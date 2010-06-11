@@ -5768,7 +5768,6 @@ var SplineSeries = extendClass( Series, {
 				num = mathRound(mathMax(chart.plotWidth, 
 					croppedData[croppedData.length-1].clientX	- croppedData[0].clientX) / 3);
 			}
-			console.log(croppedData[0].plotX);
 			splinedata.push (
 				data.length > 1 ? // if the data.length is one, it's a single point so we can't spline it
 					num ? (new SplineHelper(croppedData)).get(num) : [] :
