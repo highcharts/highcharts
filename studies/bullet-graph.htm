@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Highcharts Example</title>
+        <!-- 1. Add these JavaScript inclusions in the head of your page -->
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js">
+        </script>
+        <script type="text/javascript" src="../js/highcharts.src.js">
+        </script>
+        <!--[if IE]>
+            <script type="text/javascript" src="../js/excanvas.compiled.js"></script>
+        <![endif]-->
+        <!-- 2. Add the JavaScript to initialize the chart on document ready -->
+        <script type="text/javascript">
+            var chart;
+            $(document).ready(function(){
+                chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'container',
+                        defaultSeriesType: 'bar',
+                        margin: [10, 10, 50, 100],
+                        height: 100
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: ['Revenue (USD)']
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 50,
+                        plotBands: [{
+                            from: 0,
+                            to: 30,
+                            color: 'rgba(255, 0, 0, 0.5)'
+                        }, {
+                            from: 30,
+                            to: 40,
+                            color: 'rgba(255, 255, 0, 0.5)'
+                        }, {
+                            from: 40,
+                            to: 50,
+                            color: 'rgba(0, 128, 0, 0.5)'
+                        }],
+                        title: {
+                            text: ''
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    plotOptions: {},
+                    series: [{ // actual value
+                        data: 29.9
+                    }, { // expected value
+                        type: 'scatter',
+                        data: 40,
+                        marker: {
+                            symbol: 'square',
+                            lineColor: '#FFFFFF',
+                            lineWidth: 1,
+                            radius: 8
+                        }
+                    
+                    }]
+                });
+                
+                
+            });
+        </script>
+    </head>
+    <body>
+    	<h1>Bullet graph</h1>
+		<p>This study shows how to create a bullet graph using Highcharts 1.2.</p>
+		<ul>
+			<li>Read more on <a href="http://jsfiddle.net/mp2NG/2/">bullet graphs</a> at Wikipedia.</li>
+			<li><a href="http://jsfiddle.net/mp2NG/2/">Fiddle</a> with this example.</li>
+			
+		</ul>
+        <!-- 3. Add the container -->
+        <div id="container" style="width: 800px; height: 400px; margin: 0 auto">
+        </div>
+    </body>
+</html>
