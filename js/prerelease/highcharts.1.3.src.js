@@ -55,6 +55,10 @@ var doc = document,
 	NONE = 'none',
 	M = 'M',
 	L = 'L',
+	TRACKER_FILL = 'rgba(192,192,192,0.005)', // invisible but clickable
+	NORMAL_STATE = '',
+	HOVER_STATE = 'hover',
+	SELECT_STATE = 'select',
 	
 	// check for a custom HighchartsAdapter defined prior to this file
 	globalAdapter = win.HighchartsAdapter,
@@ -4310,7 +4314,7 @@ function Chart (options) {
 				
 			    // show the hover mark
 				tracker.resetActivePoint();
-				series.setPointState(point, 'hover');
+				series.setPointState(point, HOVER_STATE);
 			
 				// show it
 				if (tooltipIsHidden) {
@@ -4529,7 +4533,7 @@ function Chart (options) {
 				}*/
 				
 				
-				activePoint.series.setPointState(activePoint, '');
+				activePoint.series.setPointState(activePoint, NORMAL_STATE);
 				
 			}
 
@@ -5173,7 +5177,7 @@ function Chart (options) {
 						itemStyle
 					)
 					.on('mouseover', function() {
-						item.setState('hover');
+						item.setState(HOVER_STATE);
 					})
 					.on('mouseout', function() {
 						item.setState();
@@ -5232,7 +5236,7 @@ function Chart (options) {
 						0, 
 						item.options.marker.radius
 					)
-					.attr(item.pointAttr[''])
+					.attr(item.pointAttr[NORMAL_STATE])
 					.add(legendGroup, 1);
 				}
 				item.legendSymbol.isSimple = simpleSymbol;
@@ -5990,37 +5994,14 @@ function Chart (options) {
 		each(series, function(serie) {
 			serie.translate();
 			serie.setTooltipPoints();
-			/*if (options.tooltip.enabled) {
-				serie.createArea();
-			}*/
 		});	
 		
 		chart.render = render;
 		
-		//setTimeout(function() { // IE(7) needs timeout
-			render();
-			fireEvent(chart, 'load');
-		//}, 0); 
+		render();
+		fireEvent(chart, 'load');
 	}
 	
-	/**
-	 * Load graphics and data required to draw the chart
-	 */
-	/*function checkResources() {
-		var allLoaded = true;
-		for (var n in chart.resources) {
-			if (!chart.resources[n]) {
-				allLoaded = false;
-			}
-		}
-		if (allLoaded) {
-			resourcesLoaded();
-		}
-	}
-	
-	
-	
-*/
 	
 		
 	getContainer();
@@ -6245,7 +6226,7 @@ Point.prototype = {
 			each (chart.getSelectedPoints(), function (loopPoint) {
 				if (loopPoint.selected && loopPoint != point) {
 					loopPoint.selected = false;
-					loopPoint.series.setPointState(loopPoint, '');
+					loopPoint.series.setPointState(loopPoint, NORMAL_STATE);
 					fireEvent(loopPoint, 'unselect');
 				}
 			});
@@ -6413,7 +6394,7 @@ Series.prototype = {
 			index: index,
 			options: options,
 			name: options.name || 'Series '+ (index + 1),
-			state: '',
+			state: NORMAL_STATE,
 			pointAttr: {},
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
@@ -6454,7 +6435,7 @@ Series.prototype = {
 			chart = series.chart,
 			options = series.options,
 			data = options.data,
-			enabledStates = [''],
+			enabledStates = [NORMAL_STATE],
 			//data = series.data,
 			//dataParser = options.dataParser,
 			stateLayers = {},
@@ -6480,7 +6461,7 @@ Series.prototype = {
 			zIndex: 2 // labels are underneath
 		});* /
 		
-		/ *if (options.states.hover.enabled) enabledStates.push('hover');
+		/ *if (options.states.hover.enabled) enabledStates.push(HOVER_STATE);
 		each(enabledStates, function(state) { // create the state layers
 			stateLayers[state] = new Layer('state-'+ state, layerGroup.div);
 		});
@@ -6581,7 +6562,7 @@ Series.prototype = {
 			
 		/*,
 			normalSeriesMarkerOptions = options.marker,
-			hoverSeriesMarkerOptions = options.states.hover.marker;
+			hoverSeriesMarkerOptions = options.states[HOVER_STATE].marker;
 			
 		// default hover values are dynamic based on basic state 
 		//var stateOptions = seriesOptions.states[state].marker;
@@ -6832,7 +6813,7 @@ Series.prototype = {
 
 	
 	/**
-	 * Both tracker.toFront() and series.setState('hover') slow down animation
+	 * Both tracker.toFront() and series.setState(HOVER_STATE) slow down animation
 	 */
 	onMouseOver: function() {
 		var series = this,
@@ -6869,7 +6850,7 @@ Series.prototype = {
 		}
 		
 		// hover this
-		series.setState('hover');
+		series.setState(HOVER_STATE);
 		chart.hoverSeries = series;
 		
 	},
@@ -6935,8 +6916,8 @@ Series.prototype = {
 				plotX = point.plotX;
 				plotY = point.plotY;
 				
-				if (point.plotY !== UNDEFINED && 
-						chart.isInsidePlot(plotX, plotY)) {
+				// only draw the point if inside the plot and y is defined
+				if (point.plotY !== UNDEFINED && chart.isInsidePlot(plotX, plotY)) {
 					
 					point.graphic = chart.renderer.symbol(
 							pick(markerOptions.symbol, series.symbol),
@@ -6944,7 +6925,7 @@ Series.prototype = {
 							plotY, 
 							markerOptions.radius
 						)
-						.attr(point.pointAttr[point.selected ? 'select' : ''])
+						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
 						.add(series.group);
 				}
 			};
@@ -6988,7 +6969,7 @@ Series.prototype = {
 		var series = this, 
 			normalOptions = series.options.marker || series.options,
 			stateOptions = normalOptions.states,
-			stateOptionsHover = stateOptions.hover,
+			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
 			normalDefaults = {},
 			hoverDefaults = {},
@@ -7029,13 +7010,13 @@ Series.prototype = {
 		}
 		
 		// general point attributes for the series normal state
-		seriesPointAttr[''] = series.convertAttribs(normalOptions, normalDefaults);
+		seriesPointAttr[NORMAL_STATE] = series.convertAttribs(normalOptions, normalDefaults);
 		
-		// 'hover' and 'select' states inherit from normal state except the default radius
-		each(['hover', 'select'], function(state) {
+		// HOVER_STATE and SELECT_STATE states inherit from normal state except the default radius
+		each([HOVER_STATE, SELECT_STATE], function(state) {
 			seriesPointAttr[state] = series.convertAttribs(
 				stateOptions[state],
-				seriesPointAttr['']
+				seriesPointAttr[NORMAL_STATE]
 			);
 		});
 		
@@ -7070,7 +7051,7 @@ Series.prototype = {
 
 				pointAttr = [];
 				stateOptions = normalOptions.states || {}; // reassign for individual point
-				pointStateOptionsHover = stateOptions.hover = stateOptions.hover || {};
+				pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
 				
 				// if no hover color is given, brighten the normal color
 				if (!series.options.marker) { // column, bar, point
@@ -7082,15 +7063,15 @@ Series.prototype = {
 				}
 				
 				// normal point state inherits series wide normal state
-				pointAttr[''] = series.convertAttribs(normalOptions, seriesPointAttr['']);
+				pointAttr[NORMAL_STATE] = series.convertAttribs(normalOptions, seriesPointAttr[NORMAL_STATE]);
 				
-				// 'hover' and 'select' point states
-				each(['hover', 'select'], function(state) {					
+				// HOVER_STATE and SELECT_STATE point states
+				each([HOVER_STATE, SELECT_STATE], function(state) {					
 					// inherit from point normal and series hover
 					pointAttr[state] = series.convertAttribs(
 						stateOptions[state],
 						seriesPointAttr[state],
-						pointAttr['']
+						pointAttr[NORMAL_STATE]
 					);
 				});
 				
@@ -7250,74 +7231,39 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart, 
 			//inverted = chart.inverted,
-			//isHoverState = state == 'hover',
+			//isHoverState = state == HOVER_STATE,
 			//layer = layer || chart.singlePointLayer,
 			//options = series.options,
 			seriespointAttr = series.pointAttr;
 			
-		// selected points don't respond to hover
-		if (point.selected && state != 'select') return;
+		if (!state) state = NORMAL_STATE;
 		
-		//if (state) {
-			// merge series hover marker and marker hover marker
-			/*var seriesStateOptions = options.states[state].marker, 
-				pointStateOptions = options.marker.states[state];
-			
-			// the default for hover points is two more than normal radius
-			if (isHoverState && pointStateOptions.radius === UNDEFINED) {
-				pointStateOptions.radius = seriesStateOptions.radius + 2;
+		// selected points don't respond to hover
+		if (point.selected && state != SELECT_STATE) return;
+		
+		
+		
+		// if a graphic is not applied to each point in the normal state, create a shared
+		// graphic for the hover state
+		// todo: symbols
+		if (state && !point.graphic) {
+			if (!series.stateMarkerGraphic) {
+				series.stateMarkerGraphic = chart.renderer.circle(
+					0, 0, stateOptions.radius
+				)
+				.attr(point.pointAttr[state])
+				.add(series.group);
 			}
 			
-			// merge all options
-			stateOptions = merge(
-				options.marker, 
-				point.marker, 
-				seriesStateOptions, 
-				pointStateOptions
+			series.stateMarkerGraphic.translate(
+				point.plotX, 
+				point.plotY
 			);
 			
-			// lazy load the state attributes
-			if (!seriespointAttr[state]) {
-				if (seriesStateOptions.brightness) {
-					seriesStateOptions.color = 
-						Color(seriesStateOptions.color).brighten(options.brightness).get()
-				}
-				// inherit from normal state and extend it
-				seriespointAttr[state] = 
-					series.convertAttribs(seriesStateOptions, seriespointAttr['']);
-			}
-			
-			if (!point.pointAttr[state]) {			
-				point.pointAttr[state] = point.marker || pointStateOptions ?
-					series.convertAttribs(stateOptions, seriespointAttr[state]) :
-					seriespointAttr[state];
-			}
-			*/
-			// draw the marker
-			//if (stateOptions && stateOptions.enabled) {
-				
-				// if a graphic is not applied to each point in the normal state, create a shared
-				// graphic for the hover state
-				// todo: symbols
-				if (state && !point.graphic) {
-					if (!series.stateMarkerGraphic) {
-						series.stateMarkerGraphic = chart.renderer.circle(
-							0, 0, stateOptions.radius
-						)
-						.attr(point.pointAttr[state])
-						.add(series.group);
-					}
-					
-					series.stateMarkerGraphic.translate(
-						point.plotX, 
-						point.plotY
-					);
-					
-				// else, apply hover styles to the existing point
-				} else {				
-					point.graphic.attr(point.pointAttr[state]);
-				}
-			//}
+		// else, apply hover styles to the existing point
+		} else {				
+			point.graphic.attr(point.pointAttr[state]);
+		}
 		
 		
 	},
@@ -7370,7 +7316,9 @@ Series.prototype = {
 		series.drawPoints();
 		
 		// draw the mouse tracking area
-		series.createArea();
+		if (series.options.enableMouseTracking !== false) {
+			series.drawTracker();
+		}
 		
 		// run the animation
 		if (doAnimation) {
@@ -7380,8 +7328,8 @@ Series.prototype = {
 		//else series.setVisible(false, false);
 		
 		// initially hide other states than normal
-		/*if (!series.hasRendered && stateLayers.hover) {
-			stateLayers.hover.hide();
+		/*if (!series.hasRendered && stateLayers[HOVER_STATE]) {
+			stateLayers[HOVER_STATE].hide();
 			hasRendered = true;
 		}*/
 		
@@ -7397,7 +7345,6 @@ Series.prototype = {
 			
 		series.translate();
 		series.setTooltipPoints(true);
-		//if (series.chart.options.tooltip.enabled) series.createArea();
 		series.clear();
 		series.render();
 	},
@@ -7453,7 +7400,7 @@ Series.prototype = {
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			lineWidth = options.lineWidth;
 
-		state = state || '';
+		state = state || NORMAL_STATE;
 		if (series.state != state) {
 			series.state = state;
 			
@@ -7568,201 +7515,43 @@ Series.prototype = {
 		fireEvent(series, selected ? 'select' : 'unselect');
 	},
 	
+	
 	/**
-	 * Calculate the mouseover area coordinates for a given data series
+	 * Draw the tracker object that sits above all data labels and markers to
+	 * track mouse events on the graph or points. For the line type charts
+	 * the tracker uses the same graphPath, but with a greater stroke width
+	 * for better control.
 	 */
-	/*getAreaCoords: function(){
-	
-		var data = this.data, 
-			series = this, 
-			datas = [], 
-			chart = this.chart, 
-			inverted = chart.inverted, 
-			plotWidth = chart.plotWidth, 
-			plotHeight = chart.plotHeight, 
-			//reversedXAxis = series.xAxis.reversed,
-			snap = chart.options.tooltip.snap, 
-			i = 0, 
-			ret = [];
-		
-		each(series.splinedata || series.segments, function(data, i) {
-			//if (reversedXAxis) data.reverse();//reverseArray(data);
-			
-			// Reverse the data in case of a reversed x axis. Spline data
-			// is already reversed at this point, so we need to actually
-			// inspect the data x values.
-			if (data.length > 1 && data[0].x > data[1].x) {
-				data = reverseArray(data);
-			}
-			
-			
-			
-			var coords = [], outlineTop = [], outlineBottom = [];
-			each([outlineTop, outlineBottom], function(outline){
-				var last = 0, i = 0, extreme, slice, 
-					peaks = [data[0]], // add the first point at init
- 					sign = outline == outlineTop ? 1 : -1, 
-					intersects, 
-					num, 
-					x, y, lastX, lastY, x1, y1, x2, y2, dX, dY, pX, pY, l, factor, p1, p2, mA, mB, iX, iY, area;
-				
-				// pull out the highest and lowest peaks in slices of {snap} width,
-				// push these peaks into the peaks array.
-				while (data[i]) {
-					if (data[i].plotX > data[last].plotX + snap || i == data.length - 1) {
-						extreme = data[i];
-						slice = data.slice(last, i - 1);
-						each(slice, function(point){
-							if (sign * point.plotY < sign * extreme.plotY) 
-								extreme = point;
-						});
-						// push it only if we have moved on along the x axis
-						if (mathRound(data[last].plotX) < mathRound(extreme.plotX) ||
-								data[i].plotX > data[last].plotX + snap) {
-							peaks.push(extreme);
-						}
-						
-						last = i;
-					}
-					i++;
-				}
-				//console.log(peaks);
-				
-				// push the last point
-				if (peaks[peaks.length - 1] != data[data.length-1])
-					peaks.push(data[data.length - 1]);
-				
-				// loop through the peaks and calculate rectangles {snap} pixels
-				// away from the peaks.
-				//peaks = data;
-				for (i = 0; i < peaks.length; i++) {
-				
-					// clickable area
-					if (i > 0) {
-						// vector from last point to this
-						x = peaks[i].plotX;
-						y = peaks[i].plotY;
-						lastX = peaks[i - 1].plotX;
-						lastY = peaks[i - 1].plotY;
-						
-						
-						dX = x - peaks[i - 1].plotX;
-						dY = y - peaks[i - 1].plotY;
-						
-						
-						
-						// perpendicular vector
-						pX = dY;
-						pY = -dX;
-						
-						// length of the perpendicular vector
-						l = math.sqrt(math.pow(pX, 2) + math.pow(pY, 2));
-						
-						
-						// extend the line by {snap} pixels
-						if (i == 1) {
-							lastX -= (snap / l) * dX;
-							lastY -= (snap / l) * dY;
-						
-						} else if (i == peaks.length - 1) {
-							x += (snap / l) * dX;
-							y += (snap / l) * dY;
-						}
-						
-						// factors compared to snap
-						factor = sign * snap / l;
-						
-						// incremental calculation of the top and bottom line
-						
-						// the new upper parallel vector
-						x1 = mathRound(lastX + factor * pX);
-						y1 = mathRound(lastY + factor * pY);
-						x2 = mathRound(x + factor * pX);
-						y2 = mathRound(y + factor * pY);
-						
-						// loop back until this line intersects a previous line
-						if (outline[outline.length - 1] && outline[outline.length - 1][0] > x1) {
-							intersects = false;
-							while (!intersects) {
-								p2 = outline.pop();
-								p1 = outline[outline.length - 1];
-								if (!p1) 
-									break;
-								// get intersection point
-								// http://www.ultrashock.com/forums/showthread.php?t=81785
-								mA = (y1 - y2) / (x1 - x2);
-								mB = (p1[1] - p2[1]) / (p1[0] - p2[0]);
-								
-								iX = ((-mB * p1[0]) + p1[1] + (mA * x1) - y1) / (mA - mB);
-								iY = (mA * (iX - x1)) + y1;
-								
-								if (iX > p1[0]) {
-									outline.push([mathRound(iX), mathRound(iY), 1]);
-									intersects = true;
-								}
-								
-							}
-						}
-						else {
-							if (!isNaN(x1)) 
-								outline.push([x1, y1]);
-						}
-						if (outline[outline.length - 1] && outline[outline.length - 1][0] < x2) 
-							outline.push([x2, y2]);
-					}
-				}
-				
-				
-				
-			});
-			
-			// area for detecting moveover
-			for (i = 0; i < outlineTop.length; i++) { // top of the area
-				coords.push(
-					inverted ? plotWidth - outlineTop[i][1] : outlineTop[i][0], 
-					inverted ? plotHeight - outlineTop[i][0] : outlineTop[i][1]
-				);
-				
-			}
-			for (i = outlineBottom.length - 1; i >= 0; i--) { // bottom of the area
-				coords.push(
-					inverted ? plotWidth - outlineBottom[i][1] : outlineBottom[i][0], 
-					inverted ? plotHeight - outlineBottom[i][0] : outlineBottom[i][1]
-				);
-			}
-			
-			// single point: make circle
-			if (!coords.length && data[0]) {
-				coords.push(mathRound(data[0].plotX), mathRound(data[0].plotY));
-			}
-			
-			// visualize
-			//series.stateLayers[''].drawPolyLine(coords, '#afaf00', 1);
-			
-			ret.push([coords.join(',')]);
-			
-			// undo reverse
-			//if (reversedXAxis) data.reverse();
-		});
-		
-		return ret;
-	},*/
-	
-	createArea: function() {
+	drawTracker: function() {
 		var series = this,
 			options = series.options,
-			graphPath = series.graphPath,
-			chart = series.chart;
+			trackerPath = series.graphPath,
+			chart = series.chart,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight;
 		
-		if (!graphPath || series.options.enableMouseTracking === false ||
-				!chart.options.tooltip.enabled) {
-			return;
+		
+	
+		
+		// if only one series, use the whole plot area as tracker
+		if (chart.series.length == 1) {
+			trackerPath = [
+				M,
+				0, 0,
+				L,
+				0, plotHeight,
+				plotWidth, plotHeight,
+				plotWidth, 0,
+				'Z'
+			]; 
 		}
-		series.tracker = chart.renderer.path(graphPath).
+		
+		series.tracker = chart.renderer.path(trackerPath).
 			attr({
 				isTracker: true,
-				stroke: 'rgba(192, 192, 192, 0.002)', // must have an opacity to capture mouse events
-				'stroke-width' : options.lineWidth + 10,
+				stroke: TRACKER_FILL,
+				fill: TRACKER_FILL,
+				'stroke-width' : options.lineWidth + chart.options.tooltip.snap,
 				'stroke-linecap': 'round'
 			})
 			.on('mouseover', function() {
@@ -7770,10 +7559,6 @@ Series.prototype = {
 				series.onMouseOver();
 			})
 			.add(chart.trackerGroup, 1);
-			
-			
-		
-		
 	}
 	
 }; // end Series prototype
@@ -8249,20 +8034,35 @@ var ColumnSeries = extendClass(Series, {
 			pointXOffset = pointPadding + (groupPadding + columnIndex *
 				pointOffsetWidth -(categoryWidth / 2))
 				* (reversedXAxis ? -1 : 1),
-			//pointY0 = plotWidth - chart.xAxis.translate(0),
-			//translatedY0 = series.yAxis.translate(0, 0, 1);
-			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0);
+			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),
+			barX,
+			barY,
+			barW,
+			barH;
 			
 			
 		// record the new values
 		each (data, function(point) {
+			barX = point.plotX + pointXOffset;
+			barY = math.min(point.plotY, translatedY0); 
+			barW = pointWidth;
+			barH = mathAbs((point.yBottom || translatedY0) - point.plotY);
+			
 			extend (point, {
-				barX: point.plotX + pointXOffset,
-				barY: math.min(point.plotY, translatedY0), 
-				barW: pointWidth,
-				barH: mathAbs((point.yBottom || translatedY0) - point.plotY)
+				barX: barX,
+				barY: barY, 
+				barW: barW,
+				barH: barH
 			});
-						
+			point.shapeType = 'rect';
+			point.shapeArgs = [
+				barX,
+				barY,
+				barW,
+				barH,
+				options.borderRadius,
+				options.borderWidth
+			]
 		});
 		
 	},
@@ -8270,168 +8070,58 @@ var ColumnSeries = extendClass(Series, {
 	getSymbol: function(){
 	},
 	
-	drawPoints: function(state) {
+	/**
+	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
+	 * apply for columns and bars.
+	 * 
+	 */
+	drawPoints: function() {
 		var series = this,
 			options = series.options,
-			chart = series.chart,
-			plot = chart.plot,
-			pointOptions,
-			data = series.data,
-			x,
-			y,
-			width,
-			height,
 			radius = options.borderRadius,
-			seriespointAttr = series.pointAttr,
-			renderer = chart.renderer;
-			//layer = series.stateLayers[state];
-			
-			
-		// make ready for animation
-		/*if (doAnimation) {
-			this.animate(true);
-		}*/
-		
-		// cache the 'normal' state attributes
-		/*if (!seriespointAttr['']) {
-			options.color = options.color || series.color;
-			seriespointAttr[''] = series.convertAttribs(options);
-		}*/
+			renderer = series.chart.renderer;		
 		
 		// draw the columns
-		each (data, function(point) {
-			x = point.barX;
-			y = point.barY; 
-			width = point.barW; 
-			height = point.barH;
+		each (series.data, function(point) {			
 			
 			if (defined(point.plotY)) {
-				// check if individual options differ from the global series options
-				/*if (!point.pointAttr['']) {
-					if (point.options || point.color) {
-						pointOptions = point.options || {};
-						if (point.color) pointOptions.color = point.color;
-					}
-					point.pointAttr[''] = pointOptions ?
-						series.convertAttribs(pointOptions, seriespointAttr['']) : // a new config
-						seriespointAttr['']; // just a reference to the series-wide config
-						
-				}*/
-
-				// draw the graphic
-				point.graphic = renderer.rect(
-						x, y, width, height, radius, options.borderWidth
-					).attr(point.pointAttr[point.selected ? 'select' : ''])
+				// draw the graphic based on shape type and tracker/point arguments determined in translate
+				point.graphic = renderer[point.shapeType].apply(renderer, point.trackerArgs || point.shapeArgs)
+					.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
 					.add(series.group)
 					.shadow(options.shadow);
-				
-				// draw the tracker
-				point.tracker = renderer.rect(
-						x, y, width, height, radius
-					).attr({
-						isTracker: true,
-						fill: 'rgba(192,192,192,0.001)'
-					})
-					.on('mouseover', function() {
-						chart.hoverPoint = point;
-						series.onMouseOver();
-					})
-					.add(chart.trackerGroup, 1);
-					
-				
 			
 			}
-			
-			// draw the selected mode marker on top of the default one
-			/*if (point.selected)	{
-				series.setPointState(point, 'select');
-			}*/
 		});
-		/*if (doAnimation) {
-			series.animate();
-		}*/
 	},
-	
-
 	/**
-	 * Draw a single point in hover state
+	 * Draw the individual tracker elements.
+	 * This method is inherited by scatter and pie charts too.
 	 */
-	/*setPointState: function(point, state) {
-		// local vars
+	drawTracker: function() {
 		var series = this,
 			chart = series.chart,
-			seriesOptions = series.options,
-			seriesStateOptions = seriesOptions.states[state],
-			seriespointAttr = series.pointAttr,
-			//pointOptions = point ? point.options : null,	
-			plot = chart.plot,
-			inverted = chart.inverted;
+			renderer = chart.renderer;
 			
-		// selected points don't respond to hover
-		if (point.selected && state != 'select') return;
-			
-		// draw the column
-		if (state && seriesStateOptions) {
-			// lazy load the series state attributes
-			if (!seriespointAttr[state]) {
-				if (seriesStateOptions.brightness) {
-					seriesStateOptions.color = 
-						Color(seriesStateOptions.color || series.color).brighten(seriesStateOptions.brightness).get()
-				}
-				// inherit from normal state and extend it
-				seriespointAttr[state] = 
-					series.convertAttribs(seriesStateOptions, seriespointAttr['']);
-					
-			}
-
-			// lazy load the point attributes for states
-			if (!point.pointAttr['state']) {
-				point.pointAttr[state] = series.pointAttr[state];
-			}
-			
-		
-		
-		} 
-		
-		// do it
-		point.graphic.attr(point.pointAttr[state]);
-		
-	
-		
-	},*/
-	
-	getAreaCoords: function() {
-		var areas = [],
-			chart = this.chart,
-			inverted = chart.inverted;
-		each (this.data, function(point) {
-			var pointH = mathMax(mathAbs(point.h), 3) * (point.h < 0 ? -1 : 1),
-				x1 = inverted ? chart.plotWidth - point.plotY - pointH : point.plotX,
-				y2 = inverted ? chart.plotHeight - point.plotX - point.w  : point.plotY,
-				y1 = y2 + (inverted ? point.w : pointH),
-				x2 = x1 + (inverted ? pointH : point.w);
-				
-			// make sure tightly packed colums can receive mouseover
-			if (!inverted && mathAbs(x2 - x1) < 1) {
-				x2 = x1 + 1;
-			} else if (inverted && mathAbs(y2 - y1) < 1) {
-				y2 = y1 + 1;
-			}
-				
-			// push an array containing the coordinates and the point
-			areas.push([
-				map([
-					x1, y1, 
-					x1, y2, 
-					x2, y2, 
-					x2, y1
-				], mathRound).join(','),
-				point
-			]);
-		});
-		return areas;
+		each (series.data, function(point) {
+			point.tracker = 
+				renderer[point.shapeType].apply(renderer, point.shapeArgs)
+				.attr({
+					isTracker: true,
+					fill: TRACKER_FILL
+				})
+				.on('mouseover', function() {
+					chart.hoverPoint = point;
+					series.onMouseOver();
+				})
+				.add(chart.trackerGroup, 1);
+		});				
 	},
 	
+	/**
+	 * Extend the base cleanData method by getting the closest pair of points.
+	 * This is needed for determining the automatic point width.
+	 */
 	cleanData: function() {
 		var series = this,
 			data = series.data,
@@ -8536,50 +8226,52 @@ seriesTypes.bar = BarSeries;
  */
 var ScatterSeries = extendClass(Series, {
 	type: 'scatter',
-	//activeMarkers: true,
+	
 	/**
-	 * Calculate the mouseover area coordinates for a given data series
+	 * Extend the base Series' translate method by adding shape type and
+	 * arguments for the point trackers
 	 */
-	getAreaCoords: function () {
+	translate: function() {
+		var series = this;
 
-		var data = this.data,
-			coords, 
-			ret = [];
-			
-			
-		each (data, function(point) {
-			// create a circle for each point
-			ret.push([[mathRound(point.plotX), mathRound(point.plotY)].join(','), point]);
+		Series.prototype.translate.apply(series);
+
+		each (series.data, function(point) {
+			point.shapeType = 'circle';
+			point.shapeArgs = [
+				point.plotX,
+				point.plotY,
+				series.chart.options.tooltip.snap
+			];
 		});
-		return ret;
 	},
+	
+	
 	/**
-	 * Create tracker elements
+	 * Create individual tracker elements for each point
 	 */
-	createArea: function() {
+	drawTracker: ColumnSeries.prototype.drawTracker,
+	/*drawTracker: function() {
 		var series = this,
 			chart = series.chart;
 		
 		// create an individual tracker cirle for each point
 		each (series.data, function(point) {
-			point.tracker = chart.renderer.circle(
-					point.plotX, point.plotY, series.options.marker.radius 
-				).attr({
+			point.tracker = 
+				//chart.renderer.circle(point.plotX, point.plotY, chart.options.tooltip.snap)
+				
+				.attr({
 					isTracker: true,
-					fill: 'rgba(192,192,192,0.005)'//,
-					//'fill-opacity': 0.001 // must have an opacity to capture mouse events
+					fill: TRACKER_FILL
 				})
 				.on('mouseover', function() {
 					chart.hoverPoint = point;
 					series.onMouseOver();
 				})
-				//translate(plotLeft, plotTop).
 				.add(chart.trackerGroup, 1);
-				
-			
 		});
 
-	},
+	},*/
 	/**
 	 * Cleaning the data is not necessary in a scatter plot
 	 */
@@ -8692,11 +8384,12 @@ var PieSeries = extendClass(Series, {
 		fill: 'color'
 	},
 	
-	getColor: function() {
-		// pie charts have a color each point
-		// @todo: Make option like individualPointColor that is default for pies and 
-		// available for columns
-	},
+	/**
+	 * Pies have one color each point
+	 */
+	getColor: function() {},
+	
+	
 	translate: function() {
 		var sum = 0,
 			series = this,
@@ -8704,8 +8397,10 @@ var PieSeries = extendClass(Series, {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			positions = options.center,
-			size = options.size,
 			chart = series.chart,
+			start,
+			end,
+			angle,
 			data = series.data,
 			circ = 2 * math.PI,
 			fraction,
@@ -8731,17 +8426,23 @@ var PieSeries = extendClass(Series, {
 		each (data, function(point) {
 			// set start and end angle
 			fraction = sum ? point.y / sum : 0;
-			point.start = cumulative * circ;
+			start = cumulative * circ;
 			cumulative += fraction;
-			point.end = cumulative * circ;
-			point.percentage = fraction * 100;
+			end = cumulative * circ;
 			
-			// set size and positions
-			point.center = [positions[0], positions[1]];
-			point.size = positions[2];
+			
+			// set the shape
+			point.shapeType = 'arc';
+			point.shapeArgs = [
+				positions[0],
+				positions[1],
+				positions[2] / 2,
+				start,
+				end
+			];
 			
 			// center for the sliced out slice
-			var angle = (point.end + point.start) / 2;
+			angle = (end + start) / 2;
 			point.slicedTranslation = map([
 				mathCos(angle) * slicedOffset + chart.plotLeft, 
 				mathSin(angle) * slicedOffset + chart.plotTop
@@ -8754,13 +8455,17 @@ var PieSeries = extendClass(Series, {
 				positions[1] + mathSin(angle) * positions[2] * 0.35
 			];
 			
+			// API property
+			point.percentage = fraction * 100;
+			
+			
 		});
 		
 		this.setTooltipPoints();
 	},
 	
 	/**
-	 * Render the graph and markers
+	 * Render the slices
 	 */
 	render: function() {
 		var series = this,
@@ -8775,134 +8480,59 @@ var PieSeries = extendClass(Series, {
 		
 
 		this.drawPoints();
+		// draw the mouse tracking area
+		if (series.options.enableMouseTracking !== false) {
+			series.drawTracker();
+		}
+		
 		this.drawDataLabels();
 	},
 	
 	/**
 	 * Draw the data points
-	 * @param {Object} state The state of this graph
 	 */
-	drawPoints: function(state) {
-		var series = this;
+	drawPoints: function() {
+		var series = this,
+			chart = series.chart,
+			renderer = chart.renderer,
+			groupTranslation,
+			center;
 		
 		// draw the slices
 		each (this.data, function(point) {
-			series.drawPoint(point, point.color);
-			
-			if (point.visible === false) {
-				point.setVisible(false);
+			// create the group the first time
+			if (!point.group) {
+				// if the point is sliced, use special translation, else use plot area traslation
+				groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
+				point.group = renderer.g('point').add(series.group).
+					translate(groupTranslation[0], groupTranslation[1]);
 			}
 			
-			// draw the selected mode marker on top of the default one
-			if (point.selected)	{
-				series.setPointState(point, 'select');
+			// draw the slice
+			point.graphic = 
+				renderer.arc.apply(renderer, point.shapeArgs)
+				.attr(point.pointAttr[NORMAL_STATE])
+				.add(point.group);
+
+			
+			// detect point specific visibility
+			if (point.visible === false) {
+				point.setVisible(false);
 			}
 					
 		});
 		
 	},
 	
-	getSymbol: function(){
-	},
+	/**
+	 * Draw point specific tracker objects. Inherit directly from column series.
+	 */
+	drawTracker: ColumnSeries.prototype.drawTracker,
 	
-
-	
 	/**
-	 * Draw a single point (pie slice)
-	 * @param {Object} point The point object
-	 * @param {Object} ctx The canvas context to draw it into
-	 * @param {Object} color The color of the point
-	 * @param {Number} brightness The brightness relative to the color
-	 * 
-	 * @todo: merge this function back to drawPoints
+	 * Pies don't have point marker symbols
 	 */
-	drawPoint: function(point, color, brightness) {
-		var series = this,
-			options = series.options,
-			chart = series.chart,
-			renderer = chart.renderer,
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			groupTranslation = point.sliced ? point.slicedTranslation : [plotLeft, plotTop],
-			center = point.center,
-			centerX = center[0],
-			centerY = center[1],
-			start = point.start,
-			end = point.end,
-			radius = point.size / 2;
-			
-		if (!point.group) {
-			point.group = renderer.g('point').add(series.group).
-				translate(groupTranslation[0], groupTranslation[1]);
-		
-			point.graphic = renderer.arc(centerX, centerY, radius, start, end).
-				attr(point.pointAttr['']).
-				add(point.group);
-			
-			point.tracker = renderer.arc(centerX, centerY, radius, start, end).
-				attr({
-					isTracker: true,
-					fill: 'rgba(192,192,192,0.005)'//,
-					//'fill-opacity': 0.001 // must have an opacity to capture mouse events
-				})
-				.on('mouseover', function() {
-					chart.hoverPoint = point;
-					series.onMouseOver();
-				})
-				.add(chart.trackerGroup, 1);
-		}	
-	}
-	/**
-	 * Pull the slice out from the pie
-	 * @param {Object} point
-	 */
-	/*slice: function(point) {
-		var centerSliced = point.centerSliced;
-		css(point.layer, {
-			left: centerSliced[0] + PX,
-			top: centerSliced[1] + PX
-		});
-	},*/
-	/**
-	 * Get the coordinates for the mouse tracker area
-	 */
-	/*getTooltipPos: function() {
-		each (this.data, function(point) {
-			var centerX = point.center[0],
-				centerY = point.center[1],
-				radius = point.size / 2,
-				start = point.start,
-				end = point.end,
-				coords = [];
-				
-			// start building the coordinates from the start point
-			// with .25 radians (~15 degrees) increments the coordinates
-			for (var angle = start; angle; angle += 0.25) {
-				if (angle >= end) angle = end;
-				coords = coords.concat([
-					centerX + mathCos(angle) * radius,
-					centerY + mathSin(angle) * radius
-				])
-				if (angle >= end) break;
-			}
-			
-			// wrap it up with the center point		
-			coords = coords.concat([
-				centerX, centerY
-			])
-						
-			// set tooltip position in the center of the sector
-			
-			
-			// push an array containing the coordinates and the point
-			areas.push([
-				map(coords, mathRound).join(','),
-				point
-			])
-			
-		});
-		//return areas;
-	}*/
+	getSymbol: function() {}
 	
 });
 seriesTypes.pie = PieSeries;
