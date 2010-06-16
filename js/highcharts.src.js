@@ -1,7 +1,7 @@
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 /** 
- * @license Highcharts JS v1.2.5 (2010-04-13)
+ * @license Highcharts JS v1.2.6 (prerelease)
  * 
  * (c) 2010 Torstein Hønsi
  * 
@@ -310,16 +310,21 @@ function addCSSRule(selector, declaration, print) {
 			)
 		);
 	} else { // get the last stylesheet and add rules
+		
 		var styleSheets = doc.styleSheets, 
 			index,
 			styleSheet;
+			
 			
 		if (print) { // only in IE for now
 			createStyleTag(true);
 		}
 		
+		
+		
 		index = styleSheets.length - 1;
-		while (index >= 0 && styleSheets[index].media != media) index--; 
+		while (index >= 1 && styleSheets[index].media != media) index--;
+		
 		
 		styleSheet = styleSheets[index];
 		styleSheet.addRule(selector, serialized);
@@ -574,7 +579,7 @@ defaultOptions = {
 			return '<b>'+ (pThis.point.name || series.name) +'</b><br/>'+
 				(defined(x) ? 
 					'X value: '+ (xAxis && xAxis.options.type == 'datetime' ? 
-						dateFormat('%Y-%m-%d %H:%M:%S', x) : x) +'<br/>':
+						dateFormat(null, x) : x) +'<br/>':
 					'')+
 				'Y value: '+ pThis.y;
 		},
@@ -767,6 +772,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderRadius: 0,
 	groupPadding: 0.2,
 	pointPadding: 0.1,
+	//pointWidth: null,
+	minPointLength: 0, 
 	states: {
 		hover: {
 			brightness: 0.1,
@@ -948,8 +955,8 @@ function dateFormat(format, timestamp, capitalize) {
 		return number.toString().replace(/^([0-9])$/, '0$1');
 	}
 	
-	if (!defined(timestamp)) return 'Invalid date';
-	
+	if (!defined(timestamp) || isNaN(timestamp)) return 'Invalid date';
+	format = pick(format, '%Y-%m-%d %H:%M:%S');
 	
 	var date = new Date(timestamp * timeFactor),
 	
@@ -972,7 +979,7 @@ function dateFormat(format, timestamp, capitalize) {
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31 
 			'e': dayOfMonth, // Day of the month, 1 through 31 
 			
-			// Week (none implemented)			
+			// Week (none implemented)
 			
 			// Month
 			'b': langMonths[month].substr(0, 3), // Short month, like 'Jan'
@@ -1126,7 +1133,7 @@ Layer.prototype = {
 					height: height + PX,
 					position: ABSOLUTE
 				}, div);
-	
+				
 		    
 			} else {
 				// create an object and inject SVG into it
@@ -1440,7 +1447,7 @@ Layer.prototype = {
 							'style="v-text-align:'+ align + 
 							';'+ css +'"/>'+
 					'</g_vml_:line>';
-			
+					
 			// svg browsers
 			} else { 
 				hasObject = true;
@@ -1455,7 +1462,7 @@ Layer.prototype = {
 					'</g>';
 			}
 			
-			layer.hasObject = hasObject;
+			if (hasObject) layer.hasObject = hasObject;
 		}
 	},
 	/*
@@ -2049,7 +2056,6 @@ function Chart (options) {
 		// Printing CSS for IE
 		if (isIE) addCSSRule('.highcharts-image-map', { display: 'none' }, 'print');
 		
-		
 		// Axes
 		if (hasCartesianSeries) each(axes, function(axis) { 
 			axis.render();
@@ -2578,6 +2584,7 @@ function Chart (options) {
 			// push the last time
 			tickPositions.push(time);
 			
+			
 			// dynamic label formatter 
 			if (!options.labels.formatter) labelFormatter = function() {
 				return dateFormat(options.dateTimeLabelFormats[unit[0]], this.value, 1);
@@ -2639,6 +2646,7 @@ function Chart (options) {
 			if (isDatetimeAxis)	setDateTimeTickPositions();
 			else setLinearTickPositions();
 			
+			
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1];
@@ -2653,7 +2661,7 @@ function Chart (options) {
 				max = roundedMax;
 			} else if (max < roundedMax) {
 				tickPositions.pop();
-			}	
+			}
 		}
 		
 		/**
@@ -2700,6 +2708,7 @@ function Chart (options) {
 			min = pick(userSetMin, options.min, dataMin);
 			max = pick(userSetMax, options.max, dataMax);
 			
+			
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) { 
 				zoomOffset = (maxZoom - max + min) / 2;
@@ -2709,13 +2718,14 @@ function Chart (options) {
 			}
 				
 			// pad the values to get clear of the chart's edges
-			if (!categories && !usePercentage) {
+			if (!categories && !usePercentage && defined(min) && defined(max)) {
 				length = (max - min) || 1;
-				if (!defined(options.min) && minPadding && (dataMin < 0 || !ignoreMinPadding)) 
+				if (!defined(options.min) && !defined(userSetMin) && minPadding && (dataMin < 0 || !ignoreMinPadding)) 
 					min -= length * minPadding; 
-				if (!defined(options.max) && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) 
+				if (!defined(options.max) && !defined(userSetMax)  && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) 
 					max += length * maxPadding;
 			}
+			
 			
 			// tickInterval
 			if (categories || min == max) tickInterval = 1;
@@ -2743,6 +2753,7 @@ function Chart (options) {
 			};				
 			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY]) 
 				maxTicks[xOrY] = tickPositions.length;
+			//if (options.numberOfTicks) maxTicks[xOrY] = options.numberOfTicks;
 				
 			// reset stacks
 				
@@ -2753,8 +2764,10 @@ function Chart (options) {
 
 
 			
-			// mark as dirty
-			axis.isDirty = (min != oldMin || max != oldMax);
+			// mark as dirty if it is not already set to dirty and extremes have changed
+			if (!axis.isDirty) {
+				axis.isDirty = (min != oldMin || max != oldMax);
+			}
 		};
 		
 		/**
@@ -2814,6 +2827,7 @@ function Chart (options) {
 				
 				
 				// optionally redraw
+				axis.isDirty = true;
 				if (pick(doRedraw, true)) {
 					redraw();  // redraw axis
 				}
@@ -3438,7 +3452,10 @@ function Chart (options) {
 					// reset mouseIsDown and hasDragged
 					chart.mouseIsDown = mouseIsDown = hasDragged = false;
 					
+					
 				}
+				
+
 			}
 			
 			// MooTools 1.2.3 doesn't fire this in IE when using addEvent
@@ -4469,7 +4486,7 @@ Point.prototype = {
 			x: point.category, 
 			y: point.y,
 			percentage: point.percentage,
-			total: point.stackTotal
+			total: point.total || point.stackTotal
 		});
 	}	
 };
@@ -4733,6 +4750,7 @@ Series.prototype = {
 			//return point;
 		});
 		
+		
 		// set the data
 		series.data = data;
 	
@@ -4868,7 +4886,7 @@ Series.prototype = {
 		
 		// loop the concatenated data and apply each point to all the closest
 		// pixel positions
-		if (series.xAxis.reversed) data = data.reverse();//reverseArray(data);
+		if (series.xAxis && series.xAxis.reversed) data = data.reverse();//reverseArray(data);
 		each (data, function(point, i) {
 			
 			
@@ -4901,16 +4919,19 @@ Series.prototype = {
 			doAnimation = options.animation && series.animate,
 			layer = series.stateLayers[state], 
 			data = series.data, 
-			color = options.lineColor || series.color, 
-			fillColor = options.fillColor == 'auto' ? 
-				Color(series.color).setOpacity(options.fillOpacity || 0.75).get() : 
-				options.fillColor, 
+			color,
+			fillColor,
 			inverted = chart.inverted, 
 			y0 = (inverted ? 0 : chart.plotHeight) - series.yAxis.translate(0);
 		
 		// get state options
-		if (state) 
+		if (state) {
 			options = merge(options, options.states[state]);
+		}
+		color = options.lineColor || series.color; 
+		fillColor = options.fillColor == 'auto' ? 
+			Color(series.color).setOpacity(options.fillOpacity || 0.75).get() : 
+			options.fillColor; 
 			
 		
 		// initiate the animation
@@ -4947,7 +4968,7 @@ Series.prototype = {
 						area.push(segment[i].plotX, segment[i].yBottom);
 					
 				
-				} else { // follow zero line back
+				} else if (segment.length) { // follow zero line back
 					area.push(
 						inverted ? y0 : segment[segment.length - 1].plotX, 
 						inverted ? chart.plotHeight - segment[segment.length - 1].plotX : y0, 
@@ -5097,7 +5118,8 @@ Series.prototype = {
 			}
 				
 			// determine the color
-			options.style.color = options.color == 'auto' ? series.color : options.color;
+			//options.style.color = options.color == 'auto' ? series.color : options.color;
+			options.style.color = pick(options.style.color, series.color);
 			
 			// make the labels for each point
 			each(data, function(point){
@@ -5109,7 +5131,9 @@ Series.prototype = {
 					x: point.x,
 					y: point.y,
 					series: series,
-					point: point
+					point: point,
+					percentage: point.percentage,
+					total: point.total || point.stackTotal
 				});
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + options.y;
@@ -5401,6 +5425,7 @@ Series.prototype = {
 			dataIsReverse,
 			i = 0, 
 			ret = [];
+			
 		
 		each(series.splinedata || series.segments, function(data, i) {
 			//if (reversedXAxis) data.reverse();//reverseArray(data);
@@ -5550,7 +5575,7 @@ Series.prototype = {
 			}
 			
 			// single point: make circle
-			if (!coords.length) {
+			if (!coords.length && data.length) {
 				coords.push(mathRound(data[0].plotX), mathRound(data[0].plotY));
 			}
 			
@@ -5723,7 +5748,6 @@ var SplineSeries = extendClass( Series, {
 			//data = this.data,
 			splinedata = [],
 			num;
-			
 		each (series.segments, function(data) {
 			if (series.xAxis.reversed) data = data.reverse();//reverseArray(data);
 			var croppedData = [],
@@ -5734,11 +5758,10 @@ var SplineSeries = extendClass( Series, {
 			each (data, function(point, i) {
 				nextUp = data[i+2] || data[i+1] || point;
 				nextDown = data[i-2] || data[i-1] || point;
-				if (nextUp.plotX > 0 && nextDown.plotY < chart.plotWidth) {
+				if (nextUp.plotX > 0 && nextDown.plotX < chart.plotWidth) {
 					croppedData.push(point);
 				}
 			});
-			
 				
 			// 3px intervals:
 			if (croppedData.length > 1) {
@@ -5928,21 +5951,28 @@ var ColumnSeries = extendClass(Series, {
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 : 
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding),
-			columnIndex = (chart.options.xAxis.reversed ? columnCount - 
+			columnIndex = (chart.options.xAxis && chart.options.xAxis.reversed ? columnCount - 
 				series.columnIndex : series.columnIndex) || 0,
 			pointX = -(categoryWidth / 2) + groupPadding + columnIndex *
 				pointOffsetWidth + pointPadding,
 			//pointY0 = plotWidth - chart.xAxis.translate(0),
-			translatedY0 = series.yAxis.translate(0);
+			translatedY0 = series.yAxis.translate(0),
+			minPointLength = options.minPointLength,
+			height;
 			
 		// record the new values
 		each (data, function(point) {
 			point.plotX += pointX;
 			point.w = pointWidth;
 			point.y0 = (inverted ? plotWidth : plotHeight) - translatedY0;
-			point.h = (point.yBottom || point.y0) - point.plotY;
+			
+			height = (point.yBottom || point.y0) - point.plotY;
+			if (minPointLength && mathAbs(height) < minPointLength) {
+				height = (height < 0 ? 1 : -1) * minPointLength;
+			}
+			point.h = height;
+			
 		});
-		
 		
 	},
 	
@@ -6028,14 +6058,17 @@ var ColumnSeries = extendClass(Series, {
 				pointOptions
 			);
 			layer.drawRect(
-				inverted ? chart.plotWidth - point.plotY - point.h : point.plotX, 
-				inverted ? chart.plotHeight - point.plotX - point.w : point.plotY, 
-				inverted ? point.h : point.w, 
-				inverted ? point.w : point.h, 
+				inverted ? 
+					(point.h >= 0 ? chart.plotWidth - point.plotY - point.h : chart.plotWidth - point.plotY) :				
+					point.plotX,
+				inverted ? chart.plotHeight - point.plotX - point.w : 
+					(point.h >= 0 ? point.plotY : point.plotY + point.h), // for negative bars, subtract h (Opera) 
+				inverted ? mathAbs(point.h) : point.w, 
+				inverted ? point.w : mathAbs(point.h),
 				options.borderColor, 
 				options.borderWidth, 
 				options.borderRadius, 
-				Color(options.color || this.color).brighten(options.brightness).get(), 
+				Color(options.color || this.color).brighten(options.brightness).get(),
 				options.shadow		
 			)
 		}
@@ -6046,11 +6079,12 @@ var ColumnSeries = extendClass(Series, {
 			chart = this.chart,
 			inverted = chart.inverted;
 		each (this.data, function(point) {
-			var pointH = mathMax(mathAbs(point.h), 3) * (point.h < 0 ? -1 : 1),
+			var pointH = mathMax(mathAbs(point.h), 3) * (point.h < 3 ? -1 : 1),
 				x1 = inverted ? chart.plotWidth - point.plotY - pointH : point.plotX,
 				y2 = inverted ? chart.plotHeight - point.plotX - point.w  : point.plotY,
 				y1 = y2 + (inverted ? point.w : pointH),
 				x2 = x1 + (inverted ? pointH : point.w);
+				
 				
 			// make sure tightly packed colums can receive mouseover
 			if (!inverted && mathAbs(x2 - x1) < 1) x2 = x1 + 1;
@@ -6263,7 +6297,7 @@ var PieSeries = extendClass(Series, {
 		// pie charts have a color each point
 	},
 	translate: function() {
-		var sum = 0,
+		var total = 0,
 			series = this,
 			cumulative = -0.25, // start at top
 			options = series.options,
@@ -6271,6 +6305,8 @@ var PieSeries = extendClass(Series, {
 			positions = options.center,
 			size = options.size,
 			chart = series.chart,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
 			data = series.data,
 			circ = 2 * math.PI,
 			fraction;
@@ -6282,22 +6318,24 @@ var PieSeries = extendClass(Series, {
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to height
-				chart['plot' + (i ? 'Height' : 'Width')] * parseInt(length) / 100:
+				[plotWidth, plotHeight, math.min(plotWidth, plotHeight)][i]
+					* parseInt(length) / 100:
 				length;
 		});
 					
 		// get the total sum
 		each (data, function(point) {
-			sum += point.y;
+			total += point.y;
 		});
 		
 		each (data, function(point) {
 			// set start and end angle
-			fraction = sum ? point.y / sum : 0
+			fraction = total ? point.y / total : 0
 			point.start = cumulative * circ;
 			cumulative += fraction;
 			point.end = cumulative * circ;
 			point.percentage = fraction * 100;
+			point.total = total;
 			
 			// set size and positions
 			point.center = [positions[0], positions[1]];
@@ -6410,7 +6448,7 @@ var PieSeries = extendClass(Series, {
 			borderWidth = options.borderWidth,
 			/* IE7 and IE6 fail to render a full circle unless start and
 			end points are equal: */
-			end = isIE && point.percentage == 100 ? point.start : point.end;
+			end = isIE && point.percentage > 99.999 ? point.start : point.end;
 			
 		// Todo: make Layer.prototype.drawArc method
 		if (point.y > 0) { // drawing 0 will draw a full disc in IE
@@ -6453,7 +6491,7 @@ var PieSeries = extendClass(Series, {
 				
 			// start building the coordinates from the start point
 			// with .25 radians (~15 degrees) increments the coordinates
-			for (var angle = start; angle; angle += 0.25) {
+			for (var angle = start; 1; angle += 0.25) {
 				if (angle >= end) angle = end;
 				coords = coords.concat([
 					centerX + mathCos(angle) * radius,
