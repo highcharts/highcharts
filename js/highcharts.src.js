@@ -1618,7 +1618,29 @@ function Chart (options) {
 	 * Redraw legend, axes or series based on updated data
 	 */
 	function redraw() {
-		var redrawLegend = chart.isDirty;
+		var redrawLegend = chart.isDirty,
+			hasStackedSeries,
+			seriesLength = series.length,
+			i = seriesLength,
+			serie;
+		
+		// link stacked series
+		while (i--) {
+			serie = series[i];
+			if (serie.isDirty && serie.options.stacking) {
+				hasStackedSeries = true;
+				break;
+			}
+		}
+		if (hasStackedSeries) { // mark others as dirty
+			i = seriesLength;
+			while (i--) {
+				serie = series[i];
+				if (serie.options.stacking) {
+					serie.isDirty = true;
+				}
+			}
+		}
 			
 		// handle updated data in the series		
 		each (series, function(serie) {
