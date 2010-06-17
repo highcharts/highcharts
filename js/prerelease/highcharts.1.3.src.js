@@ -4,7 +4,7 @@
 /** 
  * @license Name:    Highcharts
  * Version: 2.0 Prerelease, forked from 1.2.0 (2010-02-23)
- * Modified: 2010-06-09
+ * Modified: 2010-06-15
  * Author:  Torstein Hønsi
  * Support: www.highcharts.com/support
  * License: www.highcharts.com/license
@@ -91,11 +91,7 @@ function extend(a, b) {
 		a = {};
 	}
 	for (var n in b) {
-		try {
 		a[n] = b[n];
-		} catch(e) {
-			console.log(n, ", ", b[n]);
-		}
 	}
 	return a;
 }
@@ -1167,6 +1163,11 @@ function dateFormat(format, timestamp, capitalize) {
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 }
 
+/**
+ * Loop up the node tree and add offsetWidth and offsetHeight to get the
+ * total page offset for a given element
+ * @param {Object} el
+ */
 function updatePosition (el)	{
 	var p = { x: el.offsetLeft, y: el.offsetTop };
 	while (el.offsetParent)	{
@@ -1472,6 +1473,7 @@ SVGRenderer.prototype = {
 		} else if (imageRegex.test(symbol)) {
 			imageSrc = symbol.match(imageRegex)[1];
 			
+			
 			// create the image
 			//obj = this.createElement('image').attr({
 			obj = this.image(imageSrc).attr({
@@ -1699,6 +1701,7 @@ SVGElement.prototype = {
 				
 				// join paths
 				if (key == 'd' && typeof value != 'string') {
+							
 					value = value.join(' ');
 					
 				// update child tspans x values
@@ -1984,9 +1987,9 @@ SVGElement.prototype = {
 	empty: function() {
 		var element = this.element,
 			childNodes = element.childNodes,
-			i = childNodes.length - 1;
+			i = childNodes.length;
 			
-		for (i; i >= 0; i--) {
+		while (i--) {
 			element.removeChild(childNodes[i]);
 		}
 	},
@@ -2030,6 +2033,17 @@ SVGElement.prototype = {
 	
 	}
 };
+
+
+
+/* **************************************************************************** 
+ *                                                                            * 
+ * START OF INTERNET EXPLORER < 8 SPECIFIC CODE                               *
+ *                                                                            *
+ * For applications and websites that don't need IE support, like platform    *
+ * targeted mobile apps and web apps, this code can be removed.               *
+ *                                                                            *
+ *****************************************************************************/
 		
 /**
  * The VML renderer
@@ -2410,7 +2424,7 @@ var VMLRenderer = extendClass( SVGRenderer, {
 		
 		// set the class name	
 		if (name) {
-			attribs = { 'class': PREFIX + name };
+			attribs = { 'className': PREFIX + name, 'class': PREFIX + name };
 		}
 			
 		// the div to hold HTML and clipping	
@@ -2501,8 +2515,9 @@ var VMLRenderer = extendClass( SVGRenderer, {
 	
 });
 
+
 /**
- * The VML element wrapper
+ * The VML element wrapper.
  */
 var VMLElement = extendClass( SVGElement, {
 	init: function(renderer, nodeName) {
@@ -2613,9 +2628,17 @@ var VMLElement = extendClass( SVGElement, {
 			key = hash;
 			if (key == 'translateX' || key == 'translateY') {
 				ret = this[key] || 0;
+			} else if (key == 'stroke-width') {
+				ret = element.strokeweight;
+				
 			} else {
-				ret = parseInt(elemStyle[{ x: 'left', y: 'top' }[key] || key]);
+				ret = parseInt(elemStyle[{ 
+					x: 'left', 
+					y: 'top'
+				}[key] || key]);
 			}
+			
+			
 			
 		// setter
 		} else {		
@@ -2645,6 +2668,13 @@ var VMLElement = extendClass( SVGElement, {
 				
 				// width and height
 				} else if (/^(width|height)$/.test(key)) {
+					
+					// VML bug: selection fill color becomes white when zero width or height
+					if (value == 0 && element.className == PREFIX +'selection-marker') {
+						value = 1;
+					}
+					
+					// normal
 					elemStyle[key] = value;
 										
 					// Update corner radius - IE throws an error if the element is in the 
@@ -2688,7 +2718,7 @@ var VMLElement = extendClass( SVGElement, {
 					value = renderer.color(value, element, key);				
 						
 					// in some cases only the subelement will do
-					if (parentNode && attr(parentNode, 'class') == 'highcharts-tooltip') {
+					if (parentNode && attr(parentNode, 'class') == PREFIX +'tooltip') {
 						(
 							element.getElementsByTagName(key)[0] ||
 							createElement('v:'+ key, null, null, element)
@@ -2832,8 +2862,8 @@ var VMLElement = extendClass( SVGElement, {
 			node;
 			
 		each ([element.childNodes, groupElement.childNodes], function(childNodes) { 
-			i = childNodes.length - 1;
-			for (i; i >= 0; i--) {
+			i = childNodes.length;
+			while (i--) {
 				node = childNodes[i];
 				if (node != groupElement) {
 					node.parentNode.removeChild(node);
@@ -2945,7 +2975,6 @@ var VMLElement = extendClass( SVGElement, {
 			element = this.element,
 			elemStyle = element.style;
 			
-			
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 					
@@ -2971,8 +3000,9 @@ var VMLElement = extendClass( SVGElement, {
 				if (shadow.tagName == 'shape') {
 					shadow.path = element.path;
 					shadow.coordsize = element.coordsize;
+				} else if (shadow.tagName == 'roundrect') {
+					shadow.arcsize = this.arcsize;
 				}
-				
 				
 				// insert it
 				element.parentNode.insertBefore(shadow, element);
@@ -2989,11 +3019,23 @@ var VMLElement = extendClass( SVGElement, {
 	}
 });
 
+/* **************************************************************************** 
+ *                                                                            * 
+ * END OF INTERNET EXPLORER < 8 SPECIFIC CODE                                 *
+ *                                                                            *
+ *****************************************************************************/
 
-//console.log(VMLRenderer);
+/**
+ * General renderer
+ */
+var Renderer = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? 
+	SVGRenderer : VMLRenderer;
+	
 
-
-
+/**
+ * The chart class
+ * @param {Object} options
+ */
 function Chart (options) {
 	
 	defaultXAxisOptions = merge(defaultXAxisOptions, defaultOptions.xAxis);
@@ -3973,85 +4015,76 @@ function Chart (options) {
 			});
 			
 			
-			
-			// axis line
-			if (lineWidth) {
-				lineLeft = plotLeft + (opposite ? plotWidth : 0) + offset;
-				lineTop = chartHeight - marginBottom - (opposite ? plotHeight : 0) + offset;
-				
-				renderer.path(renderer.crispLine([
-						M,
-						horiz ? 
-							plotLeft: 
-							lineLeft,
-						horiz ? 
-							lineTop: 
-							plotTop,
-						L, 
-						horiz ? 
-							chartWidth - marginRight : 
-							lineLeft,
-						horiz ? 
-							lineTop:
-							chartHeight - marginBottom
-					], lineWidth)).
-					attr({ 
-						stroke: options.lineColor, 
-						'stroke-width': lineWidth
-					}).
-					add(axisGroup);
-				
-			}
-			
-			// title
-			if (!axis.axisTitle && axisTitleOptions && axisTitleOptions.enabled && axisTitleOptions.text) {
-				
-				// compute anchor points for each of the title align options
-				var margin = horiz ? 
-						plotLeft : plotTop;
+			// Static items. As the axis group is cleared on subsequent calls
+			// to render, these items are added outside the group.			
+			if (!chart.hasRendered) {
+				// axis line
+				if (lineWidth) {
+					lineLeft = plotLeft + (opposite ? plotWidth : 0) + offset;
+					lineTop = chartHeight - marginBottom - (opposite ? plotHeight : 0) + offset;
 					
-				// the position in the length direction of the axis
-				var alongAxis = { 
-					low: margin + (horiz ? 0 : axisLength), 
-					middle: margin + axisLength / 2, 
-					high: margin + (horiz ? axisLength : 0)
-				}[axisTitleOptions.align];
+					renderer.path(renderer.crispLine([
+							M,
+							horiz ? 
+								plotLeft: 
+								lineLeft,
+							horiz ? 
+								lineTop: 
+								plotTop,
+							L, 
+							horiz ? 
+								chartWidth - marginRight : 
+								lineLeft,
+							horiz ? 
+								lineTop:
+								chartHeight - marginBottom
+						], lineWidth)).
+						attr({ 
+							stroke: options.lineColor, 
+							'stroke-width': lineWidth
+						}).
+						add(null, 7);
+					
+				}
 				
-				// the position in the perpendicular direction of the axis
-				// todo: move the centerline fix to the VMLRenderer
-				var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
-					(horiz ? 1 : -1) * // horizontal axis reverses the margin
-					(opposite ? -1 : 1) * // so does opposite axes
-					axisTitleOptions.margin 
-					- (isIE ? parseInt(
-						axisTitleOptions.style.fontSize || 12, 10
-					) / 3 : 0); // preliminary fix for vml's centerline
-				
-				/*axisLayer.text(
-					axisTitleOptions.text,
-					horiz ? 
-						alongAxis: 
-						offAxis + (opposite ? plotWidth : 0) + offset, // x
-					horiz ? 
-						offAxis - (opposite ? plotHeight : 0) + offset: 
-						alongAxis, // y
-					axisTitleOptions.style, 
-					axisTitleOptions.rotation || 0,
-					{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
-				);*/
-				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
-					horiz ? 
-						alongAxis: 
-						offAxis + (opposite ? plotWidth : 0) + offset, // x
-					horiz ? 
-						offAxis - (opposite ? plotHeight : 0) + offset: 
-						alongAxis, // y
-					axisTitleOptions.style, 
-					axisTitleOptions.rotation || 0,
-					{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
-				).add(axisGroup, 7);
-				
+				// Render the title. 
+				if (!axis.axisTitle && axisTitleOptions && axisTitleOptions.enabled && axisTitleOptions.text) {
+					
+					// compute anchor points for each of the title align options
+					var margin = horiz ? 
+							plotLeft : plotTop;
+						
+					// the position in the length direction of the axis
+					var alongAxis = { 
+						low: margin + (horiz ? 0 : axisLength), 
+						middle: margin + axisLength / 2, 
+						high: margin + (horiz ? axisLength : 0)
+					}[axisTitleOptions.align];
+					
+					// the position in the perpendicular direction of the axis
+					// todo: move the centerline fix to the VMLRenderer
+					var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
+						(horiz ? 1 : -1) * // horizontal axis reverses the margin
+						(opposite ? -1 : 1) * // so does opposite axes
+						axisTitleOptions.margin 
+						- (isIE ? parseInt(
+							axisTitleOptions.style.fontSize || 12, 10
+						) / 3 : 0); // preliminary fix for vml's centerline
+					
+					axis.axisTitle = renderer.text(
+						axisTitleOptions.text,
+						horiz ? 
+							alongAxis: 
+							offAxis + (opposite ? plotWidth : 0) + offset, // x
+						horiz ? 
+							offAxis - (opposite ? plotHeight : 0) + offset: 
+							alongAxis, // y
+						axisTitleOptions.style, 
+						axisTitleOptions.rotation || 0,
+						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+					).add(null, 7);
+					
+				}
 			}
 			// stroke tick labels and title
 			//axisLayer.strokeText();
@@ -4630,10 +4663,15 @@ function Chart (options) {
 						selectionMarker = renderer.rect(
 							plotLeft,
 							plotTop,
-							zoomX ? 0 : plotWidth,
-							zoomY ? 0 : plotHeight,
+							zoomX ? 1 : plotWidth,
+							zoomY ? 1 : plotHeight,
 							0
-						).attr({ fill: 'rgba(69,114,167,0.25)' }).add(null, 7);
+						)
+						.attr({
+							className: PREFIX +'selection-marker', 
+							fill: 'rgba(69,114,167,0.25)'
+						})
+						.add(null, 7);
 					}
 				}
 				
@@ -5160,6 +5198,7 @@ function Chart (options) {
 					options.itemHiddenStyle.color : 
 					item.color,
 				bBox,
+				legendSymbol,
 				li = item.legendItem,
 				series = item.series || item;
 
@@ -5217,7 +5256,7 @@ function Chart (options) {
 				// draw a simple symbol
 				if (simpleSymbol) { // bar|pie|area|column
 					//legendLayer.drawRect(
-					item.legendSymbol = renderer.rect(
+					legendSymbol = renderer.rect(
 						itemX - symbolWidth - symbolPadding,
 						0,
 						symbolWidth,
@@ -5230,7 +5269,7 @@ function Chart (options) {
 					
 				// draw the marker
 				else if (item.options && item.options.marker && item.options.marker.enabled) {
-					item.legendSymbol = renderer.symbol(
+					legendSymbol = renderer.symbol(
 						item.symbol,
 						itemX - symbolWidth / 2 - symbolPadding, 
 						0, 
@@ -5239,7 +5278,10 @@ function Chart (options) {
 					.attr(item.pointAttr[NORMAL_STATE])
 					.add(legendGroup, 1);
 				}
-				item.legendSymbol.isSimple = simpleSymbol;
+				if (legendSymbol) {
+					legendSymbol.isSimple = simpleSymbol;
+					item.legendSymbol = legendSymbol;
+				}
 					
 				// colorize the items
 				colorizeItem(item, !isHidden);
@@ -5814,9 +5856,9 @@ function Chart (options) {
 		
 		// Todo: detection of SVG support in IE9
 		chart.renderer = renderer = 
-			optionsChart.renderer == 'SVG' || win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? 
-			new SVGRenderer() : 
-			new VMLRenderer();
+			optionsChart.renderer == 'SVG' ? // force SVG 
+				new SVGRenderer() : 
+				new Renderer();
 		renderer.init(container, chartWidth, chartHeight);
 	}
 	/**
@@ -6786,9 +6828,9 @@ Series.prototype = {
 		
 		// loop the concatenated data and apply each point to all the closest
 		// pixel positions
-		/*if (series.xAxis.reversed) {
+		if (series.xAxis.reversed) {
 			data = data.reverse();//reverseArray(data);
-		}*/
+		}
 		each (data, function(point, i) {
 			
 			
@@ -6901,7 +6943,7 @@ Series.prototype = {
 	 */
 	drawPoints: function(){
 		var series = this,
-			markerOptions = series.options.marker,
+			pointAttr,
 			data = series.data, 
 			chart = series.chart,
 			plotX,
@@ -6909,7 +6951,7 @@ Series.prototype = {
 			i,
 			point;
 		
-		if (markerOptions.enabled) {
+		if (series.options.marker.enabled) {
 			i = data.length;
 			while (i--) {
 				point = data[i];
@@ -6917,15 +6959,17 @@ Series.prototype = {
 				plotY = point.plotY;
 				
 				// only draw the point if inside the plot and y is defined
-				if (point.plotY !== UNDEFINED && chart.isInsidePlot(plotX, plotY)) {
-					
+				if (point.plotY !== UNDEFINED && 
+						point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
+						point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
+					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 					point.graphic = chart.renderer.symbol(
-							pick(markerOptions.symbol, series.symbol),
+							pick(point.marker && point.marker.symbol, series.symbol),
 							plotX,
 							plotY, 
-							markerOptions.radius
+							pointAttr.r
 						)
-						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
+						.attr(pointAttr)
 						.add(series.group);
 				}
 			};
@@ -7156,6 +7200,7 @@ Series.prototype = {
 			} else {
 				dataLabelsGroup = series.dataLabelsGroup = 
 					chart.renderer.g(PREFIX +'data-labels')
+						.clip(chart.clipRect)
 						.translate(chart.plotLeft, chart.plotTop)
 						.add(null, 4);
 			}
@@ -7225,16 +7270,132 @@ Series.prototype = {
 	},
 	
 	/**
+	 * Draw the actual graph
+	 */
+	drawGraph: function(state) {
+		var i,
+			series = this, 
+			options = series.options, 
+			chart = series.chart,
+			graph = series.graph,
+			//trackerRect = chart.trackerRect,
+			//doAnimation = options.animation && series.animate,
+			//layer = series.stateLayers[state], 
+			graphPath = [],
+			fillColor,
+			area = series.area,
+			data = series.data,
+			group = series.group,
+			color = options.lineColor || series.color, 
+				 
+			//inverted = chart.inverted, 
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			lineWidth = options.lineWidth,
+			segmentPath,
+			//transform = chart.transform,
+			inverted = chart.inverted,
+			renderer = chart.renderer,
+			indexInSegment = 0,
+			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),
+			areaPath = [];
+			
+		
+		// divide into segments and build graph and area paths
+		each(series.segments, function(segment) {
+			segmentPath = [];
+			
+			// build the segment line
+			each(segment, function(point, i){
+				if (i < 2) {
+					segmentPath.push([M, L][i]); // moveTo or lineTo
+				}
+				segmentPath.push(
+					point.plotX, 
+					point.plotY
+				);
+			});
+			graphPath = graphPath.concat(segmentPath);
+			
+			// build the area
+			if (/area/.test(series.type)) {
+				var areaSegmentPath = [],
+					i,
+					segLength = segmentPath.length;
+				for (i = 0; i < segLength; i++) {
+					areaSegmentPath.push(segmentPath[i]);
+				}
+				if (options.stacking && series.type != 'areaspline') {
+					// follow stack back. Todo: implement areaspline
+					for (i = segment.length - 1; i >= 0; i--) {
+						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
+					}
+				
+				} else { // follow zero line back
+					areaSegmentPath.push(
+						segment[segment.length - 1].plotX, 
+						translatedY0, 
+						segment[0].plotX, 
+						translatedY0,
+						'z'
+					);
+				}
+				areaPath = areaPath.concat(areaSegmentPath);
+			}
+		});
+
+		// store it for use in area
+		if (areaPath.length) {
+			series.areaPath = areaPath;
+		}
+		series.graphPath = graphPath; // used in drawTracker
+
+		
+		
+
+		// draw the graph
+		if (graph) {
+			graph.attr({ d: graphPath });
+		} else {
+			if (lineWidth) {
+				series.graph = renderer.path(graphPath).
+					attr({
+						//'clip-path': 'url(#plotClip)',
+						'stroke': color,
+						'stroke-width': lineWidth + PX
+						//, transform: transform
+					}).add(group).shadow(options.shadow);
+			}
+		}
+
+		
+			
+		// draw the area if area series or areaspline
+		if (areaPath) {
+			fillColor = pick(
+				options.fillColor,
+				Color(series.color).setOpacity(options.fillOpacity || 0.75).get()
+			);
+			if (area) {
+				area.attr({ d: areaPath });
+			
+			} else {
+				// draw the area
+				series.area = series.chart.renderer.path(areaPath).
+					attr({
+						fill: fillColor
+					}).add(series.group);
+			}
+		}
+	},
+	
+	/**
 	 * Draw a single point in a specific state
 	 */
 	setPointState: function(point, state) {
 		var series = this,
-			chart = series.chart, 
-			//inverted = chart.inverted,
-			//isHoverState = state == HOVER_STATE,
-			//layer = layer || chart.singlePointLayer,
-			//options = series.options,
-			seriespointAttr = series.pointAttr;
+			chart = series.chart,
+			pointAttr = point.pointAttr;
 			
 		if (!state) state = NORMAL_STATE;
 		
@@ -7249,9 +7410,9 @@ Series.prototype = {
 		if (state && !point.graphic) {
 			if (!series.stateMarkerGraphic) {
 				series.stateMarkerGraphic = chart.renderer.circle(
-					0, 0, stateOptions.radius
+					0, 0, pointAttr[state].r
 				)
-				.attr(point.pointAttr[state])
+				.attr(pointAttr[state])
 				.add(series.group);
 			}
 			
@@ -7262,7 +7423,7 @@ Series.prototype = {
 			
 		// else, apply hover styles to the existing point
 		} else {				
-			point.graphic.attr(point.pointAttr[state]);
+			point.graphic.attr(pointAttr[state]);
 		}
 		
 		
@@ -7437,6 +7598,9 @@ Series.prototype = {
 			dataLabelsGroup = series.dataLabelsGroup,
 			areas = series.areas,
 			showOrHide,
+			i,
+			data = series.data,
+			point,
 			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
 			oldVisibility = series.visible;
 		
@@ -7450,9 +7614,21 @@ Series.prototype = {
 		
 		// show or hide series
 		series.group[showOrHide]();
+		
+		// show or hide trackers
 		if (seriesTracker) {
 			seriesTracker[showOrHide]();
+		} else {
+			i = data.length;
+			while (i--) {
+				point = data[i];
+				if (point.tracker) {
+					point.tracker[showOrHide]();
+				}
+			}
 		}
+		
+		
 		if (dataLabelsGroup) {
 			dataLabelsGroup[showOrHide]();
 		}
@@ -7528,13 +7704,12 @@ Series.prototype = {
 			trackerPath = series.graphPath,
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight;
-		
-		
+			plotHeight = chart.plotHeight,
+			isSingleSeries = chart.series.length == 1;
 	
 		
 		// if only one series, use the whole plot area as tracker
-		if (chart.series.length == 1) {
+		if (isSingleSeries) {
 			trackerPath = [
 				M,
 				0, 0,
@@ -7550,7 +7725,7 @@ Series.prototype = {
 			attr({
 				isTracker: true,
 				stroke: TRACKER_FILL,
-				fill: TRACKER_FILL,
+				fill: isSingleSeries ? TRACKER_FILL : NONE,
 				'stroke-width' : options.lineWidth + chart.options.tooltip.snap,
 				'stroke-linecap': 'round'
 			})
@@ -7567,201 +7742,14 @@ Series.prototype = {
 /**
  * LineSeries object
  */
-var LineSeries = extendClass(Series, {
-	translate: function() {
-		var series = this,
-			options = series.options,
-			graphPath = [],
-			areaPath = [],
-			data = series.data,
-			segmentPath,
-			i,
-			dataLength = data.length,
-			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),//series.yAxis.translate(0, 0, 1),
-			indexInSegment = 0;
-
-		// call parent to get plotX and plotY
-		Series.prototype.translate.apply(series);
-		
-		// attempt at segmentless approach: build the line
-		// todo: stacked areas are tricky and will perhaps add more code than the current code
-		/*for (i= 0; i < dataLength; i++) {
-			var point = data[i],
-				isNull = !defined(point.y);
-			
-			
-			if (defined(point.y)) {
-				if (indexInSegment < 2) {
-					graphPath.push([M, L][indexInSegment]); // 'move' to first, 'line' to second
-				}
-			
-				graphPath.push(
-					point.plotX, 
-					point.plotY
-				);
-				indexInSegment++;
-			} else {
-				indexInSegment = 0;
-			}
-		};*/
-		
-		// divide into segments and build graph and area paths
-		each(series.segments, function(segment) {
-			segmentPath = [];
-			
-			// build the segment line
-			each(segment, function(point, i){
-				if (i < 2) {
-					segmentPath.push([M, L][i]); // moveTo or lineTo
-				}
-				segmentPath.push(
-					point.plotX, 
-					point.plotY
-				);
-			});
-			graphPath = graphPath.concat(segmentPath);
-			
-			// build the area
-			if (/area/.test(series.type)) {
-				var areaSegmentPath = [],
-					i,
-					segLength = segmentPath.length;
-				for (i = 0; i < segLength; i++) {
-					areaSegmentPath.push(segmentPath[i]);
-				}
-				if (options.stacking && series.type != 'areaspline') {
-					// follow stack back. Todo: implement areaspline
-					for (i = segment.length - 1; i >= 0; i--) {
-						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
-					}
-				
-				} else { // follow zero line back
-					areaSegmentPath.push(
-						segment[segment.length - 1].plotX, 
-						translatedY0, 
-						segment[0].plotX, 
-						translatedY0,
-						'z'
-					);
-				}
-				areaPath = areaPath.concat(areaSegmentPath);
-			}
-		});
-
-		// store it
-		if (areaPath.length) {
-			series.areaPath = areaPath;
-		}
-		series.graphPath = graphPath;
-	},
-
-	/**
-	 * Draw the actual graph
-	 */
-	drawGraph: function(state) {
-		var i,
-			series = this, 
-			options = series.options, 
-			chart = series.chart,
-			graph = series.graph,
-			//trackerRect = chart.trackerRect,
-			//doAnimation = options.animation && series.animate,
-			//layer = series.stateLayers[state], 
-			data = series.data,
-			group = series.group,
-			color = options.lineColor || series.color, 
-				 
-			//inverted = chart.inverted, 
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			lineWidth = options.lineWidth,
-			segmentPath,
-			//transform = chart.transform,
-			inverted = chart.inverted,
-			renderer = chart.renderer,
-			areaPath = [];
-			
-		
-		// initiate the animation
-		/*if (doAnimation) {
-			series.animate(true);
-		}*/
-		
-
-		
-		
-
-		// draw the vector objects
-		if (graph) {
-			graph.attr({ d: series.graphPath });
-		} else {
-			// draw the area
-			/*if (areaPath.length) {
-				series.area = renderer.path(areaPath).
-					attr({
-						//'clip-path': 'url(#plotClip)',
-						fill: fillColor
-					}).add(group);
-					
-			}*/
-				
-			if (lineWidth) {
-				series.graph = renderer.path(series.graphPath).
-					attr({
-						//'clip-path': 'url(#plotClip)',
-						'stroke': color,
-						'stroke-width': lineWidth + PX
-						//, transform: transform
-					}).add(group).shadow(options.shadow);
-			}
-		}
-		
-		// experimental animation
-		/*if (doAnimation) {
-			series.animate();
-		}*/
-		
-		
-	}
-});
+var LineSeries = extendClass(Series);
 seriesTypes.line = LineSeries;
 
 /**
  * AreaSeries object
  */
-var AreaSeries = extendClass(LineSeries, {
-	type: 'area',
-	
-	/**
-	 * Extends the line series by drawing an area below the line 
-	 */
-	drawGraph: function() {
-
-		var series = this,
-			options = series.options,
-			fillColor = pick(
-				options.fillColor,
-				Color(series.color).setOpacity(options.fillOpacity || 0.75).get()
-			),
-			areaPath = series.areaPath,
-			area = series.area;
-			
-		// call the parent method
-		LineSeries.prototype.drawGraph.apply(this);
-		
-			
-		// draw the area
-		if (area) {
-			area.attr({ d: areaPath });
-		
-		} else {
-			// draw the area
-			series.area = series.chart.renderer.path(areaPath).
-				attr({
-					fill: fillColor
-				}).add(series.group);
-		}
-	}
+var AreaSeries = extendClass(Series, {
+	type: 'area'
 });
 seriesTypes.area = AreaSeries;
 
@@ -7869,12 +7857,12 @@ interpolate: function(xpoint) {
 /**
  * SplineSeries object
  */
-var SplineSeries = extendClass( LineSeries, {
+var SplineSeries = extendClass( Series, {
 	type: 'spline',
 	/**
 	 * Translate the points and get the spline data
 	 */
-	translate: function() {
+	/*translate: function() {
 		var series = this;
 		
 		// do the partent translate
@@ -7883,7 +7871,7 @@ var SplineSeries = extendClass( LineSeries, {
 		// get the spline data
 		series.splinedata = series.getSplineData();
 		
-	},
+	},*/
 	/**
 	 * Draw the actual spline line with interpolated values
 	 * @param {Object} state
@@ -7893,14 +7881,19 @@ var SplineSeries = extendClass( LineSeries, {
 			realSegments = series.segments; 
 		
 		// temporarily set the segments to reflect the spline
+		series.splinedata = series.getSplineData();
 		series.segments = series.splinedata;// || series.getSplineData();
 		
+		
+		
 		// draw the line
-		LineSeries.prototype.drawGraph.apply(series, arguments);
+		Series.prototype.drawGraph.apply(series, arguments);
 		
 		// reset the segments
 		series.segments = realSegments;	
 	},
+
+
 	/**
 	 * Get interpolated spline values
 	 */
@@ -7923,12 +7916,11 @@ var SplineSeries = extendClass( LineSeries, {
 			each (data, function(point, i) {
 				nextUp = data[i+2] || data[i+1] || point;
 				nextDown = data[i-2] || data[i-1] || point;
-				if (nextUp.plotX > 0 && nextDown.plotY < chart.plotWidth) {
+				if (nextUp.plotX >= 0 && nextDown.plotY <= chart.plotHeight) {
 					croppedData.push(point);
 				}
 			});
 			
-				
 			// 3px intervals:
 			if (croppedData.length > 1) {
 				num = mathRound(mathMax(chart.plotWidth, 
@@ -7939,8 +7931,9 @@ var SplineSeries = extendClass( LineSeries, {
 					num ? (new SplineHelper(croppedData)).get(num) : [] :
 					data
 			);
+			
 		});
-		series.splinedata = splinedata;
+		
 		return splinedata;
 	}
 });
@@ -8070,6 +8063,10 @@ var ColumnSeries = extendClass(Series, {
 	getSymbol: function(){
 	},
 	
+	/** 
+	 * Columns have no graph
+	 */
+	drawGraph: function() {},
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
 	 * apply for columns and bars.
@@ -8146,21 +8143,24 @@ var ColumnSeries = extendClass(Series, {
 		series.closestPoints = closestPoints;
 	},
 	
+	/**
+	 * Animate the column heights one by one from zero
+	 * @param {Boolean} init Whether to initialize the animation or run it 
+	 */
 	animate: function(init) {
 		var series = this,
 			data = series.data,
 			chart = series.chart,
-			y0 = series.yAxis.translate(0, 0, 1),
 			inverted = chart.inverted;
-			//div = series.layerGroup.div,
-			//dataLabelsLayer = series.dataLabelsLayer;
-		if (init) { // initialize the animation
-			/*div.style[inverted ? 'left' : 'top'] = 
-				(inverted ? -chart.plotWidth : chart.plotHeight) + PX;*/
-			series.group.hide();
-				
-		} else { // run the animation
-			/*animate(div, chart.inverted ? { left: 0 } : { top: 0 });*/
+			
+		if (!init) { // run the animation
+			/*
+			 * Note: Ideally the animation should be initialized by calling
+			 * series.group.hide(), and then calling series.group.show()
+			 * after the animation was started. But this rendered the shadows
+			 * invisible in IE8 standards mode. If the columns flicker on large
+			 * datasets, this is the cause.
+			 */
 			
 			each (data, function(point) {
 				var graphic = point.graphic;
@@ -8168,9 +8168,8 @@ var ColumnSeries = extendClass(Series, {
 				if (graphic) {
 					// start values
 					graphic.attr({ 
-						height: 0, 
-						y: y0/*,
-						'clip-path': NONE*/
+						height: 0,
+						y: series.yAxis.translate(0, 0, 1)
 					});
 					
 					// animate
@@ -8183,7 +8182,6 @@ var ColumnSeries = extendClass(Series, {
 				}
 			});
 			
-			series.group.show();	
 			
 			// delete this function to allow it only once
 			series.animate = null;
@@ -8538,16 +8536,15 @@ var PieSeries = extendClass(Series, {
 seriesTypes.pie = PieSeries;
 
 
-
 // global variables
 Highcharts = {
-	load: function(arr) {
+	/*load: function(arr) {
 		each (splat(arr), function(url) {
 			getAjax(url, function(script) {
 				eval(script);		
 			})
 		})
-	},
+	},*/
 	defaultOptions: defaultOptions,
 	numberFormat: numberFormat,
 	dateFormat: dateFormat,
@@ -8556,7 +8553,9 @@ Highcharts = {
 	symbols: symbols,
 	Chart: Chart,
 	Point: Point,
+	Renderer: Renderer,
 	Series: Series,
+	
 	
 	
 	// experimental: expose utility funcitons for modules
