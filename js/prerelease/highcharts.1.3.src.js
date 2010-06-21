@@ -3,8 +3,7 @@
 
 /** 
  * @license Name:    Highcharts
- * Version: 2.0 Prerelease, forked from 1.2.0 (2010-02-23)
- * Modified: 2010-06-15
+ * Version: 2.0 Prerelease, merged with data from 1.2.6 (2010-06-17)
  * Author:  Torstein Hønsi
  * Support: www.highcharts.com/support
  * License: www.highcharts.com/license
@@ -32,6 +31,7 @@ var doc = document,
 	userAgent = navigator.userAgent,
 	isIE = /msie/i.test(userAgent) && !win.opera,
 	isWebKit = /AppleWebKit/.test(userAgent),
+	hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
 	styleTag,
 	canvasCounter = 0,
 	colorCounter,
@@ -1250,54 +1250,13 @@ function getPosition (el)	{
 	return p;
 }
 
-/**
- * An extendable collection of functions for defining symbol paths.
- * 
- * @todo: Use size instead of radius? Radius makes sense only for circles.
- */
-var symbols = {
-	'square': function (x, y, radius) {
-		len = 0.707 * radius;
-		return [
-			M, x-len, y-len,
-			L, x+len, y-len,
-			x+len, y+len,
-			x-len, y+len,
-			'Z'
-		];
-	},
-		
-	'triangle': function (x, y, radius) {
-		return [
-			M, x, y-1.33 * radius,
-			L, x+radius, y + 0.67 * radius,
-			x-radius, y + 0.67 * radius,
-			'Z'
-		];
-	},
-		
-	'triangle-down': function (x, y, radius) {
-		return [
-			M, x, y + 1.33 * radius,
-			L, x-radius, y-0.67 * radius,
-			x+radius, y-0.67 * radius,
-			'Z'
-		];
-	},
-	'diamond': function (x, y, radius) {
-		return [
-			M, x, y-radius,
-			L, x+radius, y,
-			x, y+radius,
-			x-radius, y,
-			'Z'
-		];
-	}
-};
+
 /**
  * The default SVG renderer
  */
-var SVGRenderer = function() {};
+var SVGRenderer = function() {
+	this.init.apply(this, arguments);
+};
 SVGRenderer.prototype = {
 	/**
 	 * Initialize the SVGRenderer
@@ -1433,14 +1392,33 @@ SVGRenderer.prototype = {
 		});
 	},
 	circle: function (x, y, r) {
-		return this.createElement('circle').attr({
-			cx: x,
-			cy: y,
-			r: r
-		});
+		var attr = typeof x == 'object' ?
+			x :
+			{
+				x: x,
+				y: y,
+				r: r
+			}
+		
+		return this.createElement('circle').attr(attr);
 	},
-	arc: function (centerX, centerY, radius, start, end) {
-		return this.path([
+	arc: function (x, y, r, start, end) {
+		// arcs are defined as symbols for the ability to set 
+		// attributes in attr and animate
+		
+		if (typeof x == 'object') {
+			y = x.y;
+			r = x.r;
+			start = x.start;
+			end = x.end;
+			x = x.x;
+		}
+		
+		return this.symbol('arc', x || 0, y || 0, r || 0, {
+			start: start || 0,
+			end: end || 0
+		});
+		/*return this.path([
 				M,
 				centerX, 
 				centerY, 
@@ -1456,28 +1434,32 @@ SVGRenderer.prototype = {
 				centerX + radius * mathCos(end),
 				centerY + radius * mathSin(end),
 				'z' // close
-			]);
+			]);*/
 	},
 	rect: function (x, y, width, height, r, strokeWidth) {
 		
-		var normalizer = (strokeWidth || 0) % 2 / 2;
+		/*var normalizer = (strokeWidth || 0) % 2 / 2;
 
 		// normalize for crisp edges
-		x = mathRound(x) + normalizer;
-		y = mathRound(y) + normalizer;
-		width = mathRound(width - 2 * normalizer);
-		height = mathRound(height - 2 * normalizer);
+		x = mathRound(x || 0) + normalizer;
+		y = mathRound(y || 0) + normalizer;
+		width = mathRound((width || 0) - 2 * normalizer);
+		height = mathRound((height || 0) - 2 * normalizer);*/
 		
-		return this.createElement('rect').attr({
-			//'shape-rendering': 'crispEdges',
-			x: x,
-			y: y,
-			width: mathMax(width, 0),
-			height: mathMax(height, 0),
-			rx: r,
-			ry: r,
+		var attr = typeof x == 'object' ? 
+			x : // the attributes can be passed as the first argument
+			{
+				x: x,
+				y: y,
+				width: mathMax(width, 0),
+				height: mathMax(height, 0)
+			};			
+		
+		return this.createElement('rect').attr(extend(attr, {
+			rx: r || attr.r,
+			ry: r || attr.r,
 			fill: NONE
-		});
+		}));
 	},
 	/*text: function (x, y, text) {
 		return this.createElement('text').attr({
@@ -1520,22 +1502,48 @@ SVGRenderer.prototype = {
 		return elemWrapper;					
 	},
 	
-	// svg
-	symbol: function(symbol, x, y, radius) {
+	/**
+	 * Draw a symbol out of pre-defined shape paths from the namespace 'symbol' object.
+	 * 
+	 * @param {Object} symbol
+	 * @param {Object} x
+	 * @param {Object} y
+	 * @param {Object} radius
+	 * @param {Object} options
+	 */
+	symbol: function(symbol, x, y, radius, options) {
+		
 		var obj,
-			path = symbols[symbol] && symbols[symbol](x, y, radius, { isVML: this.urn }),//this.getSymbolPath(symbol, x, y, radius),
+			key,
+			
+			// get the symbol definition function
+			symbolFn = this.symbols[symbol],
+			
+			// check if there's a path defined for this symbol
+			path = symbolFn && symbolFn(
+				x, 
+				y, 
+				radius, 
+				options
+			),
+			
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc;
+			
 		
 		if (path) {
 			obj = this.path(path);
 			// expando properties for use in animate and attr
-			extend(obj.element, {
+			extend(obj, {
 				symbolName: symbol,
 				x: x,
 				y: y,
 				r: radius
 			});
+			if (options) {
+				extend(obj, options);
+			}
+			
 			
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
@@ -1570,6 +1578,72 @@ SVGRenderer.prototype = {
 		}
 		
 		return obj;
+	},
+	
+	/**
+	 * An extendable collection of functions for defining symbol paths.
+	 * 
+	 * @todo: Use size instead of radius? Radius makes sense only for circles.
+	 */
+	symbols: {
+		'square': function (x, y, radius) {
+			len = 0.707 * radius;
+			return [
+				M, x-len, y-len,
+				L, x+len, y-len,
+				x+len, y+len,
+				x-len, y+len,
+				'Z'
+			];
+		},
+			
+		'triangle': function (x, y, radius) {
+			return [
+				M, x, y-1.33 * radius,
+				L, x+radius, y + 0.67 * radius,
+				x-radius, y + 0.67 * radius,
+				'Z'
+			];
+		},
+			
+		'triangle-down': function (x, y, radius) {
+			return [
+				M, x, y + 1.33 * radius,
+				L, x-radius, y-0.67 * radius,
+				x+radius, y-0.67 * radius,
+				'Z'
+			];
+		},
+		'diamond': function (x, y, radius) {
+			return [
+				M, x, y-radius,
+				L, x+radius, y,
+				x, y+radius,
+				x-radius, y,
+				'Z'
+			];
+		},
+		'arc': function (x, y, radius, options) {
+			var start = options.start,
+				end = options.end;
+			return [
+				M,
+				x, 
+				y, 
+				L,
+				x + radius * mathCos(start),
+				y + radius * mathSin(start),
+				'A', // arcTo
+				radius, // x radius
+				radius, // y radius
+				0, // slanting
+				end - start < Math.PI ? 0 : 1, // long or short arc
+				1, // clockwise
+				x + radius * mathCos(end),
+				y + radius * mathSin(end),
+				'Z' // close
+			];
+		}
 	},
 	
 	/**
@@ -1741,6 +1815,8 @@ SVGElement.prototype = {
 			nodeName = element.nodeName,
 			renderer = this.renderer,
 			skipAttr,
+			shadows = this.shadows,
+			hasSetSymbolSize,
 			ret = this;
 			
 		// single key-value pair
@@ -1753,12 +1829,7 @@ SVGElement.prototype = {
 		// used as a getter: first argument is a string, second is undefined
 		if (typeof hash == 'string') {
 			key = hash;
-			
-			if (key == 'translateX' || key == 'translateY') {
-				ret = this[key] || 0;
-			} else {
-				ret = parseFloat(attr(element, key));
-			}
+			ret = parseFloat(attr(element, key) || this[key] || 0);
 			
 			
 		// setter
@@ -1767,10 +1838,18 @@ SVGElement.prototype = {
 			for (key in hash) {
 				value = hash[key];
 				
-				// join paths
-				if (key == 'd' && typeof value != 'string') {
-							
-					value = value.join(' ');
+				// paths
+				if (key == 'd') {
+					if (typeof value != 'string') { // join path
+						value = value.join(' ');
+					}
+					shadows = this.shadows;
+					if (shadows) {
+						i = shadows.length;
+						while (i--) {
+							attr(shadows[i], 'd', value);
+						}
+					}
 					
 				// update child tspans x values
 				} else if (key == 'x' && nodeName == 'text') { 
@@ -1787,7 +1866,7 @@ SVGElement.prototype = {
 				} else if (key == 'fill') {
 					value = renderer.color(value, element, key);
 				
-				// circe x and y
+				// circle x and y
 				} else if (nodeName == 'circle') {
 					key = { x: 'cx', y: 'cy' }[key] || key;
 					
@@ -1813,14 +1892,30 @@ SVGElement.prototype = {
 				}
 				
 				// symbols
-				if (element.symbolName && /^(x|y|r)/.test(key)) {
-					var x = key == 'x' ? value : element.x,
-						y = key == 'y' ? value : element.y,
-						r = key == 'r' ? value : element.r;
+				if (this.symbolName && /^(x|y|r|start|end)/.test(key)) {
+					// if one of the symbol size affecting parameters are changed,
+					// check all the others only once for each call to an element's
+					// .attr() method
+					
+					if (!hasSetSymbolSize) {
+							
+						var x = hash.x || this.x,
+							y = hash.y || this.y,
+							r = hash.r || this.r,
+							start = hash.start || this.start,
+							end = hash.end || this.end;
+					
+								
+						this.attr({ 
+							d: renderer.symbols[this.symbolName](x, y, r, {
+								start: start, 
+								end: end
+							})
+						});
 						
-					this.attr({ 
-						d: symbols[element.symbolName](x, y, r)
-					});
+					
+						hasSetSymbolSize = true;
+					}
 				}
 				
 				// let the shadow follow the main element
@@ -2112,11 +2207,16 @@ SVGElement.prototype = {
  * targeted mobile apps and web apps, this code can be removed.               *
  *                                                                            *
  *****************************************************************************/
-		
+var VMLRenderer;
+if (!hasSVG) {
+	
 /**
  * The VML renderer
  */
-var VMLRenderer = extendClass( SVGRenderer, {
+VMLRenderer = function() {
+	this.init.apply(this, arguments);
+}
+VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	/**
 	 * Initialize the VMLRenderer
  	 * @param {Object} container
@@ -2159,57 +2259,11 @@ var VMLRenderer = extendClass( SVGRenderer, {
 		    }*/
 		}
 		
-		// Add circle symbol path. This performs significantly faster than v:oval.
-		symbols.circle = function (x, y, radius, options) {
-			var ret;
-			if (options.isVML) { // don't use this in SVG export
-				
-				ret = [
-					'wa', // clockwisearcto
-					x - radius, // left
-					y - radius, // top
-					x + radius, // right
-					y + radius, // bottom
-					x + radius * 1, // start x
-					y + radius * 0, // start y
-					x + radius * 1, // end x
-					y + radius * 0, // end y
-					//'x', // finish path
-					'e' // close
-				];
-			}
-			return ret;
-		};
+
 
 	},
 	
-	/**
-	 * VML specific arc function 
-	 * @param {Number} centerX
-	 * @param {Number} centerY
-	 * @param {Number} radius
-	 * @param {Number} start
-	 * @param {Number} end
-	 */
-	arc: function (centerX, centerY, radius, start, end) {
-		return this.path([
-			M,
-			centerX,
-			centerY,
-			'wa', // clockwisearcto
-			centerX - radius, // left
-			centerY - radius, // top
-			centerX + radius, // right
-			centerY + radius, // bottom
-			centerX + radius * mathCos(start), // start x
-			centerY + radius * mathSin(start), // start y
-			centerX + radius * mathCos(end), // end x
-			centerY + radius * mathSin(end), // end y
-			//'x', // finish path
-			'e' // close
-		]);
-		
-	},
+
 	
 	/**
 	 * Define a clipping rectangle. In VML it is accomplished by storing the values
@@ -2476,7 +2530,7 @@ var VMLRenderer = extendClass( SVGRenderer, {
 	},
 	
 	circle: function(x, y, r) {
-		return this.path(symbols.circle(x, y, r, { isVML: true }));
+		return this.path(this.symbols.circle(x, y, r));
 	},
 	
 	/**
@@ -2579,8 +2633,52 @@ var VMLRenderer = extendClass( SVGRenderer, {
 		}
 
 		return wrapper;
-	}
+	},
 	
+	/**
+	 * Symbol definitions that override the parent SVG renderer's symbols
+	 * 
+	 */
+	symbols: {
+		// VML specific arc function
+		arc: function (x, y, r, options) {
+			var start = options.start,
+				end = options.end;
+			return [
+				M,
+				x,
+				y,
+				'wa', // clockwisearcto
+				x - r, // left
+				y - r, // top
+				x + r, // right
+				y + r, // bottom
+				x + r * mathCos(start), // start x
+				y + r * mathSin(start), // start y
+				x + r * mathCos(end), // end x
+				y + r * mathSin(end), // end y
+				//'x', // finish path
+				'e' // close
+			];
+			
+		},
+		// Add circle symbol path. This performs significantly faster than v:oval.
+		circle: function (x, y, r) {
+			return [
+				'wa', // clockwisearcto
+				x - r, // left
+				y - r, // top
+				x + r, // right
+				y + r, // bottom
+				x + r * 1, // start x
+				y + r * 0, // start y
+				x + r * 1, // end x
+				y + r * 0, // end y
+				//'x', // finish path
+				'e' // close
+			];
+		}
+	}
 });
 
 
@@ -2681,6 +2779,8 @@ var VMLElement = extendClass( SVGElement, {
 			nodeName = element.nodeName,
 			renderer = this.renderer,
 			parentNode = element.parentNode,
+			hasSetSymbolSize,
+			shadows,
 			skipAttr,
 			ret = this;
 			
@@ -2732,6 +2832,15 @@ var VMLElement = extendClass( SVGElement, {
 						
 						return ret;
 					}).join(' ');
+					
+					// update shadows
+					shadows = this.shadows;
+					if (shadows) {
+						i = shadows.length;
+						while (i--) {
+							shadows[i].path = value;
+						}
+					}
 	
 				
 				// width and height
@@ -2767,7 +2876,7 @@ var VMLElement = extendClass( SVGElement, {
 					skipAttr = true;
 					
 				// x and y 
-				} else if (/^(x|y)$/.test(key)) {
+				} else if (/^(x|y)$/.test(key) && !this.symbolName) {
 
 					if (key == 'y' && element.tagName == 'SPAN' && element.lineHeight) { // subtract lineHeight
 						value -= element.lineHeight;
@@ -2824,26 +2933,25 @@ var VMLElement = extendClass( SVGElement, {
 					}
 					
 				// circle radius
-				} else if (key == 'r' && nodeName == 'oval') {
+				/*} else if (key == 'r' && nodeName == 'oval') {
 					css(element, {
 						left: element.cx - value,
 						top: element.cy - value,
 						width: 2 * value,
 						height: 2 * value
 					});
-					skipAttr = true;
+					skipAttr = true;*/
 				
 				// radius for symbols
-				} else if (key == 'r' && element.symbolName) {
+				/*} else if (key == 'r' && element.symbolName) {
 					this.attr({ 
-						/*d: renderer.getSymbolPath(
-							element.symbolName, 
+						
+						d: resymbols[element.symbolName](
 							element.x, 
 							element.y, 
 							value
-						)*/
-						d: symbols[element.symbolName](element.x, element.y, value, { isVML: true })
-					});
+						)
+					});*/
 				
 				// visibility
 				} else if (key == 'visibility') {
@@ -2857,6 +2965,46 @@ var VMLElement = extendClass( SVGElement, {
 					this.updateTransform();
 					skipAttr = true;
 				}
+				
+				// symbols
+				if (this.symbolName && /^(x|y|r|start|end)/.test(key)) {
+					// if one of the symbol size affecting parameters are changed,
+					// check all the others only once for each call to an element's
+					// .attr() method
+					
+					if (!hasSetSymbolSize) {
+							
+						this.x = pick(hash.x, this.x);
+						this.y = pick(hash.y, this.y);
+						this.r = pick(hash.r, this.r);
+						this.start = pick(hash.start, this.start);
+						this.end = pick(hash.end, this.end);
+					
+						this.attr({ 
+							d: renderer.symbols[this.symbolName](this.x, this.y, this.r, {
+								start: this.start, 
+								end: this.end
+							})
+						});
+						
+					
+						hasSetSymbolSize = true;
+					}
+				}
+				
+				// symbols
+				/*if (element.symbolName && /^(x|y|r)/.test(key)) {
+					
+					var x = key == 'x' ? value : element.x,
+						y = key == 'y' ? value : element.y,
+						r = key == 'r' ? value : element.r;
+						
+					console.log(symbols[element.symbolName](x, y, r, { isVML: true }));
+						
+					this.attr({ 
+						d: symbols[element.symbolName](x, y, r, { isVML: true })
+					});
+				}*/
 				
 					
 				// let the shadow follow the main element
@@ -3087,6 +3235,7 @@ var VMLElement = extendClass( SVGElement, {
 	}
 });
 
+}
 /* **************************************************************************** 
  *                                                                            * 
  * END OF INTERNET EXPLORER < 8 SPECIFIC CODE                                 *
@@ -3096,8 +3245,7 @@ var VMLElement = extendClass( SVGElement, {
 /**
  * General renderer
  */
-var Renderer = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? 
-	SVGRenderer : VMLRenderer;
+var Renderer = hasSVG ?	SVGRenderer : VMLRenderer;
 	
 
 /**
@@ -3153,7 +3301,7 @@ function Chart (options) {
 		legend,
 		//xAxis, 
 		//yAxis,
-		position = getPosition(container),
+		position,// = getPosition(container),
 		hasCartesianSeries = optionsChart.showAxes,
 		axes = [],
 		maxTicks, // handle the greatest amount of ticks on grouped axes
@@ -3448,7 +3596,6 @@ function Chart (options) {
 		function addTick(pos, tickPos, color, width, len, withLabel, index) {
 			var x1, y1, x2, y2, str, labelOptions = options.labels;
 				//record = tickRecord[pos] || {};
-				
 			
 			// negate the length
 			if (tickPos == 'inside') {
@@ -3544,6 +3691,7 @@ function Chart (options) {
 			
 			// multiply back to the correct magnitude
 			interval *= magnitude;
+			
 			return interval;
 		}
 	
@@ -3725,7 +3873,6 @@ function Chart (options) {
 				//firstTickPosition = roundedMin + tickInterval,
 				//lastTickPosition = roundedMax - tickInterval,
 			
-				
 				//invMag = (magnitude < 1 ? 1 / magnitude : 1) * 10; // round off JS float errors;
 				
 			tickPositions = [];
@@ -3764,7 +3911,7 @@ function Chart (options) {
 				setDateTimeTickPositions();
 			} else {
 				setLinearTickPositions();
-			}
+			}	
 			
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
@@ -3776,11 +3923,13 @@ function Chart (options) {
 			} else if (min > roundedMin) {
 				tickPositions.shift();
 			}
+			
 			if (options.endOnTick) {
 				max = roundedMax;
 			} else if (max < roundedMax) {
 				tickPositions.pop();
-			}			
+			}
+					
 		}
 		
 		/**
@@ -3828,6 +3977,7 @@ function Chart (options) {
 			min = pick(userSetMin, options.min, dataMin);
 			max = pick(userSetMax, options.max, dataMax);
 			
+			
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) { 
 				zoomOffset = (maxZoom - max + min) / 2;
@@ -3858,15 +4008,16 @@ function Chart (options) {
 					);
 						
 			}
-					
-			if (!isDatetimeAxis && options.tickInterval == 'auto') { // linear
+			
+				
+			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
 				tickInterval = normalizeTickInterval(tickInterval);
 			}
 			
 			// minorTickInterval
 			minorTickInterval = options.minorTickInterval && tickInterval ?
 					tickInterval / 5 : options.minorTickInterval;
-					
+				
 			// get fixed positions based on tickInterval
 			setTickPositions();
 			
@@ -3879,7 +4030,8 @@ function Chart (options) {
 					x: 0,
 					y: 0
 				};
-			}				
+			}
+			
 			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY]) {
 				maxTicks[xOrY] = tickPositions.length;
 			}
@@ -4710,12 +4862,12 @@ function Chart (options) {
 								selectionMin = translate(
 									isHorizontal ? 
 										selectionLeft : 
-										plotHeight - selectionTop - selectionHeight, 
+										plotHeight - selectionTop - selectionBox.height, 
 									true
 								),
 								selectionMax = translate(
 									isHorizontal ? 
-										selectionLeft + selectionWidth : 
+										selectionLeft + selectionBox.width : 
 										plotHeight - selectionTop, 
 									true
 								);
@@ -5645,7 +5797,7 @@ function Chart (options) {
 		});
 		
 		// handle added or removed series 
-		if (redrawLegend) { // series or pie points are added or removed
+		if (redrawLegend && legend.renderLegend) { // series or pie points are added or removed
 			// draw legend graphics
 			legend.renderLegend();
 			
@@ -5745,7 +5897,7 @@ function Chart (options) {
 			}
 		}
 		return null;	
-	}k
+	}
 	
 	/**
 	 * Update the chart's position after it has been moved, to match
@@ -6002,9 +6154,9 @@ function Chart (options) {
 		// Todo: detection of SVG support in IE9
 		chart.renderer = renderer = 
 			optionsChart.renderer == 'SVG' ? // force SVG 
-				new SVGRenderer() : 
-				new Renderer();
-		renderer.init(container, chartWidth, chartHeight);
+				new SVGRenderer(container, chartWidth, chartHeight) : 
+				new Renderer(container, chartWidth, chartHeight);
+		//renderer.init(container, chartWidth, chartHeight);
 	}
 	/**
 	 * Render all graphics for the chart
@@ -6243,7 +6395,8 @@ function Chart (options) {
 	
 		
 	getContainer();
-	position = updatePosition(container);
+	updatePosition(container);
+	
 		
 	// Set to zero for each new chart
 	colorCounter = 0;
@@ -6428,6 +6581,25 @@ Point.prototype = {
 	},
 	
 	/**
+	 * Destroy a point to clear memory. Its reference still stays in series.data.
+	 */
+	destroy: function() {
+		var point = this,
+			prop;
+		
+		each (['graphic', 'group', 'tracker'], function(prop) {
+			if (point[prop]) {
+				point[prop].destroy();
+			}
+		});
+		
+		for (prop in point) {
+			point[prop] = null;
+		}
+		
+	},	
+	
+	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
 	 * @param {Boolean} accumulate Whether to add to the previous selection. By default,
@@ -6468,15 +6640,7 @@ Point.prototype = {
 		
 	},
 	
-	/**
-	 * Clear memory
-	 */
-	destroy: function() {
-		var point = this;
-		
-		if (point.stateLayer) point.stateLayer.destroy();
-		for (prop in point) point[prop] = null; 
-	},	
+
 	
 	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
@@ -6511,7 +6675,9 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			data = series.data;
+			data = series.data,
+			i,
+			dataLength = data.length;
 		
 		redraw = pick(redraw, true);
 		
@@ -6519,21 +6685,23 @@ Point.prototype = {
 		point.firePointEvent('remove', null, function() {
 
 			// loop through the data to locate the point and remove it
-			each(data, function(existingPoint, i) {
-				if (existingPoint == point) {
+			
+			//each(data, function(existingPoint, i) {
+			for (i = 0; i < dataLength - 1; i++) {
+				
+				if (data[i] == point) {
 					data.splice(i, 1);
 				}
-			});
+				break;
+			}
 			
-			// pies have separate point layers and legend items
-			if (point.layer) {
-				point.layer = point.layer.destroy();
-			}
 			if (point.legendItem) {
-				discardElement(point.legendItem);
-				point.legendItem = null;
-				chart.isDirty = true;
+				chart.legend.destroyItem(point);
 			}
+			
+			point.destroy();
+			
+			
 			
 			// redraw
 			series.isDirty = true;
@@ -6854,7 +7022,7 @@ Series.prototype = {
 			
 		data.push(point);
 		if (shift) {
-			data.shift();
+			data[0].remove(false);
 		}
 		
 		
@@ -6917,18 +7085,14 @@ Series.prototype = {
 			// fire the event with a default handler of removing the point			
 			fireEvent(series, 'remove', null, function() {
 				
-				// remove the layer group
-				//discardElement(series.layerGroup.div);
-				series.group.destroy();
-				
-				// remove the area
-				if (series.tracker) {
-					series.tracker.destroy();
-				}
 						
 				// remove legend items
-				chart.legend.destroyItem(series);
+				if (series.legendItem) {
+					chart.legend.destroyItem(series);
+				}
 				
+				// destroy elements
+				series.destroy();
 				
 				// loop through the chart series to locate the series and remove it
 				each(chart.series, function(existingSeries, i) {
@@ -7152,7 +7316,9 @@ Series.prototype = {
 			plotX,
 			plotY,
 			i,
-			point;
+			point,
+			radius,
+			graphic;
 		
 		if (series.options.marker.enabled) {
 			i = data.length;
@@ -7160,20 +7326,34 @@ Series.prototype = {
 				point = data[i];
 				plotX = point.plotX;
 				plotY = point.plotY;
+				graphic = point.graphic;
 				
 				// only draw the point if inside the plot and y is defined
 				if (point.plotY !== UNDEFINED && 
 						point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
 						point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
+					
+					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
-					point.graphic = chart.renderer.symbol(
+					radius = pointAttr.r;
+					
+					
+					if (graphic) { // update
+						graphic.attr({
+							x: plotX,
+							y: plotY,
+							r: radius
+						});
+					} else {
+						point.graphic = chart.renderer.symbol(
 							pick(point.marker && point.marker.symbol, series.symbol),
 							plotX,
 							plotY, 
-							pointAttr.r
+							radius
 						)
 						.attr(pointAttr)
 						.add(series.group);
+					}
 				}
 			};
 		}
@@ -7384,11 +7564,21 @@ Series.prototype = {
 		var series = this,
 			prop;
 		
+		// destroy all points with their elements
 		each (series.data, function(point) {
 			point.destroy();
 		});
 		
-		for (prop in series) series[prop] = null; 
+		// destroy all SVGElements associated to the series
+		each(['area', 'graph', 'group', 'tracker'], function(prop) {
+			if (series[prop]) {
+				series[prop].destroy();
+			}
+		});
+		
+		for (prop in series) {
+			series[prop] = null;
+		} 
 	},
 	
 	/**
@@ -7603,7 +7793,7 @@ Series.prototype = {
 		
 			
 		// draw the area if area series or areaspline
-		if (areaPath) {
+		if (areaPath.length) {
 			fillColor = pick(
 				options.fillColor,
 				Color(series.color).setOpacity(options.fillOpacity || 0.75).get()
@@ -7738,7 +7928,7 @@ Series.prototype = {
 			
 		series.translate();
 		series.setTooltipPoints(true);
-		series.clear();
+		//series.clear();
 		series.render();
 	},
 	
@@ -7937,7 +8127,8 @@ Series.prototype = {
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
-			isSingleSeries = chart.series.length == 1;
+			isSingleSeries = chart.series.length == 1,
+			tracker = series.tracker;
 	
 		
 		// if only one series, use the whole plot area as tracker
@@ -7953,19 +8144,24 @@ Series.prototype = {
 			]; 
 		}
 		
-		series.tracker = chart.renderer.path(trackerPath).
-			attr({
-				isTracker: true,
-				stroke: TRACKER_FILL,
-				fill: isSingleSeries ? TRACKER_FILL : NONE,
-				'stroke-width' : options.lineWidth + chart.options.tooltip.snap,
-				'stroke-linecap': 'round'
-			})
-			.on('mouseover', function() {
-				chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
-				series.onMouseOver();
-			})
-			.add(chart.trackerGroup, 1);
+		if (tracker) { // update
+			tracker.attr({ d: trackerPath });
+			
+		} else { // create
+			series.tracker = chart.renderer.path(trackerPath).
+				attr({
+					isTracker: true,
+					stroke: TRACKER_FILL,
+					fill: isSingleSeries ? TRACKER_FILL : NONE,
+					'stroke-width' : options.lineWidth + chart.options.tooltip.snap,
+					'stroke-linecap': 'round'
+				})
+				.on('mouseover', function() {
+					chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
+					series.onMouseOver();
+				})
+				.add(chart.trackerGroup, 1);
+		}
 	}
 	
 }; // end Series prototype
@@ -8256,7 +8452,7 @@ var ColumnSeries = extendClass(Series, {
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 : 
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding),
-			columnIndex = (chart.options.xAxis && chart.options.xAxis.reversed ? columnCount - 
+			columnIndex = (reversedXAxis ? columnCount - 
 				series.columnIndex : series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + columnIndex *
 				pointOffsetWidth -(categoryWidth / 2))
@@ -8274,10 +8470,11 @@ var ColumnSeries = extendClass(Series, {
 			barX = point.plotX + pointXOffset;
 			barY = math.min(point.plotY, translatedY0); 
 			barW = pointWidth;
-			barH = (point.yBottom || point.y0) - point.plotY;
+			barH = mathAbs((point.yBottom || translatedY0) - point.plotY);
 			if (minPointLength && mathAbs(barH) < minPointLength) { // handle options.minPointLength
 				barH = (barH < 0 ? 1 : -1) * minPointLength;
 			}
+			
 			
 			extend (point, {
 				barX: barX,
@@ -8286,14 +8483,21 @@ var ColumnSeries = extendClass(Series, {
 				barH: barH
 			});
 			point.shapeType = 'rect';
-			point.shapeArgs = [
+			/*point.shapeArgs = [
 				barX,
 				barY,
 				barW,
 				barH,
 				options.borderRadius,
 				options.borderWidth
-			]
+			]*/
+			point.shapeArgs = {
+				x: barX,
+				y: barY,
+				width: barW,
+				height: barH,
+				r: options.borderRadius
+			};
 		});
 		
 	},
@@ -8305,26 +8509,37 @@ var ColumnSeries = extendClass(Series, {
 	 * Columns have no graph
 	 */
 	drawGraph: function() {},
+	
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
-	 * apply for columns and bars.
+	 * apply for columns and bars. This method is inherited by scatter series.
 	 * 
 	 */
 	drawPoints: function() {
 		var series = this,
 			options = series.options,
 			radius = options.borderRadius,
-			renderer = series.chart.renderer;		
+			renderer = series.chart.renderer,
+			graphic,
+			shapeArgs;		
+		
 		
 		// draw the columns
 		each (series.data, function(point) {			
 			
 			if (defined(point.plotY)) {
-				// draw the graphic based on shape type and tracker/point arguments determined in translate
-				point.graphic = renderer[point.shapeType].apply(renderer, point.trackerArgs || point.shapeArgs)
-					.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
-					.add(series.group)
-					.shadow(options.shadow);
+				graphic = point.graphic;
+				shapeArgs = point.shapeArgs;
+
+				if (graphic) { // update
+					graphic.attr(shapeArgs);
+				
+				} else {
+					point.graphic = renderer[point.shapeType](shapeArgs)
+						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
+						.add(series.group)
+						.shadow(options.shadow);
+				}
 			
 			}
 		});
@@ -8336,20 +8551,30 @@ var ColumnSeries = extendClass(Series, {
 	drawTracker: function() {
 		var series = this,
 			chart = series.chart,
-			renderer = chart.renderer;
+			renderer = chart.renderer,
+			shapeArgs,
+			tracker;
 			
 		each (series.data, function(point) {
-			point.tracker = 
-				renderer[point.shapeType].apply(renderer, point.shapeArgs)
-				.attr({
-					isTracker: true,
-					fill: TRACKER_FILL
-				})
-				.on('mouseover', function() {
-					chart.hoverPoint = point;
-					series.onMouseOver();
-				})
-				.add(chart.trackerGroup, 1);
+			tracker = point.tracker;
+			shapeArgs = point.trackerArgs || point.shapeArgs;
+			if (tracker) {// update
+				tracker.attr(shapeArgs);
+				
+			} else {
+				point.tracker = 
+					renderer[point.shapeType](shapeArgs)
+					//.attr(shapeArgs)
+					.attr({
+						isTracker: true,
+						fill: TRACKER_FILL
+					})
+					.on('mouseover', function() {
+						chart.hoverPoint = point;
+						series.onMouseOver();
+					})
+					.add(chart.trackerGroup, 1);
+			}
 		});				
 	},
 	
@@ -8474,11 +8699,11 @@ var ScatterSeries = extendClass(Series, {
 
 		each (series.data, function(point) {
 			point.shapeType = 'circle';
-			point.shapeArgs = [
-				point.plotX,
-				point.plotY,
-				series.chart.options.tooltip.snap
-			];
+			point.shapeArgs = {
+				x: point.plotX,
+				y: point.plotY,
+				r: series.chart.options.tooltip.snap
+			};
 		});
 	},
 	
@@ -8487,27 +8712,7 @@ var ScatterSeries = extendClass(Series, {
 	 * Create individual tracker elements for each point
 	 */
 	drawTracker: ColumnSeries.prototype.drawTracker,
-	/*drawTracker: function() {
-		var series = this,
-			chart = series.chart;
-		
-		// create an individual tracker cirle for each point
-		each (series.data, function(point) {
-			point.tracker = 
-				//chart.renderer.circle(point.plotX, point.plotY, chart.options.tooltip.snap)
-				
-				.attr({
-					isTracker: true,
-					fill: TRACKER_FILL
-				})
-				.on('mouseover', function() {
-					chart.hoverPoint = point;
-					series.onMouseOver();
-				})
-				.add(chart.trackerGroup, 1);
-		});
-
-	},*/
+	
 	/**
 	 * Cleaning the data is not necessary in a scatter plot
 	 */
@@ -8672,13 +8877,13 @@ var PieSeries = extendClass(Series, {
 			
 			// set the shape
 			point.shapeType = 'arc';
-			point.shapeArgs = [
-				positions[0],
-				positions[1],
-				positions[2] / 2,
-				start,
-				end
-			];
+			point.shapeArgs = {
+				x: positions[0],
+				y: positions[1],
+				r: positions[2] / 2,
+				start: start,
+				end: end
+			};
 			
 			// center for the sliced out slice
 			angle = (end + start) / 2;
@@ -8719,12 +8924,14 @@ var PieSeries = extendClass(Series, {
 		
 
 		this.drawPoints();
+		
 		// draw the mouse tracking area
 		if (series.options.enableMouseTracking !== false) {
 			series.drawTracker();
 		}
 		
 		this.drawDataLabels();
+		
 	},
 	
 	/**
@@ -8735,10 +8942,15 @@ var PieSeries = extendClass(Series, {
 			chart = series.chart,
 			renderer = chart.renderer,
 			groupTranslation,
-			center;
+			center,
+			graphic,
+			shapeArgs;
 		
 		// draw the slices
 		each (this.data, function(point) {
+			graphic = point.graphic;
+			shapeArgs = point.shapeArgs;
+
 			// create the group the first time
 			if (!point.group) {
 				// if the point is sliced, use special translation, else use plot area traslation
@@ -8748,11 +8960,14 @@ var PieSeries = extendClass(Series, {
 			}
 			
 			// draw the slice
-			point.graphic = 
-				renderer.arc.apply(renderer, point.shapeArgs)
-				.attr(point.pointAttr[NORMAL_STATE])
-				.add(point.group);
-
+			if (graphic) {
+				graphic.attr(shapeArgs);
+			} else {
+				point.graphic = 
+					renderer.arc(shapeArgs)
+					.attr(point.pointAttr[NORMAL_STATE])
+					.add(point.group);
+			}
 			
 			// detect point specific visibility
 			if (point.visible === false) {
@@ -8795,7 +9010,6 @@ Highcharts = {
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	Series: Series,
-	symbols: symbols,
 	
 	
 	
@@ -8809,7 +9023,6 @@ Highcharts = {
 	map: map,
 	merge: merge,
 	pick: pick,
-	symbols: symbols,
 	extendClass: extendClass
 };
 
