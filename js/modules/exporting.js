@@ -481,7 +481,7 @@ extend (Chart.prototype, {
 });
 
 // Create the export icon
-symbols.exportIcon = function(x, y, radius) {
+HC.Renderer.prototype.symbols.exportIcon = function(x, y, radius) {
 	return [
 		M, // the disk
 		x - radius, y + radius,
@@ -503,7 +503,7 @@ symbols.exportIcon = function(x, y, radius) {
 	];
 };
 // Create the print icon
-symbols.printIcon = function(x, y, radius) {
+HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 	return [
 		M, // the printer
 		x - radius, y + radius * 0.5,
