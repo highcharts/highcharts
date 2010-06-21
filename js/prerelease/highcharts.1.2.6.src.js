@@ -2421,7 +2421,18 @@ function Chart (options) {
 			normalized = interval / magnitude;
 			
 			// multiples for a linear scale
-			if (!multiples) multiples = [1, 2, 2.5, 5, 10];
+			if (!multiples) {
+				multiples = [1, 2, 2.5, 5, 10];
+				
+				// the allowDecimals option
+				if (options.allowDecimals === false) {
+					if (magnitude == 1) {
+						multiples = [1, 2, 5, 10];
+					} else if (magnitude <= 0.1) {
+						multiples = [1 / magnitude];
+					}					
+				}
+			}
 			
 			// normalize the interval to the nearest multiple
 			for (var i = 0; i < multiples.length; i++) {

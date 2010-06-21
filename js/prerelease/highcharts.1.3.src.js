@@ -785,6 +785,7 @@ defaultOptions = {
 // Axis defaults
 //defaultOptions.xAxis = merge(defaultOptions.axis);
 var defaultXAxisOptions =  {
+	// allowDecimals: null, // docs
 	// alternateGridColor: null,
 	// categories: [],
 	dateTimeLabelFormats: {
@@ -3678,7 +3679,16 @@ function Chart (options) {
 			
 			// multiples for a linear scale
 			if (!multiples) {
-				multiples = [1, 2, 2.5, 5, 10];
+				multiples = [1, 2, 2.5, 5, 10];				
+				
+				// the allowDecimals option
+				if (options.allowDecimals === false) {
+					if (magnitude == 1) {
+						multiples = [1, 2, 5, 10];
+					} else if (magnitude <= 0.1) {
+						multiples = [1 / magnitude];
+					}					
+				}
 			}
 			
 			// normalize the interval to the nearest multiple
