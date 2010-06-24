@@ -2613,19 +2613,22 @@ function Chart (options) {
 			}
 		}
 			
+		/**
+		 * Fix JS round off float errors
+		 * @param {Number} num
+		 */
+		function correctFloat(num) {
+			var invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
+					
+			return mathRound(num * invMag) / invMag
+		}
 			
 		/**
 		 * Set the tick positions of a linear axis to round values like whole tens or every five.
 		 */
 		function setLinearTickPositions() {
 			
-			var correctFloat = function(num) { // JS round off float errors
-					var invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
-					
-					return mathRound(num * invMag) / invMag
-				},
-				
-				i,
+			var i,
 				roundedMin = mathFloor(min / tickInterval) * tickInterval,
 				roundedMax = math.ceil(max / tickInterval) * tickInterval;
 				// default extreme ticks when axis does not start and end on a tick
@@ -2700,8 +2703,11 @@ function Chart (options) {
 				
 					
 				if (calculatedTickAmount < tickAmount) {
-					while (tickPositions.length < tickAmount)
-						tickPositions.push(tickPositions[tickPositions.length - 1] + tickInterval);
+					while (tickPositions.length < tickAmount) {
+						tickPositions.push( correctFloat(
+							tickPositions[tickPositions.length - 1] + tickInterval
+						));
+					}
 					transA *= (calculatedTickAmount - 1) / (tickAmount - 1);
 				}
 				if (defined(oldTickAmount) && tickAmount != oldTickAmount) axis.isDirty = true;	
