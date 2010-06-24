@@ -87,6 +87,7 @@ var doc = document,
 	merge = adapter.merge,
 	hyphenate = adapter.hyphenate,
 	addEvent = adapter.addEvent,
+	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
 	animate = adapter.animate,
 	getAjax = adapter.getAjax;
@@ -262,6 +263,16 @@ if (!globalAdapter && win.jQuery) {
 		jQ(el).bind(event, fn);
 	};
 	
+	/**
+	 * Remove event added with addEvent
+	 * @param {Object} el The object
+	 * @param {String} eventType The event type. Leave blank to remove all events.
+	 * @param {Function} handler The function to remove
+	 */
+	removeEvent = function(el, eventType, handler) {
+		jQ(el).unbind(eventType, handler);
+	};
+	
 	fireEvent = function(el, type, eventArguments, defaultFunction) {
 		var event = jQ.Event(type),
 			detachedType = 'detached'+ type;
@@ -350,6 +361,10 @@ if (!globalAdapter && win.jQuery) {
 	
 	addEvent = function (el, type, fn) {
 		if (typeof type == 'string') { // chart broke due to el being string, type function
+		
+			if (type == 'unload') { // Moo self destructs before custom unload events
+				type = 'beforeunload';
+			}
 
 			// if the addEvent method is not defined, el is a custom Highcharts object
 			// like series or point
@@ -362,6 +377,17 @@ if (!globalAdapter && win.jQuery) {
 			}
 			
 			el.addEvent(type, fn);
+		}
+	};
+	
+	removeEvent = function(el, type, fn) {
+		if (type) {
+			if (type == 'unload') { // Moo self destructs before custom unload events
+				type = 'beforeunload';
+			}
+
+
+			el.removeEvent(type, fn);
 		}
 	};
 	
@@ -1278,6 +1304,7 @@ SVGRenderer.prototype = {
 		
 			
 		// object properties
+		//this.wrappers = [];
 		this.box = box;
 		this.defs = this.createElement('defs').add();
 		
@@ -1291,8 +1318,23 @@ SVGRenderer.prototype = {
 	createElement: function(nodeName) {
 		var wrapper = new SVGElement();
 		wrapper.init(this, nodeName);
+		//this.wrappers.push(wrapper);
 		return wrapper;
 	},
+	
+	/*destroy: function() {
+		var wrappers = this.wrappers,
+			i = wrappers.length,
+			key;
+			
+		while (i--) {
+			wrappers[i].destroy();
+		}
+		
+		for (key in this) {
+			delete this[key];
+		}
+	},*/
 	
 	// parse a simple HTML string into SVG tspans
 	// todo: more general HTML parsing
@@ -2124,6 +2166,8 @@ SVGElement.prototype = {
 	 */
 	destroy: function() {
 		var element = this.element,
+			//wrappers = this.renderer.wrappers,
+			//i,
 			key;
 		
 		function clearEvents(elem) {
@@ -2132,16 +2176,24 @@ SVGElement.prototype = {
 		
 		clearEvents(element);
 		element.parentNode.removeChild(element);
+		
 		if (this.shadows) {
 			each(this.shadows, function(shadow) {
 				clearEvents(shadow);
 				shadow.parentNode.removeChild(shadow);				
 			});
 		}
-		
+				
 		for (key in this) {
 			delete this[key];
 		}
+		
+		/*i = wrappers.length;
+		while (i--) {
+			if (wrappers[i] == this) {
+				wrappers.splice(i, 1);
+			}
+		}*/
 		
 		return null;
 	},
@@ -2233,6 +2285,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			}, container);
 		
 		// renderer properties
+		//this.wrappers = [];
 		this.box = box;
 		this.urn = 'urn:schemas-microsoft-com:vml';
 		
@@ -2317,10 +2370,13 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	/**
 	 * Create a wrapper for an VML element
 	 * @param {String} nodeName
+	 * 
+	 * @todo: make elementtype a renderer property and use the same method as SVG?
 	 */
 	createElement: function(nodeName) {
 		var wrapper = new VMLElement();
 		wrapper.init(this, nodeName);
+		//this.wrappers.push(wrapper);
 		return wrapper;
 	},
 	
@@ -3051,9 +3107,14 @@ var VMLElement = extendClass( SVGElement, {
 	 * @param {String} id The id of the clip rectangle
 	 */
 	clip: function(clipRect) {
-		var wrapper = this;
+		var wrapper = this,
+			clipMembers = clipRect.members,
+			index = clipMembers.length;
 			
-		clipRect.members.push(wrapper);
+		clipMembers.push(wrapper);
+		wrapper.destroyClip = function() {
+			clipMembers.splice(index, 1);
+		}
 		return wrapper.css({ clip: clipRect.getCSS(wrapper.flipX) });
 	},
 	
@@ -3067,6 +3128,23 @@ var VMLElement = extendClass( SVGElement, {
 		css(wrapper.element, styles);
 		
 		return wrapper;
+	},
+	
+	/**
+	 * Extend element.destroy by removing it from the clip members array
+	 */
+	destroy: function() {
+		var wrapper = this,
+			groupElement = wrapper.groupElement; 
+		
+		if (wrapper.destroyClip) {
+			wrapper.destroyClip();
+		}
+		if (groupElement) {
+			groupElement.parentNode.removeChild(groupElement);
+		}
+		
+		SVGElement.prototype.destroy.apply(this);
 	},
 	
 	/**
@@ -3312,6 +3390,7 @@ function Chart (options) {
 		inverted,
 		renderer,
 		tooltipTick,
+		tooltipInterval,
 		tooltipDiv,
 		zoom, // function
 		zoomOut; // function
@@ -4380,6 +4459,19 @@ function Chart (options) {
 						
 		}
 		
+		/* 
+		 * Clear memory
+		 * /
+		function destroy() {
+			axisGroup.destroy();
+			gridGroup.destroy();
+			
+			associatedSeries = axis = chart = options = null;
+			
+			for (var key in axis) {
+				delete axis[key];
+			}
+		}*/
 		
 		// Run Axis
 		
@@ -4404,6 +4496,7 @@ function Chart (options) {
 			addPlotLine: addPlotBandOrLine,
 			adjustTickAmount: adjustTickAmount,
 			categories: categories,
+			//destroy: destroy,
 			getExtremes: getExtremes,
 			getZeroPlane: getZeroPlane,
 			isXAxis: isXAxis,
@@ -4656,6 +4749,18 @@ function Chart (options) {
 		return {
 			refresh: refresh,
 			hide: hide
+			/*,
+			destroy: function() {
+				box.destroy();
+				group.destroy();
+				label.destroy();
+				
+				box = group = label = options = hide = move = refresh = null;
+				
+				for (var key in this) {
+					delete this[key];
+				}
+			}*/
 		};	
 	}
 	
@@ -4833,14 +4938,18 @@ function Chart (options) {
 		 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
 		 */
 		function resetTracker() {
+			var hoverSeries = chart.hoverSeries;
+
 			// hide the tooltip
 			resetActivePoint();
 			if (tooltip) {
 				tooltip.hide();
 			}
 			// hide the hovered series and point
-			if (chart.hoverSeries) {
-				chart.hoverSeries.setState();
+			if (hoverSeries) {
+				if (hoverSeries.setState) { // it might be destroyed
+					hoverSeries.setState();
+				}
 				chart.hoverSeries = null;
 				activePoint = null;
 			}
@@ -5225,7 +5334,7 @@ function Chart (options) {
 		setDOMEvents();
 		
 		// set the fixed interval ticking for the smooth tooltip
-		setInterval(function() {
+		tooltipInterval = setInterval(function() {
 			if (tooltipTick) {
 				tooltipTick();
 			}
@@ -5238,6 +5347,12 @@ function Chart (options) {
 			zoomX: zoomX,
 			zoomY: zoomY,
 			resetTracker: resetTracker
+			/*,
+			destroy: function() {
+				
+				
+				chart = options = selectionMarker = null;
+			}*/
 		});
 	}
 	
@@ -5340,27 +5455,50 @@ function Chart (options) {
 			}
 		}
 		
+		/* *
+		 * Destroy the legend object to release memory
+		 * /
+		function destroy() {
+			box.destroy();
+			legendGroup.destroy();
+			
+			// null all scope variables
+			allItems = chart = options = series = null;
+			
+			for (var key in this) {
+				delete this[key];
+			}
+		}*/
+		
 		/**
 		 * Destroy a single legend item
 		 * @param {Object} item The series or point
 		 */
 		function destroyItem(item) {
-			var legendItem = item.legendItem,
-				legendLine = item.legendLine,
-				legendSymbol = item.legendSymbol,
+			var i = allItems.length,				
 				checkbox = item.checkbox;
-			if (legendItem) {
-				legendItem.destroy();
+				
+			// pull out from the array
+			// todo: make general function for this operation
+			while (i--) {
+				if (allItems[i] == item) {
+					allItems.splice(i, 1);
+					break;
+				}
 			}
-			if (legendLine) {
-				legendLine.destroy();
-			}
-			if (legendSymbol) {
-				legendSymbol.destroy();
-			}
+				
+			// destroy SVG elements
+			each (['legendItem', 'legendLine', 'legendSymbol'], function(key) {
+				if (item[key]) {
+					item[key].destroy();
+				}
+			});
+			
 			if (checkbox) {
 				discardElement(item.checkbox);
 			}
+			
+			
 		}
 		
 		/**
@@ -5425,7 +5563,7 @@ function Chart (options) {
 					shadow(options.shadow);
 				
 				} else {
-					box.animate({ height: boxHeight });
+					box.attr({ height: boxHeight });
 				}
 			}
 			
@@ -5643,9 +5781,10 @@ function Chart (options) {
 		
 		// expose 
 		return {
-			renderLegend: renderLegend,
 			colorizeItem: colorizeItem,
-			destroyItem: destroyItem
+			//destroy: destroy,
+			destroyItem: destroyItem,
+			renderLegend: renderLegend
 		};
 	};
 	
@@ -6335,52 +6474,43 @@ function Chart (options) {
 	 * Clean up memory usage
 	 */
 	function destroy() {
+		// remove events
+		removeEvent(win, 'resize', updatePosition);
+		removeEvent(win, 'unload', destroy);
+		removeEvent(chart);
 		
+		each (axes, function(axis) {
+			removeEvent(axis);
+		});
 
-		/**
-		 * Clear certain attributes from the element
-		 * @param {Object} d
-		 */
-		function purge(d) {
-		    var a = d.attributes, i, l, n;
-		    if (a) {
-		        l = a.length;
-		        for (i = l - 1; i >= 0; i -= 1) {
-		            n = a[i].name;
-					
-					try {
-			            //if (typeof d[n] != 'object' && !/^(width|height)$/.test(n)) {
-						if (typeof d[n] == 'function') {
-							d[n] = null;
-			            }
-					} catch (e) {
-						// IE/excanvas produces errors on some of the properties
-					}
-					
-		        }
-		    }
-			
-		    a = d.childNodes;
-		    if (a) {
-		        l = a.length;
-		        for (i = l - 1; i >= 0; i--) {
-		            var node = d.childNodes[i];
-					purge(node);	
-					
-					if (!node.childNodes.length) discardElement(node);			
-		        }
-		    }
-			
-		}
-		
 		// destroy each series
 		each (series, function(serie) {
 			serie.destroy();
 		});
-		series = [];
 		
+		//trackerGroup.destroy();
 		
-		purge(container);
+		/*each (axes, function(axis) {
+			axis.destroy();
+		});*/
+		
+		/*legend.destroy();
+		
+		tooltip.destroy();
+		tracker.destroy();
+		
+		renderer.destroy();*/
+		
+		// IE6 leak 
+		container =	null;
+			
+		// memory and CPU leak
+		clearInterval(tooltipInterval);
+		
+		for (var key in chart) {
+			delete chart[key];
+		}
+		
 	};
 	/**
 	 * Prepare for first rendering after all data are loaded
@@ -6415,7 +6545,7 @@ function Chart (options) {
 	// Update position on resize and scroll
 	addEvent(win, 'resize', updatePosition);
 	
-	// Destroy the chart and free up memory
+	// Destroy the chart and free up memory. 
 	addEvent(win, 'unload', destroy);
 	
 	// Chart event handlers
@@ -6596,12 +6726,21 @@ Point.prototype = {
 	destroy: function() {
 		var point = this,
 			prop;
+			
+		// remove all events
+		removeEvent(point);
 		
-		each (['graphic', 'group', 'tracker'], function(prop) {
+		
+		each (['graphic', 'tracker', 'group'], function(prop) {
 			if (point[prop]) {
 				point[prop].destroy();
 			}
 		});
+		
+		
+		if (point.legendItem) { // pies have legend items
+			chart.legend.destroyItem(point);
+		}
 		
 		for (prop in point) {
 			point[prop] = null;
@@ -6703,10 +6842,6 @@ Point.prototype = {
 					data.splice(i, 1);
 				}
 				break;
-			}
-			
-			if (point.legendItem) {
-				chart.legend.destroyItem(point);
 			}
 			
 			point.destroy();
@@ -7049,20 +7184,20 @@ Series.prototype = {
 	 * @param {Object} redraw
 	 */
 	setData: function(data, redraw) {
-		var series = this;
+		var series = this,
+			oldData = series.data,
+			i = oldData && oldData.length || 0;
 		
-		// data.push(point);
-		// if (shift) data.shift();
-		
-		// generate the point objects
-		//x = options.pointStart || 0;
 		series.xIncrement = null; // reset for new data
 		data = map(splat(data), function(pointOptions) {
 			return (new series.pointClass()).init(series, pointOptions);
-			//return new PiePoint(series, pointOptions);
-			//x += pointInterval;
-			//return point;
 		});
+		
+		// destroy old points
+		while (i--) {
+			oldData[i].destroy();
+		}
+		
 		// set the data
 		series.data = data;
 	
@@ -7096,20 +7231,9 @@ Series.prototype = {
 			fireEvent(series, 'remove', null, function() {
 				
 						
-				// remove legend items
-				if (series.legendItem) {
-					chart.legend.destroyItem(series);
-				}
-				
 				// destroy elements
 				series.destroy();
-				
-				// loop through the chart series to locate the series and remove it
-				each(chart.series, function(existingSeries, i) {
-					if (existingSeries == series) {
-						chart.series.splice(i, 1);
-					}
-				});
+			
 				
 				// redraw
 				chart.isDirty = true;
@@ -7572,7 +7696,16 @@ Series.prototype = {
 	 */
 	destroy: function() {
 		var series = this,
+			chartSeries = series.chart.series,
 			prop;
+		
+		// remove all events
+		removeEvent(series);
+			
+		// remove legend items
+		if (series.legendItem) {
+			series.chart.legend.destroyItem(series);
+		}
 		
 		// destroy all points with their elements
 		each (series.data, function(point) {
@@ -7580,14 +7713,22 @@ Series.prototype = {
 		});
 		
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'group', 'tracker'], function(prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
 			if (series[prop]) {
 				series[prop].destroy();
 			}
 		});
 		
+		// loop through the chart series to locate the series and remove it
+		each(chartSeries, function(existingSeries, i) {
+			if (existingSeries == series) {
+				chartSeries.splice(i, 1);
+			}
+		});
+				
+		// clear all members
 		for (prop in series) {
-			series[prop] = null;
+			delete series[prop];
 		} 
 	},
 	
@@ -8751,10 +8892,6 @@ var PiePoint = extendClass(Point, {
 			name: pick(point.name, 'Slice')
 		});
 		
-		
-		// create an individual layer
-		//if (!point.layer) point.layer = new Layer('pie', series.layerGroup.div);
-		
 		// add event listener for select
 		toggleSlice = function() {
 			point.slice();
@@ -8765,12 +8902,13 @@ var PiePoint = extendClass(Point, {
 		return point;
 	},
 	setVisible: function(vis) {
+	
 		var point = this, 
 			chart = point.series.chart;
-			
 		
 		// if called without an argument, toggle visibility
 		point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+		
 		
 		if (vis) {
 			//layer.show();
@@ -8813,9 +8951,6 @@ var PiePoint = extendClass(Point, {
 			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
 			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
 		}, 100);
-		//series.isDirty = true;
-		
-		//if (redraw) series.chart.redraw();
 		
 	}
 });
@@ -8824,10 +8959,9 @@ seriesTypes.pie = PieSeries;
 /**
  * The Pie series class
  */
-var PieSeries = extendClass(Series, {
+var PieSeries = extendClass(ColumnSeries, {
 	type: 'pie',
 	isCartesian: false,
-	//allowsPointStateColor: true,
 	pointClass: PiePoint,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -8925,9 +9059,11 @@ var PieSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart;
 			
+		/*
 		if (!series.group) {
 			series.group = chart.renderer.g('series').add(null, 3);
 		}
+		*/
 		
 		// cache attributes for shapes
 		series.getAttribs();
