@@ -3791,9 +3791,9 @@ function Chart (options) {
 							
 						// click the name or symbol
 						} else if (item.firePointEvent) { // point
-							item.firePointEvent (strLegendItemClick, null, fnLegendItemClick);
+							item.firePointEvent (strLegendItemClick, event, fnLegendItemClick);
 						} else {
-							fireEvent (item, strLegendItemClick, null, fnLegendItemClick);
+							fireEvent (item, strLegendItemClick, event, fnLegendItemClick);
 						}
 					});
 					
