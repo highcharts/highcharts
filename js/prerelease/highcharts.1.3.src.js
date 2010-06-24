@@ -9,9 +9,11 @@
  * License: www.highcharts.com/license
  */
 
+// JSLint options:
+/*jslint forin: true */
 
-// crockify
-/*global jQuery, $, $each, $merge, Events, Event, Fx, Request, Highcharts */
+// Implied global:
+/*global document, window, navigator, setInterval, clearInterval, location, jQuery, $, $each, $merge, Events, Event, Fx, Request */
 
 (function() {
 
@@ -32,8 +34,6 @@ var doc = document,
 	isIE = /msie/i.test(userAgent) && !win.opera,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
-	styleTag,
-	canvasCounter = 0,
 	colorCounter,
 	symbolCounter,
 	symbolSizes = {},
@@ -41,6 +41,8 @@ var doc = document,
 	timeFactor = 1, // 1 = JavaScript time, 1000 = Unix time
 	garbageBin,
 	defaultOptions,
+	dateFormat, // function
+	
 	
 	// some constants for frequently used strings
 	UNDEFINED,
@@ -49,7 +51,6 @@ var doc = document,
 	RELATIVE = 'relative',
 	HIDDEN = 'hidden',
 	PREFIX = 'highcharts-',
-	HIGHCHARTS_HIDDEN = PREFIX + HIDDEN,
 	VISIBLE = 'visible',
 	PX = 'px',
 	NONE = 'none',
@@ -90,7 +91,7 @@ var doc = document,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
 	animate = adapter.animate,
-	getAjax = adapter.getAjax;
+	getAjax = adapter.getAjax,
 	
 	// lookup over the types and the associated classes
 	seriesTypes = {};
@@ -180,14 +181,6 @@ function pick() {
 	}
 }
 
-function arrayToPath(arr) {
-	var path = '';
-	for (var i = 0; i < arr.length; i += 2) { 
-		path += (i === 0 ? 'M' : 'L') + arr[i] +' '+ arr[i + 1];
-	}
-	return path;
-}
-
 function serializeCSS(style) {
 	var s = '', 
 		key;
@@ -248,7 +241,7 @@ if (!globalAdapter && win.jQuery) {
 		}
 		return results;
 		
-	}
+	};
 	
 	merge = function(){
 		var args = arguments;
@@ -296,7 +289,7 @@ if (!globalAdapter && win.jQuery) {
 		}
 		
 		if (defaultFunction && !event.isDefaultPrevented()) {
-  			defaultFunction(event);
+			defaultFunction(event);
 		}	
 	};
 
@@ -431,8 +424,8 @@ if (!globalAdapter && win.jQuery) {
 		myEffect = new Fx.Morph(
 			isSVGElement ? el : $(el), 
 			extend(options, {
-	 			transition: Fx.Transitions.Quad.easeInOut
-	 		})
+				transition: Fx.Transitions.Quad.easeInOut
+			})
 		);
 		myEffect.start(params);
 	};
@@ -507,6 +500,36 @@ function addCSSRule(selector, declaration, print) {
 }
 */
 
+/**
+ * Set the time methods globally based on the useUTC option. Time method can be either 
+ * local time or UTC (default).
+ */
+function setTimeMethods() {
+	var useUTC = defaultOptions.global.useUTC;
+	
+	makeTime = useUTC ? Date.UTC : function(year, month, date, hours, minutes, seconds) {
+		return new Date(
+			year, 
+			month, 
+			pick(date, 1), 
+			pick(hours, 0), 
+			pick(minutes, 0), 
+			pick(seconds, 0)
+		).getTime();
+	};
+	getMinutes = useUTC ? 'getUTCMinutes' : 'getMinutes';
+	getHours = useUTC ? 'getUTCHours' : 'getHours';
+	getDay = useUTC ? 'getUTCDay' : 'getDay';
+	getDate = useUTC ? 'getUTCDate' : 'getDate';
+	getMonth = useUTC ? 'getUTCMonth' : 'getMonth';
+	getFullYear = useUTC ? 'getUTCFullYear' : 'getFullYear';
+	setMinutes = useUTC ? 'setUTCMinutes' : 'setMinutes';
+	setHours = useUTC ? 'setUTCHours' : 'setHours';
+	setDate = useUTC ? 'setUTCDate' : 'setDate';
+	setMonth = useUTC ? 'setUTCMonth' : 'setMonth';
+	setFullYear = useUTC ? 'setUTCFullYear' : 'setFullYear';
+		
+}
 
 /**
  * Merge the default options with custom options and return the new options structure
@@ -577,11 +600,7 @@ defaultOptions = {
 	chart: {
 		//alignTicks: false,
 		//className: null,
-		/*events: {
-		 * 	load,
-		 * 	selection
-		 * },
-		 */
+		//events: { load, selection },
 		margin: [50, 50, 60, 80],
 		borderColor: '#4572A7',
 		//borderWidth: 0,
@@ -796,12 +815,8 @@ defaultOptions = {
 		text: 'Highcharts.com',
 		href: 'http://www.highcharts.com',
 		style: {
-			position: ABSOLUTE,
-			right: '10px',
-			bottom: '5px',
-			color: '#999',
-			textDecoration: NONE,
-			//font: defaultFont.replace('12px', '10px')
+			cursor: 'pointer',
+			color: '#909090',
 			fontSize: '10px'
 		},
 		target: '_self'
@@ -1154,13 +1169,13 @@ function numberFormat (number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = number, c = isNaN(decimals = mathAbs(decimals)) ? 2 : decimals,
-    	d = decPoint === undefined ? lang.decimalPoint : decPoint,
-    	t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep, s = n < 0 ? "-" : "",
-    	i = parseInt(n = mathAbs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+		d = decPoint === undefined ? lang.decimalPoint : decPoint,
+		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep, s = n < 0 ? "-" : "",
+		i = parseInt(n = mathAbs(+n || 0).toFixed(c), 10) + "", j = (j = i.length) > 3 ? j % 3 : 0;
     
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
 		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
-};
+}
 
 /**
  * Based on http://www.php.net/manual/en/function.strftime.php 
@@ -1168,12 +1183,14 @@ function numberFormat (number, decimals, decPoint, thousandsSep) {
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
-function dateFormat(format, timestamp, capitalize) {
+dateFormat = function (format, timestamp, capitalize) {
 	function pad (number) {
 		return number.toString().replace(/^([0-9])$/, '0$1');
 	}
 	
-	if (!defined(timestamp) || isNaN(timestamp)) return 'Invalid date';
+	if (!defined(timestamp) || isNaN(timestamp)) {
+		return 'Invalid date';
+	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 	
 	var date = new Date(timestamp * timeFactor),
@@ -1221,42 +1238,15 @@ function dateFormat(format, timestamp, capitalize) {
 
 
 	// do the replaces
-	for (var key in replacements) format = format.replace('%'+ key, replacements[key]);
+	for (var key in replacements) {
+		format = format.replace('%'+ key, replacements[key]);
+	}
 		
 	// Optionally capitalize the string and return
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
 
-/**
- * Set the time methods globally based on the useUTC option. Time method can be either 
- * local time or UTC (default).
- */
-function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC;
-	
-	makeTime = useUTC ? Date.UTC : function(year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year, 
-			month, 
-			pick(date, 1), 
-			pick(hours, 0), 
-			pick(minutes, 0), 
-			pick(seconds, 0)
-		).getTime();
-	};
-	getMinutes = useUTC ? 'getUTCMinutes' : 'getMinutes';
-	getHours = useUTC ? 'getUTCHours' : 'getHours';
-	getDay = useUTC ? 'getUTCDay' : 'getDay';
-	getDate = useUTC ? 'getUTCDate' : 'getDate';
-	getMonth = useUTC ? 'getUTCMonth' : 'getMonth';
-	getFullYear = useUTC ? 'getUTCFullYear' : 'getFullYear';
-	setMinutes = useUTC ? 'setUTCMinutes' : 'setMinutes';
-	setHours = useUTC ? 'setUTCHours' : 'setHours';
-	setDate = useUTC ? 'setUTCDate' : 'setDate';
-	setMonth = useUTC ? 'setUTCMonth' : 'setMonth';
-	setFullYear = useUTC ? 'setUTCFullYear' : 'setFullYear';
-		
-};
+
 
 /**
  * Loop up the node tree and add offsetWidth and offsetHeight to get the
@@ -1277,554 +1267,6 @@ function getPosition (el)	{
 	return p;
 }
 
-
-/**
- * The default SVG renderer
- */
-var SVGRenderer = function() {
-	this.init.apply(this, arguments);
-};
-SVGRenderer.prototype = {
-	/**
-	 * Initialize the SVGRenderer
- 	 * @param {Object} container
- 	 * @param {Number} width
- 	 * @param {Number} height
-	 */
-	init: function(container, width, height) {
-		var box = doc.createElementNS('http://www.w3.org/2000/svg', 'svg'),
-			animatableNodeTypes = 'path circle';
-		attr(box, {
-			width: width,
-			height: height,
-			xmlns: 'http://www.w3.org/2000/svg',
-			version: '1.1'
-		});
-		container.appendChild(box);
-		
-			
-		// object properties
-		//this.wrappers = [];
-		this.box = box;
-		this.defs = this.createElement('defs').add();
-		
-	},
-	
-	
-	/**
-	 * Create a wrapper for an SVG element
-	 * @param {Object} nodeName
-	 */
-	createElement: function(nodeName) {
-		var wrapper = new SVGElement();
-		wrapper.init(this, nodeName);
-		//this.wrappers.push(wrapper);
-		return wrapper;
-	},
-	
-	/*destroy: function() {
-		var wrappers = this.wrappers,
-			i = wrappers.length,
-			key;
-			
-		while (i--) {
-			wrappers[i].destroy();
-		}
-		
-		for (key in this) {
-			delete this[key];
-		}
-	},*/
-	
-	// parse a simple HTML string into SVG tspans
-	// todo: more general HTML parsing
-	buildText: function(textNode, str) {
-		var lines = str.toString().
-				replace(/<(b|strong)>/, '<span style="font-weight:bold">').
-				replace(/<(i|em)>/, '<span style="font-style:italic">').
-				replace(/<\/(b|strong|i|em)>/, '</span>').
-				split('<br/>'),
-			childNodes = textNode.childNodes,
-			parentX = attr(textNode, 'x'),
-			i;
-			
-		// remove old text
-		for (i = childNodes.length - 1; i >= 0; i--) {
-			textNode.removeChild(childNodes[i]);
-		}
-		
-		// single line
-		/*if (lines.length == 1) {
-			textNode.appendChild(doc.createTextNode(str));
-			
-		// multi lines or spans
-		} else {*/
-		
-		each (lines, function(line, lineNo) {
-			var spans, spanNo = 0;
-			
-			line = line.replace(/<span/, '|||<span').replace(/<\/span>/, '</span>|||');
-			spans = line.split('|||');
-			
-			each (spans, function (span) {
-				if (span !== '') {
-			
-					var attributes = {},
-						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan'),
-						styleRegex = /style="([0-9a-z:;\-]+)"/;
-					/*if (/^<b>(.*?)<\/b>$/.test(line)) {
-						//tspan.setAttribute('style', 'font-weight:bold');
-						attr(tspan, 'style', 'font-weight:bold');
-						line = line.replace(/^<b>(.*?)<\/b>$/, '$1');
-					}*/
-					if (styleRegex.test(span)) {
-						attr(tspan, 'style', span.match(styleRegex)[1]);
-					}
-					
-					span = span.replace(/<(.|\n)*?>/g, '');
-					//console.log('"'+ span +'"');
-					tspan.appendChild(doc.createTextNode(span));
-					//tspan.setAttribute('x', textNode.getAttribute('x'));
-					//tspan.setAttribute('dy', i ? 16 : 0); // line-height
-					if (!spanNo) { // first span in a line, align it to the left
-						attributes.x = parentX;
-					} else {
-						attributes.dx = 3; // space
-					}
-					if (lineNo) { // subsequent line, add the line height
-						attributes.dy = 16;
-					}
-					
-					attr(tspan, attributes);
-					
-					textNode.appendChild(tspan);
-					
-					spanNo++;
-				}
-			});
-			
-		});
-		
-		
-		//}
-	},
-	
-	/**
-	 * Make a straight line crisper by not spilling out to neighbour pixels
-	 * @param {Array} points
-	 * @param {Number} width
-	 * 
-	 * @todo shape-rendering: crispEdges can do the same for SVG, but what about VML?
-	 *       If VML doesn't have shape-rendering it might be better to keep this method for both.
-	 */
-	crispLine: function(points, width) {
-		// points format: [M, 0, 0, L, 100, 0]
-		// normalize to a crisp line
-		if (points[1] == points[4]) {
-			points[1] = points[4] = mathRound(points[1]) + (width % 2 / 2);
-		}
-		if (points[2] == points[5]) {
-			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
-		}
-		return points;
-	},
-	path: function (path) {
-		return this.createElement('path').attr({ 
-			d: path, 
-			fill: NONE
-		});
-	},
-	circle: function (x, y, r) {
-		var attr = typeof x == 'object' ?
-			x :
-			{
-				x: x,
-				y: y,
-				r: r
-			}
-		
-		return this.createElement('circle').attr(attr);
-	},
-	arc: function (x, y, r, start, end) {
-		// arcs are defined as symbols for the ability to set 
-		// attributes in attr and animate
-		
-		if (typeof x == 'object') {
-			y = x.y;
-			r = x.r;
-			start = x.start;
-			end = x.end;
-			x = x.x;
-		}
-		
-		return this.symbol('arc', x || 0, y || 0, r || 0, {
-			start: start || 0,
-			end: end || 0
-		});
-		/*return this.path([
-				M,
-				centerX, 
-				centerY, 
-				L,
-				centerX + radius * mathCos(start),
-				centerY + radius * mathSin(start),
-				'A', // arcTo
-				radius, // x radius
-				radius, // y radius
-				0, // slanting
-				end - start < Math.PI ? 0 : 1, // long or short arc
-				1, // clockwise
-				centerX + radius * mathCos(end),
-				centerY + radius * mathSin(end),
-				'z' // close
-			]);*/
-	},
-	rect: function (x, y, width, height, r, strokeWidth) {
-		
-		/*var normalizer = (strokeWidth || 0) % 2 / 2;
-
-		// normalize for crisp edges
-		x = mathRound(x || 0) + normalizer;
-		y = mathRound(y || 0) + normalizer;
-		width = mathRound((width || 0) - 2 * normalizer);
-		height = mathRound((height || 0) - 2 * normalizer);*/
-		
-		var attr = typeof x == 'object' ? 
-			x : // the attributes can be passed as the first argument
-			{
-				x: x,
-				y: y,
-				width: mathMax(width, 0),
-				height: mathMax(height, 0)
-			};			
-		
-		return this.createElement('rect').attr(extend(attr, {
-			rx: r || attr.r,
-			ry: r || attr.r,
-			fill: NONE
-		}));
-	},
-	/*text: function (x, y, text) {
-		return this.createElement('text').attr({
-				x: x,
-				y: y,
-				text: text
-			});
-	},*/
-	g: function(name) {
-		/*var obj = this.element('g');
-		return obj;*/
-		var attribs = defined(name) ?
-			{ 'class': PREFIX + name } :
-			{}
-			
-		return this.createElement('g').attr(attribs);
-	},
-	
-	/**
-	 * Display an image
-	 * @param {String} src
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} width
-	 * @param {Number} height
-	 */
-	image: function(src, x, y, width, height) {
-		var elemWrapper = this.createElement('image').attr({
-			x: x,
-			y: y,
-			width: width,
-			height: height,
-			preserveAspectRatio: NONE
-		});		
-		
-		// set the href in the xlink namespace
-		elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
-			'href', src);
-			
-		return elemWrapper;					
-	},
-	
-	/**
-	 * Draw a symbol out of pre-defined shape paths from the namespace 'symbol' object.
-	 * 
-	 * @param {Object} symbol
-	 * @param {Object} x
-	 * @param {Object} y
-	 * @param {Object} radius
-	 * @param {Object} options
-	 */
-	symbol: function(symbol, x, y, radius, options) {
-		
-		var obj,
-			key,
-			
-			// get the symbol definition function
-			symbolFn = this.symbols[symbol],
-			
-			// check if there's a path defined for this symbol
-			path = symbolFn && symbolFn(
-				x, 
-				y, 
-				radius, 
-				options
-			),
-			
-			imageRegex = /^url\((.*?)\)$/,
-			imageSrc;
-			
-		
-		if (path) {
-			obj = this.path(path);
-			// expando properties for use in animate and attr
-			extend(obj, {
-				symbolName: symbol,
-				x: x,
-				y: y,
-				r: radius
-			});
-			if (options) {
-				extend(obj, options);
-			}
-			
-			
-		// image symbols
-		} else if (imageRegex.test(symbol)) {
-			imageSrc = symbol.match(imageRegex)[1];
-			
-			
-			// create the image
-			//obj = this.createElement('image').attr({
-			obj = this.image(imageSrc).attr({
-				visibility: HIDDEN
-			});
-			
-			// create a dummy JavaScript image to get the width and height  
-			createElement('img', {
-				onload: function() {
-					var img = this,
-						size = symbolSizes[img.src] || [img.width, img.height];
-					obj.attr({
-						x: mathRound(x - size[0] / 2) + PX,
-						y: mathRound(y - size[1] / 2) + PX,
-						width: size[0],
-						height: size[1],
-						visibility: 'inherit'
-					});
-				},
-				src: imageSrc
-			});
-				
-		// default circles
-		} else {
-			obj = this.circle (x, y, radius);
-		}
-		
-		return obj;
-	},
-	
-	/**
-	 * An extendable collection of functions for defining symbol paths.
-	 * 
-	 * @todo: Use size instead of radius? Radius makes sense only for circles.
-	 */
-	symbols: {
-		'square': function (x, y, radius) {
-			len = 0.707 * radius;
-			return [
-				M, x-len, y-len,
-				L, x+len, y-len,
-				x+len, y+len,
-				x-len, y+len,
-				'Z'
-			];
-		},
-			
-		'triangle': function (x, y, radius) {
-			return [
-				M, x, y-1.33 * radius,
-				L, x+radius, y + 0.67 * radius,
-				x-radius, y + 0.67 * radius,
-				'Z'
-			];
-		},
-			
-		'triangle-down': function (x, y, radius) {
-			return [
-				M, x, y + 1.33 * radius,
-				L, x-radius, y-0.67 * radius,
-				x+radius, y-0.67 * radius,
-				'Z'
-			];
-		},
-		'diamond': function (x, y, radius) {
-			return [
-				M, x, y-radius,
-				L, x+radius, y,
-				x, y+radius,
-				x-radius, y,
-				'Z'
-			];
-		},
-		'arc': function (x, y, radius, options) {
-			var start = options.start,
-				end = options.end;
-			return [
-				M,
-				x, 
-				y, 
-				L,
-				x + radius * mathCos(start),
-				y + radius * mathSin(start),
-				'A', // arcTo
-				radius, // x radius
-				radius, // y radius
-				0, // slanting
-				end - start < Math.PI ? 0 : 1, // long or short arc
-				1, // clockwise
-				x + radius * mathCos(end),
-				y + radius * mathSin(end),
-				'Z' // close
-			];
-		}
-	},
-	
-	/**
-	 * Define a clipping rectangle
-	 * @param {String} id
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} width
-	 * @param {Number} height
-	 */
-	clipRect: function (x, y, width, height) {
-		var wrapper,
-			id = PREFIX + idCounter++,
-			
-			clipPath = this.createElement('clipPath').attr({
-				id: id
-			}).add(this.defs);
-		
-		wrapper = this.rect(x, y, width, height, 0).add(clipPath);
-		wrapper.id = id;
-		
-		return wrapper;
-	},
-	
-	
-	/**
-	 * Take a color and return it if it's a string, make it a gradient if it's a
-	 * gradient configuration object
-	 * 
-	 * @param {Object} color The color or config object
-	 */
-	color: function(color, elem, prop) {
-		var colorObject,
-			regexRgba = /^rgba/;
-		if (color && color.linearGradient) {
-			var renderer = this,
-				//element = renderer.element,
-				strLinearGradient = 'linearGradient',
-				linearGradient = color[strLinearGradient],
-				id = PREFIX + idCounter++,
-				gradientObject,
-				stopColor,
-				stopOpacity;
-			/*var gradient = ctx.createLinearGradient.apply(ctx, val.linearGradient);
-			each (val.stops, function(stop) {
-				gradient.addColorStop(stop[0], stop[1]);
-			});
-			return gradient;*/
-			gradientObject = renderer.createElement(strLinearGradient).attr({
-				id: id,
-				gradientUnits: 'userSpaceOnUse',
-				x1: linearGradient[0],
-				y1: linearGradient[1],
-				x2: linearGradient[2],
-				y2: linearGradient[3]
-			}).add(renderer.defs);
-			
-			each(color.stops, function(stop) {
-				if (regexRgba.test(stop[1])) {
-					colorObject = Color(stop[1]);
-					stopColor = colorObject.get('rgb');
-					stopOpacity = colorObject.get('a');
-				} else {
-					stopColor = stop[1];
-					stopOpacity = 1;
-				}
-				renderer.createElement('stop').attr({
-					offset: stop[0],
-					'stop-color': stopColor,
-					'stop-opacity': stopOpacity
-				}).add(gradientObject);
-			});
-			
-			return 'url(#'+ id +')';
-			
-		// Safari (4), Chrome (5) and Batik can't show rgba.
-		} else if (regexRgba.test(color)) {
-			colorObject = Color(color);
-			attr(elem, prop +'-opacity', colorObject.get('a'));
-			
-			return colorObject.get('rgb');
-			
-			
-		} else {
-			return color;
-		}
-		
-	},
-	
-		
-	// rotated and aligned text
-	text: function(str, x, y, style, rotation, align) {
-		//if (str || str === 0) {
-		style = style || {};
-		align = align || 'left';
-		rotation = rotation || 0;
-		
-		// declare variables
-		var 
-			css, 
-			fill = style.color || '#000000',
-			defaultChartStyle = defaultOptions.chart.style,
-			attributes;
-	
-		x = mathRound(pick(x, 0));
-		y = mathRound(pick(y, 0));
-		
-		extend(style, {
-			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
-			fontSize: style.fontSize || defaultChartStyle.fontSize
-		});
-		
-		// prepare style
-		css = serializeCSS(style);
-		
-		// prepare attributes
-		attribs = {
-				x: x,
-				y: y,
-				text: str,
-				fill: fill,
-				style: css.replace(/"/g, "'")
-				
-			};
-			
-		if (rotation || align != 'left') {
-			attribs = extend(attribs, {
-				'text-anchor': { left: 'start', center: 'middle', right: 'end' }[align],
-				transform: 'rotate('+ rotation +' '+ x +' '+ y +')'
-
-			});
-		}
-
-		
-		return this.createElement('text').attr(attribs);
-		//}
-	}
-}; // end SVGRenderer
 
 /**
  * A wrapper object for SVG elements 
@@ -1886,13 +1328,6 @@ SVGElement.prototype = {
 					if (typeof value != 'string') { // join path
 						value = value.join(' ');
 					}
-					shadows = this.shadows;
-					if (shadows) {
-						i = shadows.length;
-						while (i--) {
-							attr(shadows[i], 'd', value);
-						}
-					}
 					
 				// update child tspans x values
 				} else if (key == 'x' && nodeName == 'text') { 
@@ -1930,7 +1365,7 @@ SVGElement.prototype = {
 				}
 				
 				// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)				
-				if (isWebKit && key == 'stroke-width' && value == 0) {
+				if (isWebKit && key == 'stroke-width' && value === 0) {
 					value = 0.000001;
 				}
 				
@@ -1962,12 +1397,12 @@ SVGElement.prototype = {
 				}
 				
 				// let the shadow follow the main element
-				if (this.shadows && /width|height|visibility|x|y/.test(key)) {
+				if (shadows && /^(width|height|visibility|x|y|d)$/.test(key)) {
+					i = shadows.length;
+					while (i--) {
+						attr(shadows[i], key, value);
+					}
 					
-					each(this.shadows, function(shadow) {
-						//shadow.setAttribute(key, value);
-						attr(shadow, key, value);
-					});
 				}
 				
 					
@@ -2252,6 +1687,554 @@ SVGElement.prototype = {
 
 
 
+/**
+ * The default SVG renderer
+ */
+var SVGRenderer = function() {
+	this.init.apply(this, arguments);
+};
+SVGRenderer.prototype = {
+	/**
+	 * Initialize the SVGRenderer
+	 * @param {Object} container
+	 * @param {Number} width
+	 * @param {Number} height
+	 */
+	init: function(container, width, height) {
+		var box = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		attr(box, {
+			width: width,
+			height: height,
+			xmlns: 'http://www.w3.org/2000/svg',
+			version: '1.1'
+		});
+		container.appendChild(box);
+		
+			
+		// object properties
+		//this.wrappers = [];
+		this.box = box;
+		this.defs = this.createElement('defs').add();
+		
+	},
+	
+	
+	/**
+	 * Create a wrapper for an SVG element
+	 * @param {Object} nodeName
+	 */
+	createElement: function(nodeName) {
+		var wrapper = new SVGElement();
+		wrapper.init(this, nodeName);
+		//this.wrappers.push(wrapper);
+		return wrapper;
+	},
+	
+	/*destroy: function() {
+		var wrappers = this.wrappers,
+			i = wrappers.length,
+			key;
+			
+		while (i--) {
+			wrappers[i].destroy();
+		}
+		
+		for (key in this) {
+			delete this[key];
+		}
+	},*/
+	
+	// parse a simple HTML string into SVG tspans
+	// todo: more general HTML parsing
+	buildText: function(textNode, str) {
+		var lines = str.toString().
+				replace(/<(b|strong)>/, '<span style="font-weight:bold">').
+				replace(/<(i|em)>/, '<span style="font-style:italic">').
+				replace(/<\/(b|strong|i|em)>/, '</span>').
+				split('<br/>'),
+			childNodes = textNode.childNodes,
+			parentX = attr(textNode, 'x'),
+			i;
+			
+		// remove old text
+		for (i = childNodes.length - 1; i >= 0; i--) {
+			textNode.removeChild(childNodes[i]);
+		}
+		
+		// single line
+		/*if (lines.length == 1) {
+			textNode.appendChild(doc.createTextNode(str));
+			
+		// multi lines or spans
+		} else {*/
+		
+		each (lines, function(line, lineNo) {
+			var spans, spanNo = 0;
+			
+			line = line.replace(/<span/, '|||<span').replace(/<\/span>/, '</span>|||');
+			spans = line.split('|||');
+			
+			each (spans, function (span) {
+				if (span !== '') {
+			
+					var attributes = {},
+						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan'),
+						styleRegex = /style="([0-9a-z:;\-]+)"/;
+					/*if (/^<b>(.*?)<\/b>$/.test(line)) {
+						//tspan.setAttribute('style', 'font-weight:bold');
+						attr(tspan, 'style', 'font-weight:bold');
+						line = line.replace(/^<b>(.*?)<\/b>$/, '$1');
+					}*/
+					if (styleRegex.test(span)) {
+						attr(tspan, 'style', span.match(styleRegex)[1]);
+					}
+					
+					span = span.replace(/<(.|\n)*?>/g, '');
+					//console.log('"'+ span +'"');
+					tspan.appendChild(doc.createTextNode(span));
+					//tspan.setAttribute('x', textNode.getAttribute('x'));
+					//tspan.setAttribute('dy', i ? 16 : 0); // line-height
+					if (!spanNo) { // first span in a line, align it to the left
+						attributes.x = parentX;
+					} else {
+						attributes.dx = 3; // space
+					}
+					if (lineNo) { // subsequent line, add the line height
+						attributes.dy = 16;
+					}
+					
+					attr(tspan, attributes);
+					
+					textNode.appendChild(tspan);
+					
+					spanNo++;
+				}
+			});
+			
+		});
+		
+		
+		//}
+	},
+	
+	/**
+	 * Make a straight line crisper by not spilling out to neighbour pixels
+	 * @param {Array} points
+	 * @param {Number} width
+	 * 
+	 * @todo shape-rendering: crispEdges can do the same for SVG, but what about VML?
+	 *       If VML doesn't have shape-rendering it might be better to keep this method for both.
+	 */
+	crispLine: function(points, width) {
+		// points format: [M, 0, 0, L, 100, 0]
+		// normalize to a crisp line
+		if (points[1] == points[4]) {
+			points[1] = points[4] = mathRound(points[1]) + (width % 2 / 2);
+		}
+		if (points[2] == points[5]) {
+			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
+		}
+		return points;
+	},
+	path: function (path) {
+		return this.createElement('path').attr({ 
+			d: path, 
+			fill: NONE
+		});
+	},
+	circle: function (x, y, r) {
+		var attr = typeof x == 'object' ?
+			x :
+			{
+				x: x,
+				y: y,
+				r: r
+			};
+		
+		return this.createElement('circle').attr(attr);
+	},
+	arc: function (x, y, r, start, end) {
+		// arcs are defined as symbols for the ability to set 
+		// attributes in attr and animate
+		
+		if (typeof x == 'object') {
+			y = x.y;
+			r = x.r;
+			start = x.start;
+			end = x.end;
+			x = x.x;
+		}
+		
+		return this.symbol('arc', x || 0, y || 0, r || 0, {
+			start: start || 0,
+			end: end || 0
+		});
+		/*return this.path([
+				M,
+				centerX, 
+				centerY, 
+				L,
+				centerX + radius * mathCos(start),
+				centerY + radius * mathSin(start),
+				'A', // arcTo
+				radius, // x radius
+				radius, // y radius
+				0, // slanting
+				end - start < Math.PI ? 0 : 1, // long or short arc
+				1, // clockwise
+				centerX + radius * mathCos(end),
+				centerY + radius * mathSin(end),
+				'z' // close
+			]);*/
+	},
+	rect: function (x, y, width, height, r, strokeWidth) {
+		
+		/*var normalizer = (strokeWidth || 0) % 2 / 2;
+
+		// normalize for crisp edges
+		x = mathRound(x || 0) + normalizer;
+		y = mathRound(y || 0) + normalizer;
+		width = mathRound((width || 0) - 2 * normalizer);
+		height = mathRound((height || 0) - 2 * normalizer);*/
+		
+		var attr = typeof x == 'object' ? 
+			x : // the attributes can be passed as the first argument
+			{
+				x: x,
+				y: y,
+				width: mathMax(width, 0),
+				height: mathMax(height, 0)
+			};			
+		
+		return this.createElement('rect').attr(extend(attr, {
+			rx: r || attr.r,
+			ry: r || attr.r,
+			fill: NONE
+		}));
+	},
+	/*text: function (x, y, text) {
+		return this.createElement('text').attr({
+				x: x,
+				y: y,
+				text: text
+			});
+	},*/
+	g: function(name) {
+		/*var obj = this.element('g');
+		return obj;*/
+		var attribs = defined(name) ?
+			{ 'class': PREFIX + name } :
+			{};
+			
+		return this.createElement('g').attr(attribs);
+	},
+	
+	/**
+	 * Display an image
+	 * @param {String} src
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} width
+	 * @param {Number} height
+	 */
+	image: function(src, x, y, width, height) {
+		var elemWrapper = this.createElement('image').attr({
+			x: x,
+			y: y,
+			width: width,
+			height: height,
+			preserveAspectRatio: NONE
+		});		
+		
+		// set the href in the xlink namespace
+		elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
+			'href', src);
+			
+		return elemWrapper;					
+	},
+	
+	/**
+	 * Draw a symbol out of pre-defined shape paths from the namespace 'symbol' object.
+	 * 
+	 * @param {Object} symbol
+	 * @param {Object} x
+	 * @param {Object} y
+	 * @param {Object} radius
+	 * @param {Object} options
+	 */
+	symbol: function(symbol, x, y, radius, options) {
+		
+		var obj,
+			
+			// get the symbol definition function
+			symbolFn = this.symbols[symbol],
+			
+			// check if there's a path defined for this symbol
+			path = symbolFn && symbolFn(
+				x, 
+				y, 
+				radius, 
+				options
+			),
+			
+			imageRegex = /^url\((.*?)\)$/,
+			imageSrc;
+			
+		
+		if (path) {
+			obj = this.path(path);
+			// expando properties for use in animate and attr
+			extend(obj, {
+				symbolName: symbol,
+				x: x,
+				y: y,
+				r: radius
+			});
+			if (options) {
+				extend(obj, options);
+			}
+			
+			
+		// image symbols
+		} else if (imageRegex.test(symbol)) {
+			imageSrc = symbol.match(imageRegex)[1];
+			
+			
+			// create the image
+			//obj = this.createElement('image').attr({
+			obj = this.image(imageSrc).attr({
+				visibility: HIDDEN
+			});
+			
+			// create a dummy JavaScript image to get the width and height  
+			createElement('img', {
+				onload: function() {
+					var img = this,
+						size = symbolSizes[img.src] || [img.width, img.height];
+					obj.attr({
+						x: mathRound(x - size[0] / 2) + PX,
+						y: mathRound(y - size[1] / 2) + PX,
+						width: size[0],
+						height: size[1],
+						visibility: 'inherit'
+					});
+				},
+				src: imageSrc
+			});
+				
+		// default circles
+		} else {
+			obj = this.circle (x, y, radius);
+		}
+		
+		return obj;
+	},
+	
+	/**
+	 * An extendable collection of functions for defining symbol paths.
+	 * 
+	 * @todo: Use size instead of radius? Radius makes sense only for circles.
+	 */
+	symbols: {
+		'square': function (x, y, radius) {
+			var len = 0.707 * radius;
+			return [
+				M, x-len, y-len,
+				L, x+len, y-len,
+				x+len, y+len,
+				x-len, y+len,
+				'Z'
+			];
+		},
+			
+		'triangle': function (x, y, radius) {
+			return [
+				M, x, y-1.33 * radius,
+				L, x+radius, y + 0.67 * radius,
+				x-radius, y + 0.67 * radius,
+				'Z'
+			];
+		},
+			
+		'triangle-down': function (x, y, radius) {
+			return [
+				M, x, y + 1.33 * radius,
+				L, x-radius, y-0.67 * radius,
+				x+radius, y-0.67 * radius,
+				'Z'
+			];
+		},
+		'diamond': function (x, y, radius) {
+			return [
+				M, x, y-radius,
+				L, x+radius, y,
+				x, y+radius,
+				x-radius, y,
+				'Z'
+			];
+		},
+		'arc': function (x, y, radius, options) {
+			var start = options.start,
+				end = options.end;
+			return [
+				M,
+				x, 
+				y, 
+				L,
+				x + radius * mathCos(start),
+				y + radius * mathSin(start),
+				'A', // arcTo
+				radius, // x radius
+				radius, // y radius
+				0, // slanting
+				end - start < Math.PI ? 0 : 1, // long or short arc
+				1, // clockwise
+				x + radius * mathCos(end),
+				y + radius * mathSin(end),
+				'Z' // close
+			];
+		}
+	},
+	
+	/**
+	 * Define a clipping rectangle
+	 * @param {String} id
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} width
+	 * @param {Number} height
+	 */
+	clipRect: function (x, y, width, height) {
+		var wrapper,
+			id = PREFIX + idCounter++,
+			
+			clipPath = this.createElement('clipPath').attr({
+				id: id
+			}).add(this.defs);
+		
+		wrapper = this.rect(x, y, width, height, 0).add(clipPath);
+		wrapper.id = id;
+		
+		return wrapper;
+	},
+	
+	
+	/**
+	 * Take a color and return it if it's a string, make it a gradient if it's a
+	 * gradient configuration object
+	 * 
+	 * @param {Object} color The color or config object
+	 */
+	color: function(color, elem, prop) {
+		var colorObject,
+			regexRgba = /^rgba/;
+		if (color && color.linearGradient) {
+			var renderer = this,
+				//element = renderer.element,
+				strLinearGradient = 'linearGradient',
+				linearGradient = color[strLinearGradient],
+				id = PREFIX + idCounter++,
+				gradientObject,
+				stopColor,
+				stopOpacity;
+			/*var gradient = ctx.createLinearGradient.apply(ctx, val.linearGradient);
+			each (val.stops, function(stop) {
+				gradient.addColorStop(stop[0], stop[1]);
+			});
+			return gradient;*/
+			gradientObject = renderer.createElement(strLinearGradient).attr({
+				id: id,
+				gradientUnits: 'userSpaceOnUse',
+				x1: linearGradient[0],
+				y1: linearGradient[1],
+				x2: linearGradient[2],
+				y2: linearGradient[3]
+			}).add(renderer.defs);
+			
+			each(color.stops, function(stop) {
+				if (regexRgba.test(stop[1])) {
+					colorObject = Color(stop[1]);
+					stopColor = colorObject.get('rgb');
+					stopOpacity = colorObject.get('a');
+				} else {
+					stopColor = stop[1];
+					stopOpacity = 1;
+				}
+				renderer.createElement('stop').attr({
+					offset: stop[0],
+					'stop-color': stopColor,
+					'stop-opacity': stopOpacity
+				}).add(gradientObject);
+			});
+			
+			return 'url(#'+ id +')';
+			
+		// Safari (4), Chrome (5) and Batik can't show rgba.
+		} else if (regexRgba.test(color)) {
+			colorObject = Color(color);
+			attr(elem, prop +'-opacity', colorObject.get('a'));
+			
+			return colorObject.get('rgb');
+			
+			
+		} else {
+			return color;
+		}
+		
+	},
+	
+		
+	// rotated and aligned text
+	text: function(str, x, y, style, rotation, align) {
+		//if (str || str === 0) {
+		style = style || {};
+		align = align || 'left';
+		rotation = rotation || 0;
+		
+		// declare variables
+		var attribs,
+			css, 
+			fill = style.color || '#000000',
+			defaultChartStyle = defaultOptions.chart.style;
+	
+		x = mathRound(pick(x, 0));
+		y = mathRound(pick(y, 0));
+		
+		extend(style, {
+			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
+			fontSize: style.fontSize || defaultChartStyle.fontSize
+		});
+		
+		// prepare style
+		css = serializeCSS(style);
+		
+		// prepare attributes
+		attribs = {
+				x: x,
+				y: y,
+				text: str,
+				fill: fill,
+				style: css.replace(/"/g, "'")
+				
+			};
+			
+		if (rotation || align != 'left') {
+			attribs = extend(attribs, {
+				'text-anchor': { left: 'start', center: 'middle', right: 'end' }[align],
+				transform: 'rotate('+ rotation +' '+ x +' '+ y +')'
+
+			});
+		}
+
+		
+		return this.createElement('text').attr(attribs);
+		//}
+	}
+}; // end SVGRenderer
+
+
+
+
 /* **************************************************************************** 
  *                                                                            * 
  * START OF INTERNET EXPLORER < 8 SPECIFIC CODE                               *
@@ -2262,481 +2245,6 @@ SVGElement.prototype = {
  *****************************************************************************/
 var VMLRenderer;
 if (!hasSVG) {
-	
-/**
- * The VML renderer
- */
-VMLRenderer = function() {
-	this.init.apply(this, arguments);
-}
-VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
-	/**
-	 * Initialize the VMLRenderer
- 	 * @param {Object} container
- 	 * @param {Number} width
- 	 * @param {Number} height
-	 */
-	init: function(container, width, height) {
-		
-		// generate the containing box
-		var box = createElement(DIV, null, {
-				width: width + PX,
-				height: height + PX
-			}, container);
-		
-		// renderer properties
-		//this.wrappers = [];
-		this.box = box;
-		this.urn = 'urn:schemas-microsoft-com:vml';
-		
-		// create namespace and style behaviour
-		if (!doc.namespaces['v']) {
-			// better performance but mouse tracking fails:
-			//doc.namespaces.add('v_dummy', 'urn:schemas-microsoft-com:vml', '#default#VML');
-			
-			doc.namespaces.add('v', this.urn);
-			
-			// setup default css
-			doc.createStyleSheet().cssText = 
-				'v\\:group, v\\:oval, v\\:path, v\\:rect, v\\:roundrect, v\\:shape, '+
-				'v\\:line, v\\:fill, v\\:stroke, v\\:textpath '+
-				'{ behavior:url(#default#VML); display:inline-block } ';
-			/*if (!doc.styleSheets['hc']) {
-		        var ss = doc.createStyleSheet();
-		        ss.owningElement.id = 'hc';
-		        ss.cssText = 'canvas{display:inline-block;overflow:hidden;' +
-		            // default size is 300x150 in Gecko and Opera
-		            'text-align:left;width:300px;height:150px}' +
-		            'v\\:*{behavior:url(#default#VML)}' +
-		            'o\\:*{behavior:url(#default#VML)}';
-		
-		    }*/
-		}
-		
-
-
-	},
-	
-
-	
-	/**
-	 * Define a clipping rectangle. In VML it is accomplished by storing the values
-	 * for setting the CSS style to all associated members.
-	 * 
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} width
-	 * @param {Number} height
-	 */
-	clipRect: function (x, y, width, height) {
-				
-		// create a dummy element
-		var clipRect = this.createElement();
-		
-		// mimic a rectangle with its style object for automatic updating in attr
-		return extend(clipRect, {
-			members: [],
-			element: {
-				style: {
-					left: x,
-					top: y,
-					width: width,
-					height: height
-				}
-			},
-			getCSS: function(inverted) {
-				var elemStyle = clipRect.element.style,
-					top = elemStyle.top,
-					left = elemStyle.left,
-					right = left + elemStyle.width,
-					bottom = top + elemStyle.height;
-				return 'rect('+ 
-					(inverted ? left : top) + 'px,'+ 
-					(inverted ? bottom : right) + 'px,'+ 
-					(inverted ? right : bottom) + 'px,'+ 
-					(inverted ? top : left) +'px)';
-			},
-			
-			// used in attr and animation to update the clipping of all members
-			updateClipping: function() {
-				each (clipRect.members, function(member) {
-					member.css({ clip: clipRect.getCSS(member.flipX) });
-				});
-			}
-		});
-		
-	},
-	
-	/**
-	 * Create a wrapper for an VML element
-	 * @param {String} nodeName
-	 * 
-	 * @todo: make elementtype a renderer property and use the same method as SVG?
-	 */
-	createElement: function(nodeName) {
-		var wrapper = new VMLElement();
-		wrapper.init(this, nodeName);
-		//this.wrappers.push(wrapper);
-		return wrapper;
-	},
-	
-	/**
-	 * Take a color and return it if it's a string, make it a gradient if it's a
-	 * gradient configuration object, and apply opacity.
-	 * 
-	 * VML gradient shortcomings:
-	 * - only the first stop's opacity will be rendered
-	 * 
-	 * @param {Object} color The color or config object
-	 */
-	color: function(color, elem, prop) {
-		var colorObject,
-			regexRgba = /^rgba/,
-			subNode;
-			
-		if (color && color.linearGradient) {
-			
-			var stopColor, 
-				stopOpacity,
-				linearGradient = color.linearGradient,
-				angle;
-			
-			
-			subNode = elem.getElementsByTagName(prop)[0] ||
-				createElement('v:'+ prop, null, null, elem);
-				
-			each(color.stops, function(stop, i) {
-				if (regexRgba.test(stop[1])) {
-					colorObject = Color(stop[1]);
-					stopColor = colorObject.get('rgb');
-					stopOpacity = colorObject.get('a');
-				} else {
-					stopColor = stop[1];
-					stopOpacity = 1;
-				}
-				
-				if (i == 0) {
-					subNode.color = stopColor;
-					subNode.opacity = stopOpacity;
-				} else {
-					subNode.color2 = stopColor;
-					subNode['o:opacity2'] = stopOpacity; // VML bug
-				}
-			});
-			
-			// calculate the angle based on the linear vector
-			angle = 90  - math.atan(
-				(linearGradient[3] - linearGradient[1]) / // y vector
-				(linearGradient[2] - linearGradient[0]) // x vector
-				) * 180 / math.PI;
-			
-			
-			extend(subNode, {
-				type: 'gradient',
-				angle: angle,
-				focus: '100%'
-			});
-		
-		// if the color is an rgba color, split it and add a fill node
-		// to hold the opacity component
-		} else if (regexRgba.test(color)) {
-			
-			colorObject = Color(color);
-			
-			subNode = elem.getElementsByTagName(prop)[0] ||
-				createElement('v:'+prop, null, null, elem);
-				
-			subNode.opacity = colorObject.get('a');
-			
-			return colorObject.get('rgb');
-			
-			
-		} else {
-			return color;
-		}
-		
-	},
-	// rotated and aligned text
-	text: function(str, x, y, style, rotation, align) {
-		//if (str || str === 0) {
-		style = style || {};
-		align = align || 'left';
-		rotation = rotation || 0;
-		
-		// declare variables
-		var elemWrapper, 
-			elem, 
-			spanWidth,
-			lineHeight = mathRound(parseInt(style.fontSize || 12) * 1.2),
-			defaultChartStyle = defaultOptions.chart.style; 
-	
-		x = mathRound(x);
-		y = mathRound(y);
-		
-		// set styles
-		extend(style, {
-			color: style.color || '#000000',
-			//margin: 0, // margins are deprecated from 2.0
-			whiteSpace: 'nowrap',
-			// get font metrics for correct sizing
-			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
-			fontSize: style.fontSize || defaultChartStyle.fontSize
-		});
-			
-		// create a simple span for the non-rotated text
-		if (!rotation) { 
-			elemWrapper = this.createElement('span').attr({
-				x: x,
-				y: y - lineHeight,
-				text: str
-			});
-			elem = elemWrapper.element;
-			elem.lineHeight = lineHeight; // used in attr
-			
-			css(elem, style);
-			
-			
-			// fix the position according to align
-			if (align != 'left') {	
-				spanWidth = elemWrapper.getBBox().width;
-			
-				css(elem, {
-					left: (x - spanWidth / { right: 1, center: 2 }[align]) + PX
-				});				
-			}
-		
-		
-		// to achieve rotated text, the ie text is drawn on a vector line that
-		// is extrapolated to the left or right or both depending on the 
-		// alignment of the text
-		} else {
-			var radians = (rotation || 0) * math.PI * 2 / 360, // deg to rad
-				costheta = mathCos(radians),
-				sintheta = mathSin(radians),
-				length = 10, // the text is not likely to be longer than this
-				baselineCorrection = lineHeight * 0.3,
-				left = align == 'left',
-				right = align == 'right',
-				x1 = left ? 	x : x - length * costheta,
-				x2 = right ?	x : x + length * costheta,
-				y1 = left ? 	y : y - length * sintheta,
-				y2 = right ?	y : y + length * sintheta;
-				
-				
-			// IE seems to always draw the text with v-text-align middle, so we need 
-			// to correct for that by moving the path
-			x1 += baselineCorrection * sintheta;
-			x2 += baselineCorrection * sintheta;
-			y1 -= baselineCorrection * costheta;
-			y2 -= baselineCorrection * costheta;
-			
-			// strange painting bug
-			if (mathAbs(x1 - x2) < 0.1) x1 += 0.1;
-			if (mathAbs(y1 - y2) < 0.1) y1 += 0.1;
-			
-			/*x1 = mathRound(x1);
-			y1 = mathRound(y1);
-			x2 = mathRound(x2);
-			y2 = mathRound(y2);*/
-			
-			
-			elemWrapper = this.createElement('v:line').attr({
-				from: x1 +', '+ y1,
-				to: x2 +', '+ y2
-			});
-			elem = elemWrapper.element;
-			
-			createElement('v:fill', {
-				on: true,
-				color: style.color
-			}, null, elem);
-			
-			createElement('v:path', {
-				textpathok: true
-			}, null, elem);
-			
-			
-			// for reasons unknown, the style must be set on init
-			var textpath = createElement(
-				'<v:textpath style="v-text-align:'+ align +';'+ serializeCSS(style) +
-				'" on="true" string="'+ str +'">',
-			null, null, elem);
-			
-		}
-		
-		return elemWrapper;
-	},
-	
-	/*buildText: function(textNode, str) {
-	},*/
-	
-	path: function (path) {
-		// create the shape
-		return this.createElement('v:shape').attr({
-				// subpixel precision down to 0.1 (width and height = 10px)
-				coordsize: '100,100',
-				d: path
-			});
-		
-		//wrapper.pathElem = createElement('v:path', null, null, wrapper.element);
-		
-		//wrapper.attr({ d: path });
-		
-		
-		//return wrapper;
-	},
-	
-	circle: function(x, y, r) {
-		return this.path(this.symbols.circle(x, y, r));
-	},
-	
-	/**
-	 * Create a group using an outer div and an inner v:group to allow rotating 
-	 * and flipping. A simple v:group would have problems with positioning
-	 * child HTML elements and CSS clip.
-	 * 
-	 * @param {String} name The name of the group
-	 */
-	g: function(name) {
-		var wrapper,
-			attribs;
-		
-		// set the class name	
-		if (name) {
-			attribs = { 'className': PREFIX + name, 'class': PREFIX + name };
-		}
-			
-		// the div to hold HTML and clipping	
-		wrapper = this.createElement(DIV).attr(attribs);
-		
-		// the v:group to hold other VML items
-		wrapper.groupElement = createElement('v:group', attribs, {
-			position: ABSOLUTE,
-			left: 0,
-			top: 0,
-			width: 1000,
-			height: 1000
-		}, wrapper.element);
-			
-		
-		return wrapper;
-	},
-	
-	/**
-	 * VML override to create a regular HTML image
-	 * @param {String} src
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} width
-	 * @param {Number} height
-	 */
-	image: function(src, x, y, width, height) {
-		return this.createElement('img')
-			.attr({ src: src })
-			.css({
-				left: x,
-				top: y,
-				width: width,
-				height: height
-			});
-	},
-	
-	/**
-	 * VML override of rect to set the arcsize
-	 */
-	rect: function(x, y, width, height, r) {
-		var obj = SVGRenderer.prototype.rect.apply(this, arguments);
-		
-		obj.r = r; // used in attr
-		obj.arcsize = r / (math.min(width, height))
-		
-		// todo: do this in attr
-		attr(obj.element, 'arcsize', obj.arcsize);
-		
-		return obj;
-	},
-	
-
-	
-	/**
-	 * Draw a symbol of a predefined type. Overrides the SVG method only when 
-	 * drawing image symbols.
-	 * 
-	 * @param {String} symbol
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} radius
-	 */
-	symbol: function(symbol, x, y, radius) {
-		var wrapper,
-			imageRegex = /^url\((.*?)\)$/;
-		
-		// image symbols
-		if (imageRegex.test(symbol)) {
-		
-			wrapper = this.createElement('img').attr({
-				onload: function() {
-					var img = this,
-						size = [img.width, img.height];
-					css(img, {
-						left: mathRound(x - size[0] / 2),
-						top: mathRound(y - size[1] / 2)
-					});
-				},
-				src: symbol.match(imageRegex)[1]
-			});
-		} else {
-			wrapper = SVGRenderer.prototype.symbol.apply(this, arguments);
-		}
-
-		return wrapper;
-	},
-	
-	/**
-	 * Symbol definitions that override the parent SVG renderer's symbols
-	 * 
-	 */
-	symbols: {
-		// VML specific arc function
-		arc: function (x, y, r, options) {
-			var start = options.start,
-				end = options.end;
-			return [
-				M,
-				x,
-				y,
-				'wa', // clockwisearcto
-				x - r, // left
-				y - r, // top
-				x + r, // right
-				y + r, // bottom
-				x + r * mathCos(start), // start x
-				y + r * mathSin(start), // start y
-				x + r * mathCos(end), // end x
-				y + r * mathSin(end), // end y
-				//'x', // finish path
-				'e' // close
-			];
-			
-		},
-		// Add circle symbol path. This performs significantly faster than v:oval.
-		circle: function (x, y, r) {
-			return [
-				'wa', // clockwisearcto
-				x - r, // left
-				y - r, // top
-				x + r, // right
-				y + r, // bottom
-				x + r * 1, // start x
-				y + r * 0, // start y
-				x + r * 1, // end x
-				y + r * 0, // end y
-				//'x', // finish path
-				'e' // close
-			];
-		}
-	}
-});
 
 
 /**
@@ -2748,11 +2256,8 @@ var VMLElement = extendClass( SVGElement, {
 		// one to one tag names
 		nodeName = {
 			circle: 'v:oval',
-			//g: 'v:group',
-			//g: 'div',
 			rect: 'v:roundrect',
 			path: 'v:shape'
-			//text: 'span'
 		}[nodeName] || nodeName;
 		
 		// prepare style
@@ -2770,10 +2275,12 @@ var VMLElement = extendClass( SVGElement, {
 		
 		
 		// create element with default attributes and style
-		if (nodeName) this.element = createElement(nodeName, {
-			filled: false,
-			stroked: false
-		}, style);
+		if (nodeName) {
+			this.element = createElement(nodeName, {
+				filled: false,
+				stroked: false
+			}, style);
+		}
 		
 		
 		
@@ -2794,8 +2301,8 @@ var VMLElement = extendClass( SVGElement, {
 			// VML elements are added to the v:group element so they can be rotated.
 			// The exception is line (always text paths), that won't display inside
 			// a group
-			if (parent && parent.groupElement && element.tagUrn == renderer.urn
-					&& element.tagName != 'line') {
+			if (parent && parent.groupElement && element.tagUrn == renderer.urn &&
+					element.tagName != 'line') {
 				parentNode = parent.groupElement;
 			}
 			
@@ -2830,14 +2337,13 @@ var VMLElement = extendClass( SVGElement, {
 		var key, 
 			value, 
 			i, 
-			child,
 			element = this.element,
 			elemStyle = element.style,
 			nodeName = element.nodeName,
 			renderer = this.renderer,
 			parentNode = element.parentNode,
 			hasSetSymbolSize,
-			shadows,
+			shadows = this.shadows,
 			skipAttr,
 			ret = this;
 			
@@ -2860,7 +2366,7 @@ var VMLElement = extendClass( SVGElement, {
 				ret = parseInt(elemStyle[{ 
 					x: 'left', 
 					y: 'top'
-				}[key] || key]);
+				}[key] || key], 10);
 			}
 			
 			
@@ -2876,22 +2382,26 @@ var VMLElement = extendClass( SVGElement, {
 					key = 'path';
 					
 					// convert paths 
-					value = map(value, function(item) {
-						var ret = item;
+					//value = map(value, function(item) {
+					i = value.length;
+					while (i--) {
+						
 						
 						// Multiply by 10 to allow subpixel precision.
 						// Substracting half a pixel seems to make the coordinates
 						// align with SVG, but this hasn't been tested thoroughly
-						if (typeof item == 'number') ret = mathRound(item * 10) - 5;
-						
+						if (typeof value[i] == 'number') {
+							value[i] = mathRound(value[i] * 10) - 5;
+						}
 						// close the path
-						else if (item == 'Z') ret = 'x';
+						else if (value[i] == 'Z') {
+							value[i] = 'x';
+						}
 						
-						return ret;
-					}).join(' ');
+					}
+					value = value.join(' ');
 					
 					// update shadows
-					shadows = this.shadows;
 					if (shadows) {
 						i = shadows.length;
 						while (i--) {
@@ -2904,7 +2414,7 @@ var VMLElement = extendClass( SVGElement, {
 				} else if (/^(width|height)$/.test(key)) {
 					
 					// VML bug: selection fill color becomes white when zero width or height
-					if (value == 0 && element.className == PREFIX +'selection-marker') {
+					if (value === 0 && element.className == PREFIX +'selection-marker') {
 						value = 1;
 					}
 					
@@ -2928,7 +2438,9 @@ var VMLElement = extendClass( SVGElement, {
 					}
 					
 					// clipping rectangle special
-					if (this.updateClipping) this.updateClipping();
+					if (this.updateClipping) {
+						this.updateClipping();
+					}
 					
 					skipAttr = true;
 					
@@ -3065,13 +2577,13 @@ var VMLElement = extendClass( SVGElement, {
 				
 					
 				// let the shadow follow the main element
-				if (this.shadows && /width|height|visibility|x|y/.test(key)) {
-					
-					each(this.shadows, function(shadow) {
+				if (shadows && /^(width|height|visibility|x|y)/.test(key)) {
+					i = shadows.length;
+					while (i--) {
 						var style = {};
 						style[{ x: 'left', y: 'top' }[key] || key] = value;
-						css(shadow, style);
-					});
+						css(shadows[i], style);
+					}
 				}
 				
 				
@@ -3114,7 +2626,7 @@ var VMLElement = extendClass( SVGElement, {
 		clipMembers.push(wrapper);
 		wrapper.destroyClip = function() {
 			clipMembers.splice(index, 1);
-		}
+		};
 		return wrapper.css({ clip: clipRect.getCSS(wrapper.flipX) });
 	},
 	
@@ -3209,7 +2721,7 @@ var VMLElement = extendClass( SVGElement, {
 	on: function(eventType, handler) {
 		// simplest possible event model for internal use
 		this.element['on'+ eventType] = function() {
-			var evt = window.event;
+			var evt = win.event;
 			evt.target = evt.srcElement;
 			handler(evt);
 		};
@@ -3313,6 +2825,482 @@ var VMLElement = extendClass( SVGElement, {
 	
 	}
 });
+	
+/**
+ * The VML renderer
+ */
+VMLRenderer = function() {
+	this.init.apply(this, arguments);
+};
+VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
+	/**
+	 * Initialize the VMLRenderer
+	 * @param {Object} container
+	 * @param {Number} width
+	 * @param {Number} height
+	 */
+	init: function(container, width, height) {
+		
+		// generate the containing box
+		var box = createElement(DIV, null, {
+				width: width + PX,
+				height: height + PX
+			}, container);
+		
+		// renderer properties
+		//this.wrappers = [];
+		this.box = box;
+		this.urn = 'urn:schemas-microsoft-com:vml';
+		
+		// create namespace and style behaviour
+		if (!doc.namespaces.v) {
+			// better performance but mouse tracking fails:
+			//doc.namespaces.add('v_dummy', 'urn:schemas-microsoft-com:vml', '#default#VML');
+			
+			doc.namespaces.add('v', this.urn);
+			
+			// setup default css
+			doc.createStyleSheet().cssText = 
+				'v\\:group, v\\:oval, v\\:path, v\\:rect, v\\:roundrect, v\\:shape, '+
+				'v\\:line, v\\:fill, v\\:stroke, v\\:textpath '+
+				'{ behavior:url(#default#VML); display:inline-block } ';
+			/*if (!doc.styleSheets['hc']) {
+		        var ss = doc.createStyleSheet();
+		        ss.owningElement.id = 'hc';
+		        ss.cssText = 'canvas{display:inline-block;overflow:hidden;' +
+		            // default size is 300x150 in Gecko and Opera
+		            'text-align:left;width:300px;height:150px}' +
+		            'v\\:*{behavior:url(#default#VML)}' +
+		            'o\\:*{behavior:url(#default#VML)}';
+		
+		    }*/
+		}
+		
+
+
+	},
+	
+
+	
+	/**
+	 * Define a clipping rectangle. In VML it is accomplished by storing the values
+	 * for setting the CSS style to all associated members.
+	 * 
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} width
+	 * @param {Number} height
+	 */
+	clipRect: function (x, y, width, height) {
+				
+		// create a dummy element
+		var clipRect = this.createElement();
+		
+		// mimic a rectangle with its style object for automatic updating in attr
+		return extend(clipRect, {
+			members: [],
+			element: {
+				style: {
+					left: x,
+					top: y,
+					width: width,
+					height: height
+				}
+			},
+			getCSS: function(inverted) {
+				var elemStyle = clipRect.element.style,
+					top = elemStyle.top,
+					left = elemStyle.left,
+					right = left + elemStyle.width,
+					bottom = top + elemStyle.height;
+				return 'rect('+ 
+					(inverted ? left : top) + 'px,'+ 
+					(inverted ? bottom : right) + 'px,'+ 
+					(inverted ? right : bottom) + 'px,'+ 
+					(inverted ? top : left) +'px)';
+			},
+			
+			// used in attr and animation to update the clipping of all members
+			updateClipping: function() {
+				each (clipRect.members, function(member) {
+					member.css({ clip: clipRect.getCSS(member.flipX) });
+				});
+			}
+		});
+		
+	},
+	
+	/**
+	 * Create a wrapper for an VML element
+	 * @param {String} nodeName
+	 * 
+	 * @todo: make elementtype a renderer property and use the same method as SVG?
+	 */
+	createElement: function(nodeName) {
+		var wrapper = new VMLElement();
+		wrapper.init(this, nodeName);
+		//this.wrappers.push(wrapper);
+		return wrapper;
+	},
+	
+	/**
+	 * Take a color and return it if it's a string, make it a gradient if it's a
+	 * gradient configuration object, and apply opacity.
+	 * 
+	 * VML gradient shortcomings:
+	 * - only the first stop's opacity will be rendered
+	 * 
+	 * @param {Object} color The color or config object
+	 */
+	color: function(color, elem, prop) {
+		var colorObject,
+			regexRgba = /^rgba/,
+			subNode;
+			
+		if (color && color.linearGradient) {
+			
+			var stopColor, 
+				stopOpacity,
+				linearGradient = color.linearGradient,
+				angle;
+			
+			
+			subNode = elem.getElementsByTagName(prop)[0] ||
+				createElement('v:'+ prop, null, null, elem);
+				
+			each(color.stops, function(stop, i) {
+				if (regexRgba.test(stop[1])) {
+					colorObject = Color(stop[1]);
+					stopColor = colorObject.get('rgb');
+					stopOpacity = colorObject.get('a');
+				} else {
+					stopColor = stop[1];
+					stopOpacity = 1;
+				}
+				
+				if (!i) { // first
+					subNode.color = stopColor;
+					subNode.opacity = stopOpacity;
+				} else {
+					subNode.color2 = stopColor;
+					subNode['o:opacity2'] = stopOpacity; // VML bug
+				}
+			});
+			
+			// calculate the angle based on the linear vector
+			angle = 90  - math.atan(
+				(linearGradient[3] - linearGradient[1]) / // y vector
+				(linearGradient[2] - linearGradient[0]) // x vector
+				) * 180 / math.PI;
+			
+			
+			extend(subNode, {
+				type: 'gradient',
+				angle: angle,
+				focus: '100%'
+			});
+		
+		// if the color is an rgba color, split it and add a fill node
+		// to hold the opacity component
+		} else if (regexRgba.test(color)) {
+			
+			colorObject = Color(color);
+			
+			subNode = elem.getElementsByTagName(prop)[0] ||
+				createElement('v:'+prop, null, null, elem);
+				
+			subNode.opacity = colorObject.get('a');
+			
+			return colorObject.get('rgb');
+			
+			
+		} else {
+			return color;
+		}
+		
+	},
+	// rotated and aligned text
+	text: function(str, x, y, style, rotation, align) {
+		//if (str || str === 0) {
+		style = style || {};
+		align = align || 'left';
+		rotation = rotation || 0;
+		
+		// declare variables
+		var elemWrapper, 
+			elem, 
+			spanWidth,
+			lineHeight = mathRound(parseInt(style.fontSize || 12, 10) * 1.2),
+			defaultChartStyle = defaultOptions.chart.style; 
+	
+		x = mathRound(x);
+		y = mathRound(y);
+		
+		// set styles
+		extend(style, {
+			color: style.color || '#000000',
+			//margin: 0, // margins are deprecated from 2.0
+			whiteSpace: 'nowrap',
+			// get font metrics for correct sizing
+			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
+			fontSize: style.fontSize || defaultChartStyle.fontSize
+		});
+			
+		// create a simple span for the non-rotated text
+		if (!rotation) { 
+			elemWrapper = this.createElement('span').attr({
+				x: x,
+				y: y - lineHeight,
+				text: str
+			});
+			elem = elemWrapper.element;
+			elem.lineHeight = lineHeight; // used in attr
+			
+			css(elem, style);
+			
+			
+			// fix the position according to align
+			if (align != 'left') {	
+				spanWidth = elemWrapper.getBBox().width;
+			
+				css(elem, {
+					left: (x - spanWidth / { right: 1, center: 2 }[align]) + PX
+				});				
+			}
+		
+		
+		// to achieve rotated text, the ie text is drawn on a vector line that
+		// is extrapolated to the left or right or both depending on the 
+		// alignment of the text
+		} else {
+			var radians = (rotation || 0) * math.PI * 2 / 360, // deg to rad
+				costheta = mathCos(radians),
+				sintheta = mathSin(radians),
+				length = 10, // the text is not likely to be longer than this
+				baselineCorrection = lineHeight * 0.3,
+				left = align == 'left',
+				right = align == 'right',
+				x1 = left ?     x : x - length * costheta,
+				x2 = right ?    x : x + length * costheta,
+				y1 = left ?     y : y - length * sintheta,
+				y2 = right ?    y : y + length * sintheta;
+				
+				
+			// IE seems to always draw the text with v-text-align middle, so we need 
+			// to correct for that by moving the path
+			x1 += baselineCorrection * sintheta;
+			x2 += baselineCorrection * sintheta;
+			y1 -= baselineCorrection * costheta;
+			y2 -= baselineCorrection * costheta;
+			
+			// strange painting bug.
+			// todo: is this still valid in 2.0?
+			if (mathAbs(x1 - x2) < 0.1) {
+				x1 += 0.1;
+			}
+			if (mathAbs(y1 - y2) < 0.1) {
+				y1 += 0.1;
+			}
+			
+			elemWrapper = this.createElement('v:line').attr({
+				from: x1 +', '+ y1,
+				to: x2 +', '+ y2
+			});
+			elem = elemWrapper.element;
+			
+			createElement('v:fill', {
+				on: true,
+				color: style.color
+			}, null, elem);
+			
+			createElement('v:path', {
+				textpathok: true
+			}, null, elem);
+			
+			
+			// for reasons unknown, the style must be set on init
+			createElement(
+				'<v:textpath style="v-text-align:'+ align +';'+ serializeCSS(style) +
+				'" on="true" string="'+ str +'">',
+			null, null, elem);
+			
+		}
+		
+		return elemWrapper;
+	},
+	
+	/*buildText: function(textNode, str) {
+	},*/
+	
+	path: function (path) {
+		// create the shape
+		return this.createElement('v:shape').attr({
+				// subpixel precision down to 0.1 (width and height = 10px)
+				coordsize: '100,100',
+				d: path
+			});
+		
+		//wrapper.pathElem = createElement('v:path', null, null, wrapper.element);
+		
+		//wrapper.attr({ d: path });
+		
+		
+		//return wrapper;
+	},
+	
+	circle: function(x, y, r) {
+		return this.path(this.symbols.circle(x, y, r));
+	},
+	
+	/**
+	 * Create a group using an outer div and an inner v:group to allow rotating 
+	 * and flipping. A simple v:group would have problems with positioning
+	 * child HTML elements and CSS clip.
+	 * 
+	 * @param {String} name The name of the group
+	 */
+	g: function(name) {
+		var wrapper,
+			attribs;
+		
+		// set the class name	
+		if (name) {
+			attribs = { 'className': PREFIX + name, 'class': PREFIX + name };
+		}
+			
+		// the div to hold HTML and clipping	
+		wrapper = this.createElement(DIV).attr(attribs);
+		
+		// the v:group to hold other VML items
+		wrapper.groupElement = createElement('v:group', attribs, {
+			position: ABSOLUTE,
+			left: 0,
+			top: 0,
+			width: 1000,
+			height: 1000
+		}, wrapper.element);
+			
+		
+		return wrapper;
+	},
+	
+	/**
+	 * VML override to create a regular HTML image
+	 * @param {String} src
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} width
+	 * @param {Number} height
+	 */
+	image: function(src, x, y, width, height) {
+		return this.createElement('img')
+			.attr({ src: src })
+			.css({
+				left: x,
+				top: y,
+				width: width,
+				height: height
+			});
+	},
+	
+	/**
+	 * VML override of rect to set the arcsize
+	 */
+	rect: function(x, y, width, height, r) {
+		var obj = SVGRenderer.prototype.rect.apply(this, arguments);
+		
+		obj.r = r; // used in attr
+		obj.arcsize = r / (math.min(width, height));
+		
+		// todo: do this in attr
+		attr(obj.element, 'arcsize', obj.arcsize);
+		
+		return obj;
+	},
+	
+
+	
+	/**
+	 * Draw a symbol of a predefined type. Overrides the SVG method only when 
+	 * drawing image symbols.
+	 * 
+	 * @param {String} symbol
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} radius
+	 */
+	symbol: function(symbol, x, y, radius) {
+		var wrapper,
+			imageRegex = /^url\((.*?)\)$/;
+		
+		// image symbols
+		if (imageRegex.test(symbol)) {
+		
+			wrapper = this.createElement('img').attr({
+				onload: function() {
+					var img = this,
+						size = [img.width, img.height];
+					css(img, {
+						left: mathRound(x - size[0] / 2),
+						top: mathRound(y - size[1] / 2)
+					});
+				},
+				src: symbol.match(imageRegex)[1]
+			});
+		} else {
+			wrapper = SVGRenderer.prototype.symbol.apply(this, arguments);
+		}
+
+		return wrapper;
+	},
+	
+	/**
+	 * Symbol definitions that override the parent SVG renderer's symbols
+	 * 
+	 */
+	symbols: {
+		// VML specific arc function
+		arc: function (x, y, r, options) {
+			var start = options.start,
+				end = options.end;
+			return [
+				M,
+				x,
+				y,
+				'wa', // clockwisearcto
+				x - r, // left
+				y - r, // top
+				x + r, // right
+				y + r, // bottom
+				x + r * mathCos(start), // start x
+				y + r * mathSin(start), // start y
+				x + r * mathCos(end), // end x
+				y + r * mathSin(end), // end y
+				//'x', // finish path
+				'e' // close
+			];
+			
+		},
+		// Add circle symbol path. This performs significantly faster than v:oval.
+		circle: function (x, y, r) {
+			return [
+				'wa', // clockwisearcto
+				x - r, // left
+				y - r, // top
+				x + r, // right
+				y + r, // bottom
+				x + r * 1, // start x
+				y + r * 0, // start y
+				x + r * 1, // end x
+				y + r * 0, // end y
+				//'x', // finish path
+				'e' // close
+			];
+		}
+	}
+});
+
+
 
 }
 /* **************************************************************************** 
@@ -3361,14 +3349,16 @@ function Chart (options) {
 		//container,
 		chartEvents = optionsChart.events,
 		eventType,
-		imagemap,
+		getAlignment, // function
+		isInsidePlot, // function
+		//imagemap,
 		tooltip,
 		mouseIsDown,
 		//backgroundLayer = new Layer('chart-background', container),
 		//chartHeight, 
 		//chartWidth,
 		loadingLayer,
-		plotLayer,
+		//plotLayer,
 		plotHeight,
 		plotWidth,
 		plotSizeX, // width if normal, height if inverted
@@ -3391,7 +3381,7 @@ function Chart (options) {
 		renderer,
 		tooltipTick,
 		tooltipInterval,
-		tooltipDiv,
+		//tooltipDiv,
 		zoom, // function
 		zoomOut; // function
 		
@@ -3429,8 +3419,8 @@ function Chart (options) {
 			xOrY = isXAxis ? 'x' : 'y',
 			axisLength = horiz ? plotWidth : plotHeight,
 		
-			transA,							 	// translation factor
-			transB = horiz ? plotLeft : marginBottom, 		// translation addend
+			transA, // translation factor
+			transB = horiz ? plotLeft : marginBottom, // translation addend
 			axisGroup,
 			gridGroup,
 			/*axisLayer = new Layer('axis-layer', container, null, { zIndex: 7}), / * The
@@ -3459,7 +3449,7 @@ function Chart (options) {
 			tickPositions, // array containing predefined positions
 			//tickRecord = {},
 			tickAmount,
-			zoom = 1,
+			//zoom = 1,
 			//var axisLabelsLayer = new Layer((horiz ? 'x' : 'y') +'-axis-labels');
 			labelFormatter = options.labels.formatter, // can be overwritten by dynamic format
 			// column plots are always categorized
@@ -3509,7 +3499,8 @@ function Chart (options) {
 				
 				if (run) {
 					
-					var stacking;
+					var stacking,
+						typeStack;
 		
 					if (!isXAxis) {
 						stacking = serie.options.stacking;
@@ -3517,7 +3508,7 @@ function Chart (options) {
 	
 						// create a stack for this particular series type
 						if (stacking) {
-							var typeStack = stack[serie.type] || [];
+							typeStack = stack[serie.type] || [];
 							stack[serie.type] = typeStack;
 						}
 						if (usePercentage) {
@@ -3635,11 +3626,15 @@ function Chart (options) {
 				if (horiz) { 
 					y1 = plotTop;
 					y2 = chartHeight - marginBottom;
-					if (x1 < plotLeft || x1 > plotLeft + plotWidth) skip = true;
+					if (x1 < plotLeft || x1 > plotLeft + plotWidth) {
+						skip = true;
+					}
 				} else {
 					x1 = plotLeft;
 					x2 = chartWidth - marginRight;
-					if (y1 < plotTop || y1 > plotTop + plotHeight) skip = true;
+					if (y1 < plotTop || y1 > plotTop + plotHeight) {
+						skip = true;
+					}
 				}
 				
 				if (!skip) {
@@ -3749,8 +3744,7 @@ function Chart (options) {
 		 * @param {Number} interval
 		 */
 		function normalizeTickInterval(interval, multiples) {
-			var normalized,
-				allowDecimals = pick(options.allowDecimals, true);
+			var normalized;
 				
 			// round to a tenfold of 1, 2, 2.5 or 5
 			magnitude = multiples ? 1 : math.pow(10, mathFloor(math.log(interval) / math.LN10));
@@ -3865,21 +3859,25 @@ function Chart (options) {
 				
 			minDate.setMilliseconds(0);
 			
-			if (interval >= oneSecond) // second
+			if (interval >= oneSecond) { // second
 				minDate.setSeconds(interval >= oneMinute ? 0 :
 					multitude * mathFloor(minDate.getSeconds() / multitude));
+			}
 	
-			if (interval >= oneMinute) // minute
+			if (interval >= oneMinute) { // minute
 				minDate[setMinutes](interval >= oneHour ? 0 :
 					multitude * mathFloor(minDate[getMinutes]() / multitude));
+			}
 	
-			if (interval >= oneHour) // hour
+			if (interval >= oneHour) { // hour
 				minDate[setHours](interval >= oneDay ? 0 :
 					multitude * mathFloor(minDate[getHours]() / multitude));
+			}
 	
-			if (interval >= oneDay) // day
+			if (interval >= oneDay) { // day
 				minDate[setDate](interval >= oneMonth ? 1 :
 					multitude * mathFloor(minDate[getDate]() / multitude));
+			}
 					
 			if (interval >= oneMonth) { // month
 				minDate[setMonth](interval >= oneYear ? 0 :
@@ -3901,9 +3899,9 @@ function Chart (options) {
 			
 			
 			// get tick positions
-			var i = 1, // prevent crash just in case
-				time = minDate.getTime() / timeFactor,
-				minYear = minDate[getFullYear](),
+			i = 1; // prevent crash just in case
+			minYear = minDate[getFullYear]();
+			var time = minDate.getTime() / timeFactor,
 				minMonth = minDate[getMonth](),
 				minDateDate = minDate[getDate]();
 				
@@ -4053,7 +4051,7 @@ function Chart (options) {
 			var length, 
 				type, 
 				i,
-				total,
+				//total,
 				oldMin = min,
 				oldMax = max,
 				maxZoom = options.maxZoom,
@@ -4078,10 +4076,12 @@ function Chart (options) {
 			// pad the values to get clear of the chart's edges
 			if (!categories && !usePercentage && defined(min) && defined(max)) {
 				length = (max - min) || 1;
-				if (!defined(options.min) && !defined(userSetMin) && minPadding && (dataMin < 0 || !ignoreMinPadding)) 
+				if (!defined(options.min) && !defined(userSetMin) && minPadding && (dataMin < 0 || !ignoreMinPadding)) { 
 					min -= length * minPadding; 
-				if (!defined(options.max) && !defined(userSetMax)  && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) 
+				}
+				if (!defined(options.max) && !defined(userSetMax)  && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) { 
 					max += length * maxPadding;
+				}
 			}
 			
 			// tickInterval
@@ -4189,29 +4189,6 @@ function Chart (options) {
 		}
 		
 		/**
-		 * Set new axis categories and optionally redraw
-		 * @param {Array} newCategories
-		 * @param {Boolean} doRedraw
-		 */
-		function setCategories(newCategories, doRedraw) {
-				// set the categories
-				axis.categories = categories = newCategories;
-				
-				// force reindexing tooltips
-				each (associatedSeries, function(series) {
-					series.translate();
-					series.setTooltipPoints(true);
-				});
-				
-				
-				// optionally redraw
-				axis.isDirty = true;
-				if (pick(doRedraw, true)) {
-					redraw();  // redraw axis
-				}
-		}
-		
-		/**
 		 * Get the actual axis extremes
 		 */
 		function getExtremes() {
@@ -4228,8 +4205,11 @@ function Chart (options) {
 		 * Used in bar and area plots
 		 */
 		function getZeroPlane(zeroValue) {
-			if (min > 0) zeroValue = min;
-			else if (max < 0) zeroValue = max;
+			if (min > 0) {
+				zeroValue = min;
+			} else if (max < 0) {
+				zeroValue = max;
+			}
 			
 			return translate(zeroValue, 0, 1);
 		}
@@ -4396,8 +4376,8 @@ function Chart (options) {
 					var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
 						(horiz ? 1 : -1) * // horizontal axis reverses the margin
 						(opposite ? -1 : 1) * // so does opposite axes
-						axisTitleOptions.margin 
-						- (isIE ? parseInt(
+						axisTitleOptions.margin -
+						(isIE ? parseInt(
 							axisTitleOptions.style.fontSize || 12, 10
 						) / 3 : 0); // preliminary fix for vml's centerline
 					
@@ -4458,6 +4438,31 @@ function Chart (options) {
 			});
 						
 		}
+		
+		/**
+		 * Set new axis categories and optionally redraw
+		 * @param {Array} newCategories
+		 * @param {Boolean} doRedraw
+		 */
+		function setCategories(newCategories, doRedraw) {
+				// set the categories
+				axis.categories = categories = newCategories;
+				
+				// force reindexing tooltips
+				each (associatedSeries, function(series) {
+					series.translate();
+					series.setTooltipPoints(true);
+				});
+				
+				
+				// optionally redraw
+				axis.isDirty = true;
+				if (pick(doRedraw, true)) {
+					redraw();  // redraw axis
+				}
+		}
+		
+		
 		
 		/* 
 		 * Clear memory
@@ -4534,22 +4539,8 @@ function Chart (options) {
 	function Toolbar(chart) {
 		var buttons = {};
 		
-		/*toolbarLayer = new Layer('toolbar', container, null, { 
-			zIndex: 1004, 
-			width: 'auto', 
-			height: 'auto'
-		});*/
-		
-		
 		function add(id, text, title, fn) {
 			if (!buttons[id]) {
-				/*var button = createElement(DIV, {
-						innerHTML: text,
-						title: title,
-						onclick: fn
-					}, extend(options.toolbar.itemStyle, { 	
-						zIndex: 1003
-					}), toolbarLayer.div);*/
 				// todo: optional placement
 				var button = renderer.text(
 					text,
@@ -4787,12 +4778,12 @@ function Chart (options) {
 			zoomHor = zoomX && !inverted || zoomY && inverted,
 			zoomVert = zoomY && !inverted || zoomX && inverted;
 			
-		/**
+		/*
 		 * Get the currently hovered point
-		 */
+		 * /
 		function getActivePoint() {
 			return activePoint;
-		}
+		}*/
 		
 		/**
 		 * Add IE support for pageX and pageY
@@ -5047,7 +5038,7 @@ function Chart (options) {
 				}
 				
 				
-			}
+			};
 			
 			
 			// Use native browser event for this one. It's faster, and MooTools
@@ -5061,8 +5052,8 @@ function Chart (options) {
 				// tooltips
 				var mouseX = e.pageX,
 					mouseY = e.pageY,
-					posX = position.x,
-					posY = position.y,
+					//posX = position.x,
+					//posY = position.y,
 					isOutsidePlot = !isInsidePlot(mouseX, mouseY, 'page');
 					/*isOutsidePlot = mouseX < posX + plotLeft ||
 						mouseX > posX + plotLeft + plotWidth ||
@@ -5119,7 +5110,7 @@ function Chart (options) {
 				
 				lastWasOutsidePlot = isOutsidePlot;
 				return false;
-			}
+			};
 			
 			//.on('mouseup', function() {
 			container.onmouseup = function(e) {
@@ -5171,7 +5162,7 @@ function Chart (options) {
 				
 				chart.mouseIsDown = mouseIsDown = hasDragged = false;*/
 			
-			}
+			};
 			
 			//.on('mouseout', function(e) {
 			/*container.onmouseout = function(e) {
@@ -5372,15 +5363,15 @@ function Chart (options) {
 			return;
 		}
 		
-		var li,
+		var //li,
 			horizontal = options.layout == 'horizontal',
 			symbolWidth = options.symbolWidth,
 			symbolPadding = options.symbolPadding,
-			dom,
-			topRule = '#'+ container.id +' .highcharts-legend li', // apply once for each chart
+			//dom,
+			//topRule = '#'+ container.id +' .highcharts-legend li', // apply once for each chart
 			allItems = [],
 			//legendLayer = new Layer('legend', container, null, { zIndex: 7 }),
-			legendArea,
+			//legendArea,
 			style = options.style,
 			itemStyle = options.itemStyle,
 			padding = parseInt(style.padding, 10),
@@ -5391,7 +5382,7 @@ function Chart (options) {
 			itemX = initialItemX,
 			itemY,
 			box,
-			checkboxes,
+			//checkboxes,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
 			legendGroup,
@@ -5501,115 +5492,21 @@ function Chart (options) {
 			
 		}
 		
-		/**
-		 * Render the legend. This method can be called both before and after
-		 * chart.render. If called after, it will only rearrange items instead
-		 * of creating new ones.
-		 */
-		function renderLegend() {
-			itemY = y;
-			
-			if (!legendGroup) {
-				legendGroup = renderer.g('legend').add(null, 7);
-			}
-			
-			
-			// add HTML for each series
-			if (reversedLegend) {
-				series.reverse();
-			}
-			each(series, function(serie) {
-				if (!serie.options.showInLegend) {
-					return;
-				}
-				
-				// use points or series for the legend item depending on legendType
-				var items = (serie.options.legendType == 'point') ?
-					serie.data : [serie],
-					simpleSymbol;
-						
-				// render all items
-				each(items, renderItem);
-			});
-			if (reversedLegend) { // restore
-				series.reverse();
-			}
-			
-			
-			
-			// Draw the border
-			boxWidth = widthOption || offsetWidth;
-			boxHeight = itemY - y + (horizontal ? lineHeight : 0);
-			boxX = 0;
-			if (legendBorderWidth || legendBackgroundColor) {
-				boxWidth += 2 * padding;
-				boxHeight += 2 * padding;
-				
-				if (!box) {
-					box = renderer.rect(
-						//-boxX,
-						0, 
-						//y - lineHeight - padding + 3,
-						0,
-						boxWidth,
-						boxHeight,
-						options.borderRadius,
-						legendBorderWidth || 0
-					).attr({
-						stroke: options.borderColor,
-						'stroke-width': legendBorderWidth || 0,
-						fill: legendBackgroundColor || NONE
-					}).add(legendGroup).
-					shadow(options.shadow);
-				
-				} else {
-					box.attr({ height: boxHeight });
-				}
-			}
-			
-			// 1.x compatibility: positioning based on style
-			var props = ['left', 'right', 'top', 'bottom'],
-				prop,
-				i = 4;
-			while(i--) {
-				prop = props[i];
-				if (style[prop] && style[prop] != 'auto') {
-					options[i < 2 ? 'align' : 'verticalAlign'] = prop;
-					options[i < 2 ? 'x' : 'y'] = parseInt(style[prop], 10) * (i % 2 ? -1 : 1);
-				}
-			}
-
-			
-			var boxPos = getAlignment(extend(options, {
-				width: boxWidth,
-				height: boxHeight
-			}));
-			legendGroup.translate(boxPos.x, boxPos.y);
-			
-			// Position the checkboxes after the with is determined 
-			each(allItems, function(item) {
-				var checkbox = item.checkbox;
-				if (checkbox) {
-					css(checkbox, {
-						left: (boxX + boxWidth - 20) +PX,
-						top: (boxY + checkbox.y - 14) + PX 
-					});
-				}
-			});
-		}
+		
 		
 		/**
 		 * Render a single specific legend item
 		 * @param {Object} item A series or point
 		 */
 		function renderItem(item) {
-			var	markerOptions,
+			var	//markerOptions,
 				isHidden = false, //item.legendItem.className == HIGHCHARTS_HIDDEN,
-				color = isHidden ? 
+				/*color = isHidden ? 
 					options.itemHiddenStyle.color : 
-					item.color,
+					item.color,*/
 				bBox,
 				legendSymbol,
+				simpleSymbol,
 				li = item.legendItem,
 				series = item.series || item;
 
@@ -5633,7 +5530,7 @@ function Chart (options) {
 						item.setState();
 					})
 					.on('click', function(event) {
-						var target = event.target,
+						var //target = event.target,
 							strLegendItemClick = 'legendItemClick',
 							fnLegendItemClick = function() {
 								item.setVisible();
@@ -5775,6 +5672,102 @@ function Chart (options) {
 			allItems.push(item);
 		}
 
+		/**
+		 * Render the legend. This method can be called both before and after
+		 * chart.render. If called after, it will only rearrange items instead
+		 * of creating new ones.
+		 */
+		function renderLegend() {
+			itemY = y;
+			
+			if (!legendGroup) {
+				legendGroup = renderer.g('legend').add(null, 7);
+			}
+			
+			
+			// add HTML for each series
+			if (reversedLegend) {
+				series.reverse();
+			}
+			each(series, function(serie) {
+				if (!serie.options.showInLegend) {
+					return;
+				}
+				
+				// use points or series for the legend item depending on legendType
+				var items = (serie.options.legendType == 'point') ?
+					serie.data : [serie];
+					//simpleSymbol;
+						
+				// render all items
+				each(items, renderItem);
+			});
+			if (reversedLegend) { // restore
+				series.reverse();
+			}
+			
+			
+			
+			// Draw the border
+			boxWidth = widthOption || offsetWidth;
+			boxHeight = itemY - y + (horizontal ? lineHeight : 0);
+			boxX = 0;
+			if (legendBorderWidth || legendBackgroundColor) {
+				boxWidth += 2 * padding;
+				boxHeight += 2 * padding;
+				
+				if (!box) {
+					box = renderer.rect(
+						//-boxX,
+						0, 
+						//y - lineHeight - padding + 3,
+						0,
+						boxWidth,
+						boxHeight,
+						options.borderRadius,
+						legendBorderWidth || 0
+					).attr({
+						stroke: options.borderColor,
+						'stroke-width': legendBorderWidth || 0,
+						fill: legendBackgroundColor || NONE
+					}).add(legendGroup).
+					shadow(options.shadow);
+				
+				} else {
+					box.attr({ height: boxHeight });
+				}
+			}
+			
+			// 1.x compatibility: positioning based on style
+			var props = ['left', 'right', 'top', 'bottom'],
+				prop,
+				i = 4;
+			while(i--) {
+				prop = props[i];
+				if (style[prop] && style[prop] != 'auto') {
+					options[i < 2 ? 'align' : 'verticalAlign'] = prop;
+					options[i < 2 ? 'x' : 'y'] = parseInt(style[prop], 10) * (i % 2 ? -1 : 1);
+				}
+			}
+
+			
+			var boxPos = getAlignment(extend(options, {
+				width: boxWidth,
+				height: boxHeight
+			}));
+			legendGroup.translate(boxPos.x, boxPos.y);
+			
+			// Position the checkboxes after the with is determined 
+			each(allItems, function(item) {
+				var checkbox = item.checkbox;
+				if (checkbox) {
+					css(checkbox, {
+						left: (boxX + boxWidth - 20) +PX,
+						top: (boxY + checkbox.y - 14) + PX 
+					});
+				}
+			});
+		}
 		
 		// run legend
 		renderLegend();
@@ -5805,9 +5798,9 @@ function Chart (options) {
 		// an inverted chart can't take a column series and vice versa
 		if (hasRendered) {
 			if (inverted && type == 'column') {
-				typeClass = BarSeries;
+				typeClass = seriesTypes.bar;
 			} else if (!inverted && type == 'bar') {
-				typeClass = ColumnSeries;
+				typeClass = seriesTypes.column;
 			}
 		}
 		
@@ -5816,8 +5809,12 @@ function Chart (options) {
 		serie.init(chart, options);
 		
 		// set internal chart properties
-		if (!hasRendered && serie.inverted) inverted = true;
-		if (serie.isCartesian) hasCartesianSeries = serie.isCartesian;
+		if (!hasRendered && serie.inverted) {
+			inverted = true;
+		}
+		if (serie.isCartesian) {
+			hasCartesianSeries = serie.isCartesian;
+		}
 		
 		series.push(serie);
 		
@@ -5857,7 +5854,7 @@ function Chart (options) {
 	 * @param {Number} y Pixel y relative to the coordinateSystem
 	 * @param {String} coordinateSystem 'page' or undefined
 	 */
-	function isInsidePlot(x, y, coordinateSystem) {
+	isInsidePlot = function(x, y, coordinateSystem) {
 		var left = 0,
 			top = 0;
 			
@@ -5869,7 +5866,7 @@ function Chart (options) {
 			x <= left + plotWidth &&
 			y >= top &&
 			y <= top + plotHeight;
-	}
+	};
 		
 	/**
 	 * Adjust all axes tick amounts
@@ -6019,7 +6016,7 @@ function Chart (options) {
 	function get(id) {
 		var i,
 			j,
-			match,
+			//match,
 			data;
 		
 		// search axes
@@ -6134,6 +6131,7 @@ function Chart (options) {
 	zoom = function (event) {
 		
 		// add button to reset selection
+		var lang = defaultOptions.lang;
 		chart.toolbar.add('zoom', lang.resetZoom, lang.resetZoomTitle, zoomOut);
 		
 		// if zoom is called with no arguments, reset the axes
@@ -6176,7 +6174,9 @@ function Chart (options) {
 				right: chartWidth
 			};
 		
-		if (title) title.text = 'Highcharts 2.0 prerelease version. Not for production!';
+		if (title) {
+			title.text = 'Highcharts 2.0 prerelease version. Not for production!';
+		}
 			
 		if (!chart.titleLayer) {
 			/*var titleLayer = new Layer('title-layer', container, null, {
@@ -6222,7 +6222,7 @@ function Chart (options) {
 	 * 
 	 * @todo Use this in legend alignment
 	 */
-	function getAlignment(alignmentOptions) {
+	getAlignment = function(alignmentOptions) {
 		var align = alignmentOptions.align,
 			vAlign = alignmentOptions.verticalAlign,
 			optionsX = alignmentOptions.x || 0,
@@ -6233,20 +6233,20 @@ function Chart (options) {
 			};
 		// align
 		if (/^(right|center)$/.test(align)) {
-			ret.x = (chartWidth - alignmentOptions.width)
-				/ { right: 1, center: 2 }[align]
-				+ optionsX;			
+			ret.x = (chartWidth - alignmentOptions.width) /
+				{ right: 1, center: 2 }[align] +
+				optionsX;			
 		}
 		// vertical align
 		if (/^(bottom|middle)$/.test(vAlign)) {
-			ret.y = (chartHeight - alignmentOptions.height)
-				/ { bottom: 1, middle: 2 }[vAlign]
-				+ optionsY;			
+			ret.y = (chartHeight - alignmentOptions.height) /
+				{ bottom: 1, middle: 2 }[vAlign] +
+				optionsY;			
 		}
 		
 		
 		return ret;
-	}
+	};
 	
 	/**
 	 * Get the containing element, determine the size and create the inner container
@@ -6312,8 +6312,8 @@ function Chart (options) {
 	 */
 	function render () {
 		var mgn, 
-			div, 
-			i, 
+			//div, 
+			//i, 
 			labels = options.labels, 
 			credits = options.credits,
 			chartBorderWidth = optionsChart.borderWidth || 0,
@@ -6457,6 +6457,18 @@ function Chart (options) {
 			}, extend(credits.style, {
 				zIndex: 8
 			}), container);*/
+			renderer.text(
+				credits.text,
+				chartWidth - 10,
+				chartHeight - 10,
+				credits.style,
+				0,
+				'right'
+			)
+			.on('click', function() {
+				location.href = credits.href;
+			})
+			.add(null, 8); 
 		}
 
 		// Set flag
@@ -6511,7 +6523,7 @@ function Chart (options) {
 			delete chart[key];
 		}
 		
-	};
+	}
 	/**
 	 * Prepare for first rendering after all data are loaded
 	 */
@@ -6642,8 +6654,8 @@ Point.prototype = {
 
 	/**
 	 * Initialize the point
- 	 * @param {Object} series The series object containing this point
- 	 * @param {Object} options The data in either number, array or object format
+	 * @param {Object} series The series object containing this point
+	 * @param {Object} options The data in either number, array or object format
 	 */
 	init: function(series, options) {
 		var point = this,
@@ -6675,8 +6687,8 @@ Point.prototype = {
 	 */
 	applyOptions: function(options) {
 		var point = this,
-			series = point.series,
-			n;
+			series = point.series;
+			//n;
 	
 		
 		// onedimensional array input
@@ -6739,7 +6751,7 @@ Point.prototype = {
 		
 		
 		if (point.legendItem) { // pies have legend items
-			chart.legend.destroyItem(point);
+			point.series.chart.legend.destroyItem(point);
 		}
 		
 		for (prop in point) {
@@ -6752,14 +6764,14 @@ Point.prototype = {
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
 	 * @param {Boolean} accumulate Whether to add to the previous selection. By default,
-	 * 		this happens if the control key (Cmd on Mac) was pressed during clicking.
+	 *     this happens if the control key (Cmd on Mac) was pressed during clicking.
 	 */
 	select: function(selected, accumulate) {
 		var point = this,
 			series = point.series,
-			chart = series.chart,
+			chart = series.chart;
 			//stateLayers,
-			state;
+			//state;
 			//singlePointLayer = pick(point.stateLayer, series.singlePointLayer, chart.singlePointLayer);
 			
 		//point.selected = !point.selected;
@@ -6941,7 +6953,7 @@ Series.prototype = {
 		var series = this,
 			eventType,
 			events,
-			pointEvent,
+			//pointEvent,
 			index = chart.series.length;
 			
 		series.chart = chart;
@@ -7156,12 +7168,12 @@ Series.prototype = {
 	 * @param {Object} options Point options as given in series.data
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean} shift If shift is true, a point is shifted off the start 
-	 * 		of the series as one is appended to the end.
+	 *    of the series as one is appended to the end.
 	 */
 	addPoint: function(options, redraw, shift) {
 		var series = this,
 			data = series.data,
-			point = (new series.pointClass).init(series, options);
+			point = (new series.pointClass()).init(series, options);
 			
 		redraw = pick(redraw, true);
 			
@@ -7301,7 +7313,7 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ? 
 				categories[point.x] : point.x;
 				
-		};
+		}
 	},
 	/**
 	 * Memoize tooltip texts and positions
@@ -7411,7 +7423,7 @@ Series.prototype = {
 	 */
 	animate: function(init) {
 		var series = this,
-			line = series.graph,
+			//line = series.graph,
 			chart = series.chart,
 			clipRect = chart.clipRect;/*,
 			div = series.layerGroup.div*/
@@ -7489,7 +7501,7 @@ Series.prototype = {
 						.add(series.group);
 					}
 				}
-			};
+			}
 		}
 		
 	},
@@ -7533,8 +7545,8 @@ Series.prototype = {
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
 			normalDefaults = {},
-			hoverDefaults = {},
-			seriespointAttr = series.pointAttr,
+			//hoverDefaults = {},
+			//seriespointAttr = series.pointAttr,
 			seriesColor = series.color,
 			data = series.data,
 			i,
@@ -7542,8 +7554,8 @@ Series.prototype = {
 			seriesPointAttr = [],
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
-			hasPointSpecificOptions,
-			chart = series.chart;
+			hasPointSpecificOptions;
+			//chart = series.chart;
 			
 		// series type specific modifications
 		if (series.options.marker) { // line, spline, area, areaspline, scatter
@@ -7562,12 +7574,12 @@ Series.prototype = {
 			// if no color is given for the point, use the general series color
 			normalDefaults = {
 				fill: seriesColor
-			}
+			};
 			
 			// if no hover color is given, brighten the normal color
 			stateOptionsHover.color = stateOptionsHover.color || 
 				Color(stateOptionsHover.color || seriesColor)
-					.brighten(stateOptionsHover.brightness).get()
+					.brighten(stateOptionsHover.brightness).get();
 		}
 		
 		// general point attributes for the series normal state
@@ -7600,7 +7612,7 @@ Series.prototype = {
 				for (var key in pointAttrToOptions) {
 					if (normalOptions[pointAttrToOptions[key]]) {
 						hasPointSpecificOptions = true;
-					};
+					}
 				}
 			}
 			
@@ -7625,16 +7637,19 @@ Series.prototype = {
 				
 				// normal point state inherits series wide normal state
 				pointAttr[NORMAL_STATE] = series.convertAttribs(normalOptions, seriesPointAttr[NORMAL_STATE]);
-				
-				// HOVER_STATE and SELECT_STATE point states
-				each([HOVER_STATE, SELECT_STATE], function(state) {					
-					// inherit from point normal and series hover
-					pointAttr[state] = series.convertAttribs(
-						stateOptions[state],
-						seriesPointAttr[state],
-						pointAttr[NORMAL_STATE]
-					);
-				});
+									
+				// inherit from point normal and series hover
+				pointAttr[HOVER_STATE] = series.convertAttribs(
+					stateOptions[HOVER_STATE],
+					seriesPointAttr[HOVER_STATE],
+					pointAttr[NORMAL_STATE]
+				);
+				// inherit from point normal and series hover
+				pointAttr[SELECT_STATE] = series.convertAttribs(
+					stateOptions[SELECT_STATE],
+					seriesPointAttr[SELECT_STATE],
+					pointAttr[NORMAL_STATE]
+				);
 				
 				
 				
@@ -7738,18 +7753,18 @@ Series.prototype = {
 	drawDataLabels: function(){
 		if (this.options.dataLabels.enabled) {
 			var series = this, 
-				i, 
+				//i, 
 				x, 
 				y, 
 				data = series.data, 
 				options = series.options.dataLabels, 
-				color, 
+				//color, 
 				str, 
 				dataLabelsGroup = series.dataLabelsGroup, 
 				chart = series.chart, 
 				inverted = chart.inverted,
 				seriesType = series.type,
-				isPie = (seriesType == 'pie'),
+				//isPie = (seriesType == 'pie'),
 				align;
 				
 			// create a separate group for the data labels to avoid rotation
@@ -7833,7 +7848,7 @@ Series.prototype = {
 	 * Draw the actual graph
 	 */
 	drawGraph: function(state) {
-		var i,
+		var //i,
 			series = this, 
 			options = series.options, 
 			chart = series.chart,
@@ -7844,19 +7859,19 @@ Series.prototype = {
 			graphPath = [],
 			fillColor,
 			area = series.area,
-			data = series.data,
+			//data = series.data,
 			group = series.group,
 			color = options.lineColor || series.color, 
 				 
 			//inverted = chart.inverted, 
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
+			//plotLeft = chart.plotLeft,
+			//plotTop = chart.plotTop,
 			lineWidth = options.lineWidth,
 			segmentPath,
 			//transform = chart.transform,
-			inverted = chart.inverted,
+			//inverted = chart.inverted,
 			renderer = chart.renderer,
-			indexInSegment = 0,
+			//indexInSegment = 0,
 			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),
 			areaPath = [];
 			
@@ -7970,11 +7985,14 @@ Series.prototype = {
 			chart = series.chart,
 			pointAttr = point.pointAttr;
 			
-		if (!state) state = NORMAL_STATE;
+		if (!state) {
+			state = NORMAL_STATE;
+		}
 		
 		// selected points don't respond to hover
-		if (point.selected && state != SELECT_STATE) return;
-		
+		if (point.selected && state != SELECT_STATE) {
+			return;
+		}
 		
 		
 		// if a graphic is not applied to each point in the normal state, create a shared
@@ -8169,7 +8187,7 @@ Series.prototype = {
 			//legendSymbol = series.legendSymbol,
 			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
-			areas = series.areas,
+			//areas = series.areas,
 			showOrHide,
 			i,
 			data = series.data,
@@ -8526,7 +8544,7 @@ seriesTypes.spline = SplineSeries;
 var AreaSplineSeries = extendClass(SplineSeries, {
 	type: 'areaspline'
 });
-seriesTypes.areaspline = AreaSplineSeries
+seriesTypes.areaspline = AreaSplineSeries;
 
 /**
  * ColumnSeries object
@@ -8606,8 +8624,8 @@ var ColumnSeries = extendClass(Series, {
 			columnIndex = (reversedXAxis ? columnCount - 
 				series.columnIndex : series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + columnIndex *
-				pointOffsetWidth -(categoryWidth / 2))
-				* (reversedXAxis ? -1 : 1),
+				pointOffsetWidth -(categoryWidth / 2)) *
+				(reversedXAxis ? -1 : 1),
 			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),
 			minPointLength = options.minPointLength,
 			barX,
@@ -8669,7 +8687,7 @@ var ColumnSeries = extendClass(Series, {
 	drawPoints: function() {
 		var series = this,
 			options = series.options,
-			radius = options.borderRadius,
+			//radius = options.borderRadius,
 			renderer = series.chart.renderer,
 			graphic,
 			shapeArgs;		
@@ -8763,9 +8781,9 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	animate: function(init) {
 		var series = this,
-			data = series.data,
-			chart = series.chart,
-			inverted = chart.inverted;
+			data = series.data;
+			//chart = series.chart;
+			//inverted = chart.inverted;
 			
 		if (!init) { // run the animation
 			/*
@@ -8883,7 +8901,7 @@ var PiePoint = extendClass(Point, {
 		Point.prototype.init.apply(this, arguments);
 		
 		var point = this,
-			series = point.series,
+			//series = point.series,
 			toggleSlice;
 		
 		//visible: options.visible !== false,
@@ -8937,7 +8955,7 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			center = point.center,
+			//center = point.center,
 			slicedTranslation = point.slicedTranslation;
 		
 		// redraw is true by default
@@ -8954,12 +8972,11 @@ var PiePoint = extendClass(Point, {
 		
 	}
 });
-seriesTypes.pie = PieSeries;
 
 /**
  * The Pie series class
  */
-var PieSeries = extendClass(ColumnSeries, {
+var PieSeries = extendClass(Series, {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
@@ -9001,8 +9018,8 @@ var PieSeries = extendClass(ColumnSeries, {
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to height
-				[plotWidth, plotHeight, math.min(plotWidth, plotHeight)][i]
-					* parseInt(length) / 100:
+				[plotWidth, plotHeight, math.min(plotWidth, plotHeight)][i] *
+					parseInt(length, 10) / 100:
 				length;
 		});
 					
@@ -9056,8 +9073,8 @@ var PieSeries = extendClass(ColumnSeries, {
 	 * Render the slices
 	 */
 	render: function() {
-		var series = this,
-			chart = series.chart;
+		var series = this;
+			//chart = series.chart;
 			
 		/*
 		if (!series.group) {
@@ -9088,7 +9105,7 @@ var PieSeries = extendClass(ColumnSeries, {
 			chart = series.chart,
 			renderer = chart.renderer,
 			groupTranslation,
-			center,
+			//center,
 			graphic,
 			shapeArgs;
 		
@@ -9139,14 +9156,7 @@ seriesTypes.pie = PieSeries;
 
 
 // global variables
-Highcharts = {
-	/*load: function(arr) {
-		each (splat(arr), function(url) {
-			getAjax(url, function(script) {
-				eval(script);		
-			})
-		})
-	},*/
+win.Highcharts = {
 	Chart: Chart,
 	dateFormat: dateFormat,
 	defaultOptions: defaultOptions,
@@ -9156,9 +9166,7 @@ Highcharts = {
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	Series: Series,
-	
-	
-	
+		
 	// Expose utility funcitons for modules
 	addEvent: addEvent,
 	createElement: createElement,
@@ -9172,8 +9180,4 @@ Highcharts = {
 	extendClass: extendClass
 };
 
-
-
-
 })();
-
