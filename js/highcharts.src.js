@@ -5941,6 +5941,7 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			columnCount = 0,
+			categories = series.xAxis.categories,			
 			stackedIndex; // the index of the first column in a stack
 		
 		Series.prototype.translate.apply(series);
@@ -5970,7 +5971,7 @@ var ColumnSeries = extendClass(Series, {
 			closestPoints = series.closestPoints,
 			categoryWidth = mathAbs(
 				data[1] ? data[closestPoints].plotX - data[closestPoints - 1].plotX : 
-				(inverted ? plotHeight : plotWidth)
+				(inverted ? plotHeight : plotWidth) / (categories ? categories.length : 1)
 			),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
@@ -5987,6 +5988,7 @@ var ColumnSeries = extendClass(Series, {
 			translatedY0 = series.yAxis.translate(0),
 			minPointLength = options.minPointLength,
 			height;
+			
 			
 		// record the new values
 		each (data, function(point) {
