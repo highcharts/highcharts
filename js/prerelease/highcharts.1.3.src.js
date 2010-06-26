@@ -11,8 +11,6 @@
 
 // JSLint options:
 /*jslint forin: true */
-
-// Implied global:
 /*global document, window, navigator, setInterval, clearInterval, location, jQuery, $, $each, $merge, Events, Event, Fx, Request */
 
 (function() {
@@ -263,7 +261,9 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Function} handler The function to remove
 	 */
 	removeEvent = function(el, eventType, handler) {
-		jQ(el).unbind(eventType, handler);
+		try { // http://forum.jquery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jquery-1-4-2
+			jQ(el).unbind(eventType, handler);
+		} catch (e) {}
 	};
 	
 	fireEvent = function(el, type, eventArguments, defaultFunction) {
@@ -627,7 +627,6 @@ defaultOptions = {
 		align: 'center',//docs
 		style: {
 			color: '#3E576F',
-			//font: defaultFont.replace('12px', '16px')
 			fontSize: '16px'
 		}
 
@@ -1314,8 +1313,10 @@ SVGElement.prototype = {
 		// used as a getter: first argument is a string, second is undefined
 		if (typeof hash == 'string') {
 			key = hash;
+			if (nodeName == 'circle') {
+				key = { x: 'cx', y: 'cy' }[key] || key;
+			}
 			ret = parseFloat(attr(element, key) || this[key] || 0);
-			
 			
 		// setter
 		} else {
@@ -3401,7 +3402,8 @@ function Chart (options) {
 				bar: {},
 				column: {},
 				area: {},
-				areaspline: {}
+				areaspline: {},
+				line: {}
 			};
 	
 		options = merge(
@@ -6174,9 +6176,9 @@ function Chart (options) {
 				right: chartWidth
 			};
 		
-		if (title) {
+		/*if (title) {
 			title.text = 'Highcharts 2.0 prerelease version. Not for production!';
-		}
+		}*/
 			
 		if (!chart.titleLayer) {
 			/*var titleLayer = new Layer('title-layer', container, null, {
@@ -6486,6 +6488,8 @@ function Chart (options) {
 	 * Clean up memory usage
 	 */
 	function destroy() {
+		var i = series.length;
+
 		// remove events
 		removeEvent(win, 'resize', updatePosition);
 		removeEvent(win, 'unload', destroy);
@@ -6496,9 +6500,9 @@ function Chart (options) {
 		});
 
 		// destroy each series
-		each (series, function(serie) {
-			serie.destroy();
-		});
+		while (i--) {
+			series[i].destroy();
+		}
 		
 		//trackerGroup.destroy();
 		
@@ -6519,10 +6523,9 @@ function Chart (options) {
 		// memory and CPU leak
 		clearInterval(tooltipInterval);
 		
-		for (var key in chart) {
-			delete chart[key];
+		for (i in chart) {
+			delete chart[i];
 		}
-		
 	}
 	/**
 	 * Prepare for first rendering after all data are loaded
@@ -7129,20 +7132,6 @@ Series.prototype = {
 				plotOptions.series,
 				itemOptions
 			);
-			
-		/*,
-			normalSeriesMarkerOptions = options.marker,
-			hoverSeriesMarkerOptions = options.states[HOVER_STATE].marker;
-			
-		// default hover values are dynamic based on basic state 
-		//var stateOptions = seriesOptions.states[state].marker;
-		if (hoverSeriesMarkerOptions.lineWidth === UNDEFINED) {
-			hoverSeriesMarkerOptions.lineWidth = normalSeriesMarkerOptions.lineWidth + 1;
-		}
-		if (hoverSeriesMarkerOptions.radius === UNDEFINED) {
-			hoverSeriesMarkerOptions.radius = normalSeriesMarkerOptions.radius + 1;
-		}*/
-		//markerOptions = merge(markerOptions, stateOptions);
 		
 		return options;
 		
@@ -7474,10 +7463,12 @@ Series.prototype = {
 				plotY = point.plotY;
 				graphic = point.graphic;
 				
-				// only draw the point if inside the plot and y is defined
-				if (point.plotY !== UNDEFINED && 
+				// only draw the point if y is defined
+				if (point.plotY !== UNDEFINED) {
+				
+					/* && removed this code because points stayed after zoom
 						point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
-						point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
+						point.plotY >= 0 && point.plotY <= chart.plotSizeY*/
 					
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
@@ -8296,12 +8287,13 @@ Series.prototype = {
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
-			isSingleSeries = chart.series.length == 1,
+			//isSingleSeries = chart.series.length == 1,
 			tracker = series.tracker;
 	
 		
 		// if only one series, use the whole plot area as tracker
-		if (isSingleSeries) {
+		// problem: can't put legend inside plot area
+		/*if (isSingleSeries) {
 			trackerPath = [
 				M,
 				0, 0,
@@ -8311,7 +8303,7 @@ Series.prototype = {
 				plotWidth, 0,
 				'Z'
 			]; 
-		}
+		}*/
 		
 		if (tracker) { // update
 			tracker.attr({ d: trackerPath });
@@ -8321,7 +8313,8 @@ Series.prototype = {
 				attr({
 					isTracker: true,
 					stroke: TRACKER_FILL,
-					fill: isSingleSeries ? TRACKER_FILL : NONE,
+					//fill: isSingleSeries ? TRACKER_FILL : NONE,
+					fill: NONE,
 					'stroke-width' : options.lineWidth + chart.options.tooltip.snap,
 					'stroke-linecap': 'round'
 				})
