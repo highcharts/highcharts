@@ -601,7 +601,7 @@ defaultOptions = {
 		//alignTicks: false,
 		//className: null,
 		//events: { load, selection },
-		margin: [50, 50, 60, 80],
+		margin: [50, 50, 70, 80], // docs
 		borderColor: '#4572A7',
 		//borderWidth: 0,
 		borderRadius: 5,		
@@ -753,13 +753,12 @@ defaultOptions = {
 		verticalAlign: 'bottom', // docs
 		// width: null // docs
 		// x: 0, // docs
-		y: -10 // docs
+		y: -15 // docs
 	},
 	
 	loading: {
 		hideDuration: 100,
 		labelStyle: {
-			//font: defaultFont.replace('normal', 'bold'),
 			fontWeight: 'bold',
 			position: RELATIVE,
 			top: '1em'
@@ -847,6 +846,8 @@ var defaultXAxisOptions =  {
 	lineWidth: 1,
 	max: null,
 	min: null,
+	minPadding: 0.01, // docs
+	maxPadding: 0.01, // docs
 	maxZoom: null,
 	minorGridLineColor: '#E0E0E0',
 	minorGridLineWidth: 1,
@@ -1436,14 +1437,16 @@ SVGElement.prototype = {
 	css: function(styles) {
 		var elemWrapper = this;
 		
+		// convert legacy
+		if (styles) {
+			styles.fill = styles.fill || styles.color;
+		}
+		
 		// save the styles in an object
 		styles = extend(
 			elemWrapper.styles,
 			styles
 		);
-		
-		// convert legacy
-		styles.fill = styles.fill || styles.color;
 		
 		// serialize and set style attribute
 		elemWrapper.attr({
@@ -1749,13 +1752,15 @@ SVGRenderer.prototype = {
 	// todo: more general HTML parsing
 	buildText: function(textNode, str) {
 		var lines = str.toString().
-				replace(/<(b|strong)>/, '<span style="font-weight:bold">').
-				replace(/<(i|em)>/, '<span style="font-style:italic">').
-				replace(/<\/(b|strong|i|em)>/, '</span>').
+				replace(/<(b|strong)>/g, '<span style="font-weight:bold">').
+				replace(/<(i|em)>/g, '<span style="font-style:italic">').
+				replace(/<\/(b|strong|i|em)>/g, '</span>').
 				split('<br/>'),
 			childNodes = textNode.childNodes,
+			styleRegex = /style="([0-9a-z:;\-]+)"/,
 			parentX = attr(textNode, 'x'),
 			i;
+			
 			
 		// remove old text
 		for (i = childNodes.length - 1; i >= 0; i--) {
@@ -1772,15 +1777,13 @@ SVGRenderer.prototype = {
 		each (lines, function(line, lineNo) {
 			var spans, spanNo = 0;
 			
-			line = line.replace(/<span/, '|||<span').replace(/<\/span>/, '</span>|||');
+			line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 			spans = line.split('|||');
 			
 			each (spans, function (span) {
 				if (span !== '') {
-			
 					var attributes = {},
-						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan'),
-						styleRegex = /style="([0-9a-z:;\-]+)"/;
+						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
 					/*if (/^<b>(.*?)<\/b>$/.test(line)) {
 						//tspan.setAttribute('style', 'font-weight:bold');
 						attr(tspan, 'style', 'font-weight:bold');
@@ -1791,10 +1794,7 @@ SVGRenderer.prototype = {
 					}
 					
 					span = span.replace(/<(.|\n)*?>/g, '');
-					//console.log('"'+ span +'"');
 					tspan.appendChild(doc.createTextNode(span));
-					//tspan.setAttribute('x', textNode.getAttribute('x'));
-					//tspan.setAttribute('dy', i ? 16 : 0); // line-height
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
 					} else {
@@ -4106,7 +4106,7 @@ function Chart (options) {
 			}
 			
 			// minorTickInterval
-			minorTickInterval = options.minorTickInterval && tickInterval ?
+			minorTickInterval = options.minorTickInterval == 'auto' && tickInterval ?
 					tickInterval / 5 : options.minorTickInterval;
 				
 			// get fixed positions based on tickInterval
@@ -5376,19 +5376,21 @@ function Chart (options) {
 			//legendArea,
 			style = options.style,
 			itemStyle = options.itemStyle,
+			itemHoverStyle = options.itemHoverStyle,
 			padding = parseInt(style.padding, 10),
 			rightPadding = 20,
 			lineHeight = options.lineHeight || 16,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
-			itemX = initialItemX,
+			itemX,
 			itemY,
+			lastItemY,
 			box,
 			//checkboxes,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
 			legendGroup,
-			offsetWidth = 0,
+			offsetWidth,
 			boxX,
 			boxY,
 			widthOption = options.width,
@@ -5511,7 +5513,7 @@ function Chart (options) {
 				simpleSymbol,
 				li = item.legendItem,
 				series = item.series || item;
-
+				
 			
 			if (!li) { // generate it once, later move it
 			
@@ -5526,9 +5528,11 @@ function Chart (options) {
 						itemStyle
 					)
 					.on('mouseover', function() {
-						item.setState(HOVER_STATE);
+						item.setState(HOVER_STATE);				
+						li.css(itemHoverStyle);
 					})
-					.on('mouseout', function() {
+					.on('mouseout', function() {		
+						li.css(itemStyle);
 						item.setState();
 					})
 					.on('click', function(event) {
@@ -5652,23 +5656,25 @@ function Chart (options) {
 			
 			// calculate the positions for the next line
 			bBox = li.getBBox();
+			lastItemY = itemY;
+			
 			var itemWidth = options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
 			if (horizontal) {
 			
 				itemX += itemWidth;
 				offsetWidth = widthOption || mathMax(itemX, offsetWidth);
 			
-				if (itemX - initialItemX + itemWidth > (widthOption || chartWidth)) { // new line
+				if (itemX - initialItemX + itemWidth > 
+						(widthOption || (chartWidth - 2 * padding - initialItemX))) { // new line
 					itemX = initialItemX;
 					itemY += lineHeight;
 				}
+				
 			} else {
 				itemY += lineHeight;
 				// the width of the widest item
-				offsetWidth = widthOption || mathMax(itemWidth, offsetWidth);
-			
-			}
-			
+				offsetWidth = widthOption || mathMax(itemWidth, offsetWidth);			
+			}			
 			
 			// add it all to an array to use below
 			allItems.push(item);
@@ -5680,7 +5686,10 @@ function Chart (options) {
 		 * of creating new ones.
 		 */
 		function renderLegend() {
+			itemX = initialItemX;
 			itemY = y;
+			offsetWidth = 0;
+			lastItemY = 0;
 			
 			if (!legendGroup) {
 				legendGroup = renderer.g('legend').add(null, 7);
@@ -5712,7 +5721,7 @@ function Chart (options) {
 			
 			// Draw the border
 			boxWidth = widthOption || offsetWidth;
-			boxHeight = itemY - y + (horizontal ? lineHeight : 0);
+			boxHeight = lastItemY - y + (horizontal ? lineHeight : 0);
 			boxX = 0;
 			if (legendBorderWidth || legendBackgroundColor) {
 				boxWidth += 2 * padding;
@@ -5736,7 +5745,10 @@ function Chart (options) {
 					shadow(options.shadow);
 				
 				} else {
-					box.attr({ height: boxHeight });
+					box.attr({ 
+						height: boxHeight,
+						width: boxWidth
+					});
 				}
 			}
 			
@@ -5769,6 +5781,7 @@ function Chart (options) {
 					});
 				}
 			});
+			
 		}
 		
 		// run legend
@@ -5988,8 +6001,9 @@ function Chart (options) {
 			}, loadingOptions.labelStyle, loadingLayer);
 		}
 		
+		
 		// show it
-		css(loadingLayer, { display: '' });
+		css(loadingLayer, { opacity: 0, display: '' });
 		animate(loadingLayer, {
 			opacity: loadingOptions.style.opacity
 		}, {
@@ -6461,8 +6475,8 @@ function Chart (options) {
 			}), container);*/
 			renderer.text(
 				credits.text,
-				chartWidth - 10,
-				chartHeight - 10,
+				chartWidth - 5,
+				chartHeight - 5,
 				credits.style,
 				0,
 				'right'
@@ -6516,6 +6530,9 @@ function Chart (options) {
 		tracker.destroy();
 		
 		renderer.destroy();*/
+		
+		// remove all SVG
+		container.innerHTML = '';
 		
 		// IE6 leak 
 		container =	null;
@@ -8076,6 +8093,7 @@ Series.prototype = {
 			hasRendered = true;
 		}*/
 		
+		
 		series.isDirty = false; // means data is in accordance with what you see
 		
 	},
@@ -8288,9 +8306,9 @@ Series.prototype = {
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			//isSingleSeries = chart.series.length == 1,
-			tracker = series.tracker;
+			tracker = series.tracker,
+			css = options.cursor ? { cursor: options.cursor } : null;
 	
-		
 		// if only one series, use the whole plot area as tracker
 		// problem: can't put legend inside plot area
 		/*if (isSingleSeries) {
@@ -8315,13 +8333,14 @@ Series.prototype = {
 					stroke: TRACKER_FILL,
 					//fill: isSingleSeries ? TRACKER_FILL : NONE,
 					fill: NONE,
-					'stroke-width' : options.lineWidth + chart.options.tooltip.snap,
+					'stroke-width' : options.lineWidth + 2 * chart.options.tooltip.snap,
 					'stroke-linecap': 'round'
 				})
 				.on('mouseover', function() {
 					chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
 					series.onMouseOver();
 				})
+				.css(css)
 				.add(chart.trackerGroup, 1);
 		}
 	}
