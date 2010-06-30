@@ -192,9 +192,11 @@ function serializeCSS(style) {
 
 function css (el, styles) {
 	if (isIE) {
-		if (styles.opacity !== UNDEFINED) {
-			styles.filter = 'alpha(opacity='+ (styles.opacity * 100) +')';
-		}	
+		try{
+	if (styles.opacity !== UNDEFINED) {
+				styles.filter = 'alpha(opacity='+ (styles.opacity * 100) +')';
+		}
+		}catch (e) {console.log(e.message) }	
 	}
 	extend(el.style, styles);
 }
@@ -699,7 +701,8 @@ defaultOptions = {
 				select: {
 					marker: {}
 				}
-			}
+			},
+			stickyTracking: true // docs
 		}
 	},
 	labels: {
@@ -1316,6 +1319,8 @@ SVGElement.prototype = {
 			key = hash;
 			if (nodeName == 'circle') {
 				key = { x: 'cx', y: 'cy' }[key] || key;
+			} else if (key == 'strokeWidth') {
+				key = 'stroke-width';
 			}
 			ret = parseFloat(attr(element, key) || this[key] || 0);
 			
@@ -1364,6 +1369,11 @@ SVGElement.prototype = {
 				// special
 				} else if (key == 'isTracker') {
 					this[key] = value;
+				}
+				
+				// jQuery animate changes case
+				if (key == 'strokeWidth') {
+					key = 'stroke-width';
 				}
 				
 				// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)				
@@ -4684,8 +4694,8 @@ function Chart (options) {
 			} else {
 				
 			    // show the hover mark
-				tracker.resetActivePoint();
-				series.setPointState(point, HOVER_STATE);
+				//tracker.resetHoverPoint();
+				//point.setState(HOVER_STATE);
 			
 				// show it
 				if (tooltipIsHidden) {
@@ -4765,7 +4775,7 @@ function Chart (options) {
 	function MouseTracker (chart, options) {
 
 		
-		var activePoint,
+		var //activePoint,
 			mouseDownX, 
 			mouseDownY,
 			hasDragged,
@@ -4862,48 +4872,58 @@ function Chart (options) {
 		}
 		*/
 		/**
-		 * Refresh the tooltip on mouse move
+		 * With line type charts with a single tracker, get the point closest to the mouse
 		 */
 		function onmousemove (e) {
-			var point = chart.hoverPoint,
-				series = chart.hoverSeries;
+			var point,
+				hoverPoint = chart.hoverPoint,
+				hoverSeries = chart.hoverSeries;
 				
-			if (point || series) {
+			if (hoverSeries && hoverSeries.tracker) { // only use for line-type series with common tracker
 		
 				// get the point
-				if (!point) {
-					point = series.tooltipPoints[
-						inverted ? 
-							e.pageY - position.y : 
-							e.pageX - position.x - plotLeft // wtf?
-					];
-				}
-			
+				point = hoverSeries.tooltipPoints[
+					inverted ? 
+						e.pageY - position.y : 
+						e.pageX - position.x - plotLeft // wtf?
+				];
+				
+				
 				// a new point is hovered, refresh the tooltip
-				if (point && point != activePoint) {
+				if (point && point != hoverPoint) {
 					
 					// trigger the events
-					if (activePoint) {
+					/*if (activePoint) {
 						activePoint.firePointEvent('mouseOut');
-						
 					}
 					point.firePointEvent('mouseOver');
 
 					// refresh the tooltip
 					if (tooltip) {
 						tooltip.refresh(point);
-					}
-					activePoint = point;					
+					}*/
+					point.onMouseOver();
 					
 				}				
 			}
 		}
 				
+		
+		
 		/**
-		 * Set the currently active point's display state back to normal
+		 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
 		 */
-		function resetActivePoint() {
-			if (activePoint && activePoint.graphic) {
+		function resetTracker() {
+			var hoverSeries = chart.hoverSeries,
+				hoverPoint = chart.hoverPoint;
+
+			// hide the tooltip
+			/*if (tooltip) {
+				tooltip.hide();
+			}*/
+			
+			
+			if (hoverPoint) {
 				/*var options = activePoint.series.options.marker,
 					attr;
 				
@@ -4921,31 +4941,18 @@ function Chart (options) {
 				}*/
 				
 				
-				activePoint.series.setPointState(activePoint, NORMAL_STATE);
-				
-			}
-
-		}
-		
-		/**
-		 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
-		 */
-		function resetTracker() {
-			var hoverSeries = chart.hoverSeries;
-
-			// hide the tooltip
-			resetActivePoint();
-			if (tooltip) {
-				tooltip.hide();
+				hoverPoint.onMouseOut();
 			}
 			// hide the hovered series and point
 			if (hoverSeries) {
-				if (hoverSeries.setState) { // it might be destroyed
+				/*if (hoverSeries.setState) { // it might be destroyed
 					hoverSeries.setState();
 				}
 				chart.hoverSeries = null;
-				activePoint = null;
+				//activePoint = null;*/
+				hoverSeries.onMouseOut();
 			}
+			
 		}
 		
 		/**
@@ -5187,17 +5194,18 @@ function Chart (options) {
 			// MooTools 1.2.3 doesn't fire this in IE when using addEvent
 			//.on('click', function(e) {
 			container.onclick = function(e) {
+				var hoverPoint = chart.hoverPoint;
 				e = normalizeMouseEvent(e);
 				 
 				e.cancelBubble = true; // IE specific
 				
 				if (!hasDragged) {
-					if (activePoint && attr(e.target, 'isTracker')) {
-						var plotX = activePoint.plotX,
-							plotY = activePoint.plotY;
+					if (hoverPoint && attr(e.target, 'isTracker')) {
+						var plotX = hoverPoint.plotX,
+							plotY = hoverPoint.plotY;
 							
 						// add page position info
-						extend(activePoint, {
+						extend(hoverPoint, {
 							pageX: position.x + plotLeft + 
 								(inverted ? plotWidth - plotY : plotX),
 							pageY: position.y + plotTop + 
@@ -5206,11 +5214,11 @@ function Chart (options) {
 						
 						// the series click event
 						fireEvent(chart.hoverSeries, 'click', extend(e, {
-							point: activePoint
+							point: hoverPoint
 						}));
 						
 						// the point click event
-						activePoint.firePointEvent('click', e);
+						hoverPoint.firePointEvent('click', e);
 					
 					} else { 
 						extend (e, getMouseCoordinates(e));
@@ -5336,7 +5344,7 @@ function Chart (options) {
 		// expose properties
 		extend (this, {
 			//insertAtFront: insertAtFront,
-			resetActivePoint: resetActivePoint,
+			//resetHoverPoint: resetHoverPoint,
 			zoomX: zoomX,
 			zoomY: zoomY,
 			resetTracker: resetTracker
@@ -5606,17 +5614,19 @@ function Chart (options) {
 					item.checkbox = createElement('input', {
 						type: 'checkbox',
 						checked: item.selected,
-						defaultChecked: item.selected, // required by IE7
-						onclick: function() {
-							fireEvent (item, 'checkboxClick', { 
-									checked: this.checked 
-								}, 
-								function() {
-									item.select();
-								}
-							);
-						}
+						defaultChecked: item.selected // required by IE7						
 					}, options.itemCheckboxStyle, container);
+					
+					addEvent(item.checkbox, 'click', function(event) {
+						var target = event.target;
+						fireEvent (item, 'checkboxClick', { 
+								checked: target.checked 
+							}, 
+							function() {
+								item.select();
+							}
+						);
+					});
 				}
 			}
 			
@@ -6802,7 +6812,7 @@ Point.prototype = {
 		//series.isDirty = true;
 		point.firePointEvent(selected ? 'select' : 'unselect');
 		
-		series.setPointState(point, 'select');
+		point.setState(SELECT_STATE);
 		// remove the hover marker so the user can see the underlying marker changes to selected
 		/*if (singlePointLayer) {
 			singlePointLayer.clear();
@@ -6813,15 +6823,45 @@ Point.prototype = {
 			each (chart.getSelectedPoints(), function (loopPoint) {
 				if (loopPoint.selected && loopPoint != point) {
 					loopPoint.selected = false;
-					loopPoint.series.setPointState(loopPoint, NORMAL_STATE);
-					fireEvent(loopPoint, 'unselect');
+					loopPoint.setState(NORMAL_STATE);
+					loopPoint.firePointEvent('unselect');
 				}
 			});
 		}
 		
 	},
 	
-
+	onMouseOver: function() {
+		var point = this,
+			chart = point.series.chart,
+			tooltip = chart.tooltip,
+			hoverPoint = chart.hoverPoint;
+			
+		// set normal state to previous series
+		if (hoverPoint && hoverPoint != point) {
+			hoverPoint.onMouseOut();
+		}
+		
+		// trigger the event
+		point.firePointEvent('mouseOver');
+		
+		// update the tooltip
+		if (tooltip) {
+			tooltip.refresh(point);
+		}
+		
+		// hover this
+		point.setState(HOVER_STATE);
+		chart.hoverPoint = point;
+	},
+	
+	onMouseOut: function() {
+		var point = this;
+		point.firePointEvent('mouseOut');
+		
+		point.setState(NORMAL_STATE);
+		point.series.chart.hoverPoint = null;
+	},
 	
 	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
@@ -6857,8 +6897,7 @@ Point.prototype = {
 			series = point.series,
 			chart = series.chart,
 			data = series.data,
-			i,
-			dataLength = data.length;
+			i = data.length;
 		
 		redraw = pick(redraw, true);
 		
@@ -6866,18 +6905,14 @@ Point.prototype = {
 		point.firePointEvent('remove', null, function() {
 
 			// loop through the data to locate the point and remove it
-			
-			//each(data, function(existingPoint, i) {
-			for (i = 0; i < dataLength - 1; i++) {
-				
+			while (i--) {
 				if (data[i] == point) {
 					data.splice(i, 1);
+					break;
 				}
-				break;
 			}
 			
 			point.destroy();
-			
 			
 			
 			// redraw
@@ -6936,6 +6971,50 @@ Point.prototype = {
 			}
 			this.hasImportedEvents = true;
 		}
+	},
+	
+	/**
+	 * Set the point's state
+	 * @param {String} state
+	 */
+	setState: function(state) {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			pointAttr = point.pointAttr;
+			
+		if (!state) {
+			state = NORMAL_STATE;
+		}
+		
+		// selected points don't respond to hover
+		if (point.selected && state != SELECT_STATE) {
+			return;
+		}
+		
+		
+		// if a graphic is not applied to each point in the normal state, create a shared
+		// graphic for the hover state
+		// todo: symbols
+		if (state && !point.graphic) {
+			if (!series.stateMarkerGraphic) {
+				series.stateMarkerGraphic = chart.renderer.circle(
+					0, 0, pointAttr[state].r
+				)
+				.attr(pointAttr[state])
+				.add(series.group);
+			}
+			
+			series.stateMarkerGraphic.translate(
+				point.plotX, 
+				point.plotY
+			);
+			
+		// else, apply hover styles to the existing point
+		} else {				
+			point.graphic.attr(pointAttr[state]);
+		}
+		
 	},
 	
 	setTooltipText: function() {
@@ -7390,18 +7469,17 @@ Series.prototype = {
 			stateMarkerGraphic.show();
 		}
 		
+		// set normal state to previous series
+		if (hoverSeries && hoverSeries != series) {
+			hoverSeries.onMouseOut();
+		}
 		
 		// trigger the event, but to save processing time, 
 		// only if defined
 		if (series.options.events.mouseOver) { 
-			fireEvent(series, 'mouseOver', {
-				point:  chart.hoverPoint
-			});
+			fireEvent(series, 'mouseOver');
 		}
-		// set normal state to previous series
-		if (hoverSeries && hoverSeries != series) {
-			hoverSeries.setState();
-		}
+		
 		
 		// bring to front
 		// Todo: optimize. This is one of two operations slowing down the tooltip in Firefox.
@@ -7418,10 +7496,29 @@ Series.prototype = {
 	onMouseOut: function() {
 		// trigger the event only if listeners exist
 		var series = this,
-			hoverSeries = series.chart.hoverSeries;
-		if (hoverSeries && series.options.events.mouseOut) { 
-			fireEvent(hoverSeries, 'mouseOut');
+			chart = series.chart,
+			tooltip = chart.tooltip,
+			hoverPoint = chart.hoverPoint;
+			
+		// trigger mouse out on the point, which must be in this series
+		if (hoverPoint) {
+			hoverPoint.onMouseOut();
+		}		
+		
+		// fire the mouse out event
+		if (series && series.options.events.mouseOut) { 
+			fireEvent(series, 'mouseOut');
 		}
+		
+		
+		// hide the tooltip
+		if (tooltip) {
+			tooltip.hide();
+		}
+		
+		// set normal state
+		series.setState();
+		chart.hoverSeries = null;		
 	},
 	
 	/**
@@ -7596,7 +7693,7 @@ Series.prototype = {
 		// HOVER_STATE and SELECT_STATE states inherit from normal state except the default radius
 		each([HOVER_STATE, SELECT_STATE], function(state) {
 			seriesPointAttr[state] = series.convertAttribs(
-				stateOptions[state],
+				stateOptions[state].enabled !== false && stateOptions[state],
 				seriesPointAttr[NORMAL_STATE]
 			);
 		});
@@ -7758,7 +7855,7 @@ Series.prototype = {
 	/**
 	 * Draw the data labels
 	 */
-	drawDataLabels: function(){
+	drawDataLabels: function() {
 		if (this.options.dataLabels.enabled) {
 			var series = this, 
 				//i, 
@@ -7785,7 +7882,7 @@ Series.prototype = {
 						.translate(chart.plotLeft, chart.plotTop)
 						.add(null, 4);
 			}
-			
+		
 			/*series.dataLabelsLayer = dataLabelsLayer = new Layer('data-labels', 
 				series.layerGroup.div, 
 				null, {
@@ -7795,7 +7892,7 @@ Series.prototype = {
 			// determine the color
 			//options.style.color = options.color == 'auto' ? series.color : options.color;
 			options.style.color = pick(options.color, series.color);
-			
+		
 			// make the labels for each point
 			each(data, function(point){
 				var plotX = pick(point.barX, point.plotX),
@@ -7985,9 +8082,9 @@ Series.prototype = {
 		}
 	},
 	
-	/**
+	/* *
 	 * Draw a single point in a specific state
-	 */
+	 * /
 	setPointState: function(point, state) {
 		var series = this,
 			chart = series.chart,
@@ -8026,7 +8123,7 @@ Series.prototype = {
 		}
 		
 		
-	},
+	},*/
 	
 	/**
 	 * Render the graph and markers
@@ -8162,15 +8259,16 @@ Series.prototype = {
 			lineWidth = options.lineWidth;
 
 		state = state || NORMAL_STATE;
+		
 		if (series.state != state) {
 			series.state = state;
-			
+		
 			if (state) {				
 				lineWidth = pick(options.states[state].lineWidth, lineWidth);
 			} else if (stateMarkerGraphic) {
 				stateMarkerGraphic.hide();
 			}
-				
+			
 			if (graph) {
 				graph.animate({
 					'stroke-width': lineWidth
@@ -8194,6 +8292,7 @@ Series.prototype = {
 			//colorizeLegendItem = chart.legend.colorizeItem,
 			//legendLine = series.legendLine,
 			//legendSymbol = series.legendSymbol,
+			seriesGroup = series.group,
 			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
 			//areas = series.areas,
@@ -8213,7 +8312,9 @@ Series.prototype = {
 		}	
 		
 		// show or hide series
-		series.group[showOrHide]();
+		if (seriesGroup) { // pies don't have one
+			seriesGroup[showOrHide]();
+		}
 		
 		// show or hide trackers
 		if (seriesTracker) {
@@ -8337,8 +8438,15 @@ Series.prototype = {
 					'stroke-linecap': 'round'
 				})
 				.on('mouseover', function() {
-					chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
-					series.onMouseOver();
+					//chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
+					if (chart.hoverSeries != series) {
+						series.onMouseOver();
+					}
+				})
+				.on('mouseout', function() {
+					if (!options.stickyTracking) {
+						series.onMouseOut();
+					}
 				})
 				.css(css)
 				.add(chart.trackerGroup, 1);
@@ -8734,7 +8842,9 @@ var ColumnSeries = extendClass(Series, {
 			chart = series.chart,
 			renderer = chart.renderer,
 			shapeArgs,
-			tracker;
+			tracker,
+			trackerLabel = +new Date(),
+			rel;
 			
 		each (series.data, function(point) {
 			tracker = point.tracker;
@@ -8747,12 +8857,24 @@ var ColumnSeries = extendClass(Series, {
 					renderer[point.shapeType](shapeArgs)
 					//.attr(shapeArgs)
 					.attr({
-						isTracker: true,
+						isTracker: trackerLabel,
 						fill: TRACKER_FILL
 					})
-					.on('mouseover', function() {
-						chart.hoverPoint = point;
-						series.onMouseOver();
+					.on('mouseover', function(event) {
+						rel = event.relatedTarget || event.fromElement;
+						if (chart.hoverSeries != series && attr(rel, 'isTracker') != trackerLabel) {
+							series.onMouseOver();
+						}
+						point.onMouseOver();
+						
+					})
+					.on('mouseout', function(event) {
+						if (!series.options.stickyTracking) {
+							rel = event.relatedTarget || event.toElement;
+							if (attr(rel, 'isTracker') != trackerLabel) {
+								series.onMouseOut();
+							}
+						}
 					})
 					.add(chart.trackerGroup, 1);
 			}
@@ -8905,9 +9027,9 @@ seriesTypes.scatter = ScatterSeries;
  * Extended point object for pies
  */
 var PiePoint = extendClass(Point, {
-	setState: function(state) {
+	/*setState: function(state) {
 		this.series.setPointState(this, state);
-	},
+	},*/
 	init: function () {
 		
 		Point.prototype.init.apply(this, arguments);
