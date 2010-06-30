@@ -1900,13 +1900,15 @@ SVGRenderer.prototype = {
 	},
 	rect: function (x, y, width, height, r, strokeWidth) {
 		
-		/*var normalizer = (strokeWidth || 0) % 2 / 2;
+		if (arguments.length > 1) {
+			var normalizer = (strokeWidth || 0) % 2 / 2;
 
-		// normalize for crisp edges
-		x = mathRound(x || 0) + normalizer;
-		y = mathRound(y || 0) + normalizer;
-		width = mathRound((width || 0) - 2 * normalizer);
-		height = mathRound((height || 0) - 2 * normalizer);*/
+			// normalize for crisp edges
+			x = mathRound(x || 0) + normalizer;
+			y = mathRound(y || 0) + normalizer;
+			width = mathRound((width || 0) - 2 * normalizer);
+			height = mathRound((height || 0) - 2 * normalizer);
+		}
 		
 		var attr = typeof x == 'object' ? 
 			x : // the attributes can be passed as the first argument
@@ -5385,6 +5387,7 @@ function Chart (options) {
 			style = options.style,
 			itemStyle = options.itemStyle,
 			itemHoverStyle = options.itemHoverStyle,
+			itemHiddenStyle = options.itemHiddenStyle,
 			padding = parseInt(style.padding, 10),
 			rightPadding = 20,
 			lineHeight = options.lineHeight || 16,
@@ -5417,7 +5420,7 @@ function Chart (options) {
 			var legendItem = item.legendItem,
 				legendLine = item.legendLine,
 				legendSymbol = item.legendSymbol,
-				hiddenColor = options.itemHiddenStyle.color,
+				hiddenColor = itemHiddenStyle.color,
 				textColor = visible ? options.itemStyle.color : hiddenColor,
 				symbolColor = visible ? item.color : hiddenColor;
 			if (legendItem) {
@@ -5439,21 +5442,26 @@ function Chart (options) {
 		 * @param {Object} item A Series or Point instance
 		 * @param {Object} visible Dimmed or colored
 		 */
-		function positionItem(item, itemY) {
+		function positionItem(item, itemX, itemY) {
 			var legendItem = item.legendItem,
 				legendLine = item.legendLine,
 				legendSymbol = item.legendSymbol,
 				checkbox = item.checkbox;
 			if (legendItem) {
-				legendItem.attr({ y: itemY });
+				legendItem.attr({ 
+					x: itemX,
+					y: itemY
+				});
 			}
 			if (legendLine) {
-				legendLine.translate(0, itemY - 4);
+				legendLine.translate(itemX, itemY - 4);
 			}
 			if (legendSymbol) {
-				legendSymbol.attr({ y: itemY - (legendSymbol.isSimple ? 11 : 4) });
+				legendSymbol//.attr({ y: itemY - (legendSymbol.isSimple ? 11 : 4) });
+					.translate(itemX, itemY);
 			}
 			if (checkbox) {
+				checkbox.x = itemX;
 				checkbox.y = itemY;
 			}
 		}
@@ -5512,11 +5520,12 @@ function Chart (options) {
 		 */
 		function renderItem(item) {
 			var	//markerOptions,
-				isHidden = false, //item.legendItem.className == HIGHCHARTS_HIDDEN,
+				//isVisible = item.visible, //item.legendItem.className == HIGHCHARTS_HIDDEN,
 				/*color = isHidden ? 
 					options.itemHiddenStyle.color : 
 					item.color,*/
 				bBox,
+				itemWidth,
 				legendSymbol,
 				simpleSymbol,
 				li = item.legendItem,
@@ -5531,16 +5540,16 @@ function Chart (options) {
 				// generate the list item text
 				item.legendItem = li = renderer.text(
 						options.labelFormatter.call(item),
-						itemX, 
+						0, 
 						0,
 						itemStyle
 					)
 					.on('mouseover', function() {
-						item.setState(HOVER_STATE);				
+						item.setState(HOVER_STATE);
 						li.css(itemHoverStyle);
 					})
 					.on('mouseout', function() {		
-						li.css(itemStyle);
+						li.css(item.visible ? itemStyle : itemHiddenStyle);
 						item.setState();
 					})
 					.on('click', function(event) {
@@ -5563,10 +5572,10 @@ function Chart (options) {
 				if (!simpleSymbol && item.options && item.options.lineWidth) {
 					item.legendLine = renderer.path([
 						M,
-						itemX - symbolWidth - symbolPadding, 
+						-symbolWidth - symbolPadding, 
 						0,
 						L, 
-						itemX - symbolPadding, 
+						-symbolPadding, 
 						0
 					]).attr({
 						//stroke: color,
@@ -5579,34 +5588,34 @@ function Chart (options) {
 				if (simpleSymbol) { // bar|pie|area|column
 					//legendLayer.drawRect(
 					legendSymbol = renderer.rect(
-						itemX - symbolWidth - symbolPadding,
-						0,
+						-symbolWidth - symbolPadding,
+						-11,
 						symbolWidth,
 						12,
 						2
 					).attr({
 						'stroke-width': 0
-					}).add(legendGroup, 1);
+					}).add(legendGroup, 3);
 				}
 					
 				// draw the marker
 				else if (item.options && item.options.marker && item.options.marker.enabled) {
 					legendSymbol = renderer.symbol(
 						item.symbol,
-						itemX - symbolWidth / 2 - symbolPadding, 
-						0, 
+						-symbolWidth / 2 - symbolPadding, 
+						-4, 
 						item.options.marker.radius
 					)
 					.attr(item.pointAttr[NORMAL_STATE])
-					.add(legendGroup, 1);
+					.add(legendGroup, 3);
 				}
-				if (legendSymbol) {
-					legendSymbol.isSimple = simpleSymbol;
+				//if (legendSymbol) {
+				//	legendSymbol.isSimple = simpleSymbol;
 					item.legendSymbol = legendSymbol;
-				}
+				//}
 					
 				// colorize the items
-				colorizeItem(item, !isHidden);
+				colorizeItem(item, item.visible);
 				
 				
 				// add the HTML checkbox on top
@@ -5662,13 +5671,14 @@ function Chart (options) {
 			
 			
 			// position the newly generated or reordered items
-			positionItem(item, itemY);
+			positionItem(item, itemX, itemY);
 			
 			// calculate the positions for the next line
 			bBox = li.getBBox();
 			lastItemY = itemY;
 			
-			var itemWidth = options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
+			item.legendItemWidth = itemWidth = 
+				options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
 			if (horizontal) {
 			
 				itemX += itemWidth;
@@ -5731,8 +5741,7 @@ function Chart (options) {
 			
 			// Draw the border
 			boxWidth = widthOption || offsetWidth;
-			boxHeight = lastItemY - y + (horizontal ? lineHeight : 0);
-			boxX = 0;
+			boxHeight = lastItemY - y + lineHeight;// + (horizontal ? lineHeight : 0);
 			if (legendBorderWidth || legendBackgroundColor) {
 				boxWidth += 2 * padding;
 				boxHeight += 2 * padding;
@@ -5781,13 +5790,13 @@ function Chart (options) {
 			}));
 			legendGroup.translate(boxPos.x, boxPos.y);
 			
-			// Position the checkboxes after the with is determined 
+			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
 				var checkbox = item.checkbox;
 				if (checkbox) {
 					css(checkbox, {
-						left: (boxX + boxWidth - 20) +PX,
-						top: (boxY + checkbox.y - 14) + PX 
+						left: (boxPos.x + item.legendItemWidth + checkbox.x - 40) +PX,
+						top: (boxPos.y + checkbox.y - 11) + PX 
 					});
 				}
 			});
@@ -7530,27 +7539,25 @@ Series.prototype = {
 			chart = series.chart,
 			clipRect = chart.clipRect;/*,
 			div = series.layerGroup.div*/
-		if (series.visible) {
-			if (init) { // initialize the animation
-				if (!clipRect.isAnimating) { // apply it only for one of the series
-					clipRect.attr( 'width', 0 );
-					clipRect.isAnimating = true;
-				}
-				
-			} else { // run the animation
-				
-				clipRect.animate({ 
-					width: chart.plotSizeX 
-				}, {
-					complete: function() {
-						clipRect.isAnimating = false;
-					}, 
-					duration: 1000
-				});
-		
-				// delete this function to allow it only once
-				this.animate = null;
+		if (init) { // initialize the animation
+			if (!clipRect.isAnimating) { // apply it only for one of the series
+				clipRect.attr( 'width', 0 );
+				clipRect.isAnimating = true;
 			}
+			
+		} else { // run the animation
+			
+			clipRect.animate({ 
+				width: chart.plotSizeX 
+			}, {
+				complete: function() {
+					clipRect.isAnimating = false;
+				}, 
+				duration: 500
+			});
+	
+			// delete this function to allow it only once
+			this.animate = null;
 		}
 	},
 	
@@ -7878,6 +7885,7 @@ Series.prototype = {
 			} else {
 				dataLabelsGroup = series.dataLabelsGroup = 
 					chart.renderer.g(PREFIX +'data-labels')
+						.attr({ visibility: series.visible ? VISIBLE : HIDDEN })
 						.clip(chart.clipRect)
 						.translate(chart.plotLeft, chart.plotTop)
 						.add(null, 4);
@@ -8136,9 +8144,6 @@ Series.prototype = {
 			//state;//, 
 			//stateLayers = series.stateLayers;
 			
-
-		
-			
 		// the group
 		if (!series.group) {
 			group = series.group = chart.renderer.g('series');
@@ -8150,6 +8155,7 @@ Series.prototype = {
 				}).rotate(90).flip('x');
 			} 
 			group.clip(chart.clipRect)
+				.attr({ visibility: series.visible ? VISIBLE : HIDDEN })
 				.translate(chart.plotLeft, chart.plotTop)
 				.add(null, 3);
 		}
@@ -8182,6 +8188,11 @@ Series.prototype = {
 			series.animate();
 		}
 		
+		/*if (!series.visible) {
+		 * Problem: second column series is not colored. calls render again. Find a solution
+		 * where the elements are not initially shown.
+			series.hide();
+		}*/
 		//else series.setVisible(false, false);
 		
 		// initially hide other states than normal
@@ -8435,7 +8446,8 @@ Series.prototype = {
 					//fill: isSingleSeries ? TRACKER_FILL : NONE,
 					fill: NONE,
 					'stroke-width' : options.lineWidth + 2 * chart.options.tooltip.snap,
-					'stroke-linecap': 'round'
+					'stroke-linecap': 'round',
+					visibility: series.visible ? VISIBLE : HIDDEN
 				})
 				.on('mouseover', function() {
 					//chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
@@ -8819,7 +8831,6 @@ var ColumnSeries = extendClass(Series, {
 			if (defined(point.plotY)) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
-
 				if (graphic) { // update
 					graphic.attr(shapeArgs);
 				
@@ -8858,7 +8869,8 @@ var ColumnSeries = extendClass(Series, {
 					//.attr(shapeArgs)
 					.attr({
 						isTracker: trackerLabel,
-						fill: TRACKER_FILL
+						fill: TRACKER_FILL,
+						visibility: series.visible ? VISIBLE : HIDDEN
 					})
 					.on('mouseover', function(event) {
 						rel = event.relatedTarget || event.fromElement;
