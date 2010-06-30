@@ -27,7 +27,6 @@ var HC = Highcharts,
 	merge = HC.merge,
 	each = HC.each,
 	extend = HC.extend,
-	symbols = HC.symbols,
 	math = Math,
 	mathMax = math.max,
 	doc = document,
@@ -78,16 +77,22 @@ defaultOptions.buttons = {
 		y: 10,
 		width: 24,
 		height: 20,
-		borderRadius: 5,
+		borderRadius: 3,
 		borderWidth: 1,
-		borderColor: '#C0C0C0',
-		backgroundColor: '#FFFFFF',
+		borderColor: '#BBBBBB',
+		backgroundColor: {
+			linearGradient: [0, 0, 0, 20],
+			stops: [
+				[0, '#F7F7F7'],
+				[1, '#E3E3E3']
+			]
+		},
 		symbolFill: '#E0E0E0',
-		symbolStroke: '#A0A0A0',
+		troke: '#A0A0A0',
 		hoverSymbolFill: '#4572A5',
 		hoverSymbolStroke: '#4572A5',
-		hoverBackgroundColor: '#EFF7FF',
-		hoverBorderColor: '#4572A5'
+		//hoverBackgroundColor: null,
+		hoverBorderColor: '#909090'
 	}
 }
 
@@ -102,6 +107,7 @@ defaultOptions.exporting = {
 		exportButton: {
 			symbol: 'exportIcon',
 			x: -10,
+			titleKey: 'exportButtonTitle',
 			menuItems: [{
 				text: lang.downloadPNG,
 				onclick: function() {
@@ -141,6 +147,7 @@ defaultOptions.exporting = {
 		printButton: {
 			symbol: 'printIcon',
 			x: -36,
+			titleKey: 'printButtonTitle',
 			onclick: function(e) {
 				e.stopPropagation();
 				chart.print();
@@ -432,7 +439,7 @@ extend (Chart.prototype, {
 			0
 		).attr({
 			fill: 'rgba(255, 255, 255, 0.001)',
-			title: lang.exportButtonTitle
+			title: lang[options.titleKey]
 		}).css({
 			cursor: 'pointer'
 		})
@@ -467,13 +474,15 @@ extend (Chart.prototype, {
 		
 		// the box border
 		box = renderer.rect(
-			buttonLeft,
-			buttonTop,
+			0,
+			0,
 			buttonWidth, 
 			buttonHeight,
 			options.borderRadius,
 			borderWidth
-		).attr(extend(boxAttr, {
+		)
+		.translate(buttonLeft, buttonTop) // to allow gradients
+		.attr(extend(boxAttr, {
 			'stroke-width': borderWidth
 		})).add(null, 19);
 		
@@ -520,10 +529,10 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 		x + radius * 0.5, y - radius / 3,
 		'Z',
 		M, // the lower sheet
-		x - radius * 0.5, y + radius / 3,
+		x - radius * 0.5, y + radius * 0.5,
 		x - radius * 0.75, y + radius,
 		x + radius * 0.75, y + radius,
-		x + radius * 0.5, y + radius / 3,
+		x + radius * 0.5, y + radius * 0.5,
 		'Z'
 	];
 };
