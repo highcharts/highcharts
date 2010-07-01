@@ -192,11 +192,9 @@ function serializeCSS(style) {
 
 function css (el, styles) {
 	if (isIE) {
-		try{
-	if (styles.opacity !== UNDEFINED) {
-				styles.filter = 'alpha(opacity='+ (styles.opacity * 100) +')';
+		if (styles && styles.opacity !== UNDEFINED) {
+			styles.filter = 'alpha(opacity='+ (styles.opacity * 100) +')';
 		}
-		}catch (e) {console.log(e.message) }	
 	}
 	extend(el.style, styles);
 }
@@ -2397,6 +2395,7 @@ var VMLElement = extendClass( SVGElement, {
 					// convert paths 
 					//value = map(value, function(item) {
 					i = value.length;
+					var convertedPath = [];
 					while (i--) {
 						
 						
@@ -2404,15 +2403,18 @@ var VMLElement = extendClass( SVGElement, {
 						// Substracting half a pixel seems to make the coordinates
 						// align with SVG, but this hasn't been tested thoroughly
 						if (typeof value[i] == 'number') {
-							value[i] = mathRound(value[i] * 10) - 5;
+							convertedPath[i] = mathRound(value[i] * 10) - 5;
 						}
 						// close the path
 						else if (value[i] == 'Z') {
-							value[i] = 'x';
+							convertedPath[i] = 'x';
+						} 
+						else {
+							convertedPath[i] = value[i];
 						}
 						
 					}
-					value = value.join(' ');
+					value = convertedPath.join(' ');
 					
 					// update shadows
 					if (shadows) {
@@ -5003,7 +5005,7 @@ function Chart (options) {
 					fireEvent(chart, 'selection', selectionData, zoom);
 
 					//selectionIsMade = true;
-				}					
+				}
 				selectionMarker = selectionMarker.destroy();
 			}
 			
@@ -5016,6 +5018,11 @@ function Chart (options) {
 		 */
 		function setDOMEvents () {
 			var lastWasOutsidePlot = true;
+			
+			/*container.ondblclick = function(e) {
+				e = normalizeMouseEvent(e);
+				alert(e.pageX);
+			};*/
 			
 			//trackerGroup.on('mousedown', function(e) {
 			container.onmousedown = function(e) {
@@ -5047,7 +5054,6 @@ function Chart (options) {
 						.add(null, 7);
 					}
 				}
-				
 				
 			};
 			
@@ -5640,35 +5646,6 @@ function Chart (options) {
 			}
 			
 			
-			// add the checkbox
-			/*if (item.options && item.options.showCheckbox) {
-				var checkbox, checkMarker, checkRect;
-				checkbox = renderer.rect(
-						offsetWidth + 0.5, 
-						itemY - lineHeight - 12.5, 
-						12, 
-						12,
-						0, 
-						1
-					).attr({
-						'stroke-width': 1,
-						fill: 'red',
-						stroke: '#606060'
-					})
-					.on('click', function() {
-
-						fireEvent (item, 'checkboxClick', { 
-								checked: target.checked 
-							}, 
-							function() {
-								item.select();
-							}
-						);
-					})
-					.add(legendGroup);
-				
-			}*/
-			
 			
 			// position the newly generated or reordered items
 			positionItem(item, itemX, itemY);
@@ -5682,7 +5659,7 @@ function Chart (options) {
 			if (horizontal) {
 			
 				itemX += itemWidth;
-				offsetWidth = widthOption || mathMax(itemX, offsetWidth);
+				offsetWidth = widthOption || mathMax(itemX - initialItemX, offsetWidth);
 			
 				if (itemX - initialItemX + itemWidth > 
 						(widthOption || (chartWidth - 2 * padding - initialItemX))) { // new line
@@ -6778,6 +6755,10 @@ Point.prototype = {
 		var point = this,
 			prop;
 			
+		if (point == point.series.chart.hoverPoint) {
+			point.onMouseOut();
+		}
+		
 		// remove all events
 		removeEvent(point);
 		
@@ -7020,7 +7001,7 @@ Point.prototype = {
 			);
 			
 		// else, apply hover styles to the existing point
-		} else {				
+		} else if (point.graphic) {				
 			point.graphic.attr(pointAttr[state]);
 		}
 		
@@ -7233,7 +7214,7 @@ Series.prototype = {
 	setOptions: function(itemOptions) {
 		var plotOptions = this.chart.options.plotOptions,
 			options = merge(
-				plotOptions[this.type], 
+				plotOptions[this.type],
 				plotOptions.series,
 				itemOptions
 			);
@@ -7553,7 +7534,7 @@ Series.prototype = {
 				complete: function() {
 					clipRect.isAnimating = false;
 				}, 
-				duration: 500
+				duration: 1000
 			});
 	
 			// delete this function to allow it only once
@@ -8051,8 +8032,6 @@ Series.prototype = {
 		}
 		series.graphPath = graphPath; // used in drawTracker
 
-		
-		
 
 		// draw the graph
 		if (graph) {
@@ -8275,7 +8254,7 @@ Series.prototype = {
 			series.state = state;
 		
 			if (state) {				
-				lineWidth = pick(options.states[state].lineWidth, lineWidth);
+				lineWidth = options.states[state].lineWidth || lineWidth;
 			} else if (stateMarkerGraphic) {
 				stateMarkerGraphic.hide();
 			}
@@ -9264,7 +9243,7 @@ var PieSeries = extendClass(Series, {
 			if (!point.group) {
 				// if the point is sliced, use special translation, else use plot area traslation
 				groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-				point.group = renderer.g('point').add(series.group).
+				point.group = renderer.g('point').add(null, 3).
 					translate(groupTranslation[0], groupTranslation[1]);
 			}
 			
