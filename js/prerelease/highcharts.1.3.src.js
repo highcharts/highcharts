@@ -2105,6 +2105,7 @@ SVGRenderer.prototype = {
 				'Z' // close
 			];
 		}
+
 	},
 	
 	/**
@@ -2248,7 +2249,7 @@ SVGRenderer.prototype = {
 
 /* **************************************************************************** 
  *                                                                            * 
- * START OF INTERNET EXPLORER < 8 SPECIFIC CODE                               *
+ * START OF INTERNET EXPLORER <= 8 SPECIFIC CODE                              *
  *                                                                            *
  * For applications and websites that don't need IE support, like platform    *
  * targeted mobile apps and web apps, this code can be removed.               *
@@ -2298,16 +2299,22 @@ var VMLElement = extendClass( SVGElement, {
 		this.renderer = renderer;
 	},
 	
-	// add the node at a specified z index
+	/**
+	 * Add the node to the given parent
+	 * @param {Object} parent
+	 * @param {Object} zIndex
+	 */
 	add: function(parent, zIndex) {
 		var wrapper = this,
 			renderer = wrapper.renderer,
 			element = wrapper.element,
+			box = renderer.box,
+			parentClass,
 		
 			// get the parent node
 			parentNode = parent ? 
 				parent.element || parent : 
-				renderer.box;
+				box;
 			
 			// VML elements are added to the v:group element so they can be rotated.
 			// The exception is line (always text paths), that won't display inside
@@ -2322,24 +2329,18 @@ var VMLElement = extendClass( SVGElement, {
 			css(element, { zIndex: zIndex });
 		}
 		
-		//var start = (new Date()).getTime();
+		// VML bug that causes some elements to not show when added to a group. This
+		// bug only happens when #default#VML is added to the third parameter of 
+		// a namespace in the document. This namespace is present because it increases
+		// performance by up to 10 times.
+		parentClass = parentNode.className;
+		if (parentClass && (parentClass == PREFIX +'tracker' || parentClass == PREFIX +'grid')) {
+			box.appendChild(element);
+		}
 		
+		// append it where it really should be
 		parentNode.appendChild(element);
 		
-		
-		// If adding a HTML element within a group, add a dummy rectangle in the top left of the group
-		// to make the positioning work right. Without this the HTML element's 
-		// position is relative to the top left shape within the group, not the 
-		// group itself.
-		/*if (/SPAN|IMG/.test(element.nodeName) && parentNode.nodeName == 'group') {
-			if (!parent.positioner) {
-				parent.positioner = this.renderer.rect(0, 0, 1, 1, 0).
-					css({ visibility: HIDDEN }).add(parent);
-			}
-		}*/	
-		
-		//var end = (new Date()).getTime() - start;
-		//console.log(end, ", ", element.tagName, ", ", parentNode.tagName);
 		
 		return wrapper;
 	},
@@ -2860,35 +2861,28 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		var box = createElement(DIV, null, {
 				width: width + PX,
 				height: height + PX
-			}, container);
+			}, container),
+			urn = 'urn:schemas-microsoft-com:vml',
+			namespaces = doc.namespaces;
 		
 		// renderer properties
 		//this.wrappers = [];
 		this.box = box;
-		this.urn = 'urn:schemas-microsoft-com:vml';
+		this.urn = urn;
 		
 		// create namespace and style behaviour
-		if (!doc.namespaces.v) {
-			// better performance but mouse tracking fails:
-			//doc.namespaces.add('v_dummy', 'urn:schemas-microsoft-com:vml', '#default#VML');
+		if (!namespaces.v) {
 			
-			doc.namespaces.add('v', this.urn);
+			// better performance but requires workaround in VMLElement.prototype.add
+			namespaces.add('v_dummy', urn, '#default#VML');
+			
+			namespaces.add('v', urn);
 			
 			// setup default css
 			doc.createStyleSheet().cssText = 
 				'v\\:group, v\\:oval, v\\:path, v\\:rect, v\\:roundrect, v\\:shape, '+
 				'v\\:line, v\\:fill, v\\:stroke, v\\:textpath '+
 				'{ behavior:url(#default#VML); display:inline-block } ';
-			/*if (!doc.styleSheets['hc']) {
-		        var ss = doc.createStyleSheet();
-		        ss.owningElement.id = 'hc';
-		        ss.cssText = 'canvas{display:inline-block;overflow:hidden;' +
-		            // default size is 300x150 in Gecko and Opera
-		            'text-align:left;width:300px;height:150px}' +
-		            'v\\:*{behavior:url(#default#VML)}' +
-		            'o\\:*{behavior:url(#default#VML)}';
-		
-		    }*/
 		}
 		
 
@@ -3154,6 +3148,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				coordsize: '100,100',
 				d: path
 			});
+			//.add();
 		
 		//wrapper.pathElem = createElement('v:path', null, null, wrapper.element);
 		
@@ -3314,13 +3309,10 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		}
 	}
 });
-
-
-
 }
 /* **************************************************************************** 
  *                                                                            * 
- * END OF INTERNET EXPLORER < 8 SPECIFIC CODE                                 *
+ * END OF INTERNET EXPLORER <= 8 SPECIFIC CODE                                *
  *                                                                            *
  *****************************************************************************/
 
@@ -8413,7 +8405,6 @@ Series.prototype = {
 				'Z'
 			]; 
 		}*/
-		
 		if (tracker) { // update
 			tracker.attr({ d: trackerPath });
 			
@@ -9005,7 +8996,25 @@ var ScatterSeries = extendClass(Series, {
 	/**
 	 * Create individual tracker elements for each point
 	 */
-	drawTracker: ColumnSeries.prototype.drawTracker,
+	//drawTracker: ColumnSeries.prototype.drawTracker,
+	drawTracker: function() {
+		var series = this,
+			chart = series.chart;
+			
+		each(series.data, function(point) {
+			point.graphic
+				.on('mouseover', function(event) {
+					point.onMouseOver();
+					
+				})
+				.on('mouseout', function(event) {
+					if (!series.options.stickyTracking) {
+						series.onMouseOut();
+					}
+				});
+		});
+
+	},
 	
 	/**
 	 * Cleaning the data is not necessary in a scatter plot
