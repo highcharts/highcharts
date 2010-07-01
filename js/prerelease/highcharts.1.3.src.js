@@ -1862,19 +1862,21 @@ SVGRenderer.prototype = {
 		
 		return this.createElement('circle').attr(attr);
 	},
-	arc: function (x, y, r, start, end) {
+	arc: function (x, y, r, innerR, start, end) {
 		// arcs are defined as symbols for the ability to set 
 		// attributes in attr and animate
 		
 		if (typeof x == 'object') {
 			y = x.y;
 			r = x.r;
+			innerR = x.innerR;
 			start = x.start;
 			end = x.end;
 			x = x.x;
 		}
 		
 		return this.symbol('arc', x || 0, y || 0, r || 0, {
+			innerR: innerR || 0,
 			start: start || 0,
 			end: end || 0
 		});
@@ -2086,26 +2088,40 @@ SVGRenderer.prototype = {
 		},
 		'arc': function (x, y, radius, options) {
 			var start = options.start,
-				end = options.end;
+				end = options.end,
+				innerRadius = options.innerR,
+				cosStart = mathCos(start),
+				sinStart = mathSin(start),
+				cosEnd = mathCos(end),
+				sinEnd = mathSin(end),
+				longArc = end - start < Math.PI ? 0 : 1;
 			return [
 				M,
-				x, 
-				y, 
-				L,
-				x + radius * mathCos(start),
-				y + radius * mathSin(start),
+				x + radius * cosStart,
+				y + radius * sinStart,
 				'A', // arcTo
 				radius, // x radius
 				radius, // y radius
 				0, // slanting
-				end - start < Math.PI ? 0 : 1, // long or short arc
+				longArc, // long or short arc
 				1, // clockwise
-				x + radius * mathCos(end),
-				y + radius * mathSin(end),
+				x + radius * cosEnd,
+				y + radius * sinEnd,
+				L,				
+				x + innerRadius * cosEnd, 
+				y + innerRadius * sinEnd,
+				'A', // arcTo
+				innerRadius, // x radius
+				innerRadius, // y radius
+				0, // slanting
+				longArc, // long or short arc
+				0, // clockwise
+				x + innerRadius * cosStart,
+				y + innerRadius * sinStart,
+				
 				'Z' // close
 			];
 		}
-
 	},
 	
 	/**
@@ -3270,23 +3286,38 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 */
 	symbols: {
 		// VML specific arc function
-		arc: function (x, y, r, options) {
+		arc: function (x, y, radius, options) {
 			var start = options.start,
-				end = options.end;
+				end = options.end,
+				cosStart = mathCos(start),
+				sinStart = mathSin(start),
+				cosEnd = mathCos(end),
+				sinEnd = mathSin(end),
+				innerRadius = options.innerR;
+								
 			return [
-				M,
-				x,
-				y,
 				'wa', // clockwisearcto
-				x - r, // left
-				y - r, // top
-				x + r, // right
-				y + r, // bottom
-				x + r * mathCos(start), // start x
-				y + r * mathSin(start), // start y
-				x + r * mathCos(end), // end x
-				y + r * mathSin(end), // end y
-				//'x', // finish path
+				x - radius, // left
+				y - radius, // top
+				x + radius, // right
+				y + radius, // bottom
+				x + radius * cosStart, // start x
+				y + radius * sinStart, // start y
+				x + radius * cosEnd, // end x
+				y + radius * sinEnd, // end y
+				
+				
+				'at', // clockwisearcto
+				x - innerRadius, // left
+				y - innerRadius, // top
+				x + innerRadius, // right
+				y + innerRadius, // bottom
+				x + innerRadius * cosEnd, // start x
+				y + innerRadius * sinEnd, // start y
+				x + innerRadius * cosStart, // end x
+				y + innerRadius * sinStart, // end y
+				
+				'x', // finish path
 				'e' // close
 			];
 			
@@ -6711,7 +6742,6 @@ Point.prototype = {
 			// copy options directly to point
 			//for (n in options) point[n] = options[n];
 			extend(point, options);
-			
 			point.options = options;
 			// set x and y
 			//point.x = options.x;
@@ -9142,17 +9172,19 @@ var PieSeries = extendClass(Series, {
 			data = series.data,
 			circ = 2 * math.PI,
 			fraction,
+			smallestSize = math.min(plotWidth, plotHeight),
 			isPercent;
 			
 		// get positions - either an integer or a percentage string must be given
-		positions.push(options.size);
+		positions.push(options.size, options.innerSize);
 		positions = map (positions, function(length, i) {
-			isPercent = /%$/.test(length);
+			
+			isPercent = /%$/.test(length);			
 			return isPercent ? 
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to height
-				[plotWidth, plotHeight, math.min(plotWidth, plotHeight)][i] *
+				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
 					parseInt(length, 10) / 100:
 				length;
 		});
@@ -9176,6 +9208,7 @@ var PieSeries = extendClass(Series, {
 				x: positions[0],
 				y: positions[1],
 				r: positions[2] / 2,
+				innerR: positions[3] / 2,
 				start: start,
 				end: end
 			};
