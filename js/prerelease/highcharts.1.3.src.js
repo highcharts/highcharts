@@ -817,8 +817,7 @@ defaultOptions = {
 			cursor: 'pointer',
 			color: '#909090',
 			fontSize: '10px'
-		},
-		target: '_self'
+		}
 	}
 };
 
@@ -1006,6 +1005,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderWidth: 1,
 	center: ['50%', '50%'],
 	colorByPoint: true,
+	//innerSize: 0, // docs
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
 	size: '90%',
@@ -1577,7 +1577,7 @@ SVGElement.prototype = {
 		return this.attr({ visibility: HIDDEN });
 	},
 	// add the node at a specified z index
-	add: function(parentNode, zIndex) {
+	add: function(parentNode) {
 		
 		
 		parentNode = parentNode ? parentNode.element : this.renderer.box;
@@ -1585,18 +1585,20 @@ SVGElement.prototype = {
 		var //parentNode = element.parentNode,
 			childNodes = parentNode.childNodes,
 			element = this.element,
+			zIndex = attr(element, 'zIndex'),
 			otherElement,
+			otherZIndex,
 			i;
 
 		// insert according to this and other elements' zIndex
-		element.zIndex = zIndex;
 		for (i = 0; i < childNodes.length; i++) {
 			otherElement = childNodes[i];
+			otherZIndex = attr(otherElement, 'zIndex');
 			if (otherElement != element && (
 					// insert before the first element with a higher zIndex
-					otherElement.zIndex > zIndex || 
-					// if no zIndex given, insert before the first element with at zIndex
-					(!defined(zIndex) && otherElement.zIndex)  
+					otherZIndex > zIndex || 
+					// if no zIndex given, insert before the first element with a zIndex
+					(!defined(zIndex) && defined(otherZIndex))  
 					
 					)) {
 				parentNode.insertBefore(element, otherElement);
@@ -2318,9 +2320,8 @@ var VMLElement = extendClass( SVGElement, {
 	/**
 	 * Add the node to the given parent
 	 * @param {Object} parent
-	 * @param {Object} zIndex
 	 */
-	add: function(parent, zIndex) {
+	add: function(parent) {
 		var wrapper = this,
 			renderer = wrapper.renderer,
 			element = wrapper.element,
@@ -2339,18 +2340,14 @@ var VMLElement = extendClass( SVGElement, {
 					element.tagName != 'line') {
 				parentNode = parent.groupElement;
 			}
-			
-		// set the zIndex
-		if (defined(zIndex)) {
-			css(element, { zIndex: zIndex });
-		}
 		
 		// VML bug that causes some elements to not show when added to a group. This
 		// bug only happens when #default#VML is added to the third parameter of 
 		// a namespace in the document. This namespace is present because it increases
 		// performance by up to 10 times.
 		parentClass = parentNode.className;
-		if (parentClass && (parentClass == PREFIX +'tracker' || parentClass == PREFIX +'grid')) {
+		if (parentClass && (parentClass == PREFIX +'tracker' || parentClass == PREFIX +'grid' || 
+				parentClass == PREFIX +'axis' /*|| parentClass == PREFIX +'series'*/)) {
 			box.appendChild(element);
 		}
 		
@@ -2403,6 +2400,7 @@ var VMLElement = extendClass( SVGElement, {
 		} else {		
 			for (key in hash) {
 				value = hash[key];
+				skipAttr = false;
 				
 				// prepare paths
 				if (key == 'd') {
@@ -2441,6 +2439,9 @@ var VMLElement = extendClass( SVGElement, {
 						}
 					}
 	
+				} else if (key == 'zIndex') {
+					css(element, { zIndex: value });
+					skipAttr = true;
 				
 				// width and height
 				} else if (/^(width|height)$/.test(key)) {
@@ -4287,8 +4288,12 @@ function Chart (options) {
 				hasData = associatedSeries.length && defined(min) && defined(max);
 			
 			if (!axisGroup) {
-				axisGroup = renderer.g('axis').add(null, 7);
-				gridGroup = renderer.g('grid').add(null, 1);
+				axisGroup = renderer.g('axis')
+					.attr({ zIndex: 7 })
+					.add(null);
+				gridGroup = renderer.g('grid')
+					.attr({ zIndex: 1 })
+					.add(null);
 			} else {
 				// clear the axis layers before new grid and ticks are drawn
 				axisGroup.empty();
@@ -4431,7 +4436,9 @@ function Chart (options) {
 						axisTitleOptions.style, 
 						axisTitleOptions.rotation || 0,
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
-					).add(null, 7);
+					)
+					.attr({ zIndex: 7 })
+					.add();
 					
 				}
 			}
@@ -4590,7 +4597,8 @@ function Chart (options) {
 					'right'
 				)
 				.on('click', fn)
-				.add(null, 20);
+				.attr({ zIndex: 20 })
+				.add();
 				buttons[id] = button;
 			}
 		}
@@ -4624,7 +4632,9 @@ function Chart (options) {
 		style.padding = 0;
 		
 		// create the elements
-		var group = renderer.g('tooltip').add(null, 8),
+		var group = renderer.g('tooltip')
+			.attr({ zIndex: 8 })
+			.add(),
 			
 			box = renderer.rect(boxOffLeft, boxOffLeft, 0, 0, options.borderRadius, borderWidth).
 				attr({
@@ -5072,9 +5082,10 @@ function Chart (options) {
 						)
 						.attr({
 							className: PREFIX +'selection-marker', 
-							fill: 'rgba(69,114,167,0.25)'
+							fill: 'rgba(69,114,167,0.25)',
+							zIndex: 7
 						})
-						.add(null, 7);
+						.add();
 					}
 				}
 				
@@ -5595,7 +5606,8 @@ function Chart (options) {
 							fireEvent (item, strLegendItemClick, null, fnLegendItemClick);
 						}
 					})
-					.add(legendGroup, 2);
+					.attr({ zIndex: 2 })
+					.add(legendGroup);
 				
 				// draw the line
 				if (!simpleSymbol && item.options && item.options.lineWidth) {
@@ -5608,9 +5620,10 @@ function Chart (options) {
 						0
 					]).attr({
 						//stroke: color,
-						'stroke-width': item.options.lineWidth
+						'stroke-width': item.options.lineWidth,
+						zIndex: 2
 					}).
-					add(legendGroup, 2);
+					add(legendGroup);
 				}
 					
 				// draw a simple symbol
@@ -5623,8 +5636,9 @@ function Chart (options) {
 						12,
 						2
 					).attr({
-						'stroke-width': 0
-					}).add(legendGroup, 3);
+						'stroke-width': 0,
+						zIndex: 3
+					}).add(legendGroup);
 				}
 					
 				// draw the marker
@@ -5636,7 +5650,8 @@ function Chart (options) {
 						item.options.marker.radius
 					)
 					.attr(item.pointAttr[NORMAL_STATE])
-					.add(legendGroup, 3);
+					.attr({ zIndex: 3 })
+					.add(legendGroup);
 				}
 				//if (legendSymbol) {
 				//	legendSymbol.isSimple = simpleSymbol;
@@ -5712,7 +5727,9 @@ function Chart (options) {
 			lastItemY = 0;
 			
 			if (!legendGroup) {
-				legendGroup = renderer.g('legend').add(null, 7);
+				legendGroup = renderer.g('legend')
+					.attr({ zIndex: 7 })
+					.add();
 			}
 			
 			
@@ -5760,8 +5777,9 @@ function Chart (options) {
 						stroke: options.borderColor,
 						'stroke-width': legendBorderWidth || 0,
 						fill: legendBackgroundColor || NONE
-					}).add(legendGroup).
-					shadow(options.shadow);
+					})
+					.add(legendGroup)
+					.shadow(options.shadow);
 				
 				} else {
 					box.attr({ 
@@ -6421,8 +6439,9 @@ function Chart (options) {
 				attr({
 					'class': 'plot-border',
 					stroke: optionsChart.plotBorderColor,
-					'stroke-width': optionsChart.plotBorderWidth
-				}).add(null, 4);
+					'stroke-width': optionsChart.plotBorderWidth,
+					zIndex: 4
+				}).add();
 		}
 		
 		// Add plot area clipping rectangle
@@ -6462,7 +6481,9 @@ function Chart (options) {
 					x,
 					y,
 					style
-				).add(null, 2);
+				)
+				.attr({ zIndex: 2 })
+				.add();
 					
 			});
 		}
@@ -6503,7 +6524,8 @@ function Chart (options) {
 			.on('click', function() {
 				location.href = credits.href;
 			})
-			.add(null, 8); 
+			.attr({ zIndex: 8 })
+			.add(); 
 		}
 
 		// Set flag
@@ -7888,10 +7910,13 @@ Series.prototype = {
 			} else {
 				dataLabelsGroup = series.dataLabelsGroup = 
 					chart.renderer.g(PREFIX +'data-labels')
-						.attr({ visibility: series.visible ? VISIBLE : HIDDEN })
+						.attr({ 
+							visibility: series.visible ? VISIBLE : HIDDEN,
+							zIndex: 4
+						})
 						.clip(chart.clipRect)
 						.translate(chart.plotLeft, chart.plotTop)
-						.add(null, 4);
+						.add();
 			}
 		
 			/*series.dataLabelsLayer = dataLabelsLayer = new Layer('data-labels', 
@@ -7945,7 +7970,9 @@ Series.prototype = {
 						options.style, 
 						options.rotation, 
 						align
-					).add(point.group || dataLabelsGroup, 1); // pies and columns have point.group
+					)
+					.attr({ zIndex: 1 })
+					.add(point.group || dataLabelsGroup); // pies have point.group
 				}
 				
 				if (series.drawConnector) {
@@ -8156,9 +8183,12 @@ Series.prototype = {
 				}).rotate(90).flip('x');
 			} 
 			group.clip(chart.clipRect)
-				.attr({ visibility: series.visible ? VISIBLE : HIDDEN })
+				.attr({ 
+					visibility: series.visible ? VISIBLE : HIDDEN,
+					zIndex: 3					
+				})
 				.translate(chart.plotLeft, chart.plotTop)
-				.add(null, 3);
+				.add();
 		}
 			
 		series.drawDataLabels();
@@ -8447,7 +8477,8 @@ Series.prototype = {
 					fill: NONE,
 					'stroke-width' : options.lineWidth + 2 * chart.options.tooltip.snap,
 					'stroke-linecap': 'round',
-					visibility: series.visible ? VISIBLE : HIDDEN
+					visibility: series.visible ? VISIBLE : HIDDEN,
+					zIndex: 1
 				})
 				.on('mouseover', function() {
 					//chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
@@ -8461,7 +8492,7 @@ Series.prototype = {
 					}
 				})
 				.css(css)
-				.add(chart.trackerGroup, 1);
+				.add(chart.trackerGroup);
 		}
 	}
 	
@@ -8870,7 +8901,8 @@ var ColumnSeries = extendClass(Series, {
 					.attr({
 						isTracker: trackerLabel,
 						fill: TRACKER_FILL,
-						visibility: series.visible ? VISIBLE : HIDDEN
+						visibility: series.visible ? VISIBLE : HIDDEN,
+						zIndex: 1
 					})
 					.on('mouseover', function(event) {
 						rel = event.relatedTarget || event.fromElement;
@@ -8888,7 +8920,7 @@ var ColumnSeries = extendClass(Series, {
 							}
 						}
 					})
-					.add(chart.trackerGroup, 1);
+					.add(chart.trackerGroup);
 			}
 		});				
 	},
@@ -9285,8 +9317,10 @@ var PieSeries = extendClass(Series, {
 			if (!point.group) {
 				// if the point is sliced, use special translation, else use plot area traslation
 				groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-				point.group = renderer.g('point').add(null, 3).
-					translate(groupTranslation[0], groupTranslation[1]);
+				point.group = renderer.g('point')
+					.attr({ zIndex: 3 })
+					.add()
+					.translate(groupTranslation[0], groupTranslation[1]);
 			}
 			
 			// draw the slice
