@@ -1493,27 +1493,15 @@ SVGElement.prototype = {
 	},
 	
 	/**
-	 * Rotate a group around its own axis
-	 * @param {Number} rotation The rotation in degrees clockwise
+	 * Invert a group, rotate and flip
 	 */
-	rotate: function(rotation) {
+	invert: function() {
 		var wrapper = this;
-		wrapper.rotation = rotation;
+		wrapper.inverted = true;
 		wrapper.updateTransform();
 		return wrapper;
 	},
 	
-	/**
-	 * Flip a group around its own axis
-	 * 
-	 * @param {String} type Type of flip, currently only x is supported
-	 */
-	flip: function(type) {
-		var wrapper = this;
-		wrapper.flipX = /x/.test(type);
-		wrapper.updateTransform();
-		return wrapper;
-	},
 	/**
 	 * Private method to update the transform attribute based on internal 
 	 * properties
@@ -1522,12 +1510,11 @@ SVGElement.prototype = {
 		var wrapper = this,
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0,
-			rotation = wrapper.rotation || 0,
-			flipX = wrapper.flipX,
+			inverted = wrapper.inverted,
 			transform = [];
 			
 		// flipping affects translate as adjustment for flipping around the group's axis
-		if (flipX) {
+		if (inverted) {
 			translateX += wrapper.attr('width');
 			translateY += wrapper.attr('height');
 		}
@@ -1538,13 +1525,8 @@ SVGElement.prototype = {
 		}
 		
 		// apply rotation
-		if (rotation) {
-			transform.push('rotate('+ rotation +')');
-		}
-		
-		// apply flip
-		if (flipX) {
-			transform.push('scale(-1,1)');
+		if (inverted) {
+			transform.push('rotate(90) scale(-1,1)');
 		}
 		
 		if (transform.length) {
@@ -2285,8 +2267,8 @@ var VMLElement = extendClass( SVGElement, {
 		
 		// one to one tag names
 		nodeName = {
-			circle: 'v:oval',
-			rect: 'v:roundrect',
+			//circle: 'v:oval',
+			//rect: 'v:roundrect',
 			path: 'v:shape'
 		}[nodeName] || nodeName;
 		
@@ -2327,6 +2309,9 @@ var VMLElement = extendClass( SVGElement, {
 			element = wrapper.element,
 			box = renderer.box,
 			parentClass,
+			inverted = parent && parent.inverted,
+			parentStyle,
+			elemStyle,
 		
 			// get the parent node
 			parentNode = parent ? 
@@ -2336,24 +2321,51 @@ var VMLElement = extendClass( SVGElement, {
 			// VML elements are added to the v:group element so they can be rotated.
 			// The exception is line (always text paths), that won't display inside
 			// a group
-			if (parent && parent.groupElement && element.tagUrn == renderer.urn &&
+			/*if (parent && parent.groupElement && element.tagUrn == renderer.urn &&
 					element.tagName != 'line') {
 				parentNode = parent.groupElement;
-			}
+			}*/
 		
+			/*
+			 * todo: 
+			 * - bars not working
+			 * - implement repainting
+			 */
+			
+			//if (parent.flipX || parent.rotation) {
+			if (inverted) { // only on groups
+				
+				parentStyle = parentNode.style;
+				elemStyle = element.style;
+				
+				
+				
+				css(element, { 
+					flip: 'x',
+					left: parseInt(parentStyle.width, 10) - 10,
+					top: parseInt(parentStyle.height, 10) - 10,
+					rotation: -90
+				});
+				
+			}
+		//}
 		// VML bug that causes some elements to not show when added to a group. This
 		// bug only happens when #default#VML is added to the third parameter of 
 		// a namespace in the document. This namespace is present because it increases
 		// performance by up to 10 times.
-		parentClass = parentNode.className;
+		/*parentClass = parentNode.className;
 		if (parentClass && (parentClass == PREFIX +'tracker' || parentClass == PREFIX +'grid' || 
-				parentClass == PREFIX +'axis' /*|| parentClass == PREFIX +'series'*/)) {
+				parentClass == PREFIX +'axis' || parentClass == PREFIX +'series')) {
 			box.appendChild(element);
-		}
+		}*/
 		
 		// append it where it really should be
 		parentNode.appendChild(element);
 		
+		// VML Bug workaround: without this, the shape created last will not display.
+		// It can be reproduced by creating a Highcharts.Renderer outside the chart,
+		// and drawing two shapes. Only the first one shows.
+		element.style.display = 'inline-block';
 		
 		return wrapper;
 	},
@@ -2367,6 +2379,7 @@ var VMLElement = extendClass( SVGElement, {
 			nodeName = element.nodeName,
 			renderer = this.renderer,
 			parentNode = element.parentNode,
+			symbolName = this.symbolName,
 			hasSetSymbolSize,
 			shadows = this.shadows,
 			skipAttr,
@@ -2382,18 +2395,20 @@ var VMLElement = extendClass( SVGElement, {
 		// used as a getter, val is undefined
 		if (typeof hash == 'string') {
 			key = hash;
-			if (key == 'translateX' || key == 'translateY') {
+			/*if (key == 'translateX' || key == 'translateY') {
 				ret = this[key] || 0;
-			} else if (key == 'stroke-width') {
+			} else */if (key == 'stroke-width') {
 				ret = element.strokeweight;
 				
 			} else {
-				ret = parseInt(elemStyle[{ 
-					x: 'left', 
-					y: 'top'
-				}[key] || key], 10);
+				ret = pick(
+					this[key], 
+					parseInt(elemStyle[{ 
+						x: 'left', 
+						y: 'top'
+					}[key] || key], 10)
+				);
 			}
-			
 			
 			
 		// setter
@@ -2403,7 +2418,37 @@ var VMLElement = extendClass( SVGElement, {
 				skipAttr = false;
 				
 				// prepare paths
-				if (key == 'd') {
+				// symbols
+				if (symbolName && /^(x|y|r|start|end|width|height)/.test(key)) {
+					// if one of the symbol size affecting parameters are changed,
+					// check all the others only once for each call to an element's
+					// .attr() method
+					if (!hasSetSymbolSize) {
+							
+						this.x = pick(hash.x, this.x);
+						this.y = pick(hash.y, this.y);
+						this.r = pick(hash.r, this.r);
+						this.start = pick(hash.start, this.start);
+						this.end = pick(hash.end, this.end);
+						this.width = pick(hash.width, this.width);
+						this.height = pick(hash.height, this.height);
+						
+						this.attr({ 
+							d: renderer.symbols[symbolName](this.x, this.y, this.r, {
+								start: this.start, 
+								end: this.end,
+								width: this.width, 
+								height: this.height
+							})
+						});
+						
+					
+						hasSetSymbolSize = true;
+					} 
+					
+					skipAttr = true;
+					
+				} else if (key == 'd') {
 					
 					key = 'path';
 					
@@ -2439,17 +2484,20 @@ var VMLElement = extendClass( SVGElement, {
 						}
 					}
 	
-				} else if (key == 'zIndex') {
-					css(element, { zIndex: value });
+				// directly mapped to css
+				} else if (key == 'zIndex' || key == 'visibility') {
+					elemStyle[key] = value;
+					
 					skipAttr = true;
 				
 				// width and height
 				} else if (/^(width|height)$/.test(key)) {
 					
 					// VML bug: selection fill color becomes white when zero width or height
-					if (value === 0 && element.className == PREFIX +'selection-marker') {
+					/*if (value === 0 && element.className == PREFIX +'selection-marker') {
 						value = 1;
-					}
+					}*/
+					
 					
 					// normal
 					elemStyle[key] = value;
@@ -2459,7 +2507,7 @@ var VMLElement = extendClass( SVGElement, {
 					// if the arcsize changes. For tooltips, this usually means the arsize only
 					// changes the first time it is displayed, as the height of the tooltip
 					// will stay constant.
-					if (nodeName == 'roundrect' && defined(this.r)) {
+					/*if (nodeName == 'roundrect' && defined(this.r)) {
 						var arcsize = this.r / math.min(parseInt(elemStyle.width, 10), parseInt(elemStyle.height, 10));
 						
 						if (arcsize != this.arcsize) {
@@ -2468,7 +2516,7 @@ var VMLElement = extendClass( SVGElement, {
 							parentNode.appendChild(element);
 							this.arcsize = arcsize;
 						}
-					}
+					}*/
 					
 					// clipping rectangle special
 					if (this.updateClipping) {
@@ -2478,7 +2526,7 @@ var VMLElement = extendClass( SVGElement, {
 					skipAttr = true;
 					
 				// x and y 
-				} else if (/^(x|y)$/.test(key) && !this.symbolName) {
+				} else if (/^(x|y)$/.test(key)) {
 
 					if (key == 'y' && element.tagName == 'SPAN' && element.lineHeight) { // subtract lineHeight
 						value -= element.lineHeight;
@@ -2497,7 +2545,7 @@ var VMLElement = extendClass( SVGElement, {
 					value = renderer.color(value, element, key);				
 						
 					// in some cases only the subelement will do
-					if (parentNode && attr(parentNode, 'class') == PREFIX +'tooltip') {
+					/*if (parentNode && attr(parentNode, 'class') == PREFIX +'tooltip') {
 						(
 							element.getElementsByTagName(key)[0] ||
 							createElement('v:'+ key, null, null, element)
@@ -2508,9 +2556,9 @@ var VMLElement = extendClass( SVGElement, {
 						skipAttr = true;
 					
 					// other times, just set the attribute
-					} else {
+					} else {*/
 						key = 'strokecolor';
-					}
+					//}
 					
 				// stroke width
 				} else if (key == 'stroke-width') {
@@ -2533,7 +2581,7 @@ var VMLElement = extendClass( SVGElement, {
 						
 						key = 'fillcolor';
 					}
-					
+				}
 				// circle radius
 				/*} else if (key == 'r' && nodeName == 'oval') {
 					css(element, {
@@ -2555,12 +2603,6 @@ var VMLElement = extendClass( SVGElement, {
 						)
 					});*/
 				
-				// visibility
-				} else if (key == 'visibility') {
-					elemStyle[key] = value;
-					skipAttr = true;
-				}
-				
 				// translation for animation
 				else if (key == 'translateX' || key == 'translateY') {
 					this[key] = val;
@@ -2568,31 +2610,7 @@ var VMLElement = extendClass( SVGElement, {
 					skipAttr = true;
 				}
 				
-				// symbols
-				if (this.symbolName && /^(x|y|r|start|end)/.test(key)) {
-					// if one of the symbol size affecting parameters are changed,
-					// check all the others only once for each call to an element's
-					// .attr() method
-					
-					if (!hasSetSymbolSize) {
-							
-						this.x = pick(hash.x, this.x);
-						this.y = pick(hash.y, this.y);
-						this.r = pick(hash.r, this.r);
-						this.start = pick(hash.start, this.start);
-						this.end = pick(hash.end, this.end);
-					
-						this.attr({ 
-							d: renderer.symbols[this.symbolName](this.x, this.y, this.r, {
-								start: this.start, 
-								end: this.end
-							})
-						});
-						
-					
-						hasSetSymbolSize = true;
-					}
-				}
+				
 				
 				// symbols
 				/*if (element.symbolName && /^(x|y|r)/.test(key)) {
@@ -2610,12 +2628,15 @@ var VMLElement = extendClass( SVGElement, {
 				
 					
 				// let the shadow follow the main element
-				if (shadows && /^(width|height|visibility|x|y)/.test(key)) {
+				/*if (shadows && /^(width|height|visibility|x|y)/.test(key) &&
+						!(symbolName && key != 'visibility')) {*/
+				if (shadows && key == 'visibility') {
 					i = shadows.length;
 					while (i--) {
-						var style = {};
-						style[{ x: 'left', y: 'top' }[key] || key] = value;
-						css(shadows[i], style);
+						//var style = {};
+						//style[{ x: 'left', y: 'top' }[key] || key] = value;
+						//css(shadows[i], style);
+						shadows[i].style[key] = value;
 					}
 				}
 				
@@ -2660,7 +2681,7 @@ var VMLElement = extendClass( SVGElement, {
 		wrapper.destroyClip = function() {
 			clipMembers.splice(index, 1);
 		};
-		return wrapper.css({ clip: clipRect.getCSS(wrapper.flipX) });
+		return wrapper.css({ clip: clipRect.getCSS(wrapper.inverted) });
 	},
 	
 	/**
@@ -2679,15 +2700,15 @@ var VMLElement = extendClass( SVGElement, {
 	 * Extend element.destroy by removing it from the clip members array
 	 */
 	destroy: function() {
-		var wrapper = this,
-			groupElement = wrapper.groupElement; 
+		var wrapper = this;//,
+			//groupElement = wrapper.groupElement; 
 		
 		if (wrapper.destroyClip) {
 			wrapper.destroyClip();
 		}
-		if (groupElement) {
+		/*if (groupElement) {
 			groupElement.parentNode.removeChild(groupElement);
-		}
+		}*/
 		
 		SVGElement.prototype.destroy.apply(this);
 	},
@@ -2697,19 +2718,21 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	empty: function() {
 		var element = this.element,
-			groupElement = this.groupElement,
-			i,
+			//groupElement = this.groupElement,
+			childNodes = element.childNodes,
+			i = childNodes.length,
 			node;
 			
-		each ([element.childNodes, groupElement.childNodes], function(childNodes) { 
-			i = childNodes.length;
+		//each ([element.childNodes, groupElement.childNodes], function(childNodes) {
+		 
+		//	i = childNodes.length;
 			while (i--) {
 				node = childNodes[i];
-				if (node != groupElement) {
+				//if (node != groupElement) {
 					node.parentNode.removeChild(node);
-				}
+				//}
 			}
-		});
+		//});
 	},
 	
 	/**
@@ -2768,40 +2791,42 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	updateTransform: function() {
 		var wrapper = this,
-			groupElement = wrapper.groupElement,
-			element = wrapper.element,
-			elemStyle = element.style,
-			width = parseInt(elemStyle.width, 10),
-			height = parseInt(elemStyle.height, 10),
+			//groupElement = wrapper.groupElement,
+			//element = wrapper.element,
+			//elemStyle = element.style,
+			//width = parseInt(elemStyle.width, 10),
+			//height = parseInt(elemStyle.height, 10),
 			translateX = wrapper.translateX || 0,
-			translateY = wrapper.translateY || 0,
-			rotation = wrapper.rotation || 0,
-			flipX = wrapper.flipX;
+			translateY = wrapper.translateY || 0;
+			//rotation = wrapper.rotation || 0,
+			//flipX = wrapper.flipX;
 			
-		// apply flip
-		if (flipX) {
-			// flip affects other properties
-			rotation *= -1;
-		
-			css(groupElement, { 
-				flip: 'x', 
-				left: -1000 + width, // adjusted to flip and rotate around its own axis
-				top: -1000 + height
-			});
-		}
-		
 		// apply translate
 		if (translateX || translateY) {
-			css(element, {
+			css(wrapper.element, {
 				left: translateX,
 				top: translateY
 			});			
 		}
-		
-		// apply rotation
-		if (rotation) {
-			css(groupElement, { rotation: rotation });
-		}
+		/*
+		if (flipX || rotation) { // only on groups
+			// apply flip
+			if (flipX) {
+				// flip affects other properties
+				rotation *= -1;
+			
+				css(groupElement, { 
+					flip: 'x', 
+					left: -1000 + width, // adjusted to flip and rotate around its own axis
+					top: -1000 + height
+				});
+			}
+			
+			// apply rotation
+			if (rotation) {
+				css(groupElement, { rotation: rotation });
+			}
+		}*/
 	},
 	
 	/**
@@ -2840,9 +2865,9 @@ var VMLElement = extendClass( SVGElement, {
 				if (shadow.tagName == 'shape') {
 					shadow.path = element.path;
 					shadow.coordsize = element.coordsize;
-				} else if (shadow.tagName == 'roundrect') {
-					shadow.arcsize = this.arcsize;
-				}
+				}/* else if (shadow.tagName == 'roundrect') {
+					//shadow.arcsize = this.arcsize;
+				}*/
 				
 				// insert it
 				element.parentNode.insertBefore(shadow, element);
@@ -2890,19 +2915,20 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		// create namespace and style behaviour
 		if (!namespaces.v) {
 			
-			// better performance but requires workaround in VMLElement.prototype.add
+			// add a dummy namespace which increases rendering speed up to 10
+			// times for a scatter plot with 1000 points.
+			// todo: find out why this can't be used as the default namespace
 			namespaces.add('v_dummy', urn, '#default#VML');
 			
 			namespaces.add('v', urn);
 			
 			// setup default css
 			doc.createStyleSheet().cssText = 
-				'v\\:group, v\\:oval, v\\:path, v\\:rect, v\\:roundrect, v\\:shape, '+
+				'v\\:group, v\\:oval, v\\:path, v\\:rect, v\\:shape, '+
 				'v\\:line, v\\:fill, v\\:stroke, v\\:textpath '+
 				'{ behavior:url(#default#VML); display:inline-block } ';
 		}
 		
-
 
 	},
 	
@@ -2949,7 +2975,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function() {
 				each (clipRect.members, function(member) {
-					member.css({ clip: clipRect.getCSS(member.flipX) });
+					member.css({ clip: clipRect.getCSS(member.inverted) });
 				});
 			}
 		});
@@ -3199,13 +3225,13 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		wrapper = this.createElement(DIV).attr(attribs);
 		
 		// the v:group to hold other VML items
-		wrapper.groupElement = createElement('v:group', attribs, {
+		/*wrapper.groupElement = createElement('v:group', attribs, {
 			position: ABSOLUTE,
 			left: 0,
 			top: 0,
 			width: 1000,
 			height: 1000
-		}, wrapper.element);
+		}, wrapper.element);*/
 			
 		
 		return wrapper;
@@ -3231,18 +3257,32 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	},
 	
 	/**
-	 * VML override of rect to set the arcsize
+	 * VML uses a shape for rect to overcome bugs and rotation problems
 	 */
-	rect: function(x, y, width, height, r) {
-		var obj = SVGRenderer.prototype.rect.apply(this, arguments);
+	rect: function(x, y, width, height, r, strokeWidth) {
+		// todo: share this code with SVG
+		if (arguments.length > 1) {
+			var normalizer = (strokeWidth || 0) % 2 / 2;
+
+			// normalize for crisp edges
+			x = mathRound(x || 0) + normalizer;
+			y = mathRound(y || 0) + normalizer;
+			width = mathRound((width || 0) - 2 * normalizer);
+			height = mathRound((height || 0) - 2 * normalizer);
+		}
 		
-		obj.r = r; // used in attr
-		obj.arcsize = r / (math.min(width, height));
+		if (typeof x == 'object') { // the attributes can be passed as the first argument 
+			y = x.y;
+			width = x.width;
+			height = x.height;
+			r = x.r;
+			x = x.x;
+		} 
 		
-		// todo: do this in attr
-		attr(obj.element, 'arcsize', obj.arcsize);
-		
-		return obj;
+		return this.symbol('rect', x || 0, y || 0, r || 0, {
+			width: width || 0,
+			height: height || 0
+		});		
 	},
 	
 
@@ -3338,6 +3378,65 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				//'x', // finish path
 				'e' // close
 			];
+		},
+		/** 
+		 * Add rectangle symbol path which eases rotation and omits arcsize problems
+		 * compared to the built-in VML roundrect shape
+		 * 
+		 * @param {Object} left Left position
+		 * @param {Object} top Top position
+		 * @param {Object} r Border radius
+		 * @param {Object} options Width and height
+		 */
+		
+		rect: function (left, top, r, options) {
+			var width = options.width,
+				height = options.height,
+				r = Math.min(r, width, height),
+				right = left + width,
+				bottom = top + height;
+			
+			return [
+				M,
+				left + r, top,
+				
+				L,
+				right - r, top,
+				'wa',
+				right - 2 * r, top,
+				right, top + 2 * r,
+				right - r, top,
+				right, top + r,
+				
+				L,
+				right, bottom - r,
+				'wa',
+				right - 2 * r, bottom - 2 * r,
+				right, bottom,
+				right, bottom - r,
+				right - r, bottom,
+				
+				L,
+				left + r, bottom,
+				'wa',
+				left, bottom - 2 * r,
+				left + 2 * r, bottom, 
+				left + r, bottom,
+				left, bottom - r,
+				
+				L,
+				left, top + r,
+				'wa',
+				left, top,
+				left + 2 * r, top + 2 * r,
+				left, top + r,
+				left + r, top,
+				
+				
+				'x',
+				'e'
+			];
+				
 		}
 	}
 });
@@ -4647,8 +4746,9 @@ function Chart (options) {
 				/*attr({
 					style: serializeCSS(extend(style, { fill: style.color }))
 				}).*/
+				attr({ zIndex: 1 }).
 				css(style).
-				add(group, 1);
+				add(group);
 				
 		/**
 		 * Provide a soft movement for the tooltip
@@ -4990,6 +5090,10 @@ function Chart (options) {
 				hoverSeries.onMouseOut();
 			}
 			
+			if (tooltip) {
+				tooltip.hide();
+			}
+			
 		}
 		
 		/**
@@ -5151,7 +5255,6 @@ function Chart (options) {
 				
 				// cancel on mouse outside
 				if (isOutsidePlot && !lastWasOutsidePlot) {
-
 					// reset the tracker					
 					resetTracker();
 					
@@ -5318,11 +5421,13 @@ function Chart (options) {
 				trackerGroup.attr({
 					width: chart.plotWidth,
 					height: chart.plotHeight
-				}).rotate(90).flip('x');
+				}).invert();
 			} 
 		
-			trackerGroup.translate(plotLeft, plotTop).
-			add(null, 9);
+			trackerGroup
+				.attr({ zIndex: 9 })
+				.translate(plotLeft, plotTop)
+				.add();
 		
 			/*chart.trackerRect = trackerRect = renderer.rect(
 				0, 
@@ -7530,6 +7635,7 @@ Series.prototype = {
 	onMouseOut: function() {
 		// trigger the event only if listeners exist
 		var series = this,
+			options = series.options,
 			chart = series.chart,
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
@@ -7540,13 +7646,13 @@ Series.prototype = {
 		}		
 		
 		// fire the mouse out event
-		if (series && series.options.events.mouseOut) { 
+		if (series && options.events.mouseOut) { 
 			fireEvent(series, 'mouseOut');
 		}
 		
 		
 		// hide the tooltip
-		if (tooltip) {
+		if (tooltip && !options.stickyTracking) {
 			tooltip.hide();
 		}
 		
@@ -8180,7 +8286,7 @@ Series.prototype = {
 				group.attr({
 					width: chart.plotWidth,
 					height: chart.plotHeight
-				}).rotate(90).flip('x');
+				}).invert();
 			} 
 			group.clip(chart.clipRect)
 				.attr({ 
@@ -8450,7 +8556,8 @@ Series.prototype = {
 			plotHeight = chart.plotHeight,
 			//isSingleSeries = chart.series.length == 1,
 			tracker = series.tracker,
-			css = options.cursor ? { cursor: options.cursor } : null;
+			cursor = options.cursor,
+			css = cursor && { cursor: cursor };
 	
 		// if only one series, use the whole plot area as tracker
 		// problem: can't put legend inside plot area
@@ -8886,6 +8993,8 @@ var ColumnSeries = extendClass(Series, {
 			shapeArgs,
 			tracker,
 			trackerLabel = +new Date(),
+			cursor = series.options.cursor,
+			css = cursor && { cursor: cursor },
 			rel;
 			
 		each (series.data, function(point) {
@@ -8920,6 +9029,7 @@ var ColumnSeries = extendClass(Series, {
 							}
 						}
 					})
+					.css(css)
 					.add(chart.trackerGroup);
 			}
 		});				
