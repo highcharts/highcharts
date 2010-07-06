@@ -106,9 +106,7 @@ function extend(a, b) {
 		a = {};
 	}
 	for (var n in b) {
-try {
 		a[n] = b[n];
-		} catch(e) { console.log(n) }
 	}
 	return a;
 }
@@ -181,7 +179,10 @@ function pick() {
 		}
 	}
 }
-
+/**
+ * Make a style string from a JS object
+ * @param {Object} style
+ */
 function serializeCSS(style) {
 	var s = '', 
 		key;
@@ -192,7 +193,11 @@ function serializeCSS(style) {
 	return s;
 	
 }
-
+/**
+ * Set CSS on a give element
+ * @param {Object} el
+ * @param {Object} styles
+ */
 function css (el, styles) {
 	if (isIE) {
 		if (styles && styles.opacity !== UNDEFINED) {
@@ -202,13 +207,15 @@ function css (el, styles) {
 	extend(el.style, styles);
 }
 
+/**
+ * Utility function to create element with attributes and styles
+ * @param {Object} tag
+ * @param {Object} attribs
+ * @param {Object} styles
+ * @param {Object} parent
+ * @param {Object} nopad
+ */
 function createElement (tag, attribs, styles, parent, nopad) {
-	/*if (/^v:/.test(tag)) {
-		tag = tag.replace('v:', '');
-		tag = '<'+ tag +' xmlns="urn:schemas-microsoft-com:vml" '+
-			'style="behavior:url(#default#VML); display:inline-block" />';
-	}*/
-
 	var el = doc.createElement(tag);
 	if (attribs) {
 		extend(el, attribs);
@@ -449,65 +456,7 @@ if (!globalAdapter && win.jQuery) {
 	
 } 
 
-/**
- * Dynamically add a CSS rule to the page
- * @param {String} selector
- * @param {Object} declaration
- * @param {Boolean} print Whether to add the styles only to print media. IE only.
- */
-/*
-function addCSSRule(selector, declaration, print) {
-	
-	var key,
-		serialized ,
-		styleSheets,
-		styleSheet,
-		index,
-		last,
-		media = print ? 'print' : '',
-		createStyleTag = function(print) {
-			return createElement(
-				'style', { 
-					type: 'text/css',
-					media: print ? 'print' : ''
-				}, 
-				null, 
-				doc.getElementsByTagName('HEAD')[0]
-			);
 
-		};
-	
-	// add the style tag the first time
-	if (!styleTag) {
-		styleTag = createStyleTag();
-	}
-		
-	// serialize the declaration
-	serialized = serializeCSS(declaration);
-	
-	if (!isIE) { // create a text node in the style tag
-		styleTag.appendChild(
-			doc.createTextNode(
-				selector + " {" + serialized + "}\n"
-			)
-		);
-	} else { // get the last stylesheet and add rules
-		styleSheets = doc.styleSheets;
-			
-		if (print) { // only in IE for now
-			createStyleTag(true);
-		}
-		
-		index = styleSheets.length - 1;
-		while (index >= 0 && styleSheets[index].media != media) {
-			index--;
-		} 
-		
-		styleSheet = styleSheets[index];
-		styleSheet.addRule(selector, serialized);
-	}
-}
-*/
 
 /**
  * Set the time methods globally based on the useUTC option. Time method can be either 
@@ -570,7 +519,10 @@ function discardElement(element) {
 	garbageBin.innerHTML = '';
 }
 
-var //defaultFont = 'normal 12px "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif',
+/* ****************************************************************************
+ * Handle the options                                                         *
+ *****************************************************************************/
+var 
 
 defaultLabelOptions = {
 	enabled: true,
@@ -583,9 +535,7 @@ defaultLabelOptions = {
 	},*/
 	style: {
 		color: '#666',
-		//font: defaultFont.replace('12px', '11px')
-		fontSize: '11px' // docs 
-		//'10px bold "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif'	
+		fontSize: '11px' // docs	
 	}
 };
 
@@ -654,8 +604,6 @@ defaultOptions = {
 	plotOptions: {
 		line: { // base series options
 			allowPointSelect: false,
-			//allowDrag: false, // point dragging - not yet implemented
-			//dragType: 'y',
 			showCheckbox: false,
 			animation: true,
 			//cursor: 'default',
@@ -735,18 +683,11 @@ defaultOptions = {
 		shadow: false, // docs
 		// backgroundColor: null,
 		style: {
-			//bottom: '10px', deprecated
-			//left: '80px', deprecated
 			padding: '5px'
 		},
 		itemStyle: {
-			//listStyle: NONE, deprecated
-			//margin: 0, deprecated
-			// n/a in SVG padding: '0 2em 0 0', // make room for the checkbox
-			//font: defaultFont,
 			cursor: 'pointer',
 			color: '#3E576F'
-			//position: RELATIVE deprecated
 		},
 		itemHoverStyle: {
 			color: '#000000'
@@ -803,7 +744,6 @@ defaultOptions = {
 		snap: 10,
 		style: {
 			color: '#333333',
-			//font: defaultFont,
 			fontSize: '12px',
 			padding: '5px',
 			whiteSpace: 'nowrap'
@@ -813,7 +753,6 @@ defaultOptions = {
 	toolbar: {
 		itemStyle: {
 			color: '#4572A7',
-			//font: defaultFont,
 			cursor: 'pointer'
 		}
 	},
@@ -831,7 +770,6 @@ defaultOptions = {
 };
 
 // Axis defaults
-//defaultOptions.xAxis = merge(defaultOptions.axis);
 var defaultXAxisOptions =  {
 	// allowDecimals: null, // docs
 	// alternateGridColor: null,
@@ -963,7 +901,6 @@ var defaultPlotOptions = defaultOptions.plotOptions,
 //defaultPlotOptions.line = merge(defaultSeriesOptions);
 defaultPlotOptions.spline = merge(defaultSeriesOptions);
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
-	//dragType: 'xy', // n/a
 	lineWidth: 0,
 	states: {
 		hover: {
@@ -975,7 +912,7 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 	// baseValue: 0,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
 	// fillOpacity: .75,
-	//fillColor: null docs
+	// fillColor: null docs
 
 });
 defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
@@ -1044,41 +981,6 @@ function extendClass(parent, members) {
 	return object;
 }
 
-
-/*
-function reverseArray(arr) {
-	var reversed = [];
-	for (var i = arr.length - 1; i >= 0; i--)
-		reversed.push( arr[i]);
-	return reversed;
-}
-*/
-// return a deep value without throwing an error
-/*function deepStructure(obj, path) {
-	// split the path into an array
-	path = path.split('.'), i = 0;
-	// recursively set obj to the path
-	while (path[i] && obj) obj = obj[path[i++]];
-	
-	if (i == path.length) return obj;
-}*/
-
-/* *
- * Create a color from a string or configuration object
- * @param {Object} val
- */
-/*function setColor(val, ctx) {
-	if (typeof val == 'string') {
-		return val;
-
-	} else if (val.linearGradient) {
-		var gradient = ctx.createLinearGradient.apply(ctx, val.linearGradient);
-		each (val.stops, function(stop) {
-			gradient.addColorStop(stop[0], stop[1]);
-		});
-		return gradient;
-	}
-}*/
 
 /**
  * Handle color operations. The object methods are chainable.
@@ -1165,7 +1067,6 @@ var Color = function(input) {
 	};
 };
 
-	//defaultMarkers = ['circle'];
 
 
 /**
@@ -1284,23 +1185,28 @@ function getPosition (el)	{
 function SVGElement () {}
 
 SVGElement.prototype = {
+	/**
+	 * Initialize the SVG renderer
+	 * @param {Object} renderer
+	 * @param {String} nodeName
+	 */
 	init: function(renderer, nodeName) {
-		//var wrapperId = PREFIX + idCounter++;
 		this.element = doc.createElementNS('http://www.w3.org/2000/svg', nodeName);
-		//this.element.id = wrapperId;
-		
-		//renderer.wrapperLookup[wrapperId] = this;
-		
-		this.renderer = renderer;
-		
-			//renderer = this,
-			//svg = renderer.svg,
-			//firstChild = svg.firstChild;
-	
+		this.renderer = renderer;	
 	},
+	/**
+	 * Animate a given attribute
+	 * @param {Object} params
+	 * @param {Number} duration
+	 */
 	animate: function(params, duration) {
 		animate(this, params, duration);
 	},
+	/**
+	 * Set or get a given attribute
+	 * @param {Object|String} hash
+	 * @param {Mixed|Undefined} val
+	 */
 	attr: function(hash, val) {
 		var key, 
 			value, 
@@ -1368,8 +1274,8 @@ SVGElement.prototype = {
 					this.updateTransform();
 					skipAttr = true;
 	
-				// apply opacity in WebKit
-				} else if (isWebKit && key == 'stroke') {
+				// apply opacity as subnode (required by legacy WebKit and Batik)
+				} else if (key == 'stroke') {
 					value = renderer.color(value, element, key);
 					 
 				
@@ -1542,11 +1448,17 @@ SVGElement.prototype = {
 			attr(wrapper.element, 'transform', transform.join(' '));
 		}
 	},
+	/**
+	 * Bring the element to the front
+	 */
 	toFront: function() {
 		var element = this.element;
 		element.parentNode.appendChild(element);
 		return this;
 	},
+	/**
+	 * Get the bounding box (width, height, x and y) for the element
+	 */
 	getBBox: function() {
 		var element = this.element;
 		if (element.getBBox) { 
@@ -1559,22 +1471,33 @@ SVGElement.prototype = {
 				height: 30
 			};
 		}
-			
 	},
+	
+	/**
+	 * Show the element
+	 */
 	show: function() {
 		return this.attr({ visibility: VISIBLE });
 	},
+	
+	/**
+	 * Hide the element
+	 */
 	hide: function() {
 		return this.attr({ visibility: HIDDEN });
 	},
-	// add the node at a specified z index
+	
+	/**
+	 * Add the element
+	 * @param {Object|Undefined} parentNode Can be an element, an element wrapper or undefined
+	 *    to append the element to the renderer.box.
+	 */ 
 	add: function(parentNode) {
 		
 		
 		parentNode = parentNode ? parentNode.element : this.renderer.box;
 			
-		var //parentNode = element.parentNode,
-			childNodes = parentNode.childNodes,
+		var childNodes = parentNode.childNodes,
 			element = this.element,
 			zIndex = attr(element, 'zIndex'),
 			otherElement,
@@ -1606,8 +1529,6 @@ SVGElement.prototype = {
 	 */
 	destroy: function() {
 		var element = this.element,
-			//wrappers = this.renderer.wrappers,
-			//i,
 			key;
 		
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
@@ -1623,15 +1544,9 @@ SVGElement.prototype = {
 			delete this[key];
 		}
 		
-		/*i = wrappers.length;
-		while (i--) {
-			if (wrappers[i] == this) {
-				wrappers.splice(i, 1);
-			}
-		}*/
-		
 		return null;
 	},
+	
 	/**
 	 * Empty a group element
 	 */
@@ -1644,6 +1559,11 @@ SVGElement.prototype = {
 			element.removeChild(childNodes[i]);
 		}
 	},
+	
+	/**
+	 * Add a shadow to the element. Must be done after the element is added to the DOM
+	 * @param {Boolean} apply
+	 */
 	shadow: function(apply) {
 		var shadows = [],
 			i,
@@ -1712,7 +1632,6 @@ SVGRenderer.prototype = {
 		
 			
 		// object properties
-		//this.wrappers = [];
 		this.box = box;
 		this.defs = this.createElement('defs').add();
 		
@@ -1726,26 +1645,16 @@ SVGRenderer.prototype = {
 	createElement: function(nodeName) {
 		var wrapper = new SVGElement();
 		wrapper.init(this, nodeName);
-		//this.wrappers.push(wrapper);
 		return wrapper;
 	},
 	
-	/*destroy: function() {
-		var wrappers = this.wrappers,
-			i = wrappers.length,
-			key;
-			
-		while (i--) {
-			wrappers[i].destroy();
-		}
-		
-		for (key in this) {
-			delete this[key];
-		}
-	},*/
 	
-	// parse a simple HTML string into SVG tspans
-	// todo: more general HTML parsing
+	/** 
+	 * Parse a simple HTML string into SVG tspans
+	 * 
+	 * @param {Object} textNode The parent text SVG node
+	 * @param {String} str
+	 */
 	buildText: function(textNode, str) {
 		var lines = str.toString().
 				replace(/<(b|strong)>/g, '<span style="font-weight:bold">').
@@ -1763,12 +1672,6 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 		
-		// single line
-		/*if (lines.length == 1) {
-			textNode.appendChild(doc.createTextNode(str));
-			
-		// multi lines or spans
-		} else {*/
 		
 		each (lines, function(line, lineNo) {
 			var spans, spanNo = 0;
@@ -1780,11 +1683,6 @@ SVGRenderer.prototype = {
 				if (span !== '') {
 					var attributes = {},
 						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-					/*if (/^<b>(.*?)<\/b>$/.test(line)) {
-						//tspan.setAttribute('style', 'font-weight:bold');
-						attr(tspan, 'style', 'font-weight:bold');
-						line = line.replace(/^<b>(.*?)<\/b>$/, '$1');
-					}*/
 					if (styleRegex.test(span)) {
 						attr(tspan, 'style', span.match(styleRegex)[1]);
 					}
@@ -1809,9 +1707,6 @@ SVGRenderer.prototype = {
 			});
 			
 		});
-		
-		
-		//}
 	},
 	
 	/**
@@ -1833,12 +1728,24 @@ SVGRenderer.prototype = {
 		}
 		return points;
 	},
+	
+	/**
+	 * Draw a path
+	 * @param {Array} path An SVG path in array form
+	 */
 	path: function (path) {
 		return this.createElement('path').attr({ 
 			d: path, 
 			fill: NONE
 		});
 	},
+	
+	/**
+	 * Draw and return an SVG circle
+	 * @param {Number} x The x position
+	 * @param {Number} y The y position
+	 * @param {Number} r The radius
+	 */
 	circle: function (x, y, r) {
 		var attr = typeof x == 'object' ?
 			x :
@@ -1850,6 +1757,16 @@ SVGRenderer.prototype = {
 		
 		return this.createElement('circle').attr(attr);
 	},
+	
+	/**
+	 * Draw and return an arc
+	 * @param {Number} x X position
+	 * @param {Number} y Y position
+	 * @param {Number} r Radius
+	 * @param {Number} innerR Inner radius like used in donut charts
+	 * @param {Number} start Starting angle
+	 * @param {Number} end Ending angle
+	 */
 	arc: function (x, y, r, innerR, start, end) {
 		// arcs are defined as symbols for the ability to set 
 		// attributes in attr and animate
@@ -1868,24 +1785,17 @@ SVGRenderer.prototype = {
 			start: start || 0,
 			end: end || 0
 		});
-		/*return this.path([
-				M,
-				centerX, 
-				centerY, 
-				L,
-				centerX + radius * mathCos(start),
-				centerY + radius * mathSin(start),
-				'A', // arcTo
-				radius, // x radius
-				radius, // y radius
-				0, // slanting
-				end - start < Math.PI ? 0 : 1, // long or short arc
-				1, // clockwise
-				centerX + radius * mathCos(end),
-				centerY + radius * mathSin(end),
-				'z' // close
-			]);*/
 	},
+	
+	/**
+	 * Draw and return a rectangle
+	 * @param {Number} x Left position
+	 * @param {Number} y Top position
+	 * @param {Number} width
+	 * @param {Number} height
+	 * @param {Number} r Border corner radius
+	 * @param {Number} strokeWidth A stroke width can be supplied to allow crisp drawing
+	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
 		
 		if (arguments.length > 1) {
@@ -1913,21 +1823,16 @@ SVGRenderer.prototype = {
 			fill: NONE
 		}));
 	},
-	/*text: function (x, y, text) {
-		return this.createElement('text').attr({
-				x: x,
-				y: y,
-				text: text
-			});
-	},*/
+	
+	/**
+	 * Create a group
+	 * @param {String} name The group will be given a class name of 'highcharts-{name}'.
+	 *     This can be used for styling and scripting.
+	 */
 	g: function(name) {
-		/*var obj = this.element('g');
-		return obj;*/
-		var attribs = defined(name) ?
-			{ 'class': PREFIX + name } :
-			{};
-			
-		return this.createElement('g').attr(attribs);
+		return this.createElement('g').attr(
+			defined(name) && { 'class': PREFIX + name }
+		);
 	},
 	
 	/**
@@ -2002,7 +1907,6 @@ SVGRenderer.prototype = {
 			
 			
 			// create the image
-			//obj = this.createElement('image').attr({
 			obj = this.image(imageSrc).attr({
 				visibility: HIDDEN
 			});
@@ -2032,8 +1936,6 @@ SVGRenderer.prototype = {
 	
 	/**
 	 * An extendable collection of functions for defining symbol paths.
-	 * 
-	 * @todo: Use size instead of radius? Radius makes sense only for circles.
 	 */
 	symbols: {
 		'square': function (x, y, radius) {
@@ -2145,18 +2047,12 @@ SVGRenderer.prototype = {
 			regexRgba = /^rgba/;
 		if (color && color.linearGradient) {
 			var renderer = this,
-				//element = renderer.element,
 				strLinearGradient = 'linearGradient',
 				linearGradient = color[strLinearGradient],
 				id = PREFIX + idCounter++,
 				gradientObject,
 				stopColor,
 				stopOpacity;
-			/*var gradient = ctx.createLinearGradient.apply(ctx, val.linearGradient);
-			each (val.stops, function(stop) {
-				gradient.addColorStop(stop[0], stop[1]);
-			});
-			return gradient;*/
 			gradientObject = renderer.createElement(strLinearGradient).attr({
 				id: id,
 				gradientUnits: 'userSpaceOnUse',
@@ -2199,9 +2095,16 @@ SVGRenderer.prototype = {
 	},
 	
 		
-	// rotated and aligned text
+	/**
+	 * Add text to the SVG object
+	 * @param {String} str
+	 * @param {Number} x Left position
+	 * @param {Number} y Top position
+	 * @param {Object} style CSS styles for the text
+	 * @param {Nubmer} rotation Rotation in degrees
+	 * @param {String} align Left, center or right
+	 */
 	text: function(str, x, y, style, rotation, align) {
-		//if (str || str === 0) {
 		style = style || {};
 		align = align || 'left';
 		rotation = rotation || 0;
@@ -2279,14 +2182,6 @@ var VMLElement = extendClass( SVGElement, {
 		var markup =  ['<', nodeName],
 			style = ['position: ', ABSOLUTE, ';'];
 		
-		// one to one tag names
-		/*nodeName = {
-			//circle: 'v:oval',
-			//rect: 'v:roundrect',
-			path: 'shape',
-			'v:shape': 'shape'
-		}[nodeName] || nodeName;*/
-		
 		
 		if (nodeName != DIV && nodeName != 'span') {
 			markup.push(' xmlns="', this.xmlns, '" filled="f" stroked="f"');
@@ -2315,7 +2210,6 @@ var VMLElement = extendClass( SVGElement, {
 			renderer = wrapper.renderer,
 			element = wrapper.element,
 			box = renderer.box,
-			parentClass,
 			inverted = parent && parent.inverted,
 			parentStyle,
 		
@@ -2345,14 +2239,12 @@ var VMLElement = extendClass( SVGElement, {
 		parentNode.appendChild(element);
 		
 		
-		// VML Bug workaround: without this, the shape created last will not display.
-		// It can be reproduced by creating a Highcharts.Renderer outside the chart,
-		// and drawing two shapes. Only the first one shows.
-		//element.style.display = 'inline-block';
-		
 		return wrapper;
 	},
 	
+	/**
+	 * Get or set attributes
+	 */
 	attr: function(hash, val) {
 		var key, 
 			value, 
@@ -2361,7 +2253,6 @@ var VMLElement = extendClass( SVGElement, {
 			elemStyle = element.style,
 			nodeName = element.nodeName,
 			renderer = this.renderer,
-			parentNode = element.parentNode,
 			symbolName = this.symbolName,
 			hasSetSymbolSize,
 			shadows = this.shadows,
@@ -2378,9 +2269,7 @@ var VMLElement = extendClass( SVGElement, {
 		// used as a getter, val is undefined
 		if (typeof hash == 'string') {
 			key = hash;
-			/*if (key == 'translateX' || key == 'translateY') {
-				ret = this[key] || 0;
-			} else */if (key == 'stroke-width') {
+			if (key == 'stroke-width') {
 				ret = element.strokeweight;
 				
 			} else {
@@ -2436,7 +2325,6 @@ var VMLElement = extendClass( SVGElement, {
 					key = 'path';
 					
 					// convert paths 
-					//value = map(value, function(item) {
 					i = value.length;
 					var convertedPath = [];
 					while (i--) {
@@ -2476,31 +2364,9 @@ var VMLElement = extendClass( SVGElement, {
 				// width and height
 				} else if (/^(width|height)$/.test(key)) {
 					
-					// VML bug: selection fill color becomes white when zero width or height
-					/*if (value === 0 && element.className == PREFIX +'selection-marker') {
-						value = 1;
-					}*/
-					
-					
 					// normal
 					elemStyle[key] = value;
 										
-					// Update corner radius - IE throws an error if the element is in the 
-					// DOM tree during this operation. To increase performance, only do this
-					// if the arcsize changes. For tooltips, this usually means the arsize only
-					// changes the first time it is displayed, as the height of the tooltip
-					// will stay constant.
-					/*if (nodeName == 'roundrect' && defined(this.r)) {
-						var arcsize = this.r / mathMin(parseInt(elemStyle.width, 10), parseInt(elemStyle.height, 10));
-						
-						if (arcsize != this.arcsize) {
-							parentNode.removeChild(element);
-							attr(element, 'arcsize', arcsize);
-							parentNode.appendChild(element);
-							this.arcsize = arcsize;
-						}
-					}*/
-					
 					// clipping rectangle special
 					if (this.updateClipping) {
 						this.updateClipping();
@@ -2527,21 +2393,7 @@ var VMLElement = extendClass( SVGElement, {
 					
 					value = renderer.color(value, element, key);				
 						
-					// in some cases only the subelement will do
-					/*if (parentNode && attr(parentNode, 'class') == PREFIX +'tooltip') {
-						(
-							element.getElementsByTagName(key)[0] ||
-							createElement('v:'+ key, null, null, element)
-						).color = value;						
-						// IE8 compat bug: after the above operation, the tooltip border sometimes
-						// is set to 1px
-						
-						skipAttr = true;
-					
-					// other times, just set the attribute
-					} else {*/
-						key = 'strokecolor';
-					//}
+					key = 'strokecolor';
 					
 				// stroke width
 				} else if (key == 'stroke-width') {
@@ -2565,26 +2417,6 @@ var VMLElement = extendClass( SVGElement, {
 						key = 'fillcolor';
 					}
 				}
-				// circle radius
-				/*} else if (key == 'r' && nodeName == 'oval') {
-					css(element, {
-						left: element.cx - value,
-						top: element.cy - value,
-						width: 2 * value,
-						height: 2 * value
-					});
-					skipAttr = true;*/
-				
-				// radius for symbols
-				/*} else if (key == 'r' && element.symbolName) {
-					this.attr({ 
-						
-						d: resymbols[element.symbolName](
-							element.x, 
-							element.y, 
-							value
-						)
-					});*/
 				
 				// translation for animation
 				else if (key == 'translateX' || key == 'translateY') {
@@ -2594,31 +2426,11 @@ var VMLElement = extendClass( SVGElement, {
 				}
 				
 				
-				
-				// symbols
-				/*if (element.symbolName && /^(x|y|r)/.test(key)) {
-					
-					var x = key == 'x' ? value : element.x,
-						y = key == 'y' ? value : element.y,
-						r = key == 'r' ? value : element.r;
-						
-					console.log(symbols[element.symbolName](x, y, r, { isVML: true }));
-						
-					this.attr({ 
-						d: symbols[element.symbolName](x, y, r, { isVML: true })
-					});
-				}*/
-				
 					
 				// let the shadow follow the main element
-				/*if (shadows && /^(width|height|visibility|x|y)/.test(key) &&
-						!(symbolName && key != 'visibility')) {*/
 				if (shadows && key == 'visibility') {
 					i = shadows.length;
 					while (i--) {
-						//var style = {};
-						//style[{ x: 'left', y: 'top' }[key] || key] = value;
-						//css(shadows[i], style);
 						shadows[i].style[key] = value;
 					}
 				}
@@ -2628,7 +2440,6 @@ var VMLElement = extendClass( SVGElement, {
 					
 				if (key == 'text') {
 					// only one node allowed
-					//renderer.buildText(element, value);
 					element.innerHTML = value;
 				} else if (!skipAttr) {
 					if (doc.documentMode == 8) { // IE8 setAttribute bug
@@ -2639,13 +2450,7 @@ var VMLElement = extendClass( SVGElement, {
 				}
 				
 				
-			}
-			
-			//if (parentNode) parentNode.appendChild(element);
-			
-			// todo: move this from attr to initiation and check for memory leak
-			//element.graphicObject = this; // memory: circular reference
-			//return this;
+			}			
 		}
 		return ret;
 	},
@@ -2683,15 +2488,11 @@ var VMLElement = extendClass( SVGElement, {
 	 * Extend element.destroy by removing it from the clip members array
 	 */
 	destroy: function() {
-		var wrapper = this;//,
-			//groupElement = wrapper.groupElement; 
+		var wrapper = this;
 		
 		if (wrapper.destroyClip) {
 			wrapper.destroyClip();
 		}
-		/*if (groupElement) {
-			groupElement.parentNode.removeChild(groupElement);
-		}*/
 		
 		SVGElement.prototype.destroy.apply(this);
 	},
@@ -2701,21 +2502,14 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	empty: function() {
 		var element = this.element,
-			//groupElement = this.groupElement,
 			childNodes = element.childNodes,
 			i = childNodes.length,
 			node;
 			
-		//each ([element.childNodes, groupElement.childNodes], function(childNodes) {
-		 
-		//	i = childNodes.length;
-			while (i--) {
-				node = childNodes[i];
-				//if (node != groupElement) {
-					node.parentNode.removeChild(node);
-				//}
-			}
-		//});
+		while (i--) {
+			node = childNodes[i];
+			node.parentNode.removeChild(node);
+		}
 	},
 	
 	/**
@@ -2774,15 +2568,8 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	updateTransform: function() {
 		var wrapper = this,
-			//groupElement = wrapper.groupElement,
-			//element = wrapper.element,
-			//elemStyle = element.style,
-			//width = parseInt(elemStyle.width, 10),
-			//height = parseInt(elemStyle.height, 10),
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0;
-			//rotation = wrapper.rotation || 0,
-			//flipX = wrapper.flipX;
 			
 		// apply translate
 		if (translateX || translateY) {
@@ -2791,25 +2578,7 @@ var VMLElement = extendClass( SVGElement, {
 				top: translateY
 			});			
 		}
-		/*
-		if (flipX || rotation) { // only on groups
-			// apply flip
-			if (flipX) {
-				// flip affects other properties
-				rotation *= -1;
-			
-				css(groupElement, { 
-					flip: 'x', 
-					left: -1000 + width, // adjusted to flip and rotate around its own axis
-					top: -1000 + height
-				});
-			}
-			
-			// apply rotation
-			if (rotation) {
-				css(groupElement, { rotation: rotation });
-			}
-		}*/
+		
 	},
 	
 	/**
@@ -2827,23 +2596,6 @@ var VMLElement = extendClass( SVGElement, {
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				
-				
-				// clone the main element
-				/*shadow = createElement('v:shape', {
-					isShadow: 'true',
-					strokecolor: 'black',
-					strokeweight: 7 - 2 * i,
-					filled: false,
-					path: element.path,
-					coordsize: '100,100'
-				}, {
-					position: ABSOLUTE,
-					width: 10 + PX,
-					height: 10 + PX,
-					left: parseInt(elemStyle.left, 10) + 1,
-					top: parseInt(elemStyle.top, 10) + 1
-				});*/
-				
 				markup = [];
 				markup.push('<shape isShadow="true" ',
 					'xmlns="', this.renderer.urn ,'"',
@@ -2860,8 +2612,7 @@ var VMLElement = extendClass( SVGElement, {
 				markup = [];
 				markup.push('<stroke xmlns="', this.xmlns, '" style="', this.vmlStyle,
 					'" color="black" opacity="', (0.05 * i), '"/>');
-				createElement(markup.join(''), null, null, shadow);
-				
+				createElement(markup.join(''), null, null, shadow);				
 				
 				
 				// insert it
@@ -2898,37 +2649,8 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		this.box = createElement(DIV, null, {
 				width: width + PX,
 				height: height + PX
-			}, container);//,
-			//urn = 'urn:schemas-microsoft-com:vml',
-			//namespaces = doc.namespaces;
-		
-		// renderer properties
-		//this.wrappers = [];
-		//this.box = box;
-		//this.urn = urn;
-		
-		// create namespace and style behaviour
-		/*if (!doc.namespaces.v) {
-			
-			// add a dummy namespace which increases rendering speed up to 10
-			// times for a scatter plot with 1000 points.
-			// todo: find out why this can't be used as the default namespace
-			//namespaces.add('v_dummy', urn, '#default#VML');
-			
-			doc.namespaces.add('v', 'urn:schemas-microsoft-com:vml');
-			
-			// setup default css
-			doc.createStyleSheet().cssText = 
-				'v\\:group, v\\:path, v\\:shape, '+
-				'v\\:line, v\\:fill, v\\:stroke, v\\:textpath '+
-				'{ behavior:url(#default#VML); display:inline-block } ';
-			
-		}*/
-		
-
+			}, container);
 	},
-	
-
 	
 	/**
 	 * Define a clipping rectangle. In VML it is accomplished by storing the values
@@ -2987,7 +2709,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	createElement: function(nodeName) {
 		var wrapper = new VMLElement();
 		wrapper.init(this, nodeName);
-		//this.wrappers.push(wrapper);
 		return wrapper;
 	},
 	
@@ -3044,7 +2765,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				) * 180 / math.PI;
 			
 			// when colors attribute is used, the meanings of opacity and o:opacity2
-      		// are reversed.
+			// are reversed.
 			markup.push('<fill xmlns="', this.urn, '" style="behavior:url(#default#VML)"',
 				' colors="0% ', color1, ',100% ', color2, '" angle="', angle,
 				'" opacity="', opacity2, '" o:opacity2="', opacity1,
@@ -3060,7 +2781,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			colorObject = Color(color);
 			
 			markup.push('<', prop, ' opacity="', colorObject.get('a'), 
-				' xmlns="urn:schemas-microsoft-com:vml" style="behavior:url(#default#VML)" />')
+				' xmlns="urn:schemas-microsoft-com:vml" style="behavior:url(#default#VML)" />');
 			createElement(markup.join(''), null, null, elem);
 			
 			return colorObject.get('rgb');
@@ -3091,7 +2812,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		// set styles
 		extend(style, {
 			color: style.color || '#000000',
-			//margin: 0, // margins are deprecated from 2.0
 			whiteSpace: 'nowrap',
 			// get font metrics for correct sizing
 			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
@@ -3135,8 +2855,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				x1 = left ?     x : x - length * costheta,
 				x2 = right ?    x : x + length * costheta,
 				y1 = left ?     y : y - length * sintheta,
-				y2 = right ?    y : y + length * sintheta,
-				vmlMarkup;
+				y2 = right ?    y : y + length * sintheta;
 				
 				
 			// IE seems to always draw the text with v-text-align middle, so we need 
@@ -3198,26 +2917,26 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		return elemWrapper;
 	},
 	
-	/*buildText: function(textNode, str) {
-	},*/
-	
+	/**
+	 * Create and return a path element
+	 * @param {Array} path
+	 */
 	path: function (path) {
 		// create the shape
 		return this.createElement('shape').attr({
-				// subpixel precision down to 0.1 (width and height = 10px)
-				coordsize: '100 100',
-				d: path
-			});
-			//.add();
-		
-		//wrapper.pathElem = createElement('v:path', null, null, wrapper.element);
-		
-		//wrapper.attr({ d: path });
-		
-		
-		//return wrapper;
+			// subpixel precision down to 0.1 (width and height = 10px)
+			coordsize: '100 100',
+			d: path
+		});
 	},
 	
+	/**
+	 * Create and return a circle element. In VML circles are implemented as
+	 * shapes, which is faster than v:oval
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} r
+	 */
 	circle: function(x, y, r) {
 		return this.path(this.symbols.circle(x, y, r));
 	},
@@ -3240,16 +2959,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			
 		// the div to hold HTML and clipping	
 		wrapper = this.createElement(DIV).attr(attribs);
-		
-		// the v:group to hold other VML items
-		/*wrapper.groupElement = createElement('v:group', attribs, {
-			position: ABSOLUTE,
-			left: 0,
-			top: 0,
-			width: 1000,
-			height: 1000
-		}, wrapper.element);*/
-			
 		
 		return wrapper;
 	},
@@ -3409,9 +3118,10 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		rect: function (left, top, r, options) {
 			var width = options.width,
 				height = options.height,
-				r = mathMin(r, width, height),
 				right = left + width,
 				bottom = top + height;
+		
+			r = mathMin(r, width, height);
 			
 			return [
 				M,
@@ -3500,43 +3210,29 @@ function Chart (options) {
 		chartWidth,
 		chartHeight,
 		chart = this,
-		//container = doc.getElementById(optionsChart.renderTo),
-		//container,
 		chartEvents = optionsChart.events,
 		eventType,
 		getAlignment, // function
 		isInsidePlot, // function
-		//imagemap,
 		tooltip,
 		mouseIsDown,
-		//backgroundLayer = new Layer('chart-background', container),
-		//chartHeight, 
-		//chartWidth,
 		loadingLayer,
-		//plotLayer,
 		plotHeight,
 		plotWidth,
 		plotSizeX, // width if normal, height if inverted
 		plotSizeY, // height if normal, width if inverted
-		//ctx, 
 		tracker,
 		trackerGroup,
-		//trackerRect,
 		legend,
-		//xAxis, 
-		//yAxis,
 		position,// = getPosition(container),
 		hasCartesianSeries = optionsChart.showAxes,
 		axes = [],
 		maxTicks, // handle the greatest amount of ticks on grouped axes
 		series = [], 
-		//resourcesLoaded, 
-		//plotBackground,
 		inverted,
 		renderer,
 		tooltipTick,
 		tooltipInterval,
-		//tooltipDiv,
 		zoom, // function
 		zoomOut; // function
 		
@@ -3562,7 +3258,6 @@ function Chart (options) {
 	
 		options = merge(
 				isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
-				//defaultOptions[isXAxis ? 'xAxis' : 'yAxis'],
 				horiz ? 
 					(opposite ? defaultTopAxisOptions : defaultBottomAxisOptions) :
 					(opposite ? defaultRightAxisOptions : defaultLeftAxisOptions),
@@ -3579,10 +3274,6 @@ function Chart (options) {
 			transB = horiz ? plotLeft : marginBottom, // translation addend
 			axisGroup,
 			gridGroup,
-			/*axisLayer = new Layer('axis-layer', container, null, { zIndex: 7}), / * The
-				axis layer is in front of the series because the axis line must hide
-				graphs and bars. Grid lines are drawn on the grid layer. * /
-			gridLayer = new Layer('grid-layer', container, null, { zIndex: 1 }), */
 			dataMin,
 			dataMax,
 			associatedSeries,
@@ -3603,10 +3294,7 @@ function Chart (options) {
 			minorTickInterval,
 			magnitude,
 			tickPositions, // array containing predefined positions
-			//tickRecord = {},
 			tickAmount,
-			//zoom = 1,
-			//var axisLabelsLayer = new Layer((horiz ? 'x' : 'y') +'-axis-labels');
 			labelFormatter = options.labels.formatter, // can be overwritten by dynamic format
 			// column plots are always categorized
 			categories = options.categories || (isXAxis && chart.columnCount), 
@@ -3826,7 +3514,6 @@ function Chart (options) {
 		 */
 		function addTick(pos, tickPos, color, width, len, withLabel, index) {
 			var x1, y1, x2, y2, str, labelOptions = options.labels;
-				//record = tickRecord[pos] || {};
 			
 			// negate the length
 			if (tickPos == 'inside') {
@@ -3871,28 +3558,17 @@ function Chart (options) {
 						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
 					y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
 						tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
-					/*
-					 todo: translate animation
-					  if (record.label) {
-						record.label.animate({
-							x: x1,
-							y: y1
-						});
-					} else {
-						record.label = renderer.text(*/
-						renderer.text(
-							str,
-							x1,
-							y1,
-							labelOptions.style, 
-							labelOptions.rotation,
-							labelOptions.align
-						).add(axisGroup); 
-					//}
+					renderer.text(
+						str,
+						x1,
+						y1,
+						labelOptions.style, 
+						labelOptions.rotation,
+						labelOptions.align
+					).add(axisGroup);
 				}
 			}
 			
-			//return record;
 		}
 		
 		/**
@@ -3956,19 +3632,19 @@ function Chart (options) {
 					[1, 2, 5, 10, 15, 30]			// allowed multiples
 				], [
 					'minute',						// unit name
-					oneMinute,				// fixed incremental unit
+					oneMinute,						// fixed incremental unit
 					[1, 2, 5, 10, 15, 30]			// allowed multiples
 				], [
 					'hour',							// unit name
-					oneHour,			// fixed incremental unit
+					oneHour,						// fixed incremental unit
 					[1, 2, 3, 4, 6, 8, 12]			// allowed multiples
 				], [
 					'day',							// unit name
-					oneDay,		// fixed incremental unit
+					oneDay,							// fixed incremental unit
 					[1, 2]							// allowed multiples
 				], [
 					'week',							// unit name
-					oneWeek,	// fixed incremental unit
+					oneWeek,						// fixed incremental unit
 					[1, 2]							// allowed multiples
 				], [
 					'month',
@@ -4112,20 +3788,12 @@ function Chart (options) {
 				i,
 				roundedMin = mathFloor(min / tickInterval) * tickInterval,
 				roundedMax = math.ceil(max / tickInterval) * tickInterval;
-				// default extreme ticks when axis does not start and end on a tick
-				//firstTickPosition = roundedMin + tickInterval,
-				//lastTickPosition = roundedMax - tickInterval,
-			
-				//invMag = (magnitude < 1 ? 1 / magnitude : 1) * 10; // round off JS float errors;
 				
 			tickPositions = [];
 			
 			// populate the intermediate values
-			// todo: round off float errors occur here!
 			i = correctFloat(roundedMin);
 			while (i <= roundedMax) {
-			//for (i = roundedMin; i <= roundedMax; i += tickInterval) {
-				//i = mathRound(i * invMag) / invMag
 				tickPositions.push(i);
 				i = correctFloat(i + tickInterval);
 			}
@@ -4244,10 +3912,7 @@ function Chart (options) {
 			if (categories || min == max) {
 				tickInterval = 1;
 			} else {
-				tickInterval = /*options.tickInterval == 'auto' ? 
-					(max - min) * options.tickPixelInterval / axisLength : 
-					options.tickInterval;*/
-					pick(
+				tickInterval = pick(
 						options.tickInterval,
 						(max - min) * options.tickPixelInterval / axisLength
 					);
@@ -4282,8 +3947,6 @@ function Chart (options) {
 			}
 				
 			// reset stacks
-				
-			//if (!isXAxis) for (type in stacks) each (stacks[type], function(stack, i) {
 			if (!isXAxis) {
 				for (type in stacks) {
 					for (i in stacks[type]) {
@@ -4321,16 +3984,6 @@ function Chart (options) {
 						newMax = categories.length - 1;
 					}
 				}
-				
-				// set the new values
-				//userSetMin = pick(newMin, min);
-				//userSetMax = pick(newMax, max);
-				//if (defined(newMin)) userSetMin = newMin;
-				//if (defined(newMax)) userSetMax = newMax;
-				
-				// this fails on zooming when a series is hidden and ignoreHiddenSeries is true
-				//userSetMin = pick(newMin, options.min, dataMin);
-				//userSetMax = pick(newMax, options.max, dataMax);
 				
 				userSetMin = newMin;
 				userSetMax = newMax;
@@ -4414,8 +4067,6 @@ function Chart (options) {
 				// clear the axis layers before new grid and ticks are drawn
 				axisGroup.empty();
 				gridGroup.empty();
-				//axisLayer.clear();
-				//gridLayer.clear();
 			}
 			
 			// If the series has data draw the ticks. Else only the line and title
@@ -4465,7 +4116,6 @@ function Chart (options) {
 					);
 					
 					// add the tick mark
-					//tickRecord[pos] = addTick(
 					addTick(
 						pos, 
 						options.tickPosition, 
@@ -4533,7 +4183,6 @@ function Chart (options) {
 					}[axisTitleOptions.align];
 					
 					// the position in the perpendicular direction of the axis
-					// todo: move the centerline fix to the VMLRenderer
 					var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
 						(horiz ? 1 : -1) * // horizontal axis reverses the margin
 						(opposite ? -1 : 1) * // so does opposite axes
@@ -4559,8 +4208,6 @@ function Chart (options) {
 					
 				}
 			}
-			// stroke tick labels and title
-			//axisLayer.strokeText();
 			
 			axis.isDirty = false;
 		}
@@ -4627,23 +4274,7 @@ function Chart (options) {
 		
 		
 		
-		/* 
-		 * Clear memory
-		 * /
-		function destroy() {
-			axisGroup.destroy();
-			gridGroup.destroy();
-			
-			associatedSeries = axis = chart = options = null;
-			
-			for (var key in axis) {
-				delete axis[key];
-			}
-		}*/
-		
 		// Run Axis
-		
-			//var hasWrittenTitle;
 			
 		// inverted charts have reversed xAxes as default
 		if (inverted && isXAxis && reversed === UNDEFINED) {
@@ -4664,7 +4295,6 @@ function Chart (options) {
 			addPlotLine: addPlotBandOrLine,
 			adjustTickAmount: adjustTickAmount,
 			categories: categories,
-			//destroy: destroy,
 			getExtremes: getExtremes,
 			getZeroPlane: getZeroPlane,
 			isXAxis: isXAxis,
@@ -4677,7 +4307,6 @@ function Chart (options) {
 			redraw: redraw,
 			removePlotBand: removePlotBandOrLine,
 			removePlotLine: removePlotBandOrLine,
-			//reset: reset,
 			reversed: reversed,
 			stacks: stacks
 		});
@@ -4731,9 +4360,12 @@ function Chart (options) {
 		};
 	}
 	
+	/**
+	 * The tooltip object
+	 * @param {Object} options Tooltip options
+	 */
 	function Tooltip (options) {
 		var currentSeries,
-			//innerDiv,
 			borderWidth = options.borderWidth,
 			style = options.style,
 			padding = parseInt(style.padding, 10),
@@ -4761,9 +4393,6 @@ function Chart (options) {
 				add(group).
 				shadow(options.shadow),
 			label = renderer.text('', padding + boxOffLeft, parseInt(style.fontSize, 10) + padding + boxOffLeft).
-				/*attr({
-					style: serializeCSS(extend(style, { fill: style.color }))
-				}).*/
 				attr({ zIndex: 1 }).
 				css(style).
 				add(group);
@@ -4777,8 +4406,6 @@ function Chart (options) {
 		 * @todo Make tranlate animation, group the box and label and animate the translation of the group
 		 */
 		function move(finalX, finalY) {
-			
-			//var hidden = false; //(tooltipDiv.style.visibility == HIDDEN),
 			
 			currentX = tooltipIsHidden ? finalX : (2 * currentX + finalX) / 3;
 			currentY = tooltipIsHidden ? finalY : (currentY + finalY) / 2;
@@ -4802,7 +4429,6 @@ function Chart (options) {
 		function hide() {
 
 			tooltipIsHidden = true;
-			// todo: group
 			box.hide();
 			label.hide();
 		}
@@ -4815,16 +4441,12 @@ function Chart (options) {
 		function refresh(point) {
 			var 
 				series = point.series,
-				//chartOptions = chart.options,
-				//categories = series.xAxis ? series.xAxis.categories : null,
 				
 				borderColor = options.borderColor || point.color || series.color || '#606060',
-				//inverted = chart.inverted,//chart.options.chart.inverted,
 				x,
 				y,
 				boxX,
 				boxY,
-				//oldInnerDivHeight = innerDiv.offsetHeight,
 				show,
 				bBox,
 				text = point.tooltipText,
@@ -4840,7 +4462,6 @@ function Chart (options) {
 				
 				
 			// hide tooltip if the point falls outside the plot
-			//if (x >= 0 && x <= plotWidth && y >= 0 && y <= plotHeight) {
 			show = isInsidePlot(x, y);
 			
 			// update the inner HTML
@@ -4848,21 +4469,17 @@ function Chart (options) {
 				hide();
 			} else {
 				
-			    // show the hover mark
-				//tracker.resetHoverPoint();
-				//point.setState(HOVER_STATE);
-			
-				// show it
+			    // show it
 				if (tooltipIsHidden) {
 					box.show();
 					label.show();
 					tooltipIsHidden = false;
 				}
 				
-				// svg
+				// update text
 				label.attr({
-						text: text
-					});
+					text: text
+				});
 				
 				// get the bounding box
 				bBox = label.getBBox();
@@ -4871,10 +4488,10 @@ function Chart (options) {
 				
 				// set the size of the box
 				box.attr({
-						width: boxWidth + 2 * padding,
-						height: boxHeight + 2 * padding,
-						stroke: borderColor
-					});
+					width: boxWidth + 2 * padding,
+					height: boxHeight + 2 * padding,
+					stroke: borderColor
+				});
 				
 				// keep the box within the chart area
 				boxX = x - boxWidth + plotLeft - 25;
@@ -4907,18 +4524,6 @@ function Chart (options) {
 		return {
 			refresh: refresh,
 			hide: hide
-			/*,
-			destroy: function() {
-				box.destroy();
-				group.destroy();
-				label.destroy();
-				
-				box = group = label = options = hide = move = refresh = null;
-				
-				for (var key in this) {
-					delete this[key];
-				}
-			}*/
 		};	
 	}
 	
@@ -4930,28 +4535,16 @@ function Chart (options) {
 	function MouseTracker (chart, options) {
 
 		
-		var //activePoint,
-			mouseDownX, 
+		var mouseDownX, 
 			mouseDownY,
 			hasDragged,
 			selectionMarker,
-			/*dragPoint,
-			dragPointCoordinates,
-			allowXDrag,
-			allowYDrag,*/
 			zoomType = optionsChart.zoomType,
 			zoomX = /x/.test(zoomType),
 			zoomY = /y/.test(zoomType),
 			zoomHor = zoomX && !inverted || zoomY && inverted,
 			zoomVert = zoomY && !inverted || zoomX && inverted;
 			
-		/*
-		 * Get the currently hovered point
-		 * /
-		function getActivePoint() {
-			return activePoint;
-		}*/
-		
 		/**
 		 * Add IE support for pageX and pageY
 		 * @param {Object} e The event object in standard browsers
@@ -5003,29 +4596,6 @@ function Chart (options) {
 			return coordinates;
 		}
 		
-		/* *
-		 * Drop a point after dragging to change it's value
-		 * 
-		 * @todo: 
-		 * - x dimension
-		 * /
-		function dropDragPoint() {
-			if (hasDragged && dragPoint) {
-				var yAxis = dragPointCoordinates.yAxis,
-					i = 0;
-					
-				// identify the point's yAxis
-				for (i; i < yAxis.length; i++) { 
-					if (yAxis[i].axis == dragPoint.series.yAxis) {
-						break;
-					}					
-				}
-				// update the point
-				dragPoint.update(yAxis[i].value);
-				dragPoint = null;				
-			}
-		}
-		*/
 		/**
 		 * With line type charts with a single tracker, get the point closest to the mouse
 		 */
@@ -5048,15 +4618,6 @@ function Chart (options) {
 				if (point && point != hoverPoint) {
 					
 					// trigger the events
-					/*if (activePoint) {
-						activePoint.firePointEvent('mouseOut');
-					}
-					point.firePointEvent('mouseOver');
-
-					// refresh the tooltip
-					if (tooltip) {
-						tooltip.refresh(point);
-					}*/
 					point.onMouseOver();
 					
 				}				
@@ -5072,42 +4633,12 @@ function Chart (options) {
 			var hoverSeries = chart.hoverSeries,
 				hoverPoint = chart.hoverPoint;
 
-			// hide the tooltip
-			/*if (tooltip) {
-				tooltip.hide();
-			}*/
-			
-			
 			if (hoverPoint) {
-				/*var options = activePoint.series.options.marker,
-					attr;
-				
-				// todo: make general basic config object and hover object
-				// for lines, bars and pies
-				attr = {
-					stroke: options.lineColor,
-					'stroke-width': options.lineWidth,
-					r: options.radius
-				};
-				if (activePoint.series.allowsPointStateColor) {
-					attr = {
-						fill: activePoint.color
-					};
-				}*/
-				
-				
 				hoverPoint.onMouseOut();
 			}
-			// hide the hovered series and point
 			if (hoverSeries) {
-				/*if (hoverSeries.setState) { // it might be destroyed
-					hoverSeries.setState();
-				}
-				chart.hoverSeries = null;
-				//activePoint = null;*/
 				hoverSeries.onMouseOut();
 			}
-			
 			if (tooltip) {
 				tooltip.hide();
 			}
@@ -5118,7 +4649,6 @@ function Chart (options) {
 		 * Mouse up or outside the plot area
 		 */
 		function drop() {
-			//var selectionIsMade;
 			if (selectionMarker) {
 				var selectionData = {
 						xAxis: [],
@@ -5173,12 +4703,6 @@ function Chart (options) {
 		function setDOMEvents () {
 			var lastWasOutsidePlot = true;
 			
-			/*container.ondblclick = function(e) {
-				e = normalizeMouseEvent(e);
-				alert(e.pageX);
-			};*/
-			
-			//trackerGroup.on('mousedown', function(e) {
 			container.onmousedown = function(e) {
 				e = normalizeMouseEvent(e);
 				
@@ -5202,7 +4726,6 @@ function Chart (options) {
 							0
 						)
 						.attr({
-							//className: PREFIX +'selection-marker', 
 							fill: 'rgba(69,114,167,0.25)',
 							zIndex: 7
 						})
@@ -5215,26 +4738,13 @@ function Chart (options) {
 			
 			// Use native browser event for this one. It's faster, and MooTools
 			// doesn't use clientX and clientY.
-			//.on('mousemove', function(e) {
 			container.onmousemove = function(e) {
 				e = normalizeMouseEvent(e);
 				e.returnValue = false;
 				
-				// todo: General inside plot function, or cache the value. This is used also in
-				// tooltips
 				var mouseX = e.pageX,
 					mouseY = e.pageY,
-					//posX = position.x,
-					//posY = position.y,
 					isOutsidePlot = !isInsidePlot(mouseX, mouseY, 'page');
-					/*isOutsidePlot = mouseX < posX + plotLeft ||
-						mouseX > posX + plotLeft + plotWidth ||
-						mouseY < posY + plotTop ||
-						mouseY > posY + plotTop + plotHeight;*/
-				
-				
-				
-					
 				
 				if (mouseIsDown) { // make selection
 					
@@ -5283,75 +4793,11 @@ function Chart (options) {
 				return false;
 			};
 			
-			//.on('mouseup', function() {
 			container.onmouseup = function(e) {
-				
-				
 				drop();
-				
-				/*if (selectionMarker) {
-					var selectionData = {
-							xAxis: [],
-							yAxis: []
-						},
-						selectionBox = selectionMarker.getBBox(),
-						selectionLeft = selectionBox.x - plotLeft,
-						selectionTop = selectionBox.y - plotTop;
-					
-						
-					// a selection has been made
-					if (hasDragged) {
-						
-						// record each axis' min and max
-						each (axes, function(axis, i) {
-							var translate = axis.translate,
-								isXAxis = axis.isXAxis,
-								isHorizontal = inverted ? !isXAxis : isXAxis;
-								
-							selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
-								axis: axis,
-								min: translate(
-									isHorizontal ? 
-										selectionLeft : 
-										plotHeight - selectionTop - selectionBox.height, 
-									true
-								),
-								max: translate(
-									isHorizontal ? 
-										selectionLeft + selectionBox.width : 
-										plotHeight - selectionTop, 
-									true
-								)								
-							});
-						});
-						fireEvent(chart, 'selection', selectionData, zoom);
-
-						selectionIsMade = true;
-					}					
-					selectionMarker = selectionMarker.remove();
-				}
-				
-				chart.mouseIsDown = mouseIsDown = hasDragged = false;*/
-			
 			};
 			
-			//.on('mouseout', function(e) {
-			/*container.onmouseout = function(e) {
-				e = e || win.event;
-				var	related = e.relatedTarget || e.toElement;
-				
-				// check that the mouse has really left the imagemap
-				if (related && / *related != trackerRect.element &&* / !related.isTracker) {
 			
-					// reset the tracker
-					resetTracker();
-					
-					
-					// reset mouseIsDown and hasDragged
-					chart.mouseIsDown = mouseIsDown = hasDragged = false;
-					
-				}
-			}*/
 			
 			// MooTools 1.2.3 doesn't fire this in IE when using addEvent
 			//.on('click', function(e) {
@@ -5406,32 +4852,7 @@ function Chart (options) {
 		/**
 		 * Create the image map that listens for mouseovers
 		 */
-		function createImageMap () {
-			/*var id = 'highchartsMap'+ canvasCounter++;
-			
-			chart.imagemap = imagemap = createElement('map', {
-					name: id,
-					id: id,
-					className: 'highcharts-image-map'
-				}, null, container);
-			
-			// Append the image to the image map to allow events to 
-			// bubble up
-			trackerImage = createElement('img', {
-				useMap: '#'+ id
-			}, {
-				width: plotWidth + PX,
-				height: plotHeight + PX,
-				left: plotLeft + PX,
-				top: plotTop + PX,
-				opacity: 0,
-				border: NONE,
-				position: ABSOLUTE,
-				// Workaround: if not clipped, the left axis will flicker in 
-				// IE8 when hovering the chart
-				clip: 'rect(1px,'+ plotWidth +'px,'+ plotHeight +'px,1px)', 
-				zIndex: 9
-			}, imagemap);*/
+		function createTrackerGroup () {
 			chart.trackerGroup = trackerGroup = renderer.g('tracker');
 			
 			if (inverted) {
@@ -5444,54 +4865,12 @@ function Chart (options) {
 			trackerGroup
 				.attr({ zIndex: 9 })
 				.translate(plotLeft, plotTop)
-				.add();
-		
-			/*chart.trackerRect = trackerRect = renderer.rect(
-				0, 
-				0, 
-				plotWidth, 
-				plotHeight, 
-				0
-			).attr({
-				//'class': 'tracker-rect',
-				fill: 'rgba(192,192,192,0.005)' // to be able to detect mousemove
-			}). 
-			add(chart.trackerGroup);*/
-			
-						
-			// Blank image for modern browsers. IE doesn't need a valid 
-			// image for the image map to work, and fails in SSL mode
-			// if it's present.
-			//if (!isIE) trackerImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+				.add();	
 		}
 		
-
-
-		/**
-		 * Bring a specific area to the front so that the user can follow a line. The
-		 * legend area should always stay on top. Series tracker areas are brought to the
-		 * top after the legend area.
-		 * @param {Object} area The area DOM element
-		 */
-		/*function insertAtFront(area) {
-			var before = 0,
-				i,
-				childNodes = imagemap.childNodes;
-			for (i = 0; i < childNodes.length; i++) {
-				if (childNodes[i].isLegendArea) {
-					before = i + 1;
-					break;
-				}
-			}
-			imagemap.insertBefore(area, childNodes[before]);				
-		}*/
-		
-		/*if (!options.enabled) {
-			return;
-		}*/
 		
 		// Run MouseTracker
-		createImageMap(); // todo: check out and rename if still used
+		createTrackerGroup(); // todo: check out and rename if still used
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
 		}
@@ -5507,17 +4886,9 @@ function Chart (options) {
 		
 		// expose properties
 		extend (this, {
-			//insertAtFront: insertAtFront,
-			//resetHoverPoint: resetHoverPoint,
 			zoomX: zoomX,
 			zoomY: zoomY,
 			resetTracker: resetTracker
-			/*,
-			destroy: function() {
-				
-				
-				chart = options = selectionMarker = null;
-			}*/
 		});
 	}
 	
@@ -5528,24 +4899,17 @@ function Chart (options) {
 	 * @param {Object} chart
 	 */
 	var Legend = function(chart) {
-		// already existing			
-		//if (chart.legend) return;
-			
+
 		var options = chart.options.legend;
 			
 		if (!options.enabled) {
 			return;
 		}
 		
-		var //li,
-			horizontal = options.layout == 'horizontal',
+		var horizontal = options.layout == 'horizontal',
 			symbolWidth = options.symbolWidth,
 			symbolPadding = options.symbolPadding,
-			//dom,
-			//topRule = '#'+ container.id +' .highcharts-legend li', // apply once for each chart
 			allItems = [],
-			//legendLayer = new Layer('legend', container, null, { zIndex: 7 }),
-			//legendArea,
 			style = options.style,
 			itemStyle = options.itemStyle,
 			itemHoverStyle = options.itemHoverStyle,
@@ -5559,18 +4923,16 @@ function Chart (options) {
 			itemY,
 			lastItemY,
 			box,
-			//checkboxes,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
 			legendGroup,
 			offsetWidth,
-			boxX,
-			boxY,
 			widthOption = options.width,
 			boxWidth,
 			boxHeight,
 			series = chart.series,
 			reversedLegend = options.reversed;
+			
 			
 		
 		/**
@@ -5619,7 +4981,7 @@ function Chart (options) {
 				legendLine.translate(itemX, itemY - 4);
 			}
 			if (legendSymbol) {
-				legendSymbol//.attr({ y: itemY - (legendSymbol.isSimple ? 11 : 4) });
+				legendSymbol
 					.translate(itemX, itemY);
 			}
 			if (checkbox) {
@@ -5627,21 +4989,6 @@ function Chart (options) {
 				checkbox.y = itemY;
 			}
 		}
-		
-		/* *
-		 * Destroy the legend object to release memory
-		 * /
-		function destroy() {
-			box.destroy();
-			legendGroup.destroy();
-			
-			// null all scope variables
-			allItems = chart = options = series = null;
-			
-			for (var key in this) {
-				delete this[key];
-			}
-		}*/
 		
 		/**
 		 * Destroy a single legend item
@@ -5652,7 +4999,6 @@ function Chart (options) {
 				checkbox = item.checkbox;
 				
 			// pull out from the array
-			// todo: make general function for this operation
 			while (i--) {
 				if (allItems[i] == item) {
 					allItems.splice(i, 1);
@@ -5681,12 +5027,7 @@ function Chart (options) {
 		 * @param {Object} item A series or point
 		 */
 		function renderItem(item) {
-			var	//markerOptions,
-				//isVisible = item.visible, //item.legendItem.className == HIGHCHARTS_HIDDEN,
-				/*color = isHidden ? 
-					options.itemHiddenStyle.color : 
-					item.color,*/
-				bBox,
+			var	bBox,
 				itemWidth,
 				legendSymbol,
 				simpleSymbol,
@@ -5715,8 +5056,7 @@ function Chart (options) {
 						item.setState();
 					})
 					.on('click', function(event) {
-						var //target = event.target,
-							strLegendItemClick = 'legendItemClick',
+						var strLegendItemClick = 'legendItemClick',
 							fnLegendItemClick = function() {
 								item.setVisible();
 							};
@@ -5775,10 +5115,7 @@ function Chart (options) {
 					.attr({ zIndex: 3 })
 					.add(legendGroup);
 				}
-				//if (legendSymbol) {
-				//	legendSymbol.isSimple = simpleSymbol;
-					item.legendSymbol = legendSymbol;
-				//}
+				item.legendSymbol = legendSymbol;
 					
 				// colorize the items
 				colorizeItem(item, item.visible);
@@ -5817,7 +5154,6 @@ function Chart (options) {
 			item.legendItemWidth = itemWidth = 
 				options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
 			if (horizontal) {
-			
 				itemX += itemWidth;
 				offsetWidth = widthOption || mathMax(itemX - initialItemX, offsetWidth);
 			
@@ -5831,7 +5167,7 @@ function Chart (options) {
 				itemY += lineHeight;
 				// the width of the widest item
 				offsetWidth = widthOption || mathMax(itemWidth, offsetWidth);			
-			}			
+			}		
 			
 			// add it all to an array to use below
 			allItems.push(item);
@@ -5867,7 +5203,6 @@ function Chart (options) {
 				// use points or series for the legend item depending on legendType
 				var items = (serie.options.legendType == 'point') ?
 					serie.data : [serie];
-					//simpleSymbol;
 						
 				// render all items
 				each(items, renderItem);
@@ -5880,16 +5215,15 @@ function Chart (options) {
 			
 			// Draw the border
 			boxWidth = widthOption || offsetWidth;
-			boxHeight = lastItemY - y + lineHeight;// + (horizontal ? lineHeight : 0);
+			boxHeight = lastItemY - y + lineHeight;
+			
 			if (legendBorderWidth || legendBackgroundColor) {
 				boxWidth += 2 * padding;
 				boxHeight += 2 * padding;
 				
 				if (!box) {
 					box = renderer.rect(
-						//-boxX,
 						0, 
-						//y - lineHeight - padding + 3,
 						0,
 						boxWidth,
 						boxHeight,
@@ -5924,10 +5258,10 @@ function Chart (options) {
 			}
 
 			
-			var boxPos = getAlignment(extend(options, {
+			var boxPos = getAlignment(extend({
 				width: boxWidth,
 				height: boxHeight
-			}));
+			}, options));
 			legendGroup.translate(boxPos.x, boxPos.y);
 			
 			// Position the checkboxes after the width is determined 
@@ -5949,7 +5283,6 @@ function Chart (options) {
 		// expose 
 		return {
 			colorizeItem: colorizeItem,
-			//destroy: destroy,
 			destroyItem: destroyItem,
 			renderLegend: renderLegend
 		};
@@ -6191,7 +5524,6 @@ function Chart (options) {
 	function get(id) {
 		var i,
 			j,
-			//match,
 			data;
 		
 		// search axes
@@ -6294,7 +5626,6 @@ function Chart (options) {
 	 * Zoom out to 1:1
 	 */
 	zoomOut = function () {
-		//zoom(false);
 		fireEvent(chart, 'selection', { resetSelection: true }, zoom);
 		chart.toolbar.remove('zoom');
 
@@ -6349,17 +5680,11 @@ function Chart (options) {
 				right: chartWidth
 			};
 		
-		/*if (title) {
-			title.text = 'Highcharts 2.0 prerelease version. Not for production!';
-		}*/
 			
 		if (!chart.titleLayer) {
-			/*var titleLayer = new Layer('title-layer', container, null, {
-				zIndex: 2
-			});*/
 			// title
 			if (title && title.text) {
-				renderer.text(//titleLayer.drawText(
+				renderer.text(
 					title.text, 
 					anchorMap[titleAlign] + title.x,
 					title.y, 
@@ -6373,7 +5698,7 @@ function Chart (options) {
 			
 			// subtitle
 			if (subtitle && subtitle.text) {
-				renderer.text(//titleLayer.drawText(
+				renderer.text(
 					subtitle.text, 
 					anchorMap[subtitleAlign] + subtitle.x,
 					subtitle.y, 
@@ -6384,8 +5709,6 @@ function Chart (options) {
 					'class': 'highcharts-subtitle'
 				}).add();
 			}
-			
-			//chart.titleLayer = titleLayer;
 		}
 	}
 
@@ -6395,7 +5718,6 @@ function Chart (options) {
 	 * 
 	 * @param {Object} alignmentOptions
 	 * 
-	 * @todo Use this in legend alignment
 	 */
 	getAlignment = function(alignmentOptions) {
 		var align = alignmentOptions.align,
@@ -6499,9 +5821,6 @@ function Chart (options) {
 		
 		// Chart area
 		mgn = 2 * chartBorderWidth + (optionsChart.shadow ? 8 : 0);
-		/*backgroundLayer.drawRect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn, 
-			optionsChart.borderColor, optionsChart.borderWidth, optionsChart.borderRadius, 
-			optionsChart.backgroundColor, optionsChart.shadow);*/
 			
 		if (chartBorderWidth || chartBackgroundColor) {
 			renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn, 
@@ -6517,18 +5836,6 @@ function Chart (options) {
 		
 		
 		// Plot background
-		/*backgroundLayer.drawRect(
-			plotLeft, 
-			plotTop, 
-			plotWidth, 
-			plotHeight, 
-			null, 
-			null, 
-			null, 
-			optionsChart.plotBackgroundColor, 
-			null, 
-			plotBackground
-		);*/
 		if (plotBackgroundColor) {
 			renderer.rect(plotLeft, plotTop, plotWidth,	plotHeight,	0)
 				.attr({
@@ -6543,19 +5850,6 @@ function Chart (options) {
 		}
 		
 		// Plot area border
-		/*(new Layer('plot-border', container, null, {
-			zIndex: 4 // in front of grid lines and graphs, behind axis lines
-		})).drawRect(
-			plotLeft, 
-			plotTop, 
-			plotWidth, 
-			plotHeight, 
-			optionsChart.plotBorderColor, 
-			optionsChart.plotBorderWidth, 
-			null, 
-			null, 
-			optionsChart.plotShadow
-		);*/
 		if (optionsChart.plotBorderWidth) {
 			renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0, optionsChart.plotBorderWidth).
 				attr({
@@ -6569,12 +5863,6 @@ function Chart (options) {
 		// Add plot area clipping rectangle
 		chart.clipRect = renderer.clipRect(0, 0, plotSizeX,	plotSizeY);
 				
-		// Printing CSS for IE
-		/*if (isIE) {
-			addCSSRule('.highcharts-image-map', { display: NONE }, 'print');
-		}*/
-		
-		
 		// Axes
 		if (hasCartesianSeries) {
 			each(axes, function(axis) { 
@@ -6589,7 +5877,6 @@ function Chart (options) {
 		// Labels
 		if (labels.items) {
 			each (labels.items, function () {
-				//console.log(labels.style);
 				var style = extend (labels.style, this.style),
 					x = parseInt(style.left, 10) + plotLeft,
 					y = parseInt(style.top, 10) + plotTop + 12;
@@ -6626,15 +5913,6 @@ function Chart (options) {
 		
 		// Credits
 		if (credits.enabled && !chart.credits) {
-			// todo: svg 
-			/*chart.credits = createElement('a', {
-				className: 'highcharts-credits',
-				href: credits.href,
-				innerHTML: credits.text,
-				target: credits.target
-			}, extend(credits.style, {
-				zIndex: 8
-			}), container);*/
 			renderer.text(
 				credits.text,
 				chartWidth - 5,
@@ -6680,19 +5958,6 @@ function Chart (options) {
 		while (i--) {
 			series[i].destroy();
 		}
-		
-		//trackerGroup.destroy();
-		
-		/*each (axes, function(axis) {
-			axis.destroy();
-		});*/
-		
-		/*legend.destroy();
-		
-		tooltip.destroy();
-		tracker.destroy();
-		
-		renderer.destroy();*/
 		
 		// remove all SVG
 		container.innerHTML = '';
@@ -6750,22 +6015,11 @@ function Chart (options) {
 		}
 	}
 	
-	// Chart member functions
-	/*chart.addLoading = function (loadingId) {
-		chart.resources[loadingId] = false;
-	};
-	chart.clearLoading = function (loadingId) {
-		chart.resources[loadingId] = true;
-		checkResources();
-	};*/
-	
-	
 	
 	chart.options = options;
 	chart.series = series;
 	chart.container = container;
 	
-	//chart.resources = {};
 	
 	chart.chartWidth = chartWidth;
 	chart.chartHeight = chartHeight;
@@ -6791,29 +6045,8 @@ function Chart (options) {
 	chart.showLoading = showLoading;	
 	chart.updatePosition = updatePosition;
 	
-	/*chart.plotLayer = plotLayer = new Layer('plot', container, null, {
-		position: ABSOLUTE,
-		width: plotWidth + PX,
-		height: plotHeight + PX,
-		left: plotLeft + PX,
-		top: plotTop + PX,
-		overflow: HIDDEN,
-		zIndex: 3
-	});*/
-	
-	
-	// Wait for loading of plot area background
-	/*if (optionsChart.plotBackgroundImage) {
-		chart.addLoading('plotBack');
-		plotBackground = createElement('img');
-		plotBackground.onload = function() {
-			chart.clearLoading('plotBack');
-		};
-		plotBackground.src = optionsChart.plotBackgroundImage;
-	}*/
 	
 	// Initialize the series
-	//initSeries();
 	each (options.series || [], function(serieOptions) {
 		initSeries(serieOptions);
 	});
@@ -6871,12 +6104,10 @@ Point.prototype = {
 	applyOptions: function(options) {
 		var point = this,
 			series = point.series;
-			//n;
 	
 		
 		// onedimensional array input
 		if (typeof options == 'number' || options === null) {
-			//point.x = i;
 			point.y = options;	
 		}
 		
@@ -6884,18 +6115,13 @@ Point.prototype = {
 		else if (typeof options == 'object' && typeof options.length != 'number') {
 			
 			// copy options directly to point
-			//for (n in options) point[n] = options[n];
 			extend(point, options);
 			point.options = options;
-			// set x and y
-			//point.x = options.x;
-			//point.y = options.y;
 		}
 		
 		// categorized data with name in first position
 		else if (typeof options[0] == 'string') {
 			point.name = options[0];
-			//point.x = i;
 			point.y = options[1];
 		}
 		
@@ -6956,23 +6182,13 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			chart = series.chart;
-			//stateLayers,
-			//state;
-			//singlePointLayer = pick(point.stateLayer, series.singlePointLayer, chart.singlePointLayer);
 			
-		//point.selected = !point.selected;
-		// if called without an argument, toggle
-		//series.selected = selected = (selected === UNDEFINED) ? !series.selected : selected;
 		point.selected = selected = pick(selected, !point.selected);
 		
 		//series.isDirty = true;
 		point.firePointEvent(selected ? 'select' : 'unselect');
 		
 		point.setState(SELECT_STATE);
-		// remove the hover marker so the user can see the underlying marker changes to selected
-		/*if (singlePointLayer) {
-			singlePointLayer.clear();
-		}*/
 		
 		// unselect all other points unless Ctrl or Cmd + click
 		if (!accumulate) {
@@ -7151,7 +6367,6 @@ Point.prototype = {
 		
 		// if a graphic is not applied to each point in the normal state, create a shared
 		// graphic for the hover state
-		// todo: symbols
 		if (state && !point.graphic) {
 			if (!series.stateMarkerGraphic) {
 				series.stateMarkerGraphic = chart.renderer.circle(
@@ -7238,63 +6453,7 @@ Series.prototype = {
 		series.setData(options.data, false);
 			
 	},
-	/*getData: function(options) {
-		var series = this,
-			chart = series.chart,
-			loadingId = 'series'+ idCounter++;
-		
-		// Ajax loaded data
-		if (!options.data && options.dataURL) {
-			chart.addLoading(loadingId);
-			getAjax(options.dataURL, function(data) {
-				series.dataLoaded(data);
-				chart.clearLoading(loadingId);
-			});
-		} else {
-			series.dataLoaded(options.data);
-		}
-	},
-	//dataLoaded: function(data) {
-	getData: function(options) {
-		var series = this,
-			chart = series.chart,
-			options = series.options,
-			data = options.data,
-			enabledStates = [NORMAL_STATE],
-			//data = series.data,
-			//dataParser = options.dataParser,
-			stateLayers = {},
-			layerGroup,
-			point,
-			//pointInterval = options.pointInterval || 1,
-			x;
-		
-		// if no dataParser is defined for ajax loaded data, assume JSON and eval the code
-		/ *if (options.dataURL && !dataParser) { 
-			dataParser = function(data){
-				return eval(data);
-			};
-		}
-		// dataParser is defined, run parsing
-		if (dataParser) {
-			data = dataParser.call(series, data);
-		}* /
-		
-		
-		// create the group layer (TODO: move to render?)
-		/ *series.layerGroup = layerGroup = new Layer('series-group', chart.plotLayer.div, null, {
-			zIndex: 2 // labels are underneath
-		});* /
-		
-		/ *if (options.states.hover.enabled) enabledStates.push(HOVER_STATE);
-		each(enabledStates, function(state) { // create the state layers
-			stateLayers[state] = new Layer('state-'+ state, layerGroup.div);
-		});
-		series.stateLayers = stateLayers;* /
-		
-		series.setData(data, false);
 	
-	},*/
 	
 	/**
 	 * Return an auto incremented x value based on the pointStart and pointInterval options. 
@@ -7322,9 +6481,6 @@ Series.prototype = {
 		var series = this,
 			data = series.data,
 			i;
-			//smallestInterval,
-			//closestPoints,
-			//interval;
 			
 		// sort the data points
 		data.sort(function(a, b){
@@ -7339,14 +6495,8 @@ Series.prototype = {
 					data.splice(i - 1, 1); // remove the duplicate
 				}
 				
-				/*interval = data[i].x - data[i - 1].x
-				if (smallestInterval === UNDEFINED || interval < smallestInterval) {
-					smallestInterval = interval;
-					closestPoints = i;	
-				}*/
 			}
 		}
-		//series.closestPoints = closestPoints;
 	},		
 		
 	/**
@@ -7388,6 +6538,9 @@ Series.prototype = {
 		return options;
 		
 	},
+	/**
+	 * Get the series' color
+	 */
 	getColor: function(){
 		var defaultColors = this.chart.options.colors;
 		this.color = this.options.color || defaultColors[colorCounter++] || '#0000ff';
@@ -7395,6 +6548,9 @@ Series.prototype = {
 			colorCounter = 0;
 		}
 	},
+	/**
+	 * Get the series' symbol
+	 */
 	getSymbol: function(){
 		var defaultSymbols = this.chart.options.symbols,
 			symbol = this.options.marker.symbol || defaultSymbols[symbolCounter++];
@@ -7563,7 +6719,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			inverted = chart.inverted,
-			//concatenated = [],
 			data = [],
 			plotSize = (inverted ? chart.plotTop : chart.plotLeft) + chart.plotSizeX,
 			low,
@@ -7609,7 +6764,7 @@ Series.prototype = {
 
 	
 	/**
-	 * Both tracker.toFront() and series.setState(HOVER_STATE) slow down animation
+	 * Series mouse over handler
 	 */
 	onMouseOver: function() {
 		var series = this,
@@ -7649,6 +6804,10 @@ Series.prototype = {
 		chart.hoverSeries = series;
 		
 	},
+	
+	/**
+	 * Series mouse out handler
+	 */
 	onMouseOut: function() {
 		// trigger the event only if listeners exist
 		var series = this,
@@ -7679,14 +6838,12 @@ Series.prototype = {
 	},
 	
 	/**
-	 * Experimental animation
+	 * Animate in the series
 	 */
 	animate: function(init) {
 		var series = this,
-			//line = series.graph,
 			chart = series.chart,
-			clipRect = chart.clipRect;/*,
-			div = series.layerGroup.div*/
+			clipRect = chart.clipRect;
 		if (init) { // initialize the animation
 			if (!clipRect.isAnimating) { // apply it only for one of the series
 				clipRect.attr( 'width', 0 );
@@ -7805,8 +6962,6 @@ Series.prototype = {
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
 			normalDefaults = {},
-			//hoverDefaults = {},
-			//seriespointAttr = series.pointAttr,
 			seriesColor = series.color,
 			data = series.data,
 			i,
@@ -7925,47 +7080,6 @@ Series.prototype = {
 
 	},
 	
-	/*
-	 * Some config objects, like marker, have a state value that depends on the base value
-	 * @param {Object} props
-	 */
-	/*getDynamicStateValues: function(base, state, props) {
-	 each (props, function(value, key) {
-	 if (state[key] === UNDEFINED) state[key] = base[key] + value;
-	 });
-	 return state;
-	 },*/
-	/*
-	 * Draw a single marker into a given layer and position
-	 */
-	/*drawMarker: function(x, y, options, group) {
-		var series = this,
-			color = series.color,
-			chart = series.chart;
-			
-		if (options.lineColor == 'auto') {
-			options.lineColor = color;
-		}
-		if (options.fillColor == 'auto') { 
-			options.fillColor = color;
-		}
-		if (options.symbol == 'auto') { 
-			options.symbol = series.symbol;
-		}
-		
-		
-		
-		return chart.renderer.symbol(options.symbol, x, y, options.radius).
-			attr({
-				stroke: options.lineColor,
-				'stroke-width': options.lineWidth,
-				fill: options.fillColor
-			});//.
-			//translate(chart.plotLeft, chart.plotTop).
-			//add(group || series.group);
-				
-	},*/
-	
 	/**
 	 * Clear DOM objects and free up memory
 	 */
@@ -8012,19 +7126,16 @@ Series.prototype = {
 	 */
 	drawDataLabels: function() {
 		if (this.options.dataLabels.enabled) {
-			var series = this, 
-				//i, 
+			var series = this,
 				x, 
 				y, 
 				data = series.data, 
-				options = series.options.dataLabels, 
-				//color, 
+				options = series.options.dataLabels,
 				str, 
 				dataLabelsGroup = series.dataLabelsGroup, 
 				chart = series.chart, 
 				inverted = chart.inverted,
 				seriesType = series.type,
-				//isPie = (seriesType == 'pie'),
 				align;
 				
 			// create a separate group for the data labels to avoid rotation
@@ -8042,14 +7153,7 @@ Series.prototype = {
 						.add();
 			}
 		
-			/*series.dataLabelsLayer = dataLabelsLayer = new Layer('data-labels', 
-				series.layerGroup.div, 
-				null, {
-					zIndex: 1
-				});*/
-				
 			// determine the color
-			//options.style.color = options.color == 'auto' ? series.color : options.color;
 			options.style.color = pick(options.color, series.color);
 		
 			// make the labels for each point
@@ -8083,8 +7187,6 @@ Series.prototype = {
 					}[align] || 0;
 				}
 				
-				//if (str) dataLabelsLayer[isPie ? 'drawText' : 'addText'](
-				
 				if (str) {
 					point.dataLabel = chart.renderer.text(
 						str, 
@@ -8103,10 +7205,6 @@ Series.prototype = {
 				}
 					
 			});
-			//if (!isPie) dataLabelsLayer.strokeText();
-			
-			// only draw once - todo: different labels in different states and single point label?
-			//series.hasDrawnDataLabels = true;
 		}
 	},
 	
@@ -8114,30 +7212,18 @@ Series.prototype = {
 	 * Draw the actual graph
 	 */
 	drawGraph: function(state) {
-		var //i,
-			series = this, 
+		var series = this, 
 			options = series.options, 
 			chart = series.chart,
 			graph = series.graph,
-			//trackerRect = chart.trackerRect,
-			//doAnimation = options.animation && series.animate,
-			//layer = series.stateLayers[state], 
 			graphPath = [],
 			fillColor,
 			area = series.area,
-			//data = series.data,
 			group = series.group,
 			color = options.lineColor || series.color, 
-				 
-			//inverted = chart.inverted, 
-			//plotLeft = chart.plotLeft,
-			//plotTop = chart.plotTop,
 			lineWidth = options.lineWidth,
 			segmentPath,
-			//transform = chart.transform,
-			//inverted = chart.inverted,
 			renderer = chart.renderer,
-			//indexInSegment = 0,
 			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),
 			areaPath = [];
 			
@@ -8172,7 +7258,7 @@ Series.prototype = {
 			graphPath = graphPath.concat(segmentPath);
 			
 			// build the area
-			if (/area/.test(series.type)) {
+			if (/^area/.test(series.type)) {
 				var areaSegmentPath = [],
 					i,
 					segLength = segmentPath.length;
@@ -8212,10 +7298,8 @@ Series.prototype = {
 			if (lineWidth) {
 				series.graph = renderer.path(graphPath).
 					attr({
-						//'clip-path': 'url(#plotClip)',
 						'stroke': color,
 						'stroke-width': lineWidth + PX
-						//, transform: transform
 					}).add(group).shadow(options.shadow);
 			}
 		}
@@ -8241,48 +7325,6 @@ Series.prototype = {
 		}
 	},
 	
-	/* *
-	 * Draw a single point in a specific state
-	 * /
-	setPointState: function(point, state) {
-		var series = this,
-			chart = series.chart,
-			pointAttr = point.pointAttr;
-			
-		if (!state) {
-			state = NORMAL_STATE;
-		}
-		
-		// selected points don't respond to hover
-		if (point.selected && state != SELECT_STATE) {
-			return;
-		}
-		
-		
-		// if a graphic is not applied to each point in the normal state, create a shared
-		// graphic for the hover state
-		// todo: symbols
-		if (state && !point.graphic) {
-			if (!series.stateMarkerGraphic) {
-				series.stateMarkerGraphic = chart.renderer.circle(
-					0, 0, pointAttr[state].r
-				)
-				.attr(pointAttr[state])
-				.add(series.group);
-			}
-			
-			series.stateMarkerGraphic.translate(
-				point.plotX, 
-				point.plotY
-			);
-			
-		// else, apply hover styles to the existing point
-		} else {				
-			point.graphic.attr(pointAttr[state]);
-		}
-		
-		
-	},*/
 	
 	/**
 	 * Render the graph and markers
@@ -8292,8 +7334,6 @@ Series.prototype = {
 			chart = series.chart,
 			group,
 			doAnimation = series.options.animation && series.animate;
-			//state;//, 
-			//stateLayers = series.stateLayers;
 			
 		// the group
 		if (!series.group) {
@@ -8342,19 +7382,6 @@ Series.prototype = {
 			series.animate();
 		}
 		
-		/*if (!series.visible) {
-		 * Problem: second column series is not colored. calls render again. Find a solution
-		 * where the elements are not initially shown.
-			series.hide();
-		}*/
-		//else series.setVisible(false, false);
-		
-		// initially hide other states than normal
-		/*if (!series.hasRendered && stateLayers[HOVER_STATE]) {
-			stateLayers[HOVER_STATE].hide();
-			hasRendered = true;
-		}*/
-		
 		
 		series.isDirty = false; // means data is in accordance with what you see
 		
@@ -8368,49 +7395,7 @@ Series.prototype = {
 			
 		series.translate();
 		series.setTooltipPoints(true);
-		//series.clear();
 		series.render();
-	},
-	
-	/**
-	 * Clear all graphics and HTML from the series layer group
-	 * 
-	 * @todo: Instead of removing elements, reuse and set new attributes
-	 */
-	clear: function() {
-		var series = this,
-			tracker = series.tracker;
-		
-		// remove all elements in the series group
-		if (series.group) {
-			series.group.empty();
-		}
-		
-		// remove the tracker
-		if (tracker) { // common series tracker
-			tracker.destroy();
-			
-		} else { // individual point trackers
-			each (series.data, function(point) {
-				tracker = point.tracker;
-				if (tracker) {
-					tracker.destroy();
-				}
-			});
-		}
-		
-		series.graph = series.area = series.tracker = series.stateMarkerGraphic = null;
-		
-
-		/*var stateLayers = this.stateLayers;
-		for (var state in stateLayers) {
-			stateLayers[state].clear();
-			stateLayers[state].cleared = true;
-		}
-		if (this.dataLabelsLayer) {
-			this.dataLabelsLayer.clear();
-			this.hasDrawnDataLabels = false;
-		}*/
 	},
 	
 	/**
@@ -8451,16 +7436,10 @@ Series.prototype = {
 	setVisible: function(vis, redraw) {
 		var series = this,
 			chart = series.chart,
-			//imagemap = chart.imagemap,
-			//layerGroup = series.layerGroup,
 			legendItem = series.legendItem,
-			//colorizeLegendItem = chart.legend.colorizeItem,
-			//legendLine = series.legendLine,
-			//legendSymbol = series.legendSymbol,
 			seriesGroup = series.group,
 			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
-			//areas = series.areas,
 			showOrHide,
 			i,
 			data = series.data,
@@ -8569,9 +7548,6 @@ Series.prototype = {
 			options = series.options,
 			trackerPath = series.graphPath,
 			chart = series.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
-			//isSingleSeries = chart.series.length == 1,
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor };
@@ -8605,7 +7581,6 @@ Series.prototype = {
 					zIndex: 1
 				})
 				.on('mouseover', function() {
-					//chart.hoverPoint = null; // for series trackers, the point is interpolated from mouse pos
 					if (chart.hoverSeries != series) {
 						series.onMouseOver();
 					}
@@ -8743,19 +7718,7 @@ interpolate: function(xpoint) {
  */
 var SplineSeries = extendClass( Series, {
 	type: 'spline',
-	/**
-	 * Translate the points and get the spline data
-	 */
-	/*translate: function() {
-		var series = this;
-		
-		// do the partent translate
-		Series.prototype.translate.apply(series, arguments);
-		
-		// get the spline data
-		series.splinedata = series.getSplineData();
-		
-	},*/
+	
 	/**
 	 * Draw the actual spline line with interpolated values
 	 * @param {Object} state
@@ -8790,7 +7753,7 @@ var SplineSeries = extendClass( Series, {
 			
 		each (series.segments, function(data) {
 			if (series.xAxis.reversed) {
-				data = data.reverse();//reverseArray(data);
+				data = data.reverse();
 			}
 			var croppedData = [],
 				nextUp,
@@ -8838,7 +7801,6 @@ seriesTypes.areaspline = AreaSplineSeries;
  */
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
-	//allowsPointStateColor: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -8851,9 +7813,6 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart;
 		
-		
-		// record number of column series to calculate column width
-		//if (!series.options.stacking) series.countColumn = true;
 		
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
@@ -8939,14 +7898,6 @@ var ColumnSeries = extendClass(Series, {
 				barH: barH
 			});
 			point.shapeType = 'rect';
-			/*point.shapeArgs = [
-				barX,
-				barY,
-				barW,
-				barH,
-				options.borderRadius,
-				options.borderWidth
-			]*/
 			point.shapeArgs = {
 				x: barX,
 				y: barY,
@@ -8974,7 +7925,6 @@ var ColumnSeries = extendClass(Series, {
 	drawPoints: function() {
 		var series = this,
 			options = series.options,
-			//radius = options.borderRadius,
 			renderer = series.chart.renderer,
 			graphic,
 			shapeArgs;		
@@ -9023,7 +7973,6 @@ var ColumnSeries = extendClass(Series, {
 			} else {
 				point.tracker = 
 					renderer[point.shapeType](shapeArgs)
-					//.attr(shapeArgs)
 					.attr({
 						isTracker: trackerLabel,
 						fill: TRACKER_FILL,
@@ -9087,8 +8036,6 @@ var ColumnSeries = extendClass(Series, {
 	animate: function(init) {
 		var series = this,
 			data = series.data;
-			//chart = series.chart;
-			//inverted = chart.inverted;
 			
 		if (!init) { // run the animation
 			/*
@@ -9187,8 +8134,7 @@ var ScatterSeries = extendClass(Series, {
 	 */
 	//drawTracker: ColumnSeries.prototype.drawTracker,
 	drawTracker: function() {
-		var series = this,
-			chart = series.chart;
+		var series = this;
 			
 		each(series.data, function(point) {
 			point.graphic
@@ -9217,9 +8163,6 @@ seriesTypes.scatter = ScatterSeries;
  * Extended point object for pies
  */
 var PiePoint = extendClass(Point, {
-	/*setState: function(state) {
-		this.series.setPointState(this, state);
-	},*/
 	init: function () {
 		
 		Point.prototype.init.apply(this, arguments);
@@ -9279,7 +8222,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			//center = point.center,
 			slicedTranslation = point.slicedTranslation;
 		
 		// redraw is true by default
@@ -9401,14 +8343,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	render: function() {
 		var series = this;
-			//chart = series.chart;
 			
-		/*
-		if (!series.group) {
-			series.group = chart.renderer.g('series').add(null, 3);
-		}
-		*/
-		
 		// cache attributes for shapes
 		series.getAttribs();
 		

@@ -7,12 +7,9 @@
  * License: www.highcharts.com/license
  */
 
-/*
- * TODO:
- * - split into exporting and general button/menu modules as a foundation 
- *   for later interactivity
- * 
- */
+// JSLint options:
+/*global Highcharts, document, window, Math, setTimeout */
+
 // create shortcuts
 var HC = Highcharts,
 	Chart = HC.Chart,
@@ -32,8 +29,7 @@ var HC = Highcharts,
 	doc = document,
 	win = window;
 
-var //defaultOptions = Highcharts.defaultOptions,
-	lang = defaultOptions.lang,
+var lang = defaultOptions.lang,
 	M = 'M',
 	L = 'L',
 	DIV = 'div',
@@ -52,11 +48,12 @@ extend(lang, {
 	downloadPDF: 'Download PDF document',
 	downloadSVG: 'Download SVG vector image',
 	exportButtonTitle: 'Export to raster or vector image',
-	printButtonTitle: 'Print chart'
+	printButtonTitle: 'Print the chart'
 });
 
-// Button and popout menu related options
-defaultOptions.buttons = {
+// Buttons and menus are collected in a separate config option set called 'navigation'.
+// This can be extended later to add control buttons like zoom and pan right click menus.
+defaultOptions.navigation = {
 	menuStyle: {
 		border: '1px solid #A0A0A0',
 		background: '#FFFFFF'
@@ -72,85 +69,103 @@ defaultOptions.buttons = {
 	},
 	
 	buttonOptions: {
+		//enabled: true,
 		align: 'right',
 		verticalAlign: 'top',
 		y: 10,
 		width: 24,
 		height: 20,
+		symbolX: 11.5,
+		symbolY: 10.5,
 		borderRadius: 3,
 		borderWidth: 1,
 		borderColor: '#BBBBBB',
 		backgroundColor: {
 			linearGradient: [0, 0, 0, 20],
 			stops: [
-				[0, '#F7F7F7'],
-				[1, '#E3E3E3']
+				[0.4, '#F7F7F7'],
+				[0.6, '#E3E3E3']
 			]
 		},
 		symbolFill: '#E0E0E0',
-		troke: '#A0A0A0',
-		hoverSymbolFill: '#4572A5',
+		symbolStroke: '#A0A0A0',
+		hoverSymbolFill: '#81A7CF',
 		hoverSymbolStroke: '#4572A5',
 		//hoverBackgroundColor: null,
 		hoverBorderColor: '#909090'
 	}
-}
+};
+
+
 
 // Add the export related options
 defaultOptions.exporting = {
+	//enabled: true,
 	type: 'svg/image',
 	width: 800,
 	url: 'http://highslide.com/convert/',
 	
 	
+	
+	
 	buttons: {
 		exportButton: {
+			//enabled: true,
 			symbol: 'exportIcon',
 			x: -10,
 			titleKey: 'exportButtonTitle',
+			symbolFill: '#A8BF77',
+			hoverSymbolFill: '#768F3E',
 			menuItems: [{
 				text: lang.downloadPNG,
 				onclick: function() {
-					chart.exportChart({
+					this.exportChart({
 						type: 'image/png'
 					});
 				}
 			}, {
 				text: lang.downloadJPEG,
 				onclick: function() {
-					chart.exportChart({
+					this.exportChart({
 						type: 'image/jpeg'
 					});
 				}
 			}, {
 				text: lang.downloadPDF,
 				onclick: function() {
-					chart.exportChart({
+					this.exportChart({
 						type: 'application/pdf'
 					});
 				}
 			}, {
 				text: lang.downloadSVG,
 				onclick: function() {
-					chart.exportChart({
+					this.exportChart({
 						type: 'image/svg+xml'
 					});
 				}
 			}, {
 				text: 'View SVG',
 				onclick: function() {
-					alert(chart.getSVG());
+					var svg = this.getSVG()
+						.replace(/</g, '\n&lt;')
+						.replace(/>/g, '&gt;');
+						
+					doc.body.innerHTML = '<pre>'+ svg +'</pre>';
 				}
 			}]
 			
 		},
 		printButton: {
+			//enabled: true,
 			symbol: 'printIcon',
 			x: -36,
 			titleKey: 'printButtonTitle',
+			symbolFill: '#B5C9DF',
+			hoverSymbolFill: '#779ABF',
 			onclick: function(e) {
 				e.stopPropagation();
-				chart.print();
+				this.print();
 			}
 		}
 	}
@@ -160,10 +175,10 @@ defaultOptions.exporting = {
 
 extend (Chart.prototype, {
 	/**
- 	 * Return an SVG representation of the chart
- 	 * 
- 	 * @param additionalOptions {Object} Additional chart options for the generated SVG representation
- 	 */	
+	 * Return an SVG representation of the chart
+	 * 
+	 * @param additionalOptions {Object} Additional chart options for the generated SVG representation
+	 */	
 	 getSVG: function(additionalOptions) {
 		var chart = this,
 			chartCopy,
@@ -175,7 +190,7 @@ extend (Chart.prototype, {
 		if (!doc.createElementNS) {
 			doc.createElementNS = function(ns, tagName) {
 				return doc.createElement(tagName);
-			}
+			};
 		}
 		
 		// create a sandbox where a new chart will be generated
@@ -190,12 +205,20 @@ extend (Chart.prototype, {
 		extend(options.chart, {
 			renderTo: sandbox,
 			renderer: 'SVG'
-		})
+		});
+		options.exporting.enabled = false; // hide buttons in print
 		
 		// turn off animation
 		each (options.series, function(serie) {
 			serie.animation = false;
+			
+			each (serie.data, function(point) {
+				if (point && point.marker && /^url\(/.test(point.marker.symbol)) { 
+					delete point.marker.symbol;
+				}
+			});
 		});
+		
 		
 		// generate the chart copy
 		chartCopy = new Highcharts.Chart(options);
@@ -217,11 +240,10 @@ extend (Chart.prototype, {
 			replace(/isTracker="[^"]+"/g, '').
 			
 			// IE specific
-			replace(/id=([^" ]+)/g, 'id="$1"'). 
+			replace(/id=([^" >]+)/g, 'id="$1"'). 
 			replace(/class=([^" ]+)/g, 'class="$1"').
 			replace(/ transform /g, ' ').
 			replace(/:path/g, 'path').
-			replace(/:rect/g, 'rect').
 			replace(/style="([^"]+)"/g, function(s) {
 				return s.toLowerCase();
 			});
@@ -231,7 +253,7 @@ extend (Chart.prototype, {
 	
 	/**
 	 * Submit the SVG representation of the chart to the server
-	 * @param {Object} options
+	 * @param {Object} options Exporting options 
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function(options, chartOptions) {
@@ -276,8 +298,7 @@ extend (Chart.prototype, {
 			origDisplay = [],
 			origParent = container.parentNode,
 			body = doc.body,
-			childNodes = body.childNodes,
-			node;
+			childNodes = body.childNodes;
 		
 		// hide all body content	
 		each(childNodes, function(node) {
@@ -293,7 +314,7 @@ extend (Chart.prototype, {
 		// print
 		win.print();
 		
-		// allow the browser to prepare
+		// allow the browser to prepare before reverting
 		setTimeout(function() {
 
 			// put the chart back in
@@ -305,6 +326,7 @@ extend (Chart.prototype, {
 					node.style.display = origDisplay[i];
 				}
 			});
+			
 		}, 1000);
 
 	},
@@ -321,14 +343,17 @@ extend (Chart.prototype, {
 	 */
 	contextMenu: function(name, items, x, y, width, height) {
 		var chart = this,
-			buttonOptions = chart.options.buttons,
-			menuItemStyle = buttonOptions.menuItemStyle,
+			navOptions = chart.options.navigation,
+			menuItemStyle = navOptions.menuItemStyle,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			cacheName = 'cache-'+ name,
 			menu = chart[cacheName],
 			menuPadding = mathMax(width, height), // for mouse leave detection
-			boxShadow = '3px 3px 10px #888'; 
+			boxShadow = '3px 3px 10px #888',
+			innerMenu,
+			hide,
+			menuStyle; 
 		
 		// create the menu only the first time
 		if (!menu) {
@@ -342,13 +367,13 @@ extend (Chart.prototype, {
 				padding: menuPadding + PX
 			}, chart.container);
 			
-			var innerMenu = createElement(DIV, null, 
+			innerMenu = createElement(DIV, null, 
 				extend({
 					MozBoxShadow: boxShadow,
 					WebkitBoxShadow: boxShadow
-				}, buttonOptions.menuStyle) , menu);
+				}, navOptions.menuStyle) , menu);
 			
-			function hide() {
+			hide = function() {
 				css(menu, { display: NONE });
 			};
 			addEvent(menu, 'mouseleave', hide);
@@ -358,10 +383,10 @@ extend (Chart.prototype, {
 				createElement(DIV, {
 					onclick: function() {
 						hide();
-						item.onclick();
+						item.onclick.apply(chart, arguments);
 					},
 					onmouseover: function() {
-						css(this, buttonOptions.menuItemHoverStyle);
+						css(this, navOptions.menuItemHoverStyle);
 					},
 					onmouseout: function() {
 						css(this, menuItemStyle);
@@ -376,19 +401,19 @@ extend (Chart.prototype, {
 			chart.exportMenuHeigh = menu.offsetHeight;
 		}
 		
-		var menuStyle = { display: 'block' };
+		menuStyle = { display: 'block' };
 		
 		// if outside right, right align it
 		if (x + chart.exportMenuWidth > chartWidth) {
-			menuStyle.right = (chartWidth - x - width - menuPadding) + PX
+			menuStyle.right = (chartWidth - x - width - menuPadding) + PX;
 		} else {
-			menuStyle.left = (x - menuPadding) + PX
+			menuStyle.left = (x - menuPadding) + PX;
 		}
 		// if outside bottom, bottom align it
 		if (y + height + chart.exportMenuWidth > chartHeight) {
-			menuStyle.bottom = (chartHeight - y - menuPadding)  + PX
+			menuStyle.bottom = (chartHeight - y - menuPadding)  + PX;
 		} else {
-			menuStyle.top = (y + height - menuPadding) + PX
+			menuStyle.top = (y + height - menuPadding) + PX;
 		}
 		
 		css(menu, menuStyle);
@@ -396,34 +421,33 @@ extend (Chart.prototype, {
 	
 	/**
 	 * Add the export button to the chart
-	 * 
-	 * @todo
-	 * - Merge addExportButton and addPrintButton
-	 * - Add options for coloring
-	 * - Add logic for the icon placement in the button
 	 */
 	addButton: function(options) {
+		if (options.enabled === false) {
+			return;
+		}
+		
 		var chart = this,
 			renderer = chart.renderer,
-			options = merge(chart.options.buttons.buttonOptions, options),
-			onclick = options.onclick,
-			menuItems = options.menuItems,
-			position = chart.getAlignment(options),
+			btnOptions = merge(chart.options.navigation.buttonOptions, options),
+			onclick = btnOptions.onclick,
+			menuItems = btnOptions.menuItems,
+			position = chart.getAlignment(btnOptions),
 			buttonLeft = position.x,
 			buttonTop = position.y,
-			buttonWidth = options.width,
-			buttonHeight = options.height,
-			box;
-		
-		var borderWidth = options.borderWidth;
-		
-		var boxAttr = {
-				stroke: options.borderColor,
-				fill: options.backgroundColor
+			buttonWidth = btnOptions.width,
+			buttonHeight = btnOptions.height,
+			box,
+			symbol,
+			button,	
+			borderWidth = btnOptions.borderWidth,
+			boxAttr = {
+				stroke: btnOptions.borderColor
+				
 			},
 			symbolAttr = {
-				stroke: '#A0A0A0',
-				fill: '#E0E0E0'
+				stroke: btnOptions.symbolStroke,
+				fill: btnOptions.symbolFill
 			};
 			
 		// element to capture the click
@@ -431,46 +455,6 @@ extend (Chart.prototype, {
 			symbol.attr(symbolAttr);
 			box.attr(boxAttr);
 		}
-		var button = renderer.rect( 
-			buttonLeft,
-			buttonTop,
-			buttonWidth,
-			buttonHeight,
-			0
-		).attr({
-			fill: 'rgba(255, 255, 255, 0.001)',
-			title: lang[options.titleKey]
-		}).css({
-			cursor: 'pointer'
-		})
-		.on('mouseover', function() {
-			symbol.attr({ 
-				fill: options.hoverSymbolFill,
-				stroke: options.hoverSymbolStroke
-			});
-			box.attr({
-				fill: options.hoverBackgroundColor,
-				stroke: options.hoverBorderColor
-			});
-		})
-		.on('mouseout', revert)		
-		.add(null, 21);
-		addEvent(button.element, 'click', revert);
-		
-		// add the click event
-		if (menuItems) {
-			onclick = function(e) {
-				e.stopPropagation();
-				chart.contextMenu('export-menu', menuItems, buttonLeft, buttonTop, buttonWidth, buttonHeight);
-			}
-		}
-		button.on('click', onclick);
-		
-		// the icon
-		var symbol = renderer.symbol(options.symbol, buttonLeft + 11.5, buttonTop + 10.5, 6).
-			attr(extend(symbolAttr, {
-				'stroke-width': 1				
-			})).add(null, 20);
 		
 		// the box border
 		box = renderer.rect(
@@ -478,13 +462,66 @@ extend (Chart.prototype, {
 			0,
 			buttonWidth, 
 			buttonHeight,
-			options.borderRadius,
+			btnOptions.borderRadius,
 			borderWidth
 		)
 		.translate(buttonLeft, buttonTop) // to allow gradients
-		.attr(extend(boxAttr, {
-			'stroke-width': borderWidth
-		})).add(null, 19);
+		.attr(extend({
+			fill: btnOptions.backgroundColor,
+			'stroke-width': borderWidth,
+			zIndex: 19
+		}, boxAttr)).add();
+		
+		// the invisible element to track the clicks
+		button = renderer.rect( 
+			buttonLeft,
+			buttonTop,
+			buttonWidth,
+			buttonHeight,
+			0
+		).attr({
+			fill: 'rgba(255, 255, 255, 0.001)',
+			title: lang[btnOptions.titleKey],
+			zIndex: 21
+		}).css({
+			cursor: 'pointer'
+		})
+		.on('mouseover', function() {
+			symbol.attr({
+				stroke: btnOptions.hoverSymbolStroke
+			});
+			box.attr({
+				stroke: btnOptions.hoverBorderColor
+			});
+		})
+		.on('mouseout', revert)		
+		.add();
+		
+		addEvent(button.element, 'click', revert);
+		
+		// add the click event
+		if (menuItems) {
+			onclick = function(e) {
+				chart.contextMenu('export-menu', menuItems, buttonLeft, buttonTop, buttonWidth, buttonHeight);
+			};
+		}
+		addEvent(button.element, 'click', function() {
+			onclick.apply(chart, arguments);
+		});
+		
+		// the icon
+		symbol = renderer.symbol(
+				btnOptions.symbol, 
+				buttonLeft + btnOptions.symbolX, 
+				buttonTop + btnOptions.symbolY, 
+				6
+			)
+			.attr(extend(symbolAttr, {
+				'stroke-width': 1,
+				zIndex: 20		
+			})).add();
+		
+
 		
 	}
 });
@@ -530,6 +567,7 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 		'Z',
 		M, // the lower sheet
 		x - radius * 0.5, y + radius * 0.5,
+		L,
 		x - radius * 0.75, y + radius,
 		x + radius * 0.75, y + radius,
 		x + radius * 0.5, y + radius * 0.5,
@@ -541,10 +579,14 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 addEvent(Chart.prototype, 'load', function(e) {
 	var chart = e.target,
 		n,
-		buttons = chart.options.exporting.buttons;
+		exportingOptions = chart.options.exporting,
+		buttons = exportingOptions.buttons;
+		
+	if (exportingOptions.enabled !== false) {
 	
-	for (n in buttons) {
-		chart.addButton(buttons[n]);
-	};
+		for (n in buttons) {
+			chart.addButton(buttons[n]);
+		}
+	}
 	
 });
