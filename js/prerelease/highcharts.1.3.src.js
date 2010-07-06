@@ -22,6 +22,7 @@ var doc = document,
 	mathRound = math.round,
 	mathFloor = math.floor,
 	mathMax = math.max,
+	mathMin = math.min,
 	mathAbs = math.abs,
 	mathCos = math.cos,
 	mathSin = math.sin,	
@@ -105,7 +106,9 @@ function extend(a, b) {
 		a = {};
 	}
 	for (var n in b) {
+try {
 		a[n] = b[n];
+		} catch(e) { console.log(n) }
 	}
 	return a;
 }
@@ -200,6 +203,12 @@ function css (el, styles) {
 }
 
 function createElement (tag, attribs, styles, parent, nopad) {
+	/*if (/^v:/.test(tag)) {
+		tag = tag.replace('v:', '');
+		tag = '<'+ tag +' xmlns="urn:schemas-microsoft-com:vml" '+
+			'style="behavior:url(#default#VML); display:inline-block" />';
+	}*/
+
 	var el = doc.createElement(tag);
 	if (attribs) {
 		extend(el, attribs);
@@ -1601,16 +1610,11 @@ SVGElement.prototype = {
 			//i,
 			key;
 		
-		function clearEvents(elem) {
-			elem.onclick = elem.onmouseout = elem.onmouseover = elem.onmousemove = null;
-		}
-		
-		clearEvents(element);
+		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		element.parentNode.removeChild(element);
 		
 		if (this.shadows) {
 			each(this.shadows, function(shadow) {
-				clearEvents(shadow);
 				shadow.parentNode.removeChild(shadow);				
 			});
 		}
@@ -2002,7 +2006,6 @@ SVGRenderer.prototype = {
 			obj = this.image(imageSrc).attr({
 				visibility: HIDDEN
 			});
-			
 			// create a dummy JavaScript image to get the width and height  
 			createElement('img', {
 				onload: function() {
@@ -2263,38 +2266,42 @@ if (!hasSVG) {
  * The VML element wrapper.
  */
 var VMLElement = extendClass( SVGElement, {
+	xmlns: 'urn:schemas-microsoft-com:vml',
+	vmlStyle: 'display:inline-block;behavior:url(#default#VML)',
+	
+	/**
+	 * Initialize a new VML element wrapper. It builds the markup as a string
+	 * to minimize DOM traffic.
+	 * @param {Object} renderer
+	 * @param {Object} nodeName
+	 */
 	init: function(renderer, nodeName) {
+		var markup =  ['<', nodeName],
+			style = ['position: ', ABSOLUTE, ';'];
 		
 		// one to one tag names
-		nodeName = {
+		/*nodeName = {
 			//circle: 'v:oval',
 			//rect: 'v:roundrect',
-			path: 'v:shape'
-		}[nodeName] || nodeName;
+			path: 'shape',
+			'v:shape': 'shape'
+		}[nodeName] || nodeName;*/
 		
-		// prepare style
-		var style = {
-			position: ABSOLUTE
-		};
-		if (nodeName == 'v:shape') {
-			style = extend(style, {
-				left: 0,
-				top: 0,
-				width: 10,
-				height: 10
-			});
+		
+		if (nodeName != DIV && nodeName != 'span') {
+			markup.push(' xmlns="', this.xmlns, '" filled="f" stroked="f"');
+			if (nodeName == 'shape') {
+				style.push('left:0;top:0;width:10px;height:10px;');
+			}
+			style.push(this.vmlStyle);
 		}
 		
+		markup.push(' style="', style.join(''), '"/>');
 		
 		// create element with default attributes and style
 		if (nodeName) {
-			this.element = createElement(nodeName, {
-				filled: false,
-				stroked: false
-			}, style);
+			this.element = createElement(markup.join(''));
 		}
-		
-		
 		
 		this.renderer = renderer;
 	},
@@ -2311,61 +2318,37 @@ var VMLElement = extendClass( SVGElement, {
 			parentClass,
 			inverted = parent && parent.inverted,
 			parentStyle,
-			elemStyle,
 		
 			// get the parent node
 			parentNode = parent ? 
 				parent.element || parent : 
 				box;
 			
-			// VML elements are added to the v:group element so they can be rotated.
-			// The exception is line (always text paths), that won't display inside
-			// a group
-			/*if (parent && parent.groupElement && element.tagUrn == renderer.urn &&
-					element.tagName != 'line') {
-				parentNode = parent.groupElement;
-			}*/
-		
-			/*
-			 * todo: 
-			 * - bars not working
-			 * - implement repainting
-			 */
 			
-			//if (parent.flipX || parent.rotation) {
-			if (inverted) { // only on groups
-				
-				parentStyle = parentNode.style;
-				elemStyle = element.style;
-				
-				
-				
-				css(element, { 
-					flip: 'x',
-					left: parseInt(parentStyle.width, 10) - 10,
-					top: parseInt(parentStyle.height, 10) - 10,
-					rotation: -90
-				});
-				
-			}
-		//}
-		// VML bug that causes some elements to not show when added to a group. This
-		// bug only happens when #default#VML is added to the third parameter of 
-		// a namespace in the document. This namespace is present because it increases
-		// performance by up to 10 times.
-		/*parentClass = parentNode.className;
-		if (parentClass && (parentClass == PREFIX +'tracker' || parentClass == PREFIX +'grid' || 
-				parentClass == PREFIX +'axis' || parentClass == PREFIX +'series')) {
-			box.appendChild(element);
-		}*/
+		// if the parent group is inverted, apply inversion on all children
+		if (inverted) { // only on groups
+			
+			parentStyle = parentNode.style;
+			
+			css(element, { 
+				flip: 'x',
+				left: parseInt(parentStyle.width, 10) - 10,
+				top: parseInt(parentStyle.height, 10) - 10,
+				rotation: -90
+			});
+			
+		}
 		
-		// append it where it really should be
+		
+		
+		// append it
 		parentNode.appendChild(element);
+		
 		
 		// VML Bug workaround: without this, the shape created last will not display.
 		// It can be reproduced by creating a Highcharts.Renderer outside the chart,
 		// and drawing two shapes. Only the first one shows.
-		element.style.display = 'inline-block';
+		//element.style.display = 'inline-block';
 		
 		return wrapper;
 	},
@@ -2508,7 +2491,7 @@ var VMLElement = extendClass( SVGElement, {
 					// changes the first time it is displayed, as the height of the tooltip
 					// will stay constant.
 					/*if (nodeName == 'roundrect' && defined(this.r)) {
-						var arcsize = this.r / math.min(parseInt(elemStyle.width, 10), parseInt(elemStyle.height, 10));
+						var arcsize = this.r / mathMin(parseInt(elemStyle.width, 10), parseInt(elemStyle.height, 10));
 						
 						if (arcsize != this.arcsize) {
 							parentNode.removeChild(element);
@@ -2755,7 +2738,7 @@ var VMLElement = extendClass( SVGElement, {
 			y: element.offsetTop,
 			width: element.offsetWidth,
 			height: element.offsetHeight
-		}; 
+		};
 		
 		if (!hasOffsetWidth) {
 			if (origParentNode) {
@@ -2838,36 +2821,48 @@ var VMLElement = extendClass( SVGElement, {
 			i,
 			shadow,
 			element = this.element,
-			elemStyle = element.style;
+			elemStyle = element.style,
+			markup;
 			
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
-					
+				
+				
 				// clone the main element
-				shadow = element.cloneNode(1);
-				attr(shadow, {
+				/*shadow = createElement('v:shape', {
 					isShadow: 'true',
 					strokecolor: 'black',
 					strokeweight: 7 - 2 * i,
-					filled: false
-				});
-				css(shadow, {
+					filled: false,
+					path: element.path,
+					coordsize: '100,100'
+				}, {
+					position: ABSOLUTE,
+					width: 10 + PX,
+					height: 10 + PX,
 					left: parseInt(elemStyle.left, 10) + 1,
 					top: parseInt(elemStyle.top, 10) + 1
-				});
+				});*/
+				
+				markup = [];
+				markup.push('<shape isShadow="true" ',
+					'xmlns="', this.renderer.urn ,'"',
+					'strokeweight="', ( 7 - 2 * i ) ,'" filled="false" path="', element.path,
+					'" coordsize="100,100" style="', element.style.cssText, '" />');
+				shadow = createElement(markup.join(''),
+					null, {
+						left: parseInt(elemStyle.left, 10) + 1,
+						top: parseInt(elemStyle.top, 10) + 1
+					}
+				);
 				
 				// apply the opacity
-				createElement('v:stroke', {
-					opacity: 0.05 * i
-				}, null, shadow);
+				markup = [];
+				markup.push('<stroke xmlns="', this.xmlns, '" style="', this.vmlStyle,
+					'" color="black" opacity="', (0.05 * i), '"/>');
+				createElement(markup.join(''), null, null, shadow);
 				
-				// some properties are not correctly cloned
-				if (shadow.tagName == 'shape') {
-					shadow.path = element.path;
-					shadow.coordsize = element.coordsize;
-				}/* else if (shadow.tagName == 'roundrect') {
-					//shadow.arcsize = this.arcsize;
-				}*/
+				
 				
 				// insert it
 				element.parentNode.insertBefore(shadow, element);
@@ -2900,34 +2895,35 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	init: function(container, width, height) {
 		
 		// generate the containing box
-		var box = createElement(DIV, null, {
+		this.box = createElement(DIV, null, {
 				width: width + PX,
 				height: height + PX
-			}, container),
-			urn = 'urn:schemas-microsoft-com:vml',
-			namespaces = doc.namespaces;
+			}, container);//,
+			//urn = 'urn:schemas-microsoft-com:vml',
+			//namespaces = doc.namespaces;
 		
 		// renderer properties
 		//this.wrappers = [];
-		this.box = box;
-		this.urn = urn;
+		//this.box = box;
+		//this.urn = urn;
 		
 		// create namespace and style behaviour
-		if (!namespaces.v) {
+		/*if (!doc.namespaces.v) {
 			
 			// add a dummy namespace which increases rendering speed up to 10
 			// times for a scatter plot with 1000 points.
 			// todo: find out why this can't be used as the default namespace
-			namespaces.add('v_dummy', urn, '#default#VML');
+			//namespaces.add('v_dummy', urn, '#default#VML');
 			
-			namespaces.add('v', urn);
+			doc.namespaces.add('v', 'urn:schemas-microsoft-com:vml');
 			
 			// setup default css
 			doc.createStyleSheet().cssText = 
-				'v\\:group, v\\:oval, v\\:path, v\\:rect, v\\:shape, '+
+				'v\\:group, v\\:path, v\\:shape, '+
 				'v\\:line, v\\:fill, v\\:stroke, v\\:textpath '+
 				'{ behavior:url(#default#VML); display:inline-block } ';
-		}
+			
+		}*/
 		
 
 	},
@@ -3007,18 +3003,18 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	color: function(color, elem, prop) {
 		var colorObject,
 			regexRgba = /^rgba/,
-			subNode;
+			markup = [];
 			
 		if (color && color.linearGradient) {
 			
 			var stopColor, 
 				stopOpacity,
 				linearGradient = color.linearGradient,
-				angle;
-			
-			
-			subNode = elem.getElementsByTagName(prop)[0] ||
-				createElement('v:'+ prop, null, null, elem);
+				angle,
+				color1,
+				opacity1,
+				color2,
+				opacity2;	
 				
 			each(color.stops, function(stop, i) {
 				if (regexRgba.test(stop[1])) {
@@ -3031,13 +3027,15 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				}
 				
 				if (!i) { // first
-					subNode.color = stopColor;
-					subNode.opacity = stopOpacity;
+					color1 = stopColor;
+					opacity1 = stopOpacity;
 				} else {
-					subNode.color2 = stopColor;
-					subNode['o:opacity2'] = stopOpacity; // VML bug
+					color2 = stopColor;
+					opacity2 = stopOpacity;
 				}
 			});
+			
+			
 			
 			// calculate the angle based on the linear vector
 			angle = 90  - math.atan(
@@ -3045,12 +3043,15 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				(linearGradient[2] - linearGradient[0]) // x vector
 				) * 180 / math.PI;
 			
+			// when colors attribute is used, the meanings of opacity and o:opacity2
+      		// are reversed.
+			markup.push('<fill xmlns="', this.urn, '" style="behavior:url(#default#VML)"',
+				' colors="0% ', color1, ',100% ', color2, '" angle="', angle,
+				'" opacity="', opacity2, '" o:opacity2="', opacity1,
+				'" type="gradient" focus="100%"/>');
+			createElement(markup.join(''), null, null, elem);
 			
-			extend(subNode, {
-				type: 'gradient',
-				angle: angle,
-				focus: '100%'
-			});
+			
 		
 		// if the color is an rgba color, split it and add a fill node
 		// to hold the opacity component
@@ -3058,10 +3059,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			
 			colorObject = Color(color);
 			
-			subNode = elem.getElementsByTagName(prop)[0] ||
-				createElement('v:'+prop, null, null, elem);
-				
-			subNode.opacity = colorObject.get('a');
+			markup.push('<', prop, ' opacity="', colorObject.get('a'), 
+				' xmlns="urn:schemas-microsoft-com:vml" style="behavior:url(#default#VML)" />')
+			createElement(markup.join(''), null, null, elem);
 			
 			return colorObject.get('rgb');
 			
@@ -3135,7 +3135,8 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				x1 = left ?     x : x - length * costheta,
 				x2 = right ?    x : x + length * costheta,
 				y1 = left ?     y : y - length * sintheta,
-				y2 = right ?    y : y + length * sintheta;
+				y2 = right ?    y : y + length * sintheta,
+				vmlMarkup;
 				
 				
 			// IE seems to always draw the text with v-text-align middle, so we need 
@@ -3154,27 +3155,43 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				y1 += 0.1;
 			}
 			
-			elemWrapper = this.createElement('v:line').attr({
+			elemWrapper = this.createElement('line').attr({
 				from: x1 +', '+ y1,
 				to: x2 +', '+ y2
 			});
 			elem = elemWrapper.element;
 			
-			createElement('v:fill', {
+			
+			// The code below uses namespace. Wasn't able to make it display with just
+			// adding the xmlns and behavior inline like in other elements. The downside
+			// is more code, and rotated text that doesn't print. 
+			if (!doc.namespaces.hcv) {			
+				
+				doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
+				
+				// setup default css
+				doc.createStyleSheet().cssText = 
+					'hcv\\:fill, hcv\\:path, hcv\\:textpath '+
+					'{ behavior:url(#default#VML); } ';
+				
+			}
+		
+			createElement('hcv:fill', {
 				on: true,
 				color: style.color
 			}, null, elem);
 			
-			createElement('v:path', {
+			createElement('hcv:path', {
 				textpathok: true
 			}, null, elem);
 			
 			
 			// for reasons unknown, the style must be set on init
 			createElement(
-				'<v:textpath style="v-text-align:'+ align +';'+ serializeCSS(style) +
+				'<hcv:textpath style="v-text-align:'+ align +';'+ serializeCSS(style).replace(/"/g, "'") +
 				'" on="true" string="'+ str +'">',
 			null, null, elem);
+
 			
 		}
 		
@@ -3186,9 +3203,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	
 	path: function (path) {
 		// create the shape
-		return this.createElement('v:shape').attr({
+		return this.createElement('shape').attr({
 				// subpixel precision down to 0.1 (width and height = 10px)
-				coordsize: '100,100',
+				coordsize: '100 100',
 				d: path
 			});
 			//.add();
@@ -3392,7 +3409,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		rect: function (left, top, r, options) {
 			var width = options.width,
 				height = options.height,
-				r = Math.min(r, width, height),
+				r = mathMin(r, width, height),
 				right = left + width,
 				bottom = top + height;
 			
@@ -3797,7 +3814,7 @@ function Chart (options) {
 		function drawPlotBand(from, to, color) {
 			// keep within plot area
 			from = mathMax(from, min);
-			to = Math.min(to, max);  
+			to = mathMin(to, max);  
 			
 			var width = (to - from) * transA;
 			drawPlotLine(from + (to - from) / 2, color, width);
@@ -4209,7 +4226,7 @@ function Chart (options) {
 				zoomOffset = (maxZoom - max + min) / 2;
 				// if min and max options have been set, don't go beyond it
 				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset));
-				max = math.min(min + maxZoom, pick(options.max, min + maxZoom));
+				max = mathMin(min + maxZoom, pick(options.max, min + maxZoom));
 			}
 				
 			// pad the values to get clear of the chart's edges
@@ -4389,10 +4406,10 @@ function Chart (options) {
 			if (!axisGroup) {
 				axisGroup = renderer.g('axis')
 					.attr({ zIndex: 7 })
-					.add(null);
+					.add();
 				gridGroup = renderer.g('grid')
 					.attr({ zIndex: 1 })
-					.add(null);
+					.add();
 			} else {
 				// clear the axis layers before new grid and ticks are drawn
 				axisGroup.empty();
@@ -4494,9 +4511,10 @@ function Chart (options) {
 						], lineWidth)).
 						attr({ 
 							stroke: options.lineColor, 
-							'stroke-width': lineWidth
+							'stroke-width': lineWidth,
+							zIndex: 7
 						}).
-						add(null, 7);
+						add();
 					
 				}
 				
@@ -5134,14 +5152,13 @@ function Chart (options) {
 								
 							selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
 								axis: axis,
-								min: math.min(selectionMin, selectionMax), // for reversed axes
+								min: mathMin(selectionMin, selectionMax), // for reversed axes
 								max: mathMax(selectionMin, selectionMax)
 							});
 							
 						});
 					fireEvent(chart, 'selection', selectionData, zoom);
 
-					//selectionIsMade = true;
 				}
 				selectionMarker = selectionMarker.destroy();
 			}
@@ -5185,7 +5202,7 @@ function Chart (options) {
 							0
 						)
 						.attr({
-							className: PREFIX +'selection-marker', 
+							//className: PREFIX +'selection-marker', 
 							fill: 'rgba(69,114,167,0.25)',
 							zIndex: 7
 						})
@@ -8907,7 +8924,7 @@ var ColumnSeries = extendClass(Series, {
 		// record the new values
 		each (data, function(point) {
 			barX = point.plotX + pointXOffset;
-			barY = math.min(point.plotY, translatedY0); 
+			barY = mathMin(point.plotY, translatedY0); 
 			barW = pointWidth;
 			barH = mathAbs((point.yBottom || translatedY0) - point.plotY);
 			if (minPointLength && mathAbs(barH) < minPointLength) { // handle options.minPointLength
@@ -9175,9 +9192,10 @@ var ScatterSeries = extendClass(Series, {
 			
 		each(series.data, function(point) {
 			point.graphic
+				.attr({ isTracker: true })
 				.on('mouseover', function(event) {
-					point.onMouseOver();
-					
+					series.onMouseOver();
+					point.onMouseOver();					
 				})
 				.on('mouseout', function(event) {
 					if (!series.options.stickyTracking) {
@@ -9314,7 +9332,7 @@ var PieSeries = extendClass(Series, {
 			data = series.data,
 			circ = 2 * math.PI,
 			fraction,
-			smallestSize = math.min(plotWidth, plotHeight),
+			smallestSize = mathMin(plotWidth, plotHeight),
 			isPercent;
 			
 		// get positions - either an integer or a percentage string must be given
