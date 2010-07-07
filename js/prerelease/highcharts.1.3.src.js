@@ -95,7 +95,6 @@ var doc = document,
 	// lookup over the types and the associated classes
 	seriesTypes = {};
 	
-	
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -1632,9 +1631,9 @@ SVGRenderer.prototype = {
 		
 			
 		// object properties
+		this.Element = SVGElement;
 		this.box = box;
 		this.defs = this.createElement('defs').add();
-		
 	},
 	
 	
@@ -1643,7 +1642,7 @@ SVGRenderer.prototype = {
 	 * @param {Object} nodeName
 	 */
 	createElement: function(nodeName) {
-		var wrapper = new SVGElement();
+		var wrapper = new this.Element();
 		wrapper.init(this, nodeName);
 		return wrapper;
 	},
@@ -1712,10 +1711,7 @@ SVGRenderer.prototype = {
 	/**
 	 * Make a straight line crisper by not spilling out to neighbour pixels
 	 * @param {Array} points
-	 * @param {Number} width
-	 * 
-	 * @todo shape-rendering: crispEdges can do the same for SVG, but what about VML?
-	 *       If VML doesn't have shape-rendering it might be better to keep this method for both.
+	 * @param {Number} width 
 	 */
 	crispLine: function(points, width) {
 		// points format: [M, 0, 0, L, 100, 0]
@@ -1728,6 +1724,7 @@ SVGRenderer.prototype = {
 		}
 		return points;
 	},
+	
 	
 	/**
 	 * Draw a path
@@ -2650,6 +2647,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				width: width + PX,
 				height: height + PX
 			}, container);
+		this.Element = VMLElement;
 	},
 	
 	/**
@@ -2700,24 +2698,10 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		
 	},
 	
-	/**
-	 * Create a wrapper for an VML element
-	 * @param {String} nodeName
-	 * 
-	 * @todo: make elementtype a renderer property and use the same method as SVG?
-	 */
-	createElement: function(nodeName) {
-		var wrapper = new VMLElement();
-		wrapper.init(this, nodeName);
-		return wrapper;
-	},
 	
 	/**
 	 * Take a color and return it if it's a string, make it a gradient if it's a
 	 * gradient configuration object, and apply opacity.
-	 * 
-	 * VML gradient shortcomings:
-	 * - only the first stop's opacity will be rendered
 	 * 
 	 * @param {Object} color The color or config object
 	 */
@@ -2865,8 +2849,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			y1 -= baselineCorrection * costheta;
 			y2 -= baselineCorrection * costheta;
 			
-			// strange painting bug.
-			// todo: is this still valid in 2.0?
+			// strange painting bug
 			if (mathAbs(x1 - x2) < 0.1) {
 				x1 += 0.1;
 			}
@@ -4333,7 +4316,6 @@ function Chart (options) {
 		
 		function add(id, text, title, fn) {
 			if (!buttons[id]) {
-				// todo: optional placement
 				var button = renderer.text(
 					text,
 					plotLeft + plotWidth - 20,
@@ -4401,9 +4383,7 @@ function Chart (options) {
 		 * Provide a soft movement for the tooltip
 		 * 
 		 * @param {Number} finalX
-		 * @param {Number} finalY
-		 * 
-		 * @todo Make tranlate animation, group the box and label and animate the translation of the group
+		 * @param {Number} finalY 
 		 */
 		function move(finalX, finalY) {
 			
@@ -4429,8 +4409,7 @@ function Chart (options) {
 		function hide() {
 
 			tooltipIsHidden = true;
-			box.hide();
-			label.hide();
+			group.hide();
 		}
 		
 		/**
@@ -4471,8 +4450,7 @@ function Chart (options) {
 				
 			    // show it
 				if (tooltipIsHidden) {
-					box.show();
-					label.show();
+					group.show();
 					tooltipIsHidden = false;
 				}
 				
@@ -4870,7 +4848,7 @@ function Chart (options) {
 		
 		
 		// Run MouseTracker
-		createTrackerGroup(); // todo: check out and rename if still used
+		createTrackerGroup();
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
 		}
@@ -5797,12 +5775,10 @@ function Chart (options) {
 			renderToClone || renderTo
 		);
 		
-		// Todo: detection of SVG support in IE9
 		chart.renderer = renderer = 
-			optionsChart.renderer == 'SVG' ? // force SVG 
+			optionsChart.renderer == 'SVG' ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight) : 
 				new Renderer(container, chartWidth, chartHeight);
-		//renderer.init(container, chartWidth, chartHeight);
 	}
 	/**
 	 * Render all graphics for the chart
@@ -6473,9 +6449,7 @@ Series.prototype = {
 	},
 	
 	/**
-	 * Sort the data and remove duplicates
-	 * 
-	 * @todo: For reversed x axis, reverse the data once and for all here
+	 * Sort the data and remove duplicates 
 	 */
 	cleanData: function() {
 		var series = this,
@@ -6705,8 +6679,7 @@ Series.prototype = {
 				chart.plotHeight - point.plotX : 
 				point.plotX; // for mouse tracking
 				
-			// some API data 
-			// todo: move this to point.init?
+			// some API data
 			point.category = categories && categories[point.x] !== UNDEFINED ? 
 				categories[point.x] : point.x;
 				
@@ -8230,7 +8203,6 @@ var PiePoint = extendClass(Point, {
 		// if called without an argument, toggle
 		sliced = point.sliced = defined(sliced) ? sliced : !point.sliced;
 		
-		// todo: use centertranslation
 		point.group.animate({
 			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
 			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
