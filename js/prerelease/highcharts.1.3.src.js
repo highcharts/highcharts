@@ -3,7 +3,7 @@
 
 /** 
  * @license Name:    Highcharts
- * Version: 2.0 Prerelease, merged with data from 1.2.6 (2010-06-17)
+ * Version: 2.0 pre-release, merged with data from 1.2.6 (2010-07-08)
  * Author:  Torstein Hønsi
  * Support: www.highcharts.com/support
  * License: www.highcharts.com/license
@@ -3754,18 +3754,21 @@ function Chart (options) {
 			
 		}
 			
-			
+		/**
+		 * Fix JS round off float errors
+		 * @param {Number} num
+		 */
+		function correctFloat(num) {
+			var invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
+			return mathRound(num * invMag) / invMag
+		}
+				
 		/**
 		 * Set the tick positions of a linear axis to round values like whole tens or every five.
 		 */
 		function setLinearTickPositions() {
 			
-			var correctFloat = function(num) { // JS round off float errors
-					var invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
-					return mathRound(num * invMag) / invMag;
-				},
-				
-				i,
+			var i,
 				roundedMin = mathFloor(min / tickInterval) * tickInterval,
 				roundedMax = math.ceil(max / tickInterval) * tickInterval;
 				
@@ -3838,7 +3841,9 @@ function Chart (options) {
 					
 				if (calculatedTickAmount < tickAmount) {
 					while (tickPositions.length < tickAmount) {
-						tickPositions.push(tickPositions[tickPositions.length - 1] + tickInterval);
+						tickPositions.push( correctFloat(
+							tickPositions[tickPositions.length - 1] + tickInterval
+						));
 					}
 					transA *= (calculatedTickAmount - 1) / (tickAmount - 1);
 				}
@@ -5038,9 +5043,9 @@ function Chart (options) {
 						
 						// click the name or symbol
 						if (item.firePointEvent) { // point
-							item.firePointEvent (strLegendItemClick, null, fnLegendItemClick);
+							item.firePointEvent (strLegendItemClick, event, fnLegendItemClick);
 						} else {
-							fireEvent (item, strLegendItemClick, null, fnLegendItemClick);
+							fireEvent (item, strLegendItemClick, event, fnLegendItemClick);
 						}
 					})
 					.attr({ zIndex: 2 })
@@ -7800,6 +7805,7 @@ var ColumnSeries = extendClass(Series, {
 			chart = series.chart,
 			columnCount = 0,
 			reversedXAxis = series.xAxis.reversed,
+			categories = series.xAxis.categories,
 			stackedIndex; // the index of the first column in a stack
 		
 		Series.prototype.translate.apply(series);
@@ -7828,7 +7834,7 @@ var ColumnSeries = extendClass(Series, {
 			closestPoints = series.closestPoints,
 			categoryWidth = mathAbs(
 				data[1] ? data[closestPoints].plotX - data[closestPoints - 1].plotX : 
-				chart.plotSizeX
+				chart.plotSizeX / categories ? categories.length : 1
 			),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
