@@ -534,7 +534,7 @@ defaultLabelOptions = {
 	},*/
 	style: {
 		color: '#666',
-		fontSize: '11px' // docs	
+		fontSize: '11px'
 	}
 };
 
@@ -559,7 +559,11 @@ defaultOptions = {
 		//alignTicks: false,
 		//className: null,
 		//events: { load, selection },
-		margin: [50, 50, 70, 80], // docs
+		margin: [50, 50, 70, 80],
+		//marginTop: 50,
+		//marginRight: 50,
+		//marginBottom: 70,
+		//marginLeft: 50,
 		borderColor: '#4572A7',
 		//borderWidth: 0,
 		borderRadius: 5,		
@@ -567,7 +571,7 @@ defaultOptions = {
 		ignoreHiddenSeries: true,
 		//inverted: false,
 		//shadow: false,
-		style: { // docs
+		style: {
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
 		},
@@ -580,9 +584,9 @@ defaultOptions = {
 	},
 	title: {
 		text: 'Chart title',
-		x: 0,//docs
-		y: 20,// docs
-		align: 'center',//docs
+		x: 0,
+		y: 20,
+		align: 'center',
 		style: {
 			color: '#3E576F',
 			fontSize: '16px'
@@ -591,11 +595,10 @@ defaultOptions = {
 	},
 	subtitle: {
 		text: '',
-		x: 0,//docs
-		y: 40,// docs
-		align: 'center',//docs
+		x: 0,
+		y: 40,
+		align: 'center',
 		style: {
-			//font: defaultFont,
 			color: '#6D869F'
 		}
 	},
@@ -613,18 +616,18 @@ defaultOptions = {
 			// stacking: null,
 			marker: { 
 				enabled: true,
-				//symbol: null, docs
+				//symbol: null, 
 				lineWidth: 0,
 				radius: 4,
 				lineColor: '#FFFFFF',
-				//fillColor: null, docs
+				//fillColor: null, 
 				states: { // states for a single point
 					hover: {
 						//radius: base + 2
 					},
 					select: {
 						fillColor: '#FFFFFF',
-						lineColor: '#000000', //docs
+						lineColor: '#000000',
 						lineWidth: 2
 					}					
 				}
@@ -656,7 +659,7 @@ defaultOptions = {
 					marker: {}
 				}
 			},
-			stickyTracking: true // docs
+			stickyTracking: true
 		}
 	},
 	labels: {
@@ -669,17 +672,17 @@ defaultOptions = {
 	},
 	legend: {
 		enabled: true,
-		align: 'center', // docs
+		align: 'center',
 		layout: 'horizontal',
 		labelFormatter: function() {
 			return this.name;
 		},
-		// lineHeight: 16, // docs
-		borderWidth: 1, // docs
+		// lineHeight: 16,
+		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
-		//reversed: false, // docs
-		shadow: false, // docs
+		//reversed: false,
+		shadow: false,
 		// backgroundColor: null,
 		style: {
 			padding: '5px'
@@ -697,13 +700,13 @@ defaultOptions = {
 		itemCheckboxStyle: {
 			position: ABSOLUTE
 		},
-		// itemWidth: null, // docs
+		// itemWidth: undefined,
 		symbolWidth: 16,
 		symbolPadding: 5,
-		verticalAlign: 'bottom', // docs
-		// width: null // docs
-		// x: 0, // docs
-		y: -15 // docs
+		verticalAlign: 'bottom',
+		// width: undefined,
+		// x: 0,
+		y: -15
 	},
 	
 	loading: {
@@ -770,7 +773,7 @@ defaultOptions = {
 
 // Axis defaults
 var defaultXAxisOptions =  {
-	// allowDecimals: null, // docs
+	// allowDecimals: null,
 	// alternateGridColor: null,
 	// categories: [],
 	dateTimeLabelFormats: {
@@ -792,8 +795,8 @@ var defaultXAxisOptions =  {
 	lineWidth: 1,
 	max: null,
 	min: null,
-	minPadding: 0.01, // docs
-	maxPadding: 0.01, // docs
+	minPadding: 0.01,
+	maxPadding: 0.01,
 	maxZoom: null,
 	minorGridLineColor: '#E0E0E0',
 	minorGridLineWidth: 1,
@@ -810,7 +813,7 @@ var defaultXAxisOptions =  {
 	startOfWeek: 1, 
 	startOnTick: false,
 	tickColor: '#C0D0E0',
-	//tickInterval: null, docs
+	//tickInterval: null,
 	tickLength: 5,
 	tickmarkPlacement: 'between', // on or between
 	tickPixelInterval: 100,
@@ -910,8 +913,8 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
 	// baseValue: 0,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
-	// fillOpacity: .75,
-	// fillColor: null docs
+	// fillOpacity: 0.75,
+	// fillColor: null
 
 });
 defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
@@ -919,7 +922,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	borderRadius: 0,
-	//colorByPoint: undefined, docs
+	//colorByPoint: undefined,
 	groupPadding: 0.2,
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
@@ -949,8 +952,8 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: ['50%', '50%'],
-	colorByPoint: true,
-	//innerSize: 0, // docs
+	colorByPoint: true, // always true for pies
+	//innerSize: 0,
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
 	size: '90%',
@@ -3182,7 +3185,7 @@ function Chart (options) {
 		margin = typeof optionsMargin == 'number' ? 
 			[optionsMargin, optionsMargin, optionsMargin, optionsMargin] :
 			optionsMargin,
-		plotTop = pick(optionsChart.marginTop, margin[0]), // docs: marginLeft, marginTop etc
+		plotTop = pick(optionsChart.marginTop, margin[0]),
 		marginRight = pick(optionsChart.marginRight, margin[1]),
 		marginBottom = pick(optionsChart.marginBottom, margin[2]),
 		plotLeft = pick(optionsChart.marginLeft, margin[3]),
