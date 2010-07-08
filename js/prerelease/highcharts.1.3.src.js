@@ -1298,27 +1298,10 @@ SVGElement.prototype = {
 				
 				// symbols
 				if (this.symbolName && /^(x|y|r|start|end)/.test(key)) {
-					// if one of the symbol size affecting parameters are changed,
-					// check all the others only once for each call to an element's
-					// .attr() method
+					
 					
 					if (!hasSetSymbolSize) {
-							
-						var x = hash.x || this.x,
-							y = hash.y || this.y,
-							r = hash.r || this.r,
-							start = hash.start || this.start,
-							end = hash.end || this.end;
-					
-								
-						this.attr({ 
-							d: renderer.symbols[this.symbolName](x, y, r, {
-								start: start, 
-								end: end
-							})
-						});
-						
-					
+						this.symbolAttr(hash);
 						hasSetSymbolSize = true;
 					}
 				}
@@ -1345,6 +1328,33 @@ SVGElement.prototype = {
 			
 		}
 		return ret;
+	},
+	
+	/**
+	 * If one of the symbol size affecting parameters are changed,
+	 * check all the others only once for each call to an element's
+	 * .attr() method
+	 * @param {Object} hash
+	 */
+	symbolAttr: function(hash) {
+		var wrapper = this;
+		
+		wrapper.x = pick(hash.x, wrapper.x);
+		wrapper.y = pick(hash.y, wrapper.y);
+		wrapper.r = pick(hash.r, wrapper.r);
+		wrapper.start = pick(hash.start, wrapper.start);
+		wrapper.end = pick(hash.end, wrapper.end);
+		wrapper.width = pick(hash.width, wrapper.width);
+		wrapper.height = pick(hash.height, wrapper.height);
+		
+		wrapper.attr({ 
+			d: wrapper.renderer.symbols[wrapper.symbolName](wrapper.x, wrapper.y, wrapper.r, {
+				start: wrapper.start, 
+				end: wrapper.end,
+				width: wrapper.width, 
+				height: wrapper.height
+			})
+		});
 	},
 	
 	/**
@@ -2297,23 +2307,7 @@ var VMLElement = extendClass( SVGElement, {
 					// .attr() method
 					if (!hasSetSymbolSize) {
 							
-						this.x = pick(hash.x, this.x);
-						this.y = pick(hash.y, this.y);
-						this.r = pick(hash.r, this.r);
-						this.start = pick(hash.start, this.start);
-						this.end = pick(hash.end, this.end);
-						this.width = pick(hash.width, this.width);
-						this.height = pick(hash.height, this.height);
-						
-						this.attr({ 
-							d: renderer.symbols[symbolName](this.x, this.y, this.r, {
-								start: this.start, 
-								end: this.end,
-								width: this.width, 
-								height: this.height
-							})
-						});
-						
+						this.symbolAttr(hash);						
 					
 						hasSetSymbolSize = true;
 					} 
@@ -6361,7 +6355,7 @@ Point.prototype = {
 			);
 			
 		// else, apply hover styles to the existing point
-		} else if (point.graphic) {				
+		} else if (point.graphic) {
 			point.graphic.attr(pointAttr[state]);
 		}
 		
