@@ -6330,6 +6330,7 @@ Point.prototype = {
 	setState: function(state) {
 		var point = this,
 			series = point.series,
+			stateOptions = series.options.states,
 			chart = series.chart,
 			pointAttr = point.pointAttr;
 			
@@ -6337,10 +6338,17 @@ Point.prototype = {
 			state = NORMAL_STATE;
 		}
 		
-		// selected points don't respond to hover
-		if (point.selected && state != SELECT_STATE) {
+		
+		if (
+				// selected points don't respond to hover
+				(point.selected && state != SELECT_STATE) ||
+				// series' state options is disabled
+				(stateOptions[state] && stateOptions[state].enabled === false)
+			) {
 			return;
 		}
+		
+		
 		
 		
 		// if a graphic is not applied to each point in the normal state, create a shared
@@ -6977,13 +6985,10 @@ Series.prototype = {
 		
 		// HOVER_STATE and SELECT_STATE states inherit from normal state except the default radius
 		each([HOVER_STATE, SELECT_STATE], function(state) {
-			seriesPointAttr[state] = series.convertAttribs(
-				stateOptions[state].enabled !== false && stateOptions[state],
-				seriesPointAttr[NORMAL_STATE]
-			);
+			seriesPointAttr[state] = 
+					series.convertAttribs(stateOptions[state], seriesPointAttr[NORMAL_STATE]);
 		});
-		
-		
+				
 		// set it
 		series.pointAttr = seriesPointAttr;
 		
@@ -7380,16 +7385,21 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			graph = series.graph,
+			stateOptions = options.states,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			lineWidth = options.lineWidth;
 
 		state = state || NORMAL_STATE;
-		
+				
 		if (series.state != state) {
 			series.state = state;
+			
+			if (stateOptions[state] && stateOptions[state].enabled === false) {
+				return;
+			}
 		
 			if (state) {				
-				lineWidth = options.states[state].lineWidth || lineWidth;
+				lineWidth = stateOptions[state].lineWidth || lineWidth;
 			} else if (stateMarkerGraphic) {
 				stateMarkerGraphic.hide();
 			}
