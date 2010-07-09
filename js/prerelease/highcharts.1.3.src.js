@@ -90,6 +90,7 @@ var doc = document,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
 	animate = adapter.animate,
+	stop = adapter.stop,
 	getAjax = adapter.getAjax,
 	
 	// lookup over the types and the associated classes
@@ -309,7 +310,15 @@ if (!globalAdapter && win.jQuery) {
 	};
 
 	animate = function (el, params, options) {
-		jQ(el).animate(params, options);
+		$el = jQ(el);
+		$el.stop();
+		$el.animate(params, options);
+	};
+	/**
+	 * Stop running animation
+	 */
+	stop = function (el) {
+		jQ(el).stop();
 	};
 	
 	getAjax = function (url, callback) {
@@ -425,7 +434,7 @@ if (!globalAdapter && win.jQuery) {
 	
 	animate = function (el, params, options) {
 		var isSVGElement = el.attr,
-			myEffect;
+			effect;
 		
 		if (isSVGElement && !el.setStyle) {
 			// add setStyle and getStyle methods for internal use in Moo
@@ -434,15 +443,27 @@ if (!globalAdapter && win.jQuery) {
 			el.$family = el.uid = true;
 		}
 		
+		// stop running animations
+		stop(el);
 		
 		// define and run the effect
-		myEffect = new Fx.Morph(
+		effect = new Fx.Morph(
 			isSVGElement ? el : $(el), 
 			extend(options, {
 				transition: Fx.Transitions.Quad.easeInOut
 			})
 		);
-		myEffect.start(params);
+		effect.start(params);
+		el.fx = effect;
+	};
+	
+	/**
+	 * Stop running animations on the object
+	 */
+	stop = function (el) {
+		if (el.fx) {
+			el.fx.cancel();
+		}
 	};
 	
 	getAjax = function (url, callback) {
@@ -1546,6 +1567,7 @@ SVGElement.prototype = {
 			key;
 		
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
+		stop(this); // stop running animations
 		element.parentNode.removeChild(element);
 		
 		if (this.shadows) {
@@ -6845,7 +6867,7 @@ Series.prototype = {
 				}, 
 				duration: 1000
 			});
-	
+			
 			// delete this function to allow it only once
 			this.animate = null;
 		}
