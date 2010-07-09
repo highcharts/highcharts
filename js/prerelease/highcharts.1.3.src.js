@@ -559,10 +559,10 @@ defaultOptions = {
 		//alignTicks: false,
 		//className: null,
 		//events: { load, selection },
-		margin: [50, 50, 70, 80],
+		margin: [50, 50, 90, 80], // docs
 		//marginTop: 50,
 		//marginRight: 50,
-		//marginBottom: 70,
+		//marginBottom: 90, // docs
 		//marginLeft: 50,
 		borderColor: '#4572A7',
 		//borderWidth: 0,
@@ -705,7 +705,7 @@ defaultOptions = {
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
 		// width: undefined,
-		// x: 0,
+		x: 15,
 		y: -15
 	},
 	
@@ -820,8 +820,7 @@ var defaultXAxisOptions =  {
 	tickPosition: 'outside',
 	tickWidth: 1,
 	title: {
-		enabled: false,
-		text: 'X-values',
+		//text: null,
 		align: 'middle', // low, middle or high
 		margin: 35,
 		//rotation: 0,
@@ -851,7 +850,6 @@ defaultYAxisOptions = merge(defaultXAxisOptions, {
 	startOnTick: true,
 	tickWidth: 0,
 	title: {
-		enabled: true,
 		margin: 40,
 		rotation: 270,
 		text: 'Y-values'
@@ -911,7 +909,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	}
 });
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
-	// baseValue: 0,
+	// threshold: 0,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
 	// fillOpacity: 0.75,
 	// fillColor: null
@@ -1373,8 +1371,8 @@ SVGElement.prototype = {
 		var elemWrapper = this;
 		
 		// convert legacy
-		if (styles) {
-			styles.fill = styles.fill || styles.color;
+		if (styles && styles.color) {
+			styles.fill = styles.color;
 		}
 		
 		// save the styles in an object
@@ -1501,20 +1499,24 @@ SVGElement.prototype = {
 	
 	/**
 	 * Add the element
-	 * @param {Object|Undefined} parentNode Can be an element, an element wrapper or undefined
+	 * @param {Object|Undefined} parent Can be an element, an element wrapper or undefined
 	 *    to append the element to the renderer.box.
 	 */ 
-	add: function(parentNode) {
+	add: function(parent) {
 		
 		
-		parentNode = parentNode ? parentNode.element : this.renderer.box;
+		
 			
-		var childNodes = parentNode.childNodes,
+		var parentNode = parent ? parent.element : this.renderer.box,
+			childNodes = parentNode.childNodes,
 			element = this.element,
 			zIndex = attr(element, 'zIndex'),
 			otherElement,
 			otherZIndex,
 			i;
+			
+		// mark as inverted
+		this.parentInverted = parent && parent.inverted;
 
 		// insert according to this and other elements' zIndex
 		for (i = 0; i < childNodes.length; i++) {
@@ -1582,10 +1584,8 @@ SVGElement.prototype = {
 			shadow,
 			element = this.element,
 			
-			// compensate for flipped plot area
-			parentTransform = attr(element.parentNode, 'transform'),
-			transform = parentTransform && parentTransform.indexOf('rotate(90) scale(-1, 1)') > -1 ?
-				'(-1,-1)' : '(1,1)';
+			// compensate for inverted plot area
+			transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
 			
 		
 		if (apply) {
@@ -4154,7 +4154,7 @@ function Chart (options) {
 				}
 				
 				// Render the title. 
-				if (!axis.axisTitle && axisTitleOptions && axisTitleOptions.enabled && axisTitleOptions.text) {
+				if (!axis.axisTitle && axisTitleOptions && axisTitleOptions.text) {
 					
 					// compute anchor points for each of the title align options
 					var margin = horiz ? 
@@ -5043,9 +5043,9 @@ function Chart (options) {
 						
 						// click the name or symbol
 						if (item.firePointEvent) { // point
-							item.firePointEvent (strLegendItemClick, event, fnLegendItemClick);
+							item.firePointEvent (strLegendItemClick, null, fnLegendItemClick);
 						} else {
-							fireEvent (item, strLegendItemClick, event, fnLegendItemClick);
+							fireEvent (item, strLegendItemClick, null, fnLegendItemClick);
 						}
 					})
 					.attr({ zIndex: 2 })
@@ -5837,10 +5837,7 @@ function Chart (options) {
 					zIndex: 4
 				}).add();
 		}
-		
-		// Add plot area clipping rectangle
-		chart.clipRect = renderer.clipRect(0, 0, plotSizeX,	plotSizeY);
-				
+						
 		// Axes
 		if (hasCartesianSeries) {
 			each(axes, function(axis) { 
@@ -6331,11 +6328,15 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			stateOptions = series.options.states,
+			markerOptions = series.options.marker,
+			normalDisabled = markerOptions && !markerOptions.enabled,
+			markerStateOptions = markerOptions && markerOptions.states[state],
+			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
 			chart = series.chart,
 			pointAttr = point.pointAttr;
 			
 		if (!state) {
-			state = NORMAL_STATE;
+			state = NORMAL_STATE; // empty string
 		}
 		
 		
@@ -6343,7 +6344,9 @@ Point.prototype = {
 				// selected points don't respond to hover
 				(point.selected && state != SELECT_STATE) ||
 				// series' state options is disabled
-				(stateOptions[state] && stateOptions[state].enabled === false)
+				(stateOptions[state] && stateOptions[state].enabled === false) ||
+				// point marker's state options is disabled
+				(!state && normalDisabled || state && stateDisabled)
 			) {
 			return;
 		}
@@ -6826,7 +6829,7 @@ Series.prototype = {
 	animate: function(init) {
 		var series = this,
 			chart = series.chart,
-			clipRect = chart.clipRect;
+			clipRect = series.clipRect;
 		if (init) { // initialize the animation
 			if (!clipRect.isAnimating) { // apply it only for one of the series
 				clipRect.attr( 'width', 0 );
@@ -6834,7 +6837,6 @@ Series.prototype = {
 			}
 			
 		} else { // run the animation
-			
 			clipRect.animate({ 
 				width: chart.plotSizeX 
 			}, {
@@ -6966,6 +6968,7 @@ Series.prototype = {
 			
 			// if no hover radius is given, default to normal radius + 2  
 			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + 2;
+			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + 1;
 			
 		} else { // column, bar, pie
 			
@@ -7087,6 +7090,9 @@ Series.prototype = {
 				series[prop].destroy();
 			}
 		});
+		if (series.clipRect != series.chart.clipRect) {
+			series.clipRect.destroy();
+		}
 		
 		// loop through the chart series to locate the series and remove it
 		each(chartSeries, function(existingSeries, i) {
@@ -7128,7 +7134,6 @@ Series.prototype = {
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 4
 						})
-						.clip(chart.clipRect)
 						.translate(chart.plotLeft, chart.plotTop)
 						.add();
 			}
@@ -7204,7 +7209,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			segmentPath,
 			renderer = chart.renderer,
-			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),
+			translatedY0 = series.yAxis.getZeroPlane(options.threshold || 0),
 			areaPath = [];
 			
 		
@@ -7313,11 +7318,23 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			group,
-			doAnimation = series.options.animation && series.animate;
+			doAnimation = series.options.animation && series.animate,
+			renderer = chart.renderer;
+			
+		
+		// Add plot area clipping rectangle. If this is before chart.hasRendered,
+		// create one shared clipRect. 
+		if (!series.clipRect) {
+			series.clipRect = !chart.hasRendered && chart.clipRect ?
+				chart.clipRect : 
+		 		renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
+			if (!chart.clipRect) chart.clipRect = series.clipRect;
+		}
+		
 			
 		// the group
 		if (!series.group) {
-			group = series.group = chart.renderer.g('series');
+			group = series.group = renderer.g('series');
 				
 			if (chart.inverted) {
 				group.attr({
@@ -7325,7 +7342,7 @@ Series.prototype = {
 					height: chart.plotHeight
 				}).invert();
 			} 
-			group.clip(chart.clipRect)
+			group.clip(series.clipRect)
 				.attr({ 
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: 3					
@@ -7333,6 +7350,7 @@ Series.prototype = {
 				.translate(chart.plotLeft, chart.plotTop)
 				.add();
 		}
+		
 			
 		series.drawDataLabels();
 
@@ -7858,22 +7876,26 @@ var ColumnSeries = extendClass(Series, {
 			pointXOffset = pointPadding + (groupPadding + columnIndex *
 				pointOffsetWidth -(categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
-			translatedY0 = series.yAxis.getZeroPlane(options.baseValue || 0),
-			minPointLength = options.minPointLength,
-			barX,
-			barY,
-			barW,
-			barH;
+			translatedY0 = series.yAxis.getZeroPlane(options.threshold || 0),
+			minPointLength = options.minPointLength;
 			
 			
 		// record the new values
 		each (data, function(point) {
-			barX = point.plotX + pointXOffset;
-			barY = mathMin(point.plotY, translatedY0); 
-			barW = pointWidth;
-			barH = mathAbs((point.yBottom || translatedY0) - point.plotY);
-			if (minPointLength && mathAbs(barH) < minPointLength) { // handle options.minPointLength
-				barH = (barH < 0 ? 1 : -1) * minPointLength;
+			var plotY = point.plotY,
+				barX = point.plotX + pointXOffset,
+				barY = mathMin(plotY, translatedY0), 
+				barW = pointWidth,
+				barH = mathAbs((point.yBottom || translatedY0) - plotY),
+				trackerY;
+			
+			// handle options.minPointLength and tracker for small points
+			if (mathAbs(barH) < (minPointLength || 5)) { 
+				if (minPointLength) {
+					barH = minPointLength;
+					barY = translatedY0 - (plotY <= translatedY0 ? minPointLength : 0);
+				}
+				trackerY = barY - 3;
 			}
 			
 			
@@ -7891,6 +7913,14 @@ var ColumnSeries = extendClass(Series, {
 				height: barH,
 				r: options.borderRadius
 			};
+			
+			// make small columns responsive to mouse
+			if (defined(trackerY)) {
+				point.trackerArgs = merge(point.shapeArgs, { 
+					height: 6,
+					y: trackerY
+				});
+			}
 		});
 		
 	},
@@ -7953,6 +7983,7 @@ var ColumnSeries = extendClass(Series, {
 		each (series.data, function(point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
+			
 			if (tracker) {// update
 				tracker.attr(shapeArgs);
 				
@@ -8120,7 +8151,9 @@ var ScatterSeries = extendClass(Series, {
 	 */
 	//drawTracker: ColumnSeries.prototype.drawTracker,
 	drawTracker: function() {
-		var series = this;
+		var series = this,
+			cursor = series.options.cursor,
+			css = cursor && { cursor: cursor };
 			
 		each(series.data, function(point) {
 			point.graphic
@@ -8133,7 +8166,8 @@ var ScatterSeries = extendClass(Series, {
 					if (!series.options.stickyTracking) {
 						series.onMouseOut();
 					}
-				});
+				})
+				.css(css);
 		});
 
 	},
