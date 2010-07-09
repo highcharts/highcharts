@@ -1323,6 +1323,7 @@ SVGElement.prototype = {
 						this.symbolAttr(hash);
 						hasSetSymbolSize = true;
 					}
+					skipAttr = true;
 				}
 				
 				// let the shadow follow the main element
@@ -3915,6 +3916,8 @@ function Chart (options) {
 				}
 			}
 			
+			
+			
 			// tickInterval
 			if (categories || min == max) {
 				tickInterval = 1;
@@ -3934,9 +3937,10 @@ function Chart (options) {
 			// minorTickInterval
 			minorTickInterval = options.minorTickInterval == 'auto' && tickInterval ?
 					tickInterval / 5 : options.minorTickInterval;
-				
+					
 			// get fixed positions based on tickInterval
 			setTickPositions();
+			
 			
 			// the translation factor used in translate function			
 			transA = axisLength / ((max - min) || 1);
@@ -3948,6 +3952,7 @@ function Chart (options) {
 					y: 0
 				};
 			}
+			
 			
 			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY]) {
 				maxTicks[xOrY] = tickPositions.length;
@@ -6361,14 +6366,15 @@ Point.prototype = {
 			state = NORMAL_STATE; // empty string
 		}
 		
-		
 		if (
 				// selected points don't respond to hover
 				(point.selected && state != SELECT_STATE) ||
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
 				// point marker's state options is disabled
-				(!state && normalDisabled || state && stateDisabled)
+				//(!state && normalDisabled)
+				(state && (stateDisabled || normalDisabled && !markerStateOptions.enabled))
+
 			) {
 			return;
 		}
@@ -7084,6 +7090,7 @@ Series.prototype = {
 		}
 
 	},
+
 	
 	/**
 	 * Clear DOM objects and free up memory
@@ -8205,6 +8212,9 @@ seriesTypes.scatter = ScatterSeries;
  * Extended point object for pies
  */
 var PiePoint = extendClass(Point, {
+	/**
+	 * Initiate the pie slice
+	 */
 	init: function () {
 		
 		Point.prototype.init.apply(this, arguments);
@@ -8228,6 +8238,12 @@ var PiePoint = extendClass(Point, {
 		
 		return point;
 	},
+	
+	/**
+	 * Toggle the visibility of the pie slice
+	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
+	 *    visibility is toggled
+	 */
 	setVisible: function(vis) {
 	
 		var point = this, 
