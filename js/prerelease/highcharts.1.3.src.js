@@ -7098,6 +7098,7 @@ Series.prototype = {
 	destroy: function() {
 		var series = this,
 			chartSeries = series.chart.series,
+			clipRect = series.clipRect,
 			prop;
 		
 		// remove all events
@@ -7119,8 +7120,8 @@ Series.prototype = {
 				series[prop].destroy();
 			}
 		});
-		if (series.clipRect != series.chart.clipRect) {
-			series.clipRect.destroy();
+		if (clipRect && clipRect != series.chart.clipRect) {
+			clipRect.destroy();
 		}
 		
 		// loop through the chart series to locate the series and remove it
@@ -8400,10 +8401,9 @@ var PieSeries = extendClass(Series, {
 	 */
 	render: function() {
 		var series = this;
-			
+		
 		// cache attributes for shapes
 		series.getAttribs();
-		
 
 		this.drawPoints();
 		
@@ -8414,6 +8414,7 @@ var PieSeries = extendClass(Series, {
 		
 		this.drawDataLabels();
 		
+		series.isDirty = false; // means data is in accordance with what you see
 	},
 	
 	/**
