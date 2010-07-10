@@ -1691,13 +1691,15 @@ SVGRenderer.prototype = {
 	 * @param {String} str
 	 */
 	buildText: function(textNode, str) {
-		var lines = str.toString().
-				replace(/<(b|strong)>/g, '<span style="font-weight:bold">').
-				replace(/<(i|em)>/g, '<span style="font-style:italic">').
-				replace(/<\/(b|strong|i|em)>/g, '</span>').
-				split('<br/>'),
+		var lines = str.toString()
+				.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
+				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
+				.replace(/<a/g, '<span')
+				.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
+				.split('<br/>'),
 			childNodes = textNode.childNodes,
-			styleRegex = /style="([0-9a-z:;\-]+)"/,
+			styleRegex = /style="([ 0-9a-z:;\-]+)"/,
+			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			i;
 			
@@ -1717,9 +1719,18 @@ SVGRenderer.prototype = {
 			each (spans, function (span) {
 				if (span !== '') {
 					var attributes = {},
-						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan'),
+						style;
 					if (styleRegex.test(span)) {
-						attr(tspan, 'style', span.match(styleRegex)[1]);
+						attr(
+							tspan, 
+							'style', 
+							span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2')
+						);
+					}
+					if (hrefRegex.test(span)) {
+						attr(tspan, 'onclick', 'location.href=\"'+ span.match(hrefRegex)[1] +'\"');
+						css(tspan, { cursor: 'pointer' });
 					}
 					
 					span = span.replace(/<(.|\n)*?>/g, '');
@@ -8401,7 +8412,6 @@ var PieSeries = extendClass(Series, {
 	 */
 	render: function() {
 		var series = this;
-		
 		// cache attributes for shapes
 		series.getAttribs();
 
