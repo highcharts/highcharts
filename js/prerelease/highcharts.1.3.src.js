@@ -12,7 +12,7 @@
 // JSLint options:
 /*jslint forin: true */
 /*global document, window, navigator, setInterval, clearInterval, location, jQuery, $, $each, $merge, Events, Event, Fx, Request */
-
+					
 (function() {
 
 // encapsulated variables
@@ -139,7 +139,7 @@ function attr(elem, prop, value) {
 			elem[setAttribute](prop, value);
 		
 		// get the value
-		} else if (elem.getAttribute) {
+		} else if (elem && elem.getAttribute) { // elem not defined when printing pie demo...
 			ret = elem.getAttribute(prop);
 		}
 	
@@ -596,7 +596,7 @@ defaultOptions = {
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
 		},
-		//backgroundColor: null,
+		backgroundColor: '#FFFFFF',
 		//plotBackgroundColor: null,
 		plotBorderColor: '#C0C0C0'
 		//plotBorderWidth: 0,
@@ -719,7 +719,9 @@ defaultOptions = {
 			color: '#C0C0C0'
 		},
 		itemCheckboxStyle: {
-			position: ABSOLUTE
+			position: ABSOLUTE,
+			width: '13px', // for IE precision
+			height: '13px'
 		},
 		// itemWidth: undefined,
 		symbolWidth: 16,
@@ -1564,21 +1566,29 @@ SVGElement.prototype = {
 	 * Destroy the element and element wrapper
 	 */
 	destroy: function() {
-		var element = this.element,
+		var wrapper = this,
+			element = wrapper.element,
+			shadows = wrapper.shadows,
+			parentNode = element.parentNode,
 			key;
 		
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
-		stop(this); // stop running animations
-		element.parentNode.removeChild(element);
+		stop(wrapper); // stop running animations
+		if (parentNode) {
+			parentNode.removeChild(element);
+		}
 		
-		if (this.shadows) {
-			each(this.shadows, function(shadow) {
-				shadow.parentNode.removeChild(shadow);				
+		if (shadows) {
+			each(shadows, function(shadow) {
+				parentNode = shadow.parentNode;
+				if (parentNode) { // the entire chart HTML can be overwritten
+					parentNode.removeChild(shadow);
+				}				
 			});
 		}
 				
-		for (key in this) {
-			delete this[key];
+		for (key in wrapper) {
+			delete wrapper[key];
 		}
 		
 		return null;
@@ -2208,13 +2218,10 @@ SVGRenderer.prototype = {
 var VMLRenderer;
 if (!hasSVG) {
 
-
 /**
  * The VML element wrapper.
  */
 var VMLElement = extendClass( SVGElement, {
-	xmlns: 'urn:schemas-microsoft-com:vml',
-	vmlStyle: 'display:inline-block;behavior:url(#default#VML)',
 	
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -2223,23 +2230,21 @@ var VMLElement = extendClass( SVGElement, {
 	 * @param {Object} nodeName
 	 */
 	init: function(renderer, nodeName) {
-		var markup =  ['<', nodeName],
+		var markup =  ['<', nodeName, ' filled="f" stroked="f"'],
 			style = ['position: ', ABSOLUTE, ';'];
 		
-		
-		if (nodeName != DIV && nodeName != 'span') {
-			markup.push(' xmlns="', this.xmlns, '" filled="f" stroked="f"');
-			if (nodeName == 'shape') {
-				style.push('left:0;top:0;width:10px;height:10px;');
-			}
-			style.push(this.vmlStyle);
+		// divs and shapes need size
+		if (nodeName == 'shape' || nodeName == DIV) {
+			style.push('left:0;top:0;width:10px;height:10px;');
 		}
-		
 		markup.push(' style="', style.join(''), '"/>');
 		
 		// create element with default attributes and style
 		if (nodeName) {
-			this.element = createElement(markup.join(''));
+			markup = nodeName == DIV || nodeName == 'span' || nodeName == 'img' ? 
+				markup.join('')
+				: renderer.prepVML(markup);
+			this.element = createElement(markup);
 		}
 		
 		this.renderer = renderer;
@@ -2313,7 +2318,7 @@ var VMLElement = extendClass( SVGElement, {
 		// used as a getter, val is undefined
 		if (typeof hash == 'string') {
 			key = hash;
-			if (key == 'stroke-width') {
+			if (key == 'strokeWidth') {
 				ret = element.strokeweight;
 				
 			} else {
@@ -2350,13 +2355,12 @@ var VMLElement = extendClass( SVGElement, {
 					
 				} else if (key == 'd') {
 					
-					key = 'path';
+					//key = 'path';
 					
 					// convert paths 
 					i = value.length;
 					var convertedPath = [];
-					while (i--) {
-						
+					while (i--) {					
 						
 						// Multiply by 10 to allow subpixel precision.
 						// Substracting half a pixel seems to make the coordinates
@@ -2374,7 +2378,8 @@ var VMLElement = extendClass( SVGElement, {
 						
 					}
 					value = convertedPath.join(' ');
-					
+					element.path = value;
+			
 					// update shadows
 					if (shadows) {
 						i = shadows.length;
@@ -2382,6 +2387,7 @@ var VMLElement = extendClass( SVGElement, {
 							shadows[i].path = value;
 						}
 					}
+					skipAttr = true;
 	
 				// directly mapped to css
 				} else if (key == 'zIndex' || key == 'visibility') {
@@ -2424,7 +2430,7 @@ var VMLElement = extendClass( SVGElement, {
 					key = 'strokecolor';
 					
 				// stroke width
-				} else if (key == 'stroke-width') {
+				} else if (key == 'stroke-width' || key == 'strokeWidth') {
 	
 					element.stroked = value ? true : false;
 					key = 'strokeweight';
@@ -2450,6 +2456,7 @@ var VMLElement = extendClass( SVGElement, {
 				else if (key == 'translateX' || key == 'translateY') {
 					this[key] = val;
 					this.updateTransform();
+					
 					skipAttr = true;
 				}
 				
@@ -2476,8 +2483,6 @@ var VMLElement = extendClass( SVGElement, {
 						attr(element, key, value);
 					}
 				}
-				
-				
 			}			
 		}
 		return ret;
@@ -2601,12 +2606,11 @@ var VMLElement = extendClass( SVGElement, {
 			
 		// apply translate
 		if (translateX || translateY) {
-			css(wrapper.element, {
+			wrapper.css({
 				left: translateX,
 				top: translateY
-			});			
+			});
 		}
-		
 	},
 	
 	/**
@@ -2616,20 +2620,19 @@ var VMLElement = extendClass( SVGElement, {
 	shadow: function(apply) {
 		var shadows = [],
 			i,
-			shadow,
 			element = this.element,
+			renderer = this.renderer,
+			shadow,
 			elemStyle = element.style,
 			markup;
 			
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				
-				markup = [];
-				markup.push('<shape isShadow="true" ',
-					'xmlns="', this.renderer.urn ,'"',
-					'strokeweight="', ( 7 - 2 * i ) ,'" filled="false" path="', element.path,
-					'" coordsize="100,100" style="', element.style.cssText, '" />');
-				shadow = createElement(markup.join(''),
+				markup = ['<shape isShadow="true" strokeweight="', ( 7 - 2 * i ) ,
+					'" filled="false" path="', element.path,
+					'" coordsize="100,100" style="', element.style.cssText, '" />'];
+				shadow = createElement(renderer.prepVML(markup),
 					null, {
 						left: parseInt(elemStyle.left, 10) + 1,
 						top: parseInt(elemStyle.top, 10) + 1
@@ -2637,10 +2640,8 @@ var VMLElement = extendClass( SVGElement, {
 				);
 				
 				// apply the opacity
-				markup = [];
-				markup.push('<stroke xmlns="', this.xmlns, '" style="', this.vmlStyle,
-					'" color="black" opacity="', (0.05 * i), '"/>');
-				createElement(markup.join(''), null, null, shadow);				
+				markup = ['<stroke color="black" opacity="', (0.05 * i), '"/>'];
+				createElement(renderer.prepVML(markup), null, null, shadow);				
 				
 				
 				// insert it
@@ -2665,6 +2666,10 @@ VMLRenderer = function() {
 	this.init.apply(this, arguments);
 };
 VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
+	
+	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
+	
+
 	/**
 	 * Initialize the VMLRenderer
 	 * @param {Object} container
@@ -2679,6 +2684,22 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				height: height + PX
 			}, container);
 		this.Element = VMLElement;
+		
+		// The only way to make IE6 and IE7 print is to use a global namespace. However,
+		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
+		// seems to be to add the xmlns attribute and the behaviour style inline. Except
+		// for rotated text, which I haven't been able to render in IE8 without a namespace.
+		// As a consequence, rotated text doesn't print.  
+		if (!doc.namespaces.hcv) {			
+			
+			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
+			
+			// setup default css
+			doc.createStyleSheet().cssText = 
+				'hcv\\:fill, hcv\\:path, hcv\\:textpath, hcv\\:shape, hcv\\:stroke, hcv\\:line '+
+				'{ behavior:url(#default#VML); display: inline-block; } ';
+			
+		}	
 	},
 	
 	/**
@@ -2739,7 +2760,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	color: function(color, elem, prop) {
 		var colorObject,
 			regexRgba = /^rgba/,
-			markup = [];
+			markup;
 			
 		if (color && color.linearGradient) {
 			
@@ -2781,11 +2802,10 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
-			markup.push('<fill xmlns="', this.urn, '" style="behavior:url(#default#VML)"',
-				' colors="0% ', color1, ',100% ', color2, '" angle="', angle,
+			markup = ['<fill colors="0% ', color1, ',100% ', color2, '" angle="', angle,
 				'" opacity="', opacity2, '" o:opacity2="', opacity1,
-				'" type="gradient" focus="100%"/>');
-			createElement(markup.join(''), null, null, elem);
+				'" type="gradient" focus="100%" />'];
+			createElement(this.prepVML(markup), null, null, elem);
 			
 			
 		
@@ -2795,9 +2815,8 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			
 			colorObject = Color(color);
 			
-			markup.push('<', prop, ' opacity="', colorObject.get('a'), 
-				' xmlns="urn:schemas-microsoft-com:vml" style="behavior:url(#default#VML)" />');
-			createElement(markup.join(''), null, null, elem);
+			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
+			createElement(this.prepVML(markup), null, null, elem);
 			
 			return colorObject.get('rgb');
 			
@@ -2807,7 +2826,42 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		}
 		
 	},
-	// rotated and aligned text
+	
+	/**
+	 * Take a VML string and prepare it for either IE8 or IE6/IE7. 
+	 * @param {Array} markup A string array of the VML markup to prepare
+	 */
+	prepVML: function(markup) {
+		var //xmlns = 'urn:schemas-microsoft-com:vml',
+			vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
+			isIE8 = this.isIE8;
+	
+		markup = markup.join('');
+		
+		if (isIE8) { // add xmlns and style inline
+			markup = markup.replace('/>', ' xmlns="urn:schemas-microsoft-com:vml" />');
+			if (markup.indexOf('style="') == -1) {
+				markup = markup.replace('/>', ' style="'+ vmlStyle +'" />');
+			} else {
+				markup = markup.replace('style="', 'style="'+ vmlStyle);
+			}
+
+		} else { // add namespace
+			markup = markup.replace('<', '<hcv:');
+		}
+
+		return markup;
+	},
+	
+	/**
+	 * Create rotated and aligned text
+	 * @param {Object} str
+	 * @param {Object} x
+	 * @param {Object} y
+	 * @param {Object} style
+	 * @param {Object} rotation
+	 * @param {Object} align
+	 */
 	text: function(str, x, y, style, rotation, align) {
 		//if (str || str === 0) {
 		style = style || {};
@@ -2894,21 +2948,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			});
 			elem = elemWrapper.element;
 			
-			
-			// The code below uses namespace. Wasn't able to make it display with just
-			// adding the xmlns and behavior inline like in other elements. The downside
-			// is more code, and rotated text that doesn't print. 
-			if (!doc.namespaces.hcv) {			
-				
-				doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
-				
-				// setup default css
-				doc.createStyleSheet().cssText = 
-					'hcv\\:fill, hcv\\:path, hcv\\:textpath '+
-					'{ behavior:url(#default#VML); } ';
-				
-			}
-		
 			createElement('hcv:fill', {
 				on: true,
 				color: style.color
@@ -3335,6 +3374,8 @@ function Chart (options) {
 				// match this axis against the series' given or implicated axis
 				each(['xAxis', 'yAxis'], function(strAxis) {
 					if (
+						// the series is a cartesian type, and...
+						serie.isCartesian &&
 						// we're in the right x or y dimension, and...
 						(strAxis == 'xAxis' && isXAxis || strAxis == 'yAxis' && !isXAxis) && (
 							// the axis number is given in the options and matches this axis index, or
@@ -3946,7 +3987,7 @@ function Chart (options) {
 			}
 			
 			// minorTickInterval
-			minorTickInterval = options.minorTickInterval == 'auto' && tickInterval ?
+			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
 					tickInterval / 5 : options.minorTickInterval;
 					
 			// get fixed positions based on tickInterval
@@ -4430,8 +4471,8 @@ function Chart (options) {
 			currentX = tooltipIsHidden ? finalX : (2 * currentX + finalX) / 3;
 			currentY = tooltipIsHidden ? finalY : (currentY + finalY) / 2;
 			
-			
 			group.translate(currentX, currentY);
+			
 			
 			// run on next tick of the mouse tracker
 			if (mathAbs(finalX - currentX) > 1 || mathAbs(finalY - currentY) > 1) {
@@ -4649,7 +4690,7 @@ function Chart (options) {
 		 */
 		function resetTracker() {
 			var hoverSeries = chart.hoverSeries,
-				hoverPoint = chart.hoverPoint;
+				hoverPoint = chart.hoverPoint;				
 
 			if (hoverPoint) {
 				hoverPoint.onMouseOut();
@@ -4685,18 +4726,18 @@ function Chart (options) {
 						var translate = axis.translate,
 							isXAxis = axis.isXAxis,
 							isHorizontal = inverted ? !isXAxis : isXAxis,
-								selectionMin = translate(
-									isHorizontal ? 
-										selectionLeft : 
-										plotHeight - selectionTop - selectionBox.height, 
-									true
-								),
-								selectionMax = translate(
-									isHorizontal ? 
-										selectionLeft + selectionBox.width : 
-										plotHeight - selectionTop, 
-									true
-								);
+							selectionMin = translate(
+								isHorizontal ? 
+									selectionLeft : 
+									plotHeight - selectionTop - selectionBox.height, 
+								true
+							),
+							selectionMax = translate(
+								isHorizontal ? 
+									selectionLeft + selectionBox.width : 
+									plotHeight - selectionTop, 
+								true
+							);
 								
 							selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
 								axis: axis,
@@ -4785,7 +4826,7 @@ function Chart (options) {
 					if (zoomVert) {
 						var ySize = e.pageY - mouseDownY;
 						selectionMarker.attr({
-							height: mathAbs(ySize) + PX,
+							height: mathAbs(ySize),
 							y: (ySize > 0 ? 0 : ySize) + mouseDownY - position.y
 						});
 					}
@@ -4824,6 +4865,7 @@ function Chart (options) {
 				e = normalizeMouseEvent(e);
 				 
 				e.cancelBubble = true; // IE specific
+				
 				
 				if (!hasDragged) {
 					if (hoverPoint && attr(e.target, 'isTracker')) {
@@ -6840,7 +6882,7 @@ Series.prototype = {
 			chart = series.chart,
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
-			
+		
 		// trigger mouse out on the point, which must be in this series
 		if (hoverPoint) {
 			hoverPoint.onMouseOut();
@@ -7124,7 +7166,6 @@ Series.prototype = {
 		each (series.data, function(point) {
 			point.destroy();
 		});
-		
 		// destroy all SVGElements associated to the series
 		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
 			if (series[prop]) {
@@ -7637,6 +7678,7 @@ Series.prototype = {
 				.css(css)
 				.add(chart.trackerGroup);
 		}
+		
 	}
 	
 }; // end Series prototype
@@ -7869,6 +7911,9 @@ var ColumnSeries = extendClass(Series, {
 		}
 	},
 	
+	/**
+	 * Translate each point to the plot area coordinate system and find shape positions
+	 */
 	translate: function() {
 		var series = this,
 			chart = series.chart,
@@ -8511,5 +8556,4 @@ win.Highcharts = {
 	pick: pick,
 	extendClass: extendClass
 };
-
 })();
