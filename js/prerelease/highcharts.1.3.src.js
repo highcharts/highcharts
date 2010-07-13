@@ -1318,7 +1318,7 @@ SVGElement.prototype = {
 				}
 				
 				// symbols
-				if (this.symbolName && /^(x|y|r|start|end)/.test(key)) {
+				if (this.symbolName && /^(x|y|r|start|end|innerR)/.test(key)) {
 					
 					
 					if (!hasSetSymbolSize) {
@@ -1368,13 +1368,15 @@ SVGElement.prototype = {
 		wrapper.end = pick(hash.end, wrapper.end);
 		wrapper.width = pick(hash.width, wrapper.width);
 		wrapper.height = pick(hash.height, wrapper.height);
+		wrapper.innerR = pick(hash.innerR, wrapper.innerR);
 		
 		wrapper.attr({ 
 			d: wrapper.renderer.symbols[wrapper.symbolName](wrapper.x, wrapper.y, wrapper.r, {
 				start: wrapper.start, 
 				end: wrapper.end,
 				width: wrapper.width, 
-				height: wrapper.height
+				height: wrapper.height,
+				innerR: wrapper.innerR
 			})
 		});
 	},
@@ -2038,6 +2040,7 @@ SVGRenderer.prototype = {
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
 				longArc = end - start < Math.PI ? 0 : 1;
+			
 			return [
 				M,
 				x + radius * cosStart,
@@ -2340,7 +2343,7 @@ var VMLElement = extendClass( SVGElement, {
 				
 				// prepare paths
 				// symbols
-				if (symbolName && /^(x|y|r|start|end|width|height)/.test(key)) {
+				if (symbolName && /^(x|y|r|start|end|width|height|innerR)/.test(key)) {
 					// if one of the symbol size affecting parameters are changed,
 					// check all the others only once for each call to an element's
 					// .attr() method
@@ -6663,9 +6666,13 @@ Series.prototype = {
 	setData: function(data, redraw) {
 		var series = this,
 			oldData = series.data,
+			initialColor = series.initialColor,
 			i = oldData && oldData.length || 0;
 		
 		series.xIncrement = null; // reset for new data
+		if (defined(initialColor)) { // reset colors for pie
+			colorCounter = initialColor;
+		}
 		data = map(splat(data), function(pointOptions) {
 			return (new series.pointClass()).init(series, pointOptions);
 		});
@@ -8369,7 +8376,10 @@ var PieSeries = extendClass(Series, {
 	/**
 	 * Pies have one color each point
 	 */
-	getColor: function() {},
+	getColor: function() {
+		// record first color for use in setData
+		this.initialColor = colorCounter;
+	},
 	
 	
 	translate: function() {
@@ -8392,7 +8402,7 @@ var PieSeries = extendClass(Series, {
 			isPercent;
 			
 		// get positions - either an integer or a percentage string must be given
-		positions.push(options.size, options.innerSize);
+		positions.push(options.size, options.innerSize || 0);
 		positions = map (positions, function(length, i) {
 			
 			isPercent = /%$/.test(length);			
