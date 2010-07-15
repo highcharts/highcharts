@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /** 
- * @license Highcharts JS v2.0.0 (2010-07-13)
+ * @license Highcharts JS v2.0.1 (pre-release)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -2126,7 +2126,7 @@ SVGRenderer.prototype = {
 			
 			return 'url(#'+ id +')';
 			
-		// Safari (4), Chrome (5) and Batik can't show rgba.
+		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
 			colorObject = Color(color);
 			attr(elem, prop +'-opacity', colorObject.get('a'));
@@ -2369,7 +2369,7 @@ var VMLElement = extendClass( SVGElement, {
 						}
 						
 					}
-					value = convertedPath.join(' ');
+					value = convertedPath.join(' ') || 'x';							
 					element.path = value;
 			
 					// update shadows
@@ -2618,9 +2618,8 @@ var VMLElement = extendClass( SVGElement, {
 			elemStyle = element.style,
 			markup;
 			
-		if (apply) {
+		if (apply && typeof element.path == 'string') {
 			for (i = 1; i <= 3; i++) {
-				
 				markup = ['<shape isShadow="true" strokeweight="', ( 7 - 2 * i ) ,
 					'" filled="false" path="', element.path,
 					'" coordsize="100,100" style="', element.style.cssText, '" />'];
@@ -5733,34 +5732,32 @@ function Chart (options) {
 			};
 		
 			
-		if (!chart.titleLayer) {
-			// title
-			if (title && title.text) {
-				renderer.text(
-					title.text, 
-					anchorMap[titleAlign] + title.x,
-					title.y, 
-					title.style, 
-					0,
-					titleAlign
-				).attr({
-					'class': 'highcharts-title'
-				}).add();
-			}
-			
-			// subtitle
-			if (subtitle && subtitle.text) {
-				renderer.text(
-					subtitle.text, 
-					anchorMap[subtitleAlign] + subtitle.x,
-					subtitle.y, 
-					subtitle.style, 
-					0,
-					subtitleAlign
-				).attr({
-					'class': 'highcharts-subtitle'
-				}).add();
-			}
+		// title
+		if (title && title.text) {
+			renderer.text(
+				title.text, 
+				anchorMap[titleAlign] + title.x,
+				title.y, 
+				title.style, 
+				0,
+				titleAlign
+			).attr({
+				'class': 'highcharts-title'
+			}).add();
+		}
+		
+		// subtitle
+		if (subtitle && subtitle.text) {
+			renderer.text(
+				subtitle.text, 
+				anchorMap[subtitleAlign] + subtitle.x,
+				subtitle.y, 
+				subtitle.style, 
+				0,
+				subtitleAlign
+			).attr({
+				'class': 'highcharts-subtitle'
+			}).add();
 		}
 	}
 
@@ -6662,7 +6659,7 @@ Series.prototype = {
 		if (defined(initialColor)) { // reset colors for pie
 			colorCounter = initialColor;
 		}
-		data = map(splat(data), function(pointOptions) {
+		data = map(splat(data || []), function(pointOptions) {
 			return (new series.pointClass()).init(series, pointOptions);
 		});
 		
@@ -7288,6 +7285,7 @@ Series.prototype = {
 			segmentPath,
 			renderer = chart.renderer,
 			translatedY0 = series.yAxis.getZeroPlane(options.threshold || 0),
+			useArea = /^area/.test(series.type),
 			areaPath = [];
 			
 		
@@ -7321,7 +7319,7 @@ Series.prototype = {
 			graphPath = graphPath.concat(segmentPath);
 			
 			// build the area
-			if (/^area/.test(series.type)) {
+			if (useArea) {
 				var areaSegmentPath = [],
 					i,
 					segLength = segmentPath.length;
@@ -7347,12 +7345,7 @@ Series.prototype = {
 			}
 		});
 
-		// store it for use in area
-		if (areaPath.length) {
-			series.areaPath = areaPath;
-		}
 		series.graphPath = graphPath; // used in drawTracker
-
 
 		// draw the graph
 		if (graph) {
@@ -7366,11 +7359,10 @@ Series.prototype = {
 					}).add(group).shadow(options.shadow);
 			}
 		}
-
 		
 			
 		// draw the area if area series or areaspline
-		if (areaPath.length) {
+		if (useArea) {
 			fillColor = pick(
 				options.fillColor,
 				Color(series.color).setOpacity(options.fillOpacity || 0.75).get()
