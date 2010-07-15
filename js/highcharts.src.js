@@ -8228,21 +8228,25 @@ var ScatterSeries = extendClass(Series, {
 	drawTracker: function() {
 		var series = this,
 			cursor = series.options.cursor,
-			css = cursor && { cursor: cursor };
+			css = cursor && { cursor: cursor },
+			graphic;
 			
 		each(series.data, function(point) {
-			point.graphic
-				.attr({ isTracker: true })
-				.on('mouseover', function(event) {
-					series.onMouseOver();
-					point.onMouseOver();					
-				})
-				.on('mouseout', function(event) {
-					if (!series.options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
-				.css(css);
+			graphic = point.graphic;
+			if (graphic) { // doesn't exist for null points
+				graphic
+					.attr({ isTracker: true })
+					.on('mouseover', function(event) {
+						series.onMouseOver();
+						point.onMouseOver();					
+					})
+					.on('mouseout', function(event) {
+						if (!series.options.stickyTracking) {
+							series.onMouseOut();
+						}
+					})
+					.css(css);
+			}
 		});
 
 	},
