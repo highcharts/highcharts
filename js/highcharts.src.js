@@ -7197,6 +7197,7 @@ Series.prototype = {
 				chart = series.chart, 
 				inverted = chart.inverted,
 				seriesType = series.type,
+				color,
 				align;
 				
 			// create a separate group for the data labels to avoid rotation
@@ -7214,7 +7215,11 @@ Series.prototype = {
 			}
 		
 			// determine the color
-			options.style.color = pick(options.color, series.color);
+			color = options.color;
+			if (color == 'auto') { // 1.0 backwards compatibility
+				color = null;	
+			}
+			options.style.color = pick(color, series.color);
 		
 			// make the labels for each point
 			each(data, function(point){
