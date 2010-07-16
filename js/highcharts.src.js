@@ -4205,77 +4205,77 @@ function Chart (options) {
 			} // end if hasData
 			
 			// Static items. As the axis group is cleared on subsequent calls
-			// to render, these items are added outside the group.			
-			if (!chart.hasRendered) {
-				// axis line
-				if (lineWidth) {
-					lineLeft = plotLeft + (opposite ? plotWidth : 0) + offset;
-					lineTop = chartHeight - marginBottom - (opposite ? plotHeight : 0) + offset;
-					
-					renderer.path(renderer.crispLine([
-							M,
-							horiz ? 
-								plotLeft: 
-								lineLeft,
-							horiz ? 
-								lineTop: 
-								plotTop,
-							L, 
-							horiz ? 
-								chartWidth - marginRight : 
-								lineLeft,
-							horiz ? 
-								lineTop:
-								chartHeight - marginBottom
-						], lineWidth)).
-						attr({ 
-							stroke: options.lineColor, 
-							'stroke-width': lineWidth,
-							zIndex: 7
-						}).
-						add();
-					
-				}
+			// to render, these items are added outside the group.	
+			// axis line
+			if (!axis.hasRenderedLine && lineWidth) {
+				lineLeft = plotLeft + (opposite ? plotWidth : 0) + offset;
+				lineTop = chartHeight - marginBottom - (opposite ? plotHeight : 0) + offset;
 				
-				// Render the title. 
-				if (!axis.axisTitle && axisTitleOptions && axisTitleOptions.text) {
-					
-					// compute anchor points for each of the title align options
-					var margin = horiz ? 
-							plotLeft : plotTop;
-						
-					// the position in the length direction of the axis
-					var alongAxis = { 
-						low: margin + (horiz ? 0 : axisLength), 
-						middle: margin + axisLength / 2, 
-						high: margin + (horiz ? axisLength : 0)
-					}[axisTitleOptions.align];
-					
-					// the position in the perpendicular direction of the axis
-					var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
-						(horiz ? 1 : -1) * // horizontal axis reverses the margin
-						(opposite ? -1 : 1) * // so does opposite axes
-						axisTitleOptions.margin -
-						(isIE ? parseInt(
-							axisTitleOptions.style.fontSize || 12, 10
-						) / 3 : 0); // preliminary fix for vml's centerline
-					
-					axis.axisTitle = renderer.text(
-						axisTitleOptions.text,
+				renderer.path(renderer.crispLine([
+						M,
 						horiz ? 
-							alongAxis: 
-							offAxis + (opposite ? plotWidth : 0) + offset, // x
+							plotLeft: 
+							lineLeft,
 						horiz ? 
-							offAxis - (opposite ? plotHeight : 0) + offset: 
-							alongAxis, // y
-						axisTitleOptions.style, 
-						axisTitleOptions.rotation || 0,
-						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
-					)
-					.attr({ zIndex: 7 })
-					.add();
+							lineTop: 
+							plotTop,
+						L, 
+						horiz ? 
+							chartWidth - marginRight : 
+							lineLeft,
+						horiz ? 
+							lineTop:
+							chartHeight - marginBottom
+					], lineWidth)).
+					attr({ 
+						stroke: options.lineColor, 
+						'stroke-width': lineWidth,
+						zIndex: 7
+					}).
+					add();
 					
-				}
+				axis.hasRenderedLine = true;
+			}
+			
+			// Render the title. 
+			if (!axis.hasRenderedTitle && !axis.axisTitle && axisTitleOptions && axisTitleOptions.text) {
+				
+				// compute anchor points for each of the title align options
+				var margin = horiz ? 
+						plotLeft : plotTop;
+					
+				// the position in the length direction of the axis
+				var alongAxis = { 
+					low: margin + (horiz ? 0 : axisLength), 
+					middle: margin + axisLength / 2, 
+					high: margin + (horiz ? axisLength : 0)
+				}[axisTitleOptions.align];
+				
+				// the position in the perpendicular direction of the axis
+				var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
+					(horiz ? 1 : -1) * // horizontal axis reverses the margin
+					(opposite ? -1 : 1) * // so does opposite axes
+					axisTitleOptions.margin -
+					(isIE ? parseInt(
+						axisTitleOptions.style.fontSize || 12, 10
+					) / 3 : 0); // preliminary fix for vml's centerline
+				
+				axis.axisTitle = renderer.text(
+					axisTitleOptions.text,
+					horiz ? 
+						alongAxis: 
+						offAxis + (opposite ? plotWidth : 0) + offset, // x
+					horiz ? 
+						offAxis - (opposite ? plotHeight : 0) + offset: 
+						alongAxis, // y
+					axisTitleOptions.style, 
+					axisTitleOptions.rotation || 0,
+					{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+				)
+				.attr({ zIndex: 7 })
+				.add();
+				
+				axis.hasRenderedTitle = true;
 			}
 			
 			axis.isDirty = false;
