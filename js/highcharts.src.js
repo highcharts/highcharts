@@ -2021,15 +2021,16 @@ SVGRenderer.prototype = {
 			];
 		},
 		'arc': function (x, y, radius, options) {
-			var start = options.start,
-				end = options.end,
+			var pi = Math.PI,
+				start = options.start,
+				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
 				innerRadius = options.innerR,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
-				longArc = end - start < Math.PI ? 0 : 1;
-			
+				longArc = options.end - start < pi ? 0 : 1;
+				
 			return [
 				M,
 				x + radius * cosStart,
@@ -2274,7 +2275,7 @@ var VMLElement = extendClass( SVGElement, {
 			
 		}
 		
-		
+		//css(element, { visibility: 'visible' });
 		
 		// append it
 		parentNode.appendChild(element);
@@ -3099,12 +3100,17 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		// VML specific arc function
 		arc: function (x, y, radius, options) {
 			var start = options.start,
-				end = options.end,
+				optionsEnd = options.end,
+				end = optionsEnd - start == 2 * Math.PI ? optionsEnd - 0.001 : optionsEnd,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR;
+				
+			if (optionsEnd - start === 0) { // no angle, don't show it. 
+				return ['x'];
+			}
 								
 			return [
 				'wa', // clockwisearcto
@@ -3141,10 +3147,10 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				y - r, // top
 				x + r, // right
 				y + r, // bottom
-				x + r * 1, // start x
-				y + r * 0, // start y
-				x + r * 1, // end x
-				y + r * 0, // end y
+				x + r, // start x
+				y,     // start y
+				x + r, // end x
+				y,     // end y
 				//'x', // finish path
 				'e' // close
 			];
@@ -4614,7 +4620,7 @@ function Chart (options) {
 			if (!e.pageY) {
 				e.pageY = e.clientY + (doc.documentElement.scrollTop || doc.body.scrollTop);
 			}
-			
+						
 			return e;
 		}
 		
@@ -5415,7 +5421,6 @@ function Chart (options) {
 	isInsidePlot = function(x, y, coordinateSystem) {
 		var left = 0,
 			top = 0;
-			
 		if (coordinateSystem == 'page') {
 			left += position.x + plotLeft;
 			top += position.y + plotTop;
