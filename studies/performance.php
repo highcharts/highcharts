@@ -23,9 +23,8 @@ $seriesCountOptions = array(1, 2, 4, 8, 16, 32);
 $pointCountOptions = array(2, 4, 8, 16, 32, 64, 128, 500, 1000, 2000, 4000);
 $chartWidthOptions = array(1000, 500, 250);
 $libSourceOptions = array(
-	'highcharts.js',
-	'highcharts.src.js',
-	'prerelease/highcharts.1.3.src.js'
+	'1.2.5/highcharts.js',
+	'2.0.0/highcharts.js'
 );
 
 
