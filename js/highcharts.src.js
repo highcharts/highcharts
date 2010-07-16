@@ -1749,7 +1749,7 @@ SVGRenderer.prototype = {
 					} else {
 						attributes.dx = 3; // space
 					}
-					if (lineNo) { // subsequent line, add the line height
+					if (lineNo && !spanNo) { // first span on subsequent line, add the line height
 						attributes.dy = 16;
 					}
 					
