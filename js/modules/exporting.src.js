@@ -26,9 +26,7 @@ var HC = Highcharts,
 	math = Math,
 	mathMax = math.max,
 	doc = document,
-	win = window;
-
-var lang = defaultOptions.lang,
+	win = window,
 	M = 'M',
 	L = 'L',
 	DIV = 'div',
@@ -36,19 +34,21 @@ var lang = defaultOptions.lang,
 	NONE = 'none',
 	PREFIX = 'highcharts-',
 	ABSOLUTE = 'absolute',
-	PX = 'px';
+	PX = 'px',
 
 
 
-// Add language
-extend(lang, {
-	downloadPNG: 'Download PNG image',
-	downloadJPEG: 'Download JPEG image',
-	downloadPDF: 'Download PDF document',
-	downloadSVG: 'Download SVG vector image',
-	exportButtonTitle: 'Export to raster or vector image',
-	printButtonTitle: 'Print the chart'
-});
+	// Add language and get the defaultOptions
+	defaultOptions = HC.setOptions({
+		lang: {
+			downloadPNG: 'Download PNG image',
+			downloadJPEG: 'Download JPEG image',
+			downloadPDF: 'Download PDF document',
+			downloadSVG: 'Download SVG vector image',
+			exportButtonTitle: 'Export to raster or vector image',
+			printButtonTitle: 'Print the chart'
+		}
+	});
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
@@ -114,26 +114,26 @@ defaultOptions.exporting = {
 			hoverSymbolFill: '#768F3E',
 			_titleKey: 'exportButtonTitle',
 			menuItems: [{
-				text: lang.downloadPNG,
+				textKey: 'downloadPNG',
 				onclick: function() {
 					this.exportChart();
 				}
 			}, {
-				text: lang.downloadJPEG,
+				textKey: 'downloadJPEG',
 				onclick: function() {
 					this.exportChart({
 						type: 'image/jpeg'
 					});
 				}
 			}, {
-				text: lang.downloadPDF,
+				textKey: 'downloadPDF',
 				onclick: function() {
 					this.exportChart({
 						type: 'application/pdf'
 					});
 				}
 			}, {
-				text: lang.downloadSVG,
+				textKey: 'downloadSVG',
 				onclick: function() {
 					this.exportChart({
 						type: 'image/svg+xml'
@@ -403,7 +403,7 @@ extend (Chart.prototype, {
 						onmouseout: function() {
 							css(this, menuItemStyle);
 						},
-						innerHTML: item.text
+						innerHTML: item.text || HC.getOptions().lang[item.textKey]
 					}, extend({
 						cursor: 'pointer'
 					}, menuItemStyle), innerMenu);
@@ -494,7 +494,7 @@ extend (Chart.prototype, {
 			0
 		).attr({
 			fill: 'rgba(255, 255, 255, 0.001)',
-			title: lang[btnOptions._titleKey],
+			title: HC.getOptions().lang[btnOptions._titleKey],
 			zIndex: 21
 		}).css({
 			cursor: 'pointer'

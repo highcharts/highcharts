@@ -523,6 +523,14 @@ function setOptions(options) {
 }
 
 /**
+ * Get the updated default options. Merely exposing defaultOptions for outside modules
+ * isn't enough because the setOptions method creates a new object.
+ */
+function getOptions() {
+	return defaultOptions;
+}
+
+/**
  * Discard an element by moving it to the bin and delete
  * @param {Object} The HTML node to discard
  */
@@ -8542,7 +8550,7 @@ seriesTypes.pie = PieSeries;
 win.Highcharts = {
 	Chart: Chart,
 	dateFormat: dateFormat,
-	defaultOptions: defaultOptions,
+	getOptions: getOptions,
 	numberFormat: numberFormat,
 	Point: Point,
 	Renderer: Renderer,
