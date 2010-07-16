@@ -1195,7 +1195,7 @@ dateFormat = function (format, timestamp, capitalize) {
  * total page offset for a given element
  * @param {Object} el
  */
-function getPosition (el)	{
+function getPosition (el) {
 	var p = { x: el.offsetLeft, y: el.offsetTop };
 	while (el.offsetParent)	{
 		el = el.offsetParent;
@@ -2319,7 +2319,7 @@ var VMLElement = extendClass( SVGElement, {
 		// used as a getter, val is undefined
 		if (typeof hash == 'string') {
 			key = hash;
-			if (key == 'strokeWidth') {
+			if (key == 'strokeWidth' || key == 'stroke-width') {
 				ret = element.strokeweight;
 				
 			} else {
@@ -4614,21 +4614,29 @@ function Chart (options) {
 		 * @param {Object} e The event object in standard browsers
 		 */
 		function normalizeMouseEvent(e) {
+			
 			// common IE normalizing
 			e = e || win.event;
 			if (!e.target) {
 				e.target = e.srcElement;
 			}
-				
-			// pageX and pageY
-			if (!e.pageX) {
-				e.pageX = e.clientX + (doc.documentElement.scrollLeft || doc.body.scrollLeft);
+			
+			// in certain cases, get mouse position
+			if (e.type != 'mousemove' || win.opera) { // only Opera needs position on mouse move, see below
+				position = getPosition(container);
+			}
+
+			// layerX and layerY
+			if (e.layerX === UNDEFINED) { // Firefox and WebKit have layerX
+				if (isIE) { // IE
+					e.layerX = e.x;
+					e.layerY = e.y;
+				} else { // Opera has no equivalent of layerX, see above
+					e.layerX = e.pageX - position.x;
+					e.layerY = e.pageY - position.y;
+				}
 			}
 			
-			if (!e.pageY) {
-				e.pageY = e.clientY + (doc.documentElement.scrollTop || doc.body.scrollTop);
-			}
-						
 			return e;
 		}
 		
@@ -4651,8 +4659,8 @@ function Chart (options) {
 					axis: axis,
 					value: translate(
 						isHorizontal ? 
-							e.pageX - position.x - plotLeft  : 
-							plotHeight - e.pageY + position.y + plotTop ,
+							e.layerX - plotLeft  : 
+							plotHeight - e.layerY + plotTop ,
 						true
 					)								
 				});
@@ -4673,10 +4681,9 @@ function Chart (options) {
 				// get the point
 				point = hoverSeries.tooltipPoints[
 					inverted ? 
-						e.pageY - position.y : 
-						e.pageX - position.x - plotLeft // wtf?
+						e.layerY : 
+						e.layerX - plotLeft // wtf?
 				];
-				
 				
 				// a new point is hovered, refresh the tooltip
 				if (point && point != hoverPoint) {
@@ -4775,8 +4782,8 @@ function Chart (options) {
 					e.preventDefault();
 				}
 				chart.mouseIsDown = mouseIsDown = true;
-				mouseDownX = e.pageX;
-				mouseDownY = e.pageY;
+				mouseDownX = e.layerX;
+				mouseDownY = e.layerY;
 					
 				
 				// make a selection
@@ -4798,41 +4805,40 @@ function Chart (options) {
 				}
 				
 			};
-			
-			
+						
 			// Use native browser event for this one. It's faster, and MooTools
 			// doesn't use clientX and clientY.
 			container.onmousemove = function(e) {
 				e = normalizeMouseEvent(e);
 				e.returnValue = false;
 				
-				var mouseX = e.pageX,
-					mouseY = e.pageY,
-					isOutsidePlot = !isInsidePlot(mouseX, mouseY, 'page');
+				var layerX = e.layerX,
+					layerY = e.layerY,
+					isOutsidePlot = !isInsidePlot(layerX - plotLeft, layerY - plotTop);
 				
 				if (mouseIsDown) { // make selection
 					
 					// determine if the mouse has moved more than 10px
 					hasDragged = Math.sqrt(
-						Math.pow(mouseDownX - e.pageX, 2) + 
-						Math.pow(mouseDownY - e.pageY, 2)
+						Math.pow(mouseDownX - layerX, 2) + 
+						Math.pow(mouseDownY - layerY, 2)
 					) > 10;
 					
 					
 					// adjust the width of the selection marker
 					if (zoomHor) {
-						var xSize = e.pageX - mouseDownX;
+						var xSize = layerX - mouseDownX;
 						selectionMarker.attr({
 							width: mathAbs(xSize),
-							x: (xSize > 0 ? 0 : xSize) + mouseDownX - position.x
+							x: (xSize > 0 ? 0 : xSize) + mouseDownX
 						});
 					}
 					// adjust the height of the selection marker
 					if (zoomVert) {
-						var ySize = e.pageY - mouseDownY;
+						var ySize = layerY - mouseDownY;
 						selectionMarker.attr({
 							height: mathAbs(ySize),
-							y: (ySize > 0 ? 0 : ySize) + mouseDownY - position.y
+							y: (ySize > 0 ? 0 : ySize) + mouseDownY
 						});
 					}
 					
@@ -4864,7 +4870,6 @@ function Chart (options) {
 			
 			
 			// MooTools 1.2.3 doesn't fire this in IE when using addEvent
-			//.on('click', function(e) {
 			container.onclick = function(e) {
 				var hoverPoint = chart.hoverPoint;
 				e = normalizeMouseEvent(e);
@@ -4897,7 +4902,7 @@ function Chart (options) {
 						extend (e, getMouseCoordinates(e));
 						
 						// fire a click event in the chart
-						if (isInsidePlot(e.pageX, e.pageY, 'page')) {
+						if (isInsidePlot(e.layerX - plotLeft, e.layerY - plotTop)) {
 							fireEvent(chart, 'click', e);
 						}
 					}
@@ -5424,15 +5429,10 @@ function Chart (options) {
 	 * 
 	 * @param {Number} x Pixel x relative to the coordinateSystem
 	 * @param {Number} y Pixel y relative to the coordinateSystem
-	 * @param {String} coordinateSystem 'page' or undefined
 	 */
-	isInsidePlot = function(x, y, coordinateSystem) {
+	isInsidePlot = function(x, y) {
 		var left = 0,
 			top = 0;
-		if (coordinateSystem == 'page') {
-			left += position.x + plotLeft;
-			top += position.y + plotTop;
-		}
 		return x >= left &&
 			x <= left + plotWidth &&
 			y >= top &&
@@ -5620,12 +5620,12 @@ function Chart (options) {
 	 * Update the chart's position after it has been moved, to match
 	 * the mouse positions with the chart
 	 */
-	function updatePosition() {
+	/*function updatePosition() {
 		var container = doc.getElementById(containerId);
 		if (container) {
 			position = getPosition(container);
 		}
-	}
+	}*/
 	
 	/** 
 	 * Create the Axis instances based on the config options
@@ -5992,7 +5992,7 @@ function Chart (options) {
 		if (renderToClone) {
 			renderTo.appendChild(container);
 			discardElement(renderToClone);
-			updatePosition(container);
+			//updatePosition(container);
 		}
 	}
 	
@@ -6003,7 +6003,7 @@ function Chart (options) {
 		var i = series.length;
 
 		// remove events
-		removeEvent(win, 'resize', updatePosition);
+		//removeEvent(win, 'resize', updatePosition);
 		removeEvent(win, 'unload', destroy);
 		removeEvent(chart);
 		
@@ -6052,7 +6052,7 @@ function Chart (options) {
 	
 		
 	getContainer();
-	updatePosition(container);
+	//updatePosition(container);
 	
 		
 	// Set to zero for each new chart
@@ -6060,7 +6060,7 @@ function Chart (options) {
 	symbolCounter = 0;
 	
 	// Update position on resize and scroll
-	addEvent(win, 'resize', updatePosition);
+	//addEvent(win, 'resize', updatePosition);
 	
 	// Destroy the chart and free up memory. 
 	addEvent(win, 'unload', destroy);
@@ -6100,7 +6100,7 @@ function Chart (options) {
 	chart.isInsidePlot = isInsidePlot;
 	chart.redraw = redraw;
 	chart.showLoading = showLoading;	
-	chart.updatePosition = updatePosition;
+	//chart.updatePosition = updatePosition;
 	
 	
 	// Initialize the series
