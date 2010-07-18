@@ -7220,9 +7220,7 @@ Series.prototype = {
 				align;
 				
 			// create a separate group for the data labels to avoid rotation
-			if (dataLabelsGroup) {
-				dataLabelsGroup.empty();
-			} else {
+			if (!dataLabelsGroup) {
 				dataLabelsGroup = series.dataLabelsGroup = 
 					chart.renderer.g(PREFIX +'data-labels')
 						.attr({ 
@@ -7244,8 +7242,15 @@ Series.prototype = {
 			each(data, function(point){
 				var plotX = pick(point.barX, point.plotX),
 					plotY = point.plotY,
-					tooltipPos = point.tooltipPos;
+					tooltipPos = point.tooltipPos,
+					pointLabel = point.dataLabel;
 					
+				// destroy old data label after update
+				if (pointLabel) {
+					pointLabel.destroy();
+				}
+					
+				// get the string
 				str = options.formatter.call({
 					x: point.x,
 					y: point.y,
