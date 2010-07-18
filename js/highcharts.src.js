@@ -4085,14 +4085,14 @@ function Chart (options) {
 		 * Get the zero plane either based on zero or on the min or max value.
 		 * Used in bar and area plots
 		 */
-		function getZeroPlane(zeroValue) {
-			if (min > 0) {
-				zeroValue = min;
-			} else if (max < 0) {
-				zeroValue = max;
+		function getThreshold(threshold) {
+			if (min > threshold) {
+				threshold = min;
+			} else if (max < threshold) {
+				threshold = max;
 			}
 			
-			return translate(zeroValue, 0, 1);
+			return translate(threshold, 0, 1);
 		}
 		
 		/**
@@ -4368,7 +4368,7 @@ function Chart (options) {
 			adjustTickAmount: adjustTickAmount,
 			categories: categories,
 			getExtremes: getExtremes,
-			getZeroPlane: getZeroPlane,
+			getThreshold: getThreshold,
 			isXAxis: isXAxis,
 			options: options,
 			render: render,
@@ -7313,7 +7313,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			segmentPath,
 			renderer = chart.renderer,
-			translatedY0 = series.yAxis.getZeroPlane(options.threshold || 0),
+			translatedThreshold = series.yAxis.getThreshold(options.threshold || 0),
 			useArea = /^area/.test(series.type),
 			areaPath = [];
 			
@@ -7364,9 +7364,9 @@ Series.prototype = {
 				} else { // follow zero line back
 					areaSegmentPath.push(
 						segment[segment.length - 1].plotX, 
-						translatedY0, 
+						translatedThreshold, 
 						segment[0].plotX, 
-						translatedY0,
+						translatedThreshold,
 						'z'
 					);
 				}
@@ -7981,23 +7981,23 @@ var ColumnSeries = extendClass(Series, {
 			pointXOffset = pointPadding + (groupPadding + columnIndex *
 				pointOffsetWidth -(categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
-			translatedY0 = series.yAxis.getZeroPlane(options.threshold || 0),
+			translatedThreshold = series.yAxis.getThreshold(options.threshold || 0),
 			minPointLength = options.minPointLength;
 			
 		// record the new values
 		each (data, function(point) {
 			var plotY = point.plotY,
 				barX = point.plotX + pointXOffset,
-				barY = mathMin(plotY, translatedY0), 
+				barY = mathMin(plotY, translatedThreshold), 
 				barW = pointWidth,
-				barH = mathAbs((point.yBottom || translatedY0) - plotY),
+				barH = mathAbs((point.yBottom || translatedThreshold) - plotY),
 				trackerY;
 			
 			// handle options.minPointLength and tracker for small points
 			if (mathAbs(barH) < (minPointLength || 5)) { 
 				if (minPointLength) {
 					barH = minPointLength;
-					barY = translatedY0 - (plotY <= translatedY0 ? minPointLength : 0);
+					barY = translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
 				}
 				trackerY = barY - 3;
 			}
