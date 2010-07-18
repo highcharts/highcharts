@@ -139,7 +139,7 @@ defaultOptions.exporting = {
 						type: 'image/svg+xml'
 					});
 				}
-			}/*, {
+			}, {
 				text: 'View SVG',
 				onclick: function() {
 					var svg = this.getSVG()
@@ -148,7 +148,7 @@ defaultOptions.exporting = {
 						
 					doc.body.innerHTML = '<pre>'+ svg +'</pre>';
 				}
-			}*/]
+			}]
 			
 		},
 		printButton: {
@@ -235,6 +235,7 @@ extend (Chart.prototype, {
 			replace(/symbolName="[^"]+"/g, '').
 			replace(/jQuery[0-9]+="[^"]+"/g, '').
 			replace(/isTracker="[^"]+"/g, '').
+			replace('url('+ chart.renderer.url +'#', 'url(#').
 			
 			// IE specific
 			replace(/id=([^" >]+)/g, 'id="$1"'). 

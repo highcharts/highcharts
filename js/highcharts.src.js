@@ -1394,7 +1394,7 @@ SVGElement.prototype = {
 	 * @param {String} id
 	 */
 	clip: function(clipRect) {
-		return this.attr('clip-path', 'url(#'+ clipRect.id +')');
+		return this.attr('clip-path', 'url('+ this.renderer.url +'#'+ clipRect.id +')');
 	},
 	
 	/**
@@ -1666,7 +1666,8 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 */
 	init: function(container, width, height) {
-		var box = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		var box = doc.createElementNS('http://www.w3.org/2000/svg', 'svg'),
+			loc = location;
 		attr(box, {
 			width: width,
 			height: height,
@@ -1675,10 +1676,10 @@ SVGRenderer.prototype = {
 		});
 		container.appendChild(box);
 		
-			
 		// object properties
 		this.Element = SVGElement;
 		this.box = box;
+		this.url = loc.href.replace(loc.hash, ''); // page url used for internal references
 		this.defs = this.createElement('defs').add();
 	},
 	
@@ -2135,7 +2136,7 @@ SVGRenderer.prototype = {
 				}).add(gradientObject);
 			});
 			
-			return 'url(#'+ id +')';
+			return 'url('+ this.url +'#'+ id +')';
 			
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
