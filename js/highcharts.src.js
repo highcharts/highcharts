@@ -1744,9 +1744,11 @@ SVGRenderer.prototype = {
 					
 					span = span.replace(/<(.|\n)*?>/g, '');
 					tspan.appendChild(doc.createTextNode(span));
+					//console.log('"'+tspan.textContent+'"');
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
 					} else {
+						// Firefox ignores spaces at the front or end of the tspan
 						attributes.dx = 3; // space
 					}
 					if (lineNo && !spanNo) { // first span on subsequent line, add the line height
@@ -3275,6 +3277,7 @@ function Chart (options) {
 		tooltip,
 		mouseIsDown,
 		loadingLayer,
+		loadingShown,
 		plotHeight,
 		plotWidth,
 		plotSizeX, // width if normal, height if inverted
@@ -5559,12 +5562,15 @@ function Chart (options) {
 		
 		
 		// show it
-		css(loadingLayer, { opacity: 0, display: '' });
-		animate(loadingLayer, {
-			opacity: loadingOptions.style.opacity
-		}, {
-			duration: loadingOptions.showDuration
-		});
+		if (!loadingShown) {
+			css(loadingLayer, { opacity: 0, display: '' });
+			animate(loadingLayer, {
+				opacity: loadingOptions.style.opacity
+			}, {
+				duration: loadingOptions.showDuration
+			});
+			loadingShown = true;
+		}
 	}
 	/**
 	 * Hide the loading layer
@@ -5578,7 +5584,7 @@ function Chart (options) {
 				css(loadingLayer, { display: NONE });
 			}
 		});
-
+		loadingShown = false;
 	}
 	
 	/**
