@@ -5117,14 +5117,14 @@ function Chart (options) {
 				item.legendItem = li = renderer.text(
 						options.labelFormatter.call(item),
 						0, 
-						0,
-						itemStyle
+						0
 					)
+					.css(itemStyle)
 					.on('mouseover', function() {
 						item.setState(HOVER_STATE);
 						li.css(itemHoverStyle);
 					})
-					.on('mouseout', function() {		
+					.on('mouseout', function() {
 						li.css(item.visible ? itemStyle : itemHiddenStyle);
 						item.setState();
 					})
