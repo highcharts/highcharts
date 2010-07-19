@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /** 
- * @license Highcharts JS v2.0.1 (pre-release)
+ * @license Highcharts JS v2.0.1 (2010-07-18)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -12,7 +12,7 @@
 // JSLint options:
 /*jslint forin: true */
 /*global document, window, navigator, setInterval, clearInterval, location, jQuery, $, $each, $merge, Events, Event, Fx, Request */
-					
+	
 (function() {
 
 // encapsulated variables
@@ -3357,7 +3357,12 @@ function Chart (options) {
 			magnitude,
 			tickPositions, // array containing predefined positions
 			tickAmount,
-			labelFormatter = options.labels.formatter, // can be overwritten by dynamic format
+			dateTimeLabelFormat,
+			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
+				function() {
+					var value = this.value;
+					return dateTimeLabelFormat ? dateFormat(dateTimeLabelFormat, value) : value;
+				},
 			// column plots are always categorized
 			categories = options.categories || (isXAxis && chart.columnCount), 
 			reversed = options.reversed,
@@ -3615,6 +3620,7 @@ function Chart (options) {
 					index: index,
 					isFirst: pos == tickPositions[0],
 					isLast: pos == tickPositions[tickPositions.length - 1],
+					dateTimeLabelFormat: dateTimeLabelFormat,
 					value: (categories && categories[pos] ? categories[pos] : pos)
 				});
 				if (str || str === 0) {
@@ -3830,11 +3836,12 @@ function Chart (options) {
 			tickPositions.push(time);
 			
 			// dynamic label formatter 
-			if (!options.labels.formatter) {
+			dateTimeLabelFormat = options.dateTimeLabelFormats[unit[0]];
+			/*if (!options.labels.formatter) {
 				labelFormatter = function() {
 					return dateFormat(options.dateTimeLabelFormats[unit[0]], this.value, 1);
 				};
-			}
+			}*/
 			
 		}
 			
@@ -3872,11 +3879,11 @@ function Chart (options) {
 			}
 
 			// dynamic label formatter 
-			if (!labelFormatter) { 
+			/*if (!labelFormatter) { 
 				labelFormatter = function() {
 					return this.value;
 				};
-			}
+			}*/
 			
 		}
 		
@@ -6771,6 +6778,7 @@ Series.prototype = {
 					yBottom = pointStackTotal ? yBottom * 100 / pointStackTotal : 0;
 					yValue = pointStackTotal ? yValue * 100 / pointStackTotal : 0;
 				}
+
 				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
 				point.stackTotal = pointStackTotal;
 				point.yBottom = yAxis.translate(yBottom, 0, 1);				
