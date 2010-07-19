@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.0.0 (2010-07-13)
+ * @license Highcharts JS v2.0.1 (2010-07-18)
  * Exporting module
  * 
  * (c) 2010 Torstein Hønsi
@@ -139,7 +139,7 @@ defaultOptions.exporting = {
 						type: 'image/svg+xml'
 					});
 				}
-			}, {
+			}/*, {
 				text: 'View SVG',
 				onclick: function() {
 					var svg = this.getSVG()
@@ -148,7 +148,7 @@ defaultOptions.exporting = {
 						
 					doc.body.innerHTML = '<pre>'+ svg +'</pre>';
 				}
-			}]
+			}*/]
 			
 		},
 		printButton: {
@@ -235,7 +235,7 @@ extend (Chart.prototype, {
 			replace(/symbolName="[^"]+"/g, '').
 			replace(/jQuery[0-9]+="[^"]+"/g, '').
 			replace(/isTracker="[^"]+"/g, '').
-			replace('url('+ chart.renderer.url +'#', 'url(#').
+			replace(/url\([^#]+#/g, 'url(#').
 			
 			// IE specific
 			replace(/id=([^" >]+)/g, 'id="$1"'). 
@@ -311,7 +311,7 @@ extend (Chart.prototype, {
 		chart.isPrinting = true;
 		
 		// hide all body content	
-		each(childNodes, function(node) {
+		each(childNodes, function(node, i) {
 			if (node.nodeType == 1) {
 				origDisplay[i] = node.style.display;
 				node.style.display = NONE;
@@ -331,7 +331,7 @@ extend (Chart.prototype, {
 			origParent.appendChild(container);
 			
 			// restore all body content
-			each (childNodes, function(node) {
+			each (childNodes, function(node, i) {
 				if (node.nodeType == 1) {
 					node.style.display = origDisplay[i];
 				}
