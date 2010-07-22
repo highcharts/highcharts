@@ -7256,7 +7256,7 @@ Series.prototype = {
 					
 				// destroy old data label after update
 				if (pointLabel) {
-					pointLabel.destroy();
+					point.dataLabel = pointLabel.destroy();
 				}
 					
 				// get the string
