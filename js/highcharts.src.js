@@ -6226,7 +6226,7 @@ Point.prototype = {
 		removeEvent(point);
 		
 		
-		each (['graphic', 'tracker', 'group'], function(prop) {
+		each (['dataLabel', 'graphic', 'tracker', 'group'], function(prop) {
 			if (point[prop]) {
 				point[prop].destroy();
 			}
@@ -7295,7 +7295,7 @@ Series.prototype = {
 						align
 					)
 					.attr({ zIndex: 1 })
-					.add(point.group || dataLabelsGroup); // pies have point.group
+					.add(dataLabelsGroup); // pies have point.group
 				}
 				
 				if (series.drawConnector) {
