@@ -1679,7 +1679,7 @@ SVGRenderer.prototype = {
 		// object properties
 		this.Element = SVGElement;
 		this.box = box;
-		this.url = loc.href.replace(loc.hash, ''); // page url used for internal references
+		this.url = loc.href.replace(/#.*?$/, ''); // page url used for internal references
 		this.defs = this.createElement('defs').add();
 	},
 	
