@@ -5927,7 +5927,6 @@ function Chart (options) {
 		if (optionsChart.plotBorderWidth) {
 			renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0, optionsChart.plotBorderWidth).
 				attr({
-					'class': 'plot-border',
 					stroke: optionsChart.plotBorderColor,
 					'stroke-width': optionsChart.plotBorderWidth,
 					zIndex: 4
@@ -7478,7 +7477,7 @@ Series.prototype = {
 		if (series.drawGraph) {
 			series.drawGraph();
 		}
-		
+				
 		// draw the points
 		series.drawPoints();
 		
@@ -8521,7 +8520,7 @@ var PieSeries = extendClass(Series, {
 			shapeArgs;
 		
 		// draw the slices
-		each (this.data, function(point) {
+		each (series.data, function(point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 
