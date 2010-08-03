@@ -18,7 +18,7 @@
 // create shortcuts
 var HC = Highcharts, 
 	addEvent = HC.addEvent,
-	defaultOptions = HC.defaultOptions,
+	defaultOptions = HC.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	seriesTypes = HC.seriesTypes,
 	map = HC.map,
@@ -40,8 +40,7 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 });
 
 var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
-	type: 'funnel',
-	
+	type: 'funnel',	
 
 	
 	/**
@@ -159,7 +158,10 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 				path.push(x4, y5, x3, y5);
 			}
 			path.push(x3, y3, 'Z');
-			point.path = path;
+			
+			// prepare for using shared dr
+			point.shapeType = 'path';
+			point.shapeArgs = path;
 			
 			
 			// for tooltips and data labels
@@ -183,50 +185,38 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 	 * @param {Object} color The color of the point
 	 * @param {Number} brightness The brightness relative to the color
 	 */
-	drawPoint: function(point, color, brightness) {
+	drawPoints: function(point) {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
 			trackerRect = chart.trackerRect,
 			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
+			plotTop = chart.plotTop;
 			//y = point.y,
-			path = point.path;
 			//height = point.height;
 			
+		each (series.data, function(point) {
+			
+			if (!point.group) {
 				
-		if (!point.group) {
-			point.group = renderer.g('point').add(series.group).
-				translate(plotLeft, plotTop);
+				point.group = renderer.g('point').add(series.group).
+					translate(plotLeft, plotTop);
+					
 				
-			
-			
-			point.graphic = renderer.path(path).
-				attr({ 
-					//fill: Color(color).brighten(brightness).get(ctx),
-					fill: color,
-					stroke: options.borderColor,
-					'stroke-width': options.borderWidth
-				}).
-				add(point.group);
-			
-			point.tracker = renderer.path(path).
-				attr({
-					isTracker: true,
-					fill: 'rgba(192,192,192,0.005)'//,
-					//'fill-opacity': 0.001 // must have an opacity to capture mouse events
-				}).
-				add(chart.trackerGroup, 1);
-				
-			addEvent(point.tracker.element, 'mouseover', function() {
-				chart.hoverPoint = point;
-				series.onMouseOver();
-			});
-			
-			
-		}	
+				point.graphic = renderer.path(point.shapeArgs).
+					attr({ 
+						//fill: Color(color).brighten(brightness).get(ctx),
+						fill: point.color,
+						stroke: options.borderColor,
+						'stroke-width': options.borderWidth
+					}).
+					add(point.group);
+									
+			}
+		});	
 	},
+	
 	
 	/**
 	 * Draw a connector from an individual point to its data label
@@ -251,5 +241,6 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 	
 });
 seriesTypes.funnel = FunnelSeries;
+
 
 })();
