@@ -7328,7 +7328,7 @@ Series.prototype = {
 		
 		// divide into segments and build graph and area paths
 		each(series.segments, function(segment) {
-			if (segment.length > 1) {
+			if (segment.length > 0) {
 				segmentPath = [];
 				
 				// build the segment line
@@ -7357,7 +7357,7 @@ Series.prototype = {
 				graphPath = graphPath.concat(segmentPath);
 				
 				// build the area
-				if (useArea) {
+				if (useArea && segment.length > 1) {
 					var areaSegmentPath = [],
 						i,
 						segLength = segmentPath.length;
@@ -7662,9 +7662,11 @@ Series.prototype = {
 			options = series.options,
 			trackerPath = series.graphPath,
 			chart = series.chart,
+			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
 			cursor = options.cursor,
-			css = cursor && { cursor: cursor };
+			css = cursor && { cursor: cursor },
+			i;
 	
 		// if only one series, use the whole plot area as tracker
 		// problem: can't put legend inside plot area
@@ -7679,6 +7681,16 @@ Series.prototype = {
 				'Z'
 			]; 
 		}*/
+		
+		// handle single points
+		for (i = 0; i < trackerPath.length; i++) {
+			if (trackerPath[i] == M && trackerPath[i + 3] == M) { // is single point
+				trackerPath[i + 1] -= 2; // move x value left
+				trackerPath.splice(i + 3, 0, L, trackerPath[i + 1] + 4, trackerPath[i + 2]);
+			}
+		}
+		
+		// draw the tracker
 		if (tracker) { // update
 			tracker.attr({ d: trackerPath });
 			
@@ -7689,7 +7701,7 @@ Series.prototype = {
 					stroke: TRACKER_FILL,
 					//fill: isSingleSeries ? TRACKER_FILL : NONE,
 					fill: NONE,
-					'stroke-width' : options.lineWidth + 2 * chart.options.tooltip.snap,
+					'stroke-width' : options.lineWidth + 2 * snap,
 					'stroke-linecap': 'round',
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: 1
