@@ -3270,6 +3270,10 @@ function Chart (options) {
 		containerId,
 		chartWidth,
 		chartHeight,
+		chartBackground,
+		plotBackground,
+		plotBGImage,
+		plotBorder,
 		chart = this,
 		chartEvents = optionsChart.events,
 		eventType,
@@ -3330,7 +3334,7 @@ function Chart (options) {
 			isDatetimeAxis = options.type == 'datetime',
 			offset = options.offset || 0,
 			xOrY = isXAxis ? 'x' : 'y',
-			axisLength = horiz ? plotWidth : plotHeight,
+			axisLength,
 		
 			transA, // translation factor
 			transB = horiz ? plotLeft : marginBottom, // translation addend
@@ -3956,6 +3960,8 @@ function Chart (options) {
 				oldMax = max,
 				maxZoom = options.maxZoom,
 				zoomOffset;
+				
+			axisLength = horiz ? plotWidth : plotHeight;
 				
 			// get data extremes if needed
 			getSeriesExtremes();
@@ -5752,39 +5758,49 @@ function Chart (options) {
 			titleAlign = title.align,
 			subtitle = options.subtitle,
 			subtitleAlign = subtitle.align,
-			anchorMap = { // get the anchor relative to the alignment
-				left: 0,
-				center: chartWidth / 2,
-				right: chartWidth
-			};
-		
+			titlePos = getAlignment(title),
+			subtitlePos = getAlignment(subtitle);
 			
 		// title
 		if (title && title.text) {
-			renderer.text(
-				title.text, 
-				anchorMap[titleAlign] + title.x,
-				title.y, 
-				title.style, 
-				0,
-				titleAlign
-			).attr({
-				'class': 'highcharts-title'
-			}).add();
+			if (!chart.title) {
+				chart.title = renderer.text(
+					title.text, 
+					titlePos.x,
+					titlePos.y, 
+					title.style, 
+					0,
+					titleAlign
+				).attr({
+					'class': 'highcharts-title'
+				}).add();
+			} else {
+				chart.title.animate({
+					x: titlePos.x,
+					y: titlePos.y
+				})
+			}
 		}
 		
 		// subtitle
 		if (subtitle && subtitle.text) {
-			renderer.text(
-				subtitle.text, 
-				anchorMap[subtitleAlign] + subtitle.x,
-				subtitle.y, 
-				subtitle.style, 
-				0,
-				subtitleAlign
-			).attr({
-				'class': 'highcharts-subtitle'
-			}).add();
+			if (!chart.subtitle) {
+				chart.subtitle = renderer.text(
+					subtitle.text, 
+					subtitlePos.x,
+					subtitlePos.y, 
+					subtitle.style, 
+					0,
+					subtitleAlign
+				).attr({
+					'class': 'highcharts-subtitle'
+				}).add();
+			} else {
+				chart.subtitle.animate({
+					x: subtitlePos.x,
+					y: subtitlePos.y
+				})
+			}
 		}
 	}
 
@@ -5806,13 +5822,13 @@ function Chart (options) {
 			};
 		// align
 		if (/^(right|center)$/.test(align)) {
-			ret.x = (chartWidth - alignmentOptions.width) /
+			ret.x = (chartWidth - (alignmentOptions.width || 0) ) /
 				{ right: 1, center: 2 }[align] +
 				optionsX;			
 		}
 		// vertical align
 		if (/^(bottom|middle)$/.test(vAlign)) {
-			ret.y = (chartHeight - alignmentOptions.height) /
+			ret.y = (chartHeight - (alignmentOptions.height || 0)) /
 				{ bottom: 1, middle: 2 }[vAlign] +
 				optionsY;			
 		}
@@ -5890,48 +5906,71 @@ function Chart (options) {
 			chartBorderWidth = optionsChart.borderWidth || 0,
 			chartBackgroundColor = optionsChart.backgroundColor,
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
-			plotBackgroundImage = optionsChart.plotBackgroundImage;
+			plotBackgroundImage = optionsChart.plotBackgroundImage,
+			plotSize = {
+				width: plotWidth,
+				height: plotHeight
+			};
 		
 		
 		// Chart area
 		mgn = 2 * chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 			
 		if (chartBorderWidth || chartBackgroundColor) {
-			renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn, 
-					optionsChart.borderRadius, chartBorderWidth).
-				attr({ 
-					stroke: optionsChart.borderColor,
-					'stroke-width': chartBorderWidth,
-					fill: chartBackgroundColor || NONE
-				}).
-				add().
-				shadow(optionsChart.shadow);
+			if (!chartBackground) {
+				chartBackground = renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn, 
+						optionsChart.borderRadius, chartBorderWidth).
+					attr({ 
+						stroke: optionsChart.borderColor,
+						'stroke-width': chartBorderWidth,
+						fill: chartBackgroundColor || NONE
+					}).
+					add().
+					shadow(optionsChart.shadow);
+			} else { // resize
+				chartBackground.animate({
+					width: chartWidth - mgn,
+					height:chartHeight - mgn
+				});
+			}
 		}
 		
 		
 		// Plot background
 		if (plotBackgroundColor) {
-			renderer.rect(plotLeft, plotTop, plotWidth,	plotHeight,	0)
-				.attr({
-					fill: plotBackgroundColor
-				})
-				.add()
-				.shadow(optionsChart.plotShadow);
+			if (!plotBackground) {
+				plotBackground = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0)
+					.attr({
+						fill: plotBackgroundColor
+					})
+					.add()
+					.shadow(optionsChart.plotShadow);
+			} else {
+				plotBackground.animate(plotSize);
+			}
 		}
 		if (plotBackgroundImage) {
-			renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight)
-				.add();
+			if (!plotBGImage) {
+				plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight)
+					.add();
+			} else {
+				plotBGImage.animate(plotSize);
+			}
 		}
 		
 		// Plot area border
 		if (optionsChart.plotBorderWidth) {
-			renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0, optionsChart.plotBorderWidth).
-				attr({
-					'class': 'plot-border',
-					stroke: optionsChart.plotBorderColor,
-					'stroke-width': optionsChart.plotBorderWidth,
-					zIndex: 4
-				}).add();
+			if (!plotBorder) {
+				plotBorder = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0, optionsChart.plotBorderWidth).
+					attr({
+						'class': 'plot-border',
+						stroke: optionsChart.plotBorderColor,
+						'stroke-width': optionsChart.plotBorderWidth,
+						zIndex: 4
+					}).add();
+			} else {
+				plotBorder.animate(plotSize);
+			}
 		}
 						
 		// Axes
@@ -6115,6 +6154,32 @@ function Chart (options) {
 	chart.redraw = redraw;
 	chart.showLoading = showLoading;	
 	//chart.updatePosition = updatePosition;
+	
+	chart.resize = function(width, height) {
+		attr(renderer.box, {
+			width: width,
+			height: height
+		});
+		css(container, {
+			overflow: VISIBLE
+		});
+		
+		chartWidth = width;
+		chartHeight = height;
+		chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
+		chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
+		
+		chart.plotSizeX = inverted ? plotHeight : plotWidth;
+		chart.plotSizeY = inverted ? plotWidth : plotHeight;
+		
+		each(axes, function(axis) {
+			axis.isDirty = true;
+			axis.setScale();
+		});
+		
+		render();
+		redraw();
+	}
 	
 	
 	// Initialize the series
@@ -7500,6 +7565,11 @@ Series.prototype = {
 	 */
 	redraw: function() {
 		var series = this;
+		
+		series.clipRect.attr({ // for chart resize
+			width: chart.plotSizeX,
+			height: chart.plotSizeY
+		});
 			
 		series.translate();
 		series.setTooltipPoints(true);
