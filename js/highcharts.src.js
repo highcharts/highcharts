@@ -824,6 +824,7 @@ var defaultXAxisOptions =  {
 	labels: defaultLabelOptions,
 	lineColor: '#C0D0E0',
 	lineWidth: 1,
+	//linkedTo: null, // docs
 	max: null,
 	min: null,
 	minPadding: 0.01,
@@ -836,6 +837,8 @@ var defaultXAxisOptions =  {
 	minorTickLength: 2,
 	minorTickPosition: 'outside', // inside or outside
 	minorTickWidth: 1,
+	//opposite: false,
+	//offset: 0
 	//plotBands: [],
 	//plotLines: [],
 	//reversed: false,
@@ -3345,6 +3348,7 @@ function Chart (options) {
 			min = null,
 			minPadding = options.minPadding,
 			maxPadding = options.maxPadding,
+			isLinked = defined(options.linkedTo),
 			ignoreMinPadding, // can be set to true by a column or bar series
 			ignoreMaxPadding,
 			usePercentage,
@@ -3964,7 +3968,14 @@ function Chart (options) {
 			min = pick(userSetMin, options.min, dataMin);
 			max = pick(userSetMax, options.max, dataMax);
 			
-			
+			// linked axis gets the extremes from the parent axis
+			if (isLinked) {
+				var linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo],
+					linkedParentExtremes = linkedParent.getExtremes();
+				min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
+				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);				
+			}
+				
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) { 
 				zoomOffset = (maxZoom - max + min) / 2;
@@ -4150,7 +4161,7 @@ function Chart (options) {
 			}
 			
 			// If the series has data draw the ticks. Else only the line and title
-			if (hasData) {
+			if (hasData || isLinked) {
 				// alternate grid color
 				if (alternateGridColor) {
 					each(tickPositions, function(pos, i) {
