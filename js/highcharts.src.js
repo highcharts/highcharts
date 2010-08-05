@@ -794,6 +794,12 @@ defaultOptions = {
 		enabled: true,
 		text: 'Highcharts.com',
 		href: 'http://www.highcharts.com',
+		position: {
+			align: 'right',
+			x: -10,
+			verticalAlign: 'bottom',
+			y: -5
+		},
 		style: {
 			cursor: 'pointer',
 			color: '#909090',
@@ -1500,6 +1506,51 @@ SVGElement.prototype = {
 		element.parentNode.appendChild(element);
 		return this;
 	},
+	
+	
+	/**
+	 * Break down alignment options like align, verticalAlign, x and y 
+	 * to x and y relative to the chart.
+	 * 
+	 * @param {Object} alignOptions
+	 * 
+	 */
+	align: function(alignOptions) {
+		
+		if (!alignOptions) { // called on resize
+			alignOptions = this.alignOptions;
+		} else { // first call on instanciate
+			this.alignOptions = alignOptions;
+			this.renderer.alignedObjects.push(this);
+		}
+		
+		var align = alignOptions.align,
+			vAlign = alignOptions.verticalAlign,
+			isGroup = this.element.nodeName == 'g',
+			bBox = isGroup ? this.getBBox() : {},
+			x = alignOptions.x || 0, // default: left align
+			y = alignOptions.y || 0; // default: top align
+			
+		
+		// align
+		if (/^(right|center)$/.test(align)) {
+			x += (attr(this.renderer.box, 'width') - (bBox.width || 0) ) /
+					{ right: 1, center: 2 }[align];
+		}
+		this.attr(isGroup ? 'translateX' : 'x', x);
+		
+		
+		// vertical align
+		if (/^(bottom|middle)$/.test(vAlign)) {
+			y += (attr(this.renderer.box, 'height') - (bBox.height || 0)) /
+					({ bottom: 1, middle: 2 }[vAlign] || 1);
+			
+		}
+		this.attr(isGroup ? 'translateY' : 'y', y);
+		
+		return this;
+	},
+	
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
@@ -1679,6 +1730,7 @@ SVGRenderer.prototype = {
 		// object properties
 		this.Element = SVGElement;
 		this.box = box;
+		this.alignedObjects = [];
 		this.url = loc.href.replace(loc.hash, ''); // page url used for internal references
 		this.defs = this.createElement('defs').add();
 	},
@@ -1878,6 +1930,26 @@ SVGRenderer.prototype = {
 			ry: r || attr.r,
 			fill: NONE
 		}));
+	},
+	
+	/**
+	 * Resize the box and re-align all aligned elements
+	 * @param {Object} width
+	 * @param {Object} height
+	 */
+	resizeTo: function(width, height) {
+		var alignedObjects = this.alignedObjects,
+			i = alignedObjects.length,
+			obj;
+		
+		attr(this.box, {
+			width: width,
+			height: height
+		});
+		
+		while (i--) {
+			alignedObjects[i].align();
+		}
 	},
 	
 	/**
@@ -3277,7 +3349,6 @@ function Chart (options) {
 		chart = this,
 		chartEvents = optionsChart.events,
 		eventType,
-		getAlignment, // function
 		isInsidePlot, // function
 		tooltip,
 		mouseIsDown,
@@ -5345,11 +5416,9 @@ function Chart (options) {
 			}
 
 			
-			var boxPos = getAlignment(extend({
-				width: boxWidth,
-				height: boxHeight
-			}, options));
-			legendGroup.translate(boxPos.x, boxPos.y);
+			/*var boxPos = renderer.getAlignment(options);
+			legendGroup.translate(boxPos.x, boxPos.y);*/
+			legendGroup.align(options);
 			
 			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
@@ -5757,85 +5826,57 @@ function Chart (options) {
 		var title = options.title,
 			titleAlign = title.align,
 			subtitle = options.subtitle,
-			subtitleAlign = subtitle.align,
-			titlePos = getAlignment(title),
-			subtitlePos = getAlignment(subtitle);
+			subtitleAlign = subtitle.align;//,
+			//titlePos = getAlignment(title),
+			//subtitlePos = getAlignment(subtitle);
 			
 		// title
 		if (title && title.text) {
-			if (!chart.title) {
+			//if (!chart.title) {
 				chart.title = renderer.text(
 					title.text, 
-					titlePos.x,
-					titlePos.y, 
+					0,//titlePos.x,
+					0,//titlePos.y, 
 					title.style, 
 					0,
 					titleAlign
-				).attr({
+				)
+				.align(title)
+				.attr({
 					'class': 'highcharts-title'
 				}).add();
-			} else {
+			/*} else {
 				chart.title.animate({
 					x: titlePos.x,
 					y: titlePos.y
 				})
-			}
+			}*/
 		}
 		
 		// subtitle
 		if (subtitle && subtitle.text) {
-			if (!chart.subtitle) {
+			//if (!chart.subtitle) {
 				chart.subtitle = renderer.text(
 					subtitle.text, 
-					subtitlePos.x,
-					subtitlePos.y, 
+					0,//subtitlePos.x,
+					0,//subtitlePos.y, 
 					subtitle.style, 
 					0,
 					subtitleAlign
-				).attr({
+				)
+				.align(subtitle)
+				.attr({
 					'class': 'highcharts-subtitle'
 				}).add();
-			} else {
+			/*} else {
 				chart.subtitle.animate({
 					x: subtitlePos.x,
 					y: subtitlePos.y
 				})
-			}
+			}*/
 		}
 	}
 
-	/**
-	 * Break down alignment options like align, verticalAlign, x, y, 
-	 * width and height to x and y relative to the chart.
-	 * 
-	 * @param {Object} alignmentOptions
-	 * 
-	 */
-	getAlignment = function(alignmentOptions) {
-		var align = alignmentOptions.align,
-			vAlign = alignmentOptions.verticalAlign,
-			optionsX = alignmentOptions.x || 0,
-			optionsY = alignmentOptions.y || 0,
-			ret = {
-				x: optionsX || 0, // default: left align
-				y: optionsY || 0 // default: top align
-			};
-		// align
-		if (/^(right|center)$/.test(align)) {
-			ret.x = (chartWidth - (alignmentOptions.width || 0) ) /
-				{ right: 1, center: 2 }[align] +
-				optionsX;			
-		}
-		// vertical align
-		if (/^(bottom|middle)$/.test(vAlign)) {
-			ret.y = (chartHeight - (alignmentOptions.height || 0)) /
-				{ bottom: 1, middle: 2 }[vAlign] +
-				optionsY;			
-		}
-		
-		
-		return ret;
-	};
 	
 	/**
 	 * Get the containing element, determine the size and create the inner container
@@ -5894,16 +5935,12 @@ function Chart (options) {
 				new SVGRenderer(container, chartWidth, chartHeight) : 
 				new Renderer(container, chartWidth, chartHeight);
 	}
+	
 	/**
-	 * Render all graphics for the chart
+	 * Draw the borders and backgrounds for chart and plot area
 	 */
-	function render () {
-		var mgn, 
-			//div, 
-			//i, 
-			labels = options.labels, 
-			credits = options.credits,
-			chartBorderWidth = optionsChart.borderWidth || 0,
+	function drawChartBox() {
+		var chartBorderWidth = optionsChart.borderWidth || 0,
 			chartBackgroundColor = optionsChart.backgroundColor,
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
@@ -5911,8 +5948,7 @@ function Chart (options) {
 				width: plotWidth,
 				height: plotHeight
 			};
-		
-		
+
 		// Chart area
 		mgn = 2 * chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 			
@@ -5972,6 +6008,20 @@ function Chart (options) {
 				plotBorder.animate(plotSize);
 			}
 		}
+	}
+	
+	/**
+	 * Render all graphics for the chart
+	 */
+	function render () {
+		var mgn, 
+			//div, 
+			//i, 
+			labels = options.labels, 
+			credits = options.credits;
+		
+		// Draw the borders and backgrounds
+		drawChartBox();
 						
 		// Axes
 		if (hasCartesianSeries) {
@@ -6025,12 +6075,13 @@ function Chart (options) {
 		if (credits.enabled && !chart.credits) {
 			renderer.text(
 				credits.text,
-				chartWidth - 10,
-				chartHeight - 5,
+				0,
+				0,
 				credits.style,
 				0,
 				'right'
 			)
+			.align(credits.position)
 			.on('click', function() {
 				location.href = credits.href;
 			})
@@ -6146,7 +6197,7 @@ function Chart (options) {
 	chart.addSeries = addSeries;
 	chart.destroy = destroy;
 	chart.get = get;
-	chart.getAlignment = getAlignment;
+	//chart.getAlignment = getAlignment;
 	chart.getSelectedPoints = getSelectedPoints;
 	chart.getSelectedSeries = getSelectedSeries;
 	chart.hideLoading = hideLoading;
@@ -6155,11 +6206,16 @@ function Chart (options) {
 	chart.showLoading = showLoading;	
 	//chart.updatePosition = updatePosition;
 	
+	/*
+	 * To do for resize:
+	 * - Re-use setting chartWidth, plotWidth, plotSizeX etc. Run resize chart on init or
+	 *   isolate these statements in a func.
+	 * - Make the getAlignment logic part of the Renderer. Create a collection of aligned items
+	 *   and update placements on resize. Remember to slice off these on destroy.
+	 * 
+	 */
 	chart.resize = function(width, height) {
-		attr(renderer.box, {
-			width: width,
-			height: height
-		});
+		renderer.resizeTo(width, height);
 		css(container, {
 			overflow: VISIBLE
 		});
@@ -6177,7 +6233,9 @@ function Chart (options) {
 			axis.setScale();
 		});
 		
-		render();
+		// todo: should this be handled by redraw? could add something like chart.isSizeDirty
+		drawChartBox(); 
+		
 		redraw();
 	}
 	

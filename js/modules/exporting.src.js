@@ -424,7 +424,7 @@ extend (Chart.prototype, {
 			menuStyle.left = (x - menuPadding) + PX;
 		}
 		// if outside bottom, bottom align it
-		if (y + height + chart.exportMenuWidth > chartHeight) {
+		if (y + height + chart.exportMenuHeight > chartHeight) {
 			menuStyle.bottom = (chartHeight - y - menuPadding)  + PX;
 		} else {
 			menuStyle.top = (y + height - menuPadding) + PX;
