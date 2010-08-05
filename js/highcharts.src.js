@@ -277,9 +277,13 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Function} handler The function to remove
 	 */
 	removeEvent = function(el, eventType, handler) {
-		try { // http://forum.jquery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jquery-1-4-2
-			jQ(el).unbind(eventType, handler);
-		} catch (e) {}
+		// workaround for jQuery issue with unbinding custom events:
+		// http://forum.jquery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jquery-1-4-2
+		if (document.removeEventListener && !el.removeEventListener) {
+			el.removeEventListener = function() {};
+		}
+		
+		jQ(el).unbind(eventType, handler);
 	};
 	
 	fireEvent = function(el, type, eventArguments, defaultFunction) {
