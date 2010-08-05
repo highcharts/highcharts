@@ -7185,10 +7185,11 @@ Series.prototype = {
 	 */
 	destroy: function() {
 		var series = this,
-			chartSeries = series.chart.series,
+			chart = series.chart,
+			chartSeries = chart.series,
 			clipRect = series.clipRect,
 			prop;
-		
+			
 		// remove all events
 		removeEvent(series);
 			
@@ -7201,6 +7202,7 @@ Series.prototype = {
 		each (series.data, function(point) {
 			point.destroy();
 		});
+		
 		// destroy all SVGElements associated to the series
 		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
 			if (series[prop]) {
@@ -7209,6 +7211,11 @@ Series.prototype = {
 		});
 		if (clipRect && clipRect != series.chart.clipRect) {
 			clipRect.destroy();
+		}
+		
+		// remove from hoverSeries
+		if (chart.hoverSeries == series) {
+			chart.hoverSeries = null;
 		}
 		
 		// loop through the chart series to locate the series and remove it
