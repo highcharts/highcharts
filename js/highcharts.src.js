@@ -3253,7 +3253,7 @@ var Renderer = hasSVG ?	SVGRenderer : VMLRenderer;
  * @param {Object} options
  */
 function Chart (options) {
-	
+
 	defaultXAxisOptions = merge(defaultXAxisOptions, defaultOptions.xAxis);
 	defaultYAxisOptions = merge(defaultYAxisOptions, defaultOptions.yAxis);
 	defaultOptions.xAxis = defaultOptions.yAxis = null;
@@ -5867,14 +5867,21 @@ function Chart (options) {
 		
 		// get the width and height
 		var renderToOffsetHeight = (renderToClone || renderTo).offsetHeight;
-		chartWidth = optionsChart.width || (renderToClone || renderTo).offsetWidth || 600;
-		chartHeight = optionsChart.height || 
+		chart.chartWidth = chartWidth = optionsChart.width || (renderToClone || renderTo).offsetWidth || 600;
+		chart.chartHeight = chartHeight = optionsChart.height || 
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			(renderToOffsetHeight > plotTop + marginBottom ? renderToOffsetHeight : 0) || 
 			400;
+			
+		
+		chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
+		chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
+	
+		chart.plotLeft = plotLeft;
+		chart.plotTop = plotTop;
 		
 		// create the inner container
-		container = createElement(DIV, {
+		chart.container = container = createElement(DIV, {
 				className: 'highcharts-container' + 
 					(optionsChart.className ? ' '+ optionsChart.className : ''),
 				id: containerId
@@ -5897,6 +5904,7 @@ function Chart (options) {
 	 * Render all graphics for the chart
 	 */
 	function render () {
+		
 		var mgn, 
 			//div, 
 			//i, 
@@ -6062,6 +6070,34 @@ function Chart (options) {
 	 */
 	function firstRender() {
 		
+		// VML namespaces can't be added until after complete. Listening
+		// for Perini's doScroll hack is not enough.
+		var onreadystatechange = 'onreadystatechange';
+		if (isIE && doc.readyState != 'complete') {
+			doc.attachEvent(onreadystatechange, function() {
+				doc.detachEvent(onreadystatechange, arguments.callee);
+				firstRender();
+			});
+			return;
+		}
+		
+		// create the container
+		getContainer();
+		
+		
+		// Initialize the series
+		each (options.series || [], function(serieOptions) {
+			initSeries(serieOptions);
+		});
+	
+		// Set the common inversion and transformation for inverted series after initSeries
+		chart.inverted = inverted = pick(inverted, options.chart.inverted);
+		chart.plotSizeX = plotSizeX = inverted ? plotHeight : plotWidth;
+		chart.plotSizeY = plotSizeY = inverted ? plotWidth : plotHeight; 
+			
+		// depends on inverted	
+		chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
+		
 		getAxes();
 		
 		
@@ -6079,7 +6115,6 @@ function Chart (options) {
 	
 	
 		
-	getContainer();
 	//updatePosition(container);
 	
 		
@@ -6103,17 +6138,7 @@ function Chart (options) {
 	
 	chart.options = options;
 	chart.series = series;
-	chart.container = container;
-	
-	
-	chart.chartWidth = chartWidth;
-	chart.chartHeight = chartHeight;
-	
-	chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
-	chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
-	
-	chart.plotLeft = plotLeft;
-	chart.plotTop = plotTop;
+	//chart.container = container;
 	
 	
 	
@@ -6131,18 +6156,7 @@ function Chart (options) {
 	//chart.updatePosition = updatePosition;
 	
 	
-	// Initialize the series
-	each (options.series || [], function(serieOptions) {
-		initSeries(serieOptions);
-	});
 	
-	// Set the common inversion and transformation for inverted series after initSeries
-	chart.inverted = inverted = pick(inverted, options.chart.inverted);
-	chart.plotSizeX = plotSizeX = inverted ? plotHeight : plotWidth;
-	chart.plotSizeY = plotSizeY = inverted ? plotWidth : plotHeight; 
-	
-	// depends on inverted	
-	chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
 		
 	firstRender();
 }
