@@ -1,0 +1,42 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="edit-Type" edit="text/html; charset=utf-8">
+	<title>Highcharts Resize Study</title>
+    <script type="text/javascript" src="/js/jquery.js">
+    </script>
+    <script type="text/javascript" src="/js/highcharts.src.js">
+    </script>
+    <!-- script type="text/javascript" src="/js/modules/exporting.src.js">
+    </script -->
+</head>
+<body>
+    <script type='text/javascript'>
+    	var chart,
+			large;
+        $(document).ready(function(){
+            chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'container',
+					defaultSeriesType: 'spline',
+					borderWidth: 1,
+					plotBorderWidth: 1
+                },
+				
+				xAxis: {
+					title: {
+						text: 'X axis'
+					}
+				},
+				
+                series: [{
+                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+                }]
+            });
+			
+        });
+    </script>
+    <div id="container" style="height: 300px; width: 400px">
+    </div>
+</body>
+</html>

@@ -3411,6 +3411,7 @@ function Chart (options) {
 			transB = horiz ? plotLeft : marginBottom, // translation addend
 			axisGroup,
 			gridGroup,
+			axisLine,
 			dataMin,
 			dataMax,
 			associatedSeries,
@@ -4210,6 +4211,7 @@ function Chart (options) {
 				lineWidth = options.lineWidth,
 				lineLeft,
 				lineTop,
+				linePath,
 				tickmarkPos,
 				hasData = associatedSeries.length && defined(min) && defined(max);
 			
@@ -4295,11 +4297,11 @@ function Chart (options) {
 			// Static items. As the axis group is cleared on subsequent calls
 			// to render, these items are added outside the group.	
 			// axis line
-			if (!axis.hasRenderedLine && lineWidth) {
+			if (lineWidth) {
 				lineLeft = plotLeft + (opposite ? plotWidth : 0) + offset;
 				lineTop = chartHeight - marginBottom - (opposite ? plotHeight : 0) + offset;
 				
-				renderer.path(renderer.crispLine([
+				linePath = renderer.crispLine([
 						M,
 						horiz ? 
 							plotLeft: 
@@ -4314,19 +4316,24 @@ function Chart (options) {
 						horiz ? 
 							lineTop:
 							chartHeight - marginBottom
-					], lineWidth)).
-					attr({ 
-						stroke: options.lineColor, 
-						'stroke-width': lineWidth,
-						zIndex: 7
-					}).
-					add();
+					], lineWidth);
+				
+				if (!axisLine) {
+					axisLine = renderer.path(linePath).
+						attr({ 
+							stroke: options.lineColor, 
+							'stroke-width': lineWidth,
+							zIndex: 7
+						}).
+						add();
+				} else {
+					axisLine.attr('d', linePath);
+				}
 					
-				axis.hasRenderedLine = true;
 			}
 			
 			// Render the title. 
-			if (!axis.hasRenderedTitle && !axis.axisTitle && axisTitleOptions && axisTitleOptions.text) {
+			if (axisTitleOptions && axisTitleOptions.text) {
 				
 				// compute anchor points for each of the title align options
 				var margin = horiz ? 
@@ -4348,20 +4355,26 @@ function Chart (options) {
 						axisTitleOptions.style.fontSize || 12, 10
 					) / 3 : 0); // preliminary fix for vml's centerline
 				
-				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
+				if (!axis.axisTitle) {
+					axis.axisTitle = renderer.text(
+						axisTitleOptions.text,
+						0,
+						0,
+						axisTitleOptions.style, 
+						axisTitleOptions.rotation || 0,
+						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+					)
+					.attr({ zIndex: 7 })
+					.add();
+				}
+				axis.axisTitle.translate(
 					horiz ? 
 						alongAxis: 
 						offAxis + (opposite ? plotWidth : 0) + offset, // x
 					horiz ? 
 						offAxis - (opposite ? plotHeight : 0) + offset: 
-						alongAxis, // y
-					axisTitleOptions.style, 
-					axisTitleOptions.rotation || 0,
-					{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
-				)
-				.attr({ zIndex: 7 })
-				.add();
+						alongAxis // y
+				);
 				
 				axis.hasRenderedTitle = true;
 			}
@@ -5922,7 +5935,7 @@ function Chart (options) {
 				id: containerId
 			}, extend({
 				position: RELATIVE,
-				overflow: HIDDEN,
+				//overflow: HIDDEN,
 				width: chartWidth + PX,
 				height: chartHeight + PX,
 				textAlign: 'left'
@@ -5964,7 +5977,7 @@ function Chart (options) {
 					add().
 					shadow(optionsChart.shadow);
 			} else { // resize
-				chartBackground.animate({
+				chartBackground.attr({
 					width: chartWidth - mgn,
 					height:chartHeight - mgn
 				});
@@ -5982,7 +5995,7 @@ function Chart (options) {
 					.add()
 					.shadow(optionsChart.plotShadow);
 			} else {
-				plotBackground.animate(plotSize);
+				plotBackground.attr(plotSize);
 			}
 		}
 		if (plotBackgroundImage) {
@@ -5990,7 +6003,7 @@ function Chart (options) {
 				plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight)
 					.add();
 			} else {
-				plotBGImage.animate(plotSize);
+				plotBGImage.attr(plotSize);
 			}
 		}
 		
@@ -6005,7 +6018,7 @@ function Chart (options) {
 						zIndex: 4
 					}).add();
 			} else {
-				plotBorder.animate(plotSize);
+				plotBorder.attr(plotSize);
 			}
 		}
 	}
@@ -6214,11 +6227,22 @@ function Chart (options) {
 	 *   and update placements on resize. Remember to slice off these on destroy.
 	 * 
 	 */
+	
+var large = false;
+$(function() {
+	$container = $('#container');
+	if ($container) {
+		$('<button>Resize</button>')
+			.insertBefore($container)
+			.click(function() {				
+				chart.resize(large ? 400 : 800, large ? 300 : 400);
+				large = !large;
+			});
+	}
+})
+	
 	chart.resize = function(width, height) {
 		renderer.resizeTo(width, height);
-		css(container, {
-			overflow: VISIBLE
-		});
 		
 		chartWidth = width;
 		chartHeight = height;
@@ -8719,3 +8743,4 @@ win.Highcharts = {
 	extendClass: extendClass
 };
 })();
+
