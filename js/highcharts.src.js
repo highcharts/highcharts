@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /** 
- * @license Highcharts JS v2.0.1 (2010-07-18)
+ * @license Highcharts JS v2.0.2 (2010-08-06)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -3979,7 +3979,7 @@ function Chart (options) {
 				min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
 				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);				
 			}
-				
+			
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) { 
 				zoomOffset = (maxZoom - max + min) / 2;
@@ -3989,7 +3989,7 @@ function Chart (options) {
 			}
 				
 			// pad the values to get clear of the chart's edges
-			if (!categories && !usePercentage && defined(min) && defined(max)) {
+			if (!categories && !usePercentage && !isLinked && defined(min) && defined(max)) {
 				length = (max - min) || 1;
 				if (!defined(options.min) && !defined(userSetMin) && minPadding && (dataMin < 0 || !ignoreMinPadding)) { 
 					min -= length * minPadding; 
@@ -3998,8 +3998,6 @@ function Chart (options) {
 					max += length * maxPadding;
 				}
 			}
-			
-			
 			
 			// tickInterval
 			if (categories || min == max) {
@@ -4054,6 +4052,7 @@ function Chart (options) {
 			if (!axis.isDirty) {
 				axis.isDirty = (min != oldMin || max != oldMax);
 			}
+			
 		}
 		
 		/**
@@ -4229,6 +4228,8 @@ function Chart (options) {
 				});
 			
 			} // end if hasData
+			
+			
 			
 			// Static items. As the axis group is cleared on subsequent calls
 			// to render, these items are added outside the group.	
