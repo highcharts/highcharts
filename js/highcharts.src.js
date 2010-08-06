@@ -1523,18 +1523,17 @@ SVGElement.prototype = {
 			this.alignOptions = alignOptions;
 			this.renderer.alignedObjects.push(this);
 		}
-		
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
+			renderer = this.renderer,
 			isGroup = this.element.nodeName == 'g',
 			bBox = isGroup ? this.getBBox() : {},
 			x = alignOptions.x || 0, // default: left align
 			y = alignOptions.y || 0; // default: top align
 			
-		
 		// align
 		if (/^(right|center)$/.test(align)) {
-			x += (attr(this.renderer.box, 'width') - (bBox.width || 0) ) /
+			x += (renderer.width - (bBox.width || 0) ) /
 					{ right: 1, center: 2 }[align];
 		}
 		this.attr(isGroup ? 'translateX' : 'x', x);
@@ -1542,7 +1541,7 @@ SVGElement.prototype = {
 		
 		// vertical align
 		if (/^(bottom|middle)$/.test(vAlign)) {
-			y += (attr(this.renderer.box, 'height') - (bBox.height || 0)) /
+			y += (renderer.height - (bBox.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 			
 		}
@@ -1729,6 +1728,8 @@ SVGRenderer.prototype = {
 		
 		// object properties
 		this.Element = SVGElement;
+		this.width = width;
+		this.height = height;
 		this.box = box;
 		this.alignedObjects = [];
 		this.url = loc.href.replace(loc.hash, ''); // page url used for internal references
@@ -1936,11 +1937,17 @@ SVGRenderer.prototype = {
 	 * Resize the box and re-align all aligned elements
 	 * @param {Object} width
 	 * @param {Object} height
+	 * 
+	 * @todo: rename to setSize and call it in SVGRenderer.init and VMLRenderer.init
+	 * 
 	 */
 	resizeTo: function(width, height) {
 		var alignedObjects = this.alignedObjects,
 			i = alignedObjects.length,
 			obj;
+		
+		this.width = width;
+		this.height = height;
 		
 		attr(this.box, {
 			width: width,
@@ -2270,13 +2277,11 @@ SVGRenderer.prototype = {
 			attribs = extend(attribs, {
 				'text-anchor': { left: 'start', center: 'middle', right: 'end' }[align],
 				transform: 'rotate('+ rotation +' '+ x +' '+ y +')'
-
 			});
 		}
 
-		
 		return this.createElement('text').attr(attribs);
-		//}
+		
 	}
 }; // end SVGRenderer
 
@@ -2759,6 +2764,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				height: height + PX
 			}, container);
 		this.Element = VMLElement;
+		this.width = width;
+		this.height = height;
+		this.alignedObjects = [];
 		
 		// The only way to make IE6 and IE7 print is to use a global namespace. However,
 		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
@@ -4356,6 +4364,9 @@ function Chart (options) {
 					) / 3 : 0); // preliminary fix for vml's centerline
 				
 				if (!axis.axisTitle) {
+					axis.titleGroup = renderer.g()
+						.attr({ zIndex: 7 })
+						.add();
 					axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
@@ -4364,10 +4375,9 @@ function Chart (options) {
 						axisTitleOptions.rotation || 0,
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 					)
-					.attr({ zIndex: 7 })
-					.add();
+					.add(axis.titleGroup);
 				}
-				axis.axisTitle.translate(
+				axis.titleGroup.translate(
 					horiz ? 
 						alongAxis: 
 						offAxis + (opposite ? plotWidth : 0) + offset, // x
@@ -4376,7 +4386,6 @@ function Chart (options) {
 						alongAxis // y
 				);
 				
-				axis.hasRenderedTitle = true;
 			}
 			
 			axis.isDirty = false;
@@ -7646,12 +7655,15 @@ Series.prototype = {
 	 * Redraw the series after an update in the axes.
 	 */
 	redraw: function() {
-		var series = this;
+		var series = this,
+			chart = series.chart;
 		
-		series.clipRect.attr({ // for chart resize
-			width: chart.plotSizeX,
-			height: chart.plotSizeY
-		});
+		if (series.clipRect) {
+			series.clipRect.attr({ // for chart resize
+				width: chart.plotSizeX,
+				height: chart.plotSizeY
+			});
+		}
 			
 		series.translate();
 		series.setTooltipPoints(true);
