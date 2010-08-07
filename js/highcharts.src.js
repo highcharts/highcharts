@@ -6232,23 +6232,19 @@ function Chart (options) {
 	 * To do for resize:
 	 * - Re-use setting chartWidth, plotWidth, plotSizeX etc. Run resize chart on init or
 	 *   isolate these statements in a func.
-	 * - Make the getAlignment logic part of the Renderer. Create a collection of aligned items
-	 *   and update placements on resize. Remember to slice off these on destroy.
-	 * 
 	 */
-	
-var large = false;
-$(function() {
-	$container = $('#container');
-	if ($container) {
-		$('<button>Resize</button>')
-			.insertBefore($container)
-			.click(function() {				
-				chart.resize(large ? 400 : 800, large ? 300 : 400);
-				large = !large;
-			});
-	}
-})
+		
+	$(function() {
+		$container = $('#container');
+		if ($container) {
+			$('<button>Resize</button>')
+				.insertBefore($container)
+				.click(function() {				
+					chart.resize(chartWidth += 50, chartHeight += 10);
+					large = !large;
+				});
+		}
+	})
 	
 	chart.resize = function(width, height) {
 		renderer.resizeTo(width, height);
@@ -7664,6 +7660,15 @@ Series.prototype = {
 				height: chart.plotSizeY
 			});
 		}
+		
+		/* Todo: redo group and tracker inversion on resize
+		if (chart.inverted) {
+				series.group.attr({
+					width: chart.plotWidth,
+					height: chart.plotHeight
+				}).invert();
+			}*/ 
+			
 			
 		series.translate();
 		series.setTooltipPoints(true);
