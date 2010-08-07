@@ -279,8 +279,9 @@ if (!globalAdapter && win.jQuery) {
 	removeEvent = function(el, eventType, handler) {
 		// workaround for jQuery issue with unbinding custom events:
 		// http://forum.jquery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jquery-1-4-2
-		if (document.removeEventListener && !el.removeEventListener) {
-			el.removeEventListener = function() {};
+		var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
+		if (doc[func] && !el[func]) {
+			el[func] = function() {};
 		}
 		
 		jQ(el).unbind(eventType, handler);
