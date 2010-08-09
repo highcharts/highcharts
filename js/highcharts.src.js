@@ -2389,7 +2389,7 @@ var VMLElement = extendClass( SVGElement, {
 						}
 						
 					}
-					value = convertedPath.join(' ') || 'x';							
+					value = convertedPath.join(' ') || 'x';			
 					element.path = value;
 			
 					// update shadows
@@ -2636,12 +2636,18 @@ var VMLElement = extendClass( SVGElement, {
 			renderer = this.renderer,
 			shadow,
 			elemStyle = element.style,
-			markup;
+			markup,
+			path = element.path;
 			
-		if (apply && typeof element.path == 'string') {
+		// the path is some mysterious string-like object that can be cast to a string
+		if (''+ element.path == '') {
+			path = 'x';
+		}
+			
+		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				markup = ['<shape isShadow="true" strokeweight="', ( 7 - 2 * i ) ,
-					'" filled="false" path="', element.path,
+					'" filled="false" path="', path,
 					'" coordsize="100,100" style="', element.style.cssText, '" />'];
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
