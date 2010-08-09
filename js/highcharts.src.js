@@ -2971,7 +2971,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			// for reasons unknown, the style must be set on init
 			createElement(
 				'<hcv:textpath style="v-text-align:'+ align +';'+ serializeCSS(style).replace(/"/g, "'") +
-				'" on="true" string="'+ str +'">',
+				'" on="true" string="'+ str.replace(/<br\/>/g, '\n') +'">',
 			null, null, elem);
 
 			
