@@ -2813,11 +2813,10 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
-			markup = ['<fill colors="0% ', color1, ',100% ', color2, '" angle="', angle,
+			markup = ['<', prop, ' colors="0% ', color1, ',100% ', color2, '" angle="', angle,
 				'" opacity="', opacity2, '" o:opacity2="', opacity1,
 				'" type="gradient" focus="100%" />'];
 			createElement(this.prepVML(markup), null, null, elem);
-			
 			
 		
 		// if the color is an rgba color, split it and add a fill node
@@ -4492,6 +4491,7 @@ function Chart (options) {
 				attr({ zIndex: 1 }).
 				css(style).
 				add(group);
+				
 				
 		/**
 		 * Provide a soft movement for the tooltip
