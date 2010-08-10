@@ -442,9 +442,9 @@ extend (Chart.prototype, {
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
 			onclick = btnOptions.onclick,
 			menuItems = btnOptions.menuItems,
-			position = chart.getAlignment(btnOptions),
+			/*position = chart.getAlignment(btnOptions),
 			buttonLeft = position.x,
-			buttonTop = position.y,
+			buttonTop = position.y,*/
 			buttonWidth = btnOptions.width,
 			buttonHeight = btnOptions.height,
 			box,
@@ -479,7 +479,8 @@ extend (Chart.prototype, {
 			btnOptions.borderRadius,
 			borderWidth
 		)
-		.translate(buttonLeft, buttonTop) // to allow gradients
+		//.translate(buttonLeft, buttonTop) // to allow gradients
+		.align(btnOptions, true)
 		.attr(extend({
 			fill: btnOptions.backgroundColor,
 			'stroke-width': borderWidth,
@@ -488,12 +489,14 @@ extend (Chart.prototype, {
 		
 		// the invisible element to track the clicks
 		button = renderer.rect( 
-			buttonLeft,
-			buttonTop,
+			0,
+			0,
 			buttonWidth,
 			buttonHeight,
 			0
-		).attr({
+		)
+		.align(btnOptions)
+		.attr({
 			fill: 'rgba(255, 255, 255, 0.001)',
 			title: HC.getOptions().lang[btnOptions._titleKey],
 			zIndex: 21
@@ -527,10 +530,11 @@ extend (Chart.prototype, {
 		// the icon
 		symbol = renderer.symbol(
 				btnOptions.symbol, 
-				buttonLeft + btnOptions.symbolX, 
-				buttonTop + btnOptions.symbolY, 
+				btnOptions.symbolX, 
+				btnOptions.symbolY, 
 				(btnOptions.symbolSize || 12) / 2
 			)
+			.align(btnOptions, true)
 			.attr(extend(symbolAttr, {
 				'stroke-width': btnOptions.symbolStrokeWidth || 1,
 				zIndex: 20		

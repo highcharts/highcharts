@@ -1513,15 +1513,18 @@ SVGElement.prototype = {
 	 * to x and y relative to the chart.
 	 * 
 	 * @param {Object} alignOptions
+	 * @param {Boolean} alignByTranslate
 	 * 
 	 */
-	align: function(alignOptions) {
+	align: function(alignOptions, alignByTranslate) {
 		
 		if (!alignOptions) { // called on resize
 			alignOptions = this.alignOptions;
+			alignByTranslate = this.alignByTranslate;
 		} else { // first call on instanciate
 			this.alignOptions = alignOptions;
-			this.renderer.alignedObjects.push(this);
+			this.alignByTranslate = alignByTranslate;
+			this.renderer.alignedObjects.push(this); // todo: event?
 		}
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
@@ -1531,21 +1534,24 @@ SVGElement.prototype = {
 			x = alignOptions.x || 0, // default: left align
 			y = alignOptions.y || 0; // default: top align
 			
+		// position groups by translation by default
+		alignByTranslate = pick(alignByTranslate, isGroup)
+			
 		// align
 		if (/^(right|center)$/.test(align)) {
-			x += (renderer.width - (bBox.width || 0) ) /
+			x += (renderer.width - (bBox.width || alignOptions.width || 0) ) /
 					{ right: 1, center: 2 }[align];
 		}
-		this.attr(isGroup ? 'translateX' : 'x', x);
+		this.attr(alignByTranslate ? 'translateX' : 'x', x);
 		
 		
 		// vertical align
 		if (/^(bottom|middle)$/.test(vAlign)) {
-			y += (renderer.height - (bBox.height || 0)) /
+			y += (renderer.height - (bBox.height || alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 			
 		}
-		this.attr(isGroup ? 'translateY' : 'y', y);
+		this.attr(alignByTranslate ? 'translateY' : 'y', y);
 		
 		return this;
 	},
@@ -5022,12 +5028,7 @@ function Chart (options) {
 				// reset mouseIsDown and hasDragged
 				hasDragged = false;
 			};
-			
-			 
 		}
-		
-		
-
 		
 		/**
 		 * Create the image map that listens for mouseovers
@@ -5036,10 +5037,14 @@ function Chart (options) {
 			chart.trackerGroup = trackerGroup = renderer.g('tracker');
 			
 			if (inverted) {
-				trackerGroup.attr({
-					width: chart.plotWidth,
-					height: chart.plotHeight
-				}).invert();
+				var doInvert = function() {
+					trackerGroup.attr({
+						width: chart.plotWidth,
+						height: chart.plotHeight
+					}).invert();
+				};
+				doInvert(); // do it now
+				addEvent(chart, 'resize', doInvert); // do it after resize
 			} 
 		
 			trackerGroup
@@ -5523,7 +5528,7 @@ function Chart (options) {
 			series = initSeries(options);
 			series.isDirty = true;
 			
-			chart.isDirty = true; // the series array is out of sync with the display
+			chart.isDirtyLegend = true; // the series array is out of sync with the display
 			if (redraw) {
 				chart.redraw();
 			}
@@ -5562,7 +5567,7 @@ function Chart (options) {
 	 * Redraw legend, axes or series based on updated data
 	 */
 	function redraw() {
-		var redrawLegend = chart.isDirty,
+		var redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
 			seriesLength = series.length,
 			i = seriesLength,
@@ -5621,12 +5626,12 @@ function Chart (options) {
 			}
 		});
 		
-		// handle added or removed series 
+		// handle added or removed series
 		if (redrawLegend && legend.renderLegend) { // series or pie points are added or removed
 			// draw legend graphics
 			legend.renderLegend();
 			
-			chart.isDirty = false;
+			chart.isDirtyLegend = false;
 		}
 
 		// hide tooltip and hover states
@@ -6236,12 +6241,23 @@ function Chart (options) {
 		
 	$(function() {
 		$container = $('#container');
+		var origChartWidth = chartWidth,
+			origChartHeight = chartHeight;
 		if ($container) {
-			$('<button>Resize</button>')
+			$('<button>+</button>')
 				.insertBefore($container)
 				.click(function() {				
-					chart.resize(chartWidth += 50, chartHeight += 10);
-					large = !large;
+					chart.resize(chartWidth *= 1.1, chartHeight *= 1.1);
+				});
+			$('<button>-</button>')
+				.insertBefore($container)
+				.click(function() {				
+					chart.resize(chartWidth *= 0.9, chartHeight *= 0.9);
+				});
+			$('<button>1:1</button>')
+				.insertBefore($container)
+				.click(function() {				
+					chart.resize(origChartWidth, origChartHeight);
 				});
 		}
 	})
@@ -6262,8 +6278,14 @@ function Chart (options) {
 			axis.setScale();
 		});
 		
+		each(series, function(serie) {
+			serie.isDirty = true;
+		});
+		chart.isDirtyLegend = true; // force legend redraw
 		// todo: should this be handled by redraw? could add something like chart.isSizeDirty
-		drawChartBox(); 
+		drawChartBox();
+		
+		fireEvent(chart, 'resize'); 
 		
 		redraw();
 	}
@@ -6885,7 +6907,7 @@ Series.prototype = {
 			
 				
 				// redraw
-				chart.isDirty = true;
+				chart.isDirtyLegend = true;
 				if (redraw) {
 					chart.redraw();
 				}
@@ -7578,6 +7600,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			group,
+			setInvert,
 			doAnimation = series.options.animation && series.animate,
 			renderer = chart.renderer;
 			
@@ -7599,10 +7622,15 @@ Series.prototype = {
 			group = series.group = renderer.g('series');
 				
 			if (chart.inverted) {
-				group.attr({
-					width: chart.plotWidth,
-					height: chart.plotHeight
-				}).invert();
+				setInvert = function() {
+					group.attr({
+						width: chart.plotWidth,
+						height: chart.plotHeight
+					}).invert();
+				};
+				
+				setInvert(); // do it now
+				addEvent(chart, 'resize', setInvert); // do it on resize
 			} 
 			group.clip(series.clipRect)
 				.attr({ 
@@ -7667,9 +7695,8 @@ Series.prototype = {
 					width: chart.plotWidth,
 					height: chart.plotHeight
 				}).invert();
-			}*/ 
-			
-			
+			}*/
+		
 		series.translate();
 		series.setTooltipPoints(true);
 		series.render();

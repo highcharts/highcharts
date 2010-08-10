@@ -7,11 +7,19 @@
     </script>
     <script type="text/javascript" src="/js/highcharts.src.js">
     </script>
-    <!-- script type="text/javascript" src="/js/modules/exporting.src.js">
-    </script -->
+    <script type="text/javascript" src="/js/modules/exporting.src.js">
+    </script>
 </head>
 <body>
     <script type='text/javascript'>
+    	function getRandomData() {
+			var data = [];
+			for (var i = 0; i < 10; i++) {
+				data.push(Math.random());
+			}
+			return data;
+		}
+		
     	var chart,
 			large;
         $(document).ready(function(){
@@ -21,7 +29,7 @@
 					defaultSeriesType: 'bar',
 					borderWidth: 1,
 					plotBorderWidth: 1,
-					inverted: true
+					inverted: false
                 },
 				
 				xAxis: {
@@ -31,7 +39,7 @@
 				},
 				
                 series: [{
-                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+                    data: getRandomData()
                 }]
             });
 			
