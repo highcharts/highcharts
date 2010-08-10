@@ -613,9 +613,10 @@ defaultOptions = {
 	},
 	title: {
 		text: 'Chart title',
-		x: 0,
-		y: 20,
 		align: 'center',
+		// x: 0,
+		// verticalAlign: 'top', // docs
+		y: 20,
 		style: {
 			color: '#3E576F',
 			fontSize: '16px'
@@ -624,9 +625,10 @@ defaultOptions = {
 	},
 	subtitle: {
 		text: '',
-		x: 0,
-		y: 40,
 		align: 'center',
+		//x: 0,
+		//verticalAlign: 'top', // docs
+		y: 40,
 		style: {
 			color: '#6D869F'
 		}
@@ -794,7 +796,7 @@ defaultOptions = {
 		enabled: true,
 		text: 'Highcharts.com',
 		href: 'http://www.highcharts.com',
-		position: {
+		position: { // docs
 			align: 'right',
 			x: -10,
 			verticalAlign: 'bottom',
