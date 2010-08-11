@@ -7013,8 +7013,8 @@ Series.prototype = {
 				graphic = point.graphic;
 				
 				// only draw the point if y is defined
-				if (point.plotY !== UNDEFINED) {
-				
+				if (plotY !== UNDEFINED) {
+
 					/* && removed this code because points stayed after zoom
 						point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
 						point.plotY >= 0 && point.plotY <= chart.plotSizeY*/
