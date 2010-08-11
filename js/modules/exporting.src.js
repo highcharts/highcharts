@@ -520,7 +520,8 @@ extend (Chart.prototype, {
 		// add the click event
 		if (menuItems) {
 			onclick = function(e) {
-				chart.contextMenu('export-menu', menuItems, buttonLeft, buttonTop, buttonWidth, buttonHeight);
+				var bBox = button.getBBox();
+				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
 			};
 		}
 		addEvent(button.element, 'click', function() {

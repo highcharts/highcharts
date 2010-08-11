@@ -41,6 +41,7 @@ var doc = document,
 	garbageBin,
 	defaultOptions,
 	dateFormat, // function
+	globalAnimation,
 	
 	
 	// some constants for frequently used strings
@@ -586,6 +587,10 @@ defaultOptions = {
 	},
 	chart: {
 		//alignTicks: false,
+		animation: { // docs
+			//duration: 500,
+			//easing: 'swing'
+		},
 		//className: null,
 		//events: { load, selection },
 		margin: [50, 50, 90, 80], // docs
@@ -1239,7 +1244,8 @@ SVGElement.prototype = {
 	 * @param {Number} duration
 	 */
 	animate: function(params, duration) {
-		animate(this, params, duration);
+		globalAnimation = pick(globalAnimation, {});
+		animate(this, params, pick(duration, globalAnimation.duration, 500));
 	},
 	/**
 	 * Set or get a given attribute
@@ -1534,7 +1540,8 @@ SVGElement.prototype = {
 			isGroup = this.element.nodeName == 'g',
 			bBox = isGroup ? this.getBBox() : {},
 			x = alignOptions.x || 0, // default: left align
-			y = alignOptions.y || 0; // default: top align
+			y = alignOptions.y || 0, // default: top align
+			attribs = {};
 			
 		// position groups by translation by default
 		alignByTranslate = pick(alignByTranslate, isGroup)
@@ -1544,7 +1551,7 @@ SVGElement.prototype = {
 			x += (renderer.width - (bBox.width || alignOptions.width || 0) ) /
 					{ right: 1, center: 2 }[align];
 		}
-		this.attr(alignByTranslate ? 'translateX' : 'x', x);
+		attribs[alignByTranslate ? 'translateX' : 'x'] = x;
 		
 		
 		// vertical align
@@ -1553,7 +1560,9 @@ SVGElement.prototype = {
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 			
 		}
-		this.attr(alignByTranslate ? 'translateY' : 'y', y);
+		attribs[alignByTranslate ? 'translateY' : 'y'] = y;
+		
+		this.animate(attribs);
 		
 		return this;
 	},
@@ -1724,21 +1733,25 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 */
 	init: function(container, width, height) {
-		var box = doc.createElementNS('http://www.w3.org/2000/svg', 'svg'),
-			loc = location;
-		attr(box, {
-			width: width,
-			height: height,
-			xmlns: 'http://www.w3.org/2000/svg',
-			version: '1.1'
-		});
-		container.appendChild(box);
+		var loc = location,
+			boxWrapper;
+			
 		
-		// object properties
 		this.Element = SVGElement;
 		this.width = width;
 		this.height = height;
-		this.box = box;
+		boxWrapper = this.createElement('svg')
+			.attr ({
+				width: width,
+				height: height,
+				xmlns: 'http://www.w3.org/2000/svg',
+				version: '1.1'
+			});
+		container.appendChild(boxWrapper.element);
+		
+		// object properties
+		this.box = boxWrapper.element;
+		this.boxWrapper = boxWrapper;
 		this.alignedObjects = [];
 		this.url = loc.href.replace(loc.hash, ''); // page url used for internal references
 		this.defs = this.createElement('defs').add();
@@ -1957,7 +1970,7 @@ SVGRenderer.prototype = {
 		this.width = width;
 		this.height = height;
 		
-		attr(this.box, {
+		this.boxWrapper.animate({
 			width: width,
 			height: height
 		});
@@ -3626,8 +3639,8 @@ function Chart (options) {
 					translatedValue = translate(value),
 					skip;
 					
-				x1 = x2 = translatedValue + transB;
-				y1 = y2 = chartHeight - translatedValue - transB;
+				x1 = x2 = mathRound(translatedValue + transB);
+				y1 = y2 = mathRound(chartHeight - translatedValue - transB);
 				if (horiz) { 
 					y1 = plotTop;
 					y2 = chartHeight - marginBottom;
@@ -3641,6 +3654,7 @@ function Chart (options) {
 						skip = true;
 					}
 				}
+
 				
 				if (!skip) {
 					renderer.path(
@@ -4385,14 +4399,14 @@ function Chart (options) {
 					)
 					.add(axis.titleGroup);
 				}
-				axis.titleGroup.translate(
-					horiz ? 
+				axis.titleGroup.animate({
+					translateX: horiz ? 
 						alongAxis: 
 						offAxis + (opposite ? plotWidth : 0) + offset, // x
-					horiz ? 
+					translateY: horiz ? 
 						offAxis - (opposite ? plotHeight : 0) + offset: 
 						alongAxis // y
-				);
+				});
 				
 			}
 			
@@ -4522,12 +4536,17 @@ function Chart (options) {
 			if (!buttons[id]) {
 				var button = renderer.text(
 					text,
-					plotLeft + plotWidth - 20,
-					plotTop + 30,
+					0,
+					0,
 					options.toolbar.itemStyle,
 					0,
 					'right'
 				)
+				.align({
+					align: 'right',
+					x: - marginRight - 20,
+					y: plotTop + 30
+				})
 				.on('click', fn)
 				.attr({ zIndex: 20 })
 				.add();
@@ -5454,8 +5473,8 @@ function Chart (options) {
 				var checkbox = item.checkbox;
 				if (checkbox) {
 					css(checkbox, {
-						left: (boxPos.x + item.legendItemWidth + checkbox.x - 40) +PX,
-						top: (boxPos.y + checkbox.y - 11) + PX 
+						left: (legendGroup.attr('translateX') + item.legendItemWidth + checkbox.x - 40) +PX,
+						top: (legendGroup.attr('translateY') + checkbox.y - 11) + PX 
 					});
 				}
 			});
@@ -5993,7 +6012,7 @@ function Chart (options) {
 					add().
 					shadow(optionsChart.shadow);
 			} else { // resize
-				chartBackground.attr({
+				chartBackground.animate({
 					width: chartWidth - mgn,
 					height:chartHeight - mgn
 				});
@@ -6011,7 +6030,7 @@ function Chart (options) {
 					.add()
 					.shadow(optionsChart.plotShadow);
 			} else {
-				plotBackground.attr(plotSize);
+				plotBackground.animate(plotSize);
 			}
 		}
 		if (plotBackgroundImage) {
@@ -6019,7 +6038,7 @@ function Chart (options) {
 				plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight)
 					.add();
 			} else {
-				plotBGImage.attr(plotSize);
+				plotBGImage.animate(plotSize);
 			}
 		}
 		
@@ -6034,7 +6053,7 @@ function Chart (options) {
 						zIndex: 4
 					}).add();
 			} else {
-				plotBorder.attr(plotSize);
+				plotBorder.animate(plotSize);
 			}
 		}
 	}
@@ -6264,7 +6283,11 @@ function Chart (options) {
 		}
 	})
 	
-	chart.resize = function(width, height) {
+	chart.resize = function(width, height, animation) {
+		
+		// set the animation for the current process
+		globalAnimation = pick(animation, optionsChart.animation);
+		
 		renderer.resizeTo(width, height);
 		
 		chartWidth = width;
@@ -6984,7 +7007,7 @@ Series.prototype = {
 			chart = series.chart,
 			inverted = chart.inverted,
 			data = [],
-			plotSize = (inverted ? chart.plotTop : chart.plotLeft) + chart.plotSizeX,
+			plotSize = mathRound((inverted ? chart.plotTop : chart.plotLeft) + chart.plotSizeX),
 			low,
 			high,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
@@ -7682,10 +7705,12 @@ Series.prototype = {
 	 */
 	redraw: function() {
 		var series = this,
-			chart = series.chart;
+			chart = series.chart,
+			clipRect = series.clipRect;
 		
-		if (series.clipRect) {
-			series.clipRect.attr({ // for chart resize
+		if (clipRect) {
+			stop(clipRect);
+			clipRect.animate({ // for chart resize
 				width: chart.plotSizeX,
 				height: chart.plotSizeY
 			});
@@ -7762,10 +7787,6 @@ Series.prototype = {
 		series.visible = vis = vis === UNDEFINED ? !oldVisibility : vis;
 		showOrHide = vis ? 'show' : 'hide';
 		
-		if (vis) {
-			series.isDirty = ignoreHiddenSeries; // when series is initially hidden
-		}	
-		
 		// show or hide series
 		if (seriesGroup) { // pies don't have one
 			seriesGroup[showOrHide]();
@@ -7794,19 +7815,17 @@ Series.prototype = {
 		}
 			
 		
-		// rescale
-		if (ignoreHiddenSeries) {
-			
-			// in a stack, all other series are affected
-			if (series.options.stacking) {
-				each (chart.series, function(otherSeries) {
-					if (otherSeries.options.stacking && otherSeries.visible) { 
-						otherSeries.isDirty = true;
-					}
-				});
-			} 
-			
+		// rescale or adapt to resized chart
+		series.isDirty = true;
+		// in a stack, all other series are affected
+		if (series.options.stacking) {
+			each (chart.series, function(otherSeries) {
+				if (otherSeries.options.stacking && otherSeries.visible) { 
+					otherSeries.isDirty = true;
+				}
+			});
 		}
+		
 		if (redraw !== false) {
 			chart.redraw();
 		}

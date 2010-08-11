@@ -26,10 +26,14 @@
             chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'container',
-					defaultSeriesType: 'bar',
+					defaultSeriesType: 'line',
 					borderWidth: 1,
+					backgroundColor: '#FFFFEF',
 					plotBorderWidth: 1,
-					inverted: false
+					marginRight: 80,
+					animation: {
+						//duration: 1000
+					}
                 },
 				
 				xAxis: {
@@ -38,7 +42,25 @@
 					}
 				},
 				
+				yAxis: [{
+					title: {
+						text: 'Primary'
+					}
+				}, {
+					title: {
+						text: 'Secondary'
+					},
+					opposite: true
+				}],
+				
                 series: [{
+                    data: getRandomData(),
+					type: 'column',
+					yAxis: 1
+                }, {
+                    data: getRandomData(),
+					type: 'spline'
+                }, {
                     data: getRandomData()
                 }]
             });
