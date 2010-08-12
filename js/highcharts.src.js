@@ -1718,9 +1718,9 @@ SVGRenderer.prototype = {
 				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
 				.replace(/<a/g, '<span')
 				.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
-				.split('<br/>'),
+				.split(/<br[^>]?>/g),
 			childNodes = textNode.childNodes,
-			styleRegex = /style="([ 0-9a-z:;\-]+)"/,
+			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			i;
@@ -1739,9 +1739,10 @@ SVGRenderer.prototype = {
 			spans = line.split('|||');
 			
 			each (spans, function (span) {
-				if (span !== '') {
+				if (span !== '' || spans.length == 1) {
 					var attributes = {},
 						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+					
 					if (styleRegex.test(span)) {
 						attr(
 							tspan, 
@@ -2981,7 +2982,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			// for reasons unknown, the style must be set on init
 			createElement(
 				'<hcv:textpath style="v-text-align:'+ align +';'+ serializeCSS(style).replace(/"/g, "'") +
-				'" on="true" string="'+ str.replace(/<br\/>/g, '\n') +'">',
+				'" on="true" string="'+ str.replace(/<br[^>]?>/g, '\n') +'">',
 			null, null, elem);
 
 			
