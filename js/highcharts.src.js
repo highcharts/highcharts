@@ -7920,6 +7920,7 @@ var SplineSeries = extendClass( Series, {
 			chart = series.chart,
 			//data = this.data,
 			splinedata = [],
+			plotSizeX = chart.plotSizeX,
 			num;
 			
 		each (series.segments, function(data) {
@@ -7934,14 +7935,14 @@ var SplineSeries = extendClass( Series, {
 			each (data, function(point, i) {
 				nextUp = data[i+2] || data[i+1] || point;
 				nextDown = data[i-2] || data[i-1] || point;
-				if (nextUp.plotX >= 0 && nextDown.plotX <= chart.plotWidth) {
+				if (nextUp.plotX >= 0 && nextDown.plotX <= plotSizeX) {
 					croppedData.push(point);
 				}
 			});
 			
 			// 3px intervals:
 			if (croppedData.length > 1) {
-				num = mathRound(mathMax(chart.plotWidth, 
+				num = mathRound(mathMax(plotSizeX, 
 					croppedData[croppedData.length-1].clientX	- croppedData[0].clientX) / 3);
 			}
 			splinedata.push (
