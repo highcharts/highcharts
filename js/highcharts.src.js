@@ -2392,7 +2392,8 @@ var VMLElement = extendClass( SVGElement, {
 						}
 						
 					}
-					value = convertedPath.join(' ') || 'x';			
+					
+					value = convertedPath.join(' ') || 'x';
 					element.path = value;
 			
 					// update shadows
@@ -7373,12 +7374,13 @@ Series.prototype = {
 			renderer = chart.renderer,
 			translatedThreshold = series.yAxis.getThreshold(options.threshold || 0),
 			useArea = /^area/.test(series.type),
+			singlePoints = [], // used in drawTracker
 			areaPath = [];
 			
 		
 		// divide into segments and build graph and area paths
 		each(series.segments, function(segment) {
-			if (segment.length > 0) {
+			if (segment.length > 1) {
 				segmentPath = [];
 				
 				// build the segment line
@@ -7407,7 +7409,7 @@ Series.prototype = {
 				graphPath = graphPath.concat(segmentPath);
 				
 				// build the area
-				if (useArea && segment.length > 1) {
+				if (useArea) {
 					var areaSegmentPath = [],
 						i,
 						segLength = segmentPath.length;
@@ -7431,10 +7433,14 @@ Series.prototype = {
 					}
 					areaPath = areaPath.concat(areaSegmentPath);
 				}
+			} else {
+				singlePoints.push(segment[0]);
 			}
 		});
-
-		series.graphPath = graphPath; // used in drawTracker
+		
+		// used in drawTracker:
+		series.graphPath = graphPath;
+		series.singlePoints = singlePoints; 
 
 		// draw the graph
 		if (graph) {
@@ -7716,6 +7722,8 @@ Series.prototype = {
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
+			singlePoints = series.singlePoints,
+			singlePoint,
 			i;
 	
 		// if only one series, use the whole plot area as tracker
@@ -7733,11 +7741,10 @@ Series.prototype = {
 		}*/
 		
 		// handle single points
-		for (i = 0; i < trackerPath.length; i++) {
-			if (trackerPath[i] == M && trackerPath[i + 3] == M) { // is single point
-				trackerPath[i + 1] -= 2; // move x value left
-				trackerPath.splice(i + 3, 0, L, trackerPath[i + 1] + 4, trackerPath[i + 2]);
-			}
+		for (i = 0; i < singlePoints.length; i++) {
+			singlePoint = singlePoints[i];
+			trackerPath.push(M, singlePoint.plotX - 3, singlePoint.plotY,
+				L, singlePoint.plotX + 3, singlePoint.plotY);
 		}
 		
 		// draw the tracker
