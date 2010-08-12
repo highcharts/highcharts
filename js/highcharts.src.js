@@ -5156,7 +5156,7 @@ function Chart (options) {
 						0, 
 						0
 					)
-					.css(itemStyle)
+					.css(item.visible ? itemStyle : itemHiddenStyle)
 					.on('mouseover', function() {
 						item.setState(HOVER_STATE);
 						li.css(itemHoverStyle);
