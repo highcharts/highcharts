@@ -1287,6 +1287,9 @@ SVGElement.prototype = {
 					if (typeof value != 'string') { // join path
 						value = value.join(' ');
 					}
+					if (/(NaN|  )/.test(value)) {
+						value = 'M 0 0';
+					}
 					
 				// update child tspans x values
 				} else if (key == 'x' && nodeName == 'text') { 
@@ -3522,7 +3525,10 @@ function Chart (options) {
 				cvsOffset -= sign * axisLength;
 			}
 			
-			if (backwards) { // reverse translation
+			if (min === UNDEFINED) { // points in a single hidden series, axis has no min or max
+				returnValue = null;
+			
+			} else if (backwards) { // reverse translation
 				if (reversed) {
 					val = axisLength - val;
 				}
