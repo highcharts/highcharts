@@ -178,6 +178,9 @@ extend (Chart.prototype, {
 			chartCopy,
 			sandbox,
 			svg,
+			seriesOptions,
+			pointOptions,
+			pointMarker,
 			options = merge(chart.options, additionalOptions); // copy the options and add extra options
 		
 		// IE compatibility hack for generating SVG content that it doesn't really understand
@@ -206,16 +209,33 @@ extend (Chart.prototype, {
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
-		each (options.series, function(serie) {
-			serie.animation = false;// turn off animation
-			
-			each (serie.data, function(point) { // turn off symbols
-				if (point && point.marker && /^url\(/.test(point.marker.symbol)) { 
-					delete point.marker.symbol;
-				}
-			});
-		});
 		
+		// prepare for replicating the chart
+		options.series = [];	
+		each (chart.series, function(serie) {
+			seriesOptions = serie.options;			
+			
+			seriesOptions.animation = false; // turn off animation
+			seriesOptions.showCheckbox = false;
+			
+			seriesOptions.data = [];
+			each(serie.data, function(point) {
+				pointOptions = typeof point.options == 'number' ?
+					{ y: point.y } :
+					point.options;
+				pointOptions.x = point.x;
+				seriesOptions.data.push(pointOptions); // copy fresh updated data
+								
+				// remove image markers
+				pointMarker = point.options.marker;
+				if (pointMarker && /^url\(/.test(pointMarker.symbol)) { 
+					delete pointMarker.symbol;
+				}
+			});	
+			
+			options.series.push(seriesOptions);
+		});
+
 		
 		// generate the chart copy
 		chartCopy = new Highcharts.Chart(options);
