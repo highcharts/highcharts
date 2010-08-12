@@ -7149,12 +7149,15 @@ Series.prototype = {
 		while (i--) {
 			point = data[i];
 			normalOptions = (point.options && point.options.marker) || point.options;
+			if (normalOptions.enabled === false) {
+				normalOptions.radius = 0;
+			}
 			hasPointSpecificOptions = false;
 			
 			// check if the point has specific visual options
 			if (point.options) {
 				for (var key in pointAttrToOptions) {
-					if (normalOptions[pointAttrToOptions[key]]) {
+					if (defined(normalOptions[pointAttrToOptions[key]])) {
 						hasPointSpecificOptions = true;
 					}
 				}
