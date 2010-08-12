@@ -340,7 +340,7 @@ if (!globalAdapter && win.jQuery) {
 	// do the step
 	jQ.fx.step._default = function(fx){
 		var elem = fx.elem;
-		if (elem.attr) { // is SVG element wrapper					
+		if (elem.attr) { // is SVG element wrapper
 			elem.attr(fx.prop, fx.now);			
 		} else {
 			oldStepDefault.apply(this, arguments);
@@ -7188,7 +7188,7 @@ Series.prototype = {
 					
 					
 					if (graphic) { // update
-						graphic.attr({
+						graphic.animate({
 							x: plotX,
 							y: plotY,
 							r: radius
@@ -8283,7 +8283,7 @@ var ColumnSeries = extendClass(Series, {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
-					graphic.attr(shapeArgs);
+					graphic.animate(shapeArgs);
 				
 				} else {
 					point.graphic = renderer[point.shapeType](shapeArgs)
