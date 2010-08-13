@@ -614,6 +614,10 @@ defaultOptions = {
 		plotBorderColor: '#C0C0C0'
 		//plotBorderWidth: 0,
 		//plotShadow: false,
+		//plotMarginTop: 5, // docs
+		//plotMarginRight: 5, // docs
+		//plotMarginBottom: 5, // docs
+		//plotMarginLeft: 5, // docs
 		//zoomType: ''
 	},
 	title: {
@@ -631,8 +635,8 @@ defaultOptions = {
 	subtitle: {
 		text: '',
 		align: 'center',
-		//x: 0,
-		//verticalAlign: 'top', // docs
+		// x: 0,
+		// verticalAlign: 'top', // docs
 		y: 40,
 		style: {
 			color: '#6D869F'
@@ -5467,6 +5471,7 @@ function Chart (options) {
 			/*var boxPos = renderer.getAlignment(options);
 			legendGroup.translate(boxPos.x, boxPos.y);*/
 			legendGroup.align(options);
+			chart.legendTop = chartHeight - legendGroup.getBBox().height + options.y;
 			
 			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
@@ -5474,7 +5479,7 @@ function Chart (options) {
 				if (checkbox) {
 					css(checkbox, {
 						left: (legendGroup.attr('translateX') + item.legendItemWidth + checkbox.x - 40) +PX,
-						top: (legendGroup.attr('translateY') + checkbox.y - 11) + PX 
+						top: (legendGroup.attr('translateX') + checkbox.y - 11) + PX 
 					});
 				}
 			});
@@ -5891,7 +5896,8 @@ function Chart (options) {
 				)
 				.align(title)
 				.attr({
-					'class': 'highcharts-title'
+					'class': 'highcharts-title',
+					zIndex: 1
 				}).add();
 			/*} else {
 				chart.title.animate({
@@ -5914,7 +5920,8 @@ function Chart (options) {
 				)
 				.align(subtitle)
 				.attr({
-					'class': 'highcharts-subtitle'
+					'class': 'highcharts-subtitle',
+					zIndex: 1
 				}).add();
 			/*} else {
 				chart.subtitle.animate({
@@ -6068,6 +6075,21 @@ function Chart (options) {
 			labels = options.labels, 
 			credits = options.credits;
 		
+		// Title
+		showTitle();
+		
+		
+		// Legend
+		legend = chart.legend = new Legend(chart);
+		
+		// autoscale
+		plotTop = mathMax(options.title.y, options.subtitle.y)
+			+ pick(optionsChart.plotMarginTop, 5);
+			
+		if (options.legend.verticalAlign == 'bottom') {
+			plotHeight = chart.legendTop - plotTop - pick(optionsChart.plotMarginBottom, 5);
+		}
+		
 		// Draw the borders and backgrounds
 		drawChartBox();
 						
@@ -6078,8 +6100,6 @@ function Chart (options) {
 			});
 		}
 	
-		// Title
-		showTitle();
 		
 		
 		// Labels
@@ -6110,8 +6130,6 @@ function Chart (options) {
 			serie.render();
 		});
 		
-		// Legend
-		legend = chart.legend = new Legend(chart);
 
 		
 		// Toolbar (don't redraw)
@@ -6201,7 +6219,7 @@ function Chart (options) {
 		fireEvent(chart, 'load');
 	}
 	
-	
+	// Run chart
 		
 	getContainer();
 	//updatePosition(container);
