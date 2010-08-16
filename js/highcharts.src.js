@@ -8107,6 +8107,7 @@ var ColumnSeries = extendClass(Series, {
 				height: 6,
 				y: trackerY
 			});
+			
 		});
 		
 	},
