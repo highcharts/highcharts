@@ -614,15 +614,12 @@ defaultOptions = {
 		plotBorderColor: '#C0C0C0'
 		//plotBorderWidth: 0,
 		//plotShadow: false,
-		//plotMarginTop: 5, // docs
-		//plotMarginRight: 5, // docs
-		//plotMarginBottom: 5, // docs
-		//plotMarginLeft: 5, // docs
 		//zoomType: ''
 	},
 	title: {
 		text: 'Chart title',
 		align: 'center',
+		// margin: 5, // docs: padding for title or subtitle
 		// x: 0,
 		// verticalAlign: 'top', // docs
 		y: 20,
@@ -721,7 +718,8 @@ defaultOptions = {
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
-		//reversed: false,
+		// margin: 5, // docs
+		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
 		style: {
@@ -3465,7 +3463,9 @@ function Chart (options) {
 			minorTickInterval,
 			magnitude,
 			tickPositions, // array containing predefined positions
+			ticks = {},
 			tickAmount,
+			labelOffset,
 			dateTimeLabelFormat,
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function() {
@@ -3692,7 +3692,8 @@ function Chart (options) {
 		 * Add a tick mark an a label
 		 */
 		function addTick(pos, tickPos, color, width, len, withLabel, index) {
-			var x1, y1, x2, y2, str, labelOptions = options.labels;
+			var x1, y1, x2, y2, str, labelOptions = options.labels,
+				ret = {};
 			
 			// negate the length
 			if (tickPos == 'inside') {
@@ -3715,7 +3716,7 @@ function Chart (options) {
 			}
 			
 			if (width) {
-				renderer.path(
+				ret.mark = renderer.path(
 					renderer.crispLine([M, x1, y1, L, x2, y2], width)
 				).attr({
 					stroke: color,
@@ -3738,7 +3739,7 @@ function Chart (options) {
 						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
 					y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
 						tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
-					renderer.text(
+					ret.label = renderer.text(
 						str,
 						x1,
 						y1,
@@ -3748,7 +3749,7 @@ function Chart (options) {
 					).add(axisGroup);
 				}
 			}
-			
+			return ret;
 		}
 		
 		/**
@@ -4233,20 +4234,11 @@ function Chart (options) {
 			}			
 		}
 		
-
-		
 		/**
-		 * Render the axis
+		 * Render the tick labels to a preliminary position to get their sizes
 		 */
-		function render() {
-			var axisTitleOptions = options.title,
-				alternateGridColor = options.alternateGridColor,
-				minorTickWidth = options.minorTickWidth,
-				lineWidth = options.lineWidth,
-				lineLeft,
-				lineTop,
-				linePath,
-				tickmarkPos,
+		function prerender() {
+			var tickmarkPos,
 				hasData = associatedSeries.length && defined(min) && defined(max);
 			
 			if (!axisGroup) {
@@ -4261,6 +4253,61 @@ function Chart (options) {
 				axisGroup.empty();
 				gridGroup.empty();
 			}
+			
+			labelOffset = 0; // reset
+			if (hasData) {
+				each(tickPositions, function(pos, index) {
+					tickmarkPos = pos + tickmarkOffset;
+					
+					// add the tick mark
+					ticks[pos] = addTick(
+						pos, 
+						options.tickPosition, 
+						options.tickColor, 
+						options.tickWidth, 
+						options.tickLength, 
+						!((pos == min && !options.showFirstLabel) || (pos == max && !options.showLastLabel)),
+						index
+					);
+					
+					if (ticks[pos].label) {
+						labelOffset = mathMax(
+							ticks[pos].label.getBBox()[horiz ? 'height' : 'width'], 
+							labelOffset
+						);
+					}
+					
+				});
+			}
+			
+			// adjust chart margins
+			if (horiz && !opposite) {
+				marginBottom += labelOffset;
+			
+			} else if (horiz && opposite) {
+				plotTop += labelOffset;
+			
+			} else if (!horiz && !opposite) {
+				plotLeft += labelOffset;
+			
+			} else {
+				marginRight += labelOffset;
+			}
+		}
+		
+		/**
+		 * Render the axis
+		 */
+		function render() {
+			var axisTitleOptions = options.title,
+				alternateGridColor = options.alternateGridColor,
+				minorTickWidth = options.minorTickWidth,
+				lineWidth = options.lineWidth,
+				lineLeft,
+				lineTop,
+				linePath,
+				tickmarkPos,
+				hasData = associatedSeries.length && defined(min) && defined(max); // defined above - check for ticks.length instead?
 			
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData) {
@@ -4504,6 +4551,7 @@ function Chart (options) {
 			getThreshold: getThreshold,
 			isXAxis: isXAxis,
 			options: options,
+			prerender: prerender,
 			render: render,
 			setExtremes: setExtremes,
 			setScale: setScale,
@@ -6082,13 +6130,25 @@ function Chart (options) {
 		// Legend
 		legend = chart.legend = new Legend(chart);
 		
+		// pre-render axes to get labels offset width
+		if (hasCartesianSeries) {
+			each(axes, function(axis) { 
+				axis.prerender();
+			});
+		}
+	
+		
 		// autoscale
 		plotTop = mathMax(options.title.y, options.subtitle.y)
-			+ pick(optionsChart.plotMarginTop, 5);
+			+ pick(options.title.margin, 5);
 			
 		if (options.legend.verticalAlign == 'bottom') {
-			plotHeight = chart.legendTop - plotTop - pick(optionsChart.plotMarginBottom, 5);
+			//plotHeight = chart.legendTop - plotTop - pick(options.legend.margin, 5);
+			marginBottom -= chart.legendTop + pick(options.legend.margin, 5);
 		}
+		
+		
+		
 		
 		// Draw the borders and backgrounds
 		drawChartBox();
