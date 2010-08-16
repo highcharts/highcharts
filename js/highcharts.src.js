@@ -8103,12 +8103,10 @@ var ColumnSeries = extendClass(Series, {
 			};
 			
 			// make small columns responsive to mouse
-			if (defined(trackerY)) {
-				point.trackerArgs = merge(point.shapeArgs, { 
-					height: 6,
-					y: trackerY
-				});
-			}
+			point.trackerArgs = defined(trackerY) && merge(point.shapeArgs, { 
+				height: 6,
+				y: trackerY
+			});
 		});
 		
 	},
