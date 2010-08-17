@@ -3726,28 +3726,13 @@ function Chart (options) {
 			
 			
 			// write the label
-			if (withLabel && labelOptions.enabled) {
-				str = labelFormatter.call({
-					index: index,
-					isFirst: pos == tickPositions[0],
-					isLast: pos == tickPositions[tickPositions.length - 1],
-					dateTimeLabelFormat: dateTimeLabelFormat,
-					value: (categories && categories[pos] ? categories[pos] : pos)
-				});
-				if (str || str === 0) {
-					x1 = x1 + labelOptions.x - (tickmarkOffset && horiz ? 
-						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
-					y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
-						tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
-					ret.label = renderer.text(
-						str,
-						x1,
-						y1,
-						labelOptions.style, 
-						labelOptions.rotation,
-						labelOptions.align
-					).add(axisGroup);
-				}
+			if (ticks[pos]) {
+				x1 = x1 + labelOptions.x - (tickmarkOffset && horiz ? 
+					tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
+				y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
+					tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+				
+				ticks[pos].translate(x1, y1);
 			}
 			return ret;
 		}
@@ -4257,22 +4242,59 @@ function Chart (options) {
 			labelOffset = 0; // reset
 			if (hasData) {
 				each(tickPositions, function(pos, index) {
+					var withLabel = !((pos == min && !options.showFirstLabel) ||
+						(pos == max && !options.showLastLabel)),
+						labelOptions = options.labels,
+						str;
+
 					tickmarkPos = pos + tickmarkOffset;
 					
-					// add the tick mark
-					ticks[pos] = addTick(
-						pos, 
-						options.tickPosition, 
-						options.tickColor, 
-						options.tickWidth, 
-						options.tickLength, 
-						!((pos == min && !options.showFirstLabel) || (pos == max && !options.showLastLabel)),
-						index
-					);
+					// add the tick label
+					// write the label
+					if (!ticks[pos]&& withLabel && labelOptions.enabled) {
+						str = labelFormatter.call({
+							index: index,
+							isFirst: pos == tickPositions[0],
+							isLast: pos == tickPositions[tickPositions.length - 1],
+							dateTimeLabelFormat: dateTimeLabelFormat,
+							value: (categories && categories[pos] ? categories[pos] : pos)
+						});
+						if (str || str === 0) {
+							ticks[pos] = renderer.text(
+								str,
+								0,
+								0,
+								labelOptions.style, 
+								labelOptions.rotation,
+								labelOptions.align
+							)
+							.add(axisGroup);
+						}
+					}
 					
-					if (ticks[pos].label) {
+					
+					
+					/*if (!ticks[pos]) {
+						ticks[pos] = addTick(
+							pos, 
+							options.tickPosition, 
+							options.tickColor, 
+							options.tickWidth, 
+							options.tickLength, 
+							!((pos == min && !options.showFirstLabel) || (pos == max && !options.showLastLabel)),
+							index
+						);
+					}*/
+					
+					
+					
+					if (ticks[pos]) {
+						// record that it's being used
+						ticks[pos].isInUse = true; 
+
+						// get max label offset
 						labelOffset = mathMax(
-							ticks[pos].label.getBBox()[horiz ? 'height' : 'width'], 
+							ticks[pos].getBBox()[horiz ? 'height' : 'width'], 
 							labelOffset
 						);
 					}
@@ -4292,6 +4314,18 @@ function Chart (options) {
 			
 			} else {
 				marginRight += labelOffset;
+			}
+			
+			
+			
+			// remove old ticks
+			for (var pos in ticks) {
+				if (!ticks[pos].isInUse) {
+					ticks[pos].destroy();
+					delete ticks[pos];
+				} else {
+					ticks[pos].isInUse = false; // reset
+				}
 			}
 		}
 		
@@ -5519,7 +5553,7 @@ function Chart (options) {
 			/*var boxPos = renderer.getAlignment(options);
 			legendGroup.translate(boxPos.x, boxPos.y);*/
 			legendGroup.align(options);
-			chart.legendTop = chartHeight - legendGroup.getBBox().height + options.y;
+			chart.legendHeight = legendGroup.getBBox().height;
 			
 			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
@@ -6136,7 +6170,6 @@ function Chart (options) {
 				axis.prerender();
 			});
 		}
-	
 		
 		// autoscale
 		plotTop = mathMax(options.title.y, options.subtitle.y)
@@ -6144,9 +6177,11 @@ function Chart (options) {
 			
 		if (options.legend.verticalAlign == 'bottom') {
 			//plotHeight = chart.legendTop - plotTop - pick(options.legend.margin, 5);
-			marginBottom -= chart.legendTop + pick(options.legend.margin, 5);
+			marginBottom += chart.legendHeight - options.legend.y + pick(options.legend.margin, 5);
 		}
 		
+		plotHeight = chartHeight - plotTop - marginBottom;
+		plotWidth = chartWidth - plotLeft - marginRight;
 		
 		
 		
