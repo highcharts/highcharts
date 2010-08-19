@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /** 
- * @license Highcharts JS v2.0.1 (2010-07-18)
+ * @license Highcharts JS (resizing/auto margin branch)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -619,10 +619,10 @@ defaultOptions = {
 	title: {
 		text: 'Chart title',
 		align: 'center',
-		// margin: 5, // docs: padding for title or subtitle
+		// margin: 15, // docs: padding for title or subtitle
 		// x: 0,
 		// verticalAlign: 'top', // docs
-		y: 20,
+		y: 25, // docs
 		style: {
 			color: '#3E576F',
 			fontSize: '16px'
@@ -868,7 +868,7 @@ var defaultXAxisOptions =  {
 	title: {
 		//text: null,
 		align: 'middle', // low, middle or high
-		margin: 35,
+		//margin: 5, // docs
 		//rotation: 0,
 		//side: 'outside',
 		style: {
@@ -896,7 +896,7 @@ defaultYAxisOptions = merge(defaultXAxisOptions, {
 	startOnTick: true,
 	tickWidth: 0,
 	title: {
-		margin: 40,
+		//margin: 5, //docs
 		rotation: 270,
 		text: 'Y-values'
 	}
@@ -1306,6 +1306,9 @@ SVGElement.prototype = {
 							attr(child, 'x', value);
 						}
 					}
+					if (this.rotation) {
+						attr(element, 'transform', 'rotate('+ this.rotation +' '+ value +' '+ hash.y +')');
+					}
 					
 				// apply gradients
 				} else if (key == 'fill') {
@@ -1573,7 +1576,18 @@ SVGElement.prototype = {
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
 	getBBox: function() {
-		return this.element.getBBox();
+		var bBox = this.element.getBBox(),
+			rad;
+		var h = bBox.height;
+		if (this.rotation) { // adjust for rotated text
+			rad = this.rotation * math.PI * 2 / 360; // radians
+			
+			//bBox.height = bBox.height * mathCos(rad) + bBox.width * mathSin(rad);
+			bBox.slant = mathAbs(bBox.width * mathSin(rad)); // the additional height below the anchor
+			
+			
+		}
+		return bBox;
 	},
 	
 	/**
@@ -2273,7 +2287,8 @@ SVGRenderer.prototype = {
 		var attribs,
 			css, 
 			fill = style.color || '#000000',
-			defaultChartStyle = defaultOptions.chart.style;
+			defaultChartStyle = defaultOptions.chart.style,
+			wrapper;
 	
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));
@@ -2303,8 +2318,9 @@ SVGRenderer.prototype = {
 			});
 		}
 
-		return this.createElement('text').attr(attribs);
-		
+		wrapper = this.createElement('text').attr(attribs);
+		wrapper.rotation = rotation; // used when setting x and y later
+		return wrapper;
 	}
 }; // end SVGRenderer
 
@@ -3367,6 +3383,10 @@ function Chart (options) {
 		marginRight = pick(optionsChart.marginRight, margin[1]),
 		marginBottom = pick(optionsChart.marginBottom, margin[2]),
 		plotLeft = pick(optionsChart.marginLeft, margin[3]),
+		topAxisOffset = 0,
+		rightAxisOffset = 0,
+		bottomAxisOffset = 0,
+		leftAxisOffset = 0,
 		renderTo,
 		renderToClone,
 		container,
@@ -3466,6 +3486,7 @@ function Chart (options) {
 			ticks = {},
 			tickAmount,
 			labelOffset,
+			axisTitleMargin = options.title.margin,
 			dateTimeLabelFormat,
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function() {
@@ -3732,7 +3753,12 @@ function Chart (options) {
 				y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
 					tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
 				
-				ticks[pos].translate(x1, y1);
+				//ticks[pos].translate(x1, y1);
+				ticks[pos].attr({
+					x: x1,
+					y: y1
+				});
+				
 			}
 			return ret;
 		}
@@ -4108,7 +4134,7 @@ function Chart (options) {
 			setTickPositions();
 			
 			
-			// the translation factor used in translate function			
+			// the translation factor used in translate function
 			transA = axisLength / ((max - min) || 1);
 			
 			// record the greatest number of ticks for multi axis
@@ -4224,7 +4250,10 @@ function Chart (options) {
 		 */
 		function prerender() {
 			var tickmarkPos,
-				hasData = associatedSeries.length && defined(min) && defined(max);
+				hasData = associatedSeries.length && defined(min) && defined(max),
+				titleOffset = 0,
+				axisTitleOptions = options.title,
+				labelOptions = options.labels;
 			
 			if (!axisGroup) {
 				axisGroup = renderer.g('axis')
@@ -4244,7 +4273,6 @@ function Chart (options) {
 				each(tickPositions, function(pos, index) {
 					var withLabel = !((pos == min && !options.showFirstLabel) ||
 						(pos == max && !options.showLastLabel)),
-						labelOptions = options.labels,
 						str;
 
 					tickmarkPos = pos + tickmarkOffset;
@@ -4293,8 +4321,12 @@ function Chart (options) {
 						ticks[pos].isInUse = true; 
 
 						// get max label offset
+						var key = horiz ? 'height' : 'width';
+						if (horiz && !opposite) { // bottom axis labels ignores height unless rotated
+							key = 'slant';
+						}
 						labelOffset = mathMax(
-							ticks[pos].getBBox()[horiz ? 'height' : 'width'], 
+							ticks[pos].getBBox()[key] || 0, 
 							labelOffset
 						);
 					}
@@ -4302,21 +4334,39 @@ function Chart (options) {
 				});
 			}
 			
-			// adjust chart margins
-			if (horiz && !opposite) {
-				marginBottom += labelOffset;
-			
-			} else if (horiz && opposite) {
-				plotTop += labelOffset;
-			
-			} else if (!horiz && !opposite) {
-				plotLeft += labelOffset;
-			
-			} else {
-				marginRight += labelOffset;
+			if (axisTitleOptions && axisTitleOptions.text) {
+				if (!axis.axisTitle) {
+					axis.titleGroup = renderer.g()
+						.attr({ zIndex: 7 })
+						.add();
+					axis.axisTitle = renderer.text(
+						axisTitleOptions.text,
+						0,
+						0,
+						axisTitleOptions.style, 
+						axisTitleOptions.rotation || 0,
+						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+					)
+					.add(axis.titleGroup);
+				}
+				
+				titleOffset = axis.titleGroup.getBBox()[horiz ? 'height' : 'width'];
 			}
 			
 			
+			// adjust chart margins
+			if (horiz && !opposite) { // bottom
+				axisTitleMargin = labelOffset + options.labels.y + pick(options.title.margin, 5) + titleOffset;
+				bottomAxisOffset = mathMax(bottomAxisOffset, axisTitleMargin);
+			
+			} else if (horiz && opposite) {
+			
+			} else if (!horiz && !opposite) { // left
+				axisTitleMargin = labelOffset - options.labels.x + pick(options.title.margin, 5);
+				leftAxisOffset = mathMax(leftAxisOffset, axisTitleMargin + titleOffset);			
+			
+			} else {
+			}
 			
 			// remove old ticks
 			for (var pos in ticks) {
@@ -4342,6 +4392,12 @@ function Chart (options) {
 				linePath,
 				tickmarkPos,
 				hasData = associatedSeries.length && defined(min) && defined(max); // defined above - check for ticks.length instead?
+			
+			
+			// update metrics - todo: try to avoid setting these twice
+			axisLength = horiz ? plotWidth : plotHeight;
+			transA = axisLength / ((max - min) || 1);
+			transB = horiz ? plotLeft : marginBottom; // translation addend
 			
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData) {
@@ -4447,13 +4503,12 @@ function Chart (options) {
 					
 			}
 			
-			// Render the title. 
-			if (axisTitleOptions && axisTitleOptions.text) {
+			// Place the title. 
+			if (axis.titleGroup) {
 				
 				// compute anchor points for each of the title align options
 				var margin = horiz ? 
 						plotLeft : plotTop;
-					
 				// the position in the length direction of the axis
 				var alongAxis = { 
 					low: margin + (horiz ? 0 : axisLength), 
@@ -4462,28 +4517,15 @@ function Chart (options) {
 				}[axisTitleOptions.align];
 				
 				// the position in the perpendicular direction of the axis
+				// todo: reuse positions calculated in prerender
 				var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
 					(horiz ? 1 : -1) * // horizontal axis reverses the margin
 					(opposite ? -1 : 1) * // so does opposite axes
-					axisTitleOptions.margin -
+					axisTitleMargin -
 					(isIE ? parseInt(
 						axisTitleOptions.style.fontSize || 12, 10
 					) / 3 : 0); // preliminary fix for vml's centerline
 				
-				if (!axis.axisTitle) {
-					axis.titleGroup = renderer.g()
-						.attr({ zIndex: 7 })
-						.add();
-					axis.axisTitle = renderer.text(
-						axisTitleOptions.text,
-						0,
-						0,
-						axisTitleOptions.style, 
-						axisTitleOptions.rotation || 0,
-						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
-					)
-					.add(axis.titleGroup);
-				}
 				axis.titleGroup.animate({
 					translateX: horiz ? 
 						alongAxis: 
@@ -5553,7 +5595,7 @@ function Chart (options) {
 			/*var boxPos = renderer.getAlignment(options);
 			legendGroup.translate(boxPos.x, boxPos.y);*/
 			legendGroup.align(options);
-			chart.legendHeight = legendGroup.getBBox().height;
+			chart.legendBBox = legendGroup.getBBox();
 			
 			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
@@ -6154,7 +6196,8 @@ function Chart (options) {
 		var mgn, 
 			//div, 
 			//i, 
-			labels = options.labels, 
+			labels = options.labels,
+			titleOffset= 0,
 			credits = options.credits;
 		
 		// Title
@@ -6171,17 +6214,50 @@ function Chart (options) {
 			});
 		}
 		
-		// autoscale
-		plotTop = mathMax(options.title.y, options.subtitle.y)
-			+ pick(options.title.margin, 5);
+		// auto margins
+		if (chart.title || chart.subtitle) {
+			titleOffset = mathMax(
+				chart.title && !options.title.verticalAlign && options.title.y || 0, 
+				chart.subtitle && !options.subtitle.verticalAlign && options.subtitle.y || 0
+			);
+			if (titleOffset) {
+				plotTop = mathMax(plotTop, titleOffset + pick(options.title.margin, 15));
+			}
+		}
 			
-		if (options.legend.verticalAlign == 'bottom') {
-			//plotHeight = chart.legendTop - plotTop - pick(options.legend.margin, 5);
-			marginBottom += chart.legendHeight - options.legend.y + pick(options.legend.margin, 5);
+		
+		if (options.legend.align == 'right') {
+			marginRight = mathMax(
+				marginRight,
+				chart.legendBBox.width - options.legend.x + pick(options.legend.margin, 5)
+			);
+		} else if (options.legend.verticalAlign == 'top') {
+			plotTop = mathMax(
+				plotTop, 
+				chart.legendBBox.height + options.legend.y + pick(options.legend.margin, 5)
+			);
+				
+		
+		} else if (options.legend.verticalAlign == 'bottom') {
+			marginBottom = mathMax(
+				marginBottom, 
+				chart.legendBBox.height - options.legend.y + pick(options.legend.margin, 5)
+			);
+				
+		
 		}
 		
-		plotHeight = chartHeight - plotTop - marginBottom;
-		plotWidth = chartWidth - plotLeft - marginRight;
+		plotLeft += leftAxisOffset;
+		marginBottom += bottomAxisOffset;
+		
+		// todo: make function, remove duplicates
+		chart.plotLeft = plotLeft;
+		chart.plotTop = plotTop;
+		chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
+		chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
+		
+		chart.plotSizeX = inverted ? plotHeight : plotWidth;
+		chart.plotSizeY = inverted ? plotWidth : plotHeight;
 		
 		
 		
@@ -6194,7 +6270,14 @@ function Chart (options) {
 				axis.render();
 			});
 		}
-	
+		
+		
+		// The series
+		each (series, function(serie) {
+			serie.translate();
+			serie.setTooltipPoints();
+			serie.render();
+		});
 		
 		
 		// Labels
@@ -6219,13 +6302,6 @@ function Chart (options) {
 					
 			});
 		}
-
-		// The series
-		each (series, function(serie) {
-			serie.render();
-		});
-		
-
 		
 		// Toolbar (don't redraw)
 		if (!chart.toolbar) {
@@ -6303,10 +6379,10 @@ function Chart (options) {
 		
 		
 		// Prepare for the axis sizes
-		each(series, function(serie) {
+		/*each(series, function(serie) {
 			serie.translate();
 			serie.setTooltipPoints();
-		});	
+		});*/	
 		
 		chart.render = render;
 		
@@ -6372,8 +6448,9 @@ function Chart (options) {
 	 * - Re-use setting chartWidth, plotWidth, plotSizeX etc. Run resize chart on init or
 	 *   isolate these statements in a func.
 	 */
+	
 		
-	$(function() {
+	if ($) $(function() {
 		$container = $('#container');
 		var origChartWidth = chartWidth,
 			origChartHeight = chartHeight;
@@ -6405,6 +6482,8 @@ function Chart (options) {
 		
 		chartWidth = width;
 		chartHeight = height;
+		
+		// todo: make function
 		chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
 		chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
 		
@@ -7725,7 +7804,7 @@ Series.prototype = {
 				series.area = series.chart.renderer.path(areaPath).
 					attr({
 						fill: fillColor
-					}).add(series.group);
+					}).add(group);
 			}
 		}
 	},
@@ -7778,7 +7857,6 @@ Series.prototype = {
 				.translate(chart.plotLeft, chart.plotTop)
 				.add();
 		}
-		
 			
 		series.drawDataLabels();
 
