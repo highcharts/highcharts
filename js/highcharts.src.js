@@ -710,6 +710,7 @@ defaultOptions = {
 	legend: {
 		enabled: true,
 		align: 'center',
+		//floating: false, // docs
 		layout: 'horizontal',
 		labelFormatter: function() {
 			return this.name;
@@ -868,7 +869,7 @@ var defaultXAxisOptions =  {
 	title: {
 		//text: null,
 		align: 'middle', // low, middle or high
-		//margin: 5, // docs
+		//margin: 10, // docs
 		//rotation: 0,
 		//side: 'outside',
 		style: {
@@ -4252,6 +4253,7 @@ function Chart (options) {
 			var tickmarkPos,
 				hasData = associatedSeries.length && defined(min) && defined(max),
 				titleOffset = 0,
+				titleMargin = 0,
 				axisTitleOptions = options.title,
 				labelOptions = options.labels;
 			
@@ -4351,19 +4353,26 @@ function Chart (options) {
 				}
 				
 				titleOffset = axis.titleGroup.getBBox()[horiz ? 'height' : 'width'];
+				titleMargin = pick(options.title.margin, 10);
 			}
 			
 			
 			// adjust chart margins
+			if (options.index) { // add offset of previous axes
+				offset = offset || -leftAxisOffset;
+			}
 			if (horiz && !opposite) { // bottom
-				axisTitleMargin = labelOffset + options.labels.y + pick(options.title.margin, 5) + titleOffset;
+				axisTitleMargin = labelOffset + options.labels.y + titleMargin + titleOffset;
 				bottomAxisOffset = mathMax(bottomAxisOffset, axisTitleMargin);
 			
 			} else if (horiz && opposite) {
 			
 			} else if (!horiz && !opposite) { // left
-				axisTitleMargin = labelOffset - options.labels.x + pick(options.title.margin, 5);
-				leftAxisOffset = mathMax(leftAxisOffset, axisTitleMargin + titleOffset);			
+				axisTitleMargin = labelOffset - options.labels.x + titleMargin;
+				leftAxisOffset = mathMax(
+					leftAxisOffset, 
+					axisTitleMargin + titleOffset - offset
+				);			
 			
 			} else {
 			}
@@ -6225,27 +6234,33 @@ function Chart (options) {
 			}
 		}
 			
-		
-		if (options.legend.align == 'right') {
-			marginRight = mathMax(
-				marginRight,
-				chart.legendBBox.width - options.legend.x + pick(options.legend.margin, 5)
-			);
-		} else if (options.legend.verticalAlign == 'top') {
-			plotTop = mathMax(
-				plotTop, 
-				chart.legendBBox.height + options.legend.y + pick(options.legend.margin, 5)
-			);
+		// todo: rationalize
+		if (!options.legend.floating) {
+			if (options.legend.align == 'right') { // horizontal alignment handled first
+				marginRight = mathMax(
+					marginRight,
+					chart.legendBBox.width - options.legend.x + pick(options.legend.margin, 5)
+				);
+			} else if (options.legend.align == 'left') {
+				plotLeft = mathMax(
+					plotLeft,
+					chart.legendBBox.width + options.legend.x + pick(options.legend.margin, 5)
+				);
 				
-		
-		} else if (options.legend.verticalAlign == 'bottom') {
-			marginBottom = mathMax(
-				marginBottom, 
-				chart.legendBBox.height - options.legend.y + pick(options.legend.margin, 5)
-			);
-				
-		
+			} else if (options.legend.verticalAlign == 'top') {
+				plotTop = mathMax(
+					plotTop, 
+					chart.legendBBox.height + options.legend.y + pick(options.legend.margin, 5)
+				);				
+			
+			} else if (options.legend.verticalAlign == 'bottom') {
+				marginBottom = mathMax(
+					marginBottom, 
+					chart.legendBBox.height - options.legend.y + pick(options.legend.margin, 5)
+				);
+			}
 		}
+		
 		
 		plotLeft += leftAxisOffset;
 		marginBottom += bottomAxisOffset;
