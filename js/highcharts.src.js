@@ -2298,8 +2298,6 @@ var VMLElement = extendClass( SVGElement, {
 			
 		}
 		
-		//css(element, { visibility: 'visible' });
-		
 		// append it
 		parentNode.appendChild(element);
 		
@@ -2321,6 +2319,7 @@ var VMLElement = extendClass( SVGElement, {
 			symbolName = this.symbolName,
 			hasSetSymbolSize,
 			shadows = this.shadows,
+			documentMode = doc.documentMode,
 			skipAttr,
 			ret = this;
 			
@@ -2410,6 +2409,13 @@ var VMLElement = extendClass( SVGElement, {
 				} else if (key == 'zIndex' || key == 'visibility') {
 					elemStyle[key] = value;
 					
+					// issue 61 workaround
+					if (documentMode == 8 && key == 'visibility' && nodeName == 'DIV') {
+						each(element.childNodes, function(childNode) {
+							css(childNode, { visibility: value });
+						});
+					}
+					
 					skipAttr = true;
 				
 				// width and height
@@ -2494,7 +2500,7 @@ var VMLElement = extendClass( SVGElement, {
 					// only one node allowed
 					element.innerHTML = value;
 				} else if (!skipAttr) {
-					if (doc.documentMode == 8) { // IE8 setAttribute bug
+					if (documentMode == 8) { // IE8 setAttribute bug
 						element[key] = value;
 					} else {
 						attr(element, key, value);
@@ -4548,7 +4554,6 @@ function Chart (options) {
 		function refresh(point) {
 			var 
 				series = point.series,
-				
 				borderColor = options.borderColor || point.color || series.color || '#606060',
 				x,
 				y,
