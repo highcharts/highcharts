@@ -4569,8 +4569,8 @@ function Chart (options) {
 			currentSeries = series;
 			
 			// get the reference point coordinates (pie charts use tooltipPos)
-			x = tooltipPos ? tooltipPos[0] : (inverted ? plotWidth - point.plotY : point.plotX);
-			y = tooltipPos ? tooltipPos[1] : (inverted ? plotHeight - point.plotX : point.plotY);
+			x = mathRound(tooltipPos ? tooltipPos[0] : (inverted ? plotWidth - point.plotY : point.plotX));
+			y = mathRound(tooltipPos ? tooltipPos[1] : (inverted ? plotHeight - point.plotX : point.plotY));
 				
 				
 			// hide tooltip if the point falls outside the plot
