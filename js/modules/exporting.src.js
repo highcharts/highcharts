@@ -610,20 +610,20 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 	];
 };
 
-// Add the buttons on chart load
-addEvent(Chart.prototype, 'load', function(e) {
-	var chart = e.target,
+// Overwrite the HC.Chart object with added functionality for export buttons after render
+HC.Chart = function(options) {
+	var chart = new Chart(options),
 		n,
 		exportingOptions = chart.options.exporting,
 		buttons = exportingOptions.buttons;
 		
-	if (exportingOptions.enabled !== false) {
-	
+	if (exportingOptions.enabled !== false) {	
 		for (n in buttons) {
 			chart.addButton(buttons[n]);
 		}
 	}
 	
-});
+	return chart;
+};
 
 })();
