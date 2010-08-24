@@ -6225,7 +6225,7 @@ Point.prototype = {
 		var point = this,
 			series = point.series;
 	
-		point.options = options;
+		point.config = options;
 		
 		// onedimensional array input
 		if (typeof options == 'number' || options === null) {
@@ -6237,6 +6237,7 @@ Point.prototype = {
 			
 			// copy options directly to point
 			extend(point, options);
+			point.options = options;
 		}
 		
 		// categorized data with name in first position
@@ -7154,7 +7155,7 @@ Series.prototype = {
 		while (i--) {
 			point = data[i];
 			normalOptions = (point.options && point.options.marker) || point.options;
-			if (normalOptions.enabled === false) {
+			if (normalOptions && normalOptions.enabled === false) {
 				normalOptions.radius = 0;
 			}
 			hasPointSpecificOptions = false;

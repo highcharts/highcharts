@@ -211,7 +211,7 @@ extend (Chart.prototype, {
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
 		
 		// prepare for replicating the chart
-		options.series = [];	
+		options.series = [];
 		each (chart.series, function(serie) {
 			seriesOptions = serie.options;			
 			
@@ -220,14 +220,14 @@ extend (Chart.prototype, {
 			
 			seriesOptions.data = [];
 			each(serie.data, function(point) {
-				pointOptions = typeof point.options == 'number' ?
+				pointOptions = typeof point.config == 'number' ?
 					{ y: point.y } :
-					point.options;
+					point.config;
 				pointOptions.x = point.x;
 				seriesOptions.data.push(pointOptions); // copy fresh updated data
 								
 				// remove image markers
-				pointMarker = point.options.marker;
+				pointMarker = point.config.marker;
 				if (pointMarker && /^url\(/.test(pointMarker.symbol)) { 
 					delete pointMarker.symbol;
 				}
@@ -235,7 +235,6 @@ extend (Chart.prototype, {
 			
 			options.series.push(seriesOptions);
 		});
-
 		
 		// generate the chart copy
 		chartCopy = new Highcharts.Chart(options);
