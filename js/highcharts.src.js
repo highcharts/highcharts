@@ -4357,6 +4357,9 @@ function Chart (options) {
 			
 			
 			// adjust chart margins
+			// to do: record higher level axes in the same position, and add
+			// previous offsets from the same position. Make arrays with offsets,
+			// for example axisOffset.left
 			if (options.index) { // add offset of previous axes
 				offset = offset || -leftAxisOffset;
 			}
@@ -4364,7 +4367,7 @@ function Chart (options) {
 				axisTitleMargin = labelOffset + options.labels.y + titleMargin + titleOffset;
 				bottomAxisOffset = mathMax(bottomAxisOffset, axisTitleMargin);
 			
-			} else if (horiz && opposite) {
+			} else if (horiz && opposite) { // top
 			
 			} else if (!horiz && !opposite) { // left
 				axisTitleMargin = labelOffset - options.labels.x + titleMargin;
@@ -4373,9 +4376,14 @@ function Chart (options) {
 					axisTitleMargin + titleOffset - offset
 				);			
 			
-			} else {
+			} else { // right
+				axisTitleMargin = labelOffset + options.labels.x + titleMargin;
+				rightAxisOffset = mathMax(
+					rightAxisOffset, 
+					axisTitleMargin + titleOffset - offset
+				);
 			}
-			
+						
 			// remove old ticks
 			for (var pos in ticks) {
 				if (!ticks[pos].isInUse) {
@@ -6262,7 +6270,9 @@ function Chart (options) {
 		
 		
 		plotLeft += leftAxisOffset;
+		plotTop += topAxisOffset;
 		marginBottom += bottomAxisOffset;
+		marginRight += rightAxisOffset;
 		
 		// todo: make function, remove duplicates
 		chart.plotLeft = plotLeft;
