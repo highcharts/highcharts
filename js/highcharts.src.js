@@ -869,7 +869,7 @@ var defaultXAxisOptions =  {
 	title: {
 		//text: null,
 		align: 'middle', // low, middle or high
-		//margin: 10, // docs
+		//margin: 0 for horizontal, 10 for vertical axes, // docs
 		//rotation: 0,
 		//side: 'outside',
 		style: {
@@ -897,7 +897,6 @@ defaultYAxisOptions = merge(defaultXAxisOptions, {
 	startOnTick: true,
 	tickWidth: 0,
 	title: {
-		//margin: 5, //docs
 		rotation: 270,
 		text: 'Y-values'
 	}
@@ -3487,7 +3486,7 @@ function Chart (options) {
 			ticks = {},
 			tickAmount,
 			labelOffset,
-			axisTitleMargin = options.title.margin,
+			axisTitleMargin,// = options.title.margin,
 			dateTimeLabelFormat,
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function() {
@@ -4353,7 +4352,7 @@ function Chart (options) {
 				}
 				
 				titleOffset = axis.titleGroup.getBBox()[horiz ? 'height' : 'width'];
-				titleMargin = pick(options.title.margin, 10);
+				titleMargin = pick(options.title.margin, horiz ? 0 : 10);
 			}
 			
 			
