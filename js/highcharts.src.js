@@ -21,6 +21,7 @@ var doc = document,
 	math = Math,
 	mathRound = math.round,
 	mathFloor = math.floor,
+	mathCeil = math.ceil,
 	mathMax = math.max,
 	mathMin = math.min,
 	mathAbs = math.abs,
@@ -3889,7 +3890,7 @@ function Chart (options) {
 			
 			var i,
 				roundedMin = mathFloor(min / tickInterval) * tickInterval,
-				roundedMax = math.ceil(max / tickInterval) * tickInterval;
+				roundedMax = mathCeil(max / tickInterval) * tickInterval;
 				
 			tickPositions = [];
 			
@@ -8082,9 +8083,9 @@ var ColumnSeries = extendClass(Series, {
 		each (data, function(point) {
 			var plotY = point.plotY,
 				barX = point.plotX + pointXOffset,
-				barY = mathMin(plotY, translatedThreshold), 
+				barY = mathCeil(mathMin(plotY, translatedThreshold)), 
 				barW = pointWidth,
-				barH = mathAbs((point.yBottom || translatedThreshold) - plotY),
+				barH = mathCeil(mathAbs((point.yBottom || translatedThreshold) - plotY)),
 				trackerY;
 			
 			// handle options.minPointLength and tracker for small points
