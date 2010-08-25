@@ -7355,7 +7355,10 @@ Series.prototype = {
 						options.rotation, 
 						align
 					)
-					.attr({ zIndex: 1 })
+					.attr({ 
+						zIndex: 1,
+						visibility: point.visible === false ? HIDDEN : VISIBLE // for pies
+					})
 					.add(dataLabelsGroup); // pies have point.group
 				}
 				
@@ -8416,25 +8419,22 @@ var PiePoint = extendClass(Point, {
 	setVisible: function(vis) {
 	
 		var point = this, 
-			chart = point.series.chart;
+			chart = point.series.chart,
+			method;
 		
 		// if called without an argument, toggle visibility
 		point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
 		
+		method = vis ? 'show' : 'hide';
 		
-		if (vis) {
-			//layer.show();
-			point.group.show();
-			point.tracker.show();
-			
-			
-		} else { 
-			//layer.hide();
-			point.group.hide();
-			point.tracker.hide();
-			
+		point.group[method]();
+		if (point.tracker) {
+			point.tracker[method]();
 		}
-	
+		if (point.dataLabel) {
+			point.dataLabel[method]();
+		}
+		
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
 		}
