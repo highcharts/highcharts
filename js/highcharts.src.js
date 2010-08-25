@@ -2248,11 +2248,13 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	init: function(renderer, nodeName) {
 		var markup =  ['<', nodeName, ' filled="f" stroked="f"'],
-			style = ['position: ', ABSOLUTE, ';'];
+			style = ['position: ', ABSOLUTE, ';'],
+			isDiv = nodeName == DIV;
 		
 		// divs and shapes need size
-		if (nodeName == 'shape' || nodeName == DIV) {
-			style.push('left:0;top:0;width:10px;height:10px;');
+		if (nodeName == 'shape' || isDiv) {
+			style.push('left:0;top:0;width:'+ (isDiv ? renderer.width : 10) 
+				+'px;height:'+ (isDiv ? renderer.height : 10) +'px;');
 		}
 		markup.push(' style="', style.join(''), '"/>');
 		
@@ -2708,6 +2710,8 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	init: function(container, width, height) {
 		
 		// generate the containing box
+		this.width = width;
+		this.height = height;
 		this.box = createElement(DIV, null, {
 				width: width + PX,
 				height: height + PX
