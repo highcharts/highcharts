@@ -6073,8 +6073,9 @@ function Chart (options) {
 			series[i].destroy();
 		}
 		
-		// remove all SVG
-		container.innerHTML = '';
+		// remove container and all SVG
+		container.onmousedown = container.onmousemove = container.onmouseup = container.onclick = null;
+		container.parentNode.removeChild(container);
 		
 		// IE6 leak 
 		container =	null;
