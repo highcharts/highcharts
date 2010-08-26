@@ -6217,7 +6217,7 @@ Point.prototype = {
 		point.pointAttr = {};
 		
 		if (series.options.colorByPoint) {
-			defaultColors = defaultOptions.colors;
+			defaultColors = series.chart.options.colors;
 			if (!point.options) {
 				point.options = {};
 			}
