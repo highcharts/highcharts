@@ -1582,8 +1582,8 @@ SVGElement.prototype = {
 		if (this.rotation) { // adjust for rotated text
 			rad = this.rotation * math.PI * 2 / 360; // radians
 			
-			//bBox.height = bBox.height * mathCos(rad) + bBox.width * mathSin(rad);
-			bBox.slant = mathAbs(bBox.width * mathSin(rad)); // the additional height below the anchor
+			bBox.height = mathAbs(bBox.height * mathCos(rad) + bBox.width * mathSin(rad));
+			//bBox.slant = mathAbs(bBox.width * mathSin(rad)); // the additional height below the anchor
 			
 			
 		}
@@ -3383,10 +3383,7 @@ function Chart (options) {
 		marginRight = pick(optionsChart.marginRight, margin[1]),
 		marginBottom = pick(optionsChart.marginBottom, margin[2]),
 		plotLeft = pick(optionsChart.marginLeft, margin[3]),
-		topAxisOffset = 0,
-		rightAxisOffset = 0,
-		bottomAxisOffset = 0,
-		leftAxisOffset = 0,
+		axisOffset = [0, 0, 0, 0], // top, right, bottom, left
 		renderTo,
 		renderToClone,
 		container,
@@ -3436,6 +3433,9 @@ function Chart (options) {
 		var isXAxis = options.isX,
 			opposite = options.opposite, // needed in setOptions			
 			horiz = inverted ? !isXAxis : isXAxis,
+			side = horiz ? 
+				(opposite ? 0 /* top */  : 2 /* bottom */) :
+				(opposite ? 1 /* right*/ : 3 /* left */  ),
 			stacks = {
 				bar: {},
 				column: {},
@@ -3446,9 +3446,8 @@ function Chart (options) {
 	
 		options = merge(
 				isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
-				horiz ? 
-					(opposite ? defaultTopAxisOptions : defaultBottomAxisOptions) :
-					(opposite ? defaultRightAxisOptions : defaultLeftAxisOptions),
+				[defaultTopAxisOptions, defaultRightAxisOptions, 
+					defaultBottomAxisOptions, defaultLeftAxisOptions][side],
 				options
 			);
 	
@@ -4254,7 +4253,8 @@ function Chart (options) {
 				titleOffset = 0,
 				titleMargin = 0,
 				axisTitleOptions = options.title,
-				labelOptions = options.labels;
+				labelOptions = options.labels,
+				directionFactor = [-1, 1, 1, -1][side];
 			
 			if (!axisGroup) {
 				axisGroup = renderer.g('axis')
@@ -4323,9 +4323,9 @@ function Chart (options) {
 
 						// get max label offset
 						var key = horiz ? 'height' : 'width';
-						if (horiz && !opposite) { // bottom axis labels ignores height unless rotated
+						/*if (horiz && !opposite) { // bottom axis labels ignores height unless rotated
 							key = 'slant';
-						}
+						}*/
 						labelOffset = mathMax(
 							ticks[pos].getBBox()[key] || 0, 
 							labelOffset
@@ -4355,34 +4355,48 @@ function Chart (options) {
 				titleMargin = pick(options.title.margin, horiz ? 0 : 10);
 			}
 			
+			// handle automatic or user set offset
+			// todo: wrong for right and bottom axes
+			offset = offset || directionFactor * axisOffset[side];
 			
-			// adjust chart margins
-			// to do: record higher level axes in the same position, and add
-			// previous offsets from the same position. Make arrays with offsets,
-			// for example axisOffset.left
-			if (options.index) { // add offset of previous axes
-				offset = offset || -leftAxisOffset;
-			}
-			if (horiz && !opposite) { // bottom
-				axisTitleMargin = labelOffset + options.labels.y + titleMargin + titleOffset;
-				bottomAxisOffset = mathMax(bottomAxisOffset, axisTitleMargin);
+			
+			axisTitleMargin = 
+				labelOffset + 
+				directionFactor * options.labels[horiz ? 'y' : 'x'] + 
+				titleMargin;
+			axisOffset[side] = mathMax(
+				axisOffset[side], 
+				axisTitleMargin + titleOffset - offset
+			);
+				
+			/*if (horiz && !opposite) { // bottom
+				axisTitleMargin = labelOffset + options.labels.y + titleMargin;
+				axisOffset[side] = mathMax(
+					axisOffset[side], 
+					axisTitleMargin + titleOffset
+				);
 			
 			} else if (horiz && opposite) { // top
+				axisTitleMargin = labelOffset - options.labels.y + titleMargin;
+				axisOffset[side] = mathMax(
+					axisOffset[side], 
+					axisTitleMargin + titleOffset
+				);
 			
 			} else if (!horiz && !opposite) { // left
 				axisTitleMargin = labelOffset - options.labels.x + titleMargin;
-				leftAxisOffset = mathMax(
-					leftAxisOffset, 
+				axisOffset[side] = mathMax(
+					axisOffset[side], 
 					axisTitleMargin + titleOffset - offset
 				);			
 			
 			} else { // right
 				axisTitleMargin = labelOffset + options.labels.x + titleMargin;
-				rightAxisOffset = mathMax(
-					rightAxisOffset, 
+				axisOffset[side] = mathMax(
+					axisOffset[side], 
 					axisTitleMargin + titleOffset - offset
 				);
-			}
+			}*/
 						
 			// remove old ticks
 			for (var pos in ticks) {
@@ -6269,10 +6283,10 @@ function Chart (options) {
 		}
 		
 		
-		plotLeft += leftAxisOffset;
-		plotTop += topAxisOffset;
-		marginBottom += bottomAxisOffset;
-		marginRight += rightAxisOffset;
+		plotLeft += axisOffset[3];
+		plotTop += axisOffset[0];
+		marginBottom += axisOffset[2];
+		marginRight += axisOffset[1];
 		
 		// todo: make function, remove duplicates
 		chart.plotLeft = plotLeft;
