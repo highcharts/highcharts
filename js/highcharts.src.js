@@ -56,7 +56,18 @@ var doc = document,
 	NONE = 'none',
 	M = 'M',
 	L = 'L',
-	TRACKER_FILL = 'rgba(192,192,192,0.005)', // invisible but clickable
+	/*
+	 * Empirical lowest possible opacities for TRACKER_FILL
+	 * IE6: 0.002
+	 * IE7: 0.002
+	 * IE8: 0.002
+	 * IE9: 0.00000000001 (unlimited)
+	 * FF: 0.00000000001 (unlimited)
+	 * Chrome: 0.000001
+	 * Safari: 0.000001
+	 * Opera: 0.00000000001 (unlimited)
+	 */
+	TRACKER_FILL = 'rgba(192,192,192,'+ (hasSVG ? 0.000001 : 0.002) +')', // invisible but clickable
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
@@ -2440,7 +2451,6 @@ var VMLElement = extendClass( SVGElement, {
 					if (key == 'y' && element.tagName == 'SPAN' && element.lineHeight) { // subtract lineHeight
 						value -= element.lineHeight;
 					}
-					
 					elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 					
 				// class name
