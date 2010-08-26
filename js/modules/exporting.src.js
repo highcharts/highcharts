@@ -240,7 +240,7 @@ extend (Chart.prototype, {
 		chartCopy = new Highcharts.Chart(options);
 		
 		// get the SVG from the container's innerHTML
-		svg = sandbox.getElementsByTagName(DIV)[0].innerHTML;
+		svg = chartCopy.container.innerHTML;
 		
 		// free up memory
 		options = null;
