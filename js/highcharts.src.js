@@ -1246,8 +1246,12 @@ SVGElement.prototype = {
 	 * @param {Number} duration
 	 */
 	animate: function(params, duration) {
-		globalAnimation = pick(globalAnimation, {});
-		animate(this, params, pick(duration, globalAnimation.duration, 500));
+		var animOptions = pick(globalAnimation, {});
+		if (!animOptions) {
+			this.attr(params);
+		} else {
+			animate(this, params, pick(duration, animOptions.duration, 500));
+		}
 	},
 	/**
 	 * Set or get a given attribute
@@ -2531,10 +2535,15 @@ var VMLElement = extendClass( SVGElement, {
 				// x and y 
 				} else if (/^(x|y)$/.test(key)) {
 
-					if (key == 'y' && element.tagName == 'SPAN' && element.lineHeight) { // subtract lineHeight
-						value -= element.lineHeight;
+					if (nodeName == 'SPAN') {
+						if (key == 'y' && element.lineHeight) { // subtract lineHeight
+							value -= element.lineHeight;
+						
+						} else if (key == 'x' && element.align && element.align != 'left') {
+							// fix the position according to align
+							value -= this.getBBox().width / { right: 1, center: 2 }[element.align];
+						}
 					}
-					
 					elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 					
 				// class name
@@ -2796,16 +2805,22 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} height
 	 */
 	init: function(container, width, height) {
-		
-		// generate the containing box
-		this.box = createElement(DIV, null, {
-				width: width + PX,
-				height: height + PX
-			}, container);
 		this.Element = VMLElement;
 		this.width = width;
 		this.height = height;
 		this.alignedObjects = [];
+		
+		var boxWrapper = this.createElement(DIV)
+			.attr({
+				width: width + PX,
+				height: height + PX
+			});
+		container.appendChild(boxWrapper.element);	
+		
+		
+		// generate the containing box
+		this.box = boxWrapper.element;
+		this.boxWrapper = boxWrapper;
 		
 		// The only way to make IE6 and IE7 print is to use a global namespace. However,
 		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
@@ -3011,26 +3026,18 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			
 		// create a simple span for the non-rotated text
 		if (!rotation) { 
-			elemWrapper = this.createElement('span').attr({
+			elemWrapper = this.createElement('span');
+			elem = elemWrapper.element;
+			elem.lineHeight = lineHeight; // used in attr
+			elem.align = align; // internal prop used in attr
+			elemWrapper.attr({				 
 				x: x,
 				y: y - lineHeight,
 				text: str
 			});
-			elem = elemWrapper.element;
-			elem.lineHeight = lineHeight; // used in attr
 			
 			css(elem, style);
 			
-			
-			// fix the position according to align
-			if (align != 'left') {	
-				spanWidth = elemWrapper.getBBox().width;
-			
-				css(elem, {
-					left: (x - spanWidth / { right: 1, center: 2 }[align]) + PX
-				});				
-			}
-		
 		
 		// to achieve rotated text, the ie text is drawn on a vector line that
 		// is extrapolated to the left or right or both depending on the 
@@ -3409,6 +3416,8 @@ function Chart (options) {
 		tracker,
 		trackerGroup,
 		legend,
+		legendWidth,
+		legendHeight,
 		position,// = getPosition(container),
 		hasCartesianSeries = optionsChart.showAxes,
 		axes = [],
@@ -4356,18 +4365,18 @@ function Chart (options) {
 			}
 			
 			// handle automatic or user set offset
-			// todo: wrong for right and bottom axes
-			offset = offset || directionFactor * axisOffset[side];
+			offset = directionFactor * (offset || axisOffset[side]);
 			
 			
 			axisTitleMargin = 
 				labelOffset + 
-				directionFactor * options.labels[horiz ? 'y' : 'x'] + 
+				(labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) + 
 				titleMargin;
 			axisOffset[side] = mathMax(
 				axisOffset[side], 
-				axisTitleMargin + titleOffset - offset
+				axisTitleMargin + titleOffset + directionFactor * offset
 			);
+			
 				
 			/*if (horiz && !opposite) { // bottom
 				axisTitleMargin = labelOffset + options.labels.y + titleMargin;
@@ -4535,7 +4544,6 @@ function Chart (options) {
 			
 			// Place the title. 
 			if (axis.titleGroup) {
-				
 				// compute anchor points for each of the title align options
 				var margin = horiz ? 
 						plotLeft : plotTop;
@@ -4640,12 +4648,12 @@ function Chart (options) {
 		}
 			
 		// negate offset
-		if (!opposite) {
+		/*if (!opposite) {
 			offset *= -1;
 		}
 		if (horiz) {
 			offset *= -1;
-		} 
+		}*/
 			
 		// expose some variables
 		extend (axis, {
@@ -5292,8 +5300,6 @@ function Chart (options) {
 			legendGroup,
 			offsetWidth,
 			widthOption = options.width,
-			boxWidth,
-			boxHeight,
 			series = chart.series,
 			reversedLegend = options.reversed;
 			
@@ -5578,19 +5584,19 @@ function Chart (options) {
 			
 			
 			// Draw the border
-			boxWidth = widthOption || offsetWidth;
-			boxHeight = lastItemY - y + lineHeight;
+			legendWidth = widthOption || offsetWidth;
+			legendHeight = lastItemY - y + lineHeight;
 			
 			if (legendBorderWidth || legendBackgroundColor) {
-				boxWidth += 2 * padding;
-				boxHeight += 2 * padding;
+				legendWidth += 2 * padding;
+				legendHeight += 2 * padding;
 				
 				if (!box) {
 					box = renderer.rect(
 						0, 
 						0,
-						boxWidth,
-						boxHeight,
+						legendWidth,
+						legendHeight,
 						options.borderRadius,
 						legendBorderWidth || 0
 					).attr({
@@ -5603,8 +5609,8 @@ function Chart (options) {
 				
 				} else {
 					box.attr({ 
-						height: boxHeight,
-						width: boxWidth
+						height: legendHeight,
+						width: legendWidth
 					});
 				}
 			}
@@ -5625,7 +5631,6 @@ function Chart (options) {
 			/*var boxPos = renderer.getAlignment(options);
 			legendGroup.translate(boxPos.x, boxPos.y);*/
 			legendGroup.align(options);
-			chart.legendBBox = legendGroup.getBBox();
 			
 			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
@@ -6256,32 +6261,31 @@ function Chart (options) {
 		}
 			
 		// todo: rationalize
-		if (!options.legend.floating) {
+		if (options.legend.enabled && !options.legend.floating) {
 			if (options.legend.align == 'right') { // horizontal alignment handled first
 				marginRight = mathMax(
 					marginRight,
-					chart.legendBBox.width - options.legend.x + pick(options.legend.margin, 5)
+					legendWidth - options.legend.x + pick(options.legend.margin, 5)
 				);
 			} else if (options.legend.align == 'left') {
 				plotLeft = mathMax(
 					plotLeft,
-					chart.legendBBox.width + options.legend.x + pick(options.legend.margin, 5)
+					legendWidth + options.legend.x + pick(options.legend.margin, 5)
 				);
 				
 			} else if (options.legend.verticalAlign == 'top') {
 				plotTop = mathMax(
 					plotTop, 
-					chart.legendBBox.height + options.legend.y + pick(options.legend.margin, 5)
+					legendHeight + options.legend.y + pick(options.legend.margin, 5)
 				);				
 			
 			} else if (options.legend.verticalAlign == 'bottom') {
 				marginBottom = mathMax(
 					marginBottom, 
-					chart.legendBBox.height - options.legend.y + pick(options.legend.margin, 5)
+					legendHeight - options.legend.y + pick(options.legend.margin, 5)
 				);
 			}
 		}
-		
 		
 		plotLeft += axisOffset[3];
 		plotTop += axisOffset[0];
@@ -6424,6 +6428,7 @@ function Chart (options) {
 		
 		chart.render = render;
 		
+		globalAnimation = false;
 		render();
 		fireEvent(chart, 'load');
 	}
@@ -7368,6 +7373,7 @@ Series.prototype = {
 			}
 			
 		} else { // run the animation
+			globalAnimation = true;
 			clipRect.animate({ 
 				width: chart.plotSizeX 
 			}, {
@@ -7376,6 +7382,7 @@ Series.prototype = {
 				}, 
 				duration: 1000
 			});
+			globalAnimation = false;
 			
 			// delete this function to allow it only once
 			this.animate = null;
