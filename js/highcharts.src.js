@@ -881,6 +881,8 @@ var defaultXAxisOptions =  {
 			//font: defaultFont.replace('normal', 'bold')
 			fontWeight: 'bold'
 		}
+		//x: 0, //docs
+		//y: 0 // docs
 	},
 	type: 'linear' // linear or datetime
 },
@@ -4324,12 +4326,14 @@ function Chart (options) {
 				
 				axis.axisTitle = renderer.text(
 					axisTitleOptions.text,
-					horiz ? 
+					(horiz ? 
 						alongAxis: 
-						offAxis + (opposite ? plotWidth : 0) + offset, // x
-					horiz ? 
+						offAxis + (opposite ? plotWidth : 0) + offset)
+						+ (axisTitleOptions.x || 0),
+					(horiz ? 
 						offAxis - (opposite ? plotHeight : 0) + offset: 
-						alongAxis, // y
+						alongAxis)
+						+ (axisTitleOptions.y || 0),
 					axisTitleOptions.style, 
 					axisTitleOptions.rotation || 0,
 					{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
