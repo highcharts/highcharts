@@ -312,7 +312,10 @@ if (!globalAdapter && win.jQuery) {
 
 	animate = function (el, params, options) {
 		var $el = jQ(el);
-		el.d = params.d; // keep the array form for paths, used in jQ.fx.step.d
+		if (params.d) {
+			el.d = params.d; // keep the array form for paths, used in jQ.fx.step.d
+			params.d = 1; // because in jQuery, animating to an array has a different meaning
+		}
 		
 		$el.stop();
 		$el.animate(params, options);
@@ -3728,7 +3731,7 @@ function Chart (options) {
 					path = renderer.crispLine(path, width);
 					// todo: remove from array on removePlotLine
 					if (plotLines[value]) {
-						plotLines[value].attr({
+						plotLines[value].animate({
 							d: path
 						});
 					} else {
@@ -4092,7 +4095,7 @@ function Chart (options) {
 			} else if (max < roundedMax) {
 				tickPositions.pop();
 			}
-					
+			
 		}
 		
 		/**
@@ -4328,6 +4331,9 @@ function Chart (options) {
 			
 			labelOffset = 0; // reset
 			if (hasData) {
+				if (!isXAxis) {
+						console.log(tickPositions);
+					}
 				each(tickPositions, function(pos, index) {
 					var withLabel = !((pos == min && !options.showFirstLabel) ||
 						(pos == max && !options.showLastLabel)),
@@ -4453,15 +4459,7 @@ function Chart (options) {
 				);
 			}*/
 						
-			// remove old ticks
-			for (var pos in ticks) {
-				if (!ticks[pos].isInUse) {
-					ticks[pos].destroy();
-					delete ticks[pos];
-				} else {
-					ticks[pos].isInUse = false; // reset
-				}
-			}
+			
 			
 		}
 		
@@ -4487,6 +4485,9 @@ function Chart (options) {
 			
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData) {
+				if (!isXAxis) {
+						console.log(tickPositions);
+					}
 				// alternate grid color
 				if (alternateGridColor) {
 					each(tickPositions, function(pos, i) {
@@ -4554,6 +4555,16 @@ function Chart (options) {
 						delete plotLines[pos];
 					} else {
 						plotLines[pos].isInUse = false; // reset
+					}
+				}
+				
+				// remove old ticks
+				for (var pos in ticks) {
+					if (!ticks[pos].isInUse) {
+						ticks[pos].destroy();
+						delete ticks[pos];
+					} else {
+						ticks[pos].isInUse = false; // reset
 					}
 				}
 			
@@ -6637,7 +6648,7 @@ function Chart (options) {
 		
 		each(axes, function(axis) {
 			axis.isDirty = true;
-			axis.setScale();
+			//axis.setScale();
 		});
 		
 		each(series, function(serie) {
@@ -7928,7 +7939,7 @@ Series.prototype = {
 		// draw the graph
 		if (graph) {
 			//graph.animate({ d: graphPath.join(' ') });
-			graph.attr({ d: graphPath });
+			graph.animate({ d: graphPath });
 			
 		} else {
 			if (lineWidth) {
