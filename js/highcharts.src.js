@@ -312,6 +312,8 @@ if (!globalAdapter && win.jQuery) {
 
 	animate = function (el, params, options) {
 		var $el = jQ(el);
+		el.d = params.d; // keep the array form for paths, used in jQ.fx.step.d
+		
 		$el.stop();
 		$el.animate(params, options);
 	};
@@ -345,6 +347,28 @@ if (!globalAdapter && win.jQuery) {
 		} else {
 			oldStepDefault.apply(this, arguments);
 		}
+	};
+	// animate paths
+	jQ.fx.step.d = function(fx) {
+		if ( fx.state == 0 ) {
+			fx.start = fx.elem.attr(fx.prop).split(' ');
+			fx.end = fx.elem.d;
+		}
+		
+		var i = fx.start.length,
+			ret = [],
+			start;
+			
+		// in the following, point-to-point correlation between the two paths is assumed
+		while (i--) {
+			start = parseFloat(fx.start[i]);
+			ret[i] = 
+				isNaN(start) ? // a letter instruction like M or L
+					fx.start[i] :
+					fx.pos * (parseFloat(fx.end[i] - start)) + start;
+		}
+		fx.elem.attr('d', ret);
+
 	};
 	// get the current value
 	jQ.fx.prototype.cur = function() {
@@ -1286,7 +1310,11 @@ SVGElement.prototype = {
 			} else if (key == 'strokeWidth') {
 				key = 'stroke-width';
 			}
-			ret = parseFloat(attr(element, key) || this[key] || 0);
+			ret = attr(element, key) || this[key] || 0;
+			
+			if (key != 'd') { // 'd' is string in animation step
+				ret = parseFloat(ret);
+			}
 			
 		// setter
 		} else {
@@ -1311,7 +1339,7 @@ SVGElement.prototype = {
 						}
 					}
 					if (this.rotation) {
-						attr(element, 'transform', 'rotate('+ this.rotation +' '+ value +' '+ hash.y +')');
+						attr(element, 'transform', 'rotate('+ this.rotation +' '+ value +' '+ (hash.y || attr(element, 'y')) +')');
 					}
 					
 				// apply gradients
@@ -1546,18 +1574,13 @@ SVGElement.prototype = {
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
 			renderer = this.renderer,
-			isGroup = this.element.nodeName == 'g',
-			bBox = isGroup ? this.getBBox() : {},
 			x = alignOptions.x || 0, // default: left align
 			y = alignOptions.y || 0, // default: top align
 			attribs = {};
 			
-		// position groups by translation by default
-		alignByTranslate = pick(alignByTranslate, isGroup)
-			
 		// align
 		if (/^(right|center)$/.test(align)) {
-			x += (renderer.width - (bBox.width || alignOptions.width || 0) ) /
+			x += (renderer.width - (alignOptions.width || 0) ) /
 					{ right: 1, center: 2 }[align];
 		}
 		attribs[alignByTranslate ? 'translateX' : 'x'] = x;
@@ -1565,7 +1588,7 @@ SVGElement.prototype = {
 		
 		// vertical align
 		if (/^(bottom|middle)$/.test(vAlign)) {
-			y += (renderer.height - (bBox.height || alignOptions.height || 0)) /
+			y += (renderer.height - (alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 			
 		}
@@ -1581,8 +1604,8 @@ SVGElement.prototype = {
 	 */
 	getBBox: function() {
 		var bBox = this.element.getBBox(),
-			rad;
-		var h = bBox.height;
+			rad,
+			h = bBox.height;
 		if (this.rotation) { // adjust for rotated text
 			rad = this.rotation * math.PI * 2 / 360; // radians
 			
@@ -2583,12 +2606,11 @@ var VMLElement = extendClass( SVGElement, {
 				
 				// translation for animation
 				else if (key == 'translateX' || key == 'translateY') {
-					this[key] = val;
+					this[key] = value;
 					this.updateTransform();
 					
 					skipAttr = true;
 				}
-				
 				
 					
 				// let the shadow follow the main element
@@ -3386,11 +3408,11 @@ function Chart (options) {
 		margin = typeof optionsMargin == 'number' ? 
 			[optionsMargin, optionsMargin, optionsMargin, optionsMargin] :
 			optionsMargin,
-		plotTop = pick(optionsChart.marginTop, margin[0]),
-		marginRight = pick(optionsChart.marginRight, margin[1]),
-		marginBottom = pick(optionsChart.marginBottom, margin[2]),
-		plotLeft = pick(optionsChart.marginLeft, margin[3]),
-		axisOffset = [0, 0, 0, 0], // top, right, bottom, left
+		plotTop,
+		marginRight,
+		marginBottom,
+		plotLeft,
+		axisOffset,
 		renderTo,
 		renderToClone,
 		container,
@@ -3492,6 +3514,8 @@ function Chart (options) {
 			magnitude,
 			tickPositions, // array containing predefined positions
 			ticks = {},
+			tickMarks = {},
+			plotLines = {},
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
@@ -3660,42 +3684,60 @@ function Chart (options) {
 		}
 		
 		/**
+		 * Create the path for a plot line that goes from the given value on 
+		 * this axis, across the plot to the opposite side
+		 * @param {Object} value
+		 */
+		function getPlotLinePath(value) {
+			var x1, 
+				y1, 
+				x2, 
+				y2,
+				translatedValue = translate(value),
+				path,
+				skip;
+				
+			x1 = x2 = mathRound(translatedValue + transB);
+			y1 = y2 = mathRound(chartHeight - translatedValue - transB);
+			if (horiz) { 
+				y1 = plotTop;
+				y2 = chartHeight - marginBottom;
+				if (x1 < plotLeft || x1 > plotLeft + plotWidth) {
+					skip = true;
+				}
+			} else {
+				x1 = plotLeft;
+				x2 = chartWidth - marginRight;
+				if (y1 < plotTop || y1 > plotTop + plotHeight) {
+					skip = true;
+				}
+			}
+			return skip ? null : [M, x1, y1, L, x2, y2];
+		}
+		
+		/**
 		 * Add a single line across the plot
 		 */
 		function drawPlotLine(value, color, width) {
 			
 			if (width) {
-				var x1, 
-					y1, 
-					x2, 
-					y2,
-					translatedValue = translate(value),
-					skip;
-					
-				x1 = x2 = mathRound(translatedValue + transB);
-				y1 = y2 = mathRound(chartHeight - translatedValue - transB);
-				if (horiz) { 
-					y1 = plotTop;
-					y2 = chartHeight - marginBottom;
-					if (x1 < plotLeft || x1 > plotLeft + plotWidth) {
-						skip = true;
-					}
-				} else {
-					x1 = plotLeft;
-					x2 = chartWidth - marginRight;
-					if (y1 < plotTop || y1 > plotTop + plotHeight) {
-						skip = true;
-					}
-				}
-
 				
-				if (!skip) {
-					renderer.path(
-						renderer.crispLine([M, x1, y1, L, x2, y2], width)
-					).attr({
-							stroke: color,
-							'stroke-width': width
-						}).add(gridGroup);
+				var path = getPlotLinePath(value);
+				
+				if (path) {
+					path = renderer.crispLine(path, width);
+					// todo: remove from array on removePlotLine
+					if (plotLines[value]) {
+						plotLines[value].attr({
+							d: path
+						});
+					} else {
+						plotLines[value] = renderer.path(path)
+							.attr({
+								stroke: color,
+								'stroke-width': width
+							}).add(gridGroup);
+					}
 				}
 				
 			}
@@ -3722,7 +3764,7 @@ function Chart (options) {
 		 */
 		function addTick(pos, tickPos, color, width, len, withLabel, index) {
 			var x1, y1, x2, y2, str, labelOptions = options.labels,
-				ret = {};
+				markPath;
 			
 			// negate the length
 			if (tickPos == 'inside') {
@@ -3745,16 +3787,23 @@ function Chart (options) {
 			}
 			
 			if (width) {
-				ret.mark = renderer.path(
-					renderer.crispLine([M, x1, y1, L, x2, y2], width)
-				).attr({
-					stroke: color,
-					'stroke-width': width
-				}).add(axisGroup);
+				markPath = renderer.crispLine([M, x1, y1, L, x2, y2], width);
+				if (tickMarks[pos]) { // updating
+					tickMarks[pos].attr({
+						d: markPath
+					});
+				} else { // first time
+					tickMarks[pos] = renderer.path(
+						markPath
+					).attr({
+						stroke: color,
+						'stroke-width': width
+					}).add(axisGroup);
+				}
 			}
 			
 			
-			// write the label
+			// place the label that was pre-rendered to calculate its size
 			if (ticks[pos]) {
 				x1 = x1 + labelOptions.x - (tickmarkOffset && horiz ? 
 					tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
@@ -3762,13 +3811,12 @@ function Chart (options) {
 					tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
 				
 				//ticks[pos].translate(x1, y1);
-				ticks[pos].attr({
+				ticks[pos].animate({
 					x: x1,
 					y: y1
 				});
 				
 			}
-			return ret;
 		}
 		
 		/**
@@ -4272,11 +4320,11 @@ function Chart (options) {
 				gridGroup = renderer.g('grid')
 					.attr({ zIndex: 1 })
 					.add();
-			} else {
+			} /*else {
 				// clear the axis layers before new grid and ticks are drawn
 				axisGroup.empty();
 				gridGroup.empty();
-			}
+			}*/
 			
 			labelOffset = 0; // reset
 			if (hasData) {
@@ -4289,7 +4337,7 @@ function Chart (options) {
 					
 					// add the tick label
 					// write the label
-					if (!ticks[pos]&& withLabel && labelOptions.enabled) {
+					if (!ticks[pos] && withLabel && labelOptions.enabled) {
 						str = labelFormatter.call({
 							index: index,
 							isFirst: pos == tickPositions[0],
@@ -4325,7 +4373,6 @@ function Chart (options) {
 					}*/
 					
 					
-					
 					if (ticks[pos]) {
 						// record that it's being used
 						ticks[pos].isInUse = true; 
@@ -4335,8 +4382,9 @@ function Chart (options) {
 						/*if (horiz && !opposite) { // bottom axis labels ignores height unless rotated
 							key = 'slant';
 						}*/
+						
 						labelOffset = mathMax(
-							ticks[pos].getBBox()[key] || 0, 
+							ticks[pos].getBBox()[key] || 0,
 							labelOffset
 						);
 					}
@@ -4365,8 +4413,7 @@ function Chart (options) {
 			}
 			
 			// handle automatic or user set offset
-			offset = directionFactor * (offset || axisOffset[side]);
-			
+			offset = directionFactor * (options.offset || axisOffset[side]);
 			
 			axisTitleMargin = 
 				labelOffset + 
@@ -4377,7 +4424,6 @@ function Chart (options) {
 				axisTitleMargin + titleOffset + directionFactor * offset
 			);
 			
-				
 			/*if (horiz && !opposite) { // bottom
 				axisTitleMargin = labelOffset + options.labels.y + titleMargin;
 				axisOffset[side] = mathMax(
@@ -4416,6 +4462,7 @@ function Chart (options) {
 					ticks[pos].isInUse = false; // reset
 				}
 			}
+			
 		}
 		
 		/**
@@ -4483,6 +4530,9 @@ function Chart (options) {
 						options.gridLineColor, 
 						options.gridLineWidth
 					);
+					if (plotLines[tickmarkPos]) {
+						plotLines[tickmarkPos].isInUse = true;
+					}
 					
 					// add the tick mark
 					addTick(
@@ -4495,6 +4545,17 @@ function Chart (options) {
 						index
 					);
 				});
+				
+				// remove old plot lines 
+				// todo: removeUnused function?
+				for (var pos in plotLines) {
+					if (!plotLines[pos].isInUse) {
+						plotLines[pos].destroy();
+						delete plotLines[pos];
+					} else {
+						plotLines[pos].isInUse = false; // reset
+					}
+				}
 			
 				
 				// custom plot lines (in front of grid lines)
@@ -5586,6 +5647,10 @@ function Chart (options) {
 			// Draw the border
 			legendWidth = widthOption || offsetWidth;
 			legendHeight = lastItemY - y + lineHeight;
+			var boxSize = {
+				width: legendWidth,
+				height: legendHeight
+			};
 			
 			if (legendBorderWidth || legendBackgroundColor) {
 				legendWidth += 2 * padding;
@@ -5608,10 +5673,7 @@ function Chart (options) {
 					.shadow(options.shadow);
 				
 				} else {
-					box.attr({ 
-						height: legendHeight,
-						width: legendWidth
-					});
+					box.attr(boxSize);
 				}
 			}
 			
@@ -5630,7 +5692,7 @@ function Chart (options) {
 			
 			/*var boxPos = renderer.getAlignment(options);
 			legendGroup.translate(boxPos.x, boxPos.y);*/
-			legendGroup.align(options);
+			legendGroup.align(extend(options, boxSize), true);
 			
 			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
@@ -6151,6 +6213,97 @@ function Chart (options) {
 	}
 	
 	/**
+	 * Calculate margins by rendering axis labels in a preliminary position. Title,
+	 * subtitle and legend have already been rendered at this stage, but will be 
+	 * moved into their final positions
+	 */
+	function getMargins() {
+
+		
+		resetMargins();
+
+		// pre-render axes to get labels offset width
+		if (hasCartesianSeries) {
+			each(axes, function(axis) { 
+				axis.prerender();
+			});
+		}
+		
+		// auto margins
+		if (chart.title || chart.subtitle) {
+			titleOffset = mathMax(
+				chart.title && !options.title.verticalAlign && options.title.y || 0, 
+				chart.subtitle && !options.subtitle.verticalAlign && options.subtitle.y || 0
+			);
+			if (titleOffset) {
+				plotTop = mathMax(plotTop, titleOffset + pick(options.title.margin, 15));
+			}
+		}
+			
+		// todo: rationalize
+		if (options.legend.enabled && !options.legend.floating) {
+			if (options.legend.align == 'right') { // horizontal alignment handled first
+				marginRight = mathMax(
+					marginRight,
+					legendWidth - options.legend.x + pick(options.legend.margin, 5)
+				);
+			} else if (options.legend.align == 'left') {
+				plotLeft = mathMax(
+					plotLeft,
+					legendWidth + options.legend.x + pick(options.legend.margin, 5)
+				);
+				
+			} else if (options.legend.verticalAlign == 'top') {
+				plotTop = mathMax(
+					plotTop, 
+					legendHeight + options.legend.y + pick(options.legend.margin, 5)
+				);				
+			
+			} else if (options.legend.verticalAlign == 'bottom') {
+				marginBottom = mathMax(
+					marginBottom, 
+					legendHeight - options.legend.y + pick(options.legend.margin, 5)
+				);
+			}
+		}
+		
+		plotLeft += axisOffset[3];
+		plotTop += axisOffset[0];
+		marginBottom += axisOffset[2];
+		marginRight += axisOffset[1];
+		
+
+		setChartSize();
+	}
+	
+	/**
+	 * Set the public chart properties. This is done before and after the pre-render
+	 * to determine margin sizes
+	 */
+	function setChartSize() {
+		
+		chart.plotLeft = plotLeft;
+		chart.plotTop = plotTop;
+		chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
+		chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
+		
+		chart.plotSizeX = inverted ? plotHeight : plotWidth;
+		chart.plotSizeY = inverted ? plotWidth : plotHeight;
+	}
+	
+	/**
+	 * Initial margins before auto size margins are applied
+	 */
+	function resetMargins() {
+		plotTop = pick(optionsChart.marginTop, margin[0]);
+		marginRight = pick(optionsChart.marginRight, margin[1]);
+		marginBottom = pick(optionsChart.marginBottom, margin[2]);
+		plotLeft = pick(optionsChart.marginLeft, margin[3]);
+		
+		axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
+	}
+	
+	/**
 	 * Draw the borders and backgrounds for chart and plot area
 	 */
 	function drawChartBox() {
@@ -6159,6 +6312,8 @@ function Chart (options) {
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
 			plotSize = {
+				x: plotLeft,
+				y: plotTop,
 				width: plotWidth,
 				height: plotHeight
 			};
@@ -6242,64 +6397,8 @@ function Chart (options) {
 		// Legend
 		legend = chart.legend = new Legend(chart);
 		
-		// pre-render axes to get labels offset width
-		if (hasCartesianSeries) {
-			each(axes, function(axis) { 
-				axis.prerender();
-			});
-		}
-		
-		// auto margins
-		if (chart.title || chart.subtitle) {
-			titleOffset = mathMax(
-				chart.title && !options.title.verticalAlign && options.title.y || 0, 
-				chart.subtitle && !options.subtitle.verticalAlign && options.subtitle.y || 0
-			);
-			if (titleOffset) {
-				plotTop = mathMax(plotTop, titleOffset + pick(options.title.margin, 15));
-			}
-		}
-			
-		// todo: rationalize
-		if (options.legend.enabled && !options.legend.floating) {
-			if (options.legend.align == 'right') { // horizontal alignment handled first
-				marginRight = mathMax(
-					marginRight,
-					legendWidth - options.legend.x + pick(options.legend.margin, 5)
-				);
-			} else if (options.legend.align == 'left') {
-				plotLeft = mathMax(
-					plotLeft,
-					legendWidth + options.legend.x + pick(options.legend.margin, 5)
-				);
-				
-			} else if (options.legend.verticalAlign == 'top') {
-				plotTop = mathMax(
-					plotTop, 
-					legendHeight + options.legend.y + pick(options.legend.margin, 5)
-				);				
-			
-			} else if (options.legend.verticalAlign == 'bottom') {
-				marginBottom = mathMax(
-					marginBottom, 
-					legendHeight - options.legend.y + pick(options.legend.margin, 5)
-				);
-			}
-		}
-		
-		plotLeft += axisOffset[3];
-		plotTop += axisOffset[0];
-		marginBottom += axisOffset[2];
-		marginRight += axisOffset[1];
-		
-		// todo: make function, remove duplicates
-		chart.plotLeft = plotLeft;
-		chart.plotTop = plotTop;
-		chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
-		chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
-		
-		chart.plotSizeX = inverted ? plotHeight : plotWidth;
-		chart.plotSizeY = inverted ? plotWidth : plotHeight;
+		// Get margins by pre-rendering axes
+		getMargins();
 		
 		
 		
@@ -6462,14 +6561,17 @@ function Chart (options) {
 	chart.container = container;
 	
 	
-	chart.chartWidth = chartWidth;
+	/*chart.chartWidth = chartWidth;
 	chart.chartHeight = chartHeight;
 	
 	chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
 	chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
 	
 	chart.plotLeft = plotLeft;
-	chart.plotTop = plotTop;
+	chart.plotTop = plotTop;*/
+	
+	resetMargins();
+	setChartSize();
 	
 	
 	
@@ -6527,11 +6629,11 @@ function Chart (options) {
 		chartHeight = height;
 		
 		// todo: make function
-		chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
+		/*chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
 		chart.plotHeight = plotHeight = chartHeight - plotTop - marginBottom;
 		
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
-		chart.plotSizeY = inverted ? plotWidth : plotHeight;
+		chart.plotSizeY = inverted ? plotWidth : plotHeight;*/
 		
 		each(axes, function(axis) {
 			axis.isDirty = true;
@@ -6542,6 +6644,8 @@ function Chart (options) {
 			serie.isDirty = true;
 		});
 		chart.isDirtyLegend = true; // force legend redraw
+		
+		getMargins();
 		// todo: should this be handled by redraw? could add something like chart.isSizeDirty
 		drawChartBox();
 		
@@ -6558,8 +6662,8 @@ function Chart (options) {
 	
 	// Set the common inversion and transformation for inverted series after initSeries
 	chart.inverted = inverted = pick(inverted, options.chart.inverted);
-	chart.plotSizeX = plotSizeX = inverted ? plotHeight : plotWidth;
-	chart.plotSizeY = plotSizeY = inverted ? plotWidth : plotHeight; 
+	/*chart.plotSizeX = plotSizeX = inverted ? plotHeight : plotWidth;
+	chart.plotSizeY = plotSizeY = inverted ? plotWidth : plotHeight;*/ 
 	
 	// depends on inverted	
 	chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
@@ -7823,7 +7927,9 @@ Series.prototype = {
 
 		// draw the graph
 		if (graph) {
+			//graph.animate({ d: graphPath.join(' ') });
 			graph.attr({ d: graphPath });
+			
 		} else {
 			if (lineWidth) {
 				series.graph = renderer.path(graphPath).
