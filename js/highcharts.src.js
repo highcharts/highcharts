@@ -3445,6 +3445,7 @@ function Chart (options) {
 		legendHeight,
 		position,// = getPosition(container),
 		hasCartesianSeries = optionsChart.showAxes,
+		isResizing,
 		axes = [],
 		maxTicks, // handle the greatest amount of ticks on grouped axes
 		series = [], 
@@ -3518,7 +3519,7 @@ function Chart (options) {
 			tickPositions, // array containing predefined positions
 			ticks = {},
 			tickMarks = {},
-			plotLines = {},
+			plotLineLookup = {},
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
@@ -3533,6 +3534,202 @@ function Chart (options) {
 			reversed = options.reversed,
 			tickmarkOffset = (categories && options.tickmarkPlacement == 'between') ? 0.5 : 0;		
 
+		
+		/**
+		 * The Tick prototype
+		 */
+		function Tick(pos) {
+			var tick = this;
+			tick.pos = pos;
+			tick.isNew = true;				
+			
+			tick.addLabel();
+			
+		}
+		Tick.prototype = {
+			/**
+			 * Write the tick label
+			 */
+			addLabel: function() {
+				var pos = this.pos,
+					labelOptions = options.labels,
+					str,
+					withLabel = !((pos == min && !options.showFirstLabel) ||
+						(pos == max && !options.showLastLabel));
+
+					label = this.label;
+				
+				if (label === UNDEFINED) {
+					str = labelFormatter.call({
+						//index: index, todo: what-to-do?
+						isFirst: pos == tickPositions[0],
+						isLast: pos == tickPositions[tickPositions.length - 1],
+						dateTimeLabelFormat: dateTimeLabelFormat,
+						value: (categories && categories[pos] ? categories[pos] : pos)
+					});
+					this.label = label = 
+						defined(str) && withLabel && labelOptions.enabled ?
+							renderer.text(
+								str,
+								0,
+								0,
+								labelOptions.style, 
+								labelOptions.rotation,
+								labelOptions.align
+							)
+							.add(axisGroup):
+							null;
+				}
+			},
+			/**
+			 * Get the offset height or width of the label
+			 */
+			getLabelSize: function() {
+				var label = this.label;
+				return label ? 
+					label.getBBox()[horiz ? 'height' : 'width'] :
+					0;
+			},
+			/**
+			 * Put everything in place
+			 */
+			render: function() {
+				var tick = this,
+					label = tick.label,
+					pos = tick.pos,
+					labelOptions = options.labels,
+					gridLine = tick.gridLine,
+					gridLineWidth = options.gridLineWidth,
+					gridLinePath,
+					x,
+					y;
+					
+				x = horiz ? 
+					translate(pos) + transB : 
+					plotLeft + offset + (opposite ? plotWidth : 0);
+				y = horiz ?
+					chartHeight - marginBottom + offset - (opposite ? plotHeight : 0) :
+					chartHeight - translate(pos) - transB;
+				
+				// create the grid line
+				if (gridLineWidth) {
+					gridLinePath = getPlotLinePath(pos);
+					if (gridLine === UNDEFINED) {
+						tick.gridLine = gridLine =
+							gridLineWidth ?
+								renderer.path(gridLinePath)
+									.attr({
+										stroke: options.gridLineColor,
+										'stroke-width': gridLineWidth
+									}).add(gridGroup) :
+								null;
+					} 
+					gridLine && gridLine.animate({
+						d: gridLinePath
+					});
+				}
+				
+				if (label) { // the label is created on init
+					x = x + labelOptions.x - (tickmarkOffset && horiz ? 
+						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
+					y = y + labelOptions.y - (tickmarkOffset && !horiz ? 
+						tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+				
+					label[tick.isNew ? 'attr' : 'animate']({
+						x: x,
+						y: y
+					});
+				}
+				
+				tick.isNew = false;
+			},
+			/**
+			 * Destructor for the tick prototype
+			 */
+			destroy: function() {
+				var tick = this,
+					n;
+				for (n in tick) {
+					tick[n] && tick[n].destroy && tick[n].destroy();
+				}
+			}
+		};
+		
+		/*
+		function addTick(pos, tickPos, color, width, len, withLabel, index) {
+			var x1, y1, x2, y2, str, labelOptions = options.labels,
+				markPath;
+			
+			// negate the length
+			if (tickPos == 'inside') {
+				len = -len;
+			}
+			if (opposite) {
+				len = -len;
+			}
+			
+			// set the initial positions
+			x1 = x2 = translate(pos + tickmarkOffset) + transB;
+			y1 = y2 = chartHeight - translate(pos + tickmarkOffset) - transB;
+			
+			if (horiz) {
+				y1 = chartHeight - marginBottom - (opposite ? plotHeight : 0) + offset;
+				y2 = y1 + len;
+			} else {
+				x1 = plotLeft + (opposite ? plotWidth : 0) + offset;
+				x2 = x1 - len;				
+			}
+			
+			if (width) {
+				markPath = renderer.crispLine([M, x1, y1, L, x2, y2], width);
+				if (tickMarks[pos]) { // updating
+					tickMarks[pos].animate({
+						d: markPath
+					});
+				} else { // first time
+					tickMarks[pos] = renderer.path(
+						markPath
+					).attr({
+						stroke: color,
+						'stroke-width': width
+					}).add(axisGroup);
+				}
+			}
+			
+			
+			// place the label that was pre-rendered to calculate its size
+			if (ticks[pos]) {
+				
+				// record that it's being used
+				ticks[pos].isInUse = true; 
+						
+				x1 = x1 + labelOptions.x - (tickmarkOffset && horiz ? 
+					tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
+				y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
+					tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+				
+				if (ticks[pos].attr('visibility') == HIDDEN) { // first time shown after getOffset
+					setTimeout(function() {
+						if (ticks[pos]) {
+							ticks[pos].attr({
+								x: x1,
+								y: y1,
+								visibility: VISIBLE
+							});
+						}
+					}, globalAnimation.duration || 500);
+					
+				} else { // slide into new position
+					ticks[pos].animate({
+						x: x1,
+						y: y1
+					});
+				}
+				
+			}
+		}
+		*/
+		
 		/**
 		 * Get the minimum and maximum for the series of each axis 
 		 */
@@ -3730,12 +3927,12 @@ function Chart (options) {
 				if (path) {
 					path = renderer.crispLine(path, width);
 					// todo: remove from array on removePlotLine
-					if (plotLines[value]) {
-						plotLines[value].animate({
+					if (plotLineLookup[value]) {
+						plotLineLookup[value].animate({
 							d: path
 						});
 					} else {
-						plotLines[value] = renderer.path(path)
+						plotLineLookup[value] = renderer.path(path)
 							.attr({
 								stroke: color,
 								'stroke-width': width
@@ -3762,77 +3959,7 @@ function Chart (options) {
 			
 		}
 		
-		/**
-		 * Add a tick mark an a label
-		 */
-		function addTick(pos, tickPos, color, width, len, withLabel, index) {
-			var x1, y1, x2, y2, str, labelOptions = options.labels,
-				markPath;
-			
-			// negate the length
-			if (tickPos == 'inside') {
-				len = -len;
-			}
-			if (opposite) {
-				len = -len;
-			}
-			
-			// set the initial positions
-			x1 = x2 = translate(pos + tickmarkOffset) + transB;
-			y1 = y2 = chartHeight - translate(pos + tickmarkOffset) - transB;
-			
-			if (horiz) {
-				y1 = chartHeight - marginBottom - (opposite ? plotHeight : 0) + offset;
-				y2 = y1 + len;
-			} else {
-				x1 = plotLeft + (opposite ? plotWidth : 0) + offset;
-				x2 = x1 - len;				
-			}
-			
-			if (width) {
-				markPath = renderer.crispLine([M, x1, y1, L, x2, y2], width);
-				if (tickMarks[pos]) { // updating
-					tickMarks[pos].animate({
-						d: markPath
-					});
-				} else { // first time
-					tickMarks[pos] = renderer.path(
-						markPath
-					).attr({
-						stroke: color,
-						'stroke-width': width
-					}).add(axisGroup);
-				}
-			}
-			
-			
-			// place the label that was pre-rendered to calculate its size
-			if (ticks[pos]) {
-				x1 = x1 + labelOptions.x - (tickmarkOffset && horiz ? 
-					tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
-				y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
-					tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
-				
-				if (ticks[pos].attr('visibility') == HIDDEN) { // first time shown after prerender
-					setTimeout(function() {
-						if (ticks[pos]) {
-							ticks[pos].attr({
-								x: x1,
-								y: y1,
-								visibility: VISIBLE
-							});
-						}
-					}, globalAnimation.duration || 500);
-					
-				} else { // slide into new position
-					ticks[pos].animate({
-						x: x1,
-						y: y1
-					});
-				}
-				
-			}
-		}
+		
 		
 		/**
 		 * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
@@ -4234,6 +4361,7 @@ function Chart (options) {
 			if (!axis.isDirty) {
 				axis.isDirty = (min != oldMin || max != oldMax);
 			}
+			
 		}
 		
 		/**
@@ -4319,7 +4447,7 @@ function Chart (options) {
 		/**
 		 * Render the tick labels to a preliminary position to get their sizes
 		 */
-		function prerender() {
+		function getOffset() {
 			var tickmarkPos,
 				hasData = associatedSeries.length && defined(min) && defined(max),
 				titleOffset = 0,
@@ -4341,74 +4469,19 @@ function Chart (options) {
 				gridGroup.empty();
 			}*/
 			
+			
 			labelOffset = 0; // reset
 			if (hasData) {
-				if (!isXAxis) {
-						console.log(tickPositions);
-					}
-				each(tickPositions, function(pos, index) {
-					var withLabel = !((pos == min && !options.showFirstLabel) ||
-						(pos == max && !options.showLastLabel)),
-						str;
-
-					tickmarkPos = pos + tickmarkOffset;
+				each(tickPositions, function(pos) {
 					
-					// add the tick label
-					// write the label
-					if (!ticks[pos] && withLabel && labelOptions.enabled) {
-						str = labelFormatter.call({
-							index: index,
-							isFirst: pos == tickPositions[0],
-							isLast: pos == tickPositions[tickPositions.length - 1],
-							dateTimeLabelFormat: dateTimeLabelFormat,
-							value: (categories && categories[pos] ? categories[pos] : pos)
-						});
-						if (str || str === 0) {
-							ticks[pos] = renderer.text(
-								str,
-								0,
-								0,
-								labelOptions.style, 
-								labelOptions.rotation,
-								labelOptions.align
-							)
-							.attr({
-								visibility: HIDDEN
-							})
-							.add(axisGroup);
-						}
+					if (!ticks[pos]) {
+						ticks[pos] = new Tick(pos);
 					}
 					
-					
-					
-					/*if (!ticks[pos]) {
-						ticks[pos] = addTick(
-							pos, 
-							options.tickPosition, 
-							options.tickColor, 
-							options.tickWidth, 
-							options.tickLength, 
-							!((pos == min && !options.showFirstLabel) || (pos == max && !options.showLastLabel)),
-							index
-						);
-					}*/
-					
-					
-					if (ticks[pos]) {
-						// record that it's being used
-						ticks[pos].isInUse = true; 
-
-						// get max label offset
-						var key = horiz ? 'height' : 'width';
-						/*if (horiz && !opposite) { // bottom axis labels ignores height unless rotated
-							key = 'slant';
-						}*/
-						
-						labelOffset = mathMax(
-							ticks[pos].getBBox()[key] || 0,
-							labelOffset
-						);
-					}
+					labelOffset = mathMax(
+						ticks[pos].getLabelSize(),
+						labelOffset
+					);
 					
 				});
 			}
@@ -4445,36 +4518,6 @@ function Chart (options) {
 				axisTitleMargin + titleOffset + directionFactor * offset
 			);
 			
-			/*if (horiz && !opposite) { // bottom
-				axisTitleMargin = labelOffset + options.labels.y + titleMargin;
-				axisOffset[side] = mathMax(
-					axisOffset[side], 
-					axisTitleMargin + titleOffset
-				);
-			
-			} else if (horiz && opposite) { // top
-				axisTitleMargin = labelOffset - options.labels.y + titleMargin;
-				axisOffset[side] = mathMax(
-					axisOffset[side], 
-					axisTitleMargin + titleOffset
-				);
-			
-			} else if (!horiz && !opposite) { // left
-				axisTitleMargin = labelOffset - options.labels.x + titleMargin;
-				axisOffset[side] = mathMax(
-					axisOffset[side], 
-					axisTitleMargin + titleOffset - offset
-				);			
-			
-			} else { // right
-				axisTitleMargin = labelOffset + options.labels.x + titleMargin;
-				axisOffset[side] = mathMax(
-					axisOffset[side], 
-					axisTitleMargin + titleOffset - offset
-				);
-			}*/
-						
-			
 			
 		}
 		
@@ -4500,9 +4543,6 @@ function Chart (options) {
 			
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData) {
-				if (!isXAxis) {
-						console.log(tickPositions);
-					}
 				// alternate grid color
 				if (alternateGridColor) {
 					each(tickPositions, function(pos, i) {
@@ -4536,18 +4576,30 @@ function Chart (options) {
 						}
 					}
 				}
+				
 				// grid lines and tick marks
-				each(tickPositions, function(pos, index) {
-					tickmarkPos = pos + tickmarkOffset;
+				each(tickPositions, function(pos) {
+					//tickmarkPos = pos + tickmarkOffset;
+					
+					try { // to do: if ticks[pos] doesn't exist, run getOffset again to get new offsets?
+					ticks[pos].isActive = true;
+					if (globalAnimation && ticks[pos].isNew) {
+						setTimeout(function() {
+							ticks[pos] && ticks[pos].render();
+						}, globalAnimation.duration || 500);
+					} else {
+						ticks[pos].render();
+					}
+					} catch(e) { !isXAxis && console.log('Missing tick: ', pos)}
 					
 					// add the grid line
-					drawPlotLine(
+					/*drawPlotLine(
 						tickmarkPos, 
 						options.gridLineColor, 
 						options.gridLineWidth
 					);
-					if (plotLines[tickmarkPos]) {
-						plotLines[tickmarkPos].isInUse = true;
+					if (plotLineLookup[tickmarkPos]) {
+						plotLineLookup[tickmarkPos].isInUse = true;
 					}
 					
 					// add the tick mark
@@ -4559,27 +4611,29 @@ function Chart (options) {
 						options.tickLength, 
 						!((pos == min && !options.showFirstLabel) || (pos == max && !options.showLastLabel)),
 						index
-					);
+					);*/
 				});
+				
+				
 				
 				// remove old plot lines 
 				// todo: removeUnused function?
-				for (var pos in plotLines) {
-					if (!plotLines[pos].isInUse) {
-						plotLines[pos].destroy();
-						delete plotLines[pos];
+				/*for (var pos in plotLineLookup) {
+					if (!plotLineLookup[pos].isInUse) {
+						plotLineLookup[pos].destroy();
+						delete plotLineLookup[pos];
 					} else {
-						plotLines[pos].isInUse = false; // reset
+						plotLineLookup[pos].isInUse = false; // reset
 					}
-				}
+				}*/
 				
 				// remove old ticks
 				for (var pos in ticks) {
-					if (!ticks[pos].isInUse) {
+					if (!ticks[pos].isActive) {
 						ticks[pos].destroy();
 						delete ticks[pos];
 					} else {
-						ticks[pos].isInUse = false; // reset
+						ticks[pos].isActive = false; // reset
 					}
 				}
 			
@@ -4588,6 +4642,8 @@ function Chart (options) {
 				each (plotLines, function(plotLine) {
 					drawPlotLine(plotLine.value, plotLine.color, plotLine.width);
 				});
+				
+				
 			
 			} // end if hasData
 			
@@ -4614,7 +4670,6 @@ function Chart (options) {
 							lineTop:
 							chartHeight - marginBottom
 					], lineWidth);
-				
 				if (!axisLine) {
 					axisLine = renderer.path(linePath).
 						attr({ 
@@ -4624,7 +4679,7 @@ function Chart (options) {
 						}).
 						add();
 				} else {
-					axisLine.animate('d', linePath);
+					axisLine.animate({ d: linePath });
 				}
 					
 			}
@@ -4642,7 +4697,7 @@ function Chart (options) {
 				}[axisTitleOptions.align];
 				
 				// the position in the perpendicular direction of the axis
-				// todo: reuse positions calculated in prerender
+				// todo: reuse positions calculated in getOffset
 				var offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
 					(horiz ? 1 : -1) * // horizontal axis reverses the margin
 					(opposite ? -1 : 1) * // so does opposite axes
@@ -4752,7 +4807,7 @@ function Chart (options) {
 			getThreshold: getThreshold,
 			isXAxis: isXAxis,
 			options: options,
-			prerender: prerender,
+			getOffset: getOffset,
 			render: render,
 			setExtremes: setExtremes,
 			setScale: setScale,
@@ -5890,14 +5945,19 @@ function Chart (options) {
 			}
 		});
 		
-		// reset maxTicks
-		maxTicks = null;
+		
 		
 		if (hasCartesianSeries) {
-			// set axes scales
-			each (axes, function(axis) {
-				axis.setScale();
-			});
+			if (!isResizing) {
+				
+				// reset maxTicks
+				maxTicks = null;				
+				
+				// set axes scales
+				each (axes, function(axis) {
+					axis.setScale();
+				});
+			}
 			adjustTickAmounts();
 	
 			// redraw axes
@@ -6258,18 +6318,9 @@ function Chart (options) {
 	 * moved into their final positions
 	 */
 	function getMargins() {
-
-		
 		resetMargins();
 
-		// pre-render axes to get labels offset width
-		if (hasCartesianSeries) {
-			each(axes, function(axis) { 
-				axis.prerender();
-			});
-		}
-		
-		// auto margins
+		// adjust for title and subtitle
 		if (chart.title || chart.subtitle) {
 			titleOffset = mathMax(
 				chart.title && !options.title.verticalAlign && options.title.y || 0, 
@@ -6280,7 +6331,8 @@ function Chart (options) {
 			}
 		}
 			
-		// todo: rationalize
+		// adjust for legend
+		// todo: shorten
 		if (options.legend.enabled && !options.legend.floating) {
 			if (options.legend.align == 'right') { // horizontal alignment handled first
 				marginRight = mathMax(
@@ -6307,13 +6359,21 @@ function Chart (options) {
 			}
 		}
 		
+		// pre-render axes to get labels offset width
+		if (hasCartesianSeries) {
+			each(axes, function(axis) {
+				axis.getOffset();
+			});
+		}
+		
+		
 		plotLeft += axisOffset[3];
 		plotTop += axisOffset[0];
 		marginBottom += axisOffset[2];
 		marginRight += axisOffset[1];
-		
 
 		setChartSize();
+		
 	}
 	
 	/**
@@ -6439,7 +6499,10 @@ function Chart (options) {
 		
 		// Get margins by pre-rendering axes
 		getMargins();
-		
+		each(axes, function(axis) {
+			axis.setScale(); // update to reflect the new margins 
+		});
+		getMargins(); // second pass to check for new labels
 		
 		
 		// Draw the borders and backgrounds
@@ -6665,6 +6728,8 @@ function Chart (options) {
 	
 	chart.resize = function(width, height, animation) {
 		
+		isResizing = true;
+		
 		// set the animation for the current process
 		globalAnimation = pick(animation, optionsChart.animation);
 		
@@ -6672,6 +6737,9 @@ function Chart (options) {
 		
 		chartWidth = width;
 		chartHeight = height;
+		// update axis lengths for more correct tick intervals:
+		plotWidth = chartWidth - plotLeft - marginRight; 
+		plotHeight = chartHeight - plotTop - marginBottom;
 		
 		// todo: make function
 		/*chart.plotWidth = plotWidth = chartWidth - plotLeft - marginRight;
@@ -6679,10 +6747,10 @@ function Chart (options) {
 		
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;*/
-		
+		maxTicks = null;
 		each(axes, function(axis) {
 			axis.isDirty = true;
-			//axis.setScale();
+			axis.setScale();
 		});
 		
 		each(series, function(serie) {
@@ -6697,6 +6765,8 @@ function Chart (options) {
 		fireEvent(chart, 'resize'); 
 		
 		redraw();
+		
+		isResizing = false;
 	}
 	
 	
@@ -8094,6 +8164,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			clipRect = series.clipRect,
+			group = series.group,
 			translation;
 		
 		if (clipRect) {
@@ -8105,7 +8176,7 @@ Series.prototype = {
 		}
 		
 		// reposition on resize
-		series.group.animate({
+		group && group.animate({
 			translateX: chart.plotLeft, 
 			translateY: chart.plotTop
 		});
@@ -9145,7 +9216,7 @@ var PieSeries = extendClass(Series, {
 			
 			// draw the slice
 			if (graphic) {
-				graphic.attr(shapeArgs);
+				graphic.animate(shapeArgs);
 			} else {
 				point.graphic = 
 					renderer.arc(shapeArgs)
