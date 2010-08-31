@@ -1315,7 +1315,7 @@ SVGElement.prototype = {
 			}
 			ret = attr(element, key) || this[key] || 0;
 			
-			if (key != 'd') { // 'd' is string in animation step
+			if (key != 'd' && key != 'visibility') { // 'd' is string in animation step
 				ret = parseFloat(ret);
 			}
 			
@@ -3792,7 +3792,7 @@ function Chart (options) {
 			if (width) {
 				markPath = renderer.crispLine([M, x1, y1, L, x2, y2], width);
 				if (tickMarks[pos]) { // updating
-					tickMarks[pos].attr({
+					tickMarks[pos].animate({
 						d: markPath
 					});
 				} else { // first time
@@ -3813,11 +3813,23 @@ function Chart (options) {
 				y1 = y1 + labelOptions.y - (tickmarkOffset && !horiz ? 
 					tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
 				
-				//ticks[pos].translate(x1, y1);
-				ticks[pos].animate({
-					x: x1,
-					y: y1
-				});
+				if (ticks[pos].attr('visibility') == HIDDEN) { // first time shown after prerender
+					setTimeout(function() {
+						if (ticks[pos]) {
+							ticks[pos].attr({
+								x: x1,
+								y: y1,
+								visibility: VISIBLE
+							});
+						}
+					}, globalAnimation.duration || 500);
+					
+				} else { // slide into new position
+					ticks[pos].animate({
+						x: x1,
+						y: y1
+					});
+				}
 				
 			}
 		}
@@ -4360,6 +4372,9 @@ function Chart (options) {
 								labelOptions.rotation,
 								labelOptions.align
 							)
+							.attr({
+								visibility: HIDDEN
+							})
 							.add(axisGroup);
 						}
 					}
@@ -4609,7 +4624,7 @@ function Chart (options) {
 						}).
 						add();
 				} else {
-					axisLine.attr('d', linePath);
+					axisLine.animate('d', linePath);
 				}
 					
 			}
@@ -5293,23 +5308,35 @@ function Chart (options) {
 		 * Create the image map that listens for mouseovers
 		 */
 		function createTrackerGroup () {
+			var doInvert, 
+				doPosition;
+			
 			chart.trackerGroup = trackerGroup = renderer.g('tracker');
 			
 			if (inverted) {
-				var doInvert = function() {
+				doInvert = function() {
 					trackerGroup.attr({
 						width: chart.plotWidth,
 						height: chart.plotHeight
 					}).invert();
 				};
 				doInvert(); // do it now
-				addEvent(chart, 'resize', doInvert); // do it after resize
 			} 
-		
 			trackerGroup
 				.attr({ zIndex: 9 })
 				.translate(plotLeft, plotTop)
-				.add();	
+				.add();
+				
+			doPosition = function() {
+				trackerGroup.translate(plotLeft, plotTop);
+				if (doInvert) {
+					doInvert();
+				}
+			}
+			
+			addEvent(chart, 'resize', doPosition);
+			addEvent(chart, 'load', doPosition); 
+			
 		}
 		
 		
@@ -5658,10 +5685,6 @@ function Chart (options) {
 			// Draw the border
 			legendWidth = widthOption || offsetWidth;
 			legendHeight = lastItemY - y + lineHeight;
-			var boxSize = {
-				width: legendWidth,
-				height: legendHeight
-			};
 			
 			if (legendBorderWidth || legendBackgroundColor) {
 				legendWidth += 2 * padding;
@@ -5684,7 +5707,10 @@ function Chart (options) {
 					.shadow(options.shadow);
 				
 				} else {
-					box.attr(boxSize);
+					box.attr({
+				width: legendWidth,
+				height: legendHeight
+			});
 				}
 			}
 			
@@ -5703,7 +5729,10 @@ function Chart (options) {
 			
 			/*var boxPos = renderer.getAlignment(options);
 			legendGroup.translate(boxPos.x, boxPos.y);*/
-			legendGroup.align(extend(options, boxSize), true);
+			legendGroup.align(extend(options, {
+				width: legendWidth,
+				height: legendHeight
+			}), true);
 			
 			// Position the checkboxes after the width is determined 
 			each(allItems, function(item) {
@@ -6538,8 +6567,13 @@ function Chart (options) {
 		
 		chart.render = render;
 		
+		// depends on inverted and on margins being set	
+		chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
+		
 		globalAnimation = false;
 		render();
+		
+		
 		fireEvent(chart, 'load');
 	}
 	
@@ -6676,10 +6710,10 @@ function Chart (options) {
 	/*chart.plotSizeX = plotSizeX = inverted ? plotHeight : plotWidth;
 	chart.plotSizeY = plotSizeY = inverted ? plotWidth : plotHeight;*/ 
 	
-	// depends on inverted	
-	chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
 		
 	firstRender();
+	
+	
 }
 
 /**
@@ -8059,7 +8093,8 @@ Series.prototype = {
 	redraw: function() {
 		var series = this,
 			chart = series.chart,
-			clipRect = series.clipRect;
+			clipRect = series.clipRect,
+			translation;
 		
 		if (clipRect) {
 			stop(clipRect);
@@ -8069,6 +8104,11 @@ Series.prototype = {
 			});
 		}
 		
+		// reposition on resize
+		series.group.animate({
+			translateX: chart.plotLeft, 
+			translateY: chart.plotTop
+		});
 		/* Todo: redo group and tracker inversion on resize
 		if (chart.inverted) {
 				series.group.attr({
