@@ -313,7 +313,7 @@ if (!globalAdapter && win.jQuery) {
 	animate = function (el, params, options) {
 		var $el = jQ(el);
 		if (params.d) {
-			el.d = params.d; // keep the array form for paths, used in jQ.fx.step.d
+			el.toD = params.d; // keep the array form for paths, used in jQ.fx.step.d
 			params.d = 1; // because in jQuery, animating to an array has a different meaning
 		}
 		
@@ -353,22 +353,35 @@ if (!globalAdapter && win.jQuery) {
 	};
 	// animate paths
 	jQ.fx.step.d = function(fx) {
-		if ( fx.state == 0 ) {
-			fx.start = fx.elem.attr(fx.prop).split(' ');
-			fx.end = fx.elem.d;
+		
+		// Normally start and end should be set in state == 0, but sometimes,
+		// for reasons unknown, this doesn't happen. Perhaps state == 0 is skipped
+		// in these cases
+		if (typeof fx.start != 'object') { 
+			fx.start = fx.elem.attr('d').split(' ');
+		}
+		if (typeof fx.end != 'object') {
+			fx.end = fx.elem.toD;
 		}
 		
-		var i = fx.start.length,
+		var fxStart = fx.start,
+			fxEnd = fx.end,
+			i = fxStart.length,
 			ret = [],
 			start;
 			
-		// in the following, point-to-point correlation between the two paths is assumed
-		while (i--) {
-			start = parseFloat(fx.start[i]);
-			ret[i] = 
-				isNaN(start) ? // a letter instruction like M or L
-					fx.start[i] :
-					fx.pos * (parseFloat(fx.end[i] - start)) + start;
+		// interpolate each value of the path
+		if (i == fxEnd.length) {
+			while (i--) {
+				start = parseFloat(fxStart[i]);
+				ret[i] = 
+					isNaN(start) ? // a letter instruction like M or L
+						fxStart[i] :
+						fx.pos * (parseFloat(fxEnd[i] - start)) + start;
+				
+			}
+		} else {
+			ret = fxEnd;
 		}
 		fx.elem.attr('d', ret);
 
@@ -2505,7 +2518,7 @@ var VMLElement = extendClass( SVGElement, {
 					
 				} else if (key == 'd') {
 					
-					//key = 'path';
+					this.d = value; // used in getter for animation
 					
 					// convert paths 
 					i = value.length;
@@ -3513,13 +3526,13 @@ function Chart (options) {
 			eventType,
 			plotBands = options.plotBands || [],
 			plotLines = options.plotLines || [],
+			plotLineLookup = {},
 			tickInterval,
 			minorTickInterval,
 			magnitude,
 			tickPositions, // array containing predefined positions
 			ticks = {},
-			tickMarks = {},
-			plotLineLookup = {},
+			minorTicks = {},
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
@@ -3538,13 +3551,15 @@ function Chart (options) {
 		/**
 		 * The Tick prototype
 		 */
-		function Tick(pos) {
+		function Tick(pos, minor) {
 			var tick = this;
 			tick.pos = pos;
+			tick.minor = minor;
 			tick.isNew = true;				
 			
-			tick.addLabel();
-			
+			if (!minor) {
+				tick.addLabel();
+			}
 		}
 		Tick.prototype = {
 			/**
@@ -3595,41 +3610,86 @@ function Chart (options) {
 			 */
 			render: function() {
 				var tick = this,
+					major = !tick.minor,
 					label = tick.label,
 					pos = tick.pos,
 					labelOptions = options.labels,
 					gridLine = tick.gridLine,
-					gridLineWidth = options.gridLineWidth,
+					gridLineWidth = major ? options.gridLineWidth : options.minorGridLineWidth,
+					gridLineColor = major ? options.gridLineColor : options.minorGridLineColor,
 					gridLinePath,
+					mark = tick.mark,
+					markPath,
+					tickLength = major ? options.tickLength : options.minorTickLength,
+					tickWidth = major ? options.tickWidth : options.minorTickWidth,
+					tickColor = major ? options.tickColor : options.minorTickColor,
 					x,
 					y;
 					
 				x = horiz ? 
-					translate(pos) + transB : 
+					translate(pos + tickmarkOffset) + transB : 
 					plotLeft + offset + (opposite ? plotWidth : 0);
 				y = horiz ?
 					chartHeight - marginBottom + offset - (opposite ? plotHeight : 0) :
-					chartHeight - translate(pos) - transB;
+					chartHeight - translate(pos + tickmarkOffset) - transB;
 				
 				// create the grid line
 				if (gridLineWidth) {
-					gridLinePath = getPlotLinePath(pos);
+					gridLinePath = renderer.crispLine(getPlotLinePath(pos), gridLineWidth);
+					
 					if (gridLine === UNDEFINED) {
 						tick.gridLine = gridLine =
 							gridLineWidth ?
 								renderer.path(gridLinePath)
 									.attr({
-										stroke: options.gridLineColor,
+										stroke: gridLineColor,
 										'stroke-width': gridLineWidth
 									}).add(gridGroup) :
 								null;
 					} 
-					gridLine && gridLine.animate({
-						d: gridLinePath
-					});
+					if (gridLine) {
+						gridLine.animate({
+							d: gridLinePath
+						});
+					}
 				}
 				
-				if (label) { // the label is created on init
+				// create the tick mark
+				if (tickWidth) {
+					
+					// negate the length
+					if (options.tickPosition == 'inside') {
+						tickLength = -tickLength;
+					}
+					if (opposite) {
+						tickLength = -tickLength;
+					}
+			
+					markPath = renderer.crispLine([
+						M, 
+						x, 
+						y, 
+						L, 
+						x + (horiz ? 0 : tickLength), 
+						y + (horiz ? tickLength : 0)
+					], tickWidth);
+					
+					if (mark) { // updating
+						mark.animate({
+							d: markPath
+						});
+					} else { // first time
+						tick.mark = renderer.path(
+							markPath
+						).attr({
+							stroke: tickColor,
+							'stroke-width': tickWidth
+						}).add(axisGroup);
+					}
+				}
+				
+				// the label is created on init - move it into place
+				if (label) { 
 					x = x + labelOptions.x - (tickmarkOffset && horiz ? 
 						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
 					y = y + labelOptions.y - (tickmarkOffset && !horiz ? 
@@ -4488,7 +4548,7 @@ function Chart (options) {
 			
 			if (axisTitleOptions && axisTitleOptions.text) {
 				if (!axis.axisTitle) {
-					axis.titleGroup = renderer.g()
+					axis.titleGroup = renderer.g()// todo: try without groups
 						.attr({ zIndex: 7 })
 						.add();
 					axis.axisTitle = renderer.text(
@@ -4561,10 +4621,11 @@ function Chart (options) {
 					drawPlotBand(plotBand.from, plotBand.to, plotBand.color);
 				});
 				
-				// minor grid lines
+				
+				// minor ticks and grid lines
 				if (minorTickInterval && !categories) {
-					for (var i = min; i <= max; i += minorTickInterval) {
-						drawPlotLine(i, options.minorGridLineColor, options.minorGridLineWidth);
+					for (var pos = min; pos <= max; pos += minorTickInterval) {
+						/*drawPlotLine(i, options.minorGridLineColor, options.minorGridLineWidth);
 						if (minorTickWidth) {
 							addTick(
 								i, 
@@ -4573,15 +4634,17 @@ function Chart (options) {
 								minorTickWidth, 
 								options.minorTickLength
 							);
+						}*/
+						if (!minorTicks[pos]) {
+							minorTicks[pos] = new Tick(pos, true);
 						}
+						minorTicks[pos].isActive = true;
+						minorTicks[pos].render();
 					}
 				}
 				
-				// grid lines and tick marks
+				// major ticks, grid lines and tick marks
 				each(tickPositions, function(pos) {
-					//tickmarkPos = pos + tickmarkOffset;
-					
-					try { // to do: if ticks[pos] doesn't exist, run getOffset again to get new offsets?
 					ticks[pos].isActive = true;
 					if (globalAnimation && ticks[pos].isNew) {
 						setTimeout(function() {
@@ -4590,28 +4653,6 @@ function Chart (options) {
 					} else {
 						ticks[pos].render();
 					}
-					} catch(e) { !isXAxis && console.log('Missing tick: ', pos)}
-					
-					// add the grid line
-					/*drawPlotLine(
-						tickmarkPos, 
-						options.gridLineColor, 
-						options.gridLineWidth
-					);
-					if (plotLineLookup[tickmarkPos]) {
-						plotLineLookup[tickmarkPos].isInUse = true;
-					}
-					
-					// add the tick mark
-					addTick(
-						pos, 
-						options.tickPosition, 
-						options.tickColor, 
-						options.tickWidth, 
-						options.tickLength, 
-						!((pos == min && !options.showFirstLabel) || (pos == max && !options.showLastLabel)),
-						index
-					);*/
 				});
 				
 				
@@ -4627,15 +4668,17 @@ function Chart (options) {
 					}
 				}*/
 				
-				// remove old ticks
-				for (var pos in ticks) {
-					if (!ticks[pos].isActive) {
-						ticks[pos].destroy();
-						delete ticks[pos];
+				// remove inactive ticks
+				each([ticks, minorTicks], function(coll) {
+				for (var pos in coll) {
+					if (!coll[pos].isActive) {
+						coll[pos].destroy();
+						delete coll[pos];
 					} else {
-						ticks[pos].isActive = false; // reset
+						coll[pos].isActive = false; // reset
 					}
 				}
+				});
 			
 				
 				// custom plot lines (in front of grid lines)
@@ -5945,7 +5988,14 @@ function Chart (options) {
 			}
 		});
 		
-		
+		// handle added or removed series
+		if (redrawLegend && legend.renderLegend) { // series or pie points are added or removed
+			// draw legend graphics
+			legend.renderLegend();
+			
+			chart.isDirtyLegend = false;
+		}
+
 		
 		if (hasCartesianSeries) {
 			if (!isResizing) {
@@ -5959,6 +6009,7 @@ function Chart (options) {
 				});
 			}
 			adjustTickAmounts();
+			getMargins();
 	
 			// redraw axes
 			each (axes, function(axis) {
@@ -5973,18 +6024,12 @@ function Chart (options) {
 			}
 		});
 		
-		// handle added or removed series
-		if (redrawLegend && legend.renderLegend) { // series or pie points are added or removed
-			// draw legend graphics
-			legend.renderLegend();
-			
-			chart.isDirtyLegend = false;
-		}
-
+		
 		// hide tooltip and hover states
 		if (tracker && tracker.resetTracker) {
 			tracker.resetTracker();
-		}			
+		}
+		
 		
 		
 		// fire the event
@@ -6733,10 +6778,12 @@ function Chart (options) {
 		// set the animation for the current process
 		globalAnimation = pick(animation, optionsChart.animation);
 		
-		renderer.resizeTo(width, height);
 		
-		chartWidth = width;
-		chartHeight = height;
+		chartWidth = mathRound(width);
+		chartHeight = mathRound(height);
+		
+		renderer.resizeTo(chartWidth, chartHeight);
+		
 		// update axis lengths for more correct tick intervals:
 		plotWidth = chartWidth - plotLeft - marginRight; 
 		plotHeight = chartHeight - plotTop - marginBottom;
@@ -7303,11 +7350,15 @@ Series.prototype = {
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean} shift If shift is true, a point is shifted off the start 
 	 *    of the series as one is appended to the end.
+	 * @param {Object|Boolean} animation Whether to apply animation, and optionally animation
+	 *    configuration
 	 */
-	addPoint: function(options, redraw, shift) {
+	addPoint: function(options, redraw, shift, animation) {
 		var series = this,
 			data = series.data,
 			point = (new series.pointClass()).init(series, options);
+			
+		globalAnimation = animation;
 			
 		redraw = pick(redraw, true);
 			
