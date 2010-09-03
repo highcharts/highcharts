@@ -8038,27 +8038,33 @@ Series.prototype = {
 			segmentPath = [];
 			
 			// build the segment line
-			each(segment, function(point, i){
+			each(segment, function(point, i) {
+
+				if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+					segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i))
 				
-				// moveTo or lineTo
-				if (i < 2) {
-					segmentPath.push([M, L][i]);
-				}
+				} else {
 				
-				// step line?
-				if (i && options.step) {
-					var lastPoint = segment[i - 1];
-					segmentPath.push (
+					// moveTo or lineTo
+					if (i < 2) {
+						segmentPath.push([M, L][i]);
+					}
+					
+					// step line?
+					if (i && options.step) {
+						var lastPoint = segment[i - 1];
+						segmentPath.push (
+							point.plotX, 
+							lastPoint.plotY						
+						);
+					}
+					
+					// normal line to next point
+					segmentPath.push(
 						point.plotX, 
-						lastPoint.plotY						
+						point.plotY
 					);
 				}
-				
-				// normal line to next point
-				segmentPath.push(
-					point.plotX, 
-					point.plotY
-				);
 			});
 			graphPath = graphPath.concat(segmentPath);
 			
@@ -8459,106 +8465,8 @@ var AreaSeries = extendClass(Series, {
 seriesTypes.area = AreaSeries;
 
 
-/**
- * Calculate the spine interpolation.
- * 
- * @todo: Implement true Bezier curves like shown at http://www.math.ucla.edu/~baker/java/hoefer/Spline.htm
- */
-function SplineHelper (data) {
-	var xdata = [];
-	var ydata = [];
-	var i;
-	for (i = 0; i < data.length; i++) {
-		xdata[i] = data[i].plotX;
-		ydata[i] = data[i].plotY;
-	}
-	this.xdata = xdata;
-	this.ydata = ydata;
-	var delta = [];
-	this.y2 = [];
-
-	var n = ydata.length;
-	this.n = n;
-
-	// Natural spline 2:derivate == 0 at endpoints
-	this.y2[0]    = 0.0;
-	this.y2[n-1] = 0.0;
-	delta[0] = 0.0;
-
-	// Calculate 2:nd derivate
-	for(i=1; i < n-1; i++) {
-	    var d = (xdata[i+1]-xdata[i-1]);
-	    /*if( d == 0  ) {
-			error: ('Invalid input data for spline. Two or more consecutive input X-values are equal. Each input X-value must differ since from a mathematical point of view it must be a one-to-one mapping, i.e. each X-value must correspond to exactly one Y-value.');
-	    }*/
-	    var s = (xdata[i]-xdata[i-1])/d;
-	    var p = s*this.y2[i-1]+2.0;
-	    this.y2[i] = (s-1.0)/p;
-	    delta[i] = (ydata[i+1]-ydata[i])/(xdata[i+1]-xdata[i]) -
-		         (ydata[i]-ydata[i-1])/(xdata[i]-xdata[i-1]);
-	    delta[i] = (6.0*delta[i]/(xdata[i+1]-xdata[i-1])-s*delta[i-1])/p;
-	}
-
-	// Backward substitution
-	for(var j=n-2; j >= 0; j-- ) {
-	    this.y2[j] = this.y2[j]*this.y2[j+1] + delta[j];
-	}
-}
 
 
-SplineHelper.prototype = {
-// Return the two new data vectors
-get: function(num) {
-	if (!num) {
-		num = 50;
-	}
-	var n = this.n ;
-	var step = (this.xdata[n-1]-this.xdata[0]) / (num-1);
-	var xnew=[];
-	var ynew=[];
-	xnew[0] = this.xdata[0];
-	ynew[0] = this.ydata[0];
-	var data = [{ plotX: xnew[0], plotY: ynew[0] }];//[[xnew[0], ynew[0]]];
-
-	for(var j = 1; j < num; j++ ) {
-	    xnew[j] = xnew[0]+j*step;
-	    ynew[j] = this.interpolate(xnew[j]);
-	    data[j] = { plotX: xnew[j], plotY: ynew[j] };//[xnew[j], ynew[j]];
-	}
-
-	return data;
-},
-
-// Return a single interpolated Y-value from an x value
-interpolate: function(xpoint) {
-	var max = this.n-1;
-	var min = 0;
-
-	// Binary search to find interval
-	while( max-min > 1 ) {
-	    var k = (max+min) / 2;
-		if( this.xdata[mathFloor(k)] > xpoint ) {
-			max=k;
-		} else {
-			min=k;
-		}
-	}
-	var intMax = mathFloor(max), intMin = mathFloor(min);
-
-	// Each interval is interpolated by a 3:degree polynom function
-	var h = this.xdata[intMax]-this.xdata[intMin];
-	/*if( h == 0  ) {
-	    error: ('Invalid input data for spline. Two or more consecutive input X-values are equal. Each input X-value must differ since from a mathematical point of view it must be a one-to-one mapping, i.e. each X-value must correspond to exactly one Y-value.');
-	}*/
-
-
-	var a = (this.xdata[intMax]-xpoint)/h;
-	var b = (xpoint-this.xdata[intMin])/h;
-	return a*this.ydata[intMin]+b*this.ydata[intMax]+
-	     ((a*a*a-a)*this.y2[intMin]+(b*b*b-b)*this.y2[intMax])*(h*h)/6.0;
-}
-
-};
 /**
  * SplineSeries object
  */
@@ -8566,68 +8474,93 @@ var SplineSeries = extendClass( Series, {
 	type: 'spline',
 	
 	/**
-	 * Draw the actual spline line with interpolated values
-	 * @param {Object} state
+	 * Draw the actual graph
 	 */
-	drawGraph: function(state) {
-		var series = this,
-			realSegments = series.segments; 
-		
-		// temporarily set the segments to reflect the spline
-		series.splinedata = series.getSplineData();
-		series.segments = series.splinedata;// || series.getSplineData();
-		
-		
-		
-		// draw the line
-		Series.prototype.drawGraph.apply(series, arguments);
-		
-		// reset the segments
-		series.segments = realSegments;	
-	},
-
-
-	/**
-	 * Get interpolated spline values
-	 */
-	getSplineData: function() {
-		var series = this, 
-			chart = series.chart,
-			//data = this.data,
-			splinedata = [],
-			num;
+	getPointSpline: function(segment, point, i) {
+		var plotX = point.plotX,
+			plotY = point.plotY,
+			lastPoint = segment[i - 1],
+			nextPoint = segment[i + 1];
 			
-		each (series.segments, function(data) {
-			if (series.xAxis.reversed) {
-				data = data.reverse();
+		// find control points
+		if (i && i < segment.length - 1) {
+			var lastX = lastPoint.plotX,
+				lastY = lastPoint.plotY,
+				nextX = nextPoint.plotX,
+				nextY = nextPoint.plotY;
+			
+			var leftContX = (2 * plotX + lastX) / 3,
+				leftContY = (2 * plotY + lastY) / 3,
+				rightContX = (2 * plotX + nextX) / 3,
+				rightContY = (2 * plotY + nextY) / 3;
+		
+			// have the two control points make a straight line through main point
+			var correction = plotY - (leftContY + rightContY) / 2;
+			leftContY += correction;
+			rightContY += correction;
+			
+			// to prevent false extremes, check that control points are between
+			// neighbouring points' y values
+			if (leftContY > lastY && leftContY > plotY) {
+				leftContY = mathMax(lastY, plotY);
+				rightContY = 2 * plotY - leftContY; // mirror of left control point
+			} else if (leftContY < lastY && leftContY < plotY) {
+				leftContY = mathMin(lastY, plotY);
+				rightContY = 2 * plotY - leftContY;
+			} 
+			if (rightContY > nextY && rightContY > plotY) {
+				rightContY = mathMax(nextY, plotY);
+				leftContY = 2 * plotY - rightContY;
+			} else if (rightContY < nextY && rightContY < plotY) {
+				rightContY = mathMin(nextY, plotY);
+				leftContY = 2 * plotY - rightContY;
 			}
-			var croppedData = [],
-				nextUp,
-				nextDown;
 			
-			// to save calculations, only add data within the plot
-			each (data, function(point, i) {
-				nextUp = data[i+2] || data[i+1] || point;
-				nextDown = data[i-2] || data[i-1] || point;
-				if (nextUp.plotX >= 0 && nextDown.plotX <= chart.plotWidth) {
-					croppedData.push(point);
-				}
-			});
 			
-			// 3px intervals:
-			if (croppedData.length > 1) {
-				num = mathRound(mathMax(chart.plotWidth, 
-					croppedData[croppedData.length-1].clientX	- croppedData[0].clientX) / 3);
-			}
-			splinedata.push (
-				data.length > 1 ? // if the data.length is one, it's a single point so we can't spline it
-					num ? (new SplineHelper(croppedData)).get(num) : [] :
-					data
-			);
 			
-		});
+			// record for drawing in next point
+			point.rightContX = rightContX;
+			point.rightContY = rightContY;
+			
+			// visualize
+		    /*renderer.circle(leftContX, leftContY, 3).attr({
+	            stroke: '#F66666',
+	            'stroke-width': 1,
+	            fill: 'none'
+	        }).translate(chart.plotLeft, chart.plotTop).add();
+	        renderer.path(['M', leftContX, leftContY, 'L', plotX, plotY]).attr({
+	            stroke: '#F66666',
+	            'stroke-width': 1
+	        }).translate(chart.plotLeft, chart.plotTop).add();
+	        renderer.circle(rightContX, rightContY, 3).attr({
+	            stroke: '#66F666',
+	            'stroke-width': 1,
+	            fill: 'none'
+	        }).translate(chart.plotLeft, chart.plotTop).add();
+	        
+	        renderer.path(['M', rightContX, rightContY, 'L', plotX, plotY]).attr({
+	            stroke: '#66F666',
+	            'stroke-width': 1
+	        }).translate(chart.plotLeft, chart.plotTop).add();*/
+		}
 		
-		return splinedata;
+		// moveTo or lineTo
+		if (!i) {
+			return [M, plotX, plotY];
+		}
+		
+		// curve from last point to this
+		else {
+			return [
+				'C',
+				lastPoint.rightContX || lastPoint.plotX, 
+				lastPoint.rightContY || lastPoint.plotY,
+				leftContX || plotX, 
+				leftContY || plotY,
+				plotX, 
+				plotY
+			];
+		}
 	}
 });
 seriesTypes.spline = SplineSeries;
