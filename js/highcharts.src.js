@@ -1552,11 +1552,10 @@ SVGElement.prototype = {
 	 *    to append the element to the renderer.box.
 	 */ 
 	add: function(parent) {
-		
-		
-		
-			
-		var parentNode = parent ? parent.element : this.renderer.box,
+	
+		var renderer = this.renderer,
+			parentWrapper = parent || renderer,
+			parentNode = parentWrapper.element || renderer.box,
 			childNodes = parentNode.childNodes,
 			element = this.element,
 			zIndex = attr(element, 'zIndex'),
@@ -1566,22 +1565,30 @@ SVGElement.prototype = {
 			
 		// mark as inverted
 		this.parentInverted = parent && parent.inverted;
+		
+		// mark the container as having z indexed children
+		if (zIndex) {
+			parentWrapper.handleZ = true;
+		}
 
 		// insert according to this and other elements' zIndex
-		for (i = 0; i < childNodes.length; i++) {
-			otherElement = childNodes[i];
-			otherZIndex = attr(otherElement, 'zIndex');
-			if (otherElement != element && (
-					// insert before the first element with a higher zIndex
-					otherZIndex > zIndex || 
-					// if no zIndex given, insert before the first element with a zIndex
-					(!defined(zIndex) && defined(otherZIndex))  
-					
-					)) {
-				parentNode.insertBefore(element, otherElement);
-				return this;
+		if (parentWrapper.handleZ) { // this element or any of its siblings has a z index
+			for (i = 0; i < childNodes.length; i++) {
+				otherElement = childNodes[i];
+				otherZIndex = attr(otherElement, 'zIndex');
+				if (otherElement != element && (
+						// insert before the first element with a higher zIndex
+						otherZIndex > zIndex || 
+						// if no zIndex given, insert before the first element with a zIndex
+						(!defined(zIndex) && defined(otherZIndex))  
+						
+						)) {
+					parentNode.insertBefore(element, otherElement);
+					return this;
+				}
 			}
 		}
+		
 		// default: append at the end
 		parentNode.appendChild(element);
 		return this;
