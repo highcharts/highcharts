@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /** 
- * @license Highcharts JS v2.0.3 (2010-08-07)
+ * @license Highcharts JS v2.0.4 (2010-09-07)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -2268,13 +2268,11 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	init: function(renderer, nodeName) {
 		var markup =  ['<', nodeName, ' filled="f" stroked="f"'],
-			style = ['position: ', ABSOLUTE, ';'],
-			isDiv = nodeName == DIV;
+			style = ['position: ', ABSOLUTE, ';'];
 		
 		// divs and shapes need size
-		if (nodeName == 'shape' || isDiv) {
-			style.push('left:0;top:0;width:'+ (isDiv ? renderer.width : 10) 
-				+'px;height:'+ (isDiv ? renderer.height : 10) +'px;');
+		if (nodeName == 'shape' || nodeName == DIV) {
+			style.push('left:0;top:0;width:10px;height:10px');
 		}
 		markup.push(' style="', style.join(''), '"/>');
 		
@@ -2547,7 +2545,7 @@ var VMLElement = extendClass( SVGElement, {
 		wrapper.destroyClip = function() {
 			clipMembers.splice(index, 1);
 		};
-		return wrapper.css({ clip: clipRect.getCSS(wrapper.inverted) });
+		return wrapper.css(clipRect.getCSS(wrapper.inverted));
 	},
 	
 	/**
@@ -2784,18 +2782,29 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 					top = elemStyle.top,
 					left = elemStyle.left,
 					right = left + elemStyle.width,
-					bottom = top + elemStyle.height;
-				return 'rect('+ 
-					(inverted ? left : top) + 'px,'+ 
-					(inverted ? bottom : right) + 'px,'+ 
-					(inverted ? right : bottom) + 'px,'+ 
-					(inverted ? top : left) +'px)';
+					bottom = top + elemStyle.height,
+					ret = {
+						clip: 'rect('+ 
+							(inverted ? left : top) + 'px,'+ 
+							(inverted ? bottom : right) + 'px,'+ 
+							(inverted ? right : bottom) + 'px,'+ 
+							(inverted ? top : left) +'px)'
+					};
+					
+				// issue 74 workaround
+				if (!inverted && doc.documentMode == 8) {
+					extend(ret, {
+						width: right +PX,
+						height: bottom +PX
+					});
+				}
+				return ret;			
 			},
 			
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function() {
 				each (clipRect.members, function(member) {
-					member.css({ clip: clipRect.getCSS(member.inverted) });
+					member.css(clipRect.getCSS(member.inverted));
 				});
 			}
 		});
@@ -3008,14 +3017,12 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				textpathok: true
 			}, null, elem);
 			
-			
 			// for reasons unknown, the style must be set on init
 			createElement(
 				'<hcv:textpath style="v-text-align:'+ align +';'+ serializeCSS(style).replace(/"/g, "'") +
-				'" on="true" string="'+ str.replace(/<br[^>]?>/g, '\n') +'">',
+				'" on="true" string="'+ str.toString().replace(/<br[^>]?>/g, '\n') +'">',
 			null, null, elem);
 
-			
 		}
 		
 		return elemWrapper;
@@ -5091,7 +5098,7 @@ function Chart (options) {
 				textColor = visible ? options.itemStyle.color : hiddenColor,
 				symbolColor = visible ? item.color : hiddenColor;
 			if (legendItem) {
-				legendItem.attr({ fill: textColor });
+				legendItem.css({ color: textColor });
 			}
 			if (legendLine) {
 				legendLine.attr({ stroke: symbolColor });
@@ -7383,7 +7390,7 @@ Series.prototype = {
 					)
 					.attr({ 
 						zIndex: 1,
-						visibility: point.visible === false ? HIDDEN : VISIBLE // for pies
+						visibility: point.visible === false ? HIDDEN : 'inherit' // for pies
 					})
 					.add(dataLabelsGroup); // pies have point.group
 				}
