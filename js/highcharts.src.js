@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /** 
- * @license Highcharts JS v2.0.4 (2010-09-07)
+ * @license Highcharts JS v2.0.4-modified
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -738,6 +738,7 @@ defaultOptions = {
 			color: '#3E576F'
 		},
 		itemHoverStyle: {
+			cursor: 'pointer',
 			color: '#000000'
 		},
 		itemHiddenStyle: {
