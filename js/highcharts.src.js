@@ -1570,6 +1570,7 @@ SVGElement.prototype = {
 		// mark the container as having z indexed children
 		if (zIndex) {
 			parentWrapper.handleZ = true;
+			zIndex = parseInt(zIndex, 10);
 		}
 
 		// insert according to this and other elements' zIndex
@@ -1579,7 +1580,7 @@ SVGElement.prototype = {
 				otherZIndex = attr(otherElement, 'zIndex');
 				if (otherElement != element && (
 						// insert before the first element with a higher zIndex
-						otherZIndex > zIndex || 
+						parseInt(otherZIndex, 10) > zIndex || 
 						// if no zIndex given, insert before the first element with a zIndex
 						(!defined(zIndex) && defined(otherZIndex))  
 						
