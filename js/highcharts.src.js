@@ -1745,11 +1745,10 @@ SVGRenderer.prototype = {
 			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
-			i;
-			
+			i = childNodes.length;
 			
 		// remove old text
-		for (i = childNodes.length - 1; i >= 0; i--) {
+		while (i--) {
 			textNode.removeChild(childNodes[i]);
 		}
 		
@@ -1762,6 +1761,7 @@ SVGRenderer.prototype = {
 			
 			each (spans, function (span) {
 				if (span !== '' || spans.length == 1) {
+					
 					var attributes = {},
 						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
 					
@@ -1778,7 +1778,7 @@ SVGRenderer.prototype = {
 					}
 					
 					span = span.replace(/<(.|\n)*?>/g, '');
-					tspan.appendChild(doc.createTextNode(span));
+					tspan.appendChild(doc.createTextNode(span || ' ')); // WebKit needs a string
 					//console.log('"'+tspan.textContent+'"');
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
