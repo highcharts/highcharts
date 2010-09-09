@@ -1906,6 +1906,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} width 
 	 */
 	crispLine: function(points, width) {
+		try {
 		// points format: [M, 0, 0, L, 100, 0]
 		// normalize to a crisp line
 		if (points[1] == points[4]) {
@@ -1915,6 +1916,7 @@ SVGRenderer.prototype = {
 			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
 		}
 		return points;
+		} catch (e) { console.info(e.massage); return []; }
 	},
 	
 	
@@ -4034,7 +4036,8 @@ function Chart (options) {
 			
 			// multiples for a linear scale
 			if (!multiples) {
-				multiples = [1, 2, 2.5, 5, 10];				
+				multiples = [1, 2, 2.5, 5, 10];
+				//multiples = [1, 2, 2.5, 4, 5, 7.5, 10];
 				
 				// the allowDecimals option
 				if (options.allowDecimals === false) {
@@ -4271,7 +4274,28 @@ function Chart (options) {
 		 * Set the tick positions to round values and optionally extend the extremes
 		 * to the nearest tick
 		 */
-		function setTickPositions() {
+		function setTickPositions(secondPass) {
+			// get tickInterval
+			if (categories || min == max) {
+				tickInterval = 1;
+			} else {
+				tickInterval = pick(
+						secondPass && tickInterval || null,
+						options.tickInterval,
+						(max - min) * options.tickPixelInterval / axisLength
+					);
+			}
+			
+				
+			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
+				tickInterval = normalizeTickInterval(tickInterval);
+			}
+			
+			// get minorTickInterval
+			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
+					tickInterval / 5 : options.minorTickInterval;
+
+
 			if (isDatetimeAxis)	{
 				setDateTimeTickPositions();
 			} else {
@@ -4309,7 +4333,6 @@ function Chart (options) {
 				// set the axis-level tickAmount to use below
 				tickAmount = maxTicks[xOrY];
 				
-					
 				if (calculatedTickAmount < tickAmount) {
 					while (tickPositions.length < tickAmount) {
 						tickPositions.push( correctFloat(
@@ -4317,6 +4340,7 @@ function Chart (options) {
 						));
 					}
 					transA *= (calculatedTickAmount - 1) / (tickAmount - 1);
+					max = tickPositions[tickPositions.length - 1];
 				}
 				if (defined(oldTickAmount) && tickAmount != oldTickAmount) {
 					axis.isDirty = true;	
@@ -4326,6 +4350,7 @@ function Chart (options) {
 	
 		/**
 		 * Set the scale based on data min and max, user set min and max or options
+		 * 
 		 */
 		function setScale() {
 			var length, 
@@ -4368,33 +4393,13 @@ function Chart (options) {
 			
 			
 			
-			// tickInterval
-			if (categories || min == max) {
-				tickInterval = 1;
-			} else {
-				tickInterval = pick(
-						options.tickInterval,
-						(max - min) * options.tickPixelInterval / axisLength
-					);
-						
-			}
-			
-				
-			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
-				tickInterval = normalizeTickInterval(tickInterval);
-			}
-			
-			// minorTickInterval
-			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
-					tickInterval / 5 : options.minorTickInterval;
 					
 			// get fixed positions based on tickInterval
 			setTickPositions();
 			
-			
 			// the translation factor used in translate function
 			transA = axisLength / ((max - min) || 1);
-			
+							
 			// record the greatest number of ticks for multi axis
 			if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
 				maxTicks = {
@@ -4402,7 +4407,6 @@ function Chart (options) {
 					y: 0
 				};
 			}
-			
 			
 			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY]) {
 				maxTicks[xOrY] = tickPositions.length;
@@ -4544,6 +4548,11 @@ function Chart (options) {
 					);
 					
 				});
+			
+			} else { // doesn't have data
+				for (var n in ticks) {
+					ticks[n].destroy();
+				}
 			}
 			
 			if (axisTitleOptions && axisTitleOptions.text) {
@@ -4595,8 +4604,7 @@ function Chart (options) {
 				tickmarkPos,
 				hasData = associatedSeries.length && defined(min) && defined(max); // defined above - check for ticks.length instead?
 			
-			
-			// update metrics - todo: try to avoid setting these twice
+			// update metrics - todo: try to avoid setting these twice, update after getMargins
 			axisLength = horiz ? plotWidth : plotHeight;
 			transA = axisLength / ((max - min) || 1);
 			transB = horiz ? plotLeft : marginBottom; // translation addend
@@ -4645,6 +4653,7 @@ function Chart (options) {
 				
 				// major ticks, grid lines and tick marks
 				each(tickPositions, function(pos) {
+					//if (ticks[pos]) {
 					ticks[pos].isActive = true;
 					if (globalAnimation && ticks[pos].isNew) {
 						setTimeout(function() {
@@ -4653,6 +4662,7 @@ function Chart (options) {
 					} else {
 						ticks[pos].render();
 					}
+					//} else console.error('ticks[pos] not defined');
 				});
 				
 				
@@ -4689,6 +4699,7 @@ function Chart (options) {
 				
 			
 			} // end if hasData
+			
 			
 			// Static items. As the axis group is cleared on subsequent calls
 			// to render, these items are added outside the group.	
@@ -4852,9 +4863,10 @@ function Chart (options) {
 			options: options,
 			getOffset: getOffset,
 			render: render,
+			setCategories: setCategories,
 			setExtremes: setExtremes,
 			setScale: setScale,
-			setCategories: setCategories,
+			setTickPositions: setTickPositions,
 			translate: translate,
 			redraw: redraw,
 			removePlotBand: removePlotBandOrLine,
@@ -5838,7 +5850,7 @@ function Chart (options) {
 				if (checkbox) {
 					css(checkbox, {
 						left: (legendGroup.attr('translateX') + item.legendItemWidth + checkbox.x - 40) +PX,
-						top: (legendGroup.attr('translateX') + checkbox.y - 11) + PX 
+						top: (legendGroup.attr('translateY') + checkbox.y - 11) + PX 
 					});
 				}
 			});
@@ -5995,8 +6007,7 @@ function Chart (options) {
 			
 			chart.isDirtyLegend = false;
 		}
-
-		
+				
 		if (hasCartesianSeries) {
 			if (!isResizing) {
 				
@@ -6411,7 +6422,6 @@ function Chart (options) {
 			});
 		}
 		
-		
 		plotLeft += axisOffset[3];
 		plotTop += axisOffset[0];
 		marginBottom += axisOffset[2];
@@ -6544,8 +6554,9 @@ function Chart (options) {
 		
 		// Get margins by pre-rendering axes
 		getMargins();
+		//adjustTickAmounts();
 		each(axes, function(axis) {
-			axis.setScale(); // update to reflect the new margins 
+			axis.setTickPositions(true); // update to reflect the new margins 
 		});
 		getMargins(); // second pass to check for new labels
 		
@@ -6681,8 +6692,9 @@ function Chart (options) {
 		globalAnimation = false;
 		render();
 		
-		
 		fireEvent(chart, 'load');
+		
+		globalAnimation = true;
 	}
 	
 	// Run chart
@@ -7350,7 +7362,7 @@ Series.prototype = {
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean} shift If shift is true, a point is shifted off the start 
 	 *    of the series as one is appended to the end.
-	 * @param {Object|Boolean} animation Whether to apply animation, and optionally animation
+	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
 	addPoint: function(options, redraw, shift, animation) {
