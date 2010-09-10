@@ -1302,7 +1302,7 @@ SVGElement.prototype = {
 					if (typeof value != 'string') { // join path
 						value = value.join(' ');
 					}
-					if (/(NaN|  )/.test(value)) {
+					if (/(NaN|  )/.test(value) || value == "") {
 						value = 'M 0 0';
 					}
 					
