@@ -220,14 +220,14 @@ extend (Chart.prototype, {
 			
 			seriesOptions.data = [];
 			each(serie.data, function(point) {
-				pointOptions = typeof point.config == 'number' ?
+				pointOptions = point.config == null || typeof point.config == 'number' ?
 					{ y: point.y } :
 					point.config;
 				pointOptions.x = point.x;
 				seriesOptions.data.push(pointOptions); // copy fresh updated data
 								
 				// remove image markers
-				pointMarker = point.config.marker;
+				pointMarker = point.config && point.config.marker;
 				if (pointMarker && /^url\(/.test(pointMarker.symbol)) { 
 					delete pointMarker.symbol;
 				}
