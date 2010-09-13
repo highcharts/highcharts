@@ -7491,18 +7491,6 @@ Series.prototype = {
 		series.graphPath = graphPath;
 		series.singlePoints = singlePoints; 
 
-		// draw the graph
-		if (graph) {
-			graph.attr({ d: graphPath });
-		} else {
-			if (lineWidth) {
-				series.graph = renderer.path(graphPath).
-					attr({
-						'stroke': color,
-						'stroke-width': lineWidth + PX
-					}).add(group).shadow(options.shadow);
-			}
-		}
 		
 			
 		// draw the area if area series or areaspline
@@ -7522,6 +7510,20 @@ Series.prototype = {
 					}).add(series.group);
 			}
 		}
+
+		// draw the graph
+		if (graph) {
+			graph.attr({ d: graphPath });
+		} else {
+			if (lineWidth) {
+				series.graph = renderer.path(graphPath).
+					attr({
+						'stroke': color,
+						'stroke-width': lineWidth + PX
+					}).add(group).shadow(options.shadow);
+			}
+		}
+		
 	},
 	
 	
