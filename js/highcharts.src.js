@@ -1102,6 +1102,14 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderWidth: 1,
 	center: ['50%', '50%'],
 	colorByPoint: true, // always true for pies
+	dataLabels: {
+		// align: null, // docs - n/a for pies
+		// connectorWidth: 1, // docs
+		// connectorColor: '#606060', // docs
+		// connectorPadding: 5, // docs
+		distance: 30, // docs
+		y: 5
+	},
 	//innerSize: 0,
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
@@ -1351,11 +1359,11 @@ SVGElement.prototype = {
 	 * @param {Number} options The same options as in jQuery animation
 	 */
 	animate: function(params, options) {
-		var animOptions = pick(options, globalAnimation, {});
-		if (!animOptions) {
-			this.attr(params);
+		var animOptions = pick(options, globalAnimation);
+		if (animOptions) {
+			animate(this, params, merge(animOptions));
 		} else {
-			animate(this, params, animOptions);
+			this.attr(params);
 		}
 	},
 	/**
@@ -7160,7 +7168,7 @@ Point.prototype = {
 		removeEvent(point);
 		
 		
-		each (['graphic', 'tracker', 'group'], function(prop) {
+		each (['graphic', 'tracker', 'group', 'dataLabel', 'connector'], function(prop) {
 			if (point[prop]) {
 				point[prop].destroy();
 			}
@@ -7639,9 +7647,23 @@ Series.prototype = {
 		if (defined(initialColor)) { // reset colors for pie
 			colorCounter = initialColor;
 		}
+		
 		data = map(splat(data || []), function(pointOptions) {
 			return (new series.pointClass()).init(series, pointOptions);
 		});
+		
+		
+		/*
+		// brightening colors. 
+		// todo: make it apply to dynamic data as well
+		if (true) {
+			for (var j = 0; j < data.length; j++) {
+				data[j].color = data[j].options.color = Color(chart.options.colors[initialColor])
+					.brighten(j / (data.length + 2))
+					.get();
+			}
+		}
+		*/
 		
 		// destroy old points
 		while (i--) {
@@ -8147,11 +8169,11 @@ Series.prototype = {
 			point.destroy();
 		});
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
+		/*each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
 			if (series[prop]) {
 				series[prop].destroy();
 			}
-		});
+		});*/
 		if (clipRect && clipRect != series.chart.clipRect) {
 			clipRect.destroy();
 		}
@@ -8165,6 +8187,8 @@ Series.prototype = {
 				
 		// clear all members
 		for (prop in series) {
+			// destroy SVGElements
+			prop != 'chart' && series[prop] && series[prop].destroy && series[prop].destroy();
 			delete series[prop];
 		} 
 	},
@@ -8207,16 +8231,11 @@ Series.prototype = {
 			options.style.color = pick(color, series.color);
 		
 			// make the labels for each point
-			each(data, function(point){
-				var plotX = pick(point.barX, point.plotX),
-					plotY = point.plotY,
-					tooltipPos = point.tooltipPos,
-					pointLabel = point.dataLabel;
-					
-				// destroy old data label after update
-				if (pointLabel) {
-					pointLabel.destroy();
-				}
+			each(data, function(point, i){
+				var plotX = pick(point.barX, point.plotX, -999),
+					plotY = pick(point.plotY, -999),
+					labelPos = point.labelPos,
+					dataLabel = point.dataLabel;
 					
 				// get the string
 				str = options.formatter.call({
@@ -8229,14 +8248,9 @@ Series.prototype = {
 				});
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + options.y;
+				align = labelPos ? labelPos[6] : options.align;
 				
-				// special case for pies
-				if (tooltipPos) {
-					x = tooltipPos[0] + options.x;
-					y = tooltipPos[1] + options.y;
-				}
 				// in columns, align the string to the column
-				align = options.align;
 				if (seriesType == 'column') {
 					x += {
 						center: point.barW / 2,
@@ -8244,7 +8258,12 @@ Series.prototype = {
 					}[align] || 0;
 				}
 				
-				if (str) {
+				if (dataLabel) {
+					dataLabel.animate({
+						x: x,
+						y: y
+					});
+				} else if (str) {
 					point.dataLabel = chart.renderer.text(
 						str, 
 						x, 
@@ -8254,12 +8273,9 @@ Series.prototype = {
 						align
 					)
 					.attr({ zIndex: 1 })
-					.add(point.group || dataLabelsGroup); // pies have point.group
+					.add(dataLabelsGroup);
 				}
 				
-				if (series.drawConnector) {
-					series.drawConnector(point);
-				}
 					
 			});
 		}
@@ -9258,31 +9274,24 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function(vis) {
-	
+	setVisible: function(vis) {	
 		var point = this, 
-			chart = point.series.chart;
+			chart = point.series.chart,
+			tracker = point.tracker,
+			dataLabel = point.dataLabel,
+			connector = point.connector,
+			method;
 		
 		// if called without an argument, toggle visibility
 		point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
 		
+		method = vis ? 'show' : 'hide';
 		
-		if (vis) {
-			//layer.show();
-			point.group.show();
-			point.tracker.show();
-			
-			
-		} else { 
-			//layer.hide();
-			point.group.hide();
-			point.tracker.hide();
-			
-		}
-	
-		if (point.legendItem) {
-			chart.legend.colorizeItem(point, vis);
-		}
+		point.group[method]();
+		tracker && tracker[method]();
+		dataLabel && dataLabel[method]();
+		connector && connector[method]();
+		point.legendItem && chart.legend.colorizeItem(point, vis);
 	},
 	
 	/**
@@ -9349,7 +9358,10 @@ var PieSeries = extendClass(Series, {
 			circ = 2 * math.PI,
 			fraction,
 			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent;
+			isPercent,
+			radiusX, // the x component of the radius vector for a given point
+			radiusY,
+			labelDistance = options.dataLabels.distance;
 			
 		// get positions - either an integer or a percentage string must be given
 		positions.push(options.size, options.innerSize || 0);
@@ -9359,11 +9371,27 @@ var PieSeries = extendClass(Series, {
 			return isPercent ? 
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
-				// i == 2: size, relative to height
+				// i == 2: size, relative to smallestSize
 				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
 					parseInt(length, 10) / 100:
 				length;
 		});
+		
+		// utility for getting the x value from a given y, used for anticollision logic in data labels
+		series.getX = function(y, left) {
+			
+			/*y = positions[1] + mathSin(angle) * (positions[2] / 2 + labelDistance);
+			mathSin(angle) * (positions[2] / 2 + labelDistance) = y - positions[1];
+			mathSin(angle) = (y - positions[1]) / (positions[2] / 2 + labelDistance)*/
+			angle = math.asin((y - positions[1]) / (positions[2] / 2 + labelDistance));
+			
+			return positions[0] + 
+				(left ? -1 : 1) *
+				(mathCos(angle) * (positions[2] / 2 + labelDistance));
+		}
+		
+		// set center for later use
+		series.center = positions;
 					
 		// get the total sum
 		each (data, function(point) {
@@ -9398,10 +9426,29 @@ var PieSeries = extendClass(Series, {
 			
 			
 			// set the anchor point for tooltips
+			radiusX = mathCos(angle) * positions[2] / 2;
+			radiusY = mathSin(angle) * positions[2] / 2;
 			point.tooltipPos = [
-				positions[0] + mathCos(angle) * positions[2] * 0.35,
-				positions[1] + mathSin(angle) * positions[2] * 0.35
+				positions[0] + radiusX * 0.7,
+				positions[1] + radiusY * 0.7
 			];
+			
+			// set the anchor point for data labels			
+			slicedOffset += options.borderWidth;
+			point.labelPos = [
+				positions[0] + radiusX + mathCos(angle) * labelDistance, // first break of connector
+				positions[1] + radiusY + mathSin(angle) * labelDistance, // a/a
+				positions[0] + radiusX + mathCos(angle) * slicedOffset, // second break, right outside pie
+				positions[1] + radiusY + mathSin(angle) * slicedOffset, // a/a
+				positions[0] + radiusX, // landing point for connector
+				positions[1] + radiusY, // a/a
+				labelDistance < 0 ? // alignment
+					'center' :
+					angle < circ / 4 ? 'left' : 'right', // alignment
+				angle // center angle
+			];
+			
+			//point.labelPos[0] = series.getX(point.labelPos[1]);
 			
 			// API properties
 			point.percentage = fraction * 100;
@@ -9454,7 +9501,7 @@ var PieSeries = extendClass(Series, {
 				// if the point is sliced, use special translation, else use plot area traslation
 				groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
 				point.group = renderer.g('point')
-					.attr({ zIndex: 3 })
+					.attr({ zIndex: 5 })
 					.add()
 					.translate(groupTranslation[0], groupTranslation[1]);
 			}
@@ -9477,6 +9524,174 @@ var PieSeries = extendClass(Series, {
 		});
 		
 	},
+	
+	/**
+	 * Override the base drawDataLabels method by pie specific functionality
+	 */
+	drawDataLabels: function() {
+		var series = this,
+			data = series.data,
+			options = series.options.dataLabels,
+			connectorPadding = options.connectorPadding || 10,
+			connectorWidth = options.connectorWidth || 1,
+			connector,
+			connectorPath,
+			dataLabel,
+			labelPos,
+			labelHeight,
+			lastY,
+			top,
+			centerY = series.center[1],
+			quarters = [// divide the points into quarters for anti collision
+				[], // top right
+				[], // bottom right
+				[], // bottom left
+				[] // top left
+			], 
+			x,
+			y,
+			visibility,
+			overlapping,
+			rankArr,
+			secondPass,
+			sign,
+			upperHalf,
+			i = 4;
+			
+		// run parent method
+		Series.prototype.drawDataLabels.apply(series);
+		
+		// arrange points for detection collision
+		each (data, function(point) {
+			var angle = point.labelPos[7],
+				quarter;
+			if (angle < 0) {
+				quarter = 0;
+			} else if (angle < math.PI / 2) {
+				quarter = 1;
+			} else if (angle < math.PI) {
+				quarter = 2;
+			} else {
+				quarter = 3;
+			}
+			quarters[quarter].push(point);
+		});
+		quarters[1].reverse();
+		quarters[3].reverse();
+		
+		/* Loop over the points in each quartile, starting from the top and bottom
+		 * of the pie to detect overlapping labels.
+		 */
+		while (i--) {
+			overlapping = 0;
+			
+			// create an array for sorting and ranking the points within each quarter
+			rankArr = [].concat(quarters[i]);
+			rankArr.sort(function(a,b) {
+				return a.y > b.y;
+			});
+			each (rankArr, function(point, i) {
+				point.rank = i;
+			})
+				
+			/* In the first pass, count the number of overlapping labels. In the second
+			 * pass, remove the labels with lowest rank/values.
+			 */
+			for (secondPass = 0; secondPass < 2; secondPass++) {
+				lowerHalf = i % 3;
+				lastY = lowerHalf ? 9999 : -9999;
+				sign = lowerHalf ? -1 : 1;
+				each (quarters[i], function(point) {
+					
+					if ((dataLabel = point.dataLabel)) {
+						labelPos = point.labelPos;
+						visibility = VISIBLE;
+						x = labelPos[0];
+						y = labelPos[1];
+						
+						
+						// assume all labels have equal height
+						if (!labelHeight) {
+							labelHeight = dataLabel && dataLabel.getBBox().height;
+						}
+						
+						// anticollision
+						if (secondPass && point.rank < overlapping) {
+							visibility = HIDDEN;
+						} else if ((!lowerHalf && y < lastY + labelHeight) ||
+								(lowerHalf && y > lastY - labelHeight)) {  
+							y = lastY + sign * labelHeight;
+							x = series.getX(y, i > 1);
+							if ((!lowerHalf && y + labelHeight > centerY) ||
+									(lowerHalf && y -labelHeight < centerY)) {
+								if (secondPass) {
+									visibility = HIDDEN;
+								} else {									
+									overlapping++;
+								}
+							}
+						}
+						
+						if (point.visible === false) {
+							visibility = HIDDEN;
+						}
+						
+						if (visibility == VISIBLE) {
+							lastY = y;
+						}
+							
+						
+						if (secondPass) {
+						
+							// move or place the data label
+							dataLabel.animate({
+								x: x + options.x 
+									+ ({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
+								y: y + options.y							
+							});
+							dataLabel.attr('visibility', visibility);
+							
+							
+							// draw the connector
+							connector = point.connector;
+								
+							connectorPath = [
+								M,
+								x + (labelPos[6] == 'left' ? 5 : -5), y, // end of the string at the label
+								L,
+								x, y, // first break, next to the label
+								L,
+								labelPos[2], labelPos[3], // second break
+								L,
+								labelPos[4], labelPos[5] // base
+							];
+								
+							if (connector) {
+								connector.animate({ d: connectorPath });
+								connector.attr('visibility', visibility);
+							
+							} else {		
+								point.connector = connector = series.chart.renderer.path(connectorPath).attr({
+									'stroke-width': connectorWidth,
+									stroke: options.connectorColor || '#606060',
+									visibility: visibility
+								}).add(series.dataLabelsGroup);
+							}
+						}
+					}
+				});
+			}
+		}
+	},
+	
+	/* *
+	 * Draw a connector from an individual point to its data label
+	 * @todo: add this code in the same method as above to be able to reuse calculations
+	 * /
+	drawConnector: function(point) {
+
+
+	},*/
 	
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.

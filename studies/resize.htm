@@ -30,10 +30,6 @@
 					borderWidth: 1,
 					backgroundColor: '#FFFFEF',
 					plotBorderWidth: 0,
-					marginTop: 10,
-					marginRight: 10,
-					marginBottom: 10,
-					marginLeft: 10,
 					animation: {
 						//duration: 1000
 					}
@@ -55,6 +51,17 @@
 						to: 3,
 						color: 'red'
 					}]*/
+				},
+				
+				plotOptions: {
+					series: {
+						dataLabels: {
+							enabled: true,
+							formatter: function() {
+								return Highcharts.numberFormat(this.y, 2);
+							}
+						}
+					}
 				},
 				
                 series: [{
