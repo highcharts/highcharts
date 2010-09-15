@@ -6344,8 +6344,7 @@ Point.prototype = {
 		
 		//series.isDirty = true;
 		point.firePointEvent(selected ? 'select' : 'unselect');
-		
-		point.setState(SELECT_STATE);
+		point.setState(selected && SELECT_STATE);
 		
 		// unselect all other points unless Ctrl or Cmd + click
 		if (!accumulate) {
