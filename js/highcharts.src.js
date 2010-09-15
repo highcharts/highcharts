@@ -1299,10 +1299,10 @@ SVGElement.prototype = {
 				
 				// paths
 				if (key == 'd') {
-					if (typeof value != 'string') { // join path
+					if (value && value.join) { // join path
 						value = value.join(' ');
 					}
-					if (/(NaN|  )/.test(value)) {
+					if (/(NaN|  |^$)/.test(value)) {
 						value = 'M 0 0';
 					}
 					
