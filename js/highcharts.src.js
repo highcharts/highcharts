@@ -92,7 +92,6 @@ var doc = document,
 	fireEvent = adapter.fireEvent,
 	animate = adapter.animate,
 	stop = adapter.stop,
-	getAjax = adapter.getAjax,
 	
 	// lookup over the types and the associated classes
 	seriesTypes = {};
@@ -233,7 +232,8 @@ function createElement (tag, attribs, styles, parent, nopad) {
 	return el;
 }
 
-// the jQuery adapter
+// Define the adapter
+globalAdapter && globalAdapter.init && globalAdapter.init();
 if (!globalAdapter && win.jQuery) {
 	var jQ = jQuery;
 	
@@ -327,9 +327,6 @@ if (!globalAdapter && win.jQuery) {
 		jQ(el).stop();
 	};
 	
-	getAjax = function (url, callback) {
-		jQ.get(url, null, callback);
-	};
 	
 	// extend jQuery
 	jQ.extend( jQ.easing, {
@@ -450,125 +447,7 @@ if (!globalAdapter && win.jQuery) {
 		}
 		return r;
 	};
-	
-// the MooTools adapter
-} else if (!globalAdapter && win.MooTools) {
-	
-	each = $each;
-	
-	map = function (arr, fn){
-		return arr.map(fn);
-	};
-	
-	grep = function(arr, fn) {
-		return arr.filter(fn);
-	};
-	
-	merge = $merge;
-	
-	hyphenate = function (str){
-		return str.hyphenate();
-	};
-	
-	addEvent = function (el, type, fn) {
-		if (typeof type == 'string') { // chart broke due to el being string, type function
-		
-			if (type == 'unload') { // Moo self destructs before custom unload events
-				type = 'beforeunload';
-			}
-
-			// if the addEvent method is not defined, el is a custom Highcharts object
-			// like series or point
-			if (!el.addEvent) {
-				if (el.nodeName) {
-					el = $(el); // a dynamically generated node
-				} else {
-					extend(el, new Events()); // a custom object
-				}
-			}
-			
-			el.addEvent(type, fn);
-		}
-	};
-	
-	removeEvent = function(el, type, fn) {
-		if (type) {
-			if (type == 'unload') { // Moo self destructs before custom unload events
-				type = 'beforeunload';
-			}
-
-
-			el.removeEvent(type, fn);
-		}
-	};
-	
-	fireEvent = function(el, event, eventArguments, defaultFunction) {
-		// create an event object that keeps all functions		
-		event = new Event({ 
-			type: event,
-			target: el
-		});
-		event = extend (event, eventArguments);
-		// override the preventDefault function to be able to use
-		// this for custom events
-		event.preventDefault = function() {
-			defaultFunction = null;
-		};
-		// if fireEvent is not available on the object, there hasn't been added
-		// any events to it above
-		if (el.fireEvent) {
-			el.fireEvent(event.type, event);
-		}
-		
-		// fire the default if it is passed and it is not prevented above
-		if (defaultFunction) {
-			defaultFunction(event);
-		}		
-	};
-	
-	animate = function (el, params, options) {
-		var isSVGElement = el.attr,
-			effect;
-		
-		if (isSVGElement && !el.setStyle) {
-			// add setStyle and getStyle methods for internal use in Moo
-			el.setStyle = el.getStyle = el.attr;
-			// dirty hack to trick Moo into handling el as an element wrapper
-			el.$family = el.uid = true;
-		}
-		
-		// stop running animations
-		stop(el);
-		
-		// define and run the effect
-		effect = new Fx.Morph(
-			isSVGElement ? el : $(el), 
-			extend(options, {
-				transition: Fx.Transitions.Quad.easeInOut
-			})
-		);
-		effect.start(params);
-		el.fx = effect;
-	};
-	
-	/**
-	 * Stop running animations on the object
-	 */
-	stop = function (el) {
-		if (el.fx) {
-			el.fx.cancel();
-		}
-	};
-	
-	getAjax = function (url, callback) {
-		(new Request({
-			url: url,
-			method: 'get',
-			onSuccess: callback
-		})).send();			
-	};
-	
-} 
+}
 
 
 
@@ -883,6 +762,7 @@ defaultOptions = {
 		borderWidth: 2,
 		borderRadius: 5,
 		shadow: true,
+		//shared: false, // docs
 		snap: 10,
 		style: {
 			color: '#333333',
@@ -1359,7 +1239,7 @@ SVGElement.prototype = {
 	 * @param {Number} options The same options as in jQuery animation
 	 */
 	animate: function(params, options) {
-		var animOptions = pick(options, globalAnimation);
+		var animOptions = pick(options, globalAnimation, true);
 		if (animOptions) {
 			animate(this, params, merge(animOptions));
 		} else {
@@ -1928,7 +1808,7 @@ SVGRenderer.prototype = {
 				.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
 				.split('<br/>'),
 			childNodes = textNode.childNodes,
-			styleRegex = /style="([ 0-9a-z:;\-]+)"/,
+			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			i;
@@ -3560,6 +3440,7 @@ function Chart (options) {
 		renderer,
 		tooltipTick,
 		tooltipInterval,
+		hoverX,
 		zoom, // function
 		zoomOut; // function
 		
@@ -5142,6 +5023,7 @@ function Chart (options) {
 		var currentSeries,
 			borderWidth = options.borderWidth,
 			style = options.style,
+			shared = options.shared,
 			padding = parseInt(style.padding, 10),
 			boxOffLeft = borderWidth + padding, // off left/top position as IE can't 
 				//properly handle negative positioned shapes
@@ -5150,6 +5032,7 @@ function Chart (options) {
 			boxHeight,
 			currentX = 0,			
 			currentY = 0;
+			
 		
 		// remove padding CSS and apply padding on box instead
 		style.padding = 0;
@@ -5210,26 +5093,64 @@ function Chart (options) {
 		 * 
 		 */
 		function refresh(point) {
-			var 
-				series = point.series,
-				
-				borderColor = options.borderColor || point.color || series.color || '#606060',
+			var borderColor = options.borderColor || point.color || series.color || '#606060',
 				x,
 				y,
 				boxX,
 				boxY,
 				show,
 				bBox,
-				text = point.tooltipText,
-				tooltipPos = point.tooltipPos;
+				plotX,
+				plotY = 0,
+				textConfig = {},
+				pointConfig = [],
+				tooltipPos = point.tooltipPos,
+				getConfig = function(point) {
+					return {
+						series: point.series,
+						point: point,
+						x: point.category, 
+						y: point.y,
+						percentage: point.percentage,
+						total: point.total || point.stackTotal
+					}
+				};
 				
+			// shared tooltip, array is sent over
+			if (shared) { 
+				each (point, function(item, i) {
+					var series = item.series,
+						hoverPoint = series.hoverPoint;
+					hoverPoint && hoverPoint.setState();
+					series.hoverPoint = item;
+					item.setState(HOVER_STATE);
+					plotY += item.plotY; // for average
+					
+					pointConfig.push(getConfig(item));
+				});
+				plotX = point[0].plotX;
+				plotY /= point.length;
+				
+				textConfig = {
+					x: point[0].category
+				}
+				textConfig.points = pointConfig;
+				
+				
+			// single point tooltip
+			} else {
+				textConfig = getConfig(point);
+			}
+			text = options.formatter.call(textConfig);
 			
 			// register the current series
-			currentSeries = series;
+			currentSeries = point.series;
 			
 			// get the reference point coordinates (pie charts use tooltipPos)
-			x = tooltipPos ? tooltipPos[0] : (inverted ? plotWidth - point.plotY : point.plotX);
-			y = tooltipPos ? tooltipPos[1] : (inverted ? plotHeight - point.plotX : point.plotY);
+			plotX = shared ? plotX : point.plotX;
+			plotY = shared ? plotY : point.plotY;
+			x = tooltipPos ? tooltipPos[0] : (inverted ? plotWidth - plotY : plotX);
+			y = tooltipPos ? tooltipPos[1] : (inverted ? plotHeight - plotX : plotY);
 				
 				
 			// hide tooltip if the point falls outside the plot
@@ -5292,6 +5213,7 @@ function Chart (options) {
 		
 		// public members
 		return {
+			shared: shared,
 			refresh: refresh,
 			hide: hide
 		};	
@@ -5379,17 +5301,47 @@ function Chart (options) {
 		 */
 		function onmousemove (e) {
 			var point,
+				points,
 				hoverPoint = chart.hoverPoint,
-				hoverSeries = chart.hoverSeries;
-			
+				hoverSeries = chart.hoverSeries,
+				i,
+				j,
+				distance = chartWidth,
+				index = inverted ? e.layerY : e.layerX - plotLeft // wtf?;
+				
+			// common tooltip
+			if (options.shared) {
+				points = [];
+				
+				// loop over all series and find the ones with points nearest to the mouse
+				i = series.length;
+				for (j = 0; j < i; j++) {
+					if (series[j].visible) {
+						point = series[j].tooltipPoints[index];
+						point._dist = mathAbs(index - point.plotX);
+						distance = mathMin(distance, point._dist);
+						points.push(point);
+					}
+				}
+				// remove furthest points
+				i = points.length;
+				while (i--) {
+					if (points[i]._dist > distance) {
+						points.splice(i, 1);
+					}
+				}
+				// refresh the tooltip if necessary
+				if (points.length && points[0].plotX != hoverX) {
+					tooltip.refresh(points);
+					hoverX = points[0].plotX;
+				}
+			}
+				
+			// separate tooltip and general mouse events
 			if (hoverSeries && hoverSeries.tracker) { // only use for line-type series with common tracker
 		
 				// get the point
-				point = hoverSeries.tooltipPoints[
-					inverted ? 
-						e.layerY : 
-						e.layerX - plotLeft // wtf?
-				];
+				point = hoverSeries.tooltipPoints[index];
 				
 				// a new point is hovered, refresh the tooltip
 				if (point && point != hoverPoint) {
@@ -7167,13 +7119,11 @@ Point.prototype = {
 		// remove all events
 		removeEvent(point);
 		
-		
 		each (['graphic', 'tracker', 'group', 'dataLabel', 'connector'], function(prop) {
 			if (point[prop]) {
 				point[prop].destroy();
 			}
-		});
-		
+		});		
 		
 		if (point.legendItem) { // pies have legend items
 			point.series.chart.legend.destroyItem(point);
@@ -7231,7 +7181,7 @@ Point.prototype = {
 		point.firePointEvent('mouseOver');
 		
 		// update the tooltip
-		if (tooltip) {
+		if (tooltip && !tooltip.shared) {
 			tooltip.refresh(point);
 		}
 		
@@ -7385,6 +7335,8 @@ Point.prototype = {
 		}
 		
 		if (
+				// already has this state
+				state == point.state ||
 				// selected points don't respond to hover
 				(point.selected && state != SELECT_STATE) ||
 				// series' state options is disabled
@@ -7421,19 +7373,9 @@ Point.prototype = {
 			point.graphic.attr(pointAttr[state]);
 		}
 		
-	},
-	
-	setTooltipText: function() {
-		var point = this;
-		point.tooltipText = point.series.chart.options.tooltip.formatter.call({
-			series: point.series,
-			point: point,
-			x: point.category, 
-			y: point.y,
-			percentage: point.percentage,
-			total: point.total || point.stackTotal
-		});
-	}	
+		point.state = state;
+		
+	}
 };
 
 /**
@@ -7605,10 +7547,13 @@ Series.prototype = {
 	addPoint: function(options, redraw, shift, animation) {
 		var series = this,
 			data = series.data,
+			graph = series.graph,
 			point = (new series.pointClass()).init(series, options);
 			
 		globalAnimation = animation;
-		series.graph.shift = shift;
+		if (graph && shift) { // make graph animate sideways
+			graph.shift = shift;
+		}
 		/*if (series.area) {
 			series.area.shift = shift;
 		}*/
@@ -7807,12 +7752,13 @@ Series.prototype = {
 		if (series.xAxis && series.xAxis.reversed) {
 			data = data.reverse();//reverseArray(data);
 		}
+		
 		each (data, function(point, i) {
 			
 			
-			if (!series.tooltipPoints) { // only create the text the first time, not on zoom
+			/*if (!series.tooltipPoints) { // only create the text the first time, not on zoom
 				point.setTooltipText();
-			}
+			}*/
 			
 			low = data[i - 1] ? data [i - 1].high + 1 : 0;
 			high = point.high = data[i + 1] ? (
@@ -8169,11 +8115,11 @@ Series.prototype = {
 			point.destroy();
 		});
 		// destroy all SVGElements associated to the series
-		/*each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
 			if (series[prop]) {
 				series[prop].destroy();
 			}
-		});*/
+		});
 		if (clipRect && clipRect != series.chart.clipRect) {
 			clipRect.destroy();
 		}
@@ -8187,8 +8133,6 @@ Series.prototype = {
 				
 		// clear all members
 		for (prop in series) {
-			// destroy SVGElements
-			prop != 'chart' && series[prop] && series[prop].destroy && series[prop].destroy();
 			delete series[prop];
 		} 
 	},
@@ -9347,6 +9291,7 @@ var PieSeries = extendClass(Series, {
 			cumulative = -0.25, // start at top
 			options = series.options,
 			slicedOffset = options.slicedOffset,
+			connectorOffset = slicedOffset + options.borderWidth,
 			positions = options.center,
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
@@ -9434,12 +9379,11 @@ var PieSeries = extendClass(Series, {
 			];
 			
 			// set the anchor point for data labels			
-			slicedOffset += options.borderWidth;
 			point.labelPos = [
 				positions[0] + radiusX + mathCos(angle) * labelDistance, // first break of connector
 				positions[1] + radiusY + mathSin(angle) * labelDistance, // a/a
-				positions[0] + radiusX + mathCos(angle) * slicedOffset, // second break, right outside pie
-				positions[1] + radiusY + mathSin(angle) * slicedOffset, // a/a
+				positions[0] + radiusX + mathCos(angle) * connectorOffset, // second break, right outside pie
+				positions[1] + radiusY + mathSin(angle) * connectorOffset, // a/a
 				positions[0] + radiusX, // landing point for connector
 				positions[1] + radiusY, // a/a
 				labelDistance < 0 ? // alignment
