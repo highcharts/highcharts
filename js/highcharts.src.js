@@ -5617,8 +5617,10 @@ function Chart (options) {
 	
 	/**
 	 * Dim the chart and show a loading text or symbol
+	 * 
+	 * @param {String} str An optional text to show in the loading label instead of the default one
 	 */
-	function showLoading() {
+	function showLoading(str) {
 		var loadingOptions = options.loading;
 
 		// create the layer at the first call
@@ -5634,15 +5636,14 @@ function Chart (options) {
 				display: NONE
 			}), container);
 			
-			createElement('span', {
-				innerHTML: options.lang.loading
-			}, loadingOptions.labelStyle, loadingLayer);
+			createElement('span', null, loadingOptions.labelStyle, loadingLayer);
 		}
 		
 		
 		// show it
 		if (!loadingShown) {
 			css(loadingLayer, { opacity: 0, display: '' });
+			loadingLayer.getElementsByTagName('span')[0].innerHTML = str || options.lang.loading;
 			animate(loadingLayer, {
 				opacity: loadingOptions.style.opacity
 			}, {
