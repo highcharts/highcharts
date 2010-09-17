@@ -4944,6 +4944,7 @@ function Chart (options) {
 			adjustTickAmount: adjustTickAmount,
 			categories: categories,
 			getExtremes: getExtremes,
+			getPlotLinePath: getPlotLinePath,
 			getThreshold: getThreshold,
 			isXAxis: isXAxis,
 			options: options,
@@ -5028,6 +5029,8 @@ function Chart (options) {
 			boxOffLeft = borderWidth + padding, // off left/top position as IE can't 
 				//properly handle negative positioned shapes
 			tooltipIsHidden = true,
+			crosshairsX,
+			crosshairsY,
 			boxWidth,
 			boxHeight,
 			currentX = 0,			
@@ -5135,7 +5138,7 @@ function Chart (options) {
 					x: point[0].category
 				}
 				textConfig.points = pointConfig;
-				
+				point = point[0];
 				
 			// single point tooltip
 			} else {
@@ -5206,7 +5209,23 @@ function Chart (options) {
 				
 				
 			}
-		
+			
+			
+			// crosshairs
+			if (options.crosshairs) {
+				var crossPathX = point.series.xAxis.getPlotLinePath(point.x, 1);
+				if (crosshairsX) {
+					crosshairsX.attr({ d: crossPathX });
+				
+				} else {
+					crosshairsX = renderer.path(crossPathX)
+						.attr({
+							'stroke-width': 1,
+							stroke: '#606060'
+						})
+						.add();
+				}				
+			}		
 		}
 		
 
