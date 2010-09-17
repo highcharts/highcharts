@@ -265,6 +265,13 @@ extend (Chart.prototype, {
 				return s.toLowerCase();
 			});
 			
+		// IE9 beta bugs with innerHTML. Test again with final IE9.
+		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
+			.replace(/&quot;/g, "'");
+		if (svg.match(/ xmlns="/g).length == 2) {
+			svg = svg.replace(/xmlns="[^"]+"/, '');
+		}
+			
 		return svg;
 	},
 	
@@ -401,7 +408,8 @@ extend (Chart.prototype, {
 			innerMenu = createElement(DIV, null, 
 				extend({
 					MozBoxShadow: boxShadow,
-					WebkitBoxShadow: boxShadow
+					WebkitBoxShadow: boxShadow,
+					boxShadow: boxShadow
 				}, navOptions.menuStyle) , menu);
 			
 			hide = function() {
@@ -610,19 +618,24 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 };
 
 // Overwrite the HC.Chart object with added functionality for export buttons after render
-HC.Chart = function(options) {
-	var chart = new Chart(options),
-		n,
-		exportingOptions = chart.options.exporting,
-		buttons = exportingOptions.buttons;
+HC.Chart = function(options, callback) {
+	return new Chart(options, function(chart) {
+		var n,
+			exportingOptions = chart.options.exporting,
+			buttons = exportingOptions.buttons;		
 		
-	if (exportingOptions.enabled !== false) {	
-		for (n in buttons) {
-			chart.addButton(buttons[n]);
+		// add buttons
+		if (exportingOptions.enabled !== false) {	
+			for (n in buttons) {
+				chart.addButton(buttons[n]);
+			}
 		}
-	}
-	
-	return chart;
+		
+		// execute user callbacks
+		if (callback) {
+			callback();
+		}
+	});
 };
 
 })();

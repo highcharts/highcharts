@@ -1713,7 +1713,7 @@ SVGRenderer.prototype = {
 		// object properties
 		this.Element = SVGElement;
 		this.box = box;
-		this.url = loc.href.replace(/#.*?$/, ''); // page url used for internal references
+		this.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
 		this.defs = this.createElement('defs').add();
 	},
 	
@@ -2898,7 +2898,15 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
 			isIE8 = this.isIE8;
 	
-		markup = markup.join('');
+		try { // bug in IE9 Beta 1, quirks mode - check this again with later upgrades
+			markup = markup.join('');
+		} catch (e) {
+			var s = '', i = 0;
+			for (i; i < markup.length; i++) {
+				s += markup[i];
+			}
+			markup = s;
+		}
 		
 		if (isIE8) { // add xmlns and style inline
 			markup = markup.replace('/>', ' xmlns="urn:schemas-microsoft-com:vml" />');
@@ -3301,8 +3309,9 @@ var Renderer = hasSVG ?	SVGRenderer : VMLRenderer;
 /**
  * The chart class
  * @param {Object} options
+ * @param {Function} callback Function to run when the chart has loaded
  */
-function Chart (options) {
+function Chart (options, callback) {
 
 	defaultXAxisOptions = merge(defaultXAxisOptions, defaultOptions.xAxis);
 	defaultYAxisOptions = merge(defaultYAxisOptions, defaultOptions.yAxis);
@@ -4692,7 +4701,7 @@ function Chart (options) {
 			zoomVert = zoomY && !inverted || zoomX && inverted;
 			
 		/**
-		 * Add IE support for pageX and pageY
+		 * Add crossbrowser support for chartX and chartY
 		 * @param {Object} e The event object in standard browsers
 		 */
 		function normalizeMouseEvent(e) {
@@ -4708,14 +4717,17 @@ function Chart (options) {
 				position = getPosition(container);
 			}
 
-			// layerX and layerY
-			if (e.layerX === UNDEFINED) { // Firefox and WebKit have layerX
-				if (isIE) { // IE
-					e.layerX = e.x;
-					e.layerY = e.y;
-				} else { // Opera has no equivalent of layerX, see above
-					e.layerX = e.pageX - position.x;
-					e.layerY = e.pageY - position.y;
+			// chartX and chartY
+			if (isIE) { // IE including IE9 that has chartX but in a different meaning
+				e.chartX = e.x;
+				e.chartY = e.y;
+			} else {
+				if (e.layerX === UNDEFINED) { // Opera
+					e.chartX = e.pageX - position.x;
+					e.chartY = e.pageY - position.y;
+				} else {
+					e.chartX = e.layerX;
+					e.chartY = e.layerY;
 				}
 			}
 			
@@ -4741,8 +4753,8 @@ function Chart (options) {
 					axis: axis,
 					value: translate(
 						isHorizontal ? 
-							e.layerX - plotLeft  : 
-							plotHeight - e.layerY + plotTop ,
+							e.chartX - plotLeft  : 
+							plotHeight - e.chartY + plotTop ,
 						true
 					)								
 				});
@@ -4763,8 +4775,8 @@ function Chart (options) {
 				// get the point
 				point = hoverSeries.tooltipPoints[
 					inverted ? 
-						e.layerY : 
-						e.layerX - plotLeft // wtf?
+						e.chartY : 
+						e.chartX - plotLeft // wtf?
 				];
 				
 				// a new point is hovered, refresh the tooltip
@@ -4864,8 +4876,8 @@ function Chart (options) {
 					e.preventDefault();
 				}
 				chart.mouseIsDown = mouseIsDown = true;
-				mouseDownX = e.layerX;
-				mouseDownY = e.layerY;
+				mouseDownX = e.chartX;
+				mouseDownY = e.chartY;
 					
 				
 				// make a selection
@@ -4894,22 +4906,22 @@ function Chart (options) {
 				e = normalizeMouseEvent(e);
 				e.returnValue = false;
 				
-				var layerX = e.layerX,
-					layerY = e.layerY,
-					isOutsidePlot = !isInsidePlot(layerX - plotLeft, layerY - plotTop);
+				var chartX = e.chartX,
+					chartY = e.chartY,
+					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
 				
 				if (mouseIsDown) { // make selection
 					
 					// determine if the mouse has moved more than 10px
 					hasDragged = Math.sqrt(
-						Math.pow(mouseDownX - layerX, 2) + 
-						Math.pow(mouseDownY - layerY, 2)
+						Math.pow(mouseDownX - chartX, 2) + 
+						Math.pow(mouseDownY - chartY, 2)
 					) > 10;
 					
 					
 					// adjust the width of the selection marker
 					if (zoomHor) {
-						var xSize = layerX - mouseDownX;
+						var xSize = chartX - mouseDownX;
 						selectionMarker.attr({
 							width: mathAbs(xSize),
 							x: (xSize > 0 ? 0 : xSize) + mouseDownX
@@ -4917,7 +4929,7 @@ function Chart (options) {
 					}
 					// adjust the height of the selection marker
 					if (zoomVert) {
-						var ySize = layerY - mouseDownY;
+						var ySize = chartY - mouseDownY;
 						selectionMarker.attr({
 							height: mathAbs(ySize),
 							y: (ySize > 0 ? 0 : ySize) + mouseDownY
@@ -4973,7 +4985,7 @@ function Chart (options) {
 						});
 						
 						// the series click event
-						fireEvent(chart.hoverSeries, 'click', extend(e, {
+						fireEvent(chart.hoverSeries || hoverPoint.series, 'click', extend(e, {
 							point: hoverPoint
 						}));
 						
@@ -4984,7 +4996,7 @@ function Chart (options) {
 						extend (e, getMouseCoordinates(e));
 						
 						// fire a click event in the chart
-						if (isInsidePlot(e.layerX - plotLeft, e.layerY - plotTop)) {
+						if (isInsidePlot(e.chartX - plotLeft, e.chartY - plotTop)) {
 							fireEvent(chart, 'click', e);
 						}
 					}
@@ -6131,7 +6143,7 @@ function Chart (options) {
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
 		var onreadystatechange = 'onreadystatechange';
-		if (isIE && doc.readyState != 'complete') {
+		if (!hasSVG && doc.readyState != 'complete') {
 			doc.attachEvent(onreadystatechange, function() {
 				doc.detachEvent(onreadystatechange, arguments.callee);
 				firstRender();
@@ -6169,6 +6181,7 @@ function Chart (options) {
 		
 		render();
 		fireEvent(chart, 'load');
+		callback && callback(chart);
 	}
 	
 	
@@ -6479,7 +6492,7 @@ Point.prototype = {
 				point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
 			};
 		}
-			
+		
 		fireEvent(this, eventType, eventArgs, defaultFunction);
 	},
 	/**
