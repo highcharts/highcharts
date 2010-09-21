@@ -3176,18 +3176,21 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		// VML specific arc function
 		arc: function (x, y, radius, options) {
 			var start = options.start,
-				optionsEnd = options.end,
-				end = optionsEnd - start == 2 * Math.PI ? optionsEnd - 0.001 : optionsEnd,
+				end = options.end,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR;
 				
-			if (optionsEnd - start === 0) { // no angle, don't show it. 
+			if (end - start === 0) { // no angle, don't show it. 
 				return ['x'];
+				
+			} else if (end - start == 2 * math.PI) { // full circle
+				// empirical correction found by trying out the limits for different radii
+				cosEnd = -0.07 / radius;
 			}
-								
+			
 			return [
 				'wa', // clockwisearcto
 				x - radius, // left
