@@ -624,6 +624,7 @@ defaultOptions = {
 			showCheckbox: false,
 			animation: true,
 			//cursor: 'default',
+			//dashStyle: null, // docs
 			//enableMouseTracking: true,
 			events: {},
 			lineWidth: 2,
@@ -813,6 +814,7 @@ var defaultXAxisOptions =  {
 	},
 	endOnTick: false,
 	gridLineColor: '#C0C0C0',
+	// gridLineDashStyle: null, //docs
 	// gridLineWidth: 0,
 	// reversed: false,
 	
@@ -825,6 +827,7 @@ var defaultXAxisOptions =  {
 	maxPadding: 0.01,
 	maxZoom: null,
 	minorGridLineColor: '#E0E0E0',
+	// minorGridLineDashStyle: null, // docs
 	minorGridLineWidth: 1,
 	minorTickColor: '#A0A0A0',
 	//minorTickInterval: null,
@@ -837,6 +840,7 @@ var defaultXAxisOptions =  {
 	//}],
 	//plotLines: [{
 	//	events: // docs
+	//  dashStyle: // docs
 	//	zIndex: // docs
 	//}],
 	//reversed: false,
@@ -1332,8 +1336,26 @@ SVGElement.prototype = {
 				// apply opacity as subnode (required by legacy WebKit and Batik)
 				} else if (key == 'stroke') {
 					value = renderer.color(value, element, key);
-					 
-				
+					
+				// emulate VML's dashstyle implementation
+				} else if (key == 'dashstyle') {
+					key = 'stroke-dasharray';
+					if (value) {
+						value = value.toLowerCase()
+							.replace('shortdashdotdot', '3,1,1,1,1,1,')
+							.replace('shortdashdot', '3,1,1,1')
+							.replace('shortdot', '1,1,')
+							.replace('shortdash', '3,1,')
+							.replace('longdash', '8,3,')
+							.replace(/dot/g, '1,3,')
+							.replace('dash', '4,3,')
+							.replace(/,$/, '')
+							.split(','); // ending comma
+						value = map(value, function(item) {
+							return parseInt(item, 10) * hash['stroke-width'];
+						}).join(',');
+					}	
+					
 				// special
 				} else if (key == 'isTracker') {
 					this[key] = value;
@@ -2573,6 +2595,13 @@ var VMLElement = extendClass( SVGElement, {
 						value += PX;
 					}
 					
+				// dashStyle					 
+				} else if (key == 'dashstyle') {
+					var strokeElem = element.getElementsByTagName('stroke')[0] ||
+						createElement(renderer.prepVML(['<stroke/>']), null, null, element);
+					strokeElem[key] = value || 'solid';
+					skipAttr = true;
+					
 				// fill
 				} else if (key == 'fill') {
 					
@@ -3592,12 +3621,14 @@ function Chart (options) {
 					gridLine = tick.gridLine,
 					gridLineWidth = major ? options.gridLineWidth : options.minorGridLineWidth,
 					gridLineColor = major ? options.gridLineColor : options.minorGridLineColor,
+					dashStyle = major ? options.gridLineDashStyle : options.minorGridLineDashStyle,
 					gridLinePath,
 					mark = tick.mark,
 					markPath,
 					tickLength = major ? options.tickLength : options.minorTickLength,
 					tickWidth = major ? options.tickWidth : options.minorTickWidth,
 					tickColor = major ? options.tickColor : options.minorTickColor,
+					attribs,
 					x,
 					y;
 					
@@ -3613,13 +3644,17 @@ function Chart (options) {
 					gridLinePath = getPlotLinePath(pos, gridLineWidth);
 					
 					if (gridLine === UNDEFINED) {
+						attribs = {
+							stroke: gridLineColor,
+							'stroke-width': gridLineWidth
+						};
+						if (dashStyle) {
+							attribs.dashstyle = dashStyle;
+						}
 						tick.gridLine = gridLine =
 							gridLineWidth ?
 								renderer.path(gridLinePath)
-									.attr({
-										stroke: gridLineColor,
-										'stroke-width': gridLineWidth
-									}).add(gridGroup) :
+									.attr(attribs).add(gridGroup) :
 								null;
 					} 
 					if (gridLine) {
@@ -3716,6 +3751,7 @@ function Chart (options) {
 				to = options.to,
 				toPath,
 				from = options.from,
+				dashStyle = options.dashStyle,
 				svgElem = plotLine.svgElem,
 				path = [],
 				color = options.color,
@@ -3730,6 +3766,9 @@ function Chart (options) {
 					stroke: color,
 					'stroke-width': width
 				};
+				if (dashStyle) {
+					attribs.dashstyle = dashStyle;
+				}
 			}
 			
 			// plot band
@@ -5023,14 +5062,14 @@ function Chart (options) {
 	function Tooltip (options) {
 		var currentSeries,
 			borderWidth = options.borderWidth,
+			crosshairsOptions = options.crosshairs,
+			crosshairs = [],
 			style = options.style,
 			shared = options.shared,
 			padding = parseInt(style.padding, 10),
 			boxOffLeft = borderWidth + padding, // off left/top position as IE can't 
 				//properly handle negative positioned shapes
 			tooltipIsHidden = true,
-			crosshairsX,
-			crosshairsY,
 			boxWidth,
 			boxHeight,
 			currentX = 0,			
@@ -5212,18 +5251,29 @@ function Chart (options) {
 			
 			
 			// crosshairs
-			if (options.crosshairs) {
-				var crossPathX = point.series.xAxis.getPlotLinePath(point.x, 1);
-				if (crosshairsX) {
-					crosshairsX.attr({ d: crossPathX });
+			if (crosshairsOptions) {
+				crosshairsOptions = splat(crosshairsOptions); // [x, y]
 				
-				} else {
-					crosshairsX = renderer.path(crossPathX)
-						.attr({
-							'stroke-width': 1,
-							stroke: '#606060'
-						})
-						.add();
+				var paths, 
+					i = crosshairsOptions.length;
+				
+				while (i--) {
+					if (crosshairsOptions[i]) {
+						path = point.series[i ? 'yAxis' : 'xAxis']
+							.getPlotLinePath(point[i ? 'y' : 'x'], 1);
+						if (crosshairs[i]) {
+							crosshairs[i].attr({ d: path });
+						
+						} else {
+							crosshairs[i] = renderer.path(path)
+								.attr({
+									'stroke-width': 1,
+									stroke: '#606060',
+									zIndex: 2
+								})
+								.add();
+						}
+					}
 				}				
 			}		
 		}
@@ -5818,6 +5868,14 @@ function Chart (options) {
 				
 				// draw the line
 				if (!simpleSymbol && item.options && item.options.lineWidth) {
+					var itemOptions = item.options;
+						attribs = {
+							'stroke-width': itemOptions.lineWidth,
+							zIndex: 2
+						};
+					if (itemOptions.dashStyle) {
+						attribs.dashstyle = itemOptions.dashStyle;
+					}
 					item.legendLine = renderer.path([
 						M,
 						-symbolWidth - symbolPadding, 
@@ -5825,11 +5883,7 @@ function Chart (options) {
 						L, 
 						-symbolPadding, 
 						0
-					]).attr({
-						//stroke: color,
-						'stroke-width': item.options.lineWidth,
-						zIndex: 2
-					}).
+					]).attr(attribs).
 					add(legendGroup);
 				}
 					
@@ -8258,11 +8312,13 @@ Series.prototype = {
 			group = series.group,
 			color = options.lineColor || series.color, 
 			lineWidth = options.lineWidth,
+			dashStyle =  options.dashStyle,
 			segmentPath,
 			renderer = chart.renderer,
 			translatedThreshold = series.yAxis.getThreshold(options.threshold || 0),
 			useArea = /^area/.test(series.type),
-			areaPath = [];
+			areaPath = [],
+			attribs;
 			
 		
 		// divide into segments and build graph and area paths
@@ -8335,11 +8391,16 @@ Series.prototype = {
 			
 		} else {
 			if (lineWidth) {
+				attribs = {
+					'stroke': color,
+					'stroke-width': lineWidth
+				};
+				if (dashStyle) {
+					attribs.dashstyle = dashStyle;
+				}
+				
 				series.graph = renderer.path(graphPath).
-					attr({
-						'stroke': color,
-						'stroke-width': lineWidth + PX
-					}).add(group).shadow(options.shadow);
+					attr(attribs).add(group).shadow(options.shadow);
 			}
 		}
 		
