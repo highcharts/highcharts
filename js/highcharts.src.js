@@ -8200,6 +8200,7 @@ var ColumnSeries = extendClass(Series, {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
+					stop(graphic);
 					graphic.attr(shapeArgs);
 				
 				} else {
