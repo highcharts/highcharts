@@ -2873,7 +2873,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		
 		// if the color is an rgba color, split it and add a fill node
 		// to hold the opacity component
-		} else if (regexRgba.test(color)) {
+		} else if (regexRgba.test(color) && elem.tagName != 'IMG') {
 			
 			colorObject = Color(color);
 			
