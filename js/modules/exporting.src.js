@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.0.5 (2010-09-17)
+ * @license Highcharts JS v2.0.5 (modified)
  * Exporting module
  * 
  * (c) 2010 Torstein Hønsi
@@ -217,6 +217,11 @@ extend (Chart.prototype, {
 			
 			seriesOptions.animation = false; // turn off animation
 			seriesOptions.showCheckbox = false;
+			
+			// remove image markers
+			if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) { 
+				seriesOptions.marker.symbol = 'circle';
+			}
 			
 			seriesOptions.data = [];
 			each(serie.data, function(point) {
