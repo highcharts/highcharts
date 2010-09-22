@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /** 
- * @license Highcharts JS v2.0.5 (2010-09-17)
+ * @license Highcharts JS v2.0.5 (modified)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -7784,6 +7784,7 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			trackerPath = series.graphPath,
+			trackerPathLength = trackerPath.length,
 			chart = series.chart,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
@@ -7806,12 +7807,23 @@ Series.prototype = {
 				'Z'
 			]; 
 		}*/
+		// Extend end points. A better way would be to use round linecaps,
+		// but those are not clickable in VML.
+		i = trackerPathLength + 1;
+		while (i--) {
+			if (trackerPath[i] == M) { // extend left side
+				trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
+			}
+			if ((i && trackerPath[i] == M) || i == trackerPathLength) { // extend right side
+				trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+			}
+		}
 		
 		// handle single points
 		for (i = 0; i < singlePoints.length; i++) {
 			singlePoint = singlePoints[i];
-			trackerPath.push(M, singlePoint.plotX - 3, singlePoint.plotY,
-				L, singlePoint.plotX + 3, singlePoint.plotY);
+			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
+				L, singlePoint.plotX + snap, singlePoint.plotY);
 		}
 		
 		// draw the tracker
@@ -7826,7 +7838,7 @@ Series.prototype = {
 					//fill: isSingleSeries ? TRACKER_FILL : NONE,
 					fill: NONE,
 					'stroke-width' : options.lineWidth + 2 * snap,
-					'stroke-linecap': 'round',
+					//'stroke-linecap': 'round',
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: 1
 				})
