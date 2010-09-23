@@ -310,6 +310,12 @@ if (!globalAdapter && win.jQuery) {
 		}	
 	};
 
+	/**
+	 * Animate a HTML element or SVG element wrapper
+	 * @param {Object} el
+	 * @param {Object} params
+	 * @param {Object} options jQuery-like animation options: duration, easing, callback
+	 */
 	animate = function (el, params, options) {
 		var $el = jQ(el);
 		if (params.d) {
@@ -353,6 +359,8 @@ if (!globalAdapter && win.jQuery) {
 		var start = fx.start,
 			end = fx.end,
 			elem = fx.elem,
+			startBaseLine,
+			endBaseLine,
 			ret = [];
 			
 		
@@ -360,7 +368,7 @@ if (!globalAdapter && win.jQuery) {
 		// for reasons unknown, this doesn't happen. Perhaps state == 0 is skipped
 		// in these cases
 		if (!fx.started) {
-			
+			/*
 			var shift = elem.shift,
 				fromD = elem.d,
 				bezier = fromD.indexOf('C') > -1,
@@ -378,7 +386,7 @@ if (!globalAdapter && win.jQuery) {
 					}
 				};
 			
-			start = elem.d.split(' ');
+			start = fromD.split(' ');
 			end = [].concat(elem.toD); // copy
 			
 			if (bezier) {
@@ -388,7 +396,12 @@ if (!globalAdapter && win.jQuery) {
 			
 			// if shifting points, prepend a dummy point to the end path
 			if (shift) {
-				end = end.splice(0, numParams).concat(end);
+				if (elem.isArea) { // pull out the base lines
+					startBaseLine = start.splice(start.length - 6, 6);
+					endBaseLine = end.splice(end.length - 6, 6);
+				}
+
+				end = [].concat(end).splice(0, numParams).concat(end);
 				elem.shift = false; // reset for following animations
 			}
 			
@@ -405,15 +418,25 @@ if (!globalAdapter && win.jQuery) {
 				start = start.concat(slice);
 			}
 			
+			if (startBaseLine) { // append the base lines for areas
+				start = start.concat(startBaseLine);
+				end = end.concat(endBaseLine);
+			}
+			
 			
 			fx.start = start;
-			fx.end = end;			
+			fx.end = end;
+			
+						*/
+			var ends = pathAnim.init(elem, elem.d, elem.toD);
+			fx.start = ends[0];
+			fx.end = ends[1];
 			fx.started = true;
 		}
 		
 		
 		// interpolate each value of the path
-		i = start.length;
+		/*i = start.length;
 		if (fx.pos == 1) { // end of animation, land on the right path
 			ret = elem.toD;
 			
@@ -430,8 +453,8 @@ if (!globalAdapter && win.jQuery) {
 			ret = end;
 		}
 		
-		
-		elem.attr('d', ret);
+		elem.attr('d', ret);*/
+		elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
 	
 	};
 	// get the current value
@@ -446,6 +469,98 @@ if (!globalAdapter && win.jQuery) {
 		return r;
 	};
 }
+
+/**
+ * Path interpolation algorithm used across adapters
+ */
+var pathAnim = {
+	/**
+	 * Prepare start and end values so that the path can be animated one to one
+	 */
+	init: function(elem, fromD, toD) {
+		var shift = elem.shift,
+			bezier = fromD.indexOf('C') > -1,
+			numParams = bezier ? 7 : 3,
+			endLength,
+			slice,
+			i,
+			startVal,
+			start = fromD.split(' '),
+			end = [].concat(toD), // copy
+			startBaseLine,
+			endBaseLine,
+			sixify = function(arr) { // in splines make move points have six parameters like bezier curves
+				i = arr.length;
+				while (i--) {
+					if (arr[i] == M) {
+						arr.splice(i + 1, 0, arr[i+1], arr[i+2], arr[i+1], arr[i+2]);
+					}
+				}
+			};
+			
+		
+		if (bezier) {
+			sixify(start);
+			sixify(end);
+		}
+		
+		// if shifting points, prepend a dummy point to the end path
+		if (shift) {
+			if (elem.isArea) { // pull out the base lines
+				startBaseLine = start.splice(start.length - 6, 6);
+				endBaseLine = end.splice(end.length - 6, 6);
+			}
+
+			end = [].concat(end).splice(0, numParams).concat(end);
+			elem.shift = false; // reset for following animations
+		}
+		
+		// copy and append last point until the length matches the end length
+		endLength = end.length;
+		while (start.length < endLength) {		
+			
+			//bezier && sixify(start); 
+			slice = [].concat(start).splice(start.length - numParams, numParams);
+			if (bezier) { // disable first control point
+				slice[numParams - 6] = slice[numParams - 2];
+				slice[numParams - 5] = slice[numParams - 1];
+			}
+			start = start.concat(slice);
+		}
+		
+		if (startBaseLine) { // append the base lines for areas
+			start = start.concat(startBaseLine);
+			end = end.concat(endBaseLine);
+		}
+		return [start, end];
+	},
+	
+	/**
+	 * Interpolate each value of the path and return the array
+	 */
+	step: function(start, end, pos, complete) {
+		var ret = [],
+			i = start.length,
+			startVal;
+			
+		if (pos == 1) { // land on the final path without adjustment points appended in the ends
+			ret = complete;
+			
+		} else if (i == end.length && pos < 1) {
+			while (i--) {
+				startVal = parseFloat(start[i]);
+				ret[i] = 
+					isNaN(startVal) ? // a letter instruction like M or L
+						start[i] :
+						pos * (parseFloat(end[i] - startVal)) + startVal;
+				
+			}
+		} else { // if animation is finished or length not matching, land on right value
+			ret = end;
+		}
+		return ret;
+	}
+};
 
 
 
@@ -1882,7 +1997,6 @@ SVGRenderer.prototype = {
 	 * @param {Number} width 
 	 */
 	crispLine: function(points, width) {
-		try {
 		// points format: [M, 0, 0, L, 100, 0]
 		// normalize to a crisp line
 		if (points[1] == points[4]) {
@@ -1892,7 +2006,6 @@ SVGRenderer.prototype = {
 			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
 		}
 		return points;
-		} catch (e) { console.info(e.massage); return []; }
 	},
 	
 	
@@ -3552,6 +3665,7 @@ function Chart (options) {
 					}
 					return ret;
 				},
+				
 			// column plots are always categorized
 			categories = options.categories || (isXAxis && chart.columnCount), 
 			reversed = options.reversed,
@@ -4372,11 +4486,7 @@ function Chart (options) {
 				i = correctFloat(i + tickInterval);
 			}
 				
-			// pad categorised axis to nearest half unit
-			if (categories) {
-				 min -= 0.5;
-				 max += 0.5;
-			}
+
 
 			// dynamic label formatter 
 			/*if (!labelFormatter) { 
@@ -4416,12 +4526,19 @@ function Chart (options) {
 			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
 					tickInterval / 5 : options.minorTickInterval;
 			
-
+			
+			// find the tick positions
 			if (isDatetimeAxis)	{
 				setDateTimeTickPositions();
 			} else {
 				setLinearTickPositions();
-			}	
+			}
+			
+			// pad categorised axis to nearest half unit
+			if (categories && !secondPass) {
+				 min -= 0.5;
+				 max += 0.5;
+			}
 			
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
@@ -4509,8 +4626,30 @@ function Chart (options) {
 				}
 			}
 			
+			//--- start moved code
+			//axisLength = horiz ? plotWidth : plotHeight;
+
+			/*// get tickInterval
+			if (categories || min == max) {
+				tickInterval = 1;
+			} else {
+				tickInterval = pick(
+						//secondPass && tickInterval || null,
+						options.tickInterval,
+						(max - min) * options.tickPixelInterval / axisLength
+					);
+			}
 			
+				
+			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
+				tickInterval = normalizeTickInterval(tickInterval);
+			}
 			
+			// get minorTickInterval
+			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
+					tickInterval / 5 : options.minorTickInterval;*/
+					
+			//--- end moved code
 					
 			// get fixed positions based on tickInterval
 			setTickPositions();
@@ -5170,8 +5309,7 @@ function Chart (options) {
 		 * 
 		 */
 		function refresh(point) {
-			var borderColor = options.borderColor || point.color || series.color || '#606060',
-				x,
+			var x,
 				y,
 				boxX,
 				boxY,
@@ -5259,7 +5397,7 @@ function Chart (options) {
 				box.attr({
 					width: boxWidth + 2 * padding,
 					height: boxHeight + 2 * padding,
-					stroke: borderColor
+					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 				
 				// keep the box within the chart area
@@ -7666,6 +7804,7 @@ Series.prototype = {
 		}
 		if (area) {
 			area.shift = shift;
+			area.isArea = true;
 		}
 			
 		redraw = pick(redraw, true);
@@ -9822,6 +9961,7 @@ seriesTypes.pie = PieSeries;
 win.Highcharts = {
 	Chart: Chart,
 	dateFormat: dateFormat,
+	pathAnim: pathAnim,
 	getOptions: getOptions,
 	numberFormat: numberFormat,
 	Point: Point,
