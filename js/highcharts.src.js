@@ -381,7 +381,6 @@ if (!globalAdapter && win.jQuery) {
 			start = elem.d.split(' ');
 			end = [].concat(elem.toD); // copy
 			
-			
 			if (bezier) {
 				sixify(start);
 				sixify(end);
@@ -389,7 +388,8 @@ if (!globalAdapter && win.jQuery) {
 			
 			// if shifting points, prepend a dummy point to the end path
 			if (shift) {
-				end = [].concat(end).splice(0, numParams).concat(end);
+				end = end.splice(0, numParams).concat(end);
+				elem.shift = false; // reset for following animations
 			}
 			
 			// copy and append last point until the length matches the end length
@@ -405,8 +405,6 @@ if (!globalAdapter && win.jQuery) {
 				start = start.concat(slice);
 			}
 			
-			//shift && console.log(start);
-			//shift && console.log(end);
 			
 			fx.start = start;
 			fx.end = end;			
@@ -559,10 +557,6 @@ defaultOptions = {
 	},
 	chart: {
 		//alignTicks: false,
-		animation: { // docs
-			//duration: 500,
-			//easing: 'swing'
-		},
 		//className: null,
 		//events: { load, selection },
 		//margin: [null], // docs
@@ -622,7 +616,7 @@ defaultOptions = {
 		line: { // base series options
 			allowPointSelect: false,
 			showCheckbox: false,
-			animation: true,
+			animation: true, // docs: added duration and easing
 			//cursor: 'default',
 			//dashStyle: null, // docs
 			//enableMouseTracking: true,
@@ -747,21 +741,11 @@ defaultOptions = {
 	
 	tooltip: {
 		enabled: true,
-		formatter: function() {
-			var pThis = this,
-				series = pThis.series,
-				xAxis = series.xAxis,
-				x = pThis.x;
-			return '<b>'+ (pThis.point.name || series.name) +'</b><br/>'+
-				(defined(x) ? 
-					'X value: '+ (xAxis && xAxis.options.type == 'datetime' ? 
-						dateFormat(null, x) : x) +'<br/>':
-					'')+
-				'Y value: '+ pThis.y;
-		},
+		//crosshairs: null, // docs - Array<Object|Boolean>, width and color options
 		backgroundColor: 'rgba(255, 255, 255, .85)',
 		borderWidth: 2,
 		borderRadius: 5,
+		//formatter: defaultFormatter, // docs: new points property for shared tooltip
 		shadow: true,
 		//shared: false, // docs
 		snap: 10,
@@ -992,6 +976,10 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorColor: '#606060', // docs
 		// connectorPadding: 5, // docs
 		distance: 30, // docs
+		enabled: true, //  docs: enabled by default for pies
+		formatter: function() {
+			return this.point.name;
+		},
 		y: 5
 	},
 	//innerSize: 0,
@@ -2588,7 +2576,6 @@ var VMLElement = extendClass( SVGElement, {
 					
 				// stroke width
 				} else if (key == 'stroke-width' || key == 'strokeWidth') {
-	
 					element.stroked = value ? true : false;
 					key = 'strokeweight';
 					if (typeof value == 'number') {
@@ -2600,6 +2587,8 @@ var VMLElement = extendClass( SVGElement, {
 					var strokeElem = element.getElementsByTagName('stroke')[0] ||
 						createElement(renderer.prepVML(['<stroke/>']), null, null, element);
 					strokeElem[key] = value || 'solid';
+					this.noHover = true; /* because changing stroke-width will change the dash length
+						and cause an epileptic effect */ 
 					skipAttr = true;
 					
 				// fill
@@ -3543,8 +3532,25 @@ function Chart (options) {
 			dateTimeLabelFormat,
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function() {
-					var value = this.value;
-					return dateTimeLabelFormat ? dateFormat(dateTimeLabelFormat, value) : value;
+					var value = this.value, 
+						ret;
+					
+					if (dateTimeLabelFormat) { // datetime axis
+						ret = dateFormat(dateTimeLabelFormat, value);
+						
+					} else if (tickInterval % 1000000 == 0) { // use M abbreviation
+						ret = (value / 1000000) +'M';
+						
+					} else if (tickInterval % 1000 == 0) { // use k abbreviation
+						ret = (value / 1000) +'k';
+						
+					} else if (value >= 1000) { // add thousands separators
+						ret = numberFormat(value, 0);
+					
+					} else { // strings (categories) and small numbers
+						ret = value;
+					}
+					return ret;
 				},
 			// column plots are always categorized
 			categories = options.categories || (isXAxis && chart.columnCount), 
@@ -5095,7 +5101,32 @@ function Chart (options) {
 				attr({ zIndex: 1 }).
 				css(style).
 				add(group);
-				
+			
+		/**
+		 * In case no user defined formatter is given, this will be used
+		 */
+		function defaultFormatter() {
+			var pThis = this,
+				points = pThis.points || splat(pThis.point),
+				xAxis = points[0].series.xAxis,				
+				x = pThis.x,
+				s;
+			
+			// build the header	
+			s = defined(x) ? 
+						['<span style="font-size: 10px">'+
+						(xAxis && xAxis.options.type == 'datetime' ? 
+						dateFormat('%A, %b %e, %Y', x) : x) +
+						'</span>'] : [];
+						
+			// build the values
+			each (points, function(point) {
+				s.push('<span style="color:'+ point.series.color +'">'+
+				point.series.name +'</span>: <b>'+ point.y +'</b>');
+			})
+			return s.join('<br/>');
+		};
+		
 		/**
 		 * Provide a soft movement for the tooltip
 		 * 
@@ -5127,6 +5158,10 @@ function Chart (options) {
 
 			tooltipIsHidden = true;
 			group.hide();
+			
+			each (crosshairs, function(crosshair) {
+				crosshair.hide();
+			});			
 		}
 		
 		/**
@@ -5147,6 +5182,7 @@ function Chart (options) {
 				textConfig = {},
 				pointConfig = [],
 				tooltipPos = point.tooltipPos,
+				formatter = options.formatter || defaultFormatter,
 				getConfig = function(point) {
 					return {
 						series: point.series,
@@ -5183,7 +5219,7 @@ function Chart (options) {
 			} else {
 				textConfig = getConfig(point);
 			}
-			text = options.formatter.call(textConfig);
+			text = formatter.call(textConfig);
 			
 			// register the current series
 			currentSeries = point.series;
@@ -5255,20 +5291,21 @@ function Chart (options) {
 				crosshairsOptions = splat(crosshairsOptions); // [x, y]
 				
 				var paths, 
-					i = crosshairsOptions.length;
+					i = crosshairsOptions.length,
+					axis;
 				
 				while (i--) {
-					if (crosshairsOptions[i]) {
-						path = point.series[i ? 'yAxis' : 'xAxis']
+					if (crosshairsOptions[i] && (axis = point.series[i ? 'yAxis' : 'xAxis'])) {
+						path = axis
 							.getPlotLinePath(point[i ? 'y' : 'x'], 1);
 						if (crosshairs[i]) {
-							crosshairs[i].attr({ d: path });
+							crosshairs[i].attr({ d: path, visibility: VISIBLE });
 						
 						} else {
 							crosshairs[i] = renderer.path(path)
 								.attr({
-									'stroke-width': 1,
-									stroke: '#606060',
+									'stroke-width': crosshairsOptions[i].width || 1,
+									stroke: crosshairsOptions[i].color || '#606060',
 									zIndex: 2
 								})
 								.add();
@@ -5378,14 +5415,14 @@ function Chart (options) {
 				distance = chartWidth,
 				index = inverted ? e.layerY : e.layerX - plotLeft // wtf?;
 				
-			// common tooltip
+			// shared tooltip
 			if (options.shared) {
 				points = [];
 				
 				// loop over all series and find the ones with points nearest to the mouse
 				i = series.length;
 				for (j = 0; j < i; j++) {
-					if (series[j].visible) {
+					if (series[j].visible && series[j].tooltipPoints.length) {
 						point = series[j].tooltipPoints[index];
 						point._dist = mathAbs(index - point.plotX);
 						distance = mathMin(distance, point._dist);
@@ -5542,7 +5579,6 @@ function Chart (options) {
 				var layerX = e.layerX,
 					layerY = e.layerY,
 					isOutsidePlot = !isInsidePlot(layerX - plotLeft, layerY - plotTop);
-				
 				if (mouseIsDown) { // make selection
 					
 					// determine if the mouse has moved more than 10px
@@ -7621,15 +7657,16 @@ Series.prototype = {
 		var series = this,
 			data = series.data,
 			graph = series.graph,
+			area = series.area,
 			point = (new series.pointClass()).init(series, options);
 			
 		globalAnimation = animation;
 		if (graph && shift) { // make graph animate sideways
 			graph.shift = shift;
 		}
-		/*if (series.area) {
-			series.area.shift = shift;
-		}*/
+		if (area) {
+			area.shift = shift;
+		}
 			
 		redraw = pick(redraw, true);
 			
@@ -7929,7 +7966,13 @@ Series.prototype = {
 	animate: function(init) {
 		var series = this,
 			chart = series.chart,
-			clipRect = series.clipRect;
+			clipRect = series.clipRect,
+			animation = series.options.animation;
+			
+		if (animation && typeof animation != 'object') {
+			animation = {};
+		}
+			
 		if (init) { // initialize the animation
 			if (!clipRect.isAnimating) { // apply it only for one of the series
 				clipRect.attr( 'width', 0 );
@@ -7937,16 +7980,14 @@ Series.prototype = {
 			}
 			
 		} else { // run the animation
-			globalAnimation = true;
 			clipRect.animate({ 
 				width: chart.plotSizeX 
-			}, {
+			}, animation && extend(animation, {
 				complete: function() {
 					clipRect.isAnimating = false;
 				}, 
 				duration: 1000
-			});
-			globalAnimation = false;
+			}));
 			
 			// delete this function to allow it only once
 			this.animate = null;
@@ -8234,7 +8275,7 @@ Series.prototype = {
 					chart.renderer.g(PREFIX +'data-labels')
 						.attr({ 
 							visibility: series.visible ? VISIBLE : HIDDEN,
-							zIndex: 4
+							zIndex: 5
 						})
 						.translate(chart.plotLeft, chart.plotTop)
 						.add();
@@ -8568,7 +8609,7 @@ Series.prototype = {
 				stateMarkerGraphic.hide();
 			}
 			
-			if (graph) {
+			if (graph && !graph.noHover) { // hover is turned off for dashed lines in VML
 				graph.animate({
 					'stroke-width': lineWidth
 				}, state ? 0 : 500);
@@ -9151,14 +9192,10 @@ var ColumnSeries = extendClass(Series, {
 					});
 					
 					// animate
-					globalAnimation = true;
 					graphic.animate({ 
 						height: point.barH,
 						y: point.barY
-					}, {
-						duration: 1000
-					});
-					globalAnimation = false;
+					}, series.options.animation);
 				}
 			});
 			
@@ -9364,7 +9401,43 @@ var PieSeries = extendClass(Series, {
 		this.initialColor = colorCounter;
 	},
 	
-	
+	/**
+	 * Animate the column heights one by one from zero
+	 * @param {Boolean} init Whether to initialize the animation or run it 
+	 */
+	animate: function(init) {
+		var series = this,
+			data = series.data;
+			
+		each (data, function(point) {
+			var graphic = point.graphic,
+				args = point.shapeArgs,
+				up = -math.PI / 2;
+			
+			if (graphic) {
+				// start values
+				graphic.attr({ 
+					r: 0,
+					start: up,
+					end: up
+				});
+				
+				// animate
+				graphic.animate({ 
+					r: args.r,
+					start: args.start,
+					end: args.end
+				}, series.options.animation);
+			}
+		});
+		
+		// delete this function to allow it only once
+		series.animate = null;
+		
+	},
+	/**
+	 * Do translation for pie slices
+	 */
 	translate: function() {
 		var total = 0,
 			series = this,
@@ -9488,6 +9561,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	render: function() {
 		var series = this;
+			
 		// cache attributes for shapes
 		series.getAttribs();
 
@@ -9499,6 +9573,10 @@ var PieSeries = extendClass(Series, {
 		}
 		
 		this.drawDataLabels();
+		
+		if (series.options.animation && series.animate) {
+			series.animate();
+		}
 		
 		series.isDirty = false; // means data is in accordance with what you see
 	},
@@ -9555,11 +9633,13 @@ var PieSeries = extendClass(Series, {
 	drawDataLabels: function() {
 		var series = this,
 			data = series.data,
+			chart = series.chart,
 			options = series.options.dataLabels,
 			connectorPadding = options.connectorPadding || 10,
 			connectorWidth = options.connectorWidth || 1,
 			connector,
 			connectorPath,
+			outside = options.distance > 0,
 			dataLabel,
 			labelPos,
 			labelHeight,
@@ -9640,18 +9720,20 @@ var PieSeries = extendClass(Series, {
 						}
 						
 						// anticollision
-						if (secondPass && point.rank < overlapping) {
-							visibility = HIDDEN;
-						} else if ((!lowerHalf && y < lastY + labelHeight) ||
-								(lowerHalf && y > lastY - labelHeight)) {  
-							y = lastY + sign * labelHeight;
-							x = series.getX(y, i > 1);
-							if ((!lowerHalf && y + labelHeight > centerY) ||
-									(lowerHalf && y -labelHeight < centerY)) {
-								if (secondPass) {
-									visibility = HIDDEN;
-								} else {									
-									overlapping++;
+						if (outside) {
+							if (secondPass && point.rank < overlapping) {
+								visibility = HIDDEN;
+							} else if ((!lowerHalf && y < lastY + labelHeight) ||
+									(lowerHalf && y > lastY - labelHeight)) {  
+								y = lastY + sign * labelHeight;
+								x = series.getX(y, i > 1);
+								if ((!lowerHalf && y + labelHeight > centerY) ||
+										(lowerHalf && y -labelHeight < centerY)) {
+									if (secondPass) {
+										visibility = HIDDEN;
+									} else {									
+										overlapping++;
+									}
 								}
 							}
 						}
@@ -9677,29 +9759,34 @@ var PieSeries = extendClass(Series, {
 							
 							
 							// draw the connector
-							connector = point.connector;
+							if (outside && connectorWidth) {
+								connector = point.connector;
+									
+								connectorPath = [
+									M,
+									x + (labelPos[6] == 'left' ? 5 : -5), y, // end of the string at the label
+									L,
+									x, y, // first break, next to the label
+									L,
+									labelPos[2], labelPos[3], // second break
+									L,
+									labelPos[4], labelPos[5] // base
+								];
+									
+								if (connector) {
+									connector.animate({ d: connectorPath });
+									connector.attr('visibility', visibility);
 								
-							connectorPath = [
-								M,
-								x + (labelPos[6] == 'left' ? 5 : -5), y, // end of the string at the label
-								L,
-								x, y, // first break, next to the label
-								L,
-								labelPos[2], labelPos[3], // second break
-								L,
-								labelPos[4], labelPos[5] // base
-							];
-								
-							if (connector) {
-								connector.animate({ d: connectorPath });
-								connector.attr('visibility', visibility);
-							
-							} else {		
-								point.connector = connector = series.chart.renderer.path(connectorPath).attr({
-									'stroke-width': connectorWidth,
-									stroke: options.connectorColor || '#606060',
-									visibility: visibility
-								}).add(series.dataLabelsGroup);
+								} else {		
+									point.connector = connector = series.chart.renderer.path(connectorPath).attr({
+										'stroke-width': connectorWidth,
+										stroke: options.connectorColor || '#606060',
+										visibility: visibility,
+										zIndex: 3
+									})
+									.translate(chart.plotLeft, chart.plotTop)
+									.add();
+								}
 							}
 						}
 					}
