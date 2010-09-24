@@ -4146,7 +4146,8 @@ function Chart (options) {
 		 * Get the minimum and maximum for the series of each axis 
 		 */
 		function getSeriesExtremes() {
-			var stack = [],
+			var posStack = [],
+				negStack = [],
 				run;
 				
 			// reset dataMin and dataMax in case we're redrawing
@@ -4187,8 +4188,10 @@ function Chart (options) {
 				if (run) {
 					
 					var stacking,
-						typeStack,
-						stackKey;
+						posPointStack,
+						negPointStack,
+						stackKey,
+						negKey;
 		
 					if (!isXAxis) {
 						stacking = serie.options.stacking;
@@ -4197,10 +4200,14 @@ function Chart (options) {
 						// create a stack for this particular series type
 						if (stacking) {
 							stackKey = serie.type + pick(serie.options.stack, '');
+							negKey = '-'+ stackKey;
 							serie.stackKey = stackKey; // used in translate
 									
-							typeStack = stack[stackKey] || [];
-							stack[stackKey] = typeStack;
+							posPointStack = posStack[stackKey] || []; // contains the total values for each x
+							posStack[stackKey] = posPointStack;
+							
+							negPointStack = negStack[negKey] || [];
+							negStack[negKey] = negPointStack;
 						}
 						if (usePercentage) {
 							dataMin = 0;
@@ -4210,7 +4217,11 @@ function Chart (options) {
 					if (serie.isCartesian) { // line, column etc. need axes, pie doesn't
 						each(serie.data, function(point, i) {
 							var pointX = point.x,
-								pointY = point.y;
+								pointY = point.y,
+								isNegative = pointY < 0, 
+								pointStack = isNegative ? negPointStack : posPointStack,
+								key = isNegative ? negKey : stackKey,
+								totalPos;
 							
 							// initial values
 							if (dataMin === null) {
@@ -4231,26 +4242,27 @@ function Chart (options) {
 							// y axis
 							else if (defined(pointY)) {
 								if (stacking) {
-									typeStack[pointX] = typeStack[pointX] ? typeStack[pointX] + pointY : pointY;
+									pointStack[pointX] = 
+										defined(pointStack[pointX]) ? 
+										pointStack[pointX] + pointY : pointY;
 								}
 								
-								var stackedPoint = typeStack ? typeStack[pointX] : pointY;
+								totalPos = pointStack ? pointStack[pointX] : pointY;
 								if (!usePercentage) {
-									if (stackedPoint > dataMax) {
-										dataMax = stackedPoint;
-									} else if (stackedPoint < dataMin) {
-										dataMin = stackedPoint;
+									if (totalPos > dataMax) {
+										dataMax = totalPos;
+									} else if (totalPos < dataMin) {
+										dataMin = totalPos;
 									}
 								}
-								if (stacking) {
-		
+								if (stacking) {		
 									// add the series
-									if (!stacks[stackKey]) {
-										stacks[stackKey] = {};
+									if (!stacks[key]) {
+										stacks[key] = {};
 									}
-									stacks[stackKey][pointX] = {
-										total: stackedPoint,
-										cum: stackedPoint 
+									stacks[key][pointX] = {
+										total: totalPos,
+										cum: totalPos 
 									};
 								}
 							}
@@ -8076,7 +8088,6 @@ Series.prototype = {
 			stacking = series.options.stacking,
 			categories = series.xAxis.categories,
 			yAxis = series.yAxis,
-			stack = yAxis.stacks[series.stackKey],
 			data = series.data,
 			i = data.length;
 			
@@ -8085,7 +8096,8 @@ Series.prototype = {
 			var point = data[i],
 				xValue = point.x, 
 				yValue = point.y, 
-				yBottom, 
+				yBottom,
+				stack = yAxis.stacks[(yValue < 0 ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
 			point.plotX = series.xAxis.translate(xValue);
@@ -9246,7 +9258,8 @@ var ColumnSeries = extendClass(Series, {
 			reversedXAxis = series.xAxis.reversed,
 			categories = series.xAxis.categories,
 			stackGroups = {},
-			stackedIndex; // the index of the first column in a stack
+			stackKey,
+			columnIndex;
 		
 		Series.prototype.translate.apply(series);
 		
@@ -9256,14 +9269,15 @@ var ColumnSeries = extendClass(Series, {
 		each (chart.series, function(otherSeries) {
 			if (otherSeries.type == series.type) {
 				if (otherSeries.options.stacking) {
-					if (!stackGroups[otherSeries.stackKey]) {
-						stackedIndex = columnCount++;
-					}
-					stackGroups[otherSeries.stackKey] = 1;
-					otherSeries.columnIndex = stackedIndex;
+					stackKey = otherSeries.stackKey;
+					if (stackGroups[stackKey] === UNDEFINED) {
+						stackGroups[stackKey] = columnCount++;	
+					}					
+					columnIndex = stackGroups[stackKey];
 				} else {
-					otherSeries.columnIndex = columnCount++;
+					columnIndex = columnCount++;
 				}
+				otherSeries.columnIndex = columnIndex;
 			}
 		});
 		
@@ -9289,14 +9303,18 @@ var ColumnSeries = extendClass(Series, {
 			pointXOffset = pointPadding + (groupPadding + columnIndex *
 				pointOffsetWidth -(categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
-			translatedThreshold = series.yAxis.getThreshold(options.threshold || 0),
+			threshold = options.threshold || 0,
+			translatedThreshold = series.yAxis.getThreshold(threshold),
 			minPointLength = options.minPointLength;
 			
 		// record the new values
 		each (data, function(point) {
 			var plotY = point.plotY,
+				yBottom = point.yBottom,
 				barX = point.plotX + pointXOffset,
-				barY = mathMin(plotY, translatedThreshold), 
+				barY = point.y < threshold ?
+					mathMax(yBottom, translatedThreshold):
+					mathMin(plotY, translatedThreshold), 
 				barW = pointWidth,
 				barH = mathAbs((point.yBottom || translatedThreshold) - plotY),
 				trackerY;
