@@ -112,6 +112,22 @@ function extend(a, b) {
 }
 
 /**
+ * Remove last occurence of an item from an array
+ * @param {Array} arr
+ * @param {Mixed} item
+ */
+function erase(arr, item) {
+	var i = arr.length;
+	while (i--) {
+		if (arr[i] == item) {
+			arr.splice(i, 1);
+			break;
+		}
+	}
+	//return arr;
+}
+
+/**
  * Returns true if the object is not null or undefined. Like MooTools' $.defined.
  * @param {Object} obj
  */
@@ -504,12 +520,14 @@ var pathAnim = {
 			sixify(end);
 		}
 		
+		// pull out the base lines before padding
+		if (elem.isArea) { 
+			startBaseLine = start.splice(start.length - 6, 6);
+			endBaseLine = end.splice(end.length - 6, 6);
+		}
+		
 		// if shifting points, prepend a dummy point to the end path
 		if (shift) {
-			if (elem.isArea) { // pull out the base lines
-				startBaseLine = start.splice(start.length - 6, 6);
-				endBaseLine = end.splice(end.length - 6, 6);
-			}
 
 			end = [].concat(end).splice(0, numParams).concat(end);
 			elem.shift = false; // reset for following animations
@@ -647,6 +665,7 @@ defaultLabelOptions = {
 	/*formatter: function() {
 		return this.value;
 	},*/
+	//step: null, // docs
 	style: {
 		color: '#666',
 		fontSize: '11px'
@@ -672,6 +691,7 @@ defaultOptions = {
 	},
 	chart: {
 		//alignTicks: false,
+		//autoResize: true, // docs
 		//className: null,
 		//events: { load, selection },
 		//margin: [null], // docs
@@ -731,7 +751,7 @@ defaultOptions = {
 		line: { // base series options
 			allowPointSelect: false,
 			showCheckbox: false,
-			animation: true, // docs: added duration and easing
+			animation: true, // docs: added duration and easing/transition
 			//cursor: 'default',
 			//dashStyle: null, // docs
 			//enableMouseTracking: true,
@@ -785,6 +805,7 @@ defaultOptions = {
 				}
 			},
 			stickyTracking: true
+			//zIndex: null // docs
 		}
 	},
 	labels: {
@@ -913,7 +934,7 @@ var defaultXAxisOptions =  {
 	},
 	endOnTick: false,
 	gridLineColor: '#C0C0C0',
-	// gridLineDashStyle: null, //docs
+	// gridLineDashStyle: 'shortdot', //docs
 	// gridLineWidth: 0,
 	// reversed: false,
 	
@@ -936,11 +957,13 @@ var defaultXAxisOptions =  {
 	//plotBands: [{
 	//	events: // docs
 	//	zIndex: // docs
+	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign } // docs
 	//}],
 	//plotLines: [{
 	//	events: // docs
 	//  dashStyle: // docs
 	//	zIndex: // docs
+	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign } // docs
 	//}],
 	//reversed: false,
 	showFirstLabel: true,
@@ -1015,6 +1038,7 @@ defaultBottomAxisOptions = { // horizontal axis
 		align: 'center',
 		x: 0,
 		y: 14
+		// staggerLines: null // docs: only for horizontal axes
 	},
 	title: {
 		rotation: 0
@@ -1023,6 +1047,7 @@ defaultBottomAxisOptions = { // horizontal axis
 defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 	labels: {
 		y: -5
+		// staggerLines: null // docs
 	}
 });
 
@@ -1657,9 +1682,10 @@ SVGElement.prototype = {
 	 * 
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
+	 * @param {Object} box The box to align to, needs a width and height
 	 * 
 	 */
-	align: function(alignOptions, alignByTranslate) {
+	align: function(alignOptions, alignByTranslate, box) {
 		
 		if (!alignOptions) { // called on resize
 			alignOptions = this.alignOptions;
@@ -1667,18 +1693,24 @@ SVGElement.prototype = {
 		} else { // first call on instanciate
 			this.alignOptions = alignOptions;
 			this.alignByTranslate = alignByTranslate;
-			this.renderer.alignedObjects.push(this); // todo: event?
+			if (!box) { // boxes other than renderer handle this internally
+				this.renderer.alignedObjects.push(this); // todo: event?
+			}
 		}
+		
+		box = pick(box, this.renderer);
+		
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
-			renderer = this.renderer,
-			x = alignOptions.x || 0, // default: left align
-			y = alignOptions.y || 0, // default: top align
+			//renderer = this.renderer,
+			x = (box.x || 0) + (alignOptions.x || 0), // default: left align
+			y = (box.y || 0) + (alignOptions.y || 0), // default: top align
 			attribs = {};
+			
 			
 		// align
 		if (/^(right|center)$/.test(align)) {
-			x += (renderer.width - (alignOptions.width || 0) ) /
+			x += (box.width - (alignOptions.width || 0) ) /
 					{ right: 1, center: 2 }[align];
 		}
 		attribs[alignByTranslate ? 'translateX' : 'x'] = x;
@@ -1686,13 +1718,15 @@ SVGElement.prototype = {
 		
 		// vertical align
 		if (/^(bottom|middle)$/.test(vAlign)) {
-			y += (renderer.height - (alignOptions.height || 0)) /
+			y += (box.height - (alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 			
 		}
 		attribs[alignByTranslate ? 'translateY' : 'y'] = y;
 		
-		this.animate(attribs);
+		// animate only if already placed
+		this[this.placed ? 'animate' : 'attr'](attribs);
+		this.placed = true;
 		
 		return this;
 	},
@@ -1789,12 +1823,16 @@ SVGElement.prototype = {
 			parentNode = element.parentNode,
 			key;
 		
+		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		stop(wrapper); // stop running animations
+		
+		// remove element
 		if (parentNode) {
 			parentNode.removeChild(element);
 		}
 		
+		// destroy shadows
 		if (shadows) {
 			each(shadows, function(shadow) {
 				parentNode = shadow.parentNode;
@@ -1803,6 +1841,9 @@ SVGElement.prototype = {
 				}				
 			});
 		}
+		
+		// remove from alignObjects
+		erase(wrapper.renderer.alignedObjects, wrapper);
 				
 		for (key in wrapper) {
 			delete wrapper[key];
@@ -2644,7 +2685,9 @@ var VMLElement = extendClass( SVGElement, {
 	
 				// directly mapped to css
 				} else if (key == 'zIndex' || key == 'visibility') {
-					elemStyle[key] = value;
+					if (value) {
+						elemStyle[key] = value;
+					}
 					
 					skipAttr = true;
 				
@@ -3526,8 +3569,8 @@ function Chart (options) {
 		optionsMarginRight = pick(optionsChart.marginRight, margin[1]),
 		optionsMarginBottom = pick(optionsChart.marginBottom, margin[2]),
 		optionsMarginLeft = pick(optionsChart.marginLeft, margin[3]),
-		chartTitleOptions = options.title,
-		chartSubtitleOptions = options.subtitle,
+		chartTitleOptions,
+		chartSubtitleOptions,
 		plotTop,
 		marginRight,
 		marginBottom,
@@ -3537,6 +3580,8 @@ function Chart (options) {
 		renderToClone,
 		container,
 		containerId,
+		containerWidth,
+		containerHeight,
 		chartWidth,
 		chartHeight,
 		chartBackground,
@@ -3590,13 +3635,15 @@ function Chart (options) {
 			side = horiz ? 
 				(opposite ? 0 /* top */  : 2 /* bottom */) :
 				(opposite ? 1 /* right*/ : 3 /* left */  ),
-			stacks = {
+			stacks = {};
+			/*stacks = {
 				bar: {},
 				column: {},
 				area: {},
 				areaspline: {},
 				line: {}
-			};
+			};*/
+			
 	
 		options = merge(
 				isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
@@ -3657,7 +3704,7 @@ function Chart (options) {
 					} else if (tickInterval % 1000 == 0) { // use k abbreviation
 						ret = (value / 1000) +'k';
 						
-					} else if (value >= 1000) { // add thousands separators
+					} else if (!categories && value >= 1000) { // add thousands separators
 						ret = numberFormat(value, 0);
 					
 					} else { // strings (categories) and small numbers
@@ -3667,13 +3714,14 @@ function Chart (options) {
 				},
 				
 			// column plots are always categorized
-			categories = options.categories || (isXAxis && chart.columnCount), 
+			categories = options.categories || (isXAxis && chart.columnCount),
+			staggerLines = horiz && options.labels.staggerLines,
 			reversed = options.reversed,
 			tickmarkOffset = (categories && options.tickmarkPlacement == 'between') ? 0.5 : 0;		
 
 		
 		/**
-		 * The Tick prototype
+		 * The Tick class
 		 */
 		function Tick(pos, minor) {
 			var tick = this;
@@ -3731,8 +3779,10 @@ function Chart (options) {
 			},
 			/**
 			 * Put everything in place
+			 * 
+			 * @param index {Number}
 			 */
-			render: function() {
+			render: function(index) {
 				var tick = this,
 					major = !tick.minor,
 					label = tick.label,
@@ -3741,13 +3791,16 @@ function Chart (options) {
 					gridLine = tick.gridLine,
 					gridLineWidth = major ? options.gridLineWidth : options.minorGridLineWidth,
 					gridLineColor = major ? options.gridLineColor : options.minorGridLineColor,
-					dashStyle = major ? options.gridLineDashStyle : options.minorGridLineDashStyle,
+					dashStyle = major ? 
+						options.gridLineDashStyle || 'shortdot' : 
+						options.minorGridLineDashStyle,
 					gridLinePath,
 					mark = tick.mark,
 					markPath,
 					tickLength = major ? options.tickLength : options.minorTickLength,
 					tickWidth = major ? options.tickWidth : options.minorTickWidth,
 					tickColor = major ? options.tickColor : options.minorTickColor,
+					step = labelOptions.step,
 					attribs,
 					x,
 					y;
@@ -3758,7 +3811,7 @@ function Chart (options) {
 				y = horiz ?
 					chartHeight - marginBottom + offset - (opposite ? plotHeight : 0) :
 					chartHeight - translate(pos + tickmarkOffset) - transB;
-				
+					
 				// create the grid line
 				if (gridLineWidth) {
 					gridLinePath = getPlotLinePath(pos, gridLineWidth);
@@ -3818,13 +3871,23 @@ function Chart (options) {
 					}
 				}
 				
-				// the label is created on init - move it into place
+				// the label is created on init - now move it into place
 				if (label) { 
 					x = x + labelOptions.x - (tickmarkOffset && horiz ? 
 						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
 					y = y + labelOptions.y - (tickmarkOffset && !horiz ? 
 						tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
-				
+						
+					// correct for staggered labels
+					if (staggerLines) {
+						y += (index % staggerLines) * 16;
+					}
+					// apply step
+					if (step) {
+						// show those indices dividable by step 
+						label[index % step ? 'hide' : 'show']();
+					}
+					
 					label[tick.isNew ? 'attr' : 'animate']({
 						x: x,
 						y: y
@@ -3867,13 +3930,19 @@ function Chart (options) {
 		render: function () {
 			var plotLine = this,
 				options = plotLine.options,
+				optionsLabel = options.label,
+				label = plotLine.label,
 				width = options.width,
 				to = options.to,
-				toPath,
+				toPath, // bands only
 				from = options.from,
 				dashStyle = options.dashStyle,
 				svgElem = plotLine.svgElem,
 				path = [],
+				xs,
+				ys,
+				x,
+				y,
 				color = options.color,
 				zIndex = options.zIndex,
 				events = options.events,
@@ -3913,6 +3982,8 @@ function Chart (options) {
 				attribs = {
 					fill: color
 				}
+			} else {
+				return;
 			}
 			
 			// zIndex 
@@ -3939,13 +4010,60 @@ function Chart (options) {
 				}
 			}
 			
+			// the plot band/line label
+			if (optionsLabel && defined(optionsLabel.text)) {
+				
+				// apply defaults
+				optionsLabel = merge({
+					align: horiz && toPath && 'center',
+					x: horiz ? !toPath && 4 : 10,
+					verticalAlign : !horiz && toPath && 'middle',
+					y: horiz ? toPath ? 16 : 10 : toPath ? 6 : -4,
+					rotation: horiz && !toPath && 90
+				}, optionsLabel);
+				
+				// add the SVG element
+				if (!label) {
+					plotLine.label = label = renderer.text(
+							optionsLabel.text,
+							0,
+							0,
+							optionsLabel.style,
+							optionsLabel.rotation,
+							optionsLabel.textAlign || optionsLabel.align
+						)
+						.attr({ zIndex: zIndex })
+						.add();
+				}
+				
+				// get the bounding box and align the label
+				xs = [path[1], path[4], path[6] || path[1]];
+				ys = [path[2], path[5], path[7] || path[2]];
+				x = mathMin.apply(math, xs);
+				y = mathMin.apply(math, ys);
+				label.align(optionsLabel, false, {
+					x: x,
+					y: y,
+					width: mathMax.apply(math, xs) - x,
+					height: mathMax.apply(math, ys) - y 
+				});				
+			}
 		},
 		
 		/**
-		 * Destroy the element and release memory
+		 * Remove the plot line or band
 		 */
-		destroy: function() {
-			this.svgElem.destroy();
+		remove: function() {
+			var obj = this,
+				n;
+			
+			for (n in obj) {
+				obj[n] && obj[n].destroy && obj[n].destroy(); // destroy SVG wrappers
+				delete obj[n];
+			}
+			// remove it from the lookup
+			erase(plotLinesAndBands, obj);
+			//this.svgElem.destroy();
 		}
 		};
 		
@@ -4069,7 +4187,8 @@ function Chart (options) {
 				if (run) {
 					
 					var stacking,
-						typeStack;
+						typeStack,
+						stackKey;
 		
 					if (!isXAxis) {
 						stacking = serie.options.stacking;
@@ -4077,8 +4196,11 @@ function Chart (options) {
 	
 						// create a stack for this particular series type
 						if (stacking) {
-							typeStack = stack[serie.type] || [];
-							stack[serie.type] = typeStack;
+							stackKey = serie.type + pick(serie.options.stack, '');
+							serie.stackKey = stackKey; // used in translate
+									
+							typeStack = stack[stackKey] || [];
+							stack[stackKey] = typeStack;
 						}
 						if (usePercentage) {
 							dataMin = 0;
@@ -4121,7 +4243,12 @@ function Chart (options) {
 									}
 								}
 								if (stacking) {
-									stacks[serie.type][pointX] = { 
+		
+									// add the series
+									if (!stacks[stackKey]) {
+										stacks[stackKey] = {};
+									}
+									stacks[stackKey][pointX] = {
 										total: stackedPoint,
 										cum: stackedPoint 
 									};
@@ -4757,8 +4884,9 @@ function Chart (options) {
 		 * @param options {Object} The plotBand or plotLine configuration object
 		 */
 		function addPlotBandOrLine(options) {
-			plotLinesAndBands.push(new PlotLineOrBand(options));
-			
+			var obj = new PlotLineOrBand(options);
+			plotLinesAndBands.push(obj);
+			return obj;
 			
 			
 			/*if (isLine) {
@@ -4812,6 +4940,11 @@ function Chart (options) {
 						);
 					}
 				});
+				
+				if (staggerLines) {
+					labelOffset += (staggerLines - 1) * 16;
+				}
+				
 			
 			} else { // doesn't have data
 				for (var n in ticks) {
@@ -4918,42 +5051,29 @@ function Chart (options) {
 				}
 				
 				// major ticks, grid lines and tick marks
-				each(tickPositions, function(pos) {
+				each(tickPositions, function(pos, i) {
 					//if (ticks[pos]) {
 					ticks[pos].isActive = true;
-					if (globalAnimation && ticks[pos].isNew) {
+					/*if (globalAnimation !== false && ticks[pos].isNew) {
 						setTimeout(function() {
 							ticks[pos] && ticks[pos].render();
 						}, globalAnimation.duration || 500);
-					} else {
-						ticks[pos].render();
-					}
+					} else { // move to new position*/
+						ticks[pos].render(i);
+					//}
 					//} else console.error('ticks[pos] not defined');
 				});
 				
-				
-				
-				// remove old plot lines 
-				// todo: removeUnused function?
-				/*for (var pos in plotLineLookup) {
-					if (!plotLineLookup[pos].isInUse) {
-						plotLineLookup[pos].destroy();
-						delete plotLineLookup[pos];
-					} else {
-						plotLineLookup[pos].isInUse = false; // reset
-					}
-				}*/
-				
 				// remove inactive ticks
 				each([ticks, minorTicks], function(coll) {
-				for (var pos in coll) {
-					if (!coll[pos].isActive) {
-						coll[pos].destroy();
-						delete coll[pos];
-					} else {
-						coll[pos].isActive = false; // reset
+					for (var pos in coll) {
+						if (!coll[pos].isActive) {
+							coll[pos].destroy();
+							delete coll[pos];
+						} else {
+							coll[pos].isActive = false; // reset
+						}
 					}
-				}
 				});
 			
 				
@@ -5006,7 +5126,7 @@ function Chart (options) {
 					
 			}
 			
-			// Place the title. 
+			// Place the title
 			if (axis.titleGroup) {
 				// compute anchor points for each of the title align options
 				var margin = horiz ? plotLeft : plotTop,
@@ -5048,9 +5168,7 @@ function Chart (options) {
 		function removePlotBandOrLine(id) {
 			for (var i = 0; i < plotLinesAndBands.length; i++) {
 				if (plotLinesAndBands[i].id == id) {
-					plotLinesAndBands[i].destroy();
-					plotLinesAndBands.splice(i, 1);
-					break;
+					plotLinesAndBands[i].remove();
 				}
 			}
 		}
@@ -5968,12 +6086,13 @@ function Chart (options) {
 				checkbox = item.checkbox;
 				
 			// pull out from the array
-			while (i--) {
+			/*while (i--) {
 				if (allItems[i] == item) {
 					allItems.splice(i, 1);
 					break;
 				}
-			}
+			}*/
+			erase(allItems, item);
 				
 			// destroy SVG elements
 			each (['legendItem', 'legendLine', 'legendSymbol'], function(key) {
@@ -6657,65 +6776,62 @@ function Chart (options) {
 	};
 	
 	/**
-	 * Function: (private) showTitle
-	 * 
 	 * Show the title and subtitle of the chart
+	 * 
+	 * @param titleOptions {Object} New title options
+	 * @param subtitleOptions {Object} New subtitle options
+	 * 
+	 * @todo docs
 	 */
-	function showTitle () {
-		/*var //title = options.title,
-			titleAlign = chartTitleOptions.align,
-			//subtitle = options.subtitle,
-			subtitleAlign = chartSubtitleOptions.align;//,
-			//titlePos = getAlignment(title),
-			//subtitlePos = getAlignment(subtitle);*/
-			
-		// title
-		if (chartTitleOptions && chartTitleOptions.text) {
-			//if (!chart.title) {
-				chart.title = renderer.text(
+	function setTitle (titleOptions, subtitleOptions) {
+		
+		chartTitleOptions = merge(options.title, titleOptions);
+		chartSubtitleOptions = 	merge(options.subtitle, subtitleOptions);
+		
+		// add title and subtitle
+		each([
+			[chart.title, titleOptions, chartTitleOptions, 'title'],
+			[chart.subtitle, subtitleOptions, chartSubtitleOptions, 'subtitle']
+		], function(arr) {
+			var title = arr[0],
+				titleOptions = arr[1],
+				chartTitleOptions = arr[2],
+				name = arr[3];
+				
+			if (title && titleOptions) {
+				title.destroy(); // remove old
+				title = null;
+			}
+			if (chartTitleOptions && chartTitleOptions.text && !title) {
+				chart[name] = renderer.text(
 					chartTitleOptions.text, 
-					0,//titlePos.x,
-					0,//titlePos.y, 
+					0,
+					0, 
 					chartTitleOptions.style, 
 					0,
 					chartTitleOptions.align
 				)
 				.align(chartTitleOptions)
 				.attr({
-					'class': 'highcharts-title',
+					'class': 'highcharts-'+ name,
 					zIndex: 1
 				}).add();
-			/*} else {
-				chart.title.animate({
-					x: titlePos.x,
-					y: titlePos.y
-				})
-			}*/
-		}
+			}
+		});
 		
-		// subtitle
-		if (chartSubtitleOptions && chartSubtitleOptions.text) {
-			//if (!chart.subtitle) {
-				chart.subtitle = renderer.text(
-					chartSubtitleOptions.text, 
-					0,//subtitlePos.x,
-					0,//subtitlePos.y, 
-					chartSubtitleOptions.style, 
-					0,
-					chartSubtitleOptions.align
-				)
-				.align(chartSubtitleOptions)
-				.attr({
-					'class': 'highcharts-subtitle',
-					zIndex: 1
-				}).add();
-			/*} else {
-				chart.subtitle.animate({
-					x: subtitlePos.x,
-					y: subtitlePos.y
-				})
-			}*/
-		}
+	}
+	
+	/**
+	 * Get chart width and height according to options and container size
+	 */
+	function getChartSize() {
+
+		var renderToOffsetHeight = (renderToClone || renderTo).offsetHeight;
+		chartWidth = optionsChart.width || (renderToClone || renderTo).offsetWidth || 600;
+		chartHeight = optionsChart.height || 
+			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
+			(renderToOffsetHeight > plotTop + marginBottom ? renderToOffsetHeight : 0) || 
+			400;
 	}
 
 	
@@ -6749,12 +6865,7 @@ function Chart (options) {
 		}
 		
 		// get the width and height
-		var renderToOffsetHeight = (renderToClone || renderTo).offsetHeight;
-		chartWidth = optionsChart.width || (renderToClone || renderTo).offsetWidth || 600;
-		chartHeight = optionsChart.height || 
-			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-			(renderToOffsetHeight > plotTop + marginBottom ? renderToOffsetHeight : 0) || 
-			400;
+		getChartSize();
 		
 		// create the inner container
 		container = createElement(DIV, {
@@ -6859,6 +6970,73 @@ function Chart (options) {
 		
 	}
 	
+	/**
+	 * Add the event handlers necessary for auto resizing
+	 */
+	function setUpResize() {
+		addEvent(window, 'resize', function() {
+			
+			var width = renderTo.offsetWidth,
+				height = renderTo.offsetHeight;
+				
+			if (width != containerWidth || height != containerHeight) {
+				if (defined(width)) {
+					resize(width, height, false);
+				}
+				
+				containerWidth = width;
+				containerHeight = height;				
+			}
+		});
+	}
+	
+	/**
+	 * Resize the chart to a given width and height
+	 * @param {Number} width
+	 * @param {Number} height
+	 * @param {Object|Boolean} animation
+	 */
+	function resize(width, height, animation) {
+		
+		isResizing = true;
+		
+		// set the animation for the current process
+		globalAnimation = pick(animation, optionsChart.animation);
+		
+		
+		chartWidth = mathRound(width);
+		chartHeight = mathRound(height);
+		
+		renderer.resizeTo(chartWidth, chartHeight);
+		
+		// update axis lengths for more correct tick intervals:
+		plotWidth = chartWidth - plotLeft - marginRight; 
+		plotHeight = chartHeight - plotTop - marginBottom;
+		
+		// handle axes
+		maxTicks = null;
+		each(axes, function(axis) {
+			axis.isDirty = true;
+			axis.setScale();
+		});
+		
+		// make sure non-cartesian series are also handled
+		each(series, function(serie) {
+			serie.isDirty = true;
+		});
+		
+		chart.isDirtyLegend = true; // force legend redraw
+		chart.isDirtyBox = true; // force redraw of plot and chart border
+		
+		getMargins();
+		 
+		
+		redraw();
+		
+		isResizing = false;
+		
+		fireEvent(chart, 'resize');
+	}
 	/**
 	 * Set the public chart properties. This is done before and after the pre-render
 	 * to determine margin sizes
@@ -6976,7 +7154,7 @@ function Chart (options) {
 			credits = options.credits;
 		
 		// Title
-		showTitle();
+		setTitle();
 		
 		
 		// Legend
@@ -7003,6 +7181,11 @@ function Chart (options) {
 		
 		
 		// The series
+		if (!chart.seriesGroup) {
+			chart.seriesGroup = renderer.g('series-group')
+				.attr({ zIndex: 3 })
+				.add();
+		}
 		each (series, function(serie) {
 			serie.translate();
 			serie.setTooltipPoints();
@@ -7145,6 +7328,11 @@ function Chart (options) {
 	// Destroy the chart and free up memory. 
 	addEvent(win, 'unload', destroy);
 	
+	// Set up auto resize
+	if (optionsChart.autoResize !== false) {
+		setUpResize();
+	}
+	
 	// Chart event handlers
 	if (chartEvents) {
 		for (eventType in chartEvents) { 
@@ -7172,7 +7360,7 @@ function Chart (options) {
 	
 	
 	
-	// API methods
+	// Expose methods and variables
 	chart.addSeries = addSeries;
 	chart.destroy = destroy;
 	chart.get = get;
@@ -7182,6 +7370,8 @@ function Chart (options) {
 	chart.hideLoading = hideLoading;
 	chart.isInsidePlot = isInsidePlot;
 	chart.redraw = redraw;
+	chart.resize = resize;
+	chart.setTitle = setTitle;
 	chart.showLoading = showLoading;	
 	//chart.updatePosition = updatePosition;
 	
@@ -7215,47 +7405,6 @@ function Chart (options) {
 		}
 	})
 	
-	chart.resize = function(width, height, animation) {
-		
-		isResizing = true;
-		
-		// set the animation for the current process
-		globalAnimation = pick(animation, optionsChart.animation);
-		
-		
-		chartWidth = mathRound(width);
-		chartHeight = mathRound(height);
-		
-		renderer.resizeTo(chartWidth, chartHeight);
-		
-		// update axis lengths for more correct tick intervals:
-		plotWidth = chartWidth - plotLeft - marginRight; 
-		plotHeight = chartHeight - plotTop - marginBottom;
-		
-		// handle axes
-		maxTicks = null;
-		each(axes, function(axis) {
-			axis.isDirty = true;
-			axis.setScale();
-		});
-		
-		// make sure non-cartesian series are also handled
-		each(series, function(serie) {
-			serie.isDirty = true;
-		});
-		
-		chart.isDirtyLegend = true; // force legend redraw
-		chart.isDirtyBox = true; // force redraw of plot and chart border
-		
-		getMargins();
-		 
-		
-		redraw();
-		
-		isResizing = false;
-		
-		fireEvent(chart, 'resize');
-	}
 	
 	
 	// Initialize the series
@@ -7494,12 +7643,13 @@ Point.prototype = {
 		point.firePointEvent('remove', null, function() {
 
 			// loop through the data to locate the point and remove it
-			while (i--) {
+			/*while (i--) {
 				if (data[i] == point) {
 					data.splice(i, 1);
 					break;
 				}
-			}
+			}*/
+			erase(data, point);
 			
 			point.destroy();
 			
@@ -7926,7 +8076,7 @@ Series.prototype = {
 			stacking = series.options.stacking,
 			categories = series.xAxis.categories,
 			yAxis = series.yAxis,
-			stack = yAxis.stacks[series.type],
+			stack = yAxis.stacks[series.stackKey],
 			data = series.data,
 			i = data.length;
 			
@@ -8351,7 +8501,7 @@ Series.prototype = {
 	 */
 	destroy: function() {
 		var series = this,
-			chartSeries = series.chart.series,
+			//chartSeries = series.chart.series,
 			clipRect = series.clipRect,
 			prop;
 		
@@ -8378,11 +8528,12 @@ Series.prototype = {
 		}
 		
 		// loop through the chart series to locate the series and remove it
-		each(chartSeries, function(existingSeries, i) {
+		/*each(chartSeries, function(existingSeries, i) {
 			if (existingSeries == series) {
 				chartSeries.splice(i, 1);
 			}
-		});
+		});*/
+		erase(series.chart.series, series);
 				
 		// clear all members
 		for (prop in series) {
@@ -8613,7 +8764,8 @@ Series.prototype = {
 			chart = series.chart,
 			group,
 			setInvert,
-			doAnimation = series.options.animation && series.animate,
+			options = series.options,
+			doAnimation = options.animation && series.animate,
 			renderer = chart.renderer;
 			
 		
@@ -8647,10 +8799,10 @@ Series.prototype = {
 			group.clip(series.clipRect)
 				.attr({ 
 					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: 3					
+					zIndex: options.zIndex
 				})
 				.translate(chart.plotLeft, chart.plotTop)
-				.add();
+				.add(chart.seriesGroup);
 		}
 			
 		series.drawDataLabels();
@@ -9093,6 +9245,7 @@ var ColumnSeries = extendClass(Series, {
 			columnCount = 0,
 			reversedXAxis = series.xAxis.reversed,
 			categories = series.xAxis.categories,
+			stackGroups = {},
 			stackedIndex; // the index of the first column in a stack
 		
 		Series.prototype.translate.apply(series);
@@ -9102,13 +9255,14 @@ var ColumnSeries = extendClass(Series, {
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
 		each (chart.series, function(otherSeries) {
 			if (otherSeries.type == series.type) {
-				if (!otherSeries.options.stacking) {
-					otherSeries.columnIndex = columnCount++;
-				} else {
-					if (!defined(stackedIndex)) {
+				if (otherSeries.options.stacking) {
+					if (!stackGroups[otherSeries.stackKey]) {
 						stackedIndex = columnCount++;
 					}
+					stackGroups[otherSeries.stackKey] = 1;
 					otherSeries.columnIndex = stackedIndex;
+				} else {
+					otherSeries.columnIndex = columnCount++;
 				}
 			}
 		});

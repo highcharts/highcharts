@@ -53,7 +53,8 @@ var HighchartsAdapter = {
 	 */
 	animate: function (el, params, options) {
 		var isSVGElement = el.attr,
-			effect;
+			effect,
+			complete = options && options.complete;
 		
 		if (isSVGElement && !el.setStyle) {
 			// add setStyle and getStyle methods for internal use in Moo
@@ -68,33 +69,71 @@ var HighchartsAdapter = {
 		// define and run the effect
 		effect = new Fx.Morph(
 			isSVGElement ? el : $(el), 
-			$extend(options, {
+			$extend({
 				transition: Fx.Transitions.Quad.easeInOut
-			})
+			}, options)
 		);
+		
+		// special treatment for paths
 		if (params.d) {
 			effect.toD = params.d;
 		}
+		
+		// jQuery-like events
+		if (complete) {
+			effect.addEvent('complete', complete);
+		}
+		
+		// run
 		effect.start(params);
+		
+		// record for use in stop method
 		el.fx = effect;
 	},
 	
+	/**
+	 * MooTool's each function
+	 * 
+	 */
 	each: $each,
 	
+	/**
+	 * Map an array
+	 * @param {Array} arr
+	 * @param {Function} fn
+	 */
 	map: function (arr, fn){
 		return arr.map(fn);
 	},
 	
+	/**
+	 * Grep or filter an array
+	 * @param {Array} arr
+	 * @param {Function} fn
+	 */
 	grep: function(arr, fn) {
 		return arr.filter(fn);
 	},
 	
+	/**
+	 * Deep merge two objects and return a third
+	 */
 	merge: $merge,
 	
+	/**
+	 * Hyphenate a string, like minWidth becomes min-width
+	 * @param {Object} str
+	 */
 	hyphenate: function (str){
 		return str.hyphenate();
 	},
 	
+	/**
+	 * Add an event listener
+	 * @param {Object} el HTML element or custom object
+	 * @param {String} type Event type
+	 * @param {Function} fn Event handler
+	 */
 	addEvent: function (el, type, fn) {
 		if (typeof type == 'string') { // chart broke due to el being string, type function
 		
