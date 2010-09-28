@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.0.1 (2010-07-18)
+ * @license Highcharts JS v2.1 alpha (merged changes from master 2010-09-28)
  * Exporting module
  * 
  * (c) 2010 Torstein Hønsi
@@ -178,6 +178,9 @@ extend (Chart.prototype, {
 			chartCopy,
 			sandbox,
 			svg,
+			seriesOptions,
+			pointOptions,
+			pointMarker,
 			options = merge(chart.options, additionalOptions); // copy the options and add extra options
 		
 		// IE compatibility hack for generating SVG content that it doesn't really understand
@@ -206,22 +209,42 @@ extend (Chart.prototype, {
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
-		each (options.series, function(serie) {
-			serie.animation = false;// turn off animation
+		// prepare for replicating the chart
+		options.series = [];
+		each (chart.series, function(serie) {
+			seriesOptions = serie.options;			
 			
-			each (serie.data, function(point) { // turn off symbols
-				if (point && point.marker && /^url\(/.test(point.marker.symbol)) { 
-					delete point.marker.symbol;
+			seriesOptions.animation = false; // turn off animation
+			seriesOptions.showCheckbox = false;
+			
+			// remove image markers
+			if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) { 
+				seriesOptions.marker.symbol = 'circle';
+			}
+			
+			seriesOptions.data = [];
+			each(serie.data, function(point) {
+				pointOptions = point.config == null || typeof point.config == 'number' ?
+					{ y: point.y } :
+					point.config;
+				pointOptions.x = point.x;
+				seriesOptions.data.push(pointOptions); // copy fresh updated data
+								
+				// remove image markers
+				pointMarker = point.config && point.config.marker;
+				if (pointMarker && /^url\(/.test(pointMarker.symbol)) { 
+					delete pointMarker.symbol;
 				}
-			});
+			});	
+			
+			options.series.push(seriesOptions);
 		});
-		
 		
 		// generate the chart copy
 		chartCopy = new Highcharts.Chart(options);
 		
 		// get the SVG from the container's innerHTML
-		svg = sandbox.getElementsByTagName(DIV)[0].innerHTML;
+		svg = chartCopy.container.innerHTML;
 		
 		// free up memory
 		options = null;
@@ -245,6 +268,13 @@ extend (Chart.prototype, {
 			replace(/style="([^"]+)"/g, function(s) {
 				return s.toLowerCase();
 			});
+			
+		// IE9 beta bugs with innerHTML. Test again with final IE9.
+		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
+			.replace(/&quot;/g, "'");
+		if (svg.match(/ xmlns="/g).length == 2) {
+			svg = svg.replace(/xmlns="[^"]+"/, '');
+		}
 			
 		return svg;
 	},
@@ -382,7 +412,8 @@ extend (Chart.prototype, {
 			innerMenu = createElement(DIV, null, 
 				extend({
 					MozBoxShadow: boxShadow,
-					WebkitBoxShadow: boxShadow
+					WebkitBoxShadow: boxShadow,
+					boxShadow: boxShadow
 				}, navOptions.menuStyle) , menu);
 			
 			hide = function() {
@@ -412,7 +443,7 @@ extend (Chart.prototype, {
 			});
 			
 			chart.exportMenuWidth = menu.offsetWidth;
-			chart.exportMenuHeigh = menu.offsetHeight;
+			chart.exportMenuHeight = menu.offsetHeight;
 		}
 		
 		menuStyle = { display: 'block' };
@@ -595,20 +626,26 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 	];
 };
 
-// Add the buttons on chart load
-addEvent(Chart.prototype, 'load', function(e) {
-	var chart = e.target,
-		n,
-		exportingOptions = chart.options.exporting,
-		buttons = exportingOptions.buttons;
+// Overwrite the HC.Chart object with added functionality for export buttons after render
+HC.Chart = function(options, callback) {
+	return new Chart(options, function(chart) {
+		var n,
+			exportingOptions = chart.options.exporting,
+			buttons = exportingOptions.buttons;		
 		
-	if (exportingOptions.enabled !== false) {
-	
-		for (n in buttons) {
-			chart.addButton(buttons[n]);
+		// add buttons
+		if (exportingOptions.enabled !== false) {	
+
+			for (n in buttons) {
+				chart.addButton(buttons[n]);
+			}
 		}
-	}
-	
-});
+		
+		// execute user callbacks
+		if (callback) {
+			callback();
+		}
+	});
+};
 
 })();
