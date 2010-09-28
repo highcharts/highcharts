@@ -4713,9 +4713,7 @@ function Chart (options, callback) {
 		 * Set the tick positions to round values and optionally extend the extremes
 		 * to the nearest tick
 		 */
-		function setTickPositions(secondPass) {
-
-			
+		function setTickPositions(secondPass) {			
 			axisLength = horiz ? plotWidth : plotHeight;
 
 			// get tickInterval
@@ -4723,12 +4721,11 @@ function Chart (options, callback) {
 				tickInterval = 1;
 			} else {
 				tickInterval = pick(
-						secondPass && tickInterval || null,
-						options.tickInterval,
-						(max - min) * options.tickPixelInterval / axisLength
-					);
+					secondPass && tickInterval || null,
+					options.tickInterval,
+					(max - min) * options.tickPixelInterval / axisLength
+				);
 			}
-			
 				
 			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
 				tickInterval = normalizeTickInterval(tickInterval);
@@ -5435,7 +5432,6 @@ function Chart (options, callback) {
 			currentX = 0,			
 			currentY = 0;
 			
-		
 		// remove padding CSS and apply padding on box instead
 		style.padding = 0;
 		
@@ -5456,7 +5452,6 @@ function Chart (options, callback) {
 				css(style).
 				add(group);
 				
-			
 		/**
 		 * In case no user defined formatter is given, this will be used
 		 */
@@ -7424,8 +7419,6 @@ function Chart (options, callback) {
 		/*chart.plotSizeX = plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = plotSizeY = inverted ? plotWidth : plotHeight;*/ 
 			
-		// depends on inverted	
-		chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
 		
 		getAxes();
 		
@@ -7501,7 +7494,7 @@ function Chart (options, callback) {
 	//chart.updatePosition = updatePosition;
 	
 	
-		
+	/*	
 	if ($) $(function() {
 		$container = $('#container');
 		var origChartWidth,
@@ -7528,11 +7521,15 @@ function Chart (options, callback) {
 			$('<button>1:1</button>')
 				.insertBefore($container)
 				.click(function() {				
+					if (origChartWidth === UNDEFINED) {
+						origChartWidth = chartWidth;
+						origChartHeight = chartHeight;
+					}							
 					chart.resize(origChartWidth, origChartHeight);
 				});
 		}
 	})
-	
+	*/
 	
 	
 	
