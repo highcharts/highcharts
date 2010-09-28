@@ -1,7 +1,7 @@
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
-/** 
+/**
  * @license Highcharts JS (resizing/auto margin branch)
  * 
  * (c) 2009-2010 Torstein Hønsi
@@ -165,7 +165,6 @@ function attr(elem, prop, value) {
 			elem[setAttribute](key, prop[key]);
 		}
 	}
-
 	return ret;
 }
 /**
@@ -2596,6 +2595,8 @@ var VMLElement = extendClass( SVGElement, {
 			element = this.element,
 			elemStyle = element.style,
 			nodeName = element.nodeName,
+			lineHeight = element.lineHeight,
+			align = element.align,
 			renderer = this.renderer,
 			symbolName = this.symbolName,
 			hasSetSymbolSize,
@@ -2624,6 +2625,17 @@ var VMLElement = extendClass( SVGElement, {
 						y: 'top'
 					}[key] || key], 10)
 				);
+				
+				// text correction
+				if (nodeName == 'SPAN') {
+					if (key == 'y' && lineHeight) { // subtract lineHeight
+						ret += lineHeight;
+						
+					} else if (key == 'x' && align && align != 'left') {
+						// fix the position according to align
+						ret += element.offsetWidth / { right: 1, center: 2 }[align];
+					}
+				}
 			}
 			
 		// setter
@@ -2708,12 +2720,12 @@ var VMLElement = extendClass( SVGElement, {
 				} else if (/^(x|y)$/.test(key)) {
 
 					if (nodeName == 'SPAN') {
-						if (key == 'y' && element.lineHeight) { // subtract lineHeight
-							value -= element.lineHeight;
+						if (key == 'y' && lineHeight) { // subtract lineHeight
+							value -= lineHeight;
 						
-						} else if (key == 'x' && element.align && element.align != 'left') {
+						} else if (key == 'x' && align && align != 'left') {
 							// fix the position according to align
-							value -= this.getBBox().width / { right: 1, center: 2 }[element.align];
+							value -= element.offsetWidth / { right: 1, center: 2 }[align];
 						}
 					}
 					elemStyle[{ x: 'left', y: 'top' }[key]] = value;
@@ -3209,9 +3221,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			elem = elemWrapper.element;
 			elem.lineHeight = lineHeight; // used in attr
 			elem.align = align; // internal prop used in attr
-			elemWrapper.attr({				 
+			elemWrapper.attr({
 				x: x,
-				y: y - lineHeight,
+				y: y,
 				text: str
 			});
 			
@@ -3714,12 +3726,11 @@ function Chart (options) {
 				},
 				
 			// column plots are always categorized
-			categories = options.categories || (isXAxis && chart.columnCount),
+			categories = options.categories,
 			staggerLines = horiz && options.labels.staggerLines,
 			reversed = options.reversed,
 			tickmarkOffset = (categories && options.tickmarkPlacement == 'between') ? 0.5 : 0;		
 
-		
 		/**
 		 * The Tick class
 		 */
@@ -4011,7 +4022,7 @@ function Chart (options) {
 			}
 			
 			// the plot band/line label
-			if (optionsLabel && defined(optionsLabel.text)) {
+			if (optionsLabel && defined(optionsLabel.text) && path && plotWidth > 0 && plotHeight > 0) {
 				
 				// apply defaults
 				optionsLabel = merge({
@@ -4046,7 +4057,7 @@ function Chart (options) {
 					y: y,
 					width: mathMax.apply(math, xs) - x,
 					height: mathMax.apply(math, ys) - y 
-				});				
+				});		
 			}
 		},
 		
@@ -4294,6 +4305,7 @@ function Chart (options) {
 			var sign = 1,
 				cvsOffset = 0,
 				returnValue;
+			
 			if (cvsCoord) {
 				sign *= -1; // canvas coordinates inverts the value
 				cvsOffset = axisLength;
@@ -4674,9 +4686,9 @@ function Chart (options) {
 			}
 			
 			// pad categorised axis to nearest half unit
-			if (categories && !secondPass) {
-				 min -= 0.5;
-				 max += 0.5;
+			if ((categories || isXAxis && chart.hasColumn) && !secondPass) {
+				 min -= tickInterval * 0.5;
+				 max += tickInterval * 0.5;
 			}
 			
 			// reset min/max or remove extremes based on start/end on tick
@@ -4996,6 +5008,7 @@ function Chart (options) {
 				axisOffset[side], 
 				axisTitleMargin + titleOffset + directionFactor * offset
 			);
+			
 		}
 		
 		/**
@@ -5370,6 +5383,7 @@ function Chart (options) {
 				attr({ zIndex: 1 }).
 				css(style).
 				add(group);
+				
 			
 		/**
 		 * In case no user defined formatter is given, this will be used
@@ -6558,7 +6572,10 @@ function Chart (options) {
 	
 			// redraw axes
 			each (axes, function(axis) {
-				if (axis.isDirty || isDirtyBox) { axis.redraw(); }
+				if (axis.isDirty || isDirtyBox) {
+					axis.redraw();
+					isDirtyBox = true; // always redraw box to reflect changes in the axis labels 
+				}
 			});
 		}
 		
@@ -6984,6 +7001,8 @@ function Chart (options) {
 	
 	/**
 	 * Add the event handlers necessary for auto resizing
+	 * 
+	 * @todo: use one single resize event per page, that resizes all charts in a stack
 	 */
 	function setUpResize() {
 		addEvent(window, 'resize', function() {
@@ -7387,11 +7406,6 @@ function Chart (options) {
 	chart.showLoading = showLoading;	
 	//chart.updatePosition = updatePosition;
 	
-	/*
-	 * To do for resize:
-	 * - Re-use setting chartWidth, plotWidth, plotSizeX etc. Run resize chart on init or
-	 *   isolate these statements in a func.
-	 */
 	
 		
 	if ($) $(function() {
@@ -8319,7 +8333,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				
 				// only draw the point if y is defined
-				if (point.plotY !== UNDEFINED) {
+				if (plotY !== UNDEFINED && !isNaN(plotY)) {
 				
 					/* && removed this code because points stayed after zoom
 						point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
@@ -8328,7 +8342,6 @@ Series.prototype = {
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 					radius = pointAttr.r;
-					
 					
 					if (graphic) { // update
 						graphic.animate({
@@ -9236,6 +9249,8 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart;
 		
+		// flag the chart in order to pad the x axis
+		chart.hasColumn = true;
 		
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
@@ -9378,8 +9393,8 @@ var ColumnSeries = extendClass(Series, {
 		
 		// draw the columns
 		each (series.data, function(point) {			
-			
-			if (defined(point.plotY)) {
+			var plotY = point.plotY;
+			if (plotY !== UNDEFINED && !isNaN(plotY)) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
@@ -9413,36 +9428,39 @@ var ColumnSeries = extendClass(Series, {
 		each (series.data, function(point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
-			if (tracker) {// update
-				tracker.attr(shapeArgs);
-				
-			} else {
-				point.tracker = 
-					renderer[point.shapeType](shapeArgs)
-					.attr({
-						isTracker: trackerLabel,
-						fill: TRACKER_FILL,
-						visibility: series.visible ? VISIBLE : HIDDEN,
-						zIndex: 1
-					})
-					.on('mouseover', function(event) {
-						rel = event.relatedTarget || event.fromElement;
-						if (chart.hoverSeries != series && attr(rel, 'isTracker') != trackerLabel) {
-							series.onMouseOver();
-						}
-						point.onMouseOver();
-						
-					})
-					.on('mouseout', function(event) {
-						if (!series.options.stickyTracking) {
-							rel = event.relatedTarget || event.toElement;
-							if (attr(rel, 'isTracker') != trackerLabel) {
-								series.onMouseOut();
+			
+			if (!isNaN(point.plotY)) {
+				if (tracker) {// update
+					tracker.attr(shapeArgs);
+					
+				} else {
+					point.tracker = 
+						renderer[point.shapeType](shapeArgs)
+						.attr({
+							isTracker: trackerLabel,
+							fill: TRACKER_FILL,
+							visibility: series.visible ? VISIBLE : HIDDEN,
+							zIndex: 1
+						})
+						.on('mouseover', function(event) {
+							rel = event.relatedTarget || event.fromElement;
+							if (chart.hoverSeries != series && attr(rel, 'isTracker') != trackerLabel) {
+								series.onMouseOver();
 							}
-						}
-					})
-					.css(css)
-					.add(chart.trackerGroup);
+							point.onMouseOver();
+							
+						})
+						.on('mouseout', function(event) {
+							if (!series.options.stickyTracking) {
+								rel = event.relatedTarget || event.toElement;
+								if (attr(rel, 'isTracker') != trackerLabel) {
+									series.onMouseOut();
+								}
+							}
+						})
+						.css(css)
+						.add(chart.trackerGroup);
+				}
 			}
 		});				
 	},
