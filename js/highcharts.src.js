@@ -3504,11 +3504,12 @@ function Chart (options, callback) {
 							var pointX = point.x,
 								pointY = point.y;
 							
-							// initial values
+							// initial values, set dataMin and dataMax to the first non-null point
 							if (dataMin === null) {
-
-								// start out with the first point
-								dataMin = dataMax = point[xOrY]; 
+								dataMin = point[xOrY]; 
+							}
+							if (dataMax === null) {
+								dataMax = point[xOrY];
 							}
 		
 							// x axis
