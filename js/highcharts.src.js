@@ -724,7 +724,7 @@ defaultOptions = {
 		//shadow: false,
 		spacingTop: 10, // docs
 		spacingRight: 10, // docs
-		spacingBottom: 10, // docs
+		spacingBottom: 15, // docs
 		spacingLeft: 10, // docs
 		style: {
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
@@ -844,7 +844,7 @@ defaultOptions = {
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
-		// margin: 5, // docs
+		// margin: 10, // docs
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
@@ -963,7 +963,7 @@ var defaultXAxisOptions =  {
 	min: null,
 	minPadding: 0.01,
 	maxPadding: 0.01,
-	maxZoom: null,
+	//maxZoom: null, // docs
 	minorGridLineColor: '#E0E0E0',
 	// minorGridLineDashStyle: null, // docs
 	minorGridLineWidth: 1,
@@ -1759,16 +1759,29 @@ SVGElement.prototype = {
 	getBBox: function() {
 		var bBox = this.element.getBBox(),
 			rad,
+			rotation = this.rotation,
 			h = bBox.height;
-		if (this.rotation) { // adjust for rotated text
-			rad = this.rotation * math.PI * 2 / 360; // radians
 			
-			bBox.height = mathAbs(bBox.height * mathCos(rad) + bBox.width * mathSin(rad));
-			//bBox.slant = mathAbs(bBox.width * mathSin(rad)); // the additional height below the anchor
-			
-			
+		// adjust for rotated text
+		if (rotation) {
+			this.rotateBBox(bBox, rotation);
 		}
+		
 		return bBox;
+	},
+	
+	/**
+	 * Manually compute width and height of rotated text from non-rotated. Shared by SVG and VML
+	 * @param {Object} bBox
+	 * @param {number} rotation
+	 */
+	rotateBBox: function(bBox, rotation) {
+		var rad = rotation * math.PI * 2 / 360, // radians
+			width = bBox.width,
+			height = bBox.height;
+			
+		bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
+		bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 	},
 	
 	/**
@@ -2756,7 +2769,7 @@ var VMLElement = extendClass( SVGElement, {
 						
 						} else if (key == 'x' && align && align != 'left') {
 							// fix the position according to align
-							value -= element.offsetWidth / { right: 1, center: 2 }[align];
+							value -= this.getBBox().width / { right: 1, center: 2 }[align];
 						}
 					}
 					elemStyle[{ x: 'left', y: 'top' }[key]] = value;
@@ -2812,6 +2825,16 @@ var VMLElement = extendClass( SVGElement, {
 					skipAttr = true;
 				}
 				
+				// text for rotated and non-rotated elements
+				else if (key == 'text') {
+					if (this.rotation) {
+						element.getElementsByTagName('textpath')[0].string = value;
+					} else {
+						element.innerHTML = value;
+					}
+					skipAttr = true;
+				} 
+				
 					
 				// let the shadow follow the main element
 				if (shadows && key == 'visibility') {
@@ -2823,11 +2846,7 @@ var VMLElement = extendClass( SVGElement, {
 				
 				
 				
-					
-				if (key == 'text') {
-					// only one node allowed
-					element.innerHTML = value;
-				} else if (!skipAttr) {
+				if (!skipAttr) {
 					if (documentMode == 8) { // IE8 setAttribute bug
 						element[key] = value;
 					} else {
@@ -2904,14 +2923,28 @@ var VMLElement = extendClass( SVGElement, {
 	
 	getBBox: function() {
 		var element = this.element,
-			ret,
+			bBox,
 			hasOffsetWidth = element.offsetWidth,
+			textpath,
+			rotation = this.rotation,
 			origParentNode = element.parentNode;
+			
+		
+		if (element.tagName == 'line') {
+			hasOffsetWidth = origParentNode = false; // force pull-out
+			textpath = element.getElementsByTagName('textpath')[0];
+			element = createElement('span', {
+					innerHTML: textpath.string
+				}, this.style);
+			
+			//console.log(this.style);
+		}
 		
 		if (!hasOffsetWidth) {
 			doc.body.appendChild(element);
-		} 
-		ret = {
+		}
+		
+		bBox = {
 			x: element.offsetLeft,
 			y: element.offsetTop,
 			width: element.offsetWidth,
@@ -2925,8 +2958,14 @@ var VMLElement = extendClass( SVGElement, {
 				doc.body.removeChild(element);
 			}
 		}
+		
+		// adjust for rotated text
+		if (rotation) {
+			this.rotateBBox(bBox, rotation);
+		}
+		
 
-		return ret;
+		return bBox;
 			
 	},
 	
@@ -3239,12 +3278,12 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	
 	/**
 	 * Create rotated and aligned text
-	 * @param {Object} str
-	 * @param {Object} x
-	 * @param {Object} y
+	 * @param {String} str
+	 * @param {Number} x
+	 * @param {Number} y
 	 * @param {Object} style
-	 * @param {Object} rotation
-	 * @param {Object} align
+	 * @param {Number} rotation
+	 * @param {String} align
 	 */
 	text: function(str, x, y, style, rotation, align) {
 		//if (str || str === 0) {
@@ -3290,6 +3329,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		// is extrapolated to the left or right or both depending on the 
 		// alignment of the text
 		} else {
+			
 			var radians = (rotation || 0) * math.PI * 2 / 360, // deg to rad
 				costheta = mathCos(radians),
 				sintheta = mathSin(radians),
@@ -3340,7 +3380,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				'" on="true" string="'+ str.toString().replace(/<br[^>]?>/g, '\n') +'">',
 			null, null, elem);
 
-			
+			// record for use in getBBox
+			elemWrapper.style = style;
+			elemWrapper.rotation = rotation;
 		}
 		
 		return elemWrapper;
@@ -3680,7 +3722,7 @@ function Chart (options, callback) {
 		legendHeight,
 		position,// = getPosition(container),
 		hasCartesianSeries = optionsChart.showAxes,
-		isResizing,
+		isResizing = 0,
 		axes = [],
 		maxTicks, // handle the greatest amount of ticks on grouped axes
 		series = [], 
@@ -3818,15 +3860,18 @@ function Chart (options, callback) {
 
 					label = this.label;
 				
-				if (label === UNDEFINED) {
-					str = labelFormatter.call({
+				// get the string
+				str = labelFormatter.call({
 						//index: index, todo: what-to-do?
 						isFirst: pos == tickPositions[0],
 						isLast: pos == tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
 						value: (categories && categories[pos] ? categories[pos] : pos)
 					});
-					this.label = label = 
+				
+				// first call	
+				if (label === UNDEFINED) {
+					this.label =  
 						defined(str) && withLabel && labelOptions.enabled ?
 							renderer.text(
 								str,
@@ -3838,7 +3883,12 @@ function Chart (options, callback) {
 							)
 							.add(axisGroup):
 							null;
+				
+				// update
+				} else if (label) {
+					label.attr({ text: str });
 				}
+					
 			},
 			/**
 			 * Get the offset height or width of the label
@@ -4713,20 +4763,54 @@ function Chart (options, callback) {
 		 * Set the tick positions to round values and optionally extend the extremes
 		 * to the nearest tick
 		 */
-		function setTickPositions(secondPass) {			
+		function setTickPositions(secondPass) {
+			var length,
+				maxZoom = options.maxZoom || (
+					isXAxis ? 
+						mathMin(chart.smallestInterval * 5, dataMax - dataMin) : 
+						null
+					
+				),
+				zoomOffset;
+				
+			
 			axisLength = horiz ? plotWidth : plotHeight;
+			
+			// initial min and max from the extreme data values
+			min = pick(userSetMin, options.min, dataMin);
+			max = pick(userSetMax, options.max, dataMax);
+			
+			
+			// maxZoom exceeded, just center the selection
+			if (max - min < maxZoom) { 
+				zoomOffset = (maxZoom - max + min) / 2;
+				// if min and max options have been set, don't go beyond it
+				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset));
+				max = mathMin(min + maxZoom, pick(options.max, min + maxZoom));
+			}
+				
+			// pad the values to get clear of the chart's edges
+			if (!categories && !usePercentage && !isLinked && defined(min) && defined(max)) {
+				length = (max - min) || 1;
+				if (!defined(options.min) && !defined(userSetMin) && minPadding && (dataMin < 0 || !ignoreMinPadding)) { 
+					min -= length * minPadding; 
+				}
+				if (!defined(options.max) && !defined(userSetMax)  && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) { 
+					max += length * maxPadding;
+				}
+			}
 
 			// get tickInterval
 			if (categories || min == max) {
 				tickInterval = 1;
 			} else {
 				tickInterval = pick(
-					secondPass && tickInterval || null,
+					//secondPass && tickInterval || null,
 					options.tickInterval,
 					(max - min) * options.tickPixelInterval / axisLength
 				);
 			}
-				
+			
 			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
 				tickInterval = normalizeTickInterval(tickInterval);
 			}
@@ -4734,7 +4818,6 @@ function Chart (options, callback) {
 			// get minorTickInterval
 			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
 					tickInterval / 5 : options.minorTickInterval;
-			
 			
 			// find the tick positions
 			if (isDatetimeAxis)	{
@@ -4799,18 +4882,16 @@ function Chart (options, callback) {
 		 * 
 		 */
 		function setScale() {
-			var length, 
-				type, 
+			var type, 
 				i,
 				//total,
 				oldMin = min,
-				oldMax = max,
-				maxZoom = options.maxZoom,
-				zoomOffset;
+				oldMax = max;
 				
 			// get data extremes if needed
 			getSeriesExtremes();
 			
+			/*
 			// initial min and max from the extreme data values
 			min = pick(userSetMin, options.min, dataMin);
 			max = pick(userSetMax, options.max, dataMax);
@@ -4833,7 +4914,7 @@ function Chart (options, callback) {
 				if (!defined(options.max) && !defined(userSetMax)  && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) { 
 					max += length * maxPadding;
 				}
-			}
+			}*/
 			
 			// todo: find the best way of linking axes. possibly reuse of second
 			// pass setTickPositions code
@@ -5013,13 +5094,14 @@ function Chart (options, callback) {
 				gridGroup.empty();
 			}*/
 			
-			
 			labelOffset = 0; // reset
 			if (hasData || isLinked) {
 				each(tickPositions, function(pos) {
 					
 					if (!ticks[pos]) {
 						ticks[pos] = new Tick(pos);
+					} else {
+						ticks[pos].addLabel(); // update labels depending on tick interval
 					}
 					
 					// left side must be align: right and right side must have align: left for labels
@@ -5036,7 +5118,6 @@ function Chart (options, callback) {
 				if (staggerLines) {
 					labelOffset += (staggerLines - 1) * 16;
 				}
-				
 			
 			} else { // doesn't have data
 				for (var n in ticks) {
@@ -5047,9 +5128,9 @@ function Chart (options, callback) {
 			
 			if (axisTitleOptions && axisTitleOptions.text) {
 				if (!axis.axisTitle) {
-					axis.titleGroup = renderer.g()// todo: try without groups
+					/*axis.titleGroup = renderer.g()// todo: try without groups
 						.attr({ zIndex: 7 })
-						.add();
+						.add();*/
 					axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
@@ -5058,11 +5139,13 @@ function Chart (options, callback) {
 						axisTitleOptions.rotation || 0,
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 					)
-					.add(axis.titleGroup);
+					.attr ({ zIndex: 7 })
+					.add(/*axis.titleGroup*/);
 				}
 				
-				titleOffset = axis.titleGroup.getBBox()[horiz ? 'height' : 'width'];
+				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
 				titleMargin = pick(axisTitleOptions.margin, horiz ? 0 : 10);
+				
 			}
 			
 			// handle automatic or user set offset
@@ -5072,11 +5155,11 @@ function Chart (options, callback) {
 				labelOffset +
 				(side != 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) + 
 				titleMargin;
+				
 			axisOffset[side] = mathMax(
 				axisOffset[side], 
 				axisTitleMargin + titleOffset + directionFactor * offset
 			);
-			
 		}
 		
 		/**
@@ -5219,8 +5302,7 @@ function Chart (options, callback) {
 					
 			}
 			
-			// Place the title
-			if (axis.titleGroup) {
+			if (axis.axisTitle) {
 				// compute anchor points for each of the title align options
 				var margin = horiz ? plotLeft : plotTop,
 					fontSize = parseInt(axisTitleOptions.style.fontSize || 12, 10),
@@ -5236,8 +5318,41 @@ function Chart (options, callback) {
 				offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
 					(horiz ? 1 : -1) * // horizontal axis reverses the margin
 					(opposite ? -1 : 1) * // so does opposite axes
-					axisTitleMargin -
-					(isIE ? fontSize / 3 : 0)+ // preliminary fix for vml's centerline
+					axisTitleMargin +
+					//(isIE ? fontSize / 3 : 0)+ // preliminary fix for vml's centerline
+					(side == 2 ? fontSize : 0);
+				
+				axis.axisTitle.animate({
+					x: horiz ? 
+						alongAxis: 
+						offAxis + (opposite ? plotWidth : 0) + offset +
+							(axisTitleOptions.x || 0), // x
+					y: horiz ? 
+						offAxis - (opposite ? plotHeight : 0) + offset: 
+						alongAxis + (axisTitleOptions.y || 0) // y
+				});
+				
+			}
+			
+			// Place the title
+			/*if (axis.titleGroup) {
+				// compute anchor points for each of the title align options
+				var margin = horiz ? plotLeft : plotTop,
+					fontSize = parseInt(axisTitleOptions.style.fontSize || 12, 10),
+				// the position in the length direction of the axis
+				alongAxis = { 
+					low: margin + (horiz ? 0 : axisLength), 
+					middle: margin + axisLength / 2, 
+					high: margin + (horiz ? axisLength : 0)
+				}[axisTitleOptions.align],
+				
+				// the position in the perpendicular direction of the axis
+				// todo: reuse positions calculated in getOffset
+				offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
+					(horiz ? 1 : -1) * // horizontal axis reverses the margin
+					(opposite ? -1 : 1) * // so does opposite axes
+					axisTitleMargin +
+					//(isIE ? fontSize / 3 : 0)+ // preliminary fix for vml's centerline
 					(side == 2 ? fontSize : 0);
 				
 				axis.titleGroup.animate({
@@ -5250,7 +5365,8 @@ function Chart (options, callback) {
 						alongAxis + (axisTitleOptions.y || 0) // y
 				});
 				
-			}
+			}*/
+			
 			
 			axis.isDirty = false;
 		}
@@ -6205,6 +6321,20 @@ function Chart (options, callback) {
 		}
 		
 		
+		/**
+		 * Position the checkboxes after the width is determined
+		 */ 
+		function positionCheckboxes() {
+			each(allItems, function(item) {
+				var checkbox = item.checkbox;
+				if (checkbox) {
+					css(checkbox, {
+						left: (legendGroup.attr('translateX') + item.legendItemWidth + checkbox.x - 40) +PX,
+						top: (legendGroup.attr('translateY') + checkbox.y - 11) + PX 
+					});
+				}
+			});
+		}
 		
 		/**
 		 * Render a single specific legend item
@@ -6453,21 +6583,17 @@ function Chart (options, callback) {
 				height: legendHeight
 			}), true);
 			
-			// Position the checkboxes after the width is determined 
-			each(allItems, function(item) {
-				var checkbox = item.checkbox;
-				if (checkbox) {
-					css(checkbox, {
-						left: (legendGroup.attr('translateX') + item.legendItemWidth + checkbox.x - 40) +PX,
-						top: (legendGroup.attr('translateY') + checkbox.y - 11) + PX 
-					});
-				}
-			});
-			
+			if (!isResizing) {
+				positionCheckboxes();
+			}
 		}
+		
 		
 		// run legend
 		renderLegend();
+		
+		// move checkboxes
+		addEvent(chart, 'endResize', positionCheckboxes);
 		
 		// expose 
 		return {
@@ -7082,7 +7208,7 @@ function Chart (options, callback) {
 				height = renderTo.offsetHeight;
 				
 			if (width != containerWidth || height != containerHeight) {
-				if (defined(width)) {
+				if (defined(width) && !isResizing) {
 					resize(width, height, false);
 				}
 				
@@ -7100,7 +7226,7 @@ function Chart (options, callback) {
 	 */
 	function resize(width, height, animation) {
 		
-		isResizing = true;
+		isResizing += 1;
 		
 		// set the animation for the current process
 		globalAnimation = pick(animation, optionsChart.animation);
@@ -7135,9 +7261,15 @@ function Chart (options, callback) {
 		
 		redraw();
 		
-		isResizing = false;
-		
 		fireEvent(chart, 'resize');
+		
+		// fire endResize and set isResizing back 
+		setTimeout(function() {
+			fireEvent(chart, 'endResize', null, function() {
+				isResizing -= 1;
+			});
+		}, globalAnimation && globalAnimation.duration || 500);
+		
 	}
 	/**
 	 * Set the public chart properties. This is done before and after the pre-render
@@ -7494,7 +7626,7 @@ function Chart (options, callback) {
 	//chart.updatePosition = updatePosition;
 	
 	
-	/*	
+	
 	if ($) $(function() {
 		$container = $('#container');
 		var origChartWidth,
@@ -7529,7 +7661,7 @@ function Chart (options, callback) {
 				});
 		}
 	})
-	*/
+	
 	
 	
 	
@@ -7967,7 +8099,12 @@ Series.prototype = {
 	 */
 	cleanData: function() {
 		var series = this,
+			chart = series.chart,
 			data = series.data,
+			//closestPoints,
+			smallestInterval,
+			chartSmallestInterval = chart.smallestInterval,
+			interval,
 			i;
 			
 		// sort the data points
@@ -7985,6 +8122,23 @@ Series.prototype = {
 				
 			}
 		}
+		
+		
+		// find the closes pair of points
+		for (i = data.length - 1; i >= 0; i--) {
+			if (data[i - 1]) {
+				interval = data[i].x - data[i - 1].x;
+				if (smallestInterval === UNDEFINED || interval < smallestInterval) {
+					smallestInterval = interval;
+					//closestPoints = i;	
+				}
+			}
+		}
+		
+		if (chartSmallestInterval === UNDEFINED || smallestInterval < chartSmallestInterval) {
+			chart.smallestInterval = smallestInterval;
+		}
+		//series.closestPoints = closestPoints;
 	},		
 		
 	/**
@@ -9432,9 +9586,9 @@ var ColumnSeries = extendClass(Series, {
 		// and the pointPadding options
 		var options = series.options,
 			data = series.data,
-			closestPoints = series.closestPoints,
+			//closestPoints = series.closestPoints,
 			categoryWidth = mathAbs(
-				data[1] ? data[closestPoints].plotX - data[closestPoints - 1].plotX : 
+				data[1] ? chart.smallestInterval : 
 				chart.plotSizeX / (categories ? categories.length : 1)
 			),
 			groupPadding = categoryWidth * options.groupPadding,
@@ -9456,13 +9610,14 @@ var ColumnSeries = extendClass(Series, {
 		// record the new values
 		each (data, function(point) {
 			var plotY = point.plotY,
-				yBottom = point.yBottom,
+				yBottom = point.yBottom || translatedThreshold,
 				barX = point.plotX + pointXOffset,
-				barY = mathCeil(point.y < threshold ?
+				barY = /*mathCeil(point.y < threshold ?
 					mathMax(yBottom, translatedThreshold):
-					mathMin(plotY, translatedThreshold)), 
+					mathMin(plotY, translatedThreshold)),*/
+					mathCeil(mathMin(plotY, yBottom)), 
 				barW = pointWidth,
-				barH = mathCeil(mathAbs((point.yBottom || translatedThreshold) - plotY)),
+				barH = mathCeil(mathMax(plotY, yBottom) - barY),
 				trackerY;
 			
 			// handle options.minPointLength and tracker for small points
@@ -9473,7 +9628,6 @@ var ColumnSeries = extendClass(Series, {
 				}
 				trackerY = barY - 3;
 			}
-			
 			
 			extend (point, {
 				barX: barX,
@@ -9558,8 +9712,7 @@ var ColumnSeries = extendClass(Series, {
 		each (series.data, function(point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
-			
-			if (!isNaN(point.plotY)) {
+			//if (!isNaN(point.plotY)) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 					
@@ -9591,14 +9744,14 @@ var ColumnSeries = extendClass(Series, {
 						.css(css)
 						.add(chart.trackerGroup);
 				}
-			}
+			//}
 		});				
 	},
 	
-	/**
+	/* *
 	 * Extend the base cleanData method by getting the closest pair of points.
 	 * This is needed for determining the automatic point width.
-	 */
+	 * /
 	cleanData: function() {
 		var series = this,
 			data = series.data,
@@ -9610,18 +9763,7 @@ var ColumnSeries = extendClass(Series, {
 		// apply the parent method
 		Series.prototype.cleanData.apply(series);
 			
-		// find the closes pair of points
-		for (i = data.length - 1; i >= 0; i--) {
-			if (data[i - 1]) {
-				interval = data[i].x - data[i - 1].x;
-				if (smallestInterval === UNDEFINED || interval < smallestInterval) {
-					smallestInterval = interval;
-					closestPoints = i;	
-				}
-			}
-		}
-		series.closestPoints = closestPoints;
-	},
+	}, */
 	
 	/**
 	 * Animate the column heights one by one from zero
