@@ -8210,8 +8210,8 @@ var ColumnSeries = extendClass(Series, {
 		
 		
 		// draw the columns
-		each (series.data, function(point) {			
-			
+		each (series.data, function(point) {
+
 			if (defined(point.plotY)) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
@@ -8248,36 +8248,38 @@ var ColumnSeries = extendClass(Series, {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
 			
-			if (tracker) {// update
-				tracker.attr(shapeArgs);
-				
-			} else {
-				point.tracker = 
-					renderer[point.shapeType](shapeArgs)
-					.attr({
-						isTracker: trackerLabel,
-						fill: TRACKER_FILL,
-						visibility: series.visible ? VISIBLE : HIDDEN,
-						zIndex: 1
-					})
-					.on('mouseover', function(event) {
-						rel = event.relatedTarget || event.fromElement;
-						if (chart.hoverSeries != series && attr(rel, 'isTracker') != trackerLabel) {
-							series.onMouseOver();
-						}
-						point.onMouseOver();
-						
-					})
-					.on('mouseout', function(event) {
-						if (!series.options.stickyTracking) {
-							rel = event.relatedTarget || event.toElement;
-							if (attr(rel, 'isTracker') != trackerLabel) {
-								series.onMouseOut();
+			if (point.y !== null) {
+				if (tracker) {// update
+					tracker.attr(shapeArgs);
+					
+				} else {
+					point.tracker = 
+						renderer[point.shapeType](shapeArgs)
+						.attr({
+							isTracker: trackerLabel,
+							fill: TRACKER_FILL,
+							visibility: series.visible ? VISIBLE : HIDDEN,
+							zIndex: 1
+						})
+						.on('mouseover', function(event) {
+							rel = event.relatedTarget || event.fromElement;
+							if (chart.hoverSeries != series && attr(rel, 'isTracker') != trackerLabel) {
+								series.onMouseOver();
 							}
-						}
-					})
-					.css(css)
-					.add(chart.trackerGroup);
+							point.onMouseOver();
+							
+						})
+						.on('mouseout', function(event) {
+							if (!series.options.stickyTracking) {
+								rel = event.relatedTarget || event.toElement;
+								if (attr(rel, 'isTracker') != trackerLabel) {
+									series.onMouseOut();
+								}
+							}
+						})
+						.css(css)
+						.add(chart.trackerGroup);
+				}
 			}
 		});				
 	},
