@@ -596,8 +596,6 @@ var pathAnim = {
 	}
 };
 
-
-
 /**
  * Set the time methods globally based on the useUTC option. Time method can be either 
  * local time or UTC (default).
@@ -2637,6 +2635,7 @@ var VMLElement = extendClass( SVGElement, {
 			symbolName = this.symbolName,
 			hasSetSymbolSize,
 			shadows = this.shadows,
+			bBox,
 			documentMode = doc.documentMode,
 			skipAttr,
 			ret = this;
@@ -2655,16 +2654,17 @@ var VMLElement = extendClass( SVGElement, {
 				ret = element.strokeweight;
 				
 			} else {
-				ret = pick(
+				ret = this[key];
+				/*ret = pick(
 					this[key], 
 					parseInt(elemStyle[{ 
 						x: 'left', 
 						y: 'top'
 					}[key] || key], 10)
-				);
+				);*/
 				
 				// text correction
-				if (nodeName == 'SPAN') {
+				/*if (nodeName == 'SPAN') {
 					if (key == 'y' && lineHeight) { // subtract lineHeight
 						ret += lineHeight;
 						
@@ -2672,7 +2672,7 @@ var VMLElement = extendClass( SVGElement, {
 						// fix the position according to align
 						ret += element.offsetWidth / { right: 1, center: 2 }[align];
 					}
-				}
+				}*/
 			}
 			
 		// setter
@@ -2763,14 +2763,39 @@ var VMLElement = extendClass( SVGElement, {
 				// x and y 
 				} else if (/^(x|y)$/.test(key)) {
 
+					this[key] = value; // used in getter
 					if (nodeName == 'SPAN') {
-						if (key == 'y' && lineHeight) { // subtract lineHeight
-							value -= lineHeight;
+
+						// Adjust for alignment and rotation.
+						// Test case: http://highcharts.com/tests/?file=text-rotation
+						bBox = bBox || this.getBBox();
 						
-						} else if (key == 'x' && align && align != 'left') {
-							// fix the position according to align
-							value -= this.getBBox().width / { right: 1, center: 2 }[align];
+						var sintheta = this.sintheta || 0,
+							costheta = this.costheta || 1,
+							width = bBox.width,
+							height = bBox.height,
+							nonLeft = align && align != 'left';
+						
+						if (key == 'y') {
+							value += height * mathMin(sintheta, 0)
+								- mathMax(costheta, 0) * lineHeight;
+								
+							if (nonLeft) {
+								value -= height / { right: 1, center: 2 }[align]
+									* sintheta;
+							}
 						}
+						if (key == 'x') {
+							value += width * mathMin(costheta, 0)
+								+ mathMin(sintheta, 0) * lineHeight;
+								
+							if (nonLeft) {
+								value -= width / { right: 1, center: 2 }[align]
+									* costheta;
+							}
+						}
+						
+						
 					}
 					elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 					
@@ -2827,11 +2852,7 @@ var VMLElement = extendClass( SVGElement, {
 				
 				// text for rotated and non-rotated elements
 				else if (key == 'text') {
-					if (this.rotation) {
-						element.getElementsByTagName('textpath')[0].string = value;
-					} else {
-						element.innerHTML = value;
-					}
+					element.innerHTML = value;
 					skipAttr = true;
 				} 
 				
@@ -2925,12 +2946,10 @@ var VMLElement = extendClass( SVGElement, {
 		var element = this.element,
 			bBox,
 			hasOffsetWidth = element.offsetWidth,
-			textpath,
-			rotation = this.rotation,
 			origParentNode = element.parentNode;
 			
 		
-		if (element.tagName == 'line') {
+		/*if (element.tagName == 'line') {
 			hasOffsetWidth = origParentNode = false; // force pull-out
 			textpath = element.getElementsByTagName('textpath')[0];
 			element = createElement('span', {
@@ -2938,7 +2957,7 @@ var VMLElement = extendClass( SVGElement, {
 				}, this.style);
 			
 			//console.log(this.style);
-		}
+		}*/
 		
 		if (!hasOffsetWidth) {
 			doc.body.appendChild(element);
@@ -2960,9 +2979,10 @@ var VMLElement = extendClass( SVGElement, {
 		}
 		
 		// adjust for rotated text
-		if (rotation) {
+		// todo: put rotateBBox code back in SVG getBBox since VML not using it
+		/*if (rotation) {
 			this.rotateBBox(bBox, rotation);
-		}
+		}*/
 		
 
 		return bBox;
@@ -3082,7 +3102,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				width: width + PX,
 				height: height + PX
 			});
-		container.appendChild(boxWrapper.element);	
+		container.appendChild(boxWrapper.element);
 		
 		
 		// generate the containing box
@@ -3091,16 +3111,14 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		
 		// The only way to make IE6 and IE7 print is to use a global namespace. However,
 		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
-		// seems to be to add the xmlns attribute and the behaviour style inline. Except
-		// for rotated text, which I haven't been able to render in IE8 without a namespace.
-		// As a consequence, rotated text doesn't print.  
+		// seems to be to add the xmlns attribute and the behaviour style inline. 
 		if (!doc.namespaces.hcv) {			
 			
 			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
 			
 			// setup default css
 			doc.createStyleSheet().cssText = 
-				'hcv\\:fill, hcv\\:path, hcv\\:textpath, hcv\\:shape, hcv\\:stroke, hcv\\:line '+
+				'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke'+
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 			
 		}	
@@ -3311,47 +3329,48 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		});
 			
 		// create a simple span for the non-rotated text
-		if (!rotation) { 
+		//if (!rotation) { 
 			elemWrapper = this.createElement('span');
 			elem = elemWrapper.element;
 			elem.lineHeight = lineHeight; // used in attr
 			elem.align = align; // internal prop used in attr
-			elemWrapper.attr({
-				x: x,
-				y: y,
-				text: str
-			});
-			
-			css(elem, style);
 			
 		
 		// to achieve rotated text, the ie text is drawn on a vector line that
 		// is extrapolated to the left or right or both depending on the 
 		// alignment of the text
-		} else {
-			
-			var radians = (rotation || 0) * math.PI * 2 / 360, // deg to rad
+		//} else {
+		if (rotation) {	
+			var radians = rotation * math.PI * 2 / 360, // deg to rad
 				costheta = mathCos(radians),
-				sintheta = mathSin(radians),
-				length = 10, // the text is not likely to be longer than this
-				baselineCorrection = lineHeight * 0.3,
-				left = align == 'left',
+				sintheta = mathSin(radians);//,
+				//length = 10, // the text is not likely to be longer than this
+				//baselineCorrection = lineHeight * 0.3;
+				/*left = align == 'left',
 				right = align == 'right',
 				x1 = left ?     x : x - length * costheta,
 				x2 = right ?    x : x + length * costheta,
 				y1 = left ?     y : y - length * sintheta,
-				y2 = right ?    y : y + length * sintheta;
+				y2 = right ?    y : y + length * sintheta*/;
 				
 				
 			// IE seems to always draw the text with v-text-align middle, so we need 
 			// to correct for that by moving the path
-			x1 += baselineCorrection * sintheta;
+			/*x1 += baselineCorrection * sintheta;
 			x2 += baselineCorrection * sintheta;
 			y1 -= baselineCorrection * costheta;
-			y2 -= baselineCorrection * costheta;
+			y2 -= baselineCorrection * costheta;*/
 			
+			css (elem, {
+				filter: ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta, 
+					', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta, 
+					', sizingMethod=\'auto expand\')'].join('')
+			});
+
+			elemWrapper.costheta = costheta;
+			elemWrapper.sintheta = sintheta;
 			// strange painting bug
-			if (mathAbs(x1 - x2) < 0.1) {
+			/*if (mathAbs(x1 - x2) < 0.1) {
 				x1 += 0.1;
 			}
 			if (mathAbs(y1 - y2) < 0.1) {
@@ -3382,9 +3401,18 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 
 			// record for use in getBBox
 			elemWrapper.style = style;
-			elemWrapper.rotation = rotation;
+			elemWrapper.rotation = rotation;*/
 		}
 		
+			
+			css(elem, style);
+			elemWrapper.attr({
+				text: str,
+				x: x,
+				y: y
+			});
+			
+			
 		return elemWrapper;
 	},
 	
@@ -4768,8 +4796,7 @@ function Chart (options, callback) {
 				maxZoom = options.maxZoom || (
 					isXAxis ? 
 						mathMin(chart.smallestInterval * 5, dataMax - dataMin) : 
-						null
-					
+						null					
 				),
 				zoomOffset;
 				
