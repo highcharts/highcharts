@@ -2262,8 +2262,8 @@ SVGRenderer.prototype = {
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc;
 			
-		
 		if (path) {
+		
 			obj = this.path(path);
 			// expando properties for use in animate and attr
 			extend(obj, {
@@ -2279,25 +2279,29 @@ SVGRenderer.prototype = {
 			
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
-			imageSrc = symbol.match(imageRegex)[1];
 			
+			imageSrc = symbol.match(imageRegex)[1];
 			
 			// create the image
 			obj = this.image(imageSrc).attr({
 				visibility: HIDDEN
 			});
+			
 			// create a dummy JavaScript image to get the width and height  
 			createElement('img', {
 				onload: function() {
 					var img = this,
 						size = symbolSizes[img.src] || [img.width, img.height];
 					obj.attr({
-						x: mathRound(x - size[0] / 2) + PX,
-						y: mathRound(y - size[1] / 2) + PX,
+						x: x,
+						y: y,
 						width: size[0],
 						height: size[1],
 						visibility: 'inherit'
-					});
+					}).translate(
+						-mathRound(size[0] / 2),
+						-mathRound(size[1] / 2)
+					);
 				},
 				src: imageSrc
 			});
@@ -2976,8 +2980,8 @@ var VMLElement = extendClass( SVGElement, {
 		// apply translate
 		if (translateX || translateY) {
 			wrapper.css({
-				left: translateX,
-				top: translateY
+				marginLeft: translateX,
+				marginTop: translateY
 			});
 		}
 	},
@@ -3373,14 +3377,18 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} height
 	 */
 	image: function(src, x, y, width, height) {
-		return this.createElement('img')
-			.attr({ src: src })
-			.css({
+		var obj = this.createElement('img')
+			.attr({ src: src });
+			
+		if (arguments.length > 1) {
+			obj.css({
 				left: x,
 				top: y,
 				width: width,
 				height: height
 			});
+		}
+		return obj;
 	},
 	
 	/**
@@ -3414,7 +3422,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	
 
 	
-	/**
+	/* *
 	 * Draw a symbol of a predefined type. Overrides the SVG method only when 
 	 * drawing image symbols.
 	 * 
@@ -3422,7 +3430,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 * @param {Number} radius
-	 */
+	 * /
 	symbol: function(symbol, x, y, radius) {
 		var wrapper,
 			imageRegex = /^url\((.*?)\)$/;
@@ -3446,7 +3454,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		}
 
 		return wrapper;
-	},
+	},*/
 	
 	/**
 	 * Symbol definitions that override the parent SVG renderer's symbols
