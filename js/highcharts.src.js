@@ -42,6 +42,7 @@ var doc = document,
 	garbageBin,
 	defaultOptions,
 	dateFormat, // function
+	globalMouseMove,
 	globalAnimation,
 	
 	
@@ -490,6 +491,16 @@ if (!globalAdapter && win.jQuery) {
 		return r;
 	};
 }
+
+
+/**
+ * Add a global listener for mousemove events
+ */
+addEvent(doc, 'mousemove', function(e) {
+	if (globalMouseMove) {
+		globalMouseMove(e);
+	}
+});
 
 /**
  * Path interpolation algorithm used across adapters
@@ -5692,7 +5703,8 @@ function Chart (options, callback) {
 						
 			// Use native browser event for this one. It's faster, and MooTools
 			// doesn't use clientX and clientY.
-			container.onmousemove = function(e) {
+			var mouseMove = function(e) {
+			//chart.onMouseMove = function(e) {
 				e = normalizeMouseEvent(e);
 				e.returnValue = false;
 				
@@ -5745,6 +5757,24 @@ function Chart (options, callback) {
 				lastWasOutsidePlot = isOutsidePlot;
 				return false;
 			};
+			
+			/*
+			 * When the mouse enters the container, make this chart's mouseMove 
+			 * function handle mousemove.
+			 */
+			container.onmouseover = function() {
+				globalMouseMove = mouseMove;
+			}
+			/*
+			 * When the mouse leaves the container, hide the tracking (tooltip) on 
+			 * the first occurance.
+			 */
+			container.onmouseout = function() {
+				globalMouseMove = function() {
+					resetTracker();
+					globalMouseMove = null;
+				};
+			}
 			
 			container.onmouseup = function(e) {
 				drop();
