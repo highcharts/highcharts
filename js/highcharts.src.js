@@ -5660,6 +5660,7 @@ function Chart (options, callback) {
 			}
 			
 			chart.mouseIsDown = mouseIsDown = hasDragged = false;
+			removeEvent(doc, 'mouseup', drop);
 
 		}
 		
@@ -5679,25 +5680,8 @@ function Chart (options, callback) {
 				chart.mouseIsDown = mouseIsDown = true;
 				mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
-					
 				
-				// make a selection
-				if (hasCartesianSeries && (zoomX || zoomY)) {
-					if (!selectionMarker) {
-						selectionMarker = renderer.rect(
-							plotLeft,
-							plotTop,
-							zoomHor ? 1 : plotWidth,
-							zoomVert ? 1 : plotHeight,
-							0
-						)
-						.attr({
-							fill: 'rgba(69,114,167,0.25)',
-							zIndex: 7
-						})
-						.add();
-					}
-				}
+				addEvent(doc, 'mouseup', drop);
 				
 			};
 						
@@ -5711,30 +5695,76 @@ function Chart (options, callback) {
 				var chartX = e.chartX,
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
+					
+				
+				
+				// cancel on mouse outside
+				if (isOutsidePlot) {
+				
+					if (!lastWasOutsidePlot) {
+						// reset the tracker					
+						resetTracker();	
+					}
+					
+					// drop the selection if any and reset mouseIsDown and hasDragged
+					//drop();
+					if (chartX < plotLeft) {
+						chartX = plotLeft;
+					} else if (chartX > plotLeft + plotWidth) {
+						chartX = plotLeft + plotWidth;
+					}
+					
+					if (chartY < plotTop) {
+						chartY = plotTop;
+					} else if (chartY > plotTop + plotHeight) {
+						chartY = plotTop + plotHeight;
+					}	
+					
+				}	
+					
 				if (mouseIsDown) { // make selection
 					
 					// determine if the mouse has moved more than 10px
-					hasDragged = Math.sqrt(
+					if ((hasDragged = Math.sqrt(
 						Math.pow(mouseDownX - chartX, 2) + 
 						Math.pow(mouseDownY - chartY, 2)
-					) > 10;
+					) > 10)) {
 					
-					
-					// adjust the width of the selection marker
-					if (zoomHor) {
-						var xSize = chartX - mouseDownX;
-						selectionMarker.attr({
-							width: mathAbs(xSize),
-							x: (xSize > 0 ? 0 : xSize) + mouseDownX
-						});
-					}
-					// adjust the height of the selection marker
-					if (zoomVert) {
-						var ySize = chartY - mouseDownY;
-						selectionMarker.attr({
-							height: mathAbs(ySize),
-							y: (ySize > 0 ? 0 : ySize) + mouseDownY
-						});
+						// make a selection
+						if (hasCartesianSeries && (zoomX || zoomY) && 
+								isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop)) {
+							if (!selectionMarker) {
+								selectionMarker = renderer.rect(
+									plotLeft,
+									plotTop,
+									zoomHor ? 1 : plotWidth,
+									zoomVert ? 1 : plotHeight,
+									0
+								)
+								.attr({
+									fill: 'rgba(69,114,167,0.25)',
+									zIndex: 7
+								})
+								.add();
+							}
+						}
+						
+						// adjust the width of the selection marker
+						if (selectionMarker && zoomHor) {
+							var xSize = chartX - mouseDownX;
+							selectionMarker.attr({
+								width: mathAbs(xSize),
+								x: (xSize > 0 ? 0 : xSize) + mouseDownX
+							});
+						}
+						// adjust the height of the selection marker
+						if (selectionMarker && zoomVert) {
+							var ySize = chartY - mouseDownY;
+							selectionMarker.attr({
+								height: mathAbs(ySize),
+								y: (ySize > 0 ? 0 : ySize) + mouseDownY
+							});
+						}
 					}
 					
 					
@@ -5744,15 +5774,6 @@ function Chart (options, callback) {
 					// show the tooltip
 					onmousemove(e);
 				}
-				
-				// cancel on mouse outside
-				if (isOutsidePlot && !lastWasOutsidePlot) {
-					// reset the tracker					
-					resetTracker();
-					
-					// drop the selection if any and reset mouseIsDown and hasDragged
-					drop();
-				}	
 				
 				lastWasOutsidePlot = isOutsidePlot;
 				return false;
@@ -5776,9 +5797,6 @@ function Chart (options, callback) {
 				};
 			}
 			
-			container.onmouseup = function(e) {
-				drop();
-			};
 			
 			
 			
@@ -6352,12 +6370,10 @@ function Chart (options, callback) {
 	 * @param {Number} y Pixel y relative to the coordinateSystem
 	 */
 	isInsidePlot = function(x, y) {
-		var left = 0,
-			top = 0;
-		return x >= left &&
-			x <= left + plotWidth &&
-			y >= top &&
-			y <= top + plotHeight;
+		return x >= 0 &&
+			x <= plotWidth &&
+			y >= 0 &&
+			y <= plotHeight;
 	};
 		
 	/**
