@@ -128,8 +128,8 @@ function extend(a, b) {
  * Shortcut for parseInt
  * @param {Object} s
  */
-function pInt(s) {
-	return parseInt(s, 10);
+function pInt(s, mag) {
+	return parseInt(s, mag || 10);
 }
 
 /**
@@ -1222,12 +1222,16 @@ var Color = function(input) {
 	
 	/**
 	 * Brighten the color
-	 * @param {Object} alpha
+	 * @param {Number} alpha
 	 */
 	function brighten(alpha) {
 		if (isNumber(alpha) && alpha !== 0) {
-			for (var i = 0; i < 3; i++) {
-				rgba[i] += pInt(alpha * 255, 10);
+			var i, fract;
+			for (i = 0; i < 3; i++) {
+				rgba[i] += pInt(alpha * 255);
+				
+				
+				
 				if (rgba[i] < 0) {
 					rgba[i] = 0;
 				}
@@ -3864,7 +3868,7 @@ function Chart (options, callback) {
 					
 				// create the grid line
 				if (gridLineWidth) {
-					gridLinePath = getPlotLinePath(pos, gridLineWidth);
+					gridLinePath = getPlotLinePath(pos + tickmarkOffset, gridLineWidth);
 					
 					if (gridLine === UNDEFINED) {
 						attribs = {
@@ -4631,7 +4635,7 @@ function Chart (options, callback) {
 			}
 			
 			// pad categorised axis to nearest half unit
-			if ((categories || isXAxis && chart.hasColumn) && !secondPass) {
+			if (categories || (isXAxis && chart.hasColumn)) {
 				 min -= tickInterval * 0.5;
 				 max += tickInterval * 0.5;
 			}
@@ -5182,6 +5186,10 @@ function Chart (options, callback) {
 					y: plotTop + 30
 				})
 				.on('click', fn)
+				.on('touchstart', function(e) {
+					e.stopPropagation(); // don't fire the container event
+					fn();
+				})
 				.attr({ zIndex: 20 })
 				.add();
 				buttons[id] = button;
@@ -5292,13 +5300,21 @@ function Chart (options, callback) {
 		 * Hide the tooltip
 		 */
 		function hide() {
-
-			tooltipIsHidden = true;
-			group.hide();
+			if (!tooltipIsHidden) {
+				group.hide();
 			
-			each (crosshairs, function(crosshair) {
-				crosshair.hide();
-			});			
+				each (crosshairs, function(crosshair) {
+					crosshair.hide();
+				});
+			
+				// local hover points for shared tooltip
+				each (series, function(item) {
+					item.hoverPoint && item.hoverPoint.setState();
+				});
+				
+				tooltipIsHidden = true;
+			}
+					
 		}
 		
 		/**
@@ -5405,7 +5421,7 @@ function Chart (options, callback) {
 				// it is too far to the left, adjust it
 				if (boxX < 7) {
 					boxX = 7;
-					boxY -= 20;
+					boxY -= 30;
 				}
 				
 				
@@ -5441,7 +5457,7 @@ function Chart (options, callback) {
 							crosshairs[i] = renderer.path(path)
 								.attr({
 									'stroke-width': crosshairsOptions[i].width || 1,
-									stroke: crosshairsOptions[i].color || '#606060',
+									stroke: crosshairsOptions[i].color || '#C0C0C0',
 									zIndex: 2
 								})
 								.add();
@@ -5484,12 +5500,16 @@ function Chart (options, callback) {
 		 * @param {Object} e The event object in standard browsers
 		 */
 		function normalizeMouseEvent(e) {
+			var ePos;
 			
 			// common IE normalizing
 			e = e || win.event;
 			if (!e.target) {
 				e.target = e.srcElement;
 			}
+			
+			// iOS
+			ePos = e.touches ? e.touches.item(0) : e;
 			
 			// in certain cases, get mouse position
 			if (e.type != 'mousemove' || win.opera) { // only Opera needs position on mouse move, see below
@@ -5501,9 +5521,9 @@ function Chart (options, callback) {
 				e.chartX = e.x;
 				e.chartY = e.y;
 			} else {
-				if (e.layerX === UNDEFINED) { // Opera
-					e.chartX = e.pageX - position.x;
-					e.chartY = e.pageY - position.y;
+				if (ePos.layerX === UNDEFINED) { // Opera and iOS
+					e.chartX = ePos.pageX - position.x;
+					e.chartY = ePos.pageY - position.y;
 				} else {
 					e.chartX = e.layerX;
 					e.chartY = e.layerY;
@@ -5558,7 +5578,7 @@ function Chart (options, callback) {
 			if (options.shared) {
 				points = [];
 				
-				// loop over all series and find the ones with points nearest to the mouse
+				// loop over all series and find the ones with points closest to the mouse
 				i = series.length;
 				for (j = 0; j < i; j++) {
 					if (series[j].visible && series[j].tooltipPoints.length) {
@@ -5576,7 +5596,7 @@ function Chart (options, callback) {
 					}
 				}
 				// refresh the tooltip if necessary
-				if (points.length && points[0].plotX != hoverX) {
+				if (points.length && (points[0].plotX != hoverX)) {
 					tooltip.refresh(points);
 					hoverX = points[0].plotX;
 				}
@@ -5610,13 +5630,16 @@ function Chart (options, callback) {
 			if (hoverPoint) {
 				hoverPoint.onMouseOut();
 			}
+			
 			if (hoverSeries) {
 				hoverSeries.onMouseOut();
 			}
+			
 			if (tooltip) {
 				tooltip.hide();
 			}
 			
+			hoverX = null;
 		}
 		
 		/**
@@ -5669,6 +5692,7 @@ function Chart (options, callback) {
 			
 			chart.mouseIsDown = mouseIsDown = hasDragged = false;
 			removeEvent(doc, 'mouseup', drop);
+			removeEvent(doc, 'touchend', drop);
 
 		}
 		
@@ -5678,33 +5702,44 @@ function Chart (options, callback) {
 		function setDOMEvents () {
 			var lastWasOutsidePlot = true;
 			
+			/*
+			 * Record the starting position of a dragoperation
+			 */
 			container.onmousedown = function(e) {
 				e = normalizeMouseEvent(e);
 				
 				// record the start position
-				if (e.preventDefault) {
-					e.preventDefault();
-				}
+				e.preventDefault && e.preventDefault();
+				
 				chart.mouseIsDown = mouseIsDown = true;
 				mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
 				
 				addEvent(doc, 'mouseup', drop);
-				
+				addEvent(doc, 'touchend', drop);
 			};
 						
-			// Use native browser event for this one. It's faster, and MooTools
-			// doesn't use clientX and clientY.
+			// The mousemove, touchmove and touchstart event handler
 			var mouseMove = function(e) {
-			//chart.onMouseMove = function(e) {
+
+				// let the system handle multitouch operations like two finger scroll
+				// and pinching
+				if (e.touches && e.touches.length > 1) {
+					return;
+				}
+				
+				// normalize
 				e = normalizeMouseEvent(e);
 				e.returnValue = false;
+				
+				
+				// stop touch devices from performing pseudo mouse events
+				e.preventDefault && e.preventDefault();
+				
 				
 				var chartX = e.chartX,
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
-					
-				
 				
 				// cancel on mouse outside
 				if (isOutsidePlot) {
@@ -5730,7 +5765,7 @@ function Chart (options, callback) {
 					
 				}	
 					
-				if (mouseIsDown) { // make selection
+				if (mouseIsDown && e.type != 'touchstart') { // make selection
 					
 					// determine if the mouse has moved more than 10px
 					if ((hasDragged = Math.sqrt(
@@ -5775,9 +5810,6 @@ function Chart (options, callback) {
 						}
 					}
 					
-					
-					
-					
 				} else if (!isOutsidePlot) {
 					// show the tooltip
 					onmousemove(e);
@@ -5789,11 +5821,12 @@ function Chart (options, callback) {
 			
 			/*
 			 * When the mouse enters the container, make this chart's mouseMove 
-			 * function handle mousemove.
+			 * function handle global mousemove.
 			 */
 			container.onmouseover = function() {
 				globalMouseMove = mouseMove;
 			}
+			
 			/*
 			 * When the mouse leaves the container, hide the tracking (tooltip) on 
 			 * the first occurance.
@@ -5806,6 +5839,30 @@ function Chart (options, callback) {
 			}
 			
 			
+			container.ontouchstart = function(e) {
+				// For touch devices, use touchmove to zoom
+				if (zoomX || zoomY) {
+					container.onmousedown(e);
+				}
+				// Show tooltip and prevent the lower mouse pseudo event
+				mouseMove(e);
+			}
+			
+			/*
+			 * Allow dragging the finger over the chart to read the values on touch 
+			 * devices
+			 */
+			container.ontouchmove = mouseMove;
+			
+			/*
+			 * Allow dragging the finger over the chart to read the values on touch 
+			 * devices
+			 */
+			container.ontouchend = function() {
+				if (hasDragged) {
+					resetTracker;
+				}
+			}			
 			
 			
 			// MooTools 1.2.3 doesn't fire this in IE when using addEvent
@@ -7510,7 +7567,7 @@ Point.prototype = {
 		var point = this;
 		point.firePointEvent('mouseOut');
 		
-		point.setState(NORMAL_STATE);
+		point.setState();
 		point.series.chart.hoverPoint = null;
 	},
 	
@@ -7637,6 +7694,7 @@ Point.prototype = {
 			normalDisabled = markerOptions && !markerOptions.enabled,
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
+			stateMarkerGraphic = series.stateMarkerGraphic,
 			chart = series.chart,
 			pointAttr = point.pointAttr;
 			
@@ -7652,39 +7710,38 @@ Point.prototype = {
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
 				// point marker's state options is disabled
-				//(!state && normalDisabled)
 				(state && (stateDisabled || normalDisabled && !markerStateOptions.enabled))
 
 			) {
 			return;
 		}
 		
-		
-		
-		
+		// apply hover styles to the existing point
+		if (point.graphic) {
+			point.graphic.attr(pointAttr[state]);
+		}
 		// if a graphic is not applied to each point in the normal state, create a shared
 		// graphic for the hover state
-		if (state && !point.graphic) {
-			if (!series.stateMarkerGraphic) {
-				series.stateMarkerGraphic = chart.renderer.circle(
-					0, 0, pointAttr[state].r
-				)
-				.attr(pointAttr[state])
-				.add(series.group);
+		else {
+			if (state) {
+				if (!stateMarkerGraphic) {
+					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.circle(
+						0, 0, pointAttr[state].r
+					)
+					.attr(pointAttr[state])
+					.add(series.group);
+				}
+				
+				stateMarkerGraphic.translate(
+					point.plotX, 
+					point.plotY
+				);
 			}
 			
-			series.stateMarkerGraphic.translate(
-				point.plotX, 
-				point.plotY
-			);
-			
-		// else, apply hover styles to the existing point
-		} else if (point.graphic) {
-			point.graphic.attr(pointAttr[state]);
+			stateMarkerGraphic[state ? 'show' : 'hide']();
 		}
 		
 		point.state = state;
-		
 	}
 };
 
@@ -8098,15 +8155,10 @@ Series.prototype = {
 	onMouseOver: function() {
 		var series = this,
 			chart = series.chart,
-			hoverSeries = chart.hoverSeries,
-			stateMarkerGraphic = series.stateMarkerGraphic;
+			hoverSeries = chart.hoverSeries;
 			
 		if (chart.mouseIsDown) {
 			return;
-		}
-		
-		if (stateMarkerGraphic) {
-			stateMarkerGraphic.show();
 		}
 		
 		// set normal state to previous series
@@ -8800,7 +8852,6 @@ Series.prototype = {
 			options = series.options,
 			graph = series.graph,
 			stateOptions = options.states,
-			stateMarkerGraphic = series.stateMarkerGraphic,
 			lineWidth = options.lineWidth;
 
 		state = state || NORMAL_STATE;
@@ -8814,8 +8865,6 @@ Series.prototype = {
 		
 			if (state) {				
 				lineWidth = stateOptions[state].lineWidth || lineWidth;
-			} else if (stateMarkerGraphic) {
-				stateMarkerGraphic.hide();
 			}
 			
 			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML
