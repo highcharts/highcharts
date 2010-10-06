@@ -14,6 +14,7 @@ $seriesTypeOptions = array(
 	'areaspline',	
 	'column',
 	'line',
+	'line - no markers',
 	'pie',
 	'scatter',
 	'spline'
@@ -26,6 +27,7 @@ $libSourceOptions = array(
 	'1.2.5/highcharts.js',
 	'2.0.0/highcharts.js'
 );
+
 
 
 function randomData() {
@@ -122,7 +124,13 @@ function randomData() {
 			<input type="submit" value="Go" />
 			
 		</form>
-		
+<?php 		
+		// special
+if ($seriesType == 'line - no markers') {
+	$seriesType = 'line';
+	$noMarkers = true;
+}
+		?>
 		<div id="result" style="background: green; color: white; margin: 5px 0; padding: 5px"></div>
 		
 		<script type="text/javascript">
@@ -155,6 +163,20 @@ function randomData() {
 						}
 					}
 				},
+				<?php if ($noMarkers): ?>
+				plotOptions: {
+					series: {
+						marker: {
+							enabled: false,
+							states: {
+								hover: {
+									enabled: true
+								}
+							}
+						}
+					}
+				},
+				<?php endif ?>
 				series: [
 				<?php for ($seriesNumber = 0; $seriesNumber < $seriesPerChart; $seriesNumber++) : ?>
 					{
