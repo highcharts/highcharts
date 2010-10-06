@@ -69,7 +69,7 @@ var doc = document,
 	 * Safari: 0.000001
 	 * Opera: 0.00000000001 (unlimited)
 	 */
-	TRACKER_FILL = 'rgba(192,192,192,'+ (hasSVG ? 0.000001 : 0.002) +')', // invisible but clickable
+	TRACKER_FILL = 'rgba(192,192,192,'+ (hasSVG ? 0.5 : 0.002) +')', // invisible but clickable
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
@@ -808,7 +808,7 @@ defaultOptions = {
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
-					lineWidth: 3,
+					//lineWidth: base + 1,
 					marker: {
 						// lineWidth: base + 1,
 						// radius: base + 1
@@ -984,8 +984,8 @@ var defaultXAxisOptions =  {
 	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign } // docs
 	//}],
 	//reversed: false,
-	showFirstLabel: true,
-	showLastLabel: false,
+	// showFirstLabel: true,
+	// showLastLabel: false,
 	startOfWeek: 1, 
 	startOnTick: false,
 	tickColor: '#C0D0E0',
@@ -1145,7 +1145,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	//innerSize: 0,
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
-	size: '90%',
+	size: '75%', // docs
 	slicedOffset: 10,
 	states: {
 		hover: {
@@ -1356,18 +1356,20 @@ dateFormat = function (format, timestamp, capitalize) {
 
 /**
  * Loop up the node tree and add offsetWidth and offsetHeight to get the
- * total page offset for a given element
+ * total page offset for a given element. Used by Opera and iOS on hover and
+ * all browsers on point click.
+ * 
  * @param {Object} el
+ * 
  */
 function getPosition (el) {
-	var p = { x: el.offsetLeft, y: el.offsetTop };
-	while (el.offsetParent)	{
-		el = el.offsetParent;
-		p.x += el.offsetLeft;
-		p.y += el.offsetTop;
+	var p = { left: el.offsetLeft, top: el.offsetTop };
+	while ((el = el.offsetParent))	{
+		p.left += el.offsetLeft;
+		p.top += el.offsetTop;
 		if (el != doc.body && el != doc.documentElement) {
-			p.x -= el.scrollLeft;
-			p.y -= el.scrollTop;
+			p.left -= el.scrollLeft;
+			p.top -= el.scrollTop;
 		}
 	}
 	return p;
@@ -1718,7 +1720,7 @@ SVGElement.prototype = {
 			this.alignOptions = alignOptions;
 			this.alignByTranslate = alignByTranslate;
 			if (!box) { // boxes other than renderer handle this internally
-				this.renderer.alignedObjects.push(this); // todo: event?
+				this.renderer.alignedObjects.push(this);
 			}
 		}
 		
@@ -1726,7 +1728,6 @@ SVGElement.prototype = {
 		
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
-			//renderer = this.renderer,
 			x = (box.x || 0) + (alignOptions.x || 0), // default: left align
 			y = (box.y || 0) + (alignOptions.y || 0), // default: top align
 			attribs = {};
@@ -1760,31 +1761,35 @@ SVGElement.prototype = {
 	 */
 	getBBox: function() {
 		var bBox = this.element.getBBox(),
-			rad,
+			width = bBox.width,
+			height = bBox.height,
 			rotation = this.rotation,
+			rad = rotation * math.PI * 2 / 360,
 			h = bBox.height;
 			
 		// adjust for rotated text
 		if (rotation) {
-			this.rotateBBox(bBox, rotation);
+			try {
+			bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
+			bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
+			} catch(e) { console.log(e.message) }
 		}
 		
 		return bBox;
 	},
 	
-	/**
+	/* *
 	 * Manually compute width and height of rotated text from non-rotated. Shared by SVG and VML
 	 * @param {Object} bBox
 	 * @param {number} rotation
-	 */
+	 * /
 	rotateBBox: function(bBox, rotation) {
 		var rad = rotation * math.PI * 2 / 360, // radians
 			width = bBox.width,
 			height = bBox.height;
 			
-		bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
-		bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
-	},
+		
+	},*/
 	
 	/**
 	 * Show the element
@@ -1957,28 +1962,28 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 */
 	init: function(container, width, height) {
-		var loc = location,
+		var renderer = this,
+			loc = location,
 			boxWrapper;
 			
 		
-		this.Element = SVGElement;
-		this.width = width;
-		this.height = height;
-		boxWrapper = this.createElement('svg')
+		renderer.Element = SVGElement;
+		boxWrapper = renderer.createElement('svg')
 			.attr ({
-				width: width,
-				height: height,
 				xmlns: 'http://www.w3.org/2000/svg',
 				version: '1.1'
 			});
 		container.appendChild(boxWrapper.element);
 		
 		// object properties
-		this.box = boxWrapper.element;
-		this.boxWrapper = boxWrapper;
-		this.alignedObjects = [];
-		this.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
-		this.defs = this.createElement('defs').add();
+		renderer.box = boxWrapper.element;
+		renderer.boxWrapper = boxWrapper;
+		renderer.alignedObjects = [];
+		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
+		renderer.defs = this.createElement('defs').add();
+		
+		renderer.setSize(width, height, false);
+		
 	},
 	
 	
@@ -2182,22 +2187,22 @@ SVGRenderer.prototype = {
 	 * Resize the box and re-align all aligned elements
 	 * @param {Object} width
 	 * @param {Object} height
-	 * 
-	 * @todo: rename to setSize and call it in SVGRenderer.init and VMLRenderer.init
+	 * @param {Boolean} animate
 	 * 
 	 */
-	resizeTo: function(width, height) {
-		var alignedObjects = this.alignedObjects,
+	setSize: function(width, height, animate) {
+		var renderer = this,
+			alignedObjects = renderer.alignedObjects,
 			i = alignedObjects.length,
 			obj;
 		
-		this.width = width;
-		this.height = height;
+		renderer.width = width;
+		renderer.height = height;
 		
-		this.boxWrapper.animate({
+		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
-		});
+		});		
 		
 		while (i--) {
 			alignedObjects[i].align();
@@ -3059,22 +3064,22 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} height
 	 */
 	init: function(container, width, height) {
-		this.Element = VMLElement;
-		this.width = width;
-		this.height = height;
-		this.alignedObjects = [];
+		var renderer = this,
+			boxWrapper;
+
+		renderer.Element = VMLElement;
+		renderer.alignedObjects = [];
 		
-		var boxWrapper = this.createElement(DIV)
-			.attr({
-				width: width + PX,
-				height: height + PX
-			});
+		boxWrapper = renderer.createElement(DIV)
 		container.appendChild(boxWrapper.element);
 		
 		
 		// generate the containing box
-		this.box = boxWrapper.element;
-		this.boxWrapper = boxWrapper;
+		renderer.box = boxWrapper.element;
+		renderer.boxWrapper = boxWrapper;
+		
+		
+		renderer.setSize(width, height, false);
 		
 		// The only way to make IE6 and IE7 print is to use a global namespace. However,
 		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
@@ -3424,42 +3429,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		});		
 	},
 	
-
-	
-	/* *
-	 * Draw a symbol of a predefined type. Overrides the SVG method only when 
-	 * drawing image symbols.
-	 * 
-	 * @param {String} symbol
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} radius
-	 * /
-	symbol: function(symbol, x, y, radius) {
-		var wrapper,
-			imageRegex = /^url\((.*?)\)$/;
-		
-		// image symbols
-		if (imageRegex.test(symbol)) {
-		
-			wrapper = this.createElement('img').attr({
-				onload: function() {
-					var img = this,
-						size = [img.width, img.height];
-					css(img, {
-						left: mathRound(x - size[0] / 2),
-						top: mathRound(y - size[1] / 2)
-					});
-				},
-				src: symbol.match(imageRegex)[1]
-			});
-		} else {
-			wrapper = SVGRenderer.prototype.symbol.apply(this, arguments);
-		}
-
-		return wrapper;
-	},*/
-	
 	/**
 	 * Symbol definitions that override the parent SVG renderer's symbols
 	 * 
@@ -3484,7 +3453,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			}
 								
 			return [
-				'wa', // clockwisearcto
+				'wa', // clockwise arc to
 				x - radius, // left
 				y - radius, // top
 				x + radius, // right
@@ -3495,7 +3464,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				y + radius * sinEnd, // end y
 				
 				
-				'at', // clockwisearcto
+				'at', // anti clockwise arc to
 				x - innerRadius, // left
 				y - innerRadius, // top
 				x + innerRadius, // right
@@ -3662,7 +3631,7 @@ function Chart (options, callback) {
 		legend,
 		legendWidth,
 		legendHeight,
-		position,// = getPosition(container),
+		chartPosition,// = getPosition(container),
 		hasCartesianSeries = optionsChart.showAxes,
 		isResizing = 0,
 		axes = [],
@@ -3788,10 +3757,11 @@ function Chart (options, callback) {
 				var pos = this.pos,
 					labelOptions = options.labels,
 					str,
-					withLabel = !((pos == min && !options.showFirstLabel) ||
-						(pos == max && !options.showLastLabel));
+					withLabel = !((pos == min && !pick(options.showFirstLabel, 1)) ||
+						(pos == max && !pick(options.showLastLabel, 0)));
 
 					label = this.label;
+					
 				
 				// get the string
 				str = labelFormatter.call({
@@ -4584,9 +4554,8 @@ function Chart (options, callback) {
 				var linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo],
 					linkedParentExtremes = linkedParent.getExtremes();
 				min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
-				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);				
+				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);			
 			}
-
 			
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) { 
@@ -4635,7 +4604,7 @@ function Chart (options, callback) {
 			}
 			
 			// pad categorised axis to nearest half unit
-			if (categories || (isXAxis && chart.hasColumn)) {
+			if (!isLinked && (categories || (isXAxis && chart.hasColumn))) {
 				 min -= tickInterval * 0.5;
 				 max += tickInterval * 0.5;
 			}
@@ -4909,9 +4878,10 @@ function Chart (options, callback) {
 				linePath,
 				tickmarkPos,
 				hasRendered = chart.hasRendered,
-				hasData = associatedSeries.length && defined(min) && defined(max); // defined above - todo: check for ticks.length instead?
+				hasData = associatedSeries.length && defined(min) && defined(max); 
+				// defined above - todo: check for ticks.length instead?
 			
-			// update metrics - todo: try to avoid setting these twice, update after getMargins
+			// update metrics
 			axisLength = horiz ? plotWidth : plotHeight;
 			transA = axisLength / ((max - min) || 1);
 			transB = horiz ? plotLeft : marginBottom; // translation addend
@@ -4922,11 +4892,11 @@ function Chart (options, callback) {
 				if (alternateGridColor) {
 					each(tickPositions, function(pos, i) {
 						if (i % 2 === 0 && pos < max) {
-							drawPlotBand(
-								pos, 
-								tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max, 
-								alternateGridColor
-							);
+							plotLinesAndBands.push(new PlotLineOrBand({
+								from: pos,
+								to: tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max,
+								color: alternateGridColor 
+							}));
 						}
 					});
 				}
@@ -5030,7 +5000,6 @@ function Chart (options, callback) {
 				}[axisTitleOptions.align],
 				
 				// the position in the perpendicular direction of the axis
-				// todo: reuse positions calculated in getOffset
 				offAxis = (horiz ? plotTop + plotHeight : plotLeft) +
 					(horiz ? 1 : -1) * // horizontal axis reverses the margin
 					(opposite ? -1 : 1) * // so does opposite axes
@@ -5513,7 +5482,7 @@ function Chart (options, callback) {
 			
 			// in certain cases, get mouse position
 			if (e.type != 'mousemove' || win.opera) { // only Opera needs position on mouse move, see below
-				position = getPosition(container);
+				chartPosition = getPosition(container);
 			}
 
 			// chartX and chartY
@@ -5522,8 +5491,8 @@ function Chart (options, callback) {
 				e.chartY = e.y;
 			} else {
 				if (ePos.layerX === UNDEFINED) { // Opera and iOS
-					e.chartX = ePos.pageX - position.x;
-					e.chartY = ePos.pageY - position.y;
+					e.chartX = ePos.pageX - chartPosition.left;
+					e.chartY = ePos.pageY - chartPosition.top;
 				} else {
 					e.chartX = e.layerX;
 					e.chartY = e.layerY;
@@ -5880,9 +5849,9 @@ function Chart (options, callback) {
 							
 						// add page position info
 						extend(hoverPoint, {
-							pageX: position.x + plotLeft + 
+							pageX: chartPosition.left + plotLeft + 
 								(inverted ? plotWidth - plotY : plotX),
-							pageY: position.y + plotTop + 
+							pageY: chartPosition.top + plotTop + 
 								(inverted ? plotHeight - plotX : plotY)
 						});
 						
@@ -6750,7 +6719,6 @@ function Chart (options, callback) {
 	 * @param titleOptions {Object} New title options
 	 * @param subtitleOptions {Object} New subtitle options
 	 * 
-	 * @todo docs
 	 */
 	function setTitle (titleOptions, subtitleOptions) {
 		
@@ -6796,11 +6764,10 @@ function Chart (options, callback) {
 	function getChartSize() {
 
 		var renderToOffsetHeight = (renderToClone || renderTo).offsetHeight;
-		chartWidth = optionsChart.width || (renderToClone || renderTo).offsetWidth || 600;
-		chartHeight = optionsChart.height || 
+		chart.chartWidth = chartWidth = optionsChart.width || (renderToClone || renderTo).offsetWidth || 600;
+		chart.chartHeight = chartHeight = optionsChart.height || 
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-			(renderToOffsetHeight > plotTop + marginBottom ? renderToOffsetHeight : 0) || 
-			400;
+			(renderToOffsetHeight > 19 ? renderToOffsetHeight : 400);
 	}
 
 	
@@ -6837,7 +6804,7 @@ function Chart (options, callback) {
 		getChartSize();
 		
 		// create the inner container
-		container = createElement(DIV, {
+		chart.container = container = createElement(DIV, {
 				className: 'highcharts-container' + 
 					(optionsChart.className ? ' '+ optionsChart.className : ''),
 				id: containerId
@@ -6855,6 +6822,33 @@ function Chart (options, callback) {
 			optionsChart.renderer == 'SVG' ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight) : 
 				new Renderer(container, chartWidth, chartHeight);
+				
+		// Issue 110 workaround:
+		// In Firefox, if a div is positioned by percentage, its pixel position may land
+		// between pixels. The container itself doesn't display this, but an SVG element
+		// inside this container will be drawn at subpixel precition. In order to draw
+		// sharp lines, this must be compensated for.
+		if (/Gecko/.test(userAgent)) {
+			function subPixelFix() {
+				css(container, { left: 0, top: 0 });
+				var rect = container.getBoundingClientRect();
+				css(container, {
+					left: (-rect.left % 1) + PX,
+					top: (-rect.top % 1) + PX
+				});
+			}
+			
+			// run the fix now
+			subPixelFix();
+			
+			// run it on resize
+			addEvent(win, 'resize', subPixelFix);
+			
+			// remove it on chart destroy
+			addEvent(chart, 'destroy', function() {
+				removeEvent(win, 'resize', subPixelFix);
+			});
+		}
 	}
 	
 	/**
@@ -6864,7 +6858,13 @@ function Chart (options, callback) {
 	 */
 	function getMargins() {
 		var title = chart.title,
-			subtitle = chart.subitle;
+			subtitle = chart.subitle,
+			legendOptions = options.legend,
+			legendMargin = pick(legendOptions.margin, 5),
+			legendX = legendOptions.x,
+			legendY = legendOptions.y,
+			align = legendOptions.align,
+			verticalAlign = legendOptions.verticalAlign;
 
 		resetMargins();
 
@@ -6878,38 +6878,36 @@ function Chart (options, callback) {
 				plotTop = mathMax(plotTop, titleOffset + pick(chartTitleOptions.margin, 15));
 			}
 		}
-			
 		// adjust for legend
-		// todo: shorten
-		if (options.legend.enabled && !options.legend.floating) {
-			if (options.legend.align == 'right') { // horizontal alignment handled first
+		if (legendOptions.enabled && !legendOptions.floating) {
+			if (align == 'right') { // horizontal alignment handled first
 				if (!defined(optionsMarginRight)) {
 					marginRight = mathMax(
 						marginRight,
-						legendWidth - options.legend.x + pick(options.legend.margin, 5)
+						legendWidth - legendX + legendMargin
 					);
 				}
-			} else if (options.legend.align == 'left') {
+			} else if (align == 'left') {
 				if (!defined(optionsMarginLeft)) {
 					plotLeft = mathMax(
 						plotLeft,
-						legendWidth + options.legend.x + pick(options.legend.margin, 5)
+						legendWidth + legendX + legendMargin
 					);
 				}
 				
-			} else if (options.legend.verticalAlign == 'top') {
+			} else if (verticalAlign == 'top') {
 				if (!defined(optionsMarginTop)) {
 					plotTop = mathMax(
 						plotTop, 
-						legendHeight + options.legend.y + pick(options.legend.margin, 5)
+						legendHeight + legendY + legendMargin
 					);
 				}
 			
-			} else if (options.legend.verticalAlign == 'bottom') {
+			} else if (verticalAlign == 'bottom') {
 				if (!defined(optionsMarginBottom)) {
 					marginBottom = mathMax(
 						marginBottom, 
-						legendHeight - options.legend.y + pick(options.legend.margin, 5)
+						legendHeight - legendY + legendMargin
 					);
 				}
 			}
@@ -6942,10 +6940,9 @@ function Chart (options, callback) {
 	/**
 	 * Add the event handlers necessary for auto resizing
 	 * 
-	 * @todo: use one single resize event per page, that resizes all charts in a stack
 	 */
 	function setUpResize() {
-		addEvent(window, 'resize', function() {
+		function reflow() {
 			
 			var width = renderTo.offsetWidth,
 				height = renderTo.offsetHeight;
@@ -6958,6 +6955,10 @@ function Chart (options, callback) {
 				containerWidth = width;
 				containerHeight = height;				
 			}
+		}
+		addEvent(window, 'resize', reflow);
+		addEvent(chart, 'destroy', function() {
+			removeEvent(window, 'resize', reflow);
 		});
 	}
 	
@@ -6978,7 +6979,7 @@ function Chart (options, callback) {
 		chartWidth = mathRound(width);
 		chartHeight = mathRound(height);
 		
-		renderer.resizeTo(chartWidth, chartHeight);
+		renderer.setSize(chartWidth, chartHeight);
 		
 		// update axis lengths for more correct tick intervals:
 		plotWidth = chartWidth - plotLeft - marginRight; 
@@ -7198,6 +7199,10 @@ function Chart (options, callback) {
 		}
 		
 		// Credits
+		
+		// beta mark
+		credits.enabled = true;
+		credits.text = 'Highcharts v2.1 Beta';
 		if (credits.enabled && !chart.credits) {
 			renderer.text(
 				credits.text,
@@ -7233,6 +7238,9 @@ function Chart (options, callback) {
 	 */
 	function destroy() {
 		var i = series.length;
+		
+		// fire the chart.destoy event
+		fireEvent(chart, 'destroy');
 
 		// remove events
 		removeEvent(win, 'unload', destroy);
@@ -8836,8 +8844,6 @@ Series.prototype = {
 			translateX: chart.plotLeft, 
 			translateY: chart.plotTop
 		});
-		/* Todo: redo group and tracker inversion on resize
-		*/
 		
 		series.translate();
 		series.setTooltipPoints(true);
@@ -8863,8 +8869,8 @@ Series.prototype = {
 				return;
 			}
 		
-			if (state) {				
-				lineWidth = stateOptions[state].lineWidth || lineWidth;
+			if (state) {
+				lineWidth = stateOptions[state].lineWidth || lineWidth + 1;
 			}
 			
 			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML
@@ -9005,13 +9011,15 @@ Series.prototype = {
 		
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
-		i = trackerPathLength + 1;
-		while (i--) {
-			if (trackerPath[i] == M) { // extend left side
-				trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
-			}
-			if ((i && trackerPath[i] == M) || i == trackerPathLength) { // extend right side
-				trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+		if (trackerPathLength) {
+			i = trackerPathLength + 1;
+			while (i--) {
+				if (trackerPath[i] == M) { // extend left side
+					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
+				}
+				if ((i && trackerPath[i] == M) || i == trackerPathLength) { // extend right side
+					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+				}
 			}
 		}
 		
