@@ -631,7 +631,7 @@ HC.Chart = function(options, callback) {
 	return new Chart(options, function(chart) {
 		var n,
 			exportingOptions = chart.options.exporting,
-			buttons = exportingOptions.buttons;		
+			buttons = exportingOptions.buttons;
 		
 		// add buttons
 		if (exportingOptions.enabled !== false) {	
