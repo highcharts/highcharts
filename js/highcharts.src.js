@@ -26,7 +26,9 @@ var doc = document,
 	mathMin = math.min,
 	mathAbs = math.abs,
 	mathCos = math.cos,
-	mathSin = math.sin,	
+	mathSin = math.sin,
+	mathPI = math.PI,
+	deg2rad = mathPI * 2 / 360,
 	
 	
 	// some variables
@@ -69,7 +71,7 @@ var doc = document,
 	 * Safari: 0.000001
 	 * Opera: 0.00000000001 (unlimited)
 	 */
-	TRACKER_FILL = 'rgba(192,192,192,'+ (hasSVG ? 0.5 : 0.002) +')', // invisible but clickable
+	TRACKER_FILL = 'rgba(192,192,192,'+ (hasSVG ? 0.000001 : 0.002) +')', // invisible but clickable
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
@@ -496,11 +498,11 @@ if (!globalAdapter && win.jQuery) {
 /**
  * Add a global listener for mousemove events
  */
-addEvent(doc, 'mousemove', function(e) {
+/*addEvent(doc, 'mousemove', function(e) {
 	if (globalMouseMove) {
 		globalMouseMove(e);
 	}
-});
+});*/
 
 /**
  * Path interpolation algorithm used across adapters
@@ -1764,7 +1766,7 @@ SVGElement.prototype = {
 			width = bBox.width,
 			height = bBox.height,
 			rotation = this.rotation,
-			rad = rotation * math.PI * 2 / 360,
+			rad = rotation * deg2rad,
 			h = bBox.height;
 			
 		// adjust for rotated text
@@ -2365,15 +2367,14 @@ SVGRenderer.prototype = {
 			];
 		},
 		'arc': function (x, y, radius, options) {
-			var pi = Math.PI,
-				start = options.start,
+			var start = options.start,
 				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
 				innerRadius = options.innerR,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
-				longArc = options.end - start < pi ? 0 : 1;
+				longArc = options.end - start < mathPI ? 0 : 1;
 				
 			return [
 				M,
@@ -3203,7 +3204,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			angle = 90  - math.atan(
 				(linearGradient[3] - linearGradient[1]) / // y vector
 				(linearGradient[2] - linearGradient[0]) // x vector
-				) * 180 / math.PI;
+				) * 180 / mathPI;
 			
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
@@ -3307,7 +3308,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		
 		// apply rotation
 		if (rotation) {	
-			var radians = rotation * math.PI * 2 / 360, // deg to rad
+			var radians = rotation * deg2rad, // deg to rad
 				costheta = mathCos(radians),
 				sintheta = mathSin(radians);
 			
@@ -3447,7 +3448,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			if (end - start === 0) { // no angle, don't show it. 
 				return ['x'];
 				
-			} else if (end - start == 2 * math.PI) { // full circle
+			} else if (end - start == 2 * mathPI) { // full circle
 				// empirical correction found by trying out the limits for different radii
 				cosEnd = -0.07 / radius;
 			}
@@ -4789,6 +4790,7 @@ function Chart (options, callback) {
 				titleMargin = 0,
 				axisTitleOptions = options.title,
 				labelOptions = options.labels,
+				rotation = labelOptions.rotation || 0,
 				directionFactor = [-1, 1, 1, -1][side];
 			
 			if (!axisGroup) {
@@ -4815,7 +4817,9 @@ function Chart (options, callback) {
 						
 						// get the highest offset
 						labelOffset = mathMax(
-							ticks[pos].getLabelSize(),
+							ticks[pos].getLabelSize() +
+								// on bottom axis, adjust for the line height when rotating labels
+								(side == 2 ? 16 * mathSin(rotation * deg2rad) : 0),
 							labelOffset
 						);
 					}
@@ -5693,7 +5697,7 @@ function Chart (options, callback) {
 
 				// let the system handle multitouch operations like two finger scroll
 				// and pinching
-				if (e.touches && e.touches.length > 1) {
+				if (e && e.touches && e.touches.length > 1) {
 					return;
 				}
 				
@@ -5789,23 +5793,14 @@ function Chart (options, callback) {
 			};
 			
 			/*
-			 * When the mouse enters the container, make this chart's mouseMove 
-			 * function handle global mousemove.
+			 * When the mouse enters the container, run mouseMove
 			 */
-			container.onmouseover = function() {
-				globalMouseMove = mouseMove;
-			}
+			container.onmousemove = mouseMove;
 			
 			/*
-			 * When the mouse leaves the container, hide the tracking (tooltip) on 
-			 * the first occurance.
+			 * When the mouse leaves the container, hide the tracking (tooltip).
 			 */
-			container.onmouseout = function() {
-				globalMouseMove = function() {
-					resetTracker();
-					globalMouseMove = null;
-				};
-			}
+			addEvent(container, 'mouseleave', resetTracker);
 			
 			
 			container.ontouchstart = function(e) {
@@ -9649,7 +9644,7 @@ var PieSeries = extendClass(Series, {
 		each (data, function(point) {
 			var graphic = point.graphic,
 				args = point.shapeArgs,
-				up = -math.PI / 2;
+				up = -mathPI / 2;
 			
 			if (graphic) {
 				// start values
@@ -9690,7 +9685,7 @@ var PieSeries = extendClass(Series, {
 			end,
 			angle,
 			data = series.data,
-			circ = 2 * math.PI,
+			circ = 2 * mathPI,
 			fraction,
 			smallestSize = mathMin(plotWidth, plotHeight),
 			isPercent,
@@ -9904,9 +9899,9 @@ var PieSeries = extendClass(Series, {
 				quarter;
 			if (angle < 0) {
 				quarter = 0;
-			} else if (angle < math.PI / 2) {
+			} else if (angle < mathPI / 2) {
 				quarter = 1;
-			} else if (angle < math.PI) {
+			} else if (angle < mathPI) {
 				quarter = 2;
 			} else {
 				quarter = 3;
