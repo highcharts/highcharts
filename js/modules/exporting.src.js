@@ -390,6 +390,7 @@ extend (Chart.prototype, {
 			menuItemStyle = navOptions.menuItemStyle,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
+			exportMenuHeight,
 			cacheName = 'cache-'+ name,
 			menu = chart[cacheName],
 			menuPadding = mathMax(width, height), // for mouse leave detection
@@ -456,7 +457,8 @@ extend (Chart.prototype, {
 			menuStyle.left = (x - menuPadding) + PX;
 		}
 		// if outside bottom, bottom align it
-		if (y + height + chart.exportMenuHeight > chartHeight) {
+		exportMenuHeight = chart.exportMenuHeight;
+		if (y + height + exportMenuHeight > chartHeight && exportMenuHeight < y) {
 			menuStyle.bottom = (chartHeight - y - menuPadding)  + PX;
 		} else {
 			menuStyle.top = (y + height - menuPadding) + PX;
