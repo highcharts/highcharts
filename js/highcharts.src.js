@@ -14,7 +14,6 @@
 /*global document, window, navigator, setInterval, clearInterval, location, jQuery, $, $each, $merge, Events, Event, Fx, Request */
 	
 (function() {
-
 // encapsulated variables
 var doc = document,
 	win = window,
@@ -707,7 +706,7 @@ defaultOptions = {
 	},
 	chart: {
 		//alignTicks: false,
-		//autoResize: true, // docs
+		//reflow: true, // docs
 		//className: null,
 		//events: { load, selection },
 		//margin: [null], // docs
@@ -2634,7 +2633,7 @@ var VMLElement = extendClass( SVGElement, {
 		var key, 
 			value, 
 			i, 
-			element = this.element,
+			element = this.element || {},
 			elemStyle = element.style,
 			nodeName = element.nodeName,
 			lineHeight = element.lineHeight,
@@ -2740,12 +2739,14 @@ var VMLElement = extendClass( SVGElement, {
 				// width and height
 				} else if (/^(width|height)$/.test(key)) {
 					
-					// normal
-					elemStyle[key] = value;
 										
 					// clipping rectangle special
 					if (this.updateClipping) {
 						this.updateClipping();
+						
+					} else {
+						// normal
+						elemStyle[key] = value;
 					}
 					
 					skipAttr = true;
@@ -3114,26 +3115,26 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
-			element: {
-				style: {
+			/*element: {
+				style: {*/
 					left: x,
 					top: y,
 					width: width,
 					height: height
-				}
-			},
+				/*}
+			}*/,
 			getCSS: function(inverted) {
-				var elemStyle = clipRect.element.style,
-					top = elemStyle.top,
-					left = elemStyle.left,
-					right = left + elemStyle.width,
-					bottom = top + elemStyle.height,
+				var rect = this,//clipRect.element.style,
+					top = rect.top,
+					left = rect.left,
+					right = left + rect.width,
+					bottom = top + rect.height,
 					ret = {
 						clip: 'rect('+ 
-							(inverted ? left : top) + 'px,'+ 
-							(inverted ? bottom : right) + 'px,'+ 
-							(inverted ? right : bottom) + 'px,'+ 
-							(inverted ? top : left) +'px)'
+							mathRound(inverted ? left : top) + 'px,'+ 
+							mathRound(inverted ? bottom : right) + 'px,'+ 
+							mathRound(inverted ? right : bottom) + 'px,'+ 
+							mathRound(inverted ? top : left) +'px)'
 					};
 					
 				// issue 74 workaround
@@ -3704,6 +3705,7 @@ function Chart (options, callback) {
 			tickPositions, // array containing predefined positions
 			ticks = {},
 			minorTicks = {},
+			alternateBands = {},
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
@@ -3799,7 +3801,7 @@ function Chart (options, callback) {
 			getLabelSize: function() {
 				var label = this.label;
 				return label ? 
-					label.getBBox()[horiz ? 'height' : 'width'] :
+					((this.labelBBox = label.getBBox()))[horiz ? 'height' : 'width'] :
 					0;
 			},
 			/**
@@ -3939,10 +3941,12 @@ function Chart (options, callback) {
 		 */
 		function PlotLineOrBand(options) {
 			var plotLine = this;
-			plotLine.options = options;
-			plotLine.id = options.id;
+			if (options) {
+				plotLine.options = options;
+				plotLine.id = options.id;
+			}
 			
-			plotLine.render()
+			//plotLine.render()
 			return plotLine;
 		}
 		
@@ -3993,7 +3997,6 @@ function Chart (options, callback) {
 			
 				toPath = getPlotLinePath(to);
 				path = getPlotLinePath(from);
-				
 				if (path && toPath) {
 					path.push(
 						toPath[4],
@@ -4066,22 +4069,30 @@ function Chart (options, callback) {
 				ys = [path[2], path[5], path[7] || path[2]];
 				x = mathMin.apply(math, xs);
 				y = mathMin.apply(math, ys);
+				
 				label.align(optionsLabel, false, {
 					x: x,
 					y: y,
 					width: mathMax.apply(math, xs) - x,
-					height: mathMax.apply(math, ys) - y 
-				});		
+					height: mathMax.apply(math, ys) - y
+				});
+				label.show();
+				
+			} else if (label) { // move out of sight
+				label.hide();
 			}
+			
+			// chainable
+			return plotLine;
 		},
 		
 		/**
 		 * Remove the plot line or band
 		 */
-		remove: function() {
+		destroy: function() {
 			var obj = this,
 				n;
-			
+				
 			for (n in obj) {
 				obj[n] && obj[n].destroy && obj[n].destroy(); // destroy SVG wrappers
 				delete obj[n];
@@ -4284,7 +4295,11 @@ function Chart (options, callback) {
 				
 			x1 = x2 = mathRound(translatedValue + transB);
 			y1 = y2 = mathRound(chartHeight - translatedValue - transB);
-			if (horiz) { 
+			
+			if (isNaN(translatedValue)) { // no min or max
+				skip = true;
+			
+			} else if (horiz) { 
 				y1 = plotTop;
 				y2 = chartHeight - marginBottom;
 				if (x1 < plotLeft || x1 > plotLeft + plotWidth) {
@@ -4775,7 +4790,7 @@ function Chart (options, callback) {
 		 * @param options {Object} The plotBand or plotLine configuration object
 		 */
 		function addPlotBandOrLine(options) {
-			var obj = new PlotLineOrBand(options);
+			var obj = new PlotLineOrBand(options).render();
 			plotLinesAndBands.push(obj);
 			return obj;
 		}
@@ -4896,11 +4911,22 @@ function Chart (options, callback) {
 				if (alternateGridColor) {
 					each(tickPositions, function(pos, i) {
 						if (i % 2 === 0 && pos < max) {
-							plotLinesAndBands.push(new PlotLineOrBand({
+							/*plotLinesAndBands.push(new PlotLineOrBand({
 								from: pos,
 								to: tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max,
 								color: alternateGridColor 
-							}));
+							}));*/
+							
+							if (!alternateBands[pos]) {
+								alternateBands[pos] = new PlotLineOrBand();
+							}
+							alternateBands[pos].options = {
+								from: pos,
+								to: tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max,
+								color: alternateGridColor 
+							};
+							alternateBands[pos].render();
+							alternateBands[pos].isActive = true;
 						}
 					});
 				}
@@ -4908,7 +4934,7 @@ function Chart (options, callback) {
 				// custom plot bands (behind grid lines)
 				if (!hasRendered) { // only first time
 					each (options.plotBands || [], function(plotBandOptions) {
-						plotLinesAndBands.push(new PlotLineOrBand(plotBandOptions));
+						plotLinesAndBands.push(new PlotLineOrBand(plotBandOptions).render());
 					});
 				}
 				
@@ -4931,7 +4957,7 @@ function Chart (options, callback) {
 				});
 				
 				// remove inactive ticks
-				each([ticks, minorTicks], function(coll) {
+				each([ticks, minorTicks, alternateBands], function(coll) {
 					for (var pos in coll) {
 						if (!coll[pos].isActive) {
 							coll[pos].destroy();
@@ -4946,7 +4972,7 @@ function Chart (options, callback) {
 				// custom plot lines (in front of grid lines)
 				if (!hasRendered) { // only first time
 					each (options.plotLines || [], function(plotLineOptions) {
-						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions));
+						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					});
 				}
 				
@@ -5033,7 +5059,7 @@ function Chart (options, callback) {
 		function removePlotBandOrLine(id) {
 			for (var i = 0; i < plotLinesAndBands.length; i++) {
 				if (plotLinesAndBands[i].id == id) {
-					plotLinesAndBands[i].remove();
+					plotLinesAndBands[i].destroy();
 				}
 			}
 		}
@@ -6640,7 +6666,7 @@ function Chart (options, callback) {
 			return axis;
 		});
 		
-		adjustTickAmounts();	
+		adjustTickAmounts();
 	}
 
 	
@@ -7134,11 +7160,11 @@ function Chart (options, callback) {
 		
 		// Get margins by pre-rendering axes
 		getMargins();
-		//adjustTickAmounts();
 		each(axes, function(axis) {
 			axis.setTickPositions(true); // update to reflect the new margins 
 		});
 		getMargins(); // second pass to check for new labels
+		//adjustTickAmounts();
 		
 		
 		// Draw the borders and backgrounds
@@ -7324,7 +7350,7 @@ function Chart (options, callback) {
 	addEvent(win, 'unload', destroy);
 	
 	// Set up auto resize
-	if (optionsChart.autoResize !== false) {
+	if (optionsChart.reflow !== false) {
 		setUpResize();
 	}
 	
@@ -8752,7 +8778,7 @@ Series.prototype = {
 		if (!series.clipRect) {
 			series.clipRect = !chart.hasRendered && chart.clipRect ?
 				chart.clipRect : 
-			renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
+				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
 			if (!chart.clipRect) {
 				chart.clipRect = series.clipRect;
 			}
