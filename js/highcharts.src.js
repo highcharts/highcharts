@@ -4641,6 +4641,21 @@ function Chart (options, callback) {
 				tickPositions.pop();
 			}
 			
+			
+			// record the greatest number of ticks for multi axis
+			if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
+				maxTicks = {
+					x: 0,
+					y: 0
+				};
+			}
+			
+			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY]) {
+				maxTicks[xOrY] = tickPositions.length;
+			}
+				
+			
+			
 		}
 		
 		/**
@@ -4663,6 +4678,7 @@ function Chart (options, callback) {
 					}
 					transA *= (calculatedTickAmount - 1) / (tickAmount - 1);
 					max = tickPositions[tickPositions.length - 1];
+				
 				}
 				if (defined(oldTickAmount) && tickAmount != oldTickAmount) {
 					axis.isDirty = true;	
@@ -4690,18 +4706,6 @@ function Chart (options, callback) {
 			// the translation factor used in translate function
 			transA = axisLength / ((max - min) || 1);
 							
-			// record the greatest number of ticks for multi axis
-			if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
-				maxTicks = {
-					x: 0,
-					y: 0
-				};
-			}
-			
-			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY]) {
-				maxTicks[xOrY] = tickPositions.length;
-			}
-				
 			// reset stacks
 			if (!isXAxis) {
 				for (type in stacks) {
@@ -4818,9 +4822,9 @@ function Chart (options, callback) {
 			}
 			
 			labelOffset = 0; // reset
+			
 			if (hasData || isLinked) {
 				each(tickPositions, function(pos) {
-					
 					if (!ticks[pos]) {
 						ticks[pos] = new Tick(pos);
 					} else {
@@ -6440,6 +6444,7 @@ function Chart (options, callback) {
 				axis.adjustTickAmount();
 			});
 		}
+		maxTicks = null;
 	}
 
 	/**
@@ -7163,8 +7168,8 @@ function Chart (options, callback) {
 		each(axes, function(axis) {
 			axis.setTickPositions(true); // update to reflect the new margins 
 		});
+		adjustTickAmounts();
 		getMargins(); // second pass to check for new labels
-		//adjustTickAmounts();
 		
 		
 		// Draw the borders and backgrounds
@@ -7384,7 +7389,7 @@ function Chart (options, callback) {
 	chart.showLoading = showLoading;	
 	
 	
-	
+	/*
 	if ($) $(function() {
 		$container = $('#container');
 		var origChartWidth,
@@ -7419,7 +7424,7 @@ function Chart (options, callback) {
 				});
 		}
 	})
-	
+	*/
 	
 	
 	
