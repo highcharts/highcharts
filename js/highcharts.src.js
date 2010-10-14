@@ -1861,7 +1861,7 @@ SVGElement.prototype = {
 	 */
 	destroy: function() {
 		var wrapper = this,
-			element = wrapper.element,
+			element = wrapper.element || {},
 			shadows = wrapper.shadows,
 			parentNode = element.parentNode,
 			key;
@@ -5902,6 +5902,7 @@ function Chart (options, callback) {
 				// reset mouseIsDown and hasDragged
 				hasDragged = false;
 			};
+			
 		}
 		
 		/**
@@ -7282,7 +7283,7 @@ function Chart (options, callback) {
 		}
 		
 		// remove container and all SVG
-		container.onmousedown = container.onmousemove = container.onmouseup = container.onclick = null;
+		removeEvent(container);
 		container.parentNode.removeChild(container);
 		
 		// IE6 leak 
