@@ -6126,6 +6126,7 @@ function Chart (options, callback) {
 		}
 		
 		// remove container and all SVG
+		container.innerHTML = '';
 		container.onmousedown = container.onmousemove = container.onmouseup = container.onclick = null;
 		container.parentNode.removeChild(container);
 		
