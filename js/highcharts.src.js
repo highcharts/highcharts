@@ -6481,7 +6481,7 @@ function Chart (options, callback) {
 				}
 			}
 		}
-			
+		
 		// handle updated data in the series		
 		each (series, function(serie) {
 			if (serie.isDirty) { // prepare the data so axis can read it
@@ -6790,11 +6790,12 @@ function Chart (options, callback) {
 	 */
 	function getChartSize() {
 
-		var renderToOffsetHeight = (renderToClone || renderTo).offsetHeight;
-		chart.chartWidth = chartWidth = optionsChart.width || (renderToClone || renderTo).offsetWidth || 600;
+		containerWidth = (renderToClone || renderTo).offsetWidth;
+		containerHeight = (renderToClone || renderTo).offsetHeight;
+		chart.chartWidth = chartWidth = optionsChart.width || containerWidth || 600;
 		chart.chartHeight = chartHeight = optionsChart.height || 
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-			(renderToOffsetHeight > 19 ? renderToOffsetHeight : 400);
+			(containerHeight > 19 ? containerHeight : 400);
 	}
 
 	
@@ -6970,7 +6971,6 @@ function Chart (options, callback) {
 	 */
 	function setUpResize() {
 		function reflow() {
-			
 			var width = renderTo.offsetWidth,
 				height = renderTo.offsetHeight;
 				
@@ -7283,18 +7283,23 @@ function Chart (options, callback) {
 		}
 		
 		// remove container and all SVG
+		container.innerHTML = '';
 		removeEvent(container);
 		container.parentNode.removeChild(container);
 		
 		// IE6 leak 
 		container =	null;
+		// IE7 leak
+		renderer.alignedObjects = null;
 			
 		// memory and CPU leak
 		clearInterval(tooltipInterval);
 		
+		// clean it all up
 		for (i in chart) {
 			delete chart[i];
 		}
+		
 	}
 	/**
 	 * Prepare for first rendering after all data are loaded
@@ -7357,7 +7362,7 @@ function Chart (options, callback) {
 	
 	// Set up auto resize
 	if (optionsChart.reflow !== false) {
-		setUpResize();
+		addEvent(chart, 'load', setUpResize);
 	}
 	
 	// Chart event handlers
