@@ -680,7 +680,6 @@ defaultLabelOptions = {
 	/*formatter: function() {
 		return this.value;
 	},*/
-	//step: null, // docs
 	style: {
 		color: '#666',
 		fontSize: '11px'
@@ -706,14 +705,14 @@ defaultOptions = {
 	},
 	chart: {
 		//alignTicks: false,
-		//reflow: true, // docs
+		//reflow: true,
 		//className: null,
 		//events: { load, selection },
-		//margin: [null], // docs
-		//marginTop: null, // docs
-		//marginRight: null, // docs
-		//marginBottom: null, // docs
-		//marginLeft: 50,
+		//margin: [null],
+		//marginTop: null,
+		//marginRight: null,
+		//marginBottom: null,
+		//marginLeft: null,
 		borderColor: '#4572A7',
 		//borderWidth: 0,
 		borderRadius: 5,		
@@ -721,10 +720,10 @@ defaultOptions = {
 		ignoreHiddenSeries: true,
 		//inverted: false,
 		//shadow: false,
-		spacingTop: 10, // docs
-		spacingRight: 10, // docs
-		spacingBottom: 15, // docs
-		spacingLeft: 10, // docs
+		spacingTop: 10,
+		spacingRight: 10,
+		spacingBottom: 15,
+		spacingLeft: 10,
 		style: {
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
@@ -739,11 +738,11 @@ defaultOptions = {
 	title: {
 		text: 'Chart title',
 		align: 'center',
-		// floating: false, // docs
-		// margin: 15, // docs: padding for title or subtitle
+		// floating: false,
+		// margin: 15,
 		// x: 0,
-		// verticalAlign: 'top', // docs
-		y: 25, // docs
+		// verticalAlign: 'top',
+		y: 25,
 		style: {
 			color: '#3E576F',
 			fontSize: '16px'
@@ -753,9 +752,9 @@ defaultOptions = {
 	subtitle: {
 		text: '',
 		align: 'center',
-		// floating: false // docs
+		// floating: false
 		// x: 0,
-		// verticalAlign: 'top', // docs
+		// verticalAlign: 'top',
 		y: 40,
 		style: {
 			color: '#6D869F'
@@ -766,9 +765,11 @@ defaultOptions = {
 		line: { // base series options
 			allowPointSelect: false,
 			showCheckbox: false,
-			animation: true, // docs: added duration and easing/transition
+			animation: {
+				duration: 1000
+			},
 			//cursor: 'default',
-			//dashStyle: null, // docs
+			//dashStyle: null,
 			//enableMouseTracking: true,
 			events: {},
 			lineWidth: 2,
@@ -820,7 +821,7 @@ defaultOptions = {
 				}
 			},
 			stickyTracking: true
-			//zIndex: null // docs
+			//zIndex: null
 		}
 	},
 	labels: {
@@ -834,7 +835,7 @@ defaultOptions = {
 	legend: {
 		enabled: true,
 		align: 'center',
-		//floating: false, // docs
+		//floating: false,
 		layout: 'horizontal',
 		labelFormatter: function() {
 			return this.name;
@@ -843,7 +844,7 @@ defaultOptions = {
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
-		// margin: 10, // docs
+		// margin: 10,
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
@@ -893,13 +894,13 @@ defaultOptions = {
 	
 	tooltip: {
 		enabled: true,
-		//crosshairs: null, // docs - Array<Object|Boolean>, width and color options
+		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
 		borderWidth: 2,
 		borderRadius: 5,
-		//formatter: defaultFormatter, // docs: new points property for shared tooltip
+		//formatter: defaultFormatter,
 		shadow: true,
-		//shared: false, // docs
+		//shared: false,
 		snap: 10,
 		style: {
 			color: '#333333',
@@ -920,7 +921,7 @@ defaultOptions = {
 		enabled: true,
 		text: 'Highcharts.com',
 		href: 'http://www.highcharts.com',
-		position: { // docs
+		position: {
 			align: 'right',
 			x: -10,
 			verticalAlign: 'bottom',
@@ -950,11 +951,12 @@ var defaultXAxisOptions =  {
 	},
 	endOnTick: false,
 	gridLineColor: '#C0C0C0',
-	// gridLineDashStyle: 'shortdot', //docs
+	// gridLineDashStyle: 'shortdot',
 	// gridLineWidth: 0,
 	// reversed: false,
 	
 	labels: defaultLabelOptions,
+		// { step: null },
 	lineColor: '#C0D0E0',
 	lineWidth: 1,
 	//linkedTo: null,
@@ -962,9 +964,9 @@ var defaultXAxisOptions =  {
 	min: null,
 	minPadding: 0.01,
 	maxPadding: 0.01,
-	//maxZoom: null, // docs
+	//maxZoom: null,
 	minorGridLineColor: '#E0E0E0',
-	// minorGridLineDashStyle: null, // docs
+	// minorGridLineDashStyle: null,
 	minorGridLineWidth: 1,
 	minorTickColor: '#A0A0A0',
 	//minorTickInterval: null,
@@ -974,15 +976,15 @@ var defaultXAxisOptions =  {
 	//opposite: false,
 	//offset: 0,
 	//plotBands: [{
-	//	events: // docs
-	//	zIndex: // docs
-	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign } // docs
+	//	events: {},
+	//	zIndex: null,
+	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
 	//}],
 	//plotLines: [{
-	//	events: // docs
-	//  dashStyle: // docs
-	//	zIndex: // docs
-	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign } // docs
+	//	events: {}
+	//  dashStyle: {}
+	//	zIndex:
+	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
 	//}],
 	//reversed: false,
 	// showFirstLabel: true,
@@ -999,7 +1001,7 @@ var defaultXAxisOptions =  {
 	title: {
 		//text: null,
 		align: 'middle', // low, middle or high
-		//margin: 0 for horizontal, 10 for vertical axes, // docs
+		//margin: 0 for horizontal, 10 for vertical axes,
 		//rotation: 0,
 		//side: 'outside',
 		style: {
@@ -1059,7 +1061,7 @@ defaultBottomAxisOptions = { // horizontal axis
 		align: 'center',
 		x: 0,
 		y: 14
-		// staggerLines: null // docs: only for horizontal axes
+		// staggerLines: null
 	},
 	title: {
 		rotation: 0
@@ -1068,7 +1070,7 @@ defaultBottomAxisOptions = { // horizontal axis
 defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 	labels: {
 		y: -5
-		// staggerLines: null // docs
+		// staggerLines: null
 	}
 });
 
@@ -1132,12 +1134,12 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	center: ['50%', '50%'],
 	colorByPoint: true, // always true for pies
 	dataLabels: {
-		// align: null, // docs - n/a for pies
-		// connectorWidth: 1, // docs
-		// connectorColor: '#606060', // docs
-		// connectorPadding: 5, // docs
-		distance: 30, // docs
-		enabled: true, //  docs: enabled by default for pies
+		// align: null,
+		// connectorWidth: 1,
+		// connectorColor: '#606060',
+		// connectorPadding: 5,
+		distance: 30,
+		enabled: true,
 		formatter: function() {
 			return this.point.name;
 		},
@@ -1146,7 +1148,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	//innerSize: 0,
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
-	size: '75%', // docs
+	size: '75%',
 	slicedOffset: 10,
 	states: {
 		hover: {
@@ -3596,6 +3598,11 @@ function Chart (options, callback) {
 		optionsMarginRight = pick(optionsChart.marginRight, margin[1]),
 		optionsMarginBottom = pick(optionsChart.marginBottom, margin[2]),
 		optionsMarginLeft = pick(optionsChart.marginLeft, margin[3]),
+		spacingTop = optionsChart.spacingTop,
+		spacingRight = optionsChart.spacingRight,
+		spacingBottom = optionsChart.spacingBottom,
+		spacingLeft = optionsChart.spacingLeft,
+		spacingBox,
 		chartTitleOptions,
 		chartSubtitleOptions,
 		plotTop,
@@ -5262,10 +5269,10 @@ function Chart (options, callback) {
 			
 			// build the header	
 			s = defined(x) ? 
-						['<span style="font-size: 10px">'+
-						(xAxis && xAxis.options.type == 'datetime' ? 
-						dateFormat('%A, %b %e, %Y', x) : x) +
-						'</span>'] : [];
+				['<span style="font-size: 10px">'+
+				(xAxis && xAxis.options.type == 'datetime' ? 
+				dateFormat('%A, %b %e, %Y', x) : x) +
+				'</span>'] : [];
 						
 			// build the values
 			each (points, function(point) {
@@ -5447,6 +5454,7 @@ function Chart (options, callback) {
 				
 				var paths, 
 					i = crosshairsOptions.length,
+					attribs,
 					axis;
 				
 				while (i--) {
@@ -5457,12 +5465,16 @@ function Chart (options, callback) {
 							crosshairs[i].attr({ d: path, visibility: VISIBLE });
 						
 						} else {
+							attribs = {
+								'stroke-width': crosshairsOptions[i].width || 1,
+								stroke: crosshairsOptions[i].color || '#C0C0C0',
+								zIndex: 2
+							};
+							if (crosshairsOptions[i].dashStyle) {
+								attribs.dashstyle = crosshairsOptions[i].dashStyle;
+							}
 							crosshairs[i] = renderer.path(path)
-								.attr({
-									'stroke-width': crosshairsOptions[i].width || 1,
-									stroke: crosshairsOptions[i].color || '#C0C0C0',
-									zIndex: 2
-								})
+								.attr(attribs)
 								.add();
 						}
 					}
@@ -6766,6 +6778,7 @@ function Chart (options, callback) {
 				title.destroy(); // remove old
 				title = null;
 			}
+			
 			if (chartTitleOptions && chartTitleOptions.text && !title) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text, 
@@ -6888,7 +6901,7 @@ function Chart (options, callback) {
 		var title = chart.title,
 			subtitle = chart.subitle,
 			legendOptions = options.legend,
-			legendMargin = pick(legendOptions.margin, 5),
+			legendMargin = pick(legendOptions.margin, 10),
 			legendX = legendOptions.x,
 			legendY = legendOptions.y,
 			align = legendOptions.align,
@@ -6969,7 +6982,7 @@ function Chart (options, callback) {
 	 * Add the event handlers necessary for auto resizing
 	 * 
 	 */
-	function setUpResize() {
+	function initReflow() {
 		function reflow() {
 			var width = renderTo.offsetWidth,
 				height = renderTo.offsetHeight;
@@ -7055,16 +7068,23 @@ function Chart (options, callback) {
 		
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
+		
+		spacingBox = {
+			x: spacingLeft,
+			y: spacingTop,
+			width: chartWidth - spacingLeft - spacingRight,
+			height: chartHeight - spacingTop - spacingBottom
+		};
 	}
 	
 	/**
 	 * Initial margins before auto size margins are applied
 	 */
 	function resetMargins() {
-		plotTop = pick(optionsMarginTop, optionsChart.spacingTop);
-		marginRight = pick(optionsMarginRight, optionsChart.spacingRight);
-		marginBottom = pick(optionsMarginBottom, optionsChart.spacingBottom);
-		plotLeft = pick(optionsMarginLeft, optionsChart.spacingLeft);
+		plotTop = pick(optionsMarginTop, spacingTop);
+		marginRight = pick(optionsMarginRight, spacingRight);
+		marginBottom = pick(optionsMarginBottom, spacingBottom);
+		plotLeft = pick(optionsMarginLeft, spacingLeft);
 		axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 	}
 	
@@ -7362,7 +7382,7 @@ function Chart (options, callback) {
 	
 	// Set up auto resize
 	if (optionsChart.reflow !== false) {
-		addEvent(chart, 'load', setUpResize);
+		addEvent(chart, 'load', initReflow);
 	}
 	
 	// Chart event handlers
@@ -7390,7 +7410,7 @@ function Chart (options, callback) {
 	chart.hideLoading = hideLoading;
 	chart.isInsidePlot = isInsidePlot;
 	chart.redraw = redraw;
-	chart.resize = resize;
+	chart.setSize = resize;
 	chart.setTitle = setTitle;
 	chart.showLoading = showLoading;	
 	
@@ -8283,8 +8303,7 @@ Series.prototype = {
 			}, animation && extend(animation, {
 				complete: function() {
 					clipRect.isAnimating = false;
-				}, 
-				duration: 1000
+				}
 			}));
 			
 			// delete this function to allow it only once
@@ -9901,7 +9920,7 @@ var PieSeries = extendClass(Series, {
 			chart = series.chart,
 			options = series.options.dataLabels,
 			connectorPadding = options.connectorPadding || 10,
-			connectorWidth = options.connectorWidth || 1,
+			connectorWidth = pick(options.connectorWidth, 1),
 			connector,
 			connectorPath,
 			outside = options.distance > 0,
@@ -10021,7 +10040,6 @@ var PieSeries = extendClass(Series, {
 								y: y + options.y							
 							});
 							dataLabel.attr('visibility', visibility);
-							
 							
 							// draw the connector
 							if (outside && connectorWidth) {
