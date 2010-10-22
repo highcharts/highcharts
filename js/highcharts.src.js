@@ -6128,7 +6128,9 @@ function Chart (options, callback) {
 		// remove container and all SVG
 		container.innerHTML = '';
 		container.onmousedown = container.onmousemove = container.onmouseup = container.onclick = null;
-		container.parentNode.removeChild(container);
+		if (container.parentNode) {
+		  container.parentNode.removeChild(container);
+	  }
 		
 		// IE6 leak 
 		container =	null;
