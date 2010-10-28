@@ -4,7 +4,7 @@
 /**
  * @license Highcharts JS v2.1 alpha (merged changes from master 2010-09-28)
  * 
- * (c) 2009-2010 Torstein HÃ¸nsi
+ * (c) 2009-2010 Torstein Hønsi
  * 
  * License: www.highcharts.com/license
  */
@@ -1762,13 +1762,20 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function() {
-		var bBox = this.element.getBBox(),
-			width = bBox.width,
-			height = bBox.height,
+	getBBox: function() {		
+		var	bBox,
+			width,
+			height,
 			rotation = this.rotation,
-			rad = rotation * deg2rad,
-			h = bBox.height;
+			rad = rotation * deg2rad;
+			
+		try { // fails if the container has display: none
+			bBox = this.element.getBBox();
+		} catch(e) {
+			bBox = { width: 0, height: 0 }
+		}
+		width = bBox.width;
+		height = bBox.height;
 			
 		// adjust for rotated text
 		if (rotation) {
@@ -2941,7 +2948,6 @@ var VMLElement = extendClass( SVGElement, {
 			hasOffsetWidth = element.offsetWidth,
 			origParentNode = element.parentNode;
 			
-		
 		if (!hasOffsetWidth) {
 			doc.body.appendChild(element);
 		}
@@ -5590,7 +5596,7 @@ function Chart (options, callback) {
 				index = inverted ? e.chartY : e.chartX - plotLeft // wtf?;
 				
 			// shared tooltip
-			if (options.shared) {
+			if (tooltip && options.shared) {
 				points = [];
 				
 				// loop over all series and find the ones with points closest to the mouse
@@ -7545,10 +7551,14 @@ Point.prototype = {
 	 */
 	destroy: function() {
 		var point = this,
+			series = point.series,
 			prop;
 			
-		if (point == point.series.chart.hoverPoint) {
+		if (point == series.chart.hoverPoint) {
 			point.onMouseOut();
+		}
+		if (point == series.hoverPoint) {
+			series.hoverPoint = null;
 		}
 		
 		// remove all events
