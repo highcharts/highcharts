@@ -7335,8 +7335,7 @@ function Chart (options, callback) {
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
 		var onreadystatechange = 'onreadystatechange';
-		
-		if (!hasSVG && !win.parent && doc.readyState != 'complete') {
+		if (!hasSVG && doc.readyState != 'complete') {
 			doc.attachEvent(onreadystatechange, function() {
 				doc.detachEvent(onreadystatechange, arguments.callee);
 				firstRender();
@@ -9427,7 +9426,7 @@ var ColumnSeries = extendClass(Series, {
 		each (series.data, function(point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
-			//if (!isNaN(point.plotY)) {
+			if (!isNaN(point.plotY)) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 					
@@ -9459,7 +9458,7 @@ var ColumnSeries = extendClass(Series, {
 						.css(css)
 						.add(chart.trackerGroup);
 				}
-			//}
+			}
 		});				
 	},
 	
