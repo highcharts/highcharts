@@ -7002,18 +7002,22 @@ function Chart (options, callback) {
 	 * 
 	 */
 	function initReflow() {
+		var reflowTimeout;
 		function reflow() {
 			var width = renderTo.offsetWidth,
 				height = renderTo.offsetHeight;
 				
 			if (width != containerWidth || height != containerHeight) {
-				if (defined(width) && !isResizing) {
+				/*if (defined(width) && !isResizing) {
 					resize(width, height, false);
-				}
-				
-				containerWidth = width;
-				containerHeight = height;				
+				}*/
+				clearTimeout(reflowTimeout);
+				reflowTimeout = setTimeout(function() {
+					resize(width, height, false);
+				}, 100);
 			}
+			containerWidth = width;
+			containerHeight = height;
 		}
 		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function() {
