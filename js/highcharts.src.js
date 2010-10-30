@@ -1472,8 +1472,10 @@ SVGElement.prototype = {
 							attr(child, 'x', value);
 						}
 					}
+					
 					if (this.rotation) {
-						attr(element, 'transform', 'rotate('+ this.rotation +' '+ value +' '+ (hash.y || attr(element, 'y')) +')');
+						attr(element, 'transform', 'rotate('+ this.rotation +' '+ value +' '+
+							pInt(hash.y || attr(element, 'y')) +')');
 					}
 					
 				// apply gradients
@@ -1769,8 +1771,10 @@ SVGElement.prototype = {
 			rotation = this.rotation,
 			rad = rotation * deg2rad;
 			
-		try { // fails if the container has display: none
-			bBox = this.element.getBBox();
+		try { // fails in Firefox if the container has display: none
+			// use extend because IE9 is not allowed to change width and height in case 
+			// of rotation (below)
+			bBox = extend({}, this.element.getBBox());
 		} catch(e) {
 			bBox = { width: 0, height: 0 }
 		}
@@ -1779,10 +1783,8 @@ SVGElement.prototype = {
 			
 		// adjust for rotated text
 		if (rotation) {
-			try {
 			bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 			bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
-			} catch(e) { console.log(e.message) }
 		}
 		
 		return bBox;
