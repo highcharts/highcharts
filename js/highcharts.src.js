@@ -3264,7 +3264,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		var vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
 			isIE8 = this.isIE8;
 	
-		try { // bug in IE9 Beta 1, quirks mode - check this again with later upgrades
+		try { // bug in IE9 Beta 2, quirks mode - check this again with later upgrades
 			markup = markup.join('');
 		} catch (e) {
 			var s = '', i = 0;
