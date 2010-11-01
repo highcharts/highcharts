@@ -9189,7 +9189,9 @@ var SplineSeries = extendClass( Series, {
 				rightContY = (smoothing * plotY + nextY) / denom,
 		
 			// have the two control points make a straight line through main point
-				correction = plotY - (leftContY + rightContY) / 2;
+				correction = ((rightContY - leftContY) * (rightContX - plotX)) / (rightContX - leftContX)
+					+ plotY - rightContY;
+				
 			leftContY += correction;
 			rightContY += correction;
 			
@@ -9209,8 +9211,6 @@ var SplineSeries = extendClass( Series, {
 				rightContY = mathMin(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			}
-			
-			
 			
 			// record for drawing in next point
 			point.rightContX = rightContX;
