@@ -8057,17 +8057,15 @@ Series.prototype = {
 	 * Replace the series data with a new set of data
 	 * @param {Object} data
 	 * @param {Object} redraw
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
 	 */
-	setData: function(data, redraw, animation) {
+	setData: function(data, redraw) {
 		var series = this,
 			oldData = series.data,
 			initialColor = series.initialColor,
 			chart = series.chart,
 			i = oldData && oldData.length || 0;
 		
-		globalAnimation = animation;
+		globalAnimation = false;
 		series.xIncrement = null; // reset for new data
 		if (defined(initialColor)) { // reset colors for pie
 			colorCounter = initialColor;
