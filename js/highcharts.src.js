@@ -977,7 +977,7 @@ var defaultXAxisOptions =  {
 	//offset: 0,
 	//plotBands: [{
 	//	events: {},
-	//	zIndex: null,
+	//	zIndex: 1,
 	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
 	//}],
 	//plotLines: [{
@@ -2067,6 +2067,7 @@ SVGRenderer.prototype = {
 						// Firefox ignores spaces at the front or end of the tspan
 						attributes.dx = 3; // space
 					}
+					
 					if (lineNo && !spanNo) { // first span on subsequent line, add the line height
 						attributes.dy = 16;
 					}
@@ -4040,7 +4041,6 @@ function Chart (options, callback) {
 			} else {
 				return;
 			}
-			
 			// zIndex 
 			if (defined(zIndex)) {
 				attribs.zIndex = zIndex;
@@ -4821,7 +4821,9 @@ function Chart (options, callback) {
 		 * @param options {Object} The plotBand or plotLine configuration object
 		 */
 		function addPlotBandOrLine(options) {
-			var obj = new PlotLineOrBand(options).render();
+			var obj = new PlotLineOrBand(
+				extend({ zIndex: 1 }, options)
+			).render();
 			plotLinesAndBands.push(obj);
 			return obj;
 		}
@@ -4963,11 +4965,13 @@ function Chart (options, callback) {
 				}
 				
 				// custom plot bands (behind grid lines)
-				if (!hasRendered) { // only first time
+				/*if (!hasRendered) { // only first time
 					each (options.plotBands || [], function(plotBandOptions) {
-						plotLinesAndBands.push(new PlotLineOrBand(plotBandOptions).render());
+						plotLinesAndBands.push(new PlotLineOrBand(
+							extend({ zIndex: 1 }, plotBandOptions)
+						).render());
 					});
-				}
+				}*/
 				
 				
 				// minor ticks and grid lines
@@ -5000,10 +5004,12 @@ function Chart (options, callback) {
 				});
 			
 				
-				// custom plot lines (in front of grid lines)
+				// custom plot lines and bands
 				if (!hasRendered) { // only first time
-					each (options.plotLines || [], function(plotLineOptions) {
-						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
+					each ((options.plotLines || []).concat(options.plotBands), function(plotLineOptions) {
+						plotLinesAndBands.push(new PlotLineOrBand(
+							extend({ zIndex: 1 }, plotLineOptions)
+						).render());
 					});
 				}
 				
@@ -5139,8 +5145,9 @@ function Chart (options, callback) {
 				
 				// optionally redraw
 				axis.isDirty = true;
+				
 				if (pick(doRedraw, true)) {
-					redraw();  // redraw axis
+					chart.redraw();
 				}
 		}
 		
@@ -9448,7 +9455,7 @@ var ColumnSeries = extendClass(Series, {
 		each (series.data, function(point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
-			if (!isNaN(point.plotY)) {
+			if (point.y !== null) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 					
@@ -9680,11 +9687,13 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} sliced When undefined, the slice state is toggled 
 	 * @param {Boolean} redraw Whether to redraw the chart. True by default.
 	 */
-	slice: function(sliced, redraw) {
+	slice: function(sliced, redraw, animation) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
 			slicedTranslation = point.slicedTranslation;
+			
+		globalAnimation = animation;
 		
 		// redraw is true by default
 		redraw = pick(redraw, true);
@@ -9695,7 +9704,7 @@ var PiePoint = extendClass(Point, {
 		point.group.animate({
 			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
 			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
-		}, 100);
+		});
 		
 	}
 });
@@ -9951,7 +9960,7 @@ var PieSeries = extendClass(Series, {
 			data = series.data,
 			chart = series.chart,
 			options = series.options.dataLabels,
-			connectorPadding = options.connectorPadding || 10,
+			connectorPadding = pick(options.connectorPadding, 10),
 			connectorWidth = pick(options.connectorWidth, 1),
 			connector,
 			connectorPath,
@@ -10066,12 +10075,15 @@ var PieSeries = extendClass(Series, {
 						if (secondPass) {
 						
 							// move or place the data label
-							dataLabel.animate({
-								x: x + options.x 
-									+ ({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
-								y: y + options.y							
-							});
-							dataLabel.attr('visibility', visibility);
+							dataLabel
+								.attr({
+									visibility: visibility								
+								})
+								.animate({
+									x: x + options.x 
+										+ ({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
+									y: y + options.y
+								});
 							
 							// draw the connector
 							if (outside && connectorWidth) {
