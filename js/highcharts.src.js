@@ -841,7 +841,7 @@ defaultOptions = {
 		labelFormatter: function() {
 			return this.name;
 		},
-		// lineHeight: 16,
+		// lineHeight: 16, // docs: deprecated
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
@@ -6032,12 +6032,13 @@ function Chart (options, callback) {
 			itemHiddenStyle = options.itemHiddenStyle,
 			padding = pInt(style.padding),
 			rightPadding = 20,
-			lineHeight = options.lineHeight || 16,
+			//lineHeight = options.lineHeight || 16,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
 			itemY,
 			lastItemY,
+			lastItemHeight,
 			box,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
@@ -6277,6 +6278,7 @@ function Chart (options, callback) {
 			// calculate the positions for the next line
 			bBox = li.getBBox();
 			lastItemY = itemY;
+			lastItemHeight = bBox.height;
 			
 			item.legendItemWidth = itemWidth = 
 				options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
@@ -6287,11 +6289,11 @@ function Chart (options, callback) {
 				if (itemX - initialItemX + itemWidth > 
 						(widthOption || (chartWidth - 2 * padding - initialItemX))) { // new line
 					itemX = initialItemX;
-					itemY += lineHeight;
+					itemY += lastItemHeight;
 				}
 				
 			} else {
-				itemY += lineHeight;
+				itemY += lastItemHeight;
 				// the width of the widest item
 				offsetWidth = widthOption || mathMax(itemWidth, offsetWidth);			
 			}		
@@ -6342,7 +6344,7 @@ function Chart (options, callback) {
 			
 			// Draw the border
 			legendWidth = widthOption || offsetWidth;
-			legendHeight = lastItemY - y + lineHeight;
+			legendHeight = lastItemY - y + lastItemHeight;
 			
 			if (legendBorderWidth || legendBackgroundColor) {
 				legendWidth += 2 * padding;
