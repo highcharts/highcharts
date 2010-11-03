@@ -3659,7 +3659,8 @@ function Chart (options, callback) {
 		isInsidePlot, // function
 		tooltip,
 		mouseIsDown,
-		loadingLayer,
+		loadingDiv,
+		loadingSpan,
 		loadingShown,
 		plotHeight,
 		plotWidth,
@@ -6617,8 +6618,8 @@ function Chart (options, callback) {
 		var loadingOptions = options.loading;
 
 		// create the layer at the first call
-		if (!loadingLayer) {
-			loadingLayer = createElement(DIV, {
+		if (!loadingDiv) {
+			loadingDiv = createElement(DIV, {
 				className: 'highcharts-loading'
 			}, extend(loadingOptions.style, {
 				left: plotLeft + PX,
@@ -6629,16 +6630,22 @@ function Chart (options, callback) {
 				display: NONE
 			}), container);
 			
-			createElement('span', null, loadingOptions.labelStyle, loadingLayer);
+			loadingSpan = createElement(
+				'span', 
+				null, 
+				loadingOptions.labelStyle, 
+				loadingDiv
+			);
 
 		}
 		
+		// update text
+		loadingSpan.innerHTML = str || options.lang.loading;
 		
 		// show it
 		if (!loadingShown) {
-			css(loadingLayer, { opacity: 0, display: '' });
-			loadingLayer.getElementsByTagName('span')[0].innerHTML = str || options.lang.loading;
-			animate(loadingLayer, {
+			css(loadingDiv, { opacity: 0, display: '' });
+			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
 				duration: loadingOptions.showDuration
@@ -6650,12 +6657,12 @@ function Chart (options, callback) {
 	 * Hide the loading layer
 	 */
 	function hideLoading() {
-		animate(loadingLayer, {
+		animate(loadingDiv, {
 			opacity: 0
 		}, {
 			duration: options.loading.hideDuration, 
 			complete: function() {
-				css(loadingLayer, { display: NONE });
+				css(loadingDiv, { display: NONE });
 			}
 		});
 		loadingShown = false;
@@ -9477,7 +9484,7 @@ var ColumnSeries = extendClass(Series, {
 						renderer[point.shapeType](shapeArgs)
 						.attr({
 							isTracker: trackerLabel,
-							fill: TRACKER_FILL,
+							fill: 'rgba(0, 255, 0, 0.5)',//TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 1
 						})
