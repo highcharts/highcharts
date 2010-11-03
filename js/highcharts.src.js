@@ -3167,6 +3167,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 						height: bottom +PX
 					});
 				}
+				
 				return ret;
 			},
 			
@@ -5006,7 +5007,7 @@ function Chart (options, callback) {
 				
 				// custom plot lines and bands
 				if (!hasRendered) { // only first time
-					each ((options.plotLines || []).concat(options.plotBands), function(plotLineOptions) {
+					each ((options.plotLines || []).concat(options.plotBands || []), function(plotLineOptions) {
 						plotLinesAndBands.push(new PlotLineOrBand(
 							extend({ zIndex: 1 }, plotLineOptions)
 						).render());
