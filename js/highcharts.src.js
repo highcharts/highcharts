@@ -4987,7 +4987,8 @@ function Chart (options, callback) {
 				
 				// minor ticks and grid lines
 				if (minorTickInterval && !categories) {
-					for (var pos = min; pos <= max; pos += minorTickInterval) {
+					var pos = min + (tickPositions[0] - min) % minorTickInterval;
+					for (pos; pos <= max; pos += minorTickInterval) {
 						if (!minorTicks[pos]) {
 							minorTicks[pos] = new Tick(pos, true);
 						}
@@ -9485,7 +9486,7 @@ var ColumnSeries = extendClass(Series, {
 						renderer[point.shapeType](shapeArgs)
 						.attr({
 							isTracker: trackerLabel,
-							fill: 'rgba(0, 255, 0, 0.5)',//TRACKER_FILL,
+							fill: TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 1
 						})
