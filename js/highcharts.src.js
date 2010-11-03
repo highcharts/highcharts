@@ -9373,7 +9373,7 @@ var ColumnSeries = extendClass(Series, {
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold || 0,
 			translatedThreshold = series.yAxis.getThreshold(threshold),
-			minPointLength = options.minPointLength;
+			minPointLength = pick(options.minPointLength, 5);
 			
 		// record the new values
 		each (data, function(point) {
@@ -9386,10 +9386,13 @@ var ColumnSeries = extendClass(Series, {
 				trackerY;
 			
 			// handle options.minPointLength and tracker for small points
-			if (mathAbs(barH) < (minPointLength || 5)) { 
+			if (mathAbs(barH) < minPointLength) { 
 				if (minPointLength) {
 					barH = minPointLength;
-					barY = translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
+					barY = 
+						mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+							yBottom - minPointLength : // keep position
+							translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
 				}
 				trackerY = barY - 3;
 			}
@@ -9411,7 +9414,7 @@ var ColumnSeries = extendClass(Series, {
 			
 			// make small columns responsive to mouse
 			point.trackerArgs = defined(trackerY) && merge(point.shapeArgs, {
-				height: 6,
+				height: mathMax(6, barH + 3),
 				y: trackerY
 			});
 		});
