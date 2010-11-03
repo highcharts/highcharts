@@ -7341,7 +7341,8 @@ function Chart (options, callback) {
 	 * Clean up memory usage
 	 */
 	function destroy() {
-		var i = series.length;
+		var i = series.length,
+			parentNode = container.parentNode;
 		
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
@@ -7362,7 +7363,7 @@ function Chart (options, callback) {
 		// remove container and all SVG
 		container.innerHTML = '';
 		removeEvent(container);
-		container.parentNode.removeChild(container);
+		parentNode && parentNode.removeChild(container);
 		
 		// IE6 leak 
 		container =	null;
