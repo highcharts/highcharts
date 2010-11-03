@@ -2682,8 +2682,7 @@ var VMLElement = extendClass( SVGElement, {
 		if (isString(hash)) {
 			key = hash;
 			if (key == 'strokeWidth' || key == 'stroke-width') {
-				ret = element.strokeweight;
-				
+				ret = this.strokeweight;
 			} else {
 				ret = this[key];
 			}
@@ -2840,6 +2839,7 @@ var VMLElement = extendClass( SVGElement, {
 				} else if (key == 'stroke-width' || key == 'strokeWidth') {
 					element.stroked = value ? true : false;
 					key = 'strokeweight';
+					this[key] = value; // used in getter, issue #113
 					if (isNumber(value)) {
 						value += PX;
 					}
@@ -3352,7 +3352,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 					', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta, 
 					', sizingMethod=\'auto expand\')'].join('')
 			});
-
 			elemWrapper.costheta = costheta;
 			elemWrapper.sintheta = sintheta;
 		}
@@ -5281,7 +5280,6 @@ function Chart (options, callback) {
 		// create the elements
 		var group = renderer.g('tooltip')
 			.attr({	zIndex: 8 })
-			.hide()
 			.add(),
 			
 			box = renderer.rect(boxOffLeft, boxOffLeft, 0, 0, options.borderRadius, borderWidth).
@@ -5295,6 +5293,8 @@ function Chart (options, callback) {
 				attr({ zIndex: 1 }).
 				css(style).
 				add(group);
+				
+		group.hide();
 				
 		/**
 		 * In case no user defined formatter is given, this will be used
