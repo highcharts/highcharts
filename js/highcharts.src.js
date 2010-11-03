@@ -33,6 +33,7 @@ var doc = document,
 	// some variables
 	userAgent = navigator.userAgent,
 	isIE = /msie/i.test(userAgent) && !win.opera,
+	docMode8 = doc.documentMode == 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
 	colorCounter,
@@ -2586,6 +2587,10 @@ var VMLElement = extendClass( SVGElement, {
 		if (nodeName == 'shape' || nodeName == DIV) {
 			style.push('left:0;top:0;width:10px;height:10px;');
 		}
+		if (docMode8) {
+			style.push('visibility: ', nodeName == DIV ? HIDDEN : VISIBLE);
+		}
+		
 		markup.push(' style="', style.join(''), '"/>');
 		
 		// create element with default attributes and style
@@ -2663,7 +2668,6 @@ var VMLElement = extendClass( SVGElement, {
 			hasSetSymbolSize,
 			shadows = this.shadows,
 			bBox,
-			documentMode = doc.documentMode,
 			skipAttr,
 			ret = this;
 			
@@ -2743,16 +2747,22 @@ var VMLElement = extendClass( SVGElement, {
 	
 				// directly mapped to css
 				} else if (key == 'zIndex' || key == 'visibility') {
+					
+					// issue 61 workaround
+					if (docMode8 && key == 'visibility' && nodeName == 'DIV') {
+						each(element.childNodes, function(childNode) {
+							css(childNode, { visibility: value });
+						});
+						if (value == VISIBLE) { // issue 74
+							value = null;
+						}
+					}
+					
 					if (value) {
 						elemStyle[key] = value;
 					}
 					
-					// issue 61 workaround
-					if (documentMode == 8 && key == 'visibility' && nodeName == 'DIV') {
-						each(element.childNodes, function(childNode) {
-							css(childNode, { visibility: value });
-						});
-					}
+					
 					
 					skipAttr = true;
 				
@@ -2883,7 +2893,7 @@ var VMLElement = extendClass( SVGElement, {
 				
 				
 				if (!skipAttr) {
-					if (documentMode == 8) { // IE8 setAttribute bug
+					if (docMode8) { // IE8 setAttribute bug
 						element[key] = value;
 					} else {
 						attr(element, key, value);
@@ -3161,7 +3171,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 					};
 					
 				// issue 74 workaround
-				if (!inverted && doc.documentMode == 8) {
+				if (!inverted && docMode8) {
 					extend(ret, {
 						width: right +PX,
 						height: bottom +PX
@@ -3396,7 +3406,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		if (name) {
 			attribs = { 'className': PREFIX + name, 'class': PREFIX + name };
 		}
-			
+		
 		// the div to hold HTML and clipping	
 		wrapper = this.createElement(DIV).attr(attribs);
 		
