@@ -8468,7 +8468,7 @@ Series.prototype = {
 	 */
 	getAttribs: function() {
 		var series = this, 
-			normalOptions = series.options.marker || series.options,
+			normalOptions = defaultPlotOptions[series.type].marker ? series.options.marker : series.options,
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
