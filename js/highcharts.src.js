@@ -7819,7 +7819,7 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			stateOptions = series.options.states,
-			markerOptions = series.options.marker,
+			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
 			normalDisabled = markerOptions && !markerOptions.enabled,
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
