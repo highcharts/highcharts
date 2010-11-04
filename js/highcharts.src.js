@@ -1519,7 +1519,13 @@ SVGElement.prototype = {
 				// special
 				} else if (key == 'isTracker') {
 					this[key] = value;
+				
+				// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
+				// is unable to cast them. Test again with final IE9.
+				} else if (key == 'width') {
+					value = pInt(value);
 				}
+				
 				
 				// jQuery animate changes case
 				if (key == 'strokeWidth') {

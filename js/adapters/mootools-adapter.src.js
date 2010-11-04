@@ -64,7 +64,7 @@ var HighchartsAdapter = {
 		}
 		
 		// stop running animations
-		stop(el);
+		HighchartsAdapter.stop(el);
 		
 		// define and run the effect
 		effect = new Fx.Morph(
