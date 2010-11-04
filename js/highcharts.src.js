@@ -2076,13 +2076,16 @@ SVGRenderer.prototype = {
 						attributes.dx = 3; // space
 					}
 					
-					if (lineNo && !spanNo) { // first span on subsequent line, add the line height
-						attributes.dy = 16;
-					}
-					
+					// add attributes
 					attr(tspan, attributes);
 					
+					// append it
 					textNode.appendChild(tspan);
+					
+					// first span on subsequent line, add the line height
+					if (lineNo && !spanNo) {
+						attr(tspan, 'dy', pInt(window.getComputedStyle(tspan, null).getPropertyValue('line-height')));
+					}
 					
 					spanNo++;
 				}
@@ -2540,13 +2543,12 @@ SVGRenderer.prototype = {
 		
 		// prepare attributes
 		attribs = {
-				x: x,
-				y: y,
-				text: str,
-				fill: fill,
-				style: css.replace(/"/g, "'")
-				
-			};
+			x: x,
+			y: y,
+			style: css.replace(/"/g, "'"),
+			text: str,
+			fill: fill				
+		};
 			
 		if (rotation || align != 'left') {
 			attribs = extend(attribs, {
