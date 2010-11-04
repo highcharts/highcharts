@@ -36,6 +36,7 @@ var doc = document,
 	docMode8 = doc.documentMode == 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
+	hasTouch = 'ontouchstart' in doc.documentElement,
 	colorCounter,
 	symbolCounter,
 	symbolSizes = {},
@@ -5241,10 +5242,10 @@ function Chart (options, callback) {
 					y: plotTop + 30
 				})
 				.on('click', fn)
-				.on('touchstart', function(e) {
+				/*.on('touchstart', function(e) {
 					e.stopPropagation(); // don't fire the container event
 					fn();
-				})
+				})*/
 				.attr({ zIndex: 20 })
 				.add();
 				buttons[id] = button;
@@ -5775,7 +5776,7 @@ function Chart (options, callback) {
 				e = normalizeMouseEvent(e);
 				
 				// record the start position
-				e.preventDefault && e.preventDefault();
+				//e.preventDefault && e.preventDefault();
 				
 				chart.mouseIsDown = mouseIsDown = true;
 				mouseDownX = e.chartX;
@@ -5796,11 +5797,10 @@ function Chart (options, callback) {
 				
 				// normalize
 				e = normalizeMouseEvent(e);
-				e.returnValue = false;
-				
+				//e.returnValue = false;
 				
 				// stop touch devices from performing pseudo mouse events
-				e.preventDefault && e.preventDefault();
+				//e.preventDefault && e.preventDefault();
 				
 				
 				var chartX = e.chartX,
@@ -9162,7 +9162,7 @@ Series.prototype = {
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: 1
 				})
-				.on('mouseover', function() {
+				.on(hasTouch ? 'touchstart' : 'mouseover', function() {
 					if (chart.hoverSeries != series) {
 						series.onMouseOver();
 					}
