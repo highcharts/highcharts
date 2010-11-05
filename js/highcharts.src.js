@@ -4625,8 +4625,8 @@ function Chart (options, callback) {
 			if (max - min < maxZoom) { 
 				zoomOffset = (maxZoom - max + min) / 2;
 				// if min and max options have been set, don't go beyond it
-				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset));
-				max = mathMin(min + maxZoom, pick(options.max, min + maxZoom));
+				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset), dataMin);
+				max = mathMin(min + maxZoom, pick(options.max, min + maxZoom), dataMax);
 			}
 			
 				
@@ -4790,15 +4790,6 @@ function Chart (options, callback) {
 				min: newMin,
 				max: newMax
 			}, function() { // the default event handler
-				// make sure categorized axes are not exceeded
-				if (categories) {
-					if (newMin < 0) {
-						newMin = 0;
-					}
-					if (newMax > categories.length - 1) {
-						newMax = categories.length - 1;
-					}
-				}
 				
 				userSetMin = newMin;
 				userSetMax = newMax;
@@ -5755,7 +5746,7 @@ function Chart (options, callback) {
 								max: mathMax(selectionMin, selectionMax)
 							});
 							
-						});
+					});
 					fireEvent(chart, 'selection', selectionData, zoom);
 
 				}
@@ -6792,7 +6783,7 @@ function Chart (options, callback) {
 		
 		// if zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
-			each(axes, function(axis) { 
+			each(axes, function(axis) {
 				axis.setExtremes(null, null, false);
 			});
 		}
@@ -6801,7 +6792,7 @@ function Chart (options, callback) {
 		else {
 			each (event.xAxis.concat(event.yAxis), function(axisData) {
 				var axis = axisData.axis;
-					
+				
 				// don't zoom more than maxZoom
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
 					axis.setExtremes(axisData.min, axisData.max, false);
@@ -6811,7 +6802,6 @@ function Chart (options, callback) {
 		
 		// redraw chart
 		redraw();
-		
 	};
 	
 	/**
