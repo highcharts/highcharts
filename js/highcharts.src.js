@@ -4598,6 +4598,7 @@ function Chart (options, callback) {
 		 */
 		function setTickPositions(secondPass) {
 			var length,
+				catPad,
 				maxZoom = options.maxZoom || (
 					isXAxis ? 
 						mathMin(chart.smallestInterval * 5, dataMax - dataMin) : 
@@ -4641,13 +4642,14 @@ function Chart (options, callback) {
 			}
 
 			// get tickInterval
-			if (categories || min == max) {
+			if (min == max) {
 				tickInterval = 1;
 			} else {
 				tickInterval = pick(
-					//secondPass && tickInterval || null,
 					options.tickInterval,
-					(max - min) * options.tickPixelInterval / axisLength
+					categories ? // for categoried axis, 1 is default, for linear axis use tickPix 
+						1 : 
+						(max - min) * options.tickPixelInterval / axisLength
 				);
 			}
 			
@@ -4668,8 +4670,9 @@ function Chart (options, callback) {
 			
 			// pad categorised axis to nearest half unit
 			if (!isLinked && (categories || (isXAxis && chart.hasColumn))) {
-				 min -= tickInterval * 0.5;
-				 max += tickInterval * 0.5;
+				catPad = (categories ? 1 : tickInterval) * 0.5;
+				min -= catPad;
+				max += catPad;
 			}
 			
 			// reset min/max or remove extremes based on start/end on tick
