@@ -7480,6 +7480,7 @@ function Chart (options, callback) {
 	chart.setSize = resize;
 	chart.setTitle = setTitle;
 	chart.showLoading = showLoading;	
+	chart.pointCount = 0;
 	
 	
 	/*
@@ -7558,6 +7559,7 @@ Point.prototype = {
 			}
 		}
 		
+		series.chart.pointCount++;
 		return point;
 	},
 	/**
@@ -7614,6 +7616,8 @@ Point.prototype = {
 			series = point.series,
 			prop;
 			
+		series.chart.pointCount--;
+			
 		if (point == series.chart.hoverPoint) {
 			point.onMouseOut();
 		}
@@ -7637,6 +7641,7 @@ Point.prototype = {
 		for (prop in point) {
 			point[prop] = null;
 		}
+		
 		
 	},	
 	

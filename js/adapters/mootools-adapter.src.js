@@ -1,5 +1,5 @@
 /**
- * @author Torstein HÃ¸nsi
+ * @author Torstein Hønsi
  */
 var HighchartsAdapter = {
 	/**
