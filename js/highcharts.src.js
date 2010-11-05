@@ -5763,8 +5763,7 @@ function Chart (options, callback) {
 			}
 			
 			chart.mouseIsDown = mouseIsDown = hasDragged = false;
-			removeEvent(doc, 'mouseup', drop);
-			removeEvent(doc, 'touchend', drop);
+			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
 
 		}
 		
@@ -5787,8 +5786,7 @@ function Chart (options, callback) {
 				mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
 				
-				addEvent(doc, 'mouseup', drop);
-				addEvent(doc, 'touchend', drop);
+				addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
 			};
 						
 			// The mousemove, touchmove and touchstart event handler
