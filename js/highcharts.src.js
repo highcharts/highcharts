@@ -45,7 +45,7 @@ var doc = document,
 	garbageBin,
 	defaultOptions,
 	dateFormat, // function
-	globalMouseMove,
+	globalMouseMove,	
 	globalAnimation,
 	
 	
@@ -6040,7 +6040,7 @@ function Chart (options, callback) {
 			itemX,
 			itemY,
 			lastItemY,
-			lastItemHeight,
+			lastItemHeight = 0,
 			box,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
