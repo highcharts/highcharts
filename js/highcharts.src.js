@@ -4879,9 +4879,10 @@ function Chart (options, callback) {
 						
 						// get the highest offset
 						labelOffset = mathMax(
-							ticks[pos].getLabelSize() +
+							ticks[pos].getLabelSize()// +
 								// on bottom axis, adjust for the line height when rotating labels
-								(side == 2 ? 16 * mathSin(rotation * deg2rad) : 0),
+								//(side == 2 ? 16 * mathAbs(mathSin(rotation * deg2rad)) : 0)
+								,
 							labelOffset
 						);
 					}
