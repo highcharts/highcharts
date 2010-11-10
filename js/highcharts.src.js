@@ -1452,6 +1452,7 @@ SVGElement.prototype = {
 		} else {
 		
 			for (key in hash) {
+				skipAttr = false; // reset
 				value = hash[key];
 				
 				// paths
@@ -1485,11 +1486,11 @@ SVGElement.prototype = {
 					value = renderer.color(value, element, key);
 				
 				// circle x and y
-				} else if (nodeName == 'circle') {
+				} else if (nodeName == 'circle' && (key == 'x' || key == 'y')) {
 					key = { x: 'cx', y: 'cy' }[key] || key;
 					
-				// translation
-				} else if (key == 'translateX' || key == 'translateY') {
+				// translation and text rotation
+				} else if (key == 'translateX' || key == 'translateY' || key == 'rotation') {
 					this[key] = value;
 					this.updateTransform();
 					skipAttr = true;
@@ -1525,7 +1526,13 @@ SVGElement.prototype = {
 				// is unable to cast them. Test again with final IE9.
 				} else if (key == 'width') {
 					value = pInt(value);
+				
+				// Text alignment
+				} else if (key == 'align') {
+					key = 'text-anchor';
+					value = { left: 'start', center: 'middle', right: 'end' }[value];
 				}
+				
 				
 				
 				// jQuery animate changes case
@@ -1657,11 +1664,10 @@ SVGElement.prototype = {
 	 * @param {Number} y
 	 */
 	translate: function(x, y) {
-		var wrapper = this;
-		wrapper.translateX = x;
-		wrapper.translateY = y;
-		wrapper.updateTransform();
-		return wrapper;
+		return this.attr({
+			translateX: x,
+			translateY: y
+		});
 	},
 	
 	/**
@@ -1683,6 +1689,7 @@ SVGElement.prototype = {
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0,
 			inverted = wrapper.inverted,
+			rotation = wrapper.rotation,
 			transform = [];
 			
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -1699,6 +1706,8 @@ SVGElement.prototype = {
 		// apply rotation
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
+		} else if (rotation) { // text rotation
+			transform.push('rotate('+ rotation +' '+ wrapper.x +' '+ wrapper.y +')');
 		}
 		
 		if (transform.length) {
@@ -2518,47 +2527,55 @@ SVGRenderer.prototype = {
 	 * @param {Nubmer} rotation Rotation in degrees
 	 * @param {String} align Left, center or right
 	 */
-	text: function(str, x, y, style, rotation, align) {
-		style = style || {};
-		align = align || 'left';
-		rotation = rotation || 0;
+	text: function(str, x, y/*, style, rotation, align*/) {
+		//style = style || {};
+		//align = align || 'left';
+		//rotation = rotation || 0;
 		
 		// declare variables
 		var attribs,
 			css, 
-			fill = style.color || '#000000',
+			//fill = style.color || '#000000',
 			defaultChartStyle = defaultOptions.chart.style,
 			wrapper;
 	
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));
 		
-		extend(style, {
+		/*extend(style, {
 			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
 			fontSize: style.fontSize || defaultChartStyle.fontSize
-		});
+		});*/
 		
 		// prepare style
-		css = serializeCSS(style);
+		//css = serializeCSS(style);
 		
 		// prepare attributes
-		attribs = {
-			x: x,
-			y: y,
-			style: css.replace(/"/g, "'"),
-			text: str,
-			fill: fill				
-		};
+		//attribs = ;
 			
-		if (rotation || align != 'left') {
+		/*if (rotation || align != 'left') {
 			attribs = extend(attribs, {
 				'text-anchor': { left: 'start', center: 'middle', right: 'end' }[align],
 				transform: 'rotate('+ rotation +' '+ x +' '+ y +')'
 			});
-		}
+		}*/
 
-		wrapper = this.createElement('text').attr(attribs);
-		wrapper.rotation = rotation; // used when setting x and y later
+		wrapper = this.createElement('text')
+			.attr({
+				x: x,
+				y: y,
+				//style: css.replace(/"/g, "'"),
+				text: str//,
+				//fill: fill				
+			})
+			.css({
+				'font-family': defaultChartStyle.fontFamily,
+				'font-size': defaultChartStyle.fontSize
+			});
+			
+		wrapper.x = x;
+		wrapper.y = y;
+		//wrapper.rotation = rotation; // used when setting x and y later
 		return wrapper;
 	}
 }; // end SVGRenderer
@@ -2651,10 +2668,7 @@ var VMLElement = extendClass( SVGElement, {
 		// align text after adding to be able to read offset
 		wrapper.added = true;
 		if (wrapper.alignOnAdd) {
-			wrapper.attr({
-				x: wrapper.x,
-				y: wrapper.y
-			})
+			wrapper.updateTransform();
 		}
 		
 		return wrapper;
@@ -2670,13 +2684,10 @@ var VMLElement = extendClass( SVGElement, {
 			element = this.element || {},
 			elemStyle = element.style,
 			nodeName = element.nodeName,
-			lineHeight = element.lineHeight,
-			align = element.align,
 			renderer = this.renderer,
 			symbolName = this.symbolName,
 			hasSetSymbolSize,
 			shadows = this.shadows,
-			bBox,
 			skipAttr,
 			ret = this;
 			
@@ -2793,44 +2804,13 @@ var VMLElement = extendClass( SVGElement, {
 				} else if (/^(x|y)$/.test(key)) {
 
 					this[key] = value; // used in getter
-					if (nodeName == 'SPAN') {
-						// aligning non added elements is expensive
-						if (!this.added) {
-							this.alignOnAdd = true;
-							continue;
-						}
-						
-						// Adjust for alignment and rotation.
-						// Test case: http://highcharts.com/tests/?file=text-rotation
-						bBox = bBox || this.getBBox();
-						
-						var sintheta = this.sintheta || 0,
-							costheta = this.costheta || 1,
-							width = bBox.width,
-							height = bBox.height,
-							nonLeft = align && align != 'left';
-						
-						if (key == 'y') {
-							value += height * mathMin(sintheta, 0)
-								- mathMax(costheta, 0) * lineHeight;
-								
-							if (nonLeft) {
-								value -= height / { right: 1, center: 2 }[align]
-									* sintheta;
-							}
-						}
-						if (key == 'x') {
-							value += width * mathMin(costheta, 0)
-								+ mathMin(sintheta, 0) * lineHeight;
-								
-							if (nonLeft) {
-								value -= width / { right: 1, center: 2 }[align]
-									* costheta;
-							}
-						}
-						
+					
+					if (element.tagName == 'SPAN') {
+						this.updateTransform();
+					
+					} else {
+						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 					}
-					elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 					
 				// class name
 				} else if (key == 'class') {
@@ -2874,10 +2854,12 @@ var VMLElement = extendClass( SVGElement, {
 						
 						key = 'fillcolor';
 					}
-				}
 				
 				// translation for animation
-				else if (key == 'translateX' || key == 'translateY') {
+				} else if (key == 'translateX' || key == 'translateY' || key == 'rotation' || key == 'align') {
+					if (key == 'align') {
+						key = 'textAlign';
+					}
 					this[key] = value;
 					this.updateTransform();
 					
@@ -3025,17 +3007,65 @@ var VMLElement = extendClass( SVGElement, {
 	 * Private method to update elements based on internal 
 	 * properties based on SVG transform
 	 */
-	updateTransform: function() {
+	updateTransform: function(hash) {
+		// aligning non added elements is expensive
+		if (!this.added) {
+			this.alignOnAdd = true;
+			return;
+		}
+		
+		
 		var wrapper = this,
+			elem = wrapper.element,
 			translateX = wrapper.translateX || 0,
-			translateY = wrapper.translateY || 0;
-			
+			translateY = wrapper.translateY || 0,
+			x = wrapper.x || 0,
+			y = wrapper.y || 0,
+			rotation = wrapper.rotation || 0,
+			radians = rotation * deg2rad, // deg to rad
+			costheta = mathCos(radians),
+			sintheta = mathSin(radians), 
+			align = wrapper.textAlign || 'left',
+			alignCorrection = { right: 1, center: 2 }[align],
+			nonLeft = align && align != 'left';			
+		
+		
 		// apply translate
 		if (translateX || translateY) {
 			wrapper.css({
 				marginLeft: translateX,
 				marginTop: translateY
 			});
+		}
+		
+		if (elem.tagName == 'SPAN') {
+			// Adjust for alignment and rotation.
+			// Test case: http://highcharts.com/tests/?file=text-rotation
+			css (elem, {
+				filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta, 
+					', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta, 
+					', sizingMethod=\'auto expand\')'].join('') : NONE
+			});
+			
+			var width = elem.offsetWidth,
+				height = elem.offsetHeight,
+				lineHeight = mathRound(pInt(elem.style.fontSize || 12) * 1.2);
+			
+			// correct x and y
+			x += width * mathMin(costheta, 0) + mathMin(sintheta, 0) * lineHeight;
+			y += height * mathMin(sintheta, 0) - mathMax(costheta, 0) * lineHeight;
+				
+			if (nonLeft) {
+				x -= width / alignCorrection * costheta;
+				y -= height / alignCorrection * sintheta;
+			}
+			
+			css(elem, {
+				textAlign: align,
+				left: x,
+				top: y
+			});
+			
 		}
 	},
 	
@@ -3315,43 +3345,50 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {String} str
 	 * @param {Number} x
 	 * @param {Number} y
-	 * @param {Object} style
-	 * @param {Number} rotation
-	 * @param {String} align
 	 */
-	text: function(str, x, y, style, rotation, align) {
+	text: function(str, x, y/*, style, rotation, align*/) {
 		//if (str || str === 0) {
-		style = style || {};
-		align = align || 'left';
-		rotation = rotation || 0;
+		//style = style || {};
+		//align = align || 'left';
+		//rotation = rotation || 0;
 		
 		// declare variables
-		var elemWrapper, 
-			elem, 
-			spanWidth,
-			lineHeight = mathRound(pInt(style.fontSize || 12) * 1.2),
+		var //elemWrapper, 
+			//elem, 
+			//spanWidth,
+			//lineHeight = mathRound(pInt(style.fontSize || 12) * 1.2),
 			defaultChartStyle = defaultOptions.chart.style; 
 	
 		x = mathRound(x);
 		y = mathRound(y);
 		
 		// set styles
-		extend(style, {
+		/*extend(style, {
 			color: style.color || '#000000',
 			whiteSpace: 'nowrap',
 			// get font metrics for correct sizing
 			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
 			fontSize: style.fontSize || defaultChartStyle.fontSize
-		});
+		});*/
 			
-		elemWrapper = this.createElement('span');
-		elem = elemWrapper.element;
-		elem.lineHeight = lineHeight; // used in attr
-		elem.align = align; // internal prop used in attr
+		return this.createElement('span')
+			.attr({
+				text: str,
+				x: x,
+				y: y				
+			})
+			.css({
+				whiteSpace: 'nowrap',
+				fontFamily: defaultChartStyle.fontFamily,
+				fontSize: defaultChartStyle.fontSize
+			});
+		//elem = elemWrapper.element;
+		//elem.lineHeight = lineHeight; // used in attr
+		//elem.align = align; // internal prop used in attr
 			
 		
 		// apply rotation
-		if (rotation) {	
+		/*if (rotation) {	
 			var radians = rotation * deg2rad, // deg to rad
 				costheta = mathCos(radians),
 				sintheta = mathSin(radians);
@@ -3363,16 +3400,16 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			});
 			elemWrapper.costheta = costheta;
 			elemWrapper.sintheta = sintheta;
-		}
+		}*/
 		
-		css(elem, style);
+		/*css(elem, style);
 		elemWrapper.attr({
 			text: str,
 			x: x,
 			y: y
 		});			
 			
-		return elemWrapper;
+		return elemWrapper;*/
 	},
 	
 	/**
@@ -3827,14 +3864,16 @@ function Chart (options, callback) {
 					this.label =  
 						defined(str) && withLabel && labelOptions.enabled ?
 							renderer.text(
-								str,
-								0,
-								0,
-								labelOptions.style, 
-								labelOptions.rotation,
-								labelOptions.align
-							)
-							.add(axisGroup):
+									str,
+									0,
+									0
+								)
+								.attr({
+									align: labelOptions.align,
+									rotation: labelOptions.rotation
+								})
+								.css(labelOptions.style)
+								.add(axisGroup):
 							null;
 				
 				// update
@@ -4102,12 +4141,14 @@ function Chart (options, callback) {
 					plotLine.label = label = renderer.text(
 							optionsLabel.text,
 							0,
-							0,
-							optionsLabel.style,
-							optionsLabel.rotation,
-							optionsLabel.textAlign || optionsLabel.align
+							0
 						)
-						.attr({ zIndex: zIndex })
+						.attr({
+							align: optionsLabel.textAlign || optionsLabel.align,
+							rotation: optionsLabel.rotation,
+							zIndex: zIndex
+						})
+						.css(optionsLabel.style)
 						.add();
 				}
 				
@@ -4904,12 +4945,16 @@ function Chart (options, callback) {
 					axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
-						0,
-						axisTitleOptions.style, 
-						axisTitleOptions.rotation || 0,
-						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+						0
 					)
-					.attr ({ zIndex: 7 })
+					.attr ({ 
+						zIndex: 7,
+						rotation: axisTitleOptions.rotation || 0,
+						align: 
+							axisTitleOptions.textAlign || 
+							{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+					})
+					.css(axisTitleOptions.style)
 					.add();
 				}
 				
@@ -5228,11 +5273,9 @@ function Chart (options, callback) {
 				var button = renderer.text(
 					text,
 					0,
-					0,
-					options.toolbar.itemStyle,
-					0,
-					'right'
+					0
 				)
+				.css(options.toolbar.itemStyle)
 				.align({
 					align: 'right',
 					x: - marginRight - 20,
@@ -5243,7 +5286,10 @@ function Chart (options, callback) {
 					e.stopPropagation(); // don't fire the container event
 					fn();
 				})*/
-				.attr({ zIndex: 20 })
+				.attr({
+					align: 'right', 
+					zIndex: 20
+				})
 				.add();
 				buttons[id] = button;
 			}
@@ -6836,15 +6882,14 @@ function Chart (options, callback) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text, 
 					0,
-					0, 
-					chartTitleOptions.style, 
-					0,
-					chartTitleOptions.align
+					0
 				)
 				.attr({
+					align: chartTitleOptions.align,
 					'class': 'highcharts-'+ name,
 					zIndex: 1
 				})
+				.css(chartTitleOptions.style)
 				.add()
 				.align(chartTitleOptions);
 			}
@@ -7289,10 +7334,10 @@ function Chart (options, callback) {
 				renderer.text(
 					this.html,
 					x,
-					y,
-					style
+					y
 				)
 				.attr({ zIndex: 2 })
+				.css(style)
 				.add();
 					
 			});
@@ -7312,15 +7357,16 @@ function Chart (options, callback) {
 			renderer.text(
 				credits.text,
 				0,
-				0,
-				credits.style,
-				0,
-				credits.position.align
+				0
 			)
 			.on('click', function() {
 				location.href = credits.href;
 			})
-			.attr({ zIndex: 8 })
+			.attr({
+				align: credits.position.align, 
+				zIndex: 8
+			})
+			.css(credits.style)
 			.add()
 			.align(credits.position); 
 		}
@@ -8709,12 +8755,14 @@ Series.prototype = {
 					point.dataLabel = chart.renderer.text(
 						str, 
 						x, 
-						y, 
-						options.style, 
-						options.rotation, 
-						align
+						y
 					)
-					.attr({	zIndex: 1 })
+					.attr({
+						align: align,
+						rotation: options.rotation,
+						zIndex: 1
+					})
+					.css(options.style)
 					.add(dataLabelsGroup);
 				}
 				
