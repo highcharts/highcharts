@@ -1561,8 +1561,7 @@ SVGElement.prototype = {
 					i = shadows.length;
 					while (i--) {
 						attr(shadows[i], key, value);
-					}
-					
+					}					
 				}
 				
 					
@@ -2262,13 +2261,22 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 */
 	image: function(src, x, y, width, height) {
-		var elemWrapper = this.createElement('image').attr({
-			x: x,
-			y: y,
-			width: width,
-			height: height,
-			preserveAspectRatio: NONE
-		});		
+		var attribs = {
+				preserveAspectRatio: NONE	
+			},
+			elemWrapper;
+			
+		// optional properties
+		if (arguments.length > 1) {
+			extend(attribs, {
+				x: x,
+				y: y,
+				width: width,
+				height: height
+			});
+		}
+		
+		elemWrapper = this.createElement('image').attr(attribs);		
 		
 		// set the href in the xlink namespace
 		elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
@@ -2324,22 +2332,21 @@ SVGRenderer.prototype = {
 			
 			imageSrc = symbol.match(imageRegex)[1];
 			
-			// create the image
-			obj = this.image(imageSrc).attr({
-				visibility: HIDDEN
-			});
+			// create the image synchronously, add attribs async
+			obj = this.image(imageSrc)
+				.attr({
+					x: x,
+					y: y
+				});
 			
 			// create a dummy JavaScript image to get the width and height  
 			createElement('img', {
 				onload: function() {
 					var img = this,
 						size = symbolSizes[img.src] || [img.width, img.height];
-					obj.attr({
-						x: x,
-						y: y,
+					obj.attr({						
 						width: size[0],
-						height: size[1],
-						visibility: 'inherit'
+						height: size[1]
 					}).translate(
 						-mathRound(size[0] / 2),
 						-mathRound(size[1] / 2)
@@ -4640,6 +4647,8 @@ function Chart (options, callback) {
 		function setTickPositions(secondPass) {
 			var length,
 				catPad,
+				linkedParent,
+				linkedParentExtremes,
 				maxZoom = options.maxZoom || (
 					isXAxis ? 
 						mathMin(chart.smallestInterval * 5, dataMax - dataMin) : 
@@ -4650,16 +4659,18 @@ function Chart (options, callback) {
 			
 			axisLength = horiz ? plotWidth : plotHeight;
 			
-			// initial min and max from the extreme data values
-			min = pick(userSetMin, options.min, dataMin);
-			max = pick(userSetMax, options.max, dataMax);
-			
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
-				var linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo],
-					linkedParentExtremes = linkedParent.getExtremes();
+				linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo];
+				linkedParentExtremes = linkedParent.getExtremes();
 				min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
-				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);			
+				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);
+			}
+			
+			// initial min and max from the extreme data values
+			else {
+				min = pick(userSetMin, options.min, dataMin);
+				max = pick(userSetMax, options.max, dataMax);
 			}
 			
 			// maxZoom exceeded, just center the selection
@@ -4731,6 +4742,7 @@ function Chart (options, callback) {
 			} else if (max < roundedMax) {
 				tickPositions.pop();
 			}
+			
 			
 			
 			// record the greatest number of ticks for multi axis
@@ -6145,8 +6157,10 @@ function Chart (options, callback) {
 				legendLine.translate(itemX, itemY - 4);
 			}
 			if (legendSymbol) {
-				legendSymbol
-					.translate(itemX, itemY);
+				legendSymbol.attr({
+					x: itemX + legendSymbol.x, 
+					y: itemY + legendSymbol.y
+				});
 			}
 			if (checkbox) {
 				checkbox.x = itemX;
@@ -6203,6 +6217,8 @@ function Chart (options, callback) {
 			var	bBox,
 				itemWidth,
 				legendSymbol,
+				symbolX,
+				symbolY,
 				simpleSymbol,
 				li = item.legendItem,
 				series = item.series || item;
@@ -6269,8 +6285,8 @@ function Chart (options, callback) {
 				if (simpleSymbol) { // bar|pie|area|column
 					//legendLayer.drawRect(
 					legendSymbol = renderer.rect(
-						-symbolWidth - symbolPadding,
-						-11,
+						(symbolX = -symbolWidth - symbolPadding),
+						(symbolY = -11),
 						symbolWidth,
 						12,
 						2
@@ -6284,14 +6300,20 @@ function Chart (options, callback) {
 				else if (item.options && item.options.marker && item.options.marker.enabled) {
 					legendSymbol = renderer.symbol(
 						item.symbol,
-						-symbolWidth / 2 - symbolPadding, 
-						-4, 
+						(symbolX = -symbolWidth / 2 - symbolPadding), 
+						(symbolY = -4),
 						item.options.marker.radius
 					)
 					.attr(item.pointAttr[NORMAL_STATE])
 					.attr({ zIndex: 3 })
 					.add(legendGroup);
+				
+					
 				}
+				
+				legendSymbol.x = symbolX;
+				legendSymbol.y = symbolY;
+				
 				item.legendSymbol = legendSymbol;
 					
 				// colorize the items
@@ -6825,13 +6847,14 @@ function Chart (options, callback) {
 	zoom = function (event) {
 		
 		// add button to reset selection
-		var lang = defaultOptions.lang;
+		var lang = defaultOptions.lang,
+			animate = chart.pointCount < 100;
 		chart.toolbar.add('zoom', lang.resetZoom, lang.resetZoomTitle, zoomOut);
 		
 		// if zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
 			each(axes, function(axis) {
-				axis.setExtremes(null, null, false);
+				axis.setExtremes(null, null, false, animate);
 			});
 		}
 			
@@ -6842,7 +6865,7 @@ function Chart (options, callback) {
 				
 				// don't zoom more than maxZoom
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false);
+					axis.setExtremes(axisData.min, axisData.max, false, animate);
 				}
 			});
 		}
@@ -8723,7 +8746,8 @@ Series.prototype = {
 				var plotX = pick(point.barX, point.plotX, -999),
 					plotY = pick(point.plotY, -999),
 					labelPos = point.labelPos,
-					dataLabel = point.dataLabel;
+					dataLabel = point.dataLabel,
+					align = options.align;
 					
 				// get the string
 				str = options.formatter.call({
@@ -8736,7 +8760,7 @@ Series.prototype = {
 				});
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + options.y;
-				align = labelPos ? labelPos[6] : options.align;
+				//align = labelPos ? labelPos[6] : options.align;
 				
 				// in columns, align the string to the column
 				if (seriesType == 'column') {
@@ -10155,7 +10179,8 @@ var PieSeries = extendClass(Series, {
 							// move or place the data label
 							dataLabel
 								.attr({
-									visibility: visibility								
+									visibility: visibility,
+									align: labelPos[6]
 								})
 								.animate({
 									x: x + options.x 
