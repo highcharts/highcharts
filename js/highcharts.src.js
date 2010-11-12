@@ -4,7 +4,7 @@
 /**
  * @license Highcharts JS v2.1 alpha (merged changes from master 2010-09-28)
  * 
- * (c) 2009-2010 Torstein Hønsi
+ * (c) 2009-2010 Torstein HÃ¸nsi
  * 
  * License: www.highcharts.com/license
  */
@@ -744,7 +744,7 @@ defaultOptions = {
 		// margin: 15,
 		// x: 0,
 		// verticalAlign: 'top',
-		y: 25,
+		y: 15, // docs
 		style: {
 			color: '#3E576F',
 			fontSize: '16px'
@@ -757,7 +757,7 @@ defaultOptions = {
 		// floating: false
 		// x: 0,
 		// verticalAlign: 'top',
-		y: 40,
+		y: 30, // docs
 		style: {
 			color: '#6D869F'
 		}
@@ -874,8 +874,8 @@ defaultOptions = {
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
 		// width: undefined,
-		x: 15,
-		y: -15
+		x: 0, // docs
+		y: 0 // docs
 	},
 	
 	loading: {
@@ -953,7 +953,7 @@ var defaultXAxisOptions =  {
 	},
 	endOnTick: false,
 	gridLineColor: '#C0C0C0',
-	// gridLineDashStyle: 'shortdot',
+	// gridLineDashStyle: 'solid', // docs
 	// gridLineWidth: 0,
 	// reversed: false,
 	
@@ -3913,7 +3913,7 @@ function Chart (options, callback) {
 					gridLineWidth = major ? options.gridLineWidth : options.minorGridLineWidth,
 					gridLineColor = major ? options.gridLineColor : options.minorGridLineColor,
 					dashStyle = major ? 
-						options.gridLineDashStyle || 'shortdot' : 
+						options.gridLineDashStyle : 
 						options.minorGridLineDashStyle,
 					gridLinePath,
 					mark = tick.mark,
@@ -4637,7 +4637,8 @@ function Chart (options, callback) {
 			while (i <= roundedMax) {
 				tickPositions.push(i);
 				i = correctFloat(i + tickInterval);
-			}			
+			}
+			
 		}
 		
 		/**
@@ -4649,6 +4650,8 @@ function Chart (options, callback) {
 				catPad,
 				linkedParent,
 				linkedParentExtremes,
+				tickIntervalOption = options.tickInterval,
+				tickPixelIntervalOption = options.tickPixelInterval,
 				maxZoom = options.maxZoom || (
 					isXAxis ? 
 						mathMin(chart.smallestInterval * 5, dataMax - dataMin) : 
@@ -4696,17 +4699,20 @@ function Chart (options, callback) {
 			// get tickInterval
 			if (min == max) {
 				tickInterval = 1;
+			} else if (isLinked && !tickIntervalOption 
+					&& !tickPixelIntervalOption != linkedParent.options.tickPixelInterval) {
+				tickInterval = linkedParent.tickInterval;
 			} else {
 				tickInterval = pick(
-					options.tickInterval,
+					tickIntervalOption,
 					categories ? // for categoried axis, 1 is default, for linear axis use tickPix 
 						1 : 
-						(max - min) * options.tickPixelInterval / axisLength
+						(max - min) * tickPixelIntervalOption / axisLength
 				);
 			}
 			
 			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
-				tickInterval = normalizeTickInterval(tickInterval);
+				axis.tickInterval = tickInterval = normalizeTickInterval(tickInterval);
 			}
 			
 			// get minorTickInterval
@@ -4731,18 +4737,19 @@ function Chart (options, callback) {
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1];
 			
-			if (options.startOnTick) {
-				min = roundedMin;
-			} else if (min > roundedMin) {
-				tickPositions.shift();
+			if (!isLinked) {
+				if (options.startOnTick) {
+					min = roundedMin;
+				} else if (min > roundedMin) {
+					tickPositions.shift();
+				}
+				
+				if (options.endOnTick) {
+					max = roundedMax;
+				} else if (max < roundedMax) {
+					tickPositions.pop();
+				}
 			}
-			
-			if (options.endOnTick) {
-				max = roundedMax;
-			} else if (max < roundedMax) {
-				tickPositions.pop();
-			}
-			
 			
 			
 			// record the greatest number of ticks for multi axis
@@ -4756,8 +4763,6 @@ function Chart (options, callback) {
 			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY]) {
 				maxTicks[xOrY] = tickPositions.length;
 			}
-				
-			
 			
 		}
 		
@@ -4765,8 +4770,8 @@ function Chart (options, callback) {
 		 * When using multiple axes, adjust the number of ticks to match the highest
 		 * number of ticks in that group
 		 */ 
-		function adjustTickAmount() {
-			if (!isDatetimeAxis && !categories) { // only apply to linear scale
+		function adjustTickAmount() {			
+			if (!isDatetimeAxis && !categories && !isLinked) { // only apply to linear scale
 				var oldTickAmount = tickAmount,
 					calculatedTickAmount = tickPositions.length;
 					
@@ -4899,6 +4904,7 @@ function Chart (options, callback) {
 		 * Render the tick labels to a preliminary position to get their sizes
 		 */
 		function getOffset() {
+			
 			var tickmarkPos,
 				hasData = associatedSeries.length && defined(min) && defined(max),
 				titleOffset = 0,
@@ -5267,7 +5273,6 @@ function Chart (options, callback) {
 		
 		// set min and max
 		setScale();
-			
 	
 	} // end Axis
 	
@@ -6456,11 +6461,11 @@ function Chart (options, callback) {
 					options[i < 2 ? 'x' : 'y'] = pInt(style[prop]) * (i % 2 ? -1 : 1);
 				}
 			}
-
+			
 			legendGroup.align(extend(options, {
 				width: legendWidth,
 				height: legendHeight
-			}), true);
+			}), true, spacingBox);
 			
 			if (!isResizing) {
 				positionCheckboxes();
@@ -6914,8 +6919,9 @@ function Chart (options, callback) {
 				})
 				.css(chartTitleOptions.style)
 				.add()
-				.align(chartTitleOptions);
+				.align(chartTitleOptions, false, spacingBox);
 			}
+			
 		});
 		
 	}
@@ -7035,26 +7041,27 @@ function Chart (options, callback) {
 		if ((chart.title || chart.subtitle) && !defined(optionsMarginTop)) {
 			titleOffset = mathMax(
 				chart.title && !chartTitleOptions.floating && !chartTitleOptions.verticalAlign && chartTitleOptions.y || 0, 
-				chart.subtitle && !chartSubtitleOptions.floating && !chartSubtitleOptions.verticalAlign && chartSubtitleOptions.y || 0
-			);
+				chart.subtitle && !chartSubtitleOptions.floating && !chartSubtitleOptions.verticalAlign && chartSubtitleOptions.y || 0				
+			) + spacingTop;
 			if (titleOffset) {
 				plotTop = mathMax(plotTop, titleOffset + pick(chartTitleOptions.margin, 15));
 			}
 		}
+		
 		// adjust for legend
 		if (legendOptions.enabled && !legendOptions.floating) {
 			if (align == 'right') { // horizontal alignment handled first
 				if (!defined(optionsMarginRight)) {
 					marginRight = mathMax(
 						marginRight,
-						legendWidth - legendX + legendMargin
+						legendWidth - legendX + legendMargin + spacingRight
 					);
 				}
 			} else if (align == 'left') {
 				if (!defined(optionsMarginLeft)) {
 					plotLeft = mathMax(
 						plotLeft,
-						legendWidth + legendX + legendMargin
+						legendWidth + legendX + legendMargin + spacingLeft
 					);
 				}
 				
@@ -7062,7 +7069,7 @@ function Chart (options, callback) {
 				if (!defined(optionsMarginTop)) {
 					plotTop = mathMax(
 						plotTop, 
-						legendHeight + legendY + legendMargin
+						legendHeight + legendY + legendMargin + spacingTop
 					);
 				}
 			
@@ -7070,7 +7077,7 @@ function Chart (options, callback) {
 				if (!defined(optionsMarginBottom)) {
 					marginBottom = mathMax(
 						marginBottom, 
-						legendHeight - legendY + legendMargin
+						legendHeight - legendY + legendMargin + spacingBottom
 					);
 				}
 			}
@@ -7135,6 +7142,8 @@ function Chart (options, callback) {
 	 * @param {Object|Boolean} animation
 	 */
 	function resize(width, height, animation) {
+		var chartTitle = chart.title,
+			chartSubtitle = chart.subtitle;
 		
 		isResizing += 1;
 		
@@ -7168,6 +7177,9 @@ function Chart (options, callback) {
 		
 		getMargins();
 		 
+		// move titles
+		chartTitle && chartTitle.align(null, null, spacingBox);
+		chartSubtitle && chartSubtitle.align(null, null, spacingBox);
 		
 		redraw();
 		
@@ -7456,7 +7468,8 @@ function Chart (options, callback) {
 
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
-		var onreadystatechange = 'onreadystatechange';
+		var onreadystatechange = 'onreadystatechange',
+			callbacks = chart.callbacks;
 		if (!hasSVG && doc.readyState != 'complete') {
 			doc.attachEvent(onreadystatechange, function() {
 				doc.detachEvent(onreadystatechange, arguments.callee);
@@ -7494,7 +7507,12 @@ function Chart (options, callback) {
 		fireEvent(chart, 'load');
 		
 		globalAnimation = true;
-		callback && callback(chart);
+		
+		// run callbacks
+		callback && callbacks.push(callback);
+		each (callbacks, function(fn) {
+			fn.apply(chart, [chart]);
+		});
 	}
 	
 	// Run chart
@@ -7543,7 +7561,6 @@ function Chart (options, callback) {
 	chart.showLoading = showLoading;	
 	chart.pointCount = 0;
 	
-	
 	/*
 	if ($) $(function() {
 		$container = $('#container');
@@ -7587,7 +7604,10 @@ function Chart (options, callback) {
 	firstRender();
 	
 	
-}
+} // end Chart
+
+// Hook for exporting module
+Chart.prototype.callbacks = [];
 
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint

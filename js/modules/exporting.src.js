@@ -626,26 +626,20 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 	];
 };
 
-// Overwrite the HC.Chart object with added functionality for export buttons after render
-HC.Chart = function(options, callback) {
-	return new Chart(options, function(chart) {
-		var n,
-			exportingOptions = chart.options.exporting,
-			buttons = exportingOptions.buttons;
-		
-		// add buttons
-		if (exportingOptions.enabled !== false) {	
 
-			for (n in buttons) {
-				chart.addButton(buttons[n]);
-			}
+// Add the buttons on chart load
+Chart.prototype.callbacks.push(function(chart) {
+	var n,
+		exportingOptions = chart.options.exporting,
+		buttons = exportingOptions.buttons;
+
+	if (exportingOptions.enabled !== false) {
+
+		for (n in buttons) {
+			chart.addButton(buttons[n]);
 		}
-		
-		// execute user callbacks
-		if (callback) {
-			callback();
-		}
-	});
-};
+	}
+});
+
 
 })();
