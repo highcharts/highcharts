@@ -7468,8 +7468,7 @@ function Chart (options, callback) {
 
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
-		var onreadystatechange = 'onreadystatechange',
-			callbacks = chart.callbacks;
+		var onreadystatechange = 'onreadystatechange';
 		if (!hasSVG && doc.readyState != 'complete') {
 			doc.attachEvent(onreadystatechange, function() {
 				doc.detachEvent(onreadystatechange, arguments.callee);
@@ -7509,8 +7508,8 @@ function Chart (options, callback) {
 		globalAnimation = true;
 		
 		// run callbacks
-		callback && callbacks.push(callback);
-		each (callbacks, function(fn) {
+		callback && callback.apply(chart, [chart]);
+		each (chart.callbacks, function(fn) {
 			fn.apply(chart, [chart]);
 		});
 	}
