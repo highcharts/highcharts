@@ -2092,6 +2092,9 @@ SVGRenderer.prototype = {
 					
 					// first span on subsequent line, add the line height
 					if (lineNo && !spanNo) {
+						if (!tspan.style.lineHeight) { // WebKit sometimes returns computed style: normal
+							tspan.style.lineHeight = '150%';
+						}
 						attr(tspan, 'dy', pInt(window.getComputedStyle(tspan, null).getPropertyValue('line-height')));
 					}
 					
