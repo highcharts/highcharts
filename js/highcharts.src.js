@@ -2801,6 +2801,7 @@ var VMLElement = extendClass( SVGElement, {
 										
 					// clipping rectangle special
 					if (this.updateClipping) {
+						this[key] = value;
 						this.updateClipping();
 						
 					} else {
@@ -3226,7 +3227,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 						height: bottom +PX
 					});
 				}
-				
 				return ret;
 			},
 			
@@ -6166,8 +6166,8 @@ function Chart (options, callback) {
 			}
 			if (legendSymbol) {
 				legendSymbol.attr({
-					x: itemX + legendSymbol.x, 
-					y: itemY + legendSymbol.y
+					x: itemX + legendSymbol.xOff, 
+					y: itemY + legendSymbol.yOff
 				});
 			}
 			if (checkbox) {
@@ -6318,9 +6318,8 @@ function Chart (options, callback) {
 				
 					
 				}
-				
-				legendSymbol.x = symbolX;
-				legendSymbol.y = symbolY;
+				legendSymbol.xOff = symbolX;
+				legendSymbol.yOff = symbolY;
 				
 				item.legendSymbol = legendSymbol;
 					
