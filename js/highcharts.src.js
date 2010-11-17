@@ -2664,16 +2664,7 @@ var VMLElement = extendClass( SVGElement, {
 			
 		// if the parent group is inverted, apply inversion on all children
 		if (inverted) { // only on groups
-			
-			parentStyle = parentNode.style;
-			
-			css(element, { 
-				flip: 'x',
-				left: pInt(parentStyle.width) - 10,
-				top: pInt(parentStyle.height) - 10,
-				rotation: -90
-			});
-			
+			renderer.invertChild(element, parentNode);			
 		}
 		
 		// append it
@@ -3050,6 +3041,13 @@ var VMLElement = extendClass( SVGElement, {
 			wrapper.css({
 				marginLeft: translateX,
 				marginTop: translateY
+			});
+		}
+		
+		// apply inversion
+		if (wrapper.inverted) { // wrapper is a group
+			each(elem.childNodes, function(child) {
+				wrapper.renderer.invertChild(child, elem);
 			});
 		}
 		
@@ -3473,6 +3471,22 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			width: width || 0,
 			height: height || 0
 		});		
+	},
+	
+	/**
+	 * In the VML renderer, each child of an inverted div (group) is inverted
+	 * @param {Object} element
+	 * @param {Object} parentNode
+	 */
+	invertChild: function(element, parentNode) {
+		var parentStyle = parentNode.style;
+			
+		css(element, { 
+			flip: 'x',
+			left: pInt(parentStyle.width) - 10,
+			top: pInt(parentStyle.height) - 10,
+			rotation: -90
+		});
 	},
 	
 	/**
