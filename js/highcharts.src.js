@@ -6300,8 +6300,10 @@ function Chart (options, callback) {
 				
 					
 				}
-				legendSymbol.xOff = symbolX;
-				legendSymbol.yOff = symbolY;
+				if (legendSymbol) {
+					legendSymbol.xOff = symbolX;
+					legendSymbol.yOff = symbolY;
+				}
 				
 				item.legendSymbol = legendSymbol;
 					
