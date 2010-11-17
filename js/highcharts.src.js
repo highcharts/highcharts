@@ -2043,6 +2043,7 @@ SVGRenderer.prototype = {
 			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
+			lastLine,
 			i = childNodes.length;
 			
 			
@@ -2084,19 +2085,22 @@ SVGRenderer.prototype = {
 						attributes.dx = 3; // space
 					}
 					
+					
+					// first span on subsequent line, add the line height
+					if (!spanNo) {						
+						if (lineNo) {
+							attr(tspan, 'dy', lastLine.offsetHeight || 
+								pInt(window.getComputedStyle(lastLine, null).getPropertyValue('line-height')))
+						}
+						lastLine = tspan; // record for use in next line						
+					}
+					
 					// add attributes
 					attr(tspan, attributes);
 					
 					// append it
 					textNode.appendChild(tspan);
 					
-					// first span on subsequent line, add the line height
-					if (lineNo && !spanNo) {
-						if (!tspan.style.lineHeight) { // WebKit sometimes returns computed style: normal
-							tspan.style.lineHeight = '150%';
-						}
-						attr(tspan, 'dy', pInt(window.getComputedStyle(tspan, null).getPropertyValue('line-height')));
-					}
 					
 					spanNo++;
 				}
@@ -3356,70 +3360,21 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: function(str, x, y/*, style, rotation, align*/) {
-		//if (str || str === 0) {
-		//style = style || {};
-		//align = align || 'left';
-		//rotation = rotation || 0;
+	text: function(str, x, y) {
 		
-		// declare variables
-		var //elemWrapper, 
-			//elem, 
-			//spanWidth,
-			//lineHeight = mathRound(pInt(style.fontSize || 12) * 1.2),
-			defaultChartStyle = defaultOptions.chart.style; 
-	
-		x = mathRound(x);
-		y = mathRound(y);
-		
-		// set styles
-		/*extend(style, {
-			color: style.color || '#000000',
-			whiteSpace: 'nowrap',
-			// get font metrics for correct sizing
-			fontFamily: style.fontFamily || defaultChartStyle.fontFamily,
-			fontSize: style.fontSize || defaultChartStyle.fontSize
-		});*/
+		var defaultChartStyle = defaultOptions.chart.style; 
 			
 		return this.createElement('span')
 			.attr({
 				text: str,
-				x: x,
-				y: y				
+				x: mathRound(x),
+				y: mathRound(y)
 			})
 			.css({
 				whiteSpace: 'nowrap',
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
 			});
-		//elem = elemWrapper.element;
-		//elem.lineHeight = lineHeight; // used in attr
-		//elem.align = align; // internal prop used in attr
-			
-		
-		// apply rotation
-		/*if (rotation) {	
-			var radians = rotation * deg2rad, // deg to rad
-				costheta = mathCos(radians),
-				sintheta = mathSin(radians);
-			
-			css (elem, {
-				filter: ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta, 
-					', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta, 
-					', sizingMethod=\'auto expand\')'].join('')
-			});
-			elemWrapper.costheta = costheta;
-			elemWrapper.sintheta = sintheta;
-		}*/
-		
-		/*css(elem, style);
-		elemWrapper.attr({
-			text: str,
-			x: x,
-			y: y
-		});			
-			
-		return elemWrapper;*/
 	},
 	
 	/**
@@ -7116,13 +7071,10 @@ function Chart (options, callback) {
 	function initReflow() {
 		var reflowTimeout;
 		function reflow() {
-			var width = renderTo.offsetWidth,
-				height = renderTo.offsetHeight;
+			var width = optionsChart.width || renderTo.offsetWidth,
+				height = optionsChart.height || renderTo.offsetHeight;
 				
 			if (width != containerWidth || height != containerHeight) {
-				/*if (defined(width) && !isResizing) {
-					resize(width, height, false);
-				}*/
 				clearTimeout(reflowTimeout);
 				reflowTimeout = setTimeout(function() {
 					resize(width, height, false);
