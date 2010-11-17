@@ -513,6 +513,7 @@ var pathAnim = {
 	 * Prepare start and end values so that the path can be animated one to one
 	 */
 	init: function(elem, fromD, toD) {
+		fromD = fromD || '';
 		var shift = elem.shift,
 			bezier = fromD.indexOf('C') > -1,
 			numParams = bezier ? 7 : 3,
@@ -532,7 +533,6 @@ var pathAnim = {
 					}
 				}
 			};
-			
 		
 		if (bezier) {
 			sixify(start);
@@ -2743,7 +2743,7 @@ var VMLElement = extendClass( SVGElement, {
 					skipAttr = true;
 					
 				} else if (key == 'd') {
-					
+					value = value || [];
 					this.d = value.join(' '); // used in getter for animation
 					
 					// convert paths 
@@ -3660,6 +3660,8 @@ function Chart (options, callback) {
 		containerHeight,
 		chartWidth,
 		chartHeight,
+		oldChartWidth,
+		oldChartHeight,
 		chartBackground,
 		plotBackground,
 		plotBGImage,
@@ -3727,8 +3729,8 @@ function Chart (options, callback) {
 			offset = options.offset || 0,
 			xOrY = isXAxis ? 'x' : 'y',
 			axisLength,
-		
 			transA, // translation factor
+			oldTransA, // used for prerendering
 			transB = horiz ? plotLeft : marginBottom, // translation addend
 			axisGroup,
 			gridGroup,
@@ -3860,8 +3862,9 @@ function Chart (options, callback) {
 			 * Put everything in place
 			 * 
 			 * @param index {Number}
+			 * @param old {Boolean} Use old coordinates to prepare an animation into new position
 			 */
-			render: function(index) {
+			render: function(index, old) {
 				var tick = this,
 					major = !tick.minor,
 					label = tick.label,
@@ -3880,20 +3883,23 @@ function Chart (options, callback) {
 					tickWidth = major ? options.tickWidth : options.minorTickWidth,
 					tickColor = major ? options.tickColor : options.minorTickColor,
 					step = labelOptions.step,
+					cHeight = old && oldChartHeight || chartHeight,
 					attribs,
 					x,
 					y;
 					
+				// get x and y position for ticks and labels
 				x = horiz ? 
-					translate(pos + tickmarkOffset) + transB : 
-					plotLeft + offset + (opposite ? plotWidth : 0);
+					translate(pos + tickmarkOffset, null, null, old) + transB : 
+					plotLeft + offset + (opposite ? (old && oldChartWidth || chartWidth) - marginRight - plotLeft : 0);
+					
 				y = horiz ?
-					chartHeight - marginBottom + offset - (opposite ? plotHeight : 0) :
-					chartHeight - translate(pos + tickmarkOffset) - transB;
+					cHeight - marginBottom + offset - (opposite ? plotHeight : 0) :
+					cHeight - translate(pos + tickmarkOffset, null, null, old) - transB;
 					
 				// create the grid line
 				if (gridLineWidth) {
-					gridLinePath = getPlotLinePath(pos + tickmarkOffset, gridLineWidth);
+					gridLinePath = getPlotLinePath(pos + tickmarkOffset, gridLineWidth, old);
 					
 					if (gridLine === UNDEFINED) {
 						attribs = {
@@ -4304,11 +4310,16 @@ function Chart (options, callback) {
 		 * Translate from axis value to pixel position on the chart, or back
 		 * 
 		 */
-		function translate(val, backwards, cvsCoord) {
+		function translate(val, backwards, cvsCoord, old) {
 			var sign = 1,
 				cvsOffset = 0,
+				localA = old && oldTransA || transA,
 				returnValue;
-			
+				
+			if (!localA) {
+				localA = transA;
+			}
+				
 			if (cvsCoord) {
 				sign *= -1; // canvas coordinates inverts the value
 				cvsOffset = axisLength;
@@ -4322,10 +4333,10 @@ function Chart (options, callback) {
 				if (reversed) {
 					val = axisLength - val;
 				}
-				returnValue = val / transA + min; // from chart pixel to value				
+				returnValue = val / localA + min; // from chart pixel to value				
 			
 			} else { // normal translation
-				returnValue = sign * (val - min) * transA + cvsOffset; // from value to chart pixel
+				returnValue = sign * (val - min) * localA + cvsOffset; // from value to chart pixel
 			}
 			
 			return returnValue;
@@ -4336,31 +4347,34 @@ function Chart (options, callback) {
 		 * this axis, across the plot to the opposite side
 		 * @param {Number} value
 		 * @param {Number} lineWidth Used for calculation crisp line
+		 * @param {Number] old Use old coordinates (for resizing and rescaling)
 		 */
-		function getPlotLinePath(value, lineWidth) {
+		function getPlotLinePath(value, lineWidth, old) {
 			var x1, 
 				y1, 
 				x2, 
 				y2,
-				translatedValue = translate(value),
+				translatedValue = translate(value, null, null, old),
+				cHeight = old && oldChartHeight || chartHeight,
+				cWidth = old && oldChartWidth || chartWidth,
 				path,
 				skip;
 				
 			x1 = x2 = mathRound(translatedValue + transB);
-			y1 = y2 = mathRound(chartHeight - translatedValue - transB);
+			y1 = y2 = mathRound(cHeight - translatedValue - transB);
 			
 			if (isNaN(translatedValue)) { // no min or max
 				skip = true;
 			
 			} else if (horiz) { 
 				y1 = plotTop;
-				y2 = chartHeight - marginBottom;
+				y2 = cHeight - marginBottom;
 				if (x1 < plotLeft || x1 > plotLeft + plotWidth) {
 					skip = true;
 				}
 			} else {
 				x1 = plotLeft;
-				x2 = chartWidth - marginRight;
+				x2 = cWidth - marginRight;
 				if (y1 < plotTop || y1 > plotTop + plotHeight) {
 					skip = true;
 				}
@@ -4770,6 +4784,7 @@ function Chart (options, callback) {
 			setTickPositions();
 			
 			// the translation factor used in translate function
+			oldTransA = transA;
 			transA = axisLength / ((max - min) || 1);
 							
 			// reset stacks
@@ -4976,6 +4991,35 @@ function Chart (options, callback) {
 			
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData || isLinked) {
+				
+				// first, add new ticks in positions translated from the old scale
+				if (hasRendered) {
+					each(tickPositions, function(pos, i) {
+						if (ticks[pos].isNew) {
+							ticks[pos].render(i, true);
+						}
+					});
+				}
+				oldTransA = null;
+				
+				// minor ticks and grid lines
+				if (minorTickInterval && !categories) {
+					var pos = min + (tickPositions[0] - min) % minorTickInterval;
+					for (pos; pos <= max; pos += minorTickInterval) {
+						if (!minorTicks[pos]) {
+							minorTicks[pos] = new Tick(pos, true);
+						}
+						minorTicks[pos].isActive = true;
+						minorTicks[pos].render();
+					}
+				}
+				
+				// move ticks to new positions
+				each(tickPositions, function(pos, i) {
+					ticks[pos].isActive = true;
+					ticks[pos].render(i);
+				});
+				
 				// alternate grid color
 				if (alternateGridColor) {
 					each(tickPositions, function(pos, i) {
@@ -5010,23 +5054,7 @@ function Chart (options, callback) {
 				}*/
 				
 				
-				// minor ticks and grid lines
-				if (minorTickInterval && !categories) {
-					var pos = min + (tickPositions[0] - min) % minorTickInterval;
-					for (pos; pos <= max; pos += minorTickInterval) {
-						if (!minorTicks[pos]) {
-							minorTicks[pos] = new Tick(pos, true);
-						}
-						minorTicks[pos].isActive = true;
-						minorTicks[pos].render();
-					}
-				}
 				
-				// major ticks, grid lines and tick marks
-				each(tickPositions, function(pos, i) {
-					ticks[pos].isActive = true;
-					ticks[pos].render(i);
-				});
 				
 				// remove inactive ticks
 				each([ticks, minorTicks, alternateBands], function(coll) {
@@ -5149,8 +5177,7 @@ function Chart (options, callback) {
 			}
 		
 			// render the axis
-			render();
-			
+			render();			
 			
 			// move plot lines and bands
 			each(plotLinesAndBands, function(plotLine) {
@@ -6634,8 +6661,6 @@ function Chart (options, callback) {
 			tracker.resetTracker();
 		}
 		
-		
-		
 		// fire the event
 		fireEvent(chart, 'redraw');
 	}
@@ -7104,7 +7129,8 @@ function Chart (options, callback) {
 		// set the animation for the current process
 		globalAnimation = pick(animation, optionsChart.animation);
 		
-		
+		oldChartHeight = chartHeight;
+		oldChartWidth = chartWidth;
 		chartWidth = mathRound(width);
 		chartHeight = mathRound(height);
 		
@@ -7137,6 +7163,8 @@ function Chart (options, callback) {
 		
 		redraw();
 		
+		
+		oldChartHeight = null;
 		fireEvent(chart, 'resize');
 		
 		// fire endResize and set isResizing back 
