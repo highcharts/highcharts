@@ -7136,6 +7136,10 @@ function Chart (options, callback) {
 		chartWidth = mathRound(width);
 		chartHeight = mathRound(height);
 		
+		css(container, {
+			width: chartWidth + PX,
+			height: chartHeight + PX
+		});
 		renderer.setSize(chartWidth, chartHeight);
 		
 		// update axis lengths for more correct tick intervals:
