@@ -16,7 +16,6 @@
 var HC = Highcharts,
 	Chart = HC.Chart,
 	addEvent = HC.addEvent,
-	defaultOptions = HC.defaultOptions,
 	createElement = HC.createElement,
 	discardElement = HC.discardElement,
 	css = HC.css,
@@ -167,7 +166,7 @@ defaultOptions.exporting = {
 
 
 
-extend (Chart.prototype, {
+extend(Chart.prototype, {
 	/**
 	 * Return an SVG representation of the chart
 	 * 
@@ -211,7 +210,7 @@ extend (Chart.prototype, {
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
 		// prepare for replicating the chart
 		options.series = [];
-		each (chart.series, function(serie) {
+		each(chart.series, function(serie) {
 			seriesOptions = serie.options;			
 			
 			seriesOptions.animation = false; // turn off animation
@@ -224,7 +223,7 @@ extend (Chart.prototype, {
 			
 			seriesOptions.data = [];
 			each(serie.data, function(point) {
-				pointOptions = point.config == null || typeof point.config == 'number' ?
+				pointOptions = point.config === null || typeof point.config == 'number' ?
 					{ y: point.y } :
 					point.config;
 				pointOptions.x = point.x;
@@ -252,20 +251,20 @@ extend (Chart.prototype, {
 		discardElement(sandbox);
 		
 		// sanitize
-		svg = svg.
-			replace(/zIndex="[^"]+"/g, ''). 
-			replace(/isShadow="[^"]+"/g, '').
-			replace(/symbolName="[^"]+"/g, '').
-			replace(/jQuery[0-9]+="[^"]+"/g, '').
-			replace(/isTracker="[^"]+"/g, '').
-			replace(/url\([^#]+#/g, 'url(#').
+		svg = svg
+			.replace(/zIndex="[^"]+"/g, '') 
+			.replace(/isShadow="[^"]+"/g, '')
+			.replace(/symbolName="[^"]+"/g, '')
+			.replace(/jQuery[0-9]+="[^"]+"/g, '')
+			.replace(/isTracker="[^"]+"/g, '')
+			.replace(/url\([^#]+#/g, 'url(#')
 			
 			// IE specific
-			replace(/id=([^" >]+)/g, 'id="$1"'). 
-			replace(/class=([^" ]+)/g, 'class="$1"').
-			replace(/ transform /g, ' ').
-			replace(/:path/g, 'path').
-			replace(/style="([^"]+)"/g, function(s) {
+			.replace(/id=([^" >]+)/g, 'id="$1"') 
+			.replace(/class=([^" ]+)/g, 'class="$1"')
+			.replace(/ transform /g, ' ')
+			.replace(/:path/g, 'path')
+			.replace(/style="([^"]+)"/g, function(s) {
 				return s.toLowerCase();
 			});
 			
@@ -328,7 +327,6 @@ extend (Chart.prototype, {
 		
 		var chart = this,
 			container = chart.container,
-			i,
 			origDisplay = [],
 			origParent = container.parentNode,
 			body = doc.body,
@@ -361,7 +359,7 @@ extend (Chart.prototype, {
 			origParent.appendChild(container);
 			
 			// restore all body content
-			each (childNodes, function(node, i) {
+			each(childNodes, function(node, i) {
 				if (node.nodeType == 1) {
 					node.style.display = origDisplay[i];
 				}

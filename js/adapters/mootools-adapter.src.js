@@ -1,6 +1,14 @@
-/**
- * @author Torstein Hønsi
+/** 
+ * @license Highcharts JS - MooTools Adapter
+ * 
+ * (c) 2010 Torstein HÃ¸nsi
+ * 
+ * License: www.highcharts.com/license
  */
+
+// JSLint options:
+/*global Highcharts, Fx, $, $extend, $each, $merge, Events, Event */
+
 var HighchartsAdapter = {
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
@@ -26,7 +34,7 @@ var HighchartsAdapter = {
 				);
 			}
 			fxStart.apply(fx, arguments);
-		}
+		};
 		
 		// override Fx.step to allow animation of SVG element wrappers
 		morphProto.compute = function(from, to, delta) {
@@ -41,7 +49,7 @@ var HighchartsAdapter = {
 			} else {
 				return morphCompute.apply(fx, arguments);
 			}
-		}
+		};
 		
 	},	
 	
@@ -172,7 +180,7 @@ var HighchartsAdapter = {
 			type: event,
 			target: el
 		});
-		event = $extend (event, eventArguments);
+		event = $extend(event, eventArguments);
 		// override the preventDefault function to be able to use
 		// this for custom events
 		event.preventDefault = function() {
@@ -198,4 +206,4 @@ var HighchartsAdapter = {
 			el.fx.cancel();
 		}
 	}
-} 
+};
