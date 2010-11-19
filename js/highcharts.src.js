@@ -295,6 +295,16 @@ function createElement (tag, attribs, styles, parent, nopad) {
 	return el;
 }
 
+/**
+ * Set the global animation to either a given value, or fall back to the 
+ * given chart's animation option
+ * @param {Object} animation
+ * @param {Object} chart
+ */
+function setAnimation(animation, chart) {
+	globalAnimation = pick(animation, chart.animation);
+}
+
 /* 
  * Define the adapter for frameworks. If an external adapter is not defined, 
  * Highcharts reverts to the built-in jQuery adapter.
@@ -702,6 +712,7 @@ defaultOptions = {
 		useUTC: true
 	},
 	chart: {
+		animation: true, // docs
 		//alignTicks: false,
 		//reflow: true,
 		//className: null,
@@ -3294,15 +3305,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		var vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
 			isIE8 = this.isIE8;
 	
-		try { // bug in IE9 Beta 2, quirks mode - check this again with later upgrades
-			markup = markup.join('');
-		} catch (e) {
-			var s = '', i = 0;
-			for (i; i < markup.length; i++) {
-				s += markup[i];
-			}
-			markup = s;
-		}
+		markup = markup.join('');
 		
 		if (isIE8) { // add xmlns and style inline
 			markup = markup.replace('/>', ' xmlns="urn:schemas-microsoft-com:vml" />');
@@ -3625,7 +3628,7 @@ function Chart (options, callback) {
 		spacingRight = optionsChart.spacingRight,
 		spacingBottom = optionsChart.spacingBottom,
 		spacingLeft = optionsChart.spacingLeft,
-		spacingBox,
+		spacingBox, 
 		chartTitleOptions,
 		chartSubtitleOptions,
 		plotTop,
@@ -3728,6 +3731,8 @@ function Chart (options, callback) {
 			userSetMax,
 			max = null,
 			min = null,
+			oldMin,
+			oldMax,
 			minPadding = options.minPadding,
 			maxPadding = options.maxPadding,
 			isLinked = defined(options.linkedTo),
@@ -4066,9 +4071,17 @@ function Chart (options, callback) {
 			
 			// common for lines and bands
 			if (svgElem) {
-				svgElem.animate({
-					d: path
-				});
+				if (path) {
+					svgElem.animate({
+						d: path
+					}, {
+						complete: function(){
+							svgElem.show(); // if it has been outside the plot area, show it again
+						}
+					});
+				} else {
+					svgElem.hide();
+				}
 			} else if (path && path.length) {
 				plotLine.svgElem = svgElem = renderer.path(path)
 					.attr(attribs).add();
@@ -4306,7 +4319,8 @@ function Chart (options, callback) {
 		translate = function(val, backwards, cvsCoord, old) {
 			var sign = 1,
 				cvsOffset = 0,
-				localA = old && oldTransA || transA,
+				localA = old ? oldTransA : transA,
+				localMin = old ? oldMin : min,
 				returnValue;
 				
 			if (!localA) {
@@ -4326,10 +4340,10 @@ function Chart (options, callback) {
 				if (reversed) {
 					val = axisLength - val;
 				}
-				returnValue = val / localA + min; // from chart pixel to value				
+				returnValue = val / localA + localMin; // from chart pixel to value				
 			
 			} else { // normal translation
-				returnValue = sign * (val - min) * localA + cvsOffset; // from value to chart pixel
+				returnValue = sign * (val - localMin) * localA + cvsOffset; // from value to chart pixel
 			}
 			
 			return returnValue;
@@ -4764,10 +4778,10 @@ function Chart (options, callback) {
 		 */
 		function setScale() {
 			var type, 
-				i,
-				//total,
-				oldMin = min,
-				oldMax = max;
+				i;
+				
+			oldMin = min;
+			oldMax = max;
 				
 			// get data extremes if needed
 			getSeriesExtremes();
@@ -4806,7 +4820,7 @@ function Chart (options, callback) {
 		 */
 		function setExtremes(newMin, newMax, redraw, animation) {
 			
-			globalAnimation = animation;
+			setAnimation(animation, chart);
 			redraw = pick(redraw, true); // defaults to true
 				
 			fireEvent(axis, 'setExtremes', { // fire an event to enable syncing of multiple charts
@@ -4985,7 +4999,6 @@ function Chart (options, callback) {
 						}
 					});
 				}
-				oldTransA = null;
 				
 				// minor ticks and grid lines
 				if (minorTickInterval && !categories) {
@@ -6473,7 +6486,7 @@ function Chart (options, callback) {
 	 * Initialize an individual series, called internally before render time
 	 */
 	function initSeries(options) {
-		var type = options.type || optionsChart.defaultSeriesType,
+		var type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
 			typeClass = seriesTypes[type],
 			serie,
 			hasRendered = chart.hasRendered;
@@ -6517,7 +6530,7 @@ function Chart (options, callback) {
 	function addSeries(options, redraw, animation) {
 		var series;
 		
-		globalAnimation = animation;
+		setAnimation(animation, chart);
 		redraw = pick(redraw, true); // defaults to true
 		
 		fireEvent(chart, 'addSeries', { options: options }, function() {
@@ -6572,7 +6585,7 @@ function Chart (options, callback) {
 			i = seriesLength,
 			serie;
 			
-		globalAnimation = pick(animation, globalAnimation);
+		setAnimation(animation, chart);
 		
 		// link stacked series
 		while (i--) {
@@ -7120,7 +7133,7 @@ function Chart (options, callback) {
 		isResizing += 1;
 		
 		// set the animation for the current process
-		globalAnimation = pick(animation, optionsChart.animation);
+		setAnimation(animation, chart);
 		
 		oldChartHeight = chartHeight;
 		oldChartWidth = chartWidth;
@@ -7294,7 +7307,8 @@ function Chart (options, callback) {
 	 */
 	function render () {
 		var labels = options.labels,
-			credits = options.credits;
+			credits = options.credits,
+			creditsHref;
 		
 		// Title
 		setTitle();
@@ -7370,13 +7384,16 @@ function Chart (options, callback) {
 		credits.enabled = true;
 		credits.text = 'Highcharts v2.1 Beta';
 		if (credits.enabled && !chart.credits) {
+			creditsHref = credits.href;
 			renderer.text(
 				credits.text,
 				0,
 				0
 			)
 			.on('click', function() {
-				location.href = credits.href;
+				if (creditsHref) {
+					location.href = creditsHref;
+				}
 			})
 			.attr({
 				align: credits.position.align, 
@@ -7483,12 +7500,12 @@ function Chart (options, callback) {
 		// depends on inverted and on margins being set	
 		chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
 		
-		globalAnimation = false;
+		//globalAnimation = false;
 		render();
 		
 		fireEvent(chart, 'load');
 		
-		globalAnimation = true;
+		//globalAnimation = true;
 		
 		// run callbacks
 		if (callback) {
@@ -7533,6 +7550,7 @@ function Chart (options, callback) {
 	
 	// Expose methods and variables
 	chart.addSeries = addSeries;
+	chart.animation = optionsChart.animation;
 	chart.destroy = destroy;
 	chart.get = get;
 	chart.getSelectedPoints = getSelectedPoints;
@@ -7783,9 +7801,10 @@ Point.prototype = {
 	 */
 	update: function(options, redraw, animation) {
 		var point = this,
-			series = point.series;
+			series = point.series,
+			chart = series.chart;
 		
-		globalAnimation = animation;
+		setAnimation(animation, series);
 		redraw = pick(redraw, true);
 		
 		// fire the event with a default handler of doing the update
@@ -7796,7 +7815,7 @@ Point.prototype = {
 			// redraw
 			series.isDirty = true;
 			if (redraw) {
-				series.chart.redraw();
+				chart.redraw();
 			}
 		});
 	},
@@ -7813,7 +7832,7 @@ Point.prototype = {
 			chart = series.chart,
 			data = series.data;
 		
-		globalAnimation = animation;
+		setAnimation(animation, chart);
 		redraw = pick(redraw, true);
 		
 		// fire the event with a default handler of removing the point			
@@ -8140,9 +8159,11 @@ Series.prototype = {
 			data = series.data,
 			graph = series.graph,
 			area = series.area,
+			chart = series.chart,
 			point = (new series.pointClass()).init(series, options);
 			
-		globalAnimation = animation;
+		setAnimation(animation, chart);
+		
 		if (graph && shift) { // make graph animate sideways
 			graph.shift = shift;
 		}
@@ -8162,7 +8183,7 @@ Series.prototype = {
 		// redraw
 		series.isDirty = true;
 		if (redraw) {
-			series.chart.redraw();
+			chart.redraw();
 		}
 	},
 	
@@ -8178,7 +8199,7 @@ Series.prototype = {
 			chart = series.chart,
 			i = oldData && oldData.length || 0;
 		
-		globalAnimation = false;
+		globalAnimation = false; // never use animation for new data
 		series.xIncrement = null; // reset for new data
 		if (defined(initialColor)) { // reset colors for pie
 			colorCounter = initialColor;
@@ -8219,7 +8240,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart;
 			
-		globalAnimation = animation;
+		setAnimation(animation, chart);
 		redraw = pick(redraw, true);
 		
 		if (!series.isRemoving) {  /* prevent triggering native event in jQuery
@@ -9812,7 +9833,7 @@ var PiePoint = extendClass(Point, {
 			chart = series.chart,
 			slicedTranslation = point.slicedTranslation;
 			
-		globalAnimation = animation;
+		setAnimation(animation, chart);
 		
 		// redraw is true by default
 		redraw = pick(redraw, true);
@@ -10155,8 +10176,7 @@ var PieSeries = extendClass(Series, {
 				lastY = lowerHalf ? 9999 : -9999;
 				sign = lowerHalf ? -1 : 1;
 				
-				j = quarters[i].length;
-				while (j--) {
+				for (j = 0; j < quarters[i].length; j++) {
 					point = quarters[i][j];
 					
 					if ((dataLabel = point.dataLabel)) {
