@@ -258,6 +258,9 @@ extend(Chart.prototype, {
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
 			.replace(/isTracker="[^"]+"/g, '')
 			.replace(/url\([^#]+#/g, 'url(#')
+			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
+				return s2 +'.'+ s3[0];
+			}) 
 			
 			// IE specific
 			.replace(/id=([^" >]+)/g, 'id="$1"') 
