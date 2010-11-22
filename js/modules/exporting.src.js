@@ -178,6 +178,7 @@ extend(Chart.prototype, {
 			sandbox,
 			svg,
 			seriesOptions,
+			config,
 			pointOptions,
 			pointMarker,
 			options = merge(chart.options, additionalOptions); // copy the options and add extra options
@@ -222,11 +223,22 @@ extend(Chart.prototype, {
 			}
 			
 			seriesOptions.data = [];
+			
 			each(serie.data, function(point) {
-				pointOptions = point.config === null || typeof point.config == 'number' ?
+				/*pointOptions = point.config === null || typeof point.config == 'number' ?
 					{ y: point.y } :
 					point.config;
-				pointOptions.x = point.x;
+				pointOptions.x = point.x;*/
+				
+				// extend the options by those values that can be expressed in a number or array config
+				config = point.config;
+				pointOptions = extend(
+					typeof config == 'object' && config.constructor != Array && point.config, {
+						x: point.x,
+						y: point.y,
+						name: point.name
+					}
+				);
 				seriesOptions.data.push(pointOptions); // copy fresh updated data
 								
 				// remove image markers

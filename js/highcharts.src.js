@@ -910,7 +910,7 @@ defaultOptions = {
 		//formatter: defaultFormatter,
 		shadow: true,
 		//shared: false,
-		snap: 10,
+		snap: hasTouch ? 25 : 10,
 		style: {
 			color: '#333333',
 			fontSize: '12px',
@@ -1429,6 +1429,7 @@ SVGElement.prototype = {
 	 * @param {Mixed|Undefined} val
 	 */
 	attr: function(hash, val) {
+		
 		var key, 
 			value, 
 			i, 
@@ -1580,6 +1581,12 @@ SVGElement.prototype = {
 						attr(shadows[i], key, value);
 					}					
 				}
+				
+				/* trows errors in Chrome
+				if ((key == 'width' || key == 'height') && nodeName == 'rect' && value < 0) {
+					console.log(element);
+				}
+				*/
 				
 					
 				
@@ -5728,7 +5735,7 @@ function Chart (options, callback) {
 					hoverX = points[0].plotX;
 				}
 			}
-				
+			
 			// separate tooltip and general mouse events
 			if (hoverSeries && hoverSeries.tracker) { // only use for line-type series with common tracker
 		
@@ -5855,10 +5862,9 @@ function Chart (options, callback) {
 				
 				// normalize
 				e = normalizeMouseEvent(e);
-				if (e.type == 'mousemove') { // not for touch devices
+				if (!hasTouch) { // not for touch devices
 					e.returnValue = false;
 				}
-				
 				
 				var chartX = e.chartX,
 					chartY = e.chartY,
@@ -5939,7 +5945,9 @@ function Chart (options, callback) {
 				}
 				
 				lastWasOutsidePlot = isOutsidePlot;
-				return false;
+				
+				// when outside plot, allow touch-drag by returning true
+				return isOutsidePlot || !hasCartesianSeries;
 			};
 			
 			/*
@@ -6443,7 +6451,7 @@ function Chart (options, callback) {
 					.add(legendGroup)
 					.shadow(options.shadow);
 				
-				} else {
+				} else if (legendWidth > 0 && legendHeight > 0) {
 					box.animate({
 						width: legendWidth,
 						height: legendHeight
@@ -6978,7 +6986,8 @@ function Chart (options, callback) {
 				id: containerId
 			}, extend({
 				position: RELATIVE,
-				//overflow: HIDDEN,
+				overflow: HIDDEN, // needed for context menu (avoid scrollbars) and  
+					// content overflow in IE
 				width: chartWidth + PX,
 				height: chartHeight + PX,
 				textAlign: 'left'
@@ -7115,15 +7124,17 @@ function Chart (options, callback) {
 		function reflow() {
 			var width = optionsChart.width || renderTo.offsetWidth,
 				height = optionsChart.height || renderTo.offsetHeight;
-				
-			if (width != containerWidth || height != containerHeight) {
-				clearTimeout(reflowTimeout);
-				reflowTimeout = setTimeout(function() {
-					resize(width, height, false);
-				}, 100);
+			
+			if (width && height) { // means container is display:none
+				if (width != containerWidth || height != containerHeight) {
+					clearTimeout(reflowTimeout);
+					reflowTimeout = setTimeout(function() {
+						resize(width, height, false);
+					}, 100);
+				}
+				containerWidth = width;
+				containerHeight = height;
 			}
-			containerWidth = width;
-			containerHeight = height;
 		}
 		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function() {
@@ -8387,7 +8398,7 @@ Series.prototype = {
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
 			
-		if (chart.mouseIsDown) {
+		if (!hasTouch && chart.mouseIsDown) {
 			return;
 		}
 		
@@ -8413,7 +8424,6 @@ Series.prototype = {
 		// hover this
 		series.setState(HOVER_STATE);
 		chart.hoverSeries = series;
-		
 	},
 	
 	/**
@@ -10227,7 +10237,6 @@ var PieSeries = extendClass(Series, {
 							lastY = y;
 						}
 							
-						
 						if (secondPass) {
 						
 							// move or place the data label
@@ -10236,11 +10245,12 @@ var PieSeries = extendClass(Series, {
 									visibility: visibility,
 									align: labelPos[6]
 								})
-								.animate({
+								[dataLabel.moved ? 'animate' : 'attr']({
 									x: x + options.x + 
 										({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
 									y: y + options.y
 								});
+							dataLabel.moved = true;
 							
 							// draw the connector
 							if (outside && connectorWidth) {
