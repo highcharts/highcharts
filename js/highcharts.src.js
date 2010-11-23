@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1 alpha (merged changes from master 2010-09-28)
+ * @license Highcharts JS v2.1.0 (2010-11-23)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -440,6 +440,7 @@ if (!globalAdapter && win.jQuery) {
 		
 		$el.stop();
 		$el.animate(params, options);
+		
 	};
 	/**
 	 * Stop running animation
@@ -464,7 +465,7 @@ if (!globalAdapter && win.jQuery) {
 	jQ.fx.step._default = function(fx){
 		var elem = fx.elem;
 		if (elem.attr) { // is SVG element wrapper
-			elem.attr(fx.prop, fx.now);			
+			elem.attr(fx.prop, fx.now);
 		} else {
 			oldStepDefault.apply(this, arguments);
 		}
@@ -1597,6 +1598,7 @@ SVGElement.prototype = {
 					//element.setAttribute(key, value);
 					attr(element, key, value);
 				}
+				
 			}
 			
 		}
@@ -3921,7 +3923,7 @@ function Chart (options, callback) {
 									.attr(attribs).add(gridGroup) :
 								null;
 					} 
-					if (gridLine) {
+					if (gridLine && gridLinePath) {
 						gridLine.animate({
 							d: gridLinePath
 						});
@@ -6582,18 +6584,20 @@ function Chart (options, callback) {
 	function addSeries(options, redraw, animation) {
 		var series;
 		
-		setAnimation(animation, chart);
-		redraw = pick(redraw, true); // defaults to true
-		
-		fireEvent(chart, 'addSeries', { options: options }, function() {
-			series = initSeries(options);
-			series.isDirty = true;
+		if (options) {
+			setAnimation(animation, chart);
+			redraw = pick(redraw, true); // defaults to true
 			
-			chart.isDirtyLegend = true; // the series array is out of sync with the display
-			if (redraw) {
-				chart.redraw();
-			}
-		});
+			fireEvent(chart, 'addSeries', { options: options }, function() {
+				series = initSeries(options);
+				series.isDirty = true;
+				
+				chart.isDirtyLegend = true; // the series array is out of sync with the display
+				if (redraw) {
+					chart.redraw();
+				}
+			});
+		}
 		
 		return series;
 	}
@@ -6706,6 +6710,7 @@ function Chart (options, callback) {
 			placeTrackerGroup();
 		}
 		
+					
 		// redraw affected series
 		each(series, function(serie) {
 			if (serie.isDirty && serie.visible) { 
@@ -7433,10 +7438,6 @@ function Chart (options, callback) {
 		}
 		
 		// Credits
-		
-		// beta mark
-		credits.enabled = true;
-		credits.text = 'Highcharts v2.1 Beta';
 		if (credits.enabled && !chart.credits) {
 			creditsHref = credits.href;
 			renderer.text(
@@ -8298,8 +8299,6 @@ Series.prototype = {
 	remove: function(redraw, animation) {
 		var series = this,
 			chart = series.chart;
-			
-		setAnimation(animation, chart);
 		redraw = pick(redraw, true);
 		
 		if (!series.isRemoving) {  /* prevent triggering native event in jQuery
@@ -8317,7 +8316,7 @@ Series.prototype = {
 				// redraw
 				chart.isDirtyLegend = chart.isDirtyBox = true;
 				if (redraw) {
-					chart.redraw();
+					chart.redraw(animation);
 				}
 			});
 			
