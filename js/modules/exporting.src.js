@@ -26,6 +26,7 @@ var HC = Highcharts,
 	mathMax = math.max,
 	doc = document,
 	win = window,
+	hasTouch = 'ontouchstart' in doc.documentElement,	
 	M = 'M',
 	L = 'L',
 	DIV = 'div',
@@ -59,7 +60,8 @@ defaultOptions.navigation = {
 	menuItemStyle: {
 		padding: '0 5px',
 		background: NONE,
-		color: '#303030'
+		color: '#303030',
+		fontSize: hasTouch ? '14px' : '11px'
 	},
 	menuItemHoverStyle: {
 		background: '#4572A5',
@@ -270,15 +272,16 @@ extend(Chart.prototype, {
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
 			.replace(/isTracker="[^"]+"/g, '')
 			.replace(/url\([^#]+#/g, 'url(#')
+			/* This fails in IE < 8
 			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
 				return s2 +'.'+ s3[0];
-			}) 
+			})*/ 
 			
 			// IE specific
 			.replace(/id=([^" >]+)/g, 'id="$1"') 
 			.replace(/class=([^" ]+)/g, 'class="$1"')
 			.replace(/ transform /g, ' ')
-			.replace(/:path/g, 'path')
+			.replace(/:(path|rect)/g, '$1')
 			.replace(/style="([^"]+)"/g, function(s) {
 				return s.toLowerCase();
 			});
@@ -429,19 +432,18 @@ extend(Chart.prototype, {
 					boxShadow: boxShadow
 				}, navOptions.menuStyle) , menu);
 			
+			// hide on mouse out
 			hide = function() {
 				css(menu, { display: NONE });
 			};
+			
 			addEvent(menu, 'mouseleave', hide);
+			
 			
 			// create the items
 			each(items, function(item) {
 				if (item) {
-					createElement(DIV, {
-						onclick: function() {
-							hide();
-							item.onclick.apply(chart, arguments);
-						},
+					var div = createElement(DIV, {
 						onmouseover: function() {
 							css(this, navOptions.menuItemHoverStyle);
 						},
@@ -452,6 +454,12 @@ extend(Chart.prototype, {
 					}, extend({
 						cursor: 'pointer'
 					}, menuItemStyle), innerMenu);
+					
+					div[hasTouch ? 'ontouchstart' : 'onclick'] = function() {
+						hide();
+						item.onclick.apply(chart, arguments);
+					};
+						
 				}
 			});
 			
@@ -533,42 +541,47 @@ extend(Chart.prototype, {
 		
 		// the invisible element to track the clicks
 		button = renderer.rect( 
-			0,
-			0,
-			buttonWidth,
-			buttonHeight,
-			0
-		)
-		.align(btnOptions)
-		.attr({
-			fill: 'rgba(255, 255, 255, 0.001)',
-			title: HC.getOptions().lang[btnOptions._titleKey],
-			zIndex: 21
-		}).css({
-			cursor: 'pointer'
-		})
-		.on('mouseover', function() {
-			symbol.attr({
-				stroke: btnOptions.hoverSymbolStroke,
-				fill: btnOptions.hoverSymbolFill
-			});
-			box.attr({
-				stroke: btnOptions.hoverBorderColor
-			});
-		})
-		.on('mouseout', revert)		
-		.add();
+				0,
+				0,
+				buttonWidth,
+				buttonHeight,
+				0
+			)
+			.align(btnOptions)
+			.attr({
+				fill: 'rgba(255, 255, 255, 0.001)',
+				title: HC.getOptions().lang[btnOptions._titleKey],
+				zIndex: 21
+			}).css({
+				cursor: 'pointer'
+			})
+			.on('mouseover', function() {
+				symbol.attr({
+					stroke: btnOptions.hoverSymbolStroke,
+					fill: btnOptions.hoverSymbolFill
+				});
+				box.attr({
+					stroke: btnOptions.hoverBorderColor
+				});
+			})
+			.on('mouseout', revert)
+			.on('click', revert)
+			.add();
 		
-		addEvent(button.element, 'click', revert);
+		//addEvent(button.element, 'click', revert);
 		
 		// add the click event
 		if (menuItems) {
 			onclick = function(e) {
+				revert();
 				var bBox = button.getBBox();
 				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
 			};
 		}
-		addEvent(button.element, 'click', function() {
+		/*addEvent(button.element, 'click', function() {
+			onclick.apply(chart, arguments);
+		});*/
+		button.on('click', function() {
 			onclick.apply(chart, arguments);
 		});
 		
@@ -585,7 +598,7 @@ extend(Chart.prototype, {
 				zIndex: 20		
 			})).add();
 		
-
+		
 		
 	}
 });

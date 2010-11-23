@@ -1675,8 +1675,17 @@ SVGElement.prototype = {
 	 * @param {Function} handler
 	 */
 	on: function(eventType, handler) {
+		var fn = handler;
+		// touch
+		if (hasTouch && eventType == 'click') {
+			eventType = 'touchstart';
+			fn = function(e) {
+				e.preventDefault();
+				handler();
+			}
+		}
 		// simplest possible event model for internal use
-		this.element['on'+ eventType] = handler;
+		this.element['on'+ eventType] = fn;
 		return this;
 	},
 	
@@ -2075,9 +2084,8 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 		
-		
 		each(lines, function(line, lineNo) {
-			var spans, spanNo = 0;
+			var spans, spanNo = 0, lineHeight;
 			
 			line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 			spans = line.split('|||');
@@ -2108,13 +2116,16 @@ SVGRenderer.prototype = {
 						attributes.dx = 3; // space
 					}
 					
-					
 					// first span on subsequent line, add the line height
 					if (!spanNo) {						
 						if (lineNo) {
-							attr(tspan, 'dy', pInt(lastLine.offsetHeight || 
-								window.getComputedStyle(lastLine, null).getPropertyValue('line-height') ||
-								18));
+							// Webkit and opera sometimes return 'normal' as the line height. In that
+							// case, webkit uses offsetHeight, while Opera falls back to 18
+							lineHeight = pInt(window.getComputedStyle(lastLine, null).getPropertyValue('line-height'));
+							if (isNaN(lineHeight)) {
+								lineHeight = lastLine.offsetHeight || 18;
+							}
+							attr(tspan, 'dy', lineHeight);
 						}
 						lastLine = tspan; // record for use in next line						
 					}
@@ -2963,31 +2974,19 @@ var VMLElement = extendClass( SVGElement, {
 	
 	getBBox: function() {
 		var element = this.element;
-			/*bBox,
-			hasOffsetWidth = element.offsetWidth,
-			origParentNode = element.parentNode;
-			
-		if (!hasOffsetWidth) {
-			doc.body.appendChild(element);
+		
+		// faking getBBox in exported SVG in legacy IE
+		if (element.nodeName == 'text') {
+			element.style.position = ABSOLUTE;
 		}
-		*/
+		
 		return {
 			x: element.offsetLeft,
 			y: element.offsetTop,
 			width: element.offsetWidth,
 			height: element.offsetHeight
 		};
-		
-		/*if (!hasOffsetWidth) {
-			if (origParentNode) {
-				origParentNode.appendChild(element);
-			} else {
-				doc.body.removeChild(element);
-			}
-		}
-
-		return bBox;*/
-			
+					
 	},
 	
 	/**
@@ -3667,6 +3666,7 @@ function Chart (options, callback) {
 		plotBorder,
 		chart = this,
 		chartEvents = optionsChart.events,
+		runChartClick = chartEvents && !!chartEvents.click,
 		eventType,
 		isInsidePlot, // function
 		tooltip,
@@ -3843,6 +3843,7 @@ function Chart (options, callback) {
 									align: labelOptions.align,
 									rotation: labelOptions.rotation
 								})
+								// without position absolute, IE export sometimes is wrong
 								.css(labelOptions.style)
 								.add(axisGroup):
 							null;
@@ -4925,13 +4926,14 @@ function Chart (options, callback) {
 					
 					// left side must be align: right and right side must have align: left for labels
 					if (side === 0 || side == 2 || { 1: 'left', 3: 'right' }[side] == labelOptions.align) {
-						
+					
 						// get the highest offset
 						labelOffset = mathMax(
 							ticks[pos].getLabelSize(),
 							labelOffset
 						);
 					}
+			
 				});
 				
 				if (staggerLines) {
@@ -4975,7 +4977,7 @@ function Chart (options, callback) {
 				labelOffset +
 				(side != 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) + 
 				titleMargin;
-				
+			
 			axisOffset[side] = mathMax(
 				axisOffset[side], 
 				axisTitleMargin + titleOffset + directionFactor * offset
@@ -5425,18 +5427,22 @@ function Chart (options, callback) {
 		 */
 		function hide() {
 			if (!tooltipIsHidden) {
+				var hoverPoints = chart.hoverPoints;
+				
 				group.hide();
 			
 				each(crosshairs, function(crosshair) {
 					crosshair.hide();
 				});
 			
-				// local hover points for shared tooltip
-				each(series, function(item) {
-					if (item.hoverPoint) {
-						item.hoverPoint.setState();
-					}
-				});
+				// hide previous hoverPoints and set new
+				if (hoverPoints) {
+					each (hoverPoints, function(point) {
+						point.setState();
+					});
+				}
+				chart.hoverPoints = null;					
+				
 				
 				tooltipIsHidden = true;
 			}
@@ -5462,6 +5468,7 @@ function Chart (options, callback) {
 				pointConfig = [],
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
+				hoverPoints = chart.hoverPoints,
 				getConfig = function(point) {
 					return {
 						series: point.series,
@@ -5474,21 +5481,31 @@ function Chart (options, callback) {
 				};
 				
 			// shared tooltip, array is sent over
-			if (shared) { 
+			if (shared) {
+				
+				// hide previous hoverPoints and set new
+				if (hoverPoints) {
+					each (hoverPoints, function(point) {
+						point.setState();
+					});
+				}
+				chart.hoverPoints = point;					
+				 
 				each(point, function(item, i) {
-					var series = item.series,
+					/*var series = item.series,
 						hoverPoint = series.hoverPoint;
 					if (hoverPoint) {
 						hoverPoint.setState();
 					}
-					series.hoverPoint = item;
+					series.hoverPoint = item;*/
 					item.setState(HOVER_STATE);
 					plotY += item.plotY; // for average
 					
 					pointConfig.push(getConfig(item));
 				});
+				
 				plotX = point[0].plotX;
-				plotY /= point.length;
+				plotY = mathRound(plotY) / point.length; // mathRound because Opera 10 has problems here
 				
 				textConfig = {
 					x: point[0].category
@@ -5869,6 +5886,17 @@ function Chart (options, callback) {
 				var chartX = e.chartX,
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
+					
+				// on touch devices, only trigger click if a handler is defined
+				if (hasTouch && e.type == 'touchstart') {
+					if (attr(e.target, 'isTracker')) {
+						if (!chart.runTrackerClick) {
+							e.preventDefault();
+						}	
+					} else if (!runChartClick && !isOutsidePlot) {
+						e.preventDefault();
+					}
+				}
 				
 				// cancel on mouse outside
 				if (isOutsidePlot) {
@@ -6098,7 +6126,7 @@ function Chart (options, callback) {
 		var horizontal = options.layout == 'horizontal',
 			symbolWidth = options.symbolWidth,
 			symbolPadding = options.symbolPadding,
-			allItems = [],
+			allItems,
 			style = options.style,
 			itemStyle = options.itemStyle,
 			itemHoverStyle = options.itemHoverStyle,
@@ -6188,7 +6216,7 @@ function Chart (options, callback) {
 			var checkbox = item.checkbox;
 				
 			// pull out from the array
-			erase(allItems, item);
+			//erase(allItems, item);
 				
 			// destroy SVG elements
 			each(['legendItem', 'legendLine', 'legendSymbol'], function(key) {
@@ -6398,6 +6426,8 @@ function Chart (options, callback) {
 			offsetWidth = 0;
 			lastItemY = 0;
 			
+			allItems = [];
+			
 			if (!legendGroup) {
 				legendGroup = renderer.g('legend')
 					.attr({ zIndex: 7 })
@@ -6457,6 +6487,9 @@ function Chart (options, callback) {
 						height: legendHeight
 					});
 				}
+				
+				// hide the border if no items
+				box[allItems.length ? 'show' : 'hide']();
 			}
 			
 			// 1.x compatibility: positioning based on style
@@ -7055,7 +7088,6 @@ function Chart (options, callback) {
 				plotTop = mathMax(plotTop, titleOffset + pick(chartTitleOptions.margin, 15) + spacingTop);
 			}
 		}
-		
 		// adjust for legend
 		if (legendOptions.enabled && !legendOptions.floating) {
 			if (align == 'right') { // horizontal alignment handled first
@@ -7710,6 +7742,7 @@ Point.prototype = {
 		if (point.x === UNDEFINED) {
 			point.x = series.autoIncrement();
 		}
+		
 	},
 	
 	/**
@@ -7725,9 +7758,7 @@ Point.prototype = {
 		if (point == series.chart.hoverPoint) {
 			point.onMouseOut();
 		}
-		if (point == series.hoverPoint) {
-			series.hoverPoint = null;
-		}
+		series.chart.hoverPoints = null; // remove reference
 		
 		// remove all events
 		removeEvent(point);
@@ -7919,6 +7950,7 @@ Point.prototype = {
 				addEvent(point, eventType, events[eventType]);
 			}
 			this.hasImportedEvents = true;
+			
 		}
 	},
 	
@@ -8030,6 +8062,13 @@ Series.prototype = {
 		events = options.events;
 		for (eventType in events) {
 			addEvent(series, eventType, events[eventType]);
+		}
+		if (
+			(events && events.click) || 
+			(options.point && options.point.events && options.point.events.click) ||
+			options.allowPointSelect 
+		) {
+			chart.runTrackerClick = true;
 		}
 		
 		series.getColor();
@@ -9241,7 +9280,6 @@ Series.prototype = {
 			singlePoint,
 			i;
 	
-		
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
 		if (trackerPathLength) {
@@ -9619,7 +9657,7 @@ var ColumnSeries = extendClass(Series, {
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 1
 						})
-						.on('mouseover', function(event) {
+						.on(hasTouch ? 'touchstart' : 'mouseover', function(event) {
 							rel = event.relatedTarget || event.fromElement;
 							if (chart.hoverSeries != series && attr(rel, 'isTracker') != trackerLabel) {
 								series.onMouseOver();
