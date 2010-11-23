@@ -14,6 +14,7 @@
 /*global document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $ */
 	
 (function() {
+
 // encapsulated variables
 var doc = document,
 	win = window,
