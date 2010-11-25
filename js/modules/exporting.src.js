@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.0.5 (modified)
+ * @license Highcharts JS v2.1.0 (2010-11-23)
  * Exporting module
  * 
  * (c) 2010 Torstein Hønsi
@@ -16,7 +16,6 @@
 var HC = Highcharts,
 	Chart = HC.Chart,
 	addEvent = HC.addEvent,
-	defaultOptions = HC.defaultOptions,
 	createElement = HC.createElement,
 	discardElement = HC.discardElement,
 	css = HC.css,
@@ -27,6 +26,7 @@ var HC = Highcharts,
 	mathMax = math.max,
 	doc = document,
 	win = window,
+	hasTouch = 'ontouchstart' in doc.documentElement,	
 	M = 'M',
 	L = 'L',
 	DIV = 'div',
@@ -60,7 +60,8 @@ defaultOptions.navigation = {
 	menuItemStyle: {
 		padding: '0 5px',
 		background: NONE,
-		color: '#303030'
+		color: '#303030',
+		fontSize: hasTouch ? '14px' : '11px'
 	},
 	menuItemHoverStyle: {
 		background: '#4572A5',
@@ -167,7 +168,7 @@ defaultOptions.exporting = {
 
 
 
-extend (Chart.prototype, {
+extend(Chart.prototype, {
 	/**
 	 * Return an SVG representation of the chart
 	 * 
@@ -179,6 +180,7 @@ extend (Chart.prototype, {
 			sandbox,
 			svg,
 			seriesOptions,
+			config,
 			pointOptions,
 			pointMarker,
 			options = merge(chart.options, additionalOptions); // copy the options and add extra options
@@ -209,10 +211,9 @@ extend (Chart.prototype, {
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
-		
 		// prepare for replicating the chart
 		options.series = [];
-		each (chart.series, function(serie) {
+		each(chart.series, function(serie) {
 			seriesOptions = serie.options;			
 			
 			seriesOptions.animation = false; // turn off animation
@@ -224,11 +225,22 @@ extend (Chart.prototype, {
 			}
 			
 			seriesOptions.data = [];
+			
 			each(serie.data, function(point) {
-				pointOptions = point.config == null || typeof point.config == 'number' ?
+				/*pointOptions = point.config === null || typeof point.config == 'number' ?
 					{ y: point.y } :
 					point.config;
-				pointOptions.x = point.x;
+				pointOptions.x = point.x;*/
+				
+				// extend the options by those values that can be expressed in a number or array config
+				config = point.config;
+				pointOptions = extend(
+					typeof config == 'object' && config.constructor != Array && point.config, {
+						x: point.x,
+						y: point.y,
+						name: point.name
+					}
+				);
 				seriesOptions.data.push(pointOptions); // copy fresh updated data
 								
 				// remove image markers
@@ -253,20 +265,24 @@ extend (Chart.prototype, {
 		discardElement(sandbox);
 		
 		// sanitize
-		svg = svg.
-			replace(/zIndex="[^"]+"/g, ''). 
-			replace(/isShadow="[^"]+"/g, '').
-			replace(/symbolName="[^"]+"/g, '').
-			replace(/jQuery[0-9]+="[^"]+"/g, '').
-			replace(/isTracker="[^"]+"/g, '').
-			replace(/url\([^#]+#/g, 'url(#').
+		svg = svg
+			.replace(/zIndex="[^"]+"/g, '') 
+			.replace(/isShadow="[^"]+"/g, '')
+			.replace(/symbolName="[^"]+"/g, '')
+			.replace(/jQuery[0-9]+="[^"]+"/g, '')
+			.replace(/isTracker="[^"]+"/g, '')
+			.replace(/url\([^#]+#/g, 'url(#')
+			/* This fails in IE < 8
+			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
+				return s2 +'.'+ s3[0];
+			})*/ 
 			
 			// IE specific
-			replace(/id=([^" >]+)/g, 'id="$1"'). 
-			replace(/class=([^" ]+)/g, 'class="$1"').
-			replace(/ transform /g, ' ').
-			replace(/:path/g, 'path').
-			replace(/style="([^"]+)"/g, function(s) {
+			.replace(/id=([^" >]+)/g, 'id="$1"') 
+			.replace(/class=([^" ]+)/g, 'class="$1"')
+			.replace(/ transform /g, ' ')
+			.replace(/:(path|rect)/g, '$1')
+			.replace(/style="([^"]+)"/g, function(s) {
 				return s.toLowerCase();
 			});
 			
@@ -329,7 +345,6 @@ extend (Chart.prototype, {
 		
 		var chart = this,
 			container = chart.container,
-			i,
 			origDisplay = [],
 			origParent = container.parentNode,
 			body = doc.body,
@@ -362,7 +377,7 @@ extend (Chart.prototype, {
 			origParent.appendChild(container);
 			
 			// restore all body content
-			each (childNodes, function(node, i) {
+			each(childNodes, function(node, i) {
 				if (node.nodeType == 1) {
 					node.style.display = origDisplay[i];
 				}
@@ -418,19 +433,18 @@ extend (Chart.prototype, {
 					boxShadow: boxShadow
 				}, navOptions.menuStyle) , menu);
 			
+			// hide on mouse out
 			hide = function() {
 				css(menu, { display: NONE });
 			};
+			
 			addEvent(menu, 'mouseleave', hide);
+			
 			
 			// create the items
 			each(items, function(item) {
 				if (item) {
-					createElement(DIV, {
-						onclick: function() {
-							hide();
-							item.onclick.apply(chart, arguments);
-						},
+					var div = createElement(DIV, {
 						onmouseover: function() {
 							css(this, navOptions.menuItemHoverStyle);
 						},
@@ -441,6 +455,12 @@ extend (Chart.prototype, {
 					}, extend({
 						cursor: 'pointer'
 					}, menuItemStyle), innerMenu);
+					
+					div[hasTouch ? 'ontouchstart' : 'onclick'] = function() {
+						hide();
+						item.onclick.apply(chart, arguments);
+					};
+						
 				}
 			});
 			
@@ -457,8 +477,7 @@ extend (Chart.prototype, {
 			menuStyle.left = (x - menuPadding) + PX;
 		}
 		// if outside bottom, bottom align it
-		exportMenuHeight = chart.exportMenuHeight;
-		if (y + height + exportMenuHeight > chartHeight && exportMenuHeight < y) {
+		if (y + height + chart.exportMenuHeight > chartHeight) {
 			menuStyle.bottom = (chartHeight - y - menuPadding)  + PX;
 		} else {
 			menuStyle.top = (y + height - menuPadding) + PX;
@@ -476,9 +495,9 @@ extend (Chart.prototype, {
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
 			onclick = btnOptions.onclick,
 			menuItems = btnOptions.menuItems,
-			position = chart.getAlignment(btnOptions),
+			/*position = chart.getAlignment(btnOptions),
 			buttonLeft = position.x,
-			buttonTop = position.y,
+			buttonTop = position.y,*/
 			buttonWidth = btnOptions.width,
 			buttonHeight = btnOptions.height,
 			box,
@@ -513,7 +532,8 @@ extend (Chart.prototype, {
 			btnOptions.borderRadius,
 			borderWidth
 		)
-		.translate(buttonLeft, buttonTop) // to allow gradients
+		//.translate(buttonLeft, buttonTop) // to allow gradients
+		.align(btnOptions, true)
 		.attr(extend({
 			fill: btnOptions.backgroundColor,
 			'stroke-width': borderWidth,
@@ -522,55 +542,64 @@ extend (Chart.prototype, {
 		
 		// the invisible element to track the clicks
 		button = renderer.rect( 
-			buttonLeft,
-			buttonTop,
-			buttonWidth,
-			buttonHeight,
-			0
-		).attr({
-			fill: 'rgba(255, 255, 255, 0.001)',
-			title: HC.getOptions().lang[btnOptions._titleKey],
-			zIndex: 21
-		}).css({
-			cursor: 'pointer'
-		})
-		.on('mouseover', function() {
-			symbol.attr({
-				stroke: btnOptions.hoverSymbolStroke,
-				fill: btnOptions.hoverSymbolFill
-			});
-			box.attr({
-				stroke: btnOptions.hoverBorderColor
-			});
-		})
-		.on('mouseout', revert)		
-		.add();
+				0,
+				0,
+				buttonWidth,
+				buttonHeight,
+				0
+			)
+			.align(btnOptions)
+			.attr({
+				fill: 'rgba(255, 255, 255, 0.001)',
+				title: HC.getOptions().lang[btnOptions._titleKey],
+				zIndex: 21
+			}).css({
+				cursor: 'pointer'
+			})
+			.on('mouseover', function() {
+				symbol.attr({
+					stroke: btnOptions.hoverSymbolStroke,
+					fill: btnOptions.hoverSymbolFill
+				});
+				box.attr({
+					stroke: btnOptions.hoverBorderColor
+				});
+			})
+			.on('mouseout', revert)
+			.on('click', revert)
+			.add();
 		
-		addEvent(button.element, 'click', revert);
+		//addEvent(button.element, 'click', revert);
 		
 		// add the click event
 		if (menuItems) {
 			onclick = function(e) {
-				chart.contextMenu('export-menu', menuItems, buttonLeft, buttonTop, buttonWidth, buttonHeight);
+				revert();
+				var bBox = button.getBBox();
+				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
 			};
 		}
-		addEvent(button.element, 'click', function() {
+		/*addEvent(button.element, 'click', function() {
+			onclick.apply(chart, arguments);
+		});*/
+		button.on('click', function() {
 			onclick.apply(chart, arguments);
 		});
 		
 		// the icon
 		symbol = renderer.symbol(
 				btnOptions.symbol, 
-				buttonLeft + btnOptions.symbolX, 
-				buttonTop + btnOptions.symbolY, 
+				btnOptions.symbolX, 
+				btnOptions.symbolY, 
 				(btnOptions.symbolSize || 12) / 2
 			)
+			.align(btnOptions, true)
 			.attr(extend(symbolAttr, {
 				'stroke-width': btnOptions.symbolStrokeWidth || 1,
 				zIndex: 20		
 			})).add();
 		
-
+		
 		
 	}
 });
@@ -624,25 +653,20 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 	];
 };
 
-// Overwrite the HC.Chart object with added functionality for export buttons after render
-HC.Chart = function(options, callback) {
-	return new Chart(options, function(chart) {
-		var n,
-			exportingOptions = chart.options.exporting,
-			buttons = exportingOptions.buttons;		
-		
-		// add buttons
-		if (exportingOptions.enabled !== false) {	
-			for (n in buttons) {
-				chart.addButton(buttons[n]);
-			}
+
+// Add the buttons on chart load
+Chart.prototype.callbacks.push(function(chart) {
+	var n,
+		exportingOptions = chart.options.exporting,
+		buttons = exportingOptions.buttons;
+
+	if (exportingOptions.enabled !== false) {
+
+		for (n in buttons) {
+			chart.addButton(buttons[n]);
 		}
-		
-		// execute user callbacks
-		if (callback) {
-			callback();
-		}
-	});
-};
+	}
+});
+
 
 })();

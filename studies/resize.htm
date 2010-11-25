@@ -1,0 +1,82 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="edit-Type" edit="text/html; charset=utf-8">
+	<title>Highcharts Resize Study</title>
+    <script type="text/javascript" src="/js/jquery.js">
+    </script>
+    <script type="text/javascript" src="/js/highcharts.src.js">
+    </script>
+    <script type="text/javascript" src="/js/modules/exporting.src.js">
+    </script>
+</head>
+<body>
+    <script type='text/javascript'>
+    	function getRandomData() {
+			var data = [];
+			for (var i = 0; i < 5; i++) {
+				data.push(Math.random());
+			}
+			return data;
+		}
+		
+    	var chart,
+			large;
+        $(document).ready(function(){
+            chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'container',
+					defaultSeriesType: 'line',
+					borderWidth: 1,
+					backgroundColor: '#FFFFEF',
+					plotBorderWidth: 0,
+					animation: {
+						//duration: 1000
+					}
+                },
+				
+				xAxis: {
+					title: {
+						text: 'X axis'
+					},
+					categories: ['Ein', 'Tvo', 'Tri','Fir']
+				},
+				
+				yAxis: {
+					title: {
+						text: 'Primary'
+					}/*,
+					plotBands: [{
+						from: 2,
+						to: 3,
+						color: 'red'
+					}]*/
+				},
+				
+				plotOptions: {
+					series: {
+						dataLabels: {
+							enabled: true,
+							formatter: function() {
+								return Highcharts.numberFormat(this.y, 2);
+							}
+						}
+					}
+				},
+				
+                series: [{
+                    data: getRandomData()//[1,3,2,4]
+                }]
+            });
+			
+			$('#shift').click(function(){
+				chart.series[0].addPoint(Math.random(), true, true, true);
+			});
+			
+        });
+    </script>
+	<button id="shift">Shift</button>
+    <div id="container" style="height: 300px; width: 400px">
+    </div>
+</body>
+</html>
