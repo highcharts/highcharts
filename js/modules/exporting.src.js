@@ -405,7 +405,6 @@ extend(Chart.prototype, {
 			menuItemStyle = navOptions.menuItemStyle,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
-			exportMenuHeight,
 			cacheName = 'cache-'+ name,
 			menu = chart[cacheName],
 			menuPadding = mathMax(width, height), // for mouse leave detection

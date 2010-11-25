@@ -14,7 +14,6 @@
 /*global document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $ */
 	
 (function() {
-
 // encapsulated variables
 var doc = document,
 	win = window,
@@ -2097,7 +2096,6 @@ SVGRenderer.prototype = {
 				if (span !== '' || spans.length == 1) {
 					var attributes = {},
 						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-					
 					if (styleRegex.test(span)) {
 						attr(
 							tspan, 
@@ -2635,7 +2633,7 @@ var VMLElement = extendClass( SVGElement, {
 		
 		// divs and shapes need size
 		if (nodeName == 'shape' || nodeName == DIV) {
-			style.push('left:0;top:0;width:10px;height:10px');
+			style.push('left:0;top:0;width:10px;height:10px;');
 		}
 		if (docMode8) {
 			style.push('visibility: ', nodeName == DIV ? HIDDEN : VISIBLE);
@@ -2703,7 +2701,6 @@ var VMLElement = extendClass( SVGElement, {
 			childNodes,
 			hasSetSymbolSize,
 			shadows = this.shadows,
-			documentMode = doc.documentMode,
 			skipAttr,
 			ret = this;
 			
@@ -2768,8 +2765,7 @@ var VMLElement = extendClass( SVGElement, {
 						}
 						
 					}
-					
-					value = convertedPath.join(' ') || 'x';
+					value = convertedPath.join(' ') || 'x';							
 					element.path = value;
 			
 					// update shadows
@@ -2801,13 +2797,6 @@ var VMLElement = extendClass( SVGElement, {
 					}
 					
 					
-					
-					// issue 61 workaround
-					if (documentMode == 8 && key == 'visibility' && nodeName == 'DIV') {
-						each(element.childNodes, function(childNode) {
-							css(childNode, { visibility: value });
-						});
-					}
 					
 					skipAttr = true;
 				
@@ -3304,6 +3293,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				'" type="gradient" focus="100%" />'];
 			createElement(this.prepVML(markup), null, null, elem);
 			
+			
 		
 		// if the color is an rgba color, split it and add a fill node
 		// to hold the opacity component
@@ -3331,15 +3321,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		var vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
 			isIE8 = this.isIE8;
 	
-		try { // bug in IE9 Beta 1, quirks mode - check this again with later upgrades
-			markup = markup.join('');
-		} catch (e) {
-			var s = '', i = 0;
-			for (i; i < markup.length; i++) {
-				s += markup[i];
-			}
-			markup = s;
-		}
+		markup = markup.join('');
 		
 		if (isIE8) { // add xmlns and style inline
 			markup = markup.replace('/>', ' xmlns="urn:schemas-microsoft-com:vml" />');
@@ -3515,7 +3497,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				// empirical correction found by trying out the limits for different radii
 				cosEnd = -0.07 / radius;
 			}
-			
+								
 			return [
 				'wa', // clockwise arc to
 				x - radius, // left
@@ -4284,12 +4266,11 @@ function Chart (options, callback) {
 								key = isNegative ? negKey : stackKey,
 								totalPos;
 							
-							// initial values, set dataMin and dataMax to the first non-null point
+							// initial values
 							if (dataMin === null) {
-								dataMin = point[xOrY]; 
-							}
-							if (dataMax === null) {
-								dataMax = point[xOrY];
+
+								// start out with the first point
+								dataMin = dataMax = point[xOrY]; 
 							}
 		
 							// x axis
@@ -4372,10 +4353,7 @@ function Chart (options, callback) {
 				cvsOffset -= sign * axisLength;
 			}
 			
-			if (min === UNDEFINED) { // points in a single hidden series, axis has no min or max
-				returnValue = null;
-			
-			} else if (backwards) { // reverse translation
+			if (backwards) { // reverse translation
 				if (reversed) {
 					val = axisLength - val;
 				}
@@ -4634,12 +4612,8 @@ function Chart (options, callback) {
 		 * @param {Number} num
 		 */
 		function correctFloat(num) {
-			var invMag, ret = num;
-			if (defined(magnitude)) {
-				invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
-				ret = mathRound(num * invMag) / invMag;
-			}
-			return num; 
+			var invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
+			return mathRound(num * invMag) / invMag;
 		}
 				
 		/**
@@ -7957,7 +7931,7 @@ Point.prototype = {
 				point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
 			};
 		}
-		
+			
 		fireEvent(this, eventType, eventArgs, defaultFunction);
 	},
 	/**
@@ -8778,7 +8752,7 @@ Series.prototype = {
 			//chartSeries = series.chart.series,
 			clipRect = series.clipRect,
 			prop;
-			
+		
 		// remove all events
 		removeEvent(series);
 			
@@ -8791,7 +8765,6 @@ Series.prototype = {
 		each(series.data, function(point) {
 			point.destroy();
 		});
-		
 		// destroy all SVGElements associated to the series
 		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
 			if (series[prop]) {
@@ -8991,10 +8964,6 @@ Series.prototype = {
 				singlePoints.push(segment[0]);
 			}
 		});
-		
-		// used in drawTracker:
-		series.graphPath = graphPath;
-		series.singlePoints = singlePoints; 
 
 		// used in drawTracker:
 		series.graphPath = graphPath;
@@ -9037,20 +9006,6 @@ Series.prototype = {
 					.attr(attribs).add(group).shadow(options.shadow);
 			}
 		}
-
-		// draw the graph
-		if (graph) {
-			graph.attr({ d: graphPath });
-		} else {
-			if (lineWidth) {
-				series.graph = renderer.path(graphPath).
-					attr({
-						'stroke': color,
-						'stroke-width': lineWidth + PX
-					}).add(group).shadow(options.shadow);
-			}
-		}
-		
 	},
 	
 	
@@ -9117,7 +9072,7 @@ Series.prototype = {
 		if (series.drawGraph) {
 			series.drawGraph();
 		}
-				
+		
 		// draw the points
 		series.drawPoints();
 		
