@@ -4612,8 +4612,12 @@ function Chart (options, callback) {
 		 * @param {Number} num
 		 */
 		function correctFloat(num) {
-			var invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
-			return mathRound(num * invMag) / invMag;
+			var invMag, ret = num;
+			if (defined(magnitude)) {
+				invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
+				ret = mathRound(num * invMag) / invMag;
+			}
+			return ret;
 		}
 				
 		/**
