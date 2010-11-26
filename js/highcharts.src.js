@@ -10367,7 +10367,8 @@ win.Highcharts = {
 	map: map,
 	merge: merge,
 	pick: pick,
-	extendClass: extendClass
+	extendClass: extendClass,
+	version: '2.1.0'
 };
 })();
 
