@@ -8906,66 +8906,71 @@ Series.prototype = {
 		
 		// divide into segments and build graph and area paths
 		each(series.segments, function(segment) {
-			if (segment.length > 1) {
-				segmentPath = [];
+			segmentPath = [];
+			
+			// build the segment line
+			each(segment, function(point, i) {
+
+				if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+					segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
 				
-				// build the segment line
-				each(segment, function(point, i) {
-	
-					if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-						segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
+				} else {
+				
+					// moveTo or lineTo
+					segmentPath.push(i ? L : M);
 					
-					} else {
-					
-						// moveTo or lineTo
-						segmentPath.push(i ? L : M);
-						
-						// step line?
-						if (i && options.step) {
-							var lastPoint = segment[i - 1];
-							segmentPath.push(
-								point.plotX, 
-								lastPoint.plotY						
-							);
-						}
-						
-						// normal line to next point
+					// step line?
+					if (i && options.step) {
+						var lastPoint = segment[i - 1];
 						segmentPath.push(
 							point.plotX, 
-							point.plotY
+							lastPoint.plotY						
 						);
 					}
-				});
-				graphPath = graphPath.concat(segmentPath);
-				
-				// build the area
-				if (useArea) {
-					var areaSegmentPath = [],
-						i,
-						segLength = segmentPath.length;
-					for (i = 0; i < segLength; i++) {
-						areaSegmentPath.push(segmentPath[i]);
-					}
-					if (options.stacking && series.type != 'areaspline') {
-						// follow stack back. Todo: implement areaspline
-						for (i = segment.length - 1; i >= 0; i--) {
-							areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
-						}
 					
-					} else { // follow zero line back
-						areaSegmentPath.push(
-							L,
-							segment[segment.length - 1].plotX, 
-							translatedThreshold,
-							L,
-							segment[0].plotX, 
-							translatedThreshold
-						);
-					}
-					areaPath = areaPath.concat(areaSegmentPath);
+					// normal line to next point
+					segmentPath.push(
+						point.plotX, 
+						point.plotY
+					);
 				}
+			});
+			
+			// add the segment to the graph, or a single point for tracking
+			if (segment.length > 1) {
+				graphPath = graphPath.concat(segmentPath);
 			} else {
 				singlePoints.push(segment[0]);
+			}
+			
+			// build the area
+			if (useArea) {
+				var areaSegmentPath = [],
+					i,
+					segLength = segmentPath.length;
+				for (i = 0; i < segLength; i++) {
+					areaSegmentPath.push(segmentPath[i]);
+				}
+				if (segLength == 3) { // for animation from 1 to two points
+					areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
+				}
+				if (options.stacking && series.type != 'areaspline') {
+					// follow stack back. Todo: implement areaspline
+					for (i = segment.length - 1; i >= 0; i--) {
+						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
+					}
+				
+				} else { // follow zero line back
+					areaSegmentPath.push(
+						L,
+						segment[segment.length - 1].plotX, 
+						translatedThreshold,
+						L,
+						segment[0].plotX, 
+						translatedThreshold
+					);
+				}
+				areaPath = areaPath.concat(areaSegmentPath);
 			}
 		});
 
