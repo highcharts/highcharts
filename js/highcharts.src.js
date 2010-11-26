@@ -1917,7 +1917,6 @@ SVGElement.prototype = {
 		return this;
 	},
 
-	
 	/**
 	 * Destroy the element and element wrapper
 	 */
@@ -1931,6 +1930,10 @@ SVGElement.prototype = {
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		stop(wrapper); // stop running animations
+		
+		/*if (isWebKit && attr(element, 'clip-path')) {
+			attr(element, 'clip-path', NONE);
+		}*/
 		
 		// remove element
 		if (parentNode) {
@@ -6640,9 +6643,10 @@ function Chart (options, callback) {
 	function redraw(animation) {
 		var redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
-			isDirtyBox = chart.isDirtyBox,
+			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
+			clipRect,
 			serie;
 			
 		setAnimation(animation, chart);
@@ -6706,12 +6710,27 @@ function Chart (options, callback) {
 					isDirtyBox = true; // always redraw box to reflect changes in the axis labels 
 				}
 			});
+			
+			
 		}
 		
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			drawChartBox();
 			placeTrackerGroup();
+			
+			// move clip rect(s)
+			each([chart].concat(series), function(item) {
+				var clipRect = item.clipRect;
+				if (clipRect && (item == chart || clipRect != chart.clipRect)) {
+					stop(clipRect);
+					clipRect.animate({ // for chart resize
+						width: chart.plotSizeX,
+						height: chart.plotSizeY
+					});
+				}				
+			});
+		
 		}
 		
 					
@@ -8775,7 +8794,7 @@ Series.prototype = {
 				series[prop].destroy();
 			}
 		});
-		if (clipRect && clipRect != series.chart.clipRect) {
+		if (clipRect && clipRect != chart.clipRect) {
 			clipRect.destroy();
 		}
 		
@@ -9109,13 +9128,13 @@ Series.prototype = {
 			clipRect = series.clipRect,
 			group = series.group;
 		
-		if (clipRect) {
+		/*if (clipRect) {
 			stop(clipRect);
 			clipRect.animate({ // for chart resize
 				width: chart.plotSizeX,
 				height: chart.plotSizeY
 			});
-		}
+		}*/
 		
 		// reposition on resize
 		if (group) {
