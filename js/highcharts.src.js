@@ -200,6 +200,7 @@ function attr(elem, prop, value) {
 	if (isString(prop)) {
 		// set the value
 		if (defined(value)) {
+
 			elem[setAttribute](prop, value);
 		
 		// get the value
@@ -1931,9 +1932,15 @@ SVGElement.prototype = {
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		stop(wrapper); // stop running animations
 		
-		/*if (isWebKit && attr(element, 'clip-path')) {
-			attr(element, 'clip-path', NONE);
-		}*/
+		// issue 134
+		/*alert ([isWebKit, element.nodeName, attr(element, 'clip-path')].join())
+			
+		if (isWebKit && element.nodeName == 'g' && attr(element, 'clip-path')) {
+			attr(element, {
+				'clip-path': NONE,
+				display: NONE
+			});			
+		} */
 		
 		// remove element
 		if (parentNode) {
@@ -6646,7 +6653,7 @@ function Chart (options, callback) {
 			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
-			clipRect,
+			clipRect = chart.clipRect,
 			serie;
 			
 		setAnimation(animation, chart);
@@ -6719,17 +6726,14 @@ function Chart (options, callback) {
 			drawChartBox();
 			placeTrackerGroup();
 			
-			// move clip rect(s)
-			each([chart].concat(series), function(item) {
-				var clipRect = item.clipRect;
-				if (clipRect && (item == chart || clipRect != chart.clipRect)) {
-					stop(clipRect);
-					clipRect.animate({ // for chart resize
-						width: chart.plotSizeX,
-						height: chart.plotSizeY
-					});
-				}				
-			});
+			// move clip rect
+			if (clipRect) {
+				stop(clipRect);
+				clipRect.animate({ // for chart resize
+					width: chart.plotSizeX,
+					height: chart.plotSizeY
+				});
+			}
 		
 		}
 		
@@ -8544,6 +8548,10 @@ Series.prototype = {
 			}, animation && extend(animation, {
 				complete: function() {
 					clipRect.isAnimating = false;
+					if (clipRect != chart.clipRect) {
+						series.group.clip((series.clipRect = chart.clipRect));
+						clipRect.destroy();
+					}
 				}
 			}));
 			
@@ -8794,9 +8802,6 @@ Series.prototype = {
 				series[prop].destroy();
 			}
 		});
-		if (clipRect && clipRect != chart.clipRect) {
-			clipRect.destroy();
-		}
 		
 		// remove from hoverSeries
 		if (chart.hoverSeries == series) {
