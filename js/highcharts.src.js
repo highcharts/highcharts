@@ -7502,7 +7502,7 @@ function Chart (options, callback) {
 		// remove container and all SVG
 		container.innerHTML = '';
 		removeEvent(container);
-		if (parentNode) {
+		if (parentNode && !navigator.appVersion.match(/Safari\/533\.19\.4/)) { // This will not clean up all the memory, but will not crash safari
 			parentNode.removeChild(container);
 		}
 		
