@@ -7480,6 +7480,7 @@ function Chart (options, callback) {
 	 * Clean up memory usage
 	 */
 	function destroy() {
+	  if (navigator.appVersion.match(/Safari\/533\.19\.4/)) return false // This will not clean up all the memory, but will not crash safari
 		var i = series.length,
 			parentNode = container.parentNode;
 		
@@ -7502,7 +7503,7 @@ function Chart (options, callback) {
 		// remove container and all SVG
 		container.innerHTML = '';
 		removeEvent(container);
-		if (parentNode && !navigator.appVersion.match(/Safari\/533\.19\.4/)) { // This will not clean up all the memory, but will not crash safari
+		if (parentNode) {
 			parentNode.removeChild(container);
 		}
 		
