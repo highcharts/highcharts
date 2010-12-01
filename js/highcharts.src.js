@@ -4780,7 +4780,7 @@ function Chart (options, callback) {
 		 */ 
 		function adjustTickAmount() {
 					
-			if (!isDatetimeAxis && !categories && !isLinked) { // only apply to linear scale
+			if (maxTicks && !isDatetimeAxis && !categories && !isLinked) { // only apply to linear scale
 				var oldTickAmount = tickAmount,
 					calculatedTickAmount = tickPositions.length;
 					
