@@ -1932,16 +1932,6 @@ SVGElement.prototype = {
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		stop(wrapper); // stop running animations
 		
-		// issue 134
-		/*alert ([isWebKit, element.nodeName, attr(element, 'clip-path')].join())
-			
-		if (isWebKit && element.nodeName == 'g' && attr(element, 'clip-path')) {
-			attr(element, {
-				'clip-path': NONE,
-				display: NONE
-			});			
-		} */
-		
 		// remove element
 		if (parentNode) {
 			parentNode.removeChild(element);
@@ -8782,6 +8772,8 @@ Series.prototype = {
 			chart = series.chart,
 			//chartSeries = series.chart.series,
 			clipRect = series.clipRect,
+			issue134 = /\/5[0-9\.]+ Safari\//.test(userAgent), // todo: update when Safari bug is fixed
+			destroy,
 			prop;
 		
 		// remove all events
@@ -8799,7 +8791,13 @@ Series.prototype = {
 		// destroy all SVGElements associated to the series
 		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
 			if (series[prop]) {
-				series[prop].destroy();
+				
+				// issue 134 workaround
+				destroy = issue134 && prop == 'group' ?
+					'hide' :
+					'destroy';
+					
+				series[prop][destroy]();
 			}
 		});
 		
