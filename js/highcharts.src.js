@@ -2674,6 +2674,11 @@ var VMLElement = extendClass( SVGElement, {
 			renderer.invertChild(element, parentNode);			
 		}
 		
+		// issue #140 workaround - related to #61 and #74
+		if (docMode8 && parentNode.gVis == HIDDEN) {
+			css(element, { visibility: HIDDEN });
+		}
+		
 		// append it
 		parentNode.appendChild(element);
 		
@@ -2681,7 +2686,7 @@ var VMLElement = extendClass( SVGElement, {
 		wrapper.added = true;
 		if (wrapper.alignOnAdd) {
 			wrapper.updateTransform();
-		}
+		}		
 		
 		return wrapper;
 	},
@@ -2782,6 +2787,7 @@ var VMLElement = extendClass( SVGElement, {
 					
 					// issue 61 workaround
 					if (docMode8 && key == 'visibility' && nodeName == 'DIV') {
+						element.gVis = value;
 						childNodes = element.childNodes;
 						i = childNodes.length;
 						while (i--) {
