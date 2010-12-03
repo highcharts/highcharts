@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.1.0 (2010-11-23)
+ * @license Highcharts JS v2.1.1 (2010-12-03)
  * Exporting module
  * 
  * (c) 2010 Torstein Hønsi
