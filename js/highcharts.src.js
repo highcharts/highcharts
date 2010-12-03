@@ -9147,6 +9147,13 @@ Series.prototype = {
 		
 		// reposition on resize
 		if (group) {
+			if (chart.inverted) {
+				group.attr({
+					width: chart.plotWidth,
+					height: chart.plotHeight
+				});
+			}
+			
 			group.animate({
 				translateX: chart.plotLeft, 
 				translateY: chart.plotTop
