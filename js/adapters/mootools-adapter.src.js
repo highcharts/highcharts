@@ -20,7 +20,7 @@ var HighchartsAdapter = {
 			morphProto = Fx.Morph.prototype,
 			morphCompute = morphProto.compute;
 			
-		// override Fx.step to allow animation of SVG element wrappers
+		// override Fx.start to allow animation of SVG element wrappers
 		fxProto.start = function(from, to) {
 			var fx = this,
 				elem = fx.element;
