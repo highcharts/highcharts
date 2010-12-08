@@ -4734,8 +4734,12 @@ function Chart (options, callback) {
 				// pad categorised axis to nearest half unit
 				if (categories || (isXAxis && chart.hasColumn)) {
 					catPad = (categories ? 1 : tickInterval) * 0.5;
-					min -= catPad;
-					max += catPad;
+					if (categories || !defined(pick(options.min, userSetMin))) {
+						min -= catPad;
+					}
+					if (categories || !defined(pick(options.max, userSetMax))) {
+						max += catPad;
+					}
 				}
 				
 				// reset min/max or remove extremes based on start/end on tick
