@@ -7230,7 +7230,7 @@ function Chart (options, callback) {
 			width: chartWidth + PX,
 			height: chartHeight + PX
 		});
-		renderer.setSize(chartWidth, chartHeight);
+		renderer.setSize(chartWidth, chartHeight, animation);
 		
 		// update axis lengths for more correct tick intervals:
 		plotWidth = chartWidth - plotLeft - marginRight; 
@@ -7261,7 +7261,7 @@ function Chart (options, callback) {
 			chartSubtitle.align(null, null, spacingBox);
 		}
 		
-		redraw();
+		redraw(animation);
 		
 		
 		oldChartHeight = null;
