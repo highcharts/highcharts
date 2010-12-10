@@ -10,18 +10,21 @@
 // create shortcuts
 var HC = Highcharts, 
 	addEvent = HC.addEvent,
-	defaultOptions = HC.defaultOptions,
+	defaultOptions = HC.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	seriesTypes = HC.seriesTypes,
 	map = HC.map,
 	merge = HC.merge,
 	each = HC.each,
-	math = Math;
+	math = Math,
+	mathRound = math.round;
 	
 // set default options
 defaultPlotOptions.OHLC = merge(defaultPlotOptions.line, {
 	lineWidth: 1,
-	lineColor: null
+	marker: {
+		lineWidth: 1 // todo: no marker object
+	}
 });
 
 // Create the OHLCPoint object
@@ -84,6 +87,14 @@ var OHLCPoint = Highcharts.extendClass(Highcharts.Point, {
 var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 	type: 'OHLC',
 	pointClass: OHLCPoint,
+	
+	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		stroke: 'color',
+		'stroke-width': 'lineWidth'
+	},
+	
+	getSymbol: function() {},
+	
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
 	 */
@@ -121,6 +132,8 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 				categories[point.x] : point.x;
 				
 			
+				
+			
 		});
 	},
 	
@@ -131,14 +144,18 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 			seriesStateAttr = series.stateAttr,
 			data = series.data, 
 			chart = series.chart,
+			pointAttr,
+			pointOpen,
+			pointClose,
+			crispCorr,
 			crispX;
 		
 		
 		// cache the 'normal' state attributes
-		if (!seriesStateAttr['']) {
+		/*if (!seriesStateAttr['']) {
 			seriesOptions.lineColor = series.color;	
 			seriesStateAttr[''] = series.getStateAttributes(seriesOptions);
-		}
+		}*/
 				
 		each(data, function(point) {
 			
@@ -147,26 +164,32 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 					point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
 				
 				
-				crispX = Math.round(point.plotX) + (seriesOptions.lineWidth % 2) / 2;
+				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
+				
+				// crisp vector coordinates
+				
+				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispX = mathRound(point.plotX) + crispCorr;
+				plotOpen = mathRound(point.plotOpen) + crispCorr;
+				plotClose = mathRound(point.plotClose) + crispCorr; 
 				
 				point.graphic = chart.renderer.path([
 						'M',
-						crispX, point.plotLow,
+						crispX, mathRound(point.plotLow),
 						'L', 
-						crispX, point.plotHigh,
+						crispX, mathRound(point.plotHigh),
 						'M',
-						crispX, point.plotOpen,
+						crispX, plotOpen,
 						'L',
-						crispX - 2, point.plotOpen,
+						crispX - 5, plotOpen,
 						'M',
-						crispX, point.plotClose,
+						crispX, plotClose,
 						'L',
-						crispX + 2, point.plotClose,						
+						crispX + 5, plotClose,
 						'Z'
 					])
-					.attr(series.stateAttr[''])
+					.attr(pointAttr)
 					.add(series.group);
-				
 				
 			}
 			
@@ -179,7 +202,11 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 
 	},
 	
-	drawLine: function() {
+	//drawTracker: seriesTypes.column.prototype.drawTracker,
+	
+	drawGraph: function() {
+		this.singlePoints = [];
 	}
 });
 seriesTypes.OHLC = OHLCSeries;
+
