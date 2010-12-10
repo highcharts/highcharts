@@ -8530,6 +8530,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			clipRect = series.clipRect,
+			group = series.group,
 			animation = series.options.animation;
 			
 		if (animation && !isObject(animation)) {
@@ -8548,8 +8549,8 @@ Series.prototype = {
 			}, animation && extend(animation, {
 				complete: function() {
 					clipRect.isAnimating = false;
-					if (clipRect != chart.clipRect) {
-						series.group.clip((series.clipRect = chart.clipRect));
+					if (group && clipRect != chart.clipRect) {
+						group.clip((series.clipRect = chart.clipRect));
 						clipRect.destroy();
 					}
 				}
