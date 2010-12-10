@@ -7071,7 +7071,7 @@ function Chart (options, callback) {
 		// inside this container will be drawn at subpixel precition. In order to draw
 		// sharp lines, this must be compensated for.
 		var subPixelFix;
-		if (/Gecko/.test(userAgent)) {
+		if (/Firefox/.test(userAgent)) {
 			subPixelFix = function() {
 				css(container, { left: 0, top: 0 });
 				var rect = container.getBoundingClientRect();
