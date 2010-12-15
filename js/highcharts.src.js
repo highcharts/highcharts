@@ -7070,11 +7070,11 @@ function Chart (options, callback) {
 		// between pixels. The container itself doesn't display this, but an SVG element
 		// inside this container will be drawn at subpixel precition. In order to draw
 		// sharp lines, this must be compensated for.
-		var subPixelFix;
-		if (/Firefox/.test(userAgent)) {
+		var subPixelFix, rect;
+		if (/Firefox/.test(userAgent) && container.getBoundingClientRect) {
 			subPixelFix = function() {
 				css(container, { left: 0, top: 0 });
-				var rect = container.getBoundingClientRect();
+				rect = container.getBoundingClientRect();
 				css(container, {
 					left: (-rect.left % 1) + PX,
 					top: (-rect.top % 1) + PX
