@@ -5448,7 +5448,9 @@ function Chart (options, callback) {
 				group.hide();
 			
 				each(crosshairs, function(crosshair) {
-					crosshair.hide();
+					if (crosshair) {
+						crosshair.hide();
+					}
 				});
 			
 				// hide previous hoverPoints and set new
