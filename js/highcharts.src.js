@@ -561,16 +561,18 @@ pathAnim = {
 		}
 		
 		// copy and append last point until the length matches the end length
-		endLength = end.length;
-		while (start.length < endLength) {		
-			
-			//bezier && sixify(start); 
-			slice = [].concat(start).splice(start.length - numParams, numParams);
-			if (bezier) { // disable first control point
-				slice[numParams - 6] = slice[numParams - 2];
-				slice[numParams - 5] = slice[numParams - 1];
+		if (start.length) {
+			endLength = end.length;
+			while (start.length < endLength) {		
+				
+				//bezier && sixify(start); 
+				slice = [].concat(start).splice(start.length - numParams, numParams);
+				if (bezier) { // disable first control point
+					slice[numParams - 6] = slice[numParams - 2];
+					slice[numParams - 5] = slice[numParams - 1];
+				}
+				start = start.concat(slice);
 			}
-			start = start.concat(slice);
 		}
 		
 		if (startBaseLine) { // append the base lines for areas
