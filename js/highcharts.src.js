@@ -1433,7 +1433,6 @@ SVGElement.prototype = {
 	 * @param {Mixed|Undefined} val
 	 */
 	attr: function(hash, val) {
-		
 		var key, 
 			value, 
 			i, 
@@ -4610,9 +4609,9 @@ function Chart (options, callback) {
 			// push the last time
 			tickPositions.push(time);
 			
+			
 			// dynamic label formatter 
 			dateTimeLabelFormat = options.dateTimeLabelFormats[unit[0]];
-			
 		}
 			
 		/**
@@ -4718,8 +4717,9 @@ function Chart (options, callback) {
 			}
 			
 			if (!isDatetimeAxis && !defined(options.tickInterval)) { // linear
-				axis.tickInterval = tickInterval = normalizeTickInterval(tickInterval);
+				tickInterval = normalizeTickInterval(tickInterval);
 			}
+			axis.tickInterval = tickInterval; // record for linked axis
 			
 			// get minorTickInterval
 			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
@@ -9134,7 +9134,7 @@ Series.prototype = {
 				group.clip((series.clipRect = chart.clipRect));
 				clipRect.destroy();
 			}
-		});
+		}, duration);
 		
 		
 		series.isDirty = false; // means data is in accordance with what you see
