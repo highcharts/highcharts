@@ -8534,7 +8534,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			clipRect = series.clipRect,
-			group = series.group,
 			animation = series.options.animation;
 			
 		if (animation && !isObject(animation)) {
@@ -8550,20 +8549,13 @@ Series.prototype = {
 		} else { // run the animation
 			clipRect.animate({ 
 				width: chart.plotSizeX 
-			}, animation && extend(animation, {
-				complete: function() {
-					clipRect.isAnimating = false;
-					if (group && clipRect != chart.clipRect) {
-						group.clip((series.clipRect = chart.clipRect));
-						clipRect.destroy();
-					}
-				}
-			}));
+			}, animation);
 			
 			// delete this function to allow it only once
 			this.animate = null;
 		}
 	},
+	
 	
 	/**
 	 * Draw the markers
@@ -9064,18 +9056,21 @@ Series.prototype = {
 			group,
 			setInvert,
 			options = series.options,
-			doAnimation = options.animation && series.animate,
+			animation = options.animation,
+			doAnimation = animation && series.animate,
+			duration = doAnimation ? animation && animation.duration || 500 : 0,
+			clipRect = series.clipRect,
 			renderer = chart.renderer;
 			
 		
 		// Add plot area clipping rectangle. If this is before chart.hasRendered,
 		// create one shared clipRect. 
-		if (!series.clipRect) {
-			series.clipRect = !chart.hasRendered && chart.clipRect ?
+		if (!clipRect) {
+			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect ?
 				chart.clipRect : 
 				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
 			if (!chart.clipRect) {
-				chart.clipRect = series.clipRect;
+				chart.clipRect = clipRect;
 			}
 		}
 		
@@ -9131,6 +9126,15 @@ Series.prototype = {
 		if (doAnimation) {
 			series.animate();
 		}
+		
+		// finish the individual clipRect
+		setTimeout(function() {
+			clipRect.isAnimating = false;
+			if (group && clipRect != chart.clipRect) {
+				group.clip((series.clipRect = chart.clipRect));
+				clipRect.destroy();
+			}
+		});
 		
 		
 		series.isDirty = false; // means data is in accordance with what you see
