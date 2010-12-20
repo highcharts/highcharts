@@ -1617,9 +1617,9 @@ SVGElement.prototype = {
 	symbolAttr: function(hash) {
 		var wrapper = this;
 		
-		wrapper.x = pick(hash.x, wrapper.x);
+		wrapper.x = parseFloat(pick(hash.x, wrapper.x));
 		wrapper.y = parseFloat(pick(hash.y, wrapper.y)); // mootools animation bug needs parseFloat
-		wrapper.r = pick(hash.r, wrapper.r);
+		wrapper.r = parseFloat(pick(hash.r, wrapper.r));
 		wrapper.start = pick(hash.start, wrapper.start);
 		wrapper.end = pick(hash.end, wrapper.end);
 		wrapper.width = pick(hash.width, wrapper.width);
