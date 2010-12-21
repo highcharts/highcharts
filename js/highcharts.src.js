@@ -8891,7 +8891,7 @@ Series.prototype = {
 						y: y
 					});
 				} else if (str) {
-					point.dataLabel = chart.renderer.text(
+					dataLabel = point.dataLabel = chart.renderer.text(
 						str, 
 						x, 
 						y
@@ -8904,7 +8904,9 @@ Series.prototype = {
 					.css(options.style)
 					.add(dataLabelsGroup);
 				}
-				
+				if (series.isCartesian) {
+					dataLabel[chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
+				}
 					
 			});
 		}
