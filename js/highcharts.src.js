@@ -5550,7 +5550,7 @@ function Chart (options, callback) {
 				
 				
 			// hide tooltip if the point falls outside the plot
-			show = !point.series.isCartesian || isInsidePlot(x, y);
+			show = shared || !point.series.isCartesian || isInsidePlot(x, y);
 			
 			// update the inner HTML
 			if (text === false || !show) { 
