@@ -6744,7 +6744,8 @@ function Chart (options, callback) {
 					
 		// redraw affected series
 		each(series, function(serie) {
-			if (serie.isDirty && serie.visible) { 
+			if (serie.isDirty && serie.visible && 
+					(!serie.isCartesian || serie.xAxis)) { // issue #153 
 				serie.redraw();
 			}
 		});
