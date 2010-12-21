@@ -10104,7 +10104,6 @@ var PieSeries = extendClass(Series, {
 				mathSin(angle) * slicedOffset + chart.plotTop
 			], mathRound);
 			
-			
 			// set the anchor point for tooltips
 			radiusX = mathCos(angle) * positions[2] / 2;
 			radiusY = mathSin(angle) * positions[2] / 2;
@@ -10172,22 +10171,26 @@ var PieSeries = extendClass(Series, {
 			groupTranslation,
 			//center,
 			graphic,
+			group,
 			shapeArgs;
 		
 		// draw the slices
 		each(series.data, function(point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
+			group = point.group;
 
 			// create the group the first time
-			if (!point.group) {
-				// if the point is sliced, use special translation, else use plot area traslation
-				groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-				point.group = renderer.g('point')
+			if (!group) {
+				group = point.group = renderer.g('point')
 					.attr({ zIndex: 5 })
-					.add()
-					.translate(groupTranslation[0], groupTranslation[1]);
+					.add();
 			}
+			
+			// if the point is sliced, use special translation, else use plot area traslation
+			groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
+			group.translate(groupTranslation[0], groupTranslation[1])
+				
 			
 			// draw the slice
 			if (graphic) {
