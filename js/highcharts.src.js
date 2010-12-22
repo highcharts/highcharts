@@ -1663,9 +1663,14 @@ SVGElement.prototype = {
 		);
 		
 		// serialize and set style attribute
-		elemWrapper.attr({
-			style: serializeCSS(styles)
-		});
+		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute 
+			css(elemWrapper.element, styles);	
+		} else {
+			elemWrapper.attr({
+				style: serializeCSS(styles)
+			});
+		}
+		
 		
 		// store object
 		elemWrapper.styles = styles;
@@ -6999,7 +7004,6 @@ function Chart (options, callback) {
 				.add()
 				.align(chartTitleOptions, false, spacingBox);
 			}
-			
 		});
 		
 	}
