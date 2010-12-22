@@ -4271,7 +4271,8 @@ function Chart (options, callback) {
 								isNegative = pointY < 0, 
 								pointStack = isNegative ? negPointStack : posPointStack,
 								key = isNegative ? negKey : stackKey,
-								totalPos;
+								totalPos,
+								pointLow;
 							
 							// initial values
 							if (dataMin === null) {
@@ -4296,13 +4297,13 @@ function Chart (options, callback) {
 										defined(pointStack[pointX]) ? 
 										pointStack[pointX] + pointY : pointY;
 								}
-								
 								totalPos = pointStack ? pointStack[pointX] : pointY;
+								pointLow = pick(point.low, totalPos);
 								if (!usePercentage) {
 									if (totalPos > dataMax) {
 										dataMax = totalPos;
-									} else if (totalPos < dataMin) {
-										dataMin = totalPos;
+									} else if (pointLow < dataMin) {
+										dataMin = pointLow;
 									}
 								}
 								if (stacking) {		
