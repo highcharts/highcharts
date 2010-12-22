@@ -5414,10 +5414,7 @@ function Chart (options, callback) {
 						
 			// build the values
 			each(points, function(point) {
-				series = point.series;
-				s.push('<span style="color:'+ series.color +'">', (point.name || series.name), '</span>: ',
-					(!useHeader ? ('<b>x = '+ (point.name || point.x) + ',</b> ') : ''), 
-					'<b>', (!useHeader ? 'y = ' : '' ), point.y, '</b><br/>');
+				s.push(point.tooltipFormatter(useHeader));
 			});
 			return s.join('');
 		}
@@ -7881,6 +7878,23 @@ Point.prototype = {
 	},
 	
 	/**
+	 * Extendable method for formatting each point's tooltip line 
+	 * 
+	 * @param {Boolean} useHeader Whether a common header is used for multiple series in the tooltip
+	 * 
+	 * @return {String} A string to be concatenated in to the common tooltip text
+	 */
+	tooltipFormatter: function(useHeader) {
+		var point = this,
+			series = point.series;
+				
+		return ['<span style="color:'+ series.color +'">', (point.name || series.name), '</span>: ',
+			(!useHeader ? ('<b>x = '+ (point.name || point.x) + ',</b> ') : ''), 
+			'<b>', (!useHeader ? 'y = ' : '' ), point.y, '</b><br/>'].join('');
+		
+	},
+	
+	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
 	 * 
 	 * @param {Object} options Point options as defined in the series.data array
@@ -8371,7 +8385,7 @@ Series.prototype = {
 			stacking = series.options.stacking,
 			categories = series.xAxis.categories,
 			yAxis = series.yAxis,
-			data = series.data,
+			data = series.data,			
 			i = data.length;
 			
 		// do the translation
@@ -8379,7 +8393,7 @@ Series.prototype = {
 			var point = data[i],
 				xValue = point.x, 
 				yValue = point.y, 
-				yBottom,
+				yBottom = point.low,
 				stack = yAxis.stacks[(yValue < 0 ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
@@ -8399,7 +8413,10 @@ Series.prototype = {
 
 				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
 				point.stackTotal = pointStackTotal;
-				point.yBottom = yAxis.translate(yBottom, 0, 1);				
+			}
+			
+			if (defined(yBottom)) {
+				point.yBottom = yAxis.translate(yBottom, 0, 1);
 			}
 			
 			// set the y value
@@ -8657,8 +8674,11 @@ Series.prototype = {
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
-			normalDefaults = {},
 			seriesColor = series.color,
+			normalDefaults = {
+				stroke: seriesColor,
+				fill: seriesColor
+			},
 			data = series.data,
 			i,
 			point,
@@ -8670,22 +8690,11 @@ Series.prototype = {
 		// series type specific modifications
 		if (series.options.marker) { // line, spline, area, areaspline, scatter
 			
-			// if no color is given for the point, use the general series color
-			normalDefaults = {
-				stroke: seriesColor,
-				fill: seriesColor
-			};
-			
 			// if no hover radius is given, default to normal radius + 2  
 			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + 2;
 			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + 1;
 			
 		} else { // column, bar, pie
-			
-			// if no color is given for the point, use the general series color
-			normalDefaults = {
-				fill: seriesColor
-			};
 			
 			// if no hover color is given, brighten the normal color
 			stateOptionsHover.color = stateOptionsHover.color || 
@@ -9601,7 +9610,7 @@ var ColumnSeries = extendClass(Series, {
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold || 0,
 			translatedThreshold = series.yAxis.getThreshold(threshold),
-			minPointLength = pick(options.minPointLength, 5);
+			minPointLength = pick(options.minPointLength, 5);		
 			
 		// record the new values
 		each(data, function(point) {
@@ -10416,6 +10425,7 @@ win.Highcharts = {
 	getOptions: getOptions,
 	numberFormat: numberFormat,
 	Point: Point,
+	Color: Color,
 	Renderer: Renderer,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,

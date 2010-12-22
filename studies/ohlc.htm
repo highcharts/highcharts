@@ -13,38 +13,7 @@
 		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
 		<script type="text/javascript">
 			
-		var chart;
-		var options = {
-				chart: {
-					renderTo: 'container',
-					defaultSeriesType: 'OHLC'
-				},
-				title: {
-					text: 'OHLC Demo'
-				},
-				xAxis: {
-					type: 'datetime'
-				},
-				tooltip: {
-					formatter: function() {
-						return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0);
-					}
-				},
-				plotOptions: {
-					series: {
-						pointStart: Date.UTC(2010, 0, 1),
-						pointInterval: 24 * 3600 * 1000
-					}
-				},
-				tooltip: {
-					shared: true
-				},
-				legend: {
-					enabled: false
-				},
-			    series: [{
-					name: 'Browser share',
-					data: [
+		var data = [
 [ 5.64 ,  5.71 ,  4.73 ,  5.01 ],
 [ 5.39 , 6.41 , 4.85 , 5.49 ],
 [ 5.14 , 5.70 , 4.70 , 5.67 ],
@@ -80,7 +49,7 @@
 [ 5.23 , 5.52 , 4.24 , 5.20 ],
 [ 5.92 , 6.01 , 4.68 , 5.39 ],
 [ 6.16 , 6.52 , 5.30 , 5.96 ],
-[ 6.33 , 6.36 , 5.21 , 5.39 ]/*,
+[ 6.33 , 6.36 , 5.21 , 5.39 ],
 [ 6.46 , 7.03 , 5.94 , 6.89 ],
 [ 7.26 , 7.38 , 6.46 , 7.13 ],
 [ 6.69 , 7.85 , 6.55 , 7.47 ],
@@ -88,7 +57,7 @@
 [ 6.75 , 7.44 , 6.30 , 7.20 ],
 [ 7.42 , 7.65 , 6.36 , 6.75 ],
 [ 8.15 , 8.22 , 7.42 , 8.18 ],
-[ 8.00 , 8.40 , 7.55 , 8.04 ],
+[ 8.00 , 8.40 , 7.55 , 8.04 ]/*,
 [ 7.96 , 8.54 , 7.46 , 8.34 ],
 [ 7.24 , 8.19 , 6.99 , 7.54 ],
 [ 7.63 , 7.85 , 7.24 , 7.82 ],
@@ -195,17 +164,48 @@
 [ 10.44 , 10.74 , 9.94 , 9.99 ],
 [ 10.50 , 10.80 , 10.28 , 10.51 ],
 [ 10.04 , 10.54 , 9.70 , 10.44 ]	*/			
-					]
-					//data: [3.40, 1.05, 2.90, 1.65, 1.35, 2.59, 1.39, 3.07, 2.82]
+					];
+			
+			
+		var chart;
+		var options = {
+				chart: {
+				},
+				xAxis: {
+					type: 'datetime'
+				},
+				title: {
+					
+				},
+				plotOptions: {
+					series: {
+						pointStart: Date.UTC(2010, 0, 1),
+						pointInterval: 24 * 3600 * 1000
+					}
+				},
+				legend: {
+					enabled: false
+				},
+			    series: [{
+					name: 'Exchange rate',
+					data: data
 				}]
 			};
 		
 		
 		$(document).ready(function() {
+			options.chart.type = 'OHLC';
+			options.chart.renderTo = 'container-ohlc';
+			options.title.text = 'OHLC';
+			chart = new Highcharts.Chart(options);
+			
+			options.chart.type = 'candlestick';
+			options.chart.renderTo = 'container-candlestick';
+			options.title.text = 'Candlestick';
 			chart = new Highcharts.Chart(options);
 		});
 		
-
+		
 		
 		
 		</script>
@@ -215,7 +215,8 @@
 	<body>
 		
 		<!-- 3. Add the container -->
-		<div id="container" style="width: 800px; height: 400px; margin: 0 auto; "></div>
+		<div id="container-ohlc" style="width: 800px; height: 200px; margin: 0 auto; "></div>
+		<div id="container-candlestick" style="width: 800px; height: 200px; margin: 0 auto; "></div>
 		
 				
 	</body>

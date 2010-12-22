@@ -7,6 +7,12 @@
  * License: www.highcharts.com/license
  */
 
+/*
+ * Todo:
+ * - Separate up and down colors. Requires a means of assigning separate colors to the pointAttr
+ *   based on conditions, similar to states. 
+ */
+
 // create shortcuts
 var HC = Highcharts, 
 	addEvent = HC.addEvent,
@@ -19,15 +25,17 @@ var HC = Highcharts,
 	math = Math,
 	mathRound = math.round;
 	
-// set default options
-defaultPlotOptions.OHLC = merge(defaultPlotOptions.line, {
+// 1 - Set default options
+defaultPlotOptions.OHLC = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
-	marker: {
-		lineWidth: 1 // todo: no marker object
+	states: {
+		hover: {
+			lineWidth: 3
+		}
 	}
 });
 
-// Create the OHLCPoint object
+// 2- Create the OHLCPoint object
 var OHLCPoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Apply the options containing the x and OHLC data and possible some extra properties.
@@ -79,12 +87,27 @@ var OHLCPoint = Highcharts.extendClass(Highcharts.Point, {
 			point.x = series.autoIncrement();
 		}
 		
-	}	
+	},
+	
+	/**
+	 * A specific OHLC tooltip formatter
+	 */
+	tooltipFormatter: function(useHeader) {
+		var point = this,
+			series = point.series;
+				
+		return ['<span style="color:'+ series.color +';font-weight:bold">', (point.name || series.name), '</span><br/> ',
+			'O: ', point.open, '<br/>',
+			'H: ', point.high, '<br/>',
+			'L: ', point.low, '<br/>',
+			'C: ', point.close].join('');
+		
+	}
 	
 });
 	
-// Create the OHLCSeries object
-var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
+// 3 - Create the OHLCSeries object
+var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 	type: 'OHLC',
 	pointClass: OHLCPoint,
 	
@@ -93,7 +116,6 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 		'stroke-width': 'lineWidth'
 	},
 	
-	getSymbol: function() {},
 	
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -105,34 +127,13 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 			yAxis = series.yAxis,
 			stack = yAxis.stacks[series.type];
 			
+		seriesTypes.column.prototype.translate.apply(series);	
+			
 		// do the translation
 		each(this.data, function(point) {
-			var xValue = point.x, 
-				yValue = point.high; 
-				
-			point.plotX = series.xAxis.translate(xValue);
-			
-			// set the y value
-			if (yValue !== null) {
-				point.plotY = yAxis.translate(yValue, 0, 1);
-			}
 			// the graphics
 			point.plotOpen = yAxis.translate(point.open, 0, 1);
-			point.plotHigh = yAxis.translate(point.high, 0, 1);
-			point.plotLow = yAxis.translate(point.low, 0, 1);
 			point.plotClose = yAxis.translate(point.close, 0, 1);
-			
-			// set client related positions for mouse tracking
-			point.clientX = chart.inverted ? 
-				chart.plotHeight - point.plotX : 
-				point.plotX; // for mouse tracking
-				
-			// some API data
-			point.category = categories && categories[point.x] !== UNDEFINED ? 
-				categories[point.x] : point.x;
-				
-			
-				
 			
 		});
 	},
@@ -150,12 +151,6 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 			crispCorr,
 			crispX;
 		
-		
-		// cache the 'normal' state attributes
-		/*if (!seriesStateAttr['']) {
-			seriesOptions.lineColor = series.color;	
-			seriesStateAttr[''] = series.getStateAttributes(seriesOptions);
-		}*/
 				
 		each(data, function(point) {
 			
@@ -166,26 +161,25 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 				
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 				
-				// crisp vector coordinates
-				
+				// crisp vector coordinates				
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
 				crispX = mathRound(point.plotX) + crispCorr;
 				plotOpen = mathRound(point.plotOpen) + crispCorr;
-				plotClose = mathRound(point.plotClose) + crispCorr; 
+				plotClose = mathRound(point.plotClose) + crispCorr;
 				
 				point.graphic = chart.renderer.path([
 						'M',
-						crispX, mathRound(point.plotLow),
+						crispX, mathRound(point.yBottom),
 						'L', 
-						crispX, mathRound(point.plotHigh),
+						crispX, mathRound(point.plotY),
 						'M',
 						crispX, plotOpen,
 						'L',
-						crispX - 5, plotOpen,
+						crispX - 2, plotOpen,
 						'M',
 						crispX, plotClose,
 						'L',
-						crispX + 5, plotClose,
+						crispX + 2, plotClose,
 						'Z'
 					])
 					.attr(pointAttr)
@@ -200,13 +194,106 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.Series, {
 			
 		});
 
-	},
-	
-	//drawTracker: seriesTypes.column.prototype.drawTracker,
-	
-	drawGraph: function() {
-		this.singlePoints = [];
 	}
+	
+	
 });
 seriesTypes.OHLC = OHLCSeries;
+
+
+/* ****************************************************************************
+ * Candlestick series                                                         *
+ *****************************************************************************/
+
+// 1 - set default options
+defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
+	lineColor: 'black',
+	lineWidth: 1
+});
+
+// 3 - Create the CandlestickSeries object
+var CandlestickSeries = Highcharts.extendClass(seriesTypes.OHLC, {
+	type: 'candlestick',
+	
+	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		fill: 'color',
+		stroke: 'lineColor',
+		'stroke-width': 'lineWidth'
+	},
+	
+	
+	
+	drawPoints: function() {
+		var series = this,  //state = series.state,
+			//layer = series.stateLayers[state], 
+			seriesOptions = series.options, 
+			seriesStateAttr = series.stateAttr,
+			data = series.data, 
+			chart = series.chart,
+			pointAttr,
+			pointOpen,
+			pointClose,
+			topBox,
+			bottomBox,
+			crispCorr,
+			crispX,
+			boxWidth = 5;
+		
+				
+		each(data, function(point) {
+			
+			if (point.plotY !== undefined && 
+					point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
+					point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
+				
+				
+				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
+				
+				// crisp vector coordinates				
+				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispX = mathRound(point.plotX) + crispCorr;
+				plotOpen = mathRound(point.plotOpen) + crispCorr;
+				plotClose = mathRound(point.plotClose) + crispCorr;
+				topBox = math.min(plotOpen, plotClose);
+				bottomBox = math.max(plotOpen, plotClose);
+				
+				point.graphic = chart.renderer.path([
+						'M',
+						crispX - boxWidth, bottomBox,
+						'L',
+						crispX - boxWidth, topBox,
+						'L',
+						crispX + boxWidth, topBox,
+						'L',
+						crispX + boxWidth, bottomBox,
+						'L',
+						crispX - boxWidth, bottomBox,
+						'M',
+						crispX, bottomBox,
+						'L',
+						crispX, mathRound(point.yBottom),
+						'M',
+						crispX, topBox,
+						'L',
+						crispX, mathRound(point.plotY),
+						'Z'
+					])
+					.attr(pointAttr)
+					.add(series.group);
+				
+			}
+			
+			// draw the selected mode marker on top of the default one
+			if (point.selected)	{
+				series.drawPointState(point, 'select');
+			}
+			
+		});
+
+	}
+	
+	
+});
+
+seriesTypes.candlestick = CandlestickSeries;
 
