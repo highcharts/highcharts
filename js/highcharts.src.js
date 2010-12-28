@@ -8918,9 +8918,9 @@ Series.prototype = {
 					.css(options.style)
 					.add(dataLabelsGroup);
 				}
-				if (series.isCartesian) {
+				/*if (series.isCartesian) {
 					dataLabel[chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
-				}
+				}*/
 					
 			});
 		}
