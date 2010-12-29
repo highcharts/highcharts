@@ -7511,7 +7511,7 @@ function Chart (options, callback) {
 	 */
 	function destroy() {
 		var i = series.length,
-			parentNode = container.parentNode;
+			parentNode = container && container.parentNode;
 		
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
