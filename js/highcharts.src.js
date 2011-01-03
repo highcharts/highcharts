@@ -235,10 +235,11 @@ function splat(obj) {
 function pick() {
 	var args = arguments,
 		i,
-		arg;
-	for (i = 0; i < args.length; i++) {
+		arg,
+		length = args.length;
+	for (i = 0; i < length; i++) {
 		arg = args[i];
-		if (defined(arg)) {
+		if (typeof arg !== 'undefined' && arg !== null) {
 			return arg;
 		}
 	}
