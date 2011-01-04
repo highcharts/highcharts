@@ -10043,6 +10043,7 @@ var PieSeries = extendClass(Series, {
 		var total = 0,
 			series = this,
 			cumulative = -0.25, // start at top
+			precision = 10000, // issue #172
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
@@ -10097,10 +10098,9 @@ var PieSeries = extendClass(Series, {
 		each(data, function(point) {
 			// set start and end angle
 			fraction = total ? point.y / total : 0;
-			start = cumulative * circ;
+			start = mathRound(cumulative * circ * precision) / precision;
 			cumulative += fraction;
-			end = cumulative * circ;
-			
+			end = mathRound(cumulative * circ * precision) / precision;
 			
 			// set the shape
 			point.shapeType = 'arc';
