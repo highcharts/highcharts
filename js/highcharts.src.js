@@ -3021,16 +3021,15 @@ var VMLElement = extendClass( SVGElement, {
 	
 	
 	/**
-	 * Private method to update elements based on internal 
+	 * VML override private method to update elements based on internal 
 	 * properties based on SVG transform
 	 */
-	updateTransform: function(hash) {
+	updateTransform: function(hash) { 
 		// aligning non added elements is expensive
 		if (!this.added) {
 			this.alignOnAdd = true;
 			return;
 		}
-		
 		
 		var wrapper = this,
 			elem = wrapper.element,
@@ -3038,14 +3037,9 @@ var VMLElement = extendClass( SVGElement, {
 			translateY = wrapper.translateY || 0,
 			x = wrapper.x || 0,
 			y = wrapper.y || 0,
-			rotation = wrapper.rotation || 0,
-			radians = rotation * deg2rad, // deg to rad
-			costheta = mathCos(radians),
-			sintheta = mathSin(radians), 
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { right: 1, center: 2 }[align],
-			nonLeft = align && align != 'left';			
-		
+			nonLeft = align && align != 'left';
 		
 		// apply translate
 		if (translateX || translateY) {
@@ -3063,33 +3057,64 @@ var VMLElement = extendClass( SVGElement, {
 		}
 		
 		if (elem.tagName == 'SPAN') {
-			// Adjust for alignment and rotation.
-			// Test case: http://highcharts.com/tests/?file=text-rotation
-			css(elem, {
-				filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta, 
-					', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta, 
-					', sizingMethod=\'auto expand\')'].join('') : NONE
-			});
 			
-			var width = elem.offsetWidth,
-				height = elem.offsetHeight,
-				lineHeight = mathRound(pInt(elem.style.fontSize || 12) * 1.2);
-			
-			// correct x and y
-			x += width * mathMin(costheta, 0) + mathMin(sintheta, 0) * lineHeight;
-			y += height * mathMin(sintheta, 0) - mathMax(costheta, 0) * lineHeight;
+			var width, height,
+				rotation = wrapper.rotation,
+				lineHeight,
+				radians = 0,
+				costheta = 1,
+				sintheta = 0,
+				xCorr = wrapper.xCorr || 0,
+				yCorr = wrapper.yCorr || 0,
+				currentTextTransform = [rotation, align, elem.innerHTML].join(',');
 				
-			if (nonLeft) {
-				x -= width / alignCorrection * costheta;
-				y -= height / alignCorrection * sintheta;
+			if (currentTextTransform != wrapper.cTT) { // do the calculations and DOM access only if properties changed
+				
+				if (defined(rotation)) {
+					radians = rotation * deg2rad; // deg to rad
+					costheta = mathCos(radians);
+					sintheta = mathSin(radians);				
+					 
+					// Adjust for alignment and rotation.
+					// Test case: http://highcharts.com/tests/?file=text-rotation
+					css(elem, {
+						filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta, 
+							', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta, 
+							', sizingMethod=\'auto expand\')'].join('') : NONE
+					});
+				}
+				
+				width = elem.offsetWidth;
+				height = elem.offsetHeight;
+				
+				// correct x and y
+				lineHeight = mathRound(pInt(elem.style.fontSize || 12) * 1.2);
+				xCorr = width * mathMin(costheta, 0) + mathMin(sintheta, 0) * lineHeight;
+				yCorr = height * mathMin(sintheta, 0) - mathMax(costheta, 0) * lineHeight;
+					
+				// centered or right aligned
+				if (nonLeft) {
+					xCorr -= width / alignCorrection * costheta;
+					yCorr -= height / alignCorrection * sintheta;					
+					
+					css(elem, {
+						textAlign: align
+					});
+				}
+				
+				// record correction
+				wrapper.xCorr = xCorr;
+				wrapper.yCorr = yCorr; 
 			}
 			
+			// apply position with correction
 			css(elem, {
-				textAlign: align,
-				left: x,
-				top: y
+				left: x + xCorr,
+				top: y + yCorr
 			});
 			
+			// record current text transform
+			wrapper.cTT = currentTextTransform;
 		}
 	},
 	
