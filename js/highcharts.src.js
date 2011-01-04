@@ -9148,6 +9148,7 @@ Series.prototype = {
 		// finish the individual clipRect
 		setTimeout(function() {
 			clipRect.isAnimating = false;
+			group = series.group; // can be destroyed during the timeout
 			if (group && clipRect != chart.clipRect) {
 				group.clip((series.clipRect = chart.clipRect));
 				clipRect.destroy();
