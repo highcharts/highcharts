@@ -10239,7 +10239,10 @@ var PieSeries = extendClass(Series, {
 			} else {
 				point.graphic = 
 					renderer.arc(shapeArgs)
-					.attr(point.pointAttr[NORMAL_STATE])
+					.attr(extend(
+						point.pointAttr[NORMAL_STATE],
+						{ 'stroke-linejoin': 'round' }
+					))
 					.add(point.group);
 			}
 			
