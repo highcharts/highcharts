@@ -110,7 +110,8 @@ var doc = document,
 	stop = adapter.stop,
 	
 	// lookup over the types and the associated classes
-	seriesTypes = {};
+	seriesTypes = {},
+	hoverChart;
 	
 /**
  * Extend an object with the members of another
@@ -5935,6 +5936,14 @@ function Chart (options, callback) {
 				var chartX = e.chartX,
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
+					
+				// hide tooltip on other charts - issue #149
+				if (hoverChart != chart) {
+					if (hoverChart) {
+						hoverChart.tracker.resetTracker();
+					}
+					hoverChart = chart;
+				}
 					
 				// on touch devices, only trigger click if a handler is defined
 				if (hasTouch && e.type == 'touchstart') {
