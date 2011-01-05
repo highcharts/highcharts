@@ -1617,13 +1617,13 @@ SVGElement.prototype = {
 	symbolAttr: function(hash) {
 		var wrapper = this;
 		
-		wrapper.x = parseFloat(pick(hash.x, wrapper.x));
-		wrapper.y = parseFloat(pick(hash.y, wrapper.y)); // mootools animation bug needs parseFloat
-		wrapper.r = parseFloat(pick(hash.r, wrapper.r));
+		wrapper.x = pick(hash.x, wrapper.x);
+		wrapper.y = pick(hash.y, wrapper.y); // mootools animation bug needs parseFloat
+		wrapper.r = pick(hash.r, wrapper.r);
 		wrapper.start = pick(hash.start, wrapper.start);
 		wrapper.end = pick(hash.end, wrapper.end);
 		wrapper.width = pick(hash.width, wrapper.width);
-		wrapper.height = parseFloat(pick(hash.height, wrapper.height));
+		wrapper.height = pick(hash.height, wrapper.height);
 		wrapper.innerR = pick(hash.innerR, wrapper.innerR);
 		
 		wrapper.attr({ 

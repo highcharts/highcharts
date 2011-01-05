@@ -67,7 +67,11 @@ var HighchartsAdapter = {
 		
 		if (isSVGElement && !el.setStyle) {
 			// add setStyle and getStyle methods for internal use in Moo
-			el.setStyle = el.getStyle = el.attr;
+			el.getStyle = el.attr;
+			el.setStyle = function() { // property value is given as array in Moo - break it down
+				var args = arguments;
+				el.attr.call(el, args[0], args[1][0]);
+			}
 			// dirty hack to trick Moo into handling el as an element wrapper
 			el.$family = el.uid = true;
 		}
