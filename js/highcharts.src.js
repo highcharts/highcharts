@@ -6197,7 +6197,7 @@ function Chart (options, callback) {
 			itemX,
 			itemY,
 			lastItemY,
-			lastItemHeight = 0,
+			itemHeight = 0,
 			box,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
@@ -6319,7 +6319,8 @@ function Chart (options, callback) {
 				attribs,
 				simpleSymbol,
 				li = item.legendItem,
-				series = item.series || item;
+				series = item.series || item,
+				i = allItems.length;
 				
 			
 			if (!li) { // generate it once, later move it
@@ -6442,32 +6443,38 @@ function Chart (options, callback) {
 			}
 			
 			
+			// calculate the positions for the next line
+			bBox = li.getBBox();
+			
+			itemWidth = item.legendItemWidth =  
+				options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
+			itemHeight = bBox.height;
+			
+			// if the item exceeds the width, start a new line
+			if (horizontal && itemX - initialItemX + itemWidth > 
+					(widthOption || (chartWidth - 2 * padding - initialItemX))) {
+				itemX = initialItemX;
+				itemY += itemHeight;
+			}		
+			lastItemY = itemY;
 			
 			// position the newly generated or reordered items
 			positionItem(item, itemX, itemY);
 			
-			// calculate the positions for the next line
-			bBox = li.getBBox();
-			lastItemY = itemY;
-			lastItemHeight = bBox.height;
-			
-			item.legendItemWidth = itemWidth = 
-				options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
-			if (horizontal) {
+			// advance
+			if (horizontal)  {
 				itemX += itemWidth;
-				offsetWidth = widthOption || mathMax(itemX - initialItemX, offsetWidth);
-			
-				if (itemX - initialItemX + itemWidth > 
-						(widthOption || (chartWidth - 2 * padding - initialItemX))) { // new line
-					itemX = initialItemX;
-					itemY += lastItemHeight;
-				}
-				
 			} else {
-				itemY += lastItemHeight;
-				// the width of the widest item
-				offsetWidth = widthOption || mathMax(itemWidth, offsetWidth);			
-			}		
+				itemY += itemHeight;
+			}
+			
+			// the width of the widest item
+			offsetWidth = widthOption || mathMax(
+				horizontal ? itemX - initialItemX : itemWidth, 
+				offsetWidth
+			);
+			
+					
 			
 			// add it all to an array to use below
 			allItems.push(item);
@@ -6517,7 +6524,7 @@ function Chart (options, callback) {
 			
 			// Draw the border
 			legendWidth = widthOption || offsetWidth;
-			legendHeight = lastItemY - y + lastItemHeight;
+			legendHeight = lastItemY - y + itemHeight;
 			
 			if (legendBorderWidth || legendBackgroundColor) {
 				legendWidth += 2 * padding;
