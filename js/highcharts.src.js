@@ -7374,7 +7374,7 @@ function Chart (options, callback) {
 			};
 
 		// Chart area
-		mgn = 2 * chartBorderWidth + (optionsChart.shadow ? 8 : 0);
+		mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 			
 		if (chartBorderWidth || chartBackgroundColor) {
 			if (!chartBackground) {
