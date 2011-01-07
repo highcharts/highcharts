@@ -3039,7 +3039,7 @@ var VMLElement = extendClass( SVGElement, {
 			x = wrapper.x || 0,
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
-			alignCorrection = { right: 1, center: 2 }[align],
+			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
 			nonLeft = align && align != 'left';
 		
 		// apply translate
@@ -3065,6 +3065,7 @@ var VMLElement = extendClass( SVGElement, {
 				radians = 0,
 				costheta = 1,
 				sintheta = 0,
+				quad,
 				xCorr = wrapper.xCorr || 0,
 				yCorr = wrapper.yCorr || 0,
 				currentTextTransform = [rotation, align, elem.innerHTML].join(',');
@@ -3090,13 +3091,18 @@ var VMLElement = extendClass( SVGElement, {
 				
 				// correct x and y
 				lineHeight = mathRound(pInt(elem.style.fontSize || 12) * 1.2);
-				xCorr = width * mathMin(costheta, 0) + mathMin(sintheta, 0) * lineHeight;
-				yCorr = height * mathMin(sintheta, 0) - mathMax(costheta, 0) * lineHeight;
+				xCorr = costheta < 0 && -width;
+				yCorr = sintheta < 0 && -height;
+				
+				// correct for corners spilling out after rotation
+				quad = costheta * sintheta < 0;
+				xCorr += sintheta * lineHeight * (quad ? 1 - alignCorrection : alignCorrection);
+				yCorr -= costheta * lineHeight * (quad ? alignCorrection : 1 - alignCorrection);
 					
-				// centered or right aligned
+				// correct for the length/height of the text
 				if (nonLeft) {
-					xCorr -= width / alignCorrection * costheta;
-					yCorr -= height / alignCorrection * sintheta;					
+					xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
+					yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
 					
 					css(elem, {
 						textAlign: align
