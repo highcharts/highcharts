@@ -5937,14 +5937,6 @@ function Chart (options, callback) {
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
 					
-				// hide tooltip on other charts - issue #149
-				if (hoverChart != chart) {
-					if (hoverChart) {
-						hoverChart.tracker.resetTracker();
-					}
-					hoverChart = chart;
-				}
-					
 				// on touch devices, only trigger click if a handler is defined
 				if (hasTouch && e.type == 'touchstart') {
 					if (attr(e.target, 'isTracker')) {
