@@ -1946,6 +1946,9 @@ SVGElement.prototype = {
 	 * Destroy the element and element wrapper
 	 */
 	destroy: function() {
+		if (!this.renderer) {
+			console.trace();
+			}
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
@@ -2986,12 +2989,11 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	clip: function(clipRect) {
 		var wrapper = this,
-			clipMembers = clipRect.members,
-			index = clipMembers.length;
+			clipMembers = clipRect.members;
 			
 		clipMembers.push(wrapper);
 		wrapper.destroyClip = function() {
-			clipMembers.splice(index, 1);
+			erase(clipMembers, wrapper);
 		};
 		return wrapper.css(clipRect.getCSS(wrapper.inverted));
 	},
@@ -3031,7 +3033,7 @@ var VMLElement = extendClass( SVGElement, {
 			wrapper.destroyClip();
 		}
 		
-		SVGElement.prototype.destroy.apply(this);
+		SVGElement.prototype.destroy.apply(wrapper);
 	},
 	
 	/**
@@ -9280,7 +9282,7 @@ Series.prototype = {
 		setTimeout(function() {
 			clipRect.isAnimating = false;
 			group = series.group; // can be destroyed during the timeout
-			if (group && clipRect != chart.clipRect) {
+			if (group && clipRect != chart.clipRect && clipRect.renderer) {
 				group.clip((series.clipRect = chart.clipRect));
 				clipRect.destroy();
 			}
