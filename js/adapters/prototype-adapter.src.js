@@ -1,12 +1,14 @@
 /** 
- * @license Highcharts JS v2.1.1 (2010-12-03)
+ * @license Highcharts JS v2.1.2 (2011-01-12)
  * Prototype adapter
  * 
- * Written by Michael Nelson and Torstein Hønsi.
+ * @author Michael Nelson, Torstein Hønsi.
  * 
  * Feel free to use and modify this script.
  * Highcharts license: www.highcharts.com/license.
- * 
+ */
+
+/* 
  * Known issues: 
  *    - Some grid lines land in wrong position - http://jsfiddle.net/highcharts/jaRhY/28
  */

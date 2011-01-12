@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.1 (2010-12-03)
+ * @license Highcharts JS v2.1.2 (2011-01-12)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -1946,9 +1946,6 @@ SVGElement.prototype = {
 	 * Destroy the element and element wrapper
 	 */
 	destroy: function() {
-		if (!this.renderer) {
-			console.trace();
-			}
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
@@ -2094,7 +2091,7 @@ SVGRenderer.prototype = {
 	 */
 	buildText: function(wrapper) {
 		var textNode = wrapper.element,
-			lines = (wrapper.textStr || '').toString()
+			lines = pick(wrapper.textStr, '').toString()
 				.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
 				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
 				.replace(/<a/g, '<span')
@@ -3967,7 +3964,7 @@ function Chart (options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(extend(width && labelOptions.style))
+								.css(extend(width, labelOptions.style))
 								.add(axisGroup):
 							null;
 							
@@ -7199,8 +7196,9 @@ function Chart (options, callback) {
 		// Issue 110 workaround:
 		// In Firefox, if a div is positioned by percentage, its pixel position may land
 		// between pixels. The container itself doesn't display this, but an SVG element
-		// inside this container will be drawn at subpixel precition. In order to draw
-		// sharp lines, this must be compensated for.
+		// inside this container will be drawn at subpixel precision. In order to draw
+		// sharp lines, this must be compensated for. This doesn't seem to work inside
+		// iframes though (like in jsFiddle).
 		var subPixelFix, rect;
 		if (/Firefox/.test(userAgent) && container.getBoundingClientRect) {
 			subPixelFix = function() {
@@ -8974,7 +8972,6 @@ Series.prototype = {
 				chart = series.chart, 
 				inverted = chart.inverted,
 				seriesType = series.type,
-				isColumn = seriesType == 'column',
 				color;
 				
 			// create a separate group for the data labels to avoid rotation
@@ -8998,7 +8995,8 @@ Series.prototype = {
 		
 			// make the labels for each point
 			each(data, function(point, i){
-				var plotX = isColumn && point.barX || point.plotX || -999,
+				var barX = point.barX,
+					plotX = barX && barX + point.barW / 2 || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
 					align = options.align;
@@ -9014,14 +9012,10 @@ Series.prototype = {
 				});
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + options.y;
-				//align = labelPos ? labelPos[6] : options.align;
 				
 				// in columns, align the string to the column
-				if (isColumn) {
-					x += {
-						center: point.barW / 2,
-						right: point.barW
-					}[align] || 0;
+				if (seriesType == 'column') {
+					x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
 				}
 				
 				
@@ -10176,7 +10170,7 @@ var PieSeries = extendClass(Series, {
 		var total = 0,
 			series = this,
 			cumulative = -0.25, // start at top
-			precision = 10000, // issue #172
+			precision = 1000, // issue #172
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
@@ -10580,7 +10574,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	version: '2.1.1'
+	version: '2.1.2'
 };
 })();
 
