@@ -36,6 +36,7 @@ var doc = document,
 	docMode8 = doc.documentMode == 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
+	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasTouch = 'ontouchstart' in doc.documentElement,
 	colorCounter,
 	symbolCounter,
@@ -696,7 +697,8 @@ defaultLabelOptions = {
 	},*/
 	style: {
 		color: '#666',
-		fontSize: '11px'
+		fontSize: '11px',
+		lineHeight: '14px'
 	}
 };
 
@@ -1055,7 +1057,7 @@ defaultLeftAxisOptions = {
 	labels: {
 		align: 'right',
 		x: -8,
-		y: 3
+		y: null // docs
 	},
 	title: {
 		rotation: 270
@@ -1065,7 +1067,7 @@ defaultRightAxisOptions = {
 	labels: {
 		align: 'left',
 		x: 8,
-		y: 3
+		y: null // docs
 	},
 	title: {
 		rotation: 90
@@ -1405,7 +1407,7 @@ SVGElement.prototype = {
 	 * @param {String} nodeName
 	 */
 	init: function(renderer, nodeName) {
-		this.element = doc.createElementNS('http://www.w3.org/2000/svg', nodeName);
+		this.element = doc.createElementNS(SVG_NS, nodeName);
 		this.renderer = renderer;
 	},
 	/**
@@ -1510,7 +1512,7 @@ SVGElement.prototype = {
 					key = { x: 'cx', y: 'cy' }[key] || key;
 					
 				// translation and text rotation
-				} else if (key == 'translateX' || key == 'translateY' || key == 'rotation') {
+				} else if (key == 'translateX' || key == 'translateY' || key == 'rotation' || key == 'verticalAlign') {
 					this[key] = value;
 					this.updateTransform();
 					skipAttr = true;
@@ -1597,7 +1599,8 @@ SVGElement.prototype = {
 				
 				if (key == 'text') {
 					// only one node allowed
-					renderer.buildText(element, value);
+					this.textStr = value;
+					renderer.buildText(this);
 				} else if (!skipAttr) {
 					//element.setAttribute(key, value);
 					attr(element, key, value);
@@ -1651,7 +1654,8 @@ SVGElement.prototype = {
 	 * @param {Object} styles
 	 */
 	css: function(styles) {
-		var elemWrapper = this;
+		var elemWrapper = this,
+			elem = elemWrapper.element;
 		
 		// convert legacy
 		if (styles && styles.color) {
@@ -1676,6 +1680,11 @@ SVGElement.prototype = {
 		
 		// store object
 		elemWrapper.styles = styles;
+		
+		// re-build text
+		if (styles.width && elem.nodeName == 'text' && elemWrapper.added) {
+			elemWrapper.renderer.buildText(elemWrapper);
+		}
 		
 		return elemWrapper;
 	},
@@ -1890,6 +1899,7 @@ SVGElement.prototype = {
 			childNodes = parentNode.childNodes,
 			element = this.element,
 			zIndex = attr(element, 'zIndex'),
+			textStr = this.textStr,
 			otherElement,
 			otherZIndex,
 			i;
@@ -1919,6 +1929,12 @@ SVGElement.prototype = {
 					return this;
 				}
 			}
+		}
+		
+		// operations before adding
+		if (textStr !== undefined) {
+			renderer.buildText(this);
+			this.added = true;
 		}
 		
 		// default: append at the end
@@ -2040,7 +2056,7 @@ SVGRenderer.prototype = {
 		renderer.Element = SVGElement;
 		boxWrapper = renderer.createElement('svg')
 			.attr({
-				xmlns: 'http://www.w3.org/2000/svg',
+				xmlns: SVG_NS,
 				version: '1.1'
 			});
 		container.appendChild(boxWrapper.element);
@@ -2072,10 +2088,10 @@ SVGRenderer.prototype = {
 	 * Parse a simple HTML string into SVG tspans
 	 * 
 	 * @param {Object} textNode The parent text SVG node
-	 * @param {String} str
 	 */
-	buildText: function(textNode, str) {
-		var lines = str.toString()
+	buildText: function(wrapper) {
+		var textNode = wrapper.element,
+			lines = (wrapper.textStr || '').toString()
 				.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
 				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
 				.replace(/<a/g, '<span')
@@ -2085,13 +2101,19 @@ SVGRenderer.prototype = {
 			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
+			textStyles = wrapper.styles,
+			width = textStyles && pInt(textStyles.width),
+			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
 			i = childNodes.length;
-			
 			
 		// remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
+		}
+		
+		if (width) {
+			this.box.appendChild(textNode); // attach it to the DOM to read offset width
 		}
 		
 		each(lines, function(line, lineNo) {
@@ -2103,7 +2125,7 @@ SVGRenderer.prototype = {
 			each(spans, function (span) {
 				if (span !== '' || spans.length == 1) {
 					var attributes = {},
-						tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+						tspan = doc.createElementNS(SVG_NS, 'tspan');
 					if (styleRegex.test(span)) {
 						attr(
 							tspan, 
@@ -2116,8 +2138,9 @@ SVGRenderer.prototype = {
 						css(tspan, { cursor: 'pointer' });
 					}
 					
-					span = span.replace(/<(.|\n)*?>/g, '');
-					tspan.appendChild(doc.createTextNode(span || ' ')); // WebKit needs a string
+					span = span.replace(/<(.|\n)*?>/g, '') || ' ';
+					tspan.appendChild(doc.createTextNode(span)); // WebKit needs a string
+					
 					//console.log('"'+tspan.textContent+'"');
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
@@ -2133,7 +2156,7 @@ SVGRenderer.prototype = {
 							// case, webkit uses offsetHeight, while Opera falls back to 18
 							lineHeight = pInt(window.getComputedStyle(lastLine, null).getPropertyValue('line-height'));
 							if (isNaN(lineHeight)) {
-								lineHeight = lastLine.offsetHeight || 18;
+								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
 							}
 							attr(tspan, 'dy', lineHeight);
 						}
@@ -2147,10 +2170,44 @@ SVGRenderer.prototype = {
 					textNode.appendChild(tspan);
 					
 					spanNo++;
+					
+					// check width and apply soft breaks
+					if (width) {
+						var words = span.replace(/-/g, '- ').split(' '),
+							tooLong,
+							actualWidth,
+							rest = [];
+						
+						while (words.length || rest.length) {
+							actualWidth = textNode.getBBox().width;
+							tooLong = actualWidth > width;
+							if (!tooLong || words.length == 1) { // new line needed
+								words = rest;
+								rest = [];
+								tspan = doc.createElementNS(SVG_NS, 'tspan');
+								attr(tspan, {
+									x: parentX,
+									dy: textLineHeight || 16
+								});
+								textNode.appendChild(tspan);
+								
+								if (actualWidth > width) { // a single word is pressing it out
+									width = actualWidth;
+								}
+							} else { // append to existing line tspan
+								tspan.removeChild(tspan.firstChild);
+								rest.unshift(words.pop());
+							}
+							
+							tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+						}
+						
+					}
 				}
 			});
-			
 		});
+		
+		
 	},
 	
 	/**
@@ -2580,9 +2637,6 @@ SVGRenderer.prototype = {
 	 * @param {String} str
 	 * @param {Number} x Left position
 	 * @param {Number} y Top position
-	 * @param {Object} style CSS styles for the text
-	 * @param {Nubmer} rotation Rotation in degrees
-	 * @param {String} align Left, center or right
 	 */
 	text: function(str, x, y) {
 		
@@ -2597,7 +2651,7 @@ SVGRenderer.prototype = {
 			.attr({
 				x: x,
 				y: y,
-				text: str				
+				text: str	
 			})
 			.css({
 				'font-family': defaultChartStyle.fontFamily,
@@ -2947,9 +3001,22 @@ var VMLElement = extendClass( SVGElement, {
 	 * @param {Object} styles
 	 */
 	css: function(styles) {
-		var wrapper = this;
+		var wrapper = this,
+			element = wrapper.element,
+			textWidth = styles && styles.width && element.tagName == 'SPAN';
 		
+		if (textWidth) {
+			extend(styles, {
+				display: 'block',
+				whiteSpace: 'normal'
+			});	
+		}
+		wrapper.styles = extend(wrapper.styles, styles);
 		css(wrapper.element, styles);
+		
+		if (textWidth) {
+			wrapper.updateTransform();	
+		}
 		
 		return wrapper;
 	},
@@ -3068,7 +3135,7 @@ var VMLElement = extendClass( SVGElement, {
 				quad,
 				xCorr = wrapper.xCorr || 0,
 				yCorr = wrapper.yCorr || 0,
-				currentTextTransform = [rotation, align, elem.innerHTML].join(',');
+				currentTextTransform = [rotation, align, elem.innerHTML, elem.style.width].join(',');
 				
 			if (currentTextTransform != wrapper.cTT) { // do the calculations and DOM access only if properties changed
 				
@@ -3094,16 +3161,17 @@ var VMLElement = extendClass( SVGElement, {
 				xCorr = costheta < 0 && -width;
 				yCorr = sintheta < 0 && -height;
 				
-				// correct for corners spilling out after rotation
+				// correct for lineHeight and corners spilling out after rotation
 				quad = costheta * sintheta < 0;
 				xCorr += sintheta * lineHeight * (quad ? 1 - alignCorrection : alignCorrection);
-				yCorr -= costheta * lineHeight * (quad ? alignCorrection : 1 - alignCorrection);
-					
+				yCorr -= costheta * lineHeight * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
+				
 				// correct for the length/height of the text
 				if (nonLeft) {
 					xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
-					yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
-					
+					if (rotation) {
+						yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
+					}
 					css(elem, {
 						textAlign: align
 					});
@@ -3866,6 +3934,11 @@ function Chart (options, callback) {
 					str,
 					withLabel = !((pos == min && !pick(options.showFirstLabel, 1)) ||
 						(pos == max && !pick(options.showLastLabel, 0))),
+					width/* = categories && horiz && categories.length && 
+						!labelOptions.step && !labelOptions.staggerLines &&
+						!labelOptions.rotation &&
+						plotWidth / categories.length ||
+						!horiz && plotWidth / 2*/,
 					label = this.label;
 					
 				
@@ -3877,7 +3950,8 @@ function Chart (options, callback) {
 						value: (categories && categories[pos] ? categories[pos] : pos)
 					});
 				
-				// first call	
+				// first call
+				width = width && { width: (width - 2 * (labelOptions.padding || 10)) +PX };
 				if (label === UNDEFINED) {
 					this.label =  
 						defined(str) && withLabel && labelOptions.enabled ?
@@ -3891,13 +3965,14 @@ function Chart (options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(labelOptions.style)
+								.css(extend(width && labelOptions.style))
 								.add(axisGroup):
 							null;
-				
+							
 				// update
 				} else if (label) {
-					label.attr({ text: str });
+					label.attr({ text: str })
+						.css(width);
 				}
 					
 			},
@@ -4010,11 +4085,17 @@ function Chart (options, callback) {
 				}
 				
 				// the label is created on init - now move it into place
-				if (label) { 
+				if (label) {
 					x = x + labelOptions.x - (tickmarkOffset && horiz ? 
 						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
 					y = y + labelOptions.y - (tickmarkOffset && !horiz ? 
 						tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+						
+					// vertically centered
+					if (!defined(labelOptions.y)) {
+						y += parseInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+					}
+					
 						
 					// correct for staggered labels
 					if (staggerLines) {
@@ -4030,6 +4111,7 @@ function Chart (options, callback) {
 						x: x,
 						y: y
 					});
+					
 				}
 				
 				tick.isNew = false;
@@ -5431,8 +5513,8 @@ function Chart (options, callback) {
 		 */
 		function defaultFormatter() {
 			var pThis = this,
-				points = pThis.points || splat(pThis.point),
-				xAxis = points[0].series.xAxis,				
+				items = pThis.points || splat(pThis),
+				xAxis = items[0].series.xAxis,				
 				x = pThis.x,
 				isDateTime = xAxis && xAxis.options.type == 'datetime',
 				useHeader = isString(x) || isDateTime,
@@ -5446,8 +5528,8 @@ function Chart (options, callback) {
 				'</span><br/>'] : [];
 						
 			// build the values
-			each(points, function(point) {
-				s.push(point.tooltipFormatter(useHeader));
+			each(items, function(item) {
+				s.push(item.point.tooltipFormatter(useHeader));
 			});
 			return s.join('');
 		}
@@ -8890,6 +8972,7 @@ Series.prototype = {
 				chart = series.chart, 
 				inverted = chart.inverted,
 				seriesType = series.type,
+				isColumn = seriesType == 'column',
 				color;
 				
 			// create a separate group for the data labels to avoid rotation
@@ -8913,7 +8996,7 @@ Series.prototype = {
 		
 			// make the labels for each point
 			each(data, function(point, i){
-				var plotX = pick(point.barX, point.plotX, -999),
+				var plotX = isColumn && point.barX || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
 					align = options.align;
@@ -8932,12 +9015,13 @@ Series.prototype = {
 				//align = labelPos ? labelPos[6] : options.align;
 				
 				// in columns, align the string to the column
-				if (seriesType == 'column') {
+				if (isColumn) {
 					x += {
 						center: point.barW / 2,
 						right: point.barW
 					}[align] || 0;
 				}
+				
 				
 				if (dataLabel) {
 					dataLabel.animate({
@@ -8958,6 +9042,14 @@ Series.prototype = {
 					.css(options.style)
 					.add(dataLabelsGroup);
 				}
+				
+				// vertically centered
+				if (inverted && !options.y) {
+					dataLabel.attr({
+						y: y + parseInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
+					});
+				}
+				
 				/*if (series.isCartesian) {
 					dataLabel[chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
 				}*/
