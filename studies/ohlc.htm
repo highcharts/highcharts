@@ -6,7 +6,7 @@
 		
 		
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.js"></script>
 		<script type="text/javascript" src="../js/highcharts.src.js"></script>
 		<script type="text/javascript" src="../js/modules/ohlc.src.js"></script>
 		
@@ -41,7 +41,8 @@
 [ 5.24 , 5.97 , 4.86 , 5.28 ],
 [ 5.89 , 5.89 , 4.91 , 4.92 ],
 [ 5.76 , 6.37 , 5.56 , 6.03 ],
-[ 6.34 , 6.56 , 5.47 , 6.15 ],
+//[ 6.34 , 6.56 , 5.47 , 6.15 ],
+{ open: 8.34 , high: 8.56 , low: 5.47 , close: 6.15, color: 'yellow', lineColor: 'silver' },
 [ 5.62 , 6.61 , 5.33 , 6.04 ],
 [ 4.59 , 6.27 , 4.48 , 5.31 ],
 [ 4.43 , 5.06 , 4.40 , 4.50 ],
@@ -167,7 +168,6 @@
 					];
 			
 			
-		var chart;
 		var options = {
 				chart: {
 				},
@@ -181,7 +181,12 @@
 					series: {
 						pointStart: Date.UTC(2010, 0, 1),
 						pointInterval: 24 * 3600 * 1000
+					},
+					candlestick: {
 					}
+				},
+				tooltip: {
+					shared: true
 				},
 				legend: {
 					enabled: false
@@ -192,17 +197,17 @@
 				}]
 			};
 		
-		
+		var chart1, chart2;
 		$(document).ready(function() {
 			options.chart.type = 'OHLC';
 			options.chart.renderTo = 'container-ohlc';
 			options.title.text = 'OHLC';
-			chart = new Highcharts.Chart(options);
+			chart1 = new Highcharts.Chart(options);
 			
 			options.chart.type = 'candlestick';
 			options.chart.renderTo = 'container-candlestick';
 			options.title.text = 'Candlestick';
-			chart = new Highcharts.Chart(options);
+			chart2 = new Highcharts.Chart(options);
 		});
 		
 		

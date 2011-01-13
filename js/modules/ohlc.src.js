@@ -1,17 +1,14 @@
 /** 
  * @license Highcharts JS v2.0 (prerelease)
- * OHLC series module
+ * Candlestick/OHLC series module
  * 
  * (c) 2010 Torstein Hønsi
  * 
  * License: www.highcharts.com/license
  */
 
-/*
- * Todo:
- * - Separate up and down colors. Requires a means of assigning separate colors to the pointAttr
- *   based on conditions, similar to states. 
- */
+
+(function(){ // encapsulate
 
 // create shortcuts
 var HC = Highcharts, 
@@ -19,11 +16,17 @@ var HC = Highcharts,
 	defaultOptions = HC.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	seriesTypes = HC.seriesTypes,
+	extend = HC.extend,
+	each = HC.each,
 	map = HC.map,
 	merge = HC.merge,
-	each = HC.each,
 	math = Math,
 	mathRound = math.round;
+	
+	
+/* ****************************************************************************
+ * Start OHLC series code                                                     *
+ *****************************************************************************/
 	
 // 1 - Set default options
 defaultPlotOptions.OHLC = merge(defaultPlotOptions.column, {
@@ -97,10 +100,10 @@ var OHLCPoint = Highcharts.extendClass(Highcharts.Point, {
 			series = point.series;
 				
 		return ['<span style="color:'+ series.color +';font-weight:bold">', (point.name || series.name), '</span><br/> ',
-			'O: ', point.open, '<br/>',
-			'H: ', point.high, '<br/>',
-			'L: ', point.low, '<br/>',
-			'C: ', point.close].join('');
+			'Open: ', point.open, '<br/>',
+			'High: ', point.high, '<br/>',
+			'Low: ', point.low, '<br/>',
+			'Close: ', point.close].join('');
 		
 	}
 	
@@ -138,6 +141,9 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 		});
 	},
 	
+	/**
+	 * Draw the data points
+	 */
 	drawPoints: function() {
 		var series = this,  //state = series.state,
 			//layer = series.stateLayers[state], 
@@ -149,6 +155,9 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 			pointOpen,
 			pointClose,
 			crispCorr,
+			halfWidth,
+			path,
+			graphic,
 			crispX;
 		
 				
@@ -158,7 +167,7 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 					point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
 					point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
 				
-				
+				graphic = point.graphic;
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 				
 				// crisp vector coordinates				
@@ -166,31 +175,36 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 				crispX = mathRound(point.plotX) + crispCorr;
 				plotOpen = mathRound(point.plotOpen) + crispCorr;
 				plotClose = mathRound(point.plotClose) + crispCorr;
+				halfWidth = mathRound(point.barW / 2);
 				
-				point.graphic = chart.renderer.path([
-						'M',
-						crispX, mathRound(point.yBottom),
-						'L', 
-						crispX, mathRound(point.plotY),
-						'M',
-						crispX, plotOpen,
-						'L',
-						crispX - 2, plotOpen,
-						'M',
-						crispX, plotClose,
-						'L',
-						crispX + 2, plotClose,
-						'Z'
-					])
-					.attr(pointAttr)
-					.add(series.group);
+					
+				path = [
+					'M',
+					crispX, mathRound(point.yBottom),
+					'L', 
+					crispX, mathRound(point.plotY),
+					'M',
+					crispX, plotOpen,
+					'L',
+					crispX - halfWidth, plotOpen,
+					'M',
+					crispX, plotClose,
+					'L',
+					crispX + halfWidth, plotClose,
+					'Z'
+				];
+				
+				
+				if (graphic) {
+					graphic.animate({ d: path });
+				} else {
+					point.graphic = chart.renderer.path(path)
+						.attr(pointAttr)
+						.add(series.group);
+				}
 				
 			}
 			
-			// draw the selected mode marker on top of the default one
-			if (point.selected)	{
-				series.drawPointState(point, 'select');
-			}
 			
 		});
 
@@ -199,30 +213,65 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 	
 });
 seriesTypes.OHLC = OHLCSeries;
+/* ****************************************************************************
+ * End OHLC series code                                                       *
+ *****************************************************************************/
 
 
 /* ****************************************************************************
- * Candlestick series                                                         *
+ * Start Candlestick series code                                              *
  *****************************************************************************/
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	lineColor: 'black',
-	lineWidth: 1
+	lineWidth: 1,
+	upColor: 'white',
+	states: {
+		hover: {
+			lineWidth: 2
+		}
+	}
 });
 
 // 3 - Create the CandlestickSeries object
-var CandlestickSeries = Highcharts.extendClass(seriesTypes.OHLC, {
+var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
 	type: 'candlestick',
 	
+	/**
+	 * One-to-one mapping from options to SVG attributes
+	 */
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		fill: 'color',
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth'
 	},
 	
+	/**
+	 * Postprocess mapping between options and SVG attributes
+	 */
+	getAttribs: function() {
+		OHLCSeries.prototype.getAttribs.apply(this, arguments);
+		var series = this, 
+			options = series.options,
+			stateOptions = options.states,
+			upColor = options.upColor,
+			seriesDownPointAttr = merge(series.pointAttr);
+			
+		seriesDownPointAttr[''].fill = upColor;
+		seriesDownPointAttr.hover.fill = stateOptions.hover.upColor || upColor;
+		seriesDownPointAttr.select.fill = stateOptions.select.upColor || upColor;
+		
+		each(series.data, function(point) {
+			if (point.open < point.close) {
+				point.pointAttr = seriesDownPointAttr;
+			}
+		});
+	},
 	
-	
+	/**
+	 * Draw the data points
+	 */
 	drawPoints: function() {
 		var series = this,  //state = series.state,
 			//layer = series.stateLayers[state], 
@@ -237,7 +286,9 @@ var CandlestickSeries = Highcharts.extendClass(seriesTypes.OHLC, {
 			bottomBox,
 			crispCorr,
 			crispX,
-			boxWidth = 5;
+			graphic,
+			path,
+			halfWidth;
 		
 				
 		each(data, function(point) {
@@ -246,7 +297,7 @@ var CandlestickSeries = Highcharts.extendClass(seriesTypes.OHLC, {
 					point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
 					point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
 				
-				
+				graphic = point.graphic;
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 				
 				// crisp vector coordinates				
@@ -256,36 +307,39 @@ var CandlestickSeries = Highcharts.extendClass(seriesTypes.OHLC, {
 				plotClose = mathRound(point.plotClose) + crispCorr;
 				topBox = math.min(plotOpen, plotClose);
 				bottomBox = math.max(plotOpen, plotClose);
+				halfWidth = mathRound(point.barW / 2);
 				
-				point.graphic = chart.renderer.path([
-						'M',
-						crispX - boxWidth, bottomBox,
-						'L',
-						crispX - boxWidth, topBox,
-						'L',
-						crispX + boxWidth, topBox,
-						'L',
-						crispX + boxWidth, bottomBox,
-						'L',
-						crispX - boxWidth, bottomBox,
-						'M',
-						crispX, bottomBox,
-						'L',
-						crispX, mathRound(point.yBottom),
-						'M',
-						crispX, topBox,
-						'L',
-						crispX, mathRound(point.plotY),
-						'Z'
-					])
-					.attr(pointAttr)
-					.add(series.group);
+				// create the path
+				path = [
+					'M',
+					crispX - halfWidth, bottomBox,
+					'L',
+					crispX - halfWidth, topBox,
+					'L',
+					crispX + halfWidth, topBox,
+					'L',
+					crispX + halfWidth, bottomBox,
+					'L',
+					crispX - halfWidth, bottomBox,
+					'M',
+					crispX, bottomBox,
+					'L',
+					crispX, mathRound(point.yBottom),
+					'M',
+					crispX, topBox,
+					'L',
+					crispX, mathRound(point.plotY),
+					'Z'
+				];
 				
-			}
-			
-			// draw the selected mode marker on top of the default one
-			if (point.selected)	{
-				series.drawPointState(point, 'select');
+				if (graphic) {
+					graphic.animate({ d: path });
+				} else {
+					point.graphic = chart.renderer.path(path)
+						.attr(pointAttr)
+						.add(series.group);
+				}
+				
 			}
 			
 		});
@@ -297,3 +351,8 @@ var CandlestickSeries = Highcharts.extendClass(seriesTypes.OHLC, {
 
 seriesTypes.candlestick = CandlestickSeries;
 
+/* ****************************************************************************
+ * End Candlestick series code                                                *
+ *****************************************************************************/
+
+})();
