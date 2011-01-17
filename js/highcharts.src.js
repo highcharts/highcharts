@@ -9024,7 +9024,7 @@ Series.prototype = {
 						x: x,
 						y: y
 					});
-				} else if (str) {
+				} else if (defined(str)) {
 					dataLabel = point.dataLabel = chart.renderer.text(
 						str, 
 						x, 
