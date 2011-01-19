@@ -227,15 +227,11 @@ extend(Chart.prototype, {
 			seriesOptions.data = [];
 			
 			each(serie.data, function(point) {
-				/*pointOptions = point.config === null || typeof point.config == 'number' ?
-					{ y: point.y } :
-					point.config;
-				pointOptions.x = point.x;*/
 				
 				// extend the options by those values that can be expressed in a number or array config
 				config = point.config;
 				pointOptions = extend(
-					typeof config == 'object' && config.constructor != Array && point.config, {
+					typeof config == 'object' && point.config && config.constructor != Array, {
 						x: point.x,
 						y: point.y,
 						name: point.name
@@ -272,6 +268,9 @@ extend(Chart.prototype, {
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
 			.replace(/isTracker="[^"]+"/g, '')
 			.replace(/url\([^#]+#/g, 'url(#')
+			/*.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
+			.replace(/ href=/, ' xlink:href=')
+			.replace(/preserveAspectRatio="none">/g, 'preserveAspectRatio="none"/>')*/
 			/* This fails in IE < 8
 			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
 				return s2 +'.'+ s3[0];
