@@ -9731,7 +9731,7 @@ var ColumnSeries = extendClass(Series, {
 			optionPointWidth = options.pointWidth,
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 : 
 				pointOffsetWidth * options.pointPadding,
-			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding),
+			pointWidth = mathMax(pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), 1),
 			colIndex = (reversedXAxis ? columnCount - 
 				series.columnIndex : series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
@@ -9747,7 +9747,6 @@ var ColumnSeries = extendClass(Series, {
 				yBottom = point.yBottom || translatedThreshold,
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)), 
-				barW = pointWidth,
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
 				trackerY;
 			
@@ -9766,14 +9765,14 @@ var ColumnSeries = extendClass(Series, {
 			extend(point, {
 				barX: barX,
 				barY: barY, 
-				barW: barW,
+				barW: pointWidth,
 				barH: barH
 			});
 			point.shapeType = 'rect';
 			point.shapeArgs = {
 				x: barX,
 				y: barY,
-				width: barW,
+				width: pointWidth,
 				height: barH,
 				r: options.borderRadius
 			};
