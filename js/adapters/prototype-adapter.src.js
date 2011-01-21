@@ -180,7 +180,7 @@ return {
 	},
 	
 	// deep merge. merge({a : 'a', b : {b1 : 'b1', b2 : 'b2'}}, {b : {b2 : 'b2_prime'}, c : 'c'}) => {a : 'a', b : {b1 : 'b1', b2 : 'b2_prime'}, c : 'c'}
-	merge: function(){
+	/*merge: function(){
 		function doCopy(copy, original) {
 			var value,
 				key,
@@ -222,6 +222,35 @@ return {
 		}
 		
 		return retVal;
+	},*/
+	merge: function() { // the built-in prototype merge function doesn't do deep copy
+		function doCopy(copy, original) {
+			var value;
+				
+			for (var key in original) {
+				value = original[key];
+				if  (value && typeof value == 'object' && value.constructor != Array) { 
+					copy[key] = doCopy(copy[key] || {}, value); // copy
+				
+				} else {
+					copy[key] = original[key];
+				}
+			}
+			return copy;
+		}
+		
+		function merge() {
+			var args = arguments,
+				retVal = {};
+		
+			for (var i = 0; i < args.length; i++) {
+				retVal = doCopy(retVal, args[i])
+			
+			}
+			return retVal;
+		}
+		
+		return merge.apply(this, arguments);
 	},
 	
 	// extend an object to handle highchart events (highchart objects, not svg elements). 
