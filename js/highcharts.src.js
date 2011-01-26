@@ -3933,11 +3933,11 @@ function Chart (options, callback) {
 					str,
 					withLabel = !((pos == min && !pick(options.showFirstLabel, 1)) ||
 						(pos == max && !pick(options.showLastLabel, 0))),
-					width/* = categories && horiz && categories.length && 
+					width = categories && horiz && categories.length && 
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
 						plotWidth / categories.length ||
-						!horiz && plotWidth / 2*/,
+						!horiz && plotWidth / 2,
 					label = this.label;
 					
 				
