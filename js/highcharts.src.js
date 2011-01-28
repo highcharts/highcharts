@@ -8088,6 +8088,12 @@ Point.prototype = {
 				})
 			}
 			
+			// update visuals
+			if (isObject(options)) {
+				series.getAttribs();
+				point.graphic.attr(point.pointAttr[series.state]);
+			}
+			
 			// redraw
 			series.isDirty = true;
 			if (redraw) {
