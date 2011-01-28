@@ -8056,7 +8056,6 @@ Point.prototype = {
 			series = point.series,
 			chart = series.chart;
 		
-		setAnimation(animation, chart);
 		redraw = pick(redraw, true);
 		
 		// fire the event with a default handler of doing the update
@@ -8067,7 +8066,7 @@ Point.prototype = {
 			// redraw
 			series.isDirty = true;
 			if (redraw) {
-				chart.redraw();
+				chart.redraw(animation);
 			}
 		});
 	},
