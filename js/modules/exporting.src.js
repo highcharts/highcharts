@@ -207,7 +207,7 @@ extend(Chart.prototype, {
 		// override some options
 		extend(options.chart, {
 			renderTo: sandbox,
-			renderer: 'SVG'
+			forExport: true
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images

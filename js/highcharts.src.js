@@ -35,6 +35,7 @@ var doc = document,
 	isIE = /msie/i.test(userAgent) && !win.opera,
 	docMode8 = doc.documentMode == 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
+	isFirefox = /Firefox/.test(userAgent),
 	hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasTouch = 'ontouchstart' in doc.documentElement,
@@ -1600,7 +1601,9 @@ SVGElement.prototype = {
 				if (key == 'text') {
 					// only one node allowed
 					this.textStr = value;
-					renderer.buildText(this);
+					if (this.added) {
+						renderer.buildText(this);
+					}
 				} else if (!skipAttr) {
 					//element.setAttribute(key, value);
 					attr(element, key, value);
@@ -1899,13 +1902,17 @@ SVGElement.prototype = {
 			childNodes = parentNode.childNodes,
 			element = this.element,
 			zIndex = attr(element, 'zIndex'),
-			textStr = this.textStr,
 			otherElement,
 			otherZIndex,
 			i;
 			
 		// mark as inverted
 		this.parentInverted = parent && parent.inverted;
+		
+		// build formatted text
+		if (this.textStr !== undefined) {
+			renderer.buildText(this);
+		}
 		
 		// mark the container as having z indexed children
 		if (zIndex) {
@@ -1931,14 +1938,11 @@ SVGElement.prototype = {
 			}
 		}
 		
-		// operations before adding
-		if (textStr !== undefined) {
-			renderer.buildText(this);
-			this.added = true;
-		}
-		
 		// default: append at the end
 		parentNode.appendChild(element);
+		
+		this.added = true;
+		
 		return this;
 	},
 
@@ -2047,8 +2051,9 @@ SVGRenderer.prototype = {
 	 * @param {Object} container
 	 * @param {Number} width
 	 * @param {Number} height
+	 * @param {Boolean} forExport
 	 */
-	init: function(container, width, height) {
+	init: function(container, width, height, forExport) {
 		var renderer = this,
 			loc = location,
 			boxWrapper;
@@ -2067,6 +2072,7 @@ SVGRenderer.prototype = {
 		renderer.alignedObjects = [];
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
 		renderer.defs = this.createElement('defs').add();
+		renderer.forExport = forExport;
 		
 		renderer.setSize(width, height, false);
 		
@@ -2102,11 +2108,13 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
+			reverse = isFirefox && textStyles && textStyles.HcDirection == 'rtl' && !this.forExport, // issue #38
+			arr,
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
 			i = childNodes.length;
-			
+		
 		// remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
@@ -2139,9 +2147,20 @@ SVGRenderer.prototype = {
 					}
 					
 					span = span.replace(/<(.|\n)*?>/g, '') || ' ';
-					tspan.appendChild(doc.createTextNode(span)); // WebKit needs a string
 					
-					//console.log('"'+tspan.textContent+'"');
+					// issue #38 workaround.
+					if (reverse) {
+						arr = [];
+						i = span.length;
+						while (i--) {
+							arr.push(span.charAt(i))
+						}
+						span = arr.join('');
+					}
+					
+					// add the text node
+					tspan.appendChild(doc.createTextNode(span));
+					
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
 					} else {
@@ -7106,7 +7125,6 @@ function Chart (options, callback) {
 				title.destroy(); // remove old
 				title = null;
 			}
-			
 			if (chartTitleOptions && chartTitleOptions.text && !title) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text, 
@@ -7189,8 +7207,8 @@ function Chart (options, callback) {
 		);
 		
 		chart.renderer = renderer = 
-			optionsChart.renderer == 'SVG' ? // force SVG, used for SVG export
-				new SVGRenderer(container, chartWidth, chartHeight) : 
+			optionsChart.forExport ? // force SVG, used for SVG export
+				new SVGRenderer(container, chartWidth, chartHeight, true) : 
 				new Renderer(container, chartWidth, chartHeight);
 				
 		// Issue 110 workaround:
@@ -7200,7 +7218,7 @@ function Chart (options, callback) {
 		// sharp lines, this must be compensated for. This doesn't seem to work inside
 		// iframes though (like in jsFiddle).
 		var subPixelFix, rect;
-		if (/Firefox/.test(userAgent) && container.getBoundingClientRect) {
+		if (isFirefox && container.getBoundingClientRect) {
 			subPixelFix = function() {
 				css(container, { left: 0, top: 0 });
 				rect = container.getBoundingClientRect();
