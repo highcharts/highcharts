@@ -3621,7 +3621,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR,
 				circleCorrection = 0.07 / radius,
-				innerCorrection = 0.1 / innerRadius;
+				innerCorrection = innerRadius && 0.1 / innerRadius || 0;
 				
 			if (end - start === 0) { // no angle, don't show it. 
 				return ['x'];
