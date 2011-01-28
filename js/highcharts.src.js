@@ -3619,8 +3619,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
+				innerRadius = options.innerR,
 				circleCorrection = 0.07 / radius,
-				innerRadius = options.innerR;
+				innerCorrection = 0.1 / innerRadius;
 				
 			if (end - start === 0) { // no angle, don't show it. 
 				return ['x'];
@@ -3629,6 +3630,8 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			} else if (2 * mathPI - end + start < circleCorrection) { // full circle
 				// empirical correction found by trying out the limits for different radii
 				cosEnd = - circleCorrection;
+			} else if (end - start < innerCorrection) { // issue #186, another mysterious VML arc problem
+				cosEnd = mathCos(start + innerCorrection);
 			}
 								
 			return [
