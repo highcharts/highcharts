@@ -8043,6 +8043,23 @@ Point.prototype = {
 	},
 	
 	/**
+	 * Get the formatted text for this point's data label
+	 * 
+	 * @return {String} The formatted data label pseudo-HTML
+	 */
+	getDataLabelText: function() {
+		var point = this;
+		return this.series.options.dataLabels.formatter.call({
+			x: point.x,
+			y: point.y,
+			series: point.series,
+			point: point,
+			percentage: point.percentage,
+			total: point.total || point.stackTotal
+		});
+	},
+	
+	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
 	 * 
 	 * @param {Object} options Point options as defined in the series.data array
@@ -8054,6 +8071,7 @@ Point.prototype = {
 	update: function(options, redraw, animation) {
 		var point = this,
 			series = point.series,
+			dataLabel = point.dataLabel,
 			chart = series.chart;
 		
 		redraw = pick(redraw, true);
@@ -8062,7 +8080,13 @@ Point.prototype = {
 		point.firePointEvent('update', { options: options }, function() {
 
 			point.applyOptions(options);
-	
+			
+			if (dataLabel) {
+				dataLabel.attr({
+					text: point.getDataLabelText()
+				})
+			}
+			
 			// redraw
 			series.isDirty = true;
 			if (redraw) {
@@ -9027,14 +9051,7 @@ Series.prototype = {
 					align = options.align;
 					
 				// get the string
-				str = options.formatter.call({
-					x: point.x,
-					y: point.y,
-					series: series,
-					point: point,
-					percentage: point.percentage,
-					total: point.total || point.stackTotal
-				});
+				str = point.getDataLabelText();
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + options.y;
 				
