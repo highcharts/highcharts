@@ -3962,6 +3962,7 @@ function Chart (options, callback) {
 						!labelOptions.rotation &&
 						plotWidth / categories.length ||
 						!horiz && plotWidth / 2,
+					css,
 					label = this.label;
 					
 				
@@ -3973,8 +3974,11 @@ function Chart (options, callback) {
 						value: (categories && categories[pos] ? categories[pos] : pos)
 					});
 				
+				// prepare CSS
+				css = width && { width: (width - 2 * (labelOptions.padding || 10)) +PX };
+				css = extend(css, labelOptions.style);
+				
 				// first call
-				width = width && { width: (width - 2 * (labelOptions.padding || 10)) +PX };
 				if (label === UNDEFINED) {
 					this.label =  
 						defined(str) && withLabel && labelOptions.enabled ?
@@ -3988,16 +3992,15 @@ function Chart (options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(extend(width, labelOptions.style))
+								.css(css)
 								.add(axisGroup):
 							null;
 							
 				// update
 				} else if (label) {
 					label.attr({ text: str })
-						.css(width);
+						.css(css);
 				}
-					
 			},
 			/**
 			 * Get the offset height or width of the label
