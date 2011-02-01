@@ -7754,6 +7754,13 @@ function Chart (options, callback) {
 		});
 	}
 	
+  /**
+   * Reset the default color that the next series will use 
+   */
+	function resetColors() {
+    colorCounter = 0;
+  }
+  
 	// Run chart
 		
 	
@@ -7798,7 +7805,8 @@ function Chart (options, callback) {
 	chart.redraw = redraw;
 	chart.setSize = resize;
 	chart.setTitle = setTitle;
-	chart.showLoading = showLoading;	
+	chart.showLoading = showLoading;
+	chart.resetColors = resetColors;	
 	chart.pointCount = 0;
 	/*
 	if ($) $(function() {
