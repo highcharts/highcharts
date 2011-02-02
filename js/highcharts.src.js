@@ -5002,7 +5002,6 @@ function Chart (options, callback) {
 		 */
 		function setExtremes(newMin, newMax, redraw, animation) {
 			
-			setAnimation(animation, chart);
 			redraw = pick(redraw, true); // defaults to true
 				
 			fireEvent(axis, 'setExtremes', { // fire an event to enable syncing of multiple charts
@@ -5016,7 +5015,7 @@ function Chart (options, callback) {
 				
 				// redraw
 				if (redraw) {
-					chart.redraw();
+					chart.redraw(animation);
 				}
 			});
 			
