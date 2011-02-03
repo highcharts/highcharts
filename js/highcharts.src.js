@@ -2139,7 +2139,11 @@ SVGRenderer.prototype = {
 					}
 					
 					span = span.replace(/<(.|\n)*?>/g, '') || ' ';
-					tspan.appendChild(doc.createTextNode(span)); // WebKit needs a string
+					var elDiv = document.createElement("div");
+					elDiv.innerHTML = span;
+					tspan.appendChild(doc.createTextNode(elDiv.innerText || elDiv.textContent));
+
+					// tspan.appendChild(doc.createTextNode(span)); // WebKit needs a string
 					
 					//console.log('"'+tspan.textContent+'"');
 					if (!spanNo) { // first span in a line, align it to the left
@@ -2746,7 +2750,7 @@ var VMLElement = extendClass( SVGElement, {
 		
 		// align text after adding to be able to read offset
 		wrapper.added = true;
-		if (wrapper.alignOnAdd) {
+		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
 			wrapper.updateTransform();
 		}		
 		
@@ -3152,8 +3156,17 @@ var VMLElement = extendClass( SVGElement, {
 					});
 				}
 				
-				width = elem.offsetWidth;
-				height = elem.offsetHeight;
+				if (defined(wrapper.elemWidth)) {
+				    width = wrapper.elemWidth;
+				} else {
+				    width = elem.offsetWidth;
+				}
+
+				if (defined(wrapper.elemHeight)) {
+				    height = wrapper.elemHeight;
+				} else {
+				    height = elem.offsetHeight;
+				}
 				
 				// correct x and y
 				lineHeight = mathRound(pInt(elem.style.fontSize || 12) * 1.2);
@@ -3880,6 +3893,7 @@ function Chart (options, callback) {
 			alternateBands = {},
 			tickAmount,
 			labelOffset,
+			labelHeight,
 			axisTitleMargin,// = options.title.margin,
 			dateTimeLabelFormat,
 			categories = options.categories,
@@ -3924,6 +3938,24 @@ function Chart (options, callback) {
 			}
 		}
 		Tick.prototype = {
+		    attachLabel: function() {
+			if (this.label && !this.attached) {
+			    this.label.deferUpdateTransform = true;
+			    this.label.add(axisGroup);
+			    this.attached = true;
+			}
+		    },
+		    updateTransformLabel: function() {
+			this.label.deferUpdateTransform = false;
+			this.label.updateTransform();
+		    },
+
+		    computeBBox: function() {
+			if (this.label) {
+			    this.label.elemWidth = this.label.getBBox().width;
+			    this.label.elemHeight = this.label.getBBox().height;
+			}
+		    },
 			/**
 			 * Write the tick label
 			 */
@@ -3964,9 +3996,8 @@ function Chart (options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(extend(width, labelOptions.style))
-								.add(axisGroup):
-							null;
+					    .css(extend(width, labelOptions.style)):null;
+					this.attached = false;
 							
 				// update
 				} else if (label) {
@@ -4092,7 +4123,7 @@ function Chart (options, callback) {
 						
 					// vertically centered
 					if (!defined(labelOptions.y)) {
-						y += parseInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+					    y += parseInt(label.styles.lineHeight) * 0.9 - label.elemHeight / 2;
 					}
 					
 						
@@ -5057,22 +5088,38 @@ function Chart (options, callback) {
 			if (hasData || isLinked) {
 				each(tickPositions, function(pos) {
 					if (!ticks[pos]) {
-						ticks[pos] = new Tick(pos);
+					    ticks[pos] = new Tick(pos);
 					} else {
-						ticks[pos].addLabel(); // update labels depending on tick interval
+					    ticks[pos].addLabel(); // update labels depending on tick interval
 					}
+				    });
+
+
+				each(tickPositions, function(pos) {
+					ticks[pos].attachLabel();
+				    });
+
+				each(tickPositions, function(pos) {
+					ticks[pos].computeBBox();
+				    });
+
+				each(tickPositions, function(pos) {
+					ticks[pos].updateTransformLabel();
+				    });
+
+				each(tickPositions,function(pos) {
 					
 					// left side must be align: right and right side must have align: left for labels
 					if (side === 0 || side == 2 || { 1: 'left', 3: 'right' }[side] == labelOptions.align) {
-					
-						// get the highest offset
-						labelOffset = mathMax(
-							ticks[pos].getLabelSize(),
-							labelOffset
-						);
+					    // get the highest offset
+					    labelOffset = mathMax(
+								  ticks[pos].getLabelSize(),
+								  labelOffset
+								  );
 					}
-			
-				});
+				    });
+				    
+	
 				
 				if (staggerLines) {
 					labelOffset += (staggerLines - 1) * 16;
@@ -9024,7 +9071,7 @@ Series.prototype = {
 						x: x,
 						y: y
 					});
-				} else if (defined(str)) {
+				} else if (str) {
 					dataLabel = point.dataLabel = chart.renderer.text(
 						str, 
 						x, 
