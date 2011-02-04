@@ -7678,10 +7678,12 @@ function Chart (options, callback) {
 		}
 		
 		// remove container and all SVG
-		container.innerHTML = '';
-		removeEvent(container);
-		if (parentNode) {
-			parentNode.removeChild(container);
+		if (defined(container)) { // can break in IE when destroyed before finished loading
+			container.innerHTML = '';
+			removeEvent(container);
+			if (parentNode) {
+				parentNode.removeChild(container);
+			}
 		}
 		
 		// IE6 leak 
