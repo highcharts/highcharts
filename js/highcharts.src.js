@@ -2204,15 +2204,17 @@ SVGRenderer.prototype = {
 							if (!tooLong || words.length == 1) { // new line needed
 								words = rest;
 								rest = [];
-								tspan = doc.createElementNS(SVG_NS, 'tspan');
-								attr(tspan, {
-									x: parentX,
-									dy: textLineHeight || 16
-								});
-								textNode.appendChild(tspan);
+								if (words.length) {
+									tspan = doc.createElementNS(SVG_NS, 'tspan');
+									attr(tspan, {
+										x: parentX,
+										dy: textLineHeight || 16
+									});
+									textNode.appendChild(tspan);
 								
-								if (actualWidth > width) { // a single word is pressing it out
-									width = actualWidth;
+									if (actualWidth > width) { // a single word is pressing it out
+										width = actualWidth;
+									}
 								}
 							} else { // append to existing line tspan
 								tspan.removeChild(tspan.firstChild);
