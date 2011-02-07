@@ -2121,7 +2121,7 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 		
-		if (width) {
+		if (width && !wrapper.added) {
 			this.box.appendChild(textNode); // attach it to the DOM to read offset width
 		}
 		
