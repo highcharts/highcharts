@@ -5714,13 +5714,13 @@ function Chart (options, callback) {
 				
 				// get the bounding box
 				bBox = label.getBBox();
-				boxWidth = bBox.width;
-				boxHeight = bBox.height;
-				
+				boxWidth = bBox.width + 2 * padding;
+				boxHeight = bBox.height + 2 * padding;
+
 				// set the size of the box
 				box.attr({
-					width: boxWidth + 2 * padding,
-					height: boxHeight + 2 * padding,
+					width: boxWidth,
+					height: boxHeight,
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 				
