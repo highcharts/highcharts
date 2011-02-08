@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.2 (2011-01-12)
+ * @license Highcharts JS v2.1.3 (2011-02-07)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -1659,7 +1659,8 @@ SVGElement.prototype = {
 	 */
 	css: function(styles) {
 		var elemWrapper = this,
-			elem = elemWrapper.element;
+			elem = elemWrapper.element,
+			textWidth = styles && styles.width && elem.nodeName == 'text';
 		
 		// convert legacy
 		if (styles && styles.color) {
@@ -1672,21 +1673,25 @@ SVGElement.prototype = {
 			styles
 		);
 		
+		
+		// store object
+		elemWrapper.styles = styles;
+		
 		// serialize and set style attribute
-		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute 
+		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
+			if (textWidth) {
+				delete styles.width;
+			} 
 			css(elemWrapper.element, styles);	
 		} else {
 			elemWrapper.attr({
 				style: serializeCSS(styles)
 			});
-		}
+		}	
 		
-		
-		// store object
-		elemWrapper.styles = styles;
 		
 		// re-build text
-		if (styles.width && elem.nodeName == 'text' && elemWrapper.added) {
+		if (textWidth && elemWrapper.added) {
 			elemWrapper.renderer.buildText(elemWrapper);
 		}
 		
@@ -2197,7 +2202,7 @@ SVGRenderer.prototype = {
 							tooLong,
 							actualWidth,
 							rest = [];
-						
+							
 						while (words.length || rest.length) {
 							actualWidth = textNode.getBBox().width;
 							tooLong = actualWidth > width;
@@ -3024,20 +3029,24 @@ var VMLElement = extendClass( SVGElement, {
 	css: function(styles) {
 		var wrapper = this,
 			element = wrapper.element,
-			textWidth = styles && styles.width && element.tagName == 'SPAN';
+			textWidth = styles && element.tagName == 'SPAN' && styles.width;
 		
-		if (textWidth) {
+		/*if (textWidth) {
 			extend(styles, {
 				display: 'block',
 				whiteSpace: 'normal'
 			});	
+		}*/
+		if (textWidth) {
+			delete styles.width;
+			wrapper.textWidth = textWidth;
+			wrapper.updateTransform();	
 		}
+		
 		wrapper.styles = extend(wrapper.styles, styles);
 		css(wrapper.element, styles);
 		
-		if (textWidth) {
-			wrapper.updateTransform();	
-		}
+		
 		
 		return wrapper;
 	},
@@ -3154,9 +3163,10 @@ var VMLElement = extendClass( SVGElement, {
 				costheta = 1,
 				sintheta = 0,
 				quad,
+				textWidth = pInt(wrapper.textWidth),
 				xCorr = wrapper.xCorr || 0,
 				yCorr = wrapper.yCorr || 0,
-				currentTextTransform = [rotation, align, elem.innerHTML, elem.style.width].join(',');
+				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
 				
 			if (currentTextTransform != wrapper.cTT) { // do the calculations and DOM access only if properties changed
 				
@@ -3176,6 +3186,16 @@ var VMLElement = extendClass( SVGElement, {
 				
 				width = elem.offsetWidth;
 				height = elem.offsetHeight;
+				
+				// update textWidth
+				if (width > textWidth) {
+					css(elem, {
+						width: textWidth +PX,
+						display: 'block',
+						whiteSpace: 'normal'
+					});
+					width = textWidth;
+				}
 				
 				// correct x and y
 				lineHeight = mathRound(pInt(elem.style.fontSize || 12) * 1.2);
@@ -4013,7 +4033,7 @@ function Chart (options, callback) {
 				return label ? 
 					((this.labelBBox = label.getBBox()))[horiz ? 'height' : 'width'] :
 					0;
-			},
+				},
 			/**
 			 * Put everything in place
 			 * 
@@ -5149,6 +5169,7 @@ function Chart (options, callback) {
 				axisOffset[side], 
 				axisTitleMargin + titleOffset + directionFactor * offset
 			);
+			
 		}
 		
 		/**
@@ -7331,7 +7352,7 @@ function Chart (options, callback) {
 		if (!defined(optionsMarginRight)) {
 			marginRight += axisOffset[1];
 		}
-
+		
 		setChartSize();
 		
 	};
@@ -10625,7 +10646,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	version: '2.1.2'
+	version: '2.1.3'
 };
 })();
 
