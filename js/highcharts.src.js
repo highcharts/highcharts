@@ -8100,6 +8100,7 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			dataLabel = point.dataLabel,
+			graphic = point.graphic,
 			chart = series.chart;
 		
 		redraw = pick(redraw, true);
@@ -8118,7 +8119,9 @@ Point.prototype = {
 			// update visuals
 			if (isObject(options)) {
 				series.getAttribs();
-				point.graphic.attr(point.pointAttr[series.state]);
+				if (graphic) {
+					graphic.attr(point.pointAttr[series.state]);
+				}
 			}
 			
 			// redraw
