@@ -7701,18 +7701,21 @@ function Chart (options, callback) {
 		}
 		
 		// remove container and all SVG
-		if (defined(container)) { // can break in IE when destroyed before finished loading
+		if (container) { // can break in IE when destroyed before finished loading
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
 				parentNode.removeChild(container);
 			}
+			
+			// IE6 leak 
+			container =	null;
 		}
 		
-		// IE6 leak 
-		container =	null;
 		// IE7 leak
-		renderer.alignedObjects = null;
+		if (renderer) { // can break in IE when destroyed before finished loading
+			renderer.alignedObjects = null;
+		}
 			
 		// memory and CPU leak
 		clearInterval(tooltipInterval);
