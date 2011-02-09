@@ -8115,7 +8115,9 @@ Point.prototype = {
 			// update visuals
 			if (isObject(options)) {
 				series.getAttribs();
-				point.graphic.attr(point.pointAttr[series.state]);
+				if (point.graphic) {
+					point.graphic.attr(point.pointAttr[series.state]);
+				}
 			}
 			
 			// redraw
