@@ -230,13 +230,16 @@ extend(Chart.prototype, {
 				
 				// extend the options by those values that can be expressed in a number or array config
 				config = point.config;
-				pointOptions = extend(
-					typeof config == 'object' && point.config && config.constructor != Array, {
-						x: point.x,
-						y: point.y,
-						name: point.name
-					}
-				);
+				pointOptions = {
+					x: point.x,
+					y: point.y,
+					name: point.name
+				};
+
+				if (typeof config == 'object' && point.config && config.constructor != Array) {
+					extend(pointOptions, config);
+				}
+
 				seriesOptions.data.push(pointOptions); // copy fresh updated data
 								
 				// remove image markers
