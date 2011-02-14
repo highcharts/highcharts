@@ -8608,7 +8608,7 @@ Series.prototype = {
 			point.plotX = series.xAxis.translate(xValue);
 			
 			// calculate the bottom y value for stacked series
-			if (stacking && series.visible && stack[xValue]) {
+			if (stacking && series.visible && stack && stack[xValue]) {
 				pointStack = stack[xValue];
 				pointStackTotal = pointStack.total;
 				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
