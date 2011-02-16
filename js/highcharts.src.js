@@ -1625,14 +1625,9 @@ SVGElement.prototype = {
 	symbolAttr: function(hash) {
 		var wrapper = this;
 		
-		wrapper.x = pick(hash.x, wrapper.x);
-		wrapper.y = pick(hash.y, wrapper.y); // mootools animation bug needs parseFloat
-		wrapper.r = pick(hash.r, wrapper.r);
-		wrapper.start = pick(hash.start, wrapper.start);
-		wrapper.end = pick(hash.end, wrapper.end);
-		wrapper.width = pick(hash.width, wrapper.width);
-		wrapper.height = pick(hash.height, wrapper.height);
-		wrapper.innerR = pick(hash.innerR, wrapper.innerR);
+		each (['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR'], function(key) {
+			wrapper[key] = pick(hash[key], wrapper[key]);
+		});
 		
 		wrapper.attr({ 
 			d: wrapper.renderer.symbols[wrapper.symbolName](wrapper.x, wrapper.y, wrapper.r, {
@@ -1651,6 +1646,42 @@ SVGElement.prototype = {
 	 */
 	clip: function(clipRect) {
 		return this.attr('clip-path', 'url('+ this.renderer.url +'#'+ clipRect.id +')');
+	},
+	
+	/**
+	 * Calculate the coordinates needed for drawing a rectangle crisply and return the
+	 * calculated attributes
+	 * @param {Number} strokeWidth
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} width
+	 * @param {Number} height
+	 */
+	crisp: function(strokeWidth, x, y, width, height) {
+		
+		var wrapper = this,
+			key,
+			attr = {},
+			values = {},
+			normalizer;
+			
+		strokeWidth = strokeWidth || wrapper.strokeWidth || 0;
+		normalizer = strokeWidth % 2 / 2;
+
+		// normalize for crisp edges
+		values.x = mathFloor(x || wrapper.x || 0) + normalizer;
+		values.y = mathFloor(y || wrapper.y || 0) + normalizer;
+		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
+		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
+		values.strokeWidth = strokeWidth;
+		
+		for (key in values) {
+			if (wrapper[key] != values[key]) { // only set attribute if changed
+				wrapper[key] = attr[key] = values[key];
+			}
+		}
+		
+		return attr;
 	},
 	
 	/**
@@ -1821,7 +1852,7 @@ SVGElement.prototype = {
 			x += (box.width - (alignOptions.width || 0) ) /
 					{ right: 1, center: 2 }[align];
 		}
-		attribs[alignByTranslate ? 'translateX' : 'x'] = x;
+		attribs[alignByTranslate ? 'translateX' : 'x'] = mathRound(x);
 		
 		
 		// vertical align
@@ -1830,7 +1861,7 @@ SVGElement.prototype = {
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 			
 		}
-		attribs[alignByTranslate ? 'translateY' : 'y'] = y;
+		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 		
 		// animate only if already placed
 		this[this.placed ? 'animate' : 'attr'](attribs);
@@ -2323,31 +2354,19 @@ SVGRenderer.prototype = {
 	 * @param {Number} strokeWidth A stroke width can be supplied to allow crisp drawing
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
-		
-		if (arguments.length > 1) {
-			var normalizer = (strokeWidth || 0) % 2 / 2;
-
-			// normalize for crisp edges
-			x = mathRound(x || 0) + normalizer;
-			y = mathRound(y || 0) + normalizer;
-			width = mathRound((width || 0) - 2 * normalizer);
-			height = mathRound((height || 0) - 2 * normalizer);
+		if (isObject(x)) {
+			y = x.y;
+			width = x.width;
+			height = x.height;
+			x = x.x;	
 		}
-		
-		var attr = isObject(x) ? 
-			x : // the attributes can be passed as the first argument
-			{
-				x: x,
-				y: y,
-				width: mathMax(width, 0),
-				height: mathMax(height, 0)
-			};			
-		
-		return this.createElement('rect').attr(extend(attr, {
+		var wrapper = this.createElement('rect').attr({
 			rx: r || attr.r,
 			ry: r || attr.r,
 			fill: NONE
-		}));
+		});
+		
+		return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
 	},
 	
 	/**
@@ -3588,29 +3607,17 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	rect: function(x, y, width, height, r, strokeWidth) {
-		// todo: share this code with SVG
-		if (arguments.length > 1) {
-			var normalizer = (strokeWidth || 0) % 2 / 2;
-
-			// normalize for crisp edges
-			x = mathRound(x || 0) + normalizer;
-			y = mathRound(y || 0) + normalizer;
-			width = mathRound((width || 0) - 2 * normalizer);
-			height = mathRound((height || 0) - 2 * normalizer);
-		}
 		
-		if (isObject(x)) { // the attributes can be passed as the first argument 
+		if (isObject(x)) {
 			y = x.y;
 			width = x.width;
 			height = x.height;
-			r = x.r;
 			x = x.x;
-		} 
+		}
+		var wrapper = this.symbol('rect');
+		wrapper.r = r;
 		
-		return this.symbol('rect', x || 0, y || 0, r || 0, {
-			width: width || 0,
-			height: height || 0
-		});		
+		return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
 	},
 	
 	/**
@@ -3704,13 +3711,16 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		 * Add rectangle symbol path which eases rotation and omits arcsize problems
 		 * compared to the built-in VML roundrect shape
 		 * 
-		 * @param {Object} left Left position
-		 * @param {Object} top Top position
-		 * @param {Object} r Border radius
+		 * @param {Number} left Left position
+		 * @param {Number} top Top position
+		 * @param {Number} r Border radius
 		 * @param {Object} options Width and height
 		 */
 		
 		rect: function (left, top, r, options) {
+			if (!defined(options)) {
+				return [];
+			}
 			var width = options.width,
 				height = options.height,
 				right = left + width,
@@ -6676,10 +6686,9 @@ function Chart (options, callback) {
 					.shadow(options.shadow);
 				
 				} else if (legendWidth > 0 && legendHeight > 0) {
-					box.animate({
-						width: legendWidth,
-						height: legendHeight
-					});
+					box.animate(
+						box.crisp(null, null, null, legendWidth, legendHeight)
+					);
 				}
 				
 				// hide the border if no items
@@ -7517,10 +7526,9 @@ function Chart (options, callback) {
 					.add()
 					.shadow(optionsChart.shadow);
 			} else { // resize
-				chartBackground.animate({
-					width: chartWidth - mgn,
-					height:chartHeight - mgn
-				});
+				chartBackground.animate(
+					chartBackground.crisp(null, null, null, chartWidth - mgn, chartHeight - mgn)
+				);
 			}
 		}
 		
@@ -7558,7 +7566,9 @@ function Chart (options, callback) {
 					})
 					.add();
 			} else {
-				plotBorder.animate(plotSize);
+				plotBorder.animate(
+					plotBorder.crisp(null, plotLeft, plotTop, plotWidth, plotHeight)
+				);
 			}
 		}
 		
