@@ -9012,7 +9012,7 @@ Series.prototype = {
 			chart = series.chart,
 			//chartSeries = series.chart.series,
 			clipRect = series.clipRect,
-			issue134 = /\/5[0-9\.]+ Safari\//.test(userAgent), // todo: update when Safari bug is fixed
+			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
 			prop;
 		
