@@ -5376,7 +5376,8 @@ function Chart (options, callback) {
 		 * @param {Object} id
 		 */
 		function removePlotBandOrLine(id) {
-			for (var i = 0; i < plotLinesAndBands.length; i++) {
+			var i = plotLinesAndBands.length;
+			while (i--) {
 				if (plotLinesAndBands[i].id == id) {
 					plotLinesAndBands[i].destroy();
 				}
