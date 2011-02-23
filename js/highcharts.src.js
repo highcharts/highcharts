@@ -2700,8 +2700,8 @@ SVGRenderer.prototype = {
 				text: str	
 			})
 			.css({
-				'font-family': defaultChartStyle.fontFamily,
-				'font-size': defaultChartStyle.fontSize
+				fontFamily: defaultChartStyle.fontFamily,
+				fontSize: defaultChartStyle.fontSize
 			});
 			
 		wrapper.x = x;
