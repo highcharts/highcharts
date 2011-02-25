@@ -162,12 +162,11 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 		
 				
 		each(data, function(point) {
-			
+			graphic = point.graphic;
 			if (point.plotY !== undefined && 
 					point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
 					point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
 				
-				graphic = point.graphic;
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 				
 				// crisp vector coordinates				
@@ -203,8 +202,9 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 						.add(series.group);
 				}
 				
-			}
-			
+			} else {
+				point.graphic = graphic.destroy();	
+			}			
 			
 		});
 
@@ -293,11 +293,12 @@ var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
 				
 		each(data, function(point) {
 			
+			graphic = point.graphic;
+			
 			if (point.plotY !== undefined && 
 					point.plotX >= 0 && point.plotX <= chart.plotSizeX &&
 					point.plotY >= 0 && point.plotY <= chart.plotSizeY) {
 				
-				graphic = point.graphic;
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 				
 				// crisp vector coordinates				
@@ -340,6 +341,8 @@ var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
 						.add(series.group);
 				}
 				
+			} else {
+				point.graphic = graphic.destroy();	
 			}
 			
 		});
