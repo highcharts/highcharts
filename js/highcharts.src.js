@@ -2358,11 +2358,12 @@ SVGRenderer.prototype = {
 			y = x.y;
 			width = x.width;
 			height = x.height;
+			r = x.r;
 			x = x.x;	
 		}
 		var wrapper = this.createElement('rect').attr({
-			rx: r || attr.r,
-			ry: r || attr.r,
+			rx: r,
+			ry: r,
 			fill: NONE
 		});
 		
@@ -3612,6 +3613,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			y = x.y;
 			width = x.width;
 			height = x.height;
+			r = x.r;
 			x = x.x;
 		}
 		var wrapper = this.symbol('rect');
