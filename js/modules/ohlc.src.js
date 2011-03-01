@@ -202,7 +202,7 @@ var OHLCSeries = Highcharts.extendClass(seriesTypes.column, {
 						.add(series.group);
 				}
 				
-			} else {
+			} else if (graphic) {
 				point.graphic = graphic.destroy();	
 			}			
 			
@@ -341,7 +341,7 @@ var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
 						.add(series.group);
 				}
 				
-			} else {
+			} else if (graphic) {
 				point.graphic = graphic.destroy();	
 			}
 			

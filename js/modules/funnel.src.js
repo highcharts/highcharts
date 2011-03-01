@@ -166,11 +166,13 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 			
 			// for tooltips and data labels
 			point.percentage = fraction * 100;
+			point.plotX = centerX;
+			point.plotY = (y1 + (y5 || y3)) / 2;
 			
 			// Placement of tooltips and data labels
 			point.tooltipPos = [
 				centerX,
-				(y1 + (y5 || y3)) / 2 + 10
+				point.plotY
 			];
 			
 			cumulative += fraction;
@@ -217,10 +219,31 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 		});	
 	},
 	
+	drawDataLabels: function() {
+		var series = this,
+			dataLabelOptions = series.options.dataLabels,
+			connectorWidth = dataLabelOptions.connectorWidth;
+			
+		HC.Series.prototype.drawDataLabels.apply(series);
+		
+		each(series.data, function(point) {
+			var bBox = point.dataLabel.getBBox(),
+				y = bBox.y + bBox.height / 2 + connectorWidth / 2 % 1
+			point.connector = series.chart.renderer.path([
+				'M',
+				bBox.x + bBox.width + 5, y,
+				'L',
+				series.centerX - series.getWidthAt(y) / 2 - 5, y
+			]).attr({
+				'stroke-width': connectorWidth,
+				stroke: dataLabelOptions.connectorColor
+			}).add(point.group);
+		});
+	}
 	
-	/**
+	/* *
 	 * Draw a connector from an individual point to its data label
-	 */
+	 * /
 	drawConnector: function(point) {
 		var series = this,
 			dataLabelOptions = series.options.dataLabels,
@@ -228,16 +251,8 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 			connectorWidth = dataLabelOptions.connectorWidth,
 			y = bBox.y + bBox.height / 2 + connectorWidth / 2 % 1;			
 		
-		point.connector = series.chart.renderer.path([
-			'M',
-			bBox.x + bBox.width + 5, y,
-			'L',
-			series.centerX - series.getWidthAt(y) / 2 - 5, y
-		]).attr({
-			'stroke-width': connectorWidth,
-			stroke: dataLabelOptions.connectorColor
-		}).add(point.group);
-	}
+		
+	}*/
 	
 });
 seriesTypes.funnel = FunnelSeries;
