@@ -2243,8 +2243,8 @@ SVGRenderer.prototype = {
 								if (words.length) {
 									tspan = doc.createElementNS(SVG_NS, 'tspan');
 									attr(tspan, {
-										x: parentX,
-										dy: textLineHeight || 16
+										dy: textLineHeight || 16,
+										x: parentX
 									});
 									textNode.appendChild(tspan);
 								
@@ -2254,12 +2254,12 @@ SVGRenderer.prototype = {
 								}
 							} else { // append to existing line tspan
 								tspan.removeChild(tspan.firstChild);
-								rest.unshift(words.pop());
+								rest.unshift(words.pop());							
 							}
-							
-							tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+							if (words.length) {
+								tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+							}
 						}
-						
 					}
 				}
 			});
