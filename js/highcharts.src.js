@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.3 (2011-02-07)
+ * @license Highcharts JS v2.1.4 (2011-03-02)
  * 
  * (c) 2009-2010 Torstein Hønsi
  * 
@@ -10665,7 +10665,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	version: '2.1.3'
+	version: '2.1.4'
 };
 })();
 
