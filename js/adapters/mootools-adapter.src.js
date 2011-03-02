@@ -10,7 +10,15 @@
 // JSLint options:
 /*global Highcharts, Fx, $, $extend, $each, $merge, Events, Event */
 
-var HighchartsAdapter = {
+(function() {
+	
+var win = window,
+	legacy = !!win.$merge
+	$extend = win.$extend || function() {
+		return Object.append.apply(Object, arguments)
+	};
+
+win.HighchartsAdapter = {
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
 	 */
@@ -108,7 +116,11 @@ var HighchartsAdapter = {
 	 * MooTool's each function
 	 * 
 	 */
-	each: $each,
+	each: function(arr, fn) {
+		return legacy ? 
+			$each(arr, fn) :
+			arr.each(fn);
+	},
 	
 	/**
 	 * Map an array
@@ -131,7 +143,23 @@ var HighchartsAdapter = {
 	/**
 	 * Deep merge two objects and return a third
 	 */
-	merge: $merge,
+	merge: function() {
+		var args = arguments,
+			args13 = [{}], // MooTools 1.3+
+			i = args.length,
+			ret;
+		
+		if (legacy) {
+			ret = $merge.apply(null, args);
+		} else {
+			while (i--) {
+				args13[i + 1] = args[i];	
+			}
+			ret = Object.merge.apply(Object, args13);
+		}
+		
+		return ret;
+	},
 	
 	/**
 	 * Hyphenate a string, like minWidth becomes min-width
@@ -211,4 +239,6 @@ var HighchartsAdapter = {
 			el.fx.cancel();
 		}
 	}
-};
+}
+
+})();
