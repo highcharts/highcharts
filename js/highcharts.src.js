@@ -1526,8 +1526,11 @@ SVGElement.prototype = {
 				// emulate VML's dashstyle implementation
 				} else if (key == 'dashstyle') {
 					key = 'stroke-dasharray';
-					if (value) {
-						value = value.toLowerCase()
+					value = value && value.toLowerCase();
+					if (value == 'solid') {
+						value = NONE;
+					} else if (value) {
+						value = value
 							.replace('shortdashdotdot', '3,1,1,1,1,1,')
 							.replace('shortdashdot', '3,1,1,1')
 							.replace('shortdot', '1,1,')
@@ -1542,6 +1545,7 @@ SVGElement.prototype = {
 						while (i--) {
 							value[i] = pInt(value[i]) * hash['stroke-width'];
 						}
+						
 						value = value.join(',');
 					}	
 					
