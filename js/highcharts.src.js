@@ -1595,11 +1595,11 @@ SVGElement.prototype = {
 					}					
 				}
 				
-				/* trows errors in Chrome
+				// validate heights
 				if ((key == 'width' || key == 'height') && nodeName == 'rect' && value < 0) {
-					console.log(element);
+					value = 0;
 				}
-				*/
+				
 				
 					
 				
