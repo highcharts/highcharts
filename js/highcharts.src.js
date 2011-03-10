@@ -1696,6 +1696,7 @@ SVGElement.prototype = {
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName == 'text';
+			
 		
 		// convert legacy
 		if (styles && styles.color) {
@@ -4014,7 +4015,7 @@ function Chart (options, callback) {
 					});
 				
 				// prepare CSS
-				css = width && { width: (width - 2 * (labelOptions.padding || 10)) +PX };
+				css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) +PX };
 				css = extend(css, labelOptions.style);
 				
 				// first call
