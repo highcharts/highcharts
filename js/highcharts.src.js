@@ -7418,8 +7418,8 @@ function Chart (options, callback) {
 		
 		oldChartHeight = chartHeight;
 		oldChartWidth = chartWidth;
-		chartWidth = mathRound(width);
-		chartHeight = mathRound(height);
+		chart.chartWidth = chartWidth = mathRound(width);
+		chart.chartHeight = chartHeight = mathRound(height);
 		
 		css(container, {
 			width: chartWidth + PX,
