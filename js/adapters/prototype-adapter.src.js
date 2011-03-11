@@ -154,7 +154,7 @@ return {
 	
 	removeEvent: function(el, event, handler){
 		if ($(el).stopObserving) {
-			el.stopObserving(el, event, handler);
+			$(el).stopObserving(event, handler);
 			
 		} else {
 			HighchartsAdapter._extend(el);
