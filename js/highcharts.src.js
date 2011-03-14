@@ -2154,6 +2154,7 @@ SVGRenderer.prototype = {
 			childNodes = textNode.childNodes,
 			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
+			targetRegex = /target="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			reverse = isFirefox && textStyles && textStyles.HcDirection == 'rtl' && !this.forExport, // issue #38
@@ -2190,7 +2191,8 @@ SVGRenderer.prototype = {
 						);
 					}
 					if (hrefRegex.test(span)) {
-						attr(tspan, 'onclick', 'location.href=\"'+ span.match(hrefRegex)[1] +'\"');
+						targetMatch = span.test(targetRegex) ? span.match(targetRegex)[1] : '_self';
+						attr(tspan, 'onclick', 'window.open(\"'+ span.match(hrefRegex)[1] +'\", \"'+ targetMatch +'\")');
 						css(tspan, { cursor: 'pointer' });
 					}
 					
