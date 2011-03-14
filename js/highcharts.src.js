@@ -2191,7 +2191,7 @@ SVGRenderer.prototype = {
 						);
 					}
 					if (hrefRegex.test(span)) {
-						targetMatch = span.test(targetRegex) ? span.match(targetRegex)[1] : '_self';
+						targetMatch = targetRegex.test(span) ? span.match(targetRegex)[1] : '_self';
 						attr(tspan, 'onclick', 'window.open(\"'+ span.match(hrefRegex)[1] +'\", \"'+ targetMatch +'\")');
 						css(tspan, { cursor: 'pointer' });
 					}
