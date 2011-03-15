@@ -2050,7 +2050,7 @@ SVGElement.prototype = {
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
 	 * @param {Boolean} apply
 	 */
-	shadow: function(apply) {
+	shadow: function(apply, group) {
 		var shadows = [],
 			i,
 			shadow,
@@ -2072,8 +2072,11 @@ SVGElement.prototype = {
 					'fill': NONE
 				});
 				
-				
-				element.parentNode.insertBefore(shadow, element);
+				if (group) {
+					group.element.appendChild(shadow);
+				} else {
+					element.parentNode.insertBefore(shadow, element);
+				}
 				
 				shadows.push(shadow);
 			}
@@ -3269,7 +3272,7 @@ var VMLElement = extendClass( SVGElement, {
 	 * Apply a drop shadow by copying elements and giving them different strokes 
 	 * @param {Boolean} apply
 	 */
-	shadow: function(apply) {
+	shadow: function(apply, group) {
 		var shadows = [],
 			i,
 			element = this.element,
@@ -3302,7 +3305,11 @@ var VMLElement = extendClass( SVGElement, {
 				
 				
 				// insert it
-				element.parentNode.insertBefore(shadow, element);
+				if (group) {
+					group.element.appendChild(shadow);
+				} else {
+					element.parentNode.insertBefore(shadow, element);
+				}
 				
 				// record it
 				shadows.push(shadow);				
@@ -10192,7 +10199,8 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			slicedTranslation = point.slicedTranslation;
+			slicedTranslation = point.slicedTranslation,
+			translation;
 			
 		setAnimation(animation, chart);
 		
@@ -10202,10 +10210,14 @@ var PiePoint = extendClass(Point, {
 		// if called without an argument, toggle
 		sliced = point.sliced = defined(sliced) ? sliced : !point.sliced;
 		
-		point.group.animate({
+		translation = {
 			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
 			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
-		});
+		};
+		point.group.animate(translation);
+		if (point.shadowGroup) {
+			point.shadowGroup.animate(translation);
+		}
 		
 	}
 });
@@ -10417,14 +10429,25 @@ var PieSeries = extendClass(Series, {
 			//center,
 			graphic,
 			group,
+			shadow = series.options.shadow,
+			shadowGroup,
 			shapeArgs;
+			
 		
 		// draw the slices
 		each(series.data, function(point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			group = point.group;
+			shadowGroup = point.shadowGroup;
 
+			// put the shadow behind all points
+			if (shadow && !shadowGroup) {
+				shadowGroup = point.shadowGroup = renderer.g('shadow')
+					.attr({ zIndex: 4 })
+					.add();
+			}
+		
 			// create the group the first time
 			if (!group) {
 				group = point.group = renderer.g('point')
@@ -10434,7 +10457,10 @@ var PieSeries = extendClass(Series, {
 			
 			// if the point is sliced, use special translation, else use plot area traslation
 			groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-			group.translate(groupTranslation[0], groupTranslation[1])
+			group.translate(groupTranslation[0], groupTranslation[1]);
+			if (shadowGroup) {
+				shadowGroup.translate(groupTranslation[0], groupTranslation[1]);
+			}
 				
 			
 			// draw the slice
@@ -10447,7 +10473,8 @@ var PieSeries = extendClass(Series, {
 						point.pointAttr[NORMAL_STATE],
 						{ 'stroke-linejoin': 'round' }
 					))
-					.add(point.group);
+					.add(point.group)
+					.shadow(shadow, shadowGroup);
 			}
 			
 			// detect point specific visibility
