@@ -3120,19 +3120,24 @@ var VMLElement = extendClass( SVGElement, {
 	 */
 	
 	getBBox: function() {
-		var element = this.element;
+		var wrapper = this,
+			element = wrapper.element,
+			bBox = wrapper.bBox;
 		
-		// faking getBBox in exported SVG in legacy IE
-		if (element.nodeName == 'text') {
-			element.style.position = ABSOLUTE;
+		if (!bBox) {
+			// faking getBBox in exported SVG in legacy IE
+			if (element.nodeName == 'text') {
+				element.style.position = ABSOLUTE;
+			}
+			
+			bBox = wrapper.bBox = {
+				x: element.offsetLeft,
+				y: element.offsetTop,
+				width: element.offsetWidth,
+				height: element.offsetHeight
+			};
 		}
-		
-		return {
-			x: element.offsetLeft,
-			y: element.offsetTop,
-			width: element.offsetWidth,
-			height: element.offsetHeight
-		};
+		return bBox;
 					
 	},
 	
