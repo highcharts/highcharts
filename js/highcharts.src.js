@@ -4178,7 +4178,7 @@ function Chart (options, callback) {
 						
 					// correct for staggered labels
 					if (staggerLines) {
-						y += (index % staggerLines) * 16;
+						y += (index / (step || 1) % staggerLines) * 16;
 					}
 					// apply step
 					if (step) {
