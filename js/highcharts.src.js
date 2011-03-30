@@ -5610,15 +5610,15 @@ function Chart (options, callback) {
 			
 			// build the header	
 			s = useHeader ? 
-				['<span style="font-size: 10px">',
-				(isDateTime ? dateFormat('%A, %b %e, %Y', x) :  x),
-				'</span><br/>'] : [];
+				['<span style="font-size: 10px">' +
+				(isDateTime ? dateFormat('%A, %b %e, %Y', x) :  x) +
+				'</span>'] : [];
 						
 			// build the values
 			each(items, function(item) {
 				s.push(item.point.tooltipFormatter(useHeader));
 			});
-			return s.join('');
+			return s.join('<br/>');
 		}
 		
 		/**
@@ -8106,7 +8106,7 @@ Point.prototype = {
 				
 		return ['<span style="color:'+ series.color +'">', (point.name || series.name), '</span>: ',
 			(!useHeader ? ('<b>x = '+ (point.name || point.x) + ',</b> ') : ''), 
-			'<b>', (!useHeader ? 'y = ' : '' ), point.y, '</b><br/>'].join('');
+			'<b>', (!useHeader ? 'y = ' : '' ), point.y, '</b>'].join('');
 		
 	},
 	
