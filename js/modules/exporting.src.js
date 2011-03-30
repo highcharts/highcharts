@@ -35,8 +35,7 @@ var HC = Highcharts,
 	PREFIX = 'highcharts-',
 	ABSOLUTE = 'absolute',
 	PX = 'px',
-
-
+	UNDEFINED = undefined,
 
 	// Add language and get the defaultOptions
 	defaultOptions = HC.setOptions({
@@ -211,6 +210,7 @@ extend(Chart.prototype, {
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
+		
 		// prepare for replicating the chart
 		options.series = [];
 		each(chart.series, function(serie) {
@@ -253,7 +253,21 @@ extend(Chart.prototype, {
 		});
 		
 		// generate the chart copy
-		chartCopy = new Highcharts.Chart(options);
+		chartCopy = new Highcharts.Chart(options);		
+		
+		// reflect axis extremes in the export
+		each(['xAxis', 'yAxis'], function(axisType) {
+			each (chart[axisType], function(axis, i) {
+				var axisCopy = chartCopy[axisType][i],
+					extremes = axis.getExtremes(),
+					userMin = extremes.userMin,
+					userMax = extremes.userMax;
+				
+				if (userMin !== UNDEFINED || userMax !== UNDEFINED) {
+					axisCopy.setExtremes(userMin, userMax, true, false);
+				}
+			});
+		});
 		
 		// get the SVG from the container's innerHTML
 		svg = chartCopy.container.innerHTML;

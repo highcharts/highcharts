@@ -3938,8 +3938,8 @@ function Chart (options, callback) {
 			dataMin,
 			dataMax,
 			associatedSeries,
-			userSetMin,
-			userSetMax,
+			userMin,
+			userMax,
 			max = null,
 			min = null,
 			oldMin,
@@ -4883,8 +4883,8 @@ function Chart (options, callback) {
 			
 			// initial min and max from the extreme data values
 			else {
-				min = pick(userSetMin, options.min, dataMin);
-				max = pick(userSetMax, options.max, dataMax);
+				min = pick(userMin, options.min, dataMin);
+				max = pick(userMax, options.max, dataMax);
 			}
 			
 			// maxZoom exceeded, just center the selection
@@ -4898,10 +4898,10 @@ function Chart (options, callback) {
 			// pad the values to get clear of the chart's edges
 			if (!categories && !usePercentage && !isLinked && defined(min) && defined(max)) {
 				length = (max - min) || 1;
-				if (!defined(options.min) && !defined(userSetMin) && minPadding && (dataMin < 0 || !ignoreMinPadding)) { 
+				if (!defined(options.min) && !defined(userMin) && minPadding && (dataMin < 0 || !ignoreMinPadding)) { 
 					min -= length * minPadding; 
 				}
-				if (!defined(options.max) && !defined(userSetMax)  && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) { 
+				if (!defined(options.max) && !defined(userMax)  && maxPadding && (dataMax > 0 || !ignoreMaxPadding)) { 
 					max += length * maxPadding;
 				}
 			}
@@ -4941,10 +4941,10 @@ function Chart (options, callback) {
 				// pad categorised axis to nearest half unit
 				if (categories || (isXAxis && chart.hasColumn)) {
 					catPad = (categories ? 1 : tickInterval) * 0.5;
-					if (categories || !defined(pick(options.min, userSetMin))) {
+					if (categories || !defined(pick(options.min, userMin))) {
 						min -= catPad;
 					}
-					if (categories || !defined(pick(options.max, userSetMax))) {
+					if (categories || !defined(pick(options.max, userMax))) {
 						max += catPad;
 					}
 				}
@@ -5066,8 +5066,8 @@ function Chart (options, callback) {
 				max: newMax
 			}, function() { // the default event handler
 				
-				userSetMin = newMin;
-				userSetMax = newMax;
+				userMin = newMin;
+				userMax = newMax;
 			
 				
 				// redraw
@@ -5086,7 +5086,9 @@ function Chart (options, callback) {
 				min: min,
 				max: max,
 				dataMin: dataMin,
-				dataMax: dataMax
+				dataMax: dataMax,
+				userMin: userMin,
+				userMax: userMax
 			};
 		}
 		
