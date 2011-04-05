@@ -4169,7 +4169,7 @@ function Chart (options, callback) {
 				}
 				
 				// the label is created on init - now move it into place
-				if (label) {
+				if (label && !isNaN(x)) {
 					x = x + labelOptions.x - (tickmarkOffset && horiz ? 
 						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
 					y = y + labelOptions.y - (tickmarkOffset && !horiz ? 
@@ -4195,7 +4195,6 @@ function Chart (options, callback) {
 						x: x,
 						y: y
 					});
-					
 				}
 				
 				tick.isNew = false;
