@@ -2861,7 +2861,6 @@ var VMLElement = extendClass( SVGElement, {
 					// check all the others only once for each call to an element's
 					// .attr() method
 					if (!hasSetSymbolSize) {
-							
 						this.symbolAttr(hash);						
 					
 						hasSetSymbolSize = true;
@@ -3579,7 +3578,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function(x, y, r) {
-		return this.path(this.symbols.circle(x, y, r));
+		return this.symbol('circle').attr({ x: x, y: y, r: r});
 	},
 	
 	/**
