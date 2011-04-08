@@ -2224,7 +2224,7 @@ SVGRenderer.prototype = {
 						if (lineNo) {
 							// Webkit and opera sometimes return 'normal' as the line height. In that
 							// case, webkit uses offsetHeight, while Opera falls back to 18
-							lineHeight = pInt(window.getComputedStyle(lastLine, null).getPropertyValue('line-height'));
+							lineHeight = pInt(win.getComputedStyle(lastLine, null).getPropertyValue('line-height'));
 							if (isNaN(lineHeight)) {
 								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
 							}
@@ -4525,11 +4525,12 @@ function Chart (options, callback) {
 						// For column, areas and bars, set the minimum automatically to zero
 						// and prevent that minPadding is added in setScale
 						if (/(area|column|bar)/.test(serie.type) && !isXAxis) {
-							if (dataMin >= 0) {
-								dataMin = 0;
+							var threshold = 0;
+							if (dataMin >= threshold) {
+								dataMin = threshold;
 								ignoreMinPadding = true;
-							} else if (dataMax < 0) {
-								dataMax = 0;
+							} else if (dataMax < threshold) {
+								dataMax = threshold;
 								ignoreMaxPadding = true;
 							}
 						}
@@ -8473,8 +8474,8 @@ Series.prototype = {
 	setOptions: function(itemOptions) {
 		var plotOptions = this.chart.options.plotOptions,
 			options = merge(
-				plotOptions[this.type],
 				plotOptions.series,
+				plotOptions[this.type],
 				itemOptions
 			);
 		
