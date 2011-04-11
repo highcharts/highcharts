@@ -7418,9 +7418,9 @@ function Chart (options, callback) {
 				containerHeight = height;
 			}
 		}
-		addEvent(window, 'resize', reflow);
+		addEvent(win, 'resize', reflow);
 		addEvent(chart, 'destroy', function() {
-			removeEvent(window, 'resize', reflow);
+			removeEvent(win, 'resize', reflow);
 		});
 	}
 	
@@ -8476,8 +8476,8 @@ Series.prototype = {
 	setOptions: function(itemOptions) {
 		var plotOptions = this.chart.options.plotOptions,
 			options = merge(
-				plotOptions.series,
 				plotOptions[this.type],
+				plotOptions.series,
 				itemOptions
 			);
 		
