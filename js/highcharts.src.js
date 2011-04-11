@@ -8419,20 +8419,20 @@ Series.prototype = {
 		
 		// remove points with equal x values
 		// record the closest distance for calculation of column widths
-		for (i = data.length - 1; i >= 0; i--) {
+		/*for (i = data.length - 1; i >= 0; i--) {
 			if (data[i - 1]) {
 				if (data[i - 1].x == data[i].x)	{
 					data[i - 1].destroy();
 					data.splice(i - 1, 1); // remove the duplicate
 				}
 			}
-		}
+		}*/
 		
 		// find the closes pair of points
 		for (i = data.length - 1; i >= 0; i--) {
 			if (data[i - 1]) {
 				interval = data[i].x - data[i - 1].x;
-				if (smallestInterval === UNDEFINED || interval < smallestInterval) {
+				if (interval > 0 && (smallestInterval === UNDEFINED || interval < smallestInterval)) {
 					smallestInterval = interval;
 					closestPoints = i;	
 				}
