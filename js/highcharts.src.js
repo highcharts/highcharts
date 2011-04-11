@@ -4824,8 +4824,10 @@ function Chart (options, callback) {
 		 */
 		function correctFloat(num) {
 			var invMag, ret = num;
-			if (defined(magnitude)) {
-				invMag = (magnitude < 1 ? mathRound(1 / magnitude) : 1) * 10;
+			magnitude = pick(magnitude, math.pow(10, mathFloor(math.log(tickInterval) / math.LN10)));
+			
+			if (magnitude < 1) {
+				invMag = mathRound(1 / magnitude)  * 10;
 				ret = mathRound(num * invMag) / invMag;
 			}
 			return ret;
