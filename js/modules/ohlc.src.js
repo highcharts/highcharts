@@ -30,6 +30,7 @@ var HC = Highcharts,
 	
 // 1 - Set default options
 defaultPlotOptions.OHLC = merge(defaultPlotOptions.column, {
+	animation: false,
 	lineWidth: 1,
 	states: {
 		hover: {
@@ -224,6 +225,7 @@ seriesTypes.OHLC = OHLCSeries;
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
+	animation: false,
 	lineColor: 'black',
 	lineWidth: 1,
 	upColor: 'white',
