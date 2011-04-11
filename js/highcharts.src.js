@@ -4525,7 +4525,7 @@ function Chart (options, callback) {
 						// For column, areas and bars, set the minimum automatically to zero
 						// and prevent that minPadding is added in setScale
 						if (/(area|column|bar)/.test(serie.type) && !isXAxis) {
-							var threshold = 0;
+							var threshold = 0; // use series.options.threshold?
 							if (dataMin >= threshold) {
 								dataMin = threshold;
 								ignoreMinPadding = true;
@@ -4863,7 +4863,7 @@ function Chart (options, callback) {
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval,
 				maxZoom = options.maxZoom || (
-					isXAxis ? 
+					isXAxis && !defined(options.min) && !defined(options.max) ? 
 						mathMin(chart.smallestInterval * 5, dataMax - dataMin) : 
 						null					
 				),
