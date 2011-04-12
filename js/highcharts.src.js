@@ -263,7 +263,7 @@ function serializeCSS(style) {
 	
 }
 /**
- * Set CSS on a give element
+ * Set CSS on a given element
  * @param {Object} el
  * @param {Object} styles
  */
@@ -275,6 +275,23 @@ function css (el, styles) {
 	}
 	extend(el.style, styles);
 }
+
+/* *
+ * Get CSS value on a given element
+ * @param {Object} el DOM object
+ * @param {String} styleProp Camel cased CSS propery
+ * /
+function getStyle (el, styleProp) {
+	var ret,
+		CURRENT_STYLE = 'currentStyle',
+		GET_COMPUTED_STYLE = 'getComputedStyle';
+	if (el[CURRENT_STYLE]) {
+		ret = el[CURRENT_STYLE][styleProp];
+	} else if (win[GET_COMPUTED_STYLE]) {
+		ret = win[GET_COMPUTED_STYLE](el, null).getPropertyValue(hyphenate(styleProp));
+	}
+	return ret;
+}*/
 
 /**
  * Utility function to create element with attributes and styles
@@ -2164,6 +2181,7 @@ SVGRenderer.prototype = {
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles['line-height'],
 			lastLine,
+			GET_COMPUTED_STYLE = 'getComputedStyle',
 			i = childNodes.length;
 		
 		// remove old text
@@ -2222,10 +2240,18 @@ SVGRenderer.prototype = {
 					// first span on subsequent line, add the line height
 					if (!spanNo) {						
 						if (lineNo) {
+							
+							// allow getting the right offset height in exporting in IE
+							if (!hasSVG && wrapper.renderer.forExport) {
+								css(tspan, { display: 'block' });
+							};
+							
 							// Webkit and opera sometimes return 'normal' as the line height. In that
 							// case, webkit uses offsetHeight, while Opera falls back to 18
-							lineHeight = pInt(win.getComputedStyle(lastLine, null).getPropertyValue('line-height'));
-							if (isNaN(lineHeight)) {
+							lineHeight = win[GET_COMPUTED_STYLE] &&
+								win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height');
+							
+							if (!lineHeight || isNaN(lineHeight)) {
 								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
 							}
 							attr(tspan, 'dy', lineHeight);
