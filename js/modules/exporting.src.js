@@ -218,6 +218,7 @@ extend(Chart.prototype, {
 			
 			seriesOptions.animation = false; // turn off animation
 			seriesOptions.showCheckbox = false;
+			seriesOptions.visible = serie.visible;
 			
 			// remove image markers
 			if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) { 
