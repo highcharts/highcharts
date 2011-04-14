@@ -1348,6 +1348,16 @@ dateFormat = function (format, timestamp, capitalize) {
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 		langMonths = lang.months,
+		/* // uncomment this and the 'W' format key below to enable week numbers
+		weekNumber = function() { 
+			var clone = new Date(date.valueOf()),
+				day = clone[getDay]() == 0 ? 7 : clone[getDay](),
+				dayNumber;
+			clone.setDate(clone[getDate]() + 4 - day);
+			dayNumber = mathFloor((clone.getTime() - new Date(clone[getFullYear](), 0, 1, -6)) / 86400000);
+			return 1 + mathFloor(dayNumber / 7);
+		},
+		*/
 		
 		// list all format keys
 		replacements = {
@@ -1359,6 +1369,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'e': dayOfMonth, // Day of the month, 1 through 31 
 			
 			// Week (none implemented)
+			//'W': weekNumber(),
 			
 			// Month
 			'b': langMonths[month].substr(0, 3), // Short month, like 'Jan'
