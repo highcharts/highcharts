@@ -5658,7 +5658,33 @@ function Chart (options, callback) {
 			});
 			return s.join('<br/>');
 		}
-		
+
+		/**
+		 * In case no user defined positioner is given, this will be used
+		 */
+		function defaultPositioner(x, y, plotLeft, plotTop, boxWidth, boxHeight, chartWidth, chartHeight) {
+			var boxX, boxY;
+
+			// keep the box within the chart area
+			boxX = x - boxWidth + plotLeft - 25;
+			boxY = y - boxHeight + plotTop + 10;
+
+			// it is too far to the left, adjust it
+			if (boxX < 7) {
+				boxX = 7;
+				boxY -= 30;
+			}
+
+
+			if (boxY < 5) {
+				boxY = 5; // above
+			} else if (boxY + boxHeight > chartHeight) {
+				boxY = chartHeight - boxHeight - 5; // below
+			}
+
+			return [boxX, boxY];
+		}
+
 		/**
 		 * Provide a soft movement for the tooltip
 		 * 
@@ -5720,8 +5746,7 @@ function Chart (options, callback) {
 		function refresh(point) {
 			var x,
 				y,
-				boxX,
-				boxY,
+				boxXY,
 				show,
 				bBox,
 				plotX,
@@ -5731,6 +5756,7 @@ function Chart (options, callback) {
 				pointConfig = [],
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
+				positioner = options.positioner || defaultPositioner,
 				hoverPoints = chart.hoverPoints,
 				getConfig = function(point) {
 					return {
@@ -5822,28 +5848,10 @@ function Chart (options, callback) {
 					height: boxHeight,
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
-				
-				// keep the box within the chart area
-				boxX = x - boxWidth + plotLeft - 25;
-				boxY = y - boxHeight + plotTop + 10;
-				
-				// it is too far to the left, adjust it
-				if (boxX < 7) {
-					boxX = 7;
-					boxY -= 30;
-				}
-				
-				
-				if (boxY < 5) {
-					boxY = 5; // above
-				} else if (boxY + boxHeight > chartHeight) { 
-					boxY = chartHeight - boxHeight - 5; // below
-				}
-				
+				boxXY = positioner.call(this, x, y, plotLeft, plotTop, boxWidth, boxHeight, chartWidth, chartHeight);
+
 				// do the move
-				move(mathRound(boxX - boxOffLeft), mathRound(boxY - boxOffLeft));
-				
-				
+				move(mathRound(boxXY[0] - boxOffLeft), mathRound(boxXY[1] - boxOffLeft));
 			}
 			
 			
