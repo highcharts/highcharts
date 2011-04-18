@@ -9146,10 +9146,10 @@ Series.prototype = {
 			// create a separate group for the data labels to avoid rotation
 			if (!dataLabelsGroup) {
 				dataLabelsGroup = series.dataLabelsGroup = 
-					chart.renderer.g(PREFIX +'data-labels')
+					chart.renderer.g('data-labels')
 						.attr({ 
 							visibility: series.visible ? VISIBLE : HIDDEN,
-							zIndex: 5
+							zIndex: 6							
 						})
 						.translate(chart.plotLeft, chart.plotTop)
 						.add();
