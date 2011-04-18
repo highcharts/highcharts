@@ -9849,14 +9849,14 @@ var ColumnSeries = extendClass(Series, {
 		// This is called on every series. Consider moving this logic to a 
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
 		each(chart.series, function(otherSeries) {
-			if (otherSeries.type == series.type) {
+			if (otherSeries.type == series.type && otherSeries.visible) {
 				if (otherSeries.options.stacking) {
 					stackKey = otherSeries.stackKey;
 					if (stackGroups[stackKey] === UNDEFINED) {
 						stackGroups[stackKey] = columnCount++;	
 					}					
 					columnIndex = stackGroups[stackKey];
-				} else if (otherSeries.visible){
+				} else {
 					columnIndex = columnCount++;
 				}
 				otherSeries.columnIndex = columnIndex;
