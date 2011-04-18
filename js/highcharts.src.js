@@ -804,6 +804,7 @@ defaultOptions = {
 			animation: {
 				duration: 1000
 			},
+			// connectNulls: false,
 			//cursor: 'default',
 			//dashStyle: null,
 			//enableMouseTracking: true,
@@ -8446,6 +8447,15 @@ Series.prototype = {
 				}
 			}
 		}*/
+		
+		// connect nulls
+		if (series.options.connectNulls) {
+			for (i = data.length - 1; i >= 0; i--) {
+				if (data[i].y === null && data[i - 1] && data [i + 1]) {
+					data.splice(i, 1);
+				}
+			}
+		}
 		
 		// find the closes pair of points
 		for (i = data.length - 1; i >= 0; i--) {
