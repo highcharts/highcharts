@@ -4065,7 +4065,7 @@ function Chart (options, callback) {
 						isFirst: pos == tickPositions[0],
 						isLast: pos == tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: (categories && categories[pos] ? categories[pos] : pos)
+						value: (categories && defined(categories[pos]) ? categories[pos] : pos)
 					});
 				
 				// prepare CSS
