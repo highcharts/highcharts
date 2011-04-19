@@ -2702,8 +2702,8 @@ SVGRenderer.prototype = {
 				patternUnits: 'userSpaceOnUse', 
 				x: 0,
 				y: 0,
-				width: patternImageDimension[0],
-				height: patternImageDimension[1]
+				width: patternImageDimensions[0],
+				height: patternImageDimensions[1]
 			}).add(renderer.defs);
 			
 			renderer.image(patternImage, 0, 0, patternImageDimensions[0], patternImageDimensions[1])

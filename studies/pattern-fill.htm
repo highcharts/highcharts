@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Pattern Fill Example</title>
+		
+		
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/highcharts.src.js"></script>
+
+		
+		
+		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
+		<script type="text/javascript">
+            var chart;
+			$(document).ready(function() {
+				chart = new Highcharts.Chart({
+                    credits: {
+                        enabled: false
+                    },
+					chart: {
+						renderTo: 'container',
+						defaultSeriesType: 'column'
+					},
+                    colors: [
+                        {
+                            patternImage: 'pattern.jpg',
+                            patternImageDimensions: [16, 12]
+                        }
+                    ],
+					title: {
+						text: 'Monthly Average Rainfall'
+					},
+					subtitle: {
+						text: 'Source: WorldClimate.com'
+					},
+					xAxis: {
+						categories: [
+							'Jan', 
+							'Feb', 
+							'Mar', 
+							'Apr'
+						], 
+                        labels: {
+                            formatter: function() {
+                                this.checkbox = true;
+                                var labelValue = this.value;
+                                
+                                return labelValue;
+                            }
+                        } 
+					},
+					yAxis: {
+						min: 0,
+						title: {
+							text: 'Rainfall (mm)'
+						}
+					},
+                    legend: {
+                        enabled: true
+                    },
+					tooltip: {
+						formatter: function() {
+							return ''+
+								this.x +': '+ this.y +' mm';
+						}
+					},
+					plotOptions: {
+						column: {
+							pointPadding: 0.2,
+							borderWidth: 0
+						}
+					},
+				    series: [{
+						data: [{
+                            y: 25.0
+                        }, {
+                            y: 30.0
+                        }, {
+                            y: 40.0
+                        }, {
+                            y: 50.0
+                        } ]
+				
+					}]
+                    
+                    
+				});
+                
+			});
+
+		</script>
+		
+	</head>
+	<body>
+		<!-- 3. Add the container -->
+		<div id="container" style="width: 800px; height: 400px"></div>
+		
+			
+	</body>
+</html>
