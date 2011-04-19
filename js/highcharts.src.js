@@ -163,6 +163,13 @@ function isNumber(n) {
 	return typeof n == 'number';
 }
 
+function log2lin(num) {
+	return math.log(num) / math.LN10;
+}
+function lin2log(num) {
+	return math.pow(10, num);
+}
+
 /**
  * Remove last occurence of an item from an array
  * @param {Array} arr
@@ -3962,7 +3969,7 @@ function Chart (options, callback) {
 		var axis = this,
 			type = options.type,
 			isDatetimeAxis = type == 'datetime',
-			isLogarithmic = type == 'logarithmic',
+			isLog = type == 'logarithmic',
 			offset = options.offset || 0,
 			xOrY = isXAxis ? 'x' : 'y',
 			axisLength,
@@ -4069,7 +4076,7 @@ function Chart (options, callback) {
 						isFirst: pos == tickPositions[0],
 						isLast: pos == tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: isLogarithmic ? lin2log(value) : value
+						value: isLog ? lin2log(value) : value
 					});
 				
 				// prepare CSS
@@ -4585,7 +4592,7 @@ function Chart (options, callback) {
 		 * Translate from axis value to pixel position on the chart, or back
 		 * 
 		 */
-		translate = function(val, backwards, cvsCoord, old, doLog2lin) {
+		translate = function(val, backwards, cvsCoord, old, handleLog) {
 			var sign = 1,
 				cvsOffset = 0,
 				localA = old ? oldTransA : transA,
@@ -4609,10 +4616,13 @@ function Chart (options, callback) {
 				if (reversed) {
 					val = axisLength - val;
 				}
-				returnValue = val / localA + localMin; // from chart pixel to value				
+				returnValue = val / localA + localMin; // from chart pixel to value	
+				if (isLog && handleLog) {
+					returnValue = lin2log(returnValue);
+				}			
 			
 			} else { // normal translation
-				if (isLogarithmic && doLog2lin) {
+				if (isLog && handleLog) {
 					val = log2lin(val);
 				}
 				returnValue = sign * (val - localMin) * localA + cvsOffset; // from value to chart pixel
@@ -4662,12 +4672,6 @@ function Chart (options, callback) {
 				renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 0);
 		};
 		
-		function log2lin(num) {
-			return math.log(num) / math.LN10;
-		}
-		function lin2log(num) {
-    		return math.pow(10, num);
-		}
 		
 		/**
 		 * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
@@ -4686,7 +4690,7 @@ function Chart (options, callback) {
 				//multiples = [1, 2, 2.5, 4, 5, 7.5, 10];
 				
 				// the allowDecimals option
-				if (options.allowDecimals === false || isLogarithmic) {
+				if (options.allowDecimals === false || isLog) {
 					if (magnitude == 1) {
 						multiples = [1, 2, 5, 10];
 					} else if (magnitude <= 0.1) {
@@ -4939,7 +4943,7 @@ function Chart (options, callback) {
 				max = pick(userMax, options.max, dataMax);
 			}
 			
-			if (isLogarithmic) {
+			if (isLog) {
 				min = log2lin(min);
 				max = log2lin(max);
 			}
@@ -6091,18 +6095,24 @@ function Chart (options, callback) {
 								isHorizontal ? 
 									selectionLeft : 
 									plotHeight - selectionTop - selectionBox.height, 
-								true
+								true,
+								0,
+								0,
+								1
 							),
 							selectionMax = translate(
 								isHorizontal ? 
 									selectionLeft + selectionBox.width : 
 									plotHeight - selectionTop, 
-								true
+								true,
+								0,
+								0,
+								1
 							);
 								
 							selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
 								axis: axis,
-								min: mathMin(selectionMin, selectionMax), // for reversed axes
+								min: mathMin(selectionMin, selectionMax), // for reversed axes,
 								max: mathMax(selectionMin, selectionMax)
 							});
 							
