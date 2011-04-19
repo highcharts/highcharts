@@ -2688,7 +2688,29 @@ SVGRenderer.prototype = {
 	color: function(color, elem, prop) {
 		var colorObject,
 			regexRgba = /^rgba/;
-		if (color && color.linearGradient) {
+		if (color && color.patternImage) {
+			var renderer = this, 
+			    strPattern = 'pattern',
+			    pattern = color[strPattern],
+			    patternImage = color['patternImage'], 
+			    patternImageDimensions = color['patternImageDimensions'],
+				patternObject, 
+				id = PREFIX + idCounter++;
+			
+			patternObject = renderer.createElement(strPattern).attr({ 
+				id: id,
+				patternUnits: 'userSpaceOnUse', 
+				x: 0,
+				y: 0,
+				width: patternImageDimension[0],
+				height: patternImageDimension[1]
+			}).add(renderer.defs);
+			
+			renderer.image(patternImage, 0, 0, patternImageDimensions[0], patternImageDimensions[1])
+					.add(patternObject);
+
+			return 'url(#'+ id +')';
+		} else if (color && color.linearGradient) {
 			var renderer = this,
 				strLinearGradient = 'linearGradient',
 				linearGradient = color[strLinearGradient],
@@ -3489,7 +3511,15 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			regexRgba = /^rgba/,
 			markup;
 			
-		if (color && color.linearGradient) {
+		if (color && color.patternImage) {
+			var patternImage = color.patternImage;
+			
+			markup = ['<', prop, ' src="', patternImage,
+				'" type="tile" opacity="1" color="black" color2="red" />'];
+			
+			createElement(this.prepVML(markup), null, null, elem);
+			
+		} else if (color && color.linearGradient) {
 			
 			var stopColor, 
 				stopOpacity,
