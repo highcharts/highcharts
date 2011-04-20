@@ -4,7 +4,7 @@
 /**
  * @license Highcharts JS v2.1.4 (2011-03-02)
  * 
- * (c) 2009-2010 Torstein Hønsi
+ * (c) 2009-2010 Torstein H√∏nsi
  * 
  * License: www.highcharts.com/license
  */
@@ -2212,6 +2212,8 @@ SVGRenderer.prototype = {
 			this.box.appendChild(textNode); // attach it to the DOM to read offset width
 		}
 		
+		var extraHeight = 0;
+		
 		each(lines, function(line, lineNo) {
 			var spans, spanNo = 0, lineHeight;
 			
@@ -2236,88 +2238,119 @@ SVGRenderer.prototype = {
 					
 					span = span.replace(/<(.|\n)*?>/g, '') || ' ';
 					
-					// issue #38 workaround.
-					if (reverse) {
-						arr = [];
-						i = span.length;
-						while (i--) {
-							arr.push(span.charAt(i))
-						}
-						span = arr.join('');
-					}
-					
-					// add the text node
-					tspan.appendChild(doc.createTextNode(span));
-					
-					if (!spanNo) { // first span in a line, align it to the left
-						attributes.x = parentX;
-					} else {
-						// Firefox ignores spaces at the front or end of the tspan
-						attributes.dx = 3; // space
-					}
-					
-					// first span on subsequent line, add the line height
-					if (!spanNo) {						
-						if (lineNo) {
-							
-							// allow getting the right offset height in exporting in IE
-							if (!hasSVG && wrapper.renderer.forExport) {
-								css(tspan, { display: 'block' });
-							};
-							
-							// Webkit and opera sometimes return 'normal' as the line height. In that
-							// case, webkit uses offsetHeight, while Opera falls back to 18
+					if (span === ' ') {
+						spanNo++;
+						if(lineNo) {
 							lineHeight = win[GET_COMPUTED_STYLE] &&
-								win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height');
-							
+							win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height');
+						
 							if (!lineHeight || isNaN(lineHeight)) {
 								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
 							}
-							attr(tspan, 'dy', lineHeight);
-						}
-						lastLine = tspan; // record for use in next line						
-					}
-					
-					// add attributes
-					attr(tspan, attributes);
-					
-					// append it
-					textNode.appendChild(tspan);
-					
-					spanNo++;
-					
-					// check width and apply soft breaks
-					if (width) {
-						var words = span.replace(/-/g, '- ').split(' '),
-							tooLong,
-							actualWidth,
-							rest = [];
 							
-						while (words.length || rest.length) {
-							actualWidth = textNode.getBBox().width;
-							tooLong = actualWidth > width;
-							if (!tooLong || words.length == 1) { // new line needed
-								words = rest;
-								rest = [];
-								if (words.length) {
-									tspan = doc.createElementNS(SVG_NS, 'tspan');
-									attr(tspan, {
-										dy: textLineHeight || 16,
-										x: parentX
-									});
-									textNode.appendChild(tspan);
+							if (lineHeight) {
+								var lineHeightInt = pInt(lineHeight);
 								
-									if (actualWidth > width) { // a single word is pressing it out
-										width = actualWidth;
-									}
+								if(!isNaN(lineHeightInt)) {
+									extraHeight += lineHeightInt;
 								}
-							} else { // append to existing line tspan
-								tspan.removeChild(tspan.firstChild);
-								rest.unshift(words.pop());							
 							}
-							if (words.length) {
-								tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+						}
+					} else {
+						// issue #38 workaround.
+						if (reverse) {
+							arr = [];
+							i = span.length;
+							while (i--) {
+								arr.push(span.charAt(i))
 							}
+							span = arr.join('');
+						}
+					
+						// add the text node
+						tspan.appendChild(doc.createTextNode(span));
+					
+						if (!spanNo) { // first span in a line, align it to the left
+							attributes.x = parentX;
+						} else {
+							// Firefox ignores spaces at the front or end of the tspan
+							attributes.dx = 3; // space
+						}
+					
+						// first span on subsequent line, add the line height
+						if (!spanNo) {						
+							if (lineNo) {
+							
+								// allow getting the right offset height in exporting in IE
+								if (!hasSVG && wrapper.renderer.forExport) {
+									css(tspan, { display: 'block' });
+								};
+								
+								// Webkit and opera sometimes return 'normal' as the line height. In that
+								// case, webkit uses offsetHeight, while Opera falls back to 18
+								lineHeight = win[GET_COMPUTED_STYLE] &&
+									win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height');
+							
+								if (!lineHeight || isNaN(lineHeight)) {
+									lineHeight = textLineHeight || lastLine.offsetHeight || 18;
+								}
+								
+								var totalHeight = pInt(lineHeight) + extraHeight;
+
+								attr(tspan, 'dy', totalHeight);
+							}
+							lastLine = tspan; // record for use in next line						
+						}
+					
+						// add attributes
+						attr(tspan, attributes);
+					
+						// append it
+						textNode.appendChild(tspan);
+					
+						spanNo++;
+					
+						// check width and apply soft breaks
+						if (width) {
+							var words = span.replace(/-/g, '- ').split(' '),
+								tooLong,
+								actualWidth,
+								rest = [];
+							
+							while (words.length || rest.length) {
+								try {
+									actualWidth = textNode.getBBox().width;
+								} catch(err) {
+									// if the text node isn't visible, then we get an error thrown
+									// catch it and just set the actual width to be 0, when it becomes 
+									// visible, it will force a redraw
+									actualWidth = 0;
+								}
+								tooLong = actualWidth > width;
+								if (!tooLong || words.length == 1) { // new line needed
+									words = rest;
+									rest = [];
+									if (words.length) {
+										tspan = doc.createElementNS(SVG_NS, 'tspan');
+										attr(tspan, {
+											dy: textLineHeight || 16,
+											x: parentX
+										});
+										textNode.appendChild(tspan);
+								
+										if (actualWidth > width) { // a single word is pressing it out
+											width = actualWidth;
+										}
+									}
+								} else { // append to existing line tspan
+									tspan.removeChild(tspan.firstChild);
+									rest.unshift(words.pop());							
+								}
+								if (words.length) {
+									tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+								}
+							}
+							extraHeight = 0;
 						}
 					}
 				}
