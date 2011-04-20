@@ -4131,7 +4131,12 @@ function Chart (options, callback) {
 						!horiz && plotWidth / 2,
 					css,
 					label = this.label,
-					value = categories && defined(categories[pos]) ? categories[pos] : pos;
+					value = categories && defined(categories[pos]) ? categories[pos] : pos,
+					showLabelCheckboxes = labelOptions.showLabelCheckboxes || 
+                        function() {
+                            return false;
+                        },
+                    checkboxClick = labelOptions.checkboxClick || function() { };
 					
 				
 				// get the string
@@ -4139,7 +4144,8 @@ function Chart (options, callback) {
 						isFirst: pos == tickPositions[0],
 						isLast: pos == tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: isLog ? lin2log(value) : value
+						value: isLog ? lin2log(value) : value,
+						categories: categories
 					});
 				
 				// prepare CSS
@@ -4163,7 +4169,48 @@ function Chart (options, callback) {
 								.css(css)
 								.add(axisGroup):
 							null;
+					if(axis.isXAxis && showLabelCheckboxes.call({
+                            isFirst: pos == tickPositions[0],
+                            isLast: pos == tickPositions[tickPositions.length - 1],
+                            pos: pos,
+                            value: (categories && categories[pos] ? categories[pos] : pos)
+                        
+                        })) {
+                    	
+                        this.label.checkbox = createElement('input', {
+                            type: 'checkbox', 
+                            checked: false,
+                            defaultChecked: false // required by IE7
+                        }, options.itemCheckboxStyel, container);
 							
+                        if(labelOptions.checkboxIDPrefix) {
+                        	var checkboxID = labelOptions.checkboxIDPrefix + '_' + pos;
+                        	this.label.checkbox.id = checkboxID;
+                        }
+                        
+                        var theLabel = this.label;
+                        theLabel.select = function(event) {
+                            checkboxClick.call({
+                            	event: event,
+                            	chart: chart,
+                                isFirst: pos == tickPositions[0],
+                                isLast: pos == tickPositions[tickPositions.length - 1],
+                                pos: pos,
+                                value: (categories && categories[pos] ? categories[pos] : pos)
+                            });
+                        };
+							
+                        addEvent(theLabel.checkbox, 'click', function(event) {
+                            var target = event.target;
+                            fireEvent(theLabel, 'labelCheckboxClick', {
+                                    checked: target.checked
+                                },
+                                function() {
+                                    theLabel.select(event);
+                                }
+                            );
+                        });
+                    }
 				// update
 				} else if (label) {
 					label.attr({ text: str })
@@ -4280,6 +4327,8 @@ function Chart (options, callback) {
 				
 				// the label is created on init - now move it into place
 				if (label && !isNaN(x)) {
+                    var originalX = x;
+                    var originalY = y;
 					x = x + labelOptions.x - (tickmarkOffset && horiz ? 
 						tickmarkOffset * transA * (reversed ? -1 : 1) : 0); 
 					y = y + labelOptions.y - (tickmarkOffset && !horiz ? 
@@ -4295,10 +4344,53 @@ function Chart (options, callback) {
 					if (staggerLines) {
 						y += (index / (step || 1) % staggerLines) * 16;
 					}
+					
+					var showLabel = true;
 					// apply step
 					if (step) {
 						// show those indices dividable by step 
-						label[index % step ? 'hide' : 'show']();
+						showLabel = index % step;
+						label[showLabel ? 'hide' : 'show']();
+					}
+					
+					if (showLabel && label.checkbox) {
+                        var checkbox = label.checkbox;
+                        var checkboxX, checkboxY;
+
+                        var labelWidth = label.getBBox().width;
+                        
+                        if (horiz) {
+	                        var maxLabelHeight = 0;
+	                        
+	                        for(labelIndex in ticks) {
+	                        	var h = ticks[labelIndex].label.getBBox().height;
+	                        	
+	                        	if(h > maxLabelHeight) {
+	                        		maxLabelHeight = h;
+	                        	}
+	                        }
+	                        
+	                        var labelHeight = maxLabelHeight;
+	                        
+	                        if(staggerLines) {
+	                        	labelHeight += (staggerLines - 1) * 16
+	                        }
+	                        
+	                        checkboxX = originalX - (tickmarkOffset && horiz ? tickmarkOffset * transA * (reversed ? -1 : 1) : 0) - 13;
+	                        checkboxY = originalY - (tickmarkOffset && !horiz ? tickmarkOffset * transA * (reversed ? 1 : -1) : 0) + labelHeight;
+                        } else {
+                        	checkboxX = x - 13;
+                        	checkboxY = y - 13;
+                        	x -= 16;
+						}
+					
+                        css(checkbox, {
+                            position: 'absolute',
+                            height: 13 +PX,
+                            width: 13 + PX,
+                            left: (checkboxX) +PX,
+                            top: (checkboxY) + PX 
+                        });
 					}
 					
 					label[tick.isNew ? 'attr' : 'animate']({
@@ -4315,6 +4407,9 @@ function Chart (options, callback) {
 			destroy: function() {
 				var tick = this,
 					n;
+				if(tick && tick.label && tick.label.checkbox) {
+					discardElement(tick.label.checkbox);
+				}
 				for (n in tick) {
 					if (tick[n] && tick[n].destroy) {
 						tick[n].destroy();
@@ -5321,10 +5416,16 @@ function Chart (options, callback) {
 			// handle automatic or user set offset
 			offset = directionFactor * (options.offset || axisOffset[side]);
 			
+			var checkboxOffset = 0;
+            
+            if (options.labels.showLabelCheckboxes) {
+                checkboxOffset = 13;
+            }
+            
 			axisTitleMargin = 
 				labelOffset +
 				(side != 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) + 
-				titleMargin;
+				titleMargin + checkboxOffset;
 			
 			axisOffset[side] = mathMax(
 				axisOffset[side], 
