@@ -6727,24 +6727,30 @@ function Chart (options, callback) {
 					)
 					.css(item.visible ? itemStyle : itemHiddenStyle)
 					.on('mouseover', function() {
-						item.setState(HOVER_STATE);
-						li.css(itemHoverStyle);
+						if (!item.disableOnClick) {
+							item.setState(HOVER_STATE);
+							li.css(itemHoverStyle);
+						}
 					})
 					.on('mouseout', function() {
-						li.css(item.visible ? itemStyle : itemHiddenStyle);
-						item.setState();
+						if (!item.disableOnClick) {
+							li.css(item.visible ? itemStyle : itemHiddenStyle);
+							item.setState();
+						}
 					})
 					.on('click', function(event) {
-						var strLegendItemClick = 'legendItemClick',
-							fnLegendItemClick = function() {
-								item.setVisible();
-							};
+						if (!item.disableOnClick) {
+							var strLegendItemClick = 'legendItemClick',
+								fnLegendItemClick = function() {
+									item.setVisible();
+								};
 						
-						// click the name or symbol
-						if (item.firePointEvent) { // point
-							item.firePointEvent(strLegendItemClick, null, fnLegendItemClick);
-						} else {
-							fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
+							// click the name or symbol
+							if (item.firePointEvent) { // point
+								item.firePointEvent(strLegendItemClick, null, fnLegendItemClick);
+							} else {
+								fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
+							}
 						}
 					})
 					.attr({ zIndex: 2 })
@@ -6889,25 +6895,51 @@ function Chart (options, callback) {
 					.add();
 			}
 			
+			if(chart.options.legend.items) {
+				each(chart.options.legend.items, function(item) {
+					if(item.pointAttr === undefined) {
+						item.pointAttr = [];
 			
-			// add HTML for each series
-			if (reversedLegend) {
-				series.reverse();
-			}
-			each(series, function(serie) {
-				if (!serie.options.showInLegend) {
-					return;
-				}
-				
-				// use points or series for the legend item depending on legendType
-				var items = (serie.options.legendType == 'point') ?
-					serie.data : [serie];
+						item.pointAttr[NORMAL_STATE] = {	
+								stroke: '#FFFFFF',
+								fill: item.color
+							};
 						
-				// render all items
-				each(items, renderItem);
-			});
-			if (reversedLegend) { // restore
-				series.reverse();
+						item.pointAttr[HOVER_STATE] = {
+								stroke: '#FFFFFF',
+								fill: item.color
+							};
+					};
+			
+					if (item.setVisible === undefined) {
+						item.disableOnClick = true;
+					}
+					
+					if (item.setState === undefined) {
+						item.setState = function(state) { };
+					}
+				});
+				each(chart.options.legend.items, renderItem);
+			} else {
+				// add HTML for each series
+				if (reversedLegend) {
+					series.reverse();
+				}
+				each(series, function(serie) {
+					if (!serie.options.showInLegend) {
+						return;
+					}
+				
+					// use points or series for the legend item depending on legendType
+					var items = (serie.options.legendType == 'point') ?
+						serie.data : [serie];
+							
+					// render all items
+					each(items, renderItem);
+				});
+				if (reversedLegend) { // restore
+					series.reverse();
+				}
 			}
 			
 			
