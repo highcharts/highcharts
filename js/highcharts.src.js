@@ -816,6 +816,7 @@ defaultOptions = {
 			//dashStyle: null,
 			//enableMouseTracking: true,
 			events: {},
+			//legendIndex: 0, // docs (+ pie points)
 			lineWidth: 2,
 			shadow: true,
 			// stacking: null,
@@ -6703,7 +6704,7 @@ function Chart (options, callback) {
 					
 			
 			// add it all to an array to use below
-			allItems.push(item);
+			//allItems.push(item);
 		}
 
 		/**
@@ -6717,8 +6718,6 @@ function Chart (options, callback) {
 			offsetWidth = 0;
 			lastItemY = 0;
 			
-			allItems = [];
-			
 			if (!legendGroup) {
 				legendGroup = renderer.g('legend')
 					.attr({ zIndex: 7 })
@@ -6726,25 +6725,35 @@ function Chart (options, callback) {
 			}
 			
 			
-			// add HTML for each series
-			if (reversedLegend) {
-				series.reverse();
-			}
+			// add each series or point
+			allItems = [];
 			each(series, function(serie) {
-				if (!serie.options.showInLegend) {
+				var seriesOptions = serie.options;
+				
+				if (!seriesOptions.showInLegend) {
 					return;
 				}
 				
 				// use points or series for the legend item depending on legendType
-				var items = (serie.options.legendType == 'point') ?
-					serie.data : [serie];
-						
-				// render all items
-				each(items, renderItem);
+				allItems = allItems.concat(seriesOptions.legendType == 'point' ?
+					serie.data : 
+					serie
+				);
+				
 			});
-			if (reversedLegend) { // restore
-				series.reverse();
+			
+			// sort by legendIndex
+			allItems.sort(function(a, b) {
+				return (a.options.legendIndex || 0) - (b.options.legendIndex || 0);
+			});
+			
+			// reversed legend
+			if (reversedLegend) {
+				allItems.reverse();
 			}
+			
+			// render the items
+			each(allItems, renderItem);
 			
 			
 			
