@@ -10061,10 +10061,10 @@ var ColumnSeries = extendClass(Series, {
 							}
 						})
 						.css(css)
-						.add(chart.trackerGroup);
+						.add(point.group || chart.trackerGroup); // pies have point group - see issue #118
 				}
 			}
-		});				
+		});
 	},
 	
 	
