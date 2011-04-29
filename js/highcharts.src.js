@@ -8104,7 +8104,7 @@ Point.prototype = {
 	getLabelConfig: function() {
 		var point = this;
 		return {
-			x: point.x,
+			x: point.category,
 			y: point.y,
 			series: point.series,
 			point: point,
