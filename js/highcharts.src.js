@@ -5929,7 +5929,12 @@ function Chart (options, callback) {
 		 * @param {Object} e The event object in standard browsers
 		 */
 		function normalizeMouseEvent(e) {
-			var ePos;
+			var ePos,
+				pageZoomFix = isWebKit && doc.width / doc.documentElement.clientWidth - 1,
+				chartPosLeft,
+				chartPosTop,
+				chartX,
+				chartY;
 			
 			// common IE normalizing
 			e = e || win.event;
@@ -5941,25 +5946,36 @@ function Chart (options, callback) {
 			ePos = e.touches ? e.touches.item(0) : e;
 			
 			// in certain cases, get mouse position
-			if (e.type != 'mousemove' || win.opera) { // only Opera needs position on mouse move, see below
+			if (e.type != 'mousemove' || win.opera || pageZoomFix) { // only Opera needs position on mouse move, see below
 				chartPosition = getPosition(container);
+				chartPosLeft = chartPosition.left;
+				chartPosTop = chartPosition.top;
 			}
-
+			
 			// chartX and chartY
 			if (isIE) { // IE including IE9 that has chartX but in a different meaning
-				e.chartX = e.x;
-				e.chartY = e.y;
+				chartX = e.x;
+				chartY = e.y;
 			} else {
 				if (ePos.layerX === UNDEFINED) { // Opera and iOS
-					e.chartX = ePos.pageX - chartPosition.left;
-					e.chartY = ePos.pageY - chartPosition.top;
+					chartX = ePos.pageX - chartPosLeft;
+					chartY = ePos.pageY - chartPosTop;
 				} else {
-					e.chartX = e.layerX;
-					e.chartY = e.layerY;
+					chartX = e.layerX;
+					chartY = e.layerY;
 				}
 			}
 			
-			return e;
+			// correct for page zoom bug in WebKit
+			if (pageZoomFix) {
+				chartX += mathRound((pageZoomFix + 1) * chartPosLeft - chartPosLeft);
+				chartY += mathRound((pageZoomFix + 1) * chartPosTop - chartPosTop);
+			}
+			
+			return extend(e, {
+				chartX: chartX,
+				chartY: chartY
+			});
 		}
 		
 		/**
