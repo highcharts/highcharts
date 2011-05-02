@@ -3283,7 +3283,7 @@ var VMLElement = extendClass( SVGElement, {
 				}
 				
 				// correct x and y
-				lineHeight = mathRound(pInt(elem.style.fontSize || 12) * 1.2);
+				lineHeight = mathRound((pInt(elem.style.fontSize) || 12) * 1.2);
 				xCorr = costheta < 0 && -width;
 				yCorr = sintheta < 0 && -height;
 				
