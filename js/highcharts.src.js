@@ -10022,7 +10022,7 @@ var ColumnSeries = extendClass(Series, {
 		// draw the columns
 		each(series.data, function(point) {			
 			var plotY = point.plotY;
-			if (plotY !== UNDEFINED && !isNaN(plotY)) {
+			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
