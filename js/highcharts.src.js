@@ -6880,7 +6880,11 @@ function Chart (options, callback) {
 			hasCartesianSeries = serie.isCartesian;
 		}
 		
-		series.push(serie);
+		if (typeof (options.index) == 'number') {
+			series.splice(options.index, 0, serie);
+		} else {
+			series.push(serie);
+		}
 		
 		return serie;
 	}
@@ -8415,18 +8419,18 @@ Series.prototype = {
 	init: function(chart, options) {
 		var series = this,
 			eventType,
-			events,
+			events;
 			//pointEvent,
-			index = chart.series.length;
+			//index = chart.series.length;
 			
 		series.chart = chart;
 		options = series.setOptions(options); // merge with plotOptions
 		
 		// set some variables
 		extend(series, {
-			index: index,
+			index: typeof (options.index) == 'number' ? options.index : chart.series.length,
 			options: options,
-			name: options.name || 'Series '+ (index + 1),
+			name: options.name || 'Series '+ (chart.series.length + 1),
 			state: NORMAL_STATE,
 			pointAttr: {},
 			visible: options.visible !== false, // true by default
