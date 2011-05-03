@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Highcharts build file -->
+<project name="build" default="Usage">
+
+    <!-- Describes the usage of the build file by invoking -projecthelp. --> 
+    <target name="Usage">
+        <java classname="org.apache.tools.ant.Main">
+           <arg value="-projecthelp"/>
+           <arg value="-quiet"/>
+        </java>
+    </target>
+
+    <!-- Sets various properties needed during the build. -->
+    <target name="set.properties">
+        <!-- folder names -->
+        <property name="tools.dir" value="${basedir}/tools"/>
+        <property name="build.dir" value="${basedir}/build"/>
+        <property name="minify.dir" value="${build.dir}/minify"/>
+        <property name="testoutput.dir" value="${build.dir}/tests"/>
+        <property name="coveragereport.dir" value="${build.dir}/coverage-report"/>
+
+        <!-- highcharts src -->
+        <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
+        <property name="highcharts.src.name" value="highcharts.src.js"/>
+        <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}"/>
+
+        <!-- jsLint -->
+        <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
+        <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-1.4.7.jar"/>
+        <taskdef name="jslint"
+            classname="com.googlecode.jslint4java.ant.JSLintTask"
+            classpath="${jslint4java.jar}"/>
+
+        <!-- google closure compiler -->
+        <property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
+        <property name="gcc.jar" location="${gcc.dir}/compiler.jar" />
+        <taskdef name="jscomp"
+            classname="com.google.javascript.jscomp.ant.CompileTask"
+            classpath="${gcc.jar}"/>
+        <property name="gcc.output.name" value="highcharts.min-google.js"/>
+
+        <!-- YUI compressor -->
+        <property name="yuicomp.dir" value="${tools.dir}/yui-compressor"/>
+        <property name="yuicomp.jar" location="${yuicomp.dir}/yuicompressor-2.4.6.jar" />
+        <property name="yuicomp.output.name" value="highcharts.min-yui.js"/>
+
+        <!-- google js-test-driver -->
+        <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
+        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.2.jar"/>
+    </target>
+
+    <!-- Set up a clean build folder. -->
+    <target name="clean" depends="set.properties">
+        <mkdir dir="${build.dir}"/>
+        <delete includeemptydirs="true">
+            <fileset dir="${build.dir}" includes="**/*"/>
+        </delete>
+
+        <mkdir dir="${minify.dir}"/>
+        <mkdir dir="${testoutput.dir}"/>
+        <mkdir dir="${coveragereport.dir}"/>
+    </target>
+
+    <!-- Assembles the source parts into one file. -->
+    <target name="assemble" depends="clean">
+        <concat destfile="${highcharts.src.file}">
+            <filelist dir="${highcharts.parts.dir}">
+                <file name="Intro.js"/>
+                <file name="Globals.js"/>
+                <file name="Utilities.js"/>
+                <file name="Adapters.js"/>
+                <file name="PathAnimation.js"/>
+                <file name="Options.js"/>
+                <file name="ExtendClass.js"/>
+                <file name="Color.js"/>
+                <file name="Format.js"/>
+                <file name="GetPosition.js"/>
+                <file name="SvgElement.js"/>
+                <file name="SvgRenderer.js"/>
+                <file name="VmlRenderer.js"/>
+                <file name="ChooseRenderer.js"/>
+                <file name="Chart.js"/>
+                <file name="Point.js"/>
+                <file name="Series.js"/>
+                <file name="LineSeries.js"/>
+                <file name="AreaSeries.js"/>
+                <file name="SplineSeries.js"/>
+                <file name="AreaSplineSeries.js"/>
+                <file name="ColumnSeries.js"/>
+                <file name="BarSeries.js"/>
+                <file name="ScatterSeries.js"/>
+                <file name="PiePoint.js"/>
+                <file name="PieSeries.js"/>
+                <file name="Outro.js"/>
+            </filelist>
+        </concat>
+    </target>
+
+    <!-- Runs jslint on source code. -->
+    <target name="lint" depends="assemble">
+        <jslint haltOnFailure="false">
+            <formatter type="plain"/>
+            <fileset dir="${build.dir}" includes="${highcharts.src.name}" />
+        </jslint>
+    </target>
+
+    <!-- Runs minifiers on source code. -->
+    <target name="minify" depends="assemble">
+        <length file="${build.dir}/${highcharts.src.name}" property="input.length"/>
+        <echo message="Minifying with Google Closure compiler..."/>
+        <jscomp compilationLevel="simple" warning="quiet"
+            debug="false" output="${build.dir}/minify/${gcc.output.name}">
+            <sources dir="${build.dir}">
+                <file name="${highcharts.src.name}"/>
+            </sources>
+        </jscomp>
+        <length file="${build.dir}/minify/${gcc.output.name}" property="gcc.output.length"/>
+        <echo message="...done"/>
+
+        <echo message="Minifying with Yahoo YUI Compressor..."/>
+        <java jar="${yuicomp.jar}" fork="true">
+            <arg value="--type"/>
+            <arg value="js"/>
+            <arg value="-o"/>
+            <arg value="${build.dir}/minify/${yuicomp.output.name}"/>
+            <arg value="${build.dir}/${highcharts.src.name}"/>
+        </java>
+        <length file="${build.dir}/minify/${yuicomp.output.name}" property="yuicomp.output.length"/>
+        <echo message="...done"/>
+
+        <echo message=""/>
+        <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
+        <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes."/>
+    </target>
+
+    <!-- Builds the source and runts lint and minify. -->
+    <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
+    </target>
+
+    <!-- Starts the test driver server. -->
+    <target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
+        <exec executable="cmd" dir="${basedir}" >
+            <arg value="/k start java -jar ${jstestdriver.jar} --port 4224"/>
+        </exec>
+        <echo message="Test server started at localhost:4224"/>
+        <echo message="Before running tests, remember to capture one or more browsers."/>
+        <echo message="Exit the server by pressing Control-C in the java window."/>
+    </target>
+
+    <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
+    <target name="test" depends="set.properties" description="Runs the unit tests. The server must be running (i.e. 'start-server').">
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--config"/>
+            <arg value="jsTestDriver.conf"/>
+            <arg value="--testOutput"/>
+            <arg value="${testoutput.dir}"/>
+            <arg value="--tests"/>
+            <arg value="all"/>
+            <arg value="--verbose"/>
+        </java>
+    </target>
+
+    <!-- Starts the test driver server with coverage enabled. -->
+    <!-- This must be done on a separate port to the test-server. -->
+    <target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
+        <exec executable="cmd" dir="${basedir}" >
+            <arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225"/>
+        </exec>
+        <echo message="Coverage test server started at localhost:5225"/>
+        <echo message="Before running tests, remember to capture one or more browsers."/>
+        <echo message="Exit the server by pressing Control-C in the java window."/>
+    </target>
+
+    <!-- Runs coverage analysis for the tests. -->
+    <target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
+        <!-- Run the tests with coverage enabled. -->
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--config"/>
+            <arg value="jsTestDriverCoverage.conf"/>
+            <arg value="--testOutput"/>
+            <arg value="${testoutput.dir}"/>
+            <arg value="--tests"/>
+            <arg value="all"/>
+            <arg value="--verbose"/>
+        </java>
+    </target>
+
+    <!-- Generates a code-coverage report based on the output from the 'test-coverage' task. -->
+    <target name="test-report" depends="set.properties" description="Generates a code-coverage report based on the output from the 'test-coverage' task.">
+        <!-- When running on windows, the output from coverage is windows-style, but the report requires unix-style paths. -->
+        <!-- Replace dos-drive 'C:' with unix style '/C'. -->
+        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="SF:C:" value="SF:/C" summary="true"/>
+        <!-- Replace dos-paths '\' with unix style '/'. -->
+        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="\" value="/" summary="true"/>
+
+        <!-- Run perl and the genhtml script to create the report. -->
+        <exec executable="perl" dir="${basedir}">
+            <arg value="-w"/>
+            <arg value="tools/lcov-1.9/bin/genhtml"/>
+            <arg line="-o ${coveragereport.dir} --no-branch-coverage --no-function-coverage --legend --title 'Highcharts test coverage' build/tests/jsTestDriver.conf-coverage.dat"/>
+        </exec>
+
+        <!-- Point the browser to the report. -->
+        <property name="browser" location="C:/Program Files (x86)/Mozilla Firefox/firefox.exe"/>
+        <property name="file" location="${coveragereport.dir}/index.html"/>
+        <exec executable="${browser}" spawn="true">
+            <arg value="${file}"/>
+        </exec>
+    </target>
+</project>
