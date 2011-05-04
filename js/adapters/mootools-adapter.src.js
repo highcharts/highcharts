@@ -43,6 +43,8 @@ win.HighchartsAdapter = {
 				);
 			}
 			fxStart.apply(fx, arguments);
+			
+			return this; // chainable
 		};
 		
 		// override Fx.step to allow animation of SVG element wrappers
