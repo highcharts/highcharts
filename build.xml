@@ -100,17 +100,17 @@
     <target name="lint" depends="assemble">
         <jslint haltOnFailure="false">
             <formatter type="plain"/>
-            <fileset dir="${build.dir}" includes="${highcharts.src.name}" />
+            <fileset file="${highcharts.src.file}"/>
         </jslint>
     </target>
 
     <!-- Runs minifiers on source code. -->
     <target name="minify" depends="assemble">
-        <length file="${build.dir}/${highcharts.src.name}" property="input.length"/>
+        <length file="${highcharts.src.file}" property="input.length"/>
         <echo message="Minifying with Google Closure compiler..."/>
         <jscomp compilationLevel="simple" warning="quiet"
             debug="false" output="${build.dir}/minify/${gcc.output.name}">
-            <sources dir="${build.dir}">
+            <sources dir="${basedir}/js">
                 <file name="${highcharts.src.name}"/>
             </sources>
         </jscomp>
@@ -123,7 +123,7 @@
             <arg value="js"/>
             <arg value="-o"/>
             <arg value="${build.dir}/minify/${yuicomp.output.name}"/>
-            <arg value="${build.dir}/${highcharts.src.name}"/>
+            <arg value="${highcharts.src.file}"/>
         </java>
         <length file="${build.dir}/minify/${yuicomp.output.name}" property="yuicomp.output.length"/>
         <echo message="...done"/>
