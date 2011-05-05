@@ -308,6 +308,9 @@ extend(Chart.prototype, {
 			.replace(/class=([^" ]+)/g, 'class="$1"')
 			.replace(/ transform /g, ' ')
 			.replace(/:(path|rect)/g, '$1')
+			.replace(/<img ([^>]*)>/gi, '<image $1 />')
+			.replace(/width=(\d+)/g, 'width="$1"')
+			.replace(/height=(\d+)/g, 'height="$1"')
 			.replace(/style="([^"]+)"/g, function(s) {
 				return s.toLowerCase();
 			});

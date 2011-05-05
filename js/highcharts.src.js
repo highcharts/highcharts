@@ -2491,8 +2491,13 @@ SVGRenderer.prototype = {
 		elemWrapper = this.createElement('image').attr(attribs);		
 		
 		// set the href in the xlink namespace
-		elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
-			'href', src);
+		if (elemWrapper.element.setAttributeNS) {
+			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
+				'href', src);
+		} else {
+			// could be exporting in IE
+			elemWrapper.element.setAttribute('href', src);
+		}
 			
 		return elemWrapper;					
 	},
