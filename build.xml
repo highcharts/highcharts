@@ -147,7 +147,7 @@
     </target>
 
     <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
-    <target name="test" depends="set.properties" description="Runs the unit tests. The server must be running (i.e. 'start-server').">
+    <target name="test" depends="set.properties" description="Runs the unit tests. The server must be running (i.e. 'server').">
         <java jar="${jstestdriver.jar}" fork="true">
             <arg value="--config"/>
             <arg value="jsTestDriver.conf"/>
