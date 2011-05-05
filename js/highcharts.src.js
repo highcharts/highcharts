@@ -2488,7 +2488,7 @@ SVGRenderer.prototype = {
 			});
 		}
 		
-		elemWrapper = this.createElement('img').attr(attribs);		
+		elemWrapper = this.createElement('image').attr(attribs);		
 		
 		// set the href in the xlink namespace
 		if (elemWrapper.element.setAttributeNS) {
@@ -2496,7 +2496,7 @@ SVGRenderer.prototype = {
 				'href', src);
 		} else {
 			// could be exporting in IE
-			// requries regex shim to fix later
+			// using href throws "not supported" in ie7 and under, requries regex shim to fix later
 			elemWrapper.element.setAttribute('hc-svg-href', src);
 		}
 			
