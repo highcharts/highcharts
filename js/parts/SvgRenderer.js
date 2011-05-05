@@ -644,4 +644,6 @@ SVGRenderer.prototype = {
 	}
 }; // end SVGRenderer
 
+// general renderer
+Renderer = SVGRenderer;
 

@@ -78,7 +78,6 @@
                 <file name="SvgElement.js"/>
                 <file name="SvgRenderer.js"/>
                 <file name="VmlRenderer.js"/>
-                <file name="ChooseRenderer.js"/>
                 <file name="Chart.js"/>
                 <file name="Point.js"/>
                 <file name="Series.js"/>

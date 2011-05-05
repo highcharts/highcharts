@@ -1069,6 +1069,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		}
 	}
 });
+
+// general renderer
+Renderer = VMLRenderer;
 }
 /* **************************************************************************** 
  *                                                                            * 
