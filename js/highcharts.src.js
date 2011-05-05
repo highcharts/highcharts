@@ -327,6 +327,18 @@ function createElement (tag, attribs, styles, parent, nopad) {
 }
 
 /**
+ * Extend a prototyped class by new members
+ * @param {Object} parent
+ * @param {Object} members
+ */
+function extendClass(parent, members) {
+	var object = function(){};
+	object.prototype = new parent();
+	extend(object.prototype, members);
+	return object;
+}
+
+/**
  * Set the global animation to either a given value, or fall back to the 
  * given chart's animation option
  * @param {Object} animation
@@ -1208,19 +1220,6 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 
 // set the default time methods
 setTimeMethods();
-
-
-/**
- * Extend a prototyped class by new members
- * @param {Object} parent
- * @param {Object} members
- */
-function extendClass(parent, members) {
-	var object = function(){};
-	object.prototype = new parent();
-	extend(object.prototype, members);
-	return object;
-}
 
 
 /**
