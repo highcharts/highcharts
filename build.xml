@@ -72,7 +72,6 @@
                 <file name="PathAnimation.js"/>
                 <file name="Options.js"/>
                 <file name="Color.js"/>
-                <file name="SvgElement.js"/>
                 <file name="SvgRenderer.js"/>
                 <file name="VmlRenderer.js"/>
                 <file name="Chart.js"/>

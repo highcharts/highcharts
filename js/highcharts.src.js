@@ -1429,7 +1429,6 @@ var Color = function(input) {
 	};
 };
 
-
 /**
  * A wrapper object for SVG elements 
  */
@@ -2120,8 +2119,6 @@ SVGElement.prototype = {
 	
 	}
 };
-
-
 
 /**
  * The default SVG renderer
