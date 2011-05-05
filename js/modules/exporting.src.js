@@ -105,6 +105,7 @@ defaultOptions.exporting = {
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
 	width: 800,
+	enableImages: false,
 	buttons: {
 		exportButton: {
 			//enabled: true,
@@ -209,7 +210,10 @@ extend(Chart.prototype, {
 			forExport: true
 		});
 		options.exporting.enabled = false; // hide buttons in print
-		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
+
+		if (!options.exporting.enableImages) {
+			options.chart.plotBackgroundImage = null; // the converter doesn't handle images
+		}
 		
 		// prepare for replicating the chart
 		options.series = [];
@@ -220,9 +224,11 @@ extend(Chart.prototype, {
 			seriesOptions.showCheckbox = false;
 			seriesOptions.visible = serie.visible;
 			
-			// remove image markers
-			if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) { 
-				seriesOptions.marker.symbol = 'circle';
+			if (!options.exporting.enableImages) {
+				// remove image markers
+				if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) { 
+					seriesOptions.marker.symbol = 'circle';
+				}
 			}
 			
 			seriesOptions.data = [];
@@ -244,10 +250,12 @@ extend(Chart.prototype, {
 				pointOptions.visible = point.visible;
 				seriesOptions.data.push(pointOptions); // copy fresh updated data
 								
-				// remove image markers
-				pointMarker = point.config && point.config.marker;
-				if (pointMarker && /^url\(/.test(pointMarker.symbol)) { 
-					delete pointMarker.symbol;
+				if (!options.exporting.enableImages) {
+					// remove image markers
+					pointMarker = point.config && point.config.marker;
+					if (pointMarker && /^url\(/.test(pointMarker.symbol)) { 
+						delete pointMarker.symbol;
+					}
 				}
 			});	
 			
@@ -287,9 +295,9 @@ extend(Chart.prototype, {
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
 			.replace(/isTracker="[^"]+"/g, '')
 			.replace(/url\([^#]+#/g, 'url(#')
-			/*.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
-			.replace(/ href=/, ' xlink:href=')
-			.replace(/preserveAspectRatio="none">/g, 'preserveAspectRatio="none"/>')*/
+			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
+			.replace(/ href=/g, ' xlink:href=')
+			/*.replace(/preserveAspectRatio="none">/g, 'preserveAspectRatio="none"/>')*/
 			/* This fails in IE < 8
 			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
 				return s2 +'.'+ s3[0];

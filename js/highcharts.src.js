@@ -2522,7 +2522,8 @@ SVGRenderer.prototype = {
 			),
 			
 			imageRegex = /^url\((.*?)\)$/,
-			imageSrc;
+			imageSrc,
+			imageSize;
 			
 		if (path) {
 		
@@ -2542,7 +2543,18 @@ SVGRenderer.prototype = {
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
 			
+			function centerImage(img, size) {
+				img.attr({
+					width: size[0],
+					height: size[1]
+				}).translate(
+					-mathRound(size[0] / 2),
+					-mathRound(size[1] / 2)
+				);
+			}
+			
 			imageSrc = symbol.match(imageRegex)[1];
+			imageSize = symbolSizes[imageSrc];
 			
 			// create the image synchronously, add attribs async
 			obj = this.image(imageSrc)
@@ -2550,22 +2562,23 @@ SVGRenderer.prototype = {
 					x: x,
 					y: y
 				});
-			
-			// create a dummy JavaScript image to get the width and height  
-			createElement('img', {
-				onload: function() {
-					var img = this,
-						size = symbolSizes[img.src] || [img.width, img.height];
-					obj.attr({						
-						width: size[0],
-						height: size[1]
-					}).translate(
-						-mathRound(size[0] / 2),
-						-mathRound(size[1] / 2)
-					);
-				},
-				src: imageSrc
-			});
+
+			if (imageSize) {
+				centerImage(obj, imageSize);
+			} else {
+				// initialize image to be 0 size so export will still function if there's no cached sizes
+				obj.attr({ width: 0, height: 0 });
+
+				// create a dummy JavaScript image to get the width and height  
+				createElement('img', {
+					onload: function() {
+						var img = this;
+
+						centerImage(obj, symbolSizes[img.src] = [img.width, img.height]);
+					},
+					src: imageSrc
+				});
+			}
 				
 		// default circles
 		} else {
@@ -10808,4 +10821,3 @@ win.Highcharts = {
 	version: '2.1.4'
 };
 })();
-
