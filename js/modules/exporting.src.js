@@ -311,6 +311,7 @@ extend(Chart.prototype, {
 			.replace(/<img ([^>]*)>/gi, '<image $1 />')
 			.replace(/width=(\d+)/g, 'width="$1"')
 			.replace(/height=(\d+)/g, 'height="$1"')
+			.replace(/hc-svg-href="/g, 'xlink:href="')
 			.replace(/style="([^"]+)"/g, function(s) {
 				return s.toLowerCase();
 			});
