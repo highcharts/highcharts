@@ -75,7 +75,6 @@
                 <file name="SvgRenderer.js"/>
                 <file name="VmlRenderer.js"/>
                 <file name="Chart.js"/>
-                <file name="Point.js"/>
                 <file name="Series.js"/>
                 <file name="LineSeries.js"/>
                 <file name="AreaSeries.js"/>
@@ -84,7 +83,6 @@
                 <file name="ColumnSeries.js"/>
                 <file name="BarSeries.js"/>
                 <file name="ScatterSeries.js"/>
-                <file name="PiePoint.js"/>
                 <file name="PieSeries.js"/>
                 <file name="Outro.js"/>
             </filelist>

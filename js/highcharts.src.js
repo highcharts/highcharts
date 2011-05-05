@@ -7990,7 +7990,6 @@ function Chart (options, callback) {
 
 // Hook for exporting module
 Chart.prototype.callbacks = [];
-
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
