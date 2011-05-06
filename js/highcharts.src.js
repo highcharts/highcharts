@@ -7849,11 +7849,12 @@ function Chart (options, callback) {
 
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
-		var onreadystatechange = 'onreadystatechange';
-		if (!hasSVG && win == win.top && doc.readyState != 'complete') {
-			doc.attachEvent(onreadystatechange, function() {
-				if (doc.readyState == 'complete') {
-					doc.detachEvent(onreadystatechange, firstRender);
+		var ONREADYSTATECHANGE = 'onreadystatechange',
+			COMPLETE = 'complete';
+		if (!hasSVG && win == win.top && doc.readyState != COMPLETE) {
+			doc.attachEvent(ONREADYSTATECHANGE, function() {
+				doc.detachEvent(ONREADYSTATECHANGE, firstRender);
+				if (doc.readyState == COMPLETE) {
 					firstRender();
 				}
 			});
