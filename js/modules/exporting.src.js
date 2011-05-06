@@ -309,7 +309,8 @@ extend(Chart.prototype, {
 			.replace(/ transform /g, ' ')
 			.replace(/:(path|rect)/g, '$1')
 			.replace(/<img ([^>]*)>/gi, '<image $1 />')
-			.replace(/<image ([^>]*)>/gi, '<image $1 />') // closes image tags for firefox
+			.replace(/<\/image>/g, '') // remove closing tags for images as they'll never have any content
+			.replace(/<image ([^>]*)([^\/])>/gi, '<image $1$2 />') // closes image tags for firefox
 			.replace(/width=(\d+)/g, 'width="$1"')
 			.replace(/height=(\d+)/g, 'height="$1"')
 			.replace(/hc-svg-href="/g, 'xlink:href="')
