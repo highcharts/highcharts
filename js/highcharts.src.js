@@ -2575,7 +2575,7 @@ SVGRenderer.prototype = {
 					onload: function() {
 						var img = this;
 
-						centerImage(obj, symbolSizes[img.src] = [img.width, img.height]);
+						centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]);
 					},
 					src: imageSrc
 				});
