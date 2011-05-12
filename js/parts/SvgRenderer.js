@@ -62,14 +62,14 @@ SVGElement.prototype = {
 		// used as a getter: first argument is a string, second is undefined
 		if (isString(hash)) {
 			key = hash;
-			if (nodeName == 'circle') {
+			if (nodeName === 'circle') {
 				key = { x: 'cx', y: 'cy' }[key] || key;
-			} else if (key == 'strokeWidth') {
+			} else if (key === 'strokeWidth') {
 				key = 'stroke-width';
 			}
 			ret = attr(element, key) || this[key] || 0;
 			
-			if (key != 'd' && key != 'visibility') { // 'd' is string in animation step
+			if (key !== 'd' && key !== 'visibility') { // 'd' is string in animation step
 				ret = parseFloat(ret);
 			}
 			
@@ -81,7 +81,7 @@ SVGElement.prototype = {
 				value = hash[key];
 				
 				// paths
-				if (key == 'd') {
+				if (key === 'd') {
 					if (value && value.join) { // join path
 						value = value.join(' ');
 					}					
@@ -91,11 +91,11 @@ SVGElement.prototype = {
 					this.d = value; // shortcut for animations
 					
 				// update child tspans x values
-				} else if (key == 'x' && nodeName == 'text') { 
+				} else if (key === 'x' && nodeName === 'text') { 
 					for (i = 0; i < element.childNodes.length; i++ ) {
 						child = element.childNodes[i];
 						// if the x values are equal, the tspan represents a linebreak
-						if (attr(child, 'x') == attr(element, 'x')) {
+						if (attr(child, 'x') === attr(element, 'x')) {
 							//child.setAttribute('x', value);
 							attr(child, 'x', value);
 						}
@@ -107,28 +107,28 @@ SVGElement.prototype = {
 					}
 					
 				// apply gradients
-				} else if (key == 'fill') {
+				} else if (key === 'fill') {
 					value = renderer.color(value, element, key);
 				
 				// circle x and y
-				} else if (nodeName == 'circle' && (key == 'x' || key == 'y')) {
+				} else if (nodeName === 'circle' && (key === 'x' || key === 'y')) {
 					key = { x: 'cx', y: 'cy' }[key] || key;
 					
 				// translation and text rotation
-				} else if (key == 'translateX' || key == 'translateY' || key == 'rotation' || key == 'verticalAlign') {
+				} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'verticalAlign') {
 					this[key] = value;
 					this.updateTransform();
 					skipAttr = true;
 	
 				// apply opacity as subnode (required by legacy WebKit and Batik)
-				} else if (key == 'stroke') {
+				} else if (key === 'stroke') {
 					value = renderer.color(value, element, key);
 					
 				// emulate VML's dashstyle implementation
-				} else if (key == 'dashstyle') {
+				} else if (key === 'dashstyle') {
 					key = 'stroke-dasharray';
 					value = value && value.toLowerCase();
-					if (value == 'solid') {
+					if (value === 'solid') {
 						value = NONE;
 					} else if (value) {
 						value = value
@@ -151,16 +151,16 @@ SVGElement.prototype = {
 					}	
 					
 				// special
-				} else if (key == 'isTracker') {
+				} else if (key === 'isTracker') {
 					this[key] = value;
 				
 				// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
 				// is unable to cast them. Test again with final IE9.
-				} else if (key == 'width') {
+				} else if (key === 'width') {
 					value = pInt(value);
 				
 				// Text alignment
-				} else if (key == 'align') {
+				} else if (key === 'align') {
 					key = 'text-anchor';
 					value = { left: 'start', center: 'middle', right: 'end' }[value];
 				}
@@ -168,12 +168,12 @@ SVGElement.prototype = {
 				
 				
 				// jQuery animate changes case
-				if (key == 'strokeWidth') {
+				if (key === 'strokeWidth') {
 					key = 'stroke-width';
 				}
 				
 				// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)				
-				if (isWebKit && key == 'stroke-width' && value === 0) {
+				if (isWebKit && key === 'stroke-width' && value === 0) {
 					value = 0.000001;
 				}
 				
@@ -197,11 +197,11 @@ SVGElement.prototype = {
 				}
 				
 				// validate heights
-				if ((key == 'width' || key == 'height') && nodeName == 'rect' && value < 0) {
+				if ((key === 'width' || key === 'height') && nodeName === 'rect' && value < 0) {
 					value = 0;
 				}
 				
-				if (key == 'text') {
+				if (key === 'text') {
 					// only one node allowed
 					this.textStr = value;
 					if (this.added) {
@@ -278,7 +278,7 @@ SVGElement.prototype = {
 		values.strokeWidth = strokeWidth;
 		
 		for (key in values) {
-			if (wrapper[key] != values[key]) { // only set attribute if changed
+			if (wrapper[key] !== values[key]) { // only set attribute if changed
 				wrapper[key] = attr[key] = values[key];
 			}
 		}
@@ -293,7 +293,7 @@ SVGElement.prototype = {
 	css: function(styles) {
 		var elemWrapper = this,
 			elem = elemWrapper.element,
-			textWidth = styles && styles.width && elem.nodeName == 'text',
+			textWidth = styles && styles.width && elem.nodeName === 'text',
 			camelStyles = styles,
 			n;
 			
@@ -349,12 +349,12 @@ SVGElement.prototype = {
 	on: function(eventType, handler) {
 		var fn = handler;
 		// touch
-		if (hasTouch && eventType == 'click') {
+		if (hasTouch && eventType === 'click') {
 			eventType = 'touchstart';
 			fn = function(e) {
 				e.preventDefault();
 				handler();
-			}
+			};
 		}
 		// simplest possible event model for internal use
 		this.element['on'+ eventType] = fn;
@@ -486,7 +486,7 @@ SVGElement.prototype = {
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
 	getBBox: function() {		
-		var	bBox,
+		var bBox,
 			width,
 			height,
 			rotation = this.rotation,
@@ -574,7 +574,7 @@ SVGElement.prototype = {
 			for (i = 0; i < childNodes.length; i++) {
 				otherElement = childNodes[i];
 				otherZIndex = attr(otherElement, 'zIndex');
-				if (otherElement != element && (
+				if (otherElement !== element && (
 						// insert before the first element with a higher zIndex
 						pInt(otherZIndex) > zIndex || 
 						// if no zIndex given, insert before the first element with a zIndex
@@ -758,7 +758,7 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection == 'rtl' && !this.forExport, // issue #38
+			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && !this.forExport, // issue #38
 			arr,
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles['line-height'],
@@ -782,7 +782,7 @@ SVGRenderer.prototype = {
 			spans = line.split('|||');
 			
 			each(spans, function (span) {
-				if (span !== '' || spans.length == 1) {
+				if (span !== '' || spans.length === 1) {
 					var attributes = {},
 						tspan = doc.createElementNS(SVG_NS, 'tspan');
 					if (styleRegex.test(span)) {
@@ -804,7 +804,7 @@ SVGRenderer.prototype = {
 						arr = [];
 						i = span.length;
 						while (i--) {
-							arr.push(span.charAt(i))
+							arr.push(span.charAt(i));
 						}
 						span = arr.join('');
 					}
@@ -826,7 +826,7 @@ SVGRenderer.prototype = {
 							// allow getting the right offset height in exporting in IE
 							if (!hasSVG && wrapper.renderer.forExport) {
 								css(tspan, { display: 'block' });
-							};
+							}
 							
 							// Webkit and opera sometimes return 'normal' as the line height. In that
 							// case, webkit uses offsetHeight, while Opera falls back to 18
@@ -859,7 +859,7 @@ SVGRenderer.prototype = {
 						while (words.length || rest.length) {
 							actualWidth = textNode.getBBox().width;
 							tooLong = actualWidth > width;
-							if (!tooLong || words.length == 1) { // new line needed
+							if (!tooLong || words.length === 1) { // new line needed
 								words = rest;
 								rest = [];
 								if (words.length) {
@@ -898,10 +898,10 @@ SVGRenderer.prototype = {
 	crispLine: function(points, width) {
 		// points format: [M, 0, 0, L, 100, 0]
 		// normalize to a crisp line
-		if (points[1] == points[4]) {
+		if (points[1] === points[4]) {
 			points[1] = points[4] = mathRound(points[1]) + (width % 2 / 2);
 		}
-		if (points[2] == points[5]) {
+		if (points[2] === points[5]) {
 			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
 		}
 		return points;

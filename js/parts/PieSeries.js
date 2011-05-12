@@ -444,7 +444,8 @@ var PieSeries = extendClass(Series, {
 				for (j = 0; j < quarters[i].length; j++) {
 					point = quarters[i][j];
 					
-					if ((dataLabel = point.dataLabel)) {
+					dataLabel = point.dataLabel;
+					if (dataLabel) {
 						labelPos = point.labelPos;
 						visibility = VISIBLE;
 						x = labelPos[0];
@@ -479,7 +480,7 @@ var PieSeries = extendClass(Series, {
 							visibility = HIDDEN;
 						}
 						
-						if (visibility == VISIBLE) {
+						if (visibility === VISIBLE) {
 							lastY = y;
 						}
 							
@@ -490,8 +491,7 @@ var PieSeries = extendClass(Series, {
 								.attr({
 									visibility: visibility,
 									align: labelPos[6]
-								})
-								[dataLabel.moved ? 'animate' : 'attr']({
+								})[dataLabel.moved ? 'animate' : 'attr']({
 									x: x + options.x + 
 										({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
 									y: y + options.y
@@ -504,7 +504,7 @@ var PieSeries = extendClass(Series, {
 									
 								connectorPath = [
 									M,
-									x + (labelPos[6] == 'left' ? 5 : -5), y, // end of the string at the label
+									x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 									L,
 									x, y, // first break, next to the label
 									L,

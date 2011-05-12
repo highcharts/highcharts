@@ -26,5 +26,5 @@ win.Highcharts = {
 	extendClass: extendClass,
 	version: '2.1.4'
 };
-})();
+}());
 

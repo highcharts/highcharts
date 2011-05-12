@@ -15,13 +15,17 @@ var Color = function(input) {
 	function init(input) {
 		
 		// rgba
-		if((result = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/.exec(input))) {
+		result = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/.exec(input);
+		if (result) {
 			rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
 		}
 
 		// hex
-		else if((result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(input))) {
-			rgba = [pInt(result[1],16), pInt(result[2],16), pInt(result[3],16), 1];
+		else {
+			result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(input);
+			if (result) {
+				rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
+			}
 		}
 	
 	}
@@ -34,9 +38,9 @@ var Color = function(input) {
 		
 		// it's NaN if gradient colors on a column chart
 		if (rgba && !isNaN(rgba[0])) {
-			if (format == 'rgb') {
+			if (format === 'rgb') {
 				ret = 'rgb('+ rgba[0] +','+ rgba[1] +','+ rgba[2] +')';
-			} else if (format == 'a') {
+			} else if (format === 'a') {
 				ret = rgba[3];
 			} else {
 				ret = 'rgba('+ rgba.join(',') +')';

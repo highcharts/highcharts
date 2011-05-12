@@ -25,7 +25,9 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Function} fn
 	 */
 	each = function(arr, fn) {
-		for (var i = 0, len = arr.length; i < len; i++) {
+		var i = 0, 
+			len = arr.length;
+		for (; i < len; i++) {
 			if (fn.call(arr[i], arr[i], i, arr) === false) {
 				return i;
 			}
@@ -44,8 +46,9 @@ if (!globalAdapter && win.jQuery) {
 	 */
 	map = function(arr, fn){
 		//return jQuery.map(arr, fn);
-		var results = [];
-		for (var i = 0, len = arr.length; i < len; i++) {
+		var results = [],
+			i = 0, len = arr.length;
+		for (; i < len; i++) {
 			results[i] = fn.call(arr[i], arr[i], i, arr);
 		}
 		return results;

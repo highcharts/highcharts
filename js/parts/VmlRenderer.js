@@ -27,18 +27,18 @@ var VMLElement = extendClass( SVGElement, {
 			style = ['position: ', ABSOLUTE, ';'];
 		
 		// divs and shapes need size
-		if (nodeName == 'shape' || nodeName == DIV) {
+		if (nodeName === 'shape' || nodeName === DIV) {
 			style.push('left:0;top:0;width:10px;height:10px;');
 		}
 		if (docMode8) {
-			style.push('visibility: ', nodeName == DIV ? HIDDEN : VISIBLE);
+			style.push('visibility: ', nodeName === DIV ? HIDDEN : VISIBLE);
 		}
 		
 		markup.push(' style="', style.join(''), '"/>');
 		
 		// create element with default attributes and style
 		if (nodeName) {
-			markup = nodeName == DIV || nodeName == 'span' || nodeName == 'img' ? 
+			markup = nodeName === DIV || nodeName === 'span' || nodeName === 'img' ? 
 				markup.join('')
 				: renderer.prepVML(markup);
 			this.element = createElement(markup);
@@ -70,7 +70,7 @@ var VMLElement = extendClass( SVGElement, {
 		}
 		
 		// issue #140 workaround - related to #61 and #74
-		if (docMode8 && parentNode.gVis == HIDDEN) {
+		if (docMode8 && parentNode.gVis === HIDDEN) {
 			css(element, { visibility: HIDDEN });
 		}
 		
@@ -114,7 +114,7 @@ var VMLElement = extendClass( SVGElement, {
 		// used as a getter, val is undefined
 		if (isString(hash)) {
 			key = hash;
-			if (key == 'strokeWidth' || key == 'stroke-width') {
+			if (key === 'strokeWidth' || key === 'stroke-width') {
 				ret = this.strokeweight;
 			} else {
 				ret = this[key];
@@ -140,7 +140,7 @@ var VMLElement = extendClass( SVGElement, {
 					
 					skipAttr = true;
 					
-				} else if (key == 'd') {
+				} else if (key === 'd') {
 					value = value || [];
 					this.d = value.join(' '); // used in getter for animation
 					
@@ -156,7 +156,7 @@ var VMLElement = extendClass( SVGElement, {
 							convertedPath[i] = mathRound(value[i] * 10) - 5;
 						}
 						// close the path
-						else if (value[i] == 'Z') {
+						else if (value[i] === 'Z') {
 							convertedPath[i] = 'x';
 						} 
 						else {
@@ -177,17 +177,17 @@ var VMLElement = extendClass( SVGElement, {
 					skipAttr = true;
 	
 				// directly mapped to css
-				} else if (key == 'zIndex' || key == 'visibility') {
+				} else if (key === 'zIndex' || key === 'visibility') {
 					
 					// issue 61 workaround
-					if (docMode8 && key == 'visibility' && nodeName == 'DIV') {
+					if (docMode8 && key === 'visibility' && nodeName === 'DIV') {
 						element.gVis = value;
 						childNodes = element.childNodes;
 						i = childNodes.length;
 						while (i--) {
 							css(childNodes[i], { visibility: value });
 						}
-						if (value == VISIBLE) { // issue 74
+						if (value === VISIBLE) { // issue 74
 							value = null;
 						}
 					}
@@ -221,7 +221,7 @@ var VMLElement = extendClass( SVGElement, {
 
 					this[key] = value; // used in getter
 					
-					if (element.tagName == 'SPAN') {
+					if (element.tagName === 'SPAN') {
 						this.updateTransform();
 					
 					} else {
@@ -229,19 +229,19 @@ var VMLElement = extendClass( SVGElement, {
 					}
 					
 				// class name
-				} else if (key == 'class') {
+				} else if (key === 'class') {
 					// IE8 Standards mode has problems retrieving the className
 					element.className = value;
 			
 				// stroke
-				} else if (key == 'stroke') {
+				} else if (key === 'stroke') {
 					
 					value = renderer.color(value, element, key);				
 						
 					key = 'strokecolor';
 					
 				// stroke width
-				} else if (key == 'stroke-width' || key == 'strokeWidth') {
+				} else if (key === 'stroke-width' || key === 'strokeWidth') {
 					element.stroked = value ? true : false;
 					key = 'strokeweight';
 					this[key] = value; // used in getter, issue #113
@@ -250,7 +250,7 @@ var VMLElement = extendClass( SVGElement, {
 					}
 					
 				// dashStyle					 
-				} else if (key == 'dashstyle') {
+				} else if (key === 'dashstyle') {
 					var strokeElem = element.getElementsByTagName('stroke')[0] ||
 						createElement(renderer.prepVML(['<stroke/>']), null, null, element);
 					strokeElem[key] = value || 'solid';
@@ -259,12 +259,12 @@ var VMLElement = extendClass( SVGElement, {
 					skipAttr = true;
 					
 				// fill
-				} else if (key == 'fill') {
+				} else if (key === 'fill') {
 					
-					if (nodeName == 'SPAN') { // text color
+					if (nodeName === 'SPAN') { // text color
 						elemStyle.color = value;
 					} else {
-						element.filled = value != NONE ? true : false;
+						element.filled = value !== NONE ? true : false;
 						
 						value = renderer.color(value, element, key);
 						
@@ -272,8 +272,8 @@ var VMLElement = extendClass( SVGElement, {
 					}
 				
 				// translation for animation
-				} else if (key == 'translateX' || key == 'translateY' || key == 'rotation' || key == 'align') {
-					if (key == 'align') {
+				} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'align') {
+					if (key === 'align') {
 						key = 'textAlign';
 					}
 					this[key] = value;
@@ -283,7 +283,7 @@ var VMLElement = extendClass( SVGElement, {
 				}
 				
 				// text for rotated and non-rotated elements
-				else if (key == 'text') {
+				else if (key === 'text') {
 					this.bBox = null;
 					element.innerHTML = value;
 					skipAttr = true;
@@ -291,7 +291,7 @@ var VMLElement = extendClass( SVGElement, {
 				
 					
 				// let the shadow follow the main element
-				if (shadows && key == 'visibility') {
+				if (shadows && key === 'visibility') {
 					i = shadows.length;
 					while (i--) {
 						shadows[i].style[key] = value;
@@ -335,7 +335,7 @@ var VMLElement = extendClass( SVGElement, {
 	css: function(styles) {
 		var wrapper = this,
 			element = wrapper.element,
-			textWidth = styles && element.tagName == 'SPAN' && styles.width;
+			textWidth = styles && element.tagName === 'SPAN' && styles.width;
 		
 		/*if (textWidth) {
 			extend(styles, {
@@ -398,7 +398,7 @@ var VMLElement = extendClass( SVGElement, {
 		
 		if (!bBox) {
 			// faking getBBox in exported SVG in legacy IE
-			if (element.nodeName == 'text') {
+			if (element.nodeName === 'text') {
 				element.style.position = ABSOLUTE;
 			}
 			
@@ -448,7 +448,7 @@ var VMLElement = extendClass( SVGElement, {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			nonLeft = align && align != 'left';
+			nonLeft = align && align !== 'left';
 		
 		// apply translate
 		if (translateX || translateY) {
@@ -465,7 +465,7 @@ var VMLElement = extendClass( SVGElement, {
 			});
 		}
 		
-		if (elem.tagName == 'SPAN') {
+		if (elem.tagName === 'SPAN') {
 			
 			var width, height,
 				rotation = wrapper.rotation,
@@ -479,7 +479,7 @@ var VMLElement = extendClass( SVGElement, {
 				yCorr = wrapper.yCorr || 0,
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
 				
-			if (currentTextTransform != wrapper.cTT) { // do the calculations and DOM access only if properties changed
+			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
 				
 				if (defined(rotation)) {
 					radians = rotation * deg2rad; // deg to rad
@@ -560,7 +560,7 @@ var VMLElement = extendClass( SVGElement, {
 			path = element.path;
 			
 		// the path is some mysterious string-like object that can be cast to a string
-		if (''+ element.path === '') {
+		if (String(element.path) === '') {
 			path = 'x';
 		}
 			
@@ -766,7 +766,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		
 		// if the color is an rgba color, split it and add a fill node
 		// to hold the opacity component
-		} else if (regexRgba.test(color) && elem.tagName != 'IMG') {
+		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 			
 			colorObject = Color(color);
 			
@@ -794,7 +794,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		
 		if (isIE8) { // add xmlns and style inline
 			markup = markup.replace('/>', ' xmlns="urn:schemas-microsoft-com:vml" />');
-			if (markup.indexOf('style="') == -1) {
+			if (markup.indexOf('style="') === -1) {
 				markup = markup.replace('/>', ' style="'+ vmlStyle +'" />');
 			} else {
 				markup = markup.replace('style="', 'style="'+ vmlStyle);
@@ -948,7 +948,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR,
 				circleCorrection = 0.07 / radius,
-				innerCorrection = innerRadius && 0.1 / innerRadius || 0;
+				innerCorrection = (innerRadius && 0.1 / innerRadius) || 0;
 				
 			if (end - start === 0) { // no angle, don't show it. 
 				return ['x'];

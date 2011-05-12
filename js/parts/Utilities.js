@@ -5,10 +5,11 @@
  * @param {Object} b The object to add to the first one
  */
 function extend(a, b) {
+	var n;
 	if (!a) {
 		a = {};
 	}
-	for (var n in b) {
+	for (n in b) {
 		a[n] = b[n];
 	}
 	return a;
@@ -27,7 +28,7 @@ function pInt(s, mag) {
  * @param {Object} s
  */
 function isString(s) {
-	return typeof s == 'string';
+	return typeof s === 'string';
 }
 
 /**
@@ -35,7 +36,7 @@ function isString(s) {
  * @param {Object} obj
  */
 function isObject(obj) {
-	return typeof obj == 'object';
+	return typeof obj === 'object';
 }
 
 /**
@@ -43,7 +44,7 @@ function isObject(obj) {
  * @param {Object} n
  */
 function isNumber(n) {
-	return typeof n == 'number';
+	return typeof n === 'number';
 }
 
 function log2lin(num) {
@@ -61,7 +62,7 @@ function lin2log(num) {
 function erase(arr, item) {
 	var i = arr.length;
 	while (i--) {
-		if (arr[i] == item) {
+		if (arr[i] === item) {
 			arr.splice(i, 1);
 			break;
 		}
@@ -115,7 +116,7 @@ function attr(elem, prop, value) {
  * MooTools' $.splat.
  */
 function splat(obj) {
-	if (!obj || obj.constructor != Array) {
+	if (!obj || obj.constructor !== Array) {
 		obj = [obj];
 	}
 	return obj; 
@@ -233,7 +234,8 @@ function numberFormat (number, decimals, decPoint, thousandsSep) {
 		n = number, c = isNaN(decimals = mathAbs(decimals)) ? 2 : decimals,
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep, s = n < 0 ? "-" : "",
-		i = pInt(n = mathAbs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+		i = String(pInt(n = mathAbs(+n || 0).toFixed(c))),
+		j = i.length > 3 ? i.length % 3 : 0;
     
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
 		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
@@ -256,7 +258,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 	
 	var date = new Date(timestamp * timeFactor),
-	
+		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
 		day = date[getDay](),
@@ -311,7 +313,7 @@ dateFormat = function (format, timestamp, capitalize) {
 
 
 	// do the replaces
-	for (var key in replacements) {
+	for (key in replacements) {
 		format = format.replace('%'+ key, replacements[key]);
 	}
 		
@@ -329,13 +331,15 @@ dateFormat = function (format, timestamp, capitalize) {
  */
 function getPosition (el) {
 	var p = { left: el.offsetLeft, top: el.offsetTop };
-	while ((el = el.offsetParent))	{
+	el = el.offsetParent;
+	while (el) {
 		p.left += el.offsetLeft;
 		p.top += el.offsetTop;
-		if (el != doc.body && el != doc.documentElement) {
+		if (el !== doc.body && el !== doc.documentElement) {
 			p.left -= el.scrollLeft;
 			p.top -= el.scrollTop;
 		}
+		el = el.offsetParent;
 	}
 	return p;
 }
