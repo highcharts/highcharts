@@ -189,7 +189,7 @@ extend(Chart.prototype, {
 			doc.createElementNS = function(ns, tagName) {
 				var elem = doc.createElement(tagName);
 				elem.getBBox = function() {
-					return chart.renderer.Element.prototype.getBBox.apply({ element: elem });
+					return HC.Renderer.prototype.Element.prototype.getBBox.apply({ element: elem });
 				};
 				return elem;
 			};
