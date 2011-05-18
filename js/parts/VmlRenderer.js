@@ -608,6 +608,7 @@ VMLRenderer = function() {
 };
 VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	
+	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
 	
 
@@ -621,7 +622,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		var renderer = this,
 			boxWrapper;
 
-		renderer.Element = VMLElement;
 		renderer.alignedObjects = [];
 		
 		boxWrapper = renderer.createElement(DIV);
