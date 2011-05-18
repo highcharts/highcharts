@@ -2191,7 +2191,8 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection == 'rtl' && !this.forExport, // issue #38
+			reverse = isFirefox && textStyles && textStyles['-hc-direction'] == 'rtl' && 
+				!this.forExport && pInt(userAgent.split('Firefox/')[1] < 4), // issue #38
 			arr,
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles['line-height'],
