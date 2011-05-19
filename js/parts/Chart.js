@@ -2685,11 +2685,12 @@ function Chart (options, callback) {
 		 */ 
 		function positionCheckboxes() {
 			each(allItems, function(item) {
-				var checkbox = item.checkbox;
+				var checkbox = item.checkbox,
+					alignAttr = legendGroup.alignAttr;
 				if (checkbox) {
 					css(checkbox, {
-						left: (legendGroup.attr('translateX') + item.legendItemWidth + checkbox.x - 40) +PX,
-						top: (legendGroup.attr('translateY') + checkbox.y - 11) + PX 
+						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 40) +PX,
+						top: (alignAttr.translateY + checkbox.y - 11) + PX 
 					});
 				}
 			});

@@ -438,19 +438,20 @@ SVGElement.prototype = {
 	 * 
 	 */
 	align: function(alignOptions, alignByTranslate, box) {
+		var elemWrapper = this;
 		
 		if (!alignOptions) { // called on resize
-			alignOptions = this.alignOptions;
-			alignByTranslate = this.alignByTranslate;
+			alignOptions = elemWrapper.alignOptions;
+			alignByTranslate = elemWrapper.alignByTranslate;
 		} else { // first call on instanciate
-			this.alignOptions = alignOptions;
-			this.alignByTranslate = alignByTranslate;
+			elemWrapper.alignOptions = alignOptions;
+			elemWrapper.alignByTranslate = alignByTranslate;
 			if (!box) { // boxes other than renderer handle this internally
-				this.renderer.alignedObjects.push(this);
+				elemWrapper.renderer.alignedObjects.push(elemWrapper);
 			}
 		}
 		
-		box = pick(box, this.renderer);
+		box = pick(box, elemWrapper.renderer);
 		
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
@@ -476,10 +477,11 @@ SVGElement.prototype = {
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 		
 		// animate only if already placed
-		this[this.placed ? 'animate' : 'attr'](attribs);
-		this.placed = true;
+		elemWrapper[elemWrapper.placed ? 'animate' : 'attr'](attribs);
+		elemWrapper.placed = true;
+		elemWrapper.alignAttr = attribs;
 		
-		return this;
+		return elemWrapper;
 	},
 	
 	/**
