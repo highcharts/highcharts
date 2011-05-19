@@ -241,6 +241,7 @@ extend(Chart.prototype, {
 					extend(pointOptions, config);
 				}
 
+				pointOptions.visible = point.visible;
 				seriesOptions.data.push(pointOptions); // copy fresh updated data
 								
 				// remove image markers
