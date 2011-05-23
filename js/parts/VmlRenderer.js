@@ -559,8 +559,8 @@ var VMLElement = extendClass( SVGElement, {
 			markup,
 			path = element.path;
 			
-		// the path is some mysterious string-like object that can be cast to a string
-		if (''+ element.path === '') {
+		// some times empty paths are not strings
+		if (path && typeof path.value != 'string') {
 			path = 'x';
 		}
 			
