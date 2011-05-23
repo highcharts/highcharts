@@ -159,7 +159,7 @@ var PieSeries = extendClass(Series, {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			positions = options.center,
+			positions = options.center.concat([options.size, options.innerSize || 0]),
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
@@ -176,7 +176,6 @@ var PieSeries = extendClass(Series, {
 			labelDistance = options.dataLabels.distance;
 			
 		// get positions - either an integer or a percentage string must be given
-		positions.push(options.size, options.innerSize || 0);
 		positions = map(positions, function(length, i) {
 			
 			isPercent = /%$/.test(length);			
@@ -184,6 +183,7 @@ var PieSeries = extendClass(Series, {
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to smallestSize
+				// i == 4: innerSize, relative to smallestSize
 				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
 					pInt(length) / 100:
 				length;
