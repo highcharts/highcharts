@@ -1187,8 +1187,21 @@ Series.prototype = {
 				chart = series.chart, 
 				inverted = chart.inverted,
 				seriesType = series.type,
-				color;
-				
+				color,
+				labelsInsideBars = series.options.stacking && (seriesType == 'column' || seriesType == 'bar');
+
+			if (labelsInsideBars) {
+				// In stacked series the default label placement is inside the bars
+				if (options.verticalAlign === null) {
+					options = merge(options, {verticalAlign: 'middle'});
+				}
+
+				// If no y delta is specified, try to create a good default
+				if (options.y === null) {
+					options = merge(options, {y: {top: 14, middle: 4, bottom: -6}[options.verticalAlign]}); 
+				}
+			}
+
 			// create a separate group for the data labels to avoid rotation
 			if (!dataLabelsGroup) {
 				dataLabelsGroup = series.dataLabelsGroup = 
@@ -1261,7 +1274,20 @@ Series.prototype = {
 				/*if (series.isCartesian) {
 					dataLabel[chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
 				}*/
-					
+
+				if (labelsInsideBars) {
+					var barY = point.barY,
+						barW = point.barW,
+						barH = point.barH;
+
+					dataLabel.align(options, null, 
+						{
+							x: inverted ? chart.plotWidth - barY - barH : barX,
+							y: inverted ? chart.plotHeight - barX - barW : barY,
+							width: inverted ? barH : barW,
+							height: inverted ? barW : barH
+						});
+				}
 			});
 		}
 	},
