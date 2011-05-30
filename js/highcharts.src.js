@@ -1197,7 +1197,23 @@ var defaultXAxisOptions =  {
 		//x: 0,
 		//y: 0
 	},
-	type: 'linear' // linear, logarithmic or datetime // docs
+	type: 'linear', // linear, logarithmic or datetime // docs
+	stackLabels: { // docs
+		enabled: false,
+		//align: dynamic,
+		//y: dynamic,
+		//x: dynamic,
+		//verticalAlign: dynamic
+		//textAlign: dynamic
+		formatter: function() {
+			return this.total;
+		},
+		style: {
+			color: '#666',
+			'font-size': '11px',
+			'line-height': '14px'
+		}
+	}
 },
 
 defaultYAxisOptions = merge(defaultXAxisOptions, {
@@ -1303,6 +1319,10 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 			borderColor: '#000000',
 			shadow: false
 		}
+	},
+	dataLabels: {
+		y: null,
+		verticalAlign: null
 	}
 });
 defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
@@ -1880,19 +1900,20 @@ SVGElement.prototype = {
 	 * 
 	 */
 	align: function(alignOptions, alignByTranslate, box) {
+		var elemWrapper = this;
 		
 		if (!alignOptions) { // called on resize
-			alignOptions = this.alignOptions;
-			alignByTranslate = this.alignByTranslate;
+			alignOptions = elemWrapper.alignOptions;
+			alignByTranslate = elemWrapper.alignByTranslate;
 		} else { // first call on instanciate
-			this.alignOptions = alignOptions;
-			this.alignByTranslate = alignByTranslate;
+			elemWrapper.alignOptions = alignOptions;
+			elemWrapper.alignByTranslate = alignByTranslate;
 			if (!box) { // boxes other than renderer handle this internally
-				this.renderer.alignedObjects.push(this);
+				elemWrapper.renderer.alignedObjects.push(elemWrapper);
 			}
 		}
 		
-		box = pick(box, this.renderer);
+		box = pick(box, elemWrapper.renderer);
 		
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
@@ -1918,10 +1939,11 @@ SVGElement.prototype = {
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 		
 		// animate only if already placed
-		this[this.placed ? 'animate' : 'attr'](attribs);
-		this.placed = true;
+		elemWrapper[elemWrapper.placed ? 'animate' : 'attr'](attribs);
+		elemWrapper.placed = true;
+		elemWrapper.alignAttr = attribs;
 		
-		return this;
+		return elemWrapper;
 	},
 	
 	/**
@@ -2138,6 +2160,9 @@ var SVGRenderer = function() {
 	this.init.apply(this, arguments);
 };
 SVGRenderer.prototype = {
+	
+	Element: SVGElement,
+	
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -2150,7 +2175,6 @@ SVGRenderer.prototype = {
 			loc = location,
 			boxWrapper;
 					
-		renderer.Element = SVGElement;
 		boxWrapper = renderer.createElement('svg')
 			.attr({
 				xmlns: SVG_NS,
@@ -2200,7 +2224,8 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && !this.forExport, // issue #38
+			reverse = isFirefox && textStyles && textStyles['-hc-direction'] === 'rtl' && 
+				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
 			arr,
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles['line-height'],
@@ -2497,8 +2522,14 @@ SVGRenderer.prototype = {
 		elemWrapper = this.createElement('image').attr(attribs);		
 		
 		// set the href in the xlink namespace
-		elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
-			'href', src);
+		if (elemWrapper.element.setAttributeNS) {
+			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
+				'href', src);
+		} else {
+			// could be exporting in IE
+			// using href throws "not supported" in ie7 and under, requries regex shim to fix later
+			elemWrapper.element.setAttribute('hc-svg-href', src);
+		}
 			
 		return elemWrapper;					
 	},
@@ -2528,7 +2559,8 @@ SVGRenderer.prototype = {
 			),
 			
 			imageRegex = /^url\((.*?)\)$/,
-			imageSrc;
+			imageSrc,
+			imageSize;
 			
 		if (path) {
 		
@@ -2548,7 +2580,18 @@ SVGRenderer.prototype = {
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
 			
+			function centerImage(img, size) {
+				img.attr({
+					width: size[0],
+					height: size[1]
+				}).translate(
+					-mathRound(size[0] / 2),
+					-mathRound(size[1] / 2)
+				);
+			}
+			
 			imageSrc = symbol.match(imageRegex)[1];
+			imageSize = symbolSizes[imageSrc];
 			
 			// create the image synchronously, add attribs async
 			obj = this.image(imageSrc)
@@ -2556,22 +2599,23 @@ SVGRenderer.prototype = {
 					x: x,
 					y: y
 				});
-			
-			// create a dummy JavaScript image to get the width and height  
-			createElement('img', {
-				onload: function() {
-					var img = this,
-						size = symbolSizes[img.src] || [img.width, img.height];
-					obj.attr({						
-						width: size[0],
-						height: size[1]
-					}).translate(
-						-mathRound(size[0] / 2),
-						-mathRound(size[1] / 2)
-					);
-				},
-				src: imageSrc
-			});
+
+			if (imageSize) {
+				centerImage(obj, imageSize);
+			} else {
+				// initialize image to be 0 size so export will still function if there's no cached sizes
+				obj.attr({ width: 0, height: 0 });
+
+				// create a dummy JavaScript image to get the width and height  
+				createElement('img', {
+					onload: function() {
+						var img = this;
+
+						centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]);
+					},
+					src: imageSrc
+				});
+			}
 				
 		// default circles
 		} else {
@@ -3339,8 +3383,8 @@ var VMLElement = extendClass( SVGElement, {
 			markup,
 			path = element.path;
 			
-		// the path is some mysterious string-like object that can be cast to a string
-		if (String(element.path) === '') {
+		// some times empty paths are not strings
+		if (path && typeof path.value !== 'string') {
 			path = 'x';
 		}
 			
@@ -3388,6 +3432,7 @@ VMLRenderer = function() {
 };
 VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	
+	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
 	
 
@@ -3401,7 +3446,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		var renderer = this,
 			boxWrapper;
 
-		renderer.Element = VMLElement;
 		renderer.alignedObjects = [];
 		
 		boxWrapper = renderer.createElement(DIV);
@@ -4447,6 +4491,91 @@ function Chart (options, callback) {
 		}
 		};
 		
+		/**
+		 * The class for stack items
+		 */
+		function StackItem(options, isNegative, x) {
+			var stackItem = this;
+		
+			// Tells if the stack is negative 
+			stackItem.isNegative = isNegative;
+			
+			// Save the options to be able to style the label
+			stackItem.options = options;
+			
+			// Save the x value to be able to position the label later
+			stackItem.x = x;
+			
+			// The align options and text align varies on whether the stack is negative and
+			// if the chart is inverted or not.
+			// First test the user supplied value, then use the dynamic.
+			stackItem.alignOptions = {
+				align: options.align || (inverted ? (isNegative ? 'left' : 'right') : 'center'),
+				verticalAlign: options.verticalAlign || (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
+				y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
+				x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
+			};
+			
+			stackItem.textAlign = options.textAlign || (inverted ? (isNegative ? 'right' : 'left') : 'center');
+		}
+		
+		StackItem.prototype = {
+			/**
+			 * Sets the total of this stack. Should be called when a serie is hidden or shown
+			 * since that will affect the total of other stacks.
+			 */
+			setTotal: function(total) {
+				this.total = total;
+				this.cum = total;
+			},
+
+			/**
+			 * Renders the stack total label and adds it to the stack label group.
+			 */
+			render: function(group) {
+				var stackItem = this,									// aliased this
+					str = stackItem.options.formatter.call(stackItem); 	// format the text in the label
+
+				// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
+				if (stackItem.label) {
+					stackItem.label.attr({text: str, visibility: HIDDEN});
+				// Create new label
+				} else {
+					stackItem.label =
+						chart.renderer.text(str, 0, 0)				// dummy positions, actual position updated with setOffset method in columnseries
+							.css(stackItem.options.style)			// apply style
+							.attr({align: stackItem.textAlign,			// fix the text-anchor
+								rotation: stackItem.options.rotation,	// rotation
+								visibility: HIDDEN })					// hidden until setOffset is called
+							.add(group);							// add to the labels-group
+				}
+			},
+
+			/**
+			 * Sets the offset that the stack has from the x value and repositions the label.
+			 */
+			setOffset: function (xOffset, xWidth) {
+				var stackItem = this,										// aliased this
+					neg = stackItem.isNegative,								// special treatment is needed for negative stacks
+					y = axis.translate(stackItem.total),					// stack value translated mapped to chart coordinates
+					yZero = axis.translate(0),								// stack origin
+					h = mathAbs(y - yZero),									// stack height
+					x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
+					plotHeight = chart.plotHeight,
+					stackBox = {	// this is the box for the complete stack
+							x: inverted ? (neg ? y : y - h) : x,
+							y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
+							width: inverted ? h : xWidth,
+							height: inverted ? xWidth : h
+					};
+				
+				if (stackItem.label) {
+					stackItem.label
+						.align(stackItem.alignOptions, null, stackBox)	// align the label to the box
+						.attr({visibility: VISIBLE});					// set visibility
+				}
+			}
+		}
 		
 		/**
 		 * Get the minimum and maximum for the series of each axis 
@@ -4567,10 +4696,13 @@ function Chart (options, callback) {
 									if (!stacks[key]) {
 										stacks[key] = {};
 									}
-									stacks[key][pointX] = {
-										total: totalPos,
-										cum: totalPos 
-									};
+									
+									// If the StackItem is there, just update the values,
+									// if not, create one first
+									if (!stacks[key][pointX]) {
+										stacks[key][pointX] = new StackItem(options.stackLabels, isNegative, pointX);
+									}
+									stacks[key][pointX].setTotal(totalPos);
 								}
 							}
 						});
@@ -5282,6 +5414,7 @@ function Chart (options, callback) {
 		 */
 		function render() {
 			var axisTitleOptions = options.title,
+				stackLabelOptions = options.stackLabels,
 				alternateGridColor = options.alternateGridColor,
 				lineWidth = options.lineWidth,
 				lineLeft,
@@ -5463,6 +5596,33 @@ function Chart (options, callback) {
 				});
 				
 			}
+			
+			// Stacked totals:
+			if (stackLabelOptions && stackLabelOptions.enabled) {
+				var stackKey, oneStack, stackCategory,
+					stackTotalGroup = axis.stackTotalGroup;
+
+				// Create a separate group for the stack total labels
+				if (!stackTotalGroup) {
+					axis.stackTotalGroup = stackTotalGroup =
+						renderer.g('stack-labels')
+							.attr({ 
+								visibility: VISIBLE,
+								zIndex: 6
+							})
+							.translate(plotLeft, plotTop)
+							.add();
+				}
+
+				// Render each stack total
+				for (stackKey in stacks) {
+					oneStack = stacks[stackKey];
+					for (stackCategory in oneStack) {
+						oneStack[stackCategory].render(stackTotalGroup);
+					}
+				}
+			}
+			// End stacked totals
 			
 			axis.isDirty = false;
 		}
@@ -6548,11 +6708,12 @@ function Chart (options, callback) {
 		 */ 
 		function positionCheckboxes() {
 			each(allItems, function(item) {
-				var checkbox = item.checkbox;
+				var checkbox = item.checkbox,
+					alignAttr = legendGroup.alignAttr;
 				if (checkbox) {
 					css(checkbox, {
-						left: (legendGroup.attr('translateX') + item.legendItemWidth + checkbox.x - 40) +PX,
-						top: (legendGroup.attr('translateY') + checkbox.y - 11) + PX 
+						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 40) +PX,
+						top: (alignAttr.translateY + checkbox.y - 11) + PX 
 					});
 				}
 			});
@@ -9194,8 +9355,36 @@ Series.prototype = {
 				chart = series.chart, 
 				inverted = chart.inverted,
 				seriesType = series.type,
-				color;
-				
+				color,
+				stacking = series.options.stacking,
+				isBarLike = seriesType == 'column' || seriesType == 'bar',
+				vAlignIsNull = options.verticalAlign === null,
+				yIsNull = options.y === null;
+
+			if (isBarLike) {
+				if (stacking) {
+					// In stacked series the default label placement is inside the bars
+					if (vAlignIsNull) {
+						options = merge(options, {verticalAlign: 'middle'});
+					}
+
+					// If no y delta is specified, try to create a good default
+					if (yIsNull) {
+						options = merge(options, {y: {top: 14, middle: 4, bottom: -6}[options.verticalAlign]}); 
+					}
+				} else {
+					// In non stacked series the default label placement is on top of the bars
+					if (vAlignIsNull) {
+						options = merge(options, {verticalAlign: 'top'});
+					}
+
+					// If no y delta is specified, set the default
+					if (yIsNull) {
+						options = merge(options, {y: -6}); 
+					}
+				}
+			}
+
 			// create a separate group for the data labels to avoid rotation
 			if (!dataLabelsGroup) {
 				dataLabelsGroup = series.dataLabelsGroup = 
@@ -9268,7 +9457,20 @@ Series.prototype = {
 				/*if (series.isCartesian) {
 					dataLabel[chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
 				}*/
-					
+
+				if (isBarLike && series.options.stacking) {
+					var barY = point.barY,
+						barW = point.barW,
+						barH = point.barH;
+
+					dataLabel.align(options, null, 
+						{
+							x: inverted ? chart.plotWidth - barY - barH : barX,
+							y: inverted ? chart.plotHeight - barX - barW : barY,
+							width: inverted ? barH : barW,
+							height: inverted ? barW : barH
+						});
+				}
 			});
 		}
 	},
@@ -9907,6 +10109,7 @@ var ColumnSeries = extendClass(Series, {
 	translate: function() {
 		var series = this,
 			chart = series.chart,
+			stacking = series.options.stacking,
 			columnCount = 0,
 			reversedXAxis = series.xAxis.reversed,
 			categories = series.xAxis.categories,
@@ -9958,7 +10161,7 @@ var ColumnSeries = extendClass(Series, {
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold || 0,
 			translatedThreshold = series.yAxis.getThreshold(threshold),
-			minPointLength = pick(options.minPointLength, 5);		
+			minPointLength = pick(options.minPointLength, 5);
 			
 		// record the new values
 		each(data, function(point) {
@@ -9967,7 +10170,13 @@ var ColumnSeries = extendClass(Series, {
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)), 
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
+				stack = series.yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
 				trackerY;
+			
+			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
+			if (stacking && series.visible && stack && stack[point.x]) {
+				stack[point.x].setOffset(pointXOffset, pointWidth);
+			}
 			
 			// handle options.minPointLength and tracker for small points
 			if (mathAbs(barH) < minPointLength) { 
@@ -10397,7 +10606,7 @@ var PieSeries = extendClass(Series, {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			positions = options.center,
+			positions = options.center.concat([options.size, options.innerSize || 0]),
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
@@ -10414,7 +10623,6 @@ var PieSeries = extendClass(Series, {
 			labelDistance = options.dataLabels.distance;
 			
 		// get positions - either an integer or a percentage string must be given
-		positions.push(options.size, options.innerSize || 0);
 		positions = map(positions, function(length, i) {
 			
 			isPercent = /%$/.test(length);			
@@ -10422,6 +10630,7 @@ var PieSeries = extendClass(Series, {
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to smallestSize
+				// i == 4: innerSize, relative to smallestSize
 				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
 					pInt(length) / 100:
 				length;
@@ -10815,4 +11024,3 @@ win.Highcharts = {
 	version: '2.1.4'
 };
 }());
-

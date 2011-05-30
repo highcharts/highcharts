@@ -559,8 +559,8 @@ var VMLElement = extendClass( SVGElement, {
 			markup,
 			path = element.path;
 			
-		// the path is some mysterious string-like object that can be cast to a string
-		if (String(element.path) === '') {
+		// some times empty paths are not strings
+		if (path && typeof path.value !== 'string') {
 			path = 'x';
 		}
 			
@@ -608,6 +608,7 @@ VMLRenderer = function() {
 };
 VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	
+	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
 	
 
@@ -621,7 +622,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		var renderer = this,
 			boxWrapper;
 
-		renderer.Element = VMLElement;
 		renderer.alignedObjects = [];
 		
 		boxWrapper = renderer.createElement(DIV);

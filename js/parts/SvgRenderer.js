@@ -438,19 +438,20 @@ SVGElement.prototype = {
 	 * 
 	 */
 	align: function(alignOptions, alignByTranslate, box) {
+		var elemWrapper = this;
 		
 		if (!alignOptions) { // called on resize
-			alignOptions = this.alignOptions;
-			alignByTranslate = this.alignByTranslate;
+			alignOptions = elemWrapper.alignOptions;
+			alignByTranslate = elemWrapper.alignByTranslate;
 		} else { // first call on instanciate
-			this.alignOptions = alignOptions;
-			this.alignByTranslate = alignByTranslate;
+			elemWrapper.alignOptions = alignOptions;
+			elemWrapper.alignByTranslate = alignByTranslate;
 			if (!box) { // boxes other than renderer handle this internally
-				this.renderer.alignedObjects.push(this);
+				elemWrapper.renderer.alignedObjects.push(elemWrapper);
 			}
 		}
 		
-		box = pick(box, this.renderer);
+		box = pick(box, elemWrapper.renderer);
 		
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
@@ -476,10 +477,11 @@ SVGElement.prototype = {
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 		
 		// animate only if already placed
-		this[this.placed ? 'animate' : 'attr'](attribs);
-		this.placed = true;
+		elemWrapper[elemWrapper.placed ? 'animate' : 'attr'](attribs);
+		elemWrapper.placed = true;
+		elemWrapper.alignAttr = attribs;
 		
-		return this;
+		return elemWrapper;
 	},
 	
 	/**
@@ -696,6 +698,9 @@ var SVGRenderer = function() {
 	this.init.apply(this, arguments);
 };
 SVGRenderer.prototype = {
+	
+	Element: SVGElement,
+	
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -708,7 +713,6 @@ SVGRenderer.prototype = {
 			loc = location,
 			boxWrapper;
 					
-		renderer.Element = SVGElement;
 		boxWrapper = renderer.createElement('svg')
 			.attr({
 				xmlns: SVG_NS,
@@ -758,7 +762,8 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && !this.forExport, // issue #38
+			reverse = isFirefox && textStyles && textStyles['-hc-direction'] === 'rtl' && 
+				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
 			arr,
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles['line-height'],
@@ -1055,8 +1060,14 @@ SVGRenderer.prototype = {
 		elemWrapper = this.createElement('image').attr(attribs);		
 		
 		// set the href in the xlink namespace
-		elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
-			'href', src);
+		if (elemWrapper.element.setAttributeNS) {
+			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
+				'href', src);
+		} else {
+			// could be exporting in IE
+			// using href throws "not supported" in ie7 and under, requries regex shim to fix later
+			elemWrapper.element.setAttribute('hc-svg-href', src);
+		}
 			
 		return elemWrapper;					
 	},
@@ -1086,7 +1097,8 @@ SVGRenderer.prototype = {
 			),
 			
 			imageRegex = /^url\((.*?)\)$/,
-			imageSrc;
+			imageSrc,
+			imageSize;
 			
 		if (path) {
 		
@@ -1106,7 +1118,18 @@ SVGRenderer.prototype = {
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
 			
+			function centerImage(img, size) {
+				img.attr({
+					width: size[0],
+					height: size[1]
+				}).translate(
+					-mathRound(size[0] / 2),
+					-mathRound(size[1] / 2)
+				);
+			}
+			
 			imageSrc = symbol.match(imageRegex)[1];
+			imageSize = symbolSizes[imageSrc];
 			
 			// create the image synchronously, add attribs async
 			obj = this.image(imageSrc)
@@ -1114,22 +1137,23 @@ SVGRenderer.prototype = {
 					x: x,
 					y: y
 				});
-			
-			// create a dummy JavaScript image to get the width and height  
-			createElement('img', {
-				onload: function() {
-					var img = this,
-						size = symbolSizes[img.src] || [img.width, img.height];
-					obj.attr({						
-						width: size[0],
-						height: size[1]
-					}).translate(
-						-mathRound(size[0] / 2),
-						-mathRound(size[1] / 2)
-					);
-				},
-				src: imageSrc
-			});
+
+			if (imageSize) {
+				centerImage(obj, imageSize);
+			} else {
+				// initialize image to be 0 size so export will still function if there's no cached sizes
+				obj.attr({ width: 0, height: 0 });
+
+				// create a dummy JavaScript image to get the width and height  
+				createElement('img', {
+					onload: function() {
+						var img = this;
+
+						centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]);
+					},
+					src: imageSrc
+				});
+			}
 				
 		// default circles
 		} else {

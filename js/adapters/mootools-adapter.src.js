@@ -13,7 +13,7 @@
 (function() {
 	
 var win = window,
-	legacy = !!win.$merge
+	legacy = !!win.$merge,
 	$extend = win.$extend || function() {
 		return Object.append.apply(Object, arguments)
 	};

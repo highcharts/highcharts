@@ -417,7 +417,23 @@ var defaultXAxisOptions =  {
 		//x: 0,
 		//y: 0
 	},
-	type: 'linear' // linear, logarithmic or datetime // docs
+	type: 'linear', // linear, logarithmic or datetime // docs
+	stackLabels: { // docs
+		enabled: false,
+		//align: dynamic,
+		//y: dynamic,
+		//x: dynamic,
+		//verticalAlign: dynamic
+		//textAlign: dynamic
+		formatter: function() {
+			return this.total;
+		},
+		style: {
+			color: '#666',
+			'font-size': '11px',
+			'line-height': '14px'
+		}
+	}
 },
 
 defaultYAxisOptions = merge(defaultXAxisOptions, {
@@ -523,6 +539,10 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 			borderColor: '#000000',
 			shadow: false
 		}
+	},
+	dataLabels: {
+		y: null,
+		verticalAlign: null
 	}
 });
 defaultPlotOptions.bar = merge(defaultPlotOptions.column, {

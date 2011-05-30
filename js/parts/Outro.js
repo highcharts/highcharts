@@ -27,4 +27,3 @@ win.Highcharts = {
 	version: '2.1.4'
 };
 }());
-
