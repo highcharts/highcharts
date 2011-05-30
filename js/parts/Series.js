@@ -1188,7 +1188,7 @@ Series.prototype = {
 				seriesType = series.type,
 				color,
 				stacking = series.options.stacking,
-				isBarLike = seriesType == 'column' || seriesType == 'bar',
+				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
 				yIsNull = options.y === null;
 

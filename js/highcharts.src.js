@@ -2580,7 +2580,7 @@ SVGRenderer.prototype = {
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
 			
-			function centerImage(img, size) {
+			var centerImage = function(img, size) {
 				img.attr({
 					width: size[0],
 					height: size[1]
@@ -2588,7 +2588,7 @@ SVGRenderer.prototype = {
 					-mathRound(size[0] / 2),
 					-mathRound(size[1] / 2)
 				);
-			}
+			};
 			
 			imageSrc = symbol.match(imageRegex)[1];
 			imageSize = symbolSizes[imageSrc];
@@ -4534,7 +4534,7 @@ function Chart (options, callback) {
 			 */
 			render: function(group) {
 				var stackItem = this,									// aliased this
-					str = stackItem.options.formatter.call(stackItem); 	// format the text in the label
+					str = stackItem.options.formatter.call(stackItem);	// format the text in the label
 
 				// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 				if (stackItem.label) {
@@ -4554,7 +4554,7 @@ function Chart (options, callback) {
 			/**
 			 * Sets the offset that the stack has from the x value and repositions the label.
 			 */
-			setOffset: function (xOffset, xWidth) {
+			setOffset: function(xOffset, xWidth) {
 				var stackItem = this,										// aliased this
 					neg = stackItem.isNegative,								// special treatment is needed for negative stacks
 					y = axis.translate(stackItem.total),					// stack value translated mapped to chart coordinates
@@ -4575,7 +4575,7 @@ function Chart (options, callback) {
 						.attr({visibility: VISIBLE});					// set visibility
 				}
 			}
-		}
+		};
 		
 		/**
 		 * Get the minimum and maximum for the series of each axis 
@@ -9357,7 +9357,7 @@ Series.prototype = {
 				seriesType = series.type,
 				color,
 				stacking = series.options.stacking,
-				isBarLike = seriesType == 'column' || seriesType == 'bar',
+				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
 				yIsNull = options.y === null;
 

@@ -630,7 +630,7 @@ function Chart (options, callback) {
 			 */
 			render: function(group) {
 				var stackItem = this,									// aliased this
-					str = stackItem.options.formatter.call(stackItem); 	// format the text in the label
+					str = stackItem.options.formatter.call(stackItem);	// format the text in the label
 
 				// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 				if (stackItem.label) {
@@ -650,7 +650,7 @@ function Chart (options, callback) {
 			/**
 			 * Sets the offset that the stack has from the x value and repositions the label.
 			 */
-			setOffset: function (xOffset, xWidth) {
+			setOffset: function(xOffset, xWidth) {
 				var stackItem = this,										// aliased this
 					neg = stackItem.isNegative,								// special treatment is needed for negative stacks
 					y = axis.translate(stackItem.total),					// stack value translated mapped to chart coordinates
@@ -671,7 +671,7 @@ function Chart (options, callback) {
 						.attr({visibility: VISIBLE});					// set visibility
 				}
 			}
-		}
+		};
 		
 		/**
 		 * Get the minimum and maximum for the series of each axis 
