@@ -8353,9 +8353,7 @@ Point.prototype = {
 			chart = series.chart,
 			pointAttr = point.pointAttr;
 			
-		if (!state) {
-			state = NORMAL_STATE; // empty string
-		}
+		state = state || NORMAL_STATE; // empty string
 		
 		if (
 				// already has this state
