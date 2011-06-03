@@ -71,7 +71,7 @@ var ColumnSeries = extendClass(Series, {
 			closestPoints = series.closestPoints,
 			categoryWidth = mathAbs(
 				data[1] ? data[closestPoints].plotX - data[closestPoints - 1].plotX : 
-				chart.plotSizeX / (categories ? categories.length : 1)
+				chart.plotSizeX / ((categories && categories.length) || 1)
 			),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
@@ -88,7 +88,7 @@ var ColumnSeries = extendClass(Series, {
 			threshold = options.threshold || 0,
 			translatedThreshold = series.yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
-			
+		
 		// record the new values
 		each(data, function(point) {
 			var plotY = point.plotY,
