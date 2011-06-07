@@ -4109,8 +4109,10 @@ function Chart (options, callback) {
 				var pos = this.pos,
 					labelOptions = options.labels,
 					str,
-					withLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
-						(pos === max && !pick(options.showLastLabel, 0))),
+					isFirst = pos === tickPositions[0],
+					isLast = pos === tickPositions[tickPositions.length - 1],
+					withLabel = !((isFirst && !pick(options.showFirstLabel, 1)) ||
+						(isLast && !pick(options.showLastLabel, 0))),
 					width = (categories && horiz && categories.length && 
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
@@ -4120,11 +4122,10 @@ function Chart (options, callback) {
 					label = this.label,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos;
 					
-				
 				// get the string
 				str = labelFormatter.call({
-						isFirst: pos === tickPositions[0],
-						isLast: pos === tickPositions[tickPositions.length - 1],
+						isFirst: isFirst,
+						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
 						value: isLog ? lin2log(value) : value
 					});
