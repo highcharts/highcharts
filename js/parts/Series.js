@@ -503,7 +503,7 @@ Series.prototype = {
 		// connect nulls
 		if (series.options.connectNulls) {
 			for (i = data.length - 1; i >= 0; i--) {
-				if (data[i].y === null && data[i - 1] && data [i + 1]) {
+				if (data[i].y === null && data[i - 1] && data[i + 1]) {
 					data.splice(i, 1);
 				}
 			}

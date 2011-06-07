@@ -227,7 +227,7 @@ SVGElement.prototype = {
 	symbolAttr: function(hash) {
 		var wrapper = this;
 		
-		each (['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR'], function(key) {
+		each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR'], function(key) {
 			wrapper[key] = pick(hash[key], wrapper[key]);
 		});
 		
