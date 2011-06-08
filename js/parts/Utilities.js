@@ -156,7 +156,7 @@ function serializeCSS(style) {
 /**
  * Set CSS on a given element
  * @param {Object} el
- * @param {Object} styles
+ * @param {Object} styles Style object with camel case property names
  */
 function css (el, styles) {
 	if (isIE) {

@@ -83,8 +83,8 @@ defaultLabelOptions = {
 	},*/
 	style: {
 		color: '#666',
-		'font-size': '11px',
-		'line-height': '14px'
+		fontSize: '11px',
+		lineHeight: '14px'
 	}
 };
 

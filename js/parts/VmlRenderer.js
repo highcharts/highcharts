@@ -352,8 +352,6 @@ var VMLElement = extendClass( SVGElement, {
 		wrapper.styles = extend(wrapper.styles, styles);
 		css(wrapper.element, styles);
 		
-		
-		
 		return wrapper;
 	},
 	
