@@ -4107,7 +4107,7 @@ function Chart (options, callback) {
 					isFirst = pos === tickPositions[0],
 					isLast = pos === tickPositions[tickPositions.length - 1],
 					withLabel = !((isFirst && !pick(options.showFirstLabel, 1)) ||
-						(isLast && !pick(options.showLastLabel, 0))),
+						(isLast && !pick(options.showLastLabel, !!categories))), // dft true for cat, false for non-cat
 					width = (categories && horiz && categories.length && 
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
