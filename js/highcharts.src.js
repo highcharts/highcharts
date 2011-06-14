@@ -3810,19 +3810,6 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		},
 		// Add circle symbol path. This performs significantly faster than v:oval.
 		circle: function (x, y, r) {
-			console.log([
-				'wa', // clockwisearcto
-				x - r, // left
-				y - r, // top
-				x + r, // right
-				y + r, // bottom
-				x + r, // start x
-				y,     // start y
-				x + r, // end x
-				y,     // end y
-				//'x', // finish path
-				'e' // close
-			].join( ))
 			return [
 				'wa', // clockwisearcto
 				x - r, // left
@@ -9434,6 +9421,10 @@ Series.prototype = {
 				
 				// update existing label
 				if (dataLabel) {
+					// vertically centered
+					if (inverted && !options.y) {
+						y = y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2;
+					}
 					dataLabel
 						.attr({
 							text: str
@@ -9455,14 +9446,14 @@ Series.prototype = {
 					})
 					.css(options.style)
 					.add(dataLabelsGroup);
+					// vertically centered
+					if (inverted && !options.y) {
+						dataLabel.attr({
+							y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
+						});
+					}
 				}
 				
-				// vertically centered
-				if (inverted && !options.y) {
-					dataLabel.attr({
-						y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
-					});
-				}
 				
 				/*if (series.isCartesian) {
 					dataLabel[chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
