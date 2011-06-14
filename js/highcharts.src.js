@@ -1691,7 +1691,7 @@ SVGElement.prototype = {
 		});
 		
 		wrapper.attr({ 
-			d: wrapper.renderer.symbols[wrapper.symbolName](wrapper.x, wrapper.y, wrapper.r, {
+			d: wrapper.renderer.symbols[wrapper.symbolName](mathRound(wrapper.x), mathRound(wrapper.y), wrapper.r, {
 				start: wrapper.start, 
 				end: wrapper.end,
 				width: wrapper.width, 
@@ -2551,8 +2551,8 @@ SVGRenderer.prototype = {
 			
 			// check if there's a path defined for this symbol
 			path = symbolFn && symbolFn(
-				x, 
-				y, 
+				mathRound(x), 
+				mathRound(y),
 				radius, 
 				options
 			),
@@ -2609,7 +2609,6 @@ SVGRenderer.prototype = {
 				createElement('img', {
 					onload: function() {
 						var img = this;
-
 						centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]);
 					},
 					src: imageSrc
@@ -3811,6 +3810,19 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		},
 		// Add circle symbol path. This performs significantly faster than v:oval.
 		circle: function (x, y, r) {
+			console.log([
+				'wa', // clockwisearcto
+				x - r, // left
+				y - r, // top
+				x + r, // right
+				y + r, // bottom
+				x + r, // start x
+				y,     // start y
+				x + r, // end x
+				y,     // end y
+				//'x', // finish path
+				'e' // close
+			].join( ))
 			return [
 				'wa', // clockwisearcto
 				x - r, // left
