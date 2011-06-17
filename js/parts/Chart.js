@@ -1128,8 +1128,8 @@ function Chart (options, callback) {
 		function setLinearTickPositions() {
 			
 			var i,
-				roundedMin = mathFloor(min / tickInterval) * tickInterval,
-				roundedMax = mathCeil(max / tickInterval) * tickInterval;
+				roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
+				roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval);
 				
 			tickPositions = [];
 			
