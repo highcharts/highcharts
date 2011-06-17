@@ -4105,26 +4105,25 @@ function Chart (options, callback) {
 				var pos = this.pos,
 					labelOptions = options.labels,
 					str,
-					isFirst = pos === tickPositions[0],
-					isLast = pos === tickPositions[tickPositions.length - 1],
-					withLabel = !((isFirst && !pick(options.showFirstLabel, 1)) ||
-						(isLast && !pick(options.showLastLabel, !!categories))), // dft true for cat, false for non-cat
-					width = (categories && horiz && categories.length && 
+					withLabel = !((pos == min && !pick(options.showFirstLabel, 1)) ||
+						(pos == max && !pick(options.showLastLabel, 0))),
+					width = categories && horiz && categories.length && 
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
-						plotWidth / categories.length) ||
-						(!horiz && plotWidth / 2),
+						plotWidth / categories.length ||
+						!horiz && plotWidth / 2,
 					css,
-					label = this.label,
-					value = categories && defined(categories[pos]) ? categories[pos] : pos;
+					label = this.label;
 					
+				
 				// get the string
 				str = labelFormatter.call({
-						isFirst: isFirst,
-						isLast: isLast,
+						isFirst: pos == tickPositions[0],
+						isLast: pos == tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: isLog ? lin2log(value) : value
+						value: (categories && categories[pos] ? categories[pos] : pos)
 					});
+				
 				
 				// prepare CSS
 				css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) +PX };
