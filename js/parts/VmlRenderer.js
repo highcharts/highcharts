@@ -79,7 +79,9 @@ var VMLElement = extendClass( SVGElement, {
 		
 		// align text after adding to be able to read offset
 		wrapper.added = true;
-		if (wrapper.alignOnAdd) {
+
+		// if we're defering the update, don't do the updateTransform right now
+		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
 			wrapper.updateTransform();
 		}		
 		
@@ -493,8 +495,18 @@ var VMLElement = extendClass( SVGElement, {
 					});
 				}
 				
-				width = elem.offsetWidth;
-				height = elem.offsetHeight;
+				// use the elemWidths in the wrapper instead of calculating it directly from the element if posible
+				if (defined(wrapper.elemWidth)) {
+				    width = wrapper.elemWidth;
+				} else {
+				    width = elem.offsetWidth;
+				}
+
+				if (defined(wrapper.elemHeight)) {
+				    height = wrapper.elemHeight;
+				} else {
+				    height = elem.offsetHeight;
+				}
 				
 				// update textWidth
 				if (width > textWidth) {

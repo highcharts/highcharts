@@ -198,6 +198,33 @@ function Chart (options, callback) {
 			}
 		}
 		Tick.prototype = {
+			attachLabel: function() {
+				if (this.label && !this.attached) {
+					this.label.deferUpdateTransform = true;
+					this.label.add(axisGroup);
+					this.attached = true;
+				}
+			},
+
+			/**
+			 * Invoke the updateTransform on a deferredUpdate label
+			 */
+			updateTransformLabel: function() {
+				if (this.label) {
+					this.label.deferUpdateTransform = false;
+					this.label.updateTransform();
+				}
+			},
+
+			/**
+			 * Force the browser to generate element width/heights and store them
+			 */
+			computeBBox: function() {
+				if (this.label) {
+					this.label.elemWidth = this.label.getBBox().width;
+					this.label.elemHeight = this.label.getBBox().height;
+				}
+			},
 			/**
 			 * Write the tick label
 			 */
@@ -243,9 +270,10 @@ function Chart (options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(css)
-								.add(axisGroup):
+								.css(css):
 							null;
+					// don't add to the axisGroup yet, and instead set that the label is unattached
+					this.attached = false;
 							
 				// update
 				} else if (label) {
@@ -370,7 +398,8 @@ function Chart (options, callback) {
 						
 					// vertically centered
 					if (!defined(labelOptions.y)) {
-						y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+						// Use the cached elemHeight instead of generating it from the bbox
+						y += pInt(label.styles.lineHeight) * 0.9 - label.elemHeight / 2;
 					}
 					
 						
@@ -1437,13 +1466,30 @@ function Chart (options, callback) {
 			labelOffset = 0; // reset
 			
 			if (hasData || isLinked) {
+				// First create all the labels
 				each(tickPositions, function(pos) {
 					if (!ticks[pos]) {
 						ticks[pos] = new Tick(pos);
 					} else {
 						ticks[pos].addLabel(); // update labels depending on tick interval
 					}
-					
+				});
+				// Next attach all the labels
+				each(tickPositions, function(pos) {
+					ticks[pos].attachLabel();
+				});
+
+				// Next compute the bbox for all the labels
+				each(tickPositions, function(pos) {
+					ticks[pos].computeBBox();
+				});
+
+				// Finally updateTransform (that was deferred)
+				each(tickPositions, function(pos) {
+					ticks[pos].updateTransformLabel();
+				});
+
+				each(tickPositions, function(pos) {
 					// left side must be align: right and right side must have align: left for labels
 					if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === labelOptions.align) {
 					
