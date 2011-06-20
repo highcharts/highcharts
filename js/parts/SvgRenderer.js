@@ -232,7 +232,11 @@ SVGElement.prototype = {
 		});
 		
 		wrapper.attr({ 
-			d: wrapper.renderer.symbols[wrapper.symbolName](mathRound(wrapper.x), mathRound(wrapper.y), wrapper.r, {
+			d: wrapper.renderer.symbols[wrapper.symbolName](
+					mathRound(wrapper.x * 2) / 2, // Round to halves. Issue #274.
+					mathRound(wrapper.y * 2) / 2, 
+					wrapper.r, 
+			{
 				start: wrapper.start, 
 				end: wrapper.end,
 				width: wrapper.width, 
@@ -988,6 +992,7 @@ SVGRenderer.prototype = {
 			width = x.width;
 			height = x.height;
 			r = x.r;
+			strokeWidth = x.strokeWidth;
 			x = x.x;	
 		}
 		var wrapper = this.createElement('rect').attr({

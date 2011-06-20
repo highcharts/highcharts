@@ -164,7 +164,7 @@ var VMLElement = extendClass( SVGElement, {
 						}
 						
 					}
-					value = convertedPath.join(' ') || 'x';							
+					value = convertedPath.join(' ') || 'x';	
 					element.path = value;
 			
 					// update shadows
@@ -907,6 +907,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			width = x.width;
 			height = x.height;
 			r = x.r;
+			strokeWidth = x.strokeWidth;
 			x = x.x;
 		}
 		var wrapper = this.symbol('rect');

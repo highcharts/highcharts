@@ -1691,7 +1691,11 @@ SVGElement.prototype = {
 		});
 		
 		wrapper.attr({ 
-			d: wrapper.renderer.symbols[wrapper.symbolName](mathRound(wrapper.x), mathRound(wrapper.y), wrapper.r, {
+			d: wrapper.renderer.symbols[wrapper.symbolName](
+					mathRound(wrapper.x * 2) / 2, // Round to halves. Issue #274.
+					mathRound(wrapper.y * 2) / 2, 
+					wrapper.r, 
+			{
 				start: wrapper.start, 
 				end: wrapper.end,
 				width: wrapper.width, 
@@ -2447,6 +2451,7 @@ SVGRenderer.prototype = {
 			width = x.width;
 			height = x.height;
 			r = x.r;
+			strokeWidth = x.strokeWidth;
 			x = x.x;	
 		}
 		var wrapper = this.createElement('rect').attr({
@@ -2986,7 +2991,7 @@ var VMLElement = extendClass( SVGElement, {
 						}
 						
 					}
-					value = convertedPath.join(' ') || 'x';							
+					value = convertedPath.join(' ') || 'x';	
 					element.path = value;
 			
 					// update shadows
@@ -3729,6 +3734,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			width = x.width;
 			height = x.height;
 			r = x.r;
+			strokeWidth = x.strokeWidth;
 			x = x.x;
 		}
 		var wrapper = this.symbol('rect');
@@ -6729,8 +6735,9 @@ function Chart (options, callback) {
 				simpleSymbol,
 				li = item.legendItem,
 				series = item.series || item,
-				i = allItems.length;
-				
+				i = allItems.length,
+				itemOptions = series.options,
+				strokeWidth = (itemOptions && itemOptions.borderWidth) || 0;				
 			
 			if (!li) { // generate it once, later move it
 			
@@ -6769,9 +6776,8 @@ function Chart (options, callback) {
 					.add(legendGroup);
 				
 				// draw the line
-				if (!simpleSymbol && item.options && item.options.lineWidth) {
-					var itemOptions = item.options;
-						attribs = {
+				if (!simpleSymbol && itemOptions && itemOptions.lineWidth) {
+					var attribs = {
 							'stroke-width': itemOptions.lineWidth,
 							zIndex: 2
 						};
@@ -6792,7 +6798,7 @@ function Chart (options, callback) {
 					
 				// draw a simple symbol
 				if (simpleSymbol) { // bar|pie|area|column
-					//legendLayer.drawRect(
+					
 					legendSymbol = renderer.rect(
 						(symbolX = -symbolWidth - symbolPadding),
 						(symbolY = -11),
@@ -6800,18 +6806,18 @@ function Chart (options, callback) {
 						12,
 						2
 					).attr({
-						'stroke-width': 0,
+						//'stroke-width': 0,
 						zIndex: 3
 					}).add(legendGroup);
 				}
 					
 				// draw the marker
-				else if (item.options && item.options.marker && item.options.marker.enabled) {
+				else if (itemOptions && itemOptions.marker && itemOptions.marker.enabled) {
 					legendSymbol = renderer.symbol(
 						item.symbol,
 						(symbolX = -symbolWidth / 2 - symbolPadding), 
 						(symbolY = -4),
-						item.options.marker.radius
+						itemOptions.marker.radius
 					)
 					//.attr(item.pointAttr[NORMAL_STATE])
 					.attr({ zIndex: 3 })
@@ -6819,8 +6825,8 @@ function Chart (options, callback) {
 				
 				}
 				if (legendSymbol) {
-					legendSymbol.xOff = symbolX;
-					legendSymbol.yOff = symbolY;
+					legendSymbol.xOff = symbolX + (strokeWidth % 2 / 2);
+					legendSymbol.yOff = symbolY + (strokeWidth % 2 / 2);
 				}
 				
 				item.legendSymbol = legendSymbol;
@@ -6830,7 +6836,7 @@ function Chart (options, callback) {
 				
 				
 				// add the HTML checkbox on top
-				if (item.options && item.options.showCheckbox) {
+				if (itemOptions && itemOptions.showCheckbox) {
 					item.checkbox = createElement('input', {
 						type: 'checkbox',
 						checked: item.selected,
@@ -10110,7 +10116,9 @@ var ColumnSeries = extendClass(Series, {
 	translate: function() {
 		var series = this,
 			chart = series.chart,
-			stacking = series.options.stacking,
+			options = series.options,
+			stacking = options.stacking,
+			borderWidth = options.borderWidth,
 			columnCount = 0,
 			reversedXAxis = series.xAxis.reversed,
 			categories = series.xAxis.categories,
@@ -10141,8 +10149,7 @@ var ColumnSeries = extendClass(Series, {
 		// calculate the width and position of each column based on 
 		// the number of column series in the plot, the groupPadding
 		// and the pointPadding options
-		var options = series.options,
-			data = series.data,
+		var data = series.data,
 			closestPoints = series.closestPoints,
 			categoryWidth = mathAbs(
 				data[1] ? data[closestPoints].plotX - data[closestPoints - 1].plotX : 
@@ -10172,7 +10179,8 @@ var ColumnSeries = extendClass(Series, {
 				barY = mathCeil(mathMin(plotY, yBottom)), 
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
 				stack = series.yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
-				trackerY;
+				trackerY,
+				shapeArgs;
 			
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
 			if (stacking && series.visible && stack && stack[point.x]) {
@@ -10197,14 +10205,23 @@ var ColumnSeries = extendClass(Series, {
 				barW: pointWidth,
 				barH: barH
 			});
+			
+			// create shape type and shape args that are reused in drawPoints and drawTracker
 			point.shapeType = 'rect';
-			point.shapeArgs = {
-				x: barX,
-				y: barY,
-				width: pointWidth,
-				height: barH,
+			shapeArgs = extend(chart.renderer.Element.prototype.crisp.apply({}, [
+				borderWidth,
+				barX,
+				barY,
+				pointWidth,
+				barH
+			]), {
 				r: options.borderRadius
-			};
+			});
+			if (borderWidth % 2) { // correct for shorting in crisp method, visible in stacked columns with 1px border
+				shapeArgs.y -= 1;
+				shapeArgs.height += 1;
+			}
+			point.shapeArgs = shapeArgs;
 			
 			// make small columns responsive to mouse
 			point.trackerArgs = defined(trackerY) && merge(point.shapeArgs, {
@@ -10274,6 +10291,7 @@ var ColumnSeries = extendClass(Series, {
 		each(series.data, function(point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
+			delete shapeArgs.strokeWidth;
 			if (point.y !== null) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
@@ -10329,7 +10347,8 @@ var ColumnSeries = extendClass(Series, {
 			 */
 			
 			each(data, function(point) {
-				var graphic = point.graphic;
+				var graphic = point.graphic,
+					shapeArgs = point.shapeArgs;
 				
 				if (graphic) {
 					// start values
@@ -10340,8 +10359,8 @@ var ColumnSeries = extendClass(Series, {
 					
 					// animate
 					graphic.animate({ 
-						height: point.barH,
-						y: point.barY
+						height: shapeArgs.height,
+						y: shapeArgs.y
 					}, series.options.animation);
 				}
 			});
