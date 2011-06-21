@@ -4111,21 +4111,21 @@ function Chart (options, callback) {
 				var pos = this.pos,
 					labelOptions = options.labels,
 					str,
-					withLabel = !((pos == min && !pick(options.showFirstLabel, 1)) ||
-						(pos == max && !pick(options.showLastLabel, 0))),
-					width = categories && horiz && categories.length && 
+					withLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
+						(pos === max && !pick(options.showLastLabel, 0))),
+					width = (categories && horiz && categories.length && 
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
-						plotWidth / categories.length ||
-						!horiz && plotWidth / 2,
+						plotWidth / categories.length) ||
+						(!horiz && plotWidth / 2),
 					css,
 					label = this.label;
 					
 				
 				// get the string
 				str = labelFormatter.call({
-						isFirst: pos == tickPositions[0],
-						isLast: pos == tickPositions[tickPositions.length - 1],
+						isFirst: pos === tickPositions[0],
+						isLast: pos === tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
 						value: (categories && categories[pos] ? categories[pos] : pos)
 					});
@@ -6777,12 +6777,12 @@ function Chart (options, callback) {
 				
 				// draw the line
 				if (!simpleSymbol && itemOptions && itemOptions.lineWidth) {
-					var attribs = {
+					var attrs = {
 							'stroke-width': itemOptions.lineWidth,
 							zIndex: 2
 						};
 					if (itemOptions.dashStyle) {
-						attribs.dashstyle = itemOptions.dashStyle;
+						attrs.dashstyle = itemOptions.dashStyle;
 					}
 					item.legendLine = renderer.path([
 						M,
@@ -6792,7 +6792,7 @@ function Chart (options, callback) {
 						-symbolPadding, 
 						0
 					])
-					.attr(attribs)
+					.attr(attrs)
 					.add(legendGroup);
 				}
 					
