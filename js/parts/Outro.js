@@ -24,6 +24,6 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	version: '2.1.4'
+	version: '2.1.5'
 };
 }());
