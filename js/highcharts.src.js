@@ -6771,6 +6771,22 @@ function Chart (options, callback) {
 						} else {
 							fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
 						}
+						// checking if the legend symbol is an object
+                        // if so, it will attempt to change it to a disabled object look
+                        // if that object doesn't exist, it will just show no object when disabled
+                        if(typeof item.legendSymbol == 'object') {
+                            var imgLoc = item.legendSymbol.element.href.baseVal;
+                            var enabledImg = '.png';
+                            var disabledImg = '_disabled.png';
+
+                            if(imgLoc.search(disabledImg) > 0) {
+                                imgLoc = imgLoc.replace(disabledImg, enabledImg);
+                                item.legendSymbol.element.href.baseVal = imgLoc;
+                            } else {
+                                imgLoc = imgLoc.replace(enabledImg, disabledImg);
+                                item.legendSymbol.element.href.baseVal = imgLoc;
+                            }
+                        }
 					})
 					.attr({ zIndex: 2 })
 					.add(legendGroup);
