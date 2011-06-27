@@ -6771,6 +6771,40 @@ function Chart (options, callback) {
 						} else {
 							fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
 						}
+						// If the legend symbol is an object, will attempt to
+                        // change the img to a disabled form, if the image is not
+                        // available, it will keep the same image
+                        // Requirement: disabled image needs to be named *_disabled.*
+                        // Example: [image.png, image_disabled.png]
+                        if(typeof item.legendSymbol == 'object') {
+                            var imgLoc = item.legendSymbol.element.href.baseVal;
+                            var imgLocSplit = imgLoc.split('.');
+
+                            var imageSRC = imgLocSplit[0];
+                            var imageTYPE = imgLocSplit[1]
+
+                            var disabledString = '_disabled';
+
+                            if(imageSRC.search(disabledString) > 0) {
+                                imageSRC = imageSRC.replace(disabledString, '');
+                            } else {
+                                imageSRC += disabledString;
+                            }
+
+                            // Checking if the image exists
+                            // If the image exists, it will change it to the new image,
+                            // if not, then it will keep the same image there
+                            var http = new XMLHttpRequest();
+                            http.open('HEAD', imageSRC + "." + imageTYPE, false);
+                            http.send();
+
+                            if(http.status != 404) {
+                                item.legendSymbol.element.href.baseVal = imageSRC + "." + imageTYPE;
+                            }
+                            else {
+                                item.legendSymbol.element.href.baseVal = imgLoc;
+                            }
+						}
 					})
 					.attr({ zIndex: 2 })
 					.add(legendGroup);
