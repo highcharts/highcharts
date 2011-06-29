@@ -2382,6 +2382,7 @@ function Chart (options, callback) {
 						Math.pow(mouseDownX - chartX, 2) +
 						Math.pow(mouseDownY - chartY, 2));
 					if (hasDragged > 10) {
+						var clickedInside = isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
 						// make a selection
 						if (hasCartesianSeries && (zoomX || zoomY) && clickedInside) {
@@ -3036,7 +3037,7 @@ function Chart (options, callback) {
 			}
 		}
 
-		serie = new (typeClass || Series)();
+		serie = new typeClass();
 
 		serie.init(chart, options);
 
