@@ -281,7 +281,7 @@ var PieSeries = extendClass(Series, {
 		var series = this;
 
 		// cache attributes for shapes
-		//series.getAttribs();
+		series.getAttribs();
 
 		this.drawPoints();
 

@@ -269,9 +269,6 @@ Point.prototype = {
 				}
 			}
 
-			// cache attributes for shapes
-			series.getAttribs();
-
 			// redraw
 			series.isDirty = true;
 			series.isDirtyData = true;
