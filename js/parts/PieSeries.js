@@ -507,7 +507,7 @@ var PieSeries = extendClass(Series, {
 						slotIndex++;
 					}
 				}
-				i == 0 && console.log(point.name, slotIndex, slots[slotIndex]);
+				
 				usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
 				slots[slotIndex] = null; // mark as taken
 			}
