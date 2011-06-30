@@ -41,8 +41,6 @@ var doc = document,
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
-	colorCounter,
-	symbolCounter,
 	symbolSizes = {},
 	idCounter = 0,
 	timeFactor = 1, // 1 = JavaScript time, 1000 = Unix time
@@ -461,6 +459,34 @@ function getPosition (el) {
 	}
 	return p;
 }
+
+/**
+ * Helper class that contains variuos counters that are local to the chart.
+ */
+function ChartCounters() {
+	this.color = 0;
+	this.symbol = 0;
+}
+
+ChartCounters.prototype =  {
+	/**
+	 * Wraps the color counter if it reaches the specified length.
+	 */
+	wrapColor: function(length) {
+		if (this.color >= length) {
+			this.color = 0;
+		}
+	},
+
+	/**
+	 * Wraps the symbol counter if it reaches the specified length.
+	 */
+	wrapSymbol: function(length) {
+		if (this.symbol >= length) {
+			this.symbol = 0;
+		}
+	}
+};
 
 /**
  * Set the global animation to either a given value, or fall back to the 
@@ -8039,10 +8065,6 @@ function Chart (options, callback) {
 			return;
 		}
 
-		// Set to zero for each new chart
-		colorCounter = 0;
-		symbolCounter = 0;
-
 		// create the container
 		getContainer();
 		
@@ -8108,7 +8130,6 @@ function Chart (options, callback) {
 	
 	
 	
-	
 	// Expose methods and variables
 	chart.addSeries = addSeries;
 	chart.animation = pick(optionsChart.animation, true);
@@ -8123,6 +8144,7 @@ function Chart (options, callback) {
 	chart.setTitle = setTitle;
 	chart.showLoading = showLoading;	
 	chart.pointCount = 0;
+	chart.counters = new ChartCounters();
 	/*
 	if ($) $(function() {
 		$container = $('#container');
@@ -8183,6 +8205,7 @@ Point.prototype = {
 	 */
 	init: function(series, options) {
 		var point = this,
+			counters = series.chart.counters,
 			defaultColors;
 		point.series = series;
 		point.applyOptions(options);
@@ -8193,12 +8216,10 @@ Point.prototype = {
 			if (!point.options) {
 				point.options = {};
 			}
-			point.color = point.options.color = point.color || defaultColors[colorCounter++];
+			point.color = point.options.color = point.color || defaultColors[counters.color++];
 			
 			// loop back to zero
-			if (colorCounter >= defaultColors.length) {
-				colorCounter = 0;
-			}
+			counters.wrapColor(defaultColors.length);
 		}
 		
 		series.chart.pointCount++;
@@ -8741,22 +8762,19 @@ Series.prototype = {
 	 * Get the series' color
 	 */
 	getColor: function(){
-		var defaultColors = this.chart.options.colors;
-		this.color = this.options.color || defaultColors[colorCounter++] || '#0000ff';
-		if (colorCounter >= defaultColors.length) {
-			colorCounter = 0;
-		}
+		var defaultColors = this.chart.options.colors,
+			counters = this.chart.counters;
+		this.color = this.options.color || defaultColors[counters.color++] || '#0000ff';
+		counters.wrapColor(defaultColors.length);
 	},
 	/**
 	 * Get the series' symbol
 	 */
 	getSymbol: function(){
 		var defaultSymbols = this.chart.options.symbols,
-			symbol = this.options.marker.symbol || defaultSymbols[symbolCounter++];
-		this.symbol = symbol;
-		if (symbolCounter >= defaultSymbols.length) { 
-			symbolCounter = 0;
-		}
+			counters = this.chart.counters;
+		this.symbol = this.options.marker.symbol || defaultSymbols[counters.symbol++];
+		counters.wrapSymbol(defaultSymbols.length);
 	},
 	
 	/**
@@ -8816,7 +8834,7 @@ Series.prototype = {
 		
 		series.xIncrement = null; // reset for new data
 		if (defined(initialColor)) { // reset colors for pie
-			colorCounter = initialColor;
+			chart.counters.color = initialColor;
 		}
 		
 		data = map(splat(data || []), function(pointOptions) {
@@ -10578,7 +10596,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	getColor: function() {
 		// record first color for use in setData
-		this.initialColor = colorCounter;
+		this.initialColor = this.chart.counters.color;
 	},
 	
 	/**
