@@ -630,7 +630,7 @@ var VMLElement = extendClass( SVGElement, {
 VMLRenderer = function() {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = { // inherit SVGRenderer
+VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 
 	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
@@ -1095,15 +1095,7 @@ VMLRenderer.prototype = { // inherit SVGRenderer
 
 		}
 	}
-};
-//VMLRender.prototype = merge( SVGRenderer.prototype, VMLRenderer.prototype);
-// Makes it visible in editor:
-var forNSvgRenderer;
-for (forNSvgRenderer in SVGRenderer.prototype) {
-	if (!VMLRenderer.prototype[forNSvgRenderer]) {
-		VMLRenderer.prototype[forNSvgRenderer] = SVGRenderer.prototype[forNSvgRenderer];
-	}
-}
+});
 
 	// general renderer
 	Renderer = VMLRenderer;

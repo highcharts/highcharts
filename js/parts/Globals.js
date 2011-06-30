@@ -116,3 +116,6 @@ var doc = document,
 	// lookup over the types and the associated classes
 	seriesTypes = {},
 	hoverChart;
+
+// The Highcharts namespace
+win.Highcharts = {};
