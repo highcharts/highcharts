@@ -1,11 +1,10 @@
 
 // global variables
-win.Highcharts = {
+extend(Highcharts, {
 	Chart: Chart,
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
-	getTimeTicks: getTimeTicks,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,
@@ -28,5 +27,5 @@ win.Highcharts = {
 	splat: splat,
 	extendClass: extendClass,
 	version: '1.0 Alpha'
-};
+});
 }());

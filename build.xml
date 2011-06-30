@@ -84,6 +84,16 @@
 				<file name="BarSeries.js"/>
 				<file name="ScatterSeries.js"/>
 				<file name="PieSeries.js"/>
+
+				<!-- Highstock specific -->
+				<file name="DataGrouping.js"/>
+				<file name="OHLCSeries.js"/>
+				<file name="CandlestickSeries.js"/>
+				<file name="FlagsSeries.js"/>
+				<file name="StockNavigation.js"/>
+				<file name="StockChart.js"/>
+
+
 				<file name="Outro.js"/>
 			</filelist>
 		</concat>
