@@ -305,6 +305,14 @@ SVGElement.prototype = {
 		if (styles && styles.color) {
 			styles.fill = styles.color;
 		}
+
+		// hyphenate
+		if (defined(styles)) {
+			styles = {};
+			for (n in camelStyles) {
+				styles[hyphenate(n)] = camelStyles[n];
+			}
+		}
 		
 		// save the styles in an object
 		styles = extend(
@@ -316,13 +324,6 @@ SVGElement.prototype = {
 		// store object
 		elemWrapper.styles = styles;
 		
-		// hyphenate
-		if (defined(styles)) {
-			styles = {};
-			for (n in camelStyles) {
-				styles[hyphenate(n)] = camelStyles[n];
-			}
-		}
 		
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
