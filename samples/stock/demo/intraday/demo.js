@@ -85,7 +85,7 @@ $.get('/samples/stock/demo/intraday/data.csv', function(csv) {
 			}, {
 				type: 'all',
 				count: 1,
-				text: 'All	'
+				text: 'All'
 			}],
 			selected: 1,
 			inputEnabled: false
