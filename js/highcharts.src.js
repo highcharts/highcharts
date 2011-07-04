@@ -12030,8 +12030,12 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		// do the translation
 		each(series.points, function(point) {
 			// the graphics
-			point.plotOpen = yAxis.translate(point.open, 0, 1);
-			point.plotClose = yAxis.translate(point.close, 0, 1);
+			if (point.open !== null) {
+				point.plotOpen = yAxis.translate(point.open, 0, 1);
+			}
+			if (point.close !== null) {
+				point.plotClose = yAxis.translate(point.close, 0, 1);
+			}
 
 		});
 	},
@@ -12062,28 +12066,39 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
 				crispX = mathRound(point.plotX) + crispCorr;
-				plotOpen = mathRound(point.plotOpen) + crispCorr;
-				plotClose = mathRound(point.plotClose) + crispCorr;
 				halfWidth = mathRound(point.barW / 2);
 
-
+				// the vertical stem
 				path = [
 					'M',
 					crispX, mathRound(point.yBottom),
 					'L',
-					crispX, mathRound(point.plotY),
-					'M',
-					crispX, plotOpen,
-					'L',
-					crispX - halfWidth, plotOpen,
-					'M',
-					crispX, plotClose,
-					'L',
-					crispX + halfWidth, plotClose,
-					'Z'
+					crispX, mathRound(point.plotY)
 				];
 
+				// open
+				if (point.open !== null) {
+					plotOpen = mathRound(point.plotOpen) + crispCorr;
+					path.push(
+						'M',
+						crispX, plotOpen,
+						'L',
+						crispX - halfWidth, plotOpen
+					);
+				}
 
+				// close
+				if (point.close !== null) {
+					plotClose = mathRound(point.plotClose) + crispCorr;
+					path.push(
+						'M',
+						crispX, plotClose,
+						'L',
+						crispX + halfWidth, plotClose
+					);
+				}
+
+				// create and/or update the graphic
 				if (graphic) {
 					graphic.animate({ d: path });
 				} else {
