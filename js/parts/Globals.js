@@ -25,8 +25,6 @@ var doc = document,
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
-	colorCounter,
-	symbolCounter,
 	symbolSizes = {},
 	idCounter = 0,
 	timeFactor = 1, // 1 = JavaScript time, 1000 = Unix time

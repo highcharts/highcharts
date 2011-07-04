@@ -4060,10 +4060,6 @@ function Chart (options, callback) {
 			return;
 		}
 
-		// Set to zero for each new chart
-		colorCounter = 0;
-		symbolCounter = 0;
-
 		// create the container
 		getContainer();
 
@@ -4153,6 +4149,7 @@ function Chart (options, callback) {
 	chart.setTitle = setTitle;
 	chart.showLoading = showLoading;
 	chart.pointCount = 0;
+	chart.counters = new ChartCounters();
 
 	firstRender();
 
