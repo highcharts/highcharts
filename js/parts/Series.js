@@ -1454,12 +1454,13 @@ Series.prototype = {
 					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
-					align = options.align;
+					align = options.align,
+					individualYDelta = yIsNull ? (point.y > 0 ? -6 : 12) : options.y;
 
 				// get the string
 				str = options.formatter.call(point.getLabelConfig());
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
-				y = (inverted ? chart.plotHeight - plotX : plotY) + options.y;
+				y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
 
 				// in columns, align the string to the column
 				if (seriesType === 'column') {
