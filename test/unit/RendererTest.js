@@ -19,9 +19,8 @@ RendererTest.prototype.setUp = function() {
  */
 RendererTest.prototype.testCssFontSize = function () {
 	var textElement = this.renderer.text('Hello World', 100, 90),
-		isSvg = this.renderer.box.nodeName === 'svg',
-		undefinedFontSize = isSvg ? 'fontSize' : 'font-size',
-		definedFontSize = isSvg ? 'font-size' : 'fontSize',
+		undefinedFontSize = 'font-size',
+		definedFontSize = 'fontSize',
 		defaultFontSize = defaultOptions.chart.style.fontSize;
 
 	assertNotUndefined(textElement);

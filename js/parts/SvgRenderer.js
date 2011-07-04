@@ -312,8 +312,6 @@ SVGElement.prototype = {
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
-
-			camelStyles = styles,
 			n;
 
 		// convert legacy
@@ -321,20 +319,11 @@ SVGElement.prototype = {
 			styles.fill = styles.color;
 		}
 
-		// hyphenate
-		if (defined(styles)) {
-			styles = {};
-			for (n in camelStyles) {
-				styles[hyphenate(n)] = camelStyles[n];
-			}
-		}
-
-		// save the styles in an object
+		// merge the new styles with the old ones
 		styles = extend(
 			elemWrapper.styles,
 			styles
 		);
-
 
 		// store object
 		elemWrapper.styles = styles;
@@ -1466,8 +1455,8 @@ SVGRenderer.prototype = {
 				text: str
 			})
 			.css({
-				'font-family': defaultChartStyle.fontFamily,
-				'font-size': defaultChartStyle.fontSize
+				fontFamily: defaultChartStyle.fontFamily,
+				fontSize: defaultChartStyle.fontSize
 			});
 
 		wrapper.x = x;

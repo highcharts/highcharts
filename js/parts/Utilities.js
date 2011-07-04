@@ -157,7 +157,8 @@ function pick() {
 	}
 }
 /**
- * Make a style string from a JS object
+ * Make a style string from a JS object,
+ * the keys are hyphenated in this process.
  * @param {Object} style
  */
 function serializeCSS(style) {
@@ -165,7 +166,7 @@ function serializeCSS(style) {
 		key;
 	// serialize the declaration
 	for (key in style) {
-		s += key +':'+ style[key] + ';';
+		s += hyphenate(key) +':'+ style[key] + ';';
 	}
 	return s;
 
