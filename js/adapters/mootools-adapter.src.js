@@ -164,14 +164,6 @@ win.HighchartsAdapter = {
 	},
 
 	/**
-	 * Hyphenate a string, like minWidth becomes min-width
-	 * @param {Object} str
-	 */
-	hyphenate: function (str){
-		return str.hyphenate();
-	},
-
-	/**
 	 * Add an event listener
 	 * @param {Object} el HTML element or custom object
 	 * @param {String} type Event type

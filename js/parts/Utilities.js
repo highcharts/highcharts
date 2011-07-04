@@ -156,21 +156,7 @@ function pick() {
 		}
 	}
 }
-/**
- * Make a style string from a JS object,
- * the keys are hyphenated in this process.
- * @param {Object} style
- */
-function serializeCSS(style) {
-	var s = '',
-		key;
-	// serialize the declaration
-	for (key in style) {
-		s += hyphenate(key) +':'+ style[key] + ';';
-	}
-	return s;
 
-}
 /**
  * Set CSS on a given element
  * @param {Object} el
