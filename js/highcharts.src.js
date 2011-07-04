@@ -104,7 +104,6 @@ var doc = document,
 	grep = adapter.grep,
 	map = adapter.map,
 	merge = adapter.merge,
-	hyphenate = adapter.hyphenate,
 	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
@@ -255,21 +254,7 @@ function pick() {
 		}
 	}
 }
-/**
- * Make a style string from a JS object,
- * the keys are hyphenated in this process.
- * @param {Object} style
- */
-function serializeCSS(style) {
-	var s = '', 
-		key;
-	// serialize the declaration
-	for (key in style) {
-		s += hyphenate(key) +':'+ style[key] + ';';
-	}
-	return s;
-	
-}
+
 /**
  * Set CSS on a given element
  * @param {Object} el
@@ -551,14 +536,6 @@ if (!globalAdapter && win.jQuery) {
 	merge = function(){
 		var args = arguments;
 		return jQ.extend(true, null, args[0], args[1], args[2], args[3]);
-	};
-	
-	/**
-	 * Convert a camelCase string to a hyphenated string
-	 * @param {String} str
-	 */
-	hyphenate = function (str) {
-		return str.replace(/([A-Z])/g, function(a, b){ return '-'+ b.toLowerCase(); });
 	};
 	
 	/**
@@ -1784,7 +1761,9 @@ SVGElement.prototype = {
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
-			n;
+			n,
+			serializedCss,
+			hyphenate = function(a, b){ return '-'+ b.toLowerCase(); };
 			
 		// convert legacy
 		if (styles && styles.color) {
@@ -1809,8 +1788,12 @@ SVGElement.prototype = {
 			} 
 			css(elemWrapper.element, styles);	
 		} else {
+			for (n in styles) {
+				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':'+ styles[n] + ';';
+			}
+
 			elemWrapper.attr({
-				style: serializeCSS(styles)
+				style: serializedCss
 			});
 		}	
 		

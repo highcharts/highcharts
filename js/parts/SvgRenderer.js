@@ -298,7 +298,9 @@ SVGElement.prototype = {
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
-			n;
+			n,
+			serializedCss,
+			hyphenate = function(a, b){ return '-'+ b.toLowerCase(); };
 			
 		// convert legacy
 		if (styles && styles.color) {
@@ -323,8 +325,12 @@ SVGElement.prototype = {
 			} 
 			css(elemWrapper.element, styles);	
 		} else {
+			for (n in styles) {
+				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':'+ styles[n] + ';';
+			}
+
 			elemWrapper.attr({
-				style: serializeCSS(styles)
+				style: serializedCss
 			});
 		}	
 		
