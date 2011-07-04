@@ -960,7 +960,8 @@ function RangeSelector(chart) {
 					states && states.select
 				)
 				.attr({
-					width: 28
+					width: 28,
+					height: 16
 				})
 				.css({
 					textAlign: 'center'

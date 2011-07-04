@@ -2677,7 +2677,10 @@ SVGRenderer.prototype = {
 				]
 			),
 			'r', 3,
-			'padding', 3
+			'padding', 3,
+			'style', hash(
+				'color', 'black'
+			)
 		), normalState);
 		normalStyle = normalState.style;
 		delete normalState.style;
@@ -3235,7 +3238,7 @@ SVGRenderer.prototype = {
 			deferredAttr = {};
 
 		function updateBoxSize() {
-			bBox = (width === undefined || height === undefined) && wrapper.getBBox(true);
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && wrapper.getBBox(true);
 			var w = (width || bBox.width) + 2 * padding,
 				h = (height || bBox.height) + 2 * padding,
 				anchors;
@@ -3330,7 +3333,7 @@ SVGRenderer.prototype = {
 
 			// change box attributes and return modified values
 			else if (key === 'x') {
-				textAlign = wrapper.element.style.textAlign;
+				textAlign = wrapper.styles.textAlign;
 				boxAttr('translateX', value - xAdjust);
 				if (align === 'left' && defined(width) && (textAlign === 'center' || textAlign === 'right')) {
 					value += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
@@ -3338,7 +3341,7 @@ SVGRenderer.prototype = {
 				ret = mathRound(value + { left: 1, center: 0, right: -1 }[align] * padding);
 			} else if (key === 'y') {
 				boxAttr('translateY', value);
-				ret = mathRound(value + pInt(wrapper.element.style.fontSize || 12) * 1.2);
+				ret = mathRound(value + pInt(wrapper.styles.fontSize || 12) * 1.2);
 			}
 
 			else if (key === 'text') {
@@ -13515,7 +13518,8 @@ function RangeSelector(chart) {
 					states && states.select
 				)
 				.attr({
-					width: 28
+					width: 28,
+					height: 16
 				})
 				.css({
 					textAlign: 'center'

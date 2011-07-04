@@ -934,7 +934,8 @@ SVGRenderer.prototype = {
 			stateOptions,
 			normalStyle,
 			hoverStyle,
-			pressedStyle;
+			pressedStyle,
+			STYLE = 'style';
 
 		// prepare the attributes
 		normalState = merge(hash(
@@ -948,10 +949,13 @@ SVGRenderer.prototype = {
 				]
 			),
 			'r', 3,
-			'padding', 3
+			'padding', 3,
+			STYLE, hash(
+				'color', 'black'
+			)
 		), normalState);
-		normalStyle = normalState.style;
-		delete normalState.style;
+		normalStyle = normalState[STYLE];
+		delete normalState[STYLE];
 
 		hoverState = merge(normalState, hash(
 			STROKE, '#68A',
@@ -963,8 +967,8 @@ SVGRenderer.prototype = {
 				]
 			)
 		), hoverState);
-		hoverStyle = hoverState.style;
-		delete hoverState.style;
+		hoverStyle = hoverState[STYLE];
+		delete hoverState[STYLE];
 
 		pressedState = merge(normalState, hash(
 			STROKE, '#68A',
@@ -976,8 +980,8 @@ SVGRenderer.prototype = {
 				]
 			)
 		), pressedState);
-		pressedStyle = pressedState.style;
-		delete pressedState.style;
+		pressedStyle = pressedState[STYLE];
+		delete pressedState[STYLE];
 
 		// add the events
 		addEvent(label.element, 'mouseenter', function() {
@@ -1506,7 +1510,7 @@ SVGRenderer.prototype = {
 			deferredAttr = {};
 
 		function updateBoxSize() {
-			bBox = (width === undefined || height === undefined) && wrapper.getBBox(true);
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && wrapper.getBBox(true);
 			var w = (width || bBox.width) + 2 * padding,
 				h = (height || bBox.height) + 2 * padding,
 				anchors;
@@ -1601,7 +1605,7 @@ SVGRenderer.prototype = {
 
 			// change box attributes and return modified values
 			else if (key === 'x') {
-				textAlign = wrapper.element.style.textAlign;
+				textAlign = wrapper.styles.textAlign;
 				boxAttr('translateX', value - xAdjust);
 				if (align === 'left' && defined(width) && (textAlign === 'center' || textAlign === 'right')) {
 					value += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
@@ -1609,7 +1613,7 @@ SVGRenderer.prototype = {
 				ret = mathRound(value + { left: 1, center: 0, right: -1 }[align] * padding);
 			} else if (key === 'y') {
 				boxAttr('translateY', value);
-				ret = mathRound(value + pInt(wrapper.element.style.fontSize || 12) * 1.2);
+				ret = mathRound(value + pInt(wrapper.styles.fontSize || 12) * 1.2);
 			}
 
 			else if (key === 'text') {
