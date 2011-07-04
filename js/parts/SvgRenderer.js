@@ -1494,7 +1494,7 @@ SVGRenderer.prototype = {
 			deferredAttr = {};
 
 		function updateBoxSize() {
-			bBox = (width === undefined || height === undefined) && wrapper.getBBox();
+			bBox = (width === undefined || height === undefined) && wrapper.getBBox(true);
 			var w = (width || bBox.width) + 2 * padding,
 				h = (height || bBox.height) + 2 * padding,
 				anchors;

@@ -222,8 +222,8 @@ return {
 
 			for (var key in original) {
 				value = original[key];
-				if (value && typeof value == 'object' && value.constructor != Array) &&
-					typeof value.nodeType !== 'number') {
+				if (value && typeof value == 'object' && value.constructor != Array &&
+						typeof value.nodeType !== 'number') {
 					copy[key] = doCopy(copy[key] || {}, value); // copy
 
 				} else {

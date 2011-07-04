@@ -3223,7 +3223,7 @@ SVGRenderer.prototype = {
 			deferredAttr = {};
 
 		function updateBoxSize() {
-			bBox = (width === undefined || height === undefined) && wrapper.getBBox();
+			bBox = (width === undefined || height === undefined) && wrapper.getBBox(true);
 			var w = (width || bBox.width) + 2 * padding,
 				h = (height || bBox.height) + 2 * padding,
 				anchors;
@@ -3759,17 +3759,19 @@ var VMLElement = extendClass( SVGElement, {
 
 	/**
 	 * VML override for calculating the bounding box based on offsets
+	 * @param {Boolean} refresh Whether to force a fresh value from the DOM or to
+	 * use the cached value
 	 *
 	 * @return {Object} A hash containing values for x, y, width and height
 	 */
 
-	getBBox: function() {
+	getBBox: function(refresh) {
 		var wrapper = this,
 			element = wrapper.element,
 			bBox = wrapper.bBox;
 
 		// faking getBBox in exported SVG in legacy IE
-		if (!bBox) {
+		if (!bBox || refresh) {
 			// faking getBBox in exported SVG in legacy IE
 			if (element.nodeName === 'text') {
 				element.style.position = ABSOLUTE;
