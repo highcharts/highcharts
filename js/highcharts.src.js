@@ -3587,7 +3587,7 @@ var VMLElement = extendClass( SVGElement, {
 						skipAttr = true;
 
 					// width and height
-					} else if (/^(width|height)$/.test(key)) {
+					} else if (key === 'width' || key === 'height') {
 
 
 						// clipping rectangle special
@@ -3596,8 +3596,13 @@ var VMLElement = extendClass( SVGElement, {
 							wrapper.updateClipping();
 
 						} else {
+
 							// normal
+							try {
 							elemStyle[key] = value;
+							} catch(e) {
+								console.log([element.tagName, key, value].join(', '));
+								}
 						}
 
 						skipAttr = true;
@@ -11815,7 +11820,7 @@ seriesProto.processData = function() {
 				value = value === UNDEFINED || value === null ? pointY : value + pointY;
 			} else if (ohlcData) {
 				var index = series.cropStart + i,
-					point = data[index] || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]);
+					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]);
 				if (open === null) { // first point
 					open = point.open;
 				}
@@ -12130,7 +12135,12 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 
 		});
 
-	}
+	},
+
+	/**
+	 * Disable animation
+	 */
+	animate: null
 
 
 });

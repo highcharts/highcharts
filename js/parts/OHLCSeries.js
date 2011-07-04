@@ -192,7 +192,12 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 
 		});
 
-	}
+	},
+
+	/**
+	 * Disable animation
+	 */
+	animate: null
 
 
 });

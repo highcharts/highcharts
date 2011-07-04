@@ -217,7 +217,7 @@ var VMLElement = extendClass( SVGElement, {
 						skipAttr = true;
 
 					// width and height
-					} else if (/^(width|height)$/.test(key)) {
+					} else if (key === 'width' || key === 'height') {
 
 
 						// clipping rectangle special
