@@ -3180,10 +3180,8 @@ function Chart (options, callback) {
 			// redraw axes
 			each(axes, function(axis) {
 				if (axis.isDirty || isDirtyBox) {
-					var boxSum = [plotLeft, plotTop, marginBottom, marginRight].join(',');
 					axis.redraw();
-					// see if anything's changed:
-					isDirtyBox = [plotLeft, plotTop, marginBottom, marginRight].join(',') !== boxSum;
+					isDirtyBox = true;
 				}
 			});
 

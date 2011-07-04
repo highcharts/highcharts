@@ -1625,3 +1625,4 @@ SVGRenderer.prototype = {
 
 
 // general renderer
+Renderer = SVGRenderer;
