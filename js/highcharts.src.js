@@ -2658,6 +2658,14 @@ SVGRenderer.prototype = {
 	 * @param {Object} pressedState
 	 */
 	button: function(text, x, y, callback, normalState, hoverState, pressedState) {
+		var label = this.label(text, x, y),
+			curState = 0,
+			stateOptions,
+			normalStyle,
+			hoverStyle,
+			pressedStyle;
+
+		// prepare the attributes
 		normalState = merge(hash(
 			STROKE_WIDTH, 1,
 			STROKE, '#999',
@@ -2671,6 +2679,8 @@ SVGRenderer.prototype = {
 			'r', 3,
 			'padding', 3
 		), normalState);
+		normalStyle = normalState.style;
+		delete normalState.style;
 
 		hoverState = merge(normalState, hash(
 			STROKE, '#68A',
@@ -2682,6 +2692,8 @@ SVGRenderer.prototype = {
 				]
 			)
 		), hoverState);
+		hoverStyle = hoverState.style;
+		delete hoverState.style;
 
 		pressedState = merge(normalState, hash(
 			STROKE, '#68A',
@@ -2693,28 +2705,28 @@ SVGRenderer.prototype = {
 				]
 			)
 		), pressedState);
-		var label = this.label(text, x, y),
-			curState = 0,
-			stateOptions;
+		pressedStyle = pressedState.style;
+		delete pressedState.style;
 
+		// add the events
 		addEvent(label.element, 'mouseenter', function() {
 			label.attr(hoverState)
-				.css(hoverState.style);
+				.css(hoverStyle);
 		});
 		addEvent(label.element, 'mouseleave', function() {
 			stateOptions = [normalState, hoverState, pressedState][curState];
 			label.attr(stateOptions)
-				.css(stateOptions.style);
+				.css(stateStyle);
 		});
 
 		label.setState = function(state) {
 			curState = state;
 			if (!state) {
 				label.attr(normalState)
-					.css(normalState.style);
+					.css(normalStyle);
 			} else if (state === 2) {
 				label.attr(pressedState)
-					.css(pressedState.style);
+					.css(pressedStyle);
 			}
 		};
 
@@ -2723,7 +2735,7 @@ SVGRenderer.prototype = {
 				callback.call(label);
 			})
 			.attr(normalState)
-			.css(extend({ cursor: 'default' }, normalState.style));
+			.css(extend({ cursor: 'default' }, normalStyle));
 
 	},
 
@@ -3676,7 +3688,11 @@ var VMLElement = extendClass( SVGElement, {
 
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
+							try {
 							element[key] = value;
+							} catch(e) {
+								console.log([element.tagName, key, value].join(', '));
+								}
 						} else {
 							attr(element, key, value);
 						}
@@ -13425,9 +13441,18 @@ function RangeSelector(chart) {
 			setInputValue(input);
 		};
 
+		// handle changes in the input boxes
 		input.onchange = function() {
-			var value = Date.parse(input.value),
+			var inputValue = input.value,
+				value = Date.parse(inputValue),
 				extremes = chart.xAxis[0].getExtremes();
+
+			// if the value isn't parsed directly to a value by the browser's Date.parse method,
+			// like YYYY-MM-DD in IE, try parsing it a different way
+			if (isNaN(value)) {
+				value = inputValue.split('-');
+				value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
+			}
 
 			if (!isNaN(value) &&
 				((isMin && (value > extremes.dataMin && value < rightBox.HCTime)) ||

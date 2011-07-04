@@ -897,9 +897,18 @@ function RangeSelector(chart) {
 			setInputValue(input);
 		};
 
+		// handle changes in the input boxes
 		input.onchange = function() {
-			var value = Date.parse(input.value),
+			var inputValue = input.value,
+				value = Date.parse(inputValue),
 				extremes = chart.xAxis[0].getExtremes();
+
+			// if the value isn't parsed directly to a value by the browser's Date.parse method,
+			// like YYYY-MM-DD in IE, try parsing it a different way
+			if (isNaN(value)) {
+				value = inputValue.split('-');
+				value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
+			}
 
 			if (!isNaN(value) &&
 				((isMin && (value > extremes.dataMin && value < rightBox.HCTime)) ||

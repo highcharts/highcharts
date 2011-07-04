@@ -318,7 +318,11 @@ var VMLElement = extendClass( SVGElement, {
 
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
+							try {
 							element[key] = value;
+							} catch(e) {
+								console.log([element.tagName, key, value].join(', '));
+								}
 						} else {
 							attr(element, key, value);
 						}
