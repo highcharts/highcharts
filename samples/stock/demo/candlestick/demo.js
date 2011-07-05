@@ -30,14 +30,10 @@ $.get('/samples/stock/demo/candlestick-and-volume/data.csv', function(csv) {
 	});
 	
 	
-	
-	if (window.console) console.log('Finished parsing at ' + (new Date() - start) + ' ms');
-	start = +new Date();
-	
+	// create the chart
 	chart = new Highcharts.StockChart({
 	    chart: {
-	        renderTo: 'container',
-	        alignTicks: false
+	        renderTo: 'container'
 	    },
 	    
 	    navigator: {
@@ -82,8 +78,5 @@ $.get('/samples/stock/demo/candlestick-and-volume/data.csv', function(csv) {
 				]]
 	        }
 	    }]
-	}, function(){
-	    if (window.console) console.log('Rendered chart at ' + (new Date() - start) + ' ms');
-	    
 	});
 });

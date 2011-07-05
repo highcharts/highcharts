@@ -60,10 +60,6 @@ $.each(names, function(i, name) {
 		
 		if (seriesCounter == names.length) {
 			createChart();
-
-
-			
-			
 		}
 	});
 })
@@ -73,7 +69,6 @@ $.each(names, function(i, name) {
 // create the chart when all data is loaded
 function createChart() {
 
-		
 	chart = new Highcharts.StockChart({
 	    chart: {
 	        renderTo: 'container',
@@ -99,17 +94,4 @@ function createChart() {
 	    
 	    series: seriesOptions
 	});
-	
-//alert('To do: print multiple data array and create multiseries.js file')
-$(document.body).append('<br style="margin-top: 1000px" />');
-$.each (seriesOptions, function(i, series) {
-	if (window.console) console.log(series)			
-
-	$(document.body).append('var '+ series.name +' = [');
-	$.each(series.data || [], function(i, point) {
-		$(document.body).append('['+ data[0] +','+ data[1] +'],<br/>');
-	});
-	$(document.body).append('];<br/><br/>');
-	
-});
 }

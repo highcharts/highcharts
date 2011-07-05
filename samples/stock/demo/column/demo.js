@@ -1,8 +1,6 @@
 
 $.get('/samples/stock/demo/column/data.csv', function(csv) {
 	
-	var start = + new Date();
-	
 	// parse the CSV data
 	var data = [], navigatorData = [], header, comment = /^#/, x;
 	
@@ -21,11 +19,7 @@ $.get('/samples/stock/demo/column/data.csv', function(csv) {
 	    }
 	});
 	
-	
-	
-	if (window.console) console.log('Finished parsing at ' + (new Date() - start) + ' ms');
-	start = +new Date();
-	
+	// create the chart
 	chart = new Highcharts.StockChart({
 	    chart: {
 	        renderTo: 'container',
@@ -63,8 +57,5 @@ $.get('/samples/stock/demo/column/data.csv', function(csv) {
 				]]
 	        }
 	    }]
-	}, function(){
-	    if (window.console) console.log('Rendered chart at ' + (new Date() - start) + ' ms');
-	    
 	});
 });

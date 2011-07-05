@@ -25,17 +25,10 @@ $.get('/samples/stock/demo/yaxis-plotlines/data.csv', function(csv) {
 	    }
 	});
 	
-	var start = + new Date();
-	
 	// Create the chart	
 	window.chart = new Highcharts.StockChart({
 	    chart: {
-	        renderTo: 'container',
-			events: {
-				load: function() {
-					if (window.console) console.log('Rendered chart in '+ (new Date() - start) +' ms');
-				}
-			}
+	        renderTo: 'container'
 	    },
 	    
 	    rangeSelector: {

@@ -1,8 +1,6 @@
 
 $.get('/samples/stock/demo/intraday/data.csv', function(csv) {
 	
-	var start = + new Date();
-	
 	// parse the CSV data
 	var data = [], volume = [], header, comment = /^#/, x;
 	
@@ -28,22 +26,7 @@ $.get('/samples/stock/demo/intraday/data.csv', function(csv) {
 	    }
 	});
 	
-	
-	
-	if (window.console) console.log('Finished parsing at ' + (new Date() - start) + ' ms');
-	start = +new Date();
-	
-	/*var groupingUnits = [[
-		'week',                         // unit name
-		7 * 24 * 3600 * 1000,           // fixed incremental unit
-		[1]                             // allowed multiples
-	], [
-		'month',
-		30 * 24 * 3600 * 1000,
-		[1, 2, 3, 4, 6]
-	]];*/
-	
-	
+	// create the chart
 	chart = new Highcharts.StockChart({
 	    chart: {
 	        renderTo: 'container'
@@ -100,8 +83,5 @@ $.get('/samples/stock/demo/intraday/data.csv', function(csv) {
 	        data: volume,
 	        yAxis: 1
 	    }]
-	}, function(){
-	    if (window.console) console.log('Rendered chart at ' + (new Date() - start) + ' ms');
-	    
 	});
 });
