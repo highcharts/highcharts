@@ -13435,7 +13435,7 @@ function RangeSelector(chart) {
 		}
 
 		// normalize the pressed button whenever a new range is selected
-		addEvent(chart, 'beforeRender', function() {
+		addEvent(chart, 'load', function() {
 			addEvent(chart.xAxis[0], 'setExtremes', function() {
 				if (buttons[selected]) {
 					buttons[selected].setState(0);
