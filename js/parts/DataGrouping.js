@@ -128,11 +128,13 @@ seriesProto.processData = function() {
 		}
 
 		series.tooltipHeaderFormat = dataGroupingOptions.dateTimeLabelFormats[groupPositions.unit[0]];
+		series.unit = groupPositions.unit;
 
 	} else {
 		groupedXData = processedXData;
 		groupedYData = processedYData;
 		series.tooltipHeaderFormat = null;
+		series.unit = null;
 	}
 
 	series.processedXData = groupedXData;
