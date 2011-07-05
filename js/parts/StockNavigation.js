@@ -17,7 +17,12 @@ var buttonGradient = {
 			[0, '#FFF'],
 			[1, '#CCC']
 		]
-	};
+	},
+	units = [].concat(defaultPlotOptions.line.dataGrouping.units); // copy
+
+// add more resolution to units
+units[4][1] = [1, 2, 3, 4]; // allow more days
+units[5][1] = [1, 2, 3]; // allow more weeks
 
 extend(defaultOptions, {
 	navigator: {
@@ -36,7 +41,8 @@ extend(defaultOptions, {
 			color: '#4572A7',
 			fillOpacity: 0.4,
 			dataGrouping: {
-				smoothed: true
+				smoothed: true,
+				units: units
 			},
 			lineWidth: 1,
 			marker: {
