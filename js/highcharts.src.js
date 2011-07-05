@@ -13316,6 +13316,7 @@ function RangeSelector(chart) {
 			count = rangeOptions.count,
 			range,
 			rangeMin,
+			year,
 			// these time intervals have a fixed number of milliseconds, as opposed
 			// to month, ytd and year
 			fixedTimes = {
@@ -13344,7 +13345,14 @@ function RangeSelector(chart) {
 		else if (type === 'ytd') {
 			date = new Date(0);
 			now = new Date();
-			date.setFullYear(now.getFullYear());
+			year = now.getFullYear();
+			date.setFullYear(year);
+
+			// workaround for IE6 bug, it sets year to next year instead of current
+			if (String(year) !== dateFormat('%Y', date)) {alert('ie bug');
+				date.setFullYear(year - 1);
+			}
+
 			newMin = rangeMin = mathMax(dataMin || 0, date.getTime());
 			now = now.getTime();
 			newMax = mathMin(dataMax || now, now);
