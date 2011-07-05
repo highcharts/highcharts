@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts Stock v1.0 Alpha (2011-06-03)
+ * @license Highcharts Stock v1.0 Beta (2011-07-05)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1370,7 +1370,7 @@ defaultOptions = {
 
 	credits: {
 		enabled: true,
-		text: 'Highcharts.com',
+		text: 'Highstock Beta',
 		href: 'http://www.highcharts.com',
 		position: {
 			align: 'right',
@@ -8437,11 +8437,6 @@ function Chart (options, callback) {
 		}
 
 		// Credits
-
-		// force watermark
-		credits.enabled = true;
-		credits.text = 'Highcharts Stock (under development)';
-
 		if (credits.enabled && !chart.credits) {
 			creditsHref = credits.href;
 			renderer.text(
@@ -13817,6 +13812,6 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
-	version: '1.0 Alpha'
+	version: 'Highstock 1.0 Beta'
 });
 }());

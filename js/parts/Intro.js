@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts Stock v1.0 Alpha (2011-06-03)
+ * @license Highcharts Stock v1.0 Beta (2011-07-05)
  *
  * (c) 2009-2011 Torstein Hønsi
  *

@@ -3949,11 +3949,6 @@ function Chart (options, callback) {
 		}
 
 		// Credits
-
-		// force watermark
-		credits.enabled = true;
-		credits.text = 'Highcharts Stock (under development)';
-
 		if (credits.enabled && !chart.credits) {
 			creditsHref = credits.href;
 			renderer.text(

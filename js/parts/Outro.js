@@ -26,6 +26,6 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
-	version: '1.0 Alpha'
+	version: 'Highstock 1.0 Beta'
 });
 }());

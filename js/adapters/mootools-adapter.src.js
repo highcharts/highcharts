@@ -1,8 +1,8 @@
 /**
- * @license Highcharts JS v2.1.4 (2011-03-30)
+ * @license Highcharts Stock v1.0 Beta (2011-07-05)
  * MooTools adapter
  *
- * (c) 2010 Torstein Hønsi
+ * (c) 2010-2011 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
