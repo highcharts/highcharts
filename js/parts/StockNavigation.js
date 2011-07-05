@@ -208,15 +208,15 @@ function Scroller(chart) {
 
 		if (!rendered) {
 
-			var crisp = scrollbarOptions.buttonBorderWidth % 2 / 2;
 			scrollbarButtons[index] = renderer.g().add(scrollbarGroup);
 
 			renderer.rect(
-				crisp,
-				crisp,
-				scrollbarHeight,
-				scrollbarHeight,
-				scrollbarOptions.buttonBorderRadius
+				-0.5,
+				-0.5,
+				scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
+				scrollbarHeight + 1,
+				scrollbarOptions.buttonBorderRadius,
+				scrollbarOptions.buttonBorderWidth
 			).attr({
 				stroke: scrollbarOptions.buttonBorderColor,
 				'stroke-width': scrollbarOptions.buttonBorderWidth,
@@ -251,6 +251,11 @@ function Scroller(chart) {
 	 */
 	function render(min, max, pxMin, pxMax) {
 
+		var strokeWidth,
+			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
+			centerBarX;
+
+
 		outlineTop = top + halfOutline;
 		plotLeft = chart.plotLeft;
 		plotWidth = chart.plotWidth;
@@ -269,8 +274,6 @@ function Scroller(chart) {
 				xAxis.setExtremes(newExtremes.dataMin, newExtremes.dataMax);
 			}
 		}
-
-		//logTime && console.log(Highcharts.dateFormat('%Y-%m-%d', newExtremes.max))
 
 		// handles are allowed to cross
 		zoomedMin = parseInt(mathMin(pxMin, pxMax), 10);
@@ -302,22 +305,29 @@ function Scroller(chart) {
 			}
 
 			if (scrollbarEnabled) {
+
+				// draw the scrollbar group
 				scrollbarGroup = renderer.g().add();
 
+				// the scrollbar track
+				strokeWidth = scrollbarOptions.trackBorderWidth;
 				scrollbarTrack = renderer.rect().attr({
+					y: - strokeWidth % 2 / 2,
 					fill: scrollbarOptions.trackBackgroundColor,
 					stroke: scrollbarOptions.trackBorderColor,
-					'stroke-width': scrollbarOptions.trackBorderWidth,
+					'stroke-width': strokeWidth,
 					r: scrollbarOptions.trackBorderRadius || 0,
 					height: scrollbarHeight
 				}).add(scrollbarGroup);
 
+				// the scrollbar itself
 				scrollbar = renderer.rect()
 					.attr({
+						y: - scrollbarStrokeWidth % 2 / 2,
 						height: scrollbarHeight,
 						fill: scrollbarOptions.barBackgroundColor,
 						stroke: scrollbarOptions.barBorderColor,
-						'stroke-width': scrollbarOptions.barBorderWidth,
+						'stroke-width': scrollbarStrokeWidth,
 						rx: barBorderRadius,
 						ry: barBorderRadius
 					})
@@ -368,34 +378,34 @@ function Scroller(chart) {
 			drawScrollbarButton(0);
 			drawScrollbarButton(1);
 
-			scrollbarGroup.translate(plotLeft, outlineTop + height);
+			scrollbarGroup.translate(plotLeft, mathRound(outlineTop + height));
 
 			scrollbarTrack.attr({
 				width: plotWidth
 			});
 
 			scrollbar.attr({
-				x: scrollbarHeight + zoomedMin,
+				x: mathRound(scrollbarHeight + zoomedMin) + (scrollbarStrokeWidth % 2 / 2),
 				width: range
 			});
 
-			var centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
+			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
 
 			scrollbarRifles.attr({ d: [
-					'M',
+					M,
 					centerBarX - 3, scrollbarHeight / 4,
-					'L',
+					L,
 					centerBarX - 3, 2 * scrollbarHeight / 3,
-					'M',
+					M,
 					centerBarX, scrollbarHeight / 4,
-					'L',
+					L,
 					centerBarX, 2 * scrollbarHeight / 3,
-					'M',
+					M,
 					centerBarX + 3, scrollbarHeight / 4,
-					'L',
+					L,
 					centerBarX + 3, 2 * scrollbarHeight / 3
 				],
-				visibility: range > 12 ? 'visible' : 'hidden'
+				visibility: range > 12 ? VISIBLE : HIDDEN
 			});
 		}
 
