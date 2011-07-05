@@ -1,84 +1,87 @@
-// Create a timer
-var start = + new Date();
+$(function() {
 
-// Create the chart
-var chart = new Highcharts.StockChart({
-    chart: {
-        renderTo: 'container'
-    },
+	// Create a timer
+	var start = + new Date();
 
-    rangeSelector: {
-        buttons: [{
-            type: 'day',
-            count: 3,
-            text: '3d'
-        }, {
-            type: 'week',
-            count: 1,
-            text: '1w'
-        }, {
-            type: 'month',
-            count: 1,
-            text: '1m'
-        }, {
-            type: 'month',
-            count: 6,
-            text: '6m'
-        }, {
-            type: 'year',
-            count: 1,
-            text: '1y'
-        }, {
-            type: 'all',
-            text: 'All'
-        }],
-        selected: 3
-    },
+	// Create the chart
+	var chart = new Highcharts.StockChart({
+	    chart: {
+	        renderTo: 'container'
+	    },
 
-    xAxis: {
-        maxZoom: 3 * 24 * 3600000 // three days
-    },
-	
-	yAxis: {
-		title: {
-			text: 'Temperature (°C)'
-		}
-	},
+	    rangeSelector: {
+	        buttons: [{
+	            type: 'day',
+	            count: 3,
+	            text: '3d'
+	        }, {
+	            type: 'week',
+	            count: 1,
+	            text: '1w'
+	        }, {
+	            type: 'month',
+	            count: 1,
+	            text: '1m'
+	        }, {
+	            type: 'month',
+	            count: 6,
+	            text: '6m'
+	        }, {
+	            type: 'year',
+	            count: 1,
+	            text: '1y'
+	        }, {
+	            type: 'all',
+	            text: 'All'
+	        }],
+	        selected: 3
+	    },
 
-    title: {
-	text: 'Hourly temperatures in Vik i Sogn, Norway, 2004-2010'
-	},
-	
-	subtitle: {
-		text: 'Built chart at...' // dummy text to reserve space for dynamic subtitle
-	},
+	    xAxis: {
+	        maxZoom: 3 * 24 * 3600000 // three days
+	    },
 
-    tooltip: {
-        formatter: function(){
-            var point = this.points[0],
-				series = point.series,
-				unit = series.unit && series.unit[0],
-				format = '%A, %b %e, %Y, %H:%M', // with hours
-				s;
+		yAxis: {
+			title: {
+				text: 'Temperature (°C)'
+			}
+		},
 
-            if (unit == 'day') { // skip hours
-                format = '%A, %b %e, %Y';
-            }
+	    title: {
+		text: 'Hourly temperatures in Vik i Sogn, Norway, 2004-2010'
+		},
 
-            return '<b>' + Highcharts.dateFormat(format, this.x) + '</b>' +
-		'<br/>Temperature: ' + Highcharts.numberFormat(this.points[0].y, 1) +'°C';
-        }
-    },
+		subtitle: {
+			text: 'Built chart at...' // dummy text to reserve space for dynamic subtitle
+		},
 
-    series: [{
-        name: 'Temperature',
-        data: temperatures,
-        pointStart: Date.UTC(2004, 3, 1),
-        pointInterval: 3600 * 1000
-    }]
-	
-}, function(chart) {
-	chart.setTitle(null, {
-		text: 'Built chart at '+ (new Date() - start) +'ms'
+	    tooltip: {
+	        formatter: function(){
+	            var point = this.points[0],
+					series = point.series,
+					unit = series.unit && series.unit[0],
+					format = '%A, %b %e, %Y, %H:%M', // with hours
+					s;
+
+	            if (unit == 'day') { // skip hours
+	                format = '%A, %b %e, %Y';
+	            }
+
+	            return '<b>' + Highcharts.dateFormat(format, this.x) + '</b>' +
+			'<br/>Temperature: ' + Highcharts.numberFormat(this.points[0].y, 1) +'°C';
+	        }
+	    },
+
+	    series: [{
+	        name: 'Temperature',
+	        data: temperatures,
+	        pointStart: Date.UTC(2004, 3, 1),
+	        pointInterval: 3600 * 1000
+	    }]
+
+	}, function(chart) {
+		chart.setTitle(null, {
+			text: 'Built chart at '+ (new Date() - start) +'ms'
+		});
 	});
 });
