@@ -4064,6 +4064,11 @@ function Chart (options, callback) {
 		// Run an early event after the container and renderer are established
 		fireEvent(chart, 'init');
 
+		// Initialize range selector for stock charts
+		if (RangeSelector && options.rangeSelector.enabled) {
+			chart.rangeSelector = new RangeSelector(chart);
+		}
+
 		resetMargins();
 		setChartSize();
 
@@ -4080,7 +4085,12 @@ function Chart (options, callback) {
 		getAxes();
 
 		// Run an event where series and axes can be added
-		fireEvent(chart, 'beforeRender');
+		//fireEvent(chart, 'beforeRender');
+
+		// Initialize scroller for stock charts
+		if (Scroller && options.navigator.enabled || options.scrollbar.enabled) {
+			chart.scroller = new Scroller(chart);
+		}
 
 		chart.render = render;
 

@@ -8552,6 +8552,11 @@ function Chart (options, callback) {
 		// Run an early event after the container and renderer are established
 		fireEvent(chart, 'init');
 
+		// Initialize range selector for stock charts
+		if (RangeSelector && options.rangeSelector.enabled) {
+			chart.rangeSelector = new RangeSelector(chart);
+		}
+
 		resetMargins();
 		setChartSize();
 
@@ -8568,7 +8573,12 @@ function Chart (options, callback) {
 		getAxes();
 
 		// Run an event where series and axes can be added
-		fireEvent(chart, 'beforeRender');
+		//fireEvent(chart, 'beforeRender');
+
+		// Initialize scroller for stock charts
+		if (Scroller && options.navigator.enabled || options.scrollbar.enabled) {
+			chart.scroller = new Scroller(chart);
+		}
 
 		chart.render = render;
 
@@ -11857,11 +11867,13 @@ seriesProto.processData = function() {
 		}
 
 		series.tooltipHeaderFormat = dataGroupingOptions.dateTimeLabelFormats[groupPositions.unit[0]];
+		series.unit = groupPositions.unit;
 
 	} else {
 		groupedXData = processedXData;
 		groupedYData = processedYData;
 		series.tooltipHeaderFormat = null;
+		series.unit = null;
 	}
 
 	series.processedXData = groupedXData;
@@ -13348,8 +13360,8 @@ function RangeSelector(chart) {
 			year = now.getFullYear();
 			date.setFullYear(year);
 
-			// workaround for IE6 bug, it sets year to next year instead of current
-			if (String(year) !== dateFormat('%Y', date)) {alert('ie bug');
+			// workaround for IE6 bug, which sets year to next year instead of current
+			if (String(year) !== dateFormat('%Y', date)) {
 				date.setFullYear(year - 1);
 			}
 
@@ -13604,7 +13616,7 @@ function RangeSelector(chart) {
  * End Range Selector code													*
  *****************************************************************************/
 
-addEvent(Chart.prototype, 'init', function(e) {
+/*addEvent(Chart.prototype, 'init', function(e) {
 	var chart = e.target,
 		chartOptions = chart.options;
 
@@ -13621,7 +13633,7 @@ addEvent(Chart.prototype, 'beforeRender', function(e) {
 	if (chartOptions.navigator.enabled || chartOptions.scrollbar.enabled) {
 		chart.scroller = new Scroller(chart);
 	}
-});
+});*/
 
 Chart.prototype.callbacks.push(function(chart) {
 	var extremes,

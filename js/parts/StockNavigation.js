@@ -1045,7 +1045,7 @@ function RangeSelector(chart) {
  * End Range Selector code													*
  *****************************************************************************/
 
-addEvent(Chart.prototype, 'init', function(e) {
+/*addEvent(Chart.prototype, 'init', function(e) {
 	var chart = e.target,
 		chartOptions = chart.options;
 
@@ -1062,7 +1062,7 @@ addEvent(Chart.prototype, 'beforeRender', function(e) {
 	if (chartOptions.navigator.enabled || chartOptions.scrollbar.enabled) {
 		chart.scroller = new Scroller(chart);
 	}
-});
+});*/
 
 Chart.prototype.callbacks.push(function(chart) {
 	var extremes,
