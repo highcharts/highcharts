@@ -118,14 +118,12 @@ AdaptersTest.prototype.testObjectEvent = function() {
  * 
  * The counter is stored as innerHTML in a div.
  */
-AdaptersTest.prototype.testDomElementEvent = function() {
+AdaptersTest.prototype.testDomElementEventRemoveAll = function() {
 	/*:DOC += <div id="o">0</div>*/
 	var o = document.getElementById('o'),
 		f = function() {
 			o.innerHTML = pInt(o.innerHTML) + 1;
 		};
-
-	assertNotNull(o);
 
 	// Setup event handler
 	addEvent(o, 'myEvent', f);
@@ -135,7 +133,63 @@ AdaptersTest.prototype.testDomElementEvent = function() {
 	fireEvent(o, 'myEvent', null, null);
 	assertEquals('now clicked', 1, pInt(o.innerHTML));
 
-	// Remove the handler
+	// Remove all handlers
+	removeEvent(o);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
+}
+
+/**
+ * Test event add/fire/remove on DOM element.
+ *
+ * The counter is stored as innerHTML in a div.
+ */
+AdaptersTest.prototype.testDomElementEventRemoveType = function() {
+	/*:DOC += <div id="o">0</div>*/
+	var o = document.getElementById('o'),
+		f = function() {
+			o.innerHTML = pInt(o.innerHTML) + 1;
+		};
+
+	// Setup event handler
+	addEvent(o, 'myEvent', f);
+	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
+
+	// Fire it once
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('now clicked', 1, pInt(o.innerHTML));
+
+	// Remove the handler (Only specifying event type)
+	removeEvent(o, 'myEvent');
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
+}
+
+/**
+ * Test event add/fire/remove on DOM element.
+ *
+ * The counter is stored as innerHTML in a div.
+ */
+AdaptersTest.prototype.testDomElementEventRemoveHandler = function() {
+	/*:DOC += <div id="o">0</div>*/
+	var o = document.getElementById('o'),
+		f = function() {
+			o.innerHTML = pInt(o.innerHTML) + 1;
+		};
+
+	// Setup event handler
+	addEvent(o, 'myEvent', f);
+	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
+
+	// Fire it once
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('now clicked', 1, pInt(o.innerHTML));
+
+	// Remove the handler (Most fine-grained)
 	removeEvent(o, 'myEvent', f);
 
 	// Fire it again, should do nothing, since the handler is removed
