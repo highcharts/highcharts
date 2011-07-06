@@ -55,6 +55,9 @@ AdaptersTest.prototype.testMap = function() {
 AdaptersTest.prototype.testMerge = function() {
 	// Arrange
 	var obj1 = {
+			prop1: 1,
+			prop2: null,
+			prop3: {dummy: 1},
 			firstLevel: {
 				secondLevel: {
 					thirdLevel: 1
@@ -62,6 +65,9 @@ AdaptersTest.prototype.testMerge = function() {
 			}
 		},
 		obj2 = {
+			prop1: null,
+			prop2: 2,
+			prop3: null,
 			firstLevel: {
 				originalProp: {
 					thirdLevel: 2
@@ -84,6 +90,9 @@ AdaptersTest.prototype.testMerge = function() {
 	assertEquals('merge properties', 3, obj4.firstLevel.secondLevel.thirdLevel);
 	assertEquals('merge properties', 2, obj4.firstLevel.originalProp.thirdLevel);
 	assertEquals('merge length', 1, obj4.arr.length);
+	assertNull('prop1 should be null', obj4.prop1);
+	assertEquals('prop2 should be 2', 2, obj4.prop2);
+	assertNull('prop3 should be null', obj4.prop3);
 };
 
 /**
