@@ -222,7 +222,6 @@
             <arg value="${testoutput.dir}/${testrun.name}"/>
             <arg value="--tests"/>
             <arg value="all"/>
-            <arg value="--verbose"/>
             <arg value="--reset"/>
         </java>
     </target>
