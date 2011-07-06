@@ -204,8 +204,13 @@ win.HighchartsAdapter = {
 				type = 'beforeunload';
 			}
 
-
-			el.removeEvent(type, fn);
+			if (defined(fn)) {
+				el.removeEvent(type, fn);
+			} else {
+				el.removeEvents(type);
+			}
+		} else {
+			el.removeEvents();
 		}
 	},
 	
