@@ -6328,9 +6328,12 @@ function Chart (options, callback) {
 			container.onmousedown = function(e) {
 				e = normalizeMouseEvent(e);
 				
-				// record the start position
-				//e.preventDefault && e.preventDefault();
+				// issue #295, dragging not always working in Firefox
+				if (!hasTouch && e.preventDefault) {
+					e.preventDefault();
+				}
 				
+				// record the start position
 				chart.mouseIsDown = mouseIsDown = true;
 				mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
