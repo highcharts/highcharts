@@ -9302,6 +9302,9 @@ Series.prototype = {
 			destroy,
 			prop;
 		
+		// add event hook
+		fireEvent(series, 'destroy');
+		
 		// remove all events
 		removeEvent(series);
 			
@@ -9654,6 +9657,9 @@ Series.prototype = {
 				
 				setInvert(); // do it now
 				addEvent(chart, 'resize', setInvert); // do it on resize
+				addEvent(series, 'destroy', function() {
+					removeEvent(chart, 'resize', setInvert);
+				});
 			} 
 			group.clip(series.clipRect)
 				.attr({ 
