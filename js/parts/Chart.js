@@ -2106,8 +2106,7 @@ function Chart (options, callback) {
 				
 				// it is too far to the left, adjust it
 				if (boxX < 7) {
-					boxX = 7;
-					boxY -= 30;
+					boxX = plotLeft + x + 15;
 				}
 				
 				
