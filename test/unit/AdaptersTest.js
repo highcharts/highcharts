@@ -96,11 +96,71 @@ AdaptersTest.prototype.testMerge = function() {
 };
 
 /**
- * Test event add/fire/remove on a POJO.
- * 
- * The counter is just a property of an object. 
+ * Test an event that fires once and removes itself.
+ *
+ * The counter is just a property of an object.
  */
-AdaptersTest.prototype.testObjectEvent = function() {
+AdaptersTest.prototype.testObjectEventSelfRemove = function() {
+	var o = {clickedCount: 0},
+		f = function() {
+			o.clickedCount++;
+			removeEvent(o, 'myEvent', f);
+		};
+
+	// Setup event handler
+	addEvent(o, 'myEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('now clicked', 1, o.clickedCount);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('clicked again, no change', 1, o.clickedCount);
+};
+
+/**
+ * Test an event that triggers another event that remove itself.
+ *
+ * The counter is just a property of an object.
+ */
+AdaptersTest.prototype.tXstObjectEventChainedRemove = function() {
+	var o = {clickedCount: 0},
+		f = function() {
+			o.clickedCount++;
+		};
+
+	// Add a runf handler
+	addEvent(o, 'innerEvent', f);
+
+	// remove it on chart destroy
+	addEvent(document, 'outerEvent', function() {
+		jstestdriver.console.log('about to remove innerEvent');
+		removeEvent(o, 'innerEvent', f);
+	});
+
+	// Fire it once
+	fireEvent(o, 'innerEvent', null, null);
+	assertEquals('now clicked', 1, o.clickedCount);
+
+	// Fire outer to remove inner
+	fireEvent(document, 'outerEvent', null, null);
+	assertEquals('no change', 1, o.clickedCount);
+
+	// Fire it again
+	fireEvent(o, 'innerEvent', null, null);
+	assertEquals('clicked again, no change', 1, o.clickedCount);
+};
+
+
+/**
+ * Test event add/fire/remove on a POJO.
+ *
+ * The counter is just a property of an object.
+ * Remove all handlers.
+ */
+AdaptersTest.prototype.testObjectEventRemoveAll = function() {
 	var o = {clickedCount: 0},
 		f = function() {
 			o.clickedCount++;
@@ -114,22 +174,68 @@ AdaptersTest.prototype.testObjectEvent = function() {
 	fireEvent(o, 'myEvent', null, null);
 	assertEquals('now clicked', 1, o.clickedCount);
 
-	// Remove the handler
-	removeEvent(o, 'myEvent', f);
+	// Remove all handlers
+	removeEvent(o);
 
 	// Fire it again, should do nothing, since the handler is removed
 	fireEvent(o, 'myEvent', null, null);
 	assertEquals('clicked again, no change', 1, o.clickedCount);
 };
 
+/**
+ * Test event add/fire/remove on a POJO.
+ *
+ * The counter is just a property of an object.
+ * Remove handlers of a certain type.
+ */
+AdaptersTest.prototype.testObjectEventRemoveType = function() {
+	var o = {clickedCount: 0},
+		f = function() {
+			o.clickedCount++;
+		};
+
+	// Setup event handler
+	addEvent(o, 'myEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('now clicked', 1, o.clickedCount);
+
+	// Remove the handler (Only specifying event type)
+	removeEvent(o, 'myEvent');
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('clicked again, no change', 1, o.clickedCount);
+};
 
 /**
- * Simple way to test if we are using the prototype adapter. The prototype
- * library does not fire dom events properly so, use this test to shortcut those tests.
- * Uses implementation details of the adapter.
+ * Test event add/fire/remove on a POJO.
+ *
+ * The counter is just a property of an object.
+ * Remove a specific handler.
  */
-AdaptersTest.prototype.isPrototypeAdapter = function() {
-	return globalAdapter && globalAdapter._extend;
+AdaptersTest.prototype.testObjectEventRemoveHandler = function() {
+	var o = {clickedCount: 0},
+		f = function() {
+			o.clickedCount++;
+		};
+
+	// Setup event handler
+	addEvent(o, 'myEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('now clicked', 1, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'myEvent', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'myEvent', null, null);
+	assertEquals('clicked again, no change', 1, o.clickedCount);
 };
 
 /**
@@ -145,23 +251,19 @@ AdaptersTest.prototype.testDomElementEventRemoveAll = function() {
 		};
 
 	// Setup event handler
-	addEvent(o, 'myEvent', f);
+	addEvent(o, 'my:Event', f);
 	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
 
 	// Fire it once
-	fireEvent(o, 'myEvent', null, null);
-	if (!this.isPrototypeAdapter()) {
-		assertEquals('now clicked', 1, pInt(o.innerHTML));
-	}
+	fireEvent(o, 'my:Event', null, null);
+	assertEquals('now clicked', 1, pInt(o.innerHTML));
 
 	// Remove all handlers
 	removeEvent(o);
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'myEvent', null, null);
-	if (!this.isPrototypeAdapter()) {
-		assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
-	}
+	fireEvent(o, 'my:Event', null, null);
+	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
 }
 
 /**
@@ -177,23 +279,19 @@ AdaptersTest.prototype.testDomElementEventRemoveType = function() {
 		};
 
 	// Setup event handler
-	addEvent(o, 'myEvent', f);
+	addEvent(o, 'my:Event', f);
 	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
 
 	// Fire it once
-	fireEvent(o, 'myEvent', null, null);
-	if (!this.isPrototypeAdapter()) {
-		assertEquals('now clicked', 1, pInt(o.innerHTML));
-	}
+	fireEvent(o, 'my:Event', null, null);
+	assertEquals('now clicked', 1, pInt(o.innerHTML));
 
 	// Remove the handler (Only specifying event type)
-	removeEvent(o, 'myEvent');
+	removeEvent(o, 'my:Event');
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'myEvent', null, null);
-	if (!this.isPrototypeAdapter()) {
-		assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
-	}
+	fireEvent(o, 'my:Event', null, null);
+	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
 }
 
 /**
@@ -209,23 +307,19 @@ AdaptersTest.prototype.testDomElementEventRemoveHandler = function() {
 		};
 
 	// Setup event handler
-	addEvent(o, 'myEvent', f);
+	addEvent(o, 'my:Event', f);
 	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
 
 	// Fire it once
-	fireEvent(o, 'myEvent', null, null);
-	if (!this.isPrototypeAdapter()) {
-		assertEquals('now clicked', 1, pInt(o.innerHTML));
-	}
+	fireEvent(o, 'my:Event', null, null);
+	assertEquals('now clicked', 1, pInt(o.innerHTML));
 
 	// Remove the handler (Most fine-grained)
-	removeEvent(o, 'myEvent', f);
+	removeEvent(o, 'my:Event', f);
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'myEvent', null, null);
-	if (!this.isPrototypeAdapter()) {
-		assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
-	}
+	fireEvent(o, 'my:Event', null, null);
+	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
 };
 
 /*

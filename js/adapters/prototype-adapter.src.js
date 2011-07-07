@@ -155,7 +155,6 @@ return {
 	removeEvent: function(el, event, handler){
 		if ($(el).stopObserving) {
 			$(el).stopObserving(event, handler);
-			
 		} else {
 			HighchartsAdapter._extend(el);
 			el._highcharts_stop_observing(event, handler);
@@ -266,7 +265,15 @@ return {
 					this._highchart_events[name] = [this._highchart_events[name], fn].compact().flatten();
 				},
 				_highcharts_stop_observing: function(name, fn){
-					this._highchart_events[name] = [this._highchart_events[name]].compact().flatten().without(fn);
+					if (name) {
+						if (fn) {
+							this._highchart_events[name] = [this._highchart_events[name]].compact().flatten().without(fn);
+						} else {
+							delete this._highchart_events[name];
+						}
+					} else {
+						this._highchart_events = {};
+					}
 				},
 				_highcharts_fire: function(name, args){
 					(this._highchart_events[name] || []).each(function(fn){
