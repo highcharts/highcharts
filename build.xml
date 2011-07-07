@@ -186,12 +186,12 @@
 
     <!-- Replace the lib with the specified ones, if set. -->
     <target name="replace-lib" if="required.lib">
-        <replace file="jsTestDriver.conf" token="#required.lib" value="  - lib/${required.lib}" summary="true"/>
+        <replace file="jsTestDriver.conf" token="#required.lib" value="  - lib/${required.lib}"/>
     </target>
 
     <!-- Replace the adapter with the specified ones, if set. -->
     <target name="replace-adapter" if="required.adapter">
-        <replace file="jsTestDriver.conf" token="#required.adapter" value="  - ${required.adapter}" summary="true"/>
+        <replace file="jsTestDriver.conf" token="#required.adapter" value="  - ${required.adapter}"/>
     </target>
 
     <target name="test-specific-lib" depends="set.properties">
