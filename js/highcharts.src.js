@@ -2661,6 +2661,7 @@ SVGRenderer.prototype = {
 		var label = this.label(text, x, y),
 			curState = 0,
 			stateOptions,
+			stateStyle,
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
@@ -2719,6 +2720,7 @@ SVGRenderer.prototype = {
 		});
 		addEvent(label.element, 'mouseleave', function() {
 			stateOptions = [normalState, hoverState, pressedState][curState];
+			stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
 			label.attr(stateOptions)
 				.css(stateStyle);
 		});
