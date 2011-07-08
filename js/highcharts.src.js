@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.5 (2011-06-22)
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  * 
  * (c) 2009-2011 Torstein Hønsi
  * 
@@ -10867,6 +10867,11 @@ var PieSeries = extendClass(Series, {
 			i = 2,
 			j;
 			
+		// get out if not enabled
+		if (!options.enabled) {
+			return;
+		}
+			
 		// run parent method
 		Series.prototype.drawDataLabels.apply(series);
 		
@@ -11092,6 +11097,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	version: '2.1.5'
+	product: 'Highcharts',
+	version: '2.1.6'
 };
 }());

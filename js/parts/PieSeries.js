@@ -398,6 +398,11 @@ var PieSeries = extendClass(Series, {
 			i = 2,
 			j;
 			
+		// get out if not enabled
+		if (!options.enabled) {
+			return;
+		}
+			
 		// run parent method
 		Series.prototype.drawDataLabels.apply(series);
 		
