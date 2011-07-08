@@ -6,7 +6,14 @@ $(function() {
 	// Create the chart
 	var chart = new Highcharts.StockChart({
 	    chart: {
-	        renderTo: 'container'
+	        renderTo: 'container',
+			events: {
+				load: function(chart) {
+					this.setTitle(null, {
+						text: 'Built chart at '+ (new Date() - start) +'ms'
+					});
+				}
+			}
 	    },
 
 	    rangeSelector: {
@@ -79,9 +86,5 @@ $(function() {
 	        pointInterval: 3600 * 1000
 	    }]
 
-	}, function(chart) {
-		chart.setTitle(null, {
-			text: 'Built chart at '+ (new Date() - start) +'ms'
-		});
 	});
 });
