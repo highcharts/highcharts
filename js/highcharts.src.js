@@ -1762,7 +1762,7 @@ SVGElement.prototype = {
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
 			n,
-			serializedCss,
+			serializedCss = '',
 			hyphenate = function(a, b){ return '-'+ b.toLowerCase(); };
 			
 		// convert legacy
@@ -1791,7 +1791,6 @@ SVGElement.prototype = {
 			for (n in styles) {
 				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':'+ styles[n] + ';';
 			}
-
 			elemWrapper.attr({
 				style: serializedCss
 			});
