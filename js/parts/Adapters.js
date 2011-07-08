@@ -64,14 +64,6 @@ if (!globalAdapter && win.jQuery) {
 	};
 	
 	/**
-	 * Convert a camelCase string to a hyphenated string
-	 * @param {String} str
-	 */
-	hyphenate = function (str) {
-		return str.replace(/([A-Z])/g, function(a, b){ return '-'+ b.toLowerCase(); });
-	};
-	
-	/**
 	 * Add an event listener
 	 * @param {Object} el A HTML element or custom object
 	 * @param {String} event The event type

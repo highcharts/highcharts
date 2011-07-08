@@ -115,7 +115,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	getColor: function() {
 		// record first color for use in setData
-		this.initialColor = colorCounter;
+		this.initialColor = this.chart.counters.color;
 	},
 	
 	/**

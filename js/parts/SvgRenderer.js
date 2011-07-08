@@ -298,15 +298,16 @@ SVGElement.prototype = {
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
-			camelStyles = styles,
-			n;
+			n,
+			serializedCss = '',
+			hyphenate = function(a, b){ return '-'+ b.toLowerCase(); };
 			
 		// convert legacy
 		if (styles && styles.color) {
 			styles.fill = styles.color;
 		}
-		
-		// save the styles in an object
+
+		// Merge the new styles with the old ones
 		styles = extend(
 			elemWrapper.styles,
 			styles
@@ -316,13 +317,6 @@ SVGElement.prototype = {
 		// store object
 		elemWrapper.styles = styles;
 		
-		// hyphenate
-		if (defined(styles)) {
-			styles = {};
-			for (n in camelStyles) {
-				styles[hyphenate(n)] = camelStyles[n];
-			}
-		}
 		
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
@@ -331,8 +325,11 @@ SVGElement.prototype = {
 			} 
 			css(elemWrapper.element, styles);	
 		} else {
+			for (n in styles) {
+				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':'+ styles[n] + ';';
+			}
 			elemWrapper.attr({
-				style: serializeCSS(styles)
+				style: serializedCss
 			});
 		}	
 		
@@ -766,11 +763,11 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles['-hc-direction'] === 'rtl' && 
+			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && 
 				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
 			arr,
 			width = textStyles && pInt(textStyles.width),
-			textLineHeight = textStyles && textStyles['line-height'],
+			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
 			GET_COMPUTED_STYLE = 'getComputedStyle',
 			i = childNodes.length;
@@ -842,7 +839,7 @@ SVGRenderer.prototype = {
 							// Webkit and opera sometimes return 'normal' as the line height. In that
 							// case, webkit uses offsetHeight, while Opera falls back to 18
 							lineHeight = win[GET_COMPUTED_STYLE] &&
-								win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height');
+								pInt(win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height'));
 							
 							if (!lineHeight || isNaN(lineHeight)) {
 								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
@@ -1353,8 +1350,8 @@ SVGRenderer.prototype = {
 				text: str	
 			})
 			.css({
-				'font-family': defaultChartStyle.fontFamily,
-				'font-size': defaultChartStyle.fontSize
+				fontFamily: defaultChartStyle.fontFamily,
+				fontSize: defaultChartStyle.fontSize
 			});
 			
 		wrapper.x = x;

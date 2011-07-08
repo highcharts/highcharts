@@ -41,8 +41,6 @@ var doc = document,
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
-	colorCounter,
-	symbolCounter,
 	symbolSizes = {},
 	idCounter = 0,
 	timeFactor = 1, // 1 = JavaScript time, 1000 = Unix time
@@ -106,7 +104,6 @@ var doc = document,
 	grep = adapter.grep,
 	map = adapter.map,
 	merge = adapter.merge,
-	hyphenate = adapter.hyphenate,
 	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
@@ -257,20 +254,7 @@ function pick() {
 		}
 	}
 }
-/**
- * Make a style string from a JS object
- * @param {Object} style
- */
-function serializeCSS(style) {
-	var s = '', 
-		key;
-	// serialize the declaration
-	for (key in style) {
-		s += key +':'+ style[key] + ';';
-	}
-	return s;
-	
-}
+
 /**
  * Set CSS on a given element
  * @param {Object} el
@@ -463,6 +447,34 @@ function getPosition (el) {
 }
 
 /**
+ * Helper class that contains variuos counters that are local to the chart.
+ */
+function ChartCounters() {
+	this.color = 0;
+	this.symbol = 0;
+}
+
+ChartCounters.prototype =  {
+	/**
+	 * Wraps the color counter if it reaches the specified length.
+	 */
+	wrapColor: function(length) {
+		if (this.color >= length) {
+			this.color = 0;
+		}
+	},
+
+	/**
+	 * Wraps the symbol counter if it reaches the specified length.
+	 */
+	wrapSymbol: function(length) {
+		if (this.symbol >= length) {
+			this.symbol = 0;
+		}
+	}
+};
+
+/**
  * Set the global animation to either a given value, or fall back to the 
  * given chart's animation option
  * @param {Object} animation
@@ -524,14 +536,6 @@ if (!globalAdapter && win.jQuery) {
 	merge = function(){
 		var args = arguments;
 		return jQ.extend(true, null, args[0], args[1], args[2], args[3]);
-	};
-	
-	/**
-	 * Convert a camelCase string to a hyphenated string
-	 * @param {String} str
-	 */
-	hyphenate = function (str) {
-		return str.replace(/([A-Z])/g, function(a, b){ return '-'+ b.toLowerCase(); });
 	};
 	
 	/**
@@ -1757,15 +1761,16 @@ SVGElement.prototype = {
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
-			camelStyles = styles,
-			n;
+			n,
+			serializedCss = '',
+			hyphenate = function(a, b){ return '-'+ b.toLowerCase(); };
 			
 		// convert legacy
 		if (styles && styles.color) {
 			styles.fill = styles.color;
 		}
-		
-		// save the styles in an object
+
+		// Merge the new styles with the old ones
 		styles = extend(
 			elemWrapper.styles,
 			styles
@@ -1775,13 +1780,6 @@ SVGElement.prototype = {
 		// store object
 		elemWrapper.styles = styles;
 		
-		// hyphenate
-		if (defined(styles)) {
-			styles = {};
-			for (n in camelStyles) {
-				styles[hyphenate(n)] = camelStyles[n];
-			}
-		}
 		
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
@@ -1790,8 +1788,11 @@ SVGElement.prototype = {
 			} 
 			css(elemWrapper.element, styles);	
 		} else {
+			for (n in styles) {
+				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':'+ styles[n] + ';';
+			}
 			elemWrapper.attr({
-				style: serializeCSS(styles)
+				style: serializedCss
 			});
 		}	
 		
@@ -2225,11 +2226,11 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles['-hc-direction'] === 'rtl' && 
+			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && 
 				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
 			arr,
 			width = textStyles && pInt(textStyles.width),
-			textLineHeight = textStyles && textStyles['line-height'],
+			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
 			GET_COMPUTED_STYLE = 'getComputedStyle',
 			i = childNodes.length;
@@ -2301,7 +2302,7 @@ SVGRenderer.prototype = {
 							// Webkit and opera sometimes return 'normal' as the line height. In that
 							// case, webkit uses offsetHeight, while Opera falls back to 18
 							lineHeight = win[GET_COMPUTED_STYLE] &&
-								win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height');
+								pInt(win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height'));
 							
 							if (!lineHeight || isNaN(lineHeight)) {
 								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
@@ -2812,8 +2813,8 @@ SVGRenderer.prototype = {
 				text: str	
 			})
 			.css({
-				'font-family': defaultChartStyle.fontFamily,
-				'font-size': defaultChartStyle.fontSize
+				fontFamily: defaultChartStyle.fontFamily,
+				fontSize: defaultChartStyle.fontSize
 			});
 			
 		wrapper.x = x;
@@ -6012,8 +6013,7 @@ function Chart (options, callback) {
 				
 				// it is too far to the left, adjust it
 				if (boxX < 7) {
-					boxX = 7;
-					boxY -= 30;
+					boxX = plotLeft + x + 15;
 				}
 				
 				
@@ -6327,9 +6327,12 @@ function Chart (options, callback) {
 			container.onmousedown = function(e) {
 				e = normalizeMouseEvent(e);
 				
-				// record the start position
-				//e.preventDefault && e.preventDefault();
+				// issue #295, dragging not always working in Firefox
+				if (!hasTouch && e.preventDefault) {
+					e.preventDefault();
+				}
 				
+				// record the start position
 				chart.mouseIsDown = mouseIsDown = true;
 				mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
@@ -8039,10 +8042,6 @@ function Chart (options, callback) {
 			return;
 		}
 
-		// Set to zero for each new chart
-		colorCounter = 0;
-		symbolCounter = 0;
-
 		// create the container
 		getContainer();
 		
@@ -8108,7 +8107,6 @@ function Chart (options, callback) {
 	
 	
 	
-	
 	// Expose methods and variables
 	chart.addSeries = addSeries;
 	chart.animation = pick(optionsChart.animation, true);
@@ -8123,6 +8121,7 @@ function Chart (options, callback) {
 	chart.setTitle = setTitle;
 	chart.showLoading = showLoading;	
 	chart.pointCount = 0;
+	chart.counters = new ChartCounters();
 	/*
 	if ($) $(function() {
 		$container = $('#container');
@@ -8183,6 +8182,7 @@ Point.prototype = {
 	 */
 	init: function(series, options) {
 		var point = this,
+			counters = series.chart.counters,
 			defaultColors;
 		point.series = series;
 		point.applyOptions(options);
@@ -8193,12 +8193,10 @@ Point.prototype = {
 			if (!point.options) {
 				point.options = {};
 			}
-			point.color = point.options.color = point.color || defaultColors[colorCounter++];
+			point.color = point.options.color = point.color || defaultColors[counters.color++];
 			
 			// loop back to zero
-			if (colorCounter >= defaultColors.length) {
-				colorCounter = 0;
-			}
+			counters.wrapColor(defaultColors.length);
 		}
 		
 		series.chart.pointCount++;
@@ -8741,22 +8739,19 @@ Series.prototype = {
 	 * Get the series' color
 	 */
 	getColor: function(){
-		var defaultColors = this.chart.options.colors;
-		this.color = this.options.color || defaultColors[colorCounter++] || '#0000ff';
-		if (colorCounter >= defaultColors.length) {
-			colorCounter = 0;
-		}
+		var defaultColors = this.chart.options.colors,
+			counters = this.chart.counters;
+		this.color = this.options.color || defaultColors[counters.color++] || '#0000ff';
+		counters.wrapColor(defaultColors.length);
 	},
 	/**
 	 * Get the series' symbol
 	 */
 	getSymbol: function(){
 		var defaultSymbols = this.chart.options.symbols,
-			symbol = this.options.marker.symbol || defaultSymbols[symbolCounter++];
-		this.symbol = symbol;
-		if (symbolCounter >= defaultSymbols.length) { 
-			symbolCounter = 0;
-		}
+			counters = this.chart.counters;
+		this.symbol = this.options.marker.symbol || defaultSymbols[counters.symbol++];
+		counters.wrapSymbol(defaultSymbols.length);
 	},
 	
 	/**
@@ -8816,7 +8811,7 @@ Series.prototype = {
 		
 		series.xIncrement = null; // reset for new data
 		if (defined(initialColor)) { // reset colors for pie
-			colorCounter = initialColor;
+			chart.counters.color = initialColor;
 		}
 		
 		data = map(splat(data || []), function(pointOptions) {
@@ -9306,6 +9301,9 @@ Series.prototype = {
 			destroy,
 			prop;
 		
+		// add event hook
+		fireEvent(series, 'destroy');
+		
 		// remove all events
 		removeEvent(series);
 			
@@ -9380,11 +9378,6 @@ Series.prototype = {
 					if (vAlignIsNull) {
 						options = merge(options, {verticalAlign: 'top'});
 					}
-
-					// If no y delta is specified, set the default
-					if (yIsNull) {
-						options = merge(options, {y: -6}); 
-					}
 				}
 			}
 
@@ -9413,18 +9406,24 @@ Series.prototype = {
 					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
-					align = options.align;
-					
+					align = options.align,
+					individualYDelta = yIsNull ? (point.y > 0 ? -6 : 12) : options.y;
+
 				// get the string
 				str = options.formatter.call(point.getLabelConfig());
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
-				y = (inverted ? chart.plotHeight - plotX : plotY) + options.y;
+				y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
 				
 				// in columns, align the string to the column
 				if (seriesType === 'column') {
 					x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
 				}
 				
+				if (inverted && point.y < 0) {
+					align = 'right';
+					x -= 10;
+				}
+
 				// update existing label
 				if (dataLabel) {
 					// vertically centered
@@ -9662,6 +9661,9 @@ Series.prototype = {
 				
 				setInvert(); // do it now
 				addEvent(chart, 'resize', setInvert); // do it on resize
+				addEvent(series, 'destroy', function() {
+					removeEvent(chart, 'resize', setInvert);
+				});
 			} 
 			group.clip(series.clipRect)
 				.attr({ 
@@ -10582,7 +10584,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	getColor: function() {
 		// record first color for use in setData
-		this.initialColor = colorCounter;
+		this.initialColor = this.chart.counters.color;
 	},
 	
 	/**

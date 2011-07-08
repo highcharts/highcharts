@@ -166,13 +166,6 @@ return {
 		return arr.findAll(fn);
 	},
 	
-	// change leftPadding to left-padding
-	hyphenate: function(str){
-		return str.replace(/([A-Z])/g, function(a, b){
-			return '-' + b.toLowerCase();
-		});
-	},
-	
 	// um, map
 	map: function(arr, fn){
 		return arr.map(fn);
