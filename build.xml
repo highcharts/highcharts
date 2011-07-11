@@ -154,12 +154,12 @@
             <param name="required.lib" value="jquery-1.6.2.js"/>
         </antcall>
         <antcall target="test-specific-lib">
-            <param name="testrun.name" value="jquery-1.6.1"/>
-            <param name="required.lib" value="jquery-1.6.1.js"/>
-        </antcall>
-        <antcall target="test-specific-lib">
             <param name="testrun.name" value="jquery-1.5.2"/>
             <param name="required.lib" value="jquery-1.5.2.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="jquery-1.3.2"/>
+            <param name="required.lib" value="jquery-1.3.2.js"/>
         </antcall>
 
         <!-- mootools versions -->
@@ -200,10 +200,6 @@
     </target>
 
     <target name="test-specific-lib" depends="set.properties">
-        <echo message="-----------------------------------------------"/>
-        <echo message=" Running tests using: ${testrun.name}"/>
-        <echo message="-----------------------------------------------"/>
-
         <!-- Copy the templated jsTestDriver configuration to root. -->
         <copy file="test/jsTestDriver.conf" todir="${basedir}" overwrite="true"/>
 
@@ -220,6 +216,10 @@
 
     <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
     <target name="run-test" depends="set.properties">
+        <echo message="/------------------------------------------------------------"/>
+        <echo message="  Running tests using: ${testrun.name}"/>
+        <echo message=""/>
+        <echo message=""/>
         <java jar="${jstestdriver.jar}" fork="true">
             <arg value="--config"/>
             <arg value="jsTestDriver.conf"/>
@@ -229,6 +229,9 @@
             <arg value="all"/>
             <arg value="--reset"/>
         </java>
+        <echo message=""/>
+        <echo message=""/>
+        <echo message="\------------------------------------------------------------"/>
     </target>
 
     <!-- Starts the test driver server with coverage enabled. -->
