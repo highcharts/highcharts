@@ -115,7 +115,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	getColor: function() {
 		// record first color for use in setData
-		this.initialColor = colorCounter;
+		this.initialColor = this.chart.counters.color;
 	},
 	
 	/**
@@ -398,6 +398,11 @@ var PieSeries = extendClass(Series, {
 			i = 2,
 			j;
 			
+		// get out if not enabled
+		if (!options.enabled) {
+			return;
+		}
+			
 		// run parent method
 		Series.prototype.drawDataLabels.apply(series);
 		
@@ -427,7 +432,8 @@ var PieSeries = extendClass(Series, {
 				usedSlots = [],
 				points = halves[i],
 				pos,
-				length = points.length;
+				length = points.length,
+				slotIndex;
 			
 			lowerHalf = i % 3;
 			sign = lowerHalf ? 1 : -1;
@@ -481,7 +487,6 @@ var PieSeries = extendClass(Series, {
 				labelPos = point.labelPos;	
 				
 				var closest = 9999,
-					slotIndex,
 					distance,
 					slotI;
 				
@@ -521,12 +526,12 @@ var PieSeries = extendClass(Series, {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				
 				var slot = usedSlots.pop(),
-					slotIndex = slot.i,
-					naturalY = labelPos[1],
-					visibility = point.visible === false ? HIDDEN : VISIBLE;
-				
+					naturalY = labelPos[1];
+
+				visibility = point.visible === false ? HIDDEN : VISIBLE;
+				slotIndex = slot.i;
+
 				// if the slot next to currrent slot is free, the y value is allowed 
 				// to fall back to the natural position
 				y = slot.y;

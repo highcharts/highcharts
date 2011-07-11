@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.1.5 (2011-06-22)
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  * MooTools adapter
  * 
  * (c) 2010-2011 Torstein Hønsi
@@ -161,14 +161,6 @@ win.HighchartsAdapter = {
 		}
 		
 		return ret;
-	},
-	
-	/**
-	 * Hyphenate a string, like minWidth becomes min-width
-	 * @param {Object} str
-	 */
-	hyphenate: function (str){
-		return str.hyphenate();
 	},
 	
 	/**

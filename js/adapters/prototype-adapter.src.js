@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.1.5 (2011-06-22)
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  * Prototype adapter
  * 
  * @author Michael Nelson, Torstein Hønsi.
@@ -179,13 +179,6 @@ return {
 	// um, grep
 	grep: function(arr, fn){
 		return arr.findAll(fn);
-	},
-	
-	// change leftPadding to left-padding
-	hyphenate: function(str){
-		return str.replace(/([A-Z])/g, function(a, b){
-			return '-' + b.toLowerCase();
-		});
 	},
 	
 	// um, map

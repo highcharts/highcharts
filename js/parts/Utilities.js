@@ -139,20 +139,7 @@ function pick() {
 		}
 	}
 }
-/**
- * Make a style string from a JS object
- * @param {Object} style
- */
-function serializeCSS(style) {
-	var s = '', 
-		key;
-	// serialize the declaration
-	for (key in style) {
-		s += key +':'+ style[key] + ';';
-	}
-	return s;
-	
-}
+
 /**
  * Set CSS on a given element
  * @param {Object} el
@@ -343,3 +330,31 @@ function getPosition (el) {
 	}
 	return p;
 }
+
+/**
+ * Helper class that contains variuos counters that are local to the chart.
+ */
+function ChartCounters() {
+	this.color = 0;
+	this.symbol = 0;
+}
+
+ChartCounters.prototype =  {
+	/**
+	 * Wraps the color counter if it reaches the specified length.
+	 */
+	wrapColor: function(length) {
+		if (this.color >= length) {
+			this.color = 0;
+		}
+	},
+
+	/**
+	 * Wraps the symbol counter if it reaches the specified length.
+	 */
+	wrapSymbol: function(length) {
+		if (this.symbol >= length) {
+			this.symbol = 0;
+		}
+	}
+};
