@@ -158,6 +158,10 @@
             <param name="required.lib" value="jquery-1.5.2.js"/>
         </antcall>
         <antcall target="test-specific-lib">
+            <param name="testrun.name" value="jquery-1.4.4"/>
+            <param name="required.lib" value="jquery-1.4.4.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
             <param name="testrun.name" value="jquery-1.3.2"/>
             <param name="required.lib" value="jquery-1.3.2.js"/>
         </antcall>
