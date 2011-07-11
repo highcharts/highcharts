@@ -168,6 +168,11 @@
             <param name="required.lib" value="mootools-core-1.3.2-full-compat.js"/>
             <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
         </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="mootools-1.2.5"/>
+            <param name="required.lib" value="mootools-1.2.5-core-nc.js"/>
+            <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
+        </antcall>
 
         <!-- prototype versions -->
         <antcall target="test-specific-lib">
