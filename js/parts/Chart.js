@@ -3605,8 +3605,11 @@ function Chart (options, callback) {
 				top: '-9999px',
 				display: ''
 			});
-			while(!currentParent.offsetWidth && currentParent.parentNode) {
+			while (!currentParent.offsetWidth && currentParent.parentNode) {
 				currentParent = currentParent.parentNode;
+			}
+			if (!currentParent.offsetWidth && !currentParent.parentNode) {
+				currentParent = doc.body;
 			}
 			currentParent.appendChild(renderToClone);
 		}
