@@ -7489,12 +7489,14 @@ function Chart (options, callback) {
 	 * div to hold the chart
 	 */
 	function getContainer() {
+		var currentParent;
 		renderTo = optionsChart.renderTo;
 		containerId = PREFIX + idCounter++;
 	
 		if (isString(renderTo)) {
 			renderTo = doc.getElementById(renderTo);
 		}
+		currentParent = renderTo;
 	
 		// remove previous chart
 		renderTo.innerHTML = '';
@@ -7510,11 +7512,28 @@ function Chart (options, callback) {
 				top: '-9999px',
 				display: ''
 			});
-			doc.body.appendChild(renderToClone);
+			while (!currentParent.offsetWidth && currentParent.parentNode) {
+				currentParent = currentParent.parentNode;
+			}
+			if (!currentParent.offsetWidth && !currentParent.parentNode) {
+				currentParent = doc.body;
+			}
+			currentParent.appendChild(renderToClone);
 		}
 		
 		// get the width and height
 		getChartSize();
+
+		if (renderToClone) {
+			discardElement(renderToClone);
+			renderToClone = renderTo.cloneNode(0);
+			css(renderToClone, {
+				position: ABSOLUTE,
+				top: '-9999px',
+				display: ''
+			});
+			doc.body.appendChild(renderToClone);
+		}
 		
 		// create the inner container
 		chart.container = container = createElement(DIV, {
