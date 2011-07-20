@@ -1,6 +1,14 @@
 var AdaptersTest = TestCase('AdaptersTest');
 
 /**
+ * At tear down, log output from the event monitor and reset.
+ */
+AdaptersTest.prototype.tearDown = function() {
+	eventMonitor.log();
+	eventMonitor.reset();
+};
+
+/**
  * Test the each method.
  */
 AdaptersTest.prototype.testEach = function() {
@@ -131,13 +139,16 @@ AdaptersTest.prototype.testObjectEventChainedRemove = function() {
 			o.clickedCount++;
 		};
 
-	// Add a runf handler
+	// Add a inner event handler
 	addEvent(o, 'innerEvent', f);
 
-	// remove it on chart destroy
-	addEvent(document, 'outerEvent', function() {
+	var removeHandler = function() {
 		removeEvent(o, 'innerEvent', f);
-	});
+		removeEvent(document, 'outerEvent', removeHandler);
+	}
+
+	// remove it on chart destroy
+	addEvent(document, 'outerEvent', removeHandler);
 
 	// Fire it once
 	fireEvent(o, 'innerEvent', null, null);
@@ -390,11 +401,50 @@ AdaptersTest.prototype.testChartEvent = function() {
 AdaptersTest.prototype.testDocumentEvent = function() {
 	TODO: Implement
 }
-
-AdaptersTest.prototype.testWindowEvent = function() {
-	TODO: Implement
-}
 */
+
+AdaptersTest.prototype.tXstWindowEvent = function() {
+	var o = {clickedCount: 0},
+		f = function() {
+			o.clickedCount++;
+		};
+
+	// 1. Test custom events.
+	// Setup event handler
+	addEvent(window, 'customEvent', f);
+	assertEquals('custom not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(window, 'customEvent', null, null);
+	assertEquals('custom clicked', 1, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(window, 'customEvent', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(window, 'customEvent', null, null);
+	assertEquals('custom clicked again, no change', 1, o.clickedCount);
+
+	// 2. Test HTML events
+	// Reset the counter
+	o.clickedCount = 0;
+
+	// Setup event handler
+	addEvent(window, 'mousemove', f);
+	assertEquals('not yet moved', 0, o.clickedCount);
+
+	// Fire it once
+	this.safeFireEvent(window, 'mousemove')
+	assertEquals('now moved', 1, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(window, 'mousemove', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	this.safeFireEvent(window, 'mousemove')
+	assertEquals('mousemove again, no change', 1, o.clickedCount);
+};
+
 
 /**
  * A safe way of doing fireEvent. Prototype does not support fireing
