@@ -170,6 +170,8 @@ return {
 				event = HighchartsAdapter.addNS(event);
 			}
 			$(el).stopObserving(event, handler);
+		} if (window == el) {
+			Event.stopObserving(el, event, handler);
 		} else {
 			HighchartsAdapter._extend(el);
 			el._highcharts_stop_observing(event, handler);
