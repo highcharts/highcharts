@@ -15,14 +15,19 @@
         <!-- folder names -->
         <property name="tools.dir" value="${basedir}/tools"/>
         <property name="build.dir" value="${basedir}/build"/>
-        <property name="minify.dir" value="${build.dir}/minify"/>
+        <property name="dist.dir" value="${build.dir}/dist"/>
         <property name="testoutput.dir" value="${build.dir}/tests"/>
         <property name="coveragereport.dir" value="${build.dir}/coverage-report"/>
+        <property name="themes.dir" value="${basedir}/js/themes"/>
+        <property name="package.dir" value="${basedir}/../highcharts.com.site/downloads/package"/>
 
         <!-- highcharts src -->
         <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
         <property name="highcharts.src.name" value="highcharts.src.js"/>
         <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}"/>
+        <property name="mootools.src.file" value="${basedir}/js/adapters/mootools-adapter.src.js"/>
+        <property name="prototype.src.file" value="${basedir}/js/adapters/prototype-adapter.src.js"/>
+        <property name="exporting.src.file" value="${basedir}/js/modules/exporting.src.js"/>
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
@@ -37,7 +42,7 @@
         <taskdef name="jscomp"
             classname="com.google.javascript.jscomp.ant.CompileTask"
             classpath="${gcc.jar}"/>
-        <property name="gcc.output.name" value="highcharts.min-google.js"/>
+        <property name="gcc.output.name" value="highcharts.js"/>
 
         <!-- YUI compressor -->
         <property name="yuicomp.dir" value="${tools.dir}/yui-compressor"/>
@@ -56,7 +61,7 @@
             <fileset dir="${build.dir}" includes="**/*"/>
         </delete>
 
-        <mkdir dir="${minify.dir}"/>
+        <mkdir dir="${dist.dir}"/>
         <mkdir dir="${testoutput.dir}"/>
         <mkdir dir="${coveragereport.dir}"/>
 
@@ -97,6 +102,10 @@
         <jslint haltOnFailure="false">
             <formatter type="plain"/>
             <fileset file="${highcharts.src.file}"/>
+            <fileset file="${mootools.src.file}"/>
+            <fileset file="${prototype.src.file}"/>
+            <fileset file="${exporting.src.file}"/>
+            <fileset dir="${themes.dir}"/>
         </jslint>
     </target>
 
@@ -105,12 +114,12 @@
         <length file="${highcharts.src.file}" property="input.length"/>
         <echo message="Minifying with Google Closure compiler..."/>
         <jscomp compilationLevel="simple" warning="quiet"
-            debug="false" output="${build.dir}/minify/${gcc.output.name}">
+            debug="false" output="${dist.dir}/js/${gcc.output.name}">
             <sources dir="${basedir}/js">
                 <file name="${highcharts.src.name}"/>
             </sources>
         </jscomp>
-        <length file="${build.dir}/minify/${gcc.output.name}" property="gcc.output.length"/>
+        <length file="${dist.dir}/js/${gcc.output.name}" property="gcc.output.length"/>
         <echo message="...done"/>
 
         <echo message="Minifying with Yahoo YUI Compressor..."/>
@@ -118,19 +127,129 @@
             <arg value="--type"/>
             <arg value="js"/>
             <arg value="-o"/>
-            <arg value="${build.dir}/minify/${yuicomp.output.name}"/>
+            <arg value="${dist.dir}/js/${yuicomp.output.name}"/>
             <arg value="${highcharts.src.file}"/>
         </java>
-        <length file="${build.dir}/minify/${yuicomp.output.name}" property="yuicomp.output.length"/>
+        <length file="${dist.dir}/js/${yuicomp.output.name}" property="yuicomp.output.length"/>
+        <!-- We are not distributing this file, its only used to make sure compilation works. -->
+        <delete file="${dist.dir}/js/${yuicomp.output.name}" quiet="true"/>
         <echo message="...done"/>
 
         <echo message=""/>
         <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
         <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes."/>
+
+        <jscomp compilationLevel="simple" warning="quiet"
+            debug="false" output="${dist.dir}/js/adapters/mootools-adapter.js">
+            <sources dir="${basedir}/js/adapters">
+                <file name="mootools-adapter.src.js"/>
+            </sources>
+        </jscomp>
+        <jscomp compilationLevel="simple" warning="quiet"
+            debug="false" output="${dist.dir}/js/adapters/prototype-adapter.js">
+            <sources dir="${basedir}/js/adapters">
+                <file name="prototype-adapter.src.js"/>
+            </sources>
+        </jscomp>
+        <jscomp compilationLevel="simple" warning="quiet"
+            debug="false" output="${dist.dir}/js/modules/exporting.js">
+            <sources dir="${basedir}/js/modules">
+                <file name="exporting.src.js"/>
+            </sources>
+        </jscomp>
     </target>
 
     <!-- Builds the source and runts lint and minify. -->
     <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
+    </target>
+
+    <!-- Finds the current version number and product name from the source. -->
+    <target name="retrieve-version">
+        <loadfile property="version.number" srcFile="${highcharts.src.file}">
+            <filterchain>
+                <tailfilter lines="5"/>
+                <linecontains>
+                    <contains value="version"/>
+                </linecontains>
+                <striplinebreaks/>
+                <trim/>
+                <replacestring from="version: '" to=""/>
+                <replacestring from="'" to=""/>
+           </filterchain>
+        </loadfile>
+        <loadfile property="product.name" srcFile="${highcharts.src.file}">
+            <filterchain>
+                <tailfilter lines="5"/>
+                <linecontains>
+                    <contains value="product"/>
+                </linecontains>
+                <striplinebreaks/>
+                <trim/>
+                <replacestring from="product: '" to=""/>
+                <replacestring from="'," to=""/>
+           </filterchain>
+        </loadfile>
+    </target>
+
+    <!-- Builds the source and assembles a distribution package. -->
+    <target name="dist" depends="build, retrieve-version" description="Builds the source and assembles a distribution package.">
+        <echo message=""/>
+        <echo message="--- Now building: ${product.name} - ${version.number} ---"/>
+        <echo message=""/>
+
+        <!-- 1. Check for any console statements -->
+        <fail message="Source contains console statements">
+            <condition>
+                <or>
+                    <resourcecontains resource="${highcharts.src.file}" substring="console."/>
+                    <resourcecontains resource="${mootools.src.file}" substring="console."/>
+                    <resourcecontains resource="${prototype.src.file}" substring="console."/>
+                    <resourcecontains resource="${exporting.src.file}" substring="console."/>
+                </or>
+            </condition>
+        </fail>
+
+        <!-- 2. Check that version numbers in sources are correct -->
+        <fail message="Source is missing version info">
+            <condition>
+                <not>
+                    <and>
+                        <resourcecontains resource="${highcharts.src.file}" substring="${product.name} JS v${version.number}"/>
+                        <resourcecontains resource="${mootools.src.file}" substring="${product.name} JS v${version.number}"/>
+                        <resourcecontains resource="${prototype.src.file}" substring="${product.name} JS v${version.number}"/>
+                        <resourcecontains resource="${exporting.src.file}" substring="${product.name} JS v${version.number}"/>
+                    </and>
+                </not>
+            </condition>
+        </fail>
+
+        <!-- 3. Copy highcharts source and minified versions, adapters, modules, themes -->
+        <copy file="${highcharts.src.file}" todir="${dist.dir}/js"/>
+        <copy file="${mootools.src.file}" todir="${dist.dir}/js/adapters"/>
+        <copy file="${prototype.src.file}" todir="${dist.dir}/js/adapters"/>
+        <copy file="${exporting.src.file}" todir="${dist.dir}/js/modules"/>
+        <copy todir="${dist.dir}/js/themes">
+            <fileset dir="${themes.dir}"/>
+        </copy>
+
+        <!-- 4. Copy examples -->
+        <copy todir="${dist.dir}/examples">
+            <fileset dir="${package.dir}/examples"/>
+        </copy>
+        <copy file="${package.dir}/index.htm" todir="${dist.dir}"/>
+
+        <!-- 5. Copy graphics -->
+        <copy todir="${dist.dir}/graphics">
+            <fileset dir="${package.dir}/graphics"/>
+        </copy>
+
+        <!-- 6. Copy php export server -->
+        <copy todir="${dist.dir}/exporting-server">
+            <fileset dir="${package.dir}/exporting-server"/>
+        </copy>
+
+        <!-- 7. Create a zip file -->
+        <zip destfile="${dist.dir}/${product.name}-${version.number}.zip" basedir="${dist.dir}"/>
     </target>
 
     <!-- Starts the test driver server. -->
