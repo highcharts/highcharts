@@ -20,7 +20,7 @@
 // Adapter interface between prototype and the Highcarts charting library
 var HighchartsAdapter = (function() {
 
-var hasEffect = typeof Effect != 'undefined';
+var hasEffect = typeof Effect !== 'undefined';
 
 return { 
 	
@@ -44,7 +44,7 @@ return {
 					from = element.attr(attr);
 					
 					// special treatment for paths
-					if (attr == 'd') {
+					if (attr === 'd') {
 						this.paths = Highcharts.pathAnim.init(
 							element, 
 							element.d,
@@ -234,11 +234,11 @@ return {
 	},*/
 	merge: function() { // the built-in prototype merge function doesn't do deep copy
 		function doCopy(copy, original) {
-			var value;
+			var value, key;
 				
-			for (var key in original) {
+			for (key in original) {
 				value = original[key];
-				if  (value && typeof value == 'object' && value.constructor != Array && 
+				if  (value && typeof value === 'object' && value.constructor !== Array && 
 						typeof value.nodeType !== 'number') { 
 					copy[key] = doCopy(copy[key] || {}, value); // copy
 				
@@ -251,10 +251,11 @@ return {
 		
 		function merge() {
 			var args = arguments,
+				i,
 				retVal = {};
 		
-			for (var i = 0; i < args.length; i++) {
-				retVal = doCopy(retVal, args[i])
+			for (i = 0; i < args.length; i++) {
+				retVal = doCopy(retVal, args[i]);
 			
 			}
 			return retVal;
@@ -298,4 +299,4 @@ return {
 		}
 	}
 };
-})();
+}());
