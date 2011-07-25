@@ -39,9 +39,6 @@
         <!-- google closure compiler -->
         <property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
         <property name="gcc.jar" location="${gcc.dir}/compiler.jar" />
-        <taskdef name="jscomp"
-            classname="com.google.javascript.jscomp.ant.CompileTask"
-            classpath="${gcc.jar}"/>
         <property name="gcc.output.name" value="highcharts.js"/>
 
         <!-- YUI compressor -->
@@ -61,7 +58,8 @@
             <fileset dir="${build.dir}" includes="**/*"/>
         </delete>
 
-        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/js/adapters"/>
+        <mkdir dir="${dist.dir}/js/modules"/>
         <mkdir dir="${testoutput.dir}"/>
         <mkdir dir="${coveragereport.dir}"/>
 
@@ -109,54 +107,54 @@
         </jslint>
     </target>
 
-    <!-- Runs minifiers on source code. -->
-    <target name="minify" depends="assemble">
-        <length file="${highcharts.src.file}" property="input.length"/>
-        <echo message="Minifying with Google Closure compiler..."/>
-        <jscomp compilationLevel="simple" warning="quiet"
-            debug="false" output="${dist.dir}/js/${gcc.output.name}">
-            <sources dir="${basedir}/js">
-                <file name="${highcharts.src.name}"/>
-            </sources>
-        </jscomp>
-        <length file="${dist.dir}/js/${gcc.output.name}" property="gcc.output.length"/>
-        <echo message="...done"/>
-
-        <echo message="Minifying with Yahoo YUI Compressor..."/>
+    <!-- Runs google closure compiler and yui compressor on src. -->
+    <target name="compile">
+        <echo message="Minifying ${param.src}"/>
+        <java jar="${gcc.jar}" fork="true">
+            <arg value="--compilation_level"/>
+            <arg value="SIMPLE_OPTIMIZATIONS"/>
+            <arg value="--js"/>
+            <arg value="${param.src}"/>
+            <arg value="--js_output_file"/>
+            <arg value="${param.out}"/>
+        </java>
         <java jar="${yuicomp.jar}" fork="true">
             <arg value="--type"/>
             <arg value="js"/>
             <arg value="-o"/>
-            <arg value="${dist.dir}/js/${yuicomp.output.name}"/>
-            <arg value="${highcharts.src.file}"/>
+            <arg value="${param.out}.yui-min.js"/>
+            <arg value="${param.src}"/>
         </java>
-        <length file="${dist.dir}/js/${yuicomp.output.name}" property="yuicomp.output.length"/>
+        <length file="${param.src}" property="input.length"/>
+        <length file="${param.out}" property="gcc.output.length"/>
+        <length file="${param.out}.yui-min.js" property="yuicomp.output.length"/>
         <!-- We are not distributing this file, its only used to make sure compilation works. -->
-        <delete file="${dist.dir}/js/${yuicomp.output.name}" quiet="true"/>
-        <echo message="...done"/>
-
-        <echo message=""/>
+        <delete file="${param.out}.yui-min.js" quiet="true"/>
         <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
         <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes."/>
+    </target>
 
-        <jscomp compilationLevel="simple" warning="quiet"
-            debug="false" output="${dist.dir}/js/adapters/mootools-adapter.js">
-            <sources dir="${basedir}/js/adapters">
-                <file name="mootools-adapter.src.js"/>
-            </sources>
-        </jscomp>
-        <jscomp compilationLevel="simple" warning="quiet"
-            debug="false" output="${dist.dir}/js/adapters/prototype-adapter.js">
-            <sources dir="${basedir}/js/adapters">
-                <file name="prototype-adapter.src.js"/>
-            </sources>
-        </jscomp>
-        <jscomp compilationLevel="simple" warning="quiet"
-            debug="false" output="${dist.dir}/js/modules/exporting.js">
-            <sources dir="${basedir}/js/modules">
-                <file name="exporting.src.js"/>
-            </sources>
-        </jscomp>
+    <!-- Runs minifiers on source code. -->
+    <target name="minify" depends="assemble">
+        <antcall target="compile">
+            <param name="param.src" value="${highcharts.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/${gcc.output.name}"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="${basedir}/js/adapters/mootools-adapter.src.js"/>
+            <param name="param.out" value="${dist.dir}/js/adapters/mootools-adapter.js"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="${basedir}/js/adapters/prototype-adapter.src.js"/>
+            <param name="param.out" value="${dist.dir}/js/adapters/prototype-adapter.js"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="${basedir}/js/modules/exporting.src.js"/>
+            <param name="param.out" value="${dist.dir}/js/modules/exporting.js"/>
+        </antcall>
     </target>
 
     <!-- Builds the source and runts lint and minify. -->
