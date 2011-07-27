@@ -6,7 +6,7 @@ pathAnim = {
 	/**
 	 * Prepare start and end values so that the path can be animated one to one
 	 */
-	init: function(elem, fromD, toD) {
+	init: function (elem, fromD, toD) {
 		fromD = fromD || '';
 		var shift = elem.shift,
 			bezier = fromD.indexOf('C') > -1,
@@ -18,11 +18,11 @@ pathAnim = {
 			end = [].concat(toD), // copy
 			startBaseLine,
 			endBaseLine,
-			sixify = function(arr) { // in splines make move points have six parameters like bezier curves
+			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
 				i = arr.length;
 				while (i--) {
 					if (arr[i] === M) {
-						arr.splice(i + 1, 0, arr[i+1], arr[i+2], arr[i+1], arr[i+2]);
+						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
 					}
 				}
 			};
@@ -70,7 +70,7 @@ pathAnim = {
 	/**
 	 * Interpolate each value of the path and return the array
 	 */
-	step: function(start, end, pos, complete) {
+	step: function (start, end, pos, complete) {
 		var ret = [],
 			i = start.length,
 			startVal;

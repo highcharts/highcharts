@@ -14,7 +14,7 @@ if (!hasSVG) {
 /**
  * The VML element wrapper.
  */
-var VMLElement = extendClass( SVGElement, {
+var VMLElement = extendClass(SVGElement, {
 	
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -22,7 +22,7 @@ var VMLElement = extendClass( SVGElement, {
 	 * @param {Object} renderer
 	 * @param {Object} nodeName
 	 */
-	init: function(renderer, nodeName) {
+	init: function (renderer, nodeName) {
 		var markup =  ['<', nodeName, ' filled="f" stroked="f"'],
 			style = ['position: ', ABSOLUTE, ';'];
 		
@@ -51,7 +51,7 @@ var VMLElement = extendClass( SVGElement, {
 	 * Add the node to the given parent
 	 * @param {Object} parent
 	 */
-	add: function(parent) {
+	add: function (parent) {
 		var wrapper = this,
 			renderer = wrapper.renderer,
 			element = wrapper.element,
@@ -89,7 +89,7 @@ var VMLElement = extendClass( SVGElement, {
 	/**
 	 * Get or set attributes
 	 */
-	attr: function(hash, val) {
+	attr: function (hash, val) {
 		var key, 
 			value, 
 			i, 
@@ -154,12 +154,9 @@ var VMLElement = extendClass( SVGElement, {
 						// align with SVG, but this hasn't been tested thoroughly
 						if (isNumber(value[i])) {
 							convertedPath[i] = mathRound(value[i] * 10) - 5;
-						}
-						// close the path
-						else if (value[i] === 'Z') {
+						} else if (value[i] === 'Z') { // close the path
 							convertedPath[i] = 'x';
-						} 
-						else {
+						} else {
 							convertedPath[i] = value[i];
 						}
 						
@@ -280,10 +277,7 @@ var VMLElement = extendClass( SVGElement, {
 					this.updateTransform();
 					
 					skipAttr = true;
-				}
-				
-				// text for rotated and non-rotated elements
-				else if (key === 'text') {
+				} else if (key === 'text') { // text for rotated and non-rotated elements
 					this.bBox = null;
 					element.innerHTML = value;
 					skipAttr = true;
@@ -317,12 +311,12 @@ var VMLElement = extendClass( SVGElement, {
 	 * 
 	 * @param {String} id The id of the clip rectangle
 	 */
-	clip: function(clipRect) {
+	clip: function (clipRect) {
 		var wrapper = this,
 			clipMembers = clipRect.members;
 			
 		clipMembers.push(wrapper);
-		wrapper.destroyClip = function() {
+		wrapper.destroyClip = function () {
 			erase(clipMembers, wrapper);
 		};
 		return wrapper.css(clipRect.getCSS(wrapper.inverted));
@@ -332,7 +326,7 @@ var VMLElement = extendClass( SVGElement, {
 	 * Set styles for the element
 	 * @param {Object} styles
 	 */
-	css: function(styles) {
+	css: function (styles) {
 		var wrapper = this,
 			element = wrapper.element,
 			textWidth = styles && element.tagName === 'SPAN' && styles.width;
@@ -358,7 +352,7 @@ var VMLElement = extendClass( SVGElement, {
 	/**
 	 * Extend element.destroy by removing it from the clip members array
 	 */
-	destroy: function() {
+	destroy: function () {
 		var wrapper = this;
 		
 		if (wrapper.destroyClip) {
@@ -371,7 +365,7 @@ var VMLElement = extendClass( SVGElement, {
 	/**
 	 * Remove all child nodes of a group, except the v:group element
 	 */
-	empty: function() {
+	empty: function () {
 		var element = this.element,
 			childNodes = element.childNodes,
 			i = childNodes.length,
@@ -389,7 +383,7 @@ var VMLElement = extendClass( SVGElement, {
 	 * @return {Object} A hash containing values for x, y, width and height
 	 */
 	
-	getBBox: function() {
+	getBBox: function () {
 		var wrapper = this,
 			element = wrapper.element,
 			bBox = wrapper.bBox;
@@ -416,9 +410,9 @@ var VMLElement = extendClass( SVGElement, {
 	 * @param {String} eventType
 	 * @param {Function} handler
 	 */
-	on: function(eventType, handler) {
+	on: function (eventType, handler) {
 		// simplest possible event model for internal use
-		this.element['on'+ eventType] = function() {
+		this.element['on' + eventType] = function () {
 			var evt = win.event;
 			evt.target = evt.srcElement;
 			handler(evt);
@@ -431,7 +425,7 @@ var VMLElement = extendClass( SVGElement, {
 	 * VML override private method to update elements based on internal 
 	 * properties based on SVG transform
 	 */
-	updateTransform: function(hash) { 
+	updateTransform: function (hash) { 
 		// aligning non added elements is expensive
 		if (!this.added) {
 			this.alignOnAdd = true;
@@ -458,7 +452,7 @@ var VMLElement = extendClass( SVGElement, {
 		
 		// apply inversion
 		if (wrapper.inverted) { // wrapper is a group
-			each(elem.childNodes, function(child) {
+			each(elem.childNodes, function (child) {
 				wrapper.renderer.invertChild(child, elem);
 			});
 		}
@@ -499,7 +493,7 @@ var VMLElement = extendClass( SVGElement, {
 				// update textWidth
 				if (width > textWidth) {
 					css(elem, {
-						width: textWidth +PX,
+						width: textWidth + PX,
 						display: 'block',
 						whiteSpace: 'normal'
 					});
@@ -547,7 +541,7 @@ var VMLElement = extendClass( SVGElement, {
 	 * Apply a drop shadow by copying elements and giving them different strokes 
 	 * @param {Boolean} apply
 	 */
-	shadow: function(apply, group) {
+	shadow: function (apply, group) {
 		var shadows = [],
 			i,
 			element = this.element,
@@ -564,7 +558,7 @@ var VMLElement = extendClass( SVGElement, {
 			
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
-				markup = ['<shape isShadow="true" strokeweight="', ( 7 - 2 * i ) ,
+				markup = ['<shape isShadow="true" strokeweight="', (7 - 2 * i),
 					'" filled="false" path="', path,
 					'" coordsize="100,100" style="', element.style.cssText, '" />'];
 				shadow = createElement(renderer.prepVML(markup),
@@ -601,10 +595,10 @@ var VMLElement = extendClass( SVGElement, {
 /**
  * The VML renderer
  */
-VMLRenderer = function() {
+VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
+VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	
 	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
@@ -616,7 +610,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	init: function(container, width, height) {
+	init: function (container, width, height) {
 		var renderer = this,
 			boxWrapper;
 
@@ -642,7 +636,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			
 			// setup default css
 			doc.createStyleSheet().cssText = 
-				'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke'+
+				'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 			
 		}	
@@ -669,33 +663,33 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			top: y,
 			width: width,
 			height: height,
-			getCSS: function(inverted) {
+			getCSS: function (inverted) {
 				var rect = this,//clipRect.element.style,
 					top = rect.top,
 					left = rect.left,
 					right = left + rect.width,
 					bottom = top + rect.height,
 					ret = {
-						clip: 'rect('+ 
-							mathRound(inverted ? left : top) + 'px,'+ 
-							mathRound(inverted ? bottom : right) + 'px,'+ 
-							mathRound(inverted ? right : bottom) + 'px,'+ 
-							mathRound(inverted ? top : left) +'px)'
+						clip: 'rect(' + 
+							mathRound(inverted ? left : top) + 'px,' + 
+							mathRound(inverted ? bottom : right) + 'px,' + 
+							mathRound(inverted ? right : bottom) + 'px,' + 
+							mathRound(inverted ? top : left) + 'px)'
 					};
 					
 				// issue 74 workaround
 				if (!inverted && docMode8) {
 					extend(ret, {
-						width: right +PX,
-						height: bottom +PX
+						width: right + PX,
+						height: bottom + PX
 					});
 				}
 				return ret;
 			},
 			
 			// used in attr and animation to update the clipping of all members
-			updateClipping: function() {
-				each(clipRect.members, function(member) {
+			updateClipping: function () {
+				each(clipRect.members, function (member) {
 					member.css(clipRect.getCSS(member.inverted));
 				});
 			}
@@ -710,7 +704,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * 
 	 * @param {Object} color The color or config object
 	 */
-	color: function(color, elem, prop) {
+	color: function (color, elem, prop) {
 		var colorObject,
 			regexRgba = /^rgba/,
 			markup;
@@ -726,7 +720,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 				color2,
 				opacity2;	
 				
-			each(color.stops, function(stop, i) {
+			each(color.stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
@@ -784,7 +778,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * Take a VML string and prepare it for either IE8 or IE6/IE7. 
 	 * @param {Array} markup A string array of the VML markup to prepare
 	 */
-	prepVML: function(markup) {
+	prepVML: function (markup) {
 		var vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
 			isIE8 = this.isIE8;
 	
@@ -793,9 +787,9 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 		if (isIE8) { // add xmlns and style inline
 			markup = markup.replace('/>', ' xmlns="urn:schemas-microsoft-com:vml" />');
 			if (markup.indexOf('style="') === -1) {
-				markup = markup.replace('/>', ' style="'+ vmlStyle +'" />');
+				markup = markup.replace('/>', ' style="' + vmlStyle + '" />');
 			} else {
-				markup = markup.replace('style="', 'style="'+ vmlStyle);
+				markup = markup.replace('style="', 'style="' + vmlStyle);
 			}
 
 		} else { // add namespace
@@ -811,7 +805,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: function(str, x, y) {
+	text: function (str, x, y) {
 		
 		var defaultChartStyle = defaultOptions.chart.style; 
 			
@@ -848,7 +842,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} y
 	 * @param {Number} r
 	 */
-	circle: function(x, y, r) {
+	circle: function (x, y, r) {
 		return this.symbol('circle').attr({ x: x, y: y, r: r});
 	},
 	
@@ -859,7 +853,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * 
 	 * @param {String} name The name of the group
 	 */
-	g: function(name) {
+	g: function (name) {
 		var wrapper,
 			attribs;
 		
@@ -882,7 +876,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	image: function(src, x, y, width, height) {
+	image: function (src, x, y, width, height) {
 		var obj = this.createElement('img')
 			.attr({ src: src });
 			
@@ -900,7 +894,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	/**
 	 * VML uses a shape for rect to overcome bugs and rotation problems
 	 */
-	rect: function(x, y, width, height, r, strokeWidth) {
+	rect: function (x, y, width, height, r, strokeWidth) {
 		
 		if (isObject(x)) {
 			y = x.y;
@@ -921,7 +915,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Object} element
 	 * @param {Object} parentNode
 	 */
-	invertChild: function(element, parentNode) {
+	invertChild: function (element, parentNode) {
 		var parentStyle = parentNode.style;
 			
 		css(element, { 
@@ -955,7 +949,7 @@ VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
 			//} else if (end - start == 2 * mathPI) { // full circle
 			} else if (2 * mathPI - end + start < circleCorrection) { // full circle
 				// empirical correction found by trying out the limits for different radii
-				cosEnd = - circleCorrection;
+				cosEnd = -circleCorrection;
 			} else if (end - start < innerCorrection) { // issue #186, another mysterious VML arc problem
 				cosEnd = mathCos(start + innerCorrection);
 			}

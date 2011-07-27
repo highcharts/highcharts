@@ -4,7 +4,7 @@
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
  */
-var Color = function(input) {
+var Color = function (input) {
 	// declare variables
 	var rgba = [], result;
 	
@@ -18,10 +18,7 @@ var Color = function(input) {
 		result = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/.exec(input);
 		if (result) {
 			rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
-		}
-
-		// hex
-		else {
+		} else { // hex
 			result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(input);
 			if (result) {
 				rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
@@ -39,11 +36,11 @@ var Color = function(input) {
 		// it's NaN if gradient colors on a column chart
 		if (rgba && !isNaN(rgba[0])) {
 			if (format === 'rgb') {
-				ret = 'rgb('+ rgba[0] +','+ rgba[1] +','+ rgba[2] +')';
+				ret = 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
 			} else if (format === 'a') {
 				ret = rgba[3];
 			} else {
-				ret = 'rgba('+ rgba.join(',') +')';
+				ret = 'rgba(' + rgba.join(',') + ')';
 			}
 		} else {
 			ret = input;

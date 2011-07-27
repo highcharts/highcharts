@@ -74,7 +74,7 @@ function erase(arr, item) {
  * Returns true if the object is not null or undefined. Like MooTools' $.defined.
  * @param {Object} obj
  */
-function defined (obj) {
+function defined(obj) {
 	return obj !== UNDEFINED && obj !== null;
 }
 
@@ -145,10 +145,10 @@ function pick() {
  * @param {Object} el
  * @param {Object} styles Style object with camel case property names
  */
-function css (el, styles) {
+function css(el, styles) {
 	if (isIE) {
 		if (styles && styles.opacity !== UNDEFINED) {
-			styles.filter = 'alpha(opacity='+ (styles.opacity * 100) +')';
+			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
 	extend(el.style, styles);
@@ -179,7 +179,7 @@ function getStyle (el, styleProp) {
  * @param {Object} parent
  * @param {Object} nopad
  */
-function createElement (tag, attribs, styles, parent, nopad) {
+function createElement(tag, attribs, styles, parent, nopad) {
 	var el = doc.createElement(tag);
 	if (attribs) {
 		extend(el, attribs);
@@ -202,7 +202,7 @@ function createElement (tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function(){};
+	var object = function () {};
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;
@@ -215,12 +215,14 @@ function extendClass(parent, members) {
  * @param {String} decPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-function numberFormat (number, decimals, decPoint, thousandsSep) {
+function numberFormat(number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-		n = number, c = isNaN(decimals = mathAbs(decimals)) ? 2 : decimals,
+		n = number,
+		c = isNaN(decimals = mathAbs(decimals)) ? 2 : decimals,
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
-		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep, s = n < 0 ? "-" : "",
+		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
+		s = n < 0 ? "-" : "",
 		i = String(pInt(n = mathAbs(+n || 0).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
     
@@ -235,7 +237,7 @@ function numberFormat (number, decimals, decPoint, thousandsSep) {
  * @param {Boolean} capitalize
  */
 dateFormat = function (format, timestamp, capitalize) {
-	function pad (number) {
+	function pad(number) {
 		return number.toString().replace(/^([0-9])$/, '0$1');
 	}
 	
@@ -301,7 +303,7 @@ dateFormat = function (format, timestamp, capitalize) {
 
 	// do the replaces
 	for (key in replacements) {
-		format = format.replace('%'+ key, replacements[key]);
+		format = format.replace('%' + key, replacements[key]);
 	}
 		
 	// Optionally capitalize the string and return
@@ -316,7 +318,7 @@ dateFormat = function (format, timestamp, capitalize) {
  * @param {Object} el
  * 
  */
-function getPosition (el) {
+function getPosition(el) {
 	var p = { left: el.offsetLeft, top: el.offsetTop };
 	el = el.offsetParent;
 	while (el) {
@@ -339,11 +341,11 @@ function ChartCounters() {
 	this.symbol = 0;
 }
 
-ChartCounters.prototype =  {
+ChartCounters.prototype = {
 	/**
 	 * Wraps the color counter if it reaches the specified length.
 	 */
-	wrapColor: function(length) {
+	wrapColor: function (length) {
 		if (this.color >= length) {
 			this.color = 0;
 		}
@@ -352,7 +354,7 @@ ChartCounters.prototype =  {
 	/**
 	 * Wraps the symbol counter if it reaches the specified length.
 	 */
-	wrapSymbol: function(length) {
+	wrapSymbol: function (length) {
 		if (this.symbol >= length) {
 			this.symbol = 0;
 		}

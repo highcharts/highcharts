@@ -4,13 +4,13 @@
 /**
  * SplineSeries object
  */
-var SplineSeries = extendClass( Series, {
+var SplineSeries = extendClass(Series, {
 	type: 'spline',
 	
 	/**
 	 * Draw the actual graph
 	 */
-	getPointSpline: function(segment, point, i) {
+	getPointSpline: function (segment, point, i) {
 		var smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc
 			denom = smoothing + 1,
 			plotX = point.plotX,
@@ -69,10 +69,7 @@ var SplineSeries = extendClass( Series, {
 		// moveTo or lineTo
 		if (!i) {
 			ret = [M, plotX, plotY];
-		}
-		
-		// curve from last point to this
-		else {
+		} else { // curve from last point to this
 			ret = [
 				'C',
 				lastPoint.rightContX || lastPoint.plotX, 

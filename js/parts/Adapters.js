@@ -24,7 +24,7 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Array} arr
 	 * @param {Function} fn
 	 */
-	each = function(arr, fn) {
+	each = function (arr, fn) {
 		var i = 0, 
 			len = arr.length;
 		for (; i < len; i++) {
@@ -44,10 +44,11 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Array} arr
 	 * @param {Function} fn
 	 */
-	map = function(arr, fn){
+	map = function (arr, fn) {
 		//return jQuery.map(arr, fn);
 		var results = [],
-			i = 0, len = arr.length;
+			i = 0,
+			len = arr.length;
 		for (; i < len; i++) {
 			results[i] = fn.call(arr[i], arr[i], i, arr);
 		}
@@ -58,7 +59,7 @@ if (!globalAdapter && win.jQuery) {
 	/**
 	 * Deep merge two objects and return a third object
 	 */
-	merge = function(){
+	merge = function () {
 		var args = arguments;
 		return jQ.extend(true, null, args[0], args[1], args[2], args[3]);
 	};
@@ -69,7 +70,7 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {String} event The event type
 	 * @param {Function} fn The event handler
 	 */
-	addEvent = function (el, event, fn){
+	addEvent = function (el, event, fn) {
 		jQ(el).bind(event, fn);
 	};
 	
@@ -79,12 +80,12 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {String} eventType The event type. Leave blank to remove all events.
 	 * @param {Function} handler The function to remove
 	 */
-	removeEvent = function(el, eventType, handler) {
+	removeEvent = function (el, eventType, handler) {
 		// workaround for jQuery issue with unbinding custom events:
 		// http://forum.jquery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jquery-1-4-2
 		var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
 		if (doc[func] && !el[func]) {
-			el[func] = function() {};
+			el[func] = function () {};
 		}
 		
 		jQ(el).unbind(eventType, handler);
@@ -97,9 +98,9 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Object} eventArguments
 	 * @param {Function} defaultFunction
 	 */
-	fireEvent = function(el, type, eventArguments, defaultFunction) {
+	fireEvent = function (el, type, eventArguments, defaultFunction) {
 		var event = jQ.Event(type),
-			detachedType = 'detached'+ type;
+			detachedType = 'detached' + type;
 		extend(event, eventArguments);
 		
 		// Prevent jQuery from triggering the object method that is named the
@@ -150,9 +151,9 @@ if (!globalAdapter && win.jQuery) {
 	
 	
 	// extend jQuery
-	jQ.extend( jQ.easing, {
+	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
-			return -c *(t/=d)*(t-2) + b;
+			return -c * (t /= d) * (t - 2) + b;
 		}
 	});
 					
@@ -161,7 +162,7 @@ if (!globalAdapter && win.jQuery) {
 		oldCur = jQuery.fx.prototype.cur;
 	
 	// do the step
-	jQ.fx.step._default = function(fx){
+	jQ.fx.step._default = function (fx) {
 		var elem = fx.elem;
 		if (elem.attr) { // is SVG element wrapper
 			elem.attr(fx.prop, fx.now);
@@ -170,7 +171,7 @@ if (!globalAdapter && win.jQuery) {
 		}
 	};
 	// animate paths
-	jQ.fx.step.d = function(fx) {
+	jQ.fx.step.d = function (fx) {
 		var elem = fx.elem;
 			
 		
@@ -190,7 +191,7 @@ if (!globalAdapter && win.jQuery) {
 	
 	};
 	// get the current value
-	jQ.fx.prototype.cur = function() {
+	jQ.fx.prototype.cur = function () {
 		var elem = this.elem,
 			r;
 		if (elem.attr) { // is SVG element wrapper

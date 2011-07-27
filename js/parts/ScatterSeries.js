@@ -8,12 +8,12 @@ var ScatterSeries = extendClass(Series, {
 	 * Extend the base Series' translate method by adding shape type and
 	 * arguments for the point trackers
 	 */
-	translate: function() {
+	translate: function () {
 		var series = this;
 
 		Series.prototype.translate.apply(series);
 
-		each(series.data, function(point) {
+		each(series.data, function (point) {
 			point.shapeType = 'circle';
 			point.shapeArgs = {
 				x: point.plotX,
@@ -28,22 +28,22 @@ var ScatterSeries = extendClass(Series, {
 	 * Create individual tracker elements for each point
 	 */
 	//drawTracker: ColumnSeries.prototype.drawTracker,
-	drawTracker: function() {
+	drawTracker: function () {
 		var series = this,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
 			graphic;
 			
-		each(series.data, function(point) {
+		each(series.data, function (point) {
 			graphic = point.graphic;
 			if (graphic) { // doesn't exist for null points
 				graphic
 					.attr({ isTracker: true })
-					.on('mouseover', function(event) {
+					.on('mouseover', function (event) {
 						series.onMouseOver();
 						point.onMouseOver();					
 					})
-					.on('mouseout', function(event) {
+					.on('mouseout', function (event) {
 						if (!series.options.stickyTracking) {
 							series.onMouseOut();
 						}
@@ -57,7 +57,7 @@ var ScatterSeries = extendClass(Series, {
 	/**
 	 * Cleaning the data is not necessary in a scatter plot
 	 */
-	cleanData: function() {}
+	cleanData: function () {}
 });
 seriesTypes.scatter = ScatterSeries;
 

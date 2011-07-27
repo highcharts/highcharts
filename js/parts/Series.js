@@ -1,7 +1,7 @@
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
-var Point = function() {};
+var Point = function () {};
 Point.prototype = {
 
 	/**
@@ -9,7 +9,7 @@ Point.prototype = {
 	 * @param {Object} series The series object containing this point
 	 * @param {Object} options The data in either number, array or object format
 	 */
-	init: function(series, options) {
+	init: function (series, options) {
 		var point = this,
 			counters = series.chart.counters,
 			defaultColors;
@@ -37,7 +37,7 @@ Point.prototype = {
 	 * 
 	 * @param {Object} options
 	 */
-	applyOptions: function(options) {
+	applyOptions: function (options) {
 		var point = this,
 			series = point.series;
 	
@@ -45,25 +45,15 @@ Point.prototype = {
 		
 		// onedimensional array input
 		if (isNumber(options) || options === null) {
-			point.y = options;	
-		}
-		
-		// object input
-		else if (isObject(options) && !isNumber(options.length)) {
-			
+			point.y = options;
+		} else if (isObject(options) && !isNumber(options.length)) { // object input
 			// copy options directly to point
 			extend(point, options);
 			point.options = options;
-		}
-		
-		// categorized data with name in first position
-		else if (isString(options[0])) {
+		} else if (isString(options[0])) { // categorized data with name in first position
 			point.name = options[0];
 			point.y = options[1];
-		}
-		
-		// two-dimentional array
-		else if (isNumber(options[0])) {
+		} else if (isNumber(options[0])) { // two-dimentional array
 			point.x = options[0];
 			point.y = options[1];
 		}
@@ -81,7 +71,7 @@ Point.prototype = {
 	/**
 	 * Destroy a point to clear memory. Its reference still stays in series.data.
 	 */
-	destroy: function() {
+	destroy: function () {
 		var point = this,
 			series = point.series,
 			prop;
@@ -96,7 +86,7 @@ Point.prototype = {
 		// remove all events
 		removeEvent(point);
 		
-		each(['graphic', 'tracker', 'group', 'dataLabel', 'connector'], function(prop) {
+		each(['graphic', 'tracker', 'group', 'dataLabel', 'connector'], function (prop) {
 			if (point[prop]) {
 				point[prop].destroy();
 			}
@@ -116,7 +106,7 @@ Point.prototype = {
 	/**
 	 * Return the configuration hash needed for the data label and tooltip formatters
 	 */
-	getLabelConfig: function() {
+	getLabelConfig: function () {
 		var point = this;
 		return {
 			x: point.category,
@@ -134,7 +124,7 @@ Point.prototype = {
 	 * @param {Boolean} accumulate Whether to add to the previous selection. By default,
 	 *     this happens if the control key (Cmd on Mac) was pressed during clicking.
 	 */
-	select: function(selected, accumulate) {
+	select: function (selected, accumulate) {
 		var point = this,
 			series = point.series,
 			chart = series.chart;
@@ -158,7 +148,7 @@ Point.prototype = {
 		
 	},
 	
-	onMouseOver: function() {
+	onMouseOver: function () {
 		var point = this,
 			chart = point.series.chart,
 			tooltip = chart.tooltip,
@@ -182,7 +172,7 @@ Point.prototype = {
 		chart.hoverPoint = point;
 	},
 	
-	onMouseOut: function() {
+	onMouseOut: function () {
 		var point = this;
 		point.firePointEvent('mouseOut');
 		
@@ -197,13 +187,13 @@ Point.prototype = {
 	 * 
 	 * @return {String} A string to be concatenated in to the common tooltip text
 	 */
-	tooltipFormatter: function(useHeader) {
+	tooltipFormatter: function (useHeader) {
 		var point = this,
 			series = point.series;
 				
-		return ['<span style="color:'+ series.color +'">', (point.name || series.name), '</span>: ',
-			(!useHeader ? ('<b>x = '+ (point.name || point.x) + ',</b> ') : ''), 
-			'<b>', (!useHeader ? 'y = ' : '' ), point.y, '</b>'].join('');
+		return ['<span style="color:' + series.color + '">', (point.name || series.name), '</span>: ',
+			(!useHeader ? ('<b>x = ' + (point.name || point.x) + ',</b> ') : ''), 
+			'<b>', (!useHeader ? 'y = ' : ''), point.y, '</b>'].join('');
 		
 	},
 	
@@ -216,7 +206,7 @@ Point.prototype = {
 	 *    configuration
 	 * 
 	 */
-	update: function(options, redraw, animation) {
+	update: function (options, redraw, animation) {
 		var point = this,
 			series = point.series,
 			dataLabel = point.dataLabel,
@@ -226,7 +216,7 @@ Point.prototype = {
 		redraw = pick(redraw, true);
 		
 		// fire the event with a default handler of doing the update
-		point.firePointEvent('update', { options: options }, function() {
+		point.firePointEvent('update', { options: options }, function () {
 
 			point.applyOptions(options);
 			
@@ -252,7 +242,7 @@ Point.prototype = {
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
-	remove: function(redraw, animation) {
+	remove: function (redraw, animation) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
@@ -262,7 +252,7 @@ Point.prototype = {
 		redraw = pick(redraw, true);
 		
 		// fire the event with a default handler of removing the point			
-		point.firePointEvent('remove', null, function() {
+		point.firePointEvent('remove', null, function () {
 
 			erase(data, point);
 			
@@ -286,14 +276,14 @@ Point.prototype = {
 	 * @param {Object} eventArgs Additional event arguments
 	 * @param {Function} defaultFunction Default event handler
 	 */
-	firePointEvent: function(eventType, eventArgs, defaultFunction) {
+	firePointEvent: function (eventType, eventArgs, defaultFunction) {
 		var point = this,
 			series = this.series,
 			seriesOptions = series.options;
 		
 		// load event handlers on demand to save time on mouseover/out
-		if (seriesOptions.point.events[eventType] || (
-				point.options && point.options.events && point.options.events[eventType])) {
+		if (seriesOptions.point.events[eventType] || 
+			(point.options && point.options.events && point.options.events[eventType])) {
 			this.importEvents();
 		}
 			
@@ -311,7 +301,7 @@ Point.prototype = {
 	 * Import events from the series' and point's options. Only do it on 
 	 * demand, to save processing time on hovering.
 	 */
-	importEvents: function() {
+	importEvents: function () {
 		if (!this.hasImportedEvents) {
 			var point = this,
 				options = merge(point.series.options.point, point.options),
@@ -332,7 +322,7 @@ Point.prototype = {
 	 * Set the point's state
 	 * @param {String} state
 	 */
-	setState: function(state) {
+	setState: function (state) {
 		var point = this,
 			series = point.series,
 			stateOptions = series.options.states,
@@ -363,14 +353,15 @@ Point.prototype = {
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			point.graphic.attr(pointAttr[state]);
-		}
-		// if a graphic is not applied to each point in the normal state, create a shared
-		// graphic for the hover state
-		else {
+		} else {
+			// if a graphic is not applied to each point in the normal state, create a shared
+			// graphic for the hover state
 			if (state) {
 				if (!stateMarkerGraphic) {
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.circle(
-						0, 0, pointAttr[state].r
+						0, 
+						0, 
+						pointAttr[state].r
 					)
 					.attr(pointAttr[state])
 					.add(series.group);
@@ -396,7 +387,7 @@ Point.prototype = {
  * @param {Object} chart
  * @param {Object} options
  */
-var Series = function() {};
+var Series = function () {};
 
 Series.prototype = {
 	
@@ -409,7 +400,7 @@ Series.prototype = {
 		fill: 'fillColor',
 		r: 'radius'
 	},
-	init: function(chart, options) {
+	init: function (chart, options) {
 		var series = this,
 			eventType,
 			events,
@@ -423,7 +414,7 @@ Series.prototype = {
 		extend(series, {
 			index: index,
 			options: options,
-			name: options.name || 'Series '+ (index + 1),
+			name: options.name || 'Series ' + (index + 1),
 			state: NORMAL_STATE,
 			pointAttr: {},
 			visible: options.visible !== false, // true by default
@@ -457,7 +448,7 @@ Series.prototype = {
 	 * Return an auto incremented x value based on the pointStart and pointInterval options. 
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
-	autoIncrement: function() {
+	autoIncrement: function () {
 		var series = this,
 			options = series.options,
 			xIncrement = series.xIncrement;
@@ -473,7 +464,7 @@ Series.prototype = {
 	/**
 	 * Sort the data and remove duplicates 
 	 */
-	cleanData: function() {
+	cleanData: function () {
 		var series = this,
 			chart = series.chart,
 			data = series.data,
@@ -484,7 +475,7 @@ Series.prototype = {
 			i;
 			
 		// sort the data points
-		data.sort(function(a, b){
+		data.sort(function (a, b) {
 			return (a.x - b.x);
 		});
 		
@@ -529,13 +520,13 @@ Series.prototype = {
 	 * Divide the series data into segments divided by null values. Also sort
 	 * the data points and delete duplicate values.
 	 */
-	getSegments: function() {
+	getSegments: function () {
 		var lastNull = -1,
 			segments = [],
 			data = this.data;
 		
 		// create the segments
-		each(data, function(point, i) {
+		each(data, function (point, i) {
 			if (point.y === null) {
 				if (i > lastNull + 1) {
 					segments.push(data.slice(lastNull + 1, i));
@@ -553,7 +544,7 @@ Series.prototype = {
 	 * Set the series options by merging from the options tree
 	 * @param {Object} itemOptions
 	 */
-	setOptions: function(itemOptions) {
+	setOptions: function (itemOptions) {
 		var plotOptions = this.chart.options.plotOptions,
 			options = merge(
 				plotOptions[this.type],
@@ -567,7 +558,7 @@ Series.prototype = {
 	/**
 	 * Get the series' color
 	 */
-	getColor: function(){
+	getColor: function () {
 		var defaultColors = this.chart.options.colors,
 			counters = this.chart.counters;
 		this.color = this.options.color || defaultColors[counters.color++] || '#0000ff';
@@ -576,7 +567,7 @@ Series.prototype = {
 	/**
 	 * Get the series' symbol
 	 */
-	getSymbol: function(){
+	getSymbol: function () {
 		var defaultSymbols = this.chart.options.symbols,
 			counters = this.chart.counters;
 		this.symbol = this.options.marker.symbol || defaultSymbols[counters.symbol++];
@@ -592,7 +583,7 @@ Series.prototype = {
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
-	addPoint: function(options, redraw, shift, animation) {
+	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
 			data = series.data,
 			graph = series.graph,
@@ -631,7 +622,7 @@ Series.prototype = {
 	 * @param {Object} data
 	 * @param {Object} redraw
 	 */
-	setData: function(data, redraw) {
+	setData: function (data, redraw) {
 		var series = this,
 			oldData = series.data,
 			initialColor = series.initialColor,
@@ -643,7 +634,7 @@ Series.prototype = {
 			chart.counters.color = initialColor;
 		}
 		
-		data = map(splat(data || []), function(pointOptions) {
+		data = map(splat(data || []), function (pointOptions) {
 			return (new series.pointClass()).init(series, pointOptions);
 		});
 		
@@ -678,7 +669,7 @@ Series.prototype = {
 	 *    configuration
 	 */
 	
-	remove: function(redraw, animation) {
+	remove: function (redraw, animation) {
 		var series = this,
 			chart = series.chart;
 		redraw = pick(redraw, true);
@@ -688,7 +679,7 @@ Series.prototype = {
 			series.isRemoving = true;
 
 			// fire the event with a default handler of removing the point			
-			fireEvent(series, 'remove', null, function() {
+			fireEvent(series, 'remove', null, function () {
 				
 						
 				// destroy elements
@@ -710,7 +701,7 @@ Series.prototype = {
 	 * Translate data points from raw data values to chart specific positioning data
 	 * needed later in drawPoints, drawGraph and drawTracker. 
 	 */
-	translate: function() {
+	translate: function () {
 		var series = this, 
 			chart = series.chart, 
 			stacking = series.options.stacking,
@@ -785,7 +776,7 @@ Series.prototype = {
 		}
 			
 		// concat segments to overcome null values
-		each(series.segments, function(segment){
+		each(series.segments, function (segment) {
 			data = data.concat(segment);
 		});
 		
@@ -795,13 +786,12 @@ Series.prototype = {
 			data = data.reverse();//reverseArray(data);
 		}
 		
-		each(data, function(point, i) {
+		each(data, function (point, i) {
 			
 			low = data[i - 1] ? data[i - 1]._high + 1 : 0;
-			high = point._high = data[i + 1] ? (
-				mathFloor((point.plotX + (data[i + 1] ? 
-					data[i + 1].plotX : plotSize)) / 2)) :
-					plotSize;
+			high = point._high = data[i + 1] ?
+				(mathFloor((point.plotX + (data[i + 1] ? data[i + 1].plotX : plotSize)) / 2)) :
+				plotSize;
 			
 			while (low <= high) {
 				tooltipPoints[inverted ? plotSize - low++ : low++] = point;
@@ -816,7 +806,7 @@ Series.prototype = {
 	/**
 	 * Series mouse over handler
 	 */
-	onMouseOver: function() {
+	onMouseOver: function () {
 		var series = this,
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
@@ -852,7 +842,7 @@ Series.prototype = {
 	/**
 	 * Series mouse out handler
 	 */
-	onMouseOut: function() {
+	onMouseOut: function () {
 		// trigger the event only if listeners exist
 		var series = this,
 			options = series.options,
@@ -884,7 +874,7 @@ Series.prototype = {
 	/**
 	 * Animate in the series
 	 */
-	animate: function(init) {
+	animate: function (init) {
 		var series = this,
 			chart = series.chart,
 			clipRect = series.clipRect,
@@ -896,7 +886,7 @@ Series.prototype = {
 			
 		if (init) { // initialize the animation
 			if (!clipRect.isAnimating) { // apply it only for one of the series
-				clipRect.attr( 'width', 0 );
+				clipRect.attr('width', 0);
 				clipRect.isAnimating = true;
 			}
 			
@@ -914,7 +904,7 @@ Series.prototype = {
 	/**
 	 * Draw the markers
 	 */
-	drawPoints: function(){
+	drawPoints: function () {
 		var series = this,
 			pointAttr,
 			data = series.data, 
@@ -974,7 +964,7 @@ Series.prototype = {
 	 * @param {Object} base1 SVG attribute object to inherit from
 	 * @param {Object} base2 Second level SVG attribute object to inherit from
 	 */
-	convertAttribs: function(options, base1, base2, base3) {
+	convertAttribs: function (options, base1, base2, base3) {
 		var conversion = this.pointAttrToOptions,
 			attr,
 			option,
@@ -999,7 +989,7 @@ Series.prototype = {
 	 * points with individual marker options. If such options are not defined for the point,
 	 * a reference to the series wide attributes is stored in point.pointAttr.
 	 */
-	getAttribs: function() {
+	getAttribs: function () {
 		var series = this, 
 			normalOptions = defaultPlotOptions[series.type].marker ? series.options.marker : series.options,
 			stateOptions = normalOptions.states,
@@ -1038,7 +1028,7 @@ Series.prototype = {
 		seriesPointAttr[NORMAL_STATE] = series.convertAttribs(normalOptions, normalDefaults);
 		
 		// HOVER_STATE and SELECT_STATE states inherit from normal state except the default radius
-		each([HOVER_STATE, SELECT_STATE], function(state) {
+		each([HOVER_STATE, SELECT_STATE], function (state) {
 			seriesPointAttr[state] = 
 					series.convertAttribs(stateOptions[state], seriesPointAttr[NORMAL_STATE]);
 		});
@@ -1121,7 +1111,7 @@ Series.prototype = {
 	/**
 	 * Clear DOM objects and free up memory
 	 */
-	destroy: function() {
+	destroy: function () {
 		var series = this,
 			chart = series.chart,
 			//chartSeries = series.chart.series,
@@ -1142,11 +1132,11 @@ Series.prototype = {
 		}
 		
 		// destroy all points with their elements
-		each(series.data, function(point) {
+		each(series.data, function (point) {
 			point.destroy();
 		});
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function(prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function (prop) {
 			if (series[prop]) {
 				
 				// issue 134 workaround
@@ -1173,7 +1163,7 @@ Series.prototype = {
 	/**
 	 * Draw the data labels
 	 */
-	drawDataLabels: function() {
+	drawDataLabels: function () {
 		if (this.options.dataLabels.enabled) {
 			var series = this,
 				x, 
@@ -1230,7 +1220,7 @@ Series.prototype = {
 			options.style.color = pick(color, series.color);
 		
 			// make the labels for each point
-			each(data, function(point, i){
+			each(data, function (point, i) {
 				var barX = point.barX,
 					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
@@ -1313,7 +1303,7 @@ Series.prototype = {
 	/**
 	 * Draw the actual graph
 	 */
-	drawGraph: function(state) {
+	drawGraph: function (state) {
 		var series = this, 
 			options = series.options, 
 			chart = series.chart,
@@ -1335,11 +1325,11 @@ Series.prototype = {
 			
 		
 		// divide into segments and build graph and area paths
-		each(series.segments, function(segment) {
+		each(series.segments, function (segment) {
 			segmentPath = [];
 			
 			// build the segment line
-			each(segment, function(point, i) {
+			each(segment, function (point, i) {
 
 				if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
 					segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
@@ -1451,7 +1441,7 @@ Series.prototype = {
 	/**
 	 * Render the graph and markers
 	 */
-	render: function() {
+	render: function () {
 		var series = this,
 			chart = series.chart,
 			group,
@@ -1481,7 +1471,7 @@ Series.prototype = {
 			group = series.group = renderer.g('series');
 				
 			if (chart.inverted) {
-				setInvert = function() {
+				setInvert = function () {
 					group.attr({
 						width: chart.plotWidth,
 						height: chart.plotHeight
@@ -1490,7 +1480,7 @@ Series.prototype = {
 				
 				setInvert(); // do it now
 				addEvent(chart, 'resize', setInvert); // do it on resize
-				addEvent(series, 'destroy', function() {
+				addEvent(series, 'destroy', function () {
 					removeEvent(chart, 'resize', setInvert);
 				});
 			} 
@@ -1532,7 +1522,7 @@ Series.prototype = {
 		}
 		
 		// finish the individual clipRect
-		setTimeout(function() {
+		setTimeout(function () {
 			clipRect.isAnimating = false;
 			group = series.group; // can be destroyed during the timeout
 			if (group && clipRect !== chart.clipRect && clipRect.renderer) {
@@ -1549,7 +1539,7 @@ Series.prototype = {
 	/**
 	 * Redraw the series after an update in the axes.
 	 */
-	redraw: function() {
+	redraw: function () {
 		var series = this,
 			chart = series.chart,
 			clipRect = series.clipRect,
@@ -1586,7 +1576,7 @@ Series.prototype = {
 	/**
 	 * Set the state of the graph
 	 */
-	setState: function(state) {
+	setState: function (state) {
 		var series = this,
 			options = series.options,
 			graph = series.graph,
@@ -1620,7 +1610,7 @@ Series.prototype = {
 	 * @param vis {Boolean} True to show the series, false to hide. If UNDEFINED,
 	 *        the visibility is toggled.
 	 */
-	setVisible: function(vis, redraw) {
+	setVisible: function (vis, redraw) {
 		var series = this,
 			chart = series.chart,
 			legendItem = series.legendItem,
@@ -1670,7 +1660,7 @@ Series.prototype = {
 		series.isDirty = true;
 		// in a stack, all other series are affected
 		if (series.options.stacking) {
-			each(chart.series, function(otherSeries) {
+			each(chart.series, function (otherSeries) {
 				if (otherSeries.options.stacking && otherSeries.visible) { 
 					otherSeries.isDirty = true;
 				}
@@ -1690,14 +1680,14 @@ Series.prototype = {
 	/**
 	 * Show the graph
 	 */
-	show: function() {
+	show: function () {
 		this.setVisible(true);
 	},
 	
 	/**
 	 * Hide the graph
 	 */
-	hide: function() {
+	hide: function () {
 		this.setVisible(false);
 	},
 	
@@ -1708,7 +1698,7 @@ Series.prototype = {
 	 * @param selected {Boolean} True to select the series, false to unselect. If
 	 *        UNDEFINED, the selection state is toggled.
 	 */
-	select: function(selected) {
+	select: function (selected) {
 		var series = this;
 		// if called without an argument, toggle
 		series.selected = selected = (selected === UNDEFINED) ? !series.selected : selected;
@@ -1727,7 +1717,7 @@ Series.prototype = {
 	 * the tracker uses the same graphPath, but with a greater stroke width
 	 * for better control.
 	 */
-	drawTracker: function() {
+	drawTracker: function () {
 		var series = this,
 			options = series.options,
 			trackerPath = [].concat(series.graphPath),
@@ -1776,12 +1766,12 @@ Series.prototype = {
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: 1
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function() {
+				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {
 						series.onMouseOver();
 					}
 				})
-				.on('mouseout', function() {
+				.on('mouseout', function () {
 					if (!options.stickyTracking) {
 						series.onMouseOut();
 					}

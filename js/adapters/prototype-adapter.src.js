@@ -18,13 +18,13 @@
 /*global Effect, Class, Highcharts, Event, $, $A */
 
 // Adapter interface between prototype and the Highcarts charting library
-var HighchartsAdapter = (function() {
+var HighchartsAdapter = (function () {
 
 var hasEffect = typeof Effect !== 'undefined';
 
 return { 
 	
-	init: function() {
+	init: function () {
 		
 		if (hasEffect) {
 			/**
@@ -35,7 +35,7 @@ return {
 			 * @param {Object} options
 			 */
 			Effect.HighchartsTransition = Class.create(Effect.Base, {
-				initialize: function(element, attr, to, options){
+				initialize: function (element, attr, to, options) {
 					var from,
 						opts;
 					
@@ -65,11 +65,11 @@ return {
 					});
 					this.start(opts);
 				},
-				setup: function(){
+				setup: function () {
 					HighchartsAdapter._extend(this.element);
 					this.element._highchart_animation = this;
 				},
-				update: function(position) {
+				update: function (position) {
 					var paths = this.paths;
 					
 					if (paths) {
@@ -78,7 +78,7 @@ return {
 					
 					this.element.attr(this.options.attribute, position);
 				},
-				finish: function(){
+				finish: function () {
 					this.element._highchart_animation = null;
 				}
 			});
@@ -89,7 +89,7 @@ return {
 	 * Custom events in prototype needs to be namespaced. This method adds a namespace 'h:' in front of
 	 * events that are not recognized as native.
 	 */
-	addNS: function(eventName) {
+	addNS: function (eventName) {
 		var HTMLEvents = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 			MouseEvents = /^(?:click|mouse(?:down|up|over|move|out))$/;
 		return (HTMLEvents.test(eventName) || MouseEvents.test(eventName)) ?
@@ -98,7 +98,7 @@ return {
 	},
 
 	// el needs an event to be attached. el is not necessarily a dom element
-	addEvent: function(el, event, fn) {
+	addEvent: function (el, event, fn) {
 		if (el.addEventListener || el.attachEvent) {
 			Event.observe($(el), HighchartsAdapter.addNS(event), fn);
 		
@@ -109,7 +109,7 @@ return {
 	},
 	
 	// motion makes things pretty. use it if effects is loaded, if not... still get to the end result.
-	animate: function(el, params, options) { 
+	animate: function (el, params, options) {
 		var key,
 			fx;
 		
@@ -135,20 +135,20 @@ return {
 	},
 	
 	// this only occurs in higcharts 2.0+
-	stop: function(el){
+	stop: function (el) {
 		if (el._highcharts_extended && el._highchart_animation) {
 			el._highchart_animation.cancel();
 		}
 	},
 	
 	// um.. each
-	each: function(arr, fn){
+	each: function (arr, fn) {
 		$A(arr).each(fn);
 	},
 	
 	// fire an event based on an event name (event) and an object (el).
 	// again, el may not be a dom element
-	fireEvent: function(el, event, eventArguments, defaultFunction){
+	fireEvent: function (el, event, eventArguments, defaultFunction) {
 		if (event.preventDefault) { // TODO: event is a string here so this doesnt make sense at all
 			defaultFunction = null;
 		}
@@ -164,7 +164,7 @@ return {
 		}
 	},
 	
-	removeEvent: function(el, event, handler){
+	removeEvent: function (el, event, handler) {
 		if ($(el).stopObserving) {
 			if (event) {
 				event = HighchartsAdapter.addNS(event);
@@ -179,12 +179,12 @@ return {
 	},
 	
 	// um, grep
-	grep: function(arr, fn){
+	grep: function (arr, fn) {
 		return arr.findAll(fn);
 	},
 	
 	// um, map
-	map: function(arr, fn){
+	map: function (arr, fn) {
 		return arr.map(fn);
 	},
 	
@@ -232,13 +232,13 @@ return {
 		
 		return retVal;
 	},*/
-	merge: function() { // the built-in prototype merge function doesn't do deep copy
+	merge: function () { // the built-in prototype merge function doesn't do deep copy
 		function doCopy(copy, original) {
 			var value, key;
 				
 			for (key in original) {
 				value = original[key];
-				if  (value && typeof value === 'object' && value.constructor !== Array && 
+				if (value && typeof value === 'object' && value.constructor !== Array &&
 						typeof value.nodeType !== 'number') { 
 					copy[key] = doCopy(copy[key] || {}, value); // copy
 				
@@ -266,16 +266,16 @@ return {
 	
 	// extend an object to handle highchart events (highchart objects, not svg elements). 
 	// this is a very simple way of handling events but whatever, it works (i think)
-	_extend: function(object){
+	_extend: function (object) {
 		if (!object._highcharts_extended) {
 			Object.extend(object, {
 				_highchart_events: {},
 				_highchart_animation: null,
 				_highcharts_extended: true,
-				_highcharts_observe: function(name, fn){
+				_highcharts_observe: function (name, fn) {
 					this._highchart_events[name] = [this._highchart_events[name], fn].compact().flatten();
 				},
-				_highcharts_stop_observing: function(name, fn){
+				_highcharts_stop_observing: function (name, fn) {
 					if (name) {
 						if (fn) {
 							this._highchart_events[name] = [this._highchart_events[name]].compact().flatten().without(fn);
@@ -286,8 +286,8 @@ return {
 						this._highchart_events = {};
 					}
 				},
-				_highcharts_fire: function(name, args){
-					(this._highchart_events[name] || []).each(function(fn){
+				_highcharts_fire: function (name, args) {
+					(this._highchart_events[name] || []).each(function (fn) {
 						if (args && args.stopped) {
 							return; // "throw $break" wasn't working. i think because of the scope of 'this'.
 						}

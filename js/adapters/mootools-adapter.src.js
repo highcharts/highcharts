@@ -10,11 +10,11 @@
 // JSLint options:
 /*global Highcharts, Fx, $, $extend, $each, $merge, Events, Event */
 
-(function() {
+(function () {
 	
 var win = window,
 	legacy = !!win.$merge,
-	$extend = win.$extend || function() {
+	$extend = win.$extend || function () {
 		return Object.append.apply(Object, arguments);
 	};
 
@@ -22,14 +22,14 @@ win.HighchartsAdapter = {
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
 	 */
-	init: function() {
+	init: function () {
 		var fxProto = Fx.prototype,
 			fxStart = fxProto.start,
 			morphProto = Fx.Morph.prototype,
 			morphCompute = morphProto.compute;
 			
 		// override Fx.start to allow animation of SVG element wrappers
-		fxProto.start = function(from, to) {
+		fxProto.start = function (from, to) {
 			var fx = this,
 				elem = fx.element;
 			
@@ -48,7 +48,7 @@ win.HighchartsAdapter = {
 		};
 		
 		// override Fx.step to allow animation of SVG element wrappers
-		morphProto.compute = function(from, to, delta) {
+		morphProto.compute = function (from, to, delta) {
 			var fx = this,
 				paths = fx.paths;
 			
@@ -78,7 +78,7 @@ win.HighchartsAdapter = {
 		if (isSVGElement && !el.setStyle) {
 			// add setStyle and getStyle methods for internal use in Moo
 			el.getStyle = el.attr;
-			el.setStyle = function() { // property value is given as array in Moo - break it down
+			el.setStyle = function () { // property value is given as array in Moo - break it down
 				var args = arguments;
 				el.attr.call(el, args[0], args[1][0]);
 			};
@@ -118,7 +118,7 @@ win.HighchartsAdapter = {
 	 * MooTool's each function
 	 * 
 	 */
-	each: function(arr, fn) {
+	each: function (arr, fn) {
 		return legacy ? 
 			$each(arr, fn) :
 			arr.each(fn);
@@ -129,7 +129,7 @@ win.HighchartsAdapter = {
 	 * @param {Array} arr
 	 * @param {Function} fn
 	 */
-	map: function (arr, fn){
+	map: function (arr, fn) {
 		return arr.map(fn);
 	},
 	
@@ -138,14 +138,14 @@ win.HighchartsAdapter = {
 	 * @param {Array} arr
 	 * @param {Function} fn
 	 */
-	grep: function(arr, fn) {
+	grep: function (arr, fn) {
 		return arr.filter(fn);
 	},
 	
 	/**
 	 * Deep merge two objects and return a third
 	 */
-	merge: function() {
+	merge: function () {
 		var args = arguments,
 			args13 = [{}], // MooTools 1.3+
 			i = args.length,
@@ -190,7 +190,7 @@ win.HighchartsAdapter = {
 		}
 	},
 	
-	removeEvent: function(el, type, fn) {
+	removeEvent: function (el, type, fn) {
 		if (type) {
 			if (type === 'unload') { // Moo self destructs before custom unload events
 				type = 'beforeunload';
@@ -206,7 +206,7 @@ win.HighchartsAdapter = {
 		}
 	},
 	
-	fireEvent: function(el, event, eventArguments, defaultFunction) {
+	fireEvent: function (el, event, eventArguments, defaultFunction) {
 		// create an event object that keeps all functions		
 		event = new Event({ 
 			type: event,
@@ -215,7 +215,7 @@ win.HighchartsAdapter = {
 		event = $extend(event, eventArguments);
 		// override the preventDefault function to be able to use
 		// this for custom events
-		event.preventDefault = function() {
+		event.preventDefault = function () {
 			defaultFunction = null;
 		};
 		// if fireEvent is not available on the object, there hasn't been added
