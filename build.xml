@@ -31,7 +31,7 @@
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
-        <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-1.4.7.jar"/>
+        <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-2.0.0.jar"/>
         <taskdef name="jslint"
             classname="com.googlecode.jslint4java.ant.JSLintTask"
             classpath="${jslint4java.jar}"/>
@@ -97,7 +97,7 @@
 
     <!-- Runs jslint on source code. -->
     <target name="lint" depends="assemble">
-        <jslint haltOnFailure="false">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef">
             <formatter type="plain"/>
             <fileset file="${highcharts.src.file}"/>
             <fileset file="${mootools.src.file}"/>
