@@ -87,7 +87,7 @@ win.HighchartsAdapter = {
 		}
 		
 		// stop running animations
-		HighchartsAdapter.stop(el);
+		win.HighchartsAdapter.stop(el);
 		
 		// define and run the effect
 		effect = new Fx.Morph(
@@ -164,6 +164,21 @@ win.HighchartsAdapter = {
 	},
 	
 	/**
+	 * Extends an object with Events, if its not done
+	 */
+	extendWithEvents: function (el) {
+		// if the addEvent method is not defined, el is a custom Highcharts object
+		// like series or point
+		if (!el.addEvent) {
+			if (el.nodeName) {
+				el = $(el); // a dynamically generated node
+			} else {
+				$extend(el, new Events()); // a custom object
+			}
+		}
+	},
+
+	/**
 	 * Add an event listener
 	 * @param {Object} el HTML element or custom object
 	 * @param {String} type Event type
@@ -176,21 +191,15 @@ win.HighchartsAdapter = {
 				type = 'beforeunload';
 			}
 
-			// if the addEvent method is not defined, el is a custom Highcharts object
-			// like series or point
-			if (!el.addEvent) {
-				if (el.nodeName) {
-					el = $(el); // a dynamically generated node
-				} else {
-					$extend(el, new Events()); // a custom object
-				}
-			}
-			
+			win.HighchartsAdapter.extendWithEvents(el);
+
 			el.addEvent(type, fn);
 		}
 	},
 	
 	removeEvent: function (el, type, fn) {
+		win.HighchartsAdapter.extendWithEvents(el);
+
 		if (type) {
 			if (type === 'unload') { // Moo self destructs before custom unload events
 				type = 'beforeunload';
