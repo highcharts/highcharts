@@ -73,12 +73,6 @@ Highcharts.theme = {
 			}				
 		}
 	},
-	legend: {
-		itemStyle: {
-			font: '9pt Trebuchet MS, Verdana, sans-serif',
-			color: '#A0A0A0'
-		}
-	},
 	tooltip: {
 		backgroundColor: 'rgba(0, 0, 0, 0.75)',
 		style: {
@@ -115,7 +109,8 @@ Highcharts.theme = {
 	},		
 	legend: {
 		itemStyle: {
-			color: '#CCC'
+			font: '9pt Trebuchet MS, Verdana, sans-serif',
+			color: '#A0A0A0'
 		},
 		itemHoverStyle: {
 			color: '#FFF'
