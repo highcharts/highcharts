@@ -24,7 +24,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: 'Highcharts',
-	version: '2.1.6'
+	product: '@product.name@',
+	version: '@product.version@'
 };
 }());
