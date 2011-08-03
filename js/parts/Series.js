@@ -1172,7 +1172,8 @@ Series.prototype = {
 				options = series.options.dataLabels,
 				str, 
 				dataLabelsGroup = series.dataLabelsGroup, 
-				chart = series.chart, 
+				chart = series.chart,
+				renderer = chart.renderer, 
 				inverted = chart.inverted,
 				seriesType = series.type,
 				color,
@@ -1203,7 +1204,7 @@ Series.prototype = {
 			// create a separate group for the data labels to avoid rotation
 			if (!dataLabelsGroup) {
 				dataLabelsGroup = series.dataLabelsGroup = 
-					chart.renderer.g('data-labels')
+					renderer.g('data-labels')
 						.attr({ 
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 6							
@@ -1217,7 +1218,7 @@ Series.prototype = {
 			if (color === 'auto') { // 1.0 backwards compatibility
 				color = null;	
 			}
-			options.style.color = pick(color, series.color);
+			options.style.color = pick(color, series.color, 'black');
 		
 			// make the labels for each point
 			each(data, function (point, i) {
@@ -1258,7 +1259,7 @@ Series.prototype = {
 						});
 				// create new label
 				} else if (defined(str)) {
-					dataLabel = point.dataLabel = chart.renderer.text(
+					dataLabel = point.dataLabel = renderer.text(
 						str, 
 						x, 
 						y
