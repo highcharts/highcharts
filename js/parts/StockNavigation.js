@@ -585,24 +585,26 @@ function Scroller(chart) {
 
 				// set the navigator series data to the new data of the base series
 				navigatorSeries.options.pointStart = baseSeries.xData[0];
-				navigatorSeries.setData(baseSeries.options.data);
+				navigatorSeries.setData(baseSeries.options.data, false);
 
 				// if the selection is already at the max, move it to the right as new data
 				// comes in
 				if (stickToMax) {
 					newMax = baseExtremes.dataMax;
-					baseSeries.xAxis.setExtremes(newMax - range, newMax);
+					baseSeries.xAxis.setExtremes(newMax - range, newMax, false);
 				} else if (stickToMin) {
 					newMin = baseExtremes.dataMin;
-					baseSeries.xAxis.setExtremes(newMin, newMin + range);
+					baseSeries.xAxis.setExtremes(newMin, newMin + range, false);
 				// if not, just move the scroller window to reflect the new series data
 				} else {
 					render(
 						mathMax(baseExtremes.min, baseExtremes.dataMin),
 						mathMin(baseExtremes.max, baseExtremes.dataMax)
 					);
-
 				}
+
+				// apply the changes
+				chart.redraw();
 			});
 
 			// an x axis is required for scrollbar also

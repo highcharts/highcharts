@@ -2,213 +2,489 @@
 <!-- Highcharts build file -->
 <project name="build" default="Usage">
 
-	<!-- Describes the usage of the build file by invoking -projecthelp. -->
-	<target name="Usage">
-		<java classname="org.apache.tools.ant.Main">
-		<arg value="-projecthelp"/>
-		<arg value="-quiet"/>
-		</java>
-	</target>
+    <!-- Describes the usage of the build file by invoking -projecthelp. -->
+    <target name="Usage">
+        <java classname="org.apache.tools.ant.Main">
+           <arg value="-projecthelp"/>
+           <arg value="-quiet"/>
+        </java>
+    </target>
 
-	<!-- Sets various properties needed during the build. -->
-	<target name="set.properties">
-		<!-- folder names -->
-		<property name="tools.dir" value="${basedir}/tools"/>
-		<property name="build.dir" value="${basedir}/build"/>
-		<property name="minify.dir" value="${build.dir}/minify"/>
-		<property name="testoutput.dir" value="${build.dir}/tests"/>
-		<property name="coveragereport.dir" value="${build.dir}/coverage-report"/>
+    <!-- Sets various properties needed during the build. -->
+    <target name="set.properties">
+        <!-- Read the release names and versions for our products. -->
+        <property file="build.properties"/>
+        <filterset id="highcharts.filter">
+            <filter token="product.name" value="${highcharts.product.name}"/>
+            <filter token="product.version" value="${highcharts.product.version}"/>
+            <filter token="product.date" value="${highcharts.product.date}"/>
+        </filterset>
+        <filterset id="highstock.filter">
+            <filter token="product.name" value="${highstock.product.name}"/>
+            <filter token="product.version" value="${highstock.product.version}"/>
+            <filter token="product.date" value="${highstock.product.date}"/>
+        </filterset>
 
-		<!-- highcharts src -->
-		<property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
-		<property name="highcharts.src.name" value="highcharts.src.js"/>
-		<property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}"/>
+        <!-- folder names -->
+        <property name="tools.dir" value="${basedir}/tools"/>
+        <property name="build.dir" value="${basedir}/build"/>
+        <property name="dist.dir" value="${build.dir}/dist"/>
+        <property name="testoutput.dir" value="${build.dir}/tests"/>
+        <property name="coveragereport.dir" value="${build.dir}/coverage-report"/>
+        <property name="themes.dir" value="${basedir}/js/themes"/>
+        <property name="package.dir" value="${basedir}/../highcharts.com.site/downloads/package"/>
 
-		<!-- jsLint -->
-		<property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
-		<property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-1.4.7.jar"/>
-		<taskdef name="jslint"
-			classname="com.googlecode.jslint4java.ant.JSLintTask"
-			classpath="${jslint4java.jar}"/>
+        <!-- highcharts/highstock src -->
+        <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
 
-		<!-- google closure compiler -->
-		<property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
-		<property name="gcc.jar" location="${gcc.dir}/compiler.jar" />
-		<taskdef name="jscomp"
-			classname="com.google.javascript.jscomp.ant.CompileTask"
-			classpath="${gcc.jar}"/>
-		<property name="gcc.output.name" value="highcharts.min-google.js"/>
+        <property name="highcharts.src.name" value="highcharts.src.js"/>
+        <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}"/>
+        <property name="highcharts.minified.name" value="highcharts.js"/>
+        <property name="highstock.src.name" value="highstock.src.js"/>
+        <property name="highstock.src.file" value="${basedir}/js/${highstock.src.name}"/>
+        <property name="highstock.minified.name" value="highstock.js"/>
+        <property name="mootools.src.name" value="mootools-adapter.src.js"/>
+        <property name="prototype.src.name" value="prototype-adapter.src.js"/>
+        <property name="exporting.src.name" value="exporting.src.js"/>
+        <property name="mootools.minified.name" value="mootools-adapter.js"/>
+        <property name="prototype.minified.name" value="prototype-adapter.js"/>
+        <property name="exporting.minified.name" value="exporting.js"/>
+        <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
+        <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/>
+        <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
 
-		<!-- YUI compressor -->
-		<property name="yuicomp.dir" value="${tools.dir}/yui-compressor"/>
-		<property name="yuicomp.jar" location="${yuicomp.dir}/yuicompressor-2.4.6.jar" />
-		<property name="yuicomp.output.name" value="highcharts.min-yui.js"/>
+        <!-- jsLint -->
+        <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
+        <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-2.0.0.jar"/>
+        <taskdef name="jslint"
+            classname="com.googlecode.jslint4java.ant.JSLintTask"
+            classpath="${jslint4java.jar}"/>
 
-		<!-- google js-test-driver -->
-		<property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
-		<property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.2.jar"/>
-	</target>
+        <!-- google closure compiler -->
+        <property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
+        <property name="gcc.jar" location="${gcc.dir}/compiler.jar"/>
 
-	<!-- Set up a clean build folder. -->
-	<target name="clean" depends="set.properties">
-		<mkdir dir="${build.dir}"/>
-		<delete includeemptydirs="true">
-			<fileset dir="${build.dir}" includes="**/*"/>
-		</delete>
+        <!-- YUI compressor -->
+        <property name="yuicomp.dir" value="${tools.dir}/yui-compressor"/>
+        <property name="yuicomp.jar" location="${yuicomp.dir}/yuicompressor-2.4.6.jar"/>
+        <property name="yuicomp.output.name" value="highcharts.min-yui.js"/>
 
-		<mkdir dir="${minify.dir}"/>
-		<mkdir dir="${testoutput.dir}"/>
-		<mkdir dir="${coveragereport.dir}"/>
-	</target>
+        <!-- google js-test-driver -->
+        <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
+        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.2.jar"/>
 
-	<!-- Assembles the source parts into one file. -->
-	<target name="assemble" depends="clean">
-		<concat destfile="${highcharts.src.file}">
-			<filelist dir="${highcharts.parts.dir}">
-				<file name="Intro.js"/>
-				<file name="Globals.js"/>
-				<file name="Utilities.js"/>
-				<file name="Adapters.js"/>
-				<file name="PathAnimation.js"/>
-				<file name="Options.js"/>
-				<file name="Color.js"/>
-				<file name="SvgRenderer.js"/>
-				<file name="VmlRenderer.js"/>
-				<file name="Chart.js"/>
-				<file name="Series.js"/>
-				<file name="LineSeries.js"/>
-				<file name="AreaSeries.js"/>
-				<file name="SplineSeries.js"/>
-				<file name="AreaSplineSeries.js"/>
-				<file name="ColumnSeries.js"/>
-				<file name="BarSeries.js"/>
-				<file name="ScatterSeries.js"/>
-				<file name="PieSeries.js"/>
+        <!-- This is the list of files for highcharts -->
+        <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
+            <file name="Intro.js"/>
+            <file name="Globals.js"/>
+            <file name="Utilities.js"/>
+            <file name="Adapters.js"/>
+            <file name="PathAnimation.js"/>
+            <file name="Options.js"/>
+            <file name="Color.js"/>
+            <file name="SvgRenderer.js"/>
+            <file name="VmlRenderer.js"/>
+            <file name="Chart.js"/>
+            <file name="Series.js"/>
+            <file name="LineSeries.js"/>
+            <file name="AreaSeries.js"/>
+            <file name="SplineSeries.js"/>
+            <file name="AreaSplineSeries.js"/>
+            <file name="ColumnSeries.js"/>
+            <file name="BarSeries.js"/>
+            <file name="ScatterSeries.js"/>
+            <file name="PieSeries.js"/>
+            <file name="Outro.js"/>
+        </filelist>
 
-				<!-- Highstock specific -->
-				<file name="DataGrouping.js"/>
-				<file name="OHLCSeries.js"/>
-				<file name="CandlestickSeries.js"/>
-				<file name="FlagsSeries.js"/>
-				<file name="StockNavigation.js"/>
-				<file name="StockChart.js"/>
+        <!-- This is the list of files for highstock -->
+        <filelist id="highstock.files" dir="${highcharts.parts.dir}">
+            <file name="Intro.js"/>
+            <file name="Globals.js"/>
+            <file name="Utilities.js"/>
+            <file name="Adapters.js"/>
+            <file name="PathAnimation.js"/>
+            <file name="Options.js"/>
+            <file name="Color.js"/>
+            <file name="SvgRenderer.js"/>
+            <file name="VmlRenderer.js"/>
+            <file name="Chart.js"/>
+            <file name="Series.js"/>
+            <file name="LineSeries.js"/>
+            <file name="AreaSeries.js"/>
+            <file name="SplineSeries.js"/>
+            <file name="AreaSplineSeries.js"/>
+            <file name="ColumnSeries.js"/>
+            <file name="BarSeries.js"/>
+			<file name="DataGrouping.js"/>
+			<file name="OHLCSeries.js"/>
+			<file name="CandlestickSeries.js"/>
+			<file name="FlagsSeries.js"/>
+			<file name="StockNavigation.js"/>
+			<file name="StockChart.js"/>
+            <file name="Outro.js"/>
+        </filelist>
+    </target>
 
+    <!-- Set up a clean build folder. -->
+    <target name="clean" depends="set.properties">
+        <mkdir dir="${build.dir}"/>
+        <delete includeemptydirs="true">
+            <fileset dir="${build.dir}" includes="**/*"/>
+        </delete>
 
-				<file name="Outro.js"/>
-			</filelist>
-		</concat>
-	</target>
+        <mkdir dir="${dist.dir}/js/adapters"/>
+        <mkdir dir="${dist.dir}/js/modules"/>
+        <mkdir dir="${dist.dir}/highcharts/js/adapters"/>
+        <mkdir dir="${dist.dir}/highcharts/js/modules"/>
+        <mkdir dir="${dist.dir}/highstock/js/adapters"/>
+        <mkdir dir="${dist.dir}/highstock/js/modules"/>
+        <mkdir dir="${testoutput.dir}"/>
+        <mkdir dir="${coveragereport.dir}"/>
 
-	<!-- Runs jslint on source code. -->
-	<target name="lint" depends="assemble">
-		<jslint haltOnFailure="false">
-			<formatter type="plain"/>
-			<fileset file="${highcharts.src.file}"/>
-		</jslint>
-	</target>
+        <delete file="${basedir}/jsTestDriver.conf" failonerror="false"/>
+        <delete file="${basedir}/jsTestDriverCoverage.conf" failonerror="false"/>
+    </target>
 
-	<!-- Runs minifiers on source code. -->
-	<target name="minify" depends="assemble">
-		<length file="${highcharts.src.file}" property="input.length"/>
-		<echo message="Minifying with Google Closure compiler..."/>
-		<jscomp compilationLevel="simple" warning="quiet"
-			debug="false" output="${build.dir}/minify/${gcc.output.name}">
-			<sources dir="${basedir}/js">
-				<file name="${highcharts.src.name}"/>
-			</sources>
-		</jscomp>
-		<length file="${build.dir}/minify/${gcc.output.name}" property="gcc.output.length"/>
-		<echo message="...done"/>
+    <!-- Assembles the source parts into one file. -->
+    <target name="assemble" depends="clean">
+        <!-- Concat highcharts src and replace the product name and version -->
+        <concat destfile="${highcharts.src.file}">
+            <filelist refid="highcharts.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
 
-		<echo message="Minifying with Yahoo YUI Compressor..."/>
-		<java jar="${yuicomp.jar}" fork="true">
-			<arg value="--type"/>
-			<arg value="js"/>
-			<arg value="-o"/>
-			<arg value="${build.dir}/minify/${yuicomp.output.name}"/>
-			<arg value="${highcharts.src.file}"/>
-		</java>
-		<length file="${build.dir}/minify/${yuicomp.output.name}" property="yuicomp.output.length"/>
-		<echo message="...done"/>
+        <!-- Concat highstock src and replace the product name and version -->
+        <concat destfile="${highstock.src.file}">
+            <filelist refid="highstock.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highstock.product.name}"/>
+                    <token key="product.version" value="${highstock.product.version}"/>
+                    <token key="product.date" value="${highstock.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+    </target>
 
-		<echo message=""/>
-		<echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
-		<echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes."/>
-	</target>
+    <!-- Runs jslint on source code. -->
+    <target name="lint" depends="assemble">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef">
+            <formatter type="plain"/>
+            <!-- TODO: Replace the line below with highstock.src.file when the branch is merged. -->
+            <fileset file="${highcharts.src.file}"/>
+            <fileset file="${mootools.src.file}"/>
+            <fileset file="${prototype.src.file}"/>
+            <fileset file="${exporting.src.file}"/>
+            <fileset dir="${themes.dir}"/>
+        </jslint>
+    </target>
 
-	<!-- Builds the source and runts lint and minify. -->
-	<target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
-	</target>
+    <!-- Runs google closure compiler and yui compressor on src. -->
+    <target name="compile">
+        <echo message="Minifying ${param.src}"/>
+        <java jar="${gcc.jar}" fork="true">
+            <arg value="--compilation_level"/>
+            <arg value="SIMPLE_OPTIMIZATIONS"/>
+            <arg value="--js"/>
+            <arg value="${param.src}"/>
+            <arg value="--js_output_file"/>
+            <arg value="${param.out}"/>
+        </java>
+        <java jar="${yuicomp.jar}" fork="true">
+            <arg value="--type"/>
+            <arg value="js"/>
+            <arg value="-o"/>
+            <arg value="${param.out}.yui-min.js"/>
+            <arg value="${param.src}"/>
+        </java>
+        <length file="${param.src}" property="input.length"/>
+        <length file="${param.out}" property="gcc.output.length"/>
+        <length file="${param.out}.yui-min.js" property="yuicomp.output.length"/>
+        <!-- We are not distributing this file, its only used to make sure compilation works. -->
+        <delete file="${param.out}.yui-min.js" quiet="true"/>
+        <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
+        <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes."/>
+    </target>
 
-	<!-- Starts the test driver server. -->
-	<target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
-		<exec executable="cmd" dir="${basedir}" >
-			<arg value="/k start java -jar ${jstestdriver.jar} --port 4224"/>
-		</exec>
-		<echo message="Test server started at localhost:4224"/>
-		<echo message="Before running tests, remember to capture one or more browsers."/>
-		<echo message="Exit the server by pressing Control-C in the java window."/>
-	</target>
+    <!-- Runs minifiers on source code. -->
+    <target name="minify" depends="assemble">
+        <antcall target="compile">
+            <param name="param.src" value="${highcharts.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts.minified.name}"/>
+        </antcall>
 
-	<!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
-	<target name="test" depends="set.properties" description="Runs the unit tests. The server must be running (i.e. 'server').">
-		<java jar="${jstestdriver.jar}" fork="true">
-			<arg value="--config"/>
-			<arg value="jsTestDriver.conf"/>
-			<arg value="--testOutput"/>
-			<arg value="${testoutput.dir}"/>
-			<arg value="--tests"/>
-			<arg value="all"/>
-			<arg value="--verbose"/>
-			<arg value="--reset"/>
-		</java>
-	</target>
+        <antcall target="compile">
+            <param name="param.src" value="${highstock.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highstock/js/${highstock.minified.name}"/>
+        </antcall>
 
-	<!-- Starts the test driver server with coverage enabled. -->
-	<!-- This must be done on a separate port to the test-server. -->
-	<target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
-		<exec executable="cmd" dir="${basedir}" >
-			<arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225"/>
-		</exec>
-		<echo message="Coverage test server started at localhost:5225"/>
-		<echo message="Before running tests, remember to capture one or more browsers."/>
-		<echo message="Exit the server by pressing Control-C in the java window."/>
-	</target>
+        <antcall target="compile">
+            <param name="param.src" value="${mootools.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/adapters/${mootools.minified.name}"/>
+        </antcall>
 
-	<!-- Runs coverage analysis for the tests. -->
-	<target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
-		<!-- Run the tests with coverage enabled. -->
-		<java jar="${jstestdriver.jar}" fork="true">
-			<arg value="--config"/>
-			<arg value="jsTestDriverCoverage.conf"/>
-			<arg value="--testOutput"/>
-			<arg value="${testoutput.dir}"/>
-			<arg value="--tests"/>
-			<arg value="all"/>
-			<arg value="--verbose"/>
-		</java>
-	</target>
+        <antcall target="compile">
+            <param name="param.src" value="${prototype.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/adapters/${prototype.minified.name}"/>
+        </antcall>
 
-	<!-- Generates a code-coverage report based on the output from the 'test-coverage' task. -->
-	<target name="test-report" depends="set.properties" description="Generates a code-coverage report based on the output from the 'test-coverage' task.">
-		<!-- When running on windows, the output from coverage is windows-style, but the report requires unix-style paths. -->
-		<!-- Replace dos-drive 'C:' with unix style '/C'. -->
-		<replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="SF:C:" value="SF:/C" summary="true"/>
-		<!-- Replace dos-paths '\' with unix style '/'. -->
-		<replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="\" value="/" summary="true"/>
+        <antcall target="compile">
+            <param name="param.src" value="${exporting.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
+        </antcall>
+    </target>
 
-		<!-- Run perl and the genhtml script to create the report. -->
-		<exec executable="perl" dir="${basedir}">
-			<arg value="-w"/>
-			<arg value="tools/lcov-1.9/bin/genhtml"/>
-			<arg line="-o ${coveragereport.dir} --no-branch-coverage --no-function-coverage --legend --title 'Highcharts test coverage' build/tests/jsTestDriver.conf-coverage.dat"/>
-		</exec>
+    <!-- Builds the source and runts lint and minify. -->
+    <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
+    </target>
 
-		<!-- Point the browser to the report. -->
-		<property name="browser" location="C:/Program Files (x86)/Mozilla Firefox/firefox.exe"/>
-		<property name="file" location="${coveragereport.dir}/index.html"/>
-		<exec executable="${browser}" spawn="true">
-			<arg value="${file}"/>
-		</exec>
-	</target>
+    <!-- Builds the source and assembles a distribution package. -->
+    <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
+        <echo message=""/>
+        <echo message="--- Building distribution packages for ---"/>
+        <echo message=""/>
+        <echo message="    ${highcharts.product.name} - ${highcharts.product.version} (${highcharts.product.date})"/>
+        <echo message="    ${highstock.product.name} - ${highstock.product.version} (${highstock.product.date})"/>
+        <echo message=""/>
+
+        <!-- 1. Check for any console statements -->
+        <fail message="Source contains console or alert statements">
+            <condition>
+                <or>
+                    <resourcecontains resource="${highcharts.src.file}" substring="console."/>
+                    <resourcecontains resource="${highstock.src.file}" substring="console."/>
+                    <resourcecontains resource="${mootools.src.file}" substring="console."/>
+                    <resourcecontains resource="${prototype.src.file}" substring="console."/>
+                    <resourcecontains resource="${exporting.src.file}" substring="console."/>
+                    <resourcecontains resource="${highcharts.src.file}" substring="alert("/>
+                    <resourcecontains resource="${highstock.src.file}" substring="alert("/>
+                    <resourcecontains resource="${mootools.src.file}" substring="alert("/>
+                    <resourcecontains resource="${prototype.src.file}" substring="alert("/>
+                    <resourcecontains resource="${exporting.src.file}" substring="alert("/>
+                </or>
+            </condition>
+        </fail>
+
+        <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
+        <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy todir="${dist.dir}/highcharts/js/themes">
+            <fileset dir="${themes.dir}"/>
+        </copy>
+        <copy todir="${dist.dir}/highstock/js/themes">
+            <fileset dir="${themes.dir}"/>
+        </copy>
+
+        <!-- 3. Copy examples -->
+        <copy todir="${dist.dir}/highcharts/examples">
+            <fileset dir="${package.dir}/examples"/>
+        </copy>
+        <copy file="${package.dir}/index.htm" todir="${dist.dir}/highcharts"/>
+        <copy todir="${dist.dir}/highstock/examples">
+            <fileset dir="${package.dir}/examples"/>
+        </copy>
+        <copy file="${package.dir}/index.htm" todir="${dist.dir}/highstock"/>
+
+        <!-- 4. Copy graphics -->
+        <copy todir="${dist.dir}/highcharts/graphics">
+            <fileset dir="${package.dir}/graphics"/>
+        </copy>
+        <copy todir="${dist.dir}/highstock/graphics">
+            <fileset dir="${package.dir}/graphics"/>
+        </copy>
+
+        <!-- 5. Copy php export server -->
+        <copy todir="${dist.dir}/highcharts/exporting-server">
+            <fileset dir="${package.dir}/exporting-server"/>
+        </copy>
+        <copy todir="${dist.dir}/highstock/exporting-server">
+            <fileset dir="${package.dir}/exporting-server"/>
+        </copy>
+
+        <!-- 6. Create a zip files -->
+        <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
+        <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
+    </target>
+
+    <!-- Starts the test driver server. -->
+    <target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
+        <exec executable="cmd" dir="${basedir}" >
+            <arg value="/k start java -jar ${jstestdriver.jar} --port 4224"/>
+        </exec>
+        <echo message="Test server started at localhost:4224"/>
+        <echo message="Before running tests, remember to capture one or more browsers."/>
+        <echo message="Exit the server by pressing Control-C in the java window."/>
+    </target>
+
+    <target name="test-all" description="Runs the unit tests on all adapters. The server must be running (i.e. 'server').">
+        <!-- Param "testrun.name" used in echo output and to build a folder name where test result goes. -->
+        <!-- Param "required.lib" specifies wich third-party lib is used while testing. -->
+        <!-- Param "required.adapter" specifies the corresponding adapter that matches the lib. Leave unset for the built-in jquery support. -->
+
+        <!-- jquery versions -->
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="jquery-1.6.2"/>
+            <param name="required.lib" value="jquery-1.6.2.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="jquery-1.5.2"/>
+            <param name="required.lib" value="jquery-1.5.2.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="jquery-1.4.4"/>
+            <param name="required.lib" value="jquery-1.4.4.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="jquery-1.3.2"/>
+            <param name="required.lib" value="jquery-1.3.2.js"/>
+        </antcall>
+
+        <!-- mootools versions -->
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="mootools-1.3.2"/>
+            <param name="required.lib" value="mootools-core-1.3.2-full-compat.js"/>
+            <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="mootools-1.2.5"/>
+            <param name="required.lib" value="mootools-1.2.5-core-nc.js"/>
+            <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
+        </antcall>
+
+        <!-- prototype versions -->
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="prototype-1.7.0.0"/>
+            <param name="required.lib" value="prototype-1.7.0.0.js"/>
+            <param name="required.adapter" value="js/adapters/prototype-adapter.src.js"/>
+        </antcall>
+    </target>
+
+    <target name="test" description="Runs the unit tests latest jquery. The server must be running (i.e. 'server').">
+        <antcall target="test-specific-lib">
+            <param name="testrun.name" value="jquery-1.6.2"/>
+            <param name="required.lib" value="jquery-1.6.2.js"/>
+        </antcall>
+    </target>
+
+    <!-- Replace the lib with the specified ones, if set. -->
+    <target name="replace-lib" if="required.lib">
+        <replace file="jsTestDriver.conf" token="#required.lib" value="  - lib/${required.lib}"/>
+    </target>
+
+    <!-- Replace the adapter with the specified ones, if set. -->
+    <target name="replace-adapter" if="required.adapter">
+        <replace file="jsTestDriver.conf" token="#required.adapter" value="  - ${required.adapter}"/>
+    </target>
+
+    <target name="test-specific-lib" depends="set.properties">
+        <!-- Copy the templated jsTestDriver configuration to root. -->
+        <copy file="test/jsTestDriver.conf" todir="${basedir}" overwrite="true"/>
+
+        <!-- Expand the tokens to valid js files. -->
+        <antcall target="replace-lib"/>
+        <antcall target="replace-adapter"/>
+
+        <!-- Create the folder where the report is stored. -->
+        <mkdir dir="${testoutput.dir}/${testrun.name}"/>
+
+        <!-- Run the tests -->
+        <antcall target="run-test"/>
+    </target>
+
+    <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
+    <target name="run-test" depends="set.properties">
+        <echo message="/------------------------------------------------------------"/>
+        <echo message="  Running tests using: ${testrun.name}"/>
+        <echo message=""/>
+        <echo message=""/>
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--config"/>
+            <arg value="jsTestDriver.conf"/>
+            <arg value="--testOutput"/>
+            <arg value="${testoutput.dir}/${testrun.name}"/>
+            <arg value="--tests"/>
+            <arg value="all"/>
+            <arg value="--reset"/>
+        </java>
+        <echo message=""/>
+        <echo message=""/>
+        <echo message="\------------------------------------------------------------"/>
+    </target>
+
+    <!-- Starts the test driver server with coverage enabled. -->
+    <!-- This must be done on a separate port to the test-server. -->
+    <target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
+        <!-- Copy the jsTestDriverCoverage configuration to root. -->
+        <copy file="test/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
+
+        <exec executable="cmd" dir="${basedir}" >
+            <arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225"/>
+        </exec>
+        <echo message="Coverage test server started at localhost:5225"/>
+        <echo message="Before running tests, remember to capture one or more browsers."/>
+        <echo message="Exit the server by pressing Control-C in the java window."/>
+    </target>
+
+    <!-- Runs coverage analysis for the tests. -->
+    <target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
+        <!-- Copy the jsTestDriverCoverage configuration to root. -->
+        <copy file="test/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
+
+        <!-- Run the tests with coverage enabled. -->
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--config"/>
+            <arg value="jsTestDriverCoverage.conf"/>
+            <arg value="--testOutput"/>
+            <arg value="${testoutput.dir}"/>
+            <arg value="--tests"/>
+            <arg value="all"/>
+            <arg value="--verbose"/>
+        </java>
+    </target>
+
+    <!-- Generates a code-coverage report based on the output from the 'test-coverage' task. -->
+    <target name="test-report" depends="set.properties" description="Generates a code-coverage report based on the output from the 'test-coverage' task.">
+        <!-- When running on windows, the output from coverage is windows-style, but the report requires unix-style paths. -->
+        <!-- Replace dos-drive 'C:' with unix style '/C'. -->
+        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="SF:C:" value="SF:/C" summary="true"/>
+        <!-- Replace dos-paths '\' with unix style '/'. -->
+        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="\" value="/" summary="true"/>
+
+        <!-- Run perl and the genhtml script to create the report. -->
+        <exec executable="perl" dir="${basedir}">
+            <arg value="-w"/>
+            <arg value="tools/lcov-1.9/bin/genhtml"/>
+            <arg line="-o ${coveragereport.dir} --no-branch-coverage --no-function-coverage --legend --title 'Highcharts test coverage' build/tests/jsTestDriver.conf-coverage.dat"/>
+        </exec>
+
+        <!-- Point the browser to the report. -->
+        <property name="browser" location="C:/Program Files (x86)/Mozilla Firefox/firefox.exe"/>
+        <property name="file" location="${coveragereport.dir}/index.html"/>
+        <exec executable="${browser}" spawn="true">
+            <arg value="${file}"/>
+        </exec>
+    </target>
 </project>
