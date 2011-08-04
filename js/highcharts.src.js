@@ -6935,9 +6935,9 @@ function Chart(options, callback) {
 			});
 			
 			// sort by legendIndex
-			allItems.sort(function (a, b) {
-				return (a.options.legendIndex || 0) - (b.options.legendIndex || 0);
-			});
+			// allItems.sort(function (a, b) {
+			// 	return (a.options.legendIndex || 0) - (b.options.legendIndex || 0);
+			// });
 			
 			// reversed legend
 			if (reversedLegend) {
