@@ -2009,7 +2009,8 @@ function Chart(options, callback) {
 				pointConfig = [],
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
-				hoverPoints = chart.hoverPoints;
+				hoverPoints = chart.hoverPoints,
+				placedTooltipPoint;
 				
 			// shared tooltip, array is sent over
 			if (shared) {
@@ -2090,27 +2091,11 @@ function Chart(options, callback) {
 					height: boxHeight,
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
-				
-				// keep the box within the chart area
-				boxX = x - boxWidth + plotLeft - 25;
-				boxY = y - boxHeight + plotTop + 10;
-				
-				// it is too far to the left, adjust it
-				if (boxX < 7) {
-					boxX = plotLeft + x + 15;
-				}
-				
-				
-				if (boxY < 5) {
-					boxY = 5; // above
-				} else if (boxY + boxHeight > chartHeight) { 
-					boxY = chartHeight - boxHeight - 5; // below
-				}
-				
+
+				placedTooltipPoint = placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, {x: x, y: y});
+
 				// do the move
-				move(mathRound(boxX - boxOffLeft), mathRound(boxY - boxOffLeft));
-				
-				
+				move(mathRound(placedTooltipPoint.x - boxOffLeft), mathRound(placedTooltipPoint.y - boxOffLeft));
 			}
 			
 			

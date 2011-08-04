@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  * 
  * (c) 2009-2011 Torstein Hønsi
  * 
@@ -475,6 +475,37 @@ ChartCounters.prototype = {
 		}
 	}
 };
+
+/**
+ * Utility method extracted from Tooltip code that places a tooltip in a chart without spilling over
+ * and not covering the point it self.
+ */
+function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHeight, point) {
+	// keep the box within the chart area
+	var x = point.x - boxWidth + outerLeft - 25,
+		y = point.y - boxHeight + outerTop + 10;
+
+	// it is too far to the left, adjust it
+	if (x < 7) {
+		x = outerLeft + point.x + 15;
+	}
+
+	// Test to see if the tooltip is to far to the right,
+	// if it is, move it back to be inside and then up to not cover the point.
+	if ((x + boxWidth) > (outerLeft + outerWidth)) {
+		x -= (x + boxWidth) - (outerLeft + outerWidth);
+		y -= boxHeight;
+	}
+
+	if (y < 5) {
+		y = 5; // above
+	} else if (y + boxHeight > outerHeight) {
+		y = outerHeight - boxHeight - 5; // below
+		y = outerHeight - boxHeight - 5; // below
+	}
+
+	return {x: x, y: y};
+}
 
 /**
  * Set the global animation to either a given value, or fall back to the 
@@ -5911,7 +5942,8 @@ function Chart(options, callback) {
 				pointConfig = [],
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
-				hoverPoints = chart.hoverPoints;
+				hoverPoints = chart.hoverPoints,
+				placedTooltipPoint;
 				
 			// shared tooltip, array is sent over
 			if (shared) {
@@ -5992,27 +6024,11 @@ function Chart(options, callback) {
 					height: boxHeight,
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
-				
-				// keep the box within the chart area
-				boxX = x - boxWidth + plotLeft - 25;
-				boxY = y - boxHeight + plotTop + 10;
-				
-				// it is too far to the left, adjust it
-				if (boxX < 7) {
-					boxX = plotLeft + x + 15;
-				}
-				
-				
-				if (boxY < 5) {
-					boxY = 5; // above
-				} else if (boxY + boxHeight > chartHeight) { 
-					boxY = chartHeight - boxHeight - 5; // below
-				}
-				
+
+				placedTooltipPoint = placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, {x: x, y: y});
+
 				// do the move
-				move(mathRound(boxX - boxOffLeft), mathRound(boxY - boxOffLeft));
-				
-				
+				move(mathRound(placedTooltipPoint.x - boxOffLeft), mathRound(placedTooltipPoint.y - boxOffLeft));
 			}
 			
 			
@@ -11068,7 +11084,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: '@product.name@',
-	version: '@product.version@'
+	product: 'Highcharts',
+	version: '2.1.6'
 };
 }());
