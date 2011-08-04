@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  * 
  * (c) 2009-2011 Torstein Hønsi
  * 
@@ -10678,7 +10678,7 @@ var PieSeries = extendClass(Series, {
 			
 			// set the anchor point for tooltips
 			radiusX = mathCos(angle) * positions[2] / 2;
-			series.radiusY = radiusY = mathSin(angle) * positions[2] / 2;
+			radiusY = mathSin(angle) * positions[2] / 2;
 			point.tooltipPos = [
 				positions[0] + radiusX * 0.7,
 				positions[1] + radiusY * 0.7
@@ -10815,13 +10815,14 @@ var PieSeries = extendClass(Series, {
 			connector,
 			connectorPath,
 			distanceOption = options.distance,
-			radiusY = series.radiusY,
+			seriesCenter = series.center,
+			radius = seriesCenter[2] / 2,
+			centerY = seriesCenter[1],
 			outside = distanceOption > 0,
 			dataLabel,
 			labelPos,
 			labelHeight,
 			lastY,
-			centerY = series.center[1],
 			halves = [// divide the points into right and left halves for anti collision
 				[], // right
 				[]  // left
@@ -10879,7 +10880,7 @@ var PieSeries = extendClass(Series, {
 			sign = lowerHalf ? 1 : -1;
 			
 			// build the slots
-			for (pos = centerY + radiusY - distanceOption; pos <= centerY - radiusY + distanceOption; pos += labelHeight) {
+			for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
 				slots.push(pos);
 				// visualize the slot 
 				/*	
@@ -11068,7 +11069,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: '@product.name@',
-	version: '@product.version@'
+	product: 'Highcharts',
+	version: '2.1.6'
 };
 }());
