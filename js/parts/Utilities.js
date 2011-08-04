@@ -391,3 +391,27 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 
 	return {x: x, y: y};
 }
+
+/**
+ * Utility method that sorts an object array and keeping the order of equal items.
+ * ECMA script standard does not specify the behaviour when items are equal.
+ */
+function stableSort(arr, sortFunction) {
+	var length = arr.length,
+		i;
+
+	// Add index to each item
+	for (i = 0; i < length; i++) {
+		arr[i].ss_i = i; // stable sort index
+	}
+
+	arr.sort(function (a, b) {
+		var sortValue = sortFunction(a, b);
+		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
+	});
+
+	// Remove index from items
+	for (i = 0; i < length; i++) {
+		delete arr[i].ss_i; // stable sort index
+	}
+}

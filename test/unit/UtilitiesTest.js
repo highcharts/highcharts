@@ -141,21 +141,53 @@ UtilTest.prototype.testPlaceBox = function () {
 
 	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
 	extend(boxPoint, tooltipSize);
-	jstestdriver.console.log(boxPoint.x, boxPoint.y, boxPoint.width, boxPoint.height);
 	assertTrue('Left rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('Left tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 
 	dataPoint.x = 100;
 	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
 	extend(boxPoint, tooltipSize);
-	jstestdriver.console.log(boxPoint.x, boxPoint.y, boxPoint.width, boxPoint.height);
 	assertTrue('Right rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('Right tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 
 	dataPoint.x = 50;
 	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
 	extend(boxPoint, tooltipSize);
-	jstestdriver.console.log(boxPoint.x, boxPoint.y, boxPoint.width, boxPoint.height);
 	assertTrue('Mid rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('Mid tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
+};
+
+/**
+ * Tests that the stable sort utility works.
+ */
+UtilTest.prototype.testStableSort = function () {
+	// Initialize the array, it needs to be a certain size to trigger the unstable quicksort algorithm.
+	// These 11 items fails in Chrome due to its unstable sort.
+	var arr = [
+			{a: 1, b: 'F'},
+			{a: 2, b: 'H'},
+			{a: 1, b: 'G'},
+			{a: 0, b: 'A'},
+			{a: 0, b: 'B'},
+			{a: 3, b: 'J'},
+			{a: 0, b: 'C'},
+			{a: 0, b: 'D'},
+			{a: 0, b: 'E'},
+			{a: 2, b: 'I'},
+			{a: 3, b: 'K'}
+		],
+		result = [];
+
+	// Do the sort
+	stableSort(arr, function (a, b) {
+		return a.a - b.a;
+	})
+
+	// Collect the result
+	for (var i = 0; i < arr.length; i++) {
+		result.push(arr[i].b);
+	}
+
+	assertEquals('Stable sort in action', 'ABCDEFGHIJK', result.join(''));
+	assertUndefined('Stable sort index should not be there', arr[0].ss_i);
 };
