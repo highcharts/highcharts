@@ -475,7 +475,7 @@ Series.prototype = {
 			i;
 			
 		// sort the data points
-		data.sort(function (a, b) {
+		stableSort(data, function (a, b) {
 			return (a.x - b.x);
 		});
 		
