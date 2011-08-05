@@ -56,6 +56,7 @@ function Chart(options, callback) {
 		eventType,
 		isInsidePlot, // function
 		tooltip,
+		tooltipTimer,
 		mouseIsDown,
 		loadingDiv,
 		loadingSpan,
@@ -2337,6 +2338,8 @@ function Chart(options, callback) {
 				tooltip.hide();
 			}
 			
+			clearTimeout(tooltipTimer);
+			
 			hoverX = null;
 		}
 		
@@ -2459,7 +2462,7 @@ function Chart(options, callback) {
 				
 					if (!lastWasOutsidePlot) {
 						// reset the tracker					
-						resetTracker();	
+						resetTracker();
 					}
 					
 					// drop the selection if any and reset mouseIsDown and hasDragged
@@ -2545,6 +2548,23 @@ function Chart(options, callback) {
 			 */
 			addEvent(container, 'mouseleave', resetTracker);
 			
+			// issue #149 workaround
+			// to do: check whether the container position is somehow cached, so we don't
+			// have to run the expensive getPosition. In that case, we can remove the 
+			// tooltip instantly on mousemoves outside the plot area.
+			function setTooltipTimer(e) {
+				clearTimeout(tooltipTimer);
+				tooltipTimer = setTimeout (function() {
+					chartPosition = getPosition(container);
+					if (!isInsidePlot(e.pageX - chartPosition.left - plotLeft, e.pageY - chartPosition.top - plotTop)) {
+						resetTracker();
+					} else {
+						setTooltipTimer(e);
+					}
+				}, 3000);
+			}
+			addEvent(document, 'mousemove', setTooltipTimer);
+
 			
 			container.ontouchstart = function (e) {
 				// For touch devices, use touchmove to zoom
