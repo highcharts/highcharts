@@ -848,7 +848,9 @@ function Chart (options, callback) {
 									j = y.length;
 									if (j) { // array, like ohlc data
 										while (j--) {
-											activeYData[activeCounter++] = y[j];
+											if (y[j] !== null) {
+												activeYData[activeCounter++] = y[j];
+											}
 										}
 									} else {
 										activeYData[activeCounter++] = y;
