@@ -318,6 +318,10 @@ extend(Chart.prototype, {
 				return s.toLowerCase();
 			});
 			
+		// replace HTML entities not valid in XML with actual characters
+		svg = svg.replace(/&nbsp;/g, '\u00A0'); // NO-BREAK SPACE
+		svg = svg.replace(/&shy;/g,  '\u00AD'); // SOFT HYPHEN
+
 		// IE9 beta bugs with innerHTML. Test again with final IE9.
 		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
 			.replace(/&quot;/g, "'");
