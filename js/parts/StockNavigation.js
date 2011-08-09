@@ -44,6 +44,9 @@ extend(defaultOptions, {
 				smoothed: true,
 				units: units
 			},
+			dataLabels: {
+				enabled: false
+			},
 			lineWidth: 1,
 			marker: {
 				enabled: false
