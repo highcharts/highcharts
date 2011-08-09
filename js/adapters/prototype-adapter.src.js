@@ -40,7 +40,7 @@ return {
 						opts;
 					
 					this.element = element;
-					
+					this.key = attr;
 					from = element.attr(attr);
 					
 					// special treatment for paths
@@ -67,7 +67,14 @@ return {
 				},
 				setup: function () {
 					HighchartsAdapter._extend(this.element);
-					this.element._highchart_animation = this;
+					// If this is the first animation on this object, create the _highcharts_animation helper that
+					// contain pointers to the animation objects.
+					if (!this.element._highchart_animation) {
+						this.element._highchart_animation = {};
+					}
+
+					// Store a reference to this animation instance.
+					this.element._highchart_animation[this.key] = this;
 				},
 				update: function (position) {
 					var paths = this.paths;
@@ -79,7 +86,9 @@ return {
 					this.element.attr(this.options.attribute, position);
 				},
 				finish: function () {
-					this.element._highchart_animation = null;
+					// Delete the property that holds this animation now that it is finished.
+					// Both canceled animations and complete ones gets a 'finish' call.
+					delete this.element._highchart_animation[this.key];
 				}
 			});
 		}
@@ -121,6 +130,8 @@ return {
 		// animate wrappers and DOM elements
 		if (hasEffect) { 
 			for (key in params) {
+				// The fx variable is seemingly thrown away here, but the Effect.setup will add itself to the _highcharts_animation object
+				// on the element itself so its not really lost.
 				fx = new Effect.HighchartsTransition($(el), key, params[key], options);
 			}
 		} else { 
@@ -136,8 +147,13 @@ return {
 	
 	// this only occurs in higcharts 2.0+
 	stop: function (el) {
+		var key;
 		if (el._highcharts_extended && el._highchart_animation) {
-			el._highchart_animation.cancel();
+			for (key in el._highchart_animation) {
+				// Cancel the animation
+				// The 'finish' function in the Effect object will remove the reference
+				el._highchart_animation[key].cancel();
+			}
 		}
 	},
 	
