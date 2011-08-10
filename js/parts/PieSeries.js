@@ -296,7 +296,8 @@ var PieSeries = extendClass(Series, {
 			series.animate();
 		}
 
-		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+		series.isDirty = false; // means data is in accordance with what you see
 	},
 
 	/**

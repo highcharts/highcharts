@@ -1766,8 +1766,8 @@ Series.prototype = {
 			}
 		}, duration);
 
-
-		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+		series.isDirty = false; // means data is in accordance with what you see
+		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 
 	},
 
@@ -1798,10 +1798,11 @@ Series.prototype = {
 		series.translate();
 		series.setTooltipPoints(true);
 
+		series.render();
 		if (series.isDirtyData) {
+			series.isDirtyData = false;
 			fireEvent(series, 'updatedData');
 		}
-		series.render();
 	},
 
 	/**
