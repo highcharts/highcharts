@@ -111,9 +111,12 @@ UtilTest.prototype.testLin2Log = function () {
 
 /**
  * Tests if a point is inside a rectangle
+ * The rectangle coordinate system is: x and y specifies the _top_ left corner width is the width and height is the height. 
  */
 UtilTest.prototype.pointInRect = function (x, y, rect) {
-	var inside = x >= rect.x && x <= (rect.x + rect.width) && y >= rect.y && y <= (rect.y + rect.height)
+	var inside = 
+		x >= rect.x && x <= (rect.x + rect.width) && 
+		y >= rect.y && y <= (rect.y + rect.height)
 	return inside;
 };
 
@@ -155,6 +158,14 @@ UtilTest.prototype.testPlaceBox = function () {
 	extend(boxPoint, tooltipSize);
 	assertTrue('Mid rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('Mid tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
+
+	dataPoint.x = 75;
+	dataPoint.y = 5;
+	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
+	extend(boxPoint, tooltipSize);
+	jstestdriver.console.log(boxPoint.x + ',' + boxPoint.y + ', ' + boxPoint.width + ',' + boxPoint.height);
+	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, chartRect));
+	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 };
 
 /**

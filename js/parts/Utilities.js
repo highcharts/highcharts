@@ -384,8 +384,12 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 
 	if (y < 5) {
 		y = 5; // above
+
+		// If the tooltip is still covering the point, move it below instead 
+		if (point.y >= y && point.y <= (y + boxHeight)) {
+			y = point.y + boxHeight - 5; // below
+		}
 	} else if (y + boxHeight > outerHeight) {
-		y = outerHeight - boxHeight - 5; // below
 		y = outerHeight - boxHeight - 5; // below
 	}
 
