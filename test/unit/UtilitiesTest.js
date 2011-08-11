@@ -163,7 +163,6 @@ UtilTest.prototype.testPlaceBox = function () {
 	dataPoint.y = 5;
 	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
 	extend(boxPoint, tooltipSize);
-	jstestdriver.console.log(boxPoint.x + ',' + boxPoint.y + ', ' + boxPoint.width + ',' + boxPoint.height);
 	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 };

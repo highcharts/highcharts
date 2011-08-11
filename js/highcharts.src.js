@@ -2845,6 +2845,9 @@ SVGRenderer.prototype = {
 			
 			
 		} else {
+			// Remove the opacity attribute added above. Does not throw if the attribute is not there.
+			elem.removeAttribute(prop + '-opacity');
+
 			return color;
 		}
 		
