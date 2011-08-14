@@ -8752,7 +8752,7 @@ Point.prototype = {
 		series.chart.hoverPoints = null; // remove reference
 
 		// remove all events
-		if (point.graphic) { // removeEvent and destroyElements are performance expensive
+		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
 			removeEvent(point);
 			point.destroyElements();
 		}
@@ -10421,8 +10421,9 @@ Series.prototype = {
 			}
 		}, duration);
 
-		series.isDirty = false; // means data is in accordance with what you see
-		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+		//series.isDirty = false; // means data is in accordance with what you see
+		// (See #322)
+		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 
 	},
 
@@ -10453,11 +10454,12 @@ Series.prototype = {
 		series.translate();
 		series.setTooltipPoints(true);
 
-		series.render();
 		if (series.isDirtyData) {
-			series.isDirtyData = false;
+			//series.isDirtyData = false;
 			fireEvent(series, 'updatedData');
 		}
+		series.render();
+
 	},
 
 	/**
@@ -11157,9 +11159,13 @@ seriesProto.processData = function() {
 		groupedXData = [],
 		groupedYData = [];
 
+	// TODO: find out why this runs twice for each series when changing range
+	 console.log(series.name)
+
 	// clear previous groups
 	each (groupedData || [], function(point, i) {
 		if (point) {
+			// TODO: find out why this is looping over all points in the Navigator when changing range
 			groupedData[i] = point.destroy();
 		}
 	});

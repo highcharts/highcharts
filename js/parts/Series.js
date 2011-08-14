@@ -97,7 +97,7 @@ Point.prototype = {
 		series.chart.hoverPoints = null; // remove reference
 
 		// remove all events
-		if (point.graphic) { // removeEvent and destroyElements are performance expensive
+		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
 			removeEvent(point);
 			point.destroyElements();
 		}

@@ -39,9 +39,14 @@ seriesProto.processData = function() {
 		groupedXData = [],
 		groupedYData = [];
 
+	// TODO: find out why this runs twice for each series when changing range. This appeared after
+	// the following commit: https://github.com/highslide-software/highcharts.com/commit/974435ac1dcc5fb25f90c13775a3ddd94f09ba74
+	// console.log(series.name)
+
 	// clear previous groups
 	each (groupedData || [], function(point, i) {
 		if (point) {
+			// TODO: find out why this is looping over all points in the Navigator when changing range
 			groupedData[i] = point.destroy();
 		}
 	});
