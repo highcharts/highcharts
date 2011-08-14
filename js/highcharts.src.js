@@ -10421,9 +10421,8 @@ Series.prototype = {
 			}
 		}, duration);
 
-		//series.isDirty = false; // means data is in accordance with what you see
-		// (See #322)
-		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+		series.isDirty = false; // means data is in accordance with what you see
+		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 
 	},
 
@@ -10454,12 +10453,11 @@ Series.prototype = {
 		series.translate();
 		series.setTooltipPoints(true);
 
+		series.render();
 		if (series.isDirtyData) {
-			//series.isDirtyData = false;
+			series.isDirtyData = false;
 			fireEvent(series, 'updatedData');
 		}
-		series.render();
-
 	},
 
 	/**
@@ -11159,8 +11157,9 @@ seriesProto.processData = function() {
 		groupedXData = [],
 		groupedYData = [];
 
-	// TODO: find out why this runs twice for each series when changing range
-	 console.log(series.name)
+	// TODO: find out why this runs twice for each series when changing range. This appeared after
+	// the following commit: https://github.com/highslide-software/highcharts.com/commit/974435ac1dcc5fb25f90c13775a3ddd94f09ba74
+	// console.log(series.name)
 
 	// clear previous groups
 	each (groupedData || [], function(point, i) {
@@ -11777,9 +11776,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		}
 
 		each(points, function(point, i) {
-			// place on y axis
+			// place on y axis or custom position
 			if (!onSeries) {
-				point.plotY = chart.plotHeight;
+				point.plotY = point.y === UNDEFINED ? chart.plotHeight : point.plotY;
 			}
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];

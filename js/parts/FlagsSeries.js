@@ -91,9 +91,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		}
 
 		each(points, function(point, i) {
-			// place on y axis
+			// place on y axis or custom position
 			if (!onSeries) {
-				point.plotY = chart.plotHeight;
+				point.plotY = point.y === UNDEFINED ? chart.plotHeight : point.plotY;
 			}
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
