@@ -66,13 +66,12 @@ $(function() {
 	        formatter: function(){
 	            var point = this.points[0],
 					series = point.series,
-					unit = series.unit && series.unit[0],
 					format = '%A, %b %e, %Y, %H:%M', // with hours
 					s;
 
-	            if (unit == 'day') { // skip hours
-	                format = '%A, %b %e, %Y';
-	            }
+				if (series.tooltipHeaderFormat) {
+					format = series.tooltipHeaderFormat;
+				}
 
 	            return '<b>' + Highcharts.dateFormat(format, this.x) + '</b>' +
 			'<br/>Temperature: ' + Highcharts.numberFormat(this.points[0].y, 1) +'°C';
