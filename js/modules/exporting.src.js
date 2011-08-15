@@ -303,6 +303,10 @@ extend(Chart.prototype, {
 				return s2 +'.'+ s3[0];
 			})*/ 
 			
+			// Replace HTML entities, issue #347
+			.replace(/&nbsp;/g, '\u00A0') // no-break space
+			.replace(/&shy;/g,  '\u00AD') // soft hyphen
+			
 			// IE specific
 			.replace(/id=([^" >]+)/g, 'id="$1"') 
 			.replace(/class=([^" ]+)/g, 'class="$1"')
