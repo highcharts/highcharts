@@ -24,11 +24,14 @@ seriesProto.processData = function () {
 	}
 
 	var i,
+		chart = series.chart,
 		processedXData = series.processedXData,
 		processedYData = series.processedYData,
 		data = series.data,
 		dataOptions = options.data,
-		plotSizeX = series.chart.plotSizeX,
+		plotSizeX = chart.plotSizeX,
+		xAxis = series.xAxis,
+		//groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
 		groupPixelWidth = dataGroupingOptions.groupPixelWidth,
 		maxPoints = plotSizeX / groupPixelWidth,
 		approximation = dataGroupingOptions.approximation,
@@ -36,12 +39,21 @@ seriesProto.processData = function () {
 		dataLength = processedXData.length,
 		ohlcData = series.valueCount === 4,
 		groupedData = series.groupedData,
+		chartSeries = chart.series,
 		groupedXData = [],
 		groupedYData = [];
 
-	// TODO: find out why this runs twice for each series when changing range. This appeared after
-	// the following commit: https://github.com/highslide-software/highcharts.com/commit/974435ac1dcc5fb25f90c13775a3ddd94f09ba74
-	// console.log(series.name)
+	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
+	// group pixel width 
+	/*if (!xAxis.groupPixelWidth) {
+		i = chartSeries.length;
+		while (i--) {
+			if (chartSeries[i].xAxis == xAxis) {
+			groupPixelWidth = mathMax(groupPixelWidth, chartSeries[i].options.dataGrouping.groupPixelWidth);
+		}
+	}
+	xAxis.groupPixelWidth = groupPixelWidth;    
+	}*/
 
 	// clear previous groups
 	each(groupedData || [], function (point, i) {
