@@ -14,7 +14,6 @@
  */
 
 // JSLint options:
-/*jslint forin: true */
 /*global Effect, Class, Highcharts, Event, $, $A */
 
 // Adapter interface between prototype and the Highcarts charting library
@@ -186,7 +185,7 @@ return {
 				event = HighchartsAdapter.addNS(event);
 			}
 			$(el).stopObserving(event, handler);
-		} if (window == el) {
+		} if (window === el) {
 			Event.stopObserving(el, event, handler);
 		} else {
 			HighchartsAdapter._extend(el);

@@ -4114,7 +4114,9 @@ function Chart(options, callback) {
 		var ONREADYSTATECHANGE = 'onreadystatechange',
 			COMPLETE = 'complete';
 		// Note: in spite of JSLint's complaints, win == win.top is required
+		/*jslint eqeq: true*/
 		if (!hasSVG && win == win.top && doc.readyState !== COMPLETE) {
+		/*jslint eqeq: false*/
 			doc.attachEvent(ONREADYSTATECHANGE, function () {
 				doc.detachEvent(ONREADYSTATECHANGE, firstRender);
 				if (doc.readyState === COMPLETE) {
