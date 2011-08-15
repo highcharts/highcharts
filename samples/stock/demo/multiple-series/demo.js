@@ -57,7 +57,8 @@ $(function() {
 					}
 				},
 				lineWidth: 2,
-				lineColor: colors[i]
+				lineColor: colors[i],
+				offset: [0, 0, 70][i]
 			};
 
 			// As we're loading the data asynchronously, we don't know what order it will arrive. So
@@ -78,7 +79,9 @@ $(function() {
 		chart = new Highcharts.StockChart({
 		    chart: {
 		        renderTo: 'container',
-		        alignTicks: false
+		        alignTicks: false,
+		        marginLeft: 20,
+		        marginRight: 130
 		    },
 
 		    rangeSelector: {
