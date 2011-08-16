@@ -12,8 +12,8 @@ var doc = document,
 	mathSin = math.sin,
 	mathPI = math.PI,
 	deg2rad = mathPI * 2 / 360,
-	
-	
+
+
 	// some variables
 	userAgent = navigator.userAgent,
 	isIE = /msie/i.test(userAgent) && !win.opera,
@@ -35,8 +35,8 @@ var doc = document,
 	dateFormat, // function
 	globalAnimation,
 	pathAnim,
-	
-	
+
+
 	// some constants for frequently used strings
 	UNDEFINED,
 	DIV = 'div',
@@ -61,10 +61,26 @@ var doc = document,
 	 * Opera: 0.00000000001 (unlimited)
 	 */
 	TRACKER_FILL = 'rgba(192,192,192,'+ (hasSVG ? 0.000001 : 0.002) +')', // invisible but clickable
+	//TRACKER_FILL = 'rgba(192,192,192,0.5)',
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
-	
+	MILLISECOND = 'millisecond',
+	SECOND = 'second',
+	MINUTE = 'minute',
+	HOUR = 'hour',
+	DAY = 'day',
+	WEEK = 'week',
+	MONTH = 'month',
+	YEAR = 'year',
+
+	// constants for attributes
+	FILL = 'fill',
+	LINEAR_GRADIENT = 'linearGradient',
+	STOPS = 'stops',
+	STROKE = 'stroke',
+	STROKE_WIDTH = 'stroke-width',
+
 	// time methods, changed based on whether or not UTC is used
 	makeTime,
 	getMinutes,
@@ -78,13 +94,13 @@ var doc = document,
 	setDate,
 	setMonth,
 	setFullYear,
-	
+
 	// check for a custom HighchartsAdapter defined prior to this file
 	globalAdapter = win.HighchartsAdapter,
-	adapter = globalAdapter || {}, 
-	
+	adapter = globalAdapter || {},
+
 	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
-	// and all the utility functions will be null. In that case they are populated by the 
+	// and all the utility functions will be null. In that case they are populated by the
 	// default adapters below.
 	each = adapter.each,
 	grep = adapter.grep,
@@ -96,7 +112,7 @@ var doc = document,
 	fireEvent = adapter.fireEvent,
 	animate = adapter.animate,
 	stop = adapter.stop,
-	
+
 	// lookup over the types and the associated classes
 	seriesTypes = {},
 	hoverChart;

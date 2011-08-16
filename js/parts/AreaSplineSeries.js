@@ -4,7 +4,8 @@
  * AreaSplineSeries object
  */
 var AreaSplineSeries = extendClass(SplineSeries, {
-	type: 'areaspline'
+	type: 'areaspline',
+	useThreshold: true
 });
 seriesTypes.areaspline = AreaSplineSeries;
 

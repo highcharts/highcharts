@@ -2,7 +2,8 @@
  * AreaSeries object
  */
 var AreaSeries = extendClass(Series, {
-	type: 'area'
+	type: 'area',
+	useThreshold: true
 });
 seriesTypes.area = AreaSeries;
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * This file concatenates the part files and returns the result based on the setup in /build.xml

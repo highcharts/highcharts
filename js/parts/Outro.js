@@ -5,6 +5,7 @@ win.Highcharts = {
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
+	getTimeTicks: getTimeTicks,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,
@@ -12,9 +13,10 @@ win.Highcharts = {
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	Series: Series,
-		
+
 	// Expose utility funcitons for modules
 	addEvent: addEvent,
+	removeEvent: removeEvent,
 	createElement: createElement,
 	discardElement: discardElement,
 	css: css,
@@ -23,7 +25,8 @@ win.Highcharts = {
 	map: map,
 	merge: merge,
 	pick: pick,
+	splat: splat,
 	extendClass: extendClass,
-	version: '2.1.5'
+	version: '1.0 Alpha'
 };
 }());

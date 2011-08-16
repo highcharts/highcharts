@@ -1,15 +1,15 @@
-/** 
- * @license Highcharts JS v2.1.5 (2011-06-22)
+/**
+ * @license Highcharts JS v2.1.4 (2011-03-02)
  * Prototype adapter
- * 
+ *
  * @author Michael Nelson, Torstein Hønsi.
- * 
+ *
  * Feel free to use and modify this script.
  * Highcharts license: www.highcharts.com/license.
  */
 
-/* 
- * Known issues: 
+/*
+ * Known issues:
  *    - Some grid lines land in wrong position - http://jsfiddle.net/highcharts/jaRhY/28
  */
 
@@ -22,10 +22,10 @@ var HighchartsAdapter = (function() {
 
 var hasEffect = typeof Effect != 'undefined';
 
-return { 
-	
+return {
+
 	init: function() {
-		
+
 		if (hasEffect) {
 			/**
 			 * Animation for Highcharts SVG element wrappers only
@@ -38,26 +38,26 @@ return {
 				initialize: function(element, attr, to, options){
 					var from,
 						opts;
-					
+
 					this.element = element;
-					
+
 					from = element.attr(attr);
-					
+
 					// special treatment for paths
 					if (attr == 'd') {
 						this.paths = Highcharts.pathAnim.init(
-							element, 
+							element,
 							element.d,
 							to
 						);
 						this.toD = to;
-						
-						
+
+
 						// fake values in order to read relative position as a float in update
-						from = 0; 
-						to = 1;				
+						from = 0;
+						to = 1;
 					}
-					
+
 					opts = Object.extend((options || {}), {
 						from: from,
 						to: to,
@@ -71,11 +71,11 @@ return {
 				},
 				update: function(position) {
 					var paths = this.paths;
-					
+
 					if (paths) {
 						position = Highcharts.pathAnim.step(paths[0], paths[1], position, this.toD);
 					}
-					
+
 					this.element.attr(this.options.attribute, position);
 				},
 				finish: function(){
@@ -84,101 +84,101 @@ return {
 			});
 		}
 	},
-	
+
 	// el needs an event to be attached. el is not necessarily a dom element
 	addEvent: function(el, event, fn) {
 		if (el.addEventListener || el.attachEvent) {
 			Event.observe($(el), event, fn);
-		
+
 		} else {
 			HighchartsAdapter._extend(el);
 			el._highcharts_observe(event, fn);
 		}
 	},
-	
+
 	// motion makes things pretty. use it if effects is loaded, if not... still get to the end result.
-	animate: function(el, params, options) { 
+	animate: function(el, params, options) {
 		var key,
 			fx;
-		
+
 		// default options
 		options = options || {};
 		options.delay = 0;
 		options.duration = (options.duration || 500) / 1000;
-		
+
 		// animate wrappers and DOM elements
-		if (hasEffect) { 
+		if (hasEffect) {
 			for (key in params) {
 				fx = new Effect.HighchartsTransition($(el), key, params[key], options);
 			}
-		} else { 
+		} else {
 			for (key in params) {
 				el.attr(key, params[key]);
 			}
 		}
-		
+
 		if (!el.attr) {
 			throw 'Todo: implement animate DOM objects';
 		}
 	},
-	
+
 	// this only occurs in higcharts 2.0+
 	stop: function(el){
 		if (el._highcharts_extended && el._highchart_animation) {
 			el._highchart_animation.cancel();
 		}
 	},
-	
+
 	// um.. each
 	each: function(arr, fn){
 		$A(arr).each(fn);
 	},
-	
+
 	// fire an event based on an event name (event) and an object (el).
 	// again, el may not be a dom element
 	fireEvent: function(el, event, eventArguments, defaultFunction){
 		if (event.preventDefault) {
 			defaultFunction = null;
 		}
-		
+
 		if (el.fire) {
 			el.fire(event, eventArguments);
 		} else if (el._highcharts_extended) {
 			el._highcharts_fire(event, eventArguments);
 		}
-		
-		if (defaultFunction) { 
+
+		if (defaultFunction) {
 			defaultFunction(eventArguments);
 		}
 	},
-	
+
 	removeEvent: function(el, event, handler){
 		if ($(el).stopObserving) {
 			$(el).stopObserving(event, handler);
-			
+
 		} else {
 			HighchartsAdapter._extend(el);
 			el._highcharts_stop_observing(event, handler);
 		}
 	},
-	
+
 	// um, grep
 	grep: function(arr, fn){
 		return arr.findAll(fn);
 	},
-	
+
 	// change leftPadding to left-padding
 	hyphenate: function(str){
 		return str.replace(/([A-Z])/g, function(a, b){
 			return '-' + b.toLowerCase();
 		});
 	},
-	
+
 	// um, map
 	map: function(arr, fn){
 		return arr.map(fn);
 	},
-	
+
 	// deep merge. merge({a : 'a', b : {b1 : 'b1', b2 : 'b2'}}, {b : {b2 : 'b2_prime'}, c : 'c'}) => {a : 'a', b : {b1 : 'b1', b2 : 'b2_prime'}, c : 'c'}
 	/*merge: function(){
 		function doCopy(copy, original) {
@@ -190,21 +190,21 @@ return {
 				obj,
 				arr,
 				node;
-				
+
 			for (key in original) {
 				value = original[key];
 				undef = typeof(value) === 'undefined';
 				nil = value === null;
 				same = original === copy[key];
-				
-				if (undef || nil || same) { 
+
+				if (undef || nil || same) {
 					continue;
 				}
-				
+
 				obj = typeof(value) === 'object';
 				arr = value && obj && value.constructor == Array;
 				node = !!value.nodeType;
-				
+
 				if (obj && !arr && !node) {
 					copy[key] = doCopy(typeof copy[key] == 'object' ? copy[key] : {}, value);
 				}
@@ -214,47 +214,47 @@ return {
 			}
 			return copy;
 		}
-		
+
 		var args = arguments, retVal = {};
-		
+
 		for (var i = 0; i < args.length; i++) {
-			retVal = doCopy(retVal, args[i]);			
+			retVal = doCopy(retVal, args[i]);
 		}
-		
+
 		return retVal;
 	},*/
 	merge: function() { // the built-in prototype merge function doesn't do deep copy
 		function doCopy(copy, original) {
 			var value;
-				
+
 			for (var key in original) {
 				value = original[key];
-				if  (value && typeof value == 'object' && value.constructor != Array && 
-						typeof value.nodeType !== 'number') { 
+				if (value && typeof value == 'object' && value.constructor != Array) &&
+					typeof value.nodeType !== 'number') {
 					copy[key] = doCopy(copy[key] || {}, value); // copy
-				
+
 				} else {
 					copy[key] = original[key];
 				}
 			}
 			return copy;
 		}
-		
+
 		function merge() {
 			var args = arguments,
 				retVal = {};
-		
+
 			for (var i = 0; i < args.length; i++) {
 				retVal = doCopy(retVal, args[i])
-			
+
 			}
 			return retVal;
 		}
-		
+
 		return merge.apply(this, arguments);
 	},
-	
-	// extend an object to handle highchart events (highchart objects, not svg elements). 
+
+	// extend an object to handle highchart events (highchart objects, not svg elements).
 	// this is a very simple way of handling events but whatever, it works (i think)
 	_extend: function(object){
 		if (!object._highcharts_extended) {

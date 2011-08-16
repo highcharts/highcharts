@@ -1,4 +1,4 @@
-	
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -16,8 +16,25 @@ function extend(a, b) {
 }
 
 /**
+ * Take an array and turn into a hash with even number arguments as keys and odd numbers as
+ * values. Allows creating constants for commonly used style properties, attributes etc.
+ * Avoid it in performance critical situations like looping
+ */
+function hash() {
+	var i = 0,
+		args = arguments,
+		length = args.length,
+		obj = {};
+	for (; i < length; i++) {
+		obj[args[i++]] = args[i];
+	}
+	return obj;
+}
+
+/**
  * Shortcut for parseInt
  * @param {Object} s
+ * @param {Number} mag Magnitude
  */
 function pInt(s, mag) {
 	return parseInt(s, mag || 10);
@@ -81,7 +98,7 @@ function defined (obj) {
 /**
  * Set or get an attribute or an object of attributes. Can't use jQuery attr because
  * it attempts to set expando properties on the SVG element, which is not allowed.
- * 
+ *
  * @param {Object} elem The DOM element to receive the attribute(s)
  * @param {String|Object} prop The property or an abject of key-value pairs
  * @param {String} value The value if a single property is set
@@ -90,19 +107,19 @@ function attr(elem, prop, value) {
 	var key,
 		setAttribute = 'setAttribute',
 		ret;
-	
+
 	// if the prop is a string
 	if (isString(prop)) {
 		// set the value
 		if (defined(value)) {
 
 			elem[setAttribute](prop, value);
-		
+
 		// get the value
 		} else if (elem && elem.getAttribute) { // elem not defined when printing pie demo...
 			ret = elem.getAttribute(prop);
 		}
-	
+
 	// else if prop is defined, it is a hash of key/value pairs
 	} else if (defined(prop) && isObject(prop)) {
 		for (key in prop) {
@@ -119,7 +136,7 @@ function splat(obj) {
 	if (!obj || obj.constructor !== Array) {
 		obj = [obj];
 	}
-	return obj; 
+	return obj;
 }
 
 
@@ -144,14 +161,14 @@ function pick() {
  * @param {Object} style
  */
 function serializeCSS(style) {
-	var s = '', 
+	var s = '',
 		key;
 	// serialize the declaration
 	for (key in style) {
 		s += key +':'+ style[key] + ';';
 	}
 	return s;
-	
+
 }
 /**
  * Set CSS on a given element
@@ -205,7 +222,7 @@ function createElement (tag, attribs, styles, parent, nopad) {
 	}
 	if (parent) {
 		parent.appendChild(el);
-	}	
+	}
 	return el;
 }
 
@@ -236,27 +253,33 @@ function numberFormat (number, decimals, decPoint, thousandsSep) {
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep, s = n < 0 ? "-" : "",
 		i = String(pInt(n = mathAbs(+n || 0).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
-    
+
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
 		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
 }
 
 /**
- * Based on http://www.php.net/manual/en/function.strftime.php 
+ * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
 dateFormat = function (format, timestamp, capitalize) {
-	function pad (number) {
-		return number.toString().replace(/^([0-9])$/, '0$1');
+	function pad (number, length) {
+		// two digits
+		number = number.toString().replace(/^([0-9])$/, '0$1');
+		// three digits
+		if (length === 3) {
+			number = number.toString().replace(/^([0-9]{2})$/, '0$1');
+		}
+		return number;
 	}
-	
+
 	if (!defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
-	
+
 	var date = new Date(timestamp * timeFactor),
 		key, // used in for constuct below
 		// get the basic time values
@@ -269,7 +292,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		langWeekdays = lang.weekdays,
 		langMonths = lang.months,
 		/* // uncomment this and the 'W' format key below to enable week numbers
-		weekNumber = function() { 
+		weekNumber = function() {
 			var clone = new Date(date.valueOf()),
 				day = clone[getDay]() == 0 ? 7 : clone[getDay](),
 				dayNumber;
@@ -278,28 +301,28 @@ dateFormat = function (format, timestamp, capitalize) {
 			return 1 + mathFloor(dayNumber / 7);
 		},
 		*/
-		
+
 		// list all format keys
 		replacements = {
 
 			// Day
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
-			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31 
-			'e': dayOfMonth, // Day of the month, 1 through 31 
-			
+			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
+			'e': dayOfMonth, // Day of the month, 1 through 31
+
 			// Week (none implemented)
 			//'W': weekNumber(),
-			
+
 			// Month
 			'b': langMonths[month].substr(0, 3), // Short month, like 'Jan'
 			'B': langMonths[month], // Long month, like 'January'
 			'm': pad(month + 1), // Two digit month number, 01 through 12
-			
+
 			// Year
 			'y': fullYear.toString().substr(2, 2), // Two digits year, like 09 for 2009
 			'Y': fullYear, // Four digits year, like 2009
-			
+
 			// Time
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
@@ -307,8 +330,8 @@ dateFormat = function (format, timestamp, capitalize) {
 			'M': pad(date[getMinutes]()), // Two digits minutes, 00 through 59
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
-			'S': pad(date.getSeconds()) // Two digits seconds, 00 through  59
-			
+			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
+			'L': pad(timestamp % 1000, 3) // Milliseconds (naming from Ruby)
 		};
 
 
@@ -316,7 +339,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	for (key in replacements) {
 		format = format.replace('%'+ key, replacements[key]);
 	}
-		
+
 	// Optionally capitalize the string and return
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
@@ -325,9 +348,9 @@ dateFormat = function (format, timestamp, capitalize) {
  * Loop up the node tree and add offsetWidth and offsetHeight to get the
  * total page offset for a given element. Used by Opera and iOS on hover and
  * all browsers on point click.
- * 
+ *
  * @param {Object} el
- * 
+ *
  */
 function getPosition (el) {
 	var p = { left: el.offsetLeft, top: el.offsetTop };
@@ -342,4 +365,232 @@ function getPosition (el) {
 		el = el.offsetParent;
 	}
 	return p;
+}
+
+/**
+ * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
+ * @param {Number} interval
+ * @param {Array} multiples
+ * @param {Number} magnitude
+ * @param {Object} options
+ */
+function normalizeTickInterval(interval, multiples, magnitude, options) {
+	var normalized, i;
+
+	// round to a tenfold of 1, 2, 2.5 or 5
+	//magnitude = multiples ? 1 : math.pow(10, mathFloor(math.log(interval) / math.LN10));
+	magnitude = pick(magnitude, 1);
+	normalized = interval / magnitude;
+
+	// multiples for a linear scale
+	if (!multiples) {
+		multiples = [1, 2, 2.5, 5, 10];
+		//multiples = [1, 2, 2.5, 4, 5, 7.5, 10];
+
+		// the allowDecimals option
+		if (options && options.allowDecimals === false) {
+			if (magnitude === 1) {
+				multiples = [1, 2, 5, 10];
+			} else if (magnitude <= 0.1) {
+				multiples = [1 / magnitude];
+			}
+		}
+	}
+
+	// normalize the interval to the nearest multiple
+	for (i = 0; i < multiples.length; i++) {
+		interval = multiples[i];
+		if (normalized <= (multiples[i] + (multiples[i+1] || multiples[i])) / 2) {
+			break;
+		}
+	}
+
+	// multiply back to the correct magnitude
+	interval *= magnitude;
+
+	return interval;
+}
+
+/**
+ * Set the tick positions to a time unit that makes sense, for example
+ * on the first of each month or on every Monday. Return an array
+ * with the time positions. Used in datetime axes as well as for grouping
+ * data on a datetime axis.
+ *
+ * @param {Number} tickInterval The approximate interval in axis values (ms)
+ * @param {Number} min The minimum in axis values
+ * @param {Number} max The maximum in axis values
+ * @param {Number} startOfWeek
+ * @param {Array} unitsOption
+ */
+function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
+	var tickPositions = [],
+		i,
+		useUTC = defaultOptions.global.useUTC,
+		oneSecond = 1000 / timeFactor,
+		oneMinute = 60000 / timeFactor,
+		oneHour = 3600000 / timeFactor,
+		oneDay = 24 * 3600000 / timeFactor,
+		oneWeek = 7 * 24 * 3600000 / timeFactor,
+		oneMonth = 30 * 24 * 3600000 / timeFactor,
+		oneYear = 31556952000 / timeFactor,
+
+		ranges = hash(
+			MILLISECOND, 1,
+			SECOND, oneSecond,
+			MINUTE, oneMinute,
+			HOUR, oneHour,
+			DAY, oneDay,
+			WEEK, oneWeek,
+			MONTH, oneMonth,
+			YEAR, oneYear
+		),
+		units = unitsOption || [[
+			'millisecond',					// unit name
+			//1,								// fixed incremental unit
+			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
+		], [
+			'second',						// unit name
+			//oneSecond,						// fixed incremental unit
+			[1, 2, 5, 10, 15, 30]			// allowed multiples
+		], [
+			'minute',						// unit name
+			//oneMinute,						// fixed incremental unit
+			[1, 2, 5, 10, 15, 30]			// allowed multiples
+		], [
+			'hour',							// unit name
+			//oneHour,						// fixed incremental unit
+			[1, 2, 3, 4, 6, 8, 12]			// allowed multiples
+		], [
+			'day',							// unit name
+			//oneDay,							// fixed incremental unit
+			[1, 2]							// allowed multiples
+		], [
+			'week',							// unit name
+			//oneWeek,						// fixed incremental unit
+			[1, 2]							// allowed multiples
+		], [
+			'month',
+			//oneMonth,
+			[1, 2, 3, 4, 6]
+		], [
+			'year',
+			//oneYear,
+			null
+		]],
+
+		unit = units[units.length - 1], // default unit is years
+		interval = ranges[unit[0]],
+		multiples = unit[1];
+
+	// loop through the units to find the one that best fits the tickInterval
+	for (i = 0; i < units.length; i++)  {
+		unit = units[i];
+		interval = ranges[unit[0]];
+		multiples = unit[1];
+
+
+		if (units[i+1]) {
+			// lessThan is in the middle between the highest multiple and the next unit.
+			var lessThan = (interval * multiples[multiples.length - 1] +
+						ranges[units[i + 1][0]]	) / 2;
+
+			// break and keep the current unit
+			if (tickInterval <= lessThan) {
+				break;
+			}
+		}
+	}
+
+	// prevent 2.5 years intervals, though 25, 250 etc. are allowed
+	if (interval === oneYear && tickInterval < 5 * interval) {
+		multiples = [1, 2, 5];
+	}
+
+	// get the minimum value by flooring the date
+	var multitude = normalizeTickInterval(tickInterval / interval, multiples),
+		minYear, // used in months and years as a basis for Date.UTC()
+		minDate = new Date(min * timeFactor);
+
+	minDate.setMilliseconds(0);
+
+	if (interval >= oneSecond) { // second
+		minDate.setSeconds(interval >= oneMinute ? 0 :
+			multitude * mathFloor(minDate.getSeconds() / multitude));
+	}
+
+	if (interval >= oneMinute) { // minute
+		minDate[setMinutes](interval >= oneHour ? 0 :
+			multitude * mathFloor(minDate[getMinutes]() / multitude));
+	}
+
+	if (interval >= oneHour) { // hour
+		minDate[setHours](interval >= oneDay ? 0 :
+			multitude * mathFloor(minDate[getHours]() / multitude));
+	}
+
+	if (interval >= oneDay) { // day
+		minDate[setDate](interval >= oneMonth ? 1 :
+			multitude * mathFloor(minDate[getDate]() / multitude));
+	}
+
+	if (interval >= oneMonth) { // month
+		minDate[setMonth](interval >= oneYear ? 0 :
+			multitude * mathFloor(minDate[getMonth]() / multitude));
+		minYear = minDate[getFullYear]();
+	}
+
+	if (interval >= oneYear) { // year
+		minYear -= minYear % multitude;
+		minDate[setFullYear](minYear);
+	}
+
+	// week is a special case that runs outside the hierarchy
+	if (interval === oneWeek) {
+		// get start of current week, independent of multitude
+		minDate[setDate](minDate[getDate]() - minDate[getDay]() +
+			pick(startOfWeek, 1));
+	}
+
+
+	// get tick positions
+	i = 1;
+	minYear = minDate[getFullYear]();
+	var time = minDate.getTime() / timeFactor,
+		minMonth = minDate[getMonth](),
+		minDateDate = minDate[getDate]();
+
+	// iterate and add tick positions at appropriate values
+	while (time < max) {
+		tickPositions.push(time);
+
+		// if the interval is years, use Date.UTC to increase years
+		if (interval === oneYear) {
+			time = makeTime(minYear + i * multitude, 0) / timeFactor;
+
+		// if the interval is months, use Date.UTC to increase months
+		} else if (interval === oneMonth) {
+			time = makeTime(minYear, minMonth + i * multitude) / timeFactor;
+
+		// if we're using global time, the interval is not fixed as it jumps
+		// one hour at the DST crossover
+		} else if (!useUTC && (interval === oneDay || interval === oneWeek)) {
+			time = makeTime(minYear, minMonth, minDateDate +
+				i * multitude * (interval === oneDay ? 1 : 7));
+
+		// else, the interval is fixed and we use simple addition
+		} else {
+			time += interval * multitude;
+		}
+
+		i++;
+	}
+	// push the last time
+	tickPositions.push(time);
+
+
+	// record information on the chosen unit - for dynamic label formatter
+	tickPositions.unit = unit;
+
+	return tickPositions;
 }
