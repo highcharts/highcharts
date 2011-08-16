@@ -1,9 +1,9 @@
-/**
- * @license Highcharts Stock v1.0 Beta (2011-07-05)
+/** 
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  * Exporting module
- *
+ * 
  * (c) 2010-2011 Torstein Hønsi
- *
+ * 
  * License: www.highcharts.com/license
  */
 

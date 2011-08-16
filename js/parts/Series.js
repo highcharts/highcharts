@@ -23,7 +23,7 @@ Point.prototype = {
 				point.options = {};
 			}
 			point.color = point.options.color = point.color || defaultColors[counters.color++];
-
+			
 			// loop back to zero
 			counters.wrapColor(defaultColors.length);
 		}
@@ -1345,7 +1345,10 @@ Series.prototype = {
 			data = series.data || [],
 			point,
 			prop;
-
+		
+		// add event hook
+		fireEvent(series, 'destroy');
+		
 		// remove all events
 		removeEvent(series);
 
@@ -1426,11 +1429,6 @@ Series.prototype = {
 					if (vAlignIsNull) {
 						options = merge(options, {verticalAlign: 'top'});
 					}
-
-					// If no y delta is specified, set the default
-					if (yIsNull) {
-						options = merge(options, {y: -6});
-					}
 				}
 			}
 
@@ -1467,12 +1465,16 @@ Series.prototype = {
 				str = options.formatter.call(point.getLabelConfig());
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
-
+				
 				// in columns, align the string to the column
 				if (seriesType === 'column') {
 					x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
 				}
-
+				
+				if (inverted && point.y < 0) {
+					align = 'right';
+					x -= 10;
+				}
 
 				// update existing label
 				if (dataLabel) {
@@ -1713,6 +1715,9 @@ Series.prototype = {
 
 				setInvert(); // do it now
 				addEvent(chart, 'resize', setInvert); // do it on resize
+				addEvent(series, 'destroy', function() {
+					removeEvent(chart, 'resize', setInvert);
+				});
 			}
 
 			if (doClip) {

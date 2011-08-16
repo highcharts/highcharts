@@ -1,9 +1,9 @@
-/**
- * @license Highcharts Stock v1.0 Beta (2011-07-05)
+/** 
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  * MooTools adapter
- *
+ * 
  * (c) 2010-2011 Torstein Hønsi
- *
+ * 
  * License: www.highcharts.com/license
  */
 
@@ -162,7 +162,7 @@ win.HighchartsAdapter = {
 
 		return ret;
 	},
-
+	
 	/**
 	 * Add an event listener
 	 * @param {Object} el HTML element or custom object
@@ -196,8 +196,13 @@ win.HighchartsAdapter = {
 				type = 'beforeunload';
 			}
 
-
-			el.removeEvent(type, fn);
+			if (defined(fn)) {
+				el.removeEvent(type, fn);
+			} else {
+				el.removeEvents(type);
+			}
+		} else {
+			el.removeEvents();
 		}
 	},
 

@@ -39,6 +39,7 @@ var PiePoint = extendClass(Point, {
 			tracker = point.tracker,
 			dataLabel = point.dataLabel,
 			connector = point.connector,
+			shadowGroup = point.shadowGroup,
 			method;
 
 		// if called without an argument, toggle visibility
@@ -55,6 +56,9 @@ var PiePoint = extendClass(Point, {
 		}
 		if (connector) {
 			connector[method]();
+		}
+		if (shadowGroup) {
+			shadowGroup[method]();
 		}
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
@@ -244,7 +248,7 @@ var PieSeries = extendClass(Series, {
 
 			// set the anchor point for tooltips
 			radiusX = mathCos(angle) * positions[2] / 2;
-			radiusY = mathSin(angle) * positions[2] / 2;
+			series.radiusY = radiusY = mathSin(angle) * positions[2] / 2;
 			point.tooltipPos = [
 				positions[0] + radiusX * 0.7,
 				positions[1] + radiusY * 0.7
@@ -263,14 +267,14 @@ var PieSeries = extendClass(Series, {
 					angle < circ / 4 ? 'left' : 'right', // alignment
 				angle // center angle
 			];
-
-
+			
 			// API properties
 			point.percentage = fraction * 100;
 			point.total = total;
 
 		});
-
+		
+		
 		this.setTooltipPoints();
 	},
 
@@ -379,17 +383,17 @@ var PieSeries = extendClass(Series, {
 			connectorWidth = pick(options.connectorWidth, 1),
 			connector,
 			connectorPath,
-			outside = options.distance > 0,
+			distanceOption = options.distance,
+			radiusY = series.radiusY,
+			outside = distanceOption > 0,
 			dataLabel,
 			labelPos,
 			labelHeight,
 			lastY,
 			centerY = series.center[1],
-			quarters = [// divide the points into quarters for anti collision
-				[], // top right
-				[], // bottom right
-				[], // bottom left
-				[] // top left
+			halves = [// divide the points into right and left halves for anti collision
+				[], // right
+				[]  // left
 			],
 			x,
 			y,
@@ -400,144 +404,194 @@ var PieSeries = extendClass(Series, {
 			sign,
 			lowerHalf,
 			sort,
-			i = 4,
+			i = 2,
 			j;
-
+			
+		// get out if not enabled
+		if (!options.enabled) {
+			return;
+		}
+			
 		// run parent method
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		each(points, function(point) {
-			var angle = point.labelPos[7],
-				quarter;
-			if (angle < 0) {
-				quarter = 0;
-			} else if (angle < mathPI / 2) {
-				quarter = 1;
-			} else if (angle < mathPI) {
-				quarter = 2;
-			} else {
-				quarter = 3;
-			}
-			quarters[quarter].push(point);
+		each(data, function(point) {
+			halves[
+				point.labelPos[7] < mathPI / 2 ? 0 : 1
+			].push(point);
 		});
-		quarters[1].reverse();
-		quarters[3].reverse();
-
+		halves[1].reverse();
+		
 		// define the sorting algorithm
-		sort = function(a,b) {
-			return a.y > b.y;
+		sort = function(a, b) {
+			return b.y - a.y;
 		};
+		
+		// assume equal label heights
+		labelHeight = halves[0][0] && halves[0][0].dataLabel && pInt(halves[0][0].dataLabel.styles.lineHeight);
+			
 		/* Loop over the points in each quartile, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
 		while (i--) {
-			overlapping = 0;
-
-			// create an array for sorting and ranking the points within each quarter
-			rankArr = [].concat(quarters[i]);
-			rankArr.sort(sort);
-			j = rankArr.length;
-			while (j--) {
-				rankArr[j].rank = j;
+			
+			var slots = [],
+				slotsLength,
+				usedSlots = [],
+				points = halves[i],
+				pos,
+				length = points.length,
+				slotIndex;
+			
+			lowerHalf = i % 3;
+			sign = lowerHalf ? 1 : -1;
+			
+			// build the slots
+			for (pos = centerY + radiusY - distanceOption; pos <= centerY - radiusY + distanceOption; pos += labelHeight) {
+				slots.push(pos);
+				// visualize the slot 
+				/*	
+				var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
+					slotY = pos + chart.plotTop;
+				if (!isNaN(slotX)) {
+					chart.renderer.rect(slotX, slotY - 7, 100, labelHeight)
+						.attr({
+							'stroke-width': 1,
+							stroke: 'silver'
+						})
+						.add(); 
+					chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
+						.attr({
+							fill: 'silver'
+						}).add();
+				}
+				// */
 			}
+			slotsLength = slots.length;
+			
+			// if there are more values than available slots, remove lowest values
+			if (length > slotsLength) {
+				// create an array for sorting and ranking the points within each quarter
+				rankArr = [].concat(points);
+				rankArr.sort(sort);
+				j = length;
+				while (j--) {
+					rankArr[j].rank = j;
+				}
+				j = length;
+				while (j--) {
+					if (points[j].rank >= slotsLength) {
+						points.splice(j, 1);		
+					}
+				}
+				length = points.length;
+			}
+				
+			// The label goes to the nearest open slot, but not closer to the edge than
+			// the label's index.				
+			for (j = 0; j < length; j++) {
+				
+				point = points[j];
+				labelPos = point.labelPos;	
+				
+				var closest = 9999,
+					distance,
+					slotI;
+				
+				// find the closest slot index
+				for (slotI = 0; slotI < slotsLength; slotI++) {
+					distance = mathAbs(slots[slotI] - labelPos[1]);
+					if (distance < closest) {
+						closest = distance;
+						slotIndex = slotI;
+					}
+				}
+				
+				// if that slot index is closer to the edges of the slots, move it
+				// to the closest appropriate slot
+				if (slotIndex < j && slots[j] !== null) { // cluster at the top
+					slotIndex = j;
+				} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
+					slotIndex = slotsLength - length + j;
+				} else { 
+					// Slot is taken, find next free slot below. In the next run, the next slice will find the
+					// slot above these, because it is the closest one 
+					while(slots[slotIndex] === null) {
+						slotIndex++;
+					}
+				}
+				
+				usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
+				slots[slotIndex] = null; // mark as taken
+			}
+			// sort them in order to fill in from the top
+			usedSlots.sort(sort);
+			
+			
+			// now the used slots are sorted, fill them up sequentially
+			for (j = 0; j < length; j++) {
+				
+				point = points[j];
+				labelPos = point.labelPos;
+				dataLabel = point.dataLabel;
+				var slot = usedSlots.pop(),
+					naturalY = labelPos[1];
 
-			/* In the first pass, count the number of overlapping labels. In the second
-			 * pass, remove the labels with lowest rank/values.
-			 */
-			for (secondPass = 0; secondPass < 2; secondPass++) {
-				lowerHalf = i % 3;
-				lastY = lowerHalf ? 9999 : -9999;
-				sign = lowerHalf ? -1 : 1;
+				visibility = point.visible === false ? HIDDEN : VISIBLE;
+				slotIndex = slot.i;
 
-				for (j = 0; j < quarters[i].length; j++) {
-					point = quarters[i][j];
-
-					dataLabel = point.dataLabel;
-					if (dataLabel) {
-						labelPos = point.labelPos;
-						visibility = VISIBLE;
-						x = labelPos[0];
-						y = labelPos[1];
-
-
-						// assume all labels have equal height
-						if (!labelHeight) {
-							labelHeight = dataLabel && dataLabel.getBBox().height;
-						}
-
-						// anticollision
-						if (outside) {
-							if (secondPass && point.rank < overlapping) {
-								visibility = HIDDEN;
-							} else if ((!lowerHalf && y < lastY + labelHeight) ||
-									(lowerHalf && y > lastY - labelHeight)) {
-								y = lastY + sign * labelHeight;
-								x = series.getX(y, i > 1);
-								if ((!lowerHalf && y + labelHeight > centerY) ||
-										(lowerHalf && y -labelHeight < centerY)) {
-									if (secondPass) {
-										visibility = HIDDEN;
-									} else {
-										overlapping++;
-									}
-								}
-							}
-						}
-
-						if (point.visible === false) {
-							visibility = HIDDEN;
-						}
-
-						if (visibility === VISIBLE) {
-							lastY = y;
-						}
-
-						if (secondPass) {
-
-							// move or place the data label
-							dataLabel
-								.attr({
-									visibility: visibility,
-									align: labelPos[6]
-								})[dataLabel.moved ? 'animate' : 'attr']({
-									x: x + options.x +
-										({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
-									y: y + options.y
-								});
-							dataLabel.moved = true;
-
-							// draw the connector
-							if (outside && connectorWidth) {
-								connector = point.connector;
-
-								connectorPath = [
-									M,
-									x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-									L,
-									x, y, // first break, next to the label
-									L,
-									labelPos[2], labelPos[3], // second break
-									L,
-									labelPos[4], labelPos[5] // base
-								];
-
-								if (connector) {
-									connector.animate({ d: connectorPath });
-									connector.attr('visibility', visibility);
-
-								} else {
-									point.connector = connector = series.chart.renderer.path(connectorPath).attr({
-										'stroke-width': connectorWidth,
-										stroke: options.connectorColor || '#606060',
-										visibility: visibility,
-										zIndex: 3
-									})
-									.translate(chart.plotLeft, chart.plotTop)
-									.add();
-								}
-							}
-						}
+				// if the slot next to currrent slot is free, the y value is allowed 
+				// to fall back to the natural position
+				y = slot.y;
+				if ((naturalY > y && slots[slotIndex + 1] !== null) ||
+						(naturalY < y &&  slots[slotIndex - 1] !== null)) {
+					y = naturalY;
+				}
+				
+				// get the x
+				x = series.getX(y, i);
+				
+				// move or place the data label
+				dataLabel
+					.attr({
+						visibility: visibility,
+						align: labelPos[6]
+					})[dataLabel.moved ? 'animate' : 'attr']({
+						x: x + options.x + 
+							({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
+						y: y + options.y
+					});
+				dataLabel.moved = true;
+				
+				// draw the connector
+				if (outside && connectorWidth) {
+					connector = point.connector;
+						
+					connectorPath = [
+						M,
+						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+						L,
+						x, y, // first break, next to the label
+						L,
+						labelPos[2], labelPos[3], // second break
+						L,
+						labelPos[4], labelPos[5] // base
+					];
+						
+					if (connector) {
+						connector.animate({ d: connectorPath });
+						connector.attr('visibility', visibility);
+					
+					} else {		
+						point.connector = connector = series.chart.renderer.path(connectorPath).attr({
+							'stroke-width': connectorWidth,
+							stroke: options.connectorColor || '#606060',
+							visibility: visibility,
+							zIndex: 3
+						})
+						.translate(chart.plotLeft, chart.plotTop)
+						.add();
 					}
 				}
 			}
