@@ -21,8 +21,8 @@ var buttonGradient = {
 	units = [].concat(defaultPlotOptions.line.dataGrouping.units); // copy
 
 // add more resolution to units
-units[4][1] = [1, 2, 3, 4]; // allow more days
-units[5][1] = [1, 2, 3]; // allow more weeks
+units[4] = [DAY, [1, 2, 3, 4]]; // allow more days
+units[5] = [WEEK, [1, 2, 3]]; // allow more weeks
 
 extend(defaultOptions, {
 	navigator: {

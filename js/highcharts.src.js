@@ -569,36 +569,28 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 			YEAR, oneYear
 		),
 		units = unitsOption || [[
-			'millisecond',					// unit name
-			//1,								// fixed incremental unit
+			MILLISECOND,					// unit name
 			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
 		], [
-			'second',						// unit name
-			//oneSecond,						// fixed incremental unit
+			SECOND,							// unit name
 			[1, 2, 5, 10, 15, 30]			// allowed multiples
 		], [
-			'minute',						// unit name
-			//oneMinute,						// fixed incremental unit
+			MINUTE,							// unit name
 			[1, 2, 5, 10, 15, 30]			// allowed multiples
 		], [
-			'hour',							// unit name
-			//oneHour,						// fixed incremental unit
+			HOUR,							// unit name
 			[1, 2, 3, 4, 6, 8, 12]			// allowed multiples
 		], [
-			'day',							// unit name
-			//oneDay,							// fixed incremental unit
+			DAY,							// unit name
 			[1, 2]							// allowed multiples
 		], [
-			'week',							// unit name
-			//oneWeek,						// fixed incremental unit
+			WEEK,							// unit name
 			[1, 2]							// allowed multiples
 		], [
-			'month',
-			//oneMonth,
+			MONTH,
 			[1, 2, 3, 4, 6]
 		], [
-			'year',
-			//oneYear,
+			YEAR,
 			null
 		]],
 

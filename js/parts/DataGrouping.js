@@ -31,8 +31,8 @@ seriesProto.processData = function () {
 		dataOptions = options.data,
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
-		//groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
-		groupPixelWidth = dataGroupingOptions.groupPixelWidth,
+		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
+		//groupPixelWidth = dataGroupingOptions.groupPixelWidth,
 		maxPoints = plotSizeX / groupPixelWidth,
 		approximation = dataGroupingOptions.approximation,
 		summarize = approximation === 'average' || approximation === 'sum',
@@ -45,15 +45,15 @@ seriesProto.processData = function () {
 
 	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
 	// group pixel width 
-	/*if (!xAxis.groupPixelWidth) {
+	if (!xAxis.groupPixelWidth) {
 		i = chartSeries.length;
 		while (i--) {
-			if (chartSeries[i].xAxis == xAxis) {
-			groupPixelWidth = mathMax(groupPixelWidth, chartSeries[i].options.dataGrouping.groupPixelWidth);
+			if (chartSeries[i].xAxis === xAxis) {
+				groupPixelWidth = mathMax(groupPixelWidth, chartSeries[i].options.dataGrouping.groupPixelWidth);
+			}
 		}
+		xAxis.groupPixelWidth = groupPixelWidth;
 	}
-	xAxis.groupPixelWidth = groupPixelWidth;    
-	}*/
 
 	// clear previous groups
 	each(groupedData || [], function (point, i) {
@@ -183,57 +183,61 @@ seriesProto.destroy = function () {
 
 
 // Extend the plot options
-var dateTimeLabelFormats = {
-	second: '%A, %b %e, %H:%M:%S',
-	minute: '%A, %b %e, %H:%M',
-	hour: '%A, %b %e, %H:%M',
-	day: '%A, %b %e, %Y',
-	week: 'Week from %A, %b %e, %Y',
-	month: '%B %Y',
-	year: '%Y'
+/*jslint white: true*/
+var commonOptions = {
+	approximation: 'average', // average, open, high, low, close, sum
+	groupPixelWidth: 2,
+	dateTimeLabelFormats: hash(
+		SECOND, '%A, %b %e, %H:%M:%S',
+		MINUTE, '%A, %b %e, %H:%M',
+		HOUR, '%A, %b %e, %H:%M',
+		DAY, '%A, %b %e, %Y',
+		WEEK, 'Week from %A, %b %e, %Y',
+		MONTH, '%B %Y',
+		YEAR, '%Y'
+	),
+
+	// smoothed = false, // enable this for navigator series only
+	units: [[
+		MILLISECOND,          // unit name
+		[1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
+	], [
+		SECOND,              // unit name
+		[1, 2, 5, 10, 15, 30]      // allowed multiples
+	], [
+		MINUTE,              // unit name
+		[1, 2, 5, 10, 15, 30]      // allowed multiples
+	], [
+		HOUR,              // unit name
+		[1, 2, 3, 4, 6, 8, 12]      // allowed multiples
+	], [
+		DAY,              // unit name
+		[1]                // allowed multiples
+	], [
+		WEEK,              // unit name
+		[1]                // allowed multiples
+	], [
+		MONTH,
+		[1, 3, 6]
+	], [
+		YEAR,
+		null
+	]]
 };
+/*jslint white: false*/
 
 // line types
 defaultPlotOptions.line[DATA_GROUPING] =
 	defaultPlotOptions.spline[DATA_GROUPING] =
 	defaultPlotOptions.area[DATA_GROUPING] =
-	defaultPlotOptions.areaspline[DATA_GROUPING] = {
-		approximation: 'average', // average, open, high, low, close, sum
-		groupPixelWidth: 2,
-		dateTimeLabelFormats: dateTimeLabelFormats, // todo: move to tooltip options?
-		// smoothed = false, // enable this for navigator series only
-		units: [[
-			'millisecond',					// unit name
-			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
-		], [
-			'second',						// unit name
-			[1, 2, 5, 10, 15, 30]			// allowed multiples
-		], [
-			'minute',						// unit name
-			[1, 2, 5, 10, 15, 30]			// allowed multiples
-		], [
-			'hour',							// unit name
-			[1, 2, 3, 4, 6, 8, 12]			// allowed multiples
-		], [
-			'day',							// unit name
-			[1]								// allowed multiples
-		], [
-			'week',							// unit name
-			[1]								// allowed multiples
-		], [
-			'month',
-			[1, 3, 6]
-		], [
-			'year',
-			null
-		]]
-};
+	defaultPlotOptions.areaspline[DATA_GROUPING] = commonOptions;
+
 // bar-like types (OHLC and candleticks inherit this as the classes are not yet built)
-defaultPlotOptions.column[DATA_GROUPING] = {
+defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
 		approximation: 'sum',
-		groupPixelWidth: 10,
-		dateTimeLabelFormats: dateTimeLabelFormats
-};
+		groupPixelWidth: 10
+});
+
 /* ****************************************************************************
  * End data grouping module												   *
  ******************************************************************************/
