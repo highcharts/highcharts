@@ -1,6 +1,14 @@
 var AdaptersTest = TestCase('AdaptersTest');
 
 /**
+ * At tear down, log output from the event monitor and reset.
+ */
+AdaptersTest.prototype.tearDown = function() {
+	eventMonitor.log();
+	eventMonitor.reset();
+};
+
+/**
  * Test the each method.
  */
 AdaptersTest.prototype.testEach = function() {
@@ -104,19 +112,19 @@ AdaptersTest.prototype.testObjectEventSelfRemove = function() {
 	var o = {clickedCount: 0},
 		f = function() {
 			o.clickedCount++;
-			removeEvent(o, 'myEvent', f);
+			removeEvent(o, 'customEvent', f);
 		};
 
 	// Setup event handler
-	addEvent(o, 'myEvent', f);
+	addEvent(o, 'customEvent', f);
 	assertEquals('not yet clicked', 0, o.clickedCount);
 
 	// Fire it once
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('now clicked', 1, o.clickedCount);
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('clicked again, no change', 1, o.clickedCount);
 };
 
@@ -125,20 +133,22 @@ AdaptersTest.prototype.testObjectEventSelfRemove = function() {
  *
  * The counter is just a property of an object.
  */
-AdaptersTest.prototype.tXstObjectEventChainedRemove = function() {
+AdaptersTest.prototype.testObjectEventChainedRemove = function() {
 	var o = {clickedCount: 0},
 		f = function() {
 			o.clickedCount++;
 		};
 
-	// Add a runf handler
+	// Add a inner event handler
 	addEvent(o, 'innerEvent', f);
 
-	// remove it on chart destroy
-	addEvent(document, 'outerEvent', function() {
-		jstestdriver.console.log('about to remove innerEvent');
+	var removeHandler = function() {
 		removeEvent(o, 'innerEvent', f);
-	});
+		removeEvent(document, 'outerEvent', removeHandler);
+	}
+
+	// remove it on chart destroy
+	addEvent(document, 'outerEvent', removeHandler);
 
 	// Fire it once
 	fireEvent(o, 'innerEvent', null, null);
@@ -167,18 +177,18 @@ AdaptersTest.prototype.testObjectEventRemoveAll = function() {
 		};
 
 	// Setup event handler
-	addEvent(o, 'myEvent', f);
+	addEvent(o, 'customEvent', f);
 	assertEquals('not yet clicked', 0, o.clickedCount);
 
 	// Fire it once
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('now clicked', 1, o.clickedCount);
 
 	// Remove all handlers
 	removeEvent(o);
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('clicked again, no change', 1, o.clickedCount);
 };
 
@@ -195,18 +205,18 @@ AdaptersTest.prototype.testObjectEventRemoveType = function() {
 		};
 
 	// Setup event handler
-	addEvent(o, 'myEvent', f);
+	addEvent(o, 'customEvent', f);
 	assertEquals('not yet clicked', 0, o.clickedCount);
 
 	// Fire it once
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('now clicked', 1, o.clickedCount);
 
 	// Remove the handler (Only specifying event type)
-	removeEvent(o, 'myEvent');
+	removeEvent(o, 'customEvent');
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('clicked again, no change', 1, o.clickedCount);
 };
 
@@ -223,18 +233,18 @@ AdaptersTest.prototype.testObjectEventRemoveHandler = function() {
 		};
 
 	// Setup event handler
-	addEvent(o, 'myEvent', f);
+	addEvent(o, 'customEvent', f);
 	assertEquals('not yet clicked', 0, o.clickedCount);
 
 	// Fire it once
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('now clicked', 1, o.clickedCount);
 
 	// Remove the handler (Most fine-grained)
-	removeEvent(o, 'myEvent', f);
+	removeEvent(o, 'customEvent', f);
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'myEvent', null, null);
+	fireEvent(o, 'customEvent', null, null);
 	assertEquals('clicked again, no change', 1, o.clickedCount);
 };
 
@@ -250,21 +260,42 @@ AdaptersTest.prototype.testDomElementEventRemoveAll = function() {
 			o.innerHTML = pInt(o.innerHTML) + 1;
 		};
 
+	// 1. Test custom events
 	// Setup event handler
-	addEvent(o, 'my:Event', f);
+	addEvent(o, 'customEvent', f);
+	assertEquals('custom not yet clicked', 0, pInt(o.innerHTML));
+
+	// Fire it once
+	fireEvent(o, 'customEvent', null, null);
+	assertEquals('custom now clicked', 1, pInt(o.innerHTML));
+
+	// Remove all handlers
+	removeEvent(o);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'customEvent', null, null);
+	assertEquals('custom clicked again, no change', 1, pInt(o.innerHTML));
+	
+
+	// 2. Test HTML events
+	// Reset the counter
+	o.innerHTML = 0;
+
+	// Setup event handler
+	addEvent(o, 'click', f);
 	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
 
 	// Fire it once
-	fireEvent(o, 'my:Event', null, null);
+	this.safeFireEvent(o, 'click');
 	assertEquals('now clicked', 1, pInt(o.innerHTML));
 
 	// Remove all handlers
 	removeEvent(o);
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'my:Event', null, null);
+	this.safeFireEvent(o, 'click');
 	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
-}
+};
 
 /**
  * Test event add/fire/remove on DOM element.
@@ -278,21 +309,41 @@ AdaptersTest.prototype.testDomElementEventRemoveType = function() {
 			o.innerHTML = pInt(o.innerHTML) + 1;
 		};
 
+	// 1. Test custom events
 	// Setup event handler
-	addEvent(o, 'my:Event', f);
+	addEvent(o, 'customEvent', f);
+	assertEquals('custom not yet clicked', 0, pInt(o.innerHTML));
+
+	// Fire it once
+	fireEvent(o, 'customEvent', null, null);
+	assertEquals('custom now clicked', 1, pInt(o.innerHTML));
+
+	// Remove the handler (Only specifying event type)
+	removeEvent(o, 'customEvent');
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'customEvent', null, null);
+	assertEquals('custom clicked again, no change', 1, pInt(o.innerHTML));
+
+	// 2. Test HTML events
+	// Reset the counter
+	o.innerHTML = 0;
+
+	// Setup event handler
+	addEvent(o, 'click', f);
 	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
 
 	// Fire it once
-	fireEvent(o, 'my:Event', null, null);
+	this.safeFireEvent(o, 'click');
 	assertEquals('now clicked', 1, pInt(o.innerHTML));
 
 	// Remove the handler (Only specifying event type)
-	removeEvent(o, 'my:Event');
+	removeEvent(o, 'click');
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'my:Event', null, null);
+	this.safeFireEvent(o, 'click');
 	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
-}
+};
 
 /**
  * Test event add/fire/remove on DOM element.
@@ -306,19 +357,39 @@ AdaptersTest.prototype.testDomElementEventRemoveHandler = function() {
 			o.innerHTML = pInt(o.innerHTML) + 1;
 		};
 
+	// 1. Test custom events.
 	// Setup event handler
-	addEvent(o, 'my:Event', f);
+	addEvent(o, 'customEvent', f);
+	assertEquals('custom not yet clicked', 0, pInt(o.innerHTML));
+
+	// Fire it once
+	fireEvent(o, 'customEvent', null, null);
+	assertEquals('custom clicked', 1, pInt(o.innerHTML));
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'customEvent', null, null);
+	assertEquals('custom clicked again, no change', 1, pInt(o.innerHTML));
+
+	// 2. Test HTML events
+	// Reset the counter
+	o.innerHTML = 0;
+
+	// Setup event handler
+	addEvent(o, 'click', f);
 	assertEquals('not yet clicked', 0, pInt(o.innerHTML));
 
 	// Fire it once
-	fireEvent(o, 'my:Event', null, null);
+	this.safeFireEvent(o, 'click');
 	assertEquals('now clicked', 1, pInt(o.innerHTML));
 
 	// Remove the handler (Most fine-grained)
-	removeEvent(o, 'my:Event', f);
+	removeEvent(o, 'click', f);
 
 	// Fire it again, should do nothing, since the handler is removed
-	fireEvent(o, 'my:Event', null, null);
+	this.safeFireEvent(o, 'click');
 	assertEquals('clicked again, no change', 1, pInt(o.innerHTML));
 };
 
@@ -330,8 +401,122 @@ AdaptersTest.prototype.testChartEvent = function() {
 AdaptersTest.prototype.testDocumentEvent = function() {
 	TODO: Implement
 }
-
-AdaptersTest.prototype.testWindowEvent = function() {
-	TODO: Implement
-}
 */
+
+AdaptersTest.prototype.tXstWindowEvent = function() {
+	var o = {clickedCount: 0},
+		f = function() {
+			o.clickedCount++;
+		};
+
+	// 1. Test custom events.
+	// Setup event handler
+	addEvent(window, 'customEvent', f);
+	assertEquals('custom not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(window, 'customEvent', null, null);
+	assertEquals('custom clicked', 1, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(window, 'customEvent', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(window, 'customEvent', null, null);
+	assertEquals('custom clicked again, no change', 1, o.clickedCount);
+
+	// 2. Test HTML events
+	// Reset the counter
+	o.clickedCount = 0;
+
+	// Setup event handler
+	addEvent(window, 'mousemove', f);
+	assertEquals('not yet moved', 0, o.clickedCount);
+
+	// Fire it once
+	this.safeFireEvent(window, 'mousemove')
+	assertEquals('now moved', 1, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(window, 'mousemove', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	this.safeFireEvent(window, 'mousemove')
+	assertEquals('mousemove again, no change', 1, o.clickedCount);
+};
+
+
+/**
+ * A safe way of doing fireEvent. Prototype does not support fireing
+ * HTML events it seems.
+ */
+AdaptersTest.prototype.safeFireEvent = function(target, eventName) {
+	if (!this.isPrototypeAdapter()) {
+		fireEvent(target, eventName);
+	} else {
+		this.simulate(target, eventName);
+	}
+}
+
+/**
+ * Simple way to test if we are using the prototype adapter. The prototype
+ * library does not fire dom events properly so, use this test to shortcut those tests.
+ * Uses implementation details of the adapter.
+ */
+AdaptersTest.prototype.isPrototypeAdapter = function() {
+	return globalAdapter && globalAdapter._extend;
+};
+
+/**
+ * Simulates events of type HTMLEvent and MouseEvent.
+ */
+AdaptersTest.prototype.simulate = function(element, eventName) {
+	var eventMatchers = {
+			'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
+			'MouseEvents': /^(?:click|dblclick|mouse(?:down|up|over|move|out))$/
+		},
+		defaultOptions = {
+			pointerX: 0,
+			pointerY: 0,
+			button: 0,
+			ctrlKey: false,
+			altKey: false,
+			shiftKey: false,
+			metaKey: false,
+			bubbles: true,
+			cancelable: true
+		},
+		options = extend(defaultOptions, arguments[2] || {}),
+		oEvent, eventType = null;
+
+	for (var name in eventMatchers) {
+		if (eventMatchers[name].test(eventName)) { eventType = name; break; }
+	}
+	
+	if (!eventType)
+		throw new SyntaxError('Only HTMLEvents and MouseEvents interfaces are supported');
+
+	if (document.createEvent) {
+		oEvent = document.createEvent(eventType);
+		if (eventType == 'HTMLEvents')
+		{
+			oEvent.initEvent(eventName, options.bubbles, options.cancelable);
+		}
+		else
+		{
+			oEvent.initMouseEvent(eventName, options.bubbles, options.cancelable, document.defaultView,
+				options.button, options.pointerX, options.pointerY, options.pointerX, options.pointerY,
+				options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, options.button, element);
+		}
+		element.dispatchEvent(oEvent);
+	} else {
+		options.clientX = options.pointerX;
+		options.clientY = options.pointerY;
+		var evt = document.createEventObject();
+		oEvent = extend(evt, options);
+		element.fireEvent('on' + eventName, oEvent);
+	}
+
+	return element;
+}
+

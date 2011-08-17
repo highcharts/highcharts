@@ -20,7 +20,7 @@
 // Adapter interface between prototype and the Highcarts charting library
 var HighchartsAdapter = (function() {
 
-var hasEffect = typeof Effect != 'undefined';
+var hasEffect = typeof Effect !== 'undefined';
 
 return {
 
@@ -44,7 +44,7 @@ return {
 					from = element.attr(attr);
 
 					// special treatment for paths
-					if (attr == 'd') {
+					if (attr === 'd') {
 						this.paths = Highcharts.pathAnim.init(
 							element,
 							element.d,
@@ -85,11 +85,23 @@ return {
 		}
 	},
 
+	/**
+	 * Custom events in prototype needs to be namespaced. This method adds a namespace 'h:' in front of
+	 * events that are not recognized as native.
+	 */
+	addNS: function(eventName) {
+		var HTMLEvents = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
+			MouseEvents = /^(?:click|mouse(?:down|up|over|move|out))$/;
+		return (HTMLEvents.test(eventName) || MouseEvents.test(eventName)) ?
+			eventName :
+			'h:' + eventName;
+	},
+
 	// el needs an event to be attached. el is not necessarily a dom element
 	addEvent: function(el, event, fn) {
 		if (el.addEventListener || el.attachEvent) {
-			Event.observe($(el), event, fn);
-
+			Event.observe($(el), HighchartsAdapter.addNS(event), fn);
+		
 		} else {
 			HighchartsAdapter._extend(el);
 			el._highcharts_observe(event, fn);
@@ -137,12 +149,12 @@ return {
 	// fire an event based on an event name (event) and an object (el).
 	// again, el may not be a dom element
 	fireEvent: function(el, event, eventArguments, defaultFunction){
-		if (event.preventDefault) {
+		if (event.preventDefault) { // TODO: event is a string here so this doesnt make sense at all
 			defaultFunction = null;
 		}
 
 		if (el.fire) {
-			el.fire(event, eventArguments);
+			el.fire(HighchartsAdapter.addNS(event), eventArguments);
 		} else if (el._highcharts_extended) {
 			el._highcharts_fire(event, eventArguments);
 		}
@@ -154,7 +166,12 @@ return {
 
 	removeEvent: function(el, event, handler){
 		if ($(el).stopObserving) {
+			if (event) {
+				event = HighchartsAdapter.addNS(event);
+			}
 			$(el).stopObserving(event, handler);
+		} if (window == el) {
+			Event.stopObserving(el, event, handler);
 		} else {
 			HighchartsAdapter._extend(el);
 			el._highcharts_stop_observing(event, handler);
@@ -217,12 +234,12 @@ return {
 	},*/
 	merge: function() { // the built-in prototype merge function doesn't do deep copy
 		function doCopy(copy, original) {
-			var value;
-
-			for (var key in original) {
+			var value, key;
+				
+			for (key in original) {
 				value = original[key];
-				if (value && typeof value == 'object' && value.constructor != Array &&
-						typeof value.nodeType !== 'number') {
+				if  (value && typeof value === 'object' && value.constructor !== Array && 
+						typeof value.nodeType !== 'number') { 
 					copy[key] = doCopy(copy[key] || {}, value); // copy
 
 				} else {
@@ -234,11 +251,12 @@ return {
 
 		function merge() {
 			var args = arguments,
+				i,
 				retVal = {};
-
-			for (var i = 0; i < args.length; i++) {
-				retVal = doCopy(retVal, args[i])
-
+		
+			for (i = 0; i < args.length; i++) {
+				retVal = doCopy(retVal, args[i]);
+			
 			}
 			return retVal;
 		}
@@ -281,4 +299,4 @@ return {
 		}
 	}
 };
-})();
+}());

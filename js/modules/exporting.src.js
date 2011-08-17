@@ -26,7 +26,7 @@ var HC = Highcharts,
 	mathMax = math.max,
 	doc = document,
 	win = window,
-	hasTouch = 'ontouchstart' in doc.documentElement,
+	hasTouch = doc.documentElement.ontouchstart !== undefined,
 	M = 'M',
 	L = 'L',
 	DIV = 'div',
@@ -35,7 +35,7 @@ var HC = Highcharts,
 	PREFIX = 'highcharts-',
 	ABSOLUTE = 'absolute',
 	PX = 'px',
-	UNDEFINED = undefined,
+	UNDEFINED,
 
 	// Add language and get the defaultOptions
 	defaultOptions = HC.setOptions({
@@ -286,7 +286,7 @@ extend(Chart.prototype, {
 		// IE9 beta bugs with innerHTML. Test again with final IE9.
 		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
 			.replace(/&quot;/g, "'");
-		if (svg.match(/ xmlns="/g).length == 2) {
+		if (svg.match(/ xmlns="/g).length === 2) {
 			svg = svg.replace(/xmlns="[^"]+"/, '');
 		}
 
@@ -355,7 +355,7 @@ extend(Chart.prototype, {
 
 		// hide all body content
 		each(childNodes, function(node, i) {
-			if (node.nodeType == 1) {
+			if (node.nodeType === 1) {
 				origDisplay[i] = node.style.display;
 				node.style.display = NONE;
 			}
@@ -375,7 +375,7 @@ extend(Chart.prototype, {
 
 			// restore all body content
 			each(childNodes, function(node, i) {
-				if (node.nodeType == 1) {
+				if (node.nodeType === 1) {
 					node.style.display = origDisplay[i];
 				}
 			});
@@ -660,4 +660,4 @@ Chart.prototype.callbacks.push(function(chart) {
 });
 
 
-})();
+}());

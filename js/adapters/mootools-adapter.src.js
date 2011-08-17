@@ -15,7 +15,7 @@
 var win = window,
 	legacy = !!win.$merge,
 	$extend = win.$extend || function() {
-		return Object.append.apply(Object, arguments)
+		return Object.append.apply(Object, arguments);
 	};
 
 win.HighchartsAdapter = {
@@ -81,7 +81,7 @@ win.HighchartsAdapter = {
 			el.setStyle = function() { // property value is given as array in Moo - break it down
 				var args = arguments;
 				el.attr.call(el, args[0], args[1][0]);
-			}
+			};
 			// dirty hack to trick Moo into handling el as an element wrapper
 			el.$family = el.uid = true;
 		}
@@ -170,9 +170,9 @@ win.HighchartsAdapter = {
 	 * @param {Function} fn Event handler
 	 */
 	addEvent: function (el, type, fn) {
-		if (typeof type == 'string') { // chart broke due to el being string, type function
+		if (typeof type === 'string') { // chart broke due to el being string, type function
 
-			if (type == 'unload') { // Moo self destructs before custom unload events
+			if (type === 'unload') { // Moo self destructs before custom unload events
 				type = 'beforeunload';
 			}
 
@@ -192,11 +192,11 @@ win.HighchartsAdapter = {
 
 	removeEvent: function(el, type, fn) {
 		if (type) {
-			if (type == 'unload') { // Moo self destructs before custom unload events
+			if (type === 'unload') { // Moo self destructs before custom unload events
 				type = 'beforeunload';
 			}
 
-			if (defined(fn)) {
+			if (fn) {
 				el.removeEvent(type, fn);
 			} else {
 				el.removeEvents(type);
@@ -238,6 +238,6 @@ win.HighchartsAdapter = {
 			el.fx.cancel();
 		}
 	}
-}
+};
 
-})();
+}());
