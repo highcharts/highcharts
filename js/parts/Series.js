@@ -23,7 +23,7 @@ Point.prototype = {
 				point.options = {};
 			}
 			point.color = point.options.color = point.color || defaultColors[counters.color++];
-			
+
 			// loop back to zero
 			counters.wrapColor(defaultColors.length);
 		}
@@ -783,6 +783,7 @@ Series.prototype = {
 			processedYData = series.yData,
 			dataLength = processedXData.length,
 			cropStart = 0,
+			cropped,
 			i, // loop variable
 			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
 
@@ -814,9 +815,11 @@ Series.prototype = {
 				}
 				processedXData = processedXData.slice(cropStart, cropEnd);
 				processedYData = processedYData.slice(cropStart, cropEnd);
+				cropped = true;
 			}
 		}
 
+		series.cropped = cropped; // undefined or true
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
@@ -1014,7 +1017,7 @@ Series.prototype = {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			low = points[i - 1] ? points[i - 1]._high + 1 : 0;
-			high = point._high = points[i + 1] ? 
+			high = point._high = points[i + 1] ?
 				(mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
 				plotSize;
 
@@ -1337,10 +1340,10 @@ Series.prototype = {
 			data = series.data || [],
 			point,
 			prop;
-		
+
 		// add event hook
 		fireEvent(series, 'destroy');
-		
+
 		// remove all events
 		removeEvent(series);
 
@@ -1397,7 +1400,7 @@ Series.prototype = {
 				str,
 				dataLabelsGroup = series.dataLabelsGroup,
 				chart = series.chart,
-				renderer = chart.renderer, 
+				renderer = chart.renderer,
 				inverted = chart.inverted,
 				seriesType = series.type,
 				color,
@@ -1446,7 +1449,7 @@ Series.prototype = {
 				color = null;
 			}
 			options.style.color = pick(color, series.color, 'black');
-		
+
 			// make the labels for each point
 			each(points, function (point, i) {
 				var barX = point.barX,
@@ -1460,12 +1463,12 @@ Series.prototype = {
 				str = options.formatter.call(point.getLabelConfig());
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
-				
+
 				// in columns, align the string to the column
 				if (seriesType === 'column') {
 					x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
 				}
-				
+
 				if (inverted && point.y < 0) {
 					align = 'right';
 					x -= 10;

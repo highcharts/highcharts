@@ -101,7 +101,7 @@ function Chart(options, callback) {
 			opposite = options.opposite, // needed in setOptions
 			horiz = inverted ? !isXAxis : isXAxis,
 			side = horiz ?
-				(opposite ? 0 : 2) : // top : bottom 
+				(opposite ? 0 : 2) : // top : bottom
 				(opposite ? 1 : 3),  // right : left
 			stacks = {};
 
@@ -799,12 +799,12 @@ function Chart(options, callback) {
 							var isNegative,
 								pointStack,
 								key,
+								cropped = serie.cropped,
+								xExtremes = serie.xAxis.getExtremes(),
 								j;
 
 							// get clipped and grouped data
 							serie.processData();
-
-							var start = +new Date();
 
 							xData = serie.processedXData;
 							yData = serie.processedYData;
@@ -813,12 +813,14 @@ function Chart(options, callback) {
 
 							// loop over the non-null y values and read them into a local array
 							for (i = 0; i < yDataLength; i++) {
+								x = xData[i];
 								y = yData[i];
-								if (y !== null && y !== UNDEFINED) {
+								if ((y !== null && y !== UNDEFINED &&
+									cropped) || (x >= xExtremes.min && x <= xExtremes.max)) {
+
 									// read stacked values into a stack based on the x value,
 									// the sign of y and the stack key
 									if (stacking) {
-										x = xData[i];
 										isNegative = y < 0;
 										pointStack = isNegative ? negPointStack : posPointStack;
 										key = isNegative ? negKey : stackKey;
@@ -1902,7 +1904,7 @@ function Chart(options, callback) {
 				formatter = options.formatter || defaultFormatter,
 				hoverPoints = chart.hoverPoints,
 				placedTooltipPoint;
-				
+
 			// shared tooltip, array is sent over
 			if (shared && !(point.series && point.series.noSharedTooltip)) {
 				plotY = 0;
@@ -2213,7 +2215,7 @@ function Chart(options, callback) {
 			if (tooltip) {
 				tooltip.hide();
 			}
-			
+
 			hoverX = null;
 		}
 
@@ -2290,12 +2292,12 @@ function Chart(options, callback) {
 			 */
 			container.onmousedown = function (e) {
 				e = normalizeMouseEvent(e);
-				
+
 				// issue #295, dragging not always working in Firefox
 				if (!hasTouch && e.preventDefault) {
 					e.preventDefault();
 				}
-				
+
 				// record the start position
 				chart.mouseIsDown = mouseIsDown = true;
 				mouseDownX = e.chartX;
@@ -2322,12 +2324,12 @@ function Chart(options, callback) {
 				var chartX = e.chartX,
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
-					
+
 				// cache chart position for issue #149 fix
 				if (!chartPosition) {
 					chartPosition = getPosition(container);
 				}
-					
+
 				// on touch devices, only trigger click if a handler is defined
 				if (hasTouch && e.type === 'touchstart') {
 					if (attr(e.target, 'isTracker')) {
@@ -2341,12 +2343,12 @@ function Chart(options, callback) {
 
 				// cancel on mouse outside
 				if (isOutsidePlot) {
-				
+
 					/*if (!lastWasOutsidePlot) {
-						// reset the tracker					
+						// reset the tracker
 						resetTracker();
 					}*/
-					
+
 					// drop the selection if any and reset mouseIsDown and hasDragged
 					//drop();
 					if (chartX < plotLeft) {
@@ -2446,19 +2448,19 @@ function Chart(options, callback) {
 			 * When the mouse leaves the container, hide the tracking (tooltip).
 			 */
 			addEvent(container, 'mouseleave', resetTracker);
-			
+
 			// issue #149 workaround
-			// The mouseleave event above does not always fire. Whenever the mouse is moving 
+			// The mouseleave event above does not always fire. Whenever the mouse is moving
 			// outside the plotarea, hide the tooltip
 			addEvent(doc, 'mousemove', function (e) {
-				if (chartPosition && 
-						!isInsidePlot(e.pageX - chartPosition.left - plotLeft, 
+				if (chartPosition &&
+						!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
 							e.pageY - chartPosition.top - plotTop)) {
 					resetTracker();
 				}
 			});
 
-			
+
 			container.ontouchstart = function (e) {
 				// For touch devices, use touchmove to zoom
 				if (zoomX || zoomY) {
@@ -4161,7 +4163,7 @@ function Chart(options, callback) {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
-					}				
+					}
 					chart.resize(chartWidth *= 1.1, chartHeight *= 1.1);
 				});
 			$('<button>-</button>')
@@ -4170,25 +4172,25 @@ function Chart(options, callback) {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
-					}							
+					}
 					chart.resize(chartWidth *= 0.9, chartHeight *= 0.9);
 				});
 			$('<button>1:1</button>')
 				.insertBefore($container)
-				.click(function() {				
+				.click(function() {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
-					}							
+					}
 					chart.resize(origChartWidth, origChartHeight);
 				});
 		}
 	})
 	*/
-	
-	
-	
-		
+
+
+
+
 	firstRender();
 
 
