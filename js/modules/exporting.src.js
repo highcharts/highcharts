@@ -10,7 +10,7 @@
 // JSLint options:
 /*global Highcharts, document, window, Math, setTimeout */
 
-(function() { // encapsulate
+(function () { // encapsulate
 
 // create shortcuts
 var HC = Highcharts,
@@ -115,42 +115,42 @@ defaultOptions.exporting = {
 			_titleKey: 'exportButtonTitle',
 			menuItems: [{
 				textKey: 'downloadPNG',
-				onclick: function() {
+				onclick: function () {
 					this.exportChart();
 				}
 			}, {
 				textKey: 'downloadJPEG',
-				onclick: function() {
+				onclick: function () {
 					this.exportChart({
 						type: 'image/jpeg'
 					});
 				}
 			}, {
 				textKey: 'downloadPDF',
-				onclick: function() {
+				onclick: function () {
 					this.exportChart({
 						type: 'application/pdf'
 					});
 				}
 			}, {
 				textKey: 'downloadSVG',
-				onclick: function() {
+				onclick: function () {
 					this.exportChart({
 						type: 'image/svg+xml'
 					});
 				}
-			}
+			},
 			// Enable this block to add "View SVG" to the dropdown menu
 			//*
-			, {
+			{
 
 				text: 'View SVG',
-				onclick: function() {
+				onclick: function () {
 					var svg = this.getSVG()
 						.replace(/</g, '\n&lt;')
 						.replace(/>/g, '&gt;');
 
-					doc.body.innerHTML = '<pre>'+ svg +'</pre>';
+					doc.body.innerHTML = '<pre>' + svg + '</pre>';
 				}
 			} // */
 			]
@@ -163,7 +163,7 @@ defaultOptions.exporting = {
 			symbolFill: '#B5C9DF',
 			hoverSymbolFill: '#779ABF',
 			_titleKey: 'printButtonTitle',
-			onclick: function() {
+			onclick: function () {
 				this.print();
 			}
 		}
@@ -178,7 +178,7 @@ extend(Chart.prototype, {
 	 *
 	 * @param additionalOptions {Object} Additional chart options for the generated SVG representation
 	 */
-	getSVG: function(additionalOptions) {
+	getSVG: function (additionalOptions) {
 		var chart = this,
 			chartCopy,
 			sandbox,
@@ -191,9 +191,9 @@ extend(Chart.prototype, {
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
 		if (!doc.createElementNS) {
-			doc.createElementNS = function(ns, tagName) {
+			doc.createElementNS = function (ns, tagName) {
 				var elem = doc.createElement(tagName);
-				elem.getBBox = function() {
+				elem.getBBox = function () {
 					return HC.Renderer.prototype.Element.prototype.getBBox.apply({ element: elem });
 				};
 				return elem;
@@ -218,7 +218,7 @@ extend(Chart.prototype, {
 
 		// prepare for replicating the chart
 		options.series = [];
-		each(chart.series, function(serie) {
+		each(chart.series, function (serie) {
 			seriesOptions = serie.options;
 
 			seriesOptions.animation = false; // turn off animation
@@ -237,8 +237,8 @@ extend(Chart.prototype, {
 		chartCopy = new Highcharts.Chart(options);
 
 		// reflect axis extremes in the export
-		each(['xAxis', 'yAxis'], function(axisType) {
-			each (chart[axisType], function(axis, i) {
+		each(['xAxis', 'yAxis'], function (axisType) {
+			each(chart[axisType], function (axis, i) {
 				var axisCopy = chartCopy[axisType][i],
 					extremes = axis.getExtremes(),
 					userMin = extremes.userMin,
@@ -279,7 +279,7 @@ extend(Chart.prototype, {
 			.replace(/class=([^" ]+)/g, 'class="$1"')
 			.replace(/ transform /g, ' ')
 			.replace(/:(path|rect)/g, '$1')
-			.replace(/style="([^"]+)"/g, function(s) {
+			.replace(/style="([^"]+)"/g, function (s) {
 				return s.toLowerCase();
 			});
 
@@ -298,7 +298,7 @@ extend(Chart.prototype, {
 	 * @param {Object} options Exporting options. Possible members are url, type and width.
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
-	exportChart: function(options, chartOptions) {
+	exportChart: function (options, chartOptions) {
 		var form,
 			chart = this,
 			svg = chart.getSVG(chartOptions);
@@ -315,7 +315,7 @@ extend(Chart.prototype, {
 		}, doc.body);
 
 		// add the values
-		each(['filename', 'type', 'width', 'svg'], function(name) {
+		each(['filename', 'type', 'width', 'svg'], function (name) {
 			createElement('input', {
 				type: HIDDEN,
 				name: name,
@@ -338,7 +338,7 @@ extend(Chart.prototype, {
 	/**
 	 * Print the chart
 	 */
-	print: function() {
+	print: function () {
 
 		var chart = this,
 			container = chart.container,
@@ -354,7 +354,7 @@ extend(Chart.prototype, {
 		chart.isPrinting = true;
 
 		// hide all body content
-		each(childNodes, function(node, i) {
+		each(childNodes, function (node, i) {
 			if (node.nodeType === 1) {
 				origDisplay[i] = node.style.display;
 				node.style.display = NONE;
@@ -368,13 +368,13 @@ extend(Chart.prototype, {
 		win.print();
 
 		// allow the browser to prepare before reverting
-		setTimeout(function() {
+		setTimeout(function () {
 
 			// put the chart back in
 			origParent.appendChild(container);
 
 			// restore all body content
-			each(childNodes, function(node, i) {
+			each(childNodes, function (node, i) {
 				if (node.nodeType === 1) {
 					node.style.display = origDisplay[i];
 				}
@@ -396,13 +396,13 @@ extend(Chart.prototype, {
 	 * @param {Number} width The width of the opener button
 	 * @param {Number} height The height of the opener button
 	 */
-	contextMenu: function(name, items, x, y, width, height) {
+	contextMenu: function (name, items, x, y, width, height) {
 		var chart = this,
 			navOptions = chart.options.navigation,
 			menuItemStyle = navOptions.menuItemStyle,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
-			cacheName = 'cache-'+ name,
+			cacheName = 'cache-' + name,
 			menu = chart[cacheName],
 			menuPadding = mathMax(width, height), // for mouse leave detection
 			boxShadow = '3px 3px 10px #888',
@@ -427,10 +427,10 @@ extend(Chart.prototype, {
 					MozBoxShadow: boxShadow,
 					WebkitBoxShadow: boxShadow,
 					boxShadow: boxShadow
-				}, navOptions.menuStyle) , menu);
+				}, navOptions.menuStyle), menu);
 
 			// hide on mouse out
-			hide = function() {
+			hide = function () {
 				css(menu, { display: NONE });
 			};
 
@@ -438,13 +438,13 @@ extend(Chart.prototype, {
 
 
 			// create the items
-			each(items, function(item) {
+			each(items, function (item) {
 				if (item) {
 					var div = createElement(DIV, {
-						onmouseover: function() {
+						onmouseover: function () {
 							css(this, navOptions.menuItemHoverStyle);
 						},
-						onmouseout: function() {
+						onmouseout: function () {
 							css(this, menuItemStyle);
 						},
 						innerHTML: item.text || HC.getOptions().lang[item.textKey]
@@ -452,7 +452,7 @@ extend(Chart.prototype, {
 						cursor: 'pointer'
 					}, menuItemStyle), innerMenu);
 
-					div[hasTouch ? 'ontouchstart' : 'onclick'] = function() {
+					div[hasTouch ? 'ontouchstart' : 'onclick'] = function () {
 						hide();
 						item.onclick.apply(chart, arguments);
 					};
@@ -485,7 +485,7 @@ extend(Chart.prototype, {
 	/**
 	 * Add the export button to the chart
 	 */
-	addButton: function(options) {
+	addButton: function (options) {
 		var chart = this,
 			renderer = chart.renderer,
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
@@ -549,7 +549,7 @@ extend(Chart.prototype, {
 			}).css({
 				cursor: 'pointer'
 			})
-			.on('mouseover', function() {
+			.on('mouseover', function () {
 				symbol.attr({
 					stroke: btnOptions.hoverSymbolStroke,
 					fill: btnOptions.hoverSymbolFill
@@ -564,7 +564,7 @@ extend(Chart.prototype, {
 
 		// add the click event
 		if (menuItems) {
-			onclick = function(e) {
+			onclick = function (e) {
 				revert();
 				var bBox = button.getBBox();
 				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
@@ -573,7 +573,7 @@ extend(Chart.prototype, {
 		/*addEvent(button.element, 'click', function() {
 			onclick.apply(chart, arguments);
 		});*/
-		button.on('click', function() {
+		button.on('click', function () {
 			onclick.apply(chart, arguments);
 		});
 
@@ -596,7 +596,7 @@ extend(Chart.prototype, {
 });
 
 // Create the export icon
-HC.Renderer.prototype.symbols.exportIcon = function(x, y, radius) {
+HC.Renderer.prototype.symbols.exportIcon = function (x, y, radius) {
 	return [
 		M, // the disk
 		x - radius, y + radius,
@@ -618,7 +618,7 @@ HC.Renderer.prototype.symbols.exportIcon = function(x, y, radius) {
 	];
 };
 // Create the print icon
-HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
+HC.Renderer.prototype.symbols.printIcon = function (x, y, radius) {
 	return [
 		M, // the printer
 		x - radius, y + radius * 0.5,
@@ -646,7 +646,7 @@ HC.Renderer.prototype.symbols.printIcon = function(x, y, radius) {
 
 
 // Add the buttons on chart load
-Chart.prototype.callbacks.push(function(chart) {
+Chart.prototype.callbacks.push(function (chart) {
 	var n,
 		exportingOptions = chart.options.exporting,
 		buttons = exportingOptions.buttons;

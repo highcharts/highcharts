@@ -91,7 +91,7 @@ function erase(arr, item) {
  * Returns true if the object is not null or undefined. Like MooTools' $.defined.
  * @param {Object} obj
  */
-function defined (obj) {
+function defined(obj) {
 	return obj !== UNDEFINED && obj !== null;
 }
 
@@ -162,10 +162,10 @@ function pick() {
  * @param {Object} el
  * @param {Object} styles Style object with camel case property names
  */
-function css (el, styles) {
+function css(el, styles) {
 	if (isIE) {
 		if (styles && styles.opacity !== UNDEFINED) {
-			styles.filter = 'alpha(opacity='+ (styles.opacity * 100) +')';
+			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
 	extend(el.style, styles);
@@ -196,7 +196,7 @@ function getStyle (el, styleProp) {
  * @param {Object} parent
  * @param {Object} nopad
  */
-function createElement (tag, attribs, styles, parent, nopad) {
+function createElement(tag, attribs, styles, parent, nopad) {
 	var el = doc.createElement(tag);
 	if (attribs) {
 		extend(el, attribs);
@@ -219,7 +219,7 @@ function createElement (tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function(){};
+	var object = function () {};
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;
@@ -232,12 +232,14 @@ function extendClass(parent, members) {
  * @param {String} decPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-function numberFormat (number, decimals, decPoint, thousandsSep) {
+function numberFormat(number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-		n = number, c = isNaN(decimals = mathAbs(decimals)) ? 2 : decimals,
+		n = number,
+		c = isNaN(decimals = mathAbs(decimals)) ? 2 : decimals,
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
-		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep, s = n < 0 ? "-" : "",
+		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
+		s = n < 0 ? "-" : "",
 		i = String(pInt(n = mathAbs(+n || 0).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
@@ -252,7 +254,7 @@ function numberFormat (number, decimals, decPoint, thousandsSep) {
  * @param {Boolean} capitalize
  */
 dateFormat = function (format, timestamp, capitalize) {
-	function pad (number, length) {
+	function pad(number, length) {
 		// two digits
 		number = number.toString().replace(/^([0-9])$/, '0$1');
 		// three digits
@@ -279,7 +281,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		langWeekdays = lang.weekdays,
 		langMonths = lang.months,
 		/* // uncomment this and the 'W' format key below to enable week numbers
-		weekNumber = function() {
+		weekNumber = function () {
 			var clone = new Date(date.valueOf()),
 				day = clone[getDay]() == 0 ? 7 : clone[getDay](),
 				dayNumber;
@@ -324,7 +326,7 @@ dateFormat = function (format, timestamp, capitalize) {
 
 	// do the replaces
 	for (key in replacements) {
-		format = format.replace('%'+ key, replacements[key]);
+		format = format.replace('%' + key, replacements[key]);
 	}
 
 	// Optionally capitalize the string and return
@@ -339,7 +341,7 @@ dateFormat = function (format, timestamp, capitalize) {
  * @param {Object} el
  *
  */
-function getPosition (el) {
+function getPosition(el) {
 	var p = { left: el.offsetLeft, top: el.offsetTop };
 	el = el.offsetParent;
 	while (el) {
@@ -387,7 +389,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 	// normalize the interval to the nearest multiple
 	for (i = 0; i < multiples.length; i++) {
 		interval = multiples[i];
-		if (normalized <= (multiples[i] + (multiples[i+1] || multiples[i])) / 2) {
+		if (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2) {
 			break;
 		}
 	}
@@ -411,6 +413,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
  * @param {Array} unitsOption
  */
 function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
+	/*jslint white: true*/
 	var tickPositions = [],
 		i,
 		useUTC = defaultOptions.global.useUTC,
@@ -469,18 +472,19 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 		unit = units[units.length - 1], // default unit is years
 		interval = ranges[unit[0]],
 		multiples = unit[1];
+	/*jslint white: false*/
 
 	// loop through the units to find the one that best fits the tickInterval
-	for (i = 0; i < units.length; i++)  {
+	for (i = 0; i < units.length; i++) {
 		unit = units[i];
 		interval = ranges[unit[0]];
 		multiples = unit[1];
 
 
-		if (units[i+1]) {
+		if (units[i + 1]) {
 			// lessThan is in the middle between the highest multiple and the next unit.
 			var lessThan = (interval * multiples[multiples.length - 1] +
-						ranges[units[i + 1][0]]	) / 2;
+						ranges[units[i + 1][0]]) / 2;
 
 			// break and keep the current unit
 			if (tickInterval <= lessThan) {
@@ -594,7 +598,7 @@ ChartCounters.prototype =  {
 	/**
 	 * Wraps the color counter if it reaches the specified length.
 	 */
-	wrapColor: function(length) {
+	wrapColor: function (length) {
 		if (this.color >= length) {
 			this.color = 0;
 		}
@@ -603,7 +607,7 @@ ChartCounters.prototype =  {
 	/**
 	 * Wraps the symbol counter if it reaches the specified length.
 	 */
-	wrapSymbol: function(length) {
+	wrapSymbol: function (length) {
 		if (this.symbol >= length) {
 			this.symbol = 0;
 		}

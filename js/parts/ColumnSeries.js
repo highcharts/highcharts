@@ -11,7 +11,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
-	init: function() {
+	init: function () {
 		Series.prototype.init.apply(this, arguments);
 
 		var series = this,
@@ -23,7 +23,7 @@ var ColumnSeries = extendClass(Series, {
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
 		if (chart.hasRendered) {
-			each(chart.series, function(otherSeries) {
+			each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}
@@ -34,7 +34,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Translate each point to the plot area coordinate system and find shape positions
 	 */
-	translate: function() {
+	translate: function () {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
@@ -53,7 +53,7 @@ var ColumnSeries = extendClass(Series, {
 		// Get the total number of column type series.
 		// This is called on every series. Consider moving this logic to a
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
-		each(chart.series, function(otherSeries) {
+		each(chart.series, function (otherSeries) {
 			if (otherSeries.type === series.type && otherSeries.visible &&
 					series.options.group === otherSeries.options.group) { // used in Stock charts navigator series
 				if (otherSeries.options.stacking) {
@@ -88,14 +88,14 @@ var ColumnSeries = extendClass(Series, {
 			colIndex = (reversedXAxis ? columnCount -
 				series.columnIndex : series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
-				pointOffsetWidth -(categoryWidth / 2)) *
+				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold,
 			translatedThreshold = series.yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
-		each(points, function(point, i) {
+		each(points, function (point, i) {
 			var plotY = point.plotY,
 				yBottom = point.yBottom || translatedThreshold,
 				barX = point.plotX + pointXOffset,
@@ -155,20 +155,20 @@ var ColumnSeries = extendClass(Series, {
 
 	},
 
-	getSymbol: function(){
+	getSymbol: function () {
 	},
 
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: function() {},
+	drawGraph: function () {},
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
 	 * apply for columns and bars. This method is inherited by scatter series.
 	 *
 	 */
-	drawPoints: function() {
+	drawPoints: function () {
 		var series = this,
 			options = series.options,
 			renderer = series.chart.renderer,
@@ -177,7 +177,7 @@ var ColumnSeries = extendClass(Series, {
 
 
 		// draw the columns
-		each(series.points, function(point) {
+		each(series.points, function (point) {
 			var plotY = point.plotY;
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				graphic = point.graphic;
@@ -200,7 +200,7 @@ var ColumnSeries = extendClass(Series, {
 	 * Draw the individual tracker elements.
 	 * This method is inherited by scatter and pie charts too.
 	 */
-	drawTracker: function() {
+	drawTracker: function () {
 		var series = this,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -211,7 +211,7 @@ var ColumnSeries = extendClass(Series, {
 			css = cursor && { cursor: cursor },
 			rel;
 
-		each(series.points, function(point) {
+		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
 			delete shapeArgs.strokeWidth;
@@ -228,7 +228,7 @@ var ColumnSeries = extendClass(Series, {
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 1
 						})
-						.on(hasTouch ? 'touchstart' : 'mouseover', function(event) {
+						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
 							rel = event.relatedTarget || event.fromElement;
 							if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 								series.onMouseOver();
@@ -236,7 +236,7 @@ var ColumnSeries = extendClass(Series, {
 							point.onMouseOver();
 
 						})
-						.on('mouseout', function(event) {
+						.on('mouseout', function (event) {
 							if (!series.options.stickyTracking) {
 								rel = event.relatedTarget || event.toElement;
 								if (attr(rel, 'isTracker') !== trackerLabel) {
@@ -256,7 +256,7 @@ var ColumnSeries = extendClass(Series, {
 	 * Animate the column heights one by one from zero
 	 * @param {Boolean} init Whether to initialize the animation or run it
 	 */
-	animate: function(init) {
+	animate: function (init) {
 		var series = this,
 			points = series.points;
 
@@ -269,7 +269,7 @@ var ColumnSeries = extendClass(Series, {
 			 * datasets, this is the cause.
 			 */
 
-			each(points, function(point) {
+			each(points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs;
 
@@ -297,14 +297,14 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Remove this series from the chart
 	 */
-	remove: function() {
+	remove: function () {
 		var series = this,
 			chart = series.chart;
 
 		// column and bar series affects other series of the same type
 		// as they are either stacked or grouped
 		if (chart.hasRendered) {
-			each(chart.series, function(otherSeries) {
+			each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}

@@ -5,7 +5,7 @@
 function setTimeMethods() {
 	var useUTC = defaultOptions.global.useUTC;
 
-	makeTime = useUTC ? Date.UTC : function(year, month, date, hours, minutes, seconds) {
+	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
 		return new Date(
 			year,
 			month,
@@ -78,7 +78,7 @@ defaultLabelOptions = {
 	align: 'center',
 	x: 0,
 	y: 15,
-	/*formatter: function() {
+	/*formatter: function () {
 		return this.value;
 	},*/
 	style: {
@@ -205,7 +205,7 @@ defaultOptions = {
 			dataLabels: merge(defaultLabelOptions, {
 				enabled: false,
 				y: -6,
-				formatter: function() {
+				formatter: function () {
 					return this.y;
 				}
 			}),
@@ -244,7 +244,7 @@ defaultOptions = {
 		align: 'center',
 		//floating: false,
 		layout: 'horizontal',
-		labelFormatter: function() {
+		labelFormatter: function () {
 			return this.name;
 		},
 		// lineHeight: 16,
@@ -343,7 +343,8 @@ defaultOptions = {
 };
 
 // Axis defaults
-var defaultXAxisOptions =  {
+/*jslint white: true*/
+var defaultXAxisOptions = {
 	// allowDecimals: null,
 	// alternateGridColor: null,
 	// categories: [],
@@ -450,7 +451,7 @@ defaultYAxisOptions = merge(defaultXAxisOptions, {
 		//verticalAlign: dynamic,
 		//textAlign: dynamic,
 		//rotation: 0,
-		formatter: function() {
+		formatter: function () {
 			return this.total;
 		},
 		style: defaultLabelOptions.style
@@ -494,7 +495,7 @@ defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 		// staggerLines: null
 	}
 });
-
+/*jslint white: false*/
 
 
 
@@ -568,7 +569,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
-		formatter: function() {
+		formatter: function () {
 			return this.point.name;
 		},
 		y: 5

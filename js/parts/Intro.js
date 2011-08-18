@@ -13,4 +13,4 @@
 /*jslint forin: true */
 /*global document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $ */
 
-(function() {
+(function () {

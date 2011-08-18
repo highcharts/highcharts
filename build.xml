@@ -177,8 +177,7 @@
     <target name="lint" depends="assemble">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef">
             <formatter type="plain"/>
-            <!-- TODO: Replace the line below with highstock.src.file when the branch is merged. -->
-            <fileset file="${highcharts.src.file}"/>
+            <fileset file="${highstock.src.file}"/>
             <fileset file="${mootools.src.file}"/>
             <fileset file="${prototype.src.file}"/>
             <fileset file="${exporting.src.file}"/>

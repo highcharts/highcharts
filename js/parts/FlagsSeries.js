@@ -48,7 +48,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */
-	translate: function() {
+	translate: function () {
 
 		seriesTypes.column.prototype.translate.apply(this);
 
@@ -72,7 +72,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			i = onData.length;
 
 			// sort the data points
-			points.sort(function(a, b){
+			points.sort(function (a, b) {
 				return (a.x - b.x);
 			});
 
@@ -90,7 +90,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			}
 		}
 
-		each(points, function(point, i) {
+		each(points, function (point, i) {
 			// place on y axis or custom position
 			if (!onSeries) {
 				point.plotY = point.y === UNDEFINED ? chart.plotHeight : point.plotY;
@@ -112,7 +112,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	/**
 	 * Draw the markers
 	 */
-	drawPoints: function(){
+	drawPoints: function () {
 		var series = this,
 			pointAttr,
 			points = series.points,
@@ -186,7 +186,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 				// set the shape arguments for the tracker element
 				point.shapeArgs = extend(
-					bBox, {
+					bBox, 
+					{
 						x: plotX - (shape === 'flag' ? 0 : box.attr('width') / 2), // flags align left, else align center
 						y: plotY
 					}
@@ -201,15 +202,15 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	/**
 	 * Extend the column trackers with listeners to expand and contract stacks
 	 */
-	drawTracker: function() {
+	drawTracker: function () {
 		var series = this;
 
 		seriesTypes.column.prototype.drawTracker.apply(series);
 
 		// put each point in front on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis
-		each(series.points, function(point) {
-			addEvent(point.tracker.element, 'mouseover', function() {
+		each(series.points, function (point) {
+			addEvent(point.tracker.element, 'mouseover', function () {
 				point.graphic.toFront();
 			});
 		});
@@ -219,19 +220,19 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Override the regular tooltip formatter by returning the point text given
 	 * in the options
 	 */
-	tooltipFormatter: function(item) {
+	tooltipFormatter: function (item) {
 		return item.point.text;
 	},
 
 	/**
 	 * Disable animation
 	 */
-	animate: function() {}
+	animate: function () {}
 
 });
 
 // create the flag icon with anchor
-symbols.flag = function(x, y, w, h, options) {
+symbols.flag = function (x, y, w, h, options) {
 	var anchorX = (options && options.anchorX) || x,
 		anchorY = (options &&  options.anchorY) || y;
 
@@ -248,8 +249,8 @@ symbols.flag = function(x, y, w, h, options) {
 };
 
 // create the circlepin and squarepin icons with anchor
-each(['circle', 'square'], function(shape) {
-	symbols[shape +'pin'] = function(x, y, w, h, options) {
+each(['circle', 'square'], function (shape) {
+	symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
 		var anchorX = options && options.anchorX,
 			anchorY = options &&  options.anchorY,

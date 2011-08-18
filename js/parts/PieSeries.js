@@ -19,7 +19,7 @@ var PiePoint = extendClass(Point, {
 		});
 
 		// add event listener for select
-		toggleSlice = function() {
+		toggleSlice = function () {
 			point.slice();
 		};
 		addEvent(point, 'select', toggleSlice);
@@ -33,7 +33,7 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function(vis) {
+	setVisible: function (vis) {
 		var point = this,
 			chart = point.series.chart,
 			tracker = point.tracker,
@@ -70,7 +70,7 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} sliced When undefined, the slice state is toggled
 	 * @param {Boolean} redraw Whether to redraw the chart. True by default.
 	 */
-	slice: function(sliced, redraw, animation) {
+	slice: function (sliced, redraw, animation) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
@@ -113,7 +113,7 @@ var PieSeries = extendClass(Series, {
 	/**
 	 * Pies have one color each point
 	 */
-	getColor: function() {
+	getColor: function () {
 		// record first color for use in setData
 		this.initialColor = this.chart.counters.color;
 	},
@@ -122,11 +122,11 @@ var PieSeries = extendClass(Series, {
 	 * Animate the column heights one by one from zero
 	 * @param {Boolean} init Whether to initialize the animation or run it
 	 */
-	animate: function(init) {
+	animate: function (init) {
 		var series = this,
 			points = series.points;
 
-		each(points, function(point) {
+		each(points, function (point) {
 			var graphic = point.graphic,
 				args = point.shapeArgs,
 				up = -mathPI / 2;
@@ -157,7 +157,7 @@ var PieSeries = extendClass(Series, {
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.
 	 */
-	setData: function() {
+	setData: function () {
 		Series.prototype.setData.apply(this, arguments);
 		this.processData();
 		this.generatePoints();
@@ -165,7 +165,7 @@ var PieSeries = extendClass(Series, {
 	/**
 	 * Do translation for pie slices
 	 */
-	translate: function() {
+	translate: function () {
 		var total = 0,
 			series = this,
 			cumulative = -0.25, // start at top
@@ -190,7 +190,7 @@ var PieSeries = extendClass(Series, {
 			labelDistance = options.dataLabels.distance;
 
 		// get positions - either an integer or a percentage string must be given
-		positions = map(positions, function(length, i) {
+		positions = map(positions, function (length, i) {
 
 			isPercent = /%$/.test(length);
 			return isPercent ?
@@ -199,12 +199,12 @@ var PieSeries = extendClass(Series, {
 				// i == 2: size, relative to smallestSize
 				// i == 4: innerSize, relative to smallestSize
 				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
-					pInt(length) / 100:
+					pInt(length) / 100 :
 				length;
 		});
 
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
-		series.getX = function(y, left) {
+		series.getX = function (y, left) {
 
 			angle = math.asin((y - positions[1]) / (positions[2] / 2 + labelDistance));
 
@@ -217,11 +217,11 @@ var PieSeries = extendClass(Series, {
 		series.center = positions;
 
 		// get the total sum
-		each(points, function(point) {
+		each(points, function (point) {
 			total += point.y;
 		});
 
-		each(points, function(point) {
+		each(points, function (point) {
 			// set start and end angle
 			fraction = total ? point.y / total : 0;
 			start = mathRound(cumulative * circ * precision) / precision;
@@ -281,7 +281,7 @@ var PieSeries = extendClass(Series, {
 	/**
 	 * Render the slices
 	 */
-	render: function() {
+	render: function () {
 		var series = this;
 
 		// cache attributes for shapes
@@ -307,7 +307,7 @@ var PieSeries = extendClass(Series, {
 	/**
 	 * Draw the data points
 	 */
-	drawPoints: function() {
+	drawPoints: function () {
 		var series = this,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -320,7 +320,7 @@ var PieSeries = extendClass(Series, {
 			shapeArgs;
 
 		// draw the slices
-		each(series.points, function(point) {
+		each(series.points, function (point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			group = point.group;
@@ -373,7 +373,7 @@ var PieSeries = extendClass(Series, {
 	/**
 	 * Override the base drawDataLabels method by pie specific functionality
 	 */
-	drawDataLabels: function() {
+	drawDataLabels: function () {
 		var series = this,
 			points = series.points,
 			point,
@@ -416,7 +416,7 @@ var PieSeries = extendClass(Series, {
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		each(data, function(point) {
+		each(data, function (point) {
 			halves[
 				point.labelPos[7] < mathPI / 2 ? 0 : 1
 			].push(point);
@@ -424,7 +424,7 @@ var PieSeries = extendClass(Series, {
 		halves[1].reverse();
 		
 		// define the sorting algorithm
-		sort = function(a, b) {
+		sort = function (a, b) {
 			return b.y - a.y;
 		};
 		
@@ -439,9 +439,9 @@ var PieSeries = extendClass(Series, {
 			var slots = [],
 				slotsLength,
 				usedSlots = [],
-				points = halves[i],
+				piePoints = halves[i],
 				pos,
-				length = points.length,
+				length = piePoints.length,
 				slotIndex;
 			
 			lowerHalf = i % 3;
@@ -461,7 +461,7 @@ var PieSeries = extendClass(Series, {
 							stroke: 'silver'
 						})
 						.add(); 
-					chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
+					chart.renderer.text('Slot ' + (slots.length - 1), slotX, slotY + 4)
 						.attr({
 							fill: 'silver'
 						}).add();
@@ -473,7 +473,7 @@ var PieSeries = extendClass(Series, {
 			// if there are more values than available slots, remove lowest values
 			if (length > slotsLength) {
 				// create an array for sorting and ranking the points within each quarter
-				rankArr = [].concat(points);
+				rankArr = [].concat(piepoints);
 				rankArr.sort(sort);
 				j = length;
 				while (j--) {
@@ -481,18 +481,18 @@ var PieSeries = extendClass(Series, {
 				}
 				j = length;
 				while (j--) {
-					if (points[j].rank >= slotsLength) {
-						points.splice(j, 1);		
+					if (piePoints[j].rank >= slotsLength) {
+						piePoints.splice(j, 1);		
 					}
 				}
-				length = points.length;
+				length = piePoints.length;
 			}
 				
 			// The label goes to the nearest open slot, but not closer to the edge than
 			// the label's index.				
 			for (j = 0; j < length; j++) {
 				
-				point = points[j];
+				point = piePoints[j];
 				labelPos = point.labelPos;	
 				
 				var closest = 9999,
@@ -517,7 +517,7 @@ var PieSeries = extendClass(Series, {
 				} else { 
 					// Slot is taken, find next free slot below. In the next run, the next slice will find the
 					// slot above these, because it is the closest one 
-					while(slots[slotIndex] === null) {
+					while (slots[slotIndex] === null) {
 						slotIndex++;
 					}
 				}
@@ -532,7 +532,7 @@ var PieSeries = extendClass(Series, {
 			// now the used slots are sorted, fill them up sequentially
 			for (j = 0; j < length; j++) {
 				
-				point = points[j];
+				point = piePoints[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
 				var slot = usedSlots.pop(),
@@ -606,7 +606,7 @@ var PieSeries = extendClass(Series, {
 	/**
 	 * Pies don't have point marker symbols
 	 */
-	getSymbol: function() {}
+	getSymbol: function () {}
 
 });
 seriesTypes.pie = PieSeries;

@@ -11,7 +11,7 @@ var DATA_GROUPING = 'dataGrouping',
  * Extend the basic processData method, that crops the data to the current zoom
  * range, with data grouping logic.
  */
-seriesProto.processData = function() {
+seriesProto.processData = function () {
 	var series = this,
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING];
@@ -44,7 +44,7 @@ seriesProto.processData = function() {
 	// console.log(series.name)
 
 	// clear previous groups
-	each (groupedData || [], function(point, i) {
+	each(groupedData || [], function (point, i) {
 		if (point) {
 			// TODO: find out why this is looping over all points in the Navigator when changing range
 			groupedData[i] = point.destroy();
@@ -105,7 +105,7 @@ seriesProto.processData = function() {
 				if (open === null) { // first point
 					open = point.open;
 				}
-				high = high === null? point.high : mathMax(high, point.high);
+				high = high === null ? point.high : mathMax(high, point.high);
 				low = low === null ? point.low : mathMin(low, point.low);
 				close = point.close; // last point
 			} else if (approximation === 'open' && value === UNDEFINED) {
@@ -147,7 +147,7 @@ seriesProto.processData = function() {
 
 };
 
-seriesProto.generatePoints = function() {
+seriesProto.generatePoints = function () {
 	var series = this;
 
 	baseGeneratePoints.apply(series);
@@ -156,12 +156,12 @@ seriesProto.generatePoints = function() {
 	series.groupedData = series.hasGroupedData ? series.points : null;
 };
 
-seriesProto.destroy = function() {
+seriesProto.destroy = function () {
 	var series = this,
 		groupedData = series.groupedData || [],
 		i = groupedData.length;
 
-	while(i--) {
+	while (i--) {
 		if (groupedData[i]) {
 			groupedData[i].destroy();
 		}

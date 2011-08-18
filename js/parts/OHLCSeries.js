@@ -24,7 +24,7 @@ var OHLCPoint = extendClass(Point, {
 	 *
 	 * @param {Object} options
 	 */
-	applyOptions: function(options) {
+	applyOptions: function (options) {
 		var point = this,
 			series = point.series,
 			i = 0;
@@ -38,10 +38,7 @@ var OHLCPoint = extendClass(Point, {
 			extend(point, options);
 
 			point.options = options;
-		}
-
-		// array
-		else if (options.length) {
+		} else if (options.length) { // array
 			// with leading x value
 			if (options.length === 5) {
 				if (typeof options[0] === 'string') {
@@ -71,11 +68,11 @@ var OHLCPoint = extendClass(Point, {
 	/**
 	 * A specific OHLC tooltip formatter
 	 */
-	tooltipFormatter: function() {
+	tooltipFormatter: function () {
 		var point = this,
 			series = point.series;
 
-		return ['<span style="color:'+ series.color +';font-weight:bold">', (point.name || series.name), '</span><br/> ',
+		return ['<span style="color:' + series.color + ';font-weight:bold">', (point.name || series.name), '</span><br/> ',
 			'Open: ', point.open, '<br/>',
 			'High: ', point.high, '<br/>',
 			'Low: ', point.low, '<br/>',
@@ -101,14 +98,14 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
 	 */
-	translate: function() {
+	translate: function () {
 		var series = this,
 			yAxis = series.yAxis;
 
 		seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation
-		each(series.points, function(point) {
+		each(series.points, function (point) {
 			// the graphics
 			if (point.open !== null) {
 				point.plotOpen = yAxis.translate(point.open, 0, 1);
@@ -123,7 +120,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 	/**
 	 * Draw the data points
 	 */
-	drawPoints: function() {
+	drawPoints: function () {
 		var series = this,
 			points = series.points,
 			chart = series.chart,
@@ -137,7 +134,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 			crispX;
 
 
-		each(points, function(point) {
+		each(points, function (point) {
 			if (point.plotY !== UNDEFINED) {
 
 				graphic = point.graphic;
@@ -161,9 +158,11 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 					plotOpen = mathRound(point.plotOpen) + crispCorr;
 					path.push(
 						'M',
-						crispX, plotOpen,
+						crispX,
+						plotOpen,
 						'L',
-						crispX - halfWidth, plotOpen
+						crispX - halfWidth,
+						plotOpen
 					);
 				}
 
@@ -172,9 +171,11 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 					plotClose = mathRound(point.plotClose) + crispCorr;
 					path.push(
 						'M',
-						crispX, plotClose,
+						crispX,
+						plotClose,
 						'L',
-						crispX + halfWidth, plotClose
+						crispX + halfWidth,
+						plotClose
 					);
 				}
 

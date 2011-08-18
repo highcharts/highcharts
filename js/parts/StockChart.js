@@ -1,7 +1,7 @@
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-Highcharts.StockChart = function(options, callback) {
+Highcharts.StockChart = function (options, callback) {
 	var seriesOptions = options.series, // to increase performance, don't merge the data
 		lineOptions = {
 
@@ -23,7 +23,7 @@ Highcharts.StockChart = function(options, callback) {
 		};
 
 	// apply Y axis options to both single and multi y axes
-	options.yAxis = map (splat(options.yAxis || {}), function(yAxisOptions) {
+	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
 		return merge({
 			labels: {
 				align: 'left',

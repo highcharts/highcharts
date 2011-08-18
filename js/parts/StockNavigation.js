@@ -1,6 +1,6 @@
 
 // constants
-var	MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
+var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
 	MOUSEMOVE = hasTouch ? 'touchmove' : 'mousemove',
 	MOUSEUP = hasTouch ? 'touchend' : 'mouseup';
 
@@ -197,7 +197,7 @@ function Scroller(chart) {
 					'M',
 					-1.5, 4,
 					'L',
-					-1.5,	12,
+					-1.5, 12,
 					'M',
 					0.5, 4,
 					'L',
@@ -270,7 +270,7 @@ function Scroller(chart) {
 		plotWidth = chart.plotWidth;
 		navigatorLeft = plotLeft + scrollbarHeight;
 
-		pxMin = pick(pxMin,	xAxis.translate(min));
+		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
 
 		// set the scroller x axis extremes to reflect the total
@@ -321,7 +321,7 @@ function Scroller(chart) {
 				// the scrollbar track
 				strokeWidth = scrollbarOptions.trackBorderWidth;
 				scrollbarTrack = renderer.rect().attr({
-					y: - strokeWidth % 2 / 2,
+					y: -strokeWidth % 2 / 2,
 					fill: scrollbarOptions.trackBackgroundColor,
 					stroke: scrollbarOptions.trackBorderColor,
 					'stroke-width': strokeWidth,
@@ -332,7 +332,7 @@ function Scroller(chart) {
 				// the scrollbar itself
 				scrollbar = renderer.rect()
 					.attr({
-						y: - scrollbarStrokeWidth % 2 / 2,
+						y: -scrollbarStrokeWidth % 2 / 2,
 						height: scrollbarHeight,
 						fill: scrollbarOptions.barBackgroundColor,
 						stroke: scrollbarOptions.barBorderColor,
@@ -369,10 +369,10 @@ function Scroller(chart) {
 				'M',
 				plotLeft, outlineTop, // left
 				'L',
-				navigatorLeft + zoomedMin - halfOutline,	outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin - halfOutline,	outlineTop + outlineHeight, // lower left of z.r.
-				navigatorLeft + zoomedMax + halfOutline,	outlineTop + outlineHeight, // lower right of z.r.
-				navigatorLeft + zoomedMax + halfOutline,	outlineTop, // upper right of z.r.
+				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
+				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
+				navigatorLeft + zoomedMax + halfOutline, outlineTop + outlineHeight, // lower right of z.r.
+				navigatorLeft + zoomedMax + halfOutline, outlineTop, // upper right of z.r.
 				plotLeft + plotWidth, outlineTop // right
 			]});
 			// draw handles
@@ -425,7 +425,7 @@ function Scroller(chart) {
 	 * Set up the mouse and touch events for the navigator and scrollbar
 	 */
 	function addEvents() {
-		addEvent(chart.container, MOUSEDOWN, function(e) {
+		addEvent(chart.container, MOUSEDOWN, function (e) {
 			e = chart.tracker.normalizeMouseEvent(e);
 			var chartX = e.chartX,
 				chartY = e.chartY,
@@ -440,32 +440,29 @@ function Scroller(chart) {
 				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
 					grabbedLeft = true;
 					otherHandlePos = zoomedMax;
-				}
 
 				// grab the right handle
-				else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
+				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
 					grabbedRight = true;
 					otherHandlePos = zoomedMin;
-				}
 
 				// grab the zoomed range
-				else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
+				} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
 					grabbedCenter = chartX;
 					defaultBodyCursor = bodyStyle.cursor;
 					bodyStyle.cursor = 'ew-resize';
 
 					dragOffset = chartX - zoomedMin;
-				}
 
 				// click on the shaded areas
-				else if (chartX > plotLeft && chartX < plotLeft + plotWidth) {
+				} else if (chartX > plotLeft && chartX < plotLeft + plotWidth) {
 
 					if (isOnNavigator) { // center around the clicked point
 						left = chartX - navigatorLeft - range / 2;
 					} else { // click on scrollbar
 						if (chartX < navigatorLeft) { // click left scrollbar button
 							left = zoomedMin - mathMin(10, range);
-						} else if (chartX > plotLeft + plotWidth - scrollbarHeight)  {
+						} else if (chartX > plotLeft + plotWidth - scrollbarHeight) {
 							left = zoomedMin + mathMin(10, range);
 						} else {
 							// shift the scrollbar by one range
@@ -492,7 +489,7 @@ function Scroller(chart) {
 			}
 		});
 
-		addEvent(chart.container, MOUSEMOVE, function(e) {
+		addEvent(chart.container, MOUSEMOVE, function (e) {
 			e = chart.tracker.normalizeMouseEvent(e);
 			var chartX = e.chartX;
 
@@ -526,7 +523,7 @@ function Scroller(chart) {
 			}
 		});
 
-		addEvent(document, MOUSEUP, function() {
+		addEvent(document, MOUSEUP, function () {
 			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
 					xAxis.translate(zoomedMin, true),
@@ -576,7 +573,7 @@ function Scroller(chart) {
 
 			// respond to updated data in the base series
 			// todo: use similiar hook when base series is not yet initialized
-			addEvent(baseSeries, 'updatedData', function() {
+			addEvent(baseSeries, 'updatedData', function () {
 				var baseExtremes = baseSeries.xAxis.getExtremes(),
 					range = baseExtremes.max - baseExtremes.min,
 					stickToMax = baseExtremes.max >=
@@ -639,7 +636,7 @@ function Scroller(chart) {
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {
 			xAxis = {
-				translate: function(value, reverse) {
+				translate: function (value, reverse) {
 					var ext = baseSeries.xAxis.getExtremes(),
 						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
 						dataMin = ext.dataMin,
@@ -782,13 +779,11 @@ function RangeSelector(chart) {
 		if (fixedTimes[type]) {
 			range = fixedTimes[type] * count;
 			newMin = mathMax(newMax - range, dataMin);
-		}
-		else if (type === 'month') {
+		} else if (type === 'month') {
 			date.setMonth(date.getMonth() - count);
 			newMin = mathMax(date.getTime(), dataMin);
 			range = 30 * 24 * 3600 * 1000 * count;
-		}
-		else if (type === 'ytd') {
+		} else if (type === 'ytd') {
 			date = new Date(0);
 			now = new Date();
 			year = now.getFullYear();
@@ -802,13 +797,11 @@ function RangeSelector(chart) {
 			newMin = rangeMin = mathMax(dataMin || 0, date.getTime());
 			now = now.getTime();
 			newMax = mathMin(dataMax || now, now);
-		}
-		else if (type === 'year') {
+		} else if (type === 'year') {
 			date.setFullYear(date.getFullYear() - count);
 			newMin = mathMax(dataMin, date.getTime());
 			range = 365 * 24 * 3600 * 1000 * count;
-		}
-		else if (type === 'all' && baseAxis) {
+		} else if (type === 'all' && baseAxis) {
 			newMin = dataMin;
 			newMax = dataMax;
 		}
@@ -821,7 +814,8 @@ function RangeSelector(chart) {
 		// update the chart
 		if (!baseAxis) { // axis not yet instanciated
 			chart.options.xAxis = merge(
-				chart.options.xAxis, {
+				chart.options.xAxis,
+				{
 					//zoomedRange: {
 						range: range,
 						min: rangeMin
@@ -831,7 +825,7 @@ function RangeSelector(chart) {
 			selected = i;
 
 		} else { // existing axis object; after render time
-			setTimeout(function() { // make sure the visual state is set before the heavy process begins
+			setTimeout(function () { // make sure the visual state is set before the heavy process begins
 				baseAxis.setExtremes(
 					newMin,
 					newMax,
@@ -853,7 +847,7 @@ function RangeSelector(chart) {
 		buttonOptions = options.buttons || defaultButtons;
 		selected = options.selected;
 
-		addEvent(container, MOUSEDOWN, function() {
+		addEvent(container, MOUSEDOWN, function () {
 
 			if (leftBox) {
 				leftBox.blur();
@@ -869,8 +863,8 @@ function RangeSelector(chart) {
 		}
 
 		// normalize the pressed button whenever a new range is selected
-		addEvent(chart, 'load', function() {
-			addEvent(chart.xAxis[0], 'setExtremes', function() {
+		addEvent(chart, 'load', function () {
+			addEvent(chart.xAxis[0], 'setExtremes', function () {
 				if (buttons[selected]) {
 					buttons[selected].setState(0);
 				}
@@ -920,14 +914,14 @@ function RangeSelector(chart) {
 		}, options.inputStyle), div);
 
 
-		input.onfocus = input.onblur = function(e) {
+		input.onfocus = input.onblur = function (e) {
 			e = e || window.event;
 			input.hasFocus = e.type === 'focus';
 			setInputValue(input);
 		};
 
 		// handle changes in the input boxes
-		input.onchange = function() {
+		input.onchange = function () {
 			var inputValue = input.value,
 				value = Date.parse(inputValue),
 				extremes = chart.xAxis[0].getExtremes();
@@ -972,12 +966,12 @@ function RangeSelector(chart) {
 				.css(options.labelStyle)
 				.add();
 
-			each(buttonOptions, function(rangeOptions, i) {
+			each(buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 					rangeOptions.text,
 					chart.plotLeft + 50 +  i * 30,
 					chart.plotTop - 25,
-					function() {
+					function () {
 						clickButton(i, rangeOptions);
 						this.isActive = true;
 					},
@@ -1016,7 +1010,7 @@ function RangeSelector(chart) {
 				// create an absolutely positionied div to keep the inputs
 				div = createElement('div', null, extend({
 					position: 'absolute',
-					top: (-chart.chartHeight + chart.plotTop - 25) +'px',
+					top: (-chart.chartHeight + chart.plotTop - 25) + 'px',
 					right: (chart.chartWidth - chart.plotLeft - chart.plotWidth) + 'px'
 				}, options.inputBoxStyle), div);
 
@@ -1050,7 +1044,7 @@ function RangeSelector(chart) {
  * End Range Selector code													*
  *****************************************************************************/
 
-/*addEvent(Chart.prototype, 'init', function(e) {
+/*addEvent(Chart.prototype, 'init', function (e) {
 	var chart = e.target,
 		chartOptions = chart.options;
 
@@ -1059,7 +1053,7 @@ function RangeSelector(chart) {
 		chart.rangeSelector = new RangeSelector(chart);
 	}
 });
-addEvent(Chart.prototype, 'beforeRender', function(e) {
+addEvent(Chart.prototype, 'beforeRender', function (e) {
 	var chart = e.target,
 		chartOptions = chart.options;
 
@@ -1069,7 +1063,7 @@ addEvent(Chart.prototype, 'beforeRender', function(e) {
 	}
 });*/
 
-Chart.prototype.callbacks.push(function(chart) {
+Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
 		scroller = chart.scroller,
 		rangeSelector = chart.rangeSelector;
@@ -1091,7 +1085,7 @@ Chart.prototype.callbacks.push(function(chart) {
 	if (scroller) {
 
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'setExtremes', function(e) {
+		addEvent(chart.xAxis[0], 'setExtremes', function (e) {
 			scroller.render(e.min, e.max);
 		});
 
@@ -1108,7 +1102,7 @@ Chart.prototype.callbacks.push(function(chart) {
 
 
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'setExtremes', function(e) {
+		addEvent(chart.xAxis[0], 'setExtremes', function (e) {
 			rangeSelector.render(e.min, e.max);
 		});
 

@@ -30,7 +30,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function() {
+	getAttribs: function () {
 		OHLCSeries.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
@@ -42,7 +42,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 		seriesDownPointAttr.hover.fill = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select.fill = stateOptions.select.upColor || upColor;
 
-		each(series.points, function(point) {
+		each(series.points, function (point) {
 			if (point.open < point.close) {
 				point.pointAttr = seriesDownPointAttr;
 			}
@@ -52,7 +52,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 	/**
 	 * Draw the data points
 	 */
-	drawPoints: function() {
+	drawPoints: function () {
 		var series = this,  //state = series.state,
 			points = series.points,
 			chart = series.chart,
@@ -68,7 +68,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 			halfWidth;
 
 
-		each(points, function(point) {
+		each(points, function (point) {
 
 			graphic = point.graphic;
 			if (point.plotY !== UNDEFINED) {
