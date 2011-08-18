@@ -5283,7 +5283,7 @@ function Chart(options, callback) {
 						serie[strAxis] = axis;
 						associatedSeries.push(serie);
 
-						if (serie.options.padXAxis) {
+						if (strAxis === 'xAxis' && serie.options.padXAxis) {
 							padAxis = true;
 						}
 
@@ -9535,11 +9535,11 @@ Series.prototype = {
 			var extremes = series.xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max,
-				cropEnd = dataLength - 1,
+				cropEnd = dataLength,
 				point;
 
 			// only crop if it's actually spilling out
-			if (processedXData[0] < min || processedXData[cropEnd] > max) {
+			if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
 
 				// iterate up to find slice start
 				for (i = 0; i < dataLength; i++) {
