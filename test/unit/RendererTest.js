@@ -47,3 +47,21 @@ RendererTest.prototype.testCssFontSize = function () {
 	assertUndefined(undefinedFontSize + ' should be undefined', textElement.styles[undefinedFontSize])
 	assertEquals('Changed font size', '21px', textElement.styles[definedFontSize]);
 }
+
+RendererTest.prototype.testTransparancy = function () {
+	var rect = this.renderer.rect(100, 100, 100, 100, 5);
+
+	// Set the stroke to a transparent color
+	rect.attr({
+		'stroke-width': 2,
+		stroke: 'rgba(255,255,255,0)'
+	});
+
+	// Set it back to a solid color
+	rect.attr({
+		stroke: '#aabbcc'
+	});
+
+	// Make sure there is no stray opacity
+	assertFalse('There is a stray opacity value', rect.element.hasAttribute('stroke-opacity'));
+}
