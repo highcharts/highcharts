@@ -5361,7 +5361,7 @@ function Chart(options, callback) {
 								x = xData[i];
 								y = yData[i];
 								if ((y !== null && y !== UNDEFINED &&
-									cropped) || (x >= xExtremes.min && x <= xExtremes.max)) {
+									cropped) || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
 
 									// read stacked values into a stack based on the x value,
 									// the sign of y and the stack key
