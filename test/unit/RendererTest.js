@@ -62,6 +62,12 @@ RendererTest.prototype.testTransparancy = function () {
 		stroke: '#aabbcc'
 	});
 
-	// Make sure there is no stray opacity
+	// Make sure there is no stray opacity (this is SVG case)
 	assertFalse('There is a stray opacity value', rect.element.hasAttribute('stroke-opacity'));
+
+	// Make sure there is no stray opacity (this is VML case)
+	var strokeElement = rect.element.getElementsByTagName('stroke')[0];
+	if (strokeElement) {
+		assertEquals('There is a stray opacity value', 1, strokeElement.opacity);
+	}
 }
