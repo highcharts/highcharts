@@ -2,8 +2,8 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts Stock v1.0 Beta (2011-07-05)
- *
+ * @license Highcharts JS v2.1.6 (2011-07-08)
+ * 
  * (c) 2009-2011 Torstein Hønsi
  *
  * License: www.highcharts.com/license
@@ -11839,7 +11839,7 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
-	product: 'Highstock',
-	version: '1.0 Beta'
+	product: 'Highcharts',
+	version: '2.1.6'
 });
 }());

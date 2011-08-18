@@ -2,8 +2,8 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts Stock v1.0 Beta (2011-07-05)
- *
+ * @license Highstock JS v1.0 Beta (2011-08-02)
+ * 
  * (c) 2009-2011 Torstein Hønsi
  *
  * License: www.highcharts.com/license

@@ -26,7 +26,7 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
-	product: 'Highstock',
-	version: '1.0 Beta'
+	product: '@product.name@',
+	version: '@product.version@'
 });
 }());
