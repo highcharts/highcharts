@@ -58,6 +58,7 @@ function Chart(options, callback) {
 		eventType,
 		isInsidePlot, // function
 		tooltip,
+		tooltipTimer,
 		mouseIsDown,
 		loadingDiv,
 		loadingSpan,
@@ -1900,8 +1901,9 @@ function Chart(options, callback) {
 				pointConfig = [],
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
-				hoverPoints = chart.hoverPoints;
-
+				hoverPoints = chart.hoverPoints,
+				placedTooltipPoint;
+				
 			// shared tooltip, array is sent over
 			if (shared && !(point.series && point.series.noSharedTooltip)) {
 				plotY = 0;
@@ -1976,26 +1978,10 @@ function Chart(options, callback) {
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 
-				// keep the box within the chart area
-				boxX = x - boxWidth + plotLeft - 25;
-				boxY = y - boxHeight + plotTop + 10;
-
-				// it is too far to the left, adjust it
-				if (boxX < 7) {
-					boxX = plotLeft + x + 15;
-				}
-
-
-				if (boxY < plotTop + 5) {
-					boxY = plotTop + 5; // above
-				} else if (boxY + boxHeight > chartHeight) {
-					boxY = chartHeight - boxHeight - 5; // below
-				}
+				placedTooltipPoint = placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, {x: x, y: y});
 
 				// do the move
-				move(mathRound(boxX - boxOffLeft), mathRound(boxY - boxOffLeft));
-
-
+				move(mathRound(placedTooltipPoint.x - boxOffLeft), mathRound(placedTooltipPoint.y - boxOffLeft));
 			}
 
 
@@ -2228,7 +2214,9 @@ function Chart(options, callback) {
 			if (tooltip) {
 				tooltip.hide();
 			}
-
+			
+			clearTimeout(tooltipTimer);
+			
 			hoverX = null;
 		}
 
@@ -2353,7 +2341,7 @@ function Chart(options, callback) {
 				if (isOutsidePlot) {
 
 					if (!lastWasOutsidePlot) {
-						// reset the tracker
+						// reset the tracker					
 						resetTracker();
 					}
 
@@ -2456,8 +2444,25 @@ function Chart(options, callback) {
 			 * When the mouse leaves the container, hide the tracking (tooltip).
 			 */
 			addEvent(container, 'mouseleave', resetTracker);
+			
+			// issue #149 workaround
+			// to do: check whether the container position is somehow cached, so we don't
+			// have to run the expensive getPosition. In that case, we can remove the 
+			// tooltip instantly on mousemoves outside the plot area.
+			function setTooltipTimer(e) {
+				clearTimeout(tooltipTimer);
+				tooltipTimer = setTimeout (function() {
+					chartPosition = getPosition(container);
+					if (!isInsidePlot(e.pageX - chartPosition.left - plotLeft, e.pageY - chartPosition.top - plotTop)) {
+						resetTracker();
+					} else {
+						setTooltipTimer(e);
+					}
+				}, 3000);
+			}
+			addEvent(document, 'mousemove', setTooltipTimer);
 
-
+			
 			container.ontouchstart = function (e) {
 				// For touch devices, use touchmove to zoom
 				if (zoomX || zoomY) {
@@ -2926,7 +2931,7 @@ function Chart(options, callback) {
 			});
 
 			// sort by legendIndex
-			allItems.sort(function (a, b) {
+			stableSort(allItems, function (a, b) {
 				return (a.options.legendIndex || 0) - (b.options.legendIndex || 0);
 			});
 

@@ -613,3 +613,58 @@ ChartCounters.prototype =  {
 		}
 	}
 };
+
+/**
+ * Utility method extracted from Tooltip code that places a tooltip in a chart without spilling over
+ * and not covering the point it self.
+ */
+function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHeight, point) {
+	// keep the box within the chart area
+	var x = point.x - boxWidth + outerLeft - 25,
+		y = point.y - boxHeight + outerTop + 10;
+
+	// it is too far to the left, adjust it
+	if (x < 7) {
+		x = outerLeft + point.x + 15;
+	}
+
+	// Test to see if the tooltip is to far to the right,
+	// if it is, move it back to be inside and then up to not cover the point.
+	if ((x + boxWidth) > (outerLeft + outerWidth)) {
+		x -= (x + boxWidth) - (outerLeft + outerWidth);
+		y -= boxHeight;
+	}
+
+	if (y < 5) {
+		y = 5; // above
+	} else if (y + boxHeight > outerHeight) {
+		y = outerHeight - boxHeight - 5; // below
+		y = outerHeight - boxHeight - 5; // below
+	}
+
+	return {x: x, y: y};
+}
+
+/**
+ * Utility method that sorts an object array and keeping the order of equal items.
+ * ECMA script standard does not specify the behaviour when items are equal.
+ */
+function stableSort(arr, sortFunction) {
+	var length = arr.length,
+		i;
+
+	// Add index to each item
+	for (i = 0; i < length; i++) {
+		arr[i].ss_i = i; // stable sort index
+	}
+
+	arr.sort(function (a, b) {
+		var sortValue = sortFunction(a, b);
+		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
+	});
+
+	// Remove index from items
+	for (i = 0; i < length; i++) {
+		delete arr[i].ss_i; // stable sort index
+	}
+}
