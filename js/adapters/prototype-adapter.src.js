@@ -14,7 +14,6 @@
  */
 
 // JSLint options:
-/*jslint forin: true */
 /*global Effect, Class, Highcharts, Event, $, $A */
 
 // Adapter interface between prototype and the Highcarts charting library

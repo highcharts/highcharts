@@ -1431,7 +1431,7 @@ function Chart(options, callback) {
 				// minor ticks
 				if (minorTickInterval && !categories) {
 					var pos = min + (tickPositions[0] - min) % minorTickInterval;
-					for (pos; pos <= max; pos += minorTickInterval) {
+					for (; pos <= max; pos += minorTickInterval) {
 						if (!minorTicks[pos]) {
 							minorTicks[pos] = new Tick(pos, true);
 						}
@@ -4040,7 +4040,7 @@ function Chart(options, callback) {
 		/*jslint eqeq: true*/
 		if (!hasSVG && win == win.top && doc.readyState !== COMPLETE) {
 		/*jslint eqeq: false*/
-				doc.attachEvent(ONREADYSTATECHANGE, function () {
+			doc.attachEvent(ONREADYSTATECHANGE, function () {
 				doc.detachEvent(ONREADYSTATECHANGE, firstRender);
 				if (doc.readyState === COMPLETE) {
 					firstRender();
