@@ -5360,8 +5360,8 @@ function Chart(options, callback) {
 							for (i = 0; i < yDataLength; i++) {
 								x = xData[i];
 								y = yData[i];
-								if ((y !== null && y !== UNDEFINED &&
-									cropped) || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
+								if (y !== null && y !== UNDEFINED &&
+									(cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max))) {
 
 									// read stacked values into a stack based on the x value,
 									// the sign of y and the stack key
@@ -9422,7 +9422,8 @@ Series.prototype = {
 			yData = [],
 			dataLength = data.length,
 			turboThreshold = options.turboThreshold || 1000,
-			pt;
+			pt,
+			ohlc = series.valueCount === 4;
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -9440,7 +9441,7 @@ Series.prototype = {
 				}
 				series.xIncrement = x;
 			} else if (data[0].constructor === Array) { // assume all points are arrays
-				if (series.valueCount === 4) { // [x, o, h, l, c]
+				if (ohlc) { // [x, o, h, l, c]
 					for (i = 0; i < dataLength; i++) {
 						pt = data[i];
 						xData[i] = pt[0];
@@ -9459,7 +9460,7 @@ Series.prototype = {
 				pt = { series: series };
 				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = pt.y;
+				yData[i] = ohlc ? [pt.open, pt.high, pt.low, pt.close] : pt.y;
 			}
 		}
 
