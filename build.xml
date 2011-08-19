@@ -167,8 +167,13 @@
         </concat>
     </target>
 
+    <!-- This target convert any mixed line endings to crlf. -->
+    <target name="check-whitespace" depends="assemble">
+        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" eol="crlf" fixlast="false"/>
+    </target>
+
     <!-- Runs jslint on source code. -->
-    <target name="lint" depends="assemble">
+    <target name="lint" depends="check-whitespace">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef">
             <formatter type="plain"/>
             <!-- TODO: Replace the line below with highstock.src.file when the branch is merged. -->
