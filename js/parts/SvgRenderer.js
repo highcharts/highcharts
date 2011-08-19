@@ -1,5 +1,5 @@
 /**
- * A wrapper object for SVG elements 
+ * A wrapper object for SVG elements
  */
 function SVGElement() {}
 
@@ -40,9 +40,9 @@ SVGElement.prototype = {
 	 * @param {Mixed|Undefined} val
 	 */
 	attr: function (hash, val) {
-		var key, 
-			value, 
-			i, 
+		var key,
+			value,
+			i,
 			child,
 			element = this.element,
 			nodeName = element.nodeName,
@@ -51,14 +51,14 @@ SVGElement.prototype = {
 			shadows = this.shadows,
 			hasSetSymbolSize,
 			ret = this;
-			
+
 		// single key-value pair
 		if (isString(hash) && defined(val)) {
 			key = hash;
 			hash = {};
 			hash[key] = val;
 		}
-		
+
 		// used as a getter: first argument is a string, second is undefined
 		if (isString(hash)) {
 			key = hash;
@@ -68,30 +68,30 @@ SVGElement.prototype = {
 				key = 'stroke-width';
 			}
 			ret = attr(element, key) || this[key] || 0;
-			
+
 			if (key !== 'd' && key !== 'visibility') { // 'd' is string in animation step
 				ret = parseFloat(ret);
 			}
-			
+
 		// setter
 		} else {
-		
+
 			for (key in hash) {
 				skipAttr = false; // reset
 				value = hash[key];
-				
+
 				// paths
 				if (key === 'd') {
 					if (value && value.join) { // join path
 						value = value.join(' ');
-					}					
+					}
 					if (/(NaN| {2}|^$)/.test(value)) {
 						value = 'M 0 0';
 					}
 					this.d = value; // shortcut for animations
-					
+
 				// update child tspans x values
-				} else if (key === 'x' && nodeName === 'text') { 
+				} else if (key === 'x' && nodeName === 'text') {
 					for (i = 0; i < element.childNodes.length; i++) {
 						child = element.childNodes[i];
 						// if the x values are equal, the tspan represents a linebreak
@@ -100,30 +100,30 @@ SVGElement.prototype = {
 							attr(child, 'x', value);
 						}
 					}
-					
+
 					if (this.rotation) {
 						attr(element, 'transform', 'rotate(' + this.rotation + ' ' + value + ' ' +
 							pInt(hash.y || attr(element, 'y')) + ')');
 					}
-					
+
 				// apply gradients
 				} else if (key === 'fill') {
 					value = renderer.color(value, element, key);
-				
+
 				// circle x and y
 				} else if (nodeName === 'circle' && (key === 'x' || key === 'y')) {
 					key = { x: 'cx', y: 'cy' }[key] || key;
-					
+
 				// translation and text rotation
 				} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'verticalAlign') {
 					this[key] = value;
 					this.updateTransform();
 					skipAttr = true;
-	
+
 				// apply opacity as subnode (required by legacy WebKit and Batik)
 				} else if (key === 'stroke') {
 					value = renderer.color(value, element, key);
-					
+
 				// emulate VML's dashstyle implementation
 				} else if (key === 'dashstyle') {
 					key = 'stroke-dasharray';
@@ -141,66 +141,66 @@ SVGElement.prototype = {
 							.replace('dash', '4,3,')
 							.replace(/,$/, '')
 							.split(','); // ending comma
-						
+
 						i = value.length;
 						while (i--) {
 							value[i] = pInt(value[i]) * hash['stroke-width'];
 						}
-						
+
 						value = value.join(',');
-					}	
-					
+					}
+
 				// special
 				} else if (key === 'isTracker') {
 					this[key] = value;
-				
+
 				// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
 				// is unable to cast them. Test again with final IE9.
 				} else if (key === 'width') {
 					value = pInt(value);
-				
+
 				// Text alignment
 				} else if (key === 'align') {
 					key = 'text-anchor';
 					value = { left: 'start', center: 'middle', right: 'end' }[value];
 				}
-				
-				
-				
+
+
+
 				// jQuery animate changes case
 				if (key === 'strokeWidth') {
 					key = 'stroke-width';
 				}
-				
-				// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)				
+
+				// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)
 				if (isWebKit && key === 'stroke-width' && value === 0) {
 					value = 0.000001;
 				}
-				
+
 				// symbols
 				if (this.symbolName && /^(x|y|r|start|end|innerR)/.test(key)) {
-					
-					
+
+
 					if (!hasSetSymbolSize) {
 						this.symbolAttr(hash);
 						hasSetSymbolSize = true;
 					}
 					skipAttr = true;
 				}
-				
+
 				// let the shadow follow the main element
 				if (shadows && /^(width|height|visibility|x|y|d)$/.test(key)) {
 					i = shadows.length;
 					while (i--) {
 						attr(shadows[i], key, value);
-					}					
+					}
 				}
-				
+
 				// validate heights
 				if ((key === 'width' || key === 'height') && nodeName === 'rect' && value < 0) {
 					value = 0;
 				}
-				
+
 				if (key === 'text') {
 					// only one node allowed
 					this.textStr = value;
@@ -211,13 +211,13 @@ SVGElement.prototype = {
 					//element.setAttribute(key, value);
 					attr(element, key, value);
 				}
-				
+
 			}
-			
+
 		}
 		return ret;
 	},
-	
+
 	/**
 	 * If one of the symbol size affecting parameters are changed,
 	 * check all the others only once for each call to an element's
@@ -226,27 +226,27 @@ SVGElement.prototype = {
 	 */
 	symbolAttr: function (hash) {
 		var wrapper = this;
-		
+
 		each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR'], function (key) {
 			wrapper[key] = pick(hash[key], wrapper[key]);
 		});
-		
-		wrapper.attr({ 
+
+		wrapper.attr({
 			d: wrapper.renderer.symbols[wrapper.symbolName](
 					mathRound(wrapper.x * 2) / 2, // Round to halves. Issue #274.
-					mathRound(wrapper.y * 2) / 2, 
-					wrapper.r, 
+					mathRound(wrapper.y * 2) / 2,
+					wrapper.r,
 					{
-						start: wrapper.start, 
+						start: wrapper.start,
 						end: wrapper.end,
-						width: wrapper.width, 
+						width: wrapper.width,
 						height: wrapper.height,
 						innerR: wrapper.innerR
 					}
 			)
 		});
 	},
-	
+
 	/**
 	 * Apply a clipping path to this object
 	 * @param {String} id
@@ -254,7 +254,7 @@ SVGElement.prototype = {
 	clip: function (clipRect) {
 		return this.attr('clip-path', 'url(' + this.renderer.url + '#' + clipRect.id + ')');
 	},
-	
+
 	/**
 	 * Calculate the coordinates needed for drawing a rectangle crisply and return the
 	 * calculated attributes
@@ -265,13 +265,13 @@ SVGElement.prototype = {
 	 * @param {Number} height
 	 */
 	crisp: function (strokeWidth, x, y, width, height) {
-		
+
 		var wrapper = this,
 			key,
 			attr = {},
 			values = {},
 			normalizer;
-			
+
 		strokeWidth = strokeWidth || wrapper.strokeWidth || 0;
 		normalizer = strokeWidth % 2 / 2;
 
@@ -281,16 +281,16 @@ SVGElement.prototype = {
 		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
 		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
 		values.strokeWidth = strokeWidth;
-		
+
 		for (key in values) {
 			if (wrapper[key] !== values[key]) { // only set attribute if changed
 				wrapper[key] = attr[key] = values[key];
 			}
 		}
-		
+
 		return attr;
 	},
-	
+
 	/**
 	 * Set styles for the element
 	 * @param {Object} styles
@@ -302,7 +302,7 @@ SVGElement.prototype = {
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
-			
+
 		// convert legacy
 		if (styles && styles.color) {
 			styles.fill = styles.color;
@@ -313,18 +313,18 @@ SVGElement.prototype = {
 			elemWrapper.styles,
 			styles
 		);
-		
-		
+
+
 		// store object
 		elemWrapper.styles = styles;
-		
-		
+
+
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
 			if (textWidth) {
 				delete styles.width;
-			} 
-			css(elemWrapper.element, styles);	
+			}
+			css(elemWrapper.element, styles);
 		} else {
 			for (n in styles) {
 				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
@@ -332,17 +332,17 @@ SVGElement.prototype = {
 			elemWrapper.attr({
 				style: serializedCss
 			});
-		}	
-		
-		
+		}
+
+
 		// re-build text
 		if (textWidth && elemWrapper.added) {
 			elemWrapper.renderer.buildText(elemWrapper);
 		}
-		
+
 		return elemWrapper;
 	},
-	
+
 	/**
 	 * Add an event listener
 	 * @param {String} eventType
@@ -362,8 +362,8 @@ SVGElement.prototype = {
 		this.element['on' + eventType] = fn;
 		return this;
 	},
-	
-	
+
+
 	/**
 	 * Move an object and its children by x and y values
 	 * @param {Number} x
@@ -375,7 +375,7 @@ SVGElement.prototype = {
 			translateY: y
 		});
 	},
-	
+
 	/**
 	 * Invert a group, rotate and flip
 	 */
@@ -385,9 +385,9 @@ SVGElement.prototype = {
 		wrapper.updateTransform();
 		return wrapper;
 	},
-	
+
 	/**
-	 * Private method to update the transform attribute based on internal 
+	 * Private method to update the transform attribute based on internal
 	 * properties
 	 */
 	updateTransform: function () {
@@ -397,25 +397,25 @@ SVGElement.prototype = {
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
 			transform = [];
-			
+
 		// flipping affects translate as adjustment for flipping around the group's axis
 		if (inverted) {
 			translateX += wrapper.attr('width');
 			translateY += wrapper.attr('height');
 		}
-			
+
 		// apply translate
 		if (translateX || translateY) {
 			transform.push('translate(' + translateX + ',' + translateY + ')');
 		}
-		
+
 		// apply rotation
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
 			transform.push('rotate(' + rotation + ' ' + wrapper.x + ' ' + wrapper.y + ')');
 		}
-		
+
 		if (transform.length) {
 			attr(wrapper.element, 'transform', transform.join(' '));
 		}
@@ -428,20 +428,20 @@ SVGElement.prototype = {
 		element.parentNode.appendChild(element);
 		return this;
 	},
-	
-	
+
+
 	/**
-	 * Break down alignment options like align, verticalAlign, x and y 
+	 * Break down alignment options like align, verticalAlign, x and y
 	 * to x and y relative to the chart.
-	 * 
+	 *
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
 	 * @param {Object} box The box to align to, needs a width and height
-	 * 
+	 *
 	 */
 	align: function (alignOptions, alignByTranslate, box) {
 		var elemWrapper = this;
-		
+
 		if (!alignOptions) { // called on resize
 			alignOptions = elemWrapper.alignOptions;
 			alignByTranslate = elemWrapper.alignByTranslate;
@@ -452,52 +452,52 @@ SVGElement.prototype = {
 				elemWrapper.renderer.alignedObjects.push(elemWrapper);
 			}
 		}
-		
+
 		box = pick(box, elemWrapper.renderer);
-		
+
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
 			x = (box.x || 0) + (alignOptions.x || 0), // default: left align
 			y = (box.y || 0) + (alignOptions.y || 0), // default: top align
 			attribs = {};
-			
-			
+
+
 		// align
 		if (/^(right|center)$/.test(align)) {
 			x += (box.width - (alignOptions.width || 0)) /
 					{ right: 1, center: 2 }[align];
 		}
 		attribs[alignByTranslate ? 'translateX' : 'x'] = mathRound(x);
-		
-		
+
+
 		// vertical align
 		if (/^(bottom|middle)$/.test(vAlign)) {
 			y += (box.height - (alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
-			
+
 		}
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
-		
+
 		// animate only if already placed
 		elemWrapper[elemWrapper.placed ? 'animate' : 'attr'](attribs);
 		elemWrapper.placed = true;
 		elemWrapper.alignAttr = attribs;
-		
+
 		return elemWrapper;
 	},
-	
+
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {		
+	getBBox: function () {
 		var bBox,
 			width,
 			height,
 			rotation = this.rotation,
 			rad = rotation * deg2rad;
-			
+
 		try { // fails in Firefox if the container has display: none
-			// use extend because IE9 is not allowed to change width and height in case 
+			// use extend because IE9 is not allowed to change width and height in case
 			// of rotation (below)
 			bBox = extend({}, this.element.getBBox());
 		} catch (e) {
@@ -505,16 +505,16 @@ SVGElement.prototype = {
 		}
 		width = bBox.width;
 		height = bBox.height;
-			
+
 		// adjust for rotated text
 		if (rotation) {
 			bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 			bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 		}
-		
+
 		return bBox;
 	},
-	
+
 	/* *
 	 * Manually compute width and height of rotated text from non-rotated. Shared by SVG and VML
 	 * @param {Object} bBox
@@ -524,31 +524,31 @@ SVGElement.prototype = {
 		var rad = rotation * math.PI * 2 / 360, // radians
 			width = bBox.width,
 			height = bBox.height;
-			
-		
+
+
 	},*/
-	
+
 	/**
 	 * Show the element
 	 */
 	show: function () {
 		return this.attr({ visibility: VISIBLE });
 	},
-	
+
 	/**
 	 * Hide the element
 	 */
 	hide: function () {
 		return this.attr({ visibility: HIDDEN });
 	},
-	
+
 	/**
 	 * Add the element
 	 * @param {Object|Undefined} parent Can be an element, an element wrapper or undefined
 	 *    to append the element to the renderer.box.
-	 */ 
+	 */
 	add: function (parent) {
-	
+
 		var renderer = this.renderer,
 			parentWrapper = parent || renderer,
 			parentNode = parentWrapper.element || renderer.box,
@@ -558,15 +558,15 @@ SVGElement.prototype = {
 			otherElement,
 			otherZIndex,
 			i;
-			
+
 		// mark as inverted
 		this.parentInverted = parent && parent.inverted;
-		
+
 		// build formatted text
 		if (this.textStr !== undefined) {
 			renderer.buildText(this);
 		}
-		
+
 		// mark the container as having z indexed children
 		if (zIndex) {
 			parentWrapper.handleZ = true;
@@ -580,22 +580,22 @@ SVGElement.prototype = {
 				otherZIndex = attr(otherElement, 'zIndex');
 				if (otherElement !== element && (
 						// insert before the first element with a higher zIndex
-						pInt(otherZIndex) > zIndex || 
+						pInt(otherZIndex) > zIndex ||
 						// if no zIndex given, insert before the first element with a zIndex
-						(!defined(zIndex) && defined(otherZIndex))  
-						
+						(!defined(zIndex) && defined(otherZIndex))
+
 						)) {
 					parentNode.insertBefore(element, otherElement);
 					return this;
 				}
 			}
 		}
-		
+
 		// default: append at the end
 		parentNode.appendChild(element);
-		
+
 		this.added = true;
-		
+
 		return this;
 	},
 
@@ -608,36 +608,36 @@ SVGElement.prototype = {
 			shadows = wrapper.shadows,
 			parentNode = element.parentNode,
 			key;
-		
+
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		stop(wrapper); // stop running animations
-		
+
 		// remove element
 		if (parentNode) {
 			parentNode.removeChild(element);
 		}
-		
+
 		// destroy shadows
 		if (shadows) {
 			each(shadows, function (shadow) {
 				parentNode = shadow.parentNode;
 				if (parentNode) { // the entire chart HTML can be overwritten
 					parentNode.removeChild(shadow);
-				}				
+				}
 			});
 		}
-		
+
 		// remove from alignObjects
 		erase(wrapper.renderer.alignedObjects, wrapper);
-				
+
 		for (key in wrapper) {
 			delete wrapper[key];
 		}
-		
+
 		return null;
 	},
-	
+
 	/**
 	 * Empty a group element
 	 */
@@ -645,12 +645,12 @@ SVGElement.prototype = {
 		var element = this.element,
 			childNodes = element.childNodes,
 			i = childNodes.length;
-			
+
 		while (i--) {
 			element.removeChild(childNodes[i]);
 		}
 	},
-	
+
 	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
 	 * @param {Boolean} apply
@@ -660,11 +660,11 @@ SVGElement.prototype = {
 			i,
 			shadow,
 			element = this.element,
-			
+
 			// compensate for inverted plot area
 			transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
-			
-		
+
+
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				shadow = element.cloneNode(0);
@@ -676,20 +676,20 @@ SVGElement.prototype = {
 					'transform': 'translate' + transform,
 					'fill': NONE
 				});
-				
+
 				if (group) {
 					group.element.appendChild(shadow);
 				} else {
 					element.parentNode.insertBefore(shadow, element);
 				}
-				
+
 				shadows.push(shadow);
 			}
-			
+
 			this.shadows = shadows;
 		}
 		return this;
-	
+
 	}
 };
 
@@ -700,9 +700,9 @@ var SVGRenderer = function () {
 	this.init.apply(this, arguments);
 };
 SVGRenderer.prototype = {
-	
+
 	Element: SVGElement,
-	
+
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -714,14 +714,14 @@ SVGRenderer.prototype = {
 		var renderer = this,
 			loc = location,
 			boxWrapper;
-					
+
 		boxWrapper = renderer.createElement('svg')
 			.attr({
 				xmlns: SVG_NS,
 				version: '1.1'
 			});
 		container.appendChild(boxWrapper.element);
-		
+
 		// object properties
 		renderer.box = boxWrapper.element;
 		renderer.boxWrapper = boxWrapper;
@@ -729,12 +729,12 @@ SVGRenderer.prototype = {
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
-		
+
 		renderer.setSize(width, height, false);
-		
+
 	},
-	
-	
+
+
 	/**
 	 * Create a wrapper for an SVG element
 	 * @param {Object} nodeName
@@ -744,11 +744,11 @@ SVGRenderer.prototype = {
 		wrapper.init(this, nodeName);
 		return wrapper;
 	},
-	
-	
-	/** 
+
+
+	/**
 	 * Parse a simple HTML string into SVG tspans
-	 * 
+	 *
 	 * @param {Object} textNode The parent text SVG node
 	 */
 	buildText: function (wrapper) {
@@ -764,7 +764,7 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && 
+			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' &&
 				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
 			arr,
 			width = textStyles && pInt(textStyles.width),
@@ -772,30 +772,30 @@ SVGRenderer.prototype = {
 			lastLine,
 			GET_COMPUTED_STYLE = 'getComputedStyle',
 			i = childNodes.length;
-		
+
 		// remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
 		}
-		
+
 		if (width && !wrapper.added) {
 			this.box.appendChild(textNode); // attach it to the DOM to read offset width
 		}
-		
+
 		each(lines, function (line, lineNo) {
 			var spans, spanNo = 0, lineHeight;
-			
+
 			line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 			spans = line.split('|||');
-			
+
 			each(spans, function (span) {
 				if (span !== '' || spans.length === 1) {
 					var attributes = {},
 						tspan = doc.createElementNS(SVG_NS, 'tspan');
 					if (styleRegex.test(span)) {
 						attr(
-							tspan, 
-							'style', 
+							tspan,
+							'style',
 							span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2')
 						);
 					}
@@ -803,11 +803,11 @@ SVGRenderer.prototype = {
 						attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
 						css(tspan, { cursor: 'pointer' });
 					}
-					
+
 					span = (span.replace(/<(.|\n)*?>/g, '') || ' ')
 						.replace(/&lt;/g, '<')
 						.replace(/&gt;/g, '>');
-					
+
 					// issue #38 workaround.
 					if (reverse) {
 						arr = [];
@@ -817,54 +817,54 @@ SVGRenderer.prototype = {
 						}
 						span = arr.join('');
 					}
-					
+
 					// add the text node
 					tspan.appendChild(doc.createTextNode(span));
-					
+
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
 					} else {
 						// Firefox ignores spaces at the front or end of the tspan
 						attributes.dx = 3; // space
 					}
-					
+
 					// first span on subsequent line, add the line height
-					if (!spanNo) {						
+					if (!spanNo) {
 						if (lineNo) {
-							
+
 							// allow getting the right offset height in exporting in IE
 							if (!hasSVG && wrapper.renderer.forExport) {
 								css(tspan, { display: 'block' });
 							}
-							
+
 							// Webkit and opera sometimes return 'normal' as the line height. In that
 							// case, webkit uses offsetHeight, while Opera falls back to 18
 							lineHeight = win[GET_COMPUTED_STYLE] &&
 								pInt(win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height'));
-							
+
 							if (!lineHeight || isNaN(lineHeight)) {
 								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
 							}
 							attr(tspan, 'dy', lineHeight);
 						}
-						lastLine = tspan; // record for use in next line						
+						lastLine = tspan; // record for use in next line
 					}
-					
+
 					// add attributes
 					attr(tspan, attributes);
-					
+
 					// append it
 					textNode.appendChild(tspan);
-					
+
 					spanNo++;
-					
+
 					// check width and apply soft breaks
 					if (width) {
 						var words = span.replace(/-/g, '- ').split(' '),
 							tooLong,
 							actualWidth,
 							rest = [];
-							
+
 						while (words.length || rest.length) {
 							actualWidth = textNode.getBBox().width;
 							tooLong = actualWidth > width;
@@ -878,14 +878,14 @@ SVGRenderer.prototype = {
 										x: parentX
 									});
 									textNode.appendChild(tspan);
-								
+
 									if (actualWidth > width) { // a single word is pressing it out
 										width = actualWidth;
 									}
 								}
 							} else { // append to existing line tspan
 								tspan.removeChild(tspan.firstChild);
-								rest.unshift(words.pop());							
+								rest.unshift(words.pop());
 							}
 							if (words.length) {
 								tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
@@ -895,14 +895,14 @@ SVGRenderer.prototype = {
 				}
 			});
 		});
-		
-		
+
+
 	},
-	
+
 	/**
 	 * Make a straight line crisper by not spilling out to neighbour pixels
 	 * @param {Array} points
-	 * @param {Number} width 
+	 * @param {Number} width
 	 */
 	crispLine: function (points, width) {
 		// points format: [M, 0, 0, L, 100, 0]
@@ -915,19 +915,19 @@ SVGRenderer.prototype = {
 		}
 		return points;
 	},
-	
-	
+
+
 	/**
 	 * Draw a path
 	 * @param {Array} path An SVG path in array form
 	 */
 	path: function (path) {
-		return this.createElement('path').attr({ 
-			d: path, 
+		return this.createElement('path').attr({
+			d: path,
 			fill: NONE
 		});
 	},
-	
+
 	/**
 	 * Draw and return an SVG circle
 	 * @param {Number} x The x position
@@ -942,10 +942,10 @@ SVGRenderer.prototype = {
 				y: y,
 				r: r
 			};
-		
+
 		return this.createElement('circle').attr(attr);
 	},
-	
+
 	/**
 	 * Draw and return an arc
 	 * @param {Number} x X position
@@ -956,9 +956,9 @@ SVGRenderer.prototype = {
 	 * @param {Number} end Ending angle
 	 */
 	arc: function (x, y, r, innerR, start, end) {
-		// arcs are defined as symbols for the ability to set 
+		// arcs are defined as symbols for the ability to set
 		// attributes in attr and animate
-		
+
 		if (isObject(x)) {
 			y = x.y;
 			r = x.r;
@@ -967,14 +967,14 @@ SVGRenderer.prototype = {
 			end = x.end;
 			x = x.x;
 		}
-		
+
 		return this.symbol('arc', x || 0, y || 0, r || 0, {
 			innerR: innerR || 0,
 			start: start || 0,
 			end: end || 0
 		});
 	},
-	
+
 	/**
 	 * Draw and return a rectangle
 	 * @param {Number} x Left position
@@ -991,42 +991,42 @@ SVGRenderer.prototype = {
 			height = x.height;
 			r = x.r;
 			strokeWidth = x.strokeWidth;
-			x = x.x;	
+			x = x.x;
 		}
 		var wrapper = this.createElement('rect').attr({
 			rx: r,
 			ry: r,
 			fill: NONE
 		});
-		
+
 		return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
 	},
-	
+
 	/**
 	 * Resize the box and re-align all aligned elements
 	 * @param {Object} width
 	 * @param {Object} height
 	 * @param {Boolean} animate
-	 * 
+	 *
 	 */
 	setSize: function (width, height, animate) {
 		var renderer = this,
 			alignedObjects = renderer.alignedObjects,
 			i = alignedObjects.length;
-		
+
 		renderer.width = width;
 		renderer.height = height;
-		
+
 		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
-		});		
-		
+		});
+
 		while (i--) {
 			alignedObjects[i].align();
 		}
 	},
-	
+
 	/**
 	 * Create a group
 	 * @param {String} name The group will be given a class name of 'highcharts-{name}'.
@@ -1037,7 +1037,7 @@ SVGRenderer.prototype = {
 			defined(name) && { 'class': PREFIX + name }
 		);
 	},
-	
+
 	/**
 	 * Display an image
 	 * @param {String} src
@@ -1048,10 +1048,10 @@ SVGRenderer.prototype = {
 	 */
 	image: function (src, x, y, width, height) {
 		var attribs = {
-				preserveAspectRatio: NONE	
+				preserveAspectRatio: NONE
 			},
 			elemWrapper;
-			
+
 		// optional properties
 		if (arguments.length > 1) {
 			extend(attribs, {
@@ -1061,25 +1061,25 @@ SVGRenderer.prototype = {
 				height: height
 			});
 		}
-		
-		elemWrapper = this.createElement('image').attr(attribs);		
-		
+
+		elemWrapper = this.createElement('image').attr(attribs);
+
 		// set the href in the xlink namespace
 		if (elemWrapper.element.setAttributeNS) {
-			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink', 
+			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink',
 				'href', src);
 		} else {
 			// could be exporting in IE
 			// using href throws "not supported" in ie7 and under, requries regex shim to fix later
 			elemWrapper.element.setAttribute('hc-svg-href', src);
 		}
-			
-		return elemWrapper;					
+
+		return elemWrapper;
 	},
-	
+
 	/**
 	 * Draw a symbol out of pre-defined shape paths from the namespace 'symbol' object.
-	 * 
+	 *
 	 * @param {Object} symbol
 	 * @param {Object} x
 	 * @param {Object} y
@@ -1087,26 +1087,26 @@ SVGRenderer.prototype = {
 	 * @param {Object} options
 	 */
 	symbol: function (symbol, x, y, radius, options) {
-		
+
 		var obj,
-			
+
 			// get the symbol definition function
 			symbolFn = this.symbols[symbol],
-			
+
 			// check if there's a path defined for this symbol
 			path = symbolFn && symbolFn(
-				mathRound(x), 
+				mathRound(x),
 				mathRound(y),
-				radius, 
+				radius,
 				options
 			),
-			
+
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize;
-			
+
 		if (path) {
-		
+
 			obj = this.path(path);
 			// expando properties for use in animate and attr
 			extend(obj, {
@@ -1118,11 +1118,11 @@ SVGRenderer.prototype = {
 			if (options) {
 				extend(obj, options);
 			}
-			
-			
+
+
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
-			
+
 			var centerImage = function (img, size) {
 				img.attr({
 					width: size[0],
@@ -1132,10 +1132,10 @@ SVGRenderer.prototype = {
 					-mathRound(size[1] / 2)
 				);
 			};
-			
+
 			imageSrc = symbol.match(imageRegex)[1];
 			imageSize = symbolSizes[imageSrc];
-			
+
 			// create the image synchronously, add attribs async
 			obj = this.image(imageSrc)
 				.attr({
@@ -1149,7 +1149,7 @@ SVGRenderer.prototype = {
 				// initialize image to be 0 size so export will still function if there's no cached sizes
 				obj.attr({ width: 0, height: 0 });
 
-				// create a dummy JavaScript image to get the width and height  
+				// create a dummy JavaScript image to get the width and height
 				createElement('img', {
 					onload: function () {
 						var img = this;
@@ -1158,15 +1158,15 @@ SVGRenderer.prototype = {
 					src: imageSrc
 				});
 			}
-				
+
 		// default circles
 		} else {
 			obj = this.circle(x, y, radius);
 		}
-		
+
 		return obj;
 	},
-	
+
 	/**
 	 * An extendable collection of functions for defining symbol paths.
 	 */
@@ -1181,7 +1181,7 @@ SVGRenderer.prototype = {
 				'Z'
 			];
 		},
-			
+
 		'triangle': function (x, y, radius) {
 			return [
 				M, x, y - 1.33 * radius,
@@ -1190,7 +1190,7 @@ SVGRenderer.prototype = {
 				'Z'
 			];
 		},
-			
+
 		'triangle-down': function (x, y, radius) {
 			return [
 				M, x, y + 1.33 * radius,
@@ -1217,7 +1217,7 @@ SVGRenderer.prototype = {
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
 				longArc = options.end - start < mathPI ? 0 : 1;
-				
+
 			return [
 				M,
 				x + radius * cosStart,
@@ -1230,8 +1230,8 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				L,				
-				x + innerRadius * cosEnd, 
+				L,
+				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
 				innerRadius, // x radius
@@ -1241,12 +1241,12 @@ SVGRenderer.prototype = {
 				0, // clockwise
 				x + innerRadius * cosStart,
 				y + innerRadius * sinStart,
-				
+
 				'Z' // close
 			];
 		}
 	},
-	
+
 	/**
 	 * Define a clipping rectangle
 	 * @param {String} id
@@ -1258,22 +1258,22 @@ SVGRenderer.prototype = {
 	clipRect: function (x, y, width, height) {
 		var wrapper,
 			id = PREFIX + idCounter++,
-			
+
 			clipPath = this.createElement('clipPath').attr({
 				id: id
 			}).add(this.defs);
-		
+
 		wrapper = this.rect(x, y, width, height, 0).add(clipPath);
 		wrapper.id = id;
-		
+
 		return wrapper;
 	},
-	
-	
+
+
 	/**
 	 * Take a color and return it if it's a string, make it a gradient if it's a
 	 * gradient configuration object
-	 * 
+	 *
 	 * @param {Object} color The color or config object
 	 */
 	color: function (color, elem, prop) {
@@ -1295,7 +1295,7 @@ SVGRenderer.prototype = {
 				x2: linearGradient[2],
 				y2: linearGradient[3]
 			}).add(renderer.defs);
-			
+
 			each(color.stops, function (stop) {
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
@@ -1311,27 +1311,27 @@ SVGRenderer.prototype = {
 					'stop-opacity': stopOpacity
 				}).add(gradientObject);
 			});
-			
+
 			return 'url(' + this.url + '#' + id + ')';
-			
+
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
 			colorObject = Color(color);
 			attr(elem, prop + '-opacity', colorObject.get('a'));
-			
+
 			return colorObject.get('rgb');
-			
-			
+
+
 		} else {
 			// Remove the opacity attribute added above. Does not throw if the attribute is not there.
 			elem.removeAttribute(prop + '-opacity');
 
 			return color;
 		}
-		
+
 	},
-	
-		
+
+
 	/**
 	 * Add text to the SVG object
 	 * @param {String} str
@@ -1339,25 +1339,25 @@ SVGRenderer.prototype = {
 	 * @param {Number} y Top position
 	 */
 	text: function (str, x, y) {
-		
+
 		// declare variables
 		var defaultChartStyle = defaultOptions.chart.style,
 			wrapper;
-	
+
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));
-		
+
 		wrapper = this.createElement('text')
 			.attr({
 				x: x,
 				y: y,
-				text: str	
+				text: str
 			})
 			.css({
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
 			});
-			
+
 		wrapper.x = x;
 		wrapper.y = y;
 		return wrapper;

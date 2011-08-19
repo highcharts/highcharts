@@ -1,9 +1,9 @@
-/** 
+/**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * MooTools adapter
- * 
+ *
  * (c) 2010-2011 Torstein Hønsi
- * 
+ *
  * License: www.highcharts.com/license
  */
 
@@ -11,7 +11,7 @@
 /*global Highcharts, Fx, $, $extend, $each, $merge, Events, Event */
 
 (function () {
-	
+
 var win = window,
 	legacy = !!win.$merge,
 	$extend = win.$extend || function () {
@@ -27,43 +27,43 @@ win.HighchartsAdapter = {
 			fxStart = fxProto.start,
 			morphProto = Fx.Morph.prototype,
 			morphCompute = morphProto.compute;
-			
+
 		// override Fx.start to allow animation of SVG element wrappers
 		fxProto.start = function (from, to) {
 			var fx = this,
 				elem = fx.element;
-			
+
 			// special for animating paths
 			if (from.d) {
 				//this.fromD = this.element.d.split(' ');
 				fx.paths = Highcharts.pathAnim.init(
-					elem, 
-					elem.d, 
+					elem,
+					elem.d,
 					fx.toD
 				);
 			}
 			fxStart.apply(fx, arguments);
-			
+
 			return this; // chainable
 		};
-		
+
 		// override Fx.step to allow animation of SVG element wrappers
 		morphProto.compute = function (from, to, delta) {
 			var fx = this,
 				paths = fx.paths;
-			
+
 			if (paths) {
 				fx.element.attr(
-					'd', 
+					'd',
 					Highcharts.pathAnim.step(paths[0], paths[1], delta, fx.toD)
 				);
 			} else {
 				return morphCompute.apply(fx, arguments);
 			}
 		};
-		
-	},	
-	
+
+	},
+
 	/**
 	 * Animate a HTML element or SVG element wrapper
 	 * @param {Object} el
@@ -74,7 +74,7 @@ win.HighchartsAdapter = {
 		var isSVGElement = el.attr,
 			effect,
 			complete = options && options.complete;
-		
+
 		if (isSVGElement && !el.setStyle) {
 			// add setStyle and getStyle methods for internal use in Moo
 			el.getStyle = el.attr;
@@ -85,45 +85,45 @@ win.HighchartsAdapter = {
 			// dirty hack to trick Moo into handling el as an element wrapper
 			el.$family = el.uid = true;
 		}
-		
+
 		// stop running animations
 		win.HighchartsAdapter.stop(el);
-		
+
 		// define and run the effect
 		effect = new Fx.Morph(
-			isSVGElement ? el : $(el), 
+			isSVGElement ? el : $(el),
 			$extend({
 				transition: Fx.Transitions.Quad.easeInOut
 			}, options)
 		);
-		
+
 		// special treatment for paths
 		if (params.d) {
 			effect.toD = params.d;
 		}
-		
+
 		// jQuery-like events
 		if (complete) {
 			effect.addEvent('complete', complete);
 		}
-		
+
 		// run
 		effect.start(params);
-		
+
 		// record for use in stop method
 		el.fx = effect;
 	},
-	
+
 	/**
 	 * MooTool's each function
-	 * 
+	 *
 	 */
 	each: function (arr, fn) {
-		return legacy ? 
+		return legacy ?
 			$each(arr, fn) :
 			arr.each(fn);
 	},
-	
+
 	/**
 	 * Map an array
 	 * @param {Array} arr
@@ -132,7 +132,7 @@ win.HighchartsAdapter = {
 	map: function (arr, fn) {
 		return arr.map(fn);
 	},
-	
+
 	/**
 	 * Grep or filter an array
 	 * @param {Array} arr
@@ -141,7 +141,7 @@ win.HighchartsAdapter = {
 	grep: function (arr, fn) {
 		return arr.filter(fn);
 	},
-	
+
 	/**
 	 * Deep merge two objects and return a third
 	 */
@@ -150,19 +150,19 @@ win.HighchartsAdapter = {
 			args13 = [{}], // MooTools 1.3+
 			i = args.length,
 			ret;
-		
+
 		if (legacy) {
 			ret = $merge.apply(null, args);
 		} else {
 			while (i--) {
-				args13[i + 1] = args[i];	
+				args13[i + 1] = args[i];
 			}
 			ret = Object.merge.apply(Object, args13);
 		}
-		
+
 		return ret;
 	},
-	
+
 	/**
 	 * Extends an object with Events, if its not done
 	 */
@@ -186,7 +186,7 @@ win.HighchartsAdapter = {
 	 */
 	addEvent: function (el, type, fn) {
 		if (typeof type === 'string') { // chart broke due to el being string, type function
-		
+
 			if (type === 'unload') { // Moo self destructs before custom unload events
 				type = 'beforeunload';
 			}
@@ -196,7 +196,7 @@ win.HighchartsAdapter = {
 			el.addEvent(type, fn);
 		}
 	},
-	
+
 	removeEvent: function (el, type, fn) {
 		win.HighchartsAdapter.extendWithEvents(el);
 
@@ -214,10 +214,10 @@ win.HighchartsAdapter = {
 			el.removeEvents();
 		}
 	},
-	
+
 	fireEvent: function (el, event, eventArguments, defaultFunction) {
-		// create an event object that keeps all functions		
-		event = new Event({ 
+		// create an event object that keeps all functions
+		event = new Event({
 			type: event,
 			target: el
 		});
@@ -232,13 +232,13 @@ win.HighchartsAdapter = {
 		if (el.fireEvent) {
 			el.fireEvent(event.type, event);
 		}
-		
+
 		// fire the default if it is passed and it is not prevented above
 		if (defaultFunction) {
 			defaultFunction(event);
-		}		
+		}
 	},
-	
+
 	/**
 	 * Stop running animations on the object
 	 */

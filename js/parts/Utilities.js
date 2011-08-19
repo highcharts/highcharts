@@ -1,4 +1,4 @@
-	
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -81,7 +81,7 @@ function defined(obj) {
 /**
  * Set or get an attribute or an object of attributes. Can't use jQuery attr because
  * it attempts to set expando properties on the SVG element, which is not allowed.
- * 
+ *
  * @param {Object} elem The DOM element to receive the attribute(s)
  * @param {String|Object} prop The property or an abject of key-value pairs
  * @param {String} value The value if a single property is set
@@ -90,19 +90,19 @@ function attr(elem, prop, value) {
 	var key,
 		setAttribute = 'setAttribute',
 		ret;
-	
+
 	// if the prop is a string
 	if (isString(prop)) {
 		// set the value
 		if (defined(value)) {
 
 			elem[setAttribute](prop, value);
-		
+
 		// get the value
 		} else if (elem && elem.getAttribute) { // elem not defined when printing pie demo...
 			ret = elem.getAttribute(prop);
 		}
-	
+
 	// else if prop is defined, it is a hash of key/value pairs
 	} else if (defined(prop) && isObject(prop)) {
 		for (key in prop) {
@@ -119,7 +119,7 @@ function splat(obj) {
 	if (!obj || obj.constructor !== Array) {
 		obj = [obj];
 	}
-	return obj; 
+	return obj;
 }
 
 
@@ -192,7 +192,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 	}
 	if (parent) {
 		parent.appendChild(el);
-	}	
+	}
 	return el;
 }
 
@@ -225,13 +225,13 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 		s = n < 0 ? "-" : "",
 		i = String(pInt(n = mathAbs(+n || 0).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
-    
+
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
 		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
 }
 
 /**
- * Based on http://www.php.net/manual/en/function.strftime.php 
+ * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
  * @param {Number} timestamp
  * @param {Boolean} capitalize
@@ -240,12 +240,12 @@ dateFormat = function (format, timestamp, capitalize) {
 	function pad(number) {
 		return number.toString().replace(/^([0-9])$/, '0$1');
 	}
-	
+
 	if (!defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
-	
+
 	var date = new Date(timestamp * timeFactor),
 		key, // used in for constuct below
 		// get the basic time values
@@ -258,7 +258,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		langWeekdays = lang.weekdays,
 		langMonths = lang.months,
 		/* // uncomment this and the 'W' format key below to enable week numbers
-		weekNumber = function() { 
+		weekNumber = function() {
 			var clone = new Date(date.valueOf()),
 				day = clone[getDay]() == 0 ? 7 : clone[getDay](),
 				dayNumber;
@@ -267,28 +267,28 @@ dateFormat = function (format, timestamp, capitalize) {
 			return 1 + mathFloor(dayNumber / 7);
 		},
 		*/
-		
+
 		// list all format keys
 		replacements = {
 
 			// Day
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
-			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31 
-			'e': dayOfMonth, // Day of the month, 1 through 31 
-			
+			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
+			'e': dayOfMonth, // Day of the month, 1 through 31
+
 			// Week (none implemented)
 			//'W': weekNumber(),
-			
+
 			// Month
 			'b': langMonths[month].substr(0, 3), // Short month, like 'Jan'
 			'B': langMonths[month], // Long month, like 'January'
 			'm': pad(month + 1), // Two digit month number, 01 through 12
-			
+
 			// Year
 			'y': fullYear.toString().substr(2, 2), // Two digits year, like 09 for 2009
 			'Y': fullYear, // Four digits year, like 2009
-			
+
 			// Time
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
@@ -297,7 +297,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()) // Two digits seconds, 00 through  59
-			
+
 		};
 
 
@@ -305,7 +305,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	for (key in replacements) {
 		format = format.replace('%' + key, replacements[key]);
 	}
-		
+
 	// Optionally capitalize the string and return
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
@@ -314,9 +314,9 @@ dateFormat = function (format, timestamp, capitalize) {
  * Loop up the node tree and add offsetWidth and offsetHeight to get the
  * total page offset for a given element. Used by Opera and iOS on hover and
  * all browsers on point click.
- * 
+ *
  * @param {Object} el
- * 
+ *
  */
 function getPosition(el) {
 	var p = { left: el.offsetLeft, top: el.offsetTop };
@@ -385,7 +385,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 	if (y < 5) {
 		y = 5; // above
 
-		// If the tooltip is still covering the point, move it below instead 
+		// If the tooltip is still covering the point, move it below instead
 		if (point.y >= y && point.y <= (y + boxHeight)) {
 			y = point.y + boxHeight - 5; // below
 		}

@@ -12,7 +12,7 @@ win.Highcharts = {
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	Series: Series,
-		
+
 	// Expose utility funcitons for modules
 	addEvent: addEvent,
 	createElement: createElement,

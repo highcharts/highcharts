@@ -4,7 +4,7 @@
  */
 
 Highcharts.theme = {
-	colors: ["#DDDF0D", "#7798BF", "#55BF3B", "#DF5353", "#aaeeee", "#ff0066", "#eeaaee", 
+	colors: ["#DDDF0D", "#7798BF", "#55BF3B", "#DF5353", "#aaeeee", "#ff0066", "#eeaaee",
 		"#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
 	chart: {
 		backgroundColor: {
@@ -21,13 +21,13 @@ Highcharts.theme = {
 		plotBorderWidth: 0
 	},
 	title: {
-		style: { 
+		style: {
 			color: '#FFF',
 			font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
 		}
 	},
 	subtitle: {
-		style: { 
+		style: {
 			color: '#DDD',
 			font: '12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
 		}
@@ -46,7 +46,7 @@ Highcharts.theme = {
 			style: {
 				color: '#AAA',
 				font: 'bold 12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
-			}				
+			}
 		}
 	},
 	yAxis: {
@@ -65,7 +65,7 @@ Highcharts.theme = {
 			style: {
 				color: '#AAA',
 				font: 'bold 12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
-			}				
+			}
 		}
 	},
 	legend: {
@@ -97,8 +97,8 @@ Highcharts.theme = {
 			color: '#FFF'
 		}
 	},
-	
-	
+
+
 	plotOptions: {
 		line: {
 			dataLabels: {
@@ -122,13 +122,13 @@ Highcharts.theme = {
 			lineColor: 'white'
 		}
 	},
-	
+
 	toolbar: {
 		itemStyle: {
 			color: '#CCC'
 		}
 	},
-	
+
 	navigation: {
 		buttonOptions: {
 			backgroundColor: {
@@ -143,7 +143,7 @@ Highcharts.theme = {
 			hoverSymbolStroke: '#FFFFFF'
 		}
 	},
-	
+
 	exporting: {
 		buttons: {
 			exportButton: {
@@ -154,7 +154,7 @@ Highcharts.theme = {
 			}
 		}
 	},
-	
+
 	// scroll charts
 	rangeSelector: {
 		buttonTheme: {
@@ -197,7 +197,7 @@ Highcharts.theme = {
 						color: 'yellow'
 					}
 				}
-			}					
+			}
 		},
 		inputStyle: {
 			backgroundColor: '#333',
@@ -207,7 +207,7 @@ Highcharts.theme = {
 			color: 'silver'
 		}
 	},
-	
+
 	navigator: {
 		handles: {
 			backgroundColor: '#666',
@@ -220,7 +220,7 @@ Highcharts.theme = {
 			lineColor: '#A6C7ED'
 		}
 	},
-	
+
 	scrollbar: {
 		barBackgroundColor: {
 				linearGradient: [0, 0, 0, 20],
@@ -249,7 +249,7 @@ Highcharts.theme = {
 		},
 		trackBorderColor: '#666'
 	},
-	
+
 	// special colors for some of the demo examples
 	legendBackgroundColor: 'rgba(48, 48, 48, 0.8)',
 	legendBackgroundColorSolid: 'rgb(70, 70, 70)',

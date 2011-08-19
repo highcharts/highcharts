@@ -6,7 +6,7 @@
  */
 var SplineSeries = extendClass(Series, {
 	type: 'spline',
-	
+
 	/**
 	 * Draw the actual graph
 	 */
@@ -22,7 +22,7 @@ var SplineSeries = extendClass(Series, {
 			rightContX,
 			rightContY,
 			ret;
-			
+
 		// find control points
 		if (i && i < segment.length - 1) {
 			var lastX = lastPoint.plotX,
@@ -30,19 +30,19 @@ var SplineSeries = extendClass(Series, {
 				nextX = nextPoint.plotX,
 				nextY = nextPoint.plotY,
 				correction;
-			
+
 			leftContX = (smoothing * plotX + lastX) / denom;
 			leftContY = (smoothing * plotY + lastY) / denom;
 			rightContX = (smoothing * plotX + nextX) / denom;
 			rightContY = (smoothing * plotY + nextY) / denom;
-		
+
 			// have the two control points make a straight line through main point
-			correction = ((rightContY - leftContY) * (rightContX - plotX)) / 
+			correction = ((rightContY - leftContY) * (rightContX - plotX)) /
 				(rightContX - leftContX) + plotY - rightContY;
-				
+
 			leftContY += correction;
 			rightContY += correction;
-			
+
 			// to prevent false extremes, check that control points are between
 			// neighbouring points' y values
 			if (leftContY > lastY && leftContY > plotY) {
@@ -51,7 +51,7 @@ var SplineSeries = extendClass(Series, {
 			} else if (leftContY < lastY && leftContY < plotY) {
 				leftContY = mathMin(lastY, plotY);
 				rightContY = 2 * plotY - leftContY;
-			} 
+			}
 			if (rightContY > nextY && rightContY > plotY) {
 				rightContY = mathMax(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
@@ -59,24 +59,24 @@ var SplineSeries = extendClass(Series, {
 				rightContY = mathMin(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			}
-			
+
 			// record for drawing in next point
 			point.rightContX = rightContX;
 			point.rightContY = rightContY;
-			
+
 		}
-		
+
 		// moveTo or lineTo
 		if (!i) {
 			ret = [M, plotX, plotY];
 		} else { // curve from last point to this
 			ret = [
 				'C',
-				lastPoint.rightContX || lastPoint.plotX, 
+				lastPoint.rightContX || lastPoint.plotX,
 				lastPoint.rightContY || lastPoint.plotY,
-				leftContX || plotX, 
+				leftContX || plotX,
 				leftContY || plotY,
-				plotX, 
+				plotX,
 				plotY
 			];
 			lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later

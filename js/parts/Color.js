@@ -7,13 +7,13 @@
 var Color = function (input) {
 	// declare variables
 	var rgba = [], result;
-	
+
 	/**
 	 * Parse the input color to rgba array
 	 * @param {String} input
 	 */
 	function init(input) {
-		
+
 		// rgba
 		result = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/.exec(input);
 		if (result) {
@@ -24,7 +24,7 @@ var Color = function (input) {
 				rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
 			}
 		}
-	
+
 	}
 	/**
 	 * Return the color a specified format
@@ -32,7 +32,7 @@ var Color = function (input) {
 	 */
 	function get(format) {
 		var ret;
-		
+
 		// it's NaN if gradient colors on a column chart
 		if (rgba && !isNaN(rgba[0])) {
 			if (format === 'rgb') {
@@ -47,7 +47,7 @@ var Color = function (input) {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Brighten the color
 	 * @param {Number} alpha
@@ -57,7 +57,7 @@ var Color = function (input) {
 			var i;
 			for (i = 0; i < 3; i++) {
 				rgba[i] += pInt(alpha * 255);
-				
+
 				if (rgba[i] < 0) {
 					rgba[i] = 0;
 				}
@@ -75,11 +75,11 @@ var Color = function (input) {
 	function setOpacity(alpha) {
 		rgba[3] = alpha;
 		return this;
-	}	
-	
+	}
+
 	// initialize: parse the input
 	init(input);
-	
+
 	// public methods
 	return {
 		get: get,

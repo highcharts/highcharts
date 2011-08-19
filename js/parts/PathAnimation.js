@@ -26,31 +26,31 @@ pathAnim = {
 					}
 				}
 			};
-		
+
 		if (bezier) {
 			sixify(start);
 			sixify(end);
 		}
-		
+
 		// pull out the base lines before padding
-		if (elem.isArea) { 
+		if (elem.isArea) {
 			startBaseLine = start.splice(start.length - 6, 6);
 			endBaseLine = end.splice(end.length - 6, 6);
 		}
-		
+
 		// if shifting points, prepend a dummy point to the end path
 		if (shift) {
 
 			end = [].concat(end).splice(0, numParams).concat(end);
 			elem.shift = false; // reset for following animations
 		}
-		
+
 		// copy and append last point until the length matches the end length
 		if (start.length) {
 			endLength = end.length;
-			while (start.length < endLength) {		
-				
-				//bezier && sixify(start); 
+			while (start.length < endLength) {
+
+				//bezier && sixify(start);
 				slice = [].concat(start).splice(start.length - numParams, numParams);
 				if (bezier) { // disable first control point
 					slice[numParams - 6] = slice[numParams - 2];
@@ -59,14 +59,14 @@ pathAnim = {
 				start = start.concat(slice);
 			}
 		}
-		
+
 		if (startBaseLine) { // append the base lines for areas
 			start = start.concat(startBaseLine);
 			end = end.concat(endBaseLine);
 		}
 		return [start, end];
 	},
-	
+
 	/**
 	 * Interpolate each value of the path and return the array
 	 */
@@ -74,18 +74,18 @@ pathAnim = {
 		var ret = [],
 			i = start.length,
 			startVal;
-			
+
 		if (pos === 1) { // land on the final path without adjustment points appended in the ends
 			ret = complete;
-			
+
 		} else if (i === end.length && pos < 1) {
 			while (i--) {
 				startVal = parseFloat(start[i]);
-				ret[i] = 
+				ret[i] =
 					isNaN(startVal) ? // a letter instruction like M or L
 						start[i] :
 						pos * (parseFloat(end[i] - startVal)) + startVal;
-				
+
 			}
 		} else { // if animation is finished or length not matching, land on right value
 			ret = end;

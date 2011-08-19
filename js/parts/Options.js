@@ -1,17 +1,17 @@
 /**
- * Set the time methods globally based on the useUTC option. Time method can be either 
+ * Set the time methods globally based on the useUTC option. Time method can be either
  * local time or UTC (default).
  */
 function setTimeMethods() {
 	var useUTC = defaultOptions.global.useUTC;
-	
+
 	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
 		return new Date(
-			year, 
-			month, 
-			pick(date, 1), 
-			pick(hours, 0), 
-			pick(minutes, 0), 
+			year,
+			month,
+			pick(date, 1),
+			pick(hours, 0),
+			pick(minutes, 0),
 			pick(seconds, 0)
 		).getTime();
 	};
@@ -26,7 +26,7 @@ function setTimeMethods() {
 	setDate = useUTC ? 'setUTCDate' : 'setDate';
 	setMonth = useUTC ? 'setUTCMonth' : 'setMonth';
 	setFullYear = useUTC ? 'setUTCFullYear' : 'setFullYear';
-		
+
 }
 
 /**
@@ -35,10 +35,10 @@ function setTimeMethods() {
  */
 function setOptions(options) {
 	defaultOptions = merge(defaultOptions, options);
-	
+
 	// apply UTC
 	setTimeMethods();
-	
+
 	return defaultOptions;
 }
 
@@ -59,7 +59,7 @@ function discardElement(element) {
 	if (!garbageBin) {
 		garbageBin = createElement(DIV);
 	}
-	
+
 	// move the node and empty bin
 	if (element) {
 		garbageBin.appendChild(element);
@@ -70,7 +70,7 @@ function discardElement(element) {
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-var 
+var
 
 defaultLabelOptions = {
 	enabled: true,
@@ -89,12 +89,12 @@ defaultLabelOptions = {
 };
 
 defaultOptions = {
-	colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE', 
+	colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
 		'#DB843D', '#92A8CD', '#A47D7C', '#B5CA92'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
-		months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
+		months: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
 				'August', 'September', 'October', 'November', 'December'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		decimalPoint: '.',
@@ -118,7 +118,7 @@ defaultOptions = {
 		//marginLeft: null,
 		borderColor: '#4572A7',
 		//borderWidth: 0,
-		borderRadius: 5,		
+		borderRadius: 5,
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
@@ -163,7 +163,7 @@ defaultOptions = {
 			color: '#6D869F'
 		}
 	},
-	
+
 	plotOptions: {
 		line: { // base series options
 			allowPointSelect: false,
@@ -180,13 +180,13 @@ defaultOptions = {
 			lineWidth: 2,
 			shadow: true,
 			// stacking: null,
-			marker: { 
+			marker: {
 				enabled: true,
-				//symbol: null, 
+				//symbol: null,
 				lineWidth: 0,
 				radius: 4,
 				lineColor: '#FFFFFF',
-				//fillColor: null, 
+				//fillColor: null,
 				states: { // states for a single point
 					hover: {
 						//radius: base + 2
@@ -195,7 +195,7 @@ defaultOptions = {
 						fillColor: '#FFFFFF',
 						lineColor: '#000000',
 						lineWidth: 2
-					}					
+					}
 				}
 			},
 			point: {
@@ -208,7 +208,7 @@ defaultOptions = {
 					return this.y;
 				}
 			}),
-			
+
 			//pointStart: 0,
 			//pointInterval: 1,
 			showInLegend: true,
@@ -280,7 +280,7 @@ defaultOptions = {
 		x: 0, // docs
 		y: 0 // docs
 	},
-	
+
 	loading: {
 		hideDuration: 100,
 		labelStyle: {
@@ -296,7 +296,7 @@ defaultOptions = {
 			textAlign: 'center'
 		}
 	},
-	
+
 	tooltip: {
 		enabled: true,
 		//crosshairs: null,
@@ -314,14 +314,14 @@ defaultOptions = {
 			whiteSpace: 'nowrap'
 		}
 	},
-	
+
 	toolbar: {
 		itemStyle: {
 			color: '#4572A7',
 			cursor: 'pointer'
 		}
 	},
-	
+
 	credits: {
 		enabled: true,
 		text: 'Highcharts.com',
@@ -359,7 +359,7 @@ var defaultXAxisOptions =  {
 	// gridLineDashStyle: 'solid', // docs
 	// gridLineWidth: 0,
 	// reversed: false,
-	
+
 	labels: defaultLabelOptions,
 		// { step: null },
 	lineColor: '#C0D0E0',
@@ -394,7 +394,7 @@ var defaultXAxisOptions =  {
 	//reversed: false,
 	// showFirstLabel: true,
 	// showLastLabel: false,
-	startOfWeek: 1, 
+	startOfWeek: 1,
 	startOnTick: false,
 	tickColor: '#C0D0E0',
 	//tickInterval: null,
@@ -493,11 +493,11 @@ defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 });
 
 
- 
+
 
 // Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions, 
-	defaultSeriesOptions = defaultPlotOptions.line; 
+var defaultPlotOptions = defaultOptions.plotOptions,
+	defaultSeriesOptions = defaultPlotOptions.line;
 //defaultPlotOptions.line = merge(defaultSeriesOptions);
 defaultPlotOptions.spline = merge(defaultSeriesOptions);
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
@@ -525,7 +525,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
 	//pointWidth: null,
-	minPointLength: 0, 
+	minPointLength: 0,
 	states: {
 		hover: {
 			brightness: 0.1,
@@ -579,7 +579,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 			shadow: false
 		}
 	}
-	
+
 });
 
 // set the default time methods

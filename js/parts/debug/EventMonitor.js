@@ -35,7 +35,7 @@ EventMonitor.prototype.registerEvent = function(el, eventName, handler) {
 			jstestdriver.console.log('HTMLEvents and MouseEvents are only allowed on DOM elements: ' + eventName);
 		}
 	}
-	
+
 	// 1. Create an id so to not have a reference to the object
 	// 2. Store the id in our registry and in the object
 	// 3. Add a mapping from the id to the event name and a counter instead of the function
@@ -54,7 +54,7 @@ EventMonitor.prototype.registerEvent = function(el, eventName, handler) {
 
 	var eventObject = this.registry[id];
 
-	// Create an eventname that is the combination of event and function 
+	// Create an eventname that is the combination of event and function
 	eventKey = this.getHandlerKey(eventName, handler);
 
 	// Create event counter if its not there
@@ -90,7 +90,7 @@ EventMonitor.prototype.unregisterEvent = function(el, eventName, handler) {
 
 	if (eventName) {
 		if (handler) {
-			// Create an eventname that is the combination of event and function 
+			// Create an eventname that is the combination of event and function
 			eventKey = this.getHandlerKey(eventName, handler);
 
 			// Remove one event handler
