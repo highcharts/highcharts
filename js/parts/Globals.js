@@ -12,8 +12,8 @@ var doc = document,
 	mathSin = math.sin,
 	mathPI = math.PI,
 	deg2rad = mathPI * 2 / 360,
-	
-	
+
+
 	// some variables
 	userAgent = navigator.userAgent,
 	isIE = /msie/i.test(userAgent) && !win.opera,
@@ -33,8 +33,8 @@ var doc = document,
 	dateFormat, // function
 	globalAnimation,
 	pathAnim,
-	
-	
+
+
 	// some constants for frequently used strings
 	UNDEFINED,
 	DIV = 'div',
@@ -62,7 +62,7 @@ var doc = document,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
-	
+
 	// time methods, changed based on whether or not UTC is used
 	makeTime,
 	getMinutes,
@@ -76,13 +76,13 @@ var doc = document,
 	setDate,
 	setMonth,
 	setFullYear,
-	
+
 	// check for a custom HighchartsAdapter defined prior to this file
 	globalAdapter = win.HighchartsAdapter,
-	adapter = globalAdapter || {}, 
-	
+	adapter = globalAdapter || {},
+
 	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
-	// and all the utility functions will be null. In that case they are populated by the 
+	// and all the utility functions will be null. In that case they are populated by the
 	// default adapters below.
 	each = adapter.each,
 	grep = adapter.grep,
@@ -93,7 +93,7 @@ var doc = document,
 	fireEvent = adapter.fireEvent,
 	animate = adapter.animate,
 	stop = adapter.stop,
-	
+
 	// lookup over the types and the associated classes
 	seriesTypes = {},
 	hoverChart;
