@@ -1,9 +1,9 @@
-/** 
+/**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Prototype adapter
- * 
+ *
  * @author Michael Nelson, Torstein Hønsi.
- * 
+ *
  * Feel free to use and modify this script.
  * Highcharts license: www.highcharts.com/license.
  */
@@ -109,7 +109,7 @@ return {
 	addEvent: function (el, event, fn) {
 		if (el.addEventListener || el.attachEvent) {
 			Event.observe($(el), HighchartsAdapter.addNS(event), fn);
-		
+
 		} else {
 			HighchartsAdapter._extend(el);
 			el._highcharts_observe(event, fn);
@@ -197,12 +197,12 @@ return {
 	grep: function (arr, fn) {
 		return arr.findAll(fn);
 	},
-	
+
 	// um, map
 	map: function (arr, fn) {
 		return arr.map(fn);
 	},
-	
+
 	// deep merge. merge({a : 'a', b : {b1 : 'b1', b2 : 'b2'}}, {b : {b2 : 'b2_prime'}, c : 'c'}) => {a : 'a', b : {b1 : 'b1', b2 : 'b2_prime'}, c : 'c'}
 	/*merge: function(){
 		function doCopy(copy, original) {
@@ -250,11 +250,11 @@ return {
 	merge: function () { // the built-in prototype merge function doesn't do deep copy
 		function doCopy(copy, original) {
 			var value, key;
-				
+
 			for (key in original) {
 				value = original[key];
-				if (value && typeof value === 'object' && value.constructor !== Array && 
-						typeof value.nodeType !== 'number') { 
+				if (value && typeof value === 'object' && value.constructor !== Array &&
+						typeof value.nodeType !== 'number') {
 					copy[key] = doCopy(copy[key] || {}, value); // copy
 
 				} else {
@@ -268,10 +268,10 @@ return {
 			var args = arguments,
 				i,
 				retVal = {};
-		
+
 			for (i = 0; i < args.length; i++) {
 				retVal = doCopy(retVal, args[i]);
-			
+
 			}
 			return retVal;
 		}

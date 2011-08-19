@@ -44,7 +44,7 @@ seriesProto.processData = function () {
 		groupedYData = [];
 
 	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
-	// group pixel width 
+	// group pixel width
 	if (!xAxis.groupPixelWidth) {
 		i = chartSeries.length;
 		while (i--) {

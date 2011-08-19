@@ -3,7 +3,7 @@
 
 /**
  * @license Highstock JS v1.0 Beta (2011-08-02)
- * 
+ *
  * (c) 2009-2011 Torstein Hønsi
  *
  * License: www.highcharts.com/license
@@ -763,7 +763,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 	if (y < 5) {
 		y = 5; // above
 
-		// If the tooltip is still covering the point, move it below instead 
+		// If the tooltip is still covering the point, move it below instead
 		if (point.y >= y && point.y <= (y + boxHeight)) {
 			y = point.y + boxHeight - 5; // below
 		}
@@ -2097,7 +2097,7 @@ SVGElement.prototype = {
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
-			
+
 		// convert legacy
 		if (styles && styles.color) {
 			styles.fill = styles.color;
@@ -2642,7 +2642,7 @@ SVGRenderer.prototype = {
 							// case, webkit uses offsetHeight, while Opera falls back to 18
 							lineHeight = win[GET_COMPUTED_STYLE] &&
 								pInt(win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height'));
-							
+
 							if (!lineHeight || isNaN(lineHeight)) {
 								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
 							}
@@ -11252,7 +11252,7 @@ seriesProto.processData = function () {
 		groupedYData = [];
 
 	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
-	// group pixel width 
+	// group pixel width
 	if (!xAxis.groupPixelWidth) {
 		i = chartSeries.length;
 		while (i--) {
@@ -11974,7 +11974,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 				// set the shape arguments for the tracker element
 				point.shapeArgs = extend(
-					bBox, 
+					bBox,
 					{
 						x: plotX - (shape === 'flag' ? 0 : box.attr('width') / 2), // flags align left, else align center
 						y: plotY

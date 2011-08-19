@@ -1,9 +1,9 @@
-/** 
+/**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * MooTools adapter
- * 
+ *
  * (c) 2010-2011 Torstein Hønsi
- * 
+ *
  * License: www.highcharts.com/license
  */
 
@@ -88,7 +88,7 @@ win.HighchartsAdapter = {
 
 		// stop running animations
 		win.HighchartsAdapter.stop(el);
-		
+
 		// define and run the effect
 		effect = new Fx.Morph(
 			isSVGElement ? el : $(el),
@@ -162,7 +162,7 @@ win.HighchartsAdapter = {
 
 		return ret;
 	},
-	
+
 	/**
 	 * Extends an object with Events, if its not done
 	 */

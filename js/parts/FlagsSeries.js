@@ -186,7 +186,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 				// set the shape arguments for the tracker element
 				point.shapeArgs = extend(
-					bBox, 
+					bBox,
 					{
 						x: plotX - (shape === 'flag' ? 0 : box.attr('width') / 2), // flags align left, else align center
 						y: plotY
