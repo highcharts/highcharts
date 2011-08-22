@@ -19,7 +19,6 @@ To make sure that `ant` is installed correctly, just type:
 `$ ant -version`
 It should respond with version number and build date.
 
-Main targets used for building the source:
 ### assemble
 Running `$ ant assemble` will concatenate the parts into one file `highcharts.src.js`. This file is
 a generated file so don't edit it directly. We keep the assembled file in github so to be able to
