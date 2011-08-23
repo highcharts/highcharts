@@ -158,10 +158,9 @@ win.HighchartsAdapter = {
 			while (i--) {
 				// Boolean argumens should not be merged.
 				// JQuery explicitly skips this, so we do it here as well.
-				if (typeof args[i] === 'boolean') {
-					continue;
+				if (typeof args[i] !== 'boolean') {
+					args13[i + 1] = args[i];
 				}
-				args13[i + 1] = args[i];
 			}
 			ret = Object.merge.apply(Object, args13);
 		}
