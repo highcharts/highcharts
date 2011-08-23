@@ -13,7 +13,8 @@
 (function () {
 
 var win = window,
-	legacy = !!win.$merge,
+	mooVersion = win.MooTools.version.substring(0, 3), // Get the first three characters of the version number
+	legacy = mooVersion === '1.2' || mooVersion === '1.1', // 1.1 && 1.2 considered legacy, 1.3 is not.
 	$extend = win.$extend || function () {
 		return Object.append.apply(Object, arguments);
 	};
@@ -155,7 +156,11 @@ win.HighchartsAdapter = {
 			ret = $merge.apply(null, args);
 		} else {
 			while (i--) {
-				args13[i + 1] = args[i];
+				// Boolean argumens should not be merged.
+				// JQuery explicitly skips this, so we do it here as well.
+				if (typeof args[i] !== 'boolean') {
+					args13[i + 1] = args[i];
+				}
 			}
 			ret = Object.merge.apply(Object, args13);
 		}
