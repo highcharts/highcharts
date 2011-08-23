@@ -15,7 +15,7 @@ AdaptersTest.prototype.testEach = function() {
 	// Arrange
 	var arr = [1];
 
-	// Act 
+	// Act
 	each(arr, function(value, i) {
 		arr[i] = 2;
 	});
@@ -31,7 +31,7 @@ AdaptersTest.prototype.testGrep = function() {
 	// Arrange
 	var arr = [1, 2];
 
-	// Act 
+	// Act
 	arr = grep(arr, function(value) {
 		return (value === 1);
 	});
@@ -48,7 +48,7 @@ AdaptersTest.prototype.testMap = function() {
 	// Arrange
 	var arr = [1];
 
-	// Act 
+	// Act
 	arr = map(arr, function(value) {
 		return value + 1;
 	});
@@ -92,7 +92,7 @@ AdaptersTest.prototype.testMerge = function() {
 		},
 		obj4;
 
-	// Act 
+	// Act
 	obj4 = merge(obj1, obj2, obj3);
 
 	assertEquals('merge properties', 3, obj4.firstLevel.secondLevel.thirdLevel);
@@ -101,6 +101,63 @@ AdaptersTest.prototype.testMerge = function() {
 	assertNull('prop1 should be null', obj4.prop1);
 	assertEquals('prop2 should be 2', 2, obj4.prop2);
 	assertNull('prop3 should be null', obj4.prop3);
+};
+
+AdaptersTest.prototype.testMergeBooleanProperties = function () {
+	var obj1 = {
+			prop1: 1,
+			prop2: 'prop2'
+		},
+		obj2 = false,
+		obj3 = {
+			prop2: 'propTwo'
+		},
+		obj4;
+
+	obj4 = merge(obj1, obj2, obj3);
+
+	assertEquals('merge properties', 1, obj4.prop1);
+	assertEquals('merge properties', 'propTwo', obj4.prop2);
+	assertUndefined('mootools stray merge properties', obj4.$constructor);
+	assertUndefined('mootools stray merge properties', obj4.$family);
+};
+
+AdaptersTest.prototype.testMergeUndefinedProperties = function () {
+	var obj1 = {
+			prop1: 1,
+			prop2: 'prop2'
+		},
+		obj2,
+		obj3 = {
+			prop2: 'propTwo'
+		},
+		obj4;
+
+	obj4 = merge(obj2, obj1, obj3);
+
+	assertEquals('merge properties', 1, obj4.prop1);
+	assertEquals('merge properties', 'propTwo', obj4.prop2);
+	assertUndefined('mootools stray merge properties', obj4.$constructor);
+	assertUndefined('mootools stray merge properties', obj4.$family);
+};
+
+AdaptersTest.prototype.testMergeFunctionProperties = function () {
+	var obj1 = {
+			prop1: 1,
+			prop2: 'prop2'
+		},
+		obj2,
+		obj3 = {
+			prop2: function () {}
+		},
+		obj4;
+
+	obj4 = merge(obj1, obj2, obj3);
+
+	assertEquals('merge properties', 1, obj4.prop1);
+	assertEquals('merge properties', 'function', typeof obj4.prop2);
+	assertUndefined('mootools stray merge properties', obj4.$constructor);
+	assertUndefined('mootools stray merge properties', obj4.$family);
 };
 
 /**
@@ -250,7 +307,7 @@ AdaptersTest.prototype.testObjectEventRemoveHandler = function() {
 
 /**
  * Test event add/fire/remove on DOM element.
- * 
+ *
  * The counter is stored as innerHTML in a div.
  */
 AdaptersTest.prototype.testDomElementEventRemoveAll = function() {
@@ -275,7 +332,7 @@ AdaptersTest.prototype.testDomElementEventRemoveAll = function() {
 	// Fire it again, should do nothing, since the handler is removed
 	fireEvent(o, 'customEvent', null, null);
 	assertEquals('custom clicked again, no change', 1, pInt(o.innerHTML));
-	
+
 
 	// 2. Test HTML events
 	// Reset the counter
@@ -492,7 +549,7 @@ AdaptersTest.prototype.simulate = function(element, eventName) {
 	for (var name in eventMatchers) {
 		if (eventMatchers[name].test(eventName)) { eventType = name; break; }
 	}
-	
+
 	if (!eventType)
 		throw new SyntaxError('Only HTMLEvents and MouseEvents interfaces are supported');
 
