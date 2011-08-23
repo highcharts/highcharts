@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.6 (2011-07-08)
+ * @license @product.name@ JS v@product.version@ (@product.date@)
  * 
  * (c) 2009-2011 Torstein Hønsi
  * 
@@ -37,6 +37,7 @@ var doc = document,
 	isFirefox = /Firefox/.test(userAgent),
 	//hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS("http://www.w3.org/2000/svg", "svg").createSVGRect,
+	hasRtlBug = isFirefox && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
@@ -1570,6 +1571,7 @@ SVGElement.prototype = {
 			renderer = this.renderer,
 			skipAttr,
 			shadows = this.shadows,
+			htmlNode = this.htmlNode,
 			hasSetSymbolSize,
 			ret = this;
 			
@@ -1731,6 +1733,28 @@ SVGElement.prototype = {
 				} else if (!skipAttr) {
 					//element.setAttribute(key, value);
 					attr(element, key, value);
+				}
+				
+				// Issue #38
+				if (htmlNode && (key === 'x' || key === 'y' || 
+						key === 'translateX' || key === 'translateY' || key === 'visibility')) {
+					var wrapper = this,
+						bBox;
+						
+					each(htmlNode.length ? htmlNode : [this], function(itemWrapper) {
+						bBox = itemWrapper.getBBox();
+						htmlNode = itemWrapper.htmlNode; // reassign to child item
+						css(htmlNode, extend(wrapper.styles, {
+							left: (bBox.x + (wrapper.translateX || 0)) + PX,
+							top: (bBox.y + (wrapper.translateY || 0)) + PX
+						}));
+						
+						if (key === 'visibility') {
+							css(htmlNode, {
+								visibility: value
+							});
+						}
+					});
 				}
 				
 			}
@@ -2088,6 +2112,14 @@ SVGElement.prototype = {
 			renderer.buildText(this);
 		}
 		
+		// register html spans in groups
+		if (parent && this.htmlNode) {
+			if (!parent.htmlNode) {
+				parent.htmlNode = [];
+			}
+			parent.htmlNode.push(this);
+		}
+		
 		// mark the container as having z indexed children
 		if (zIndex) {
 			parentWrapper.handleZ = true;
@@ -2266,7 +2298,6 @@ SVGRenderer.prototype = {
 		return wrapper;
 	},
 	
-	
 	/** 
 	 * Parse a simple HTML string into SVG tspans
 	 * 
@@ -2284,9 +2315,9 @@ SVGRenderer.prototype = {
 			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
-			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && 
-				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
+			textStyles = wrapper.styles,			
+			renderAsHtml = textStyles && wrapper.useHTML && !this.forExport,
+			htmlNode = wrapper.htmlNode,
 			arr,
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
@@ -2330,14 +2361,14 @@ SVGRenderer.prototype = {
 						.replace(/&gt;/g, '>');
 					
 					// issue #38 workaround.
-					if (reverse) {
+					/*if (reverse) {
 						arr = [];
 						i = span.length;
 						while (i--) {
 							arr.push(span.charAt(i));
 						}
 						span = arr.join('');
-					}
+					}*/
 					
 					// add the text node
 					tspan.appendChild(doc.createTextNode(span));
@@ -2417,7 +2448,22 @@ SVGRenderer.prototype = {
 			});
 		});
 		
-		
+		// Fix issue #38 and allow HTML in tooltips and other labels
+		if (renderAsHtml) {
+			if (!htmlNode) {
+				htmlNode = wrapper.htmlNode = createElement('span', null, extend(textStyles, {	
+					position: ABSOLUTE,
+					top: 0,
+					left: 0			
+				}), this.box.parentNode);
+			}
+			htmlNode.innerHTML = wrapper.textStr;
+			
+			i = childNodes.length;	
+			while (i--) {
+				childNodes[i].style.visibility = HIDDEN;
+			}
+		}
 	},
 	
 	/**
@@ -2858,8 +2904,9 @@ SVGRenderer.prototype = {
 	 * @param {String} str
 	 * @param {Number} x Left position
 	 * @param {Number} y Top position
+	 * @param {Boolean} useHTML Use HTML to render the text
 	 */
-	text: function (str, x, y) {
+	text: function (str, x, y, useHTML) {
 		
 		// declare variables
 		var defaultChartStyle = defaultOptions.chart.style,
@@ -2881,6 +2928,7 @@ SVGRenderer.prototype = {
 			
 		wrapper.x = x;
 		wrapper.y = y;
+		wrapper.useHTML = useHTML;
 		return wrapper;
 	}
 }; // end SVGRenderer
@@ -4198,12 +4246,13 @@ function Chart(options, callback) {
 				
 				// first call
 				if (label === UNDEFINED) {
-					this.label =  
+					label = this.label =  
 						defined(str) && withLabel && labelOptions.enabled ?
 							renderer.text(
 									str,
 									0,
-									0
+									0,
+									labelOptions.useHTML
 								)
 								.attr({
 									align: labelOptions.align,
@@ -5430,7 +5479,8 @@ function Chart(options, callback) {
 					axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
-						0
+						0,
+						axisTitleOptions.useHTML
 					)
 					.attr({ 
 						zIndex: 7,
@@ -5871,12 +5921,13 @@ function Chart(options, callback) {
 				})
 				.add(group)
 				.shadow(options.shadow),
-			label = renderer.text('', padding + boxOffLeft, pInt(style.fontSize) + padding + boxOffLeft)
+			label = renderer.text('', padding + boxOffLeft, pInt(style.fontSize) + padding + boxOffLeft, options.useHTML)
 				.attr({ zIndex: 1 })
 				.css(style)
 				.add(group);
-				
+			
 		group.hide();
+		
 				
 		/**
 		 * In case no user defined formatter is given, this will be used
@@ -7504,7 +7555,8 @@ function Chart(options, callback) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text, 
 					0,
-					0
+					0,
+					chartTitleOptions.useHTML
 				)
 				.attr({
 					align: chartTitleOptions.align,
@@ -11120,6 +11172,7 @@ win.Highcharts = {
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
+	hasRtlBug: hasRtlBug,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,
@@ -11139,7 +11192,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: 'Highcharts',
-	version: '2.1.6'
+	product: '@product.name@',
+	version: '@product.version@'
 };
 }());

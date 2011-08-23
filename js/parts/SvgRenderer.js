@@ -794,12 +794,8 @@ SVGRenderer.prototype = {
 			styleRegex = /style="([^"]+)"/,
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
-			textStyles = wrapper.styles,
-			/*reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' && 
-				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
-				*/
-			//reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl',
-			renderAsHtml = textStyles && textStyles.HcRenderAs === 'html' && !this.forExport,
+			textStyles = wrapper.styles,			
+			renderAsHtml = textStyles && wrapper.useHTML && !this.forExport,
 			htmlNode = wrapper.htmlNode,
 			arr,
 			width = textStyles && pInt(textStyles.width),
@@ -1387,8 +1383,9 @@ SVGRenderer.prototype = {
 	 * @param {String} str
 	 * @param {Number} x Left position
 	 * @param {Number} y Top position
+	 * @param {Boolean} useHTML Use HTML to render the text
 	 */
-	text: function (str, x, y) {
+	text: function (str, x, y, useHTML) {
 		
 		// declare variables
 		var defaultChartStyle = defaultOptions.chart.style,
@@ -1410,6 +1407,7 @@ SVGRenderer.prototype = {
 			
 		wrapper.x = x;
 		wrapper.y = y;
+		wrapper.useHTML = useHTML;
 		return wrapper;
 	}
 }; // end SVGRenderer

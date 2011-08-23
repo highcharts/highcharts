@@ -236,7 +236,8 @@ function Chart(options, callback) {
 							renderer.text(
 									str,
 									0,
-									0
+									0,
+									labelOptions.useHTML
 								)
 								.attr({
 									align: labelOptions.align,
@@ -1463,7 +1464,8 @@ function Chart(options, callback) {
 					axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
-						0
+						0,
+						axisTitleOptions.useHTML
 					)
 					.attr({ 
 						zIndex: 7,
@@ -1904,11 +1906,11 @@ function Chart(options, callback) {
 				})
 				.add(group)
 				.shadow(options.shadow),
-			label = renderer.text('', padding + boxOffLeft, pInt(style.fontSize) + padding + boxOffLeft)
+			label = renderer.text('', padding + boxOffLeft, pInt(style.fontSize) + padding + boxOffLeft, options.useHTML)
 				.attr({ zIndex: 1 })
 				.css(style)
 				.add(group);
-				
+			
 		group.hide();
 				
 		/**
@@ -3537,7 +3539,8 @@ function Chart(options, callback) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text, 
 					0,
-					0
+					0,
+					chartTitleOptions.useHTML
 				)
 				.attr({
 					align: chartTitleOptions.align,
