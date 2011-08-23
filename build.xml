@@ -174,12 +174,12 @@
     </target>
 
     <!-- This target convert any mixed line endings to crlf. -->
-    <target name="check-whitespace" depends="assemble">
+    <target name="check-crlf" depends="assemble">
         <fixcrlf srcDir="${basedir}/js" includes="**/*.js" eol="crlf" fixlast="false"/>
     </target>
 
     <!-- Runs jslint on source code. -->
-    <target name="lint" depends="check-whitespace">
+    <target name="lint" depends="check-crlf">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef">
             <formatter type="plain"/>
             <fileset file="${highstock.src.file}"/>
