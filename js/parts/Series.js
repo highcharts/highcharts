@@ -808,7 +808,7 @@ Series.prototype = {
 					}
 				}
 				// proceed to find slice end
-				for (i; i < dataLength; i++) {
+				for (; i < dataLength; i++) {
 					if (processedXData[i] > max) {
 						cropEnd = i + 1;
 						break;
@@ -902,15 +902,7 @@ Series.prototype = {
 			categories = xAxis.categories,
 			yAxis = series.yAxis,
 			points = series.points,
-			//data = series.data,
-			//dataLength = data.length,
-			//point,
-			//xData = series.processedXData || series.xData,
-			//yData = series.processedYData || series.yData,
 			dataLength = points.length,
-			//closestPoints,
-			//smallestInterval,
-			leastDistance = xAxis.leastDistance,
 			interval,
 			i,
 			cropI = -1;
@@ -962,15 +954,8 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
-			// get the smallest distance between points for columns
-			if (series.getDistance && i) {
-				distance = mathAbs(point.plotX - points[i - 1].plotX);
-				leastDistance = leastDistance === UNDEFINED ? distance : mathMin(distance, leastDistance);
-			}
 
 		}
-
-		xAxis.leastDistance = leastDistance;
 
 		// now that we have the cropped data, build the segments
 		series.getSegments();

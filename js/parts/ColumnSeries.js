@@ -4,7 +4,6 @@
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	useThreshold: true,
-	getDistance: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -16,9 +15,6 @@ var ColumnSeries = extendClass(Series, {
 
 		var series = this,
 			chart = series.chart;
-
-		// flag the chart in order to pad the x axis
-		//chart.hasColumn = true;
 
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
@@ -74,8 +70,10 @@ var ColumnSeries = extendClass(Series, {
 		// and the pointPadding options
 		var points = series.points,
 			//closestPoints = series.closestPoints || 1,
+			leastUnitDistance = xAxis.leastUnitDistance,
+			leastPixelDistance = leastUnitDistance && mathAbs(xAxis.translate(0) - xAxis.translate(leastUnitDistance)),
 			categoryWidth = mathAbs(pick(
-				xAxis.leastDistance,
+				leastPixelDistance,
 				chart.plotSizeX / ((categories && categories.length) || 1)
 			)),
 			groupPadding = categoryWidth * options.groupPadding,

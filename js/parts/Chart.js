@@ -788,6 +788,8 @@ function Chart(options, callback) {
 							y,
 							threshold = seriesOptions.threshold,
 							yDataLength,
+							distance,
+							leastUnitDistance,
 							activeYData = [],
 							activeCounter = 0;
 
@@ -806,6 +808,7 @@ function Chart(options, callback) {
 							// get clipped and grouped data
 							serie.processData();
 
+							leastUnitDistance = serie.xAxis.leastUnitDistance;
 							xData = serie.processedXData;
 							yData = serie.processedYData;
 							yDataLength = yData.length;
@@ -854,8 +857,19 @@ function Chart(options, callback) {
 									} else {
 										activeYData[activeCounter++] = y;
 									}
+									
+									
+			
+									// get the smallest distance between points
+									if (i) {
+										distance = mathAbs(xData[i] - xData[i - 1]);
+										leastUnitDistance = leastUnitDistance === UNDEFINED ? distance : mathMin(distance, leastUnitDistance);
+									}
 								}
 							}
+					
+							serie.xAxis.leastUnitDistance = leastUnitDistance;
+							
 							if (!usePercentage) { // percentage stacks are always 0-100
 								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
 								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));
@@ -1015,7 +1029,7 @@ function Chart(options, callback) {
 				tickPixelIntervalOption = options.tickPixelInterval,
 				maxZoom = options.maxZoom || (
 					isXAxis && !defined(options.min) && !defined(options.max) ?
-						mathMin(chart.smallestInterval * 5, dataMax - dataMin) :
+						mathMin(axis.leastUnitDistance * 5, dataMax - dataMin) :
 						null
 				),
 				zoomOffset;
@@ -1104,11 +1118,10 @@ function Chart(options, callback) {
 			if (!isLinked) {
 				// pad categorised axis to nearest half unit
 				if (categories || padAxis) {
-					catPad = (categories ? 1 : tickInterval) * 0.5;
-					if (categories || !defined(pick(options.min, userMin))) {
+					catPad = (categories ? 1 : (axis.leastUnitDistance || 0)) * 0.5;
+					
+					if (catPad) {
 						min -= catPad;
-					}
-					if (categories || !defined(pick(options.max, userMax))) {
 						max += catPad;
 					}
 				}
@@ -3169,7 +3182,7 @@ function Chart(options, callback) {
 
 				// set axes scales
 				each(axes, function (axis) {
-					axis.leastDistance = UNDEFINED;
+					axis.leastUnitDistance = UNDEFINED;
 					axis.setScale();
 				});
 			}

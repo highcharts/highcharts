@@ -5333,6 +5333,8 @@ function Chart(options, callback) {
 							y,
 							threshold = seriesOptions.threshold,
 							yDataLength,
+							distance,
+							leastUnitDistance,
 							activeYData = [],
 							activeCounter = 0;
 
@@ -5351,6 +5353,7 @@ function Chart(options, callback) {
 							// get clipped and grouped data
 							serie.processData();
 
+							leastUnitDistance = serie.xAxis.leastUnitDistance;
 							xData = serie.processedXData;
 							yData = serie.processedYData;
 							yDataLength = yData.length;
@@ -5399,8 +5402,19 @@ function Chart(options, callback) {
 									} else {
 										activeYData[activeCounter++] = y;
 									}
+									
+									
+			
+									// get the smallest distance between points
+									if (i) {
+										distance = mathAbs(xData[i] - xData[i - 1]);
+										leastUnitDistance = leastUnitDistance === UNDEFINED ? distance : mathMin(distance, leastUnitDistance);
+									}
 								}
 							}
+					
+							serie.xAxis.leastUnitDistance = leastUnitDistance;
+							
 							if (!usePercentage) { // percentage stacks are always 0-100
 								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
 								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));
@@ -5560,11 +5574,10 @@ function Chart(options, callback) {
 				tickPixelIntervalOption = options.tickPixelInterval,
 				maxZoom = options.maxZoom || (
 					isXAxis && !defined(options.min) && !defined(options.max) ?
-						mathMin(chart.smallestInterval * 5, dataMax - dataMin) :
+						mathMin(axis.leastUnitDistance * 5, dataMax - dataMin) :
 						null
 				),
 				zoomOffset;
-
 			axisLength = horiz ? axisWidth : axisHeight;
 
 			// linked axis gets the extremes from the parent axis
@@ -5649,11 +5662,10 @@ function Chart(options, callback) {
 			if (!isLinked) {
 				// pad categorised axis to nearest half unit
 				if (categories || padAxis) {
-					catPad = (categories ? 1 : tickInterval) * 0.5;
-					if (categories || !defined(pick(options.min, userMin))) {
+					catPad = (categories ? 1 : (axis.leastUnitDistance || 0)) * 0.5;
+					
+					if (catPad) {
 						min -= catPad;
-					}
-					if (categories || !defined(pick(options.max, userMax))) {
 						max += catPad;
 					}
 				}
@@ -7714,7 +7726,7 @@ function Chart(options, callback) {
 
 				// set axes scales
 				each(axes, function (axis) {
-					axis.leastDistance = UNDEFINED;
+					axis.leastUnitDistance = UNDEFINED;
 					axis.setScale();
 				});
 			}
@@ -9553,7 +9565,7 @@ Series.prototype = {
 					}
 				}
 				// proceed to find slice end
-				for (i; i < dataLength; i++) {
+				for (; i < dataLength; i++) {
 					if (processedXData[i] > max) {
 						cropEnd = i + 1;
 						break;
@@ -9589,6 +9601,7 @@ Series.prototype = {
 			cropStart = series.cropStart || 0,
 			cursor,
 			hasGroupedData = series.hasGroupedData,
+			xAxis = series.xAxis,
 			point,
 			points = [],
 			i;
@@ -9647,15 +9660,7 @@ Series.prototype = {
 			categories = xAxis.categories,
 			yAxis = series.yAxis,
 			points = series.points,
-			//data = series.data,
-			//dataLength = data.length,
-			//point,
-			//xData = series.processedXData || series.xData,
-			//yData = series.processedYData || series.yData,
 			dataLength = points.length,
-			//closestPoints,
-			//smallestInterval,
-			leastDistance = xAxis.leastDistance,
 			interval,
 			i,
 			cropI = -1;
@@ -9707,15 +9712,8 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
-			// get the smallest distance between points for columns
-			if (series.getDistance && i) {
-				distance = mathAbs(point.plotX - points[i - 1].plotX);
-				leastDistance = leastDistance === UNDEFINED ? distance : mathMin(distance, leastDistance);
-			}
 
 		}
-
-		xAxis.leastDistance = leastDistance;
 
 		// now that we have the cropped data, build the segments
 		series.getSegments();
@@ -10886,7 +10884,6 @@ seriesTypes.areaspline = AreaSplineSeries;
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	useThreshold: true,
-	getDistance: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -10898,9 +10895,6 @@ var ColumnSeries = extendClass(Series, {
 
 		var series = this,
 			chart = series.chart;
-
-		// flag the chart in order to pad the x axis
-		//chart.hasColumn = true;
 
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
@@ -10956,8 +10950,10 @@ var ColumnSeries = extendClass(Series, {
 		// and the pointPadding options
 		var points = series.points,
 			//closestPoints = series.closestPoints || 1,
+			leastUnitDistance = xAxis.leastUnitDistance,
+			leastPixelDistance = leastUnitDistance && mathAbs(xAxis.translate(0) - xAxis.translate(leastUnitDistance)),
 			categoryWidth = mathAbs(pick(
-				xAxis.leastDistance,
+				leastPixelDistance,
 				chart.plotSizeX / ((categories && categories.length) || 1)
 			)),
 			groupPadding = categoryWidth * options.groupPadding,
@@ -11290,6 +11286,7 @@ seriesProto.processData = function () {
 			low = null,
 			close = null,
 			count = 0;
+			
 
 		for (i = 0; i < dataLength; i++) {
 
