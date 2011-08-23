@@ -607,8 +607,10 @@ function Scroller(chart) {
 					newMin;
 
 				// set the navigator series data to the new data of the base series
-				navigatorSeries.options.pointStart = baseSeries.xData[0];
-				navigatorSeries.setData(baseSeries.options.data);
+				if (!navigatorData) {
+					navigatorSeries.options.pointStart = baseSeries.xData[0];
+					navigatorSeries.setData(baseSeries.options.data);
+				}
 
 				// if the selection is already at the max, move it to the right as new data
 				// comes in
