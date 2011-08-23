@@ -136,6 +136,7 @@ function Chart(options, callback) {
 			axisLine,
 			dataMin,
 			dataMax,
+			maxZoom,
 			associatedSeries,
 			range = options.range,
 			userMin,
@@ -1027,14 +1028,18 @@ function Chart(options, callback) {
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval,
+				zoomOffset;
+				
+			axisLength = horiz ? axisWidth : axisHeight;
+			
+			// set the max zoom once
+			if (secondPass) {
 				maxZoom = options.maxZoom || (
 					isXAxis && !defined(options.min) && !defined(options.max) ?
 						mathMin(axis.leastUnitDistance * 5, dataMax - dataMin) :
 						null
-				),
-				zoomOffset;
-
-			axisLength = horiz ? axisWidth : axisHeight;
+				)
+			}
 
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
@@ -1063,6 +1068,7 @@ function Chart(options, callback) {
 
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) {
+			
 				zoomOffset = (maxZoom - max + min) / 2;
 				// if min and max options have been set, don't go beyond it
 				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset), dataMin);
