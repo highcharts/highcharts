@@ -4680,6 +4680,7 @@ function Chart(options, callback) {
 			axisLine,
 			dataMin,
 			dataMax,
+			maxZoom,
 			associatedSeries,
 			range = options.range,
 			userMin,
@@ -5571,14 +5572,18 @@ function Chart(options, callback) {
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval,
+				zoomOffset;
+				
+			axisLength = horiz ? axisWidth : axisHeight;
+			
+			// set the max zoom once
+			if (secondPass) {
 				maxZoom = options.maxZoom || (
 					isXAxis && !defined(options.min) && !defined(options.max) ?
 						mathMin(axis.leastUnitDistance * 5, dataMax - dataMin) :
 						null
-				),
-				zoomOffset;
-
-			axisLength = horiz ? axisWidth : axisHeight;
+				);
+			}
 
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
@@ -5607,6 +5612,7 @@ function Chart(options, callback) {
 
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) {
+			
 				zoomOffset = (maxZoom - max + min) / 2;
 				// if min and max options have been set, don't go beyond it
 				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset), dataMin);
@@ -5779,22 +5785,21 @@ function Chart(options, callback) {
 		 *
 		 */
 		function setExtremes(newMin, newMax, redraw, animation) {
-			var start = +new Date();
 			redraw = pick(redraw, true); // defaults to true
-
-			fireEvent(axis, 'setExtremes', { // fire an event to enable syncing of multiple charts
-				min: newMin,
-				max: newMax
-			}, function () { // the default event handler
-
-				userMin = newMin;
-				userMax = newMax;
-
-
-				// redraw
-				if (redraw) {
-					chart.redraw(animation);
-				}
+			
+			userMin = newMin;
+			userMax = newMax;
+			if (redraw) {
+				chart.redraw(animation);
+			}
+			
+			// Fire the event. At this point, min and max may have been modified by maxPadding,
+			// column padAxis etc.
+			fireEvent(axis, 'setExtremes', {
+				userMin: userMin,
+				userMax: userMax,
+				min: min,
+				max: max
 			});
 		}
 

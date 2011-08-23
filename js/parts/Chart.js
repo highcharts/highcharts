@@ -1038,7 +1038,7 @@ function Chart(options, callback) {
 					isXAxis && !defined(options.min) && !defined(options.max) ?
 						mathMin(axis.leastUnitDistance * 5, dataMax - dataMin) :
 						null
-				)
+				);
 			}
 
 			// linked axis gets the extremes from the parent axis
@@ -1241,22 +1241,21 @@ function Chart(options, callback) {
 		 *
 		 */
 		function setExtremes(newMin, newMax, redraw, animation) {
-			var start = +new Date();
 			redraw = pick(redraw, true); // defaults to true
-
-			fireEvent(axis, 'setExtremes', { // fire an event to enable syncing of multiple charts
-				min: newMin,
-				max: newMax
-			}, function () { // the default event handler
-
-				userMin = newMin;
-				userMax = newMax;
-
-
-				// redraw
-				if (redraw) {
-					chart.redraw(animation);
-				}
+			
+			userMin = newMin;
+			userMax = newMax;
+			if (redraw) {
+				chart.redraw(animation);
+			}
+			
+			// Fire the event. At this point, min and max may have been modified by maxPadding,
+			// column padAxis etc.
+			fireEvent(axis, 'setExtremes', {
+				userMin: userMin,
+				userMax: userMax,
+				min: min,
+				max: max
 			});
 		}
 
