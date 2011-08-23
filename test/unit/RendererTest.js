@@ -12,7 +12,7 @@ RendererTest.prototype.setUp = function() {
 
 	this.renderer = new Renderer(this.container, 200, 200);
 	assertNotUndefined(this.renderer);
-}
+};
 
 /**
  * Test that css attributes are merged together.
@@ -46,7 +46,7 @@ RendererTest.prototype.testCssFontSize = function () {
 
 	assertUndefined(undefinedFontSize + ' should be undefined', textElement.styles[undefinedFontSize])
 	assertEquals('Changed font size', '21px', textElement.styles[definedFontSize]);
-}
+};
 
 RendererTest.prototype.testTransparancy = function () {
 	var rect = this.renderer.rect(100, 100, 100, 100, 5);
@@ -70,4 +70,16 @@ RendererTest.prototype.testTransparancy = function () {
 	if (strokeElement) {
 		assertEquals('There is a stray opacity value', 1, strokeElement.opacity);
 	}
-}
+};
+
+RendererTest.prototype.testGroupWithoutName = function () {
+	var namedGroup = this.renderer.g('myName');
+	assertNotUndefined(namedGroup);
+
+	try {
+		var group = this.renderer.g();
+		assertNotUndefined(group);
+	} catch (exception) {
+		fail('unnamed group failed.')
+	}
+};
