@@ -5578,6 +5578,7 @@ function Chart(options, callback) {
 						null
 				),
 				zoomOffset;
+
 			axisLength = horiz ? axisWidth : axisHeight;
 
 			// linked axis gets the extremes from the parent axis
@@ -9601,7 +9602,6 @@ Series.prototype = {
 			cropStart = series.cropStart || 0,
 			cursor,
 			hasGroupedData = series.hasGroupedData,
-			xAxis = series.xAxis,
 			point,
 			points = [],
 			i;

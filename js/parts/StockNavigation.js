@@ -781,6 +781,7 @@ function RangeSelector(chart) {
 			date = new Date(newMax),
 			type = rangeOptions.type,
 			count = rangeOptions.count,
+			baseXAxisOptions,
 			range,
 			rangeMin,
 			year,
@@ -837,13 +838,12 @@ function RangeSelector(chart) {
 
 		// update the chart
 		if (!baseAxis) { // axis not yet instanciated
-			chart.options.xAxis = merge(
-				chart.options.xAxis,
+			baseXAxisOptions = chart.options.xAxis;
+			baseXAxisOptions[0] = merge(
+				baseXAxisOptions[0],
 				{
-					//zoomedRange: {
-						range: range,
-						min: rangeMin
-					//}
+					range: range,
+					min: rangeMin
 				}
 			);
 			selected = i;

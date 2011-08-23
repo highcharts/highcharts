@@ -5578,6 +5578,7 @@ function Chart(options, callback) {
 						null
 				),
 				zoomOffset;
+
 			axisLength = horiz ? axisWidth : axisHeight;
 
 			// linked axis gets the extremes from the parent axis
@@ -9601,7 +9602,6 @@ Series.prototype = {
 			cropStart = series.cropStart || 0,
 			cursor,
 			hasGroupedData = series.hasGroupedData,
-			xAxis = series.xAxis,
 			point,
 			points = [],
 			i;
@@ -11286,7 +11286,6 @@ seriesProto.processData = function () {
 			low = null,
 			close = null,
 			count = 0;
-			
 
 		for (i = 0; i < dataLength; i++) {
 
@@ -12837,6 +12836,7 @@ function RangeSelector(chart) {
 			date = new Date(newMax),
 			type = rangeOptions.type,
 			count = rangeOptions.count,
+			baseXAxisOptions,
 			range,
 			rangeMin,
 			year,
@@ -12893,13 +12893,12 @@ function RangeSelector(chart) {
 
 		// update the chart
 		if (!baseAxis) { // axis not yet instanciated
-			chart.options.xAxis = merge(
-				chart.options.xAxis,
+			baseXAxisOptions = chart.options.xAxis;
+			baseXAxisOptions[0] = merge(
+				baseXAxisOptions[0],
 				{
-					//zoomedRange: {
-						range: range,
-						min: rangeMin
-					//}
+					range: range,
+					min: rangeMin
 				}
 			);
 			selected = i;
