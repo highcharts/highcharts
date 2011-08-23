@@ -2936,9 +2936,8 @@ SVGRenderer.prototype = {
 	 *     This can be used for styling and scripting.
 	 */
 	g: function (name) {
-		return this.createElement('g').attr(
-			defined(name) && { 'class': PREFIX + name }
-		);
+		var elem = this.createElement('g');
+		return defined(name) ? elem.attr({ 'class': PREFIX + name }) : elem;
 	},
 
 	/**
