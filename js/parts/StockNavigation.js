@@ -798,8 +798,9 @@ function RangeSelector(chart) {
 				week: 7 * 24 * 3600 * 1000
 			};
 
-		// chart has no data, base series is removed
-		if (dataMin === null || dataMax === null) {
+		
+		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
+				i === selected) { // same button is clicked twice
 			return;
 		}
 
@@ -871,7 +872,9 @@ function RangeSelector(chart) {
 		chart.extraTopMargin = 25;
 		options = chart.options.rangeSelector;
 		buttonOptions = options.buttons || defaultButtons;
-		selected = options.selected;
+		
+		
+		var selectedOption = options.selected;
 
 		addEvent(container, MOUSEDOWN, function () {
 
@@ -884,8 +887,8 @@ function RangeSelector(chart) {
 		});
 
 		// zoomed range based on a pre-selected button index
-		if (selected !== UNDEFINED && buttonOptions[selected]) {
-			clickButton(selected, buttonOptions[selected], false);
+		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
+			clickButton(selectedOption, buttonOptions[selectedOption], false);
 		}
 
 		// normalize the pressed button whenever a new range is selected
