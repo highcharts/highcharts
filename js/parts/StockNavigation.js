@@ -604,12 +604,14 @@ function Scroller(chart) {
 						baseXAxis = baseSeries.xAxis,
 						hasSetExtremes = !!baseXAxis.setExtremes,
 					newMax,
-					newMin;
+					newMin,
+					doRedraw;
 
 				// set the navigator series data to the new data of the base series
 				if (!navigatorData) {
 					navigatorSeries.options.pointStart = baseSeries.xData[0];
-					navigatorSeries.setData(baseSeries.options.data);
+					navigatorSeries.setData(baseSeries.options.data, false);
+					doRedraw = true;
 				}
 
 				// if the selection is already at the max, move it to the right as new data
@@ -617,12 +619,14 @@ function Scroller(chart) {
 				if (stickToMax) {
 					newMax = baseExtremes.dataMax;
 					if (hasSetExtremes) {
-						baseXAxis.setExtremes(newMax - range, newMax);
+						baseXAxis.setExtremes(newMax - range, newMax, false);
+						doRedraw = true;
 					}
 				} else if (stickToMin) {
 					newMin = baseExtremes.dataMin;
 					if (hasSetExtremes) {
-						baseXAxis.setExtremes(newMin, newMin + range);
+						baseXAxis.setExtremes(newMin, newMin + range, false);
+						doRedraw = true;
 					}
 				// if not, just move the scroller window to reflect the new series data
 				} else {
@@ -630,6 +634,9 @@ function Scroller(chart) {
 						mathMax(baseExtremes.min, baseExtremes.dataMin),
 						mathMin(baseExtremes.max, baseExtremes.dataMax)
 					);
+				}
+				if (doRedraw) {
+					chart.redraw();
 				}
 			});
 

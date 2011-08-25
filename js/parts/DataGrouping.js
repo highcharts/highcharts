@@ -59,7 +59,7 @@ seriesProto.processData = function () {
 	each(groupedData || [], function (point, i) {
 		if (point) {
 			// TODO: find out why this is looping over all points in the Navigator when changing range
-			groupedData[i] = point.destroy();
+			groupedData[i] = point.destroy ? point.destroy() : null;
 		}
 	});
 
