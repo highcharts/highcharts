@@ -702,12 +702,14 @@ extend(defaultOptions, {
 	rangeSelector: {
 		// enabled: true,
 		// buttons: {Object}
-		// buttonTheme: {
+		buttonTheme: {
+			width: 28,
+			height: 16
 		//	states: {
 		//		hover: {},
 		//		select: {}
-		//	}
-		// },
+		// }
+		}
 		// inputEnabled: true,
 		// inputStyle: {}
 		// labelStyle: {}
@@ -987,18 +989,24 @@ function RangeSelector(chart) {
 		var chartStyle = chart.options.chart.style,
 			buttonTheme = options.buttonTheme,
 			inputEnabled = options.inputEnabled !== false,
-			states = buttonTheme && buttonTheme.states;
+			states = buttonTheme && buttonTheme.states,
+			plotLeft = chart.plotLeft,
+			buttonLeft,
+			zoomText;
 
 		// create the elements
 		if (!rendered) {
-			renderer.text(lang.rangeSelectorZoom, chart.plotLeft, chart.plotTop - 10)
+			zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 10)
 				.css(options.labelStyle)
 				.add();
+				
+			// button starting position
+			buttonLeft = plotLeft + zoomText.getBBox().width + 5;  
 
 			each(buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 					rangeOptions.text,
-					chart.plotLeft + 50 +  i * 30,
+					buttonLeft,
 					chart.plotTop - 25,
 					function () {
 						clickButton(i, rangeOptions);
@@ -1011,15 +1019,14 @@ function RangeSelector(chart) {
 					states && states.hover,
 					states && states.select
 				)
-				.attr({
-					width: 28,
-					height: 16
-				})
 				.css({
 					textAlign: 'center'
 				})
 				.add();
-
+				
+				// increase button position for the next button
+				buttonLeft += buttons[i].getBBox().width;
+				
 				if (selected === i) {
 					buttons[i].setState(2);
 				}

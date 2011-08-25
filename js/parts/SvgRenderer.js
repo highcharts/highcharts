@@ -1519,7 +1519,8 @@ SVGRenderer.prototype = {
 			deferredAttr = {};
 
 		function updateBoxSize() {
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && wrapper.getBBox(true);
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
+				renderer.Element.prototype.getBBox.call(wrapper, true); // use prototype because label.getBBox is overridden
 			var w = (width || bBox.width) + 2 * padding,
 				h = (height || bBox.height) + 2 * padding,
 				anchors;
@@ -1632,6 +1633,9 @@ SVGRenderer.prototype = {
 		wrapper.txtToFront = wrapper.toFront;
 
 		return extend(wrapper, {
+			getBBox: function () {
+				return box.getBBox();
+			},
 			shadow: function (b) {
 				box.shadow(b);
 				return wrapper;
