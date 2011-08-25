@@ -306,6 +306,281 @@ AdaptersTest.prototype.testObjectEventRemoveHandler = function() {
 };
 
 /**
+ * Tests that default action can be prevented by returning false.
+ */
+AdaptersTest.prototype.tXstObjectEventPreventDefaultByReturn = function () {
+	var o = {clickedCount: 0},
+		f = function () {
+			o.clickedCount++;
+			return false;
+		},
+		defaultFunction = function () {
+			o.clickedCount = o.clickedCount + 10;
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', null, defaultFunction);
+
+	assertEquals('now clicked', 1, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'customEvent', null, defaultFunction);
+	assertEquals('clicked again, no change', 11, o.clickedCount);
+};
+
+/**
+ * Tests that preventDefault function exists in the event handler.
+ */
+AdaptersTest.prototype.testObjectEventPreventDefaultExists = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			assertEquals('preventDefault should exist', typeof e.preventDefault, 'function');
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 1}, null);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+};
+
+/**
+ * Test that 'type' property exists in event handler.
+ */
+AdaptersTest.prototype.tXstObjectEventTypeExists = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			assertNotUndefined('type should exist', e.type);
+			assertEquals('type should be correct', e.type, 'customEvent');
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 1}, null);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+};
+
+/**
+ * Tests that 'target' property exists in event handler.
+ */
+AdaptersTest.prototype.tXstObjectEventTargetExists = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			assertNotUndefined('target should exist', e.target);
+			assertEquals('target should be correct', e.target, o);
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 1}, null);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+};
+
+/**
+ * Tests that stopPropagation exists in event handler.
+ */
+AdaptersTest.prototype.tXstObjectEventStopPropagationExists = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			assertEquals('preventDefault should exist', typeof e.stopPropagation, 'function');
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 1}, null);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+};
+
+/**
+ * Tests that it is possible to prevent the default action by calling preventDefault.
+ */
+AdaptersTest.prototype.testObjectEventPreventDefaultByFunction = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			o.clickedCount += e.inc;
+			e.preventDefault();
+		},
+		defaultFunction = function (e) {
+			o.clickedCount += e.inc;
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 1}, defaultFunction);
+
+	assertEquals('now clicked', 1, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'customEvent', {inc: 10}, defaultFunction);
+	assertEquals('clicked again, no change', 11, o.clickedCount);
+};
+
+/**
+ * Test that it is possible to prevent the default action from one
+ * handler and still not running the default.
+ */
+AdaptersTest.prototype.testObjectEventPreventDefaultByFunctionMultiple = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			o.clickedCount += e.inc;
+			e.preventDefault();
+		},
+		g = function (e) {
+			o.clickedCount += e.inc;
+			// e.preventDefault(); Do not prevent the default.
+		},
+		defaultFunction = function (e) {
+			o.clickedCount += e.inc;
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+	addEvent(o, 'customEvent', g);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 1}, defaultFunction);
+
+	assertEquals('now clicked', 2, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+
+	// Fire it again, should fire 'g' which is not preventing the default
+	fireEvent(o, 'customEvent', {inc: 10}, defaultFunction);
+	assertEquals('clicked again, no change', 22, o.clickedCount); // 2 (from before) + 2 * 10 (handler + default)
+	removeEvent(o, 'customEvent', g);
+};
+
+/**
+ * Test that arguments are passed to the event handler.
+ */
+AdaptersTest.prototype.testObjectEventArgumentToHandler = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			o.clickedCount += e.inc;
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 2}, null);
+
+	assertEquals('now clicked', 2, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+
+	// Fire it again, should do nothing, since the handler is removed
+	fireEvent(o, 'customEvent', {inc: 2}, null);
+	assertEquals('clicked again, no change', 2, o.clickedCount);
+};
+
+/**
+ * Test that arguments are passed to the default function.
+ */
+AdaptersTest.prototype.testObjectEventArgumentToDefaultFunction = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			o.clickedCount += e.inc;
+		},
+		defaultFunction = function (e) {
+			o.clickedCount += e.inc;
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 2}, defaultFunction);
+
+	assertEquals('now clicked', 4, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+
+	// Fire it again, should only run the default function, since the handler is removed
+	fireEvent(o, 'customEvent', {inc: 2}, defaultFunction);
+	assertEquals('clicked again, no change', 6, o.clickedCount);
+};
+
+/**
+ * Tests that properties set in the handler is passed on to the default function.
+ */
+AdaptersTest.prototype.testObjectEventPropertiesSetInHandlerSuppliedToDefaultFunction = function () {
+	var o = {clickedCount: 0},
+		f = function (e) {
+			o.clickedCount += e.inc;
+			e.extraInc = 100;
+		},
+		defaultFunction = function (e) {
+			o.clickedCount += e.inc;
+			o.clickedCount += (e.extraInc || 0);
+		};
+
+	// Setup event handler
+	addEvent(o, 'customEvent', f);
+	assertEquals('not yet clicked', 0, o.clickedCount);
+
+	// Fire it once
+	fireEvent(o, 'customEvent', {inc: 2}, defaultFunction);
+
+	assertEquals('now clicked', 104, o.clickedCount);
+
+	// Remove the handler (Most fine-grained)
+	removeEvent(o, 'customEvent', f);
+
+	// Fire it again, should only run the default function, since the handler is removed
+	fireEvent(o, 'customEvent', {inc: 2}, defaultFunction);
+	assertEquals('clicked again, no change', 106, o.clickedCount);
+};
+
+/**
+ * Tests that the default function is executed even when no listeners are registered.
+ */
+AdaptersTest.prototype.testObjectEventDefaultFunctionShouldRunWhenNoHandlersAreRegistered = function () {
+	var o = {clickedCount: 0},
+		defaultFunction = function (e) {
+			o.clickedCount += e.inc;
+		};
+
+	// Fire it, should only run the default function, since there is no handler
+	fireEvent(o, 'customEvent', {inc: 1}, defaultFunction);
+	assertEquals('clicked again, no change', 1, o.clickedCount);
+};
+
+/**
  * Test event add/fire/remove on DOM element.
  *
  * The counter is stored as innerHTML in a div.

@@ -41,7 +41,7 @@ EventMonitor.prototype.registerEvent = function(el, eventName, handler) {
 	// 3. Add a mapping from the id to the event name and a counter instead of the function
 	var id;
 
-	if (el['evt-id']) {
+	if (el['evt-id'] !== undefined) {
 		id = el['evt-id'];
 	} else {
 		el['evt-id'] = id = this.getId();

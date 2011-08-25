@@ -164,14 +164,15 @@ return {
 	// fire an event based on an event name (event) and an object (el).
 	// again, el may not be a dom element
 	fireEvent: function (el, event, eventArguments, defaultFunction) {
-		if (event.preventDefault) { // TODO: event is a string here so this doesnt make sense at all
-			defaultFunction = null;
-		}
-
 		if (el.fire) {
 			el.fire(HighchartsAdapter.addNS(event), eventArguments);
 		} else if (el._highcharts_extended) {
+			eventArguments = eventArguments || {};
 			el._highcharts_fire(event, eventArguments);
+		}
+
+		if (eventArguments && eventArguments.defaultPrevented) {
+			defaultFunction = null;
 		}
 
 		if (defaultFunction) {
@@ -303,10 +304,20 @@ return {
 				},
 				_highcharts_fire: function (name, args) {
 					(this._highchart_events[name] || []).each(function (fn) {
-						if (args && args.stopped) {
+						// args is never null here
+						if (args.stopped) {
 							return; // "throw $break" wasn't working. i think because of the scope of 'this'.
 						}
-						fn.bind(this)(args);
+
+						// Attach a simple preventDefault function to skip default handler if called
+						args.preventDefault = function () {
+							args.defaultPrevented = true;
+						};
+
+						// If the event handler return false, prevent the default handler from executing
+						if (fn.bind(this)(args) === false) {
+							args.preventDefault();
+						}
 					}
 .bind(this));
 				}
