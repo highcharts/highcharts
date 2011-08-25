@@ -9565,7 +9565,7 @@ Series.prototype = {
 
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold) {
+		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = series.xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max,
@@ -11236,12 +11236,15 @@ var DATA_GROUPING = 'dataGrouping',
 seriesProto.processData = function () {
 	var series = this,
 		options = series.options,
-		dataGroupingOptions = options[DATA_GROUPING];
+		dataGroupingOptions = options[DATA_GROUPING],
+		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled;
 
-	baseProcessData.apply(this);
+	// run base method
+	series.forceCrop = groupingEnabled; // #334
+	baseProcessData.apply(series);
 
 	// disabled?
-	if (!dataGroupingOptions || dataGroupingOptions.enabled === false) {
+	if (!groupingEnabled) {
 		return;
 	}
 
@@ -11285,7 +11288,7 @@ seriesProto.processData = function () {
 		}
 	});
 
-	series.hasGroupedData = false;
+	
 	if (dataLength > maxPoints) {
 		series.hasGroupedData = true;
 
@@ -13251,6 +13254,9 @@ Highcharts.StockChart = function (options, callback) {
 				hover: {
 					lineWidth: 2
 				}
+			},
+			dataGrouping: {
+				enabled: true
 			}
 		};
 
@@ -13319,7 +13325,10 @@ Highcharts.StockChart = function (options, callback) {
 			areaspline: lineOptions,
 			column: {
 				shadow: false,
-				borderWidth: 0
+				borderWidth: 0,
+				dataGrouping: {
+					enabled: true
+				}
 			}
 		}
 

@@ -14,12 +14,15 @@ var DATA_GROUPING = 'dataGrouping',
 seriesProto.processData = function () {
 	var series = this,
 		options = series.options,
-		dataGroupingOptions = options[DATA_GROUPING];
+		dataGroupingOptions = options[DATA_GROUPING],
+		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled;
 
-	baseProcessData.apply(this);
+	// run base method
+	series.forceCrop = groupingEnabled; // #334
+	baseProcessData.apply(series);
 
 	// disabled?
-	if (!dataGroupingOptions || dataGroupingOptions.enabled === false) {
+	if (!groupingEnabled) {
 		return;
 	}
 
@@ -63,7 +66,7 @@ seriesProto.processData = function () {
 		}
 	});
 
-	series.hasGroupedData = false;
+	
 	if (dataLength > maxPoints) {
 		series.hasGroupedData = true;
 

@@ -19,6 +19,9 @@ Highcharts.StockChart = function (options, callback) {
 				hover: {
 					lineWidth: 2
 				}
+			},
+			dataGrouping: {
+				enabled: true
 			}
 		};
 
@@ -87,7 +90,10 @@ Highcharts.StockChart = function (options, callback) {
 			areaspline: lineOptions,
 			column: {
 				shadow: false,
-				borderWidth: 0
+				borderWidth: 0,
+				dataGrouping: {
+					enabled: true
+				}
 			}
 		}
 

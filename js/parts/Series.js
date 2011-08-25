@@ -799,7 +799,7 @@ Series.prototype = {
 
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold) {
+		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = series.xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max,
