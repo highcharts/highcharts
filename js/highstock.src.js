@@ -13228,12 +13228,15 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return merge({
+		return merge({ // defaults
+				minPadding: 0,
+				maxPadding: 0,
 				title: {
 					text: null
 				},
 				showLastLabel: true
-			}, xAxisOptions, {
+			}, xAxisOptions, // user options 
+			{ // forced options
 				type: 'datetime',
 				categories: null
 			});
@@ -13241,7 +13244,7 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply Y axis options to both single and multi y axes
 	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
-		return merge({
+		return merge({ // defaults
 			labels: {
 				align: 'left',
 				x: 2,
@@ -13251,7 +13254,8 @@ Highcharts.StockChart = function (options, callback) {
 			title: {
 				text: null
 			}
-		}, yAxisOptions);
+		}, yAxisOptions // user options
+		);
 	});
 
 	options.series = null;
