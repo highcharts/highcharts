@@ -664,6 +664,7 @@ Series.prototype = {
 			options = series.options,
 			initialColor = series.initialColor,
 			chart = series.chart,
+			firstPoint = null,
 			i;
 
 		series.xIncrement = null; // reset for new data
@@ -684,7 +685,16 @@ Series.prototype = {
 		// way. Although the 'for' loops are similar, they are repeated inside each
 		// if-else conditional for max performance.
 		if (dataLength > turboThreshold) {
-			if (isNumber(data[0])) { // assume all points are numbers
+			
+			// find the first non-null point
+			i = 0;
+			while (firstPoint === null && i < dataLength) {
+				firstPoint = data[i];
+				i++;
+			}
+		
+		
+			if (isNumber(firstPoint)) { // assume all points are numbers
 				var x = pick(options.pointStart, 0),
 					pointInterval = pick(options.pointInterval, 1);
 
@@ -694,7 +704,7 @@ Series.prototype = {
 					x += pointInterval;
 				}
 				series.xIncrement = x;
-			} else if (data[0].constructor === Array) { // assume all points are arrays
+			} else if (firstPoint.constructor === Array) { // assume all points are arrays
 				if (ohlc) { // [x, o, h, l, c]
 					for (i = 0; i < dataLength; i++) {
 						pt = data[i];
