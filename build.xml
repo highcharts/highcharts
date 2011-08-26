@@ -174,9 +174,10 @@
     </target>
 
     <!-- Runs jslint on source code. -->
-    <target name="lint" depends="check-crlf">
+    <target name="do-lint" depends="check-crlf">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef">
             <formatter type="plain"/>
+            <formatter type="report" destfile="${build.dir}/lintreport.html"/>
             <!-- TODO: Replace the line below with highstock.src.file when the branch is merged. -->
             <fileset file="${highcharts.src.file}"/>
             <fileset file="${mootools.src.file}"/>
@@ -184,6 +185,16 @@
             <fileset file="${exporting.src.file}"/>
             <fileset dir="${themes.dir}"/>
         </jslint>
+
+        <!-- Set a property that tells if there are unused variables. -->
+        <condition property="unused.variables.exists">
+            <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
+        </condition>
+    </target>
+
+    <!-- This target is only run if there are unused variables. -->
+    <target name="lint" depends="do-lint" if="unused.variables.exists">
+        <echo message="Warning: unused variables exists. See build/lintreport.html"/>
     </target>
 
     <!-- Runs google closure compiler and yui compressor on src. -->
