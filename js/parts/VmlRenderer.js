@@ -27,7 +27,8 @@ var VMLElement = extendClass(SVGElement, {
 	 * @param {Object} nodeName
 	 */
 	init: function (renderer, nodeName) {
-		var markup =  ['<', nodeName, ' filled="f" stroked="f"'],
+		var wrapper = this,
+			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
 			style = ['position: ', ABSOLUTE, ';'];
 
 		// divs and shapes need size
@@ -45,10 +46,11 @@ var VMLElement = extendClass(SVGElement, {
 			markup = nodeName === DIV || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
-			this.element = createElement(markup);
+			wrapper.element = createElement(markup);
 		}
 
-		this.renderer = renderer;
+		wrapper.renderer = renderer;
+		wrapper.attrSetters = {};
 	},
 
 	/**
@@ -111,6 +113,7 @@ var VMLElement = extendClass(SVGElement, {
 			hasSetSymbolSize,
 			shadows = wrapper.shadows,
 			skipAttr,
+			attrSetters = wrapper.attrSetters,
 			ret = wrapper;
 
 		// single key-value pair
@@ -135,11 +138,15 @@ var VMLElement = extendClass(SVGElement, {
 				value = hash[key];
 				skipAttr = false;
 
-				fireEvent(wrapper, 'setAttr', { key: key, value: value }, function (e) {
-					result = e.result;
-					if (defined(result) && result !== false) {
-						value = result;
+				// check for a specific attribute setter
+				result = attrSetters[key] && attrSetters[key](key, value);
+				
+				if (result !== false) {
+					
+					if (result !== UNDEFINED) {
+						value = result; // the attribute setter has returned a new value to set
 					}
+					
 
 					// prepare paths
 					// symbols
@@ -313,21 +320,17 @@ var VMLElement = extendClass(SVGElement, {
 
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
-							try {
-								element[key] = value;
-							} catch (ex) {
-								console.log([element.tagName, key, value].join(', '));
-							}
+							element[key] = value;
 						} else {
 							attr(element, key, value);
 						}
 					}
 
-
-					if (e.callback) {
-						e.callback();
+					// run the after-setter if set (used in label)
+					if (attrSetters['after' + key]) {
+						attrSetters['after' + key]();
 					}
-				});
+				}
 			}
 		}
 		return ret;

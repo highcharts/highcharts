@@ -1793,8 +1793,16 @@ SVGElement.prototype = {
 	 * @param {String} nodeName
 	 */
 	init: function (renderer, nodeName) {
-		this.element = doc.createElementNS(SVG_NS, nodeName);
-		this.renderer = renderer;
+		var wrapper = this;
+		wrapper.element = doc.createElementNS(SVG_NS, nodeName);
+		wrapper.renderer = renderer;
+		/**
+		 * A collection of attribute setters. These methods, if defined, are called right before a certain
+		 * attribute is set on an element wrapper. Returning false prevents the default attribute 
+		 * setter to run. Returning a value causes the default setter to set that value. Used in 
+		 * Renderer.label.
+		 */
+		wrapper.attrSetters = {};
 	},
 	/**
 	 * Animate a given attribute
@@ -1833,6 +1841,7 @@ SVGElement.prototype = {
 			nodeName = element.nodeName,
 			renderer = wrapper.renderer,
 			skipAttr,
+			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
 			ret = wrapper;
@@ -1864,12 +1873,16 @@ SVGElement.prototype = {
 			for (key in hash) {
 				skipAttr = false; // reset
 				value = hash[key];
-
-				fireEvent(wrapper, 'setAttr', { key: key, value: value }, function (e) {
-					result = e.result;
-					if (defined(result) && result !== false) {
-						value = result;
+				
+				// check for a specific attribute setter
+				result = attrSetters[key] && attrSetters[key](key, value);
+				
+				if (result !== false) {
+					
+					if (result !== UNDEFINED) {
+						value = result; // the attribute setter has returned a new value to set
 					}
+					
 					// paths
 					if (key === 'd') {
 						if (value && value.join) { // join path
@@ -2008,14 +2021,14 @@ SVGElement.prototype = {
 							renderer.buildText(wrapper);
 						}
 					} else if (!skipAttr) {
-						//fireEvent(this, 'setAttr', { key: key, value: value }, function () {
-							attr(element, key, value);
-						//});
+						attr(element, key, value);
 					}
-					if (e.callback) {
-						e.callback();
+					
+					// run the after setter if set (used in label)
+					if (attrSetters['after' + key]) {
+						attrSetters['after' + key]();
 					}
-				});
+				}
 
 			}
 
@@ -3298,7 +3311,8 @@ SVGRenderer.prototype = {
 			width,
 			height,
 			xAdjust,
-			deferredAttr = {};
+			deferredAttr = {},
+			attrSetters = wrapper.attrSetters;
 
 		function updateBoxSize() {
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
@@ -3360,58 +3374,58 @@ SVGRenderer.prototype = {
 				y: y
 			});
 		});
+		
+		
+		// Add specific attribute setters.  
+		
+		// only change local variables
+		attrSetters.width = function (key, value) {
+			width = value;
+			return false;
+		};
+		attrSetters.height = function (key, value) {
+			height = value;
+			return false;
+		};
+		attrSetters.padding = function (key, value) {
+			padding = value;
+			return false;
+		};
 
-		addEvent(wrapper, 'setAttr', function (e) {
-			var key = e.key,
-				value = e.value,
-				elem = wrapper,
-				textAlign,
-				ret;
-
-			// change local variables
-			if (key === 'width') {
-				width = value;
-				ret = false;
-			} else if (key === 'height') {
-				height = value;
-				ret = false;
-			} else if (key === 'padding') {
-				padding = value;
-				ret = false;
-
-			// change local variable and set attribue as well
-			} else if (key === 'align') {
-				align = value;
-				//ret = false;
-
-			// apply these to the box and the text alike
-			} else if (key === 'visibility' || key === 'zIndex') {
-				boxAttr(key, value);
-
-			// apply these to the box but not to the text
-			} else if (key === 'stroke' || key === 'stroke-width' || key === 'fill' || key === 'r') {
-				boxAttr(key, value);
-				ret = false;
-
-			// change box attributes and return modified values
-			} else if (key === 'x') {
-				textAlign = wrapper.styles.textAlign;
-				boxAttr('translateX', value - xAdjust);
-				if (align === 'left' && defined(width) && (textAlign === 'center' || textAlign === 'right')) {
-					value += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
-				}
-				ret = mathRound(value + { left: 1, center: 0, right: -1 }[align] * padding);
-			} else if (key === 'y') {
-				boxAttr('translateY', value);
-				ret = mathRound(value + pInt(wrapper.styles.fontSize || 12) * 1.2);
-			} else if (key === 'text') {
-				e.callback = updateBoxSize;
+		// change local variable and set attribue as well
+		attrSetters.align = function (key, value) {
+			align = value;
+		};
+		
+		// apply these to the box and the text alike
+		attrSetters.visibility = attrSetters.zIndex = function (key, value) {
+			boxAttr(key, value);
+		};
+		
+		
+		// apply these to the box but not to the text
+		attrSetters.stroke = attrSetters['stroke-width'] = attrSetters.fill = attrSetters.r = function (key, value) {
+			boxAttr(key, value);
+			return false;
+		};
+		
+		// change box attributes and return modified values
+		attrSetters.x = function (key, value) {
+			var textAlign = wrapper.styles.textAlign;
+			boxAttr('translateX', value - xAdjust);
+			if (align === 'left' && defined(width) && (textAlign === 'center' || textAlign === 'right')) {
+				value += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
 			}
-			if (ret !== UNDEFINED) {
-				return ret;
-			}
-		});
-
+			return mathRound(value + { left: 1, center: 0, right: -1 }[align] * padding);
+		};
+		attrSetters.y = function (key, value) {
+			boxAttr('translateY', value);
+			return mathRound(value + pInt(wrapper.styles.fontSize || 12) * 1.2);
+		};
+		attrSetters.aftertext = updateBoxSize;
+		
+		
+		// direct certain methods to the box instead of the wrapper/text
 		wrapper.txtToFront = wrapper.toFront;
 
 		return extend(wrapper, {
@@ -3462,7 +3476,8 @@ var VMLElement = extendClass(SVGElement, {
 	 * @param {Object} nodeName
 	 */
 	init: function (renderer, nodeName) {
-		var markup =  ['<', nodeName, ' filled="f" stroked="f"'],
+		var wrapper = this,
+			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
 			style = ['position: ', ABSOLUTE, ';'];
 
 		// divs and shapes need size
@@ -3480,10 +3495,11 @@ var VMLElement = extendClass(SVGElement, {
 			markup = nodeName === DIV || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
-			this.element = createElement(markup);
+			wrapper.element = createElement(markup);
 		}
 
-		this.renderer = renderer;
+		wrapper.renderer = renderer;
+		wrapper.attrSetters = {};
 	},
 
 	/**
@@ -3546,6 +3562,7 @@ var VMLElement = extendClass(SVGElement, {
 			hasSetSymbolSize,
 			shadows = wrapper.shadows,
 			skipAttr,
+			attrSetters = wrapper.attrSetters,
 			ret = wrapper;
 
 		// single key-value pair
@@ -3570,11 +3587,15 @@ var VMLElement = extendClass(SVGElement, {
 				value = hash[key];
 				skipAttr = false;
 
-				fireEvent(wrapper, 'setAttr', { key: key, value: value }, function (e) {
-					result = e.result;
-					if (defined(result) && result !== false) {
-						value = result;
+				// check for a specific attribute setter
+				result = attrSetters[key] && attrSetters[key](key, value);
+				
+				if (result !== false) {
+					
+					if (result !== UNDEFINED) {
+						value = result; // the attribute setter has returned a new value to set
 					}
+					
 
 					// prepare paths
 					// symbols
@@ -3748,21 +3769,17 @@ var VMLElement = extendClass(SVGElement, {
 
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
-							try {
-								element[key] = value;
-							} catch (ex) {
-								console.log([element.tagName, key, value].join(', '));
-							}
+							element[key] = value;
 						} else {
 							attr(element, key, value);
 						}
 					}
 
-
-					if (e.callback) {
-						e.callback();
+					// run the after-setter if set (used in label)
+					if (attrSetters['after' + key]) {
+						attrSetters['after' + key]();
 					}
-				});
+				}
 			}
 		}
 		return ret;
