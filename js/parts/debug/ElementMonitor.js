@@ -84,7 +84,10 @@ ElementMonitor.prototype.unregisterElement = function (element) {
  * Logs currently monitored elements to the console.
  */
 ElementMonitor.prototype.log = function () {
-	var writeHeader = true;
+	var writeHeader = true,
+		countByType = {},
+		total = 0;
+
 	for (var id in this.registry) {
 		if (writeHeader) {
 			jstestdriver.console.log('');
@@ -94,7 +97,8 @@ ElementMonitor.prototype.log = function () {
 		var elementObject = this.registry[id];
 		jstestdriver.console.log(id + ' nodeName: ' + elementObject.nodeName + ' <- ' + elementObject.caller);
 	}
-	var writeHeader = true;
+	writeHeader = true;
+
 	for (var id in this.registry) {
 		if (writeHeader) {
 			jstestdriver.console.log('');
@@ -103,8 +107,16 @@ ElementMonitor.prototype.log = function () {
 		}
 		var elementObject = this.registry[id];
 		jstestdriver.console.log(id + ' nodeName: ' + elementObject.nodeName);
+
+		countByType[elementObject.nodeName] = countByType[elementObject.nodeName] ? countByType[elementObject.nodeName] + 1 : 1;
 	}
 
+	jstestdriver.console.log('--- summary ---');
+	for (var name in countByType) {
+		jstestdriver.console.log(countByType[name] + '\t' + name);
+		total += countByType[name];
+	}
+	jstestdriver.console.log(total + '\ttotal');
 };
 
 /**
