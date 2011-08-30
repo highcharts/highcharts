@@ -1950,6 +1950,12 @@ function Chart(options, callback) {
 		 * Destroy the tooltip and its elements.
 		 */
 		function destroy() {
+			each(crosshairs, function (crosshair) {
+				if (crosshair) {
+					crosshair.destroy();
+				}
+			});
+
 			if (box) {
 				box.destroy();
 				box = null;

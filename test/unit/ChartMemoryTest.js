@@ -22,28 +22,46 @@ ChartMemoryTest.prototype.setUp = function () {
 	/*:DOC container = <div style="height: 200px; width: 200px"></div>*/
 	assertNotUndefined(this.container);
 
-	this.config = {
+	this.chart = new Chart(this.getConfig());
+	assertNotUndefined(this.chart);
+};
+
+/**
+ * Returns the configuration for the charts that we test.
+ */
+ChartMemoryTest.prototype.getConfig = function () {
+	return {
 		chart: {
-			renderTo: this.container
+			renderTo: this.container,
+			backgroundColor: '#FFFFFF',
+			shadow: true,
+			zoomType: 'xy'
 		},
+
+		tooltip: {
+			crosshairs: [true, true]
+		},
+
 		series: [{
 			type: 'scatter',
 			data: this.randomData(1)
 		}]
 	};
-
-	this.chart = new Chart(this.config);
-	assertNotUndefined(this.chart);
 };
 
 /**
  * At tear down, log output from the element monitor and reset.
  */
 ChartMemoryTest.prototype.tearDown = function () {
+	// Remove the chart
+	this.chart.destroy();
+	this.chart = null;
+
+	// Log any stray svg elements
 	elementMonitor.log();
 	elementMonitor.reset();
 
-	// Enable it again for other tests
+	// Enable event monitor it again for other tests
 	eventMonitor.setEnabled(true);
 };
 
@@ -57,17 +75,13 @@ ChartMemoryTest.prototype.testAddRemovePoints = function () {
 	for (i = 0; i < 1000; i++) {
 		this.chart.series[0].addPoint(Math.random(), false, true);
 	}
-
-	this.chart.destroy();
-	this.chart = null;
 };
 
 /**
  * Tests SVG allocations when destroying.
  */
 ChartMemoryTest.prototype.testDestroyChart = function () {
-	this.chart.destroy();
-	this.chart = null;
+	// Just runs setUp and tearDown
 };
 
 /**
@@ -88,9 +102,6 @@ ChartMemoryTest.prototype.testAddRemoveSeries = function () {
 			newSeries = null;
 		}
 	}
-
-	this.chart.destroy();
-	this.chart = null;
 };
 
 /**
@@ -102,8 +113,6 @@ ChartMemoryTest.prototype.testRedrawChart = function () {
 	for (i = 0; i < 2; i++) {
 		this.chart.redraw(true);
 	}
-	this.chart.destroy();
-	this.chart = null;
 };
 
 /**
@@ -115,9 +124,6 @@ ChartMemoryTest.prototype.testSetSizeChart = function () {
 	for (i = 1; i < 10; i++) {
 		this.chart.setSize(100 * i, 100 * i, true);
 	}
-
-	this.chart.destroy();
-	this.chart = null;
 };
 
 /**
@@ -138,7 +144,15 @@ ChartMemoryTest.prototype.testSetTitleChart = function () {
 			}
 		);
 	}
+};
 
-	this.chart.destroy();
-	this.chart = null;
+ChartMemoryTest.prototype.testShowHideTooltip = function () {
+	var numPoints = this.chart.series[0].data.length,
+		firstPoint = this.chart.series[0].data[0],
+		lastPoint = this.chart.series[0].data[numPoints - 1];
+
+	this.chart.tooltip.refresh(firstPoint);
+	this.chart.tooltip.hide();
+	this.chart.tooltip.refresh(lastPoint);
+	this.chart.tooltip.hide();
 };
