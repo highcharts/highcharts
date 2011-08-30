@@ -54,8 +54,8 @@ ElementMonitor.prototype.registerElement = function (element, nodeName) {
 	if (!this.registry[id]) {
 		this.registry[id] = {
 			nodeName: nodeName,
-			// caller path: registerElement -> SVGElement -> SVGRenderer -> interesting stuff
-			caller: ElementMonitor.prototype.registerElement.caller.caller.caller.toString()
+			// caller path: registerElement -> SVGElement -> SVGRenderer -> SVGRenderer -> interesting stuff
+			caller: ElementMonitor.prototype.registerElement.caller.caller.caller.caller.toString()
 		};
 	}
 };
@@ -111,12 +111,15 @@ ElementMonitor.prototype.log = function () {
 		countByType[elementObject.nodeName] = countByType[elementObject.nodeName] ? countByType[elementObject.nodeName] + 1 : 1;
 	}
 
-	jstestdriver.console.log('--- summary ---');
-	for (var name in countByType) {
-		jstestdriver.console.log(countByType[name] + '\t' + name);
-		total += countByType[name];
+	if (writeHeader === false) { // Meaning there were some elements in the registry
+		jstestdriver.console.log('');
+		jstestdriver.console.log('--- summary ---');
+		for (var name in countByType) {
+			jstestdriver.console.log(countByType[name] + '\t' + name);
+			total += countByType[name];
+		}
+		jstestdriver.console.log(total + '\ttotal');
 	}
-	jstestdriver.console.log(total + '\ttotal');
 };
 
 /**
