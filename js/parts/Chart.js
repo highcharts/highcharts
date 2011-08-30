@@ -2393,7 +2393,8 @@ function Chart(options, callback) {
 						Math.pow(mouseDownY - chartY, 2)
 					);
 					if (hasDragged > 10) {
-						var clickedInside = isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
+						var clickedInside = isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop),
+							hoverPoints = chart.hoverPoints;
 
 						// make a selection
 						if (hasCartesianSeries && (zoomX || zoomY) && clickedInside) {
@@ -2438,6 +2439,13 @@ function Chart(options, callback) {
 								dataMax = extremes.dataMax,
 								newMin = xAxis.translate(mouseDownX - chartX, true),
 								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
+								
+							// remove active points for shared tooltip
+							if (hoverPoints) {
+								each(hoverPoints, function (point) {
+									point.setState();
+								});
+							}
 
 							if (newMin > dataMin && newMax < dataMax) {
 								xAxis.setExtremes(newMin, newMax, true, false);
