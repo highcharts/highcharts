@@ -1778,6 +1778,38 @@ function Chart(options, callback) {
 				}
 		}
 
+		/**
+		 * Destroys an Axis instance.
+		 */
+		function destroy() {
+			each([ticks, minorTicks, alternateBands/*, plotLinesAndBands*/], function (coll) {
+				var pos;
+				for (pos in coll) {
+					coll[pos].destroy();
+					delete coll[pos];
+				}
+			});
+
+			if (axisLine) {
+				axisLine.destroy();
+				axisLine = null;
+			}
+
+			if (axisGroup) {
+				axisGroup.destroy();
+				axisGroup = null;
+			}
+
+			if (gridGroup) {
+				gridGroup.destroy();
+				gridGroup = null;
+			}
+
+			if (axisTitle) {
+				axisTitle.destroy();
+				axisTitle = null;
+			}
+		}
 
 
 		// Run Axis
@@ -1811,7 +1843,8 @@ function Chart(options, callback) {
 			removePlotBand: removePlotBandOrLine,
 			removePlotLine: removePlotBandOrLine,
 			reversed: reversed,
-			stacks: stacks
+			stacks: stacks,
+			destroy: destroy
 		});
 
 		// register event listeners
@@ -1912,6 +1945,26 @@ function Chart(options, callback) {
 				.add(group);
 
 		group.hide();
+
+		/**
+		 * Destroy the tooltip and its elements.
+		 */
+		function destroy() {
+			if (box) {
+				box.destroy();
+				box = null;
+			}
+
+			if (label) {
+				label.destroy();
+				label = null;
+			}
+
+			if (group) {
+				group.destroy();
+				group = null;
+			}
+		}
 
 		/**
 		 * In case no user defined formatter is given, this will be used
@@ -2142,7 +2195,8 @@ function Chart(options, callback) {
 		return {
 			shared: shared,
 			refresh: refresh,
-			hide: hide
+			hide: hide,
+			destroy: destroy
 		};
 	}
 
@@ -2795,6 +2849,20 @@ function Chart(options, callback) {
 
 		}
 
+		/**
+		 * Destroys the legend.
+		 */
+		function destroy() {
+			if (box) {
+				box.destroy();
+				box = null;
+			}
+
+			if (legendGroup) {
+				legendGroup.destroy();
+				legendGroup = null;
+			}
+		}
 
 		/**
 		 * Position the checkboxes after the width is determined
@@ -3105,7 +3173,8 @@ function Chart(options, callback) {
 		return {
 			colorizeItem: colorizeItem,
 			destroyItem: destroyItem,
-			renderLegend: renderLegend
+			renderLegend: renderLegend,
+			destroy: destroy
 		};
 	};
 
@@ -4029,7 +4098,7 @@ function Chart(options, callback) {
 		// Credits
 		if (credits.enabled && !chart.credits) {
 			creditsHref = credits.href;
-			renderer.text(
+			chart.credits = renderer.text(
 				credits.text,
 				0,
 				0
@@ -4077,11 +4146,69 @@ function Chart(options, callback) {
 
 		each(axes, function (axis) {
 			removeEvent(axis);
+			axis.destroy();
 		});
 
 		// destroy each series
 		while (i--) {
 			series[i].destroy();
+		}
+
+		// Destroy the chart series group element
+		if (chart.seriesGroup) {
+			chart.seriesGroup.destroy();
+			chart.seriesGroup = null;
+		}
+
+		// Destroy clip rect
+		if (chart.clipRect) {
+			chart.clipRect.destroy();
+			chart.clipRect = null;
+		}
+
+		if (chart.credits) {
+			chart.credits.destroy();
+			chart.credits = null;
+		}
+
+		// Destroy titles
+		each(['title', 'subtitle'], function (name) {
+			var title = chart[name];
+
+			if (title) {
+				title.destroy();
+				chart[name] = null;
+			}
+		});
+
+		// Destroy the chart background element
+		if (chartBackground) {
+			chartBackground.destroy();
+			chartBackground = null;
+		}
+
+		// Destroy the legend
+		if (legend) {
+			legend.destroy();
+			legend = null;
+		}
+
+		// Destroy the tooltip
+		if (tooltip) {
+			tooltip.destroy();
+			tooltip = null;
+		}
+
+		// Destroy the tracker group element
+		if (trackerGroup) {
+			trackerGroup.destroy();
+			trackerGroup = null;
+		}
+
+		// Destroy the renderer
+		if (renderer) {
+			renderer.destroy();
+			renderer = null;
 		}
 
 		// remove container and all SVG

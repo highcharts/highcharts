@@ -613,6 +613,11 @@ SVGElement.prototype = {
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		stop(wrapper); // stop running animations
 
+		if (wrapper.clipPath) {
+			wrapper.clipPath.destroy();
+			wrapper.clipPath = null;
+		}
+
 		// remove element
 		if (parentNode) {
 			parentNode.removeChild(element);
@@ -734,6 +739,19 @@ SVGRenderer.prototype = {
 
 	},
 
+	/**
+	 * Destroys the renderer and its allocated members.
+	 */
+	destroy: function () {
+		var renderer = this;
+		renderer.box = null;
+		renderer.boxWrapper.destroy();
+		renderer.boxWrapper = null;
+
+		renderer.defs.destroy();
+		renderer.defs = null;
+/*		renderer.alignedObjects = null;*/
+	},
 
 	/**
 	 * Create a wrapper for an SVG element
@@ -1264,6 +1282,7 @@ SVGRenderer.prototype = {
 
 		wrapper = this.rect(x, y, width, height, 0).add(clipPath);
 		wrapper.id = id;
+		wrapper.clipPath = clipPath;
 
 		return wrapper;
 	},

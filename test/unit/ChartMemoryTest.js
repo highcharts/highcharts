@@ -46,16 +46,12 @@ ChartMemoryTest.prototype.tearDown = function() {
 	elementMonitor.reset();
 };
 
-ChartMemoryTest.prototype.tXstAddRemovePoints = function () {
+ChartMemoryTest.prototype.testAddRemovePoints = function () {
 	var i;
 
-	// Make the point really heavy to be able to notice a leak
-	this.chart.renderer.Element.prototype.bigString = new Array(2000).join(new Array(2000).join("XXXXXYYYYYZZZZZZ"));
-
-	// Test addPoint with shift. This will do a remove point aswell.
+	// Test addPoint with shift. This will do a remove point as well.
 	for (i = 0; i < 1000; i++) {
 		this.chart.series[0].addPoint(Math.random(), false, true);
-		//this.chart.series[1].addPoint(Math.random(), false, true);
 	}
 
 	this.chart.destroy();
@@ -65,12 +61,23 @@ ChartMemoryTest.prototype.tXstAddRemovePoints = function () {
 ChartMemoryTest.prototype.testDestroyChart = function() {
 	this.chart.destroy();
 	this.chart = null;
-
-	// Test create destroy chart.
-	for (i = 0; i < 0; i++) {
-		this.chart = new Chart(this.config);
-		this.chart.destroy();
-		this.chart = null;
-	}
 };
 
+ChartMemoryTest.prototype.tXstAddRemoveSeries = function () {
+	var newSeries;
+
+	// Test to add Series and remove them
+	for (i = 0; i < 1; i++) {
+		newSeries = this.chart.addSeries({
+			data: this.randomData(100)
+		});
+
+		if (newSeries) {
+			newSeries.remove(true);
+			newSeries = null;
+		}
+	}
+
+	this.chart.destroy();
+	this.chart = null;
+};
