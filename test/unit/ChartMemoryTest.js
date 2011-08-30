@@ -22,14 +22,16 @@ ChartMemoryTest.prototype.setUp = function () {
 	/*:DOC container = <div style="height: 200px; width: 200px"></div>*/
 	assertNotUndefined(this.container);
 
-	this.chart = new Chart(this.getConfig());
+	var conf = merge({}, this.getBaseConfig(), this.getConfig());
+
+	this.chart = new Chart(conf);
 	assertNotUndefined(this.chart);
 };
 
 /**
  * Returns the configuration for the charts that we test.
  */
-ChartMemoryTest.prototype.getConfig = function () {
+ChartMemoryTest.prototype.getBaseConfig = function () {
 	return {
 		chart: {
 			renderTo: this.container,
@@ -39,13 +41,24 @@ ChartMemoryTest.prototype.getConfig = function () {
 		},
 
 		tooltip: {
-			crosshairs: [true, true]
+			crosshairs: [true, true],
+			shadow: true
 		},
 
 		series: [{
-			type: 'scatter',
 			data: this.randomData(1)
 		}]
+	};
+};
+
+/**
+ * Returns the configuration for the charts that we test.
+ */
+ChartMemoryTest.prototype.getConfig = function () {
+	return {
+		chart: {
+			type: 'scatter'
+		}
 	};
 };
 
