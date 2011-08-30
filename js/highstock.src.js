@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highstock JS v1.0 Beta (2011-08-02)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -9536,7 +9536,9 @@ Series.prototype = {
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
 		while (i--) {
-			oldData[i].destroy();
+			if (oldData[i]) {
+				oldData[i].destroy();
+			}
 		}
 
 		// redraw
@@ -12704,16 +12706,18 @@ function Scroller(chart) {
 			addEvent(baseSeries, 'updatedData', function () {
 
 				var baseExtremes = baseSeries.xAxis.getExtremes(),
-					range = baseExtremes.max - baseExtremes.min,
-					stickToMax = baseExtremes.max >=
-						navigatorSeries.xData[navigatorSeries.xData.length - 1],
-					stickToMin = baseExtremes.min - range <=
-						navigatorSeries.xData[0],
-						baseXAxis = baseSeries.xAxis,
-						hasSetExtremes = !!baseXAxis.setExtremes,
+					baseMin = baseExtremes.min,
+					baseMax = baseExtremes.max,
+					baseDataMin = baseExtremes.dataMin,
+					baseDataMax = baseExtremes.dataMax,
+					range = baseMax - baseMin,
+					stickToMin,
+					stickToMax,
 					newMax,
 					newMin,
-					doRedraw;
+					doRedraw,
+					baseXAxis = baseSeries.xAxis,
+					hasSetExtremes = !!baseXAxis.setExtremes;
 
 				// set the navigator series data to the new data of the base series
 				if (!navigatorData) {
@@ -12721,31 +12725,36 @@ function Scroller(chart) {
 					navigatorSeries.setData(baseSeries.options.data, false);
 					doRedraw = true;
 				}
+				
+				// detect whether to move the range
+				stickToMax = baseMax >=
+					navigatorSeries.xData[navigatorSeries.xData.length - 1];
+				stickToMin = baseMin - range <=
+					navigatorSeries.xData[0];
 
 				// if the selection is already at the max, move it to the right as new data
 				// comes in
 				if (stickToMax) {
-					newMax = baseExtremes.dataMax;
+					newMax = baseDataMax;
 					if (hasSetExtremes) {
-						baseXAxis.setExtremes(newMax - range, newMax, false);
-						doRedraw = true;
+						baseXAxis.setExtremes(newMax - range, newMax);
 					}
 				} else if (stickToMin) {
-					newMin = baseExtremes.dataMin;
+					newMin = baseDataMin;
 					if (hasSetExtremes) {
-						baseXAxis.setExtremes(newMin, newMin + range, false);
-						doRedraw = true;
+						baseXAxis.setExtremes(newMin, newMin + range);
 					}
 				// if not, just move the scroller window to reflect the new series data
 				} else {
+					if (doRedraw) {
+						chart.redraw();
+					}
 					render(
-						mathMax(baseExtremes.min, baseExtremes.dataMin),
-						mathMin(baseExtremes.max, baseExtremes.dataMax)
-					);
+						mathMax(baseMin, baseDataMin),
+						mathMin(baseMax, baseDataMax)
+					);					
 				}
-				if (doRedraw) {
-					chart.redraw();
-				}
+				
 			});
 
 			// an x axis is required for scrollbar also
@@ -13407,7 +13416,7 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
-	product: '@product.name@',
-	version: '@product.version@'
+	product: 'Highstock',
+	version: '1.0 Beta'
 });
 }());
