@@ -4599,6 +4599,13 @@ function Chart(options, callback) {
 		}
 
 		StackItem.prototype = {
+			destroy: function () {
+				if (this.label) {
+					this.label.destroy();
+					this.label = null;
+				}
+			},
+
 			/**
 			 * Sets the total of this stack. Should be called when a serie is hidden or shown
 			 * since that will affect the total of other stacks.
@@ -5767,6 +5774,21 @@ function Chart(options, callback) {
 		 * Destroys an Axis instance.
 		 */
 		function destroy() {
+			var stackKey, stackCategory;
+
+			// Destroy each stack total
+			for (stackKey in stacks) {
+				oneStack = stacks[stackKey];
+				for (stackCategory in oneStack) {
+					oneStack[stackCategory].destroy();
+				}
+			}
+
+			if (axis.stackTotalGroup) {
+				axis.stackTotalGroup.destroy();
+				axis.stackTotalGroup = null;
+			}
+
 			each([ticks, minorTicks, alternateBands/*, plotLinesAndBands*/], function (coll) {
 				var pos;
 				for (pos in coll) {
