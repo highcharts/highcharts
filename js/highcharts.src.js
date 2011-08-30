@@ -5781,7 +5781,10 @@ function Chart(options, callback) {
 				oneStack = stacks[stackKey];
 				for (stackCategory in oneStack) {
 					oneStack[stackCategory].destroy();
+					oneStack[stackCategory] = null;
 				}
+
+				stacks[stackKey] = null;
 			}
 
 			if (axis.stackTotalGroup) {
@@ -8147,7 +8150,7 @@ function Chart(options, callback) {
 	 * Clean up memory usage
 	 */
 	function destroy() {
-		var i = series.length,
+		var i,
 			parentNode = container && container.parentNode;
 
 		// fire the chart.destoy event
@@ -8157,14 +8160,19 @@ function Chart(options, callback) {
 		removeEvent(win, 'unload', destroy);
 		removeEvent(chart);
 
-		each(axes, function (axis) {
-			removeEvent(axis);
-			axis.destroy();
-		});
+		// Destroy axes
+		i = axes.length;
+		while (i--) {
+			removeEvent(axes[i]);
+			axes[i].destroy();
+			axes[i] = null;
+		}
 
 		// destroy each series
+		i = series.length;
 		while (i--) {
 			series[i].destroy();
+			series[i] = null;
 		}
 
 		// Destroy the chart series group element
@@ -8217,6 +8225,9 @@ function Chart(options, callback) {
 			trackerGroup.destroy();
 			trackerGroup = null;
 		}
+
+		// Destroy the MouseTracker object
+		chart.tracker = tracker = null;
 
 		// Destroy the renderer
 		if (renderer) {
