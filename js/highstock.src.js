@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.0 Beta (2011-08-02)
+ * @license @product.name@ JS v@product.version@ (@product.date@)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -6998,6 +6998,7 @@ function Chart(options, callback) {
 
 						// panning
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
+							
 							var xAxis = chart.xAxis[0],
 								extremes = xAxis.getExtremes(),
 								dataMin = extremes.dataMin,
@@ -7012,7 +7013,7 @@ function Chart(options, callback) {
 								});
 							}
 
-							if (newMin > dataMin && newMax < dataMax) {
+							if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
 								xAxis.setExtremes(newMin, newMax, true, false);
 							}
 
@@ -13406,7 +13407,7 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
-	product: 'Highstock',
-	version: '1.0 Beta'
+	product: '@product.name@',
+	version: '@product.version@'
 });
 }());

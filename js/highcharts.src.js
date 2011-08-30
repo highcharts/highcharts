@@ -6998,6 +6998,7 @@ function Chart(options, callback) {
 
 						// panning
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
+							
 							var xAxis = chart.xAxis[0],
 								extremes = xAxis.getExtremes(),
 								dataMin = extremes.dataMin,
@@ -7012,7 +7013,7 @@ function Chart(options, callback) {
 								});
 							}
 
-							if (newMin > dataMin && newMax < dataMax) {
+							if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
 								xAxis.setExtremes(newMin, newMax, true, false);
 							}
 
