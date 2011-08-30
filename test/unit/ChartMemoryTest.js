@@ -37,9 +37,9 @@ ChartMemoryTest.prototype.setUp = function () {
 };
 
 /**
- * At tear down, log output from the event monitor and reset.
+ * At tear down, log output from the element monitor and reset.
  */
-ChartMemoryTest.prototype.tearDown = function() {
+ChartMemoryTest.prototype.tearDown = function () {
 	elementMonitor.log();
 	elementMonitor.reset();
 
@@ -47,6 +47,9 @@ ChartMemoryTest.prototype.tearDown = function() {
 	eventMonitor.setEnabled(true);
 };
 
+/**
+ * Tests SVG allocations when adding and removing points.
+ */
 ChartMemoryTest.prototype.testAddRemovePoints = function () {
 	var i;
 
@@ -59,13 +62,20 @@ ChartMemoryTest.prototype.testAddRemovePoints = function () {
 	this.chart = null;
 };
 
-ChartMemoryTest.prototype.testDestroyChart = function() {
+/**
+ * Tests SVG allocations when destroying.
+ */
+ChartMemoryTest.prototype.testDestroyChart = function () {
 	this.chart.destroy();
 	this.chart = null;
 };
 
+/**
+ * Tests SVG allocations when adding and removing series.
+ */
 ChartMemoryTest.prototype.testAddRemoveSeries = function () {
-	var newSeries;
+	var newSeries,
+		i;
 
 	// Test to add Series and remove them
 	for (i = 0; i < 2; i++) {
@@ -77,6 +87,56 @@ ChartMemoryTest.prototype.testAddRemoveSeries = function () {
 			newSeries.remove(true);
 			newSeries = null;
 		}
+	}
+
+	this.chart.destroy();
+	this.chart = null;
+};
+
+/**
+ * Tests SVG allocations when redrawing the chart.
+ */
+ChartMemoryTest.prototype.testRedrawChart = function () {
+	var i;
+
+	for (i = 0; i < 2; i++) {
+		this.chart.redraw(true);
+	}
+	this.chart.destroy();
+	this.chart = null;
+};
+
+/**
+ * Tests SVG allocations when resizing the chart.
+ */
+ChartMemoryTest.prototype.testSetSizeChart = function () {
+	var i;
+
+	for (i = 1; i < 10; i++) {
+		this.chart.setSize(100 * i, 100 * i, true);
+	}
+
+	this.chart.destroy();
+	this.chart = null;
+};
+
+/**
+ * Tests SVG allocations when renaming the chart.
+ */
+ChartMemoryTest.prototype.testSetTitleChart = function () {
+	var i;
+
+	for (i = 1; i < 2; i++) {
+		this.chart.setTitle(
+			{
+				text: 'New title ' + i,
+				style: { color: 'red' }
+			},
+			{
+				text: 'New sub title ' + i,
+				style: { color: 'green' }
+			}
+		);
 	}
 
 	this.chart.destroy();
