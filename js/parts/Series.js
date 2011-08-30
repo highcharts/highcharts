@@ -1135,6 +1135,14 @@ Series.prototype = {
 		each(series.data, function (point) {
 			point.destroy();
 		});
+
+		// If this series clipRect is not the global one (which is removed on chart.destroy) we
+		// destroy it here.
+		if (series.clipRect !== chart.clipRect) {
+			series.clipRect.destroy();
+			series.clipRect = null;
+		}
+
 		// destroy all SVGElements associated to the series
 		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function (prop) {
 			if (series[prop]) {

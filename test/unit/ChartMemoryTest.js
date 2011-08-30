@@ -63,11 +63,11 @@ ChartMemoryTest.prototype.testDestroyChart = function() {
 	this.chart = null;
 };
 
-ChartMemoryTest.prototype.tXstAddRemoveSeries = function () {
+ChartMemoryTest.prototype.testAddRemoveSeries = function () {
 	var newSeries;
 
 	// Test to add Series and remove them
-	for (i = 0; i < 1; i++) {
+	for (i = 0; i < 2; i++) {
 		newSeries = this.chart.addSeries({
 			data: this.randomData(100)
 		});
