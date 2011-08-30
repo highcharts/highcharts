@@ -16,9 +16,7 @@ ChartMemoryTest.prototype.randomData = function (len) {
  */
 ChartMemoryTest.prototype.setUp = function () {
 	// Disable the event monitor
-	addEvent = eventMonitor.internalAdd;
-	removeEvent = eventMonitor.internalRemove;
-	fireEvent = eventMonitor.internalFire;
+	eventMonitor.setEnabled(false);
 
 	assertUndefined(this.container);
 	/*:DOC container = <div style="height: 200px; width: 200px"></div>*/
@@ -44,6 +42,9 @@ ChartMemoryTest.prototype.setUp = function () {
 ChartMemoryTest.prototype.tearDown = function() {
 	elementMonitor.log();
 	elementMonitor.reset();
+
+	// Enable it again for other tests
+	eventMonitor.setEnabled(true);
 };
 
 ChartMemoryTest.prototype.testAddRemovePoints = function () {

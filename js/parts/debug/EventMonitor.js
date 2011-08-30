@@ -7,9 +7,17 @@ function EventMonitor(add, remove, fire) {
 	this.internalAdd = add;
 	this.internalRemove = remove;
 	this.internalFire = fire;
+	this.enabled = true;
 
 	this.reset();
 }
+
+/**
+ * Enable or disable the event monitor. It is enabled by default.
+ */
+EventMonitor.prototype.setEnabled = function (enable) {
+	this.enabled = enable;
+};
 
 /**
  * Returns the id to use for the next object.
@@ -22,6 +30,10 @@ EventMonitor.prototype.getId = function() {
  * Registers an event with the monitor.
  */
 EventMonitor.prototype.registerEvent = function(el, eventName, handler) {
+	if (!this.enabled) {
+		return;
+	}
+
 	// Sanity checks
 	var HTMLEvents = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 		MouseEvents = /^(?:click|mouse(?:down|up|over|move|out))$/,
@@ -81,6 +93,10 @@ EventMonitor.prototype.getHandlerKey = function(eventName, handler) {
  * Registers an event to the monitor.
  */
 EventMonitor.prototype.unregisterEvent = function(el, eventName, handler) {
+	if (!this.enabled) {
+		return;
+	}
+
 	var id = el['evt-id'];
 	if (id === undefined) {
 		jstestdriver.console.log('Trying to unregister an event (' + eventName + ') on an object thats not registered yet.');
