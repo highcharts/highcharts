@@ -146,6 +146,9 @@ ChartMemoryTest.prototype.testSetTitleChart = function () {
 	}
 };
 
+/**
+ *Tests SVG allocations when showing and hiding the tooltip.
+ */
 ChartMemoryTest.prototype.testShowHideTooltip = function () {
 	var numPoints = this.chart.series[0].data.length,
 		firstPoint = this.chart.series[0].data[0],
