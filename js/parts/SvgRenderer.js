@@ -1535,7 +1535,7 @@ SVGRenderer.prototype = {
 		 */
 		function updateBoxSize() {
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
-				renderer.Element.prototype.getBBox.call(wrapper, true); // use prototype because label.getBBox is overridden
+				wrapper.txtGetBBox(true); // use prototype because label.getBBox is overridden
 			var w = (width || bBox.width) + 2 * padding,
 				h = (height || bBox.height) + 2 * padding,
 				anchors;
@@ -1669,10 +1669,10 @@ SVGRenderer.prototype = {
 		
 		// direct certain methods to the box instead of the wrapper/text
 		wrapper.txtToFront = wrapper.toFront;
+		wrapper.txtGetBBox = wrapper.getBBox;
 
 		return extend(wrapper, {
 			getBBox: function () {
-				var bBox = box.getBBox();
 				return box.getBBox();
 			},
 			shadow: function (b) {
