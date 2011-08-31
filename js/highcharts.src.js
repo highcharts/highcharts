@@ -1988,7 +1988,7 @@ SVGElement.prototype = {
 					}
 
 					// symbols
-					if (wrapper.symbolName && /^(x|y|r|start|end|innerR)/.test(key)) {
+					if (wrapper.symbolName && /^(x|y|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
 
 
 						if (!hasSetSymbolSize) {
@@ -2225,11 +2225,6 @@ SVGElement.prototype = {
 
 		if (transform.length) {
 			attr(wrapper.element, 'transform', transform.join(' '));
-			if (shadows) { // in label/tooltip
-				each(shadows, function (shadow) {
-					attr(shadow, 'transform', 'translate(' + (translateX + 1) + ',' + (translateY + 1) + ')');
-				});
-			}
 		}
 	},
 	/**
@@ -2739,7 +2734,7 @@ SVGRenderer.prototype = {
 			STROKE_WIDTH, 1,
 			STROKE, '#999',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 14],
+				LINEAR_GRADIENT, [0, 0, 0, 1],
 				STOPS, [
 					[0, '#FFF'],
 					[1, '#DDD']
@@ -2759,7 +2754,7 @@ SVGRenderer.prototype = {
 		hoverState = merge(normalState, hash(
 			STROKE, '#68A',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 14],
+				LINEAR_GRADIENT, [0, 0, 0, 1],
 				STOPS, [
 					[0, '#FFF'],
 					[1, '#ACF']
@@ -2774,7 +2769,7 @@ SVGRenderer.prototype = {
 		pressedState = merge(normalState, hash(
 			STROKE, '#68A',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 14],
+				LINEAR_GRADIENT, [0, 0, 0, 1],
 				STOPS, [
 					[0, '#9BD'],
 					[1, '#CDF']
@@ -3213,7 +3208,7 @@ SVGRenderer.prototype = {
 				stopOpacity;
 			gradientObject = renderer.createElement(strLinearGradient).attr({
 				id: id,
-				gradientUnits: 'userSpaceOnUse',
+				//gradientUnits: 'userSpaceOnUse',
 				x1: linearGradient[0],
 				y1: linearGradient[1],
 				x2: linearGradient[2],
@@ -3311,9 +3306,15 @@ SVGRenderer.prototype = {
 			width,
 			height,
 			xAdjust,
+			crispAdjust = 0,
 			deferredAttr = {},
 			attrSetters = wrapper.attrSetters;
 
+		/**
+		 * This function runs after the label is added to the DOM (when the bounding box is
+		 * available), and after the text of the label is updated to detect the new bounding
+		 * box and reflect it in the border box.
+		 */
 		function updateBoxSize() {
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
 				renderer.Element.prototype.getBBox.call(wrapper, true); // use prototype because label.getBBox is overridden
@@ -3321,19 +3322,24 @@ SVGRenderer.prototype = {
 				h = (height || bBox.height) + 2 * padding,
 				anchors;
 
+			// record the adjustment for right or center aligned labels
 			xAdjust = mathRound(w * { left: 0, center: 0.5, right: 1 }[align]);
+			
+			// store the anchor information in an object
 			anchors = anchorX !== undefined && {
-				anchorX: anchorX - x + xAdjust,
-				anchorY: anchorY - y
+				anchorX: anchorX,
+				anchorY: anchorY
 			};
 
+			// create the border box if it is not already present
 			if (!box) {
 				wrapper.box = box = shape ?
 					renderer.symbol(shape, 0, 0, w, h, anchors) :
 					renderer.rect(0, 0, w, h, 0, deferredAttr['stroke-width']);
 				box.add(); // to get the translation right in IE
 			}
-
+			
+			// apply the box attributes
 			box.attr(merge({
 				width: w,
 				height: h
@@ -3342,7 +3348,7 @@ SVGRenderer.prototype = {
 		}
 
 		/**
-		 * Set box attributes, or defer them if the box is not yet created
+		 * Set a box attribute, or defer it if the box is not yet created
 		 * @param {Object} key
 		 * @param {Object} value
 		 */
@@ -3352,12 +3358,14 @@ SVGRenderer.prototype = {
 			} else {
 				deferredAttr[key] = value;
 			}
-
 		}
 
+		
+		/**
+		 * After the text element is added, get the desired size of the border box
+		 * and add it before the text in the DOM.
+		 */
 		addEvent(wrapper, 'add', function () {
-
-
 			updateBoxSize();
 
 			var boxElem = box.element,
@@ -3368,7 +3376,6 @@ SVGRenderer.prototype = {
 			}
 			wrapperElem.parentNode.insertBefore(boxElem, wrapperElem);
 
-
 			wrapper.attr({
 				x: x,
 				y: y
@@ -3376,7 +3383,9 @@ SVGRenderer.prototype = {
 		});
 		
 		
-		// Add specific attribute setters.  
+		/*
+		 * Add specific attribute setters.
+		 */   
 		
 		// only change local variables
 		attrSetters.width = function (key, value) {
@@ -3404,7 +3413,20 @@ SVGRenderer.prototype = {
 		
 		
 		// apply these to the box but not to the text
-		attrSetters.stroke = attrSetters['stroke-width'] = attrSetters.fill = attrSetters.r = function (key, value) {
+		attrSetters.stroke = attrSetters[STROKE_WIDTH] = attrSetters.fill = attrSetters.r = function (key, value) {
+			if (key === STROKE_WIDTH) {
+				crispAdjust = value % 2 / 2;
+			}
+			boxAttr(key, value);
+			return false;
+		};
+		attrSetters.anchorX = function (key, value) {
+			anchorX = value;
+			boxAttr(key, value + crispAdjust);
+			return false;
+		};
+		attrSetters.anchorY = function (key, value) {
+			anchorY = value;
 			boxAttr(key, value);
 			return false;
 		};
@@ -3412,16 +3434,18 @@ SVGRenderer.prototype = {
 		// change box attributes and return modified values
 		attrSetters.x = function (key, value) {
 			var textAlign = wrapper.styles.textAlign;
-			boxAttr('translateX', value - xAdjust);
+			boxAttr(key, value - xAdjust - crispAdjust);
 			if (align === 'left' && defined(width) && (textAlign === 'center' || textAlign === 'right')) {
 				value += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
 			}
 			return mathRound(value + { left: 1, center: 0, right: -1 }[align] * padding);
 		};
 		attrSetters.y = function (key, value) {
-			boxAttr('translateY', value);
+			boxAttr(key, value - crispAdjust);
 			return mathRound(value + pInt(wrapper.styles.fontSize || 12) * 1.2);
 		};
+		
+		// apply this after the default attribute handler has run
 		attrSetters.aftertext = updateBoxSize;
 		
 		
@@ -3430,6 +3454,7 @@ SVGRenderer.prototype = {
 
 		return extend(wrapper, {
 			getBBox: function () {
+				var bBox = box.getBBox();
 				return box.getBBox();
 			},
 			shadow: function (b) {
@@ -3599,7 +3624,7 @@ var VMLElement = extendClass(SVGElement, {
 
 					// prepare paths
 					// symbols
-					if (symbolName && /^(x|y|r|start|end|width|height|innerR)/.test(key)) {
+					if (symbolName && /^(x|y|r|start|end|width|height|innerR|anchorX|anchorY)/.test(key)) {
 						// if one of the symbol size affecting parameters are changed,
 						// check all the others only once for each call to an element's
 						// .attr() method

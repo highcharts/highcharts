@@ -12,7 +12,7 @@ var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
  *****************************************************************************/
 
 var buttonGradient = {
-		linearGradient: [0, 0, 0, 14],
+		linearGradient: [0, 0, 0, 1],
 		stops: [
 			[0, '#FFF'],
 			[1, '#CCC']
@@ -94,7 +94,7 @@ extend(defaultOptions, {
 		buttonBorderWidth: 1,
 		rifleColor: '#666',
 		trackBackgroundColor: {
-			linearGradient: [0, 0, 0, 10],
+			linearGradient: [0, 0, 0, 1],
 			stops: [
 				[0, '#EEE'],
 				[1, '#FFF']

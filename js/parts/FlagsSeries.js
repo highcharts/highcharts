@@ -158,7 +158,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					graphic.attr({
 						x: plotX,
 						y: plotY,
-						r: pointAttr.r
+						r: pointAttr.r,
+						anchorX: anchorX,
+						anchorY: anchorY
 					});
 				} else {
 					graphic = point.graphic = renderer.label(

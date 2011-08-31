@@ -150,7 +150,7 @@ var VMLElement = extendClass(SVGElement, {
 
 					// prepare paths
 					// symbols
-					if (symbolName && /^(x|y|r|start|end|width|height|innerR)/.test(key)) {
+					if (symbolName && /^(x|y|r|start|end|width|height|innerR|anchorX|anchorY)/.test(key)) {
 						// if one of the symbol size affecting parameters are changed,
 						// check all the others only once for each call to an element's
 						// .attr() method
