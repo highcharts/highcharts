@@ -10,7 +10,41 @@ function EventMonitor(add, remove, fire) {
 	this.enabled = true;
 
 	this.reset();
+	this.connect();
 }
+
+/**
+ * Connects the EventMonitor to adapter event handling.
+ */
+EventMonitor.prototype.connect = function () {
+	var that = this;
+
+	/**
+	 * Connect registerEvent before doing add event.
+	 */
+	addEvent = function (el, eventName, handler) {
+		that.registerEvent(el, eventName, handler);
+		that.internalAdd(el, eventName, handler);
+	};
+
+	/**
+	 * Connect unregisterEvent before doing remove event.
+	 */
+	removeEvent = function (el, eventName, handler) {
+		that.unregisterEvent(el, eventName, handler);
+		that.internalRemove(el, eventName, handler);
+	};
+};
+
+/**
+ * Disconnects the EventMonitor from adapter event handling.
+ */
+EventMonitor.prototype.disconnect = function () {
+	var that = this;
+
+	addEvent = that.internalAdd;
+	removeEvent = that.internalRemove;
+};
 
 /**
  * Enable or disable the event monitor. It is enabled by default.
@@ -86,7 +120,8 @@ EventMonitor.prototype.getHandlerKey = function(eventName, handler) {
 	s = s.split(' ').join('');
 	s = s.split('\r').join('');
 	s = s.split('\n').join('');
-	return eventName + '_' + s;
+	s = s.split('\t').join('');
+	return eventName + '_' + s.substring(0, 80);
 };
 
 /**
@@ -172,38 +207,3 @@ EventMonitor.prototype.reset = function() {
 	this.nextId = 0;
 };
 
-// Map the three event functions to call our own instead.
-var eventMonitor = new EventMonitor(addEvent, removeEvent, fireEvent);
-
-/**
- * Add an event listener
- * @param {Object} el A HTML element or custom object
- * @param {String} eventName The event name
- * @param {Function} handler The event handler
- */
-addEvent = function(el, eventName, handler) {
-	eventMonitor.registerEvent(el, eventName, handler);
-	eventMonitor.internalAdd(el, eventName, handler);
-};
-
-/**
- * Remove event added with addEvent
- * @param {Object} el The object
- * @param {String} eventName The event name. Leave blank to remove all events.
- * @param {Function} handler The function to remove. Leave blank to remove all of above type.
- */
-removeEvent = function(el, eventName, handler) {
-	eventMonitor.unregisterEvent(el, eventName, handler);
-	eventMonitor.internalRemove(el, eventName, handler);
-};
-
-/**
- * Fire an event on a custom object
- * @param {Object} el The object
- * @param {String} eventName The event name.
- * @param {Object} eventArguments
- * @param {Function} defaultFunction
- */
-fireEvent = function(el, eventName, eventArguments, defaultFunction) {
-	eventMonitor.internalFire(el, eventName, eventArguments, defaultFunction);
-};
