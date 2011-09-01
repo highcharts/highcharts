@@ -1794,11 +1794,7 @@ function Chart(options, callback) {
 			style = options.style,
 			shared = options.shared,
 			padding = pInt(style.padding),
-			boxOffLeft = borderWidth + padding, // off left/top position as IE can't
-				//properly handle negative positioned shapes
 			tooltipIsHidden = true,
-			boxWidth,
-			boxHeight,
 			currentX = 0,
 			currentY = 0;
 
@@ -1856,12 +1852,12 @@ function Chart(options, callback) {
 		 */
 		function move(finalX, finalY) {
 
+			// get intermediate values for animation
 			currentX = tooltipIsHidden ? finalX : (2 * currentX + finalX) / 3;
 			currentY = tooltipIsHidden ? finalY : (currentY + finalY) / 2;
 
-			//group.translate(currentX, currentY);
+			// move to the intermediate value
 			label.attr({ x: currentX, y: currentY });
-
 
 			// run on next tick of the mouse tracker
 			if (mathAbs(finalX - currentX) > 1 || mathAbs(finalY - currentY) > 1) {
@@ -1989,20 +1985,16 @@ function Chart(options, callback) {
 					text: text
 				});
 
-				// get the bounding box
-				bBox = label.getBBox();
-				boxWidth = bBox.width;
-				boxHeight = bBox.height;
-
-				// set the size of the box
+				// set the stroke color of the box
 				label.attr({
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 
-				placedTooltipPoint = placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, {x: x, y: y});
+				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop, 
+					plotWidth, plotHeight, {x: x, y: y}, pick(options.distance, 12));
 
 				// do the move
-				move(mathRound(placedTooltipPoint.x - boxOffLeft), mathRound(placedTooltipPoint.y - boxOffLeft));
+				move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
 			}
 
 
@@ -4060,7 +4052,6 @@ function Chart(options, callback) {
 		for (i in chart) {
 			delete chart[i];
 		}
-		//logTime && console.log('Destroyed chart in ' + (new Date() - start) + ' ms');
 	}
 	/**
 	 * Prepare for first rendering after all data are loaded

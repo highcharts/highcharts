@@ -610,20 +610,21 @@ ChartCounters.prototype =  {
  * Utility method extracted from Tooltip code that places a tooltip in a chart without spilling over
  * and not covering the point it self.
  */
-function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHeight, point) {
-	// keep the box within the chart area
-	var x = point.x - boxWidth + outerLeft - 25,
-		y = point.y - boxHeight + outerTop + 10;
+function placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, point, distance) {
+	
+	// the initial position of the tooltip if it is not close to any edge
+	var x = point.x - boxWidth + plotLeft - distance,
+		y = point.y - boxHeight + plotTop + 15; // 15 means the point is 15 pixels up from the bottom of the tooltip
 
 	// it is too far to the left, adjust it
 	if (x < 7) {
-		x = outerLeft + point.x + 15;
+		x = plotLeft + point.x + distance;
 	}
 
 	// Test to see if the tooltip is to far to the right,
 	// if it is, move it back to be inside and then up to not cover the point.
-	if ((x + boxWidth) > (outerLeft + outerWidth)) {
-		x -= (x + boxWidth) - (outerLeft + outerWidth);
+	if ((x + boxWidth) > (plotLeft + plotWidth)) {
+		x -= (x + boxWidth) - (plotLeft + plotWidth);
 		y -= boxHeight;
 	}
 
@@ -634,8 +635,8 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		if (point.y >= y && point.y <= (y + boxHeight)) {
 			y = point.y + boxHeight - 5; // below
 		}
-	} else if (y + boxHeight > outerHeight) {
-		y = outerHeight - boxHeight - 5; // below
+	} else if (y + boxHeight > plotTop + plotHeight) {
+		y = plotHeight - boxHeight - 5; // below
 	}
 
 	return {x: x, y: y};

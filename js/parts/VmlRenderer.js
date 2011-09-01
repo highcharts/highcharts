@@ -160,7 +160,6 @@ var VMLElement = extendClass(SVGElement, {
 
 							hasSetSymbolSize = true;
 						}
-
 						skipAttr = true;
 
 					} else if (key === 'd') {
@@ -186,7 +185,7 @@ var VMLElement = extendClass(SVGElement, {
 						}
 						value = convertedPath.join(' ') || 'x';
 						element.path = value;
-
+						
 						// update shadows
 						if (shadows) {
 							i = shadows.length;
@@ -222,7 +221,6 @@ var VMLElement = extendClass(SVGElement, {
 
 					// width and height
 					} else if (key === 'width' || key === 'height') {
-
 
 						// clipping rectangle special
 						if (wrapper.updateClipping) {

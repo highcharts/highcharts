@@ -743,20 +743,21 @@ ChartCounters.prototype =  {
  * Utility method extracted from Tooltip code that places a tooltip in a chart without spilling over
  * and not covering the point it self.
  */
-function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHeight, point) {
-	// keep the box within the chart area
-	var x = point.x - boxWidth + outerLeft - 25,
-		y = point.y - boxHeight + outerTop + 10;
+function placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, point, distance) {
+	
+	// the initial position of the tooltip if it is not close to any edge
+	var x = point.x - boxWidth + plotLeft - distance,
+		y = point.y - boxHeight + plotTop + 15; // 15 means the point is 15 pixels up from the bottom of the tooltip
 
 	// it is too far to the left, adjust it
 	if (x < 7) {
-		x = outerLeft + point.x + 15;
+		x = plotLeft + point.x + distance;
 	}
 
 	// Test to see if the tooltip is to far to the right,
 	// if it is, move it back to be inside and then up to not cover the point.
-	if ((x + boxWidth) > (outerLeft + outerWidth)) {
-		x -= (x + boxWidth) - (outerLeft + outerWidth);
+	if ((x + boxWidth) > (plotLeft + plotWidth)) {
+		x -= (x + boxWidth) - (plotLeft + plotWidth);
 		y -= boxHeight;
 	}
 
@@ -767,8 +768,8 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		if (point.y >= y && point.y <= (y + boxHeight)) {
 			y = point.y + boxHeight - 5; // below
 		}
-	} else if (y + boxHeight > outerHeight) {
-		y = outerHeight - boxHeight - 5; // below
+	} else if (y + boxHeight > plotTop + plotHeight) {
+		y = plotHeight - boxHeight - 5; // below
 	}
 
 	return {x: x, y: y};
@@ -3308,6 +3309,7 @@ SVGRenderer.prototype = {
 			xAdjust,
 			crispAdjust = 0,
 			deferredAttr = {},
+			anchors,
 			attrSetters = wrapper.attrSetters;
 
 		/**
@@ -3317,13 +3319,12 @@ SVGRenderer.prototype = {
 		 */
 		function updateBoxSize() {
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
-				wrapper.txtGetBBox(true); // use prototype because label.getBBox is overridden
-			var w = (width || bBox.width) + 2 * padding,
-				h = (height || bBox.height) + 2 * padding,
-				anchors;
+				wrapper.getBBox(true); // use prototype because label.getBBox is overridden
+			wrapper.width = (width || bBox.width) + 2 * padding;
+			wrapper.height = (height || bBox.height) + 2 * padding;
 
 			// record the adjustment for right or center aligned labels
-			xAdjust = mathRound(w * { left: 0, center: 0.5, right: 1 }[align]);
+			xAdjust = mathRound(wrapper.width * { left: 0, center: 0.5, right: 1 }[align]);
 			
 			// store the anchor information in an object
 			anchors = anchorX !== undefined && {
@@ -3334,15 +3335,15 @@ SVGRenderer.prototype = {
 			// create the border box if it is not already present
 			if (!box) {
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, 0, 0, w, h, anchors) :
-					renderer.rect(0, 0, w, h, 0, deferredAttr['stroke-width']);
+					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height, anchors) :
+					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
 				box.add(); // to get the translation right in IE
 			}
 			
 			// apply the box attributes
 			box.attr(merge({
-				width: w,
-				height: h
+				width: wrapper.width,
+				height: wrapper.height
 			}, anchors, deferredAttr));
 			deferredAttr = null;
 		}
@@ -3451,12 +3452,8 @@ SVGRenderer.prototype = {
 		
 		// direct certain methods to the box instead of the wrapper/text
 		wrapper.txtToFront = wrapper.toFront;
-		wrapper.txtGetBBox = wrapper.getBBox;
 
 		return extend(wrapper, {
-			getBBox: function () {
-				return box.getBBox();
-			},
 			shadow: function (b) {
 				box.shadow(b);
 				return wrapper;
@@ -3634,7 +3631,6 @@ var VMLElement = extendClass(SVGElement, {
 
 							hasSetSymbolSize = true;
 						}
-
 						skipAttr = true;
 
 					} else if (key === 'd') {
@@ -3660,7 +3656,7 @@ var VMLElement = extendClass(SVGElement, {
 						}
 						value = convertedPath.join(' ') || 'x';
 						element.path = value;
-
+						
 						// update shadows
 						if (shadows) {
 							i = shadows.length;
@@ -3696,7 +3692,6 @@ var VMLElement = extendClass(SVGElement, {
 
 					// width and height
 					} else if (key === 'width' || key === 'height') {
-
 
 						// clipping rectangle special
 						if (wrapper.updateClipping) {
@@ -6384,11 +6379,7 @@ function Chart(options, callback) {
 			style = options.style,
 			shared = options.shared,
 			padding = pInt(style.padding),
-			boxOffLeft = borderWidth + padding, // off left/top position as IE can't
-				//properly handle negative positioned shapes
 			tooltipIsHidden = true,
-			boxWidth,
-			boxHeight,
 			currentX = 0,
 			currentY = 0;
 
@@ -6446,12 +6437,12 @@ function Chart(options, callback) {
 		 */
 		function move(finalX, finalY) {
 
+			// get intermediate values for animation
 			currentX = tooltipIsHidden ? finalX : (2 * currentX + finalX) / 3;
 			currentY = tooltipIsHidden ? finalY : (currentY + finalY) / 2;
 
-			//group.translate(currentX, currentY);
+			// move to the intermediate value
 			label.attr({ x: currentX, y: currentY });
-
 
 			// run on next tick of the mouse tracker
 			if (mathAbs(finalX - currentX) > 1 || mathAbs(finalY - currentY) > 1) {
@@ -6579,20 +6570,16 @@ function Chart(options, callback) {
 					text: text
 				});
 
-				// get the bounding box
-				bBox = label.getBBox();
-				boxWidth = bBox.width;
-				boxHeight = bBox.height;
-
-				// set the size of the box
+				// set the stroke color of the box
 				label.attr({
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 
-				placedTooltipPoint = placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, {x: x, y: y});
+				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop, 
+					plotWidth, plotHeight, {x: x, y: y}, pick(options.distance, 12));
 
 				// do the move
-				move(mathRound(placedTooltipPoint.x - boxOffLeft), mathRound(placedTooltipPoint.y - boxOffLeft));
+				move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
 			}
 
 
@@ -8650,7 +8637,6 @@ function Chart(options, callback) {
 		for (i in chart) {
 			delete chart[i];
 		}
-		//logTime && console.log('Destroyed chart in ' + (new Date() - start) + ' ms');
 	}
 	/**
 	 * Prepare for first rendering after all data are loaded
@@ -13176,7 +13162,7 @@ function RangeSelector(chart) {
 				.add();
 				
 				// increase button position for the next button
-				buttonLeft += buttons[i].getBBox().width;
+				buttonLeft += buttons[i].width;
 				
 				if (selected === i) {
 					buttons[i].setState(2);

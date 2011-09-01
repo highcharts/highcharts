@@ -1039,7 +1039,7 @@ function RangeSelector(chart) {
 				.add();
 				
 				// increase button position for the next button
-				buttonLeft += buttons[i].getBBox().width;
+				buttonLeft += buttons[i].width;
 				
 				if (selected === i) {
 					buttons[i].setState(2);

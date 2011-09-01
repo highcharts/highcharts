@@ -1526,6 +1526,7 @@ SVGRenderer.prototype = {
 			xAdjust,
 			crispAdjust = 0,
 			deferredAttr = {},
+			anchors,
 			attrSetters = wrapper.attrSetters;
 
 		/**
@@ -1535,13 +1536,12 @@ SVGRenderer.prototype = {
 		 */
 		function updateBoxSize() {
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
-				wrapper.txtGetBBox(true); // use prototype because label.getBBox is overridden
-			var w = (width || bBox.width) + 2 * padding,
-				h = (height || bBox.height) + 2 * padding,
-				anchors;
+				wrapper.getBBox(true); // use prototype because label.getBBox is overridden
+			wrapper.width = (width || bBox.width) + 2 * padding;
+			wrapper.height = (height || bBox.height) + 2 * padding;
 
 			// record the adjustment for right or center aligned labels
-			xAdjust = mathRound(w * { left: 0, center: 0.5, right: 1 }[align]);
+			xAdjust = mathRound(wrapper.width * { left: 0, center: 0.5, right: 1 }[align]);
 			
 			// store the anchor information in an object
 			anchors = anchorX !== undefined && {
@@ -1552,15 +1552,15 @@ SVGRenderer.prototype = {
 			// create the border box if it is not already present
 			if (!box) {
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, 0, 0, w, h, anchors) :
-					renderer.rect(0, 0, w, h, 0, deferredAttr['stroke-width']);
+					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height, anchors) :
+					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
 				box.add(); // to get the translation right in IE
 			}
 			
 			// apply the box attributes
 			box.attr(merge({
-				width: w,
-				height: h
+				width: wrapper.width,
+				height: wrapper.height
 			}, anchors, deferredAttr));
 			deferredAttr = null;
 		}
@@ -1669,12 +1669,8 @@ SVGRenderer.prototype = {
 		
 		// direct certain methods to the box instead of the wrapper/text
 		wrapper.txtToFront = wrapper.toFront;
-		wrapper.txtGetBBox = wrapper.getBBox;
 
 		return extend(wrapper, {
-			getBBox: function () {
-				return box.getBBox();
-			},
 			shadow: function (b) {
 				box.shadow(b);
 				return wrapper;
