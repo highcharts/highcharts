@@ -15,9 +15,6 @@ ChartMemoryTest.prototype.randomData = function (len) {
  * - Creates a chart instance.
  */
 ChartMemoryTest.prototype.setUp = function () {
-	// Disable the event monitor
-	eventMonitor.setEnabled(false);
-
 	assertUndefined(this.container);
 	/*:DOC container = <div style="height: 200px; width: 200px"></div>*/
 	assertNotUndefined(this.container);
@@ -26,6 +23,9 @@ ChartMemoryTest.prototype.setUp = function () {
 
 	this.chart = new Chart(conf);
 	assertNotUndefined(this.chart);
+
+	// Disconnect the unload event that runs destroy. It should not run now that we are testing memory leaks.
+	removeEvent(window, 'unload');
 };
 
 /**
@@ -73,9 +73,6 @@ ChartMemoryTest.prototype.tearDown = function () {
 	// Log any stray svg elements
 	elementMonitor.log();
 	elementMonitor.reset();
-
-	// Enable event monitor it again for other tests
-	eventMonitor.setEnabled(true);
 };
 
 /**
