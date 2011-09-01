@@ -11,8 +11,33 @@ BarChartMemoryTest.prototype.getConfig = function () {
 			type: 'bar'
 		},
 
+		xAxis: {
+			categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+		},
+
+		yAxis: {
+			stackLabels: {
+				style: {
+					color: 'black'
+				},
+				enabled: true
+			}
+		},
+
+		plotOptions: {
+			column:{
+				stacking: 'normal',
+				dataLabels: {
+					enabled: true,
+					color: 'black'
+				}
+			}
+		},
+
 		series: [{
-			data: this.randomData(20)
+			data: this.randomData(12)
+		},{
+			data: this.randomData(12)
 		}]
 	};
 };
