@@ -37,7 +37,17 @@ ChartMemoryTest.prototype.getBaseConfig = function () {
 			renderTo: this.container,
 			backgroundColor: '#FFFFFF',
 			shadow: true,
-			zoomType: 'xy'
+			zoomType: 'xy',
+			reflow: false,		// cannot have reflow in tests
+			width: 200,
+			height: 200,
+			animation: false	// cannot have animations in tests
+		},
+
+		plotOptions: {
+			series: {
+				animation: false // cannot have animations in tests
+			}
 		},
 
 		tooltip: {
@@ -83,7 +93,7 @@ ChartMemoryTest.prototype.testAddRemovePoints = function () {
 
 	// Test addPoint with shift. This will do a remove point as well.
 	for (i = 0; i < 1000; i++) {
-		this.chart.series[0].addPoint(Math.random(), false, true);
+		this.chart.series[0].addPoint(Math.random(), false, false);
 	}
 };
 
@@ -108,7 +118,7 @@ ChartMemoryTest.prototype.testAddRemoveSeries = function () {
 		});
 
 		if (newSeries) {
-			newSeries.remove(true);
+			newSeries.remove(true, false);
 			newSeries = null;
 		}
 	}
@@ -121,7 +131,7 @@ ChartMemoryTest.prototype.testRedrawChart = function () {
 	var i;
 
 	for (i = 0; i < 2; i++) {
-		this.chart.redraw(true);
+		this.chart.redraw(false);
 	}
 };
 
@@ -132,7 +142,7 @@ ChartMemoryTest.prototype.testSetSizeChart = function () {
 	var i;
 
 	for (i = 1; i < 10; i++) {
-		this.chart.setSize(100 * i, 100 * i, true);
+		this.chart.setSize(100 * i, 100 * i, false);
 	}
 };
 
