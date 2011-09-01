@@ -4075,10 +4075,9 @@ function Chart(options, callback) {
 
 	/**
 	 * Create a new axis object
-	 * @param {Object} chart
 	 * @param {Object} options
 	 */
-	function Axis(chart, options) {
+	function Axis(options) {
 
 		// Define variables
 		var isXAxis = options.isX,
@@ -5870,10 +5869,8 @@ function Chart(options, callback) {
 
 	/**
 	 * The toolbar object
-	 *
-	 * @param {Object} chart
 	 */
-	function Toolbar(chart) {
+	function Toolbar() {
 		var buttons = {};
 
 		function add(id, text, title, fn) {
@@ -6218,10 +6215,9 @@ function Chart(options, callback) {
 
 	/**
 	 * The mouse tracker object
-	 * @param {Object} chart
 	 * @param {Object} options
 	 */
-	function MouseTracker(chart, options) {
+	function MouseTracker(options) {
 
 
 		var mouseDownX,
@@ -6743,9 +6739,8 @@ function Chart(options, callback) {
 
 	/**
 	 * The overview of the chart's series
-	 * @param {Object} chart
 	 */
-	var Legend = function (chart) {
+	var Legend = function () {
 
 		var options = chart.options.legend;
 
@@ -7527,7 +7522,7 @@ function Chart(options, callback) {
 		chart.xAxis = [];
 		chart.yAxis = [];
 		axes = map(axes, function (axisOptions) {
-			axis = new Axis(chart, axisOptions);
+			axis = new Axis(axisOptions);
 			chart[axis.isXAxis ? 'xAxis' : 'yAxis'].push(axis);
 
 			return axis;
@@ -7914,11 +7909,18 @@ function Chart(options, callback) {
 		fireEvent(chart, 'resize');
 
 		// fire endResize and set isResizing back
-		setTimeout(function () {
+		// If animation is disabled, fire without delay
+		if (globalAnimation === false) {
 			fireEvent(chart, 'endResize', null, function () {
 				isResizing -= 1;
 			});
-		}, (globalAnimation && globalAnimation.duration) || 500);
+		} else { // else set a timeout with the animation duration
+			setTimeout(function () {
+				fireEvent(chart, 'endResize', null, function () {
+					isResizing -= 1;
+				});
+			}, (globalAnimation && globalAnimation.duration) || 500);
+		}
 	};
 
 	/**
@@ -8048,7 +8050,7 @@ function Chart(options, callback) {
 
 
 		// Legend
-		legend = chart.legend = new Legend(chart);
+		legend = chart.legend = new Legend();
 
 		// Get margins by pre-rendering axes
 		getMargins();
@@ -8108,7 +8110,7 @@ function Chart(options, callback) {
 
 		// Toolbar (don't redraw)
 		if (!chart.toolbar) {
-			chart.toolbar = Toolbar(chart);
+			chart.toolbar = Toolbar();
 		}
 
 		// Credits
@@ -8260,6 +8262,7 @@ function Chart(options, callback) {
 			delete chart[i];
 		}
 
+		chart = null;
 	}
 	/**
 	 * Prepare for first rendering after all data are loaded
@@ -8304,7 +8307,7 @@ function Chart(options, callback) {
 		chart.render = render;
 
 		// depends on inverted and on margins being set
-		chart.tracker = tracker = new MouseTracker(chart, options.tooltip);
+		chart.tracker = tracker = new MouseTracker(options.tooltip);
 
 		//globalAnimation = false;
 		render();
