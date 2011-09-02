@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.6 (2011-07-08)
+ * @license @product.name@ JS v@product.version@ (@product.date@)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -9592,7 +9592,8 @@ Series.prototype = {
 				x,
 				y,
 				data = series.data,
-				options = series.options.dataLabels,
+				seriesOptions = series.options,
+				options = seriesOptions.dataLabels,
 				str,
 				dataLabelsGroup = series.dataLabelsGroup,
 				chart = series.chart,
@@ -9600,7 +9601,7 @@ Series.prototype = {
 				inverted = chart.inverted,
 				seriesType = series.type,
 				color,
-				stacking = series.options.stacking,
+				stacking = seriesOptions.stacking,
 				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
 				yIsNull = options.y === null;
@@ -9709,7 +9710,7 @@ Series.prototype = {
 					dataLabel[chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
 				}*/
 
-				if (isBarLike && series.options.stacking) {
+				if (isBarLike && seriesOptions.stacking && dataLabel) {
 					var barY = point.barY,
 						barW = point.barW,
 						barH = point.barH;
@@ -11340,7 +11341,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: 'Highcharts',
-	version: '2.1.6'
+	product: '@product.name@',
+	version: '@product.version@'
 };
 }());
