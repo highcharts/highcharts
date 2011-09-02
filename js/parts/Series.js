@@ -1138,7 +1138,7 @@ Series.prototype = {
 
 		// If this series clipRect is not the global one (which is removed on chart.destroy) we
 		// destroy it here.
-		if (series.clipRect !== chart.clipRect) {
+		if (series.clipRect && series.clipRect !== chart.clipRect) {
 			series.clipRect.destroy();
 			series.clipRect = null;
 		}
