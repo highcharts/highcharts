@@ -36,17 +36,16 @@ var HC = Highcharts,
 	ABSOLUTE = 'absolute',
 	PX = 'px',
 	UNDEFINED,
-
-	// Add language and get the defaultOptions
-	defaultOptions = HC.setOptions({
-		lang: {
-			downloadPNG: 'Download PNG image',
-			downloadJPEG: 'Download JPEG image',
-			downloadPDF: 'Download PDF document',
-			downloadSVG: 'Download SVG vector image',
-			exportButtonTitle: 'Export to raster or vector image',
-			printButtonTitle: 'Print the chart'
-		}
+	defaultOptions = HC.getOptions();
+	
+	// Add language
+	extend(defaultOptions.lang, {
+		downloadPNG: 'Download PNG image',
+		downloadJPEG: 'Download JPEG image',
+		downloadPDF: 'Download PDF document',
+		downloadSVG: 'Download SVG vector image',
+		exportButtonTitle: 'Export to raster or vector image',
+		printButtonTitle: 'Print the chart'
 	});
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
