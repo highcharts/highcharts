@@ -354,32 +354,38 @@
         <!-- Param "testrun.name" used in echo output and to build a folder name where test result goes. -->
         <!-- Param "required.lib" specifies wich third-party lib is used while testing. -->
         <!-- Param "required.adapter" specifies the corresponding adapter that matches the lib. Leave unset for the built-in jquery support. -->
-
+		
         <!-- jquery versions -->
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.6.2"/>
             <param name="required.lib" value="jquery-1.6.2.js"/>
         </antcall>
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.5.2"/>
             <param name="required.lib" value="jquery-1.5.2.js"/>
         </antcall>
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.4.4"/>
             <param name="required.lib" value="jquery-1.4.4.js"/>
         </antcall>
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.3.2"/>
             <param name="required.lib" value="jquery-1.3.2.js"/>
         </antcall>
 
         <!-- mootools versions -->
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="mootools-1.3.2"/>
             <param name="required.lib" value="mootools-core-1.3.2-full-compat.js"/>
             <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
         </antcall>
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="mootools-1.2.5"/>
             <param name="required.lib" value="mootools-1.2.5-core-nc.js"/>
             <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
@@ -387,6 +393,7 @@
 
         <!-- prototype versions -->
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="prototype-1.7.0.0"/>
             <param name="required.lib" value="prototype-1.7.0.0.js"/>
             <param name="required.adapter" value="js/adapters/prototype-adapter.src.js"/>
@@ -395,6 +402,15 @@
 
     <target name="test" description="Runs the unit tests latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
+            <param name="testrun.name" value="jquery-1.6.2"/>
+            <param name="required.lib" value="jquery-1.6.2.js"/>
+        </antcall>
+    </target>
+
+    <target name="it" description="Runs the integration tests latest jquery. The server must be running (i.e. 'server').">
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="it"/>
             <param name="testrun.name" value="jquery-1.6.2"/>
             <param name="required.lib" value="jquery-1.6.2.js"/>
         </antcall>
@@ -412,7 +428,7 @@
 
     <target name="test-specific-lib" depends="set.properties">
         <!-- Copy the templated jsTestDriver configuration to root. -->
-        <copy file="test/jsTestDriver.conf" todir="${basedir}" overwrite="true"/>
+        <copy file="test/${testrun.type}/jsTestDriver.conf" todir="${basedir}" overwrite="true"/>
 
         <!-- Expand the tokens to valid js files. -->
         <antcall target="replace-lib"/>
@@ -449,7 +465,7 @@
     <!-- This must be done on a separate port to the test-server. -->
     <target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
         <!-- Copy the jsTestDriverCoverage configuration to root. -->
-        <copy file="test/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
+        <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
 
         <exec executable="cmd" dir="${basedir}" >
             <arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225"/>
@@ -462,7 +478,7 @@
     <!-- Runs coverage analysis for the tests. -->
     <target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
         <!-- Copy the jsTestDriverCoverage configuration to root. -->
-        <copy file="test/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
+        <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
 
         <!-- Run the tests with coverage enabled. -->
         <java jar="${jstestdriver.jar}" fork="true">
