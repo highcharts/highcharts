@@ -2,6 +2,7 @@
  * Start Candlestick series code											  *
  *****************************************************************************/
 
+
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	lineColor: 'black',
