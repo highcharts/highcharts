@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, Fx, $, $extend, $each, $merge, Events, Event */
+/*global Fx, $, $extend, $each, $merge, Events, Event */
 
 (function () {
 
@@ -22,8 +22,9 @@ var win = window,
 win.HighchartsAdapter = {
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
+	 * @param {Object} pathAnim The helper object to do animations across adapters.
 	 */
-	init: function () {
+	init: function (pathAnim) {
 		var fxProto = Fx.prototype,
 			fxStart = fxProto.start,
 			morphProto = Fx.Morph.prototype,
@@ -37,7 +38,7 @@ win.HighchartsAdapter = {
 			// special for animating paths
 			if (from.d) {
 				//this.fromD = this.element.d.split(' ');
-				fx.paths = Highcharts.pathAnim.init(
+				fx.paths = pathAnim.init(
 					elem,
 					elem.d,
 					fx.toD
@@ -56,7 +57,7 @@ win.HighchartsAdapter = {
 			if (paths) {
 				fx.element.attr(
 					'd',
-					Highcharts.pathAnim.step(paths[0], paths[1], delta, fx.toD)
+					pathAnim.step(paths[0], paths[1], delta, fx.toD)
 				);
 			} else {
 				return morphCompute.apply(fx, arguments);
