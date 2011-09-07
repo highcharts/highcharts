@@ -1,7 +1,7 @@
 ExportingTest = TestCase("ExportingTest");
 
 ExportingTest.prototype.testOverrideDefaultLangOptions = function () {
-	assertUndefined(this.container);
+	assertUndefined(this.chartContainer);
 	/*:DOC += <div id="chartContainer" style="height: 200px; width: 200px"></div>*/
 	var chartContainer = document.getElementById('chartContainer');
 	assertNotNull(chartContainer);
@@ -19,7 +19,7 @@ ExportingTest.prototype.testOverrideDefaultLangOptions = function () {
 		}
 	};
 	var chart = new Highcharts.Chart(options);
-	// jstestdriver.console.log(chart.container.innerHTML);
+
 	var rects = chart.container.getElementsByTagNameNS("http://www.w3.org/2000/svg", "rect");
 	for (var i = 0; i < rects.length; i++) {
 		if (rects[i].getAttribute('id') === 'exportButton') {
@@ -30,4 +30,27 @@ ExportingTest.prototype.testOverrideDefaultLangOptions = function () {
 		}
 	}
 	// TODO-CLC Test the hover menu options
-}
+};
+
+ExportingTest.prototype.testDefaultLangOptions = function () {
+	assertUndefined(this.chartContainer);
+	/*:DOC += <div id="chartContainer" style="height: 200px; width: 200px"></div>*/
+	var chartContainer = document.getElementById('chartContainer');
+	assertNotNull(chartContainer);
+	var options = {
+		chart : {
+			renderTo : 'chartContainer'
+		}
+	};
+	var chart = new Highcharts.Chart(options);
+
+	var rects = chart.container.getElementsByTagNameNS("http://www.w3.org/2000/svg", "rect");
+	for (var i = 0; i < rects.length; i++) {
+		if (rects[i].getAttribute('id') === 'exportButton') {
+			assertEquals('Default export title', Highcharts.getOptions().lang.exportButtonTitle, rects[i].getAttribute('title'));
+		}
+		if (rects[i].getAttribute('id') === 'printButton') {
+			assertEquals('Default print title', Highcharts.getOptions().lang.printButtonTitle, rects[i].getAttribute('title'));
+		}
+	}
+};
