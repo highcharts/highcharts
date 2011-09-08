@@ -6398,7 +6398,7 @@ function Chart(options, callback) {
 			.css(style)
 			.hide()
 			.add()
-			.shadow(1);
+			.shadow(options.shadow);
 
 		/**
 		 * In case no user defined formatter is given, this will be used
