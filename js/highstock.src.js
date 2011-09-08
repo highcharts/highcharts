@@ -9415,7 +9415,7 @@ Series.prototype = {
 			chart = series.chart,
 			xData = series.xData,
 			yData = series.yData,
-			currentShift = graph.shift || 0,
+			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
 			point;
 			//point = (new series.pointClass()).init(series, options);
