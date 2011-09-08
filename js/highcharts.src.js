@@ -8667,7 +8667,7 @@ function Chart(options, callback) {
 		fireEvent(chart, 'init');
 
 		// Initialize range selector for stock charts
-		if (RangeSelector && options.rangeSelector.enabled) {
+		if (typeof RangeSelector !== 'undefined' && options.rangeSelector.enabled) {
 			chart.rangeSelector = new RangeSelector(chart);
 		}
 
@@ -8690,7 +8690,7 @@ function Chart(options, callback) {
 		//fireEvent(chart, 'beforeRender');
 
 		// Initialize scroller for stock charts
-		if ((Scroller && options.navigator.enabled) || options.scrollbar.enabled) {
+		if (typeof Scroller !== 'undefined' && (options.navigator.enabled || options.scrollbar.enabled)) {
 			chart.scroller = new Scroller(chart);
 		}
 
