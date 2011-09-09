@@ -2171,7 +2171,7 @@ function Chart(options, callback) {
 		function normalizeMouseEvent(e) {
 			var ePos,
 				pageZoomFix = isWebKit && 
-					doc.width / mathMax(doc.documentElement.clientWidth, doc.body.scrollWidth) -
+					doc.width / doc.body.scrollWidth -
 					1, // #224, #348
 				chartPosLeft,
 				chartPosTop,
