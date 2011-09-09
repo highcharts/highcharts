@@ -11520,6 +11520,7 @@ defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	dataGrouping: {
+		enabled: true,
 		groupPixelWidth: 5 // allows to be packed tighter than candlesticks
 	},
 	states: {
@@ -11726,6 +11727,9 @@ seriesTypes.ohlc = OHLCSeries;
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
+	dataGrouping: {
+		enabled: true
+	},
 	lineColor: 'black',
 	lineWidth: 1,
 	upColor: 'white',

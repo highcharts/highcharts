@@ -6,6 +6,7 @@
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	dataGrouping: {
+		enabled: true,
 		groupPixelWidth: 5 // allows to be packed tighter than candlesticks
 	},
 	states: {
