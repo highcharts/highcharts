@@ -35,9 +35,9 @@ var doc = document,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
-	//hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
-	hasSVG = !!doc.createElementNS && !!doc.createElementNS("http://www.w3.org/2000/svg", "svg").createSVGRect,
 	SVG_NS = 'http://www.w3.org/2000/svg',
+	//hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
+	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, "svg").createSVGRect,
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
 	symbolSizes = {},
@@ -1742,6 +1742,21 @@ SVGElement.prototype = {
 	},
 
 	/**
+	 * Set title for the element
+	 * @param {String} titleText
+	 */	
+	title: function (titleText) {
+		var elemWrapper = this;
+		// SVG clients differ in how they choose the tooltip (attribute vs. child element),
+		// so do it both ways. See http://www.w3.org/Graphics/SVG/IG/wiki/SVG_Bugs
+		attr(elemWrapper.element, 'title', titleText);
+		var titleElement = doc.createElementNS(SVG_NS, 'title');
+		titleElement.appendChild(doc.createTextNode(titleText));
+		elemWrapper.element.appendChild(titleElement);
+		return elemWrapper;
+	},
+
+	/**
 	 * If one of the symbol size affecting parameters are changed,
 	 * check all the others only once for each call to an element's
 	 * .attr() method
@@ -3197,7 +3212,15 @@ var VMLElement = extendClass(SVGElement, {
 		}
 		return ret;
 	},
-
+	/**
+	 * Set title for the element
+	 * @param {String} titleText
+	 */
+	title: function (titleText) {
+		var wrapper = this;
+		attr(wrapper.element, 'title', titleText);
+		return wrapper;
+	},
 	/**
 	 * Set the element's clipping to a predefined rectangle
 	 *

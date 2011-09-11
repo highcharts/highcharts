@@ -408,7 +408,7 @@
         </antcall>
     </target>
 
-    <target name="it" description="Runs the integration tests latest jquery. The server must be running (i.e. 'server').">
+    <target name="it" description="Runs the integration tests latest jquery. The server must be running (i.e. 'server'), and the project must have been built (i.e. 'build').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="it"/>
             <param name="testrun.name" value="jquery-1.6.2"/>
