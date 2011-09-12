@@ -306,7 +306,15 @@ var VMLElement = extendClass(SVGElement, {
 		}
 		return ret;
 	},
-
+	/**
+	 * Set title for the element
+	 * @param {String} titleText
+	 */
+	title: function (titleText) {
+		var wrapper = this;
+		attr(wrapper.element, 'title', titleText);
+		return wrapper;
+	},
 	/**
 	 * Set the element's clipping to a predefined rectangle
 	 *

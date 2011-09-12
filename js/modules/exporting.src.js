@@ -588,9 +588,10 @@ extend(Chart.prototype, {
 			.attr({
 				id: btnOptions._id,
 				fill: 'rgba(255, 255, 255, 0.001)',
-				title: chart.options.lang[btnOptions._titleKey],
 				zIndex: 21
-			}).css({
+			})
+			.title(chart.options.lang[btnOptions._titleKey])
+			.css({
 				cursor: 'pointer'
 			})
 			.on('mouseover', function () {

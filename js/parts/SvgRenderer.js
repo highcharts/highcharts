@@ -219,6 +219,21 @@ SVGElement.prototype = {
 	},
 
 	/**
+	 * Set title for the element
+	 * @param {String} titleText
+	 */	
+	title: function (titleText) {
+		var elemWrapper = this;
+		// SVG clients differ in how they choose the tooltip (attribute vs. child element),
+		// so do it both ways. See http://www.w3.org/Graphics/SVG/IG/wiki/SVG_Bugs
+		attr(elemWrapper.element, 'title', titleText);
+		var titleElement = doc.createElementNS(SVG_NS, 'title');
+		titleElement.appendChild(doc.createTextNode(titleText));
+		elemWrapper.element.appendChild(titleElement);
+		return elemWrapper;
+	},
+
+	/**
 	 * If one of the symbol size affecting parameters are changed,
 	 * check all the others only once for each call to an element's
 	 * .attr() method
