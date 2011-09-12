@@ -200,7 +200,8 @@ var VMLElement = extendClass(SVGElement, {
 				// width and height
 				} else if (/^(width|height)$/.test(key)) {
 
-
+					this[key] = value; // used in getter
+					
 					// clipping rectangle special
 					if (this.updateClipping) {
 						this[key] = value;

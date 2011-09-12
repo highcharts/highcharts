@@ -3110,7 +3110,8 @@ var VMLElement = extendClass(SVGElement, {
 				// width and height
 				} else if (/^(width|height)$/.test(key)) {
 
-
+					this[key] = value; // used in getter
+					
 					// clipping rectangle special
 					if (this.updateClipping) {
 						this[key] = value;
@@ -6238,7 +6239,9 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit && doc.width / doc.documentElement.clientWidth - 1,
+				pageZoomFix = isWebKit && 
+					doc.width / doc.body.scrollWidth -
+					1, // #224, #348
 				chartPosLeft,
 				chartPosTop,
 				chartX,
