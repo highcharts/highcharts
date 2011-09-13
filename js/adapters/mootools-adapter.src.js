@@ -15,6 +15,7 @@
 var win = window,
 	mooVersion = win.MooTools.version.substring(0, 3), // Get the first three characters of the version number
 	legacy = mooVersion === '1.2' || mooVersion === '1.1', // 1.1 && 1.2 considered legacy, 1.3 is not.
+	legacyEvent = legacy || mooVersion === '1.3', // In versions 1.1 - 1.3 the event class is named Event, in newer versions it is named DOMEvent.
 	$extend = win.$extend || function () {
 		return Object.append.apply(Object, arguments);
 	};
@@ -222,11 +223,12 @@ win.HighchartsAdapter = {
 	},
 
 	fireEvent: function (el, event, eventArguments, defaultFunction) {
-		// create an event object that keeps all functions
-		event = new Event({
+		var eventArgs = {
 			type: event,
 			target: el
-		});
+		};
+		// create an event object that keeps all functions
+		event = legacyEvent ? new Event(eventArgs) : new DOMEvent(eventArgs);
 		event = $extend(event, eventArguments);
 		// override the preventDefault function to be able to use
 		// this for custom events
