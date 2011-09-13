@@ -198,7 +198,6 @@ win.HighchartsAdapter = {
 			}
 
 			win.HighchartsAdapter.extendWithEvents(el);
-
 			el.addEvent(type, fn);
 		}
 	},
@@ -223,7 +222,7 @@ win.HighchartsAdapter = {
 
 	fireEvent: function (el, event, eventArguments, defaultFunction) {
 		// create an event object that keeps all functions
-		event = new Event({
+		event = new DOMEvent({
 			type: event,
 			target: el
 		});
