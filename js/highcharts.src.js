@@ -6239,7 +6239,7 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit && 
+				pageZoomFix = isWebKit &&
 					doc.width / doc.body.scrollWidth -
 					1, // #224, #348
 				chartPosLeft,
@@ -6462,7 +6462,6 @@ function Chart(options, callback) {
 		 */
 		function setDOMEvents() {
 			var lastWasOutsidePlot = true;
-
 			/*
 			 * Record the starting position of a dragoperation
 			 */
@@ -6693,6 +6692,20 @@ function Chart(options, callback) {
 		}
 
 		/**
+		 * Destroys the MouseTracker object and disconnects DOM events.
+		 */
+		function destroy() {
+			// Destroy the tracker group element
+			if (chart.trackerGroup) {
+				chart.trackerGroup.destroy();
+				chart.trackerGroup = trackerGroup = null;
+			}
+
+			removeEvent(doc, 'mousemove');
+			container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
+		}
+
+		/**
 		 * Create the image map that listens for mouseovers
 		 */
 		placeTrackerGroup = function () {
@@ -6736,7 +6749,8 @@ function Chart(options, callback) {
 		extend(this, {
 			zoomX: zoomX,
 			zoomY: zoomY,
-			resetTracker: resetTracker
+			resetTracker: resetTracker,
+			destroy: destroy
 		});
 	}
 
@@ -8227,14 +8241,11 @@ function Chart(options, callback) {
 			tooltip = null;
 		}
 
-		// Destroy the tracker group element
-		if (trackerGroup) {
-			trackerGroup.destroy();
-			trackerGroup = null;
-		}
-
 		// Destroy the MouseTracker object
-		chart.tracker = tracker = null;
+		if (chart.tracker) {
+			chart.tracker.destroy();
+			chart.tracker = tracker = null;
+		}
 
 		// Destroy the renderer
 		if (renderer) {
@@ -8506,7 +8517,7 @@ Point.prototype = {
 		// remove all events
 		removeEvent(point);
 
-		each(['graphic', 'tracker', 'group', 'dataLabel', 'connector'], function (prop) {
+		each(['graphic', 'tracker', 'group', 'dataLabel', 'connector', 'shadowGroup'], function (prop) {
 			if (point[prop]) {
 				point[prop].destroy();
 			}

@@ -76,9 +76,21 @@ ChartMemoryTest.prototype.getConfig = function () {
  * At tear down, log output from the element monitor and reset.
  */
 ChartMemoryTest.prototype.tearDown = function () {
+	var innerDivContainer = this.chart.container;
+
 	// Remove the chart
 	this.chart.destroy();
 	this.chart = null;
+
+	var domEvents = ['onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeydown', 'onkeypress', 'onkeyup', 'onload', 'onunload', 'onabort', 'onerror', 'onresize', 'onscroll', 'onselect', 'onchange', 'onsubmit', 'onreset', 'onfocus', 'onblur', 'ontouchstart', 'ontouchend', 'ontouchenter', 'ontouchleave', 'ontouchmove', 'ontouchcancel']
+
+	for (var n in domEvents) {
+		// Assert that the container do not have any event handler attached
+		if (innerDivContainer[domEvents[n]]) {
+			jstestdriver.console.log(domEvents[n] + ' handler is still attached');
+		}
+		assertTrue(n + ' handler is still attached', innerDivContainer[domEvents[n]] === null || innerDivContainer[domEvents[n]] === undefined);
+	}
 
 	// Log any stray svg elements
 	elementMonitor.log();
@@ -92,7 +104,7 @@ ChartMemoryTest.prototype.testAddRemovePoints = function () {
 	var i;
 
 	// Test addPoint with shift. This will do a remove point as well.
-	for (i = 0; i < 1000; i++) {
+	for (i = 0; i < 10; i++) {
 		this.chart.series[0].addPoint(Math.random(), false, false);
 	}
 };
@@ -178,4 +190,13 @@ ChartMemoryTest.prototype.testShowHideTooltip = function () {
 	this.chart.tooltip.hide();
 	this.chart.tooltip.refresh(lastPoint);
 	this.chart.tooltip.hide();
+};
+
+/**
+ *Tests SVG allocations when showing and hiding the series.
+ */
+ChartMemoryTest.prototype.testShowHideSeries = function () {
+	this.chart.series[0].hide();
+	this.chart.series[0].show();
+	this.chart.series[0].hide();
 };

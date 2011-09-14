@@ -86,7 +86,7 @@ Point.prototype = {
 		// remove all events
 		removeEvent(point);
 
-		each(['graphic', 'tracker', 'group', 'dataLabel', 'connector'], function (prop) {
+		each(['graphic', 'tracker', 'group', 'dataLabel', 'connector', 'shadowGroup'], function (prop) {
 			if (point[prop]) {
 				point[prop].destroy();
 			}
