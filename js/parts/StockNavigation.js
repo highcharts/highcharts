@@ -622,19 +622,28 @@ function Scroller(chart) {
 				stickToMin = baseMin - range <=
 					navigatorSeries.xData[0];
 
-				// if the selection is already at the max, move it to the right as new data
+				
+				// if the zoomed range is already at the min, move it to the right as new data
+				// comes in
+				if (stickToMin) {
+					newMin = baseDataMin;
+					newMax = newMin + range;
+				}
+				
+				// if the zoomed range is already at the max, move it to the right as new data
 				// comes in
 				if (stickToMax) {
 					newMax = baseDataMax;
-					if (hasSetExtremes) {
-						baseXAxis.setExtremes(newMax - range, newMax);
+					if (!stickToMin) { // if stickToMin is true, the new min value is set above
+						newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
 					}
-				} else if (stickToMin) {
-					newMin = baseDataMin;
-					if (hasSetExtremes) {
-						baseXAxis.setExtremes(newMin, newMin + range);
-					}
-				// if not, just move the scroller window to reflect the new series data
+				}
+				
+				// update the extremes
+				if (hasSetExtremes && (stickToMin || stickToMax)) {
+					baseXAxis.setExtremes(newMin, newMax);
+				
+				// if it is not at any edge, just move the scroller window to reflect the new series data
 				} else {
 					if (doRedraw) {
 						chart.redraw();
