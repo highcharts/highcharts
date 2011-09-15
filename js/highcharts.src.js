@@ -2130,7 +2130,8 @@ SVGElement.prototype = {
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
 			parentNode = element.parentNode,
-			key;
+			key,
+			i;
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
@@ -2139,6 +2140,15 @@ SVGElement.prototype = {
 		if (wrapper.clipPath) {
 			wrapper.clipPath.destroy();
 			wrapper.clipPath = null;
+		}
+
+		// Destroy stops in case this is a gradient object
+		if (wrapper.stops) {
+			for (i = 0; i < wrapper.stops.length; i++) {
+				wrapper.stops[i].destroy();
+				wrapper.stops[i] = null;
+			}
+			wrapper.stops = null;
 		}
 
 		// remove element
@@ -2257,6 +2267,7 @@ SVGRenderer.prototype = {
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
+		renderer.gradients = []; // Array where gradient SvgElements are stored
 
 		renderer.setSize(width, height, false);
 
@@ -2266,10 +2277,18 @@ SVGRenderer.prototype = {
 	 * Destroys the renderer and its allocated members.
 	 */
 	destroy: function () {
-		var renderer = this;
+		var renderer = this,
+			i;
 		renderer.box = null;
 		renderer.boxWrapper.destroy();
 		renderer.boxWrapper = null;
+
+		// Call destroy on all gradient elements
+		for (i = 0; i < renderer.gradients.length; i++) {
+			renderer.gradients[i].destroy();
+			renderer.gradients[i] = null;
+		}
+		renderer.gradients = null;
 
 		renderer.defs.destroy();
 		renderer.defs = null;
@@ -2837,7 +2856,13 @@ SVGRenderer.prototype = {
 				y2: linearGradient[3]
 			}).add(renderer.defs);
 
+			// Keep a reference to the gradient object so it is possible to destroy it later
+			renderer.gradients.push(gradientObject);
+
+			// The gradient needs to keep a list of stops to be able to destroy them
+			gradientObject.stops = [];
 			each(color.stops, function (stop) {
+				var stopObject;
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
@@ -2846,11 +2871,14 @@ SVGRenderer.prototype = {
 					stopColor = stop[1];
 					stopOpacity = 1;
 				}
-				renderer.createElement('stop').attr({
+				stopObject = renderer.createElement('stop').attr({
 					offset: stop[0],
 					'stop-color': stopColor,
 					'stop-opacity': stopOpacity
 				}).add(gradientObject);
+
+				// Add the stop element to the gradient
+				gradientObject.stops.push(stopObject);
 			});
 
 			return 'url(' + this.url + '#' + id + ')';
