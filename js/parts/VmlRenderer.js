@@ -140,13 +140,13 @@ var VMLElement = extendClass(SVGElement, {
 
 				// check for a specific attribute setter
 				result = attrSetters[key] && attrSetters[key](key, value);
-				
+
 				if (result !== false) {
-					
+
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
 					}
-					
+
 
 					// prepare paths
 					// symbols
@@ -185,7 +185,7 @@ var VMLElement = extendClass(SVGElement, {
 						}
 						value = convertedPath.join(' ') || 'x';
 						element.path = value;
-						
+
 						// update shadows
 						if (shadows) {
 							i = shadows.length;
@@ -221,12 +221,12 @@ var VMLElement = extendClass(SVGElement, {
 
 					// width and height
 					} else if (key === 'width' || key === 'height') {
+						this[key] = value; // used in getter
 
 						// clipping rectangle special
 						if (wrapper.updateClipping) {
 							wrapper[key] = value;
 							wrapper.updateClipping();
-
 						} else {
 							// normal
 							elemStyle[key] = value;

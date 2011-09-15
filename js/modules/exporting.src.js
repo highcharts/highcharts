@@ -111,6 +111,7 @@ defaultOptions.exporting = {
 			x: -10,
 			symbolFill: '#A8BF77',
 			hoverSymbolFill: '#768F3E',
+			_id: 'exportButton',
 			_titleKey: 'exportButtonTitle',
 			menuItems: [{
 				textKey: 'downloadPNG',
@@ -161,6 +162,7 @@ defaultOptions.exporting = {
 			x: -36,
 			symbolFill: '#B5C9DF',
 			hoverSymbolFill: '#779ABF',
+			_id: 'printButton',
 			_titleKey: 'printButtonTitle',
 			onclick: function () {
 				this.print();
@@ -450,7 +452,7 @@ extend(Chart.prototype, {
 						onmouseout: function () {
 							css(this, menuItemStyle);
 						},
-						innerHTML: item.text || HC.getOptions().lang[item.textKey]
+						innerHTML: item.text || chart.options.lang[item.textKey]
 					}, extend({
 						cursor: 'pointer'
 					}, menuItemStyle), innerMenu);
@@ -546,8 +548,9 @@ extend(Chart.prototype, {
 			)
 			.align(btnOptions)
 			.attr({
+				id: btnOptions._id,
 				fill: 'rgba(255, 255, 255, 0.001)',
-				title: HC.getOptions().lang[btnOptions._titleKey],
+				title: chart.options.lang[btnOptions._titleKey],
 				zIndex: 21
 			}).css({
 				cursor: 'pointer'

@@ -8,13 +8,14 @@
  */
 
 // JSLint options:
-/*global Highcharts, Fx, $, $extend, $each, $merge, Events, Event */
+/*global Fx, $, $extend, $each, $merge, Events, Event */
 
 (function () {
 
 var win = window,
 	mooVersion = win.MooTools.version.substring(0, 3), // Get the first three characters of the version number
 	legacy = mooVersion === '1.2' || mooVersion === '1.1', // 1.1 && 1.2 considered legacy, 1.3 is not.
+	legacyEvent = legacy || mooVersion === '1.3', // In versions 1.1 - 1.3 the event class is named Event, in newer versions it is named DOMEvent.
 	$extend = win.$extend || function () {
 		return Object.append.apply(Object, arguments);
 	};
@@ -22,8 +23,9 @@ var win = window,
 win.HighchartsAdapter = {
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
+	 * @param {Object} pathAnim The helper object to do animations across adapters.
 	 */
-	init: function () {
+	init: function (pathAnim) {
 		var fxProto = Fx.prototype,
 			fxStart = fxProto.start,
 			morphProto = Fx.Morph.prototype,
@@ -37,7 +39,7 @@ win.HighchartsAdapter = {
 			// special for animating paths
 			if (from.d) {
 				//this.fromD = this.element.d.split(' ');
-				fx.paths = Highcharts.pathAnim.init(
+				fx.paths = pathAnim.init(
 					elem,
 					elem.d,
 					fx.toD
@@ -56,7 +58,7 @@ win.HighchartsAdapter = {
 			if (paths) {
 				fx.element.attr(
 					'd',
-					Highcharts.pathAnim.step(paths[0], paths[1], delta, fx.toD)
+					pathAnim.step(paths[0], paths[1], delta, fx.toD)
 				);
 			} else {
 				return morphCompute.apply(fx, arguments);
@@ -221,11 +223,12 @@ win.HighchartsAdapter = {
 	},
 
 	fireEvent: function (el, event, eventArguments, defaultFunction) {
-		// create an event object that keeps all functions
-		event = new Event({
+		var eventArgs = {
 			type: event,
 			target: el
-		});
+		};
+		// create an event object that keeps all functions
+		event = legacyEvent ? new Event(eventArgs) : new DOMEvent(eventArgs);
 		event = $extend(event, eventArguments);
 		// override the preventDefault function to be able to use
 		// this for custom events

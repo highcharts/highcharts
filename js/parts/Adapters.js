@@ -14,7 +14,9 @@ function setAnimation(animation, chart) {
  * Highcharts reverts to the built-in jQuery adapter.
  */
 if (globalAdapter && globalAdapter.init) {
-	globalAdapter.init();
+	// Initialize the adapter with the pathAnim object that takes care
+	// of path animations.
+	globalAdapter.init(pathAnim);
 }
 if (!globalAdapter && win.jQuery) {
 	var jQ = jQuery;

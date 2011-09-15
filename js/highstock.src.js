@@ -798,6 +798,101 @@ function stableSort(arr, sortFunction) {
 		delete arr[i].ss_i; // stable sort index
 	}
 }
+/**
+ * Path interpolation algorithm used across adapters
+ */
+pathAnim = {
+	/**
+	 * Prepare start and end values so that the path can be animated one to one
+	 */
+	init: function (elem, fromD, toD) {
+		fromD = fromD || '';
+		var shift = elem.shift,
+			bezier = fromD.indexOf('C') > -1,
+			numParams = bezier ? 7 : 3,
+			endLength,
+			slice,
+			i,
+			start = fromD.split(' '),
+			end = [].concat(toD), // copy
+			startBaseLine,
+			endBaseLine,
+			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
+				i = arr.length;
+				while (i--) {
+					if (arr[i] === M) {
+						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
+					}
+				}
+			};
+
+		if (bezier) {
+			sixify(start);
+			sixify(end);
+		}
+
+		// pull out the base lines before padding
+		if (elem.isArea) {
+			startBaseLine = start.splice(start.length - 6, 6);
+			endBaseLine = end.splice(end.length - 6, 6);
+		}
+
+		// if shifting points, prepend a dummy point to the end path
+		if (shift === 1) {
+
+			end = [].concat(end).splice(0, numParams).concat(end);
+		}
+		elem.shift = 0; // reset for following animations
+
+		// copy and append last point until the length matches the end length
+		if (start.length) {
+			endLength = end.length;
+			while (start.length < endLength) {
+
+				//bezier && sixify(start);
+				slice = [].concat(start).splice(start.length - numParams, numParams);
+				if (bezier) { // disable first control point
+					slice[numParams - 6] = slice[numParams - 2];
+					slice[numParams - 5] = slice[numParams - 1];
+				}
+				start = start.concat(slice);
+			}
+		}
+
+		if (startBaseLine) { // append the base lines for areas
+			start = start.concat(startBaseLine);
+			end = end.concat(endBaseLine);
+		}
+		return [start, end];
+	},
+
+	/**
+	 * Interpolate each value of the path and return the array
+	 */
+	step: function (start, end, pos, complete) {
+		var ret = [],
+			i = start.length,
+			startVal;
+
+		if (pos === 1) { // land on the final path without adjustment points appended in the ends
+			ret = complete;
+
+		} else if (i === end.length && pos < 1) {
+			while (i--) {
+				startVal = parseFloat(start[i]);
+				ret[i] =
+					isNaN(startVal) ? // a letter instruction like M or L
+						start[i] :
+						pos * (parseFloat(end[i] - startVal)) + startVal;
+
+			}
+		} else { // if animation is finished or length not matching, land on right value
+			ret = end;
+		}
+		return ret;
+	}
+};
+
 
 /**
  * Set the global animation to either a given value, or fall back to the
@@ -814,7 +909,9 @@ function setAnimation(animation, chart) {
  * Highcharts reverts to the built-in jQuery adapter.
  */
 if (globalAdapter && globalAdapter.init) {
-	globalAdapter.init();
+	// Initialize the adapter with the pathAnim object that takes care
+	// of path animations.
+	globalAdapter.init(pathAnim);
 }
 if (!globalAdapter && win.jQuery) {
 	var jQ = jQuery;
@@ -1002,101 +1099,6 @@ if (!globalAdapter && win.jQuery) {
 		return r;
 	};
 }
-
-/**
- * Path interpolation algorithm used across adapters
- */
-pathAnim = {
-	/**
-	 * Prepare start and end values so that the path can be animated one to one
-	 */
-	init: function (elem, fromD, toD) {
-		fromD = fromD || '';
-		var shift = elem.shift,
-			bezier = fromD.indexOf('C') > -1,
-			numParams = bezier ? 7 : 3,
-			endLength,
-			slice,
-			i,
-			start = fromD.split(' '),
-			end = [].concat(toD), // copy
-			startBaseLine,
-			endBaseLine,
-			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
-				i = arr.length;
-				while (i--) {
-					if (arr[i] === M) {
-						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
-					}
-				}
-			};
-
-		if (bezier) {
-			sixify(start);
-			sixify(end);
-		}
-
-		// pull out the base lines before padding
-		if (elem.isArea) {
-			startBaseLine = start.splice(start.length - 6, 6);
-			endBaseLine = end.splice(end.length - 6, 6);
-		}
-
-		// if shifting points, prepend a dummy point to the end path
-		if (shift === 1) {
-
-			end = [].concat(end).splice(0, numParams).concat(end);
-		}
-		elem.shift = 0; // reset for following animations
-
-		// copy and append last point until the length matches the end length
-		if (start.length) {
-			endLength = end.length;
-			while (start.length < endLength) {
-
-				//bezier && sixify(start);
-				slice = [].concat(start).splice(start.length - numParams, numParams);
-				if (bezier) { // disable first control point
-					slice[numParams - 6] = slice[numParams - 2];
-					slice[numParams - 5] = slice[numParams - 1];
-				}
-				start = start.concat(slice);
-			}
-		}
-
-		if (startBaseLine) { // append the base lines for areas
-			start = start.concat(startBaseLine);
-			end = end.concat(endBaseLine);
-		}
-		return [start, end];
-	},
-
-	/**
-	 * Interpolate each value of the path and return the array
-	 */
-	step: function (start, end, pos, complete) {
-		var ret = [],
-			i = start.length,
-			startVal;
-
-		if (pos === 1) { // land on the final path without adjustment points appended in the ends
-			ret = complete;
-
-		} else if (i === end.length && pos < 1) {
-			while (i--) {
-				startVal = parseFloat(start[i]);
-				ret[i] =
-					isNaN(startVal) ? // a letter instruction like M or L
-						start[i] :
-						pos * (parseFloat(end[i] - startVal)) + startVal;
-
-			}
-		} else { // if animation is finished or length not matching, land on right value
-			ret = end;
-		}
-		return ret;
-	}
-};
 
 /**
  * Set the time methods globally based on the useUTC option. Time method can be either
@@ -1974,9 +1976,13 @@ SVGElement.prototype = {
 					} else if (key === 'align') {
 						key = 'text-anchor';
 						value = { left: 'start', center: 'middle', right: 'end' }[value];
+
+					// Title requires a subnode, #431
+					} else if (key === 'title') {
+						var title = doc.createElementNS(SVG_NS, 'title');
+						title.appendChild(doc.createTextNode(value));
+						element.appendChild(title);
 					}
-
-
 
 					// jQuery animate changes case
 					if (key === 'strokeWidth') {
@@ -3611,13 +3617,13 @@ var VMLElement = extendClass(SVGElement, {
 
 				// check for a specific attribute setter
 				result = attrSetters[key] && attrSetters[key](key, value);
-				
+
 				if (result !== false) {
-					
+
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
 					}
-					
+
 
 					// prepare paths
 					// symbols
@@ -3656,7 +3662,7 @@ var VMLElement = extendClass(SVGElement, {
 						}
 						value = convertedPath.join(' ') || 'x';
 						element.path = value;
-						
+
 						// update shadows
 						if (shadows) {
 							i = shadows.length;
@@ -3692,12 +3698,12 @@ var VMLElement = extendClass(SVGElement, {
 
 					// width and height
 					} else if (key === 'width' || key === 'height') {
+						this[key] = value; // used in getter
 
 						// clipping rectangle special
 						if (wrapper.updateClipping) {
 							wrapper[key] = value;
 							wrapper.updateClipping();
-
 						} else {
 							// normal
 							elemStyle[key] = value;
@@ -5444,9 +5450,9 @@ function Chart(options, callback) {
 									} else {
 										activeYData[activeCounter++] = y;
 									}
-									
-									
-			
+
+
+
 									// get the smallest distance between points
 									if (i) {
 										distance = mathAbs(xData[i] - xData[i - 1]);
@@ -5454,9 +5460,9 @@ function Chart(options, callback) {
 									}
 								}
 							}
-					
+
 							serie.xAxis.leastUnitDistance = leastUnitDistance;
-							
+
 							if (!usePercentage) { // percentage stacks are always 0-100
 								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
 								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));
@@ -5615,9 +5621,9 @@ function Chart(options, callback) {
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval,
 				zoomOffset;
-				
+
 			axisLength = horiz ? axisWidth : axisHeight;
-			
+
 			// set the max zoom once
 			if (secondPass) {
 				maxZoom = options.maxZoom || (
@@ -5654,7 +5660,7 @@ function Chart(options, callback) {
 
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) {
-			
+
 				zoomOffset = (maxZoom - max + min) / 2;
 				// if min and max options have been set, don't go beyond it
 				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset), dataMin);
@@ -5711,7 +5717,7 @@ function Chart(options, callback) {
 				// pad categorised axis to nearest half unit
 				if (categories || padAxis) {
 					catPad = (categories ? 1 : (axis.leastUnitDistance || 0)) * 0.5;
-					
+
 					if (catPad) {
 						min -= catPad;
 						max += catPad;
@@ -5828,13 +5834,13 @@ function Chart(options, callback) {
 		 */
 		function setExtremes(newMin, newMax, redraw, animation) {
 			redraw = pick(redraw, true); // defaults to true
-			
+
 			userMin = newMin;
 			userMax = newMax;
 			if (redraw) {
 				chart.redraw(animation);
 			}
-			
+
 			// Fire the event. At this point, min and max may have been modified by maxPadding,
 			// column padAxis etc.
 			fireEvent(axis, 'setExtremes', {
@@ -6575,7 +6581,7 @@ function Chart(options, callback) {
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 
-				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop, 
+				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop,
 					plotWidth, plotHeight, {x: x, y: y}, pick(options.distance, 12));
 
 				// do the move
@@ -6652,7 +6658,9 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit && doc.width / doc.documentElement.clientWidth - 1,
+				pageZoomFix = isWebKit &&
+					doc.width / doc.body.scrollWidth -
+					1, // #224, #348
 				chartPosLeft,
 				chartPosTop,
 				chartX,
@@ -7010,14 +7018,14 @@ function Chart(options, callback) {
 
 						// panning
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
-							
+
 							var xAxis = chart.xAxis[0],
 								extremes = xAxis.getExtremes(),
 								dataMin = extremes.dataMin,
 								dataMax = extremes.dataMax,
 								newMin = xAxis.translate(mouseDownX - chartX, true),
 								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
-								
+
 							// remove active points for shared tooltip
 							if (hoverPoints) {
 								each(hoverPoints, function (point) {
@@ -12781,6 +12789,7 @@ function Scroller(chart) {
 						mathMin(baseMax, baseDataMax)
 					);					
 				}
+				
 			});
 
 			// an x axis is required for scrollbar also

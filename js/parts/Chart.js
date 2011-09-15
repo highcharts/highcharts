@@ -859,9 +859,9 @@ function Chart(options, callback) {
 									} else {
 										activeYData[activeCounter++] = y;
 									}
-									
-									
-			
+
+
+
 									// get the smallest distance between points
 									if (i) {
 										distance = mathAbs(xData[i] - xData[i - 1]);
@@ -869,9 +869,9 @@ function Chart(options, callback) {
 									}
 								}
 							}
-					
+
 							serie.xAxis.leastUnitDistance = leastUnitDistance;
-							
+
 							if (!usePercentage) { // percentage stacks are always 0-100
 								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
 								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));
@@ -1030,9 +1030,9 @@ function Chart(options, callback) {
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval,
 				zoomOffset;
-				
+
 			axisLength = horiz ? axisWidth : axisHeight;
-			
+
 			// set the max zoom once
 			if (secondPass) {
 				maxZoom = options.maxZoom || (
@@ -1069,7 +1069,7 @@ function Chart(options, callback) {
 
 			// maxZoom exceeded, just center the selection
 			if (max - min < maxZoom) {
-			
+
 				zoomOffset = (maxZoom - max + min) / 2;
 				// if min and max options have been set, don't go beyond it
 				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset), dataMin);
@@ -1126,7 +1126,7 @@ function Chart(options, callback) {
 				// pad categorised axis to nearest half unit
 				if (categories || padAxis) {
 					catPad = (categories ? 1 : (axis.leastUnitDistance || 0)) * 0.5;
-					
+
 					if (catPad) {
 						min -= catPad;
 						max += catPad;
@@ -1243,13 +1243,13 @@ function Chart(options, callback) {
 		 */
 		function setExtremes(newMin, newMax, redraw, animation) {
 			redraw = pick(redraw, true); // defaults to true
-			
+
 			userMin = newMin;
 			userMax = newMax;
 			if (redraw) {
 				chart.redraw(animation);
 			}
-			
+
 			// Fire the event. At this point, min and max may have been modified by maxPadding,
 			// column padAxis etc.
 			fireEvent(axis, 'setExtremes', {
@@ -1990,7 +1990,7 @@ function Chart(options, callback) {
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 
-				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop, 
+				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop,
 					plotWidth, plotHeight, {x: x, y: y}, pick(options.distance, 12));
 
 				// do the move
@@ -2067,7 +2067,9 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit && doc.width / doc.documentElement.clientWidth - 1,
+				pageZoomFix = isWebKit &&
+					doc.width / doc.body.scrollWidth -
+					1, // #224, #348
 				chartPosLeft,
 				chartPosTop,
 				chartX,
@@ -2425,14 +2427,14 @@ function Chart(options, callback) {
 
 						// panning
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
-							
+
 							var xAxis = chart.xAxis[0],
 								extremes = xAxis.getExtremes(),
 								dataMin = extremes.dataMin,
 								dataMax = extremes.dataMax,
 								newMin = xAxis.translate(mouseDownX - chartX, true),
 								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
-								
+
 							// remove active points for shared tooltip
 							if (hoverPoints) {
 								each(hoverPoints, function (point) {

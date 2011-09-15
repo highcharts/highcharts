@@ -14,17 +14,20 @@
  */
 
 // JSLint options:
-/*global Effect, Class, Highcharts, Event, $, $A */
+/*global Effect, Class, Event, $, $A */
 
-// Adapter interface between prototype and the Highcarts charting library
+// Adapter interface between prototype and the Highcharts charting library
 var HighchartsAdapter = (function () {
 
 var hasEffect = typeof Effect !== 'undefined';
 
 return {
 
-	init: function () {
-
+	/**
+	 * Initialize the adapter. This is run once as Highcharts is first run.
+	 * @param {Object} pathAnim The helper object to do animations across adapters.
+	 */
+	init: function (pathAnim) {
 		if (hasEffect) {
 			/**
 			 * Animation for Highcharts SVG element wrappers only
@@ -44,7 +47,7 @@ return {
 
 					// special treatment for paths
 					if (attr === 'd') {
-						this.paths = Highcharts.pathAnim.init(
+						this.paths = pathAnim.init(
 							element,
 							element.d,
 							to
@@ -79,7 +82,7 @@ return {
 					var paths = this.paths;
 
 					if (paths) {
-						position = Highcharts.pathAnim.step(paths[0], paths[1], position, this.toD);
+						position = pathAnim.step(paths[0], paths[1], position, this.toD);
 					}
 
 					this.element.attr(this.options.attribute, position);
