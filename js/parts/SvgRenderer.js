@@ -163,6 +163,13 @@ SVGElement.prototype = {
 				} else if (key === 'align') {
 					key = 'text-anchor';
 					value = { left: 'start', center: 'middle', right: 'end' }[value];
+				
+				
+				// Title requires a subnode, #431
+				} else if (key === 'title') {
+					var title = doc.createElementNS(SVG_NS, 'title');
+					title.appendChild(doc.createTextNode(value));
+					element.appendChild(title);
 				}
 
 
