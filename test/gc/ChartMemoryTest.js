@@ -88,7 +88,7 @@ ChartMemoryTest.prototype.tearDown = function () {
 	this.chart.destroy();
 	this.chart = null;
 
-	var domEvents = ['onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeydown', 'onkeypress', 'onkeyup', 'onload', 'onunload', 'onabort', 'onerror', 'onresize', 'onscroll', 'onselect', 'onchange', 'onsubmit', 'onreset', 'onfocus', 'onblur', 'ontouchstart', 'ontouchend', 'ontouchenter', 'ontouchleave', 'ontouchmove', 'ontouchcancel']
+	var domEvents = ['onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeydown', 'onkeypress', 'onkeyup', 'onload', 'onunload', 'onabort', 'onerror', 'onresize', 'onscroll', 'onselect', 'onchange', 'onsubmit', 'onreset', 'onfocus', 'onblur', 'ontouchstart', 'ontouchend', 'ontouchenter', 'ontouchleave', 'ontouchmove', 'ontouchcancel'];
 
 	for (var n in domEvents) {
 		// Assert that the container do not have any event handler attached
@@ -112,6 +112,18 @@ ChartMemoryTest.prototype.testAddRemovePoints = function () {
 	// Test addPoint with shift. This will do a remove point as well.
 	for (i = 0; i < 10; i++) {
 		this.chart.series[0].addPoint(Math.random(), false, false);
+	}
+};
+
+/**
+ * Tests SVG allocations when calling setData.
+ */
+ChartMemoryTest.prototype.testSetData = function () {
+	var i;
+
+	// Test setData of random points with redraw.
+	for (i = 0; i < 2; i++) {
+		this.chart.series[0].setData(this.randomData(10), true);
 	}
 };
 
