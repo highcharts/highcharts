@@ -1422,7 +1422,7 @@ Series.prototype = {
 
 		// draw the graph
 		if (graph) {
-			//graph.animate({ d: graphPath.join(' ') });
+			stop(graph); // cancel running animations, #459		
 			graph.animate({ d: graphPath });
 
 		} else {
