@@ -374,6 +374,7 @@ var PieSeries = extendClass(Series, {
 			connectorWidth = pick(options.connectorWidth, 1),
 			connector,
 			connectorPath,
+			softConnector = pick(options.softConnector, true),
 			distanceOption = options.distance,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
@@ -560,11 +561,18 @@ var PieSeries = extendClass(Series, {
 				if (outside && connectorWidth) {
 					connector = point.connector;
 
-					connectorPath = [
+					connectorPath = softConnector ? [
 						M,
 						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-						L,
+						'C',
 						x, y, // first break, next to the label
+						2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
+						labelPos[2], labelPos[3], // second break
+						L,
+						labelPos[4], labelPos[5] // base
+					] : [
+						M,
+						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 						L,
 						labelPos[2], labelPos[3], // second break
 						L,
@@ -578,7 +586,7 @@ var PieSeries = extendClass(Series, {
 					} else {
 						point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 							'stroke-width': connectorWidth,
-							stroke: options.connectorColor || '#606060',
+							stroke: options.connectorColor || point.color || '#606060',
 							visibility: visibility,
 							zIndex: 3
 						})
