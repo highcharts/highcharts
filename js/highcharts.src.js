@@ -10920,8 +10920,6 @@ var PieSeries = extendClass(Series, {
 			overlapping,
 			rankArr,
 			secondPass,
-			sign,
-			lowerHalf,
 			sort,
 			i = 2,
 			j;
@@ -10963,8 +10961,6 @@ var PieSeries = extendClass(Series, {
 				length = points.length,
 				slotIndex;
 
-			lowerHalf = i % 3;
-			sign = lowerHalf ? 1 : -1;
 
 			// build the slots
 			for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
@@ -11033,10 +11029,13 @@ var PieSeries = extendClass(Series, {
 					slotIndex = j;
 				} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
 					slotIndex = slotsLength - length + j;
+					while (slots[slotIndex] === null) { // make sure it is not taken
+						slotIndex++;
+					}
 				} else {
 					// Slot is taken, find next free slot below. In the next run, the next slice will find the
 					// slot above these, because it is the closest one
-					while (slots[slotIndex] === null) {
+					while (slots[slotIndex] === null) { // make sure it is not taken
 						slotIndex++;
 					}
 				}
@@ -11067,9 +11066,10 @@ var PieSeries = extendClass(Series, {
 						(naturalY < y &&  slots[slotIndex - 1] !== null)) {
 					y = naturalY;
 				}
-
-				// get the x
-				x = series.getX(y, i);
+				
+				// get the x - use the natural x position for first and last slot, to prevent the top 
+				// and botton slice connectors from touching each other on either side
+				x = series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
 
 				// move or place the data label
 				dataLabel
