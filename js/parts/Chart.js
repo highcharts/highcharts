@@ -4186,6 +4186,13 @@ function Chart(options, callback) {
 		var i,
 			parentNode = container && container.parentNode;
 
+		// If the chart is destroyed already, do nothing.
+		// This will happen if if a script invokes chart.destroy and
+		// then it will be called again on win.unload
+		if (chart === null) {
+			return;
+		}
+
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
 

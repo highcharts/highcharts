@@ -163,8 +163,8 @@ SVGElement.prototype = {
 				} else if (key === 'align') {
 					key = 'text-anchor';
 					value = { left: 'start', center: 'middle', right: 'end' }[value];
-				
-				
+
+
 				// Title requires a subnode, #431
 				} else if (key === 'title') {
 					var title = doc.createElementNS(SVG_NS, 'title');
@@ -768,14 +768,20 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = null;
 
 		// Call destroy on all gradient elements
-		for (i = 0; i < renderer.gradients.length; i++) {
-			renderer.gradients[i].destroy();
-			renderer.gradients[i] = null;
+		if (renderer.gradients) { // gradients are null in VMLRenderer
+			for (i = 0; i < renderer.gradients.length; i++) {
+				renderer.gradients[i].destroy();
+				renderer.gradients[i] = null;
+			}
+			renderer.gradients = null;
 		}
-		renderer.gradients = null;
 
-		renderer.defs.destroy();
-		renderer.defs = null;
+		// Defs are null in VMLRenderer
+		// Otherwise, destroy them here.
+		if (renderer.defs) {
+			renderer.defs.destroy();
+			renderer.defs = null;
+		}
 /*		renderer.alignedObjects = null;*/
 	},
 

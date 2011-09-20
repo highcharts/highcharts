@@ -201,7 +201,7 @@ var VMLElement = extendClass(SVGElement, {
 				} else if (/^(width|height)$/.test(key)) {
 
 					this[key] = value; // used in getter
-					
+
 					// clipping rectangle special
 					if (this.updateClipping) {
 						this[key] = value;
@@ -641,6 +641,15 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 
 		}
+	},
+
+	/**
+	 * Destroys the renderer and its allocated members.
+	 */
+	destroy: function () {
+		var renderer = this;
+
+		SVGRenderer.prototype.destroy.apply(renderer);
 	},
 
 	/**

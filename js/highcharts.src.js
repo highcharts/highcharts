@@ -1686,8 +1686,8 @@ SVGElement.prototype = {
 				} else if (key === 'align') {
 					key = 'text-anchor';
 					value = { left: 'start', center: 'middle', right: 'end' }[value];
-				
-				
+
+
 				// Title requires a subnode, #431
 				} else if (key === 'title') {
 					var title = doc.createElementNS(SVG_NS, 'title');
@@ -2291,14 +2291,20 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = null;
 
 		// Call destroy on all gradient elements
-		for (i = 0; i < renderer.gradients.length; i++) {
-			renderer.gradients[i].destroy();
-			renderer.gradients[i] = null;
+		if (renderer.gradients) { // gradients are null in VMLRenderer
+			for (i = 0; i < renderer.gradients.length; i++) {
+				renderer.gradients[i].destroy();
+				renderer.gradients[i] = null;
+			}
+			renderer.gradients = null;
 		}
-		renderer.gradients = null;
 
-		renderer.defs.destroy();
-		renderer.defs = null;
+		// Defs are null in VMLRenderer
+		// Otherwise, destroy them here.
+		if (renderer.defs) {
+			renderer.defs.destroy();
+			renderer.defs = null;
+		}
 /*		renderer.alignedObjects = null;*/
 	},
 
@@ -3146,7 +3152,7 @@ var VMLElement = extendClass(SVGElement, {
 				} else if (/^(width|height)$/.test(key)) {
 
 					this[key] = value; // used in getter
-					
+
 					// clipping rectangle special
 					if (this.updateClipping) {
 						this[key] = value;
@@ -3586,6 +3592,15 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 
 		}
+	},
+
+	/**
+	 * Destroys the renderer and its allocated members.
+	 */
+	destroy: function () {
+		var renderer = this;
+
+		SVGRenderer.prototype.destroy.apply(renderer);
 	},
 
 	/**
@@ -8208,6 +8223,13 @@ function Chart(options, callback) {
 	function destroy() {
 		var i,
 			parentNode = container && container.parentNode;
+
+		// If the chart is destroyed already, do nothing.
+		// This will happen if if a script invokes chart.destroy and
+		// then it will be called again on win.unload
+		if (chart === null) {
+			return;
+		}
 
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
