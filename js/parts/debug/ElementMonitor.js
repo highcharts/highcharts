@@ -121,7 +121,10 @@ ElementMonitor.prototype.log = function () {
 		}
 		jstestdriver.console.log(total + '\ttotal');
 	}
-	jstestdriver.console.log('Number of items created and destroyed: ' + this.nextId);
+
+	if (this.nextId === 0) {
+		jstestdriver.console.log('Warning: There were no logged elements in the test, this may indicate setup problems.');
+	}
 };
 
 /**
