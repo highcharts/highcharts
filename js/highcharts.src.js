@@ -3552,7 +3552,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	clipRect: function (x, y, width, height) {
 
 		// create a dummy element
-		var clipRect = this.createElement();
+		var clipRect = this.createElement('clipPath');
 
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
