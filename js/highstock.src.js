@@ -11418,7 +11418,7 @@ seriesProto.processData = function () {
 		if (dataGroupingOptions.smoothed) {
 			i = groupedXData.length - 1;
 			groupedXData[i] = xMax;
-			while (i-- && i) {
+			while (i-- && i > 0) {
 				groupedXData[i] += interval / 2;
 			}
 			groupedXData[0] = xMin;
