@@ -1923,7 +1923,6 @@ function Chart(options, callback) {
 				x = pThis.x,
 				isDateTime = xAxis && xAxis.options.type === 'datetime',
 				useHeader = isString(x) || isDateTime,
-				series,
 				s;
 
 			// build the header
@@ -2000,8 +1999,6 @@ function Chart(options, callback) {
 		function refresh(point) {
 			var x,
 				y,
-				boxX,
-				boxY,
 				show,
 				bBox,
 				plotX,
@@ -2170,7 +2167,7 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit && 
+				pageZoomFix = isWebKit &&
 					doc.width / doc.body.scrollWidth -
 					1, // #224, #348
 				chartPosLeft,
@@ -2824,11 +2821,9 @@ function Chart(options, callback) {
 				legendSymbol,
 				symbolX,
 				symbolY,
-				attribs,
 				simpleSymbol,
 				li = item.legendItem,
 				series = item.series || item,
-				i = allItems.length,
 				itemOptions = series.options,
 				strokeWidth = (itemOptions && itemOptions.borderWidth) || 0;
 

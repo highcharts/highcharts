@@ -94,5 +94,4 @@ var doc = document,
 	stop = adapter.stop,
 
 	// lookup over the types and the associated classes
-	seriesTypes = {},
-	hoverChart;
+	seriesTypes = {};

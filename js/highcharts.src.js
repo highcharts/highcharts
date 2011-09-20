@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -109,8 +109,7 @@ var doc = document,
 	stop = adapter.stop,
 
 	// lookup over the types and the associated classes
-	seriesTypes = {},
-	hoverChart;
+	seriesTypes = {};
 
 /**
  * Extend an object with the members of another
@@ -5899,7 +5898,6 @@ function Chart(options, callback) {
 				x = pThis.x,
 				isDateTime = xAxis && xAxis.options.type === 'datetime',
 				useHeader = isString(x) || isDateTime,
-				series,
 				s;
 
 			// build the header
@@ -5976,8 +5974,6 @@ function Chart(options, callback) {
 		function refresh(point) {
 			var x,
 				y,
-				boxX,
-				boxY,
 				show,
 				bBox,
 				plotX,
@@ -6146,7 +6142,7 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit && 
+				pageZoomFix = isWebKit &&
 					doc.width / doc.body.scrollWidth -
 					1, // #224, #348
 				chartPosLeft,
@@ -6800,11 +6796,9 @@ function Chart(options, callback) {
 				legendSymbol,
 				symbolX,
 				symbolY,
-				attribs,
 				simpleSymbol,
 				li = item.legendItem,
 				series = item.series || item,
-				i = allItems.length,
 				itemOptions = series.options,
 				strokeWidth = (itemOptions && itemOptions.borderWidth) || 0;
 
@@ -8448,7 +8442,6 @@ Point.prototype = {
 	update: function (options, redraw, animation) {
 		var point = this,
 			series = point.series,
-			dataLabel = point.dataLabel,
 			graphic = point.graphic,
 			chart = series.chart;
 
@@ -9354,7 +9347,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			//chartSeries = series.chart.series,
-			clipRect = series.clipRect,
 			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
 			prop;
@@ -9661,7 +9653,7 @@ Series.prototype = {
 
 		// draw the graph
 		if (graph) {
-			stop(graph); // cancel running animations, #459		
+			stop(graph); // cancel running animations, #459
 			graph.animate({ d: graphPath });
 
 		} else {
@@ -9785,7 +9777,6 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			clipRect = series.clipRect,
 			group = series.group;
 
 		/*if (clipRect) {
@@ -10911,7 +10902,6 @@ var PieSeries = extendClass(Series, {
 			dataLabel,
 			labelPos,
 			labelHeight,
-			lastY,
 			halves = [// divide the points into right and left halves for anti collision
 				[], // right
 				[]  // left
@@ -10919,9 +10909,7 @@ var PieSeries = extendClass(Series, {
 			x,
 			y,
 			visibility,
-			overlapping,
 			rankArr,
-			secondPass,
 			sort,
 			i = 2,
 			j;
@@ -11068,8 +11056,8 @@ var PieSeries = extendClass(Series, {
 						(naturalY < y &&  slots[slotIndex - 1] !== null)) {
 					y = naturalY;
 				}
-				
-				// get the x - use the natural x position for first and last slot, to prevent the top 
+
+				// get the x - use the natural x position for first and last slot, to prevent the top
 				// and botton slice connectors from touching each other on either side
 				x = series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
 
@@ -11165,7 +11153,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: '@product.name@',
-	version: '@product.version@'
+	product: 'Highcharts',
+	version: '2.1.6'
 };
 }());

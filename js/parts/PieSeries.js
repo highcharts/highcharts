@@ -383,7 +383,6 @@ var PieSeries = extendClass(Series, {
 			dataLabel,
 			labelPos,
 			labelHeight,
-			lastY,
 			halves = [// divide the points into right and left halves for anti collision
 				[], // right
 				[]  // left
@@ -391,9 +390,7 @@ var PieSeries = extendClass(Series, {
 			x,
 			y,
 			visibility,
-			overlapping,
 			rankArr,
-			secondPass,
 			sort,
 			i = 2,
 			j;
@@ -540,8 +537,8 @@ var PieSeries = extendClass(Series, {
 						(naturalY < y &&  slots[slotIndex - 1] !== null)) {
 					y = naturalY;
 				}
-				
-				// get the x - use the natural x position for first and last slot, to prevent the top 
+
+				// get the x - use the natural x position for first and last slot, to prevent the top
 				// and botton slice connectors from touching each other on either side
 				x = series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
 

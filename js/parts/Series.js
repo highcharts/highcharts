@@ -209,7 +209,6 @@ Point.prototype = {
 	update: function (options, redraw, animation) {
 		var point = this,
 			series = point.series,
-			dataLabel = point.dataLabel,
 			graphic = point.graphic,
 			chart = series.chart;
 
@@ -1115,7 +1114,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			//chartSeries = series.chart.series,
-			clipRect = series.clipRect,
 			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
 			prop;
@@ -1422,7 +1420,7 @@ Series.prototype = {
 
 		// draw the graph
 		if (graph) {
-			stop(graph); // cancel running animations, #459		
+			stop(graph); // cancel running animations, #459
 			graph.animate({ d: graphPath });
 
 		} else {
@@ -1546,7 +1544,6 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			clipRect = series.clipRect,
 			group = series.group;
 
 		/*if (clipRect) {
