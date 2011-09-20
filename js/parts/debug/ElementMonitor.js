@@ -1,26 +1,27 @@
 /**
  * The ElementMonitor class is a helper class that keeps count of adds and removes of
- * SVGElements and that their destroy method is called. This is to avoid memory leaks.
+ * SVG/VMLElements and that their destroy method is called. This is to avoid memory leaks.
  */
-function ElementMonitor(init, destroy) {
+function ElementMonitor(elementClass) {
+	var that = this;
 	this.KEY = 'elmt-id';
 
 	// Store the 'base' implementations
-	SVGElement.prototype.base_init = init;
-	SVGElement.prototype.base_destroy = destroy;
+	elementClass.prototype.base_init = elementClass.prototype.init;
+	elementClass.prototype.base_destroy = elementClass.prototype.destroy;
 
 	// Override with new ones that registers the init/destroy calls
-	SVGElement.prototype.init = function (renderer, nodeName) {
+	elementClass.prototype.init = function (renderer, nodeName) {
 		// Call original implementation
 		this.base_init(renderer, nodeName);
 
 		// Register with the monitor
-		elementMonitor.registerElement(this, nodeName);
+		that.registerElement(this, nodeName);
 	};
 
-	SVGElement.prototype.destroy = function () {
+	elementClass.prototype.destroy = function () {
 		// Unregister with the monitor
-		elementMonitor.unregisterElement(this);
+		that.unregisterElement(this);
 
 		// Call original implementation
 		this.base_destroy();
@@ -55,7 +56,7 @@ ElementMonitor.prototype.registerElement = function (element, nodeName) {
 		this.registry[id] = {
 			nodeName: nodeName,
 			// caller path: registerElement -> SVGElement -> SVGRenderer -> SVGRenderer -> interesting stuff
-			caller: ElementMonitor.prototype.registerElement.caller.caller.caller.caller.toString()
+			caller: ElementMonitor.prototype.registerElement.caller.caller.caller.toString()
 		};
 	}
 };
@@ -120,6 +121,7 @@ ElementMonitor.prototype.log = function () {
 		}
 		jstestdriver.console.log(total + '\ttotal');
 	}
+	jstestdriver.console.log('Number of items created and destroyed: ' + this.nextId);
 };
 
 /**
@@ -131,4 +133,4 @@ ElementMonitor.prototype.reset = function () {
 };
 
 // Map the two element functions to call our own instead.
-var elementMonitor = new ElementMonitor(SVGElement.prototype.init, SVGElement.prototype.destroy);
+var elementMonitor = hasSVG ? new ElementMonitor(SVGElement) : new ElementMonitor(VMLElement);

@@ -98,7 +98,7 @@ ChartMemoryTest.prototype.tearDown = function () {
 		assertTrue(n + ' handler is still attached', innerDivContainer[domEvents[n]] === null || innerDivContainer[domEvents[n]] === undefined);
 	}
 
-	// Log any stray svg elements
+	// Log any stray elements
 	elementMonitor.log();
 	elementMonitor.reset();
 };
