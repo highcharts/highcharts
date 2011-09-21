@@ -744,7 +744,7 @@ function Chart(options, callback) {
 						}
 					}
 					if (serie.isCartesian) { // line, column etc. need axes, pie doesn't
-						each(serie.data, function (point, i) {
+						each(serie.data, function (point) {
 							var pointX = point.x,
 								pointY = point.y,
 								isNegative = pointY < 0,
@@ -2022,7 +2022,7 @@ function Chart(options, callback) {
 				}
 				chart.hoverPoints = point;
 
-				each(point, function (item, i) {
+				each(point, function (item) {
 					/*var series = item.series,
 						hoverPoint = series.hoverPoint;
 					if (hoverPoint) {
@@ -2227,7 +2227,7 @@ function Chart(options, callback) {
 				xAxis: [],
 				yAxis: []
 			};
-			each(axes, function (axis, i) {
+			each(axes, function (axis) {
 				var translate = axis.translate,
 					isXAxis = axis.isXAxis,
 					isHorizontal = inverted ? !isXAxis : isXAxis;
@@ -2344,7 +2344,7 @@ function Chart(options, callback) {
 				if (hasDragged) {
 
 					// record each axis' min and max
-					each(axes, function (axis, i) {
+					each(axes, function (axis) {
 						var translate = axis.translate,
 							isXAxis = axis.isXAxis,
 							isHorizontal = inverted ? !isXAxis : isXAxis,
@@ -2847,7 +2847,7 @@ function Chart(options, callback) {
 						li.css(item.visible ? itemStyle : itemHiddenStyle);
 						item.setState();
 					})
-					.on('click', function (event) {
+					.on('click', function () {
 						var strLegendItemClick = 'legendItemClick',
 							fnLegendItemClick = function () {
 								item.setVisible();
