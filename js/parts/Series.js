@@ -74,14 +74,19 @@ Point.prototype = {
 	destroy: function () {
 		var point = this,
 			series = point.series,
+			hoverPoints = series.chart.hoverPoints,
 			prop;
 
 		series.chart.pointCount--;
-
+		
+		if (hoverPoints) {
+			point.setState();
+			erase(hoverPoints, point);
+		}
 		if (point === series.chart.hoverPoint) {
 			point.onMouseOut();
 		}
-		series.chart.hoverPoints = null; // remove reference
+		
 
 		// remove all events
 		removeEvent(point);
