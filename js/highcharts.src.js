@@ -782,11 +782,13 @@ if (!globalAdapter && win.jQuery) {
 
 
 	// extend jQuery
+	/*jslint unparam: true*//* allow unused param x in this function */
 	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
 			return -c * (t /= d) * (t - 2) + b;
 		}
 	});
+	/*jslint unparam: false*/
 
 	// extend the animate function to allow SVG animations
 	var oldStepDefault = jQuery.fx.step._default,
@@ -1685,8 +1687,8 @@ SVGElement.prototype = {
 				} else if (key === 'align') {
 					key = 'text-anchor';
 					value = { left: 'start', center: 'middle', right: 'end' }[value];
-				
-				
+
+
 				// Title requires a subnode, #431
 				} else if (key === 'title') {
 					var title = doc.createElementNS(SVG_NS, 'title');
@@ -1825,12 +1827,14 @@ SVGElement.prototype = {
 	 * @param {Object} styles
 	 */
 	css: function (styles) {
+		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
+		/*jslint unparam: false*/
 
 		// convert legacy
 		if (styles && styles.color) {
@@ -3098,7 +3102,7 @@ var VMLElement = extendClass(SVGElement, {
 				} else if (/^(width|height)$/.test(key)) {
 
 					this[key] = value; // used in getter
-					
+
 					// clipping rectangle special
 					if (this.updateClipping) {
 						this[key] = value;
@@ -3323,7 +3327,7 @@ var VMLElement = extendClass(SVGElement, {
 	 * VML override private method to update elements based on internal
 	 * properties based on SVG transform
 	 */
-	updateTransform: function (hash) {
+	updateTransform: function () {
 		// aligning non added elements is expensive
 		if (!this.added) {
 			this.alignOnAdd = true;
@@ -5116,7 +5120,7 @@ function Chart(options, callback) {
 		 * Set the tick positions to round values and optionally extend the extremes
 		 * to the nearest tick
 		 */
-		function setTickPositions(secondPass) {
+		function setTickPositions() {
 			var length,
 				catPad,
 				linkedParent,
@@ -5802,12 +5806,11 @@ function Chart(options, callback) {
 
 	/**
 	 * The toolbar object
-	 *
-	 * @param {Object} chart
 	 */
-	function Toolbar(chart) {
+	function Toolbar() {
 		var buttons = {};
 
+		/*jslint unparam: true*//* allow the unused param title until Toolbar rewrite*/
 		function add(id, text, title, fn) {
 			if (!buttons[id]) {
 				var button = renderer.text(
@@ -5834,6 +5837,8 @@ function Chart(options, callback) {
 				buttons[id] = button;
 			}
 		}
+		/*jslint unparam: false*/
+
 		function remove(id) {
 			discardElement(buttons[id].element);
 			buttons[id] = null;
@@ -9538,7 +9543,7 @@ Series.prototype = {
 	/**
 	 * Draw the actual graph
 	 */
-	drawGraph: function (state) {
+	drawGraph: function () {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
@@ -10639,9 +10644,8 @@ var PieSeries = extendClass(Series, {
 
 	/**
 	 * Animate the column heights one by one from zero
-	 * @param {Boolean} init Whether to initialize the animation or run it
 	 */
-	animate: function (init) {
+	animate: function () {
 		var series = this,
 			data = series.data;
 

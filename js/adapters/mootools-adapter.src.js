@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Fx, $, $extend, $each, $merge, Events, Event */
+/*global Fx, $, $extend, $each, $merge, Events, Event, DOMEvent */
 
 (function () {
 
@@ -32,6 +32,7 @@ win.HighchartsAdapter = {
 			morphCompute = morphProto.compute;
 
 		// override Fx.start to allow animation of SVG element wrappers
+		/*jslint unparam: true*//* allow unused parameters in fx functions */
 		fxProto.start = function (from, to) {
 			var fx = this,
 				elem = fx.element;
@@ -64,7 +65,7 @@ win.HighchartsAdapter = {
 				return morphCompute.apply(fx, arguments);
 			}
 		};
-
+		/*jslint unparam: false*/
 	},
 
 	/**

@@ -1141,7 +1141,7 @@ function Chart(options, callback) {
 		 * Set the tick positions to round values and optionally extend the extremes
 		 * to the nearest tick
 		 */
-		function setTickPositions(secondPass) {
+		function setTickPositions() {
 			var length,
 				catPad,
 				linkedParent,
@@ -1827,12 +1827,11 @@ function Chart(options, callback) {
 
 	/**
 	 * The toolbar object
-	 *
-	 * @param {Object} chart
 	 */
-	function Toolbar(chart) {
+	function Toolbar() {
 		var buttons = {};
 
+		/*jslint unparam: true*//* allow the unused param title until Toolbar rewrite*/
 		function add(id, text, title, fn) {
 			if (!buttons[id]) {
 				var button = renderer.text(
@@ -1859,6 +1858,8 @@ function Chart(options, callback) {
 				buttons[id] = button;
 			}
 		}
+		/*jslint unparam: false*/
+
 		function remove(id) {
 			discardElement(buttons[id].element);
 			buttons[id] = null;

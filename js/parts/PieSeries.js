@@ -120,9 +120,8 @@ var PieSeries = extendClass(Series, {
 
 	/**
 	 * Animate the column heights one by one from zero
-	 * @param {Boolean} init Whether to initialize the animation or run it
 	 */
-	animate: function (init) {
+	animate: function () {
 		var series = this,
 			data = series.data;
 
