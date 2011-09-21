@@ -41,6 +41,7 @@ extend(defaultOptions, {
 			color: '#4572A7',
 			fillOpacity: 0.4,
 			dataGrouping: {
+				approximation: 'average',
 				smoothed: true,
 				units: units
 			},

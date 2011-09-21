@@ -11959,7 +11959,66 @@ var DATA_GROUPING = 'dataGrouping',
 	seriesProto = Series.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
-	baseDestroy = seriesProto.destroy;
+	baseDestroy = seriesProto.destroy,
+	NUMBER = 'number',
+	
+	/**
+	 * Define the available approximation types
+	 */
+	approximations = {
+		average: function (arr) {
+			var len = arr.length,
+				ret = approximations.sum(arr);
+				
+			// If we have a number, return it divided by the length. If not, return
+			// null or undefined based on what the sum method finds.
+			if (typeof ret === NUMBER && len) {
+				ret = ret / len;
+			}
+			
+			return ret;
+		},
+		sum: function (arr) {
+			var len = arr.length, 
+				ret;
+				
+			// 1. it consists of nulls exclusively
+			if (!len && arr.hasNulls) {
+				ret = null;
+			// 2. it has a length and real values
+			} else if (len) {
+				ret = 0;
+				while (len--) {
+					ret += arr[len];
+				}
+			}
+			// 3. it has zero length, so just return undefined 
+			// => doNothing()
+			
+			return ret;
+		},
+		open: function (arr) {
+			return arr[0];
+		},
+		high: function (arr) {
+			return mathMax.apply(0, arr);
+		},
+		low: function (arr) {
+			return mathMin.apply(0, arr);
+		},
+		close: function (arr) {
+			return arr[arr.length - 1];
+		},
+		// ohlc is a special case where a multidimensional array is input and an array is output
+		ohlc: function (opens, highs, lows, closes) {
+			return [
+				approximations.open(opens),
+				approximations.high(highs),
+				approximations.low(lows),
+				approximations.close(closes)
+			];
+		}
+	};
 
 /**
  * Extend the basic processData method, that crops the data to the current zoom
@@ -11989,12 +12048,9 @@ seriesProto.processData = function () {
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
-		//groupPixelWidth = dataGroupingOptions.groupPixelWidth,
 		maxPoints = plotSizeX / groupPixelWidth,
 		approximation = dataGroupingOptions.approximation,
-		summarize = approximation === 'average' || approximation === 'sum',
 		dataLength = processedXData.length,
-		ohlcData = series.valueCount === 4,
 		groupedData = series.groupedData,
 		chartSeries = chart.series,
 		groupedXData = [],
@@ -12032,62 +12088,59 @@ seriesProto.processData = function () {
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units),
 			pointX,
 			pointY,
-			value = UNDEFINED,
-			open = null,
-			high = null,
-			low = null,
-			close = null,
-			count = 0;
+			groupedY,
+			values1 = [],
+			values2 = [],
+			values3 = [],
+			values4 = [];
 
 		for (i = 0; i < dataLength; i++) {
 
 			// when a new group is entered, summarize and initiate the previous group
 			while (groupPositions[1] !== UNDEFINED && processedXData[i] >= groupPositions[1]) {
 
-				if (approximation === 'average' && value !== UNDEFINED && value !== null) {
-					value /= count;
-				}
-
 				pointX = groupPositions.shift();
-				if (value !== UNDEFINED || ohlcData) {
-					groupedXData.push(pointX); // todo: just use groupPositions as xData?
-
-					if (ohlcData) {
-						groupedYData.push([open, high, low, close]);
-						open = high = low = close = null;
-					} else {
-						groupedYData.push(value);
-					}
+				
+				groupedY = typeof approximation === 'function' ?
+						approximation(values1, values2, values3, values4) : // custom approximation callback function
+						approximations[approximation](values1, values2, values3, values4); // predefined approximation
+						
+				if (groupedY !== UNDEFINED) {
+					groupedXData.push(pointX);
+					groupedYData.push(groupedY);
 				}
-
-				value = UNDEFINED;
-				count = 0;
+				
+				values1 = [];
+				values2 = [];
+				values3 = [];
+				values4 = [];
 			}
-
-			// increase the counters
+			
+			// for each raw data point, push it to an array that contains all values for this specific group
 			pointY = processedYData[i];
-			if (summarize && !ohlcData) { // approximation = 'sum' or 'average', the most frequent
-				value = value === UNDEFINED || value === null ? pointY : value + pointY;
-			} else if (ohlcData) {
+			if (approximation === 'ohlc') {
 				var index = series.cropStart + i,
 					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]);
-				if (open === null) { // first point
-					open = point.open;
+				if (typeof point.open === NUMBER) {
+					values1.push(point.open);
 				}
-				high = high === null ? point.high : mathMax(high, point.high);
-				low = low === null ? point.low : mathMin(low, point.low);
-				close = point.close; // last point
-			} else if (approximation === 'open' && value === UNDEFINED) {
-				value = pointY;
-			} else if (approximation === 'high') {
-				value = value === UNDEFINED ? pointY : mathMax(value, pointY);
-			} else if (approximation === 'low') {
-				value = value === UNDEFINED ? pointY : mathMin(value, pointY);
-			} else if (approximation === 'close') { // last point
-				value = pointY;
+				if (typeof point.high === NUMBER) {
+					values2.push(point.high);
+				}
+				if (typeof point.low === NUMBER) {
+					values3.push(point.low);
+				}
+				if (typeof point.close === NUMBER) {
+					values4.push(point.close);
+				}
+			} else {
+				if (typeof pointY === NUMBER) {
+					values1.push(pointY);
+				} else if (pointY === null) {
+					values1.hasNulls = true;
+				}
 			}
 
-			count++;
 		}
 
 		// prevent the smoothed data to spill out left and right, and make
@@ -12205,6 +12258,7 @@ defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	dataGrouping: {
+		approximation: 'ohlc',
 		enabled: true,
 		groupPixelWidth: 5 // allows to be packed tighter than candlesticks
 	},
@@ -12413,6 +12467,7 @@ seriesTypes.ohlc = OHLCSeries;
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	dataGrouping: {
+		approximation: 'ohlc',
 		enabled: true
 	},
 	lineColor: 'black',
@@ -12854,6 +12909,7 @@ extend(defaultOptions, {
 			color: '#4572A7',
 			fillOpacity: 0.4,
 			dataGrouping: {
+				approximation: 'average',
 				smoothed: true,
 				units: units
 			},

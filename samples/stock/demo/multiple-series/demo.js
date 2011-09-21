@@ -91,7 +91,13 @@ $(function() {
 		    title: {
 		        text: null
 		    },
-
+plotOptions: {
+	series: {
+		dataGrouping: {
+			approximation: 'average'
+		}
+	}
+},
 		    xAxis: {
 		        type: 'datetime',
 		        maxZoom: 14 * 24 * 3600000, // fourteen days
