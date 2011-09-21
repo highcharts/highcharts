@@ -558,13 +558,14 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	dataLabels: {
 		// align: null,
 		// connectorWidth: 1,
-		// connectorColor: '#606060',
+		// connectorColor: point.color, // docs
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
 		formatter: function () {
 			return this.point.name;
 		},
+		// softConnector: true, // docs
 		y: 5
 	},
 	//innerSize: 0,

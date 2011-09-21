@@ -750,7 +750,7 @@ function Chart(options, callback) {
 						}
 					}
 					if (serie.isCartesian) { // line, column etc. need axes, pie doesn't
-						each(serie.data, function (point, i) {
+						each(serie.data, function (point) {
 							var pointX = point.x,
 								pointY = point.y,
 								isNegative = pointY < 0,
@@ -1147,7 +1147,7 @@ function Chart(options, callback) {
 		 * Set the tick positions to round values and optionally extend the extremes
 		 * to the nearest tick
 		 */
-		function setTickPositions(secondPass) {
+		function setTickPositions() {
 			var length,
 				catPad,
 				linkedParent,
@@ -1888,6 +1888,7 @@ function Chart(options, callback) {
 	function Toolbar() {
 		var buttons = {};
 
+		/*jslint unparam: true*//* allow the unused param title until Toolbar rewrite*/
 		function add(id, text, title, fn) {
 			if (!buttons[id]) {
 				var button = renderer.text(
@@ -1914,6 +1915,8 @@ function Chart(options, callback) {
 				buttons[id] = button;
 			}
 		}
+		/*jslint unparam: false*/
+
 		function remove(id) {
 			discardElement(buttons[id].element);
 			buttons[id] = null;
@@ -2004,7 +2007,6 @@ function Chart(options, callback) {
 				x = pThis.x,
 				isDateTime = xAxis && xAxis.options.type === 'datetime',
 				useHeader = isString(x) || isDateTime,
-				series,
 				s;
 
 			// build the header
@@ -2081,8 +2083,6 @@ function Chart(options, callback) {
 		function refresh(point) {
 			var x,
 				y,
-				boxX,
-				boxY,
 				show,
 				bBox,
 				plotX,
@@ -2106,7 +2106,7 @@ function Chart(options, callback) {
 				}
 				chart.hoverPoints = point;
 
-				each(point, function (item, i) {
+				each(point, function (item) {
 					/*var series = item.series,
 						hoverPoint = series.hoverPoint;
 					if (hoverPoint) {
@@ -2311,7 +2311,7 @@ function Chart(options, callback) {
 				xAxis: [],
 				yAxis: []
 			};
-			each(axes, function (axis, i) {
+			each(axes, function (axis) {
 				var translate = axis.translate,
 					isXAxis = axis.isXAxis,
 					isHorizontal = inverted ? !isXAxis : isXAxis;
@@ -2428,7 +2428,7 @@ function Chart(options, callback) {
 				if (hasDragged) {
 
 					// record each axis' min and max
-					each(axes, function (axis, i) {
+					each(axes, function (axis) {
 						var translate = axis.translate,
 							isXAxis = axis.isXAxis,
 							isHorizontal = inverted ? !isXAxis : isXAxis,
@@ -2932,11 +2932,9 @@ function Chart(options, callback) {
 				legendSymbol,
 				symbolX,
 				symbolY,
-				attribs,
 				simpleSymbol,
 				li = item.legendItem,
 				series = item.series || item,
-				i = allItems.length,
 				itemOptions = series.options,
 				strokeWidth = (itemOptions && itemOptions.borderWidth) || 0;
 
@@ -2960,7 +2958,7 @@ function Chart(options, callback) {
 						li.css(item.visible ? itemStyle : itemHiddenStyle);
 						item.setState();
 					})
-					.on('click', function (event) {
+					.on('click', function () {
 						var strLegendItemClick = 'legendItemClick',
 							fnLegendItemClick = function () {
 								item.setVisible();

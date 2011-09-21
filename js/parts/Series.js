@@ -74,14 +74,19 @@ Point.prototype = {
 	destroy: function () {
 		var point = this,
 			series = point.series,
+			hoverPoints = series.chart.hoverPoints,
 			prop;
 
 		series.chart.pointCount--;
-
+		
+		if (hoverPoints) {
+			point.setState();
+			erase(hoverPoints, point);
+		}
 		if (point === series.chart.hoverPoint) {
 			point.onMouseOut();
 		}
-		series.chart.hoverPoints = null; // remove reference
+		
 
 		// remove all events
 		removeEvent(point);
@@ -209,7 +214,6 @@ Point.prototype = {
 	update: function (options, redraw, animation) {
 		var point = this,
 			series = point.series,
-			dataLabel = point.dataLabel,
 			graphic = point.graphic,
 			chart = series.chart;
 
@@ -1115,7 +1119,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			//chartSeries = series.chart.series,
-			clipRect = series.clipRect,
 			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
 			prop;
@@ -1232,7 +1235,7 @@ Series.prototype = {
 			options.style.color = pick(color, series.color, 'black');
 
 			// make the labels for each point
-			each(data, function (point, i) {
+			each(data, function (point) {
 				var barX = point.barX,
 					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
@@ -1315,7 +1318,7 @@ Series.prototype = {
 	/**
 	 * Draw the actual graph
 	 */
-	drawGraph: function (state) {
+	drawGraph: function () {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
@@ -1430,7 +1433,7 @@ Series.prototype = {
 
 		// draw the graph
 		if (graph) {
-			//graph.animate({ d: graphPath.join(' ') });
+			stop(graph); // cancel running animations, #459
 			graph.animate({ d: graphPath });
 
 		} else {
@@ -1554,7 +1557,6 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			clipRect = series.clipRect,
 			group = series.group;
 
 		/*if (clipRect) {

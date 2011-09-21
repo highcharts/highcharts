@@ -426,7 +426,7 @@ var VMLElement = extendClass(SVGElement, {
 	 * VML override private method to update elements based on internal
 	 * properties based on SVG transform
 	 */
-	updateTransform: function (hash) {
+	updateTransform: function () {
 		// aligning non added elements is expensive
 		if (!this.added) {
 			this.alignOnAdd = true;
