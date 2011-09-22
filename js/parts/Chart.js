@@ -2491,7 +2491,7 @@ function Chart(options, callback) {
 									0
 								)
 								.attr({
-									fill: 'rgba(69,114,167,0.25)',
+									fill: optionsChart.selectionMarkerFill || 'rgba(69,114,167,0.25)',
 									zIndex: 7
 								})
 								.add();

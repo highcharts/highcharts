@@ -6470,7 +6470,7 @@ function Chart(options, callback) {
 									0
 								)
 								.attr({
-									fill: 'rgba(69,114,167,0.25)',
+									fill: optionsChart.selectionMarkerFill || 'rgba(69,114,167,0.25)',
 									zIndex: 7
 								})
 								.add();
@@ -9471,7 +9471,7 @@ Series.prototype = {
 					plotY = pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
 					align = options.align,
-					individualYDelta = yIsNull ? (point.y > 0 ? -6 : 12) : options.y;
+					individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
 
 				// get the string
 				str = options.formatter.call(point.getLabelConfig());
