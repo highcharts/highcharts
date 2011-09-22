@@ -1742,12 +1742,11 @@ function Chart(options, callback) {
 
 	/**
 	 * The toolbar object
-	 *
-	 * @param {Object} chart
 	 */
-	function Toolbar(chart) {
+	function Toolbar() {
 		var buttons = {};
 
+		/*jslint unparam: true*//* allow the unused param title until Toolbar rewrite*/
 		function add(id, text, title, fn) {
 			if (!buttons[id]) {
 				var button = renderer.text(
@@ -1770,6 +1769,8 @@ function Chart(options, callback) {
 				buttons[id] = button;
 			}
 		}
+		/*jslint unparam: false*/
+
 		function remove(id) {
 			discardElement(buttons[id].element);
 			buttons[id] = null;
@@ -1907,8 +1908,6 @@ function Chart(options, callback) {
 		function refresh(point) {
 			var x,
 				y,
-				boxX,
-				boxY,
 				show,
 				bBox,
 				plotX,
@@ -1933,7 +1932,7 @@ function Chart(options, callback) {
 				}
 				chart.hoverPoints = point;
 
-				each(point, function (item, i) {
+				each(point, function (item) {
 					item.setState(HOVER_STATE);
 					plotY += item.plotY; // for average
 
@@ -2132,7 +2131,7 @@ function Chart(options, callback) {
 				xAxis: [],
 				yAxis: []
 			};
-			each(axes, function (axis, i) {
+			each(axes, function (axis) {
 				var translate = axis.translate,
 					isXAxis = axis.isXAxis,
 					isHorizontal = inverted ? !isXAxis : isXAxis;
@@ -2251,7 +2250,7 @@ function Chart(options, callback) {
 				if (hasDragged) {
 
 					// record each axis' min and max
-					each(axes, function (axis, i) {
+					each(axes, function (axis) {
 						if (axis.options.zoomEnabled !== false) {
 							var translate = axis.translate,
 								isXAxis = axis.isXAxis,
@@ -2752,12 +2751,10 @@ function Chart(options, callback) {
 				legendSymbol,
 				symbolX,
 				symbolY,
-				attribs,
 				simpleSymbol,
 				radius,
 				li = item.legendItem,
 				series = item.series || item,
-				i = allItems.length,
 				itemOptions = series.options,
 				strokeWidth = (itemOptions && itemOptions.borderWidth) || 0;
 
@@ -2782,7 +2779,7 @@ function Chart(options, callback) {
 						li.css(item.visible ? itemStyle : itemHiddenStyle);
 						item.setState();
 					})
-					.on('click', function (event) {
+					.on('click', function () {
 						var strLegendItemClick = 'legendItemClick',
 							fnLegendItemClick = function () {
 								item.setVisible();

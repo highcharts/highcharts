@@ -326,12 +326,14 @@ SVGElement.prototype = {
 	 * @param {Object} styles
 	 */
 	css: function (styles) {
+		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
+		/*jslint unparam: false*/
 
 		// convert legacy
 		if (styles && styles.color) {

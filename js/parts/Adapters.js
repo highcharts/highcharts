@@ -153,11 +153,13 @@ if (!globalAdapter && win.jQuery) {
 
 
 	// extend jQuery
+	/*jslint unparam: true*//* allow unused param x in this function */
 	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
 			return -c * (t /= d) * (t - 2) + b;
 		}
 	});
+	/*jslint unparam: false*/
 
 	// extend the animate function to allow SVG animations
 	var oldStepDefault = jQuery.fx.step._default,

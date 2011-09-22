@@ -35,9 +35,8 @@ var doc = document,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
-	//hasSVG = win.SVGAngle || doc.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
-	hasSVG = !!doc.createElementNS && !!doc.createElementNS("http://www.w3.org/2000/svg", "svg").createSVGRect,
 	SVG_NS = 'http://www.w3.org/2000/svg',
+	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
 	symbolSizes = {},
@@ -126,8 +125,7 @@ var doc = document,
 	stop = adapter.stop,
 
 	// lookup over the types and the associated classes
-	seriesTypes = {},
-	hoverChart;
+	seriesTypes = {};
 
 // The Highcharts namespace
 win.Highcharts = {};
@@ -1048,11 +1046,13 @@ if (!globalAdapter && win.jQuery) {
 
 
 	// extend jQuery
+	/*jslint unparam: true*//* allow unused param x in this function */
 	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
 			return -c * (t /= d) * (t - 2) + b;
 		}
 	});
+	/*jslint unparam: false*/
 
 	// extend the animate function to allow SVG animations
 	var oldStepDefault = jQuery.fx.step._default,
@@ -1667,13 +1667,14 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	dataLabels: {
 		// align: null,
 		// connectorWidth: 1,
-		// connectorColor: '#606060',
+		// connectorColor: point.color, // docs
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
 		formatter: function () {
 			return this.point.name;
 		},
+		// softConnector: true, // docs
 		y: 5
 	},
 	//innerSize: 0,
@@ -2111,12 +2112,14 @@ SVGElement.prototype = {
 	 * @param {Object} styles
 	 */
 	css: function (styles) {
+		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
 			elem = elemWrapper.element,
 			textWidth = styles && styles.width && elem.nodeName === 'text',
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
+		/*jslint unparam: false*/
 
 		// convert legacy
 		if (styles && styles.color) {
@@ -3927,7 +3930,7 @@ var VMLElement = extendClass(SVGElement, {
 	 * VML override private method to update elements based on internal
 	 * properties based on SVG transform
 	 */
-	updateTransform: function (hash) {
+	updateTransform: function () {
 		// aligning non added elements is expensive
 		if (!this.added) {
 			this.alignOnAdd = true;
@@ -6333,12 +6336,11 @@ function Chart(options, callback) {
 
 	/**
 	 * The toolbar object
-	 *
-	 * @param {Object} chart
 	 */
-	function Toolbar(chart) {
+	function Toolbar() {
 		var buttons = {};
 
+		/*jslint unparam: true*//* allow the unused param title until Toolbar rewrite*/
 		function add(id, text, title, fn) {
 			if (!buttons[id]) {
 				var button = renderer.text(
@@ -6361,6 +6363,8 @@ function Chart(options, callback) {
 				buttons[id] = button;
 			}
 		}
+		/*jslint unparam: false*/
+
 		function remove(id) {
 			discardElement(buttons[id].element);
 			buttons[id] = null;
@@ -6498,8 +6502,6 @@ function Chart(options, callback) {
 		function refresh(point) {
 			var x,
 				y,
-				boxX,
-				boxY,
 				show,
 				bBox,
 				plotX,
@@ -6524,7 +6526,7 @@ function Chart(options, callback) {
 				}
 				chart.hoverPoints = point;
 
-				each(point, function (item, i) {
+				each(point, function (item) {
 					item.setState(HOVER_STATE);
 					plotY += item.plotY; // for average
 
@@ -6723,7 +6725,7 @@ function Chart(options, callback) {
 				xAxis: [],
 				yAxis: []
 			};
-			each(axes, function (axis, i) {
+			each(axes, function (axis) {
 				var translate = axis.translate,
 					isXAxis = axis.isXAxis,
 					isHorizontal = inverted ? !isXAxis : isXAxis;
@@ -6842,7 +6844,7 @@ function Chart(options, callback) {
 				if (hasDragged) {
 
 					// record each axis' min and max
-					each(axes, function (axis, i) {
+					each(axes, function (axis) {
 						if (axis.options.zoomEnabled !== false) {
 							var translate = axis.translate,
 								isXAxis = axis.isXAxis,
@@ -7343,12 +7345,10 @@ function Chart(options, callback) {
 				legendSymbol,
 				symbolX,
 				symbolY,
-				attribs,
 				simpleSymbol,
 				radius,
 				li = item.legendItem,
 				series = item.series || item,
-				i = allItems.length,
 				itemOptions = series.options,
 				strokeWidth = (itemOptions && itemOptions.borderWidth) || 0;
 
@@ -7373,7 +7373,7 @@ function Chart(options, callback) {
 						li.css(item.visible ? itemStyle : itemHiddenStyle);
 						item.setState();
 					})
-					.on('click', function (event) {
+					.on('click', function () {
 						var strLegendItemClick = 'legendItemClick',
 							fnLegendItemClick = function () {
 								item.setVisible();
@@ -8894,10 +8894,15 @@ Point.prototype = {
 	destroy: function () {
 		var point = this,
 			series = point.series,
+			hoverPoints = series.chart.hoverPoints,
 			prop;
 
 		series.chart.pointCount--;
-
+		
+		if (hoverPoints) {
+			point.setState();
+			erase(hoverPoints, point);
+		}
 		if (point === series.chart.hoverPoint) {
 			point.onMouseOut();
 		}
@@ -9043,7 +9048,6 @@ Point.prototype = {
 	update: function (options, redraw, animation) {
 		var point = this,
 			series = point.series,
-			dataLabel = point.dataLabel,
 			graphic = point.graphic,
 			i,
 			data = series.data,
@@ -10148,7 +10152,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			//chartSeries = series.chart.series,
-			clipRect = series.clipRect,
 			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
 			i,
@@ -10345,7 +10348,7 @@ Series.prototype = {
 	/**
 	 * Draw the actual graph
 	 */
-	drawGraph: function (state) {
+	drawGraph: function () {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
@@ -10462,7 +10465,7 @@ Series.prototype = {
 
 		// draw the graph
 		if (graph) {
-			//graph.animate({ d: graphPath.join(' ') });
+			stop(graph); // cancel running animations, #459
 			graph.animate({ d: graphPath });
 
 		} else {
@@ -11316,11 +11319,11 @@ var ScatterSeries = extendClass(Series, {
 			if (graphic) { // doesn't exist for null points
 				graphic
 					.attr({ isTracker: true })
-					.on('mouseover', function (event) {
+					.on('mouseover', function () {
 						series.onMouseOver();
 						point.onMouseOver();
 					})
-					.on('mouseout', function (event) {
+					.on('mouseout', function () {
 						if (!series.options.stickyTracking) {
 							series.onMouseOut();
 						}
@@ -11460,9 +11463,8 @@ var PieSeries = extendClass(Series, {
 
 	/**
 	 * Animate the column heights one by one from zero
-	 * @param {Boolean} init Whether to initialize the animation or run it
 	 */
-	animate: function (init) {
+	animate: function () {
 		var series = this,
 			points = series.points;
 
@@ -11723,6 +11725,7 @@ var PieSeries = extendClass(Series, {
 			connectorWidth = pick(options.connectorWidth, 1),
 			connector,
 			connectorPath,
+			softConnector = pick(options.softConnector, true),
 			distanceOption = options.distance,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
@@ -11731,7 +11734,6 @@ var PieSeries = extendClass(Series, {
 			dataLabel,
 			labelPos,
 			labelHeight,
-			lastY,
 			halves = [// divide the points into right and left halves for anti collision
 				[], // right
 				[]  // left
@@ -11739,11 +11741,7 @@ var PieSeries = extendClass(Series, {
 			x,
 			y,
 			visibility,
-			overlapping,
 			rankArr,
-			secondPass,
-			sign,
-			lowerHalf,
 			sort,
 			i = 2,
 			j;
@@ -11785,8 +11783,6 @@ var PieSeries = extendClass(Series, {
 				length = piePoints.length,
 				slotIndex;
 
-			lowerHalf = i % 3;
-			sign = lowerHalf ? 1 : -1;
 
 			// build the slots
 			for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
@@ -11855,10 +11851,13 @@ var PieSeries = extendClass(Series, {
 					slotIndex = j;
 				} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
 					slotIndex = slotsLength - length + j;
+					while (slots[slotIndex] === null) { // make sure it is not taken
+						slotIndex++;
+					}
 				} else {
 					// Slot is taken, find next free slot below. In the next run, the next slice will find the
 					// slot above these, because it is the closest one
-					while (slots[slotIndex] === null) {
+					while (slots[slotIndex] === null) { // make sure it is not taken
 						slotIndex++;
 					}
 				}
@@ -11890,8 +11889,9 @@ var PieSeries = extendClass(Series, {
 					y = naturalY;
 				}
 
-				// get the x
-				x = series.getX(y, i);
+				// get the x - use the natural x position for first and last slot, to prevent the top
+				// and botton slice connectors from touching each other on either side
+				x = series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
 
 				// move or place the data label
 				dataLabel
@@ -11909,11 +11909,18 @@ var PieSeries = extendClass(Series, {
 				if (outside && connectorWidth) {
 					connector = point.connector;
 
-					connectorPath = [
+					connectorPath = softConnector ? [
 						M,
 						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-						L,
+						'C',
 						x, y, // first break, next to the label
+						2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
+						labelPos[2], labelPos[3], // second break
+						L,
+						labelPos[4], labelPos[5] // base
+					] : [
+						M,
+						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 						L,
 						labelPos[2], labelPos[3], // second break
 						L,
@@ -11927,7 +11934,7 @@ var PieSeries = extendClass(Series, {
 					} else {
 						point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 							'stroke-width': connectorWidth,
-							stroke: options.connectorColor || '#606060',
+							stroke: options.connectorColor || point.color || '#606060',
 							visibility: visibility,
 							zIndex: 3
 						})

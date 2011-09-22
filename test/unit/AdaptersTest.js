@@ -25,6 +25,38 @@ AdaptersTest.prototype.testEach = function() {
 };
 
 /**
+ * Test the each method with various numbers of parameters.
+ */
+AdaptersTest.prototype.testEachParams = function() {
+	var arr = [{hello: undefined}];
+
+	// Test indexing the array
+	each(arr, function (value, i) {
+		arr[i].hello = 'world';
+	});
+
+	assertEquals('each index', 'world', arr[0].hello);
+
+	// Test without index
+	arr = [{hello: undefined}];
+	assertUndefined('each value undefined', arr[0].hello);
+	each(arr, function (value) {
+		value.hello = 'world';
+	});
+
+	assertEquals('each value', 'world', arr[0].hello);
+
+	// Test with no parameters at all
+	arr = [{hello: undefined}];
+	assertUndefined('each no-param undefined', arr[0].hello);
+	each(arr, function () {
+		arr[0].hello = 'world';
+	});
+
+	assertEquals('each no-param', 'world', arr[0].hello);
+};
+
+/**
  * Test the grep method.
  */
 AdaptersTest.prototype.testGrep = function() {

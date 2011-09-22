@@ -37,7 +37,7 @@ var HC = Highcharts,
 	PX = 'px',
 	UNDEFINED,
 	defaultOptions = HC.getOptions();
-	
+
 	// Add language
 	extend(defaultOptions.lang, {
 		downloadPNG: 'Download PNG image',
@@ -192,6 +192,7 @@ extend(Chart.prototype, {
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
 		if (!doc.createElementNS) {
+			/*jslint unparam: true*//* allow unused parameter ns in function below */
 			doc.createElementNS = function (ns, tagName) {
 				var elem = doc.createElement(tagName);
 				elem.getBBox = function () {
@@ -199,6 +200,7 @@ extend(Chart.prototype, {
 				};
 				return elem;
 			};
+			/*jslint unparam: false*/
 		}
 
 		// create a sandbox where a new chart will be generated
@@ -570,7 +572,7 @@ extend(Chart.prototype, {
 
 		// add the click event
 		if (menuItems) {
-			onclick = function (e) {
+			onclick = function () {
 				revert();
 				var bBox = button.getBBox();
 				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);

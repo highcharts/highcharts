@@ -120,9 +120,8 @@ var PieSeries = extendClass(Series, {
 
 	/**
 	 * Animate the column heights one by one from zero
-	 * @param {Boolean} init Whether to initialize the animation or run it
 	 */
-	animate: function (init) {
+	animate: function () {
 		var series = this,
 			points = series.points;
 
@@ -383,6 +382,7 @@ var PieSeries = extendClass(Series, {
 			connectorWidth = pick(options.connectorWidth, 1),
 			connector,
 			connectorPath,
+			softConnector = pick(options.softConnector, true),
 			distanceOption = options.distance,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
@@ -391,7 +391,6 @@ var PieSeries = extendClass(Series, {
 			dataLabel,
 			labelPos,
 			labelHeight,
-			lastY,
 			halves = [// divide the points into right and left halves for anti collision
 				[], // right
 				[]  // left
@@ -399,11 +398,7 @@ var PieSeries = extendClass(Series, {
 			x,
 			y,
 			visibility,
-			overlapping,
 			rankArr,
-			secondPass,
-			sign,
-			lowerHalf,
 			sort,
 			i = 2,
 			j;
@@ -445,8 +440,6 @@ var PieSeries = extendClass(Series, {
 				length = piePoints.length,
 				slotIndex;
 
-			lowerHalf = i % 3;
-			sign = lowerHalf ? 1 : -1;
 
 			// build the slots
 			for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
@@ -515,10 +508,13 @@ var PieSeries = extendClass(Series, {
 					slotIndex = j;
 				} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
 					slotIndex = slotsLength - length + j;
+					while (slots[slotIndex] === null) { // make sure it is not taken
+						slotIndex++;
+					}
 				} else {
 					// Slot is taken, find next free slot below. In the next run, the next slice will find the
 					// slot above these, because it is the closest one
-					while (slots[slotIndex] === null) {
+					while (slots[slotIndex] === null) { // make sure it is not taken
 						slotIndex++;
 					}
 				}
@@ -550,8 +546,9 @@ var PieSeries = extendClass(Series, {
 					y = naturalY;
 				}
 
-				// get the x
-				x = series.getX(y, i);
+				// get the x - use the natural x position for first and last slot, to prevent the top
+				// and botton slice connectors from touching each other on either side
+				x = series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
 
 				// move or place the data label
 				dataLabel
@@ -569,11 +566,18 @@ var PieSeries = extendClass(Series, {
 				if (outside && connectorWidth) {
 					connector = point.connector;
 
-					connectorPath = [
+					connectorPath = softConnector ? [
 						M,
 						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-						L,
+						'C',
 						x, y, // first break, next to the label
+						2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
+						labelPos[2], labelPos[3], // second break
+						L,
+						labelPos[4], labelPos[5] // base
+					] : [
+						M,
+						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 						L,
 						labelPos[2], labelPos[3], // second break
 						L,
@@ -587,7 +591,7 @@ var PieSeries = extendClass(Series, {
 					} else {
 						point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 							'stroke-width': connectorWidth,
-							stroke: options.connectorColor || '#606060',
+							stroke: options.connectorColor || point.color || '#606060',
 							visibility: visibility,
 							zIndex: 3
 						})
