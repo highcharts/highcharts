@@ -9,21 +9,12 @@ var DATA_GROUPING = 'dataGrouping',
 	NUMBER = 'number',
 	
 	/**
-	 * Define the available approximation types
+	 * Define the available approximation types. The data grouping approximations takes an array
+	 * or numbers as the first parameter. In case of ohlc, four arrays are sent in as four parameters.
+	 * Each array consists only of numbers. In case null values belong to the group, the property
+	 * .hasNulls will be set to true on the array.
 	 */
 	approximations = {
-		average: function (arr) {
-			var len = arr.length,
-				ret = approximations.sum(arr);
-				
-			// If we have a number, return it divided by the length. If not, return
-			// null or undefined based on what the sum method finds.
-			if (typeof ret === NUMBER && len) {
-				ret = ret / len;
-			}
-			
-			return ret;
-		},
 		sum: function (arr) {
 			var len = arr.length, 
 				ret;
@@ -43,17 +34,29 @@ var DATA_GROUPING = 'dataGrouping',
 			
 			return ret;
 		},
+		average: function (arr) {
+			var len = arr.length,
+				ret = approximations.sum(arr);
+				
+			// If we have a number, return it divided by the length. If not, return
+			// null or undefined based on what the sum method finds.
+			if (typeof ret === NUMBER && len) {
+				ret = ret / len;
+			}
+			
+			return ret;
+		},
 		open: function (arr) {
-			return arr[0];
+			return arr.length ? arr[0] : (arr.hasNulls ? null : UNDEFINED);
 		},
 		high: function (arr) {
-			return mathMax.apply(0, arr);
+			return arr.length ? mathMax.apply(0, arr) : (arr.hasNulls ? null : UNDEFINED);
 		},
 		low: function (arr) {
-			return mathMin.apply(0, arr);
+			return arr.length ? mathMin.apply(0, arr) : (arr.hasNulls ? null : UNDEFINED);
 		},
 		close: function (arr) {
-			return arr[arr.length - 1];
+			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : UNDEFINED);
 		},
 		// ohlc is a special case where a multidimensional array is input and an array is output
 		ohlc: function (opens, highs, lows, closes) {
@@ -166,18 +169,34 @@ seriesProto.processData = function () {
 			pointY = processedYData[i];
 			if (approximation === 'ohlc') {
 				var index = series.cropStart + i,
-					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]);
-				if (typeof point.open === NUMBER) {
-					values1.push(point.open);
+					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]),
+					open = point.open,
+					high = point.high,
+					low = point.low,
+					close = point.close;
+				
+				if (typeof open === NUMBER) {
+					values1.push(open);
+				} else if (open === null) {
+					values1.hasNulls = true;
 				}
-				if (typeof point.high === NUMBER) {
-					values2.push(point.high);
+				
+				if (typeof high === NUMBER) {
+					values2.push(high);
+				} else if (high === null) {
+					values2.hasNulls = true;
 				}
-				if (typeof point.low === NUMBER) {
-					values3.push(point.low);
+				
+				if (typeof low === NUMBER) {
+					values3.push(low);
+				} else if (low === null) {
+					values3.hasNulls = true;
 				}
-				if (typeof point.close === NUMBER) {
-					values4.push(point.close);
+				
+				if (typeof close === NUMBER) {
+					values4.push(close);
+				} else if (close === null) {
+					values4.hasNulls = true;
 				}
 			} else {
 				if (typeof pointY === NUMBER) {
