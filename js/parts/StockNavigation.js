@@ -468,7 +468,7 @@ function Scroller(chart) {
 
 					dragOffset = chartX - zoomedMin;
 
-				// click on the shaded areas
+				// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
 				} else if (chartX > plotLeft && chartX < plotLeft + plotWidth) {
 
 					if (isOnNavigator) { // center around the clicked point
@@ -479,7 +479,7 @@ function Scroller(chart) {
 						} else if (chartX > plotLeft + plotWidth - scrollbarHeight) {
 							left = zoomedMin + mathMin(10, range);
 						} else {
-							// shift the scrollbar by one range
+							// click on scrollbar track, shift the scrollbar by one range
 							left = chartX < navigatorLeft + zoomedMin ? // on the left
 								zoomedMin - range :
 								zoomedMax;
@@ -490,12 +490,14 @@ function Scroller(chart) {
 					} else if (left + range > plotWidth - 2 * scrollbarHeight) {
 						left = plotWidth - range - 2 * scrollbarHeight;
 					}
-					chart.xAxis[0].setExtremes(
-						xAxis.translate(left, true),
-						xAxis.translate(left + range, true),
-						true,
-						false
-					);
+					if (left !== zoomedMin) { // it has actually moved
+						chart.xAxis[0].setExtremes(
+							xAxis.translate(left, true),
+							xAxis.translate(left + range, true),
+							true,
+							false
+						);
+					}
 				}
 			}
 			if (e.preventDefault) { // tries to drag object when clicking on the shades
