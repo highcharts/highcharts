@@ -59,13 +59,16 @@ var DATA_GROUPING = 'dataGrouping',
 			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : UNDEFINED);
 		},
 		// ohlc is a special case where a multidimensional array is input and an array is output
-		ohlc: function (opens, highs, lows, closes) {
-			return [
-				approximations.open(opens),
-				approximations.high(highs),
-				approximations.low(lows),
-				approximations.close(closes)
-			];
+		ohlc: function (open, high, low, close) {
+			open = approximations.open(open);
+			high = approximations.high(high);
+			low = approximations.low(low);
+			close = approximations.close(close);
+			
+			if (typeof open === NUMBER || typeof high === NUMBER || typeof low === NUMBER || typeof close === NUMBER) {
+				return [open, high, low, close];
+			} 
+			// else, return is undefined
 		}
 	};
 
