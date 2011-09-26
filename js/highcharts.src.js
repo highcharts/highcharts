@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v2.1.6 (2011-07-08)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -501,8 +501,8 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		if (point.y >= y && point.y <= (y + boxHeight)) {
 			y = point.y + boxHeight - 5; // below
 		}
-	} else if (y + boxHeight > outerHeight) {
-		y = outerHeight - boxHeight - 5; // below
+	} else if (y + boxHeight > outerTop + outerHeight) {
+		y = outerTop + outerHeight - boxHeight - 5; // below
 	}
 
 	return {x: x, y: y};
@@ -11164,7 +11164,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: '@product.name@',
-	version: '@product.version@'
+	product: 'Highcharts',
+	version: '2.1.6'
 };
 }());
