@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.6 (2011-07-08)
+ * @license @product.name@ JS v@product.version@ (@product.date@)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -10933,9 +10933,11 @@ var PieSeries = extendClass(Series, {
 
 		// arrange points for detection collision
 		each(data, function (point) {
-			halves[
-				point.labelPos[7] < mathPI / 2 ? 0 : 1
-			].push(point);
+			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
+				halves[
+					point.labelPos[7] < mathPI / 2 ? 0 : 1
+				].push(point);
+			}
 		});
 		halves[1].reverse();
 
@@ -11162,7 +11164,7 @@ win.Highcharts = {
 	merge: merge,
 	pick: pick,
 	extendClass: extendClass,
-	product: 'Highcharts',
-	version: '2.1.6'
+	product: '@product.name@',
+	version: '@product.version@'
 };
 }());

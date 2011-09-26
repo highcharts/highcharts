@@ -404,9 +404,11 @@ var PieSeries = extendClass(Series, {
 
 		// arrange points for detection collision
 		each(data, function (point) {
-			halves[
-				point.labelPos[7] < mathPI / 2 ? 0 : 1
-			].push(point);
+			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
+				halves[
+					point.labelPos[7] < mathPI / 2 ? 0 : 1
+				].push(point);
+			}
 		});
 		halves[1].reverse();
 
