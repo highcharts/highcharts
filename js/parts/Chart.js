@@ -214,6 +214,7 @@ function Chart(options, callback) {
 						plotWidth / categories.length) ||
 						(!horiz && plotWidth / 2),
 					css,
+					value = categories && defined(categories[pos]) ? categories[pos] : pos,
 					label = this.label;
 
 
@@ -222,7 +223,7 @@ function Chart(options, callback) {
 						isFirst: pos === tickPositions[0],
 						isLast: pos === tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: (categories && categories[pos] ? categories[pos] : pos)
+						value: isLog ? lin2log(value) : value
 					});
 
 
