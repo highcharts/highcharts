@@ -633,10 +633,10 @@ function placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight,
 
 		// If the tooltip is still covering the point, move it below instead
 		if (point.y >= y && point.y <= (y + boxHeight)) {
-			y = point.y + boxHeight - 5; // below
+			y = point.y + boxHeight - distance; // below
 		}
 	} else if (y + boxHeight > plotTop + plotHeight) {
-		y = plotHeight - boxHeight - 5; // below
+		y = plotTop + plotHeight - boxHeight - distance; // below
 	}
 
 	return {x: x, y: y};
