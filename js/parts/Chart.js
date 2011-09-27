@@ -2545,9 +2545,12 @@ function Chart(options, callback) {
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
 			// outside the plotarea, hide the tooltip
 			addEvent(doc, 'mousemove', function (e) {
+				var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+					pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
 				if (chartPosition &&
-						!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
-							e.pageY - chartPosition.top - plotTop)) {
+						!isInsidePlot(pageX - chartPosition.left - plotLeft,
+							pageY - chartPosition.top - plotTop)) {
 					resetTracker();
 				}
 			});
