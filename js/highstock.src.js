@@ -13171,33 +13171,23 @@ function Scroller(chart) {
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
 
-		// set the scroller x axis extremes to reflect the total
-		// commented out in the fix for #374: can't see why the new extremes should
-		// be fetched from the base x axis extremes rather than the actual navigator
-		// axis which depends on the navigator series data
-		/*if (rendered && xAxis.getExtremes) {
-			var newExtremes = chart.xAxis[0].getExtremes(),
-				oldExtremes = xAxis.getExtremes();
+		// Set the scroller x axis extremes to reflect the total. The navigator extremes
+		// should always be the extremes of the union of all series in the chart as 
+		// well as the navigator series.
+		if (xAxis.getExtremes) {
+			var baseExtremes = chart.xAxis[0].getExtremes(), // the base
+				navExtremes = xAxis.getExtremes(),
+				newMin = mathMin(baseExtremes.dataMin, navExtremes.dataMin),
+				newMax = mathMax(baseExtremes.dataMax, navExtremes.dataMax);
 
-			if (newExtremes.dataMin !== oldExtremes.min ||
-					newExtremes.dataMax !== oldExtremes.max) {
-				xAxis.setExtremes(newExtremes.dataMin, newExtremes.dataMax);
-			}
-		}*/
-
-		// set the scroller x axis extremes to reflect the data total
-		if (rendered && xAxis.getExtremes) {
-			var extremes = xAxis.getExtremes();
-
-			if (extremes.dataMin !== extremes.min ||
-				extremes.dataMax !== extremes.max) {
-				xAxis.setExtremes(extremes.dataMin, extremes.dataMax);
+			if (newMin !== navExtremes.min || newMax !== navExtremes.max) {
+				xAxis.setExtremes(newMin, newMax, true, false);
 			}
 		}
-
+		
 		// handles are allowed to cross
-		zoomedMin = parseInt(mathMin(pxMin, pxMax), 10);
-		zoomedMax = parseInt(mathMax(pxMin, pxMax), 10);
+		zoomedMin = pInt(mathMin(pxMin, pxMax));
+		zoomedMax = pInt(mathMax(pxMin, pxMax));
 		range = zoomedMax - zoomedMin;
 
 		// on first render, create all elements
