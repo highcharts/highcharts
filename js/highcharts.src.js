@@ -4617,7 +4617,6 @@ function Chart(options, callback) {
 		destroy: function () {
 			var obj = this,
 				n;
-
 			for (n in obj) {
 				if (obj[n] && obj[n].destroy) {
 					obj[n].destroy(); // destroy SVG wrappers
@@ -5851,7 +5850,7 @@ function Chart(options, callback) {
 				axis.stackTotalGroup = null;
 			}
 
-			each([ticks, minorTicks, alternateBands/*, plotLinesAndBands*/], function (coll) {
+			each([ticks, minorTicks, alternateBands, plotLinesAndBands], function (coll) {
 				var pos;
 				for (pos in coll) {
 					coll[pos].destroy();

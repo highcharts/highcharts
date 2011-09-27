@@ -230,3 +230,86 @@ ChartMemoryTest.prototype.testShowHideSeries = function () {
 	this.chart.series[0].show();
 	this.chart.series[0].hide();
 };
+
+ChartMemoryTest.prototype.testAddRemovePlotBands = function () {
+	var xAxis = this.chart.xAxis[0],
+		yAxis = this.chart.yAxis[0],
+		xExtremes = xAxis.getExtremes(),
+		yExtremes = yAxis.getExtremes();
+
+	// Add one for each axis
+	xAxis.addPlotBand({
+			from: xExtremes.dataMin,
+			to: xExtremes.dataMax,
+			color: '#FCFFC5',
+			id: 'plot-band-x'
+		});
+
+	yAxis.addPlotBand({
+			from: yExtremes.dataMin,
+			to: yExtremes.dataMax,
+			color: '#FCFFC5',
+			id: 'plot-band-y'
+		});
+
+	// Remove them
+	xAxis.removePlotBand('plot-band-x');
+	yAxis.removePlotBand('plot-band-y');
+
+	// Add them again to trigger leak
+	xAxis.addPlotBand({
+			from: xExtremes.dataMin,
+			to: xExtremes.dataMax,
+			color: '#FCFFC5',
+			id: 'plot-band-x'
+		});
+
+	yAxis.addPlotBand({
+			from: yExtremes.dataMin,
+			to: yExtremes.dataMax,
+			color: '#FCFFC5',
+			id: 'plot-band-y'
+		});
+};
+
+ChartMemoryTest.prototype.testPlotLines = function () {
+	var xAxis = this.chart.xAxis[0],
+		yAxis = this.chart.yAxis[0],
+		xExtremes = xAxis.getExtremes(),
+		yExtremes = yAxis.getExtremes();
+
+	// Add one for each axis
+	xAxis.addPlotLine({
+			value: (xExtremes.dataMax - xExtremes.dataMin) / 2,
+			color: 'red',
+			width: 2,
+			id: 'plot-line-x'
+		});
+
+	yAxis.addPlotLine({
+			value: (yExtremes.dataMax - yExtremes.dataMin) / 2,
+			color: 'red',
+			width: 2,
+			id: 'plot-line-y'
+		});
+
+	// Remove them
+	xAxis.removePlotBand('plot-line-x');
+	yAxis.removePlotBand('plot-line-y');
+
+	// Add them again to trigger leak
+	xAxis.addPlotLine({
+			value: (xExtremes.dataMax - xExtremes.dataMin) / 2,
+			color: 'red',
+			width: 2,
+			id: 'plot-line-x'
+		});
+
+	yAxis.addPlotLine({
+			value: (yExtremes.dataMax - yExtremes.dataMin) / 2,
+			color: 'red',
+			width: 2,
+			id: 'plot-line-y'
+		});
+};
+

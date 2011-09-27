@@ -17,3 +17,7 @@ PieChartMemoryTest.prototype.getConfig = function () {
 	};
 };
 
+PieChartMemoryTest.prototype.testAddRemovePlotBands = function () {
+	// Do not run this test in Pie charts.
+}
+
