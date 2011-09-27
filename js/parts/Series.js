@@ -1770,7 +1770,7 @@ Series.prototype = {
 					fill: NONE,
 					'stroke-width' : options.lineWidth + 2 * snap,
 					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: 1
+					zIndex: options.zIndex || 1
 				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {
