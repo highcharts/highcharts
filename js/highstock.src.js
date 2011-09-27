@@ -5466,9 +5466,11 @@ function Chart(options, callback) {
 
 							serie.xAxis.leastUnitDistance = leastUnitDistance;
 
-							if (!usePercentage) { // percentage stacks are always 0-100
+							// Get the dataMin and dataMax so far. If percentage is used, the min and max are
+							// always 0 and 100. If the length of activeYData is 0, continue with null values. 
+							if (!usePercentage && activeYData.length) {								
 								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
-								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));
+								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));								
 							}
 
 
@@ -12185,16 +12187,16 @@ seriesProto.processData = function () {
 
 		series.tooltipHeaderFormat = dataGroupingOptions.dateTimeLabelFormats[groupPositions.unit[0]];
 		series.unit = groupPositions.unit;
+		
+		
+		series.processedXData = groupedXData;
+		series.processedYData = groupedYData;
 
 	} else {
-		groupedXData = processedXData;
-		groupedYData = processedYData;
 		series.tooltipHeaderFormat = null;
 		series.unit = null;
 	}
 
-	series.processedXData = groupedXData;
-	series.processedYData = groupedYData;
 
 };
 

@@ -224,16 +224,16 @@ seriesProto.processData = function () {
 
 		series.tooltipHeaderFormat = dataGroupingOptions.dateTimeLabelFormats[groupPositions.unit[0]];
 		series.unit = groupPositions.unit;
+		
+		
+		series.processedXData = groupedXData;
+		series.processedYData = groupedYData;
 
 	} else {
-		groupedXData = processedXData;
-		groupedYData = processedYData;
 		series.tooltipHeaderFormat = null;
 		series.unit = null;
 	}
 
-	series.processedXData = groupedXData;
-	series.processedYData = groupedYData;
 
 };
 
