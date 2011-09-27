@@ -271,9 +271,6 @@ function Scroller(chart) {
 		plotWidth = chart.plotWidth;
 		navigatorLeft = plotLeft + scrollbarHeight;
 
-		pxMin = pick(pxMin, xAxis.translate(min));
-		pxMax = pick(pxMax, xAxis.translate(max));
-
 		// Set the scroller x axis extremes to reflect the total. The navigator extremes
 		// should always be the extremes of the union of all series in the chart as 
 		// well as the navigator series.
@@ -287,6 +284,11 @@ function Scroller(chart) {
 				xAxis.setExtremes(newMin, newMax, true, false);
 			}
 		}
+		
+		// get the pixel position of the handles
+		pxMin = pick(pxMin, xAxis.translate(min));
+		pxMax = pick(pxMax, xAxis.translate(max));
+		
 		
 		// handles are allowed to cross
 		zoomedMin = pInt(mathMin(pxMin, pxMax));
