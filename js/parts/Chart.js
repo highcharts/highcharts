@@ -316,6 +316,9 @@ function Chart(options, callback) {
 						if (dashStyle) {
 							attribs.dashstyle = dashStyle;
 						}
+						if (major) {
+							attribs.zIndex = 1;
+						}
 						tick.gridLine = gridLine =
 							gridLineWidth ?
 								renderer.path(gridLinePath)
