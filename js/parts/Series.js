@@ -800,6 +800,7 @@ Series.prototype = {
 			processedYData = series.yData,
 			dataLength = processedXData.length,
 			cropStart = 0,
+			cropEnd = dataLength,
 			cropped,
 			i, // loop variable
 			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
@@ -810,11 +811,15 @@ Series.prototype = {
 			var extremes = series.xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max,
-				cropEnd = dataLength,
 				point;
 
+			// it's outside current extremes
+			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
+				processedXData = [];
+				processedYData = [];
+			
 			// only crop if it's actually spilling out
-			if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
+			} else if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
 
 				// iterate up to find slice start
 				for (i = 0; i < dataLength; i++) {

@@ -874,7 +874,7 @@ function Chart(options, callback) {
 
 							// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 							// always 0 and 100. If the length of activeYData is 0, continue with null values. 
-							if (!usePercentage && activeYData.length) {								
+							if (!usePercentage && activeYData.length) {
 								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
 								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));								
 							}

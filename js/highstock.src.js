@@ -5468,7 +5468,7 @@ function Chart(options, callback) {
 
 							// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 							// always 0 and 100. If the length of activeYData is 0, continue with null values. 
-							if (!usePercentage && activeYData.length) {								
+							if (!usePercentage && activeYData.length) {
 								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
 								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));								
 							}
@@ -9619,6 +9619,7 @@ Series.prototype = {
 			processedYData = series.yData,
 			dataLength = processedXData.length,
 			cropStart = 0,
+			cropEnd = dataLength,
 			cropped,
 			i, // loop variable
 			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
@@ -9629,11 +9630,15 @@ Series.prototype = {
 			var extremes = series.xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max,
-				cropEnd = dataLength,
 				point;
 
+			// it's outside current extremes
+			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
+				processedXData = [];
+				processedYData = [];
+			
 			// only crop if it's actually spilling out
-			if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
+			} else if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
 
 				// iterate up to find slice start
 				for (i = 0; i < dataLength; i++) {
