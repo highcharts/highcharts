@@ -16,7 +16,8 @@ ChartMemoryTest.prototype.randomData = function (len) {
  */
 ChartMemoryTest.prototype.setUp = function () {
 	assertUndefined(this.container);
-	/*:DOC container = <div style="height: 200px; width: 200px"></div>*/
+	/*:DOC += <div id="container" style="height: 200px; width: 200px"></div> */
+	this.container = document.getElementById('container');
 	assertNotUndefined(this.container);
 
 	var conf = merge({}, this.getBaseConfig(), this.getConfig());
@@ -97,6 +98,12 @@ ChartMemoryTest.prototype.tearDown = function () {
 		}
 		assertTrue(n + ' handler is still attached', innerDivContainer[domEvents[n]] === null || innerDivContainer[domEvents[n]] === undefined);
 	}
+
+	// Remove the container added to the document.body in setUp.
+	assertNotUndefined(this.container);
+	document.body.removeChild(this.container);
+	this.container = undefined;
+	assertUndefined(this.container);
 
 	// Log any stray elements
 	elementMonitor.log();
