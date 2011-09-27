@@ -20,6 +20,9 @@ ChartMemoryTest.prototype.setUp = function () {
 	this.container = document.getElementById('container');
 	assertNotUndefined(this.container);
 
+	// Map the two element functions to call our own instead.
+	this.elementMonitor = new ElementMonitor(hasSVG ? SVGElement : VMLElement);
+
 	var conf = merge({}, this.getBaseConfig(), this.getConfig());
 
 	this.chart = new Chart(conf);
@@ -106,8 +109,10 @@ ChartMemoryTest.prototype.tearDown = function () {
 	assertUndefined(this.container);
 
 	// Log any stray elements
-	elementMonitor.log();
-	elementMonitor.reset();
+	this.elementMonitor.log();
+	this.elementMonitor.reset();
+	this.elementMonitor.disconnect(hasSVG ? SVGElement : VMLElement);
+	this.elementMonitor = undefined;
 };
 
 /**

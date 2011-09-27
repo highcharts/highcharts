@@ -31,6 +31,17 @@ function ElementMonitor(elementClass) {
 }
 
 /**
+ * Disconnects the ElementMonitor and stops monitoring create calls.
+ */
+ElementMonitor.prototype.disconnect = function (elementClass) {
+	var that = this;
+
+	// Restore the 'base' implementations
+	elementClass.prototype.init = elementClass.prototype.base_init;
+	elementClass.prototype.destroy = elementClass.prototype.base_destroy;
+};
+
+/**
  * Returns the id to use for the next object.
  */
 ElementMonitor.prototype.getId = function () {
@@ -134,6 +145,3 @@ ElementMonitor.prototype.reset = function () {
 	this.registry = {};
 	this.nextId = 0;
 };
-
-// Map the two element functions to call our own instead.
-var elementMonitor = hasSVG ? new ElementMonitor(SVGElement) : new ElementMonitor(VMLElement);
