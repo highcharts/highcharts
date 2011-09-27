@@ -389,8 +389,8 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		if (point.y >= y && point.y <= (y + boxHeight)) {
 			y = point.y + boxHeight - 5; // below
 		}
-	} else if (y + boxHeight > outerHeight) {
-		y = outerHeight - boxHeight - 5; // below
+	} else if (y + boxHeight > outerTop + outerHeight) {
+		y = outerTop + outerHeight - boxHeight - 5; // below
 	}
 
 	return {x: x, y: y};

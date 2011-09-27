@@ -501,8 +501,8 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		if (point.y >= y && point.y <= (y + boxHeight)) {
 			y = point.y + boxHeight - 5; // below
 		}
-	} else if (y + boxHeight > outerHeight) {
-		y = outerHeight - boxHeight - 5; // below
+	} else if (y + boxHeight > outerTop + outerHeight) {
+		y = outerTop + outerHeight - boxHeight - 5; // below
 	}
 
 	return {x: x, y: y};
@@ -4254,6 +4254,7 @@ function Chart(options, callback) {
 						plotWidth / categories.length) ||
 						(!horiz && plotWidth / 2),
 					css,
+					value = categories && defined(categories[pos]) ? categories[pos] : pos,
 					label = this.label;
 
 
@@ -4262,7 +4263,7 @@ function Chart(options, callback) {
 						isFirst: pos === tickPositions[0],
 						isLast: pos === tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: (categories && categories[pos] ? categories[pos] : pos)
+						value: isLog ? lin2log(value) : value
 					});
 
 
@@ -4354,6 +4355,9 @@ function Chart(options, callback) {
 						};
 						if (dashStyle) {
 							attribs.dashstyle = dashStyle;
+						}
+						if (major) {
+							attribs.zIndex = 1;
 						}
 						tick.gridLine = gridLine =
 							gridLineWidth ?
@@ -6614,7 +6618,7 @@ function Chart(options, callback) {
 									0
 								)
 								.attr({
-									fill: 'rgba(69,114,167,0.25)',
+									fill: optionsChart.selectionMarkerFill || 'rgba(69,114,167,0.25)',
 									zIndex: 7
 								})
 								.add();
@@ -6829,8 +6833,6 @@ function Chart(options, callback) {
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = options.itemHiddenStyle,
 			padding = pInt(style.padding),
-			rightPadding = 20,
-			//lineHeight = options.lineHeight || 16,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -7100,7 +7102,7 @@ function Chart(options, callback) {
 			bBox = li.getBBox();
 
 			itemWidth = item.legendItemWidth =
-				options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
+				options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding;
 			itemHeight = bBox.height;
 
 			// if the item exceeds the width, start a new line
@@ -8623,23 +8625,24 @@ Point.prototype = {
 			series = point.series,
 			chart = series.chart;
 
-		point.selected = selected = pick(selected, !point.selected);
+		selected = pick(selected, !point.selected);
 
-		//series.isDirty = true;
-		point.firePointEvent(selected ? 'select' : 'unselect');
-		point.setState(selected && SELECT_STATE);
-
-		// unselect all other points unless Ctrl or Cmd + click
-		if (!accumulate) {
-			each(chart.getSelectedPoints(), function (loopPoint) {
-				if (loopPoint.selected && loopPoint !== point) {
-					loopPoint.selected = false;
-					loopPoint.setState(NORMAL_STATE);
-					loopPoint.firePointEvent('unselect');
-				}
-			});
-		}
-
+		// fire the event with the defalut handler
+		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
+			point.selected = selected;
+			point.setState(selected && SELECT_STATE);
+	
+			// unselect all other points unless Ctrl or Cmd + click
+			if (!accumulate) {
+				each(chart.getSelectedPoints(), function (loopPoint) {
+					if (loopPoint.selected && loopPoint !== point) {
+						loopPoint.selected = false;
+						loopPoint.setState(NORMAL_STATE);
+						loopPoint.firePointEvent('unselect');
+					}
+				});
+			}
+		});
 	},
 
 	onMouseOver: function () {
@@ -9730,7 +9733,7 @@ Series.prototype = {
 					plotY = pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
 					align = options.align,
-					individualYDelta = yIsNull ? (point.y > 0 ? -6 : 12) : options.y;
+					individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
 
 				// get the string
 				str = options.formatter.call(point.getLabelConfig());
@@ -10267,7 +10270,7 @@ Series.prototype = {
 					fill: NONE,
 					'stroke-width' : options.lineWidth + 2 * snap,
 					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: 1
+					zIndex: options.zIndex || 1
 				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {
@@ -10605,7 +10608,8 @@ var ColumnSeries = extendClass(Series, {
 			shapeArgs,
 			tracker,
 			trackerLabel = +new Date(),
-			cursor = series.options.cursor,
+			options = series.options,
+			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			rel;
 
@@ -10624,7 +10628,7 @@ var ColumnSeries = extendClass(Series, {
 							isTracker: trackerLabel,
 							fill: TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN,
-							zIndex: 1
+							zIndex: options.zIndex || 1
 						})
 						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
 							rel = event.relatedTarget || event.fromElement;
@@ -10635,7 +10639,7 @@ var ColumnSeries = extendClass(Series, {
 
 						})
 						.on('mouseout', function (event) {
-							if (!series.options.stickyTracking) {
+							if (!options.stickyTracking) {
 								rel = event.relatedTarget || event.toElement;
 								if (attr(rel, 'isTracker') !== trackerLabel) {
 									series.onMouseOut();
@@ -11192,9 +11196,11 @@ var PieSeries = extendClass(Series, {
 
 		// arrange points for detection collision
 		each(data, function (point) {
-			halves[
-				point.labelPos[7] < mathPI / 2 ? 0 : 1
-			].push(point);
+			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
+				halves[
+					point.labelPos[7] < mathPI / 2 ? 0 : 1
+				].push(point);
+			}
 		});
 		halves[1].reverse();
 

@@ -213,6 +213,7 @@ function Chart(options, callback) {
 						plotWidth / categories.length) ||
 						(!horiz && plotWidth / 2),
 					css,
+					value = categories && defined(categories[pos]) ? categories[pos] : pos,
 					label = this.label;
 
 
@@ -221,7 +222,7 @@ function Chart(options, callback) {
 						isFirst: pos === tickPositions[0],
 						isLast: pos === tickPositions[tickPositions.length - 1],
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: (categories && categories[pos] ? categories[pos] : pos)
+						value: isLog ? lin2log(value) : value
 					});
 
 
@@ -313,6 +314,9 @@ function Chart(options, callback) {
 						};
 						if (dashStyle) {
 							attribs.dashstyle = dashStyle;
+						}
+						if (major) {
+							attribs.zIndex = 1;
 						}
 						tick.gridLine = gridLine =
 							gridLineWidth ?
@@ -2573,7 +2577,7 @@ function Chart(options, callback) {
 									0
 								)
 								.attr({
-									fill: 'rgba(69,114,167,0.25)',
+									fill: optionsChart.selectionMarkerFill || 'rgba(69,114,167,0.25)',
 									zIndex: 7
 								})
 								.add();
@@ -2788,8 +2792,6 @@ function Chart(options, callback) {
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = options.itemHiddenStyle,
 			padding = pInt(style.padding),
-			rightPadding = 20,
-			//lineHeight = options.lineHeight || 16,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -3059,7 +3061,7 @@ function Chart(options, callback) {
 			bBox = li.getBBox();
 
 			itemWidth = item.legendItemWidth =
-				options.itemWidth || symbolWidth + symbolPadding + bBox.width + rightPadding;
+				options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding;
 			itemHeight = bBox.height;
 
 			// if the item exceeds the width, start a new line
