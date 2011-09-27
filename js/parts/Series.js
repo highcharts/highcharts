@@ -1878,7 +1878,7 @@ Series.prototype = {
 		// show or hide trackers
 		if (seriesTracker) {
 			seriesTracker[showOrHide]();
-		} else {
+		} else if (points) {
 			i = points.length;
 			while (i--) {
 				point = points[i];
