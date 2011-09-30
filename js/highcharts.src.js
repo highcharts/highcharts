@@ -479,12 +479,15 @@ ChartCounters.prototype = {
  */
 function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHeight, point) {
 	// keep the box within the chart area
-	var x = point.x - boxWidth + outerLeft - 25,
-		y = point.y - boxHeight + outerTop + 10;
+	var pointX = point.x,
+		pointY = point.y,
+		x = pointX - boxWidth + outerLeft - 25,
+		y = pointY - boxHeight + outerTop + 10,
+		alignedRight;
 
 	// it is too far to the left, adjust it
 	if (x < 7) {
-		x = outerLeft + point.x + 15;
+		x = outerLeft + pointX + 15;
 	}
 
 	// Test to see if the tooltip is to far to the right,
@@ -492,14 +495,15 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 	if ((x + boxWidth) > (outerLeft + outerWidth)) {
 		x -= (x + boxWidth) - (outerLeft + outerWidth);
 		y -= boxHeight;
+		alignedRight = true;
 	}
 
 	if (y < 5) {
 		y = 5; // above
 
 		// If the tooltip is still covering the point, move it below instead
-		if (point.y >= y && point.y <= (y + boxHeight)) {
-			y = point.y + boxHeight - 5; // below
+		if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
+			y = pointY + boxHeight - 5; // below
 		}
 	} else if (y + boxHeight > outerTop + outerHeight) {
 		y = outerTop + outerHeight - boxHeight - 5; // below
