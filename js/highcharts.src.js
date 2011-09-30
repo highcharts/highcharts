@@ -4150,26 +4150,25 @@ function Chart(options, callback) {
 	 * Create a new axis object
 	 * @param {Object} options
 	 */
-	function Axis(options) {
+	function Axis(userOptions) {
 
 		// Define variables
-		var isXAxis = options.isX,
-			opposite = options.opposite, // needed in setOptions
+		var isXAxis = userOptions.isX,
+			opposite = userOptions.opposite, // needed in setOptions
 			horiz = inverted ? !isXAxis : isXAxis,
 			side = horiz ?
 				(opposite ? 0 : 2) : // top : bottom
 				(opposite ? 1 : 3),  // right : left
-			stacks = {};
+			stacks = {},
 
-
-		options = merge(
+			options = merge(
 				isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
 				[defaultTopAxisOptions, defaultRightAxisOptions,
 					defaultBottomAxisOptions, defaultLeftAxisOptions][side],
-				options
-			);
+				userOptions
+			),
 
-		var axis = this,
+			axis = this,
 			axisTitle,
 			type = options.type,
 			isDatetimeAxis = type === 'datetime',
@@ -4382,7 +4381,10 @@ function Chart(options, callback) {
 									.attr(attribs).add(gridGroup) :
 								null;
 					}
-					if (gridLine && gridLinePath) {
+
+					// If the parameter 'old' is set, the current call will be followed
+					// by another call, therefore do not do any animations this time
+					if (!old && gridLine && gridLinePath) {
 						gridLine.animate({
 							d: gridLinePath
 						});
@@ -5815,7 +5817,7 @@ function Chart(options, callback) {
 		 */
 		function setCategories(newCategories, doRedraw) {
 				// set the categories
-				axis.categories = categories = newCategories;
+				axis.categories = userOptions.categories = categories = newCategories;
 
 				// force reindexing tooltips
 				each(associatedSeries, function (series) {
@@ -6662,9 +6664,12 @@ function Chart(options, callback) {
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
 			// outside the plotarea, hide the tooltip
 			addEvent(doc, 'mousemove', function (e) {
+				var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+					pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
 				if (chartPosition &&
-						!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
-							e.pageY - chartPosition.top - plotTop)) {
+						!isInsidePlot(pageX - chartPosition.left - plotLeft,
+							pageY - chartPosition.top - plotTop)) {
 					resetTracker();
 				}
 			});
