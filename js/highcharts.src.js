@@ -533,6 +533,25 @@ function stableSort(arr, sortFunction) {
 }
 
 /**
+ * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
+ * It loops all properties and invokes destroy if there is a destroy method. The property is
+ * then delete'ed.
+ */
+function destroyObjectProperties(obj) {
+	var n;
+	for (n in obj) {
+		// If the object is non-null and destroy is defined
+		if (obj[n] && obj[n].destroy) {
+			// Invoke the destroy
+			obj[n].destroy();
+		}
+
+		// Delete the property from the object.
+		delete obj[n];
+	}
+}
+
+/**
  * Path interpolation algorithm used across adapters
  */
 pathAnim = {
@@ -4443,13 +4462,7 @@ function Chart(options, callback) {
 			 * Destructor for the tick prototype
 			 */
 			destroy: function () {
-				var tick = this,
-					n;
-				for (n in tick) {
-					if (tick[n] && tick[n].destroy) {
-						tick[n].destroy();
-					}
-				}
+				destroyObjectProperties(this);
 			}
 		};
 
@@ -4617,14 +4630,10 @@ function Chart(options, callback) {
 		 * Remove the plot line or band
 		 */
 		destroy: function () {
-			var obj = this,
-				n;
-			for (n in obj) {
-				if (obj[n] && obj[n].destroy) {
-					obj[n].destroy(); // destroy SVG wrappers
-				}
-				delete obj[n];
-			}
+			var obj = this;
+
+			destroyObjectProperties(obj);
+
 			// remove it from the lookup
 			erase(plotLinesAndBands, obj);
 		}
@@ -4660,9 +4669,7 @@ function Chart(options, callback) {
 
 		StackItem.prototype = {
 			destroy: function () {
-				if (this.label) {
-					this.label = this.label.destroy();
-				}
+				destroyObjectProperties(this);
 			},
 
 			/**
@@ -5851,11 +5858,7 @@ function Chart(options, callback) {
 			}
 
 			each([ticks, minorTicks, alternateBands, plotLinesAndBands], function (coll) {
-				var pos;
-				for (pos in coll) {
-					coll[pos].destroy();
-					delete coll[pos];
-				}
+				destroyObjectProperties(coll);
 			});
 
 			if (axisLine) {

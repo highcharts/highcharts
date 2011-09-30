@@ -400,13 +400,7 @@ function Chart(options, callback) {
 			 * Destructor for the tick prototype
 			 */
 			destroy: function () {
-				var tick = this,
-					n;
-				for (n in tick) {
-					if (tick[n] && tick[n].destroy) {
-						tick[n].destroy();
-					}
-				}
+				destroyObjectProperties(this);
 			}
 		};
 
@@ -574,14 +568,10 @@ function Chart(options, callback) {
 		 * Remove the plot line or band
 		 */
 		destroy: function () {
-			var obj = this,
-				n;
-			for (n in obj) {
-				if (obj[n] && obj[n].destroy) {
-					obj[n].destroy(); // destroy SVG wrappers
-				}
-				delete obj[n];
-			}
+			var obj = this;
+
+			destroyObjectProperties(obj);
+
 			// remove it from the lookup
 			erase(plotLinesAndBands, obj);
 		}
@@ -617,9 +607,7 @@ function Chart(options, callback) {
 
 		StackItem.prototype = {
 			destroy: function () {
-				if (this.label) {
-					this.label = this.label.destroy();
-				}
+				destroyObjectProperties(this);
 			},
 
 			/**
@@ -1808,11 +1796,7 @@ function Chart(options, callback) {
 			}
 
 			each([ticks, minorTicks, alternateBands, plotLinesAndBands], function (coll) {
-				var pos;
-				for (pos in coll) {
-					coll[pos].destroy();
-					delete coll[pos];
-				}
+				destroyObjectProperties(coll);
 			});
 
 			if (axisLine) {

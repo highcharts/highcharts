@@ -9,15 +9,15 @@ UtilTest.prototype.testExtend = function () {
 	// test extend of undefined
 	result = extend(undefined, extra);
 	assertEquals("Extended undefined", 2, this.countMembers(result));
-	
+
 	// test extend of null
 	result = extend(null, extra);
 	assertEquals("Extended null", 2, this.countMembers(result));
-	
+
 	// test extend of empty
 	result = extend(empty, extra);
 	assertEquals("Extended empty object", 2, this.countMembers(result));
-	
+
 	// test extend of same object
 	result = extend(extra, extra);
 	assertEquals("Extended object with object", 2, this.countMembers(result));
@@ -32,7 +32,7 @@ UtilTest.prototype.countMembers = function (obj) {
 	for (var member in obj) {
 		count++;
 	}
-	
+
 	return count;
 };
 
@@ -111,11 +111,11 @@ UtilTest.prototype.testLin2Log = function () {
 
 /**
  * Tests if a point is inside a rectangle
- * The rectangle coordinate system is: x and y specifies the _top_ left corner width is the width and height is the height. 
+ * The rectangle coordinate system is: x and y specifies the _top_ left corner width is the width and height is the height.
  */
 UtilTest.prototype.pointInRect = function (x, y, rect) {
-	var inside = 
-		x >= rect.x && x <= (rect.x + rect.width) && 
+	var inside =
+		x >= rect.x && x <= (rect.x + rect.width) &&
 		y >= rect.y && y <= (rect.y + rect.height)
 	return inside;
 };
@@ -200,4 +200,40 @@ UtilTest.prototype.testStableSort = function () {
 
 	assertEquals('Stable sort in action', 'ABCDEFGHIJK', result.join(''));
 	assertUndefined('Stable sort index should not be there', arr[0].ss_i);
+};
+
+
+/**
+ * Tests that destroyObjectProperties calls the destroy method on properties before delete.
+ */
+UtilTest.prototype.testDestroyObjectProperties = function () {
+	var testObject = {}, // Test object with the properties to destroy
+		destroyCount = 0; // Number of destroy calls made
+
+	/**
+	 * Class containing a destroy method.
+	 */
+	function DummyWithDestroy() {};
+
+	DummyWithDestroy.prototype.destroy = function () {
+		destroyCount++;
+		return null;
+	};
+
+	// Setup three properties with destroy methods
+	testObject.rect = new DummyWithDestroy();
+	testObject.line = new DummyWithDestroy();
+	testObject.label = new DummyWithDestroy();
+
+	// And one without
+	testObject.noDestroy = {};
+
+	// Destroy them all
+	destroyObjectProperties(testObject);
+
+	assertEquals('Number of destroyed elements', 3, destroyCount);
+	assertUndefined('Property should be undefined', testObject.rect);
+	assertUndefined('Property should be undefined', testObject.line);
+	assertUndefined('Property should be undefined', testObject.label);
+	assertUndefined('Property should be undefined', testObject.noDestroy);
 };
