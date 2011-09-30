@@ -647,9 +647,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	 * Destroys the renderer and its allocated members.
 	 */
 	destroy: function () {
-		var renderer = this;
-
-		return SVGRenderer.prototype.destroy.apply(renderer);
+		return SVGRenderer.prototype.destroy.apply(this);
 	},
 
 	/**

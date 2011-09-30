@@ -1780,45 +1780,35 @@ function Chart(options, callback) {
 		 * Destroys an Axis instance.
 		 */
 		function destroy() {
-			var stackKey, oneStack, stackCategory;
+			var stackKey;
 
 			// Remove the events
 			removeEvent(axis);
 
 			// Destroy each stack total
 			for (stackKey in stacks) {
-				oneStack = stacks[stackKey];
-				for (stackCategory in oneStack) {
-					oneStack[stackCategory].destroy();
-					oneStack[stackCategory] = null;
-				}
+				destroyObjectProperties(stacks[stackKey]);
 
 				stacks[stackKey] = null;
 			}
 
+			// Destroy stack total group
 			if (axis.stackTotalGroup) {
 				axis.stackTotalGroup = axis.stackTotalGroup.destroy();
 			}
 
+			// Destroy collections
 			each([ticks, minorTicks, alternateBands, plotLinesAndBands], function (coll) {
 				destroyObjectProperties(coll);
 			});
 
-			if (axisLine) {
-				axisLine = axisLine.destroy();
-			}
-
-			if (axisGroup) {
-				axisGroup = axisGroup.destroy();
-			}
-
-			if (gridGroup) {
-				gridGroup = gridGroup.destroy();
-			}
-
-			if (axisTitle) {
-				axisTitle = axisTitle.destroy();
-			}
+			// Destroy local variables
+			each([axisLine, axisGroup, gridGroup, axisTitle], function (obj) {
+				if (obj) {
+					obj.destroy();
+				}
+			});
+			axisLine = axisGroup = gridGroup = axisTitle = null;
 		}
 
 
@@ -1967,17 +1957,13 @@ function Chart(options, callback) {
 				}
 			});
 
-			if (box) {
-				box = box.destroy();
-			}
-
-			if (label) {
-				label = label.destroy();
-			}
-
-			if (group) {
-				group = group.destroy();
-			}
+			// Destroy and clear local variables
+			each([box, label, group], function (obj) {
+				if (obj) {
+					obj.destroy();
+				}
+			});
+			box = label = group = null;
 		}
 
 		/**

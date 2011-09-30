@@ -78,7 +78,7 @@ Point.prototype = {
 			prop;
 
 		series.chart.pointCount--;
-		
+
 		if (hoverPoints) {
 			point.setState();
 			erase(hoverPoints, point);
@@ -86,7 +86,7 @@ Point.prototype = {
 		if (point === series.chart.hoverPoint) {
 			point.onMouseOut();
 		}
-		
+
 
 		// remove all events
 		removeEvent(point);
@@ -140,7 +140,7 @@ Point.prototype = {
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
 			point.selected = selected;
 			point.setState(selected && SELECT_STATE);
-	
+
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
 				each(chart.getSelectedPoints(), function (loopPoint) {
@@ -1143,8 +1143,7 @@ Series.prototype = {
 		// If this series clipRect is not the global one (which is removed on chart.destroy) we
 		// destroy it here.
 		if (series.clipRect && series.clipRect !== chart.clipRect) {
-			series.clipRect.destroy();
-			series.clipRect = null;
+			series.clipRect = series.clipRect.destroy();
 		}
 
 		// destroy all SVGElements associated to the series
