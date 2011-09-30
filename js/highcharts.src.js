@@ -5842,6 +5842,9 @@ function Chart(options, callback) {
 		function destroy() {
 			var stackKey, oneStack, stackCategory;
 
+			// Remove the events
+			removeEvent(axis);
+
 			// Destroy each stack total
 			for (stackKey in stacks) {
 				oneStack = stacks[stackKey];
@@ -8235,7 +8238,6 @@ function Chart(options, callback) {
 		// Destroy axes
 		i = axes.length;
 		while (i--) {
-			removeEvent(axes[i]);
 			axes[i] = axes[i].destroy();
 		}
 
