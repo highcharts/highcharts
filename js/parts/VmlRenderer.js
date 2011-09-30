@@ -360,7 +360,7 @@ var VMLElement = extendClass(SVGElement, {
 			wrapper.destroyClip();
 		}
 
-		SVGElement.prototype.destroy.apply(wrapper);
+		return SVGElement.prototype.destroy.apply(wrapper);
 	},
 
 	/**
@@ -649,7 +649,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	destroy: function () {
 		var renderer = this;
 
-		SVGRenderer.prototype.destroy.apply(renderer);
+		return SVGRenderer.prototype.destroy.apply(renderer);
 	},
 
 	/**

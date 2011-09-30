@@ -2309,6 +2309,8 @@ SVGRenderer.prototype = {
 			renderer.defs = null;
 		}
 /*		renderer.alignedObjects = null;*/
+
+		return null;
 	},
 
 	/**
@@ -3314,7 +3316,7 @@ var VMLElement = extendClass(SVGElement, {
 			wrapper.destroyClip();
 		}
 
-		SVGElement.prototype.destroy.apply(wrapper);
+		return SVGElement.prototype.destroy.apply(wrapper);
 	},
 
 	/**
@@ -3603,7 +3605,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	destroy: function () {
 		var renderer = this;
 
-		SVGRenderer.prototype.destroy.apply(renderer);
+		return SVGRenderer.prototype.destroy.apply(renderer);
 	},
 
 	/**
@@ -4659,8 +4661,7 @@ function Chart(options, callback) {
 		StackItem.prototype = {
 			destroy: function () {
 				if (this.label) {
-					this.label.destroy();
-					this.label = null;
+					this.label = this.label.destroy();
 				}
 			},
 
@@ -5832,7 +5833,7 @@ function Chart(options, callback) {
 		 * Destroys an Axis instance.
 		 */
 		function destroy() {
-			var stackKey, stackCategory;
+			var stackKey, oneStack, stackCategory;
 
 			// Destroy each stack total
 			for (stackKey in stacks) {
@@ -5846,8 +5847,7 @@ function Chart(options, callback) {
 			}
 
 			if (axis.stackTotalGroup) {
-				axis.stackTotalGroup.destroy();
-				axis.stackTotalGroup = null;
+				axis.stackTotalGroup = axis.stackTotalGroup.destroy();
 			}
 
 			each([ticks, minorTicks, alternateBands, plotLinesAndBands], function (coll) {
@@ -5859,23 +5859,19 @@ function Chart(options, callback) {
 			});
 
 			if (axisLine) {
-				axisLine.destroy();
-				axisLine = null;
+				axisLine = axisLine.destroy();
 			}
 
 			if (axisGroup) {
-				axisGroup.destroy();
-				axisGroup = null;
+				axisGroup = axisGroup.destroy();
 			}
 
 			if (gridGroup) {
-				gridGroup.destroy();
-				gridGroup = null;
+				gridGroup = gridGroup.destroy();
 			}
 
 			if (axisTitle) {
-				axisTitle.destroy();
-				axisTitle = null;
+				axisTitle = axisTitle.destroy();
 			}
 		}
 
@@ -6026,18 +6022,15 @@ function Chart(options, callback) {
 			});
 
 			if (box) {
-				box.destroy();
-				box = null;
+				box = box.destroy();
 			}
 
 			if (label) {
-				label.destroy();
-				label = null;
+				label = label.destroy();
 			}
 
 			if (group) {
-				group.destroy();
-				group = null;
+				group = group.destroy();
 			}
 		}
 
@@ -6753,8 +6746,7 @@ function Chart(options, callback) {
 		function destroy() {
 			// Destroy the tracker group element
 			if (chart.trackerGroup) {
-				chart.trackerGroup.destroy();
-				chart.trackerGroup = trackerGroup = null;
+				chart.trackerGroup = trackerGroup = chart.trackerGroup.destroy();
 			}
 
 			removeEvent(doc, 'mousemove');
@@ -6938,13 +6930,11 @@ function Chart(options, callback) {
 		 */
 		function destroy() {
 			if (box) {
-				box.destroy();
-				box = null;
+				box = box.destroy();
 			}
 
 			if (legendGroup) {
-				legendGroup.destroy();
-				legendGroup = null;
+				legendGroup = legendGroup.destroy();
 			}
 		}
 
@@ -7687,8 +7677,7 @@ function Chart(options, callback) {
 				chartTitleOptions = arr[2];
 
 			if (title && titleOptions) {
-				title.destroy(); // remove old
-				title = null;
+				title = title.destroy(); // remove old
 			}
 			if (chartTitleOptions && chartTitleOptions.text && !title) {
 				chart[name] = renderer.text(
@@ -8244,32 +8233,27 @@ function Chart(options, callback) {
 		i = axes.length;
 		while (i--) {
 			removeEvent(axes[i]);
-			axes[i].destroy();
-			axes[i] = null;
+			axes[i] = axes[i].destroy();
 		}
 
 		// destroy each series
 		i = series.length;
 		while (i--) {
-			series[i].destroy();
-			series[i] = null;
+			series[i] = series[i].destroy();
 		}
 
 		// Destroy the chart series group element
 		if (chart.seriesGroup) {
-			chart.seriesGroup.destroy();
-			chart.seriesGroup = null;
+			chart.seriesGroup = chart.seriesGroup.destroy();
 		}
 
 		// Destroy clip rect
 		if (chart.clipRect) {
-			chart.clipRect.destroy();
-			chart.clipRect = null;
+			chart.clipRect = chart.clipRect.destroy();
 		}
 
 		if (chart.credits) {
-			chart.credits.destroy();
-			chart.credits = null;
+			chart.credits = chart.credits.destroy();
 		}
 
 		// Destroy titles
@@ -8277,39 +8261,33 @@ function Chart(options, callback) {
 			var title = chart[name];
 
 			if (title) {
-				title.destroy();
-				chart[name] = null;
+				chart[name] = title.destroy();
 			}
 		});
 
 		// Destroy the chart background element
 		if (chartBackground) {
-			chartBackground.destroy();
-			chartBackground = null;
+			chartBackground = chartBackground.destroy();
 		}
 
 		// Destroy the legend
 		if (legend) {
-			legend.destroy();
-			legend = null;
+			legend = legend.destroy();
 		}
 
 		// Destroy the tooltip
 		if (tooltip) {
-			tooltip.destroy();
-			tooltip = null;
+			tooltip = tooltip.destroy();
 		}
 
 		// Destroy the MouseTracker object
 		if (chart.tracker) {
-			chart.tracker.destroy();
-			chart.tracker = tracker = null;
+			chart.tracker = tracker = chart.tracker.destroy();
 		}
 
 		// Destroy the renderer
 		if (renderer) {
-			renderer.destroy();
-			renderer = null;
+			renderer = renderer.destroy();
 		}
 
 		// remove container and all SVG

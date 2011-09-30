@@ -785,6 +785,8 @@ SVGRenderer.prototype = {
 			renderer.defs = null;
 		}
 /*		renderer.alignedObjects = null;*/
+
+		return null;
 	},
 
 	/**
