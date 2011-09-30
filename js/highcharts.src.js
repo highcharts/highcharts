@@ -8235,65 +8235,35 @@ function Chart(options, callback) {
 		removeEvent(win, 'unload', destroy);
 		removeEvent(chart);
 
+		// ==== Destroy collections:
 		// Destroy axes
 		i = axes.length;
 		while (i--) {
 			axes[i] = axes[i].destroy();
 		}
 
-		// destroy each series
+		// Destroy each series
 		i = series.length;
 		while (i--) {
 			series[i] = series[i].destroy();
 		}
 
-		// Destroy the chart series group element
-		if (chart.seriesGroup) {
-			chart.seriesGroup = chart.seriesGroup.destroy();
-		}
+		// ==== Destroy chart properties:
+		each(['title', 'subtitle', 'seriesGroup', 'clipRect', 'credits', 'tracker'], function (name) {
+			var prop = chart[name];
 
-		// Destroy clip rect
-		if (chart.clipRect) {
-			chart.clipRect = chart.clipRect.destroy();
-		}
-
-		if (chart.credits) {
-			chart.credits = chart.credits.destroy();
-		}
-
-		// Destroy titles
-		each(['title', 'subtitle'], function (name) {
-			var title = chart[name];
-
-			if (title) {
-				chart[name] = title.destroy();
+			if (prop) {
+				chart[name] = prop.destroy();
 			}
 		});
 
-		// Destroy the chart background element
-		if (chartBackground) {
-			chartBackground = chartBackground.destroy();
-		}
-
-		// Destroy the legend
-		if (legend) {
-			legend = legend.destroy();
-		}
-
-		// Destroy the tooltip
-		if (tooltip) {
-			tooltip = tooltip.destroy();
-		}
-
-		// Destroy the MouseTracker object
-		if (chart.tracker) {
-			chart.tracker = tracker = chart.tracker.destroy();
-		}
-
-		// Destroy the renderer
-		if (renderer) {
-			renderer = renderer.destroy();
-		}
+		// ==== Destroy local variables:
+		each([chartBackground, legend, tooltip, renderer, tracker], function (obj) {
+			if (obj) {
+				obj.destroy();
+			}
+		});
+		chartBackground = legend = tooltip = renderer = tracker = null;
 
 		// remove container and all SVG
 		if (container) { // can break in IE when destroyed before finished loading
