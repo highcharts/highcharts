@@ -2167,15 +2167,13 @@ SVGElement.prototype = {
 		stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
-			wrapper.clipPath.destroy();
-			wrapper.clipPath = null;
+			wrapper.clipPath = wrapper.clipPath.destroy();
 		}
 
 		// Destroy stops in case this is a gradient object
 		if (wrapper.stops) {
 			for (i = 0; i < wrapper.stops.length; i++) {
-				wrapper.stops[i].destroy();
-				wrapper.stops[i] = null;
+				wrapper.stops[i] = wrapper.stops[i].destroy();
 			}
 			wrapper.stops = null;
 		}
@@ -2309,14 +2307,12 @@ SVGRenderer.prototype = {
 		var renderer = this,
 			i;
 		renderer.box = null;
-		renderer.boxWrapper.destroy();
-		renderer.boxWrapper = null;
+		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
 		if (renderer.gradients) { // gradients are null in VMLRenderer
 			for (i = 0; i < renderer.gradients.length; i++) {
-				renderer.gradients[i].destroy();
-				renderer.gradients[i] = null;
+				renderer.gradients[i] = renderer.gradients[i].destroy();
 			}
 			renderer.gradients = null;
 		}
@@ -2324,10 +2320,10 @@ SVGRenderer.prototype = {
 		// Defs are null in VMLRenderer
 		// Otherwise, destroy them here.
 		if (renderer.defs) {
-			renderer.defs.destroy();
-			renderer.defs = null;
+			renderer.defs = renderer.defs.destroy();
 		}
-/*		renderer.alignedObjects = null;*/
+
+		renderer.alignedObjects = null;
 
 		return null;
 	},
@@ -8275,11 +8271,6 @@ function Chart(options, callback) {
 
 			// IE6 leak
 			container = null;
-		}
-
-		// IE7 leak
-		if (renderer) { // can break in IE when destroyed before finished loading
-			renderer.alignedObjects = null;
 		}
 
 		// memory and CPU leak

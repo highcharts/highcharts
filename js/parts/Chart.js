@@ -4215,11 +4215,6 @@ function Chart(options, callback) {
 			container = null;
 		}
 
-		// IE7 leak
-		if (renderer) { // can break in IE when destroyed before finished loading
-			renderer.alignedObjects = null;
-		}
-
 		// memory and CPU leak
 		clearInterval(tooltipInterval);
 
