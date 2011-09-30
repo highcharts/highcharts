@@ -325,7 +325,10 @@ function Chart(options, callback) {
 									.attr(attribs).add(gridGroup) :
 								null;
 					}
-					if (gridLine && gridLinePath) {
+
+					// If the parameter 'old' is set, the current call will be followed
+					// by another call, therefore do not do any animations this time
+					if (!old && gridLine && gridLinePath) {
 						gridLine.animate({
 							d: gridLinePath
 						});
