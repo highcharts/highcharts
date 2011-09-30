@@ -4072,26 +4072,25 @@ function Chart(options, callback) {
 	 * @param {Object} chart
 	 * @param {Object} options
 	 */
-	function Axis(chart, options) {
+	function Axis(chart, userOptions) {
 
 		// Define variables
-		var isXAxis = options.isX,
-			opposite = options.opposite, // needed in setOptions
+		var isXAxis = userOptions.isX,
+			opposite = userOptions.opposite, // needed in setOptions
 			horiz = inverted ? !isXAxis : isXAxis,
 			side = horiz ?
 				(opposite ? 0 : 2) : // top : bottom
 				(opposite ? 1 : 3),  // right : left
-			stacks = {};
+			stacks = {},
 
-
-		options = merge(
+			options = merge(
 				isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
 				[defaultTopAxisOptions, defaultRightAxisOptions,
 					defaultBottomAxisOptions, defaultLeftAxisOptions][side],
-				options
-			);
+				userOptions
+			),
 
-		var axis = this,
+			axis = this,
 			axisTitle,
 			type = options.type,
 			isDatetimeAxis = type === 'datetime',
@@ -5747,7 +5746,7 @@ function Chart(options, callback) {
 		 */
 		function setCategories(newCategories, doRedraw) {
 				// set the categories
-				axis.categories = categories = newCategories;
+				axis.categories = userOptions.categories = categories = newCategories;
 
 				// force reindexing tooltips
 				each(associatedSeries, function (series) {
