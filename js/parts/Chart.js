@@ -2439,6 +2439,20 @@ function Chart(options, callback) {
 		}
 
 		/**
+		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
+		 */
+		function hideTooltipOnMouseMove(e) {
+			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
+			if (chartPosition &&
+					!isInsidePlot(pageX - chartPosition.left - plotLeft,
+						pageY - chartPosition.top - plotTop)) {
+				resetTracker();
+			}
+		}
+
+		/**
 		 * Set the JS events on the container element
 		 */
 		function setDOMEvents() {
@@ -2591,17 +2605,7 @@ function Chart(options, callback) {
 			// issue #149 workaround
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
 			// outside the plotarea, hide the tooltip
-			addEvent(doc, 'mousemove', function (e) {
-				var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
-					pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
-
-				if (chartPosition &&
-						!isInsidePlot(pageX - chartPosition.left - plotLeft,
-							pageY - chartPosition.top - plotTop)) {
-					resetTracker();
-				}
-			});
-
+			addEvent(doc, 'mousemove', hideTooltipOnMouseMove);
 
 			container.ontouchstart = function (e) {
 				// For touch devices, use touchmove to zoom
@@ -2684,7 +2688,7 @@ function Chart(options, callback) {
 				chart.trackerGroup = trackerGroup = chart.trackerGroup.destroy();
 			}
 
-			removeEvent(doc, 'mousemove');
+			removeEvent(doc, 'mousemove', hideTooltipOnMouseMove);
 			container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 		}
 
@@ -3843,6 +3847,15 @@ function Chart(options, callback) {
 	}
 
 	/**
+	 * Fires endResize event on chart instance.
+	 */
+	function fireEndResize() {
+		fireEvent(chart, 'endResize', null, function () {
+			isResizing -= 1;
+		});
+	}
+
+	/**
 	 * Resize the chart to a given width and height
 	 * @param {Number} width
 	 * @param {Number} height
@@ -3906,15 +3919,9 @@ function Chart(options, callback) {
 		// fire endResize and set isResizing back
 		// If animation is disabled, fire without delay
 		if (globalAnimation === false) {
-			fireEvent(chart, 'endResize', null, function () {
-				isResizing -= 1;
-			});
+			fireEndResize();
 		} else { // else set a timeout with the animation duration
-			setTimeout(function () {
-				fireEvent(chart, 'endResize', null, function () {
-					isResizing -= 1;
-				});
-			}, (globalAnimation && globalAnimation.duration) || 500);
+			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
 		}
 	};
 

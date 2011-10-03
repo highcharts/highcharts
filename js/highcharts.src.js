@@ -2305,22 +2305,24 @@ SVGRenderer.prototype = {
 	 */
 	destroy: function () {
 		var renderer = this,
-			i;
+			i,
+			rendererGradients = renderer.gradients,
+			rendererDefs = renderer.defs;
 		renderer.box = null;
 		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
-		if (renderer.gradients) { // gradients are null in VMLRenderer
-			for (i = 0; i < renderer.gradients.length; i++) {
-				renderer.gradients[i] = renderer.gradients[i].destroy();
+		if (rendererGradients) { // gradients are null in VMLRenderer
+			for (i = 0; i < rendererGradients.length; i++) {
+				renderer.gradients[i] = rendererGradients[i].destroy();
 			}
 			renderer.gradients = null;
 		}
 
 		// Defs are null in VMLRenderer
 		// Otherwise, destroy them here.
-		if (renderer.defs) {
-			renderer.defs = renderer.defs.destroy();
+		if (rendererDefs) {
+			renderer.defs = rendererDefs.destroy();
 		}
 
 		renderer.alignedObjects = null;
@@ -3612,13 +3614,6 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 
 		}
-	},
-
-	/**
-	 * Destroys the renderer and its allocated members.
-	 */
-	destroy: function () {
-		return SVGRenderer.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -6495,6 +6490,20 @@ function Chart(options, callback) {
 		}
 
 		/**
+		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
+		 */
+		function hideTooltipOnMouseMove(e) {
+			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
+			if (chartPosition &&
+					!isInsidePlot(pageX - chartPosition.left - plotLeft,
+						pageY - chartPosition.top - plotTop)) {
+				resetTracker();
+			}
+		}
+
+		/**
 		 * Set the JS events on the container element
 		 */
 		function setDOMEvents() {
@@ -6647,17 +6656,7 @@ function Chart(options, callback) {
 			// issue #149 workaround
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
 			// outside the plotarea, hide the tooltip
-			addEvent(doc, 'mousemove', function (e) {
-				var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
-					pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
-
-				if (chartPosition &&
-						!isInsidePlot(pageX - chartPosition.left - plotLeft,
-							pageY - chartPosition.top - plotTop)) {
-					resetTracker();
-				}
-			});
-
+			addEvent(doc, 'mousemove', hideTooltipOnMouseMove);
 
 			container.ontouchstart = function (e) {
 				// For touch devices, use touchmove to zoom
@@ -6740,7 +6739,7 @@ function Chart(options, callback) {
 				chart.trackerGroup = trackerGroup = chart.trackerGroup.destroy();
 			}
 
-			removeEvent(doc, 'mousemove');
+			removeEvent(doc, 'mousemove', hideTooltipOnMouseMove);
 			container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 		}
 
@@ -7899,6 +7898,15 @@ function Chart(options, callback) {
 	}
 
 	/**
+	 * Fires endResize event on chart instance.
+	 */
+	function fireEndResize() {
+		fireEvent(chart, 'endResize', null, function () {
+			isResizing -= 1;
+		});
+	}
+
+	/**
 	 * Resize the chart to a given width and height
 	 * @param {Number} width
 	 * @param {Number} height
@@ -7962,15 +7970,9 @@ function Chart(options, callback) {
 		// fire endResize and set isResizing back
 		// If animation is disabled, fire without delay
 		if (globalAnimation === false) {
-			fireEvent(chart, 'endResize', null, function () {
-				isResizing -= 1;
-			});
+			fireEndResize();
 		} else { // else set a timeout with the animation duration
-			setTimeout(function () {
-				fireEvent(chart, 'endResize', null, function () {
-					isResizing -= 1;
-				});
-			}, (globalAnimation && globalAnimation.duration) || 500);
+			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
 		}
 	};
 
@@ -9542,6 +9544,7 @@ Series.prototype = {
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
+			seriesClipRect = series.clipRect,
 			//chartSeries = series.chart.series,
 			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
@@ -9565,8 +9568,8 @@ Series.prototype = {
 
 		// If this series clipRect is not the global one (which is removed on chart.destroy) we
 		// destroy it here.
-		if (series.clipRect && series.clipRect !== chart.clipRect) {
-			series.clipRect = series.clipRect.destroy();
+		if (seriesClipRect && seriesClipRect !== chart.clipRect) {
+			series.clipRect = seriesClipRect.destroy();
 		}
 
 		// destroy all SVGElements associated to the series
