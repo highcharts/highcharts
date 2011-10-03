@@ -71,7 +71,7 @@
 
         <!-- google js-test-driver -->
         <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
-        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.2.jar"/>
+        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3b.jar"/>
 
         <!-- This is the list of files for highcharts -->
         <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
