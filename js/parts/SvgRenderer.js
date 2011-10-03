@@ -762,22 +762,24 @@ SVGRenderer.prototype = {
 	 */
 	destroy: function () {
 		var renderer = this,
-			i;
+			i,
+			rendererGradients = renderer.gradients,
+			rendererDefs = renderer.defs;
 		renderer.box = null;
 		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
-		if (renderer.gradients) { // gradients are null in VMLRenderer
-			for (i = 0; i < renderer.gradients.length; i++) {
-				renderer.gradients[i] = renderer.gradients[i].destroy();
+		if (rendererGradients) { // gradients are null in VMLRenderer
+			for (i = 0; i < rendererGradients.length; i++) {
+				renderer.gradients[i] = rendererGradients[i].destroy();
 			}
 			renderer.gradients = null;
 		}
 
 		// Defs are null in VMLRenderer
 		// Otherwise, destroy them here.
-		if (renderer.defs) {
-			renderer.defs = renderer.defs.destroy();
+		if (rendererDefs) {
+			renderer.defs = rendererDefs.destroy();
 		}
 
 		renderer.alignedObjects = null;

@@ -644,13 +644,6 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	},
 
 	/**
-	 * Destroys the renderer and its allocated members.
-	 */
-	destroy: function () {
-		return SVGRenderer.prototype.destroy.apply(this);
-	},
-
-	/**
 	 * Define a clipping rectangle. In VML it is accomplished by storing the values
 	 * for setting the CSS style to all associated members.
 	 *

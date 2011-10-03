@@ -1119,6 +1119,7 @@ Series.prototype = {
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
+			seriesClipRect = series.clipRect,
 			//chartSeries = series.chart.series,
 			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
@@ -1142,8 +1143,8 @@ Series.prototype = {
 
 		// If this series clipRect is not the global one (which is removed on chart.destroy) we
 		// destroy it here.
-		if (series.clipRect && series.clipRect !== chart.clipRect) {
-			series.clipRect = series.clipRect.destroy();
+		if (seriesClipRect && seriesClipRect !== chart.clipRect) {
+			series.clipRect = seriesClipRect.destroy();
 		}
 
 		// destroy all SVGElements associated to the series
