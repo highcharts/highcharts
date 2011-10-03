@@ -4407,8 +4407,9 @@ function Chart(options, callback) {
 				label = plotLine.label,
 				width = options.width,
 				to = options.to,
-				toPath, // bands only
 				from = options.from,
+				value = options.value,				
+				toPath, // bands only
 				dashStyle = options.dashStyle,
 				svgElem = plotLine.svgElem,
 				path = [],
@@ -4423,9 +4424,16 @@ function Chart(options, callback) {
 				events = options.events,
 				attribs;
 
+			// logarithmic conversion
+			if (isLog) {
+				from = log2lin(from);
+				to = log2lin(to);
+				value = log2lin(value);
+			}
+
 			// plot line
 			if (width) {
-				path = getPlotLinePath(options.value, width);
+				path = getPlotLinePath(value, width);
 				attribs = {
 					stroke: color,
 					'stroke-width': width
@@ -6035,7 +6043,7 @@ function Chart(options, callback) {
 
 			// hide tooltip if the point falls outside the plot
 			show = shared || !point.series.isCartesian || isInsidePlot(x, y);
-
+			
 			// update the inner HTML
 			if (text === false || !show) {
 				hide();
