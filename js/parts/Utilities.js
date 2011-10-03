@@ -154,23 +154,6 @@ function css(el, styles) {
 	extend(el.style, styles);
 }
 
-/* *
- * Get CSS value on a given element
- * @param {Object} el DOM object
- * @param {String} styleProp Camel cased CSS propery
- * /
-function getStyle (el, styleProp) {
-	var ret,
-		CURRENT_STYLE = 'currentStyle',
-		GET_COMPUTED_STYLE = 'getComputedStyle';
-	if (el[CURRENT_STYLE]) {
-		ret = el[CURRENT_STYLE][styleProp];
-	} else if (win[GET_COMPUTED_STYLE]) {
-		ret = win[GET_COMPUTED_STYLE](el, null).getPropertyValue(hyphenate(styleProp));
-	}
-	return ret;
-}*/
-
 /**
  * Utility function to create element with attributes and styles
  * @param {Object} tag
