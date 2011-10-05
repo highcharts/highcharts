@@ -1301,14 +1301,16 @@ function Chart(options, callback) {
 			axisBottom = chartHeight - axisHeight - axisTop;
 			axisRight = chartWidth - axisWidth - axisLeft;
 
-			// expose to use in Series obejct
-			axis.left = axisLeft;
-			axis.top = axisTop;
-
 			// secondary values
 			axisLength = horiz ? axisWidth : axisHeight;
 			transA = axisLength / ((max - min) || 1);
 			transB = horiz ? axisLeft : axisBottom; // translation addend
+			
+			// expose to use in Series object and navigator
+			axis.left = axisLeft;
+			axis.top = axisTop;
+			axis.len = axisLength; 
+
 		}
 
 		/**
@@ -3822,7 +3824,9 @@ function Chart(options, callback) {
 		};
 
 		each(axes, function (axis) {
-			axis.setAxisSize();
+			if (axis.isDirty) {
+				axis.setAxisSize();
+			}
 		});
 	};
 

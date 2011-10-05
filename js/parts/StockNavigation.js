@@ -118,6 +118,7 @@ function Scroller(chart) {
 		navigatorOptions = chartOptions.navigator,
 		navigatorEnabled = navigatorOptions.enabled,
 		navigatorLeft,
+		navigatorWidth,
 		navigatorSeries,
 		scrollbarOptions = chartOptions.scrollbar,
 		scrollbarEnabled = scrollbarOptions.enabled,
@@ -145,8 +146,8 @@ function Scroller(chart) {
 		top = navigatorOptions.top || chart.chartHeight - height - scrollbarHeight - chartOptions.chart.spacingBottom,
 		halfOutline = outlineWidth / 2,
 		outlineTop,
-		plotLeft,
-		plotWidth,
+		scrollerLeft,
+		scrollerWidth,
 		rendered,
 		baseSeriesOption = navigatorOptions.baseSeries,
 		baseSeries = chart.series[baseSeriesOption] ||
@@ -207,7 +208,7 @@ function Scroller(chart) {
 				.add(handles[index]);
 		}
 
-		handles[index].translate(plotLeft + scrollbarHeight + parseInt(x, 10), top + height / 2 - 8);
+		handles[index].translate(scrollerLeft + scrollbarHeight + parseInt(x, 10), top + height / 2 - 8);
 	}
 
 	/**
@@ -247,7 +248,7 @@ function Scroller(chart) {
 		// adjust the right side button to the varying length of the scroll track
 		if (index) {
 			scrollbarButtons[index].attr({
-				translateX: plotWidth - scrollbarHeight
+				translateX: scrollerWidth - scrollbarHeight
 			});
 		}
 	}
@@ -265,11 +266,14 @@ function Scroller(chart) {
 			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
 			centerBarX;
 
-
 		outlineTop = top + halfOutline;
-		plotLeft = chart.plotLeft;
-		plotWidth = chart.plotWidth;
-		navigatorLeft = plotLeft + scrollbarHeight;
+		navigatorLeft = pick(
+			xAxis.left, 
+			chart.plotLeft + scrollbarHeight // in case of scrollbar only, without navigator
+		);
+		navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
+		scrollerLeft = navigatorLeft - scrollbarHeight;
+		scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
 
 		// Set the scroller x axis extremes to reflect the total. The navigator extremes
 		// should always be the extremes of the union of all series in the chart as 
@@ -368,18 +372,18 @@ function Scroller(chart) {
 			rightShade.attr({
 				x: navigatorLeft + zoomedMax,
 				y: top,
-				width: plotWidth - zoomedMax - 2 * scrollbarHeight,
+				width: navigatorWidth - zoomedMax,
 				height: height
 			});
 			outline.attr({ d: [
 				'M',
-				plotLeft, outlineTop, // left
+				scrollerLeft, outlineTop, // left
 				'L',
 				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
 				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
 				navigatorLeft + zoomedMax + halfOutline, outlineTop + outlineHeight, // lower right of z.r.
 				navigatorLeft + zoomedMax + halfOutline, outlineTop, // upper right of z.r.
-				plotLeft + plotWidth, outlineTop // right
+				scrollerLeft + scrollerWidth, outlineTop // right
 			]});
 			// draw handles
 			drawHandle(zoomedMin - halfOutline, 0);
@@ -393,10 +397,10 @@ function Scroller(chart) {
 			drawScrollbarButton(0);
 			drawScrollbarButton(1);
 
-			scrollbarGroup.translate(plotLeft, mathRound(outlineTop + height));
+			scrollbarGroup.translate(scrollerLeft, mathRound(outlineTop + height));
 
 			scrollbarTrack.attr({
-				width: plotWidth
+				width: scrollerWidth
 			});
 
 			scrollbar.attr({
@@ -461,14 +465,14 @@ function Scroller(chart) {
 					dragOffset = chartX - zoomedMin;
 
 				// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
-				} else if (chartX > plotLeft && chartX < plotLeft + plotWidth) {
+				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
 
 					if (isOnNavigator) { // center around the clicked point
 						left = chartX - navigatorLeft - range / 2;
 					} else { // click on scrollbar
 						if (chartX < navigatorLeft) { // click left scrollbar button
 							left = zoomedMin - mathMin(10, range);
-						} else if (chartX > plotLeft + plotWidth - scrollbarHeight) {
+						} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
 							left = zoomedMin + mathMin(10, range);
 						} else {
 							// click on scrollbar track, shift the scrollbar by one range
@@ -479,8 +483,8 @@ function Scroller(chart) {
 					}
 					if (left < 0) {
 						left = 0;
-					} else if (left + range > plotWidth - 2 * scrollbarHeight) {
-						left = plotWidth - range - 2 * scrollbarHeight;
+					} else if (left + range > navigatorWidth) {
+						left = navigatorWidth - range;
 					}
 					if (left !== zoomedMin) { // it has actually moved
 						chart.xAxis[0].setExtremes(
@@ -504,8 +508,8 @@ function Scroller(chart) {
 			// validation for handle dragging
 			if (chartX < navigatorLeft) {
 				chartX = navigatorLeft;
-			} else if (chartX > plotLeft + plotWidth - scrollbarHeight) {
-				chartX = plotLeft + plotWidth - scrollbarHeight;
+			} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
+				chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
 			}
 
 			// drag left handle
@@ -523,8 +527,8 @@ function Scroller(chart) {
 				hasDragged = true;
 				if (chartX < dragOffset) { // outside left
 					chartX = dragOffset;
-				} else if (chartX > plotWidth + dragOffset - range - 2 * scrollbarHeight) { // outside right
-					chartX = plotWidth + dragOffset - range - 2 * scrollbarHeight;
+				} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
+					chartX = navigatorWidth + dragOffset - range;
 				}
 
 				render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
