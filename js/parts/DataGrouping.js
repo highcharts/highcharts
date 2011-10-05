@@ -129,7 +129,7 @@ seriesProto.processData = function () {
 	});
 
 	
-	if (dataLength > maxPoints) {
+	if (dataLength > maxPoints || dataGroupingOptions.forced) {
 		series.hasGroupedData = true;
 
 		series.points = null; // force recreation of point instances in series.translate
@@ -264,6 +264,7 @@ seriesProto.destroy = function () {
 /*jslint white: true*/
 var commonOptions = {
 	approximation: 'average', // average, open, high, low, close, sum
+	//forced: undefined, // docs
 	groupPixelWidth: 2,
 	dateTimeLabelFormats: hash(
 		SECOND, '%A, %b %e, %H:%M:%S',
