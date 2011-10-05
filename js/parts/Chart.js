@@ -120,7 +120,8 @@ function Chart(options, callback) {
 			isLog = type === 'logarithmic',
 			offset = options.offset || 0,
 			xOrY = isXAxis ? 'x' : 'y',
-			axisLength,
+			axisLength = 0,
+			oldAxisLength,
 			transA, // translation factor
 			transB, // translation addend
 			oldTransA, // used for prerendering
@@ -142,6 +143,8 @@ function Chart(options, callback) {
 			range = options.range,
 			userMin,
 			userMax,
+			oldUserMin,
+			oldUserMax,
 			max = null,
 			min = null,
 			oldMin,
@@ -1033,8 +1036,6 @@ function Chart(options, callback) {
 				tickPixelIntervalOption = options.tickPixelInterval,
 				zoomOffset;
 
-			axisLength = horiz ? axisWidth : axisHeight;
-
 			// set the max zoom once
 			if (secondPass) {
 				maxZoom = options.maxZoom || (
@@ -1203,35 +1204,52 @@ function Chart(options, callback) {
 		 */
 		function setScale() {
 			var type,
-				i;
+				i,
+				isDirtyData;
 
 			oldMin = min;
 			oldMax = max;
-
-			// get data extremes if needed
-			getSeriesExtremes();
-
-			// get fixed positions based on tickInterval
-			setTickPositions();
-
-			// the translation factor used in translate function
-			oldTransA = transA;
-			transA = axisLength / ((max - min) || 1);
-
-			// reset stacks
-			if (!isXAxis) {
-				for (type in stacks) {
-					for (i in stacks[type]) {
-						stacks[type][i].cum = stacks[type][i].total;
+			oldAxisLength = axisLength;
+			
+			// set the new axisLength
+			axisLength = horiz ? axisWidth : axisHeight;
+			
+			// is there new data?
+			each(associatedSeries || [], function (series) {
+				if (series.isDirtyData || 
+						series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
+					isDirtyData = true;
+				}
+			});
+			
+			// do we really need to go through all this?
+			if (axisLength !== oldAxisLength || isDirtyData ||
+				userMin !== oldUserMin || userMax !== oldUserMax) {
+			
+				// get data extremes if needed
+				getSeriesExtremes();
+	
+				// get fixed positions based on tickInterval
+				setTickPositions();
+	
+				// the translation factor used in translate function
+				oldTransA = transA;
+				transA = axisLength / ((max - min) || 1);
+	
+				// reset stacks
+				if (!isXAxis) {
+					for (type in stacks) {
+						for (i in stacks[type]) {
+							stacks[type][i].cum = stacks[type][i].total;
+						}
 					}
 				}
+	
+				// mark as dirty if it is not already set to dirty and extremes have changed
+				if (!axis.isDirty) {
+					axis.isDirty = (min !== oldMin || max !== oldMax);
+				}
 			}
-
-			// mark as dirty if it is not already set to dirty and extremes have changed
-			if (!axis.isDirty) {
-				axis.isDirty = (min !== oldMin || max !== oldMax);
-			}
-
 		}
 
 		/**
@@ -1246,6 +1264,11 @@ function Chart(options, callback) {
 		function setExtremes(newMin, newMax, redraw, animation) {
 			redraw = pick(redraw, true); // defaults to true
 
+			// record old values so that we can determine whether to redraw in setScale
+			oldUserMin = userMin;
+			oldUserMax = userMax;
+			
+			// set new values
 			userMin = newMin;
 			userMax = newMax;
 			if (redraw) {
@@ -3187,6 +3210,7 @@ function Chart(options, callback) {
 			chart.isDirtyLegend = false;
 		}
 
+
 		if (hasCartesianSeries) {
 			if (!isResizing) {
 
@@ -3204,9 +3228,9 @@ function Chart(options, callback) {
 
 			// redraw axes
 			each(axes, function (axis) {
-				if (axis.isDirty || isDirtyBox) {
+				if (axis.isDirty) {
 					axis.redraw();
-					isDirtyBox = true;
+					//isDirtyBox = true; // force redrawing subsequent axes
 				}
 			});
 

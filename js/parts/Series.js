@@ -805,7 +805,6 @@ Series.prototype = {
 			i, // loop variable
 			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
 
-
 		// optionally filter out points outside the plot area
 		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = series.xAxis.getExtremes(),
