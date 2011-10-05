@@ -4473,7 +4473,7 @@ function Chart(options, callback) {
 				width = options.width,
 				to = options.to,
 				from = options.from,
-				value = options.value,				
+				value = options.value,
 				toPath, // bands only
 				dashStyle = options.dashStyle,
 				svgElem = plotLine.svgElem,
@@ -6161,7 +6161,7 @@ function Chart(options, callback) {
 
 			// hide tooltip if the point falls outside the plot
 			show = shared || !point.series.isCartesian || isInsidePlot(x, y);
-			
+
 			// update the inner HTML
 			if (text === false || !show) {
 				hide();
@@ -8241,7 +8241,7 @@ function Chart(options, callback) {
 
 		// ==== Destroy local variables:
 		each([chartBackground, legend, tooltip, renderer, tracker], function (obj) {
-			if (obj) {
+			if (obj && obj.destroy) {
 				obj.destroy();
 			}
 		});
