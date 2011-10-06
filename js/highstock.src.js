@@ -12068,103 +12068,53 @@ var DATA_GROUPING = 'dataGrouping',
 	};
 
 /**
- * Extend the basic processData method, that crops the data to the current zoom
- * range, with data grouping logic.
+ * Takes parallel arrays of x and y data and groups the data into intervals defined by groupPositions, a collection
+ * of starting x values for each group.
  */
-seriesProto.processData = function () {
-	var series = this,
-		options = series.options,
-		dataGroupingOptions = options[DATA_GROUPING],
-		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled;
-
-	// run base method
-	series.forceCrop = groupingEnabled; // #334
-	baseProcessData.apply(series);
-
-	// disabled?
-	if (!groupingEnabled) {
-		return;
-	}
-
-	var i,
-		chart = series.chart,
-		processedXData = series.processedXData,
-		processedYData = series.processedYData,
-		data = series.data,
-		dataOptions = options.data,
-		plotSizeX = chart.plotSizeX,
-		xAxis = series.xAxis,
-		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
-		maxPoints = plotSizeX / groupPixelWidth,
-		approximation = dataGroupingOptions.approximation,
-		dataLength = processedXData.length,
-		groupedData = series.groupedData,
-		chartSeries = chart.series,
-		groupedXData = [],
-		groupedYData = [];
-
-	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
-	// group pixel width
-	if (!xAxis.groupPixelWidth) {
-		i = chartSeries.length;
-		while (i--) {
-			if (chartSeries[i].xAxis === xAxis) {
-				groupPixelWidth = mathMax(groupPixelWidth, chartSeries[i].options.dataGrouping.groupPixelWidth);
-			}
-		}
-		xAxis.groupPixelWidth = groupPixelWidth;
-	}
-
-	// clear previous groups
-	each(groupedData || [], function (point, i) {
-		if (point) {
-			// TODO: find out why this is looping over all points in the Navigator when changing range
-			groupedData[i] = point.destroy ? point.destroy() : null;
-		}
-	});
-
+seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
+	var groupedXData = [],
+		groupedYData = [],
+		dataLength = xData.length,
+		pointX,
+		pointY,
+		groupedY,
+		values1 = [],
+		values2 = [],
+		values3 = [],
+		values4 = [];
 	
-	if (dataLength > maxPoints || dataGroupingOptions.forced) {
-		series.hasGroupedData = true;
-
-		series.points = null; // force recreation of point instances in series.translate
-
-		var xMin = processedXData[0],
-			xMax = processedXData[dataLength - 1],
-			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
-			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units),
-			pointX,
-			pointY,
-			groupedY,
-			values1 = [],
-			values2 = [],
-			values3 = [],
-			values4 = [];
-
-		for (i = 0; i < dataLength; i++) {
+		for (i = 0; i <= dataLength; i++) {
 
 			// when a new group is entered, summarize and initiate the previous group
-			while (groupPositions[1] !== UNDEFINED && processedXData[i] >= groupPositions[1]) {
+			while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
+					i === dataLength) { // get the last group
 
-				pointX = groupPositions.shift();
-				
+				// get group x and y 
+				pointX = groupPositions.shift();				
 				groupedY = typeof approximation === 'function' ?
 						approximation(values1, values2, values3, values4) : // custom approximation callback function
 						approximations[approximation](values1, values2, values3, values4); // predefined approximation
-						
+				
+				// push the grouped data		
 				if (groupedY !== UNDEFINED) {
 					groupedXData.push(pointX);
 					groupedYData.push(groupedY);
 				}
 				
+				// reset the aggregate arrays
 				values1 = [];
 				values2 = [];
 				values3 = [];
 				values4 = [];
+				
+				// don't loop beyond the last group
+				if (i === dataLength) {
+					break;
+				}
 			}
 			
 			// for each raw data point, push it to an array that contains all values for this specific group
-			pointY = processedYData[i];
+			pointY = yData[i];
 			if (approximation === 'ohlc') {
 				var index = series.cropStart + i,
 					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]),
@@ -12205,7 +12155,76 @@ seriesProto.processData = function () {
 			}
 
 		}
+	return [groupedXData, groupedYData];
+};
 
+/**
+ * Extend the basic processData method, that crops the data to the current zoom
+ * range, with data grouping logic.
+ */
+seriesProto.processData = function () {
+	var series = this,
+		options = series.options,
+		dataGroupingOptions = options[DATA_GROUPING],
+		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled;
+
+	// run base method
+	series.forceCrop = groupingEnabled; // #334
+	baseProcessData.apply(series);
+
+	// disabled?
+	if (!groupingEnabled) {
+		return;
+	}
+
+	var i,
+		chart = series.chart,
+		processedXData = series.processedXData,
+		processedYData = series.processedYData,
+		data = series.data,
+		dataOptions = options.data,
+		plotSizeX = chart.plotSizeX,
+		xAxis = series.xAxis,
+		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
+		maxPoints = plotSizeX / groupPixelWidth,
+		dataLength = processedXData.length,
+		groupedData = series.groupedData,
+		chartSeries = chart.series;
+
+	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
+	// group pixel width
+	if (!xAxis.groupPixelWidth) {
+		i = chartSeries.length;
+		while (i--) {
+			if (chartSeries[i].xAxis === xAxis) {
+				groupPixelWidth = mathMax(groupPixelWidth, chartSeries[i].options.dataGrouping.groupPixelWidth);
+			}
+		}
+		xAxis.groupPixelWidth = groupPixelWidth;
+	}
+
+	// clear previous groups
+	each(groupedData || [], function (point, i) {
+		if (point) {
+			// TODO: find out why this is looping over all points in the Navigator when changing range
+			groupedData[i] = point.destroy ? point.destroy() : null;
+		}
+	});
+
+	
+	if (dataLength > maxPoints || dataGroupingOptions.forced) {
+		series.hasGroupedData = true;
+
+		series.points = null; // force recreation of point instances in series.translate
+
+		var xMin = processedXData[0],
+			xMax = processedXData[dataLength - 1],
+			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
+			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units),
+			groupedXandY = series.groupData(processedXData, processedYData, groupPositions, dataGroupingOptions.approximation),
+			groupedXData = groupedXandY[0],
+			groupedYData = groupedXandY[1];
+			
 		// prevent the smoothed data to spill out left and right, and make
 		// sure data is not shifted to the left
 		if (dataGroupingOptions.smoothed) {
