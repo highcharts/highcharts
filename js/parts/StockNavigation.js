@@ -607,6 +607,12 @@ function Scroller(chart) {
 					doRedraw,
 					baseXAxis = baseSeries.xAxis,
 					hasSetExtremes = !!baseXAxis.setExtremes;
+					
+				// detect whether to move the range
+				stickToMax = baseMax >=
+					navigatorSeries.xData[navigatorSeries.xData.length - 1];
+				stickToMin = baseMin - range <=
+					navigatorSeries.xData[0];
 
 				// set the navigator series data to the new data of the base series
 				if (!navigatorData) {
@@ -614,14 +620,7 @@ function Scroller(chart) {
 					navigatorSeries.setData(baseSeries.options.data, false);
 					doRedraw = true;
 				}
-				
-				// detect whether to move the range
-				stickToMax = baseMax >=
-					navigatorSeries.xData[navigatorSeries.xData.length - 1];
-				stickToMin = baseMin - range <=
-					navigatorSeries.xData[0];
 
-				
 				// if the zoomed range is already at the min, move it to the right as new data
 				// comes in
 				if (stickToMin) {
