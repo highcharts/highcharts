@@ -37,6 +37,7 @@ var doc = document,
 	isFirefox = /Firefox/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	hasRtlBug = isFirefox && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
 	symbolSizes = {},
@@ -1579,6 +1580,7 @@ SVGElement.prototype = {
 			renderer = this.renderer,
 			skipAttr,
 			shadows = this.shadows,
+			htmlNode = this.htmlNode,
 			hasSetSymbolSize,
 			ret = this;
 
@@ -1747,6 +1749,28 @@ SVGElement.prototype = {
 				} else if (!skipAttr) {
 					//element.setAttribute(key, value);
 					attr(element, key, value);
+				}
+
+				// Issue #38
+				if (htmlNode && (key === 'x' || key === 'y' ||
+						key === 'translateX' || key === 'translateY' || key === 'visibility')) {
+					var wrapper = this,
+						bBox;
+
+					each(htmlNode.length ? htmlNode : [this], function (itemWrapper) {
+						bBox = itemWrapper.getBBox();
+						htmlNode = itemWrapper.htmlNode; // reassign to child item
+						css(htmlNode, extend(wrapper.styles, {
+							left: (bBox.x + (wrapper.translateX || 0)) + PX,
+							top: (bBox.y + (wrapper.translateY || 0)) + PX
+						}));
+
+						if (key === 'visibility') {
+							css(htmlNode, {
+								visibility: value
+							});
+						}
+					});
 				}
 
 			}
@@ -2106,6 +2130,14 @@ SVGElement.prototype = {
 			renderer.buildText(this);
 		}
 
+		// register html spans in groups
+		if (parent && this.htmlNode) {
+			if (!parent.htmlNode) {
+				parent.htmlNode = [];
+			}
+			parent.htmlNode.push(this);
+		}
+
 		// mark the container as having z indexed children
 		if (zIndex) {
 			parentWrapper.handleZ = true;
@@ -2346,9 +2378,9 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' &&
-				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
-			arr,
+			renderAsHtml = textStyles && wrapper.useHTML && !this.forExport,
+			htmlNode = wrapper.htmlNode,
+			//arr, issue #38 workaround
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
@@ -2391,14 +2423,14 @@ SVGRenderer.prototype = {
 						.replace(/&gt;/g, '>');
 
 					// issue #38 workaround.
-					if (reverse) {
+					/*if (reverse) {
 						arr = [];
 						i = span.length;
 						while (i--) {
 							arr.push(span.charAt(i));
 						}
 						span = arr.join('');
-					}
+					}*/
 
 					// add the text node
 					tspan.appendChild(doc.createTextNode(span));
@@ -2478,7 +2510,22 @@ SVGRenderer.prototype = {
 			});
 		});
 
+		// Fix issue #38 and allow HTML in tooltips and other labels
+		if (renderAsHtml) {
+			if (!htmlNode) {
+				htmlNode = wrapper.htmlNode = createElement('span', null, extend(textStyles, {
+					position: ABSOLUTE,
+					top: 0,
+					left: 0
+				}), this.box.parentNode);
+			}
+			htmlNode.innerHTML = wrapper.textStr;
 
+			i = childNodes.length;
+			while (i--) {
+				childNodes[i].style.visibility = HIDDEN;
+			}
+		}
 	},
 
 	/**
@@ -2928,8 +2975,9 @@ SVGRenderer.prototype = {
 	 * @param {String} str
 	 * @param {Number} x Left position
 	 * @param {Number} y Top position
+	 * @param {Boolean} useHTML Use HTML to render the text
 	 */
-	text: function (str, x, y) {
+	text: function (str, x, y, useHTML) {
 
 		// declare variables
 		var defaultChartStyle = defaultOptions.chart.style,
@@ -2951,6 +2999,7 @@ SVGRenderer.prototype = {
 
 		wrapper.x = x;
 		wrapper.y = y;
+		wrapper.useHTML = useHTML;
 		return wrapper;
 	}
 }; // end SVGRenderer
@@ -4274,7 +4323,8 @@ function Chart(options, callback) {
 							renderer.text(
 									str,
 									0,
-									0
+									0,
+									labelOptions.useHTML
 								)
 								.attr({
 									align: labelOptions.align,
@@ -5508,7 +5558,8 @@ function Chart(options, callback) {
 					axisTitle = axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
-						0
+						0,
+						axisTitleOptions.useHTML
 					)
 					.attr({
 						zIndex: 7,
@@ -5986,7 +6037,7 @@ function Chart(options, callback) {
 				})
 				.add(group)
 				.shadow(options.shadow),
-			label = renderer.text('', padding + boxOffLeft, pInt(style.fontSize) + padding + boxOffLeft)
+			label = renderer.text('', padding + boxOffLeft, pInt(style.fontSize) + padding + boxOffLeft, options.useHTML)
 				.attr({ zIndex: 1 })
 				.css(style)
 				.add(group);
@@ -7668,7 +7719,8 @@ function Chart(options, callback) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text,
 					0,
-					0
+					0,
+					chartTitleOptions.useHTML
 				)
 				.attr({
 					align: chartTitleOptions.align,
@@ -11337,6 +11389,7 @@ win.Highcharts = {
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
+	hasRtlBug: hasRtlBug,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,

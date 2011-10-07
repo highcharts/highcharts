@@ -5,6 +5,7 @@ win.Highcharts = {
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
+	hasRtlBug: hasRtlBug,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,
