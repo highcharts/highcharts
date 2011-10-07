@@ -26,13 +26,12 @@ var doc = document,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
 	symbolSizes = {},
 	idCounter = 0,
-	timeFactor = 1, // 1 = JavaScript time, 1000 = Unix time
 	garbageBin,
 	defaultOptions,
 	dateFormat, // function
 	globalAnimation,
 	pathAnim,
-
+	timeUnits,
 
 	// some constants for frequently used strings
 	UNDEFINED,

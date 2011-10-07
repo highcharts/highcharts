@@ -55,34 +55,22 @@ $(function() {
 		},
 
 	    title: {
-		text: 'Hourly temperatures in Vik i Sogn, Norway, 2004-2010'
+			text: 'Hourly temperatures in Vik i Sogn, Norway, 2004-2010'
 		},
 
 		subtitle: {
 			text: 'Built chart at...' // dummy text to reserve space for dynamic subtitle
 		},
 
-	    tooltip: {
-	        formatter: function(){
-	            var point = this.points[0],
-					series = point.series,
-					format = '%A, %b %e, %Y, %H:%M', // with hours
-					s;
-
-				if (series.tooltipHeaderFormat) {
-					format = series.tooltipHeaderFormat;
-				}
-
-	            return '<b>' + Highcharts.dateFormat(format, this.x) + '</b>' +
-			'<br/>Temperature: ' + Highcharts.numberFormat(this.points[0].y, 1) +'°C';
-	        }
-	    },
-
 	    series: [{
 	        name: 'Temperature',
 	        data: temperatures,
 	        pointStart: Date.UTC(2004, 3, 1),
-	        pointInterval: 3600 * 1000
+	        pointInterval: 3600 * 1000,
+	        tooltip: {
+	        	yDecimals: 1,
+	        	ySuffix: '°C'
+	        }
 	    }]
 
 	});

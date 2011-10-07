@@ -132,6 +132,7 @@ Point.prototype = {
 		return {
 			x: point.category,
 			y: point.y,
+			key: point.name || point.category,
 			series: point.series,
 			point: point,
 			percentage: point.percentage,
@@ -205,18 +206,30 @@ Point.prototype = {
 	/**
 	 * Extendable method for formatting each point's tooltip line
 	 *
-	 * @param {Boolean} useHeader Whether a common header is used for multiple series in the tooltip
-	 *
 	 * @return {String} A string to be concatenated in to the common tooltip text
 	 */
-	tooltipFormatter: function (useHeader) {
+	tooltipFormatter: function () {
 		var point = this,
-			series = point.series;
+			series = point.series,
+			seriesTooltipOptions = series.tooltipOptions,
+			pointFormat = seriesTooltipOptions.pointFormat,
+			split = String(point.y).split('.'),
+			originalDecimals = split[1] ? split[1].length : 0,
+			replacements = {
+				'{series.color}': series.color,
+				'{series.name}': series.name,
+				'{point.y}':
+					(seriesTooltipOptions.yPrefix || '') + 
+					numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
+					(seriesTooltipOptions.ySuffix || '')
+			},
+			name;
 
-		return ['<span style="color:' + series.color + '">', (point.name || series.name), '</span>: ',
-			(!useHeader ? ('<b>x = ' + (point.name || point.x) + ',</b> ') : ''),
-			'<b>', (!useHeader ? 'y = ' : ''), point.y, '</b>'].join('');
-
+		for (name in replacements) {
+			pointFormat = pointFormat.replace(name, replacements[name]);	
+		}
+		
+		return pointFormat;
 	},
 
 	/**
@@ -558,7 +571,10 @@ Series.prototype = {
 	 * @param {Object} itemOptions
 	 */
 	setOptions: function (itemOptions) {
-		var plotOptions = this.chart.options.plotOptions,
+		var series = this,
+			chart = series.chart,
+			chartOptions = chart.options,
+			plotOptions = chartOptions.plotOptions,
 			data = itemOptions.data,
 			options;
 
@@ -570,6 +586,9 @@ Series.prototype = {
 			itemOptions
 		);
 		options.data = data;
+		
+		// the tooltip options are merged between global and series specific options
+		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
 
 		return options;
 
@@ -1034,8 +1053,21 @@ Series.prototype = {
 		series.tooltipPoints = tooltipPoints;
 	},
 
-
-
+	/**
+	 * Format the header of the tooltip
+	 */
+	tooltipHeaderFormatter: function (key) {
+		var series = this,
+			tooltipOptions = series.tooltipOptions,
+			xDateFormat = tooltipOptions.xDateFormat || '%A, %b %e, %Y',
+			xAxis = series.xAxis,
+			isDateTime = xAxis && xAxis.options.type === 'datetime';
+		
+		return tooltipOptions.headerFormat.replace(
+			'{point.key}', 
+			isDateTime ? dateFormat(xDateFormat, key) :  key				
+		);
+	},
 
 	/**
 	 * Series mouse over handler

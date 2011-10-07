@@ -269,7 +269,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp * timeFactor),
+	var date = new Date(timestamp),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -413,46 +413,27 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
  * @param {Array} unitsOption
  */
 function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
-	/*jslint white: true*/
 	var tickPositions = [],
 		i,
 		useUTC = defaultOptions.global.useUTC,
-		oneSecond = 1000 / timeFactor,
-		oneMinute = 60000 / timeFactor,
-		oneHour = 3600000 / timeFactor,
-		oneDay = 24 * 3600000 / timeFactor,
-		oneWeek = 7 * 24 * 3600000 / timeFactor,
-		oneMonth = 30 * 24 * 3600000 / timeFactor,
-		oneYear = 31556952000 / timeFactor,
-
-		ranges = hash(
-			MILLISECOND, 1,
-			SECOND, oneSecond,
-			MINUTE, oneMinute,
-			HOUR, oneHour,
-			DAY, oneDay,
-			WEEK, oneWeek,
-			MONTH, oneMonth,
-			YEAR, oneYear
-		),
 		units = unitsOption || [[
-			MILLISECOND,					// unit name
-			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
+			MILLISECOND, // unit name
+			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 		], [
-			SECOND,							// unit name
-			[1, 2, 5, 10, 15, 30]			// allowed multiples
+			SECOND,
+			[1, 2, 5, 10, 15, 30]
 		], [
-			MINUTE,							// unit name
-			[1, 2, 5, 10, 15, 30]			// allowed multiples
+			MINUTE,
+			[1, 2, 5, 10, 15, 30]
 		], [
-			HOUR,							// unit name
-			[1, 2, 3, 4, 6, 8, 12]			// allowed multiples
+			HOUR,
+			[1, 2, 3, 4, 6, 8, 12]
 		], [
-			DAY,							// unit name
-			[1, 2]							// allowed multiples
+			DAY,
+			[1, 2]
 		], [
-			WEEK,							// unit name
-			[1, 2]							// allowed multiples
+			WEEK,
+			[1, 2]
 		], [
 			MONTH,
 			[1, 2, 3, 4, 6]
@@ -462,21 +443,20 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 		]],
 
 		unit = units[units.length - 1], // default unit is years
-		interval = ranges[unit[0]],
+		interval = timeUnits[unit[0]],
 		multiples = unit[1];
-	/*jslint white: false*/
 
 	// loop through the units to find the one that best fits the tickInterval
 	for (i = 0; i < units.length; i++) {
 		unit = units[i];
-		interval = ranges[unit[0]];
+		interval = timeUnits[unit[0]];
 		multiples = unit[1];
 
 
 		if (units[i + 1]) {
 			// lessThan is in the middle between the highest multiple and the next unit.
 			var lessThan = (interval * multiples[multiples.length - 1] +
-						ranges[units[i + 1][0]]) / 2;
+						timeUnits[units[i + 1][0]]) / 2;
 
 			// break and keep the current unit
 			if (tickInterval <= lessThan) {
@@ -486,50 +466,50 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	}
 
 	// prevent 2.5 years intervals, though 25, 250 etc. are allowed
-	if (interval === oneYear && tickInterval < 5 * interval) {
+	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
 		multiples = [1, 2, 5];
 	}
 
 	// get the minimum value by flooring the date
 	var multitude = normalizeTickInterval(tickInterval / interval, multiples),
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min * timeFactor);
+		minDate = new Date(min);
 
 	minDate.setMilliseconds(0);
 
-	if (interval >= oneSecond) { // second
-		minDate.setSeconds(interval >= oneMinute ? 0 :
+	if (interval >= timeUnits[SECOND]) { // second
+		minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
 			multitude * mathFloor(minDate.getSeconds() / multitude));
 	}
 
-	if (interval >= oneMinute) { // minute
-		minDate[setMinutes](interval >= oneHour ? 0 :
+	if (interval >= timeUnits[MINUTE]) { // minute
+		minDate[setMinutes](interval >= timeUnits[HOUR] ? 0 :
 			multitude * mathFloor(minDate[getMinutes]() / multitude));
 	}
 
-	if (interval >= oneHour) { // hour
-		minDate[setHours](interval >= oneDay ? 0 :
+	if (interval >= timeUnits[HOUR]) { // hour
+		minDate[setHours](interval >= timeUnits[DAY] ? 0 :
 			multitude * mathFloor(minDate[getHours]() / multitude));
 	}
 
-	if (interval >= oneDay) { // day
-		minDate[setDate](interval >= oneMonth ? 1 :
+	if (interval >= timeUnits[DAY]) { // day
+		minDate[setDate](interval >= timeUnits[MONTH] ? 1 :
 			multitude * mathFloor(minDate[getDate]() / multitude));
 	}
 
-	if (interval >= oneMonth) { // month
-		minDate[setMonth](interval >= oneYear ? 0 :
+	if (interval >= timeUnits[MONTH]) { // month
+		minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
 			multitude * mathFloor(minDate[getMonth]() / multitude));
 		minYear = minDate[getFullYear]();
 	}
 
-	if (interval >= oneYear) { // year
+	if (interval >= timeUnits[YEAR]) { // year
 		minYear -= minYear % multitude;
 		minDate[setFullYear](minYear);
 	}
 
 	// week is a special case that runs outside the hierarchy
-	if (interval === oneWeek) {
+	if (interval === timeUnits[WEEK]) {
 		// get start of current week, independent of multitude
 		minDate[setDate](minDate[getDate]() - minDate[getDay]() +
 			pick(startOfWeek, 1));
@@ -539,7 +519,7 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	// get tick positions
 	i = 1;
 	minYear = minDate[getFullYear]();
-	var time = minDate.getTime() / timeFactor,
+	var time = minDate.getTime(),
 		minMonth = minDate[getMonth](),
 		minDateDate = minDate[getDate]();
 
@@ -548,18 +528,18 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 		tickPositions.push(time);
 
 		// if the interval is years, use Date.UTC to increase years
-		if (interval === oneYear) {
-			time = makeTime(minYear + i * multitude, 0) / timeFactor;
+		if (interval === timeUnits[YEAR]) {
+			time = makeTime(minYear + i * multitude, 0);
 
 		// if the interval is months, use Date.UTC to increase months
-		} else if (interval === oneMonth) {
-			time = makeTime(minYear, minMonth + i * multitude) / timeFactor;
+		} else if (interval === timeUnits[MONTH]) {
+			time = makeTime(minYear, minMonth + i * multitude);
 
 		// if we're using global time, the interval is not fixed as it jumps
 		// one hour at the DST crossover
-		} else if (!useUTC && (interval === oneDay || interval === oneWeek)) {
+		} else if (!useUTC && (interval === timeUnits[DAY] || interval === timeUnits[WEEK])) {
 			time = makeTime(minYear, minMonth, minDateDate +
-				i * multitude * (interval === oneDay ? 1 : 7));
+				i * multitude * (interval === timeUnits[DAY] ? 1 : 7));
 
 		// else, the interval is fixed and we use simple addition
 		} else {
@@ -573,7 +553,12 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 
 
 	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.unit = unit;
+	tickPositions.info = {
+		unitName: unit[0],
+		unitRange: interval,
+		count: multitude,
+		totalRange: interval * multitude
+	};
 
 	return tickPositions;
 }
@@ -665,3 +650,19 @@ function stableSort(arr, sortFunction) {
 		delete arr[i].ss_i; // stable sort index
 	}
 }
+
+/**
+ * The time unit lookup
+ */
+/*jslint white: true*/
+timeUnits = hash(
+	MILLISECOND, 1,
+	SECOND, 1000,
+	MINUTE, 60000,
+	HOUR, 3600000,
+	DAY, 24 * 3600000,
+	WEEK, 7 * 24 * 3600000,
+	MONTH, 30 * 24 * 3600000,
+	YEAR, 31556952000
+);
+/*jslint white: false*/

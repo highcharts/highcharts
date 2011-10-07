@@ -1120,7 +1120,7 @@ function Chart(options, callback) {
 			// find the tick positions
 			if (isDatetimeAxis) {
 				tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek);
-				dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.unit[0]];
+				dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
 			} else {
 				setLinearTickPositions();
 			}
@@ -1850,26 +1850,21 @@ function Chart(options, callback) {
 			var pThis = this,
 				items = pThis.points || splat(pThis),
 				xAxis = items[0].series.xAxis,
-				x = pThis.x,
 				isDateTime = xAxis && xAxis.options.type === 'datetime',
-				useHeader = isString(x) || isDateTime,
 				series = items[0].series,
 				headerFormat = series.tooltipHeaderFormat || '%A, %b %e, %Y',
 				s;
 
 			// build the header
-			s = useHeader ?
-			['<span style="font-size: 10px">' +
-				(isDateTime ? dateFormat('%A, %b %e, %Y', x) :  x) +
-				'</span>'] : [];
+			s = [series.tooltipHeaderFormatter(items[0].key)];
 
 			// build the values
 			each(items, function (item) {
 				series = item.series;
 				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-					item.point.tooltipFormatter(useHeader));
+					item.point.tooltipFormatter());
 			});
-			return s.join('<br/>');
+			return s.join('');
 		}
 
 		/**

@@ -227,6 +227,13 @@ defaultOptions = {
 				}
 			},
 			stickyTracking: true
+			//tooltip: { // docs
+				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
+				//yDecimals: null,
+				//xDateFormat: '%A, %b %e, %Y',
+				//yPrefix: '',
+				//ySuffix: ''				
+			//}
 			// turboThreshold: 1000 // docs
 			// zIndex: null
 		}
@@ -306,6 +313,8 @@ defaultOptions = {
 		borderWidth: 2,
 		borderRadius: 5,
 		//formatter: defaultFormatter,
+		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>', // docs
+		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>', // docs
 		shadow: true,
 		//shared: false,
 		snap: hasTouch ? 25 : 10,
@@ -315,6 +324,10 @@ defaultOptions = {
 			padding: '5px',
 			whiteSpace: 'nowrap'
 		}
+		//xDateFormat: '%A, %b %e, %Y', // docs
+		//yDecimals: null, // docs
+		//yPrefix: '', // docs
+		//ySuffix: '' // docs
 	},
 
 	toolbar: {

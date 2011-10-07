@@ -241,16 +241,15 @@ seriesProto.processData = function () {
 			groupedXData[0] = xMin;
 		}
 
-		series.tooltipHeaderFormat = dataGroupingOptions.dateTimeLabelFormats[groupPositions.unit[0]];
-		series.unit = groupPositions.unit;
+		// record what data grouping values were used
+		series.currentDataGrouping = groupPositions.info;
 		
-		
+		// set series props
 		series.processedXData = groupedXData;
 		series.processedYData = groupedYData;
 
 	} else {
-		series.tooltipHeaderFormat = null;
-		series.unit = null;
+		series.currentDataGrouping = null;
 	}
 
 
@@ -265,6 +264,55 @@ seriesProto.generatePoints = function () {
 	series.groupedData = series.hasGroupedData ? series.points : null;
 };
 
+/**
+ * Make the tooltip's header reflect the grouped range
+ */
+seriesProto.tooltipHeaderFormatter = function (key) {
+	var series = this,
+		options = series.options,
+		tooltipOptions = series.tooltipOptions,
+		xDateFormat = tooltipOptions.xDateFormat,
+		xDateFormatEnd,
+		currentDataGrouping = series.currentDataGrouping,
+		dateTimeLabelFormats = options.dataGrouping.dateTimeLabelFormats,
+		labelFormats,
+		formattedKey,
+		n;
+	
+	// if we have grouped data, use the grouping information to get the right format
+	if (currentDataGrouping) {
+		labelFormats = dateTimeLabelFormats[currentDataGrouping.unitName];
+		if (currentDataGrouping.count === 1) {
+			xDateFormat = labelFormats[0];
+		} else {
+			xDateFormat = labelFormats[1];
+			xDateFormatEnd = labelFormats[2];
+		} 
+	// if not grouped, and we don't have set the xDateFormat option, get the best fit,
+	// so if the least distance between points is one minute, show it, but if the 
+	// least distance is one day, skip hours and minutes etc.
+	} else if (!xDateFormat) {
+		for (n in timeUnits) {
+			if (timeUnits[n] >= series.xAxis.leastUnitDistance) {
+				xDateFormat = dateTimeLabelFormats[n][0];
+				break;
+			}	
+		}		
+	}
+	
+	// now format the key
+	formattedKey = dateFormat(xDateFormat, key);
+	if (xDateFormatEnd) {
+		formattedKey += dateFormat(xDateFormatEnd, key + currentDataGrouping.totalRange - 1);
+	}
+		
+	// return the replaced format
+	return tooltipOptions.headerFormat.replace('{point.key}', formattedKey);
+};
+
+/**
+ * Extend the series destroyer
+ */
 seriesProto.destroy = function () {
 	var series = this,
 		groupedData = series.groupedData || [],
@@ -280,40 +328,42 @@ seriesProto.destroy = function () {
 
 
 // Extend the plot options
-/*jslint white: true*/
+/*jslint white:true */
 var commonOptions = {
 	approximation: 'average', // average, open, high, low, close, sum
 	//forced: undefined, // docs
 	groupPixelWidth: 2,
-	dateTimeLabelFormats: hash(
-		SECOND, '%A, %b %e, %H:%M:%S',
-		MINUTE, '%A, %b %e, %H:%M',
-		HOUR, '%A, %b %e, %H:%M',
-		DAY, '%A, %b %e, %Y',
-		WEEK, 'Week from %A, %b %e, %Y',
-		MONTH, '%B %Y',
-		YEAR, '%Y'
+	// the first one is the point or start value, the second is the start value if we're dealing with range,
+	// the third one is the end value if dealing with a range
+	dateTimeLabelFormats: hash( 
+		SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
+		MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+		HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+		DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+		WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+		MONTH, ['%B %Y', '%B', '-%B %Y'],
+		YEAR, ['%Y', '%Y', '-%Y']
 	),
 
 	// smoothed = false, // enable this for navigator series only
 	units: [[
-		MILLISECOND,          // unit name
-		[1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
+		MILLISECOND, // unit name
+		[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 	], [
-		SECOND,              // unit name
-		[1, 2, 5, 10, 15, 30]      // allowed multiples
+		SECOND,
+		[1, 2, 5, 10, 15, 30]
 	], [
-		MINUTE,              // unit name
-		[1, 2, 5, 10, 15, 30]      // allowed multiples
+		MINUTE,
+		[1, 2, 5, 10, 15, 30]
 	], [
-		HOUR,              // unit name
-		[1, 2, 3, 4, 6, 8, 12]      // allowed multiples
+		HOUR,
+		[1, 2, 3, 4, 6, 8, 12]
 	], [
-		DAY,              // unit name
-		[1]                // allowed multiples
+		DAY,
+		[1]
 	], [
-		WEEK,              // unit name
-		[1]                // allowed multiples
+		WEEK,
+		[1]
 	], [
 		MONTH,
 		[1, 3, 6]
@@ -322,7 +372,6 @@ var commonOptions = {
 		null
 	]]
 };
-/*jslint white: false*/
 
 // line types
 defaultPlotOptions.line[DATA_GROUPING] =
@@ -335,7 +384,7 @@ defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
 		approximation: 'sum',
 		groupPixelWidth: 10
 });
-
+/*jslint white:false */
 /* ****************************************************************************
  * End data grouping module												   *
  ******************************************************************************/
