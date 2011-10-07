@@ -239,7 +239,6 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
-		langMonths = lang.months,
 		/* // uncomment this and the 'W' format key below to enable week numbers
 		weekNumber = function() {
 			var clone = new Date(date.valueOf()),
@@ -264,8 +263,8 @@ dateFormat = function (format, timestamp, capitalize) {
 			//'W': weekNumber(),
 
 			// Month
-			'b': langMonths[month].substr(0, 3), // Short month, like 'Jan'
-			'B': langMonths[month], // Long month, like 'January'
+			'b': lang.shortMonths[month], // Short month, like 'Jan'
+			'B': lang.months[month], // Long month, like 'January'
 			'm': pad(month + 1), // Two digit month number, 01 through 12
 
 			// Year
