@@ -12112,7 +12112,10 @@ var DATA_GROUPING = 'dataGrouping',
  * of starting x values for each group.
  */
 seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
-	var groupedXData = [],
+	var series = this,
+		data = series.data,
+		dataOptions = series.options.data,
+		groupedXData = [],
 		groupedYData = [],
 		dataLength = xData.length,
 		pointX,
@@ -12153,15 +12156,22 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 				}
 			}
 			
+			// break out
+			if (i === dataLength) {
+				break;
+			}
+			
 			// for each raw data point, push it to an array that contains all values for this specific group
 			pointY = yData[i];
 			if (approximation === 'ohlc') {
+				
 				var index = series.cropStart + i,
 					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]),
 					open = point.open,
 					high = point.high,
 					low = point.low,
 					close = point.close;
+				
 				
 				if (typeof open === NUMBER) {
 					values1.push(open);
@@ -12221,8 +12231,6 @@ seriesProto.processData = function () {
 		chart = series.chart,
 		processedXData = series.processedXData,
 		processedYData = series.processedYData,
-		data = series.data,
-		dataOptions = options.data,
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
