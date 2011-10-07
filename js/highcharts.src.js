@@ -1757,7 +1757,7 @@ SVGElement.prototype = {
 					var wrapper = this,
 						bBox;
 
-					each(htmlNode.length ? htmlNode : [this], function(itemWrapper) {
+					each(htmlNode.length ? htmlNode : [this], function (itemWrapper) {
 						bBox = itemWrapper.getBBox();
 						htmlNode = itemWrapper.htmlNode; // reassign to child item
 						css(htmlNode, extend(wrapper.styles, {
@@ -2380,7 +2380,7 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			renderAsHtml = textStyles && wrapper.useHTML && !this.forExport,
 			htmlNode = wrapper.htmlNode,
-			arr,
+			//arr, issue #38 workaround
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
