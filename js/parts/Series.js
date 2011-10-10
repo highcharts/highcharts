@@ -218,6 +218,7 @@ Point.prototype = {
 			replacements = {
 				'{series.color}': series.color,
 				'{series.name}': series.name,
+				'{point.x}': point.x,
 				'{point.y}':
 					(seriesTooltipOptions.yPrefix || '') + 
 					numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
@@ -1063,10 +1064,10 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime';
 		
-		return tooltipOptions.headerFormat.replace(
-			'{point.key}', 
-			isDateTime ? dateFormat(xDateFormat, key) :  key				
-		);
+		return tooltipOptions.headerFormat
+			.replace('{point.key}', isDateTime ? dateFormat(xDateFormat, key) :  key)
+			.replace('{series.name}', series.name)
+			.replace('{series.color}', series.color);
 	},
 
 	/**

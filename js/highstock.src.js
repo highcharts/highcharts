@@ -1625,6 +1625,10 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 		hover: {
 			lineWidth: 0
 		}
+	},
+	tooltip: {
+		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>', // docs
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>' // docs
 	}
 });
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
@@ -9073,6 +9077,7 @@ Point.prototype = {
 			replacements = {
 				'{series.color}': series.color,
 				'{series.name}': series.name,
+				'{point.x}': point.x,
 				'{point.y}':
 					(seriesTooltipOptions.yPrefix || '') + 
 					numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
@@ -9918,10 +9923,10 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime';
 		
-		return tooltipOptions.headerFormat.replace(
-			'{point.key}', 
-			isDateTime ? dateFormat(xDateFormat, key) :  key				
-		);
+		return tooltipOptions.headerFormat
+			.replace('{point.key}', isDateTime ? dateFormat(xDateFormat, key) :  key)
+			.replace('{series.name}', series.name)
+			.replace('{series.color}', series.color);
 	},
 
 	/**
@@ -12041,6 +12046,7 @@ var DATA_GROUPING = 'dataGrouping',
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
+	baseTooltipHeaderFormatter = seriesProto.tooltipHeaderFormatter,
 	NUMBER = 'number',
 	
 	/**
@@ -12314,43 +12320,60 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 	var series = this,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
+		dataGroupingOptions = options.dataGrouping,
 		xDateFormat = tooltipOptions.xDateFormat,
 		xDateFormatEnd,
-		currentDataGrouping = series.currentDataGrouping,
-		dateTimeLabelFormats = options.dataGrouping.dateTimeLabelFormats,
+		xAxis = series.xAxis,
+		currentDataGrouping,
+		dateTimeLabelFormats,
 		labelFormats,
 		formattedKey,
-		n;
+		n,
+		ret;
 	
-	// if we have grouped data, use the grouping information to get the right format
-	if (currentDataGrouping) {
-		labelFormats = dateTimeLabelFormats[currentDataGrouping.unitName];
-		if (currentDataGrouping.count === 1) {
-			xDateFormat = labelFormats[0];
-		} else {
-			xDateFormat = labelFormats[1];
-			xDateFormatEnd = labelFormats[2];
-		} 
-	// if not grouped, and we don't have set the xDateFormat option, get the best fit,
-	// so if the least distance between points is one minute, show it, but if the 
-	// least distance is one day, skip hours and minutes etc.
-	} else if (!xDateFormat) {
-		for (n in timeUnits) {
-			if (timeUnits[n] >= series.xAxis.leastUnitDistance) {
-				xDateFormat = dateTimeLabelFormats[n][0];
-				break;
-			}	
-		}		
-	}
-	
-	// now format the key
-	formattedKey = dateFormat(xDateFormat, key);
-	if (xDateFormatEnd) {
-		formattedKey += dateFormat(xDateFormatEnd, key + currentDataGrouping.totalRange - 1);
-	}
+	// apply only to grouped series
+	if (dataGroupingOptions && dataGroupingOptions.enabled) {
 		
-	// return the replaced format
-	return tooltipOptions.headerFormat.replace('{point.key}', formattedKey);
+		// set variables
+		currentDataGrouping = series.currentDataGrouping;		
+		dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats;
+		
+		// if we have grouped data, use the grouping information to get the right format
+		if (currentDataGrouping) {
+			labelFormats = dateTimeLabelFormats[currentDataGrouping.unitName];
+			if (currentDataGrouping.count === 1) {
+				xDateFormat = labelFormats[0];
+			} else {
+				xDateFormat = labelFormats[1];
+				xDateFormatEnd = labelFormats[2];
+			} 
+		// if not grouped, and we don't have set the xDateFormat option, get the best fit,
+		// so if the least distance between points is one minute, show it, but if the 
+		// least distance is one day, skip hours and minutes etc.
+		} else if (!xDateFormat && isDateTime) {
+			for (n in timeUnits) {
+				if (timeUnits[n] >= xAxis.leastUnitDistance) {
+					xDateFormat = dateTimeLabelFormats[n][0];
+					break;
+				}	
+			}		
+		}
+		
+		// now format the key
+		formattedKey = dateFormat(xDateFormat, key);
+		if (xDateFormatEnd) {
+			formattedKey += dateFormat(xDateFormatEnd, key + currentDataGrouping.totalRange - 1);
+		}
+		
+		// return the replaced format
+		ret = tooltipOptions.headerFormat.replace('{point.key}', formattedKey);
+	
+	// else, fall back to the regular formatter
+	} else {
+		ret = baseTooltipHeaderFormatter.apply(series, [key]);
+	}
+	
+	return ret;
 };
 
 /**

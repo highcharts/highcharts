@@ -1625,6 +1625,10 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 		hover: {
 			lineWidth: 0
 		}
+	},
+	tooltip: {
+		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>', // docs
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>' // docs
 	}
 });
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
@@ -9073,6 +9077,7 @@ Point.prototype = {
 			replacements = {
 				'{series.color}': series.color,
 				'{series.name}': series.name,
+				'{point.x}': point.x,
 				'{point.y}':
 					(seriesTooltipOptions.yPrefix || '') + 
 					numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
@@ -9918,10 +9923,10 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime';
 		
-		return tooltipOptions.headerFormat.replace(
-			'{point.key}', 
-			isDateTime ? dateFormat(xDateFormat, key) :  key				
-		);
+		return tooltipOptions.headerFormat
+			.replace('{point.key}', isDateTime ? dateFormat(xDateFormat, key) :  key)
+			.replace('{series.name}', series.name)
+			.replace('{series.color}', series.color);
 	},
 
 	/**
