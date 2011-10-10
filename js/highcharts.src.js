@@ -949,7 +949,7 @@ defaultOptions = {
 		loading: 'Loading...',
 		months: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
 				'August', 'September', 'October', 'November', 'December'],
-		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // docs
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		decimalPoint: '.',
 		resetZoom: 'Reset zoom',
@@ -4678,7 +4678,7 @@ function Chart(options, callback) {
 		/**
 		 * The class for stack items
 		 */
-		function StackItem(options, isNegative, x) {
+		function StackItem(options, isNegative, x, stackOption) {
 			var stackItem = this;
 
 			// Tells if the stack is negative
@@ -4689,6 +4689,9 @@ function Chart(options, callback) {
 
 			// Save the x value to be able to position the label later
 			stackItem.x = x;
+			
+			// Save the stack option on the series configuration object
+			stackItem.stack = stackOption;
 
 			// The align options and text align varies on whether the stack is negative and
 			// if the chart is inverted or not.
@@ -4814,6 +4817,7 @@ function Chart(options, callback) {
 						posPointStack,
 						negPointStack,
 						stackKey,
+						stackOption,
 						negKey;
 
 					if (!isXAxis) {
@@ -4822,7 +4826,8 @@ function Chart(options, callback) {
 
 						// create a stack for this particular series type
 						if (stacking) {
-							stackKey = serie.type + pick(serie.options.stack, '');
+							stackOption = serie.options.stack;
+							stackKey = serie.type + pick(stackOption, '');
 							negKey = '-' + stackKey;
 							serie.stackKey = stackKey; // used in translate
 
@@ -4885,7 +4890,7 @@ function Chart(options, callback) {
 									// If the StackItem is there, just update the values,
 									// if not, create one first
 									if (!stacks[key][pointX]) {
-										stacks[key][pointX] = new StackItem(options.stackLabels, isNegative, pointX);
+										stacks[key][pointX] = new StackItem(options.stackLabels, isNegative, pointX, stackOption);
 									}
 									stacks[key][pointX].setTotal(totalPos);
 								}
