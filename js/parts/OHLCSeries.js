@@ -74,7 +74,7 @@ var OHLCPoint = extendClass(Point, {
 		var point = this,
 			series = point.series;
 
-		return ['<span style="color:' + series.color + ';font-weight:bold">', (point.name || series.name), '</span><br/> ',
+		return ['<span style="color:' + series.color + ';font-weight:bold">', (point.name || series.name), '</span><br/>',
 			'Open: ', point.open, '<br/>',
 			'High: ', point.high, '<br/>',
 			'Low: ', point.low, '<br/>',
