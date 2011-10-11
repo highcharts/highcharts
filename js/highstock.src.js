@@ -13492,17 +13492,19 @@ function Scroller(chart) {
 				height: height
 			});
 			outline.attr({ d: [
-				'M',
+				M,
 				scrollerLeft, outlineTop, // left
-				'L',
-				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
-				navigatorLeft + zoomedMax + halfOutline, outlineTop + outlineHeight, // lower right of z.r.
-				navigatorLeft + zoomedMax + halfOutline, outlineTop, // upper right of z.r.
+				L,
+				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
+				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower left of z.r.
+				M,
+				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower right of z.r.
+				L,
+				navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
 				scrollerLeft + scrollerWidth, outlineTop // right
 			]});
 			// draw handles
-			drawHandle(zoomedMin - halfOutline, 0);
+			drawHandle(zoomedMin + halfOutline, 0);
 			drawHandle(zoomedMax + halfOutline, 1);
 		}
 
@@ -13521,7 +13523,7 @@ function Scroller(chart) {
 
 			scrollbar.attr({
 				x: mathRound(scrollbarHeight + zoomedMin) + (scrollbarStrokeWidth % 2 / 2),
-				width: range
+				width: range - scrollbarStrokeWidth
 			});
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
