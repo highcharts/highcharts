@@ -14179,13 +14179,16 @@ function RangeSelector(chart) {
 					position: 'relative',
 					height: 0,
 					fontFamily: chartStyle.fontFamily,
-					fontSize: chartStyle.fontSize
-				}, container.parentNode);
-
+					fontSize: chartStyle.fontSize,
+					zIndex: 1 // above container
+				});
+				
+				container.parentNode.insertBefore(div, container);
+				
 				// create an absolutely positionied div to keep the inputs
 				div = createElement('div', null, extend({
 					position: 'absolute',
-					top: (-chart.chartHeight + chart.plotTop - 25) + 'px',
+					top: (chart.plotTop - 25) + 'px',
 					right: (chart.chartWidth - chart.plotLeft - chart.plotWidth) + 'px'
 				}, options.inputBoxStyle), div);
 
