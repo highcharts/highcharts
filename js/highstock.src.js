@@ -13823,9 +13823,12 @@ extend(defaultOptions, {
 	rangeSelector: {
 		// enabled: true,
 		// buttons: {Object}
+		// buttonSpacing: 0, // docs
 		buttonTheme: {
 			width: 28,
 			height: 16,
+			padding: 1,
+			r: 0,
 			zIndex: 10 // #484
 		//	states: {
 		//		hover: {},
@@ -14134,10 +14137,7 @@ function RangeSelector(chart) {
 						clickButton(i, rangeOptions);
 						this.isActive = true;
 					},
-					extend(buttonTheme, {
-						padding: 1,
-						r: 0
-					}),
+					buttonTheme,
 					states && states.hover,
 					states && states.select
 				)
@@ -14147,7 +14147,7 @@ function RangeSelector(chart) {
 				.add();
 				
 				// increase button position for the next button
-				buttonLeft += buttons[i].width;
+				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
 				
 				if (selected === i) {
 					buttons[i].setState(2);
