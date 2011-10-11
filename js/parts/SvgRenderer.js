@@ -247,9 +247,9 @@ SVGElement.prototype = {
 					}
 					
 					// run the after setter if set (used in label)
-					if (attrSetters['after' + key]) {
+					/*if (attrSetters['after' + key]) {
 						attrSetters['after' + key]();
-					}
+					}*/
 				}
 
 			}
@@ -1522,19 +1522,25 @@ SVGRenderer.prototype = {
 	label: function (str, x, y, shape, anchorX, anchorY) {
 
 		var renderer = this,
-			wrapper = renderer.text(str),
+			wrapper = renderer.g(),
+			text = renderer.text()
+				.attr({
+					zIndex: 1
+				})
+				.add(wrapper),
 			box,
 			bBox,
 			align = 'left',
-			padding = 2,
+			padding = 3,
 			width,
 			height,
-			xAdjust,
+			wrapperX,
+			wrapperY,
 			crispAdjust = 0,
 			deferredAttr = {},
-			anchors,
+			//anchors,
 			attrSetters = wrapper.attrSetters;
-
+			
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
@@ -1542,33 +1548,57 @@ SVGRenderer.prototype = {
 		 */
 		function updateBoxSize() {
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
-				wrapper.getBBox(true); // use prototype because label.getBBox is overridden
+				text.getBBox(true);
 			wrapper.width = (width || bBox.width) + 2 * padding;
 			wrapper.height = (height || bBox.height) + 2 * padding;
 
-			// record the adjustment for right or center aligned labels
-			xAdjust = mathRound(wrapper.width * { left: 0, center: 0.5, right: 1 }[align]);
-			
 			// store the anchor information in an object
-			anchors = anchorX !== undefined && {
+			/*anchors = anchorX !== undefined && {
 				anchorX: anchorX,
 				anchorY: anchorY
-			};
+			};*/
 
 			// create the border box if it is not already present
 			if (!box) {
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height, anchors) :
+					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height) :
 					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
-				box.add(); // to get the translation right in IE
+				box.add(wrapper);
 			}
 			
 			// apply the box attributes
 			box.attr(merge({
 				width: wrapper.width,
 				height: wrapper.height
-			}, anchors, deferredAttr));
+			}, deferredAttr));
 			deferredAttr = null;
+		}
+		
+		/**
+		 * This function runs after setting text or padding, but only if padding is changed
+		 */
+		function updateTextPadding() {
+			var styles = wrapper.styles,
+				textAlign = styles && styles.textAlign,
+				x = padding,
+				y = padding + mathRound(pInt(wrapper.element.style.fontSize || 11) * 1.2);
+			
+			// compensate for alignment
+			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
+				x += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
+			}
+			
+			// update if anything changed
+			if (x !== text.x || y !== text.y) {
+				text.attr({
+					x: x,
+					y: y
+				});
+			}
+			
+			// record current values
+			text.x = x;
+			text.y = y;
 		}
 
 		/**
@@ -1590,19 +1620,12 @@ SVGRenderer.prototype = {
 		 * and add it before the text in the DOM.
 		 */
 		addEvent(wrapper, 'add', function () {
-			updateBoxSize();
-
-			var boxElem = box.element,
-				wrapperElem = wrapper.element,
-				zIndex = attr(wrapperElem, 'zIndex');
-			if (defined(zIndex)) {
-				attr(boxElem, 'zIndex', zIndex);
-			}
-			wrapperElem.parentNode.insertBefore(boxElem, wrapperElem);
-
 			wrapper.attr({
+				text: str, // alignment is available now
 				x: x,
-				y: y
+				y: y,
+				anchorX: anchorX,
+				anchorY: anchorY
 			});
 		});
 		
@@ -1622,6 +1645,8 @@ SVGRenderer.prototype = {
 		};
 		attrSetters.padding = function (key, value) {
 			padding = value;
+			updateTextPadding();
+			
 			return false;
 		};
 
@@ -1631,59 +1656,60 @@ SVGRenderer.prototype = {
 		};
 		
 		// apply these to the box and the text alike
-		attrSetters.visibility = attrSetters.zIndex = function (key, value) {
-			boxAttr(key, value);
-		};
-		
+		attrSetters.text = function(key, value) {
+			text.attr(key, value);
+			updateBoxSize();
+			updateTextPadding();
+			return false;
+		}
 		
 		// apply these to the box but not to the text
-		attrSetters.stroke = attrSetters[STROKE_WIDTH] = attrSetters.fill = attrSetters.r = function (key, value) {
-			if (key === STROKE_WIDTH) {
-				crispAdjust = value % 2 / 2;
-			}
+		attrSetters[STROKE_WIDTH] = function (key, value) {
+			crispAdjust = value % 2 / 2;
+			boxAttr(key, value);
+			return false;
+		};
+		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (key, value) {
 			boxAttr(key, value);
 			return false;
 		};
 		attrSetters.anchorX = function (key, value) {
 			anchorX = value;
-			boxAttr(key, value + crispAdjust);
+			boxAttr(key, value + crispAdjust - wrapperX);
 			return false;
 		};
 		attrSetters.anchorY = function (key, value) {
 			anchorY = value;
-			boxAttr(key, value);
+			boxAttr(key, value - wrapperY);
 			return false;
 		};
 		
-		// change box attributes and return modified values
+		// rename attributes
 		attrSetters.x = function (key, value) {
-			var textAlign = wrapper.styles.textAlign;
-			boxAttr(key, value - xAdjust - crispAdjust);
-			if (align === 'left' && defined(width) && (textAlign === 'center' || textAlign === 'right')) {
-				value += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
-			}
-			return mathRound(value + { left: 1, center: 0, right: -1 }[align] * padding);
+			wrapperX = value;
+			if (defined(width)) {
+				wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * (width + padding); 
+			} 
+			wrapper.attr('translateX', mathRound(wrapperX));
+			return false;
 		};
 		attrSetters.y = function (key, value) {
-			boxAttr(key, value - crispAdjust);
-			return mathRound(value + pInt(wrapper.styles.fontSize || 12) * 1.2);
+			wrapperY = value;
+			wrapper.attr('translateY', mathRound(value));
+			return false;
 		};
 		
-		// apply this after the default attribute handler has run
-		attrSetters.aftertext = updateBoxSize;
-		
-		
-		// direct certain methods to the box instead of the wrapper/text
-		wrapper.txtToFront = wrapper.toFront;
-
 		return extend(wrapper, {
 			shadow: function (b) {
 				box.shadow(b);
 				return wrapper;
 			},
-			toFront: function () {
+			/*toFront: function () {
 				box.toFront();
 				wrapper.txtToFront();
+			},*/
+			getBBox: function() {
+				return box.getBBox();				
 			}
 		});
 	}
