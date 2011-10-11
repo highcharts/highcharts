@@ -13372,6 +13372,11 @@ function Scroller(chart) {
 	 * @param {Number} pxMax Pixel value maximum
 	 */
 	function render(min, max, pxMin, pxMax) {
+		
+		// don't render the navigator until we have data (#486)
+		if (isNaN(min)) {
+			return;
+		}
 
 		var strokeWidth,
 			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
@@ -13936,8 +13941,7 @@ function RangeSelector(chart) {
 				week: 7 * 24 * 3600 * 1000
 			};
 
-		
-		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
+		if (!defined(dataMin) || // chart has no data, base series is removed
 				i === selected) { // same button is clicked twice
 			return;
 		}
