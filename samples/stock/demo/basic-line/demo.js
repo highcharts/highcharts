@@ -1,4 +1,6 @@
-jQuery(function() {
+// The jsonp callback
+function callback(data) {
+	
 	// Create the chart	
 	window.chart = new Highcharts.StockChart({
 	    chart: {
@@ -24,7 +26,16 @@ jQuery(function() {
 		
 	    series: [{
 	        name: 'USD to EUR',
-	        data: usdeur
+	        data: data
 	    }]
 	});
+}
+
+jQuery(function($) {
+	
+	$.ajax({
+		url: 'http://www.highcharts.com/samples/data/usdeur.jsonp',
+		dataType: 'jsonp'
+	});
+
 });
