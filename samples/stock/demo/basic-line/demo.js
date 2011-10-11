@@ -1,5 +1,5 @@
 // The jsonp callback
-function callback(data) {
+window.callback = function(data) {
 	
 	// Create the chart	
 	window.chart = new Highcharts.StockChart({
@@ -29,7 +29,7 @@ function callback(data) {
 	        data: data
 	    }]
 	});
-}
+};
 
 jQuery(function($) {
 	
