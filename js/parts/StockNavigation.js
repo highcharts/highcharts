@@ -52,6 +52,7 @@ extend(defaultOptions, {
 			marker: {
 				enabled: false
 			},
+			pointRange: 0,
 			shadow: false
 		},
 		//top: undefined, // docs

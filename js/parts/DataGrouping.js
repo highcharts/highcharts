@@ -252,7 +252,9 @@ seriesProto.processData = function () {
 
 		// record what data grouping values were used
 		series.currentDataGrouping = groupPositions.info;
-		series.pointRange = groupPositions.info.totalRange;
+		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
+			series.pointRange = groupPositions.info.totalRange;
+		}
 		
 		// set series props
 		series.processedXData = groupedXData;
@@ -314,7 +316,7 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat) {
 			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.leastUnitDistance) {
+				if (timeUnits[n] >= xAxis.closestPointRange) {
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;
 				}	

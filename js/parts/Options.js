@@ -411,7 +411,7 @@ var defaultXAxisOptions = {
 	//}],
 	//reversed: false,
 	// showFirstLabel: true,
-	// showLastLabel: false,
+	// showLastLabel: true, // docs
 	startOfWeek: 1,
 	startOnTick: false,
 	tickColor: '#C0D0E0',
@@ -549,7 +549,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	//pointWidth: null,
 	minPointLength: 0,
 	cropThreshold: 50, // docs, when there are more points, they will not animate out of the chart on xAxis.setExtremes
-	pointRange: null, // docs, null means auto, meaning 1 in a categorized axis and leastUnitDistance if not categories
+	pointRange: null, // docs, null means auto, meaning 1 in a categorized axis and least distance between points if not categories
 	states: {
 		hover: {
 			brightness: 0.1,

@@ -1312,6 +1312,7 @@ defaultOptions = {
 				}
 			}),
 			cropThreshold: 300, // docs - draw points outside the plot area when the number of points is less than this
+			pointRange: 0, // docs
 			//pointStart: 0,
 			//pointInterval: 1,
 			showInLegend: true,
@@ -1512,7 +1513,7 @@ var defaultXAxisOptions = {
 	//}],
 	//reversed: false,
 	// showFirstLabel: true,
-	// showLastLabel: false,
+	// showLastLabel: true, // docs
 	startOfWeek: 1,
 	startOnTick: false,
 	tickColor: '#C0D0E0',
@@ -1650,7 +1651,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	//pointWidth: null,
 	minPointLength: 0,
 	cropThreshold: 50, // docs, when there are more points, they will not animate out of the chart on xAxis.setExtremes
-	padXAxis: true,
+	pointRange: null, // docs, null means auto, meaning 1 in a categorized axis and least distance between points if not categories
 	states: {
 		hover: {
 			brightness: 0.1,
@@ -4762,13 +4763,15 @@ function Chart(options, callback) {
 			oldMax,
 			minPadding = options.minPadding,
 			maxPadding = options.maxPadding,
+			leftPadding = 0,
+			rightPadding = 0,
+			leftPixelPadding = 0,
 			isLinked = defined(options.linkedTo),
 			ignoreMinPadding, // can be set to true by a column or bar series
 			ignoreMaxPadding,
 			usePercentage,
 			events = options.events,
 			eventType,
-			padAxis,
 			plotLinesAndBands = [],
 			tickInterval,
 			minorTickInterval,
@@ -4855,7 +4858,7 @@ function Chart(options, callback) {
 					labelOptions = options.labels,
 					str,
 					withLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
-						(pos === max && !pick(options.showLastLabel, 0))),
+						(pos === max && !pick(options.showLastLabel, 1))),
 					width = (categories && horiz && categories.length &&
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
@@ -5354,8 +5357,9 @@ function Chart(options, callback) {
 						serie[strAxis] = axis;
 						associatedSeries.push(serie);
 
-						if (strAxis === 'xAxis' && serie.options.padXAxis) {
-							padAxis = true;
+						// apply pointRange = 1 for category axes
+						if (categories) {
+							serie.pointRange = 1;
 						}
 
 						// the series is visible, run the min/max detection
@@ -5405,7 +5409,6 @@ function Chart(options, callback) {
 							threshold = seriesOptions.threshold,
 							yDataLength,
 							distance,
-							leastUnitDistance,
 							activeYData = [],
 							activeCounter = 0;
 
@@ -5413,18 +5416,27 @@ function Chart(options, callback) {
 							xData = serie.xData;
 							dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
 							dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
+							
+							// get the padding
+							//leftPadding = mathMax(leftPadding, serie.pointRange / 2);
+							//rightPadding = mathMax(rightPadding, serie.pointRange / 2);
+							
 						} else {
 							var isNegative,
 								pointStack,
 								key,
 								cropped = serie.cropped,
 								xExtremes = serie.xAxis.getExtremes(),
+								findPointRange,
+								pointRange,
 								j;
 
 							// get clipped and grouped data
 							serie.processData();
+							
+							// processData can alter serie.pointRange, so this goes after
+							findPointRange = serie.pointRange === null;
 
-							leastUnitDistance = serie.xAxis.leastUnitDistance;
 							xData = serie.processedXData;
 							yData = serie.processedYData;
 							yDataLength = yData.length;
@@ -5479,12 +5491,17 @@ function Chart(options, callback) {
 									// get the smallest distance between points
 									if (i) {
 										distance = mathAbs(xData[i] - xData[i - 1]);
-										leastUnitDistance = leastUnitDistance === UNDEFINED ? distance : mathMin(distance, leastUnitDistance);
+										pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
 									}
 								}
 							}
 
-							serie.xAxis.leastUnitDistance = leastUnitDistance;
+							// record the least unit distance
+							if (findPointRange) {
+								serie.pointRange = pointRange || 1;
+							}
+							serie.closestPointRange = pointRange;
+							
 
 							// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 							// always 0 and 100. If the length of activeYData is 0, continue with null values. 
@@ -5505,7 +5522,6 @@ function Chart(options, callback) {
 									ignoreMaxPadding = true;
 								}
 							}
-
 
 						}
 					}
@@ -5551,7 +5567,7 @@ function Chart(options, callback) {
 				if (isLog && handleLog) {
 					val = log2lin(val);
 				}
-				returnValue = sign * (val - localMin) * localA + cvsOffset;
+				returnValue = sign * (val - localMin) * localA + cvsOffset + leftPixelPadding;
 			}
 
 			return returnValue;
@@ -5640,7 +5656,6 @@ function Chart(options, callback) {
 		 */
 		function setTickPositions(secondPass) {
 			var length,
-				catPad,
 				linkedParent,
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
@@ -5651,7 +5666,7 @@ function Chart(options, callback) {
 			if (secondPass) {
 				maxZoom = options.maxZoom || (
 					isXAxis && !defined(options.min) && !defined(options.max) ?
-						mathMin(axis.leastUnitDistance * 5, dataMax - dataMin) :
+						mathMin(axis.closestPointRange * 5, dataMax - dataMin) :
 						null
 				);
 			}
@@ -5737,16 +5752,7 @@ function Chart(options, callback) {
 			}
 
 			if (!isLinked) {
-				// pad categorised axis to nearest half unit
-				if (categories || padAxis) {
-					catPad = (categories ? 1 : (axis.leastUnitDistance || 0)) * 0.5;
-
-					if (catPad) {
-						min -= catPad;
-						max += catPad;
-					}
-				}
-
+				
 				// reset min/max or remove extremes based on start/end on tick
 				var roundedMin = tickPositions[0],
 					roundedMax = tickPositions[tickPositions.length - 1];
@@ -5886,8 +5892,7 @@ function Chart(options, callback) {
 				chart.redraw(animation);
 			}
 
-			// Fire the event. At this point, min and max may have been modified by maxPadding,
-			// column padAxis etc.
+			// Fire the event. At this point, min and max may have been modified by maxPadding etc.
 			fireEvent(axis, 'setExtremes', {
 				userMin: userMin,
 				userMax: userMax,
@@ -5902,7 +5907,10 @@ function Chart(options, callback) {
 		function setAxisSize() {
 
 			var offsetLeft = options.offsetLeft || 0,
-				offsetRight = options.offsetRight || 0;
+				offsetRight = options.offsetRight || 0,
+				range = max - min,
+				pointRange = 0,
+				closestPointRange;
 
 			// basic values
 			axisLeft = pick(options.left, plotLeft + offsetLeft);
@@ -5912,10 +5920,32 @@ function Chart(options, callback) {
 			axisBottom = chartHeight - axisHeight - axisTop;
 			axisRight = chartWidth - axisWidth - axisLeft;
 
+
+			
+			// adjust translation for padding
+			if (isXAxis) {
+				each(associatedSeries, function (series) {
+					pointRange = mathMax(pointRange, series.pointRange);
+					closestPointRange = defined(closestPointRange) ? 
+						mathMin(closestPointRange, series.closestPointRange) :
+						series.closestPointRange;					
+				});
+				
+				// pointRange means the width reserved for each point, like in a column chart
+				axis.pointRange = pointRange;
+				
+				// closestPointRange means the closest distance between points. In columns
+				// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
+				// is some other value
+				axis.closestPointRange = closestPointRange;
+				
+			}
+			
 			// secondary values
 			axisLength = horiz ? axisWidth : axisHeight;
-			transA = axisLength / ((max - min) || 1);
+			transA = axisLength / ((range + pointRange) || 1);
 			transB = horiz ? axisLeft : axisBottom; // translation addend
+			leftPixelPadding = transA * (pointRange / 2);
 			
 			// expose to use in Series object and navigator
 			axis.left = axisLeft;
@@ -7827,7 +7857,6 @@ function Chart(options, callback) {
 
 				// set axes scales
 				each(axes, function (axis) {
-					axis.leastUnitDistance = UNDEFINED;
 					axis.setScale();
 				});
 			}
@@ -9357,6 +9386,7 @@ Series.prototype = {
 			name: options.name || 'Series ' + (index + 1),
 			state: NORMAL_STATE,
 			pointAttr: {},
+			pointRange: options.pointRange, 
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
 		});
@@ -9617,7 +9647,6 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 
-
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
 		while (i--) {
@@ -9805,8 +9834,7 @@ Series.prototype = {
 			interval,
 			i,
 			cropI = -1;
-
-
+		
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
 				xValue = point.x,
@@ -9816,6 +9844,7 @@ Series.prototype = {
 				pointStack,
 				distance,
 				pointStackTotal;
+				
 			// get the plotX translation
 			point.plotX = series.xAxis.translate(xValue);
 
@@ -11103,13 +11132,8 @@ var ColumnSeries = extendClass(Series, {
 		// the number of column series in the plot, the groupPadding
 		// and the pointPadding options
 		var points = series.points,
-			//closestPoints = series.closestPoints || 1,
-			leastUnitDistance = xAxis.leastUnitDistance,
-			leastPixelDistance = leastUnitDistance && mathAbs(xAxis.translate(0) - xAxis.translate(leastUnitDistance)),
-			categoryWidth = mathAbs(pick(
-				leastPixelDistance,
-				chart.plotSizeX / ((categories && categories.length) || 1)
-			)),
+			pointRange = pick(series.pointRange, xAxis.pointRange),
+			categoryWidth = mathAbs(xAxis.translate(0) - xAxis.translate(pointRange)),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
@@ -12292,6 +12316,9 @@ seriesProto.processData = function () {
 
 		// record what data grouping values were used
 		series.currentDataGrouping = groupPositions.info;
+		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
+			series.pointRange = groupPositions.info.totalRange;
+		}
 		
 		// set series props
 		series.processedXData = groupedXData;
@@ -12299,6 +12326,7 @@ seriesProto.processData = function () {
 
 	} else {
 		series.currentDataGrouping = null;
+		series.pointRange = options.pointRange;
 	}
 
 
@@ -12352,7 +12380,7 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat) {
 			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.leastUnitDistance) {
+				if (timeUnits[n] >= xAxis.closestPointRange) {
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;
 				}	
@@ -13123,6 +13151,7 @@ extend(defaultOptions, {
 			marker: {
 				enabled: false
 			},
+			pointRange: 0,
 			shadow: false
 		},
 		//top: undefined, // docs
