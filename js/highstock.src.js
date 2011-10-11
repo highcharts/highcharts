@@ -9275,6 +9275,8 @@ Point.prototype = {
 	 */
 	setState: function (state) {
 		var point = this,
+			plotX = point.plotX,
+			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,
 			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
@@ -9304,7 +9306,16 @@ Point.prototype = {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			point.graphic.attr(pointAttr[state]);
+			radius = pointAttr[state].r;
+			point.graphic.attr(merge(
+				pointAttr[state],
+				radius ? { // new symbol attributes
+					x: plotX - radius,
+					y: plotY - radius,
+					width: 2 * radius,
+					height: 2 * radius
+				} : {}
+			));
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
@@ -9323,8 +9334,8 @@ Point.prototype = {
 				}
 
 				stateMarkerGraphic.translate(
-					point.plotX,
-					point.plotY
+					plotX,
+					plotY
 				);
 			}
 
