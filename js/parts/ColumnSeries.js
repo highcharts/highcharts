@@ -70,12 +70,13 @@ var ColumnSeries = extendClass(Series, {
 		// and the pointPadding options
 		var points = series.points,
 			//closestPoints = series.closestPoints || 1,
-			leastUnitDistance = xAxis.leastUnitDistance,
-			leastPixelDistance = leastUnitDistance && mathAbs(xAxis.translate(0) - xAxis.translate(leastUnitDistance)),
+			pointRange = pick(series.pointRange, xAxis.pointRange),
+			/*pointPixelRange = pointRange && mathAbs(xAxis.translate(0) - xAxis.translate(pointRange)),
 			categoryWidth = mathAbs(pick(
-				leastPixelDistance,
+				pointPixelRange,
 				chart.plotSizeX / ((categories && categories.length) || 1)
-			)),
+			)),*/
+			categoryWidth = pointRange && mathAbs(xAxis.translate(0) - xAxis.translate(pointRange)),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
@@ -91,7 +92,7 @@ var ColumnSeries = extendClass(Series, {
 			threshold = options.threshold,
 			translatedThreshold = series.yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
-
+console.log(pointRange)
 		// record the new values
 		each(points, function (point, i) {
 			var plotY = point.plotY,

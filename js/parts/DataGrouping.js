@@ -252,6 +252,7 @@ seriesProto.processData = function () {
 
 		// record what data grouping values were used
 		series.currentDataGrouping = groupPositions.info;
+		series.pointRange = groupPositions.info.totalRange;
 		
 		// set series props
 		series.processedXData = groupedXData;
@@ -259,6 +260,7 @@ seriesProto.processData = function () {
 
 	} else {
 		series.currentDataGrouping = null;
+		series.pointRange = options.pointRange;
 	}
 
 

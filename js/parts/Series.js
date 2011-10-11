@@ -498,6 +498,7 @@ Series.prototype = {
 			name: options.name || 'Series ' + (index + 1),
 			state: NORMAL_STATE,
 			pointAttr: {},
+			pointRange: options.pointRange, 
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
 		});
@@ -758,7 +759,6 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 
-
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
 		while (i--) {
@@ -946,8 +946,7 @@ Series.prototype = {
 			interval,
 			i,
 			cropI = -1;
-
-
+		
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
 				xValue = point.x,
@@ -957,6 +956,7 @@ Series.prototype = {
 				pointStack,
 				distance,
 				pointStackTotal;
+				
 			// get the plotX translation
 			point.plotX = series.xAxis.translate(xValue);
 

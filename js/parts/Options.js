@@ -210,6 +210,7 @@ defaultOptions = {
 				}
 			}),
 			cropThreshold: 300, // docs - draw points outside the plot area when the number of points is less than this
+			pointRange: 0, // docs
 			//pointStart: 0,
 			//pointInterval: 1,
 			showInLegend: true,
@@ -548,7 +549,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	//pointWidth: null,
 	minPointLength: 0,
 	cropThreshold: 50, // docs, when there are more points, they will not animate out of the chart on xAxis.setExtremes
-	padXAxis: true,
+	pointRange: null, // docs, null means auto, meaning 1 in a categorized axis and leastUnitDistance if not categories
 	states: {
 		hover: {
 			brightness: 0.1,

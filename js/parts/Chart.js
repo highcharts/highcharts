@@ -151,6 +151,9 @@ function Chart(options, callback) {
 			oldMax,
 			minPadding = options.minPadding,
 			maxPadding = options.maxPadding,
+			leftPadding = 0,
+			rightPadding = 0,
+			leftPixelPadding = 0,
 			isLinked = defined(options.linkedTo),
 			ignoreMinPadding, // can be set to true by a column or bar series
 			ignoreMaxPadding,
@@ -743,8 +746,12 @@ function Chart(options, callback) {
 						serie[strAxis] = axis;
 						associatedSeries.push(serie);
 
-						if (strAxis === 'xAxis' && serie.options.padXAxis) {
+						/*if (strAxis === 'xAxis' && serie.options.padXAxis) {
 							padAxis = true;
+						}*/
+						// apply pointRange = 1 for category axes
+						if (categories) {
+							serie.pointRange = 1;
 						}
 
 						// the series is visible, run the min/max detection
@@ -794,7 +801,6 @@ function Chart(options, callback) {
 							threshold = seriesOptions.threshold,
 							yDataLength,
 							distance,
-							leastUnitDistance,
 							activeYData = [],
 							activeCounter = 0;
 
@@ -802,18 +808,27 @@ function Chart(options, callback) {
 							xData = serie.xData;
 							dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
 							dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
+							
+							// get the padding
+							//leftPadding = mathMax(leftPadding, serie.pointRange / 2);
+							//rightPadding = mathMax(rightPadding, serie.pointRange / 2);
+							
 						} else {
 							var isNegative,
 								pointStack,
 								key,
 								cropped = serie.cropped,
 								xExtremes = serie.xAxis.getExtremes(),
+								findPointRange,
+								pointRange,
 								j;
 
 							// get clipped and grouped data
 							serie.processData();
+							
+							// processData can alter serie.pointRange, so this goes after
+							findPointRange = serie.pointRange === null;
 
-							leastUnitDistance = serie.xAxis.leastUnitDistance;
 							xData = serie.processedXData;
 							yData = serie.processedYData;
 							yDataLength = yData.length;
@@ -866,14 +881,17 @@ function Chart(options, callback) {
 
 
 									// get the smallest distance between points
-									if (i) {
+									if (findPointRange && i) {
 										distance = mathAbs(xData[i] - xData[i - 1]);
-										leastUnitDistance = leastUnitDistance === UNDEFINED ? distance : mathMin(distance, leastUnitDistance);
+										pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
 									}
 								}
 							}
 
-							serie.xAxis.leastUnitDistance = leastUnitDistance;
+							// record the least unit distance
+							if (findPointRange) {
+								serie.pointRange = pointRange;
+							}
 
 							// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 							// always 0 and 100. If the length of activeYData is 0, continue with null values. 
@@ -894,7 +912,6 @@ function Chart(options, callback) {
 									ignoreMaxPadding = true;
 								}
 							}
-
 
 						}
 					}
@@ -940,7 +957,7 @@ function Chart(options, callback) {
 				if (isLog && handleLog) {
 					val = log2lin(val);
 				}
-				returnValue = sign * (val - localMin) * localA + cvsOffset;
+				returnValue = sign * (val - localMin) * localA + cvsOffset + leftPixelPadding;
 			}
 
 			return returnValue;
@@ -1040,7 +1057,7 @@ function Chart(options, callback) {
 			if (secondPass) {
 				maxZoom = options.maxZoom || (
 					isXAxis && !defined(options.min) && !defined(options.max) ?
-						mathMin(axis.leastUnitDistance * 5, dataMax - dataMin) :
+						mathMin(axis.pointRange * 5, dataMax - dataMin) :
 						null
 				);
 			}
@@ -1127,14 +1144,14 @@ function Chart(options, callback) {
 
 			if (!isLinked) {
 				// pad categorised axis to nearest half unit
-				if (categories || padAxis) {
-					catPad = (categories ? 1 : (axis.leastUnitDistance || 0)) * 0.5;
+				/*if (categories || padAxis) {
+					catPad = (categories ? 1 : (axis.pointRange || 0)) * 0.5;
 
 					if (catPad) {
 						min -= catPad;
 						max += catPad;
 					}
-				}
+				}*/
 
 				// reset min/max or remove extremes based on start/end on tick
 				var roundedMin = tickPositions[0],
@@ -1291,7 +1308,9 @@ function Chart(options, callback) {
 		function setAxisSize() {
 
 			var offsetLeft = options.offsetLeft || 0,
-				offsetRight = options.offsetRight || 0;
+				offsetRight = options.offsetRight || 0,
+				range = (max - min) || 1,
+				pointRange = 0;
 
 			// basic values
 			axisLeft = pick(options.left, plotLeft + offsetLeft);
@@ -1303,8 +1322,24 @@ function Chart(options, callback) {
 
 			// secondary values
 			axisLength = horiz ? axisWidth : axisHeight;
-			transA = axisLength / ((max - min) || 1);
+			transA = axisLength / range;
 			transB = horiz ? axisLeft : axisBottom; // translation addend
+			
+			// adjust translation for padding
+			
+			/*if (axis.pointRange) {
+				leftPadding = axis.pointRange / 2;
+				rightPadding = axis.pointRange / 2;
+			}*/
+			if (isXAxis) {
+				each (associatedSeries, function(series) {
+					pointRange = mathMax(pointRange, series.pointRange);
+				});
+			}
+			isXAxis && console.log(pointRange / (24 * 3600 * 1000), 'days');
+			leftPixelPadding = transA * (pointRange / 2);
+			transA = (axisLength - transA * pointRange) / range;
+			
 			
 			// expose to use in Series object and navigator
 			axis.left = axisLeft;
@@ -3216,7 +3251,7 @@ function Chart(options, callback) {
 
 				// set axes scales
 				each(axes, function (axis) {
-					axis.leastUnitDistance = UNDEFINED;
+					axis.pointRange = UNDEFINED;
 					axis.setScale();
 				});
 			}
