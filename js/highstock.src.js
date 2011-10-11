@@ -13825,7 +13825,8 @@ extend(defaultOptions, {
 		// buttons: {Object}
 		buttonTheme: {
 			width: 28,
-			height: 16
+			height: 16,
+			zIndex: 10 // #484
 		//	states: {
 		//		hover: {},
 		//		select: {}
