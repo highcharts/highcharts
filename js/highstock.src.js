@@ -13943,7 +13943,7 @@ function RangeSelector(chart) {
 				week: 7 * 24 * 3600 * 1000
 			};
 
-		if (!defined(dataMin) || // chart has no data, base series is removed
+		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
 				i === selected) { // same button is clicked twice
 			return;
 		}
@@ -13994,7 +13994,7 @@ function RangeSelector(chart) {
 				}
 			);
 			selected = i;
-
+			
 		} else { // existing axis object; after render time
 			setTimeout(function () { // make sure the visual state is set before the heavy process begins
 				baseAxis.setExtremes(
