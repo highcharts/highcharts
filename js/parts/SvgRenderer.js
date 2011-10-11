@@ -246,10 +246,6 @@ SVGElement.prototype = {
 						attr(element, key, value);
 					}
 					
-					// run the after setter if set (used in label)
-					/*if (attrSetters['after' + key]) {
-						attrSetters['after' + key]();
-					}*/
 				}
 
 			}
@@ -1538,7 +1534,6 @@ SVGRenderer.prototype = {
 			wrapperY,
 			crispAdjust = 0,
 			deferredAttr = {},
-			//anchors,
 			attrSetters = wrapper.attrSetters;
 			
 		/**
@@ -1551,12 +1546,6 @@ SVGRenderer.prototype = {
 				text.getBBox(true);
 			wrapper.width = (width || bBox.width) + 2 * padding;
 			wrapper.height = (height || bBox.height) + 2 * padding;
-
-			// store the anchor information in an object
-			/*anchors = anchorX !== undefined && {
-				anchorX: anchorX,
-				anchorY: anchorY
-			};*/
 
 			// create the border box if it is not already present
 			if (!box) {
@@ -1653,15 +1642,16 @@ SVGRenderer.prototype = {
 		// change local variable and set attribue as well
 		attrSetters.align = function (key, value) {
 			align = value;
+			return false; // prevent setting text-anchor on the group
 		};
 		
 		// apply these to the box and the text alike
-		attrSetters.text = function(key, value) {
+		attrSetters.text = function (key, value) {
 			text.attr(key, value);
 			updateBoxSize();
 			updateTextPadding();
 			return false;
-		}
+		};
 		
 		// apply these to the box but not to the text
 		attrSetters[STROKE_WIDTH] = function (key, value) {
@@ -1687,9 +1677,8 @@ SVGRenderer.prototype = {
 		// rename attributes
 		attrSetters.x = function (key, value) {
 			wrapperX = value;
-			if (defined(width)) {
-				wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * (width + padding); 
-			} 
+			wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding); 
+			
 			wrapper.attr('translateX', mathRound(wrapperX));
 			return false;
 		};
@@ -1704,11 +1693,7 @@ SVGRenderer.prototype = {
 				box.shadow(b);
 				return wrapper;
 			},
-			/*toFront: function () {
-				box.toFront();
-				wrapper.txtToFront();
-			},*/
-			getBBox: function() {
+			getBBox: function () {
 				return box.getBBox();				
 			}
 		});

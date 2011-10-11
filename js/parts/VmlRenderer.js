@@ -324,10 +324,6 @@ var VMLElement = extendClass(SVGElement, {
 						}
 					}
 
-					// run the after-setter if set (used in label)
-					if (attrSetters['after' + key]) {
-						attrSetters['after' + key]();
-					}
 				}
 			}
 		}
