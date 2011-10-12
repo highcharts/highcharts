@@ -743,6 +743,8 @@ extend(defaultOptions, {
 		//		select: {}
 		// }
 		}
+		// inputDateFormat: '%b %e, %Y', // docs
+		// inputEditDateFormat: '%Y-%m-%d', // docs
 		// inputEnabled: true,
 		// inputStyle: {}
 		// labelStyle: {}
@@ -942,7 +944,7 @@ function RangeSelector(chart) {
 	 * @param {Number} time
 	 */
 	function setInputValue(input, time) {
-		var format = input.hasFocus ? '%Y-%m-%d' : '%b %e, %Y';
+		var format = input.hasFocus ? options.inputEditDateFormat || '%Y-%m-%d' : options.inputDateFormat || '%b %e, %Y';
 		if (time) {
 			input.HCTime = time;
 		}
