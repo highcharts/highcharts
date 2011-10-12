@@ -34,48 +34,34 @@
 				series: []
 			};
 			
-			/*
-			 Load the data from the CSV file. This is the contents of the file:
-			 
-				Apples,Pears,Oranges,Bananas,Plums
-				John,8,4,6,5
-				Jane,3,4,2,3
-				Joe,86,76,79,77
-				Janet,3,16,13,15
+			// Load the data from the XML file 
+			$.get('data.xml', function(xml) {
 				
-			 */ 
-			$.get('data.csv', function(data) {
 				// Split the lines
-				var lines = data.split('\n');
-				$.each(lines, function(lineNo, line) {
-					var items = line.split(',');
-					
-					// header line containes categories
-					if (lineNo == 0) {
-						$.each(items, function(itemNo, item) {
-							if (itemNo > 0) options.xAxis.categories.push(item);
-						});
-					}
-					
-					// the rest of the lines contain data with their name in the first position
-					else {
-						var series = { 
-							data: []
-						};
-						$.each(items, function(itemNo, item) {
-							if (itemNo == 0) {
-								series.name = item;
-							} else {
-								series.data.push(parseFloat(item));
-							}
-						});
-						
-						options.series.push(series);
-
-					}
-					
+				var $xml = $(xml);
+				
+				// push categories
+				$xml.find('categories item').each(function(i, category) {
+					options.xAxis.categories.push($(category).text());
 				});
 				
+				// push series
+				$xml.find('series').each(function(i, series) {
+					var seriesOptions = {
+						name: $(series).find('name').text(),
+						data: []
+					};
+					
+					// push data points
+					$(series).find('data point').each(function(i, point) {
+						seriesOptions.data.push(
+							parseInt($(point).text())
+						);
+					});
+					
+					// add it to the options
+					options.series.push(seriesOptions);
+				});
 				var chart = new Highcharts.Chart(options);
 			});
 			
