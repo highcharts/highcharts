@@ -13023,7 +13023,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						width: options.width,
 						height: options.height
 					})
-					.add(series.group);
+					.add(series.group)
+					.shadow(options.shadow);
 
 				}
 
@@ -13104,7 +13105,7 @@ each(['circle', 'square'], function (shape) {
 			path = symbols[shape](x, y, w, h);
 
 		if (anchorX && anchorY) {
-			path.push('M', x + w / 2, y + h, 'L', anchorX, anchorY);
+			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
 		}
 
 		//console.trace(x, y, );
