@@ -11,13 +11,13 @@ var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
  * Start Scroller code														*
  *****************************************************************************/
 
-var buttonGradient = {
-		linearGradient: [0, 0, 0, 1],
-		stops: [
+var buttonGradient = hash(
+		LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
+		STOPS, [
 			[0, '#FFF'],
 			[1, '#CCC']
 		]
-	},
+	),
 	units = [].concat(defaultPlotOptions.line.dataGrouping.units); // copy
 
 // add more resolution to units
@@ -95,13 +95,13 @@ extend(defaultOptions, {
 		buttonBorderRadius: 2,
 		buttonBorderWidth: 1,
 		rifleColor: '#666',
-		trackBackgroundColor: {
-			linearGradient: [0, 0, 0, 1],
-			stops: [
+		trackBackgroundColor: hash(
+			LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
+			STOPS, [
 				[0, '#EEE'],
 				[1, '#FFF']
 			]
-		},
+		),
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1
 		// trackBorderRadius: 0

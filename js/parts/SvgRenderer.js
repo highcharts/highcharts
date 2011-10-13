@@ -946,7 +946,8 @@ SVGRenderer.prototype = {
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
-			STYLE = 'style';
+			STYLE = 'style',
+			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// prepare the attributes
 		/*jslint white: true*/
@@ -954,7 +955,7 @@ SVGRenderer.prototype = {
 			STROKE_WIDTH, 1,
 			STROKE, '#999',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 1],
+				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
 					[0, '#FFF'],
 					[1, '#DDD']
@@ -974,7 +975,7 @@ SVGRenderer.prototype = {
 		hoverState = merge(normalState, hash(
 			STROKE, '#68A',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 1],
+				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
 					[0, '#FFF'],
 					[1, '#ACF']
@@ -989,7 +990,7 @@ SVGRenderer.prototype = {
 		pressedState = merge(normalState, hash(
 			STROKE, '#68A',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 1],
+				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
 					[0, '#9BD'],
 					[1, '#CDF']
@@ -1424,21 +1425,20 @@ SVGRenderer.prototype = {
 			regexRgba = /^rgba/;
 		if (color && color.linearGradient) {
 			var renderer = this,
-				strLinearGradient = 'linearGradient',
-				linearGradient = color[strLinearGradient],
+				linearGradient = color[LINEAR_GRADIENT],
 				relativeToShape = !linearGradient.length, // keep backwards compatibility
 				id = PREFIX + idCounter++,
 				gradientObject,
 				stopColor,
 				stopOpacity;
 			
-			gradientObject = renderer.createElement(strLinearGradient)
+			gradientObject = renderer.createElement(LINEAR_GRADIENT)
 				.attr(extend({
 					id: id,
-					x1: linearGradient.x1 || linearGradient[0],
-					y1: linearGradient.y1 || linearGradient[1],
-					x2: linearGradient.x2 || linearGradient[2],
-					y2: linearGradient.y2 || linearGradient[3]
+					x1: linearGradient.x1 || linearGradient[0] || 0,
+					y1: linearGradient.y1 || linearGradient[1] || 0,
+					x2: linearGradient.x2 || linearGradient[2] || 0,
+					y2: linearGradient.y2 || linearGradient[3] || 0
 				}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
 				.add(renderer.defs);
 

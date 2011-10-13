@@ -2750,7 +2750,8 @@ SVGRenderer.prototype = {
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
-			STYLE = 'style';
+			STYLE = 'style',
+			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// prepare the attributes
 		/*jslint white: true*/
@@ -2758,7 +2759,7 @@ SVGRenderer.prototype = {
 			STROKE_WIDTH, 1,
 			STROKE, '#999',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 1],
+				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
 					[0, '#FFF'],
 					[1, '#DDD']
@@ -2778,7 +2779,7 @@ SVGRenderer.prototype = {
 		hoverState = merge(normalState, hash(
 			STROKE, '#68A',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 1],
+				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
 					[0, '#FFF'],
 					[1, '#ACF']
@@ -2793,7 +2794,7 @@ SVGRenderer.prototype = {
 		pressedState = merge(normalState, hash(
 			STROKE, '#68A',
 			FILL, hash(
-				LINEAR_GRADIENT, [0, 0, 0, 1],
+				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
 					[0, '#9BD'],
 					[1, '#CDF']
@@ -3228,21 +3229,20 @@ SVGRenderer.prototype = {
 			regexRgba = /^rgba/;
 		if (color && color.linearGradient) {
 			var renderer = this,
-				strLinearGradient = 'linearGradient',
-				linearGradient = color[strLinearGradient],
+				linearGradient = color[LINEAR_GRADIENT],
 				relativeToShape = !linearGradient.length, // keep backwards compatibility
 				id = PREFIX + idCounter++,
 				gradientObject,
 				stopColor,
 				stopOpacity;
 			
-			gradientObject = renderer.createElement(strLinearGradient)
+			gradientObject = renderer.createElement(LINEAR_GRADIENT)
 				.attr(extend({
 					id: id,
-					x1: linearGradient.x1 || linearGradient[0],
-					y1: linearGradient.y1 || linearGradient[1],
-					x2: linearGradient.x2 || linearGradient[2],
-					y2: linearGradient.y2 || linearGradient[3]
+					x1: linearGradient.x1 || linearGradient[0] || 0,
+					y1: linearGradient.y1 || linearGradient[1] || 0,
+					x2: linearGradient.x2 || linearGradient[2] || 0,
+					y2: linearGradient.y2 || linearGradient[3] || 0
 				}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
 				.add(renderer.defs);
 
@@ -4255,15 +4255,15 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 			regexRgba = /^rgba/,
 			markup;
 
-		if (color && color.linearGradient) {
+		if (color && color[LINEAR_GRADIENT]) {
 
 			var stopColor,
 				stopOpacity,
-				linearGradient = color.linearGradient,
-				x1 = linearGradient.x1 || linearGradient[0],
-				y1 = linearGradient.y1 || linearGradient[1],
-				x2 = linearGradient.x2 || linearGradient[2],
-				y2 = linearGradient.y2 || linearGradient[3],
+				linearGradient = color[LINEAR_GRADIENT],
+				x1 = linearGradient.x1 || linearGradient[0] || 0,
+				y1 = linearGradient.y1 || linearGradient[1] || 0,
+				x2 = linearGradient.x2 || linearGradient[2] || 0,
+				y2 = linearGradient.y2 || linearGradient[3] || 0,
 				angle,
 				color1,
 				opacity1,
@@ -4289,21 +4289,19 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				}
 			});
 
-
-
 			// calculate the angle based on the linear vector
 			angle = 90  - math.atan(
 				(y2 - y1) / // y vector
 				(x2 - x1) // x vector
 				) * 180 / mathPI;
+				
 
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
 			markup = ['<', prop, ' colors="0% ', color1, ',100% ', color2, '" angle="', angle,
 				'" opacity="', opacity2, '" o:opacity2="', opacity1,
-				'" type="gradient" focus="100%" />'];
+				'" type="gradient" focus="100%" method="any" />'];
 			createElement(this.prepVML(markup), null, null, elem);
-
 
 
 		// if the color is an rgba color, split it and add a fill node

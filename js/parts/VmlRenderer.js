@@ -739,15 +739,15 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 			regexRgba = /^rgba/,
 			markup;
 
-		if (color && color.linearGradient) {
+		if (color && color[LINEAR_GRADIENT]) {
 
 			var stopColor,
 				stopOpacity,
-				linearGradient = color.linearGradient,
-				x1 = linearGradient.x1 || linearGradient[0],
-				y1 = linearGradient.y1 || linearGradient[1],
-				x2 = linearGradient.x2 || linearGradient[2],
-				y2 = linearGradient.y2 || linearGradient[3],
+				linearGradient = color[LINEAR_GRADIENT],
+				x1 = linearGradient.x1 || linearGradient[0] || 0,
+				y1 = linearGradient.y1 || linearGradient[1] || 0,
+				x2 = linearGradient.x2 || linearGradient[2] || 0,
+				y2 = linearGradient.y2 || linearGradient[3] || 0,
 				angle,
 				color1,
 				opacity1,
@@ -773,21 +773,19 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				}
 			});
 
-
-
 			// calculate the angle based on the linear vector
 			angle = 90  - math.atan(
 				(y2 - y1) / // y vector
 				(x2 - x1) // x vector
 				) * 180 / mathPI;
+				
 
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
 			markup = ['<', prop, ' colors="0% ', color1, ',100% ', color2, '" angle="', angle,
 				'" opacity="', opacity2, '" o:opacity2="', opacity1,
-				'" type="gradient" focus="100%" />'];
+				'" type="gradient" focus="100%" method="any" />'];
 			createElement(this.prepVML(markup), null, null, elem);
-
 
 
 		// if the color is an rgba color, split it and add a fill node
