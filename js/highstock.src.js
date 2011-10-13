@@ -725,33 +725,36 @@ ChartCounters.prototype =  {
  * Utility method extracted from Tooltip code that places a tooltip in a chart without spilling over
  * and not covering the point it self.
  */
-function placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, point, distance) {
-	
-	// the initial position of the tooltip if it is not close to any edge
-	var x = point.x - boxWidth + plotLeft - distance,
-		y = point.y - boxHeight + plotTop + 15; // 15 means the point is 15 pixels up from the bottom of the tooltip
+function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHeight, point, distance) {
+	// keep the box within the chart area
+	var pointX = point.x,
+		pointY = point.y,
+		x = pointX - boxWidth + outerLeft - distance,
+		y = pointY - boxHeight + outerTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
+		alignedRight;
 
 	// it is too far to the left, adjust it
 	if (x < 7) {
-		x = plotLeft + point.x + distance;
+		x = outerLeft + pointX + distance;
 	}
 
 	// Test to see if the tooltip is to far to the right,
 	// if it is, move it back to be inside and then up to not cover the point.
-	if ((x + boxWidth) > (plotLeft + plotWidth)) {
-		x -= (x + boxWidth) - (plotLeft + plotWidth);
+	if ((x + boxWidth) > (outerLeft + outerWidth)) {
+		x -= (x + boxWidth) - (outerLeft + outerWidth);
 		y -= boxHeight;
+		alignedRight = true;
 	}
 
-	if (y < 5) {
-		y = 5; // above
+	if (y < outerTop + 5) {
+		y = outerTop + 5; // above
 
 		// If the tooltip is still covering the point, move it below instead
-		if (point.y >= y && point.y <= (y + boxHeight)) {
-			y = point.y + boxHeight - distance; // below
+		if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
+			y = pointY + boxHeight - distance; // below
 		}
-	} else if (y + boxHeight > plotTop + plotHeight) {
-		y = plotTop + plotHeight - boxHeight - distance; // below
+	} else if (y + boxHeight > outerTop + outerHeight) {
+		y = outerTop + outerHeight - boxHeight - distance; // below
 	}
 
 	return {x: x, y: y};
