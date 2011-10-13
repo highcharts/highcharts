@@ -6766,7 +6766,12 @@ function Chart(options, callback) {
 			if (e.originalEvent) {
 				e = e.originalEvent;
 			}
-
+			
+			// The same for MooTools. It renames e.pageX to e.page.x. #445.
+			if (e.event) {
+				e = e.event;
+			}
+			
 			// iOS
 			ePos = e.touches ? e.touches.item(0) : e;
 
@@ -7157,6 +7162,9 @@ function Chart(options, callback) {
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
 			// outside the plotarea, hide the tooltip
 			addEvent(doc, 'mousemove', function (e) {
+				if (e.event) {
+					e = e.event; // MooTools renames e.pageX to e.page.x
+				}
 				if (chartPosition &&
 						!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
 							e.pageY - chartPosition.top - plotTop)) {

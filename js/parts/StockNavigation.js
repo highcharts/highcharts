@@ -512,7 +512,7 @@ function Scroller(chart) {
 		addEvent(chart.container, MOUSEMOVE, function (e) {
 			e = chart.tracker.normalizeMouseEvent(e);
 			var chartX = e.chartX;
-
+			
 			// validation for handle dragging
 			if (chartX < navigatorLeft) {
 				chartX = navigatorLeft;
