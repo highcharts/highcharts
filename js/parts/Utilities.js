@@ -40,6 +40,14 @@ function isObject(obj) {
 }
 
 /**
+ * Check for array
+ * @param {Object} obj
+ */
+function isArray(obj) {
+	return Object.prototype.toString.call(obj) === '[object Array]';
+}
+
+/**
  * Check for number
  * @param {Object} n
  */
@@ -116,12 +124,8 @@ function attr(elem, prop, value) {
  * MooTools' $.splat.
  */
 function splat(obj) {
-	if (!obj || obj.constructor !== Array) {
-		obj = [obj];
-	}
-	return obj;
+	return isArray(obj) ? obj : [obj];
 }
-
 
 
 /**
