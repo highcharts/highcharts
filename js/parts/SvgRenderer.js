@@ -1411,7 +1411,11 @@ SVGRenderer.prototype = {
 
 	/**
 	 * Take a color and return it if it's a string, make it a gradient if it's a
-	 * gradient configuration object
+	 * gradient configuration object. Prior to Highstock, an array was used to define
+	 * a linear gradient with pixel positions relative to the SVG. In newer versions
+	 * we change the coordinates to apply relative to the shape, using coordinates 
+	 * 0-1 within the shape. To preserve backwards compatibility, linearGradient
+	 * in this definition is an object of x1, y1, x2 and y2.
 	 *
 	 * @param {Object} color The color or config object
 	 */
@@ -1422,18 +1426,21 @@ SVGRenderer.prototype = {
 			var renderer = this,
 				strLinearGradient = 'linearGradient',
 				linearGradient = color[strLinearGradient],
+				relativeToShape = !linearGradient.length, // keep backwards compatibility
 				id = PREFIX + idCounter++,
 				gradientObject,
 				stopColor,
 				stopOpacity;
-			gradientObject = renderer.createElement(strLinearGradient).attr({
-				id: id,
-				//gradientUnits: 'userSpaceOnUse',
-				x1: linearGradient[0],
-				y1: linearGradient[1],
-				x2: linearGradient[2],
-				y2: linearGradient[3]
-			}).add(renderer.defs);
+			
+			gradientObject = renderer.createElement(strLinearGradient)
+				.attr(extend({
+					id: id,
+					x1: linearGradient.x1 || linearGradient[0],
+					y1: linearGradient.y1 || linearGradient[1],
+					x2: linearGradient.x2 || linearGradient[2],
+					y2: linearGradient.y2 || linearGradient[3]
+				}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
+				.add(renderer.defs);
 
 			each(color.stops, function (stop) {
 				if (regexRgba.test(stop[1])) {

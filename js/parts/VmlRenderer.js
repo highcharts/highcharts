@@ -744,6 +744,10 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 			var stopColor,
 				stopOpacity,
 				linearGradient = color.linearGradient,
+				x1 = linearGradient.x1 || linearGradient[0],
+				y1 = linearGradient.y1 || linearGradient[1],
+				x2 = linearGradient.x2 || linearGradient[2],
+				y2 = linearGradient.y2 || linearGradient[3],
 				angle,
 				color1,
 				opacity1,
@@ -773,8 +777,8 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 			// calculate the angle based on the linear vector
 			angle = 90  - math.atan(
-				(linearGradient[3] - linearGradient[1]) / // y vector
-				(linearGradient[2] - linearGradient[0]) // x vector
+				(y2 - y1) / // y vector
+				(x2 - x1) // x vector
 				) * 180 / mathPI;
 
 			// when colors attribute is used, the meanings of opacity and o:opacity2
