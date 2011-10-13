@@ -5910,7 +5910,7 @@ function Chart(options, callback) {
 			if (redraw) {
 				chart.redraw(animation);
 			}
-
+			
 			// Fire the event. At this point, min and max may have been modified by maxPadding etc.
 			fireEvent(axis, 'setExtremes', {
 				userMin: userMin,
@@ -8111,7 +8111,7 @@ function Chart(options, callback) {
 		if (!event || event.resetSelection) {
 			each(axes, function (axis) {
 				if (axis.options.zoomEnabled !== false) {
-					axis.setExtremes(null, null, false, animate);
+					axis.setExtremes(null, null, true, animate);
 				}
 			});
 		} else { // else, zoom in on all axes
@@ -8120,13 +8120,10 @@ function Chart(options, callback) {
 
 				// don't zoom more than maxZoom
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false, animate);
+					axis.setExtremes(axisData.min, axisData.max, true, animate);
 				}
 			});
 		}
-
-		// redraw chart
-		redraw();
 	};
 
 	/**
