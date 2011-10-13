@@ -210,8 +210,8 @@ seriesProto.processData = function () {
 	if (!xAxis.groupPixelWidth) {
 		i = chartSeries.length;
 		while (i--) {
-			if (chartSeries[i].xAxis === xAxis) {
-				groupPixelWidth = mathMax(groupPixelWidth, chartSeries[i].options.dataGrouping.groupPixelWidth);
+			if (chartSeries[i].xAxis === xAxis && chartSeries[i].options[DATA_GROUPING]) {
+				groupPixelWidth = mathMax(groupPixelWidth, chartSeries[i].options[DATA_GROUPING].groupPixelWidth);
 			}
 		}
 		xAxis.groupPixelWidth = groupPixelWidth;
