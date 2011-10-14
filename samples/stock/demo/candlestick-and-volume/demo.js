@@ -1,108 +1,88 @@
 $(function() {
-	$.get('/samples/stock/demo/candlestick-and-volume/data.csv', function(csv, state, xhr) {
+	$.ajax({
+		url : 'http://www.highcharts.com/samples/data/jsonp.php?filename=AAPL.OHLCV.json',
+		dataType : 'jsonp',
+		success : function(data) {
 
-		// inconsistency
-		if (typeof csv != 'string') {
-			csv = xhr.responseText;
+			// split the data set into ohlc and volume
+			var ohlc = [],
+				volume = [],
+				dataLength = data.length;
+				
+			for (i = 0; i < dataLength; i++) {
+				ohlc.push([
+					data[i][0], // the date
+					data[i][1], // open
+					data[i][2], // high
+					data[i][3], // low
+					data[i][4] // close
+				]);
+				
+				volume.push([
+					data[i][0], // the date
+					data[i][5] // the volume
+				])
+			}
+
+			// set the allowed units for data grouping
+			var groupingUnits = [[
+				'week',                         // unit name
+				[1]                             // allowed multiples
+			], [
+				'month',
+				[1, 2, 3, 4, 6]
+			]];
+	
+			// create the chart
+			chart = new Highcharts.StockChart({
+			    chart: {
+			        renderTo: 'container'
+			    },
+	
+			    rangeSelector: {
+			        selected: 1
+			    },
+	
+			    title: {
+			        text: 'AAPL Historical'
+			    },
+	
+			    xAxis: {
+			        maxZoom: 14 * 24 * 3600000,
+			    },
+			    yAxis: [{
+			        title: {
+			            text: 'OHLC'
+			        },
+			        height: 200,
+			        lineWidth: 2
+			    }, {
+			        title: {
+			            text: 'Volume'
+			        },
+			        top: 300,
+			        height: 100,
+			        offset: 0,
+			        lineWidth: 2
+			    }],
+			    
+			    series: [{
+			        type: 'candlestick',
+			        name: 'AAPL',
+			        data: ohlc,
+			        dataGrouping: {
+						units: groupingUnits
+			        }
+			    }, {
+			        type: 'column',
+			        name: 'Volume',
+			        data: volume,
+			        yAxis: 1,
+			        dataGrouping: {
+						units: groupingUnits
+			        }
+			    }]
+			});
 		}
-
-		// parse the CSV data
-		var data = [], volume = [], navigatorData = [], header, comment = /^#/, x;
-
-		$.each(csv.split('\n'), function(i, line){
-		    if (!comment.test(line)) {
-		        if (!header) {
-		            header = line;
-		        }
-		        else {
-		            var point = line.split(';'), date = point[0].split('-');
-
-		            x = Date.UTC(date[2], date[1] - 1, date[0]);
-
-		            data.push([
-						x, // time
-						parseFloat(point[3]), // open
-						parseFloat(point[6]), // high
-						parseFloat(point[5]), // low
-						parseFloat(point[4]) // close
-					]);
-
-		            volume.push([x, parseFloat(point[2])]); // volume
-				    navigatorData.push([x, parseFloat(point[4])]); // close
-		        }
-		    }
-		});
-
-		// set the allowed units for data grouping
-		var groupingUnits = [[
-			'week',                         // unit name
-			[1]                             // allowed multiples
-		], [
-			'month',
-			[1, 2, 3, 4, 6]
-		]];
-
-		// create the chart
-		chart = new Highcharts.StockChart({
-		    chart: {
-		        renderTo: 'container',
-		        alignTicks: false
-		    },
-
-		    navigator: {
-		        series: {
-		            data: navigatorData
-		        }
-		    },
-
-		    rangeSelector: {
-		        selected: 0
-		    },
-
-		    title: {
-		        text: 'USD to EUR exchange rate'
-		    },
-
-		    xAxis: {
-		        type: 'datetime',
-		        maxZoom: 14 * 24 * 3600000,
-		        // fourteen days
-		        title: {
-		            text: null
-		        }
-		    },
-		    yAxis: [{
-		        title: {
-		            text: 'Exchange rate'
-		        },
-		        height: 200,
-		        lineWidth: 2
-		    }, {
-		        title: {
-		            text: 'Volume'
-		        },
-		        top: 300,
-		        height: 100,
-		        offset: 0,
-		        lineWidth: 2
-		    }],
-
-		    series: [{
-		        type: 'candlestick',
-		        name: 'USD to EUR',
-		        data: data,
-		        dataGrouping: {
-				units: groupingUnits
-		        }
-		    }, {
-		        type: 'column',
-		        name: 'Volume',
-		        data: volume,
-		        yAxis: 1,
-		        dataGrouping: {
-				units: groupingUnits
-		        }
-		    }]
-		});
 	});
 });
