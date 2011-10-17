@@ -1397,13 +1397,13 @@ defaultOptions = {
 	},
 
 	loading: {
-		hideDuration: 100,
+		// hideDuration: 100,
 		labelStyle: {
 			fontWeight: 'bold',
 			position: RELATIVE,
 			top: '1em'
 		},
-		showDuration: 100,
+		// showDuration: 0, // docs
 		style: {
 			position: ABSOLUTE,
 			backgroundColor: 'white',
@@ -7976,7 +7976,7 @@ function Chart(options, callback) {
 			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
-				duration: loadingOptions.showDuration
+				duration: loadingOptions.showDuration || 0
 			});
 			loadingShown = true;
 		}
@@ -7988,7 +7988,7 @@ function Chart(options, callback) {
 		animate(loadingDiv, {
 			opacity: 0
 		}, {
-			duration: options.loading.hideDuration,
+			duration: options.loading.hideDuration || 100,
 			complete: function () {
 				css(loadingDiv, { display: NONE });
 			}
@@ -9677,7 +9677,7 @@ Series.prototype = {
 			}
 		}
 
-		series.data = null;
+		series.data = [];
 		series.options.data = data;
 		series.xData = xData;
 		series.yData = yData;
@@ -13782,12 +13782,12 @@ function Scroller(chart) {
 				
 				// update the extremes
 				if (hasSetExtremes && (stickToMin || stickToMax)) {
-					baseXAxis.setExtremes(newMin, newMax);
+					baseXAxis.setExtremes(newMin, newMax, true, false);
 				
 				// if it is not at any edge, just move the scroller window to reflect the new series data
 				} else {
 					if (doRedraw) {
-						chart.redraw();
+						chart.redraw(false);
 					}
 					render(
 						mathMax(baseMin, baseDataMin),

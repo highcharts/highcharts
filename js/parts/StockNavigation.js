@@ -647,12 +647,12 @@ function Scroller(chart) {
 				
 				// update the extremes
 				if (hasSetExtremes && (stickToMin || stickToMax)) {
-					baseXAxis.setExtremes(newMin, newMax);
+					baseXAxis.setExtremes(newMin, newMax, true, false);
 				
 				// if it is not at any edge, just move the scroller window to reflect the new series data
 				} else {
 					if (doRedraw) {
-						chart.redraw();
+						chart.redraw(false);
 					}
 					render(
 						mathMax(baseMin, baseDataMin),

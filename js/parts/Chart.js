@@ -3345,7 +3345,7 @@ function Chart(options, callback) {
 			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
-				duration: loadingOptions.showDuration
+				duration: loadingOptions.showDuration || 0
 			});
 			loadingShown = true;
 		}
@@ -3357,7 +3357,7 @@ function Chart(options, callback) {
 		animate(loadingDiv, {
 			opacity: 0
 		}, {
-			duration: options.loading.hideDuration,
+			duration: options.loading.hideDuration || 100,
 			complete: function () {
 				css(loadingDiv, { display: NONE });
 			}

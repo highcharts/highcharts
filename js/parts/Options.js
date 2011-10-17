@@ -292,13 +292,13 @@ defaultOptions = {
 	},
 
 	loading: {
-		hideDuration: 100,
+		// hideDuration: 100,
 		labelStyle: {
 			fontWeight: 'bold',
 			position: RELATIVE,
 			top: '1em'
 		},
-		showDuration: 100,
+		// showDuration: 0, // docs
 		style: {
 			position: ABSOLUTE,
 			backgroundColor: 'white',

@@ -765,7 +765,7 @@ Series.prototype = {
 			}
 		}
 
-		series.data = null;
+		series.data = [];
 		series.options.data = data;
 		series.xData = xData;
 		series.yData = yData;
