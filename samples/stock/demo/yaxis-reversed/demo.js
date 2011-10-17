@@ -1,35 +1,6 @@
 $(function() {
-	$.get('/samples/stock/demo/yaxis-reversed/data.csv', function(csv, state, xhr) {
-
-		// inconsistency
-		if (typeof csv != 'string') {
-			csv = xhr.responseText;
-		}
-
-		// parse the CSV data
-		var data = [], header, comment = /^#/, x;
-
-		$.each(csv.split('\n'), function(i, line){
-		    if (!comment.test(line)) {
-		        if (!header) {
-		            header = line;
-		        }
-		        else {
-		            var point = line.split(';'),
-						date = point[0].split('-');
-
-					if (point.length > 1) {
-		                x = Date.UTC(date[2], date[1] - 1, date[0]);
-
-			            data.push([
-							x, // time
-							parseFloat(point[4]) // close
-						]);
-		            }
-		        }
-		    }
-		});
-
+	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
+		
 		// Create the chart
 		window.chart = new Highcharts.StockChart({
 		    chart: {
@@ -42,23 +13,31 @@ $(function() {
 		    },
 
 		    title: {
-		        text: 'USD to EUR exchange rate'
+		        text: 'AAPL Stock Price'
 		    },
 
-		    xAxis: {
-		        maxZoom: 14 * 24 * 3600000 // fourteen days
-		    },
 		    yAxis: {
-		        title: {
-		            text: 'Exchange rate'
-		        },
-		        reversed: true
+		        reversed: true,
+		        showFirstLabel: false,
+		        showLastLabel: true
 		    },
 
 		    series: [{
-		        name: 'USD to EUR',
+		        name: 'AAPL Stock Price',
 		        data: data,
-		        threshold: null
+		        threshold: null,
+		        fillColor : {
+					linearGradient : {
+						x1: 0, 
+						y1: 1, 
+						x2: 0, 
+						y2: 0
+					},
+					stops : [[0, Highcharts.getOptions().colors[0]], [1, 'rgba(0,0,0,0)']]
+				},
+				tooltip: {
+					yDecimals: 2
+				}
 		    }]
 		});
 	});

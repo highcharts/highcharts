@@ -2,41 +2,12 @@ $(function() {
 	var seriesOptions = [],
 		yAxisOptions = [],
 		seriesCounter = 0,
-		names = ['ADBE', 'GOOGL', 'MSFT'],
+		names = ['ADBE', 'GOOG', 'MSFT'],
 		colors = Highcharts.getOptions().colors;
 
 	$.each(names, function(i, name) {
 
-		$.get('/samples/stock/demo/multiple-series/'+ name +'.csv', function(csv, state, xhr) {
-
-			// inconsistency
-			if (typeof csv != 'string') {
-				csv = xhr.responseText;
-			}
-
-			// parse the CSV data
-			var data = [], header, comment = /^#/, x;
-
-			$.each(csv.split('\n'), function(i, line){
-			    if (!comment.test(line)) {
-			        if (!header) {
-			            header = line;
-			        }
-			        else {
-			            var point = line.split(';'), date = point[0].split('-');
-
-			            x = Date.UTC(date[2], date[1] - 1, date[0]);
-
-						if (point.length > 1) {
-							// use point[4], the close value
-					data.push([
-								x,
-								parseFloat(point[4])
-							]);
-			            }
-			        }
-			    }
-			});
+		$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename='+ name.toLowerCase() +'-c.json&callback=?',	function(data) {
 
 			seriesOptions[i] = {
 				name: name,
@@ -91,20 +62,11 @@ $(function() {
 		    title: {
 		        text: null
 		    },
-plotOptions: {
-	series: {
-		dataGrouping: {
-			approximation: 'average'
-		}
-	}
-},
-		    xAxis: {
-		        type: 'datetime',
-		        maxZoom: 14 * 24 * 3600000, // fourteen days
-		        title: {
-		            text: null
-		        }
+		    
+		    tooltip: {
+		    	yDecimals: 2
 		    },
+		    
 		    yAxis: yAxisOptions,
 
 		    series: seriesOptions
