@@ -9695,7 +9695,7 @@ Series.prototype = {
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
 		while (i--) {
-			if (oldData[i]) {
+			if (oldData[i] && oldData[i].destroy) {
 				oldData[i].destroy();
 			}
 		}
