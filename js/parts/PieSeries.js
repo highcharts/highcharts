@@ -374,6 +374,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	drawDataLabels: function () {
 		var series = this,
+			data = series.data,
 			point,
 			chart = series.chart,
 			options = series.options.dataLabels,
@@ -411,10 +412,12 @@ var PieSeries = extendClass(Series, {
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		each(series.data, function (point) {
-			halves[
-				point.labelPos[7] < mathPI / 2 ? 0 : 1
-			].push(point);
+		each(data, function (point) {
+			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
+				halves[
+					point.labelPos[7] < mathPI / 2 ? 0 : 1
+				].push(point);
+			}
 		});
 		halves[1].reverse();
 
@@ -434,9 +437,9 @@ var PieSeries = extendClass(Series, {
 			var slots = [],
 				slotsLength,
 				usedSlots = [],
-				piePoints = halves[i],
+				points = halves[i],
 				pos,
-				length = piePoints.length,
+				length = points.length,
 				slotIndex;
 
 
@@ -454,7 +457,7 @@ var PieSeries = extendClass(Series, {
 							stroke: 'silver'
 						})
 						.add();
-					chart.renderer.text('Slot ' + (slots.length - 1), slotX, slotY + 4)
+					chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
 						.attr({
 							fill: 'silver'
 						}).add();
@@ -466,7 +469,7 @@ var PieSeries = extendClass(Series, {
 			// if there are more values than available slots, remove lowest values
 			if (length > slotsLength) {
 				// create an array for sorting and ranking the points within each quarter
-				rankArr = [].concat(piePoints);
+				rankArr = [].concat(points);
 				rankArr.sort(sort);
 				j = length;
 				while (j--) {
@@ -474,18 +477,18 @@ var PieSeries = extendClass(Series, {
 				}
 				j = length;
 				while (j--) {
-					if (piePoints[j].rank >= slotsLength) {
-						piePoints.splice(j, 1);
+					if (points[j].rank >= slotsLength) {
+						points.splice(j, 1);
 					}
 				}
-				length = piePoints.length;
+				length = points.length;
 			}
 
 			// The label goes to the nearest open slot, but not closer to the edge than
 			// the label's index.
 			for (j = 0; j < length; j++) {
 
-				point = piePoints[j];
+				point = points[j];
 				labelPos = point.labelPos;
 
 				var closest = 9999,
@@ -528,7 +531,7 @@ var PieSeries = extendClass(Series, {
 			// now the used slots are sorted, fill them up sequentially
 			for (j = 0; j < length; j++) {
 
-				point = piePoints[j];
+				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
 				var slot = usedSlots.pop(),

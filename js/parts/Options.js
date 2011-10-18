@@ -340,7 +340,7 @@ defaultOptions = {
 
 	credits: {
 		enabled: true,
-		text: 'Highstock Beta',
+		text: 'Highcharts.com',
 		href: 'http://www.highcharts.com',
 		position: {
 			align: 'right',

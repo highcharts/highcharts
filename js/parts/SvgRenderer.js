@@ -809,6 +809,12 @@ SVGRenderer.prototype = {
 			this.box.appendChild(textNode); // attach it to the DOM to read offset width
 		}
 
+		// remove empty line at end
+		if (lines[lines.length - 1] === '') {
+			lines.pop();
+		}
+
+		// build the lines
 		each(lines, function (line, lineNo) {
 			var spans, spanNo = 0, lineHeight;
 

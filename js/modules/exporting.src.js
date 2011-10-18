@@ -139,10 +139,10 @@ defaultOptions.exporting = {
 						type: 'image/svg+xml'
 					});
 				}
-			},
+			}
 			// Enable this block to add "View SVG" to the dropdown menu
-			//*
-			{
+			/*
+			,{
 
 				text: 'View SVG',
 				onclick: function () {
