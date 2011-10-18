@@ -5947,9 +5947,11 @@ function Chart(options, callback) {
 			if (isXAxis) {
 				each(associatedSeries, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
-					closestPointRange = defined(closestPointRange) ? 
-						mathMin(closestPointRange, series.closestPointRange) :
-						series.closestPointRange;
+					if (!series.noSharedTooltip) {
+						closestPointRange = defined(closestPointRange) ? 
+							mathMin(closestPointRange, series.closestPointRange) :
+							series.closestPointRange;
+					}
 				});
 				
 				// pointRange means the width reserved for each point, like in a column chart
