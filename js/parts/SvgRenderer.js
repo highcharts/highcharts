@@ -292,7 +292,6 @@ SVGElement.prototype = {
 	crisp: function (strokeWidth, x, y, width, height) {
 
 		var wrapper = this,
-			element = wrapper.element,
 			key,
 			attribs = {},
 			values = {},
@@ -422,7 +421,6 @@ SVGElement.prototype = {
 			translateY = wrapper.translateY || 0,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
-			shadows = wrapper.shadows,
 			transform = [];
 
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -1489,8 +1487,7 @@ SVGRenderer.prototype = {
 		// declare variables
 		var renderer = this,
 			defaultChartStyle = defaultOptions.chart.style,
-			wrapper,
-			box;
+			wrapper;
 
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));

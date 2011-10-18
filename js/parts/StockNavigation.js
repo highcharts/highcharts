@@ -10,7 +10,7 @@ var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
-
+/*jslint white:true */
 var buttonGradient = hash(
 		LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
 		STOPS, [
@@ -107,6 +107,7 @@ extend(defaultOptions, {
 		// trackBorderRadius: 0
 	}
 });
+/*jslint white:false */
 
 /**
  * The Scroller class

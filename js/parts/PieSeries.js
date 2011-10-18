@@ -374,7 +374,6 @@ var PieSeries = extendClass(Series, {
 	 */
 	drawDataLabels: function () {
 		var series = this,
-			points = series.points,
 			point,
 			chart = series.chart,
 			options = series.options.dataLabels,
@@ -412,7 +411,7 @@ var PieSeries = extendClass(Series, {
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		each(data, function (point) {
+		each(series.data, function (point) {
 			halves[
 				point.labelPos[7] < mathPI / 2 ? 0 : 1
 			].push(point);
@@ -467,7 +466,7 @@ var PieSeries = extendClass(Series, {
 			// if there are more values than available slots, remove lowest values
 			if (length > slotsLength) {
 				// create an array for sorting and ranking the points within each quarter
-				rankArr = [].concat(piepoints);
+				rankArr = [].concat(piePoints);
 				rankArr.sort(sort);
 				j = length;
 				while (j--) {

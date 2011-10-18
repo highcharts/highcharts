@@ -1289,7 +1289,7 @@ function Chart(options, callback) {
 			fireEvent(axis, 'afterSetExtremes', {
 				min: min,
 				max: max
-			})
+			});
 		}
 
 		/**

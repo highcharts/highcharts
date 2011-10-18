@@ -10,7 +10,7 @@
  */
 
 // JSLint options:
-/*global document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $ */
+/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $ */
 
 (function () {
 // encapsulated variables
@@ -2099,7 +2099,6 @@ SVGElement.prototype = {
 	crisp: function (strokeWidth, x, y, width, height) {
 
 		var wrapper = this,
-			element = wrapper.element,
 			key,
 			attribs = {},
 			values = {},
@@ -2229,7 +2228,6 @@ SVGElement.prototype = {
 			translateY = wrapper.translateY || 0,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
-			shadows = wrapper.shadows,
 			transform = [];
 
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -3296,8 +3294,7 @@ SVGRenderer.prototype = {
 		// declare variables
 		var renderer = this,
 			defaultChartStyle = defaultOptions.chart.style,
-			wrapper,
-			box;
+			wrapper;
 
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));
@@ -5920,7 +5917,7 @@ function Chart(options, callback) {
 			fireEvent(axis, 'afterSetExtremes', {
 				min: min,
 				max: max
-			})
+			});
 		}
 
 		/**
@@ -11903,7 +11900,7 @@ var PieSeries = extendClass(Series, {
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		each(data, function (point) {
+		each(series.data, function (point) {
 			halves[
 				point.labelPos[7] < mathPI / 2 ? 0 : 1
 			].push(point);
@@ -11958,7 +11955,7 @@ var PieSeries = extendClass(Series, {
 			// if there are more values than available slots, remove lowest values
 			if (length > slotsLength) {
 				// create an array for sorting and ranking the points within each quarter
-				rankArr = [].concat(piepoints);
+				rankArr = [].concat(piePoints);
 				rankArr.sort(sort);
 				j = length;
 				while (j--) {

@@ -90,7 +90,8 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		values1 = [],
 		values2 = [],
 		values3 = [],
-		values4 = [];
+		values4 = [],
+		i;
 	
 		for (i = 0; i <= dataLength; i++) {
 
