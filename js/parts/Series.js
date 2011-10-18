@@ -704,7 +704,10 @@ Series.prototype = {
 			firstPoint = null,
 			i;
 
-		series.xIncrement = null; // reset for new data
+		// reset properties
+		series.xIncrement = null;
+		series.pointRange = options.pointRange;
+		
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
 		}

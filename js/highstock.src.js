@@ -5898,26 +5898,29 @@ function Chart(options, callback) {
 		 *
 		 */
 		function setExtremes(newMin, newMax, redraw, animation) {
+
 			redraw = pick(redraw, true); // defaults to true
 
-			// record old values so that we can determine whether to redraw in setScale
-			oldUserMin = userMin;
-			oldUserMax = userMax;
-			
-			// set new values
-			userMin = newMin;
-			userMax = newMax;
-			if (redraw) {
-				chart.redraw(animation);
-			}
-			
-			// Fire the event. At this point, min and max may have been modified by maxPadding etc.
-			fireEvent(axis, 'setExtremes', {
-				userMin: userMin,
-				userMax: userMax,
+			fireEvent(axis, 'setExtremes', { // fire an event to enable syncing of multiple charts
+				min: newMin,
+				max: newMax
+			}, function () { // the default event handler
+
+				userMin = newMin;
+				userMax = newMax;
+
+
+				// redraw
+				if (redraw) {
+					chart.redraw(animation);
+				}
+			});
+
+			// this event contains the min and max values that may be modified by padding etc.
+			fireEvent(axis, 'afterSetExtremes', {
 				min: min,
 				max: max
-			});
+			})
 		}
 
 		/**
@@ -5938,19 +5941,22 @@ function Chart(options, callback) {
 			axisHeight = pick(options.height, plotHeight);
 			axisBottom = chartHeight - axisHeight - axisTop;
 			axisRight = chartWidth - axisWidth - axisLeft;
-
-
-			
+			axisLength = horiz ? axisWidth : axisHeight;
+						
 			// adjust translation for padding
 			if (isXAxis) {
 				each(associatedSeries, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
 					closestPointRange = defined(closestPointRange) ? 
 						mathMin(closestPointRange, series.closestPointRange) :
-						series.closestPointRange;					
+						series.closestPointRange;
 				});
 				
 				// pointRange means the width reserved for each point, like in a column chart
+				if ((defined(userMin) || defined(userMax)) && pointRange > tickInterval / 2) {
+					// prevent great padding when zooming tightly in to view columns
+					pointRange = 0;
+				}
 				axis.pointRange = pointRange;
 				
 				// closestPointRange means the closest distance between points. In columns
@@ -5961,7 +5967,6 @@ function Chart(options, callback) {
 			}
 			
 			// secondary values
-			axisLength = horiz ? axisWidth : axisHeight;
 			transA = axisLength / ((range + pointRange) || 1);
 			transB = horiz ? axisLeft : axisBottom; // translation addend
 			leftPixelPadding = transA * (pointRange / 2);
@@ -9616,7 +9621,10 @@ Series.prototype = {
 			firstPoint = null,
 			i;
 
-		series.xIncrement = null; // reset for new data
+		// reset properties
+		series.xIncrement = null;
+		series.pointRange = options.pointRange;
+		
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
 		}
@@ -12395,7 +12403,7 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 		ret;
 	
 	// apply only to grouped series
-	if (dataGroupingOptions && dataGroupingOptions.enabled) {
+	if (xAxis.options.type === 'datetime') {
 		
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;		
@@ -14064,7 +14072,7 @@ function RangeSelector(chart) {
 
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
-			addEvent(chart.xAxis[0], 'setExtremes', function () {
+			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
 				if (buttons[selected]) {
 					buttons[selected].setState(0);
 				}
@@ -14290,7 +14298,7 @@ Chart.prototype.callbacks.push(function (chart) {
 	if (scroller) {
 
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+		addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
 			scroller.render(e.min, e.max);
 		});
 
@@ -14307,7 +14315,7 @@ Chart.prototype.callbacks.push(function (chart) {
 
 
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+		addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
 			rangeSelector.render(e.min, e.max);
 		});
 

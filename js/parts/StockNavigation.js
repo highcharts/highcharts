@@ -929,7 +929,7 @@ function RangeSelector(chart) {
 
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
-			addEvent(chart.xAxis[0], 'setExtremes', function () {
+			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
 				if (buttons[selected]) {
 					buttons[selected].setState(0);
 				}
@@ -1155,7 +1155,7 @@ Chart.prototype.callbacks.push(function (chart) {
 	if (scroller) {
 
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+		addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
 			scroller.render(e.min, e.max);
 		});
 
@@ -1172,7 +1172,7 @@ Chart.prototype.callbacks.push(function (chart) {
 
 
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+		addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
 			rangeSelector.render(e.min, e.max);
 		});
 
