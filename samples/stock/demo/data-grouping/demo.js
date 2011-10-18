@@ -15,7 +15,8 @@ $(function() {
 							text: 'Built chart at '+ (new Date() - start) +'ms'
 						});
 					}
-				}
+				},
+				zoomType: 'x'
 		    },
 	
 		    rangeSelector: {
