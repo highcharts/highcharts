@@ -171,13 +171,13 @@ defaultOptions = {
 			animation: {
 				duration: 1000
 			},
-			// connectNulls: false, // docs
+			//connectNulls: false,
 			//cursor: 'default',
 			//clip: true,
 			//dashStyle: null,
 			//enableMouseTracking: true,
 			events: {},
-			//legendIndex: 0, // docs (+ pie points)
+			//legendIndex: 0,
 			lineWidth: 2,
 			shadow: true,
 			// stacking: null,
@@ -209,8 +209,8 @@ defaultOptions = {
 					return this.y;
 				}
 			}),
-			cropThreshold: 300, // docs - draw points outside the plot area when the number of points is less than this
-			pointRange: 0, // docs
+			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
+			pointRange: 0,
 			//pointStart: 0,
 			//pointInterval: 1,
 			showInLegend: true,
@@ -228,14 +228,14 @@ defaultOptions = {
 				}
 			},
 			stickyTracking: true
-			//tooltip: { // docs
+			//tooltip: {
 				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
 				//yDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//yPrefix: '',
 				//ySuffix: ''				
 			//}
-			// turboThreshold: 1000 // docs
+			// turboThreshold: 1000
 			// zIndex: null
 		}
 	},
@@ -287,8 +287,8 @@ defaultOptions = {
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
 		// width: undefined,
-		x: 0, // docs
-		y: 0 // docs
+		x: 0,
+		y: 0
 	},
 
 	loading: {
@@ -298,7 +298,7 @@ defaultOptions = {
 			position: RELATIVE,
 			top: '1em'
 		},
-		// showDuration: 0, // docs
+		// showDuration: 0,
 		style: {
 			position: ABSOLUTE,
 			backgroundColor: 'white',
@@ -314,8 +314,8 @@ defaultOptions = {
 		borderWidth: 2,
 		borderRadius: 5,
 		//formatter: defaultFormatter,
-		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>', // docs
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>', // docs
+		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
 		//shared: false,
 		snap: hasTouch ? 25 : 10,
@@ -325,10 +325,10 @@ defaultOptions = {
 			padding: '5px',
 			whiteSpace: 'nowrap'
 		}
-		//xDateFormat: '%A, %b %e, %Y', // docs
-		//yDecimals: null, // docs
-		//yPrefix: '', // docs
-		//ySuffix: '' // docs
+		//xDateFormat: '%A, %b %e, %Y',
+		//yDecimals: null,
+		//yPrefix: '',
+		//ySuffix: ''
 	},
 
 	toolbar: {
@@ -374,7 +374,7 @@ var defaultXAxisOptions = {
 	),
 	endOnTick: false,
 	gridLineColor: '#C0C0C0',
-	// gridLineDashStyle: 'solid', // docs
+	// gridLineDashStyle: 'solid',
 	// gridLineWidth: 0,
 	// reversed: false,
 
@@ -411,7 +411,7 @@ var defaultXAxisOptions = {
 	//}],
 	//reversed: false,
 	// showFirstLabel: true,
-	// showLastLabel: true, // docs
+	// showLastLabel: true,
 	startOfWeek: 1,
 	startOnTick: false,
 	tickColor: '#C0D0E0',
@@ -435,7 +435,7 @@ var defaultXAxisOptions = {
 		//x: 0,
 		//y: 0
 	},
-	type: 'linear' // linear, logarithmic or datetime // docs
+	type: 'linear' // linear, logarithmic or datetime
 },
 
 defaultYAxisOptions = merge(defaultXAxisOptions, {
@@ -476,7 +476,7 @@ defaultLeftAxisOptions = {
 	labels: {
 		align: 'right',
 		x: -8,
-		y: null // docs
+		y: null
 	},
 	title: {
 		rotation: 270
@@ -486,7 +486,7 @@ defaultRightAxisOptions = {
 	labels: {
 		align: 'left',
 		x: 8,
-		y: null // docs
+		y: null
 	},
 	title: {
 		rotation: 90
@@ -526,8 +526,8 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 		}
 	},
 	tooltip: {
-		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>', // docs
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>' // docs
+		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	}
 });
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
@@ -548,8 +548,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	pointPadding: 0.1,
 	//pointWidth: null,
 	minPointLength: 0,
-	cropThreshold: 50, // docs, when there are more points, they will not animate out of the chart on xAxis.setExtremes
-	pointRange: null, // docs, null means auto, meaning 1 in a categorized axis and least distance between points if not categories
+	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
+	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
 	states: {
 		hover: {
 			brightness: 0.1,
@@ -583,14 +583,14 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	dataLabels: {
 		// align: null,
 		// connectorWidth: 1,
-		// connectorColor: point.color, // docs
+		// connectorColor: point.color,
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
 		formatter: function () {
 			return this.point.name;
 		},
-		// softConnector: true, // docs
+		// softConnector: true,
 		y: 5
 	},
 	//innerSize: 0,

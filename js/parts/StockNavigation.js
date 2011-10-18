@@ -731,7 +731,7 @@ extend(defaultOptions, {
 	rangeSelector: {
 		// enabled: true,
 		// buttons: {Object}
-		// buttonSpacing: 0, // docs
+		// buttonSpacing: 0,
 		buttonTheme: {
 			width: 28,
 			height: 16,
@@ -743,8 +743,8 @@ extend(defaultOptions, {
 		//		select: {}
 		// }
 		}
-		// inputDateFormat: '%b %e, %Y', // docs
-		// inputEditDateFormat: '%Y-%m-%d', // docs
+		// inputDateFormat: '%b %e, %Y',
+		// inputEditDateFormat: '%Y-%m-%d',
 		// inputEnabled: true,
 		// inputStyle: {}
 		// labelStyle: {}

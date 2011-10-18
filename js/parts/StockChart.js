@@ -61,7 +61,7 @@ Highcharts.StockChart = function (options, callback) {
 
 	options = merge({
 		chart: {
-			panning: true // docs
+			panning: true
 		},
 		navigator: {
 			enabled: true

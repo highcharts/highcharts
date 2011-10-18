@@ -361,7 +361,7 @@ seriesProto.destroy = function () {
 /*jslint white:true */
 var commonOptions = {
 	approximation: 'average', // average, open, high, low, close, sum
-	//forced: undefined, // docs
+	//forced: undefined,
 	groupPixelWidth: 2,
 	// the first one is the point or start value, the second is the start value if we're dealing with range,
 	// the third one is the end value if dealing with a range
