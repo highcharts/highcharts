@@ -96,7 +96,7 @@ defaultOptions = {
 		loading: 'Loading...',
 		months: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
 				'August', 'September', 'October', 'November', 'December'],
-		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // docs
+		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		decimalPoint: '.',
 		resetZoom: 'Reset zoom',
@@ -146,7 +146,7 @@ defaultOptions = {
 		// margin: 15,
 		// x: 0,
 		// verticalAlign: 'top',
-		y: 15, // docs
+		y: 15,
 		style: {
 			color: '#3E576F',
 			fontSize: '16px'
@@ -159,7 +159,7 @@ defaultOptions = {
 		// floating: false
 		// x: 0,
 		// verticalAlign: 'top',
-		y: 30, // docs
+		y: 30,
 		style: {
 			color: '#6D869F'
 		}
@@ -172,12 +172,12 @@ defaultOptions = {
 			animation: {
 				duration: 1000
 			},
-			// connectNulls: false, // docs
+			//connectNulls: false,
 			//cursor: 'default',
 			//dashStyle: null,
 			//enableMouseTracking: true,
 			events: {},
-			//legendIndex: 0, // docs (+ pie points)
+			//legendIndex: 0,
 			lineWidth: 2,
 			shadow: true,
 			// stacking: null,
@@ -246,7 +246,6 @@ defaultOptions = {
 		labelFormatter: function () {
 			return this.name;
 		},
-		// lineHeight: 16, // docs: deprecated
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
@@ -278,8 +277,8 @@ defaultOptions = {
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
 		// width: undefined,
-		x: 0, // docs
-		y: 0 // docs
+		x: 0,
+		y: 0
 	},
 
 	loading: {
@@ -418,7 +417,7 @@ var defaultXAxisOptions =  {
 		//x: 0,
 		//y: 0
 	},
-	type: 'linear' // linear, logarithmic or datetime // docs
+	type: 'linear' // linear, logarithmic or datetime
 },
 
 defaultYAxisOptions = merge(defaultXAxisOptions, {
@@ -459,7 +458,7 @@ defaultLeftAxisOptions = {
 	labels: {
 		align: 'right',
 		x: -8,
-		y: null // docs
+		y: null
 	},
 	title: {
 		rotation: 270
@@ -469,7 +468,7 @@ defaultRightAxisOptions = {
 	labels: {
 		align: 'left',
 		x: 8,
-		y: null // docs
+		y: null
 	},
 	title: {
 		rotation: 90
@@ -559,14 +558,14 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	dataLabels: {
 		// align: null,
 		// connectorWidth: 1,
-		// connectorColor: point.color, // docs
+		// connectorColor: point.color,
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
 		formatter: function () {
 			return this.point.name;
 		},
-		// softConnector: true, // docs
+		// softConnector: true,
 		y: 5
 	},
 	//innerSize: 0,
