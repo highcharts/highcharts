@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.7 (2011-10-18)
+ * @license Highcharts JS v2.1.7 (2011-10-19)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1759,9 +1759,14 @@ SVGElement.prototype = {
 				if (htmlNode && (key === 'x' || key === 'y' ||
 						key === 'translateX' || key === 'translateY' || key === 'visibility')) {
 					var wrapper = this,
-						bBox;
-
-					each(htmlNode.length ? htmlNode : [this], function (itemWrapper) {
+						bBox,
+						arr = htmlNode.length ? htmlNode : [this],
+						length = arr.length,
+						itemWrapper,
+						j;
+					
+					for (j = 0; j < length; j++) {
+						itemWrapper = arr[j];
 						bBox = itemWrapper.getBBox();
 						htmlNode = itemWrapper.htmlNode; // reassign to child item
 						css(htmlNode, extend(wrapper.styles, {
@@ -1774,7 +1779,7 @@ SVGElement.prototype = {
 								visibility: value
 							});
 						}
-					});
+					}
 				}
 
 			}
