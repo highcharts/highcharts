@@ -151,7 +151,7 @@ function Chart(options, callback) {
 			oldMax,
 			minPadding = options.minPadding,
 			maxPadding = options.maxPadding,
-			leftPixelPadding = 0,
+			minPixelPadding = 0,
 			isLinked = defined(options.linkedTo),
 			ignoreMinPadding, // can be set to true by a column or bar series
 			ignoreMaxPadding,
@@ -952,7 +952,7 @@ function Chart(options, callback) {
 				if (isLog && handleLog) {
 					val = log2lin(val);
 				}
-				returnValue = sign * (val - localMin) * localA + cvsOffset + leftPixelPadding;
+				returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding);
 			}
 
 			return returnValue;
@@ -1337,7 +1337,7 @@ function Chart(options, callback) {
 			// secondary values
 			transA = axisLength / ((range + pointRange) || 1);
 			transB = horiz ? axisLeft : axisBottom; // translation addend
-			leftPixelPadding = transA * (pointRange / 2);
+			minPixelPadding = transA * (pointRange / 2);
 			
 			// expose to use in Series object and navigator
 			axis.left = axisLeft;
