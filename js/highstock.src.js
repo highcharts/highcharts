@@ -9333,12 +9333,13 @@ Point.prototype = {
 			radius = pointAttr[state].r;
 			point.graphic.attr(merge(
 				pointAttr[state],
-				radius ? { // new symbol attributes
+				radius ? extend({ // new symbol attributes
 					x: plotX - radius,
-					y: plotY - radius,
+					y: plotY - radius
+				}, point.graphic.symbolName ? { // don't apply to image symbols #507
 					width: 2 * radius,
 					height: 2 * radius
-				} : {}
+				} : {}) : {}
 			));
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
@@ -10110,12 +10111,13 @@ Series.prototype = {
 					radius = pointAttr.r;
 
 					if (graphic) { // update
-						graphic.animate({
+						graphic.animate(extend({
 							x: plotX - radius,
-							y: plotY - radius,
+							y: plotY - radius
+						}, graphic.symbolName ? { // don't apply to image symbols #507
 							width: 2 * radius,
 							height: 2 * radius
-						});
+						} : {}));
 					} else {
 						point.graphic = chart.renderer.symbol(
 							pick(point.marker && point.marker.symbol, series.symbol),
