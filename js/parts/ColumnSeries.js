@@ -39,7 +39,6 @@ var ColumnSeries = extendClass(Series, {
 			columnCount = 0,
 			xAxis = series.xAxis,
 			reversedXAxis = xAxis.reversed,
-			categories = xAxis.categories,
 			stackGroups = {},
 			stackKey,
 			columnIndex;
@@ -88,7 +87,7 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
-		each(points, function (point, i) {
+		each(points, function (point) {
 			var plotY = point.plotY,
 				yBottom = point.yBottom || translatedThreshold,
 				barX = point.plotX + pointXOffset,

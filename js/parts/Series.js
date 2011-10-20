@@ -562,8 +562,6 @@ Series.prototype = {
 			segments = [],
 			points = this.points;
 
-		var start = +new Date();
-
 		// create the segments
 		each(points, function (point, i) {
 			if (point.y === null) {
@@ -843,8 +841,7 @@ Series.prototype = {
 		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = series.xAxis.getExtremes(),
 				min = extremes.min,
-				max = extremes.max,
-				point;
+				max = extremes.max;
 
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -888,7 +885,6 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			dataOptions = options.data,
-			hasProcessedData = series.prosessedXData !== series.xData,
 			data = series.data,
 			dataLength,
 			processedXData = series.processedXData,
@@ -957,9 +953,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			points = series.points,
 			dataLength = points.length,
-			interval,
-			i,
-			cropI = -1;
+			i;
 		
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
@@ -968,7 +962,6 @@ Series.prototype = {
 				yBottom = point.low,
 				stack = yAxis.stacks[(yValue < 0 ? '-' : '') + series.stackKey],
 				pointStack,
-				distance,
 				pointStackTotal;
 				
 			// get the plotX translation
@@ -1504,7 +1497,7 @@ Series.prototype = {
 			options.style.color = pick(color, series.color, 'black');
 
 			// make the labels for each point
-			each(points, function (point, i) {
+			each(points, function (point) {
 				var barX = point.barX,
 					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
@@ -1586,8 +1579,6 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
-			plotLeft = chart.plotLeft,
-			plotRight = plotLeft + chart.plotWidth,
 			graph = series.graph,
 			graphPath = [],
 			fillColor,
@@ -1833,7 +1824,6 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			clipRect = series.clipRect,
 			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
 			group = series.group;
 

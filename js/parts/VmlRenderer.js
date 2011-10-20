@@ -139,7 +139,7 @@ var VMLElement = extendClass(SVGElement, {
 				skipAttr = false;
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](key, value);
+				result = attrSetters[key] && attrSetters[key](value, key);
 
 				if (result !== false) {
 
@@ -970,7 +970,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 		arc: function (x, y, w, h, options) {
 			var start = options.start,
 				end = options.end,
-				radius = w,
+				radius = w || h,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),

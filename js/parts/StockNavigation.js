@@ -113,7 +113,7 @@ extend(defaultOptions, {
  * The Scroller class
  * @param {Object} chart
  */
-function Scroller(chart) {
+Highcharts.Scroller = function (chart) {
 
 	var renderer = chart.renderer,
 		chartOptions = chart.options,
@@ -719,7 +719,7 @@ function Scroller(chart) {
 		render: render
 	};
 
-}
+};
 
 /* ****************************************************************************
  * End Scroller code														  *
@@ -766,7 +766,7 @@ defaultOptions.lang = merge(defaultOptions.lang, {
  * The object constructor for the range selector
  * @param {Object} chart
  */
-function RangeSelector(chart) {
+Highcharts.RangeSelector = function (chart) {
 	var renderer = chart.renderer,
 		rendered,
 		container = chart.container,
@@ -968,7 +968,7 @@ function RangeSelector(chart) {
 		// create the input element
 		input = createElement('input', {
 			name: name,
-			className: 'highcharts-range-selector',
+			className: PREFIX + 'range-selector',
 			type: 'text'
 		}, extend({
 			width: '80px',
@@ -1109,30 +1109,13 @@ function RangeSelector(chart) {
 	return {
 		render: render
 	};
-}
+};
 
 /* ****************************************************************************
  * End Range Selector code													*
  *****************************************************************************/
 
-/*addEvent(Chart.prototype, 'init', function (e) {
-	var chart = e.target,
-		chartOptions = chart.options;
 
-	// initiate the range selector
-	if (chartOptions.rangeSelector.enabled) {
-		chart.rangeSelector = new RangeSelector(chart);
-	}
-});
-addEvent(Chart.prototype, 'beforeRender', function (e) {
-	var chart = e.target,
-		chartOptions = chart.options;
-
-	// initiate the scroller
-	if (chartOptions.navigator.enabled || chartOptions.scrollbar.enabled) {
-		chart.scroller = new Scroller(chart);
-	}
-});*/
 
 Chart.prototype.callbacks.push(function (chart) {
 	var extremes,

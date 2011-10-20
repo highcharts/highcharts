@@ -185,9 +185,6 @@ extend(Chart.prototype, {
 			sandbox,
 			svg,
 			seriesOptions,
-			config,
-			pointOptions,
-			pointMarker,
 			options = merge(chart.options, additionalOptions); // copy the options and add extra options
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand

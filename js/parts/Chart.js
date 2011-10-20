@@ -151,8 +151,6 @@ function Chart(options, callback) {
 			oldMax,
 			minPadding = options.minPadding,
 			maxPadding = options.maxPadding,
-			leftPadding = 0,
-			rightPadding = 0,
 			leftPixelPadding = 0,
 			isLinked = defined(options.linkedTo),
 			ignoreMinPadding, // can be set to true by a column or bar series
@@ -170,7 +168,6 @@ function Chart(options, callback) {
 			alternateBands = {},
 			tickAmount,
 			labelOffset,
-			labelHeight,
 			axisTitleMargin,// = options.title.margin,
 			dateTimeLabelFormat,
 			categories = options.categories,
@@ -1885,10 +1882,7 @@ function Chart(options, callback) {
 		function defaultFormatter() {
 			var pThis = this,
 				items = pThis.points || splat(pThis),
-				xAxis = items[0].series.xAxis,
-				isDateTime = xAxis && xAxis.options.type === 'datetime',
 				series = items[0].series,
-				headerFormat = series.tooltipHeaderFormat || '%A, %b %e, %Y',
 				s;
 
 			// build the header
@@ -1967,7 +1961,6 @@ function Chart(options, callback) {
 			var x,
 				y,
 				show,
-				bBox,
 				plotX,
 				plotY,
 				textConfig = {},
@@ -2492,8 +2485,6 @@ function Chart(options, callback) {
 
 							var xAxis = chart.xAxis[0],
 								extremes = xAxis.getExtremes(),
-								dataMin = extremes.dataMin,
-								dataMax = extremes.dataMax,
 								newMin = xAxis.translate(mouseDownX - chartX, true),
 								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
 
@@ -3324,7 +3315,7 @@ function Chart(options, callback) {
 		// create the layer at the first call
 		if (!loadingDiv) {
 			loadingDiv = createElement(DIV, {
-				className: 'highcharts-loading'
+				className: PREFIX + 'loading'
 			}, extend(loadingOptions.style, {
 				left: plotLeft + PX,
 				top: plotTop + PX,
@@ -3536,7 +3527,7 @@ function Chart(options, callback) {
 				)
 				.attr({
 					align: chartTitleOptions.align,
-					'class': 'highcharts-' + name,
+					'class': PREFIX + name,
 					zIndex: 1
 				})
 				.css(chartTitleOptions.style)
@@ -3595,7 +3586,7 @@ function Chart(options, callback) {
 
 		// create the inner container
 		chart.container = container = createElement(DIV, {
-				className: 'highcharts-container' +
+				className: PREFIX + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
 			}, extend({
@@ -4072,7 +4063,6 @@ function Chart(options, callback) {
 	 * Clean up memory usage
 	 */
 	function destroy() {
-		var start = +new Date();
 		var i = series.length,
 			parentNode = container && container.parentNode;
 
@@ -4146,8 +4136,8 @@ function Chart(options, callback) {
 		fireEvent(chart, 'init');
 
 		// Initialize range selector for stock charts
-		if (typeof RangeSelector !== 'undefined' && options.rangeSelector.enabled) {
-			chart.rangeSelector = new RangeSelector(chart);
+		if (Highcharts.RangeSelector && options.rangeSelector.enabled) {
+			chart.rangeSelector = new Highcharts.RangeSelector(chart);
 		}
 
 		resetMargins();
@@ -4169,8 +4159,8 @@ function Chart(options, callback) {
 		//fireEvent(chart, 'beforeRender');
 
 		// Initialize scroller for stock charts
-		if (typeof Scroller !== 'undefined' && (options.navigator.enabled || options.scrollbar.enabled)) {
-			chart.scroller = new Scroller(chart);
+		if (Highcharts.Scroller && (options.navigator.enabled || options.scrollbar.enabled)) {
+			chart.scroller = new Highcharts.Scroller(chart);
 		}
 
 		chart.render = render;

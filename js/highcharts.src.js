@@ -1900,7 +1900,7 @@ SVGElement.prototype = {
 				value = hash[key];
 				
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](key, value);
+				result = attrSetters[key] && attrSetters[key](value, key);
 				
 				if (result !== false) {
 					
@@ -3160,7 +3160,7 @@ SVGRenderer.prototype = {
 		},
 		'arc': function (x, y, w, h, options) {
 			var start = options.start,
-				radius = w,
+				radius = w || h,
 				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
 				innerRadius = options.innerR,
 				cosStart = mathCos(start),
@@ -3441,15 +3441,15 @@ SVGRenderer.prototype = {
 		 */   
 		
 		// only change local variables
-		attrSetters.width = function (key, value) {
+		attrSetters.width = function (value) {
 			width = value;
 			return false;
 		};
-		attrSetters.height = function (key, value) {
+		attrSetters.height = function (value) {
 			height = value;
 			return false;
 		};
-		attrSetters.padding = function (key, value) {
+		attrSetters.padding = function (value) {
 			padding = value;
 			updateTextPadding();
 			
@@ -3457,13 +3457,13 @@ SVGRenderer.prototype = {
 		};
 
 		// change local variable and set attribue as well
-		attrSetters.align = function (key, value) {
+		attrSetters.align = function (value) {
 			align = value;
 			return false; // prevent setting text-anchor on the group
 		};
 		
 		// apply these to the box and the text alike
-		attrSetters.text = function (key, value) {
+		attrSetters.text = function (value, key) {
 			text.attr(key, value);
 			updateBoxSize();
 			updateTextPadding();
@@ -3471,35 +3471,35 @@ SVGRenderer.prototype = {
 		};
 		
 		// apply these to the box but not to the text
-		attrSetters[STROKE_WIDTH] = function (key, value) {
+		attrSetters[STROKE_WIDTH] = function (value, key) {
 			crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
 			return false;
 		};
-		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (key, value) {
+		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (value, key) {
 			boxAttr(key, value);
 			return false;
 		};
-		attrSetters.anchorX = function (key, value) {
+		attrSetters.anchorX = function (value, key) {
 			anchorX = value;
 			boxAttr(key, value + crispAdjust - wrapperX);
 			return false;
 		};
-		attrSetters.anchorY = function (key, value) {
+		attrSetters.anchorY = function (value, key) {
 			anchorY = value;
 			boxAttr(key, value - wrapperY);
 			return false;
 		};
 		
 		// rename attributes
-		attrSetters.x = function (key, value) {
+		attrSetters.x = function (value) {
 			wrapperX = value;
 			wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding); 
 			
 			wrapper.attr('translateX', mathRound(wrapperX));
 			return false;
 		};
-		attrSetters.y = function (key, value) {
+		attrSetters.y = function (value) {
 			wrapperY = value;
 			wrapper.attr('translateY', mathRound(value));
 			return false;
@@ -3661,7 +3661,7 @@ var VMLElement = extendClass(SVGElement, {
 				skipAttr = false;
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](key, value);
+				result = attrSetters[key] && attrSetters[key](value, key);
 
 				if (result !== false) {
 
@@ -4492,7 +4492,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 		arc: function (x, y, w, h, options) {
 			var start = options.start,
 				end = options.end,
-				radius = w,
+				radius = w || h,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
@@ -4785,8 +4785,6 @@ function Chart(options, callback) {
 			oldMax,
 			minPadding = options.minPadding,
 			maxPadding = options.maxPadding,
-			leftPadding = 0,
-			rightPadding = 0,
 			leftPixelPadding = 0,
 			isLinked = defined(options.linkedTo),
 			ignoreMinPadding, // can be set to true by a column or bar series
@@ -4804,7 +4802,6 @@ function Chart(options, callback) {
 			alternateBands = {},
 			tickAmount,
 			labelOffset,
-			labelHeight,
 			axisTitleMargin,// = options.title.margin,
 			dateTimeLabelFormat,
 			categories = options.categories,
@@ -6519,10 +6516,7 @@ function Chart(options, callback) {
 		function defaultFormatter() {
 			var pThis = this,
 				items = pThis.points || splat(pThis),
-				xAxis = items[0].series.xAxis,
-				isDateTime = xAxis && xAxis.options.type === 'datetime',
 				series = items[0].series,
-				headerFormat = series.tooltipHeaderFormat || '%A, %b %e, %Y',
 				s;
 
 			// build the header
@@ -6601,7 +6595,6 @@ function Chart(options, callback) {
 			var x,
 				y,
 				show,
-				bBox,
 				plotX,
 				plotY,
 				textConfig = {},
@@ -7126,8 +7119,6 @@ function Chart(options, callback) {
 
 							var xAxis = chart.xAxis[0],
 								extremes = xAxis.getExtremes(),
-								dataMin = extremes.dataMin,
-								dataMax = extremes.dataMax,
 								newMin = xAxis.translate(mouseDownX - chartX, true),
 								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
 
@@ -7958,7 +7949,7 @@ function Chart(options, callback) {
 		// create the layer at the first call
 		if (!loadingDiv) {
 			loadingDiv = createElement(DIV, {
-				className: 'highcharts-loading'
+				className: PREFIX + 'loading'
 			}, extend(loadingOptions.style, {
 				left: plotLeft + PX,
 				top: plotTop + PX,
@@ -8170,7 +8161,7 @@ function Chart(options, callback) {
 				)
 				.attr({
 					align: chartTitleOptions.align,
-					'class': 'highcharts-' + name,
+					'class': PREFIX + name,
 					zIndex: 1
 				})
 				.css(chartTitleOptions.style)
@@ -8229,7 +8220,7 @@ function Chart(options, callback) {
 
 		// create the inner container
 		chart.container = container = createElement(DIV, {
-				className: 'highcharts-container' +
+				className: PREFIX + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
 			}, extend({
@@ -8706,7 +8697,6 @@ function Chart(options, callback) {
 	 * Clean up memory usage
 	 */
 	function destroy() {
-		var start = +new Date();
 		var i = series.length,
 			parentNode = container && container.parentNode;
 
@@ -8780,8 +8770,8 @@ function Chart(options, callback) {
 		fireEvent(chart, 'init');
 
 		// Initialize range selector for stock charts
-		if (typeof RangeSelector !== 'undefined' && options.rangeSelector.enabled) {
-			chart.rangeSelector = new RangeSelector(chart);
+		if (Highcharts.RangeSelector && options.rangeSelector.enabled) {
+			chart.rangeSelector = new Highcharts.RangeSelector(chart);
 		}
 
 		resetMargins();
@@ -8803,8 +8793,8 @@ function Chart(options, callback) {
 		//fireEvent(chart, 'beforeRender');
 
 		// Initialize scroller for stock charts
-		if (typeof Scroller !== 'undefined' && (options.navigator.enabled || options.scrollbar.enabled)) {
-			chart.scroller = new Scroller(chart);
+		if (Highcharts.Scroller && (options.navigator.enabled || options.scrollbar.enabled)) {
+			chart.scroller = new Highcharts.Scroller(chart);
 		}
 
 		chart.render = render;
@@ -9484,8 +9474,6 @@ Series.prototype = {
 			segments = [],
 			points = this.points;
 
-		var start = +new Date();
-
 		// create the segments
 		each(points, function (point, i) {
 			if (point.y === null) {
@@ -9765,8 +9753,7 @@ Series.prototype = {
 		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = series.xAxis.getExtremes(),
 				min = extremes.min,
-				max = extremes.max,
-				point;
+				max = extremes.max;
 
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -9810,7 +9797,6 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			dataOptions = options.data,
-			hasProcessedData = series.prosessedXData !== series.xData,
 			data = series.data,
 			dataLength,
 			processedXData = series.processedXData,
@@ -9879,9 +9865,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			points = series.points,
 			dataLength = points.length,
-			interval,
-			i,
-			cropI = -1;
+			i;
 		
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
@@ -9890,7 +9874,6 @@ Series.prototype = {
 				yBottom = point.low,
 				stack = yAxis.stacks[(yValue < 0 ? '-' : '') + series.stackKey],
 				pointStack,
-				distance,
 				pointStackTotal;
 				
 			// get the plotX translation
@@ -10426,7 +10409,7 @@ Series.prototype = {
 			options.style.color = pick(color, series.color, 'black');
 
 			// make the labels for each point
-			each(points, function (point, i) {
+			each(points, function (point) {
 				var barX = point.barX,
 					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 					plotY = pick(point.plotY, -999),
@@ -10508,8 +10491,6 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
-			plotLeft = chart.plotLeft,
-			plotRight = plotLeft + chart.plotWidth,
 			graph = series.graph,
 			graphPath = [],
 			fillColor,
@@ -10755,7 +10736,6 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			clipRect = series.clipRect,
 			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
 			group = series.group;
 
@@ -11150,7 +11130,6 @@ var ColumnSeries = extendClass(Series, {
 			columnCount = 0,
 			xAxis = series.xAxis,
 			reversedXAxis = xAxis.reversed,
-			categories = xAxis.categories,
 			stackGroups = {},
 			stackKey,
 			columnIndex;
@@ -11199,7 +11178,7 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
-		each(points, function (point, i) {
+		each(points, function (point) {
 			var plotY = point.plotY,
 				yBottom = point.yBottom || translatedThreshold,
 				barX = point.plotX + pointXOffset,

@@ -93,7 +93,7 @@ SVGElement.prototype = {
 				value = hash[key];
 				
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](key, value);
+				result = attrSetters[key] && attrSetters[key](value, key);
 				
 				if (result !== false) {
 					
@@ -1353,7 +1353,7 @@ SVGRenderer.prototype = {
 		},
 		'arc': function (x, y, w, h, options) {
 			var start = options.start,
-				radius = w,
+				radius = w || h,
 				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
 				innerRadius = options.innerR,
 				cosStart = mathCos(start),
@@ -1634,15 +1634,15 @@ SVGRenderer.prototype = {
 		 */   
 		
 		// only change local variables
-		attrSetters.width = function (key, value) {
+		attrSetters.width = function (value) {
 			width = value;
 			return false;
 		};
-		attrSetters.height = function (key, value) {
+		attrSetters.height = function (value) {
 			height = value;
 			return false;
 		};
-		attrSetters.padding = function (key, value) {
+		attrSetters.padding = function (value) {
 			padding = value;
 			updateTextPadding();
 			
@@ -1650,13 +1650,13 @@ SVGRenderer.prototype = {
 		};
 
 		// change local variable and set attribue as well
-		attrSetters.align = function (key, value) {
+		attrSetters.align = function (value) {
 			align = value;
 			return false; // prevent setting text-anchor on the group
 		};
 		
 		// apply these to the box and the text alike
-		attrSetters.text = function (key, value) {
+		attrSetters.text = function (value, key) {
 			text.attr(key, value);
 			updateBoxSize();
 			updateTextPadding();
@@ -1664,35 +1664,35 @@ SVGRenderer.prototype = {
 		};
 		
 		// apply these to the box but not to the text
-		attrSetters[STROKE_WIDTH] = function (key, value) {
+		attrSetters[STROKE_WIDTH] = function (value, key) {
 			crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
 			return false;
 		};
-		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (key, value) {
+		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (value, key) {
 			boxAttr(key, value);
 			return false;
 		};
-		attrSetters.anchorX = function (key, value) {
+		attrSetters.anchorX = function (value, key) {
 			anchorX = value;
 			boxAttr(key, value + crispAdjust - wrapperX);
 			return false;
 		};
-		attrSetters.anchorY = function (key, value) {
+		attrSetters.anchorY = function (value, key) {
 			anchorY = value;
 			boxAttr(key, value - wrapperY);
 			return false;
 		};
 		
 		// rename attributes
-		attrSetters.x = function (key, value) {
+		attrSetters.x = function (value) {
 			wrapperX = value;
 			wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding); 
 			
 			wrapper.attr('translateX', mathRound(wrapperX));
 			return false;
 		};
-		attrSetters.y = function (key, value) {
+		attrSetters.y = function (value) {
 			wrapperY = value;
 			wrapper.attr('translateY', mathRound(value));
 			return false;
