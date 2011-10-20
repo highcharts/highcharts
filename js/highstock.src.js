@@ -12390,7 +12390,7 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 		ret;
 	
 	// apply only to grouped series
-	if (xAxis.options.type === 'datetime') {
+	if (xAxis.options.type === 'datetime' && dataGroupingOptions) {
 		
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;		
@@ -14064,6 +14064,7 @@ Highcharts.RangeSelector = function (chart) {
 				if (buttons[selected]) {
 					buttons[selected].setState(0);
 				}
+				selected = null;
 			});
 		});
 	}

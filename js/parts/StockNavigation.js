@@ -934,6 +934,7 @@ Highcharts.RangeSelector = function (chart) {
 				if (buttons[selected]) {
 					buttons[selected].setState(0);
 				}
+				selected = null;
 			});
 		});
 	}
