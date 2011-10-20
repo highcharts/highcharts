@@ -1218,7 +1218,7 @@ function Chart(options, callback) {
 			
 			// is there new data?
 			each(associatedSeries || [], function (series) {
-				if (series.isDirtyData || 
+				if (series.isDirtyData || series.isDirty ||
 						series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
 					isDirtyData = true;
 				}
@@ -1236,7 +1236,7 @@ function Chart(options, callback) {
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
-				transA = axisLength / ((max - min) || 1);
+				transA = axisLength / ((max - min + axis.pointRange) || 1);
 	
 				// reset stacks
 				if (!isXAxis) {
@@ -1331,7 +1331,6 @@ function Chart(options, callback) {
 				// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
 				// is some other value
 				axis.closestPointRange = closestPointRange;
-				
 			}
 			
 			// secondary values
