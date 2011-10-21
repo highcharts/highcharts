@@ -1220,6 +1220,7 @@ function Chart(options, callback) {
 			// is there new data?
 			each(associatedSeries || [], function (series) {
 				if (series.isDirtyData || series.isDirty ||
+						!series.data || // series has been removed 
 						series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
 					isDirtyData = true;
 				}
