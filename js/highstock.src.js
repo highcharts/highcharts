@@ -12479,6 +12479,7 @@ var commonOptions = {
 	// the first one is the point or start value, the second is the start value if we're dealing with range,
 	// the third one is the end value if dealing with a range
 	dateTimeLabelFormats: hash( 
+		MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
 		SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
 		MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
 		HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
