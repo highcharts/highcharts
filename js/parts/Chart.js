@@ -802,10 +802,6 @@ function Chart(options, callback) {
 							dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
 							dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
 							
-							// get the padding
-							//leftPadding = mathMax(leftPadding, serie.pointRange / 2);
-							//rightPadding = mathMax(rightPadding, serie.pointRange / 2);
-							
 						} else {
 							var isNegative,
 								pointStack,
@@ -814,7 +810,8 @@ function Chart(options, callback) {
 								xExtremes = serie.xAxis.getExtremes(),
 								findPointRange,
 								pointRange,
-								j;
+								j,
+								hasModifyValue = !!serie.modifyValue;
 
 							// get clipped and grouped data
 							serie.processData();
@@ -858,6 +855,10 @@ function Chart(options, callback) {
 										}
 										stacks[key][x].setTotal(y);
 
+									
+									 // general hook, used for Highstock compare values feature
+									} else if (hasModifyValue) {
+										y = serie.modifyValue(y);
 									}
 
 									j = y.length;
@@ -1236,7 +1237,7 @@ function Chart(options, callback) {
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
-				transA = axisLength / ((max - min + axis.pointRange) || 1);
+				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
 	
 				// reset stacks
 				if (!isXAxis) {
@@ -1891,7 +1892,7 @@ function Chart(options, callback) {
 			each(items, function (item) {
 				series = item.series;
 				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-					item.point.tooltipFormatter());
+					item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
 			});
 			return s.join('');
 		}

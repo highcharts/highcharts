@@ -39,6 +39,7 @@ extend(defaultOptions, {
 		series: {
 			type: 'areaspline',
 			color: '#4572A7',
+			compare: null,
 			fillOpacity: 0.4,
 			dataGrouping: {
 				approximation: 'average',

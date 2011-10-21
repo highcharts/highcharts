@@ -5436,10 +5436,6 @@ function Chart(options, callback) {
 							dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
 							dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
 							
-							// get the padding
-							//leftPadding = mathMax(leftPadding, serie.pointRange / 2);
-							//rightPadding = mathMax(rightPadding, serie.pointRange / 2);
-							
 						} else {
 							var isNegative,
 								pointStack,
@@ -5448,7 +5444,8 @@ function Chart(options, callback) {
 								xExtremes = serie.xAxis.getExtremes(),
 								findPointRange,
 								pointRange,
-								j;
+								j,
+								hasModifyValue = !!serie.modifyValue;
 
 							// get clipped and grouped data
 							serie.processData();
@@ -5492,6 +5489,10 @@ function Chart(options, callback) {
 										}
 										stacks[key][x].setTotal(y);
 
+									
+									 // general hook, used for Highstock compare values feature
+									} else if (hasModifyValue) {
+										y = serie.modifyValue(y);
 									}
 
 									j = y.length;
@@ -5870,7 +5871,7 @@ function Chart(options, callback) {
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
-				transA = axisLength / ((max - min + axis.pointRange) || 1);
+				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
 	
 				// reset stacks
 				if (!isXAxis) {
@@ -6525,7 +6526,7 @@ function Chart(options, callback) {
 			each(items, function (item) {
 				series = item.series;
 				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-					item.point.tooltipFormatter());
+					item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
 			});
 			return s.join('');
 		}
@@ -9119,26 +9120,37 @@ Point.prototype = {
 	 *
 	 * @return {String} A string to be concatenated in to the common tooltip text
 	 */
-	tooltipFormatter: function () {
+	tooltipFormatter: function (pointFormat) {
 		var point = this,
 			series = point.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			pointFormat = seriesTooltipOptions.pointFormat,
 			split = String(point.y).split('.'),
 			originalDecimals = split[1] ? split[1].length : 0,
-			replacements = {
-				'{series.color}': series.color,
-				'{series.name}': series.name,
-				'{point.x}': point.x,
-				'{point.y}':
-					(seriesTooltipOptions.yPrefix || '') + 
-					numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
-					(seriesTooltipOptions.ySuffix || '')
-			},
-			name;
+			match = pointFormat.match(/\{(series|point)\.[a-zA-Z]+\}/g),
+			splitter = /[\.}]/,
+			obj,
+			key,
+			replacement,
+			i;
 
-		for (name in replacements) {
-			pointFormat = pointFormat.replace(name, replacements[name]);	
+		// loop over the variables defined on the form {series.name}, {point.y} etc
+		for (i in match) {
+			key = match[i];
+			
+			if (isString(key) && key !== pointFormat) { // IE matches more than just the variables 
+				obj = key.indexOf('point') === 1 ? point : series;
+				
+				if (key === '{point.y}') { // add some preformatting 
+					replacement = (seriesTooltipOptions.yPrefix || '') + 
+						numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
+						(seriesTooltipOptions.ySuffix || '');
+				
+				} else { // automatic replacement
+					replacement = obj[match[i].split(splitter)[1]];
+				}
+				
+				pointFormat = pointFormat.replace(match[i], replacement);
+			}
 		}
 		
 		return pointFormat;
@@ -9865,6 +9877,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			points = series.points,
 			dataLength = points.length,
+			hasModifyValue = !!series.modifyValue,
 			i;
 		
 		for (i = 0; i < dataLength; i++) {
@@ -9897,6 +9910,11 @@ Series.prototype = {
 
 			if (defined(yBottom)) {
 				point.yBottom = yAxis.translate(yBottom, 0, 1, 0, 1);
+			}
+			
+			// general hook, used for Highstock compare mode
+			if (hasModifyValue) {
+				yValue = series.modifyValue(yValue, point);
 			}
 
 			// set the y value

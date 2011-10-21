@@ -5436,10 +5436,6 @@ function Chart(options, callback) {
 							dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
 							dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
 							
-							// get the padding
-							//leftPadding = mathMax(leftPadding, serie.pointRange / 2);
-							//rightPadding = mathMax(rightPadding, serie.pointRange / 2);
-							
 						} else {
 							var isNegative,
 								pointStack,
@@ -5448,7 +5444,8 @@ function Chart(options, callback) {
 								xExtremes = serie.xAxis.getExtremes(),
 								findPointRange,
 								pointRange,
-								j;
+								j,
+								hasModifyValue = !!serie.modifyValue;
 
 							// get clipped and grouped data
 							serie.processData();
@@ -5492,6 +5489,10 @@ function Chart(options, callback) {
 										}
 										stacks[key][x].setTotal(y);
 
+									
+									 // general hook, used for Highstock compare values feature
+									} else if (hasModifyValue) {
+										y = serie.modifyValue(y);
 									}
 
 									j = y.length;
@@ -5870,7 +5871,7 @@ function Chart(options, callback) {
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
-				transA = axisLength / ((max - min + axis.pointRange) || 1);
+				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
 	
 				// reset stacks
 				if (!isXAxis) {
@@ -6525,7 +6526,7 @@ function Chart(options, callback) {
 			each(items, function (item) {
 				series = item.series;
 				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-					item.point.tooltipFormatter());
+					item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
 			});
 			return s.join('');
 		}
@@ -9119,26 +9120,37 @@ Point.prototype = {
 	 *
 	 * @return {String} A string to be concatenated in to the common tooltip text
 	 */
-	tooltipFormatter: function () {
+	tooltipFormatter: function (pointFormat) {
 		var point = this,
 			series = point.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			pointFormat = seriesTooltipOptions.pointFormat,
 			split = String(point.y).split('.'),
 			originalDecimals = split[1] ? split[1].length : 0,
-			replacements = {
-				'{series.color}': series.color,
-				'{series.name}': series.name,
-				'{point.x}': point.x,
-				'{point.y}':
-					(seriesTooltipOptions.yPrefix || '') + 
-					numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
-					(seriesTooltipOptions.ySuffix || '')
-			},
-			name;
+			match = pointFormat.match(/\{(series|point)\.[a-zA-Z]+\}/g),
+			splitter = /[\.}]/,
+			obj,
+			key,
+			replacement,
+			i;
 
-		for (name in replacements) {
-			pointFormat = pointFormat.replace(name, replacements[name]);	
+		// loop over the variables defined on the form {series.name}, {point.y} etc
+		for (i in match) {
+			key = match[i];
+			
+			if (isString(key) && key !== pointFormat) { // IE matches more than just the variables 
+				obj = key.indexOf('point') === 1 ? point : series;
+				
+				if (key === '{point.y}') { // add some preformatting 
+					replacement = (seriesTooltipOptions.yPrefix || '') + 
+						numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
+						(seriesTooltipOptions.ySuffix || '');
+				
+				} else { // automatic replacement
+					replacement = obj[match[i].split(splitter)[1]];
+				}
+				
+				pointFormat = pointFormat.replace(match[i], replacement);
+			}
 		}
 		
 		return pointFormat;
@@ -9865,6 +9877,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			points = series.points,
 			dataLength = points.length,
+			hasModifyValue = !!series.modifyValue,
 			i;
 		
 		for (i = 0; i < dataLength; i++) {
@@ -9897,6 +9910,11 @@ Series.prototype = {
 
 			if (defined(yBottom)) {
 				point.yBottom = yAxis.translate(yBottom, 0, 1, 0, 1);
+			}
+			
+			// general hook, used for Highstock compare mode
+			if (hasModifyValue) {
+				yValue = series.modifyValue(yValue, point);
 			}
 
 			// set the y value
@@ -13170,6 +13188,7 @@ extend(defaultOptions, {
 		series: {
 			type: 'areaspline',
 			color: '#4572A7',
+			compare: null,
 			fillOpacity: 0.4,
 			dataGrouping: {
 				approximation: 'average',
@@ -14414,6 +14433,96 @@ Highcharts.StockChart = function (options, callback) {
 
 	return new Chart(options, callback);
 };
+
+
+/* ****************************************************************************
+ * Start value compare logic                                                  *
+ *****************************************************************************/
+ 
+var seriesInit = seriesProto.init, 
+	seriesProcessData = seriesProto.processData,
+	pointTooltipFormatter = Point.prototype.tooltipFormatter;
+	
+/**
+ * Extend series.init by adding a method to modify the y value used for plotting
+ * on the y axis. This method is called both from the axis when finding dataMin
+ * and dataMax, and from the series.translate method.
+ */
+seriesProto.init = function () {
+	
+	// call base method
+	seriesInit.apply(this, arguments);
+	
+	// local variables
+	var series = this,
+		compare = series.options.compare;
+	
+	if (compare) {
+		series.modifyValue = function (value, point) {
+			var compareValue = this.compareValue;
+			
+			// get the modified value
+			value = compare === 'value' ? 
+				value - compareValue : // compare value
+				value = 100 * (value / compareValue) - 100; // compare percent
+				
+			// record for tooltip etc.
+			if (point) {
+				point.change = value;
+			}
+			
+			return value;
+		};
+	}	
+};
+
+/**
+ * Extend series.processData by finding the first y value in the plot area,
+ * used for comparing the following values 
+ */
+seriesProto.processData = function () {
+	var series = this;
+	
+	// call base method
+	seriesProcessData.apply(this);
+	
+	if (series.options.compare) {
+		
+		// local variables
+		var i = 0,
+			processedXData = series.processedXData,
+			processedYData = series.processedYData,
+			length = processedYData.length,
+			min = series.xAxis.getExtremes().min;
+		
+		// find the first value for comparison
+		for (; i < length; i++) {
+			if (typeof processedYData[i] === NUMBER && processedXData[i] >= min) {
+				series.compareValue = processedYData[i];
+				break;
+			}
+		}
+	}
+};
+
+/**
+ * Extend the tooltip formatter by adding support for the point.change variable
+ * as well as the changeDecimals option
+ */
+Point.prototype.tooltipFormatter = function (pointFormat) {
+	var point = this;
+	
+	pointFormat = pointFormat.replace(
+		'{point.change}',
+		(point.change > 0 ? '+' : '') + numberFormat(point.change, point.series.tooltipOptions.changeDecimals || 2)
+	); 
+	
+	return pointTooltipFormatter.apply(this, [pointFormat]);
+};
+
+/* ****************************************************************************
+ * End value compare logic                                                    *
+ *****************************************************************************/
 
 // global variables
 extend(Highcharts, {

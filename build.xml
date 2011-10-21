@@ -183,7 +183,7 @@
 
     <!-- Runs jslint on source code. -->
     <target name="do-lint" depends="check-crlf">
-        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
             <formatter type="plain"/>
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
             <fileset file="${highstock.src.file}"/>

@@ -208,26 +208,37 @@ Point.prototype = {
 	 *
 	 * @return {String} A string to be concatenated in to the common tooltip text
 	 */
-	tooltipFormatter: function () {
+	tooltipFormatter: function (pointFormat) {
 		var point = this,
 			series = point.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			pointFormat = seriesTooltipOptions.pointFormat,
 			split = String(point.y).split('.'),
 			originalDecimals = split[1] ? split[1].length : 0,
-			replacements = {
-				'{series.color}': series.color,
-				'{series.name}': series.name,
-				'{point.x}': point.x,
-				'{point.y}':
-					(seriesTooltipOptions.yPrefix || '') + 
-					numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
-					(seriesTooltipOptions.ySuffix || '')
-			},
-			name;
+			match = pointFormat.match(/\{(series|point)\.[a-zA-Z]+\}/g),
+			splitter = /[\.}]/,
+			obj,
+			key,
+			replacement,
+			i;
 
-		for (name in replacements) {
-			pointFormat = pointFormat.replace(name, replacements[name]);	
+		// loop over the variables defined on the form {series.name}, {point.y} etc
+		for (i in match) {
+			key = match[i];
+			
+			if (isString(key) && key !== pointFormat) { // IE matches more than just the variables 
+				obj = key.indexOf('point') === 1 ? point : series;
+				
+				if (key === '{point.y}') { // add some preformatting 
+					replacement = (seriesTooltipOptions.yPrefix || '') + 
+						numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
+						(seriesTooltipOptions.ySuffix || '');
+				
+				} else { // automatic replacement
+					replacement = obj[match[i].split(splitter)[1]];
+				}
+				
+				pointFormat = pointFormat.replace(match[i], replacement);
+			}
 		}
 		
 		return pointFormat;
@@ -954,6 +965,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			points = series.points,
 			dataLength = points.length,
+			hasModifyValue = !!series.modifyValue,
 			i;
 		
 		for (i = 0; i < dataLength; i++) {
@@ -986,6 +998,11 @@ Series.prototype = {
 
 			if (defined(yBottom)) {
 				point.yBottom = yAxis.translate(yBottom, 0, 1, 0, 1);
+			}
+			
+			// general hook, used for Highstock compare mode
+			if (hasModifyValue) {
+				yValue = series.modifyValue(yValue, point);
 			}
 
 			// set the y value
