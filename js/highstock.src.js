@@ -13503,11 +13503,12 @@ Highcharts.Scroller = function (chart) {
 		// well as the navigator series.
 		if (xAxis.getExtremes) {
 			var baseExtremes = chart.xAxis[0].getExtremes(), // the base
+				noBase = baseExtremes.dataMin === null,
 				navExtremes = xAxis.getExtremes(),
 				newMin = mathMin(baseExtremes.dataMin, navExtremes.dataMin),
 				newMax = mathMax(baseExtremes.dataMax, navExtremes.dataMax);
 
-			if (newMin !== navExtremes.min || newMax !== navExtremes.max) {
+			if (!noBase && (newMin !== navExtremes.min || newMax !== navExtremes.max)) {
 				xAxis.setExtremes(newMin, newMax, true, false);
 			}
 		}
@@ -13893,12 +13894,12 @@ Highcharts.Scroller = function (chart) {
 				// update the extremes
 				if (hasSetExtremes && (stickToMin || stickToMax)) {
 					baseXAxis.setExtremes(newMin, newMax, true, false);
-				
 				// if it is not at any edge, just move the scroller window to reflect the new series data
 				} else {
 					if (doRedraw) {
 						chart.redraw(false);
 					}
+					
 					render(
 						mathMax(baseMin, baseDataMin),
 						mathMin(baseMax, baseDataMax)
