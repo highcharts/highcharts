@@ -224,13 +224,16 @@ extend(Chart.prototype, {
 				showCheckbox: false,
 				visible: serie.visible
 			});
-
-			// remove image markers
-			if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) {
-				seriesOptions.marker.symbol = 'circle';
+	
+			if (!seriesOptions.isInternal) { // used for the navigator series that has its own option set
+			
+				// remove image markers
+				if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) {
+					seriesOptions.marker.symbol = 'circle';
+				}
+	
+				options.series.push(seriesOptions);
 			}
-
-			options.series.push(seriesOptions);
 		});
 
 		// generate the chart copy

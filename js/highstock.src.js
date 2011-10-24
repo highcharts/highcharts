@@ -13831,7 +13831,8 @@ Highcharts.Scroller = function (chart) {
 				xAxis: xAxisIndex,
 				yAxis: yAxisIndex,
 				name: 'Navigator',
-				showInLegend: false
+				showInLegend: false,
+				isInternal: true
 			});
 
 			// set the data back
