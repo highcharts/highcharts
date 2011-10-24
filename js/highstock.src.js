@@ -5846,7 +5846,7 @@ function Chart(options, callback) {
 			});
 			
 			// do we really need to go through all this?
-			if (axisLength !== oldAxisLength || isDirtyData ||
+			if (axisLength !== oldAxisLength || isDirtyData || isLinked ||
 				userMin !== oldUserMin || userMax !== oldUserMax) {
 			
 				// get data extremes if needed
