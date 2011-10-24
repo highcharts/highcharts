@@ -1698,13 +1698,37 @@ SVGRenderer.prototype = {
 			return false;
 		};
 		
+		// Redirect certain methods to either the box or the text
+		var baseCss = wrapper.css;
 		return extend(wrapper, {
+			/**
+			 * Pick up some properties and apply them to the text instead of the wrapper
+			 */
+			css: function (styles) {
+				if (styles) {
+					var textStyles = {};
+					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight'], function (prop) {
+						if (styles[prop] !== UNDEFINED) {
+							textStyles[prop] = styles[prop];
+							delete styles[prop];
+						}
+					});
+					text.css(textStyles);
+				}
+				return baseCss.call(wrapper, styles);
+			},
+			/**
+			 * Return the bounding box of the box, not the group
+			 */
+			getBBox: function () {
+				return box.getBBox();				
+			},
+			/**
+			 * Apply the shadow to the box
+			 */
 			shadow: function (b) {
 				box.shadow(b);
 				return wrapper;
-			},
-			getBBox: function () {
-				return box.getBBox();				
 			}
 		});
 	}
