@@ -23,7 +23,7 @@
 			}
 			
 			a:visited {
-				color: #039;
+				color: silver;
 			}
 			
 		</style>
@@ -45,9 +45,10 @@ if ($handle = opendir(dirname(__FILE__). '/stock')) {
 			// loop over the inner directories
 			if ($innerHandle = opendir(dirname(__FILE__). '/stock/'. $file)) {
 				while (false !== ($innerFile = readdir($innerHandle))) {
+					$next = $i + 1;
 					if (preg_match('/^[a-z\-]+$/', $innerFile)) {
 						echo "
-						<li>$i) <a target='main' href='view.php?path=stock/$file/$innerFile'>$innerFile</a></li>
+						<li>$i) <a target='main' id='i$i' href='view.php?path=stock/$file/$innerFile&next=$next'>$innerFile</a></li>
 						";
 						$i++;
 					}

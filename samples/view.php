@@ -14,8 +14,32 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z\-]+$/', $path)) {
 		<?php include("$path/demo.js"); ?>
 		</script>
 		
+		<script type="text/javascript">
+			$(function() {
+				
+				
+				
+				if (window.parent.frames[0]) {
+					function goNext () {
+						window.location.href = 
+							window.parent.frames[0].document.getElementById('i<?php echo (int)$_GET['next'] ?>').href;
+					}
+					
+					$('#next').click(function() {
+						goNext();
+					});
+					$('#next')[0].disabled = false;
+				}
+			});
+		</script>
+		
 	</head>
 	<body>
-		<?php include("$path/demo.html"); ?>		
+		<?php include("$path/demo.html"); ?>
+		
+		<div style="text-align: center">
+			<button id="next" disabled="disabled">Next</button>
+			<a target="_blank" href="http://jsfiddle.net/gh/get/jquery/1.6/highslide-software/highcharts.com/tree/stock/samples/<?php echo $path ?>/">jsFiddle</a>
+		</div>
 	</body>
 </html>
