@@ -4773,7 +4773,6 @@ function Chart(options, callback) {
 			dataMin,
 			dataMax,
 			maxZoom,
-			associatedSeries,
 			range = options.range,
 			userMin,
 			userMax,
@@ -5346,67 +5345,60 @@ function Chart(options, callback) {
 		function getSeriesExtremes() {
 			var posStack = [],
 				negStack = [],
-				i,
-				run;
+				i;
 
 			// reset dataMin and dataMax in case we're redrawing
 			dataMin = dataMax = null;
 
-			// get an overview of what series are associated with this axis
-			associatedSeries = [];
-			each(series, function (serie) {
-				var seriesOptions = serie.options;
+			// loop through this axis' series
+			each(axis.series, function (series) {
+				
+				if (series.visible || !optionsChart.ignoreHiddenSeries) {
 
-				run = false;
-
-
-				// match this axis against the series' given or implicated axis
-				each(['xAxis', 'yAxis'], function (strAxis) {
-					if (
-						// the series is a cartesian type, and...
-						serie.isCartesian &&
-						// we're in the right x or y dimension, and...
-						((strAxis === 'xAxis' && isXAxis) || (strAxis === 'yAxis' && !isXAxis)) && (
-							// the axis number is given in the options and matches this axis index, or
-							(seriesOptions[strAxis] === options.index) ||
-							// the axis index is not given
-							(seriesOptions[strAxis] === UNDEFINED && options.index === 0)
-						)
-					) {
-						serie[strAxis] = axis;
-						associatedSeries.push(serie);
-
-						// apply pointRange = 1 for category axes
-						if (categories) {
-							serie.pointRange = 1;
-						}
-
-						// the series is visible, run the min/max detection
-						run = true;
-					}
-				});
-				// ignore hidden series if opted
-				if (!serie.visible && optionsChart.ignoreHiddenSeries) {
-					run = false;
-				}
-
-				if (run) {
-
-					var stacking,
+					var seriesOptions = series.options,
+						stacking,
 						posPointStack,
 						negPointStack,
 						stackKey,
-						negKey;
-
-					if (!isXAxis) {
+						negKey,
+						xData,
+						yData,
+						x,
+						y,
+						threshold = seriesOptions.threshold,
+						yDataLength,
+						distance,
+						activeYData = [],
+						activeCounter = 0;
+					
+					// Get dataMin and dataMax for X axes
+					if (isXAxis) {
+						xData = series.xData;
+						dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
+						dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
+						
+					// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
+					} else {
+						var isNegative,
+							pointStack,
+							key,
+							cropped = series.cropped,
+							xExtremes = series.xAxis.getExtremes(),
+							findPointRange,
+							pointRange,
+							j,
+							hasModifyValue = !!series.modifyValue;
+							
+						
+						// Handle stacking
 						stacking = seriesOptions.stacking;
 						usePercentage = stacking === 'percent';
 
 						// create a stack for this particular series type
 						if (stacking) {
-							stackKey = serie.type + pick(seriesOptions.stack, '');
+							stackKey = series.type + pick(seriesOptions.stack, '');
 							negKey = '-' + stackKey;
-							serie.stackKey = stackKey; // used in translate
+							series.stackKey = stackKey; // used in translate
 
 							posPointStack = posStack[stackKey] || []; // contains the total values for each x
 							posStack[stackKey] = posPointStack;
@@ -5418,131 +5410,101 @@ function Chart(options, callback) {
 							dataMin = 0;
 							dataMax = 99;
 						}
-					}
-					if (serie.isCartesian) { // line, column etc. need axes, pie doesn't
 
-						var xData,
-							yData,
-							x,
-							y,
-							threshold = seriesOptions.threshold,
-							yDataLength,
-							distance,
-							activeYData = [],
-							activeCounter = 0;
+						// get clipped and grouped data
+						series.processData();
+						
+						// processData can alter series.pointRange, so this goes after
+						findPointRange = series.pointRange === null;
 
-						if (isXAxis) {
-							xData = serie.xData;
-							dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
-							dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
-							
-						} else {
-							var isNegative,
-								pointStack,
-								key,
-								cropped = serie.cropped,
-								xExtremes = serie.xAxis.getExtremes(),
-								findPointRange,
-								pointRange,
-								j,
-								hasModifyValue = !!serie.modifyValue;
-
-							// get clipped and grouped data
-							serie.processData();
-							
-							// processData can alter serie.pointRange, so this goes after
-							findPointRange = serie.pointRange === null;
-
-							xData = serie.processedXData;
-							yData = serie.processedYData;
-							yDataLength = yData.length;
+						xData = series.processedXData;
+						yData = series.processedYData;
+						yDataLength = yData.length;
 
 
-							// loop over the non-null y values and read them into a local array
-							for (i = 0; i < yDataLength; i++) {
-								x = xData[i];
-								y = yData[i];
-								if (y !== null && y !== UNDEFINED &&
-									(cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max))) {
+						// loop over the non-null y values and read them into a local array
+						for (i = 0; i < yDataLength; i++) {
+							x = xData[i];
+							y = yData[i];
+							if (y !== null && y !== UNDEFINED &&
+								(cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max))) {
 
-									// read stacked values into a stack based on the x value,
-									// the sign of y and the stack key
-									if (stacking) {
-										isNegative = y < 0;
-										pointStack = isNegative ? negPointStack : posPointStack;
-										key = isNegative ? negKey : stackKey;
+								// read stacked values into a stack based on the x value,
+								// the sign of y and the stack key
+								if (stacking) {
+									isNegative = y < 0;
+									pointStack = isNegative ? negPointStack : posPointStack;
+									key = isNegative ? negKey : stackKey;
 
-										y = pointStack[x] =
-											defined(pointStack[x]) ?
-											pointStack[x] + y : y;
+									y = pointStack[x] =
+										defined(pointStack[x]) ?
+										pointStack[x] + y : y;
 
 
-										// add the series
-										if (!stacks[key]) {
-											stacks[key] = {};
-										}
-
-										// If the StackItem is there, just update the values,
-										// if not, create one first
-										if (!stacks[key][x]) {
-											stacks[key][x] = new StackItem(options.stackLabels, isNegative, x);
-										}
-										stacks[key][x].setTotal(y);
-
-									
-									 // general hook, used for Highstock compare values feature
-									} else if (hasModifyValue) {
-										y = serie.modifyValue(y);
+									// add the series
+									if (!stacks[key]) {
+										stacks[key] = {};
 									}
 
-									j = y.length;
-									if (j) { // array, like ohlc data
-										while (j--) {
-											if (y[j] !== null) {
-												activeYData[activeCounter++] = y[j];
-											}
+									// If the StackItem is there, just update the values,
+									// if not, create one first
+									if (!stacks[key][x]) {
+										stacks[key][x] = new StackItem(options.stackLabels, isNegative, x);
+									}
+									stacks[key][x].setTotal(y);
+
+								
+								 // general hook, used for Highstock compare values feature
+								} else if (hasModifyValue) {
+									y = series.modifyValue(y);
+								}
+
+								j = y.length;
+								if (j) { // array, like ohlc data
+									while (j--) {
+										if (y[j] !== null) {
+											activeYData[activeCounter++] = y[j];
 										}
-									} else {
-										activeYData[activeCounter++] = y;
 									}
+								} else {
+									activeYData[activeCounter++] = y;
+								}
 
 
 
-									// get the smallest distance between points
-									if (i) {
-										distance = mathAbs(xData[i] - xData[i - 1]);
-										pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
-									}
+								// get the smallest distance between points
+								if (i) {
+									distance = mathAbs(xData[i] - xData[i - 1]);
+									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
 								}
 							}
+						}
 
-							// record the least unit distance
-							if (findPointRange) {
-								serie.pointRange = pointRange || 1;
+						// record the least unit distance
+						if (findPointRange) {
+							series.pointRange = pointRange || 1;
+						}
+						series.closestPointRange = pointRange;
+						
+
+						// Get the dataMin and dataMax so far. If percentage is used, the min and max are
+						// always 0 and 100. If the length of activeYData is 0, continue with null values. 
+						if (!usePercentage && activeYData.length) {
+							dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
+							dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));								
+						}
+
+
+						// todo: instead of checking useThreshold, just set the threshold to 0
+						// in area and column-like chart types
+						if (series.useThreshold && threshold !== null) {
+							if (dataMin >= threshold) {
+								dataMin = threshold;
+								ignoreMinPadding = true;
+							} else if (dataMax < threshold) {
+								dataMax = threshold;
+								ignoreMaxPadding = true;
 							}
-							serie.closestPointRange = pointRange;
-							
-
-							// Get the dataMin and dataMax so far. If percentage is used, the min and max are
-							// always 0 and 100. If the length of activeYData is 0, continue with null values. 
-							if (!usePercentage && activeYData.length) {
-								dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
-								dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));								
-							}
-
-
-							// todo: instead of checking useThreshold, just set the threshold to 0
-							// in area and column-like chart types
-							if (serie.useThreshold && threshold !== null) {
-								if (dataMin >= threshold) {
-									dataMin = threshold;
-									ignoreMinPadding = true;
-								} else if (dataMax < threshold) {
-									dataMax = threshold;
-									ignoreMaxPadding = true;
-								}
-							}
-
 						}
 					}
 				}
@@ -5852,9 +5814,8 @@ function Chart(options, callback) {
 			axisLength = horiz ? axisWidth : axisHeight;
 			
 			// is there new data?
-			each(associatedSeries || [], function (series) {
+			each(axis.series, function (series) {
 				if (series.isDirtyData || series.isDirty ||
-						!series.data || // series has been removed 
 						series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
 					isDirtyData = true;
 				}
@@ -5947,7 +5908,7 @@ function Chart(options, callback) {
 						
 			// adjust translation for padding
 			if (isXAxis) {
-				each(associatedSeries, function (series) {
+				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
 					if (!series.noSharedTooltip) {
 						closestPointRange = defined(closestPointRange) ? 
@@ -5955,7 +5916,6 @@ function Chart(options, callback) {
 							series.closestPointRange;
 					}
 				});
-				
 				// pointRange means the width reserved for each point, like in a column chart
 				if ((defined(userMin) || defined(userMax)) && pointRange > tickInterval / 2) {
 					// prevent great padding when zooming tightly in to view columns
@@ -6025,7 +5985,7 @@ function Chart(options, callback) {
 		 */
 		function getOffset() {
 
-			var hasData = associatedSeries.length && defined(min) && defined(max),
+			var hasData = axis.series.length && defined(min) && defined(max),
 				titleOffset = 0,
 				titleMargin = 0,
 				axisTitleOptions = options.title,
@@ -6140,7 +6100,7 @@ function Chart(options, callback) {
 				linePath,
 				hasRendered = chart.hasRendered,
 				slideInTicks = hasRendered && defined(oldMin) && !isNaN(oldMin),
-				hasData = associatedSeries.length && defined(min) && defined(max);
+				hasData = axis.series.length && defined(min) && defined(max);
 
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData || isLinked) {
@@ -6353,7 +6313,7 @@ function Chart(options, callback) {
 			});
 
 			// mark associated series as dirty and ready for redraw
-			each(associatedSeries, function (series) {
+			each(axis.series, function (series) {
 				series.isDirty = true;
 			});
 
@@ -6369,7 +6329,7 @@ function Chart(options, callback) {
 				axis.categories = categories = newCategories;
 
 				// force reindexing tooltips
-				each(associatedSeries, function (series) {
+				each(axis.series, function (series) {
 					series.translate();
 					series.setTooltipPoints(true);
 				});
@@ -6421,6 +6381,7 @@ function Chart(options, callback) {
 			removePlotBand: removePlotBandOrLine,
 			removePlotLine: removePlotBandOrLine,
 			reversed: reversed,
+			series: [], // populated by Series
 			stacks: stacks
 		});
 
@@ -6430,7 +6391,7 @@ function Chart(options, callback) {
 		}
 
 		// set min and max
-		setScale();
+		//setScale();
 
 	} // end Axis
 
@@ -8584,6 +8545,32 @@ function Chart(options, callback) {
 	};
 
 	/**
+	 * Detect whether the chart is inverted, either by setting the chart.inverted option
+	 * or adding a bar series to the configuration options
+	 */
+	function setInverted() {
+		var BAR = 'bar',
+			isInverted = pick(
+				inverted, // it is set before 
+				optionsChart.inverted,
+				optionsChart.type === BAR, // default series type 
+				optionsChart.defaultSeriesType === BAR // backwards compatible
+			),
+			seriesOptions = options.series,
+			i = seriesOptions && seriesOptions.length;
+		
+		// check if a bar series is present in the config options
+		while (!isInverted && i--) {
+			if (seriesOptions[i].type === BAR) {
+				isInverted = true;
+			}
+		}		
+		
+		// set the chart property and the chart scope variable
+		chart.inverted = inverted = isInverted;
+	}
+	
+	/**
 	 * Render all graphics for the chart
 	 */
 	function render() {
@@ -8599,6 +8586,10 @@ function Chart(options, callback) {
 		legend = chart.legend = new Legend(chart);
 
 		// Get margins by pre-rendering axes
+		// set axes scales
+		each(axes, function (axis) {
+			axis.setScale();
+		});
 		getMargins();
 		each(axes, function (axis) {
 			axis.setTickPositions(true); // update to reflect the new margins
@@ -8778,17 +8769,16 @@ function Chart(options, callback) {
 		resetMargins();
 		setChartSize();
 
+		// Set the common inversion and transformation for inverted series after initSeries
+		setInverted();
+
+		// get axes
+		getAxes();
+		
 		// Initialize the series
 		each(options.series || [], function (serieOptions) {
 			initSeries(serieOptions);
 		});
-
-		// Set the common inversion and transformation for inverted series after initSeries
-		chart.inverted = inverted = pick(inverted, options.chart.inverted);
-
-
-		// get axes
-		getAxes();
 
 		// Run an event where series and axes can be added
 		//fireEvent(chart, 'beforeRender');
@@ -9425,20 +9415,21 @@ Series.prototype = {
 			index = chart.series.length;
 
 		series.chart = chart;
-		options = series.setOptions(options); // merge with plotOptions
+		series.options = options = series.setOptions(options); // merge with plotOptions
+		
+		// bind the axes
+		series.bindAxes();
 
 		// set some variables
 		extend(series, {
 			index: index,
-			options: options,
 			name: options.name || 'Series ' + (index + 1),
 			state: NORMAL_STATE,
 			pointAttr: {},
-			pointRange: options.pointRange, 
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
 		});
-
+		
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {
@@ -9455,10 +9446,49 @@ Series.prototype = {
 		series.getColor();
 		series.getSymbol();
 
-
 		// set the data
 		series.setData(options.data, false);
 
+	},
+	
+	
+	
+	/**
+	 * Set the xAxis and yAxis properties of cartesian series, and register the series
+	 * in the axis.series array
+	 */
+	bindAxes: function () {
+		var series = this,
+			seriesOptions = series.options,
+			chart = series.chart,
+			axisOptions;
+			
+		if (series.isCartesian) {
+			
+			each(['xAxis', 'yAxis'], function (AXIS) { // repeat for xAxis and yAxis
+				
+				each(chart[AXIS], function (axis) { // loop through the chart's axis objects
+					
+					axisOptions = axis.options;
+					
+					// apply if the series xAxis or yAxis option mathches the number of the 
+					// axis, or if undefined, use the first axis
+					if ((seriesOptions[AXIS] === axisOptions.index) ||
+							(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
+						
+						// register this series in the axis.series lookup
+						axis.series.push(series);
+						
+						// set this series.xAxis or series.yAxis reference
+						series[AXIS] = axis;
+						
+						// mark dirty for redraw
+						axis.isDirty = true;
+					}
+				});
+				
+			});
+		}
 	},
 
 
@@ -9629,7 +9659,7 @@ Series.prototype = {
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = options.pointRange;
+		series.pointRange = (series.xAxis && series.xAxis.categories && 1) || options.pointRange;
 		
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -10316,13 +10346,23 @@ Series.prototype = {
 			i,
 			data = series.data || [],
 			point,
-			prop;
+			prop,
+			axis;
 
 		// add event hook
 		fireEvent(series, 'destroy');
 
 		// remove all events
 		removeEvent(series);
+		
+		// erase from axes
+		each(['xAxis', 'yAxis'], function (AXIS) {
+			axis = series[AXIS];
+			if (axis) {
+				erase(axis.series, series);
+				axis.isDirty = true;
+			}
+		});
 
 		// remove legend items
 		if (series.legendItem) {
@@ -11421,8 +11461,8 @@ seriesTypes.column = ColumnSeries;
 
 var BarSeries = extendClass(ColumnSeries, {
 	type: 'bar',
-	init: function (chart) {
-		chart.inverted = this.inverted = true;
+	init: function () {
+		this.inverted = true;
 		ColumnSeries.prototype.init.apply(this, arguments);
 	}
 });
@@ -13729,8 +13769,35 @@ Highcharts.Scroller = function (chart) {
 
 			// remove it to prevent merging one by one
 			baseOptions.data = navigatorSeriesOptions.data = null;
+			
+			
+			// an x axis is required for scrollbar also
+			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
+				isX: true,
+				type: 'datetime',
+				index: xAxisIndex,
+				height: height, // docs + width
+				top: top, // docs + left
+				offset: 0,
+				offsetLeft: scrollbarHeight, // docs
+				offsetRight: -scrollbarHeight, // docs
+				startOnTick: false,
+				endOnTick: false,
+				minPadding: 0,
+				maxPadding: 0,
+				zoomEnabled: false
+			}));
 
-			// do the merge
+			yAxis = new chart.Axis(merge(navigatorOptions.yAxis, {
+				alignTicks: false, // docs
+				height: height,
+				top: top,
+				offset: 0,
+				index: yAxisIndex,
+				zoomEnabled: false
+			}));
+
+			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseSeries.options, navigatorSeriesOptions, {
 				threshold: null, // docs
 				clip: false, // docs
@@ -13814,32 +13881,6 @@ Highcharts.Scroller = function (chart) {
 				}
 				
 			});
-
-			// an x axis is required for scrollbar also
-			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
-				isX: true,
-				type: 'datetime',
-				index: xAxisIndex,
-				height: height, // docs + width
-				top: top, // docs + left
-				offset: 0,
-				offsetLeft: scrollbarHeight, // docs
-				offsetRight: -scrollbarHeight, // docs
-				startOnTick: false,
-				endOnTick: false,
-				minPadding: 0,
-				maxPadding: 0,
-				zoomEnabled: false
-			}));
-
-			yAxis = new chart.Axis(merge(navigatorOptions.yAxis, {
-				alignTicks: false, // docs
-				height: height,
-				top: top,
-				offset: 0,
-				index: yAxisIndex,
-				zoomEnabled: false
-			}));
 
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {

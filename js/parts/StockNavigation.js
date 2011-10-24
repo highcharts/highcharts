@@ -578,8 +578,35 @@ Highcharts.Scroller = function (chart) {
 
 			// remove it to prevent merging one by one
 			baseOptions.data = navigatorSeriesOptions.data = null;
+			
+			
+			// an x axis is required for scrollbar also
+			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
+				isX: true,
+				type: 'datetime',
+				index: xAxisIndex,
+				height: height, // docs + width
+				top: top, // docs + left
+				offset: 0,
+				offsetLeft: scrollbarHeight, // docs
+				offsetRight: -scrollbarHeight, // docs
+				startOnTick: false,
+				endOnTick: false,
+				minPadding: 0,
+				maxPadding: 0,
+				zoomEnabled: false
+			}));
 
-			// do the merge
+			yAxis = new chart.Axis(merge(navigatorOptions.yAxis, {
+				alignTicks: false, // docs
+				height: height,
+				top: top,
+				offset: 0,
+				index: yAxisIndex,
+				zoomEnabled: false
+			}));
+
+			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseSeries.options, navigatorSeriesOptions, {
 				threshold: null, // docs
 				clip: false, // docs
@@ -663,32 +690,6 @@ Highcharts.Scroller = function (chart) {
 				}
 				
 			});
-
-			// an x axis is required for scrollbar also
-			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
-				isX: true,
-				type: 'datetime',
-				index: xAxisIndex,
-				height: height, // docs + width
-				top: top, // docs + left
-				offset: 0,
-				offsetLeft: scrollbarHeight, // docs
-				offsetRight: -scrollbarHeight, // docs
-				startOnTick: false,
-				endOnTick: false,
-				minPadding: 0,
-				maxPadding: 0,
-				zoomEnabled: false
-			}));
-
-			yAxis = new chart.Axis(merge(navigatorOptions.yAxis, {
-				alignTicks: false, // docs
-				height: height,
-				top: top,
-				offset: 0,
-				index: yAxisIndex,
-				zoomEnabled: false
-			}));
 
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {

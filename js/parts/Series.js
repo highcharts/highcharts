@@ -512,20 +512,21 @@ Series.prototype = {
 			index = chart.series.length;
 
 		series.chart = chart;
-		options = series.setOptions(options); // merge with plotOptions
+		series.options = options = series.setOptions(options); // merge with plotOptions
+		
+		// bind the axes
+		series.bindAxes();
 
 		// set some variables
 		extend(series, {
 			index: index,
-			options: options,
 			name: options.name || 'Series ' + (index + 1),
 			state: NORMAL_STATE,
 			pointAttr: {},
-			pointRange: options.pointRange, 
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
 		});
-
+		
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {
@@ -542,10 +543,49 @@ Series.prototype = {
 		series.getColor();
 		series.getSymbol();
 
-
 		// set the data
 		series.setData(options.data, false);
 
+	},
+	
+	
+	
+	/**
+	 * Set the xAxis and yAxis properties of cartesian series, and register the series
+	 * in the axis.series array
+	 */
+	bindAxes: function () {
+		var series = this,
+			seriesOptions = series.options,
+			chart = series.chart,
+			axisOptions;
+			
+		if (series.isCartesian) {
+			
+			each(['xAxis', 'yAxis'], function (AXIS) { // repeat for xAxis and yAxis
+				
+				each(chart[AXIS], function (axis) { // loop through the chart's axis objects
+					
+					axisOptions = axis.options;
+					
+					// apply if the series xAxis or yAxis option mathches the number of the 
+					// axis, or if undefined, use the first axis
+					if ((seriesOptions[AXIS] === axisOptions.index) ||
+							(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
+						
+						// register this series in the axis.series lookup
+						axis.series.push(series);
+						
+						// set this series.xAxis or series.yAxis reference
+						series[AXIS] = axis;
+						
+						// mark dirty for redraw
+						axis.isDirty = true;
+					}
+				});
+				
+			});
+		}
 	},
 
 
@@ -716,7 +756,7 @@ Series.prototype = {
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = options.pointRange;
+		series.pointRange = (series.xAxis && series.xAxis.categories && 1) || options.pointRange;
 		
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -1403,13 +1443,23 @@ Series.prototype = {
 			i,
 			data = series.data || [],
 			point,
-			prop;
+			prop,
+			axis;
 
 		// add event hook
 		fireEvent(series, 'destroy');
 
 		// remove all events
 		removeEvent(series);
+		
+		// erase from axes
+		each(['xAxis', 'yAxis'], function (AXIS) {
+			axis = series[AXIS];
+			if (axis) {
+				erase(axis.series, series);
+				axis.isDirty = true;
+			}
+		});
 
 		// remove legend items
 		if (series.legendItem) {
