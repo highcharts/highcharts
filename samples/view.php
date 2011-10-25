@@ -3,6 +3,8 @@ $path = $_GET['path'];
 if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z\-]+$/', $path)) {
 	die ('Invalid sample path input');
 }
+
+$next = (int)$_GET['next'];
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -19,10 +21,10 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z\-]+$/', $path)) {
 				
 				
 				
-				if (window.parent.frames[0]) {
+				if (window.parent.frames[0] && window.parent.frames[0].document.getElementById('i<?php echo $next ?>')) {
 					function goNext () {
 						window.location.href = 
-							window.parent.frames[0].document.getElementById('i<?php echo (int)$_GET['next'] ?>').href;
+							window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
 					}
 					
 					$('#next').click(function() {
@@ -33,8 +35,15 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z\-]+$/', $path)) {
 			});
 		</script>
 		
+		<style type="text/css">
+			h1 {
+				text-align: center;
+			}
+		</style>
+		
 	</head>
 	<body>
+		<h1><?php echo ($next - 1) ?>. /samples/<?php echo $path ?></h1> 
 		<?php include("$path/demo.html"); ?>
 		
 		<div style="text-align: center">

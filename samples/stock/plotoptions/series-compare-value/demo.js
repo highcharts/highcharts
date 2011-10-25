@@ -41,12 +41,12 @@ $(function() {
             yAxis: {
                 labels: {
                     formatter: function() {
-                        return (this.value > 0 ? '+' : '') + this.value + '%';
+                        return (this.value > 0 ? '+' : '') + this.value;
                     }
                 }
             },
             
-            plotOpitions: {
+            plotOptions: {
                 series: {
                     compare: 'value'
                 }
