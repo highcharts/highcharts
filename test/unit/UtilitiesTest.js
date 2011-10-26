@@ -106,7 +106,7 @@ UtilTest.prototype.testIsArray = function () {
 
 	// test with array
 	assertEquals("isArray array", true, isArray([]));
-		
+
 }
 
 UtilTest.prototype.testIsNumber = function () {
@@ -127,25 +127,25 @@ UtilTest.prototype.testIsNumber = function () {
 };
 
 UtilTest.prototype.testSplat = function() {
-	
+
 	// test with undefined
 	assertEquals("splat undefined", 1, splat(undefined).length);
-	
+
 	// test with null
 	assertEquals("splat null", 1, splat(null).length);
-	
+
 	// test with false
 	assertEquals("splat false", 1, splat(false).length);
-	
+
 	// test with 0
 	assertEquals("splat 0", 1, splat(0).length);
-	
+
 	// test with ""
 	assertEquals("splat 0", 1, splat("").length);
-	
+
 	// test with object
 	assertEquals("splat object", 1, splat({}).length);
-	
+
 	// test with array
 	assertEquals("splat array", 3, splat([1,2,3]).length);
 };
@@ -192,26 +192,26 @@ UtilTest.prototype.testPlaceBox = function () {
 		tooltipPoint,
 		boxPoint;
 
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
+	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
 	extend(boxPoint, tooltipSize);
 	assertTrue('Left rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('Left tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 
 	dataPoint.x = 100;
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
+	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
 	extend(boxPoint, tooltipSize);
 	assertTrue('Right rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('Right tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 
 	dataPoint.x = 50;
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
+	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
 	extend(boxPoint, tooltipSize);
 	assertTrue('Mid rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('Mid tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 
 	dataPoint.x = 75;
 	dataPoint.y = 5;
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint);
+	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
 	extend(boxPoint, tooltipSize);
 	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
