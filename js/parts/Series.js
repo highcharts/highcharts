@@ -81,7 +81,7 @@ Point.prototype = {
 			prop;
 
 		series.chart.pointCount--;
-		
+
 		if (hoverPoints) {
 			point.setState();
 			erase(hoverPoints, point);
@@ -113,9 +113,9 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'tracker', 'dataLabel', 'group', 'connector'],
+			props = ['graphic', 'tracker', 'dataLabel', 'group', 'connector', 'shadowGroup'],
 			prop,
-			i = 5;
+			i = 6;
 		while (i--) {
 			prop = props[i];
 			if (point[prop]) {
@@ -151,23 +151,24 @@ Point.prototype = {
 			series = point.series,
 			chart = series.chart;
 
-		point.selected = selected = pick(selected, !point.selected);
+		selected = pick(selected, !point.selected);
 
-		//series.isDirty = true;
-		point.firePointEvent(selected ? 'select' : 'unselect');
-		point.setState(selected && SELECT_STATE);
+		// fire the event with the defalut handler
+		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
+			point.selected = selected;
+			point.setState(selected && SELECT_STATE);
 
-		// unselect all other points unless Ctrl or Cmd + click
-		if (!accumulate) {
-			each(chart.getSelectedPoints(), function (loopPoint) {
-				if (loopPoint.selected && loopPoint !== point) {
-					loopPoint.selected = false;
-					loopPoint.setState(NORMAL_STATE);
-					loopPoint.firePointEvent('unselect');
-				}
-			});
-		}
-
+			// unselect all other points unless Ctrl or Cmd + click
+			if (!accumulate) {
+				each(chart.getSelectedPoints(), function (loopPoint) {
+					if (loopPoint.selected && loopPoint !== point) {
+						loopPoint.selected = false;
+						loopPoint.setState(NORMAL_STATE);
+						loopPoint.firePointEvent('unselect');
+					}
+				});
+			}
+		});
 	},
 
 	onMouseOver: function () {
@@ -1437,6 +1438,7 @@ Series.prototype = {
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
+			seriesClipRect = series.clipRect,
 			//chartSeries = series.chart.series,
 			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
 			destroy,
@@ -1475,6 +1477,12 @@ Series.prototype = {
 			}
 		}
 		series.points = null;
+
+		// If this series clipRect is not the global one (which is removed on chart.destroy) we
+		// destroy it here.
+		if (seriesClipRect && seriesClipRect !== chart.clipRect) {
+			series.clipRect = seriesClipRect.destroy();
+		}
 
 		// destroy all SVGElements associated to the series
 		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function (prop) {
@@ -1572,7 +1580,7 @@ Series.prototype = {
 					plotY = pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
 					align = options.align,
-					individualYDelta = yIsNull ? (point.y > 0 ? -6 : 12) : options.y;
+					individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
 
 				// get the string
 				str = options.formatter.call(point.getLabelConfig());
@@ -2111,7 +2119,7 @@ Series.prototype = {
 					fill: NONE,
 					'stroke-width' : options.lineWidth + 2 * snap,
 					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: 1
+					zIndex: options.zIndex || 1
 				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {

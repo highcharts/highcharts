@@ -628,11 +628,24 @@ SVGElement.prototype = {
 			shadows = wrapper.shadows,
 			box = wrapper.box,
 			parentNode = element.parentNode,
-			key;
+			key,
+			i;
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
 		stop(wrapper); // stop running animations
+
+		if (wrapper.clipPath) {
+			wrapper.clipPath = wrapper.clipPath.destroy();
+		}
+
+		// Destroy stops in case this is a gradient object
+		if (wrapper.stops) {
+			for (i = 0; i < wrapper.stops.length; i++) {
+				wrapper.stops[i] = wrapper.stops[i].destroy();
+			}
+			wrapper.stops = null;
+		}
 
 		// remove element
 		if (parentNode) {
@@ -756,11 +769,41 @@ SVGRenderer.prototype = {
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
+		renderer.gradients = []; // Array where gradient SvgElements are stored
 
 		renderer.setSize(width, height, false);
 
 	},
 
+	/**
+	 * Destroys the renderer and its allocated members.
+	 */
+	destroy: function () {
+		var renderer = this,
+			i,
+			rendererGradients = renderer.gradients,
+			rendererDefs = renderer.defs;
+		renderer.box = null;
+		renderer.boxWrapper = renderer.boxWrapper.destroy();
+
+		// Call destroy on all gradient elements
+		if (rendererGradients) { // gradients are null in VMLRenderer
+			for (i = 0; i < rendererGradients.length; i++) {
+				renderer.gradients[i] = rendererGradients[i].destroy();
+			}
+			renderer.gradients = null;
+		}
+
+		// Defs are null in VMLRenderer
+		// Otherwise, destroy them here.
+		if (rendererDefs) {
+			renderer.defs = rendererDefs.destroy();
+		}
+
+		renderer.alignedObjects = null;
+
+		return null;
+	},
 
 	/**
 	 * Create a wrapper for an SVG element
@@ -1409,6 +1452,7 @@ SVGRenderer.prototype = {
 
 		wrapper = this.rect(x, y, width, height, 0).add(clipPath);
 		wrapper.id = id;
+		wrapper.clipPath = clipPath;
 
 		return wrapper;
 	},
@@ -1446,7 +1490,13 @@ SVGRenderer.prototype = {
 				}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
 				.add(renderer.defs);
 
+			// Keep a reference to the gradient object so it is possible to destroy it later
+			renderer.gradients.push(gradientObject);
+
+			// The gradient needs to keep a list of stops to be able to destroy them
+			gradientObject.stops = [];
 			each(color.stops, function (stop) {
+				var stopObject;
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
@@ -1455,11 +1505,14 @@ SVGRenderer.prototype = {
 					stopColor = stop[1];
 					stopOpacity = 1;
 				}
-				renderer.createElement('stop').attr({
+				stopObject = renderer.createElement('stop').attr({
 					offset: stop[0],
 					'stop-color': stopColor,
 					'stop-opacity': stopOpacity
 				}).add(gradientObject);
+
+				// Add the stop element to the gradient
+				gradientObject.stops.push(stopObject);
 			});
 
 			return 'url(' + this.url + '#' + id + ')';

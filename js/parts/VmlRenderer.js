@@ -377,7 +377,7 @@ var VMLElement = extendClass(SVGElement, {
 			wrapper.destroyClip();
 		}
 
-		SVGElement.prototype.destroy.apply(wrapper);
+		return SVGElement.prototype.destroy.apply(wrapper);
 	},
 
 	/**

@@ -71,7 +71,7 @@
 
         <!-- google js-test-driver -->
         <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
-        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.2.jar"/>
+        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3b.jar"/>
 
         <!-- This is the list of files for highcharts -->
         <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
@@ -359,9 +359,10 @@
 
     <target name="test-all" description="Runs the unit tests on all adapters. The server must be running (i.e. 'server').">
         <!-- Param "testrun.name" used in echo output and to build a folder name where test result goes. -->
+        <!-- Param "testrun.type" tells which type of test this is, also corresponds to the path name for the conf file. -->
         <!-- Param "required.lib" specifies wich third-party lib is used while testing. -->
         <!-- Param "required.adapter" specifies the corresponding adapter that matches the lib. Leave unset for the built-in jquery support. -->
-		
+
         <!-- jquery versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
@@ -413,7 +414,7 @@
         </antcall>
     </target>
 
-    <target name="test" description="Runs the unit tests latest jquery. The server must be running (i.e. 'server').">
+    <target name="test" description="Runs the unit tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.6.2"/>
@@ -421,9 +422,17 @@
         </antcall>
     </target>
 
-    <target name="it" description="Runs the integration tests latest jquery. The server must be running (i.e. 'server').">
+    <target name="it" description="Runs the integration tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="it"/>
+            <param name="testrun.name" value="jquery-1.6.2"/>
+            <param name="required.lib" value="jquery-1.6.2.js"/>
+        </antcall>
+    </target>
+
+    <target name="gc" description="Runs the leaks tests using latest jquery. The server must be running (i.e. 'server').">
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="gc"/>
             <param name="testrun.name" value="jquery-1.6.2"/>
             <param name="required.lib" value="jquery-1.6.2.js"/>
         </antcall>
@@ -457,7 +466,7 @@
     <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
     <target name="run-test" depends="set.properties">
         <echo message="/------------------------------------------------------------"/>
-        <echo message="  Running tests using: ${testrun.name}"/>
+        <echo message="  Running ${testrun.type} tests using: ${testrun.name}"/>
         <echo message=""/>
         <echo message=""/>
         <java jar="${jstestdriver.jar}" fork="true">

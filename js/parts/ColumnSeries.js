@@ -199,7 +199,8 @@ var ColumnSeries = extendClass(Series, {
 			shapeArgs,
 			tracker,
 			trackerLabel = +new Date(),
-			cursor = series.options.cursor,
+			options = series.options,
+			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			rel;
 
@@ -218,7 +219,7 @@ var ColumnSeries = extendClass(Series, {
 							isTracker: trackerLabel,
 							fill: TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN,
-							zIndex: 1
+							zIndex: options.zIndex || 1
 						})
 						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
 							rel = event.relatedTarget || event.fromElement;
@@ -229,7 +230,7 @@ var ColumnSeries = extendClass(Series, {
 
 						})
 						.on('mouseout', function (event) {
-							if (!series.options.stickyTracking) {
+							if (!options.stickyTracking) {
 								rel = event.relatedTarget || event.toElement;
 								if (attr(rel, 'isTracker') !== trackerLabel) {
 									series.onMouseOut();

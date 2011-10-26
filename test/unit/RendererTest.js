@@ -14,6 +14,11 @@ RendererTest.prototype.setUp = function() {
 	assertNotUndefined(this.renderer);
 };
 
+RendererTest.prototype.tearDown = function () {
+	this.renderer.destroy();
+	this.renderer = null;
+};
+
 /**
  * Test that css attributes are merged together.
  */
@@ -46,6 +51,8 @@ RendererTest.prototype.testCssFontSize = function () {
 
 	assertUndefined(undefinedFontSize + ' should be undefined', textElement.styles[undefinedFontSize])
 	assertEquals('Changed font size', '21px', textElement.styles[definedFontSize]);
+
+	textElement.destroy();
 };
 
 RendererTest.prototype.testTransparancy = function () {
@@ -70,16 +77,24 @@ RendererTest.prototype.testTransparancy = function () {
 	if (strokeElement) {
 		assertEquals('There is a stray opacity value', 1, strokeElement.opacity);
 	}
+
+	rect.destroy();
 };
 
 RendererTest.prototype.testGroupWithoutName = function () {
-	var namedGroup = this.renderer.g('myName');
+	var namedGroup = this.renderer.g('myName'),
+		group;
 	assertNotUndefined(namedGroup);
 
 	try {
-		var group = this.renderer.g();
+		group = this.renderer.g();
 		assertNotUndefined(group);
 	} catch (exception) {
 		fail('unnamed group failed.')
+	}
+
+	namedGroup.destroy();
+	if (group) {
+		group.destroy();
 	}
 };

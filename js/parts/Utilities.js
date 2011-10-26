@@ -171,23 +171,6 @@ function css(el, styles) {
 	extend(el.style, styles);
 }
 
-/* *
- * Get CSS value on a given element
- * @param {Object} el DOM object
- * @param {String} styleProp Camel cased CSS propery
- * /
-function getStyle (el, styleProp) {
-	var ret,
-		CURRENT_STYLE = 'currentStyle',
-		GET_COMPUTED_STYLE = 'getComputedStyle';
-	if (el[CURRENT_STYLE]) {
-		ret = el[CURRENT_STYLE][styleProp];
-	} else if (win[GET_COMPUTED_STYLE]) {
-		ret = win[GET_COMPUTED_STYLE](el, null).getPropertyValue(hyphenate(styleProp));
-	}
-	return ret;
-}*/
-
 /**
  * Utility function to create element with attributes and styles
  * @param {Object} tag
@@ -651,6 +634,25 @@ function stableSort(arr, sortFunction) {
 	// Remove index from items
 	for (i = 0; i < length; i++) {
 		delete arr[i].ss_i; // stable sort index
+	}
+}
+
+/**
+ * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
+ * It loops all properties and invokes destroy if there is a destroy method. The property is
+ * then delete'ed.
+ */
+function destroyObjectProperties(obj) {
+	var n;
+	for (n in obj) {
+		// If the object is non-null and destroy is defined
+		if (obj[n] && obj[n].destroy) {
+			// Invoke the destroy
+			obj[n].destroy();
+		}
+
+		// Delete the property from the object.
+		delete obj[n];
 	}
 }
 

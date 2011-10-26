@@ -1,11 +1,18 @@
 var AdaptersTest = TestCase('AdaptersTest');
 
+AdaptersTest.prototype.setUp = function () {
+	// Map the three event functions to call our own instead.
+	this.eventMonitor = new EventMonitor(addEvent, removeEvent, fireEvent);
+}
+
 /**
  * At tear down, log output from the event monitor and reset.
  */
 AdaptersTest.prototype.tearDown = function() {
-	eventMonitor.log();
-	eventMonitor.reset();
+	this.eventMonitor.log();
+	this.eventMonitor.reset();
+	this.eventMonitor.disconnect();
+	this.eventMonitor = null;
 };
 
 /**
