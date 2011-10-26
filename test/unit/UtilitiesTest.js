@@ -82,7 +82,32 @@ UtilTest.prototype.testIsObject = function () {
 
 	// test with object
 	assertEquals("IsObject object", true, isObject({}));
+
+	// test with array
+	assertEquals("IsObject array", true, isObject([]));
 };
+
+
+UtilTest.prototype.testIsArray = function () {
+	// test with undefined
+	assertEquals("isArray undefined", false, isArray(undefined));
+
+	// test with null
+	assertEquals("isArray null", false, isArray(null));
+
+	// test with number
+	assertEquals("isArray number", false, isArray(15));
+
+	// test with string
+	assertEquals("isArray string", false, isArray("this is a string"));
+
+	// test with object
+	assertEquals("isArray object", false, isArray({}));
+
+	// test with array
+	assertEquals("isArray array", true, isArray([]));
+		
+}
 
 UtilTest.prototype.testIsNumber = function () {
 	// test with undefined
@@ -100,6 +125,31 @@ UtilTest.prototype.testIsNumber = function () {
 	// test with object
 	assertEquals("IsNumber object", false, isNumber({}));
 };
+
+UtilTest.prototype.testSplat = function() {
+	
+	// test with undefined
+	assertEquals("splat undefined", 1, splat(undefined).length);
+	
+	// test with null
+	assertEquals("splat null", 1, splat(null).length);
+	
+	// test with false
+	assertEquals("splat false", 1, splat(false).length);
+	
+	// test with 0
+	assertEquals("splat 0", 1, splat(0).length);
+	
+	// test with ""
+	assertEquals("splat 0", 1, splat("").length);
+	
+	// test with object
+	assertEquals("splat object", 1, splat({}).length);
+	
+	// test with array
+	assertEquals("splat array", 3, splat([1,2,3]).length);
+};
+
 
 UtilTest.prototype.testLog2Lin = function () {
 	// TODO: implement

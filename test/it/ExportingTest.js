@@ -1,5 +1,10 @@
 ExportingTest = TestCase("ExportingTest");
 
+ExportingTest.prototype.hasSVG = function () {
+	var SVG_NS = 'http://www.w3.org/2000/svg';
+	return !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect;
+};
+
 ExportingTest.prototype.testOverrideDefaultLangOptions = function () {
 	assertUndefined(this.chartContainer);
 	/*:DOC += <div id="chartContainer" style="height: 200px; width: 200px"></div>*/
@@ -20,13 +25,15 @@ ExportingTest.prototype.testOverrideDefaultLangOptions = function () {
 	};
 	var chart = new Highcharts.Chart(options);
 
-	var rects = chart.container.getElementsByTagNameNS("http://www.w3.org/2000/svg", "rect");
-	for (var i = 0; i < rects.length; i++) {
-		if (rects[i].getAttribute('id') === 'exportButton') {
-			assertEquals(options.lang.exportButtonTitle, rects[i].getAttribute('title'));
-		}
-		if (rects[i].getAttribute('id') === 'printButton') {
-			assertEquals(options.lang.printButtonTitle, rects[i].getAttribute('title'));
+	if (this.hasSVG()) {
+		var rects = chart.container.getElementsByTagNameNS("http://www.w3.org/2000/svg", "rect");
+		for (var i = 0; i < rects.length; i++) {
+			if (rects[i].getAttribute('id') === 'exportButton') {
+				assertEquals(options.lang.exportButtonTitle, rects[i].getAttribute('title'));
+			}
+			if (rects[i].getAttribute('id') === 'printButton') {
+				assertEquals(options.lang.printButtonTitle, rects[i].getAttribute('title'));
+			}
 		}
 	}
 	// TODO-CLC Test the hover menu options
@@ -44,13 +51,15 @@ ExportingTest.prototype.testDefaultLangOptions = function () {
 	};
 	var chart = new Highcharts.Chart(options);
 
-	var rects = chart.container.getElementsByTagNameNS("http://www.w3.org/2000/svg", "rect");
-	for (var i = 0; i < rects.length; i++) {
-		if (rects[i].getAttribute('id') === 'exportButton') {
-			assertEquals('Default export title', Highcharts.getOptions().lang.exportButtonTitle, rects[i].getAttribute('title'));
-		}
-		if (rects[i].getAttribute('id') === 'printButton') {
-			assertEquals('Default print title', Highcharts.getOptions().lang.printButtonTitle, rects[i].getAttribute('title'));
+	if (this.hasSVG()) {
+		var rects = chart.container.getElementsByTagNameNS("http://www.w3.org/2000/svg", "rect");
+		for (var i = 0; i < rects.length; i++) {
+			if (rects[i].getAttribute('id') === 'exportButton') {
+				assertEquals('Default export title', Highcharts.getOptions().lang.exportButtonTitle, rects[i].getAttribute('title'));
+			}
+			if (rects[i].getAttribute('id') === 'printButton') {
+				assertEquals('Default print title', Highcharts.getOptions().lang.printButtonTitle, rects[i].getAttribute('title'));
+			}
 		}
 	}
 };

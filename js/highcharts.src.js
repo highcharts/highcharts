@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.6 (2011-07-08)
+ * @license Highcharts JS v2.1.7 (2011-10-19)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -37,6 +37,7 @@ var doc = document,
 	isFirefox = /Firefox/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	hasRtlBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
 	symbolSizes = {},
@@ -187,6 +188,14 @@ function isObject(obj) {
 }
 
 /**
+ * Check for array
+ * @param {Object} obj
+ */
+function isArray(obj) {
+	return Object.prototype.toString.call(obj) === '[object Array]';
+}
+
+/**
  * Check for number
  * @param {Object} n
  */
@@ -263,12 +272,8 @@ function attr(elem, prop, value) {
  * MooTools' $.splat.
  */
 function splat(obj) {
-	if (!obj || obj.constructor !== Array) {
-		obj = [obj];
-	}
-	return obj;
+	return isArray(obj) ? obj : [obj];
 }
-
 
 
 /**
@@ -392,7 +397,6 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
-		langMonths = lang.months,
 		/* // uncomment this and the 'W' format key below to enable week numbers
 		weekNumber = function () {
 			var clone = new Date(date.valueOf()),
@@ -417,8 +421,8 @@ dateFormat = function (format, timestamp, capitalize) {
 			//'W': weekNumber(),
 
 			// Month
-			'b': langMonths[month].substr(0, 3), // Short month, like 'Jan'
-			'B': langMonths[month], // Long month, like 'January'
+			'b': lang.shortMonths[month], // Short month, like 'Jan'
+			'B': lang.months[month], // Long month, like 'January'
 			'm': pad(month + 1), // Two digit month number, 01 through 12
 
 			// Year
@@ -1203,6 +1207,7 @@ defaultOptions = {
 		loading: 'Loading...',
 		months: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
 				'August', 'September', 'October', 'November', 'December'],
+		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		decimalPoint: '.',
 		resetZoom: 'Reset zoom',
@@ -1362,7 +1367,6 @@ defaultOptions = {
 		labelFormatter: function () {
 			return this.name;
 		},
-		// lineHeight: 16,
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
@@ -1825,8 +1829,8 @@ SVGElement.prototype = {
 		wrapper.renderer = renderer;
 		/**
 		 * A collection of attribute setters. These methods, if defined, are called right before a certain
-		 * attribute is set on an element wrapper. Returning false prevents the default attribute 
-		 * setter to run. Returning a value causes the default setter to set that value. Used in 
+		 * attribute is set on an element wrapper. Returning false prevents the default attribute
+		 * setter to run. Returning a value causes the default setter to set that value. Used in
 		 * Renderer.label.
 		 */
 		wrapper.attrSetters = {};
@@ -1870,6 +1874,7 @@ SVGElement.prototype = {
 			skipAttr,
 			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
+			htmlNode = wrapper.htmlNode,
 			hasSetSymbolSize,
 			ret = wrapper;
 
@@ -1900,16 +1905,16 @@ SVGElement.prototype = {
 			for (key in hash) {
 				skipAttr = false; // reset
 				value = hash[key];
-				
+
 				// check for a specific attribute setter
 				result = attrSetters[key] && attrSetters[key](value, key);
-				
+
 				if (result !== false) {
-					
+
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
 					}
-					
+
 					// paths
 					if (key === 'd') {
 						if (value && value.join) { // join path
@@ -2054,7 +2059,33 @@ SVGElement.prototype = {
 					} else if (!skipAttr) {
 						attr(element, key, value);
 					}
-					
+
+				}
+
+				// Issue #38
+				if (htmlNode && (key === 'x' || key === 'y' ||
+						key === 'translateX' || key === 'translateY' || key === 'visibility')) {
+					var bBox,
+						arr = htmlNode.length ? htmlNode : [this],
+						length = arr.length,
+						itemWrapper,
+						j;
+
+					for (j = 0; j < length; j++) {
+						itemWrapper = arr[j];
+						bBox = itemWrapper.getBBox();
+						htmlNode = itemWrapper.htmlNode; // reassign to child item
+						css(htmlNode, extend(wrapper.styles, {
+							left: (bBox.x + (wrapper.translateX || 0)) + PX,
+							top: (bBox.y + (wrapper.translateY || 0)) + PX
+						}));
+
+						if (key === 'visibility') {
+							css(htmlNode, {
+								visibility: value
+							});
+						}
+					}
 				}
 
 			}
@@ -2389,6 +2420,14 @@ SVGElement.prototype = {
 			renderer.buildText(this);
 		}
 
+		// register html spans in groups
+		if (parent && this.htmlNode) {
+			if (!parent.htmlNode) {
+				parent.htmlNode = [];
+			}
+			parent.htmlNode.push(this);
+		}
+
 		// mark the container as having z indexed children
 		if (zIndex) {
 			parentWrapper.handleZ = true;
@@ -2643,9 +2682,9 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			reverse = isFirefox && textStyles && textStyles.HcDirection === 'rtl' &&
-				!this.forExport && pInt(userAgent.split('Firefox/')[1]) < 4, // issue #38
-			arr,
+			renderAsHtml = textStyles && wrapper.useHTML && !this.forExport,
+			htmlNode = wrapper.htmlNode,
+			//arr, issue #38 workaround
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
@@ -2694,14 +2733,14 @@ SVGRenderer.prototype = {
 						.replace(/&gt;/g, '>');
 
 					// issue #38 workaround.
-					if (reverse) {
+					/*if (reverse) {
 						arr = [];
 						i = span.length;
 						while (i--) {
 							arr.push(span.charAt(i));
 						}
 						span = arr.join('');
-					}
+					}*/
 
 					// add the text node
 					tspan.appendChild(doc.createTextNode(span));
@@ -2781,7 +2820,22 @@ SVGRenderer.prototype = {
 			});
 		});
 
+		// Fix issue #38 and allow HTML in tooltips and other labels
+		if (renderAsHtml) {
+			if (!htmlNode) {
+				htmlNode = wrapper.htmlNode = createElement('span', null, extend(textStyles, {
+					position: ABSOLUTE,
+					top: 0,
+					left: 0
+				}), this.box.parentNode);
+			}
+			htmlNode.innerHTML = wrapper.textStr;
 
+			i = childNodes.length;
+			while (i--) {
+				childNodes[i].style.visibility = HIDDEN;
+			}
+		}
 	},
 
 	/**
@@ -3271,7 +3325,7 @@ SVGRenderer.prototype = {
 	 * Take a color and return it if it's a string, make it a gradient if it's a
 	 * gradient configuration object. Prior to Highstock, an array was used to define
 	 * a linear gradient with pixel positions relative to the SVG. In newer versions
-	 * we change the coordinates to apply relative to the shape, using coordinates 
+	 * we change the coordinates to apply relative to the shape, using coordinates
 	 * 0-1 within the shape. To preserve backwards compatibility, linearGradient
 	 * in this definition is an object of x1, y1, x2 and y2.
 	 *
@@ -3288,7 +3342,7 @@ SVGRenderer.prototype = {
 				gradientObject,
 				stopColor,
 				stopOpacity;
-			
+
 			gradientObject = renderer.createElement(LINEAR_GRADIENT)
 				.attr(extend({
 					id: id,
@@ -3349,8 +3403,9 @@ SVGRenderer.prototype = {
 	 * @param {String} str
 	 * @param {Number} x Left position
 	 * @param {Number} y Top position
+	 * @param {Boolean} useHTML Use HTML to render the text
 	 */
-	text: function (str, x, y) {
+	text: function (str, x, y, useHTML) {
 
 		// declare variables
 		var renderer = this,
@@ -3373,6 +3428,7 @@ SVGRenderer.prototype = {
 
 		wrapper.x = x;
 		wrapper.y = y;
+		wrapper.useHTML = useHTML;
 		return wrapper;
 	},
 
@@ -3407,14 +3463,14 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			attrSetters = wrapper.attrSetters;
-			
+
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
 		 * box and reflect it in the border box.
 		 */
 		function updateBoxSize() {
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && 
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
 				text.getBBox(true);
 			wrapper.width = (width || bBox.width) + 2 * padding;
 			wrapper.height = (height || bBox.height) + 2 * padding;
@@ -3426,7 +3482,7 @@ SVGRenderer.prototype = {
 					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
 				box.add(wrapper);
 			}
-			
+
 			// apply the box attributes
 			box.attr(merge({
 				width: wrapper.width,
@@ -3434,7 +3490,7 @@ SVGRenderer.prototype = {
 			}, deferredAttr));
 			deferredAttr = null;
 		}
-		
+
 		/**
 		 * This function runs after setting text or padding, but only if padding is changed
 		 */
@@ -3443,12 +3499,12 @@ SVGRenderer.prototype = {
 				textAlign = styles && styles.textAlign,
 				x = padding,
 				y = padding + mathRound(pInt(wrapper.element.style.fontSize || 11) * 1.2);
-			
+
 			// compensate for alignment
 			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
 				x += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
 			}
-			
+
 			// update if anything changed
 			if (x !== text.x || y !== text.y) {
 				text.attr({
@@ -3456,7 +3512,7 @@ SVGRenderer.prototype = {
 					y: y
 				});
 			}
-			
+
 			// record current values
 			text.x = x;
 			text.y = y;
@@ -3475,7 +3531,7 @@ SVGRenderer.prototype = {
 			}
 		}
 
-		
+
 		/**
 		 * After the text element is added, get the desired size of the border box
 		 * and add it before the text in the DOM.
@@ -3489,12 +3545,12 @@ SVGRenderer.prototype = {
 				anchorY: anchorY
 			});
 		});
-		
-		
+
+
 		/*
 		 * Add specific attribute setters.
-		 */   
-		
+		 */
+
 		// only change local variables
 		attrSetters.width = function (value) {
 			width = value;
@@ -3507,7 +3563,7 @@ SVGRenderer.prototype = {
 		attrSetters.padding = function (value) {
 			padding = value;
 			updateTextPadding();
-			
+
 			return false;
 		};
 
@@ -3516,7 +3572,7 @@ SVGRenderer.prototype = {
 			align = value;
 			return false; // prevent setting text-anchor on the group
 		};
-		
+
 		// apply these to the box and the text alike
 		attrSetters.text = function (value, key) {
 			text.attr(key, value);
@@ -3524,7 +3580,7 @@ SVGRenderer.prototype = {
 			updateTextPadding();
 			return false;
 		};
-		
+
 		// apply these to the box but not to the text
 		attrSetters[STROKE_WIDTH] = function (value, key) {
 			crispAdjust = value % 2 / 2;
@@ -3545,12 +3601,12 @@ SVGRenderer.prototype = {
 			boxAttr(key, value - wrapperY);
 			return false;
 		};
-		
+
 		// rename attributes
 		attrSetters.x = function (value) {
 			wrapperX = value;
-			wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding); 
-			
+			wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding);
+
 			wrapper.attr('translateX', mathRound(wrapperX));
 			return false;
 		};
@@ -3559,7 +3615,7 @@ SVGRenderer.prototype = {
 			wrapper.attr('translateY', mathRound(value));
 			return false;
 		};
-		
+
 		// Redirect certain methods to either the box or the text
 		var baseCss = wrapper.css;
 		return extend(wrapper, {
@@ -3583,7 +3639,7 @@ SVGRenderer.prototype = {
 			 * Return the bounding box of the box, not the group
 			 */
 			getBBox: function () {
-				return box.getBBox();				
+				return box.getBBox();
 			},
 			/**
 			 * Apply the shadow to the box
@@ -4985,7 +5041,8 @@ function Chart(options, callback) {
 							renderer.text(
 									str,
 									0,
-									0
+									0,
+									labelOptions.useHTML
 								)
 								.attr({
 									align: labelOptions.align,
@@ -5183,7 +5240,7 @@ function Chart(options, callback) {
 				width = options.width,
 				to = options.to,
 				from = options.from,
-				value = options.value,				
+				value = options.value,
 				toPath, // bands only
 				dashStyle = options.dashStyle,
 				svgElem = plotLine.svgElem,
@@ -5338,7 +5395,7 @@ function Chart(options, callback) {
 		/**
 		 * The class for stack items
 		 */
-		function StackItem(options, isNegative, x) {
+		function StackItem(options, isNegative, x, stackOption) {
 			var stackItem = this;
 
 			// Tells if the stack is negative
@@ -5349,6 +5406,9 @@ function Chart(options, callback) {
 
 			// Save the x value to be able to position the label later
 			stackItem.x = x;
+			
+			// Save the stack option on the series configuration object
+			stackItem.stack = stackOption;
 
 			// The align options and text align varies on whether the stack is negative and
 			// if the chart is inverted or not.
@@ -5446,6 +5506,7 @@ function Chart(options, callback) {
 						posPointStack,
 						negPointStack,
 						stackKey,
+						stackOption,
 						negKey,
 						xData,
 						yData,
@@ -5482,7 +5543,8 @@ function Chart(options, callback) {
 
 						// create a stack for this particular series type
 						if (stacking) {
-							stackKey = series.type + pick(seriesOptions.stack, '');
+							stackOption = series.options.stack;
+							stackKey = series.type + pick(stackOption, '');
 							negKey = '-' + stackKey;
 							series.stackKey = stackKey; // used in translate
 
@@ -5535,12 +5597,12 @@ function Chart(options, callback) {
 									// If the StackItem is there, just update the values,
 									// if not, create one first
 									if (!stacks[key][x]) {
-										stacks[key][x] = new StackItem(options.stackLabels, isNegative, x);
+										stacks[key][x] = new StackItem(options.stackLabels, isNegative, x, stackOption);
 									}
 									stacks[key][x].setTotal(y);
 
 								
-								 // general hook, used for Highstock compare values feature
+								// general hook, used for Highstock compare values feature
 								} else if (hasModifyValue) {
 									y = series.modifyValue(y);
 								}
@@ -6139,7 +6201,8 @@ function Chart(options, callback) {
 					axisTitle = axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
-						0
+						0,
+						axisTitleOptions.useHTML
 					)
 					.attr({
 						zIndex: 7,
@@ -6604,12 +6667,9 @@ function Chart(options, callback) {
 			});
 
 			// Destroy and clear local variables
-			each([box, label, group], function (obj) {
-				if (obj) {
-					obj.destroy();
-				}
-			});
-			box = label = group = null;
+			if (label) {
+				label = label.destroy();
+			}
 		}
 
 		/**
@@ -6754,7 +6814,7 @@ function Chart(options, callback) {
 
 			// hide tooltip if the point falls outside the plot
 			show = shared || !point.series.isCartesian || isInsidePlot(x, y);
-			
+
 			// update the inner HTML
 			if (text === false || !show) {
 				hide();
@@ -8286,7 +8346,8 @@ function Chart(options, callback) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text,
 					0,
-					0
+					0,
+					chartTitleOptions.useHTML
 				)
 				.attr({
 					align: chartTitleOptions.align,
@@ -8907,7 +8968,7 @@ function Chart(options, callback) {
 
 		// ==== Destroy local variables:
 		each([chartBackground, legend, tooltip, renderer, tracker], function (obj) {
-			if (obj) {
+			if (obj && obj.destroy) {
 				obj.destroy();
 			}
 		});
@@ -12369,6 +12430,7 @@ extend(Highcharts, {
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
+	hasRtlBug: hasRtlBug,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,
@@ -12391,6 +12453,6 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	product: 'Highcharts',
-	version: '2.1.6'
+	version: '2.1.7'
 });
 }());

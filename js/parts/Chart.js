@@ -272,7 +272,8 @@ function Chart(options, callback) {
 							renderer.text(
 									str,
 									0,
-									0
+									0,
+									labelOptions.useHTML
 								)
 								.attr({
 									align: labelOptions.align,
@@ -470,7 +471,7 @@ function Chart(options, callback) {
 				width = options.width,
 				to = options.to,
 				from = options.from,
-				value = options.value,				
+				value = options.value,
 				toPath, // bands only
 				dashStyle = options.dashStyle,
 				svgElem = plotLine.svgElem,
@@ -625,7 +626,7 @@ function Chart(options, callback) {
 		/**
 		 * The class for stack items
 		 */
-		function StackItem(options, isNegative, x) {
+		function StackItem(options, isNegative, x, stackOption) {
 			var stackItem = this;
 
 			// Tells if the stack is negative
@@ -636,6 +637,9 @@ function Chart(options, callback) {
 
 			// Save the x value to be able to position the label later
 			stackItem.x = x;
+			
+			// Save the stack option on the series configuration object
+			stackItem.stack = stackOption;
 
 			// The align options and text align varies on whether the stack is negative and
 			// if the chart is inverted or not.
@@ -733,6 +737,7 @@ function Chart(options, callback) {
 						posPointStack,
 						negPointStack,
 						stackKey,
+						stackOption,
 						negKey,
 						xData,
 						yData,
@@ -769,7 +774,8 @@ function Chart(options, callback) {
 
 						// create a stack for this particular series type
 						if (stacking) {
-							stackKey = series.type + pick(seriesOptions.stack, '');
+							stackOption = series.options.stack;
+							stackKey = series.type + pick(stackOption, '');
 							negKey = '-' + stackKey;
 							series.stackKey = stackKey; // used in translate
 
@@ -822,12 +828,12 @@ function Chart(options, callback) {
 									// If the StackItem is there, just update the values,
 									// if not, create one first
 									if (!stacks[key][x]) {
-										stacks[key][x] = new StackItem(options.stackLabels, isNegative, x);
+										stacks[key][x] = new StackItem(options.stackLabels, isNegative, x, stackOption);
 									}
 									stacks[key][x].setTotal(y);
 
 								
-								 // general hook, used for Highstock compare values feature
+								// general hook, used for Highstock compare values feature
 								} else if (hasModifyValue) {
 									y = series.modifyValue(y);
 								}
@@ -1426,7 +1432,8 @@ function Chart(options, callback) {
 					axisTitle = axis.axisTitle = renderer.text(
 						axisTitleOptions.text,
 						0,
-						0
+						0,
+						axisTitleOptions.useHTML
 					)
 					.attr({
 						zIndex: 7,
@@ -1891,12 +1898,9 @@ function Chart(options, callback) {
 			});
 
 			// Destroy and clear local variables
-			each([box, label, group], function (obj) {
-				if (obj) {
-					obj.destroy();
-				}
-			});
-			box = label = group = null;
+			if (label) {
+				label = label.destroy();
+			}
 		}
 
 		/**
@@ -2041,7 +2045,7 @@ function Chart(options, callback) {
 
 			// hide tooltip if the point falls outside the plot
 			show = shared || !point.series.isCartesian || isInsidePlot(x, y);
-			
+
 			// update the inner HTML
 			if (text === false || !show) {
 				hide();
@@ -3573,7 +3577,8 @@ function Chart(options, callback) {
 				chart[name] = renderer.text(
 					chartTitleOptions.text,
 					0,
-					0
+					0,
+					chartTitleOptions.useHTML
 				)
 				.attr({
 					align: chartTitleOptions.align,
@@ -4194,7 +4199,7 @@ function Chart(options, callback) {
 
 		// ==== Destroy local variables:
 		each([chartBackground, legend, tooltip, renderer, tracker], function (obj) {
-			if (obj) {
+			if (obj && obj.destroy) {
 				obj.destroy();
 			}
 		});
