@@ -1834,6 +1834,17 @@ SVGRenderer.prototype = {
 			shadow: function (b) {
 				box.shadow(b);
 				return wrapper;
+			},
+			/**
+			 * Destroy and release memory.
+			 */
+			destroy: function () {
+				if (text) {
+					// Destroy the text element
+					text = text.destroy();
+				}
+				// Call base implementation to destroy the rest
+				SVGElement.prototype.destroy.call(wrapper);
 			}
 		});
 	}
