@@ -729,7 +729,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 	// if it is, move it back to be inside and then up to not cover the point.
 	if ((x + boxWidth) > (outerLeft + outerWidth)) {
 		x -= (x + boxWidth) - (outerLeft + outerWidth);
-		y -= boxHeight;
+		y = pointY - boxHeight + outerTop - distance;
 		alignedRight = true;
 	}
 
