@@ -4019,10 +4019,10 @@ function Chart(options, callback) {
 	 */
 	function setInverted() {
 		var BAR = 'bar',
-			isInverted = pick(
-				inverted, // it is set before 
-				optionsChart.inverted,
-				optionsChart.type === BAR, // default series type 
+			isInverted = (
+				inverted || // it is set before 
+				optionsChart.inverted ||
+				optionsChart.type === BAR || // default series type 
 				optionsChart.defaultSeriesType === BAR // backwards compatible
 			),
 			seriesOptions = options.series,

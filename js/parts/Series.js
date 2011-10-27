@@ -795,7 +795,7 @@ Series.prototype = {
 					x += pointInterval;
 				}
 				series.xIncrement = x;
-			} else if (firstPoint.constructor === Array) { // assume all points are arrays
+			} else if (isArray(firstPoint)) { // assume all points are arrays
 				if (ohlc) { // [x, o, h, l, c]
 					for (i = 0; i < dataLength; i++) {
 						pt = data[i];
