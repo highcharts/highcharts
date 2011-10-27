@@ -594,7 +594,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		x = outerLeft + pointX + distance;
 	}
 
-	// Test to see if the tooltip is to far to the right,
+	// Test to see if the tooltip is too far to the right,
 	// if it is, move it back to be inside and then up to not cover the point.
 	if ((x + boxWidth) > (outerLeft + outerWidth)) {
 		x -= (x + boxWidth) - (outerLeft + outerWidth);
@@ -602,12 +602,13 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		alignedRight = true;
 	}
 
+	// if it is now above the plot area, align it to the top of the plot area
 	if (y < outerTop + 5) {
-		y = outerTop + 5; // above
+		y = outerTop + 5;
 
 		// If the tooltip is still covering the point, move it below instead
 		if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
-			y = pointY + boxHeight - distance; // below
+			y = pointY + outerTop + distance; // below
 		}
 	} else if (y + boxHeight > outerTop + outerHeight) {
 		y = outerTop + outerHeight - boxHeight - distance; // below
