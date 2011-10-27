@@ -650,7 +650,7 @@ Highcharts.Scroller = function (chart) {
 				// detect whether to move the range
 				stickToMax = baseMax >=
 					navigatorSeries.xData[navigatorSeries.xData.length - 1];
-				stickToMin = baseMin - range <=
+				stickToMin = baseMax - range <=
 					navigatorSeries.xData[0];
 
 				// set the navigator series data to the new data of the base series
