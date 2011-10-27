@@ -2,7 +2,8 @@
  * A wrapper for Chart with all the default values for a Stock chart
  */
 Highcharts.StockChart = function (options, callback) {
-	var seriesOptions = options.series, // to increase performance, don't merge the data
+	var seriesOptions = options.series, // to increase performance, don't merge the data 
+		opposite,
 		lineOptions = {
 
 			marker: {
@@ -43,10 +44,11 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply Y axis options to both single and multi y axes
 	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
+		opposite = yAxisOptions.opposite;
 		return merge({ // defaults
 			labels: {
-				align: 'left',
-				x: 2,
+				align: opposite ? 'right' : 'left',
+				x: opposite ? -2 : 2,
 				y: -2
 			},
 			showLastLabel: false,

@@ -7,11 +7,7 @@ $(function() {
 	    
 	    yAxis: [{}, {
 	    	linkedTo: 0,
-	    	opposite: true,
-	    	labels: {
-	    		align: 'right',
-	    		x: 0
-	    	}
+	    	opposite: true
 	    }],
 	    
 	    rangeSelector: {
