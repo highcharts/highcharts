@@ -3,7 +3,7 @@
 // get the parameters
 
 $callback = $_GET['callback'];
-if (!preg_match('/^[a-zA-Z0-9]+$/', $callback)) {
+if (!preg_match('/^[a-zA-Z0-9_]+$/', $callback)) {
 	die('Invalid callback name');
 }
 
