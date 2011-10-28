@@ -2563,7 +2563,10 @@ function Chart(options, callback) {
 			/*
 			 * When the mouse leaves the container, hide the tracking (tooltip).
 			 */
-			addEvent(container, 'mouseleave', resetTracker);
+			addEvent(container, 'mouseleave', function () {
+				resetTracker();
+				chartPosition = null; // also reset the chart position, used in #149 fix	
+			});
 
 			// issue #149 workaround
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
