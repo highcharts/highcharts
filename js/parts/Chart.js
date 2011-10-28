@@ -2728,7 +2728,7 @@ function Chart(options, callback) {
 			style = options.style,
 			itemStyle = options.itemStyle,
 			itemHoverStyle = options.itemHoverStyle,
-			itemHiddenStyle = options.itemHiddenStyle,
+			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = pInt(style.padding),
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
