@@ -611,7 +611,8 @@ Series.prototype = {
 	 * Divide the series data into segments divided by null values.
 	 */
 	getSegments: function () {
-		var lastNull = -1,
+		var series = this,
+			lastNull = -1,
 			segments = [],
 			points = this.points;
 
@@ -628,7 +629,23 @@ Series.prototype = {
 		});
 		this.segments = segments;
 
-
+		// extension for ordinal breaks
+		each (segments, function(segment, no) {
+			var i = segment.length - 1;
+			//for (var i = 1; i < segment.length; i++) {
+			while (i--) {
+				if (segment[i+1] && segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * 1.5) {
+					segments.splice( // insert after this one
+						no + 1,
+						0,
+						segment.splice(i + 1, segment.length - i)
+					);
+				}
+			}
+		});
+		each (segments, function(segment, no) {
+			console.log(dateFormat(null, segment[0].x))
+		});
 	},
 	/**
 	 * Set the series options by merging from the options tree
@@ -823,7 +840,7 @@ Series.prototype = {
 		series.options.data = data;
 		series.xData = xData;
 		series.yData = yData;
-
+		
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
 		while (i--) {
@@ -923,6 +940,16 @@ Series.prototype = {
 				cropped = true;
 			}
 		}
+		
+		// todo: allow merging in other series with other gaps
+		if (series.xAxis.options.ordinal) {
+			series.xAxis.ordinalPositions = [];
+			for (i = 0; i < processedXData.length; i++) {
+				series.xAxis.ordinalPositions.push(processedXData[i]);
+			}
+			series.xAxis.ordinalSlope = (processedXData[i - 1] - processedXData[0]) / (i - 1);
+			series.xAxis.ordinalOffset = processedXData[0];
+		}
 
 		series.cropped = cropped; // undefined or true
 		series.cropStart = cropStart;
@@ -1017,6 +1044,10 @@ Series.prototype = {
 				stack = yAxis.stacks[(yValue < 0 ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
+				
+			/*if (xAxis.options.ordinal) {
+				xValue = i;
+			}*/
 				
 			// get the plotX translation
 			point.plotX = series.xAxis.translate(xValue);

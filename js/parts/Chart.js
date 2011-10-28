@@ -164,6 +164,7 @@ function Chart(options, callback) {
 			ticks = {},
 			minorTicks = {},
 			alternateBands = {},
+			ordinalBreaks = [],
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
@@ -751,12 +752,15 @@ function Chart(options, callback) {
 					
 					// Get dataMin and dataMax for X axes
 					if (isXAxis) {
+						
 						xData = series.xData;
 						dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
 						dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
 						
+						
 					// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 					} else {
+						
 						var isNegative,
 							pointStack,
 							key,
@@ -790,6 +794,7 @@ function Chart(options, callback) {
 							dataMax = 99;
 						}
 
+						
 						// get clipped and grouped data
 						series.processData();
 						
@@ -890,6 +895,38 @@ function Chart(options, callback) {
 			});
 
 		}
+		
+		function value2ordinal (val) {
+			
+			var ordinalPositions = axis.ordinalPositions,
+				ordinalLength = ordinalPositions.length,
+				i,
+				lastN,
+				distance,
+				closest,
+				ordinalIndex;
+				
+			
+			i = ordinalLength;
+			while (ordinalIndex === UNDEFINED && i--) {
+				if (ordinalPositions[i] === val) {
+					ordinalIndex = i;
+				}
+			}
+			
+			i = ordinalLength - 1;
+			while (ordinalIndex === UNDEFINED && i--) {
+				if (val > ordinalPositions[i]) { // interpolate
+					/*if (ordinalPositions[i + 1] - ordinalPositions[i] > axis.closestPointRange) {
+						break;
+					}*/
+					distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
+					ordinalIndex = i + distance;
+				}
+			}
+			//console.log(val, ordinalIndex)
+			return axis.ordinalSlope * ordinalIndex + axis.ordinalOffset;
+		}
 
 		/**
 		 * Translate from axis value to pixel position on the chart, or back
@@ -928,6 +965,12 @@ function Chart(options, callback) {
 				if (isLog && handleLog) {
 					val = log2lin(val);
 				}
+				
+				
+				if (options.ordinal) {
+					val = value2ordinal(val);					
+				}
+				
 				returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding);
 			}
 
@@ -1083,14 +1126,26 @@ function Chart(options, callback) {
 			} else if (isLinked && !tickIntervalOption &&
 					tickPixelIntervalOption === linkedParent.options.tickPixelInterval) {
 				tickInterval = linkedParent.tickInterval;
-			} else {
-				tickInterval = pick(
+			} else if (defined(tickIntervalOption)) {
+				tickInterval = tickIntervalOption;
+			} else if (categories) {
+				tickInterval = 1;
+				/*tickInterval = pick(
 					tickIntervalOption,
 					categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 						1 :
 						(max - min) * tickPixelIntervalOption / (axisLength || 1)
-				);
+				);*/
+				
+			} else {
+				tickInterval = (max - min) * tickPixelIntervalOption / (axisLength || 1);
+				
+				// make them closer because the ordinal gaps make the ticks spread out or cluster
+				if (axis.ordinalSlope && axis.closestPointRange && secondPass) {
+					tickInterval /= (axis.ordinalSlope / axis.closestPointRange);
+				}
 			}
+			
 
 			if (!isDatetimeAxis) { // linear
 				magnitude = math.pow(10, mathFloor(math.log(tickInterval) / math.LN10));
@@ -1110,6 +1165,55 @@ function Chart(options, callback) {
 				dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
 			} else {
 				setLinearTickPositions();
+			}
+			
+			// don't show ticks withing a gap in the ordinal axis, where the space between
+			// two points is greater than clostestPointRange
+			// to do: when renewing, the new ordinal positions are not yet available
+			/*if (axis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
+				var n,
+					lastN,
+					i = 0,
+					ordinalPositions = axis.ordinalPositions,
+					start,
+					end;
+				
+				for (n in ordinalPositions) {
+					start = end = null;
+					
+					//console.log(lastN !== UNDEFINED && n - lastN > axis.closestPointRange * 1.5)
+					if (lastN !== UNDEFINED && n - lastN > axis.closestPointRange * 1.5) {
+						while (end === null && tickPositions[i] !== UNDEFINED) {
+							if (start === null && tickPositions[i] > lastN) {
+								start = i;
+							}
+							else if (start !== null && tickPositions[i] >= n) {
+								end = i;
+							}
+							i++;
+						}
+						
+						if (end !== null) {
+							//console.log('splice', start, end)
+							//tickPositions.splice(start, end - start);
+							//i = start; // continue from there
+						}
+					}
+					lastN = n;
+				}
+			}*/
+			if (axis.ordinalPositions && defined(tickPixelIntervalOption) && secondPass) { // check for squashed ticks
+				var i = tickPositions.length,
+					translated,
+					lastTranslated;
+				while (i--) {
+					translated = translate(tickPositions[i]);
+					if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.3) {
+						tickPositions.splice(i, 1);
+					}
+					
+					lastTranslated = translated;
+				}
 			}
 
 			if (!isLinked) {
@@ -1209,6 +1313,7 @@ function Chart(options, callback) {
 	
 				// get fixed positions based on tickInterval
 				setTickPositions();
+				
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
@@ -1384,6 +1489,7 @@ function Chart(options, callback) {
 			labelOffset = 0; // reset
 
 			if (hasData || isLinked) {
+				
 				each(tickPositions, function (pos) {
 					if (!ticks[pos]) {
 						ticks[pos] = new Tick(pos);
@@ -1507,7 +1613,7 @@ function Chart(options, callback) {
 				// major ticks
 				each(tickPositions, function (pos, i) {
 					// linked axes need an extra check to find out if
-					if (!isLinked || (pos >= min && pos <= max)) {
+					if ((!isLinked || (pos >= min && pos <= max)) && ticks[pos]) {
 
 						// render new ticks in old position
 						if (slideInTicks && ticks[pos].isNew) {
@@ -1518,6 +1624,19 @@ function Chart(options, callback) {
 						ticks[pos].render(i);
 					}
 				});
+				
+				/*if (axis.ordinalPositions) {
+					var i = axis.ordinalPositions.length - 1;
+					while (i--) {
+						if (axis.ordinalPositions[i + 1] - axis.ordinalPositions[i] > axis.closestPointRange * 1.5) {
+							addPlotBandOrLine({
+								value: axis.ordinalPositions[i + 1],
+								width: 1,
+								color: 'silver'
+							});
+						}
+					}
+				}*/
 
 				// alternate grid color
 				if (alternateGridColor) {
@@ -1540,7 +1659,8 @@ function Chart(options, callback) {
 				// custom plot lines and bands
 				if (!hasRendered) { // only first time
 					each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
-						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
+						//plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
+						addPlotBandOrLine(plotLineOptions);
 					});
 				}
 
@@ -1682,6 +1802,10 @@ function Chart(options, callback) {
 			// hide tooltip and hover states
 			if (tracker.resetTracker) {
 				tracker.resetTracker();
+			}
+			
+			if (axis.ordinalPositions) {
+				setTickPositions(true);
 			}
 
 			// render the axis
