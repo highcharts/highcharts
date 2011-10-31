@@ -240,7 +240,7 @@ function Chart(options, callback) {
 				var pos = this.pos,
 					labelOptions = options.labels,
 					str,
-					withLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
+					visibleLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
 						(pos === max && !pick(options.showLastLabel, 1))),
 					width = (categories && horiz && categories.length &&
 						!labelOptions.step && !labelOptions.staggerLines &&
@@ -268,7 +268,7 @@ function Chart(options, callback) {
 				// first call
 				if (!defined(label)) {
 					this.label =
-						defined(str) && withLabel && labelOptions.enabled ?
+						defined(str) && visibleLabel && labelOptions.enabled ?
 							renderer.text(
 									str,
 									0,
@@ -285,7 +285,10 @@ function Chart(options, callback) {
 
 				// update
 				} else if (label) {
-					label.attr({ text: str })
+					label.attr({ 
+							text: str,
+							visibility: visibleLabel ? VISIBLE : HIDDEN // make it right when label is moved (#538) 
+						})
 						.css(css);
 				}
 			},
