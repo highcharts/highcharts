@@ -3447,6 +3447,12 @@ function Chart(options, callback) {
 		// search points
 		for (i = 0; i < series.length; i++) {
 			points = series[i].points;
+
+			// Check if the series was changed but not redrawn yet
+			if(points === null){
+				continue;
+			}
+
 			for (j = 0; j < points.length; j++) {
 				if (points[j].id === id) {
 					return points[j];
