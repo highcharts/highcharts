@@ -494,7 +494,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 		//multiples = [1, 2, 2.5, 4, 5, 7.5, 10];
 
 		// the allowDecimals option
-		if (options && options.allowDecimals === false) {
+		if (options && (options.allowDecimals === false || options.type === 'logarithmic')) {
 			if (magnitude === 1) {
 				multiples = [1, 2, 5, 10];
 			} else if (magnitude <= 0.1) {
@@ -11988,6 +11988,8 @@ var PieSeries = extendClass(Series, {
 	 * Do translation for pie slices
 	 */
 	translate: function () {
+		this.generatePoints();
+		
 		var total = 0,
 			series = this,
 			cumulative = -0.25, // start at top

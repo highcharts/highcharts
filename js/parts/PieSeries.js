@@ -165,6 +165,8 @@ var PieSeries = extendClass(Series, {
 	 * Do translation for pie slices
 	 */
 	translate: function () {
+		this.generatePoints();
+		
 		var total = 0,
 			series = this,
 			cumulative = -0.25, // start at top
