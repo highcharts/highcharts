@@ -162,11 +162,15 @@ Highcharts.Scroller = function (chart) {
 		rightShade,
 		outline,
 		handles = [],
+		handlesRects = [], // The rect corresponding to handles[i], reference kept to be able to destroy
+		handlesPaths = [], // The path corresponding to handles[i], reference kept to be able to destroy
 		scrollbarGroup,
 		scrollbarTrack,
 		scrollbar,
 		scrollbarRifles,
-		scrollbarButtons = [];
+		scrollbarButtons = [],
+		scrollbarButtonsRects = [], // The rect corresponding to scrollbarButtons[i], reference kept to be able to destroy
+		scrollbarButtonsPaths = []; // The path corresponding to scrollbarButtons[i], reference kept to be able to destroy
 
 	chart.resetZoomEnabled = false;
 
@@ -193,12 +197,12 @@ Highcharts.Scroller = function (chart) {
 				.add();
 
 			// the rectangle
-			renderer.rect(-4.5, 0, 9, 16, 3, 1)
+			handlesRects[index] = renderer.rect(-4.5, 0, 9, 16, 3, 1)
 				.attr(attr)
 				.add(handles[index]);
 
 			// the rifles
-			renderer.path([
+			handlesPaths[index] = renderer.path([
 					'M',
 					-1.5, 4,
 					'L',
@@ -224,7 +228,7 @@ Highcharts.Scroller = function (chart) {
 
 			scrollbarButtons[index] = renderer.g().add(scrollbarGroup);
 
-			renderer.rect(
+			scrollbarButtonsRects[index] = renderer.rect(
 				-0.5,
 				-0.5,
 				scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
@@ -237,7 +241,7 @@ Highcharts.Scroller = function (chart) {
 				fill: scrollbarOptions.buttonBackgroundColor
 			}).add(scrollbarButtons[index]);
 
-			renderer.path([
+			scrollbarButtonsPaths[index] = renderer.path([
 				'M',
 				scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
 				'L',
@@ -264,7 +268,7 @@ Highcharts.Scroller = function (chart) {
 	 * @param {Number} pxMax Pixel value maximum
 	 */
 	function render(min, max, pxMin, pxMax) {
-		
+
 		// don't render the navigator until we have data (#486)
 		if (isNaN(min)) {
 			return;
@@ -276,7 +280,7 @@ Highcharts.Scroller = function (chart) {
 
 		outlineTop = top + halfOutline;
 		navigatorLeft = pick(
-			xAxis.left, 
+			xAxis.left,
 			chart.plotLeft + scrollbarHeight // in case of scrollbar only, without navigator
 		);
 		navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
@@ -284,7 +288,7 @@ Highcharts.Scroller = function (chart) {
 		scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
 
 		// Set the scroller x axis extremes to reflect the total. The navigator extremes
-		// should always be the extremes of the union of all series in the chart as 
+		// should always be the extremes of the union of all series in the chart as
 		// well as the navigator series.
 		if (xAxis.getExtremes) {
 			var baseExtremes = chart.xAxis[0].getExtremes(), // the base
@@ -297,12 +301,12 @@ Highcharts.Scroller = function (chart) {
 				xAxis.setExtremes(newMin, newMax, true, false);
 			}
 		}
-		
+
 		// get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
-		
-		
+
+
 		// handles are allowed to cross
 		zoomedMin = pInt(mathMin(pxMin, pxMax));
 		zoomedMax = pInt(mathMax(pxMin, pxMax));
@@ -515,7 +519,7 @@ Highcharts.Scroller = function (chart) {
 		addEvent(chart.container, MOUSEMOVE, function (e) {
 			e = chart.tracker.normalizeMouseEvent(e);
 			var chartX = e.chartX;
-			
+
 			// validation for handle dragging
 			if (chartX < navigatorLeft) {
 				chartX = navigatorLeft;
@@ -579,8 +583,8 @@ Highcharts.Scroller = function (chart) {
 
 			// remove it to prevent merging one by one
 			baseOptions.data = navigatorSeriesOptions.data = null;
-			
-			
+
+
 			// an x axis is required for scrollbar also
 			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
 				isX: true,
@@ -647,7 +651,7 @@ Highcharts.Scroller = function (chart) {
 					doRedraw,
 					baseXAxis = baseSeries.xAxis,
 					hasSetExtremes = !!baseXAxis.setExtremes;
-					
+
 				// detect whether to move the range
 				stickToMax = baseMax >=
 					navigatorSeries.xData[navigatorSeries.xData.length - 1];
@@ -667,7 +671,7 @@ Highcharts.Scroller = function (chart) {
 					newMin = baseDataMin;
 					newMax = newMin + range;
 				}
-				
+
 				// if the zoomed range is already at the max, move it to the right as new data
 				// comes in
 				if (stickToMax) {
@@ -676,7 +680,7 @@ Highcharts.Scroller = function (chart) {
 						newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
 					}
 				}
-				
+
 				// update the extremes
 				if (hasSetExtremes && (stickToMin || stickToMax)) {
 					baseXAxis.setExtremes(newMin, newMax, true, false);
@@ -685,13 +689,13 @@ Highcharts.Scroller = function (chart) {
 					if (doRedraw) {
 						chart.redraw(false);
 					}
-					
+
 					render(
 						mathMax(baseMin, baseDataMin),
 						mathMin(baseMax, baseDataMax)
-					);					
+					);
 				}
-				
+
 			});
 
 		// in case of scrollbar only, fake an x axis to get translation
@@ -715,13 +719,46 @@ Highcharts.Scroller = function (chart) {
 		addEvents();
 	}
 
+	/**
+	 * Destroys allocated elements.
+	 */
+	function destroy() {
+		var i;
+		// TODO: Test != null
+
+		// Destroy shades and outline elements
+		leftShade = leftShade.destroy();
+		rightShade = rightShade.destroy();
+		outline = outline.destroy();
+
+		// Destroy scrollbar button elements
+		for (i = 0; i < 2; i++) {
+			scrollbarButtons[i] = scrollbarButtons[i].destroy();
+			scrollbarButtonsRects[i] = scrollbarButtonsRects[i].destroy();
+			scrollbarButtonsPaths[i] = scrollbarButtonsPaths[i].destroy();
+		}
+
+		// Destroy handles elements
+		for (i = 0; i < 2; i++) {
+			handles[i] = handles[i].destroy();
+			handlesRects[i] = handlesRects[i].destroy();
+			handlesPaths[i] = handlesPaths[i].destroy();
+		}
+
+		// Destroy scrollbar elements
+		scrollbarTrack = scrollbarTrack.destroy();
+		scrollbar = scrollbar.destroy();
+		scrollbarRifles = scrollbarRifles.destroy();
+		scrollbarGroup = scrollbarGroup.destroy();
+	}
 
 	// Run scroller
 	init();
 
 	// Expose
 	return {
-		render: render
+		render: render,
+		destroy: destroy
 	};
 
 };
@@ -780,6 +817,7 @@ Highcharts.RangeSelector = function (chart) {
 		leftBox,
 		rightBox,
 		selected,
+		zoomText,
 		buttons = [],
 		buttonOptions,
 		options,
@@ -892,7 +930,7 @@ Highcharts.RangeSelector = function (chart) {
 				}
 			);
 			selected = i;
-			
+
 		} else { // existing axis object; after render time
 			setTimeout(function () { // make sure the visual state is set before the heavy process begins
 				baseAxis.setExtremes(
@@ -914,8 +952,8 @@ Highcharts.RangeSelector = function (chart) {
 		chart.extraTopMargin = 25;
 		options = chart.options.rangeSelector;
 		buttonOptions = options.buttons || defaultButtons;
-		
-		
+
+
 		var selectedOption = options.selected;
 
 		addEvent(container, MOUSEDOWN, function () {
@@ -1032,17 +1070,16 @@ Highcharts.RangeSelector = function (chart) {
 			inputEnabled = options.inputEnabled !== false,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
-			buttonLeft,
-			zoomText;
+			buttonLeft;
 
 		// create the elements
 		if (!rendered) {
 			zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 10)
 				.css(options.labelStyle)
 				.add();
-				
+
 			// button starting position
-			buttonLeft = plotLeft + zoomText.getBBox().width + 5;  
+			buttonLeft = plotLeft + zoomText.getBBox().width + 5;
 
 			each(buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
@@ -1061,10 +1098,10 @@ Highcharts.RangeSelector = function (chart) {
 					textAlign: 'center'
 				})
 				.add();
-				
+
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
-				
+
 				if (selected === i) {
 					buttons[i].setState(2);
 				}
@@ -1081,9 +1118,9 @@ Highcharts.RangeSelector = function (chart) {
 					fontSize: chartStyle.fontSize,
 					zIndex: 1 // above container
 				});
-				
+
 				container.parentNode.insertBefore(div, container);
-				
+
 				// create an absolutely positionied div to keep the inputs
 				div = createElement('div', null, extend({
 					position: 'absolute',
@@ -1106,14 +1143,30 @@ Highcharts.RangeSelector = function (chart) {
 		rendered = true;
 	}
 
+	/**
+	 * Destroys allocated elements.
+	 */
+	function destroy() {
+		var i;
+		for (i = 0; i < buttons.length; i++) {
+			buttons[i] = buttons[i].destroy();
+		}
+		// TODO: Test != null
+		zoomText = zoomText.destroy();
 
+		// Clear input element events
+		// TODO: Finish work
+		//leftBox.onfocus = leftBox.onblur = leftBox.onchange
+		//rightBox.onfocus = rightBox.onblur = rightBox.onchange
+	}
 
 	// Run RangeSelector
 	init();
 
 	// Expose
 	return {
-		render: render
+		render: render,
+		destroy: destroy
 	};
 };
 
