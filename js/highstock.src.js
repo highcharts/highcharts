@@ -5993,6 +5993,10 @@ function Chart(options, callback) {
 	
 				// get fixed positions based on tickInterval
 				setTickPositions();
+				
+				// record old values to decide whether a rescale is necessary later on (#540)
+				oldUserMin = userMin;
+				oldUserMax = userMax;
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
@@ -10073,6 +10077,12 @@ Series.prototype = {
 			cropped,
 			i, // loop variable
 			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
+			
+		// If the series data or axes haven't changed, don't go through this. Return false to pass
+		// the message on to override methods like in data grouping. 
+		if (series.isCartesian && !series.isDirty && !series.xAxis.isDirty && !series.yAxis.isDirty) {
+			return false;
+		}
 
 		// optionally filter out points outside the plot area
 		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
@@ -12632,10 +12642,9 @@ seriesProto.processData = function () {
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
-	baseProcessData.apply(series);
-
-	// disabled?
-	if (!groupingEnabled) {
+	
+	// skip if processData returns false or if grouping is disabled (in that order)
+	if (baseProcessData.apply(series) === false || !groupingEnabled) {
 		return;
 	}
 

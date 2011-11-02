@@ -1212,6 +1212,10 @@ function Chart(options, callback) {
 	
 				// get fixed positions based on tickInterval
 				setTickPositions();
+				
+				// record old values to decide whether a rescale is necessary later on (#540)
+				oldUserMin = userMin;
+				oldUserMax = userMax;
 	
 				// the translation factor used in translate function
 				oldTransA = transA;

@@ -187,10 +187,9 @@ seriesProto.processData = function () {
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
-	baseProcessData.apply(series);
-
-	// disabled?
-	if (!groupingEnabled) {
+	
+	// skip if processData returns false or if grouping is disabled (in that order)
+	if (baseProcessData.apply(series) === false || !groupingEnabled) {
 		return;
 	}
 
