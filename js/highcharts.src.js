@@ -8124,7 +8124,7 @@ function Chart(options, callback) {
 				stop(clipRect);
 				clipRect.animate({ // for chart resize
 					width: chart.plotSizeX,
-					height: chart.plotSizeY
+					height: chart.plotSizeY + 1
 				});
 			}
 
@@ -11007,7 +11007,7 @@ Series.prototype = {
 		if (!clipRect) {
 			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect ?
 				chart.clipRect :
-				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
+				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY + 1);
 			if (!chart.clipRect) {
 				chart.clipRect = clipRect;
 			}

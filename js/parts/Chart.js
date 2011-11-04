@@ -3343,7 +3343,7 @@ function Chart(options, callback) {
 				stop(clipRect);
 				clipRect.animate({ // for chart resize
 					width: chart.plotSizeX,
-					height: chart.plotSizeY
+					height: chart.plotSizeY + 1
 				});
 			}
 
