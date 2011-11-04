@@ -8059,6 +8059,7 @@ function Chart(options, callback) {
 
 		var horizontal = options.layout === 'horizontal',
 			symbolWidth = options.symbolWidth,
+			symbolHeight = options.symbolHeight || 12,
 			symbolPadding = options.symbolPadding,
 			allItems,
 			style = options.style,
@@ -8287,9 +8288,9 @@ function Chart(options, callback) {
 
 					legendSymbol = renderer.rect(
 						(symbolX = -symbolWidth - symbolPadding),
-						(symbolY = -11),
+						(symbolY = -symbolHeight + 1),
 						symbolWidth,
-						12,
+						symbolHeight,
 						2
 					).attr({
 						//'stroke-width': 0,
