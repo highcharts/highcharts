@@ -3149,6 +3149,10 @@ function Chart(options, callback) {
 					})
 					.add(legendGroup);
 
+				// expose the legend group item to make it possible to find
+				// its position from outside (for example to add extra buttons)
+				item.legendItem.legendGroup = legendGroup;
+
 				// draw the line
 				if (!simpleSymbol && options.legendLine && itemOptions && itemOptions.lineWidth) {
 					var attrs = {
