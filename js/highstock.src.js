@@ -1460,6 +1460,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		legendLine: true,
 		symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
@@ -8261,7 +8262,7 @@ function Chart(options, callback) {
 					.add(legendGroup);
 
 				// draw the line
-				if (!simpleSymbol && itemOptions && itemOptions.lineWidth) {
+				if (!simpleSymbol && options.legendLine && itemOptions && itemOptions.lineWidth) {
 					var attrs = {
 							'stroke-width': itemOptions.lineWidth,
 							zIndex: 2

@@ -227,6 +227,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		legendLine: true,
 		symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
