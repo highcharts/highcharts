@@ -791,7 +791,8 @@ if (!globalAdapter && win.jQuery) {
 	};
 
 
-	// extend jQuery
+	//=== Extend jQuery on init
+	
 	/*jslint unparam: true*//* allow unused param x in this function */
 	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
@@ -801,20 +802,44 @@ if (!globalAdapter && win.jQuery) {
 	/*jslint unparam: false*/
 
 	// extend the animate function to allow SVG animations
-	var oldStepDefault = jQuery.fx.step._default,
-		oldCur = jQuery.fx.prototype.cur;
-
-	// do the step
-	jQ.fx.step._default = function (fx) {
-		var elem = fx.elem;
-		if (elem.attr) { // is SVG element wrapper
-			elem.attr(fx.prop, fx.now);
-		} else {
-			oldStepDefault.apply(this, arguments);
+	var jFx = jQuery.fx,
+		jStep = jFx.step;
+		
+	// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
+	each([[jStep, '_default'], [jStep, 'width'], [jStep, 'height'], [jFx.prototype, 'cur']], function (arr) {
+		var ret,
+			obj = arr[0],
+			fn = arr[1],
+			base = obj[fn],
+			elem;
+		
+		if (base) { // step.width and step.height don't exist in jQuery < 1.7
+		
+			// create the extended function replacement
+			obj[fn] = function (fx) {
+				
+				if (fn === 'cur') { // jFx.prototype.cur does not use fx argument
+					fx = this;
+				}
+				
+				// shortcut
+				elem = fx.elem;
+				
+				if (elem.attr) { // is SVG element wrapper
+					ret = elem.attr(fx.prop, fx.now);
+				} else {
+					ret = base.apply(this, arguments);
+				}
+				
+				// jFX.prototype.cur returns the current value. The other ones are setters and returning a value 
+				// has no effect.
+				return ret;
+			};
 		}
-	};
+	});
+	
 	// animate paths
-	jQ.fx.step.d = function (fx) {
+	jStep.d = function (fx) {
 		var elem = fx.elem;
 
 
@@ -832,17 +857,6 @@ if (!globalAdapter && win.jQuery) {
 		// interpolate each value of the path
 		elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
 
-	};
-	// get the current value
-	jQ.fx.prototype.cur = function () {
-		var elem = this.elem,
-			r;
-		if (elem.attr) { // is SVG element wrapper
-			r = elem.attr(this.prop);
-		} else {
-			r = oldCur.apply(this, arguments);
-		}
-		return r;
 	};
 }
 
