@@ -2954,6 +2954,7 @@ function Chart(options, callback) {
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
 			ltr = !options.rtl,
+			rightPadding = pInt(options.rightPadding) || 0,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -3243,7 +3244,7 @@ function Chart(options, callback) {
 			bBox = li.getBBox();
 
 			itemWidth = item.legendItemWidth =
-				options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding;
+				options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding + rightPadding;
 			itemHeight = bBox.height;
 
 			// if the item exceeds the width, start a new line
