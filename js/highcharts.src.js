@@ -806,10 +806,8 @@ if (!globalAdapter && win.jQuery) {
 		jStep = jFx.step;
 		
 	// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-	each([[jStep, '_default'], [jStep, 'width'], [jStep, 'height'], [jFx.prototype, 'cur']], function (arr) {
-		var ret,
-			obj = arr[0],
-			fn = arr[1],
+	each(['cur', '_default', 'width', 'height'], function (fn, i) {
+		var obj = i ? jStep : jFx.prototype, // 'cur', the getter' relates to jFx.prototype
 			base = obj[fn],
 			elem;
 		
@@ -818,22 +816,17 @@ if (!globalAdapter && win.jQuery) {
 			// create the extended function replacement
 			obj[fn] = function (fx) {
 				
-				if (fn === 'cur') { // jFx.prototype.cur does not use fx argument
-					fx = this;
-				}
+				// jFx.prototype.cur does not use fx argument
+				fx = i ? fx : this;
 				
 				// shortcut
 				elem = fx.elem;
 				
-				if (elem.attr) { // is SVG element wrapper
-					ret = elem.attr(fx.prop, fx.now);
-				} else {
-					ret = base.apply(this, arguments);
-				}
-				
-				// jFX.prototype.cur returns the current value. The other ones are setters and returning a value 
-				// has no effect.
-				return ret;
+				// jFX.prototype.cur returns the current value. The other ones are setters 
+				// and returning a value has no effect.
+				return elem.attr ? // is SVG element wrapper
+					elem.attr(fx.prop, fx.now) : // apply the SVG wrapper's method
+					base.apply(this, arguments); // use jQuery's built-in method
 			};
 		}
 	});
