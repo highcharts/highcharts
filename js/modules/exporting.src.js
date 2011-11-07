@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v2.1.8 (2011-11-05)
+ * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
  * (c) 2010-2011 Torstein Hønsi
@@ -476,7 +476,7 @@ extend(Chart.prototype, {
 				css(menu, { display: NONE });
 			};
 
-			addEvent(menu, 'mouseleave', hide);
+			menu.onmouseleave = hide;
 
 
 			// create the items
@@ -499,8 +499,14 @@ extend(Chart.prototype, {
 						item.onclick.apply(chart, arguments);
 					};
 
+					// Keep references to menu divs to be able to destroy them
+					chart.exportContextMenuItemDivs.push(div);
 				}
 			});
+
+			// Keep references to menu innerMenu div to be able to destroy them
+			chart.exportContextInnerMenuDivs.push(innerMenu);
+			chart.exportContextMenuDivs.push(menu);
 
 			chart.exportMenuWidth = menu.offsetWidth;
 			chart.exportMenuHeight = menu.offsetHeight;
@@ -550,6 +556,16 @@ extend(Chart.prototype, {
 				stroke: btnOptions.symbolStroke,
 				fill: btnOptions.symbolFill
 			};
+
+		// Keeps references to the button elements
+		if (!chart.exportButtonsBoxes) {
+			chart.exportButtonsBoxes = [];
+			chart.exportButtonsButtons = [];
+			chart.exportButtonsSymbols = [];
+			chart.exportContextMenuItemDivs = [];
+			chart.exportContextInnerMenuDivs = [];
+			chart.exportContextMenuDivs = [];
+		}
 
 		if (btnOptions.enabled === false) {
 			return;
@@ -638,8 +654,62 @@ extend(Chart.prototype, {
 				zIndex: 20
 			})).add();
 
+		// Keep references to the renderer element so to be able to destroy them later.
+		chart.exportButtonsBoxes.push(box);
+		chart.exportButtonsButtons.push(button);
+		chart.exportButtonsSymbols.push(symbol);
+	},
 
+	/**
+	 * Destroy the buttons.
+	 */
+	destroyExport: function () {
+		var i,
+			chart = this,
+			div;
 
+		// Destroy the extra buttons added
+		for (i = 0; i < chart.exportButtonsBoxes.length; i++) {
+			// Destroy and null the box
+			chart.exportButtonsBoxes[i] = chart.exportButtonsBoxes[i].destroy();
+
+			// Remove event, destroy and null the button
+			chart.exportButtonsButtons[i].onclick = null;
+			chart.exportButtonsButtons[i] = chart.exportButtonsButtons[i].destroy();
+
+			// Destroy and null the symbol
+			chart.exportButtonsSymbols[i] = chart.exportButtonsSymbols[i].destroy();
+		}
+
+		// Destroy the divs for the menu
+		for (i = 0; i < chart.exportContextMenuItemDivs.length; i++) {
+			div = chart.exportContextMenuItemDivs[i];
+
+			// Remove inline events
+			chart.exportContextMenuItemDivs[i] = div.onmouseout = div.onmouseover = div.ontouchstart = div.onclick = null;
+
+			// Destroy the div by moving to garbage bin
+			discardElement(div);
+			div = null;
+		}
+
+		// Destroy inner menu divs
+		for (i = 0; i < chart.exportContextInnerMenuDivs.length; i++) {
+			// Destroy divs by moving to them to garbage bin
+			discardElement(chart.exportContextInnerMenuDivs[i]);
+			chart.exportContextInnerMenuDivs[i] = null;
+		}
+
+		// Destroy menu divs and mouseleave handler
+		for (i = 0; i < chart.exportContextMenuDivs.length; i++) {
+			div = chart.exportContextMenuDivs[i];
+			// Remove the event handler
+			div.onmouseleave = null;
+
+			// Destroy divs by moving to them to garbage bin
+			discardElement(div);
+			chart.exportContextMenuDivs[i] = null;
+		}
 	}
 });
 
@@ -704,7 +774,11 @@ Chart.prototype.callbacks.push(function (chart) {
 		for (n in buttons) {
 			chart.addButton(buttons[n]);
 		}
+
+		// Destroy the export elements at chart destroy
+		addEvent(chart, 'destroy', chart.destroyExport);
 	}
+
 });
 
 
