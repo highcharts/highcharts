@@ -4222,7 +4222,7 @@ function Chart(options, callback) {
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
-				parentNode.removeChild(container);
+				discardElement(container);
 			}
 
 			// IE6 leak

@@ -229,7 +229,7 @@ SVGElement.prototype = {
 						length = arr.length,
 						itemWrapper,
 						j;
-					
+
 					for (j = 0; j < length; j++) {
 						itemWrapper = arr[j];
 						bBox = itemWrapper.getBBox();
@@ -673,7 +673,7 @@ SVGElement.prototype = {
 
 		// remove element
 		if (parentNode) {
-			parentNode.removeChild(element);
+			discardElement(element);
 		}
 
 		// destroy shadows
@@ -681,7 +681,7 @@ SVGElement.prototype = {
 			each(shadows, function (shadow) {
 				parentNode = shadow.parentNode;
 				if (parentNode) { // the entire chart HTML can be overwritten
-					parentNode.removeChild(shadow);
+					discardElement(shadow);
 				}
 			});
 		}
