@@ -16,6 +16,7 @@
 var HC = Highcharts,
 	Chart = HC.Chart,
 	addEvent = HC.addEvent,
+	removeEvent = HC.removeEvent,
 	createElement = HC.createElement,
 	discardElement = HC.discardElement,
 	css = HC.css,
@@ -476,7 +477,7 @@ extend(Chart.prototype, {
 				css(menu, { display: NONE });
 			};
 
-			menu.onmouseleave = hide;
+			addEvent(menu, 'mouseleave', hide);
 
 
 			// create the items
@@ -500,13 +501,12 @@ extend(Chart.prototype, {
 					};
 
 					// Keep references to menu divs to be able to destroy them
-					chart.exportContextMenuItemDivs.push(div);
+					chart.exportDivElements.push(div);
 				}
 			});
 
-			// Keep references to menu innerMenu div to be able to destroy them
-			chart.exportContextInnerMenuDivs.push(innerMenu);
-			chart.exportContextMenuDivs.push(menu);
+			// Keep references to menu and innerMenu div to be able to destroy them
+			chart.exportDivElements.push(innerMenu, menu);
 
 			chart.exportMenuWidth = menu.offsetWidth;
 			chart.exportMenuHeight = menu.offsetHeight;
@@ -558,13 +558,9 @@ extend(Chart.prototype, {
 			};
 
 		// Keeps references to the button elements
-		if (!chart.exportButtonsBoxes) {
-			chart.exportButtonsBoxes = [];
-			chart.exportButtonsButtons = [];
-			chart.exportButtonsSymbols = [];
-			chart.exportContextMenuItemDivs = [];
-			chart.exportContextInnerMenuDivs = [];
-			chart.exportContextMenuDivs = [];
+		if (!chart.exportDivElements) {
+			chart.exportDivElements = [];
+			chart.exportSVGElements = [];
 		}
 
 		if (btnOptions.enabled === false) {
@@ -655,9 +651,7 @@ extend(Chart.prototype, {
 			})).add();
 
 		// Keep references to the renderer element so to be able to destroy them later.
-		chart.exportButtonsBoxes.push(box);
-		chart.exportButtonsButtons.push(button);
-		chart.exportButtonsSymbols.push(symbol);
+		chart.exportSVGElements.push(box, button, symbol);
 	},
 
 	/**
@@ -669,46 +663,24 @@ extend(Chart.prototype, {
 			div;
 
 		// Destroy the extra buttons added
-		for (i = 0; i < chart.exportButtonsBoxes.length; i++) {
-			// Destroy and null the box
-			chart.exportButtonsBoxes[i] = chart.exportButtonsBoxes[i].destroy();
-
-			// Remove event, destroy and null the button
-			chart.exportButtonsButtons[i].onclick = null;
-			chart.exportButtonsButtons[i] = chart.exportButtonsButtons[i].destroy();
-
-			// Destroy and null the symbol
-			chart.exportButtonsSymbols[i] = chart.exportButtonsSymbols[i].destroy();
+		for (i = 0; i < chart.exportSVGElements.length; i++) {
+			// Destroy and null the svg/vml elements
+			chart.exportSVGElements[i].onclick = null;
+			chart.exportSVGElements[i] = chart.exportSVGElements[i].destroy();
 		}
 
 		// Destroy the divs for the menu
-		for (i = 0; i < chart.exportContextMenuItemDivs.length; i++) {
-			div = chart.exportContextMenuItemDivs[i];
+		for (i = 0; i < chart.exportDivElements.length; i++) {
+			div = chart.exportDivElements[i];
+
+			// Remove the event handler
+			removeEvent(div, 'mouseleave');
 
 			// Remove inline events
-			chart.exportContextMenuItemDivs[i] = div.onmouseout = div.onmouseover = div.ontouchstart = div.onclick = null;
+			chart.exportDivElements[i] = div.onmouseout = div.onmouseover = div.ontouchstart = div.onclick = null;
 
 			// Destroy the div by moving to garbage bin
 			discardElement(div);
-			div = null;
-		}
-
-		// Destroy inner menu divs
-		for (i = 0; i < chart.exportContextInnerMenuDivs.length; i++) {
-			// Destroy divs by moving to them to garbage bin
-			discardElement(chart.exportContextInnerMenuDivs[i]);
-			chart.exportContextInnerMenuDivs[i] = null;
-		}
-
-		// Destroy menu divs and mouseleave handler
-		for (i = 0; i < chart.exportContextMenuDivs.length; i++) {
-			div = chart.exportContextMenuDivs[i];
-			// Remove the event handler
-			div.onmouseleave = null;
-
-			// Destroy divs by moving to them to garbage bin
-			discardElement(div);
-			chart.exportContextMenuDivs[i] = null;
 		}
 	}
 });
