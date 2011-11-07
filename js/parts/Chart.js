@@ -602,7 +602,7 @@ function Chart(options, callback) {
 
 			// Save the x value to be able to position the label later
 			stackItem.x = x;
-			
+
 			// Save the stack option on the series configuration object
 			stackItem.stack = stackOption;
 
@@ -4210,12 +4210,12 @@ function Chart(options, callback) {
 		});
 
 		// ==== Destroy local variables:
-		each([chartBackground, legend, tooltip, renderer, tracker], function (obj) {
+		each([chartBackground, plotBorder, plotBackground, legend, tooltip, renderer, tracker], function (obj) {
 			if (obj && obj.destroy) {
 				obj.destroy();
 			}
 		});
-		chartBackground = legend = tooltip = renderer = tracker = null;
+		chartBackground = plotBorder = plotBackground = legend = tooltip = renderer = tracker = null;
 
 		// remove container and all SVG
 		if (container) { // can break in IE when destroyed before finished loading
