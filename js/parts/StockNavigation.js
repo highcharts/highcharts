@@ -356,8 +356,7 @@ Highcharts.Scroller = function (chart) {
 						fill: scrollbarOptions.barBackgroundColor,
 						stroke: scrollbarOptions.barBorderColor,
 						'stroke-width': scrollbarStrokeWidth,
-						rx: barBorderRadius,
-						ry: barBorderRadius
+						r: barBorderRadius
 					})
 					.add(scrollbarGroup);
 
