@@ -645,6 +645,18 @@ SVGElement.prototype = {
 	},
 
 	/**
+	 * Removes a child either by removeChild or move to garbageBin.
+	 * Issue 490; in VML removeChild results in Orphaned nodes according to sIEve, discardElement does not.
+	 */
+	safeRemoveChild: function (parentNode, element) {
+		if (hasSVG) {
+			parentNode.removeChild(element);
+		} else {
+			discardElement(element);
+		}
+	},
+
+	/**
 	 * Destroy the element and element wrapper
 	 */
 	destroy: function () {
@@ -673,7 +685,7 @@ SVGElement.prototype = {
 
 		// remove element
 		if (parentNode) {
-			discardElement(element);
+			wrapper.safeRemoveChild(parentNode, element);
 		}
 
 		// destroy shadows
@@ -681,7 +693,7 @@ SVGElement.prototype = {
 			each(shadows, function (shadow) {
 				parentNode = shadow.parentNode;
 				if (parentNode) { // the entire chart HTML can be overwritten
-					discardElement(shadow);
+					wrapper.safeRemoveChild(parentNode, shadow);
 				}
 			});
 		}
