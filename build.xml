@@ -366,6 +366,11 @@
         <!-- jquery versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.6.4"/>
             <param name="required.lib" value="jquery-1.6.4.js"/>
         </antcall>
@@ -417,24 +422,24 @@
     <target name="test" description="Runs the unit tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="jquery-1.6.4"/>
-            <param name="required.lib" value="jquery-1.6.4.js"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
         </antcall>
     </target>
 
     <target name="it" description="Runs the integration tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="it"/>
-            <param name="testrun.name" value="jquery-1.6.4"/>
-            <param name="required.lib" value="jquery-1.6.4.js"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
         </antcall>
     </target>
 
     <target name="gc" description="Runs the leaks tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="gc"/>
-            <param name="testrun.name" value="jquery-1.6.4"/>
-            <param name="required.lib" value="jquery-1.6.4.js"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
         </antcall>
     </target>
 
