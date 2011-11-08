@@ -32,7 +32,6 @@
         <property name="testoutput.dir" value="${build.dir}/tests"/>
         <property name="coveragereport.dir" value="${build.dir}/coverage-report"/>
         <property name="themes.dir" value="${basedir}/js/themes"/>
-        <property name="package.dir" value="${basedir}/../highcharts.com.site/downloads/package"/>
 
         <!-- highcharts/highstock src -->
         <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
@@ -263,6 +262,74 @@
     <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
     </target>
 
+
+    <scriptdef name="listfiles" language="javascript">
+        <![CDATA[
+        var dir = project.getProperty("samples.dir");
+        var fs = project.createDataType("fileset");
+        fs.setDir(new java.io.File(dir));
+        fs.setIncludes("**/demo.js");
+
+        // Get the files (array) of that fileset
+        var ds = fs.getDirectoryScanner(project);
+        var demoFiles = ds.getIncludedFiles();
+        // get the values via Java API
+        var basedir  = fs.getDir(project);
+        var htmlLinks = '<ul>';
+        // Iterate over the demo files
+        for (i = 0; i < demoFiles.length; i++) {
+            var filename = demoFiles[i];
+            var file = new java.io.File(basedir, filename);
+
+            project.setProperty('demo.name', file.getParentFile().getName());
+            project.setProperty('demo.html.name', file.getParent() + '/demo.html');
+            project.setProperty('demo.js.name', file.getParent() + '/demo.js');
+            project.executeTarget('create-sample');
+            htmlLinks += '<li><a href="examples/' + file.getParentFile().getName() + '/index.htm">' + file.getParentFile().getName() + '</a></li>\n';
+        }
+        htmlLinks += '</ul>';
+        project.setProperty('index.html.links', htmlLinks);
+        project.executeTarget('create-sample-index');
+        ]]>
+    </scriptdef>
+
+    <target name="create-sample-index">
+        <!-- Copy the template index file and replace the properties -->
+        <copy file="samples/template-index.htm" tofile="${samples.dist.dir}/index.htm">
+            <filterchain>
+                <replacetokens>
+                    <token key="demo.title" value="${demo.title}"/>
+                    <token key="index.html.links" value="${index.html.links}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+    <target name="create-sample">
+        <antcall target="create-sample-param"/>
+    </target>
+
+    <target name="create-sample-param">
+        <!-- Load the two demo files into properties -->
+        <loadfile property="demo.js" srcFile="${demo.js.name}"/>
+        <loadfile property="demo.html" srcFile="${demo.html.name}"/>
+
+        <!-- Copy the template file and replace the properties -->
+        <copy file="samples/template-example.htm" tofile="${samples.dist.dir}/examples/${demo.name}/index.htm">
+            <filterchain>
+                <replacetokens>
+                    <token key="demo.title" value="${demo.title}"/>
+                    <token key="demo.js" value="${demo.js}"/>
+                    <token key="demo.html" value="${demo.html}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+    <target name="create-samples">
+        <listfiles></listfiles>
+    </target>
+
     <!-- Builds the source and assembles a distribution package. -->
     <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
         <echo message=""/>
@@ -316,31 +383,33 @@
             <fileset dir="${themes.dir}"/>
         </copy>
 
-        <!-- 3. Copy examples -->
-        <copy todir="${dist.dir}/highcharts/examples">
-            <fileset dir="${package.dir}/examples"/>
-        </copy>
-        <copy file="${package.dir}/index.htm" todir="${dist.dir}/highcharts"/>
-        <copy todir="${dist.dir}/highstock/examples">
-            <fileset dir="${package.dir}/examples"/>
-        </copy>
-        <copy file="${package.dir}/index.htm" todir="${dist.dir}/highstock"/>
+        <!-- 3. Create samples -->
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highcharts"/>
+            <param name="samples.dir" value="samples/highcharts/demo"/>
+            <param name="samples.dist.dir" value="${dist.dir}/highcharts/"/>
+        </antcall>
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highstock"/>
+            <param name="samples.dir" value="samples/stock/demo"/>
+            <param name="samples.dist.dir" value="${dist.dir}/highstock/"/>
+        </antcall>
 
         <!-- 4. Copy graphics -->
         <copy todir="${dist.dir}/highcharts/graphics">
-            <fileset dir="${package.dir}/graphics"/>
+            <fileset dir="samples/graphics"/>
         </copy>
         <copy todir="${dist.dir}/highstock/graphics">
-            <fileset dir="${package.dir}/graphics"/>
+            <fileset dir="samples/graphics"/>
         </copy>
 
         <!-- 5. Copy php export server -->
-        <copy todir="${dist.dir}/highcharts/exporting-server">
+<!--        <copy todir="${dist.dir}/highcharts/exporting-server">
             <fileset dir="${package.dir}/exporting-server"/>
         </copy>
         <copy todir="${dist.dir}/highstock/exporting-server">
             <fileset dir="${package.dir}/exporting-server"/>
-        </copy>
+        </copy>-->
 
         <!-- 6. Create a zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
