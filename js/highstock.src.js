@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.0.2 (2011-11-08)
+ * @license Highstock JS v1.0.3 (2011-11-09)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -4454,7 +4454,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				(y2 - y1) / // y vector
 				(x2 - x1) // x vector
 				) * 180 / mathPI;
-				
+
 
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
@@ -4722,7 +4722,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 		rect: function (left, top, width, height, options) {
 			/*for (var n in r) {
-				logTime && console.log(n)
+				logTime && console .log(n)
 				}*/
 
 			if (!defined(options)) {
@@ -13491,7 +13491,7 @@ each(['circle', 'square'], function (shape) {
 			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
 		}
 
-		//console.trace(x, y, );
+		//console .trace(x, y, );
 		return path;
 	};
 });
@@ -14909,6 +14909,6 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	product: 'Highstock',
-	version: '1.0.2'
+	version: '1.0.3'
 });
 }());

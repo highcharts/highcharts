@@ -263,7 +263,7 @@ each(['circle', 'square'], function (shape) {
 			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
 		}
 
-		//console.trace(x, y, );
+		//console .trace(x, y, );
 		return path;
 	};
 });
