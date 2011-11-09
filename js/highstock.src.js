@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.0.1 (2011-10-25)
+ * @license Highstock JS v1.0.2 (2011-11-08)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -494,7 +494,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 		//multiples = [1, 2, 2.5, 4, 5, 7.5, 10];
 
 		// the allowDecimals option
-		if (options && options.allowDecimals === false) {
+		if (options && (options.allowDecimals === false || options.type === 'logarithmic')) {
 			if (magnitude === 1) {
 				multiples = [1, 2, 5, 10];
 			} else if (magnitude <= 0.1) {
@@ -1055,7 +1055,8 @@ if (!globalAdapter && win.jQuery) {
 	};
 
 
-	// extend jQuery
+	//=== Extend jQuery on init
+	
 	/*jslint unparam: true*//* allow unused param x in this function */
 	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
@@ -1065,20 +1066,37 @@ if (!globalAdapter && win.jQuery) {
 	/*jslint unparam: false*/
 
 	// extend the animate function to allow SVG animations
-	var oldStepDefault = jQuery.fx.step._default,
-		oldCur = jQuery.fx.prototype.cur;
-
-	// do the step
-	jQ.fx.step._default = function (fx) {
-		var elem = fx.elem;
-		if (elem.attr) { // is SVG element wrapper
-			elem.attr(fx.prop, fx.now);
-		} else {
-			oldStepDefault.apply(this, arguments);
+	var jFx = jQuery.fx,
+		jStep = jFx.step;
+		
+	// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
+	each(['cur', '_default', 'width', 'height'], function (fn, i) {
+		var obj = i ? jStep : jFx.prototype, // 'cur', the getter' relates to jFx.prototype
+			base = obj[fn],
+			elem;
+		
+		if (base) { // step.width and step.height don't exist in jQuery < 1.7
+		
+			// create the extended function replacement
+			obj[fn] = function (fx) {
+				
+				// jFx.prototype.cur does not use fx argument
+				fx = i ? fx : this;
+				
+				// shortcut
+				elem = fx.elem;
+				
+				// jFX.prototype.cur returns the current value. The other ones are setters 
+				// and returning a value has no effect.
+				return elem.attr ? // is SVG element wrapper
+					elem.attr(fx.prop, fx.now) : // apply the SVG wrapper's method
+					base.apply(this, arguments); // use jQuery's built-in method
+			};
 		}
-	};
+	});
+	
 	// animate paths
-	jQ.fx.step.d = function (fx) {
+	jStep.d = function (fx) {
 		var elem = fx.elem;
 
 
@@ -1096,17 +1114,6 @@ if (!globalAdapter && win.jQuery) {
 		// interpolate each value of the path
 		elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
 
-	};
-	// get the current value
-	jQ.fx.prototype.cur = function () {
-		var elem = this.elem,
-			r;
-		if (elem.attr) { // is SVG element wrapper
-			r = elem.attr(this.prop);
-		} else {
-			r = oldCur.apply(this, arguments);
-		}
-		return r;
 	};
 }
 
@@ -4447,7 +4454,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				(y2 - y1) / // y vector
 				(x2 - x1) // x vector
 				) * 180 / mathPI;
-				
+
 
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
@@ -4715,7 +4722,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 		rect: function (left, top, width, height, options) {
 			/*for (var n in r) {
-				logTime && console.log(n)
+				logTime && console .log(n)
 				}*/
 
 			if (!defined(options)) {
@@ -5936,7 +5943,7 @@ function Chart(options, callback) {
 		 */
 		function adjustTickAmount() {
 
-			if (maxTicks && !isDatetimeAxis && !categories && !isLinked && options.alignTicks !== false) { // only apply to linear scale
+			if (maxTicks && maxTicks[xOrY] && !isDatetimeAxis && !categories && !isLinked && options.alignTicks !== false) { // only apply to linear scale
 				var oldTickAmount = tickAmount,
 					calculatedTickAmount = tickPositions.length;
 
@@ -5994,6 +6001,10 @@ function Chart(options, callback) {
 				// get fixed positions based on tickInterval
 				setTickPositions();
 
+				// record old values to decide whether a rescale is necessary later on (#540)
+				oldUserMin = userMin;
+				oldUserMax = userMax;
+	
 				// the translation factor used in translate function
 				oldTransA = transA;
 				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
@@ -7165,12 +7176,12 @@ function Chart(options, callback) {
 		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
 		 */
 		function hideTooltipOnMouseMove(e) {
-			if (e.event) {
-				e = e.event; // MooTools renames e.pageX to e.page.x
-			}
+			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
 			if (chartPosition &&
-					!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
-					e.pageY - chartPosition.top - plotTop)) {
+					!isInsidePlot(pageX - chartPosition.left - plotLeft,
+						pageY - chartPosition.top - plotTop)) {
 				resetTracker();
 			}
 		}
@@ -8120,7 +8131,7 @@ function Chart(options, callback) {
 				stop(clipRect);
 				clipRect.animate({ // for chart resize
 					width: chart.plotSizeX,
-					height: chart.plotSizeY
+					height: chart.plotSizeY + 1
 				});
 			}
 
@@ -10073,6 +10084,12 @@ Series.prototype = {
 			cropped,
 			i, // loop variable
 			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
+			
+		// If the series data or axes haven't changed, don't go through this. Return false to pass
+		// the message on to override methods like in data grouping. 
+		if (series.isCartesian && !series.isDirty && !series.xAxis.isDirty && !series.yAxis.isDirty) {
+			return false;
+		}
 
 		// optionally filter out points outside the plot area
 		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
@@ -10997,7 +11014,7 @@ Series.prototype = {
 		if (!clipRect) {
 			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect ?
 				chart.clipRect :
-				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
+				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY + 1);
 			if (!chart.clipRect) {
 				chart.clipRect = clipRect;
 			}
@@ -11988,6 +12005,8 @@ var PieSeries = extendClass(Series, {
 	 * Do translation for pie slices
 	 */
 	translate: function () {
+		this.generatePoints();
+		
 		var total = 0,
 			series = this,
 			cumulative = -0.25, // start at top
@@ -12630,10 +12649,9 @@ seriesProto.processData = function () {
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
-	baseProcessData.apply(series);
-
-	// disabled?
-	if (!groupingEnabled) {
+	
+	// skip if processData returns false or if grouping is disabled (in that order)
+	if (baseProcessData.apply(series) === false || !groupingEnabled) {
 		return;
 	}
 
@@ -12659,6 +12677,7 @@ seriesProto.processData = function () {
 			}
 		}
 		xAxis.groupPixelWidth = groupPixelWidth;
+		
 	}
 
 	// clear previous groups
@@ -12675,8 +12694,9 @@ seriesProto.processData = function () {
 
 		series.points = null; // force recreation of point instances in series.translate
 
-		var xMin = processedXData[0],
-			xMax = processedXData[dataLength - 1],
+		var extremes = xAxis.getExtremes(),
+			xMin = extremes.min,
+			xMax = extremes.max,
 			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units),
 			groupedXandY = series.groupData(processedXData, processedYData, groupPositions, dataGroupingOptions.approximation),
@@ -13471,7 +13491,7 @@ each(['circle', 'square'], function (shape) {
 			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
 		}
 
-		//console.trace(x, y, );
+		//console .trace(x, y, );
 		return path;
 	};
 });
@@ -13841,8 +13861,7 @@ Highcharts.Scroller = function (chart) {
 						fill: scrollbarOptions.barBackgroundColor,
 						stroke: scrollbarOptions.barBorderColor,
 						'stroke-width': scrollbarStrokeWidth,
-						rx: barBorderRadius,
-						ry: barBorderRadius
+						r: barBorderRadius
 					})
 					.add(scrollbarGroup);
 
@@ -14119,7 +14138,8 @@ Highcharts.Scroller = function (chart) {
 			// todo: use similiar hook when base series is not yet initialized
 			addEvent(baseSeries, 'updatedData', function () {
 
-				var baseExtremes = baseSeries.xAxis.getExtremes(),
+				var baseXAxis = baseSeries.xAxis,
+					baseExtremes = baseXAxis.getExtremes(),
 					baseMin = baseExtremes.min,
 					baseMax = baseExtremes.max,
 					baseDataMin = baseExtremes.dataMin,
@@ -14130,15 +14150,13 @@ Highcharts.Scroller = function (chart) {
 					newMax,
 					newMin,
 					doRedraw,
-					baseXAxis = baseSeries.xAxis,
+					navXData = navigatorSeries.xData,
 					hasSetExtremes = !!baseXAxis.setExtremes;
 
 				// detect whether to move the range
-				stickToMax = baseMax >=
-					navigatorSeries.xData[navigatorSeries.xData.length - 1];
-				stickToMin = baseMin - range <=
-					navigatorSeries.xData[0];
-
+				stickToMax = baseMax >= navXData[navXData.length - 1];
+				stickToMin = baseMin <= baseDataMin;
+				
 				// set the navigator series data to the new data of the base series
 				if (!navigatorData) {
 					navigatorSeries.options.pointStart = baseSeries.xData[0];
@@ -14944,6 +14962,6 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	product: 'Highstock',
-	version: '1.0.1'
+	version: '1.0.2'
 });
 }());

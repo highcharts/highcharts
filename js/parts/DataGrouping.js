@@ -187,10 +187,9 @@ seriesProto.processData = function () {
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
-	baseProcessData.apply(series);
-
-	// disabled?
-	if (!groupingEnabled) {
+	
+	// skip if processData returns false or if grouping is disabled (in that order)
+	if (baseProcessData.apply(series) === false || !groupingEnabled) {
 		return;
 	}
 
@@ -216,6 +215,7 @@ seriesProto.processData = function () {
 			}
 		}
 		xAxis.groupPixelWidth = groupPixelWidth;
+		
 	}
 
 	// clear previous groups
@@ -232,8 +232,9 @@ seriesProto.processData = function () {
 
 		series.points = null; // force recreation of point instances in series.translate
 
-		var xMin = processedXData[0],
-			xMax = processedXData[dataLength - 1],
+		var extremes = xAxis.getExtremes(),
+			xMin = extremes.min,
+			xMax = extremes.max,
 			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units),
 			groupedXandY = series.groupData(processedXData, processedYData, groupPositions, dataGroupingOptions.approximation),

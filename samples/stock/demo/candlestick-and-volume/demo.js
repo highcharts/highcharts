@@ -33,7 +33,8 @@ $(function() {
 		// create the chart
 		chart = new Highcharts.StockChart({
 		    chart: {
-		        renderTo: 'container'
+		        renderTo: 'container',
+		        alignTicks: false
 		    },
 
 		    rangeSelector: {

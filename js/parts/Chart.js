@@ -1155,7 +1155,7 @@ function Chart(options, callback) {
 		 */
 		function adjustTickAmount() {
 
-			if (maxTicks && !isDatetimeAxis && !categories && !isLinked && options.alignTicks !== false) { // only apply to linear scale
+			if (maxTicks && maxTicks[xOrY] && !isDatetimeAxis && !categories && !isLinked && options.alignTicks !== false) { // only apply to linear scale
 				var oldTickAmount = tickAmount,
 					calculatedTickAmount = tickPositions.length;
 
@@ -1213,6 +1213,10 @@ function Chart(options, callback) {
 				// get fixed positions based on tickInterval
 				setTickPositions();
 
+				// record old values to decide whether a rescale is necessary later on (#540)
+				oldUserMin = userMin;
+				oldUserMax = userMax;
+	
 				// the translation factor used in translate function
 				oldTransA = transA;
 				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
@@ -2384,12 +2388,12 @@ function Chart(options, callback) {
 		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
 		 */
 		function hideTooltipOnMouseMove(e) {
-			if (e.event) {
-				e = e.event; // MooTools renames e.pageX to e.page.x
-			}
+			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
 			if (chartPosition &&
-					!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
-					e.pageY - chartPosition.top - plotTop)) {
+					!isInsidePlot(pageX - chartPosition.left - plotLeft,
+						pageY - chartPosition.top - plotTop)) {
 				resetTracker();
 			}
 		}
@@ -3339,7 +3343,7 @@ function Chart(options, callback) {
 				stop(clipRect);
 				clipRect.animate({ // for chart resize
 					width: chart.plotSizeX,
-					height: chart.plotSizeY
+					height: chart.plotSizeY + 1
 				});
 			}
 

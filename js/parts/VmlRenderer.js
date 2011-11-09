@@ -778,7 +778,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				(y2 - y1) / // y vector
 				(x2 - x1) // x vector
 				) * 180 / mathPI;
-				
+
 
 			// when colors attribute is used, the meanings of opacity and o:opacity2
 			// are reversed.
@@ -1046,7 +1046,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 		rect: function (left, top, width, height, options) {
 			/*for (var n in r) {
-				logTime && console.log(n)
+				logTime && console .log(n)
 				}*/
 
 			if (!defined(options)) {

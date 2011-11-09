@@ -22,8 +22,22 @@
 				text-decoration: none;
 			}
 			
-			a:visited {
-				color: silver;
+			
+			li {
+				border: 1px solid white;
+				border-radius: 5px;
+				padding: 2px;
+			}
+			li.visited a {
+				color: gray;
+			}
+			li.hilighted {
+				background: #FCFFC5;
+				border-color: silver;
+				font-weight: bold;
+			}
+			li.hilighted a {
+				color: black;
 			}
 			
 		</style>
@@ -48,7 +62,7 @@ if ($handle = opendir(dirname(__FILE__). '/stock')) {
 					$next = $i + 1;
 					if (preg_match('/^[a-z\-]+$/', $innerFile)) {
 						echo "
-						<li>$i) <a target='main' id='i$i' href='view.php?path=stock/$file/$innerFile&next=$next'>$innerFile</a></li>
+						<li id='li$i'>$i. <a target='main' id='i$i' href='view.php?path=stock/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
 						";
 						$i++;
 					}

@@ -32,7 +32,6 @@
         <property name="testoutput.dir" value="${build.dir}/tests"/>
         <property name="coveragereport.dir" value="${build.dir}/coverage-report"/>
         <property name="themes.dir" value="${basedir}/js/themes"/>
-        <property name="package.dir" value="${basedir}/../highcharts.com.site/downloads/package"/>
 
         <!-- highcharts/highstock src -->
         <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
@@ -71,7 +70,7 @@
 
         <!-- google js-test-driver -->
         <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
-        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3b.jar"/>
+        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3d.jar"/>
 
         <!-- This is the list of files for highcharts -->
         <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
@@ -263,6 +262,57 @@
     <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
     </target>
 
+
+    <scriptdef name="listfiles" language="javascript">
+        <![CDATA[
+        var dir = project.getProperty("samples.dir");
+        var fs = project.createDataType("fileset");
+        fs.setDir(new java.io.File(dir));
+        fs.setIncludes("**/demo.js");
+
+        // Get the files (array) of that fileset
+        var ds = fs.getDirectoryScanner(project);
+        var demoFiles = ds.getIncludedFiles();
+        // get the values via Java API
+        var basedir  = fs.getDir(project);
+        // Iterate over the demo files
+        for (i = 0; i < demoFiles.length; i++) {
+            var filename = demoFiles[i];
+            var file = new java.io.File(basedir, filename);
+
+            project.setProperty('demo.name', file.getParentFile().getName());
+            project.setProperty('demo.html.name', file.getParent() + '/demo.html');
+            project.setProperty('demo.js.name', file.getParent() + '/demo.js');
+            project.executeTarget('create-sample');
+        }
+        ]]>
+    </scriptdef>
+
+    <target name="create-sample">
+        <antcall target="create-sample-param"/>
+    </target>
+
+    <target name="create-sample-param">
+        <!-- Load the two demo files into properties -->
+        <loadfile property="demo.js" srcFile="${demo.js.name}"/>
+        <loadfile property="demo.html" srcFile="${demo.html.name}"/>
+
+        <!-- Copy the template file and replace the properties -->
+        <copy file="samples/template-example.htm" tofile="${samples.dist.dir}/examples/${demo.name}/index.htm">
+            <filterchain>
+                <replacetokens>
+                    <token key="demo.title" value="${demo.title}"/>
+                    <token key="demo.js" value="${demo.js}"/>
+                    <token key="demo.html" value="${demo.html}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+    <target name="create-samples">
+        <listfiles></listfiles>
+    </target>
+
     <!-- Builds the source and assembles a distribution package. -->
     <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
         <echo message=""/>
@@ -316,33 +366,64 @@
             <fileset dir="${themes.dir}"/>
         </copy>
 
-        <!-- 3. Copy examples -->
-        <copy todir="${dist.dir}/highcharts/examples">
-            <fileset dir="${package.dir}/examples"/>
-        </copy>
-        <copy file="${package.dir}/index.htm" todir="${dist.dir}/highcharts"/>
-        <copy todir="${dist.dir}/highstock/examples">
-            <fileset dir="${package.dir}/examples"/>
-        </copy>
-        <copy file="${package.dir}/index.htm" todir="${dist.dir}/highstock"/>
-
-        <!-- 4. Copy graphics -->
+        <!-- 3. Create samples -->
+        <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highcharts"/>
+            <param name="samples.dir" value="samples/highcharts/demo"/>
+            <param name="samples.dist.dir" value="${dist.dir}/highcharts/"/>
+        </antcall>
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highstock"/>
+            <param name="samples.dir" value="samples/stock/demo"/>
+            <param name="samples.dist.dir" value="${dist.dir}/highstock/"/>
+        </antcall>
+        <sleep seconds="1"/>
+        <!-- The demos are checked in with references to highcharts.com to be able to run them from jsfiddle -->
+        <!-- replace these references with local paths here -->
+        <replace dir="${dist.dir}">
+            <replacefilter>
+                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-exporting.js"></script>]]></replacetoken>
+                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highcharts.js"></script>
+<script type="text/javascript" src="../../js/modules/exporting.js"></script>]]></replacevalue>
+            </replacefilter>
+            <replacefilter>
+                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-stock.js"></script>]]></replacetoken>
+                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highstock.js"></script>]]></replacevalue>
+            </replacefilter>
+            <replacefilter>
+                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-stock-exporting.js"></script>]]></replacetoken>
+                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highstock.js"></script>
+<script type="text/javascript" src="../../js/modules/exporting.js"></script>]]></replacevalue>
+            </replacefilter>
+            <include name="**/index.htm"/>
+        </replace>
+        <!-- Copy the analytics.tsv file to example -->
+        <copy file="samples/highcharts/demo/line-ajax/analytics.tsv" todir="${dist.dir}/highcharts/examples/line-ajax/"/>
+        <!-- Copy index files -->
+        <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/"/>
+        <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/"/>
+        <!-- Copy graphic files -->
         <copy todir="${dist.dir}/highcharts/graphics">
-            <fileset dir="${package.dir}/graphics"/>
+            <fileset dir="samples/graphics"/>
         </copy>
         <copy todir="${dist.dir}/highstock/graphics">
-            <fileset dir="${package.dir}/graphics"/>
+            <fileset dir="samples/graphics"/>
         </copy>
 
-        <!-- 5. Copy php export server -->
+        <!-- 4. Copy php export server -->
         <copy todir="${dist.dir}/highcharts/exporting-server">
-            <fileset dir="${package.dir}/exporting-server"/>
+            <fileset dir="exporting-server"/>
         </copy>
         <copy todir="${dist.dir}/highstock/exporting-server">
-            <fileset dir="${package.dir}/exporting-server"/>
+            <fileset dir="exporting-server"/>
         </copy>
+        <!-- Make sure files in the zip have lf line endings -->
+        <!-- even if being built on windows -->
+        <sleep seconds="2"/>
+        <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf"/>
 
-        <!-- 6. Create a zip files -->
+        <!-- 5. Create zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
     </target>
@@ -364,6 +445,11 @@
         <!-- Param "required.adapter" specifies the corresponding adapter that matches the lib. Leave unset for the built-in jquery support. -->
 
         <!-- jquery versions -->
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
+        </antcall>
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.6.4"/>
@@ -417,24 +503,24 @@
     <target name="test" description="Runs the unit tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="jquery-1.6.4"/>
-            <param name="required.lib" value="jquery-1.6.4.js"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
         </antcall>
     </target>
 
     <target name="it" description="Runs the integration tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="it"/>
-            <param name="testrun.name" value="jquery-1.6.4"/>
-            <param name="required.lib" value="jquery-1.6.4.js"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
         </antcall>
     </target>
 
     <target name="gc" description="Runs the leaks tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="gc"/>
-            <param name="testrun.name" value="jquery-1.6.4"/>
-            <param name="required.lib" value="jquery-1.6.4.js"/>
+            <param name="testrun.name" value="jquery-1.7"/>
+            <param name="required.lib" value="jquery-1.7.js"/>
         </antcall>
     </target>
 

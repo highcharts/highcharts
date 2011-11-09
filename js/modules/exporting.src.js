@@ -1,5 +1,5 @@
 /**
- * @license Highstock JS v1.0.1 (2011-10-25)
+ * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
  * (c) 2010-2011 Torstein Hønsi
@@ -224,14 +224,14 @@ extend(Chart.prototype, {
 				showCheckbox: false,
 				visible: serie.visible
 			});
-	
+
 			if (!seriesOptions.isInternal) { // used for the navigator series that has its own option set
-			
+
 				// remove image markers
 				if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) {
 					seriesOptions.marker.symbol = 'circle';
 				}
-	
+
 				options.series.push(seriesOptions);
 			}
 		});
