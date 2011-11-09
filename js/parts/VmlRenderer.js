@@ -351,6 +351,14 @@ var VMLElement = extendClass(SVGElement, {
 	},
 
 	/**
+	 * Removes a child either by removeChild or move to garbageBin.
+	 * Issue 490; in VML removeChild results in Orphaned nodes according to sIEve, discardElement does not.
+	 */
+	safeRemoveChild: function (element) {
+		discardElement(element);
+	},
+
+	/**
 	 * Extend element.destroy by removing it from the clip members array
 	 */
 	destroy: function () {
