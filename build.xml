@@ -378,6 +378,7 @@
             <param name="samples.dir" value="samples/stock/demo"/>
             <param name="samples.dist.dir" value="${dist.dir}/highstock/"/>
         </antcall>
+        <sleep seconds="1"/>
         <!-- The demos are checked in with references to highcharts.com to be able to run them from jsfiddle -->
         <!-- replace these references with local paths here -->
         <replace dir="${dist.dir}">
@@ -397,9 +398,8 @@
             </replacefilter>
             <include name="**/index.htm"/>
         </replace>
-        <!-- Copy the analytics.tsv file to examples and make sure it has line ending 'lf' -->
+        <!-- Copy the analytics.tsv file to example -->
         <copy file="samples/highcharts/demo/line-ajax/analytics.tsv" todir="${dist.dir}/highcharts/examples/line-ajax/"/>
-        <fixcrlf file="${dist.dir}/highcharts/examples/line-ajax/analytics.tsv" eol="lf"/>
         <!-- Copy index files -->
         <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/"/>
         <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/"/>
@@ -412,14 +412,18 @@
         </copy>
 
         <!-- 4. Copy php export server -->
-<!--        <copy todir="${dist.dir}/highcharts/exporting-server">
-            <fileset dir="${package.dir}/exporting-server"/>
+        <copy todir="${dist.dir}/highcharts/exporting-server">
+            <fileset dir="exporting-server"/>
         </copy>
         <copy todir="${dist.dir}/highstock/exporting-server">
-            <fileset dir="${package.dir}/exporting-server"/>
-        </copy>-->
+            <fileset dir="exporting-server"/>
+        </copy>
+        <!-- Make sure files in the zip have lf line endings -->
+        <!-- even if being built on windows -->
+        <sleep seconds="1"/>
+        <fixcrlf srcdir="${dist.dir}" includes="**/***/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf"/>
 
-        <!-- 5. Create a zip files -->
+        <!-- 5. Create zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
     </target>
