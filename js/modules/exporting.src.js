@@ -660,27 +660,28 @@ extend(Chart.prototype, {
 	destroyExport: function () {
 		var i,
 			chart = this,
-			div;
+			elem;
 
 		// Destroy the extra buttons added
 		for (i = 0; i < chart.exportSVGElements.length; i++) {
+			elem = chart.exportSVGElements[i];
 			// Destroy and null the svg/vml elements
-			chart.exportSVGElements[i].onclick = null;
-			chart.exportSVGElements[i] = chart.exportSVGElements[i].destroy();
+			elem.onclick = elem.ontouchstart = null;
+			chart.exportSVGElements[i] = elem.destroy();
 		}
 
 		// Destroy the divs for the menu
 		for (i = 0; i < chart.exportDivElements.length; i++) {
-			div = chart.exportDivElements[i];
+			elem = chart.exportDivElements[i];
 
 			// Remove the event handler
-			removeEvent(div, 'mouseleave');
+			removeEvent(elem, 'mouseleave');
 
 			// Remove inline events
-			chart.exportDivElements[i] = div.onmouseout = div.onmouseover = div.ontouchstart = div.onclick = null;
+			chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
 
 			// Destroy the div by moving to garbage bin
-			discardElement(div);
+			discardElement(elem);
 		}
 	}
 });
