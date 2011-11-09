@@ -355,7 +355,12 @@ var VMLElement = extendClass(SVGElement, {
 	 * Issue 490; in VML removeChild results in Orphaned nodes according to sIEve, discardElement does not.
 	 */
 	safeRemoveChild: function (element) {
-		discardElement(element);
+		// discardElement will detach the node from its parent before attaching it
+		// to the garbage bin. Therefore it is important that the node is attached and have parent.
+		var parentNode = element.parentNode;
+		if (parentNode) {
+			discardElement(element);
+		}
 	},
 
 	/**
