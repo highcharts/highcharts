@@ -7319,10 +7319,11 @@ function Chart(options, callback) {
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
 
 							var xAxis = chart.xAxis[0],
+								halfPointRange = xAxis.pointRange / 2,
 								extremes = xAxis.getExtremes(),
-								newMin = xAxis.translate(mouseDownX - chartX, true),
-								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
-
+								newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
+								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange;
+								
 							// remove active points for shared tooltip
 							if (hoverPoints) {
 								each(hoverPoints, function (point) {
