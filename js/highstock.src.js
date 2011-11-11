@@ -8449,7 +8449,8 @@ function Chart(options, callback) {
 					// content overflow in IE
 				width: chartWidth + PX,
 				height: chartHeight + PX,
-				textAlign: 'left'
+				textAlign: 'left',
+				lineHeight: 'normal' // #427
 			}, optionsChart.style),
 			renderToClone || renderTo
 		);
