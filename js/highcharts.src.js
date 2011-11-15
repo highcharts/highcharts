@@ -6069,7 +6069,8 @@ function Chart(options, callback) {
 				offsetRight = options.offsetRight || 0,
 				range = max - min,
 				pointRange = 0,
-				closestPointRange;
+				closestPointRange,
+				seriesClosestPointRange;
 
 			// basic values
 			axisLeft = pick(options.left, plotLeft + offsetLeft);
@@ -6084,10 +6085,11 @@ function Chart(options, callback) {
 			if (isXAxis) {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
-					if (!series.noSharedTooltip) {
+					seriesClosestPointRange = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ? 
-							mathMin(closestPointRange, series.closestPointRange) :
-							series.closestPointRange;
+							mathMin(closestPointRange, seriesClosestPointRange) :
+							seriesClosestPointRange;
 					}
 				});
 				// pointRange means the width reserved for each point, like in a column chart
@@ -6638,10 +6640,8 @@ function Chart(options, callback) {
 		/*jslint unparam: false*/
 
 		function remove(id) {
-			if(buttons[id]){
-				discardElement(buttons[id].element);
-				buttons[id] = null;
-			}
+			discardElement(buttons[id].element);
+			buttons[id] = null;
 		}
 
 		// public
