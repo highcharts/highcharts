@@ -6638,8 +6638,10 @@ function Chart(options, callback) {
 		/*jslint unparam: false*/
 
 		function remove(id) {
-			discardElement(buttons[id].element);
-			buttons[id] = null;
+			if(buttons[id]){
+				discardElement(buttons[id].element);
+				buttons[id] = null;
+			}
 		}
 
 		// public
