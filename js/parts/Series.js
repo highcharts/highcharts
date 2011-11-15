@@ -1529,6 +1529,10 @@ Series.prototype = {
 				str,
 				dataLabelsGroup = series.dataLabelsGroup,
 				chart = series.chart,
+				xAxis = series.xAxis,
+				groupLeft = xAxis ? xAxis.left : chart.plotLeft,
+				yAxis = series.yAxis,
+				groupTop = yAxis ? yAxis.top : chart.plotTop,
 				renderer = chart.renderer,
 				inverted = chart.inverted,
 				seriesType = series.type,
@@ -1566,10 +1570,10 @@ Series.prototype = {
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 6
 						})
-						.translate(chart.plotLeft, chart.plotTop)
+						.translate(groupLeft, groupTop)
 						.add();
 			} else {
-				dataLabelsGroup.translate(chart.plotLeft, chart.plotTop);
+				dataLabelsGroup.translate(groupLeft, groupTop);
 			}
 
 			// determine the color

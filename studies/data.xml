@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <chart>
 	<categories>
-		<item>Categories</item>
 		<item>Apples</item>
 		<item>Pears</item>
 		<item>Oranges</item>

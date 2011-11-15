@@ -237,25 +237,29 @@ function Chart(options, callback) {
 			 * Write the tick label
 			 */
 			addLabel: function () {
-				var pos = this.pos,
+				var tick = this,
+					pos = tick.pos,
 					labelOptions = options.labels,
 					str,
-					visibleLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
-						(pos === max && !pick(options.showLastLabel, 1))),
 					width = (categories && horiz && categories.length &&
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
 						plotWidth / categories.length) ||
 						(!horiz && plotWidth / 2),
+					isFirst = pos === tickPositions[0],
+					isLast = pos === tickPositions[tickPositions.length - 1],
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
-					label = this.label;
+					label = tick.label;
 
+				// set properties for access in render method
+				tick.isFirst = isFirst;
+				tick.isLast = isLast;
 
 				// get the string
 				str = labelFormatter.call({
-						isFirst: pos === tickPositions[0],
-						isLast: pos === tickPositions[tickPositions.length - 1],
+						isFirst: isFirst,
+						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
 						value: isLog ? lin2log(value) : value
 					});
@@ -267,8 +271,8 @@ function Chart(options, callback) {
 
 				// first call
 				if (!defined(label)) {
-					this.label =
-						defined(str) && visibleLabel && labelOptions.enabled ?
+					tick.label =
+						defined(str) && labelOptions.enabled ?
 							renderer.text(
 									str,
 									0,
@@ -286,8 +290,7 @@ function Chart(options, callback) {
 				// update
 				} else if (label) {
 					label.attr({
-							text: str,
-							visibility: visibleLabel ? VISIBLE : HIDDEN // make it right when label is moved (#538)
+							text: str 
 						})
 						.css(css);
 				}
@@ -423,10 +426,20 @@ function Chart(options, callback) {
 					if (staggerLines) {
 						y += (index / (step || 1) % staggerLines) * 16;
 					}
+					
+					// apply show first and show last
+					if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
+							(tick.isLast && !pick(options.showLastLabel, 1))) {
+						label.hide();
+					} else {
+						 // show those that may have been previously hidden, either by show first/last, or by step
+						label.show();
+					}
+					
 					// apply step
-					if (step) {
+					if (step && index % step) {
 						// show those indices dividable by step
-						label[index % step ? 'hide' : 'show']();
+						label.hide();
 					}
 
 					label[tick.isNew ? 'attr' : 'animate']({
@@ -1281,7 +1294,8 @@ function Chart(options, callback) {
 				offsetRight = options.offsetRight || 0,
 				range = max - min,
 				pointRange = 0,
-				closestPointRange;
+				closestPointRange,
+				seriesClosestPointRange;
 
 			// basic values
 			axisLeft = pick(options.left, plotLeft + offsetLeft);
@@ -1296,10 +1310,11 @@ function Chart(options, callback) {
 			if (isXAxis) {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
-					if (!series.noSharedTooltip) {
+					seriesClosestPointRange = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, series.closestPointRange) :
-							series.closestPointRange;
+							mathMin(closestPointRange, seriesClosestPointRange) :
+							seriesClosestPointRange;
 					}
 				});
 				// pointRange means the width reserved for each point, like in a column chart
@@ -2531,10 +2546,11 @@ function Chart(options, callback) {
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
 
 							var xAxis = chart.xAxis[0],
+								halfPointRange = xAxis.pointRange / 2,
 								extremes = xAxis.getExtremes(),
-								newMin = xAxis.translate(mouseDownX - chartX, true),
-								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
-
+								newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
+								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange;
+								
 							// remove active points for shared tooltip
 							if (hoverPoints) {
 								each(hoverPoints, function (point) {
@@ -3660,7 +3676,8 @@ function Chart(options, callback) {
 					// content overflow in IE
 				width: chartWidth + PX,
 				height: chartHeight + PX,
-				textAlign: 'left'
+				textAlign: 'left',
+				lineHeight: 'normal' // #427
 			}, optionsChart.style),
 			renderToClone || renderTo
 		);
@@ -4208,19 +4225,19 @@ function Chart(options, callback) {
 		});
 
 		// ==== Destroy local variables:
-		each([chartBackground, legend, tooltip, renderer, tracker], function (obj) {
+		each([chartBackground, plotBorder, plotBackground, legend, tooltip, renderer, tracker], function (obj) {
 			if (obj && obj.destroy) {
 				obj.destroy();
 			}
 		});
-		chartBackground = legend = tooltip = renderer = tracker = null;
+		chartBackground = plotBorder = plotBackground = legend = tooltip = renderer = tracker = null;
 
 		// remove container and all SVG
 		if (container) { // can break in IE when destroyed before finished loading
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
-				parentNode.removeChild(container);
+				discardElement(container);
 			}
 
 			// IE6 leak

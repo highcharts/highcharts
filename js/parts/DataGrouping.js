@@ -298,7 +298,7 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 		ret;
 	
 	// apply only to grouped series
-	if (xAxis.options.type === 'datetime' && dataGroupingOptions) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions) {
 		
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;		
