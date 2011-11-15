@@ -237,25 +237,29 @@ function Chart(options, callback) {
 			 * Write the tick label
 			 */
 			addLabel: function () {
-				var pos = this.pos,
+				var tick = this,
+					pos = tick.pos,
 					labelOptions = options.labels,
 					str,
-					visibleLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
-						(pos === max && !pick(options.showLastLabel, 1))),
 					width = (categories && horiz && categories.length &&
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
 						plotWidth / categories.length) ||
 						(!horiz && plotWidth / 2),
+					isFirst = pos === tickPositions[0],
+					isLast = pos === tickPositions[tickPositions.length - 1],
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
-					label = this.label;
+					label = tick.label;
 
+				// set properties for access in render method
+				tick.isFirst = isFirst;
+				tick.isLast = isLast;
 
 				// get the string
 				str = labelFormatter.call({
-						isFirst: pos === tickPositions[0],
-						isLast: pos === tickPositions[tickPositions.length - 1],
+						isFirst: isFirst,
+						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
 						value: isLog ? lin2log(value) : value
 					});
@@ -267,8 +271,8 @@ function Chart(options, callback) {
 
 				// first call
 				if (!defined(label)) {
-					this.label =
-						defined(str) && visibleLabel && labelOptions.enabled ?
+					tick.label =
+						defined(str) && labelOptions.enabled ?
 							renderer.text(
 									str,
 									0,
@@ -286,8 +290,7 @@ function Chart(options, callback) {
 				// update
 				} else if (label) {
 					label.attr({ 
-							text: str,
-							visibility: visibleLabel ? VISIBLE : HIDDEN // make it right when label is moved (#538) 
+							text: str 
 						})
 						.css(css);
 				}
@@ -423,10 +426,20 @@ function Chart(options, callback) {
 					if (staggerLines) {
 						y += (index / (step || 1) % staggerLines) * 16;
 					}
+					
+					// apply show first and show last
+					if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
+							(tick.isLast && !pick(options.showLastLabel, 1))) {
+						label.hide();
+					} else {
+						 // show those that may have been previously hidden, either by show first/last, or by step
+						label.show();
+					}
+					
 					// apply step
-					if (step) {
+					if (step && index % step) {
 						// show those indices dividable by step
-						label[index % step ? 'hide' : 'show']();
+						label.hide();
 					}
 
 					label[tick.isNew ? 'attr' : 'animate']({
