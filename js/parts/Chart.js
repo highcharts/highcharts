@@ -896,6 +896,11 @@ function Chart(options, callback) {
 
 		}
 		
+		/**
+		 * Translate from a linear axis value to the corresponding ordinal axis position. If there
+		 * are no gaps in the ordinal axis this will be the same. The translated value is the value
+		 * that the point would have if the axis were linear, using the same min and max.
+		 */
 		function value2ordinal (val) {
 			
 			var ordinalPositions = axis.ordinalPositions,
@@ -906,7 +911,7 @@ function Chart(options, callback) {
 				closest,
 				ordinalIndex;
 				
-			
+			// first look for an exact match in the ordinalpositions array
 			i = ordinalLength;
 			while (ordinalIndex === UNDEFINED && i--) {
 				if (ordinalPositions[i] === val) {
@@ -914,18 +919,40 @@ function Chart(options, callback) {
 				}
 			}
 			
+			// if that failed, find the intermediate position between the two nearest values
 			i = ordinalLength - 1;
 			while (ordinalIndex === UNDEFINED && i--) {
 				if (val > ordinalPositions[i]) { // interpolate
-					/*if (ordinalPositions[i + 1] - ordinalPositions[i] > axis.closestPointRange) {
-						break;
-					}*/
 					distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
 					ordinalIndex = i + distance;
 				}
 			}
-			//console.log(val, ordinalIndex)
+			
 			return axis.ordinalSlope * ordinalIndex + axis.ordinalOffset;
+		}
+		
+		function ordinal2value (val) {
+			var ordinalPositions = axis.ordinalPositions,
+				ordinalSlope = axis.ordinalSlope,
+				ordinalOffset = axis.ordinalOffset,
+				i = ordinalPositions.length - 1,
+				linearEquivalentLeft,
+				linearEquivalentRight,
+				ret = val,
+				distance;
+				
+			// Loop down along the ordinal positions. When the linear equivalent of i matches
+			// an ordinal position, interpolate between the left and right values.
+			while (i--) {
+				linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
+				if (val > linearEquivalentLeft) {
+					linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
+					distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
+					ret = ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]);
+					break;
+				}
+			}
+			return ret;
 		}
 
 		/**
@@ -959,6 +986,10 @@ function Chart(options, callback) {
 				returnValue = val / localA + localMin; // from chart pixel to value
 				if (isLog && handleLog) {
 					returnValue = lin2log(returnValue);
+				}
+				
+				if (options.ordinal) {
+					returnValue = ordinal2value(returnValue);
 				}
 
 			} else { // normal translation, from axis value to pixel, relative to plot

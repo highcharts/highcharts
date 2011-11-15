@@ -634,7 +634,7 @@ Series.prototype = {
 			var i = segment.length - 1;
 			//for (var i = 1; i < segment.length; i++) {
 			while (i--) {
-				if (segment[i+1] && segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * 1.5) {
+				if (segment[i+1] && segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * (series.options.gapSize || 5)) {
 					segments.splice( // insert after this one
 						no + 1,
 						0,
@@ -642,9 +642,6 @@ Series.prototype = {
 					);
 				}
 			}
-		});
-		each (segments, function(segment, no) {
-			console.log(dateFormat(null, segment[0].x))
 		});
 	},
 	/**
