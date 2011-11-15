@@ -46,6 +46,9 @@ ChartMemoryTest.prototype.getBaseConfig = function () {
 					[1, 'rgb(200, 200, 255)']
 				]
 			},
+			borderWidth: 1,
+			plotBorderWidth: 12,
+			plotBackgroundColor: '#EFEFEF',
 			shadow: true,
 			zoomType: 'xy',
 			reflow: false,		// cannot have reflow in tests
