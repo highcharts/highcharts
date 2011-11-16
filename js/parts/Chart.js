@@ -2076,6 +2076,7 @@ function Chart(options, callback) {
 				pointConfig = [],
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
+				positioner = options.positioner || placeBox,
 				hoverPoints = chart.hoverPoints,
 				placedTooltipPoint;
 
@@ -2159,7 +2160,9 @@ function Chart(options, callback) {
 					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 				});
 
-				placedTooltipPoint = placeBox(boxWidth, boxHeight, plotLeft, plotTop, plotWidth, plotHeight, {x: x, y: y});
+				placedTooltipPoint =
+					positioner(boxWidth, boxHeight, plotLeft, plotTop, plotWidth,
+							       plotHeight, {x: x, y: y});
 
 				// do the move
 				move(mathRound(placedTooltipPoint.x - boxOffLeft), mathRound(placedTooltipPoint.y - boxOffLeft));
