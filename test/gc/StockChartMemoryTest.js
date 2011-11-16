@@ -123,7 +123,7 @@ StockChartMemoryTest.prototype.tearDown = function () {
 /**
  * Tests SVG allocations when adding and removing points.
  */
-StockChartMemoryTest.prototype.xtestAddRemovePoints = function () {
+StockChartMemoryTest.prototype.testAddRemovePoints = function () {
 	var i;
 
 	// Test addPoint with shift. This will do a remove point as well.
@@ -135,7 +135,7 @@ StockChartMemoryTest.prototype.xtestAddRemovePoints = function () {
 /**
  * Tests SVG allocations when calling setData.
  */
-StockChartMemoryTest.prototype.xtestSetData = function () {
+StockChartMemoryTest.prototype.testSetData = function () {
 	var i;
 
 	// Test setData of random points with redraw.
@@ -154,7 +154,7 @@ StockChartMemoryTest.prototype.testDestroyChart = function () {
 /**
  * Tests SVG allocations when adding and removing series.
  */
-StockChartMemoryTest.prototype.xtestAddRemoveSeries = function () {
+StockChartMemoryTest.prototype.testAddRemoveSeries = function () {
 	var newSeries,
 		i;
 
@@ -174,7 +174,7 @@ StockChartMemoryTest.prototype.xtestAddRemoveSeries = function () {
 /**
  * Tests SVG allocations when redrawing the chart.
  */
-StockChartMemoryTest.prototype.xtestRedrawChart = function () {
+StockChartMemoryTest.prototype.testRedrawChart = function () {
 	var i;
 
 	for (i = 0; i < 2; i++) {
@@ -185,7 +185,7 @@ StockChartMemoryTest.prototype.xtestRedrawChart = function () {
 /**
  * Tests SVG allocations when resizing the chart.
  */
-StockChartMemoryTest.prototype.xtestSetSizeChart = function () {
+StockChartMemoryTest.prototype.testSetSizeChart = function () {
 	var i;
 
 	for (i = 1; i < 10; i++) {
