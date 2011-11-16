@@ -210,29 +210,7 @@ function Chart(options, callback) {
 			}
 		}
 		Tick.prototype = {
-			attachLabel: function () {
-				var label = this.label;
-				if (label && !this.added) {
-					label.deferUpdateTransform = true;
-					label.add(axisGroup);
-				}
-			},
-			updateTransformLabel: function () {
-				var label = this.label;
-				if (label) {
-					label.deferUpdateTransform = false;
-					label.updateTransform();
-				}
-			},
-			computeBBox: function () {
-				var label = this.label,
-					bBox;
-				if (label) {
-					bBox = label.getBBox();
-					label.elemWidth = bBox.width;
-					label.elemHeight = bBox.height;
-				}
-			},
+			
 			/**
 			 * Write the tick label
 			 */
@@ -284,7 +262,8 @@ function Chart(options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(css) :
+								.css(css)
+								.add(axisGroup) :
 							null;
 
 				// update
@@ -821,8 +800,7 @@ function Chart(options, callback) {
 						for (i = 0; i < yDataLength; i++) {
 							x = xData[i];
 							y = yData[i];
-							if (y !== null && y !== UNDEFINED &&
-								(cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max))) {
+							if (y !== null && y !== UNDEFINED) {
 
 								// read stacked values into a stack based on the x value,
 								// the sign of y and the stack key
@@ -853,24 +831,26 @@ function Chart(options, callback) {
 								} else if (hasModifyValue) {
 									y = series.modifyValue(y);
 								}
-
-								j = y.length;
-								if (j) { // array, like ohlc data
-									while (j--) {
-										if (y[j] !== null) {
-											activeYData[activeCounter++] = y[j];
-										}
-									}
-								} else {
-									activeYData[activeCounter++] = y;
-								}
-
-
-
+								
 								// get the smallest distance between points
 								if (i) {
 									distance = mathAbs(xData[i] - xData[i - 1]);
 									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
+								}
+	
+								// for points within the visible range, consider y extremes
+								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
+
+									j = y.length;
+									if (j) { // array, like ohlc data
+										while (j--) {
+											if (y[j] !== null) {
+												activeYData[activeCounter++] = y[j];
+											}
+										}
+									} else {
+										activeYData[activeCounter++] = y;
+									}
 								}
 							}
 						}
@@ -1413,16 +1393,6 @@ function Chart(options, callback) {
 						ticks[pos].addLabel(); // update labels depending on tick interval
 					}
 
-				});
-
-				each(tickPositions, function (pos) {
-					ticks[pos].attachLabel();
-				});
-				each(tickPositions, function (pos) {
-					ticks[pos].computeBBox();
-				});
-				each(tickPositions, function (pos) {
-					ticks[pos].updateTransformLabel();
 				});
 
 				each(tickPositions, function (pos) {

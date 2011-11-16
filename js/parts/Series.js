@@ -1445,8 +1445,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			seriesClipRect = series.clipRect,
-			//chartSeries = series.chart.series,
-			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
+			issue134 = /AppleWebKit\/533/.test(userAgent),
 			destroy,
 			i,
 			data = series.data || [],
