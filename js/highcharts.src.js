@@ -5016,29 +5016,7 @@ function Chart(options, callback) {
 			}
 		}
 		Tick.prototype = {
-			attachLabel: function () {
-				var label = this.label;
-				if (label && !this.added) {
-					label.deferUpdateTransform = true;
-					label.add(axisGroup);
-				}
-			},
-			updateTransformLabel: function () {
-				var label = this.label;
-				if (label) {
-					label.deferUpdateTransform = false;
-					label.updateTransform();
-				}
-			},
-			computeBBox: function () {
-				var label = this.label,
-					bBox;
-				if (label) {
-					bBox = label.getBBox();
-					label.elemWidth = bBox.width;
-					label.elemHeight = bBox.height;
-				}
-			},
+			
 			/**
 			 * Write the tick label
 			 */
@@ -5090,7 +5068,8 @@ function Chart(options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(css) :
+								.css(css)
+								.add(axisGroup) :
 							null;
 
 				// update
@@ -6219,16 +6198,6 @@ function Chart(options, callback) {
 						ticks[pos].addLabel(); // update labels depending on tick interval
 					}
 
-				});
-
-				each(tickPositions, function (pos) {
-					ticks[pos].attachLabel();
-				});
-				each(tickPositions, function (pos) {
-					ticks[pos].computeBBox();
-				});
-				each(tickPositions, function (pos) {
-					ticks[pos].updateTransformLabel();
 				});
 
 				each(tickPositions, function (pos) {
