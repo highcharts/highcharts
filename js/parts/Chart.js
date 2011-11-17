@@ -1167,6 +1167,7 @@ function Chart(options, callback) {
 				if (axis.ordinalSlope && axis.closestPointRange && secondPass) {
 					tickInterval /= (axis.ordinalSlope / axis.closestPointRange);
 				}
+				
 			}
 			
 
@@ -1185,6 +1186,7 @@ function Chart(options, callback) {
 			// find the tick positions
 			if (isDatetimeAxis) {
 				tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek);
+								
 				dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
 			} else {
 				setLinearTickPositions();
@@ -1269,8 +1271,6 @@ function Chart(options, callback) {
 					maxTicks[xOrY] = tickPositions.length;
 				}
 			}
-
-
 		}
 
 		/**
@@ -1301,6 +1301,7 @@ function Chart(options, callback) {
 				}
 			}
 
+			
 		}
 
 		/**
@@ -1517,15 +1518,15 @@ function Chart(options, callback) {
 			labelOffset = 0; // reset
 
 			if (hasData || isLinked) {
+
 				each(tickPositions, function (pos) {
 					if (!ticks[pos]) {
 						ticks[pos] = new Tick(pos);
 					} else {
 						ticks[pos].addLabel(); // update labels depending on tick interval
 					}
-
 				});
-
+				
 				each(tickPositions, function (pos) {
 					// left side must be align: right and right side must have align: left for labels
 					if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === labelOptions.align) {
@@ -1630,7 +1631,11 @@ function Chart(options, callback) {
 				// major ticks
 				each(tickPositions, function (pos, i) {
 					// linked axes need an extra check to find out if
-					if ((!isLinked || (pos >= min && pos <= max)) && ticks[pos]) {
+					if (!isLinked || (pos >= min && pos <= max)) {
+						
+						if (!ticks[pos]) {
+							ticks[pos] = new Tick(pos);
+						}
 
 						// render new ticks in old position
 						if (slideInTicks && ticks[pos].isNew) {
@@ -1640,8 +1645,9 @@ function Chart(options, callback) {
 						ticks[pos].isActive = true;
 						ticks[pos].render(i);
 					}
+					
 				});
-				
+
 				/*if (axis.ordinalPositions) {
 					var i = axis.ordinalPositions.length - 1;
 					while (i--) {
