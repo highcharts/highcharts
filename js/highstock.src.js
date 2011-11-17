@@ -6894,7 +6894,7 @@ function Chart(options, callback) {
 							attribs = {
 								'stroke-width': crosshairsOptions[i].width || 1,
 								stroke: crosshairsOptions[i].color || '#C0C0C0',
-								zIndex: 2
+								zIndex: crosshairsOptions[i].zIndex || 2
 							};
 							if (crosshairsOptions[i].dashStyle) {
 								attribs.dashstyle = crosshairsOptions[i].dashStyle;
