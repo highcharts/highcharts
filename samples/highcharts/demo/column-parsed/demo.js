@@ -1,4 +1,5 @@
-$(function () {
+// On document ready, call visualize on the datatable.
+$(document).ready(function() {
 	/**
 	 * Visualize an HTML table using Highcharts. The top (horizontal) header
 	 * is used for series names, and the left (vertical) header is used
@@ -34,32 +35,29 @@ $(function () {
 		var chart = new Highcharts.Chart(options);
 	}
 
-	// On document ready, call visualize on the datatable.
-	$(document).ready(function() {
-		var table = document.getElementById('datatable'),
-		options = {
-			chart: {
-				renderTo: 'container',
-				defaultSeriesType: 'column'
-			},
+	var table = document.getElementById('datatable'),
+	options = {
+		chart: {
+			renderTo: 'container',
+			defaultSeriesType: 'column'
+		},
+		title: {
+			text: 'Data extracted from a HTML table in the page'
+		},
+		xAxis: {
+		},
+		yAxis: {
 			title: {
-				text: 'Data extracted from a HTML table in the page'
-			},
-			xAxis: {
-			},
-			yAxis: {
-				title: {
-					text: 'Units'
-				}
-			},
-			tooltip: {
-				formatter: function() {
-					return '<b>'+ this.series.name +'</b><br/>'+
-						this.y +' '+ this.x.toLowerCase();
-				}
+				text: 'Units'
 			}
-		};
+		},
+		tooltip: {
+			formatter: function() {
+				return '<b>'+ this.series.name +'</b><br/>'+
+					this.y +' '+ this.x.toLowerCase();
+			}
+		}
+	};
 
-		Highcharts.visualize(table, options);
-	});
+	Highcharts.visualize(table, options);
 });

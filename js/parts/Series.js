@@ -903,6 +903,12 @@ Series.prototype = {
 			cropped,
 			i, // loop variable
 			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
+			
+		// If the series data or axes haven't changed, don't go through this. Return false to pass
+		// the message on to override methods like in data grouping. 
+		if (series.isCartesian && !series.isDirty && !series.xAxis.isDirty && !series.yAxis.isDirty) {
+			return false;
+		}
 
 		// optionally filter out points outside the plot area
 		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
@@ -1467,8 +1473,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			seriesClipRect = series.clipRect,
-			//chartSeries = series.chart.series,
-			issue134 = /\/5[0-9\.]+ (Safari|Mobile)\//.test(userAgent), // todo: update when Safari bug is fixed
+			issue134 = /AppleWebKit\/533/.test(userAgent),
 			destroy,
 			i,
 			data = series.data || [],
@@ -1551,6 +1556,10 @@ Series.prototype = {
 				str,
 				dataLabelsGroup = series.dataLabelsGroup,
 				chart = series.chart,
+				xAxis = series.xAxis,
+				groupLeft = xAxis ? xAxis.left : chart.plotLeft,
+				yAxis = series.yAxis,
+				groupTop = yAxis ? yAxis.top : chart.plotTop,
 				renderer = chart.renderer,
 				inverted = chart.inverted,
 				seriesType = series.type,
@@ -1588,10 +1597,10 @@ Series.prototype = {
 							visibility: series.visible ? VISIBLE : HIDDEN,
 							zIndex: 6
 						})
-						.translate(chart.plotLeft, chart.plotTop)
+						.translate(groupLeft, groupTop)
 						.add();
 			} else {
-				dataLabelsGroup.translate(chart.plotLeft, chart.plotTop);
+				dataLabelsGroup.translate(groupLeft, groupTop);
 			}
 
 			// determine the color
@@ -1841,7 +1850,7 @@ Series.prototype = {
 		if (!clipRect) {
 			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect ?
 				chart.clipRect :
-				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
+				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY + 1);
 			if (!chart.clipRect) {
 				chart.clipRect = clipRect;
 			}

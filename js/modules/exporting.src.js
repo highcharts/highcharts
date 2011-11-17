@@ -1,5 +1,5 @@
 /**
- * @license Highstock JS v1.0.1 (2011-10-25)
+ * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
  * (c) 2010-2011 Torstein Hønsi
@@ -16,6 +16,7 @@
 var HC = Highcharts,
 	Chart = HC.Chart,
 	addEvent = HC.addEvent,
+	removeEvent = HC.removeEvent,
 	createElement = HC.createElement,
 	discardElement = HC.discardElement,
 	css = HC.css,
@@ -224,14 +225,14 @@ extend(Chart.prototype, {
 				showCheckbox: false,
 				visible: serie.visible
 			});
-	
+
 			if (!seriesOptions.isInternal) { // used for the navigator series that has its own option set
-			
+
 				// remove image markers
 				if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) {
 					seriesOptions.marker.symbol = 'circle';
 				}
-	
+
 				options.series.push(seriesOptions);
 			}
 		});
@@ -464,8 +465,13 @@ extend(Chart.prototype, {
 						item.onclick.apply(chart, arguments);
 					};
 
+					// Keep references to menu divs to be able to destroy them
+					chart.exportDivElements.push(div);
 				}
 			});
+
+			// Keep references to menu and innerMenu div to be able to destroy them
+			chart.exportDivElements.push(innerMenu, menu);
 
 			chart.exportMenuWidth = menu.offsetWidth;
 			chart.exportMenuHeight = menu.offsetHeight;
@@ -512,6 +518,12 @@ extend(Chart.prototype, {
 				stroke: btnOptions.symbolStroke,
 				fill: btnOptions.symbolFill
 			};
+
+		// Keeps references to the button elements
+		if (!chart.exportDivElements) {
+			chart.exportDivElements = [];
+			chart.exportSVGElements = [];
+		}
 
 		if (btnOptions.enabled === false) {
 			return;
@@ -598,8 +610,39 @@ extend(Chart.prototype, {
 				zIndex: 20
 			})).add();
 
+		// Keep references to the renderer element so to be able to destroy them later.
+		chart.exportSVGElements.push(box, button, symbol);
+	},
 
+	/**
+	 * Destroy the buttons.
+	 */
+	destroyExport: function () {
+		var i,
+			chart = this,
+			elem;
 
+		// Destroy the extra buttons added
+		for (i = 0; i < chart.exportSVGElements.length; i++) {
+			elem = chart.exportSVGElements[i];
+			// Destroy and null the svg/vml elements
+			elem.onclick = elem.ontouchstart = null;
+			chart.exportSVGElements[i] = elem.destroy();
+		}
+
+		// Destroy the divs for the menu
+		for (i = 0; i < chart.exportDivElements.length; i++) {
+			elem = chart.exportDivElements[i];
+
+			// Remove the event handler
+			removeEvent(elem, 'mouseleave');
+
+			// Remove inline events
+			chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
+
+			// Destroy the div by moving to garbage bin
+			discardElement(elem);
+		}
 	}
 });
 
@@ -664,7 +707,11 @@ Chart.prototype.callbacks.push(function (chart) {
 		for (n in buttons) {
 			chart.addButton(buttons[n]);
 		}
+
+		// Destroy the export elements at chart destroy
+		addEvent(chart, 'destroy', chart.destroyExport);
 	}
+
 });
 
 

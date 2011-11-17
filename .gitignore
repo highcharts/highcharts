@@ -1,7 +1,6 @@
+/build/
 /.metadata/
 /.settings/
-/build/dist/
-/build/lintreport.html
 /js/highcharts.js
 /js/highstock.js
 /js/adapters/mootools-adapter.js

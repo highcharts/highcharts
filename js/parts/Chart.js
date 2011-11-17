@@ -211,52 +211,34 @@ function Chart(options, callback) {
 			}
 		}
 		Tick.prototype = {
-			attachLabel: function () {
-				var label = this.label;
-				if (label && !this.added) {
-					label.deferUpdateTransform = true;
-					label.add(axisGroup);
-				}
-			},
-			updateTransformLabel: function () {
-				var label = this.label;
-				if (label) {
-					label.deferUpdateTransform = false;
-					label.updateTransform();
-				}
-			},
-			computeBBox: function () {
-				var label = this.label,
-					bBox;
-				if (label) {
-					bBox = label.getBBox();
-					label.elemWidth = bBox.width;
-					label.elemHeight = bBox.height;
-				}
-			},
+			
 			/**
 			 * Write the tick label
 			 */
 			addLabel: function () {
-				var pos = this.pos,
+				var tick = this,
+					pos = tick.pos,
 					labelOptions = options.labels,
 					str,
-					withLabel = !((pos === min && !pick(options.showFirstLabel, 1)) ||
-						(pos === max && !pick(options.showLastLabel, 1))),
 					width = (categories && horiz && categories.length &&
 						!labelOptions.step && !labelOptions.staggerLines &&
 						!labelOptions.rotation &&
 						plotWidth / categories.length) ||
 						(!horiz && plotWidth / 2),
+					isFirst = pos === tickPositions[0],
+					isLast = pos === tickPositions[tickPositions.length - 1],
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
-					label = this.label;
+					label = tick.label;
 
+				// set properties for access in render method
+				tick.isFirst = isFirst;
+				tick.isLast = isLast;
 
 				// get the string
 				str = labelFormatter.call({
-						isFirst: pos === tickPositions[0],
-						isLast: pos === tickPositions[tickPositions.length - 1],
+						isFirst: isFirst,
+						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
 						value: isLog ? lin2log(value) : value
 					});
@@ -268,8 +250,8 @@ function Chart(options, callback) {
 
 				// first call
 				if (!defined(label)) {
-					this.label =
-						defined(str) && withLabel && labelOptions.enabled ?
+					tick.label =
+						defined(str) && labelOptions.enabled ?
 							renderer.text(
 									str,
 									0,
@@ -281,12 +263,15 @@ function Chart(options, callback) {
 									rotation: labelOptions.rotation
 								})
 								// without position absolute, IE export sometimes is wrong
-								.css(css) :
+								.css(css)
+								.add(axisGroup) :
 							null;
 
 				// update
 				} else if (label) {
-					label.attr({ text: str })
+					label.attr({ 
+							text: str 
+						})
 						.css(css);
 				}
 			},
@@ -421,10 +406,20 @@ function Chart(options, callback) {
 					if (staggerLines) {
 						y += (index / (step || 1) % staggerLines) * 16;
 					}
+					
+					// apply show first and show last
+					if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
+							(tick.isLast && !pick(options.showLastLabel, 1))) {
+						label.hide();
+					} else {
+						 // show those that may have been previously hidden, either by show first/last, or by step
+						label.show();
+					}
+					
 					// apply step
-					if (step) {
+					if (step && index % step) {
 						// show those indices dividable by step
-						label[index % step ? 'hide' : 'show']();
+						label.hide();
 					}
 
 					label[tick.isNew ? 'attr' : 'animate']({
@@ -638,7 +633,7 @@ function Chart(options, callback) {
 
 			// Save the x value to be able to position the label later
 			stackItem.x = x;
-			
+
 			// Save the stack option on the series configuration object
 			stackItem.stack = stackOption;
 
@@ -752,15 +747,12 @@ function Chart(options, callback) {
 					
 					// Get dataMin and dataMax for X axes
 					if (isXAxis) {
-						
 						xData = series.xData;
 						dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
 						dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
 						
-						
 					// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 					} else {
-						
 						var isNegative,
 							pointStack,
 							key,
@@ -794,7 +786,6 @@ function Chart(options, callback) {
 							dataMax = 99;
 						}
 
-						
 						// get clipped and grouped data
 						series.processData();
 						
@@ -810,8 +801,7 @@ function Chart(options, callback) {
 						for (i = 0; i < yDataLength; i++) {
 							x = xData[i];
 							y = yData[i];
-							if (y !== null && y !== UNDEFINED &&
-								(cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max))) {
+							if (y !== null && y !== UNDEFINED) {
 
 								// read stacked values into a stack based on the x value,
 								// the sign of y and the stack key
@@ -842,24 +832,26 @@ function Chart(options, callback) {
 								} else if (hasModifyValue) {
 									y = series.modifyValue(y);
 								}
-
-								j = y.length;
-								if (j) { // array, like ohlc data
-									while (j--) {
-										if (y[j] !== null) {
-											activeYData[activeCounter++] = y[j];
-										}
-									}
-								} else {
-									activeYData[activeCounter++] = y;
-								}
-
-
-
+								
 								// get the smallest distance between points
 								if (i) {
 									distance = mathAbs(xData[i] - xData[i - 1]);
 									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
+								}
+	
+								// for points within the visible range, consider y extremes
+								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
+
+									j = y.length;
+									if (j) { // array, like ohlc data
+										while (j--) {
+											if (y[j] !== null) {
+												activeYData[activeCounter++] = y[j];
+											}
+										}
+									} else {
+										activeYData[activeCounter++] = y;
+									}
 								}
 							}
 						}
@@ -1287,7 +1279,7 @@ function Chart(options, callback) {
 		 */
 		function adjustTickAmount() {
 
-			if (maxTicks && !isDatetimeAxis && !categories && !isLinked && options.alignTicks !== false) { // only apply to linear scale
+			if (maxTicks && maxTicks[xOrY] && !isDatetimeAxis && !categories && !isLinked && options.alignTicks !== false) { // only apply to linear scale
 				var oldTickAmount = tickAmount,
 					calculatedTickAmount = tickPositions.length;
 
@@ -1345,6 +1337,9 @@ function Chart(options, callback) {
 				// get fixed positions based on tickInterval
 				setTickPositions();
 				
+				// record old values to decide whether a rescale is necessary later on (#540)
+				oldUserMin = userMin;
+				oldUserMax = userMax;
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
@@ -1410,7 +1405,8 @@ function Chart(options, callback) {
 				offsetRight = options.offsetRight || 0,
 				range = max - min,
 				pointRange = 0,
-				closestPointRange;
+				closestPointRange,
+				seriesClosestPointRange;
 
 			// basic values
 			axisLeft = pick(options.left, plotLeft + offsetLeft);
@@ -1425,10 +1421,11 @@ function Chart(options, callback) {
 			if (isXAxis) {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
-					if (!series.noSharedTooltip) {
+					seriesClosestPointRange = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ? 
-							mathMin(closestPointRange, series.closestPointRange) :
-							series.closestPointRange;
+							mathMin(closestPointRange, seriesClosestPointRange) :
+							seriesClosestPointRange;
 					}
 				});
 				// pointRange means the width reserved for each point, like in a column chart
@@ -1520,7 +1517,6 @@ function Chart(options, callback) {
 			labelOffset = 0; // reset
 
 			if (hasData || isLinked) {
-				
 				each(tickPositions, function (pos) {
 					if (!ticks[pos]) {
 						ticks[pos] = new Tick(pos);
@@ -1528,16 +1524,6 @@ function Chart(options, callback) {
 						ticks[pos].addLabel(); // update labels depending on tick interval
 					}
 
-				});
-
-				each(tickPositions, function (pos) {
-					ticks[pos].attachLabel();
-				});
-				each(tickPositions, function (pos) {
-					ticks[pos].computeBBox();
-				});
-				each(tickPositions, function (pos) {
-					ticks[pos].updateTransformLabel();
 				});
 
 				each(tickPositions, function (pos) {
@@ -2251,7 +2237,7 @@ function Chart(options, callback) {
 							attribs = {
 								'stroke-width': crosshairsOptions[i].width || 1,
 								stroke: crosshairsOptions[i].color || '#C0C0C0',
-								zIndex: 2
+								zIndex: crosshairsOptions[i].zIndex || 2
 							};
 							if (crosshairsOptions[i].dashStyle) {
 								attribs.dashstyle = crosshairsOptions[i].dashStyle;
@@ -2536,12 +2522,12 @@ function Chart(options, callback) {
 		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
 		 */
 		function hideTooltipOnMouseMove(e) {
-			if (e.event) {
-				e = e.event; // MooTools renames e.pageX to e.page.x
-			}
+			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
 			if (chartPosition &&
-					!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
-					e.pageY - chartPosition.top - plotTop)) {
+					!isInsidePlot(pageX - chartPosition.left - plotLeft,
+						pageY - chartPosition.top - plotTop)) {
 				resetTracker();
 			}
 		}
@@ -2679,10 +2665,11 @@ function Chart(options, callback) {
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
 
 							var xAxis = chart.xAxis[0],
+								halfPointRange = xAxis.pointRange / 2,
 								extremes = xAxis.getExtremes(),
-								newMin = xAxis.translate(mouseDownX - chartX, true),
-								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true);
-
+								newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
+								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange;
+								
 							// remove active points for shared tooltip
 							if (hoverPoints) {
 								each(hoverPoints, function (point) {
@@ -2718,7 +2705,10 @@ function Chart(options, callback) {
 			/*
 			 * When the mouse leaves the container, hide the tracking (tooltip).
 			 */
-			addEvent(container, 'mouseleave', resetTracker);
+			addEvent(container, 'mouseleave', function () {
+				resetTracker();
+				chartPosition = null; // also reset the chart position, used in #149 fix	
+			});
 
 			// issue #149 workaround
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
@@ -2880,7 +2870,7 @@ function Chart(options, callback) {
 			style = options.style,
 			itemStyle = options.itemStyle,
 			itemHoverStyle = options.itemHoverStyle,
-			itemHiddenStyle = options.itemHiddenStyle,
+			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = pInt(style.padding),
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
@@ -3488,7 +3478,7 @@ function Chart(options, callback) {
 				stop(clipRect);
 				clipRect.animate({ // for chart resize
 					width: chart.plotSizeX,
-					height: chart.plotSizeY
+					height: chart.plotSizeY + 1
 				});
 			}
 
@@ -3805,7 +3795,8 @@ function Chart(options, callback) {
 					// content overflow in IE
 				width: chartWidth + PX,
 				height: chartHeight + PX,
-				textAlign: 'left'
+				textAlign: 'left',
+				lineHeight: 'normal' // #427
 			}, optionsChart.style),
 			renderToClone || renderTo
 		);
@@ -4353,19 +4344,19 @@ function Chart(options, callback) {
 		});
 
 		// ==== Destroy local variables:
-		each([chartBackground, legend, tooltip, renderer, tracker], function (obj) {
+		each([chartBackground, plotBorder, plotBackground, legend, tooltip, renderer, tracker], function (obj) {
 			if (obj && obj.destroy) {
 				obj.destroy();
 			}
 		});
-		chartBackground = legend = tooltip = renderer = tracker = null;
+		chartBackground = plotBorder = plotBackground = legend = tooltip = renderer = tracker = null;
 
 		// remove container and all SVG
 		if (container) { // can break in IE when destroyed before finished loading
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
-				parentNode.removeChild(container);
+				discardElement(container);
 			}
 
 			// IE6 leak

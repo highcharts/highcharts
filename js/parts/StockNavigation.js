@@ -356,8 +356,7 @@ Highcharts.Scroller = function (chart) {
 						fill: scrollbarOptions.barBackgroundColor,
 						stroke: scrollbarOptions.barBorderColor,
 						'stroke-width': scrollbarStrokeWidth,
-						rx: barBorderRadius,
-						ry: barBorderRadius
+						r: barBorderRadius
 					})
 					.add(scrollbarGroup);
 
@@ -618,7 +617,8 @@ Highcharts.Scroller = function (chart) {
 				yAxis: yAxisIndex,
 				name: 'Navigator',
 				showInLegend: false,
-				isInternal: true
+				isInternal: true,
+				visible: true
 			});
 
 			// set the data back
@@ -633,7 +633,8 @@ Highcharts.Scroller = function (chart) {
 			// todo: use similiar hook when base series is not yet initialized
 			addEvent(baseSeries, 'updatedData', function () {
 
-				var baseExtremes = baseSeries.xAxis.getExtremes(),
+				var baseXAxis = baseSeries.xAxis,
+					baseExtremes = baseXAxis.getExtremes(),
 					baseMin = baseExtremes.min,
 					baseMax = baseExtremes.max,
 					baseDataMin = baseExtremes.dataMin,
@@ -644,15 +645,13 @@ Highcharts.Scroller = function (chart) {
 					newMax,
 					newMin,
 					doRedraw,
-					baseXAxis = baseSeries.xAxis,
+					navXData = navigatorSeries.xData,
 					hasSetExtremes = !!baseXAxis.setExtremes;
 					
 				// detect whether to move the range
-				stickToMax = baseMax >=
-					navigatorSeries.xData[navigatorSeries.xData.length - 1];
-				stickToMin = baseMin - range <=
-					navigatorSeries.xData[0];
-
+				stickToMax = baseMax >= navXData[navXData.length - 1];
+				stickToMin = baseMin <= baseDataMin;
+				
 				// set the navigator series data to the new data of the base series
 				if (!navigatorData) {
 					navigatorSeries.options.pointStart = baseSeries.xData[0];
