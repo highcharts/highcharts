@@ -4,16 +4,7 @@ $(function() {
 		// create the chart
 		chart = new Highcharts.StockChart({
 			chart : {
-				renderTo : 'container',
-				zoomType: 'x',
-				events: {
-					selection: function(e) {
-						console.log(
-							Highcharts.dateFormat(null, e.xAxis[0].min),
-							Highcharts.dateFormat(null, e.xAxis[0].max)
-						)
-					}
-				}
+				renderTo : 'container'
 			},
 
 			title: {
