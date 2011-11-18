@@ -401,6 +401,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	var tickPositions = [],
 		i,
+		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		units = unitsOption || [[
 			MILLISECOND, // unit name
@@ -530,19 +531,25 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 		// else, the interval is fixed and we use simple addition
 		} else {
 			time += interval * multitude;
+			
+			// mark new days if the time is dividable by day
+			if (interval <= timeUnits[HOUR] && !(time % timeUnits[DAY])) {
+				higherRanks[time] = DAY;
+			}
 		}
 
 		i++;
 	}
+	
 	// push the last time
 	tickPositions.push(time);
-
 
 	// record information on the chosen unit - for dynamic label formatter
 	tickPositions.info = {
 		unitName: unit[0],
 		unitRange: interval,
 		count: multitude,
+		higherRanks: higherRanks,
 		totalRange: interval * multitude
 	};
 

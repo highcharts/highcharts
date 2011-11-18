@@ -16,7 +16,7 @@ for ($i = sizeof ($lines) - 5000; $i < sizeof($lines); $i++) {
 	$date = $date[2] .'-'. $date[0] .'-'. $date[1] .' '. $cells[1];
 	$timestamp = strtotime($date);
 	
-	if ($timestamp > strtotime('2011-10-10')) {
+	if ($timestamp > strtotime('2011-10-06')) {
 		if (date('G', $timestamp) > 7 && date('G', $timestamp) < 16) {
 			$data[] = '['. $timestamp .'000,'. $cells[2] .','. $cells[3] .','. $cells[4] .','. $cells[5] ."]";
 		}	

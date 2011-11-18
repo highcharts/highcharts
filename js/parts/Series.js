@@ -1051,7 +1051,6 @@ Series.prototype = {
 			/*if (xAxis.options.ordinal) {
 				xValue = i;
 			}*/
-				
 			// get the plotX translation
 			point.plotX = series.xAxis.translate(xValue);
 
@@ -1709,7 +1708,6 @@ Series.prototype = {
 			areaPath = [],
 			attribs;
 
-
 		// divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
 			segmentPath = [];
@@ -1748,7 +1746,6 @@ Series.prototype = {
 			} else {
 				singlePoints.push(segment[0]);
 			}
-
 			// build the area
 			if (useArea) {
 				var areaSegmentPath = [],
