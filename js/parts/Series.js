@@ -944,16 +944,6 @@ Series.prototype = {
 			}
 		}
 		
-		// todo: allow merging in other series with other gaps
-		if (series.xAxis.options.ordinal) {
-			series.xAxis.ordinalPositions = [];
-			for (i = 0; i < processedXData.length; i++) {
-				series.xAxis.ordinalPositions.push(processedXData[i]);
-			}
-			series.xAxis.ordinalSlope = (processedXData[i - 1] - processedXData[0]) / (i - 1);
-			series.xAxis.ordinalOffset = processedXData[0];
-		}
-
 		series.cropped = cropped; // undefined or true
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
@@ -980,7 +970,9 @@ Series.prototype = {
 			point,
 			points = [],
 			i;
-
+			
+			
+		
 		if (!data && !hasGroupedData) {
 			var arr = [];
 			arr.length = dataOptions.length;
@@ -1016,6 +1008,7 @@ Series.prototype = {
 
 		series.data = data;
 		series.points = points;
+		
 	},
 
 	/**

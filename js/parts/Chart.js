@@ -1172,11 +1172,11 @@ function Chart(options, callback) {
 			} else {
 				tickInterval = (max - min) * tickPixelIntervalOption / (axisLength || 1);
 				
+				
 				// make them closer because the ordinal gaps make the ticks spread out or cluster
 				if (axis.ordinalSlope && axis.closestPointRange && secondPass) {
-					tickInterval /= (axis.ordinalSlope / axis.closestPointRange);
+					tickInterval /= axis.ordinalSlope / axis.closestPointRange;
 				}
-				
 			}
 			
 
@@ -1194,7 +1194,7 @@ function Chart(options, callback) {
 
 			// find the tick positions
 			if (isDatetimeAxis) {
-				tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek);							
+				tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek);									
 			} else {
 				setLinearTickPositions();
 			}
@@ -1238,7 +1238,7 @@ function Chart(options, callback) {
 				var i = tickPositions.length,
 					translated,
 					lastTranslated,
-					higherRanks = tickPositions.info.higherRanks;
+					higherRanks = isDatetimeAxis && tickPositions.info.higherRanks;
 				
 				while (i--) {
 					translated = translate(tickPositions[i]);

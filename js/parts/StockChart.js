@@ -203,3 +203,30 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 /* ****************************************************************************
  * End value compare logic                                                    *
  *****************************************************************************/
+
+
+/* ****************************************************************************
+ * Start ordinal axis logic                                                   *
+ *****************************************************************************/
+var seriesProcessDataNoOrdinal = seriesProto.processData;
+		
+seriesProto.processData = function() {
+
+	var series = this,
+		processedXData;
+	
+	// call base method
+	seriesProcessDataNoOrdinal.apply(series);
+	
+	processedXData = series.processedXData;
+	
+	// todo: allow merging in other series with other gaps
+	if (series.xAxis.options.ordinal) {
+		series.xAxis.ordinalPositions = [];
+		for (i = 0; i < processedXData.length; i++) {
+			series.xAxis.ordinalPositions.push(processedXData[i]);
+		}
+		series.xAxis.ordinalSlope = (processedXData[i - 1] - processedXData[0]) / (i - 1);
+		series.xAxis.ordinalOffset = processedXData[0];
+	}
+}
