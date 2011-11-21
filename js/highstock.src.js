@@ -10935,6 +10935,11 @@ Series.prototype = {
 				if (options.stacking && series.type !== 'areaspline') {
 					// follow stack back. Todo: implement areaspline
 					for (i = segment.length - 1; i >= 0; i--) {
+						// step line?
+						if (i<(segment.length-1) && options.step) {
+							areaSegmentPath.push(segment[i+1].plotX, segment[i].yBottom);
+						}
+						
 						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
 					}
 
