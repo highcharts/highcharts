@@ -164,7 +164,6 @@ function Chart(options, callback) {
 			ticks = {},
 			minorTicks = {},
 			alternateBands = {},
-			ordinalBreaks = [],
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
@@ -898,65 +897,6 @@ function Chart(options, callback) {
 		}
 		
 		/**
-		 * Translate from a linear axis value to the corresponding ordinal axis position. If there
-		 * are no gaps in the ordinal axis this will be the same. The translated value is the value
-		 * that the point would have if the axis were linear, using the same min and max.
-		 */
-		function value2ordinal (val) {
-			
-			var ordinalPositions = axis.ordinalPositions,
-				ordinalLength = ordinalPositions.length,
-				i,
-				lastN,
-				distance,
-				closest,
-				ordinalIndex;
-				
-			// first look for an exact match in the ordinalpositions array
-			i = ordinalLength;
-			while (ordinalIndex === UNDEFINED && i--) {
-				if (ordinalPositions[i] === val) {
-					ordinalIndex = i;
-				}
-			}
-			
-			// if that failed, find the intermediate position between the two nearest values
-			i = ordinalLength - 1;
-			while (ordinalIndex === UNDEFINED && i--) {
-				if (val > ordinalPositions[i]) { // interpolate
-					distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
-					ordinalIndex = i + distance;
-				}
-			}
-			
-			return axis.ordinalSlope * (ordinalIndex || 0) + axis.ordinalOffset;
-		}
-		
-		function ordinal2value (val) {
-			var ordinalPositions = axis.ordinalPositions,
-				ordinalSlope = axis.ordinalSlope,
-				ordinalOffset = axis.ordinalOffset,
-				i = ordinalPositions.length - 1,
-				linearEquivalentLeft,
-				linearEquivalentRight,
-				ret = val,
-				distance;
-				
-			// Loop down along the ordinal positions. When the linear equivalent of i matches
-			// an ordinal position, interpolate between the left and right values.
-			while (i--) {
-				linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
-				if (val > linearEquivalentLeft) {
-					linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
-					distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
-					ret = ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]);
-					break;
-				}
-			}
-			return ret;
-		}
-
-		/**
 		 * Translate from axis value to pixel position on the chart, or back
 		 *
 		 */
@@ -985,22 +925,13 @@ function Chart(options, callback) {
 					val = axisLength - val;
 				}
 				returnValue = val / localA + localMin; // from chart pixel to value
-				if (isLog && handleLog) {
-					returnValue = lin2log(returnValue);
-				}
-				
-				if (options.ordinal) {
-					returnValue = ordinal2value(returnValue);
+				if (axis.lin2val) { // log and ordinal axes
+					returnValue = axis.lin2val(returnValue);
 				}
 
 			} else { // normal translation, from axis value to pixel, relative to plot
-				if (isLog && handleLog) {
-					val = log2lin(val);
-				}
-				
-				
-				if (options.ordinal) {
-					val = value2ordinal(val);
+				if (axis.val2lin) { // log and ordinal axes
+					val = axis.val2lin(val);
 				}
 				
 				returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding);
@@ -1158,35 +1089,30 @@ function Chart(options, callback) {
 			} else if (isLinked && !tickIntervalOption &&
 					tickPixelIntervalOption === linkedParent.options.tickPixelInterval) {
 				tickInterval = linkedParent.tickInterval;
-			} else if (defined(tickIntervalOption)) {
-				tickInterval = tickIntervalOption;
-			} else if (categories) {
-				tickInterval = 1;
-				/*tickInterval = pick(
+			} else {
+				tickInterval = pick(
 					tickIntervalOption,
 					categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 						1 :
 						(max - min) * tickPixelIntervalOption / (axisLength || 1)
-				);*/
-				
-			} else {
-				tickInterval = (max - min) * tickPixelIntervalOption / (axisLength || 1);
-				
-				
-				// make them closer because the ordinal gaps make the ticks spread out or cluster
-				if (axis.ordinalSlope && axis.closestPointRange && secondPass) {
-					tickInterval /= axis.ordinalSlope / axis.closestPointRange;
-				}
+				);
 			}
 			
-
+			// for linear axes, get magnitude and normalize the interval
 			if (!isDatetimeAxis) { // linear
 				magnitude = math.pow(10, mathFloor(math.log(tickInterval) / math.LN10));
 				if (!defined(options.tickInterval)) {
 					tickInterval = normalizeTickInterval(tickInterval, null, magnitude, options);
 				}
 			}
-			axis.tickInterval = tickInterval; // record for linked axis
+			
+			// hook for extensions, used in Highstock ordinal axes
+			if (secondPass && axis.postProcessTickInterval) {
+				tickInterval = axis.postProcessTickInterval(tickInterval);
+			}
+			
+			// record the tick interval for linked axis
+			axis.tickInterval = tickInterval;
 
 			// get minorTickInterval
 			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
@@ -1199,65 +1125,11 @@ function Chart(options, callback) {
 				setLinearTickPositions();
 			}
 			
-			// don't show ticks withing a gap in the ordinal axis, where the space between
-			// two points is greater than clostestPointRange
-			// to do: when renewing, the new ordinal positions are not yet available
-			/*if (axis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
-				var n,
-					lastN,
-					i = 0,
-					ordinalPositions = axis.ordinalPositions,
-					start,
-					end;
-				
-				for (n in ordinalPositions) {
-					start = end = null;
-					
-					//console.log(lastN !== UNDEFINED && n - lastN > axis.closestPointRange * 1.5)
-					if (lastN !== UNDEFINED && n - lastN > axis.closestPointRange * 1.5) {
-						while (end === null && tickPositions[i] !== UNDEFINED) {
-							if (start === null && tickPositions[i] > lastN) {
-								start = i;
-							}
-							else if (start !== null && tickPositions[i] >= n) {
-								end = i;
-							}
-							i++;
-						}
-						
-						if (end !== null) {
-							//console.log('splice', start, end)
-							//tickPositions.splice(start, end - start);
-							//i = start; // continue from there
-						}
-					}
-					lastN = n;
-				}
-			}*/
-			if (axis.ordinalPositions && defined(tickPixelIntervalOption) && secondPass) { // check for squashed ticks
-				var i = tickPositions.length,
-					translated,
-					lastTranslated,
-					higherRanks = isDatetimeAxis && tickPositions.info.higherRanks;
-				
-				while (i--) {
-					translated = translate(tickPositions[i]);
-					
-					// remove ticks that are closer than 0.3 times the pixel interval from the one to the right 
-					if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.3) {
-						
-						tickPositions.splice(
-							// is this a higher ranked position with a normal position to the right?
-							higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]] ?
-								// yes: remove the lower ranked neighbour to the right
-								i + 1 :
-								// no: remove this one
-								i,
-						1);
-					}
-					lastTranslated = translated;
-				}
+			// post process positions, used in ordinal axes in Highstock
+			if (secondPass && axis.postProcessTickPositions) {
+				axis.postProcessTickPositions(tickPositions);
 			}
+			
 
 			if (!isLinked) {
 				
@@ -1666,19 +1538,6 @@ function Chart(options, callback) {
 					
 				});
 
-				/*if (axis.ordinalPositions) {
-					var i = axis.ordinalPositions.length - 1;
-					while (i--) {
-						if (axis.ordinalPositions[i + 1] - axis.ordinalPositions[i] > axis.closestPointRange * 1.5) {
-							addPlotBandOrLine({
-								value: axis.ordinalPositions[i + 1],
-								width: 1,
-								color: 'silver'
-							});
-						}
-					}
-				}*/
-
 				// alternate grid color
 				if (alternateGridColor) {
 					each(tickPositions, function (pos, i) {
@@ -1845,6 +1704,7 @@ function Chart(options, callback) {
 				tracker.resetTracker();
 			}
 			
+			// we need to filter the tick postions again
 			if (axis.ordinalPositions) {
 				setTickPositions(true);
 			}
@@ -1970,8 +1830,11 @@ function Chart(options, callback) {
 			addEvent(axis, eventType, events[eventType]);
 		}
 
-		// set min and max
-		//setScale();
+		// extend logarithmic axis
+		if (isLog) {
+			axis.val2lin = log2lin;
+			axis.lin2val = lin2log;
+		}
 
 	} // end Axis
 

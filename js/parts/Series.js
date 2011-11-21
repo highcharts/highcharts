@@ -628,21 +628,6 @@ Series.prototype = {
 			}
 		});
 		this.segments = segments;
-
-		// extension for ordinal breaks
-		each (segments, function(segment, no) {
-			var i = segment.length - 1;
-			//for (var i = 1; i < segment.length; i++) {
-			while (i--) {
-				if (segment[i+1] && segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * (series.options.gapSize || 5)) {
-					segments.splice( // insert after this one
-						no + 1,
-						0,
-						segment.splice(i + 1, segment.length - i)
-					);
-				}
-			}
-		});
 	},
 	/**
 	 * Set the series options by merging from the options tree
@@ -1041,9 +1026,6 @@ Series.prototype = {
 				pointStack,
 				pointStackTotal;
 				
-			/*if (xAxis.options.ordinal) {
-				xValue = i;
-			}*/
 			// get the plotX translation
 			point.plotX = series.xAxis.translate(xValue);
 
