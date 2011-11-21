@@ -116,6 +116,7 @@ var doc = document,
 	// default adapters below.
 	each = adapter.each,
 	grep = adapter.grep,
+	offset = adapter.offset,
 	map = adapter.map,
 	merge = adapter.merge,
 	addEvent = adapter.addEvent,
@@ -449,29 +450,6 @@ dateFormat = function (format, timestamp, capitalize) {
 	// Optionally capitalize the string and return
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
-
-/**
- * Loop up the node tree and add offsetWidth and offsetHeight to get the
- * total page offset for a given element. Used by Opera and iOS on hover and
- * all browsers on point click.
- *
- * @param {Object} el
- *
- */
-function getPosition(el) {
-	var p = { left: el.offsetLeft, top: el.offsetTop };
-	el = el.offsetParent;
-	while (el) {
-		p.left += el.offsetLeft;
-		p.top += el.offsetTop;
-		if (el !== doc.body && el !== doc.documentElement) {
-			p.left -= el.scrollLeft;
-			p.top -= el.scrollTop;
-		}
-		el = el.offsetParent;
-	}
-	return p;
-}
 
 /**
  * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
@@ -967,6 +945,13 @@ if (!globalAdapter && win.jQuery) {
 	merge = function () {
 		var args = arguments;
 		return jQ.extend(true, null, args[0], args[1], args[2], args[3]);
+	};
+
+	/**
+	 * Get the position of an element relative to the top left of the page
+	 */
+	offset = function (el) {
+		return jQ(el).offset();
 	};
 
 	/**
@@ -4876,7 +4861,7 @@ function Chart(options, callback) {
 		legend,
 		legendWidth,
 		legendHeight,
-		chartPosition,// = getPosition(container),
+		chartPosition,
 		hasCartesianSeries = optionsChart.showAxes,
 		isResizing = 0,
 		axes = [],
@@ -6969,25 +6954,18 @@ function Chart(options, callback) {
 			// iOS
 			ePos = e.touches ? e.touches.item(0) : e;
 
-			// in certain cases, get mouse position
-			if (e.type !== 'mousemove' || win.opera || pageZoomFix) { // only Opera needs position on mouse move, see below
-				chartPosition = getPosition(container);
-				chartPosLeft = chartPosition.left;
-				chartPosTop = chartPosition.top;
-			}
-
+			// get mouse position
+			chartPosition = offset(container);
+			chartPosLeft = chartPosition.left;
+			chartPosTop = chartPosition.top;
+			
 			// chartX and chartY
 			if (isIE) { // IE including IE9 that has pageX but in a different meaning
 				chartX = e.x;
 				chartY = e.y;
 			} else {
-				if (ePos.layerX === UNDEFINED) { // Opera and iOS
-					chartX = ePos.pageX - chartPosLeft;
-					chartY = ePos.pageY - chartPosTop;
-				} else {
-					chartX = e.layerX;
-					chartY = e.layerY;
-				}
+				chartX = ePos.pageX - chartPosLeft;
+				chartY = ePos.pageY - chartPosTop;
 			}
 
 			// correct for page zoom bug in WebKit
@@ -7231,11 +7209,6 @@ function Chart(options, callback) {
 				var chartX = e.chartX,
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
-
-				// cache chart position for issue #149 fix
-				if (!chartPosition) {
-					chartPosition = getPosition(container);
-				}
 
 				// on touch devices, only trigger click if a handler is defined
 				if (hasTouch && e.type === 'touchstart') {
