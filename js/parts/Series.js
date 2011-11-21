@@ -1711,6 +1711,21 @@ Series.prototype = {
 						point.plotX,
 						point.plotY
 					);
+					
+					if(i == (segment.length-1) && options.step) {
+						var lastPoint = segment[i - 1];
+						var newPointX = point.plotX + (point.plotX - lastPoint.plotX);
+						// draw the line one step further
+						segmentPath.push(
+							newPointX,
+							point.plotY
+						);
+						// draw the line to point zero
+						segmentPath.push(
+							newPointX,
+							point.yBottom
+						);
+					}
 				}
 			});
 
@@ -1738,6 +1753,13 @@ Series.prototype = {
 						// step line?
 						if (i<(segment.length-1) && options.step) {
 							areaSegmentPath.push(segment[i+1].plotX, segment[i].yBottom);
+						}
+						
+						// step line: if it's the last point, the step line has to draw one point further
+						if(i == (segment.length-1) && options.step) {
+							var nextPoint = segment[i - 1];
+							var newPointX = segment[i].plotX + (segment[i].plotX - nextPoint.plotX);
+							areaSegmentPath.push(newPointX, segment[i].yBottom);
 						}
 						
 						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
