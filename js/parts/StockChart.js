@@ -379,8 +379,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			
 			// remove duplicates
 			if (xAxis.series.length > 1) {
-				
-				ordinalPositions.sort();
+			
+				ordinalPositions.sort(function(a, b) {
+					return a - b; // without a custom function it is sorted as strings
+				});
 			
 				i = ordinalPositions.length - 1;
 				while (i--) {
@@ -394,6 +396,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			i = ordinalPositions.length;
 			xAxis.ordinalSlope = (ordinalPositions[i - 1] - ordinalPositions[0]) / (i - 1);
 			xAxis.ordinalOffset = ordinalPositions[0];
+			
 		}
 	};
 	
