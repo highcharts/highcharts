@@ -70,7 +70,7 @@ function Chart(options, callback) {
 		legend,
 		legendWidth,
 		legendHeight,
-		chartPosition,// = getPosition(container),
+		chartPosition,
 		hasCartesianSeries = optionsChart.showAxes,
 		isResizing = 0,
 		axes = [],
@@ -2088,7 +2088,7 @@ function Chart(options, callback) {
 							attribs = {
 								'stroke-width': crosshairsOptions[i].width || 1,
 								stroke: crosshairsOptions[i].color || '#C0C0C0',
-								zIndex: 2
+								zIndex: crosshairsOptions[i].zIndex || 2
 							};
 							if (crosshairsOptions[i].dashStyle) {
 								attribs.dashstyle = crosshairsOptions[i].dashStyle;
@@ -2163,25 +2163,18 @@ function Chart(options, callback) {
 			// iOS
 			ePos = e.touches ? e.touches.item(0) : e;
 
-			// in certain cases, get mouse position
-			if (e.type !== 'mousemove' || win.opera || pageZoomFix) { // only Opera needs position on mouse move, see below
-				chartPosition = getPosition(container);
-				chartPosLeft = chartPosition.left;
-				chartPosTop = chartPosition.top;
-			}
-
+			// get mouse position
+			chartPosition = offset(container);
+			chartPosLeft = chartPosition.left;
+			chartPosTop = chartPosition.top;
+			
 			// chartX and chartY
 			if (isIE) { // IE including IE9 that has pageX but in a different meaning
 				chartX = e.x;
 				chartY = e.y;
 			} else {
-				if (ePos.layerX === UNDEFINED) { // Opera and iOS
-					chartX = ePos.pageX - chartPosLeft;
-					chartY = ePos.pageY - chartPosTop;
-				} else {
-					chartX = e.layerX;
-					chartY = e.layerY;
-				}
+				chartX = ePos.pageX - chartPosLeft;
+				chartY = ePos.pageY - chartPosTop;
 			}
 
 			// correct for page zoom bug in WebKit
@@ -2425,11 +2418,6 @@ function Chart(options, callback) {
 				var chartX = e.chartX,
 					chartY = e.chartY,
 					isOutsidePlot = !isInsidePlot(chartX - plotLeft, chartY - plotTop);
-
-				// cache chart position for issue #149 fix
-				if (!chartPosition) {
-					chartPosition = getPosition(container);
-				}
 
 				// on touch devices, only trigger click if a handler is defined
 				if (hasTouch && e.type === 'touchstart') {

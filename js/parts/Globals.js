@@ -101,6 +101,7 @@ var doc = document,
 	// default adapters below.
 	each = adapter.each,
 	grep = adapter.grep,
+	offset = adapter.offset,
 	map = adapter.map,
 	merge = adapter.merge,
 	addEvent = adapter.addEvent,

@@ -158,6 +158,15 @@ return {
 	each: function (arr, fn) {
 		$A(arr).each(fn);
 	},
+	
+	/**
+	 * Get the cumulative offset relative to the top left of the page. This method, unlike its
+	 * jQuery and MooTools counterpart, still suffers from issue #208 regarding the position
+	 * of a chart within a fixed container.
+	 */
+	offset: function (el) {
+		return $(el).cumulativeOffset();
+	},
 
 	// fire an event based on an event name (event) and an object (el).
 	// again, el may not be a dom element
