@@ -305,24 +305,26 @@ function Chart(options, callback) {
 					pos = tick.pos,
 					labelOptions = options.labels,
 					gridLine = tick.gridLine,
-					gridLineWidth = major ? options.gridLineWidth : options.minorGridLineWidth,
-					gridLineColor = major ? options.gridLineColor : options.minorGridLineColor,
-					dashStyle = major ?
-						options.gridLineDashStyle :
-						options.minorGridLineDashStyle,
+					gridPrefix = tickPositions.gaps && tickPositions.gaps[pos] && options.gapGridLineWidth ?
+						'gapGrid' : // mark the gap in an ordinal axis (stock charts)
+						major ? 'grid' : 'minorGrid',
+					tickPrefix = major ? 'tick' : 'minorTick',
+					gridLineWidth = options[gridPrefix + 'LineWidth'],
+					gridLineColor = options[gridPrefix + 'LineColor'],
+					dashStyle = options[gridPrefix + 'LineDashStyle'],
+					tickLength = options[tickPrefix + 'Length'],
+					tickWidth = options[tickPrefix + 'Width'] || 0,
+					tickColor = options[tickPrefix + 'Color'],
+					tickPosition = options[tickPrefix + 'Position'],
 					gridLinePath,
 					mark = tick.mark,
 					markPath,
-					tickLength = major ? options.tickLength : options.minorTickLength,
-					tickWidth = major ? options.tickWidth : (options.minorTickWidth || 0),
-					tickColor = major ? options.tickColor : options.minorTickColor,
-					tickPosition = major ? options.tickPosition : options.minorTickPosition,
 					step = labelOptions.step,
 					cHeight = (old && oldChartHeight) || chartHeight,
 					attribs,
 					x,
 					y;
-
+					
 				// get x and y position for ticks and labels
 				x = horiz ?
 					translate(pos + tickmarkOffset, null, null, old) + transB :
@@ -1098,17 +1100,17 @@ function Chart(options, callback) {
 				);
 			}
 			
+			// hook for extensions, used in Highstock ordinal axes
+			if (secondPass && axis.postProcessTickInterval) {
+				tickInterval = axis.postProcessTickInterval(tickInterval);
+			}
+						
 			// for linear axes, get magnitude and normalize the interval
 			if (!isDatetimeAxis) { // linear
 				magnitude = math.pow(10, mathFloor(math.log(tickInterval) / math.LN10));
 				if (!defined(options.tickInterval)) {
 					tickInterval = normalizeTickInterval(tickInterval, null, magnitude, options);
 				}
-			}
-			
-			// hook for extensions, used in Highstock ordinal axes
-			if (secondPass && axis.postProcessTickInterval) {
-				tickInterval = axis.postProcessTickInterval(tickInterval);
 			}
 			
 			// record the tick interval for linked axis

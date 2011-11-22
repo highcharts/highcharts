@@ -15,6 +15,7 @@ Highcharts.StockChart = function (options, callback) {
 					}
 				}
 			},
+			gapSize: 5,
 			shadow: false,
 			states: {
 				hover: {
@@ -29,6 +30,8 @@ Highcharts.StockChart = function (options, callback) {
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
 		return merge({ // defaults
+				gapGridLineWidth: 1,
+				gapGridLineColor: 'silver',
 				minPadding: 0,
 				maxPadding: 0,
 				title: {
@@ -210,8 +213,145 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  *****************************************************************************/
 
 (function() {
-	var baseProcessData = seriesProto.processData,
+	var baseInit = seriesProto.init,
+		baseProcessData = seriesProto.processData,
 		baseGetSegments = seriesProto.getSegments;
+		
+	seriesProto.init = function() {
+		var series = this,
+			xAxis;
+		
+		// call base method
+		baseInit.apply(series, arguments);
+		
+		// xAxis is set in base init
+		xAxis = series.xAxis;
+		
+		if (xAxis && xAxis.options.ordinal) {
+			
+			/**
+			 * Translate from a linear axis value to the corresponding ordinal axis position. If there
+			 * are no gaps in the ordinal axis this will be the same. The translated value is the value
+			 * that the point would have if the axis were linear, using the same min and max.
+			 */
+			xAxis.val2lin = function (val) {
+				
+				var ordinalPositions = xAxis.ordinalPositions,
+					ordinalLength = ordinalPositions.length,
+					i,
+					lastN,
+					distance,
+					closest,
+					ordinalIndex;
+					
+				// first look for an exact match in the ordinalpositions array
+				i = ordinalLength;
+				while (ordinalIndex === UNDEFINED && i--) {
+					if (ordinalPositions[i] === val) {
+						ordinalIndex = i;
+					}
+				}
+				
+				// if that failed, find the intermediate position between the two nearest values
+				i = ordinalLength - 1;
+				while (ordinalIndex === UNDEFINED && i--) {
+					if (val > ordinalPositions[i]) { // interpolate
+						distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
+						ordinalIndex = i + distance;
+					}
+				}
+				
+				return xAxis.ordinalSlope * (ordinalIndex || 0) + xAxis.ordinalOffset;
+			};
+			
+			/**
+			 * Translate from linear (internal) to axis value
+			 */
+			xAxis.lin2val = function (val) {
+				var ordinalPositions = xAxis.ordinalPositions,
+					ordinalSlope = xAxis.ordinalSlope,
+					ordinalOffset = xAxis.ordinalOffset,
+					i = ordinalPositions.length - 1,
+					linearEquivalentLeft,
+					linearEquivalentRight,
+					ret = val,
+					distance;
+					
+				// Loop down along the ordinal positions. When the linear equivalent of i matches
+				// an ordinal position, interpolate between the left and right values.
+				while (i--) {
+					linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
+					if (val > linearEquivalentLeft) {
+						linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
+						distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
+						ret = ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]);
+						break;
+					}
+				}
+				return ret;
+			};
+			
+			/**
+			 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
+			 */
+			xAxis.postProcessTickInterval = function (tickInterval) {					
+				return tickInterval / (xAxis.ordinalSlope / xAxis.closestPointRange);
+			};
+			
+			/**
+			 * Don't show ticks withing a gap in the ordinal axis, where the space between
+			 * two points is greater than a portion of the tick pixel interval
+			 */
+			xAxis.postProcessTickPositions = function (tickPositions) {
+				var options = xAxis.options,
+					tickPixelIntervalOption = options.tickPixelInterval,
+					gaps = {};
+					
+					
+				if (defined(tickPixelIntervalOption)) { // check for squashed ticks
+					var i = tickPositions.length,
+						translated,
+						lastTranslated,
+						tickInfo = tickPositions.info,
+						higherRanks = tickInfo ? tickInfo.higherRanks : [];
+					
+					while (i--) {
+						translated = xAxis.translate(tickPositions[i]);
+						
+						// remove ticks that are closer than 0.3 times the pixel interval from the one to the right 
+						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.3) {
+							
+							
+							tickPositions.splice(
+								// is this a higher ranked position with a normal position to the right?
+								higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]] ?
+									// yes: remove the lower ranked neighbour to the right
+									i + 1 :
+									// no: remove this one
+									i,
+							1);
+							
+							// when tick positions are removed, register the next one to the right or with higher rank
+							// so that we can add a grid line to ticks 
+							if (i) { // don't mark the first tick 
+								gaps[tickPositions[i]] = 1;
+							}
+						}
+						lastTranslated = translated;
+					}
+					
+					// register gaps on the tickPositions array and overwrite previous gaps
+					tickPositions.gaps = gaps;
+				}
+			};
+			
+			/**
+			 * The registry over ordinal positions in use on the axis' series
+			 */
+			xAxis.ordinalPositions = [];
+			
+		}
+	};
 			
 	/**
 	 * Extend processData by indexing the processed x positions in the x axis so that
@@ -220,134 +360,40 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	seriesProto.processData = function() {
 	
 		var series = this,
+			i,
 			xAxis = series.xAxis,
-			processedXData;
+			processedXData,
+			ordinalPositions = xAxis.ordinalPositions;
 		
 		// call base method
 		baseProcessData.apply(series);
 		
-		// get the processed data
-		processedXData = series.processedXData;
-		
-		// todo: allow merging in other series with other gaps
-		if (xAxis.options.ordinal) {
-			xAxis.ordinalPositions = [];
-			// to do: for one series charts, ordinalPositions are the same as xData. Use [].concat.
-			// check if this can be done to extend with more series.
-			for (i = 0; i < processedXData.length; i++) {
-				xAxis.ordinalPositions.push(processedXData[i]);
-			}
-			xAxis.ordinalSlope = (processedXData[i - 1] - processedXData[0]) / (i - 1);
-			xAxis.ordinalOffset = processedXData[0];
+		// apply the ordinal logic
+		if (ordinalPositions) {
 			
-			if (!xAxis.extendedForOrdinal) { // to do: use prototype extension once that is implemented
+			// get the processed data
+			processedXData = series.processedXData;
+		
+			// concatenate the processed X data into the existing positions, or the empty array 
+			xAxis.ordinalPositions = ordinalPositions = ordinalPositions.concat(processedXData);
+			
+			// remove duplicates
+			if (xAxis.series.length > 1) {
 				
-				/**
-				 * Translate from a linear axis value to the corresponding ordinal axis position. If there
-				 * are no gaps in the ordinal axis this will be the same. The translated value is the value
-				 * that the point would have if the axis were linear, using the same min and max.
-				 */
-				xAxis.val2lin = function (val) {
-					
-					var ordinalPositions = xAxis.ordinalPositions,
-						ordinalLength = ordinalPositions.length,
-						i,
-						lastN,
-						distance,
-						closest,
-						ordinalIndex;
-						
-					// first look for an exact match in the ordinalpositions array
-					i = ordinalLength;
-					while (ordinalIndex === UNDEFINED && i--) {
-						if (ordinalPositions[i] === val) {
-							ordinalIndex = i;
-						}
+				ordinalPositions.sort();
+			
+				i = ordinalPositions.length - 1;
+				while (i--) {
+					if (ordinalPositions[i] === ordinalPositions[i + 1]) {
+						ordinalPositions.splice(i, 1);
 					}
-					
-					// if that failed, find the intermediate position between the two nearest values
-					i = ordinalLength - 1;
-					while (ordinalIndex === UNDEFINED && i--) {
-						if (val > ordinalPositions[i]) { // interpolate
-							distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
-							ordinalIndex = i + distance;
-						}
-					}
-					
-					return xAxis.ordinalSlope * (ordinalIndex || 0) + xAxis.ordinalOffset;
-				};
-				
-				/**
-				 * Translate from linear (internal) to axis value
-				 */
-				xAxis.lin2val = function (val) {
-					var ordinalPositions = xAxis.ordinalPositions,
-						ordinalSlope = xAxis.ordinalSlope,
-						ordinalOffset = xAxis.ordinalOffset,
-						i = ordinalPositions.length - 1,
-						linearEquivalentLeft,
-						linearEquivalentRight,
-						ret = val,
-						distance;
-						
-					// Loop down along the ordinal positions. When the linear equivalent of i matches
-					// an ordinal position, interpolate between the left and right values.
-					while (i--) {
-						linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
-						if (val > linearEquivalentLeft) {
-							linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
-							distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
-							ret = ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]);
-							break;
-						}
-					}
-					return ret;
-				};
-				
-				/**
-				 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
-				 */
-				xAxis.postProcessTickInterval = function (tickInterval) {					
-					return tickInterval / (xAxis.ordinalSlope / xAxis.closestPointRange);
-				};
-				
-				/**
-				 * Don't show ticks withing a gap in the ordinal axis, where the space between
-				 * two points is greater than a portion of the tick pixel interval
-				 */
-				xAxis.postProcessTickPositions = function (tickPositions) {
-					var options = xAxis.options,
-						tickPixelIntervalOption = options.tickPixelInterval;
-						
-					if (defined(tickPixelIntervalOption)) { // check for squashed ticks
-						var i = tickPositions.length,
-							translated,
-							lastTranslated,
-							higherRanks = tickPositions.info.higherRanks;
-						
-						while (i--) {
-							translated = xAxis.translate(tickPositions[i]);
-							
-							// remove ticks that are closer than 0.3 times the pixel interval from the one to the right 
-							if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.3) {
-								
-								tickPositions.splice(
-									// is this a higher ranked position with a normal position to the right?
-									higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]] ?
-										// yes: remove the lower ranked neighbour to the right
-										i + 1 :
-										// no: remove this one
-										i,
-								1);
-							}
-							lastTranslated = translated;
-						}
-					}
-				};
-				
-				// extend only once
-				xAxis.extendedForOrdinal = true;
+				}
 			}
+			
+			// record the slope and offset to compute the linear values from the array index
+			i = ordinalPositions.length;
+			xAxis.ordinalSlope = (ordinalPositions[i - 1] - ordinalPositions[0]) / (i - 1);
+			xAxis.ordinalOffset = ordinalPositions[0];
 		}
 	};
 	
@@ -358,27 +404,31 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	seriesProto.getSegments = function() {
 		
 		var series = this,
-			segments;
+			segments,
+			gapSize = series.options.gapSize;
 	
 		// call base method
 		baseGetSegments.apply(series);
 		
-		// properties
-		segments = series.segments;
+		if (gapSize) {
 		
-		// extension for ordinal breaks
-		each (segments, function(segment, no) {
-			var i = segment.length - 1;
-			while (i--) {
-				if (segment[i+1] && segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * (series.options.gapSize || 5)) {
-					segments.splice( // insert after this one
-						no + 1,
-						0,
-						segment.splice(i + 1, segment.length - i)
-					);
+			// properties
+			segments = series.segments;
+			
+			// extension for ordinal breaks
+			each (segments, function(segment, no) {
+				var i = segment.length - 1;
+				while (i--) {
+					if (segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * gapSize) {
+						segments.splice( // insert after this one
+							no + 1,
+							0,
+							segment.splice(i + 1, segment.length - i)
+						);
+					}
 				}
-			}
-		});
+			});
+		}
 	};
 })();
 
