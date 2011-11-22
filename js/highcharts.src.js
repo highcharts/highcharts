@@ -3762,6 +3762,26 @@ var VMLElement = extendClass(SVGElement, {
 	},
 
 	/**
+	 * In IE8 documentMode 8, we need to recursively set the visibility down in the DOM
+	 * tree for nested groups. Related to #61, #586.
+	 */
+	toggleChildren: function (element, visibility) {
+		var childNodes = element.childNodes,
+			i = childNodes.length;
+			
+		while (i--) {
+			
+			// apply the visibility
+			css(childNodes[i], { visibility: visibility });
+			
+			// we have a nested group, apply it to its children again
+			if (childNodes[i].nodeName === 'DIV') {
+				this.toggleChildren(childNodes[i], visibility);
+			}
+		}
+	},
+
+	/**
 	 * Get or set attributes
 	 */
 	attr: function (hash, val) {
@@ -3775,7 +3795,6 @@ var VMLElement = extendClass(SVGElement, {
 			nodeName = element.nodeName,
 			renderer = wrapper.renderer,
 			symbolName = wrapper.symbolName,
-			childNodes,
 			hasSetSymbolSize,
 			shadows = wrapper.shadows,
 			skipAttr,
@@ -3864,15 +3883,11 @@ var VMLElement = extendClass(SVGElement, {
 					// directly mapped to css
 					} else if (key === 'zIndex' || key === 'visibility') {
 
-						// issue 61 workaround
+						// workaround for #61 and #586
 						if (docMode8 && key === 'visibility' && nodeName === 'DIV') {
 							element.gVis = value;
-							childNodes = element.childNodes;
-							i = childNodes.length;
-							while (i--) {
-								css(childNodes[i], { visibility: value });
-							}
-							if (value === VISIBLE) { // issue 74
+							wrapper.toggleChildren(element, value);
+							if (value === VISIBLE) { // #74
 								value = null;
 							}
 						}
