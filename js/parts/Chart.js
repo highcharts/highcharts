@@ -3391,14 +3391,16 @@ function Chart(options, callback) {
 	 * Hide the loading layer
 	 */
 	function hideLoading() {
-		animate(loadingDiv, {
-			opacity: 0
-		}, {
-			duration: options.loading.hideDuration || 100,
-			complete: function () {
-				css(loadingDiv, { display: NONE });
-			}
-		});
+		if (loadingDiv) {
+			animate(loadingDiv, {
+				opacity: 0
+			}, {
+				duration: options.loading.hideDuration || 100,
+				complete: function () {
+					css(loadingDiv, { display: NONE });
+				}
+			});
+		}
 		loadingShown = false;
 	}
 
