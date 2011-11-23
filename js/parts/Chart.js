@@ -839,7 +839,7 @@ function Chart(options, callback) {
 								}
 	
 								// for points within the visible range, consider y extremes
-								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
+								if (cropped || (x >= xExtremes.min && x <= xExtremes.max)) {
 
 									j = y.length;
 									if (j) { // array, like ohlc data
