@@ -238,7 +238,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 */
 			xAxis.beforeSetTickPositions = function() {
 				var len,
-					ordinalPositions = [];
+					ordinalPositions = [],
+					useOrdinal = false,
+					dist;
 				
 				// apply the ordinal logic
 				if (xAxis.options.ordinal) {
@@ -246,7 +248,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					each (xAxis.series, function(series, i) {
 					
 						// concatenate the processed X data into the existing positions, or the empty array 
-						xAxis.ordinalPositions = ordinalPositions = ordinalPositions.concat(series.processedXData);
+						ordinalPositions = ordinalPositions.concat(series.processedXData);
 						
 						// if we're dealing with more than one series, remove duplicates
 						if (i) {
@@ -264,10 +266,30 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						}
 					});
 					
+					// cache the length
+					len = ordinalPositions.length;					
+					
+					// Check if we really need the overhead of mapping axis data against the ordinal positions.
+					// If the series consist of evenly spaced data any way, we don't need any ordinal logic.
+					if (len > 2) { // two points have equal distance by default
+						dist = ordinalPositions[1] - ordinalPositions[0];
+						i = len - 1;					
+						while (i-- && !useOrdinal) {
+							if (ordinalPositions[i + 1] - ordinalPositions[i] !== dist) {
+								useOrdinal = true;
+							} 
+						}
+					}
+					
 					// record the slope and offset to compute the linear values from the array index
-					len = ordinalPositions.length;
-					xAxis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
-					xAxis.ordinalOffset = ordinalPositions[0];
+					if (useOrdinal) {
+						xAxis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
+						xAxis.ordinalOffset = ordinalPositions[0];					
+						xAxis.ordinalPositions = ordinalPositions;
+					
+					} else {
+						xAxis.ordinalPositions = UNDEFINED;
+					}
 				}
 			};
 			
@@ -277,59 +299,76 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * that the point would have if the axis were linear, using the same min and max.
 			 */
 			xAxis.val2lin = function (val) {
-				var ordinalPositions = xAxis.ordinalPositions,
-					ordinalLength = ordinalPositions.length,
-					i,
-					lastN,
-					distance,
-					closest,
-					ordinalIndex;
+				
+				var ordinalPositions = xAxis.ordinalPositions;
+				
+				if (!ordinalPositions) {
+					return val;
+				
+				} else {
+				
+					var ordinalPositions = ordinalPositions,
+						ordinalLength = ordinalPositions.length,
+						i,
+						lastN,
+						distance,
+						closest,
+						ordinalIndex;
+						
+					// first look for an exact match in the ordinalpositions array
+					i = ordinalLength;
+					while (ordinalIndex === UNDEFINED && i--) {
+						if (ordinalPositions[i] === val) {
+							ordinalIndex = i;
+						}
+					}
 					
-				// first look for an exact match in the ordinalpositions array
-				i = ordinalLength;
-				while (ordinalIndex === UNDEFINED && i--) {
-					if (ordinalPositions[i] === val) {
-						ordinalIndex = i;
+					// if that failed, find the intermediate position between the two nearest values
+					i = ordinalLength - 1;
+					while (ordinalIndex === UNDEFINED && i--) {
+						if (val > ordinalPositions[i]) { // interpolate
+							distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
+							ordinalIndex = i + distance;
+						}
 					}
+					
+					return xAxis.ordinalSlope * (ordinalIndex || 0) + xAxis.ordinalOffset;
 				}
-				
-				// if that failed, find the intermediate position between the two nearest values
-				i = ordinalLength - 1;
-				while (ordinalIndex === UNDEFINED && i--) {
-					if (val > ordinalPositions[i]) { // interpolate
-						distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
-						ordinalIndex = i + distance;
-					}
-				}
-				
-				return xAxis.ordinalSlope * (ordinalIndex || 0) + xAxis.ordinalOffset;
 			};
 			
 			/**
 			 * Translate from linear (internal) to axis value
 			 */
 			xAxis.lin2val = function (val) {
-				var ordinalPositions = xAxis.ordinalPositions,
-					ordinalSlope = xAxis.ordinalSlope,
-					ordinalOffset = xAxis.ordinalOffset,
-					i = mathMax(ordinalPositions.length - 1, 0),
-					linearEquivalentLeft,
-					linearEquivalentRight,
-					ret = val,
-					distance;
-					
-				// Loop down along the ordinal positions. When the linear equivalent of i matches
-				// an ordinal position, interpolate between the left and right values.
-				while (i--) {
-					linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
-					if (val > linearEquivalentLeft) {
-						linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
-						distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
-						ret = ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]);
-						break;
+				
+				var ordinalPositions = xAxis.ordinalPositions;
+				
+				if (!ordinalPositions) {
+					return val;
+				
+				} else {
+				
+					var ordinalSlope = xAxis.ordinalSlope,
+						ordinalOffset = xAxis.ordinalOffset,
+						i = ordinalPositions.length - 1,
+						linearEquivalentLeft,
+						linearEquivalentRight,
+						ret = val,
+						distance;
+						
+					// Loop down along the ordinal positions. When the linear equivalent of i matches
+					// an ordinal position, interpolate between the left and right values.
+					while (i--) {
+						linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
+						if (val > linearEquivalentLeft) {
+							linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
+							distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
+							ret = ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]);
+							break;
+						}
 					}
+					return ret;
 				}
-				return ret;
 			};
 			
 			/**
