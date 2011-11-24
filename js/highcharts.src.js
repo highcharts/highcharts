@@ -6254,9 +6254,10 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				labelOffset +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) +
-				titleMargin;
+				pick(axisTitleOptions.offset, // docs
+					labelOffset + titleMargin +
+					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				);
 
 			axisOffset[side] = mathMax(
 				axisOffset[side],
