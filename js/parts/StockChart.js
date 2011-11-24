@@ -227,7 +227,49 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 		// xAxis is set in base init
 		xAxis = series.xAxis;
 		
-		if (xAxis && xAxis.options.ordinal) {
+		if (xAxis && xAxis.options.ordinal && !xAxis.hasOrdinalExtension) {
+				
+			xAxis.hasOrdinalExtension = true;
+		
+			/**
+			 * Calculate the ordinal positions before tick positions are calculated. 
+			 * TODO: When we rewrite Axis to use a prototype model, this should be implemented
+			 * as a method extension to avoid overhead in the core.
+			 */
+			xAxis.beforeSetTickPositions = function() {
+				var len,
+					ordinalPositions = [];
+				
+				// apply the ordinal logic
+				if (xAxis.options.ordinal) {
+					
+					each (xAxis.series, function(series, i) {
+					
+						// concatenate the processed X data into the existing positions, or the empty array 
+						xAxis.ordinalPositions = ordinalPositions = ordinalPositions.concat(series.processedXData);
+						
+						// if we're dealing with more than one series, remove duplicates
+						if (i) {
+						
+							ordinalPositions.sort(function(a, b) {
+								return a - b; // without a custom function it is sorted as strings
+							});
+						
+							i = ordinalPositions.length - 1;
+							while (i--) {
+								if (ordinalPositions[i] === ordinalPositions[i + 1]) {
+									ordinalPositions.splice(i, 1);
+								}
+							}
+						}
+					});
+					
+					// record the slope and offset to compute the linear values from the array index
+					len = ordinalPositions.length;
+					xAxis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
+					xAxis.ordinalOffset = ordinalPositions[0];
+				}
+			};
 			
 			/**
 			 * Translate from a linear axis value to the corresponding ordinal axis position. If there
@@ -235,7 +277,6 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * that the point would have if the axis were linear, using the same min and max.
 			 */
 			xAxis.val2lin = function (val) {
-				
 				var ordinalPositions = xAxis.ordinalPositions,
 					ordinalLength = ordinalPositions.length,
 					i,
@@ -271,7 +312,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				var ordinalPositions = xAxis.ordinalPositions,
 					ordinalSlope = xAxis.ordinalSlope,
 					ordinalOffset = xAxis.ordinalOffset,
-					i = ordinalPositions.length - 1,
+					i = mathMax(ordinalPositions.length - 1, 0),
 					linearEquivalentLeft,
 					linearEquivalentRight,
 					ret = val,
@@ -299,15 +340,17 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			};
 			
 			/**
-			 * Don't show ticks withing a gap in the ordinal axis, where the space between
+			 * Post process tick positions. The tickPositions array is altered. Don't show ticks 
+			 * within a gap in the ordinal axis, where the space between
 			 * two points is greater than a portion of the tick pixel interval
 			 */
-			xAxis.postProcessTickPositions = function (tickPositions) {
+			addEvent(xAxis, 'afterSetTickPositions', function(e) {
+				
 				var options = xAxis.options,
 					tickPixelIntervalOption = options.tickPixelInterval,
+					tickPositions = e.tickPositions,
 					gaps = {};
-					
-					
+				
 				if (defined(tickPixelIntervalOption)) { // check for squashed ticks
 					var i = tickPositions.length,
 						translated,
@@ -336,70 +379,18 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 							if (i) { // don't mark the first tick 
 								gaps[tickPositions[i]] = 1;
 							}
+						} else {
+							lastTranslated = translated;
 						}
-						lastTranslated = translated;
 					}
 					
 					// register gaps on the tickPositions array and overwrite previous gaps
 					tickPositions.gaps = gaps;
 				}
-			};
-			
-			/**
-			 * The registry over ordinal positions in use on the axis' series
-			 */
-			xAxis.ordinalPositions = [];
-			
+			});
 		}
 	};
 			
-	/**
-	 * Extend processData by indexing the processed x positions in the x axis so that
-	 * it can be used as a map for the irregular ordinal position values
-	 */
-	seriesProto.processData = function() {
-	
-		var series = this,
-			i,
-			xAxis = series.xAxis,
-			processedXData,
-			ordinalPositions = xAxis.ordinalPositions;
-		
-		// call base method
-		baseProcessData.apply(series);
-		
-		// apply the ordinal logic
-		if (ordinalPositions) {
-			
-			// get the processed data
-			processedXData = series.processedXData;
-		
-			// concatenate the processed X data into the existing positions, or the empty array 
-			xAxis.ordinalPositions = ordinalPositions = ordinalPositions.concat(processedXData);
-			
-			// remove duplicates
-			if (xAxis.series.length > 1) {
-			
-				ordinalPositions.sort(function(a, b) {
-					return a - b; // without a custom function it is sorted as strings
-				});
-			
-				i = ordinalPositions.length - 1;
-				while (i--) {
-					if (ordinalPositions[i] === ordinalPositions[i + 1]) {
-						ordinalPositions.splice(i, 1);
-					}
-				}
-			}
-			
-			// record the slope and offset to compute the linear values from the array index
-			i = ordinalPositions.length;
-			xAxis.ordinalSlope = (ordinalPositions[i - 1] - ordinalPositions[0]) / (i - 1);
-			xAxis.ordinalOffset = ordinalPositions[0];
-			
-		}
-	};
-	
 	/**
 	 * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the 
 	 * line or area

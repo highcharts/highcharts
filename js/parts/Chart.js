@@ -1024,15 +1024,16 @@ function Chart(options, callback) {
 		 * to the nearest tick
 		 */
 		function setTickPositions(secondPass) {
+			
 			var length,
 				linkedParent,
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval,
 				zoomOffset;
-
+				
 			// set the max zoom once
-			if (secondPass) {
+			if (!secondPass) {
 				maxZoom = options.maxZoom || (
 					isXAxis && !defined(options.min) && !defined(options.max) ?
 						mathMin(axis.closestPointRange * 5, dataMax - dataMin) :
@@ -1040,6 +1041,11 @@ function Chart(options, callback) {
 				);
 			}
 
+			// hook for ordinal axes
+			if (secondPass && axis.beforeSetTickPositions) {
+				axis.beforeSetTickPositions();
+			}
+			
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
 				linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo];
@@ -1128,8 +1134,10 @@ function Chart(options, callback) {
 			}
 			
 			// post process positions, used in ordinal axes in Highstock
-			if (secondPass && axis.postProcessTickPositions) {
-				axis.postProcessTickPositions(tickPositions);
+			if (secondPass) {
+				fireEvent(axis, 'afterSetTickPositions', {
+					tickPositions: tickPositions
+				});
 			}
 			
 
