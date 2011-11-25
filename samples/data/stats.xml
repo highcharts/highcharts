@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- To rebuild the sizes.js demo stats file: -->
+<!-- 1. $ rm samples/data/sizes.js -->
+<!-- 2. $ git log x-reverse x-format='ant -f samples/data/stats.xml -Dcommit.hash="%H"' master > log_all_stats.sh -->
+<!-- 3. $ log_all_stats.sh -->
+
+<!-- To rebuild the tags.js demo stats file: -->
+<!-- 1. $ ant -f samples/data/stats.xml get-all-tag-info -->
+
+<project name="stats" default="log-stats">
+	<target name="set.properties">
+		<available file="sizes.js" property="sizes.file.available"/>
+	</target>
+
+	<!-- Runs google closure compiler on src. -->
+	<target name="compile">
+		<echo message="Minifying ${param.src}"/>
+		<java jar="../../tools/google-closure-compiler/compiler.jar" fork="true">
+			<arg value="--compilation_level"/>
+			<arg value="SIMPLE_OPTIMIZATIONS"/>
+			<arg value="--js"/>
+			<arg value="${param.src}"/>
+			<arg value="--js_output_file"/>
+			<arg value="${param.out}"/>
+		</java>
+		<length file="${param.src}" property="input.length"/>
+		<length file="${param.out}" property="gcc.output.length"/>
+
+		<echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
+		
+		<!-- Log the sizes to file -->
+		<basename property="src.name" file="${file.src}"/>
+		<replace file="sizes.js" token="/*size*/" value="[${commit.date}000, ${input.length}]/*size*/"/>
+		<replace file="sizes.js" token="/*minifiedSize*/" value="[${commit.date}000, ${gcc.output.length}]/*minifiedSize*/"/>
+	</target>
+
+	<!-- If the size file is not there, create it -->
+	<target name="create-log-file" unless="sizes.file.available">
+		<echo file="sizes.js" append="false">
+var authorSeries = [/*author*/];
+var messageSeries = [/*message*/];
+var sizeSeries = [/*size*/];
+var minifiedSizeSeries = [/*minifiedSize*/];
+		</echo>
+	</target>
+
+	<!-- If this is not the first insert, prepend a comma to the token for the arrays to work -->
+	<target name="prepend-comma" if="sizes.file.available">
+		<replace file="sizes.js" token="/*size*/" value=",/*size*/"/>
+		<replace file="sizes.js" token="/*minifiedSize*/" value=",/*minifiedSize*/"/>
+		<replace file="sizes.js" token="/*author*/" value=",/*author*/"/>
+		<replace file="sizes.js" token="/*message*/" value=",/*message*/"/>
+	</target>
+
+	<!-- Checks out a specific version of highcharts.src.js -->
+	<target name="git-checkout">
+		<exec executable="git">
+			<arg line="checkout ${commit.hash} ../../js/highcharts.src.js"/>
+		</exec>
+	</target>
+
+	<!-- Gets commit info from git: -->
+	<!-- %an == author name -->
+	<!-- %ai == author date -->
+	<!-- %s == commit message -->
+	<!-- -1 == last commit -->
+	<target name="get-commit-info">
+		<exec executable="git" outputproperty="commit.author">
+			<arg line="log --pretty=format:'%an' ${commit.hash} -1 ../../js/highcharts.src.js"/>
+		</exec>
+		<exec executable="git" outputproperty="commit.date">
+			<arg line="log --pretty=format:'%at' ${commit.hash} -1 ../../js/highcharts.src.js"/>
+		</exec>
+		<exec executable="git" outputproperty="commit.message">
+			<arg line="log --pretty=format:'%f' ${commit.hash} -1 ../../js/highcharts.src.js"/>
+		</exec>
+		
+		<replace file="sizes.js" token="/*author*/" value="[${commit.date}000, '${commit.author}']/*author*/"/>
+		<replace file="sizes.js" token="/*message*/" value="[${commit.date}000, '${commit.message}']/*message*/"/>
+	</target>
+
+	<!-- Gets the tag info for a tag -->
+	<!-- %ai == author date -->
+	<!-- -1 == last commit -->
+	<target name="get-tag-info">
+		<exec executable="git" outputproperty="tag.date">
+			<arg line="log --pretty=format:'%at' ${tag.name} -1"/>
+		</exec>
+		<replace file="tags.js" token="/*tagSeries*/" value=",[${tag.date}000, '${tag.name}']/*tagSeries*/"/>
+		<echo message="${tag.name} - ${tag.date}"/>
+	</target>
+
+	<!-- Get the tag info for these tags, didn't find an easy way to script this.. -->
+	<target name="get-all-tag-info">
+		<echo file="tags.js" append="false">
+var tagSeries = [/*tagSeries*/];
+		</echo>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.0.2"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.0.3"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.0.4"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.0.5"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.0"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.1"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.2"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.3"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.4"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.5"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.6"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.7"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.8"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="v2.1.9"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="highstock-v1.0.1"/></antcall>
+		<antcall target="get-tag-info"><param name="tag.name" value="highstock-v1.0.2"/></antcall>
+		<replace file="tags.js" token="tagSeries = [," value="tagSeries = ["/>
+	</target>
+
+	<!-- 1. Get commit info -->
+	<!-- 2. Minify -->
+	<!-- 2.5. Append to sizes.js -->
+	<target name="log-stats" depends="set.properties, git-checkout, create-log-file, prepend-comma, get-commit-info">
+		<antcall target="compile">
+			<param name="param.src" value="../../js/highcharts.src.js"/>
+			<param name="param.out" value="../../build/highcharts.js"/>
+		</antcall>
+	</target>
+</project>

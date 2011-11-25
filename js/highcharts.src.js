@@ -3477,7 +3477,7 @@ SVGRenderer.prototype = {
 			if (!box) {
 				wrapper.box = box = shape ?
 					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height) :
-					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
+					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 				box.add(wrapper);
 			}
 
@@ -3762,6 +3762,26 @@ var VMLElement = extendClass(SVGElement, {
 	},
 
 	/**
+	 * In IE8 documentMode 8, we need to recursively set the visibility down in the DOM
+	 * tree for nested groups. Related to #61, #586.
+	 */
+	toggleChildren: function (element, visibility) {
+		var childNodes = element.childNodes,
+			i = childNodes.length;
+			
+		while (i--) {
+			
+			// apply the visibility
+			css(childNodes[i], { visibility: visibility });
+			
+			// we have a nested group, apply it to its children again
+			if (childNodes[i].nodeName === 'DIV') {
+				this.toggleChildren(childNodes[i], visibility);
+			}
+		}
+	},
+
+	/**
 	 * Get or set attributes
 	 */
 	attr: function (hash, val) {
@@ -3775,7 +3795,6 @@ var VMLElement = extendClass(SVGElement, {
 			nodeName = element.nodeName,
 			renderer = wrapper.renderer,
 			symbolName = wrapper.symbolName,
-			childNodes,
 			hasSetSymbolSize,
 			shadows = wrapper.shadows,
 			skipAttr,
@@ -3864,15 +3883,11 @@ var VMLElement = extendClass(SVGElement, {
 					// directly mapped to css
 					} else if (key === 'zIndex' || key === 'visibility') {
 
-						// issue 61 workaround
+						// workaround for #61 and #586
 						if (docMode8 && key === 'visibility' && nodeName === 'DIV') {
 							element.gVis = value;
-							childNodes = element.childNodes;
-							i = childNodes.length;
-							while (i--) {
-								css(childNodes[i], { visibility: value });
-							}
-							if (value === VISIBLE) { // issue 74
+							wrapper.toggleChildren(element, value);
+							if (value === VISIBLE) { // #74
 								value = null;
 							}
 						}
@@ -5630,7 +5645,7 @@ function Chart(options, callback) {
 								}
 	
 								// for points within the visible range, consider y extremes
-								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
+								if (cropped || (x >= xExtremes.min && x <= xExtremes.max)) {
 
 									j = y.length;
 									if (j) { // array, like ohlc data
@@ -6170,7 +6185,7 @@ function Chart(options, callback) {
 					.attr({ zIndex: 7 })
 					.add();
 				gridGroup = renderer.g('grid')
-					.attr({ zIndex: 1 })
+					.attr({ zIndex: options.gridZIndex || 1 }) // docs
 					.add();
 			}
 
@@ -6239,9 +6254,10 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				labelOffset +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) +
-				titleMargin;
+				pick(axisTitleOptions.offset, // docs
+					labelOffset + titleMargin +
+					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				);
 
 			axisOffset[side] = mathMax(
 				axisOffset[side],
@@ -6321,10 +6337,11 @@ function Chart(options, callback) {
 				}
 
 				// custom plot lines and bands
-				if (!hasRendered) { // only first time
+				if (!chart._addedPlotLB) { // only first time
 					each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
 						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					});
+					chart._addedPlotLB = true;
 				}
 
 
@@ -8182,14 +8199,16 @@ function Chart(options, callback) {
 	 * Hide the loading layer
 	 */
 	function hideLoading() {
-		animate(loadingDiv, {
-			opacity: 0
-		}, {
-			duration: options.loading.hideDuration || 100,
-			complete: function () {
-				css(loadingDiv, { display: NONE });
-			}
-		});
+		if (loadingDiv) {
+			animate(loadingDiv, {
+				opacity: 0
+			}, {
+				duration: options.loading.hideDuration || 100,
+				complete: function () {
+					css(loadingDiv, { display: NONE });
+				}
+			});
+		}
 		loadingShown = false;
 	}
 
@@ -10366,7 +10385,7 @@ Series.prototype = {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking) {
+		if (tooltip && !options.stickyTracking && !tooltip.shared) {
 			tooltip.hide();
 		}
 

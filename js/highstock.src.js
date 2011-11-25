@@ -3477,7 +3477,7 @@ SVGRenderer.prototype = {
 			if (!box) {
 				wrapper.box = box = shape ?
 					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height) :
-					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
+					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 				box.add(wrapper);
 			}
 
@@ -3762,6 +3762,26 @@ var VMLElement = extendClass(SVGElement, {
 	},
 
 	/**
+	 * In IE8 documentMode 8, we need to recursively set the visibility down in the DOM
+	 * tree for nested groups. Related to #61, #586.
+	 */
+	toggleChildren: function (element, visibility) {
+		var childNodes = element.childNodes,
+			i = childNodes.length;
+			
+		while (i--) {
+			
+			// apply the visibility
+			css(childNodes[i], { visibility: visibility });
+			
+			// we have a nested group, apply it to its children again
+			if (childNodes[i].nodeName === 'DIV') {
+				this.toggleChildren(childNodes[i], visibility);
+			}
+		}
+	},
+
+	/**
 	 * Get or set attributes
 	 */
 	attr: function (hash, val) {
@@ -3775,7 +3795,6 @@ var VMLElement = extendClass(SVGElement, {
 			nodeName = element.nodeName,
 			renderer = wrapper.renderer,
 			symbolName = wrapper.symbolName,
-			childNodes,
 			hasSetSymbolSize,
 			shadows = wrapper.shadows,
 			skipAttr,
@@ -3864,15 +3883,11 @@ var VMLElement = extendClass(SVGElement, {
 					// directly mapped to css
 					} else if (key === 'zIndex' || key === 'visibility') {
 
-						// issue 61 workaround
+						// workaround for #61 and #586
 						if (docMode8 && key === 'visibility' && nodeName === 'DIV') {
 							element.gVis = value;
-							childNodes = element.childNodes;
-							i = childNodes.length;
-							while (i--) {
-								css(childNodes[i], { visibility: value });
-							}
-							if (value === VISIBLE) { // issue 74
+							wrapper.toggleChildren(element, value);
+							if (value === VISIBLE) { // #74
 								value = null;
 							}
 						}
@@ -5630,7 +5645,7 @@ function Chart(options, callback) {
 								}
 	
 								// for points within the visible range, consider y extremes
-								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
+								if (cropped || (x >= xExtremes.min && x <= xExtremes.max)) {
 
 									j = y.length;
 									if (j) { // array, like ohlc data
@@ -6170,7 +6185,7 @@ function Chart(options, callback) {
 					.attr({ zIndex: 7 })
 					.add();
 				gridGroup = renderer.g('grid')
-					.attr({ zIndex: 1 })
+					.attr({ zIndex: options.gridZIndex || 1 }) // docs
 					.add();
 			}
 
@@ -6239,9 +6254,10 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				labelOffset +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) +
-				titleMargin;
+				pick(axisTitleOptions.offset, // docs
+					labelOffset + titleMargin +
+					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				);
 
 			axisOffset[side] = mathMax(
 				axisOffset[side],
@@ -6321,10 +6337,11 @@ function Chart(options, callback) {
 				}
 
 				// custom plot lines and bands
-				if (!hasRendered) { // only first time
+				if (!chart._addedPlotLB) { // only first time
 					each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
 						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					});
+					chart._addedPlotLB = true;
 				}
 
 
@@ -8182,14 +8199,16 @@ function Chart(options, callback) {
 	 * Hide the loading layer
 	 */
 	function hideLoading() {
-		animate(loadingDiv, {
-			opacity: 0
-		}, {
-			duration: options.loading.hideDuration || 100,
-			complete: function () {
-				css(loadingDiv, { display: NONE });
-			}
-		});
+		if (loadingDiv) {
+			animate(loadingDiv, {
+				opacity: 0
+			}, {
+				duration: options.loading.hideDuration || 100,
+				complete: function () {
+					css(loadingDiv, { display: NONE });
+				}
+			});
+		}
 		loadingShown = false;
 	}
 
@@ -10366,7 +10385,7 @@ Series.prototype = {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking) {
+		if (tooltip && !options.stickyTracking && !tooltip.shared) {
 			tooltip.hide();
 		}
 
@@ -12679,7 +12698,7 @@ seriesProto.processData = function () {
 			xMin = extremes.min,
 			xMax = extremes.max,
 			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
-			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units),
+			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
 			groupedXandY = series.groupData(processedXData, processedYData, groupPositions, dataGroupingOptions.approximation),
 			groupedXData = groupedXandY[0],
 			groupedYData = groupedXandY[1];
@@ -12805,49 +12824,51 @@ seriesProto.destroy = function () {
 // Extend the plot options
 /*jslint white:true */
 var commonOptions = {
-	approximation: 'average', // average, open, high, low, close, sum
-	//forced: undefined,
-	groupPixelWidth: 2,
-	// the first one is the point or start value, the second is the start value if we're dealing with range,
-	// the third one is the end value if dealing with a range
-	dateTimeLabelFormats: hash( 
-		MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
-		SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
-		MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-		HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-		DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-		WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-		MONTH, ['%B %Y', '%B', '-%B %Y'],
-		YEAR, ['%Y', '%Y', '-%Y']
-	),
-
-	// smoothed = false, // enable this for navigator series only
-	units: [[
-		MILLISECOND, // unit name
-		[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-	], [
-		SECOND,
-		[1, 2, 5, 10, 15, 30]
-	], [
-		MINUTE,
-		[1, 2, 5, 10, 15, 30]
-	], [
-		HOUR,
-		[1, 2, 3, 4, 6, 8, 12]
-	], [
-		DAY,
-		[1]
-	], [
-		WEEK,
-		[1]
-	], [
-		MONTH,
-		[1, 3, 6]
-	], [
-		YEAR,
-		null
-	]]
-};
+		approximation: 'average', // average, open, high, low, close, sum
+		//forced: undefined,
+		groupPixelWidth: 2,
+		// the first one is the point or start value, the second is the start value if we're dealing with range,
+		// the third one is the end value if dealing with a range
+		dateTimeLabelFormats: hash( 
+			MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
+			SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
+			MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			MONTH, ['%B %Y', '%B', '-%B %Y'],
+			YEAR, ['%Y', '%Y', '-%Y']
+		)
+		// smoothed = false, // enable this for navigator series only
+	},
+	
+	// units are defined in a separate array to allow complete overriding in case of a user option
+	defaultDataGroupingUnits = [[
+			MILLISECOND, // unit name
+			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+		], [
+			SECOND,
+			[1, 2, 5, 10, 15, 30]
+		], [
+			MINUTE,
+			[1, 2, 5, 10, 15, 30]
+		], [
+			HOUR,
+			[1, 2, 3, 4, 6, 8, 12]
+		], [
+			DAY,
+			[1]
+		], [
+			WEEK,
+			[1]
+		], [
+			MONTH,
+			[1, 3, 6]
+		], [
+			YEAR,
+			null
+		]
+	];
 
 // line types
 defaultPlotOptions.line[DATA_GROUPING] =
@@ -13211,7 +13232,7 @@ seriesTypes.candlestick = CandlestickSeries;
  * Start Flags series code													*
  *****************************************************************************/
 
-var symbols = Renderer.prototype.symbols;
+var symbols = SVGRenderer.prototype.symbols;
 
 // 1 - set default options
 defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
@@ -13472,10 +13493,18 @@ each(['circle', 'square'], function (shape) {
 			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
 		}
 
-		//console .trace(x, y, );
 		return path;
 	};
 });
+
+// The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
+// VML browsers need this in order to generate shapes in export. Now share
+// them with the VMLRenderer.
+if (Renderer === VMLRenderer) {
+	each(['flag', 'circlepin', 'squarepin'], function (shape) {
+		VMLRenderer.prototype.symbols[shape] = symbols[shape];
+	});
+}
 
 /* ****************************************************************************
  * End Flags series code													  *
@@ -13500,7 +13529,7 @@ var buttonGradient = hash(
 			[1, '#CCC']
 		]
 	),
-	units = [].concat(defaultPlotOptions.line.dataGrouping.units); // copy
+	units = [].concat(defaultDataGroupingUnits); // copy
 
 // add more resolution to units
 units[4] = [DAY, [1, 2, 3, 4]]; // allow more days

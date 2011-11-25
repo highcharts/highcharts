@@ -839,7 +839,7 @@ function Chart(options, callback) {
 								}
 	
 								// for points within the visible range, consider y extremes
-								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i + 1] || x) <= xExtremes.max)) {
+								if (cropped || (x >= xExtremes.min && x <= xExtremes.max)) {
 
 									j = y.length;
 									if (j) { // array, like ohlc data
@@ -1379,7 +1379,7 @@ function Chart(options, callback) {
 					.attr({ zIndex: 7 })
 					.add();
 				gridGroup = renderer.g('grid')
-					.attr({ zIndex: 1 })
+					.attr({ zIndex: options.gridZIndex || 1 }) // docs
 					.add();
 			}
 
@@ -1448,9 +1448,10 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				labelOffset +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x']) +
-				titleMargin;
+				pick(axisTitleOptions.offset, // docs
+					labelOffset + titleMargin +
+					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				);
 
 			axisOffset[side] = mathMax(
 				axisOffset[side],
@@ -1530,10 +1531,11 @@ function Chart(options, callback) {
 				}
 
 				// custom plot lines and bands
-				if (!hasRendered) { // only first time
+				if (!chart._addedPlotLB) { // only first time
 					each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
 						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					});
+					chart._addedPlotLB = true;
 				}
 
 
@@ -3391,14 +3393,16 @@ function Chart(options, callback) {
 	 * Hide the loading layer
 	 */
 	function hideLoading() {
-		animate(loadingDiv, {
-			opacity: 0
-		}, {
-			duration: options.loading.hideDuration || 100,
-			complete: function () {
-				css(loadingDiv, { display: NONE });
-			}
-		});
+		if (loadingDiv) {
+			animate(loadingDiv, {
+				opacity: 0
+			}, {
+				duration: options.loading.hideDuration || 100,
+				complete: function () {
+					css(loadingDiv, { display: NONE });
+				}
+			});
+		}
 		loadingShown = false;
 	}
 
