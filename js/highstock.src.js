@@ -6029,9 +6029,9 @@ function Chart(options, callback) {
 					}
 				}
 	
-				// mark as dirty if it is not already set to dirty and extremes have changed
+				// Mark as dirty if it is not already set to dirty and extremes have changed. #595.
 				if (!axis.isDirty) {
-					axis.isDirty = (min !== oldMin || max !== oldMax);
+					axis.isDirty = chart.isDirtyBox || min !== oldMin || max !== oldMax;
 				}
 			}
 		}
