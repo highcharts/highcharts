@@ -9814,24 +9814,38 @@ Series.prototype = {
 	 * Divide the series data into segments divided by null values.
 	 */
 	getSegments: function () {
-		var lastNull = -1,
+		var series = this,
+			lastNull = -1,
 			segments = [],
-			points = this.points;
+			i,
+			points = series.points;
 
-		// create the segments
-		each(points, function (point, i) {
-			if (point.y === null) {
-				if (i > lastNull + 1) {
-					segments.push(points.slice(lastNull + 1, i));
+		// if connect nulls, just remove null points
+		if (series.options.connectNulls) {
+			i = points.length - 1;
+			while (i--) {
+				if (points[i].y === null) {
+					points.splice(i, 1);
 				}
-				lastNull = i;
-			} else if (i === points.length - 1) { // last value
-				segments.push(points.slice(lastNull + 1, i + 1));
 			}
-		});
-		this.segments = segments;
-
-
+			segments = [points];
+			
+		// else, split on null points
+		} else {			
+			each(points, function (point, i) {
+				if (point.y === null) {
+					if (i > lastNull + 1) {
+						segments.push(points.slice(lastNull + 1, i));
+					}
+					lastNull = i;
+				} else if (i === points.length - 1) { // last value
+					segments.push(points.slice(lastNull + 1, i + 1));
+				}
+			});
+		}
+		
+		// register it
+		series.segments = segments;
 	},
 	/**
 	 * Set the series options by merging from the options tree
