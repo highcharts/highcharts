@@ -6173,6 +6173,7 @@ function Chart(options, callback) {
 		function getOffset() {
 
 			var hasData = axis.series.length && defined(min) && defined(max),
+				showAxis = hasData || pick(options.showEmpty, true), // docs
 				titleOffset = 0,
 				titleMargin = 0,
 				axisTitleOptions = options.title,
@@ -6244,9 +6245,15 @@ function Chart(options, callback) {
 					.add();
 					axisTitle.isNew = true;
 				}
+				
+				if (showAxis) {	
+					titleOffset = axisTitle.getBBox()[horiz ? 'height' : 'width'];
+					titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
+				}
+				
+				// hide or show the title depending on whether showEmpty is set
+				axisTitle[showAxis ? 'show' : 'hide']();
 
-				titleOffset = axisTitle.getBBox()[horiz ? 'height' : 'width'];
-				titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
 
 			}
 
@@ -6279,7 +6286,8 @@ function Chart(options, callback) {
 				linePath,
 				hasRendered = chart.hasRendered,
 				slideInTicks = hasRendered && defined(oldMin) && !isNaN(oldMin),
-				hasData = axis.series.length && defined(min) && defined(max);
+				hasData = axis.series.length && defined(min) && defined(max),
+				showAxis = hasData || pick(options.showEmpty, true);
 
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData || isLinked) {
@@ -6398,10 +6406,13 @@ function Chart(options, callback) {
 				} else {
 					axisLine.animate({ d: linePath });
 				}
+				
+				// show or hide the line depending on options.showEmpty
+				axisLine[showAxis ? 'show' : 'hide']();
 
 			}
 
-			if (axisTitle) {
+			if (axisTitle && showAxis) {
 				// compute anchor points for each of the title align options
 				var margin = horiz ? axisLeft : axisTop,
 					fontSize = pInt(axisTitleOptions.style.fontSize || 12),
