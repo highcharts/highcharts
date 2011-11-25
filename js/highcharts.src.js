@@ -10385,7 +10385,7 @@ Series.prototype = {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking) {
+		if (tooltip && !options.stickyTracking && !tooltip.shared) {
 			tooltip.hide();
 		}
 
