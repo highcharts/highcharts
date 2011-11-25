@@ -236,7 +236,7 @@ seriesProto.processData = function () {
 			xMin = extremes.min,
 			xMax = extremes.max,
 			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
-			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units),
+			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
 			groupedXandY = series.groupData(processedXData, processedYData, groupPositions, dataGroupingOptions.approximation),
 			groupedXData = groupedXandY[0],
 			groupedYData = groupedXandY[1];
@@ -362,49 +362,51 @@ seriesProto.destroy = function () {
 // Extend the plot options
 /*jslint white:true */
 var commonOptions = {
-	approximation: 'average', // average, open, high, low, close, sum
-	//forced: undefined,
-	groupPixelWidth: 2,
-	// the first one is the point or start value, the second is the start value if we're dealing with range,
-	// the third one is the end value if dealing with a range
-	dateTimeLabelFormats: hash( 
-		MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
-		SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
-		MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-		HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-		DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-		WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-		MONTH, ['%B %Y', '%B', '-%B %Y'],
-		YEAR, ['%Y', '%Y', '-%Y']
-	),
-
-	// smoothed = false, // enable this for navigator series only
-	units: [[
-		MILLISECOND, // unit name
-		[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-	], [
-		SECOND,
-		[1, 2, 5, 10, 15, 30]
-	], [
-		MINUTE,
-		[1, 2, 5, 10, 15, 30]
-	], [
-		HOUR,
-		[1, 2, 3, 4, 6, 8, 12]
-	], [
-		DAY,
-		[1]
-	], [
-		WEEK,
-		[1]
-	], [
-		MONTH,
-		[1, 3, 6]
-	], [
-		YEAR,
-		null
-	]]
-};
+		approximation: 'average', // average, open, high, low, close, sum
+		//forced: undefined,
+		groupPixelWidth: 2,
+		// the first one is the point or start value, the second is the start value if we're dealing with range,
+		// the third one is the end value if dealing with a range
+		dateTimeLabelFormats: hash( 
+			MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
+			SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
+			MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			MONTH, ['%B %Y', '%B', '-%B %Y'],
+			YEAR, ['%Y', '%Y', '-%Y']
+		)
+		// smoothed = false, // enable this for navigator series only
+	},
+	
+	// units are defined in a separate array to allow complete overriding in case of a user option
+	defaultDataGroupingUnits = [[
+			MILLISECOND, // unit name
+			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+		], [
+			SECOND,
+			[1, 2, 5, 10, 15, 30]
+		], [
+			MINUTE,
+			[1, 2, 5, 10, 15, 30]
+		], [
+			HOUR,
+			[1, 2, 3, 4, 6, 8, 12]
+		], [
+			DAY,
+			[1]
+		], [
+			WEEK,
+			[1]
+		], [
+			MONTH,
+			[1, 3, 6]
+		], [
+			YEAR,
+			null
+		]
+	];
 
 // line types
 defaultPlotOptions.line[DATA_GROUPING] =

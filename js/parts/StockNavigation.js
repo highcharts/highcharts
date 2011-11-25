@@ -18,7 +18,7 @@ var buttonGradient = hash(
 			[1, '#CCC']
 		]
 	),
-	units = [].concat(defaultPlotOptions.line.dataGrouping.units); // copy
+	units = [].concat(defaultDataGroupingUnits); // copy
 
 // add more resolution to units
 units[4] = [DAY, [1, 2, 3, 4]]; // allow more days
