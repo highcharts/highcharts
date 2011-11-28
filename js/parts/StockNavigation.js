@@ -43,12 +43,14 @@ extend(defaultOptions, {
 			fillOpacity: 0.4,
 			dataGrouping: {
 				approximation: 'average',
+				groupPixelWidth: 2,
 				smoothed: true,
 				units: units
 			},
 			dataLabels: {
 				enabled: false
 			},
+			lineColor: '#4572A7',
 			lineWidth: 1,
 			marker: {
 				enabled: false

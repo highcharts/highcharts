@@ -288,7 +288,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						xAxis.ordinalPositions = ordinalPositions;
 					
 					} else {
-						xAxis.ordinalPositions = UNDEFINED;
+						xAxis.ordinalPositions = xAxis.ordinalSlope = xAxis.ordinalOffset = UNDEFINED;
 					}
 				}
 			};

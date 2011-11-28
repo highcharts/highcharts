@@ -1244,7 +1244,7 @@ function Chart(options, callback) {
 	
 				// the translation factor used in translate function
 				oldTransA = transA;
-				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
+				axis.translationSlope = transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
 	
 				// reset stacks
 				if (!isXAxis) {
@@ -1343,7 +1343,7 @@ function Chart(options, callback) {
 			}
 			
 			// secondary values
-			transA = axisLength / ((range + pointRange) || 1);
+			axis.translationSlope = transA = axisLength / ((range + pointRange) || 1);
 			transB = horiz ? axisLeft : axisBottom; // translation addend
 			minPixelPadding = transA * (pointRange / 2);
 			
@@ -1715,7 +1715,7 @@ function Chart(options, callback) {
 			}
 			
 			// we need to filter the tick postions again
-			if (axis.ordinalPositions) {
+			if (options.ordinal) {
 				setTickPositions(true);
 			}
 
