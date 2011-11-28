@@ -749,12 +749,12 @@ Highcharts.Scroller = function (chart) {
 		removeEvents();
 
 		// Destroy local variables
-		each([leftShade, rightShade, outline, scrollbarTrack, scrollbar, scrollbarRifles, scrollbarGroup], function (obj) {
-			if (obj) {
+		each([xAxis, yAxis, leftShade, rightShade, outline, scrollbarTrack, scrollbar, scrollbarRifles, scrollbarGroup], function (obj) {
+			if (obj && obj.destroy) {
 				obj.destroy();
 			}
 		});
-		leftShade = rightShade = outline = scrollbarTrack = scrollbar = scrollbarRifles = scrollbarGroup = null;
+		xAxis = yAxis = leftShade = rightShade = outline = scrollbarTrack = scrollbar = scrollbarRifles = scrollbarGroup = null;
 
 		// Destroy elements in collection
 		each([scrollbarButtons, handles, elementsToDestroy], function (coll) {
@@ -826,6 +826,9 @@ Highcharts.RangeSelector = function (chart) {
 		div,
 		leftBox,
 		rightBox,
+		boxSpanElements = {},
+		divAbsolute,
+		divRelative,
 		selected,
 		zoomText,
 		buttons = [],
@@ -956,6 +959,18 @@ Highcharts.RangeSelector = function (chart) {
 	}
 
 	/**
+	 * The handler connected to container that handles mousedown.
+	 */
+	function mouseDownHandler() {
+		if (leftBox) {
+			leftBox.blur();
+		}
+		if (rightBox) {
+			rightBox.blur();
+		}
+	}
+
+	/**
 	 * Initialize the range selector
 	 */
 	function init() {
@@ -966,15 +981,7 @@ Highcharts.RangeSelector = function (chart) {
 
 		var selectedOption = options.selected;
 
-		addEvent(container, MOUSEDOWN, function () {
-
-			if (leftBox) {
-				leftBox.blur();
-			}
-			if (rightBox) {
-				rightBox.blur();
-			}
-		});
+		addEvent(container, MOUSEDOWN, mouseDownHandler);
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
@@ -1015,7 +1022,7 @@ Highcharts.RangeSelector = function (chart) {
 			input;
 
 		// create the text label
-		createElement('span', {
+		boxSpanElements[name] = createElement('span', {
 			innerHTML: lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo']
 		}, options.labelStyle, div);
 
@@ -1121,7 +1128,7 @@ Highcharts.RangeSelector = function (chart) {
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
 			if (inputEnabled) {
-				div = createElement('div', null, {
+				divRelative = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
 					fontFamily: chartStyle.fontFamily,
@@ -1132,7 +1139,7 @@ Highcharts.RangeSelector = function (chart) {
 				container.parentNode.insertBefore(div, container);
 
 				// create an absolutely positionied div to keep the inputs
-				div = createElement('div', null, extend({
+				divAbsolute = div = createElement('div', null, extend({
 					position: 'absolute',
 					top: (chart.plotTop - 25) + 'px',
 					right: (chart.chartWidth - chart.plotLeft - chart.plotWidth) + 'px'
@@ -1157,6 +1164,8 @@ Highcharts.RangeSelector = function (chart) {
 	 * Destroys allocated elements.
 	 */
 	function destroy() {
+		removeEvent(container, MOUSEDOWN, mouseDownHandler);
+
 		// Destroy elements in collections
 		each([buttons], function (coll) {
 			destroyObjectProperties(coll);
@@ -1171,8 +1180,18 @@ Highcharts.RangeSelector = function (chart) {
 		leftBox.onfocus = leftBox.onblur = leftBox.onchange = null;
 		rightBox.onfocus = rightBox.onblur = rightBox.onchange = null;
 
-		// null the closure chart variable
-		chart = null;
+		discardElement(leftBox);
+		discardElement(rightBox);
+		leftBox = rightBox = null;
+
+		discardElement(boxSpanElements.min);
+		discardElement(boxSpanElements.max);
+		boxSpanElements = null;
+
+		discardElement(divAbsolute);
+		discardElement(divRelative);
+		divAbsolute = divRelative = null;
+		div = null;
 	}
 
 	// Run RangeSelector
