@@ -210,7 +210,7 @@ function Chart(options, callback) {
 			}
 		}
 		Tick.prototype = {
-			
+
 			/**
 			 * Write the tick label
 			 */
@@ -269,7 +269,7 @@ function Chart(options, callback) {
 				// update
 				} else if (label) {
 					label.attr({
-							text: str 
+							text: str
 						})
 						.css(css);
 				}
@@ -405,16 +405,16 @@ function Chart(options, callback) {
 					if (staggerLines) {
 						y += (index / (step || 1) % staggerLines) * 16;
 					}
-					
+
 					// apply show first and show last
 					if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
 							(tick.isLast && !pick(options.showLastLabel, 1))) {
 						label.hide();
 					} else {
-						 // show those that may have been previously hidden, either by show first/last, or by step
+						// show those that may have been previously hidden, either by show first/last, or by step
 						label.show();
 					}
-					
+
 					// apply step
 					if (step && index % step) {
 						// show those indices dividable by step
@@ -831,13 +831,13 @@ function Chart(options, callback) {
 								} else if (hasModifyValue) {
 									y = series.modifyValue(y);
 								}
-								
+
 								// get the smallest distance between points
 								if (i) {
 									distance = mathAbs(xData[i] - xData[i - 1]);
 									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
 								}
-	
+
 								// for points within the visible range, consider y extremes
 								if (cropped || (x >= xExtremes.min && x <= xExtremes.max)) {
 
@@ -1209,7 +1209,7 @@ function Chart(options, callback) {
 				// record old values to decide whether a rescale is necessary later on (#540)
 				oldUserMin = userMin;
 				oldUserMax = userMax;
-	
+
 				// the translation factor used in translate function
 				oldTransA = transA;
 				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
@@ -2169,7 +2169,7 @@ function Chart(options, callback) {
 			chartPosition = offset(container);
 			chartPosLeft = chartPosition.left;
 			chartPosTop = chartPosition.top;
-			
+
 			// chartX and chartY
 			if (isIE) { // IE including IE9 that has pageX but in a different meaning
 				chartX = e.x;
@@ -2379,6 +2379,14 @@ function Chart(options, callback) {
 		}
 
 		/**
+		 * When mouse leaves the container, hide the tooltip.
+		 */
+		function hideTooltipOnMouseLeave() {
+			resetTracker();
+			chartPosition = null; // also reset the chart position, used in #149 fix
+		}
+
+		/**
 		 * Set the JS events on the container element
 		 */
 		function setDOMEvents() {
@@ -2510,7 +2518,7 @@ function Chart(options, callback) {
 								extremes = xAxis.getExtremes(),
 								newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
 								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange;
-								
+
 							// remove active points for shared tooltip
 							if (hoverPoints) {
 								each(hoverPoints, function (point) {
@@ -2546,10 +2554,7 @@ function Chart(options, callback) {
 			/*
 			 * When the mouse leaves the container, hide the tracking (tooltip).
 			 */
-			addEvent(container, 'mouseleave', function () {
-				resetTracker();
-				chartPosition = null; // also reset the chart position, used in #149 fix
-			});
+			addEvent(container, 'mouseleave', hideTooltipOnMouseLeave);
 
 			// issue #149 workaround
 			// The mouseleave event above does not always fire. Whenever the mouse is moving
@@ -2637,6 +2642,7 @@ function Chart(options, callback) {
 				chart.trackerGroup = trackerGroup = chart.trackerGroup.destroy();
 			}
 
+			removeEvent(container, 'mouseleave', hideTooltipOnMouseLeave);
 			removeEvent(doc, 'mousemove', hideTooltipOnMouseMove);
 			container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 		}
