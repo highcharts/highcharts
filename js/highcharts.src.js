@@ -6768,14 +6768,7 @@ function Chart(options, callback) {
 			if (!tooltipIsHidden) {
 				var hoverPoints = chart.hoverPoints;
 
-				//group.hide();
 				label.hide();
-
-				each(crosshairs, function (crosshair) {
-					if (crosshair) {
-						crosshair.hide();
-					}
-				});
 
 				// hide previous hoverPoints and set new
 				if (hoverPoints) {
@@ -6789,6 +6782,17 @@ function Chart(options, callback) {
 				tooltipIsHidden = true;
 			}
 
+		}
+		
+		/**
+		 * Hide the crosshairs
+		 */		
+		function hideCrosshairs() {
+			each(crosshairs, function (crosshair) {
+				if (crosshair) {
+					crosshair.hide();
+				}
+			});
 		}
 
 		/**
@@ -6929,6 +6933,7 @@ function Chart(options, callback) {
 			shared: shared,
 			refresh: refresh,
 			hide: hide,
+			hideCrosshairs: hideCrosshairs,
 			destroy: destroy
 		};
 	}
@@ -7115,6 +7120,7 @@ function Chart(options, callback) {
 
 			if (tooltip) {
 				tooltip.hide();
+				tooltip.hideCrosshairs();
 			}
 
 			hoverX = null;
