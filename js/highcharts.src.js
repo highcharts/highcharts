@@ -6346,11 +6346,11 @@ function Chart(options, callback) {
 				}
 
 				// custom plot lines and bands
-				if (!chart._addedPlotLB) { // only first time
+				if (!axis._addedPlotLB) { // only first time
 					each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
 						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					});
-					chart._addedPlotLB = true;
+					axis._addedPlotLB = true;
 				}
 
 
