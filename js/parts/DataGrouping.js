@@ -226,7 +226,6 @@ seriesProto.processData = function () {
 		}
 	});
 
-	
 	if (dataLength > maxPoints || dataGroupingOptions.forced) {
 		series.hasGroupedData = true;
 
@@ -384,10 +383,10 @@ var commonOptions = {
 		[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 	], [
 		SECOND,
-		[1, 2, 5, 10, 15, 30]
+		[1, 5, 10, 15, 30]
 	], [
 		MINUTE,
-		[1, 2, 5, 10, 15, 30]
+		[1, 5, 10, 15, 30]
 	], [
 		HOUR,
 		[1, 2, 3, 4, 6, 8, 12]

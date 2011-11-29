@@ -2447,7 +2447,7 @@ function Chart(options, callback) {
 
 				// record the start position
 				chart.mouseIsDown = mouseIsDown = true;
-				mouseDownX = e.chartX;
+				chart.mouseDownX = mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
 
 				addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
@@ -2560,26 +2560,7 @@ function Chart(options, callback) {
 
 						// panning
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
-
-							var xAxis = chart.xAxis[0],
-								halfPointRange = xAxis.pointRange / 2,
-								extremes = xAxis.getExtremes(),
-								newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
-								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange;
-								
-							// remove active points for shared tooltip
-							if (hoverPoints) {
-								each(hoverPoints, function (point) {
-									point.setState();
-								});
-							}
-
-							if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-								xAxis.setExtremes(newMin, newMax, true, false);
-							}
-
-							mouseDownX = chartX;
-							css(container, { cursor: 'move' });
+							chart.pan(chartX);
 						}
 					}
 
@@ -3588,6 +3569,37 @@ function Chart(options, callback) {
 				}
 			});
 		}
+	};
+	
+	/**
+	 * Pan the chart by dragging the mouse across the pane. This function is called
+	 * on mouse move, and the distance to pan is computed from chartX compared to 
+	 * the first chartX position in the dragging operation.
+	 */
+	chart.pan = function(chartX) {
+
+		var xAxis = chart.xAxis[0],
+			mouseDownX = chart.mouseDownX,
+			halfPointRange = xAxis.pointRange / 2,
+			extremes = xAxis.getExtremes(),
+			newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
+			newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange,
+			hoverPoints = chart.hoverPoints;
+			
+		// remove active points for shared tooltip
+		if (hoverPoints) {
+			each(hoverPoints, function (point) {
+				point.setState();
+			});
+		}
+
+		if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+			//xAxis.setExtremes(newMin, newMax, true, false);
+		}
+		console.log(xAxis.ordinalSlope / xAxis.closestPointRange)
+
+		//chart.mouseDownX = chartX; // set new reference for next run
+		css(container, { cursor: 'move' });
 	};
 
 	/**
