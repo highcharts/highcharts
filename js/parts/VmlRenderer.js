@@ -998,7 +998,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 		arc: function (x, y, w, h, options) {
 			var start = options.start,
 				end = options.end,
-				radius = w || h,
+				radius = options.r || w || h,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
