@@ -10958,8 +10958,17 @@ Series.prototype = {
 					areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
 				}
 				if (options.stacking && series.type !== 'areaspline') {
-					// follow stack back. Todo: implement areaspline
+					
+					// Follow stack back. Todo: implement areaspline. A general solution could be to 
+					// reverse the entire graphPath of the previous series, though may be hard with
+					// splines and with series with different extremes
 					for (i = segment.length - 1; i >= 0; i--) {
+					
+						// step line?
+						if (i < segment.length - 1 && options.step) {
+							areaSegmentPath.push(segment[i + 1].plotX, segment[i].yBottom);
+						}
+						
 						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
 					}
 
