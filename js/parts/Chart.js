@@ -838,8 +838,9 @@ function Chart(options, callback) {
 									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
 								}
 	
-								// for points within the visible range, consider y extremes
-								if (cropped || (x >= xExtremes.min && x <= xExtremes.max)) {
+								// for points within the visible range, including the first point outside the 
+								// visible range, consider y extremes
+								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
 
 									j = y.length;
 									if (j) { // array, like ohlc data

@@ -5644,8 +5644,9 @@ function Chart(options, callback) {
 									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
 								}
 	
-								// for points within the visible range, consider y extremes
-								if (cropped || (x >= xExtremes.min && x <= xExtremes.max)) {
+								// for points within the visible range, including the first point outside the 
+								// visible range, consider y extremes
+								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
 
 									j = y.length;
 									if (j) { // array, like ohlc data
@@ -10242,7 +10243,7 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = series.xAxis.translate(xValue);
+			point.plotX = mathRound(series.xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -10271,7 +10272,7 @@ Series.prototype = {
 
 			// set the y value
 			if (yValue !== null) {
-				point.plotY = yAxis.translate(yValue, 0, 1, 0, 1);
+				point.plotY = mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10; // Math.round fixes #591
 			}
 
 			// set client related positions for mouse tracking

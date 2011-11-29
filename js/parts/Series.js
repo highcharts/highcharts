@@ -1039,7 +1039,7 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = series.xAxis.translate(xValue);
+			point.plotX = mathRound(series.xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1068,7 +1068,7 @@ Series.prototype = {
 
 			// set the y value
 			if (yValue !== null) {
-				point.plotY = yAxis.translate(yValue, 0, 1, 0, 1);
+				point.plotY = mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10; // Math.round fixes #591
 			}
 
 			// set client related positions for mouse tracking
