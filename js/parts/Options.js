@@ -387,7 +387,7 @@ var defaultXAxisOptions = {
 	min: null,
 	minPadding: 0.01,
 	maxPadding: 0.01,
-	//maxZoom: null,
+	//minRange: null, // docs
 	minorGridLineColor: '#E0E0E0',
 	// minorGridLineDashStyle: null,
 	minorGridLineWidth: 1,

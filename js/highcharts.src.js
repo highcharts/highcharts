@@ -1491,7 +1491,7 @@ var defaultXAxisOptions = {
 	min: null,
 	minPadding: 0.01,
 	maxPadding: 0.01,
-	//maxZoom: null,
+	//minRange: null, // docs
 	minorGridLineColor: '#E0E0E0',
 	// minorGridLineDashStyle: null,
 	minorGridLineWidth: 1,
@@ -4944,7 +4944,7 @@ function Chart(options, callback) {
 			axisLine,
 			dataMin,
 			dataMax,
-			maxZoom,
+			minRange,
 			range = options.range,
 			userMin,
 			userMax,
@@ -5828,8 +5828,8 @@ function Chart(options, callback) {
 				zoomOffset;
 
 			// set the max zoom once
-			if (secondPass) {
-				maxZoom = options.maxZoom || (
+			if (minRange === UNDEFINED) {
+				minRange = options.minRange || options.maxZoom || ( // maxZoom is deprecated but supported
 					isXAxis && !defined(options.min) && !defined(options.max) ?
 						mathMin(axis.closestPointRange * 5, dataMax - dataMin) :
 						null
@@ -5861,13 +5861,13 @@ function Chart(options, callback) {
 				}
 			}
 
-			// maxZoom exceeded, just center the selection
-			if (max - min < maxZoom) {
+			// minRange exceeded, just center the selection
+			if (max - min < minRange) {
 
-				zoomOffset = (maxZoom - max + min) / 2;
+				zoomOffset = (minRange - max + min) / 2;
 				// if min and max options have been set, don't go beyond it
-				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset), dataMin);
-				max = mathMin(min + maxZoom, pick(options.max, min + maxZoom), dataMax);
+				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset));
+				max = mathMin(min + minRange, pick(options.max, min + minRange));
 			}
 
 			// pad the values to get clear of the chart's edges
@@ -8353,7 +8353,7 @@ function Chart(options, callback) {
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
 				var axis = axisData.axis;
 
-				// don't zoom more than maxZoom
+				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
 					axis.setExtremes(axisData.min, axisData.max, true, animate);
 				}
