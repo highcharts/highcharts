@@ -5947,7 +5947,7 @@ function Chart(options, callback) {
 			tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max])); // docs
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
-					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek);
+					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units); // docs
 					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
 				} else {
 					setLinearTickPositions();
