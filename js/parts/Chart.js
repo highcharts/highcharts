@@ -161,6 +161,7 @@ function Chart(options, callback) {
 			minorTickInterval,
 			magnitude,
 			tickPositions, // array containing predefined positions
+			tickPositioner = options.tickPositioner,
 			ticks = {},
 			minorTicks = {},
 			alternateBands = {},
@@ -1130,11 +1131,14 @@ function Chart(options, callback) {
 					tickInterval / 5 : options.minorTickInterval;
 
 			// find the tick positions
-			if (isDatetimeAxis) {
-				tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek);
-				dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
-			} else {
-				setLinearTickPositions();
+			tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max])); // docs
+			if (!tickPositions) {
+				if (isDatetimeAxis) {
+					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek);
+					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
+				} else {
+					setLinearTickPositions();
+				}
 			}
 
 			if (!isLinked) {
