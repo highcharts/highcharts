@@ -4221,6 +4221,7 @@ function Chart(options, callback) {
 		}
 
 		chart = null;
+		options = null;
 	}
 	/**
 	 * Prepare for first rendering after all data are loaded
