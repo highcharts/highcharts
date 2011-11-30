@@ -14778,21 +14778,18 @@ Highcharts.RangeSelector = function (chart) {
 		}
 
 		// Clear input element events
-		leftBox.onfocus = leftBox.onblur = leftBox.onchange = null;
-		rightBox.onfocus = rightBox.onblur = rightBox.onchange = null;
+		leftBox.onfocus = leftBox.onblur = leftBox.onchange = rightBox.onfocus = rightBox.onblur = rightBox.onchange = null;
 
-		discardElement(leftBox);
+		each([leftBox, rightBox, boxSpanElements.min, boxSpanElements.max, divAbsolute, divRelative], function (item) {
+			discardElement(item);
+		});
+/*		discardElement(leftBox);
 		discardElement(rightBox);
-		leftBox = rightBox = null;
-
 		discardElement(boxSpanElements.min);
 		discardElement(boxSpanElements.max);
-		boxSpanElements = null;
-
 		discardElement(divAbsolute);
-		discardElement(divRelative);
-		divAbsolute = divRelative = null;
-		div = null;
+		discardElement(divRelative);*/
+		leftBox = rightBox = boxSpanElements = div = divAbsolute = divRelative = null;
 	}
 
 	// Run RangeSelector
