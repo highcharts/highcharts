@@ -4944,7 +4944,7 @@ function Chart(options, callback) {
 			axisLine,
 			dataMin,
 			dataMax,
-			minRange,
+			minRange = options.minRange || options.maxZoom,
 			range = options.range,
 			userMin,
 			userMax,
@@ -5814,6 +5814,50 @@ function Chart(options, callback) {
 			}
 
 		}
+		
+		/**
+		 * Adjust the min and max for the minimum range
+		 */
+		function adjustForMinRange(secondPass) {
+			var zoomOffset,
+				halfPointRange = (axis.pointRange || 0) / 2,
+				spaceAvailable = dataMax - dataMin > minRange,
+				minArgs,
+				maxArgs;
+				
+			// set the automatic minimum range based on the closest point distance 
+			if (secondPass && minRange === UNDEFINED) {
+				minRange = isXAxis && !defined(options.min) && !defined(options.max) ?
+					mathMin(axis.closestPointRange * 5, dataMax - dataMin) :
+					null;
+			}
+				
+			// if minRange is exceeded, adjust
+			if (max - min < minRange) { 
+
+				zoomOffset = (minRange - max + min) / 2;
+				
+				// if min and max options have been set, don't go beyond it
+				minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
+				if (spaceAvailable) { // if space is available, stay within the data range
+					minArgs[2] = dataMin - halfPointRange;
+				}
+				min = mathMax.apply(0, minArgs);
+				
+				maxArgs = [min + minRange, pick(options.max, min + minRange)];
+				if (spaceAvailable) { // if space is availabe, stay within the data range
+					maxArgs[2] = dataMax + halfPointRange;
+				}
+				max = mathMin.apply(0, maxArgs);
+				
+				// now if the max is adjusted, adjust the min back
+				if (max - min < minRange) {
+					minArgs[0] = max - minRange;
+					minArgs[1] = pick(options.min, max - minRange);
+					min = mathMax.apply(0, minArgs);
+				}
+			}
+		}
 
 		/**
 		 * Set the tick positions to round values and optionally extend the extremes
@@ -5824,17 +5868,7 @@ function Chart(options, callback) {
 				linkedParent,
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
-				tickPixelIntervalOption = options.tickPixelInterval,
-				zoomOffset;
-
-			// set the max zoom once
-			if (minRange === UNDEFINED) {
-				minRange = options.minRange || options.maxZoom || ( // maxZoom is deprecated but supported
-					isXAxis && !defined(options.min) && !defined(options.max) ?
-						mathMin(axis.closestPointRange * 5, dataMax - dataMin) :
-						null
-				);
-			}
+				tickPixelIntervalOption = options.tickPixelInterval;
 
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
@@ -5861,15 +5895,9 @@ function Chart(options, callback) {
 				}
 			}
 
-			// minRange exceeded, just center the selection
-			if (max - min < minRange) {
-
-				zoomOffset = (minRange - max + min) / 2;
-				// if min and max options have been set, don't go beyond it
-				min = mathMax(min - zoomOffset, pick(options.min, min - zoomOffset));
-				max = mathMin(min + minRange, pick(options.max, min + minRange));
-			}
-
+			// adjust min and max for the minimum range
+			adjustForMinRange(secondPass);
+			
 			// pad the values to get clear of the chart's edges
 			if (!categories && !usePercentage && !isLinked && defined(min) && defined(max)) {
 				length = (max - min) || 1;
