@@ -3529,12 +3529,7 @@ SVGRenderer.prototype = {
 			}
 		}
 
-
-		/**
-		 * After the text element is added, get the desired size of the border box
-		 * and add it before the text in the DOM.
-		 */
-		addEvent(wrapper, 'add', function () {
+		function getSizeAfterAdd() {
 			wrapper.attr({
 				text: str, // alignment is available now
 				x: x,
@@ -3542,8 +3537,13 @@ SVGRenderer.prototype = {
 				anchorX: anchorX,
 				anchorY: anchorY
 			});
-		});
+		}
 
+		/**
+		 * After the text element is added, get the desired size of the border box
+		 * and add it before the text in the DOM.
+		 */
+		addEvent(wrapper, 'add', getSizeAfterAdd);
 
 		/*
 		 * Add specific attribute setters.
@@ -3650,6 +3650,12 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
+				removeEvent(wrapper, 'add', getSizeAfterAdd);
+
+				// Added by button implementation
+				removeEvent(wrapper.element, 'mouseenter');
+				removeEvent(wrapper.element, 'mouseleave');
+
 				if (text) {
 					// Destroy the text element
 					text = text.destroy();
@@ -9027,6 +9033,7 @@ function Chart(options, callback) {
 		}
 
 		chart = null;
+		options = null;
 	}
 	/**
 	 * Prepare for first rendering after all data are loaded
@@ -14086,6 +14093,65 @@ Highcharts.Scroller = function (chart) {
 			bodyStyle.cursor = defaultBodyCursor;
 	}
 
+	function updatedDataHandler() {
+		var baseXAxis = baseSeries.xAxis,
+			baseExtremes = baseXAxis.getExtremes(),
+			baseMin = baseExtremes.min,
+			baseMax = baseExtremes.max,
+			baseDataMin = baseExtremes.dataMin,
+			baseDataMax = baseExtremes.dataMax,
+			range = baseMax - baseMin,
+			stickToMin,
+			stickToMax,
+			newMax,
+			newMin,
+			doRedraw,
+			navXData = navigatorSeries.xData,
+			hasSetExtremes = !!baseXAxis.setExtremes;
+
+		// detect whether to move the range
+		stickToMax = baseMax >= navXData[navXData.length - 1];
+		stickToMin = baseMin <= baseDataMin;
+
+		// set the navigator series data to the new data of the base series
+		if (!navigatorData) {
+			navigatorSeries.options.pointStart = baseSeries.xData[0];
+			navigatorSeries.setData(baseSeries.options.data, false);
+			doRedraw = true;
+		}
+
+		// if the zoomed range is already at the min, move it to the right as new data
+		// comes in
+		if (stickToMin) {
+			newMin = baseDataMin;
+			newMax = newMin + range;
+		}
+
+		// if the zoomed range is already at the max, move it to the right as new data
+		// comes in
+		if (stickToMax) {
+			newMax = baseDataMax;
+			if (!stickToMin) { // if stickToMin is true, the new min value is set above
+				newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
+			}
+		}
+
+		// update the extremes
+		if (hasSetExtremes && (stickToMin || stickToMax)) {
+			baseXAxis.setExtremes(newMin, newMax, true, false);
+		// if it is not at any edge, just move the scroller window to reflect the new series data
+		} else {
+			if (doRedraw) {
+				chart.redraw(false);
+			}
+
+			render(
+				mathMax(baseMin, baseDataMin),
+				mathMin(baseMax, baseDataMax)
+			);
+		}
+	}
+
 	/**
 	 * Set up the mouse and touch events for the navigator and scrollbar
 	 */
@@ -14102,6 +14168,9 @@ Highcharts.Scroller = function (chart) {
 		removeEvent(chart.container, MOUSEDOWN, mouseDownHandler);
 		removeEvent(chart.container, MOUSEMOVE, mouseMoveHandler);
 		removeEvent(document, MOUSEUP, mouseUpHandler);
+		if (navigatorEnabled) {
+			removeEvent(baseSeries, 'updatedData', updatedDataHandler);
+		}
 	}
 
 	/**
@@ -14176,66 +14245,7 @@ Highcharts.Scroller = function (chart) {
 
 			// respond to updated data in the base series
 			// todo: use similiar hook when base series is not yet initialized
-			addEvent(baseSeries, 'updatedData', function () {
-
-				var baseXAxis = baseSeries.xAxis,
-					baseExtremes = baseXAxis.getExtremes(),
-					baseMin = baseExtremes.min,
-					baseMax = baseExtremes.max,
-					baseDataMin = baseExtremes.dataMin,
-					baseDataMax = baseExtremes.dataMax,
-					range = baseMax - baseMin,
-					stickToMin,
-					stickToMax,
-					newMax,
-					newMin,
-					doRedraw,
-					navXData = navigatorSeries.xData,
-					hasSetExtremes = !!baseXAxis.setExtremes;
-
-				// detect whether to move the range
-				stickToMax = baseMax >= navXData[navXData.length - 1];
-				stickToMin = baseMin <= baseDataMin;
-
-				// set the navigator series data to the new data of the base series
-				if (!navigatorData) {
-					navigatorSeries.options.pointStart = baseSeries.xData[0];
-					navigatorSeries.setData(baseSeries.options.data, false);
-					doRedraw = true;
-				}
-
-				// if the zoomed range is already at the min, move it to the right as new data
-				// comes in
-				if (stickToMin) {
-					newMin = baseDataMin;
-					newMax = newMin + range;
-				}
-
-				// if the zoomed range is already at the max, move it to the right as new data
-				// comes in
-				if (stickToMax) {
-					newMax = baseDataMax;
-					if (!stickToMin) { // if stickToMin is true, the new min value is set above
-						newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
-					}
-				}
-
-				// update the extremes
-				if (hasSetExtremes && (stickToMin || stickToMax)) {
-					baseXAxis.setExtremes(newMin, newMax, true, false);
-				// if it is not at any edge, just move the scroller window to reflect the new series data
-				} else {
-					if (doRedraw) {
-						chart.redraw(false);
-					}
-
-					render(
-						mathMax(baseMin, baseDataMin),
-						mathMin(baseMax, baseDataMax)
-					);
-				}
-
-			});
+			addEvent(baseSeries, 'updatedData', updatedDataHandler);
 
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {
@@ -14745,39 +14755,49 @@ Chart.prototype.callbacks.push(function (chart) {
 		rangeSelector.render(extremes.min, extremes.max);
 	}
 
+	function afterSetExtremesHandlerScroller(e) {
+		scroller.render(e.min, e.max);
+	}
+
+	function afterSetExtremesHandlerRangeSelector(e) {
+		rangeSelector.render(e.min, e.max);
+	}
+
+	function destroyEvents() {
+		if (scroller) {
+			removeEvent(chart, 'resize', renderScroller);
+			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
+		}
+		if (rangeSelector) {
+			removeEvent(chart, 'resize', renderRangeSelector);
+			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerRangeSelector);
+		}
+	}
+
 	// initiate the scroller
 	if (scroller) {
-
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
-			scroller.render(e.min, e.max);
-		});
+		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
 
 		// redraw the scroller chart resize
 		addEvent(chart, 'resize', renderScroller);
 
-
 		// do it now
 		renderScroller();
-
 	}
 	if (rangeSelector) {
-
-
-
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
-			rangeSelector.render(e.min, e.max);
-		});
+		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerRangeSelector);
 
 		// redraw the scroller chart resize
 		addEvent(chart, 'resize', renderRangeSelector);
 
-
 		// do it now
 		renderRangeSelector();
-
 	}
+
+	// Remove resize/afterSetExtremes at chart destroy
+	addEvent(chart, 'destroy', destroyEvents);
 });
 /**
  * A wrapper for Chart with all the default values for a Stock chart
