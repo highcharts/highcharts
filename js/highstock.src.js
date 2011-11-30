@@ -14780,15 +14780,11 @@ Highcharts.RangeSelector = function (chart) {
 		// Clear input element events
 		leftBox.onfocus = leftBox.onblur = leftBox.onchange = rightBox.onfocus = rightBox.onblur = rightBox.onchange = null;
 
+		// Discard divs and spans
 		each([leftBox, rightBox, boxSpanElements.min, boxSpanElements.max, divAbsolute, divRelative], function (item) {
 			discardElement(item);
 		});
-/*		discardElement(leftBox);
-		discardElement(rightBox);
-		discardElement(boxSpanElements.min);
-		discardElement(boxSpanElements.max);
-		discardElement(divAbsolute);
-		discardElement(divRelative);*/
+		// Null the references
 		leftBox = rightBox = boxSpanElements = div = divAbsolute = divRelative = null;
 	}
 
