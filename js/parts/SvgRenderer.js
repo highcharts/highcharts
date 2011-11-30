@@ -1723,12 +1723,7 @@ SVGRenderer.prototype = {
 			}
 		}
 
-
-		/**
-		 * After the text element is added, get the desired size of the border box
-		 * and add it before the text in the DOM.
-		 */
-		addEvent(wrapper, 'add', function () {
+		function getSizeAfterAdd() {
 			wrapper.attr({
 				text: str, // alignment is available now
 				x: x,
@@ -1736,8 +1731,13 @@ SVGRenderer.prototype = {
 				anchorX: anchorX,
 				anchorY: anchorY
 			});
-		});
+		}
 
+		/**
+		 * After the text element is added, get the desired size of the border box
+		 * and add it before the text in the DOM.
+		 */
+		addEvent(wrapper, 'add', getSizeAfterAdd);
 
 		/*
 		 * Add specific attribute setters.
@@ -1844,6 +1844,12 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
+				removeEvent(wrapper, 'add', getSizeAfterAdd);
+
+				// Added by button implementation
+				removeEvent(wrapper.element, 'mouseenter');
+				removeEvent(wrapper.element, 'mouseleave');
+
 				if (text) {
 					// Destroy the text element
 					text = text.destroy();
