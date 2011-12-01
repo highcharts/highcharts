@@ -1375,7 +1375,7 @@ defaultOptions = {
 			color: '#3E576F'
 		},
 		itemHoverStyle: {
-			cursor: 'pointer',
+			//cursor: 'pointer', removed as of #601
 			color: '#000000'
 		},
 		itemHiddenStyle: {
