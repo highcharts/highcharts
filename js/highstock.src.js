@@ -14154,12 +14154,10 @@ Highcharts.Scroller = function (chart) {
 	 */
 	function mouseUpHandler() {
 		if (hasDragged) {
-				chart.xAxis[0].setExtremes(
-					xAxis.translate(zoomedMin, true),
-					xAxis.translate(zoomedMax, true),
-					true,
-					false
-				);
+				var min = xAxis.translate(zoomedMin, true),
+					max = xAxis.translate(zoomedMax, true);
+				fireEvent(chart, 'navigatorUpdate', {min:min, max:max, xAxis:xAxis}, function() {});
+				chart.xAxis[0].setExtremes(min, max, true, false);
 			}
 			grabbedLeft = grabbedRight = grabbedCenter = hasDragged = dragOffset = null;
 			bodyStyle.cursor = defaultBodyCursor;
