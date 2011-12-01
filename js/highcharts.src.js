@@ -5651,8 +5651,8 @@ function Chart(options, callback) {
 									distance = mathAbs(xData[i] - xData[i - 1]);
 									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
 								}
-	
-								// for points within the visible range, including the first point outside the 
+
+								// for points within the visible range, including the first point outside the
 								// visible range, consider y extremes
 								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
 
@@ -5821,7 +5821,7 @@ function Chart(options, callback) {
 			}
 
 		}
-		
+
 		/**
 		 * Adjust the min and max for the minimum range
 		 */
@@ -5831,32 +5831,32 @@ function Chart(options, callback) {
 				spaceAvailable = dataMax - dataMin > minRange,
 				minArgs,
 				maxArgs;
-				
-			// set the automatic minimum range based on the closest point distance 
+
+			// set the automatic minimum range based on the closest point distance
 			if (secondPass && minRange === UNDEFINED) {
 				minRange = isXAxis && !defined(options.min) && !defined(options.max) ?
 					mathMin(axis.closestPointRange * 5, dataMax - dataMin) :
 					null;
 			}
-				
+
 			// if minRange is exceeded, adjust
-			if (max - min < minRange) { 
+			if (max - min < minRange) {
 
 				zoomOffset = (minRange - max + min) / 2;
-				
+
 				// if min and max options have been set, don't go beyond it
 				minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
 				if (spaceAvailable) { // if space is available, stay within the data range
 					minArgs[2] = dataMin - halfPointRange;
 				}
 				min = mathMax.apply(0, minArgs);
-				
+
 				maxArgs = [min + minRange, pick(options.max, min + minRange)];
 				if (spaceAvailable) { // if space is availabe, stay within the data range
 					maxArgs[2] = dataMax + halfPointRange;
 				}
 				max = mathMin.apply(0, maxArgs);
-				
+
 				// now if the max is adjusted, adjust the min back
 				if (max - min < minRange) {
 					minArgs[0] = max - minRange;
@@ -5904,7 +5904,7 @@ function Chart(options, callback) {
 
 			// adjust min and max for the minimum range
 			adjustForMinRange(secondPass);
-			
+
 			// pad the values to get clear of the chart's edges
 			if (!categories && !usePercentage && !isLinked && defined(min) && defined(max)) {
 				length = (max - min) || 1;
@@ -6068,7 +6068,7 @@ function Chart(options, callback) {
 						}
 					}
 				}
-	
+
 				// Mark as dirty if it is not already set to dirty and extremes have changed. #595.
 				if (!axis.isDirty) {
 					axis.isDirty = chart.isDirtyBox || min !== oldMin || max !== oldMax;
@@ -6285,12 +6285,12 @@ function Chart(options, callback) {
 					.add();
 					axisTitle.isNew = true;
 				}
-				
-				if (showAxis) {	
+
+				if (showAxis) {
 					titleOffset = axisTitle.getBBox()[horiz ? 'height' : 'width'];
 					titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
 				}
-				
+
 				// hide or show the title depending on whether showEmpty is set
 				axisTitle[showAxis ? 'show' : 'hide']();
 
@@ -6446,7 +6446,7 @@ function Chart(options, callback) {
 				} else {
 					axisLine.animate({ d: linePath });
 				}
-				
+
 				// show or hide the line depending on options.showEmpty
 				axisLine[showAxis ? 'show' : 'hide']();
 
@@ -6822,10 +6822,10 @@ function Chart(options, callback) {
 			}
 
 		}
-		
+
 		/**
 		 * Hide the crosshairs
-		 */		
+		 */
 		function hideCrosshairs() {
 			each(crosshairs, function (crosshair) {
 				if (crosshair) {
@@ -9030,7 +9030,6 @@ function Chart(options, callback) {
 		fireEvent(chart, 'destroy');
 
 		// remove events
-		removeEvent(win, 'unload', destroy);
 		removeEvent(chart);
 
 		// ==== Destroy collections:
@@ -9162,10 +9161,6 @@ function Chart(options, callback) {
 	}
 
 	// Run chart
-
-
-	// Destroy the chart and free up memory.
-	addEvent(win, 'unload', destroy);
 
 	// Set up auto resize
 	if (optionsChart.reflow !== false) {

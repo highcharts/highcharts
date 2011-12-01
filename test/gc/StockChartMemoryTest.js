@@ -32,9 +32,6 @@ StockChartMemoryTest.prototype.setUp = function () {
 
 	this.chart = new Highcharts.StockChart(conf);
 	assertNotUndefined(this.chart);
-
-	// Disconnect the unload event that runs destroy. It should not run now that we are testing memory leaks.
-	removeEvent(window, 'unload');
 };
 
 /**
