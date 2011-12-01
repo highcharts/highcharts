@@ -1375,7 +1375,7 @@ defaultOptions = {
 			color: '#3E576F'
 		},
 		itemHoverStyle: {
-			cursor: 'pointer',
+			//cursor: 'pointer', removed as of #601
 			color: '#000000'
 		},
 		itemHiddenStyle: {
@@ -3909,6 +3909,9 @@ var VMLElement = extendClass(SVGElement, {
 
 					// width and height
 					} else if (key === 'width' || key === 'height') {
+						
+						value = mathMax(0, value); // don't set width or height below zero (#311)
+						
 						this[key] = value; // used in getter
 
 						// clipping rectangle special
