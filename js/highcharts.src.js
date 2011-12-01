@@ -3903,6 +3903,9 @@ var VMLElement = extendClass(SVGElement, {
 
 					// width and height
 					} else if (key === 'width' || key === 'height') {
+						
+						value = mathMax(0, value); // don't set width or height below zero (#311)
+						
 						this[key] = value; // used in getter
 
 						// clipping rectangle special
