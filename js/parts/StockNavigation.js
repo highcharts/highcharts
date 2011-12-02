@@ -123,6 +123,7 @@ Highcharts.Scroller = function (chart) {
 		navigatorLeft,
 		navigatorWidth,
 		navigatorSeries,
+		navigatorData,
 		scrollbarOptions = chartOptions.scrollbar,
 		scrollbarEnabled = scrollbarOptions.enabled,
 		grabbedLeft,
@@ -663,10 +664,10 @@ Highcharts.Scroller = function (chart) {
 			var baseOptions = baseSeries.options,
 				mergedNavSeriesOptions,
 				baseData = baseOptions.data,
-				navigatorSeriesOptions = navigatorOptions.series,
-				navigatorData = navigatorSeriesOptions.data;
+				navigatorSeriesOptions = navigatorOptions.series;
 
 			// remove it to prevent merging one by one
+			navigatorData = navigatorSeriesOptions.data;
 			baseOptions.data = navigatorSeriesOptions.data = null;
 
 
@@ -1188,6 +1189,7 @@ Highcharts.RangeSelector = function (chart) {
 		});
 		// Null the references
 		leftBox = rightBox = boxSpanElements = div = divAbsolute = divRelative = null;
+		
 	}
 
 	// Run RangeSelector
