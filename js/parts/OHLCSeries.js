@@ -110,10 +110,10 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		each(series.points, function (point) {
 			// the graphics
 			if (point.open !== null) {
-				point.plotOpen = yAxis.translate(point.open, 0, 1);
+				point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
 			}
 			if (point.close !== null) {
-				point.plotClose = yAxis.translate(point.close, 0, 1);
+				point.plotClose = yAxis.translate(point.close, 0, 1, 0, 1);
 			}
 
 		});
