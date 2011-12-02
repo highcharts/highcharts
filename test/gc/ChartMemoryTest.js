@@ -27,9 +27,6 @@ ChartMemoryTest.prototype.setUp = function () {
 
 	this.chart = new Chart(conf);
 	assertNotUndefined(this.chart);
-
-	// Disconnect the unload event that runs destroy. It should not run now that we are testing memory leaks.
-	removeEvent(window, 'unload');
 };
 
 /**
