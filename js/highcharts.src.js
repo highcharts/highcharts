@@ -9684,16 +9684,15 @@ Point.prototype = {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = pointAttr[state].r;
+			radius = point.graphic.symbolName && pointAttr[state].r;
 			point.graphic.attr(merge(
 				pointAttr[state],
-				radius ? extend({ // new symbol attributes
+				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
-					y: plotY - radius
-				}, point.graphic.symbolName ? { // don't apply to image symbols #507
+					y: plotY - radius,
 					width: 2 * radius,
 					height: 2 * radius
-				} : {}) : {}
+				} : {}
 			));
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
