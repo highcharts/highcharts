@@ -173,6 +173,7 @@ function Chart(options, callback) {
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function () {
 					var value = this.value,
+						dateTimeLabelFormat = this.dateTimeLabelFormat,
 						ret;
 
 					if (dateTimeLabelFormat) { // datetime axis
@@ -229,7 +230,16 @@ function Chart(options, callback) {
 					isLast = pos === tickPositions[tickPositions.length - 1],
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
-					label = tick.label;
+					label = tick.label,
+					tickPositionInfo,
+					dateTimeLabelFormat;
+				
+				// Set the datetime label format. If a higher rank is set for this position, use that. If not,
+				// use the general format.
+				if (isDatetimeAxis) {
+					tickPositionInfo = tickPositions.info;
+					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
+				}
 
 				// set properties for access in render method
 				tick.isFirst = isFirst;
@@ -1066,6 +1076,7 @@ function Chart(options, callback) {
 				linkedParent,
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
+				tickPixelIntervalOption = options.tickPixelInterval;
 
 			// hook for ordinal axes
 			if (secondPass && axis.beforeSetTickPositions) {
@@ -1151,7 +1162,6 @@ function Chart(options, callback) {
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
 					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units); // docs
-					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
 				} else {
 					setLinearTickPositions();
 				}

@@ -510,6 +510,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	var tickPositions = [],
 		i,
+		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		units = unitsOption || [[
 			MILLISECOND, // unit name
@@ -639,19 +640,25 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 		// else, the interval is fixed and we use simple addition
 		} else {
 			time += interval * multitude;
+			
+			// mark new days if the time is dividable by day
+			if (interval <= timeUnits[HOUR] && !(time % timeUnits[DAY])) {
+				higherRanks[time] = DAY;
+			}
 		}
 
 		i++;
 	}
+	
 	// push the last time
 	tickPositions.push(time);
-
 
 	// record information on the chosen unit - for dynamic label formatter
 	tickPositions.info = {
 		unitName: unit[0],
 		unitRange: interval,
 		count: multitude,
+		higherRanks: higherRanks,
 		totalRange: interval * multitude
 	};
 
@@ -4989,6 +4996,7 @@ function Chart(options, callback) {
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function () {
 					var value = this.value,
+						dateTimeLabelFormat = this.dateTimeLabelFormat,
 						ret;
 
 					if (dateTimeLabelFormat) { // datetime axis
@@ -5045,7 +5053,16 @@ function Chart(options, callback) {
 					isLast = pos === tickPositions[tickPositions.length - 1],
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
-					label = tick.label;
+					label = tick.label,
+					tickPositionInfo,
+					dateTimeLabelFormat;
+				
+				// Set the datetime label format. If a higher rank is set for this position, use that. If not,
+				// use the general format.
+				if (isDatetimeAxis) {
+					tickPositionInfo = tickPositions.info;
+					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
+				}
 
 				// set properties for access in render method
 				tick.isFirst = isFirst;
@@ -5113,24 +5130,26 @@ function Chart(options, callback) {
 					pos = tick.pos,
 					labelOptions = options.labels,
 					gridLine = tick.gridLine,
-					gridLineWidth = major ? options.gridLineWidth : options.minorGridLineWidth,
-					gridLineColor = major ? options.gridLineColor : options.minorGridLineColor,
-					dashStyle = major ?
-						options.gridLineDashStyle :
-						options.minorGridLineDashStyle,
+					gridPrefix = tickPositions.gaps && tickPositions.gaps[pos] && options.gapGridLineWidth ?
+						'gapGrid' : // mark the gap in an ordinal axis (stock charts)
+						major ? 'grid' : 'minorGrid',
+					tickPrefix = major ? 'tick' : 'minorTick',
+					gridLineWidth = options[gridPrefix + 'LineWidth'],
+					gridLineColor = options[gridPrefix + 'LineColor'],
+					dashStyle = options[gridPrefix + 'LineDashStyle'],
+					tickLength = options[tickPrefix + 'Length'],
+					tickWidth = options[tickPrefix + 'Width'] || 0,
+					tickColor = options[tickPrefix + 'Color'],
+					tickPosition = options[tickPrefix + 'Position'],
 					gridLinePath,
 					mark = tick.mark,
 					markPath,
-					tickLength = major ? options.tickLength : options.minorTickLength,
-					tickWidth = major ? options.tickWidth : (options.minorTickWidth || 0),
-					tickColor = major ? options.tickColor : options.minorTickColor,
-					tickPosition = major ? options.tickPosition : options.minorTickPosition,
 					step = labelOptions.step,
 					cHeight = (old && oldChartHeight) || chartHeight,
 					attribs,
 					x,
 					y;
-
+					
 				// get x and y position for ticks and labels
 				x = horiz ?
 					translate(pos + tickmarkOffset, null, null, old) + transB :
@@ -5734,14 +5753,15 @@ function Chart(options, callback) {
 					val = axisLength - val;
 				}
 				returnValue = val / localA + localMin; // from chart pixel to value
-				if (isLog && handleLog) {
-					returnValue = lin2log(returnValue);
+				if (axis.lin2val) { // log and ordinal axes
+					returnValue = axis.lin2val(returnValue);
 				}
 
 			} else { // normal translation, from axis value to pixel, relative to plot
-				if (isLog && handleLog) {
-					val = log2lin(val);
+				if (axis.val2lin) { // log and ordinal axes
+					val = axis.val2lin(val);
 				}
+				
 				returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding);
 			}
 
@@ -5874,12 +5894,18 @@ function Chart(options, callback) {
 		 * to the nearest tick
 		 */
 		function setTickPositions(secondPass) {
+			
 			var length,
 				linkedParent,
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval;
 
+			// hook for ordinal axes
+			if (secondPass && axis.beforeSetTickPositions) {
+				axis.beforeSetTickPositions();
+			}
+			
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
 				linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo];
@@ -5933,14 +5959,22 @@ function Chart(options, callback) {
 						(max - min) * tickPixelIntervalOption / (axisLength || 1)
 				);
 			}
-
+			
+			// hook for extensions, used in Highstock ordinal axes
+			if (secondPass && axis.postProcessTickInterval) {
+				tickInterval = axis.postProcessTickInterval(tickInterval);
+			}
+						
+			// for linear axes, get magnitude and normalize the interval
 			if (!isDatetimeAxis) { // linear
 				magnitude = math.pow(10, mathFloor(math.log(tickInterval) / math.LN10));
 				if (!defined(options.tickInterval)) {
 					tickInterval = normalizeTickInterval(tickInterval, null, magnitude, options);
 				}
 			}
-			axis.tickInterval = tickInterval; // record for linked axis
+			
+			// record the tick interval for linked axis
+			axis.tickInterval = tickInterval;
 
 			// get minorTickInterval
 			minorTickInterval = options.minorTickInterval === 'auto' && tickInterval ?
@@ -5951,11 +5985,18 @@ function Chart(options, callback) {
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
 					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units); // docs
-					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositions.info.unitName];
 				} else {
 					setLinearTickPositions();
 				}
 			}
+			
+			// post process positions, used in ordinal axes in Highstock
+			if (secondPass) {
+				fireEvent(axis, 'afterSetTickPositions', {
+					tickPositions: tickPositions
+				});
+			}
+			
 
 			if (!isLinked) {
 
@@ -5987,8 +6028,6 @@ function Chart(options, callback) {
 					maxTicks[xOrY] = tickPositions.length;
 				}
 			}
-
-
 		}
 
 		/**
@@ -6019,6 +6058,7 @@ function Chart(options, callback) {
 				}
 			}
 
+			
 		}
 
 		/**
@@ -6061,8 +6101,8 @@ function Chart(options, callback) {
 
 				// the translation factor used in translate function
 				oldTransA = transA;
-				transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
-
+				axis.translationSlope = transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
+	
 				// reset stacks
 				if (!isXAxis) {
 					for (type in stacks) {
@@ -6160,7 +6200,7 @@ function Chart(options, callback) {
 			}
 
 			// secondary values
-			transA = axisLength / ((range + pointRange) || 1);
+			axis.translationSlope = transA = axisLength / ((range + pointRange) || 1);
 			transB = horiz ? axisLeft : axisBottom; // translation addend
 			minPixelPadding = transA * (pointRange / 2);
 
@@ -6358,6 +6398,10 @@ function Chart(options, callback) {
 				each(tickPositions, function (pos, i) {
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= min && pos <= max)) {
+						
+						if (!ticks[pos]) {
+							ticks[pos] = new Tick(pos);
+						}
 
 						// render new ticks in old position
 						if (slideInTicks && ticks[pos].isNew) {
@@ -6367,6 +6411,7 @@ function Chart(options, callback) {
 						ticks[pos].isActive = true;
 						ticks[pos].render(i);
 					}
+					
 				});
 
 				// alternate grid color
@@ -6390,7 +6435,8 @@ function Chart(options, callback) {
 				// custom plot lines and bands
 				if (!axis._addedPlotLB) { // only first time
 					each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
-						plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
+						//plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
+						addPlotBandOrLine(plotLineOptions);
 					});
 					axis._addedPlotLB = true;
 				}
@@ -6537,6 +6583,11 @@ function Chart(options, callback) {
 			if (tracker.resetTracker) {
 				tracker.resetTracker();
 			}
+			
+			// we need to filter the tick postions again
+			if (options.ordinal) {
+				setTickPositions(true);
+			}
 
 			// render the axis
 			render();
@@ -6659,8 +6710,11 @@ function Chart(options, callback) {
 			addEvent(axis, eventType, events[eventType]);
 		}
 
-		// set min and max
-		//setScale();
+		// extend logarithmic axis
+		if (isLog) {
+			axis.val2lin = log2lin;
+			axis.lin2val = lin2log;
+		}
 
 	} // end Axis
 
@@ -7270,7 +7324,7 @@ function Chart(options, callback) {
 
 				// record the start position
 				chart.mouseIsDown = mouseIsDown = true;
-				mouseDownX = e.chartX;
+				chart.mouseDownX = mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
 
 				addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
@@ -7378,26 +7432,7 @@ function Chart(options, callback) {
 
 						// panning
 						if (clickedInside && !selectionMarker && optionsChart.panning) {
-
-							var xAxis = chart.xAxis[0],
-								halfPointRange = xAxis.pointRange / 2,
-								extremes = xAxis.getExtremes(),
-								newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
-								newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange;
-
-							// remove active points for shared tooltip
-							if (hoverPoints) {
-								each(hoverPoints, function (point) {
-									point.setState();
-								});
-							}
-
-							if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-								xAxis.setExtremes(newMin, newMax, true, false);
-							}
-
-							mouseDownX = chartX;
-							css(container, { cursor: 'move' });
+							chart.pan(chartX);
 						}
 					}
 
@@ -8406,6 +8441,36 @@ function Chart(options, callback) {
 				}
 			});
 		}
+	};
+	
+	/**
+	 * Pan the chart by dragging the mouse across the pane. This function is called
+	 * on mouse move, and the distance to pan is computed from chartX compared to 
+	 * the first chartX position in the dragging operation.
+	 */
+	chart.pan = function(chartX) {
+
+		var xAxis = chart.xAxis[0],
+			mouseDownX = chart.mouseDownX,
+			halfPointRange = xAxis.pointRange / 2,
+			extremes = xAxis.getExtremes(),
+			newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
+			newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange,
+			hoverPoints = chart.hoverPoints;
+			
+		// remove active points for shared tooltip
+		if (hoverPoints) {
+			each(hoverPoints, function (point) {
+				point.setState();
+			});
+		}
+		
+		if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+			xAxis.setExtremes(newMin, newMax, true, false);
+		}
+
+		chart.mouseDownX = chartX; // set new reference for next run
+		css(container, { cursor: 'move' });
 	};
 
 	/**
@@ -11617,8 +11682,7 @@ var ColumnSeries = extendClass(Series, {
 		// the number of column series in the plot, the groupPadding
 		// and the pointPadding options
 		var points = series.points,
-			pointRange = pick(series.pointRange, xAxis.pointRange),
-			categoryWidth = mathAbs(xAxis.translate(0) - xAxis.translate(pointRange)),
+			categoryWidth = mathAbs(xAxis.translationSlope) * (xAxis.ordinalSlope || xAxis.closestPointRange),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
