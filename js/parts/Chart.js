@@ -3592,13 +3592,12 @@ function Chart(options, callback) {
 				point.setState();
 			});
 		}
-
+		
 		if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-			//xAxis.setExtremes(newMin, newMax, true, false);
+			xAxis.setExtremes(newMin, newMax, true, false);
 		}
-		console.log(xAxis.ordinalSlope / xAxis.closestPointRange)
 
-		//chart.mouseDownX = chartX; // set new reference for next run
+		chart.mouseDownX = chartX; // set new reference for next run
 		css(container, { cursor: 'move' });
 	};
 

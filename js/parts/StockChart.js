@@ -219,13 +219,22 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 		
 	seriesProto.init = function() {
 		var series = this,
+			chart,
 			xAxis;
 		
 		// call base method
 		baseInit.apply(series, arguments);
 		
-		// xAxis is set in base init
+		// chart and xAxis are set in base init
+		chart = series.chart;
 		xAxis = series.xAxis;
+		
+		// Destroy the extended ordinal index on updated data
+		if (xAxis && xAxis.options.ordinal) {
+			addEvent(series, 'updatedData', function() {
+				delete xAxis.ordinalIndex;
+			});
+		}
 		
 		if (xAxis && xAxis.options.ordinal && !xAxis.hasOrdinalExtension) {
 				
@@ -237,15 +246,16 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * as a method extension to avoid overhead in the core.
 			 */
 			xAxis.beforeSetTickPositions = function() {
-				var len,
+				var axis = this,
+					len,
 					ordinalPositions = [],
 					useOrdinal = false,
 					dist;
 				
 				// apply the ordinal logic
-				if (xAxis.options.ordinal) {
+				if (axis.options.ordinal) {
 					
-					each (xAxis.series, function(series, i) {
+					each (axis.series, function(series, i) {
 					
 						// concatenate the processed X data into the existing positions, or the empty array 
 						ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -283,12 +293,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					
 					// record the slope and offset to compute the linear values from the array index
 					if (useOrdinal) {
-						xAxis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
-						xAxis.ordinalOffset = ordinalPositions[0];					
-						xAxis.ordinalPositions = ordinalPositions;
+						axis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
+						axis.ordinalOffset = ordinalPositions[0];					
+						axis.ordinalPositions = ordinalPositions;
 					
 					} else {
-						xAxis.ordinalPositions = xAxis.ordinalSlope = xAxis.ordinalOffset = UNDEFINED;
+						axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 					}
 				}
 			};
@@ -297,10 +307,14 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * Translate from a linear axis value to the corresponding ordinal axis position. If there
 			 * are no gaps in the ordinal axis this will be the same. The translated value is the value
 			 * that the point would have if the axis were linear, using the same min and max.
+			 * 
+			 * @param Number val The axis value
+			 * @param Boolean toIndex Whether to return the index in the ordinalPositions or the new value
 			 */
-			xAxis.val2lin = function (val) {
+			xAxis.val2lin = function (val, toIndex) {
 				
-				var ordinalPositions = xAxis.ordinalPositions;
+				var axis = this,
+					ordinalPositions = axis.ordinalPositions;
 				
 				if (!ordinalPositions) {
 					return val;
@@ -331,44 +345,134 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 							ordinalIndex = i + distance;
 						}
 					}
-					
-					return xAxis.ordinalSlope * (ordinalIndex || 0) + xAxis.ordinalOffset;
+					return toIndex ?
+						ordinalIndex :
+						axis.ordinalSlope * (ordinalIndex || 0) + axis.ordinalOffset;
 				}
 			};
 			
 			/**
 			 * Translate from linear (internal) to axis value
+			 * 
+			 * @param Number val The linear abstracted value
+			 * @param Boolean fromIndex Translate from an index in the ordinal positions rather than a value
 			 */
-			xAxis.lin2val = function (val) {
+			xAxis.lin2val = function (val, fromIndex) {
+				var axis = this,
+					ordinalPositions = axis.ordinalPositions;
 				
-				var ordinalPositions = xAxis.ordinalPositions;
-				
-				if (!ordinalPositions) {
+				if (!ordinalPositions) { // the visible range contains only equally spaced values
 					return val;
 				
 				} else {
 				
-					var ordinalSlope = xAxis.ordinalSlope,
-						ordinalOffset = xAxis.ordinalOffset,
+					var ordinalSlope = axis.ordinalSlope,
+						ordinalOffset = axis.ordinalOffset,
 						i = ordinalPositions.length - 1,
 						linearEquivalentLeft,
 						linearEquivalentRight,
-						ret = val,
+						ret,
 						distance;
+						
+					
+					// Handle the case where we translate from the index directly, used only 
+					// when panning an ordinal axis
+					if (fromIndex) {
+						
+						if (val < 0) { // out of range, in effect panning to the left
+							val = ordinalPositions[0];
+						} else if (val > i) { // out of range, panning to the right
+							val = ordinalPositions[i];
+						} else { // split it up
+							i = mathFloor(val);
+							distance = val - i; // the decimal
+						}
 						
 					// Loop down along the ordinal positions. When the linear equivalent of i matches
 					// an ordinal position, interpolate between the left and right values.
-					while (i--) {
-						linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
-						if (val > linearEquivalentLeft) {
-							linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
-							distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
-							ret = ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]);
-							break;
+					} else {
+						while (i--) {
+							linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
+							if (val >= linearEquivalentLeft) {
+								linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
+								distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
+								break;
+							}
 						}
 					}
-					return ret;
+					
+					// If the index is within the range of the ordinal positions, return the associated
+					// or interpolated value. If not, just return the value
+					return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
+						ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 
+						val;
 				}
+			};
+			
+			/**
+			 * Get the ordinal positions for the entire data set. This is necessary in chart panning
+			 * because we need to find out what points or data groups are available outside the 
+			 * visible range. When a panning operation starts, if an index for the given grouping
+			 * does not exists, it is created and cached. This index is deleted on updated data, so
+			 * it will be regenerated the next time a panning operation starts.
+			 */
+			xAxis.getExtendedPositions = function() {
+				var grouping = xAxis.series[0].currentDataGrouping,
+					ordinalIndex = xAxis.ordinalIndex,
+					key = grouping ? grouping.count + grouping.unitName : 'raw',
+					extremes = xAxis.getExtremes(),
+					fakeAxis,
+					fakeSeries;
+					
+				// If this is the first time, or the ordinal index is deleted by updatedData,
+				// create it.
+				if (!ordinalIndex) {
+					ordinalIndex = xAxis.ordinalIndex = {};
+				}
+				
+				
+				if (!ordinalIndex[key]) {
+					
+					// Create a fake axis object where the extended ordinal positions are emulated
+					fakeAxis = {
+						series: [],
+						getExtremes: function() {
+							return {
+								min: extremes.dataMin,
+								max: extremes.dataMax
+							}
+						},
+						options: {
+							ordinal: true
+						}
+					}
+					
+					// Add the fake series to hold the full data, then apply processData to it
+					each(xAxis.series, function(series) {
+						fakeSeries = {
+							xAxis: fakeAxis,
+							xData: series.xData
+						};
+						fakeSeries.options = {
+							dataGrouping : grouping ? {
+								forced: true,
+								units: [[grouping.unitName, [grouping.count]]]
+							} : {
+								enabled: false
+							}
+						};
+						series.processData.apply(fakeSeries);
+						
+						fakeAxis.series.push(fakeSeries);
+					});
+					
+					// Run beforeSetTickPositions to compute the ordinalPositions
+					xAxis.beforeSetTickPositions.apply(fakeAxis);
+					
+					// Cache it
+					ordinalIndex[key] = fakeAxis.ordinalPositions;
+				}
+				return ordinalIndex[key];
 			};
 			
 			/**
@@ -427,6 +531,61 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					tickPositions.gaps = gaps;
 				}
 			});
+			
+			
+			/**
+			 * Overrride the chart.pan method for ordinal axes. 
+			 */
+			
+			var baseChartPan = chart.pan;
+			chart.pan = function(chartX) {
+				var xAxis = chart.xAxis[0];
+					
+				if (xAxis.options.ordinal) {
+					
+					var mouseDownX = chart.mouseDownX,
+						extremes = xAxis.getExtremes(),
+						newMin,
+						newMax,
+						hoverPoints = chart.hoverPoints,
+						pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || xAxis.closestPointRange),
+						movedUnits = (mouseDownX - chartX) / pointPixelWidth, // how many ordinal units did we move?
+						extendedAxis = { ordinalPositions: xAxis.getExtendedPositions() }; // get index of all the chart's points
+					
+					if (mathAbs(movedUnits) > 1) { //  don't handle non-change
+						
+						// Remove active points for shared tooltip
+						if (hoverPoints) {
+							each(hoverPoints, function (point) {
+								point.setState();
+							});
+						}
+						
+						// Get the new min and max values by getting the ordinal index for the current extreme, 
+						// then add the moved units and translate back to values. All this happens on the 
+						// extended ordinal positions.
+						newMin = xAxis.lin2val.apply(extendedAxis, [
+							xAxis.val2lin.apply(extendedAxis, [extremes.min, true]) + movedUnits, // the new index 
+							true // translate from index
+						]);
+						newMax = xAxis.lin2val.apply(extendedAxis, [
+							xAxis.val2lin.apply(extendedAxis, [extremes.max, true]) + movedUnits, // the new index 
+							true // translate from index
+						]);
+						
+						// Apply it if it is within the available data range
+						if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+							xAxis.setExtremes(newMin, newMax, true, false);
+						}
+				
+						chart.mouseDownX = chartX; // set new reference for next run
+						css(container, { cursor: 'move' });
+					}
+				
+				} else {
+					baseChartPan.apply(chart, arguments);
+				}
+			}; 
 		}
 	};
 			
