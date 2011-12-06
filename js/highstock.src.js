@@ -12705,10 +12705,12 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		pointX,
 		pointY,
 		groupedY,
+		handleYData = !!yData, // when grouping the fake extended axis for panning, we don't need to consider y
 		values1 = [],
 		values2 = [],
 		values3 = [],
 		values4 = [],
+		approximationFn = typeof approximation === 'function' ? approximation : approximations[approximation],
 		i;
 	
 		for (i = 0; i <= dataLength; i++) {
@@ -12719,9 +12721,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 				// get group x and y 
 				pointX = groupPositions.shift();				
-				groupedY = typeof approximation === 'function' ?
-						approximation(values1, values2, values3, values4) : // custom approximation callback function
-						approximations[approximation](values1, values2, values3, values4); // predefined approximation
+				groupedY = approximationFn(values1, values2, values3, values4);
 				
 				// push the grouped data		
 				if (groupedY !== UNDEFINED) {
@@ -12747,7 +12747,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			}
 			
 			// for each raw data point, push it to an array that contains all values for this specific group
-			pointY = yData[i];
+			pointY = handleYData ? yData[i] : null;
 			if (approximation === 'ohlc') {
 				
 				var index = series.cropStart + i,
@@ -12810,7 +12810,7 @@ seriesProto.processData = function () {
 	if (baseProcessData.apply(series) === false || !groupingEnabled) {
 		return;
 	}
-
+	
 	var i,
 		chart = series.chart,
 		processedXData = series.processedXData,
@@ -12855,7 +12855,7 @@ seriesProto.processData = function () {
 			xMax = extremes.max,
 			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
-			groupedXandY = series.groupData(processedXData, processedYData, groupPositions, dataGroupingOptions.approximation),
+			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
 			groupedXData = groupedXandY[0],
 			groupedYData = groupedXandY[1];
 			
@@ -15392,11 +15392,14 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					each(xAxis.series, function(series) {
 						fakeSeries = {
 							xAxis: fakeAxis,
-							xData: series.xData
+							xData: series.xData,
+							chart: chart
 						};
 						fakeSeries.options = {
 							dataGrouping : grouping ? {
+								enabled: true,
 								forced: true,
+								approximation: 'open', // doesn't matter which, use the fastest
 								units: [[grouping.unitName, [grouping.count]]]
 							} : {
 								enabled: false

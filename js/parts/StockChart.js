@@ -451,11 +451,14 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					each(xAxis.series, function(series) {
 						fakeSeries = {
 							xAxis: fakeAxis,
-							xData: series.xData
+							xData: series.xData,
+							chart: chart
 						};
 						fakeSeries.options = {
 							dataGrouping : grouping ? {
+								enabled: true,
 								forced: true,
+								approximation: 'open', // doesn't matter which, use the fastest
 								units: [[grouping.unitName, [grouping.count]]]
 							} : {
 								enabled: false
