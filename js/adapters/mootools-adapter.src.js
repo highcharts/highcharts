@@ -172,6 +172,17 @@ win.HighchartsAdapter = {
 	},
 
 	/**
+	 * Get the offset of an element relative to the top left corner of the web page
+	 */
+	offset: function (el) {
+		var offsets = $(el).getOffsets();
+		return {
+			left: offsets.x,
+			top: offsets.y
+		};
+	},
+
+	/**
 	 * Extends an object with Events, if its not done
 	 */
 	extendWithEvents: function (el) {

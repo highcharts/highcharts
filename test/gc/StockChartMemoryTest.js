@@ -1,11 +1,16 @@
-var ChartMemoryTest = TestCase("ChartMemoryTest");
+var StockChartMemoryTest = TestCase("StockChartMemoryTest");
 
-ChartMemoryTest.prototype.randomData = function (len) {
-	var arr = [];
+StockChartMemoryTest.prototype.randomData = function (len) {
+	var minDate = 0,
+		maxDate = Date.now(),
+		startDate = Math.random() * maxDate,
+		i = 0,
+		arr = [];
 
-	for (var i = 0; i < len; i++) {
-		arr.push(Math.random());
+	for (i = 0; i < len; i++) {
+		arr.push([startDate + i * 1000 * 60 * 60, Math.random()]);
 	}
+
 	return arr;
 };
 
@@ -14,7 +19,7 @@ ChartMemoryTest.prototype.randomData = function (len) {
  * - Creates the container div object on the page.
  * - Creates a chart instance.
  */
-ChartMemoryTest.prototype.setUp = function () {
+StockChartMemoryTest.prototype.setUp = function () {
 	assertUndefined(this.container);
 	/*:DOC += <div id="container" style="height: 200px; width: 200px"></div> */
 	this.container = document.getElementById('container');
@@ -25,14 +30,14 @@ ChartMemoryTest.prototype.setUp = function () {
 
 	var conf = merge({}, this.getBaseConfig(), this.getConfig());
 
-	this.chart = new Chart(conf);
+	this.chart = new Highcharts.StockChart(conf);
 	assertNotUndefined(this.chart);
 };
 
 /**
  * Returns the configuration for the charts that we test.
  */
-ChartMemoryTest.prototype.getBaseConfig = function () {
+StockChartMemoryTest.prototype.getBaseConfig = function () {
 	return {
 		chart: {
 			renderTo: this.container,
@@ -43,9 +48,6 @@ ChartMemoryTest.prototype.getBaseConfig = function () {
 					[1, 'rgb(200, 200, 255)']
 				]
 			},
-			borderWidth: 1,
-			plotBorderWidth: 12,
-			plotBackgroundColor: '#EFEFEF',
 			shadow: true,
 			zoomType: 'xy',
 			reflow: false,		// cannot have reflow in tests
@@ -66,7 +68,7 @@ ChartMemoryTest.prototype.getBaseConfig = function () {
 		},
 
 		series: [{
-			data: this.randomData(1)
+			data: this.randomData(3)
 		}]
 	};
 };
@@ -74,7 +76,7 @@ ChartMemoryTest.prototype.getBaseConfig = function () {
 /**
  * Returns the configuration for the charts that we test.
  */
-ChartMemoryTest.prototype.getConfig = function () {
+StockChartMemoryTest.prototype.getConfig = function () {
 	return {
 		chart: {
 			type: 'scatter'
@@ -85,7 +87,7 @@ ChartMemoryTest.prototype.getConfig = function () {
 /**
  * At tear down, log output from the element monitor and reset.
  */
-ChartMemoryTest.prototype.tearDown = function () {
+StockChartMemoryTest.prototype.tearDown = function () {
 	var innerDivContainer = this.chart.container;
 
 	// Remove the chart
@@ -118,7 +120,7 @@ ChartMemoryTest.prototype.tearDown = function () {
 /**
  * Tests SVG allocations when adding and removing points.
  */
-ChartMemoryTest.prototype.testAddRemovePoints = function () {
+StockChartMemoryTest.prototype.testAddRemovePoints = function () {
 	var i;
 
 	// Test addPoint with shift. This will do a remove point as well.
@@ -130,7 +132,7 @@ ChartMemoryTest.prototype.testAddRemovePoints = function () {
 /**
  * Tests SVG allocations when calling setData.
  */
-ChartMemoryTest.prototype.testSetData = function () {
+StockChartMemoryTest.prototype.testSetData = function () {
 	var i;
 
 	// Test setData of random points with redraw.
@@ -142,14 +144,14 @@ ChartMemoryTest.prototype.testSetData = function () {
 /**
  * Tests SVG allocations when destroying.
  */
-ChartMemoryTest.prototype.testDestroyChart = function () {
+StockChartMemoryTest.prototype.testDestroyChart = function () {
 	// Just runs setUp and tearDown
 };
 
 /**
  * Tests SVG allocations when adding and removing series.
  */
-ChartMemoryTest.prototype.testAddRemoveSeries = function () {
+StockChartMemoryTest.prototype.testAddRemoveSeries = function () {
 	var newSeries,
 		i;
 
@@ -169,7 +171,7 @@ ChartMemoryTest.prototype.testAddRemoveSeries = function () {
 /**
  * Tests SVG allocations when redrawing the chart.
  */
-ChartMemoryTest.prototype.testRedrawChart = function () {
+StockChartMemoryTest.prototype.testRedrawChart = function () {
 	var i;
 
 	for (i = 0; i < 2; i++) {
@@ -180,136 +182,11 @@ ChartMemoryTest.prototype.testRedrawChart = function () {
 /**
  * Tests SVG allocations when resizing the chart.
  */
-ChartMemoryTest.prototype.testSetSizeChart = function () {
+StockChartMemoryTest.prototype.testSetSizeChart = function () {
 	var i;
 
 	for (i = 1; i < 10; i++) {
 		this.chart.setSize(100 * i, 100 * i, false);
 	}
-};
-
-/**
- * Tests SVG allocations when renaming the chart.
- */
-ChartMemoryTest.prototype.testSetTitleChart = function () {
-	var i;
-
-	for (i = 1; i < 2; i++) {
-		this.chart.setTitle(
-			{
-				text: 'New title ' + i,
-				style: { color: 'red' }
-			},
-			{
-				text: 'New sub title ' + i,
-				style: { color: 'green' }
-			}
-		);
-	}
-};
-
-/**
- *Tests SVG allocations when showing and hiding the tooltip.
- */
-ChartMemoryTest.prototype.testShowHideTooltip = function () {
-	var numPoints = this.chart.series[0].data.length,
-		firstPoint = this.chart.series[0].data[0],
-		lastPoint = this.chart.series[0].data[numPoints - 1];
-
-	this.chart.tooltip.refresh(firstPoint);
-	this.chart.tooltip.hide();
-	this.chart.tooltip.refresh(lastPoint);
-	this.chart.tooltip.hide();
-};
-
-/**
- *Tests SVG allocations when showing and hiding the series.
- */
-ChartMemoryTest.prototype.testShowHideSeries = function () {
-	this.chart.series[0].hide();
-	this.chart.series[0].show();
-	this.chart.series[0].hide();
-};
-
-ChartMemoryTest.prototype.testAddRemovePlotBands = function () {
-	var xAxis = this.chart.xAxis[0],
-		yAxis = this.chart.yAxis[0],
-		xExtremes = xAxis.getExtremes(),
-		yExtremes = yAxis.getExtremes();
-
-	// Add one for each axis
-	xAxis.addPlotBand({
-			from: xExtremes.dataMin,
-			to: xExtremes.dataMax,
-			color: '#FCFFC5',
-			id: 'plot-band-x'
-		});
-
-	yAxis.addPlotBand({
-			from: yExtremes.dataMin,
-			to: yExtremes.dataMax,
-			color: '#FCFFC5',
-			id: 'plot-band-y'
-		});
-
-	// Remove them
-	xAxis.removePlotBand('plot-band-x');
-	yAxis.removePlotBand('plot-band-y');
-
-	// Add them again to trigger leak
-	xAxis.addPlotBand({
-			from: xExtremes.dataMin,
-			to: xExtremes.dataMax,
-			color: '#FCFFC5',
-			id: 'plot-band-x'
-		});
-
-	yAxis.addPlotBand({
-			from: yExtremes.dataMin,
-			to: yExtremes.dataMax,
-			color: '#FCFFC5',
-			id: 'plot-band-y'
-		});
-};
-
-ChartMemoryTest.prototype.testPlotLines = function () {
-	var xAxis = this.chart.xAxis[0],
-		yAxis = this.chart.yAxis[0],
-		xExtremes = xAxis.getExtremes(),
-		yExtremes = yAxis.getExtremes();
-
-	// Add one for each axis
-	xAxis.addPlotLine({
-			value: (xExtremes.dataMax - xExtremes.dataMin) / 2,
-			color: 'red',
-			width: 2,
-			id: 'plot-line-x'
-		});
-
-	yAxis.addPlotLine({
-			value: (yExtremes.dataMax - yExtremes.dataMin) / 2,
-			color: 'red',
-			width: 2,
-			id: 'plot-line-y'
-		});
-
-	// Remove them
-	xAxis.removePlotBand('plot-line-x');
-	yAxis.removePlotBand('plot-line-y');
-
-	// Add them again to trigger leak
-	xAxis.addPlotLine({
-			value: (xExtremes.dataMax - xExtremes.dataMin) / 2,
-			color: 'red',
-			width: 2,
-			id: 'plot-line-x'
-		});
-
-	yAxis.addPlotLine({
-			value: (yExtremes.dataMax - yExtremes.dataMin) / 2,
-			color: 'red',
-			width: 2,
-			id: 'plot-line-y'
-		});
 };
 

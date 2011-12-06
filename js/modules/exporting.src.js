@@ -309,7 +309,7 @@ extend(Chart.prototype, {
 	exportChart: function (options, chartOptions) {
 		var form,
 			chart = this,
-			svg = chart.getSVG(chartOptions);
+			svg = chart.getSVG(merge(chart.options.exporting.chartOptions, chartOptions)); // docs
 
 		// merge the options
 		options = merge(chart.options.exporting, options);

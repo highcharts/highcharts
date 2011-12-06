@@ -1,0 +1,90 @@
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<title>Source stats</title>
+
+	<script type='text/javascript' src='../../lib/jquery-1.7.js'></script>
+	<script type='text/javascript' src='../data/sizes.js'></script>
+	<script type='text/javascript' src='../data/tags.js'></script>
+	<script type='text/javascript' src='../../js/highcharts.src.js'></script>
+
+<script type='text/javascript'>
+$(function(){
+	function timeSort(arr) {
+		return arr.sort(function (a, b) {
+			var aa = a[0], bb = b[0];
+			return aa - bb;
+		});
+	}
+
+	function find(arr, time) {
+		var i;
+		for (i = 0; i < arr.length; i++) {
+			if (arr[i][0] == time) {
+				return arr[i][1];
+			}
+		}
+		return '';
+	}
+
+var chart = new Highcharts.Chart({
+
+	chart: {
+		renderTo: 'container',
+		zoomType: 'x'
+	},
+
+	title: {
+		text: 'Source stats'
+	},
+
+	xAxis: {
+		type: 'datetime'
+	},
+
+	tooltip: {
+		crosshairs: true,
+		shared: true,
+		formatter: function() {
+			var s = '<b>'+ Highcharts.dateFormat('%e. %b %Y, %H:00', this.x) + '</b>';
+			$.each(this.points, function(i, point) {
+				s += '<br/>' + point.series.name + ': ' +
+					point.y + ' bytes';
+			});
+
+			s += '<br/>Author: ' + find(authorSeries, this.x);
+			s += '<br/>Message: ' + find(messageSeries, this.x).substr(0, 80);
+			return s;
+		}
+	},
+
+	series: [{
+		name: 'Size',
+		data: timeSort(sizeSeries).slice(1)
+	},{
+		name: 'Minified size',
+		data: timeSort(minifiedSizeSeries).slice(1)
+	}]
+}, function (chart) {
+	var i;
+	for (i = 0; i < tagSeries.length; i++) {
+		chart.xAxis[0].addPlotLine({
+			color: '#FF0000',
+			width: 2,
+			value: tagSeries[i][0],
+			label: {
+				text: tagSeries[i][1],
+				align: 'right',
+				x: 5,
+				y: 60
+			}
+		});
+	}
+});
+});
+</script>
+</head>
+	<body>
+		<div id="container" style="height: 600px"></div>
+	</body>
+</html>

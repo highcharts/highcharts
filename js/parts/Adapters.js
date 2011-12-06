@@ -67,6 +67,13 @@ if (!globalAdapter && win.jQuery) {
 	};
 
 	/**
+	 * Get the position of an element relative to the top left of the page
+	 */
+	offset = function (el) {
+		return jQ(el).offset();
+	};
+
+	/**
 	 * Add an event listener
 	 * @param {Object} el A HTML element or custom object
 	 * @param {String} event The event type

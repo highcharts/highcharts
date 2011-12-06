@@ -2,7 +2,7 @@
  * Start Flags series code													*
  *****************************************************************************/
 
-var symbols = Renderer.prototype.symbols;
+var symbols = SVGRenderer.prototype.symbols;
 
 // 1 - set default options
 defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
@@ -263,10 +263,18 @@ each(['circle', 'square'], function (shape) {
 			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
 		}
 
-		//console .trace(x, y, );
 		return path;
 	};
 });
+
+// The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
+// VML browsers need this in order to generate shapes in export. Now share
+// them with the VMLRenderer.
+if (Renderer === VMLRenderer) {
+	each(['flag', 'circlepin', 'squarepin'], function (shape) {
+		VMLRenderer.prototype.symbols[shape] = symbols[shape];
+	});
+}
 
 /* ****************************************************************************
  * End Flags series code													  *

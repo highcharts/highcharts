@@ -430,16 +430,15 @@ Point.prototype = {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = pointAttr[state].r;
+			radius = point.graphic.symbolName && pointAttr[state].r;
 			point.graphic.attr(merge(
 				pointAttr[state],
-				radius ? extend({ // new symbol attributes
+				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
-					y: plotY - radius
-				}, point.graphic.symbolName ? { // don't apply to image symbols #507
+					y: plotY - radius,
 					width: 2 * radius,
 					height: 2 * radius
-				} : {}) : {}
+				} : {}
 			));
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
@@ -614,20 +613,35 @@ Series.prototype = {
 		var series = this,
 			lastNull = -1,
 			segments = [],
-			points = this.points;
+			i,
+			points = series.points;
 
-		// create the segments
-		each(points, function (point, i) {
-			if (point.y === null) {
-				if (i > lastNull + 1) {
-					segments.push(points.slice(lastNull + 1, i));
+		// if connect nulls, just remove null points
+		if (series.options.connectNulls) {
+			i = points.length - 1;
+			while (i--) {
+				if (points[i].y === null) {
+					points.splice(i, 1);
 				}
-				lastNull = i;
-			} else if (i === points.length - 1) { // last value
-				segments.push(points.slice(lastNull + 1, i + 1));
 			}
-		});
-		this.segments = segments;
+			segments = [points];
+			
+		// else, split on null points
+		} else {			
+			each(points, function (point, i) {
+				if (point.y === null) {
+					if (i > lastNull + 1) {
+						segments.push(points.slice(lastNull + 1, i));
+					}
+					lastNull = i;
+				} else if (i === points.length - 1) { // last value
+					segments.push(points.slice(lastNull + 1, i + 1));
+				}
+			});
+		}
+		
+		// register it
+		series.segments = segments;
 	},
 	/**
 	 * Set the series options by merging from the options tree
@@ -669,9 +683,17 @@ Series.prototype = {
 	 * Get the series' symbol
 	 */
 	getSymbol: function () {
-		var defaultSymbols = this.chart.options.symbols,
-			counters = this.chart.counters;
-		this.symbol = this.options.marker.symbol || defaultSymbols[counters.symbol++];
+		var series = this,
+			seriesMarkerOption = series.options.marker,
+			chart = series.chart,
+			defaultSymbols = chart.options.symbols,
+			counters = chart.counters;
+		series.symbol = seriesMarkerOption.symbol || defaultSymbols[counters.symbol++];
+		
+		// don't substract radius in image symbols (#604)
+		if (/^url/.test(series.symbol)) {
+			seriesMarkerOption.radius = 0;
+		}
 		counters.wrapSymbol(defaultSymbols.length);
 	},
 
@@ -822,7 +844,7 @@ Series.prototype = {
 		series.options.data = data;
 		series.xData = xData;
 		series.yData = yData;
-		
+
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
 		while (i--) {
@@ -928,7 +950,7 @@ Series.prototype = {
 				cropped = true;
 			}
 		}
-		
+
 		series.cropped = cropped; // undefined or true
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
@@ -955,9 +977,7 @@ Series.prototype = {
 			point,
 			points = [],
 			i;
-			
-			
-		
+
 		if (!data && !hasGroupedData) {
 			var arr = [];
 			arr.length = dataOptions.length;
@@ -993,7 +1013,6 @@ Series.prototype = {
 
 		series.data = data;
 		series.points = points;
-		
 	},
 
 	/**
@@ -1027,7 +1046,7 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = series.xAxis.translate(xValue);
+			point.plotX = mathRound(series.xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1056,7 +1075,7 @@ Series.prototype = {
 
 			// set the y value
 			if (yValue !== null) {
-				point.plotY = yAxis.translate(yValue, 0, 1, 0, 1);
+				point.plotY = mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10; // Math.round fixes #591
 			}
 
 			// set client related positions for mouse tracking
@@ -1195,7 +1214,7 @@ Series.prototype = {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking) {
+		if (tooltip && !options.stickyTracking && !tooltip.shared) {
 			tooltip.hide();
 		}
 
@@ -1683,6 +1702,7 @@ Series.prototype = {
 			areaPath = [],
 			attribs;
 
+
 		// divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
 			segmentPath = [];
@@ -1721,6 +1741,7 @@ Series.prototype = {
 			} else {
 				singlePoints.push(segment[0]);
 			}
+
 			// build the area
 			if (useArea) {
 				var areaSegmentPath = [],
@@ -1733,8 +1754,17 @@ Series.prototype = {
 					areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
 				}
 				if (options.stacking && series.type !== 'areaspline') {
-					// follow stack back. Todo: implement areaspline
+					
+					// Follow stack back. Todo: implement areaspline. A general solution could be to 
+					// reverse the entire graphPath of the previous series, though may be hard with
+					// splines and with series with different extremes
 					for (i = segment.length - 1; i >= 0; i--) {
+					
+						// step line?
+						if (i < segment.length - 1 && options.step) {
+							areaSegmentPath.push(segment[i + 1].plotX, segment[i].yBottom);
+						}
+						
 						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
 					}
 
