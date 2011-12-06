@@ -481,8 +481,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			/**
 			 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 			 */
-			xAxis.postProcessTickInterval = function (tickInterval) {					
-				return tickInterval / (xAxis.ordinalSlope / xAxis.closestPointRange);
+			xAxis.postProcessTickInterval = function (tickInterval) {
+				var ordinalSlope = this.ordinalSlope;
+				
+				return ordinalSlope ? 
+					tickInterval / (ordinalSlope / xAxis.closestPointRange) : 
+					tickInterval;
 			};
 			
 			/**
@@ -497,7 +501,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					tickPositions = e.tickPositions,
 					gaps = {};
 				
-				if (defined(tickPixelIntervalOption)) { // check for squashed ticks
+				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
 					var i = tickPositions.length,
 						translated,
 						lastTranslated,
