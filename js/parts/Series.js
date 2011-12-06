@@ -908,8 +908,11 @@ Series.prototype = {
 			cropStart = 0,
 			cropEnd = dataLength,
 			cropped,
+			distance,
+			closestPointRange,
 			i, // loop variable
-			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
+			options = series.options,
+			cropThreshold = options.cropThreshold; // todo: consider combining it with turboThreshold
 			
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
@@ -944,17 +947,34 @@ Series.prototype = {
 						cropEnd = i + 1;
 						break;
 					}
+					
 				}
 				processedXData = processedXData.slice(cropStart, cropEnd);
 				processedYData = processedYData.slice(cropStart, cropEnd);
 				cropped = true;
 			}
 		}
-
+		
+		
+		// Find the closest distance between points
+		for (i = processedXData.length - 1; i > 0; i--) {
+			distance = processedXData[i] - processedXData[i - 1];
+			if (closestPointRange === UNDEFINED || distance < closestPointRange) {
+				closestPointRange = distance;
+			}
+		}
+		
+		// Record the properties
 		series.cropped = cropped; // undefined or true
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+		
+		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
+			series.pointRange = closestPointRange || 1;
+		}
+		series.closestPointRange = closestPointRange;
+		
 	},
 
 	/**

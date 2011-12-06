@@ -5593,8 +5593,8 @@ function Chart(options, callback) {
 							key,
 							cropped = series.cropped,
 							xExtremes = series.xAxis.getExtremes(),
-							findPointRange,
-							pointRange,
+							//findPointRange,
+							//pointRange,
 							j,
 							hasModifyValue = !!series.modifyValue;
 
@@ -5625,7 +5625,7 @@ function Chart(options, callback) {
 						series.processData();
 
 						// processData can alter series.pointRange, so this goes after
-						findPointRange = series.pointRange === null;
+						//findPointRange = series.pointRange === null;
 
 						xData = series.processedXData;
 						yData = series.processedYData;
@@ -5669,10 +5669,10 @@ function Chart(options, callback) {
 								}
 
 								// get the smallest distance between points
-								if (i) {
+								/*if (i) {
 									distance = mathAbs(xData[i] - xData[i - 1]);
 									pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
-								}
+								}*/
 
 								// for points within the visible range, including the first point outside the
 								// visible range, consider y extremes
@@ -5693,10 +5693,10 @@ function Chart(options, callback) {
 						}
 
 						// record the least unit distance
-						if (findPointRange) {
+						/*if (findPointRange) {
 							series.pointRange = pointRange || 1;
 						}
-						series.closestPointRange = pointRange;
+						series.closestPointRange = pointRange;*/
 
 
 						// Get the dataMin and dataMax so far. If percentage is used, the min and max are
@@ -10227,8 +10227,11 @@ Series.prototype = {
 			cropStart = 0,
 			cropEnd = dataLength,
 			cropped,
+			distance,
+			closestPointRange,
 			i, // loop variable
-			cropThreshold = series.options.cropThreshold; // todo: consider combining it with turboThreshold
+			options = series.options,
+			cropThreshold = options.cropThreshold; // todo: consider combining it with turboThreshold
 			
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
@@ -10263,17 +10266,34 @@ Series.prototype = {
 						cropEnd = i + 1;
 						break;
 					}
+					
 				}
 				processedXData = processedXData.slice(cropStart, cropEnd);
 				processedYData = processedYData.slice(cropStart, cropEnd);
 				cropped = true;
 			}
 		}
-
+		
+		
+		// Find the closest distance between points
+		for (i = processedXData.length - 1; i > 0; i--) {
+			distance = processedXData[i] - processedXData[i - 1];
+			if (closestPointRange === UNDEFINED || distance < closestPointRange) {
+				closestPointRange = distance;
+			}
+		}
+		
+		// Record the properties
 		series.cropped = cropped; // undefined or true
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+		
+		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
+			series.pointRange = closestPointRange || 1;
+		}
+		series.closestPointRange = closestPointRange;
+		
 	},
 
 	/**
@@ -12822,6 +12842,7 @@ seriesProto.processData = function () {
 		dataLength = processedXData.length,
 		groupedData = series.groupedData,
 		chartSeries = chart.series;
+	
 
 	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
 	// group pixel width
@@ -12853,7 +12874,9 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
+			imaginedPlotWidth = // how wide would the plot are be if gaps were included?
+				plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)), 
+			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
 			groupedXData = groupedXandY[0],
@@ -12875,11 +12898,11 @@ seriesProto.processData = function () {
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = groupPositions.info.totalRange;
 		}
+		series.closestPointRange = groupPositions.info.totalRange;
 		
 		// set series props
 		series.processedXData = groupedXData;
 		series.processedYData = groupedYData;
-
 	} else {
 		series.currentDataGrouping = null;
 		series.pointRange = options.pointRange;
@@ -15436,6 +15459,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * two points is greater than a portion of the tick pixel interval
 			 */
 			addEvent(xAxis, 'afterSetTickPositions', function(e) {
+				
 				var options = xAxis.options,
 					tickPixelIntervalOption = options.tickPixelInterval,
 					tickPositions = e.tickPositions,

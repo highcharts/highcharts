@@ -204,6 +204,7 @@ seriesProto.processData = function () {
 		dataLength = processedXData.length,
 		groupedData = series.groupedData,
 		chartSeries = chart.series;
+	
 
 	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
 	// group pixel width
@@ -235,7 +236,9 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			interval = groupPixelWidth * (xMax - xMin) / plotSizeX,
+			imaginedPlotWidth = // how wide would the plot are be if gaps were included?
+				plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)), 
+			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
 			groupedXData = groupedXandY[0],
@@ -257,11 +260,11 @@ seriesProto.processData = function () {
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = groupPositions.info.totalRange;
 		}
+		series.closestPointRange = groupPositions.info.totalRange;
 		
 		// set series props
 		series.processedXData = groupedXData;
 		series.processedYData = groupedYData;
-
 	} else {
 		series.currentDataGrouping = null;
 		series.pointRange = options.pointRange;
