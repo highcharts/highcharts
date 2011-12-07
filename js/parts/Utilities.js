@@ -1,4 +1,24 @@
 
+function arrayMin(data) {
+	var i = 1,
+		min = data[0],
+		length = data.length;
+	for (; i < length; i++) {
+		min = mathMin(min, data[i]);
+	}
+	return min;
+}
+
+function arrayMax(data) {
+	var i = 1,
+		max = data[0],
+		length = data.length;
+	for (; i < length; i++) {
+		max = mathMax(max, data[i]);
+	}
+	return max;
+}
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
