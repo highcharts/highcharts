@@ -751,6 +751,40 @@ function stableSort(arr, sortFunction) {
 }
 
 /**
+ * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
+ * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
+ * method is slightly slower, but safe.
+ */
+function arrayMin(data) {
+	var i = data.length,
+		min = data[0];
+
+	while (i--) {
+		if (data[i] < min) {
+			min = data[i];
+		}
+	}
+	return min;
+}
+
+/**
+ * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
+ * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
+ * method is slightly slower, but safe.
+ */
+function arrayMax(data) {
+	var i = data.length,
+		max = data[0];
+
+	while (i--) {
+		if (data[i] > max) {
+			max = data[i];
+		}
+	}
+	return max;
+}
+
+/**
  * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
  * It loops all properties and invokes destroy if there is a destroy method. The property is
  * then delete'ed.
@@ -5403,14 +5437,14 @@ function Chart(options, callback) {
 				// get the bounding box and align the label
 				xs = [path[1], path[4], pick(path[6], path[1])];
 				ys = [path[2], path[5], pick(path[7], path[2])];
-				x = mathMin.apply(math, xs);
-				y = mathMin.apply(math, ys);
+				x = arrayMin(xs);
+				y = arrayMin(ys);
 
 				label.align(optionsLabel, false, {
 					x: x,
 					y: y,
-					width: mathMax.apply(math, xs) - x,
-					height: mathMax.apply(math, ys) - y
+					width: arrayMax(xs) - x,
+					height: arrayMax(ys) - y
 				});
 				label.show();
 
@@ -5564,8 +5598,8 @@ function Chart(options, callback) {
 					// Get dataMin and dataMax for X axes
 					if (isXAxis) {
 						xData = series.xData;
-						dataMin = mathMin(pick(dataMin, xData[0]), mathMin.apply(math, xData));
-						dataMax = mathMax(pick(dataMax, xData[0]), mathMax.apply(math, xData));
+						dataMin = mathMin(pick(dataMin, xData[0]), arrayMin(xData));
+						dataMax = mathMax(pick(dataMax, xData[0]), arrayMax(xData));
 
 					// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 					} else {
@@ -5683,8 +5717,8 @@ function Chart(options, callback) {
 						// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 						// always 0 and 100. If the length of activeYData is 0, continue with null values.
 						if (!usePercentage && activeYData.length) {
-							dataMin = mathMin(pick(dataMin, activeYData[0]), mathMin.apply(math, activeYData));
-							dataMax = mathMax(pick(dataMax, activeYData[0]), mathMax.apply(math, activeYData));
+							dataMin = mathMin(pick(dataMin, activeYData[0]), arrayMin(activeYData));
+							dataMax = mathMax(pick(dataMax, activeYData[0]), arrayMax(activeYData));
 						}
 
 
@@ -5852,19 +5886,19 @@ function Chart(options, callback) {
 				if (spaceAvailable) { // if space is available, stay within the data range
 					minArgs[2] = dataMin - halfPointRange;
 				}
-				min = mathMax.apply(0, minArgs);
+				min = arrayMax(minArgs);
 
 				maxArgs = [min + minRange, pick(options.max, min + minRange)];
 				if (spaceAvailable) { // if space is availabe, stay within the data range
 					maxArgs[2] = dataMax + halfPointRange;
 				}
-				max = mathMin.apply(0, maxArgs);
+				max = arrayMin(maxArgs);
 
 				// now if the max is adjusted, adjust the min back
 				if (max - min < minRange) {
 					minArgs[0] = max - minRange;
 					minArgs[1] = pick(options.min, max - minRange);
-					min = mathMax.apply(0, minArgs);
+					min = arrayMax(minArgs);
 				}
 			}
 		}

@@ -619,6 +619,40 @@ function stableSort(arr, sortFunction) {
 }
 
 /**
+ * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
+ * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
+ * method is slightly slower, but safe.
+ */
+function arrayMin(data) {
+	var i = data.length,
+		min = data[0];
+
+	while (i--) {
+		if (data[i] < min) {
+			min = data[i];
+		}
+	}
+	return min;
+}
+
+/**
+ * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
+ * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
+ * method is slightly slower, but safe.
+ */
+function arrayMax(data) {
+	var i = data.length,
+		max = data[0];
+
+	while (i--) {
+		if (data[i] > max) {
+			max = data[i];
+		}
+	}
+	return max;
+}
+
+/**
  * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
  * It loops all properties and invokes destroy if there is a destroy method. The property is
  * then delete'ed.

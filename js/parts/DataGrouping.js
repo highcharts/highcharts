@@ -51,10 +51,10 @@ var DATA_GROUPING = 'dataGrouping',
 			return arr.length ? arr[0] : (arr.hasNulls ? null : UNDEFINED);
 		},
 		high: function (arr) {
-			return arr.length ? mathMax.apply(0, arr) : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : UNDEFINED);
 		},
 		low: function (arr) {
-			return arr.length ? mathMin.apply(0, arr) : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : UNDEFINED);
 		},
 		close: function (arr) {
 			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : UNDEFINED);
