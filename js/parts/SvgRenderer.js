@@ -30,6 +30,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = pick(options, globalAnimation, true);
+		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)			
 		if (animOptions) {
 			animOptions = merge(animOptions);
 			if (complete) { // allows using a callback with the global animation without overwriting it
