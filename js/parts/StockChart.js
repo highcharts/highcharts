@@ -552,6 +552,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					
 					var mouseDownX = chart.mouseDownX,
 						extremes = xAxis.getExtremes(),
+						dataMax = extremes.dataMax,
+						min = extremes.min,
+						max = extremes.max,
 						newMin,
 						newMax,
 						hoverPoints = chart.hoverPoints,
@@ -559,6 +562,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || closestPointRange),
 						movedUnits = (mouseDownX - chartX) / pointPixelWidth, // how many ordinal units did we move?
 						extendedAxis = { ordinalPositions: xAxis.getExtendedPositions() }, // get index of all the chart's points
+						ordinalPositions,
 						searchAxisLeft,
 						lin2val = xAxis.lin2val,
 						val2lin = xAxis.val2lin,
@@ -573,10 +577,6 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 							});
 						}
 						
-						// Get the new min and max values by getting the ordinal index for the current extreme, 
-						// then add the moved units and translate back to values. This happens on the 
-						// extended ordinal positions if the new position is out of range, else it happens
-						// on the current x axis which is smaller and faster.
 						if (movedUnits < 0) {
 							searchAxisLeft = extendedAxis;
 							searchAxisRight = xAxis;
@@ -585,23 +585,29 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 							searchAxisRight = extendedAxis;
 						}
 						
+						// In grouped data series, the last ordinal position represents the grouped data, which is 
+						// to the left of the real data max. If we don't compensate for this, we will be allowed
+						// to pan grouped data series passed the right of the plot area. 
+						ordinalPositions = searchAxisRight.ordinalPositions;
+						if (dataMax > ordinalPositions[ordinalPositions.length - 1]) {
+							ordinalPositions.push(dataMax);
+						}
+						
+						// Get the new min and max values by getting the ordinal index for the current extreme, 
+						// then add the moved units and translate back to values. This happens on the 
+						// extended ordinal positions if the new position is out of range, else it happens
+						// on the current x axis which is smaller and faster.
 						newMin = lin2val.apply(searchAxisLeft, [
-							val2lin.apply(searchAxisLeft, [extremes.min, true]) + movedUnits, // the new index 
+							val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index 
 							true // translate from index
 						]);
 						newMax = lin2val.apply(searchAxisRight, [
-							val2lin.apply(searchAxisRight, [extremes.max, true]) + movedUnits, // the new index 
+							val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index 
 							true // translate from index
 						]);
 						
-						console.log(
-							'TODO: Fix me',
-							dateFormat(null, newMax), 
-							dateFormat(null, mathMax(extremes.dataMax, extremes.max)),
-							xAxis.closestPointRange
-						);
 						// Apply it if it is within the available data range
-						if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+						if (newMin > mathMin(extremes.dataMin, min) && newMax < mathMax(dataMax, max)) {
 							xAxis.setExtremes(newMin, newMax, true, false);
 						}
 				
