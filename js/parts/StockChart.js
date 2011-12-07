@@ -555,9 +555,14 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						newMin,
 						newMax,
 						hoverPoints = chart.hoverPoints,
-						pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || xAxis.closestPointRange),
+						closestPointRange = xAxis.closestPointRange,
+						pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || closestPointRange),
 						movedUnits = (mouseDownX - chartX) / pointPixelWidth, // how many ordinal units did we move?
-						extendedAxis = { ordinalPositions: xAxis.getExtendedPositions() }; // get index of all the chart's points
+						extendedAxis = { ordinalPositions: xAxis.getExtendedPositions() }, // get index of all the chart's points
+						searchAxisLeft,
+						lin2val = xAxis.lin2val,
+						val2lin = xAxis.val2lin,
+						searchAxisRight;
 					
 					if (mathAbs(movedUnits) > 1) { //  don't handle non-change
 						
@@ -569,17 +574,32 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						}
 						
 						// Get the new min and max values by getting the ordinal index for the current extreme, 
-						// then add the moved units and translate back to values. All this happens on the 
-						// extended ordinal positions.
-						newMin = xAxis.lin2val.apply(extendedAxis, [
-							xAxis.val2lin.apply(extendedAxis, [extremes.min, true]) + movedUnits, // the new index 
+						// then add the moved units and translate back to values. This happens on the 
+						// extended ordinal positions if the new position is out of range, else it happens
+						// on the current x axis which is smaller and faster.
+						if (movedUnits < 0) {
+							searchAxisLeft = extendedAxis;
+							searchAxisRight = xAxis;
+						} else {
+							searchAxisLeft = xAxis;
+							searchAxisRight = extendedAxis;
+						}
+						
+						newMin = lin2val.apply(searchAxisLeft, [
+							val2lin.apply(searchAxisLeft, [extremes.min, true]) + movedUnits, // the new index 
 							true // translate from index
 						]);
-						newMax = xAxis.lin2val.apply(extendedAxis, [
-							xAxis.val2lin.apply(extendedAxis, [extremes.max, true]) + movedUnits, // the new index 
+						newMax = lin2val.apply(searchAxisRight, [
+							val2lin.apply(searchAxisRight, [extremes.max, true]) + movedUnits, // the new index 
 							true // translate from index
 						]);
 						
+						console.log(
+							'TODO: Fix me',
+							dateFormat(null, newMax), 
+							dateFormat(null, mathMax(extremes.dataMax, extremes.max)),
+							xAxis.closestPointRange
+						);
 						// Apply it if it is within the available data range
 						if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
 							xAxis.setExtremes(newMin, newMax, true, false);
