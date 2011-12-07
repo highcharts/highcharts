@@ -7584,13 +7584,15 @@ function Chart(options, callback) {
 			itemStyle = options.itemStyle,
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
-			padding = pInt(style.padding),
+			padding = options.padding || pInt(style.padding), // docs
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
 			itemY,
 			lastItemY,
 			itemHeight = 0,
+			itemMarginTop = options.itemMarginTop || 0, // docs
+			itemMarginBottom = options.itemMarginBottom || 0, // docs
 			box,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
@@ -7856,9 +7858,9 @@ function Chart(options, callback) {
 			if (horizontal && itemX - initialItemX + itemWidth >
 					(widthOption || (chartWidth - 2 * padding - initialItemX))) {
 				itemX = initialItemX;
-				itemY += itemHeight;
+				itemY += itemMarginTop + itemHeight + itemMarginBottom;
 			}
-			lastItemY = itemY;
+			lastItemY = itemY + itemMarginBottom;
 
 			// position the newly generated or reordered items
 			positionItem(item, itemX, itemY);
@@ -7867,7 +7869,7 @@ function Chart(options, callback) {
 			if (horizontal) {
 				itemX += itemWidth;
 			} else {
-				itemY += itemHeight;
+				itemY += itemMarginTop + itemHeight + itemMarginBottom;
 			}
 
 			// the width of the widest item
@@ -7876,10 +7878,6 @@ function Chart(options, callback) {
 				offsetWidth
 			);
 
-
-
-			// add it all to an array to use below
-			//allItems.push(item);
 		}
 
 		/**
@@ -7889,7 +7887,7 @@ function Chart(options, callback) {
 		 */
 		function renderLegend() {
 			itemX = initialItemX;
-			itemY = y;
+			itemY = padding + itemMarginTop + y - 5; // 5 is the number of pixels above the text
 			offsetWidth = 0;
 			lastItemY = 0;
 
