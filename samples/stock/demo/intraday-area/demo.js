@@ -12,7 +12,6 @@ $(function() {
 			},
 			
 			xAxis: {
-				ordinal: true,
 				gapGridLineWidth: 0
 			},
 			
@@ -34,11 +33,6 @@ $(function() {
 				inputEnabled : false
 			},
 			
-			navigator: {
-				xAxis: {
-					ordinal: true
-				}
-			},
 			series : [{
 				name : 'AAPL',
 				type: 'area',

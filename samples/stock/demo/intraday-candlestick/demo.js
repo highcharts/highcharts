@@ -11,10 +11,6 @@ $(function() {
 				text: 'AAPL stock price by minute'
 			},
 			
-			xAxis: {
-				ordinal: true
-			},
-			
 			rangeSelector : {
 				buttons : [{
 					type : 'hour',
@@ -33,11 +29,6 @@ $(function() {
 				inputEnabled : false
 			},
 			
-			navigator: {
-				xAxis: {
-					ordinal: true
-				}
-			},
 			series : [{
 				name : 'AAPL',
 				type: 'candlestick',
