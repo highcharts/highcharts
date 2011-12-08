@@ -56,14 +56,14 @@ EventMonitor.prototype.setEnabled = function (enable) {
 /**
  * Returns the id to use for the next object.
  */
-EventMonitor.prototype.getId = function() {
+EventMonitor.prototype.getId = function () {
 	return this.nextId++;
 };
 
 /**
  * Registers an event with the monitor.
  */
-EventMonitor.prototype.registerEvent = function(el, eventName, handler) {
+EventMonitor.prototype.registerEvent = function (el, eventName, handler) {
 	if (!this.enabled) {
 		return;
 	}
@@ -115,7 +115,7 @@ EventMonitor.prototype.registerEvent = function(el, eventName, handler) {
 /**
  * Creates a string key from a handler function.
  */
-EventMonitor.prototype.getHandlerKey = function(eventName, handler) {
+EventMonitor.prototype.getHandlerKey = function (eventName, handler) {
 	var s = handler.toString();
 	s = s.split(' ').join('');
 	s = s.split('\r').join('');
@@ -127,7 +127,7 @@ EventMonitor.prototype.getHandlerKey = function(eventName, handler) {
 /**
  * Registers an event to the monitor.
  */
-EventMonitor.prototype.unregisterEvent = function(el, eventName, handler) {
+EventMonitor.prototype.unregisterEvent = function (el, eventName, handler) {
 	if (!this.enabled) {
 		return;
 	}
@@ -182,7 +182,7 @@ EventMonitor.prototype.unregisterEvent = function(el, eventName, handler) {
 /**
  * Logs currently monitored events to the console.
  */
-EventMonitor.prototype.log = function() {
+EventMonitor.prototype.log = function () {
 	var writeHeader = true;
 	for (var name in this.registry) {
 		if (writeHeader) {
@@ -202,7 +202,7 @@ EventMonitor.prototype.log = function() {
 /**
  * Resets the id counter and clears the registry.
  */
-EventMonitor.prototype.reset = function() {
+EventMonitor.prototype.reset = function () {
 	this.registry = {};
 	this.nextId = 0;
 };

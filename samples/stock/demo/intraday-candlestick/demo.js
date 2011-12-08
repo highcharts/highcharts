@@ -1,5 +1,5 @@
 $(function() {
-	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=intraday.json&callback=?', function(data) {
+	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?', function(data) {
 
 		// create the chart
 		chart = new Highcharts.StockChart({
@@ -8,18 +8,18 @@ $(function() {
 			},
 
 			title: {
-				text: 'ORCL stock price by minute'
+				text: 'AAPL stock price by minute'
 			},
 			
 			rangeSelector : {
 				buttons : [{
-					type : 'minute',
-					count : 15,
-					text : '15m'
-				}, {
 					type : 'hour',
 					count : 1,
 					text : '1h'
+				}, {
+					type : 'day',
+					count : 1,
+					text : '1D'
 				}, {
 					type : 'all',
 					count : 1,
@@ -30,9 +30,12 @@ $(function() {
 			},
 			
 			series : [{
-				name : 'ORCL',
+				name : 'AAPL',
 				type: 'candlestick',
-				data : data
+				data : data,
+				tooltip: {
+					yDecimals: 2
+				}
 			}]
 		});
 	});

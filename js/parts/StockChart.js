@@ -15,6 +15,7 @@ Highcharts.StockChart = function (options, callback) {
 					}
 				}
 			},
+			gapSize: 5,
 			shadow: false,
 			states: {
 				hover: {
@@ -29,8 +30,11 @@ Highcharts.StockChart = function (options, callback) {
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
 		return merge({ // defaults
+				gapGridLineWidth: 1,
+				gapGridLineColor: 'silver',
 				minPadding: 0,
 				maxPadding: 0,
+				ordinal: true,
 				title: {
 					text: null
 				},
