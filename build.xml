@@ -123,6 +123,7 @@
             <file name="FlagsSeries.js"/>
             <file name="StockNavigation.js"/>
             <file name="StockChart.js"/>
+            <file name="OrdinalAxis.js"/>
             <file name="Outro.js"/>
         </filelist>
     </target>

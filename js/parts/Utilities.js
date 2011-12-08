@@ -510,7 +510,7 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 			time += interval * multitude;
 			
 			// mark new days if the time is dividable by day
-			if (interval <= timeUnits[HOUR] && !(time % timeUnits[DAY])) {
+			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === 0) {
 				higherRanks[time] = DAY;
 			}
 		}
@@ -607,6 +607,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
  */
 function stableSort(arr, sortFunction) {
 	var length = arr.length,
+		sortValue,
 		i;
 
 	// Add index to each item
@@ -615,7 +616,7 @@ function stableSort(arr, sortFunction) {
 	}
 
 	arr.sort(function (a, b) {
-		var sortValue = sortFunction(a, b);
+		sortValue = sortFunction(a, b);
 		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
 	});
 

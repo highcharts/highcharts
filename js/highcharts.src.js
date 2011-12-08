@@ -642,7 +642,7 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 			time += interval * multitude;
 			
 			// mark new days if the time is dividable by day
-			if (interval <= timeUnits[HOUR] && !(time % timeUnits[DAY])) {
+			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === 0) {
 				higherRanks[time] = DAY;
 			}
 		}
@@ -739,6 +739,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
  */
 function stableSort(arr, sortFunction) {
 	var length = arr.length,
+		sortValue,
 		i;
 
 	// Add index to each item
@@ -747,7 +748,7 @@ function stableSort(arr, sortFunction) {
 	}
 
 	arr.sort(function (a, b) {
-		var sortValue = sortFunction(a, b);
+		sortValue = sortFunction(a, b);
 		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
 	});
 
@@ -4991,7 +4992,6 @@ function Chart(options, callback) {
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
-			dateTimeLabelFormat,
 			categories = options.categories,
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function () {
@@ -5576,7 +5576,6 @@ function Chart(options, callback) {
 						y,
 						threshold = seriesOptions.threshold,
 						yDataLength,
-						distance,
 						activeYData = [],
 						activeCounter = 0;
 
@@ -5733,7 +5732,8 @@ function Chart(options, callback) {
 				cvsOffset = 0,
 				localA = old ? oldTransA : transA,
 				localMin = old ? oldMin : min,
-				returnValue;
+				returnValue,
+				postTranslate = options.ordinal || (isLog && handleLog);
 
 			if (!localA) {
 				localA = transA;
@@ -5753,12 +5753,12 @@ function Chart(options, callback) {
 					val = axisLength - val;
 				}
 				returnValue = val / localA + localMin; // from chart pixel to value
-				if (axis.lin2val) { // log and ordinal axes
+				if (postTranslate) { // log and ordinal axes
 					returnValue = axis.lin2val(returnValue);
 				}
 
 			} else { // normal translation, from axis value to pixel, relative to plot
-				if (axis.val2lin) { // log and ordinal axes
+				if (postTranslate) { // log and ordinal axes
 					val = axis.val2lin(val);
 				}
 				
@@ -7392,8 +7392,7 @@ function Chart(options, callback) {
 						Math.pow(mouseDownY - chartY, 2)
 					);
 					if (hasDragged > 10) {
-						var clickedInside = isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop),
-							hoverPoints = chart.hoverPoints;
+						var clickedInside = isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
 						// make a selection
 						if (hasCartesianSeries && (zoomX || zoomY) && clickedInside) {
@@ -8448,7 +8447,7 @@ function Chart(options, callback) {
 	 * on mouse move, and the distance to pan is computed from chartX compared to 
 	 * the first chartX position in the dragging operation.
 	 */
-	chart.pan = function(chartX) {
+	chart.pan = function (chartX) {
 
 		var xAxis = chart.xAxis[0],
 			mouseDownX = chart.mouseDownX,
@@ -9271,14 +9270,14 @@ function Chart(options, callback) {
 	chart.pointCount = 0;
 	chart.counters = new ChartCounters();
 	/*
-	if ($) $(function() {
+	if ($) $(function () {
 		$container = $('#container');
 		var origChartWidth,
 			origChartHeight;
 		if ($container) {
 			$('<button>+</button>')
 				.insertBefore($container)
-				.click(function() {
+				.click(function () {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
@@ -9287,7 +9286,7 @@ function Chart(options, callback) {
 				});
 			$('<button>-</button>')
 				.insertBefore($container)
-				.click(function() {
+				.click(function () {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
@@ -9296,7 +9295,7 @@ function Chart(options, callback) {
 				});
 			$('<button>1:1</button>')
 				.insertBefore($container)
-				.click(function() {
+				.click(function () {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;

@@ -642,7 +642,7 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 			time += interval * multitude;
 			
 			// mark new days if the time is dividable by day
-			if (interval <= timeUnits[HOUR] && !(time % timeUnits[DAY])) {
+			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === 0) {
 				higherRanks[time] = DAY;
 			}
 		}
@@ -739,6 +739,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
  */
 function stableSort(arr, sortFunction) {
 	var length = arr.length,
+		sortValue,
 		i;
 
 	// Add index to each item
@@ -747,7 +748,7 @@ function stableSort(arr, sortFunction) {
 	}
 
 	arr.sort(function (a, b) {
-		var sortValue = sortFunction(a, b);
+		sortValue = sortFunction(a, b);
 		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
 	});
 
@@ -4991,7 +4992,6 @@ function Chart(options, callback) {
 			tickAmount,
 			labelOffset,
 			axisTitleMargin,// = options.title.margin,
-			dateTimeLabelFormat,
 			categories = options.categories,
 			labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 				function () {
@@ -5576,7 +5576,6 @@ function Chart(options, callback) {
 						y,
 						threshold = seriesOptions.threshold,
 						yDataLength,
-						distance,
 						activeYData = [],
 						activeCounter = 0;
 
@@ -5733,7 +5732,8 @@ function Chart(options, callback) {
 				cvsOffset = 0,
 				localA = old ? oldTransA : transA,
 				localMin = old ? oldMin : min,
-				returnValue;
+				returnValue,
+				postTranslate = options.ordinal || (isLog && handleLog);
 
 			if (!localA) {
 				localA = transA;
@@ -5753,12 +5753,12 @@ function Chart(options, callback) {
 					val = axisLength - val;
 				}
 				returnValue = val / localA + localMin; // from chart pixel to value
-				if (axis.lin2val) { // log and ordinal axes
+				if (postTranslate) { // log and ordinal axes
 					returnValue = axis.lin2val(returnValue);
 				}
 
 			} else { // normal translation, from axis value to pixel, relative to plot
-				if (axis.val2lin) { // log and ordinal axes
+				if (postTranslate) { // log and ordinal axes
 					val = axis.val2lin(val);
 				}
 				
@@ -7392,8 +7392,7 @@ function Chart(options, callback) {
 						Math.pow(mouseDownY - chartY, 2)
 					);
 					if (hasDragged > 10) {
-						var clickedInside = isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop),
-							hoverPoints = chart.hoverPoints;
+						var clickedInside = isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
 						// make a selection
 						if (hasCartesianSeries && (zoomX || zoomY) && clickedInside) {
@@ -8448,7 +8447,7 @@ function Chart(options, callback) {
 	 * on mouse move, and the distance to pan is computed from chartX compared to 
 	 * the first chartX position in the dragging operation.
 	 */
-	chart.pan = function(chartX) {
+	chart.pan = function (chartX) {
 
 		var xAxis = chart.xAxis[0],
 			mouseDownX = chart.mouseDownX,
@@ -9271,14 +9270,14 @@ function Chart(options, callback) {
 	chart.pointCount = 0;
 	chart.counters = new ChartCounters();
 	/*
-	if ($) $(function() {
+	if ($) $(function () {
 		$container = $('#container');
 		var origChartWidth,
 			origChartHeight;
 		if ($container) {
 			$('<button>+</button>')
 				.insertBefore($container)
-				.click(function() {
+				.click(function () {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
@@ -9287,7 +9286,7 @@ function Chart(options, callback) {
 				});
 			$('<button>-</button>')
 				.insertBefore($container)
-				.click(function() {
+				.click(function () {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
@@ -9296,7 +9295,7 @@ function Chart(options, callback) {
 				});
 			$('<button>1:1</button>')
 				.insertBefore($container)
-				.click(function() {
+				.click(function () {
 					if (origChartWidth === UNDEFINED) {
 						origChartWidth = chartWidth;
 						origChartHeight = chartHeight;
@@ -12639,6 +12638,7 @@ seriesTypes.pie = PieSeries;
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
+/*jslint white:true */
 var DATA_GROUPING = 'dataGrouping',
 	seriesProto = Series.prototype,
 	baseProcessData = seriesProto.processData,
@@ -12646,6 +12646,53 @@ var DATA_GROUPING = 'dataGrouping',
 	baseDestroy = seriesProto.destroy,
 	baseTooltipHeaderFormatter = seriesProto.tooltipHeaderFormatter,
 	NUMBER = 'number',
+	
+	commonOptions = {
+			approximation: 'average', // average, open, high, low, close, sum
+			//forced: undefined,
+			groupPixelWidth: 2,
+			// the first one is the point or start value, the second is the start value if we're dealing with range,
+			// the third one is the end value if dealing with a range
+			dateTimeLabelFormats: hash( 
+				MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
+				SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
+				MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+				HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+				DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+				WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+				MONTH, ['%B %Y', '%B', '-%B %Y'],
+				YEAR, ['%Y', '%Y', '-%Y']
+			)
+			// smoothed = false, // enable this for navigator series only
+		},
+		
+		// units are defined in a separate array to allow complete overriding in case of a user option
+		defaultDataGroupingUnits = [[
+				MILLISECOND, // unit name
+				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+			], [
+				SECOND,
+				[1, 2, 5, 10, 15, 30]
+			], [
+				MINUTE,
+				[1, 2, 5, 10, 15, 30]
+			], [
+				HOUR,
+				[1, 2, 3, 4, 6, 8, 12]
+			], [
+				DAY,
+				[1]
+			], [
+				WEEK,
+				[1]
+			], [
+				MONTH,
+				[1, 3, 6]
+			], [
+				YEAR,
+				null
+			]
+		],
 	
 	/**
 	 * Define the available approximation types. The data grouping approximations takes an array
@@ -12710,6 +12757,8 @@ var DATA_GROUPING = 'dataGrouping',
 			// else, return is undefined
 		}
 	};
+
+/*jslint white:false */
 
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals defined by groupPositions, a collection
@@ -13001,53 +13050,6 @@ seriesProto.destroy = function () {
 
 
 // Extend the plot options
-/*jslint white:true */
-var commonOptions = {
-		approximation: 'average', // average, open, high, low, close, sum
-		//forced: undefined,
-		groupPixelWidth: 2,
-		// the first one is the point or start value, the second is the start value if we're dealing with range,
-		// the third one is the end value if dealing with a range
-		dateTimeLabelFormats: hash( 
-			MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
-			SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
-			MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-			HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-			DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-			WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-			MONTH, ['%B %Y', '%B', '-%B %Y'],
-			YEAR, ['%Y', '%Y', '-%Y']
-		)
-		// smoothed = false, // enable this for navigator series only
-	},
-	
-	// units are defined in a separate array to allow complete overriding in case of a user option
-	defaultDataGroupingUnits = [[
-			MILLISECOND, // unit name
-			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-		], [
-			SECOND,
-			[1, 2, 5, 10, 15, 30]
-		], [
-			MINUTE,
-			[1, 2, 5, 10, 15, 30]
-		], [
-			HOUR,
-			[1, 2, 3, 4, 6, 8, 12]
-		], [
-			DAY,
-			[1]
-		], [
-			WEEK,
-			[1]
-		], [
-			MONTH,
-			[1, 3, 6]
-		], [
-			YEAR,
-			null
-		]
-	];
 
 // line types
 defaultPlotOptions.line[DATA_GROUPING] =
@@ -13060,7 +13062,6 @@ defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
 		approximation: 'sum',
 		groupPixelWidth: 10
 });
-/*jslint white:false */
 /* ****************************************************************************
  * End data grouping module												   *
  ******************************************************************************//* ****************************************************************************
@@ -13753,6 +13754,7 @@ extend(defaultOptions, {
 			tickWidth: 0,
 			lineWidth: 0,
 			gridLineWidth: 1,
+			ordinal: true,
 			tickPixelInterval: 200,
 			labels: {
 				align: 'left',
@@ -14998,6 +15000,7 @@ Highcharts.StockChart = function (options, callback) {
 				gapGridLineColor: 'silver',
 				minPadding: 0,
 				maxPadding: 0,
+				ordinal: true,
 				title: {
 					text: null
 				},
@@ -15171,17 +15174,15 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * End value compare logic                                                    *
  *****************************************************************************/
 
-
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
 
-(function() {
+(function () {
 	var baseInit = seriesProto.init,
-		baseProcessData = seriesProto.processData,
 		baseGetSegments = seriesProto.getSegments;
 		
-	seriesProto.init = function() {
+	seriesProto.init = function () {
 		var series = this,
 			chart,
 			xAxis;
@@ -15195,7 +15196,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 		
 		// Destroy the extended ordinal index on updated data
 		if (xAxis && xAxis.options.ordinal) {
-			addEvent(series, 'updatedData', function() {
+			addEvent(series, 'updatedData', function () {
 				delete xAxis.ordinalIndex;
 			});
 		}
@@ -15209,17 +15210,18 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * TODO: When we rewrite Axis to use a prototype model, this should be implemented
 			 * as a method extension to avoid overhead in the core.
 			 */
-			xAxis.beforeSetTickPositions = function() {
+			xAxis.beforeSetTickPositions = function () {
 				var axis = this,
 					len,
 					ordinalPositions = [],
 					useOrdinal = false,
-					dist;
+					dist,
+					i;
 				
 				// apply the ordinal logic
 				if (axis.options.ordinal) {
 					
-					each (axis.series, function(series, i) {
+					each(axis.series, function (series, i) {
 					
 						// concatenate the processed X data into the existing positions, or the empty array 
 						ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -15227,7 +15229,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						// if we're dealing with more than one series, remove duplicates
 						if (i) {
 						
-							ordinalPositions.sort(function(a, b) {
+							ordinalPositions.sort(function (a, b) {
 								return a - b; // without a custom function it is sorted as strings
 							});
 						
@@ -15285,12 +15287,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				
 				} else {
 				
-					var ordinalPositions = ordinalPositions,
-						ordinalLength = ordinalPositions.length,
+					var ordinalLength = ordinalPositions.length,
 						i,
-						lastN,
 						distance,
-						closest,
 						ordinalIndex;
 						
 					// first look for an exact match in the ordinalpositions array
@@ -15335,7 +15334,6 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						i = ordinalPositions.length - 1,
 						linearEquivalentLeft,
 						linearEquivalentRight,
-						ret,
 						distance;
 						
 					
@@ -15380,7 +15378,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * does not exists, it is created and cached. This index is deleted on updated data, so
 			 * it will be regenerated the next time a panning operation starts.
 			 */
-			xAxis.getExtendedPositions = function() {
+			xAxis.getExtendedPositions = function () {
 				var grouping = xAxis.series[0].currentDataGrouping,
 					ordinalIndex = xAxis.ordinalIndex,
 					key = grouping ? grouping.count + grouping.unitName : 'raw',
@@ -15400,19 +15398,19 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					// Create a fake axis object where the extended ordinal positions are emulated
 					fakeAxis = {
 						series: [],
-						getExtremes: function() {
+						getExtremes: function () {
 							return {
 								min: extremes.dataMin,
 								max: extremes.dataMax
-							}
+							};
 						},
 						options: {
 							ordinal: true
 						}
-					}
+					};
 					
 					// Add the fake series to hold the full data, then apply processData to it
-					each(xAxis.series, function(series) {
+					each(xAxis.series, function (series) {
 						fakeSeries = {
 							xAxis: fakeAxis,
 							xData: series.xData,
@@ -15458,7 +15456,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * within a gap in the ordinal axis, where the space between
 			 * two points is greater than a portion of the tick pixel interval
 			 */
-			addEvent(xAxis, 'afterSetTickPositions', function(e) {
+			addEvent(xAxis, 'afterSetTickPositions', function (e) {
 				
 				var options = xAxis.options,
 					tickPixelIntervalOption = options.tickPixelInterval,
@@ -15486,7 +15484,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 									i + 1 :
 									// no: remove this one
 									i,
-							1);
+								1
+							);
 							
 							// when tick positions are removed, register the next one to the right or with higher rank
 							// so that we can add a grid line to ticks 
@@ -15509,8 +15508,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 */
 			
 			var baseChartPan = chart.pan;
-			chart.pan = function(chartX) {
-				var xAxis = chart.xAxis[0];
+			chart.pan = function (chartX) {
+				var xAxis = chart.xAxis[0],
+					runBase = false;
 					
 				if (xAxis.options.ordinal) {
 					
@@ -15532,7 +15532,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						val2lin = xAxis.val2lin,
 						searchAxisRight;
 					
-					if (mathAbs(movedUnits) > 1) { //  don't handle non-change
+					if (!extendedAxis.ordinalPositions) { // we have an ordinal axis, but the data is equally spaced
+						runBase = true;
+					
+					} else if (mathAbs(movedUnits) > 1) {
 						
 						// Remove active points for shared tooltip
 						if (hoverPoints) {
@@ -15543,9 +15546,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 						if (movedUnits < 0) {
 							searchAxisLeft = extendedAxis;
-							searchAxisRight = xAxis;
+							searchAxisRight = xAxis.ordinalPositions ? xAxis : extendedAxis;
 						} else {
-							searchAxisLeft = xAxis;
+							searchAxisLeft = xAxis.ordinalPositions ? xAxis : extendedAxis;
 							searchAxisRight = extendedAxis;
 						}
 						
@@ -15576,10 +15579,15 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						}
 				
 						chart.mouseDownX = chartX; // set new reference for next run
-						css(container, { cursor: 'move' });
+						css(chart.container, { cursor: 'move' });
 					}
 				
 				} else {
+					runBase = true;
+				}
+				
+				// revert to the linear chart.pan version
+				if (runBase) {
 					baseChartPan.apply(chart, arguments);
 				}
 			}; 
@@ -15590,7 +15598,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	 * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the 
 	 * line or area
 	 */
-	seriesProto.getSegments = function() {
+	seriesProto.getSegments = function () {
 		
 		var series = this,
 			segments,
@@ -15605,7 +15613,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			segments = series.segments;
 			
 			// extension for ordinal breaks
-			each (segments, function(segment, no) {
+			each(segments, function (segment, no) {
 				var i = segment.length - 1;
 				while (i--) {
 					if (segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * gapSize) {
@@ -15619,7 +15627,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			});
 		}
 	};
-})();
+}());
 
 /* ****************************************************************************
  * End ordinal axis logic                                                   *
