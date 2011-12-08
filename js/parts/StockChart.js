@@ -34,6 +34,7 @@ Highcharts.StockChart = function (options, callback) {
 				gapGridLineColor: 'silver',
 				minPadding: 0,
 				maxPadding: 0,
+				ordinal: true,
 				title: {
 					text: null
 				},
@@ -546,7 +547,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			
 			var baseChartPan = chart.pan;
 			chart.pan = function(chartX) {
-				var xAxis = chart.xAxis[0];
+				var xAxis = chart.xAxis[0],
+					runBase = false;
 					
 				if (xAxis.options.ordinal) {
 					
@@ -568,7 +570,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						val2lin = xAxis.val2lin,
 						searchAxisRight;
 					
-					if (mathAbs(movedUnits) > 1) { //  don't handle non-change
+					if (!extendedAxis.ordinalPositions) { // we have an ordinal axis, but the data is equally spaced
+						runBase = true;
+					
+					} else if (mathAbs(movedUnits) > 1) {
 						
 						// Remove active points for shared tooltip
 						if (hoverPoints) {
@@ -579,9 +584,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 						if (movedUnits < 0) {
 							searchAxisLeft = extendedAxis;
-							searchAxisRight = xAxis;
+							searchAxisRight = xAxis.ordinalPositions ? xAxis : extendedAxis;
 						} else {
-							searchAxisLeft = xAxis;
+							searchAxisLeft = xAxis.ordinalPositions ? xAxis : extendedAxis;
 							searchAxisRight = extendedAxis;
 						}
 						
@@ -616,6 +621,11 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					}
 				
 				} else {
+					runBase = true;
+				}
+				
+				// revert to the linear chart.pan version
+				if (runBase) {
 					baseChartPan.apply(chart, arguments);
 				}
 			}; 

@@ -63,6 +63,7 @@ extend(defaultOptions, {
 			tickWidth: 0,
 			lineWidth: 0,
 			gridLineWidth: 1,
+			ordinal: true,
 			tickPixelInterval: 200,
 			labels: {
 				align: 'left',
