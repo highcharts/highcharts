@@ -5059,13 +5059,13 @@ function Chart(options, callback) {
 		/**
 		 * The Tick class
 		 */
-		function Tick(pos, minor) {
+		function Tick(pos, type) {
 			var tick = this;
 			tick.pos = pos;
-			tick.minor = minor;
+			tick.type = type || '';
 			tick.isNew = true;
 
-			if (!minor) {
+			if (!type) {
 				tick.addLabel();
 			}
 		}
@@ -5160,15 +5160,13 @@ function Chart(options, callback) {
 			 */
 			render: function (index, old) {
 				var tick = this,
-					major = !tick.minor,
+					type = tick.type,
 					label = tick.label,
 					pos = tick.pos,
 					labelOptions = options.labels,
 					gridLine = tick.gridLine,
-					gridPrefix = tickPositions.gaps && tickPositions.gaps[pos] && options.gapGridLineWidth ?
-						'gapGrid' : // mark the gap in an ordinal axis (stock charts)
-						major ? 'grid' : 'minorGrid',
-					tickPrefix = major ? 'tick' : 'minorTick',
+					gridPrefix = type ? type + 'Grid' : 'grid',
+					tickPrefix = type ? type + 'Tick' : 'tick',
 					gridLineWidth = options[gridPrefix + 'LineWidth'],
 					gridLineColor = options[gridPrefix + 'LineColor'],
 					dashStyle = options[gridPrefix + 'LineDashStyle'],
@@ -5206,7 +5204,7 @@ function Chart(options, callback) {
 						if (dashStyle) {
 							attribs.dashstyle = dashStyle;
 						}
-						if (major) {
+						if (!type) {
 							attribs.zIndex = 1;
 						}
 						tick.gridLine = gridLine =
@@ -6415,7 +6413,7 @@ function Chart(options, callback) {
 					var pos = min + (tickPositions[0] - min) % minorTickInterval;
 					for (; pos <= max; pos += minorTickInterval) {
 						if (!minorTicks[pos]) {
-							minorTicks[pos] = new Tick(pos, true);
+							minorTicks[pos] = new Tick(pos, 'minor');
 						}
 
 						// render new ticks in old position

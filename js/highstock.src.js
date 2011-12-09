@@ -5059,13 +5059,13 @@ function Chart(options, callback) {
 		/**
 		 * The Tick class
 		 */
-		function Tick(pos, minor) {
+		function Tick(pos, type) {
 			var tick = this;
 			tick.pos = pos;
-			tick.minor = minor;
+			tick.type = type || '';
 			tick.isNew = true;
 
-			if (!minor) {
+			if (!type) {
 				tick.addLabel();
 			}
 		}
@@ -5160,15 +5160,13 @@ function Chart(options, callback) {
 			 */
 			render: function (index, old) {
 				var tick = this,
-					major = !tick.minor,
+					type = tick.type,
 					label = tick.label,
 					pos = tick.pos,
 					labelOptions = options.labels,
 					gridLine = tick.gridLine,
-					gridPrefix = tickPositions.gaps && tickPositions.gaps[pos] && options.gapGridLineWidth ?
-						'gapGrid' : // mark the gap in an ordinal axis (stock charts)
-						major ? 'grid' : 'minorGrid',
-					tickPrefix = major ? 'tick' : 'minorTick',
+					gridPrefix = type ? type + 'Grid' : 'grid',
+					tickPrefix = type ? type + 'Tick' : 'tick',
 					gridLineWidth = options[gridPrefix + 'LineWidth'],
 					gridLineColor = options[gridPrefix + 'LineColor'],
 					dashStyle = options[gridPrefix + 'LineDashStyle'],
@@ -5206,7 +5204,7 @@ function Chart(options, callback) {
 						if (dashStyle) {
 							attribs.dashstyle = dashStyle;
 						}
-						if (major) {
+						if (!type) {
 							attribs.zIndex = 1;
 						}
 						tick.gridLine = gridLine =
@@ -6415,7 +6413,7 @@ function Chart(options, callback) {
 					var pos = min + (tickPositions[0] - min) % minorTickInterval;
 					for (; pos <= max; pos += minorTickInterval) {
 						if (!minorTicks[pos]) {
-							minorTicks[pos] = new Tick(pos, true);
+							minorTicks[pos] = new Tick(pos, 'minor');
 						}
 
 						// render new ticks in old position
@@ -15029,8 +15027,6 @@ Highcharts.StockChart = function (options, callback) {
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
 		return merge({ // defaults
-				gapGridLineWidth: 1,
-				gapGridLineColor: 'silver',
 				minPadding: 0,
 				maxPadding: 0,
 				ordinal: true,
@@ -15255,24 +15251,28 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				if (axis.options.ordinal) {
 					
 					each(axis.series, function (series, i) {
-					
-						// concatenate the processed X data into the existing positions, or the empty array 
-						ordinalPositions = ordinalPositions.concat(series.processedXData);
 						
-						// if we're dealing with more than one series, remove duplicates
-						if (i) {
-						
-							ordinalPositions.sort(function (a, b) {
-								return a - b; // without a custom function it is sorted as strings
-							});
-						
-							i = ordinalPositions.length - 1;
-							while (i--) {
-								if (ordinalPositions[i] === ordinalPositions[i + 1]) {
-									ordinalPositions.splice(i, 1);
+						if (series.visible !== false) {
+							
+							// concatenate the processed X data into the existing positions, or the empty array 
+							ordinalPositions = ordinalPositions.concat(series.processedXData);
+							
+							// if we're dealing with more than one series, remove duplicates
+							if (i) {
+							
+								ordinalPositions.sort(function (a, b) {
+									return a - b; // without a custom function it is sorted as strings
+								});
+							
+								i = ordinalPositions.length - 1;
+								while (i--) {
+									if (ordinalPositions[i] === ordinalPositions[i + 1]) {
+										ordinalPositions.splice(i, 1);
+									}
 								}
 							}
 						}
+						
 					});
 					
 					// cache the length
@@ -15281,12 +15281,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					// Check if we really need the overhead of mapping axis data against the ordinal positions.
 					// If the series consist of evenly spaced data any way, we don't need any ordinal logic.
 					if (len > 2) { // two points have equal distance by default
-						dist = ordinalPositions[1] - ordinalPositions[0];
-						i = len - 1;					
+						dist = ordinalPositions[1] - ordinalPositions[0]; 
+						i = len - 1;
 						while (i-- && !useOrdinal) {
 							if (ordinalPositions[i + 1] - ordinalPositions[i] !== dist) {
 								useOrdinal = true;
-							} 
+							}
 						}
 					}
 					
@@ -15493,8 +15493,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				
 				var options = xAxis.options,
 					tickPixelIntervalOption = options.tickPixelInterval,
-					tickPositions = e.tickPositions,
-					gaps = {};
+					tickPositions = e.tickPositions;
 				
 				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
 					var i = tickPositions.length,
@@ -15506,8 +15505,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					while (i--) {
 						translated = xAxis.translate(tickPositions[i]);
 						
-						// remove ticks that are closer than 0.3 times the pixel interval from the one to the right 
-						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.3) {
+						// remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
+						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.6) {
 							
 							
 							tickPositions.splice(
@@ -15519,19 +15518,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 									i,
 								1
 							);
-							
-							// when tick positions are removed, register the next one to the right or with higher rank
-							// so that we can add a grid line to ticks 
-							if (i) { // don't mark the first tick 
-								gaps[tickPositions[i]] = 1;
-							}
 						} else {
 							lastTranslated = translated;
 						}
 					}
-					
-					// register gaps on the tickPositions array and overwrite previous gaps
-					tickPositions.gaps = gaps;
 				}
 			});
 			
@@ -15544,7 +15534,6 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			chart.pan = function (chartX) {
 				var xAxis = chart.xAxis[0],
 					runBase = false;
-					
 				if (xAxis.options.ordinal) {
 					
 					var mouseDownX = chart.mouseDownX,
