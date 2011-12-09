@@ -618,7 +618,7 @@ Series.prototype = {
 
 		// if connect nulls, just remove null points
 		if (series.options.connectNulls) {
-			i = mathMax(points.length - 1, 0);
+			i = points.length - 1;
 			while (i--) {
 				if (points[i].y === null) {
 					points.splice(i, 1);
