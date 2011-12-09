@@ -1311,7 +1311,7 @@ Series.prototype = {
 							width: 2 * radius,
 							height: 2 * radius
 						} : {}));
-					} else {
+					} else if (radius > 0) {
 						point.graphic = chart.renderer.symbol(
 							pick(point.marker && point.marker.symbol, series.symbol),
 							plotX - radius,
