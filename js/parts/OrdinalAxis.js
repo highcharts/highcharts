@@ -420,7 +420,7 @@
 		
 		var series = this,
 			segments,
-			gapSize = series.options.gapSize;
+			gapSize = series.xAxis.options.ordinal && series.options.gapSize;
 	
 		// call base method
 		baseGetSegments.apply(series);
@@ -432,7 +432,7 @@
 			
 			// extension for ordinal breaks
 			each(segments, function (segment, no) {
-				var i = segment.length - 1;
+				var i = segment.length;
 				while (i--) {
 					if (segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * gapSize) {
 						segments.splice( // insert after this one

@@ -618,7 +618,7 @@ Series.prototype = {
 
 		// if connect nulls, just remove null points
 		if (series.options.connectNulls) {
-			i = points.length - 1;
+			i = mathMax(points.length - 1, 0);
 			while (i--) {
 				if (points[i].y === null) {
 					points.splice(i, 1);
@@ -627,7 +627,7 @@ Series.prototype = {
 			segments = [points];
 			
 		// else, split on null points
-		} else {			
+		} else {
 			each(points, function (point, i) {
 				if (point.y === null) {
 					if (i > lastNull + 1) {
@@ -736,7 +736,7 @@ Series.prototype = {
 		point = { series: series };
 		series.pointClass.prototype.applyOptions.apply(point, [options]);
 		xData.push(point.x);
-		yData.push(point.y);
+		yData.push(series.valueCount === 4 ? [point.open, point.high, point.low, point.close] : point.y);
 		dataOptions.push(options);
 
 
