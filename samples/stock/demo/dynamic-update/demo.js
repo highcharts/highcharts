@@ -19,7 +19,7 @@ $(function() {
 						var x = (new Date()).getTime(), // current time
 						y = Math.round(Math.random() * 100);
 						series.addPoint([x, y], true, true);
-					}, 3000);
+					}, 1000);
 				}
 			}
 		},

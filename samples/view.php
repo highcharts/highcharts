@@ -14,8 +14,12 @@ $next = $i + 1;
 		
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
 		<script type="text/javascript">
-		<?php include("$path/demo.js"); ?>
+		<?php @include("$path/demo.js"); ?>
 		</script>
+		
+		<style type="text/css">
+			<?php @include("$path/demo.css"); ?>
+		</style>
 		
 		<script type="text/javascript">
 			$(function() {
@@ -54,10 +58,6 @@ $next = $i + 1;
 						location.reload();
 					});
 					
-					// the jsfiddle button
-					$('#jsfiddle').click(function() {
-						location.href = 'http://jsfiddle.net/gh/get/jquery/1.6/highslide-software/highcharts.com/tree/stock/samples/<?php echo $path ?>/';
-					});
 				}
 			});
 		</script>
@@ -71,12 +71,13 @@ $next = $i + 1;
 	</head>
 	<body>
 		<h1><?php echo ($next - 1) ?>. /samples/<?php echo $path ?></h1> 
-		<?php include("$path/demo.html"); ?>
+		<?php @include("$path/demo.html"); ?>
 		
 		<div style="text-align: center">
 			<button id="next" disabled="disabled">Next</button>
 			<button id="reload">Reload</button>
-			<button id="jsfiddle">jsFiddle</button>
+			<a href="http://jsfiddle.net/gh/get/jquery/1.6/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+				target="_blank">jsFiddle</button>
 		</div>
 	</body>
 </html>

@@ -6,7 +6,9 @@ $(function() {
 	    },
 	    
 	    yAxis: {
-	    	reversed: true
+	    	reversed: true,
+	    	showFirstLabel: false,
+	    	showLastLabel: true
 	    },
 	    
 	    rangeSelector: {

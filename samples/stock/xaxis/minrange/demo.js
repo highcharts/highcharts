@@ -6,7 +6,7 @@ $(function() {
 	    },
 	    
 	    xAxis: {
-	    	maxZoom: 30 * 24 * 3600 * 1000
+	    	minRange: 30 * 24 * 3600 * 1000
 	    },
 	    
 	    rangeSelector: {
