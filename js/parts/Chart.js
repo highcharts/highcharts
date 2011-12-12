@@ -778,7 +778,7 @@ function Chart(options, callback) {
 
 						// create a stack for this particular series type
 						if (stacking) {
-							stackOption = series.options.stack;
+							stackOption = seriesOptions.stack;
 							stackKey = series.type + pick(stackOption, '');
 							negKey = '-' + stackKey;
 							series.stackKey = stackKey; // used in translate
@@ -814,7 +814,7 @@ function Chart(options, callback) {
 								// read stacked values into a stack based on the x value,
 								// the sign of y and the stack key
 								if (stacking) {
-									isNegative = y < 0;
+									isNegative = y < threshold;
 									pointStack = isNegative ? negPointStack : posPointStack;
 									key = isNegative ? negKey : stackKey;
 

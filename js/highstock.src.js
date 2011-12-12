@@ -5637,7 +5637,7 @@ function Chart(options, callback) {
 
 						// create a stack for this particular series type
 						if (stacking) {
-							stackOption = series.options.stack;
+							stackOption = seriesOptions.stack;
 							stackKey = series.type + pick(stackOption, '');
 							negKey = '-' + stackKey;
 							series.stackKey = stackKey; // used in translate
@@ -5673,7 +5673,7 @@ function Chart(options, callback) {
 								// read stacked values into a stack based on the x value,
 								// the sign of y and the stack key
 								if (stacking) {
-									isNegative = y < 0;
+									isNegative = y < threshold;
 									pointStack = isNegative ? negPointStack : posPointStack;
 									key = isNegative ? negKey : stackKey;
 
@@ -10403,6 +10403,7 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
+			isLastSeries = series.index === series.yAxis.series.length - 1,
 			i;
 		
 		for (i = 0; i < dataLength; i++) {
@@ -10410,7 +10411,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(yValue < 0 ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(yValue < options.threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
 				
@@ -10423,7 +10424,11 @@ Series.prototype = {
 				pointStackTotal = pointStack.total;
 				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
 				yValue = yBottom + yValue;
-
+				
+				if (isLastSeries) {
+					yBottom = options.threshold;
+				}
+				
 				if (stacking === 'percent') {
 					yBottom = pointStackTotal ? yBottom * 100 / pointStackTotal : 0;
 					yValue = pointStackTotal ? yValue * 100 / pointStackTotal : 0;
