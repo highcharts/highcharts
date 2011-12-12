@@ -32,6 +32,24 @@ AdaptersTest.prototype.testEach = function() {
 };
 
 /**
+ * Test each method on arrays.
+ */
+AdaptersTest.prototype.testEachOfDomNodes = function() {
+	/*:DOC += <div id="testDiv"><p><p><p></div>*/
+	var testDiv = document.getElementById('testDiv'),
+		numbersOfPs = 0;
+
+	assertNotUndefined('testDiv not undefined', testDiv);
+
+	// Issue #611, mootools adapter, DOM collection 'childNodes' cannot be treated as an array
+	each(testDiv.childNodes, function(value, i) {
+		numbersOfPs++;
+	});
+
+	assertEquals('Numbers of paragraphs', 3, numbersOfPs);
+};
+
+/**
  * Test the each method with various numbers of parameters.
  */
 AdaptersTest.prototype.testEachParams = function() {
