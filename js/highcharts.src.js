@@ -5091,7 +5091,7 @@ function Chart(options, callback) {
 					label = tick.label,
 					tickPositionInfo,
 					dateTimeLabelFormat;
-				
+
 				// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 				// use the general format.
 				if (isDatetimeAxis) {
@@ -5182,7 +5182,7 @@ function Chart(options, callback) {
 					attribs,
 					x,
 					y;
-					
+
 				// get x and y position for ticks and labels
 				x = horiz ?
 					translate(pos + tickmarkOffset, null, null, old) + transB :
@@ -5794,7 +5794,7 @@ function Chart(options, callback) {
 				if (postTranslate) { // log and ordinal axes
 					val = axis.val2lin(val);
 				}
-				
+
 				returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding);
 			}
 
@@ -5870,10 +5870,19 @@ function Chart(options, callback) {
 			tickPositions = [];
 
 			// populate the intermediate values
-			i = correctFloat(roundedMin);
+			i = roundedMin;
 			while (i <= roundedMax) {
-				tickPositions.push(i);
-				i = correctFloat(i + tickInterval);
+				// Place the tick on the rounded value
+				tickPositions.push(correctFloat(i));
+
+				// If the interval is not big enough in the current min - max range to actually increase
+				// the loop variable, we need to break out to prevent endless loop. Issue #619
+				if (i === i + tickInterval) {
+					break;
+				}
+
+				// Always add the raw tickInterval, not the corrected one.
+				i = i + tickInterval;
 			}
 
 		}
@@ -5927,7 +5936,7 @@ function Chart(options, callback) {
 		 * to the nearest tick
 		 */
 		function setTickPositions(secondPass) {
-			
+
 			var length,
 				linkedParent,
 				linkedParentExtremes,
@@ -5938,7 +5947,7 @@ function Chart(options, callback) {
 			if (secondPass && axis.beforeSetTickPositions) {
 				axis.beforeSetTickPositions();
 			}
-			
+
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
 				linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo];
@@ -5992,12 +6001,12 @@ function Chart(options, callback) {
 						(max - min) * tickPixelIntervalOption / (axisLength || 1)
 				);
 			}
-			
+
 			// hook for extensions, used in Highstock ordinal axes
 			if (secondPass && axis.postProcessTickInterval) {
 				tickInterval = axis.postProcessTickInterval(tickInterval);
 			}
-						
+
 			// for linear axes, get magnitude and normalize the interval
 			if (!isDatetimeAxis) { // linear
 				magnitude = math.pow(10, mathFloor(math.log(tickInterval) / math.LN10));
@@ -6005,7 +6014,7 @@ function Chart(options, callback) {
 					tickInterval = normalizeTickInterval(tickInterval, null, magnitude, options);
 				}
 			}
-			
+
 			// record the tick interval for linked axis
 			axis.tickInterval = tickInterval;
 
@@ -6022,14 +6031,14 @@ function Chart(options, callback) {
 					setLinearTickPositions();
 				}
 			}
-			
+
 			// post process positions, used in ordinal axes in Highstock
 			if (secondPass) {
 				fireEvent(axis, 'afterSetTickPositions', {
 					tickPositions: tickPositions
 				});
 			}
-			
+
 
 			if (!isLinked) {
 
@@ -6091,7 +6100,7 @@ function Chart(options, callback) {
 				}
 			}
 
-			
+
 		}
 
 		/**
@@ -6135,7 +6144,7 @@ function Chart(options, callback) {
 				// the translation factor used in translate function
 				oldTransA = transA;
 				axis.translationSlope = transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
-	
+
 				// reset stacks
 				if (!isXAxis) {
 					for (type in stacks) {
@@ -6431,7 +6440,7 @@ function Chart(options, callback) {
 				each(tickPositions, function (pos, i) {
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= min && pos <= max)) {
-						
+
 						if (!ticks[pos]) {
 							ticks[pos] = new Tick(pos);
 						}
@@ -6444,7 +6453,7 @@ function Chart(options, callback) {
 						ticks[pos].isActive = true;
 						ticks[pos].render(i);
 					}
-					
+
 				});
 
 				// alternate grid color
@@ -6616,7 +6625,7 @@ function Chart(options, callback) {
 			if (tracker.resetTracker) {
 				tracker.resetTracker();
 			}
-			
+
 			// we need to filter the tick postions again
 			if (options.ordinal) {
 				setTickPositions(true);
@@ -8472,10 +8481,10 @@ function Chart(options, callback) {
 			});
 		}
 	};
-	
+
 	/**
 	 * Pan the chart by dragging the mouse across the pane. This function is called
-	 * on mouse move, and the distance to pan is computed from chartX compared to 
+	 * on mouse move, and the distance to pan is computed from chartX compared to
 	 * the first chartX position in the dragging operation.
 	 */
 	chart.pan = function (chartX) {
@@ -8487,14 +8496,14 @@ function Chart(options, callback) {
 			newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
 			newMax = xAxis.translate(mouseDownX + plotWidth - chartX, true) - halfPointRange,
 			hoverPoints = chart.hoverPoints;
-			
+
 		// remove active points for shared tooltip
 		if (hoverPoints) {
 			each(hoverPoints, function (point) {
 				point.setState();
 			});
 		}
-		
+
 		if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
 			xAxis.setExtremes(newMin, newMax, true, false);
 		}
@@ -10665,7 +10674,7 @@ Series.prototype = {
 							width: 2 * radius,
 							height: 2 * radius
 						} : {}));
-					} else {
+					} else if (radius > 0) {
 						point.graphic = chart.renderer.symbol(
 							pick(point.marker && point.marker.symbol, series.symbol),
 							plotX - radius,
