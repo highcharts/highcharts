@@ -5615,8 +5615,10 @@ function Chart(options, callback) {
 					// Get dataMin and dataMax for X axes
 					if (isXAxis) {
 						xData = series.xData;
-						dataMin = mathMin(pick(dataMin, xData[0]), arrayMin(xData));
-						dataMax = mathMax(pick(dataMax, xData[0]), arrayMax(xData));
+						if (xData.length) {
+							dataMin = mathMin(pick(dataMin, xData[0]), arrayMin(xData));
+							dataMax = mathMax(pick(dataMax, xData[0]), arrayMax(xData));
+						}
 
 					// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 					} else {
@@ -9963,30 +9965,34 @@ Series.prototype = {
 			lastNull = -1,
 			segments = [],
 			i,
-			points = series.points;
+			points = series.points,
+			pointsLength = points.length;
 
-		// if connect nulls, just remove null points
-		if (series.options.connectNulls) {
-			i = points.length - 1;
-			while (i--) {
-				if (points[i].y === null) {
-					points.splice(i, 1);
-				}
-			}
-			segments = [points];
+		if (pointsLength) { // no action required for []
 			
-		// else, split on null points
-		} else {
-			each(points, function (point, i) {
-				if (point.y === null) {
-					if (i > lastNull + 1) {
-						segments.push(points.slice(lastNull + 1, i));
+			// if connect nulls, just remove null points
+			if (series.options.connectNulls) {
+				i = pointsLength;
+				while (i--) {
+					if (points[i].y === null) {
+						points.splice(i, 1);
 					}
-					lastNull = i;
-				} else if (i === points.length - 1) { // last value
-					segments.push(points.slice(lastNull + 1, i + 1));
 				}
-			});
+				segments = [points];
+				
+			// else, split on null points
+			} else {
+				each(points, function (point, i) {
+					if (point.y === null) {
+						if (i > lastNull + 1) {
+							segments.push(points.slice(lastNull + 1, i));
+						}
+						lastNull = i;
+					} else if (i === pointsLength - 1) { // last value
+						segments.push(points.slice(lastNull + 1, i + 1));
+					}
+				});
+			}
 		}
 		
 		// register it
@@ -10132,11 +10138,11 @@ Series.prototype = {
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
 		}
-
+		
 		// parallel arrays
 		var xData = [],
 			yData = [],
-			dataLength = data.length,
+			dataLength = data ? data.length : [],
 			turboThreshold = options.turboThreshold || 1000,
 			pt,
 			ohlc = series.valueCount === 4;
@@ -10665,7 +10671,7 @@ Series.prototype = {
 							width: 2 * radius,
 							height: 2 * radius
 						} : {}));
-					} else {
+					} else if (radius > 0) {
 						point.graphic = chart.renderer.symbol(
 							pick(point.marker && point.marker.symbol, series.symbol),
 							plotX - radius,

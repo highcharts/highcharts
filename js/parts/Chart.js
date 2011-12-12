@@ -756,8 +756,10 @@ function Chart(options, callback) {
 					// Get dataMin and dataMax for X axes
 					if (isXAxis) {
 						xData = series.xData;
-						dataMin = mathMin(pick(dataMin, xData[0]), arrayMin(xData));
-						dataMax = mathMax(pick(dataMax, xData[0]), arrayMax(xData));
+						if (xData.length) {
+							dataMin = mathMin(pick(dataMin, xData[0]), arrayMin(xData));
+							dataMax = mathMax(pick(dataMax, xData[0]), arrayMax(xData));
+						}
 
 					// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 					} else {
