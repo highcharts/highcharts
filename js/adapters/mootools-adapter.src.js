@@ -125,7 +125,7 @@ win.HighchartsAdapter = {
 	each: function (arr, fn) {
 		return legacy ?
 			$each(arr, fn) :
-			arr.each(fn);
+			Array.each(arr, fn);
 	},
 
 	/**
