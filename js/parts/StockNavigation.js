@@ -50,6 +50,7 @@ extend(defaultOptions, {
 			dataLabels: {
 				enabled: false
 			},
+			id: PREFIX + 'navigator-series',
 			lineColor: '#4572A7',
 			lineWidth: 1,
 			marker: {
