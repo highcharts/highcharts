@@ -87,7 +87,7 @@ win.HighchartsAdapter = {
 				el.attr.call(el, args[0], args[1][0]);
 			};
 			// dirty hack to trick Moo into handling el as an element wrapper
-			el.$family = el.uid = true;
+			el.$family = function () { return true; };
 		}
 
 		// stop running animations
@@ -100,6 +100,11 @@ win.HighchartsAdapter = {
 				transition: Fx.Transitions.Quad.easeInOut
 			}, options)
 		);
+
+		// Make sure that the element reference is set when animating svg elements
+		if (isSVGElement) {
+			effect.element = el;
+		}
 
 		// special treatment for paths
 		if (params.d) {
