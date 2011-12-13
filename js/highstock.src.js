@@ -5865,28 +5865,32 @@ function Chart(options, callback) {
 		 */
 		function setLinearTickPositions() {
 
-			var i,
+			var pos,
+				lastPos,
 				roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
 				roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval);
 
 			tickPositions = [];
 
-			// populate the intermediate values
-			i = roundedMin;
-			while (i <= roundedMax) {
+			// Populate the intermediate values
+			pos = roundedMin;
+			while (pos <= roundedMax) {
+				
 				// Place the tick on the rounded value
-				tickPositions.push(correctFloat(i));
-
-				// If the interval is not big enough in the current min - max range to actually increase
-				// the loop variable, we need to break out to prevent endless loop. Issue #619
-				if (i === i + tickInterval) {
-					break;
-				}
+				tickPositions.push(pos);
 
 				// Always add the raw tickInterval, not the corrected one.
-				i = i + tickInterval;
+				pos = correctFloat(pos + tickInterval);
+				
+				// If the interval is not big enough in the current min - max range to actually increase
+				// the loop variable, we need to break out to prevent endless loop. Issue #619
+				if (pos === lastPos) {
+					break;
+				}
+				
+				// Record the last value
+				lastPos = pos;
 			}
-
 		}
 
 		/**
