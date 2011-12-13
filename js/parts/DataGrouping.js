@@ -233,7 +233,8 @@ seriesProto.processData = function () {
 	var series = this,
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
-		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled;
+		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
+		hasGroupedData;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
@@ -272,14 +273,13 @@ seriesProto.processData = function () {
 	// clear previous groups
 	each(groupedData || [], function (point, i) {
 		if (point) {
-			// TODO: find out why this is looping over all points in the Navigator when changing range
 			groupedData[i] = point.destroy ? point.destroy() : null;
 		}
 	});
 
 	
 	if (dataLength > maxPoints || dataGroupingOptions.forced) {
-		series.hasGroupedData = true;
+		hasGroupedData = true;
 
 		series.points = null; // force recreation of point instances in series.translate
 
@@ -320,7 +320,7 @@ seriesProto.processData = function () {
 		series.pointRange = options.pointRange;
 	}
 
-
+	series.hasGroupedData = hasGroupedData;
 };
 
 seriesProto.generatePoints = function () {
