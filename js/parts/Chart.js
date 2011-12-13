@@ -3433,6 +3433,9 @@ function Chart(options, callback) {
 			tracker.resetTracker();
 		}
 
+		// redraw if canvas
+		renderer.draw();
+
 		// fire the event
 		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
 	}
@@ -3771,6 +3774,11 @@ function Chart(options, callback) {
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
+
+		// If we need canvg library, start the download here.
+		if (useCanVG) {
+			renderer.download(options.global.canvgUrl, doc);
+		}
 
 		// Issue 110 workaround:
 		// In Firefox, if a div is positioned by percentage, its pixel position may land
@@ -4402,6 +4410,8 @@ function Chart(options, callback) {
 
 		render();
 
+		// add canvas
+		renderer.draw();
 		// run callbacks
 		if (callback) {
 			callback.apply(chart, [chart]);
@@ -4441,7 +4451,7 @@ function Chart(options, callback) {
 
 	// Expose methods and variables
 	chart.addSeries = addSeries;
-	chart.animation = pick(optionsChart.animation, true);
+	chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
 	chart.Axis = Axis;
 	chart.destroy = destroy;
 	chart.get = get;

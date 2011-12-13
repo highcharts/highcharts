@@ -527,6 +527,11 @@ Series.prototype = {
 			selected: options.selected === true // false by default
 		});
 		
+		// special
+		if (useCanVG) {
+			options.animation = false;
+		}
+
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {

@@ -38,6 +38,7 @@ var doc = document,
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasRtlBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== undefined,
 	symbolSizes = {},
@@ -1250,7 +1251,8 @@ defaultOptions = {
 		thousandsSep: ','
 	},
 	global: {
-		useUTC: true
+		useUTC: true,
+		canvgUrl: 'http://highcharts.com/js/canvg.js' // docs
 	},
 	chart: {
 		//animation: true,
@@ -2400,7 +2402,14 @@ SVGElement.prototype = {
 		try { // fails in Firefox if the container has display: none
 			// use extend because IE9 is not allowed to change width and height in case
 			// of rotation (below)
-			bBox = extend({}, this.element.getBBox());
+			bBox = element.getBBox ?
+				// SVG:
+				extend({}, element.getBBox()) :
+				// Canvas renderer:
+				{
+					width: element.offsetWidth,
+					height: element.offsetHeight
+				};
 		} catch (e) {
 			bBox = { width: 0, height: 0 };
 		}
@@ -2704,6 +2713,10 @@ SVGRenderer.prototype = {
 		return wrapper;
 	},
 
+	/**
+	 * Dummy function for use in canvas renderer
+	 */
+	draw: function () {},
 
 	/**
 	 * Parse a simple HTML string into SVG tspans
@@ -3729,7 +3742,7 @@ Renderer = SVGRenderer;
  * @constructor
  */
 var VMLRenderer;
-if (!hasSVG) {
+if (!hasSVG && !useCanVG) {
 
 /**
  * The VML element wrapper.
@@ -4857,6 +4870,104 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
  * END OF INTERNET EXPLORER <= 8 SPECIFIC CODE                                *
  *                                                                            *
  *****************************************************************************/
+/* ****************************************************************************
+ *                                                                            *
+ * START OF ANDROID < 3 SPECIFIC CODE. THIS CAN BE REMOVED IF YOU'RE NOT      *
+ * TARGETING THAT SYSTEM.                                                     *
+ *                                                                            *
+ *****************************************************************************/
+var CanVGRenderer;
+if (useCanVG) {
+
+CanVGRenderer = function (container) {
+	var contStyle = container.style,
+		canvas;
+
+	this.init.apply(this, arguments);
+
+	// add the canvas above it
+	canvas = createElement('canvas', {
+		width: container.offsetWidth,
+		height: container.offsetHeight
+	}, {
+		position: RELATIVE,
+		left: contStyle.left,
+		top: contStyle.top
+	}, container.parentNode);
+
+	// hide the container
+	css(container, {
+		position: ABSOLUTE,
+		visibility: HIDDEN
+	});
+
+	this.container = container;
+	this.canvas = canvas;
+
+	// Keep all deferred canvases here until we can render them
+	this.deferred = [];
+};
+
+CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
+
+	/**
+	 * Draws the SVG on the canvas or adds a draw invokation to the deferred list.
+	 */
+	draw: function () {
+		var renderer = this;
+
+		if (win.canvg) {
+			canvg(renderer.canvas, renderer.container.innerHTML);
+		} else {
+			renderer.deferred.push(function () {
+				renderer.draw();
+			});
+		}
+	},
+
+	/**
+	 * Starts to downloads the canvg script and sets a callback to drawDeferred when its
+	 * loaded.
+	 */
+	download: function (scriptLocation, doc) {
+		var renderer = this,
+			head = doc.getElementsByTagName('head')[0],
+			scriptAttributes = {
+				type: 'text/javascript',
+				src: scriptLocation,
+				onload: function () {
+					renderer.drawDeferred();
+				}
+			};
+
+		createElement('script', scriptAttributes, null, head);
+	},
+
+	/**
+	 * Draws the deferred canvases when the canvg script is loaded.
+	 */
+	drawDeferred: function () {
+		var renderer = this;
+
+		each(renderer.deferred, function (fn) {
+			fn();
+			erase(renderer.deferred, fn);
+		});
+	}
+});
+
+} // end CanVGRenderer
+/* ****************************************************************************
+ *                                                                            *
+ * END OF ANDROID < 3 SPECIFIC CODE                                           *
+ *                                                                            *
+ *****************************************************************************/
+
+
+/**
+ * General renderer
+ */
+Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;
 
 /**
  * The chart class
@@ -8292,6 +8403,9 @@ function Chart(options, callback) {
 			tracker.resetTracker();
 		}
 
+		// redraw if canvas
+		renderer.draw();
+
 		// fire the event
 		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
 	}
@@ -8630,6 +8744,11 @@ function Chart(options, callback) {
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
+
+		// If we need canvg library, start the download here.
+		if (useCanVG) {
+			renderer.download(options.global.canvgUrl, doc);
+		}
 
 		// Issue 110 workaround:
 		// In Firefox, if a div is positioned by percentage, its pixel position may land
@@ -9261,6 +9380,8 @@ function Chart(options, callback) {
 
 		render();
 
+		// add canvas
+		renderer.draw();
 		// run callbacks
 		if (callback) {
 			callback.apply(chart, [chart]);
@@ -9300,7 +9421,7 @@ function Chart(options, callback) {
 
 	// Expose methods and variables
 	chart.addSeries = addSeries;
-	chart.animation = pick(optionsChart.animation, true);
+	chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
 	chart.Axis = Axis;
 	chart.destroy = destroy;
 	chart.get = get;
@@ -9891,6 +10012,11 @@ Series.prototype = {
 			selected: options.selected === true // false by default
 		});
 		
+		// special
+		if (useCanVG) {
+			options.animation = false;
+		}
+
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {

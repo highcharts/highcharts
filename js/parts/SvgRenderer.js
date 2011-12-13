@@ -552,7 +552,14 @@ SVGElement.prototype = {
 		try { // fails in Firefox if the container has display: none
 			// use extend because IE9 is not allowed to change width and height in case
 			// of rotation (below)
-			bBox = extend({}, this.element.getBBox());
+			bBox = element.getBBox ?
+				// SVG:
+				extend({}, element.getBBox()) :
+				// Canvas renderer:
+				{
+					width: element.offsetWidth,
+					height: element.offsetHeight
+				};
 		} catch (e) {
 			bBox = { width: 0, height: 0 };
 		}
@@ -856,6 +863,10 @@ SVGRenderer.prototype = {
 		return wrapper;
 	},
 
+	/**
+	 * Dummy function for use in canvas renderer
+	 */
+	draw: function () {},
 
 	/**
 	 * Parse a simple HTML string into SVG tspans

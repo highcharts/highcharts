@@ -83,6 +83,7 @@
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
+            <file name="CanVGRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -107,6 +108,7 @@
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
+            <file name="CanVGRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
