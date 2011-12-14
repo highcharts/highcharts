@@ -1170,10 +1170,10 @@ function Chart(options, callback) {
 					tickInterval / 5 : options.minorTickInterval;
 
 			// find the tick positions
-			tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max])); // docs
+			tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max]));
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
-					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units); // docs
+					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units);
 				} else {
 					setLinearTickPositions();
 				}
@@ -1445,7 +1445,7 @@ function Chart(options, callback) {
 		function getOffset() {
 
 			var hasData = axis.series.length && defined(min) && defined(max),
-				showAxis = hasData || pick(options.showEmpty, true), // docs
+				showAxis = hasData || pick(options.showEmpty, true),
 				titleOffset = 0,
 				titleMargin = 0,
 				axisTitleOptions = options.title,
@@ -1458,7 +1458,7 @@ function Chart(options, callback) {
 					.attr({ zIndex: 7 })
 					.add();
 				gridGroup = renderer.g('grid')
-					.attr({ zIndex: options.gridZIndex || 1 }) // docs
+					.attr({ zIndex: options.gridZIndex || 1 })
 					.add();
 			}
 
@@ -1533,7 +1533,7 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				pick(axisTitleOptions.offset, // docs
+				pick(axisTitleOptions.offset,
 					labelOffset + titleMargin +
 					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
 				);
@@ -2807,15 +2807,15 @@ function Chart(options, callback) {
 			itemStyle = options.itemStyle,
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
-			padding = options.padding || pInt(style.padding), // docs
+			padding = options.padding || pInt(style.padding),
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
 			itemY,
 			lastItemY,
 			itemHeight = 0,
-			itemMarginTop = options.itemMarginTop || 0, // docs
-			itemMarginBottom = options.itemMarginBottom || 0, // docs
+			itemMarginTop = options.itemMarginTop || 0,
+			itemMarginBottom = options.itemMarginBottom || 0,
 			box,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
