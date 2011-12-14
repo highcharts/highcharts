@@ -507,7 +507,7 @@
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.7.1"/>
-            <param name="required.lib" value="jquery-1.7.1js"/>
+            <param name="required.lib" value="jquery-1.7.1.js"/>
         </antcall>
     </target>
 
