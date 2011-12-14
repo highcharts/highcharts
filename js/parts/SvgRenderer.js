@@ -30,7 +30,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = pick(options, globalAnimation, true);
-		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)			
+		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions);
 			if (complete) { // allows using a callback with the global animation without overwriting it
@@ -547,7 +547,8 @@ SVGElement.prototype = {
 			width,
 			height,
 			rotation = this.rotation,
-			rad = rotation * deg2rad;
+			rad = rotation * deg2rad,
+			element = this.element;
 
 		try { // fails in Firefox if the container has display: none
 			// use extend because IE9 is not allowed to change width and height in case
@@ -1702,7 +1703,8 @@ SVGRenderer.prototype = {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = padding,
-				y = padding + mathRound(pInt(wrapper.element.style.fontSize || 11) * 1.2);
+				style = wrapper.element.style,
+				y = padding + mathRound(pInt((style && style.fontSize) || 11) * 1.2);
 
 			// compensate for alignment
 			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {

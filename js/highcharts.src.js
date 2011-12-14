@@ -1880,7 +1880,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = pick(options, globalAnimation, true);
-		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)			
+		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions);
 			if (complete) { // allows using a callback with the global animation without overwriting it
@@ -2397,7 +2397,8 @@ SVGElement.prototype = {
 			width,
 			height,
 			rotation = this.rotation,
-			rad = rotation * deg2rad;
+			rad = rotation * deg2rad,
+			element = this.element;
 
 		try { // fails in Firefox if the container has display: none
 			// use extend because IE9 is not allowed to change width and height in case
@@ -3552,7 +3553,8 @@ SVGRenderer.prototype = {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = padding,
-				y = padding + mathRound(pInt(wrapper.element.style.fontSize || 11) * 1.2);
+				style = wrapper.element.style,
+				y = padding + mathRound(pInt((style && style.fontSize) || 11) * 1.2);
 
 			// compensate for alignment
 			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
@@ -4929,7 +4931,7 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	 * Starts to downloads the canvg script and sets a callback to drawDeferred when its
 	 * loaded.
 	 */
-	download: function (scriptLocation, doc) {
+	download: function (scriptLocation) {
 		var renderer = this,
 			head = doc.getElementsByTagName('head')[0],
 			scriptAttributes = {
@@ -5986,19 +5988,19 @@ function Chart(options, callback) {
 			// Populate the intermediate values
 			pos = roundedMin;
 			while (pos <= roundedMax) {
-				
+
 				// Place the tick on the rounded value
 				tickPositions.push(pos);
 
 				// Always add the raw tickInterval, not the corrected one.
 				pos = correctFloat(pos + tickInterval);
-				
+
 				// If the interval is not big enough in the current min - max range to actually increase
 				// the loop variable, we need to break out to prevent endless loop. Issue #619
 				if (pos === lastPos) {
 					break;
 				}
-				
+
 				// Record the last value
 				lastPos = pos;
 			}
@@ -8747,7 +8749,7 @@ function Chart(options, callback) {
 
 		// If we need canvg library, start the download here.
 		if (useCanVG) {
-			renderer.download(options.global.canvgUrl, doc);
+			renderer.download(options.global.canvgUrl);
 		}
 
 		// Issue 110 workaround:
@@ -9328,7 +9330,7 @@ function Chart(options, callback) {
 		COMPLETE = 'complete';
 		// Note: in spite of JSLint's complaints, win == win.top is required
 		/*jslint eqeq: true*/
-		if (!hasSVG && win == win.top && doc.readyState !== COMPLETE) {
+		if (!hasSVG && !useCanVG && win == win.top && doc.readyState !== COMPLETE) {
 		/*jslint eqeq: false*/
 			doc.attachEvent(ONREADYSTATECHANGE, function () {
 				doc.detachEvent(ONREADYSTATECHANGE, firstRender);
