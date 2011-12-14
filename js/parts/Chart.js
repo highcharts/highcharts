@@ -1016,19 +1016,19 @@ function Chart(options, callback) {
 			// Populate the intermediate values
 			pos = roundedMin;
 			while (pos <= roundedMax) {
-				
+
 				// Place the tick on the rounded value
 				tickPositions.push(pos);
 
 				// Always add the raw tickInterval, not the corrected one.
 				pos = correctFloat(pos + tickInterval);
-				
+
 				// If the interval is not big enough in the current min - max range to actually increase
 				// the loop variable, we need to break out to prevent endless loop. Issue #619
 				if (pos === lastPos) {
 					break;
 				}
-				
+
 				// Record the last value
 				lastPos = pos;
 			}
@@ -3777,7 +3777,7 @@ function Chart(options, callback) {
 
 		// If we need canvg library, start the download here.
 		if (useCanVG) {
-			renderer.download(options.global.canvgUrl, doc);
+			renderer.download(options.global.canvgUrl);
 		}
 
 		// Issue 110 workaround:
@@ -4358,7 +4358,7 @@ function Chart(options, callback) {
 		COMPLETE = 'complete';
 		// Note: in spite of JSLint's complaints, win == win.top is required
 		/*jslint eqeq: true*/
-		if (!hasSVG && win == win.top && doc.readyState !== COMPLETE) {
+		if (!hasSVG && !useCanVG && win == win.top && doc.readyState !== COMPLETE) {
 		/*jslint eqeq: false*/
 			doc.attachEvent(ONREADYSTATECHANGE, function () {
 				doc.detachEvent(ONREADYSTATECHANGE, firstRender);

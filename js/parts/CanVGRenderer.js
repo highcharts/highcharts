@@ -57,7 +57,7 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	 * Starts to downloads the canvg script and sets a callback to drawDeferred when its
 	 * loaded.
 	 */
-	download: function (scriptLocation, doc) {
+	download: function (scriptLocation) {
 		var renderer = this,
 			head = doc.getElementsByTagName('head')[0],
 			scriptAttributes = {
