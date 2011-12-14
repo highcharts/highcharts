@@ -45,9 +45,6 @@ $(function() {
 		        text: 'AAPL Historical'
 		    },
 
-		    xAxis: {
-		        maxZoom: 14 * 24 * 3600000,
-		    },
 		    yAxis: [{
 		        title: {
 		            text: 'OHLC'

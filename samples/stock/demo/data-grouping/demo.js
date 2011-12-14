@@ -47,10 +47,6 @@ $(function() {
 		        selected: 3
 		    },
 	
-		    xAxis: {
-		        maxZoom: 3 * 24 * 3600000 // three days
-		    },
-	
 			yAxis: {
 				title: {
 					text: 'Temperature (°C)'

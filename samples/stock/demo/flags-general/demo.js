@@ -14,10 +14,6 @@ $(function() {
 			title : {
 				text : 'USD to EUR exchange rate'
 			},
-
-			xAxis : {
-				maxZoom : 14 * 24 * 3600000 // fourteen days
-			},
 			
 			tooltip: {
 				style: {

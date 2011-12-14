@@ -26,7 +26,6 @@ $(function() {
 				events : {
 					setExtremes : onSetExtremes
 				},
-				maxZoom : 14 * 24 * 3600000, // fourteen days
 				ordinal: true
 			},
 
