@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.0.2 (2011-11-08)
+ * @license Highstock JS v1.1.0 (2011-12-14)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -15709,6 +15709,6 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	product: 'Highstock',
-	version: '1.0.2'
+	version: '1.1.0'
 });
 }());

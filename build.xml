@@ -422,7 +422,7 @@
         <!-- Make sure files in the zip have lf line endings -->
         <!-- even if being built on windows -->
         <sleep seconds="2"/>
-        <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf"/>
+        <!-- fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf"/ -->
 
         <!-- 5. Create zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
