@@ -18,6 +18,14 @@ $(function() {
 			xAxis : {
 				maxZoom : 14 * 24 * 3600000 // fourteen days
 			},
+			
+			tooltip: {
+				style: {
+					width: '200px'
+				},
+				yDecimals: 4
+			},
+			
 			yAxis : {
 				title : {
 					text : 'Exchange rate'
@@ -27,10 +35,7 @@ $(function() {
 			series : [{
 				name : 'USD to EUR',
 				data : data,
-				id : 'dataseries',
-				tooltip: {
-					yDecimals: 4
-				}
+				id : 'dataseries'
 			},
 			// the event marker flags
 			{
