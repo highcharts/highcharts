@@ -287,7 +287,9 @@ seriesProto.processData = function () {
 			xMin = extremes.min,
 			xMax = extremes.max,
 			imaginedPlotWidth = // how wide would the plot are be if gaps were included?
-				plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)), 
+				xAxis.options.ordinal ? 
+					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
+					plotSizeX, 
 			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),

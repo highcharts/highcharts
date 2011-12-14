@@ -64,7 +64,6 @@ extend(defaultOptions, {
 			tickWidth: 0,
 			lineWidth: 0,
 			gridLineWidth: 1,
-			ordinal: true,
 			tickPixelInterval: 200,
 			labels: {
 				align: 'left',
@@ -676,7 +675,9 @@ Highcharts.Scroller = function (chart) {
 
 
 			// an x axis is required for scrollbar also
-			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
+			xAxis = new chart.Axis(merge({
+				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+			}, navigatorOptions.xAxis, {
 				isX: true,
 				type: 'datetime',
 				index: xAxisIndex,

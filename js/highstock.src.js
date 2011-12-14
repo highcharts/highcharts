@@ -12980,7 +12980,9 @@ seriesProto.processData = function () {
 			xMin = extremes.min,
 			xMax = extremes.max,
 			imaginedPlotWidth = // how wide would the plot are be if gaps were included?
-				plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)), 
+				xAxis.options.ordinal ? 
+					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
+					plotSizeX, 
 			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
@@ -13811,7 +13813,6 @@ extend(defaultOptions, {
 			tickWidth: 0,
 			lineWidth: 0,
 			gridLineWidth: 1,
-			ordinal: true,
 			tickPixelInterval: 200,
 			labels: {
 				align: 'left',
@@ -14423,7 +14424,9 @@ Highcharts.Scroller = function (chart) {
 
 
 			// an x axis is required for scrollbar also
-			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
+			xAxis = new chart.Axis(merge({
+				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+			}, navigatorOptions.xAxis, {
 				isX: true,
 				type: 'datetime',
 				index: xAxisIndex,
