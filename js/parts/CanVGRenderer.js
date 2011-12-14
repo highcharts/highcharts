@@ -39,6 +39,21 @@ CanVGRenderer = function (container) {
 CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 	/**
+	 * Take a color and return it if it's a string, do not make it a gradient even if it is a
+	 * gradient. Currently canvg cannot render gradients (turns out black),
+	 * see: http://code.google.com/p/canvg/issues/detail?id=104
+	 *
+	 * @param {Object} color The color or config object
+	 */
+	color: function (color, elem, prop) {
+		if (color && color.linearGradient) {
+			// Pick the end color and forward to base implementation
+			color = color.stops[color.stops.length - 1][1];
+		}
+		return SVGRenderer.prototype.color.call(this, color, elem, prop);
+	},
+
+	/**
 	 * Draws the SVG on the canvas or adds a draw invokation to the deferred list.
 	 */
 	draw: function () {
