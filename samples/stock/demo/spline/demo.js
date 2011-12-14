@@ -14,11 +14,7 @@ $(function() {
 		    title: {
 		        text: 'AAPL Stock Price'
 		    },
-
-		    xAxis: {
-		        maxZoom: 14 * 24 * 3600000 // fourteen days
-		    },
-
+		    
 		    series: [{
 		        name: 'AAPL Stock Price',
 		        data: data,

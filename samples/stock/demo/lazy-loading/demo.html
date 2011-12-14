@@ -2,7 +2,7 @@
 
 <div id="container" style="height: 500px"></div>
 
-<div>In this example Highcharts' data grouping is turned off. Instead, new data 
+<div class="info">In this example Highcharts' data grouping is turned off. Instead, new data 
 	with a suitable resolution is loaded from the server every time the
 	extremes of the x axis change.</div>
 
@@ -12,7 +12,7 @@ To do lazy-loading
 
 - Range selector only running when choosing a smaller range. When choosing wider, it is limited to dataMin and dataMax
 - When dragging the scrollbar, it jumps back until new data is loaded
-- maxZoom has no effect
+- minRange has no effect
 - loading data after Sep 30 is impossible though there is data on the server
 - range selector inputs not reflecting actual data
 - Show "loading" on the container before the dataset is first loaded. Move chart.loading up to namespace to allow it in a container before chart
