@@ -3926,9 +3926,11 @@ function Chart(options, callback) {
 	 * Fires endResize event on chart instance.
 	 */
 	function fireEndResize() {
-		fireEvent(chart, 'endResize', null, function () {
-			isResizing -= 1;
-		});
+		if (chart) {
+			fireEvent(chart, 'endResize', null, function () {
+				isResizing -= 1;
+			});
+		}
 	}
 
 	/**
