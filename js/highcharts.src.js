@@ -2769,7 +2769,8 @@ SVGRenderer.prototype = {
 						css(tspan, { cursor: 'pointer' });
 					}
 
-					span = (span.replace(/<(.|\n)*?>/g, '') || ' ')
+					span = (span.replace(/<([^\/]|\n)*?>/g, '') || ' ')
+						.replace(/<\/(.|\n)*?>/g, '')
 						.replace(/&lt;/g, '<')
 						.replace(/&gt;/g, '>');
 
