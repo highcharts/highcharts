@@ -5968,7 +5968,7 @@ function Chart(options, callback) {
 
 			// handle zoomed range
 			if (range) {
-				userMin = min = max - range;
+				userMin = min = mathMax(min, max - range); // #618
 				userMax = max;
 				if (secondPass) {
 					range = null;  // don't use it when running setExtremes
