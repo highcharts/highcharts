@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
+		
+		<!-- 2. Insert the shapes and the data -->
+		<script type="text/javascript" src="world-map-shapes.js"></script>
+		<script type="text/javascript" src="world-map-data.js"></script>
+		
+		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
+		<script type="text/javascript">
+			(function() {
+				var plotOptions = Highcharts.getOptions().plotOptions;
+				
+				/**
+				 * Extend the default options with map options
+				 */
+				plotOptions.map = Highcharts.merge(
+					plotOptions.scatter, {
+						animation: false, // makes the complex shapes slow
+						shadow: false,
+						showInLegend: false,
+						marker: {
+							lineColor: 'silver',
+							lineWidth: 1
+						}
+					}
+				);
+				
+				/**
+				 * Add the series type
+				 */
+				Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
+					type: 'map',
+					
+					/**
+					 * Add the path option for data points. Find the max value for color calculation.
+					 */
+					translate: function () {
+						var series = this,
+							maxValue = 0;
+				
+						Highcharts.Series.prototype.translate.apply(series);
+				
+						$.each(series.points, function (i, point) {
+							point.shapeType = 'path';
+							point.shapeArgs = point.path;
+							
+							if (point.y > maxValue) {
+								maxValue = point.y;
+							}
+							
+						});
+										
+						
+						$.each(series.points, function (i, point) {
+							point.options.marker = {
+								fillColor: Highcharts.Color(series.color).setOpacity(point.y / maxValue).get()
+							};
+						});
+					},
+					
+					getSymbol: function() {},
+					
+					/** 
+					 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
+					 * Extend it by assigning the tooltip position.
+					 */
+					drawPoints: function() {
+						var series = this,
+							saturation,
+							bBox;
+						
+						Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
+						
+						$.each(series.points, function (i, point) {
+							bBox = point.graphic.getBBox();
+							point.tooltipPos = [
+								bBox.x + bBox.width / 2,
+								bBox.y + bBox.height / 2
+							];
+							
+						});
+					}
+				});
+			})();
+			
+			var chart, symbols = {};
+
+			$(document).ready(function() {
+
+				$container = $('#container');
+				var options = {
+					chart : {
+						renderTo : $container[0],
+						type : 'map',
+						borderWidth : 1
+					},
+					xAxis : {
+						min : 0,
+						max : $container.width(),
+						labels : {
+							enabled : false
+						},
+						tickWidth : 0
+
+					},
+					title : {
+						text : null
+					},
+					yAxis : {
+						labels : {
+							enabled : false
+						},
+						min : 0,
+						max : $container.height(),
+						gridLineWidth : 0,
+						title : {
+							text : null
+						}
+					},
+					tooltip : {
+						formatter : function() {
+							return '<b>' + this.point.name + '</b> ' + Highcharts.numberFormat(this.y, 0, '.', ',');
+						}
+					},
+
+					series : [{
+						data : [],
+						marker: {
+							states: {
+								hover: {
+									fillColor: 'orange'
+								}
+							}
+						}
+					}]
+				};
+
+				// Populate the data points
+				for (var key in shapes) {
+
+					options.series[0].data.push({
+						y : data[key] ? data[key].value : 0,
+						name : data[key] && data[key].title,
+						path : shapes[key]
+					});
+				}
+				
+				// Initiate the chart
+				chart = new Highcharts.Chart(options);
+			});
+
+		</script>
+	</head>
+	<body>
+		<!-- 3. Add the container -->
+		<div id="container" style="width: 1000px; height: 600px; margin: 0 auto"></div>
+	</body>
+</html>
