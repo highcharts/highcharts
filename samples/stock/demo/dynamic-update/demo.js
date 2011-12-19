@@ -56,10 +56,10 @@ $(function() {
 				var data = [], time = (new Date()).getTime(), i;
 
 				for( i = -999; i <= 0; i++) {
-					data.push({
-						x : time + i * 1000,
-						y : Math.round(Math.random() * 100)
-					});
+					data.push([
+						time + i * 1000,
+						Math.round(Math.random() * 100)
+					]);
 				}
 				return data;
 			})()
