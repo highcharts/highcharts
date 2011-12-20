@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
+		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/map.src.js"></script>
+		
+		<!-- 2. Insert the shapes and the data -->
+		<script type="text/javascript" src="world-map-shapes.js"></script>
+		<script type="text/javascript" src="world-map-data.js"></script>
+		
+		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
+		<script type="text/javascript">
+			
+			var chart;
+
+			$(document).ready(function() {
+
+				var options = {
+					chart : {
+						renderTo : 'container',
+						type : 'map',
+						borderWidth : 1
+					},
+					title : {
+						text : 'The World drawn by Highcharts'
+					},
+					tooltip : {
+						formatter : function() {
+							return '<b>' + this.point.name + '</b> ' + Highcharts.numberFormat(this.y, 0, '.', ',');
+						}
+					},
+
+					series : [{
+						data : [],
+						states: {
+							hover: {
+								color: 'orange'
+							}
+						}
+					}]
+				};
+
+				// Populate the data points
+				for (var key in shapes) {
+
+					options.series[0].data.push({
+						y : data[key] ? data[key].value : null,
+						name : data[key] ? data[key].title : key,
+						path : shapes[key]
+					});
+				}
+				
+				// Initiate the chart
+				chart = new Highcharts.Chart(options);
+			});
+
+		</script>
+	</head>
+	<body>
+		<!-- 3. Add the container -->
+		<div id="container" style="width: 1000px; height: 550px; margin: 0 auto"></div>
+	</body>
+</html>
