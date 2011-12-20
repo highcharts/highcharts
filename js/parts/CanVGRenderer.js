@@ -37,6 +37,7 @@ CanVGRenderer = function (container) {
 	// the container (and as direct childs to the div specified in the html page)
 	this.ttLine = createElement('div', null, initialHiddenStyle, containerParent);
 	this.ttDiv = createElement('div', null, initialHiddenStyle, containerParent);
+	this.ttTimer = UNDEFINED;
 
 	// Move away the svg node to a new div inside the container's parent so we can hide it.
 	var hiddenSvg = createElement('div', {
@@ -57,8 +58,7 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	 * Configures the renderer with the chart. Attach a listener to the event tooltipRefresh.
 	 **/
 	configure: function (chart) {
-		var timeoutId,
-			renderer = this,
+		var renderer = this,
 			options = chart.options.tooltip,
 			borderWidth = options.borderWidth,
 			tooltipDiv = renderer.ttDiv,
@@ -118,16 +118,39 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 			// This timeout hides the tooltip after 3 seconds
 			// First clear any existing timer
-			if (timeoutId !== UNDEFINED) {
-				clearTimeout(timeoutId);
+			if (renderer.ttTimer !== UNDEFINED) {
+				clearTimeout(renderer.ttTimer);
 			}
 
 			// Start a new timer that hides tooltip and line
-			timeoutId = setTimeout(function () {
+			renderer.ttTimer = setTimeout(function () {
 				css(tooltipDiv, { visibility: HIDDEN });
 				css(tooltipLine, { visibility: HIDDEN });
 			}, 3000);
 		});
+	},
+
+	/**
+	 * Extend SVGRenderer.destroy to also destroy the elements added by CanVGRenderer.
+	 */
+	destroy: function () {
+		var renderer = this;
+
+		// Remove the canvas
+		discardElement(renderer.canvas);
+
+		// Kill the timer
+		if (renderer.ttTimer !== UNDEFINED) {
+			clearTimeout(renderer.ttTimer);
+		}
+
+		// Remove the divs for tooltip and line
+		discardElement(renderer.ttLine);
+		discardElement(renderer.ttDiv);
+		discardElement(renderer.hiddenSvg);
+
+		// Continue with base class
+		return SVGRenderer.prototype.destroy.apply(renderer);
 	},
 
 	/**
