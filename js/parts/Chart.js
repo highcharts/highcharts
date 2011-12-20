@@ -1981,8 +1981,13 @@ function Chart(options, callback) {
 			})
 			.css(style)
 			.hide()
-			.add()
-			.shadow(options.shadow);
+			.add();
+
+		// When using canVG the shadow shows up as a gray circle
+		// even if the tooltip is
+		if (!useCanVG) {
+			label.shadow(options.shadow);
+		}
 
 		/**
 		 * Destroy the tooltip and its elements.
@@ -2209,6 +2214,11 @@ function Chart(options, callback) {
 					}
 				}
 			}
+			fireEvent(chart, 'tooltipRefresh', {
+					text: text,
+					x: x + plotLeft,
+					y: y + plotTop
+				});
 		}
 
 
@@ -3777,6 +3787,7 @@ function Chart(options, callback) {
 
 		// If we need canvg library, start the download here.
 		if (useCanVG) {
+			renderer.configure(chart); // To get the tracker for translating mouse events
 			renderer.download(options.global.canvgUrl);
 		}
 
