@@ -5086,10 +5086,6 @@ Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;
  */
 function Chart(options, callback) {
 
-	defaultXAxisOptions = merge(defaultXAxisOptions, defaultOptions.xAxis);
-	defaultYAxisOptions = merge(defaultYAxisOptions, defaultOptions.yAxis);
-	defaultOptions.xAxis = defaultOptions.yAxis = null;
-
 	// Handle regular options
 	var seriesOptions = options.series; // skip merging data points to increase performance
 	options.series = null;
@@ -6193,7 +6189,7 @@ function Chart(options, callback) {
 
 			// handle zoomed range
 			if (range) {
-				userMin = min = max - range;
+				userMin = min = mathMax(min, max - range); // #618
 				userMax = max;
 				if (secondPass) {
 					range = null;  // don't use it when running setExtremes
@@ -9025,9 +9021,11 @@ function Chart(options, callback) {
 	 * Fires endResize event on chart instance.
 	 */
 	function fireEndResize() {
-		fireEvent(chart, 'endResize', null, function () {
-			isResizing -= 1;
-		});
+		if (chart) {
+			fireEvent(chart, 'endResize', null, function () {
+				isResizing -= 1;
+			});
+		}
 	}
 
 	/**

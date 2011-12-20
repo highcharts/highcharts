@@ -5086,10 +5086,6 @@ Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;
  */
 function Chart(options, callback) {
 
-	defaultXAxisOptions = merge(defaultXAxisOptions, defaultOptions.xAxis);
-	defaultYAxisOptions = merge(defaultYAxisOptions, defaultOptions.yAxis);
-	defaultOptions.xAxis = defaultOptions.yAxis = null;
-
 	// Handle regular options
 	var seriesOptions = options.series; // skip merging data points to increase performance
 	options.series = null;
@@ -6193,7 +6189,7 @@ function Chart(options, callback) {
 
 			// handle zoomed range
 			if (range) {
-				userMin = min = max - range;
+				userMin = min = mathMax(min, max - range); // #618
 				userMax = max;
 				if (secondPass) {
 					range = null;  // don't use it when running setExtremes
@@ -9025,9 +9021,11 @@ function Chart(options, callback) {
 	 * Fires endResize event on chart instance.
 	 */
 	function fireEndResize() {
-		fireEvent(chart, 'endResize', null, function () {
-			isResizing -= 1;
-		});
+		if (chart) {
+			fireEvent(chart, 'endResize', null, function () {
+				isResizing -= 1;
+			});
+		}
 	}
 
 	/**
@@ -13227,7 +13225,9 @@ seriesProto.processData = function () {
 			xMin = extremes.min,
 			xMax = extremes.max,
 			imaginedPlotWidth = // how wide would the plot are be if gaps were included?
-				plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)), 
+				xAxis.options.ordinal ? 
+					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
+					plotSizeX, 
 			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
 			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
@@ -14058,7 +14058,6 @@ extend(defaultOptions, {
 			tickWidth: 0,
 			lineWidth: 0,
 			gridLineWidth: 1,
-			ordinal: true,
 			tickPixelInterval: 200,
 			labels: {
 				align: 'left',
@@ -14670,7 +14669,9 @@ Highcharts.Scroller = function (chart) {
 
 
 			// an x axis is required for scrollbar also
-			xAxis = new chart.Axis(merge(navigatorOptions.xAxis, {
+			xAxis = new chart.Axis(merge({
+				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+			}, navigatorOptions.xAxis, {
 				isX: true,
 				type: 'datetime',
 				index: xAxisIndex,
@@ -15600,18 +15601,20 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 					// first look for an exact match in the ordinalpositions array
 					i = ordinalLength;
-					while (ordinalIndex === UNDEFINED && i--) {
+					while (i--) {
 						if (ordinalPositions[i] === val) {
 							ordinalIndex = i;
+							break;
 						}
 					}
 					
 					// if that failed, find the intermediate position between the two nearest values
 					i = ordinalLength - 1;
-					while (ordinalIndex === UNDEFINED && i--) {
+					while (i--) {
 						if (val > ordinalPositions[i]) { // interpolate
 							distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
 							ordinalIndex = i + distance;
+							break;
 						}
 					}
 					return toIndex ?

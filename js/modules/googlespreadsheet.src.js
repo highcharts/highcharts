@@ -22,7 +22,8 @@
  * - key (String): The Google Spreadsheet key
  * - shiftRowsAndColumns (Boolean): Allows using rows instead of columns as 
  *   series data
- * - worksheet (String): The Google Spreadsheet worksheet
+ * - worksheet (String): The Google Spreadsheet worksheet. The available id's
+ *   can be read from https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
  * 
  * 
  * Todo:

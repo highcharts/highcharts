@@ -123,18 +123,20 @@
 						
 					// first look for an exact match in the ordinalpositions array
 					i = ordinalLength;
-					while (ordinalIndex === UNDEFINED && i--) {
+					while (i--) {
 						if (ordinalPositions[i] === val) {
 							ordinalIndex = i;
+							break;
 						}
 					}
 					
 					// if that failed, find the intermediate position between the two nearest values
 					i = ordinalLength - 1;
-					while (ordinalIndex === UNDEFINED && i--) {
+					while (i--) {
 						if (val > ordinalPositions[i]) { // interpolate
 							distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
 							ordinalIndex = i + distance;
+							break;
 						}
 					}
 					return toIndex ?
