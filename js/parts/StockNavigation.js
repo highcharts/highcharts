@@ -1186,7 +1186,12 @@ Highcharts.RangeSelector = function (chart) {
 		}
 
 		// Clear input element events
-		leftBox.onfocus = leftBox.onblur = leftBox.onchange = rightBox.onfocus = rightBox.onblur = rightBox.onchange = null;
+		if (leftBox) {
+			leftBox.onfocus = leftBox.onblur = leftBox.onchange = null;
+		}
+		if (rightBox) {
+			rightBox.onfocus = rightBox.onblur = rightBox.onchange = null;
+		}
 
 		// Discard divs and spans
 		each([leftBox, rightBox, boxSpanElements.min, boxSpanElements.max, divAbsolute, divRelative], function (item) {
@@ -1194,7 +1199,7 @@ Highcharts.RangeSelector = function (chart) {
 		});
 		// Null the references
 		leftBox = rightBox = boxSpanElements = div = divAbsolute = divRelative = null;
-		
+
 	}
 
 	// Run RangeSelector
