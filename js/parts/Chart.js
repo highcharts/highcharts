@@ -2098,7 +2098,8 @@ function Chart(options, callback) {
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
 				hoverPoints = chart.hoverPoints,
-				placedTooltipPoint;
+				placedTooltipPoint,
+				borderColor;
 
 			// shared tooltip, array is sent over
 			if (shared && !(point.series && point.series.noSharedTooltip)) {
@@ -2165,8 +2166,9 @@ function Chart(options, callback) {
 				});
 
 				// set the stroke color of the box
+				borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
 				label.attr({
-					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
+					stroke: borderColor
 				});
 
 				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop,
@@ -2213,7 +2215,8 @@ function Chart(options, callback) {
 			fireEvent(chart, 'tooltipRefresh', {
 					text: text,
 					x: x + plotLeft,
-					y: y + plotTop
+					y: y + plotTop,
+					borderColor: borderColor
 				});
 		}
 

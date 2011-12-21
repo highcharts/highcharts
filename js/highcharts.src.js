@@ -1382,7 +1382,7 @@ defaultOptions = {
 				//yDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//yPrefix: '',
-				//ySuffix: ''				
+				//ySuffix: ''
 			//}
 			// turboThreshold: 1000
 			// zIndex: null
@@ -1465,7 +1465,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shared: false,
+		shared: useCanVG,
 		snap: hasTouch ? 25 : 10,
 		style: {
 			color: '#333333',
@@ -4945,7 +4945,6 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 			padding: padding + PX,
 			'background-color': options.backgroundColor,
 			'border-style': 'solid',
-			'border-color': options.borderColor || '#606060',
 			'border-width': borderWidth + PX,
 			'border-radius': options.borderRadius + PX
 		});
@@ -4967,19 +4966,21 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 		// This event is triggered when a new tooltip should be shown
 		addEvent(chart, 'tooltipRefresh', function (args) {
 			var firstHalf = args.x < chart.plotWidth / 2,
-				offsetLeft = chart.container.offsetLeft,
-				offsetTop = chart.container.offsetTop;
+				chartContainer = chart.container,
+				offsetLeft = chartContainer.offsetLeft,
+				offsetTop = chartContainer.offsetTop,
+				position;
 
 			// Set the content of the tooltip
 			tooltipDiv.innerHTML = args.text;
 
-			// Place the tooltip to the right of the line if its on the
-			// first half of the chart, otherwise on the left side.
+			// Compute the best position for the tooltip based on the divs size and container size.
+			position = placeBox(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, offsetLeft, offsetTop, chartContainer.offsetWidth, chartContainer.offsetHeight, {x: args.x, y: args.y}, 12);
 			css(tooltipDiv, {
 				visibility: VISIBLE,
-				left: firstHalf ? (offsetLeft + args.x + 20) + PX : null,
-				right: firstHalf ? null : ((chart.plotLeft + chart.plotWidth - args.x) + 20) + PX,
-				top: offsetTop + chart.plotTop + PX
+				left: position.x + PX,
+				top: position.y + PX,
+				'border-color': args.borderColor
 			});
 
 			// Position the tooltip line
@@ -7201,7 +7202,8 @@ function Chart(options, callback) {
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
 				hoverPoints = chart.hoverPoints,
-				placedTooltipPoint;
+				placedTooltipPoint,
+				borderColor;
 
 			// shared tooltip, array is sent over
 			if (shared && !(point.series && point.series.noSharedTooltip)) {
@@ -7268,8 +7270,9 @@ function Chart(options, callback) {
 				});
 
 				// set the stroke color of the box
+				borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
 				label.attr({
-					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
+					stroke: borderColor
 				});
 
 				placedTooltipPoint = placeBox(label.width, label.height, plotLeft, plotTop,
@@ -7316,7 +7319,8 @@ function Chart(options, callback) {
 			fireEvent(chart, 'tooltipRefresh', {
 					text: text,
 					x: x + plotLeft,
-					y: y + plotTop
+					y: y + plotTop,
+					borderColor: borderColor
 				});
 		}
 

@@ -71,7 +71,6 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 			padding: padding + PX,
 			'background-color': options.backgroundColor,
 			'border-style': 'solid',
-			'border-color': options.borderColor || '#606060',
 			'border-width': borderWidth + PX,
 			'border-radius': options.borderRadius + PX
 		});
@@ -93,19 +92,21 @@ CanVGRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 		// This event is triggered when a new tooltip should be shown
 		addEvent(chart, 'tooltipRefresh', function (args) {
 			var firstHalf = args.x < chart.plotWidth / 2,
-				offsetLeft = chart.container.offsetLeft,
-				offsetTop = chart.container.offsetTop;
+				chartContainer = chart.container,
+				offsetLeft = chartContainer.offsetLeft,
+				offsetTop = chartContainer.offsetTop,
+				position;
 
 			// Set the content of the tooltip
 			tooltipDiv.innerHTML = args.text;
 
-			// Place the tooltip to the right of the line if its on the
-			// first half of the chart, otherwise on the left side.
+			// Compute the best position for the tooltip based on the divs size and container size.
+			position = placeBox(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, offsetLeft, offsetTop, chartContainer.offsetWidth, chartContainer.offsetHeight, {x: args.x, y: args.y}, 12);
 			css(tooltipDiv, {
 				visibility: VISIBLE,
-				left: firstHalf ? (offsetLeft + args.x + 20) + PX : null,
-				right: firstHalf ? null : ((chart.plotLeft + chart.plotWidth - args.x) + 20) + PX,
-				top: offsetTop + chart.plotTop + PX
+				left: position.x + PX,
+				top: position.y + PX,
+				'border-color': args.borderColor
 			});
 
 			// Position the tooltip line
