@@ -28,19 +28,37 @@
 					title : {
 						text : 'The World drawn by Highcharts'
 					},
-					tooltip : {
-						formatter : function() {
-							return '<b>' + this.point.name + '</b> ' + Highcharts.numberFormat(this.y, 0, '.', ',');
+					
+					legend: {
+						align: 'left',
+						verticalAlign: 'bottom',
+						floating: true,
+						layout: 'vertical',
+						labelFormatter: function() {
+							return Highcharts.numberFormat(this.from, 0, ',') + ' - ' +
+								Highcharts.numberFormat(this.to, 0, ',');
 						}
 					},
 
 					series : [{
 						data : [],
-						states: {
-							hover: {
-								color: 'orange'
-							}
-						}
+						valueRanges: [{
+							from: 0,
+							to: 99,
+							color: 'rgba(69,114,167,0.4)'
+						}, {
+							from: 100,
+							to: 999,
+							color: 'rgba(69,114,167,0.6)'
+						}, {
+							from: 1000,
+							to: 9999,
+							color: 'rgba(69,114,167,0.8)'
+						}, {
+							from: 10000,
+							to: 99999,
+							color: 'rgba(69,114,167,1)'
+						}]
 					}]
 				};
 
