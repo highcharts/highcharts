@@ -11,7 +11,7 @@
  *
  * To do:
  * - Implement legend with specified value ranges
- * - Optimize long variable names and alias adapter methods
+ * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
  * 
  */
  (function() {
@@ -28,18 +28,67 @@
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
 			shadow: false,
-			showInLegend: false,
+			showInLegend: true,
 			borderColor: 'silver'
 		}
 	);
 	
-	
+	/**
+	 * Extend the point object (or area in the choropleth map) to pick the 
+	 * color from value ranges
+	 */
+	var MapPoint = Highcharts.extendClass(Highcharts.Point, {
+		/**
+		 * Override the init method
+		 */
+		init: function () {
+
+			var point = Highcharts.Point.prototype.init.apply(this, arguments),
+				valueRanges = point.series.options.valueRanges,
+				range,
+				i;
+			
+			if (valueRanges) {
+				i = valueRanges.length;
+				while(i--) {
+					range = valueRanges[i];
+					if (point.y >= range.from && point.y <= range.to) {
+						point.color = point.options.color = range.color;
+						break;
+					}
+						
+				}
+			}
+			return point;
+		}
+	});
 	
 	/**
 	 * Add the series type
 	 */
 	Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.pie, {
 		type: 'map',
+		pointClass: MapPoint,
+		
+		init: function() {
+			var series = this,
+				legendItems = [];
+			Highcharts.Series.prototype.init.apply(this, arguments);
+			
+			if (series.options.valueRanges) {
+				$.each(series.options.valueRanges, function(i, range) {
+					legendItems.push(Highcharts.extend({
+						name: range.from + ' - ' + range.to,
+						options: {},
+						type: 'pie', // force simpleSymbol (yes, it's bad design)
+						visible: true,
+						setState: function() {},
+						setVisible: function() {}
+					}, range));
+				});
+				series.legendItems = legendItems;
+			}
+		},
 		
 		getBox: function() {
 			var series = this,
@@ -140,7 +189,7 @@
 			});
 							
 			// Set weighted opacity
-			if (options.weightedOpacity) {
+			/*if (options.weightedOpacity) {
 				color = options.color || Highcharts.getOptions().colors[0];
 				$.each(series.data, function(i, point) {
 					if (point.y === null) {
@@ -159,7 +208,7 @@
 						}
 					}
 				});
-			}
+			}*/
 		},
 		
 		/**
