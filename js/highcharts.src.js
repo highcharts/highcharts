@@ -7986,9 +7986,11 @@ function Chart(options, callback) {
 				}
 
 				// use points or series for the legend item depending on legendType
-				allItems = allItems.concat(seriesOptions.legendType === 'point' ?
-					serie.data :
-					serie
+				allItems = allItems.concat(
+						serie.legendItems ||
+						(seriesOptions.legendType === 'point' ?
+								serie.data :
+								serie)
 				);
 
 			});
