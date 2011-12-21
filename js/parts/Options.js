@@ -235,7 +235,7 @@ defaultOptions = {
 				//yDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//yPrefix: '',
-				//ySuffix: ''				
+				//ySuffix: ''
 			//}
 			// turboThreshold: 1000
 			// zIndex: null
@@ -318,7 +318,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shared: false,
+		shared: useCanVG,
 		snap: hasTouch ? 25 : 10,
 		style: {
 			color: '#333333',
