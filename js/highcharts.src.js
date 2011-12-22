@@ -1180,9 +1180,16 @@ function setTimeMethods() {
  * @param {Object} options The new custom options
  */
 function setOptions(options) {
+	
+	// Pull out axis options and apply them to the respective default axis options 
+	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
+	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
+	options.xAxis = options.yAxis = UNDEFINED;
+	
+	// Merge in the default options
 	defaultOptions = merge(defaultOptions, options);
-
-	// apply UTC
+	
+	// Apply UTC
 	setTimeMethods();
 
 	return defaultOptions;
@@ -10423,7 +10430,7 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries = series.index === series.yAxis.series.length - 1,
+			isLastSeries = series.index === yAxis.series.length - 1,
 			i;
 		
 		for (i = 0; i < dataLength; i++) {
@@ -10436,7 +10443,7 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = mathRound(series.xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
+			point.plotX = mathRound(xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {

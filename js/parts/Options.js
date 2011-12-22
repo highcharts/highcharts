@@ -34,9 +34,16 @@ function setTimeMethods() {
  * @param {Object} options The new custom options
  */
 function setOptions(options) {
+	
+	// Pull out axis options and apply them to the respective default axis options 
+	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
+	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
+	options.xAxis = options.yAxis = UNDEFINED;
+	
+	// Merge in the default options
 	defaultOptions = merge(defaultOptions, options);
-
-	// apply UTC
+	
+	// Apply UTC
 	setTimeMethods();
 
 	return defaultOptions;
