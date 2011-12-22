@@ -19,12 +19,6 @@ $(function() {
 				ordinal: false
 			},
 			
-			navigator: {
-				xAxis: {
-					ordinal: false
-				}
-			},
-			
 			series : [{
 				name : 'AAPL Stock Price',
 				data : data,
