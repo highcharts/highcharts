@@ -14,8 +14,11 @@
  * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
  * 
  */
- (function() {
-	var plotOptions = Highcharts.getOptions().plotOptions;
+ (function(Highcharts) {
+	var UNDEFINED,
+		each = Highcharts.each,
+		numberFormat = Highcharts.numberFormat,
+		plotOptions = Highcharts.getOptions().plotOptions;
 				
 	/**
 	 * Extend the default options with map options
@@ -46,13 +49,17 @@
 			var point = Highcharts.Point.prototype.init.apply(this, arguments),
 				valueRanges = point.series.options.valueRanges,
 				range,
+				from,
+				to,
 				i;
 			
 			if (valueRanges) {
 				i = valueRanges.length;
 				while(i--) {
 					range = valueRanges[i];
-					if (point.y >= range.from && point.y <= range.to) {
+					from = range.from;
+					to = range.to;
+					if ((from === UNDEFINED || point.y >= from) && (to === UNDEFINED || point.y <= to)) {
 						point.color = point.options.color = range.color;
 						break;
 					}
@@ -70,15 +77,41 @@
 		type: 'map',
 		pointClass: MapPoint,
 		
-		init: function() {
+		init: function(chart) {
 			var series = this,
-				legendItems = [];
+				valueDecimals = chart.options.legend.valueDecimals,
+				legendItems = [],
+				name,
+				from,
+				to;
+				
 			Highcharts.Series.prototype.init.apply(this, arguments);
 			
 			if (series.options.valueRanges) {
-				$.each(series.options.valueRanges, function(i, range) {
+				each(series.options.valueRanges, function(range) {
+					from = range.from;
+					to = range.to;
+					
+					// Assemble the default name. This can be overridden by legend.options.labelFormatter
+					name = '';
+					if (from === UNDEFINED) {
+						name = '< '
+					} else if (to === UNDEFINED) {
+						name = '> ';
+					}
+					if (from !== UNDEFINED) {
+						name += numberFormat(from, valueDecimals);
+					}
+					if (from !== UNDEFINED && to !== UNDEFINED) {
+						name += ' - ';
+					}
+					if (to !== UNDEFINED) {
+						name += numberFormat(to, valueDecimals);
+					}
+					
+					// Add a mock object to the legend items
 					legendItems.push(Highcharts.extend({
-						name: range.from + ' - ' + range.to,
+						name: name,
 						options: {},
 						type: 'pie', // force simpleSymbol (yes, it's bad design)
 						visible: true,
@@ -187,28 +220,7 @@
 				}
 				
 			});
-							
-			// Set weighted opacity
-			/*if (options.weightedOpacity) {
-				color = options.color || Highcharts.getOptions().colors[0];
-				$.each(series.data, function(i, point) {
-					if (point.y === null) {
-						point.color = point.options.color = options.nullColor;
-						
-					} else if (!point.options.color) {
-						opacity = minOpacity + (1 - minOpacity) * (point.y / maxValue);
-						point.color = point.options.color = Highcharts.Color(color).setOpacity(opacity).get();
-						
-						if (options.states.hover.color) {
-							point.options.states = {
-								hover: {
-									color: options.states.hover.color
-								}
-							};
-						}
-					}
-				});
-			}*/
+			
 		},
 		
 		/**
@@ -257,4 +269,4 @@
 		 */
 		drawTracker: Highcharts.seriesTypes.scatter.prototype.drawTracker
 	});
-})();
+})(Highcharts);

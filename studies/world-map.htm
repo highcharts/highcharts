@@ -8,6 +8,7 @@
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/map.src.js"></script>
 		
+		
 		<!-- 2. Insert the shapes and the data -->
 		<script type="text/javascript" src="world-map-shapes.js"></script>
 		<script type="text/javascript" src="world-map-data.js"></script>
@@ -34,29 +35,36 @@
 						verticalAlign: 'bottom',
 						floating: true,
 						layout: 'vertical',
-						labelFormatter: function() {
-							return Highcharts.numberFormat(this.from, 0, ',') + ' - ' +
-								Highcharts.numberFormat(this.to, 0, ',');
-						}
+						valueDecimals: 0
 					},
 
 					series : [{
 						data : [],
 						valueRanges: [{
-							from: 0,
-							to: 99,
-							color: 'rgba(69,114,167,0.4)'
+							to: 30,
+							color: 'rgba(69,114,167,0.2)'
+						}, {
+							from: 30,
+							to: 100,
+							color: 'rgba(69,114,167,0.3)'
 						}, {
 							from: 100,
-							to: 999,
-							color: 'rgba(69,114,167,0.6)'
+							to: 300,
+							color: 'rgba(69,114,167,0.4)'
+						}, {
+							from: 300,
+							to: 1000,
+							color: 'rgba(69,114,167,0.5)'
 						}, {
 							from: 1000,
-							to: 9999,
+							to: 3000,
+							color: 'rgba(69,114,167,0.6)'
+						}, {
+							from: 3000,
+							to: 10000,
 							color: 'rgba(69,114,167,0.8)'
 						}, {
 							from: 10000,
-							to: 99999,
 							color: 'rgba(69,114,167,1)'
 						}]
 					}]
