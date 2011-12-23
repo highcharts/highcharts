@@ -13538,7 +13538,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			optionsOnSeries = options.onSeries,
 			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
 			onData,
-			onPoint;
+			leftPoint,
+			rightPoint;
 
 
 		// relate to a master series
@@ -13553,9 +13554,20 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			while (i-- && points[cursor]) {
 				point = points[cursor];
-				onPoint = onData[i];
-				if (onPoint.x <= point.x) {
-					point.plotY = onPoint.plotY;
+				leftPoint = onData[i];
+				if (leftPoint.x <= point.x) {
+					point.plotY = leftPoint.plotY;
+					
+					// interpolate between points, #666
+					if (leftPoint.x < point.x) { 
+						rightPoint = onData[i + 1];
+						if (rightPoint) {
+							point.plotY += 
+								((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
+								(rightPoint.plotY - leftPoint.plotY); // the y distance
+						}
+					}
+					
 					cursor--;
 					i++; // check again for points in the same x position
 					if (cursor < 0) {
