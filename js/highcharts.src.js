@@ -14,7 +14,8 @@
 
 (function () {
 // encapsulated variables
-var doc = document,
+var UNDEFINED,
+	doc = document,
 	win = window,
 	math = Math,
 	mathRound = math.round,
@@ -39,7 +40,7 @@ var doc = document,
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasRtlBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
-	hasTouch = !!doc.documentElement.ontouchstart,
+	hasTouch = doc.documentElement.ontouchstart !== UNDEFINED,
 	symbolSizes = {},
 	idCounter = 0,
 	garbageBin,
@@ -50,7 +51,6 @@ var doc = document,
 	timeUnits,
 
 	// some constants for frequently used strings
-	UNDEFINED,
 	DIV = 'div',
 	ABSOLUTE = 'absolute',
 	RELATIVE = 'relative',
