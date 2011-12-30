@@ -39,7 +39,7 @@ var ScatterSeries = extendClass(Series, {
 			if (graphic) { // doesn't exist for null points
 				graphic
 					.attr({ isTracker: true })
-					.on('mouseover', function () {
+					.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 						series.onMouseOver();
 						point.onMouseOver();
 					})
