@@ -11006,15 +11006,18 @@ Series.prototype = {
 
 			// make the labels for each point
 			each(points, function (point) {
+				
+				// Get the string, and also allow modifying the options (position, align)
+				str = options.formatter.call(point.getLabelConfig(), options); // docs
+				
 				var barX = point.barX,
-					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
-					plotY = pick(point.plotY, -999),
+					plotX = options.labelX || (barX && barX + point.barW / 2) || point.plotX || -999,
+					plotY = options.labelY || pick(point.plotY, -999),
 					dataLabel = point.dataLabel,
 					align = options.align,
 					individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
 
-				// get the string
-				str = options.formatter.call(point.getLabelConfig());
+				// Postprocess the positions
 				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 				y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
 
@@ -11027,7 +11030,7 @@ Series.prototype = {
 					align = 'right';
 					x -= 10;
 				}
-
+				
 				// update existing label
 				if (dataLabel) {
 					// vertically centered
