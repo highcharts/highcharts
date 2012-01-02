@@ -7016,8 +7016,8 @@ function Chart(options, callback) {
 			y = mathRound(tooltipPos ? tooltipPos[1] : (inverted ? plotHeight - plotX : plotY));
 
 
-			// hide tooltip if the point falls outside the plot
-			show = shared || !point.series.isCartesian || isInsidePlot(x, y);
+			// For line type series, hide tooltip if the point falls outside the plot
+			show = shared || !currentSeries.isCartesian || currentSeries.tooltipOutsidePlot || isInsidePlot(x, y);
 
 			// update the inner HTML
 			if (text === false || !show) {
@@ -11713,6 +11713,7 @@ seriesTypes.areaspline = AreaSplineSeries;
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	useThreshold: true,
+	tooltipOutsidePlot: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
