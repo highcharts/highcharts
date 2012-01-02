@@ -2665,7 +2665,7 @@ SVGRenderer.prototype = {
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
-		renderer.gradients = []; // Array where gradient SvgElements are stored
+		renderer.gradients = {}; // Object where gradient SvgElements are stored
 
 		renderer.setSize(width, height, false);
 
@@ -2676,7 +2676,7 @@ SVGRenderer.prototype = {
 	 */
 	destroy: function () {
 		var renderer = this,
-			i,
+			key,
 			rendererGradients = renderer.gradients,
 			rendererDefs = renderer.defs;
 		renderer.box = null;
@@ -2684,8 +2684,8 @@ SVGRenderer.prototype = {
 
 		// Call destroy on all gradient elements
 		if (rendererGradients) { // gradients are null in VMLRenderer
-			for (i = 0; i < rendererGradients.length; i++) {
-				renderer.gradients[i] = rendererGradients[i].destroy();
+			for (key in rendererGradients) {
+				renderer.gradients[key] = rendererGradients[key].destroy();
 			}
 			renderer.gradients = null;
 		}
@@ -3385,46 +3385,62 @@ SVGRenderer.prototype = {
 		if (color && color.linearGradient) {
 			var renderer = this,
 				linearGradient = color[LINEAR_GRADIENT],
-				relativeToShape = !linearGradient.length, // keep backwards compatibility
-				id = PREFIX + idCounter++,
+				relativeToShape = !isArray(linearGradient), // keep backwards compatibility
+				id,
+				gradients = renderer.gradients,
 				gradientObject,
+				x1 = linearGradient.x1 || linearGradient[0] || 0,
+				y1 = linearGradient.y1 || linearGradient[1] || 0,
+				x2 = linearGradient.x2 || linearGradient[2] || 0,
+				y2 = linearGradient.y2 || linearGradient[3] || 0,
 				stopColor,
-				stopOpacity;
-
-			gradientObject = renderer.createElement(LINEAR_GRADIENT)
-				.attr(extend({
-					id: id,
-					x1: linearGradient.x1 || linearGradient[0] || 0,
-					y1: linearGradient.y1 || linearGradient[1] || 0,
-					x2: linearGradient.x2 || linearGradient[2] || 0,
-					y2: linearGradient.y2 || linearGradient[3] || 0
-				}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
-				.add(renderer.defs);
-
-			// Keep a reference to the gradient object so it is possible to destroy it later
-			renderer.gradients.push(gradientObject);
-
-			// The gradient needs to keep a list of stops to be able to destroy them
-			gradientObject.stops = [];
-			each(color.stops, function (stop) {
-				var stopObject;
-				if (regexRgba.test(stop[1])) {
-					colorObject = Color(stop[1]);
-					stopColor = colorObject.get('rgb');
-					stopOpacity = colorObject.get('a');
-				} else {
-					stopColor = stop[1];
-					stopOpacity = 1;
-				}
-				stopObject = renderer.createElement('stop').attr({
-					offset: stop[0],
-					'stop-color': stopColor,
-					'stop-opacity': stopOpacity
-				}).add(gradientObject);
-
-				// Add the stop element to the gradient
-				gradientObject.stops.push(stopObject);
-			});
+				stopOpacity,
+				// Create a unique key in order to reuse gradient objects. #671.
+				key = [relativeToShape, x1, y1, x2, y2, color.stops.join(',')].join(',');
+			
+			// If the gradient with the same setup is already created, reuse it
+			if (gradients[key]) {
+				id = attr(gradients[key].element, 'id');
+			
+			// If not, create a new one and keep the reference.	
+			} else {
+				id = PREFIX + idCounter++;
+				gradientObject = renderer.createElement(LINEAR_GRADIENT)
+					.attr(extend({
+						id: id,
+						x1: x1,
+						y1: y1,
+						x2: x2,
+						y2: y2
+					}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
+					.add(renderer.defs);
+	
+				// The gradient needs to keep a list of stops to be able to destroy them
+				gradientObject.stops = [];
+				each(color.stops, function (stop) {
+					var stopObject;
+					if (regexRgba.test(stop[1])) {
+						colorObject = Color(stop[1]);
+						stopColor = colorObject.get('rgb');
+						stopOpacity = colorObject.get('a');
+					} else {
+						stopColor = stop[1];
+						stopOpacity = 1;
+					}
+					stopObject = renderer.createElement('stop').attr({
+						offset: stop[0],
+						'stop-color': stopColor,
+						'stop-opacity': stopOpacity
+					}).add(gradientObject);
+	
+					// Add the stop element to the gradient
+					gradientObject.stops.push(stopObject);
+				});
+				
+				// Keep a reference to the gradient object so it is possible to reuse it and
+				// destroy it later
+				gradients[key] = gradientObject;
+			}
 
 			return 'url(' + this.url + '#' + id + ')';
 
