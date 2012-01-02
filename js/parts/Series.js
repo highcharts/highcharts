@@ -1912,7 +1912,7 @@ Series.prototype = {
 			}
 
 			if (doClip) {
-				group.clip(series.clipRect);
+				group.clip(clipRect);
 			}
 			group.attr({
 					visibility: series.visible ? VISIBLE : HIDDEN,
@@ -2150,11 +2150,13 @@ Series.prototype = {
 			trackerPath = [].concat(series.graphPath),
 			trackerPathLength = trackerPath.length,
 			chart = series.chart,
+			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
+			group,
 			singlePoint,
 			i;
 
@@ -2184,7 +2186,11 @@ Series.prototype = {
 			tracker.attr({ d: trackerPath });
 
 		} else { // create
-			series.tracker = chart.renderer.path(trackerPath)
+			group = renderer.g()
+				.clip(series.clipRect)
+				.add(chart.trackerGroup);
+				
+			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
 					stroke: TRACKER_FILL,
@@ -2204,7 +2210,7 @@ Series.prototype = {
 					}
 				})
 				.css(css)
-				.add(chart.trackerGroup);
+				.add(group);
 		}
 
 	}

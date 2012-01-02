@@ -11303,7 +11303,7 @@ Series.prototype = {
 			}
 
 			if (doClip) {
-				group.clip(series.clipRect);
+				group.clip(clipRect);
 			}
 			group.attr({
 					visibility: series.visible ? VISIBLE : HIDDEN,
@@ -11541,11 +11541,13 @@ Series.prototype = {
 			trackerPath = [].concat(series.graphPath),
 			trackerPathLength = trackerPath.length,
 			chart = series.chart,
+			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
+			group,
 			singlePoint,
 			i;
 
@@ -11575,7 +11577,11 @@ Series.prototype = {
 			tracker.attr({ d: trackerPath });
 
 		} else { // create
-			series.tracker = chart.renderer.path(trackerPath)
+			group = renderer.g()
+				.clip(series.clipRect)
+				.add(chart.trackerGroup);
+				
+			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
 					stroke: TRACKER_FILL,
@@ -11595,7 +11601,7 @@ Series.prototype = {
 					}
 				})
 				.css(css)
-				.add(chart.trackerGroup);
+				.add(group);
 		}
 
 	}
@@ -11921,7 +11927,15 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
+			group,
 			rel;
+			
+		// Add a series specific group to allow clipping the trackers
+		if (series.isCartesian) {
+			group = renderer.g()
+				.clip(series.clipRect)
+				.add(chart.trackerGroup);	
+		}
 
 		each(series.points, function (point) {
 			tracker = point.tracker;
@@ -11957,7 +11971,7 @@ var ColumnSeries = extendClass(Series, {
 							}
 						})
 						.css(css)
-						.add(point.group || chart.trackerGroup); // pies have point group - see issue #118
+						.add(point.group || group); // pies have point group - see issue #118
 				}
 			}
 		});
