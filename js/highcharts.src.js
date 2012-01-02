@@ -2676,19 +2676,13 @@ SVGRenderer.prototype = {
 	 */
 	destroy: function () {
 		var renderer = this,
-			key,
-			rendererGradients = renderer.gradients,
 			rendererDefs = renderer.defs;
 		renderer.box = null;
 		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
-		if (rendererGradients) { // gradients are null in VMLRenderer
-			for (key in rendererGradients) {
-				renderer.gradients[key] = rendererGradients[key].destroy();
-			}
-			renderer.gradients = null;
-		}
+		destroyObjectProperties(renderer.gradients || {});
+		renderer.gradients = null;
 
 		// Defs are null in VMLRenderer
 		// Otherwise, destroy them here.
