@@ -1655,7 +1655,7 @@ Series.prototype = {
 					x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
 				}
 
-				if (inverted && point.y < 0) {
+				if (!stacking && inverted && point.y < 0) {
 					align = 'right';
 					x -= 10;
 				}
