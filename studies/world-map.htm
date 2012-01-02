@@ -5,15 +5,16 @@
 		<title>Highcharts Example</title>
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<!--
+		
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/map.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/googlespreadsheet.src.js"></script>
-		-->
 		
+		<!-- 
 		<script type="text/javascript" src="/js/highcharts.src.js"></script>
 		<script type="text/javascript" src="/js/modules/map.src.js"></script>
 		<script type="text/javascript" src="/js/modules/googlespreadsheet.src.js"></script>
+		-->
 		
 		<!-- 2. Insert the shapes -->
 		<script type="text/javascript" src="world-map-shapes.js"></script>
@@ -67,30 +68,30 @@
 								name: 'Population density',
 								valueRanges: [{
 									to: 3,
-									color: 'rgba(69,114,167,0.05)'
+									color: 'rgba(19,64,117,0.05)'
 								}, {
 									from: 3,
 									to: 10,
-									color: 'rgba(69,114,167,0.2)'
+									color: 'rgba(19,64,117,0.2)'
 								}, {
 									from: 10,
 									to: 30,
-									color: 'rgba(69,114,167,0.4)'
+									color: 'rgba(19,64,117,0.4)'
 								}, {
 									from: 30,
 									to: 100,
-									color: 'rgba(69,114,167,0.5)'
+									color: 'rgba(19,64,117,0.5)'
 								}, {
 									from: 100,
 									to: 300,
-									color: 'rgba(69,114,167,0.6)'
+									color: 'rgba(19,64,117,0.6)'
 								}, {
 									from: 300,
 									to: 1000,
-									color: 'rgba(69,114,167,0.8)'
+									color: 'rgba(19,64,117,0.8)'
 								}, {
 									from: 1000,
-									color: 'rgba(69,114,167,1)'
+									color: 'rgba(19,64,117,1)'
 								}]
 							}]
 						};
@@ -102,7 +103,13 @@
 								options.series[0].data.push({
 									y : populationDensities[i],
 									name : countryNames[i],
-									path : shapes[countryCodes[i]]
+									path : shapes[countryCodes[i]],
+									states: {
+										hover: {
+											color: 'orange'
+										}
+									}
+								
 								});
 							}
 						}

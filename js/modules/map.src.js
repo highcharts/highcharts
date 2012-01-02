@@ -19,6 +19,29 @@
 		each = Highcharts.each,
 		numberFormat = Highcharts.numberFormat,
 		plotOptions = Highcharts.getOptions().plotOptions;
+	
+	/**
+	 * Utility for reading SVG paths directly.
+	 * 
+	 * @todo Automatically detect strings in SVGElement.attr and use this. Split it into
+	 * array only on demand, a) when transforming VML and b) before animation
+	 */
+	Highcharts.pathToArray = function (path) {
+		// Move letters apart
+		path = path.replace(/([A-Za-z])/g, ' $1 ');
+		// Trim
+		path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+		
+		// Split on spaces and commas
+		path = path.split(/[ ,]+/);
+		
+		for (var i = 0; i < path.length; i++) {
+			if (!/[a-zA-Z]/.test(path[i])) {
+				path[i] = parseFloat(path[i]);
+			}
+		}
+		return path;
+	};
 				
 	/**
 	 * Extend the default options with map options
@@ -227,7 +250,11 @@
 		 * Disable data labels. To enable them, try using the column prototype and extend it
 		 * with a label position similar to the tooltipPos in this plugin.
 		 */
-		drawDataLabels: function() {}, 
+		drawDataLabels: function() {
+			var series = this;
+			
+			Highcharts.seriesTypes.line.prototype.drawDataLabels.apply(series);
+		}, 
 		
 		/** 
 		 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
@@ -235,10 +262,11 @@
 		 */
 		drawPoints: function() {
 			var series = this,
+				chart = series.chart,
 				saturation,
 				bBox;
 			
-			// make points pass test in drawing
+			// Make points pass test in drawing
 			$.each(series.data, function (i, point) {
 				point.plotY = 1; // pass null test in column.drawPoints
 				if (point.y === null) {
@@ -247,14 +275,19 @@
 				}
 			});
 			
+			// Draw them
 			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			
 			$.each(series.data, function (i, point) {
 				bBox = point.graphic.getBBox();
+				// for tooltip
 				point.tooltipPos = [
 					bBox.x + bBox.width / 2,
 					bBox.y + bBox.height / 2
 				];
+				// for data labels
+				point.plotX = point.tooltipPos[0] - chart.plotLeft;
+				point.plotY = point.tooltipPos[1] - chart.plotTop; 
 				
 				// Reset escapted null points
 				if (point.isNull) {
