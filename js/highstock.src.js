@@ -11047,10 +11047,12 @@ Series.prototype = {
 					options = merge(options, pointOptions.dataLabels);
 				}
 				
-				if (options.enabled) { // allow disabling individual data labels
+				// Individual labels are disabled if the are explicitly disabled 
+				// in the point options, or if they fall outside the plot area. #678.
+				if (options.enabled && (!series.isCartesian || chart.isInsidePlot(point.plotX, point.plotY))) {
 				
 					// Get the string
-					str = options.formatter.call(point.getLabelConfig());
+					str = options.formatter.call(point.getLabelConfig(), options);
 					
 					var barX = point.barX,
 						plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
@@ -11063,10 +11065,6 @@ Series.prototype = {
 					x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 					y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
 					
-					// Determine the color
-					options.style.color = pick(options.color, options.style.color, series.color, 'black');
-	
-	
 					// in columns, align the string to the column
 					if (seriesType === 'column') {
 						x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
@@ -11076,6 +11074,10 @@ Series.prototype = {
 						align = 'right';
 						x -= 10;
 					}
+					
+					// Determine the color
+					options.style.color = pick(options.color, options.style.color, series.color, 'black');
+	
 					
 					// update existing label
 					if (dataLabel) {
