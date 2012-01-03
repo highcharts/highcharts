@@ -11048,8 +11048,8 @@ Series.prototype = {
 				}
 				
 				// Individual labels are disabled if the are explicitly disabled 
-				// in the point options, or if they fall outside the plot area. #678.
-				if (options.enabled && (!series.isCartesian || chart.isInsidePlot(point.plotX, point.plotY))) {
+				// in the point options
+				if (options.enabled) {
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
@@ -11113,6 +11113,11 @@ Series.prototype = {
 							});
 						}
 					}
+					
+					// Hide labels outside the plot area. #678
+					if (series.isCartesian) {
+						dataLabel[chart.isInsidePlot(x, y) ? 'show' : 'hide']();
+					}
 	
 					if (isBarLike && seriesOptions.stacking && dataLabel) {
 						var barY = point.barY,
@@ -11127,6 +11132,8 @@ Series.prototype = {
 								height: inverted ? barW : barH
 							});
 					}
+					
+					
 				}
 			});
 		}
