@@ -1905,49 +1905,6 @@ function Chart(options, callback) {
 
 
 	/**
-	 * The toolbar object
-	 */
-	function Toolbar() {
-		var buttons = {};
-
-		/*jslint unparam: true*//* allow the unused param title until Toolbar rewrite*/
-		function add(id, text, title, fn) {
-			if (!buttons[id]) {
-				var button = renderer.text(
-					text,
-					0,
-					0
-				)
-				.css(options.toolbar.itemStyle)
-				.align({
-					align: 'right',
-					x: -marginRight - 20,
-					y: plotTop + 30
-				})
-				.on('click', fn)
-				.attr({
-					align: 'right',
-					zIndex: 20
-				})
-				.add();
-				buttons[id] = button;
-			}
-		}
-		/*jslint unparam: false*/
-
-		function remove(id) {
-			discardElement(buttons[id].element);
-			buttons[id] = null;
-		}
-
-		// public
-		return {
-			add: add,
-			remove: remove
-		};
-	}
-
-	/**
 	 * The tooltip object
 	 * @param {Object} options Tooltip options
 	 */
@@ -3596,12 +3553,37 @@ function Chart(options, callback) {
 	}
 
 	/**
+	 * Display the zoom button
+	 */
+	function showResetZoom() {
+		var lang = defaultOptions.lang,
+			btnOptions = optionsChart.resetZoomButton,
+			box = btnOptions.relativeTo === 'plot' && {
+				x: plotLeft,
+				y: plotTop,
+				width: plotWidth,
+				height: plotHeight
+			};
+		
+		chart.resetZoomButton = renderer.button(lang.resetZoom, null, null, zoomOut, btnOptions.theme)
+			.attr({
+				align: btnOptions.position.align,
+				title: lang.resetZoomTitle
+			})
+			.add()
+			.align(btnOptions.position, false, box);
+	}
+
+	/**
 	 * Zoom out to 1:1
 	 */
 	zoomOut = function () {
+		var resetZoomButton = chart.resetZoomButton;
+		
 		fireEvent(chart, 'selection', { resetSelection: true }, zoom);
-		chart.toolbar.remove('zoom');
-
+		if (resetZoomButton) {
+			chart.resetZoomButton = resetZoomButton.destroy();
+		}
 	};
 	/**
 	 * Zoom into a given portion of the chart given by axis coordinates
@@ -3610,11 +3592,10 @@ function Chart(options, callback) {
 	zoom = function (event) {
 
 		// add button to reset selection
-		var lang = defaultOptions.lang,
-			animate = chart.pointCount < 100;
+		var animate = chart.pointCount < 100;
 
-		if (chart.resetZoomEnabled !== false) { // hook for Stock charts etc.
-			chart.toolbar.add('zoom', lang.resetZoom, lang.resetZoomTitle, zoomOut);
+		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
+			showResetZoom();
 		}
 
 		// if zoom is called with no arguments, reset the axes
@@ -4233,11 +4214,6 @@ function Chart(options, callback) {
 				.add();
 
 			});
-		}
-
-		// Toolbar (don't redraw)
-		if (!chart.toolbar) {
-			chart.toolbar = Toolbar();
 		}
 
 		// Credits

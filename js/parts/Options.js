@@ -141,10 +141,22 @@ defaultOptions = {
 		},
 		backgroundColor: '#FFFFFF',
 		//plotBackgroundColor: null,
-		plotBorderColor: '#C0C0C0'
+		plotBorderColor: '#C0C0C0',
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		//zoomType: ''
+		resetZoomButton: { // docs
+			theme: {
+				zIndex: 20
+			},
+			position: {
+				align: 'right',
+				x: -10,
+				//verticalAlign: 'top',
+				y: 10
+			},
+			relativeTo: 'plot'
+		}
 	},
 	title: {
 		text: 'Chart title',
@@ -336,13 +348,6 @@ defaultOptions = {
 		//yDecimals: null,
 		//yPrefix: '',
 		//ySuffix: ''
-	},
-
-	toolbar: {
-		itemStyle: {
-			color: '#4572A7',
-			cursor: 'pointer'
-		}
 	},
 
 	credits: {
