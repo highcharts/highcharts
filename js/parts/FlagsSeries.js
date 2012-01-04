@@ -8,6 +8,7 @@ var symbols = SVGRenderer.prototype.symbols;
 defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
+	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
 	stackDistance: 7,
