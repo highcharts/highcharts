@@ -10326,19 +10326,20 @@ Series.prototype = {
 			cropped,
 			distance,
 			closestPointRange,
+			xAxis = series.xAxis,
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold; // todo: consider combining it with turboThreshold
 			
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
-		if (series.isCartesian && !series.isDirty && !series.xAxis.isDirty && !series.yAxis.isDirty) {
+		if (series.isCartesian && !series.isDirty && !xAxis.isDirty && !series.yAxis.isDirty) {
 			return false;
 		}
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
-			var extremes = series.xAxis.getExtremes(),
+		if (!cropThreshold || dataLength > cropThreshold || xAxis.options.ordinal || series.forceCrop) {
+			var extremes = xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max;
 
@@ -15362,6 +15363,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			});
 		}
 		
+		/**
+		 * Extend the ordinal axis object. If we rewrite the axis object to a prototype model,
+		 * we should add these properties to the prototype instead.
+		 */
 		if (xAxis && xAxis.options.ordinal && !xAxis.hasOrdinalExtension) {
 				
 			xAxis.hasOrdinalExtension = true;

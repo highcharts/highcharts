@@ -26,6 +26,10 @@
 			});
 		}
 		
+		/**
+		 * Extend the ordinal axis object. If we rewrite the axis object to a prototype model,
+		 * we should add these properties to the prototype instead.
+		 */
 		if (xAxis && xAxis.options.ordinal && !xAxis.hasOrdinalExtension) {
 				
 			xAxis.hasOrdinalExtension = true;
