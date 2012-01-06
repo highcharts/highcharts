@@ -2278,8 +2278,8 @@ function Chart(options, callback) {
 			}
 
 			return extend(e, {
-				chartX: chartX,
-				chartY: chartY
+				chartX: mathRound(chartX),
+				chartY: mathRound(chartY)
 			});
 		}
 
