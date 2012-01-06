@@ -1033,18 +1033,40 @@ function Chart(options, callback) {
 		/**
 		 * Adjust the min and max for the minimum range
 		 */
-		function adjustForMinRange(secondPass) {
+		function adjustForMinRange() {
 			var zoomOffset,
 				halfPointRange = (axis.pointRange || 0) / 2,
 				spaceAvailable = dataMax - dataMin > minRange,
+				closestDataRange,
+				i,
+				distance,
+				xData,
+				loopLength,
 				minArgs,
 				maxArgs;
 
-			// set the automatic minimum range based on the closest point distance
-			if (secondPass && minRange === UNDEFINED) {
-				minRange = isXAxis && !defined(options.min) && !defined(options.max) ?
-					mathMin(axis.closestPointRange * 5, dataMax - dataMin) :
-					null;
+			// Set the automatic minimum range based on the closest point distance
+			if (isXAxis && minRange === UNDEFINED) {
+				
+				if (defined(options.min) || defined(options.max)) {
+					minRange = null; // don't do this again
+				
+				} else {
+				
+					// Find the closest distance between raw data points, as opposed to 
+					// closestPointRange that applies to processed points (cropped and grouped)
+					each(axis.series, function (series) {
+						xData = series.xData;
+						loopLength = series.xIncrement ? 1 : xData.length - 1;
+						for (i = loopLength; i; i--) {
+							distance = xData[i] - xData[i - 1];
+							if (closestDataRange === UNDEFINED || distance < closestDataRange) {
+								closestDataRange = distance;
+							}
+						}
+					});
+					minRange = mathMin(closestDataRange * 5, dataMax - dataMin);
+				}
 			}
 
 			// if minRange is exceeded, adjust
@@ -1117,7 +1139,7 @@ function Chart(options, callback) {
 			}
 
 			// adjust min and max for the minimum range
-			adjustForMinRange(secondPass);
+			adjustForMinRange();
 
 			// pad the values to get clear of the chart's edges
 			if (!categories && !usePercentage && !isLinked && defined(min) && defined(max)) {

@@ -960,7 +960,7 @@ Series.prototype = {
 		}
 		
 		
-		// Find the closest distance between points
+		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i > 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (closestPointRange === UNDEFINED || distance < closestPointRange) {
