@@ -6,6 +6,7 @@ var symbols = SVGRenderer.prototype.symbols;
 
 // 1 - set default options
 defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
+	dataGrouping: null,
 	fillColor: 'white',
 	lineWidth: 1,
 	pointRange: 0, // #673

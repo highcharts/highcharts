@@ -1058,7 +1058,7 @@ function Chart(options, callback) {
 					each(axis.series, function (series) {
 						xData = series.xData;
 						loopLength = series.xIncrement ? 1 : xData.length - 1;
-						for (i = loopLength; i; i--) {
+						for (i = loopLength; i > 0; i--) {
 							distance = xData[i] - xData[i - 1];
 							if (closestDataRange === UNDEFINED || distance < closestDataRange) {
 								closestDataRange = distance;
