@@ -15,7 +15,7 @@ Highcharts.StockChart = function (options, callback) {
 					}
 				}
 			},
-			gapSize: 5,
+			// gapSize: 0, // docs
 			shadow: false,
 			states: {
 				hover: {
