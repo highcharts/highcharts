@@ -56,15 +56,16 @@
 							
 							// concatenate the processed X data into the existing positions, or the empty array 
 							ordinalPositions = ordinalPositions.concat(series.processedXData);
+							len = ordinalPositions.length;
 							
 							// if we're dealing with more than one series, remove duplicates
-							if (i) {
+							if (i && len) {
 							
 								ordinalPositions.sort(function (a, b) {
 									return a - b; // without a custom function it is sorted as strings
 								});
 							
-								i = ordinalPositions.length - 1;
+								i = len - 1;
 								while (i--) {
 									if (ordinalPositions[i] === ordinalPositions[i + 1]) {
 										ordinalPositions.splice(i, 1);
