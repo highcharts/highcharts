@@ -50,6 +50,9 @@
 		plotOptions.pie, {
 			animation: false, // makes the complex shapes slow
 			colorByPoint: false,
+			dataLabels: {
+				enabled: false
+			},
 			weightedOpacity: true,
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
