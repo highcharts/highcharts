@@ -92,7 +92,12 @@
 								}, {
 									from: 1000,
 									color: 'rgba(19,64,117,1)'
-								}]
+								}],
+								states: {
+									hover: {
+										color: '#DD6E28'
+									}
+								}
 							}]
 						};
 		
@@ -103,7 +108,7 @@
 								options.series[0].data.push({
 									y : populationDensities[i],
 									name : countryNames[i],
-									path : shapes[countryCodes[i]],
+									path : Highcharts.pathToArray(shapes[countryCodes[i]]),
 									states: {
 										hover: {
 											color: 'orange'

@@ -7,11 +7,11 @@
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" />
-		<!--
+		
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/map.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/googlespreadsheet.src.js"></script>
-		-->
+		
 		 
 		
 		
@@ -109,34 +109,6 @@
 									enabled: true,
 									color: 'white',
 									formatter: function(dataLabelOptions) {
-										
-										var point = this.point,
-											factor = point.series.mapTranslation.factor;
-										
-										// Some labels need to be placed in custom positions, other than
-										// the default shape center. x,y positions in the same coordinate system as the paths 
-										labelPositions = { 
-											ak: [110, 490],
-											ca: [80, 300],
-											dc: [800, 250],
-											fl: [760, 500],
-											id: [190, 150],
-											hi: [280, 550],
-											ok: [450, 360],
-											ky: [670, 300],
-											ma: [870, 150],
-											md: [800, 235],
-											mi: [660, 180],
-											mn: [500, 130],
-											la: [560, 460],
-											sc: [760, 370],
-											va: [780, 280],
-											wv: [740, 260]
-										},
-										pos = labelPositions[point.options.key];
-										dataLabelOptions.labelX = pos ? Math.round(pos[0] * factor) : null;
-										dataLabelOptions.labelY = pos ? Math.round(pos[1] * factor) : null;
-										
 										return this.point.options.key.toUpperCase();
 									},
 									style: {
@@ -158,17 +130,65 @@
 									from: -100,
 									to: 0,
 									color: '#C40401',
-									name: 'Republican'
+									name: 'McCain'
 								}, {
 									from: 0,
 									to: 100,
 									color: '#0200D0',
-									name: 'Democratic'
+									name: 'Obama'
 								}]
 							}]
 						};
 		
 						// Populate the data points
+						// The following are the center coordinates in the original SVG coordinate system. 
+						// After re-implementing x and y axis and translation, these can be used again.
+						/*var dataLabelOptions = { 
+							ak: [110, 490],
+							ca: [80, 300],
+							dc: [800, 250],
+							fl: [760, 500],
+							id: [190, 150],
+							hi: [280, 550],
+							ok: [450, 360],
+							ky: [670, 300],
+							ma: [870, 150],
+							md: [800, 235],
+							mi: [660, 180],
+							mn: [500, 130],
+							la: [560, 460],
+							sc: [760, 370],
+							va: [780, 280],
+							wv: [740, 260]
+						};*/
+						var dataLabelOptions = { 
+							ak: {
+								y: -10
+							},
+							ca: {
+								x: -10,
+								y: 20
+							},
+							dc: {},
+							fl: {
+								x: 40
+							},
+							id: {},
+							hi: {
+								color: 'black',
+								y: 15
+							},
+							ok: {},
+							ky: {},
+							ma: {},
+							md: {},
+							mi: {},
+							mn: {},
+							la: {},
+							sc: {},
+							va: {},
+							wv: {}
+						};
 						for (var i = 1; i < keys.length; i++) {
 							var key = keys[i];
 							
@@ -177,8 +197,8 @@
 								name : names[i],
 								key: key,
 								row: i,
-								path : Highcharts.pathToArray(shapes[key])
-							
+								path : Highcharts.pathToArray(shapes[key]),
+								dataLabels: dataLabelOptions[key] // or undefined
 							});
 						}
 						
@@ -196,69 +216,70 @@
 		
 		
 		<!-- Load the Highcharts parts -->
-	<script type="text/javascript" src="../js/parts/Globals.js"></script>
-	<script type="text/javascript" src="../js/parts/Utilities.js"></script>
-	<script type="text/javascript" src="../js/parts/PathAnimation.js"></script>
-	<script type="text/javascript" src="../js/parts/Adapters.js"></script>
-	<script type="text/javascript" src="../js/parts/Options.js"></script>
-	<script type="text/javascript" src="../js/parts/Color.js"></script>
-	<script type="text/javascript" src="../js/parts/SvgRenderer.js"></script>
-	<script type="text/javascript" src="../js/parts/VmlRenderer.js"></script>
-	<script type="text/javascript" src="../js/parts/Chart.js"></script>
-	<script type="text/javascript" src="../js/parts/Series.js"></script>
-	<script type="text/javascript" src="../js/parts/LineSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/AreaSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/SplineSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/AreaSplineSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/ColumnSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/BarSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/ScatterSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/PieSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/DataGrouping.js"></script>
-	<script type="text/javascript" src="../js/parts/OHLCSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/CandlestickSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/FlagsSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/StockNavigation.js"></script>
-	<script type="text/javascript" src="../js/parts/StockChart.js"></script>
-	<script type="text/javascript" src="../samples/data/usdeur.js"></script>
-	<script type="text/javascript">
-		// global variables
-		extend(Highcharts, {
-			Chart : Chart,
-			dateFormat : dateFormat,
-			pathAnim : pathAnim,
-			getOptions : getOptions,
-			numberFormat : numberFormat,
-			Point : Point,
-			Color : Color,
-			Renderer : Renderer,
-			seriesTypes : seriesTypes,
-			setOptions : setOptions,
-			Series : Series,
-
-			// Expose utility funcitons for modules
-			addEvent : addEvent,
-			removeEvent : removeEvent,
-			createElement : createElement,
-			discardElement : discardElement,
-			css : css,
-			each : each,
-			extend : extend,
-			map : map,
-			merge : merge,
-			pick : pick,
-			splat : splat,
-			extendClass : extendClass,
-			product : '@product.name@',
-			version : '@product.version@'
-		});
-
-	</script>
+		<!--
+		<script type="text/javascript" src="../js/parts/Globals.js"></script>
+		<script type="text/javascript" src="../js/parts/Utilities.js"></script>
+		<script type="text/javascript" src="../js/parts/PathAnimation.js"></script>
+		<script type="text/javascript" src="../js/parts/Adapters.js"></script>
+		<script type="text/javascript" src="../js/parts/Options.js"></script>
+		<script type="text/javascript" src="../js/parts/Color.js"></script>
+		<script type="text/javascript" src="../js/parts/SvgRenderer.js"></script>
+		<script type="text/javascript" src="../js/parts/VmlRenderer.js"></script>
+		<script type="text/javascript" src="../js/parts/Chart.js"></script>
+		<script type="text/javascript" src="../js/parts/Series.js"></script>
+		<script type="text/javascript" src="../js/parts/LineSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/AreaSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/SplineSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/AreaSplineSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/ColumnSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/BarSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/ScatterSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/PieSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/DataGrouping.js"></script>
+		<script type="text/javascript" src="../js/parts/OHLCSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/CandlestickSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/FlagsSeries.js"></script>
+		<script type="text/javascript" src="../js/parts/StockNavigation.js"></script>
+		<script type="text/javascript" src="../js/parts/StockChart.js"></script>
+		<script type="text/javascript" src="../samples/data/usdeur.js"></script>
+		<script type="text/javascript">
+			// global variables
+			extend(Highcharts, {
+				Chart : Chart,
+				dateFormat : dateFormat,
+				pathAnim : pathAnim,
+				getOptions : getOptions,
+				numberFormat : numberFormat,
+				Point : Point,
+				Color : Color,
+				Renderer : Renderer,
+				seriesTypes : seriesTypes,
+				setOptions : setOptions,
+				Series : Series,
+	
+				// Expose utility funcitons for modules
+				addEvent : addEvent,
+				removeEvent : removeEvent,
+				createElement : createElement,
+				discardElement : discardElement,
+				css : css,
+				each : each,
+				extend : extend,
+				map : map,
+				merge : merge,
+				pick : pick,
+				splat : splat,
+				extendClass : extendClass,
+				product : '@product.name@',
+				version : '@product.version@'
+			});
+	
+		</script>
 	
 	
 		<script type="text/javascript" src="../js/modules/map.src.js"></script>
 		<script type="text/javascript" src="../js/modules/googlespreadsheet.src.js"></script>
-		
+		-->	
 		
 	</body>
 </html>
