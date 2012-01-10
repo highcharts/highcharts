@@ -251,7 +251,6 @@ seriesProto.processData = function () {
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
-		maxPoints = plotSizeX / groupPixelWidth,
 		dataLength = processedXData.length,
 		groupedData = series.groupedData,
 		chartSeries = chart.series;
@@ -277,8 +276,8 @@ seriesProto.processData = function () {
 		}
 	});
 
-	
-	if (dataLength > maxPoints || dataGroupingOptions.forced) {
+	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
+	if (dataLength > (plotSizeX / groupPixelWidth) || dataGroupingOptions.forced) {
 		hasGroupedData = true;
 
 		series.points = null; // force recreation of point instances in series.translate
@@ -286,7 +285,7 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			imaginedPlotWidth = // how wide would the plot are be if gaps were included?
+			imaginedPlotWidth = // how wide would the plot area be if gaps were included?
 				xAxis.options.ordinal ? 
 					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
 					plotSizeX, 
