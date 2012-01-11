@@ -5142,6 +5142,8 @@ function Chart(options, callback) {
 
 				// get the string
 				str = labelFormatter.call({
+						axis: axis,
+						chart: chart,
 						isFirst: isFirst,
 						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
@@ -5912,19 +5914,19 @@ function Chart(options, callback) {
 			// Populate the intermediate values
 			pos = roundedMin;
 			while (pos <= roundedMax) {
-				
+
 				// Place the tick on the rounded value
 				tickPositions.push(pos);
 
 				// Always add the raw tickInterval, not the corrected one.
 				pos = correctFloat(pos + tickInterval);
-				
+
 				// If the interval is not big enough in the current min - max range to actually increase
 				// the loop variable, we need to break out to prevent endless loop. Issue #619
 				if (pos === lastPos) {
 					break;
 				}
-				
+
 				// Record the last value
 				lastPos = pos;
 			}
@@ -5947,13 +5949,13 @@ function Chart(options, callback) {
 
 			// Set the automatic minimum range based on the closest point distance
 			if (isXAxis && minRange === UNDEFINED) {
-				
+
 				if (defined(options.min) || defined(options.max)) {
 					minRange = null; // don't do this again
-				
+
 				} else {
-				
-					// Find the closest distance between raw data points, as opposed to 
+
+					// Find the closest distance between raw data points, as opposed to
 					// closestPointRange that applies to processed points (cropped and grouped)
 					each(axis.series, function (series) {
 						xData = series.xData;
@@ -7044,13 +7046,13 @@ function Chart(options, callback) {
 				});
 
 				placedTooltipPoint = placeBox(
-					label.width, 
-					label.height, 
-					plotLeft, 
+					label.width,
+					label.height,
+					plotLeft,
 					plotTop,
-					plotWidth, 
-					plotHeight, 
-					{x: x, y: y}, 
+					plotWidth,
+					plotHeight,
+					{x: x, y: y},
 					pick(options.distance, 12),
 					inverted
 				);
@@ -8486,7 +8488,7 @@ function Chart(options, callback) {
 				width: plotWidth,
 				height: plotHeight
 			};
-		
+
 		chart.resetZoomButton = renderer.button(lang.resetZoom, null, null, zoomOut, btnOptions.theme)
 			.attr({
 				align: btnOptions.position.align,
@@ -8501,7 +8503,7 @@ function Chart(options, callback) {
 	 */
 	zoomOut = function () {
 		var resetZoomButton = chart.resetZoomButton;
-		
+
 		fireEvent(chart, 'selection', { resetSelection: true }, zoom);
 		if (resetZoomButton) {
 			chart.resetZoomButton = resetZoomButton.destroy();
