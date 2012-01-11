@@ -5142,8 +5142,8 @@ function Chart(options, callback) {
 
 				// get the string
 				str = labelFormatter.call({
-						axis: axis,
-						chart: chart,
+						axis: axis, // docs
+						chart: chart, // docs
 						isFirst: isFirst,
 						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
