@@ -1946,7 +1946,7 @@ function Chart(options, callback) {
 		style.padding = 0;
 
 		// create the label
-		var label = renderer.label('', 0, 0)
+		var label = renderer.label('', 0, 0, null, null, null, options.useHTML)
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
@@ -2946,7 +2946,8 @@ function Chart(options, callback) {
 				item.legendItem = li = renderer.text(
 						options.labelFormatter.call(item),
 						0,
-						0
+						0,
+						options.useHTML
 					)
 					.css(item.visible ? itemStyle : itemHiddenStyle)
 					.on('mouseover', function () {

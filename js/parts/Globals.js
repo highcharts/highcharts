@@ -23,7 +23,7 @@ var UNDEFINED,
 	isFirefox = /Firefox/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
-	hasRtlBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== UNDEFINED,
 	symbolSizes = {},

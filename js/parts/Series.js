@@ -1690,7 +1690,8 @@ Series.prototype = {
 						dataLabel = point.dataLabel = renderer.text(
 							str,
 							x,
-							y
+							y,
+							options.useHTML
 						)
 						.attr({
 							align: align,
