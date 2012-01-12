@@ -1,4 +1,3 @@
-
 /**
  * The chart class
  * @param {Object} options
@@ -2756,11 +2755,13 @@ function Chart(options, callback) {
 		setDOMEvents();
 
 		// set the fixed interval ticking for the smooth tooltip
-		tooltipInterval = setInterval(function () {
-			if (tooltipTick) {
-				tooltipTick();
-			}
-		}, 32);
+		if (options.enabled) {
+			tooltipInterval = setInterval(function () {
+				if (tooltipTick) {
+					tooltipTick();
+				}
+			}, 32);
+		}
 
 		// expose properties
 		extend(this, {
