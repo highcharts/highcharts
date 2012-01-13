@@ -900,6 +900,7 @@ function Chart(options, callback) {
 		 *
 		 */
 		translate = function (val, backwards, cvsCoord, old, handleLog) {
+			
 			var sign = 1,
 				cvsOffset = 0,
 				localA = old ? oldTransA : transA,
@@ -1029,6 +1030,47 @@ function Chart(options, callback) {
 				lastPos = pos;
 			}
 		}
+		
+		/**
+		 * Set the tick positions of a logarithmic axis
+		 */
+		function setLogTickPositions() {
+			setLinearTickPositions();
+			
+			// If the distance between 10-based ticks is too long, insert intermediate values
+			if (axisLength && options.tickPixelInterval && tickPositions.length / axisLength) {
+				
+				// The ratio is the current tick pixel interval compared to the
+				// desired one 
+				var i = tickPositions.length - 1,
+					j,
+					ratio = (axisLength / i) / options.tickPixelInterval,
+					intermediate;
+				
+				// Insert ticks for 2, 4 etc
+				if (ratio > 3) {
+					intermediate = [2, 4, 6, 8];
+				
+				// Insert ticks for halves
+				} else if (ratio > 1.5) {
+					intermediate = [5];			
+				}
+				
+				// Do the insertion
+				if (intermediate) {
+					while (i--) {
+						j = intermediate.length;
+						while (j--) {
+							tickPositions.splice(
+								i + 1,
+								0,
+								log2lin(lin2log(tickPositions[i]) * intermediate[j])
+							);
+						}
+					}
+				}
+			}
+		}
 
 		/**
 		 * Adjust the min and max for the minimum range
@@ -1046,7 +1088,7 @@ function Chart(options, callback) {
 				maxArgs;
 
 			// Set the automatic minimum range based on the closest point distance
-			if (isXAxis && minRange === UNDEFINED) {
+			if (isXAxis && minRange === UNDEFINED && !isLog) {
 				
 				if (defined(options.min) || defined(options.max)) {
 					minRange = null; // don't do this again
@@ -1125,6 +1167,9 @@ function Chart(options, callback) {
 			}
 
 			if (isLog) {
+				if (!secondPass && (min <= 0 || max <= 0)) {
+					error(10);
+				}
 				min = log2lin(min);
 				max = log2lin(max);
 			}
@@ -1192,6 +1237,8 @@ function Chart(options, callback) {
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
 					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units);
+				} else if (isLog) {
+					setLogTickPositions();
 				} else {
 					setLinearTickPositions();
 				}

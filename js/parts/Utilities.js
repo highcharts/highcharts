@@ -681,6 +681,18 @@ function destroyObjectProperties(obj) {
 }
 
 /**
+ * Provide error messages for debugging, with links to online explanation 
+ */
+function error(code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw msg;
+	} else if (win.console) {
+		console.log(msg);
+	}
+}
+
+/**
  * The time unit lookup
  */
 /*jslint white: true*/
