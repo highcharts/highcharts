@@ -1193,7 +1193,15 @@ function Chart(options, callback) {
 			tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max]));
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
-					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units);
+					tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
+						normalizeTimeTickInterval(tickInterval, options.units), 
+						min, 
+						max, 
+						options.startOfWeek,
+						axis.ordinalPositions, 
+						axis.closestPointRange,
+						true
+					);
 				} else {
 					setLinearTickPositions();
 				}

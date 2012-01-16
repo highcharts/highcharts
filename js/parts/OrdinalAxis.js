@@ -288,6 +288,88 @@
 			};
 			
 			/**
+			 * In an ordinal axis, there might be areas with dense consentrations of points, then large
+			 * gaps between some. Creating equally distributed ticks over this entire range
+			 * may lead to a huge number of ticks that will later be removed. So instead, break the 
+			 * positions up in segments, find the tick positions for each segment then concatenize them.
+			 * This method is used from both data grouping logic and X axis tick position logic. 
+			 */
+			xAxis.getNonLinearTimeTicks = function (normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+				
+				var segments = [],
+					start,
+					end,
+					xMin,
+					xMax,
+					segmentPositions,
+					higherRanks = {},
+					hasCrossedHigherRank,
+					info,
+					groupPositions = [];
+					
+				// The positions are not always defined, for example for ordinal positions when data
+				// has regular interval
+				if (!positions) {
+					return getTimeTicks.apply(0, arguments);
+				}
+				
+				// Analyze the positions array to split it into segments on gaps larger than 5 times
+				// the closest distance. The closest distance is already found at this point, so 
+				// we reuse that instead of computing it again.
+				start = positions.length;
+				while (start--) {
+					if (start === 0 || positions[start] - positions[start - 1] > closestDistance * 5) {
+						segments.push(positions.slice(start, end));
+						end = start;
+					}
+				}
+				segments.reverse();
+				
+				// For each segment, calculate the tick positions from the getTimeTicks utility
+				// function. The interval will be the same regardless of how long the segment is.
+				each(segments, function (segment) {					
+					xMin = segment[0];
+					xMax = segment[segment.length - 1];
+					segmentPositions = getTimeTicks(normalizedInterval, xMin, xMax, startOfWeek);
+						
+					groupPositions = groupPositions.concat(segmentPositions);
+				});
+				
+				// Get the grouping info from the last of the segments. The info is the same for
+				// all segments.
+				info = segmentPositions.info;
+				
+				// Optionally identify ticks with higher rank, for example when the ticks
+				// have crossed midnight.
+				if (findHigherRanks && info.unitRange <= timeUnits[HOUR]) {
+					end = groupPositions.length - 1;
+					
+					// Compare points two by two
+					for (start = 1; start < end; start++) {
+						if (new Date(groupPositions[start])[getDate]() !== new Date(groupPositions[start - 1])[getDate]()) {
+							higherRanks[groupPositions[start]] = DAY;
+							hasCrossedHigherRank = true;
+						}
+					}
+					
+					// If the complete array has crossed midnight, we want to mark the first
+					// positions also as higher rank
+					if (hasCrossedHigherRank) {
+						higherRanks[groupPositions[0]] = DAY;
+					}
+					info.higherRanks = higherRanks;
+				}
+				
+				// Save the info
+				groupPositions.info = info;				
+				
+				
+				// Return it
+				return groupPositions;
+				
+			};
+			
+			/**
 			 * Post process tick positions. The tickPositions array is altered. Don't show ticks 
 			 * within a gap in the ordinal axis, where the space between
 			 * two points is greater than a portion of the tick pixel interval

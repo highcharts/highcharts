@@ -289,8 +289,15 @@ seriesProto.processData = function () {
 				xAxis.options.ordinal ? 
 					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
 					plotSizeX, 
-			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
-			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
+			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,			
+			groupPositions = (xAxis.getNonLinearTimeTicks || getTimeTicks)(
+				normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
+				xMin, 
+				xMax, 
+				null, 
+				series.processedXData, 
+				series.closestPointRange
+			),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
 			groupedXData = groupedXandY[0],
 			groupedYData = groupedXandY[1];

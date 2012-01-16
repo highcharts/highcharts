@@ -496,52 +496,45 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 }
 
 /**
- * Set the tick positions to a time unit that makes sense, for example
- * on the first of each month or on every Monday. Return an array
- * with the time positions. Used in datetime axes as well as for grouping
- * data on a datetime axis.
- *
- * @param {Number} tickInterval The approximate interval in axis values (ms)
- * @param {Number} min The minimum in axis values
- * @param {Number} max The maximum in axis values
- * @param {Number} startOfWeek
- * @param {Array} unitsOption
+ * Get a normalized tick interval for dates. Returns a configuration object with
+ * unit range (interval), count and name. Used to prepare data for getTimeTicks. 
+ * Previously this logic was part of getTimeTicks, but as getTimeTicks now runs
+ * of segments in stock charts, the normalizing logic was extracted in order to 
+ * prevent it for running over again for each segment having the same interval. 
+ * #662, #697.
  */
-function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
-	var tickPositions = [],
-		i,
-		higherRanks = {},
-		useUTC = defaultOptions.global.useUTC,
-		units = unitsOption || [[
-			MILLISECOND, // unit name
-			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-		], [
-			SECOND,
-			[1, 2, 5, 10, 15, 30]
-		], [
-			MINUTE,
-			[1, 2, 5, 10, 15, 30]
-		], [
-			HOUR,
-			[1, 2, 3, 4, 6, 8, 12]
-		], [
-			DAY,
-			[1, 2]
-		], [
-			WEEK,
-			[1, 2]
-		], [
-			MONTH,
-			[1, 2, 3, 4, 6]
-		], [
-			YEAR,
-			null
-		]],
-
+function normalizeTimeTickInterval(tickInterval, unitsOption) {
+	var units = unitsOption || [[
+				MILLISECOND, // unit name
+				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+			], [
+				SECOND,
+				[1, 2, 5, 10, 15, 30]
+			], [
+				MINUTE,
+				[1, 2, 5, 10, 15, 30]
+			], [
+				HOUR,
+				[1, 2, 3, 4, 6, 8, 12]
+			], [
+				DAY,
+				[1, 2]
+			], [
+				WEEK,
+				[1, 2]
+			], [
+				MONTH,
+				[1, 2, 3, 4, 6]
+			], [
+				YEAR,
+				null
+			]],
 		unit = units[units.length - 1], // default unit is years
 		interval = timeUnits[unit[0]],
-		multiples = unit[1];
-
+		multiples = unit[1],
+		count,
+		i;
+		
 	// loop through the units to find the one that best fits the tickInterval
 	for (i = 0; i < units.length; i++) {
 		unit = units[i];
@@ -565,48 +558,79 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
 		multiples = [1, 2, 5];
 	}
+	
+	// prevent 2.5 years intervals, though 25, 250 etc. are allowed
+	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
+		multiples = [1, 2, 5];
+	}
 
-	// get the minimum value by flooring the date
-	var multitude = normalizeTickInterval(tickInterval / interval, multiples),
+	// get the count
+	count = normalizeTickInterval(tickInterval / interval, multiples);
+	
+	return {
+		unitRange: interval,
+		count: count,
+		unitName: unit[0]
+	};
+}
+
+/**
+ * Set the tick positions to a time unit that makes sense, for example
+ * on the first of each month or on every Monday. Return an array
+ * with the time positions. Used in datetime axes as well as for grouping
+ * data on a datetime axis.
+ *
+ * @param {Object} normalizedInterval The interval in axis values (ms) and the count
+ * @param {Number} min The minimum in axis values
+ * @param {Number} max The maximum in axis values
+ * @param {Number} startOfWeek
+ */
+function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
+	var tickPositions = [],
+		i,
+		higherRanks = {},
+		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min);
+		minDate = new Date(min),
+		interval = normalizedInterval.unitRange,
+		count = normalizedInterval.count;
 
 	minDate.setMilliseconds(0);
 
 	if (interval >= timeUnits[SECOND]) { // second
 		minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
-			multitude * mathFloor(minDate.getSeconds() / multitude));
+			count * mathFloor(minDate.getSeconds() / count));
 	}
 
 	if (interval >= timeUnits[MINUTE]) { // minute
 		minDate[setMinutes](interval >= timeUnits[HOUR] ? 0 :
-			multitude * mathFloor(minDate[getMinutes]() / multitude));
+			count * mathFloor(minDate[getMinutes]() / count));
 	}
 
 	if (interval >= timeUnits[HOUR]) { // hour
 		minDate[setHours](interval >= timeUnits[DAY] ? 0 :
-			multitude * mathFloor(minDate[getHours]() / multitude));
+			count * mathFloor(minDate[getHours]() / count));
 	}
 
 	if (interval >= timeUnits[DAY]) { // day
 		minDate[setDate](interval >= timeUnits[MONTH] ? 1 :
-			multitude * mathFloor(minDate[getDate]() / multitude));
+			count * mathFloor(minDate[getDate]() / count));
 	}
 
 	if (interval >= timeUnits[MONTH]) { // month
 		minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
-			multitude * mathFloor(minDate[getMonth]() / multitude));
+			count * mathFloor(minDate[getMonth]() / count));
 		minYear = minDate[getFullYear]();
 	}
 
 	if (interval >= timeUnits[YEAR]) { // year
-		minYear -= minYear % multitude;
+		minYear -= minYear % count;
 		minDate[setFullYear](minYear);
 	}
 
 	// week is a special case that runs outside the hierarchy
 	if (interval === timeUnits[WEEK]) {
-		// get start of current week, independent of multitude
+		// get start of current week, independent of count
 		minDate[setDate](minDate[getDate]() - minDate[getDay]() +
 			pick(startOfWeek, 1));
 	}
@@ -625,21 +649,21 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 
 		// if the interval is years, use Date.UTC to increase years
 		if (interval === timeUnits[YEAR]) {
-			time = makeTime(minYear + i * multitude, 0);
+			time = makeTime(minYear + i * count, 0);
 
 		// if the interval is months, use Date.UTC to increase months
 		} else if (interval === timeUnits[MONTH]) {
-			time = makeTime(minYear, minMonth + i * multitude);
+			time = makeTime(minYear, minMonth + i * count);
 
 		// if we're using global time, the interval is not fixed as it jumps
 		// one hour at the DST crossover
 		} else if (!useUTC && (interval === timeUnits[DAY] || interval === timeUnits[WEEK])) {
 			time = makeTime(minYear, minMonth, minDateDate +
-				i * multitude * (interval === timeUnits[DAY] ? 1 : 7));
+				i * count * (interval === timeUnits[DAY] ? 1 : 7));
 
 		// else, the interval is fixed and we use simple addition
 		} else {
-			time += interval * multitude;
+			time += interval * count;
 			
 			// mark new days if the time is dividable by day
 			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === 0) {
@@ -654,13 +678,10 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	tickPositions.push(time);
 
 	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.info = {
-		unitName: unit[0],
-		unitRange: interval,
-		count: multitude,
+	tickPositions.info = extend(normalizedInterval, {
 		higherRanks: higherRanks,
-		totalRange: interval * multitude
-	};
+		totalRange: interval * count
+	});
 
 	return tickPositions;
 }
@@ -6093,7 +6114,15 @@ function Chart(options, callback) {
 			tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max]));
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
-					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units);
+					tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
+						normalizeTimeTickInterval(tickInterval, options.units), 
+						min, 
+						max, 
+						options.startOfWeek,
+						axis.ordinalPositions, 
+						axis.closestPointRange,
+						true
+					);
 				} else {
 					setLinearTickPositions();
 				}
@@ -13070,8 +13099,15 @@ seriesProto.processData = function () {
 				xAxis.options.ordinal ? 
 					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
 					plotSizeX, 
-			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
-			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
+			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,			
+			groupPositions = (xAxis.getNonLinearTimeTicks || getTimeTicks)(
+				normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
+				xMin, 
+				xMax, 
+				null, 
+				series.processedXData, 
+				series.closestPointRange
+			),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
 			groupedXData = groupedXandY[0],
 			groupedYData = groupedXandY[1];
@@ -15624,6 +15660,88 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				return ordinalSlope ? 
 					tickInterval / (ordinalSlope / xAxis.closestPointRange) : 
 					tickInterval;
+			};
+			
+			/**
+			 * In an ordinal axis, there might be areas with dense consentrations of points, then large
+			 * gaps between some. Creating equally distributed ticks over this entire range
+			 * may lead to a huge number of ticks that will later be removed. So instead, break the 
+			 * positions up in segments, find the tick positions for each segment then concatenize them.
+			 * This method is used from both data grouping logic and X axis tick position logic. 
+			 */
+			xAxis.getNonLinearTimeTicks = function (normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+				
+				var segments = [],
+					start,
+					end,
+					xMin,
+					xMax,
+					segmentPositions,
+					higherRanks = {},
+					hasCrossedHigherRank,
+					info,
+					groupPositions = [];
+					
+				// The positions are not always defined, for example for ordinal positions when data
+				// has regular interval
+				if (!positions) {
+					return getTimeTicks.apply(0, arguments);
+				}
+				
+				// Analyze the positions array to split it into segments on gaps larger than 5 times
+				// the closest distance. The closest distance is already found at this point, so 
+				// we reuse that instead of computing it again.
+				start = positions.length;
+				while (start--) {
+					if (start === 0 || positions[start] - positions[start - 1] > closestDistance * 5) {
+						segments.push(positions.slice(start, end));
+						end = start;
+					}
+				}
+				segments.reverse();
+				
+				// For each segment, calculate the tick positions from the getTimeTicks utility
+				// function. The interval will be the same regardless of how long the segment is.
+				each(segments, function (segment) {					
+					xMin = segment[0];
+					xMax = segment[segment.length - 1];
+					segmentPositions = getTimeTicks(normalizedInterval, xMin, xMax, startOfWeek);
+						
+					groupPositions = groupPositions.concat(segmentPositions);
+				});
+				
+				// Get the grouping info from the last of the segments. The info is the same for
+				// all segments.
+				info = segmentPositions.info;
+				
+				// Optionally identify ticks with higher rank, for example when the ticks
+				// have crossed midnight.
+				if (findHigherRanks && info.unitRange <= timeUnits[HOUR]) {
+					end = groupPositions.length - 1;
+					
+					// Compare points two by two
+					for (start = 1; start < end; start++) {
+						if (new Date(groupPositions[start])[getDate]() !== new Date(groupPositions[start - 1])[getDate]()) {
+							higherRanks[groupPositions[start]] = DAY;
+							hasCrossedHigherRank = true;
+						}
+					}
+					
+					// If the complete array has crossed midnight, we want to mark the first
+					// positions also as higher rank
+					if (hasCrossedHigherRank) {
+						higherRanks[groupPositions[0]] = DAY;
+					}
+					info.higherRanks = higherRanks;
+				}
+				
+				// Save the info
+				groupPositions.info = info;				
+				
+				
+				// Return it
+				return groupPositions;
+				
 			};
 			
 			/**
