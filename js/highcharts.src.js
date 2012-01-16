@@ -3917,7 +3917,7 @@ var VMLElement = extendClass(SVGElement, {
 				// check for a specific attribute setter
 				result = attrSetters[key] && attrSetters[key](value, key);
 
-				if (result !== false) {
+				if (result !== false && value !== null) { // #620
 
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
