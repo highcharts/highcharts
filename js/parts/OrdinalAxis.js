@@ -307,8 +307,8 @@
 					
 				// The positions are not always defined, for example for ordinal positions when data
 				// has regular interval
-				if (!positions) {
-					return getTimeTicks.apply(0, arguments);
+				if (!positions || min === UNDEFINED) {
+					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
 				}
 				
 				// Analyze the positions array to split it into segments on gaps larger than 5 times
