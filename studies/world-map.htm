@@ -5,12 +5,19 @@
 		<title>Highcharts Example</title>
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/map.src.js"></script>
+		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/googlespreadsheet.src.js"></script>
 		
-		<!-- 2. Insert the shapes and the data -->
+		<!-- 
+		<script type="text/javascript" src="/js/highcharts.src.js"></script>
+		<script type="text/javascript" src="/js/modules/map.src.js"></script>
+		<script type="text/javascript" src="/js/modules/googlespreadsheet.src.js"></script>
+		-->
+		
+		<!-- 2. Insert the shapes -->
 		<script type="text/javascript" src="world-map-shapes.js"></script>
-		<script type="text/javascript" src="world-map-data.js"></script>
 		
 		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
 		<script type="text/javascript">
@@ -18,62 +25,104 @@
 			var chart;
 
 			$(document).ready(function() {
-
-				var options = {
-					chart : {
-						renderTo : 'container',
-						type : 'map',
-						borderWidth : 1
-					},
-					title : {
-						text : 'The World drawn by Highcharts'
-					},
-					
-					legend: {
-						align: 'left',
-						verticalAlign: 'bottom',
-						floating: true,
-						layout: 'vertical',
-						labelFormatter: function() {
-							return Highcharts.numberFormat(this.from, 0, ',') + ' - ' +
-								Highcharts.numberFormat(this.to, 0, ',');
-						}
-					},
-
-					series : [{
-						data : [],
-						valueRanges: [{
-							from: 0,
-							to: 99,
-							color: 'rgba(69,114,167,0.4)'
-						}, {
-							from: 100,
-							to: 999,
-							color: 'rgba(69,114,167,0.6)'
-						}, {
-							from: 1000,
-							to: 9999,
-							color: 'rgba(69,114,167,0.8)'
-						}, {
-							from: 10000,
-							to: 99999,
-							color: 'rgba(69,114,167,1)'
-						}]
-					}]
-				};
-
-				// Populate the data points
-				for (var key in shapes) {
-
-					options.series[0].data.push({
-						y : data[key] ? data[key].value : null,
-						name : data[key] ? data[key].title : key,
-						path : shapes[key]
-					});
-				}
 				
-				// Initiate the chart
-				chart = new Highcharts.Chart(options);
+				// Load the data from a Google Spreadsheet 
+				// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
+				Highcharts.getGoogleSpreadsheet({
+				    
+				    key: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
+				    
+				    // custom handler for columns
+				    columns: function(columns) {
+				    	
+				    	// Make the columns easier to read
+				    	var countryCodes = columns[0],
+				    		countryNames = columns[1],
+				    		populationDensities = columns[2];
+
+						var options = {
+							chart : {
+								renderTo : 'container',
+								type : 'map',
+								borderWidth : 1
+							},
+							
+							title : {
+								text : 'Population density by country (/km²)'
+							},
+							
+							legend: {
+								align: 'left',
+								verticalAlign: 'bottom',
+								floating: true,
+								layout: 'vertical',
+								valueDecimals: 0
+							},
+							
+							tooltip: {
+								ySuffix: '/km²'
+							},
+		
+							series : [{
+								data : [],
+								name: 'Population density',
+								valueRanges: [{
+									to: 3,
+									color: 'rgba(19,64,117,0.05)'
+								}, {
+									from: 3,
+									to: 10,
+									color: 'rgba(19,64,117,0.2)'
+								}, {
+									from: 10,
+									to: 30,
+									color: 'rgba(19,64,117,0.4)'
+								}, {
+									from: 30,
+									to: 100,
+									color: 'rgba(19,64,117,0.5)'
+								}, {
+									from: 100,
+									to: 300,
+									color: 'rgba(19,64,117,0.6)'
+								}, {
+									from: 300,
+									to: 1000,
+									color: 'rgba(19,64,117,0.8)'
+								}, {
+									from: 1000,
+									color: 'rgba(19,64,117,1)'
+								}],
+								states: {
+									hover: {
+										color: '#DD6E28'
+									}
+								}
+							}]
+						};
+		
+						// Populate the data points
+						for (var i = 1; i < countryCodes.length; i++) {
+		
+							if (shapes[countryCodes[i]]) {
+								options.series[0].data.push({
+									y : populationDensities[i],
+									name : countryNames[i],
+									path : Highcharts.pathToArray(shapes[countryCodes[i]]),
+									states: {
+										hover: {
+											color: 'orange'
+										}
+									}
+								
+								});
+							}
+						}
+						
+						// Initiate the chart
+						chart = new Highcharts.Chart(options);
+				    }
+				});
 			});
 
 		</script>

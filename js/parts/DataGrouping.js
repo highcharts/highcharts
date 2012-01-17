@@ -234,10 +234,18 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
+		groupedData = series.groupedData,
 		hasGroupedData;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
+	
+	// clear previous groups, #622
+	each(groupedData || [], function (point, i) {
+		if (point) {
+			groupedData[i] = point.destroy ? point.destroy() : null;
+		}
+	});
 	
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series) === false || !groupingEnabled) {
@@ -251,9 +259,7 @@ seriesProto.processData = function () {
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
-		maxPoints = plotSizeX / groupPixelWidth,
 		dataLength = processedXData.length,
-		groupedData = series.groupedData,
 		chartSeries = chart.series;
 	
 
@@ -270,15 +276,8 @@ seriesProto.processData = function () {
 		
 	}
 
-	// clear previous groups
-	each(groupedData || [], function (point, i) {
-		if (point) {
-			groupedData[i] = point.destroy ? point.destroy() : null;
-		}
-	});
-
-	
-	if (dataLength > maxPoints || dataGroupingOptions.forced) {
+	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
+	if (dataLength > (plotSizeX / groupPixelWidth) || dataGroupingOptions.forced) {
 		hasGroupedData = true;
 
 		series.points = null; // force recreation of point instances in series.translate
@@ -286,12 +285,19 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			imaginedPlotWidth = // how wide would the plot are be if gaps were included?
+			imaginedPlotWidth = // how wide would the plot area be if gaps were included?
 				xAxis.options.ordinal ? 
 					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
 					plotSizeX, 
-			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
-			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
+			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,			
+			groupPositions = (xAxis.getNonLinearTimeTicks || getTimeTicks)(
+				normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
+				xMin, 
+				xMax, 
+				null, 
+				series.processedXData, 
+				series.closestPointRange
+			),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
 			groupedXData = groupedXandY[0],
 			groupedYData = groupedXandY[1];

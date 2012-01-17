@@ -919,19 +919,21 @@ Series.prototype = {
 			cropped,
 			distance,
 			closestPointRange,
+			xAxis = series.xAxis,
+			forceCrop = series.forceCrop || (xAxis && xAxis.options.ordinal),
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold; // todo: consider combining it with turboThreshold
 			
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
-		if (series.isCartesian && !series.isDirty && !series.xAxis.isDirty && !series.yAxis.isDirty) {
+		if (series.isCartesian && !series.isDirty && !xAxis.isDirty && !series.yAxis.isDirty) {
 			return false;
 		}
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
-			var extremes = series.xAxis.getExtremes(),
+		if (!cropThreshold || dataLength > cropThreshold || forceCrop) {
+			var extremes = xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max;
 
@@ -965,7 +967,7 @@ Series.prototype = {
 		}
 		
 		
-		// Find the closest distance between points
+		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i > 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (closestPointRange === UNDEFINED || distance < closestPointRange) {
@@ -1064,7 +1066,7 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries = series.index === series.yAxis.series.length - 1,
+			isLastSeries = series.index === yAxis.series.length - 1,
 			i;
 		
 		for (i = 0; i < dataLength; i++) {
@@ -1077,7 +1079,7 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = mathRound(series.xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
+			point.plotX = mathRound(xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1581,6 +1583,8 @@ Series.prototype = {
 				points = series.points,
 				seriesOptions = series.options,
 				options = seriesOptions.dataLabels,
+				pointOptions,
+				generalOptions,
 				str,
 				dataLabelsGroup = series.dataLabelsGroup,
 				chart = series.chart,
@@ -1591,7 +1595,6 @@ Series.prototype = {
 				renderer = chart.renderer,
 				inverted = chart.inverted,
 				seriesType = series.type,
-				color,
 				stacking = seriesOptions.stacking,
 				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
@@ -1631,84 +1634,104 @@ Series.prototype = {
 				dataLabelsGroup.translate(groupLeft, groupTop);
 			}
 
-			// determine the color
-			color = options.color;
-			if (color === 'auto') { // 1.0 backwards compatibility
-				color = null;
-			}
-			options.style.color = pick(color, series.color, 'black');
-
 			// make the labels for each point
+			generalOptions = options;
 			each(points, function (point) {
-				var barX = point.barX,
-					plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
-					plotY = pick(point.plotY, -999),
-					dataLabel = point.dataLabel,
-					align = options.align,
-					individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
-
-				// get the string
-				str = options.formatter.call(point.getLabelConfig());
-				x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
-				y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
-
-				// in columns, align the string to the column
-				if (seriesType === 'column') {
-					x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
+				
+				// Merge in individual options from point // docs
+				options = generalOptions; // reset changes from previous points
+				pointOptions = point.options;
+				if (pointOptions && pointOptions.dataLabels) {
+					options = merge(options, pointOptions.dataLabels);
 				}
-
-				if (inverted && point.y < 0) {
-					align = 'right';
-					x -= 10;
-				}
-
-				// update existing label
-				if (dataLabel) {
-					// vertically centered
-					if (inverted && !options.y) {
-						y = y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2;
+				
+				// Individual labels are disabled if the are explicitly disabled 
+				// in the point options
+				if (options.enabled) {
+				
+					// Get the string
+					str = options.formatter.call(point.getLabelConfig(), options);
+					
+					var barX = point.barX,
+						plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
+						plotY = pick(point.plotY, -999),
+						dataLabel = point.dataLabel,
+						align = options.align,
+						individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
+	
+					// Postprocess the positions
+					x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
+					y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
+					
+					// in columns, align the string to the column
+					if (seriesType === 'column') {
+						x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
 					}
-					dataLabel
+	
+					if (!stacking && inverted && point.y < 0) {
+						align = 'right';
+						x -= 10;
+					}
+					
+					// Determine the color
+					options.style.color = pick(options.color, options.style.color, series.color, 'black');
+	
+					
+					// update existing label
+					if (dataLabel) {
+						// vertically centered
+						if (inverted && !options.y) {
+							y = y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2;
+						}
+						dataLabel
+							.attr({
+								text: str
+							}).animate({
+								x: x,
+								y: y
+							});
+					// create new label
+					} else if (defined(str)) {
+						dataLabel = point.dataLabel = renderer.text(
+							str,
+							x,
+							y
+						)
 						.attr({
-							text: str
-						}).animate({
-							x: x,
-							y: y
-						});
-				// create new label
-				} else if (defined(str)) {
-					dataLabel = point.dataLabel = renderer.text(
-						str,
-						x,
-						y
-					)
-					.attr({
-						align: align,
-						rotation: options.rotation,
-						zIndex: 1
-					})
-					.css(options.style)
-					.add(dataLabelsGroup);
-					// vertically centered
-					if (inverted && !options.y) {
-						dataLabel.attr({
-							y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
-						});
+							align: align,
+							rotation: options.rotation,
+							zIndex: 1
+						})
+						.css(options.style)
+						.add(dataLabelsGroup);
+						// vertically centered
+						if (inverted && !options.y) {
+							dataLabel.attr({
+								y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
+							});
+						}
 					}
-				}
-
-				if (isBarLike && seriesOptions.stacking && dataLabel) {
-					var barY = point.barY,
-						barW = point.barW,
-						barH = point.barH;
-
-					dataLabel.align(options, null,
-						{
-							x: inverted ? chart.plotWidth - barY - barH : barX,
-							y: inverted ? chart.plotHeight - barX - barW : barY,
-							width: inverted ? barH : barW,
-							height: inverted ? barW : barH
-						});
+					
+					// Hide labels outside the plot area. #678
+					if (series.isCartesian) {
+						dataLabel[chart.isInsidePlot(x, y) ? 'show' : 'hide']();
+					}
+	
+					if (isBarLike && seriesOptions.stacking && dataLabel) {
+						var barY = point.barY,
+							barW = point.barW,
+							barH = point.barH;
+	
+						dataLabel.align(options, null,
+							{
+								x: inverted ? chart.plotWidth - barY - barH : barX,
+								y: inverted ? chart.plotHeight - barX - barW : barY,
+								width: inverted ? barH : barW,
+								height: inverted ? barW : barH
+							});
+					}
+					
+					
 				}
 			});
 		}
@@ -1914,7 +1937,7 @@ Series.prototype = {
 			}
 
 			if (doClip) {
-				group.clip(series.clipRect);
+				group.clip(clipRect);
 			}
 			group.attr({
 					visibility: series.visible ? VISIBLE : HIDDEN,
@@ -2152,11 +2175,13 @@ Series.prototype = {
 			trackerPath = [].concat(series.graphPath),
 			trackerPathLength = trackerPath.length,
 			chart = series.chart,
+			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
+			group,
 			singlePoint,
 			i;
 
@@ -2186,7 +2211,11 @@ Series.prototype = {
 			tracker.attr({ d: trackerPath });
 
 		} else { // create
-			series.tracker = chart.renderer.path(trackerPath)
+			group = renderer.g()
+				.clip(series.clipRect)
+				.add(chart.trackerGroup);
+				
+			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
 					stroke: TRACKER_FILL,
@@ -2206,7 +2235,7 @@ Series.prototype = {
 					}
 				})
 				.css(css)
-				.add(chart.trackerGroup);
+				.add(group);
 		}
 
 	}

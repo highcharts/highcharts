@@ -37,6 +37,7 @@ $(function() {
 				name : 'AAPL',
 				type: 'area',
 				data : data,
+				gapSize: 5,
 				tooltip: {
 					yDecimals: 2
 				},

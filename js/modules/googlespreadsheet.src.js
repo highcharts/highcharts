@@ -16,6 +16,8 @@
  * for series data. The first row is used for series names. 
  * 
  * Options:
+ * - columns (Function): A callback function for custom handling of the columns of the 
+ *   spreadsheet before the Highcharts options are automatically built. 
  * - complete (Function): The callback function to execute when the data is 
  *   parsed. The options are passed in as the first argument and can be 
  *   extended by Highcharts.merge().
@@ -92,38 +94,48 @@
                 columns[cell.gs$cell[COL] - 1][cell.gs$cell[ROW] - 1] = 
                     cell.content.$t;
             }
-        
-            // Use the first column for categories
-            var categories = columns.shift();
-            categories.shift(); // remove the first cell
             
-            // Use the next columns for series
-            var series = [],
-                data,
-                name;
-            for (i = 0; i < columns.length; i++) {
-                name = columns[i].shift();
-                data = [];
-                for (var j = 0; j < columns[i].length; j++) {
-                    data[j] = columns[i][j] !== undefined ?
-                        parseInt(columns[i][j]) :
-                        null
-                }
-                series[i] = {
-                    name: name,
-                    data: data
-                };
+            // If a user defined columns function exists, pass them over
+            if (options.columns) {
+            	options.columns(columns);
             }
-            
-            options.complete({
-                xAxis: {
-                    categories: categories
-                },
-                series: series,
-                title: {
-                    text: json.feed.title.$t
-                }
-            });
+        
+        
+        	// If a user defined complete function exists, parse the columns 
+        	// into a Highcharts options object.
+        	if (options.complete) {
+        		// Use the first column for categories
+	            var categories = columns.shift();
+	            categories.shift(); // remove the first cell
+	            
+	            // Use the next columns for series
+	            var series = [],
+	                data,
+	                name;
+	            for (i = 0; i < columns.length; i++) {
+	                name = columns[i].shift();
+	                data = [];
+	                for (var j = 0; j < columns[i].length; j++) {
+	                    data[j] = columns[i][j] !== undefined ?
+	                        parseInt(columns[i][j]) :
+	                        null
+	                }
+	                series[i] = {
+	                    name: name,
+	                    data: data
+	                };
+	            }
+	            
+	            options.complete({
+	                xAxis: {
+	                    categories: categories
+	                },
+	                series: series,
+	                title: {
+	                    text: json.feed.title.$t
+	                }
+	            });
+	        }
         });
    };
 })(Highcharts);

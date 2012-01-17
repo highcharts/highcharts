@@ -109,7 +109,9 @@ if (!globalAdapter && win.jQuery) {
 	 */
 	fireEvent = function (el, type, eventArguments, defaultFunction) {
 		var event = jQ.Event(type),
-			detachedType = 'detached' + type;
+			detachedType = 'detached' + type,
+			defaultPrevented;
+			
 		extend(event, eventArguments);
 
 		// Prevent jQuery from triggering the object method that is named the
@@ -119,6 +121,22 @@ if (!globalAdapter && win.jQuery) {
 			el[detachedType] = el[type];
 			el[type] = null;
 		}
+		
+		// Wrap preventDefault and stopPropagation in try/catch blocks in
+		// order to prevent JS errors when cancelling events on non-DOM
+		// objects. #615.
+		each(['preventDefault', 'stopPropagation'], function (fn) {
+			var base = event[fn];
+			event[fn] = function () {
+				try {
+					base.call(event);
+				} catch (e) {
+					if (fn === 'preventDefault') {
+						defaultPrevented = true;
+					}
+				}
+			};
+		});
 
 		// trigger it
 		jQ(el).trigger(event);
@@ -129,7 +147,7 @@ if (!globalAdapter && win.jQuery) {
 			el[detachedType] = null;
 		}
 
-		if (defaultFunction && !event.isDefaultPrevented()) {
+		if (defaultFunction && !event.isDefaultPrevented() && !defaultPrevented) {
 			defaultFunction(event);
 		}
 	};
