@@ -8545,7 +8545,8 @@ function Chart(options, callback) {
 	zoom = function (event) {
 
 		// add button to reset selection
-		var animate = chart.pointCount < 100;
+		var animate = chart.pointCount < 100,
+			hasZoomed;
 
 		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
 			showResetZoom();
@@ -8555,7 +8556,8 @@ function Chart(options, callback) {
 		if (!event || event.resetSelection) {
 			each(axes, function (axis) {
 				if (axis.options.zoomEnabled !== false) {
-					axis.setExtremes(null, null, true, animate);
+					axis.setExtremes(null, null, false);
+					hasZoomed = true;
 				}
 			});
 		} else { // else, zoom in on all axes
@@ -8564,9 +8566,15 @@ function Chart(options, callback) {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, true, animate);
+					axis.setExtremes(axisData.min, axisData.max, false);
+					hasZoomed = true;
 				}
 			});
+		}
+		
+		// Redraw
+		if (hasZoomed) {
+			redraw(true, animate);
 		}
 	};
 
@@ -13044,10 +13052,18 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
+		groupedData = series.groupedData,
 		hasGroupedData;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
+	
+	// clear previous groups, #622
+	each(groupedData || [], function (point, i) {
+		if (point) {
+			groupedData[i] = point.destroy ? point.destroy() : null;
+		}
+	});
 	
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series) === false || !groupingEnabled) {
@@ -13062,7 +13078,6 @@ seriesProto.processData = function () {
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
 		dataLength = processedXData.length,
-		groupedData = series.groupedData,
 		chartSeries = chart.series;
 	
 
@@ -13078,13 +13093,6 @@ seriesProto.processData = function () {
 		xAxis.groupPixelWidth = groupPixelWidth;
 		
 	}
-
-	// clear previous groups
-	each(groupedData || [], function (point, i) {
-		if (point) {
-			groupedData[i] = point.destroy ? point.destroy() : null;
-		}
-	});
 
 	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 	if (dataLength > (plotSizeX / groupPixelWidth) || dataGroupingOptions.forced) {

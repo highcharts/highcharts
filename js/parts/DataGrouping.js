@@ -234,10 +234,18 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
+		groupedData = series.groupedData,
 		hasGroupedData;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
+	
+	// clear previous groups, #622
+	each(groupedData || [], function (point, i) {
+		if (point) {
+			groupedData[i] = point.destroy ? point.destroy() : null;
+		}
+	});
 	
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series) === false || !groupingEnabled) {
@@ -252,7 +260,6 @@ seriesProto.processData = function () {
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
 		dataLength = processedXData.length,
-		groupedData = series.groupedData,
 		chartSeries = chart.series;
 	
 
@@ -268,13 +275,6 @@ seriesProto.processData = function () {
 		xAxis.groupPixelWidth = groupPixelWidth;
 		
 	}
-
-	// clear previous groups
-	each(groupedData || [], function (point, i) {
-		if (point) {
-			groupedData[i] = point.destroy ? point.destroy() : null;
-		}
-	});
 
 	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 	if (dataLength > (plotSizeX / groupPixelWidth) || dataGroupingOptions.forced) {

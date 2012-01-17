@@ -8545,7 +8545,8 @@ function Chart(options, callback) {
 	zoom = function (event) {
 
 		// add button to reset selection
-		var animate = chart.pointCount < 100;
+		var animate = chart.pointCount < 100,
+			hasZoomed;
 
 		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
 			showResetZoom();
@@ -8555,7 +8556,8 @@ function Chart(options, callback) {
 		if (!event || event.resetSelection) {
 			each(axes, function (axis) {
 				if (axis.options.zoomEnabled !== false) {
-					axis.setExtremes(null, null, true, animate);
+					axis.setExtremes(null, null, false);
+					hasZoomed = true;
 				}
 			});
 		} else { // else, zoom in on all axes
@@ -8564,9 +8566,15 @@ function Chart(options, callback) {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, true, animate);
+					axis.setExtremes(axisData.min, axisData.max, false);
+					hasZoomed = true;
 				}
 			});
+		}
+		
+		// Redraw
+		if (hasZoomed) {
+			redraw(true, animate);
 		}
 	};
 
