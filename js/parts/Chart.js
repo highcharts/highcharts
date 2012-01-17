@@ -3512,8 +3512,7 @@ function Chart(options, callback) {
 
 		// search points
 		for (i = 0; i < series.length; i++) {
-			points = series[i].points;
-			if(typeof points === "undefined" || points === null) continue;
+			points = series[i].points || [];
 			for (j = 0; j < points.length; j++) {
 				if (points[j].id === id) {
 					return points[j];
