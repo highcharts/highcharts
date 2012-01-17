@@ -175,6 +175,11 @@
                 </replacetokens>
             </filterchain>
         </concat>
+
+        <!-- Concat canvg library together with rgbcolor script -->
+        <concat destfile="build/rgbcanvg.src.js">
+            <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
+        </concat>
     </target>
 
     <!-- This target convert any mixed line endings to crlf. -->
@@ -258,6 +263,11 @@
         <antcall target="compile">
             <param name="param.src" value="${exporting.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="build/rgbcanvg.src.js"/>
+            <param name="param.out" value="build/rgbcanvg.js"/>
         </antcall>
     </target>
 
