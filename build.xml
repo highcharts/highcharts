@@ -177,7 +177,7 @@
         </concat>
 
         <!-- Concat canvg library together with rgbcolor script -->
-        <concat destfile="build/rgbcanvg.src.js">
+        <concat destfile="build/rgbcolor-canvg.src.js">
             <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
         </concat>
     </target>
@@ -266,8 +266,8 @@
         </antcall>
 
         <antcall target="compile">
-            <param name="param.src" value="build/rgbcanvg.src.js"/>
-            <param name="param.out" value="build/rgbcanvg.js"/>
+            <param name="param.src" value="build/rgbcolor-canvg.src.js"/>
+            <param name="param.out" value="build/rgbcolor-canvg.js"/>
         </antcall>
     </target>
 
