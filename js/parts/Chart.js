@@ -468,6 +468,7 @@ function Chart(options, callback) {
 		 */
 		render: function () {
 			var plotLine = this,
+				halfPointRange = axis.pointRange / 2,
 				options = plotLine.options,
 				optionsLabel = options.label,
 				label = plotLine.label,
@@ -509,8 +510,8 @@ function Chart(options, callback) {
 				}
 			} else if (defined(from) && defined(to)) { // plot band
 				// keep within plot area
-				from = mathMax(from, min);
-				to = mathMin(to, max);
+				from = mathMax(from, min - halfPointRange);
+				to = mathMin(to, max + halfPointRange);
 
 				toPath = getPlotLinePath(to);
 				path = getPlotLinePath(from);
