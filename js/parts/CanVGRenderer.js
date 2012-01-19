@@ -4,20 +4,23 @@
  * TARGETING THAT SYSTEM.                                                     *
  *                                                                            *
  *****************************************************************************/
+var CanVGRenderer,
+	CanVGController;
+
 if (useCanVG) {
 	/**
 	 * The CanVGRenderer is empty from start to keep the source footprint small.
 	 * When requested, the CanVGController downloads the rest of the source packaged
 	 * together with the canvg library.
 	 */
-	var CanVGRenderer = function () {
+	CanVGRenderer = function () {
 		// Empty constructor
 	};
 
 	/**
 	 * Handles on demand download of canvg rendering support.
 	 */
-	var CanVGController = (function () {
+	CanVGController = (function () {
 		// List of renderering calls
 		var deferredRenderCalls = [];
 
