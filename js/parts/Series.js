@@ -1593,7 +1593,9 @@ Series.prototype = {
 				stacking = seriesOptions.stacking,
 				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
-				yIsNull = options.y === null;
+				yIsNull = options.y === null,
+				dataLabel,
+				isOutside;
 
 			if (isBarLike) {
 				if (stacking) {
@@ -1633,6 +1635,8 @@ Series.prototype = {
 			generalOptions = options;
 			each(points, function (point) {
 				
+				dataLabel = point.dataLabel;
+				
 				// Merge in individual options from point // docs
 				options = generalOptions; // reset changes from previous points
 				pointOptions = point.options;
@@ -1640,9 +1644,13 @@ Series.prototype = {
 					options = merge(options, pointOptions.dataLabels);
 				}
 				
+				// If the point is outside the plot area, destroy it. #678
+				if (dataLabel && series.isCartesian && !chart.isInsidePlot(point.plotX, point.plotY)) {
+					point.dataLabel = dataLabel.destroy();
+				
 				// Individual labels are disabled if the are explicitly disabled 
-				// in the point options
-				if (options.enabled) {
+				// in the point options, or if they fall outside the plot area.
+				} else if (options.enabled) {
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
@@ -1650,7 +1658,6 @@ Series.prototype = {
 					var barX = point.barX,
 						plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 						plotY = pick(point.plotY, -999),
-						dataLabel = point.dataLabel,
 						align = options.align,
 						individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
 	
@@ -1705,11 +1712,6 @@ Series.prototype = {
 								y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
 							});
 						}
-					}
-					
-					// Hide labels outside the plot area. #678
-					if (series.isCartesian) {
-						dataLabel[chart.isInsidePlot(x, y) ? 'show' : 'hide']();
 					}
 	
 					if (isBarLike && seriesOptions.stacking && dataLabel) {
