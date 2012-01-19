@@ -5470,6 +5470,7 @@ function Chart(options, callback) {
 		 */
 		render: function () {
 			var plotLine = this,
+				halfPointRange = axis.pointRange / 2,
 				options = plotLine.options,
 				optionsLabel = options.label,
 				label = plotLine.label,
@@ -5511,8 +5512,8 @@ function Chart(options, callback) {
 				}
 			} else if (defined(from) && defined(to)) { // plot band
 				// keep within plot area
-				from = mathMax(from, min);
-				to = mathMin(to, max);
+				from = mathMax(from, min - halfPointRange);
+				to = mathMin(to, max + halfPointRange);
 
 				toPath = getPlotLinePath(to);
 				path = getPlotLinePath(from);
@@ -7774,16 +7775,16 @@ function Chart(options, callback) {
 		placeTrackerGroup();
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
+			
+			// set the fixed interval ticking for the smooth tooltip
+			tooltipInterval = setInterval(function () {
+				if (tooltipTick) {
+					tooltipTick();
+				}
+			}, 32);
 		}
 
 		setDOMEvents();
-
-		// set the fixed interval ticking for the smooth tooltip
-		tooltipInterval = setInterval(function () {
-			if (tooltipTick) {
-				tooltipTick();
-			}
-		}, 32);
 
 		// expose properties
 		extend(this, {
@@ -8538,7 +8539,7 @@ function Chart(options, callback) {
 
 		// search points
 		for (i = 0; i < series.length; i++) {
-			points = series[i].points;
+			points = series[i].points || [];
 			for (j = 0; j < points.length; j++) {
 				if (points[j].id === id) {
 					return points[j];
@@ -11159,7 +11160,8 @@ Series.prototype = {
 				stacking = seriesOptions.stacking,
 				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
-				yIsNull = options.y === null;
+				yIsNull = options.y === null,
+				dataLabel;
 
 			if (isBarLike) {
 				if (stacking) {
@@ -11199,6 +11201,8 @@ Series.prototype = {
 			generalOptions = options;
 			each(points, function (point) {
 				
+				dataLabel = point.dataLabel;
+				
 				// Merge in individual options from point // docs
 				options = generalOptions; // reset changes from previous points
 				pointOptions = point.options;
@@ -11206,9 +11210,13 @@ Series.prototype = {
 					options = merge(options, pointOptions.dataLabels);
 				}
 				
+				// If the point is outside the plot area, destroy it. #678
+				if (dataLabel && series.isCartesian && !chart.isInsidePlot(point.plotX, point.plotY)) {
+					point.dataLabel = dataLabel.destroy();
+				
 				// Individual labels are disabled if the are explicitly disabled 
-				// in the point options
-				if (options.enabled) {
+				// in the point options, or if they fall outside the plot area.
+				} else if (options.enabled) {
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
@@ -11216,7 +11224,6 @@ Series.prototype = {
 					var barX = point.barX,
 						plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 						plotY = pick(point.plotY, -999),
-						dataLabel = point.dataLabel,
 						align = options.align,
 						individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
 	
@@ -11271,11 +11278,6 @@ Series.prototype = {
 								y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
 							});
 						}
-					}
-					
-					// Hide labels outside the plot area. #678
-					if (series.isCartesian) {
-						dataLabel[chart.isInsidePlot(x, y) ? 'show' : 'hide']();
 					}
 	
 					if (isBarLike && seriesOptions.stacking && dataLabel) {
@@ -15805,8 +15807,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					
 				// The positions are not always defined, for example for ordinal positions when data
 				// has regular interval
-				if (!positions) {
-					return getTimeTicks.apply(0, arguments);
+				if (!positions || min === UNDEFINED) {
+					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
 				}
 				
 				// Analyze the positions array to split it into segments on gaps larger than 5 times
@@ -15873,6 +15875,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				
 				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
 					var i = tickPositions.length,
+						itemToRemove,
 						translated,
 						lastTranslated,
 						tickInfo = tickPositions.info,
@@ -15881,19 +15884,24 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					while (i--) {
 						translated = xAxis.translate(tickPositions[i]);
 						
-						// remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
+						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
 						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.6) {
 							
+							// Is this a higher ranked position with a normal position to the right?
+							if (higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]]) {
+								
+								// Yes: remove the lower ranked neighbour to the right
+								itemToRemove = i + 1;
+								lastTranslated = translated; // #709
+								
+							} else {
+								
+								// No: remove this one
+								itemToRemove = i;
+							}
 							
-							tickPositions.splice(
-								// is this a higher ranked position with a normal position to the right?
-								higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]] ?
-									// yes: remove the lower ranked neighbour to the right
-									i + 1 :
-									// no: remove this one
-									i,
-								1
-							);
+							tickPositions.splice(itemToRemove, 1);
+							
 						} else {
 							lastTranslated = translated;
 						}

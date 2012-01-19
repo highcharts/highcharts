@@ -202,14 +202,17 @@
         </jslint>
 
         <!-- Set a property that tells if there are unused variables. -->
-        <condition property="unused.variables.exists">
-            <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
+        <condition property="lint.variable.error">
+        	<or>
+            	<resourcecontains resource="${build.dir}/lintreport.html" substring="Undefined variable"/>
+            	<resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
+            </or>
         </condition>
     </target>
 
     <!-- This target is only run if there are unused variables. -->
-    <target name="lint" depends="do-lint" if="unused.variables.exists">
-        <echo message="Warning: unused variables exists. See build/lintreport.html"/>
+    <target name="lint" depends="do-lint" if="lint.variable.error">
+        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'"/>
     </target>
 
     <!-- Runs google closure compiler and yui compressor on src. -->
