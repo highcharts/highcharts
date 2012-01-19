@@ -375,6 +375,7 @@
 				
 				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
 					var i = tickPositions.length,
+						itemToRemove,
 						translated,
 						lastTranslated,
 						tickInfo = tickPositions.info,
@@ -383,19 +384,24 @@
 					while (i--) {
 						translated = xAxis.translate(tickPositions[i]);
 						
-						// remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
+						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
 						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.6) {
 							
+							// Is this a higher ranked position with a normal position to the right?
+							if (higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]]) {
+								
+								// Yes: remove the lower ranked neighbour to the right
+								itemToRemove = i + 1;
+								lastTranslated = translated; // #709
+								
+							} else {
+								
+								// No: remove this one
+								itemToRemove = i;
+							}
 							
-							tickPositions.splice(
-								// is this a higher ranked position with a normal position to the right?
-								higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]] ?
-									// yes: remove the lower ranked neighbour to the right
-									i + 1 :
-									// no: remove this one
-									i,
-								1
-							);
+							tickPositions.splice(itemToRemove, 1);
+							
 						} else {
 							lastTranslated = translated;
 						}
