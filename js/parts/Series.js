@@ -1594,8 +1594,7 @@ Series.prototype = {
 				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
 				yIsNull = options.y === null,
-				dataLabel,
-				isOutside;
+				dataLabel;
 
 			if (isBarLike) {
 				if (stacking) {
