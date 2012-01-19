@@ -330,17 +330,15 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 	var normalized, i;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
-	//magnitude = multiples ? 1 : math.pow(10, mathFloor(math.log(interval) / math.LN10));
 	magnitude = pick(magnitude, 1);
 	normalized = interval / magnitude;
 
 	// multiples for a linear scale
 	if (!multiples) {
 		multiples = [1, 2, 2.5, 5, 10];
-		//multiples = [1, 2, 2.5, 4, 5, 7.5, 10];
 
 		// the allowDecimals option
-		if (options && (options.allowDecimals === false || options.type === 'logarithmic')) {
+		if (options && options.allowDecimals === false) {
 			if (magnitude === 1) {
 				multiples = [1, 2, 5, 10];
 			} else if (magnitude <= 0.1) {
