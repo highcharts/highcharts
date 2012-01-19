@@ -1194,11 +1194,11 @@ function Chart(options, callback) {
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
 					tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
-						normalizeTimeTickInterval(tickInterval, options.units), 
-						min, 
-						max, 
+						normalizeTimeTickInterval(tickInterval, options.units),
+						min,
+						max,
 						options.startOfWeek,
-						axis.ordinalPositions, 
+						axis.ordinalPositions,
 						axis.closestPointRange,
 						true
 					);
@@ -1969,7 +1969,7 @@ function Chart(options, callback) {
 			.add();
 
 		// When using canVG the shadow shows up as a gray circle
-		// even if the tooltip is
+		// even if the tooltip is hidden.
 		if (!useCanVG) {
 			label.shadow(options.shadow);
 		}
@@ -3666,7 +3666,7 @@ function Chart(options, callback) {
 				}
 			});
 		}
-		
+
 		// Redraw
 		if (hasZoomed) {
 			redraw(true, animate);
@@ -3816,10 +3816,10 @@ function Chart(options, callback) {
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
 
-		// If we need canvg library, start the download here.
 		if (useCanVG) {
-			renderer.configure(chart); // To get the tracker for translating mouse events
-			renderer.download(options.global.canvgUrl);
+			// If we need canvg library, extend and configure the renderer
+			// to get the tracker for translating mouse events
+			renderer.create(chart, container, chartWidth, chartHeight);
 		}
 
 		// Issue 110 workaround:
@@ -4390,21 +4390,26 @@ function Chart(options, callback) {
 	 * Prepare for first rendering after all data are loaded
 	 */
 	function firstRender() {
-
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
 		var ONREADYSTATECHANGE = 'onreadystatechange',
 		COMPLETE = 'complete';
 		// Note: in spite of JSLint's complaints, win == win.top is required
 		/*jslint eqeq: true*/
-		if (!hasSVG && !useCanVG && win == win.top && doc.readyState !== COMPLETE) {
+		if ((!hasSVG && (win == win.top && doc.readyState !== COMPLETE)) || (useCanVG && !win.canvg)) {
 		/*jslint eqeq: false*/
-			doc.attachEvent(ONREADYSTATECHANGE, function () {
-				doc.detachEvent(ONREADYSTATECHANGE, firstRender);
-				if (doc.readyState === COMPLETE) {
-					firstRender();
-				}
-			});
+			if (useCanVG) {
+				// Delay rendering until canvg library is downloaded and ready
+				CanVGController.push(firstRender);
+				CanVGController.download(options.global.canvgUrl);
+			} else {
+				doc.attachEvent(ONREADYSTATECHANGE, function () {
+					doc.detachEvent(ONREADYSTATECHANGE, firstRender);
+					if (doc.readyState === COMPLETE) {
+						firstRender();
+					}
+				});
+			}
 			return;
 		}
 

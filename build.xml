@@ -179,6 +179,7 @@
         <!-- Concat canvg library together with rgbcolor script -->
         <concat destfile="build/rgbcolor-canvg.src.js">
             <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
+            <filelist dir="js/modules/" files="canvgrenderer-extended.src.js"/>
         </concat>
     </target>
 

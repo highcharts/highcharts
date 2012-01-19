@@ -30,6 +30,7 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
+	placeBox: placeBox,
 	product: '@product.name@',
 	version: '@product.version@'
 });
