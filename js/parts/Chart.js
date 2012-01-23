@@ -1056,7 +1056,7 @@ function Chart(options, callback) {
 					lastPos;
 					
 				if (tickInterval > 0.3) {
-					intermediate = [1, 2, 5];
+					intermediate = [1, 2, 4];
 				} else {
 					intermediate = [1, 2, 4, 6, 8];
 				}
