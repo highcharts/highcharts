@@ -7162,9 +7162,6 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit &&
-					doc.width / doc.body.scrollWidth -
-					1, // #224, #348
 				chartPosLeft,
 				chartPosTop,
 				chartX,
@@ -7201,12 +7198,6 @@ function Chart(options, callback) {
 			} else {
 				chartX = ePos.pageX - chartPosLeft;
 				chartY = ePos.pageY - chartPosTop;
-			}
-
-			// correct for page zoom bug in WebKit
-			if (pageZoomFix) {
-				chartX += mathRound((pageZoomFix + 1) * chartPosLeft - chartPosLeft);
-				chartY += mathRound((pageZoomFix + 1) * chartPosTop - chartPosTop);
 			}
 
 			return extend(e, {
