@@ -5147,13 +5147,12 @@ function Chart(options, callback) {
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
 					label = tick.label,
-					tickPositionInfo,
+					tickPositionInfo = tickPositions.info,
 					dateTimeLabelFormat;
 
 				// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 				// use the general format.
-				if (isDatetimeAxis) {
-					tickPositionInfo = tickPositions.info;
+				if (isDatetimeAxis && tickPositionInfo) {
 					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 				}
 
