@@ -100,6 +100,7 @@ var UNDEFINED,
 	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 	// and all the utility functions will be null. In that case they are populated by the
 	// default adapters below.
+	getScript = adapter.getScript,
 	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
