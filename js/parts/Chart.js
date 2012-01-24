@@ -12,7 +12,6 @@ function Chart(options, callback) {
 	options = merge(defaultOptions, options); // do the merge
 	options.series = seriesOptions; // set back the series data
 
-	// Define chart variables
 	var optionsChart = options.chart,
 		optionsMargin = optionsChart.margin,
 		margin = isObject(optionsMargin) ?
@@ -2773,7 +2772,7 @@ function Chart(options, callback) {
 		placeTrackerGroup();
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
-			
+
 			// set the fixed interval ticking for the smooth tooltip
 			tooltipInterval = setInterval(function () {
 				if (tooltipTick) {
@@ -4401,8 +4400,7 @@ function Chart(options, callback) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(firstRender);
-				CanVGController.download(options.global.canvgUrl);
+				CanVGController.push(firstRender, options.global.canvgUrl);
 			} else {
 				doc.attachEvent(ONREADYSTATECHANGE, function () {
 					doc.detachEvent(ONREADYSTATECHANGE, firstRender);

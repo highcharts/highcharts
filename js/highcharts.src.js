@@ -4964,27 +4964,38 @@ if (useCanVG) {
 		 * When downloaded, we are ready to draw deferred charts.
 		 */
 		function drawDeferred() {
-			each(deferredRenderCalls, function (fn) {
-				fn();
-				erase(deferredRenderCalls, fn);
-			});
+			var callLength = deferredRenderCalls.length,
+				callIndex;
+
+			// Draw all pending render calls
+			for (callIndex = 0; callIndex < callLength; callIndex++) {
+				deferredRenderCalls[callIndex]();
+			}
+			// Clear the list
+			deferredRenderCalls = [];
+		}
+
+		/**
+		 * Download the complete canvg renderer.
+		 */
+		function download(scriptLocation) {
+			var head = doc.getElementsByTagName('head')[0],
+				scriptAttributes = {
+					type: 'text/javascript',
+					src: scriptLocation,
+					onload: drawDeferred
+				};
+
+			createElement('script', scriptAttributes, null, head);
 		}
 
 		return {
-			push: function (func) {
+			push: function (func, scriptLocation) {
+				// Only get the script once
+				if (deferredRenderCalls.length === 0) {
+					download(scriptLocation);
+				}
 				deferredRenderCalls.push(func);
-			},
-			download: function (scriptLocation) {
-				var head = doc.getElementsByTagName('head')[0],
-					scriptAttributes = {
-						type: 'text/javascript',
-						src: scriptLocation,
-						onload: function () {
-							drawDeferred();
-						}
-					};
-
-				createElement('script', scriptAttributes, null, head);
 			}
 		};
 	}());
@@ -5014,7 +5025,6 @@ function Chart(options, callback) {
 	options = merge(defaultOptions, options); // do the merge
 	options.series = seriesOptions; // set back the series data
 
-	// Define chart variables
 	var optionsChart = options.chart,
 		optionsMargin = optionsChart.margin,
 		margin = isObject(optionsMargin) ?
@@ -7775,7 +7785,7 @@ function Chart(options, callback) {
 		placeTrackerGroup();
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
-			
+
 			// set the fixed interval ticking for the smooth tooltip
 			tooltipInterval = setInterval(function () {
 				if (tooltipTick) {
@@ -9403,8 +9413,7 @@ function Chart(options, callback) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(firstRender);
-				CanVGController.download(options.global.canvgUrl);
+				CanVGController.push(firstRender, options.global.canvgUrl);
 			} else {
 				doc.attachEvent(ONREADYSTATECHANGE, function () {
 					doc.detachEvent(ONREADYSTATECHANGE, firstRender);
