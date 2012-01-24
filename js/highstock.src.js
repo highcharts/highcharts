@@ -5233,13 +5233,12 @@ function Chart(options, callback) {
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
 					label = tick.label,
-					tickPositionInfo,
+					tickPositionInfo = tickPositions.info,
 					dateTimeLabelFormat;
 
 				// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 				// use the general format.
-				if (isDatetimeAxis) {
-					tickPositionInfo = tickPositions.info;
+				if (isDatetimeAxis && tickPositionInfo) {
 					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 				}
 
@@ -7261,9 +7260,6 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit &&
-					doc.width / doc.body.scrollWidth -
-					1, // #224, #348
 				chartPosLeft,
 				chartPosTop,
 				chartX,
@@ -7300,12 +7296,6 @@ function Chart(options, callback) {
 			} else {
 				chartX = ePos.pageX - chartPosLeft;
 				chartY = ePos.pageY - chartPosTop;
-			}
-
-			// correct for page zoom bug in WebKit
-			if (pageZoomFix) {
-				chartX += mathRound((pageZoomFix + 1) * chartPosLeft - chartPosLeft);
-				chartY += mathRound((pageZoomFix + 1) * chartPosTop - chartPosTop);
 			}
 
 			return extend(e, {
@@ -13224,17 +13214,14 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			imaginedPlotWidth = // how wide would the plot area be if gaps were included?
-				xAxis.options.ordinal ? 
-					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
-					plotSizeX, 
-			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,			
+			groupIntervalFactor = (xAxis.getGroupIntervalFactor && xAxis.getGroupIntervalFactor(xMin, xMax, processedXData)) || 1,
+			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,			
 			groupPositions = (xAxis.getNonLinearTimeTicks || getTimeTicks)(
 				normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
 				xMin, 
 				xMax, 
 				null, 
-				series.processedXData, 
+				processedXData, 
 				series.closestPointRange
 			),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
@@ -15778,6 +15765,48 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					ordinalIndex[key] = fakeAxis.ordinalPositions;
 				}
 				return ordinalIndex[key];
+			};
+			
+			/**
+			 * Find the factor to estimate how wide the plot area would have been if ordinal
+			 * gaps were included. This value is used to compute an imagined plot width in order
+			 * to establish the data grouping interval. 
+			 * 
+			 * A real world case is the intraday-candlestick
+			 * example. Without this logic, it would show the correct data grouping when viewing
+			 * a range within each day, but once moving the range to include the gap between two
+			 * days, the interval would include the cut-away night hours and the data grouping
+			 * would be wrong. So the below method tries to compensate by identifying the most
+			 * common point interval, in this case days. 
+			 * 
+			 * An opposite case is presented in issue #718. We have a long array of daily data,
+			 * then one point is appended one hour after the last point. We expect the data grouping
+			 * not to change.
+			 * 
+			 * In the future, if we find cases where this estimation doesn't work optimally, we
+			 * might need to add a second pass to the data grouping logic, where we do another run
+			 * with a greater interval if the number of data groups is more than a certain fraction
+			 * of the desired group count.
+			 */
+			xAxis.getGroupIntervalFactor = function (xMin, xMax, processedXData) {
+				var i = 0,
+					len = processedXData.length, 
+					distances = [],
+					median;
+					
+				// Register all the distances in an array
+				for (; i < len - 1; i++) {
+					distances[i] = processedXData[i + 1] - processedXData[i];
+				}
+				
+				// Sort them and find the median
+				distances.sort(function (a, b) {
+					return a - b;
+				});
+				median = distances[mathFloor(len / 2)];
+				
+				// Return the factor needed for data grouping
+				return (len * median) / (xMax - xMin);
 			};
 			
 			/**

@@ -491,8 +491,8 @@
         <!-- mootools versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="mootools-1.4.2"/>
-            <param name="required.lib" value="mootools-core-1.4.2-full-nocompat.js"/>
+            <param name="testrun.name" value="mootools-1.4.3"/>
+            <param name="required.lib" value="mootools-core-1.4.3-full-nocompat.js"/>
             <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
         </antcall>
         <antcall target="test-specific-lib">
