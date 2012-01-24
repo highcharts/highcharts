@@ -277,6 +277,48 @@
 			};
 			
 			/**
+			 * Find the factor to estimate how wide the plot area would have been if ordinal
+			 * gaps were included. This value is used to compute an imagined plot width in order
+			 * to establish the data grouping interval. 
+			 * 
+			 * A real world case is the intraday-candlestick
+			 * example. Without this logic, it would show the correct data grouping when viewing
+			 * a range within each day, but once moving the range to include the gap between two
+			 * days, the interval would include the cut-away night hours and the data grouping
+			 * would be wrong. So the below method tries to compensate by identifying the most
+			 * common point interval, in this case days. 
+			 * 
+			 * An opposite case is presented in issue #718. We have a long array of daily data,
+			 * then one point is appended one hour after the last point. We expect the data grouping
+			 * not to change.
+			 * 
+			 * In the future, if we find cases where this estimation doesn't work optimally, we
+			 * might need to add a second pass to the data grouping logic, where we do another run
+			 * with a greater interval if the number of data groups is more than a certain fraction
+			 * of the desired group count.
+			 */
+			xAxis.getGroupIntervalFactor = function (xMin, xMax, processedXData) {
+				var i = 0,
+					len = processedXData.length, 
+					distances = [],
+					median;
+					
+				// Register all the distances in an array
+				for (; i < len - 1; i++) {
+					distances[i] = processedXData[i + 1] - processedXData[i];
+				}
+				
+				// Sort them and find the median
+				distances.sort(function (a, b) {
+					return a - b;
+				});
+				median = distances[mathFloor(len / 2)];
+				
+				// Return the factor needed for data grouping
+				return (len * median) / (xMax - xMin);
+			};
+			
+			/**
 			 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 			 */
 			xAxis.postProcessTickInterval = function (tickInterval) {

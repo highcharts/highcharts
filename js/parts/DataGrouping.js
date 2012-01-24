@@ -285,17 +285,14 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			imaginedPlotWidth = // how wide would the plot area be if gaps were included?
-				xAxis.options.ordinal ? 
-					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
-					plotSizeX, 
-			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,			
+			groupIntervalFactor = (xAxis.getGroupIntervalFactor && xAxis.getGroupIntervalFactor(xMin, xMax, processedXData)) || 1,
+			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,			
 			groupPositions = (xAxis.getNonLinearTimeTicks || getTimeTicks)(
 				normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
 				xMin, 
 				xMax, 
 				null, 
-				series.processedXData, 
+				processedXData, 
 				series.closestPointRange
 			),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
