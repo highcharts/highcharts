@@ -7248,7 +7248,7 @@ function Chart(options, callback) {
 			mouseDownY,
 			hasDragged,
 			selectionMarker,
-			zoomType = optionsChart.zoomType,
+			zoomType = useCanVG ? '' : optionsChart.zoomType,
 			zoomX = /x/.test(zoomType),
 			zoomY = /y/.test(zoomType),
 			zoomHor = (zoomX && !inverted) || (zoomY && inverted),
