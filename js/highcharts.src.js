@@ -38,7 +38,7 @@ var UNDEFINED,
 	isFirefox = /Firefox/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
-	hasRtlBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== UNDEFINED,
 	symbolSizes = {},
@@ -1903,7 +1903,9 @@ SVGElement.prototype = {
 	 */
 	init: function (renderer, nodeName) {
 		var wrapper = this;
-		wrapper.element = doc.createElementNS(SVG_NS, nodeName);
+		wrapper.element = nodeName === 'span' ?
+			createElement(nodeName) :
+			doc.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 		/**
 		 * A collection of attribute setters. These methods, if defined, are called right before a certain
@@ -1953,7 +1955,6 @@ SVGElement.prototype = {
 			skipAttr,
 			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
-			htmlNode = wrapper.htmlNode,
 			hasSetSymbolSize,
 			ret = wrapper;
 
@@ -2141,32 +2142,6 @@ SVGElement.prototype = {
 
 				}
 
-				// Issue #38
-				if (htmlNode && (key === 'x' || key === 'y' ||
-						key === 'translateX' || key === 'translateY' || key === 'visibility')) {
-					var bBox,
-						arr = htmlNode.length ? htmlNode : [this],
-						length = arr.length,
-						itemWrapper,
-						j;
-
-					for (j = 0; j < length; j++) {
-						itemWrapper = arr[j];
-						bBox = itemWrapper.getBBox();
-						htmlNode = itemWrapper.htmlNode; // reassign to child item
-						css(htmlNode, extend(wrapper.styles, {
-							left: (bBox.x + (wrapper.translateX || 0)) + PX,
-							top: (bBox.y + (wrapper.translateY || 0)) + PX
-						}));
-
-						if (key === 'visibility') {
-							css(htmlNode, {
-								visibility: value
-							});
-						}
-					}
-				}
-
 			}
 
 		}
@@ -2329,6 +2304,188 @@ SVGElement.prototype = {
 		wrapper.updateTransform();
 		return wrapper;
 	},
+	
+	/**
+	 * Apply CSS to HTML elements. This is used in text within SVG rendering and 
+	 * by the VML renderer
+	 */
+	htmlCss: function (styles) {
+		var wrapper = this,
+			element = wrapper.element,
+			textWidth = styles && element.tagName === 'SPAN' && styles.width;
+
+		if (textWidth) {
+			delete styles.width;
+			wrapper.textWidth = textWidth;
+			wrapper.updateTransform();
+		}
+
+		wrapper.styles = extend(wrapper.styles, styles);
+		css(wrapper.element, styles);
+
+		return wrapper;
+	},
+	
+	
+
+	/**
+	 * VML and useHTML method for calculating the bounding box based on offsets
+	 * @param {Boolean} refresh Whether to force a fresh value from the DOM or to
+	 * use the cached value
+	 *
+	 * @return {Object} A hash containing values for x, y, width and height
+	 */
+
+	htmlGetBBox: function (refresh) {
+		var wrapper = this,
+			element = wrapper.element,
+			bBox = wrapper.bBox;
+
+		// faking getBBox in exported SVG in legacy IE
+		if (!bBox || refresh) {
+			// faking getBBox in exported SVG in legacy IE
+			if (element.nodeName === 'text') {
+				element.style.position = ABSOLUTE;
+			}
+
+			bBox = wrapper.bBox = {
+				x: element.offsetLeft,
+				y: element.offsetTop,
+				width: element.offsetWidth,
+				height: element.offsetHeight
+			};
+		}
+
+		return bBox;
+	},
+	
+	/**
+	 * VML override private method to update elements based on internal
+	 * properties based on SVG transform
+	 */
+	htmlUpdateTransform: function () {
+		// aligning non added elements is expensive
+		if (!this.added) {
+			this.alignOnAdd = true;
+			return;
+		}
+
+		var wrapper = this,
+			elem = wrapper.element,
+			translateX = wrapper.translateX || 0,
+			translateY = wrapper.translateY || 0,
+			x = wrapper.x || 0,
+			y = wrapper.y || 0,
+			align = wrapper.textAlign || 'left',
+			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
+			nonLeft = align && align !== 'left',
+			shadows = wrapper.shadows;
+
+		// apply translate
+		if (translateX || translateY) {
+			css(elem, {
+				marginLeft: translateX,
+				marginTop: translateY
+			});
+			if (shadows) { // used in labels/tooltip
+				each(shadows, function (shadow) {
+					css(shadow, {
+						marginLeft: translateX + 1,
+						marginTop: translateY + 1
+					});
+				});
+			}
+		}
+
+		// apply inversion
+		if (wrapper.inverted) { // wrapper is a group
+			each(elem.childNodes, function (child) {
+				wrapper.renderer.invertChild(child, elem);
+			});
+		}
+
+		if (elem.tagName === 'SPAN') {
+
+			var width, height,
+				rotation = wrapper.rotation,
+				lineHeight,
+				radians = 0,
+				costheta = 1,
+				sintheta = 0,
+				quad,
+				textWidth = pInt(wrapper.textWidth),
+				xCorr = wrapper.xCorr || 0,
+				yCorr = wrapper.yCorr || 0,
+				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
+
+			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
+
+				if (defined(rotation)) {
+					radians = rotation * deg2rad; // deg to rad
+					costheta = mathCos(radians);
+					sintheta = mathSin(radians);
+
+					// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
+					// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+ 
+					// has support for CSS3 transform. The getBBox method also needs to be updated
+					// to compensate for the rotation, like it currently does for SVG.
+					// Test case: http://highcharts.com/tests/?file=text-rotation
+					css(elem, {
+						filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
+							', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
+							', sizingMethod=\'auto expand\')'].join('') : NONE
+					});
+				}
+
+				width = pick(wrapper.elemWidth, elem.offsetWidth);
+				height = pick(wrapper.elemHeight, elem.offsetHeight);
+
+				// update textWidth
+				if (width > textWidth) {
+					css(elem, {
+						width: textWidth + PX,
+						display: 'block',
+						whiteSpace: 'normal'
+					});
+					width = textWidth;
+				}
+
+				// correct x and y
+				lineHeight = mathRound((pInt(elem.style.fontSize) || 12) * 1.2);
+				xCorr = costheta < 0 && -width;
+				yCorr = sintheta < 0 && -height;
+
+				// correct for lineHeight and corners spilling out after rotation
+				quad = costheta * sintheta < 0;
+				xCorr += sintheta * lineHeight * (quad ? 1 - alignCorrection : alignCorrection);
+				yCorr -= costheta * lineHeight * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
+
+				// correct for the length/height of the text
+				if (nonLeft) {
+					xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
+					if (rotation) {
+						yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
+					}
+					css(elem, {
+						textAlign: align
+					});
+				}
+
+				// record correction
+				wrapper.xCorr = xCorr;
+				wrapper.yCorr = yCorr;
+			}
+
+			// apply position with correction
+			css(elem, {
+				left: (x + xCorr) + PX,
+				top: (y + yCorr) + PX
+			});
+
+			// record current text transform
+			wrapper.cTT = currentTextTransform;
+		}
+	},
 
 	/**
 	 * Private method to update the transform attribute based on internal
@@ -2433,27 +2590,36 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
-		var bBox,
+	getBBox: function (refresh) {
+		var wrapper = this,
+			bBox,
 			width,
 			height,
-			rotation = this.rotation,
+			rotation = wrapper.rotation,
+			element = wrapper.element,
 			rad = rotation * deg2rad;
 
-		try { // fails in Firefox if the container has display: none
-			// use extend because IE9 is not allowed to change width and height in case
-			// of rotation (below)
-			bBox = extend({}, this.element.getBBox());
-		} catch (e) {
-			bBox = { width: 0, height: 0 };
-		}
-		width = bBox.width;
-		height = bBox.height;
-
-		// adjust for rotated text
-		if (rotation) {
-			bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
-			bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
+		// SVG elements
+		if (element.namespaceURI === SVG_NS) {
+			try { // fails in Firefox if the container has display: none
+				// use extend because IE9 is not allowed to change width and height in case
+				// of rotation (below)
+				bBox = extend({}, element.getBBox());
+			} catch (e) {
+				bBox = { width: 0, height: 0 };
+			}
+			width = bBox.width;
+			height = bBox.height;
+	
+			// adjust for rotated text
+			if (rotation) {
+				bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
+				bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
+			}
+			
+		 // VML Renderer or useHTML within SVG
+		} else {			
+			bBox = wrapper.htmlGetBBox(refresh);
 		}
 
 		return bBox;
@@ -2497,14 +2663,6 @@ SVGElement.prototype = {
 		// build formatted text
 		if (this.textStr !== undefined) {
 			renderer.buildText(this);
-		}
-
-		// register html spans in groups
-		if (parent && this.htmlNode) {
-			if (!parent.htmlNode) {
-				parent.htmlNode = [];
-			}
-			parent.htmlNode.push(this);
 		}
 
 		// mark the container as having z indexed children
@@ -2672,7 +2830,6 @@ var SVGRenderer = function () {
 	this.init.apply(this, arguments);
 };
 SVGRenderer.prototype = {
-
 	Element: SVGElement,
 
 	/**
@@ -2695,6 +2852,7 @@ SVGRenderer.prototype = {
 		container.appendChild(boxWrapper.element);
 
 		// object properties
+		renderer.isSVG = true;
 		renderer.box = boxWrapper.element;
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
@@ -2760,9 +2918,6 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			renderAsHtml = textStyles && wrapper.useHTML && !this.forExport,
-			htmlNode = wrapper.htmlNode,
-			//arr, issue #38 workaround
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
@@ -2897,23 +3052,6 @@ SVGRenderer.prototype = {
 				}
 			});
 		});
-
-		// Fix issue #38 and allow HTML in tooltips and other labels
-		if (renderAsHtml) {
-			if (!htmlNode) {
-				htmlNode = wrapper.htmlNode = createElement('span', null, extend(textStyles, {
-					position: ABSOLUTE,
-					top: 0,
-					left: 0
-				}), this.box.parentNode);
-			}
-			htmlNode.innerHTML = wrapper.textStr;
-
-			i = childNodes.length;
-			while (i--) {
-				childNodes[i].style.visibility = HIDDEN;
-			}
-		}
 	},
 
 	/**
@@ -3500,11 +3638,15 @@ SVGRenderer.prototype = {
 	 * @param {Boolean} useHTML Use HTML to render the text
 	 */
 	text: function (str, x, y, useHTML) {
-
+		
 		// declare variables
 		var renderer = this,
 			defaultChartStyle = defaultOptions.chart.style,
 			wrapper;
+			
+		if (useHTML && !renderer.forExport) {
+			return renderer.html(str, x, y); 
+		}		
 
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));
@@ -3522,7 +3664,107 @@ SVGRenderer.prototype = {
 
 		wrapper.x = x;
 		wrapper.y = y;
-		wrapper.useHTML = useHTML;
+		return wrapper;
+	},
+	
+	
+	/**
+	 * Create HTML text node. This is used by the VML renderer as well as the SVG
+	 * renderer through the useHTML option.
+	 * 
+	 * @param {String} str
+	 * @param {Number} x
+	 * @param {Number} y
+	 */
+	html: function (str, x, y) {
+		var defaultChartStyle = defaultOptions.chart.style,
+			wrapper = this.createElement('span'),
+			attrSetters = wrapper.attrSetters,
+			element = wrapper.element,
+			renderer = wrapper.renderer;
+		
+		// Text setter
+		attrSetters.text = function (value) {
+			element.innerHTML = value;
+			return false;
+		};
+		
+		// Various setters which rely on update transform
+		attrSetters.x = attrSetters.y = attrSetters.align = function (value, key) {
+			if (key === 'align') {
+				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
+			}
+			wrapper[key] = value;
+			wrapper.htmlUpdateTransform();
+			return false;
+		};
+		
+		// Set the default attributes
+		wrapper.attr({
+				text: str,
+				x: mathRound(x),
+				y: mathRound(y)
+			})
+			.css({
+				position: ABSOLUTE,
+				whiteSpace: 'nowrap',
+				fontFamily: defaultChartStyle.fontFamily,
+				fontSize: defaultChartStyle.fontSize
+			});
+	
+		// Use the HTML specific .css method
+		wrapper.css = wrapper.htmlCss;
+		
+		// This is specific for HTML within SVG
+		if (renderer.isSVG) {
+			wrapper.add = function (svgGroupWrapper) {
+				
+				var htmlGroup,
+					htmlGroupStyle,
+					container = renderer.box.parentNode;
+				
+				// Create a mock group to hold the HTML elements
+				if (svgGroupWrapper) {
+					htmlGroup = svgGroupWrapper.div;
+					if (!htmlGroup) {
+						htmlGroup = svgGroupWrapper.div = createElement(DIV, {
+							className: attr(svgGroupWrapper.element, 'class')
+						}, {
+							position: ABSOLUTE,
+							left: svgGroupWrapper.attr('translateX') + PX,
+							top: svgGroupWrapper.attr('translateY') + PX
+						}, container);
+						
+						// Ensure dynamic updating position
+						htmlGroupStyle = htmlGroup.style;
+						extend(svgGroupWrapper.attrSetters, {
+							translateX: function (value) {
+								htmlGroupStyle.left = value + PX;						
+							},
+							translateY: function (value) {
+								htmlGroupStyle.top = value + PX;						
+							},
+							visibility: function (value, key) {
+								htmlGroupStyle[key] = value;
+							}
+						});
+						
+					}
+				} else {
+					htmlGroup = container;
+				}
+				
+				htmlGroup.appendChild(element);
+				
+				// Shared with VML:
+				wrapper.added = true;			
+				if (wrapper.alignOnAdd) {
+					wrapper.htmlUpdateTransform();
+				}
+				
+				return wrapper;
+			};
+		}
 		return wrapper;
 	},
 
@@ -3537,11 +3779,11 @@ SVGRenderer.prototype = {
 	 *    coordinates it should be pinned to
 	 * @param {Number} anchorY
 	 */
-	label: function (str, x, y, shape, anchorX, anchorY) {
+	label: function (str, x, y, shape, anchorX, anchorY, useHTML) {
 
 		var renderer = this,
 			wrapper = renderer.g(),
-			text = renderer.text()
+			text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
 				})
@@ -3787,7 +4029,7 @@ if (!hasSVG) {
 /**
  * The VML element wrapper.
  */
-var VMLElement = extendClass(SVGElement, {
+var VMLElementExtension = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -3855,7 +4097,7 @@ var VMLElement = extendClass(SVGElement, {
 		// align text after adding to be able to read offset
 		wrapper.added = true;
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
-			wrapper.updateTransform();
+			wrapper.htmlUpdateTransform();
 		}
 
 		// fire an event for internal hooks
@@ -4022,16 +4264,10 @@ var VMLElement = extendClass(SVGElement, {
 						skipAttr = true;
 
 					// x and y
-					} else if (/^(x|y)$/.test(key)) {
+					} else if (key === 'x' || key === 'y') {
 
 						wrapper[key] = value; // used in getter
-
-						if (element.tagName === 'SPAN') {
-							wrapper.updateTransform();
-
-						} else {
-							elemStyle[{ x: 'left', y: 'top' }[key]] = value;
-						}
+						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 
 					// class name
 					} else if (key === 'class') {
@@ -4077,12 +4313,9 @@ var VMLElement = extendClass(SVGElement, {
 						}
 
 					// translation for animation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'align') {
-						if (key === 'align') {
-							key = 'textAlign';
-						}
+					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
 						wrapper[key] = value;
-						wrapper.updateTransform();
+						wrapper.htmlUpdateTransform();
 
 						skipAttr = true;
 
@@ -4137,22 +4370,7 @@ var VMLElement = extendClass(SVGElement, {
 	 * Set styles for the element
 	 * @param {Object} styles
 	 */
-	css: function (styles) {
-		var wrapper = this,
-			element = wrapper.element,
-			textWidth = styles && element.tagName === 'SPAN' && styles.width;
-
-		if (textWidth) {
-			delete styles.width;
-			wrapper.textWidth = textWidth;
-			wrapper.updateTransform();
-		}
-
-		wrapper.styles = extend(wrapper.styles, styles);
-		css(wrapper.element, styles);
-
-		return wrapper;
-	},
+	css: SVGElement.prototype.htmlCss,
 
 	/**
 	 * Removes a child either by removeChild or move to garbageBin.
@@ -4196,37 +4414,6 @@ var VMLElement = extendClass(SVGElement, {
 	},
 
 	/**
-	 * VML override for calculating the bounding box based on offsets
-	 * @param {Boolean} refresh Whether to force a fresh value from the DOM or to
-	 * use the cached value
-	 *
-	 * @return {Object} A hash containing values for x, y, width and height
-	 */
-
-	getBBox: function (refresh) {
-		var wrapper = this,
-			element = wrapper.element,
-			bBox = wrapper.bBox;
-
-		// faking getBBox in exported SVG in legacy IE
-		if (!bBox || refresh) {
-			// faking getBBox in exported SVG in legacy IE
-			if (element.nodeName === 'text') {
-				element.style.position = ABSOLUTE;
-			}
-
-			bBox = wrapper.bBox = {
-				x: element.offsetLeft,
-				y: element.offsetTop,
-				width: element.offsetWidth,
-				height: element.offsetHeight
-			};
-		}
-
-		return bBox;
-	},
-
-	/**
 	 * Add an event listener. VML override for normalizing event parameters.
 	 * @param {String} eventType
 	 * @param {Function} handler
@@ -4239,132 +4426,6 @@ var VMLElement = extendClass(SVGElement, {
 			handler(evt);
 		};
 		return this;
-	},
-
-
-	/**
-	 * VML override private method to update elements based on internal
-	 * properties based on SVG transform
-	 */
-	updateTransform: function () {
-		// aligning non added elements is expensive
-		if (!this.added) {
-			this.alignOnAdd = true;
-			return;
-		}
-
-		var wrapper = this,
-			elem = wrapper.element,
-			translateX = wrapper.translateX || 0,
-			translateY = wrapper.translateY || 0,
-			x = wrapper.x || 0,
-			y = wrapper.y || 0,
-			align = wrapper.textAlign || 'left',
-			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			nonLeft = align && align !== 'left',
-			shadows = wrapper.shadows;
-
-		// apply translate
-		if (translateX || translateY) {
-			css(elem, {
-				marginLeft: translateX,
-				marginTop: translateY
-			});
-			if (shadows) { // used in labels/tooltip
-				each(shadows, function (shadow) {
-					css(shadow, {
-						marginLeft: translateX + 1,
-						marginTop: translateY + 1
-					});
-				});
-			}
-		}
-
-		// apply inversion
-		if (wrapper.inverted) { // wrapper is a group
-			each(elem.childNodes, function (child) {
-				wrapper.renderer.invertChild(child, elem);
-			});
-		}
-
-		if (elem.tagName === 'SPAN') {
-
-			var width, height,
-				rotation = wrapper.rotation,
-				lineHeight,
-				radians = 0,
-				costheta = 1,
-				sintheta = 0,
-				quad,
-				textWidth = pInt(wrapper.textWidth),
-				xCorr = wrapper.xCorr || 0,
-				yCorr = wrapper.yCorr || 0,
-				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
-
-			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
-
-				if (defined(rotation)) {
-					radians = rotation * deg2rad; // deg to rad
-					costheta = mathCos(radians);
-					sintheta = mathSin(radians);
-
-					// Adjust for alignment and rotation.
-					// Test case: http://highcharts.com/tests/?file=text-rotation
-					css(elem, {
-						filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
-							', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-							', sizingMethod=\'auto expand\')'].join('') : NONE
-					});
-				}
-
-				width = pick(wrapper.elemWidth, elem.offsetWidth);
-				height = pick(wrapper.elemHeight, elem.offsetHeight);
-
-				// update textWidth
-				if (width > textWidth) {
-					css(elem, {
-						width: textWidth + PX,
-						display: 'block',
-						whiteSpace: 'normal'
-					});
-					width = textWidth;
-				}
-
-				// correct x and y
-				lineHeight = mathRound((pInt(elem.style.fontSize) || 12) * 1.2);
-				xCorr = costheta < 0 && -width;
-				yCorr = sintheta < 0 && -height;
-
-				// correct for lineHeight and corners spilling out after rotation
-				quad = costheta * sintheta < 0;
-				xCorr += sintheta * lineHeight * (quad ? 1 - alignCorrection : alignCorrection);
-				yCorr -= costheta * lineHeight * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
-
-				// correct for the length/height of the text
-				if (nonLeft) {
-					xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
-					if (rotation) {
-						yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
-					}
-					css(elem, {
-						textAlign: align
-					});
-				}
-
-				// record correction
-				wrapper.xCorr = xCorr;
-				wrapper.yCorr = yCorr;
-			}
-
-			// apply position with correction
-			css(elem, {
-				left: x + xCorr,
-				top: y + yCorr
-			});
-
-			// record current text transform
-			wrapper.cTT = currentTextTransform;
-		}
 	},
 
 	/**
@@ -4420,15 +4481,13 @@ var VMLElement = extendClass(SVGElement, {
 		return this;
 
 	}
-});
+},
+VMLElement = extendClass(SVGElement, VMLElementExtension),
 
 /**
  * The VML renderer
  */
-VMLRenderer = function () {
-	this.init.apply(this, arguments);
-};
-VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
+VMLRendererExtension = { // inherit SVGRenderer
 
 	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
@@ -4641,22 +4700,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: function (str, x, y) {
-
-		var defaultChartStyle = defaultOptions.chart.style;
-
-		return this.createElement('span')
-			.attr({
-				text: str,
-				x: mathRound(x),
-				y: mathRound(y)
-			})
-			.css({
-				whiteSpace: 'nowrap',
-				fontFamily: defaultChartStyle.fontFamily,
-				fontSize: defaultChartStyle.fontSize
-			});
-	},
+	text: SVGRenderer.prototype.html,
 
 	/**
 	 * Create and return a path element
@@ -4899,7 +4943,11 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 		}
 	}
-});
+};
+VMLRenderer = function () {
+	this.init.apply(this, arguments);
+};
+VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
 	Renderer = VMLRenderer;
@@ -6905,7 +6953,7 @@ function Chart(options, callback) {
 		style.padding = 0;
 
 		// create the label
-		var label = renderer.label('', 0, 0)
+		var label = renderer.label('', 0, 0, null, null, null, options.useHTML)
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
@@ -7751,6 +7799,7 @@ function Chart(options, callback) {
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
+			ltr = !options.rtl, // docs
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -7802,23 +7851,31 @@ function Chart(options, callback) {
 		 * @param {Object} item A Series or Point instance
 		 * @param {Object} visible Dimmed or colored
 		 */
-		function positionItem(item, itemX, itemY) {
+		function positionItem(item) {
 			var legendItem = item.legendItem,
 				legendLine = item.legendLine,
+				legendItemPos = item._legendItemPos,
+				itemX = legendItemPos[0],
+				itemY = legendItemPos[1],
 				legendSymbol = item.legendSymbol,
+				symbolX = itemX + legendSymbol.xOff,
 				checkbox = item.checkbox;
+			
 			if (legendItem) {
 				legendItem.attr({
-					x: itemX,
+					x: ltr ? itemX : legendWidth - itemX,
 					y: itemY
 				});
 			}
 			if (legendLine) {
-				legendLine.translate(itemX, itemY - 4);
+				legendLine.translate(
+					ltr ? itemX : legendWidth - itemX,
+					itemY - 4
+				);
 			}
 			if (legendSymbol) {
 				legendSymbol.attr({
-					x: itemX + legendSymbol.xOff,
+					x: ltr ? symbolX : legendWidth - symbolX,
 					y: itemY + legendSymbol.yOff
 				});
 			}
@@ -7905,7 +7962,8 @@ function Chart(options, callback) {
 				item.legendItem = li = renderer.text(
 						options.labelFormatter.call(item),
 						0,
-						0
+						0,
+						options.useHTML
 					)
 					.css(item.visible ? itemStyle : itemHiddenStyle)
 					.on('mouseover', function () {
@@ -7929,7 +7987,10 @@ function Chart(options, callback) {
 							fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
 						}
 					})
-					.attr({ zIndex: 2 })
+					.attr({
+						align: ltr ? 'left' : 'right',
+						zIndex: 2
+					})
 					.add(legendGroup);
 
 				// draw the line
@@ -7943,10 +8004,10 @@ function Chart(options, callback) {
 					}
 					item.legendLine = renderer.path([
 						M,
-						-symbolWidth - symbolPadding,
+						(-symbolWidth - symbolPadding) * (ltr ? 1 : -1),
 						0,
 						L,
-						-symbolPadding,
+						(-symbolPadding) * (ltr ? 1 : -1),
 						0
 					])
 					.attr(attrs)
@@ -7966,6 +8027,11 @@ function Chart(options, callback) {
 						//'stroke-width': 0,
 						zIndex: 3
 					}).add(legendGroup);
+					
+					if (!ltr) {
+						symbolX += symbolWidth;
+					}
+					
 				} else if (itemOptions && itemOptions.marker && itemOptions.marker.enabled) { // draw the marker
 					radius = itemOptions.marker.radius;
 					legendSymbol = renderer.symbol(
@@ -7978,9 +8044,14 @@ function Chart(options, callback) {
 					.attr(item.pointAttr[NORMAL_STATE])
 					.attr({ zIndex: 3 })
 					.add(legendGroup);
+					
+					if (!ltr) {
+						symbolX += symbolWidth / 2;
+					}
 
 				}
 				if (legendSymbol) {
+					
 					legendSymbol.xOff = symbolX + (strokeWidth % 2 / 2);
 					legendSymbol.yOff = symbolY + (strokeWidth % 2 / 2);
 				}
@@ -8028,8 +8099,8 @@ function Chart(options, callback) {
 			}
 			lastItemY = itemY + itemMarginBottom;
 
-			// position the newly generated or reordered items
-			positionItem(item, itemX, itemY);
+			// cache the position of the newly generated or reordered items
+			item._legendItemPos = [itemX, itemY];
 
 			// advance
 			if (horizontal) {
@@ -8132,6 +8203,10 @@ function Chart(options, callback) {
 				// hide the border if no items
 				box[allItems.length ? 'show' : 'hide']();
 			}
+			
+			// Now that the legend width and height are extablished, put the items in the 
+			// final position
+			each(allItems, positionItem);
 
 			// 1.x compatibility: positioning based on style
 			var props = ['left', 'right', 'top', 'bottom'],
@@ -11161,7 +11236,8 @@ Series.prototype = {
 						dataLabel = point.dataLabel = renderer.text(
 							str,
 							x,
-							y
+							y,
+							options.useHTML
 						)
 						.attr({
 							align: align,
@@ -12843,7 +12919,7 @@ extend(Highcharts, {
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
-	hasRtlBug: hasRtlBug,
+	hasBidiBug: hasBidiBug,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,

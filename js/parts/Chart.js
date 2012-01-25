@@ -2020,7 +2020,7 @@ function Chart(options, callback) {
 		style.padding = 0;
 
 		// create the label
-		var label = renderer.label('', 0, 0)
+		var label = renderer.label('', 0, 0, null, null, null, options.useHTML)
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
@@ -2866,6 +2866,7 @@ function Chart(options, callback) {
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
+			ltr = !options.rtl, // docs
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -2917,23 +2918,31 @@ function Chart(options, callback) {
 		 * @param {Object} item A Series or Point instance
 		 * @param {Object} visible Dimmed or colored
 		 */
-		function positionItem(item, itemX, itemY) {
+		function positionItem(item) {
 			var legendItem = item.legendItem,
 				legendLine = item.legendLine,
+				legendItemPos = item._legendItemPos,
+				itemX = legendItemPos[0],
+				itemY = legendItemPos[1],
 				legendSymbol = item.legendSymbol,
+				symbolX = itemX + legendSymbol.xOff,
 				checkbox = item.checkbox;
+			
 			if (legendItem) {
 				legendItem.attr({
-					x: itemX,
+					x: ltr ? itemX : legendWidth - itemX,
 					y: itemY
 				});
 			}
 			if (legendLine) {
-				legendLine.translate(itemX, itemY - 4);
+				legendLine.translate(
+					ltr ? itemX : legendWidth - itemX,
+					itemY - 4
+				);
 			}
 			if (legendSymbol) {
 				legendSymbol.attr({
-					x: itemX + legendSymbol.xOff,
+					x: ltr ? symbolX : legendWidth - symbolX,
 					y: itemY + legendSymbol.yOff
 				});
 			}
@@ -3020,7 +3029,8 @@ function Chart(options, callback) {
 				item.legendItem = li = renderer.text(
 						options.labelFormatter.call(item),
 						0,
-						0
+						0,
+						options.useHTML
 					)
 					.css(item.visible ? itemStyle : itemHiddenStyle)
 					.on('mouseover', function () {
@@ -3044,7 +3054,10 @@ function Chart(options, callback) {
 							fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
 						}
 					})
-					.attr({ zIndex: 2 })
+					.attr({
+						align: ltr ? 'left' : 'right',
+						zIndex: 2
+					})
 					.add(legendGroup);
 
 				// draw the line
@@ -3058,10 +3071,10 @@ function Chart(options, callback) {
 					}
 					item.legendLine = renderer.path([
 						M,
-						-symbolWidth - symbolPadding,
+						(-symbolWidth - symbolPadding) * (ltr ? 1 : -1),
 						0,
 						L,
-						-symbolPadding,
+						(-symbolPadding) * (ltr ? 1 : -1),
 						0
 					])
 					.attr(attrs)
@@ -3081,6 +3094,11 @@ function Chart(options, callback) {
 						//'stroke-width': 0,
 						zIndex: 3
 					}).add(legendGroup);
+					
+					if (!ltr) {
+						symbolX += symbolWidth;
+					}
+					
 				} else if (itemOptions && itemOptions.marker && itemOptions.marker.enabled) { // draw the marker
 					radius = itemOptions.marker.radius;
 					legendSymbol = renderer.symbol(
@@ -3093,9 +3111,14 @@ function Chart(options, callback) {
 					.attr(item.pointAttr[NORMAL_STATE])
 					.attr({ zIndex: 3 })
 					.add(legendGroup);
+					
+					if (!ltr) {
+						symbolX += symbolWidth / 2;
+					}
 
 				}
 				if (legendSymbol) {
+					
 					legendSymbol.xOff = symbolX + (strokeWidth % 2 / 2);
 					legendSymbol.yOff = symbolY + (strokeWidth % 2 / 2);
 				}
@@ -3143,8 +3166,8 @@ function Chart(options, callback) {
 			}
 			lastItemY = itemY + itemMarginBottom;
 
-			// position the newly generated or reordered items
-			positionItem(item, itemX, itemY);
+			// cache the position of the newly generated or reordered items
+			item._legendItemPos = [itemX, itemY];
 
 			// advance
 			if (horizontal) {
@@ -3247,6 +3270,10 @@ function Chart(options, callback) {
 				// hide the border if no items
 				box[allItems.length ? 'show' : 'hide']();
 			}
+			
+			// Now that the legend width and height are extablished, put the items in the 
+			// final position
+			each(allItems, positionItem);
 
 			// 1.x compatibility: positioning based on style
 			var props = ['left', 'right', 'top', 'bottom'],

@@ -5,7 +5,7 @@ extend(Highcharts, {
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
-	hasRtlBug: hasRtlBug,
+	hasBidiBug: hasBidiBug,
 	numberFormat: numberFormat,
 	Point: Point,
 	Color: Color,
