@@ -5203,7 +5203,7 @@ function Chart(options, callback) {
 						isFirst: isFirst,
 						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: isLog ? lin2log(value) : value
+						value: isLog ? correctFloat(lin2log(value)) : value
 					});
 
 
@@ -5946,14 +5946,9 @@ function Chart(options, callback) {
 		 * @param {Number} num
 		 */
 		function correctFloat(num) {
-			var invMag, ret = num;
-			magnitude = pick(magnitude, math.pow(10, mathFloor(math.log(tickInterval) / math.LN10)));
-
-			if (magnitude < 1) {
-				invMag = mathRound(1 / magnitude)  * 10;
-				ret = mathRound(num * invMag) / invMag;
-			}
-			return ret;
+			return parseFloat(
+				num.toPrecision(14)
+			);
 		}
 
 		/**
@@ -6001,9 +5996,9 @@ function Chart(options, callback) {
 				
 			// Second case: We need intermediary ticks. For example 
 			// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
-			} else if (tickInterval >= 0.05) {
+			} else if (tickInterval >= 0.08) {
 				
-				tickPositions = []; // todo: assign as array initially?
+				tickPositions = [];
 				
 				var roundedMin = mathFloor(min),
 					intermediate,
@@ -6041,17 +6036,27 @@ function Chart(options, callback) {
 				// [BUG]: this tickInterval is based on the logarithmic min and max. 
 				// Before treating this like any linear axis, we need to use the original
 				// min and max and use the same logic to find tickInterval. Check out
-				// create a method like findTickInterval 
+				// create a method like findTickInterval
+				var realMin = lin2log(min),
+					realMax = lin2log(max);
+					
+				tickInterval = pick(
+					options.tickInterval,
+					categories ? // for categoried axis, 1 is default, for linear axis use tickPix
+						1 :
+						(realMax - realMin) * options.tickPixelInterval / (axisLength || 1)
+				);
 				tickInterval = normalizeTickInterval(
 					tickInterval, 
 					null, 
 					math.pow(10, mathFloor(math.log(tickInterval) / math.LN10))
 				);
 				
+				
 				setLinearTickPositions(
 					tickInterval, 
-					lin2log(min),
-					lin2log(max)	
+					realMin,
+					realMax	
 				);
 				tickPositions = map(tickPositions, log2lin);
 			}
@@ -6152,7 +6157,7 @@ function Chart(options, callback) {
 			}
 
 			if (isLog) {
-				if (!secondPass && (min <= 0 || max <= 0)) {
+				if (!secondPass && min <= 0) {
 					error(10);
 				}
 				min = log2lin(min);
