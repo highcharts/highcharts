@@ -199,6 +199,7 @@
             <fileset file="${prototype.src.file}"/>
             <fileset file="${exporting.src.file}"/>
             <fileset dir="${themes.dir}"/>
+            <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
 
         <!-- Set a property that tells if there are unused variables. -->

@@ -47,7 +47,7 @@
 				canvas,
 				initialHiddenStyle = { visibility: HIDDEN, position: ABSOLUTE };
 
-			this.init.apply(this, arguments);
+			this.init.apply(this, [container, chartWidth, chartHeight]);
 
 			// add the canvas above it
 			canvas = createElement('canvas', {
@@ -116,8 +116,7 @@
 
 			// This event is triggered when a new tooltip should be shown
 			addEvent(chart, 'tooltipRefresh', function (args) {
-				var firstHalf = args.x < chart.plotWidth / 2,
-					chartContainer = chart.container,
+				var chartContainer = chart.container,
 					offsetLeft = chartContainer.offsetLeft,
 					offsetTop = chartContainer.offsetTop,
 					position;
@@ -126,7 +125,6 @@
 				tooltipDiv.innerHTML = args.text;
 
 				// Compute the best position for the tooltip based on the divs size and container size.
-				//position = {x: 100, y: 100};
 				position = placeBox(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, offsetLeft, offsetTop, chartContainer.offsetWidth, chartContainer.offsetHeight, {x: args.x, y: args.y}, 12);
 
 				css(tooltipDiv, {
