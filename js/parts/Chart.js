@@ -4062,10 +4062,10 @@ function Chart(options, callback) {
 		oldChartHeight = chartHeight;
 		oldChartWidth = chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathRound(width);
+			chart.chartWidth = optionsChart.width = chartWidth = mathRound(width);
 		}
 		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathRound(height);
+			chart.chartHeight = optionsChart.height = chartHeight = mathRound(height);
 		}
 
 		css(container, {

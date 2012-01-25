@@ -462,17 +462,15 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 	var normalized, i;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
-	//magnitude = multiples ? 1 : math.pow(10, mathFloor(math.log(interval) / math.LN10));
 	magnitude = pick(magnitude, 1);
 	normalized = interval / magnitude;
 
 	// multiples for a linear scale
 	if (!multiples) {
 		multiples = [1, 2, 2.5, 5, 10];
-		//multiples = [1, 2, 2.5, 4, 5, 7.5, 10];
 
 		// the allowDecimals option
-		if (options && (options.allowDecimals === false || options.type === 'logarithmic')) {
+		if (options && options.allowDecimals === false) {
 			if (magnitude === 1) {
 				multiples = [1, 2, 5, 10];
 			} else if (magnitude <= 0.1) {
@@ -5961,7 +5959,7 @@ function Chart(options, callback) {
 		/**
 		 * Set the tick positions of a linear axis to round values like whole tens or every five.
 		 */
-		function setLinearTickPositions() {
+		function setLinearTickPositions(tickInterval, min, max) {
 
 			var pos,
 				lastPos,
@@ -5995,40 +5993,67 @@ function Chart(options, callback) {
 		 * Set the tick positions of a logarithmic axis
 		 */
 		function setLogTickPositions() {
-			setLinearTickPositions();
 			
-			// If the distance between 10-based ticks is too long, insert intermediate values
-			if (axisLength && options.tickPixelInterval && tickPositions.length / axisLength) {
+			// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
+			if (tickInterval >= 0.5) {
+				tickInterval = mathRound(tickInterval);
+				setLinearTickPositions(tickInterval, min, max);
 				
-				// The ratio is the current tick pixel interval compared to the
-				// desired one 
-				var i = tickPositions.length - 1,
+			// Second case: We need intermediary ticks. For example 
+			// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
+			} else if (tickInterval >= 0.05) {
+				
+				tickPositions = []; // todo: assign as array initially?
+				
+				var roundedMin = mathFloor(min),
+					intermediate,
+					i,
 					j,
-					ratio = (axisLength / i) / options.tickPixelInterval,
-					intermediate;
-				
-				// Insert ticks for 2, 4 etc
-				if (ratio > 3) {
-					intermediate = [2, 4, 6, 8];
-				
-				// Insert ticks for halves
-				} else if (ratio > 1.5) {
-					intermediate = [5];			
+					len,
+					pos,
+					lastPos;
+					
+				if (tickInterval > 0.3) {
+					intermediate = [1, 2, 4];
+				} else {
+					intermediate = [1, 2, 4, 6, 8];
 				}
-				
-				// Do the insertion
-				if (intermediate) {
-					while (i--) {
-						j = intermediate.length;
-						while (j--) {
-							tickPositions.splice(
-								i + 1,
-								0,
-								log2lin(lin2log(tickPositions[i]) * intermediate[j])
-							);
+					
+				for (i = roundedMin; i < max + 1; i++) {
+					len = intermediate.length;
+					for (j = 0; j < len; j++) {
+						pos = log2lin(lin2log(i) * intermediate[j]);
+						if (pos > min) {
+							tickPositions.push(lastPos);
 						}
+						
+						if (lastPos > max) {
+							break;
+						}
+						lastPos = pos;
 					}
 				}
+				
+			// Third case: We are so deep in between whole logarithmic values that
+			// we might as well handle the tick positions like a linear axis. For
+			// example 1.01, 1.02, 1.03, 1.04.
+			} else {
+				// [BUG]: this tickInterval is based on the logarithmic min and max. 
+				// Before treating this like any linear axis, we need to use the original
+				// min and max and use the same logic to find tickInterval. Check out
+				// create a method like findTickInterval 
+				tickInterval = normalizeTickInterval(
+					tickInterval, 
+					null, 
+					math.pow(10, mathFloor(math.log(tickInterval) / math.LN10))
+				);
+				
+				setLinearTickPositions(
+					tickInterval, 
+					lin2log(min),
+					lin2log(max)	
+				);
+				tickPositions = map(tickPositions, log2lin);
 			}
 		}
 
@@ -6178,7 +6203,7 @@ function Chart(options, callback) {
 			}
 
 			// for linear axes, get magnitude and normalize the interval
-			if (!isDatetimeAxis) { // linear
+			if (!isDatetimeAxis && !isLog) { // linear
 				magnitude = math.pow(10, mathFloor(math.log(tickInterval) / math.LN10));
 				if (!defined(options.tickInterval)) {
 					tickInterval = normalizeTickInterval(tickInterval, null, magnitude, options);
@@ -6200,7 +6225,7 @@ function Chart(options, callback) {
 				} else if (isLog) {
 					setLogTickPositions();
 				} else {
-					setLinearTickPositions();
+					setLinearTickPositions(tickInterval, min, max);
 				}
 			}
 
@@ -8995,10 +9020,10 @@ function Chart(options, callback) {
 		oldChartHeight = chartHeight;
 		oldChartWidth = chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathRound(width);
+			chart.chartWidth = optionsChart.width = chartWidth = mathRound(width);
 		}
 		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathRound(height);
+			chart.chartHeight = optionsChart.height = chartHeight = mathRound(height);
 		}
 
 		css(container, {
