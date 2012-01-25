@@ -10357,7 +10357,6 @@ Series.prototype = {
 			distance,
 			closestPointRange,
 			xAxis = series.xAxis,
-			forceCrop = series.forceCrop || (xAxis && xAxis.options.ordinal),
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold; // todo: consider combining it with turboThreshold
@@ -10369,7 +10368,7 @@ Series.prototype = {
 		}
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold || forceCrop) {
+		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max;
@@ -15417,6 +15416,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					ordinalPositions = [],
 					useOrdinal = false,
 					dist,
+					extremes = axis.getExtremes(),
+					min = extremes.min,
+					max = extremes.max,
+					minIndex,
+					maxIndex,
+					slope,
 					i;
 				
 				// apply the ordinal logic
@@ -15463,12 +15468,22 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						}
 					}
 					
-					// record the slope and offset to compute the linear values from the array index
+					// Record the slope and offset to compute the linear values from the array index.
+					// Since the ordinal positions may exceed the current range, get the start and 
+					// end positions within it (#719, #665b)
 					if (useOrdinal) {
-						axis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
-						axis.ordinalOffset = ordinalPositions[0];					
+						
+						// Register
 						axis.ordinalPositions = ordinalPositions;
-					
+						
+						// This relies on the ordinalPositions being set
+						minIndex = xAxis.val2lin(min, true);
+						maxIndex = xAxis.val2lin(max, true);
+				
+						// Set the slope and offset of the values compared to the indices in the ordinal positions
+						axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
+						axis.ordinalOffset = min - (minIndex * slope);
+						
 					} else {
 						axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 					}
@@ -15510,7 +15525,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					// if that failed, find the intermediate position between the two nearest values
 					i = ordinalLength - 1;
 					while (i--) {
-						if (val > ordinalPositions[i]) { // interpolate
+						if (val > ordinalPositions[i] || i === 0) { // interpolate
 							distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
 							ordinalIndex = i + distance;
 							break;
@@ -15574,7 +15589,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					// If the index is within the range of the ordinal positions, return the associated
 					// or interpolated value. If not, just return the value
 					return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
-						ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 
+						ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) : 
 						val;
 				}
 			};
@@ -15717,6 +15732,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					hasCrossedHigherRank,
 					info,
 					posLength,
+					outsideMax,
 					groupPositions = [];
 					
 				// The positions are not always defined, for example for ordinal positions when data
@@ -15730,15 +15746,26 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				// we reuse that instead of computing it again.
 				posLength = positions.length;
 				for (; end < posLength; end++) {
-					if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5) {
+					
+					outsideMax = end && positions[end - 1] > max;
+					
+					if (positions[end] < min) { // Set the last position before min
+						start = end;
+					
+					} else if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
 						
 						// For each segment, calculate the tick positions from the getTimeTicks utility
 						// function. The interval will be the same regardless of how long the segment is.
-						segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);						
+						segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);		
+						
 						groupPositions = groupPositions.concat(segmentPositions);
 						
 						// Set start of next segment
-						start = end + 1;
+						start = end + 1;						
+					}
+					
+					if (outsideMax) {
+						break;
 					}
 				}
 				

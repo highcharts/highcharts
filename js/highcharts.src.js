@@ -10357,7 +10357,6 @@ Series.prototype = {
 			distance,
 			closestPointRange,
 			xAxis = series.xAxis,
-			forceCrop = series.forceCrop || (xAxis && xAxis.options.ordinal),
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold; // todo: consider combining it with turboThreshold
@@ -10369,7 +10368,7 @@ Series.prototype = {
 		}
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold || forceCrop) {
+		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max;
