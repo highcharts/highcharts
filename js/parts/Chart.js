@@ -996,14 +996,13 @@ function Chart(options, callback) {
 		/**
 		 * Set the tick positions of a linear axis to round values like whole tens or every five.
 		 */
-		function setLinearTickPositions(tickInterval, min, max) {
+		function getLinearTickPositions(tickInterval, min, max) {
 
 			var pos,
 				lastPos,
 				roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
-				roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval);
-
-			tickPositions = [];
+				roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
+				tickPositions = [];
 
 			// Populate the intermediate values
 			pos = roundedMin;
@@ -1024,23 +1023,26 @@ function Chart(options, callback) {
 				// Record the last value
 				lastPos = pos;
 			}
+			return tickPositions;
 		}
 		
 		/**
 		 * Set the tick positions of a logarithmic axis
 		 */
-		function setLogTickPositions() {
+		function getLogTickPositions(interval, min, max, minor) {
+			
+			// Since we use this method for both major and minor ticks,
+			// use a local variable and return the result
+			var positions = []; 
 			
 			// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
-			if (tickInterval >= 0.5) {
-				tickInterval = mathRound(tickInterval);
-				setLinearTickPositions(tickInterval, min, max);
+			if (interval >= 0.5) {
+				interval = mathRound(interval);
+				positions = getLinearTickPositions(interval, min, max);
 				
 			// Second case: We need intermediary ticks. For example 
 			// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
-			} else if (tickInterval >= 0.08) {
-				
-				tickPositions = [];
+			} else if (interval >= 0.08) {
 				
 				var roundedMin = mathFloor(min),
 					intermediate,
@@ -1050,7 +1052,7 @@ function Chart(options, callback) {
 					pos,
 					lastPos;
 					
-				if (tickInterval > 0.3) {
+				if (interval > 0.3) {
 					intermediate = [1, 2, 4];
 				} else {
 					intermediate = [1, 2, 4, 6, 8];
@@ -1061,7 +1063,7 @@ function Chart(options, callback) {
 					for (j = 0; j < len; j++) {
 						pos = log2lin(lin2log(i) * intermediate[j]);
 						if (pos > min) {
-							tickPositions.push(lastPos);
+							positions.push(lastPos);
 						}
 						
 						if (lastPos > max) {
@@ -1075,33 +1077,65 @@ function Chart(options, callback) {
 			// we might as well handle the tick positions like a linear axis. For
 			// example 1.01, 1.02, 1.03, 1.04.
 			} else {
-				// [BUG]: this tickInterval is based on the logarithmic min and max. 
-				// Before treating this like any linear axis, we need to use the original
-				// min and max and use the same logic to find tickInterval. Check out
-				// create a method like findTickInterval
 				var realMin = lin2log(min),
-					realMax = lin2log(max);
+					realMax = lin2log(max),
+					tickIntervalOption = options[minor ? 'minorTickInterval' : 'tickInterval'],
+					filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
+					tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
+					totalPixelLength = minor ? axisLength / tickPositions.length : axisLength;
 					
-				tickInterval = pick(
-					options.tickInterval,
-					categories ? // for categoried axis, 1 is default, for linear axis use tickPix
-						1 :
-						(realMax - realMin) * options.tickPixelInterval / (axisLength || 1)
+				// Todo: minor grid lines misses major lines in http://jsfiddle.net/highcharts/49Jwd/6/
+				interval = pick(
+					filteredTickIntervalOption,
+					(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 				);
-				tickInterval = normalizeTickInterval(
-					tickInterval, 
+				
+				interval = normalizeTickInterval(
+					interval, 
 					null, 
-					math.pow(10, mathFloor(math.log(tickInterval) / math.LN10))
+					math.pow(10, mathFloor(math.log(interval) / math.LN10))
 				);
 				
-				
-				setLinearTickPositions(
-					tickInterval, 
+				positions = map(getLinearTickPositions(
+					interval, 
 					realMin,
 					realMax	
-				);
-				tickPositions = map(tickPositions, log2lin);
+				), log2lin);
+				
 			}
+			
+			// Set the axis-level tickInterval variable 
+			if (!minor) {
+				tickInterval = interval;
+			}
+			return positions;
+		}
+		
+		/**
+		 * Return the minor tick positions. For logarithmic axes, reuse the same logic
+		 * as for major ticks.
+		 */
+		function getMinorTickPositions() {
+			var minorTickPositions = [],
+				pos,
+				i,
+				len;
+			
+			if (isLog) {
+				len = tickPositions.length;
+				for (i = 1; i < len; i++) {
+					minorTickPositions = minorTickPositions.concat(
+						getLogTickPositions(minorTickInterval, tickPositions[i-1], tickPositions[i], true)
+					);	
+				}
+			
+			} else {			
+				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+					minorTickPositions.push(pos);	
+				}
+			}
+			
+			return minorTickPositions;
 		}
 
 		/**
@@ -1270,9 +1304,9 @@ function Chart(options, callback) {
 				if (isDatetimeAxis) {
 					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units);
 				} else if (isLog) {
-					setLogTickPositions();
+					tickPositions = getLogTickPositions(tickInterval, min, max);
 				} else {
-					setLinearTickPositions(tickInterval, min, max);
+					tickPositions = getLinearTickPositions(tickInterval, min, max);
 				}
 			}
 
@@ -1663,8 +1697,7 @@ function Chart(options, callback) {
 
 				// minor ticks
 				if (minorTickInterval && !categories) {
-					var pos = min + (tickPositions[0] - min) % minorTickInterval;
-					for (; pos <= max; pos += minorTickInterval) {
+					each(getMinorTickPositions(), function(pos) {
 						if (!minorTicks[pos]) {
 							minorTicks[pos] = new Tick(pos, 'minor');
 						}
@@ -1677,7 +1710,7 @@ function Chart(options, callback) {
 
 						minorTicks[pos].isActive = true;
 						minorTicks[pos].render();
-					}
+					});
 				}
 
 				// major ticks
