@@ -833,6 +833,24 @@ function destroyObjectProperties(obj) {
 	}
 }
 
+
+/**
+ * Discard an element by moving it to the bin and delete
+ * @param {Object} The HTML node to discard
+ */
+function discardElement(element) {
+	// create a garbage bin element, not part of the DOM
+	if (!garbageBin) {
+		garbageBin = createElement(DIV);
+	}
+
+	// move the node and empty bin
+	if (element) {
+		garbageBin.appendChild(element);
+	}
+	garbageBin.innerHTML = '';
+}
+
 /**
  * The time unit lookup
  */
@@ -1182,82 +1200,6 @@ if (!globalAdapter && win.jQuery) {
 		elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
 
 	};
-}
-
-/**
- * Set the time methods globally based on the useUTC option. Time method can be either
- * local time or UTC (default).
- */
-function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC;
-
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
-	};
-	getMinutes = useUTC ? 'getUTCMinutes' : 'getMinutes';
-	getHours = useUTC ? 'getUTCHours' : 'getHours';
-	getDay = useUTC ? 'getUTCDay' : 'getDay';
-	getDate = useUTC ? 'getUTCDate' : 'getDate';
-	getMonth = useUTC ? 'getUTCMonth' : 'getMonth';
-	getFullYear = useUTC ? 'getUTCFullYear' : 'getFullYear';
-	setMinutes = useUTC ? 'setUTCMinutes' : 'setMinutes';
-	setHours = useUTC ? 'setUTCHours' : 'setHours';
-	setDate = useUTC ? 'setUTCDate' : 'setDate';
-	setMonth = useUTC ? 'setUTCMonth' : 'setMonth';
-	setFullYear = useUTC ? 'setUTCFullYear' : 'setFullYear';
-
-}
-
-/**
- * Merge the default options with custom options and return the new options structure
- * @param {Object} options The new custom options
- */
-function setOptions(options) {
-	
-	// Pull out axis options and apply them to the respective default axis options 
-	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
-	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
-	options.xAxis = options.yAxis = UNDEFINED;
-	
-	// Merge in the default options
-	defaultOptions = merge(defaultOptions, options);
-	
-	// Apply UTC
-	setTimeMethods();
-
-	return defaultOptions;
-}
-
-/**
- * Get the updated default options. Merely exposing defaultOptions for outside modules
- * isn't enough because the setOptions method creates a new object.
- */
-function getOptions() {
-	return defaultOptions;
-}
-
-/**
- * Discard an element by moving it to the bin and delete
- * @param {Object} The HTML node to discard
- */
-function discardElement(element) {
-	// create a garbage bin element, not part of the DOM
-	if (!garbageBin) {
-		garbageBin = createElement(DIV);
-	}
-
-	// move the node and empty bin
-	if (element) {
-		garbageBin.appendChild(element);
-	}
-	garbageBin.innerHTML = '';
 }
 
 /* ****************************************************************************
@@ -1808,6 +1750,70 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 
 // set the default time methods
 setTimeMethods();
+
+
+
+/**
+ * Set the time methods globally based on the useUTC option. Time method can be either
+ * local time or UTC (default).
+ */
+function setTimeMethods() {
+	var useUTC = defaultOptions.global.useUTC,
+		GET = useUTC ? 'getUTC' : 'get',
+		SET = useUTC ? 'setUTC' : 'set';
+
+	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
+		return new Date(
+			year,
+			month,
+			pick(date, 1),
+			pick(hours, 0),
+			pick(minutes, 0),
+			pick(seconds, 0)
+		).getTime();
+	};
+	getMinutes =  GET + 'Minutes';
+	getHours =    GET + 'Hours';
+	getDay =      GET + 'Day';
+	getDate =     GET + 'Date';
+	getMonth =    GET + 'Month';
+	getFullYear = GET + 'FullYear';
+	setMinutes =  SET + 'Minutes';
+	setHours =    SET + 'Hours';
+	setDate =     SET + 'Date';
+	setMonth =    SET + 'Month';
+	setFullYear = SET + 'FullYear';
+
+}
+
+/**
+ * Merge the default options with custom options and return the new options structure
+ * @param {Object} options The new custom options
+ */
+function setOptions(options) {
+	
+	// Pull out axis options and apply them to the respective default axis options 
+	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
+	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
+	options.xAxis = options.yAxis = UNDEFINED;
+	
+	// Merge in the default options
+	defaultOptions = merge(defaultOptions, options);
+	
+	// Apply UTC
+	setTimeMethods();
+
+	return defaultOptions;
+}
+
+/**
+ * Get the updated default options. Merely exposing defaultOptions for outside modules
+ * isn't enough because the setOptions method creates a new object.
+ */
+function getOptions() {
+	return defaultOptions;
+}
+
 
 
 /**
@@ -4582,6 +4588,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				}
 			});
 
+			// Apply the gradient to fills only.
 			if (prop === 'fill') {
 				// calculate the angle based on the linear vector
 				angle = 90  - math.atan(
@@ -4597,7 +4604,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 					'" type="gradient" focus="100%" method="any" />'];
 				createElement(this.prepVML(markup), null, null, elem);
 			
-			// Gradients are not supported for VML stroke
+			// Gradients are not supported for VML stroke, return the first color. #722.
 			} else {
 				return stopColor;
 			}
