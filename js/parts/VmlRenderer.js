@@ -804,6 +804,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 				}
 			});
 
+			// Apply the gradient to fills only.
 			if (prop === 'fill') {
 				// calculate the angle based on the linear vector
 				angle = 90  - math.atan(
@@ -819,7 +820,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 					'" type="gradient" focus="100%" method="any" />'];
 				createElement(this.prepVML(markup), null, null, elem);
 			
-			// Gradients are not supported for VML stroke
+			// Gradients are not supported for VML stroke, return the first color. #722.
 			} else {
 				return stopColor;
 			}
