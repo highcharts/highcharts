@@ -39,6 +39,7 @@ var UNDEFINED,
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== UNDEFINED,
 	symbolSizes = {},
@@ -114,6 +115,7 @@ var UNDEFINED,
 	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 	// and all the utility functions will be null. In that case they are populated by the
 	// default adapters below.
+	getScript = adapter.getScript,
 	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
@@ -494,52 +496,45 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 }
 
 /**
- * Set the tick positions to a time unit that makes sense, for example
- * on the first of each month or on every Monday. Return an array
- * with the time positions. Used in datetime axes as well as for grouping
- * data on a datetime axis.
- *
- * @param {Number} tickInterval The approximate interval in axis values (ms)
- * @param {Number} min The minimum in axis values
- * @param {Number} max The maximum in axis values
- * @param {Number} startOfWeek
- * @param {Array} unitsOption
+ * Get a normalized tick interval for dates. Returns a configuration object with
+ * unit range (interval), count and name. Used to prepare data for getTimeTicks. 
+ * Previously this logic was part of getTimeTicks, but as getTimeTicks now runs
+ * of segments in stock charts, the normalizing logic was extracted in order to 
+ * prevent it for running over again for each segment having the same interval. 
+ * #662, #697.
  */
-function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
-	var tickPositions = [],
-		i,
-		higherRanks = {},
-		useUTC = defaultOptions.global.useUTC,
-		units = unitsOption || [[
-			MILLISECOND, // unit name
-			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-		], [
-			SECOND,
-			[1, 2, 5, 10, 15, 30]
-		], [
-			MINUTE,
-			[1, 2, 5, 10, 15, 30]
-		], [
-			HOUR,
-			[1, 2, 3, 4, 6, 8, 12]
-		], [
-			DAY,
-			[1, 2]
-		], [
-			WEEK,
-			[1, 2]
-		], [
-			MONTH,
-			[1, 2, 3, 4, 6]
-		], [
-			YEAR,
-			null
-		]],
-
+function normalizeTimeTickInterval(tickInterval, unitsOption) {
+	var units = unitsOption || [[
+				MILLISECOND, // unit name
+				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+			], [
+				SECOND,
+				[1, 2, 5, 10, 15, 30]
+			], [
+				MINUTE,
+				[1, 2, 5, 10, 15, 30]
+			], [
+				HOUR,
+				[1, 2, 3, 4, 6, 8, 12]
+			], [
+				DAY,
+				[1, 2]
+			], [
+				WEEK,
+				[1, 2]
+			], [
+				MONTH,
+				[1, 2, 3, 4, 6]
+			], [
+				YEAR,
+				null
+			]],
 		unit = units[units.length - 1], // default unit is years
 		interval = timeUnits[unit[0]],
-		multiples = unit[1];
-
+		multiples = unit[1],
+		count,
+		i;
+		
 	// loop through the units to find the one that best fits the tickInterval
 	for (i = 0; i < units.length; i++) {
 		unit = units[i];
@@ -563,48 +558,79 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
 		multiples = [1, 2, 5];
 	}
+	
+	// prevent 2.5 years intervals, though 25, 250 etc. are allowed
+	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
+		multiples = [1, 2, 5];
+	}
 
-	// get the minimum value by flooring the date
-	var multitude = normalizeTickInterval(tickInterval / interval, multiples),
+	// get the count
+	count = normalizeTickInterval(tickInterval / interval, multiples);
+	
+	return {
+		unitRange: interval,
+		count: count,
+		unitName: unit[0]
+	};
+}
+
+/**
+ * Set the tick positions to a time unit that makes sense, for example
+ * on the first of each month or on every Monday. Return an array
+ * with the time positions. Used in datetime axes as well as for grouping
+ * data on a datetime axis.
+ *
+ * @param {Object} normalizedInterval The interval in axis values (ms) and the count
+ * @param {Number} min The minimum in axis values
+ * @param {Number} max The maximum in axis values
+ * @param {Number} startOfWeek
+ */
+function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
+	var tickPositions = [],
+		i,
+		higherRanks = {},
+		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min);
+		minDate = new Date(min),
+		interval = normalizedInterval.unitRange,
+		count = normalizedInterval.count;
 
 	minDate.setMilliseconds(0);
 
 	if (interval >= timeUnits[SECOND]) { // second
 		minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
-			multitude * mathFloor(minDate.getSeconds() / multitude));
+			count * mathFloor(minDate.getSeconds() / count));
 	}
 
 	if (interval >= timeUnits[MINUTE]) { // minute
 		minDate[setMinutes](interval >= timeUnits[HOUR] ? 0 :
-			multitude * mathFloor(minDate[getMinutes]() / multitude));
+			count * mathFloor(minDate[getMinutes]() / count));
 	}
 
 	if (interval >= timeUnits[HOUR]) { // hour
 		minDate[setHours](interval >= timeUnits[DAY] ? 0 :
-			multitude * mathFloor(minDate[getHours]() / multitude));
+			count * mathFloor(minDate[getHours]() / count));
 	}
 
 	if (interval >= timeUnits[DAY]) { // day
 		minDate[setDate](interval >= timeUnits[MONTH] ? 1 :
-			multitude * mathFloor(minDate[getDate]() / multitude));
+			count * mathFloor(minDate[getDate]() / count));
 	}
 
 	if (interval >= timeUnits[MONTH]) { // month
 		minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
-			multitude * mathFloor(minDate[getMonth]() / multitude));
+			count * mathFloor(minDate[getMonth]() / count));
 		minYear = minDate[getFullYear]();
 	}
 
 	if (interval >= timeUnits[YEAR]) { // year
-		minYear -= minYear % multitude;
+		minYear -= minYear % count;
 		minDate[setFullYear](minYear);
 	}
 
 	// week is a special case that runs outside the hierarchy
 	if (interval === timeUnits[WEEK]) {
-		// get start of current week, independent of multitude
+		// get start of current week, independent of count
 		minDate[setDate](minDate[getDate]() - minDate[getDay]() +
 			pick(startOfWeek, 1));
 	}
@@ -623,21 +649,21 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 
 		// if the interval is years, use Date.UTC to increase years
 		if (interval === timeUnits[YEAR]) {
-			time = makeTime(minYear + i * multitude, 0);
+			time = makeTime(minYear + i * count, 0);
 
 		// if the interval is months, use Date.UTC to increase months
 		} else if (interval === timeUnits[MONTH]) {
-			time = makeTime(minYear, minMonth + i * multitude);
+			time = makeTime(minYear, minMonth + i * count);
 
 		// if we're using global time, the interval is not fixed as it jumps
 		// one hour at the DST crossover
 		} else if (!useUTC && (interval === timeUnits[DAY] || interval === timeUnits[WEEK])) {
 			time = makeTime(minYear, minMonth, minDateDate +
-				i * multitude * (interval === timeUnits[DAY] ? 1 : 7));
+				i * count * (interval === timeUnits[DAY] ? 1 : 7));
 
 		// else, the interval is fixed and we use simple addition
 		} else {
-			time += interval * multitude;
+			time += interval * count;
 			
 			// mark new days if the time is dividable by day
 			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === 0) {
@@ -652,13 +678,10 @@ function getTimeTicks(tickInterval, min, max, startOfWeek, unitsOption) {
 	tickPositions.push(time);
 
 	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.info = {
-		unitName: unit[0],
-		unitRange: interval,
-		count: multitude,
+	tickPositions.info = extend(normalizedInterval, {
 		higherRanks: higherRanks,
-		totalRange: interval * multitude
-	};
+		totalRange: interval * count
+	});
 
 	return tickPositions;
 }
@@ -810,6 +833,24 @@ function destroyObjectProperties(obj) {
 	}
 }
 
+
+/**
+ * Discard an element by moving it to the bin and delete
+ * @param {Object} The HTML node to discard
+ */
+function discardElement(element) {
+	// create a garbage bin element, not part of the DOM
+	if (!garbageBin) {
+		garbageBin = createElement(DIV);
+	}
+
+	// move the node and empty bin
+	if (element) {
+		garbageBin.appendChild(element);
+	}
+	garbageBin.innerHTML = '';
+}
+
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
@@ -956,6 +997,13 @@ if (!globalAdapter && win.jQuery) {
 	var jQ = jQuery;
 
 	/**
+	 * Downloads a script and executes a callback when done.
+	 * @param {String} scriptLocation
+	 * @param {Function} callback
+	 */
+	getScript = jQ.getScript;
+
+	/**
 	 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
 	 * @param {Array} arr
 	 * @param {Function} fn
@@ -1045,7 +1093,7 @@ if (!globalAdapter && win.jQuery) {
 		var event = jQ.Event(type),
 			detachedType = 'detached' + type,
 			defaultPrevented;
-			
+
 		extend(event, eventArguments);
 
 		// Prevent jQuery from triggering the object method that is named the
@@ -1055,7 +1103,7 @@ if (!globalAdapter && win.jQuery) {
 			el[detachedType] = el[type];
 			el[type] = null;
 		}
-		
+
 		// Wrap preventDefault and stopPropagation in try/catch blocks in
 		// order to prevent JS errors when cancelling events on non-DOM
 		// objects. #615.
@@ -1112,7 +1160,7 @@ if (!globalAdapter && win.jQuery) {
 
 
 	//=== Extend jQuery on init
-	
+
 	/*jslint unparam: true*//* allow unused param x in this function */
 	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
@@ -1124,25 +1172,25 @@ if (!globalAdapter && win.jQuery) {
 	// extend the animate function to allow SVG animations
 	var jFx = jQuery.fx,
 		jStep = jFx.step;
-		
+
 	// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 	each(['cur', '_default', 'width', 'height'], function (fn, i) {
 		var obj = i ? jStep : jFx.prototype, // 'cur', the getter' relates to jFx.prototype
 			base = obj[fn],
 			elem;
-		
+
 		if (base) { // step.width and step.height don't exist in jQuery < 1.7
-		
+
 			// create the extended function replacement
 			obj[fn] = function (fx) {
-				
+
 				// jFx.prototype.cur does not use fx argument
 				fx = i ? fx : this;
-				
+
 				// shortcut
 				elem = fx.elem;
-				
-				// jFX.prototype.cur returns the current value. The other ones are setters 
+
+				// jFX.prototype.cur returns the current value. The other ones are setters
 				// and returning a value has no effect.
 				return elem.attr ? // is SVG element wrapper
 					elem.attr(fx.prop, fx.now) : // apply the SVG wrapper's method
@@ -1150,7 +1198,7 @@ if (!globalAdapter && win.jQuery) {
 			};
 		}
 	});
-	
+
 	// animate paths
 	jStep.d = function (fx) {
 		var elem = fx.elem;
@@ -1171,82 +1219,6 @@ if (!globalAdapter && win.jQuery) {
 		elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
 
 	};
-}
-
-/**
- * Set the time methods globally based on the useUTC option. Time method can be either
- * local time or UTC (default).
- */
-function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC;
-
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
-	};
-	getMinutes = useUTC ? 'getUTCMinutes' : 'getMinutes';
-	getHours = useUTC ? 'getUTCHours' : 'getHours';
-	getDay = useUTC ? 'getUTCDay' : 'getDay';
-	getDate = useUTC ? 'getUTCDate' : 'getDate';
-	getMonth = useUTC ? 'getUTCMonth' : 'getMonth';
-	getFullYear = useUTC ? 'getUTCFullYear' : 'getFullYear';
-	setMinutes = useUTC ? 'setUTCMinutes' : 'setMinutes';
-	setHours = useUTC ? 'setUTCHours' : 'setHours';
-	setDate = useUTC ? 'setUTCDate' : 'setDate';
-	setMonth = useUTC ? 'setUTCMonth' : 'setMonth';
-	setFullYear = useUTC ? 'setUTCFullYear' : 'setFullYear';
-
-}
-
-/**
- * Merge the default options with custom options and return the new options structure
- * @param {Object} options The new custom options
- */
-function setOptions(options) {
-	
-	// Pull out axis options and apply them to the respective default axis options 
-	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
-	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
-	options.xAxis = options.yAxis = UNDEFINED;
-	
-	// Merge in the default options
-	defaultOptions = merge(defaultOptions, options);
-	
-	// Apply UTC
-	setTimeMethods();
-
-	return defaultOptions;
-}
-
-/**
- * Get the updated default options. Merely exposing defaultOptions for outside modules
- * isn't enough because the setOptions method creates a new object.
- */
-function getOptions() {
-	return defaultOptions;
-}
-
-/**
- * Discard an element by moving it to the bin and delete
- * @param {Object} The HTML node to discard
- */
-function discardElement(element) {
-	// create a garbage bin element, not part of the DOM
-	if (!garbageBin) {
-		garbageBin = createElement(DIV);
-	}
-
-	// move the node and empty bin
-	if (element) {
-		garbageBin.appendChild(element);
-	}
-	garbageBin.innerHTML = '';
 }
 
 /* ****************************************************************************
@@ -1286,7 +1258,8 @@ defaultOptions = {
 		thousandsSep: ','
 	},
 	global: {
-		useUTC: true
+		useUTC: true,
+		canvgUrl: 'http://www.highcharts.com/js/rgbcolor-canvg.js' // docs
 	},
 	chart: {
 		//animation: true,
@@ -1428,7 +1401,7 @@ defaultOptions = {
 				//yDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//yPrefix: '',
-				//ySuffix: ''				
+				//ySuffix: ''
 			//}
 			// turboThreshold: 1000
 			// zIndex: null
@@ -1511,7 +1484,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shared: false,
+		shared: useCanVG,
 		snap: hasTouch ? 25 : 10,
 		style: {
 			color: '#333333',
@@ -1799,6 +1772,70 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 setTimeMethods();
 
 
+
+/**
+ * Set the time methods globally based on the useUTC option. Time method can be either
+ * local time or UTC (default).
+ */
+function setTimeMethods() {
+	var useUTC = defaultOptions.global.useUTC,
+		GET = useUTC ? 'getUTC' : 'get',
+		SET = useUTC ? 'setUTC' : 'set';
+
+	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
+		return new Date(
+			year,
+			month,
+			pick(date, 1),
+			pick(hours, 0),
+			pick(minutes, 0),
+			pick(seconds, 0)
+		).getTime();
+	};
+	getMinutes =  GET + 'Minutes';
+	getHours =    GET + 'Hours';
+	getDay =      GET + 'Day';
+	getDate =     GET + 'Date';
+	getMonth =    GET + 'Month';
+	getFullYear = GET + 'FullYear';
+	setMinutes =  SET + 'Minutes';
+	setHours =    SET + 'Hours';
+	setDate =     SET + 'Date';
+	setMonth =    SET + 'Month';
+	setFullYear = SET + 'FullYear';
+
+}
+
+/**
+ * Merge the default options with custom options and return the new options structure
+ * @param {Object} options The new custom options
+ */
+function setOptions(options) {
+	
+	// Pull out axis options and apply them to the respective default axis options 
+	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
+	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
+	options.xAxis = options.yAxis = UNDEFINED;
+	
+	// Merge in the default options
+	defaultOptions = merge(defaultOptions, options);
+	
+	// Apply UTC
+	setTimeMethods();
+
+	return defaultOptions;
+}
+
+/**
+ * Get the updated default options. Merely exposing defaultOptions for outside modules
+ * isn't enough because the setOptions method creates a new object.
+ */
+function getOptions() {
+	return defaultOptions;
+}
+
+
+
 /**
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
@@ -1921,7 +1958,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = pick(options, globalAnimation, true);
-		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)			
+		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions);
 			if (complete) { // allows using a callback with the global animation without overwriting it
@@ -2302,9 +2339,9 @@ SVGElement.prototype = {
 		wrapper.updateTransform();
 		return wrapper;
 	},
-	
+
 	/**
-	 * Apply CSS to HTML elements. This is used in text within SVG rendering and 
+	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
 	 */
 	htmlCss: function (styles) {
@@ -2323,8 +2360,8 @@ SVGElement.prototype = {
 
 		return wrapper;
 	},
-	
-	
+
+
 
 	/**
 	 * VML and useHTML method for calculating the bounding box based on offsets
@@ -2356,7 +2393,7 @@ SVGElement.prototype = {
 
 		return bBox;
 	},
-	
+
 	/**
 	 * VML override private method to update elements based on internal
 	 * properties based on SVG transform
@@ -2424,7 +2461,7 @@ SVGElement.prototype = {
 					sintheta = mathSin(radians);
 
 					// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
-					// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+ 
+					// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
 					// has support for CSS3 transform. The getBBox method also needs to be updated
 					// to compensate for the rotation, like it currently does for SVG.
 					// Test case: http://highcharts.com/tests/?file=text-rotation
@@ -2602,21 +2639,28 @@ SVGElement.prototype = {
 			try { // fails in Firefox if the container has display: none
 				// use extend because IE9 is not allowed to change width and height in case
 				// of rotation (below)
-				bBox = extend({}, element.getBBox());
+				bBox = element.getBBox ?
+					// SVG:
+					extend({}, element.getBBox()) :
+					// Canvas renderer:
+					{
+						width: element.offsetWidth,
+						height: element.offsetHeight
+					};
 			} catch (e) {
 				bBox = { width: 0, height: 0 };
 			}
 			width = bBox.width;
 			height = bBox.height;
-	
+
 			// adjust for rotated text
 			if (rotation) {
 				bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 				bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 			}
-			
-		 // VML Renderer or useHTML within SVG
-		} else {			
+
+		// VML Renderer or useHTML within SVG
+		} else {
 			bBox = wrapper.htmlGetBBox(refresh);
 		}
 
@@ -2854,13 +2898,13 @@ SVGRenderer.prototype = {
 		renderer.box = boxWrapper.element;
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
-		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
+		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, '')
+			.replace(/\(/g, '\\(').replace(/\)/g, '\\)'); // Page url used for internal references. #24, #672.
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
 
 		renderer.setSize(width, height, false);
-
 	},
 
 	/**
@@ -2897,6 +2941,10 @@ SVGRenderer.prototype = {
 		return wrapper;
 	},
 
+	/**
+	 * Dummy function for use in canvas renderer
+	 */
+	draw: function () {},
 
 	/**
 	 * Parse a simple HTML string into SVG tspans
@@ -3563,12 +3611,12 @@ SVGRenderer.prototype = {
 				stopOpacity,
 				// Create a unique key in order to reuse gradient objects. #671.
 				key = [relativeToShape, x1, y1, x2, y2, color.stops.join(',')].join(',');
-			
+
 			// If the gradient with the same setup is already created, reuse it
 			if (gradients[key]) {
 				id = attr(gradients[key].element, 'id');
-			
-			// If not, create a new one and keep the reference.	
+
+			// If not, create a new one and keep the reference.
 			} else {
 				id = PREFIX + idCounter++;
 				gradientObject = renderer.createElement(LINEAR_GRADIENT)
@@ -3580,7 +3628,7 @@ SVGRenderer.prototype = {
 						y2: y2
 					}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
 					.add(renderer.defs);
-	
+
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
 				each(color.stops, function (stop) {
@@ -3598,11 +3646,11 @@ SVGRenderer.prototype = {
 						'stop-color': stopColor,
 						'stop-opacity': stopOpacity
 					}).add(gradientObject);
-	
+
 					// Add the stop element to the gradient
 					gradientObject.stops.push(stopObject);
 				});
-				
+
 				// Keep a reference to the gradient object so it is possible to reuse it and
 				// destroy it later
 				gradients[key] = gradientObject;
@@ -3636,15 +3684,15 @@ SVGRenderer.prototype = {
 	 * @param {Boolean} useHTML Use HTML to render the text
 	 */
 	text: function (str, x, y, useHTML) {
-		
+
 		// declare variables
 		var renderer = this,
 			defaultChartStyle = defaultOptions.chart.style,
 			wrapper;
-			
+
 		if (useHTML && !renderer.forExport) {
-			return renderer.html(str, x, y); 
-		}		
+			return renderer.html(str, x, y);
+		}
 
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));
@@ -3664,12 +3712,12 @@ SVGRenderer.prototype = {
 		wrapper.y = y;
 		return wrapper;
 	},
-	
-	
+
+
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.
-	 * 
+	 *
 	 * @param {String} str
 	 * @param {Number} x
 	 * @param {Number} y
@@ -3680,13 +3728,13 @@ SVGRenderer.prototype = {
 			attrSetters = wrapper.attrSetters,
 			element = wrapper.element,
 			renderer = wrapper.renderer;
-		
+
 		// Text setter
 		attrSetters.text = function (value) {
 			element.innerHTML = value;
 			return false;
 		};
-		
+
 		// Various setters which rely on update transform
 		attrSetters.x = attrSetters.y = attrSetters.align = function (value, key) {
 			if (key === 'align') {
@@ -3696,7 +3744,7 @@ SVGRenderer.prototype = {
 			wrapper.htmlUpdateTransform();
 			return false;
 		};
-		
+
 		// Set the default attributes
 		wrapper.attr({
 				text: str,
@@ -3709,18 +3757,18 @@ SVGRenderer.prototype = {
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
 			});
-	
+
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;
-		
+
 		// This is specific for HTML within SVG
 		if (renderer.isSVG) {
 			wrapper.add = function (svgGroupWrapper) {
-				
+
 				var htmlGroup,
 					htmlGroupStyle,
 					container = renderer.box.parentNode;
-				
+
 				// Create a mock group to hold the HTML elements
 				if (svgGroupWrapper) {
 					htmlGroup = svgGroupWrapper.div;
@@ -3732,34 +3780,34 @@ SVGRenderer.prototype = {
 							left: svgGroupWrapper.attr('translateX') + PX,
 							top: svgGroupWrapper.attr('translateY') + PX
 						}, container);
-						
+
 						// Ensure dynamic updating position
 						htmlGroupStyle = htmlGroup.style;
 						extend(svgGroupWrapper.attrSetters, {
 							translateX: function (value) {
-								htmlGroupStyle.left = value + PX;						
+								htmlGroupStyle.left = value + PX;
 							},
 							translateY: function (value) {
-								htmlGroupStyle.top = value + PX;						
+								htmlGroupStyle.top = value + PX;
 							},
 							visibility: function (value, key) {
 								htmlGroupStyle[key] = value;
 							}
 						});
-						
+
 					}
 				} else {
 					htmlGroup = container;
 				}
-				
+
 				htmlGroup.appendChild(element);
-				
+
 				// Shared with VML:
-				wrapper.added = true;			
+				wrapper.added = true;
 				if (wrapper.alignOnAdd) {
 					wrapper.htmlUpdateTransform();
 				}
-				
+
 				return wrapper;
 			};
 		}
@@ -3832,7 +3880,8 @@ SVGRenderer.prototype = {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = padding,
-				y = padding + mathRound(pInt(wrapper.element.style.fontSize || 11) * 1.2);
+				style = wrapper.element.style,
+				y = padding + mathRound(pInt((style && style.fontSize) || 11) * 1.2);
 
 			// compensate for alignment
 			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
@@ -4022,7 +4071,7 @@ Renderer = SVGRenderer;
  * @constructor
  */
 var VMLRenderer;
-if (!hasSVG) {
+if (!hasSVG && !useCanVG) {
 
 /**
  * The VML element wrapper.
@@ -4169,7 +4218,7 @@ var VMLElementExtension = {
 				// check for a specific attribute setter
 				result = attrSetters[key] && attrSetters[key](value, key);
 
-				if (result !== false) {
+				if (result !== false && value !== null) { // #620
 
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
@@ -4630,19 +4679,26 @@ VMLRendererExtension = { // inherit SVGRenderer
 				}
 			});
 
-			// calculate the angle based on the linear vector
-			angle = 90  - math.atan(
-				(y2 - y1) / // y vector
-				(x2 - x1) // x vector
-				) * 180 / mathPI;
-
-
-			// when colors attribute is used, the meanings of opacity and o:opacity2
-			// are reversed.
-			markup = ['<', prop, ' colors="0% ', color1, ',100% ', color2, '" angle="', angle,
-				'" opacity="', opacity2, '" o:opacity2="', opacity1,
-				'" type="gradient" focus="100%" method="any" />'];
-			createElement(this.prepVML(markup), null, null, elem);
+			// Apply the gradient to fills only.
+			if (prop === 'fill') {
+				// calculate the angle based on the linear vector
+				angle = 90  - math.atan(
+					(y2 - y1) / // y vector
+					(x2 - x1) // x vector
+					) * 180 / mathPI;
+	
+	
+				// when colors attribute is used, the meanings of opacity and o:opacity2
+				// are reversed.
+				markup = ['<fill colors="0% ', color1, ',100% ', color2, '" angle="', angle,
+					'" opacity="', opacity2, '" o:opacity2="', opacity1,
+					'" type="gradient" focus="100%" method="any" />'];
+				createElement(this.prepVML(markup), null, null, elem);
+			
+			// Gradients are not supported for VML stroke, return the first color. #722.
+			} else {
+				return stopColor;
+			}
 
 
 		// if the color is an rgba color, split it and add a fill node
@@ -4956,6 +5012,70 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
  * END OF INTERNET EXPLORER <= 8 SPECIFIC CODE                                *
  *                                                                            *
  *****************************************************************************/
+/* ****************************************************************************
+ *                                                                            *
+ * START OF ANDROID < 3 SPECIFIC CODE. THIS CAN BE REMOVED IF YOU'RE NOT      *
+ * TARGETING THAT SYSTEM.                                                     *
+ *                                                                            *
+ *****************************************************************************/
+var CanVGRenderer,
+	CanVGController;
+
+if (useCanVG) {
+	/**
+	 * The CanVGRenderer is empty from start to keep the source footprint small.
+	 * When requested, the CanVGController downloads the rest of the source packaged
+	 * together with the canvg library.
+	 */
+	CanVGRenderer = function () {
+		// Empty constructor
+	};
+
+	/**
+	 * Handles on demand download of canvg rendering support.
+	 */
+	CanVGController = (function () {
+		// List of renderering calls
+		var deferredRenderCalls = [];
+
+		/**
+		 * When downloaded, we are ready to draw deferred charts.
+		 */
+		function drawDeferred() {
+			var callLength = deferredRenderCalls.length,
+				callIndex;
+
+			// Draw all pending render calls
+			for (callIndex = 0; callIndex < callLength; callIndex++) {
+				deferredRenderCalls[callIndex]();
+			}
+			// Clear the list
+			deferredRenderCalls = [];
+		}
+
+		return {
+			push: function (func, scriptLocation) {
+				// Only get the script once
+				if (deferredRenderCalls.length === 0) {
+					getScript(scriptLocation, drawDeferred);
+				}
+				// Register render call
+				deferredRenderCalls.push(func);
+			}
+		};
+	}());
+} // end CanVGRenderer
+
+/* ****************************************************************************
+ *                                                                            *
+ * END OF ANDROID < 3 SPECIFIC CODE                                           *
+ *                                                                            *
+ *****************************************************************************/
+
+/**
+ * General renderer
+ */
+Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;
 
 /**
  * The chart class
@@ -4970,7 +5090,6 @@ function Chart(options, callback) {
 	options = merge(defaultOptions, options); // do the merge
 	options.series = seriesOptions; // set back the series data
 
-	// Define chart variables
 	var optionsChart = options.chart,
 		optionsMargin = optionsChart.margin,
 		margin = isObject(optionsMargin) ?
@@ -5184,13 +5303,12 @@ function Chart(options, callback) {
 					css,
 					value = categories && defined(categories[pos]) ? categories[pos] : pos,
 					label = tick.label,
-					tickPositionInfo,
+					tickPositionInfo = tickPositions.info,
 					dateTimeLabelFormat;
 
 				// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 				// use the general format.
-				if (isDatetimeAxis) {
-					tickPositionInfo = tickPositions.info;
+				if (isDatetimeAxis && tickPositionInfo) {
 					dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 				}
 
@@ -5200,6 +5318,8 @@ function Chart(options, callback) {
 
 				// get the string
 				str = labelFormatter.call({
+						axis: axis, // docs
+						chart: chart, // docs
 						isFirst: isFirst,
 						isLast: isLast,
 						dateTimeLabelFormat: dateTimeLabelFormat,
@@ -5424,6 +5544,7 @@ function Chart(options, callback) {
 		 */
 		render: function () {
 			var plotLine = this,
+				halfPointRange = axis.pointRange / 2,
 				options = plotLine.options,
 				optionsLabel = options.label,
 				label = plotLine.label,
@@ -5465,8 +5586,8 @@ function Chart(options, callback) {
 				}
 			} else if (defined(from) && defined(to)) { // plot band
 				// keep within plot area
-				from = mathMax(from, min);
-				to = mathMin(to, max);
+				from = mathMax(from, min - halfPointRange);
+				to = mathMin(to, max + halfPointRange);
 
 				toPath = getPlotLinePath(to);
 				path = getPlotLinePath(from);
@@ -5965,19 +6086,19 @@ function Chart(options, callback) {
 			// Populate the intermediate values
 			pos = roundedMin;
 			while (pos <= roundedMax) {
-				
+
 				// Place the tick on the rounded value
 				tickPositions.push(pos);
 
 				// Always add the raw tickInterval, not the corrected one.
 				pos = correctFloat(pos + tickInterval);
-				
+
 				// If the interval is not big enough in the current min - max range to actually increase
 				// the loop variable, we need to break out to prevent endless loop. Issue #619
 				if (pos === lastPos) {
 					break;
 				}
-				
+
 				// Record the last value
 				lastPos = pos;
 			}
@@ -6116,10 +6237,10 @@ function Chart(options, callback) {
 				
 				if (defined(options.min) || defined(options.max)) {
 					minRange = null; // don't do this again
-				
+
 				} else {
-				
-					// Find the closest distance between raw data points, as opposed to 
+
+					// Find the closest distance between raw data points, as opposed to
 					// closestPointRange that applies to processed points (cropped and grouped)
 					each(axis.series, function (series) {
 						xData = series.xData;
@@ -6260,7 +6381,15 @@ function Chart(options, callback) {
 			tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max]));
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
-					tickPositions = getTimeTicks(tickInterval, min, max, options.startOfWeek, options.units);
+					tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
+						normalizeTimeTickInterval(tickInterval, options.units),
+						min,
+						max,
+						options.startOfWeek,
+						axis.ordinalPositions,
+						axis.closestPointRange,
+						true
+					);
 				} else if (isLog) {
 					tickPositions = getLogTickPositions(tickInterval, min, max);
 				} else {
@@ -7026,8 +7155,13 @@ function Chart(options, callback) {
 			})
 			.css(style)
 			.hide()
-			.add()
-			.shadow(options.shadow);
+			.add();
+
+		// When using canVG the shadow shows up as a gray circle
+		// even if the tooltip is hidden.
+		if (!useCanVG) {
+			label.shadow(options.shadow);
+		}
 
 		/**
 		 * Destroy the tooltip and its elements.
@@ -7142,7 +7276,8 @@ function Chart(options, callback) {
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
 				hoverPoints = chart.hoverPoints,
-				placedTooltipPoint;
+				placedTooltipPoint,
+				borderColor;
 
 			// shared tooltip, array is sent over
 			if (shared && !(point.series && point.series.noSharedTooltip)) {
@@ -7209,18 +7344,19 @@ function Chart(options, callback) {
 				});
 
 				// set the stroke color of the box
+				borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
 				label.attr({
-					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
+					stroke: borderColor
 				});
 
 				placedTooltipPoint = placeBox(
-					label.width, 
-					label.height, 
-					plotLeft, 
+					label.width,
+					label.height,
+					plotLeft,
 					plotTop,
-					plotWidth, 
-					plotHeight, 
-					{x: x, y: y}, 
+					plotWidth,
+					plotHeight,
+					{x: x, y: y},
 					pick(options.distance, 12),
 					inverted
 				);
@@ -7263,6 +7399,12 @@ function Chart(options, callback) {
 					}
 				}
 			}
+			fireEvent(chart, 'tooltipRefresh', {
+					text: text,
+					x: x + plotLeft,
+					y: y + plotTop,
+					borderColor: borderColor
+				});
 		}
 
 
@@ -7288,7 +7430,7 @@ function Chart(options, callback) {
 			mouseDownY,
 			hasDragged,
 			selectionMarker,
-			zoomType = optionsChart.zoomType,
+			zoomType = useCanVG ? '' : optionsChart.zoomType,
 			zoomX = /x/.test(zoomType),
 			zoomY = /y/.test(zoomType),
 			zoomHor = (zoomX && !inverted) || (zoomY && inverted),
@@ -7300,9 +7442,6 @@ function Chart(options, callback) {
 		 */
 		function normalizeMouseEvent(e) {
 			var ePos,
-				pageZoomFix = isWebKit &&
-					doc.width / doc.body.scrollWidth -
-					1, // #224, #348
 				chartPosLeft,
 				chartPosTop,
 				chartX,
@@ -7339,12 +7478,6 @@ function Chart(options, callback) {
 			} else {
 				chartX = ePos.pageX - chartPosLeft;
 				chartY = ePos.pageY - chartPosTop;
-			}
-
-			// correct for page zoom bug in WebKit
-			if (pageZoomFix) {
-				chartX += mathRound((pageZoomFix + 1) * chartPosLeft - chartPosLeft);
-				chartY += mathRound((pageZoomFix + 1) * chartPosTop - chartPosTop);
 			}
 
 			return extend(e, {
@@ -7819,16 +7952,16 @@ function Chart(options, callback) {
 		placeTrackerGroup();
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
+
+			// set the fixed interval ticking for the smooth tooltip
+			tooltipInterval = setInterval(function () {
+				if (tooltipTick) {
+					tooltipTick();
+				}
+			}, 32);
 		}
 
 		setDOMEvents();
-
-		// set the fixed interval ticking for the smooth tooltip
-		tooltipInterval = setInterval(function () {
-			if (tooltipTick) {
-				tooltipTick();
-			}
-		}, 32);
 
 		// expose properties
 		extend(this, {
@@ -8516,6 +8649,9 @@ function Chart(options, callback) {
 			tracker.resetTracker();
 		}
 
+		// redraw if canvas
+		renderer.draw();
+
 		// fire the event
 		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
 	}
@@ -8607,7 +8743,7 @@ function Chart(options, callback) {
 
 		// search points
 		for (i = 0; i < series.length; i++) {
-			points = series[i].points;
+			points = series[i].points || [];
 			for (j = 0; j < points.length; j++) {
 				if (points[j].id === id) {
 					return points[j];
@@ -8683,7 +8819,7 @@ function Chart(options, callback) {
 				width: plotWidth,
 				height: plotHeight
 			};
-		
+
 		chart.resetZoomButton = renderer.button(lang.resetZoom, null, null, zoomOut, btnOptions.theme)
 			.attr({
 				align: btnOptions.position.align,
@@ -8698,7 +8834,7 @@ function Chart(options, callback) {
 	 */
 	zoomOut = function () {
 		var resetZoomButton = chart.resetZoomButton;
-		
+
 		fireEvent(chart, 'selection', { resetSelection: true }, zoom);
 		if (resetZoomButton) {
 			chart.resetZoomButton = resetZoomButton.destroy();
@@ -8711,7 +8847,8 @@ function Chart(options, callback) {
 	zoom = function (event) {
 
 		// add button to reset selection
-		var animate = chart.pointCount < 100;
+		var animate = chart.pointCount < 100,
+			hasZoomed;
 
 		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
 			showResetZoom();
@@ -8721,7 +8858,8 @@ function Chart(options, callback) {
 		if (!event || event.resetSelection) {
 			each(axes, function (axis) {
 				if (axis.options.zoomEnabled !== false) {
-					axis.setExtremes(null, null, true, animate);
+					axis.setExtremes(null, null, false);
+					hasZoomed = true;
 				}
 			});
 		} else { // else, zoom in on all axes
@@ -8730,9 +8868,15 @@ function Chart(options, callback) {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, true, animate);
+					axis.setExtremes(axisData.min, axisData.max, false);
+					hasZoomed = true;
 				}
 			});
+		}
+
+		// Redraw
+		if (hasZoomed) {
+			redraw(true, animate);
 		}
 	};
 
@@ -8878,6 +9022,12 @@ function Chart(options, callback) {
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
+
+		if (useCanVG) {
+			// If we need canvg library, extend and configure the renderer
+			// to get the tracker for translating mouse events
+			renderer.create(chart, container, chartWidth, chartHeight);
+		}
 
 		// Issue 110 workaround:
 		// In Firefox, if a div is positioned by percentage, its pixel position may land
@@ -9447,21 +9597,25 @@ function Chart(options, callback) {
 	 * Prepare for first rendering after all data are loaded
 	 */
 	function firstRender() {
-
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
 		var ONREADYSTATECHANGE = 'onreadystatechange',
 		COMPLETE = 'complete';
 		// Note: in spite of JSLint's complaints, win == win.top is required
 		/*jslint eqeq: true*/
-		if (!hasSVG && win == win.top && doc.readyState !== COMPLETE) {
+		if ((!hasSVG && (win == win.top && doc.readyState !== COMPLETE)) || (useCanVG && !win.canvg)) {
 		/*jslint eqeq: false*/
-			doc.attachEvent(ONREADYSTATECHANGE, function () {
-				doc.detachEvent(ONREADYSTATECHANGE, firstRender);
-				if (doc.readyState === COMPLETE) {
-					firstRender();
-				}
-			});
+			if (useCanVG) {
+				// Delay rendering until canvg library is downloaded and ready
+				CanVGController.push(firstRender, options.global.canvgUrl);
+			} else {
+				doc.attachEvent(ONREADYSTATECHANGE, function () {
+					doc.detachEvent(ONREADYSTATECHANGE, firstRender);
+					if (doc.readyState === COMPLETE) {
+						firstRender();
+					}
+				});
+			}
 			return;
 		}
 
@@ -9506,6 +9660,8 @@ function Chart(options, callback) {
 
 		render();
 
+		// add canvas
+		renderer.draw();
 		// run callbacks
 		if (callback) {
 			callback.apply(chart, [chart]);
@@ -9545,7 +9701,7 @@ function Chart(options, callback) {
 
 	// Expose methods and variables
 	chart.addSeries = addSeries;
-	chart.animation = pick(optionsChart.animation, true);
+	chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
 	chart.Axis = Axis;
 	chart.destroy = destroy;
 	chart.get = get;
@@ -10136,6 +10292,11 @@ Series.prototype = {
 			selected: options.selected === true // false by default
 		});
 		
+		// special
+		if (useCanVG) {
+			options.animation = false;
+		}
+
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {
@@ -10524,7 +10685,6 @@ Series.prototype = {
 			distance,
 			closestPointRange,
 			xAxis = series.xAxis,
-			forceCrop = series.forceCrop || (xAxis && xAxis.options.ordinal),
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold; // todo: consider combining it with turboThreshold
@@ -10536,7 +10696,7 @@ Series.prototype = {
 		}
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold || forceCrop) {
+		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
 			var extremes = xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max;
@@ -11202,7 +11362,8 @@ Series.prototype = {
 				stacking = seriesOptions.stacking,
 				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
-				yIsNull = options.y === null;
+				yIsNull = options.y === null,
+				dataLabel;
 
 			if (isBarLike) {
 				if (stacking) {
@@ -11242,6 +11403,8 @@ Series.prototype = {
 			generalOptions = options;
 			each(points, function (point) {
 				
+				dataLabel = point.dataLabel;
+				
 				// Merge in individual options from point // docs
 				options = generalOptions; // reset changes from previous points
 				pointOptions = point.options;
@@ -11249,9 +11412,13 @@ Series.prototype = {
 					options = merge(options, pointOptions.dataLabels);
 				}
 				
+				// If the point is outside the plot area, destroy it. #678
+				if (dataLabel && series.isCartesian && !chart.isInsidePlot(point.plotX, point.plotY)) {
+					point.dataLabel = dataLabel.destroy();
+				
 				// Individual labels are disabled if the are explicitly disabled 
-				// in the point options
-				if (options.enabled) {
+				// in the point options, or if they fall outside the plot area.
+				} else if (options.enabled) {
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
@@ -11259,7 +11426,6 @@ Series.prototype = {
 					var barX = point.barX,
 						plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
 						plotY = pick(point.plotY, -999),
-						dataLabel = point.dataLabel,
 						align = options.align,
 						individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
 	
@@ -11315,11 +11481,6 @@ Series.prototype = {
 								y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
 							});
 						}
-					}
-					
-					// Hide labels outside the plot area. #678
-					if (series.isCartesian) {
-						dataLabel[chart.isInsidePlot(x, y) ? 'show' : 'hide']();
 					}
 	
 					if (isBarLike && seriesOptions.stacking && dataLabel) {
@@ -13211,10 +13372,18 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
+		groupedData = series.groupedData,
 		hasGroupedData;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
+	
+	// clear previous groups, #622
+	each(groupedData || [], function (point, i) {
+		if (point) {
+			groupedData[i] = point.destroy ? point.destroy() : null;
+		}
+	});
 	
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series) === false || !groupingEnabled) {
@@ -13229,7 +13398,6 @@ seriesProto.processData = function () {
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
 		dataLength = processedXData.length,
-		groupedData = series.groupedData,
 		chartSeries = chart.series;
 	
 
@@ -13246,13 +13414,6 @@ seriesProto.processData = function () {
 		
 	}
 
-	// clear previous groups
-	each(groupedData || [], function (point, i) {
-		if (point) {
-			groupedData[i] = point.destroy ? point.destroy() : null;
-		}
-	});
-
 	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 	if (dataLength > (plotSizeX / groupPixelWidth) || dataGroupingOptions.forced) {
 		hasGroupedData = true;
@@ -13262,12 +13423,16 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			imaginedPlotWidth = // how wide would the plot area be if gaps were included?
-				xAxis.options.ordinal ? 
-					plotSizeX * ((xMax - xMin) / (dataLength * series.closestPointRange)) :
-					plotSizeX, 
-			interval = groupPixelWidth * (xMax - xMin) / imaginedPlotWidth,
-			groupPositions = getTimeTicks(interval, xMin, xMax, null, dataGroupingOptions.units || defaultDataGroupingUnits),
+			groupIntervalFactor = (xAxis.getGroupIntervalFactor && xAxis.getGroupIntervalFactor(xMin, xMax, processedXData)) || 1,
+			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,			
+			groupPositions = (xAxis.getNonLinearTimeTicks || getTimeTicks)(
+				normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
+				xMin, 
+				xMax, 
+				null, 
+				processedXData, 
+				series.closestPointRange
+			),
 			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
 			groupedXData = groupedXandY[0],
 			groupedYData = groupedXandY[1];
@@ -15580,6 +15745,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					ordinalPositions = [],
 					useOrdinal = false,
 					dist,
+					extremes = axis.getExtremes(),
+					min = extremes.min,
+					max = extremes.max,
+					minIndex,
+					maxIndex,
+					slope,
 					i;
 				
 				// apply the ordinal logic
@@ -15626,12 +15797,22 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						}
 					}
 					
-					// record the slope and offset to compute the linear values from the array index
+					// Record the slope and offset to compute the linear values from the array index.
+					// Since the ordinal positions may exceed the current range, get the start and 
+					// end positions within it (#719, #665b)
 					if (useOrdinal) {
-						axis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
-						axis.ordinalOffset = ordinalPositions[0];					
+						
+						// Register
 						axis.ordinalPositions = ordinalPositions;
-					
+						
+						// This relies on the ordinalPositions being set
+						minIndex = xAxis.val2lin(min, true);
+						maxIndex = xAxis.val2lin(max, true);
+				
+						// Set the slope and offset of the values compared to the indices in the ordinal positions
+						axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
+						axis.ordinalOffset = min - (minIndex * slope);
+						
 					} else {
 						axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 					}
@@ -15673,7 +15854,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					// if that failed, find the intermediate position between the two nearest values
 					i = ordinalLength - 1;
 					while (i--) {
-						if (val > ordinalPositions[i]) { // interpolate
+						if (val > ordinalPositions[i] || i === 0) { // interpolate
 							distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
 							ordinalIndex = i + distance;
 							break;
@@ -15737,7 +15918,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					// If the index is within the range of the ordinal positions, return the associated
 					// or interpolated value. If not, just return the value
 					return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
-						ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 
+						ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) : 
 						val;
 				}
 			};
@@ -15812,6 +15993,48 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			};
 			
 			/**
+			 * Find the factor to estimate how wide the plot area would have been if ordinal
+			 * gaps were included. This value is used to compute an imagined plot width in order
+			 * to establish the data grouping interval. 
+			 * 
+			 * A real world case is the intraday-candlestick
+			 * example. Without this logic, it would show the correct data grouping when viewing
+			 * a range within each day, but once moving the range to include the gap between two
+			 * days, the interval would include the cut-away night hours and the data grouping
+			 * would be wrong. So the below method tries to compensate by identifying the most
+			 * common point interval, in this case days. 
+			 * 
+			 * An opposite case is presented in issue #718. We have a long array of daily data,
+			 * then one point is appended one hour after the last point. We expect the data grouping
+			 * not to change.
+			 * 
+			 * In the future, if we find cases where this estimation doesn't work optimally, we
+			 * might need to add a second pass to the data grouping logic, where we do another run
+			 * with a greater interval if the number of data groups is more than a certain fraction
+			 * of the desired group count.
+			 */
+			xAxis.getGroupIntervalFactor = function (xMin, xMax, processedXData) {
+				var i = 0,
+					len = processedXData.length, 
+					distances = [],
+					median;
+					
+				// Register all the distances in an array
+				for (; i < len - 1; i++) {
+					distances[i] = processedXData[i + 1] - processedXData[i];
+				}
+				
+				// Sort them and find the median
+				distances.sort(function (a, b) {
+					return a - b;
+				});
+				median = distances[mathFloor(len / 2)];
+				
+				// Return the factor needed for data grouping
+				return (len * median) / (xMax - xMin);
+			};
+			
+			/**
 			 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 			 */
 			xAxis.postProcessTickInterval = function (tickInterval) {
@@ -15820,6 +16043,93 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				return ordinalSlope ? 
 					tickInterval / (ordinalSlope / xAxis.closestPointRange) : 
 					tickInterval;
+			};
+			
+			/**
+			 * In an ordinal axis, there might be areas with dense consentrations of points, then large
+			 * gaps between some. Creating equally distributed ticks over this entire range
+			 * may lead to a huge number of ticks that will later be removed. So instead, break the 
+			 * positions up in segments, find the tick positions for each segment then concatenize them.
+			 * This method is used from both data grouping logic and X axis tick position logic. 
+			 */
+			xAxis.getNonLinearTimeTicks = function (normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+				
+				var start = 0,
+					end = 0,
+					segmentPositions,
+					higherRanks = {},
+					hasCrossedHigherRank,
+					info,
+					posLength,
+					outsideMax,
+					groupPositions = [];
+					
+				// The positions are not always defined, for example for ordinal positions when data
+				// has regular interval
+				if (!positions || min === UNDEFINED) {
+					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
+				}
+				
+				// Analyze the positions array to split it into segments on gaps larger than 5 times
+				// the closest distance. The closest distance is already found at this point, so 
+				// we reuse that instead of computing it again.
+				posLength = positions.length;
+				for (; end < posLength; end++) {
+					
+					outsideMax = end && positions[end - 1] > max;
+					
+					if (positions[end] < min) { // Set the last position before min
+						start = end;
+					
+					} else if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
+						
+						// For each segment, calculate the tick positions from the getTimeTicks utility
+						// function. The interval will be the same regardless of how long the segment is.
+						segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);		
+						
+						groupPositions = groupPositions.concat(segmentPositions);
+						
+						// Set start of next segment
+						start = end + 1;						
+					}
+					
+					if (outsideMax) {
+						break;
+					}
+				}
+				
+				// Get the grouping info from the last of the segments. The info is the same for
+				// all segments.
+				info = segmentPositions.info;
+				
+				// Optionally identify ticks with higher rank, for example when the ticks
+				// have crossed midnight.
+				if (findHigherRanks && info.unitRange <= timeUnits[HOUR]) {
+					end = groupPositions.length - 1;
+					
+					// Compare points two by two
+					for (start = 1; start < end; start++) {
+						if (new Date(groupPositions[start])[getDate]() !== new Date(groupPositions[start - 1])[getDate]()) {
+							higherRanks[groupPositions[start]] = DAY;
+							hasCrossedHigherRank = true;
+						}
+					}
+					
+					// If the complete array has crossed midnight, we want to mark the first
+					// positions also as higher rank
+					if (hasCrossedHigherRank) {
+						higherRanks[groupPositions[0]] = DAY;
+					}
+					info.higherRanks = higherRanks;
+				}
+				
+				// Save the info
+				groupPositions.info = info;				
+				
+				
+				// Return it
+				return groupPositions;
+				
 			};
 			
 			/**
@@ -15835,6 +16145,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				
 				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
 					var i = tickPositions.length,
+						itemToRemove,
 						translated,
 						lastTranslated,
 						tickInfo = tickPositions.info,
@@ -15843,19 +16154,24 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					while (i--) {
 						translated = xAxis.translate(tickPositions[i]);
 						
-						// remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
+						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
 						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.6) {
 							
+							// Is this a higher ranked position with a normal position to the right?
+							if (higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]]) {
+								
+								// Yes: remove the lower ranked neighbour to the right
+								itemToRemove = i + 1;
+								lastTranslated = translated; // #709
+								
+							} else {
+								
+								// No: remove this one
+								itemToRemove = i;
+							}
 							
-							tickPositions.splice(
-								// is this a higher ranked position with a normal position to the right?
-								higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]] ?
-									// yes: remove the lower ranked neighbour to the right
-									i + 1 :
-									// no: remove this one
-									i,
-								1
-							);
+							tickPositions.splice(itemToRemove, 1);
+							
 						} else {
 							lastTranslated = translated;
 						}
@@ -16003,6 +16319,9 @@ extend(Highcharts, {
 	Point: Point,
 	Color: Color,
 	Renderer: Renderer,
+	SVGRenderer: SVGRenderer,
+	VMLRenderer: VMLRenderer,
+	CanVGRenderer: CanVGRenderer,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	Series: Series,
@@ -16020,6 +16339,7 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
+	placeBox: placeBox,
 	product: 'Highstock',
 	version: '1.1.2'
 });

@@ -10,6 +10,9 @@ extend(Highcharts, {
 	Point: Point,
 	Color: Color,
 	Renderer: Renderer,
+	SVGRenderer: SVGRenderer,
+	VMLRenderer: VMLRenderer,
+	CanVGRenderer: CanVGRenderer,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	Series: Series,
@@ -27,6 +30,7 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
+	placeBox: placeBox,
 	product: '@product.name@',
 	version: '@product.version@'
 });

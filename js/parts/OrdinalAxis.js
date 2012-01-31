@@ -45,6 +45,12 @@
 					ordinalPositions = [],
 					useOrdinal = false,
 					dist,
+					extremes = axis.getExtremes(),
+					min = extremes.min,
+					max = extremes.max,
+					minIndex,
+					maxIndex,
+					slope,
 					i;
 				
 				// apply the ordinal logic
@@ -91,12 +97,22 @@
 						}
 					}
 					
-					// record the slope and offset to compute the linear values from the array index
+					// Record the slope and offset to compute the linear values from the array index.
+					// Since the ordinal positions may exceed the current range, get the start and 
+					// end positions within it (#719, #665b)
 					if (useOrdinal) {
-						axis.ordinalSlope = (ordinalPositions[len - 1] - ordinalPositions[0]) / (len - 1);
-						axis.ordinalOffset = ordinalPositions[0];					
+						
+						// Register
 						axis.ordinalPositions = ordinalPositions;
-					
+						
+						// This relies on the ordinalPositions being set
+						minIndex = xAxis.val2lin(min, true);
+						maxIndex = xAxis.val2lin(max, true);
+				
+						// Set the slope and offset of the values compared to the indices in the ordinal positions
+						axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
+						axis.ordinalOffset = min - (minIndex * slope);
+						
 					} else {
 						axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 					}
@@ -138,7 +154,7 @@
 					// if that failed, find the intermediate position between the two nearest values
 					i = ordinalLength - 1;
 					while (i--) {
-						if (val > ordinalPositions[i]) { // interpolate
+						if (val > ordinalPositions[i] || i === 0) { // interpolate
 							distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
 							ordinalIndex = i + distance;
 							break;
@@ -202,7 +218,7 @@
 					// If the index is within the range of the ordinal positions, return the associated
 					// or interpolated value. If not, just return the value
 					return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
-						ordinalPositions[i] + distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 
+						ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) : 
 						val;
 				}
 			};
@@ -277,6 +293,48 @@
 			};
 			
 			/**
+			 * Find the factor to estimate how wide the plot area would have been if ordinal
+			 * gaps were included. This value is used to compute an imagined plot width in order
+			 * to establish the data grouping interval. 
+			 * 
+			 * A real world case is the intraday-candlestick
+			 * example. Without this logic, it would show the correct data grouping when viewing
+			 * a range within each day, but once moving the range to include the gap between two
+			 * days, the interval would include the cut-away night hours and the data grouping
+			 * would be wrong. So the below method tries to compensate by identifying the most
+			 * common point interval, in this case days. 
+			 * 
+			 * An opposite case is presented in issue #718. We have a long array of daily data,
+			 * then one point is appended one hour after the last point. We expect the data grouping
+			 * not to change.
+			 * 
+			 * In the future, if we find cases where this estimation doesn't work optimally, we
+			 * might need to add a second pass to the data grouping logic, where we do another run
+			 * with a greater interval if the number of data groups is more than a certain fraction
+			 * of the desired group count.
+			 */
+			xAxis.getGroupIntervalFactor = function (xMin, xMax, processedXData) {
+				var i = 0,
+					len = processedXData.length, 
+					distances = [],
+					median;
+					
+				// Register all the distances in an array
+				for (; i < len - 1; i++) {
+					distances[i] = processedXData[i + 1] - processedXData[i];
+				}
+				
+				// Sort them and find the median
+				distances.sort(function (a, b) {
+					return a - b;
+				});
+				median = distances[mathFloor(len / 2)];
+				
+				// Return the factor needed for data grouping
+				return (len * median) / (xMax - xMin);
+			};
+			
+			/**
 			 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 			 */
 			xAxis.postProcessTickInterval = function (tickInterval) {
@@ -285,6 +343,93 @@
 				return ordinalSlope ? 
 					tickInterval / (ordinalSlope / xAxis.closestPointRange) : 
 					tickInterval;
+			};
+			
+			/**
+			 * In an ordinal axis, there might be areas with dense consentrations of points, then large
+			 * gaps between some. Creating equally distributed ticks over this entire range
+			 * may lead to a huge number of ticks that will later be removed. So instead, break the 
+			 * positions up in segments, find the tick positions for each segment then concatenize them.
+			 * This method is used from both data grouping logic and X axis tick position logic. 
+			 */
+			xAxis.getNonLinearTimeTicks = function (normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+				
+				var start = 0,
+					end = 0,
+					segmentPositions,
+					higherRanks = {},
+					hasCrossedHigherRank,
+					info,
+					posLength,
+					outsideMax,
+					groupPositions = [];
+					
+				// The positions are not always defined, for example for ordinal positions when data
+				// has regular interval
+				if (!positions || min === UNDEFINED) {
+					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
+				}
+				
+				// Analyze the positions array to split it into segments on gaps larger than 5 times
+				// the closest distance. The closest distance is already found at this point, so 
+				// we reuse that instead of computing it again.
+				posLength = positions.length;
+				for (; end < posLength; end++) {
+					
+					outsideMax = end && positions[end - 1] > max;
+					
+					if (positions[end] < min) { // Set the last position before min
+						start = end;
+					
+					} else if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
+						
+						// For each segment, calculate the tick positions from the getTimeTicks utility
+						// function. The interval will be the same regardless of how long the segment is.
+						segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);		
+						
+						groupPositions = groupPositions.concat(segmentPositions);
+						
+						// Set start of next segment
+						start = end + 1;						
+					}
+					
+					if (outsideMax) {
+						break;
+					}
+				}
+				
+				// Get the grouping info from the last of the segments. The info is the same for
+				// all segments.
+				info = segmentPositions.info;
+				
+				// Optionally identify ticks with higher rank, for example when the ticks
+				// have crossed midnight.
+				if (findHigherRanks && info.unitRange <= timeUnits[HOUR]) {
+					end = groupPositions.length - 1;
+					
+					// Compare points two by two
+					for (start = 1; start < end; start++) {
+						if (new Date(groupPositions[start])[getDate]() !== new Date(groupPositions[start - 1])[getDate]()) {
+							higherRanks[groupPositions[start]] = DAY;
+							hasCrossedHigherRank = true;
+						}
+					}
+					
+					// If the complete array has crossed midnight, we want to mark the first
+					// positions also as higher rank
+					if (hasCrossedHigherRank) {
+						higherRanks[groupPositions[0]] = DAY;
+					}
+					info.higherRanks = higherRanks;
+				}
+				
+				// Save the info
+				groupPositions.info = info;				
+				
+				
+				// Return it
+				return groupPositions;
+				
 			};
 			
 			/**
@@ -300,6 +445,7 @@
 				
 				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
 					var i = tickPositions.length,
+						itemToRemove,
 						translated,
 						lastTranslated,
 						tickInfo = tickPositions.info,
@@ -308,19 +454,24 @@
 					while (i--) {
 						translated = xAxis.translate(tickPositions[i]);
 						
-						// remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
+						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
 						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.6) {
 							
+							// Is this a higher ranked position with a normal position to the right?
+							if (higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]]) {
+								
+								// Yes: remove the lower ranked neighbour to the right
+								itemToRemove = i + 1;
+								lastTranslated = translated; // #709
+								
+							} else {
+								
+								// No: remove this one
+								itemToRemove = i;
+							}
 							
-							tickPositions.splice(
-								// is this a higher ranked position with a normal position to the right?
-								higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]] ?
-									// yes: remove the lower ranked neighbour to the right
-									i + 1 :
-									// no: remove this one
-									i,
-								1
-							);
+							tickPositions.splice(itemToRemove, 1);
+							
 						} else {
 							lastTranslated = translated;
 						}

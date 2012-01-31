@@ -83,6 +83,7 @@
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
+            <file name="CanVGRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -107,6 +108,7 @@
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
+            <file name="CanVGRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -173,6 +175,12 @@
                 </replacetokens>
             </filterchain>
         </concat>
+
+        <!-- Concat canvg library together with rgbcolor script -->
+        <concat destfile="build/rgbcolor-canvg.src.js">
+            <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
+            <filelist dir="js/modules/" files="canvgrenderer-extended.src.js"/>
+        </concat>
     </target>
 
     <!-- This target convert any mixed line endings to crlf. -->
@@ -191,17 +199,21 @@
             <fileset file="${prototype.src.file}"/>
             <fileset file="${exporting.src.file}"/>
             <fileset dir="${themes.dir}"/>
+            <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
 
         <!-- Set a property that tells if there are unused variables. -->
-        <condition property="unused.variables.exists">
-            <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
+        <condition property="lint.variable.error">
+        	<or>
+            	<resourcecontains resource="${build.dir}/lintreport.html" substring="Undefined variable"/>
+            	<resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
+            </or>
         </condition>
     </target>
 
     <!-- This target is only run if there are unused variables. -->
-    <target name="lint" depends="do-lint" if="unused.variables.exists">
-        <echo message="Warning: unused variables exists. See build/lintreport.html"/>
+    <target name="lint" depends="do-lint" if="lint.variable.error">
+        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'"/>
     </target>
 
     <!-- Runs google closure compiler and yui compressor on src. -->
@@ -256,6 +268,11 @@
         <antcall target="compile">
             <param name="param.src" value="${exporting.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="build/rgbcolor-canvg.src.js"/>
+            <param name="param.out" value="build/rgbcolor-canvg.js"/>
         </antcall>
     </target>
 
@@ -475,8 +492,8 @@
         <!-- mootools versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="mootools-1.4.2"/>
-            <param name="required.lib" value="mootools-core-1.4.2-full-nocompat.js"/>
+            <param name="testrun.name" value="mootools-1.4.3"/>
+            <param name="required.lib" value="mootools-core-1.4.3-full-nocompat.js"/>
             <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
         </antcall>
         <antcall target="test-specific-lib">
@@ -505,7 +522,7 @@
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.7.1"/>
-            <param name="required.lib" value="jquery-1.7.1js"/>
+            <param name="required.lib" value="jquery-1.7.1.js"/>
         </antcall>
     </target>
 

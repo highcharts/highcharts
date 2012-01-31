@@ -1,79 +1,3 @@
-/**
- * Set the time methods globally based on the useUTC option. Time method can be either
- * local time or UTC (default).
- */
-function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC;
-
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
-	};
-	getMinutes = useUTC ? 'getUTCMinutes' : 'getMinutes';
-	getHours = useUTC ? 'getUTCHours' : 'getHours';
-	getDay = useUTC ? 'getUTCDay' : 'getDay';
-	getDate = useUTC ? 'getUTCDate' : 'getDate';
-	getMonth = useUTC ? 'getUTCMonth' : 'getMonth';
-	getFullYear = useUTC ? 'getUTCFullYear' : 'getFullYear';
-	setMinutes = useUTC ? 'setUTCMinutes' : 'setMinutes';
-	setHours = useUTC ? 'setUTCHours' : 'setHours';
-	setDate = useUTC ? 'setUTCDate' : 'setDate';
-	setMonth = useUTC ? 'setUTCMonth' : 'setMonth';
-	setFullYear = useUTC ? 'setUTCFullYear' : 'setFullYear';
-
-}
-
-/**
- * Merge the default options with custom options and return the new options structure
- * @param {Object} options The new custom options
- */
-function setOptions(options) {
-	
-	// Pull out axis options and apply them to the respective default axis options 
-	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
-	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
-	options.xAxis = options.yAxis = UNDEFINED;
-	
-	// Merge in the default options
-	defaultOptions = merge(defaultOptions, options);
-	
-	// Apply UTC
-	setTimeMethods();
-
-	return defaultOptions;
-}
-
-/**
- * Get the updated default options. Merely exposing defaultOptions for outside modules
- * isn't enough because the setOptions method creates a new object.
- */
-function getOptions() {
-	return defaultOptions;
-}
-
-/**
- * Discard an element by moving it to the bin and delete
- * @param {Object} The HTML node to discard
- */
-function discardElement(element) {
-	// create a garbage bin element, not part of the DOM
-	if (!garbageBin) {
-		garbageBin = createElement(DIV);
-	}
-
-	// move the node and empty bin
-	if (element) {
-		garbageBin.appendChild(element);
-	}
-	garbageBin.innerHTML = '';
-}
-
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
@@ -111,7 +35,8 @@ defaultOptions = {
 		thousandsSep: ','
 	},
 	global: {
-		useUTC: true
+		useUTC: true,
+		canvgUrl: 'http://www.highcharts.com/js/rgbcolor-canvg.js' // docs
 	},
 	chart: {
 		//animation: true,
@@ -253,7 +178,7 @@ defaultOptions = {
 				//yDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//yPrefix: '',
-				//ySuffix: ''				
+				//ySuffix: ''
 			//}
 			// turboThreshold: 1000
 			// zIndex: null
@@ -336,7 +261,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shared: false,
+		shared: useCanVG,
 		snap: hasTouch ? 25 : 10,
 		style: {
 			color: '#333333',
@@ -622,3 +547,67 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 
 // set the default time methods
 setTimeMethods();
+
+
+
+/**
+ * Set the time methods globally based on the useUTC option. Time method can be either
+ * local time or UTC (default).
+ */
+function setTimeMethods() {
+	var useUTC = defaultOptions.global.useUTC,
+		GET = useUTC ? 'getUTC' : 'get',
+		SET = useUTC ? 'setUTC' : 'set';
+
+	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
+		return new Date(
+			year,
+			month,
+			pick(date, 1),
+			pick(hours, 0),
+			pick(minutes, 0),
+			pick(seconds, 0)
+		).getTime();
+	};
+	getMinutes =  GET + 'Minutes';
+	getHours =    GET + 'Hours';
+	getDay =      GET + 'Day';
+	getDate =     GET + 'Date';
+	getMonth =    GET + 'Month';
+	getFullYear = GET + 'FullYear';
+	setMinutes =  SET + 'Minutes';
+	setHours =    SET + 'Hours';
+	setDate =     SET + 'Date';
+	setMonth =    SET + 'Month';
+	setFullYear = SET + 'FullYear';
+
+}
+
+/**
+ * Merge the default options with custom options and return the new options structure
+ * @param {Object} options The new custom options
+ */
+function setOptions(options) {
+	
+	// Pull out axis options and apply them to the respective default axis options 
+	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
+	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
+	options.xAxis = options.yAxis = UNDEFINED;
+	
+	// Merge in the default options
+	defaultOptions = merge(defaultOptions, options);
+	
+	// Apply UTC
+	setTimeMethods();
+
+	return defaultOptions;
+}
+
+/**
+ * Get the updated default options. Merely exposing defaultOptions for outside modules
+ * isn't enough because the setOptions method creates a new object.
+ */
+function getOptions() {
+	return defaultOptions;
+}
+
