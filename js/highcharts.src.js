@@ -5402,7 +5402,7 @@ function Chart(options, callback) {
 		 */
 		render: function () {
 			var plotLine = this,
-				halfPointRange = axis.pointRange / 2,
+				halfPointRange = (axis.pointRange || 0) / 2,
 				options = plotLine.options,
 				optionsLabel = options.label,
 				label = plotLine.label,
