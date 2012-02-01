@@ -127,6 +127,7 @@ function Chart(options, callback) {
 			axisBottom,
 			axisRight,
 			translate, // fn
+			setAxisTranslation, // fn
 			getPlotLinePath, // fn
 			axisGroup,
 			gridGroup,
@@ -794,8 +795,6 @@ function Chart(options, callback) {
 							dataMax = 99;
 						}
 
-						// get clipped and grouped data
-						series.processData();
 
 						// processData can alter series.pointRange, so this goes after
 						//findPointRange = series.pointRange === null;
@@ -1110,11 +1109,6 @@ function Chart(options, callback) {
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval;
 
-			// hook for ordinal axes
-			if (secondPass && axis.beforeSetTickPositions) {
-				axis.beforeSetTickPositions();
-			}
-
 			// linked axis gets the extremes from the parent axis
 			if (isLinked) {
 				linkedParent = chart[isXAxis ? 'xAxis' : 'yAxis'][options.linkedTo];
@@ -1169,9 +1163,26 @@ function Chart(options, callback) {
 				);
 			}
 
+			// Now we're finished detecting min and max, crop and group series data. This
+			// is in turn needed in order to find tick positions in ordinal axes. 
+			if (isXAxis && !secondPass) {
+				each(axis.series, function (series) {
+					series.processData(min !== oldMin);             
+				});
+			}
+
+
+			// set the translation factor used in translate function
+			setAxisTranslation();
+
+			// hook for ordinal axes. To do: merge with below
+			if (axis.beforeSetTickPositions) {
+				axis.beforeSetTickPositions();
+			}
+			
 			// hook for extensions, used in Highstock ordinal axes
-			if (secondPass && axis.postProcessTickInterval) {
-				tickInterval = axis.postProcessTickInterval(tickInterval);
+			if (axis.postProcessTickInterval) {
+				tickInterval = axis.postProcessTickInterval(tickInterval);				
 			}
 
 			// for linear axes, get magnitude and normalize the interval
@@ -1208,11 +1219,9 @@ function Chart(options, callback) {
 			}
 
 			// post process positions, used in ordinal axes in Highstock
-			if (secondPass) {
-				fireEvent(axis, 'afterSetTickPositions', {
-					tickPositions: tickPositions
-				});
-			}
+			fireEvent(axis, 'afterSetTickPositions', {
+				tickPositions: tickPositions
+			});
 
 
 			if (!isLinked) {
@@ -1316,10 +1325,6 @@ function Chart(options, callback) {
 				oldUserMin = userMin;
 				oldUserMax = userMax;
 
-				// the translation factor used in translate function
-				oldTransA = transA;
-				axis.translationSlope = transA = axisLength / ((max - min + (axis.pointRange || 0)) || 1);
-
 				// reset stacks
 				if (!isXAxis) {
 					for (type in stacks) {
@@ -1370,28 +1375,16 @@ function Chart(options, callback) {
 				max: max
 			});
 		}
-
+		
 		/**
-		 * Update the axis metrics
+		 * Update translation information
 		 */
-		function setAxisSize() {
-
-			var offsetLeft = options.offsetLeft || 0,
-				offsetRight = options.offsetRight || 0,
-				range = max - min,
+		setAxisTranslation = function () {
+			var range = max - min,
 				pointRange = 0,
 				closestPointRange,
 				seriesClosestPointRange;
-
-			// basic values
-			axisLeft = pick(options.left, plotLeft + offsetLeft);
-			axisTop = pick(options.top, plotTop);
-			axisWidth = pick(options.width, plotWidth - offsetLeft + offsetRight);
-			axisHeight = pick(options.height, plotHeight);
-			axisBottom = chartHeight - axisHeight - axisTop;
-			axisRight = chartWidth - axisWidth - axisLeft;
-			axisLength = horiz ? axisWidth : axisHeight;
-
+			
 			// adjust translation for padding
 			if (isXAxis) {
 				each(axis.series, function (series) {
@@ -1417,9 +1410,28 @@ function Chart(options, callback) {
 			}
 
 			// secondary values
+			oldTransA = transA;
 			axis.translationSlope = transA = axisLength / ((range + pointRange) || 1);
 			transB = horiz ? axisLeft : axisBottom; // translation addend
 			minPixelPadding = transA * (pointRange / 2);
+		};
+
+		/**
+		 * Update the axis metrics
+		 */
+		function setAxisSize() {
+
+			var offsetLeft = options.offsetLeft || 0,
+				offsetRight = options.offsetRight || 0;
+
+			// basic values
+			axisLeft = pick(options.left, plotLeft + offsetLeft);
+			axisTop = pick(options.top, plotTop);
+			axisWidth = pick(options.width, plotWidth - offsetLeft + offsetRight);
+			axisHeight = pick(options.height, plotHeight);
+			axisBottom = chartHeight - axisHeight - axisTop;
+			axisRight = chartWidth - axisWidth - axisLeft;
+			axisLength = horiz ? axisWidth : axisHeight;
 
 			// expose to use in Series object and navigator
 			axis.left = axisLeft;
@@ -1801,11 +1813,6 @@ function Chart(options, callback) {
 				tracker.resetTracker();
 			}
 
-			// we need to filter the tick postions again
-			if (options.ordinal) {
-				setTickPositions(true);
-			}
-
 			// render the axis
 			render();
 
@@ -1908,6 +1915,7 @@ function Chart(options, callback) {
 			getOffset: getOffset,
 			render: render,
 			setAxisSize: setAxisSize,
+			setAxisTranslation: setAxisTranslation,
 			setCategories: setCategories,
 			setExtremes: setExtremes,
 			setScale: setScale,
@@ -4048,9 +4056,8 @@ function Chart(options, callback) {
 		};
 
 		each(axes, function (axis) {
-			if (axis.isDirty) {
-				axis.setAxisSize();
-			}
+			axis.setAxisSize();
+			axis.setAxisTranslation();
 		});
 	};
 

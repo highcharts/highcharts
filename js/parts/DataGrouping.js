@@ -248,7 +248,7 @@ seriesProto.processData = function () {
 	});
 	
 	// skip if processData returns false or if grouping is disabled (in that order)
-	if (baseProcessData.apply(series) === false || !groupingEnabled) {
+	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
 		return;
 	}
 	
