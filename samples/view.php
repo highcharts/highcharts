@@ -37,6 +37,10 @@ $next = $i + 1;
 						}
 						
 						$(li).addClass('hilighted');
+						$(contentDoc.body).animate({
+							scrollTop: $(li).offset().top - 50
+						},'slow');
+
 						contentDoc.currentLi = li;
 					}
 					
@@ -69,15 +73,19 @@ $next = $i + 1;
 		</style>
 		
 	</head>
-	<body>
+	<body style="margin: 0">
+		
+		<div style="text-align: center; background: #57544A; color: silver; padding: 0.3em">
+			<button id="next" disabled="disabled">Next</button>
+			<button id="reload" style="margin-left: 1em">Reload</button>
+			<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
+				href="http://jsfiddle.net/gh/get/jquery/1.6/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+				target="_blank">» jsFiddle</a>
+		</div>
+		<div style="margin: 1em">
 		<h1><?php echo ($next - 1) ?>. /samples/<?php echo $path ?></h1> 
 		<?php @include("$path/demo.html"); ?>
-		
-		<div style="text-align: center">
-			<button id="next" disabled="disabled">Next</button>
-			<button id="reload">Reload</button>
-			<a href="http://jsfiddle.net/gh/get/jquery/1.6/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
-				target="_blank">jsFiddle</button>
 		</div>
+		
 	</body>
 </html>
