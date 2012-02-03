@@ -14095,7 +14095,7 @@ Highcharts.Scroller = function (chart) {
 			// the group
 			handles[index] = renderer.g()
 				.css({ cursor: 'e-resize' })
-				.attr({ zIndex: 3 })
+				.attr({ zIndex: 4 - index }) // zIndex = 3 for right handle, 4 for left
 				.add();
 
 			// the rectangle
