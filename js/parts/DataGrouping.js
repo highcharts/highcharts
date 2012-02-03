@@ -260,8 +260,8 @@ seriesProto.processData = function () {
 		xAxis = series.xAxis,
 		groupPixelWidth = pick(xAxis.groupPixelWidth, dataGroupingOptions.groupPixelWidth),
 		dataLength = processedXData.length,
-		chartSeries = chart.series;
-	
+		chartSeries = chart.series,
+		nonGroupedPointRange = series.pointRange;
 
 	// attempt to solve #334: if multiple series are compared on the same x axis, give them the same
 	// group pixel width
@@ -322,7 +322,7 @@ seriesProto.processData = function () {
 		series.processedYData = groupedYData;
 	} else {
 		series.currentDataGrouping = null;
-		series.pointRange = options.pointRange;
+		series.pointRange = nonGroupedPointRange;
 	}
 
 	series.hasGroupedData = hasGroupedData;

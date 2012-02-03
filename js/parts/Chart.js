@@ -1032,11 +1032,13 @@ function Chart(options, callback) {
 		}
 
 		/**
-		 * Adjust the min and max for the minimum range
+		 * Adjust the min and max for the minimum range. Keep in mind that the series data is 
+		 * not yet processed, so we don't have information on data cropping and grouping, or 
+		 * updated axis.pointRange or series.pointRange. The data can't be processed until
+		 * we have finally established min and max.
 		 */
 		function adjustForMinRange() {
 			var zoomOffset,
-				halfPointRange = (axis.pointRange || 0) / 2,
 				spaceAvailable = dataMax - dataMin > minRange,
 				closestDataRange,
 				i,
@@ -1078,13 +1080,13 @@ function Chart(options, callback) {
 				// if min and max options have been set, don't go beyond it
 				minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
 				if (spaceAvailable) { // if space is available, stay within the data range
-					minArgs[2] = dataMin - halfPointRange;
+					minArgs[2] = dataMin;
 				}
 				min = arrayMax(minArgs);
 
 				maxArgs = [min + minRange, pick(options.max, min + minRange)];
 				if (spaceAvailable) { // if space is availabe, stay within the data range
-					maxArgs[2] = dataMax + halfPointRange;
+					maxArgs[2] = dataMax;
 				}
 				max = arrayMin(maxArgs);
 
@@ -1167,7 +1169,7 @@ function Chart(options, callback) {
 			// is in turn needed in order to find tick positions in ordinal axes. 
 			if (isXAxis && !secondPass) {
 				each(axis.series, function (series) {
-					series.processData(min !== oldMin);             
+					series.processData(min !== oldMin || max !== oldMax);             
 				});
 			}
 
@@ -1397,10 +1399,6 @@ function Chart(options, callback) {
 					}
 				});
 				// pointRange means the width reserved for each point, like in a column chart
-				if ((defined(userMin) || defined(userMax)) && pointRange > tickInterval / 2) {
-					// prevent great padding when zooming tightly in to view columns
-					pointRange = 0;
-				}
 				axis.pointRange = pointRange;
 
 				// closestPointRange means the closest distance between points. In columns
