@@ -32,7 +32,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = pick(options, globalAnimation, true);
-		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)			
+		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions);
 			if (complete) { // allows using a callback with the global animation without overwriting it
@@ -413,9 +413,9 @@ SVGElement.prototype = {
 		wrapper.updateTransform();
 		return wrapper;
 	},
-	
+
 	/**
-	 * Apply CSS to HTML elements. This is used in text within SVG rendering and 
+	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
 	 */
 	htmlCss: function (styles) {
@@ -434,8 +434,8 @@ SVGElement.prototype = {
 
 		return wrapper;
 	},
-	
-	
+
+
 
 	/**
 	 * VML and useHTML method for calculating the bounding box based on offsets
@@ -467,7 +467,7 @@ SVGElement.prototype = {
 
 		return bBox;
 	},
-	
+
 	/**
 	 * VML override private method to update elements based on internal
 	 * properties based on SVG transform
@@ -535,7 +535,7 @@ SVGElement.prototype = {
 					sintheta = mathSin(radians);
 
 					// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
-					// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+ 
+					// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
 					// has support for CSS3 transform. The getBBox method also needs to be updated
 					// to compensate for the rotation, like it currently does for SVG.
 					// Test case: http://highcharts.com/tests/?file=text-rotation
@@ -713,21 +713,28 @@ SVGElement.prototype = {
 			try { // fails in Firefox if the container has display: none
 				// use extend because IE9 is not allowed to change width and height in case
 				// of rotation (below)
-				bBox = extend({}, element.getBBox());
+				bBox = element.getBBox ?
+					// SVG:
+					extend({}, element.getBBox()) :
+					// Canvas renderer:
+					{
+						width: element.offsetWidth,
+						height: element.offsetHeight
+					};
 			} catch (e) {
 				bBox = { width: 0, height: 0 };
 			}
 			width = bBox.width;
 			height = bBox.height;
-	
+
 			// adjust for rotated text
 			if (rotation) {
 				bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 				bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 			}
-			
-		 // VML Renderer or useHTML within SVG
-		} else {			
+
+		// VML Renderer or useHTML within SVG
+		} else {
 			bBox = wrapper.htmlGetBBox(refresh);
 		}
 
@@ -965,13 +972,13 @@ SVGRenderer.prototype = {
 		renderer.box = boxWrapper.element;
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
-		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, ''); // page url used for internal references
+		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, '')
+			.replace(/\(/g, '\\(').replace(/\)/g, '\\)'); // Page url used for internal references. #24, #672.
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
 
 		renderer.setSize(width, height, false);
-
 	},
 
 	/**
@@ -1008,6 +1015,10 @@ SVGRenderer.prototype = {
 		return wrapper;
 	},
 
+	/**
+	 * Dummy function for use in canvas renderer
+	 */
+	draw: function () {},
 
 	/**
 	 * Parse a simple HTML string into SVG tspans
@@ -1674,12 +1685,12 @@ SVGRenderer.prototype = {
 				stopOpacity,
 				// Create a unique key in order to reuse gradient objects. #671.
 				key = [relativeToShape, x1, y1, x2, y2, color.stops.join(',')].join(',');
-			
+
 			// If the gradient with the same setup is already created, reuse it
 			if (gradients[key]) {
 				id = attr(gradients[key].element, 'id');
-			
-			// If not, create a new one and keep the reference.	
+
+			// If not, create a new one and keep the reference.
 			} else {
 				id = PREFIX + idCounter++;
 				gradientObject = renderer.createElement(LINEAR_GRADIENT)
@@ -1691,7 +1702,7 @@ SVGRenderer.prototype = {
 						y2: y2
 					}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
 					.add(renderer.defs);
-	
+
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
 				each(color.stops, function (stop) {
@@ -1709,11 +1720,11 @@ SVGRenderer.prototype = {
 						'stop-color': stopColor,
 						'stop-opacity': stopOpacity
 					}).add(gradientObject);
-	
+
 					// Add the stop element to the gradient
 					gradientObject.stops.push(stopObject);
 				});
-				
+
 				// Keep a reference to the gradient object so it is possible to reuse it and
 				// destroy it later
 				gradients[key] = gradientObject;
@@ -1747,15 +1758,15 @@ SVGRenderer.prototype = {
 	 * @param {Boolean} useHTML Use HTML to render the text
 	 */
 	text: function (str, x, y, useHTML) {
-		
+
 		// declare variables
 		var renderer = this,
 			defaultChartStyle = defaultOptions.chart.style,
 			wrapper;
-			
+
 		if (useHTML && !renderer.forExport) {
-			return renderer.html(str, x, y); 
-		}		
+			return renderer.html(str, x, y);
+		}
 
 		x = mathRound(pick(x, 0));
 		y = mathRound(pick(y, 0));
@@ -1775,12 +1786,12 @@ SVGRenderer.prototype = {
 		wrapper.y = y;
 		return wrapper;
 	},
-	
-	
+
+
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.
-	 * 
+	 *
 	 * @param {String} str
 	 * @param {Number} x
 	 * @param {Number} y
@@ -1791,13 +1802,13 @@ SVGRenderer.prototype = {
 			attrSetters = wrapper.attrSetters,
 			element = wrapper.element,
 			renderer = wrapper.renderer;
-		
+
 		// Text setter
 		attrSetters.text = function (value) {
 			element.innerHTML = value;
 			return false;
 		};
-		
+
 		// Various setters which rely on update transform
 		attrSetters.x = attrSetters.y = attrSetters.align = function (value, key) {
 			if (key === 'align') {
@@ -1807,7 +1818,7 @@ SVGRenderer.prototype = {
 			wrapper.htmlUpdateTransform();
 			return false;
 		};
-		
+
 		// Set the default attributes
 		wrapper.attr({
 				text: str,
@@ -1820,18 +1831,18 @@ SVGRenderer.prototype = {
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
 			});
-	
+
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;
-		
+
 		// This is specific for HTML within SVG
 		if (renderer.isSVG) {
 			wrapper.add = function (svgGroupWrapper) {
-				
+
 				var htmlGroup,
 					htmlGroupStyle,
 					container = renderer.box.parentNode;
-				
+
 				// Create a mock group to hold the HTML elements
 				if (svgGroupWrapper) {
 					htmlGroup = svgGroupWrapper.div;
@@ -1843,34 +1854,34 @@ SVGRenderer.prototype = {
 							left: svgGroupWrapper.attr('translateX') + PX,
 							top: svgGroupWrapper.attr('translateY') + PX
 						}, container);
-						
+
 						// Ensure dynamic updating position
 						htmlGroupStyle = htmlGroup.style;
 						extend(svgGroupWrapper.attrSetters, {
 							translateX: function (value) {
-								htmlGroupStyle.left = value + PX;						
+								htmlGroupStyle.left = value + PX;
 							},
 							translateY: function (value) {
-								htmlGroupStyle.top = value + PX;						
+								htmlGroupStyle.top = value + PX;
 							},
 							visibility: function (value, key) {
 								htmlGroupStyle[key] = value;
 							}
 						});
-						
+
 					}
 				} else {
 					htmlGroup = container;
 				}
-				
+
 				htmlGroup.appendChild(element);
-				
+
 				// Shared with VML:
-				wrapper.added = true;			
+				wrapper.added = true;
 				if (wrapper.alignOnAdd) {
 					wrapper.htmlUpdateTransform();
 				}
-				
+
 				return wrapper;
 			};
 		}
@@ -1943,7 +1954,8 @@ SVGRenderer.prototype = {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = padding,
-				y = padding + mathRound(pInt(wrapper.element.style.fontSize || 11) * 1.2);
+				style = wrapper.element.style,
+				y = padding + mathRound(pInt((style && style.fontSize) || 11) * 1.2);
 
 			// compensate for alignment
 			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {

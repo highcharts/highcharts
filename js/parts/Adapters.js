@@ -22,6 +22,13 @@ if (!globalAdapter && win.jQuery) {
 	var jQ = jQuery;
 
 	/**
+	 * Downloads a script and executes a callback when done.
+	 * @param {String} scriptLocation
+	 * @param {Function} callback
+	 */
+	getScript = jQ.getScript;
+
+	/**
 	 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
 	 * @param {Array} arr
 	 * @param {Function} fn
@@ -111,7 +118,7 @@ if (!globalAdapter && win.jQuery) {
 		var event = jQ.Event(type),
 			detachedType = 'detached' + type,
 			defaultPrevented;
-			
+
 		extend(event, eventArguments);
 
 		// Prevent jQuery from triggering the object method that is named the
@@ -121,7 +128,7 @@ if (!globalAdapter && win.jQuery) {
 			el[detachedType] = el[type];
 			el[type] = null;
 		}
-		
+
 		// Wrap preventDefault and stopPropagation in try/catch blocks in
 		// order to prevent JS errors when cancelling events on non-DOM
 		// objects. #615.
@@ -178,7 +185,7 @@ if (!globalAdapter && win.jQuery) {
 
 
 	//=== Extend jQuery on init
-	
+
 	/*jslint unparam: true*//* allow unused param x in this function */
 	jQ.extend(jQ.easing, {
 		easeOutQuad: function (x, t, b, c, d) {
@@ -190,25 +197,25 @@ if (!globalAdapter && win.jQuery) {
 	// extend the animate function to allow SVG animations
 	var jFx = jQuery.fx,
 		jStep = jFx.step;
-		
+
 	// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 	each(['cur', '_default', 'width', 'height'], function (fn, i) {
 		var obj = i ? jStep : jFx.prototype, // 'cur', the getter' relates to jFx.prototype
 			base = obj[fn],
 			elem;
-		
+
 		if (base) { // step.width and step.height don't exist in jQuery < 1.7
-		
+
 			// create the extended function replacement
 			obj[fn] = function (fx) {
-				
+
 				// jFx.prototype.cur does not use fx argument
 				fx = i ? fx : this;
-				
+
 				// shortcut
 				elem = fx.elem;
-				
-				// jFX.prototype.cur returns the current value. The other ones are setters 
+
+				// jFX.prototype.cur returns the current value. The other ones are setters
 				// and returning a value has no effect.
 				return elem.attr ? // is SVG element wrapper
 					elem.attr(fx.prop, fx.now) : // apply the SVG wrapper's method
@@ -216,7 +223,7 @@ if (!globalAdapter && win.jQuery) {
 			};
 		}
 	});
-	
+
 	// animate paths
 	jStep.d = function (fx) {
 		var elem = fx.elem;
