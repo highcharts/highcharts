@@ -12399,7 +12399,8 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	animate: function (init) {
 		var series = this,
-			points = series.points;
+			points = series.points,
+			options = series.options;
 
 		if (!init) { // run the animation
 			/*
@@ -12418,14 +12419,14 @@ var ColumnSeries = extendClass(Series, {
 					// start values
 					graphic.attr({
 						height: 0,
-						y: series.yAxis.translate(0, 0, 1)
+						y: series.yAxis.translate(options.threshold, 0, 1)
 					});
 
 					// animate
 					graphic.animate({
 						height: shapeArgs.height,
 						y: shapeArgs.y
-					}, series.options.animation);
+					}, options.animation);
 				}
 			});
 
