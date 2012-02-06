@@ -1036,6 +1036,11 @@ function Chart(options, callback) {
 			// use a local variable and return the result
 			var positions = []; 
 			
+			// Reset
+			if (!minor) {
+				axis._minorAutoInterval = null;
+			}
+			
 			// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
 			if (interval >= 0.5) {
 				interval = mathRound(interval);
@@ -1084,10 +1089,10 @@ function Chart(options, callback) {
 					filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
 					tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 					totalPixelLength = minor ? axisLength / tickPositions.length : axisLength;
-					
-				// Todo: minor grid lines misses major lines in http://jsfiddle.net/highcharts/49Jwd/6/
+				
 				interval = pick(
 					filteredTickIntervalOption,
+					axis._minorAutoInterval,
 					(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 				);
 				
@@ -1103,6 +1108,9 @@ function Chart(options, callback) {
 					realMax	
 				), log2lin);
 				
+				if (!minor) {
+					axis._minorAutoInterval = interval / 5;
+				}
 			}
 			
 			// Set the axis-level tickInterval variable 
