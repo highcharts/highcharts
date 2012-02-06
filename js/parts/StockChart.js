@@ -166,7 +166,7 @@ seriesProto.processData = function () {
 	var series = this;
 	
 	// call base method
-	seriesProcessData.apply(this);
+	seriesProcessData.apply(this, arguments);
 	
 	if (series.options.compare) {
 		
