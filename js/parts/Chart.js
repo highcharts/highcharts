@@ -1892,6 +1892,20 @@ function Chart(options, callback) {
 				}
 			}
 		}
+		
+		/**
+		 * Update the axis title by options
+		 */
+		function setTitle(newTitleOptions, redraw) {
+			options.title = merge(options.title, newTitleOptions);
+			
+			axisTitle = axisTitle.destroy();
+			axis.isDirty = true;
+			
+			if (pick(redraw, true)) {
+				chart.redraw();
+			}
+		}
 
 		/**
 		 * Redraw the axis to reflect changes in the data or axis extremes
@@ -2019,6 +2033,7 @@ function Chart(options, callback) {
 			removePlotBand: removePlotBandOrLine,
 			removePlotLine: removePlotBandOrLine,
 			reversed: reversed,
+			setTitle: setTitle, // docs, since 2.2
 			series: [], // populated by Series
 			stacks: stacks,
 			destroy: destroy
