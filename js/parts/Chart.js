@@ -984,16 +984,6 @@ function Chart(options, callback) {
 		};
 
 		/**
-		 * Fix JS round off float errors
-		 * @param {Number} num
-		 */
-		function correctFloat(num) {
-			return parseFloat(
-				num.toPrecision(14)
-			);
-		}
-
-		/**
 		 * Set the tick positions of a linear axis to round values like whole tens or every five.
 		 */
 		function getLinearTickPositions(tickInterval, min, max) {
@@ -1055,7 +1045,8 @@ function Chart(options, callback) {
 					j,
 					len,
 					pos,
-					lastPos;
+					lastPos,
+					break2;
 					
 				if (interval > 0.3) {
 					intermediate = [1, 2, 4];
@@ -1063,16 +1054,17 @@ function Chart(options, callback) {
 					intermediate = [1, 2, 4, 6, 8];
 				}
 					
-				for (i = roundedMin; i < max + 1; i++) {
+				for (i = roundedMin; i < max + 1 && !break2; i++) {
 					len = intermediate.length;
-					for (j = 0; j < len; j++) {
+					for (j = 0; j < len && !break2; j++) {
 						pos = log2lin(lin2log(i) * intermediate[j]);
+						
 						if (pos > min) {
 							positions.push(lastPos);
 						}
 						
 						if (lastPos > max) {
-							break;
+							break2 = true;
 						}
 						lastPos = pos;
 					}
@@ -1133,7 +1125,7 @@ function Chart(options, callback) {
 				len = tickPositions.length;
 				for (i = 1; i < len; i++) {
 					minorTickPositions = minorTickPositions.concat(
-						getLogTickPositions(minorTickInterval, tickPositions[i-1], tickPositions[i], true)
+						getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
 					);	
 				}
 			
@@ -1344,7 +1336,6 @@ function Chart(options, callback) {
 			fireEvent(axis, 'afterSetTickPositions', {
 				tickPositions: tickPositions
 			});
-
 
 			if (!isLinked) {
 
@@ -1724,7 +1715,7 @@ function Chart(options, callback) {
 
 				// minor ticks
 				if (minorTickInterval && !categories) {
-					each(getMinorTickPositions(), function(pos) {
+					each(getMinorTickPositions(), function (pos) {
 						if (!minorTicks[pos]) {
 							minorTicks[pos] = new Tick(pos, 'minor');
 						}

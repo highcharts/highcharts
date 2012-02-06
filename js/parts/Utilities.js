@@ -730,6 +730,16 @@ function error(code, stop) {
 }
 
 /**
+ * Fix JS round off float errors
+ * @param {Number} num
+ */
+function correctFloat(num) {
+	return parseFloat(
+		num.toPrecision(14)
+	);
+}
+
+/**
  * The time unit lookup
  */
 /*jslint white: true*/

@@ -10,7 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $ */
+/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function () {
 // encapsulated variables
@@ -861,6 +861,16 @@ function error(code, stop) {
 	} else if (win.console) {
 		console.log(msg);
 	}
+}
+
+/**
+ * Fix JS round off float errors
+ * @param {Number} num
+ */
+function correctFloat(num) {
+	return parseFloat(
+		num.toPrecision(14)
+	);
 }
 
 /**
@@ -6062,16 +6072,6 @@ function Chart(options, callback) {
 		};
 
 		/**
-		 * Fix JS round off float errors
-		 * @param {Number} num
-		 */
-		function correctFloat(num) {
-			return parseFloat(
-				num.toPrecision(14)
-			);
-		}
-
-		/**
 		 * Set the tick positions of a linear axis to round values like whole tens or every five.
 		 */
 		function getLinearTickPositions(tickInterval, min, max) {
@@ -6113,6 +6113,11 @@ function Chart(options, callback) {
 			// use a local variable and return the result
 			var positions = []; 
 			
+			// Reset
+			if (!minor) {
+				axis._minorAutoInterval = null;
+			}
+			
 			// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
 			if (interval >= 0.5) {
 				interval = mathRound(interval);
@@ -6128,7 +6133,8 @@ function Chart(options, callback) {
 					j,
 					len,
 					pos,
-					lastPos;
+					lastPos,
+					break2;
 					
 				if (interval > 0.3) {
 					intermediate = [1, 2, 4];
@@ -6136,16 +6142,17 @@ function Chart(options, callback) {
 					intermediate = [1, 2, 4, 6, 8];
 				}
 					
-				for (i = roundedMin; i < max + 1; i++) {
+				for (i = roundedMin; i < max + 1 && !break2; i++) {
 					len = intermediate.length;
-					for (j = 0; j < len; j++) {
+					for (j = 0; j < len && !break2; j++) {
 						pos = log2lin(lin2log(i) * intermediate[j]);
+						
 						if (pos > min) {
 							positions.push(lastPos);
 						}
 						
 						if (lastPos > max) {
-							break;
+							break2 = true;
 						}
 						lastPos = pos;
 					}
@@ -6161,10 +6168,10 @@ function Chart(options, callback) {
 					filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
 					tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 					totalPixelLength = minor ? axisLength / tickPositions.length : axisLength;
-					
-				// Todo: minor grid lines misses major lines in http://jsfiddle.net/highcharts/49Jwd/6/
+				
 				interval = pick(
 					filteredTickIntervalOption,
+					axis._minorAutoInterval,
 					(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 				);
 				
@@ -6180,6 +6187,9 @@ function Chart(options, callback) {
 					realMax	
 				), log2lin);
 				
+				if (!minor) {
+					axis._minorAutoInterval = interval / 5;
+				}
 			}
 			
 			// Set the axis-level tickInterval variable 
@@ -6203,7 +6213,7 @@ function Chart(options, callback) {
 				len = tickPositions.length;
 				for (i = 1; i < len; i++) {
 					minorTickPositions = minorTickPositions.concat(
-						getLogTickPositions(minorTickInterval, tickPositions[i-1], tickPositions[i], true)
+						getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
 					);	
 				}
 			
@@ -6414,7 +6424,6 @@ function Chart(options, callback) {
 			fireEvent(axis, 'afterSetTickPositions', {
 				tickPositions: tickPositions
 			});
-
 
 			if (!isLinked) {
 
@@ -6794,7 +6803,7 @@ function Chart(options, callback) {
 
 				// minor ticks
 				if (minorTickInterval && !categories) {
-					each(getMinorTickPositions(), function(pos) {
+					each(getMinorTickPositions(), function (pos) {
 						if (!minorTicks[pos]) {
 							minorTicks[pos] = new Tick(pos, 'minor');
 						}
