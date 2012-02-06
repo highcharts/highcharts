@@ -3,7 +3,6 @@
  */
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
-	useThreshold: true,
 	tooltipOutsidePlot: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',

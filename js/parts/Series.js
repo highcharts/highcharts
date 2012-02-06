@@ -675,7 +675,7 @@ Series.prototype = {
 		
 		// the tooltip options are merged between global and series specific options
 		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
-
+		
 		return options;
 
 	},

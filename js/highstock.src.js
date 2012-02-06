@@ -5838,6 +5838,11 @@ function Chart(options, callback) {
 						yDataLength,
 						activeYData = [],
 						activeCounter = 0;
+						
+					// Validate threshold in logarithmic axes
+					if (isLog && threshold <= 0) {
+						threshold = seriesOptions.threshold = null;
+					}
 
 					// Get dataMin and dataMax for X axes
 					if (isXAxis) {
@@ -5889,7 +5894,6 @@ function Chart(options, callback) {
 						xData = series.processedXData;
 						yData = series.processedYData;
 						yDataLength = yData.length;
-
 
 						// loop over the non-null y values and read them into a local array
 						for (i = 0; i < yDataLength; i++) {
@@ -5957,7 +5961,6 @@ function Chart(options, callback) {
 						}
 						series.closestPointRange = pointRange;*/
 
-
 						// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 						// always 0 and 100. If the length of activeYData is 0, continue with null values.
 						if (!usePercentage && activeYData.length) {
@@ -5965,10 +5968,8 @@ function Chart(options, callback) {
 							dataMax = mathMax(pick(dataMax, activeYData[0]), arrayMax(activeYData));
 						}
 
-
-						// todo: instead of checking useThreshold, just set the threshold to 0
-						// in area and column-like chart types
-						if (series.useThreshold && threshold !== null) {
+						// Adjust to threshold
+						if (threshold !== null) {
 							if (dataMin >= threshold) {
 								dataMin = threshold;
 								ignoreMinPadding = true;
@@ -6126,7 +6127,6 @@ function Chart(options, callback) {
 			// Second case: We need intermediary ticks. For example 
 			// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
 			} else if (interval >= 0.08) {
-				
 				var roundedMin = mathFloor(min),
 					intermediate,
 					i,
@@ -6138,10 +6138,12 @@ function Chart(options, callback) {
 					
 				if (interval > 0.3) {
 					intermediate = [1, 2, 4];
-				} else {
+				} else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
 					intermediate = [1, 2, 4, 6, 8];
+				} else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
+					intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 				}
-					
+				
 				for (i = roundedMin; i < max + 1 && !break2; i++) {
 					len = intermediate.length;
 					for (j = 0; j < len && !break2; j++) {
@@ -6370,7 +6372,6 @@ function Chart(options, callback) {
 					series.processData(min !== oldMin || max !== oldMax);             
 				});
 			}
-
 
 			// set the translation factor used in translate function
 			setAxisTranslation();
@@ -6642,8 +6643,8 @@ function Chart(options, callback) {
 		 */
 		function getExtremes() {
 			return {
-				min: min,
-				max: max,
+				min: isLog ? correctFloat(lin2log(min)) : min,
+				max: isLog ? correctFloat(lin2log(max)) : max,
 				dataMin: dataMin,
 				dataMax: dataMax,
 				userMin: userMin,
@@ -10469,7 +10470,7 @@ Series.prototype = {
 		
 		// the tooltip options are merged between global and series specific options
 		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
-
+		
 		return options;
 
 	},
@@ -12048,8 +12049,7 @@ seriesTypes.line = LineSeries;
  * AreaSeries object
  */
 var AreaSeries = extendClass(Series, {
-	type: 'area',
-	useThreshold: true
+	type: 'area'
 });
 seriesTypes.area = AreaSeries;
 
@@ -12147,8 +12147,7 @@ seriesTypes.spline = SplineSeries;
  * AreaSplineSeries object
  */
 var AreaSplineSeries = extendClass(SplineSeries, {
-	type: 'areaspline',
-	useThreshold: true
+	type: 'areaspline'
 });
 seriesTypes.areaspline = AreaSplineSeries;
 
@@ -12157,7 +12156,6 @@ seriesTypes.areaspline = AreaSplineSeries;
  */
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
-	useThreshold: true,
 	tooltipOutsidePlot: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -13691,7 +13689,6 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 	type: 'ohlc',
 	valueCount: 4, // four values per point
 	pointClass: OHLCPoint,
-	useThreshold: false,
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
@@ -13977,7 +13974,6 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	noSharedTooltip: true,
-	useThreshold: false,
 	/**
 	 * Inherit the initialization from base Series
 	 */

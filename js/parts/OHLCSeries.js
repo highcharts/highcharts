@@ -89,7 +89,6 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 	type: 'ohlc',
 	valueCount: 4, // four values per point
 	pointClass: OHLCPoint,
-	useThreshold: false,
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
