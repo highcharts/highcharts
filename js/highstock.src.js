@@ -12425,13 +12425,14 @@ var ColumnSeries = extendClass(Series, {
 
 			each(points, function (point) {
 				var graphic = point.graphic,
-					shapeArgs = point.shapeArgs;
+					shapeArgs = point.shapeArgs,
+					yAxis = series.yAxis;
 
 				if (graphic) {
 					// start values
 					graphic.attr({
 						height: 0,
-						y: series.yAxis.translate(options.threshold, 0, 1)
+						y: yAxis.translate(pick(options.threshold, yAxis.getExtremes().min), 0, 1, 0, 1)
 					});
 
 					// animate
