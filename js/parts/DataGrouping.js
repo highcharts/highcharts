@@ -240,16 +240,17 @@ seriesProto.processData = function () {
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
 	
-	// clear previous groups, #622
-	each(groupedData || [], function (point, i) {
-		if (point) {
-			groupedData[i] = point.destroy ? point.destroy() : null;
-		}
-	});
-	
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
 		return;
+		
+	} else {
+		// clear previous groups, #622, #740
+		each(groupedData || [], function (point, i) {
+			if (point) {
+				groupedData[i] = point.destroy ? point.destroy() : null;
+			}
+		});
 	}
 	
 	var i,
