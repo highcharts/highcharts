@@ -4111,11 +4111,11 @@ function Chart(options, callback) {
 	 */
 	function initReflow() {
 		var reflowTimeout;
-		function reflow() {
+		function reflow(e) {
 			var width = optionsChart.width || renderTo.offsetWidth,
 				height = optionsChart.height || renderTo.offsetHeight;
 
-			if (width && height) { // means container is display:none
+			if (width && height && e.target === win) { // width and height checks for display:none
 				if (width !== containerWidth || height !== containerHeight) {
 					clearTimeout(reflowTimeout);
 					reflowTimeout = setTimeout(function () {
@@ -4161,10 +4161,10 @@ function Chart(options, callback) {
 		oldChartHeight = chartHeight;
 		oldChartWidth = chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = optionsChart.width = chartWidth = mathRound(width);
+			chart.chartWidth = chartWidth = mathRound(width);
 		}
 		if (defined(height)) {
-			chart.chartHeight = optionsChart.height = chartHeight = mathRound(height);
+			chart.chartHeight = chartHeight = mathRound(height);
 		}
 
 		css(container, {
