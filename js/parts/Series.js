@@ -1065,9 +1065,21 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries = series.index === yAxis.series.length - 1,
-			i;
+			isLastSeries,
+			allStackSeries = yAxis.series,
+			i = allStackSeries.length;
+			
+		// Is it the last visible series?
+		while (i--) {
+			if (allStackSeries[i].visible) {
+				if (i === series.index) {
+					isLastSeries = true;
+				}
+				break;
+			}
+		}
 		
+		// Translate each point
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
 				xValue = point.x,
@@ -1100,9 +1112,10 @@ Series.prototype = {
 				point.stackTotal = pointStackTotal;
 			}
 
-			if (defined(yBottom)) {
-				point.yBottom = yAxis.translate(yBottom, 0, 1, 0, 1);
-			}
+			// Set translated yBottom or remove it
+			point.yBottom = defined(yBottom) ? 
+				yAxis.translate(yBottom, 0, 1, 0, 1) :
+				null;
 			
 			// general hook, used for Highstock compare mode
 			if (hasModifyValue) {

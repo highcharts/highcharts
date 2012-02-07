@@ -5787,7 +5787,7 @@ function Chart(options, callback) {
 			setOffset: function (xOffset, xWidth) {
 				var stackItem = this,										// aliased this
 					neg = stackItem.isNegative,								// special treatment is needed for negative stacks
-					y = axis.translate(stackItem.total),					// stack value translated mapped to chart coordinates
+					y = axis.translate(stackItem.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
 					yZero = axis.translate(0),								// stack origin
 					h = mathAbs(y - yZero),									// stack height
 					x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
@@ -6314,6 +6314,9 @@ function Chart(options, callback) {
 				linkedParentExtremes = linkedParent.getExtremes();
 				min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
 				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);
+				if (options.type !== linkedParent.options.type) {
+					error(11, 1); // Can't link axes of different type
+				}
 			} else { // initial min and max from the extreme data values
 				min = pick(userMin, options.min, dataMin);
 				max = pick(userMax, options.max, dataMax);
@@ -6321,7 +6324,7 @@ function Chart(options, callback) {
 
 			if (isLog) {
 				if (!secondPass && min <= 0) {
-					error(10);
+					error(10); // Can't plot negative values on log axis
 				}
 				min = log2lin(min);
 				max = log2lin(max);
@@ -6800,7 +6803,9 @@ function Chart(options, callback) {
 				hasRendered = chart.hasRendered,
 				slideInTicks = hasRendered && defined(oldMin) && !isNaN(oldMin),
 				hasData = axis.series.length && defined(min) && defined(max),
-				showAxis = hasData || pick(options.showEmpty, true);
+				showAxis = hasData || pick(options.showEmpty, true),
+				from,
+				to;
 
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData || isLinked) {
@@ -6850,9 +6855,11 @@ function Chart(options, callback) {
 							if (!alternateBands[pos]) {
 								alternateBands[pos] = new PlotLineOrBand();
 							}
+							from = pos;
+							to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max;
 							alternateBands[pos].options = {
-								from: pos,
-								to: tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max,
+								from: isLog ? lin2log(from) : from,
+								to: isLog ? lin2log(to) : to,
 								color: alternateGridColor
 							};
 							alternateBands[pos].render();
@@ -10863,9 +10870,21 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries = series.index === yAxis.series.length - 1,
-			i;
+			isLastSeries,
+			allStackSeries = yAxis.series,
+			i = allStackSeries.length;
+			
+		// Is it the last visible series?
+		while (i--) {
+			if (allStackSeries[i].visible) {
+				if (i === series.index) {
+					isLastSeries = true;
+				}
+				break;
+			}
+		}
 		
+		// Translate each point
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
 				xValue = point.x,
@@ -10898,9 +10917,10 @@ Series.prototype = {
 				point.stackTotal = pointStackTotal;
 			}
 
-			if (defined(yBottom)) {
-				point.yBottom = yAxis.translate(yBottom, 0, 1, 0, 1);
-			}
+			// Set translated yBottom or remove it
+			point.yBottom = defined(yBottom) ? 
+				yAxis.translate(yBottom, 0, 1, 0, 1) :
+				null;
 			
 			// general hook, used for Highstock compare mode
 			if (hasModifyValue) {
