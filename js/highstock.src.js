@@ -6657,13 +6657,16 @@ function Chart(options, callback) {
 		 * Used in bar and area plots
 		 */
 		function getThreshold(threshold) {
-			if (min > threshold || threshold === null) {
-				threshold = min;
-			} else if (max < threshold) {
-				threshold = max;
+			var realMin = isLog ? lin2log(min) : min,
+				realMax = isLog ? lin2log(max) : max;
+			
+			if (realMin > threshold || threshold === null) {
+				threshold = realMin;
+			} else if (realMax < threshold) {
+				threshold = realMax;
 			}
 
-			return translate(threshold, 0, 1);
+			return translate(threshold, 0, 1, 0, 1);
 		}
 
 		/**
@@ -12426,13 +12429,16 @@ var ColumnSeries = extendClass(Series, {
 			each(points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs,
-					yAxis = series.yAxis;
+					yAxis = series.yAxis,
+					threshold = options.threshold;
 
 				if (graphic) {
 					// start values
 					graphic.attr({
 						height: 0,
-						y: yAxis.translate(pick(options.threshold, yAxis.getExtremes().min), 0, 1, 0, 1)
+						y: defined(threshold) ? 
+							yAxis.getThreshold(threshold) :
+							yAxis.translate(yAxis.getExtremes().min, 0, 1, 0, 1)
 					});
 
 					// animate
@@ -13615,7 +13621,8 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 		hover: {
 			lineWidth: 3
 		}
-	}
+	},
+	threshold: null
 });
 
 // 2- Create the OHLCPoint object
@@ -13820,12 +13827,13 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	},
 	lineColor: 'black',
 	lineWidth: 1,
-	upColor: 'white',
 	states: {
 		hover: {
 			lineWidth: 2
 		}
-	}
+	},
+	threshold: null,
+	upColor: 'white'
 });
 
 // 2 - Create the CandlestickSeries object

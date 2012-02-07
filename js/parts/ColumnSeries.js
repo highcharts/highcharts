@@ -273,13 +273,16 @@ var ColumnSeries = extendClass(Series, {
 			each(points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs,
-					yAxis = series.yAxis;
+					yAxis = series.yAxis,
+					threshold = options.threshold;
 
 				if (graphic) {
 					// start values
 					graphic.attr({
 						height: 0,
-						y: yAxis.translate(pick(options.threshold, yAxis.getExtremes().min), 0, 1, 0, 1)
+						y: defined(threshold) ? 
+							yAxis.getThreshold(threshold) :
+							yAxis.translate(yAxis.getExtremes().min, 0, 1, 0, 1)
 					});
 
 					// animate

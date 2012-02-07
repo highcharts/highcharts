@@ -14,7 +14,8 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 		hover: {
 			lineWidth: 3
 		}
-	}
+	},
+	threshold: null
 });
 
 // 2- Create the OHLCPoint object
