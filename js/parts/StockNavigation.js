@@ -1070,8 +1070,8 @@ Highcharts.RangeSelector = function (chart) {
 			}
 
 			if (!isNaN(value) &&
-				((isMin && (value > extremes.dataMin && value < rightBox.HCTime)) ||
-				(!isMin && (value < extremes.dataMax && value > leftBox.HCTime)))
+				((isMin && (value >= extremes.dataMin && value <= rightBox.HCTime)) ||
+				(!isMin && (value <= extremes.dataMax && value >= leftBox.HCTime)))
 			) {
 				chart.xAxis[0].setExtremes(
 					isMin ? value : extremes.min,
