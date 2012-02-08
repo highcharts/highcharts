@@ -10477,7 +10477,9 @@ Series.prototype = {
 			plotOptions.series,
 			itemOptions
 		);
-		options.data = data;
+		
+		// Re-insert the data array to the options and the original config (#717)
+		options.data = itemOptions.data = data;
 		
 		// the tooltip options are merged between global and series specific options
 		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
@@ -11121,6 +11123,8 @@ Series.prototype = {
 			i,
 			point,
 			radius,
+			symbol,
+			isImage,
 			graphic;
 
 		if (series.options.marker.enabled) {
@@ -11137,6 +11141,8 @@ Series.prototype = {
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 					radius = pointAttr.r;
+					symbol = pick(point.marker && point.marker.symbol, series.symbol);
+					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
 						graphic.animate(extend({
@@ -11146,9 +11152,9 @@ Series.prototype = {
 							width: 2 * radius,
 							height: 2 * radius
 						} : {}));
-					} else if (radius > 0) {
+					} else if (radius > 0 || isImage) {
 						point.graphic = chart.renderer.symbol(
-							pick(point.marker && point.marker.symbol, series.symbol),
+							symbol,
 							plotX - radius,
 							plotY - radius,
 							2 * radius,
@@ -12270,7 +12276,6 @@ var ColumnSeries = extendClass(Series, {
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
 				stack = series.yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
-				trackerY,
 				shapeArgs;
 
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
@@ -12278,7 +12283,7 @@ var ColumnSeries = extendClass(Series, {
 				stack[point.x].setOffset(pointXOffset, pointWidth);
 			}
 
-			// handle options.minPointLength and tracker for small points
+			// handle options.minPointLength
 			if (mathAbs(barH) < minPointLength) {
 				if (minPointLength) {
 					barH = minPointLength;
@@ -12287,7 +12292,6 @@ var ColumnSeries = extendClass(Series, {
 							yBottom - minPointLength : // keep position
 							translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
 				}
-				trackerY = barY - 3;
 			}
 
 			extend(point, {
@@ -12315,9 +12319,9 @@ var ColumnSeries = extendClass(Series, {
 			point.shapeArgs = shapeArgs;
 
 			// make small columns responsive to mouse
-			point.trackerArgs = defined(trackerY) && merge(point.shapeArgs, {
-				height: mathMax(6, barH + 3),
-				y: trackerY
+			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
+				height: 6,
+				y: barY - 3
 			});
 		});
 
@@ -12532,41 +12536,44 @@ var ScatterSeries = extendClass(Series, {
 		});
 	},
 
-
 	/**
-	 * Create individual tracker elements for each point
+	 * Add tracking event listener to the series group, so the point graphics
+	 * themselves act as trackers
 	 */
-	//drawTracker: ColumnSeries.prototype.drawTracker,
 	drawTracker: function () {
 		var series = this,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
+			points = series.points,
+			i = points.length,
 			graphic;
 
-		each(series.points, function (point) {
-			graphic = point.graphic;
+		// Set an expando property for the point index, used below
+		while (i--) {
+			graphic = points[i].graphic;
 			if (graphic) { // doesn't exist for null points
-				graphic
-					.attr({ isTracker: true })
-					.on(hasTouch ? 'touchstart' : 'mouseover', function () {
-						series.onMouseOver();
-						point.onMouseOver();
-					})
-					.on('mouseout', function () {
-						if (!series.options.stickyTracking) {
-							series.onMouseOut();
-						}
-					})
-					.css(css);
+				graphic.element._index = i; 
 			}
-		});
+		}
+		
+		// Add the event listeners, we need to do this only once
+		if (!series._hasTracking) {
+			series.group
+				.on(hasTouch ? 'touchstart' : 'mouseover', function (e) {
+					series.onMouseOver();
+					points[e.target._index].onMouseOver();
+				})
+				.on('mouseout', function () {
+					if (!series.options.stickyTracking) {
+						series.onMouseOut();
+					}
+				})
+				.css(css);
+		} else {
+			series._hasTracking = true;
+		}
 
-	}//,
-
-	/**
-	 * Cleaning the data is not necessary in a scatter plot
-	 */
-	//cleanData: function () {}
+	}
 });
 seriesTypes.scatter = ScatterSeries;
 

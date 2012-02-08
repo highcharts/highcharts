@@ -517,7 +517,8 @@ extend(Chart.prototype, {
 			symbolAttr = {
 				stroke: btnOptions.symbolStroke,
 				fill: btnOptions.symbolFill
-			};
+			},
+			symbolSize = btnOptions.symbolSize || 12;
 
 		// Keeps references to the button elements
 		if (!chart.exportDivElements) {
@@ -600,9 +601,10 @@ extend(Chart.prototype, {
 		// the icon
 		symbol = renderer.symbol(
 				btnOptions.symbol,
-				btnOptions.symbolX,
-				btnOptions.symbolY,
-				(btnOptions.symbolSize || 12) / 2
+				btnOptions.symbolX - (symbolSize / 2),
+				btnOptions.symbolY - (symbolSize / 2),
+				symbolSize,				
+				symbolSize
 			)
 			.align(btnOptions, true)
 			.attr(extend(symbolAttr, {
@@ -646,53 +648,67 @@ extend(Chart.prototype, {
 	}
 });
 
+/**
+ * Crisp for 1px stroke width, which is default. In the future, consider a smarter,
+ * global function.
+ */
+function crisp(arr) {
+	var i = arr.length;
+	while (i--) {
+		if (typeof arr[i] === 'number') {
+			arr[i] = Math.round(arr[i]) - 0.5;		
+		}
+	}
+	return arr;
+}
+
 // Create the export icon
-HC.Renderer.prototype.symbols.exportIcon = function (x, y, radius) {
-	return [
+HC.Renderer.prototype.symbols.exportIcon = function (x, y, width, height) {
+	return crisp([
 		M, // the disk
-		x - radius, y + radius,
+		x, y + width,
 		L,
-		x + radius, y + radius,
-		x + radius, y + radius * 0.5,
-		x - radius, y + radius * 0.5,
+		x + width, y + height,
+		x + width, y + height * 0.8,
+		x, y + height * 0.8,
 		'Z',
 		M, // the arrow
-		x, y + radius * 0.5,
+		x + width * 0.5, y + height * 0.8,
 		L,
-		x - radius * 0.5, y - radius / 3,
-		x - radius / 6, y - radius / 3,
-		x - radius / 6, y - radius,
-		x + radius / 6, y - radius,
-		x + radius / 6, y - radius / 3,
-		x + radius * 0.5, y - radius / 3,
+		x + width * 0.8, y + height * 0.4,
+		x + width * 0.4, y + height * 0.4,
+		x + width * 0.4, y,
+		x + width * 0.6, y,
+		x + width * 0.6, y + height * 0.4,
+		x + width * 0.2, y + height * 0.4,
 		'Z'
-	];
+	]);
 };
 // Create the print icon
-HC.Renderer.prototype.symbols.printIcon = function (x, y, radius) {
-	return [
+HC.Renderer.prototype.symbols.printIcon = function (x, y, width, height) {
+	return crisp([
 		M, // the printer
-		x - radius, y + radius * 0.5,
+		x, y + height * 0.7,
 		L,
-		x + radius, y + radius * 0.5,
-		x + radius, y - radius / 3,
-		x - radius, y - radius / 3,
+		x + width, y + height * 0.7,
+		x + width, y + height * 0.4,
+		x, y + height * 0.4,
 		'Z',
 		M, // the upper sheet
-		x - radius * 0.5, y - radius / 3,
+		x + width * 0.2, y + height * 0.4,
 		L,
-		x - radius * 0.5, y - radius,
-		x + radius * 0.5, y - radius,
-		x + radius * 0.5, y - radius / 3,
+		x + width * 0.2, y,
+		x + width * 0.8, y,
+		x + width * 0.8, y + height * 0.4,
 		'Z',
 		M, // the lower sheet
-		x - radius * 0.5, y + radius * 0.5,
+		x + width * 0.2, y + height * 0.7,
 		L,
-		x - radius * 0.75, y + radius,
-		x + radius * 0.75, y + radius,
-		x + radius * 0.5, y + radius * 0.5,
+		x, y + height,
+		x + width, y + height,
+		x + width * 0.8, y + height * 0.7,
 		'Z'
-	];
+	]);
 };
 
 

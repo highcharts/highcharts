@@ -671,7 +671,9 @@ Series.prototype = {
 			plotOptions.series,
 			itemOptions
 		);
-		options.data = data;
+		
+		// Re-insert the data array to the options and the original config (#717)
+		options.data = itemOptions.data = data;
 		
 		// the tooltip options are merged between global and series specific options
 		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
@@ -1315,6 +1317,8 @@ Series.prototype = {
 			i,
 			point,
 			radius,
+			symbol,
+			isImage,
 			graphic;
 
 		if (series.options.marker.enabled) {
@@ -1331,6 +1335,8 @@ Series.prototype = {
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 					radius = pointAttr.r;
+					symbol = pick(point.marker && point.marker.symbol, series.symbol);
+					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
 						graphic.animate(extend({
@@ -1340,9 +1346,9 @@ Series.prototype = {
 							width: 2 * radius,
 							height: 2 * radius
 						} : {}));
-					} else if (radius > 0) {
+					} else if (radius > 0 || isImage) {
 						point.graphic = chart.renderer.symbol(
-							pick(point.marker && point.marker.symbol, series.symbol),
+							symbol,
 							plotX - radius,
 							plotY - radius,
 							2 * radius,
