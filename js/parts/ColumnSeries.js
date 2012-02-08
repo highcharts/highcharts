@@ -94,7 +94,6 @@ var ColumnSeries = extendClass(Series, {
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
 				stack = series.yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
-				trackerY,
 				shapeArgs;
 
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
@@ -102,7 +101,7 @@ var ColumnSeries = extendClass(Series, {
 				stack[point.x].setOffset(pointXOffset, pointWidth);
 			}
 
-			// handle options.minPointLength and tracker for small points
+			// handle options.minPointLength
 			if (mathAbs(barH) < minPointLength) {
 				if (minPointLength) {
 					barH = minPointLength;
@@ -111,7 +110,6 @@ var ColumnSeries = extendClass(Series, {
 							yBottom - minPointLength : // keep position
 							translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
 				}
-				trackerY = barY - 3;
 			}
 
 			extend(point, {
@@ -139,9 +137,9 @@ var ColumnSeries = extendClass(Series, {
 			point.shapeArgs = shapeArgs;
 
 			// make small columns responsive to mouse
-			point.trackerArgs = defined(trackerY) && merge(point.shapeArgs, {
-				height: mathMax(6, barH + 3),
-				y: trackerY
+			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
+				height: 6,
+				y: barY - 3
 			});
 		});
 
