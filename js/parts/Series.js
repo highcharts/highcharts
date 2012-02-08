@@ -666,7 +666,9 @@ Series.prototype = {
 			plotOptions.series,
 			itemOptions
 		);
-		options.data = data;
+		
+		// Re-insert the data array to the options and the original config (#717)
+		options.data = itemOptions.data = data;
 		
 		// the tooltip options are merged between global and series specific options
 		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
