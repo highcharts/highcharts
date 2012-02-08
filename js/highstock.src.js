@@ -8095,7 +8095,7 @@ function Chart(options, callback) {
 				itemX = legendItemPos[0],
 				itemY = legendItemPos[1],
 				legendSymbol = item.legendSymbol,
-				symbolX = itemX + legendSymbol.xOff,
+				symbolX,
 				checkbox = item.checkbox;
 			
 			if (legendItem) {
@@ -8111,6 +8111,7 @@ function Chart(options, callback) {
 				);
 			}
 			if (legendSymbol) {
+				symbolX = itemX + legendSymbol.xOff;
 				legendSymbol.attr({
 					x: ltr ? symbolX : legendWidth - symbolX,
 					y: itemY + legendSymbol.yOff
