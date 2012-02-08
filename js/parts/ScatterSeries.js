@@ -23,41 +23,44 @@ var ScatterSeries = extendClass(Series, {
 		});
 	},
 
-
 	/**
-	 * Create individual tracker elements for each point
+	 * Add tracking event listener to the series group, so the point graphics
+	 * themselves act as trackers
 	 */
-	//drawTracker: ColumnSeries.prototype.drawTracker,
 	drawTracker: function () {
 		var series = this,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
+			points = series.points,
+			i = points.length,
 			graphic;
 
-		each(series.points, function (point) {
-			graphic = point.graphic;
+		// Set an expando property for the point index, used below
+		while (i--) {
+			graphic = points[i].graphic;
 			if (graphic) { // doesn't exist for null points
-				graphic
-					.attr({ isTracker: true })
-					.on(hasTouch ? 'touchstart' : 'mouseover', function () {
-						series.onMouseOver();
-						point.onMouseOver();
-					})
-					.on('mouseout', function () {
-						if (!series.options.stickyTracking) {
-							series.onMouseOut();
-						}
-					})
-					.css(css);
+				graphic.element._index = i; 
 			}
-		});
+		}
+		
+		// Add the event listeners, we need to do this only once
+		if (!series._hasTracking) {
+			series.group
+				.on(hasTouch ? 'touchstart' : 'mouseover', function (e) {
+					series.onMouseOver();
+					points[e.target._index].onMouseOver();
+				})
+				.on('mouseout', function () {
+					if (!series.options.stickyTracking) {
+						series.onMouseOut();
+					}
+				})
+				.css(css);
+		} else {
+			series._hasTracking = true;
+		}
 
-	}//,
-
-	/**
-	 * Cleaning the data is not necessary in a scatter plot
-	 */
-	//cleanData: function () {}
+	}
 });
 seriesTypes.scatter = ScatterSeries;
 
