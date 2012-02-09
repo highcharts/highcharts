@@ -710,20 +710,25 @@ SVGElement.prototype = {
 
 		// SVG elements
 		if (element.namespaceURI === SVG_NS) {
-			try { // fails in Firefox if the container has display: none
-				// use extend because IE9 is not allowed to change width and height in case
-				// of rotation (below)
+			try { // Fails in Firefox if the container has display: none.
+				
 				bBox = element.getBBox ?
-					// SVG:
+					// SVG: use extend because IE9 is not allowed to change width and height in case
+					// of rotation (below)
 					extend({}, element.getBBox()) :
-					// Canvas renderer:
+					// Canvas renderer: // TODO: can this be removed now that we're checking for the SVG NS?
 					{
 						width: element.offsetWidth,
 						height: element.offsetHeight
 					};
-			} catch (e) {
+			} catch (e) {}
+			
+			// If the bBox is not set, the try-catch block above failed. The other condition
+			// is for Opera that returns a width of -Infinity on hidden elements.
+			if (!bBox || bBox.width < 0) {
 				bBox = { width: 0, height: 0 };
 			}
+			
 			width = bBox.width;
 			height = bBox.height;
 

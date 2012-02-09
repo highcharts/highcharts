@@ -4114,9 +4114,13 @@ function Chart(options, callback) {
 		var reflowTimeout;
 		function reflow(e) {
 			var width = optionsChart.width || renderTo.offsetWidth,
-				height = optionsChart.height || renderTo.offsetHeight;
-
-			if (width && height && e.target === win) { // width and height checks for display:none
+				height = optionsChart.height || renderTo.offsetHeight,
+				target = e.target;
+				
+			// Width and height checks for display:none. Target is doc in Opera,
+			// win in Chrome.
+			if (width && height && (target === win || target === doc)) {
+				
 				if (width !== containerWidth || height !== containerHeight) {
 					clearTimeout(reflowTimeout);
 					reflowTimeout = setTimeout(function () {
