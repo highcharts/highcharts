@@ -4792,7 +4792,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
-		return this.symbol('circle').attr({ x: x, y: y, r: r});
+		return this.symbol('circle').attr({ x: x - r, y: y - r, width: 2 * r, height: 2 * r });
 	},
 
 	/**
@@ -9210,8 +9210,8 @@ function Chart(options, callback) {
 				height = optionsChart.height || renderTo.offsetHeight,
 				target = e.target;
 				
-			// Width and height checks for display:none. Target is doc in Opera,
-			// win in Chrome.
+			// Width and height checks for display:none. Target is doc in IE8 and Opera,
+			// win in Firefox, Chrome and IE9.
 			if (width && height && (target === win || target === doc)) {
 				
 				if (width !== containerWidth || height !== containerHeight) {

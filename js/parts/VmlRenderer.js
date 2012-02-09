@@ -719,7 +719,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
-		return this.symbol('circle').attr({ x: x, y: y, r: r});
+		return this.symbol('circle').attr({ x: x - r, y: y - r, width: 2 * r, height: 2 * r });
 	},
 
 	/**
