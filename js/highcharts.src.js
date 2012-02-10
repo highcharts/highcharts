@@ -6297,18 +6297,11 @@ function Chart(options, callback) {
 
 				userMin = newMin;
 				userMax = newMax;
-
-
+				
 				// redraw
 				if (redraw) {
 					chart.redraw(animation);
 				}
-			});
-
-			// this event contains the min and max values that may be modified by padding etc.
-			fireEvent(axis, 'afterSetExtremes', {
-				min: min,
-				max: max
 			});
 		}
 		
@@ -8321,8 +8314,10 @@ function Chart(options, callback) {
 			// redraw axes
 			each(axes, function (axis) {
 				if (axis.isDirty) {
+					
+					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747
 					axis.redraw();
-					//isDirtyBox = true; // force redrawing subsequent axes
+					
 				}
 			});
 
