@@ -38,7 +38,7 @@ return {
 
 					this.element = element;
 					this.key = attr;
-					from = element.attr(attr);
+					from = element.attr ? element.attr(attr) : $(element).getStyle(attr);
 
 					// special treatment for paths
 					if (attr === 'd') {
@@ -74,13 +74,23 @@ return {
 					this.element._highchart_animation[this.key] = this;
 				},
 				update: function (position) {
-					var paths = this.paths;
+					var paths = this.paths,
+						element = this.element,
+						obj;
 
 					if (paths) {
 						position = pathAnim.step(paths[0], paths[1], position, this.toD);
 					}
 
-					this.element.attr(this.options.attribute, position);
+					if (element.attr) { // SVGElement
+						element.attr(this.options.attribute, position);
+					
+					} else { // HTML, #409
+						obj = {};
+						obj[this.options.attribute] = position;
+						$(element).setStyle(obj);
+					}
+					
 				},
 				finish: function () {
 					// Delete the property that holds this animation now that it is finished.
@@ -137,8 +147,8 @@ return {
 			}
 		}
 
-		if (!el.attr) {
-			throw 'Todo: implement animate DOM objects';
+		if (!el.attr) { // HTML element, #409
+			$(el).setStyle(params);
 		}
 	},
 
