@@ -1,4 +1,3 @@
-
 /**
  * The chart class
  * @param {Object} options
@@ -1368,6 +1367,12 @@ function Chart(options, callback) {
 				if (redraw) {
 					chart.redraw(animation);
 				}
+			});
+
+			// this event contains the min and max values that may be modified by padding etc.
+			fireEvent(axis, 'afterSetExtremes', {
+				min: newMin,
+				max: newMax
 			});
 		}
 		
