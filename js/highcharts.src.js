@@ -8855,11 +8855,15 @@ function Chart(options, callback) {
 	 */
 	function initReflow() {
 		var reflowTimeout;
-		function reflow() {
+		function reflow(e) {
 			var width = optionsChart.width || renderTo.offsetWidth,
-				height = optionsChart.height || renderTo.offsetHeight;
-
-			if (width && height) { // means container is display:none
+				height = optionsChart.height || renderTo.offsetHeight,
+				target = e.target;
+				
+			// Width and height checks for display:none. Target is doc in IE8 and Opera,
+			// win in Firefox, Chrome and IE9.
+			if (width && height && (target === win || target === doc)) {
+				
 				if (width !== containerWidth || height !== containerHeight) {
 					clearTimeout(reflowTimeout);
 					reflowTimeout = setTimeout(function () {
