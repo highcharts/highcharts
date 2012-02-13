@@ -1039,7 +1039,7 @@ function Chart(options, callback) {
 		 */
 		function adjustForMinRange() {
 			var zoomOffset,
-				spaceAvailable = dataMax - dataMin > minRange,
+				spaceAvailable = dataMax - dataMin >= minRange,
 				closestDataRange,
 				i,
 				distance,
@@ -1047,7 +1047,7 @@ function Chart(options, callback) {
 				loopLength,
 				minArgs,
 				maxArgs;
-
+				
 			// Set the automatic minimum range based on the closest point distance
 			if (isXAxis && minRange === UNDEFINED) {
 
@@ -1071,7 +1071,7 @@ function Chart(options, callback) {
 					minRange = mathMin(closestDataRange * 5, dataMax - dataMin);
 				}
 			}
-
+			
 			// if minRange is exceeded, adjust
 			if (max - min < minRange) {
 
@@ -1088,6 +1088,7 @@ function Chart(options, callback) {
 				if (spaceAvailable) { // if space is availabe, stay within the data range
 					maxArgs[2] = dataMax;
 				}
+				
 				max = arrayMin(maxArgs);
 
 				// now if the max is adjusted, adjust the min back
@@ -3380,11 +3381,9 @@ function Chart(options, callback) {
 
 			// redraw axes
 			each(axes, function (axis) {
-				if (axis.isDirty) {
-					
-					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747
-					axis.redraw();
-					
+				fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751					
+				if (axis.isDirty) {					
+					axis.redraw();					
 				}
 			});
 
