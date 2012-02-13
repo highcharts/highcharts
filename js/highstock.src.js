@@ -14057,7 +14057,7 @@ Highcharts.Scroller = function (chart) {
 		scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0,
 		outlineHeight = height + scrollbarHeight,
 		barBorderRadius = scrollbarOptions.barBorderRadius,
-		top = navigatorOptions.top || chart.chartHeight - height - scrollbarHeight - chartOptions.chart.spacingBottom,
+		top,
 		halfOutline = outlineWidth / 2,
 		outlineTop,
 		scrollerLeft,
@@ -14081,6 +14081,13 @@ Highcharts.Scroller = function (chart) {
 		elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
 
 	chart.resetZoomEnabled = false;
+
+	/**
+	 * Return the top of the navigation 
+	 */
+	function getAxisTop(chartHeight) {
+		return navigatorOptions.top || chartHeight - height - scrollbarHeight - chartOptions.chart.spacingBottom;
+	}
 
 	/**
 	 * Draw one of the handles on the side of the zoomed range in the navigator
@@ -14565,10 +14572,13 @@ Highcharts.Scroller = function (chart) {
 	 */
 	function init() {
 		var xAxisIndex = chart.xAxis.length,
-			yAxisIndex = chart.yAxis.length;
+			yAxisIndex = chart.yAxis.length,
+			baseChartSetSize = chart.setSize;
 
 		// make room below the chart
 		chart.extraBottomMargin = outlineHeight + navigatorOptions.margin;
+		// get the top offset
+		top = getAxisTop(chart.chartHeight);
 
 		if (navigatorEnabled) {
 			var baseOptions = baseSeries.options,
@@ -14653,6 +14663,14 @@ Highcharts.Scroller = function (chart) {
 				}
 			};
 		}
+		
+		
+		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
+		// This needs to be done prior to chart.resize
+		chart.setSize = function (width, height, animation) {
+			xAxis.options.top = yAxis.options.top = top = getAxisTop(height);
+			baseChartSetSize.call(chart, width, height, animation);
+		};
 
 		addEvents();
 	}
