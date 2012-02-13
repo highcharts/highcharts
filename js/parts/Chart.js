@@ -1220,7 +1220,8 @@ function Chart(options, callback) {
 				}
 			}
 
-			// post process positions, used in ordinal axes in Highstock
+			// post process positions, used in ordinal axes in Highstock. 
+			// TODO: combine with getNonLinearTimeTicks
 			fireEvent(axis, 'afterSetTickPositions', {
 				tickPositions: tickPositions
 			});
