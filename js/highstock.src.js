@@ -15211,7 +15211,7 @@ Highcharts.RangeSelector = function (chart) {
 			range = 30 * 24 * 3600 * 1000 * count;
 		} else if (type === 'ytd') {
 			date = new Date(0);
-			now = new Date();
+			now = new Date(dataMax);
 			year = now.getFullYear();
 			date.setFullYear(year);
 
