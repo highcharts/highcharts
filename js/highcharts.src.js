@@ -11444,8 +11444,6 @@ Series.prototype = {
 			if (group && clipRect !== chart.clipRect && clipRect.renderer) {
 				if (doClip) {
 					group.clip((series.clipRect = chart.clipRect));
-					
-					//series.trackerGroup.clip((series.clipRect = chart.clipRect));
 				}
 				clipRect.destroy();
 			}
@@ -11678,7 +11676,7 @@ Series.prototype = {
 
 		} else { // create
 			group = renderer.g()
-				.clip(series.clipRect)
+				.clip(chart.clipRect)
 				.add(chart.trackerGroup);
 				
 			series.tracker = renderer.path(trackerPath)
@@ -12032,7 +12030,7 @@ var ColumnSeries = extendClass(Series, {
 		// Add a series specific group to allow clipping the trackers
 		if (series.isCartesian) {
 			group = renderer.g()
-				.clip(series.clipRect)
+				.clip(chart.clipRect)
 				.add(chart.trackerGroup);	
 		}
 

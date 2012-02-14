@@ -1985,8 +1985,6 @@ Series.prototype = {
 			if (group && clipRect !== chart.clipRect && clipRect.renderer) {
 				if (doClip) {
 					group.clip((series.clipRect = chart.clipRect));
-					
-					//series.trackerGroup.clip((series.clipRect = chart.clipRect));
 				}
 				clipRect.destroy();
 			}
@@ -2219,7 +2217,7 @@ Series.prototype = {
 
 		} else { // create
 			group = renderer.g()
-				.clip(series.clipRect)
+				.clip(chart.clipRect)
 				.add(chart.trackerGroup);
 				
 			series.tracker = renderer.path(trackerPath)

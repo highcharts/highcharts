@@ -206,7 +206,7 @@ var ColumnSeries = extendClass(Series, {
 		// Add a series specific group to allow clipping the trackers
 		if (series.isCartesian) {
 			group = renderer.g()
-				.clip(series.clipRect)
+				.clip(chart.clipRect)
 				.add(chart.trackerGroup);	
 		}
 
