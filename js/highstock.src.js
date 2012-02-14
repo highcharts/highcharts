@@ -10295,7 +10295,9 @@ Series.prototype = {
 						yData[i] = pt[1];
 					}
 				}
-			}
+			} /* else {
+				error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
+			}*/
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				pt = { series: series };
@@ -11375,7 +11377,7 @@ Series.prototype = {
 				chart.clipRect = clipRect;
 			}
 		}
-
+		
 
 		// the group
 		if (!series.group) {
@@ -11442,6 +11444,8 @@ Series.prototype = {
 			if (group && clipRect !== chart.clipRect && clipRect.renderer) {
 				if (doClip) {
 					group.clip((series.clipRect = chart.clipRect));
+					
+					//series.trackerGroup.clip((series.clipRect = chart.clipRect));
 				}
 				clipRect.destroy();
 			}
@@ -11665,6 +11669,8 @@ Series.prototype = {
 			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
 				L, singlePoint.plotX + snap, singlePoint.plotY);
 		}
+		
+		
 
 		// draw the tracker
 		if (tracker) {
@@ -11680,6 +11686,7 @@ Series.prototype = {
 					isTracker: true,
 					stroke: TRACKER_FILL,
 					fill: NONE,
+					'stroke-linejoin': 'bevel',
 					'stroke-width' : options.lineWidth + 2 * snap,
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: options.zIndex || 1
