@@ -272,7 +272,7 @@ defaultOptions = {
 		//xDateFormat: '%A, %b %e, %Y',
 		//valueDecimals: null,
 		//valuePrefix: '',
-		//ySuffix: ''
+		//valueSuffix: ''
 	},
 
 	credits: {
