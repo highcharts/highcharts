@@ -9873,6 +9873,14 @@ Point.prototype = {
 			point.name = options[0];
 			point.y = options[1];
 		}
+		
+		/*
+		 * This is the fastest way to detect if there are individual point dataLabels that need 
+		 * to be considered in drawDataLabels 
+		 */
+		if (options.dataLabels) {
+			series._hasPointLabels = true;
+		}
 
 		/*
 		 * If no x is set by now, get auto incremented value. All points must have an
@@ -9883,6 +9891,8 @@ Point.prototype = {
 		if (point.x === UNDEFINED) {
 			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
+		
+		
 
 	},
 
@@ -11409,13 +11419,15 @@ Series.prototype = {
 	 * Draw the data labels
 	 */
 	drawDataLabels: function () {
-		if (this.options.dataLabels.enabled) {
-			var series = this,
-				x,
+		
+		var series = this,
+			seriesOptions = series.options,
+			options = seriesOptions.dataLabels;
+		
+		if (options.enabled || series._hasPointLabels) {
+			var x,
 				y,
 				points = series.points,
-				seriesOptions = series.options,
-				options = seriesOptions.dataLabels,
 				pointOptions,
 				generalOptions,
 				str,
@@ -11467,7 +11479,7 @@ Series.prototype = {
 			} else {
 				dataLabelsGroup.translate(groupLeft, groupTop);
 			}
-
+			
 			// make the labels for each point
 			generalOptions = options;
 			each(points, function (point) {
