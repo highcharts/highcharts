@@ -55,7 +55,7 @@ $(function() {
             tooltip: {
                 pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
                 changeDecimals: 2,
-                yDecimals: 2
+                valueDecimals: 2
             },
             
             series: seriesOptions

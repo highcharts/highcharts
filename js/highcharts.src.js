@@ -1408,10 +1408,10 @@ defaultOptions = {
 			stickyTracking: true
 			//tooltip: {
 				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
-				//yDecimals: null,
+				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
-				//yPrefix: '',
-				//ySuffix: ''
+				//valuePrefix: '',
+				//ySuffix: ''				
 			//}
 			// turboThreshold: 1000
 			// zIndex: null
@@ -1503,8 +1503,8 @@ defaultOptions = {
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',
-		//yDecimals: null,
-		//yPrefix: '',
+		//valueDecimals: null,
+		//valuePrefix: '',
 		//ySuffix: ''
 	},
 
@@ -6241,7 +6241,7 @@ function Chart(options, callback) {
 		 */
 		function adjustForMinRange() {
 			var zoomOffset,
-				spaceAvailable = dataMax - dataMin > minRange,
+				spaceAvailable = dataMax - dataMin >= minRange,
 				closestDataRange,
 				i,
 				distance,
@@ -6249,7 +6249,7 @@ function Chart(options, callback) {
 				loopLength,
 				minArgs,
 				maxArgs;
-
+				
 			// Set the automatic minimum range based on the closest point distance
 			if (isXAxis && minRange === UNDEFINED && !isLog) {
 				
@@ -6273,7 +6273,7 @@ function Chart(options, callback) {
 					minRange = mathMin(closestDataRange * 5, dataMax - dataMin);
 				}
 			}
-
+			
 			// if minRange is exceeded, adjust
 			if (max - min < minRange) {
 
@@ -6290,6 +6290,7 @@ function Chart(options, callback) {
 				if (spaceAvailable) { // if space is availabe, stay within the data range
 					maxArgs[2] = dataMax;
 				}
+				
 				max = arrayMin(maxArgs);
 
 				// now if the max is adjusted, adjust the min back
@@ -6429,7 +6430,8 @@ function Chart(options, callback) {
 				}
 			}
 
-			// post process positions, used in ordinal axes in Highstock
+			// post process positions, used in ordinal axes in Highstock. 
+			// TODO: combine with getNonLinearTimeTicks
 			fireEvent(axis, 'afterSetTickPositions', {
 				tickPositions: tickPositions
 			});
@@ -6571,18 +6573,11 @@ function Chart(options, callback) {
 
 				userMin = newMin;
 				userMax = newMax;
-
-
+				
 				// redraw
 				if (redraw) {
 					chart.redraw(animation);
 				}
-			});
-
-			// this event contains the min and max values that may be modified by padding etc.
-			fireEvent(axis, 'afterSetExtremes', {
-				min: min,
-				max: max
 			});
 		}
 		
@@ -8656,9 +8651,9 @@ function Chart(options, callback) {
 
 			// redraw axes
 			each(axes, function (axis) {
-				if (axis.isDirty) {
-					axis.redraw();
-					//isDirtyBox = true; // force redrawing subsequent axes
+				fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751					
+				if (axis.isDirty) {					
+					axis.redraw();					
 				}
 			});
 
@@ -10055,9 +10050,9 @@ Point.prototype = {
 				obj = key.indexOf('point') === 1 ? point : series;
 				
 				if (key === '{point.y}') { // add some preformatting 
-					replacement = (seriesTooltipOptions.yPrefix || '') + 
-						numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
-						(seriesTooltipOptions.ySuffix || '');
+					replacement = (seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix || '') + 
+						numberFormat(point.y, pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, originalDecimals)) +
+						(seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix || '');
 				
 				} else { // automatic replacement
 					replacement = obj[match[i].split(splitter)[1]];
@@ -10666,7 +10661,9 @@ Series.prototype = {
 						yData[i] = pt[1];
 					}
 				}
-			}
+			} /* else {
+				error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
+			}*/
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				pt = { series: series };
@@ -11762,7 +11759,7 @@ Series.prototype = {
 				chart.clipRect = clipRect;
 			}
 		}
-
+		
 
 		// the group
 		if (!series.group) {
@@ -12052,6 +12049,8 @@ Series.prototype = {
 			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
 				L, singlePoint.plotX + snap, singlePoint.plotY);
 		}
+		
+		
 
 		// draw the tracker
 		if (tracker) {
@@ -12059,7 +12058,7 @@ Series.prototype = {
 
 		} else { // create
 			group = renderer.g()
-				.clip(series.clipRect)
+				.clip(chart.clipRect)
 				.add(chart.trackerGroup);
 				
 			series.tracker = renderer.path(trackerPath)
@@ -12067,6 +12066,7 @@ Series.prototype = {
 					isTracker: true,
 					stroke: TRACKER_FILL,
 					fill: NONE,
+					'stroke-linejoin': 'bevel',
 					'stroke-width' : options.lineWidth + 2 * snap,
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: options.zIndex || 1
@@ -12409,7 +12409,7 @@ var ColumnSeries = extendClass(Series, {
 		// Add a series specific group to allow clipping the trackers
 		if (series.isCartesian) {
 			group = renderer.g()
-				.clip(series.clipRect)
+				.clip(chart.clipRect)
 				.add(chart.trackerGroup);	
 		}
 

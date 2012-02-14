@@ -19,7 +19,7 @@ $(function() {
                 name : 'AAPL',
                 data : data,
                 tooltip: {
-                    yDecimals: 2
+                    valueDecimals: 2
                 }
             }]
             

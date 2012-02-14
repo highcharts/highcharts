@@ -240,9 +240,9 @@ Point.prototype = {
 				obj = key.indexOf('point') === 1 ? point : series;
 				
 				if (key === '{point.y}') { // add some preformatting 
-					replacement = (seriesTooltipOptions.yPrefix || '') + 
-						numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
-						(seriesTooltipOptions.ySuffix || '');
+					replacement = (seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix || '') + 
+						numberFormat(point.y, pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, originalDecimals)) +
+						(seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix || '');
 				
 				} else { // automatic replacement
 					replacement = obj[match[i].split(splitter)[1]];
@@ -851,7 +851,9 @@ Series.prototype = {
 						yData[i] = pt[1];
 					}
 				}
-			}
+			} /* else {
+				error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
+			}*/
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				pt = { series: series };
@@ -1947,7 +1949,7 @@ Series.prototype = {
 				chart.clipRect = clipRect;
 			}
 		}
-
+		
 
 		// the group
 		if (!series.group) {
@@ -2237,6 +2239,8 @@ Series.prototype = {
 			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
 				L, singlePoint.plotX + snap, singlePoint.plotY);
 		}
+		
+		
 
 		// draw the tracker
 		if (tracker) {
@@ -2244,7 +2248,7 @@ Series.prototype = {
 
 		} else { // create
 			group = renderer.g()
-				.clip(series.clipRect)
+				.clip(chart.clipRect)
 				.add(chart.trackerGroup);
 				
 			series.tracker = renderer.path(trackerPath)
@@ -2252,6 +2256,7 @@ Series.prototype = {
 					isTracker: true,
 					stroke: TRACKER_FILL,
 					fill: NONE,
+					'stroke-linejoin': 'bevel',
 					'stroke-width' : options.lineWidth + 2 * snap,
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					zIndex: options.zIndex || 1

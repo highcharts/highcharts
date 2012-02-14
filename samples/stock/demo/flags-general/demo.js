@@ -19,7 +19,7 @@ $(function() {
 				style: {
 					width: '200px'
 				},
-				yDecimals: 4
+				valueDecimals: 4
 			},
 			
 			yAxis : {

@@ -21,7 +21,7 @@ $(function() {
 				type : 'areaspline',
 				threshold : null,
 				tooltip : {
-					yDecimals : 2
+					valueDecimals : 2
 				},
 				fillColor : {
 					linearGradient : {

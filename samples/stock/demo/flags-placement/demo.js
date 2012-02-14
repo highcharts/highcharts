@@ -26,7 +26,7 @@ $(function() {
 		        data: data,
 				id: 'dataseries',
 				tooltip: {
-					yDecimals: 4
+					valueDecimals: 4
 				}
 		    }, {
 		        type: 'flags',

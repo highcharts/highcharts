@@ -14,7 +14,7 @@ $(function() {
 	    },
 	    
 	    tooltip: {
-	    	yDecimals: 4
+	    	valueDecimals: 4
 	    },
 	    
 	    rangeSelector: {
