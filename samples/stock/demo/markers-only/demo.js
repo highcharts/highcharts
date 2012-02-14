@@ -24,7 +24,7 @@ $(function() {
 					radius : 2
 				},
 				tooltip: {
-					yDecimals: 2
+					valueDecimals: 2
 				}
 			}]
 		});

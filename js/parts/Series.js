@@ -230,9 +230,9 @@ Point.prototype = {
 				obj = key.indexOf('point') === 1 ? point : series;
 				
 				if (key === '{point.y}') { // add some preformatting 
-					replacement = (seriesTooltipOptions.yPrefix || '') + 
-						numberFormat(point.y, pick(seriesTooltipOptions.yDecimals, originalDecimals)) +
-						(seriesTooltipOptions.ySuffix || '');
+					replacement = (seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix || '') + 
+						numberFormat(point.y, pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, originalDecimals)) +
+						(seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix || '');
 				
 				} else { // automatic replacement
 					replacement = obj[match[i].split(splitter)[1]];

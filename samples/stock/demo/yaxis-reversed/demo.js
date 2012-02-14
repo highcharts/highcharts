@@ -36,7 +36,7 @@ $(function() {
 					stops : [[0, Highcharts.getOptions().colors[0]], [1, 'rgba(0,0,0,0)']]
 				},
 				tooltip: {
-					yDecimals: 2
+					valueDecimals: 2
 				}
 		    }]
 		});

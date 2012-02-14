@@ -32,7 +32,7 @@ $(function() {
 		        name: 'AAPL Stock Price',
 		        data: data,
 		        tooltip: {
-		        	yDecimals: 2
+		        	valueDecimals: 2
 		        }
 		    }]
 		});

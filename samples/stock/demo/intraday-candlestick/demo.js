@@ -34,7 +34,7 @@ $(function() {
 				type: 'candlestick',
 				data : data,
 				tooltip: {
-					yDecimals: 2
+					valueDecimals: 2
 				}
 			}]
 		});

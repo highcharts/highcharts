@@ -20,7 +20,7 @@ $(function() {
 		        data: data,
 		        step: true,
 		        tooltip: {
-		        	yDecimals: 2
+		        	valueDecimals: 2
 		        }
 		    }]
 		});

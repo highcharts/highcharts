@@ -20,7 +20,7 @@ $(function() {
 		        data: data,
 		        type: 'spline',
 		        tooltip: {
-		        	yDecimals: 2
+		        	valueDecimals: 2
 		        }
 		    }]
 		});

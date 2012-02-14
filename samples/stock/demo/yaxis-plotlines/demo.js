@@ -42,7 +42,7 @@ $(function() {
 				name : 'USD to EUR',
 				data : data,
 				tooltip : {
-					yDecimals : 4
+					valueDecimals : 4
 				}
 			}]
 		});

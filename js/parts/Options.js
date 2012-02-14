@@ -174,9 +174,9 @@ defaultOptions = {
 			stickyTracking: true
 			//tooltip: {
 				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
-				//yDecimals: null,
+				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
-				//yPrefix: '',
+				//valuePrefix: '',
 				//ySuffix: ''				
 			//}
 			// turboThreshold: 1000
@@ -269,8 +269,8 @@ defaultOptions = {
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',
-		//yDecimals: null,
-		//yPrefix: '',
+		//valueDecimals: null,
+		//valuePrefix: '',
 		//ySuffix: ''
 	},
 

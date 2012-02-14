@@ -39,7 +39,7 @@ $(function() {
 				data : data,
 				gapSize: 5,
 				tooltip: {
-					yDecimals: 2
+					valueDecimals: 2
 				},
 				fillColor : {
 					linearGradient : {
