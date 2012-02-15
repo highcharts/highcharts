@@ -36,7 +36,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvgUrl: 'http://www.highcharts.com/js/rgbcolor-canvg.js' // docs
+		canvasToolsURL: 'http://www.highcharts.com/js/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -70,7 +70,7 @@ defaultOptions = {
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		//zoomType: ''
-		resetZoomButton: { // docs
+		resetZoomButton: {
 			theme: {
 				zIndex: 20
 			},
@@ -79,8 +79,8 @@ defaultOptions = {
 				x: -10,
 				//verticalAlign: 'top',
 				y: 10
-			},
-			relativeTo: 'plot'
+			}
+			// relativeTo: 'plot'
 		}
 	},
 	title: {

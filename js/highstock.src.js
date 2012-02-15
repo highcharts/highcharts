@@ -1269,7 +1269,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvgUrl: 'http://www.highcharts.com/js/rgbcolor-canvg.js' // docs
+		canvasToolsURL: 'http://www.highcharts.com/js/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -1303,7 +1303,7 @@ defaultOptions = {
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		//zoomType: ''
-		resetZoomButton: { // docs
+		resetZoomButton: {
 			theme: {
 				zIndex: 20
 			},
@@ -1312,8 +1312,8 @@ defaultOptions = {
 				x: -10,
 				//verticalAlign: 'top',
 				y: 10
-			},
-			relativeTo: 'plot'
+			}
+			// relativeTo: 'plot'
 		}
 	},
 	title: {
@@ -2190,6 +2190,26 @@ SVGElement.prototype = {
 			}
 
 		}
+		
+		// Workaround for our #732, WebKit's issue https://bugs.webkit.org/show_bug.cgi?id=78385
+		// TODO: If the WebKit team fix this bug before the final release of Chrome 18, remove the workaround.
+		if (isWebKit && /Chrome\/(18|19)/.test(userAgent)) {
+			if (nodeName === 'text' && (hash.x !== UNDEFINED || hash.y !== UNDEFINED)) {
+				var parent = element.parentNode,
+					next = element.nextSibling;
+			
+				if (parent) {
+					parent.removeChild(element);
+					if (next) {
+						parent.insertBefore(element, next);
+					} else {
+						parent.appendChild(element);
+					}
+				}
+			}
+		}
+		// End of workaround for #732
+		
 		return ret;
 	},
 
@@ -5334,13 +5354,13 @@ function Chart(options, callback) {
 
 				// get the string
 				str = labelFormatter.call({
-						axis: axis, // docs
-						chart: chart, // docs
-						isFirst: isFirst,
-						isLast: isLast,
-						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: isLog ? correctFloat(lin2log(value)) : value
-					});
+					axis: axis,
+					chart: chart,
+					isFirst: isFirst,
+					isLast: isLast,
+					dateTimeLabelFormat: dateTimeLabelFormat,
+					value: isLog ? correctFloat(lin2log(value)) : value
+				});
 
 
 				// prepare CSS
@@ -7146,7 +7166,7 @@ function Chart(options, callback) {
 			removePlotBand: removePlotBandOrLine,
 			removePlotLine: removePlotBandOrLine,
 			reversed: reversed,
-			setTitle: setTitle, // docs, since 2.2
+			setTitle: setTitle,
 			series: [], // populated by Series
 			stacks: stacks,
 			destroy: destroy
@@ -8036,7 +8056,7 @@ function Chart(options, callback) {
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
-			ltr = !options.rtl, // docs
+			ltr = !options.rtl,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -8855,14 +8875,15 @@ function Chart(options, callback) {
 	function showResetZoom() {
 		var lang = defaultOptions.lang,
 			btnOptions = optionsChart.resetZoomButton,
-			box = btnOptions.relativeTo === 'plot' && {
+			theme = btnOptions.theme,
+			states = theme.states,
+			box = btnOptions.relativeTo === 'chart' ? null : {
 				x: plotLeft,
 				y: plotTop,
 				width: plotWidth,
 				height: plotHeight
 			};
-
-		chart.resetZoomButton = renderer.button(lang.resetZoom, null, null, zoomOut, btnOptions.theme)
+		chart.resetZoomButton = renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
@@ -9652,7 +9673,7 @@ function Chart(options, callback) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(firstRender, options.global.canvgUrl);
+				CanVGController.push(firstRender, options.global.canvasToolsURL);
 			} else {
 				doc.attachEvent(ONREADYSTATECHANGE, function () {
 					doc.detachEvent(ONREADYSTATECHANGE, firstRender);
@@ -11483,7 +11504,7 @@ Series.prototype = {
 				
 				dataLabel = point.dataLabel;
 				
-				// Merge in individual options from point // docs
+				// Merge in individual options from point
 				options = generalOptions; // reset changes from previous points
 				pointOptions = point.options;
 				if (pointOptions && pointOptions.dataLabels) {

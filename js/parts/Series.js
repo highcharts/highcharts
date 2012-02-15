@@ -1673,7 +1673,7 @@ Series.prototype = {
 				
 				dataLabel = point.dataLabel;
 				
-				// Merge in individual options from point // docs
+				// Merge in individual options from point
 				options = generalOptions; // reset changes from previous points
 				pointOptions = point.options;
 				if (pointOptions && pointOptions.dataLabels) {
