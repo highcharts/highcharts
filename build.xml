@@ -424,7 +424,7 @@
         </copy>
         <!-- Make sure files in the zip have lf line endings -->
         <!-- even if being built on windows -->
-        <sleep seconds="2"/>
+        <sleep seconds="5"/>
         <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf"/>
 
         <!-- 5. Create zip files -->
