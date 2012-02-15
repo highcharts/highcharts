@@ -2185,6 +2185,26 @@ SVGElement.prototype = {
 			}
 
 		}
+		
+		// Workaround for our #732, WebKit's issue https://bugs.webkit.org/show_bug.cgi?id=78385
+		// TODO: If the WebKit team fix this bug before the final release of Chrome 18, remove the workaround.
+		if (isWebKit && /Chrome\/(18|19)/.test(userAgent)) {
+			if (nodeName === 'text' && (hash.x !== UNDEFINED || hash.y !== UNDEFINED)) {
+				var parent = element.parentNode,
+					next = element.nextSibling;
+			
+				if (parent) {
+					parent.removeChild(element);
+					if (next) {
+						parent.insertBefore(element, next);
+					} else {
+						parent.appendChild(element);
+					}
+				}
+			}
+		}
+		// End of workaround for #732
+		
 		return ret;
 	},
 
