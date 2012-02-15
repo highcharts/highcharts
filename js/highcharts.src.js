@@ -5260,6 +5260,7 @@ function Chart(options, callback) {
 			maxPadding = options.maxPadding,
 			minPixelPadding = 0,
 			isLinked = defined(options.linkedTo),
+			linkedParent,
 			ignoreMinPadding, // can be set to true by a column or bar series
 			ignoreMaxPadding,
 			usePercentage,
@@ -6329,7 +6330,6 @@ function Chart(options, callback) {
 		function setTickPositions(secondPass) {
 
 			var length,
-				linkedParent,
 				linkedParentExtremes,
 				tickIntervalOption = options.tickInterval,
 				tickPixelIntervalOption = options.tickPixelInterval;
@@ -6612,15 +6612,20 @@ function Chart(options, callback) {
 			
 			// adjust translation for padding
 			if (isXAxis) {
-				each(axis.series, function (series) {
-					pointRange = mathMax(pointRange, series.pointRange);
-					seriesClosestPointRange = series.closestPointRange;
-					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosestPointRange) :
-							seriesClosestPointRange;
-					}
-				});
+				if (isLinked) {
+					pointRange = linkedParent.pointRange;
+				} else {
+					each(axis.series, function (series) {
+						pointRange = mathMax(pointRange, series.pointRange);
+						seriesClosestPointRange = series.closestPointRange;
+						if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
+							closestPointRange = defined(closestPointRange) ?
+								mathMin(closestPointRange, seriesClosestPointRange) :
+								seriesClosestPointRange;
+						}
+					});
+				}
+				
 				// pointRange means the width reserved for each point, like in a column chart
 				axis.pointRange = pointRange;
 
