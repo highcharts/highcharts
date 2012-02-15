@@ -2150,6 +2150,10 @@ function Chart(options, callback) {
 				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
 					item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
 			});
+			
+			// footer
+			s.push(options.footerFormat || '');
+			
 			return s.join('');
 		}
 
