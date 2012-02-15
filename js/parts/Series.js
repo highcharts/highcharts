@@ -63,7 +63,7 @@ Point.prototype = {
 		 * This is the fastest way to detect if there are individual point dataLabels that need 
 		 * to be considered in drawDataLabels 
 		 */
-		if (options.dataLabels) {
+		if (options && options.dataLabels) {
 			series._hasPointLabels = true;
 		}
 
@@ -71,7 +71,6 @@ Point.prototype = {
 		 * If no x is set by now, get auto incremented value. All points must have an
 		 * x value, however the y value can be null to create a gap in the series
 		 */
-
 		// todo: skip this? It is only used in applyOptions, in translate it should not be used
 		if (point.x === UNDEFINED) {
 			point.x = x === UNDEFINED ? series.autoIncrement() : x;
