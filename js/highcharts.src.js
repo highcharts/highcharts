@@ -9890,19 +9890,17 @@ Point.prototype = {
 			// copy options directly to point
 			extend(point, options);
 			point.options = options;
+			
+			// This is the fastest way to detect if there are individual point dataLabels that need 
+			// to be considered in drawDataLabels. These can only occur in object configs.
+			if (options.dataLabels) {
+				series._hasPointLabels = true;
+			}
 		} else if (typeof options[0] === 'string') { // categorized data with name in first position
 			point.name = options[0];
 			point.y = options[1];
 		}
 		
-		/*
-		 * This is the fastest way to detect if there are individual point dataLabels that need 
-		 * to be considered in drawDataLabels 
-		 */
-		if (options && options.dataLabels) {
-			series._hasPointLabels = true;
-		}
-
 		/*
 		 * If no x is set by now, get auto incremented value. All points must have an
 		 * x value, however the y value can be null to create a gap in the series
