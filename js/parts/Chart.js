@@ -3109,7 +3109,10 @@ function Chart(options, callback) {
 
 			if (!legendGroup) {
 				legendGroup = renderer.g('legend')
-					.attr({ zIndex: 10 }) // in front of trackers, #414
+					// #414, #759. Trackers will be drawn above the legend, but we have 
+					// to sacrifice that because tooltips need to be above the legend
+					// and trackers above tooltips
+					.attr({ zIndex: 7 }) 
 					.add();
 			}
 
