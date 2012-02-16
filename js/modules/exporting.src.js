@@ -323,7 +323,7 @@ extend(Chart.prototype, {
 		}, doc.body);
 
 		// add the values
-		each(['filename', 'type', 'width', 'svg'], function (name) {
+		each(['filename', 'type', 'width', 'height', 'svg'], function (name) {
 			createElement('input', {
 				type: HIDDEN,
 				name: name,
@@ -331,6 +331,7 @@ extend(Chart.prototype, {
 					filename: options.filename || 'chart',
 					type: options.type,
 					width: options.width,
+                    height: options.height,
 					svg: svg
 				}[name]
 			}, null, form);
