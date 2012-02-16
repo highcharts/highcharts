@@ -36,7 +36,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://www.highcharts.com/js/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,

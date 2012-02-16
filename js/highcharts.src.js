@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.1.9 (2011-11-11)
+ * @license Highcharts JS v2.2.0 (2012-02-16)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1269,7 +1269,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://www.highcharts.com/js/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com/2.2.0/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -9052,6 +9052,11 @@ function Chart(options, callback) {
 		if (isString(renderTo)) {
 			renderTo = doc.getElementById(renderTo);
 		}
+		
+		// Display an error if the renderTo is wrong
+		if (!renderTo) {
+			error(13, true);
+		}
 
 		// remove previous chart
 		renderTo.innerHTML = '';
@@ -13281,6 +13286,6 @@ extend(Highcharts, {
 	extendClass: extendClass,
 	placeBox: placeBox,
 	product: 'Highcharts',
-	version: '2.1.9'
+	version: '2.2.0'
 });
 }());

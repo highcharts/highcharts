@@ -1269,7 +1269,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://www.highcharts.com/js/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.1.4/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -9051,6 +9051,11 @@ function Chart(options, callback) {
 
 		if (isString(renderTo)) {
 			renderTo = doc.getElementById(renderTo);
+		}
+		
+		// Display an error if the renderTo is wrong
+		if (!renderTo) {
+			error(13, true);
 		}
 
 		// remove previous chart

@@ -16,11 +16,13 @@
         <property file="build.properties"/>
         <filterset id="highcharts.filter">
             <filter token="product.name" value="${highcharts.product.name}"/>
+            <filter token="product.cdnpath" value="${highcharts.product.cdnpath}"/>
             <filter token="product.version" value="${highcharts.product.version}"/>
             <filter token="product.date" value="${highcharts.product.date}"/>
         </filterset>
         <filterset id="highstock.filter">
             <filter token="product.name" value="${highstock.product.name}"/>
+            <filter token="product.cdnpath" value="${highstock.product.cdnpath}"/>
             <filter token="product.version" value="${highstock.product.version}"/>
             <filter token="product.date" value="${highstock.product.date}"/>
         </filterset>
@@ -158,6 +160,7 @@
             <filterchain>
                 <replacetokens>
                     <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
                     <token key="product.version" value="${highcharts.product.version}"/>
                     <token key="product.date" value="${highcharts.product.date}"/>
                 </replacetokens>
@@ -170,6 +173,7 @@
             <filterchain>
                 <replacetokens>
                     <token key="product.name" value="${highstock.product.name}"/>
+                    <token key="product.cdnpath" value="${highstock.product.cdnpath}"/>
                     <token key="product.version" value="${highstock.product.version}"/>
                     <token key="product.date" value="${highstock.product.date}"/>
                 </replacetokens>
@@ -341,7 +345,7 @@
         <echo message=""/>
 
         <!-- 1. Check for any console statements -->
-        <fail message="Source contains console or alert statements">
+        <!-- fail message="Source contains console or alert statements">
             <condition>
                 <or>
                     <resourcecontains resource="${highcharts.src.file}" substring="console."/>
@@ -356,7 +360,7 @@
                     <resourcecontains resource="${exporting.src.file}" substring="alert("/>
                 </or>
             </condition>
-        </fail>
+        </fail -->
 
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
@@ -376,6 +380,11 @@
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
         <copy todir="${dist.dir}/highcharts/js/themes">
             <fileset dir="${themes.dir}"/>

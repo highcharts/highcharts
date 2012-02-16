@@ -3939,6 +3939,11 @@ function Chart(options, callback) {
 		if (isString(renderTo)) {
 			renderTo = doc.getElementById(renderTo);
 		}
+		
+		// Display an error if the renderTo is wrong
+		if (!renderTo) {
+			error(13, true);
+		}
 
 		// remove previous chart
 		renderTo.innerHTML = '';
