@@ -816,13 +816,12 @@ VMLRendererExtension = { // inherit SVGRenderer
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR,
-				circleCorrection = 0.07 / radius,
+				circleCorrection = 0.08 / radius, // #760
 				innerCorrection = (innerRadius && 0.1 / innerRadius) || 0;
 
 			if (end - start === 0) { // no angle, don't show it.
 				return ['x'];
 
-			//} else if (end - start == 2 * mathPI) { // full circle
 			} else if (2 * mathPI - end + start < circleCorrection) { // full circle
 				// empirical correction found by trying out the limits for different radii
 				cosEnd = -circleCorrection;

@@ -17,8 +17,11 @@
  (function(Highcharts) {
 	var UNDEFINED,
 		each = Highcharts.each,
+		extend = Highcharts.extend,
+		merge = Highcharts.merge,
 		numberFormat = Highcharts.numberFormat,
-		plotOptions = Highcharts.getOptions().plotOptions;
+		plotOptions = Highcharts.getOptions().plotOptions,
+		noop = function() {};
 	
 	/**
 	 * Utility for reading SVG paths directly.
@@ -46,18 +49,12 @@
 	/**
 	 * Extend the default options with map options
 	 */
-	plotOptions.map = Highcharts.merge(
-		plotOptions.pie, {
+	plotOptions.map = merge(
+		plotOptions.scatter, {
 			animation: false, // makes the complex shapes slow
-			colorByPoint: false,
-			dataLabels: {
-				enabled: false
-			},
-			weightedOpacity: true,
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
 			shadow: false,
-			showInLegend: true,
 			borderColor: 'silver'
 		}
 	);
@@ -99,10 +96,10 @@
 	/**
 	 * Add the series type
 	 */
-	Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.pie, {
+	Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 		type: 'map',
 		pointClass: MapPoint,
-		
+		pointAttrToOptions: Highcharts.seriesTypes.column.prototype.pointAttrToOptions,
 		init: function(chart) {
 			var series = this,
 				valueDecimals = chart.options.legend.valueDecimals,
@@ -151,8 +148,7 @@
 		
 		getBox: function() {
 			var series = this,
-				chart = series.chart,
-				factor,
+				//chart = series.chart,
 				maxX = -Math.pow(2, 31), 
 				minX =  Math.pow(2, 31) - 1, 
 				maxY = -Math.pow(2, 31), 
@@ -160,7 +156,7 @@
 			
 			
 			// Find the bounding box
-			$.each(series.data, function(index, point) {
+			each(series.options.data, function(point) {
 				var path = point.path,
 					i = path.length,
 					even = false; // while loop reads from the end
@@ -180,17 +176,31 @@
 			});
 			
 			// fit into the least of plot width or plot height
-			factor = Math.min(
+			/*factor = Math.min(
 				chart.plotWidth / (maxX - minX),
 				chart.plotHeight / (maxY - minY)
-			);
+			);*/
+			extend(series.xAxis.options, {
+				min: minX,
+				max: maxX
+			});
+			extend(series.yAxis.options, {
+				min: minY,
+				max: maxY
+			});
+			//series.xData = [minX, maxX];
+			//series.yData = [minY, maxY];
 			
+			
+			/*console.log('set xData', series.xData)
 			series.mapTranslation = {
 				minX: minX,
 				minY: minY,
 				factor: factor 
-			}
+			}*/
 		},
+		
+		
 		
 		/**
 		 * Translate the path so that it automatically fits into the plot area box
@@ -201,24 +211,33 @@
 			var series = this,
 				chart = series.chart,
 				even = false, // while loop reads from the end
-				mapTranslation = series.mapTranslation,
-				minX = mapTranslation.minX,
-				minY = mapTranslation.minY,
-				factor = mapTranslation.factor;
+				//mapTranslation = series.mapTranslation,
+				//minX = mapTranslation.minX,
+				//minY = mapTranslation.minY,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis;
+				//factor = mapTranslation.factor;
 			
 			// Do the translation
 			i = path.length;
 			while(i--) {
 				if (typeof path[i] === 'number') {
 					if (even) { // even = x
-						path[i] = Math.round(chart.plotLeft + ((path[i] - minX) * factor));
+						//path[i] = Math.round(chart.plotLeft + ((path[i] - minX) * factor));
+						path[i] = Math.round(xAxis.translate(path[i]));
 					} else { // odd = Y
-						path[i] = Math.round(chart.plotTop + ((path[i] - minY) * factor));
+						//path[i] = Math.round(chart.plotTop + ((path[i] - minY) * factor));
+						path[i] = Math.round(yAxis.translate(path[i]));
 					}
 					even = !even;
 				}
 			}
 			return path;
+		},
+		
+		setData: function() {
+			Highcharts.Series.prototype.setData.apply(this, arguments);
+			this.getBox();
 		},
 		
 		/**
@@ -233,10 +252,9 @@
 				path,
 				color;
 	
-			// Find the bounding box of the total map
-			series.getBox();
+			series.generatePoints();
 	
-			$.each(series.data, function (i, point) {
+			each(series.data, function (point) {
 				
 				point.shapeType = 'path';
 				point.shapeArgs = series.translatePath(point.path);
@@ -249,15 +267,21 @@
 			
 		},
 		
+		
+		
 		/**
 		 * Disable data labels. To enable them, try using the column prototype and extend it
 		 * with a label position similar to the tooltipPos in this plugin.
 		 */
+		/*
 		drawDataLabels: function() {
 			var series = this;
 			
 			Highcharts.seriesTypes.line.prototype.drawDataLabels.apply(series);
 		}, 
+		*/
+		
+		drawGraph: noop,
 		
 		/** 
 		 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
@@ -270,7 +294,7 @@
 				bBox;
 			
 			// Make points pass test in drawing
-			$.each(series.data, function (i, point) {
+			each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
 				if (point.y === null) {
 					point.y = 0;
@@ -281,7 +305,7 @@
 			// Draw them
 			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			
-			$.each(series.data, function (i, point) {
+			each(series.data, function (point) {
 				bBox = point.graphic.getBBox();
 				// for tooltip
 				point.tooltipPos = [
@@ -297,12 +321,50 @@
 					point.y = null;
 				}
 			});
-		},
-		
-		/**
-		 * Inherit the trackers from scatter, which apply the tracking
-		 * events to the point shapes directly
-		 */
-		drawTracker: Highcharts.seriesTypes.scatter.prototype.drawTracker
+		}
 	});
+	
+	/**
+	 * A wrapper for Chart with all the default values for a Map
+	 */
+	Highcharts.Map = function (options, callback) {
+		
+		var hiddenAxis = {
+			endOnTick: false,
+			gridLineWidth: 0,
+			labels: {
+				enabled: false
+			},
+			lineWidth: 0,
+			minPadding: 0,
+			maxPadding: 0,
+			startOnTick: false,
+			tickWidth: 0,
+			title: null
+		};
+		
+		// Don't merge the data
+		seriesOptions = options.series;
+		options.series = null;
+		
+		options = merge({
+			chart: {
+				type: 'map'
+			},
+			xAxis: hiddenAxis,
+			yAxis: hiddenAxis	
+		},
+		options, // user's options
+	
+		{ // forced options
+			chart: {
+				inverted: false
+			}
+		});
+	
+		options.series = seriesOptions;
+	
+	
+		return new Highcharts.Chart(options, callback);
+	};
 })(Highcharts);

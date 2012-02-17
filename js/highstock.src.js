@@ -4909,13 +4909,12 @@ VMLRendererExtension = { // inherit SVGRenderer
 				cosEnd = mathCos(end),
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR,
-				circleCorrection = 0.07 / radius,
+				circleCorrection = 0.08 / radius, // #760
 				innerCorrection = (innerRadius && 0.1 / innerRadius) || 0;
 
 			if (end - start === 0) { // no angle, don't show it.
 				return ['x'];
 
-			//} else if (end - start == 2 * mathPI) { // full circle
 			} else if (2 * mathPI - end + start < circleCorrection) { // full circle
 				// empirical correction found by trying out the limits for different radii
 				cosEnd = -circleCorrection;
@@ -5174,7 +5173,6 @@ function Chart(options, callback) {
 		plotWidth,
 		tracker,
 		trackerGroup,
-		placeTrackerGroup,
 		legend,
 		legendWidth,
 		legendHeight,
@@ -6716,6 +6714,7 @@ function Chart(options, callback) {
 			var hasData = axis.series.length && defined(min) && defined(max),
 				showAxis = hasData || pick(options.showEmpty, true),
 				titleOffset = 0,
+				titleOffsetOption,
 				titleMargin = 0,
 				axisTitleOptions = options.title,
 				labelOptions = options.labels,
@@ -6790,6 +6789,7 @@ function Chart(options, callback) {
 				if (showAxis) {
 					titleOffset = axisTitle.getBBox()[horiz ? 'height' : 'width'];
 					titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
+					titleOffsetOption = axisTitleOptions.offset;
 				}
 
 				// hide or show the title depending on whether showEmpty is set
@@ -6802,7 +6802,7 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				pick(axisTitleOptions.offset,
+				pick(titleOffsetOption,
 					labelOffset + titleMargin +
 					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
 				);
@@ -7993,33 +7993,15 @@ function Chart(options, callback) {
 			container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 		}
 
-		/**
-		 * Create the image map that listens for mouseovers
-		 */
-		placeTrackerGroup = function () {
-
-			// first create - plot positions is not final at this stage
-			if (!trackerGroup) {
-				chart.trackerGroup = trackerGroup = renderer.g('tracker')
-					.attr({ zIndex: 9 })
-					.add();
-
-			// then position - this happens on load and after resizing and changing
-			// axis or box positions
-			} else {
-				trackerGroup.translate(plotLeft, plotTop);
-				if (inverted) {
-					trackerGroup.attr({
-						width: chart.plotWidth,
-						height: chart.plotHeight
-					}).invert();
-				}
-			}
-		};
-
-
+		
 		// Run MouseTracker
-		placeTrackerGroup();
+		
+		if (!trackerGroup) {
+			chart.trackerGroup = trackerGroup = renderer.g('tracker')
+				.attr({ zIndex: 9 })
+				.add();
+		}
+		
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
 
@@ -8397,7 +8379,10 @@ function Chart(options, callback) {
 
 			if (!legendGroup) {
 				legendGroup = renderer.g('legend')
-					.attr({ zIndex: 10 }) // in front of trackers, #414
+					// #414, #759. Trackers will be drawn above the legend, but we have 
+					// to sacrifice that because tooltips need to be above the legend
+					// and trackers above tooltips
+					.attr({ zIndex: 7 }) 
 					.add();
 			}
 
@@ -8692,7 +8677,6 @@ function Chart(options, callback) {
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			drawChartBox();
-			placeTrackerGroup();
 
 			// move clip rect
 			if (clipRect) {
@@ -9586,8 +9570,6 @@ function Chart(options, callback) {
 			.add()
 			.align(credits.position);
 		}
-
-		placeTrackerGroup();
 
 		// Set flag
 		chart.hasRendered = true;
@@ -11759,6 +11741,42 @@ Series.prototype = {
 		}
 	},
 
+	/**
+	 * Initialize and perform group inversion on series.group and series.trackerGroup
+	 */
+	invertGroups: function () {
+		var series = this,
+			group = series.group,
+			trackerGroup = series.trackerGroup,
+			chart = series.chart;
+		
+		// A fixed size is needed for inversion to work
+		function setInvert() {			
+			var size = {
+				width: series.yAxis.len,
+				height: series.xAxis.len
+			};
+			
+			// Set the series.group size
+			group.attr(size).invert();
+			
+			// Set the tracker group size
+			if (trackerGroup) {
+				trackerGroup.attr(size).invert();
+			}
+		}
+
+		addEvent(chart, 'resize', setInvert); // do it on resize
+		addEvent(series, 'destroy', function () {
+			removeEvent(chart, 'resize', setInvert);
+		});
+
+		// Do it now
+		setInvert(); // do it now
+		
+		// On subsequent render and redraw, just do setInvert without setting up events again
+		series.invertGroups = setInvert;
+	},
 
 	/**
 	 * Render the graph and markers
@@ -11767,7 +11785,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			group,
-			setInvert,
 			options = series.options,
 			doClip = options.clip !== false,
 			animation = options.animation,
@@ -11796,21 +11813,6 @@ Series.prototype = {
 		// the group
 		if (!series.group) {
 			group = series.group = renderer.g('series');
-
-			if (chart.inverted) {
-				setInvert = function () {
-					group.attr({
-						width: chart.plotWidth,
-						height: chart.plotHeight
-					}).invert();
-				};
-
-				setInvert(); // do it now
-				addEvent(chart, 'resize', setInvert); // do it on resize
-				addEvent(series, 'destroy', function () {
-					removeEvent(chart, 'resize', setInvert);
-				});
-			}
 
 			if (doClip) {
 				group.clip(clipRect);
@@ -11844,6 +11846,11 @@ Series.prototype = {
 		// draw the mouse tracking area
 		if (series.options.enableMouseTracking !== false) {
 			series.drawTracker();
+		}
+		
+		// Handle inverted series and tracker groups
+		if (chart.inverted) {
+			series.invertGroups();
 		}
 
 		// run the animation
@@ -12038,7 +12045,31 @@ Series.prototype = {
 		fireEvent(series, selected ? 'select' : 'unselect');
 	},
 
-
+	/**
+	 * Create a group that holds the tracking object or objects. This allows for
+	 * individual clipping and placement of each series tracker.
+	 */
+	drawTrackerGroup: function () {
+		var trackerGroup = this.trackerGroup,
+			chart = this.chart;
+		
+		if (this.isCartesian) {
+		
+			// Generate it on first call
+			if (!trackerGroup) {	
+				this.trackerGroup = trackerGroup = chart.renderer.g()
+					.clip(chart.clipRect)
+					.add(chart.trackerGroup);
+					
+			}
+			// Place it on first and subsequent (redraw) calls
+			trackerGroup.translate(this.xAxis.left, this.yAxis.top);
+			
+		}
+		
+		return trackerGroup;
+	},
+	
 	/**
 	 * Draw the tracker object that sits above all data labels and markers to
 	 * track mouse events on the graph or points. For the line type charts
@@ -12057,7 +12088,7 @@ Series.prototype = {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
-			group,
+			trackerGroup = series.drawTrackerGroup(),
 			singlePoint,
 			i;
 
@@ -12089,9 +12120,6 @@ Series.prototype = {
 			tracker.attr({ d: trackerPath });
 
 		} else { // create
-			group = renderer.g()
-				.clip(chart.clipRect)
-				.add(chart.trackerGroup);
 				
 			series.tracker = renderer.path(trackerPath)
 				.attr({
@@ -12114,7 +12142,7 @@ Series.prototype = {
 					}
 				})
 				.css(css)
-				.add(group);
+				.add(trackerGroup);
 		}
 
 	}
@@ -12435,16 +12463,9 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
-			group,
+			trackerGroup = series.drawTrackerGroup(),
 			rel;
 			
-		// Add a series specific group to allow clipping the trackers
-		if (series.isCartesian) {
-			group = renderer.g()
-				.clip(chart.clipRect)
-				.add(chart.trackerGroup);	
-		}
-
 		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
@@ -12479,7 +12500,7 @@ var ColumnSeries = extendClass(Series, {
 							}
 						})
 						.css(css)
-						.add(point.group || group); // pies have point group - see issue #118
+						.add(point.group || trackerGroup); // pies have point group - see issue #118
 				}
 			}
 		});

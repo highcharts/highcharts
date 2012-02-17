@@ -1914,6 +1914,42 @@ Series.prototype = {
 		}
 	},
 
+	/**
+	 * Initialize and perform group inversion on series.group and series.trackerGroup
+	 */
+	invertGroups: function () {
+		var series = this,
+			group = series.group,
+			trackerGroup = series.trackerGroup,
+			chart = series.chart;
+		
+		// A fixed size is needed for inversion to work
+		function setInvert() {			
+			var size = {
+				width: series.yAxis.len,
+				height: series.xAxis.len
+			};
+			
+			// Set the series.group size
+			group.attr(size).invert();
+			
+			// Set the tracker group size
+			if (trackerGroup) {
+				trackerGroup.attr(size).invert();
+			}
+		}
+
+		addEvent(chart, 'resize', setInvert); // do it on resize
+		addEvent(series, 'destroy', function () {
+			removeEvent(chart, 'resize', setInvert);
+		});
+
+		// Do it now
+		setInvert(); // do it now
+		
+		// On subsequent render and redraw, just do setInvert without setting up events again
+		series.invertGroups = setInvert;
+	},
 
 	/**
 	 * Render the graph and markers
@@ -1922,7 +1958,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			group,
-			setInvert,
 			options = series.options,
 			doClip = options.clip !== false,
 			animation = options.animation,
@@ -1951,21 +1986,6 @@ Series.prototype = {
 		// the group
 		if (!series.group) {
 			group = series.group = renderer.g('series');
-
-			if (chart.inverted) {
-				setInvert = function () {
-					group.attr({
-						width: chart.plotWidth,
-						height: chart.plotHeight
-					}).invert();
-				};
-
-				setInvert(); // do it now
-				addEvent(chart, 'resize', setInvert); // do it on resize
-				addEvent(series, 'destroy', function () {
-					removeEvent(chart, 'resize', setInvert);
-				});
-			}
 
 			if (doClip) {
 				group.clip(clipRect);
@@ -1999,6 +2019,11 @@ Series.prototype = {
 		// draw the mouse tracking area
 		if (series.options.enableMouseTracking !== false) {
 			series.drawTracker();
+		}
+		
+		// Handle inverted series and tracker groups
+		if (chart.inverted) {
+			series.invertGroups();
 		}
 
 		// run the animation
@@ -2193,7 +2218,31 @@ Series.prototype = {
 		fireEvent(series, selected ? 'select' : 'unselect');
 	},
 
-
+	/**
+	 * Create a group that holds the tracking object or objects. This allows for
+	 * individual clipping and placement of each series tracker.
+	 */
+	drawTrackerGroup: function () {
+		var trackerGroup = this.trackerGroup,
+			chart = this.chart;
+		
+		if (this.isCartesian) {
+		
+			// Generate it on first call
+			if (!trackerGroup) {	
+				this.trackerGroup = trackerGroup = chart.renderer.g()
+					.clip(chart.clipRect)
+					.add(chart.trackerGroup);
+					
+			}
+			// Place it on first and subsequent (redraw) calls
+			trackerGroup.translate(this.xAxis.left, this.yAxis.top);
+			
+		}
+		
+		return trackerGroup;
+	},
+	
 	/**
 	 * Draw the tracker object that sits above all data labels and markers to
 	 * track mouse events on the graph or points. For the line type charts
@@ -2212,7 +2261,7 @@ Series.prototype = {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
-			group,
+			trackerGroup = series.drawTrackerGroup(),
 			singlePoint,
 			i;
 
@@ -2244,9 +2293,6 @@ Series.prototype = {
 			tracker.attr({ d: trackerPath });
 
 		} else { // create
-			group = renderer.g()
-				.clip(chart.clipRect)
-				.add(chart.trackerGroup);
 				
 			series.tracker = renderer.path(trackerPath)
 				.attr({
@@ -2269,7 +2315,7 @@ Series.prototype = {
 					}
 				})
 				.css(css)
-				.add(group);
+				.add(trackerGroup);
 		}
 
 	}

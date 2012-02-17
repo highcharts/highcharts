@@ -61,7 +61,6 @@ function Chart(options, callback) {
 		plotWidth,
 		tracker,
 		trackerGroup,
-		placeTrackerGroup,
 		legend,
 		legendWidth,
 		legendHeight,
@@ -1603,6 +1602,7 @@ function Chart(options, callback) {
 			var hasData = axis.series.length && defined(min) && defined(max),
 				showAxis = hasData || pick(options.showEmpty, true),
 				titleOffset = 0,
+				titleOffsetOption,
 				titleMargin = 0,
 				axisTitleOptions = options.title,
 				labelOptions = options.labels,
@@ -1677,6 +1677,7 @@ function Chart(options, callback) {
 				if (showAxis) {
 					titleOffset = axisTitle.getBBox()[horiz ? 'height' : 'width'];
 					titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
+					titleOffsetOption = axisTitleOptions.offset;
 				}
 
 				// hide or show the title depending on whether showEmpty is set
@@ -1689,7 +1690,7 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				pick(axisTitleOptions.offset,
+				pick(titleOffsetOption,
 					labelOffset + titleMargin +
 					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
 				);
@@ -2880,33 +2881,15 @@ function Chart(options, callback) {
 			container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 		}
 
-		/**
-		 * Create the image map that listens for mouseovers
-		 */
-		placeTrackerGroup = function () {
-
-			// first create - plot positions is not final at this stage
-			if (!trackerGroup) {
-				chart.trackerGroup = trackerGroup = renderer.g('tracker')
-					.attr({ zIndex: 9 })
-					.add();
-
-			// then position - this happens on load and after resizing and changing
-			// axis or box positions
-			} else {
-				trackerGroup.translate(plotLeft, plotTop);
-				if (inverted) {
-					trackerGroup.attr({
-						width: chart.plotWidth,
-						height: chart.plotHeight
-					}).invert();
-				}
-			}
-		};
-
-
+		
 		// Run MouseTracker
-		placeTrackerGroup();
+		
+		if (!trackerGroup) {
+			chart.trackerGroup = trackerGroup = renderer.g('tracker')
+				.attr({ zIndex: 9 })
+				.add();
+		}
+		
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
 
@@ -3284,7 +3267,10 @@ function Chart(options, callback) {
 
 			if (!legendGroup) {
 				legendGroup = renderer.g('legend')
-					.attr({ zIndex: 10 }) // in front of trackers, #414
+					// #414, #759. Trackers will be drawn above the legend, but we have 
+					// to sacrifice that because tooltips need to be above the legend
+					// and trackers above tooltips
+					.attr({ zIndex: 7 }) 
 					.add();
 			}
 
@@ -3579,7 +3565,6 @@ function Chart(options, callback) {
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			drawChartBox();
-			placeTrackerGroup();
 
 			// move clip rect
 			if (clipRect) {
@@ -4473,8 +4458,6 @@ function Chart(options, callback) {
 			.add()
 			.align(credits.position);
 		}
-
-		placeTrackerGroup();
 
 		// Set flag
 		chart.hasRendered = true;

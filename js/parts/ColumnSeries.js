@@ -199,16 +199,9 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
-			group,
+			trackerGroup = series.drawTrackerGroup(),
 			rel;
 			
-		// Add a series specific group to allow clipping the trackers
-		if (series.isCartesian) {
-			group = renderer.g()
-				.clip(chart.clipRect)
-				.add(chart.trackerGroup);	
-		}
-
 		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
@@ -243,7 +236,7 @@ var ColumnSeries = extendClass(Series, {
 							}
 						})
 						.css(css)
-						.add(point.group || group); // pies have point group - see issue #118
+						.add(point.group || trackerGroup); // pies have point group - see issue #118
 				}
 			}
 		});

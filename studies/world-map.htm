@@ -6,15 +6,16 @@
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		
+		<!--
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/map.src.js"></script>
 		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/googlespreadsheet.src.js"></script>
-		
-		<!-- 
-		<script type="text/javascript" src="/js/highcharts.src.js"></script>
+		-->
+		 
+		<script type="text/javascript" src="/js/testing.js"></script>
 		<script type="text/javascript" src="/js/modules/map.src.js"></script>
 		<script type="text/javascript" src="/js/modules/googlespreadsheet.src.js"></script>
-		-->
+		
 		
 		<!-- 2. Insert the shapes -->
 		<script type="text/javascript" src="world-map-shapes.js"></script>
@@ -43,7 +44,6 @@
 						var options = {
 							chart : {
 								renderTo : 'container',
-								type : 'map',
 								borderWidth : 1
 							},
 							
@@ -120,7 +120,7 @@
 						}
 						
 						// Initiate the chart
-						chart = new Highcharts.Chart(options);
+						chart = new Highcharts.Map(options);
 				    }
 				});
 			});
@@ -129,6 +129,6 @@
 	</head>
 	<body>
 		<!-- 3. Add the container -->
-		<div id="container" style="width: 1000px; height: 550px; margin: 0 auto"></div>
+		<div id="container" style="width: 600px; height: 550px; margin: 0 auto"></div>
 	</body>
 </html>
