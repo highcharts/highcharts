@@ -62,7 +62,6 @@ function Chart(options, callback) {
 		plotWidth,
 		tracker,
 		trackerGroup,
-		placeTrackerGroup,
 		legend,
 		legendWidth,
 		legendHeight,
@@ -2729,33 +2728,15 @@ function Chart(options, callback) {
 			container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 		}
 
-		/**
-		 * Create the image map that listens for mouseovers
-		 */
-		placeTrackerGroup = function () {
-
-			// first create - plot positions is not final at this stage
-			if (!trackerGroup) {
-				chart.trackerGroup = trackerGroup = renderer.g('tracker')
-					.attr({ zIndex: 9 })
-					.add();
-
-			// then position - this happens on load and after resizing and changing
-			// axis or box positions
-			} else {
-				trackerGroup.translate(plotLeft, plotTop);
-				if (inverted) {
-					trackerGroup.attr({
-						width: chart.plotWidth,
-						height: chart.plotHeight
-					}).invert();
-				}
-			}
-		};
-
-
+		
 		// Run MouseTracker
-		placeTrackerGroup();
+		
+		if (!trackerGroup) {
+			chart.trackerGroup = trackerGroup = renderer.g('tracker')
+				.attr({ zIndex: 9 })
+				.add();
+		}
+		
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
 			
@@ -3403,7 +3384,6 @@ function Chart(options, callback) {
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			drawChartBox();
-			placeTrackerGroup();
 
 			// move clip rect
 			if (clipRect) {
@@ -4282,8 +4262,6 @@ function Chart(options, callback) {
 			.add()
 			.align(credits.position);
 		}
-
-		placeTrackerGroup();
 
 		// Set flag
 		chart.hasRendered = true;
