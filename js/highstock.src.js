@@ -5620,9 +5620,10 @@ function Chart(options, callback) {
 			 * Sets the total of this stack. Should be called when a serie is hidden or shown
 			 * since that will affect the total of other stacks.
 			 */
-			setTotal: function (total) {
+			setTotal: function (total, stackLow) {
 				this.total = total;
 				this.cum = total;
+				this.stackLow = mathMax(pick(this.stackLow, 0), pick(stackLow, 0));
 			},
 
 			/**
@@ -5653,7 +5654,7 @@ function Chart(options, callback) {
 			setOffset: function (xOffset, xWidth) {
 				var stackItem = this,										// aliased this
 					neg = stackItem.isNegative,								// special treatment is needed for negative stacks
-					y = axis.translate(stackItem.total),					// stack value translated mapped to chart coordinates
+					y = axis.translate(stackItem.total + stackItem.stackLow),	// stack value translated mapped to chart coordinates
 					yZero = axis.translate(0),								// stack origin
 					h = mathAbs(y - yZero),									// stack height
 					x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
@@ -5668,7 +5669,7 @@ function Chart(options, callback) {
 				if (stackItem.label) {
 					stackItem.label
 						.align(stackItem.alignOptions, null, stackBox)	// align the label to the box
-						.attr({visibility: VISIBLE});					// set visibility
+						.attr({ visibility: y > 0 ? VISIBLE : HIDDEN });// set visibility
 				}
 			}
 		};
@@ -5785,7 +5786,7 @@ function Chart(options, callback) {
 									if (!stacks[key][x]) {
 										stacks[key][x] = new StackItem(options.stackLabels, isNegative, x, stackOption);
 									}
-									stacks[key][x].setTotal(y);
+									stacks[key][x].setTotal(y, series.options.data[x].low);
 
 
 								// general hook, used for Highstock compare values feature
@@ -5815,6 +5816,17 @@ function Chart(options, callback) {
 									}
 								}
 							}
+
+							// Get the dataMin and dataMax so far. If percentage is used, the min and max are
+							// always 0 and 100. If the length of activeYData is 0, continue with null values.
+							// Update dataMin and dataMax for each "x" because with stacking and "low" we can't use arrayMax.
+							if (!usePercentage && activeYData.length) {
+								var low = stacking
+									? pick(stacks[key][x].stackLow, 0)
+									: pick(series.options.data[x].low, 0);
+								dataMin = mathMin(pick(dataMin, activeYData[x]), activeYData[x]);
+								dataMax = mathMax(pick(dataMax, activeYData[x] + low), activeYData[x] + low);
+							}							
 						}
 
 						// record the least unit distance
@@ -5822,15 +5834,6 @@ function Chart(options, callback) {
 							series.pointRange = pointRange || 1;
 						}
 						series.closestPointRange = pointRange;*/
-
-
-						// Get the dataMin and dataMax so far. If percentage is used, the min and max are
-						// always 0 and 100. If the length of activeYData is 0, continue with null values.
-						if (!usePercentage && activeYData.length) {
-							dataMin = mathMin(pick(dataMin, activeYData[0]), arrayMin(activeYData));
-							dataMax = mathMax(pick(dataMax, activeYData[0]), arrayMax(activeYData));
-						}
-
 
 						// todo: instead of checking useThreshold, just set the threshold to 0
 						// in area and column-like chart types
@@ -10545,6 +10548,10 @@ Series.prototype = {
 				
 			// get the plotX translation
 			point.plotX = mathRound(xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
+			
+			if (!stacking && point.low) {
+				yValue = yValue ? yValue + point.low : point.low;
+			}
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -10555,6 +10562,11 @@ Series.prototype = {
 				
 				if (isLastSeries) {
 					yBottom = options.threshold;
+				}
+
+				if (point.low) {
+					yBottom = yBottom ? yBottom + point.low : point.low;
+					yValue = yValue ? yValue + point.low : point.low;
 				}
 				
 				if (stacking === 'percent') {
