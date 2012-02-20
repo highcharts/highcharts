@@ -1079,6 +1079,10 @@ Series.prototype = {
 				
 			// get the plotX translation
 			point.plotX = mathRound(xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
+			
+			if (!stacking && point.low) {
+			    yValue = (yValue) ? yValue + point.low : point.low;
+			}
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1090,6 +1094,11 @@ Series.prototype = {
 				if (isLastSeries) {
 					yBottom = options.threshold;
 				}
+
+				if (point.low) {
+	                yBottom = (yBottom) ? yBottom + point.low : point.low;
+	                yValue = (yValue) ? yValue + point.low : point.low;
+	            }
 				
 				if (stacking === 'percent') {
 					yBottom = pointStackTotal ? yBottom * 100 / pointStackTotal : 0;
