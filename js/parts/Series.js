@@ -921,16 +921,17 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			i, // loop variable
 			options = series.options,
-			cropThreshold = options.cropThreshold;
+			cropThreshold = options.cropThreshold,
+			isCartesian = series.isCartesian;
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
-		if (series.isCartesian && !series.isDirty && !xAxis.isDirty && !series.yAxis.isDirty && !force) {
+		if (isCartesian && !series.isDirty && !xAxis.isDirty && !series.yAxis.isDirty && !force) {
 			return false;
 		}
 
 		// optionally filter out points outside the plot area
-		if (!cropThreshold || dataLength > cropThreshold || series.forceCrop) {
+		if (isCartesian && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			var extremes = xAxis.getExtremes(),
 				min = extremes.min,
 				max = extremes.max;
