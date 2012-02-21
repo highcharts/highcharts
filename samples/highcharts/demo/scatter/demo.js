@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'scatter',
+			type: 'scatter',
 			zoomType: 'xy'
 		},
 		title: {

@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'area'
+			type: 'area'
 		},
 		title: {
 			text: 'Historic and Estimated Worldwide Population Growth by Region'

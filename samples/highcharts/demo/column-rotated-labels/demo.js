@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'column',
+			type: 'column',
 			margin: [ 50, 50, 100, 80]
 		},
 		title: {

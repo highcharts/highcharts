@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'area'
+			type: 'area'
 		},
 		title: {
 			text: 'US and USSR nuclear stockpiles'

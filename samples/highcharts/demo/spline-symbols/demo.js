@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'spline'
+			type: 'spline'
 		},
 		title: {
 			text: 'Monthly Average Temperature'

@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'scatter',
+			type: 'scatter',
 			margin: [70, 50, 60, 80],
 			events: {
 				click: function(e) {
