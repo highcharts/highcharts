@@ -1351,16 +1351,21 @@ function Chart(options, callback) {
 		 * @param {Boolean} redraw
 		 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 		 *    configuration
+		 * @param {Object} eventArguments 
 		 *
 		 */
-		function setExtremes(newMin, newMax, redraw, animation) {
+		function setExtremes(newMin, newMax, redraw, animation, eventArguments) {
 
 			redraw = pick(redraw, true); // defaults to true
-
-			fireEvent(axis, 'setExtremes', { // fire an event to enable syncing of multiple charts
+			
+			// Extend the arguments with min and max
+			eventArguments = extend(eventArguments, {
 				min: newMin,
 				max: newMax
-			}, function () { // the default event handler
+			});
+
+			// Fire the event
+			fireEvent(axis, 'setExtremes', eventArguments, function () { // the default event handler
 
 				userMin = newMin;
 				userMax = newMax;
