@@ -522,9 +522,7 @@ Highcharts.Scroller = function (chart) {
 				}
 			}
 		}
-		if (e.preventDefault) { // tries to drag object when clicking on the shades
-			e.preventDefault();
-		}
+		
 	}
 
 	/**
