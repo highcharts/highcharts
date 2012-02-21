@@ -191,7 +191,23 @@ function Chart(options, callback) {
 
 			staggerLines = horiz && options.labels.staggerLines,
 			reversed = options.reversed,
-			tickmarkOffset = (categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
+			tickmarkOffset = (categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
+			plotLineOrBandContext = new PlotLineOrBandContext(
+				chart, 
+				axis, 
+				isLog,
+				function () { return min; },
+				function () { return max; },
+				function () { return axisWidth; },
+				function () { return axisHeight; },
+				horiz,
+				plotLinesAndBands
+			),
+			stackItemContext = new StackItemContext(
+				chart,
+				inverted,
+				axis
+			);
 
 		/**
 		 * The Tick class
@@ -444,187 +460,6 @@ function Chart(options, callback) {
 			}
 		};
 
-		/**
-		 * The object wrapper for plot lines and plot bands
-		 * @param {Object} options
-		 */
-		function PlotLineOrBand(options) {
-			var plotLine = this;
-			if (options) {
-				plotLine.options = options;
-				plotLine.id = options.id;
-			}
-
-			//plotLine.render()
-			return plotLine;
-		}
-
-		PlotLineOrBand.prototype = {
-
-		/**
-		 * Render the plot line or plot band. If it is already existing,
-		 * move it.
-		 */
-		render: function () {
-			var plotLine = this,
-				halfPointRange = (axis.pointRange || 0) / 2,
-				options = plotLine.options,
-				optionsLabel = options.label,
-				label = plotLine.label,
-				width = options.width,
-				to = options.to,
-				from = options.from,
-				value = options.value,
-				toPath, // bands only
-				dashStyle = options.dashStyle,
-				svgElem = plotLine.svgElem,
-				path = [],
-				addEvent,
-				eventType,
-				xs,
-				ys,
-				x,
-				y,
-				color = options.color,
-				zIndex = options.zIndex,
-				events = options.events,
-				attribs;
-
-			// logarithmic conversion
-			if (isLog) {
-				from = log2lin(from);
-				to = log2lin(to);
-				value = log2lin(value);
-			}
-
-			// plot line
-			if (width) {
-				path = getPlotLinePath(value, width);
-				attribs = {
-					stroke: color,
-					'stroke-width': width
-				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
-				}
-			} else if (defined(from) && defined(to)) { // plot band
-				// keep within plot area
-				from = mathMax(from, min - halfPointRange);
-				to = mathMin(to, max + halfPointRange);
-
-				toPath = getPlotLinePath(to);
-				path = getPlotLinePath(from);
-				if (path && toPath) {
-					path.push(
-						toPath[4],
-						toPath[5],
-						toPath[1],
-						toPath[2]
-					);
-				} else { // outside the axis area
-					path = null;
-				}
-				attribs = {
-					fill: color
-				};
-			} else {
-				return;
-			}
-			// zIndex
-			if (defined(zIndex)) {
-				attribs.zIndex = zIndex;
-			}
-
-			// common for lines and bands
-			if (svgElem) {
-				if (path) {
-					svgElem.animate({
-						d: path
-					}, null, svgElem.onGetPath);
-				} else {
-					svgElem.hide();
-					svgElem.onGetPath = function () {
-						svgElem.show();
-					};
-				}
-			} else if (path && path.length) {
-				plotLine.svgElem = svgElem = renderer.path(path)
-					.attr(attribs).add();
-
-				// events
-				if (events) {
-					addEvent = function (eventType) {
-						svgElem.on(eventType, function (e) {
-							events[eventType].apply(plotLine, [e]);
-						});
-					};
-					for (eventType in events) {
-						addEvent(eventType);
-					}
-				}
-			}
-
-			// the plot band/line label
-			if (optionsLabel && defined(optionsLabel.text) && path && path.length && axisWidth > 0 && axisHeight > 0) {
-				// apply defaults
-				optionsLabel = merge({
-					align: horiz && toPath && 'center',
-					x: horiz ? !toPath && 4 : 10,
-					verticalAlign : !horiz && toPath && 'middle',
-					y: horiz ? toPath ? 16 : 10 : toPath ? 6 : -4,
-					rotation: horiz && !toPath && 90
-				}, optionsLabel);
-
-				// add the SVG element
-				if (!label) {
-					plotLine.label = label = renderer.text(
-							optionsLabel.text,
-							0,
-							0
-						)
-						.attr({
-							align: optionsLabel.textAlign || optionsLabel.align,
-							rotation: optionsLabel.rotation,
-							zIndex: zIndex
-						})
-						.css(optionsLabel.style)
-						.add();
-				}
-
-				// get the bounding box and align the label
-				xs = [path[1], path[4], pick(path[6], path[1])];
-				ys = [path[2], path[5], pick(path[7], path[2])];
-				x = arrayMin(xs);
-				y = arrayMin(ys);
-
-				label.align(optionsLabel, false, {
-					x: x,
-					y: y,
-					width: arrayMax(xs) - x,
-					height: arrayMax(ys) - y
-				});
-				label.show();
-
-			} else if (label) { // move out of sight
-				label.hide();
-			}
-
-			// chainable
-			return plotLine;
-		},
-
-		/**
-		 * Remove the plot line or band
-		 */
-		destroy: function () {
-			var obj = this;
-
-			destroyObjectProperties(obj);
-
-			// remove it from the lookup
-			erase(plotLinesAndBands, obj);
-		}
-		};
 
 		/**
 		 * Get the minimum and maximum for the series of each axis
@@ -740,7 +575,7 @@ function Chart(options, callback) {
 									// If the StackItem is there, just update the values,
 									// if not, create one first
 									if (!stacks[key][x]) {
-										stacks[key][x] = new StackItem(new StackItemContext(chart, inverted, axis), options.stackLabels, isNegative, x, stackOption);
+										stacks[key][x] = new StackItem(stackItemContext, options.stackLabels, isNegative, x, stackOption);
 									}
 									stacks[key][x].setTotal(y);
 
@@ -1496,7 +1331,7 @@ function Chart(options, callback) {
 		 * @param options {Object} The plotBand or plotLine configuration object
 		 */
 		function addPlotBandOrLine(options) {
-			var obj = new PlotLineOrBand(options).render();
+			var obj = new PlotLineOrBand(plotLineOrBandContext, options).render();
 			plotLinesAndBands.push(obj);
 			return obj;
 		}
@@ -1673,7 +1508,7 @@ function Chart(options, callback) {
 					each(tickPositions, function (pos, i) {
 						if (i % 2 === 0 && pos < max) {
 							if (!alternateBands[pos]) {
-								alternateBands[pos] = new PlotLineOrBand();
+								alternateBands[pos] = new PlotLineOrBand(plotLineOrBandContext);
 							}
 							from = pos;
 							to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max;

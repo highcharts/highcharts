@@ -3,9 +3,9 @@
  */
 function StackItemContext(chart, inverted, axis) {
 	return {
-		chart: chart,
-		inverted: inverted,
-		axis: axis
+		chart: chart, // object
+		inverted: inverted, // constant
+		axis: axis // object
 	};
 }
 

@@ -5110,6 +5110,310 @@ if (useCanVG) {
  * General renderer
  */
 Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;
+/**
+ * Context holding the variables that were in local closure in the chart.
+ */
+function PlotLineOrBandContext(chart, axis, isLog, getMin, getMax, getAxisWidth, getAxisHeight, horiz, plotLinesAndBands) {
+	return {
+		chart: chart, // object
+		axis: axis, // object
+		isLog: isLog, // constant
+		getMin: getMin, // function
+		getMax: getMax, // function
+		getAxisWidth: getAxisWidth, // function
+		getAxisHeight: getAxisHeight, // function
+		horiz: horiz, // constant
+		plotLinesAndBands: plotLinesAndBands // object
+	};
+}
+
+
+/**
+ * The object wrapper for plot lines and plot bands
+ * @param {Object} options
+ */
+function PlotLineOrBand(context, options) {
+	this.cx = context;
+
+	if (options) {
+		this.options = options;
+		this.id = options.id;
+	}
+
+	//plotLine.render()
+	return this;
+}
+
+PlotLineOrBand.prototype = {
+
+	/**
+	 * Render the plot line or plot band. If it is already existing,
+	 * move it.
+	 */
+	render: function () {
+		var plotLine = this,
+			halfPointRange = (plotLine.cx.axis.pointRange || 0) / 2,
+			options = plotLine.options,
+			optionsLabel = options.label,
+			label = plotLine.label,
+			width = options.width,
+			to = options.to,
+			from = options.from,
+			value = options.value,
+			toPath, // bands only
+			dashStyle = options.dashStyle,
+			svgElem = plotLine.svgElem,
+			path = [],
+			addEvent,
+			eventType,
+			xs,
+			ys,
+			x,
+			y,
+			color = options.color,
+			zIndex = options.zIndex,
+			events = options.events,
+			attribs;
+
+		// logarithmic conversion
+		if (plotLine.cx.isLog) {
+			from = log2lin(from);
+			to = log2lin(to);
+			value = log2lin(value);
+	}
+
+		// plot line
+		if (width) {
+			path = plotLine.cx.axis.getPlotLinePath(value, width);
+			attribs = {
+				stroke: color,
+				'stroke-width': width
+			};
+			if (dashStyle) {
+				attribs.dashstyle = dashStyle;
+			}
+		} else if (defined(from) && defined(to)) { // plot band
+			// keep within plot area
+			from = mathMax(from, plotLine.cx.getMin() - halfPointRange);
+			to = mathMin(to, plotLine.cx.getMax() + halfPointRange);
+
+			toPath = plotLine.cx.axis.getPlotLinePath(to);
+			path = plotLine.cx.axis.getPlotLinePath(from);
+			if (path && toPath) {
+				path.push(
+					toPath[4],
+					toPath[5],
+					toPath[1],
+					toPath[2]
+				);
+			} else { // outside the axis area
+				path = null;
+			}
+			attribs = {
+				fill: color
+			};
+		} else {
+			return;
+		}
+		// zIndex
+		if (defined(zIndex)) {
+			attribs.zIndex = zIndex;
+		}
+
+		// common for lines and bands
+		if (svgElem) {
+			if (path) {
+				svgElem.animate({
+					d: path
+				}, null, svgElem.onGetPath);
+			} else {
+				svgElem.hide();
+				svgElem.onGetPath = function () {
+					svgElem.show();
+				};
+			}
+		} else if (path && path.length) {
+			plotLine.svgElem = svgElem = plotLine.cx.chart.renderer.path(path)
+				.attr(attribs).add();
+
+			// events
+			if (events) {
+				addEvent = function (eventType) {
+					svgElem.on(eventType, function (e) {
+						events[eventType].apply(plotLine, [e]);
+					});
+				};
+				for (eventType in events) {
+					addEvent(eventType);
+				}
+			}
+		}
+
+		// the plot band/line label
+		if (optionsLabel && defined(optionsLabel.text) && path && path.length && plotLine.cx.getAxisWidth() > 0 && plotLine.cx.getAxisHeight() > 0) {
+			// apply defaults
+			var horiz = plotLine.cx.horiz;
+			optionsLabel = merge({
+				align: horiz && toPath && 'center',
+				x: horiz ? !toPath && 4 : 10,
+				verticalAlign : !horiz && toPath && 'middle',
+				y: horiz ? toPath ? 16 : 10 : toPath ? 6 : -4,
+				rotation: horiz && !toPath && 90
+			}, optionsLabel);
+
+			// add the SVG element
+			if (!label) {
+				plotLine.label = label = plotLine.cx.chart.renderer.text(
+						optionsLabel.text,
+						0,
+						0
+					)
+					.attr({
+						align: optionsLabel.textAlign || optionsLabel.align,
+						rotation: optionsLabel.rotation,
+						zIndex: zIndex
+					})
+					.css(optionsLabel.style)
+					.add();
+			}
+
+			// get the bounding box and align the label
+			xs = [path[1], path[4], pick(path[6], path[1])];
+			ys = [path[2], path[5], pick(path[7], path[2])];
+			x = arrayMin(xs);
+			y = arrayMin(ys);
+
+			label.align(optionsLabel, false, {
+				x: x,
+				y: y,
+				width: arrayMax(xs) - x,
+				height: arrayMax(ys) - y
+			});
+			label.show();
+
+		} else if (label) { // move out of sight
+			label.hide();
+		}
+
+		// chainable
+		return plotLine;
+	},
+
+	/**
+	 * Remove the plot line or band
+	 */
+	destroy: function () {
+		var obj = this;
+
+		destroyObjectProperties(obj);
+
+		// remove it from the lookup
+		erase(this.cx.plotLinesAndBands, obj);
+	}
+};
+/**
+ * Context holding the variables that were in local closure in the chart.
+ */
+function StackItemContext(chart, inverted, axis) {
+	return {
+		chart: chart, // object
+		inverted: inverted, // constant
+		axis: axis // object
+	};
+}
+
+/**
+ * The class for stack items
+ */
+function StackItem(context, options, isNegative, x, stackOption) {
+	var inverted = context.inverted;
+
+	this.cx = context;
+
+	// Tells if the stack is negative
+	this.isNegative = isNegative;
+
+	// Save the options to be able to style the label
+	this.options = options;
+
+	// Save the x value to be able to position the label later
+	this.x = x;
+
+	// Save the stack option on the series configuration object
+	this.stack = stackOption;
+
+	// The align options and text align varies on whether the stack is negative and
+	// if the chart is inverted or not.
+	// First test the user supplied value, then use the dynamic.
+	this.alignOptions = {
+		align: options.align || (inverted ? (isNegative ? 'left' : 'right') : 'center'),
+		verticalAlign: options.verticalAlign || (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
+		y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
+		x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
+	};
+
+	this.textAlign = options.textAlign || (inverted ? (isNegative ? 'right' : 'left') : 'center');
+}
+
+StackItem.prototype = {
+	destroy: function () {
+		destroyObjectProperties(this);
+	},
+
+	/**
+	 * Sets the total of this stack. Should be called when a serie is hidden or shown
+	 * since that will affect the total of other stacks.
+	 */
+	setTotal: function (total) {
+		this.total = total;
+		this.cum = total;
+	},
+
+	/**
+	 * Renders the stack total label and adds it to the stack label group.
+	 */
+	render: function (group) {
+		var str = this.options.formatter.call(this);  // format the text in the label
+
+		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
+		if (this.label) {
+			this.label.attr({text: str, visibility: HIDDEN});
+		// Create new label
+		} else {
+			this.label =
+				this.cx.chart.renderer.text(str, 0, 0)		// dummy positions, actual position updated with setOffset method in columnseries
+					.css(this.options.style)				// apply style
+					.attr({align: this.textAlign,			// fix the text-anchor
+						rotation: this.options.rotation,	// rotation
+						visibility: HIDDEN })				// hidden until setOffset is called
+					.add(group);							// add to the labels-group
+		}
+	},
+
+	/**
+	 * Sets the offset that the stack has from the x value and repositions the label.
+	 */
+	setOffset: function (xOffset, xWidth) {
+		var neg = this.isNegative,									// special treatment is needed for negative stacks
+			y = this.cx.axis.translate(this.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
+			yZero = this.cx.axis.translate(0),						// stack origin
+			h = mathAbs(y - yZero),									// stack height
+			x = this.cx.chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
+			plotHeight = this.cx.chart.plotHeight,
+			stackBox = {	// this is the box for the complete stack
+					x: this.cx.inverted ? (neg ? y : y - h) : x,
+					y: this.cx.inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
+					width: this.cx.inverted ? h : xWidth,
+					height: this.cx.inverted ? xWidth : h
+			};
+
+		if (this.label) {
+			this.label
+				.align(this.alignOptions, null, stackBox)	// align the label to the box
+				.attr({visibility: VISIBLE});				// set visibility
+		}
+	}
+};
 
 /**
  * The chart class
@@ -5303,7 +5607,23 @@ function Chart(options, callback) {
 
 			staggerLines = horiz && options.labels.staggerLines,
 			reversed = options.reversed,
-			tickmarkOffset = (categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
+			tickmarkOffset = (categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
+			plotLineOrBandContext = new PlotLineOrBandContext(
+				chart, 
+				axis, 
+				isLog,
+				function () { return min; },
+				function () { return max; },
+				function () { return axisWidth; },
+				function () { return axisHeight; },
+				horiz,
+				plotLinesAndBands
+			),
+			stackItemContext = new StackItemContext(
+				chart,
+				inverted,
+				axis
+			);
 
 		/**
 		 * The Tick class
@@ -5556,280 +5876,6 @@ function Chart(options, callback) {
 			}
 		};
 
-		/**
-		 * The object wrapper for plot lines and plot bands
-		 * @param {Object} options
-		 */
-		function PlotLineOrBand(options) {
-			var plotLine = this;
-			if (options) {
-				plotLine.options = options;
-				plotLine.id = options.id;
-			}
-
-			//plotLine.render()
-			return plotLine;
-		}
-
-		PlotLineOrBand.prototype = {
-
-		/**
-		 * Render the plot line or plot band. If it is already existing,
-		 * move it.
-		 */
-		render: function () {
-			var plotLine = this,
-				halfPointRange = (axis.pointRange || 0) / 2,
-				options = plotLine.options,
-				optionsLabel = options.label,
-				label = plotLine.label,
-				width = options.width,
-				to = options.to,
-				from = options.from,
-				value = options.value,
-				toPath, // bands only
-				dashStyle = options.dashStyle,
-				svgElem = plotLine.svgElem,
-				path = [],
-				addEvent,
-				eventType,
-				xs,
-				ys,
-				x,
-				y,
-				color = options.color,
-				zIndex = options.zIndex,
-				events = options.events,
-				attribs;
-
-			// logarithmic conversion
-			if (isLog) {
-				from = log2lin(from);
-				to = log2lin(to);
-				value = log2lin(value);
-			}
-
-			// plot line
-			if (width) {
-				path = getPlotLinePath(value, width);
-				attribs = {
-					stroke: color,
-					'stroke-width': width
-				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
-				}
-			} else if (defined(from) && defined(to)) { // plot band
-				// keep within plot area
-				from = mathMax(from, min - halfPointRange);
-				to = mathMin(to, max + halfPointRange);
-
-				toPath = getPlotLinePath(to);
-				path = getPlotLinePath(from);
-				if (path && toPath) {
-					path.push(
-						toPath[4],
-						toPath[5],
-						toPath[1],
-						toPath[2]
-					);
-				} else { // outside the axis area
-					path = null;
-				}
-				attribs = {
-					fill: color
-				};
-			} else {
-				return;
-			}
-			// zIndex
-			if (defined(zIndex)) {
-				attribs.zIndex = zIndex;
-			}
-
-			// common for lines and bands
-			if (svgElem) {
-				if (path) {
-					svgElem.animate({
-						d: path
-					}, null, svgElem.onGetPath);
-				} else {
-					svgElem.hide();
-					svgElem.onGetPath = function () {
-						svgElem.show();
-					};
-				}
-			} else if (path && path.length) {
-				plotLine.svgElem = svgElem = renderer.path(path)
-					.attr(attribs).add();
-
-				// events
-				if (events) {
-					addEvent = function (eventType) {
-						svgElem.on(eventType, function (e) {
-							events[eventType].apply(plotLine, [e]);
-						});
-					};
-					for (eventType in events) {
-						addEvent(eventType);
-					}
-				}
-			}
-
-			// the plot band/line label
-			if (optionsLabel && defined(optionsLabel.text) && path && path.length && axisWidth > 0 && axisHeight > 0) {
-				// apply defaults
-				optionsLabel = merge({
-					align: horiz && toPath && 'center',
-					x: horiz ? !toPath && 4 : 10,
-					verticalAlign : !horiz && toPath && 'middle',
-					y: horiz ? toPath ? 16 : 10 : toPath ? 6 : -4,
-					rotation: horiz && !toPath && 90
-				}, optionsLabel);
-
-				// add the SVG element
-				if (!label) {
-					plotLine.label = label = renderer.text(
-							optionsLabel.text,
-							0,
-							0
-						)
-						.attr({
-							align: optionsLabel.textAlign || optionsLabel.align,
-							rotation: optionsLabel.rotation,
-							zIndex: zIndex
-						})
-						.css(optionsLabel.style)
-						.add();
-				}
-
-				// get the bounding box and align the label
-				xs = [path[1], path[4], pick(path[6], path[1])];
-				ys = [path[2], path[5], pick(path[7], path[2])];
-				x = arrayMin(xs);
-				y = arrayMin(ys);
-
-				label.align(optionsLabel, false, {
-					x: x,
-					y: y,
-					width: arrayMax(xs) - x,
-					height: arrayMax(ys) - y
-				});
-				label.show();
-
-			} else if (label) { // move out of sight
-				label.hide();
-			}
-
-			// chainable
-			return plotLine;
-		},
-
-		/**
-		 * Remove the plot line or band
-		 */
-		destroy: function () {
-			var obj = this;
-
-			destroyObjectProperties(obj);
-
-			// remove it from the lookup
-			erase(plotLinesAndBands, obj);
-		}
-		};
-
-		/**
-		 * The class for stack items
-		 */
-		function StackItem(options, isNegative, x, stackOption) {
-			var stackItem = this;
-
-			// Tells if the stack is negative
-			stackItem.isNegative = isNegative;
-
-			// Save the options to be able to style the label
-			stackItem.options = options;
-
-			// Save the x value to be able to position the label later
-			stackItem.x = x;
-
-			// Save the stack option on the series configuration object
-			stackItem.stack = stackOption;
-
-			// The align options and text align varies on whether the stack is negative and
-			// if the chart is inverted or not.
-			// First test the user supplied value, then use the dynamic.
-			stackItem.alignOptions = {
-				align: options.align || (inverted ? (isNegative ? 'left' : 'right') : 'center'),
-				verticalAlign: options.verticalAlign || (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
-				y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
-				x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
-			};
-
-			stackItem.textAlign = options.textAlign || (inverted ? (isNegative ? 'right' : 'left') : 'center');
-		}
-
-		StackItem.prototype = {
-			destroy: function () {
-				destroyObjectProperties(this);
-			},
-
-			/**
-			 * Sets the total of this stack. Should be called when a serie is hidden or shown
-			 * since that will affect the total of other stacks.
-			 */
-			setTotal: function (total) {
-				this.total = total;
-				this.cum = total;
-			},
-
-			/**
-			 * Renders the stack total label and adds it to the stack label group.
-			 */
-			render: function (group) {
-				var stackItem = this,									// aliased this
-					str = stackItem.options.formatter.call(stackItem);  // format the text in the label
-
-				// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
-				if (stackItem.label) {
-					stackItem.label.attr({text: str, visibility: HIDDEN});
-				// Create new label
-				} else {
-					stackItem.label =
-						chart.renderer.text(str, 0, 0)				// dummy positions, actual position updated with setOffset method in columnseries
-							.css(stackItem.options.style)			// apply style
-							.attr({align: stackItem.textAlign,			// fix the text-anchor
-								rotation: stackItem.options.rotation,	// rotation
-								visibility: HIDDEN })					// hidden until setOffset is called
-							.add(group);							// add to the labels-group
-				}
-			},
-
-			/**
-			 * Sets the offset that the stack has from the x value and repositions the label.
-			 */
-			setOffset: function (xOffset, xWidth) {
-				var stackItem = this,										// aliased this
-					neg = stackItem.isNegative,								// special treatment is needed for negative stacks
-					y = axis.translate(stackItem.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
-					yZero = axis.translate(0),								// stack origin
-					h = mathAbs(y - yZero),									// stack height
-					x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
-					plotHeight = chart.plotHeight,
-					stackBox = {	// this is the box for the complete stack
-							x: inverted ? (neg ? y : y - h) : x,
-							y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
-							width: inverted ? h : xWidth,
-							height: inverted ? xWidth : h
-					};
-
-				if (stackItem.label) {
-					stackItem.label
-						.align(stackItem.alignOptions, null, stackBox)	// align the label to the box
-						.attr({visibility: VISIBLE});					// set visibility
-				}
-			}
-		};
 
 		/**
 		 * Get the minimum and maximum for the series of each axis
@@ -5945,7 +5991,7 @@ function Chart(options, callback) {
 									// If the StackItem is there, just update the values,
 									// if not, create one first
 									if (!stacks[key][x]) {
-										stacks[key][x] = new StackItem(options.stackLabels, isNegative, x, stackOption);
+										stacks[key][x] = new StackItem(stackItemContext, options.stackLabels, isNegative, x, stackOption);
 									}
 									stacks[key][x].setTotal(y);
 
@@ -6701,7 +6747,7 @@ function Chart(options, callback) {
 		 * @param options {Object} The plotBand or plotLine configuration object
 		 */
 		function addPlotBandOrLine(options) {
-			var obj = new PlotLineOrBand(options).render();
+			var obj = new PlotLineOrBand(plotLineOrBandContext, options).render();
 			plotLinesAndBands.push(obj);
 			return obj;
 		}
@@ -6878,7 +6924,7 @@ function Chart(options, callback) {
 					each(tickPositions, function (pos, i) {
 						if (i % 2 === 0 && pos < max) {
 							if (!alternateBands[pos]) {
-								alternateBands[pos] = new PlotLineOrBand();
+								alternateBands[pos] = new PlotLineOrBand(plotLineOrBandContext);
 							}
 							from = pos;
 							to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max;
