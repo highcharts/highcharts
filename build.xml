@@ -16,11 +16,13 @@
         <property file="build.properties"/>
         <filterset id="highcharts.filter">
             <filter token="product.name" value="${highcharts.product.name}"/>
+            <filter token="product.cdnpath" value="${highcharts.product.cdnpath}"/>
             <filter token="product.version" value="${highcharts.product.version}"/>
             <filter token="product.date" value="${highcharts.product.date}"/>
         </filterset>
         <filterset id="highstock.filter">
             <filter token="product.name" value="${highstock.product.name}"/>
+            <filter token="product.cdnpath" value="${highstock.product.cdnpath}"/>
             <filter token="product.version" value="${highstock.product.version}"/>
             <filter token="product.date" value="${highstock.product.date}"/>
         </filterset>
@@ -83,6 +85,7 @@
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
+            <file name="CanVGRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -107,6 +110,7 @@
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
+            <file name="CanVGRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -156,6 +160,7 @@
             <filterchain>
                 <replacetokens>
                     <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
                     <token key="product.version" value="${highcharts.product.version}"/>
                     <token key="product.date" value="${highcharts.product.date}"/>
                 </replacetokens>
@@ -168,10 +173,17 @@
             <filterchain>
                 <replacetokens>
                     <token key="product.name" value="${highstock.product.name}"/>
+                    <token key="product.cdnpath" value="${highstock.product.cdnpath}"/>
                     <token key="product.version" value="${highstock.product.version}"/>
                     <token key="product.date" value="${highstock.product.date}"/>
                 </replacetokens>
             </filterchain>
+        </concat>
+
+        <!-- Concat canvg library together with rgbcolor script -->
+        <concat destfile="build/canvas-tools.src.js">
+            <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
+            <filelist dir="js/modules/" files="canvgrenderer-extended.src.js"/>
         </concat>
     </target>
 
@@ -191,6 +203,7 @@
             <fileset file="${prototype.src.file}"/>
             <fileset file="${exporting.src.file}"/>
             <fileset dir="${themes.dir}"/>
+            <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
 
         <!-- Set a property that tells if there are unused variables. -->
@@ -260,6 +273,11 @@
             <param name="param.src" value="${exporting.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
         </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="build/canvas-tools.src.js"/>
+            <param name="param.out" value="build/canvas-tools.js"/>
+        </antcall>
     </target>
 
     <!-- Builds the source and runts lint and minify. -->
@@ -327,7 +345,7 @@
         <echo message=""/>
 
         <!-- 1. Check for any console statements -->
-        <fail message="Source contains console or alert statements">
+        <!-- fail message="Source contains console or alert statements">
             <condition>
                 <or>
                     <resourcecontains resource="${highcharts.src.file}" substring="console."/>
@@ -342,7 +360,7 @@
                     <resourcecontains resource="${exporting.src.file}" substring="alert("/>
                 </or>
             </condition>
-        </fail>
+        </fail -->
 
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
@@ -362,6 +380,11 @@
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
         <copy todir="${dist.dir}/highcharts/js/themes">
             <fileset dir="${themes.dir}"/>
@@ -508,7 +531,7 @@
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.7.1"/>
-            <param name="required.lib" value="jquery-1.7.1js"/>
+            <param name="required.lib" value="jquery-1.7.1.js"/>
         </antcall>
     </target>
 

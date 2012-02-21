@@ -35,7 +35,8 @@ defaultOptions = {
 		thousandsSep: ','
 	},
 	global: {
-		useUTC: true
+		useUTC: true,
+		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -69,7 +70,7 @@ defaultOptions = {
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		//zoomType: ''
-		resetZoomButton: { // docs
+		resetZoomButton: {
 			theme: {
 				zIndex: 20
 			},
@@ -78,8 +79,8 @@ defaultOptions = {
 				x: -10,
 				//verticalAlign: 'top',
 				y: 10
-			},
-			relativeTo: 'plot'
+			}
+			// relativeTo: 'plot'
 		}
 	},
 	title: {
@@ -260,7 +261,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shared: false,
+		shared: useCanVG,
 		snap: hasTouch ? 25 : 10,
 		style: {
 			color: '#333333',
@@ -271,7 +272,7 @@ defaultOptions = {
 		//xDateFormat: '%A, %b %e, %Y',
 		//valueDecimals: null,
 		//valuePrefix: '',
-		//ySuffix: ''
+		//valueSuffix: ''
 	},
 
 	credits: {

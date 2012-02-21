@@ -13,12 +13,12 @@
  * @constructor
  */
 var VMLRenderer;
-if (!hasSVG) {
+if (!hasSVG && !useCanVG) {
 
 /**
  * The VML element wrapper.
  */
-var VMLElement = extendClass(SVGElement, {
+var VMLElementExtension = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -86,7 +86,7 @@ var VMLElement = extendClass(SVGElement, {
 		// align text after adding to be able to read offset
 		wrapper.added = true;
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
-			wrapper.updateTransform();
+			wrapper.htmlUpdateTransform();
 		}
 
 		// fire an event for internal hooks
@@ -253,16 +253,10 @@ var VMLElement = extendClass(SVGElement, {
 						skipAttr = true;
 
 					// x and y
-					} else if (/^(x|y)$/.test(key)) {
+					} else if (key === 'x' || key === 'y') {
 
 						wrapper[key] = value; // used in getter
-
-						if (element.tagName === 'SPAN') {
-							wrapper.updateTransform();
-
-						} else {
-							elemStyle[{ x: 'left', y: 'top' }[key]] = value;
-						}
+						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 
 					// class name
 					} else if (key === 'class') {
@@ -308,12 +302,9 @@ var VMLElement = extendClass(SVGElement, {
 						}
 
 					// translation for animation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'align') {
-						if (key === 'align') {
-							key = 'textAlign';
-						}
+					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
 						wrapper[key] = value;
-						wrapper.updateTransform();
+						wrapper.htmlUpdateTransform();
 
 						skipAttr = true;
 
@@ -368,22 +359,7 @@ var VMLElement = extendClass(SVGElement, {
 	 * Set styles for the element
 	 * @param {Object} styles
 	 */
-	css: function (styles) {
-		var wrapper = this,
-			element = wrapper.element,
-			textWidth = styles && element.tagName === 'SPAN' && styles.width;
-
-		if (textWidth) {
-			delete styles.width;
-			wrapper.textWidth = textWidth;
-			wrapper.updateTransform();
-		}
-
-		wrapper.styles = extend(wrapper.styles, styles);
-		css(wrapper.element, styles);
-
-		return wrapper;
-	},
+	css: SVGElement.prototype.htmlCss,
 
 	/**
 	 * Removes a child either by removeChild or move to garbageBin.
@@ -427,37 +403,6 @@ var VMLElement = extendClass(SVGElement, {
 	},
 
 	/**
-	 * VML override for calculating the bounding box based on offsets
-	 * @param {Boolean} refresh Whether to force a fresh value from the DOM or to
-	 * use the cached value
-	 *
-	 * @return {Object} A hash containing values for x, y, width and height
-	 */
-
-	getBBox: function (refresh) {
-		var wrapper = this,
-			element = wrapper.element,
-			bBox = wrapper.bBox;
-
-		// faking getBBox in exported SVG in legacy IE
-		if (!bBox || refresh) {
-			// faking getBBox in exported SVG in legacy IE
-			if (element.nodeName === 'text') {
-				element.style.position = ABSOLUTE;
-			}
-
-			bBox = wrapper.bBox = {
-				x: element.offsetLeft,
-				y: element.offsetTop,
-				width: element.offsetWidth,
-				height: element.offsetHeight
-			};
-		}
-
-		return bBox;
-	},
-
-	/**
 	 * Add an event listener. VML override for normalizing event parameters.
 	 * @param {String} eventType
 	 * @param {Function} handler
@@ -470,132 +415,6 @@ var VMLElement = extendClass(SVGElement, {
 			handler(evt);
 		};
 		return this;
-	},
-
-
-	/**
-	 * VML override private method to update elements based on internal
-	 * properties based on SVG transform
-	 */
-	updateTransform: function () {
-		// aligning non added elements is expensive
-		if (!this.added) {
-			this.alignOnAdd = true;
-			return;
-		}
-
-		var wrapper = this,
-			elem = wrapper.element,
-			translateX = wrapper.translateX || 0,
-			translateY = wrapper.translateY || 0,
-			x = wrapper.x || 0,
-			y = wrapper.y || 0,
-			align = wrapper.textAlign || 'left',
-			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			nonLeft = align && align !== 'left',
-			shadows = wrapper.shadows;
-
-		// apply translate
-		if (translateX || translateY) {
-			css(elem, {
-				marginLeft: translateX,
-				marginTop: translateY
-			});
-			if (shadows) { // used in labels/tooltip
-				each(shadows, function (shadow) {
-					css(shadow, {
-						marginLeft: translateX + 1,
-						marginTop: translateY + 1
-					});
-				});
-			}
-		}
-
-		// apply inversion
-		if (wrapper.inverted) { // wrapper is a group
-			each(elem.childNodes, function (child) {
-				wrapper.renderer.invertChild(child, elem);
-			});
-		}
-
-		if (elem.tagName === 'SPAN') {
-
-			var width, height,
-				rotation = wrapper.rotation,
-				lineHeight,
-				radians = 0,
-				costheta = 1,
-				sintheta = 0,
-				quad,
-				textWidth = pInt(wrapper.textWidth),
-				xCorr = wrapper.xCorr || 0,
-				yCorr = wrapper.yCorr || 0,
-				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
-
-			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
-
-				if (defined(rotation)) {
-					radians = rotation * deg2rad; // deg to rad
-					costheta = mathCos(radians);
-					sintheta = mathSin(radians);
-
-					// Adjust for alignment and rotation.
-					// Test case: http://highcharts.com/tests/?file=text-rotation
-					css(elem, {
-						filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
-							', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-							', sizingMethod=\'auto expand\')'].join('') : NONE
-					});
-				}
-
-				width = pick(wrapper.elemWidth, elem.offsetWidth);
-				height = pick(wrapper.elemHeight, elem.offsetHeight);
-
-				// update textWidth
-				if (width > textWidth) {
-					css(elem, {
-						width: textWidth + PX,
-						display: 'block',
-						whiteSpace: 'normal'
-					});
-					width = textWidth;
-				}
-
-				// correct x and y
-				lineHeight = mathRound((pInt(elem.style.fontSize) || 12) * 1.2);
-				xCorr = costheta < 0 && -width;
-				yCorr = sintheta < 0 && -height;
-
-				// correct for lineHeight and corners spilling out after rotation
-				quad = costheta * sintheta < 0;
-				xCorr += sintheta * lineHeight * (quad ? 1 - alignCorrection : alignCorrection);
-				yCorr -= costheta * lineHeight * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
-
-				// correct for the length/height of the text
-				if (nonLeft) {
-					xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
-					if (rotation) {
-						yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
-					}
-					css(elem, {
-						textAlign: align
-					});
-				}
-
-				// record correction
-				wrapper.xCorr = xCorr;
-				wrapper.yCorr = yCorr;
-			}
-
-			// apply position with correction
-			css(elem, {
-				left: x + xCorr,
-				top: y + yCorr
-			});
-
-			// record current text transform
-			wrapper.cTT = currentTextTransform;
-		}
 	},
 
 	/**
@@ -651,15 +470,13 @@ var VMLElement = extendClass(SVGElement, {
 		return this;
 
 	}
-});
+},
+VMLElement = extendClass(SVGElement, VMLElementExtension),
 
 /**
  * The VML renderer
  */
-VMLRenderer = function () {
-	this.init.apply(this, arguments);
-};
-VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
+VMLRendererExtension = { // inherit SVGRenderer
 
 	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
@@ -879,22 +696,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: function (str, x, y) {
-
-		var defaultChartStyle = defaultOptions.chart.style;
-
-		return this.createElement('span')
-			.attr({
-				text: str,
-				x: mathRound(x),
-				y: mathRound(y)
-			})
-			.css({
-				whiteSpace: 'nowrap',
-				fontFamily: defaultChartStyle.fontFamily,
-				fontSize: defaultChartStyle.fontSize
-			});
-	},
+	text: SVGRenderer.prototype.html,
 
 	/**
 	 * Create and return a path element
@@ -917,7 +719,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
-		return this.symbol('circle').attr({ x: x, y: y, r: r});
+		return this.symbol('circle').attr({ x: x - r, y: y - r, width: 2 * r, height: 2 * r });
 	},
 
 	/**
@@ -1136,7 +938,11 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, { // inherit SVGRenderer
 
 		}
 	}
-});
+};
+VMLRenderer = function () {
+	this.init.apply(this, arguments);
+};
+VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
 	Renderer = VMLRenderer;

@@ -54,20 +54,27 @@ Point.prototype = {
 			// copy options directly to point
 			extend(point, options);
 			point.options = options;
+			
+			// This is the fastest way to detect if there are individual point dataLabels that need 
+			// to be considered in drawDataLabels. These can only occur in object configs.
+			if (options.dataLabels) {
+				series._hasPointLabels = true;
+			}
 		} else if (typeof options[0] === 'string') { // categorized data with name in first position
 			point.name = options[0];
 			point.y = options[1];
 		}
-
+		
 		/*
 		 * If no x is set by now, get auto incremented value. All points must have an
 		 * x value, however the y value can be null to create a gap in the series
 		 */
-
 		// todo: skip this? It is only used in applyOptions, in translate it should not be used
 		if (point.x === UNDEFINED) {
 			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
+		
+		
 
 	},
 
@@ -527,6 +534,11 @@ Series.prototype = {
 			selected: options.selected === true // false by default
 		});
 		
+		// special
+		if (useCanVG) {
+			options.animation = false;
+		}
+
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {
@@ -674,7 +686,7 @@ Series.prototype = {
 		
 		// the tooltip options are merged between global and series specific options
 		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
-
+		
 		return options;
 
 	},
@@ -1067,9 +1079,21 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries = series.index === yAxis.series.length - 1,
-			i;
+			isLastSeries,
+			allStackSeries = yAxis.series,
+			i = allStackSeries.length;
+			
+		// Is it the last visible series?
+		while (i--) {
+			if (allStackSeries[i].visible) {
+				if (i === series.index) {
+					isLastSeries = true;
+				}
+				break;
+			}
+		}
 		
+		// Translate each point
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
 				xValue = point.x,
@@ -1080,7 +1104,7 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = mathRound(xAxis.translate(xValue) * 10) / 10; // Math.round fixes #591
+			point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1102,9 +1126,10 @@ Series.prototype = {
 				point.stackTotal = pointStackTotal;
 			}
 
-			if (defined(yBottom)) {
-				point.yBottom = yAxis.translate(yBottom, 0, 1, 0, 1);
-			}
+			// Set translated yBottom or remove it
+			point.yBottom = defined(yBottom) ? 
+				yAxis.translate(yBottom, 0, 1, 0, 1) :
+				null;
 			
 			// general hook, used for Highstock compare mode
 			if (hasModifyValue) {
@@ -1581,13 +1606,15 @@ Series.prototype = {
 	 * Draw the data labels
 	 */
 	drawDataLabels: function () {
-		if (this.options.dataLabels.enabled) {
-			var series = this,
-				x,
+		
+		var series = this,
+			seriesOptions = series.options,
+			options = seriesOptions.dataLabels;
+		
+		if (options.enabled || series._hasPointLabels) {
+			var x,
 				y,
 				points = series.points,
-				seriesOptions = series.options,
-				options = seriesOptions.dataLabels,
 				pointOptions,
 				generalOptions,
 				str,
@@ -1639,14 +1666,14 @@ Series.prototype = {
 			} else {
 				dataLabelsGroup.translate(groupLeft, groupTop);
 			}
-
+			
 			// make the labels for each point
 			generalOptions = options;
 			each(points, function (point) {
 				
 				dataLabel = point.dataLabel;
 				
-				// Merge in individual options from point // docs
+				// Merge in individual options from point
 				options = generalOptions; // reset changes from previous points
 				pointOptions = point.options;
 				if (pointOptions && pointOptions.dataLabels) {
@@ -1706,7 +1733,8 @@ Series.prototype = {
 						dataLabel = point.dataLabel = renderer.text(
 							str,
 							x,
-							y
+							y,
+							options.useHTML
 						)
 						.attr({
 							align: align,

@@ -12,7 +12,6 @@ function Chart(options, callback) {
 	options = merge(defaultOptions, options); // do the merge
 	options.series = seriesOptions; // set back the series data
 
-	// Define chart variables
 	var optionsChart = options.chart,
 		optionsMargin = optionsChart.margin,
 		margin = isObject(optionsMargin) ?
@@ -242,13 +241,13 @@ function Chart(options, callback) {
 
 				// get the string
 				str = labelFormatter.call({
-						axis: axis, // docs
-						chart: chart, // docs
-						isFirst: isFirst,
-						isLast: isLast,
-						dateTimeLabelFormat: dateTimeLabelFormat,
-						value: isLog ? lin2log(value) : value
-					});
+					axis: axis,
+					chart: chart,
+					isFirst: isFirst,
+					isLast: isLast,
+					dateTimeLabelFormat: dateTimeLabelFormat,
+					value: isLog ? correctFloat(lin2log(value)) : value
+				});
 
 
 				// prepare CSS
@@ -700,7 +699,7 @@ function Chart(options, callback) {
 			setOffset: function (xOffset, xWidth) {
 				var stackItem = this,										// aliased this
 					neg = stackItem.isNegative,								// special treatment is needed for negative stacks
-					y = axis.translate(stackItem.total),					// stack value translated mapped to chart coordinates
+					y = axis.translate(stackItem.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
 					yZero = axis.translate(0),								// stack origin
 					h = mathAbs(y - yZero),									// stack height
 					x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
@@ -751,6 +750,11 @@ function Chart(options, callback) {
 						yDataLength,
 						activeYData = [],
 						activeCounter = 0;
+						
+					// Validate threshold in logarithmic axes
+					if (isLog && threshold <= 0) {
+						threshold = seriesOptions.threshold = null;
+					}
 
 					// Get dataMin and dataMax for X axes
 					if (isXAxis) {
@@ -802,7 +806,6 @@ function Chart(options, callback) {
 						xData = series.processedXData;
 						yData = series.processedYData;
 						yDataLength = yData.length;
-
 
 						// loop over the non-null y values and read them into a local array
 						for (i = 0; i < yDataLength; i++) {
@@ -870,7 +873,6 @@ function Chart(options, callback) {
 						}
 						series.closestPointRange = pointRange;*/
 
-
 						// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 						// always 0 and 100. If the length of activeYData is 0, continue with null values.
 						if (!usePercentage && activeYData.length) {
@@ -878,10 +880,8 @@ function Chart(options, callback) {
 							dataMax = mathMax(pick(dataMax, activeYData[0]), arrayMax(activeYData));
 						}
 
-
-						// todo: instead of checking useThreshold, just set the threshold to 0
-						// in area and column-like chart types
-						if (series.useThreshold && threshold !== null) {
+						// Adjust to threshold
+						if (threshold !== null) {
 							if (dataMin >= threshold) {
 								dataMin = threshold;
 								ignoreMinPadding = true;
@@ -901,6 +901,7 @@ function Chart(options, callback) {
 		 *
 		 */
 		translate = function (val, backwards, cvsCoord, old, handleLog) {
+			
 			var sign = 1,
 				cvsOffset = 0,
 				localA = old ? oldTransA : transA,
@@ -984,31 +985,15 @@ function Chart(options, callback) {
 		};
 
 		/**
-		 * Fix JS round off float errors
-		 * @param {Number} num
-		 */
-		function correctFloat(num) {
-			var invMag, ret = num;
-			magnitude = pick(magnitude, math.pow(10, mathFloor(math.log(tickInterval) / math.LN10)));
-
-			if (magnitude < 1) {
-				invMag = mathRound(1 / magnitude)  * 10;
-				ret = mathRound(num * invMag) / invMag;
-			}
-			return ret;
-		}
-
-		/**
 		 * Set the tick positions of a linear axis to round values like whole tens or every five.
 		 */
-		function setLinearTickPositions() {
+		function getLinearTickPositions(tickInterval, min, max) {
 
 			var pos,
 				lastPos,
 				roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
-				roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval);
-
-			tickPositions = [];
+				roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
+				tickPositions = [];
 
 			// Populate the intermediate values
 			pos = roundedMin;
@@ -1029,6 +1014,130 @@ function Chart(options, callback) {
 				// Record the last value
 				lastPos = pos;
 			}
+			return tickPositions;
+		}
+		
+		/**
+		 * Set the tick positions of a logarithmic axis
+		 */
+		function getLogTickPositions(interval, min, max, minor) {
+			
+			// Since we use this method for both major and minor ticks,
+			// use a local variable and return the result
+			var positions = []; 
+			
+			// Reset
+			if (!minor) {
+				axis._minorAutoInterval = null;
+			}
+			
+			// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
+			if (interval >= 0.5) {
+				interval = mathRound(interval);
+				positions = getLinearTickPositions(interval, min, max);
+				
+			// Second case: We need intermediary ticks. For example 
+			// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
+			} else if (interval >= 0.08) {
+				var roundedMin = mathFloor(min),
+					intermediate,
+					i,
+					j,
+					len,
+					pos,
+					lastPos,
+					break2;
+					
+				if (interval > 0.3) {
+					intermediate = [1, 2, 4];
+				} else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
+					intermediate = [1, 2, 4, 6, 8];
+				} else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
+					intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+				}
+				
+				for (i = roundedMin; i < max + 1 && !break2; i++) {
+					len = intermediate.length;
+					for (j = 0; j < len && !break2; j++) {
+						pos = log2lin(lin2log(i) * intermediate[j]);
+						
+						if (pos > min) {
+							positions.push(lastPos);
+						}
+						
+						if (lastPos > max) {
+							break2 = true;
+						}
+						lastPos = pos;
+					}
+				}
+				
+			// Third case: We are so deep in between whole logarithmic values that
+			// we might as well handle the tick positions like a linear axis. For
+			// example 1.01, 1.02, 1.03, 1.04.
+			} else {
+				var realMin = lin2log(min),
+					realMax = lin2log(max),
+					tickIntervalOption = options[minor ? 'minorTickInterval' : 'tickInterval'],
+					filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
+					tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
+					totalPixelLength = minor ? axisLength / tickPositions.length : axisLength;
+				
+				interval = pick(
+					filteredTickIntervalOption,
+					axis._minorAutoInterval,
+					(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
+				);
+				
+				interval = normalizeTickInterval(
+					interval, 
+					null, 
+					math.pow(10, mathFloor(math.log(interval) / math.LN10))
+				);
+				
+				positions = map(getLinearTickPositions(
+					interval, 
+					realMin,
+					realMax	
+				), log2lin);
+				
+				if (!minor) {
+					axis._minorAutoInterval = interval / 5;
+				}
+			}
+			
+			// Set the axis-level tickInterval variable 
+			if (!minor) {
+				tickInterval = interval;
+			}
+			return positions;
+		}
+		
+		/**
+		 * Return the minor tick positions. For logarithmic axes, reuse the same logic
+		 * as for major ticks.
+		 */
+		function getMinorTickPositions() {
+			var minorTickPositions = [],
+				pos,
+				i,
+				len;
+			
+			if (isLog) {
+				len = tickPositions.length;
+				for (i = 1; i < len; i++) {
+					minorTickPositions = minorTickPositions.concat(
+						getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
+					);	
+				}
+			
+			} else {			
+				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+					minorTickPositions.push(pos);	
+				}
+			}
+			
+			return minorTickPositions;
 		}
 
 		/**
@@ -1049,8 +1158,8 @@ function Chart(options, callback) {
 				maxArgs;
 				
 			// Set the automatic minimum range based on the closest point distance
-			if (isXAxis && minRange === UNDEFINED) {
-
+			if (isXAxis && minRange === UNDEFINED && !isLog) {
+				
 				if (defined(options.min) || defined(options.max)) {
 					minRange = null; // don't do this again
 
@@ -1117,12 +1226,18 @@ function Chart(options, callback) {
 				linkedParentExtremes = linkedParent.getExtremes();
 				min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
 				max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);
+				if (options.type !== linkedParent.options.type) {
+					error(11, 1); // Can't link axes of different type
+				}
 			} else { // initial min and max from the extreme data values
 				min = pick(userMin, options.min, dataMin);
 				max = pick(userMax, options.max, dataMax);
 			}
 
 			if (isLog) {
+				if (!secondPass && min <= 0) {
+					error(10); // Can't plot negative values on log axis
+				}
 				min = log2lin(min);
 				max = log2lin(max);
 			}
@@ -1173,7 +1288,6 @@ function Chart(options, callback) {
 				});
 			}
 
-
 			// set the translation factor used in translate function
 			setAxisTranslation();
 
@@ -1188,7 +1302,7 @@ function Chart(options, callback) {
 			}
 
 			// for linear axes, get magnitude and normalize the interval
-			if (!isDatetimeAxis) { // linear
+			if (!isDatetimeAxis && !isLog) { // linear
 				magnitude = math.pow(10, mathFloor(math.log(tickInterval) / math.LN10));
 				if (!defined(options.tickInterval)) {
 					tickInterval = normalizeTickInterval(tickInterval, null, magnitude, options);
@@ -1207,16 +1321,18 @@ function Chart(options, callback) {
 			if (!tickPositions) {
 				if (isDatetimeAxis) {
 					tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
-						normalizeTimeTickInterval(tickInterval, options.units), 
-						min, 
-						max, 
+						normalizeTimeTickInterval(tickInterval, options.units),
+						min,
+						max,
 						options.startOfWeek,
-						axis.ordinalPositions, 
+						axis.ordinalPositions,
 						axis.closestPointRange,
 						true
 					);
+				} else if (isLog) {
+					tickPositions = getLogTickPositions(tickInterval, min, max);
 				} else {
-					setLinearTickPositions();
+					tickPositions = getLinearTickPositions(tickInterval, min, max);
 				}
 			}
 
@@ -1225,7 +1341,6 @@ function Chart(options, callback) {
 			fireEvent(axis, 'afterSetTickPositions', {
 				tickPositions: tickPositions
 			});
-
 
 			if (!isLinked) {
 
@@ -1447,8 +1562,8 @@ function Chart(options, callback) {
 		 */
 		function getExtremes() {
 			return {
-				min: min,
-				max: max,
+				min: isLog ? correctFloat(lin2log(min)) : min,
+				max: isLog ? correctFloat(lin2log(max)) : max,
 				dataMin: dataMin,
 				dataMax: dataMax,
 				userMin: userMin,
@@ -1461,13 +1576,16 @@ function Chart(options, callback) {
 		 * Used in bar and area plots
 		 */
 		function getThreshold(threshold) {
-			if (min > threshold || threshold === null) {
-				threshold = min;
-			} else if (max < threshold) {
-				threshold = max;
+			var realMin = isLog ? lin2log(min) : min,
+				realMax = isLog ? lin2log(max) : max;
+			
+			if (realMin > threshold || threshold === null) {
+				threshold = realMin;
+			} else if (realMax < threshold) {
+				threshold = realMax;
 			}
 
-			return translate(threshold, 0, 1);
+			return translate(threshold, 0, 1, 0, 1);
 		}
 
 		/**
@@ -1603,15 +1721,16 @@ function Chart(options, callback) {
 				hasRendered = chart.hasRendered,
 				slideInTicks = hasRendered && defined(oldMin) && !isNaN(oldMin),
 				hasData = axis.series.length && defined(min) && defined(max),
-				showAxis = hasData || pick(options.showEmpty, true);
+				showAxis = hasData || pick(options.showEmpty, true),
+				from,
+				to;
 
 			// If the series has data draw the ticks. Else only the line and title
 			if (hasData || isLinked) {
 
 				// minor ticks
 				if (minorTickInterval && !categories) {
-					var pos = min + (tickPositions[0] - min) % minorTickInterval;
-					for (; pos <= max; pos += minorTickInterval) {
+					each(getMinorTickPositions(), function (pos) {
 						if (!minorTicks[pos]) {
 							minorTicks[pos] = new Tick(pos, 'minor');
 						}
@@ -1624,7 +1743,7 @@ function Chart(options, callback) {
 
 						minorTicks[pos].isActive = true;
 						minorTicks[pos].render();
-					}
+					});
 				}
 
 				// major ticks
@@ -1654,9 +1773,11 @@ function Chart(options, callback) {
 							if (!alternateBands[pos]) {
 								alternateBands[pos] = new PlotLineOrBand();
 							}
+							from = pos;
+							to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max;
 							alternateBands[pos].options = {
-								from: pos,
-								to: tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : max,
+								from: isLog ? lin2log(from) : from,
+								to: isLog ? lin2log(to) : to,
 								color: alternateGridColor
 							};
 							alternateBands[pos].render();
@@ -1806,6 +1927,20 @@ function Chart(options, callback) {
 				}
 			}
 		}
+		
+		/**
+		 * Update the axis title by options
+		 */
+		function setTitle(newTitleOptions, redraw) {
+			options.title = merge(options.title, newTitleOptions);
+			
+			axisTitle = axisTitle.destroy();
+			axis.isDirty = true;
+			
+			if (pick(redraw, true)) {
+				chart.redraw();
+			}
+		}
 
 		/**
 		 * Redraw the axis to reflect changes in the data or axis extremes
@@ -1929,6 +2064,7 @@ function Chart(options, callback) {
 			removePlotBand: removePlotBandOrLine,
 			removePlotLine: removePlotBandOrLine,
 			reversed: reversed,
+			setTitle: setTitle,
 			series: [], // populated by Series
 			stacks: stacks,
 			destroy: destroy
@@ -1968,7 +2104,7 @@ function Chart(options, callback) {
 		style.padding = 0;
 
 		// create the label
-		var label = renderer.label('', 0, 0)
+		var label = renderer.label('', 0, 0, null, null, null, options.useHTML)
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
@@ -1978,8 +2114,13 @@ function Chart(options, callback) {
 			})
 			.css(style)
 			.hide()
-			.add()
-			.shadow(options.shadow);
+			.add();
+
+		// When using canVG the shadow shows up as a gray circle
+		// even if the tooltip is hidden.
+		if (!useCanVG) {
+			label.shadow(options.shadow);
+		}
 
 		/**
 		 * Destroy the tooltip and its elements.
@@ -2015,6 +2156,10 @@ function Chart(options, callback) {
 				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
 					item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
 			});
+			
+			// footer
+			s.push(options.footerFormat || '');
+			
 			return s.join('');
 		}
 
@@ -2094,7 +2239,8 @@ function Chart(options, callback) {
 				tooltipPos = point.tooltipPos,
 				formatter = options.formatter || defaultFormatter,
 				hoverPoints = chart.hoverPoints,
-				placedTooltipPoint;
+				placedTooltipPoint,
+				borderColor;
 
 			// shared tooltip, array is sent over
 			if (shared && !(point.series && point.series.noSharedTooltip)) {
@@ -2161,8 +2307,9 @@ function Chart(options, callback) {
 				});
 
 				// set the stroke color of the box
+				borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
 				label.attr({
-					stroke: options.borderColor || point.color || currentSeries.color || '#606060'
+					stroke: borderColor
 				});
 
 				placedTooltipPoint = placeBox(
@@ -2215,6 +2362,12 @@ function Chart(options, callback) {
 					}
 				}
 			}
+			fireEvent(chart, 'tooltipRefresh', {
+					text: text,
+					x: x + plotLeft,
+					y: y + plotTop,
+					borderColor: borderColor
+				});
 		}
 
 
@@ -2240,7 +2393,7 @@ function Chart(options, callback) {
 			mouseDownY,
 			hasDragged,
 			selectionMarker,
-			zoomType = optionsChart.zoomType,
+			zoomType = useCanVG ? '' : optionsChart.zoomType,
 			zoomX = /x/.test(zoomType),
 			zoomY = /y/.test(zoomType),
 			zoomHor = (zoomX && !inverted) || (zoomY && inverted),
@@ -2744,7 +2897,7 @@ function Chart(options, callback) {
 		
 		if (options.enabled) {
 			chart.tooltip = tooltip = Tooltip(options);
-			
+
 			// set the fixed interval ticking for the smooth tooltip
 			tooltipInterval = setInterval(function () {
 				if (tooltipTick) {
@@ -2787,6 +2940,7 @@ function Chart(options, callback) {
 			itemHoverStyle = options.itemHoverStyle,
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
+			ltr = !options.rtl,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -2838,23 +2992,32 @@ function Chart(options, callback) {
 		 * @param {Object} item A Series or Point instance
 		 * @param {Object} visible Dimmed or colored
 		 */
-		function positionItem(item, itemX, itemY) {
+		function positionItem(item) {
 			var legendItem = item.legendItem,
 				legendLine = item.legendLine,
+				legendItemPos = item._legendItemPos,
+				itemX = legendItemPos[0],
+				itemY = legendItemPos[1],
 				legendSymbol = item.legendSymbol,
+				symbolX,
 				checkbox = item.checkbox;
+			
 			if (legendItem) {
 				legendItem.attr({
-					x: itemX,
+					x: ltr ? itemX : legendWidth - itemX,
 					y: itemY
 				});
 			}
 			if (legendLine) {
-				legendLine.translate(itemX, itemY - 4);
+				legendLine.translate(
+					ltr ? itemX : legendWidth - itemX,
+					itemY - 4
+				);
 			}
 			if (legendSymbol) {
+				symbolX = itemX + legendSymbol.xOff;
 				legendSymbol.attr({
-					x: itemX + legendSymbol.xOff,
+					x: ltr ? symbolX : legendWidth - symbolX,
 					y: itemY + legendSymbol.yOff
 				});
 			}
@@ -2941,7 +3104,8 @@ function Chart(options, callback) {
 				item.legendItem = li = renderer.text(
 						options.labelFormatter.call(item),
 						0,
-						0
+						0,
+						options.useHTML
 					)
 					.css(item.visible ? itemStyle : itemHiddenStyle)
 					.on('mouseover', function () {
@@ -2965,7 +3129,10 @@ function Chart(options, callback) {
 							fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
 						}
 					})
-					.attr({ zIndex: 2 })
+					.attr({
+						align: ltr ? 'left' : 'right',
+						zIndex: 2
+					})
 					.add(legendGroup);
 
 				// draw the line
@@ -2979,10 +3146,10 @@ function Chart(options, callback) {
 					}
 					item.legendLine = renderer.path([
 						M,
-						-symbolWidth - symbolPadding,
+						(-symbolWidth - symbolPadding) * (ltr ? 1 : -1),
 						0,
 						L,
-						-symbolPadding,
+						(-symbolPadding) * (ltr ? 1 : -1),
 						0
 					])
 					.attr(attrs)
@@ -3002,6 +3169,11 @@ function Chart(options, callback) {
 						//'stroke-width': 0,
 						zIndex: 3
 					}).add(legendGroup);
+					
+					if (!ltr) {
+						symbolX += symbolWidth;
+					}
+					
 				} else if (itemOptions && itemOptions.marker && itemOptions.marker.enabled) { // draw the marker
 					radius = itemOptions.marker.radius;
 					legendSymbol = renderer.symbol(
@@ -3014,9 +3186,14 @@ function Chart(options, callback) {
 					.attr(item.pointAttr[NORMAL_STATE])
 					.attr({ zIndex: 3 })
 					.add(legendGroup);
+					
+					if (!ltr) {
+						symbolX += symbolWidth / 2;
+					}
 
 				}
 				if (legendSymbol) {
+					
 					legendSymbol.xOff = symbolX + (strokeWidth % 2 / 2);
 					legendSymbol.yOff = symbolY + (strokeWidth % 2 / 2);
 				}
@@ -3064,8 +3241,8 @@ function Chart(options, callback) {
 			}
 			lastItemY = itemY + itemMarginBottom;
 
-			// position the newly generated or reordered items
-			positionItem(item, itemX, itemY);
+			// cache the position of the newly generated or reordered items
+			item._legendItemPos = [itemX, itemY];
 
 			// advance
 			if (horizontal) {
@@ -3171,6 +3348,10 @@ function Chart(options, callback) {
 				// hide the border if no items
 				box[allItems.length ? 'show' : 'hide']();
 			}
+			
+			// Now that the legend width and height are extablished, put the items in the 
+			// final position
+			each(allItems, positionItem);
 
 			// 1.x compatibility: positioning based on style
 			var props = ['left', 'right', 'top', 'bottom'],
@@ -3416,6 +3597,9 @@ function Chart(options, callback) {
 			tracker.resetTracker();
 		}
 
+		// redraw if canvas
+		renderer.draw();
+
 		// fire the event
 		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
 	}
@@ -3577,14 +3761,15 @@ function Chart(options, callback) {
 	function showResetZoom() {
 		var lang = defaultOptions.lang,
 			btnOptions = optionsChart.resetZoomButton,
-			box = btnOptions.relativeTo === 'plot' && {
+			theme = btnOptions.theme,
+			states = theme.states,
+			box = btnOptions.relativeTo === 'chart' ? null : {
 				x: plotLeft,
 				y: plotTop,
 				width: plotWidth,
 				height: plotHeight
 			};
-
-		chart.resetZoomButton = renderer.button(lang.resetZoom, null, null, zoomOut, btnOptions.theme)
+		chart.resetZoomButton = renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
@@ -3637,7 +3822,7 @@ function Chart(options, callback) {
 				}
 			});
 		}
-		
+
 		// Redraw
 		if (hasZoomed) {
 			redraw(true, animate);
@@ -3744,6 +3929,11 @@ function Chart(options, callback) {
 		if (isString(renderTo)) {
 			renderTo = doc.getElementById(renderTo);
 		}
+		
+		// Display an error if the renderTo is wrong
+		if (!renderTo) {
+			error(13, true);
+		}
 
 		// remove previous chart
 		renderTo.innerHTML = '';
@@ -3786,6 +3976,12 @@ function Chart(options, callback) {
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
+
+		if (useCanVG) {
+			// If we need canvg library, extend and configure the renderer
+			// to get the tracker for translating mouse events
+			renderer.create(chart, container, chartWidth, chartHeight);
+		}
 
 		// Issue 110 workaround:
 		// In Firefox, if a div is positioned by percentage, its pixel position may land
@@ -4356,21 +4552,25 @@ function Chart(options, callback) {
 	 * Prepare for first rendering after all data are loaded
 	 */
 	function firstRender() {
-
 		// VML namespaces can't be added until after complete. Listening
 		// for Perini's doScroll hack is not enough.
 		var ONREADYSTATECHANGE = 'onreadystatechange',
 		COMPLETE = 'complete';
 		// Note: in spite of JSLint's complaints, win == win.top is required
 		/*jslint eqeq: true*/
-		if (!hasSVG && win == win.top && doc.readyState !== COMPLETE) {
+		if ((!hasSVG && (win == win.top && doc.readyState !== COMPLETE)) || (useCanVG && !win.canvg)) {
 		/*jslint eqeq: false*/
-			doc.attachEvent(ONREADYSTATECHANGE, function () {
-				doc.detachEvent(ONREADYSTATECHANGE, firstRender);
-				if (doc.readyState === COMPLETE) {
-					firstRender();
-				}
-			});
+			if (useCanVG) {
+				// Delay rendering until canvg library is downloaded and ready
+				CanVGController.push(firstRender, options.global.canvasToolsURL);
+			} else {
+				doc.attachEvent(ONREADYSTATECHANGE, function () {
+					doc.detachEvent(ONREADYSTATECHANGE, firstRender);
+					if (doc.readyState === COMPLETE) {
+						firstRender();
+					}
+				});
+			}
 			return;
 		}
 
@@ -4415,6 +4615,8 @@ function Chart(options, callback) {
 
 		render();
 
+		// add canvas
+		renderer.draw();
 		// run callbacks
 		if (callback) {
 			callback.apply(chart, [chart]);
@@ -4454,7 +4656,7 @@ function Chart(options, callback) {
 
 	// Expose methods and variables
 	chart.addSeries = addSeries;
-	chart.animation = pick(optionsChart.animation, true);
+	chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
 	chart.Axis = Axis;
 	chart.destroy = destroy;
 	chart.get = get;

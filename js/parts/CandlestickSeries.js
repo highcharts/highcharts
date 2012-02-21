@@ -10,12 +10,13 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	},
 	lineColor: 'black',
 	lineWidth: 1,
-	upColor: 'white',
 	states: {
 		hover: {
 			lineWidth: 2
 		}
-	}
+	},
+	threshold: null,
+	upColor: 'white'
 });
 
 // 2 - Create the CandlestickSeries object

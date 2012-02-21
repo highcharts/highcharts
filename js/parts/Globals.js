@@ -23,7 +23,8 @@ var UNDEFINED,
 	isFirefox = /Firefox/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
-	hasRtlBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
 	Renderer,
 	hasTouch = doc.documentElement.ontouchstart !== UNDEFINED,
 	symbolSizes = {},
@@ -99,6 +100,7 @@ var UNDEFINED,
 	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 	// and all the utility functions will be null. In that case they are populated by the
 	// default adapters below.
+	getScript = adapter.getScript,
 	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,

@@ -3,7 +3,6 @@
  */
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
-	useThreshold: true,
 	tooltipOutsidePlot: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -250,7 +249,8 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	animate: function (init) {
 		var series = this,
-			points = series.points;
+			points = series.points,
+			options = series.options;
 
 		if (!init) { // run the animation
 			/*
@@ -263,20 +263,24 @@ var ColumnSeries = extendClass(Series, {
 
 			each(points, function (point) {
 				var graphic = point.graphic,
-					shapeArgs = point.shapeArgs;
+					shapeArgs = point.shapeArgs,
+					yAxis = series.yAxis,
+					threshold = options.threshold;
 
 				if (graphic) {
 					// start values
 					graphic.attr({
 						height: 0,
-						y: series.yAxis.translate(0, 0, 1)
+						y: defined(threshold) ? 
+							yAxis.getThreshold(threshold) :
+							yAxis.translate(yAxis.getExtremes().min, 0, 1, 0, 1)
 					});
 
 					// animate
 					graphic.animate({
 						height: shapeArgs.height,
 						y: shapeArgs.y
-					}, series.options.animation);
+					}, options.animation);
 				}
 			});
 

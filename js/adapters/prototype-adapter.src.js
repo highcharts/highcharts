@@ -9,7 +9,7 @@
  */
 
 // JSLint options:
-/*global Effect, Class, Event, $, $A */
+/*global Effect, Class, Event, Element, $, $$, $A */
 
 // Adapter interface between prototype and the Highcharts charting library
 var HighchartsAdapter = (function () {
@@ -102,6 +102,19 @@ return {
 	},
 
 	/**
+	 * Downloads a script and executes a callback when done.
+	 * @param {String} scriptLocation
+	 * @param {Function} callback
+	 */
+	getScript: function (scriptLocation, callback) {
+		var head = $$('head')[0]; // Returns an array, so pick the first element.
+		if (head) {
+			// Append a new 'script' element, set its type and src attributes, add a 'load' handler that calls the callback
+			head.appendChild(new Element('script', { type: 'text/javascript', src: scriptLocation}).observe('load', callback));
+		}
+	},
+
+	/**
 	 * Custom events in prototype needs to be namespaced. This method adds a namespace 'h:' in front of
 	 * events that are not recognized as native.
 	 */
@@ -168,7 +181,7 @@ return {
 	each: function (arr, fn) {
 		$A(arr).each(fn);
 	},
-	
+
 	/**
 	 * Get the cumulative offset relative to the top left of the page. This method, unlike its
 	 * jQuery and MooTools counterpart, still suffers from issue #208 regarding the position
