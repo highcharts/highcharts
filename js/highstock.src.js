@@ -10098,7 +10098,9 @@ Series.prototype = {
 						points.splice(i, 1);
 					}
 				}
-				segments = [points];
+				if (points.length) {
+					segments = [points];
+				}
 				
 			// else, split on null points
 			} else {
