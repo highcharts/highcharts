@@ -39,7 +39,7 @@ $(document).ready(function() {
 	options = {
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'column'
+			type: 'column'
 		},
 		title: {
 			text: 'Data extracted from a HTML table in the page'

@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'spline',
+			type: 'spline',
 			inverted: true,
 			width: 500,
 			style: {

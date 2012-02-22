@@ -522,9 +522,7 @@ Highcharts.Scroller = function (chart) {
 				}
 			}
 		}
-		if (e.preventDefault) { // tries to drag object when clicking on the shades
-			e.preventDefault();
-		}
+		
 	}
 
 	/**
@@ -977,7 +975,8 @@ Highcharts.RangeSelector = function (chart) {
 					newMin,
 					newMax,
 					pick(redraw, 1),
-					0
+					0,
+					{ rangeSelectorButton: rangeOptions }
 				);
 				selected = i;
 			}, 1);

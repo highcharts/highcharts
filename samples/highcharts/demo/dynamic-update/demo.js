@@ -9,7 +9,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'spline',
+			type: 'spline',
 			marginRight: 10,
 			events: {
 				load: function() {

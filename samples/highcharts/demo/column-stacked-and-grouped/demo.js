@@ -4,7 +4,7 @@ $(document).ready(function() {
 
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'column'
+			type: 'column'
 		},
 
 		title: {

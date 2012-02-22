@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'areaspline'
+			type: 'areaspline'
 		},
 		title: {
 			text: 'Average fruit consumption during one week'

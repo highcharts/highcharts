@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'column'
+			type: 'column'
 		},
 		title: {
 			text: 'Stacked column chart'

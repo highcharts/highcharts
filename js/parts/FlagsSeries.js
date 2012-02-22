@@ -24,6 +24,7 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 		fontWeight: 'bold',
 		textAlign: 'center'
 	},
+	threshold: null,
 	y: -30
 });
 

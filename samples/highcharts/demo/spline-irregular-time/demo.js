@@ -30,6 +30,7 @@ $(document).ready(function() {
 					Highcharts.dateFormat('%e. %b', this.x) +': '+ this.y +' m';
 			}
 		},
+		
 		series: [{
 			name: 'Winter 2007-2008',
 			// Define the data points. All series have a dummy year

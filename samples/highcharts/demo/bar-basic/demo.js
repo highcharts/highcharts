@@ -3,7 +3,7 @@ $(document).ready(function() {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
-			defaultSeriesType: 'bar'
+			type: 'bar'
 		},
 		title: {
 			text: 'Historic World Population by Region'
