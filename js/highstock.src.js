@@ -6448,12 +6448,6 @@ function Chart(options, callback) {
 				}
 			}
 
-			// post process positions, used in ordinal axes in Highstock. 
-			// TODO: combine with getNonLinearTimeTicks
-			fireEvent(axis, 'afterSetTickPositions', {
-				tickPositions: tickPositions
-			});
-
 			if (!isLinked) {
 
 				// reset min/max or remove extremes based on start/end on tick
@@ -16228,7 +16222,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					info,
 					posLength,
 					outsideMax,
-					groupPositions = [];
+					groupPositions = [],
+					tickPixelIntervalOption = xAxis.options.tickPixelInterval;
 					
 				// The positions are not always defined, for example for ordinal positions when data
 				// has regular interval
@@ -16290,41 +16285,48 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				}
 				
 				// Save the info
-				groupPositions.info = info;				
+				groupPositions.info = info;
 				
 				
-				// Return it
-				return groupPositions;
 				
-			};
-			
-			/**
-			 * Post process tick positions. The tickPositions array is altered. Don't show ticks 
-			 * within a gap in the ordinal axis, where the space between
-			 * two points is greater than a portion of the tick pixel interval
-			 */
-			addEvent(xAxis, 'afterSetTickPositions', function (e) {
-				
-				var options = xAxis.options,
-					tickPixelIntervalOption = options.tickPixelInterval,
-					tickPositions = e.tickPositions;
-				
-				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
-					var i = tickPositions.length,
+				// Don't show ticks within a gap in the ordinal axis, where the space between
+				// two points is greater than a portion of the tick pixel interval
+				if (findHigherRanks && defined(tickPixelIntervalOption)) { // check for squashed ticks
+					var i = groupPositions.length,
 						itemToRemove,
 						translated,
+						translatedArr = [],
 						lastTranslated,
-						tickInfo = tickPositions.info,
-						higherRanks = tickInfo ? tickInfo.higherRanks : [];
-					
-					while (i--) {
-						translated = xAxis.translate(tickPositions[i]);
+						medianDistance,
+						distance,
+						distances = [];
 						
-						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
-						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.6) {
+					// Find median pixel distance in order to keep a reasonably even distance between
+					// ticks (#748)
+					while (i--) {
+						translated = xAxis.translate(groupPositions[i]);
+						if (lastTranslated) {
+							distances[i] = lastTranslated - translated;
+						}
+						translatedArr[i] = lastTranslated = translated; 
+					}
+					distances.sort();
+					medianDistance = distances[mathFloor(distances.length / 2)];
+					
+					
+					// Now loop over again and remove ticks where needed
+					i = groupPositions.length;
+					lastTranslated = undefined;
+					while (i--) {
+						translated = translatedArr[i];
+						distance = lastTranslated - translated;
+						
+						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right,
+						// but not if it is close to the median distance (#748).
+						if (lastTranslated && distance < tickPixelIntervalOption * 0.7 && distance < medianDistance * 0.7) {
 							
 							// Is this a higher ranked position with a normal position to the right?
-							if (higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]]) {
+							if (higherRanks[groupPositions[i]] && !higherRanks[groupPositions[i + 1]]) {
 								
 								// Yes: remove the lower ranked neighbour to the right
 								itemToRemove = i + 1;
@@ -16336,14 +16338,16 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 								itemToRemove = i;
 							}
 							
-							tickPositions.splice(itemToRemove, 1);
+							groupPositions.splice(itemToRemove, 1);
 							
 						} else {
 							lastTranslated = translated;
 						}
 					}
 				}
-			});
+				
+				return groupPositions;
+			};
 			
 			
 			/**

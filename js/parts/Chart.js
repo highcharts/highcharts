@@ -1336,12 +1336,6 @@ function Chart(options, callback) {
 				}
 			}
 
-			// post process positions, used in ordinal axes in Highstock. 
-			// TODO: combine with getNonLinearTimeTicks
-			fireEvent(axis, 'afterSetTickPositions', {
-				tickPositions: tickPositions
-			});
-
 			if (!isLinked) {
 
 				// reset min/max or remove extremes based on start/end on tick
