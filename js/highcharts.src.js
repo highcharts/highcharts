@@ -5993,7 +5993,7 @@ function Chart(options, callback) {
 						}
 
 						// Adjust to threshold
-						if (threshold !== null) {
+						if (defined(threshold)) {
 							if (dataMin >= threshold) {
 								dataMin = threshold;
 								ignoreMinPadding = true;
@@ -12067,6 +12067,9 @@ Series.prototype = {
 			// Generate it on first call
 			if (!trackerGroup) {	
 				this.trackerGroup = trackerGroup = chart.renderer.g()
+					.attr({
+						zIndex: this.options.zIndex || 1
+					})
 					.clip(chart.clipRect)
 					.add(chart.trackerGroup);
 					
@@ -12137,8 +12140,7 @@ Series.prototype = {
 					fill: NONE,
 					'stroke-linejoin': 'bevel',
 					'stroke-width' : options.lineWidth + 2 * snap,
-					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: options.zIndex || 1
+					visibility: series.visible ? VISIBLE : HIDDEN
 				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {
@@ -12489,8 +12491,7 @@ var ColumnSeries = extendClass(Series, {
 						.attr({
 							isTracker: trackerLabel,
 							fill: TRACKER_FILL,
-							visibility: series.visible ? VISIBLE : HIDDEN,
-							zIndex: options.zIndex || 1
+							visibility: series.visible ? VISIBLE : HIDDEN
 						})
 						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
 							rel = event.relatedTarget || event.fromElement;

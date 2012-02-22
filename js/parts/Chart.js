@@ -881,7 +881,7 @@ function Chart(options, callback) {
 						}
 
 						// Adjust to threshold
-						if (threshold !== null) {
+						if (defined(threshold)) {
 							if (dataMin >= threshold) {
 								dataMin = threshold;
 								ignoreMinPadding = true;
