@@ -290,7 +290,9 @@ $(document).ready(function() {
 				type: 'datetime'
 			},
 			yAxis: {
-				title: null,
+				title: {
+					text: null
+				},
 				maxZoom: 0.1
 			},
 			tooltip: {
