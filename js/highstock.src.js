@@ -12358,7 +12358,7 @@ var ColumnSeries = extendClass(Series, {
 		// record the new values
 		each(points, function (point) {
 			var plotY = point.plotY,
-				yBottom = point.yBottom || translatedThreshold,
+				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
