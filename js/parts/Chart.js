@@ -372,7 +372,7 @@ function Chart(options, callback) {
 								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
 
 									j = y.length;
-									if (j) { // array, like ohlc data
+									if (j) { // array, like ohlc or range data
 										while (j--) {
 											if (y[j] !== null) {
 												activeYData[activeCounter++] = y[j];

@@ -1686,97 +1686,6 @@ defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 // Series defaults
 var defaultPlotOptions = defaultOptions.plotOptions,
 	defaultSeriesOptions = defaultPlotOptions.line;
-//defaultPlotOptions.line = merge(defaultSeriesOptions);
-defaultPlotOptions.spline = merge(defaultSeriesOptions);
-defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
-	lineWidth: 0,
-	states: {
-		hover: {
-			lineWidth: 0
-		}
-	},
-	tooltip: {
-		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
-	}
-});
-defaultPlotOptions.area = merge(defaultSeriesOptions, {
-	threshold: 0
-	// lineColor: null, // overrides color, but lets fillColor be unaltered
-	// fillOpacity: 0.75,
-	// fillColor: null
-
-});
-defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
-defaultPlotOptions.column = merge(defaultSeriesOptions, {
-	borderColor: '#FFFFFF',
-	borderWidth: 1,
-	borderRadius: 0,
-	//colorByPoint: undefined,
-	groupPadding: 0.2,
-	marker: null, // point options are specified in the base options
-	pointPadding: 0.1,
-	//pointWidth: null,
-	minPointLength: 0,
-	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
-	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
-	states: {
-		hover: {
-			brightness: 0.1,
-			shadow: false
-		},
-		select: {
-			color: '#C0C0C0',
-			borderColor: '#000000',
-			shadow: false
-		}
-	},
-	dataLabels: {
-		y: null,
-		verticalAlign: null
-	},
-	threshold: 0
-});
-defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
-	dataLabels: {
-		align: 'left',
-		x: 5,
-		y: 0
-	}
-});
-defaultPlotOptions.pie = merge(defaultSeriesOptions, {
-	//dragType: '', // n/a
-	borderColor: '#FFFFFF',
-	borderWidth: 1,
-	center: ['50%', '50%'],
-	colorByPoint: true, // always true for pies
-	dataLabels: {
-		// align: null,
-		// connectorWidth: 1,
-		// connectorColor: point.color,
-		// connectorPadding: 5,
-		distance: 30,
-		enabled: true,
-		formatter: function () {
-			return this.point.name;
-		},
-		// softConnector: true,
-		y: 5
-	},
-	//innerSize: 0,
-	legendType: 'point',
-	marker: null, // point options are specified in the base options
-	size: '75%',
-	showInLegend: false,
-	slicedOffset: 10,
-	states: {
-		hover: {
-			brightness: 0.1,
-			shadow: false
-		}
-	}
-
-});
 
 // set the default time methods
 setTimeMethods();
@@ -6103,7 +6012,7 @@ function Chart(options, callback) {
 								if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
 
 									j = y.length;
-									if (j) { // array, like ohlc data
+									if (j) { // array, like ohlc or range data
 										while (j--) {
 											if (y[j] !== null) {
 												activeYData[activeCounter++] = y[j];
@@ -10764,7 +10673,8 @@ Series.prototype = {
 			initialColor = series.initialColor,
 			chart = series.chart,
 			firstPoint = null,
-			i;
+			i,
+			pointProto = series.pointClass.prototype;
 
 		// reset properties
 		series.xIncrement = null;
@@ -10780,7 +10690,7 @@ Series.prototype = {
 			dataLength = data ? data.length : [],
 			turboThreshold = options.turboThreshold || 1000,
 			pt,
-			ohlc = series.valueCount === 4;
+			valueCount = series.valueCount;
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -10807,11 +10717,11 @@ Series.prototype = {
 				}
 				series.xIncrement = x;
 			} else if (isArray(firstPoint)) { // assume all points are arrays
-				if (ohlc) { // [x, o, h, l, c]
+				if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 					for (i = 0; i < dataLength; i++) {
 						pt = data[i];
 						xData[i] = pt[0];
-						yData[i] = pt.slice(1, 5);
+						yData[i] = pt.slice(1, valueCount + 1);
 					}
 				} else { // [x, y]
 					for (i = 0; i < dataLength; i++) {
@@ -10826,9 +10736,9 @@ Series.prototype = {
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				pt = { series: series };
-				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
+				pointProto.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = ohlc ? [pt.open, pt.high, pt.low, pt.close] : pt.y;
+				yData[i] = pointProto.toYData ? pointProto.toYData.apply(pt) : pt.y;
 			}
 		}
 
@@ -11740,6 +11650,44 @@ Series.prototype = {
 			});
 		}
 	},
+	
+	/**
+	 * Return the graph path of a segment
+	 */
+	getSegmentPath: function (segment) {		
+		var series = this,
+			segmentPath = [];
+		
+		// build the segment line
+		each(segment, function (point, i) {
+
+			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
+
+			} else {
+
+				// moveTo or lineTo
+				segmentPath.push(i ? L : M);
+
+				// step line?
+				if (i && series.options.step) {
+					var lastPoint = segment[i - 1];
+					segmentPath.push(
+						point.plotX,
+						lastPoint.plotY
+					);
+				}
+
+				// normal line to next point
+				segmentPath.push(
+					point.plotX,
+					point.plotY
+				);
+			}
+		});
+		
+		return segmentPath;
+	},
 
 	/**
 	 * Draw the actual graph
@@ -11750,121 +11698,32 @@ Series.prototype = {
 			chart = series.chart,
 			graph = series.graph,
 			graphPath = [],
-			fillColor,
-			area = series.area,
 			group = series.group,
 			color = options.lineColor || series.color,
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			segmentPath,
 			renderer = chart.renderer,
-			translatedThreshold = series.yAxis.getThreshold(options.threshold),
-			useArea = /^area/.test(series.type),
 			singlePoints = [], // used in drawTracker
-			areaPath = [],
 			attribs;
 
 
 		// divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
-			segmentPath = [];
-
-			// build the segment line
-			each(segment, function (point, i) {
-
-				if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-					segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
-
-				} else {
-
-					// moveTo or lineTo
-					segmentPath.push(i ? L : M);
-
-					// step line?
-					if (i && options.step) {
-						var lastPoint = segment[i - 1];
-						segmentPath.push(
-							point.plotX,
-							lastPoint.plotY
-						);
-					}
-
-					// normal line to next point
-					segmentPath.push(
-						point.plotX,
-						point.plotY
-					);
-				}
-			});
-
+			
+			segmentPath = series.getSegmentPath(segment);
+			
 			// add the segment to the graph, or a single point for tracking
 			if (segment.length > 1) {
 				graphPath = graphPath.concat(segmentPath);
 			} else {
 				singlePoints.push(segment[0]);
 			}
-
-			// build the area
-			if (useArea) {
-				var areaSegmentPath = [],
-					i,
-					segLength = segmentPath.length;
-				for (i = 0; i < segLength; i++) {
-					areaSegmentPath.push(segmentPath[i]);
-				}
-				if (segLength === 3) { // for animation from 1 to two points
-					areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
-				}
-				if (options.stacking && series.type !== 'areaspline') {
-					
-					// Follow stack back. Todo: implement areaspline. A general solution could be to 
-					// reverse the entire graphPath of the previous series, though may be hard with
-					// splines and with series with different extremes
-					for (i = segment.length - 1; i >= 0; i--) {
-					
-						// step line?
-						if (i < segment.length - 1 && options.step) {
-							areaSegmentPath.push(segment[i + 1].plotX, segment[i].yBottom);
-						}
-						
-						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
-					}
-
-				} else { // follow zero line back
-					areaSegmentPath.push(
-						L,
-						segment[segment.length - 1].plotX,
-						translatedThreshold,
-						L,
-						segment[0].plotX,
-						translatedThreshold
-					);
-				}
-				areaPath = areaPath.concat(areaSegmentPath);
-			}
 		});
 
 		// used in drawTracker:
 		series.graphPath = graphPath;
 		series.singlePoints = singlePoints;
-
-		// draw the area if area series or areaspline
-		if (useArea) {
-			fillColor = pick(
-				options.fillColor,
-				Color(series.color).setOpacity(options.fillOpacity || 0.75).get()
-			);
-			if (area) {
-				area.animate({ d: areaPath });
-
-			} else {
-				// draw the area
-				series.area = series.chart.renderer.path(areaPath)
-					.attr({
-						fill: fillColor
-					}).add(group);
-			}
-		}
 
 		// draw the graph
 		if (graph) {
@@ -11874,7 +11733,7 @@ Series.prototype = {
 		} else {
 			if (lineWidth) {
 				attribs = {
-					'stroke': color,
+					stroke: color,
 					'stroke-width': lineWidth
 				};
 				if (dashStyle) {
@@ -12228,7 +12087,8 @@ Series.prototype = {
 	drawTracker: function () {
 		var series = this,
 			options = series.options,
-			trackerPath = [].concat(series.graphPath),
+			trackByArea = options.trackByArea,
+			trackerPath = [].concat(trackByArea ? series.areaPath : series.graphPath),
 			trackerPathLength = trackerPath.length,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -12243,7 +12103,7 @@ Series.prototype = {
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
-		if (trackerPathLength) {
+		if (trackerPathLength && !trackByArea) {
 			i = trackerPathLength + 1;
 			while (i--) {
 				if (trackerPath[i] === M) { // extend left side
@@ -12273,11 +12133,11 @@ Series.prototype = {
 			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
-					stroke: TRACKER_FILL,
-					fill: NONE,
 					'stroke-linejoin': 'bevel',
-					'stroke-width' : options.lineWidth + 2 * snap,
-					visibility: series.visible ? VISIBLE : HIDDEN
+					visibility: series.visible ? VISIBLE : HIDDEN,
+					stroke: TRACKER_FILL,
+					fill: trackByArea ? TRACKER_FILL : NONE,
+					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
 				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {
@@ -12305,15 +12165,106 @@ var LineSeries = extendClass(Series);
 seriesTypes.line = LineSeries;
 
 /**
+ * Set the default options for area
+ */
+defaultPlotOptions.area = merge(defaultSeriesOptions, {
+	threshold: 0
+	// trackByArea: false, // docs
+	// lineColor: null, // overrides color, but lets fillColor be unaltered
+	// fillOpacity: 0.75,
+	// fillColor: null
+});
+
+/**
  * AreaSeries object
  */
 var AreaSeries = extendClass(Series, {
-	type: 'area'
+	type: 'area',
+	
+	/**
+	 * Extend the base Series getSegmentPath method by adding the path for the area.
+	 * This path is pushed to the series.areaPath property.
+	 */
+	getSegmentPath: function (segment) {
+		
+		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
+			areaSegmentPath = [].concat(segmentPath), // work on a copy for the area path
+			i,
+			options = this.options,
+			segLength = segmentPath.length,
+			translatedThreshold = this.yAxis.getThreshold(options.threshold);
+		
+		if (segLength === 3) { // for animation from 1 to two points
+			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
+		}
+		if (options.stacking && this.type !== 'areaspline') {
+			
+			// Follow stack back. Todo: implement areaspline. A general solution could be to 
+			// reverse the entire graphPath of the previous series, though may be hard with
+			// splines and with series with different extremes
+			for (i = segment.length - 1; i >= 0; i--) {
+			
+				// step line?
+				if (i < segment.length - 1 && options.step) {
+					areaSegmentPath.push(segment[i + 1].plotX, segment[i].yBottom);
+				}
+				
+				areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
+			}
+
+		} else { // follow zero line back
+			areaSegmentPath.push(
+				L,
+				segment[segment.length - 1].plotX,
+				translatedThreshold,
+				L,
+				segment[0].plotX,
+				translatedThreshold
+			);
+		}
+		this.areaPath = this.areaPath.concat(areaSegmentPath);
+		
+		return segmentPath;
+	},
+	
+	/**
+	 * Draw the graph and the underlying area. This method calls the Series base
+	 * function and adds the area. The areaPath is calculated in the getSegmentPath
+	 * method called from Series.prototype.drawGraph.
+	 */
+	drawGraph: function () {
+		
+		// Define or reset areaPath
+		this.areaPath = [];
+		
+		// Call the base method
+		Series.prototype.drawGraph.apply(this);
+		
+		// Define local variables
+		var areaPath = this.areaPath,
+			options = this.options,
+			area = this.area;
+		
+		// Create or update the area
+		if (area) { // update
+			area.animate({ d: areaPath });
+
+		} else { // create
+			this.area = this.chart.renderer.path(areaPath)
+				.attr({
+					fill: pick(
+						options.fillColor,
+						Color(this.color).setOpacity(options.fillOpacity || 0.75).get()
+					)
+				}).add(this.group);
+		}
+	}
 });
-seriesTypes.area = AreaSeries;
 
-
-
+seriesTypes.area = AreaSeries;/**
+ * Set the default options for spline
+ */
+defaultPlotOptions.spline = merge(defaultSeriesOptions);
 
 /**
  * SplineSeries object
@@ -12400,15 +12351,56 @@ var SplineSeries = extendClass(Series, {
 });
 seriesTypes.spline = SplineSeries;
 
-
+/**
+ * Set the default options for areaspline
+ */
+defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
 
 /**
  * AreaSplineSeries object
  */
-var AreaSplineSeries = extendClass(SplineSeries, {
-	type: 'areaspline'
-});
+var areaProto = AreaSeries.prototype,
+	AreaSplineSeries = extendClass(SplineSeries, {
+		type: 'areaspline',
+		
+		// Mix in methods from the area series
+		getSegmentPath: areaProto.getSegmentPath,
+		drawGraph: areaProto.drawGraph
+	});
 seriesTypes.areaspline = AreaSplineSeries;
+
+/**
+ * Set the default options for column
+ */
+defaultPlotOptions.column = merge(defaultSeriesOptions, {
+	borderColor: '#FFFFFF',
+	borderWidth: 1,
+	borderRadius: 0,
+	//colorByPoint: undefined,
+	groupPadding: 0.2,
+	marker: null, // point options are specified in the base options
+	pointPadding: 0.1,
+	//pointWidth: null,
+	minPointLength: 0,
+	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
+	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
+	states: {
+		hover: {
+			brightness: 0.1,
+			shadow: false
+		},
+		select: {
+			color: '#C0C0C0',
+			borderColor: '#000000',
+			shadow: false
+		}
+	},
+	dataLabels: {
+		y: null,
+		verticalAlign: null
+	},
+	threshold: 0
+});
 
 /**
  * ColumnSeries object
@@ -12722,7 +12714,19 @@ var ColumnSeries = extendClass(Series, {
 	}
 });
 seriesTypes.column = ColumnSeries;
-
+/**
+ * Set the default options for bar
+ */
+defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
+	dataLabels: {
+		align: 'left',
+		x: 5,
+		y: 0
+	}
+});
+/**
+ * The Bar series class
+ */
 var BarSeries = extendClass(ColumnSeries, {
 	type: 'bar',
 	init: function () {
@@ -12731,6 +12735,22 @@ var BarSeries = extendClass(ColumnSeries, {
 	}
 });
 seriesTypes.bar = BarSeries;
+
+/**
+ * Set the default options for scatter
+ */
+defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
+	lineWidth: 0,
+	states: {
+		hover: {
+			lineWidth: 0
+		}
+	},
+	tooltip: {
+		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+	}
+});
 
 /**
  * The scatter series class
@@ -12797,6 +12817,41 @@ var ScatterSeries = extendClass(Series, {
 	}
 });
 seriesTypes.scatter = ScatterSeries;
+
+/**
+ * Set the default options for pie
+ */
+defaultPlotOptions.pie = merge(defaultSeriesOptions, {
+	borderColor: '#FFFFFF',
+	borderWidth: 1,
+	center: ['50%', '50%'],
+	colorByPoint: true, // always true for pies
+	dataLabels: {
+		// align: null,
+		// connectorWidth: 1,
+		// connectorColor: point.color,
+		// connectorPadding: 5,
+		distance: 30,
+		enabled: true,
+		formatter: function () {
+			return this.point.name;
+		},
+		// softConnector: true,
+		y: 5
+	},
+	//innerSize: 0,
+	legendType: 'point',
+	marker: null, // point options are specified in the base options
+	size: '75%',
+	showInLegend: false,
+	slicedOffset: 10,
+	states: {
+		hover: {
+			brightness: 0.1,
+			shadow: false
+		}
+	}
+});
 
 /**
  * Extended point object for pies
@@ -13938,6 +13993,13 @@ var OHLCPoint = extendClass(Point, {
 			'Low: ', point.low, '<br/>',
 			'Close: ', point.close, '<br/>'].join('');
 
+	},
+	
+	/**
+	 * Return a plain array for speedy calculation
+	 */
+	toYData: function () {
+		return [this.open, this.high, this.low, this.close];
 	}
 
 });

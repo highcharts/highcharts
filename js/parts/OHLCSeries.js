@@ -81,6 +81,13 @@ var OHLCPoint = extendClass(Point, {
 			'Low: ', point.low, '<br/>',
 			'Close: ', point.close, '<br/>'].join('');
 
+	},
+	
+	/**
+	 * Return a plain array for speedy calculation
+	 */
+	toYData: function () {
+		return [this.open, this.high, this.low, this.close];
 	}
 
 });

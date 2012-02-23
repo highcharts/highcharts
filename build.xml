@@ -144,6 +144,7 @@
         <!-- This is the list of files for highstock -->
         <filelist id="highchartsmore.files" dir="${highchartsmore.parts.dir}">
             <file name="Intro.js"/>
+            <file name="Globals.js"/>
             <file name="AreaRangeSeries.js"/>
             <file name="Outro.js"/>
         </filelist>

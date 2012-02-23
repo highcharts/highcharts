@@ -794,7 +794,8 @@ Series.prototype = {
 			initialColor = series.initialColor,
 			chart = series.chart,
 			firstPoint = null,
-			i;
+			i,
+			pointProto = series.pointClass.prototype;
 
 		// reset properties
 		series.xIncrement = null;
@@ -810,7 +811,7 @@ Series.prototype = {
 			dataLength = data ? data.length : [],
 			turboThreshold = options.turboThreshold || 1000,
 			pt,
-			ohlc = series.valueCount === 4;
+			valueCount = series.valueCount;
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -837,11 +838,11 @@ Series.prototype = {
 				}
 				series.xIncrement = x;
 			} else if (isArray(firstPoint)) { // assume all points are arrays
-				if (ohlc) { // [x, o, h, l, c]
+				if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 					for (i = 0; i < dataLength; i++) {
 						pt = data[i];
 						xData[i] = pt[0];
-						yData[i] = pt.slice(1, 5);
+						yData[i] = pt.slice(1, valueCount + 1);
 					}
 				} else { // [x, y]
 					for (i = 0; i < dataLength; i++) {
@@ -856,9 +857,9 @@ Series.prototype = {
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				pt = { series: series };
-				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
+				pointProto.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = ohlc ? [pt.open, pt.high, pt.low, pt.close] : pt.y;
+				yData[i] = pointProto.toYData ? pointProto.toYData.apply(pt) : pt.y;
 			}
 		}
 
@@ -1770,6 +1771,44 @@ Series.prototype = {
 			});
 		}
 	},
+	
+	/**
+	 * Return the graph path of a segment
+	 */
+	getSegmentPath: function (segment) {		
+		var series = this,
+			segmentPath = [];
+		
+		// build the segment line
+		each(segment, function (point, i) {
+
+			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
+
+			} else {
+
+				// moveTo or lineTo
+				segmentPath.push(i ? L : M);
+
+				// step line?
+				if (i && series.options.step) {
+					var lastPoint = segment[i - 1];
+					segmentPath.push(
+						point.plotX,
+						lastPoint.plotY
+					);
+				}
+
+				// normal line to next point
+				segmentPath.push(
+					point.plotX,
+					point.plotY
+				);
+			}
+		});
+		
+		return segmentPath;
+	},
 
 	/**
 	 * Draw the actual graph
@@ -1780,121 +1819,32 @@ Series.prototype = {
 			chart = series.chart,
 			graph = series.graph,
 			graphPath = [],
-			fillColor,
-			area = series.area,
 			group = series.group,
 			color = options.lineColor || series.color,
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			segmentPath,
 			renderer = chart.renderer,
-			translatedThreshold = series.yAxis.getThreshold(options.threshold),
-			useArea = /^area/.test(series.type),
 			singlePoints = [], // used in drawTracker
-			areaPath = [],
 			attribs;
 
 
 		// divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
-			segmentPath = [];
-
-			// build the segment line
-			each(segment, function (point, i) {
-
-				if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-					segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
-
-				} else {
-
-					// moveTo or lineTo
-					segmentPath.push(i ? L : M);
-
-					// step line?
-					if (i && options.step) {
-						var lastPoint = segment[i - 1];
-						segmentPath.push(
-							point.plotX,
-							lastPoint.plotY
-						);
-					}
-
-					// normal line to next point
-					segmentPath.push(
-						point.plotX,
-						point.plotY
-					);
-				}
-			});
-
+			
+			segmentPath = series.getSegmentPath(segment);
+			
 			// add the segment to the graph, or a single point for tracking
 			if (segment.length > 1) {
 				graphPath = graphPath.concat(segmentPath);
 			} else {
 				singlePoints.push(segment[0]);
 			}
-
-			// build the area
-			if (useArea) {
-				var areaSegmentPath = [],
-					i,
-					segLength = segmentPath.length;
-				for (i = 0; i < segLength; i++) {
-					areaSegmentPath.push(segmentPath[i]);
-				}
-				if (segLength === 3) { // for animation from 1 to two points
-					areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
-				}
-				if (options.stacking && series.type !== 'areaspline') {
-					
-					// Follow stack back. Todo: implement areaspline. A general solution could be to 
-					// reverse the entire graphPath of the previous series, though may be hard with
-					// splines and with series with different extremes
-					for (i = segment.length - 1; i >= 0; i--) {
-					
-						// step line?
-						if (i < segment.length - 1 && options.step) {
-							areaSegmentPath.push(segment[i + 1].plotX, segment[i].yBottom);
-						}
-						
-						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
-					}
-
-				} else { // follow zero line back
-					areaSegmentPath.push(
-						L,
-						segment[segment.length - 1].plotX,
-						translatedThreshold,
-						L,
-						segment[0].plotX,
-						translatedThreshold
-					);
-				}
-				areaPath = areaPath.concat(areaSegmentPath);
-			}
 		});
 
 		// used in drawTracker:
 		series.graphPath = graphPath;
 		series.singlePoints = singlePoints;
-
-		// draw the area if area series or areaspline
-		if (useArea) {
-			fillColor = pick(
-				options.fillColor,
-				Color(series.color).setOpacity(options.fillOpacity || 0.75).get()
-			);
-			if (area) {
-				area.animate({ d: areaPath });
-
-			} else {
-				// draw the area
-				series.area = series.chart.renderer.path(areaPath)
-					.attr({
-						fill: fillColor
-					}).add(group);
-			}
-		}
 
 		// draw the graph
 		if (graph) {
@@ -1904,7 +1854,7 @@ Series.prototype = {
 		} else {
 			if (lineWidth) {
 				attribs = {
-					'stroke': color,
+					stroke: color,
 					'stroke-width': lineWidth
 				};
 				if (dashStyle) {
@@ -2258,7 +2208,8 @@ Series.prototype = {
 	drawTracker: function () {
 		var series = this,
 			options = series.options,
-			trackerPath = [].concat(series.graphPath),
+			trackByArea = options.trackByArea,
+			trackerPath = [].concat(trackByArea ? series.areaPath : series.graphPath),
 			trackerPathLength = trackerPath.length,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -2273,7 +2224,7 @@ Series.prototype = {
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
-		if (trackerPathLength) {
+		if (trackerPathLength && !trackByArea) {
 			i = trackerPathLength + 1;
 			while (i--) {
 				if (trackerPath[i] === M) { // extend left side
@@ -2303,11 +2254,11 @@ Series.prototype = {
 			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
-					stroke: TRACKER_FILL,
-					fill: NONE,
 					'stroke-linejoin': 'bevel',
-					'stroke-width' : options.lineWidth + 2 * snap,
-					visibility: series.visible ? VISIBLE : HIDDEN
+					visibility: series.visible ? VISIBLE : HIDDEN,
+					stroke: TRACKER_FILL,
+					fill: trackByArea ? TRACKER_FILL : NONE,
+					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
 				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {
