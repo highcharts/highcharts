@@ -1461,6 +1461,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		legendLine: true,
 		symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
@@ -8040,6 +8041,7 @@ function Chart(options, callback) {
 
 		var horizontal = options.layout === 'horizontal',
 			symbolWidth = options.symbolWidth,
+			symbolHeight = options.symbolHeight || 12,
 			symbolPadding = options.symbolPadding,
 			allItems,
 			style = options.style,
@@ -8048,6 +8050,7 @@ function Chart(options, callback) {
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
 			ltr = !options.rtl,
+			rightPadding = pInt(options.rightPadding) || 0,
 			y = 18,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
 			itemX,
@@ -8242,8 +8245,12 @@ function Chart(options, callback) {
 					})
 					.add(legendGroup);
 
+				// expose the legend group item to make it possible to find
+				// its position from outside (for example to add extra buttons)
+				item.legendItem.legendGroup = legendGroup;
+
 				// draw the line
-				if (!simpleSymbol && itemOptions && itemOptions.lineWidth) {
+				if (!simpleSymbol && options.legendLine && itemOptions && itemOptions.lineWidth) {
 					var attrs = {
 							'stroke-width': itemOptions.lineWidth,
 							zIndex: 2
@@ -8268,9 +8275,9 @@ function Chart(options, callback) {
 
 					legendSymbol = renderer.rect(
 						(symbolX = -symbolWidth - symbolPadding),
-						(symbolY = -11),
+						(symbolY = -symbolHeight + 1),
 						symbolWidth,
-						12,
+						symbolHeight,
 						2
 					).attr({
 						//'stroke-width': 0,
@@ -8337,7 +8344,7 @@ function Chart(options, callback) {
 			bBox = li.getBBox();
 
 			itemWidth = item.legendItemWidth =
-				options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding;
+				options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding + rightPadding;
 			itemHeight = bBox.height;
 
 			// if the item exceeds the width, start a new line
