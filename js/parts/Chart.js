@@ -1689,7 +1689,7 @@ function Chart(options, callback) {
 			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
-				pick(axisTitleOptions.offset,
+				pick(axisTitleOptions && axisTitleOptions.offset,
 					labelOffset + titleMargin +
 					(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
 				);
