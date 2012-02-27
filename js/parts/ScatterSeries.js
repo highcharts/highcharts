@@ -46,6 +46,9 @@ var ScatterSeries = extendClass(Series, {
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
 			series.group
+				.attr({
+					isTracker: true
+				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function (e) {
 					series.onMouseOver();
 					points[e.target._index].onMouseOver();
