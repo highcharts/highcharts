@@ -5028,7 +5028,6 @@ function TickContext(
 		options,
 		categories,
 		horiz,
-		getPlotWidth,
 		getTickPositions,
 		isDatetimeAxis,
 		labelFormatter,
@@ -5037,8 +5036,6 @@ function TickContext(
 		getGridGroup,
 		getOldChartHeight,
 		getOldChartWidth,
-		getChartHeight,
-		getChartWidth,
 		tickmarkOffset,
 		getTransA,
 		getTransB,
@@ -5056,7 +5053,6 @@ function TickContext(
 		options: options, // object
 		categories: categories, // object
 		horiz: horiz, // constant
-		getPlotWidth: getPlotWidth, // function
 		getTickPositions: getTickPositions, // function
 		isDatetimeAxis: isDatetimeAxis, // constant
 		labelFormatter: labelFormatter, // function
@@ -5065,8 +5061,6 @@ function TickContext(
 		getGridGroup: getGridGroup, // function
 		getOldChartHeight: getOldChartHeight, // function
 		getOldChartWidth: getOldChartWidth, // function
-		getChartHeight: getChartHeight, // function
-		getChartWidth: getChartWidth, // function
 		tickmarkOffset: tickmarkOffset, // constant
 		getTransA: getTransA, // function
 		getTransB: getTransB, // function
@@ -5106,8 +5100,8 @@ Tick.prototype = {
 			width = (tick.cx.categories && tick.cx.horiz && tick.cx.categories.length &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
-				tick.cx.getPlotWidth() / tick.cx.categories.length) ||
-				(!tick.cx.horiz && tick.cx.getPlotWidth() / 2),
+				tick.cx.chart.plotWidth / tick.cx.categories.length) ||
+				(!tick.cx.horiz && tick.cx.chart.plotWidth / 2),
 			tickPositions = tick.cx.getTickPositions(),
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
@@ -5205,7 +5199,7 @@ Tick.prototype = {
 			mark = tick.mark,
 			markPath,
 			step = labelOptions.step,
-			cHeight = (old && tick.cx.getOldChartHeight()) || tick.cx.getChartHeight(),
+			cHeight = (old && tick.cx.getOldChartHeight()) || tick.cx.chart.chartHeight,
 			attribs,
 			x,
 			y;
@@ -5213,7 +5207,7 @@ Tick.prototype = {
 		// get x and y position for ticks and labels
 		x = tick.cx.horiz ?
 			tick.cx.axis.translate(pos + tick.cx.tickmarkOffset, null, null, old) + tick.cx.getTransB() :
-			tick.cx.getAxisLeft() + tick.cx.offset + (tick.cx.opposite ? ((old && tick.cx.getOldChartWidth()) || tick.cx.getChartWidth()) - tick.cx.getAxisRight() - tick.cx.getAxisLeft() : 0);
+			tick.cx.getAxisLeft() + tick.cx.offset + (tick.cx.opposite ? ((old && tick.cx.getOldChartWidth()) || tick.cx.chart.chartWidth) - tick.cx.getAxisRight() - tick.cx.getAxisLeft() : 0);
 
 		y = tick.cx.horiz ?
 			cHeight - tick.cx.getAxisBottom() + tick.cx.offset - (tick.cx.opposite ? tick.cs.getAxisHeight() : 0) :
@@ -5807,7 +5801,6 @@ function Axis(context, userOptions) {
 			options,
 			categories,
 			horiz,
-			function () { return chart.plotWidth; },
 			function () { return tickPositions; },
 			isDatetimeAxis,
 			labelFormatter,
@@ -5816,8 +5809,6 @@ function Axis(context, userOptions) {
 			function () { return gridGroup; },
 			getOldChartHeight,
 			getOldChartWidth,
-			function () { return chart.chartHeight; },
-			function () { return chart.chartWidth; },
 			tickmarkOffset,
 			function () { return transA; },
 			function () { return transB; },
