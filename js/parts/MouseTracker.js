@@ -11,11 +11,9 @@ function MouseTrackerContext(
 		getPlotWidth,
 		getPlotHeight,
 		getChartWidth,
-		Tooltip,
 		axes,
 		getZoomFunction,
 		getHasCartesianSeries,
-		getTooltipTick,
 		runChartClick
 	) {
 	return {
@@ -28,11 +26,9 @@ function MouseTrackerContext(
 		getPlotWidth: getPlotWidth, // function
 		getPlotHeight: getPlotHeight, // function
 		getChartWidth: getChartWidth, // function
-		Tooltip: Tooltip, // constructor function
 		axes: axes, // object (Array)
 		getZoomFunction: getZoomFunction, // function returning a function
 		getHasCartesianSeries: getHasCartesianSeries, // function
-		getTooltipTick: getTooltipTick, // function
 		runChartClick: runChartClick // constant
 	};
 }
@@ -52,15 +48,14 @@ function MouseTracker(context, options) {
 		getPlotWidth = context.getPlotWidth,
 		getPlotHeight = context.getPlotHeight,
 		getChartWidth = context.getChartWidth,
-		Tooltip = context.Tooltip,
 		container = chart.container,
 		axes = context.axes,
 		series = chart.series,
 		zoom = context.getZoomFunction(),
 		isInsidePlot = chart.isInsidePlot,
 		getHasCartesianSeries = context.getHasCartesianSeries,
-		getTooltipTick = context.getTooltipTick,
-		runChartClick = context.runChartClick;
+		runChartClick = context.runChartClick,
+		tooltipTick;
 
 	var chartPosition,
 		mouseDownX,
@@ -575,11 +570,21 @@ function MouseTracker(context, options) {
 	}
 
 	if (options.enabled) {
-		chart.tooltip = Tooltip(options);
+		var tooltipContext = new TooltipContext(
+				chart,
+				function () { return renderer; },
+				inverted,
+				getPlotLeft,
+				getPlotTop,
+				getPlotWidth,
+				getPlotHeight,
+				function (tooltipFunction) { tooltipTick = tooltipFunction; }
+			);
+
+		chart.tooltip = Tooltip(tooltipContext, options);
 
 		// set the fixed interval ticking for the smooth tooltip
 		tooltipInterval = setInterval(function () {
-			var tooltipTick = getTooltipTick();
 			if (tooltipTick) {
 				tooltipTick();
 			}
