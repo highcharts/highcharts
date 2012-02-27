@@ -158,7 +158,6 @@ function Axis(context, userOptions) {
 		),
 		stackItemContext = new StackItemContext(
 			chart,
-			chart.inverted,
 			axis
 		),
 		tickContext = new TickContext(

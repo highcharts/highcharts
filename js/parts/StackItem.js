@@ -1,10 +1,9 @@
 /**
  * Context holding the variables that were in local closure in the chart.
  */
-function StackItemContext(chart, inverted, axis) {
+function StackItemContext(chart, axis) {
 	return {
 		chart: chart, // object
-		inverted: inverted, // constant
 		axis: axis // object
 	};
 }
@@ -13,7 +12,7 @@ function StackItemContext(chart, inverted, axis) {
  * The class for stack items
  */
 function StackItem(context, options, isNegative, x, stackOption) {
-	var inverted = context.inverted;
+	var inverted = context.chart.inverted;
 
 	this.cx = context;
 
@@ -81,17 +80,21 @@ StackItem.prototype = {
 	 * Sets the offset that the stack has from the x value and repositions the label.
 	 */
 	setOffset: function (xOffset, xWidth) {
-		var neg = this.isNegative,									// special treatment is needed for negative stacks
-			y = this.cx.axis.translate(this.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
-			yZero = this.cx.axis.translate(0),						// stack origin
-			h = mathAbs(y - yZero),									// stack height
-			x = this.cx.chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
-			plotHeight = this.cx.chart.plotHeight,
+		var context = this.cx,
+			chart = context.chart,
+			inverted = chart.inverted,
+			axis = context.axis,
+			neg = this.isNegative,							// special treatment is needed for negative stacks
+			y = axis.translate(this.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
+			yZero = axis.translate(0),						// stack origin
+			h = mathAbs(y - yZero),							// stack height
+			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
+			plotHeight = chart.plotHeight,
 			stackBox = {	// this is the box for the complete stack
-					x: this.cx.inverted ? (neg ? y : y - h) : x,
-					y: this.cx.inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
-					width: this.cx.inverted ? h : xWidth,
-					height: this.cx.inverted ? xWidth : h
+					x: inverted ? (neg ? y : y - h) : x,
+					y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
+					width: inverted ? h : xWidth,
+					height: inverted ? xWidth : h
 			};
 
 		if (this.label) {
