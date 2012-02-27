@@ -4,7 +4,6 @@
 function TooltipContext(
 		chart,
 		getRenderer,
-		inverted,
 		getPlotLeft,
 		getPlotTop,
 		getPlotWidth,
@@ -14,7 +13,6 @@ function TooltipContext(
 	return {
 		chart: chart, // object
 		getRenderer: getRenderer, // object
-		inverted: inverted, // constant
 		getPlotLeft: getPlotLeft, // function
 		getPlotTop: getPlotTop, // function
 		getPlotWidth: getPlotWidth, // function
@@ -30,7 +28,6 @@ function TooltipContext(
 function Tooltip(context, options) {
 	var chart = context.chart,
 		renderer = context.getRenderer(),
-		inverted = context.inverted,
 		getPlotLeft = context.getPlotLeft,
 		getPlotTop = context.getPlotTop,
 		getPlotWidth = context.getPlotWidth,
@@ -232,8 +229,8 @@ function Tooltip(context, options) {
 		plotX = pick(plotX, point.plotX);
 		plotY = pick(plotY, point.plotY);
 
-		x = mathRound(tooltipPos ? tooltipPos[0] : (inverted ? getPlotWidth() - plotY : plotX));
-		y = mathRound(tooltipPos ? tooltipPos[1] : (inverted ? getPlotHeight() - plotX : plotY));
+		x = mathRound(tooltipPos ? tooltipPos[0] : (chart.inverted ? getPlotWidth() - plotY : plotX));
+		y = mathRound(tooltipPos ? tooltipPos[1] : (chart.inverted ? getPlotHeight() - plotX : plotY));
 
 
 		// For line type series, hide tooltip if the point falls outside the plot
@@ -270,7 +267,7 @@ function Tooltip(context, options) {
 				getPlotHeight(),
 				{x: x, y: y},
 				pick(options.distance, 12),
-				inverted
+				chart.inverted
 			);
 
 			// do the move

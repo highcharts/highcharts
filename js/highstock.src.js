@@ -5644,7 +5644,6 @@ StackItem.prototype = {
 function TooltipContext(
 		chart,
 		getRenderer,
-		inverted,
 		getPlotLeft,
 		getPlotTop,
 		getPlotWidth,
@@ -5654,7 +5653,6 @@ function TooltipContext(
 	return {
 		chart: chart, // object
 		getRenderer: getRenderer, // object
-		inverted: inverted, // constant
 		getPlotLeft: getPlotLeft, // function
 		getPlotTop: getPlotTop, // function
 		getPlotWidth: getPlotWidth, // function
@@ -5670,7 +5668,6 @@ function TooltipContext(
 function Tooltip(context, options) {
 	var chart = context.chart,
 		renderer = context.getRenderer(),
-		inverted = context.inverted,
 		getPlotLeft = context.getPlotLeft,
 		getPlotTop = context.getPlotTop,
 		getPlotWidth = context.getPlotWidth,
@@ -5872,8 +5869,8 @@ function Tooltip(context, options) {
 		plotX = pick(plotX, point.plotX);
 		plotY = pick(plotY, point.plotY);
 
-		x = mathRound(tooltipPos ? tooltipPos[0] : (inverted ? getPlotWidth() - plotY : plotX));
-		y = mathRound(tooltipPos ? tooltipPos[1] : (inverted ? getPlotHeight() - plotX : plotY));
+		x = mathRound(tooltipPos ? tooltipPos[0] : (chart.inverted ? getPlotWidth() - plotY : plotX));
+		y = mathRound(tooltipPos ? tooltipPos[1] : (chart.inverted ? getPlotHeight() - plotX : plotY));
 
 
 		// For line type series, hide tooltip if the point falls outside the plot
@@ -5910,7 +5907,7 @@ function Tooltip(context, options) {
 				getPlotHeight(),
 				{x: x, y: y},
 				pick(options.distance, 12),
-				inverted
+				chart.inverted
 			);
 
 			// do the move
@@ -5977,7 +5974,6 @@ function MouseTrackerContext(
 		chart,
 		optionsChart,
 		getRenderer,
-		inverted,
 		getPlotLeft,
 		getPlotTop,
 		getPlotWidth,
@@ -5992,7 +5988,6 @@ function MouseTrackerContext(
 		chart: chart, // object
 		optionsChart: optionsChart, // object
 		getRenderer: getRenderer, // object
-		inverted: inverted, // constant
 		getPlotLeft: getPlotLeft, // function
 		getPlotTop: getPlotTop, // function
 		getPlotWidth: getPlotWidth, // function
@@ -6014,7 +6009,6 @@ function MouseTracker(context, options) {
 	var optionsChart = context.optionsChart,
 		chart = context.chart,
 		renderer = context.getRenderer(),
-		inverted = context.inverted,
 		getPlotLeft = context.getPlotLeft,
 		getPlotTop = context.getPlotTop,
 		getPlotWidth = context.getPlotWidth,
@@ -6037,8 +6031,8 @@ function MouseTracker(context, options) {
 		zoomType = useCanVG ? '' : optionsChart.zoomType,
 		zoomX = /x/.test(zoomType),
 		zoomY = /y/.test(zoomType),
-		zoomHor = (zoomX && !inverted) || (zoomY && inverted),
-		zoomVert = (zoomY && !inverted) || (zoomX && inverted),
+		zoomHor = (zoomX && !chart.inverted) || (zoomY && chart.inverted),
+		zoomVert = (zoomY && !chart.inverted) || (zoomX && chart.inverted),
 		tooltipInterval,
 		hoverX;
 
@@ -6105,7 +6099,7 @@ function MouseTracker(context, options) {
 		each(axes, function (axis) {
 			var translate = axis.translate,
 				isXAxis = axis.isXAxis,
-				isHorizontal = inverted ? !isXAxis : isXAxis;
+				isHorizontal = chart.inverted ? !isXAxis : isXAxis;
 
 			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
@@ -6131,7 +6125,7 @@ function MouseTracker(context, options) {
 			i,
 			j,
 			distance = getChartWidth(),
-			index = inverted ? e.chartY : e.chartX - getPlotLeft(); // wtf?
+			index = chart.inverted ? e.chartY : e.chartX - getPlotLeft(); // wtf?
 
 		// shared tooltip
 		if (chart.tooltip && options.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -6226,7 +6220,7 @@ function MouseTracker(context, options) {
 					if (axis.options.zoomEnabled !== false) {
 						var translate = axis.translate,
 							isXAxis = axis.isXAxis,
-							isHorizontal = inverted ? !isXAxis : isXAxis,
+							isHorizontal = chart.inverted ? !isXAxis : isXAxis,
 							selectionMin = translate(
 								isHorizontal ?
 									selectionLeft :
@@ -6485,9 +6479,9 @@ function MouseTracker(context, options) {
 					// add page position info
 					extend(hoverPoint, {
 						pageX: chartPosition.left + getPlotLeft() +
-							(inverted ? getPlotWidth() - plotY : plotX),
+							(chart.inverted ? getPlotWidth() - plotY : plotX),
 						pageY: chartPosition.top + getPlotTop() +
-							(inverted ? getPlotHeight() - plotX : plotY)
+							(chart.inverted ? getPlotHeight() - plotX : plotY)
 					});
 
 					// the series click event
@@ -6545,7 +6539,6 @@ function MouseTracker(context, options) {
 		var tooltipContext = new TooltipContext(
 				chart,
 				function () { return renderer; },
-				inverted,
 				getPlotLeft,
 				getPlotTop,
 				getPlotWidth,
@@ -6655,7 +6648,6 @@ function Chart(options, callback) {
 			chart,
 			optionsChart,
 			function () { return renderer; },
-			inverted,
 			function () { return plotLeft; },
 			function () { return plotTop; },
 			function () { return plotWidth; },

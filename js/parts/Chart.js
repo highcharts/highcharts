@@ -79,7 +79,6 @@ function Chart(options, callback) {
 			chart,
 			optionsChart,
 			function () { return renderer; },
-			inverted,
 			function () { return plotLeft; },
 			function () { return plotTop; },
 			function () { return plotWidth; },
