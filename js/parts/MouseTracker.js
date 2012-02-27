@@ -5,11 +5,6 @@ function MouseTrackerContext(
 		chart,
 		optionsChart,
 		getRenderer,
-		getPlotLeft,
-		getPlotTop,
-		getPlotWidth,
-		getPlotHeight,
-		getChartWidth,
 		axes,
 		getZoomFunction,
 		getHasCartesianSeries,
@@ -19,11 +14,6 @@ function MouseTrackerContext(
 		chart: chart, // object
 		optionsChart: optionsChart, // object
 		getRenderer: getRenderer, // object
-		getPlotLeft: getPlotLeft, // function
-		getPlotTop: getPlotTop, // function
-		getPlotWidth: getPlotWidth, // function
-		getPlotHeight: getPlotHeight, // function
-		getChartWidth: getChartWidth, // function
 		axes: axes, // object (Array)
 		getZoomFunction: getZoomFunction, // function returning a function
 		getHasCartesianSeries: getHasCartesianSeries, // function
@@ -40,11 +30,6 @@ function MouseTracker(context, options) {
 	var optionsChart = context.optionsChart,
 		chart = context.chart,
 		renderer = context.getRenderer(),
-		getPlotLeft = context.getPlotLeft,
-		getPlotTop = context.getPlotTop,
-		getPlotWidth = context.getPlotWidth,
-		getPlotHeight = context.getPlotHeight,
-		getChartWidth = context.getChartWidth,
 		container = chart.container,
 		axes = context.axes,
 		series = chart.series,
@@ -136,8 +121,8 @@ function MouseTracker(context, options) {
 				axis: axis,
 				value: translate(
 					isHorizontal ?
-						e.chartX - getPlotLeft() :
-						getPlotHeight() - e.chartY + getPlotTop(),
+						e.chartX - chart.plotLeft :
+						chart.plotHeight - e.chartY + chart.plotTop,
 					true
 				)
 			});
@@ -155,8 +140,8 @@ function MouseTracker(context, options) {
 			hoverSeries = chart.hoverSeries,
 			i,
 			j,
-			distance = getChartWidth(),
-			index = chart.inverted ? e.chartY : e.chartX - getPlotLeft(); // wtf?
+			distance = chart.chartWidth,
+			index = chart.inverted ? e.chartY : e.chartX - chart.plotLeft; // wtf?
 
 		// shared tooltip
 		if (chart.tooltip && options.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -239,8 +224,8 @@ function MouseTracker(context, options) {
 					yAxis: []
 				},
 				selectionBox = selectionMarker.getBBox(),
-				selectionLeft = selectionBox.x - getPlotLeft(),
-				selectionTop = selectionBox.y - getPlotTop();
+				selectionLeft = selectionBox.x - chart.plotLeft,
+				selectionTop = selectionBox.y - chart.plotTop;
 
 
 			// a selection has been made
@@ -255,7 +240,7 @@ function MouseTracker(context, options) {
 							selectionMin = translate(
 								isHorizontal ?
 									selectionLeft :
-									getPlotHeight() - selectionTop - selectionBox.height,
+									chart.plotHeight - selectionTop - selectionBox.height,
 								true,
 								0,
 								0,
@@ -264,7 +249,7 @@ function MouseTracker(context, options) {
 							selectionMax = translate(
 								isHorizontal ?
 									selectionLeft + selectionBox.width :
-									getPlotHeight() - selectionTop,
+									chart.plotHeight - selectionTop,
 								true,
 								0,
 								0,
@@ -299,8 +284,8 @@ function MouseTracker(context, options) {
 			pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
 
 		if (chartPosition &&
-				!isInsidePlot(pageX - chartPosition.left - getPlotLeft(),
-					pageY - chartPosition.top - getPlotTop())) {
+				!isInsidePlot(pageX - chartPosition.left - chart.plotLeft,
+					pageY - chartPosition.top - chart.plotTop)) {
 			resetTracker();
 		}
 	}
@@ -354,7 +339,7 @@ function MouseTracker(context, options) {
 
 			var chartX = e.chartX,
 				chartY = e.chartY,
-				isOutsidePlot = !isInsidePlot(chartX - getPlotLeft(), chartY - getPlotTop());
+				isOutsidePlot = !isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
 
 			// on touch devices, only trigger click if a handler is defined
 			if (hasTouch && e.type === 'touchstart') {
@@ -377,16 +362,16 @@ function MouseTracker(context, options) {
 
 				// drop the selection if any and reset mouseIsDown and hasDragged
 				//drop();
-				if (chartX < getPlotLeft()) {
-					chartX = getPlotLeft();
-				} else if (chartX > getPlotLeft() + getPlotWidth()) {
-					chartX = getPlotLeft() + getPlotWidth();
+				if (chartX < chart.plotLeft) {
+					chartX = chart.plotLeft;
+				} else if (chartX > chart.plotLeft + chart.plotWidth) {
+					chartX = chart.plotLeft + chart.plotWidth;
 				}
 
-				if (chartY < getPlotTop()) {
-					chartY = getPlotTop();
-				} else if (chartY > getPlotTop() + getPlotHeight()) {
-					chartY = getPlotTop() + getPlotHeight();
+				if (chartY < chart.plotTop) {
+					chartY = chart.plotTop;
+				} else if (chartY > chart.plotTop + chart.plotHeight) {
+					chartY = chart.plotTop + chart.plotHeight;
 				}
 
 			}
@@ -399,16 +384,16 @@ function MouseTracker(context, options) {
 					Math.pow(mouseDownY - chartY, 2)
 				);
 				if (hasDragged > 10) {
-					var clickedInside = isInsidePlot(mouseDownX - getPlotLeft(), mouseDownY - getPlotTop());
+					var clickedInside = isInsidePlot(mouseDownX - chart.plotLeft, mouseDownY - chart.plotTop);
 
 					// make a selection
 					if (getHasCartesianSeries() && (zoomX || zoomY) && clickedInside) {
 						if (!selectionMarker) {
 							selectionMarker = renderer.rect(
-								getPlotLeft(),
-								getPlotTop(),
-								zoomHor ? 1 : getPlotWidth(),
-								zoomVert ? 1 : getPlotHeight(),
+								chart.plotLeft,
+								chart.plotTop,
+								zoomHor ? 1 : chart.plotWidth,
+								zoomVert ? 1 : chart.plotHeight,
 								0
 							)
 							.attr({
@@ -509,10 +494,10 @@ function MouseTracker(context, options) {
 
 					// add page position info
 					extend(hoverPoint, {
-						pageX: chartPosition.left + getPlotLeft() +
-							(chart.inverted ? getPlotWidth() - plotY : plotX),
-						pageY: chartPosition.top + getPlotTop() +
-							(chart.inverted ? getPlotHeight() - plotX : plotY)
+						pageX: chartPosition.left + chart.plotLeft +
+							(chart.inverted ? chart.plotWidth - plotY : plotX),
+						pageY: chartPosition.top + chart.plotTop +
+							(chart.inverted ? chart.plotHeight - plotX : plotY)
 					});
 
 					// the series click event
@@ -527,7 +512,7 @@ function MouseTracker(context, options) {
 					extend(e, getMouseCoordinates(e));
 
 					// fire a click event in the chart
-					if (isInsidePlot(e.chartX - getPlotLeft(), e.chartY - getPlotTop())) {
+					if (isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 						fireEvent(chart, 'click', e);
 					}
 				}
@@ -570,10 +555,6 @@ function MouseTracker(context, options) {
 		var tooltipContext = new TooltipContext(
 				chart,
 				function () { return renderer; },
-				getPlotLeft,
-				getPlotTop,
-				getPlotWidth,
-				getPlotHeight,
 				function (tooltipFunction) { tooltipTick = tooltipFunction; }
 			);
 

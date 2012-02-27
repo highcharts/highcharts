@@ -4,19 +4,11 @@
 function TooltipContext(
 		chart,
 		getRenderer,
-		getPlotLeft,
-		getPlotTop,
-		getPlotWidth,
-		getPlotHeight,
 		setTooltipTick
 	) {
 	return {
 		chart: chart, // object
 		getRenderer: getRenderer, // object
-		getPlotLeft: getPlotLeft, // function
-		getPlotTop: getPlotTop, // function
-		getPlotWidth: getPlotWidth, // function
-		getPlotHeight: getPlotHeight, // function
 		setTooltipTick: setTooltipTick // function
 	};
 }
@@ -28,10 +20,6 @@ function TooltipContext(
 function Tooltip(context, options) {
 	var chart = context.chart,
 		renderer = context.getRenderer(),
-		getPlotLeft = context.getPlotLeft,
-		getPlotTop = context.getPlotTop,
-		getPlotWidth = context.getPlotWidth,
-		getPlotHeight = context.getPlotHeight,
 		isInsidePlot = chart.isInsidePlot,
 		setTooltipTick = context.setTooltipTick;
 
@@ -229,8 +217,8 @@ function Tooltip(context, options) {
 		plotX = pick(plotX, point.plotX);
 		plotY = pick(plotY, point.plotY);
 
-		x = mathRound(tooltipPos ? tooltipPos[0] : (chart.inverted ? getPlotWidth() - plotY : plotX));
-		y = mathRound(tooltipPos ? tooltipPos[1] : (chart.inverted ? getPlotHeight() - plotX : plotY));
+		x = mathRound(tooltipPos ? tooltipPos[0] : (chart.inverted ? chart.plotWidth - plotY : plotX));
+		y = mathRound(tooltipPos ? tooltipPos[1] : (chart.inverted ? chart.plotHeight - plotX : plotY));
 
 
 		// For line type series, hide tooltip if the point falls outside the plot
@@ -261,10 +249,10 @@ function Tooltip(context, options) {
 			placedTooltipPoint = placeBox(
 				label.width,
 				label.height,
-				getPlotLeft(),
-				getPlotTop(),
-				getPlotWidth(),
-				getPlotHeight(),
+				chart.plotLeft,
+				chart.plotTop,
+				chart.plotWidth,
+				chart.plotHeight,
 				{x: x, y: y},
 				pick(options.distance, 12),
 				chart.inverted
@@ -310,8 +298,8 @@ function Tooltip(context, options) {
 		}
 		fireEvent(chart, 'tooltipRefresh', {
 				text: text,
-				x: x + getPlotLeft(),
-				y: y + getPlotTop(),
+				x: x + chart.plotLeft,
+				y: y + chart.plotTop,
 				borderColor: borderColor
 			});
 	}
