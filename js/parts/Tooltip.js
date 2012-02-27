@@ -1,26 +1,10 @@
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function TooltipContext(
-		chart,
-		setTooltipTick
-	) {
-	return {
-		chart: chart, // object
-		setTooltipTick: setTooltipTick // function
-	};
-}
-
-/**
  * The tooltip object
  * @param {Object} options Tooltip options
  */
-function Tooltip(context, options) {
-	var chart = context.chart,
-		isInsidePlot = chart.isInsidePlot,
-		setTooltipTick = context.setTooltipTick;
-
-	var currentSeries,
+function Tooltip(chart, options) {
+	var isInsidePlot = chart.isInsidePlot,
+		currentSeries,
 		borderWidth = options.borderWidth,
 		crosshairsOptions = options.crosshairs,
 		crosshairs = [],
@@ -29,7 +13,8 @@ function Tooltip(context, options) {
 		padding = pInt(style.padding),
 		tooltipIsHidden = true,
 		currentX = 0,
-		currentY = 0;
+		currentY = 0,
+		tooltipTick;
 
 	// remove padding CSS and apply padding on box instead
 	style.padding = 0;
@@ -111,11 +96,11 @@ function Tooltip(context, options) {
 
 		// run on next tick of the mouse tracker
 		if (mathAbs(finalX - currentX) > 1 || mathAbs(finalY - currentY) > 1) {
-			setTooltipTick(function () {
+			tooltipTick = function () {
 				move(finalX, finalY);
-			});
+			};
 		} else {
-			setTooltipTick(null);
+			tooltipTick = null;
 		}
 	}
 
@@ -301,7 +286,11 @@ function Tooltip(context, options) {
 			});
 	}
 
-
+	function tick() {
+		if (tooltipTick) {
+			tooltipTick();
+		}
+	}
 
 	// public members
 	return {
@@ -309,6 +298,7 @@ function Tooltip(context, options) {
 		refresh: refresh,
 		hide: hide,
 		hideCrosshairs: hideCrosshairs,
-		destroy: destroy
+		destroy: destroy,
+		tick: tick
 	};
 }

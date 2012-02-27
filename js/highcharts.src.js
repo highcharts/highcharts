@@ -5094,27 +5094,28 @@ Tick.prototype = {
 	 */
 	addLabel: function () {
 		var tick = this,
+			context = this.cx,
 			pos = tick.pos,
-			labelOptions = tick.cx.options.labels,
+			labelOptions = context.options.labels,
 			str,
-			width = (tick.cx.categories && tick.cx.horiz && tick.cx.categories.length &&
+			width = (context.categories && context.horiz && context.categories.length &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
-				tick.cx.chart.plotWidth / tick.cx.categories.length) ||
-				(!tick.cx.horiz && tick.cx.chart.plotWidth / 2),
-			tickPositions = tick.cx.getTickPositions(),
+				context.chart.plotWidth / context.categories.length) ||
+				(!context.horiz && context.chart.plotWidth / 2),
+			tickPositions = context.getTickPositions(),
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
-			value = tick.cx.categories && defined(tick.cx.categories[pos]) ? tick.cx.categories[pos] : pos,
+			value = context.categories && defined(context.categories[pos]) ? context.categories[pos] : pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
 			dateTimeLabelFormat;
 
 		// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 		// use the general format.
-		if (tick.cx.isDatetimeAxis && tickPositionInfo) {
-			dateTimeLabelFormat = tick.cx.options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
+		if (context.isDatetimeAxis && tickPositionInfo) {
+			dateTimeLabelFormat = context.options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 		}
 
 		// set properties for access in render method
@@ -5122,13 +5123,13 @@ Tick.prototype = {
 		tick.isLast = isLast;
 
 		// get the string
-		str = tick.cx.labelFormatter.call({
-			axis: tick.cx.axis,
-			chart: tick.cx.chart,
+		str = context.labelFormatter.call({
+			axis: context.axis,
+			chart: context.chart,
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: tick.cx.isLog ? correctFloat(lin2log(value)) : value
+			value: context.isLog ? correctFloat(lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -5139,7 +5140,7 @@ Tick.prototype = {
 		if (!defined(label)) {
 			tick.label =
 				defined(str) && labelOptions.enabled ?
-					tick.cx.chart.renderer.text(
+					context.chart.renderer.text(
 							str,
 							0,
 							0,
@@ -5151,7 +5152,7 @@ Tick.prototype = {
 						})
 						// without position absolute, IE export sometimes is wrong
 						.css(css)
-						.add(tick.cx.getAxisGroup()) :
+						.add(context.getAxisGroup()) :
 					null;
 
 		// update
@@ -5181,41 +5182,42 @@ Tick.prototype = {
 	 */
 	render: function (index, old) {
 		var tick = this,
+			context = tick.cx,
 			type = tick.type,
 			label = tick.label,
 			pos = tick.pos,
-			labelOptions = tick.cx.options.labels,
+			labelOptions = context.options.labels,
 			gridLine = tick.gridLine,
 			gridPrefix = type ? type + 'Grid' : 'grid',
 			tickPrefix = type ? type + 'Tick' : 'tick',
-			gridLineWidth = tick.cx.options[gridPrefix + 'LineWidth'],
-			gridLineColor = tick.cx.options[gridPrefix + 'LineColor'],
-			dashStyle = tick.cx.options[gridPrefix + 'LineDashStyle'],
-			tickLength = tick.cx.options[tickPrefix + 'Length'],
-			tickWidth = tick.cx.options[tickPrefix + 'Width'] || 0,
-			tickColor = tick.cx.options[tickPrefix + 'Color'],
-			tickPosition = tick.cx.options[tickPrefix + 'Position'],
+			gridLineWidth = context.options[gridPrefix + 'LineWidth'],
+			gridLineColor = context.options[gridPrefix + 'LineColor'],
+			dashStyle = context.options[gridPrefix + 'LineDashStyle'],
+			tickLength = context.options[tickPrefix + 'Length'],
+			tickWidth = context.options[tickPrefix + 'Width'] || 0,
+			tickColor = context.options[tickPrefix + 'Color'],
+			tickPosition = context.options[tickPrefix + 'Position'],
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
 			step = labelOptions.step,
-			cHeight = (old && tick.cx.getOldChartHeight()) || tick.cx.chart.chartHeight,
+			cHeight = (old && context.getOldChartHeight()) || context.chart.chartHeight,
 			attribs,
 			x,
 			y;
 
 		// get x and y position for ticks and labels
-		x = tick.cx.horiz ?
-			tick.cx.axis.translate(pos + tick.cx.tickmarkOffset, null, null, old) + tick.cx.getTransB() :
-			tick.cx.getAxisLeft() + tick.cx.offset + (tick.cx.opposite ? ((old && tick.cx.getOldChartWidth()) || tick.cx.chart.chartWidth) - tick.cx.getAxisRight() - tick.cx.getAxisLeft() : 0);
+		x = context.horiz ?
+			context.axis.translate(pos + context.tickmarkOffset, null, null, old) + context.getTransB() :
+			context.getAxisLeft() + context.offset + (context.opposite ? ((old && context.getOldChartWidth()) || context.chart.chartWidth) - tick.cx.getAxisRight() - tick.cx.getAxisLeft() : 0);
 
-		y = tick.cx.horiz ?
-			cHeight - tick.cx.getAxisBottom() + tick.cx.offset - (tick.cx.opposite ? tick.cs.getAxisHeight() : 0) :
-			cHeight - tick.cx.axis.translate(pos + tick.cx.tickmarkOffset, null, null, old) - tick.cx.getTransB();
+		y = context.horiz ?
+			cHeight - context.getAxisBottom() + context.offset - (context.opposite ? context.getAxisHeight() : 0) :
+			cHeight - context.axis.translate(pos + context.tickmarkOffset, null, null, old) - context.getTransB();
 
 		// create the grid line
 		if (gridLineWidth) {
-			gridLinePath = tick.cx.axis.getPlotLinePath(pos + tick.cx.tickmarkOffset, gridLineWidth, old);
+			gridLinePath = context.axis.getPlotLinePath(pos + context.tickmarkOffset, gridLineWidth, old);
 
 			if (gridLine === UNDEFINED) {
 				attribs = {
@@ -5230,8 +5232,8 @@ Tick.prototype = {
 				}
 				tick.gridLine = gridLine =
 					gridLineWidth ?
-						tick.cx.chart.renderer.path(gridLinePath)
-							.attr(attribs).add(tick.cx.getGridGroup()) :
+						context.chart.renderer.path(gridLinePath)
+							.attr(attribs).add(context.getGridGroup()) :
 						null;
 			}
 
@@ -5251,17 +5253,17 @@ Tick.prototype = {
 			if (tickPosition === 'inside') {
 				tickLength = -tickLength;
 			}
-			if (tick.cx.opposite) {
+			if (context.opposite) {
 				tickLength = -tickLength;
 			}
 
-			markPath = tick.cx.chart.renderer.crispLine([
+			markPath = context.chart.renderer.crispLine([
 				M,
 				x,
 				y,
 				L,
-				x + (tick.cx.horiz ? 0 : -tickLength),
-				y + (tick.cx.horiz ? tickLength : 0)
+				x + (context.horiz ? 0 : -tickLength),
+				y + (context.horiz ? tickLength : 0)
 			], tickWidth);
 
 			if (mark) { // updating
@@ -5269,21 +5271,21 @@ Tick.prototype = {
 					d: markPath
 				});
 			} else { // first time
-				tick.mark = tick.cx.chart.renderer.path(
+				tick.mark = context.chart.renderer.path(
 					markPath
 				).attr({
 					stroke: tickColor,
 					'stroke-width': tickWidth
-				}).add(tick.cx.getAxisGroup());
+				}).add(context.getAxisGroup());
 			}
 		}
 
 		// the label is created on init - now move it into place
 		if (label && !isNaN(x)) {
-			x = x + labelOptions.x - (tick.cx.tickmarkOffset && tick.cx.horiz ?
-				tick.cx.tickmarkOffset * tick.cx.getTransA() * (tick.cx.axis.reversed ? -1 : 1) : 0);
-			y = y + labelOptions.y - (tick.cx.tickmarkOffset && !tick.cx.horiz ?
-				tick.cx.tickmarkOffset * tick.cx.getTransA() * (tick.cx.axis.reversed ? 1 : -1) : 0);
+			x = x + labelOptions.x - (context.tickmarkOffset && context.horiz ?
+				context.tickmarkOffset * context.getTransA() * (context.axis.reversed ? -1 : 1) : 0);
+			y = y + labelOptions.y - (context.tickmarkOffset && !context.horiz ?
+				context.tickmarkOffset * context.getTransA() * (context.axis.reversed ? 1 : -1) : 0);
 
 			// vertically centered
 			if (!defined(labelOptions.y)) {
@@ -5292,13 +5294,13 @@ Tick.prototype = {
 
 
 			// correct for staggered labels
-			if (tick.cx.staggerLines) {
-				y += (index / (step || 1) % tick.cx.staggerLines) * 16;
+			if (context.staggerLines) {
+				y += (index / (step || 1) % context.staggerLines) * 16;
 			}
 
 			// apply show first and show last
-			if ((tick.isFirst && !pick(tick.cx.options.showFirstLabel, 1)) ||
-					(tick.isLast && !pick(tick.cx.options.showLastLabel, 1))) {
+			if ((tick.isFirst && !pick(context.options.showFirstLabel, 1)) ||
+					(tick.isLast && !pick(context.options.showLastLabel, 1))) {
 				label.hide();
 			} else {
 				// show those that may have been previously hidden, either by show first/last, or by step
@@ -7189,28 +7191,12 @@ function Axis(context, userOptions) {
 } // end Axis
 
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function TooltipContext(
-		chart,
-		setTooltipTick
-	) {
-	return {
-		chart: chart, // object
-		setTooltipTick: setTooltipTick // function
-	};
-}
-
-/**
  * The tooltip object
  * @param {Object} options Tooltip options
  */
-function Tooltip(context, options) {
-	var chart = context.chart,
-		isInsidePlot = chart.isInsidePlot,
-		setTooltipTick = context.setTooltipTick;
-
-	var currentSeries,
+function Tooltip(chart, options) {
+	var isInsidePlot = chart.isInsidePlot,
+		currentSeries,
 		borderWidth = options.borderWidth,
 		crosshairsOptions = options.crosshairs,
 		crosshairs = [],
@@ -7219,7 +7205,8 @@ function Tooltip(context, options) {
 		padding = pInt(style.padding),
 		tooltipIsHidden = true,
 		currentX = 0,
-		currentY = 0;
+		currentY = 0,
+		tooltipTick;
 
 	// remove padding CSS and apply padding on box instead
 	style.padding = 0;
@@ -7301,11 +7288,11 @@ function Tooltip(context, options) {
 
 		// run on next tick of the mouse tracker
 		if (mathAbs(finalX - currentX) > 1 || mathAbs(finalY - currentY) > 1) {
-			setTooltipTick(function () {
+			tooltipTick = function () {
 				move(finalX, finalY);
-			});
+			};
 		} else {
-			setTooltipTick(null);
+			tooltipTick = null;
 		}
 	}
 
@@ -7491,7 +7478,11 @@ function Tooltip(context, options) {
 			});
 	}
 
-
+	function tick() {
+		if (tooltipTick) {
+			tooltipTick();
+		}
+	}
 
 	// public members
 	return {
@@ -7499,7 +7490,8 @@ function Tooltip(context, options) {
 		refresh: refresh,
 		hide: hide,
 		hideCrosshairs: hideCrosshairs,
-		destroy: destroy
+		destroy: destroy,
+		tick: tick
 	};
 }
 /**
@@ -7538,8 +7530,7 @@ function MouseTracker(context, options) {
 		zoom = context.getZoomFunction(),
 		isInsidePlot = chart.isInsidePlot,
 		getHasCartesianSeries = context.getHasCartesianSeries,
-		runChartClick = context.runChartClick,
-		tooltipTick;
+		runChartClick = context.runChartClick;
 
 	var chartPosition,
 		mouseDownX,
@@ -8054,19 +8045,10 @@ function MouseTracker(context, options) {
 	}
 
 	if (options.enabled) {
-		var tooltipContext = new TooltipContext(
-				chart,
-				function (tooltipFunction) { tooltipTick = tooltipFunction; }
-			);
-
-		chart.tooltip = Tooltip(tooltipContext, options);
+		chart.tooltip = Tooltip(chart, options);
 
 		// set the fixed interval ticking for the smooth tooltip
-		tooltipInterval = setInterval(function () {
-			if (tooltipTick) {
-				tooltipTick();
-			}
-		}, 32);
+		tooltipInterval = setInterval(chart.tooltip.tick, 32);
 	}
 
 	setDOMEvents();

@@ -34,8 +34,7 @@ function MouseTracker(context, options) {
 		zoom = context.getZoomFunction(),
 		isInsidePlot = chart.isInsidePlot,
 		getHasCartesianSeries = context.getHasCartesianSeries,
-		runChartClick = context.runChartClick,
-		tooltipTick;
+		runChartClick = context.runChartClick;
 
 	var chartPosition,
 		mouseDownX,
@@ -550,19 +549,10 @@ function MouseTracker(context, options) {
 	}
 
 	if (options.enabled) {
-		var tooltipContext = new TooltipContext(
-				chart,
-				function (tooltipFunction) { tooltipTick = tooltipFunction; }
-			);
-
-		chart.tooltip = Tooltip(tooltipContext, options);
+		chart.tooltip = Tooltip(chart, options);
 
 		// set the fixed interval ticking for the smooth tooltip
-		tooltipInterval = setInterval(function () {
-			if (tooltipTick) {
-				tooltipTick();
-			}
-		}, 32);
+		tooltipInterval = setInterval(chart.tooltip.tick, 32);
 	}
 
 	setDOMEvents();
