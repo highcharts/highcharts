@@ -93,6 +93,7 @@
             <file name="Tick.js"/>
             <file name="PlotLineOrBand.js"/>
             <file name="StackItem.js"/>
+            <file name="Axis.js"/>
             <file name="Tooltip.js"/>
             <file name="MouseTracker.js"/>
             <file name="Legend.js"/>
@@ -124,6 +125,7 @@
             <file name="Tick.js"/>
             <file name="PlotLineOrBand.js"/>
             <file name="StackItem.js"/>
+            <file name="Axis.js"/>
             <file name="Tooltip.js"/>
             <file name="MouseTracker.js"/>
             <file name="Legend.js"/>
