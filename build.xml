@@ -95,6 +95,7 @@
             <file name="StackItem.js"/>
             <file name="Tooltip.js"/>
             <file name="MouseTracker.js"/>
+            <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -125,6 +126,7 @@
             <file name="StackItem.js"/>
             <file name="Tooltip.js"/>
             <file name="MouseTracker.js"/>
+            <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
