@@ -5646,7 +5646,6 @@ StackItem.prototype = {
  */
 function AxisContext(
 		chart,
-		renderer,
 		axes,
 		getOldChartWidth,
 		getOldChartHeight,
@@ -5658,7 +5657,6 @@ function AxisContext(
 	) {
 	return {
 		chart: chart, // object
-		renderer: renderer, // object
 		axes: axes, // object (Array)
 		getOldChartWidth: getOldChartWidth, // function
 		getOldChartHeight: getOldChartHeight, // function
@@ -5676,7 +5674,7 @@ function AxisContext(
  */
 function Axis(context, userOptions) {
 	var chart = context.chart,
-		renderer = context.renderer,
+		renderer = chart.renderer,
 		axes = context.axes,
 		getOldChartWidth = context.getOldChartWidth,
 		getOldChartHeight = context.getOldChartHeight,
@@ -7204,12 +7202,10 @@ function Axis(context, userOptions) {
  */
 function TooltipContext(
 		chart,
-		getRenderer,
 		setTooltipTick
 	) {
 	return {
 		chart: chart, // object
-		getRenderer: getRenderer, // object
 		setTooltipTick: setTooltipTick // function
 	};
 }
@@ -7220,7 +7216,6 @@ function TooltipContext(
  */
 function Tooltip(context, options) {
 	var chart = context.chart,
-		renderer = context.getRenderer(),
 		isInsidePlot = chart.isInsidePlot,
 		setTooltipTick = context.setTooltipTick;
 
@@ -7239,7 +7234,7 @@ function Tooltip(context, options) {
 	style.padding = 0;
 
 	// create the label
-	var label = renderer.label('', 0, 0, null, null, null, options.useHTML)
+	var label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML)
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,
@@ -7490,7 +7485,7 @@ function Tooltip(context, options) {
 						if (crosshairsOptions[i].dashStyle) {
 							attribs.dashstyle = crosshairsOptions[i].dashStyle;
 						}
-						crosshairs[i] = renderer.path(path)
+						crosshairs[i] = chart.renderer.path(path)
 							.attr(attribs)
 							.add();
 					}
@@ -7522,7 +7517,6 @@ function Tooltip(context, options) {
 function MouseTrackerContext(
 		chart,
 		optionsChart,
-		getRenderer,
 		axes,
 		getZoomFunction,
 		getHasCartesianSeries,
@@ -7531,7 +7525,6 @@ function MouseTrackerContext(
 	return {
 		chart: chart, // object
 		optionsChart: optionsChart, // object
-		getRenderer: getRenderer, // object
 		axes: axes, // object (Array)
 		getZoomFunction: getZoomFunction, // function returning a function
 		getHasCartesianSeries: getHasCartesianSeries, // function
@@ -7547,7 +7540,7 @@ function MouseTrackerContext(
 function MouseTracker(context, options) {
 	var optionsChart = context.optionsChart,
 		chart = context.chart,
-		renderer = context.getRenderer(),
+		renderer = chart.renderer,
 		container = chart.container,
 		axes = context.axes,
 		series = chart.series,
@@ -8072,7 +8065,6 @@ function MouseTracker(context, options) {
 	if (options.enabled) {
 		var tooltipContext = new TooltipContext(
 				chart,
-				function () { return renderer; },
 				function (tooltipFunction) { tooltipTick = tooltipFunction; }
 			);
 
@@ -8102,13 +8094,11 @@ function MouseTracker(context, options) {
  */
 function LegendContext(
 		chart,
-		renderer,
 		getSpacingBox,
 		getIsResizing
 	) {
 	return {
 		chart: chart, // object
-		renderer: renderer, // object
 		getSpacingBox: getSpacingBox, // function
 		getIsResizing: getIsResizing
 	};
@@ -8119,7 +8109,7 @@ function LegendContext(
  */
 var Legend = function (context) {
 	var chart = context.chart,
-		renderer = context.renderer,
+		renderer = chart.renderer,
 		legendWidth,
 		legendHeight,
 		getSpacingBox = context.getSpacingBox,
@@ -8681,7 +8671,6 @@ function Chart(options, callback) {
 		mouseTrackerContext = new MouseTrackerContext(
 			chart,
 			optionsChart,
-			function () { return renderer; },
 			axes,
 			function () { return zoom; },
 			function () { return hasCartesianSeries; },
@@ -9017,7 +9006,6 @@ function Chart(options, callback) {
 
 		var axisContext = new AxisContext(
 			chart,
-			renderer,
 			axes,
 			function () { return oldChartWidth; },
 			function () { return oldChartHeight; },
@@ -9685,7 +9673,6 @@ function Chart(options, callback) {
 		// Legend
 		var legendContext = new LegendContext(
 			chart,
-			renderer,
 			function () { return spacingBox; },
 			function () { return isResizing; }
 		);

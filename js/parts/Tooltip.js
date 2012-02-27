@@ -3,12 +3,10 @@
  */
 function TooltipContext(
 		chart,
-		getRenderer,
 		setTooltipTick
 	) {
 	return {
 		chart: chart, // object
-		getRenderer: getRenderer, // object
 		setTooltipTick: setTooltipTick // function
 	};
 }
@@ -19,7 +17,6 @@ function TooltipContext(
  */
 function Tooltip(context, options) {
 	var chart = context.chart,
-		renderer = context.getRenderer(),
 		isInsidePlot = chart.isInsidePlot,
 		setTooltipTick = context.setTooltipTick;
 
@@ -38,7 +35,7 @@ function Tooltip(context, options) {
 	style.padding = 0;
 
 	// create the label
-	var label = renderer.label('', 0, 0, null, null, null, options.useHTML)
+	var label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML)
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,
@@ -289,7 +286,7 @@ function Tooltip(context, options) {
 						if (crosshairsOptions[i].dashStyle) {
 							attribs.dashstyle = crosshairsOptions[i].dashStyle;
 						}
-						crosshairs[i] = renderer.path(path)
+						crosshairs[i] = chart.renderer.path(path)
 							.attr(attribs)
 							.add();
 					}

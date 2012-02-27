@@ -4,7 +4,6 @@
 function MouseTrackerContext(
 		chart,
 		optionsChart,
-		getRenderer,
 		axes,
 		getZoomFunction,
 		getHasCartesianSeries,
@@ -13,7 +12,6 @@ function MouseTrackerContext(
 	return {
 		chart: chart, // object
 		optionsChart: optionsChart, // object
-		getRenderer: getRenderer, // object
 		axes: axes, // object (Array)
 		getZoomFunction: getZoomFunction, // function returning a function
 		getHasCartesianSeries: getHasCartesianSeries, // function
@@ -29,7 +27,7 @@ function MouseTrackerContext(
 function MouseTracker(context, options) {
 	var optionsChart = context.optionsChart,
 		chart = context.chart,
-		renderer = context.getRenderer(),
+		renderer = chart.renderer,
 		container = chart.container,
 		axes = context.axes,
 		series = chart.series,
@@ -554,7 +552,6 @@ function MouseTracker(context, options) {
 	if (options.enabled) {
 		var tooltipContext = new TooltipContext(
 				chart,
-				function () { return renderer; },
 				function (tooltipFunction) { tooltipTick = tooltipFunction; }
 			);
 

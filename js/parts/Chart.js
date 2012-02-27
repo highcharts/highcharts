@@ -76,7 +76,6 @@ function Chart(options, callback) {
 		mouseTrackerContext = new MouseTrackerContext(
 			chart,
 			optionsChart,
-			function () { return renderer; },
 			axes,
 			function () { return zoom; },
 			function () { return hasCartesianSeries; },
@@ -412,7 +411,6 @@ function Chart(options, callback) {
 
 		var axisContext = new AxisContext(
 			chart,
-			renderer,
 			axes,
 			function () { return oldChartWidth; },
 			function () { return oldChartHeight; },
@@ -1080,7 +1078,6 @@ function Chart(options, callback) {
 		// Legend
 		var legendContext = new LegendContext(
 			chart,
-			renderer,
 			function () { return spacingBox; },
 			function () { return isResizing; }
 		);

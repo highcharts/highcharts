@@ -3,13 +3,11 @@
  */
 function LegendContext(
 		chart,
-		renderer,
 		getSpacingBox,
 		getIsResizing
 	) {
 	return {
 		chart: chart, // object
-		renderer: renderer, // object
 		getSpacingBox: getSpacingBox, // function
 		getIsResizing: getIsResizing
 	};
@@ -20,7 +18,7 @@ function LegendContext(
  */
 var Legend = function (context) {
 	var chart = context.chart,
-		renderer = context.renderer,
+		renderer = chart.renderer,
 		legendWidth,
 		legendHeight,
 		getSpacingBox = context.getSpacingBox,

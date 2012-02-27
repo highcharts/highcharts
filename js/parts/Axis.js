@@ -3,7 +3,6 @@
  */
 function AxisContext(
 		chart,
-		renderer,
 		axes,
 		getOldChartWidth,
 		getOldChartHeight,
@@ -15,7 +14,6 @@ function AxisContext(
 	) {
 	return {
 		chart: chart, // object
-		renderer: renderer, // object
 		axes: axes, // object (Array)
 		getOldChartWidth: getOldChartWidth, // function
 		getOldChartHeight: getOldChartHeight, // function
@@ -33,7 +31,7 @@ function AxisContext(
  */
 function Axis(context, userOptions) {
 	var chart = context.chart,
-		renderer = context.renderer,
+		renderer = chart.renderer,
 		axes = context.axes,
 		getOldChartWidth = context.getOldChartWidth,
 		getOldChartHeight = context.getOldChartHeight,
