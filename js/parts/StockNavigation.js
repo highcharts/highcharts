@@ -741,7 +741,7 @@ Highcharts.Scroller = function (chart) {
 		} else {
 			xAxis = {
 				translate: function (value, reverse) {
-					var ext = baseSeries.xAxis.getExtremes(),
+					var ext = chart.xAxis[0].getExtremes(),
 						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
 						dataMin = ext.dataMin,
 						valueRange = ext.dataMax - dataMin;
