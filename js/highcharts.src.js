@@ -8905,8 +8905,7 @@ function Chart(options, callback) {
 	zoom = function (event) {
 
 		// add button to reset selection
-		var animate = chart.pointCount < 100,
-			hasZoomed;
+		var hasZoomed;
 
 		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
 			showResetZoom();
@@ -8934,7 +8933,9 @@ function Chart(options, callback) {
 
 		// Redraw
 		if (hasZoomed) {
-			redraw(true, animate);
+			redraw( 
+				pick(optionsChart.animation, chart.pointCount < 100) // animation
+			);
 		}
 	};
 
