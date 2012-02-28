@@ -4728,7 +4728,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 				// are reversed.
 				markup = ['<fill colors="0% ', color1, ',100% ', color2, '" angle="', angle,
 					'" opacity="', opacity2, '" o:opacity2="', opacity1,
-					'" type="gradient" focus="100%" method="any" />'];
+					'" type="gradient" focus="100%" method="sigma" />'];
 				createElement(this.prepVML(markup), null, null, elem);
 			
 			// Gradients are not supported for VML stroke, return the first color. #722.
