@@ -10575,9 +10575,11 @@ Series.prototype = {
 		if (graph && shift) { 
 			graph.shift = currentShift + 1;
 		}
-		if (area && shift) {
-			area.shift = currentShift + 1;
-			area.isArea = true;
+		if (area) {
+			if (shift) { // #780
+				area.shift = currentShift + 1;
+			}
+			area.isArea = true; // needed in animation, both with and without shift
 		}
 		
 		// Optional redraw, defaults to true
