@@ -6348,8 +6348,8 @@ function Chart(options, callback) {
 			}
 
 			if (isLog) {
-				if (!secondPass && min <= 0) {
-					error(10); // Can't plot negative values on log axis
+				if (!secondPass && mathMin(min, dataMin) <= 0) {
+					error(10, 1); // Can't plot negative values on log axis
 				}
 				min = log2lin(min);
 				max = log2lin(max);
