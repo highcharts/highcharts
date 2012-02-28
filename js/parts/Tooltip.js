@@ -1,26 +1,39 @@
 /**
  * The tooltip object
+ * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
  */
 function Tooltip(chart, options) {
-	var isInsidePlot = chart.isInsidePlot,
-		currentSeries,
-		borderWidth = options.borderWidth,
-		crosshairsOptions = options.crosshairs,
-		crosshairs = [],
+	var borderWidth = options.borderWidth,
 		style = options.style,
 		shared = options.shared,
-		padding = pInt(style.padding),
-		tooltipIsHidden = true,
-		currentX = 0,
-		currentY = 0,
-		tooltipTick;
+		padding = pInt(style.padding);
+
+	// Save the chart and options
+	this.chart = chart;
+	this.options = options;
 
 	// remove padding CSS and apply padding on box instead
 	style.padding = 0;
 
+	// Keep track of the current series
+	this.currentSeries = UNDEFINED;
+
+	// List of crosshairs
+	this.crosshairs = [];
+
+	// Current values of x and y when animating
+	this.currentX = 0;
+	this.currentY = 0;
+
+	// The tooltipTick function, initialized to nothing
+	this.tooltipTick = UNDEFINED;
+
+	// The tooltip is initially hidden
+	this.tooltipIsHidden = true;
+
 	// create the label
-	var label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML)
+	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML)
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,
@@ -35,83 +48,65 @@ function Tooltip(chart, options) {
 	// When using canVG the shadow shows up as a gray circle
 	// even if the tooltip is hidden.
 	if (!useCanVG) {
-		label.shadow(options.shadow);
+		this.label.shadow(options.shadow);
 	}
 
+	// Public property for getting the shared state.
+	this.shared = shared;
+}
+
+Tooltip.prototype = {
 	/**
 	 * Destroy the tooltip and its elements.
 	 */
-	function destroy() {
-		each(crosshairs, function (crosshair) {
+	destroy: function () {
+		each(this.crosshairs, function (crosshair) {
 			if (crosshair) {
 				crosshair.destroy();
 			}
 		});
 
 		// Destroy and clear local variables
-		if (label) {
-			label = label.destroy();
+		if (this.label) {
+			this.label = this.label.destroy();
 		}
-	}
-
-	/**
-	 * In case no user defined formatter is given, this will be used
-	 */
-	function defaultFormatter() {
-		var pThis = this,
-			items = pThis.points || splat(pThis),
-			series = items[0].series,
-			s;
-
-		// build the header
-		s = [series.tooltipHeaderFormatter(items[0].key)];
-
-		// build the values
-		each(items, function (item) {
-			series = item.series;
-			s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-				item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
-		});
-		
-		// footer
-		s.push(options.footerFormat || '');
-		
-		return s.join('');
-	}
+	},
 
 	/**
 	 * Provide a soft movement for the tooltip
 	 *
 	 * @param {Number} finalX
 	 * @param {Number} finalY
+	 * @private
 	 */
-	function move(finalX, finalY) {
+	move: function (finalX, finalY) {
+		var tooltip = this;
 
 		// get intermediate values for animation
-		currentX = tooltipIsHidden ? finalX : (2 * currentX + finalX) / 3;
-		currentY = tooltipIsHidden ? finalY : (currentY + finalY) / 2;
+		tooltip.currentX = tooltip.tooltipIsHidden ? finalX : (2 * tooltip.currentX + finalX) / 3;
+		tooltip.currentY = tooltip.tooltipIsHidden ? finalY : (tooltip.currentY + finalY) / 2;
 
 		// move to the intermediate value
-		label.attr({ x: currentX, y: currentY });
+		tooltip.label.attr({ x: tooltip.currentX, y: tooltip.currentY });
 
 		// run on next tick of the mouse tracker
-		if (mathAbs(finalX - currentX) > 1 || mathAbs(finalY - currentY) > 1) {
-			tooltipTick = function () {
-				move(finalX, finalY);
+		if (mathAbs(finalX - tooltip.currentX) > 1 || mathAbs(finalY - tooltip.currentY) > 1) {
+			tooltip.tooltipTick = function () {
+				tooltip.move(finalX, finalY);
 			};
 		} else {
-			tooltipTick = null;
+			tooltip.tooltipTick = null;
 		}
-	}
+	},
 
 	/**
 	 * Hide the tooltip
 	 */
-	function hide() {
-		if (!tooltipIsHidden) {
-			var hoverPoints = chart.hoverPoints;
+	hide: function () {
+		if (!this.tooltipIsHidden) {
+			var hoverPoints = this.chart.hoverPoints;
 
-			label.hide();
+			this.label.hide();
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -119,31 +114,58 @@ function Tooltip(chart, options) {
 					point.setState();
 				});
 			}
-			chart.hoverPoints = null;
 
-
-			tooltipIsHidden = true;
+			this.chart.hoverPoints = null;
+			this.tooltipIsHidden = true;
 		}
-
-	}
+	},
 
 	/**
 	 * Hide the crosshairs
 	 */
-	function hideCrosshairs() {
-		each(crosshairs, function (crosshair) {
+	hideCrosshairs: function () {
+		each(this.crosshairs, function (crosshair) {
 			if (crosshair) {
 				crosshair.hide();
 			}
 		});
-	}
+	},
 
 	/**
 	 * Refresh the tooltip's text and position.
 	 * @param {Object} point
-	 *
 	 */
-	function refresh(point) {
+	refresh: function (point) {
+		var tooltip = this,
+			chart = tooltip.chart,
+			label = tooltip.label,
+			options = tooltip.options;
+
+		/**
+		 * In case no user defined formatter is given, this will be used
+		 */
+		function defaultFormatter() {
+			var pThis = this,
+				items = pThis.points || splat(pThis),
+				series = items[0].series,
+				s;
+
+			// build the header
+			s = [series.tooltipHeaderFormatter(items[0].key)];
+
+			// build the values
+			each(items, function (item) {
+				series = item.series;
+				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
+					item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
+			});
+
+			// footer
+			s.push(options.footerFormat || '');
+
+			return s.join('');
+		}
+
 		var x,
 			y,
 			show,
@@ -156,10 +178,11 @@ function Tooltip(chart, options) {
 			formatter = options.formatter || defaultFormatter,
 			hoverPoints = chart.hoverPoints,
 			placedTooltipPoint,
-			borderColor;
+			borderColor,
+			crosshairsOptions = options.crosshairs;
 
 		// shared tooltip, array is sent over
-		if (shared && !(point.series && point.series.noSharedTooltip)) {
+		if (tooltip.shared && !(point.series && point.series.noSharedTooltip)) {
 			plotY = 0;
 
 			// hide previous hoverPoints and set new
@@ -193,7 +216,7 @@ function Tooltip(chart, options) {
 		text = formatter.call(textConfig);
 
 		// register the current series
-		currentSeries = point.series;
+		tooltip.currentSeries = point.series;
 
 		// get the reference point coordinates (pie charts use tooltipPos)
 		plotX = pick(plotX, point.plotX);
@@ -204,17 +227,17 @@ function Tooltip(chart, options) {
 
 
 		// For line type series, hide tooltip if the point falls outside the plot
-		show = shared || !currentSeries.isCartesian || currentSeries.tooltipOutsidePlot || isInsidePlot(x, y);
+		show = tooltip.shared || !tooltip.currentSeries.isCartesian || tooltip.currentSeries.tooltipOutsidePlot || chart.isInsidePlot(x, y);
 
 		// update the inner HTML
 		if (text === false || !show) {
-			hide();
+			this.hide();
 		} else {
 
 			// show it
-			if (tooltipIsHidden) {
+			if (tooltip.tooltipIsHidden) {
 				label.show();
-				tooltipIsHidden = false;
+				tooltip.tooltipIsHidden = false;
 			}
 
 			// update text
@@ -223,7 +246,7 @@ function Tooltip(chart, options) {
 			});
 
 			// set the stroke color of the box
-			borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
+			borderColor = options.borderColor || point.color || tooltip.currentSeries.color || '#606060';
 			label.attr({
 				stroke: borderColor
 			});
@@ -241,9 +264,8 @@ function Tooltip(chart, options) {
 			);
 
 			// do the move
-			move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
+			this.move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
 		}
-
 
 		// crosshairs
 		if (crosshairsOptions) {
@@ -257,11 +279,9 @@ function Tooltip(chart, options) {
 			while (i--) {
 				axis = point.series[i ? 'yAxis' : 'xAxis'];
 				if (crosshairsOptions[i] && axis) {
-					path = axis
-						.getPlotLinePath(point[i ? 'y' : 'x'], 1);
-					if (crosshairs[i]) {
-						crosshairs[i].attr({ d: path, visibility: VISIBLE });
-
+					path = axis.getPlotLinePath(point[i ? 'y' : 'x'], 1);
+					if (tooltip.crosshairs[i]) {
+						tooltip.crosshairs[i].attr({ d: path, visibility: VISIBLE });
 					} else {
 						attribs = {
 							'stroke-width': crosshairsOptions[i].width || 1,
@@ -271,7 +291,7 @@ function Tooltip(chart, options) {
 						if (crosshairsOptions[i].dashStyle) {
 							attribs.dashstyle = crosshairsOptions[i].dashStyle;
 						}
-						crosshairs[i] = chart.renderer.path(path)
+						tooltip.crosshairs[i] = chart.renderer.path(path)
 							.attr(attribs)
 							.add();
 					}
@@ -284,21 +304,14 @@ function Tooltip(chart, options) {
 				y: y + chart.plotTop,
 				borderColor: borderColor
 			});
-	}
+	},
 
-	function tick() {
-		if (tooltipTick) {
-			tooltipTick();
+	/**
+	 * Runs the tooltip animation one tick.
+	 */
+	tick: function () {
+		if (this.tooltipTick) {
+			this.tooltipTick();
 		}
 	}
-
-	// public members
-	return {
-		shared: shared,
-		refresh: refresh,
-		hide: hide,
-		hideCrosshairs: hideCrosshairs,
-		destroy: destroy,
-		tick: tick
-	};
-}
+};

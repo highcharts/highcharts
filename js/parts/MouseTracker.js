@@ -549,10 +549,10 @@ function MouseTracker(context, options) {
 	}
 
 	if (options.enabled) {
-		chart.tooltip = Tooltip(chart, options);
+		chart.tooltip = new Tooltip(chart, options);
 
 		// set the fixed interval ticking for the smooth tooltip
-		tooltipInterval = setInterval(chart.tooltip.tick, 32);
+		tooltipInterval = setInterval(function () { chart.tooltip.tick(); }, 32);
 	}
 
 	setDOMEvents();
