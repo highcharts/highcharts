@@ -5714,9 +5714,6 @@ function Axis(context, userOptions) {
 		axisHeight,
 		axisBottom,
 		axisRight,
-		translate, // fn
-		setAxisTranslation, // fn
-		getPlotLinePath, // fn
 		axisGroup,
 		gridGroup,
 		axisLine,
@@ -6004,7 +6001,7 @@ function Axis(context, userOptions) {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate = function (val, backwards, cvsCoord, old, handleLog) {
+	function translate(val, backwards, cvsCoord, old, handleLog) {
 		
 		var sign = 1,
 			cvsOffset = 0,
@@ -6044,7 +6041,7 @@ function Axis(context, userOptions) {
 		}
 
 		return returnValue;
-	};
+	}
 
 	/**
 	 * Create the path for a plot line that goes from the given value on
@@ -6053,7 +6050,7 @@ function Axis(context, userOptions) {
 	 * @param {Number} lineWidth Used for calculation crisp line
 	 * @param {Number] old Use old coordinates (for resizing and rescaling)
 	 */
-	getPlotLinePath = function (value, lineWidth, old) {
+	function getPlotLinePath(value, lineWidth, old) {
 		var x1,
 			y1,
 			x2,
@@ -6086,7 +6083,7 @@ function Axis(context, userOptions) {
 		return skip ?
 			null :
 			renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 0);
-	};
+	}
 
 	/**
 	 * Set the tick positions of a linear axis to round values like whole tens or every five.
@@ -6311,6 +6308,47 @@ function Axis(context, userOptions) {
 				min = arrayMax(minArgs);
 			}
 		}
+	}
+
+	/**
+	 * Update translation information
+	 */
+	function setAxisTranslation() {
+		var range = max - min,
+			pointRange = 0,
+			closestPointRange,
+			seriesClosestPointRange;
+
+		// adjust translation for padding
+		if (isXAxis) {
+			if (isLinked) {
+				pointRange = linkedParent.pointRange;
+			} else {
+				each(axis.series, function (series) {
+					pointRange = mathMax(pointRange, series.pointRange);
+					seriesClosestPointRange = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
+						closestPointRange = defined(closestPointRange) ?
+							mathMin(closestPointRange, seriesClosestPointRange) :
+							seriesClosestPointRange;
+					}
+				});
+			}
+
+			// pointRange means the width reserved for each point, like in a column chart
+			axis.pointRange = pointRange;
+
+			// closestPointRange means the closest distance between points. In columns
+			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
+			// is some other value
+			axis.closestPointRange = closestPointRange;
+		}
+
+		// secondary values
+		oldTransA = transA;
+		axis.translationSlope = transA = axisLength / ((range + pointRange) || 1);
+		transB = horiz ? axisLeft : axisBottom; // translation addend
+		minPixelPadding = transA * (pointRange / 2);
 	}
 
 	/**
@@ -6598,47 +6636,6 @@ function Axis(context, userOptions) {
 		});
 	}
 	
-	/**
-	 * Update translation information
-	 */
-	setAxisTranslation = function () {
-		var range = max - min,
-			pointRange = 0,
-			closestPointRange,
-			seriesClosestPointRange;
-		
-		// adjust translation for padding
-		if (isXAxis) {
-			if (isLinked) {
-				pointRange = linkedParent.pointRange;
-			} else {
-				each(axis.series, function (series) {
-					pointRange = mathMax(pointRange, series.pointRange);
-					seriesClosestPointRange = series.closestPointRange;
-					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosestPointRange) :
-							seriesClosestPointRange;
-					}
-				});
-			}
-			
-			// pointRange means the width reserved for each point, like in a column chart
-			axis.pointRange = pointRange;
-
-			// closestPointRange means the closest distance between points. In columns
-			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
-			// is some other value
-			axis.closestPointRange = closestPointRange;
-		}
-
-		// secondary values
-		oldTransA = transA;
-		axis.translationSlope = transA = axisLength / ((range + pointRange) || 1);
-		transB = horiz ? axisLeft : axisBottom; // translation addend
-		minPixelPadding = transA * (pointRange / 2);
-	};
-
 	/**
 	 * Update the axis metrics
 	 */
