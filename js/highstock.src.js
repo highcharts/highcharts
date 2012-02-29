@@ -7209,7 +7209,7 @@ function Tooltip(chart, options) {
 	style.padding = 0;
 
 	// Keep track of the current series
-	this.currentSeries = UNDEFINED;
+	//this.currentSeries = UNDEFINED;
 
 	// List of crosshairs
 	this.crosshairs = [];
@@ -7219,7 +7219,7 @@ function Tooltip(chart, options) {
 	this.currentY = 0;
 
 	// The tooltipTick function, initialized to nothing
-	this.tooltipTick = UNDEFINED;
+	//this.tooltipTick = UNDEFINED;
 
 	// The tooltip is initially hidden
 	this.tooltipIsHidden = true;
@@ -7512,7 +7512,6 @@ Tooltip.prototype = {
  */
 function MouseTrackerContext(
 		chart,
-		optionsChart,
 		axes,
 		getZoomFunction,
 		getHasCartesianSeries,
@@ -7520,7 +7519,6 @@ function MouseTrackerContext(
 	) {
 	return {
 		chart: chart, // object
-		optionsChart: optionsChart, // object
 		axes: axes, // object (Array)
 		getZoomFunction: getZoomFunction, // function returning a function
 		getHasCartesianSeries: getHasCartesianSeries, // function
@@ -7531,43 +7529,60 @@ function MouseTrackerContext(
 /**
  * The mouse tracker object
  * @param {Object} context The MouseTrackerContext
- * @param {Object} options
+ * @param {Object} options The root options object
  */
 function MouseTracker(context, options) {
-	var optionsChart = context.optionsChart,
-		chart = context.chart,
-		renderer = chart.renderer,
-		container = chart.container,
-		axes = context.axes,
-		series = chart.series,
-		zoom = context.getZoomFunction(),
-		isInsidePlot = chart.isInsidePlot,
-		getHasCartesianSeries = context.getHasCartesianSeries,
-		runChartClick = context.runChartClick;
+	var chart = context.chart;
 
-	var chartPosition,
-		mouseDownX,
-		mouseDownY,
-		hasDragged,
-		selectionMarker,
-		zoomType = useCanVG ? '' : optionsChart.zoomType,
-		zoomX = /x/.test(zoomType),
-		zoomY = /y/.test(zoomType),
-		zoomHor = (zoomX && !chart.inverted) || (zoomY && chart.inverted),
-		zoomVert = (zoomY && !chart.inverted) || (zoomX && chart.inverted),
-		tooltipInterval,
-		hoverX;
+	this.runChartClick = context.runChartClick;
 
+	// Function returning true if the chart has cartesian series.
+	this.getHasCartesianSeries = context.getHasCartesianSeries;
+
+	var zoomType = useCanVG ? '' : options.chart.zoomType;
+
+	// Zoom status
+	this.zoomX = /x/.test(zoomType);
+	this.zoomY = /y/.test(zoomType);
+
+	// Store reference to options
+	this.options = options;
+
+	// Reference to the chart
+	this.chart = chart;
+
+	// Reference to the collection of axes.
+	this.axes = context.axes;
+
+	// The interval id
+	//this.tooltipInterval = UNDEFINED;
+
+	// The cached x hover position
+	//this.hoverX = UNDEFINED;
+
+	// The chart position
+	//this.chartPosition = UNDEFINED;
+
+	// The selection marker element
+	//this.selectionMarker = UNDEFINED;
+
+	// False or a value > 0 if a dragging operation
+	//this.mouseDownX = UNDEFINED;
+	//this.mouseDownY = UNDEFINED;
+	this.zoom = context.getZoomFunction();
+	this.init(chart, options.tooltip);
+}
+
+MouseTracker.prototype = {
 	/**
 	 * Add crossbrowser support for chartX and chartY
 	 * @param {Object} e The event object in standard browsers
 	 */
-	function normalizeMouseEvent(e) {
-		var ePos,
-			chartPosLeft,
-			chartPosTop,
+	normalizeMouseEvent: function (e) {
+		var chartPosition,
 			chartX,
-			chartY;
+			chartY,
+			ePos;
 
 		// common IE normalizing
 		e = e || win.event;
@@ -7589,36 +7604,36 @@ function MouseTracker(context, options) {
 		ePos = e.touches ? e.touches.item(0) : e;
 
 		// get mouse position
-		chartPosition = offset(container);
-		chartPosLeft = chartPosition.left;
-		chartPosTop = chartPosition.top;
+		this.chartPosition = chartPosition = offset(this.chart.container);
 
 		// chartX and chartY
 		if (isIE) { // IE including IE9 that has pageX but in a different meaning
 			chartX = e.x;
 			chartY = e.y;
 		} else {
-			chartX = ePos.pageX - chartPosLeft;
-			chartY = ePos.pageY - chartPosTop;
+			chartX = ePos.pageX - chartPosition.left;
+			chartY = ePos.pageY - chartPosition.top;
 		}
 
 		return extend(e, {
 			chartX: mathRound(chartX),
 			chartY: mathRound(chartY)
 		});
-	}
+	},
 
 	/**
 	 * Get the click position in terms of axis values.
 	 *
 	 * @param {Object} e A mouse event
 	 */
-	function getMouseCoordinates(e) {
+	getMouseCoordinates: function (e) {
 		var coordinates = {
-			xAxis: [],
-			yAxis: []
-		};
-		each(axes, function (axis) {
+				xAxis: [],
+				yAxis: []
+			},
+			chart = this.chart;
+
+		each(this.axes, function (axis) {
 			var translate = axis.translate,
 				isXAxis = axis.isXAxis,
 				isHorizontal = chart.inverted ? !isXAxis : isXAxis;
@@ -7634,13 +7649,16 @@ function MouseTracker(context, options) {
 			});
 		});
 		return coordinates;
-	}
+	},
 
 	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse
 	 */
-	function onmousemove(e) {
-		var point,
+	onmousemove: function (e) {
+		var mouseTracker = this,
+			chart = mouseTracker.chart,
+			series = chart.series,
+			point,
 			points,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
@@ -7650,7 +7668,7 @@ function MouseTracker(context, options) {
 			index = chart.inverted ? e.chartY : e.chartX - chart.plotLeft; // wtf?
 
 		// shared tooltip
-		if (chart.tooltip && options.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
+		if (chart.tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
 			points = [];
 
 			// loop over all series and find the ones with points closest to the mouse
@@ -7673,9 +7691,9 @@ function MouseTracker(context, options) {
 				}
 			}
 			// refresh the tooltip if necessary
-			if (points.length && (points[0].plotX !== hoverX)) {
+			if (points.length && (points[0].plotX !== mouseTracker.hoverX)) {
 				chart.tooltip.refresh(points);
-				hoverX = points[0].plotX;
+				mouseTracker.hoverX = points[0].plotX;
 			}
 		}
 
@@ -7693,15 +7711,17 @@ function MouseTracker(context, options) {
 
 			}
 		}
-	}
+	},
 
 
 
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
 	 */
-	function resetTracker() {
-		var hoverSeries = chart.hoverSeries,
+	resetTracker: function () {
+		var mouseTracker = this,
+			chart = mouseTracker.chart,
+			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint;
 
 		if (hoverPoint) {
@@ -7717,103 +7737,111 @@ function MouseTracker(context, options) {
 			chart.tooltip.hideCrosshairs();
 		}
 
-		hoverX = null;
-	}
-
-	/**
-	 * Mouse up or outside the plot area
-	 */
-	function drop() {
-		if (selectionMarker) {
-			var selectionData = {
-					xAxis: [],
-					yAxis: []
-				},
-				selectionBox = selectionMarker.getBBox(),
-				selectionLeft = selectionBox.x - chart.plotLeft,
-				selectionTop = selectionBox.y - chart.plotTop;
-
-
-			// a selection has been made
-			if (hasDragged) {
-
-				// record each axis' min and max
-				each(axes, function (axis) {
-					if (axis.options.zoomEnabled !== false) {
-						var translate = axis.translate,
-							isXAxis = axis.isXAxis,
-							isHorizontal = chart.inverted ? !isXAxis : isXAxis,
-							selectionMin = translate(
-								isHorizontal ?
-									selectionLeft :
-									chart.plotHeight - selectionTop - selectionBox.height,
-								true,
-								0,
-								0,
-								1
-							),
-							selectionMax = translate(
-								isHorizontal ?
-									selectionLeft + selectionBox.width :
-									chart.plotHeight - selectionTop,
-								true,
-								0,
-								0,
-								1
-							);
-
-							selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
-								axis: axis,
-								min: mathMin(selectionMin, selectionMax), // for reversed axes,
-								max: mathMax(selectionMin, selectionMax)
-							});
-					}
-				});
-				fireEvent(chart, 'selection', selectionData, zoom);
-
-			}
-			selectionMarker = selectionMarker.destroy();
-		}
-
-		css(container, { cursor: 'auto' });
-
-		chart.mouseIsDown = hasDragged = false;
-		removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
-
-	}
-
-	/**
-	 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
-	 */
-	function hideTooltipOnMouseMove(e) {
-		var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
-			pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
-
-		if (chartPosition &&
-				!isInsidePlot(pageX - chartPosition.left - chart.plotLeft,
-					pageY - chartPosition.top - chart.plotTop)) {
-			resetTracker();
-		}
-	}
-
-	/**
-	 * When mouse leaves the container, hide the tooltip.
-	 */
-	function hideTooltipOnMouseLeave() {
-		resetTracker();
-		chartPosition = null; // also reset the chart position, used in #149 fix
-	}
+		mouseTracker.hoverX = null;
+	},
 
 	/**
 	 * Set the JS events on the container element
 	 */
-	function setDOMEvents() {
-		var lastWasOutsidePlot = true;
+	setDOMEvents: function () {
+		var lastWasOutsidePlot = true,
+			mouseTracker = this,
+			chart = mouseTracker.chart,
+			container = chart.container,
+			isInsidePlot = chart.isInsidePlot,
+			hasDragged,
+			zoomHor = (mouseTracker.zoomX && !chart.inverted) || (mouseTracker.zoomY && chart.inverted),
+			zoomVert = (mouseTracker.zoomY && !chart.inverted) || (mouseTracker.zoomX && chart.inverted);
+
+		/**
+		 * Mouse up or outside the plot area
+		 */
+		function drop() {
+			if (mouseTracker.selectionMarker) {
+				var selectionData = {
+						xAxis: [],
+						yAxis: []
+					},
+					selectionBox = mouseTracker.selectionMarker.getBBox(),
+					selectionLeft = selectionBox.x - chart.plotLeft,
+					selectionTop = selectionBox.y - chart.plotTop;
+
+
+				// a selection has been made
+				if (hasDragged) {
+
+					// record each axis' min and max
+					each(mouseTracker.axes, function (axis) {
+						if (axis.options.zoomEnabled !== false) {
+							var translate = axis.translate,
+								isXAxis = axis.isXAxis,
+								isHorizontal = chart.inverted ? !isXAxis : isXAxis,
+								selectionMin = translate(
+									isHorizontal ?
+										selectionLeft :
+										chart.plotHeight - selectionTop - selectionBox.height,
+									true,
+									0,
+									0,
+									1
+								),
+								selectionMax = translate(
+									isHorizontal ?
+										selectionLeft + selectionBox.width :
+										chart.plotHeight - selectionTop,
+									true,
+									0,
+									0,
+									1
+								);
+
+								selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
+									axis: axis,
+									min: mathMin(selectionMin, selectionMax), // for reversed axes,
+									max: mathMax(selectionMin, selectionMax)
+								});
+						}
+					});
+					fireEvent(chart, 'selection', selectionData, mouseTracker.zoom);
+
+				}
+				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();
+			}
+
+			css(chart.container, { cursor: 'auto' });
+
+			chart.mouseIsDown = hasDragged = false;
+			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+		}
+
+		/**
+		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
+		 */
+		mouseTracker.hideTooltipOnMouseMove = function (e) {
+			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
+				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
+
+			if (mouseTracker.chartPosition &&
+					!chart.isInsidePlot(pageX - mouseTracker.chartPosition.left - chart.plotLeft,
+						pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
+				mouseTracker.resetTracker();
+			}
+		};
+
+		/**
+		 * When mouse leaves the container, hide the tooltip.
+		 */
+		mouseTracker.hideTooltipOnMouseLeave = function () {
+			mouseTracker.resetTracker();
+			mouseTracker.chartPosition = null; // also reset the chart position, used in #149 fix
+		};
+
+
 		/*
 		 * Record the starting position of a dragoperation
 		 */
 		container.onmousedown = function (e) {
-			e = normalizeMouseEvent(e);
+			e = mouseTracker.normalizeMouseEvent(e);
 
 			// issue #295, dragging not always working in Firefox
 			if (!hasTouch && e.preventDefault) {
@@ -7822,8 +7850,8 @@ function MouseTracker(context, options) {
 
 			// record the start position
 			chart.mouseIsDown = true;
-			chart.mouseDownX = mouseDownX = e.chartX;
-			mouseDownY = e.chartY;
+			chart.mouseDownX = mouseTracker.mouseDownX = e.chartX;
+			mouseTracker.mouseDownY = e.chartY;
 
 			addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
 		};
@@ -7838,7 +7866,7 @@ function MouseTracker(context, options) {
 			}
 
 			// normalize
-			e = normalizeMouseEvent(e);
+			e = mouseTracker.normalizeMouseEvent(e);
 			if (!hasTouch) { // not for touch devices
 				e.returnValue = false;
 			}
@@ -7853,7 +7881,7 @@ function MouseTracker(context, options) {
 					if (!chart.runTrackerClick) {
 						e.preventDefault();
 					}
-				} else if (!runChartClick && !isOutsidePlot) {
+				} else if (!mouseTracker.runChartClick && !isOutsidePlot) {
 					e.preventDefault();
 				}
 			}
@@ -7886,16 +7914,16 @@ function MouseTracker(context, options) {
 
 				// determine if the mouse has moved more than 10px
 				hasDragged = Math.sqrt(
-					Math.pow(mouseDownX - chartX, 2) +
-					Math.pow(mouseDownY - chartY, 2)
+					Math.pow(mouseTracker.mouseDownX - chartX, 2) +
+					Math.pow(mouseTracker.mouseDownY - chartY, 2)
 				);
 				if (hasDragged > 10) {
-					var clickedInside = isInsidePlot(mouseDownX - chart.plotLeft, mouseDownY - chart.plotTop);
+					var clickedInside = isInsidePlot(mouseTracker.mouseDownX - chart.plotLeft, mouseTracker.mouseDownY - chart.plotTop);
 
 					// make a selection
-					if (getHasCartesianSeries() && (zoomX || zoomY) && clickedInside) {
-						if (!selectionMarker) {
-							selectionMarker = renderer.rect(
+					if (mouseTracker.getHasCartesianSeries() && (mouseTracker.zoomX || mouseTracker.zoomY) && clickedInside) {
+						if (!mouseTracker.selectionMarker) {
+							mouseTracker.selectionMarker = chart.renderer.rect(
 								chart.plotLeft,
 								chart.plotTop,
 								zoomHor ? 1 : chart.plotWidth,
@@ -7903,7 +7931,7 @@ function MouseTracker(context, options) {
 								0
 							)
 							.attr({
-								fill: optionsChart.selectionMarkerFill || 'rgba(69,114,167,0.25)',
+								fill: mouseTracker.options.chart.selectionMarkerFill || 'rgba(69,114,167,0.25)',
 								zIndex: 7
 							})
 							.add();
@@ -7911,37 +7939,37 @@ function MouseTracker(context, options) {
 					}
 
 					// adjust the width of the selection marker
-					if (selectionMarker && zoomHor) {
-						var xSize = chartX - mouseDownX;
-						selectionMarker.attr({
+					if (mouseTracker.selectionMarker && zoomHor) {
+						var xSize = chartX - mouseTracker.mouseDownX;
+						mouseTracker.selectionMarker.attr({
 							width: mathAbs(xSize),
-							x: (xSize > 0 ? 0 : xSize) + mouseDownX
+							x: (xSize > 0 ? 0 : xSize) + mouseTracker.mouseDownX
 						});
 					}
 					// adjust the height of the selection marker
-					if (selectionMarker && zoomVert) {
-						var ySize = chartY - mouseDownY;
-						selectionMarker.attr({
+					if (mouseTracker.selectionMarker && zoomVert) {
+						var ySize = chartY - mouseTracker.mouseDownY;
+						mouseTracker.selectionMarker.attr({
 							height: mathAbs(ySize),
-							y: (ySize > 0 ? 0 : ySize) + mouseDownY
+							y: (ySize > 0 ? 0 : ySize) + mouseTracker.mouseDownY
 						});
 					}
 
 					// panning
-					if (clickedInside && !selectionMarker && optionsChart.panning) {
+					if (clickedInside && !mouseTracker.selectionMarker && options.chart.panning) {
 						chart.pan(chartX);
 					}
 				}
 
 			} else if (!isOutsidePlot) {
 				// show the tooltip
-				onmousemove(e);
+				mouseTracker.onmousemove(e);
 			}
 
 			lastWasOutsidePlot = isOutsidePlot;
 
 			// when outside plot, allow touch-drag by returning true
-			return isOutsidePlot || !getHasCartesianSeries();
+			return isOutsidePlot || !mouseTracker.getHasCartesianSeries();
 		};
 
 		/*
@@ -7952,16 +7980,16 @@ function MouseTracker(context, options) {
 		/*
 		 * When the mouse leaves the container, hide the tracking (tooltip).
 		 */
-		addEvent(container, 'mouseleave', hideTooltipOnMouseLeave);
+		addEvent(container, 'mouseleave', mouseTracker.hideTooltipOnMouseLeave);
 
 		// issue #149 workaround
 		// The mouseleave event above does not always fire. Whenever the mouse is moving
 		// outside the plotarea, hide the tooltip
-		addEvent(doc, 'mousemove', hideTooltipOnMouseMove);
+		addEvent(doc, 'mousemove', mouseTracker.hideTooltipOnMouseMove);
 
 		container.ontouchstart = function (e) {
 			// For touch devices, use touchmove to zoom
-			if (zoomX || zoomY) {
+			if (mouseTracker.zoomX || mouseTracker.zoomY) {
 				container.onmousedown(e);
 			}
 			// Show tooltip and prevent the lower mouse pseudo event
@@ -7980,7 +8008,7 @@ function MouseTracker(context, options) {
 		 */
 		container.ontouchend = function () {
 			if (hasDragged) {
-				resetTracker();
+				mouseTracker.resetTracker();
 			}
 		};
 
@@ -7988,7 +8016,7 @@ function MouseTracker(context, options) {
 		// MooTools 1.2.3 doesn't fire this in IE when using addEvent
 		container.onclick = function (e) {
 			var hoverPoint = chart.hoverPoint;
-			e = normalizeMouseEvent(e);
+			e = mouseTracker.normalizeMouseEvent(e);
 
 			e.cancelBubble = true; // IE specific
 
@@ -8000,9 +8028,9 @@ function MouseTracker(context, options) {
 
 					// add page position info
 					extend(hoverPoint, {
-						pageX: chartPosition.left + chart.plotLeft +
+						pageX: mouseTracker.chartPosition.left + chart.plotLeft +
 							(chart.inverted ? chart.plotWidth - plotY : plotX),
-						pageY: chartPosition.top + chart.plotTop +
+						pageY: mouseTracker.chartPosition.top + chart.plotTop +
 							(chart.inverted ? chart.plotHeight - plotX : plotY)
 					});
 
@@ -8015,7 +8043,7 @@ function MouseTracker(context, options) {
 					hoverPoint.firePointEvent('click', e);
 
 				} else {
-					extend(e, getMouseCoordinates(e));
+					extend(e, mouseTracker.getMouseCoordinates(e));
 
 					// fire a click event in the chart
 					if (isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
@@ -8029,52 +8057,47 @@ function MouseTracker(context, options) {
 			hasDragged = false;
 		};
 
-	}
+	},
 
 	/**
 	 * Destroys the MouseTracker object and disconnects DOM events.
 	 */
-	function destroy() {
+	destroy: function () {
+		var mouseTracker = this,
+			chart = mouseTracker.chart,
+			container = chart.container;
+
 		// Destroy the tracker group element
 		if (chart.trackerGroup) {
 			chart.trackerGroup = chart.trackerGroup.destroy();
 		}
 
-		removeEvent(container, 'mouseleave', hideTooltipOnMouseLeave);
-		removeEvent(doc, 'mousemove', hideTooltipOnMouseMove);
+		removeEvent(container, 'mouseleave', mouseTracker.hideTooltipOnMouseLeave);
+		removeEvent(doc, 'mousemove', mouseTracker.hideTooltipOnMouseMove);
 		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 
 		// memory and CPU leak
-		clearInterval(tooltipInterval);
-	}
-
+		clearInterval(this.tooltipInterval);
+	},
 
 	// Run MouseTracker
+	init: function (chart, options) {
+		if (!chart.trackerGroup) {
+			chart.trackerGroup = chart.renderer.g('tracker')
+				.attr({ zIndex: 9 })
+				.add();
+		}
 
-	if (!chart.trackerGroup) {
-		chart.trackerGroup = renderer.g('tracker')
-			.attr({ zIndex: 9 })
-			.add();
+		if (options.enabled) {
+			chart.tooltip = new Tooltip(chart, options);
+
+			// set the fixed interval ticking for the smooth tooltip
+			this.tooltipInterval = setInterval(function () { chart.tooltip.tick(); }, 32);
+		}
+
+		this.setDOMEvents();
 	}
-
-	if (options.enabled) {
-		chart.tooltip = new Tooltip(chart, options);
-
-		// set the fixed interval ticking for the smooth tooltip
-		tooltipInterval = setInterval(function () { chart.tooltip.tick(); }, 32);
-	}
-
-	setDOMEvents();
-
-	// expose properties
-	extend(this, {
-		zoomX: zoomX,
-		zoomY: zoomY,
-		resetTracker: resetTracker,
-		normalizeMouseEvent: normalizeMouseEvent,
-		destroy: destroy
-	});
-}
+};
 /**
  * Context holding the variables that were in local closure in the chart.
  */
@@ -8656,7 +8679,6 @@ function Chart(options, callback) {
 		zoomOut, // function
 		mouseTrackerContext = new MouseTrackerContext(
 			chart,
-			optionsChart,
 			axes,
 			function () { return zoom; },
 			function () { return hasCartesianSeries; },
@@ -9884,7 +9906,7 @@ function Chart(options, callback) {
 		chart.render = render;
 
 		// depends on inverted and on margins being set
-		chart.tracker = tracker = new MouseTracker(mouseTrackerContext, options.tooltip);
+		chart.tracker = tracker = new MouseTracker(mouseTrackerContext, options);
 
 
 		render();

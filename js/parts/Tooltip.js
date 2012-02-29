@@ -17,7 +17,7 @@ function Tooltip(chart, options) {
 	style.padding = 0;
 
 	// Keep track of the current series
-	this.currentSeries = UNDEFINED;
+	//this.currentSeries = UNDEFINED;
 
 	// List of crosshairs
 	this.crosshairs = [];
@@ -27,7 +27,7 @@ function Tooltip(chart, options) {
 	this.currentY = 0;
 
 	// The tooltipTick function, initialized to nothing
-	this.tooltipTick = UNDEFINED;
+	//this.tooltipTick = UNDEFINED;
 
 	// The tooltip is initially hidden
 	this.tooltipIsHidden = true;

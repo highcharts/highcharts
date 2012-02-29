@@ -75,7 +75,6 @@ function Chart(options, callback) {
 		zoomOut, // function
 		mouseTrackerContext = new MouseTrackerContext(
 			chart,
-			optionsChart,
 			axes,
 			function () { return zoom; },
 			function () { return hasCartesianSeries; },
@@ -1303,7 +1302,7 @@ function Chart(options, callback) {
 		chart.render = render;
 
 		// depends on inverted and on margins being set
-		chart.tracker = tracker = new MouseTracker(mouseTrackerContext, options.tooltip);
+		chart.tracker = tracker = new MouseTracker(mouseTrackerContext, options);
 
 
 		render();
