@@ -7956,7 +7956,7 @@ MouseTracker.prototype = {
 					}
 
 					// panning
-					if (clickedInside && !mouseTracker.selectionMarker && options.chart.panning) {
+					if (clickedInside && !mouseTracker.selectionMarker && mouseTracker.options.chart.panning) {
 						chart.pan(chartX);
 					}
 				}
