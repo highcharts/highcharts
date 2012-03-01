@@ -6524,14 +6524,16 @@ function Chart(options, callback) {
 		function setScale() {
 			var type,
 				i,
-				isDirtyData;
-
+				isDirtyData,
+				isDirtyAxisLength;
+				
 			oldMin = min;
 			oldMax = max;
 			oldAxisLength = axisLength;
 
 			// set the new axisLength
 			axisLength = horiz ? axisWidth : axisHeight;
+			isDirtyAxisLength = axisLength !== oldAxisLength;
 
 			// is there new data?
 			each(axis.series, function (series) {
@@ -6542,7 +6544,7 @@ function Chart(options, callback) {
 			});
 
 			// do we really need to go through all this?
-			if (axisLength !== oldAxisLength || isDirtyData || isLinked ||
+			if (isDirtyAxisLength || isDirtyData || isLinked ||
 				userMin !== oldUserMin || userMax !== oldUserMax) {
 
 				// get data extremes if needed
@@ -6566,7 +6568,7 @@ function Chart(options, callback) {
 
 				// Mark as dirty if it is not already set to dirty and extremes have changed. #595.
 				if (!axis.isDirty) {
-					axis.isDirty = chart.isDirtyBox || min !== oldMin || max !== oldMax;
+					axis.isDirty = isDirtyAxisLength || min !== oldMin || max !== oldMax;
 				}
 			}
 		}
@@ -14971,7 +14973,7 @@ Highcharts.Scroller = function (chart) {
 
 		// detect whether to move the range
 		stickToMax = baseMax >= navXData[navXData.length - 1];
-		stickToMin = baseMin <= baseDataMin;
+		stickToMin = baseMin <= navXData[0];
 
 		// set the navigator series data to the new data of the base series
 		if (!navigatorData) {
@@ -15168,7 +15170,10 @@ Highcharts.Scroller = function (chart) {
 	// Expose
 	return {
 		render: render,
-		destroy: destroy
+		destroy: destroy,
+		series: navigatorSeries,
+		xAxis: xAxis,
+		yAxis: yAxis
 	};
 
 };
@@ -15269,11 +15274,17 @@ Highcharts.RangeSelector = function (chart) {
 
 		var baseAxis = chart.xAxis[0],
 			extremes = baseAxis && baseAxis.getExtremes(),
-			now,
-			dataMin = extremes && extremes.dataMin,
-			dataMax = extremes && extremes.dataMax,
+			navAxis = chart.scroller && chart.scroller.xAxis,
+			navExtremes = navAxis && navAxis.getExtremes && navAxis.getExtremes(),
+			navDataMin = navExtremes && navExtremes.dataMin,
+			navDataMax = navExtremes && navExtremes.dataMax,
+			baseDataMin = extremes && extremes.dataMin,
+			baseDataMax = extremes && extremes.dataMax,
+			dataMin = mathMin(baseDataMin, pick(navDataMin, baseDataMin)),
+			dataMax = mathMax(baseDataMax, pick(navDataMax, baseDataMax)),
 			newMin,
 			newMax = baseAxis && mathMin(extremes.max, dataMax),
+			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
 			count = rangeOptions.count,
@@ -15392,10 +15403,12 @@ Highcharts.RangeSelector = function (chart) {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (buttons[selected]) {
-					buttons[selected].setState(0);
+				if (this.isDirty) {
+					if (buttons[selected]) {
+						buttons[selected].setState(0);
+					}
+					selected = null;
 				}
-				selected = null;
 			});
 		});
 	}

@@ -1,6 +1,8 @@
 $(function() {
 	$.getJSON('http://www.highcharts.com/samples/data/from-sql.php?callback=?', function(data) {
 		
+		data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null]]);
+		
 		// create the chart
 		window.chart = new Highcharts.StockChart({
 			chart : {
@@ -9,12 +11,18 @@ $(function() {
 			},
 
 			navigator : {
+				//enabled: false,
 				series : {
 					data : data
 				}
 			},
-
+			
+			scrollbar: {
+				//enabled: false
+			},
+			
 			rangeSelector : {
+				//enabled: false,
 				selected : 5 // All
 			},
 			
@@ -26,16 +34,20 @@ $(function() {
 				events : {
 					setExtremes : onSetExtremes
 				},
-				ordinal: true
+				ordinal: false,
+				minRange: 3600 * 1000 // one hour
+			},
+			
+			plotOptions: {
+				series: {
+					dataGrouping: {
+						enabled: false
+					}
+				}
 			},
 
 			series : [{
-				//type: 'candlestick',
-				name : query.stockQuote,
 				data : data,
-				dataGrouping : {
-					enabled : false
-				},
 				marker: {
 					enabled: true,
 					radius: 2
@@ -45,25 +57,19 @@ $(function() {
 	});
 });
 
-/**
- * The initial data to load
- */
-var query = {
-	groupBy: 'month'
-};
 
 /**
  * Load new data depending on the selected min and max
  */
-function onSetExtremes(e) {
+function onSetExtremes(e) { console.log('onSetExtremes')
 	var url,
-		currentExtremes = e.target.getExtremes(),
+		currentExtremes = this.getExtremes(),
 		range = e.max - e.min;
 	
-	// cancel if we're reloading the same range
-	if (e.min === currentExtremes.min && e.max === currentExtremes.max) {
+	// cancel if we're reloading the same range, or too narrow range
+	/*if (e.min === currentExtremes.min && e.max === currentExtremes.max || e.max - e.min < this.options.minRange) {
 		return false;
-	}
+	}*/
 	
 	chart.showLoading('Loading data from server...');
 	$.getJSON('http://www.highcharts.com/samples/data/from-sql.php?start='+ Math.round(e.min) +
@@ -73,25 +79,6 @@ function onSetExtremes(e) {
 	});
 	
 	// Stop set extremes. When the new data arrives from the server, the x axis will 
-	// reflect data min and max automatically. 
-	return false;
-}
-
-/**
- * Helper function to build the URL for the YAHOO query based on a configuration object
- */
-function buildURL(cfg) {
-
-	var n, 
-		options = [], 
-		s = "http://www.highcharts.com/samples/data/from-sql.php?";
-
-	for(n in cfg) {
-		options.push(n + "=" + cfg[n]);
-	}
-	s += options.join("&");
-	s += "&callback=?";
-	console.log(s)
-	return s;
-
+	// reflect data min and max automatically.
+	//return false;
 }
