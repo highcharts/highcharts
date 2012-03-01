@@ -15,6 +15,7 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 			lineWidth: 2
 		}
 	},
+	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
 });

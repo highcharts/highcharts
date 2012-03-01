@@ -10,6 +10,13 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 		enabled: true,
 		groupPixelWidth: 5 // allows to be packed tighter than candlesticks
 	},
+	tooltip: {
+		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
+			'Open: {point.open}<br/>' +
+			'High: {point.high}<br/>' +
+			'Low: {point.low}<br/>' +
+			'Close: {point.close}'	
+	},
 	states: {
 		hover: {
 			lineWidth: 3
@@ -66,21 +73,6 @@ var OHLCPoint = extendClass(Point, {
 			point.x = series.autoIncrement();
 		}
 		return point;
-	},
-
-	/**
-	 * A specific OHLC tooltip formatter
-	 */
-	tooltipFormatter: function () {
-		var point = this,
-			series = point.series;
-
-		return ['<span style="color:' + series.color + ';font-weight:bold">', (point.name || series.name), '</span><br/>',
-			'Open: ', point.open, '<br/>',
-			'High: ', point.high, '<br/>',
-			'Low: ', point.low, '<br/>',
-			'Close: ', point.close, '<br/>'].join('');
-
 	}
 
 });
