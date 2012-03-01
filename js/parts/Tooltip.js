@@ -130,6 +130,41 @@ Tooltip.prototype = {
 			}
 		});
 	},
+	
+	/** 
+	 * Extendable method to get the anchor position of the tooltip
+	 * from a point or set of points
+	 */
+	getAnchor: function (points) {
+		var ret,
+			chart = this.chart,
+			inverted = chart.inverted,
+			plotX = 0,
+			plotY = 0;
+		
+		points = splat(points);
+		
+		// Pie uses a special tooltipPos
+		ret = points[0].tooltipPos;
+		
+		// When shared, use the average position
+		if (!ret) {
+			each(points, function (point) {
+				plotX += point.plotX;
+				plotY += point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY;
+			});
+			
+			plotX /= points.length;
+			plotY /= points.length;
+			
+			ret = [
+				inverted ? chart.plotWidth - plotY : plotX,
+				inverted ? chart.plotHeight - plotX : plotY
+			];
+		}
+
+		return map(ret, mathRound);
+	},
 
 	/**
 	 * Refresh the tooltip's text and position.
@@ -169,22 +204,24 @@ Tooltip.prototype = {
 		var x,
 			y,
 			show,
-			plotX,
-			plotY,
+			anchor,
 			textConfig = {},
 			text,
 			pointConfig = [],
-			tooltipPos = point.tooltipPos,
 			formatter = options.formatter || defaultFormatter,
 			hoverPoints = chart.hoverPoints,
 			placedTooltipPoint,
 			borderColor,
 			crosshairsOptions = options.crosshairs;
+			
+		// get the reference point coordinates (pie charts use tooltipPos)
+		anchor = tooltip.getAnchor(point);
+		x = anchor[0];
+		y = anchor[1];
 
 		// shared tooltip, array is sent over
 		if (tooltip.shared && !(point.series && point.series.noSharedTooltip)) {
-			plotY = 0;
-
+			
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
 				each(hoverPoints, function (point) {
@@ -195,13 +232,9 @@ Tooltip.prototype = {
 
 			each(point, function (item) {
 				item.setState(HOVER_STATE);
-				plotY += item.plotY; // for average
 
 				pointConfig.push(item.getLabelConfig());
 			});
-
-			plotX = point[0].plotX;
-			plotY = mathRound(plotY) / point.length; // mathRound because Opera 10 has problems here
 
 			textConfig = {
 				x: point[0].category
@@ -217,13 +250,6 @@ Tooltip.prototype = {
 
 		// register the current series
 		tooltip.currentSeries = point.series;
-
-		// get the reference point coordinates (pie charts use tooltipPos)
-		plotX = pick(plotX, point.plotX);
-		plotY = pick(plotY, point.plotY);
-
-		x = mathRound(tooltipPos ? tooltipPos[0] : (chart.inverted ? chart.plotWidth - plotY : plotX));
-		y = mathRound(tooltipPos ? tooltipPos[1] : (chart.inverted ? chart.plotHeight - plotX : plotY));
 
 
 		// For line type series, hide tooltip if the point falls outside the plot
