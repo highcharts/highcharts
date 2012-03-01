@@ -8675,8 +8675,9 @@ function Chart(options, callback) {
 			// redraw axes
 			each(axes, function (axis) {
 				fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751					
-				if (axis.isDirty) {					
-					axis.redraw();					
+				if (axis.isDirty || isDirtyBox) {					
+					axis.redraw();
+					isDirtyBox = true; // #792
 				}
 			});
 
