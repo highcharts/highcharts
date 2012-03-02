@@ -96,6 +96,7 @@
             <file name="BarSeries.js"/>
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
+            <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
 
@@ -128,6 +129,7 @@
             <file name="StockNavigation.js"/>
             <file name="StockChart.js"/>
             <file name="OrdinalAxis.js"/>
+            <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
     </target>
