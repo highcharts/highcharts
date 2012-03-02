@@ -1387,6 +1387,12 @@ defaultOptions = {
 				formatter: function () {
 					return this.y;
 				}
+				// backgroundColor: undefined, // docs
+				// borderColor: undefined, // docs
+				// borderRadius: undefined, // docs
+				// borderWidth: undefined, // docs
+				// padding: 3, // docs
+				// shadow: false // docs
 			}),
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
@@ -3860,8 +3866,10 @@ SVGRenderer.prototype = {
 	 * @param {Number} anchorX In case the shape has a pointer, like a flag, this is the
 	 *    coordinates it should be pinned to
 	 * @param {Number} anchorY
+	 * @param {Boolean} baseline Whether to position the label relative to the text baseline,
+	 *    like renderer.text, or to the upper border of the rectangle. 
 	 */
-	label: function (str, x, y, shape, anchorX, anchorY, useHTML) {
+	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline) {
 
 		var renderer = this,
 			wrapper = renderer.g(),
@@ -3880,6 +3888,7 @@ SVGRenderer.prototype = {
 			wrapperY,
 			crispAdjust = 0,
 			deferredAttr = {},
+			baselineOffset,
 			attrSetters = wrapper.attrSetters;
 
 		/**
@@ -3888,16 +3897,24 @@ SVGRenderer.prototype = {
 		 * box and reflect it in the border box.
 		 */
 		function updateBoxSize() {
+			var boxY,
+				style = wrapper.element.style;
+				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
 				text.getBBox(true);
 			wrapper.width = (width || bBox.width) + 2 * padding;
 			wrapper.height = (height || bBox.height) + 2 * padding;
+			
+			// update the label-scoped y offset
+			baselineOffset = padding + mathRound(pInt((style && style.fontSize) || 11) * 1.2);
 
 			// create the border box if it is not already present
 			if (!box) {
+				boxY = baseline ? -baselineOffset : 0;
+			
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height) :
-					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+					renderer.symbol(shape, 0, boxY, wrapper.width, wrapper.height) :
+					renderer.rect(0, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 				box.add(wrapper);
 			}
 
@@ -3916,8 +3933,10 @@ SVGRenderer.prototype = {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = padding,
-				style = wrapper.element.style,
-				y = padding + mathRound(pInt((style && style.fontSize) || 11) * 1.2);
+				y;
+			
+			// determin y based on the baseline
+			y = baseline ? 0 : baselineOffset;
 
 			// compensate for alignment
 			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
@@ -3980,8 +3999,10 @@ SVGRenderer.prototype = {
 			return false;
 		};
 		attrSetters.padding = function (value) {
-			padding = value;
-			updateTextPadding();
+			if (defined(value) && value !== padding) {
+				padding = value;
+				updateTextPadding();
+			}
 
 			return false;
 		};
@@ -11570,7 +11591,7 @@ Series.prototype = {
 					if (dataLabel) {
 						// vertically centered
 						if (inverted && !options.y) {
-							y = y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2;
+							y = y + pInt(options.style.lineHeight) * 0.9 - dataLabel.getBBox().height / 2;
 						}
 						dataLabel
 							.attr({
@@ -11581,23 +11602,33 @@ Series.prototype = {
 							});
 					// create new label
 					} else if (defined(str)) {
-						dataLabel = point.dataLabel = renderer.text(
+						dataLabel = point.dataLabel = renderer.label(
 							str,
 							x,
 							y,
-							options.useHTML
+							null,
+							null,
+							null,
+							options.useHTML,
+							true // baseline for backwards compat
 						)
 						.attr({
 							align: align,
+							fill: options.backgroundColor,
+							stroke: options.borderColor,
+							'stroke-width': options.borderWidth,
+							r: options.borderRadius,
 							rotation: options.rotation,
+							padding: options.padding,
 							zIndex: 1
 						})
 						.css(options.style)
-						.add(dataLabelsGroup);
+						.add(dataLabelsGroup)
+						.shadow(options.shadow);
 						// vertically centered
 						if (inverted && !options.y) {
 							dataLabel.attr({
-								y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
+								y: y + pInt(options.style.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
 							});
 						}
 					}
@@ -13118,7 +13149,7 @@ var PieSeries = extendClass(Series, {
 		};
 
 		// assume equal label heights
-		labelHeight = halves[0][0] && halves[0][0].dataLabel && pInt(halves[0][0].dataLabel.styles.lineHeight);
+		labelHeight = halves[0][0] && halves[0][0].dataLabel && halves[0][0].dataLabel.getBBox().height;
 
 		/* Loop over the points in each quartile, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
