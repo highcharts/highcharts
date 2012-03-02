@@ -1705,7 +1705,7 @@ Series.prototype = {
 					str = options.formatter.call(point.getLabelConfig(), options);
 					
 					var barX = point.barX,
-						plotX = (barX && barX + point.barW / 2) || point.plotX || -999,
+						plotX = (barX && barX + point.barW / 2) || pick(point.plotX, -999),
 						plotY = pick(point.plotY, -999),
 						align = options.align,
 						individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
