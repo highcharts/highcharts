@@ -8749,7 +8749,6 @@ function Chart(options, callback) {
 		chartEvents = optionsChart.events,
 		runChartClick = chartEvents && !!chartEvents.click,
 		eventType,
-		isInsidePlot, // function
 		loadingDiv,
 		loadingSpan,
 		loadingShown,
@@ -8764,13 +8763,6 @@ function Chart(options, callback) {
 		series = [],
 		inverted,
 		renderer,
-		drawChartBox, // function
-		getMargins, // function
-		resetMargins, // function
-		setChartSize, // function
-		resize,
-		zoom, // function
-		zoomOut, // function
 		mouseTrackerContext = new MouseTrackerContext(
 			chart,
 			axes,
@@ -8851,12 +8843,12 @@ function Chart(options, callback) {
 	 * @param {Number} x Pixel x relative to the plot area
 	 * @param {Number} y Pixel y relative to the plot area
 	 */
-	isInsidePlot = function (x, y) {
+	function isInsidePlot(x, y) {
 		return x >= 0 &&
 			x <= plotWidth &&
 			y >= 0 &&
 			y <= plotHeight;
-	};
+	}
 
 	/**
 	 * Adjust all axes tick amounts
@@ -9174,19 +9166,20 @@ function Chart(options, callback) {
 	/**
 	 * Zoom out to 1:1
 	 */
-	zoomOut = function () {
+	function zoomOut() {
 		var resetZoomButton = chart.resetZoomButton;
 
 		fireEvent(chart, 'selection', { resetSelection: true }, zoom);
 		if (resetZoomButton) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
-	};
+	}
+
 	/**
 	 * Zoom into a given portion of the chart given by axis coordinates
 	 * @param {Object} event
 	 */
-	zoom = function (event) {
+	function zoom(event) {
 
 		// add button to reset selection
 		var animate = chart.pointCount < 100,
@@ -9220,14 +9213,14 @@ function Chart(options, callback) {
 		if (hasZoomed) {
 			redraw(true, animate);
 		}
-	};
+	}
 
 	/**
 	 * Pan the chart by dragging the mouse across the pane. This function is called
 	 * on mouse move, and the distance to pan is computed from chartX compared to
 	 * the first chartX position in the dragging operation.
 	 */
-	chart.pan = function (chartX) {
+	function pan(chartX) {
 
 		var xAxis = chart.xAxis[0],
 			mouseDownX = chart.mouseDownX,
@@ -9250,7 +9243,7 @@ function Chart(options, callback) {
 
 		chart.mouseDownX = chartX; // set new reference for next run
 		css(container, { cursor: 'move' });
-	};
+	}
 
 	/**
 	 * Show the title and subtitle of the chart
@@ -9411,7 +9404,7 @@ function Chart(options, callback) {
 	 * subtitle and legend have already been rendered at this stage, but will be
 	 * moved into their final positions
 	 */
-	getMargins = function () {
+	function getMargins() {
 		var legendOptions = options.legend,
 			legendMargin = pick(legendOptions.margin, 10),
 			legendX = legendOptions.x,
@@ -9497,7 +9490,7 @@ function Chart(options, callback) {
 
 		setChartSize();
 
-	};
+	}
 
 	/**
 	 * Add the event handlers necessary for auto resizing
@@ -9547,7 +9540,8 @@ function Chart(options, callback) {
 	 * @param {Number} height
 	 * @param {Object|Boolean} animation
 	 */
-	resize = function (width, height, animation) {
+	// TODO: This method is called setSize in the api
+	function resize(width, height, animation) {
 		var chartTitle = chart.title,
 			chartSubtitle = chart.subtitle;
 
@@ -9613,13 +9607,13 @@ function Chart(options, callback) {
 		} else { // else set a timeout with the animation duration
 			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
 		}
-	};
+	}
 
 	/**
 	 * Set the public chart properties. This is done before and after the pre-render
 	 * to determine margin sizes
 	 */
-	setChartSize = function () {
+	function setChartSize() {
 
 		chart.plotLeft = plotLeft = mathRound(plotLeft);
 		chart.plotTop = plotTop = mathRound(plotTop);
@@ -9640,23 +9634,23 @@ function Chart(options, callback) {
 			axis.setAxisSize();
 			axis.setAxisTranslation();
 		});
-	};
+	}
 
 	/**
 	 * Initial margins before auto size margins are applied
 	 */
-	resetMargins = function () {
+	function resetMargins() {
 		plotTop = pick(optionsMarginTop, spacingTop);
 		marginRight = pick(optionsMarginRight, spacingRight);
 		marginBottom = pick(optionsMarginBottom, spacingBottom);
 		plotLeft = pick(optionsMarginLeft, spacingLeft);
 		axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
-	};
+	}
 
 	/**
 	 * Draw the borders and backgrounds for chart and plot area
 	 */
-	drawChartBox = function () {
+	function drawChartBox() {
 		var chartBorderWidth = optionsChart.borderWidth || 0,
 			chartBackgroundColor = optionsChart.backgroundColor,
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
@@ -10068,6 +10062,7 @@ function Chart(options, callback) {
 	chart.showLoading = showLoading;
 	chart.pointCount = 0;
 	chart.counters = new ChartCounters();
+	chart.pan = pan;
 	/*
 	if ($) $(function () {
 		$container = $('#container');
