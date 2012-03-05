@@ -456,6 +456,11 @@
 						}
 						translatedArr[i] = lastTranslated = translated; 
 					}
+					distances.sort();
+					medianDistance = distances[mathFloor(distances.length / 2)];
+					if (medianDistance < tickPixelIntervalOption * 0.6) {
+						medianDistance = null;
+					}
 					
 					// Now loop over again and remove ticks where needed
 					i = groupPositions.length;
@@ -463,10 +468,11 @@
 					while (i--) {
 						translated = translatedArr[i];
 						distance = lastTranslated - translated;
-						
+	
 						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right,
 						// but not if it is close to the median distance (#748).
-						if (lastTranslated && distance < tickPixelIntervalOption * 0.8 && distance < medianDistance * 0.8) {
+						if (lastTranslated && distance < tickPixelIntervalOption * 0.8 && 
+								(medianDistance === null || distance < medianDistance * 0.8)) {
 							
 							// Is this a higher ranked position with a normal position to the right?
 							if (higherRanks[groupPositions[i]] && !higherRanks[groupPositions[i + 1]]) {
