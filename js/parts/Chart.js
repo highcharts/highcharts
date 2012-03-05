@@ -413,7 +413,7 @@ function Chart(options, callback) {
 			axes,
 			function () { return oldChartWidth; },
 			function () { return oldChartHeight; },
-			optionsChart,
+			optionsChart.ignoreHiddenSeries,
 			function () { return maxTicks; },
 			function (newMaxTicks) { maxTicks = newMaxTicks; },
 			function () { return axisOffset; },
