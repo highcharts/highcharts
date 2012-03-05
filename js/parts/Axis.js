@@ -84,7 +84,6 @@ function Axis(context, userOptions) {
 	// TODO: Remove when chart is prototyped
 	axis.tickContext = new TickContext(
 			axis,
-			options,
 			labelFormatter,
 			context.getOldChartHeight,
 			context.getOldChartWidth,
@@ -438,19 +437,19 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			axisLeft = axis.left,
-			axisTop = axis.top;
-
-		var x1,
+			axisTop = axis.top,
+			x1,
 			y1,
 			x2,
 			y2,
 			translatedValue = axis.translate(value, null, null, old),
 			cHeight = (old && axis.getOldChartHeight()) || chart.chartHeight,
 			cWidth = (old && axis.getOldChartWidth()) || chart.chartWidth,
-			skip;
+			skip,
+			transB = axis.transB;
 
-		x1 = x2 = mathRound(translatedValue + axis.transB);
-		y1 = y2 = mathRound(cHeight - translatedValue - axis.transB);
+		x1 = x2 = mathRound(translatedValue + transB);
+		y1 = y2 = mathRound(cHeight - translatedValue - transB);
 
 		if (isNaN(translatedValue)) { // no min or max
 			skip = true;
@@ -612,7 +611,8 @@ Axis.prototype = {
 	 */
 	getMinorTickPositions: function () {
 		var axis = this,
-			tickPositions = axis.tickPositions;
+			tickPositions = axis.tickPositions,
+			minorTickInterval = axis.minorTickInterval;
 
 		var minorTickPositions = [],
 			pos,
@@ -623,12 +623,12 @@ Axis.prototype = {
 			len = tickPositions.length;
 			for (i = 1; i < len; i++) {
 				minorTickPositions = minorTickPositions.concat(
-					axis.getLogTickPositions(axis.minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
+					axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
 				);	
 			}
 		
 		} else {			
-			for (pos = axis.min + (tickPositions[0] - axis.min) % axis.minorTickInterval; pos <= axis.max; pos += axis.minorTickInterval) {
+			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 				minorTickPositions.push(pos);	
 			}
 		}
@@ -644,7 +644,9 @@ Axis.prototype = {
 	 */
 	adjustForMinRange: function () {
 		var axis = this,
-			options = axis.options;
+			options = axis.options,
+			min = axis.min,
+			max = axis.max;
 
 		var zoomOffset,
 			spaceAvailable = axis.dataMax - axis.dataMin >= axis.minRange,
@@ -681,28 +683,28 @@ Axis.prototype = {
 		}
 		
 		// if minRange is exceeded, adjust
-		if (axis.max - axis.min < axis.minRange) {
+		if (max - min < axis.minRange) {
 			var minRange = axis.minRange;
-			zoomOffset = (minRange - axis.max + axis.min) / 2;
+			zoomOffset = (minRange - max + min) / 2;
 
 			// if min and max options have been set, don't go beyond it
-			minArgs = [axis.min - zoomOffset, pick(options.min, axis.min - zoomOffset)];
+			minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
 			if (spaceAvailable) { // if space is available, stay within the data range
 				minArgs[2] = axis.dataMin;
 			}
-			axis.min = arrayMax(minArgs);
+			axis.min = min = arrayMax(minArgs);
 
-			maxArgs = [axis.min + minRange, pick(options.max, axis.min + minRange)];
+			maxArgs = [min + minRange, pick(options.max, min + minRange)];
 			if (spaceAvailable) { // if space is availabe, stay within the data range
 				maxArgs[2] = axis.dataMax;
 			}
 			
-			axis.max = arrayMin(maxArgs);
+			axis.max = max = arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
-			if (axis.max - axis.min < minRange) {
-				minArgs[0] = axis.max - minRange;
-				minArgs[1] = pick(options.min, axis.max - minRange);
+			if (max - min < minRange) {
+				minArgs[0] = max - minRange;
+				minArgs[1] = pick(options.min, max - minRange);
 				axis.min = arrayMax(minArgs);
 			}
 		}
@@ -712,12 +714,12 @@ Axis.prototype = {
 	 * Update translation information
 	 */
 	setAxisTranslation: function () {
-		var axis = this;
-
-		var range = axis.max - axis.min,
+		var axis = this,
+			range = axis.max - axis.min,
 			pointRange = 0,
 			closestPointRange,
-			seriesClosestPointRange;
+			seriesClosestPointRange,
+			transA = axis.transA;
 
 		// adjust translation for padding
 		if (axis.isXAxis) {
@@ -745,10 +747,10 @@ Axis.prototype = {
 		}
 
 		// secondary values
-		axis.oldTransA = axis.transA;
-		axis.translationSlope = axis.transA = axis.len / ((range + pointRange) || 1);
+		axis.oldTransA = transA;
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRange) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
-		axis.minPixelPadding = axis.transA * (pointRange / 2);
+		axis.minPixelPadding = transA * (pointRange / 2);
 	},
 
 	/**
@@ -767,12 +769,15 @@ Axis.prototype = {
 			tickPositioner = axis.options.tickPositioner,
 			magnitude,
 			maxPadding = options.maxPadding,
-			minPadding = options.minPadding;
-
-		var length,
+			minPadding = options.minPadding,
+			length,
 			linkedParentExtremes,
 			tickIntervalOption = options.tickInterval,
-			tickPixelIntervalOption = options.tickPixelInterval;
+			tickPixelIntervalOption = options.tickPixelInterval,
+			tickPositions,
+			categories = axis.categories,
+			min,
+			max;
 
 		// linked axis gets the extremes from the parent axis
 		if (isLinked) {
@@ -788,18 +793,21 @@ Axis.prototype = {
 			axis.max = pick(axis.userMax, options.max, axis.dataMax);
 		}
 
+		min = axis.min;
+		max = axis.max;
+
 		if (isLog) {
 			if (!secondPass && axis.min <= 0) {
 				error(10); // Can't plot negative values on log axis
 			}
-			axis.min = log2lin(axis.min);
-			axis.max = log2lin(axis.max);
+			axis.min = min = log2lin(min);
+			axis.max = max = log2lin(max);
 		}
 
 		// handle zoomed range
 		if (axis.range) {
-			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
-			axis.userMax = axis.max;
+			axis.userMin = axis.min = min = mathMax(min, max - axis.range); // #618
+			axis.userMax = max;
 			if (secondPass) {
 				axis.range = null;  // don't use it when running setExtremes
 			}
@@ -809,18 +817,18 @@ Axis.prototype = {
 		axis.adjustForMinRange();
 
 		// pad the values to get clear of the chart's edges
-		if (!axis.categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
-			length = (axis.max - axis.min) || 1;
+		if (!categories && !axis.usePercentage && !isLinked && defined(min) && defined(max)) {
+			length = (max - min) || 1;
 			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
-				axis.min -= length * minPadding;
+				min = axis.min -= length * minPadding;
 			}
 			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
-				axis.max += length * maxPadding;
+				max = axis.max += length * maxPadding;
 			}
 		}
 
 		// get tickInterval
-		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
+		if (min === max || min === undefined || max === undefined) {
 			axis.tickInterval = 1;
 		} else if (isLinked && !tickIntervalOption &&
 				tickPixelIntervalOption === axis.linkedParent.options.tickPixelInterval) {
@@ -828,9 +836,9 @@ Axis.prototype = {
 		} else {
 			axis.tickInterval = pick(
 				tickIntervalOption,
-				axis.categories ? // for categoried axis, 1 is default, for linear axis use tickPix
+				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
-					(axis.max - axis.min) * tickPixelIntervalOption / (axis.len || 1)
+					(max - min) * tickPixelIntervalOption / (axis.len || 1)
 			);
 		}
 
@@ -838,7 +846,7 @@ Axis.prototype = {
 		// is in turn needed in order to find tick positions in ordinal axes. 
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
-				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
+				series.processData(min !== axis.oldMin || max !== axis.oldMax);
 			});
 		}
 
@@ -868,47 +876,48 @@ Axis.prototype = {
 				axis.tickInterval / 5 : options.minorTickInterval;
 
 		// find the tick positions
-		axis.tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
-		if (!axis.tickPositions) {
+		axis.tickPositions = tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max]));
+		if (!tickPositions) {
 			if (isDatetimeAxis) {
-				axis.tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
+				tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
 					normalizeTimeTickInterval(axis.tickInterval, options.units),
-					axis.min,
-					axis.max,
+					min,
+					max,
 					options.startOfWeek,
 					axis.ordinalPositions,
 					axis.closestPointRange,
 					true
 				);
 			} else if (isLog) {
-				axis.tickPositions = axis.getLogTickPositions(axis.tickInterval, axis.min, axis.max);
+				tickPositions = axis.getLogTickPositions(axis.tickInterval, min, max);
 			} else {
-				axis.tickPositions = axis.getLinearTickPositions(axis.tickInterval, axis.min, axis.max);
+				tickPositions = axis.getLinearTickPositions(axis.tickInterval, min, max);
 			}
+			axis.tickPositions = tickPositions;
 		}
 
 		// post process positions, used in ordinal axes in Highstock. 
 		// TODO: combine with getNonLinearTimeTicks
 		fireEvent(axis, 'afterSetTickPositions', {
-			tickPositions: axis.tickPositions
+			tickPositions: tickPositions
 		});
 
 		if (!isLinked) {
 
 			// reset min/max or remove extremes based on start/end on tick
-			var roundedMin = axis.tickPositions[0],
-				roundedMax = axis.tickPositions[axis.tickPositions.length - 1];
+			var roundedMin = tickPositions[0],
+				roundedMax = tickPositions[tickPositions.length - 1];
 
 			if (options.startOnTick) {
 				axis.min = roundedMin;
 			} else if (axis.min > roundedMin) {
-				axis.tickPositions.shift();
+				tickPositions.shift();
 			}
 
 			if (options.endOnTick) {
-				axis.max = roundedMax;
-			} else if (axis.max < roundedMax) {
-				axis.tickPositions.pop();
+				axis.max = max = roundedMax;
+			} else if (max < roundedMax) {
+				tickPositions.pop();
 			}
 
 			// record the greatest number of ticks for multi axis
@@ -920,8 +929,8 @@ Axis.prototype = {
 				};
 			}
 
-			if (!isDatetimeAxis && axis.tickPositions.length > maxTicks[xOrY] && options.alignTicks !== false) {
-				maxTicks[xOrY] = axis.tickPositions.length;
+			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY] && options.alignTicks !== false) {
+				maxTicks[xOrY] = tickPositions.length;
 			}
 			axis.setMaxTicks(maxTicks);
 		}

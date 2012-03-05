@@ -3,7 +3,6 @@
  */
 function TickContext(
 		axis,
-		options,
 		labelFormatter,
 		getOldChartHeight,
 		getOldChartWidth,
@@ -11,7 +10,6 @@ function TickContext(
 	) {
 	return {
 		axis: axis, // object
-		options: options, // object
 		labelFormatter: labelFormatter, // function
 		getOldChartHeight: getOldChartHeight, // function
 		getOldChartWidth: getOldChartWidth, // function
@@ -41,11 +39,12 @@ Tick.prototype = {
 		var tick = this,
 			context = this.cx,
 			axis = context.axis,
+			options = axis.options,
 			chart = axis.chart,
 			horiz = axis.horiz,
 			categories = axis.categories,
 			pos = tick.pos,
-			labelOptions = context.options.labels,
+			labelOptions = options.labels,
 			str,
 			width = (categories && horiz && categories.length &&
 				!labelOptions.step && !labelOptions.staggerLines &&
@@ -64,7 +63,7 @@ Tick.prototype = {
 		// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 		// use the general format.
 		if (axis.isDatetimeAxis && tickPositionInfo) {
-			dateTimeLabelFormat = context.options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
+			dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 		}
 
 		// set properties for access in render method
@@ -133,23 +132,24 @@ Tick.prototype = {
 		var tick = this,
 			context = tick.cx,
 			axis = context.axis,
+			options = axis.options,
 			chart = axis.chart,
 			renderer = chart.renderer,
 			horiz = axis.horiz,
 			type = tick.type,
 			label = tick.label,
 			pos = tick.pos,
-			labelOptions = context.options.labels,
+			labelOptions = options.labels,
 			gridLine = tick.gridLine,
 			gridPrefix = type ? type + 'Grid' : 'grid',
 			tickPrefix = type ? type + 'Tick' : 'tick',
-			gridLineWidth = context.options[gridPrefix + 'LineWidth'],
-			gridLineColor = context.options[gridPrefix + 'LineColor'],
-			dashStyle = context.options[gridPrefix + 'LineDashStyle'],
-			tickLength = context.options[tickPrefix + 'Length'],
-			tickWidth = context.options[tickPrefix + 'Width'] || 0,
-			tickColor = context.options[tickPrefix + 'Color'],
-			tickPosition = context.options[tickPrefix + 'Position'],
+			gridLineWidth = options[gridPrefix + 'LineWidth'],
+			gridLineColor = options[gridPrefix + 'LineColor'],
+			dashStyle = options[gridPrefix + 'LineDashStyle'],
+			tickLength = options[tickPrefix + 'Length'],
+			tickWidth = options[tickPrefix + 'Width'] || 0,
+			tickColor = options[tickPrefix + 'Color'],
+			tickPosition = options[tickPrefix + 'Position'],
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
@@ -252,8 +252,8 @@ Tick.prototype = {
 			}
 
 			// apply show first and show last
-			if ((tick.isFirst && !pick(context.options.showFirstLabel, 1)) ||
-					(tick.isLast && !pick(context.options.showLastLabel, 1))) {
+			if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
+					(tick.isLast && !pick(options.showLastLabel, 1))) {
 				label.hide();
 			} else {
 				// show those that may have been previously hidden, either by show first/last, or by step
