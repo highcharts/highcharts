@@ -1387,7 +1387,7 @@ defaultOptions = {
 				formatter: function () {
 					return this.y;
 				}
-				// backgroundColor: undefined, // docs
+				// backgroundColor: undefined, // docs - http://jsfiddle.net/highcharts/rAwN5/
 				// borderColor: undefined, // docs
 				// borderRadius: undefined, // docs
 				// borderWidth: undefined, // docs

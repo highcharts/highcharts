@@ -1387,7 +1387,7 @@ defaultOptions = {
 				formatter: function () {
 					return this.y;
 				}
-				// backgroundColor: undefined, // docs
+				// backgroundColor: undefined, // docs - http://jsfiddle.net/highcharts/rAwN5/
 				// borderColor: undefined, // docs
 				// borderRadius: undefined, // docs
 				// borderWidth: undefined, // docs
@@ -14179,6 +14179,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			lastPoint,
 			optionsOnSeries = options.onSeries,
 			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
+			step = onSeries && onSeries.options.step,
 			onData,
 			leftPoint,
 			rightPoint;
@@ -14201,7 +14202,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					point.plotY = leftPoint.plotY;
 					
 					// interpolate between points, #666
-					if (leftPoint.x < point.x) { 
+					if (leftPoint.x < point.x && !step) { 
 						rightPoint = onData[i + 1];
 						if (rightPoint) {
 							point.plotY += 
