@@ -36,6 +36,9 @@ var each = Highcharts.each,
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	lineWidth: 0,
 	threshold: null,
+	tooltip: {
+		pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.low} - {point.high}' 
+	},
 	trackByArea: true
 });
 
