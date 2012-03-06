@@ -4115,7 +4115,7 @@ function Chart(options, callback) {
 		function reflow(e) {
 			var width = optionsChart.width || renderTo.offsetWidth,
 				height = optionsChart.height || renderTo.offsetHeight,
-				target = e.target;
+				target = e ? e.target : win; // #805 - MooTools doesn't supply e
 				
 			// Width and height checks for display:none. Target is doc in IE8 and Opera,
 			// win in Firefox, Chrome and IE9.
