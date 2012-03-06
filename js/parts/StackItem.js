@@ -1,20 +1,10 @@
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function StackItemContext(chart, axis) {
-	return {
-		chart: chart, // object
-		axis: axis // object
-	};
-}
-
-/**
  * The class for stack items
  */
-function StackItem(context, options, isNegative, x, stackOption) {
-	var inverted = context.chart.inverted;
+function StackItem(axis, options, isNegative, x, stackOption) {
+	var inverted = axis.chart.inverted;
 
-	this.cx = context;
+	this.axis = axis;
 
 	// Tells if the stack is negative
 	this.isNegative = isNegative;
@@ -67,7 +57,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.cx.chart.renderer.text(str, 0, 0)		// dummy positions, actual position updated with setOffset method in columnseries
+				this.axis.chart.renderer.text(str, 0, 0)		// dummy positions, actual position updated with setOffset method in columnseries
 					.css(this.options.style)				// apply style
 					.attr({align: this.textAlign,			// fix the text-anchor
 						rotation: this.options.rotation,	// rotation
@@ -80,10 +70,10 @@ StackItem.prototype = {
 	 * Sets the offset that the stack has from the x value and repositions the label.
 	 */
 	setOffset: function (xOffset, xWidth) {
-		var context = this.cx,
-			chart = context.chart,
+		var stackItem = this,
+			axis = stackItem.axis,
+			chart = axis.chart,
 			inverted = chart.inverted,
-			axis = context.axis,
 			neg = this.isNegative,							// special treatment is needed for negative stacks
 			y = axis.translate(this.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin

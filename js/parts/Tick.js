@@ -2,54 +2,18 @@
  * Context holding the variables that were in local closure in the chart.
  */
 function TickContext(
-		chart,
 		axis,
-		options,
-		categories,
-		horiz,
-		getTickPositions,
-		isDatetimeAxis,
 		labelFormatter,
-		isLog,
-		getAxisGroup,
-		getGridGroup,
 		getOldChartHeight,
 		getOldChartWidth,
-		tickmarkOffset,
-		getTransA,
-		getTransB,
-		getAxisLeft,
-		getAxisRight,
-		getAxisBottom,
-		getAxisHeight,
-		opposite,
-		staggerLines,
-		offset
+		tickmarkOffset
 	) {
 	return {
-		chart: chart, // object
 		axis: axis, // object
-		options: options, // object
-		categories: categories, // object
-		horiz: horiz, // constant
-		getTickPositions: getTickPositions, // function
-		isDatetimeAxis: isDatetimeAxis, // constant
 		labelFormatter: labelFormatter, // function
-		isLog: isLog, // constant
-		getAxisGroup: getAxisGroup, // function
-		getGridGroup: getGridGroup, // function
 		getOldChartHeight: getOldChartHeight, // function
 		getOldChartWidth: getOldChartWidth, // function
-		tickmarkOffset: tickmarkOffset, // constant
-		getTransA: getTransA, // function
-		getTransB: getTransB, // function
-		getAxisLeft: getAxisLeft, // function
-		getAxisRight: getAxisRight, // function
-		getAxisBottom: getAxisBottom, // function
-		getAxisHeight: getAxisHeight, // function
-		opposite: opposite, // constant
-		staggerLines: staggerLines, // constant
-		offset: offset // constant
+		tickmarkOffset: tickmarkOffset // constant
 	};
 }
 
@@ -74,27 +38,32 @@ Tick.prototype = {
 	addLabel: function () {
 		var tick = this,
 			context = this.cx,
+			axis = context.axis,
+			options = axis.options,
+			chart = axis.chart,
+			horiz = axis.horiz,
+			categories = axis.categories,
 			pos = tick.pos,
-			labelOptions = context.options.labels,
+			labelOptions = options.labels,
 			str,
-			width = (context.categories && context.horiz && context.categories.length &&
+			width = (categories && horiz && categories.length &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
-				context.chart.plotWidth / context.categories.length) ||
-				(!context.horiz && context.chart.plotWidth / 2),
-			tickPositions = context.getTickPositions(),
+				chart.plotWidth / categories.length) ||
+				(!horiz && chart.plotWidth / 2),
+			tickPositions = axis.tickPositions,
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
-			value = context.categories && defined(context.categories[pos]) ? context.categories[pos] : pos,
+			value = categories && defined(categories[pos]) ? categories[pos] : pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
 			dateTimeLabelFormat;
 
 		// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 		// use the general format.
-		if (context.isDatetimeAxis && tickPositionInfo) {
-			dateTimeLabelFormat = context.options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
+		if (axis.isDatetimeAxis && tickPositionInfo) {
+			dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 		}
 
 		// set properties for access in render method
@@ -103,12 +72,12 @@ Tick.prototype = {
 
 		// get the string
 		str = context.labelFormatter.call({
-			axis: context.axis,
-			chart: context.chart,
+			axis: axis,
+			chart: chart,
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: context.isLog ? correctFloat(lin2log(value)) : value
+			value: axis.isLog ? correctFloat(lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -119,7 +88,7 @@ Tick.prototype = {
 		if (!defined(label)) {
 			tick.label =
 				defined(str) && labelOptions.enabled ?
-					context.chart.renderer.text(
+					chart.renderer.text(
 							str,
 							0,
 							0,
@@ -131,7 +100,7 @@ Tick.prototype = {
 						})
 						// without position absolute, IE export sometimes is wrong
 						.css(css)
-						.add(context.getAxisGroup()) :
+						.add(axis.axisGroup) :
 					null;
 
 		// update
@@ -149,7 +118,7 @@ Tick.prototype = {
 	getLabelSize: function () {
 		var label = this.label;
 		return label ?
-			((this.labelBBox = label.getBBox()))[this.cx.horiz ? 'height' : 'width'] :
+			((this.labelBBox = label.getBBox()))[this.cx.axis.horiz ? 'height' : 'width'] :
 			0;
 		},
 
@@ -162,41 +131,46 @@ Tick.prototype = {
 	render: function (index, old) {
 		var tick = this,
 			context = tick.cx,
+			axis = context.axis,
+			options = axis.options,
+			chart = axis.chart,
+			renderer = chart.renderer,
+			horiz = axis.horiz,
 			type = tick.type,
 			label = tick.label,
 			pos = tick.pos,
-			labelOptions = context.options.labels,
+			labelOptions = options.labels,
 			gridLine = tick.gridLine,
 			gridPrefix = type ? type + 'Grid' : 'grid',
 			tickPrefix = type ? type + 'Tick' : 'tick',
-			gridLineWidth = context.options[gridPrefix + 'LineWidth'],
-			gridLineColor = context.options[gridPrefix + 'LineColor'],
-			dashStyle = context.options[gridPrefix + 'LineDashStyle'],
-			tickLength = context.options[tickPrefix + 'Length'],
-			tickWidth = context.options[tickPrefix + 'Width'] || 0,
-			tickColor = context.options[tickPrefix + 'Color'],
-			tickPosition = context.options[tickPrefix + 'Position'],
+			gridLineWidth = options[gridPrefix + 'LineWidth'],
+			gridLineColor = options[gridPrefix + 'LineColor'],
+			dashStyle = options[gridPrefix + 'LineDashStyle'],
+			tickLength = options[tickPrefix + 'Length'],
+			tickWidth = options[tickPrefix + 'Width'] || 0,
+			tickColor = options[tickPrefix + 'Color'],
+			tickPosition = options[tickPrefix + 'Position'],
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
 			step = labelOptions.step,
-			cHeight = (old && context.getOldChartHeight()) || context.chart.chartHeight,
+			cHeight = (old && context.getOldChartHeight()) || chart.chartHeight,
 			attribs,
 			x,
 			y;
 
 		// get x and y position for ticks and labels
-		x = context.horiz ?
-			context.axis.translate(pos + context.tickmarkOffset, null, null, old) + context.getTransB() :
-			context.getAxisLeft() + context.offset + (context.opposite ? ((old && context.getOldChartWidth()) || context.chart.chartWidth) - tick.cx.getAxisRight() - tick.cx.getAxisLeft() : 0);
+		x = horiz ?
+			axis.translate(pos + context.tickmarkOffset, null, null, old) + axis.transB :
+			axis.left + axis.offset + (axis.opposite ? ((old && context.getOldChartWidth()) || chart.chartWidth) - axis.right - tick.cx.axis.left : 0);
 
-		y = context.horiz ?
-			cHeight - context.getAxisBottom() + context.offset - (context.opposite ? context.getAxisHeight() : 0) :
-			cHeight - context.axis.translate(pos + context.tickmarkOffset, null, null, old) - context.getTransB();
+		y = horiz ?
+			cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
+			cHeight - axis.translate(pos + context.tickmarkOffset, null, null, old) - axis.transB;
 
 		// create the grid line
 		if (gridLineWidth) {
-			gridLinePath = context.axis.getPlotLinePath(pos + context.tickmarkOffset, gridLineWidth, old);
+			gridLinePath = axis.getPlotLinePath(pos + context.tickmarkOffset, gridLineWidth, old);
 
 			if (gridLine === UNDEFINED) {
 				attribs = {
@@ -211,8 +185,8 @@ Tick.prototype = {
 				}
 				tick.gridLine = gridLine =
 					gridLineWidth ?
-						context.chart.renderer.path(gridLinePath)
-							.attr(attribs).add(context.getGridGroup()) :
+						renderer.path(gridLinePath)
+							.attr(attribs).add(axis.gridGroup) :
 						null;
 			}
 
@@ -232,17 +206,17 @@ Tick.prototype = {
 			if (tickPosition === 'inside') {
 				tickLength = -tickLength;
 			}
-			if (context.opposite) {
+			if (axis.opposite) {
 				tickLength = -tickLength;
 			}
 
-			markPath = context.chart.renderer.crispLine([
+			markPath = renderer.crispLine([
 				M,
 				x,
 				y,
 				L,
-				x + (context.horiz ? 0 : -tickLength),
-				y + (context.horiz ? tickLength : 0)
+				x + (horiz ? 0 : -tickLength),
+				y + (horiz ? tickLength : 0)
 			], tickWidth);
 
 			if (mark) { // updating
@@ -250,21 +224,21 @@ Tick.prototype = {
 					d: markPath
 				});
 			} else { // first time
-				tick.mark = context.chart.renderer.path(
+				tick.mark = renderer.path(
 					markPath
 				).attr({
 					stroke: tickColor,
 					'stroke-width': tickWidth
-				}).add(context.getAxisGroup());
+				}).add(axis.axisGroup);
 			}
 		}
 
 		// the label is created on init - now move it into place
 		if (label && !isNaN(x)) {
-			x = x + labelOptions.x - (context.tickmarkOffset && context.horiz ?
-				context.tickmarkOffset * context.getTransA() * (context.axis.reversed ? -1 : 1) : 0);
-			y = y + labelOptions.y - (context.tickmarkOffset && !context.horiz ?
-				context.tickmarkOffset * context.getTransA() * (context.axis.reversed ? 1 : -1) : 0);
+			x = x + labelOptions.x - (context.tickmarkOffset && horiz ?
+				context.tickmarkOffset * axis.transA * (axis.reversed ? -1 : 1) : 0);
+			y = y + labelOptions.y - (context.tickmarkOffset && !horiz ?
+				context.tickmarkOffset * axis.transA * (axis.reversed ? 1 : -1) : 0);
 
 			// vertically centered
 			if (!defined(labelOptions.y)) {
@@ -273,13 +247,13 @@ Tick.prototype = {
 
 
 			// correct for staggered labels
-			if (context.staggerLines) {
-				y += (index / (step || 1) % context.staggerLines) * 16;
+			if (axis.staggerLines) {
+				y += (index / (step || 1) % axis.staggerLines) * 16;
 			}
 
 			// apply show first and show last
-			if ((tick.isFirst && !pick(context.options.showFirstLabel, 1)) ||
-					(tick.isLast && !pick(context.options.showLastLabel, 1))) {
+			if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
+					(tick.isLast && !pick(options.showLastLabel, 1))) {
 				label.hide();
 			} else {
 				// show those that may have been previously hidden, either by show first/last, or by step

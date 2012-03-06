@@ -1,27 +1,9 @@
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function PlotLineOrBandContext(chart, axis, isLog, getMin, getMax, getAxisWidth, getAxisHeight, horiz, plotLinesAndBands) {
-	return {
-		chart: chart, // object
-		axis: axis, // object
-		isLog: isLog, // constant
-		getMin: getMin, // function
-		getMax: getMax, // function
-		getAxisWidth: getAxisWidth, // function
-		getAxisHeight: getAxisHeight, // function
-		horiz: horiz, // constant
-		plotLinesAndBands: plotLinesAndBands // object
-	};
-}
-
-
-/**
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
-function PlotLineOrBand(context, options) {
-	this.cx = context;
+function PlotLineOrBand(axis, options) {
+	this.axis = axis;
 
 	if (options) {
 		this.options = options;
@@ -40,7 +22,8 @@ PlotLineOrBand.prototype = {
 	 */
 	render: function () {
 		var plotLine = this,
-			halfPointRange = (plotLine.cx.axis.pointRange || 0) / 2,
+			axis = plotLine.axis,
+			halfPointRange = (axis.pointRange || 0) / 2,
 			options = plotLine.options,
 			optionsLabel = options.label,
 			label = plotLine.label,
@@ -61,18 +44,19 @@ PlotLineOrBand.prototype = {
 			color = options.color,
 			zIndex = options.zIndex,
 			events = options.events,
-			attribs;
+			attribs,
+			renderer = axis.chart.renderer;
 
 		// logarithmic conversion
-		if (plotLine.cx.isLog) {
+		if (axis.isLog) {
 			from = log2lin(from);
 			to = log2lin(to);
 			value = log2lin(value);
-	}
+		}
 
 		// plot line
 		if (width) {
-			path = plotLine.cx.axis.getPlotLinePath(value, width);
+			path = axis.getPlotLinePath(value, width);
 			attribs = {
 				stroke: color,
 				'stroke-width': width
@@ -82,11 +66,11 @@ PlotLineOrBand.prototype = {
 			}
 		} else if (defined(from) && defined(to)) { // plot band
 			// keep within plot area
-			from = mathMax(from, plotLine.cx.getMin() - halfPointRange);
-			to = mathMin(to, plotLine.cx.getMax() + halfPointRange);
+			from = mathMax(from, axis.min - halfPointRange);
+			to = mathMin(to, axis.max + halfPointRange);
 
-			toPath = plotLine.cx.axis.getPlotLinePath(to);
-			path = plotLine.cx.axis.getPlotLinePath(from);
+			toPath = axis.getPlotLinePath(to);
+			path = axis.getPlotLinePath(from);
 			if (path && toPath) {
 				path.push(
 					toPath[4],
@@ -121,7 +105,7 @@ PlotLineOrBand.prototype = {
 				};
 			}
 		} else if (path && path.length) {
-			plotLine.svgElem = svgElem = plotLine.cx.chart.renderer.path(path)
+			plotLine.svgElem = svgElem = renderer.path(path)
 				.attr(attribs).add();
 
 			// events
@@ -138,9 +122,9 @@ PlotLineOrBand.prototype = {
 		}
 
 		// the plot band/line label
-		if (optionsLabel && defined(optionsLabel.text) && path && path.length && plotLine.cx.getAxisWidth() > 0 && plotLine.cx.getAxisHeight() > 0) {
+		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
 			// apply defaults
-			var horiz = plotLine.cx.horiz;
+			var horiz = axis.horiz;
 			optionsLabel = merge({
 				align: horiz && toPath && 'center',
 				x: horiz ? !toPath && 4 : 10,
@@ -151,7 +135,7 @@ PlotLineOrBand.prototype = {
 
 			// add the SVG element
 			if (!label) {
-				plotLine.label = label = plotLine.cx.chart.renderer.text(
+				plotLine.label = label = renderer.text(
 						optionsLabel.text,
 						0,
 						0
@@ -191,11 +175,11 @@ PlotLineOrBand.prototype = {
 	 * Remove the plot line or band
 	 */
 	destroy: function () {
-		var obj = this;
-
-		destroyObjectProperties(obj);
+		var axis = this;
 
 		// remove it from the lookup
-		erase(this.cx.plotLinesAndBands, obj);
+		erase(axis.plotLinesAndBands, axis);
+
+		destroyObjectProperties(axis);
 	}
 };
