@@ -1,35 +1,9 @@
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function MouseTrackerContext(
-		chart,
-		axes,
-		getZoomFunction,
-		getHasCartesianSeries,
-		runChartClick
-	) {
-	return {
-		chart: chart, // object
-		axes: axes, // object (Array)
-		getZoomFunction: getZoomFunction, // function returning a function
-		getHasCartesianSeries: getHasCartesianSeries, // function
-		runChartClick: runChartClick // constant
-	};
-}
-
-/**
  * The mouse tracker object
- * @param {Object} context The MouseTrackerContext
+ * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
-function MouseTracker(context, options) {
-	var chart = context.chart;
-
-	this.runChartClick = context.runChartClick;
-
-	// Function returning true if the chart has cartesian series.
-	this.getHasCartesianSeries = context.getHasCartesianSeries;
-
+function MouseTracker(chart, options) {
 	var zoomType = useCanVG ? '' : options.chart.zoomType;
 
 	// Zoom status
@@ -41,9 +15,6 @@ function MouseTracker(context, options) {
 
 	// Reference to the chart
 	this.chart = chart;
-
-	// Reference to the collection of axes.
-	this.axes = context.axes;
 
 	// The interval id
 	//this.tooltipInterval = UNDEFINED;
@@ -60,7 +31,6 @@ function MouseTracker(context, options) {
 	// False or a value > 0 if a dragging operation
 	//this.mouseDownX = UNDEFINED;
 	//this.mouseDownY = UNDEFINED;
-	this.zoom = context.getZoomFunction();
 	this.init(chart, options.tooltip);
 }
 
@@ -124,7 +94,7 @@ MouseTracker.prototype = {
 			},
 			chart = this.chart;
 
-		each(this.axes, function (axis) {
+		each(chart.axes, function (axis) {
 			var translate = axis.translate,
 				isXAxis = axis.isXAxis,
 				isHorizontal = chart.inverted ? !isXAxis : isXAxis;
@@ -239,7 +209,6 @@ MouseTracker.prototype = {
 			mouseTracker = this,
 			chart = mouseTracker.chart,
 			container = chart.container,
-			isInsidePlot = chart.isInsidePlot,
 			hasDragged,
 			zoomHor = (mouseTracker.zoomX && !chart.inverted) || (mouseTracker.zoomY && chart.inverted),
 			zoomVert = (mouseTracker.zoomY && !chart.inverted) || (mouseTracker.zoomX && chart.inverted);
@@ -262,7 +231,7 @@ MouseTracker.prototype = {
 				if (hasDragged) {
 
 					// record each axis' min and max
-					each(mouseTracker.axes, function (axis) {
+					each(chart.axes, function (axis) {
 						if (axis.options.zoomEnabled !== false) {
 							var translate = axis.translate,
 								isXAxis = axis.isXAxis,
@@ -293,7 +262,7 @@ MouseTracker.prototype = {
 								});
 						}
 					});
-					fireEvent(chart, 'selection', selectionData, mouseTracker.zoom);
+					fireEvent(chart, 'selection', selectionData, chart.zoom);
 
 				}
 				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();
@@ -349,7 +318,6 @@ MouseTracker.prototype = {
 
 		// The mousemove, touchmove and touchstart event handler
 		var mouseMove = function (e) {
-
 			// let the system handle multitouch operations like two finger scroll
 			// and pinching
 			if (e && e.touches && e.touches.length > 1) {
@@ -364,7 +332,7 @@ MouseTracker.prototype = {
 
 			var chartX = e.chartX,
 				chartY = e.chartY,
-				isOutsidePlot = !isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
+				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
 
 			// on touch devices, only trigger click if a handler is defined
 			if (hasTouch && e.type === 'touchstart') {
@@ -372,7 +340,7 @@ MouseTracker.prototype = {
 					if (!chart.runTrackerClick) {
 						e.preventDefault();
 					}
-				} else if (!mouseTracker.runChartClick && !isOutsidePlot) {
+				} else if (!chart.runChartClick && !isOutsidePlot) {
 					e.preventDefault();
 				}
 			}
@@ -398,7 +366,6 @@ MouseTracker.prototype = {
 				} else if (chartY > chart.plotTop + chart.plotHeight) {
 					chartY = chart.plotTop + chart.plotHeight;
 				}
-
 			}
 
 			if (chart.mouseIsDown && e.type !== 'touchstart') { // make selection
@@ -409,10 +376,10 @@ MouseTracker.prototype = {
 					Math.pow(mouseTracker.mouseDownY - chartY, 2)
 				);
 				if (hasDragged > 10) {
-					var clickedInside = isInsidePlot(mouseTracker.mouseDownX - chart.plotLeft, mouseTracker.mouseDownY - chart.plotTop);
+					var clickedInside = chart.isInsidePlot(mouseTracker.mouseDownX - chart.plotLeft, mouseTracker.mouseDownY - chart.plotTop);
 
 					// make a selection
-					if (mouseTracker.getHasCartesianSeries() && (mouseTracker.zoomX || mouseTracker.zoomY) && clickedInside) {
+					if (chart.hasCartesianSeries && (mouseTracker.zoomX || mouseTracker.zoomY) && clickedInside) {
 						if (!mouseTracker.selectionMarker) {
 							mouseTracker.selectionMarker = chart.renderer.rect(
 								chart.plotLeft,
@@ -460,7 +427,7 @@ MouseTracker.prototype = {
 			lastWasOutsidePlot = isOutsidePlot;
 
 			// when outside plot, allow touch-drag by returning true
-			return isOutsidePlot || !mouseTracker.getHasCartesianSeries();
+			return isOutsidePlot || !chart.hasCartesianSeries;
 		};
 
 		/*
@@ -537,7 +504,7 @@ MouseTracker.prototype = {
 					extend(e, mouseTracker.getMouseCoordinates(e));
 
 					// fire a click event in the chart
-					if (isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+					if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 						fireEvent(chart, 'click', e);
 					}
 				}

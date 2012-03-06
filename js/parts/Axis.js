@@ -1,38 +1,10 @@
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function AxisContext(
-		chart,
-		axes,
-		getOldChartWidth,
-		getOldChartHeight,
-		ignoreHiddenSeries,
-		getMaxTicks,
-		setMaxTicks,
-		getAxisOffset,
-		setAxisOffset
-	) {
-	return {
-		chart: chart, // object
-		axes: axes, // object (Array)
-		getOldChartWidth: getOldChartWidth, // function
-		getOldChartHeight: getOldChartHeight, // function
-		ignoreHiddenSeries: ignoreHiddenSeries, // constant
-		getMaxTicks: getMaxTicks, // function
-		setMaxTicks: setMaxTicks, // function
-		getAxisOffset: getAxisOffset, // function
-		setAxisOffset: setAxisOffset // function
-	};
-}
-
-/**
  * Create a new axis object
+ * @param {Object} chart
  * @param {Object} options
  */
-function Axis(context, userOptions) {
-	var chart = context.chart,
-		axes = context.axes,
-		options,
+function Axis(chart, userOptions) {
+	var options,
 		isXAxis = userOptions.isX,
 		axis = this;
 
@@ -85,18 +57,8 @@ function Axis(context, userOptions) {
 	axis.tickContext = new TickContext(
 			axis,
 			labelFormatter,
-			context.getOldChartHeight,
-			context.getOldChartWidth,
 			(options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0 //tickmarkOffset,
 		);
-
-	// Functions to chart local variables (TODO: Defined these on chart instead)
-	axis.getAxisOffset = context.getAxisOffset;
-	axis.setAxisOffset = context.setAxisOffset;
-	axis.getMaxTicks = context.getMaxTicks;
-	axis.setMaxTicks = context.setMaxTicks;
-	axis.getOldChartWidth = context.getOldChartWidth;
-	axis.getOldChartHeight = context.getOldChartHeight;
 
 	axis.userOptions = userOptions;
 
@@ -106,7 +68,6 @@ function Axis(context, userOptions) {
 	//axis.ignoreMaxPadding = UNDEFINED;
 
 	axis.chart = chart;
-	axis.ignoreHiddenSeries = context.ignoreHiddenSeries;
 	axis.reversed = options.reversed;
 
 	// Initial categories
@@ -190,7 +151,7 @@ function Axis(context, userOptions) {
 	//axis.userMin = UNDEFINED,
 	//axis.userMax = UNDEFINED,
 
-	axis.init(axes);
+	axis.init();
 	axis.createTranslate();
 }
 
@@ -200,6 +161,7 @@ Axis.prototype = {
 	 */
 	getSeriesExtremes: function () {
 		var axis = this,
+			chart = axis.chart,
 			stacks = axis.stacks;
 
 		var posStack = [],
@@ -212,7 +174,7 @@ Axis.prototype = {
 		// loop through this axis' series
 		each(axis.series, function (series) {
 
-			if (series.visible || !axis.ignoreHiddenSeries) {
+			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
 				var seriesOptions = series.options,
 					stacking,
@@ -443,8 +405,8 @@ Axis.prototype = {
 			x2,
 			y2,
 			translatedValue = axis.translate(value, null, null, old),
-			cHeight = (old && axis.getOldChartHeight()) || chart.chartHeight,
-			cWidth = (old && axis.getOldChartWidth()) || chart.chartWidth,
+			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
+			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
 			transB = axis.transB;
 
@@ -921,7 +883,7 @@ Axis.prototype = {
 			}
 
 			// record the greatest number of ticks for multi axis
-			var maxTicks = axis.getMaxTicks();
+			var maxTicks = chart.maxTicks;
 			if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
 				maxTicks = {
 					x: 0,
@@ -932,7 +894,7 @@ Axis.prototype = {
 			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY] && options.alignTicks !== false) {
 				maxTicks[xOrY] = tickPositions.length;
 			}
-			axis.setMaxTicks(maxTicks);
+			chart.maxTicks = maxTicks;
 		}
 	},
 
@@ -942,10 +904,11 @@ Axis.prototype = {
 	 */
 	adjustTickAmount: function () {
 		var axis = this,
+			chart = axis.chart,
 			xOrY = axis.xOrY,
 			tickPositions = axis.tickPositions;
 
-		var maxTicks = axis.getMaxTicks();
+		var maxTicks = chart.maxTicks;
 		if (maxTicks && maxTicks[xOrY] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
@@ -1236,7 +1199,7 @@ Axis.prototype = {
 		}
 
 		// handle automatic or user set offset
-		var axisOffset = axis.getAxisOffset();
+		var axisOffset = chart.axisOffset;
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 		axis.axisTitleMargin =
@@ -1250,8 +1213,7 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
 
-		axis.setAxisOffset(axisOffset);
-
+		chart.axisOffset = axisOffset;
 	},
 
 	/**
@@ -1607,7 +1569,7 @@ Axis.prototype = {
 	},
 
 
-	init: function (axes) {
+	init: function () {
 		var axis = this,
 			chart = axis.chart,
 			isXAxis = axis.isXAxis,
@@ -1617,7 +1579,7 @@ Axis.prototype = {
 		// Run Axis
 
 		// Register
-		axes.push(axis);
+		chart.axes.push(axis);
 		chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
 
 		axis.series = []; // populated by Series
@@ -1657,6 +1619,11 @@ Axis.prototype = {
 			stacks: stacks,
 			destroy: destroy
 		});*/
+		axis.removePlotBand = axis.removePlotBandOrLine;
+		axis.removePlotLine = axis.removePlotBandOrLine;
+		axis.addPlotBand = axis.addPlotBandOrLine;
+		axis.addPlotLine = axis.addPlotBandOrLine;
+
 
 		// register event listeners
 		for (eventType in events) {

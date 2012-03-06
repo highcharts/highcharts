@@ -175,11 +175,12 @@ PlotLineOrBand.prototype = {
 	 * Remove the plot line or band
 	 */
 	destroy: function () {
-		var axis = this;
+		var plotLine = this,
+			axis = plotLine.axis;
 
 		// remove it from the lookup
-		erase(axis.plotLinesAndBands, axis);
+		erase(axis.plotLinesAndBands, plotLine);
 
-		destroyObjectProperties(axis);
+		destroyObjectProperties(plotLine);
 	}
 };

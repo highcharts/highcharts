@@ -4,15 +4,11 @@
 function TickContext(
 		axis,
 		labelFormatter,
-		getOldChartHeight,
-		getOldChartWidth,
 		tickmarkOffset
 	) {
 	return {
 		axis: axis, // object
 		labelFormatter: labelFormatter, // function
-		getOldChartHeight: getOldChartHeight, // function
-		getOldChartWidth: getOldChartWidth, // function
 		tickmarkOffset: tickmarkOffset // constant
 	};
 }
@@ -154,7 +150,7 @@ Tick.prototype = {
 			mark = tick.mark,
 			markPath,
 			step = labelOptions.step,
-			cHeight = (old && context.getOldChartHeight()) || chart.chartHeight,
+			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			attribs,
 			x,
 			y;
@@ -162,7 +158,7 @@ Tick.prototype = {
 		// get x and y position for ticks and labels
 		x = horiz ?
 			axis.translate(pos + context.tickmarkOffset, null, null, old) + axis.transB :
-			axis.left + axis.offset + (axis.opposite ? ((old && context.getOldChartWidth()) || chart.chartWidth) - axis.right - tick.cx.axis.left : 0);
+			axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - tick.cx.axis.left : 0);
 
 		y = horiz ?
 			cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :

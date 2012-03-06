@@ -1,29 +1,11 @@
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function LegendContext(
-		chart,
-		getSpacingBox,
-		getIsResizing
-	) {
-	return {
-		chart: chart, // object
-		getSpacingBox: getSpacingBox, // function
-		getIsResizing: getIsResizing
-	};
-}
-
-/**
  * The overview of the chart's series
  */
-var Legend = function (context) {
-	var chart = context.chart,
-		renderer = chart.renderer,
+var Legend = function (chart) {
+	var renderer = chart.renderer,
 		legendWidth,
 		legendHeight,
-		getSpacingBox = context.getSpacingBox,
-		container = chart.container,
-		getIsResizing = context.getIsResizing;
+		container = chart.container;
 
 	var options = chart.options.legend;
 
@@ -469,10 +451,10 @@ var Legend = function (context) {
 			legendGroup.align(extend(options, {
 				width: legendWidth,
 				height: legendHeight
-			}), true, getSpacingBox());
+			}), true, chart.spacingBox);
 		}
 
-		if (!getIsResizing()) {
+		if (!chart.isResizing) {
 			positionCheckboxes();
 		}
 	}
