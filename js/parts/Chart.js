@@ -64,7 +64,6 @@ function Chart(options, callback) {
 	//this.loadingDiv = UNDEFINED;
 	//this.loadingSpan = UNDEFINED;
 
-	this.createZoomFunctions();
 	this.init(chartEvents);
 }
 
@@ -469,7 +468,7 @@ Chart.prototype = {
 				width: chart.plotWidth,
 				height: chart.plotHeight
 			};
-		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, chart.zoomOut, theme, states && states.hover)
+		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
@@ -478,59 +477,55 @@ Chart.prototype = {
 			.align(btnOptions.position, false, box);
 	},
 
-	createZoomFunctions: function () {
-		var chart = this;
+	/**
+	 * Zoom out to 1:1
+	 */
+	zoomOut: function () {
+		var resetZoomButton = chart.resetZoomButton;
 
-		/**
-		 * Zoom out to 1:1
-		 */
-		chart.zoomOut = function () {
-			var resetZoomButton = chart.resetZoomButton;
+		fireEvent(chart, 'selection', { resetSelection: true }, function () { chart.zoom(); });
+		if (resetZoomButton) {
+			chart.resetZoomButton = resetZoomButton.destroy();
+		}
+	},
 
-			fireEvent(chart, 'selection', { resetSelection: true }, chart.zoom);
-			if (resetZoomButton) {
-				chart.resetZoomButton = resetZoomButton.destroy();
-			}
-		};
+	/**
+	 * Zoom into a given portion of the chart given by axis coordinates
+	 * @param {Object} event
+	 */
+	zoom: function (event) {
+		// add button to reset selection
+		var animate = chart.pointCount < 100,
+			hasZoomed;
 
-		/**
-		 * Zoom into a given portion of the chart given by axis coordinates
-		 * @param {Object} event
-		 */
-		chart.zoom = function (event) {
-			// add button to reset selection
-			var animate = chart.pointCount < 100,
-				hasZoomed;
+		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
+			chart.showResetZoom();
+		}
 
-			if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
-				chart.showResetZoom();
-			}
+		// if zoom is called with no arguments, reset the axes
+		if (!event || event.resetSelection) {
+			each(chart.axes, function (axis) {
+				if (axis.options.zoomEnabled !== false) {
+					axis.setExtremes(null, null, false);
+					hasZoomed = true;
+				}
+			});
+		} else { // else, zoom in on all axes
+			each(event.xAxis.concat(event.yAxis), function (axisData) {
+				var axis = axisData.axis;
 
-			// if zoom is called with no arguments, reset the axes
-			if (!event || event.resetSelection) {
-				each(chart.axes, function (axis) {
-					if (axis.options.zoomEnabled !== false) {
-						axis.setExtremes(null, null, false);
-						hasZoomed = true;
-					}
-				});
-			} else { // else, zoom in on all axes
-				each(event.xAxis.concat(event.yAxis), function (axisData) {
-					var axis = axisData.axis;
+				// don't zoom more than minRange
+				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
+					axis.setExtremes(axisData.min, axisData.max, false);
+					hasZoomed = true;
+				}
+			});
+		}
 
-					// don't zoom more than minRange
-					if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-						axis.setExtremes(axisData.min, axisData.max, false);
-						hasZoomed = true;
-					}
-				});
-			}
-
-			// Redraw
-			if (hasZoomed) {
-				chart.redraw(true, animate);
-			}
-		};
+		// Redraw
+		if (hasZoomed) {
+			chart.redraw(true, animate);
+		}
 	},
 
 	/**

@@ -145,7 +145,6 @@ function Axis(chart, userOptions) {
 	//axis.userMax = UNDEFINED,
 
 	axis.init();
-	axis.createTranslate();
 }
 
 Axis.prototype = {
@@ -330,55 +329,51 @@ Axis.prototype = {
 
 	},
 
-	createTranslate: function () {
-		var axis = this;
+	/**
+	 * Translate from axis value to pixel position on the chart, or back
+	 *
+	 */
+	translate: function (val, backwards, cvsCoord, old, handleLog) {
+		var axis = this,
+			axisLength = axis.len,
+			sign = 1,
+			cvsOffset = 0,
+			localA = old ? axis.oldTransA : axis.transA,
+			localMin = old ? axis.oldMin : axis.min,
+			returnValue,
+			postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
 
-		/**
-		 * Translate from axis value to pixel position on the chart, or back
-		 *
-		 */
-		axis.translate = function (val, backwards, cvsCoord, old, handleLog) {
-			var axisLength = axis.len;
+		if (!localA) {
+			localA = axis.transA;
+		}
 
-			var sign = 1,
-				cvsOffset = 0,
-				localA = old ? axis.oldTransA : axis.transA,
-				localMin = old ? axis.oldMin : axis.min,
-				returnValue,
-				postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
+		if (cvsCoord) {
+			sign *= -1; // canvas coordinates inverts the value
+			cvsOffset = axisLength;
+		}
+		if (axis.reversed) { // reversed axis
+			sign *= -1;
+			cvsOffset -= sign * axisLength;
+		}
 
-			if (!localA) {
-				localA = axis.transA;
+		if (backwards) { // reverse translation
+			if (axis.reversed) {
+				val = axisLength - val;
+			}
+			returnValue = val / localA + localMin; // from chart pixel to value
+			if (postTranslate) { // log and ordinal axes
+				returnValue = axis.lin2val(returnValue);
 			}
 
-			if (cvsCoord) {
-				sign *= -1; // canvas coordinates inverts the value
-				cvsOffset = axisLength;
-			}
-			if (axis.reversed) { // reversed axis
-				sign *= -1;
-				cvsOffset -= sign * axisLength;
+		} else { // normal translation, from axis value to pixel, relative to plot
+			if (postTranslate) { // log and ordinal axes
+				val = axis.val2lin(val);
 			}
 
-			if (backwards) { // reverse translation
-				if (axis.reversed) {
-					val = axisLength - val;
-				}
-				returnValue = val / localA + localMin; // from chart pixel to value
-				if (postTranslate) { // log and ordinal axes
-					returnValue = axis.lin2val(returnValue);
-				}
+			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
+		}
 
-			} else { // normal translation, from axis value to pixel, relative to plot
-				if (postTranslate) { // log and ordinal axes
-					val = axis.val2lin(val);
-				}
-
-				returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
-			}
-
-			return returnValue;
-		};
+		return returnValue;
 	},
 
 	/**

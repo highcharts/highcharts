@@ -5717,7 +5717,6 @@ function Axis(chart, userOptions) {
 	//axis.userMax = UNDEFINED,
 
 	axis.init();
-	axis.createTranslate();
 }
 
 Axis.prototype = {
@@ -5902,55 +5901,51 @@ Axis.prototype = {
 
 	},
 
-	createTranslate: function () {
-		var axis = this;
+	/**
+	 * Translate from axis value to pixel position on the chart, or back
+	 *
+	 */
+	translate: function (val, backwards, cvsCoord, old, handleLog) {
+		var axis = this,
+			axisLength = axis.len,
+			sign = 1,
+			cvsOffset = 0,
+			localA = old ? axis.oldTransA : axis.transA,
+			localMin = old ? axis.oldMin : axis.min,
+			returnValue,
+			postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
 
-		/**
-		 * Translate from axis value to pixel position on the chart, or back
-		 *
-		 */
-		axis.translate = function (val, backwards, cvsCoord, old, handleLog) {
-			var axisLength = axis.len;
+		if (!localA) {
+			localA = axis.transA;
+		}
 
-			var sign = 1,
-				cvsOffset = 0,
-				localA = old ? axis.oldTransA : axis.transA,
-				localMin = old ? axis.oldMin : axis.min,
-				returnValue,
-				postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
+		if (cvsCoord) {
+			sign *= -1; // canvas coordinates inverts the value
+			cvsOffset = axisLength;
+		}
+		if (axis.reversed) { // reversed axis
+			sign *= -1;
+			cvsOffset -= sign * axisLength;
+		}
 
-			if (!localA) {
-				localA = axis.transA;
+		if (backwards) { // reverse translation
+			if (axis.reversed) {
+				val = axisLength - val;
+			}
+			returnValue = val / localA + localMin; // from chart pixel to value
+			if (postTranslate) { // log and ordinal axes
+				returnValue = axis.lin2val(returnValue);
 			}
 
-			if (cvsCoord) {
-				sign *= -1; // canvas coordinates inverts the value
-				cvsOffset = axisLength;
-			}
-			if (axis.reversed) { // reversed axis
-				sign *= -1;
-				cvsOffset -= sign * axisLength;
+		} else { // normal translation, from axis value to pixel, relative to plot
+			if (postTranslate) { // log and ordinal axes
+				val = axis.val2lin(val);
 			}
 
-			if (backwards) { // reverse translation
-				if (axis.reversed) {
-					val = axisLength - val;
-				}
-				returnValue = val / localA + localMin; // from chart pixel to value
-				if (postTranslate) { // log and ordinal axes
-					returnValue = axis.lin2val(returnValue);
-				}
+			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
+		}
 
-			} else { // normal translation, from axis value to pixel, relative to plot
-				if (postTranslate) { // log and ordinal axes
-					val = axis.val2lin(val);
-				}
-
-				returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
-			}
-
-			return returnValue;
-		};
+		return returnValue;
 	},
 
 	/**
@@ -7637,13 +7632,12 @@ MouseTracker.prototype = {
 			chart = this.chart;
 
 		each(chart.axes, function (axis) {
-			var translate = axis.translate,
-				isXAxis = axis.isXAxis,
+			var isXAxis = axis.isXAxis,
 				isHorizontal = chart.inverted ? !isXAxis : isXAxis;
 
 			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
-				value: translate(
+				value: axis.translate(
 					isHorizontal ?
 						e.chartX - chart.plotLeft :
 						chart.plotHeight - e.chartY + chart.plotTop,
@@ -7775,10 +7769,9 @@ MouseTracker.prototype = {
 					// record each axis' min and max
 					each(chart.axes, function (axis) {
 						if (axis.options.zoomEnabled !== false) {
-							var translate = axis.translate,
-								isXAxis = axis.isXAxis,
+							var isXAxis = axis.isXAxis,
 								isHorizontal = chart.inverted ? !isXAxis : isXAxis,
-								selectionMin = translate(
+								selectionMin = axis.translate(
 									isHorizontal ?
 										selectionLeft :
 										chart.plotHeight - selectionTop - selectionBox.height,
@@ -7787,7 +7780,7 @@ MouseTracker.prototype = {
 									0,
 									1
 								),
-								selectionMax = translate(
+								selectionMax = axis.translate(
 									isHorizontal ?
 										selectionLeft + selectionBox.width :
 										chart.plotHeight - selectionTop,
@@ -8605,7 +8598,6 @@ function Chart(options, callback) {
 	//this.loadingDiv = UNDEFINED;
 	//this.loadingSpan = UNDEFINED;
 
-	this.createZoomFunctions();
 	this.init(chartEvents);
 }
 
@@ -9010,7 +9002,7 @@ Chart.prototype = {
 				width: chart.plotWidth,
 				height: chart.plotHeight
 			};
-		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, chart.zoomOut, theme, states && states.hover)
+		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
@@ -9019,59 +9011,55 @@ Chart.prototype = {
 			.align(btnOptions.position, false, box);
 	},
 
-	createZoomFunctions: function () {
-		var chart = this;
+	/**
+	 * Zoom out to 1:1
+	 */
+	zoomOut: function () {
+		var resetZoomButton = chart.resetZoomButton;
 
-		/**
-		 * Zoom out to 1:1
-		 */
-		chart.zoomOut = function () {
-			var resetZoomButton = chart.resetZoomButton;
+		fireEvent(chart, 'selection', { resetSelection: true }, function () { chart.zoom(); });
+		if (resetZoomButton) {
+			chart.resetZoomButton = resetZoomButton.destroy();
+		}
+	},
 
-			fireEvent(chart, 'selection', { resetSelection: true }, chart.zoom);
-			if (resetZoomButton) {
-				chart.resetZoomButton = resetZoomButton.destroy();
-			}
-		};
+	/**
+	 * Zoom into a given portion of the chart given by axis coordinates
+	 * @param {Object} event
+	 */
+	zoom: function (event) {
+		// add button to reset selection
+		var animate = chart.pointCount < 100,
+			hasZoomed;
 
-		/**
-		 * Zoom into a given portion of the chart given by axis coordinates
-		 * @param {Object} event
-		 */
-		chart.zoom = function (event) {
-			// add button to reset selection
-			var animate = chart.pointCount < 100,
-				hasZoomed;
+		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
+			chart.showResetZoom();
+		}
 
-			if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
-				chart.showResetZoom();
-			}
+		// if zoom is called with no arguments, reset the axes
+		if (!event || event.resetSelection) {
+			each(chart.axes, function (axis) {
+				if (axis.options.zoomEnabled !== false) {
+					axis.setExtremes(null, null, false);
+					hasZoomed = true;
+				}
+			});
+		} else { // else, zoom in on all axes
+			each(event.xAxis.concat(event.yAxis), function (axisData) {
+				var axis = axisData.axis;
 
-			// if zoom is called with no arguments, reset the axes
-			if (!event || event.resetSelection) {
-				each(chart.axes, function (axis) {
-					if (axis.options.zoomEnabled !== false) {
-						axis.setExtremes(null, null, false);
-						hasZoomed = true;
-					}
-				});
-			} else { // else, zoom in on all axes
-				each(event.xAxis.concat(event.yAxis), function (axisData) {
-					var axis = axisData.axis;
+				// don't zoom more than minRange
+				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
+					axis.setExtremes(axisData.min, axisData.max, false);
+					hasZoomed = true;
+				}
+			});
+		}
 
-					// don't zoom more than minRange
-					if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-						axis.setExtremes(axisData.min, axisData.max, false);
-						hasZoomed = true;
-					}
-				});
-			}
-
-			// Redraw
-			if (hasZoomed) {
-				chart.redraw(true, animate);
-			}
-		};
+		// Redraw
+		if (hasZoomed) {
+			chart.redraw(true, animate);
+		}
 	},
 
 	/**

@@ -95,13 +95,12 @@ MouseTracker.prototype = {
 			chart = this.chart;
 
 		each(chart.axes, function (axis) {
-			var translate = axis.translate,
-				isXAxis = axis.isXAxis,
+			var isXAxis = axis.isXAxis,
 				isHorizontal = chart.inverted ? !isXAxis : isXAxis;
 
 			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
-				value: translate(
+				value: axis.translate(
 					isHorizontal ?
 						e.chartX - chart.plotLeft :
 						chart.plotHeight - e.chartY + chart.plotTop,
@@ -233,10 +232,9 @@ MouseTracker.prototype = {
 					// record each axis' min and max
 					each(chart.axes, function (axis) {
 						if (axis.options.zoomEnabled !== false) {
-							var translate = axis.translate,
-								isXAxis = axis.isXAxis,
+							var isXAxis = axis.isXAxis,
 								isHorizontal = chart.inverted ? !isXAxis : isXAxis,
-								selectionMin = translate(
+								selectionMin = axis.translate(
 									isHorizontal ?
 										selectionLeft :
 										chart.plotHeight - selectionTop - selectionBox.height,
@@ -245,7 +243,7 @@ MouseTracker.prototype = {
 									0,
 									1
 								),
-								selectionMax = translate(
+								selectionMax = axis.translate(
 									isHorizontal ?
 										selectionLeft + selectionBox.width :
 										chart.plotHeight - selectionTop,
