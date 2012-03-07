@@ -8107,58 +8107,59 @@ MouseTracker.prototype = {
 /**
  * The overview of the chart's series
  */
-var Legend = function (chart) {
+function Legend(chart) {
 	var legend = this,
-		renderer = chart.renderer,
-		legendWidth,
-		legendHeight,
-		container = chart.container;
-
-	var options = legend.options = chart.options.legend;
+		options = legend.options = chart.options.legend;
 
 	if (!options.enabled) {
 		return;
 	}
 
-	var horizontal = options.layout === 'horizontal',
-		symbolWidth = options.symbolWidth,
-		symbolPadding = options.symbolPadding,
-		allItems,
-		//style = options.style || {}, // deprecated
+	var //style = options.style || {}, // deprecated
 		itemStyle = options.itemStyle,
 		itemHoverStyle = options.itemHoverStyle,
 		itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 		padding = pick(options.padding, 8), // docs
-		ltr = !options.rtl,
-		y = 0,
-		initialItemX = padding,
-		itemX,
-		itemY,
-		lastItemY,
-		itemHeight = 0,
-		itemMarginTop = options.itemMarginTop || 0,
-		itemMarginBottom = options.itemMarginBottom || 0,
-		box,
-		legendBorderWidth = options.borderWidth,
-		legendBackgroundColor = options.backgroundColor,
-		legendGroup,
-		offsetWidth,
-		widthOption = options.width,
-		series = chart.series,
-		reversedLegend = options.reversed;
+		itemMarginTop = options.itemMarginTop || 0;
 
 	legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
+	legend.itemStyle = itemStyle;
+	legend.itemHoverStyle = itemHoverStyle;
+	legend.itemHiddenStyle = itemHiddenStyle;
+	legend.itemMarginTop = itemMarginTop;
+	legend.padding = padding;
+	legend.initialItemX = padding;
+	legend.chart = chart;
+	//legend.allItems = UNDEFINED;
+	//legend.legendWidth = UNDEFINED;
+	//legend.legendHeight = UNDEFINED;
+	//legend.offsetWidth = UNDEFINED;
+	legend.itemHeight = 0;
+	//legend.itemX = UNDEFINED;
+	//legend.itemY = UNDEFINED;
+	//legend.lastItemY = UNDEFINED;
+
+	// Elements
+	//legend.group = UNDEFINED;
+	//legend.box = UNDEFINED;
+
+	legend.init();
+}
+
+Legend.prototype = {
 
 	/**
 	 * Set the colors for the legend item
 	 * @param {Object} item A Series or Point instance
 	 * @param {Object} visible Dimmed or colored
 	 */
-	function colorizeItem(item, visible) {
-		var legendItem = item.legendItem,
+	colorizeItem: function (item, visible) {
+		var legend = this,
+			options = legend.options,
+			legendItem = item.legendItem,
 			legendLine = item.legendLine,
 			legendSymbol = item.legendSymbol,
-			hiddenColor = itemHiddenStyle.color,
+			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
 			symbolColor = visible ? item.color : hiddenColor;
 
@@ -8174,36 +8175,40 @@ var Legend = function (chart) {
 				fill: symbolColor
 			});
 		}
-	}
+	},
 
 	/**
 	 * Position the legend item
 	 * @param {Object} item A Series or Point instance
 	 */
-	function positionItem(item) {
-		var legendItemPos = item._legendItemPos,
+	positionItem: function (item) {
+		var legend = this,
+			options = legend.options,
+			symbolPadding = options.symbolPadding,
+			ltr = !options.rtl,
+			legendItemPos = item._legendItemPos,
 			itemX = legendItemPos[0],
 			itemY = legendItemPos[1],
 			checkbox = item.checkbox;
-			
+
 		if (item.legendGroup) {
 			item.legendGroup.translate(
-				ltr ? itemX : legendWidth - itemX - 2 * symbolPadding - 4,
+				ltr ? itemX : legend.legendWidth - itemX - 2 * symbolPadding - 4,
 				itemY
 			);
 		}
-		
+
 		if (checkbox) {
 			checkbox.x = itemX;
 			checkbox.y = itemY;
 		}
-	}
+	},
 
 	/**
 	 * Destroy a single legend item
 	 * @param {Object} item The series or point
 	 */
-	function destroyItem(item) {
+	destroyItem: function (item) {
 		var checkbox = item.checkbox;
 
 		// destroy SVG elements
@@ -8216,30 +8221,34 @@ var Legend = function (chart) {
 		if (checkbox) {
 			discardElement(item.checkbox);
 		}
-
-
-	}
+	},
 
 	/**
 	 * Destroys the legend.
 	 */
-	function destroy() {
+	destroy: function () {
+		var legend = this,
+			legendGroup = legend.group,
+			box = legend.box;
+
 		if (box) {
-			box = box.destroy();
+			legend.box = box.destroy();
 		}
 
 		if (legendGroup) {
-			legendGroup = legendGroup.destroy();
+			legend.group = legendGroup.destroy();
 		}
-	}
+	},
 
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
-	function positionCheckboxes() {
-		each(allItems, function (item) {
+	positionCheckboxes: function () {
+		var legend = this;
+
+		each(legend.allItems, function (item) {
 			var checkbox = item.checkbox,
-				alignAttr = legendGroup.alignAttr;
+				alignAttr = legend.group.alignAttr;
 			if (checkbox) {
 				css(checkbox, {
 					left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
@@ -8247,29 +8256,44 @@ var Legend = function (chart) {
 				});
 			}
 		});
-	}
+	},
 
 	/**
 	 * Render a single specific legend item
 	 * @param {Object} item A series or point
 	 */
-	function renderItem(item) {
-		var bBox,
+	renderItem: function (item) {
+		var legend = this,
+			chart = legend.chart,
+			renderer = chart.renderer,
+			options = legend.options,
+			horizontal = options.layout === 'horizontal',
+			symbolWidth = options.symbolWidth,
+			symbolPadding = options.symbolPadding,
+			itemStyle = legend.itemStyle,
+			itemHiddenStyle = legend.itemHiddenStyle,
+			padding = legend.padding,
+			ltr = !options.rtl,
+			itemHeight,
+			widthOption = options.width,
+			itemMarginBottom = options.itemMarginBottom || 0,
+			itemMarginTop = legend.itemMarginTop,
+			initialItemX = legend.initialItemX,
+			bBox,
 			itemWidth,
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
 			showCheckbox = itemOptions.showCheckbox;
 
-
 		if (!li) { // generate it once, later move it
-			
+
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
 				.attr({ zIndex: 1 })
 				.add(legend.group);
-		
+
 			// Draw the legend symbol inside the group box
 			series.drawLegendSymbol(legend, item);
 
@@ -8290,7 +8314,7 @@ var Legend = function (chart) {
 			// Set the events on the item group
 			item.legendGroup.on('mouseover', function () {
 					item.setState(HOVER_STATE);
-					li.css(itemHoverStyle);
+					li.css(legend.itemHoverStyle);
 				})
 				.on('mouseout', function () {
 					li.css(item.visible ? itemStyle : itemHiddenStyle);
@@ -8311,8 +8335,7 @@ var Legend = function (chart) {
 				});
 
 			// Colorize the items
-			colorizeItem(item, item.visible);
-
+			legend.colorizeItem(item, item.visible);
 
 			// add the HTML checkbox on top
 			if (itemOptions && showCheckbox) {
@@ -8320,7 +8343,7 @@ var Legend = function (chart) {
 					type: 'checkbox',
 					checked: item.selected,
 					defaultChecked: item.selected // required by IE7
-				}, options.itemCheckboxStyle, container);
+				}, options.itemCheckboxStyle, chart.container);
 
 				addEvent(item.checkbox, 'click', function (event) {
 					var target = event.target;
@@ -8335,51 +8358,63 @@ var Legend = function (chart) {
 			}
 		}
 
-
 		// calculate the positions for the next line
 		bBox = li.getBBox();
 
 		itemWidth = item.legendItemWidth =
 			options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding +
 			(showCheckbox ? 20 : 0);
-		itemHeight = bBox.height;
+		legend.itemHeight = itemHeight = bBox.height;
 
 		// if the item exceeds the width, start a new line
-		if (horizontal && itemX - initialItemX + itemWidth >
+		if (horizontal && legend.itemX - initialItemX + itemWidth >
 				(widthOption || (chart.chartWidth - 2 * padding - initialItemX))) {
-			itemX = initialItemX;
-			itemY += itemMarginTop + itemHeight + itemMarginBottom;
+			legend.itemX = initialItemX;
+			legend.itemY += itemMarginTop + itemHeight + itemMarginBottom;
 		}
-		lastItemY = itemMarginTop + itemY + itemMarginBottom;
+		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
 
 		// cache the position of the newly generated or reordered items
-		item._legendItemPos = [itemX, itemY];
+		item._legendItemPos = [legend.itemX, legend.itemY];
 
 		// advance
 		if (horizontal) {
-			itemX += itemWidth;
+			legend.itemX += itemWidth;
 		} else {
-			itemY += itemMarginTop + itemHeight + itemMarginBottom;
+			legend.itemY += itemMarginTop + itemHeight + itemMarginBottom;
 		}
 
 		// the width of the widest item
-		offsetWidth = widthOption || mathMax(
-			horizontal ? itemX - initialItemX : itemWidth,
-			offsetWidth
+		legend.offsetWidth = widthOption || mathMax(
+			horizontal ? legend.itemX - initialItemX : itemWidth,
+			legend.offsetWidth
 		);
-
-	}
+	},
 
 	/**
 	 * Render the legend. This method can be called both before and after
 	 * chart.render. If called after, it will only rearrange items instead
 	 * of creating new ones.
 	 */
-	function renderLegend() {
-		itemX = initialItemX;
-		itemY = padding + itemMarginTop + y - 5; // 5 is the number of pixels above the text
-		offsetWidth = 0;
-		lastItemY = 0;
+	renderLegend: function () {
+		var legend = this,
+			chart = legend.chart,
+			renderer = chart.renderer,
+			legendGroup = legend.group,
+			allItems,
+			legendWidth,
+			legendHeight,
+			box = legend.box,
+			options = legend.options,
+			padding = legend.padding,
+			widthOption = options.width,
+			legendBorderWidth = options.borderWidth,
+			legendBackgroundColor = options.backgroundColor;
+
+		legend.itemX = legend.initialItemX;
+		legend.itemY = padding + legend.itemMarginTop - 5; // 5 is the number of pixels above the text
+		legend.offsetWidth = 0;
+		legend.lastItemY = 0;
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
@@ -8390,10 +8425,9 @@ var Legend = function (chart) {
 				.add();
 		}
 
-
 		// add each series or point
-		allItems = [];
-		each(series, function (serie) {
+		legend.allItems = allItems = [];
+		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
 			if (!seriesOptions.showInLegend) {
@@ -8407,7 +8441,6 @@ var Legend = function (chart) {
 							serie.data :
 							serie)
 			);
-
 		});
 
 		// sort by legendIndex
@@ -8416,24 +8449,25 @@ var Legend = function (chart) {
 		});
 
 		// reversed legend
-		if (reversedLegend) {
+		if (options.reversed) {
 			allItems.reverse();
 		}
 
 		// render the items
-		each(allItems, renderItem);
-
+		each(allItems, function (item) {
+			legend.renderItem(item); 
+		});
 
 		// Draw the border
-		legendWidth = widthOption || offsetWidth;
-		legendHeight = lastItemY - y + itemHeight;
+		legend.legendWidth = legendWidth = widthOption || legend.offsetWidth;
+		legend.legendHeight = legendHeight = legend.lastItemY + legend.itemHeight;
 
 		if (legendBorderWidth || legendBackgroundColor) {
-			legendWidth += padding;
-			legendHeight += padding;
+			legend.legendWidth = legendWidth += padding;
+			legend.legendHeight = legendHeight += padding;
 
 			if (!box) {
-				box = renderer.rect(
+				legend.box = box = renderer.rect(
 					0,
 					0,
 					legendWidth,
@@ -8459,10 +8493,12 @@ var Legend = function (chart) {
 			// hide the border if no items
 			box[allItems.length ? 'show' : 'hide']();
 		}
-		
+
 		// Now that the legend width and height are extablished, put the items in the 
 		// final position
-		each(allItems, positionItem);
+		each(allItems, function (item) {
+			legend.positionItem(item);
+		});
 
 		// 1.x compatibility: positioning based on style
 		/*var props = ['left', 'right', 'top', 'bottom'],
@@ -8484,33 +8520,29 @@ var Legend = function (chart) {
 		}
 
 		if (!chart.isResizing) {
-			positionCheckboxes();
+			this.positionCheckboxes();
 		}
+	},
+
+	init: function () {
+		var legend = this;
+
+		// run legend
+		legend.renderLegend();
+
+		// move checkboxes
+		addEvent(legend.chart, 'endResize', legend.positionCheckboxes);
+
+/*		// expose
+		return {
+			colorizeItem: colorizeItem,
+			destroyItem: destroyItem,
+			renderLegend: renderLegend,
+			destroy: destroy,
+			getLegendWidth: getLegendWidth,
+			getLegendHeight: getLegendHeight
+		};*/
 	}
-
-	function getLegendWidth() {
-		return legendWidth;
-	}
-
-	function getLegendHeight() {
-		return legendHeight;
-	}
-
-	// run legend
-	renderLegend();
-
-	// move checkboxes
-	addEvent(chart, 'endResize', positionCheckboxes);
-
-	// expose
-	return {
-		colorizeItem: colorizeItem,
-		destroyItem: destroyItem,
-		renderLegend: renderLegend,
-		destroy: destroy,
-		getLegendWidth: getLegendWidth,
-		getLegendHeight: getLegendHeight
-	};
 };
 
 
@@ -9299,14 +9331,14 @@ Chart.prototype = {
 				if (!defined(optionsMarginRight)) {
 					chart.marginRight = mathMax(
 						chart.marginRight,
-						legend.getLegendWidth() - legendX + legendMargin + spacingRight
+						legend.legendWidth - legendX + legendMargin + spacingRight
 					);
 				}
 			} else if (align === 'left') {
 				if (!defined(optionsMarginLeft)) {
 					chart.plotLeft = mathMax(
 						chart.plotLeft,
-						legend.getLegendWidth() + legendX + legendMargin + spacingLeft
+						legend.legendWidth + legendX + legendMargin + spacingLeft
 					);
 				}
 
@@ -9314,7 +9346,7 @@ Chart.prototype = {
 				if (!defined(optionsMarginTop)) {
 					chart.plotTop = mathMax(
 						chart.plotTop,
-						legend.getLegendHeight() + legendY + legendMargin + spacingTop
+						legend.legendHeight + legendY + legendMargin + spacingTop
 					);
 				}
 
@@ -9322,7 +9354,7 @@ Chart.prototype = {
 				if (!defined(optionsMarginBottom)) {
 					chart.marginBottom = mathMax(
 						chart.marginBottom,
-						legend.getLegendHeight() - legendY + legendMargin + spacingBottom
+						legend.legendHeight - legendY + legendMargin + spacingBottom
 					);
 				}
 			}

@@ -784,14 +784,14 @@ Chart.prototype = {
 				if (!defined(optionsMarginRight)) {
 					chart.marginRight = mathMax(
 						chart.marginRight,
-						legend.getLegendWidth() - legendX + legendMargin + spacingRight
+						legend.legendWidth - legendX + legendMargin + spacingRight
 					);
 				}
 			} else if (align === 'left') {
 				if (!defined(optionsMarginLeft)) {
 					chart.plotLeft = mathMax(
 						chart.plotLeft,
-						legend.getLegendWidth() + legendX + legendMargin + spacingLeft
+						legend.legendWidth + legendX + legendMargin + spacingLeft
 					);
 				}
 
@@ -799,7 +799,7 @@ Chart.prototype = {
 				if (!defined(optionsMarginTop)) {
 					chart.plotTop = mathMax(
 						chart.plotTop,
-						legend.getLegendHeight() + legendY + legendMargin + spacingTop
+						legend.legendHeight + legendY + legendMargin + spacingTop
 					);
 				}
 
@@ -807,7 +807,7 @@ Chart.prototype = {
 				if (!defined(optionsMarginBottom)) {
 					chart.marginBottom = mathMax(
 						chart.marginBottom,
-						legend.getLegendHeight() - legendY + legendMargin + spacingBottom
+						legend.legendHeight - legendY + legendMargin + spacingBottom
 					);
 				}
 			}
