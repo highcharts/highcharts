@@ -8990,9 +8990,8 @@ Chart.prototype = {
 	 * Display the zoom button
 	 */
 	showResetZoom: function () {
-		var chart = this;
-
-		var lang = defaultOptions.lang,
+		var chart = this,
+			lang = defaultOptions.lang,
 			btnOptions = chart.options.chart.resetZoomButton,
 			theme = btnOptions.theme,
 			states = theme.states,
@@ -9015,7 +9014,8 @@ Chart.prototype = {
 	 * Zoom out to 1:1
 	 */
 	zoomOut: function () {
-		var resetZoomButton = chart.resetZoomButton;
+		var chart = this,
+			resetZoomButton = chart.resetZoomButton;
 
 		fireEvent(chart, 'selection', { resetSelection: true }, function () { chart.zoom(); });
 		if (resetZoomButton) {
@@ -9029,7 +9029,8 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		// add button to reset selection
-		var animate = chart.pointCount < 100,
+		var chart = this,
+			animate = chart.pointCount < 100,
 			hasZoomed;
 
 		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
