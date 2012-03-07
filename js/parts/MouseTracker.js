@@ -260,7 +260,7 @@ MouseTracker.prototype = {
 								});
 						}
 					});
-					fireEvent(chart, 'selection', selectionData, chart.zoom);
+					fireEvent(chart, 'selection', selectionData, function (args) { chart.zoom(args); });
 
 				}
 				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();

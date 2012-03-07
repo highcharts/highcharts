@@ -683,7 +683,7 @@ Highcharts.Scroller = function (chart) {
 
 
 			// an x axis is required for scrollbar also
-			xAxis = new chart.Axis(merge({
+			xAxis = new Axis(merge({
 				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
 			}, navigatorOptions.xAxis, {
 				isX: true,
@@ -701,7 +701,7 @@ Highcharts.Scroller = function (chart) {
 				zoomEnabled: false
 			}));
 
-			yAxis = new chart.Axis(merge(navigatorOptions.yAxis, {
+			yAxis = new Axis(merge(navigatorOptions.yAxis, {
 				alignTicks: false, // docs
 				height: height,
 				top: top,

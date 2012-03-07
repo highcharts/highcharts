@@ -7797,7 +7797,7 @@ MouseTracker.prototype = {
 								});
 						}
 					});
-					fireEvent(chart, 'selection', selectionData, chart.zoom);
+					fireEvent(chart, 'selection', selectionData, function (args) { chart.zoom(args); });
 
 				}
 				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();
@@ -9965,7 +9965,6 @@ Chart.prototype = {
 
 		// Expose methods and variables
 		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
-		chart.Axis = Axis;
 		chart.setSize = chart.resize;
 		chart.pointCount = 0;
 		chart.counters = new ChartCounters();

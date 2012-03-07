@@ -1314,8 +1314,8 @@ Chart.prototype = {
 			delete chart[i];
 		}
 
-		chart = null;
 		chart.options = null;
+		chart = null;
 	},
 
 	/**
@@ -1431,7 +1431,6 @@ Chart.prototype = {
 
 		// Expose methods and variables
 		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
-		chart.Axis = Axis;
 		chart.setSize = chart.resize;
 		chart.pointCount = 0;
 		chart.counters = new ChartCounters();
