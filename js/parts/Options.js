@@ -207,12 +207,13 @@ defaultOptions = {
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
-		style: {
+		/*style: {
 			padding: '5px'
-		},
+		},*/
 		itemStyle: {
 			cursor: 'pointer',
-			color: '#3E576F'
+			color: '#3E576F',
+			fontSize: '12px'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601

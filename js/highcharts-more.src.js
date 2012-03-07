@@ -24,8 +24,7 @@ var each = Highcharts.each,
  * http://jsfiddle.net/highcharts/DFANM/
  * 
  * TODO:
- * - Specific tooltip.pointFormat with range
- * - Tooltip position origins in the middle of the range
+ * - Duplicate data labels below and above the range
  * - Disable stateMarker (or concatenize paths for the markers?)
  * - Test series.data point config formats
  */

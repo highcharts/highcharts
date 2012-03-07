@@ -648,6 +648,11 @@ var PieSeries = extendClass(Series, {
 	drawTracker: ColumnSeries.prototype.drawTracker,
 
 	/**
+	 * Use a simple symbol from column prototype
+	 */
+	drawLegendSymbol: ColumnSeries.prototype.drawLegendSymbol,
+
+	/**
 	 * Pies don't have point marker symbols
 	 */
 	getSymbol: function () {}

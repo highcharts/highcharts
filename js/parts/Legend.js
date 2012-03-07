@@ -2,12 +2,13 @@
  * The overview of the chart's series
  */
 var Legend = function (chart) {
-	var renderer = chart.renderer,
+	var legend = this,
+		renderer = chart.renderer,
 		legendWidth,
 		legendHeight,
 		container = chart.container;
 
-	var options = chart.options.legend;
+	var options = legend.options = chart.options.legend;
 
 	if (!options.enabled) {
 		return;
@@ -17,14 +18,14 @@ var Legend = function (chart) {
 		symbolWidth = options.symbolWidth,
 		symbolPadding = options.symbolPadding,
 		allItems,
-		style = options.style,
+		//style = options.style || {}, // deprecated
 		itemStyle = options.itemStyle,
 		itemHoverStyle = options.itemHoverStyle,
 		itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
-		padding = options.padding || pInt(style.padding),
+		padding = pick(options.padding, 8), // docs
 		ltr = !options.rtl,
-		y = 18,
-		initialItemX = 4 + padding + symbolWidth + symbolPadding,
+		y = 0,
+		initialItemX = padding,
 		itemX,
 		itemY,
 		lastItemY,
@@ -40,7 +41,7 @@ var Legend = function (chart) {
 		series = chart.series,
 		reversedLegend = options.reversed;
 
-
+	legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 
 	/**
 	 * Set the colors for the legend item
@@ -72,37 +73,20 @@ var Legend = function (chart) {
 	/**
 	 * Position the legend item
 	 * @param {Object} item A Series or Point instance
-	 * @param {Object} visible Dimmed or colored
 	 */
 	function positionItem(item) {
-		var legendItem = item.legendItem,
-			legendLine = item.legendLine,
-			legendItemPos = item._legendItemPos,
+		var legendItemPos = item._legendItemPos,
 			itemX = legendItemPos[0],
 			itemY = legendItemPos[1],
-			legendSymbol = item.legendSymbol,
-			symbolX,
 			checkbox = item.checkbox;
-		
-		if (legendItem) {
-			legendItem.attr({
-				x: ltr ? itemX : legendWidth - itemX,
-				y: itemY
-			});
-		}
-		if (legendLine) {
-			legendLine.translate(
-				ltr ? itemX : legendWidth - itemX,
-				itemY - 4
+			
+		if (item.legendGroup) {
+			item.legendGroup.translate(
+				ltr ? itemX : legendWidth - itemX - 2 * symbolPadding - 4,
+				itemY
 			);
 		}
-		if (legendSymbol) {
-			symbolX = itemX + legendSymbol.xOff;
-			legendSymbol.attr({
-				x: ltr ? symbolX : legendWidth - symbolX,
-				y: itemY + legendSymbol.yOff
-			});
-		}
+		
 		if (checkbox) {
 			checkbox.x = itemX;
 			checkbox.y = itemY;
@@ -152,8 +136,8 @@ var Legend = function (chart) {
 				alignAttr = legendGroup.alignAttr;
 			if (checkbox) {
 				css(checkbox, {
-					left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 40) + PX,
-					top: (alignAttr.translateY + checkbox.y - 11) + PX
+					left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
+					top: (alignAttr.translateY + checkbox.y + 3) + PX
 				});
 			}
 		});
@@ -166,31 +150,39 @@ var Legend = function (chart) {
 	function renderItem(item) {
 		var bBox,
 			itemWidth,
-			legendSymbol,
-			symbolX,
-			symbolY,
-			simpleSymbol,
-			radius,
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			strokeWidth = (itemOptions && itemOptions.borderWidth) || 0;
+			showCheckbox = itemOptions.showCheckbox;
 
 
 		if (!li) { // generate it once, later move it
+			
+			// Generate the group box
+			// A group to hold the symbol and text. Text is to be appended in Legend class.
+			item.legendGroup = renderer.g('legend-item')
+				.attr({ zIndex: 1 })
+				.add(legend.group);
+		
+			// Draw the legend symbol inside the group box
+			series.drawLegendSymbol(legend, item);
 
-			// let these series types use a simple symbol
-			simpleSymbol = /^(bar|pie|area|column)$/.test(series.type);
-
-			// generate the list item text
+			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
 					options.labelFormatter.call(item),
-					0,
-					0,
+					ltr ? symbolWidth + symbolPadding : -symbolPadding,
+					legend.baseline,
 					options.useHTML
 				)
 				.css(item.visible ? itemStyle : itemHiddenStyle)
-				.on('mouseover', function () {
+				.attr({
+					align: ltr ? 'left' : 'right',
+					zIndex: 2
+				})
+				.add(item.legendGroup);
+
+			// Set the events on the item group
+			item.legendGroup.on('mouseover', function () {
 					item.setState(HOVER_STATE);
 					li.css(itemHoverStyle);
 				})
@@ -210,84 +202,14 @@ var Legend = function (chart) {
 					} else {
 						fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
 					}
-				})
-				.attr({
-					align: ltr ? 'left' : 'right',
-					zIndex: 2
-				})
-				.add(legendGroup);
+				});
 
-			// draw the line
-			if (!simpleSymbol && itemOptions && itemOptions.lineWidth) {
-				var attrs = {
-						'stroke-width': itemOptions.lineWidth,
-						zIndex: 2
-					};
-				if (itemOptions.dashStyle) {
-					attrs.dashstyle = itemOptions.dashStyle;
-				}
-				item.legendLine = renderer.path([
-					M,
-					(-symbolWidth - symbolPadding) * (ltr ? 1 : -1),
-					0,
-					L,
-					(-symbolPadding) * (ltr ? 1 : -1),
-					0
-				])
-				.attr(attrs)
-				.add(legendGroup);
-			}
-
-			// draw a simple symbol
-			if (simpleSymbol) { // bar|pie|area|column
-
-				legendSymbol = renderer.rect(
-					(symbolX = -symbolWidth - symbolPadding),
-					(symbolY = -11),
-					symbolWidth,
-					12,
-					2
-				).attr({
-					//'stroke-width': 0,
-					zIndex: 3
-				}).add(legendGroup);
-				
-				if (!ltr) {
-					symbolX += symbolWidth;
-				}
-				
-			} else if (itemOptions && itemOptions.marker && itemOptions.marker.enabled) { // draw the marker
-				radius = itemOptions.marker.radius;
-				legendSymbol = renderer.symbol(
-					item.symbol,
-					(symbolX = -symbolWidth / 2 - symbolPadding - radius),
-					(symbolY = -4 - radius),
-					2 * radius,
-					2 * radius
-				)
-				.attr(item.pointAttr[NORMAL_STATE])
-				.attr({ zIndex: 3 })
-				.add(legendGroup);
-				
-				if (!ltr) {
-					symbolX += symbolWidth / 2;
-				}
-
-			}
-			if (legendSymbol) {
-				
-				legendSymbol.xOff = symbolX + (strokeWidth % 2 / 2);
-				legendSymbol.yOff = symbolY + (strokeWidth % 2 / 2);
-			}
-
-			item.legendSymbol = legendSymbol;
-
-			// colorize the items
+			// Colorize the items
 			colorizeItem(item, item.visible);
 
 
 			// add the HTML checkbox on top
-			if (itemOptions && itemOptions.showCheckbox) {
+			if (itemOptions && showCheckbox) {
 				item.checkbox = createElement('input', {
 					type: 'checkbox',
 					checked: item.selected,
@@ -312,7 +234,8 @@ var Legend = function (chart) {
 		bBox = li.getBBox();
 
 		itemWidth = item.legendItemWidth =
-			options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding;
+			options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding +
+			(showCheckbox ? 20 : 0);
 		itemHeight = bBox.height;
 
 		// if the item exceeds the width, start a new line
@@ -321,7 +244,7 @@ var Legend = function (chart) {
 			itemX = initialItemX;
 			itemY += itemMarginTop + itemHeight + itemMarginBottom;
 		}
-		lastItemY = itemY + itemMarginBottom;
+		lastItemY = itemMarginTop + itemY + itemMarginBottom;
 
 		// cache the position of the newly generated or reordered items
 		item._legendItemPos = [itemX, itemY];
@@ -353,7 +276,7 @@ var Legend = function (chart) {
 		lastItemY = 0;
 
 		if (!legendGroup) {
-			legendGroup = renderer.g('legend')
+			legend.group = legendGroup = renderer.g('legend')
 				// #414, #759. Trackers will be drawn above the legend, but we have 
 				// to sacrifice that because tooltips need to be above the legend
 				// and trackers above tooltips
@@ -400,8 +323,8 @@ var Legend = function (chart) {
 		legendHeight = lastItemY - y + itemHeight;
 
 		if (legendBorderWidth || legendBackgroundColor) {
-			legendWidth += 2 * padding;
-			legendHeight += 2 * padding;
+			legendWidth += padding;
+			legendHeight += padding;
 
 			if (!box) {
 				box = renderer.rect(
@@ -436,7 +359,7 @@ var Legend = function (chart) {
 		each(allItems, positionItem);
 
 		// 1.x compatibility: positioning based on style
-		var props = ['left', 'right', 'top', 'bottom'],
+		/*var props = ['left', 'right', 'top', 'bottom'],
 			prop,
 			i = 4;
 		while (i--) {
@@ -445,7 +368,7 @@ var Legend = function (chart) {
 				options[i < 2 ? 'align' : 'verticalAlign'] = prop;
 				options[i < 2 ? 'x' : 'y'] = pInt(style[prop]) * (i % 2 ? -1 : 1);
 			}
-		}
+		}*/
 
 		if (allItems.length) {
 			legendGroup.align(extend(options, {
