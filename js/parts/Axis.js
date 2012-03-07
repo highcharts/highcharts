@@ -25,8 +25,9 @@ function Axis(chart, userOptions) {
 		);
 
 	var type = options.type,
-		isDatetimeAxis = type === 'datetime',
-		labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
+		isDatetimeAxis = type === 'datetime';
+
+	axis.labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 			function () {
 				var value = this.value,
 					dateTimeLabelFormat = this.dateTimeLabelFormat,
@@ -52,14 +53,6 @@ function Axis(chart, userOptions) {
 
 	// Flag, stagger lines or not
 	axis.staggerLines = axis.horiz && options.labels.staggerLines;
-
-	// TODO: Remove when chart is prototyped
-	axis.tickContext = new TickContext(
-			axis,
-			labelFormatter,
-			(options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0 //tickmarkOffset,
-		);
-
 	axis.userOptions = userOptions;
 
 	//axis.axisTitleMargin = UNDEFINED,// = options.title.margin,
@@ -1135,7 +1128,7 @@ Axis.prototype = {
 		if (hasData || axis.isLinked) {
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
-					ticks[pos] = new Tick(axis.tickContext, pos);
+					ticks[pos] = new Tick(axis, pos);
 				} else {
 					ticks[pos].addLabel(); // update labels depending on tick interval
 				}
@@ -1261,7 +1254,7 @@ Axis.prototype = {
 			if (axis.minorTickInterval && !axis.categories) {
 				each(axis.getMinorTickPositions(), function (pos) {
 					if (!minorTicks[pos]) {
-						minorTicks[pos] = new Tick(axis.tickContext, pos, 'minor');
+						minorTicks[pos] = new Tick(axis, pos, 'minor');
 					}
 
 					// render new ticks in old position
@@ -1281,7 +1274,7 @@ Axis.prototype = {
 				if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
 
 					if (!ticks[pos]) {
-						ticks[pos] = new Tick(axis.tickContext, pos);
+						ticks[pos] = new Tick(axis, pos);
 					}
 
 					// render new ticks in old position

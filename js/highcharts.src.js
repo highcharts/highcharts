@@ -818,12 +818,14 @@ function arrayMax(data) {
  * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
  * It loops all properties and invokes destroy if there is a destroy method. The property is
  * then delete'ed.
+ * @param {Object} The object to destroy properties on
+ * @param {Object} Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj) {
+function destroyObjectProperties(obj, except) {
 	var n;
 	for (n in obj) {
 		// If the object is non-null and destroy is defined
-		if (obj[n] && obj[n].destroy) {
+		if (obj[n] && obj[n] !== except && obj[n].destroy) {
 			// Invoke the destroy
 			obj[n].destroy();
 		}
@@ -5020,25 +5022,10 @@ if (useCanVG) {
  */
 Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;
 /**
- * Context holding the variables that were in local closure in the chart.
- */
-function TickContext(
-		axis,
-		labelFormatter,
-		tickmarkOffset
-	) {
-	return {
-		axis: axis, // object
-		labelFormatter: labelFormatter, // function
-		tickmarkOffset: tickmarkOffset // constant
-	};
-}
-
-/**
  * The Tick class
  */
-function Tick(context, pos, type) {
-	this.cx = context;
+function Tick(axis, pos, type) {
+	this.axis = axis;
 	this.pos = pos;
 	this.type = type || '';
 	this.isNew = true;
@@ -5054,8 +5041,7 @@ Tick.prototype = {
 	 */
 	addLabel: function () {
 		var tick = this,
-			context = this.cx,
-			axis = context.axis,
+			axis = tick.axis,
 			options = axis.options,
 			chart = axis.chart,
 			horiz = axis.horiz,
@@ -5088,7 +5074,7 @@ Tick.prototype = {
 		tick.isLast = isLast;
 
 		// get the string
-		str = context.labelFormatter.call({
+		str = axis.labelFormatter.call({
 			axis: axis,
 			chart: chart,
 			isFirst: isFirst,
@@ -5133,9 +5119,10 @@ Tick.prototype = {
 	 * Get the offset height or width of the label
 	 */
 	getLabelSize: function () {
-		var label = this.label;
+		var label = this.label,
+			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox()))[this.cx.axis.horiz ? 'height' : 'width'] :
+			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
 			0;
 		},
 
@@ -5147,8 +5134,7 @@ Tick.prototype = {
 	 */
 	render: function (index, old) {
 		var tick = this,
-			context = tick.cx,
-			axis = context.axis,
+			axis = tick.axis,
 			options = axis.options,
 			chart = axis.chart,
 			renderer = chart.renderer,
@@ -5174,20 +5160,21 @@ Tick.prototype = {
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			attribs,
 			x,
-			y;
+			y,
+			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0; //tickmarkOffset,
 
 		// get x and y position for ticks and labels
 		x = horiz ?
-			axis.translate(pos + context.tickmarkOffset, null, null, old) + axis.transB :
-			axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - tick.cx.axis.left : 0);
+			axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
+			axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left : 0);
 
 		y = horiz ?
 			cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
-			cHeight - axis.translate(pos + context.tickmarkOffset, null, null, old) - axis.transB;
+			cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB;
 
 		// create the grid line
 		if (gridLineWidth) {
-			gridLinePath = axis.getPlotLinePath(pos + context.tickmarkOffset, gridLineWidth, old);
+			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth, old);
 
 			if (gridLine === UNDEFINED) {
 				attribs = {
@@ -5252,10 +5239,10 @@ Tick.prototype = {
 
 		// the label is created on init - now move it into place
 		if (label && !isNaN(x)) {
-			x = x + labelOptions.x - (context.tickmarkOffset && horiz ?
-				context.tickmarkOffset * axis.transA * (axis.reversed ? -1 : 1) : 0);
-			y = y + labelOptions.y - (context.tickmarkOffset && !horiz ?
-				context.tickmarkOffset * axis.transA * (axis.reversed ? 1 : -1) : 0);
+			x = x + labelOptions.x - (tickmarkOffset && horiz ?
+				tickmarkOffset * axis.transA * (axis.reversed ? -1 : 1) : 0);
+			y = y + labelOptions.y - (tickmarkOffset && !horiz ?
+				tickmarkOffset * axis.transA * (axis.reversed ? 1 : -1) : 0);
 
 			// vertically centered
 			if (!defined(labelOptions.y)) {
@@ -5296,7 +5283,7 @@ Tick.prototype = {
 	 * Destructor for the tick prototype
 	 */
 	destroy: function () {
-		destroyObjectProperties(this);
+		destroyObjectProperties(this, this.axis);
 	}
 };
 
@@ -5483,7 +5470,7 @@ PlotLineOrBand.prototype = {
 		// remove it from the lookup
 		erase(axis.plotLinesAndBands, plotLine);
 
-		destroyObjectProperties(plotLine);
+		destroyObjectProperties(plotLine, this.axis);
 	}
 };
 /**
@@ -5521,7 +5508,7 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 StackItem.prototype = {
 	destroy: function () {
-		destroyObjectProperties(this);
+		destroyObjectProperties(this, this.axis);
 	},
 
 	/**
@@ -5609,8 +5596,9 @@ function Axis(chart, userOptions) {
 		);
 
 	var type = options.type,
-		isDatetimeAxis = type === 'datetime',
-		labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
+		isDatetimeAxis = type === 'datetime';
+	
+	axis.labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
 			function () {
 				var value = this.value,
 					dateTimeLabelFormat = this.dateTimeLabelFormat,
@@ -5636,14 +5624,6 @@ function Axis(chart, userOptions) {
 
 	// Flag, stagger lines or not
 	axis.staggerLines = axis.horiz && options.labels.staggerLines;
-
-	// TODO: Remove when chart is prototyped
-	axis.tickContext = new TickContext(
-			axis,
-			labelFormatter,
-			(options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0 //tickmarkOffset,
-		);
-
 	axis.userOptions = userOptions;
 
 	//axis.axisTitleMargin = UNDEFINED,// = options.title.margin,
@@ -6719,7 +6699,7 @@ Axis.prototype = {
 		if (hasData || axis.isLinked) {
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
-					ticks[pos] = new Tick(axis.tickContext, pos);
+					ticks[pos] = new Tick(axis, pos);
 				} else {
 					ticks[pos].addLabel(); // update labels depending on tick interval
 				}
@@ -6845,7 +6825,7 @@ Axis.prototype = {
 			if (axis.minorTickInterval && !axis.categories) {
 				each(axis.getMinorTickPositions(), function (pos) {
 					if (!minorTicks[pos]) {
-						minorTicks[pos] = new Tick(axis.tickContext, pos, 'minor');
+						minorTicks[pos] = new Tick(axis, pos, 'minor');
 					}
 
 					// render new ticks in old position
@@ -6865,7 +6845,7 @@ Axis.prototype = {
 				if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
 
 					if (!ticks[pos]) {
-						ticks[pos] = new Tick(axis.tickContext, pos);
+						ticks[pos] = new Tick(axis, pos);
 					}
 
 					// render new ticks in old position

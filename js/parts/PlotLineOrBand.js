@@ -181,6 +181,6 @@ PlotLineOrBand.prototype = {
 		// remove it from the lookup
 		erase(axis.plotLinesAndBands, plotLine);
 
-		destroyObjectProperties(plotLine);
+		destroyObjectProperties(plotLine, this.axis);
 	}
 };

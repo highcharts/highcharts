@@ -33,7 +33,7 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 StackItem.prototype = {
 	destroy: function () {
-		destroyObjectProperties(this);
+		destroyObjectProperties(this, this.axis);
 	},
 
 	/**

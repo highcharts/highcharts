@@ -684,12 +684,14 @@ function arrayMax(data) {
  * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
  * It loops all properties and invokes destroy if there is a destroy method. The property is
  * then delete'ed.
+ * @param {Object} The object to destroy properties on
+ * @param {Object} Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj) {
+function destroyObjectProperties(obj, except) {
 	var n;
 	for (n in obj) {
 		// If the object is non-null and destroy is defined
-		if (obj[n] && obj[n].destroy) {
+		if (obj[n] && obj[n] !== except && obj[n].destroy) {
 			// Invoke the destroy
 			obj[n].destroy();
 		}
