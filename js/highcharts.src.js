@@ -5559,6 +5559,42 @@ function Chart(options, callback) {
 					} else {
 						// show those that may have been previously hidden, either by show first/last, or by step
 						label.show();
+						
+						if (tick.isLast && horiz) {
+							var bBox = label.getBBox(),
+								rightOfX = bBox.width * { left: 1, center: 0.5, right: 0 }[labelOptions.align] + labelOptions.x,
+								leftOfX = bBox.width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] + labelOptions.x,
+								plotRight = chart.plotLeft + axis.len;
+							
+							if (x + rightOfX > plotRight) {
+								var neighbour = ticks[tickPositions[index - 1]],
+									neighbourBBox = neighbour.label.getBBox(),
+									neighbourX = neighbourBBox.x + neighbourBBox.width;
+								
+								x = plotRight - rightOfX;
+								
+								if (x - leftOfX < neighbourX) {
+									label.hide();
+								}
+								
+							}
+						} else if (tick.isFirst && horiz) {
+							var bBox = label.getBBox(),
+								rightOfX = bBox.width * { left: 1, center: 0.5, right: 0 }[labelOptions.align] + labelOptions.x,
+								leftOfX = bBox.width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] + labelOptions.x;
+								
+							if (x - leftOfX < chart.plotLeft) {
+								var neighbour = ticks[tickPositions[index + 1]],
+									neighbourBBox = neighbour.label.getBBox(),
+									neighbourX = neighbourBBox.x;
+								
+								x = chart.plotLeft + leftOfX;
+								
+								if (x + rightOfX > neighbourX) {
+									label.hide();
+								}
+							}							
+						}
 					}
 
 					// apply step
@@ -6881,8 +6917,13 @@ function Chart(options, callback) {
 					});
 				}
 
-				// major ticks
-				each(tickPositions, function (pos, i) {
+				// Major ticks. Pull out the first item and render it last so that
+				// we can get the position of the neighbour label. #808.
+				each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
+					
+					// Reorganize the indices
+					i = (i === tickPositions.length - 1) ? 0 : i + 1;
+					
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= min && pos <= max)) {
 
@@ -8078,14 +8119,16 @@ function Chart(options, callback) {
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
 			ltr = !options.rtl,
+			itemMarginTop = options.itemMarginTop || 0,
+			itemMarginBottom = options.itemMarginBottom || 0,
 			y = 18,
+			maxItemWidth = 0,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
+			initialItemY = padding + itemMarginTop + y - 5, // 5 is the number of pixels above the text
 			itemX,
 			itemY,
 			lastItemY,
 			itemHeight = 0,
-			itemMarginTop = options.itemMarginTop || 0,
-			itemMarginBottom = options.itemMarginBottom || 0,
 			box,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
@@ -8376,8 +8419,18 @@ function Chart(options, callback) {
 				itemX = initialItemX;
 				itemY += itemMarginTop + itemHeight + itemMarginBottom;
 			}
-			lastItemY = itemY + itemMarginBottom;
+			
+			// If the item exceeds the height, start a new column
+			if (!horizontal && itemY + options.y + itemHeight > chartHeight - spacingTop - spacingBottom) {
+				itemY = initialItemY;
+				itemX += maxItemWidth;
+				maxItemWidth = 0;
+			}
 
+			// Set the edge positions
+			maxItemWidth = mathMax(maxItemWidth, itemWidth);
+			lastItemY = mathMax(lastItemY, itemY + itemMarginBottom);
+			
 			// cache the position of the newly generated or reordered items
 			item._legendItemPos = [itemX, itemY];
 
@@ -8390,7 +8443,7 @@ function Chart(options, callback) {
 
 			// the width of the widest item
 			offsetWidth = widthOption || mathMax(
-				horizontal ? itemX - initialItemX : itemWidth,
+				(itemX - initialItemX) + (horizontal ? 0 : itemWidth),
 				offsetWidth
 			);
 
@@ -8403,7 +8456,7 @@ function Chart(options, callback) {
 		 */
 		function renderLegend() {
 			itemX = initialItemX;
-			itemY = padding + itemMarginTop + y - 5; // 5 is the number of pixels above the text
+			itemY = initialItemY;
 			offsetWidth = 0;
 			lastItemY = 0;
 

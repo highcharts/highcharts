@@ -2980,14 +2980,16 @@ function Chart(options, callback) {
 			itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
 			padding = options.padding || pInt(style.padding),
 			ltr = !options.rtl,
+			itemMarginTop = options.itemMarginTop || 0,
+			itemMarginBottom = options.itemMarginBottom || 0,
 			y = 18,
+			maxItemWidth = 0,
 			initialItemX = 4 + padding + symbolWidth + symbolPadding,
+			initialItemY = padding + itemMarginTop + y - 5, // 5 is the number of pixels above the text
 			itemX,
 			itemY,
 			lastItemY,
 			itemHeight = 0,
-			itemMarginTop = options.itemMarginTop || 0,
-			itemMarginBottom = options.itemMarginBottom || 0,
 			box,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
@@ -3278,8 +3280,18 @@ function Chart(options, callback) {
 				itemX = initialItemX;
 				itemY += itemMarginTop + itemHeight + itemMarginBottom;
 			}
-			lastItemY = itemY + itemMarginBottom;
+			
+			// If the item exceeds the height, start a new column
+			if (!horizontal && itemY + options.y + itemHeight > chartHeight - spacingTop - spacingBottom) {
+				itemY = initialItemY;
+				itemX += maxItemWidth;
+				maxItemWidth = 0;
+			}
 
+			// Set the edge positions
+			maxItemWidth = mathMax(maxItemWidth, itemWidth);
+			lastItemY = mathMax(lastItemY, itemY + itemMarginBottom);
+			
 			// cache the position of the newly generated or reordered items
 			item._legendItemPos = [itemX, itemY];
 
@@ -3292,7 +3304,7 @@ function Chart(options, callback) {
 
 			// the width of the widest item
 			offsetWidth = widthOption || mathMax(
-				horizontal ? itemX - initialItemX : itemWidth,
+				(itemX - initialItemX) + (horizontal ? 0 : itemWidth),
 				offsetWidth
 			);
 
@@ -3305,7 +3317,7 @@ function Chart(options, callback) {
 		 */
 		function renderLegend() {
 			itemX = initialItemX;
-			itemY = padding + itemMarginTop + y - 5; // 5 is the number of pixels above the text
+			itemY = initialItemY;
 			offsetWidth = 0;
 			lastItemY = 0;
 
