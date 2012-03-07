@@ -7114,23 +7114,17 @@ Axis.prototype = {
 			stacks[stackKey] = null;
 		}
 
-		// Destroy stack total group
-		if (axis.stackTotalGroup) {
-			axis.stackTotalGroup = axis.stackTotalGroup.destroy();
-		}
-
 		// Destroy collections
 		each([axis.ticks, axis.minorTicks, axis.alternateBands, axis.plotLinesAndBands], function (coll) {
 			destroyObjectProperties(coll);
 		});
 
 		// Destroy local variables
-		each([axis.axisLine, axis.axisGroup, axis.gridGroup, axis.axisTitle], function (obj) {
-			if (obj) {
-				obj.destroy();
+		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'axisTitle'], function (prop) {
+			if (axis[prop]) {
+				axis[prop] = axis[prop].destroy();
 			}
 		});
-		axis.axisLine = axis.axisGroup = axis.gridGroup = axis.axisTitle = null;
 	},
 
 
