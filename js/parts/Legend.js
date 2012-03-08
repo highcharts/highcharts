@@ -106,7 +106,7 @@ Legend.prototype = {
 		var checkbox = item.checkbox;
 
 		// destroy SVG elements
-		each(['legendItem', 'legendLine', 'legendSymbol'], function (key) {
+		each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
 			if (item[key]) {
 				item[key].destroy();
 			}
@@ -320,7 +320,7 @@ Legend.prototype = {
 		}
 
 		// add each series or point
-		legend.allItems = allItems = [];
+		allItems = [];
 		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
@@ -346,6 +346,8 @@ Legend.prototype = {
 		if (options.reversed) {
 			allItems.reverse();
 		}
+
+		legend.allItems = allItems;
 
 		// render the items
 		each(allItems, function (item) {
@@ -425,7 +427,7 @@ Legend.prototype = {
 		legend.renderLegend();
 
 		// move checkboxes
-		addEvent(legend.chart, 'endResize', legend.positionCheckboxes);
+		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
 
 /*		// expose
 		return {

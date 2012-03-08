@@ -8199,7 +8199,7 @@ Legend.prototype = {
 		var checkbox = item.checkbox;
 
 		// destroy SVG elements
-		each(['legendItem', 'legendLine', 'legendSymbol'], function (key) {
+		each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
 			if (item[key]) {
 				item[key].destroy();
 			}
@@ -8413,7 +8413,7 @@ Legend.prototype = {
 		}
 
 		// add each series or point
-		legend.allItems = allItems = [];
+		allItems = [];
 		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
@@ -8439,6 +8439,8 @@ Legend.prototype = {
 		if (options.reversed) {
 			allItems.reverse();
 		}
+
+		legend.allItems = allItems;
 
 		// render the items
 		each(allItems, function (item) {
@@ -8518,7 +8520,7 @@ Legend.prototype = {
 		legend.renderLegend();
 
 		// move checkboxes
-		addEvent(legend.chart, 'endResize', legend.positionCheckboxes);
+		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
 
 /*		// expose
 		return {
@@ -9823,7 +9825,7 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		each(['title', 'subtitle', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 'rangeSelector'], function (name) {
+		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
 			if (prop) {
@@ -9848,8 +9850,8 @@ Chart.prototype = {
 			delete chart[i];
 		}
 
-		chart = null;
 		chart.options = null;
+		chart = null;
 	},
 
 	/**
@@ -11646,7 +11648,7 @@ Series.prototype = {
 		}
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function (prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker', 'trackerGroup'], function (prop) {
 			if (series[prop]) {
 
 				// issue 134 workaround
