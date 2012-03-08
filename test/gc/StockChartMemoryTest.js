@@ -62,6 +62,10 @@ StockChartMemoryTest.prototype.getBaseConfig = function () {
 			}
 		},
 
+		xAxis: {
+			ordinal: false
+		},
+
 		tooltip: {
 			crosshairs: [true, true],
 			shadow: true
@@ -79,7 +83,7 @@ StockChartMemoryTest.prototype.getBaseConfig = function () {
 StockChartMemoryTest.prototype.getConfig = function () {
 	return {
 		chart: {
-			type: 'scatter'
+			type: 'line'
 		}
 	};
 };

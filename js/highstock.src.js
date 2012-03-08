@@ -8752,7 +8752,7 @@ Chart.prototype = {
 		});
 
 		// handle added or removed series
-		if (redrawLegend && legend.renderLegend) { // series or pie points are added or removed
+		if (redrawLegend && legend.options.enabled) { // series or pie points are added or removed
 			// draw legend graphics
 			legend.renderLegend();
 
@@ -15457,7 +15457,7 @@ Highcharts.Scroller = function (chart) {
 
 
 			// an x axis is required for scrollbar also
-			xAxis = new Axis(merge({
+			xAxis = new Axis(chart, merge({
 				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
 			}, navigatorOptions.xAxis, {
 				isX: true,
@@ -15475,7 +15475,7 @@ Highcharts.Scroller = function (chart) {
 				zoomEnabled: false
 			}));
 
-			yAxis = new Axis(merge(navigatorOptions.yAxis, {
+			yAxis = new Axis(chart, merge(navigatorOptions.yAxis, {
 				alignTicks: false, // docs
 				height: height,
 				top: top,

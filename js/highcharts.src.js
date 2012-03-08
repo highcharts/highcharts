@@ -8752,7 +8752,7 @@ Chart.prototype = {
 		});
 
 		// handle added or removed series
-		if (redrawLegend && legend.renderLegend) { // series or pie points are added or removed
+		if (redrawLegend && legend.options.enabled) { // series or pie points are added or removed
 			// draw legend graphics
 			legend.renderLegend();
 
