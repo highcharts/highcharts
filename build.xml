@@ -262,6 +262,9 @@
 
     <!-- Runs google closure compiler and yui compressor on src. -->
     <target name="compile">
+        <!-- This command sets the logging level in current task to only include echo messages. -->
+        <script language="javascript">project.getBuildListeners().firstElement().setMessageOutputLevel(1);</script>
+
         <echo message="Minifying ${param.src}"/>
         <java jar="${gcc.jar}" fork="true">
             <arg value="--compilation_level"/>
@@ -280,11 +283,22 @@
         </java>
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
+        <!-- Create a temporary zipfile to get the zipped size -->
+        <copy file="${param.out}" tofile="${build.dir}/zipme.js"/>
+        <zip destfile="${build.dir}/zipped.zip" basedir="${build.dir}" includes="zipme.js"/>
+        <length file="${build.dir}/zipped.zip" property="zipped.output.length"/>
+
         <length file="${param.out}.yui-min.js" property="yuicomp.output.length"/>
+        <!-- Create a temporary zipfile to get the zipped size -->
+        <copy file="${param.out}.yui-min.js" tofile="${build.dir}/yuizipme.js"/>
+        <zip destfile="${build.dir}/yuizipped.zip" basedir="${build.dir}" includes="yuizipme.js"/>
+        <length file="${build.dir}/yuizipped.zip" property="yui.zipped.output.length"/>
         <!-- We are not distributing this file, its only used to make sure compilation works. -->
         <delete file="${param.out}.yui-min.js" quiet="true"/>
-        <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
-        <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes."/>
+
+        <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)."/>
+        <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)."/>
+        <echo message=""/>
     </target>
 
     <!-- Runs minifiers on source code. -->
