@@ -16486,7 +16486,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				// Don't show ticks within a gap in the ordinal axis, where the space between
 				// two points is greater than a portion of the tick pixel interval
 				if (findHigherRanks && defined(tickPixelIntervalOption)) { // check for squashed ticks
-					var i = groupPositions.length,
+					
+					var length = groupPositions.length,
+						i = length,
 						itemToRemove,
 						translated,
 						translatedArr = [],
@@ -16511,7 +16513,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					}
 					
 					// Now loop over again and remove ticks where needed
-					i = groupPositions.length;
+					i = groupPositions[length - 1] > max ? length - 1 : length; // #817
 					lastTranslated = undefined;
 					while (i--) {
 						translated = translatedArr[i];
