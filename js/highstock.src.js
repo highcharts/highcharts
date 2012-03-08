@@ -14299,8 +14299,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 
 		// relate to a master series
-		if (onSeries) {
+		if (onSeries && onSeries.points && onSeries.points.length > 0) {
 			onData = onSeries.points;
+			i = onData.length;
 			lastX = onData[i - 1].x;
 
 			// sort the data points
