@@ -1673,7 +1673,8 @@ defaultBottomAxisOptions = { // horizontal axis
 	labels: {
 		align: 'center',
 		x: 0,
-		y: 14
+		y: 14,
+		overflow: 'justify' // docs
 		// staggerLines: null
 	},
 	title: {
@@ -1682,7 +1683,8 @@ defaultBottomAxisOptions = { // horizontal axis
 },
 defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 	labels: {
-		y: -5
+		y: -5,
+		overflow: 'justify'
 		// staggerLines: null
 	}
 });
@@ -5428,7 +5430,76 @@ function Chart(options, callback) {
 				return label ?
 					((this.labelBBox = label.getBBox()))[horiz ? 'height' : 'width'] :
 					0;
-				},
+			},
+			
+			/**
+			 * Find how far the labels extend to the right and left of the tick's x position. Used for anti-collision
+			 * detection with overflow logic.
+			 */
+			getLabelSides: function () {
+				var bBox = this.labelBBox, // assume getLabelSize has run at this point
+					labelOptions = options.labels,
+					width = bBox.width,
+					leftSide = width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] - labelOptions.x;
+					
+				return [-leftSide, width - leftSide];				
+			},
+			
+			/**
+			 * Handle the label overflow by adjusting the labels to the left and right edge, or
+			 * hide them if they collide into the neighbour label.
+			 */
+			handleOverflow: function (index) {
+				var show = true,
+					isFirst = this.isFirst,
+					isLast = this.isLast,
+					label = this.label,
+					x = label.x;
+					
+				if (isFirst || isLast) {
+					
+					var sides = this.getLabelSides(),
+						leftSide = sides[0],
+						rightSide = sides[1],
+						plotLeft = chart.plotLeft,
+						plotRight = plotLeft + axis.len,
+						neighbour = ticks[tickPositions[index + (isFirst ? 1 : -1)]],
+						neighbourEdge = neighbour.label.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+					
+					if ((isFirst && !reversed) || (isLast && reversed)) {
+						// Is the label spilling out to the left of the plot area?
+						if (x + leftSide < plotLeft) {
+							
+							// Align it to plot left
+							x = plotLeft - leftSide;
+							
+							// Hide it if it now overlaps the neighbour label
+							if (x + rightSide > neighbourEdge) {
+								show = false;
+							}
+						}
+										
+					} else {
+						// Is the label spilling out to the right of the plot area?
+						if (x + rightSide > plotRight) {
+							
+							// Align it to plot right
+							x = plotRight - rightSide;
+							
+							// Hide it if it now overlaps the neighbour label
+							if (x + leftSide < neighbourEdge) {
+								show = false;
+							}
+							
+						}
+					}
+					
+					// Set the modified x position of the label
+					label.x = x;
+				}
+				return show;
+			},
+			
 			/**
 			 * Put everything in place
 			 *
@@ -5457,6 +5528,7 @@ function Chart(options, callback) {
 					step = labelOptions.step,
 					cHeight = (old && oldChartHeight) || chartHeight,
 					attribs,
+					show = true,
 					x,
 					y;
 
@@ -5551,66 +5623,43 @@ function Chart(options, callback) {
 					if (staggerLines) {
 						y += (index / (step || 1) % staggerLines) * 16;
 					}
+					
+					// Cache x and y to be able to read final position before animation
+					label.x = x;
+					label.y = y;
 
 					// apply show first and show last
 					if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
 							(tick.isLast && !pick(options.showLastLabel, 1))) {
-						label.hide();
-					} else {
-						// show those that may have been previously hidden, either by show first/last, or by step
-						label.show();
+						show = false;
 						
-						if (tick.isLast && horiz) {
-							var bBox = label.getBBox(),
-								rightOfX = bBox.width * { left: 1, center: 0.5, right: 0 }[labelOptions.align] + labelOptions.x,
-								leftOfX = bBox.width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] + labelOptions.x,
-								plotRight = chart.plotLeft + axis.len;
-							
-							if (x + rightOfX > plotRight) {
-								var neighbour = ticks[tickPositions[index - 1]],
-									neighbourBBox = neighbour.label.getBBox(),
-									neighbourX = neighbourBBox.x + neighbourBBox.width;
-								
-								x = plotRight - rightOfX;
-								
-								if (x - leftOfX < neighbourX) {
-									label.hide();
-								}
-								
-							}
-						} else if (tick.isFirst && horiz) {
-							var bBox = label.getBBox(),
-								rightOfX = bBox.width * { left: 1, center: 0.5, right: 0 }[labelOptions.align] + labelOptions.x,
-								leftOfX = bBox.width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] + labelOptions.x;
-								
-							if (x - leftOfX < chart.plotLeft) {
-								var neighbour = ticks[tickPositions[index + 1]],
-									neighbourBBox = neighbour.label.getBBox(),
-									neighbourX = neighbourBBox.x;
-								
-								x = chart.plotLeft + leftOfX;
-								
-								if (x + rightOfX > neighbourX) {
-									label.hide();
-								}
-							}							
-						}
+					// Handle label overflow and show or hide accordingly
+					} else if (horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index)) {						
+						show = false;
 					}
 
 					// apply step
 					if (step && index % step) {
 						// show those indices dividable by step
+						show = false;
+					}
+					
+					// Set the new position, and show or hide
+					if (show) {
+						label[tick.isNew ? 'attr' : 'animate']({
+							x: label.x,
+							y: label.y
+						});
+						label.show();
+						tick.isNew = false;
+					} else {
 						label.hide();
 					}
-
-					label[tick.isNew ? 'attr' : 'animate']({
-						x: x,
-						y: y
-					});
 				}
 
-				tick.isNew = false;
+				
 			},
+			
 			/**
 			 * Destructor for the tick prototype
 			 */
@@ -12512,7 +12561,7 @@ var ColumnSeries = extendClass(Series, {
 				height: barH,
 				r: options.borderRadius,
 				strokeWidth: borderWidth
-			}
+			};
 			
 			if (borderWidth % 2) { // correct for shorting in crisp method, visible in stacked columns with 1px border
 				shapeArgs.y -= 1;

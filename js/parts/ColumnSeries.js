@@ -127,7 +127,7 @@ var ColumnSeries = extendClass(Series, {
 				height: barH,
 				r: options.borderRadius,
 				strokeWidth: borderWidth
-			}
+			};
 			
 			if (borderWidth % 2) { // correct for shorting in crisp method, visible in stacked columns with 1px border
 				shapeArgs.y -= 1;
