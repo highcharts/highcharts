@@ -11114,9 +11114,8 @@ Series.prototype = {
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = (typeof yValue === 'number') ? 
-				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
-				UNDEFINED;
+			point.plotY = isNaN(yValue) ? chart.plotHeight
+					: mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10; // Math.round fixes #591
 
 			// set client related positions for mouse tracking
 			point.clientX = chart.inverted ?
@@ -14299,8 +14298,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 
 		// relate to a master series
-		if (onSeries) {
+		if (onSeries && onSeries.points && onSeries.points.length > 0) {
 			onData = onSeries.points;
+			i = onData.length;
 			lastX = onData[i - 1].x;
 
 			// sort the data points
@@ -14342,7 +14342,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		each(points, function (point, i) {
 			// place on y axis or custom position
 			if (!onSeries) {
-				point.plotY = point.y === UNDEFINED ? chart.plotHeight : point.plotY;
+				point.plotY = isNaN(point.y) ? chart.plotHeight : point.plotY;
 			}
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];

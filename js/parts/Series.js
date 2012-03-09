@@ -1150,9 +1150,8 @@ Series.prototype = {
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = (typeof yValue === 'number') ? 
-				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
-				UNDEFINED;
+			point.plotY = isNaN(yValue) ? chart.plotHeight
+					: mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10; // Math.round fixes #591
 
 			// set client related positions for mouse tracking
 			point.clientX = chart.inverted ?
