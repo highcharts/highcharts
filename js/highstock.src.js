@@ -14286,21 +14286,19 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			chart = series.chart,
 			points = series.points,
 			cursor = points.length - 1,
-			i,
 			point,
 			lastPoint,
 			optionsOnSeries = options.onSeries,
 			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
 			step = onSeries && onSeries.options.step,
-			onData,
+			onData = onSeries && onSeries.points,
+			i = onData && onData.length,
 			leftPoint,
 			lastX,
 			rightPoint;
 
-
 		// relate to a master series
-		if (onSeries) {
-			onData = onSeries.points;
+		if (onSeries && onSeries.visible && i) {
 			lastX = onData[i - 1].x;
 
 			// sort the data points
@@ -14329,7 +14327,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 							}
 						}
 					}
-					
 					cursor--;
 					i++; // check again for points in the same x position
 					if (cursor < 0) {
@@ -14341,8 +14338,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 		each(points, function (point, i) {
 			// place on y axis or custom position
-			if (!onSeries) {
-				point.plotY = point.y === UNDEFINED ? chart.plotHeight : point.plotY;
+			if (point.plotY === UNDEFINED) { // either on axis, outside series range or hidden series
+				point.plotY = chart.plotHeight;
 			}
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
@@ -14352,7 +14349,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				}
 				point.stackIndex = lastPoint.stackIndex + 1;
 			}
-
+					
 		});
 
 
