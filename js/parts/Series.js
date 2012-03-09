@@ -445,7 +445,7 @@ Point.prototype = {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = point.graphic.symbolName && pointAttr[state].r;
+			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
 			point.graphic.attr(merge(
 				pointAttr[state],
 				radius ? { // new symbol attributes (#507, #612)

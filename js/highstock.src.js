@@ -4135,7 +4135,7 @@ if (!hasSVG && !useCanVG) {
 /**
  * The VML element wrapper.
  */
-var VMLElementExtension = {
+var VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -4296,7 +4296,6 @@ var VMLElementExtension = {
 						// check all the others only once for each call to an element's
 						// .attr() method
 						if (!hasSetSymbolSize) {
-
 							wrapper.symbolAttr(hash);
 
 							hasSetSymbolSize = true;
@@ -4592,13 +4591,13 @@ var VMLElementExtension = {
 		return this;
 
 	}
-},
-VMLElement = extendClass(SVGElement, VMLElementExtension),
+};
+VMLElement = extendClass(SVGElement, VMLElement);
 
 /**
  * The VML renderer
  */
-VMLRendererExtension = { // inherit SVGRenderer
+var VMLRendererExtension = { // inherit SVGRenderer
 
 	Element: VMLElement,
 	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
@@ -10409,7 +10408,7 @@ Point.prototype = {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = point.graphic.symbolName && pointAttr[state].r;
+			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
 			point.graphic.attr(merge(
 				pointAttr[state],
 				radius ? { // new symbol attributes (#507, #612)
