@@ -3,7 +3,7 @@
  */
 var ScatterSeries = extendClass(Series, {
 	type: 'scatter',
-
+	sorted: false,
 	/**
 	 * Extend the base Series' translate method by adding shape type and
 	 * arguments for the point trackers

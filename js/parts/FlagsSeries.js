@@ -31,6 +31,7 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 // 2 - Create the CandlestickSeries object
 seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
+	sorted: false,
 	noSharedTooltip: true,
 	/**
 	 * Inherit the initialization from base Series
