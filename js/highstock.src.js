@@ -15617,23 +15617,8 @@ defaultOptions.lang = merge(defaultOptions.lang, {
  * The object constructor for the range selector
  * @param {Object} chart
  */
-Highcharts.RangeSelector = function (chart) {
-	var renderer = chart.renderer,
-		rendered,
-		container = chart.container,
-		lang = defaultOptions.lang,
-		div,
-		leftBox,
-		rightBox,
-		boxSpanElements = {},
-		divAbsolute,
-		divRelative,
-		selected,
-		zoomText,
-		buttons = [],
-		buttonOptions,
-		options,
-		defaultButtons = [{
+function RangeSelector(chart) {
+	var defaultButtons = [{
 			type: 'month',
 			count: 1,
 			text: '1m'
@@ -15658,13 +15643,29 @@ Highcharts.RangeSelector = function (chart) {
 		}];
 		chart.resetZoomEnabled = false;
 
+	this.chart = chart;
+	this.buttons = [];
+	this.boxSpanElements = {};
+	//this.divAbsolute = UNDEFINED;
+	//this.divRelative = UNDEFINED;
+	//this.zoomText = UNDEFINED;
+	//this.div = UNDEFINED;
+
+	// Run RangeSelector
+	this.init(defaultButtons);
+}
+
+RangeSelector.prototype = {
 	/**
 	 * The method to run when one of the buttons in the range selectors is clicked
 	 * @param {Number} i The index of the button
 	 * @param {Object} rangeOptions
 	 * @param {Boolean} redraw
 	 */
-	function clickButton(i, rangeOptions, redraw) {
+	clickButton: function (i, rangeOptions, redraw) {
+		var rangeSelector = this,
+			chart = rangeSelector.chart,
+			buttons = rangeSelector.buttons;
 
 		var baseAxis = chart.xAxis[0],
 			extremes = baseAxis && baseAxis.getExtremes(),
@@ -15692,7 +15693,7 @@ Highcharts.RangeSelector = function (chart) {
 			};
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
-				i === selected) { // same button is clicked twice
+				i === rangeSelector.selected) { // same button is clicked twice
 			return;
 		}
 
@@ -15741,7 +15742,7 @@ Highcharts.RangeSelector = function (chart) {
 					min: rangeMin
 				}
 			);
-			selected = i;
+			rangeSelector.selected = i;
 
 		} else { // existing axis object; after render time
 			setTimeout(function () { // make sure the visual state is set before the heavy process begins
@@ -15752,52 +15753,59 @@ Highcharts.RangeSelector = function (chart) {
 					0,
 					{ rangeSelectorButton: rangeOptions }
 				);
-				selected = i;
+				rangeSelector.selected = i;
 			}, 1);
 		}
 
-	}
-
-	/**
-	 * The handler connected to container that handles mousedown.
-	 */
-	function mouseDownHandler() {
-		if (leftBox) {
-			leftBox.blur();
-		}
-		if (rightBox) {
-			rightBox.blur();
-		}
-	}
+	},
 
 	/**
 	 * Initialize the range selector
 	 */
-	function init() {
-		chart.extraTopMargin = 25;
-		options = chart.options.rangeSelector;
-		buttonOptions = options.buttons || defaultButtons;
+	init: function (defaultButtons) {
+		var rangeSelector = this,
+			chart = rangeSelector.chart,
+			options = chart.options.rangeSelector,
+			buttonOptions = options.buttons || defaultButtons,
+			buttons = rangeSelector.buttons,
+			leftBox = rangeSelector.leftBox,
+			rightBox = rangeSelector.rightBox;
 
+		chart.extraTopMargin = 25;
+		rangeSelector.buttonOptions = buttonOptions;
+
+
+		/**
+		 * The handler connected to container that handles mousedown.
+		 */
+		rangeSelector.mouseDownHandler = function () {
+			if (leftBox) {
+				leftBox.blur();
+			}
+			if (rightBox) {
+				rightBox.blur();
+			}
+		};
 
 		var selectedOption = options.selected;
 
-		addEvent(container, MOUSEDOWN, mouseDownHandler);
+		addEvent(chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
-			clickButton(selectedOption, buttonOptions[selectedOption], false);
+			this.clickButton(selectedOption, buttonOptions[selectedOption], false);
 		}
 
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (buttons[selected]) {
-					buttons[selected].setState(0);
+				if (buttons[rangeSelector.selected]) {
+					buttons[rangeSelector.selected].setState(0);
 				}
-				selected = null;
+				rangeSelector.selected = null;
 			});
 		});
-	}
+	},
 
 
 	/**
@@ -15805,19 +15813,30 @@ Highcharts.RangeSelector = function (chart) {
 	 * @param {Object} input
 	 * @param {Number} time
 	 */
-	function setInputValue(input, time) {
+	setInputValue: function (input, time) {
+		var rangeSelector = this,
+			chart = rangeSelector.chart,
+			options = chart.options.rangeSelector;
+
 		var format = input.hasFocus ? options.inputEditDateFormat || '%Y-%m-%d' : options.inputDateFormat || '%b %e, %Y';
 		if (time) {
 			input.HCTime = time;
 		}
 		input.value = dateFormat(format, input.HCTime);
-	}
+	},
 
 	/**
 	 * Draw either the 'from' or the 'to' HTML input box of the range selector
 	 * @param {Object} name
 	 */
-	function drawInput(name) {
+	drawInput: function (name) {
+		var rangeSelector = this,
+			chart = rangeSelector.chart,
+			options = chart.options.rangeSelector,
+			boxSpanElements = rangeSelector.boxSpanElements,
+			lang = defaultOptions.lang,
+			div = rangeSelector.div;
+
 		var isMin = name === 'min',
 			input;
 
@@ -15844,7 +15863,7 @@ Highcharts.RangeSelector = function (chart) {
 		input.onfocus = input.onblur = function (e) {
 			e = e || window.event;
 			input.hasFocus = e.type === 'focus';
-			setInputValue(input);
+			rangeSelector.setInputValue(input);
 		};
 
 		// handle changes in the input boxes
@@ -15861,8 +15880,8 @@ Highcharts.RangeSelector = function (chart) {
 			}
 
 			if (!isNaN(value) &&
-				((isMin && (value >= extremes.dataMin && value <= rightBox.HCTime)) ||
-				(!isMin && (value <= extremes.dataMax && value >= leftBox.HCTime)))
+				((isMin && (value >= extremes.dataMin && value <= rangeSelector.rightBox.HCTime)) ||
+				(!isMin && (value <= extremes.dataMax && value >= rangeSelector.leftBox.HCTime)))
 			) {
 				chart.xAxis[0].setExtremes(
 					isMin ? value : extremes.min,
@@ -15872,7 +15891,7 @@ Highcharts.RangeSelector = function (chart) {
 		};
 
 		return input;
-	}
+	},
 
 	/**
 	 * Render the range selector including the buttons and the inputs. The first time render
@@ -15881,7 +15900,16 @@ Highcharts.RangeSelector = function (chart) {
 	 * @param {Number} min X axis minimum
 	 * @param {Number} max X axis maximum
 	 */
-	function render(min, max) {
+	render: function (min, max) {
+		var rangeSelector = this,
+			chart = rangeSelector.chart,
+			renderer = chart.renderer,
+			container = chart.container,
+			options = chart.options.rangeSelector,
+			buttons = rangeSelector.buttons,
+			lang = defaultOptions.lang,
+			div = rangeSelector.div;
+
 		var chartStyle = chart.options.chart.style,
 			buttonTheme = options.buttonTheme,
 			inputEnabled = options.inputEnabled !== false,
@@ -15890,22 +15918,22 @@ Highcharts.RangeSelector = function (chart) {
 			buttonLeft;
 
 		// create the elements
-		if (!rendered) {
-			zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 10)
+		if (!rangeSelector.rendered) {
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 10)
 				.css(options.labelStyle)
 				.add();
 
 			// button starting position
-			buttonLeft = plotLeft + zoomText.getBBox().width + 5;
+			buttonLeft = plotLeft + rangeSelector.zoomText.getBBox().width + 5;
 
-			each(buttonOptions, function (rangeOptions, i) {
+			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 					rangeOptions.text,
 					buttonLeft,
 					chart.plotTop - 25,
 					function () {
-						clickButton(i, rangeOptions);
-						this.isActive = true;
+						rangeSelector.clickButton(i, rangeOptions);
+						rangeSelector.isActive = true;
 					},
 					buttonTheme,
 					states && states.hover,
@@ -15919,7 +15947,7 @@ Highcharts.RangeSelector = function (chart) {
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
 
-				if (selected === i) {
+				if (rangeSelector.selected === i) {
 					buttons[i].setState(2);
 				}
 
@@ -15928,7 +15956,7 @@ Highcharts.RangeSelector = function (chart) {
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
 			if (inputEnabled) {
-				divRelative = div = createElement('div', null, {
+				rangeSelector.divRelative = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
 					fontFamily: chartStyle.fontFamily,
@@ -15939,41 +15967,49 @@ Highcharts.RangeSelector = function (chart) {
 				container.parentNode.insertBefore(div, container);
 
 				// create an absolutely positionied div to keep the inputs
-				divAbsolute = div = createElement('div', null, extend({
+				rangeSelector.divAbsolute = rangeSelector.div = div = createElement('div', null, extend({
 					position: 'absolute',
 					top: (chart.plotTop - 25) + 'px',
 					right: (chart.chartWidth - chart.plotLeft - chart.plotWidth) + 'px'
 				}, options.inputBoxStyle), div);
 
-				leftBox = drawInput('min');
+				rangeSelector.leftBox = rangeSelector.drawInput('min');
 
-				rightBox = drawInput('max');
+				rangeSelector.rightBox = rangeSelector.drawInput('max');
 			}
 		}
 
 		if (inputEnabled) {
-			setInputValue(leftBox, min);
-			setInputValue(rightBox, max);
+			rangeSelector.setInputValue(rangeSelector.leftBox, min);
+			rangeSelector.setInputValue(rangeSelector.rightBox, max);
 		}
 
 
-		rendered = true;
-	}
+		rangeSelector.rendered = true;
+	},
 
 	/**
 	 * Destroys allocated elements.
 	 */
-	function destroy() {
-		removeEvent(container, MOUSEDOWN, mouseDownHandler);
+	destroy: function () {
+		var rangeSelector = this,
+			leftBox = rangeSelector.leftBox,
+			rightBox = rangeSelector.rightBox,
+			boxSpanElements = rangeSelector.boxSpanElements,
+			divRelative = rangeSelector.divRelative,
+			divAbsolute = rangeSelector.divAbsolute,
+			zoomText = rangeSelector.zoomText;
+
+		removeEvent(rangeSelector.chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
 
 		// Destroy elements in collections
-		each([buttons], function (coll) {
+		each([rangeSelector.buttons], function (coll) {
 			destroyObjectProperties(coll);
 		});
 
 		// Destroy zoomText
 		if (zoomText) {
-			zoomText = zoomText.destroy();
+			rangeSelector.zoomText = zoomText.destroy();
 		}
 
 		// Clear input element events
@@ -15989,19 +16025,16 @@ Highcharts.RangeSelector = function (chart) {
 			discardElement(item);
 		});
 		// Null the references
-		leftBox = rightBox = boxSpanElements = div = divAbsolute = divRelative = null;
-
+		rangeSelector.leftBox = rangeSelector.rightBox = rangeSelector.boxSpanElements = rangeSelector.div = rangeSelector.divAbsolute = rangeSelector.divRelative = null;
 	}
-
-	// Run RangeSelector
-	init();
-
-	// Expose
+/*	// Expose
 	return {
 		render: render,
 		destroy: destroy
-	};
+	};*/
 };
+
+Highcharts.RangeSelector = RangeSelector;
 
 /* ****************************************************************************
  * End Range Selector code													*
