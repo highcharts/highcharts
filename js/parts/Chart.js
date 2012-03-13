@@ -494,7 +494,7 @@ function Chart(userOptions, callback) {
 						show = false;
 						
 					// Handle label overflow and show or hide accordingly
-					} else if (horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index)) {						
+					} else if (!staggerLines && horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index)) {						
 						show = false;
 					}
 
