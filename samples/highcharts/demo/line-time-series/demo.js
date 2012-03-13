@@ -38,7 +38,7 @@ $(document).ready(function() {
 		plotOptions: {
 			area: {
 				fillColor: {
-					linearGradient: [0, 0, 0, 300],
+					linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
 					stops: [
 						[0, Highcharts.getOptions().colors[0]],
 						[1, 'rgba(2,0,0,0)']
