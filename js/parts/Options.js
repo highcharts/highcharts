@@ -516,7 +516,8 @@ defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
 	dataLabels: {
 		align: 'left',
 		x: 5,
-		y: 0
+		y: null,
+		verticalAlign: 'middle'
 	}
 });
 defaultPlotOptions.pie = merge(defaultSeriesOptions, {
