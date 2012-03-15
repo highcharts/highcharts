@@ -1775,7 +1775,7 @@ function Chart(userOptions, callback) {
 			}
 
 			// handle automatic or user set offset
-			offset = directionFactor * pick(options.offset, axisOffset[side]); // docs
+			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
 				pick(titleOffsetOption,
