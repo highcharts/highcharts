@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.1.4 (2012-02-15)
+ * @license Highstock JS v1.1.5 (2012-03-15)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1270,7 +1270,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.1.4/modules/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.1.5/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -16760,6 +16760,6 @@ extend(Highcharts, {
 	extendClass: extendClass,
 	placeBox: placeBox,
 	product: 'Highstock',
-	version: '1.1.4'
+	version: '1.1.5'
 });
 }());
