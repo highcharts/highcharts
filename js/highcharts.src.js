@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.2.0 (2012-02-16)
+ * @license Highcharts JS v2.2.1 (2012-03-15)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1270,7 +1270,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/2.2.0/modules/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com/2.2.1/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -1387,12 +1387,12 @@ defaultOptions = {
 				formatter: function () {
 					return this.y;
 				}
-				// backgroundColor: undefined, // docs - http://jsfiddle.net/highcharts/rAwN5/
-				// borderColor: undefined, // docs
-				// borderRadius: undefined, // docs
-				// borderWidth: undefined, // docs
-				// padding: 3, // docs
-				// shadow: false // docs
+				// backgroundColor: undefined,
+				// borderColor: undefined,
+				// borderRadius: undefined,
+				// borderWidth: undefined,
+				// padding: 3,
+				// shadow: false
 			}),
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
@@ -6938,7 +6938,7 @@ function Chart(userOptions, callback) {
 			}
 
 			// handle automatic or user set offset
-			offset = directionFactor * pick(options.offset, axisOffset[side]); // docs
+			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
 				pick(titleOffsetOption,
@@ -13538,6 +13538,6 @@ extend(Highcharts, {
 	extendClass: extendClass,
 	placeBox: placeBox,
 	product: 'Highcharts',
-	version: '2.2.0'
+	version: '2.2.1'
 });
 }());

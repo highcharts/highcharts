@@ -1387,12 +1387,12 @@ defaultOptions = {
 				formatter: function () {
 					return this.y;
 				}
-				// backgroundColor: undefined, // docs - http://jsfiddle.net/highcharts/rAwN5/
-				// borderColor: undefined, // docs
-				// borderRadius: undefined, // docs
-				// borderWidth: undefined, // docs
-				// padding: 3, // docs
-				// shadow: false // docs
+				// backgroundColor: undefined,
+				// borderColor: undefined,
+				// borderRadius: undefined,
+				// borderWidth: undefined,
+				// padding: 3,
+				// shadow: false
 			}),
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
@@ -6938,7 +6938,7 @@ function Chart(userOptions, callback) {
 			}
 
 			// handle automatic or user set offset
-			offset = directionFactor * pick(options.offset, axisOffset[side]); // docs
+			offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 			axisTitleMargin =
 				pick(titleOffsetOption,
@@ -14640,7 +14640,7 @@ extend(defaultOptions, {
 			pointRange: 0,
 			shadow: false
 		},
-		//top: undefined, // docs
+		//top: undefined,
 		xAxis: {
 			tickWidth: 0,
 			lineWidth: 0,
@@ -15270,11 +15270,11 @@ Highcharts.Scroller = function (chart) {
 				isX: true,
 				type: 'datetime',
 				index: xAxisIndex,
-				height: height, // docs + width
-				top: top, // docs + left
+				height: height,
+				top: top,
 				offset: 0,
-				offsetLeft: scrollbarHeight, // docs
-				offsetRight: -scrollbarHeight, // docs
+				offsetLeft: scrollbarHeight,
+				offsetRight: -scrollbarHeight,
 				startOnTick: false,
 				endOnTick: false,
 				minPadding: 0,
@@ -15283,7 +15283,7 @@ Highcharts.Scroller = function (chart) {
 			}));
 
 			yAxis = new chart.Axis(merge(navigatorOptions.yAxis, {
-				alignTicks: false, // docs
+				alignTicks: false,
 				height: height,
 				top: top,
 				offset: 0,
@@ -15293,8 +15293,8 @@ Highcharts.Scroller = function (chart) {
 
 			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseSeries.options, navigatorSeriesOptions, {
-				threshold: null, // docs
-				clip: false, // docs
+				threshold: null,
+				clip: false,
 				enableMouseTracking: false,
 				group: 'nav', // for columns
 				padXAxis: false,
@@ -15906,7 +15906,7 @@ Highcharts.StockChart = function (options, callback) {
 					}
 				}
 			},
-			// gapSize: 0, // docs
+			// gapSize: 0,
 			shadow: false,
 			states: {
 				hover: {
