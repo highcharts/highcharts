@@ -2089,12 +2089,6 @@ SVGRenderer.prototype = {
 			return false; // prevent setting text-anchor on the group
 		};
 		
-		// apply to the text only
-		attrSetters.rotation = function (value, key) {
-			text.attr(key, value);
-			return false;
-		};
-
 		// apply these to the box and the text alike
 		attrSetters.text = function (value, key) {
 			text.attr(key, value);
