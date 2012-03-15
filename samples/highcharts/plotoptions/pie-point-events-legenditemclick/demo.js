@@ -1,31 +1,33 @@
-var chart = new Highcharts.Chart({
-    chart: {
-        renderTo: 'container',
-        type: 'pie'
-    },
-    
-    plotOptions: {
-        pie: {
-            point: {
-                events: {
-                    legendItemClick: function() {
-                        if (!confirm('Do you want to toggle the visibility of this slice?')) {
-                            return false;
+$(function () {
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            type: 'pie'
+        },
+        
+        plotOptions: {
+            pie: {
+                point: {
+                    events: {
+                        legendItemClick: function() {
+                            if (!confirm('Do you want to toggle the visibility of this slice?')) {
+                                return false;
+                            }
                         }
                     }
-                }
-            },
-            showInLegend: true
-        }
-    },
-    
-    series: [{
-        data: [
-            ['Firefox',   44.2],
-            ['IE7',       26.6],
-            ['IE6',       20],
-            ['Chrome',    3.1],
-            ['Other',    5.4]
-        ]
-    }]
+                },
+                showInLegend: true
+            }
+        },
+        
+        series: [{
+            data: [
+                ['Firefox',   44.2],
+                ['IE7',       26.6],
+                ['IE6',       20],
+                ['Chrome',    3.1],
+                ['Other',    5.4]
+            ]
+        }]
+    });
 });
