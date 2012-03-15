@@ -651,4 +651,50 @@
             <arg value="${file}"/>
         </exec>
     </target>
+    
+    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
+    <target name="deploy-highcharts">
+    	<property file="git-ignore-me.properties"/>
+    	<property file="build.properties"/>
+    	
+    	<!-- The zip file -->
+		<copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" 
+    		tofile="${basedir}/build/dist/Highcharts.zip" />
+        <ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/downloads/zips">
+	   		<fileset dir="${basedir}/build/dist">
+      			<include name="Highcharts-${highcharts.product.version}.zip"/>
+      			<include name="Highcharts.zip"/>
+    		</fileset>
+    	</ftp>
+  		
+        <!-- Upload the .js files to code.highcharts.com/version -->
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			action="mkdir"
+	   			remotedir="/www/code/${highcharts.product.version}" />
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code/${highcharts.product.version}">
+	   		<fileset dir="${basedir}/build/dist/highcharts/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp> 
+  		
+  		<!-- Upload the .js files to code.highcharts.com root -->   	
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code">
+	   		<fileset dir="${basedir}/build/dist/highcharts/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp>
+    </target>
 </project>
