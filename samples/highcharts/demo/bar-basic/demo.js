@@ -51,7 +51,7 @@ $(document).ready(function() {
 		credits: {
 			enabled: false
 		},
-			series: [{
+		series: [{
 			name: 'Year 1800',
 			data: [107, 31, 635, 203, 2]
 		}, {
