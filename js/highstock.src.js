@@ -5594,7 +5594,7 @@ function Chart(userOptions, callback) {
 					// If the parameter 'old' is set, the current call will be followed
 					// by another call, therefore do not do any animations this time
 					if (!old && gridLine && gridLinePath) {
-						gridLine.animate({
+						gridLine[tick.isNew ? 'attr' : 'animate']({
 							d: gridLinePath
 						});
 					}
