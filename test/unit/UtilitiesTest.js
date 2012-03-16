@@ -215,6 +215,20 @@ UtilTest.prototype.testPlaceBox = function () {
 	extend(boxPoint, tooltipSize);
 	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, chartRect));
 	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
+	
+	// #834
+	tooltipSize.width = 64;
+	tooltipSize.height = 46;
+	dataPoint.x = 13;
+	dataPoint.y = 48;
+	chartRect.x = 32;
+	chartRect.y = 10;
+	chartRect.width = 78;
+	chartRect.height = 63;
+	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
+	extend(boxPoint, tooltipSize);
+	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, chartRect));
+	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 };
 
 /**
