@@ -3,4 +3,5 @@ var each = Highcharts.each,
 	merge = Highcharts.merge,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
+	Series = Highcharts.Series,
 	noop = function () {};

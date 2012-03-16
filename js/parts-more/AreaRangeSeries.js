@@ -4,7 +4,7 @@
  * http://jsfiddle.net/highcharts/DFANM/
  * 
  * TODO:
- * - Duplicate data labels below and above the range
+ * - Check out inverted
  * - Disable stateMarker (or concatenize paths for the markers?)
  * - Test series.data point config formats
  */
@@ -18,7 +18,11 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	tooltip: {
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.low} - {point.high}' 
 	},
-	trackByArea: true
+	trackByArea: true,
+	dataLabels: {
+		yHigh: -6,
+		yLow: 16
+	}
 });
 
 /**
@@ -117,7 +121,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		
 		var highSegment = [],
 			i = segment.length,
-			baseGetSegmentPath = Highcharts.Series.prototype.getSegmentPath,
+			baseGetSegmentPath = Series.prototype.getSegmentPath,
 			point,
 			linePath,
 			lowerPath,
@@ -144,6 +148,59 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		this.areaPath = this.areaPath.concat(lowerPath, higherPath);
 		
 		return linePath;
+	},
+	
+	/**
+	 * Extend the basic drawDataLabels method by running it for both lower and higher
+	 * values.
+	 */
+	drawDataLabels: function () {
+		
+		var points = this.points,
+			length = points.length,
+			i,
+			originalDataLabels = [],
+			uberMethod = Series.prototype.drawDataLabels,
+			dataLabelOptions = this.options.dataLabels,
+			point;
+			
+		// Step 1: set preliminary values for plotY and dataLabel and draw the upper labels
+		i = length;
+		while (i--) {
+			point = points[i];
+			
+			// Set preliminary values
+			point.y = point.high;
+			point.plotY = point.plotHigh;
+			
+			// Store original data labels and set preliminary label objects to be picked up 
+			// in the uber method
+			originalDataLabels[i] = point.dataLabel;
+			point.dataLabel = point.dataLabelUpper;
+			
+			// Set the default y offset
+			dataLabelOptions.y = dataLabelOptions.yHigh;
+		}
+		uberMethod.apply(this, arguments);
+		
+		// Step 2: reorganize and handle data labels for the lower values
+		i = length;
+		while (i--) {
+			point = points[i];
+			
+			// Move the generated labels from step 1, and reassign the original data labels
+			point.dataLabelUpper = point.dataLabel;
+			point.dataLabel = originalDataLabels[i];
+			
+			// Reset values
+			point.y = point.low;
+			point.plotY = point.plotLow;
+			
+			// Set the default y offset
+			dataLabelOptions.y = dataLabelOptions.yLow;
+		}
+		uberMethod.apply(this, arguments);
+	
 	},
 	
 	drawPoints: noop
