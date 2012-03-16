@@ -106,21 +106,32 @@ function getResources() {
 		</script>
 		
 		<style type="text/css">
-			h1 {
-				text-align: center;
+			.top-bar {
+				color: white; 
+				font-family: Arial, sans-serif; 
+				font-size: 0.8em; 
+				padding: 0.5em; 
+				height: 3.5em;
+				background: #57544A;
+				background: -webkit-linear-gradient(top, #57544A, #37342A); 
+				background: -moz-linear-gradient(top, #57544A, #37342A);
+				box-shadow: 0px 0px 8px #888;
 			}
 		</style>
 		
 	</head>
 	<body style="margin: 0">
 		
-		<div style="background: #57544A; color: white; font-family: Arial, sans-serif; font-size: 0.8em; padding: 0.5em; height: 2em">
+		<div class="top-bar">
 			
-			<h2 style="float: left; margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2> 
+			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2> 
 			
-			<div style="float: right">
+			<div style="text-align: center">
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
+					href="../compare-svg/view.php?path=<?php echo $path ?>"
+					">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
 					href="http://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>

@@ -697,4 +697,50 @@
     		</fileset>    		
   		</ftp>
     </target>
+    
+    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
+    <target name="deploy-highstock">
+    	<property file="git-ignore-me.properties"/>
+    	<property file="build.properties"/>
+    	
+    	<!-- The zip file -->
+		<copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" 
+    		tofile="${basedir}/build/dist/Highstock.zip" />
+        <ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/downloads/zips">
+	   		<fileset dir="${basedir}/build/dist">
+      			<include name="Highstock-${highstock.product.version}.zip"/>
+      			<include name="Highstock.zip"/>
+    		</fileset>
+    	</ftp>
+  		
+        <!-- Upload the .js files to code.highcharts.com/version -->
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			action="mkdir"
+	   			remotedir="/www/code/stock/${highstock.product.version}" />
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code/stock/${highstock.product.version}">
+	   		<fileset dir="${basedir}/build/dist/highstock/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp> 
+  		
+  		<!-- Upload the .js files to code.highcharts.com root -->   	
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code/stock">
+	   		<fileset dir="${basedir}/build/dist/highstock/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp>
+    </target>
 </project>
