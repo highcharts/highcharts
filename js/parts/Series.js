@@ -84,20 +84,24 @@ Point.prototype = {
 	destroy: function () {
 		var point = this,
 			series = point.series,
-			hoverPoints = series.chart.hoverPoints,
+			chart = series.chart,
+			hoverPoints = chart.hoverPoints,
 			prop;
 
-		series.chart.pointCount--;
+		chart.pointCount--;
 
 		if (hoverPoints) {
 			point.setState();
 			erase(hoverPoints, point);
+			if (!hoverPoints.length) {
+				chart.hoverPoints = null;
+			}
+
 		}
-		if (point === series.chart.hoverPoint) {
+		if (point === chart.hoverPoint) {
 			point.onMouseOut();
 		}
-		series.chart.hoverPoints = null;
-
+		
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
 			removeEvent(point);
@@ -105,7 +109,7 @@ Point.prototype = {
 		}
 
 		if (point.legendItem) { // pies have legend items
-			point.series.chart.legend.destroyItem(point);
+			chart.legend.destroyItem(point);
 		}
 
 		for (prop in point) {

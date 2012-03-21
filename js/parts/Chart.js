@@ -2037,7 +2037,7 @@ function Chart(userOptions, callback) {
 
 			// hide tooltip and hover states
 			if (tracker.resetTracker) {
-				tracker.resetTracker();
+				tracker.resetTracker(true);
 			}
 
 			// render the axis
@@ -2631,24 +2631,34 @@ function Chart(userOptions, callback) {
 		/**
 		 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
 		 */
-		function resetTracker() {
+		function resetTracker(allowMove) {
 			var hoverSeries = chart.hoverSeries,
-				hoverPoint = chart.hoverPoint;
-
-			if (hoverPoint) {
-				hoverPoint.onMouseOut();
+				hoverPoint = chart.hoverPoint,
+				tooltipPoints = chart.hoverPoints || hoverPoint;
+				
+			// Just move the tooltip, #349
+			if (allowMove && tooltip && tooltipPoints) {
+				tooltip.refresh(tooltipPoints);
+			
+			// Full reset
+			} else {
+					
+				if (hoverPoint) {
+					hoverPoint.onMouseOut();
+				}
+	
+				if (hoverSeries) {
+					hoverSeries.onMouseOut();
+				}
+	
+				if (tooltip) {
+					tooltip.hide();
+					tooltip.hideCrosshairs();
+				}
+	
+				hoverX = null;
+				
 			}
-
-			if (hoverSeries) {
-				hoverSeries.onMouseOut();
-			}
-
-			if (tooltip) {
-				tooltip.hide();
-				tooltip.hideCrosshairs();
-			}
-
-			hoverX = null;
 		}
 
 		/**
@@ -3703,9 +3713,9 @@ function Chart(userOptions, callback) {
 		});
 
 
-		// hide tooltip and hover states
+		// move tooltip or reset
 		if (tracker && tracker.resetTracker) {
-			tracker.resetTracker();
+			tracker.resetTracker(true);
 		}
 
 		// redraw if canvas
