@@ -158,6 +158,13 @@ if (!globalAdapter && win.jQuery) {
 			defaultFunction(event);
 		}
 	};
+	
+	/**
+	 * Extension method needed for MooTools
+	 */
+	washMouseEvent = function (e) {
+		return e;
+	};
 
 	/**
 	 * Animate a HTML element or SVG element wrapper

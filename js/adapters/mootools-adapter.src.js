@@ -284,6 +284,15 @@ win.HighchartsAdapter = {
 			defaultFunction(event);
 		}
 	},
+	
+	/**
+	 * Set back e.pageX and e.pageY that MooTools has abstracted away
+	 */
+	washMouseEvent: function (e) {
+		e.pageX = e.page.x;
+		e.pageY = e.page.y;
+		return e;
+	},
 
 	/**
 	 * Stop running animations on the object
