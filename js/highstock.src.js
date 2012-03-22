@@ -1678,8 +1678,8 @@ defaultBottomAxisOptions = { // horizontal axis
 	labels: {
 		align: 'center',
 		x: 0,
-		y: 14,
-		overflow: 'justify' // docs
+		y: 14
+		// overflow: undefined // docs - can be 'justify'
 		// staggerLines: null
 	},
 	title: {
@@ -15945,6 +15945,9 @@ Highcharts.StockChart = function (options, callback) {
 				ordinal: true,
 				title: {
 					text: null
+				},
+				labels: {
+					overflow: 'justify'
 				},
 				showLastLabel: true
 			}, xAxisOptions, // user options 

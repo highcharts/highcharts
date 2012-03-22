@@ -36,6 +36,9 @@ Highcharts.StockChart = function (options, callback) {
 				title: {
 					text: null
 				},
+				labels: {
+					overflow: 'justify'
+				},
 				showLastLabel: true
 			}, xAxisOptions, // user options 
 			{ // forced options
