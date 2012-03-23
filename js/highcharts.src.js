@@ -7374,7 +7374,7 @@ function Chart(userOptions, callback) {
 				fill: options.backgroundColor,
 				'stroke-width': borderWidth,
 				r: options.borderRadius,
-				zIndex: 8
+				zIndex: options.zIndex || 8
 			})
 			.css(style)
 			.hide()
