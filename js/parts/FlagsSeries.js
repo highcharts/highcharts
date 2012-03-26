@@ -33,6 +33,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
+	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series
 	 */
@@ -67,6 +68,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			step = onSeries && onSeries.options.step,
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
+			xAxisExt = series.xAxis.getExtremes(),
 			leftPoint,
 			lastX,
 			rightPoint;
@@ -110,10 +112,18 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			}
 		}
 
+		// Add plotY position and handle stacking
 		each(points, function (point, i) {
-			// place on y axis or custom position
-			if (point.plotY === UNDEFINED) { // either on axis, outside series range or hidden series
-				point.plotY = chart.plotHeight;
+			
+			// Undefined plotY means the point is either on axis, outside series range or hidden series.
+			// If the series is outside the range of the x axis it should fall through with 
+			// an undefined plotY, but then we must remove the shapeArgs (#847).
+			if (point.plotY === UNDEFINED) {
+				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
+					point.plotY = chart.plotHeight;
+				} else {
+					point.shapeArgs = {}; // 847
+				}
 			}
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
