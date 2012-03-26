@@ -818,7 +818,7 @@ extend(defaultOptions, {
 			height: 16,
 			padding: 1,
 			r: 0,
-			zIndex: 7 // #484
+			zIndex: 7 // #484, #852
 		//	states: {
 		//		hover: {},
 		//		select: {}
