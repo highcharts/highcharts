@@ -14891,77 +14891,82 @@ extend(defaultOptions, {
  * The Scroller class
  * @param {Object} chart
  */
-Highcharts.Scroller = function (chart) {
+function Scroller(chart) {
 
-	var renderer = chart.renderer,
-		chartOptions = chart.options,
+	var chartOptions = chart.options,
 		navigatorOptions = chartOptions.navigator,
 		navigatorEnabled = navigatorOptions.enabled,
-		navigatorLeft,
-		navigatorWidth,
-		navigatorSeries,
-		navigatorData,
 		scrollbarOptions = chartOptions.scrollbar,
 		scrollbarEnabled = scrollbarOptions.enabled,
-		grabbedLeft,
-		grabbedRight,
-		grabbedCenter,
-		otherHandlePos,
-		dragOffset,
-		hasDragged,
-		xAxis,
-		yAxis,
-		zoomedMin,
-		zoomedMax,
-		range,
-
-		bodyStyle = document.body.style,
-		defaultBodyCursor,
-
-		handlesOptions = navigatorOptions.handles,
 		height = navigatorEnabled ? navigatorOptions.height : 0,
-		outlineWidth = navigatorOptions.outlineWidth,
 		scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0,
-		outlineHeight = height + scrollbarHeight,
-		barBorderRadius = scrollbarOptions.barBorderRadius,
-		top,
-		halfOutline = outlineWidth / 2,
-		outlineTop,
-		scrollerLeft,
-		scrollerWidth,
-		rendered,
-		baseSeriesOption = navigatorOptions.baseSeries,
-		baseSeries = chart.series[baseSeriesOption] ||
-			(typeof baseSeriesOption === 'string' && chart.get(baseSeriesOption)) ||
-			chart.series[0],
+		baseSeriesOption = navigatorOptions.baseSeries;
 
-		// element wrappers
-		leftShade,
-		rightShade,
-		outline,
-		handles = [],
-		scrollbarGroup,
-		scrollbarTrack,
-		scrollbar,
-		scrollbarRifles,
-		scrollbarButtons = [],
-		elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
+	this.baseSeries = chart.series[baseSeriesOption] ||
+			(typeof baseSeriesOption === 'string' && chart.get(baseSeriesOption)) ||
+			chart.series[0];
+
+	this.handles = [];
+	this.scrollbarButtons = [];
+	this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
 
 	chart.resetZoomEnabled = false;
 
+	this.chart = chart;
+	this.height = height;
+	//top = UNDEFINED;
+	this.scrollbarHeight = scrollbarHeight;
+	this.scrollbarEnabled = scrollbarEnabled;
+	this.navigatorEnabled = navigatorEnabled;
+	this.navigatorOptions = navigatorOptions;
+	this.scrollbarOptions = scrollbarOptions;
+	this.outlineHeight = height + scrollbarHeight;
+
+	//this.rendered = UNDEFINED;
+
+	// Elements
+	//this.scrollbarRifles = UNDEFINED;
+	//this.scrollbarGroup = UNDEFINED;
+	//this.scrollbar = UNDEFINED;
+	//this.xAxis = UNDEFINED;
+	//this.yAxis = UNDEFINED;
+	//this.scrollbarTrack = UNDEFINED;
+	//this.leftShade = UNDEFINED;
+	//this.rightShade = UNDEFINED;
+	//this.outline = UNDEFINED;
+
+	//this.navigatorLeft = UNDEFINED;
+	//this.navigatorWidth = UNDEFINED;
+	//this.scrollerLeft = UNDEFINED;
+	//this.scrollerWidth = UNDEFINED;
+	//this.zoomedMin = UNDEFINED;
+	//this.zoomedMax = UNDEFINED;
+	//this.range = UNDEFINED;
+
+	// Run scroller
+	this.init();
+}
+
+Scroller.prototype = {
 	/**
 	 * Return the top of the navigation 
 	 */
-	function getAxisTop(chartHeight) {
-		return navigatorOptions.top || chartHeight - height - scrollbarHeight - chartOptions.chart.spacingBottom;
-	}
+	getAxisTop: function (chartHeight) {
+		return this.navigatorOptions.top || chartHeight - this.height - this.scrollbarHeight - this.chart.options.chart.spacingBottom;
+	},
 
 	/**
 	 * Draw one of the handles on the side of the zoomed range in the navigator
 	 * @param {Number} x The x center for the handle
 	 * @param {Number} index 0 for left and 1 for right
 	 */
-	function drawHandle(x, index) {
+	drawHandle: function (x, index) {
+		var scroller = this,
+			chart = scroller.chart,
+			renderer = chart.renderer,
+			elementsToDestroy = scroller.elementsToDestroy,
+			handles = scroller.handles,
+			handlesOptions = scroller.navigatorOptions.handles;
 
 		var attr = {
 				fill: handlesOptions.backgroundColor,
@@ -14971,7 +14976,7 @@ Highcharts.Scroller = function (chart) {
 			tempElem;
 
 		// create the elements
-		if (!rendered) {
+		if (!scroller.rendered) {
 
 			// the group
 			handles[index] = renderer.g()
@@ -15000,18 +15005,26 @@ Highcharts.Scroller = function (chart) {
 			elementsToDestroy.push(tempElem);
 		}
 
-		handles[index].translate(scrollerLeft + scrollbarHeight + parseInt(x, 10), top + height / 2 - 8);
-	}
+		handles[index].translate(scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10), scroller.top + scroller.height / 2 - 8);
+	},
 
 	/**
 	 * Draw the scrollbar buttons with arrows
 	 * @param {Number} index 0 is left, 1 is right
 	 */
-	function drawScrollbarButton(index) {
-		var tempElem;
-		if (!rendered) {
+	drawScrollbarButton: function (index) {
+		var scroller = this,
+			chart = scroller.chart,
+			renderer = chart.renderer,
+			elementsToDestroy = scroller.elementsToDestroy,
+			scrollbarButtons = scroller.scrollbarButtons,
+			scrollbarHeight = scroller.scrollbarHeight,
+			scrollbarOptions = scroller.scrollbarOptions;
 
-			scrollbarButtons[index] = renderer.g().add(scrollbarGroup);
+		var tempElem;
+		if (!scroller.rendered) {
+
+			scrollbarButtons[index] = renderer.g().add(scroller.scrollbarGroup);
 
 			tempElem = renderer.rect(
 				-0.5,
@@ -15042,10 +15055,10 @@ Highcharts.Scroller = function (chart) {
 		// adjust the right side button to the varying length of the scroll track
 		if (index) {
 			scrollbarButtons[index].attr({
-				translateX: scrollerWidth - scrollbarHeight
+				translateX: scroller.scrollerWidth - scrollbarHeight
 			});
 		}
-	}
+	},
 
 	/**
 	 * Render the navigator and scroll bar
@@ -15054,7 +15067,32 @@ Highcharts.Scroller = function (chart) {
 	 * @param {Number} pxMin Pixel value minimum
 	 * @param {Number} pxMax Pixel value maximum
 	 */
-	function render(min, max, pxMin, pxMax) {
+	render: function (min, max, pxMin, pxMax) {
+		var scroller = this,
+			chart = scroller.chart,
+			renderer = chart.renderer,
+			navigatorLeft,
+			navigatorWidth,
+			scrollerLeft,
+			scrollerWidth,
+			scrollbarGroup = scroller.scrollbarGroup,
+			scrollbar = scroller.scrollbar,
+			xAxis = scroller.xAxis,
+			scrollbarTrack = scroller.scrollbarTrack,
+			scrollbarHeight = scroller.scrollbarHeight,
+			scrollbarEnabled = scroller.scrollbarEnabled,
+			navigatorOptions = scroller.navigatorOptions,
+			scrollbarOptions = scroller.scrollbarOptions,
+			height = scroller.height,
+			top = scroller.top,
+			navigatorEnabled = scroller.navigatorEnabled,
+			outlineWidth = navigatorOptions.outlineWidth,
+			halfOutline = outlineWidth / 2,
+			zoomedMin,
+			zoomedMax,
+			range,
+			outlineHeight = scroller.outlineHeight,
+			barBorderRadius = scrollbarOptions.barBorderRadius;
 
 		// don't render the navigator until we have data (#486)
 		if (isNaN(min)) {
@@ -15063,16 +15101,16 @@ Highcharts.Scroller = function (chart) {
 
 		var strokeWidth,
 			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
-			centerBarX;
+			centerBarX,
+			outlineTop = top + halfOutline;
 
-		outlineTop = top + halfOutline;
-		navigatorLeft = pick(
+		scroller.navigatorLeft = navigatorLeft = pick(
 			xAxis.left,
 			chart.plotLeft + scrollbarHeight // in case of scrollbar only, without navigator
 		);
-		navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
-		scrollerLeft = navigatorLeft - scrollbarHeight;
-		scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
+		scroller.navigatorWidth = navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
+		scroller.scrollerLeft = scrollerLeft = navigatorLeft - scrollbarHeight;
+		scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
 
 		// Set the scroller x axis extremes to reflect the total. The navigator extremes
 		// should always be the extremes of the union of all series in the chart as
@@ -15095,26 +15133,26 @@ Highcharts.Scroller = function (chart) {
 
 
 		// handles are allowed to cross
-		zoomedMin = pInt(mathMin(pxMin, pxMax));
-		zoomedMax = pInt(mathMax(pxMin, pxMax));
-		range = zoomedMax - zoomedMin;
+		scroller.zoomedMin = zoomedMin = pInt(mathMin(pxMin, pxMax));
+		scroller.zoomedMax = zoomedMax = pInt(mathMax(pxMin, pxMax));
+		scroller.range = range = zoomedMax - zoomedMin;
 
 		// on first render, create all elements
-		if (!rendered) {
+		if (!scroller.rendered) {
 
 			if (navigatorEnabled) {
 
-				leftShade = renderer.rect()
+				scroller.leftShade = renderer.rect()
 					.attr({
 						fill: navigatorOptions.maskFill,
 						zIndex: 3
 					}).add();
-				rightShade = renderer.rect()
+				scroller.rightShade = renderer.rect()
 					.attr({
 						fill: navigatorOptions.maskFill,
 						zIndex: 3
 					}).add();
-				outline = renderer.path()
+				scroller.outline = renderer.path()
 					.attr({
 						'stroke-width': outlineWidth,
 						stroke: navigatorOptions.outlineColor,
@@ -15126,11 +15164,11 @@ Highcharts.Scroller = function (chart) {
 			if (scrollbarEnabled) {
 
 				// draw the scrollbar group
-				scrollbarGroup = renderer.g().add();
+				scroller.scrollbarGroup = scrollbarGroup = renderer.g().add();
 
 				// the scrollbar track
 				strokeWidth = scrollbarOptions.trackBorderWidth;
-				scrollbarTrack = renderer.rect().attr({
+				scroller.scrollbarTrack = scrollbarTrack = renderer.rect().attr({
 					y: -strokeWidth % 2 / 2,
 					fill: scrollbarOptions.trackBackgroundColor,
 					stroke: scrollbarOptions.trackBorderColor,
@@ -15140,7 +15178,7 @@ Highcharts.Scroller = function (chart) {
 				}).add(scrollbarGroup);
 
 				// the scrollbar itself
-				scrollbar = renderer.rect()
+				scroller.scrollbar = scrollbar = renderer.rect()
 					.attr({
 						y: -scrollbarStrokeWidth % 2 / 2,
 						height: scrollbarHeight,
@@ -15151,7 +15189,7 @@ Highcharts.Scroller = function (chart) {
 					})
 					.add(scrollbarGroup);
 
-				scrollbarRifles = renderer.path()
+				scroller.scrollbarRifles = renderer.path()
 					.attr({
 						stroke: scrollbarOptions.rifleColor,
 						'stroke-width': 1
@@ -15162,19 +15200,19 @@ Highcharts.Scroller = function (chart) {
 
 		// place elements
 		if (navigatorEnabled) {
-			leftShade.attr({
+			scroller.leftShade.attr({
 				x: navigatorLeft,
 				y: top,
 				width: zoomedMin,
 				height: height
 			});
-			rightShade.attr({
+			scroller.rightShade.attr({
 				x: navigatorLeft + zoomedMax,
 				y: top,
 				width: navigatorWidth - zoomedMax,
 				height: height
 			});
-			outline.attr({ d: [
+			scroller.outline.attr({ d: [
 				M,
 				scrollerLeft, outlineTop, // left
 				L,
@@ -15187,16 +15225,16 @@ Highcharts.Scroller = function (chart) {
 				scrollerLeft + scrollerWidth, outlineTop // right
 			]});
 			// draw handles
-			drawHandle(zoomedMin + halfOutline, 0);
-			drawHandle(zoomedMax + halfOutline, 1);
+			scroller.drawHandle(zoomedMin + halfOutline, 0);
+			scroller.drawHandle(zoomedMax + halfOutline, 1);
 		}
 
 		// draw the scrollbar
 		if (scrollbarEnabled) {
 
 			// draw the buttons
-			drawScrollbarButton(0);
-			drawScrollbarButton(1);
+			scroller.drawScrollbarButton(0);
+			scroller.drawScrollbarButton(1);
 
 			scrollbarGroup.translate(scrollerLeft, mathRound(outlineTop + height));
 
@@ -15211,7 +15249,7 @@ Highcharts.Scroller = function (chart) {
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
 
-			scrollbarRifles.attr({ d: [
+			scroller.scrollbarRifles.attr({ d: [
 					M,
 					centerBarX - 3, scrollbarHeight / 4,
 					L,
@@ -15229,118 +15267,187 @@ Highcharts.Scroller = function (chart) {
 			});
 		}
 
-		rendered = true;
-	}
+		scroller.rendered = true;
+	},
+
+
 
 	/**
-	 * Event handler for the mouse down event.
+	 * Set up the mouse and touch events for the navigator and scrollbar
 	 */
-	function mouseDownHandler(e) {
-		e = chart.tracker.normalizeMouseEvent(e);
-		var chartX = e.chartX,
-			chartY = e.chartY,
-			handleSensitivity = hasTouch ? 10 : 7,
-			left,
-			isOnNavigator;
+	addEvents: function () {
+		var scroller = this,
+			chart = scroller.chart;
 
-		if (chartY > top && chartY < top + height + scrollbarHeight) { // we're vertically inside the navigator
-			isOnNavigator = !scrollbarEnabled || chartY < top + height;
+		addEvent(chart.container, MOUSEDOWN, scroller.mouseDownHandler);
+		addEvent(chart.container, MOUSEMOVE, scroller.mouseMoveHandler);
+		addEvent(document, MOUSEUP, scroller.mouseUpHandler);
+	},
 
-			// grab the left handle
-			if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
-				grabbedLeft = true;
-				otherHandlePos = zoomedMax;
+	/**
+	 * Removes the event handlers attached previously with addEvents.
+	 */
+	removeEvents: function () {
+		var scroller = this,
+			chart = scroller.chart;
 
-			// grab the right handle
-			} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
-				grabbedRight = true;
-				otherHandlePos = zoomedMin;
+		removeEvent(chart.container, MOUSEDOWN, scroller.mouseDownHandler);
+		removeEvent(chart.container, MOUSEMOVE, scroller.mouseMoveHandler);
+		removeEvent(document, MOUSEUP, scroller.mouseUpHandler);
+		if (scroller.navigatorEnabled) {
+			removeEvent(scroller.baseSeries, 'updatedData', scroller.updatedDataHandler);
+		}
+	},
 
-			// grab the zoomed range
-			} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
-				grabbedCenter = chartX;
-				defaultBodyCursor = bodyStyle.cursor;
-				bodyStyle.cursor = 'ew-resize';
+	/**
+	 * Initiate the Scroller object
+	 */
+	init: function () {
+		var scroller = this,
+			chart = scroller.chart,
+			xAxis,
+			yAxis,
+			scrollbarHeight = scroller.scrollbarHeight,
+			navigatorOptions = scroller.navigatorOptions,
+			height = scroller.height,
+			top = scroller.top,
+			navigatorSeries,
+			dragOffset,
+			hasDragged,
+			bodyStyle = document.body.style,
+			defaultBodyCursor,
+			baseSeries = scroller.baseSeries,
+			navigatorData;
 
-				dragOffset = chartX - zoomedMin;
+		/**
+		 * Event handler for the mouse down event.
+		 */
+		scroller.mouseDownHandler = function (e) {
+			var zoomedMin = scroller.zoomedMin,
+				zoomedMax = scroller.zoomedMax,
+				top = scroller.top,
+				scrollbarHeight = scroller.scrollbarHeight,
+				scrollerLeft = scroller.scrollerLeft,
+				scrollerWidth = scroller.scrollerWidth,
+				navigatorLeft = scroller.navigatorLeft,
+				navigatorWidth = scroller.navigatorWidth,
+				range = scroller.range;
 
-			// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
-			} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
+			e = chart.tracker.normalizeMouseEvent(e);
+			var chartX = e.chartX,
+				chartY = e.chartY,
+				handleSensitivity = hasTouch ? 10 : 7,
+				left,
+				isOnNavigator;
 
-				if (isOnNavigator) { // center around the clicked point
-					left = chartX - navigatorLeft - range / 2;
-				} else { // click on scrollbar
-					if (chartX < navigatorLeft) { // click left scrollbar button
-						left = zoomedMin - mathMin(10, range);
-					} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-						left = zoomedMin + mathMin(10, range);
-					} else {
-						// click on scrollbar track, shift the scrollbar by one range
-						left = chartX < navigatorLeft + zoomedMin ? // on the left
-							zoomedMin - range :
-							zoomedMax;
+			if (chartY > top && chartY < top + height + scrollbarHeight) { // we're vertically inside the navigator
+				isOnNavigator = !scroller.scrollbarEnabled || chartY < top + height;
+
+				// grab the left handle
+				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
+					scroller.grabbedLeft = true;
+					scroller.otherHandlePos = zoomedMax;
+
+				// grab the right handle
+				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
+					scroller.grabbedRight = true;
+					scroller.otherHandlePos = zoomedMin;
+
+				// grab the zoomed range
+				} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
+					scroller.grabbedCenter = chartX;
+					defaultBodyCursor = bodyStyle.cursor;
+					bodyStyle.cursor = 'ew-resize';
+
+					dragOffset = chartX - zoomedMin;
+
+				// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
+				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
+
+					if (isOnNavigator) { // center around the clicked point
+						left = chartX - navigatorLeft - range / 2;
+					} else { // click on scrollbar
+						if (chartX < navigatorLeft) { // click left scrollbar button
+							left = zoomedMin - mathMin(10, range);
+						} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
+							left = zoomedMin + mathMin(10, range);
+						} else {
+							// click on scrollbar track, shift the scrollbar by one range
+							left = chartX < navigatorLeft + zoomedMin ? // on the left
+								zoomedMin - range :
+								zoomedMax;
+						}
+					}
+					if (left < 0) {
+						left = 0;
+					} else if (left + range > navigatorWidth) {
+						left = navigatorWidth - range;
+					}
+					if (left !== zoomedMin) { // it has actually moved
+						chart.xAxis[0].setExtremes(
+							xAxis.translate(left, true),
+							xAxis.translate(left + range, true),
+							true,
+							false
+						);
 					}
 				}
-				if (left < 0) {
-					left = 0;
-				} else if (left + range > navigatorWidth) {
-					left = navigatorWidth - range;
-				}
-				if (left !== zoomedMin) { // it has actually moved
-					chart.xAxis[0].setExtremes(
-						xAxis.translate(left, true),
-						xAxis.translate(left + range, true),
-						true,
-						false
-					);
-				}
-			}
-		}
-		
-	}
-
-	/**
-	 * Event handler for the mouse move event.
-	 */
-	function mouseMoveHandler(e) {
-		e = chart.tracker.normalizeMouseEvent(e);
-		var chartX = e.chartX;
-
-		// validation for handle dragging
-		if (chartX < navigatorLeft) {
-			chartX = navigatorLeft;
-		} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-			chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
-		}
-
-		// drag left handle
-		if (grabbedLeft) {
-			hasDragged = true;
-			render(0, 0, chartX - navigatorLeft, otherHandlePos);
-
-		// drag right handle
-		} else if (grabbedRight) {
-			hasDragged = true;
-			render(0, 0, otherHandlePos, chartX - navigatorLeft);
-
-		// drag scrollbar or open area in navigator
-		} else if (grabbedCenter) {
-			hasDragged = true;
-			if (chartX < dragOffset) { // outside left
-				chartX = dragOffset;
-			} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
-				chartX = navigatorWidth + dragOffset - range;
 			}
 
-			render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
-		}
-	}
+		};
 
-	/**
-	 * Event handler for the mouse up event.
-	 */
-	function mouseUpHandler() {
-		if (hasDragged) {
+		/**
+		 * Event handler for the mouse move event.
+		 */
+		scroller.mouseMoveHandler = function (e) {
+			var scrollbarHeight = scroller.scrollbarHeight,
+				navigatorLeft = scroller.navigatorLeft,
+				navigatorWidth = scroller.navigatorWidth,
+				scrollerLeft = scroller.scrollerLeft,
+				scrollerWidth = scroller.scrollerWidth,
+				range = scroller.range;
+
+			e = chart.tracker.normalizeMouseEvent(e);
+			var chartX = e.chartX;
+
+			// validation for handle dragging
+			if (chartX < navigatorLeft) {
+				chartX = navigatorLeft;
+			} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
+				chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
+			}
+
+			// drag left handle
+			if (scroller.grabbedLeft) {
+				hasDragged = true;
+				scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
+
+			// drag right handle
+			} else if (scroller.grabbedRight) {
+				hasDragged = true;
+				scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
+
+			// drag scrollbar or open area in navigator
+			} else if (scroller.grabbedCenter) {
+				hasDragged = true;
+				if (chartX < dragOffset) { // outside left
+					chartX = dragOffset;
+				} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
+					chartX = navigatorWidth + dragOffset - range;
+				}
+
+				scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+			}
+		};
+
+		/**
+		 * Event handler for the mouse up event.
+		 */
+		scroller.mouseUpHandler = function () {
+			var zoomedMin = scroller.zoomedMin,
+				zoomedMax = scroller.zoomedMax;
+
+			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
 					xAxis.translate(zoomedMin, true),
 					xAxis.translate(zoomedMax, true),
@@ -15348,104 +15455,79 @@ Highcharts.Scroller = function (chart) {
 					false
 				);
 			}
-			grabbedLeft = grabbedRight = grabbedCenter = hasDragged = dragOffset = null;
+			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
 			bodyStyle.cursor = defaultBodyCursor;
-	}
+		};
 
-	function updatedDataHandler() {
-		var baseXAxis = baseSeries.xAxis,
-			baseExtremes = baseXAxis.getExtremes(),
-			baseMin = baseExtremes.min,
-			baseMax = baseExtremes.max,
-			baseDataMin = baseExtremes.dataMin,
-			baseDataMax = baseExtremes.dataMax,
-			range = baseMax - baseMin,
-			stickToMin,
-			stickToMax,
-			newMax,
-			newMin,
-			doRedraw,
-			navXData = navigatorSeries.xData,
-			hasSetExtremes = !!baseXAxis.setExtremes;
+		scroller.updatedDataHandler = function () {
+			var baseXAxis = baseSeries.xAxis,
+				baseExtremes = baseXAxis.getExtremes(),
+				baseMin = baseExtremes.min,
+				baseMax = baseExtremes.max,
+				baseDataMin = baseExtremes.dataMin,
+				baseDataMax = baseExtremes.dataMax,
+				range = baseMax - baseMin,
+				stickToMin,
+				stickToMax,
+				newMax,
+				newMin,
+				doRedraw,
+				navXData = navigatorSeries.xData,
+				hasSetExtremes = !!baseXAxis.setExtremes;
 
-		// detect whether to move the range
-		stickToMax = baseMax >= navXData[navXData.length - 1];
-		stickToMin = baseMin <= baseDataMin;
+			// detect whether to move the range
+			stickToMax = baseMax >= navXData[navXData.length - 1];
+			stickToMin = baseMin <= baseDataMin;
 
-		// set the navigator series data to the new data of the base series
-		if (!navigatorData) {
-			navigatorSeries.options.pointStart = baseSeries.xData[0];
-			navigatorSeries.setData(baseSeries.options.data, false);
-			doRedraw = true;
-		}
-
-		// if the zoomed range is already at the min, move it to the right as new data
-		// comes in
-		if (stickToMin) {
-			newMin = baseDataMin;
-			newMax = newMin + range;
-		}
-
-		// if the zoomed range is already at the max, move it to the right as new data
-		// comes in
-		if (stickToMax) {
-			newMax = baseDataMax;
-			if (!stickToMin) { // if stickToMin is true, the new min value is set above
-				newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
-			}
-		}
-
-		// update the extremes
-		if (hasSetExtremes && (stickToMin || stickToMax)) {
-			baseXAxis.setExtremes(newMin, newMax, true, false);
-		// if it is not at any edge, just move the scroller window to reflect the new series data
-		} else {
-			if (doRedraw) {
-				chart.redraw(false);
+			// set the navigator series data to the new data of the base series
+			if (!navigatorData) {
+				navigatorSeries.options.pointStart = baseSeries.xData[0];
+				navigatorSeries.setData(baseSeries.options.data, false);
+				doRedraw = true;
 			}
 
-			render(
-				mathMax(baseMin, baseDataMin),
-				mathMin(baseMax, baseDataMax)
-			);
-		}
-	}
+			// if the zoomed range is already at the min, move it to the right as new data
+			// comes in
+			if (stickToMin) {
+				newMin = baseDataMin;
+				newMax = newMin + range;
+			}
 
-	/**
-	 * Set up the mouse and touch events for the navigator and scrollbar
-	 */
-	function addEvents() {
-		addEvent(chart.container, MOUSEDOWN, mouseDownHandler);
-		addEvent(chart.container, MOUSEMOVE, mouseMoveHandler);
-		addEvent(document, MOUSEUP, mouseUpHandler);
-	}
+			// if the zoomed range is already at the max, move it to the right as new data
+			// comes in
+			if (stickToMax) {
+				newMax = baseDataMax;
+				if (!stickToMin) { // if stickToMin is true, the new min value is set above
+					newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
+				}
+			}
 
-	/**
-	 * Removes the event handlers attached previously with addEvents.
-	 */
-	function removeEvents() {
-		removeEvent(chart.container, MOUSEDOWN, mouseDownHandler);
-		removeEvent(chart.container, MOUSEMOVE, mouseMoveHandler);
-		removeEvent(document, MOUSEUP, mouseUpHandler);
-		if (navigatorEnabled) {
-			removeEvent(baseSeries, 'updatedData', updatedDataHandler);
-		}
-	}
+			// update the extremes
+			if (hasSetExtremes && (stickToMin || stickToMax)) {
+				baseXAxis.setExtremes(newMin, newMax, true, false);
+			// if it is not at any edge, just move the scroller window to reflect the new series data
+			} else {
+				if (doRedraw) {
+					chart.redraw(false);
+				}
 
-	/**
-	 * Initiate the Scroller object
-	 */
-	function init() {
+				scroller.render(
+					mathMax(baseMin, baseDataMin),
+					mathMin(baseMax, baseDataMax)
+				);
+			}
+		};
+
 		var xAxisIndex = chart.xAxis.length,
 			yAxisIndex = chart.yAxis.length,
 			baseChartSetSize = chart.setSize;
 
 		// make room below the chart
-		chart.extraBottomMargin = outlineHeight + navigatorOptions.margin;
+		chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
 		// get the top offset
-		top = getAxisTop(chart.chartHeight);
+		scroller.top = top = scroller.getAxisTop(chart.chartHeight);
 
-		if (navigatorEnabled) {
+		if (scroller.navigatorEnabled) {
 			var baseOptions = baseSeries.options,
 				mergedNavSeriesOptions,
 				baseData = baseOptions.data,
@@ -15455,9 +15537,8 @@ Highcharts.Scroller = function (chart) {
 			navigatorData = navigatorSeriesOptions.data;
 			baseOptions.data = navigatorSeriesOptions.data = null;
 
-
 			// an x axis is required for scrollbar also
-			xAxis = new Axis(chart, merge({
+			scroller.xAxis = xAxis = new Axis(chart, merge({
 				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
 			}, navigatorOptions.xAxis, {
 				isX: true,
@@ -15475,7 +15556,7 @@ Highcharts.Scroller = function (chart) {
 				zoomEnabled: false
 			}));
 
-			yAxis = new Axis(chart, merge(navigatorOptions.yAxis, {
+			scroller.yAxis = yAxis = new Axis(chart, merge(navigatorOptions.yAxis, {
 				alignTicks: false, // docs
 				height: height,
 				top: top,
@@ -15509,11 +15590,11 @@ Highcharts.Scroller = function (chart) {
 
 			// respond to updated data in the base series
 			// todo: use similiar hook when base series is not yet initialized
-			addEvent(baseSeries, 'updatedData', updatedDataHandler);
+			addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {
-			xAxis = {
+			scroller.xAxis = xAxis = {
 				translate: function (value, reverse) {
 					var ext = baseSeries.xAxis.getExtremes(),
 						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
@@ -15533,44 +15614,38 @@ Highcharts.Scroller = function (chart) {
 		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
 		// This needs to be done prior to chart.resize
 		chart.setSize = function (width, height, animation) {
-			xAxis.options.top = yAxis.options.top = top = getAxisTop(height);
+			xAxis.options.top = yAxis.options.top = scroller.top = top = scroller.getAxisTop(height);
 			baseChartSetSize.call(chart, width, height, animation);
 		};
 
-		addEvents();
-	}
+		scroller.addEvents();
+	},
 
 	/**
 	 * Destroys allocated elements.
 	 */
-	function destroy() {
-		// Disconnect events added in addEvents
-		removeEvents();
+	destroy: function () {
+		var scroller = this;
 
-		// Destroy local variables
-		each([xAxis, yAxis, leftShade, rightShade, outline, scrollbarTrack, scrollbar, scrollbarRifles, scrollbarGroup], function (obj) {
-			if (obj && obj.destroy) {
-				obj.destroy();
+		// Disconnect events added in addEvents
+		scroller.removeEvents();
+
+		// Destroy properties
+		each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline, scroller.scrollbarTrack, scroller.scrollbarRifles, scroller.scrollbarGroup, scroller.scrollbar], function (prop) {
+			if (prop && prop.destroy) {
+				prop.destroy();
 			}
 		});
-		xAxis = yAxis = leftShade = rightShade = outline = scrollbarTrack = scrollbar = scrollbarRifles = scrollbarGroup = null;
+		scroller.xAxis = scroller.yAxis = scroller.leftShade = scroller.rightShade = scroller.outline = scroller.scrollbarTrack = scroller.scrollbarRifles = scroller.scrollbarGroup = scroller.scrollbar = null;
 
 		// Destroy elements in collection
-		each([scrollbarButtons, handles, elementsToDestroy], function (coll) {
+		each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
 			destroyObjectProperties(coll);
 		});
 	}
-
-	// Run scroller
-	init();
-
-	// Expose
-	return {
-		render: render,
-		destroy: destroy
-	};
-
 };
+
+Highcharts.Scroller = Scroller;
 
 /* ****************************************************************************
  * End Scroller code														  *
