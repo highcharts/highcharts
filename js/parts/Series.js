@@ -1785,7 +1785,7 @@ Series.prototype = {
 							fill: options.backgroundColor,
 							stroke: options.borderColor,
 							'stroke-width': options.borderWidth,
-							r: options.borderRadius,
+							r: options.borderRadius || 0,
 							rotation: options.rotation,
 							padding: options.padding,
 							zIndex: 1
