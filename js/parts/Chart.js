@@ -2578,7 +2578,8 @@ function Chart(userOptions, callback) {
 				i,
 				j,
 				distance = chartWidth,
-				index = inverted ? e.chartY : e.chartX - plotLeft; // wtf?
+				// the index in the tooltipPoints array, corresponding to pixel position in plot area 
+				index = inverted ? plotHeight + plotTop - e.chartY : e.chartX - plotLeft;
 
 			// shared tooltip
 			if (tooltip && options.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {

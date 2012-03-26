@@ -7755,7 +7755,8 @@ function Chart(userOptions, callback) {
 				i,
 				j,
 				distance = chartWidth,
-				index = inverted ? e.chartY : e.chartX - plotLeft; // wtf?
+				// the index in the tooltipPoints array, corresponding to pixel position in plot area 
+				index = inverted ? plotHeight + plotTop - e.chartY : e.chartX - plotLeft;
 
 			// shared tooltip
 			if (tooltip && options.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -11202,10 +11203,9 @@ Series.prototype = {
 	setTooltipPoints: function (renew) {
 		var series = this,
 			chart = series.chart,
-			inverted = chart.inverted,
 			points = [],
 			pointsLength,
-			plotSize = mathRound((inverted ? chart.plotTop : chart.plotLeft) + chart.plotSizeX),
+			plotSize = chart.plotSizeX,
 			low,
 			high,
 			xAxis = series.xAxis,
@@ -11231,10 +11231,10 @@ Series.prototype = {
 		// loop the concatenated points and apply each point to all the closest
 		// pixel positions
 		if (xAxis && xAxis.reversed) {
-			points = points.reverse();//reverseArray(points);
+			points = points.reverse();
 		}
 
-		//each(points, function (point, i) {
+		// Assign each pixel position to the nearest point
 		pointsLength = points.length;
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
@@ -11244,7 +11244,7 @@ Series.prototype = {
 				plotSize;
 
 			while (low <= high) {
-				tooltipPoints[inverted ? plotSize - low++ : low++] = point;
+				tooltipPoints[low++] = point;
 			}
 		}
 		series.tooltipPoints = tooltipPoints;
