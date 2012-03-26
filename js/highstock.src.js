@@ -15637,12 +15637,10 @@ Highcharts.RangeSelector = function (chart) {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (this.isDirty) {
-					if (buttons[selected]) {
-						buttons[selected].setState(0);
-					}
-					selected = null;
+				if (buttons[selected]) {
+					buttons[selected].setState(0);
 				}
+				selected = null;
 			});
 		});
 	}
