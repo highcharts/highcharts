@@ -2192,7 +2192,7 @@ function Chart(userOptions, callback) {
 		style.padding = 0;
 
 		// create the label
-		var label = renderer.label('', 0, 0, null, null, null, options.useHTML)
+		var label = renderer.label('', 0, 0, null, null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
