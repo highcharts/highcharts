@@ -5726,9 +5726,8 @@ Axis.prototype = {
 	getSeriesExtremes: function () {
 		var axis = this,
 			chart = axis.chart,
-			stacks = axis.stacks;
-
-		var posStack = [],
+			stacks = axis.stacks,
+			posStack = [],
 			negStack = [],
 			i;
 
@@ -5803,7 +5802,6 @@ Axis.prototype = {
 						axis.dataMin = 0;
 						axis.dataMax = 99;
 					}
-
 
 					// processData can alter series.pointRange, so this goes after
 					//findPointRange = series.pointRange === null;
@@ -5898,7 +5896,6 @@ Axis.prototype = {
 				}
 			}
 		});
-
 	},
 
 	/**
@@ -5999,7 +5996,6 @@ Axis.prototype = {
 	 * Set the tick positions of a linear axis to round values like whole tens or every five.
 	 */
 	getLinearTickPositions: function (tickInterval, min, max) {
-
 		var pos,
 			lastPos,
 			roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
@@ -6126,7 +6122,7 @@ Axis.prototype = {
 		}
 		return positions;
 	},
-	
+
 	/**
 	 * Return the minor tick positions. For logarithmic axes, reuse the same logic
 	 * as for major ticks.
@@ -6168,9 +6164,8 @@ Axis.prototype = {
 		var axis = this,
 			options = axis.options,
 			min = axis.min,
-			max = axis.max;
-
-		var zoomOffset,
+			max = axis.max,
+			zoomOffset,
 			spaceAvailable = axis.dataMax - axis.dataMin >= axis.minRange,
 			closestDataRange,
 			i,
@@ -6179,10 +6174,10 @@ Axis.prototype = {
 			loopLength,
 			minArgs,
 			maxArgs;
-			
+
 		// Set the automatic minimum range based on the closest point distance
 		if (axis.isXAxis && axis.minRange === UNDEFINED && !axis.isLog) {
-			
+
 			if (defined(options.min) || defined(options.max)) {
 				axis.minRange = null; // don't do this again
 
@@ -6203,7 +6198,7 @@ Axis.prototype = {
 				axis.minRange = mathMin(closestDataRange * 5, axis.dataMax - axis.dataMin);
 			}
 		}
-		
+
 		// if minRange is exceeded, adjust
 		if (max - min < axis.minRange) {
 			var minRange = axis.minRange;
@@ -6220,7 +6215,7 @@ Axis.prototype = {
 			if (spaceAvailable) { // if space is availabe, stay within the data range
 				maxArgs[2] = axis.dataMax;
 			}
-			
+
 			axis.max = max = arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
@@ -6466,9 +6461,9 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			xOrY = axis.xOrY,
-			tickPositions = axis.tickPositions;
+			tickPositions = axis.tickPositions,
+			maxTicks = chart.maxTicks;
 
-		var maxTicks = chart.maxTicks;
 		if (maxTicks && maxTicks[xOrY] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
@@ -6491,8 +6486,6 @@ Axis.prototype = {
 				axis.isDirty = true;
 			}
 		}
-
-
 	},
 
 	/**
@@ -6502,9 +6495,8 @@ Axis.prototype = {
 	setScale: function () {
 		var axis = this,
 			chart = axis.chart,
-			stacks = axis.stacks;
-
-		var type,
+			stacks = axis.stacks,
+			type,
 			i,
 			isDirtyData;
 
@@ -6568,7 +6560,7 @@ Axis.prototype = {
 			chart = axis.chart;
 
 		redraw = pick(redraw, true); // defaults to true
-		
+
 		// Extend the arguments with min and max
 		eventArguments = extend(eventArguments, {
 			min: newMin,
@@ -6580,7 +6572,7 @@ Axis.prototype = {
 
 			axis.userMin = newMin;
 			axis.userMax = newMax;
-			
+
 			// redraw
 			if (redraw) {
 				chart.redraw(animation);
@@ -6669,9 +6661,8 @@ Axis.prototype = {
 			tickPositions = axis.tickPositions,
 			ticks = axis.ticks,
 			horiz = axis.horiz,
-			side = axis.side;
-
-		var hasData = axis.series.length && defined(axis.min) && defined(axis.max),
+			side = axis.side,
+			hasData = axis.series.length && defined(axis.min) && defined(axis.max),
 			showAxis = hasData || pick(options.showEmpty, true),
 			titleOffset = 0,
 			titleOffsetOption,
@@ -6754,8 +6745,6 @@ Axis.prototype = {
 
 			// hide or show the title depending on whether showEmpty is set
 			axis.axisTitle[showAxis ? 'show' : 'hide']();
-
-
 		}
 
 		// handle automatic or user set offset
@@ -6798,9 +6787,8 @@ Axis.prototype = {
 			minorTicks = axis.minorTicks,
 			alternateBands = axis.alternateBands,
 			horiz = axis.horiz,
-			opposite = axis.opposite;
-
-		var axisTitleOptions = options.title,
+			opposite = axis.opposite,
+			axisTitleOptions = options.title,
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
 			lineWidth = options.lineWidth,
@@ -6884,8 +6872,6 @@ Axis.prototype = {
 				axis._addedPlotLB = true;
 			}
 
-
-
 		} // end if hasData
 
 		// remove inactive ticks
@@ -6900,9 +6886,6 @@ Axis.prototype = {
 				}
 			}
 		});
-
-
-
 
 		// Static items. As the axis group is cleared on subsequent calls
 		// to render, these items are added outside the group.
@@ -7017,7 +7000,7 @@ Axis.prototype = {
 			}
 		}
 	},
-	
+
 	/**
 	 * Update the axis title by options
 	 */
@@ -7027,10 +7010,10 @@ Axis.prototype = {
 			options = axis.options;
 
 		options.title = merge(options.title, newTitleOptions);
-		
+
 		axis.axisTitle = axis.axisTitle.destroy();
 		axis.isDirty = true;
-		
+
 		if (pick(redraw, true)) {
 			chart.redraw();
 		}
@@ -7095,9 +7078,8 @@ Axis.prototype = {
 	 */
 	destroy: function () {
 		var axis = this,
-			stacks = axis.stacks;
-
-		var stackKey;
+			stacks = axis.stacks,
+			stackKey;
 
 		// Remove the events
 		removeEvent(axis);
@@ -7143,36 +7125,6 @@ Axis.prototype = {
 			axis.reversed = true;
 		}
 
-		// expose some variables
-/*		extend(axis, {
-			addPlotBand: addPlotBandOrLine,
-			addPlotLine: addPlotBandOrLine,
-			adjustTickAmount: adjustTickAmount,
-			categories: categories,
-			getExtremes: getExtremes,
-			getPlotLinePath: getPlotLinePath,
-			getThreshold: getThreshold,
-			isXAxis: isXAxis,
-			options: options,
-			plotLinesAndBands: plotLinesAndBands,
-			getOffset: getOffset,
-			render: render,
-			setAxisSize: setAxisSize,
-			setAxisTranslation: setAxisTranslation,
-			setCategories: setCategories,
-			setExtremes: setExtremes,
-			setScale: setScale,
-			setTickPositions: setTickPositions,
-			translate: translate,
-			redraw: redraw,
-			removePlotBand: removePlotBandOrLine,
-			removePlotLine: removePlotBandOrLine,
-			reversed: reversed,
-			setTitle: setTitle,
-			series: [], // populated by Series
-			stacks: stacks,
-			destroy: destroy
-		});*/
 		axis.removePlotBand = axis.removePlotBandOrLine;
 		axis.removePlotLine = axis.removePlotBandOrLine;
 		axis.addPlotBand = axis.addPlotBandOrLine;
@@ -14772,14 +14724,10 @@ if (Renderer === VMLRenderer) {
 /* ****************************************************************************
  * End Flags series code													  *
  *****************************************************************************/
-
 // constants
 var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
 	MOUSEMOVE = hasTouch ? 'touchmove' : 'mousemove',
 	MOUSEUP = hasTouch ? 'touchend' : 'mouseup';
-
-
-
 
 /* ****************************************************************************
  * Start Scroller code														*
@@ -14892,7 +14840,6 @@ extend(defaultOptions, {
  * @param {Object} chart
  */
 function Scroller(chart) {
-
 	var chartOptions = chart.options,
 		navigatorOptions = chartOptions.navigator,
 		navigatorEnabled = navigatorOptions.enabled,
@@ -14914,34 +14861,12 @@ function Scroller(chart) {
 
 	this.chart = chart;
 	this.height = height;
-	//top = UNDEFINED;
 	this.scrollbarHeight = scrollbarHeight;
 	this.scrollbarEnabled = scrollbarEnabled;
 	this.navigatorEnabled = navigatorEnabled;
 	this.navigatorOptions = navigatorOptions;
 	this.scrollbarOptions = scrollbarOptions;
 	this.outlineHeight = height + scrollbarHeight;
-
-	//this.rendered = UNDEFINED;
-
-	// Elements
-	//this.scrollbarRifles = UNDEFINED;
-	//this.scrollbarGroup = UNDEFINED;
-	//this.scrollbar = UNDEFINED;
-	//this.xAxis = UNDEFINED;
-	//this.yAxis = UNDEFINED;
-	//this.scrollbarTrack = UNDEFINED;
-	//this.leftShade = UNDEFINED;
-	//this.rightShade = UNDEFINED;
-	//this.outline = UNDEFINED;
-
-	//this.navigatorLeft = UNDEFINED;
-	//this.navigatorWidth = UNDEFINED;
-	//this.scrollerLeft = UNDEFINED;
-	//this.scrollerWidth = UNDEFINED;
-	//this.zoomedMin = UNDEFINED;
-	//this.zoomedMax = UNDEFINED;
-	//this.range = UNDEFINED;
 
 	// Run scroller
 	this.init();
@@ -14966,9 +14891,8 @@ Scroller.prototype = {
 			renderer = chart.renderer,
 			elementsToDestroy = scroller.elementsToDestroy,
 			handles = scroller.handles,
-			handlesOptions = scroller.navigatorOptions.handles;
-
-		var attr = {
+			handlesOptions = scroller.navigatorOptions.handles,
+			attr = {
 				fill: handlesOptions.backgroundColor,
 				stroke: handlesOptions.borderColor,
 				'stroke-width': 1
@@ -14977,7 +14901,6 @@ Scroller.prototype = {
 
 		// create the elements
 		if (!scroller.rendered) {
-
 			// the group
 			handles[index] = renderer.g()
 				.css({ cursor: 'e-resize' })
@@ -15019,36 +14942,35 @@ Scroller.prototype = {
 			elementsToDestroy = scroller.elementsToDestroy,
 			scrollbarButtons = scroller.scrollbarButtons,
 			scrollbarHeight = scroller.scrollbarHeight,
-			scrollbarOptions = scroller.scrollbarOptions;
+			scrollbarOptions = scroller.scrollbarOptions,
+			tempElem;
 
-		var tempElem;
 		if (!scroller.rendered) {
-
 			scrollbarButtons[index] = renderer.g().add(scroller.scrollbarGroup);
 
 			tempElem = renderer.rect(
-				-0.5,
-				-0.5,
-				scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
-				scrollbarHeight + 1,
-				scrollbarOptions.buttonBorderRadius,
-				scrollbarOptions.buttonBorderWidth
-			).attr({
-				stroke: scrollbarOptions.buttonBorderColor,
-				'stroke-width': scrollbarOptions.buttonBorderWidth,
-				fill: scrollbarOptions.buttonBackgroundColor
-			}).add(scrollbarButtons[index]);
+					-0.5,
+					-0.5,
+					scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
+					scrollbarHeight + 1,
+					scrollbarOptions.buttonBorderRadius,
+					scrollbarOptions.buttonBorderWidth
+				).attr({
+					stroke: scrollbarOptions.buttonBorderColor,
+					'stroke-width': scrollbarOptions.buttonBorderWidth,
+					fill: scrollbarOptions.buttonBackgroundColor
+				}).add(scrollbarButtons[index]);
 			elementsToDestroy.push(tempElem);
 
 			tempElem = renderer.path([
-				'M',
-				scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
-				'L',
-				scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 + 3,
-				scrollbarHeight / 2 + (index ? 2 : -2), scrollbarHeight / 2
-			]).attr({
-				fill: scrollbarOptions.buttonArrowColor
-			}).add(scrollbarButtons[index]);
+					'M',
+					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
+					'L',
+					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 + 3,
+					scrollbarHeight / 2 + (index ? 2 : -2), scrollbarHeight / 2
+				]).attr({
+					fill: scrollbarOptions.buttonArrowColor
+				}).add(scrollbarButtons[index]);
 			elementsToDestroy.push(tempElem);
 		}
 
@@ -15092,17 +15014,16 @@ Scroller.prototype = {
 			zoomedMax,
 			range,
 			outlineHeight = scroller.outlineHeight,
-			barBorderRadius = scrollbarOptions.barBorderRadius;
+			barBorderRadius = scrollbarOptions.barBorderRadius,
+			strokeWidth,
+			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
+			centerBarX,
+			outlineTop = top + halfOutline;
 
 		// don't render the navigator until we have data (#486)
 		if (isNaN(min)) {
 			return;
 		}
-
-		var strokeWidth,
-			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
-			centerBarX,
-			outlineTop = top + halfOutline;
 
 		scroller.navigatorLeft = navigatorLeft = pick(
 			xAxis.left,
@@ -15130,7 +15051,6 @@ Scroller.prototype = {
 		// get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
-
 
 		// handles are allowed to cross
 		scroller.zoomedMin = zoomedMin = pInt(mathMin(pxMin, pxMax));
@@ -15270,8 +15190,6 @@ Scroller.prototype = {
 		scroller.rendered = true;
 	},
 
-
-
 	/**
 	 * Set up the mouse and touch events for the navigator and scrollbar
 	 */
@@ -15331,14 +15249,14 @@ Scroller.prototype = {
 				scrollerWidth = scroller.scrollerWidth,
 				navigatorLeft = scroller.navigatorLeft,
 				navigatorWidth = scroller.navigatorWidth,
-				range = scroller.range;
-
-			e = chart.tracker.normalizeMouseEvent(e);
-			var chartX = e.chartX,
+				range = scroller.range,
+				chartX = e.chartX,
 				chartY = e.chartY,
 				handleSensitivity = hasTouch ? 10 : 7,
 				left,
 				isOnNavigator;
+
+			e = chart.tracker.normalizeMouseEvent(e);
 
 			if (chartY > top && chartY < top + height + scrollbarHeight) { // we're vertically inside the navigator
 				isOnNavigator = !scroller.scrollbarEnabled || chartY < top + height;
@@ -15393,7 +15311,6 @@ Scroller.prototype = {
 					}
 				}
 			}
-
 		};
 
 		/**
@@ -15609,8 +15526,7 @@ Scroller.prototype = {
 				}
 			};
 		}
-		
-		
+
 		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
 		// This needs to be done prior to chart.resize
 		chart.setSize = function (width, height, animation) {
@@ -15650,7 +15566,6 @@ Highcharts.Scroller = Scroller;
 /* ****************************************************************************
  * End Scroller code														  *
  *****************************************************************************/
-
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
@@ -15716,15 +15631,12 @@ function RangeSelector(chart) {
 			type: 'all',
 			text: 'All'
 		}];
-		chart.resetZoomEnabled = false;
+
+	chart.resetZoomEnabled = false;
 
 	this.chart = chart;
 	this.buttons = [];
 	this.boxSpanElements = {};
-	//this.divAbsolute = UNDEFINED;
-	//this.divRelative = UNDEFINED;
-	//this.zoomText = UNDEFINED;
-	//this.div = UNDEFINED;
 
 	// Run RangeSelector
 	this.init(defaultButtons);
@@ -15740,9 +15652,8 @@ RangeSelector.prototype = {
 	clickButton: function (i, rangeOptions, redraw) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
-			buttons = rangeSelector.buttons;
-
-		var baseAxis = chart.xAxis[0],
+			buttons = rangeSelector.buttons,
+			baseAxis = chart.xAxis[0],
 			extremes = baseAxis && baseAxis.getExtremes(),
 			now,
 			dataMin = extremes && extremes.dataMin,
@@ -15818,7 +15729,6 @@ RangeSelector.prototype = {
 				}
 			);
 			rangeSelector.selected = i;
-
 		} else { // existing axis object; after render time
 			setTimeout(function () { // make sure the visual state is set before the heavy process begins
 				baseAxis.setExtremes(
@@ -15831,7 +15741,6 @@ RangeSelector.prototype = {
 				rangeSelector.selected = i;
 			}, 1);
 		}
-
 	},
 
 	/**
@@ -15844,11 +15753,11 @@ RangeSelector.prototype = {
 			buttonOptions = options.buttons || defaultButtons,
 			buttons = rangeSelector.buttons,
 			leftBox = rangeSelector.leftBox,
-			rightBox = rangeSelector.rightBox;
+			rightBox = rangeSelector.rightBox,
+			selectedOption = options.selected;
 
 		chart.extraTopMargin = 25;
 		rangeSelector.buttonOptions = buttonOptions;
-
 
 		/**
 		 * The handler connected to container that handles mousedown.
@@ -15861,8 +15770,6 @@ RangeSelector.prototype = {
 				rightBox.blur();
 			}
 		};
-
-		var selectedOption = options.selected;
 
 		addEvent(chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
 
@@ -15891,12 +15798,13 @@ RangeSelector.prototype = {
 	setInputValue: function (input, time) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
-			options = chart.options.rangeSelector;
+			options = chart.options.rangeSelector,
+			format = input.hasFocus ? options.inputEditDateFormat || '%Y-%m-%d' : options.inputDateFormat || '%b %e, %Y';
 
-		var format = input.hasFocus ? options.inputEditDateFormat || '%Y-%m-%d' : options.inputDateFormat || '%b %e, %Y';
 		if (time) {
 			input.HCTime = time;
 		}
+
 		input.value = dateFormat(format, input.HCTime);
 	},
 
@@ -15910,9 +15818,8 @@ RangeSelector.prototype = {
 			options = chart.options.rangeSelector,
 			boxSpanElements = rangeSelector.boxSpanElements,
 			lang = defaultOptions.lang,
-			div = rangeSelector.div;
-
-		var isMin = name === 'min',
+			div = rangeSelector.div,
+			isMin = name === 'min',
 			input;
 
 		// create the text label
@@ -15983,9 +15890,8 @@ RangeSelector.prototype = {
 			options = chart.options.rangeSelector,
 			buttons = rangeSelector.buttons,
 			lang = defaultOptions.lang,
-			div = rangeSelector.div;
-
-		var chartStyle = chart.options.chart.style,
+			div = rangeSelector.div,
+			chartStyle = chart.options.chart.style,
 			buttonTheme = options.buttonTheme,
 			inputEnabled = options.inputEnabled !== false,
 			states = buttonTheme && buttonTheme.states,
@@ -16003,21 +15909,21 @@ RangeSelector.prototype = {
 
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
-					rangeOptions.text,
-					buttonLeft,
-					chart.plotTop - 25,
-					function () {
-						rangeSelector.clickButton(i, rangeOptions);
-						rangeSelector.isActive = true;
-					},
-					buttonTheme,
-					states && states.hover,
-					states && states.select
-				)
-				.css({
-					textAlign: 'center'
-				})
-				.add();
+						rangeOptions.text,
+						buttonLeft,
+						chart.plotTop - 25,
+						function () {
+							rangeSelector.clickButton(i, rangeOptions);
+							rangeSelector.isActive = true;
+						},
+						buttonTheme,
+						states && states.hover,
+						states && states.select
+					)
+					.css({
+						textAlign: 'center'
+					})
+					.add();
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
@@ -16025,7 +15931,6 @@ RangeSelector.prototype = {
 				if (rangeSelector.selected === i) {
 					buttons[i].setState(2);
 				}
-
 			});
 
 			// first create a wrapper outside the container in order to make
@@ -16049,7 +15954,6 @@ RangeSelector.prototype = {
 				}, options.inputBoxStyle), div);
 
 				rangeSelector.leftBox = rangeSelector.drawInput('min');
-
 				rangeSelector.rightBox = rangeSelector.drawInput('max');
 			}
 		}
@@ -16058,7 +15962,6 @@ RangeSelector.prototype = {
 			rangeSelector.setInputValue(rangeSelector.leftBox, min);
 			rangeSelector.setInputValue(rangeSelector.rightBox, max);
 		}
-
 
 		rangeSelector.rendered = true;
 	},
@@ -16099,14 +16002,10 @@ RangeSelector.prototype = {
 		each([leftBox, rightBox, boxSpanElements.min, boxSpanElements.max, divAbsolute, divRelative], function (item) {
 			discardElement(item);
 		});
+
 		// Null the references
 		rangeSelector.leftBox = rangeSelector.rightBox = rangeSelector.boxSpanElements = rangeSelector.div = rangeSelector.divAbsolute = rangeSelector.divRelative = null;
 	}
-/*	// Expose
-	return {
-		render: render,
-		destroy: destroy
-	};*/
 };
 
 Highcharts.RangeSelector = RangeSelector;

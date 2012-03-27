@@ -1,11 +1,7 @@
-
 // constants
 var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
 	MOUSEMOVE = hasTouch ? 'touchmove' : 'mousemove',
 	MOUSEUP = hasTouch ? 'touchend' : 'mouseup';
-
-
-
 
 /* ****************************************************************************
  * Start Scroller code														*
@@ -118,7 +114,6 @@ extend(defaultOptions, {
  * @param {Object} chart
  */
 function Scroller(chart) {
-
 	var chartOptions = chart.options,
 		navigatorOptions = chartOptions.navigator,
 		navigatorEnabled = navigatorOptions.enabled,
@@ -140,34 +135,12 @@ function Scroller(chart) {
 
 	this.chart = chart;
 	this.height = height;
-	//top = UNDEFINED;
 	this.scrollbarHeight = scrollbarHeight;
 	this.scrollbarEnabled = scrollbarEnabled;
 	this.navigatorEnabled = navigatorEnabled;
 	this.navigatorOptions = navigatorOptions;
 	this.scrollbarOptions = scrollbarOptions;
 	this.outlineHeight = height + scrollbarHeight;
-
-	//this.rendered = UNDEFINED;
-
-	// Elements
-	//this.scrollbarRifles = UNDEFINED;
-	//this.scrollbarGroup = UNDEFINED;
-	//this.scrollbar = UNDEFINED;
-	//this.xAxis = UNDEFINED;
-	//this.yAxis = UNDEFINED;
-	//this.scrollbarTrack = UNDEFINED;
-	//this.leftShade = UNDEFINED;
-	//this.rightShade = UNDEFINED;
-	//this.outline = UNDEFINED;
-
-	//this.navigatorLeft = UNDEFINED;
-	//this.navigatorWidth = UNDEFINED;
-	//this.scrollerLeft = UNDEFINED;
-	//this.scrollerWidth = UNDEFINED;
-	//this.zoomedMin = UNDEFINED;
-	//this.zoomedMax = UNDEFINED;
-	//this.range = UNDEFINED;
 
 	// Run scroller
 	this.init();
@@ -192,9 +165,8 @@ Scroller.prototype = {
 			renderer = chart.renderer,
 			elementsToDestroy = scroller.elementsToDestroy,
 			handles = scroller.handles,
-			handlesOptions = scroller.navigatorOptions.handles;
-
-		var attr = {
+			handlesOptions = scroller.navigatorOptions.handles,
+			attr = {
 				fill: handlesOptions.backgroundColor,
 				stroke: handlesOptions.borderColor,
 				'stroke-width': 1
@@ -203,7 +175,6 @@ Scroller.prototype = {
 
 		// create the elements
 		if (!scroller.rendered) {
-
 			// the group
 			handles[index] = renderer.g()
 				.css({ cursor: 'e-resize' })
@@ -245,36 +216,35 @@ Scroller.prototype = {
 			elementsToDestroy = scroller.elementsToDestroy,
 			scrollbarButtons = scroller.scrollbarButtons,
 			scrollbarHeight = scroller.scrollbarHeight,
-			scrollbarOptions = scroller.scrollbarOptions;
+			scrollbarOptions = scroller.scrollbarOptions,
+			tempElem;
 
-		var tempElem;
 		if (!scroller.rendered) {
-
 			scrollbarButtons[index] = renderer.g().add(scroller.scrollbarGroup);
 
 			tempElem = renderer.rect(
-				-0.5,
-				-0.5,
-				scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
-				scrollbarHeight + 1,
-				scrollbarOptions.buttonBorderRadius,
-				scrollbarOptions.buttonBorderWidth
-			).attr({
-				stroke: scrollbarOptions.buttonBorderColor,
-				'stroke-width': scrollbarOptions.buttonBorderWidth,
-				fill: scrollbarOptions.buttonBackgroundColor
-			}).add(scrollbarButtons[index]);
+					-0.5,
+					-0.5,
+					scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
+					scrollbarHeight + 1,
+					scrollbarOptions.buttonBorderRadius,
+					scrollbarOptions.buttonBorderWidth
+				).attr({
+					stroke: scrollbarOptions.buttonBorderColor,
+					'stroke-width': scrollbarOptions.buttonBorderWidth,
+					fill: scrollbarOptions.buttonBackgroundColor
+				}).add(scrollbarButtons[index]);
 			elementsToDestroy.push(tempElem);
 
 			tempElem = renderer.path([
-				'M',
-				scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
-				'L',
-				scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 + 3,
-				scrollbarHeight / 2 + (index ? 2 : -2), scrollbarHeight / 2
-			]).attr({
-				fill: scrollbarOptions.buttonArrowColor
-			}).add(scrollbarButtons[index]);
+					'M',
+					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
+					'L',
+					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 + 3,
+					scrollbarHeight / 2 + (index ? 2 : -2), scrollbarHeight / 2
+				]).attr({
+					fill: scrollbarOptions.buttonArrowColor
+				}).add(scrollbarButtons[index]);
 			elementsToDestroy.push(tempElem);
 		}
 
@@ -318,17 +288,16 @@ Scroller.prototype = {
 			zoomedMax,
 			range,
 			outlineHeight = scroller.outlineHeight,
-			barBorderRadius = scrollbarOptions.barBorderRadius;
+			barBorderRadius = scrollbarOptions.barBorderRadius,
+			strokeWidth,
+			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
+			centerBarX,
+			outlineTop = top + halfOutline;
 
 		// don't render the navigator until we have data (#486)
 		if (isNaN(min)) {
 			return;
 		}
-
-		var strokeWidth,
-			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
-			centerBarX,
-			outlineTop = top + halfOutline;
 
 		scroller.navigatorLeft = navigatorLeft = pick(
 			xAxis.left,
@@ -356,7 +325,6 @@ Scroller.prototype = {
 		// get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
-
 
 		// handles are allowed to cross
 		scroller.zoomedMin = zoomedMin = pInt(mathMin(pxMin, pxMax));
@@ -496,8 +464,6 @@ Scroller.prototype = {
 		scroller.rendered = true;
 	},
 
-
-
 	/**
 	 * Set up the mouse and touch events for the navigator and scrollbar
 	 */
@@ -557,14 +523,14 @@ Scroller.prototype = {
 				scrollerWidth = scroller.scrollerWidth,
 				navigatorLeft = scroller.navigatorLeft,
 				navigatorWidth = scroller.navigatorWidth,
-				range = scroller.range;
-
-			e = chart.tracker.normalizeMouseEvent(e);
-			var chartX = e.chartX,
+				range = scroller.range,
+				chartX = e.chartX,
 				chartY = e.chartY,
 				handleSensitivity = hasTouch ? 10 : 7,
 				left,
 				isOnNavigator;
+
+			e = chart.tracker.normalizeMouseEvent(e);
 
 			if (chartY > top && chartY < top + height + scrollbarHeight) { // we're vertically inside the navigator
 				isOnNavigator = !scroller.scrollbarEnabled || chartY < top + height;
@@ -619,7 +585,6 @@ Scroller.prototype = {
 					}
 				}
 			}
-
 		};
 
 		/**
@@ -835,8 +800,7 @@ Scroller.prototype = {
 				}
 			};
 		}
-		
-		
+
 		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
 		// This needs to be done prior to chart.resize
 		chart.setSize = function (width, height, animation) {
@@ -876,4 +840,3 @@ Highcharts.Scroller = Scroller;
 /* ****************************************************************************
  * End Scroller code														  *
  *****************************************************************************/
-

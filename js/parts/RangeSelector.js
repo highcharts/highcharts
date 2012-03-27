@@ -63,15 +63,12 @@ function RangeSelector(chart) {
 			type: 'all',
 			text: 'All'
 		}];
-		chart.resetZoomEnabled = false;
+
+	chart.resetZoomEnabled = false;
 
 	this.chart = chart;
 	this.buttons = [];
 	this.boxSpanElements = {};
-	//this.divAbsolute = UNDEFINED;
-	//this.divRelative = UNDEFINED;
-	//this.zoomText = UNDEFINED;
-	//this.div = UNDEFINED;
 
 	// Run RangeSelector
 	this.init(defaultButtons);
@@ -87,9 +84,8 @@ RangeSelector.prototype = {
 	clickButton: function (i, rangeOptions, redraw) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
-			buttons = rangeSelector.buttons;
-
-		var baseAxis = chart.xAxis[0],
+			buttons = rangeSelector.buttons,
+			baseAxis = chart.xAxis[0],
 			extremes = baseAxis && baseAxis.getExtremes(),
 			now,
 			dataMin = extremes && extremes.dataMin,
@@ -165,7 +161,6 @@ RangeSelector.prototype = {
 				}
 			);
 			rangeSelector.selected = i;
-
 		} else { // existing axis object; after render time
 			setTimeout(function () { // make sure the visual state is set before the heavy process begins
 				baseAxis.setExtremes(
@@ -178,7 +173,6 @@ RangeSelector.prototype = {
 				rangeSelector.selected = i;
 			}, 1);
 		}
-
 	},
 
 	/**
@@ -191,11 +185,11 @@ RangeSelector.prototype = {
 			buttonOptions = options.buttons || defaultButtons,
 			buttons = rangeSelector.buttons,
 			leftBox = rangeSelector.leftBox,
-			rightBox = rangeSelector.rightBox;
+			rightBox = rangeSelector.rightBox,
+			selectedOption = options.selected;
 
 		chart.extraTopMargin = 25;
 		rangeSelector.buttonOptions = buttonOptions;
-
 
 		/**
 		 * The handler connected to container that handles mousedown.
@@ -208,8 +202,6 @@ RangeSelector.prototype = {
 				rightBox.blur();
 			}
 		};
-
-		var selectedOption = options.selected;
 
 		addEvent(chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
 
@@ -238,12 +230,13 @@ RangeSelector.prototype = {
 	setInputValue: function (input, time) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
-			options = chart.options.rangeSelector;
+			options = chart.options.rangeSelector,
+			format = input.hasFocus ? options.inputEditDateFormat || '%Y-%m-%d' : options.inputDateFormat || '%b %e, %Y';
 
-		var format = input.hasFocus ? options.inputEditDateFormat || '%Y-%m-%d' : options.inputDateFormat || '%b %e, %Y';
 		if (time) {
 			input.HCTime = time;
 		}
+
 		input.value = dateFormat(format, input.HCTime);
 	},
 
@@ -257,9 +250,8 @@ RangeSelector.prototype = {
 			options = chart.options.rangeSelector,
 			boxSpanElements = rangeSelector.boxSpanElements,
 			lang = defaultOptions.lang,
-			div = rangeSelector.div;
-
-		var isMin = name === 'min',
+			div = rangeSelector.div,
+			isMin = name === 'min',
 			input;
 
 		// create the text label
@@ -330,9 +322,8 @@ RangeSelector.prototype = {
 			options = chart.options.rangeSelector,
 			buttons = rangeSelector.buttons,
 			lang = defaultOptions.lang,
-			div = rangeSelector.div;
-
-		var chartStyle = chart.options.chart.style,
+			div = rangeSelector.div,
+			chartStyle = chart.options.chart.style,
 			buttonTheme = options.buttonTheme,
 			inputEnabled = options.inputEnabled !== false,
 			states = buttonTheme && buttonTheme.states,
@@ -350,21 +341,21 @@ RangeSelector.prototype = {
 
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
-					rangeOptions.text,
-					buttonLeft,
-					chart.plotTop - 25,
-					function () {
-						rangeSelector.clickButton(i, rangeOptions);
-						rangeSelector.isActive = true;
-					},
-					buttonTheme,
-					states && states.hover,
-					states && states.select
-				)
-				.css({
-					textAlign: 'center'
-				})
-				.add();
+						rangeOptions.text,
+						buttonLeft,
+						chart.plotTop - 25,
+						function () {
+							rangeSelector.clickButton(i, rangeOptions);
+							rangeSelector.isActive = true;
+						},
+						buttonTheme,
+						states && states.hover,
+						states && states.select
+					)
+					.css({
+						textAlign: 'center'
+					})
+					.add();
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
@@ -372,7 +363,6 @@ RangeSelector.prototype = {
 				if (rangeSelector.selected === i) {
 					buttons[i].setState(2);
 				}
-
 			});
 
 			// first create a wrapper outside the container in order to make
@@ -396,7 +386,6 @@ RangeSelector.prototype = {
 				}, options.inputBoxStyle), div);
 
 				rangeSelector.leftBox = rangeSelector.drawInput('min');
-
 				rangeSelector.rightBox = rangeSelector.drawInput('max');
 			}
 		}
@@ -405,7 +394,6 @@ RangeSelector.prototype = {
 			rangeSelector.setInputValue(rangeSelector.leftBox, min);
 			rangeSelector.setInputValue(rangeSelector.rightBox, max);
 		}
-
 
 		rangeSelector.rendered = true;
 	},
@@ -446,14 +434,10 @@ RangeSelector.prototype = {
 		each([leftBox, rightBox, boxSpanElements.min, boxSpanElements.max, divAbsolute, divRelative], function (item) {
 			discardElement(item);
 		});
+
 		// Null the references
 		rangeSelector.leftBox = rangeSelector.rightBox = rangeSelector.boxSpanElements = rangeSelector.div = rangeSelector.divAbsolute = rangeSelector.divRelative = null;
 	}
-/*	// Expose
-	return {
-		render: render,
-		destroy: destroy
-	};*/
 };
 
 Highcharts.RangeSelector = RangeSelector;
