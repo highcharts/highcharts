@@ -130,8 +130,7 @@ function getResources() {
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
-					href="../compare-svg/view.php?path=<?php echo $path ?>"
-					">Compare</a>
+					href="../compare-svg/view.php?path=<?php echo $path ?>">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
 					href="http://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>
