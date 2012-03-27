@@ -2,6 +2,8 @@
 // global variables
 extend(Highcharts, {
 	Chart: Chart,
+	Axis: Axis,
+	Tick: Tick,
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,

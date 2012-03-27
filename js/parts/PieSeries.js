@@ -135,7 +135,7 @@ var PiePoint = extendClass(Point, {
 /**
  * The Pie series class
  */
-var PieSeries = extendClass(Series, {
+var PieSeries = {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
@@ -196,6 +196,35 @@ var PieSeries = extendClass(Series, {
 		this.processData();
 		this.generatePoints();
 	},
+	
+	/**
+	 * Get the center of the pie based on the size and center options relative to the  
+	 * plot area. Borrowed by the polar and gauge series types.
+	 */
+	getCenter: function () {
+		
+		var options = this.options,
+			chart = this.chart,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
+			positions = options.center.concat([options.size, options.innerSize || 0]),
+			smallestSize = mathMin(plotWidth, plotHeight),
+			isPercent;			
+		
+		return map(positions, function (length, i) {
+
+			isPercent = /%$/.test(length);
+			return isPercent ?
+				// i == 0: centerX, relative to width
+				// i == 1: centerY, relative to height
+				// i == 2: size, relative to smallestSize
+				// i == 4: innerSize, relative to smallestSize
+				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
+					pInt(length) / 100 :
+				length;
+		});
+	},
+	
 	/**
 	 * Do translation for pie slices
 	 */
@@ -209,35 +238,20 @@ var PieSeries = extendClass(Series, {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			positions = options.center.concat([options.size, options.innerSize || 0]),
+			positions,
 			chart = series.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
 			start,
 			end,
 			angle,
 			points = series.points,
 			circ = 2 * mathPI,
 			fraction,
-			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance;
 
 		// get positions - either an integer or a percentage string must be given
-		positions = map(positions, function (length, i) {
-
-			isPercent = /%$/.test(length);
-			return isPercent ?
-				// i == 0: centerX, relative to width
-				// i == 1: centerY, relative to height
-				// i == 2: size, relative to smallestSize
-				// i == 4: innerSize, relative to smallestSize
-				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
-					pInt(length) / 100 :
-				length;
-		});
+		series.center = positions = series.getCenter();
 
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
 		series.getX = function (y, left) {
@@ -248,9 +262,6 @@ var PieSeries = extendClass(Series, {
 				(left ? -1 : 1) *
 				(mathCos(angle) * (positions[2] / 2 + labelDistance));
 		};
-
-		// set center for later use
-		series.center = positions;
 
 		// get the total sum
 		each(points, function (point) {
@@ -657,6 +668,7 @@ var PieSeries = extendClass(Series, {
 	 */
 	getSymbol: function () {}
 
-});
+};
+PieSeries = extendClass(Series, PieSeries);
 seriesTypes.pie = PieSeries;
 

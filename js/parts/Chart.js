@@ -1179,12 +1179,7 @@ Chart.prototype = {
 		// Draw the borders and backgrounds
 		chart.drawChartBox();
 
-		// Axes
-		if (chart.hasCartesianSeries) {
-			each(axes, function (axis) {
-				axis.render();
-			});
-		}
+		
 
 
 		// The series
@@ -1199,6 +1194,12 @@ Chart.prototype = {
 			serie.render();
 		});
 
+		// Axes
+		if (chart.hasCartesianSeries) {
+			each(axes, function (axis) {
+				axis.render();
+			});
+		}
 
 		// Labels
 		if (labels.items) {

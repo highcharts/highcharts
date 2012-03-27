@@ -50,6 +50,7 @@ var UNDEFINED,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
+	noop = function () {},
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -5126,6 +5127,40 @@ Tick.prototype = {
 			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
 			0;
 		},
+		
+	/**
+	 * Get the x and y position for ticks and labels
+	 */
+	getPosition: function (horiz, pos, tickmarkOffset, old) {
+		var axis = this.axis,
+			chart = axis.chart,
+			cHeight = (old && chart.oldChartHeight) || chart.chartHeight;
+		
+		return {
+			x: horiz ?
+				axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
+				axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left : 0),
+
+			y: horiz ?
+				cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
+				cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB
+		};
+		
+	},
+	
+	/**
+	 * Extendible method to return the path of the marker
+	 */
+	getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
+		return renderer.crispLine([
+				M,
+				x,
+				y,
+				L,
+				x + (horiz ? 0 : -tickLength),
+				y + (horiz ? tickLength : 0)
+			], tickWidth);
+	},
 
 	/**
 	 * Put everything in place
@@ -5158,21 +5193,12 @@ Tick.prototype = {
 			mark = tick.mark,
 			markPath,
 			step = labelOptions.step,
-			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			attribs,
-			x,
-			y,
-			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0; //tickmarkOffset,
-
-		// get x and y position for ticks and labels
-		x = horiz ?
-			axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
-			axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left : 0);
-
-		y = horiz ?
-			cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
-			cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB;
-
+			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
+			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
+			x = xy.x,
+			y = xy.y;
+		
 		// create the grid line
 		if (gridLineWidth) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth, old);
@@ -5215,14 +5241,7 @@ Tick.prototype = {
 				tickLength = -tickLength;
 			}
 
-			markPath = renderer.crispLine([
-				M,
-				x,
-				y,
-				L,
-				x + (horiz ? 0 : -tickLength),
-				y + (horiz ? tickLength : 0)
-			], tickWidth);
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth, horiz, renderer);
 
 			if (mark) { // updating
 				mark.animate({
@@ -5305,7 +5324,7 @@ function PlotLineOrBand(axis, options) {
 }
 
 PlotLineOrBand.prototype = {
-
+	
 	/**
 	 * Render the plot line or plot band. If it is already existing,
 	 * move it.
@@ -5355,22 +5374,12 @@ PlotLineOrBand.prototype = {
 				attribs.dashstyle = dashStyle;
 			}
 		} else if (defined(from) && defined(to)) { // plot band
+			
 			// keep within plot area
 			from = mathMax(from, axis.min - halfPointRange);
 			to = mathMin(to, axis.max + halfPointRange);
-
-			toPath = axis.getPlotLinePath(to);
-			path = axis.getPlotLinePath(from);
-			if (path && toPath) {
-				path.push(
-					toPath[4],
-					toPath[5],
-					toPath[1],
-					toPath[2]
-				);
-			} else { // outside the axis area
-				path = null;
-			}
+			
+			path = axis.getPlotBandPath(from, to, options);
 			attribs = {
 				fill: color
 			};
@@ -5994,7 +6003,29 @@ Axis.prototype = {
 			null :
 			chart.renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 0);
 	},
+	
+	/**
+	 * Create the path for a plot band
+	 */
+	getPlotBandPath: function (from, to) {
 
+		var toPath = this.getPlotLinePath(to),
+			path = this.getPlotLinePath(from);
+			
+		if (path && toPath) {
+			path.push(
+				toPath[4],
+				toPath[5],
+				toPath[1],
+				toPath[2]
+			);
+		} else { // outside the axis area
+			path = null;
+		}
+		
+		return path;
+	},
+	
 	/**
 	 * Set the tick positions of a linear axis to round values like whole tens or every five.
 	 */
@@ -6775,7 +6806,36 @@ Axis.prototype = {
 
 		chart.axisOffset = axisOffset;
 	},
+	
+	/**
+	 * Get the path for the axis line
+	 */
+	getLinePath: function (lineWidth) {
+		var chart = this.chart,
+			opposite = this.opposite,
+			offset = this.offset,
+			horiz = this.horiz,
+			lineLeft = this.left + (opposite ? this.width : 0) + offset,
+			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
 
+		return chart.renderer.crispLine([
+				M,
+				horiz ?
+					this.left :
+					lineLeft,
+				horiz ?
+					lineTop :
+					this.top,
+				L,
+				horiz ?
+					chart.chartWidth - this.right :
+					lineLeft,
+				horiz ?
+					lineTop :
+					chart.chartHeight - this.bottom
+			], lineWidth);
+	},
+	
 	/**
 	 * Render the axis
 	 */
@@ -6804,8 +6864,6 @@ Axis.prototype = {
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
 			lineWidth = options.lineWidth,
-			lineLeft,
-			lineTop,
 			linePath,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
@@ -6908,25 +6966,7 @@ Axis.prototype = {
 		// to render, these items are added outside the group.
 		// axis line
 		if (lineWidth) {
-			lineLeft = axisLeft + (opposite ? axisWidth : 0) + axis.offset;
-			lineTop = chart.chartHeight - axisBottom - (opposite ? axisHeight : 0) + axis.offset;
-
-			linePath = renderer.crispLine([
-					M,
-					horiz ?
-						axisLeft :
-						lineLeft,
-					horiz ?
-						lineTop :
-						axisTop,
-					L,
-					horiz ?
-						chart.chartWidth - axis.right :
-						lineLeft,
-					horiz ?
-						lineTop :
-						chart.chartHeight - axisBottom
-				], lineWidth);
+			linePath = axis.getLinePath(lineWidth);
 			if (!axis.axisLine) {
 				axis.axisLine = renderer.path(linePath)
 					.attr({
@@ -9715,12 +9755,7 @@ Chart.prototype = {
 		// Draw the borders and backgrounds
 		chart.drawChartBox();
 
-		// Axes
-		if (chart.hasCartesianSeries) {
-			each(axes, function (axis) {
-				axis.render();
-			});
-		}
+		
 
 
 		// The series
@@ -9735,6 +9770,12 @@ Chart.prototype = {
 			serie.render();
 		});
 
+		// Axes
+		if (chart.hasCartesianSeries) {
+			each(axes, function (axis) {
+				axis.render();
+			});
+		}
 
 		// Labels
 		if (labels.items) {
@@ -10574,8 +10615,6 @@ Series.prototype = {
 		series.setData(options.data, false);
 
 	},
-	
-	
 	
 	/**
 	 * Set the xAxis and yAxis properties of cartesian series, and register the series
@@ -11972,6 +12011,30 @@ Series.prototype = {
 		// On subsequent render and redraw, just do setInvert without setting up events again
 		series.invertGroups = setInvert;
 	},
+	
+	/**
+	 * Create the series group
+	 */
+	createGroup: function (doClip) {
+		
+		var chart = this.chart,
+			group = this.group = chart.renderer.g('series'),
+			xAxis = this.xAxis,
+			yAxis = this.yAxis;
+
+		if (doClip) {
+			group.clip(this.clipRect);
+		}
+		group.attr({
+				visibility: this.visible ? VISIBLE : HIDDEN,
+				zIndex: this.options.zIndex
+			})
+			.translate(xAxis ? xAxis.left : chart.plotLeft, yAxis ? yAxis.top : chart.plotTop)
+			.add(chart.seriesGroup);
+			
+		// Only run this once
+		this.createGroup = noop;
+	},
 
 	/**
 	 * Render the graph and markers
@@ -12006,19 +12069,7 @@ Series.prototype = {
 		
 
 		// the group
-		if (!series.group) {
-			group = series.group = renderer.g('series');
-
-			if (doClip) {
-				group.clip(clipRect);
-			}
-			group.attr({
-					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: options.zIndex
-				})
-				.translate(series.xAxis.left, series.yAxis.top)
-				.add(chart.seriesGroup);
-		}
+		series.createGroup(doClip);
 
 		series.drawDataLabels();
 
@@ -13165,7 +13216,7 @@ var PiePoint = extendClass(Point, {
 /**
  * The Pie series class
  */
-var PieSeries = extendClass(Series, {
+var PieSeries = {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
@@ -13226,6 +13277,35 @@ var PieSeries = extendClass(Series, {
 		this.processData();
 		this.generatePoints();
 	},
+	
+	/**
+	 * Get the center of the pie based on the size and center options relative to the  
+	 * plot area. Borrowed by the polar and gauge series types.
+	 */
+	getCenter: function () {
+		
+		var options = this.options,
+			chart = this.chart,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
+			positions = options.center.concat([options.size, options.innerSize || 0]),
+			smallestSize = mathMin(plotWidth, plotHeight),
+			isPercent;			
+		
+		return map(positions, function (length, i) {
+
+			isPercent = /%$/.test(length);
+			return isPercent ?
+				// i == 0: centerX, relative to width
+				// i == 1: centerY, relative to height
+				// i == 2: size, relative to smallestSize
+				// i == 4: innerSize, relative to smallestSize
+				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
+					pInt(length) / 100 :
+				length;
+		});
+	},
+	
 	/**
 	 * Do translation for pie slices
 	 */
@@ -13239,35 +13319,20 @@ var PieSeries = extendClass(Series, {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			positions = options.center.concat([options.size, options.innerSize || 0]),
+			positions,
 			chart = series.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
 			start,
 			end,
 			angle,
 			points = series.points,
 			circ = 2 * mathPI,
 			fraction,
-			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance;
 
 		// get positions - either an integer or a percentage string must be given
-		positions = map(positions, function (length, i) {
-
-			isPercent = /%$/.test(length);
-			return isPercent ?
-				// i == 0: centerX, relative to width
-				// i == 1: centerY, relative to height
-				// i == 2: size, relative to smallestSize
-				// i == 4: innerSize, relative to smallestSize
-				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
-					pInt(length) / 100 :
-				length;
-		});
+		series.center = positions = series.getCenter();
 
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
 		series.getX = function (y, left) {
@@ -13278,9 +13343,6 @@ var PieSeries = extendClass(Series, {
 				(left ? -1 : 1) *
 				(mathCos(angle) * (positions[2] / 2 + labelDistance));
 		};
-
-		// set center for later use
-		series.center = positions;
 
 		// get the total sum
 		each(points, function (point) {
@@ -13687,7 +13749,8 @@ var PieSeries = extendClass(Series, {
 	 */
 	getSymbol: function () {}
 
-});
+};
+PieSeries = extendClass(Series, PieSeries);
 seriesTypes.pie = PieSeries;
 
 /* ****************************************************************************
@@ -16999,6 +17062,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // global variables
 extend(Highcharts, {
 	Chart: Chart,
+	Axis: Axis,
+	Tick: Tick,
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,

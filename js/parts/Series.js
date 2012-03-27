@@ -560,8 +560,6 @@ Series.prototype = {
 
 	},
 	
-	
-	
 	/**
 	 * Set the xAxis and yAxis properties of cartesian series, and register the series
 	 * in the axis.series array
@@ -1957,6 +1955,30 @@ Series.prototype = {
 		// On subsequent render and redraw, just do setInvert without setting up events again
 		series.invertGroups = setInvert;
 	},
+	
+	/**
+	 * Create the series group
+	 */
+	createGroup: function (doClip) {
+		
+		var chart = this.chart,
+			group = this.group = chart.renderer.g('series'),
+			xAxis = this.xAxis,
+			yAxis = this.yAxis;
+
+		if (doClip) {
+			group.clip(this.clipRect);
+		}
+		group.attr({
+				visibility: this.visible ? VISIBLE : HIDDEN,
+				zIndex: this.options.zIndex
+			})
+			.translate(xAxis ? xAxis.left : chart.plotLeft, yAxis ? yAxis.top : chart.plotTop)
+			.add(chart.seriesGroup);
+			
+		// Only run this once
+		this.createGroup = noop;
+	},
 
 	/**
 	 * Render the graph and markers
@@ -1991,19 +2013,7 @@ Series.prototype = {
 		
 
 		// the group
-		if (!series.group) {
-			group = series.group = renderer.g('series');
-
-			if (doClip) {
-				group.clip(clipRect);
-			}
-			group.attr({
-					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: options.zIndex
-				})
-				.translate(series.xAxis.left, series.yAxis.top)
-				.add(chart.seriesGroup);
-		}
+		series.createGroup(doClip);
 
 		series.drawDataLabels();
 

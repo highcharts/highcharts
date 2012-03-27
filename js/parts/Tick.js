@@ -102,6 +102,40 @@ Tick.prototype = {
 			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
 			0;
 		},
+		
+	/**
+	 * Get the x and y position for ticks and labels
+	 */
+	getPosition: function (horiz, pos, tickmarkOffset, old) {
+		var axis = this.axis,
+			chart = axis.chart,
+			cHeight = (old && chart.oldChartHeight) || chart.chartHeight;
+		
+		return {
+			x: horiz ?
+				axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
+				axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left : 0),
+
+			y: horiz ?
+				cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
+				cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB
+		};
+		
+	},
+	
+	/**
+	 * Extendible method to return the path of the marker
+	 */
+	getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
+		return renderer.crispLine([
+				M,
+				x,
+				y,
+				L,
+				x + (horiz ? 0 : -tickLength),
+				y + (horiz ? tickLength : 0)
+			], tickWidth);
+	},
 
 	/**
 	 * Put everything in place
@@ -134,21 +168,12 @@ Tick.prototype = {
 			mark = tick.mark,
 			markPath,
 			step = labelOptions.step,
-			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			attribs,
-			x,
-			y,
-			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0; //tickmarkOffset,
-
-		// get x and y position for ticks and labels
-		x = horiz ?
-			axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
-			axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left : 0);
-
-		y = horiz ?
-			cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
-			cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB;
-
+			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
+			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
+			x = xy.x,
+			y = xy.y;
+		
 		// create the grid line
 		if (gridLineWidth) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth, old);
@@ -191,14 +216,7 @@ Tick.prototype = {
 				tickLength = -tickLength;
 			}
 
-			markPath = renderer.crispLine([
-				M,
-				x,
-				y,
-				L,
-				x + (horiz ? 0 : -tickLength),
-				y + (horiz ? tickLength : 0)
-			], tickWidth);
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth, horiz, renderer);
 
 			if (mark) { // updating
 				mark.animate({

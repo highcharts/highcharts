@@ -1,7 +1,11 @@
 var each = Highcharts.each,
 	extend = Highcharts.extend,
 	merge = Highcharts.merge,
+	map = Highcharts.map,
+	pick = Highcharts.pick,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
+	Axis = Highcharts.Axis,
+	Tick = Highcharts.Tick,
 	Series = Highcharts.Series,
 	noop = function () {};

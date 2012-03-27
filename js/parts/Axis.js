@@ -422,7 +422,29 @@ Axis.prototype = {
 			null :
 			chart.renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 0);
 	},
+	
+	/**
+	 * Create the path for a plot band
+	 */
+	getPlotBandPath: function (from, to) {
 
+		var toPath = this.getPlotLinePath(to),
+			path = this.getPlotLinePath(from);
+			
+		if (path && toPath) {
+			path.push(
+				toPath[4],
+				toPath[5],
+				toPath[1],
+				toPath[2]
+			);
+		} else { // outside the axis area
+			path = null;
+		}
+		
+		return path;
+	},
+	
 	/**
 	 * Set the tick positions of a linear axis to round values like whole tens or every five.
 	 */
@@ -1203,7 +1225,36 @@ Axis.prototype = {
 
 		chart.axisOffset = axisOffset;
 	},
+	
+	/**
+	 * Get the path for the axis line
+	 */
+	getLinePath: function (lineWidth) {
+		var chart = this.chart,
+			opposite = this.opposite,
+			offset = this.offset,
+			horiz = this.horiz,
+			lineLeft = this.left + (opposite ? this.width : 0) + offset,
+			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
 
+		return chart.renderer.crispLine([
+				M,
+				horiz ?
+					this.left :
+					lineLeft,
+				horiz ?
+					lineTop :
+					this.top,
+				L,
+				horiz ?
+					chart.chartWidth - this.right :
+					lineLeft,
+				horiz ?
+					lineTop :
+					chart.chartHeight - this.bottom
+			], lineWidth);
+	},
+	
 	/**
 	 * Render the axis
 	 */
@@ -1232,8 +1283,6 @@ Axis.prototype = {
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
 			lineWidth = options.lineWidth,
-			lineLeft,
-			lineTop,
 			linePath,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
@@ -1336,25 +1385,7 @@ Axis.prototype = {
 		// to render, these items are added outside the group.
 		// axis line
 		if (lineWidth) {
-			lineLeft = axisLeft + (opposite ? axisWidth : 0) + axis.offset;
-			lineTop = chart.chartHeight - axisBottom - (opposite ? axisHeight : 0) + axis.offset;
-
-			linePath = renderer.crispLine([
-					M,
-					horiz ?
-						axisLeft :
-						lineLeft,
-					horiz ?
-						lineTop :
-						axisTop,
-					L,
-					horiz ?
-						chart.chartWidth - axis.right :
-						lineLeft,
-					horiz ?
-						lineTop :
-						chart.chartHeight - axisBottom
-				], lineWidth);
+			linePath = axis.getLinePath(lineWidth);
 			if (!axis.axisLine) {
 				axis.axisLine = renderer.path(linePath)
 					.attr({

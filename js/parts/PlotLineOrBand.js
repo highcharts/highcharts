@@ -15,7 +15,7 @@ function PlotLineOrBand(axis, options) {
 }
 
 PlotLineOrBand.prototype = {
-
+	
 	/**
 	 * Render the plot line or plot band. If it is already existing,
 	 * move it.
@@ -65,22 +65,12 @@ PlotLineOrBand.prototype = {
 				attribs.dashstyle = dashStyle;
 			}
 		} else if (defined(from) && defined(to)) { // plot band
+			
 			// keep within plot area
 			from = mathMax(from, axis.min - halfPointRange);
 			to = mathMin(to, axis.max + halfPointRange);
-
-			toPath = axis.getPlotLinePath(to);
-			path = axis.getPlotLinePath(from);
-			if (path && toPath) {
-				path.push(
-					toPath[4],
-					toPath[5],
-					toPath[1],
-					toPath[2]
-				);
-			} else { // outside the axis area
-				path = null;
-			}
+			
+			path = axis.getPlotBandPath(from, to, options);
 			attribs = {
 				fill: color
 			};

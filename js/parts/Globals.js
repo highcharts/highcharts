@@ -35,6 +35,7 @@ var UNDEFINED,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
+	noop = function () {},
 
 	// some constants for frequently used strings
 	DIV = 'div',

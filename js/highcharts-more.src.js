@@ -16,8 +16,12 @@
 var each = Highcharts.each,
 	extend = Highcharts.extend,
 	merge = Highcharts.merge,
+	map = Highcharts.map,
+	pick = Highcharts.pick,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
+	Axis = Highcharts.Axis,
+	Tick = Highcharts.Tick,
 	Series = Highcharts.Series,
 	noop = function () {};/* 
  * The AreaRangeSeries class
@@ -225,5 +229,248 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	},
 	
 	drawPoints: noop
+});/* 
+ * The GaugeSeries class
+ * 
+ * http://jsfiddle.net/highcharts/qPeFM/
+ * 
+ */
+
+/**
+ * Extend the default options
+ */
+defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
+	center: ['50%', '50%'],
+	colorByPoint: true,
+	dataLabels: {
+		enabled: true,
+		y: 30,
+		borderWidth: 1,
+		borderColor: 'silver',
+		borderRadius: 3,
+		style: {
+			fontWeight: 'bold'
+		}
+	},
+	size: '100%'
+});
+
+/**
+ * Extend the point object
+ */
+var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
+	
+});
+
+/**
+ * Augmented methods for the value axis
+ */
+var gaugeValueAxisMixin = {
+	isRadial: true,
+	/**
+	 * Get the path for the axis line
+	 */
+	getLinePath: function (lineWidth) {
+		var center = this.center,
+			options = this.options,
+			radius = center[2] / 2;
+		
+		return this.chart.renderer.symbols.arc(
+			this.left + center[0],
+			this.top + center[1],
+			center[2] / 2,
+			center[2] / 2,
+			{
+				start: options.startAngle,
+				end: options.endAngle,
+				innerR: 0
+			}
+		);
+	},
+	
+	/**
+	 * Override setAxisSize by setting the width and height to the difference
+	 * in rotation. This allows the translate method to return angle for 
+	 * any given value.
+	 */
+	setAxisTranslation: function () {
+		var options = this.options;
+		
+		Axis.prototype.setAxisTranslation.call(this);
+		
+		this.transA = (options.endAngle - options.startAngle) / ((this.max - this.min) || 1);
+	},
+	
+	/**
+	 * Returns the x, y coordinate of a point given by a value and a pixel distance
+	 * from center
+	 */
+	getPosition: function (value, length) {
+		var chart = this.chart,
+			center = this.center,
+			angle = this.options.startAngle + this.translate(value);
+			
+		radius = pick(length, center[2] / 2);
+		
+		return {
+			x: chart.plotLeft + center[0] + Math.cos(angle) * radius,
+			y: chart.plotTop + center[1] + Math.sin(angle) * radius
+		};
+		
+	},
+	
+	/**
+	 * Find the path for plot bands along the radial axis
+	 */
+	getPlotBandPath: function (from, to, options) {
+		var center = this.center,
+			startAngle = this.options.startAngle,
+			fullRadius = center[2] / 2,
+			radii = [
+				pick(options.outerRadius, '100%'),
+				pick(options.innerRadius, '90%')
+			],
+			percentRegex = /%$/;
+			
+		// Convert percentages to pixel values
+		radii = map(radii, function (radius) {
+			if (percentRegex.test(radius)) {
+				radius = (parseInt(radius, 10) * fullRadius) / 100;
+			}
+			return radius;
+		});
+		
+		return this.chart.renderer.symbols.arc(
+			this.left + center[0],
+			this.top + center[1],
+			radii[0],
+			radii[1],
+			{
+				start: startAngle + this.translate(from),
+				end: startAngle + this.translate(to),
+				innerR: radii[1]
+			}
+		);
+		
+	}
+	
+};
+
+/**
+ * Add special cases within the Tick class' getPosition method for radial axes
+ */
+var tickProto = Tick.prototype,
+	uberGetPosition = tickProto.getPosition,
+	uberGetMarkPath = tickProto.getMarkPath;
+	
+tickProto.getPosition = function (x, y) {
+	var axis = this.axis;
+		
+	return axis.isRadial ? 
+		axis.getPosition(y) :
+		uberGetPosition.apply(this, arguments);	
+};
+/**
+ * Return the path of the marker
+ */
+tickProto.getMarkPath = function (x, y, tickLength, tickWidth) {
+	var axis = this.axis,
+		endPoint,
+		ret;
+		
+	if (axis.isRadial) {
+		endPoint = axis.getPosition(this.pos, axis.center[2] / 2 + tickLength);
+		ret = [
+			'M',
+			x,
+			y,
+			'L',
+			endPoint.x,
+			endPoint.y
+		];
+	} else {
+		ret = uberGetMarkPath.apply(this, arguments);
+	}
+	return ret;
+};
+
+/**
+ * Augmented methods for the x axis in order to hide it completely
+ */
+var gaugeXAxisMixin = {
+	setScale: noop,
+	render: noop
+};
+
+/**
+ * Add the series type
+ */
+seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
+	type: 'gauge',
+	pointClass: GaugePoint,
+	
+	bindAxes: function () {
+		Series.prototype.bindAxes.call(this);
+		
+		extend(this.xAxis, gaugeXAxisMixin);
+		extend(this.yAxis, gaugeValueAxisMixin);
+	},
+	
+	translate: function () {
+		
+		var series = this,
+			yAxis = series.yAxis,
+			center,
+			position;
+		series.generatePoints();
+		
+		center = series.center = yAxis.center = seriesTypes.pie.prototype.getCenter.call(series);
+		
+		each(series.points, function (point) {
+			point.path = ['M', center[0], center[1], 'L', center[0] + center[2] / 2, center[1]];
+			point.rotation = (yAxis.options.startAngle + yAxis.translate(point.y)) * 180 / Math.PI;
+			
+			// Positions for data label
+			point.plotX = center[0];
+			point.plotY = center[1];
+		});
+		//this.setTooltipPoints();
+	},
+	
+	drawPoints: function () {
+		
+		var series = this,
+			center = series.center;
+		
+		each(series.points, function (point) {
+			
+			var graphic = point.graphic;
+			
+			if (graphic) {
+				graphic
+					.attr({
+						d: point.path,
+						transform: 'rotate(' + point.rotation + ' ' + center[0] + ' ' + center[1] + ')'
+					});
+			} else {
+				point.graphic = series.chart.renderer.path(point.path)
+					.attr({
+						'stroke': point.color,
+						'stroke-width': 2,
+						transform: 'rotate(' + point.rotation + ' ' + center[0] + ' ' + center[1] + ')'
+					})
+					.add(series.group);
+			}
+		});		
+	},
+	
+	render: function () {
+		this.createGroup();
+		seriesTypes.pie.prototype.render.call(this);
+	},
+	
+	setData: seriesTypes.pie.prototype.setData,
+	animate: noop,
+	drawTracker: noop
 });
 }(Highcharts));
