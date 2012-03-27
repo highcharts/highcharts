@@ -154,9 +154,8 @@ Axis.prototype = {
 	getSeriesExtremes: function () {
 		var axis = this,
 			chart = axis.chart,
-			stacks = axis.stacks;
-
-		var posStack = [],
+			stacks = axis.stacks,
+			posStack = [],
 			negStack = [],
 			i;
 
@@ -231,7 +230,6 @@ Axis.prototype = {
 						axis.dataMin = 0;
 						axis.dataMax = 99;
 					}
-
 
 					// processData can alter series.pointRange, so this goes after
 					//findPointRange = series.pointRange === null;
@@ -326,7 +324,6 @@ Axis.prototype = {
 				}
 			}
 		});
-
 	},
 
 	/**
@@ -449,7 +446,6 @@ Axis.prototype = {
 	 * Set the tick positions of a linear axis to round values like whole tens or every five.
 	 */
 	getLinearTickPositions: function (tickInterval, min, max) {
-
 		var pos,
 			lastPos,
 			roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
@@ -576,7 +572,7 @@ Axis.prototype = {
 		}
 		return positions;
 	},
-	
+
 	/**
 	 * Return the minor tick positions. For logarithmic axes, reuse the same logic
 	 * as for major ticks.
@@ -618,9 +614,8 @@ Axis.prototype = {
 		var axis = this,
 			options = axis.options,
 			min = axis.min,
-			max = axis.max;
-
-		var zoomOffset,
+			max = axis.max,
+			zoomOffset,
 			spaceAvailable = axis.dataMax - axis.dataMin >= axis.minRange,
 			closestDataRange,
 			i,
@@ -629,10 +624,10 @@ Axis.prototype = {
 			loopLength,
 			minArgs,
 			maxArgs;
-			
+
 		// Set the automatic minimum range based on the closest point distance
 		if (axis.isXAxis && axis.minRange === UNDEFINED && !axis.isLog) {
-			
+
 			if (defined(options.min) || defined(options.max)) {
 				axis.minRange = null; // don't do this again
 
@@ -653,7 +648,7 @@ Axis.prototype = {
 				axis.minRange = mathMin(closestDataRange * 5, axis.dataMax - axis.dataMin);
 			}
 		}
-		
+
 		// if minRange is exceeded, adjust
 		if (max - min < axis.minRange) {
 			var minRange = axis.minRange;
@@ -670,7 +665,7 @@ Axis.prototype = {
 			if (spaceAvailable) { // if space is availabe, stay within the data range
 				maxArgs[2] = axis.dataMax;
 			}
-			
+
 			axis.max = max = arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
@@ -916,9 +911,9 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			xOrY = axis.xOrY,
-			tickPositions = axis.tickPositions;
+			tickPositions = axis.tickPositions,
+			maxTicks = chart.maxTicks;
 
-		var maxTicks = chart.maxTicks;
 		if (maxTicks && maxTicks[xOrY] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
@@ -941,8 +936,6 @@ Axis.prototype = {
 				axis.isDirty = true;
 			}
 		}
-
-
 	},
 
 	/**
@@ -952,9 +945,8 @@ Axis.prototype = {
 	setScale: function () {
 		var axis = this,
 			chart = axis.chart,
-			stacks = axis.stacks;
-
-		var type,
+			stacks = axis.stacks,
+			type,
 			i,
 			isDirtyData;
 
@@ -1018,7 +1010,7 @@ Axis.prototype = {
 			chart = axis.chart;
 
 		redraw = pick(redraw, true); // defaults to true
-		
+
 		// Extend the arguments with min and max
 		eventArguments = extend(eventArguments, {
 			min: newMin,
@@ -1030,7 +1022,7 @@ Axis.prototype = {
 
 			axis.userMin = newMin;
 			axis.userMax = newMax;
-			
+
 			// redraw
 			if (redraw) {
 				chart.redraw(animation);
@@ -1119,9 +1111,8 @@ Axis.prototype = {
 			tickPositions = axis.tickPositions,
 			ticks = axis.ticks,
 			horiz = axis.horiz,
-			side = axis.side;
-
-		var hasData = axis.series.length && defined(axis.min) && defined(axis.max),
+			side = axis.side,
+			hasData = axis.series.length && defined(axis.min) && defined(axis.max),
 			showAxis = hasData || pick(options.showEmpty, true),
 			titleOffset = 0,
 			titleOffsetOption,
@@ -1204,8 +1195,6 @@ Axis.prototype = {
 
 			// hide or show the title depending on whether showEmpty is set
 			axis.axisTitle[showAxis ? 'show' : 'hide']();
-
-
 		}
 
 		// handle automatic or user set offset
@@ -1277,9 +1266,8 @@ Axis.prototype = {
 			minorTicks = axis.minorTicks,
 			alternateBands = axis.alternateBands,
 			horiz = axis.horiz,
-			opposite = axis.opposite;
-
-		var axisTitleOptions = options.title,
+			opposite = axis.opposite,
+			axisTitleOptions = options.title,
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
 			lineWidth = options.lineWidth,
@@ -1361,8 +1349,6 @@ Axis.prototype = {
 				axis._addedPlotLB = true;
 			}
 
-
-
 		} // end if hasData
 
 		// remove inactive ticks
@@ -1377,9 +1363,6 @@ Axis.prototype = {
 				}
 			}
 		});
-
-
-
 
 		// Static items. As the axis group is cleared on subsequent calls
 		// to render, these items are added outside the group.
@@ -1476,7 +1459,7 @@ Axis.prototype = {
 			}
 		}
 	},
-	
+
 	/**
 	 * Update the axis title by options
 	 */
@@ -1486,10 +1469,10 @@ Axis.prototype = {
 			options = axis.options;
 
 		options.title = merge(options.title, newTitleOptions);
-		
+
 		axis.axisTitle = axis.axisTitle.destroy();
 		axis.isDirty = true;
-		
+
 		if (pick(redraw, true)) {
 			chart.redraw();
 		}
@@ -1554,9 +1537,8 @@ Axis.prototype = {
 	 */
 	destroy: function () {
 		var axis = this,
-			stacks = axis.stacks;
-
-		var stackKey;
+			stacks = axis.stacks,
+			stackKey;
 
 		// Remove the events
 		removeEvent(axis);
@@ -1602,36 +1584,6 @@ Axis.prototype = {
 			axis.reversed = true;
 		}
 
-		// expose some variables
-/*		extend(axis, {
-			addPlotBand: addPlotBandOrLine,
-			addPlotLine: addPlotBandOrLine,
-			adjustTickAmount: adjustTickAmount,
-			categories: categories,
-			getExtremes: getExtremes,
-			getPlotLinePath: getPlotLinePath,
-			getThreshold: getThreshold,
-			isXAxis: isXAxis,
-			options: options,
-			plotLinesAndBands: plotLinesAndBands,
-			getOffset: getOffset,
-			render: render,
-			setAxisSize: setAxisSize,
-			setAxisTranslation: setAxisTranslation,
-			setCategories: setCategories,
-			setExtremes: setExtremes,
-			setScale: setScale,
-			setTickPositions: setTickPositions,
-			translate: translate,
-			redraw: redraw,
-			removePlotBand: removePlotBandOrLine,
-			removePlotLine: removePlotBandOrLine,
-			reversed: reversed,
-			setTitle: setTitle,
-			series: [], // populated by Series
-			stacks: stacks,
-			destroy: destroy
-		});*/
 		axis.removePlotBand = axis.removePlotBandOrLine;
 		axis.removePlotLine = axis.removePlotBandOrLine;
 		axis.addPlotBand = axis.addPlotBandOrLine;
