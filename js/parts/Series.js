@@ -1784,7 +1784,7 @@ Series.prototype = {
 					if (dataLabel) {
 						// vertically centered
 						if (inverted && !options.y) {
-							y = y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2;
+							y = y + pInt(options.style.lineHeight) * 0.9 - dataLabel.getBBox().height / 2;
 						}
 						dataLabel
 							.attr({
@@ -1795,23 +1795,33 @@ Series.prototype = {
 							});
 					// create new label
 					} else if (defined(str)) {
-						dataLabel = point.dataLabel = renderer.text(
+						dataLabel = point.dataLabel = renderer.label(
 							str,
 							x,
 							y,
-							options.useHTML
+							null,
+							null,
+							null,
+							options.useHTML,
+							true // baseline for backwards compat
 						)
 						.attr({
 							align: align,
+							fill: options.backgroundColor,
+							stroke: options.borderColor,
+							'stroke-width': options.borderWidth,
+							r: options.borderRadius,
 							rotation: options.rotation,
+							padding: options.padding,
 							zIndex: 1
 						})
 						.css(options.style)
-						.add(dataLabelsGroup);
+						.add(dataLabelsGroup)
+						.shadow(options.shadow);
 						// vertically centered
 						if (inverted && !options.y) {
 							dataLabel.attr({
-								y: y + pInt(dataLabel.styles.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
+								y: y + pInt(options.style.lineHeight) * 0.9 - dataLabel.getBBox().height / 2
 							});
 						}
 					}
