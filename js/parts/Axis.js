@@ -1119,6 +1119,8 @@ Axis.prototype = {
 			titleMargin = 0,
 			axisTitleOptions = options.title,
 			labelOptions = options.labels,
+			labelOffset = 0, // reset
+			axisOffset = chart.axisOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 
@@ -1131,7 +1133,6 @@ Axis.prototype = {
 				.add();
 		}
 
-		var labelOffset = 0; // reset
 
 		if (hasData || axis.isLinked) {
 			each(tickPositions, function (pos) {
@@ -1198,7 +1199,6 @@ Axis.prototype = {
 		}
 
 		// handle automatic or user set offset
-		var axisOffset = chart.axisOffset;
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 		axis.axisTitleMargin =
@@ -1244,6 +1244,46 @@ Axis.prototype = {
 	},
 	
 	/**
+	 * Position the title
+	 */
+	getTitlePosition: function () {
+		// compute anchor points for each of the title align options
+		var horiz = this.horiz,
+			axisLeft = this.left,
+			axisTop = this.top,
+			axisLength = this.len,
+			axisTitleOptions = this.options.title,			
+			margin = horiz ? axisLeft : axisTop,
+			opposite = this.opposite,
+			offset = this.offset,
+			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+			
+			// the position in the length direction of the axis
+			alongAxis = {
+				low: margin + (horiz ? 0 : axisLength),
+				middle: margin + axisLength / 2,
+				high: margin + (horiz ? axisLength : 0)
+			}[axisTitleOptions.align],
+	
+			// the position in the perpendicular direction of the axis
+			offAxis = (horiz ? axisTop + this.height : axisLeft) +
+				(horiz ? 1 : -1) * // horizontal axis reverses the margin
+				(opposite ? -1 : 1) * // so does opposite axes
+				this.axisTitleMargin +
+				(this.side === 2 ? fontSize : 0);
+
+		return {
+			x: horiz ?
+				alongAxis :
+				offAxis + (opposite ? this.width : 0) + offset +
+					(axisTitleOptions.x || 0), // x
+			y: horiz ?
+				offAxis - (opposite ? this.height : 0) + offset :
+				alongAxis + (axisTitleOptions.y || 0) // y
+		};
+	},
+	
+	/**
 	 * Render the axis
 	 */
 	render: function () {
@@ -1260,6 +1300,7 @@ Axis.prototype = {
 			axisWidth = axis.width,
 			axisHeight = axis.height,
 			axisBottom = axis.bottom,
+			axisTitle = axis.axisTitle,
 			stacks = axis.stacks,
 			ticks = axis.ticks,
 			minorTicks = axis.minorTicks,
@@ -1385,34 +1426,12 @@ Axis.prototype = {
 
 		}
 
-		if (axis.axisTitle && showAxis) {
-			// compute anchor points for each of the title align options
-			var margin = horiz ? axisLeft : axisTop,
-				fontSize = pInt(axisTitleOptions.style.fontSize || 12),
-			// the position in the length direction of the axis
-			alongAxis = {
-				low: margin + (horiz ? 0 : axisLength),
-				middle: margin + axisLength / 2,
-				high: margin + (horiz ? axisLength : 0)
-			}[axisTitleOptions.align],
-
-			// the position in the perpendicular direction of the axis
-			offAxis = (horiz ? axisTop + axisHeight : axisLeft) +
-				(horiz ? 1 : -1) * // horizontal axis reverses the margin
-				(opposite ? -1 : 1) * // so does opposite axes
-				axis.axisTitleMargin +
-				(axis.side === 2 ? fontSize : 0);
-
-			axis.axisTitle[axis.axisTitle.isNew ? 'attr' : 'animate']({
-				x: horiz ?
-					alongAxis :
-					offAxis + (opposite ? axisWidth : 0) + axis.offset +
-						(axisTitleOptions.x || 0), // x
-				y: horiz ?
-					offAxis - (opposite ? axisHeight : 0) + axis.offset :
-					alongAxis + (axisTitleOptions.y || 0) // y
-			});
-			axis.axisTitle.isNew = false;
+		if (axisTitle && showAxis) {
+			
+			axisTitle[axisTitle.isNew ? 'attr' : 'animate'](
+				axis.getTitlePosition()
+			);
+			axisTitle.isNew = false;
 		}
 
 		// Stacked totals:

@@ -234,14 +234,27 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
  * 
  * http://jsfiddle.net/highcharts/qPeFM/
  * 
+ * TODO:
+ * - Handle grid lines on the angular axis
+ * - Make tickInterval and tickPixelInterval relate to the circumference of the gauge
+ * - Individual dial options per point
+ * - Implement rotation of VML elements
+ * - Allow pixel and percentage thickness for plot bands. Find naming that makes sense in cartesian plots, 
+ *   since width is already used for plotLines. Possible combination with from-to on the crossing axis
+ *   in the cartesian plane.
+ * - Auto align axis labels
+ * - Rotation of axis labels along the perimeter
+ * - Consistent way of adding background objects
+ * - Radial gradients
+ * - Size to the actual space given, for example by vu-meters
+ * - Option to wrap (like clock)
+ * - Tooltip
  */
 
 /**
  * Extend the default options
  */
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
-	center: ['50%', '50%'],
-	colorByPoint: true,
 	dataLabels: {
 		enabled: true,
 		y: 30,
@@ -252,7 +265,21 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 			fontWeight: 'bold'
 		}
 	},
-	size: '100%'
+	dial: {
+		// radius: '80%',
+		// backgroundColor: '{series.color}',
+		// borderColor: 'silver',
+		// borderWidth: 0,
+		// baseWidth: 3,
+		// topWidth: 1,
+		// baseLength: '70%'
+	},
+	pivot: {
+		//radius: 5,
+		//borderWidth: 0
+		//borderColor: 'silver',
+		//backgroundColor: '{series.color}'
+	}
 });
 
 /**
@@ -267,12 +294,55 @@ var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
  */
 var gaugeValueAxisMixin = {
 	isRadial: true,
+	
+	/**
+	 * Set special default options for the radial axis. Since the radial axis is
+	 * extended after the initial options are merged, we need to do it here. If
+	 * we create a RadialAxis class we should handle it in a setOptions method.
+	 */
+	onBind: function () {
+		var userOptions = this.userOptions,
+			userOptionsTitle = userOptions.title,
+			options = this.options;
+			
+		if (!userOptionsTitle || userOptionsTitle.rotation === UNDEFINED) {
+			options.title.rotation = 0;
+		}
+		if (!userOptions.center) {
+			options.center = ['50%', '50%'];
+		}
+		if (!userOptions.size) {
+			options.size = ['90%'];
+		}
+		
+		// Special initiation for the radial axis. Start and end angle options are
+		// given in degrees relative to top, while internal computations are
+		// in radians relative to right (like SVG).
+		this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
+		this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
+	},
+	
+	/**
+	 * Wrap the getOffset method to return zero offset for title or labels in a radial 
+	 * axis
+	 */
+	getOffset: function () {
+		
+		// Call the Axis prototype method (the method we're in now is on the instance)
+		Axis.prototype.getOffset.call(this);
+		
+		// Title or label offsets are not counted
+		this.chart.axisOffset[this.side] = 0;
+		
+		// Set the center array
+		this.center = seriesTypes.pie.prototype.getCenter.call(this);
+	},
+	
 	/**
 	 * Get the path for the axis line
 	 */
 	getLinePath: function (lineWidth) {
 		var center = this.center,
-			options = this.options,
 			radius = center[2] / 2;
 		
 		return this.chart.renderer.symbols.arc(
@@ -281,8 +351,8 @@ var gaugeValueAxisMixin = {
 			center[2] / 2,
 			center[2] / 2,
 			{
-				start: options.startAngle,
-				end: options.endAngle,
+				start: this.startAngleRad,
+				end: this.endAngleRad,
 				innerR: 0
 			}
 		);
@@ -294,11 +364,10 @@ var gaugeValueAxisMixin = {
 	 * any given value.
 	 */
 	setAxisTranslation: function () {
-		var options = this.options;
 		
 		Axis.prototype.setAxisTranslation.call(this);
 		
-		this.transA = (options.endAngle - options.startAngle) / ((this.max - this.min) || 1);
+		this.transA = (this.endAngleRad - this.startAngleRad) / ((this.max - this.min) || 1);
 	},
 	
 	/**
@@ -308,7 +377,7 @@ var gaugeValueAxisMixin = {
 	getPosition: function (value, length) {
 		var chart = this.chart,
 			center = this.center,
-			angle = this.options.startAngle + this.translate(value);
+			angle = this.startAngleRad + this.translate(value);
 			
 		radius = pick(length, center[2] / 2);
 		
@@ -324,7 +393,7 @@ var gaugeValueAxisMixin = {
 	 */
 	getPlotBandPath: function (from, to, options) {
 		var center = this.center,
-			startAngle = this.options.startAngle,
+			startAngleRad = this.startAngleRad,
 			fullRadius = center[2] / 2,
 			radii = [
 				pick(options.outerRadius, '100%'),
@@ -346,12 +415,21 @@ var gaugeValueAxisMixin = {
 			radii[0],
 			radii[1],
 			{
-				start: startAngle + this.translate(from),
-				end: startAngle + this.translate(to),
+				start: startAngleRad + this.translate(from),
+				end: startAngleRad + this.translate(to),
 				innerR: radii[1]
 			}
-		);
+		);		
+	},
+	
+	getTitlePosition: function () {
+		var center = this.center,
+			chart = this.chart;
 		
+		return { 
+			x: chart.plotLeft + center[0], 
+			y: chart.plotTop + center[1] - ({ high: 0.5, middle: 0.25, low: 0 }[this.options.title.align] * center[2])  
+		};
 	}
 	
 };
@@ -359,40 +437,43 @@ var gaugeValueAxisMixin = {
 /**
  * Add special cases within the Tick class' getPosition method for radial axes
  */
-var tickProto = Tick.prototype,
-	uberGetPosition = tickProto.getPosition,
-	uberGetMarkPath = tickProto.getMarkPath;
+var tickProto = Tick.prototype;
 	
-tickProto.getPosition = function (x, y) {
-	var axis = this.axis;
+tickProto.getPosition = (function (func) {
+	return function (x, y) {
+		var axis = this.axis;
 		
-	return axis.isRadial ? 
-		axis.getPosition(y) :
-		uberGetPosition.apply(this, arguments);	
-};
-/**
- * Return the path of the marker
- */
-tickProto.getMarkPath = function (x, y, tickLength, tickWidth) {
-	var axis = this.axis,
-		endPoint,
-		ret;
-		
-	if (axis.isRadial) {
-		endPoint = axis.getPosition(this.pos, axis.center[2] / 2 + tickLength);
-		ret = [
-			'M',
-			x,
-			y,
-			'L',
-			endPoint.x,
-			endPoint.y
-		];
-	} else {
-		ret = uberGetMarkPath.apply(this, arguments);
+		return axis.isRadial ? 
+			axis.getPosition(y) :
+			func.apply(this, arguments);	
 	}
-	return ret;
-};
+}(tickProto.getPosition));
+
+/**
+ * Wrap the getMarkPath function to return the path of the radial marker
+ */
+tickProto.getMarkPath = (function (func) {
+	return function (x, y, tickLength, tickWidth) {
+		var axis = this.axis,
+			endPoint,
+			ret;
+			
+		if (axis.isRadial) {
+			endPoint = axis.getPosition(this.pos, axis.center[2] / 2 + tickLength);
+			ret = [
+				'M',
+				x,
+				y,
+				'L',
+				endPoint.x,
+				endPoint.y
+			];
+		} else {
+			ret = func.apply(this, arguments);
+		}
+		return ret;
+	}
+}(tickProto.getMarkPath));
 
 /**
  * Augmented methods for the x axis in order to hide it completely
@@ -405,7 +486,7 @@ var gaugeXAxisMixin = {
 /**
  * Add the series type
  */
-seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
+var GaugeSeries = {
 	type: 'gauge',
 	pointClass: GaugePoint,
 	
@@ -414,22 +495,37 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 		
 		extend(this.xAxis, gaugeXAxisMixin);
 		extend(this.yAxis, gaugeValueAxisMixin);
+		this.yAxis.onBind();
 	},
 	
 	translate: function () {
 		
 		var series = this,
 			yAxis = series.yAxis,
-			center,
+			center = yAxis.center,
+			dialOptions = series.options.dial,
 			position;
 			
 		series.generatePoints();
 		
-		center = series.center = yAxis.center = seriesTypes.pie.prototype.getCenter.call(series);
-		
 		each(series.points, function (point) {
-			point.path = ['M', center[0], center[1], 'L', center[0] + center[2] / 2, center[1]];
-			point.rotation = (yAxis.options.startAngle + yAxis.translate(point.y)) * 180 / Math.PI;
+			
+			var radius = (parseInt(dialOptions.radius || 80) * center[2]) / 200,
+				baseLength = (parseInt(dialOptions.baseLength || 70) * radius) / 100,
+				baseWidth = dialOptions.baseWidth || 3,
+				topWidth = dialOptions.topWidth || 1;
+				
+			point.path = [
+				'M', 
+				center[0], center[1] - baseWidth / 2, 
+				'L', 
+				center[0] + baseLength, center[1] - baseWidth / 2,
+				center[0] + radius, center[1] - topWidth / 2,
+				center[0] + radius, center[1] + topWidth / 2,
+				center[0] + baseLength, center[1] + baseWidth / 2,
+				center[0], center[1] + baseWidth / 2
+			];
+			point.rotation = (yAxis.startAngleRad + yAxis.translate(point.y)) * 180 / Math.PI;
 			
 			// Positions for data label
 			point.plotX = center[0];
@@ -441,7 +537,11 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 	drawPoints: function () {
 		
 		var series = this,
-			center = series.center;
+			center = series.yAxis.center,
+			pivot = series.pivot,
+			options = series.options,
+			pivotOptions = options.pivot,
+			dialOptions = options.dial;
 		
 		each(series.points, function (point) {
 			
@@ -450,23 +550,41 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 				rotation = point.rotation;
 			
 			if (graphic) {
-				graphic
-					.animate({
-						d: path,
-						rotation: rotation
-					});
+				graphic.animate({
+					d: path,
+					x: center[0],
+					y: center[1],
+					rotation: rotation
+				});
 			} else {
 				point.graphic = series.chart.renderer.path(path)
 					.attr({
-						'stroke': point.color,
-						'stroke-width': 2,
+						stroke: dialOptions.borderColor || 'none',
+						'stroke-width': dialOptions.borderWidth || 0,
+						fill: dialOptions.backgroundColor || series.color,
 						x: center[0],
 						y: center[1],
 						rotation: rotation
 					})
-					.add(series.group);
+					.add(series.group)
 			}
-		});		
+		});
+		
+		// Add or move the pivot
+		if (pivot) {
+			pivot.animate({
+				x: center[0],
+				y: center[1]
+			});
+		} else {
+			series.pivot = series.chart.renderer.circle(center[0], center[1], pick(pivotOptions.radius, 5))
+				.attr({
+					'stroke-width': pivotOptions.borderWidth || 0,
+					stroke: pivotOptions.borderColor || 'silver',
+					fill: pivotOptions.backgroundColor || series.color
+				})
+				.add(series.group);
+		}
 	},
 	
 	/**
@@ -481,7 +599,7 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 			if (graphic) {
 				// start value
 				graphic.attr({
-					rotation: series.yAxis.options.startAngle * 180 / Math.PI
+					rotation: series.yAxis.startAngleRad * 180 / Math.PI
 				});
 
 				// animate
@@ -502,5 +620,6 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 	
 	setData: seriesTypes.pie.prototype.setData,
 	drawTracker: noop
-});
+};
+seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);
 }(Highcharts));
