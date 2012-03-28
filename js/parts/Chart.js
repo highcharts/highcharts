@@ -744,7 +744,7 @@ Chart.prototype = {
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
 			spacingLeft = optionsChart.spacingLeft,
-			axisOffset = chart.axisOffset,
+			axisOffset,
 			legend = chart.legend,
 			optionsMarginTop = chart.optionsMarginTop,
 			optionsMarginLeft = chart.optionsMarginLeft,
@@ -763,6 +763,7 @@ Chart.prototype = {
 			titleOffset;
 
 		chart.resetMargins();
+		axisOffset = chart.axisOffset;
 
 		// adjust for title and subtitle
 		if ((chart.title || chart.subtitle) && !defined(chart.optionsMarginTop)) {
@@ -823,7 +824,7 @@ Chart.prototype = {
 				axis.getOffset();
 			});
 		}
-
+		
 		if (!defined(optionsMarginLeft)) {
 			chart.plotLeft += axisOffset[3];
 		}

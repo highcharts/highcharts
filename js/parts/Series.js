@@ -1962,9 +1962,7 @@ Series.prototype = {
 	createGroup: function (doClip) {
 		
 		var chart = this.chart,
-			group = this.group = chart.renderer.g('series'),
-			xAxis = this.xAxis,
-			yAxis = this.yAxis;
+			group = this.group = chart.renderer.g('series');
 
 		if (doClip) {
 			group.clip(this.clipRect);
@@ -1973,9 +1971,9 @@ Series.prototype = {
 				visibility: this.visible ? VISIBLE : HIDDEN,
 				zIndex: this.options.zIndex
 			})
-			.translate(xAxis ? xAxis.left : chart.plotLeft, yAxis ? yAxis.top : chart.plotTop)
+			.translate(this.xAxis.left, this.yAxis.top)
 			.add(chart.seriesGroup);
-			
+		
 		// Only run this once
 		this.createGroup = noop;
 	},

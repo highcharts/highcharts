@@ -6793,7 +6793,6 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
 
-		chart.axisOffset = axisOffset;
 	},
 	
 	/**
@@ -9272,7 +9271,7 @@ Chart.prototype = {
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
 			spacingLeft = optionsChart.spacingLeft,
-			axisOffset = chart.axisOffset,
+			axisOffset,
 			legend = chart.legend,
 			optionsMarginTop = chart.optionsMarginTop,
 			optionsMarginLeft = chart.optionsMarginLeft,
@@ -9291,6 +9290,7 @@ Chart.prototype = {
 			titleOffset;
 
 		chart.resetMargins();
+		axisOffset = chart.axisOffset;
 
 		// adjust for title and subtitle
 		if ((chart.title || chart.subtitle) && !defined(chart.optionsMarginTop)) {
@@ -9351,7 +9351,7 @@ Chart.prototype = {
 				axis.getOffset();
 			});
 		}
-
+		
 		if (!defined(optionsMarginLeft)) {
 			chart.plotLeft += axisOffset[3];
 		}
@@ -11970,9 +11970,7 @@ Series.prototype = {
 	createGroup: function (doClip) {
 		
 		var chart = this.chart,
-			group = this.group = chart.renderer.g('series'),
-			xAxis = this.xAxis,
-			yAxis = this.yAxis;
+			group = this.group = chart.renderer.g('series');
 
 		if (doClip) {
 			group.clip(this.clipRect);
@@ -11981,9 +11979,9 @@ Series.prototype = {
 				visibility: this.visible ? VISIBLE : HIDDEN,
 				zIndex: this.options.zIndex
 			})
-			.translate(xAxis ? xAxis.left : chart.plotLeft, yAxis ? yAxis.top : chart.plotTop)
+			.translate(this.xAxis.left, this.yAxis.top)
 			.add(chart.seriesGroup);
-			
+		
 		// Only run this once
 		this.createGroup = noop;
 	},

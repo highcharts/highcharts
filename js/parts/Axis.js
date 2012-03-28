@@ -1212,7 +1212,6 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
 
-		chart.axisOffset = axisOffset;
 	},
 	
 	/**
