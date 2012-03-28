@@ -11240,10 +11240,10 @@ Series.prototype = {
 				yValue = series.modifyValue(yValue, point);
 			}
 
-			// set the y value
-			if (yValue !== null) {
-				point.plotY = mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10; // Math.round fixes #591
-			}
+			// Set the the plotY value, reset it for redraws
+			point.plotY = (typeof yValue === 'number') ? 
+				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
+				UNDEFINED;
 
 			// set client related positions for mouse tracking
 			point.clientX = chart.inverted ?
@@ -14641,13 +14641,14 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			step = onSeries && onSeries.options.step,
 			onData,
 			leftPoint,
+			lastX,
 			rightPoint;
 
 
 		// relate to a master series
 		if (onSeries) {
 			onData = onSeries.points;
-			i = onData.length;
+			lastX = onData[i - 1].x;
 
 			// sort the data points
 			points.sort(function (a, b) {
@@ -14657,16 +14658,22 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			while (i-- && points[cursor]) {
 				point = points[cursor];
 				leftPoint = onData[i];
+				
+				
 				if (leftPoint.x <= point.x) {
-					point.plotY = leftPoint.plotY;
 					
-					// interpolate between points, #666
-					if (leftPoint.x < point.x && !step) { 
-						rightPoint = onData[i + 1];
-						if (rightPoint) {
-							point.plotY += 
-								((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
-								(rightPoint.plotY - leftPoint.plotY); // the y distance
+					if (point.x <= lastX) { // #803
+					
+						point.plotY = leftPoint.plotY;
+					
+						// interpolate between points, #666
+						if (leftPoint.x < point.x && !step) { 
+							rightPoint = onData[i + 1];
+							if (rightPoint) {
+								point.plotY += 
+									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
+									(rightPoint.plotY - leftPoint.plotY); // the y distance
+							}
 						}
 					}
 					
@@ -14728,10 +14735,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			point = points[i];
 			plotX = point.plotX + crisp;
 			stackIndex = point.stackIndex;
-			plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
-			// outside to the left, on series but series is clipped
-			if (isNaN(plotY)) {
-				plotY = 0;
+			plotY = point.plotY;
+			if (plotY !== UNDEFINED) {
+				plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
 			}
 			anchorX = stackIndex ? UNDEFINED : point.plotX + crisp; // skip connectors for higher level stacked points
 			anchorY = stackIndex ? UNDEFINED : point.plotY;
@@ -14785,6 +14791,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					}
 				);
 
+			} else if (graphic) {
+				point.graphic = graphic.destroy();
 			}
 
 		}
