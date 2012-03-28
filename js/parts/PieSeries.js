@@ -154,7 +154,7 @@ var PieSeries = {
 	},
 
 	/**
-	 * Animate the column heights one by one from zero
+	 * Animate the pies in
 	 */
 	animate: function () {
 		var series = this,

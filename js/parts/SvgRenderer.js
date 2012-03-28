@@ -65,6 +65,7 @@ SVGElement.prototype = {
 			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
+			doTransform,
 			ret = wrapper;
 
 		// single key-value pair
@@ -112,7 +113,7 @@ SVGElement.prototype = {
 						if (/(NaN| {2}|^$)/.test(value)) {
 							value = 'M 0 0';
 						}
-						wrapper.d = value; // shortcut for animations
+						//wrapper.d = value; // shortcut for animations
 
 					// update child tspans x values
 					} else if (key === 'x' && nodeName === 'text') {
@@ -148,8 +149,7 @@ SVGElement.prototype = {
 
 					// translation and text rotation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'verticalAlign') {
-						wrapper[key] = value;
-						wrapper.updateTransform();
+						doTransform = true;
 						skipAttr = true;
 
 					// apply opacity as subnode (required by legacy WebKit and Batik)
@@ -236,7 +236,13 @@ SVGElement.prototype = {
 						value = 0;
 					}
 
-
+					// Record for animation and quick access without polling the DOM
+					wrapper[key] = value;
+					
+					// Update transform
+					if (doTransform) {
+						wrapper.updateTransform();
+					}
 
 
 					if (key === 'text') {

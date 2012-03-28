@@ -422,6 +422,7 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 			yAxis = series.yAxis,
 			center,
 			position;
+			
 		series.generatePoints();
 		
 		center = series.center = yAxis.center = seriesTypes.pie.prototype.getCenter.call(series);
@@ -444,24 +445,54 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 		
 		each(series.points, function (point) {
 			
-			var graphic = point.graphic;
+			var graphic = point.graphic,
+				path = point.path,
+				rotation = point.rotation;
 			
 			if (graphic) {
 				graphic
-					.attr({
-						d: point.path,
-						transform: 'rotate(' + point.rotation + ' ' + center[0] + ' ' + center[1] + ')'
+					.animate({
+						d: path,
+						rotation: rotation
 					});
 			} else {
-				point.graphic = series.chart.renderer.path(point.path)
+				point.graphic = series.chart.renderer.path(path)
 					.attr({
 						'stroke': point.color,
 						'stroke-width': 2,
-						transform: 'rotate(' + point.rotation + ' ' + center[0] + ' ' + center[1] + ')'
+						x: center[0],
+						y: center[1],
+						rotation: rotation
 					})
 					.add(series.group);
 			}
 		});		
+	},
+	
+	/**
+	 * Animate the arrow up from startAngle
+	 */
+	animate: function () {
+		var series = this;
+
+		each(series.points, function (point) {
+			var graphic = point.graphic;
+
+			if (graphic) {
+				// start value
+				graphic.attr({
+					rotation: series.yAxis.options.startAngle * 180 / Math.PI
+				});
+
+				// animate
+				graphic.animate({
+					rotation: point.rotation
+				}, series.options.animation);
+			}
+		});
+
+		// delete this function to allow it only once
+		series.animate = null;
 	},
 	
 	render: function () {
@@ -470,7 +501,6 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, {
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
-	animate: noop,
 	drawTracker: noop
 });
 }(Highcharts));
