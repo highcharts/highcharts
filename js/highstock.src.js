@@ -9024,9 +9024,7 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		// add button to reset selection
-		var chart = this,
-			animate = chart.pointCount < 100,
-			hasZoomed;
+		var hasZoomed;
 
 		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
 			chart.showResetZoom();
@@ -9054,7 +9052,9 @@ Chart.prototype = {
 
 		// Redraw
 		if (hasZoomed) {
-			chart.redraw(true, animate);
+			redraw( 
+				pick(optionsChart.animation, chart.pointCount < 100) // animation
+			);
 		}
 	},
 
