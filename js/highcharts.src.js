@@ -10252,11 +10252,10 @@ Point.prototype = {
 		// loop over the variables defined on the form {series.name}, {point.y} etc
 		for (i in match) {
 			key = match[i];
-			
 			if (isString(key) && key !== pointFormat) { // IE matches more than just the variables
 				
 				// Split it further into parts
-				parts = key.split(splitter);
+				parts = (' ' + key).split(splitter); // add empty string because IE and the rest handles it differently
 				obj = { 'point': point, 'series': series }[parts[1]];
 				prop = parts[2];
 				
