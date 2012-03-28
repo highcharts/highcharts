@@ -2854,7 +2854,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, '')
-			.replace(/\(/g, '\\(').replace(/\)/g, '\\)'); // Page url used for internal references. #24, #672.
+			.replace(/([\('\)])/g, '\\$1'); // Page url used for internal references. #24, #672.
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
@@ -12684,7 +12684,7 @@ var ColumnSeries = extendClass(Series, {
 		// record the new values
 		each(points, function (point) {
 			var plotY = point.plotY,
-				yBottom = point.yBottom || translatedThreshold,
+				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
@@ -16687,6 +16687,11 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 			 */
 			xAxis.postProcessTickInterval = function (tickInterval) {
+				// TODO: http://jsfiddle.net/highcharts/FQm4E/1/
+				// This is a case where this algorithm doesn't work optimally. In this case, the 
+				// tick labels are spread out per week, but all the gaps reside within weeks. So 
+				// we have a situation where the labels are courser than the ordinal gaps, and 
+				// thus the tick interval should not be altered				
 				var ordinalSlope = this.ordinalSlope;
 				
 				return ordinalSlope ? 
@@ -16800,9 +16805,6 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						}
 						translatedArr[i] = lastTranslated = translated; 
 					}
-					distances.sort();
-					medianDistance = distances[mathFloor(distances.length / 2)];
-					
 					
 					// Now loop over again and remove ticks where needed
 					i = groupPositions.length;
@@ -16813,7 +16815,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right,
 						// but not if it is close to the median distance (#748).
-						if (lastTranslated && distance < tickPixelIntervalOption * 0.6/* && distance < medianDistance * 0.7*/) {
+						if (lastTranslated && distance < tickPixelIntervalOption * 0.8 && distance < medianDistance * 0.8) {
 							
 							// Is this a higher ranked position with a normal position to the right?
 							if (higherRanks[groupPositions[i]] && !higherRanks[groupPositions[i + 1]]) {

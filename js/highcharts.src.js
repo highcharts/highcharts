@@ -2854,7 +2854,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, '')
-			.replace(/\(/g, '\\(').replace(/\)/g, '\\)'); // Page url used for internal references. #24, #672.
+			.replace(/([\('\)])/g, '\\$1'); // Page url used for internal references. #24, #672.
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
@@ -12684,7 +12684,7 @@ var ColumnSeries = extendClass(Series, {
 		// record the new values
 		each(points, function (point) {
 			var plotY = point.plotY,
-				yBottom = point.yBottom || translatedThreshold,
+				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
