@@ -793,15 +793,19 @@ Series.prototype = {
 
 		setAnimation(animation, chart);
 
-		if (graph && shift) { // make graph animate sideways
+		// Make graph animate sideways
+		if (graph && shift) { 
 			graph.shift = currentShift + 1;
 		}
 		if (area) {
-			area.shift = currentShift + 1;
-			area.isArea = true;
+			if (shift) { // #780
+				area.shift = currentShift + 1;
+			}
+			area.isArea = true; // needed in animation, both with and without shift
 		}
+		
+		// Optional redraw, defaults to true
 		redraw = pick(redraw, true);
-
 
 		// Get options and push the point to xData, yData and series.options. In series.generatePoints
 		// the Point instance will be created on demand and pushed to the series.data array.
@@ -1036,7 +1040,7 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i > 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
-			if (closestPointRange === UNDEFINED || distance < closestPointRange) {
+			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 			}
 		}
