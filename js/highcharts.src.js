@@ -8177,8 +8177,11 @@ function Legend(chart) {
 	legend.itemHoverStyle = itemHoverStyle;
 	legend.itemHiddenStyle = itemHiddenStyle;
 	legend.itemMarginTop = itemMarginTop;
+	legend.itemMarginBottom = options.itemMarginBottom || 0;
+	legend.maxItemWidth = 0;
 	legend.padding = padding;
-	legend.initialItemX = padding;
+	legend.initialItemX = 4 + padding + symbolWidth + symbolPadding;
+	legend.initialItemY = padding + itemMarginTop + y - 5; // 5 is the number of pixels above the text
 	legend.chart = chart;
 	//legend.allItems = UNDEFINED;
 	//legend.legendWidth = UNDEFINED;
@@ -8422,7 +8425,17 @@ Legend.prototype = {
 			legend.itemX = initialItemX;
 			legend.itemY += itemMarginTop + itemHeight + itemMarginBottom;
 		}
-		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
+
+		// If the item exceeds the height, start a new column
+		if (!horizontal && legend.itemY + options.y + itemHeight > chartHeight - spacingTop - spacingBottom) {
+			legend.itemY = initialItemY;
+			legend.itemX += maxItemWidth;
+			legend.maxItemWidth = 0;
+		}
+
+		// Set the edge positions
+		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
+		legend.lastItemY = mathMax(legend.lastItemY, legend.itemY + itemMarginBottom);
 
 		// cache the position of the newly generated or reordered items
 		item._legendItemPos = [legend.itemX, legend.itemY];
@@ -8436,7 +8449,7 @@ Legend.prototype = {
 
 		// the width of the widest item
 		legend.offsetWidth = widthOption || mathMax(
-			horizontal ? legend.itemX - initialItemX : itemWidth,
+			(legend.itemX - initialItemX) + (horizontal ? 0 : itemWidth),
 			legend.offsetWidth
 		);
 	},
@@ -8462,7 +8475,7 @@ Legend.prototype = {
 			legendBackgroundColor = options.backgroundColor;
 
 		legend.itemX = legend.initialItemX;
-		legend.itemY = padding + legend.itemMarginTop - 5; // 5 is the number of pixels above the text
+		legend.itemY = legend.initialItemY;
 		legend.offsetWidth = 0;
 		legend.lastItemY = 0;
 
