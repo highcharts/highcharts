@@ -764,8 +764,8 @@ Axis.prototype = {
 		max = axis.max;
 
 		if (isLog) {
-			if (!secondPass && axis.min <= 0) {
-				error(10); // Can't plot negative values on log axis
+			if (!secondPass && mathMin(min, dataMin) <= 0) {
+				error(10, 1); // Can't plot negative values on log axis
 			}
 			axis.min = min = log2lin(min);
 			axis.max = max = log2lin(max);
