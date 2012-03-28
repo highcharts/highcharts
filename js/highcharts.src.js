@@ -5315,6 +5315,43 @@ Tick.prototype = {
 			} else {
 				// show those that may have been previously hidden, either by show first/last, or by step
 				label.show();
+
+				if (tick.isLast && horiz) {
+
+					var bBox = label.getBBox(),
+						rightOfX = bBox.width * { left: 1, center: 0.5, right: 0 }[labelOptions.align] + labelOptions.x,
+						leftOfX = bBox.width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] + labelOptions.x,
+						plotRight = chart.plotLeft + axis.len;
+
+					if (x + rightOfX > plotRight) {
+						var neighbour = ticks[tickPositions[index - 1]],
+							neighbourBBox = neighbour.label.getBBox(),
+							neighbourX = neighbourBBox.x + neighbourBBox.width;
+
+						x = plotRight - rightOfX;
+
+						if (x - leftOfX < neighbourX) {
+							label.hide();
+						}
+
+					}
+				} else if (tick.isFirst && horiz) {
+					var bBox = label.getBBox(),
+						rightOfX = bBox.width * { left: 1, center: 0.5, right: 0 }[labelOptions.align] + labelOptions.x,
+						leftOfX = bBox.width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] + labelOptions.x;
+
+					if (x - leftOfX < chart.plotLeft) {
+						var neighbour = ticks[tickPositions[index + 1]],
+							neighbourBBox = neighbour.label.getBBox(),
+							neighbourX = neighbourBBox.x;
+
+						x = chart.plotLeft + leftOfX;
+
+						if (x + rightOfX > neighbourX) {
+							label.hide();
+						}
+					}
+				}
 			}
 
 			// apply step
@@ -6909,8 +6946,13 @@ Axis.prototype = {
 				});
 			}
 
-			// major ticks
-			each(tickPositions, function (pos, i) {
+			// Major ticks. Pull out the first item and render it last so that
+			// we can get the position of the neighbour label. #808.
+			each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
+
+				// Reorganize the indices
+				i = (i === tickPositions.length - 1) ? 0 : i + 1;
+
 				// linked axes need an extra check to find out if
 				if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
 
@@ -13781,8 +13823,6 @@ seriesTypes.pie = PieSeries;
 // global variables
 extend(Highcharts, {
 	Chart: Chart,
-	Axis: Axis,
-	Tick: Tick,
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
