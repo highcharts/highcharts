@@ -461,9 +461,10 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
-	minDate.setMilliseconds(0);
+	
 
 	if (interval >= timeUnits[SECOND]) { // second
+		minDate.setMilliseconds(0);
 		minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
 			count * mathFloor(minDate.getSeconds() / count));
 	}

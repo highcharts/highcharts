@@ -596,9 +596,10 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
-	minDate.setMilliseconds(0);
+	
 
 	if (interval >= timeUnits[SECOND]) { // second
+		minDate.setMilliseconds(0);
 		minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
 			count * mathFloor(minDate.getSeconds() / count));
 	}
@@ -16728,9 +16729,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					outsideMax = end && positions[end - 1] > max;
 					
 					if (positions[end] < min) { // Set the last position before min
-						start = end;
+						start = end;						
+					}
 					
-					} else if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
+					if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
 						
 						// For each segment, calculate the tick positions from the getTimeTicks utility
 						// function. The interval will be the same regardless of how long the segment is.
@@ -16811,7 +16813,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right,
 						// but not if it is close to the median distance (#748).
-						if (lastTranslated && distance < tickPixelIntervalOption * 0.7 && distance < medianDistance * 0.7) {
+						if (lastTranslated && distance < tickPixelIntervalOption * 0.6/* && distance < medianDistance * 0.7*/) {
 							
 							// Is this a higher ranked position with a normal position to the right?
 							if (higherRanks[groupPositions[i]] && !higherRanks[groupPositions[i + 1]]) {
