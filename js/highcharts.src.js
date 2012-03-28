@@ -6535,7 +6535,8 @@ Axis.prototype = {
 			stacks = axis.stacks,
 			type,
 			i,
-			isDirtyData;
+			isDirtyData,
+			isDirtyAxisLength;
 
 		axis.oldMin = axis.min;
 		axis.oldMax = axis.max;
@@ -6543,6 +6544,7 @@ Axis.prototype = {
 
 		// set the new axisLength
 		axis.len = axis.horiz ? axis.width : axis.height;
+		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
 		each(axis.series, function (series) {
@@ -6553,7 +6555,7 @@ Axis.prototype = {
 		});
 
 		// do we really need to go through all this?
-		if (axis.len !== axis.oldAxisLength || isDirtyData || axis.isLinked ||
+		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
 
 			// get data extremes if needed
@@ -6577,7 +6579,7 @@ Axis.prototype = {
 
 			// Mark as dirty if it is not already set to dirty and extremes have changed. #595.
 			if (!axis.isDirty) {
-				axis.isDirty = chart.isDirtyBox || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
+				axis.isDirty = isDirtyAxisLength || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
 			}
 		}
 	},

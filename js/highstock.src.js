@@ -6535,7 +6535,8 @@ Axis.prototype = {
 			stacks = axis.stacks,
 			type,
 			i,
-			isDirtyData;
+			isDirtyData,
+			isDirtyAxisLength;
 
 		axis.oldMin = axis.min;
 		axis.oldMax = axis.max;
@@ -6543,6 +6544,7 @@ Axis.prototype = {
 
 		// set the new axisLength
 		axis.len = axis.horiz ? axis.width : axis.height;
+		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
 		each(axis.series, function (series) {
@@ -6553,7 +6555,7 @@ Axis.prototype = {
 		});
 
 		// do we really need to go through all this?
-		if (axis.len !== axis.oldAxisLength || isDirtyData || axis.isLinked ||
+		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
 
 			// get data extremes if needed
@@ -6577,7 +6579,7 @@ Axis.prototype = {
 
 			// Mark as dirty if it is not already set to dirty and extremes have changed. #595.
 			if (!axis.isDirty) {
-				axis.isDirty = chart.isDirtyBox || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
+				axis.isDirty = isDirtyAxisLength || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
 			}
 		}
 	},
@@ -15487,7 +15489,7 @@ Scroller.prototype = {
 
 			// detect whether to move the range
 			stickToMax = baseMax >= navXData[navXData.length - 1];
-			stickToMin = baseMin <= baseDataMin;
+			stickToMin = baseMin <= navXData[0];
 
 			// set the navigator series data to the new data of the base series
 			if (!navigatorData) {
@@ -15620,6 +15622,9 @@ Scroller.prototype = {
 			};
 		}
 
+		// Expose the navigator seris
+		scroller.series = navigatorSeries;
+
 		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
 		// This needs to be done prior to chart.resize
 		chart.setSize = function (width, height, animation) {
@@ -15748,11 +15753,17 @@ RangeSelector.prototype = {
 			buttons = rangeSelector.buttons,
 			baseAxis = chart.xAxis[0],
 			extremes = baseAxis && baseAxis.getExtremes(),
-			now,
-			dataMin = extremes && extremes.dataMin,
-			dataMax = extremes && extremes.dataMax,
+			navAxis = chart.scroller && chart.scroller.xAxis,
+			navExtremes = navAxis && navAxis.getExtremes && navAxis.getExtremes(),
+			navDataMin = navExtremes && navExtremes.dataMin,
+			navDataMax = navExtremes && navExtremes.dataMax,
+			baseDataMin = extremes && extremes.dataMin,
+			baseDataMax = extremes && extremes.dataMax,
+			dataMin = mathMin(baseDataMin, pick(navDataMin, baseDataMin)),
+			dataMax = mathMax(baseDataMax, pick(navDataMax, baseDataMax)),
 			newMin,
 			newMax = baseAxis && mathMin(extremes.max, dataMax),
+			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
 			count = rangeOptions.count,
@@ -15874,10 +15885,12 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (buttons[rangeSelector.selected]) {
-					buttons[rangeSelector.selected].setState(0);
+				if (this.isDirty) {
+					if (buttons[rangeSelector.selected]) {
+						buttons[rangeSelector.selected].setState(0);
+					}
+					rangeSelector.selected = null;
 				}
-				rangeSelector.selected = null;
 			});
 		});
 	},

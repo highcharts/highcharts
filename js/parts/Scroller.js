@@ -668,7 +668,7 @@ Scroller.prototype = {
 
 			// detect whether to move the range
 			stickToMax = baseMax >= navXData[navXData.length - 1];
-			stickToMin = baseMin <= baseDataMin;
+			stickToMin = baseMin <= navXData[0];
 
 			// set the navigator series data to the new data of the base series
 			if (!navigatorData) {
@@ -800,6 +800,9 @@ Scroller.prototype = {
 				}
 			};
 		}
+
+		// Expose the navigator seris
+		scroller.series = navigatorSeries;
 
 		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
 		// This needs to be done prior to chart.resize
