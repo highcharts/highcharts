@@ -86,7 +86,7 @@ var VMLElementExtension = {
 		// align text after adding to be able to read offset
 		wrapper.added = true;
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
-			wrapper.htmlUpdateTransform();
+			wrapper.updateTransform();
 		}
 
 		// fire an event for internal hooks
@@ -114,6 +114,11 @@ var VMLElementExtension = {
 			}
 		}
 	},
+
+	/**
+	 * VML always uses htmlUpdateTransform
+	 */
+	updateTransform: SVGElement.prototype.htmlUpdateTransform,
 
 	/**
 	 * Get or set attributes
@@ -304,7 +309,7 @@ var VMLElementExtension = {
 					// translation for animation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
 						wrapper[key] = value;
-						wrapper.htmlUpdateTransform();
+						wrapper.updateTransform();
 
 						skipAttr = true;
 

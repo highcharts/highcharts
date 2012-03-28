@@ -2016,6 +2016,16 @@ Series.prototype = {
 
 		// the group
 		series.createGroup(doClip);
+		if (!series.group) {
+			group = series.group = renderer.g('series');
+
+			group.attr({
+					visibility: series.visible ? VISIBLE : HIDDEN,
+					zIndex: options.zIndex
+				})
+				.translate(series.xAxis.left, series.yAxis.top)
+				.add(chart.seriesGroup);
+		}
 
 		series.drawDataLabels();
 
@@ -2044,6 +2054,15 @@ Series.prototype = {
 		if (chart.inverted) {
 			series.invertGroups();
 		}
+		
+		// Do the initial clipping. This must be done after inverting for VML.
+		if (doClip && !series.hasRendered) {
+			group.clip(clipRect);
+			if (series.trackerGroup) {
+				series.trackerGroup.clip(chart.clipRect);
+			}
+		}
+			
 
 		// run the animation
 		if (doAnimation) {
@@ -2064,7 +2083,7 @@ Series.prototype = {
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
-
+		series.hasRendered = true;
 	},
 
 	/**
@@ -2253,7 +2272,6 @@ Series.prototype = {
 					.attr({
 						zIndex: this.options.zIndex || 1
 					})
-					.clip(chart.clipRect)
 					.add(chart.trackerGroup);
 					
 			}
