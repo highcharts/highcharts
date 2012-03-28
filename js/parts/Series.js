@@ -223,29 +223,38 @@ Point.prototype = {
 			split = String(point.y).split('.'),
 			originalDecimals = split[1] ? split[1].length : 0,
 			match = pointFormat.match(/\{(series|point)\.[a-zA-Z]+\}/g),
-			splitter = /[\.}]/,
+			splitter = /[{\.}]/,
 			obj,
 			key,
 			replacement,
+			parts,
+			prop,
 			i;
 
 		// loop over the variables defined on the form {series.name}, {point.y} etc
 		for (i in match) {
 			key = match[i];
 			
-			if (isString(key) && key !== pointFormat) { // IE matches more than just the variables 
-				obj = key.indexOf('point') === 1 ? point : series;
+			if (isString(key) && key !== pointFormat) { // IE matches more than just the variables
 				
-				if (key === '{point.y}') { // add some preformatting 
+				// Split it further into parts
+				parts = key.split(splitter);
+				obj = { 'point': point, 'series': series }[parts[1]];
+				prop = parts[2];
+				
+				// Add some preformatting
+				if (obj === point && (prop === 'y' || prop === 'open' || prop === 'high' || 
+						prop === 'low' || prop === 'close')) { 
 					replacement = (seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix || '') + 
-						numberFormat(point.y, pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, originalDecimals)) +
+						numberFormat(point[prop], pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, originalDecimals)) +
 						(seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix || '');
 				
-				} else { // automatic replacement
-					replacement = obj[match[i].split(splitter)[1]];
+				// Automatic replacement
+				} else {
+					replacement = obj[prop];
 				}
 				
-				pointFormat = pointFormat.replace(match[i], replacement);
+				pointFormat = pointFormat.replace(key, replacement);
 			}
 		}
 		
