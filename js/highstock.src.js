@@ -9157,7 +9157,7 @@ Chart.prototype = {
 				.attr({
 					align: chartTitleOptions.align,
 					'class': PREFIX + name,
-					zIndex: 1
+					zIndex: chartTitleOptions.zIndex || 4
 				})
 				.css(chartTitleOptions.style)
 				.add()
