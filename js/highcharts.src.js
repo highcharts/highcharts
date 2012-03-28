@@ -12796,7 +12796,7 @@ var ColumnSeries = extendClass(Series, {
 			optionPointWidth = options.pointWidth,
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
-			pointWidth = mathCeil(mathMax(pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), 1)),
+			pointWidth = mathCeil(mathMax(pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), 1 + 2 * borderWidth)),
 			colIndex = (reversedXAxis ? columnCount -
 				series.columnIndex : series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
@@ -12841,15 +12841,15 @@ var ColumnSeries = extendClass(Series, {
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
 			point.shapeType = 'rect';
-			shapeArgs = extend(chart.renderer.Element.prototype.crisp.apply({}, [
-				borderWidth,
-				barX,
-				barY,
-				pointWidth,
-				barH
-			]), {
-				r: options.borderRadius
-			});
+			shapeArgs = {
+				x: barX,
+				y: barY,
+				width: pointWidth,
+				height: barH,
+				r: options.borderRadius,
+				strokeWidth: borderWidth
+			}
+			
 			if (borderWidth % 2) { // correct for shorting in crisp method, visible in stacked columns with 1px border
 				shapeArgs.y -= 1;
 				shapeArgs.height += 1;
@@ -12914,13 +12914,20 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
-					graphic.animate(shapeArgs);
+					graphic.animate(renderer.Element.prototype.crisp.apply({}, [
+						shapeArgs.strokeWidth,
+						shapeArgs.x,
+						shapeArgs.y,
+						shapeArgs.width,
+						shapeArgs.height
+					]));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
 						.add(series.group)
 						.shadow(options.shadow);
+						
 				}
 
 			}
