@@ -478,7 +478,8 @@ MouseTracker.prototype = {
 
 
 			if (!hasDragged) {
-				if (hoverPoint && attr(e.target, 'isTracker')) {
+				// Detect clicks on trackers or tracker groups, #783
+				if (hoverPoint && (attr(e.target, 'isTracker') || attr(e.target.parentNode, 'isTracker'))) {
 					var plotX = hoverPoint.plotX,
 						plotY = hoverPoint.plotY;
 
