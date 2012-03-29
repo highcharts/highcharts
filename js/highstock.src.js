@@ -11002,7 +11002,7 @@ Series.prototype = {
 		// Shift the first point off the parallel arrays
 		// todo: consider series.removePoint(i) method
 		if (shift) {
-			if (data[0]) {
+			if (data[0] && data[0].remove) {
 				data[0].remove(false);
 			} else {
 				data.shift();
@@ -14393,7 +14393,7 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
-			'Close: {point.close}'	
+			'Close: {point.close}<br/>'	
 	},
 	states: {
 		hover: {
