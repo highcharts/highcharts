@@ -494,16 +494,19 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	init: function (container, width, height) {
 		var renderer = this,
-			boxWrapper;
+			boxWrapper,
+			box;
 
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement(DIV);
+		box = boxWrapper.element;
+		box.style.position = RELATIVE; // for freeform drawing using renderer directly
 		container.appendChild(boxWrapper.element);
 
 
 		// generate the containing box
-		renderer.box = boxWrapper.element;
+		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
 
 
