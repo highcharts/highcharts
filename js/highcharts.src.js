@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.2.0 (2012-02-16)
+ * @license Highcharts JS v2.2.1 (2012-03-15)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1273,7 +1273,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/2.2.0/modules/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com/2.2.1/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -13975,6 +13975,6 @@ extend(Highcharts, {
 	extendClass: extendClass,
 	placeBox: placeBox,
 	product: 'Highcharts',
-	version: '2.2.0'
+	version: '2.2.1'
 });
 }());
