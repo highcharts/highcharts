@@ -3496,7 +3496,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				L,
+				options.open ? M : L,
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
@@ -4045,7 +4045,7 @@ var VMLElementExtension = {
 
 		// divs and shapes need size
 		if (nodeName === 'shape' || nodeName === DIV) {
-			style.push('left:0;top:0;width:10px;height:10px;');
+			style.push('left:0;top:0;width:1px;height:1px;');
 		}
 		if (docMode8) {
 			style.push('visibility: ', nodeName === DIV ? HIDDEN : VISIBLE);
@@ -4312,6 +4312,10 @@ var VMLElementExtension = {
 
 							key = 'fillcolor';
 						}
+						
+					// rotation on VML elements
+					} else if (nodeName === 'shape' && key === 'rotation') {
+						wrapper[key] = value;
 
 					// translation for animation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
@@ -4452,7 +4456,7 @@ var VMLElementExtension = {
 			for (i = 1; i <= 3; i++) {
 				markup = ['<shape isShadow="true" strokeweight="', (7 - 2 * i),
 					'" filled="false" path="', path,
-					'" coordsize="100,100" style="', element.style.cssText, '" />'];
+					'" coordsize="10 10" style="', element.style.cssText, '" />'];
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
 						left: pInt(elemStyle.left) + 1,
@@ -4717,8 +4721,8 @@ VMLRendererExtension = { // inherit SVGRenderer
 	path: function (path) {
 		// create the shape
 		return this.createElement('shape').attr({
-			// subpixel precision down to 0.1 (width and height = 10px)
-			coordsize: '100 100',
+			// subpixel precision down to 0.1 (width and height = 1px)
+			coordsize: '10 10',
 			d: path
 		});
 	},
@@ -4804,7 +4808,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var parentStyle = parentNode.style;
-
+		console.log('Warning in VMLRenderer.js: We may have to replace 10 for 1 below after changing the coordsize');
 		css(element, {
 			flip: 'x',
 			left: pInt(parentStyle.width) - 10,
@@ -4829,7 +4833,8 @@ VMLRendererExtension = { // inherit SVGRenderer
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR,
 				circleCorrection = 0.08 / radius, // #760
-				innerCorrection = (innerRadius && 0.1 / innerRadius) || 0;
+				innerCorrection = (innerRadius && 0.1 / innerRadius) || 0,
+				ret;
 
 			if (end - start === 0) { // no angle, don't show it.
 				return ['x'];
@@ -4841,7 +4846,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 				cosEnd = mathCos(start + innerCorrection);
 			}
 
-			return [
+			ret = [
 				'wa', // clockwise arc to
 				x - radius, // left
 				y - radius, // top
@@ -4850,22 +4855,37 @@ VMLRendererExtension = { // inherit SVGRenderer
 				x + radius * cosStart, // start x
 				y + radius * sinStart, // start y
 				x + radius * cosEnd, // end x
-				y + radius * sinEnd, // end y
+				y + radius * sinEnd  // end y
+			];
 
+			if (options.open) {
+				ret.push(
+					M, 
+					x - innerRadius, 
+					y - innerRadius
+				);
+			}
 
-				'at', // anti clockwise arc to
-				x - innerRadius, // left
-				y - innerRadius, // top
-				x + innerRadius, // right
-				y + innerRadius, // bottom
-				x + innerRadius * cosEnd, // start x
-				y + innerRadius * sinEnd, // start y
-				x + innerRadius * cosStart, // end x
-				y + innerRadius * sinStart, // end y
-
+			if (innerRadius) {
+				ret.push(
+					'at', // anti clockwise arc to
+					x - innerRadius, // left
+					y - innerRadius, // top
+					x + innerRadius, // right
+					y + innerRadius, // bottom
+					x + innerRadius * cosEnd, // start x
+					y + innerRadius * sinEnd, // start y
+					x + innerRadius * cosStart, // end x
+					y + innerRadius * sinStart // end y
+				);
+			}
+			
+			ret.push(
 				'x', // finish path
 				'e' // close
-			];
+			);
+			
+			return ret;
 
 		},
 		// Add circle symbol path. This performs significantly faster than v:oval.
@@ -5402,6 +5422,10 @@ PlotLineOrBand.prototype = {
 			attribs = {
 				fill: color
 			};
+			if (options.borderWidth) {
+				attribs.stroke = options.borderColor;
+				attribs['stroke-width'] = options.borderWidth;
+			}
 		} else {
 			return;
 		}

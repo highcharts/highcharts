@@ -238,17 +238,17 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
  * TODO:
  * - Handle grid lines on the angular axis
  * - Make tickInterval and tickPixelInterval relate to the circumference of the gauge
- * - Individual dial options per point
- * - Implement rotation of VML elements
+ * - Individual dial options per point (clock demo)
  * - Allow pixel and percentage thickness for plot bands. Find naming that makes sense in cartesian plots, 
  *   since width is already used for plotLines. Possible combination with from-to on the crossing axis
  *   in the cartesian plane.
  * - Rotation of axis labels along the perimeter
- * - Consistent way of adding background objects
  * - Radial gradients
  * - Size to the actual space given, for example by vu-meters
  * - Option to wrap (like clock)
  * - Tooltip
+ * - Should the gauge series be called angular gauge as opposed to linear gauges?
+ * - Targets? Could perhaps be implemented as a separate series type, inherited from GaugeSeries
  */
 
 
@@ -275,7 +275,8 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		// borderWidth: 0,
 		// baseWidth: 3,
 		// topWidth: 1,
-		// baseLength: '70%'
+		// baseLength: '70%' // of radius
+		// rearLength: '10%'
 	},
 	pivot: {
 		//radius: 5,
@@ -306,10 +307,13 @@ var gaugeValueAxisMixin = {
 	 * merge in these options the usual way
 	 */
 	onBind: function () {
-		var userOptions = this.userOptions,
+		var axis = this,
+			userOptions = axis.userOptions,
 			userOptionsTitle = userOptions.title,
 			userOptionsLabels = userOptions.labels,
-			options = this.options;
+			background = userOptions.background || {}, // start out with one default background
+			defaultBackground,
+			options = axis.options;
 			
 		if (!userOptionsTitle || userOptionsTitle.rotation === UNDEFINED) {
 			options.title.rotation = 0;
@@ -331,8 +335,33 @@ var gaugeValueAxisMixin = {
 		// Special initiation for the radial axis. Start and end angle options are
 		// given in degrees relative to top, while internal computations are
 		// in radians relative to right (like SVG).
-		this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
-		this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
+		axis.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
+		axis.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
+		
+		// Handle background objects. If we move to a RadialAxis class, this should
+		// be done in the init method. Backgrounds are special plot band config objects.
+		defaultBackground = {
+			shape: 'circle',
+			borderWidth: 1,
+			borderColor: 'silver',
+			backgroundColor: {
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+				stops: [
+					[0, '#FFF'],
+					[1, '#DDD']
+				]
+			},
+			from: 1,
+			innerRadius: 0,
+			to: 1,
+			outerRadius: '105%'
+		};
+		each(Highcharts.splat(background).reverse(), function (config) {
+			config = merge(defaultBackground, config);
+			config.color = config.backgroundColor; // due to naming in plotBands
+			
+			options.plotBands.unshift(config);
+		});
 	},
 	
 	/**
@@ -411,7 +440,10 @@ var gaugeValueAxisMixin = {
 				pick(options.outerRadius, '100%'),
 				pick(options.innerRadius, '90%')
 			],
-			percentRegex = /%$/;
+			percentRegex = /%$/,
+			start,
+			end,
+			open;
 			
 		// Convert percentages to pixel values
 		radii = map(radii, function (radius) {
@@ -421,15 +453,26 @@ var gaugeValueAxisMixin = {
 			return radius;
 		});
 		
+		// Handle full circle
+		if (options.shape === 'circle') {
+			start = -Math.PI / 2;
+			end = Math.PI * 1.5;
+			open = true;
+		} else {
+			start = startAngleRad + this.translate(from);
+			end = startAngleRad + this.translate(to);
+		}
+		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
 			this.top + center[1],
 			radii[0],
-			radii[1],
+			radii[0],
 			{
-				start: startAngleRad + this.translate(from),
-				end: startAngleRad + this.translate(to),
-				innerR: radii[1]
+				start: start,
+				end: end,
+				innerR: radii[1],
+				open: open
 			}
 		);		
 	},
@@ -533,6 +576,9 @@ var GaugeSeries = {
 	type: 'gauge',
 	pointClass: GaugePoint,
 	
+	/**
+	 * Extend the bindAxes method by adding radial features to the axes
+	 */
 	bindAxes: function () {
 		Series.prototype.bindAxes.call(this);
 		
@@ -541,6 +587,9 @@ var GaugeSeries = {
 		this.yAxis.onBind();
 	},
 	
+	/**
+	 * Calculate paths etc
+	 */
 	translate: function () {
 		
 		var series = this,
@@ -554,18 +603,29 @@ var GaugeSeries = {
 			
 			var radius = (pInt(dialOptions.radius || 80) * center[2]) / 200,
 				baseLength = (pInt(dialOptions.baseLength || 70) * radius) / 100,
+				rearLength = (pInt(dialOptions.baseLength || 10) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1;
 				
-			point.path = [
+			/*point.path = [
 				'M', 
-				center[0], center[1] - baseWidth / 2, 
+				center[0] - rearLength, center[1] - baseWidth / 2, 
 				'L', 
 				center[0] + baseLength, center[1] - baseWidth / 2,
 				center[0] + radius, center[1] - topWidth / 2,
 				center[0] + radius, center[1] + topWidth / 2,
 				center[0] + baseLength, center[1] + baseWidth / 2,
-				center[0], center[1] + baseWidth / 2
+				center[0] - rearLength, center[1] + baseWidth / 2
+			];*/
+			point.path = [
+				'M', 
+				-rearLength, -baseWidth / 2, 
+				'L', 
+				baseLength, -baseWidth / 2,
+				radius, -topWidth / 2,
+				radius, topWidth / 2,
+				baseLength, baseWidth / 2,
+				-rearLength, baseWidth / 2
 			];
 			point.rotation = (yAxis.startAngleRad + yAxis.translate(point.y)) * 180 / Math.PI;
 			
@@ -576,6 +636,9 @@ var GaugeSeries = {
 		//this.setTooltipPoints();
 	},
 	
+	/**
+	 * Draw the points where each point is one needle
+	 */
 	drawPoints: function () {
 		
 		var series = this,
@@ -594,8 +657,8 @@ var GaugeSeries = {
 			if (graphic) {
 				graphic.animate({
 					d: path,
-					x: center[0],
-					y: center[1],
+					translateX: center[0],
+					translateY: center[1],
 					rotation: rotation
 				});
 			} else {
@@ -604,8 +667,10 @@ var GaugeSeries = {
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
 						fill: dialOptions.backgroundColor || 'black',
-						x: center[0],
-						y: center[1],
+						x: 0, // base of rotation
+						y: 0,
+						translateX: center[0],
+						translateY: center[1],
 						rotation: rotation
 					})
 					.add(series.group);
@@ -615,8 +680,8 @@ var GaugeSeries = {
 		// Add or move the pivot
 		if (pivot) {
 			pivot.animate({
-				x: center[0],
-				y: center[1]
+				cx: center[0],
+				cy: center[1]
 			});
 		} else {
 			series.pivot = series.chart.renderer.circle(center[0], center[1], pick(pivotOptions.radius, 5))

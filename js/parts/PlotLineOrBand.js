@@ -74,6 +74,10 @@ PlotLineOrBand.prototype = {
 			attribs = {
 				fill: color
 			};
+			if (options.borderWidth) {
+				attribs.stroke = options.borderColor;
+				attribs['stroke-width'] = options.borderWidth;
+			}
 		} else {
 			return;
 		}
