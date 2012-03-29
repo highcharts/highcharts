@@ -6713,6 +6713,9 @@ Axis.prototype = {
 			axis.userMin = newMin;
 			axis.userMax = newMax;
 
+			// Mark for running afterSetExtremes
+			axis.isDirtyExtremes = true;
+
 			// redraw
 			if (redraw) {
 				chart.redraw(animation);
@@ -8901,7 +8904,13 @@ Chart.prototype = {
 
 			// redraw axes
 			each(axes, function (axis) {
-				fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751					
+				
+				// Fire 'afterSetExtremes' only if extremes are set
+				if (axis.isDirtyExtremes) { // #821
+					axis.isDirtyExtremes = false;
+					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
+				}
+								
 				if (axis.isDirty || isDirtyBox) {					
 					axis.redraw();
 					isDirtyBox = true; // #792

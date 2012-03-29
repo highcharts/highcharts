@@ -1019,6 +1019,9 @@ Axis.prototype = {
 			axis.userMin = newMin;
 			axis.userMax = newMax;
 
+			// Mark for running afterSetExtremes
+			axis.isDirtyExtremes = true;
+
 			// redraw
 			if (redraw) {
 				chart.redraw(animation);
