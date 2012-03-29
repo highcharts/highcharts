@@ -36,7 +36,8 @@ $(document).ready(function() {
 				rotation: -45,
 				align: 'right',
 				style: {
-					font: 'normal 13px Verdana, sans-serif'
+					fontSize: '13px',
+					fontFamily: 'Verdana, sans-serif'
 				}
 			}
 		},
@@ -72,7 +73,8 @@ $(document).ready(function() {
 					return this.y;
 				},
 				style: {
-					font: 'normal 13px Verdana, sans-serif'
+					fontSize: '13px',
+					fontFamily: 'Verdana, sans-serif'
 				}
 			}
 		}]

@@ -1,3 +1,9 @@
+<?php
+$product = $_GET['product'];
+
+if ($product == 'highcharts') $dir = 'highcharts';
+elseif ($product == 'highstock') $dir = 'stock';
+?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -44,38 +50,44 @@
 		
 		
 	</head>
-	<body><?php
-
-if ($handle = opendir(dirname(__FILE__). '/stock')) {
-	
-	$i = 1;
-	while (false !== ($file = readdir($handle))) {
-		if (preg_match('/^[a-z]+$/', $file)) {
-			echo "
-			<h4>$file</h4>
-			<ul>
-			";
+	<body>
 		
-			// loop over the inner directories
-			if ($innerHandle = opendir(dirname(__FILE__). '/stock/'. $file)) {
-				while (false !== ($innerFile = readdir($innerHandle))) {
-					$next = $i + 1;
-					if (preg_match('/^[a-z\-]+$/', $innerFile)) {
-						echo "
-						<li id='li$i'>$i. <a target='main' id='i$i' href='view.php?path=stock/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
-						";
-						$i++;
+	Product: <a href='?product=highcharts'>Highcharts</a> | <a href='?product=highstock'>Highstock</a>
+		<hr/>	
+
+	<?php
+	if (isset($dir)) {
+		if ($handle = opendir(dirname(__FILE__). '/' . $dir)) {
+			
+			$i = 1;
+			while (false !== ($file = readdir($handle))) {
+				if (preg_match('/^[a-z]+$/', $file)) {
+					echo "
+					<h4>$file</h4>
+					<ul>
+					";
+				
+					// loop over the inner directories
+					if ($innerHandle = opendir(dirname(__FILE__). '/' . $dir . '/'. $file)) {
+						while (false !== ($innerFile = readdir($innerHandle))) {
+							$next = $i + 1;
+							if (preg_match('/^[a-z\-]+$/', $innerFile)) {
+								echo "
+								<li id='li$i'>$i. <a target='main' id='i$i' href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
+								";
+								$i++;
+							}
+						}
 					}
+				
+					echo "</ul>";
 				}
 			}
 		
-			echo "</ul>";
+		
+			closedir($handle);
 		}
 	}
-
-
-	closedir($handle);
-}
 ?>
 </body>
 </html>
