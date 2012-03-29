@@ -35,6 +35,7 @@ Tick.prototype = {
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
+			attr,
 			value = categories && defined(categories[pos]) ? categories[pos] : pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -66,6 +67,12 @@ Tick.prototype = {
 
 		// first call
 		if (!defined(label)) {
+			attr = {
+				align: labelOptions.align
+			};
+			if (isNumber(labelOptions.rotation)) {
+				attr.rotation = labelOptions.rotation;
+			}			
 			tick.label =
 				defined(str) && labelOptions.enabled ?
 					chart.renderer.text(
@@ -74,10 +81,7 @@ Tick.prototype = {
 							0,
 							labelOptions.useHTML
 						)
-						.attr({
-							align: labelOptions.align,
-							rotation: labelOptions.rotation
-						})
+						.attr(attr)
 						// without position absolute, IE export sometimes is wrong
 						.css(css)
 						.add(axis.axisGroup) :

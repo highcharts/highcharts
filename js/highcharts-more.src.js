@@ -233,19 +233,16 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 });/* 
  * The GaugeSeries class
  * 
- * http://jsfiddle.net/highcharts/qPeFM/
+ * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
+ * Clock:       http://jsfiddle.net/highcharts/BFN2F/
  * 
  * TODO:
- * - Handle grid lines on the angular axis
  * - Make tickInterval and tickPixelInterval relate to the circumference of the gauge
- * - Individual dial options per point (clock demo)
  * - Allow pixel and percentage thickness for plot bands. Find naming that makes sense in cartesian plots, 
  *   since width is already used for plotLines. Possible combination with from-to on the crossing axis
  *   in the cartesian plane.
- * - Rotation of axis labels along the perimeter
  * - Radial gradients
  * - Size to the actual space given, for example by vu-meters
- * - Option to wrap (like clock)
  * - Tooltip
  * - Should the gauge series be called angular gauge as opposed to linear gauges?
  * - Targets? Could perhaps be implemented as a separate series type, inherited from GaugeSeries
@@ -315,7 +312,7 @@ var gaugeValueAxisMixin = {
 			defaultBackground,
 			options = axis.options;
 			
-		if (!userOptionsTitle || userOptionsTitle.rotation === UNDEFINED) {
+		if ((!userOptionsTitle || userOptionsTitle.rotation === UNDEFINED) && options.title) {
 			options.title.rotation = 0;
 		}
 		if (!userOptions.center) {
@@ -478,15 +475,28 @@ var gaugeValueAxisMixin = {
 	},
 	
 	/**
+	 * Find the path for plot lines perpendicular to the radial axis. These will
+	 * appear as spokes in a wheel.
+	 */
+	getPlotLinePath: function (value) {
+		var center = this.center,
+			chart = this.chart,
+			end = this.getPosition(value);
+		return ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
+	},
+	
+	/**
 	 * Find the position for the axis title, by default inside the gauge
 	 */
 	getTitlePosition: function () {
 		var center = this.center,
-			chart = this.chart;
+			chart = this.chart,
+			titleOptions = this.options.title;
 		
 		return { 
-			x: chart.plotLeft + center[0], 
-			y: chart.plotTop + center[1] - ({ high: 0.5, middle: 0.25, low: 0 }[this.options.title.align] * center[2])  
+			x: chart.plotLeft + center[0] + (titleOptions.x || 0), 
+			y: chart.plotTop + center[1] - ({ high: 0.5, middle: 0.25, low: 0 }[this.options.title.align] * 
+				center[2]) + (titleOptions.y || 0)  
 		};
 	}
 	
@@ -521,11 +531,19 @@ tickProto.getLabelPosition = (function (func) {
 		if (axis.isRadial) {
 			ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
 			
+			// Automatically rotated
+			if (labelOptions.rotation === 'auto') {
+				label.attr({ 
+					rotation: (axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180  
+				});
+			
 			// Vertically centered
-			if (labelOptions.y === null) {
+			} else if (labelOptions.y === null) {
 				// TODO: new fontMetric logic
 				ret.y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
 			}
+			
+			
 			
 		} else {
 			ret = func.apply(this, arguments);
@@ -594,16 +612,16 @@ var GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
-			center = yAxis.center,
-			dialOptions = series.options.dial;
+			center = yAxis.center;
 			
 		series.generatePoints();
 		
 		each(series.points, function (point) {
 			
-			var radius = (pInt(dialOptions.radius || 80) * center[2]) / 200,
+			var dialOptions = merge(series.options.dial, point.dial),
+				radius = (pInt(dialOptions.radius || 80) * center[2]) / 200,
 				baseLength = (pInt(dialOptions.baseLength || 70) * radius) / 100,
-				rearLength = (pInt(dialOptions.baseLength || 10) * radius) / 100,
+				rearLength = (pInt(dialOptions.rearLength || 10) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1;
 				
