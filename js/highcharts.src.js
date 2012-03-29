@@ -750,9 +750,14 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 		if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
 			y = pointY + outerTop + distance; // below
 		}
-	} else if (y + boxHeight > outerTop + outerHeight) {
+	} 
+
+	// Now if the tooltip is below the chart, move it up. It's better to cover the
+	// point than to disappear outside the chart. #834.
+	if (y + boxHeight > outerTop + outerHeight) {
 		y = outerTop + outerHeight - boxHeight - distance; // below
 	}
+	
 
 	return {x: x, y: y};
 }
