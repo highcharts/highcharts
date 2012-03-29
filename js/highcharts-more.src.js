@@ -18,6 +18,7 @@ var each = Highcharts.each,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
 	pick = Highcharts.pick,
+	pInt = Highcharts.pInt,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
 	Axis = Highcharts.Axis,
@@ -242,7 +243,6 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
  * - Allow pixel and percentage thickness for plot bands. Find naming that makes sense in cartesian plots, 
  *   since width is already used for plotLines. Possible combination with from-to on the crossing axis
  *   in the cartesian plane.
- * - Auto align axis labels
  * - Rotation of axis labels along the perimeter
  * - Consistent way of adding background objects
  * - Radial gradients
@@ -250,6 +250,9 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
  * - Option to wrap (like clock)
  * - Tooltip
  */
+
+
+var tickProto = Tick.prototype;
 
 /**
  * Extend the default options
@@ -267,7 +270,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	},
 	dial: {
 		// radius: '80%',
-		// backgroundColor: '{series.color}',
+		// backgroundColor: 'black',
 		// borderColor: 'silver',
 		// borderWidth: 0,
 		// baseWidth: 3,
@@ -278,8 +281,9 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		//radius: 5,
 		//borderWidth: 0
 		//borderColor: 'silver',
-		//backgroundColor: '{series.color}'
-	}
+		//backgroundColor: 'black'
+	},
+	showInLegend: false
 });
 
 /**
@@ -298,11 +302,13 @@ var gaugeValueAxisMixin = {
 	/**
 	 * Set special default options for the radial axis. Since the radial axis is
 	 * extended after the initial options are merged, we need to do it here. If
-	 * we create a RadialAxis class we should handle it in a setOptions method.
+	 * we create a RadialAxis class we should handle it in a setOptions method and
+	 * merge in these options the usual way
 	 */
 	onBind: function () {
 		var userOptions = this.userOptions,
 			userOptionsTitle = userOptions.title,
+			userOptionsLabels = userOptions.labels,
 			options = this.options;
 			
 		if (!userOptionsTitle || userOptionsTitle.rotation === UNDEFINED) {
@@ -314,6 +320,13 @@ var gaugeValueAxisMixin = {
 		if (!userOptions.size) {
 			options.size = ['90%'];
 		}
+		if (!userOptionsLabels || !userOptionsLabels.align) {
+			options.labels.align = 'center';
+		}
+		if (!userOptionsLabels || userOptionsLabels.x === UNDEFINED) {
+			options.labels.x = 0;
+		}
+		
 		
 		// Special initiation for the radial axis. Start and end angle options are
 		// given in degrees relative to top, while internal computations are
@@ -341,15 +354,15 @@ var gaugeValueAxisMixin = {
 	/**
 	 * Get the path for the axis line
 	 */
-	getLinePath: function (lineWidth) {
+	getLinePath: function () {
 		var center = this.center,
 			radius = center[2] / 2;
 		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
 			this.top + center[1],
-			center[2] / 2,
-			center[2] / 2,
+			radius,
+			radius,
 			{
 				start: this.startAngleRad,
 				end: this.endAngleRad,
@@ -377,9 +390,8 @@ var gaugeValueAxisMixin = {
 	getPosition: function (value, length) {
 		var chart = this.chart,
 			center = this.center,
-			angle = this.startAngleRad + this.translate(value);
-			
-		radius = pick(length, center[2] / 2);
+			angle = this.startAngleRad + this.translate(value),
+			radius = pick(length, center[2] / 2);
 		
 		return {
 			x: chart.plotLeft + center[0] + Math.cos(angle) * radius,
@@ -404,7 +416,7 @@ var gaugeValueAxisMixin = {
 		// Convert percentages to pixel values
 		radii = map(radii, function (radius) {
 			if (percentRegex.test(radius)) {
-				radius = (parseInt(radius, 10) * fullRadius) / 100;
+				radius = (pInt(radius, 10) * fullRadius) / 100;
 			}
 			return radius;
 		});
@@ -422,6 +434,9 @@ var gaugeValueAxisMixin = {
 		);		
 	},
 	
+	/**
+	 * Find the position for the axis title, by default inside the gauge
+	 */
 	getTitlePosition: function () {
 		var center = this.center,
 			chart = this.chart;
@@ -435,25 +450,52 @@ var gaugeValueAxisMixin = {
 };
 
 /**
- * Add special cases within the Tick class' getPosition method for radial axes
- */
-var tickProto = Tick.prototype;
-	
+ * Add special cases within the Tick class' methods for radial axes. 
+ * TODO: If we go for a RadialAxis class, add a RadialTick class too.
+ */	
 tickProto.getPosition = (function (func) {
-	return function (x, y) {
-		var axis = this.axis;
+	return function () {
+		var axis = this.axis,
+			args = arguments;
 		
 		return axis.isRadial ? 
-			axis.getPosition(y) :
-			func.apply(this, arguments);	
-	}
+			axis.getPosition(args[2]) :
+			func.apply(this, args);	
+	};
 }(tickProto.getPosition));
+
+/**
+ * Wrap the getLabelPosition function to find the center position of the label
+ * based on the distance option
+ */	
+tickProto.getLabelPosition = (function (func) {
+	return function () {
+		var axis = this.axis,
+			labelOptions = axis.options.labels,
+			label = this.label,
+			ret;
+		
+		if (axis.isRadial) {
+			ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
+			
+			// Vertically centered
+			if (labelOptions.y === null) {
+				// TODO: new fontMetric logic
+				ret.y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+			}
+			
+		} else {
+			ret = func.apply(this, arguments);
+		}
+		return ret;
+	};
+}(tickProto.getLabelPosition));
 
 /**
  * Wrap the getMarkPath function to return the path of the radial marker
  */
 tickProto.getMarkPath = (function (func) {
-	return function (x, y, tickLength, tickWidth) {
+	return function (x, y, tickLength) {
 		var axis = this.axis,
 			endPoint,
 			ret;
@@ -472,8 +514,9 @@ tickProto.getMarkPath = (function (func) {
 			ret = func.apply(this, arguments);
 		}
 		return ret;
-	}
+	};
 }(tickProto.getMarkPath));
+
 
 /**
  * Augmented methods for the x axis in order to hide it completely
@@ -503,15 +546,14 @@ var GaugeSeries = {
 		var series = this,
 			yAxis = series.yAxis,
 			center = yAxis.center,
-			dialOptions = series.options.dial,
-			position;
+			dialOptions = series.options.dial;
 			
 		series.generatePoints();
 		
 		each(series.points, function (point) {
 			
-			var radius = (parseInt(dialOptions.radius || 80) * center[2]) / 200,
-				baseLength = (parseInt(dialOptions.baseLength || 70) * radius) / 100,
+			var radius = (pInt(dialOptions.radius || 80) * center[2]) / 200,
+				baseLength = (pInt(dialOptions.baseLength || 70) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1;
 				
@@ -561,12 +603,12 @@ var GaugeSeries = {
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
-						fill: dialOptions.backgroundColor || series.color,
+						fill: dialOptions.backgroundColor || 'black',
 						x: center[0],
 						y: center[1],
 						rotation: rotation
 					})
-					.add(series.group)
+					.add(series.group);
 			}
 		});
 		
@@ -581,7 +623,7 @@ var GaugeSeries = {
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
-					fill: pivotOptions.backgroundColor || series.color
+					fill: pivotOptions.backgroundColor || 'black'
 				})
 				.add(series.group);
 		}

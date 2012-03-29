@@ -235,7 +235,7 @@
         <fixcrlf srcDir="${basedir}/test" includes="**/*.js" eol="crlf" fixlast="false"/>
     </target>
 
-    <!-- Runs jslint on source code. -->
+    <!-- Runs jslint on generated source code. -->
     <target name="do-lint" depends="check-crlf">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
             <formatter type="plain"/>
@@ -260,7 +260,47 @@
 
     <!-- This target is only run if there are unused variables. -->
     <target name="lint" depends="do-lint" if="lint.variable.error">
-        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'"/>
+        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'."/>
+    </target>
+    
+    <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
+    <target name="do-lint-parts" depends="set.properties">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
+            <formatter type="plain"/>
+            <formatter type="report" destfile="${build.dir}/lintreport.html"/>
+            <fileset dir="${highcharts.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+            <fileset dir="${highchartsmore.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+            <fileset dir="${highchartsmore.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+            <fileset dir="${highchartsmore.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+        </jslint>
+
+        <!-- Set a property that tells if there are unused variables. -->
+        <condition property="lint.parts.variable.error">
+        	<resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
+        </condition>
+        
+        <echo message="General warning: This target won't reveal undefined variables. Run 'ant lint' in addition."/>
+    </target>
+
+    <!-- This target is only run if there are unused variables. -->
+    <target name="lint-parts" depends="do-lint-parts" if="lint.parts.variable.error">
+        <echo message="Warning: Unused variables exist. Run 'start build/lintreport.html', search for 'Unused'."/>
     </target>
 
     <!-- Runs google closure compiler and yui compressor on src. -->

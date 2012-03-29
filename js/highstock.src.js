@@ -5155,6 +5155,36 @@ Tick.prototype = {
 	},
 	
 	/**
+	 * Get the x, y position of the tick label
+	 */
+	getLabelPosition: function (x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+		var axis = this.axis,
+			transA = axis.transA,
+			reversed = axis.reversed,
+			staggerLines = axis.staggerLines;
+			
+		x = x + labelOptions.x - (tickmarkOffset && horiz ?
+			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
+		y = y + labelOptions.y - (tickmarkOffset && !horiz ?
+			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+		
+		// Vertically centered
+		if (!defined(labelOptions.y)) {
+			y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+		}
+		
+		// Correct for staggered labels
+		if (staggerLines) {
+			y += (index / (step || 1) % staggerLines) * 16;
+		}
+		
+		return {
+			x: x,
+			y: y
+		};
+	},
+	
+	/**
 	 * Extendible method to return the path of the marker
 	 */
 	getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
@@ -5265,21 +5295,7 @@ Tick.prototype = {
 
 		// the label is created on init - now move it into place
 		if (label && !isNaN(x)) {
-			x = x + labelOptions.x - (tickmarkOffset && horiz ?
-				tickmarkOffset * axis.transA * (axis.reversed ? -1 : 1) : 0);
-			y = y + labelOptions.y - (tickmarkOffset && !horiz ?
-				tickmarkOffset * axis.transA * (axis.reversed ? 1 : -1) : 0);
-
-			// vertically centered
-			if (!defined(labelOptions.y)) {
-				y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
-			}
-
-
-			// correct for staggered labels
-			if (axis.staggerLines) {
-				y += (index / (step || 1) % axis.staggerLines) * 16;
-			}
+			xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
 			// apply show first and show last
 			if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
@@ -5296,10 +5312,7 @@ Tick.prototype = {
 				label.hide();
 			}
 
-			label[tick.isNew ? 'attr' : 'animate']({
-				x: x,
-				y: y
-			});
+			label[tick.isNew ? 'attr' : 'animate'](xy);
 		}
 
 		tick.isNew = false;
@@ -6881,20 +6894,11 @@ Axis.prototype = {
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
-			axisLength = axis.len,
-			axisTop = axis.top,
-			axisLeft = axis.left,
-			axisWidth = axis.width,
-			axisHeight = axis.height,
-			axisBottom = axis.bottom,
 			axisTitle = axis.axisTitle,
 			stacks = axis.stacks,
 			ticks = axis.ticks,
 			minorTicks = axis.minorTicks,
 			alternateBands = axis.alternateBands,
-			horiz = axis.horiz,
-			opposite = axis.opposite,
-			axisTitleOptions = options.title,
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
 			lineWidth = options.lineWidth,
@@ -17013,6 +17017,7 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	placeBox: placeBox,
+	pInt: pInt,
 	product: 'Highstock',
 	version: '1.1.4'
 });
