@@ -1682,8 +1682,8 @@ defaultBottomAxisOptions = { // horizontal axis
 	labels: {
 		align: 'center',
 		x: 0,
-		y: 14,
-		overflow: 'justify' // docs
+		y: 14
+		// overflow: undefined // docs - can be 'justify'
 		// staggerLines: null
 	},
 	title: {
