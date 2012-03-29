@@ -441,7 +441,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
-			'L': pad(timestamp % 1000, 3) // Milliseconds (naming from Ruby)
+			'L': pad(mathRound(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
 		};
 
 
@@ -14785,7 +14785,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				leftPoint = onData[i];
 				
 				
-				if (leftPoint.x <= point.x) {
+				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
 					
 					if (point.x <= lastX) { // #803
 					
@@ -14794,7 +14794,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						// interpolate between points, #666
 						if (leftPoint.x < point.x && !step) { 
 							rightPoint = onData[i + 1];
-							if (rightPoint) {
+							if (rightPoint && rightPoint.plotY !== UNDEFINED) {
 								point.plotY += 
 									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
 									(rightPoint.plotY - leftPoint.plotY); // the y distance

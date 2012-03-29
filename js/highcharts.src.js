@@ -441,7 +441,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
-			'L': pad(timestamp % 1000, 3) // Milliseconds (naming from Ruby)
+			'L': pad(mathRound(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
 		};
 
 

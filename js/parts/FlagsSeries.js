@@ -84,7 +84,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				leftPoint = onData[i];
 				
 				
-				if (leftPoint.x <= point.x) {
+				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
 					
 					if (point.x <= lastX) { // #803
 					
@@ -93,7 +93,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						// interpolate between points, #666
 						if (leftPoint.x < point.x && !step) { 
 							rightPoint = onData[i + 1];
-							if (rightPoint) {
+							if (rightPoint && rightPoint.plotY !== UNDEFINED) {
 								point.plotY += 
 									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
 									(rightPoint.plotY - leftPoint.plotY); // the y distance
