@@ -11840,7 +11840,8 @@ Series.prototype = {
 				isBarLike = seriesType === 'column' || seriesType === 'bar',
 				vAlignIsNull = options.verticalAlign === null,
 				yIsNull = options.y === null,
-				dataLabel;
+				dataLabel,
+				enabled;
 
 			if (isBarLike) {
 				if (stacking) {
@@ -11888,27 +11889,31 @@ Series.prototype = {
 				if (pointOptions && pointOptions.dataLabels) {
 					options = merge(options, pointOptions.dataLabels);
 				}
+				enabled = options.enabled;
 				
-				// If the point is outside the plot area, destroy it. #678
-				if (dataLabel && series.isCartesian && !chart.isInsidePlot(point.plotX, point.plotY)) {
+				// Get the positions
+				if (enabled) {
+					var plotX = (point.barX && point.barX + point.barW / 2) || pick(point.plotX, -999),
+						plotY = pick(point.plotY, -999),
+						individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
+					
+					x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
+					y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
+					
+				}
+				
+				// If the point is outside the plot area, destroy it. #678, #820
+				if (dataLabel && series.isCartesian && !chart.isInsidePlot(x, y)) {
 					point.dataLabel = dataLabel.destroy();
 				
 				// Individual labels are disabled if the are explicitly disabled 
 				// in the point options, or if they fall outside the plot area.
-				} else if (options.enabled) {
+				} else if (enabled) {
+					
+					var align = options.align;
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
-					
-					var barX = point.barX,
-						plotX = (barX && barX + point.barW / 2) || pick(point.plotX, -999),
-						plotY = pick(point.plotY, -999),
-						align = options.align,
-						individualYDelta = yIsNull ? (point.y >= 0 ? -6 : 12) : options.y;
-	
-					// Postprocess the positions
-					x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
-					y = (inverted ? chart.plotHeight - plotX : plotY) + individualYDelta;
 					
 					// in columns, align the string to the column
 					if (seriesType === 'column') {
@@ -11971,7 +11976,8 @@ Series.prototype = {
 					}
 	
 					if (isBarLike && seriesOptions.stacking && dataLabel) {
-						var barY = point.barY,
+						var barX = point.barX,
+							barY = point.barY,
 							barW = point.barW,
 							barH = point.barH;
 	
