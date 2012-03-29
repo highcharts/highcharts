@@ -440,7 +440,8 @@ defaultBottomAxisOptions = { // horizontal axis
 	labels: {
 		align: 'center',
 		x: 0,
-		y: 14
+		y: 14,
+		overflow: 'justify' // docs
 		// staggerLines: null
 	},
 	title: {
@@ -449,7 +450,8 @@ defaultBottomAxisOptions = { // horizontal axis
 },
 defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 	labels: {
-		y: -5
+		y: -5,
+		overflow: 'justify'
 		// staggerLines: null
 	}
 });
