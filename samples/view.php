@@ -52,9 +52,9 @@ function getResources() {
 		
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
 		<?php echo getResources(); ?>
-		<script type="text/javascript">$(function() {
+		<script type="text/javascript">
 		<?php @include("$path/demo.js"); ?>
-		});</script>
+		</script>
 		
 		<style type="text/css">
 			<?php @include("$path/demo.css"); ?>
