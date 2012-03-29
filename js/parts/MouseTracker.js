@@ -178,26 +178,36 @@ MouseTracker.prototype = {
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
 	 */
-	resetTracker: function () {
+	resetTracker: function (allowMove) {
 		var mouseTracker = this,
 			chart = mouseTracker.chart,
 			hoverSeries = chart.hoverSeries,
-			hoverPoint = chart.hoverPoint;
+			hoverPoint = chart.hoverPoint,
+			tooltipPoints = chart.hoverPoints || hoverPoint;
 
-		if (hoverPoint) {
-			hoverPoint.onMouseOut();
+		// Just move the tooltip, #349
+		if (allowMove && tooltip && tooltipPoints) {
+			tooltip.refresh(tooltipPoints);
+
+		// Full reset
+		} else {
+
+			if (hoverPoint) {
+				hoverPoint.onMouseOut();
+			}
+
+			if (hoverSeries) {
+				hoverSeries.onMouseOut();
+			}
+
+			if (tooltip) {
+				tooltip.hide();
+				tooltip.hideCrosshairs();
+			}
+
+			hoverX = null;
+
 		}
-
-		if (hoverSeries) {
-			hoverSeries.onMouseOut();
-		}
-
-		if (chart.tooltip) {
-			chart.tooltip.hide();
-			chart.tooltip.hideCrosshairs();
-		}
-
-		mouseTracker.hoverX = null;
 	},
 
 	/**

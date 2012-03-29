@@ -1490,7 +1490,7 @@ Axis.prototype = {
 
 		// hide tooltip and hover states
 		if (chart.tracker.resetTracker) {
-			chart.tracker.resetTracker();
+			chart.tracker.resetTracker(true);
 		}
 
 		// render the axis
