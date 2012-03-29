@@ -1198,7 +1198,7 @@ Axis.prototype = {
 
 		// handle automatic or user set offset
 		var axisOffset = chart.axisOffset;
-		axis.offset = directionFactor * pick(options.offset, axisOffset[side]); // docs
+		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,

@@ -55,7 +55,7 @@ extend(defaultOptions, {
 			pointRange: 0,
 			shadow: false
 		},
-		//top: undefined, // docs
+		//top: undefined,
 		xAxis: {
 			tickWidth: 0,
 			lineWidth: 0,
@@ -735,11 +735,11 @@ Scroller.prototype = {
 				isX: true,
 				type: 'datetime',
 				index: xAxisIndex,
-				height: height, // docs + width
-				top: top, // docs + left
+				height: height,
+				top: top,
 				offset: 0,
-				offsetLeft: scrollbarHeight, // docs
-				offsetRight: -scrollbarHeight, // docs
+				offsetLeft: scrollbarHeight,
+				offsetRight: -scrollbarHeight,
 				startOnTick: false,
 				endOnTick: false,
 				minPadding: 0,
@@ -748,7 +748,7 @@ Scroller.prototype = {
 			}));
 
 			scroller.yAxis = yAxis = new Axis(chart, merge(navigatorOptions.yAxis, {
-				alignTicks: false, // docs
+				alignTicks: false,
 				height: height,
 				top: top,
 				offset: 0,
@@ -758,8 +758,8 @@ Scroller.prototype = {
 
 			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseSeries.options, navigatorSeriesOptions, {
-				threshold: null, // docs
-				clip: false, // docs
+				threshold: null,
+				clip: false,
 				enableMouseTracking: false,
 				group: 'nav', // for columns
 				padXAxis: false,
