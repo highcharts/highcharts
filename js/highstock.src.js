@@ -5195,7 +5195,7 @@ Tick.prototype = {
 				plotLeft = chart.plotLeft,
 				plotRight = plotLeft + axis.len,
 				neighbour = ticks[tickPositions[index + (isFirst ? 1 : -1)]],
-				neighbourEdge = neighbour.label.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+				neighbourEdge = neighbour && neighbour.label.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
@@ -5205,7 +5205,7 @@ Tick.prototype = {
 					x = plotLeft - leftSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (x + rightSide > neighbourEdge) {
+					if (neighbour && x + rightSide > neighbourEdge) {
 						show = false;
 					}
 				}
@@ -5218,7 +5218,7 @@ Tick.prototype = {
 					x = plotRight - rightSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (x + leftSide < neighbourEdge) {
+					if (neighbour && x + leftSide < neighbourEdge) {
 						show = false;
 					}
 
