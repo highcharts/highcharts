@@ -370,22 +370,22 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 }
 
 /**
+ * Pad a string to a given length by adding 0 to the beginning
+ * @param {Number} number
+ * @param {Number} length
+ */
+function pad(number, length) {
+	// Create an array of the remaining length +1 and join it with 0's
+	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+}
+
+/**
  * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
 dateFormat = function (format, timestamp, capitalize) {
-	function pad(number, length) {
-		// two digits
-		number = number.toString().replace(/^([0-9])$/, '0$1');
-		// three digits
-		if (length === 3) {
-			number = number.toString().replace(/^([0-9]{2})$/, '0$1');
-		}
-		return number;
-	}
-
 	if (!defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
