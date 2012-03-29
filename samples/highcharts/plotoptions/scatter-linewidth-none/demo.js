@@ -1,21 +1,23 @@
-var chart = new Highcharts.Chart({
-    chart: {
-        renderTo: 'container',
-        type: 'scatter'
-    },
-    xAxis: {
-        minPadding: 0.05,
-        maxPadding: 0.05
-    },
-    
-    series: [{
-        data: [
-            [34, 29.9],
-            [35, 144.0],
-            [43, 176.0],
-            [46, 71.5], 
-            [12, 106.4], 
-            [78, 129.2]
-        ]
-    }]
+$(function () {
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            type: 'scatter'
+        },
+        xAxis: {
+            minPadding: 0.05,
+            maxPadding: 0.05
+        },
+        
+        series: [{
+            data: [
+                [34, 29.9],
+                [35, 144.0],
+                [43, 176.0],
+                [46, 71.5], 
+                [12, 106.4], 
+                [78, 129.2]
+            ]
+        }]
+    });
 });
