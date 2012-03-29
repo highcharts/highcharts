@@ -11903,7 +11903,7 @@ Series.prototype = {
 				}
 				
 				// If the point is outside the plot area, destroy it. #678, #820
-				if (dataLabel && series.isCartesian && !chart.isInsidePlot(x, y)) {
+				if (dataLabel && series.isCartesian && (!chart.isInsidePlot(x, y) || !enabled)) {
 					point.dataLabel = dataLabel.destroy();
 				
 				// Individual labels are disabled if the are explicitly disabled 
