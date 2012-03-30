@@ -237,12 +237,10 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
  * Clock:       http://jsfiddle.net/highcharts/BFN2F/
  * 
  * TODO:
- * - Make tickInterval and tickPixelInterval relate to the circumference of the gauge
- * - Allow pixel and percentage thickness for plot bands. Find naming that makes sense in cartesian plots, 
- *   since width is already used for plotLines. Possible combination with from-to on the crossing axis
- *   in the cartesian plane.
+ * - Fix shape: arc for backgrounds (options.from and options.to should fall back to min and max)
  * - Radial gradients
  * - Size to the actual space given, for example by vu-meters
+ * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
  * - Tooltip
  * - Should the gauge series be called angular gauge as opposed to linear gauges?
  * - Targets? Could perhaps be implemented as a separate series type, inherited from GaugeSeries
@@ -317,6 +315,9 @@ var gaugeValueAxisMixin = {
 		}
 		if (!userOptions.center) {
 			options.center = ['50%', '50%'];
+		}
+		if (!userOptions.zIndex) {
+			options.zIndex = 2; // behind dials, points in the series group
 		}
 		if (!userOptions.size) {
 			options.size = ['90%'];
@@ -398,7 +399,7 @@ var gaugeValueAxisMixin = {
 	},
 	
 	/**
-	 * Override setAxisSize by setting the width and height to the difference
+	 * Override setAxisTranslation by setting the translation to the difference
 	 * in rotation. This allows the translate method to return angle for 
 	 * any given value.
 	 */
@@ -407,6 +408,17 @@ var gaugeValueAxisMixin = {
 		Axis.prototype.setAxisTranslation.call(this);
 		
 		this.transA = (this.endAngleRad - this.startAngleRad) / ((this.max - this.min) || 1);
+	},
+	
+	/**
+	 * Override the setAxisSize method to use the arc's circumference as length. This
+	 * allows tickPixelInterval to apply to pixel lengths along the perimeter
+	 */
+	setAxisSize: function () {
+		
+		Axis.prototype.setAxisSize.call(this);
+		
+		this.len = this.height = this.center[2] * (this.endAngleRad - this.startAngleRad) / 2;
 	},
 	
 	/**
@@ -435,7 +447,8 @@ var gaugeValueAxisMixin = {
 			fullRadius = center[2] / 2,
 			radii = [
 				pick(options.outerRadius, '100%'),
-				pick(options.innerRadius, '90%')
+				options.innerRadius,
+				pick(options.thickness, 10)
 			],
 			percentRegex = /%$/,
 			start,
@@ -468,7 +481,7 @@ var gaugeValueAxisMixin = {
 			{
 				start: start,
 				end: end,
-				innerR: radii[1],
+				innerR: pick(radii[1], radii[0] - radii[2]),
 				open: open
 			}
 		);		
@@ -619,22 +632,12 @@ var GaugeSeries = {
 		each(series.points, function (point) {
 			
 			var dialOptions = merge(series.options.dial, point.dial),
-				radius = (pInt(dialOptions.radius || 80) * center[2]) / 200,
-				baseLength = (pInt(dialOptions.baseLength || 70) * radius) / 100,
-				rearLength = (pInt(dialOptions.rearLength || 10) * radius) / 100,
+				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
+				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
+				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1;
 				
-			/*point.path = [
-				'M', 
-				center[0] - rearLength, center[1] - baseWidth / 2, 
-				'L', 
-				center[0] + baseLength, center[1] - baseWidth / 2,
-				center[0] + radius, center[1] - topWidth / 2,
-				center[0] + radius, center[1] + topWidth / 2,
-				center[0] + baseLength, center[1] + baseWidth / 2,
-				center[0] - rearLength, center[1] + baseWidth / 2
-			];*/
 			point.path = [
 				'M', 
 				-rearLength, -baseWidth / 2, 

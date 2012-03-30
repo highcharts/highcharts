@@ -956,7 +956,7 @@ Axis.prototype = {
 
 		// set the new axisLength
 		axis.len = axis.horiz ? axis.width : axis.height;
-
+		
 		// is there new data?
 		each(axis.series, function (series) {
 			if (series.isDirtyData || series.isDirty ||
@@ -1126,7 +1126,7 @@ Axis.prototype = {
 
 		if (!axis.axisGroup) {
 			axis.axisGroup = renderer.g('axis')
-				.attr({ zIndex: 7 })
+				.attr({ zIndex: options.zIndex || 7 })
 				.add();
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
@@ -1184,7 +1184,7 @@ Axis.prototype = {
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 				})
 				.css(axisTitleOptions.style)
-				.add();
+				.add(axis.axisGroup);
 				axis.axisTitle.isNew = true;
 			}
 
