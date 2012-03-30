@@ -7905,6 +7905,7 @@ function Chart(userOptions, callback) {
 
 			css(container, { cursor: 'auto' });
 
+			chart.cancelClick = hasDragged; // #370
 			chart.mouseIsDown = mouseIsDown = hasDragged = false;
 			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
 
@@ -7952,6 +7953,7 @@ function Chart(userOptions, callback) {
 
 				// record the start position
 				chart.mouseIsDown = mouseIsDown = true;
+				chart.cancelClick = false;
 				chart.mouseDownX = mouseDownX = e.chartX;
 				mouseDownY = e.chartY;
 
@@ -8123,7 +8125,7 @@ function Chart(userOptions, callback) {
 				e.cancelBubble = true; // IE specific
 
 
-				if (!hasDragged) {
+				if (!chart.cancelClick) {
 					
 					// Detect clicks on trackers or tracker groups, #783 
 					if (hoverPoint && (attr(e.target, 'isTracker') || attr(e.target.parentNode, 'isTracker'))) {
@@ -8157,8 +8159,6 @@ function Chart(userOptions, callback) {
 
 
 				}
-				// reset mouseIsDown and hasDragged
-				hasDragged = false;
 			};
 
 		}
