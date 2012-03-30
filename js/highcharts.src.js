@@ -4613,10 +4613,9 @@ VMLRendererExtension = { // inherit SVGRenderer
 				x2 = linearGradient.x2 || linearGradient[2] || 0,
 				y2 = linearGradient.y2 || linearGradient[3] || 0,
 				angle,
-				color1,
 				opacity1,
-				color2,
-				opacity2;
+				opacity2,
+				colors = [];
 
 			each(color.stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
@@ -4627,12 +4626,14 @@ VMLRendererExtension = { // inherit SVGRenderer
 					stopColor = stop[1];
 					stopOpacity = 1;
 				}
+				
+				// Build the color attribute
+				colors.push((stop[0] * 100) + '% ' + stopColor); 
 
-				if (!i) { // first
-					color1 = stopColor;
+				// Only start and end opacities are allowed, so we use the first and the last
+				if (!i) {
 					opacity1 = stopOpacity;
 				} else {
-					color2 = stopColor;
 					opacity2 = stopOpacity;
 				}
 			});
@@ -4648,7 +4649,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	
 				// when colors attribute is used, the meanings of opacity and o:opacity2
 				// are reversed.
-				markup = ['<fill colors="0% ', color1, ',100% ', color2, '" angle="', angle,
+				markup = ['<fill colors="' + colors.join(',') + '" angle="', angle,
 					'" opacity="', opacity2, '" o:opacity2="', opacity1,
 					'" type="gradient" focus="100%" method="any" />'];
 				createElement(this.prepVML(markup), null, null, elem);
