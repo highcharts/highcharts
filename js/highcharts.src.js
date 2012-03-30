@@ -4502,12 +4502,19 @@ var VMLElement = {
 	 */
 	clip: function (clipRect) {
 		var wrapper = this,
-			clipMembers = clipRect.members;
+			clipMembers = clipRect.members,
+			element = wrapper.element;
 
 		clipMembers.push(wrapper);
 		wrapper.destroyClip = function () {
 			erase(clipMembers, wrapper);
 		};
+		
+		// Issue #863 workaround - related to #140, #61, #74
+		if (element.parentNode.className === 'highcharts-tracker' && !docMode8) {
+			css(element, { visibility: HIDDEN });
+		}
+		
 		return wrapper.css(clipRect.getCSS(wrapper.inverted));
 	},
 
@@ -4721,6 +4728,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						height: bottom + PX
 					});
 				}
+				
 				return ret;
 			},
 
