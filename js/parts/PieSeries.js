@@ -490,109 +490,118 @@ var PieSeries = {
 				length = points.length,
 				slotIndex;
 
-
-			// build the slots
-			for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
-				slots.push(pos);
-				// visualize the slot
-				/*
-				var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
-					slotY = pos + chart.plotTop;
-				if (!isNaN(slotX)) {
-					chart.renderer.rect(slotX, slotY - 7, 100, labelHeight)
-						.attr({
-							'stroke-width': 1,
-							stroke: 'silver'
-						})
-						.add();
-					chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
-						.attr({
-							fill: 'silver'
-						}).add();
+			// Only do anti-collision when we are outside the pie and have connectors (#856)
+			if (distanceOption > 0) {
+				
+				// build the slots
+				for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
+					slots.push(pos);
+					// visualize the slot
+					/*
+					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
+						slotY = pos + chart.plotTop;
+					if (!isNaN(slotX)) {
+						chart.renderer.rect(slotX, slotY - 7, 100, labelHeight)
+							.attr({
+								'stroke-width': 1,
+								stroke: 'silver'
+							})
+							.add();
+						chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
+							.attr({
+								fill: 'silver'
+							}).add();
+					}
+					// */
 				}
-				// */
+				slotsLength = slots.length;
+	
+				// if there are more values than available slots, remove lowest values
+				if (length > slotsLength) {
+					// create an array for sorting and ranking the points within each quarter
+					rankArr = [].concat(points);
+					rankArr.sort(sort);
+					j = length;
+					while (j--) {
+						rankArr[j].rank = j;
+					}
+					j = length;
+					while (j--) {
+						if (points[j].rank >= slotsLength) {
+							points.splice(j, 1);
+						}
+					}
+					length = points.length;
+				}
+	
+				// The label goes to the nearest open slot, but not closer to the edge than
+				// the label's index.
+				for (j = 0; j < length; j++) {
+	
+					point = points[j];
+					labelPos = point.labelPos;
+	
+					var closest = 9999,
+						distance,
+						slotI;
+	
+					// find the closest slot index
+					for (slotI = 0; slotI < slotsLength; slotI++) {
+						distance = mathAbs(slots[slotI] - labelPos[1]);
+						if (distance < closest) {
+							closest = distance;
+							slotIndex = slotI;
+						}
+					}
+	
+					// if that slot index is closer to the edges of the slots, move it
+					// to the closest appropriate slot
+					if (slotIndex < j && slots[j] !== null) { // cluster at the top
+						slotIndex = j;
+					} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
+						slotIndex = slotsLength - length + j;
+						while (slots[slotIndex] === null) { // make sure it is not taken
+							slotIndex++;
+						}
+					} else {
+						// Slot is taken, find next free slot below. In the next run, the next slice will find the
+						// slot above these, because it is the closest one
+						while (slots[slotIndex] === null) { // make sure it is not taken
+							slotIndex++;
+						}
+					}
+	
+					usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
+					slots[slotIndex] = null; // mark as taken
+				}
+				// sort them in order to fill in from the top
+				usedSlots.sort(sort);
 			}
-			slotsLength = slots.length;
-
-			// if there are more values than available slots, remove lowest values
-			if (length > slotsLength) {
-				// create an array for sorting and ranking the points within each quarter
-				rankArr = [].concat(points);
-				rankArr.sort(sort);
-				j = length;
-				while (j--) {
-					rankArr[j].rank = j;
-				}
-				j = length;
-				while (j--) {
-					if (points[j].rank >= slotsLength) {
-						points.splice(j, 1);
-					}
-				}
-				length = points.length;
-			}
-
-			// The label goes to the nearest open slot, but not closer to the edge than
-			// the label's index.
-			for (j = 0; j < length; j++) {
-
-				point = points[j];
-				labelPos = point.labelPos;
-
-				var closest = 9999,
-					distance,
-					slotI;
-
-				// find the closest slot index
-				for (slotI = 0; slotI < slotsLength; slotI++) {
-					distance = mathAbs(slots[slotI] - labelPos[1]);
-					if (distance < closest) {
-						closest = distance;
-						slotIndex = slotI;
-					}
-				}
-
-				// if that slot index is closer to the edges of the slots, move it
-				// to the closest appropriate slot
-				if (slotIndex < j && slots[j] !== null) { // cluster at the top
-					slotIndex = j;
-				} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
-					slotIndex = slotsLength - length + j;
-					while (slots[slotIndex] === null) { // make sure it is not taken
-						slotIndex++;
-					}
-				} else {
-					// Slot is taken, find next free slot below. In the next run, the next slice will find the
-					// slot above these, because it is the closest one
-					while (slots[slotIndex] === null) { // make sure it is not taken
-						slotIndex++;
-					}
-				}
-
-				usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
-				slots[slotIndex] = null; // mark as taken
-			}
-			// sort them in order to fill in from the top
-			usedSlots.sort(sort);
-
 
 			// now the used slots are sorted, fill them up sequentially
 			for (j = 0; j < length; j++) {
+				
+				var slot, naturalY;
 
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				var slot = usedSlots.pop(),
-					naturalY = labelPos[1];
-
 				visibility = point.visible === false ? HIDDEN : VISIBLE;
-				slotIndex = slot.i;
+				naturalY = labelPos[1];
+				
+				if (distanceOption > 0) {
+					slot = usedSlots.pop();
+					slotIndex = slot.i;
 
-				// if the slot next to currrent slot is free, the y value is allowed
-				// to fall back to the natural position
-				y = slot.y;
-				if ((naturalY > y && slots[slotIndex + 1] !== null) ||
-						(naturalY < y &&  slots[slotIndex - 1] !== null)) {
+					// if the slot next to currrent slot is free, the y value is allowed
+					// to fall back to the natural position
+					y = slot.y;
+					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
+							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
+						y = naturalY;
+					}
+					
+				} else {
 					y = naturalY;
 				}
 
