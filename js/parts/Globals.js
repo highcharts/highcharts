@@ -110,6 +110,7 @@ var UNDEFINED,
 	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
+	washMouseEvent = adapter.washMouseEvent,
 	animate = adapter.animate,
 	stop = adapter.stop,
 

@@ -229,6 +229,10 @@ return {
 			el._highcharts_stop_observing(event, handler);
 		}
 	},
+	
+	washMouseEvent: function (e) {
+		return e;
+	},
 
 	// um, grep
 	grep: function (arr, fn) {

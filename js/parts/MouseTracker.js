@@ -286,13 +286,15 @@ MouseTracker.prototype = {
 		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
 		 */
 		mouseTracker.hideTooltipOnMouseMove = function (e) {
-			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
-				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
 
+			// Get e.pageX and e.pageY back in MooTools
+			washMouseEvent(e);
+
+			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition &&
-					!chart.isInsidePlot(pageX - mouseTracker.chartPosition.left - chart.plotLeft,
-						pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
-				mouseTracker.resetTracker();
+				!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
+				e.pageY - chartPosition.top - plotTop)) {
+					mouseTracker.resetTracker();
 			}
 		};
 
