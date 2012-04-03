@@ -1186,10 +1186,15 @@ Chart.prototype = {
 
 
 		// Draw the borders and backgrounds
-		chart.drawChartBox();
+		chart.drawChartBox();		
 
-		
 
+		// Axes
+		if (chart.hasCartesianSeries) {
+			each(axes, function (axis) {
+				axis.render();
+			});
+		}
 
 		// The series
 		if (!chart.seriesGroup) {
@@ -1202,13 +1207,6 @@ Chart.prototype = {
 			serie.setTooltipPoints();
 			serie.render();
 		});
-
-		// Axes
-		if (chart.hasCartesianSeries) {
-			each(axes, function (axis) {
-				axis.render();
-			});
-		}
 
 		// Labels
 		if (labels.items) {

@@ -3520,7 +3520,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				L,
+				options.open ? M : L,
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
@@ -4103,7 +4103,7 @@ var VMLElement = {
 
 		// divs and shapes need size
 		if (nodeName === 'shape' || nodeName === DIV) {
-			style.push('left:0;top:0;width:10px;height:10px;');
+			style.push('left:0;top:0;width:1px;height:1px;');
 		}
 		if (docMode8) {
 			style.push('visibility: ', nodeName === DIV ? HIDDEN : VISIBLE);
@@ -4374,6 +4374,10 @@ var VMLElement = {
 
 							key = 'fillcolor';
 						}
+						
+					// rotation on VML elements
+					} else if (nodeName === 'shape' && key === 'rotation') {
+						wrapper[key] = value;
 
 					// translation for animation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
@@ -4521,7 +4525,7 @@ var VMLElement = {
 			for (i = 1; i <= 3; i++) {
 				markup = ['<shape isShadow="true" strokeweight="', (7 - 2 * i),
 					'" filled="false" path="', path,
-					'" coordsize="100,100" style="', element.style.cssText, '" />'];
+					'" coordsize="10 10" style="', element.style.cssText, '" />'];
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
 						left: pInt(elemStyle.left) + 1,
@@ -4790,8 +4794,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	path: function (path) {
 		// create the shape
 		return this.createElement('shape').attr({
-			// subpixel precision down to 0.1 (width and height = 10px)
-			coordsize: '100 100',
+			// subpixel precision down to 0.1 (width and height = 1px)
+			coordsize: '10 10',
 			d: path
 		});
 	},
@@ -4877,7 +4881,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var parentStyle = parentNode.style;
-
+		console.log('Warning in VMLRenderer.js: We may have to replace 10 for 1 below after changing the coordsize');
 		css(element, {
 			flip: 'x',
 			left: pInt(parentStyle.width) - 10,
@@ -4902,7 +4906,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				sinEnd = mathSin(end),
 				innerRadius = options.innerR,
 				circleCorrection = 0.08 / radius, // #760
-				innerCorrection = (innerRadius && 0.25 / innerRadius) || 0;
+				innerCorrection = (innerRadius && 0.1 / innerRadius) || 0,
+				ret;
 
 			if (end - start === 0) { // no angle, don't show it.
 				return ['x'];
@@ -4914,7 +4919,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				cosEnd = mathCos(start + innerCorrection);
 			}
 
-			return [
+			ret = [
 				'wa', // clockwise arc to
 				x - radius, // left
 				y - radius, // top
@@ -4923,22 +4928,37 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				x + radius * cosStart, // start x
 				y + radius * sinStart, // start y
 				x + radius * cosEnd, // end x
-				y + radius * sinEnd, // end y
+				y + radius * sinEnd  // end y
+			];
 
+			if (options.open) {
+				ret.push(
+					M, 
+					x - innerRadius, 
+					y - innerRadius
+				);
+			}
 
-				'at', // anti clockwise arc to
-				x - innerRadius, // left
-				y - innerRadius, // top
-				x + innerRadius, // right
-				y + innerRadius, // bottom
-				x + innerRadius * cosEnd, // start x
-				y + innerRadius * sinEnd, // start y
-				x + innerRadius * cosStart, // end x
-				y + innerRadius * sinStart, // end y
-
+			if (innerRadius) {
+				ret.push(
+					'at', // anti clockwise arc to
+					x - innerRadius, // left
+					y - innerRadius, // top
+					x + innerRadius, // right
+					y + innerRadius, // bottom
+					x + innerRadius * cosEnd, // start x
+					y + innerRadius * sinEnd, // start y
+					x + innerRadius * cosStart, // end x
+					y + innerRadius * sinStart // end y
+				);
+			}
+			
+			ret.push(
 				'x', // finish path
 				'e' // close
-			];
+			);
+			
+			return ret;
 
 		},
 		// Add circle symbol path. This performs significantly faster than v:oval.
@@ -5139,6 +5159,7 @@ Tick.prototype = {
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
+			attr,
 			value = categories && defined(categories[pos]) ? categories[pos] : pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -5170,6 +5191,12 @@ Tick.prototype = {
 
 		// first call
 		if (!defined(label)) {
+			attr = {
+				align: labelOptions.align
+			};
+			if (isNumber(labelOptions.rotation)) {
+				attr.rotation = labelOptions.rotation;
+			}			
 			tick.label =
 				defined(str) && labelOptions.enabled ?
 					chart.renderer.text(
@@ -5178,10 +5205,7 @@ Tick.prototype = {
 							0,
 							labelOptions.useHTML
 						)
-						.attr({
-							align: labelOptions.align,
-							rotation: labelOptions.rotation
-						})
+						.attr(attr)
 						// without position absolute, IE export sometimes is wrong
 						.css(css)
 						.add(axis.axisGroup) :
@@ -5296,6 +5320,36 @@ Tick.prototype = {
 	},
 	
 	/**
+	 * Get the x, y position of the tick label
+	 */
+	getLabelPosition: function (x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+		var axis = this.axis,
+			transA = axis.transA,
+			reversed = axis.reversed,
+			staggerLines = axis.staggerLines;
+			
+		x = x + labelOptions.x - (tickmarkOffset && horiz ?
+			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
+		y = y + labelOptions.y - (tickmarkOffset && !horiz ?
+			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+		
+		// Vertically centered
+		if (!defined(labelOptions.y)) {
+			y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+		}
+		
+		// Correct for staggered labels
+		if (staggerLines) {
+			y += (index / (step || 1) % staggerLines) * 16;
+		}
+		
+		return {
+			x: x,
+			y: y
+		};
+	},
+	
+	/**
 	 * Extendible method to return the path of the marker
 	 */
 	getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
@@ -5407,21 +5461,7 @@ Tick.prototype = {
 
 		// the label is created on init - now move it into place
 		if (label && !isNaN(x)) {
-			x = x + labelOptions.x - (tickmarkOffset && horiz ?
-				tickmarkOffset * axis.transA * (axis.reversed ? -1 : 1) : 0);
-			y = y + labelOptions.y - (tickmarkOffset && !horiz ?
-				tickmarkOffset * axis.transA * (axis.reversed ? 1 : -1) : 0);
-
-			// vertically centered
-			if (!defined(labelOptions.y)) {
-				y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
-			}
-
-
-			// correct for staggered labels
-			if (axis.staggerLines) {
-				y += (index / (step || 1) % axis.staggerLines) * 16;
-			}
+			xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
 			// Cache x and y to be able to read final position before animation
 			label.x = x;
@@ -5445,10 +5485,7 @@ Tick.prototype = {
 
 			// Set the new position, and show or hide
 			if (show) {
-				label[tick.isNew ? 'attr' : 'animate']({
-					x: label.x,
-					y: label.y
-				});
+				label[tick.isNew ? 'attr' : 'animate'](xy);
 				label.show();
 				tick.isNew = false;
 			} else {
@@ -5541,6 +5578,10 @@ PlotLineOrBand.prototype = {
 			attribs = {
 				fill: color
 			};
+			if (options.borderWidth) {
+				attribs.stroke = options.borderColor;
+				attribs['stroke-width'] = options.borderWidth;
+			}
 		} else {
 			return;
 		}
@@ -6857,19 +6898,20 @@ Axis.prototype = {
 			titleMargin = 0,
 			axisTitleOptions = options.title,
 			labelOptions = options.labels,
+			labelOffset = 0, // reset
+			axisOffset = chart.axisOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 
 		if (!axis.axisGroup) {
 			axis.axisGroup = renderer.g('axis')
-				.attr({ zIndex: 7 })
+				.attr({ zIndex: options.zIndex || 7 })
 				.add();
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
 				.add();
 		}
 
-		var labelOffset = 0; // reset
 
 		if (hasData || axis.isLinked) {
 			each(tickPositions, function (pos) {
@@ -6921,7 +6963,7 @@ Axis.prototype = {
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 				})
 				.css(axisTitleOptions.style)
-				.add();
+				.add(axis.axisGroup);
 				axis.axisTitle.isNew = true;
 			}
 
@@ -6936,7 +6978,6 @@ Axis.prototype = {
 		}
 
 		// handle automatic or user set offset
-		var axisOffset = chart.axisOffset;
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 		axis.axisTitleMargin =
@@ -6982,6 +7023,46 @@ Axis.prototype = {
 	},
 	
 	/**
+	 * Position the title
+	 */
+	getTitlePosition: function () {
+		// compute anchor points for each of the title align options
+		var horiz = this.horiz,
+			axisLeft = this.left,
+			axisTop = this.top,
+			axisLength = this.len,
+			axisTitleOptions = this.options.title,			
+			margin = horiz ? axisLeft : axisTop,
+			opposite = this.opposite,
+			offset = this.offset,
+			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+			
+			// the position in the length direction of the axis
+			alongAxis = {
+				low: margin + (horiz ? 0 : axisLength),
+				middle: margin + axisLength / 2,
+				high: margin + (horiz ? axisLength : 0)
+			}[axisTitleOptions.align],
+	
+			// the position in the perpendicular direction of the axis
+			offAxis = (horiz ? axisTop + this.height : axisLeft) +
+				(horiz ? 1 : -1) * // horizontal axis reverses the margin
+				(opposite ? -1 : 1) * // so does opposite axes
+				this.axisTitleMargin +
+				(this.side === 2 ? fontSize : 0);
+
+		return {
+			x: horiz ?
+				alongAxis :
+				offAxis + (opposite ? this.width : 0) + offset +
+					(axisTitleOptions.x || 0), // x
+			y: horiz ?
+				offAxis - (opposite ? this.height : 0) + offset :
+				alongAxis + (axisTitleOptions.y || 0) // y
+		};
+	},
+	
+	/**
 	 * Render the axis
 	 */
 	render: function () {
@@ -6992,19 +7073,11 @@ Axis.prototype = {
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
-			axisLength = axis.len,
-			axisTop = axis.top,
-			axisLeft = axis.left,
-			axisWidth = axis.width,
-			axisHeight = axis.height,
-			axisBottom = axis.bottom,
+			axisTitle = axis.axisTitle,
 			stacks = axis.stacks,
 			ticks = axis.ticks,
 			minorTicks = axis.minorTicks,
 			alternateBands = axis.alternateBands,
-			horiz = axis.horiz,
-			opposite = axis.opposite,
-			axisTitleOptions = options.title,
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
 			lineWidth = options.lineWidth,
@@ -7128,34 +7201,12 @@ Axis.prototype = {
 
 		}
 
-		if (axis.axisTitle && showAxis) {
-			// compute anchor points for each of the title align options
-			var margin = horiz ? axisLeft : axisTop,
-				fontSize = pInt(axisTitleOptions.style.fontSize || 12),
-			// the position in the length direction of the axis
-			alongAxis = {
-				low: margin + (horiz ? 0 : axisLength),
-				middle: margin + axisLength / 2,
-				high: margin + (horiz ? axisLength : 0)
-			}[axisTitleOptions.align],
-
-			// the position in the perpendicular direction of the axis
-			offAxis = (horiz ? axisTop + axisHeight : axisLeft) +
-				(horiz ? 1 : -1) * // horizontal axis reverses the margin
-				(opposite ? -1 : 1) * // so does opposite axes
-				axis.axisTitleMargin +
-				(axis.side === 2 ? fontSize : 0);
-
-			axis.axisTitle[axis.axisTitle.isNew ? 'attr' : 'animate']({
-				x: horiz ?
-					alongAxis :
-					offAxis + (opposite ? axisWidth : 0) + axis.offset +
-						(axisTitleOptions.x || 0), // x
-				y: horiz ?
-					offAxis - (opposite ? axisHeight : 0) + axis.offset :
-					alongAxis + (axisTitleOptions.y || 0) // y
-			});
-			axis.axisTitle.isNew = false;
+		if (axisTitle && showAxis) {
+			
+			axisTitle[axisTitle.isNew ? 'attr' : 'animate'](
+				axis.getTitlePosition()
+			);
+			axisTitle.isNew = false;
 		}
 
 		// Stacked totals:
@@ -9907,10 +9958,15 @@ Chart.prototype = {
 
 
 		// Draw the borders and backgrounds
-		chart.drawChartBox();
+		chart.drawChartBox();		
 
-		
 
+		// Axes
+		if (chart.hasCartesianSeries) {
+			each(axes, function (axis) {
+				axis.render();
+			});
+		}
 
 		// The series
 		if (!chart.seriesGroup) {
@@ -9923,13 +9979,6 @@ Chart.prototype = {
 			serie.setTooltipPoints();
 			serie.render();
 		});
-
-		// Axes
-		if (chart.hasCartesianSeries) {
-			each(axes, function (axis) {
-				axis.render();
-			});
-		}
 
 		// Labels
 		if (labels.items) {
@@ -17303,6 +17352,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // global variables
 extend(Highcharts, {
 	Chart: Chart,
+	Axis: Axis,
+	Tick: Tick,
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
@@ -17332,6 +17383,7 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	placeBox: placeBox,
+	pInt: pInt,
 	product: 'Highstock',
 	version: '1.1.5'
 });
