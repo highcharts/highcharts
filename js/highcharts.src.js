@@ -3820,11 +3820,12 @@ SVGRenderer.prototype = {
 	 * @param {Number} anchorY
 	 * @param {Boolean} baseline Whether to position the label relative to the text baseline,
 	 *    like renderer.text, or to the upper border of the rectangle. 
+	 * @param {String} className Class name for the group 
 	 */
-	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline) {
+	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
 		var renderer = this,
-			wrapper = renderer.g(),
+			wrapper = renderer.g(className),
 			text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
@@ -7370,7 +7371,7 @@ function Tooltip(chart, options) {
 	this.tooltipIsHidden = true;
 
 	// create the label
-	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML)
+	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML, null, 'tooltip')
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,

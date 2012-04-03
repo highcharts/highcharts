@@ -33,7 +33,7 @@ function Tooltip(chart, options) {
 	this.tooltipIsHidden = true;
 
 	// create the label
-	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML)
+	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML, null, 'tooltip')
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,
