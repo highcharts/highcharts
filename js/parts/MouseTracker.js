@@ -125,7 +125,8 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			index = chart.inverted ? e.chartY : e.chartX - chart.plotLeft; // wtf?
+			// the index in the tooltipPoints array, corresponding to pixel position in plot area
+			index = chart.inverted ? plotHeight + plotTop - e.chartY : e.chartX - chart.plotLeft;
 
 		// shared tooltip
 		if (chart.tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
