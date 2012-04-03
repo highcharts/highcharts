@@ -474,18 +474,12 @@
         <!-- replace these references with local paths here -->
         <replace dir="${dist.dir}">
             <replacefilter>
-                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-exporting.js"></script>]]></replacetoken>
-                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highcharts.js"></script>
-<script type="text/javascript" src="../../js/modules/exporting.js"></script>]]></replacevalue>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/stock/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <replacefilter>
-                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-stock.js"></script>]]></replacetoken>
-                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highstock.js"></script>]]></replacevalue>
-            </replacefilter>
-            <replacefilter>
-                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-stock-exporting.js"></script>]]></replacetoken>
-                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highstock.js"></script>
-<script type="text/javascript" src="../../js/modules/exporting.js"></script>]]></replacevalue>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <include name="**/index.htm"/>
         </replace>
