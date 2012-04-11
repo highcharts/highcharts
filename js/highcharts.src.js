@@ -7902,11 +7902,13 @@ function Chart(userOptions, callback) {
 				}
 				selectionMarker = selectionMarker.destroy();
 			}
+			
+			if (chart) { // it may be destroyed on mouse up - #877
+				css(container, { cursor: 'auto' });
+				chart.cancelClick = hasDragged; // #370
+				chart.mouseIsDown = mouseIsDown = hasDragged = false;
+			}
 
-			css(container, { cursor: 'auto' });
-
-			chart.cancelClick = hasDragged; // #370
-			chart.mouseIsDown = mouseIsDown = hasDragged = false;
 			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
 
 		}
