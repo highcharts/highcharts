@@ -16,8 +16,7 @@ function Legend(chart) {
 		padding = pick(options.padding, 8), // docs
 		itemMarginTop = options.itemMarginTop || 0;
 
-	var y = 18, // Trying to resolve merge conflicts
-		symbolWidth = options.symbolWidth,
+	var symbolWidth = options.symbolWidth,
 		symbolPadding = options.symbolPadding;
 
 	legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
@@ -29,7 +28,7 @@ function Legend(chart) {
 	legend.maxItemWidth = 0;
 	legend.padding = padding;
 	legend.initialItemX = 4 + padding + symbolWidth + symbolPadding;
-	legend.initialItemY = padding + itemMarginTop + y - 5; // 5 is the number of pixels above the text
+	legend.initialItemY = padding + itemMarginTop - 5; // 5 is the number of pixels above the text
 	legend.chart = chart;
 	//legend.allItems = UNDEFINED;
 	//legend.legendWidth = UNDEFINED;
