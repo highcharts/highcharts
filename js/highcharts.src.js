@@ -12341,6 +12341,8 @@ Series.prototype = {
 				})
 				.translate(series.xAxis.left, series.yAxis.top)
 				.add(chart.seriesGroup);
+		} else {
+			group = series.group;
 		}
 
 		series.drawDataLabels();
