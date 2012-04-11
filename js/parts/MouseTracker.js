@@ -126,7 +126,7 @@ MouseTracker.prototype = {
 			j,
 			distance = chart.chartWidth,
 			// the index in the tooltipPoints array, corresponding to pixel position in plot area
-			index = chart.inverted ? plotHeight + plotTop - e.chartY : e.chartX - chart.plotLeft;
+			index = chart.inverted ? chart.plotHeight + chart.plotTop - e.chartY : e.chartX - chart.plotLeft;
 
 		// shared tooltip
 		if (chart.tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -184,7 +184,8 @@ MouseTracker.prototype = {
 			chart = mouseTracker.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltipPoints = chart.hoverPoints || hoverPoint;
+			tooltipPoints = chart.hoverPoints || hoverPoint,
+			tooltip = chart.tooltip;
 
 		// Just move the tooltip, #349
 		if (allowMove && tooltip && tooltipPoints) {
@@ -206,7 +207,7 @@ MouseTracker.prototype = {
 				tooltip.hideCrosshairs();
 			}
 
-			hoverX = null;
+			mouseTracker.hoverX = null;
 
 		}
 	},
@@ -294,8 +295,8 @@ MouseTracker.prototype = {
 
 			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition &&
-				!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
-				e.pageY - chartPosition.top - plotTop)) {
+				!chart.isInsidePlot(e.pageX - mouseTracker.chartPosition.left - chart.plotLeft,
+				e.pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
 					mouseTracker.resetTracker();
 			}
 		};

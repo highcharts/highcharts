@@ -113,6 +113,8 @@ Tick.prototype = {
 	 */
 	getLabelSides: function () {
 		var bBox = this.labelBBox, // assume getLabelSize has run at this point
+			axis = this.axis,
+			options = axis.options,
 			labelOptions = options.labels,
 			width = bBox.width,
 			leftSide = width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] - labelOptions.x;
@@ -126,10 +128,14 @@ Tick.prototype = {
 	 */
 	handleOverflow: function (index) {
 		var show = true,
+			axis = this.axis,
+			chart = axis.chart,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
 			label = this.label,
-			x = label.x;
+			x = label.x,
+			reversed = axis.reversed,
+			tickPositions = axis.tickPositions;
 
 		if (isFirst || isLast) {
 
@@ -138,7 +144,7 @@ Tick.prototype = {
 				rightSide = sides[1],
 				plotLeft = chart.plotLeft,
 				plotRight = plotLeft + axis.len,
-				neighbour = ticks[tickPositions[index + (isFirst ? 1 : -1)]],
+				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
 				neighbourEdge = neighbour && neighbour.label.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
@@ -275,7 +281,8 @@ Tick.prototype = {
 			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
-			y = xy.y;
+			y = xy.y,
+			staggerLines = axis.staggerLines;
 		
 		// create the grid line
 		if (gridLineWidth) {

@@ -502,6 +502,9 @@ Chart.prototype = {
 	 * @param {Object} event
 	 */
 	zoom: function (event) {
+		var chart = this,
+			optionsChart = chart.options.chart;
+
 		// add button to reset selection
 		var hasZoomed;
 
@@ -531,7 +534,7 @@ Chart.prototype = {
 
 		// Redraw
 		if (hasZoomed) {
-			redraw( 
+			chart.redraw(
 				pick(optionsChart.animation, chart.pointCount < 100) // animation
 			);
 		}

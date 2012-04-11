@@ -5237,6 +5237,8 @@ Tick.prototype = {
 	 */
 	getLabelSides: function () {
 		var bBox = this.labelBBox, // assume getLabelSize has run at this point
+			axis = this.axis,
+			options = axis.options,
 			labelOptions = options.labels,
 			width = bBox.width,
 			leftSide = width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] - labelOptions.x;
@@ -5250,10 +5252,14 @@ Tick.prototype = {
 	 */
 	handleOverflow: function (index) {
 		var show = true,
+			axis = this.axis,
+			chart = axis.chart,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
 			label = this.label,
-			x = label.x;
+			x = label.x,
+			reversed = axis.reversed,
+			tickPositions = axis.tickPositions;
 
 		if (isFirst || isLast) {
 
@@ -5262,7 +5268,7 @@ Tick.prototype = {
 				rightSide = sides[1],
 				plotLeft = chart.plotLeft,
 				plotRight = plotLeft + axis.len,
-				neighbour = ticks[tickPositions[index + (isFirst ? 1 : -1)]],
+				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
 				neighbourEdge = neighbour && neighbour.label.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
@@ -5399,7 +5405,8 @@ Tick.prototype = {
 			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
-			y = xy.y;
+			y = xy.y,
+			staggerLines = axis.staggerLines;
 		
 		// create the grid line
 		if (gridLineWidth) {
@@ -6544,7 +6551,7 @@ Axis.prototype = {
 		max = axis.max;
 
 		if (isLog) {
-			if (!secondPass && mathMin(min, dataMin) <= 0) {
+			if (!secondPass && mathMin(min, axis.dataMin) <= 0) {
 				error(10, 1); // Can't plot negative values on log axis
 			}
 			axis.min = min = log2lin(min);
@@ -6718,7 +6725,6 @@ Axis.prototype = {
 	 */
 	setScale: function () {
 		var axis = this,
-			chart = axis.chart,
 			stacks = axis.stacks,
 			type,
 			i,
@@ -7872,7 +7878,7 @@ MouseTracker.prototype = {
 			j,
 			distance = chart.chartWidth,
 			// the index in the tooltipPoints array, corresponding to pixel position in plot area
-			index = chart.inverted ? plotHeight + plotTop - e.chartY : e.chartX - chart.plotLeft;
+			index = chart.inverted ? chart.plotHeight + chart.plotTop - e.chartY : e.chartX - chart.plotLeft;
 
 		// shared tooltip
 		if (chart.tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -7930,7 +7936,8 @@ MouseTracker.prototype = {
 			chart = mouseTracker.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltipPoints = chart.hoverPoints || hoverPoint;
+			tooltipPoints = chart.hoverPoints || hoverPoint,
+			tooltip = chart.tooltip;
 
 		// Just move the tooltip, #349
 		if (allowMove && tooltip && tooltipPoints) {
@@ -7952,7 +7959,7 @@ MouseTracker.prototype = {
 				tooltip.hideCrosshairs();
 			}
 
-			hoverX = null;
+			mouseTracker.hoverX = null;
 
 		}
 	},
@@ -8040,8 +8047,8 @@ MouseTracker.prototype = {
 
 			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition &&
-				!isInsidePlot(e.pageX - chartPosition.left - plotLeft,
-				e.pageY - chartPosition.top - plotTop)) {
+				!chart.isInsidePlot(e.pageX - mouseTracker.chartPosition.left - chart.plotLeft,
+				e.pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
 					mouseTracker.resetTracker();
 			}
 		};
@@ -8332,6 +8339,10 @@ function Legend(chart) {
 		padding = pick(options.padding, 8), // docs
 		itemMarginTop = options.itemMarginTop || 0;
 
+	var y = 18, // Trying to resolve merge conflicts
+		symbolWidth = options.symbolWidth,
+		symbolPadding = options.symbolPadding;
+
 	legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 	legend.itemStyle = itemStyle;
 	legend.itemHoverStyle = itemHoverStyle;
@@ -8497,7 +8508,10 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			optionsChart = chart.options.chart,
+			spacingTop = optionsChart.spacingTop,
+			spacingBottom = optionsChart.spacingBottom;
 
 		if (!li) { // generate it once, later move it
 
@@ -8587,9 +8601,9 @@ Legend.prototype = {
 		}
 
 		// If the item exceeds the height, start a new column
-		if (!horizontal && legend.itemY + options.y + itemHeight > chartHeight - spacingTop - spacingBottom) {
-			legend.itemY = initialItemY;
-			legend.itemX += maxItemWidth;
+		if (!horizontal && legend.itemY + options.y + itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
+			legend.itemY = legend.initialItemY;
+			legend.itemX += legend.maxItemWidth;
 			legend.maxItemWidth = 0;
 		}
 
@@ -9274,6 +9288,9 @@ Chart.prototype = {
 	 * @param {Object} event
 	 */
 	zoom: function (event) {
+		var chart = this,
+			optionsChart = chart.options.chart;
+
 		// add button to reset selection
 		var hasZoomed;
 
@@ -9303,7 +9320,7 @@ Chart.prototype = {
 
 		// Redraw
 		if (hasZoomed) {
-			redraw( 
+			chart.redraw(
 				pick(optionsChart.animation, chart.pointCount < 100) // animation
 			);
 		}

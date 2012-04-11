@@ -764,7 +764,7 @@ Axis.prototype = {
 		max = axis.max;
 
 		if (isLog) {
-			if (!secondPass && mathMin(min, dataMin) <= 0) {
+			if (!secondPass && mathMin(min, axis.dataMin) <= 0) {
 				error(10, 1); // Can't plot negative values on log axis
 			}
 			axis.min = min = log2lin(min);
@@ -938,7 +938,6 @@ Axis.prototype = {
 	 */
 	setScale: function () {
 		var axis = this,
-			chart = axis.chart,
 			stacks = axis.stacks,
 			type,
 			i,

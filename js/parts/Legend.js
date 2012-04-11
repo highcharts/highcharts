@@ -16,6 +16,10 @@ function Legend(chart) {
 		padding = pick(options.padding, 8), // docs
 		itemMarginTop = options.itemMarginTop || 0;
 
+	var y = 18, // Trying to resolve merge conflicts
+		symbolWidth = options.symbolWidth,
+		symbolPadding = options.symbolPadding;
+
 	legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 	legend.itemStyle = itemStyle;
 	legend.itemHoverStyle = itemHoverStyle;
@@ -181,7 +185,10 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			optionsChart = chart.options.chart,
+			spacingTop = optionsChart.spacingTop,
+			spacingBottom = optionsChart.spacingBottom;
 
 		if (!li) { // generate it once, later move it
 
@@ -271,9 +278,9 @@ Legend.prototype = {
 		}
 
 		// If the item exceeds the height, start a new column
-		if (!horizontal && legend.itemY + options.y + itemHeight > chartHeight - spacingTop - spacingBottom) {
-			legend.itemY = initialItemY;
-			legend.itemX += maxItemWidth;
+		if (!horizontal && legend.itemY + options.y + itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
+			legend.itemY = legend.initialItemY;
+			legend.itemX += legend.maxItemWidth;
 			legend.maxItemWidth = 0;
 		}
 
