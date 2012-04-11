@@ -278,7 +278,7 @@ seriesProto.processData = function () {
 	}
 
 	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
-	if (dataLength > (plotSizeX / groupPixelWidth) || dataGroupingOptions.forced) {
+	if (dataLength > (plotSizeX / groupPixelWidth) || (dataLength && dataGroupingOptions.forced)) {
 		hasGroupedData = true;
 
 		series.points = null; // force recreation of point instances in series.translate
