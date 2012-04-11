@@ -4063,18 +4063,18 @@ function Chart(userOptions, callback) {
 		}
 
 		// remove previous chart
-		renderTo.innerHTML = '';
+		renderTo.innerHTML = '';	
 
-		// If the container doesn't have an offsetWidth, it has or is a child of a node
+		// If the container doesn't have an offsetWidth, it ha	s or is a child of a node
 		// that has display:none. We need to temporarily move it out to a visible
 		// state to determine the size, else the legend and tooltips won't render
-		// properly
+		// properly	
 		if (!renderTo.offsetWidth) {
 			renderToClone = renderTo.cloneNode(0);
 			css(renderToClone, {
 				position: ABSOLUTE,
 				top: '-9999px',
-				display: ''
+				display: 'block'
 			});
 			doc.body.appendChild(renderToClone);
 		}
