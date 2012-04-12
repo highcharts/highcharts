@@ -1956,7 +1956,7 @@ SVGRenderer.prototype = {
 				.add(wrapper),
 			box,
 			bBox,
-			align = 'left',
+			alignFactor = 0,
 			padding = 3,
 			width,
 			height,
@@ -1990,8 +1990,8 @@ SVGRenderer.prototype = {
 				boxY = baseline ? -baselineOffset : 0;
 			
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, -padding, boxY, wrapper.width, wrapper.height) :
-					renderer.rect(-padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+					renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
+					renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 				box.add(wrapper);
 			}
 
@@ -2009,7 +2009,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = 0,
+				x = padding * (1 - alignFactor),
 				y;
 			
 			// determin y based on the baseline
@@ -2086,7 +2086,7 @@ SVGRenderer.prototype = {
 
 		// change local variable and set attribue as well
 		attrSetters.align = function (value) {
-			align = value;
+			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
 			return false; // prevent setting text-anchor on the group
 		};
 		
@@ -2122,7 +2122,7 @@ SVGRenderer.prototype = {
 		// rename attributes
 		attrSetters.x = function (value) {
 			wrapper.x = value; // for animation getter
-			value -= { left: 0, center: 0.5, right: 1 }[align] * (width || bBox.width);
+			value -= alignFactor * ((width || bBox.width) + padding);
 			wrapperX = mathRound(value); 
 			
 			wrapper.attr('translateX', wrapperX);
