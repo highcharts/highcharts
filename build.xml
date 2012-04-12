@@ -233,8 +233,8 @@
 
     <!-- This target convert any mixed line endings to crlf. -->
     <target name="check-crlf" depends="assemble">
-        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" eol="crlf" fixlast="false"/>
-        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" eol="crlf" fixlast="false"/>
+        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" eol="lf" fixlast="false"/>
+        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" eol="lf" fixlast="false"/>
     </target>
 
     <!-- Runs jslint on generated source code. -->
