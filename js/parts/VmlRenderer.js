@@ -604,23 +604,50 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	color: function (color, elem, prop) {
 		var colorObject,
 			regexRgba = /^rgba/,
-			markup;
+			markup,
+			fillType;
 
-		if (color && color[LINEAR_GRADIENT]) {
+		// Check for linear or radial gradient
+		if (color && color.linearGradient) {
+			fillType = 'gradient';
+		} else if (color && color.radialGradient) {
+			fillType = 'pattern';
+		}
+		
+		
+		if (fillType) {
 
 			var stopColor,
 				stopOpacity,
-				linearGradient = color[LINEAR_GRADIENT],
-				x1 = linearGradient.x1 || linearGradient[0] || 0,
-				y1 = linearGradient.y1 || linearGradient[1] || 0,
-				x2 = linearGradient.x2 || linearGradient[2] || 0,
-				y2 = linearGradient.y2 || linearGradient[3] || 0,
+				gradient = color[fillType],
+				x1,
+				y1, 
+				x2,
+				y2,
 				angle,
-				color1,
 				opacity1,
-				color2,
-				opacity2;
+				opacity2,
+				fillAttr = '',
+				colors = [];
+				
+			// Handle linear gradient angle
+			if (fillType === 'gradient') {
+				x1 = gradient.x1 || gradient[0] || 0;
+				y1 = gradient.y1 || gradient[1] || 0;
+				x2 = gradient.x2 || gradient[2] || 0;
+				y2 = gradient.y2 || gradient[3] || 0;
+				angle = 90  - math.atan(
+					(y2 - y1) / // y vector
+					(x2 - x1) // x vector
+					) * 180 / mathPI;
+				
+			} else { // fillType === 'pattern'
+				fillAttr = 'src="http://midiwebconcept.free.fr/grad1.jpg" ' +
+					'size="1,1" ' +
+					'origin="100,100" ';
+			}
 
+			// Compute the stops
 			each(color.stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
@@ -630,30 +657,26 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					stopColor = stop[1];
 					stopOpacity = 1;
 				}
+				
+				// Build the color attribute
+				colors.push((stop[0] * 100) + '% ' + stopColor); 
 
-				if (!i) { // first
-					color1 = stopColor;
+				// Only start and end opacities are allowed, so we use the first and the last
+				if (!i) {
 					opacity1 = stopOpacity;
 				} else {
-					color2 = stopColor;
 					opacity2 = stopOpacity;
 				}
 			});
 
 			// Apply the gradient to fills only.
 			if (prop === 'fill') {
-				// calculate the angle based on the linear vector
-				angle = 90  - math.atan(
-					(y2 - y1) / // y vector
-					(x2 - x1) // x vector
-					) * 180 / mathPI;
-	
-	
+				
 				// when colors attribute is used, the meanings of opacity and o:opacity2
 				// are reversed.
-				markup = ['<fill colors="0% ', color1, ',100% ', color2, '" angle="', angle,
+				markup = ['<fill colors="' + colors.join(',') + '" angle="', angle,
 					'" opacity="', opacity2, '" o:opacity2="', opacity1,
-					'" type="gradient" focus="100%" method="sigma" />'];
+					'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
 				createElement(this.prepVML(markup), null, null, elem);
 			
 			// Gradients are not supported for VML stroke, return the first color. #722.
@@ -869,21 +892,16 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				);
 			}
 
-			if (innerRadius) {
-				ret.push(
-					'at', // anti clockwise arc to
-					x - innerRadius, // left
-					y - innerRadius, // top
-					x + innerRadius, // right
-					y + innerRadius, // bottom
-					x + innerRadius * cosEnd, // start x
-					y + innerRadius * sinEnd, // start y
-					x + innerRadius * cosStart, // end x
-					y + innerRadius * sinStart // end y
-				);
-			}
-			
 			ret.push(
+				'at', // anti clockwise arc to
+				x - innerRadius, // left
+				y - innerRadius, // top
+				x + innerRadius, // right
+				y + innerRadius, // bottom
+				x + innerRadius * cosEnd, // start x
+				y + innerRadius * sinEnd, // start y
+				x + innerRadius * cosStart, // end x
+				y + innerRadius * sinStart, // end y
 				'x', // finish path
 				'e' // close
 			);

@@ -232,12 +232,13 @@
     </target>
 
     <!-- This target convert any mixed line endings to crlf. -->
-	<!-- TODO: Display warning for mixed line endings 
-    <target name="check-crlf" depends="assemble">
+	<target name="check-crlf" depends="assemble">
+		<!-- TODO: Display warning for mixed line endings -->
+		<!--
         <fixcrlf srcDir="${basedir}/js" includes="**/*.js" eol="crlf" fixlast="false"/>
         <fixcrlf srcDir="${basedir}/test" includes="**/*.js" eol="crlf" fixlast="false"/>
+       	-->
     </target>
-	-->
 
     <!-- Runs jslint on generated source code. -->
     <target name="do-lint" depends="check-crlf">

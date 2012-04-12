@@ -243,6 +243,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
  * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
  * - Tooltip
  * - Should the gauge series be called angular gauge as opposed to linear gauges?
+ * - POC with two axes - for example km/h and m/h. For this we need either an option to make it 
+ *   circular. Axis extension could be loaded on axis init.
  * - Targets? Could perhaps be implemented as a separate series type, inherited from GaugeSeries
  */
 
