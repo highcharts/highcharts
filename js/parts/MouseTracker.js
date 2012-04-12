@@ -278,10 +278,12 @@ MouseTracker.prototype = {
 				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();
 			}
 
-			css(chart.container, { cursor: 'auto' });
+			if (chart) { // it may be destroyed on mouse up - #877
+				css(container, { cursor: 'auto' });
+				chart.cancelClick = hasDragged; // #370
+				chart.mouseIsDown = hasDragged = false;
+			}
 
-			chart.cancelClick = hasDragged; // #370
-			chart.mouseIsDown = hasDragged = false;
 			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
 		}
 
