@@ -153,6 +153,12 @@ defaultOptions = {
 				formatter: function () {
 					return this.y;
 				}
+				// backgroundColor: undefined,
+				// borderColor: undefined,
+				// borderRadius: undefined,
+				// borderWidth: undefined,
+				// padding: 3,
+				// shadow: false
 			}),
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
@@ -435,6 +441,7 @@ defaultBottomAxisOptions = { // horizontal axis
 		align: 'center',
 		x: 0,
 		y: 14
+		// overflow: undefined // docs - can be 'justify'
 		// staggerLines: null
 	},
 	title: {
@@ -443,7 +450,8 @@ defaultBottomAxisOptions = { // horizontal axis
 },
 defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
 	labels: {
-		y: -5
+		y: -5,
+		overflow: 'justify'
 		// staggerLines: null
 	}
 });

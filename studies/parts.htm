@@ -3,35 +3,17 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta http-equiv="edit-Type" edit="text/html; charset=utf-8">
 	<title>Highcharts General Study</title>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"></script>
-	<script type='text/javascript'>
+	<script src="../lib/jquery-1.7.1.js"></script>
+	<script>
 		jQuery(function() {
 			// Create the chart
-			window.chart = new Highcharts.StockChart({
+			window.chart = new Highcharts.Chart({
 				chart : {
 					renderTo : 'container'
 				},
 
-				rangeSelector : {
-					selected : 1
-				},
-
-				title : {
-					text : 'USD to EUR exchange rate'
-				},
-
-				xAxis : {
-					maxZoom : 14 * 24 * 3600000 // fourteen days
-				},
-				yAxis : {
-					title : {
-						text : 'Exchange rate'
-					}
-				},
-
 				series : [{
-					name : 'USD to EUR',
-					data : usdeur
+					data: [3,6,4,8,5,3]
 				}]
 			});
 		});
@@ -40,64 +22,7 @@
 </head>
 <body>
 	<div id="container" style="height: 400px"></div>
-	<!-- Load the Highcharts parts -->
-	<script type="text/javascript" src="../js/parts/Globals.js"></script>
-	<script type="text/javascript" src="../js/parts/Utilities.js"></script>
-	<script type="text/javascript" src="../js/parts/PathAnimation.js"></script>
-	<script type="text/javascript" src="../js/parts/Adapters.js"></script>
-	<script type="text/javascript" src="../js/parts/Options.js"></script>
-	<script type="text/javascript" src="../js/parts/Color.js"></script>
-	<script type="text/javascript" src="../js/parts/SvgRenderer.js"></script>
-	<script type="text/javascript" src="../js/parts/VmlRenderer.js"></script>
-	<script type="text/javascript" src="../js/parts/Chart.js"></script>
-	<script type="text/javascript" src="../js/parts/Series.js"></script>
-	<script type="text/javascript" src="../js/parts/LineSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/AreaSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/SplineSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/AreaSplineSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/ColumnSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/BarSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/ScatterSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/PieSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/DataGrouping.js"></script>
-	<script type="text/javascript" src="../js/parts/OHLCSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/CandlestickSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/FlagsSeries.js"></script>
-	<script type="text/javascript" src="../js/parts/StockNavigation.js"></script>
-	<script type="text/javascript" src="../js/parts/StockChart.js"></script>
-	<script type="text/javascript" src="../samples/data/usdeur.js"></script>
-	<script type="text/javascript">
-		// global variables
-		extend(Highcharts, {
-			Chart : Chart,
-			dateFormat : dateFormat,
-			pathAnim : pathAnim,
-			getOptions : getOptions,
-			numberFormat : numberFormat,
-			Point : Point,
-			Color : Color,
-			Renderer : Renderer,
-			seriesTypes : seriesTypes,
-			setOptions : setOptions,
-			Series : Series,
-
-			// Expose utility funcitons for modules
-			addEvent : addEvent,
-			removeEvent : removeEvent,
-			createElement : createElement,
-			discardElement : discardElement,
-			css : css,
-			each : each,
-			extend : extend,
-			map : map,
-			merge : merge,
-			pick : pick,
-			splat : splat,
-			extendClass : extendClass,
-			product : '@product.name@',
-			version : '@product.version@'
-		});
-
-	</script>
+	
+	<script src="../js/highcharts.debug.js"></script>
 </body>
 </html> 

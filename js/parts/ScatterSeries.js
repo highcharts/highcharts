@@ -19,7 +19,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
  */
 var ScatterSeries = extendClass(Series, {
 	type: 'scatter',
-
+	sorted: false,
 	/**
 	 * Extend the base Series' translate method by adding shape type and
 	 * arguments for the point trackers
@@ -55,16 +55,21 @@ var ScatterSeries = extendClass(Series, {
 		while (i--) {
 			graphic = points[i].graphic;
 			if (graphic) { // doesn't exist for null points
-				graphic.element._index = i; 
+				graphic.element._i = i; 
 			}
 		}
 		
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
 			series.group
+				.attr({
+					isTracker: true
+				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function (e) {
 					series.onMouseOver();
-					points[e.target._index].onMouseOver();
+					if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
+						points[e.target._i].onMouseOver();
+					}
 				})
 				.on('mouseout', function () {
 					if (!series.options.stickyTracking) {

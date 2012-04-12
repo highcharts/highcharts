@@ -31,7 +31,9 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 // 2 - Create the CandlestickSeries object
 seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
+	sorted: false,
 	noSharedTooltip: true,
+	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series
 	 */
@@ -59,20 +61,21 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			chart = series.chart,
 			points = series.points,
 			cursor = points.length - 1,
-			i,
 			point,
 			lastPoint,
 			optionsOnSeries = options.onSeries,
 			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
-			onData,
+			step = onSeries && onSeries.options.step,
+			onData = onSeries && onSeries.points,
+			i = onData && onData.length,
+			xAxisExt = series.xAxis.getExtremes(),
 			leftPoint,
+			lastX,
 			rightPoint;
 
-
 		// relate to a master series
-		if (onSeries) {
-			onData = onSeries.points;
-			i = onData.length;
+		if (onSeries && onSeries.visible && i) {
+			lastX = onData[i - 1].x;
 
 			// sort the data points
 			points.sort(function (a, b) {
@@ -82,19 +85,24 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			while (i-- && points[cursor]) {
 				point = points[cursor];
 				leftPoint = onData[i];
-				if (leftPoint.x <= point.x) {
-					point.plotY = leftPoint.plotY;
+				
+				
+				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
 					
-					// interpolate between points, #666
-					if (leftPoint.x < point.x) { 
-						rightPoint = onData[i + 1];
-						if (rightPoint) {
-							point.plotY += 
-								((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
-								(rightPoint.plotY - leftPoint.plotY); // the y distance
+					if (point.x <= lastX) { // #803
+					
+						point.plotY = leftPoint.plotY;
+					
+						// interpolate between points, #666
+						if (leftPoint.x < point.x && !step) { 
+							rightPoint = onData[i + 1];
+							if (rightPoint && rightPoint.plotY !== UNDEFINED) {
+								point.plotY += 
+									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
+									(rightPoint.plotY - leftPoint.plotY); // the y distance
+							}
 						}
 					}
-					
 					cursor--;
 					i++; // check again for points in the same x position
 					if (cursor < 0) {
@@ -104,10 +112,18 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			}
 		}
 
+		// Add plotY position and handle stacking
 		each(points, function (point, i) {
-			// place on y axis or custom position
-			if (!onSeries) {
-				point.plotY = point.y === UNDEFINED ? chart.plotHeight : point.plotY;
+			
+			// Undefined plotY means the point is either on axis, outside series range or hidden series.
+			// If the series is outside the range of the x axis it should fall through with 
+			// an undefined plotY, but then we must remove the shapeArgs (#847).
+			if (point.plotY === UNDEFINED) {
+				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
+					point.plotY = chart.plotHeight;
+				} else {
+					point.shapeArgs = {}; // 847
+				}
 			}
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
@@ -117,7 +133,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				}
 				point.stackIndex = lastPoint.stackIndex + 1;
 			}
-
+					
 		});
 
 
@@ -153,10 +169,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			point = points[i];
 			plotX = point.plotX + crisp;
 			stackIndex = point.stackIndex;
-			plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
-			// outside to the left, on series but series is clipped
-			if (isNaN(plotY)) {
-				plotY = 0;
+			plotY = point.plotY;
+			if (plotY !== UNDEFINED) {
+				plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
 			}
 			anchorX = stackIndex ? UNDEFINED : point.plotX + crisp; // skip connectors for higher level stacked points
 			anchorY = stackIndex ? UNDEFINED : point.plotY;
@@ -210,6 +225,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					}
 				);
 
+			} else if (graphic) {
+				point.graphic = graphic.destroy();
 			}
 
 		}

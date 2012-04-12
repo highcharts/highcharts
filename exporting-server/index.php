@@ -6,10 +6,10 @@
  *  
  * Available POST variables:
  *
- * $tempName string The desired filename without extension
- * $type string The MIME type for export. 
- * $width int The pixel width of the exported raster image. The height is calculated.
- * $svg string The SVG source code to convert.
+ * $filename  string   The desired filename without extension
+ * $type      string   The MIME type for export. 
+ * $width     int      The pixel width of the exported raster image. The height is calculated.
+ * $svg       string   The SVG source code to convert.
  */
 
 
@@ -81,7 +81,7 @@ if (isset($typeString)) {
 	
 	// stream it
 	else {
-		header("Content-Disposition: attachment; filename=$filename.$ext");
+		header("Content-Disposition: attachment; filename=\"$filename.$ext\"");
 		header("Content-Type: $type");
 		echo file_get_contents($outfile);
 	}
@@ -92,7 +92,7 @@ if (isset($typeString)) {
 
 // SVG can be streamed directly back
 } else if ($ext == 'svg') {
-	header("Content-Disposition: attachment; filename=$filename.$ext");
+	header("Content-Disposition: attachment; filename=\"$filename.$ext\"");
 	header("Content-Type: $type");
 	echo $svg;
 	

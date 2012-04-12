@@ -1,0 +1,6 @@
+#resizer {
+    border: 1px solid silver;   
+}
+#inner-resizer { /* make room for the resize handle */
+    padding: 10px;
+}

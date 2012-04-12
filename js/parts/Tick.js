@@ -105,8 +105,82 @@ Tick.prototype = {
 		return label ?
 			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
 			0;
-		},
-		
+	},
+
+	/**
+	 * Find how far the labels extend to the right and left of the tick's x position. Used for anti-collision
+	 * detection with overflow logic.
+	 */
+	getLabelSides: function () {
+		var bBox = this.labelBBox, // assume getLabelSize has run at this point
+			axis = this.axis,
+			options = axis.options,
+			labelOptions = options.labels,
+			width = bBox.width,
+			leftSide = width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] - labelOptions.x;
+
+		return [-leftSide, width - leftSide];
+	},
+
+	/**
+	 * Handle the label overflow by adjusting the labels to the left and right edge, or
+	 * hide them if they collide into the neighbour label.
+	 */
+	handleOverflow: function (index) {
+		var show = true,
+			axis = this.axis,
+			chart = axis.chart,
+			isFirst = this.isFirst,
+			isLast = this.isLast,
+			label = this.label,
+			x = label.x,
+			reversed = axis.reversed,
+			tickPositions = axis.tickPositions;
+
+		if (isFirst || isLast) {
+
+			var sides = this.getLabelSides(),
+				leftSide = sides[0],
+				rightSide = sides[1],
+				plotLeft = chart.plotLeft,
+				plotRight = plotLeft + axis.len,
+				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
+				neighbourEdge = neighbour && neighbour.label.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+
+			if ((isFirst && !reversed) || (isLast && reversed)) {
+				// Is the label spilling out to the left of the plot area?
+				if (x + leftSide < plotLeft) {
+
+					// Align it to plot left
+					x = plotLeft - leftSide;
+
+					// Hide it if it now overlaps the neighbour label
+					if (neighbour && x + rightSide > neighbourEdge) {
+						show = false;
+					}
+				}
+
+			} else {
+				// Is the label spilling out to the right of the plot area?
+				if (x + rightSide > plotRight) {
+
+					// Align it to plot right
+					x = plotRight - rightSide;
+
+					// Hide it if it now overlaps the neighbour label
+					if (neighbour && x + leftSide < neighbourEdge) {
+						show = false;
+					}
+
+				}
+			}
+
+			// Set the modified x position of the label
+			label.x = x;
+		}
+		return show;
+	},
+
 	/**
 	 * Get the x and y position for ticks and labels
 	 */
@@ -203,10 +277,12 @@ Tick.prototype = {
 			markPath,
 			step = labelOptions.step,
 			attribs,
+			show = true,
 			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
-			y = xy.y;
+			y = xy.y,
+			staggerLines = axis.staggerLines;
 		
 		// create the grid line
 		if (gridLineWidth) {
@@ -233,7 +309,7 @@ Tick.prototype = {
 			// If the parameter 'old' is set, the current call will be followed
 			// by another call, therefore do not do any animations this time
 			if (!old && gridLine && gridLinePath) {
-				gridLine.animate({
+				gridLine[tick.isNew ? 'attr' : 'animate']({
 					d: gridLinePath
 				});
 			}
@@ -270,25 +346,35 @@ Tick.prototype = {
 		if (label && !isNaN(x)) {
 			xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
+			// Cache x and y to be able to read final position before animation
+			label.x = x;
+			label.y = y;
+
 			// apply show first and show last
 			if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
 					(tick.isLast && !pick(options.showLastLabel, 1))) {
-				label.hide();
-			} else {
-				// show those that may have been previously hidden, either by show first/last, or by step
-				label.show();
+				show = false;
+
+				// Handle label overflow and show or hide accordingly
+			} else if (!staggerLines && horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index)) {
+				show = false;
 			}
 
 			// apply step
 			if (step && index % step) {
 				// show those indices dividable by step
-				label.hide();
+				show = false;
 			}
 
-			label[tick.isNew ? 'attr' : 'animate'](xy);
+			// Set the new position, and show or hide
+			if (show) {
+				label[tick.isNew ? 'attr' : 'animate'](xy);
+				label.show();
+				tick.isNew = false;
+			} else {
+				label.hide();
+			}
 		}
-
-		tick.isNew = false;
 	},
 
 	/**

@@ -33,7 +33,7 @@ function Tooltip(chart, options) {
 	this.tooltipIsHidden = true;
 
 	// create the label
-	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML)
+	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML, null, 'tooltip')
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,
@@ -305,7 +305,12 @@ Tooltip.prototype = {
 			while (i--) {
 				axis = point.series[i ? 'yAxis' : 'xAxis'];
 				if (crosshairsOptions[i] && axis) {
-					path = axis.getPlotLinePath(point[i ? 'y' : 'x'], 1);
+
+					path = axis.getPlotLinePath(
+						i ? pick(point.stackY, point.y) : point.x, // #814
+						1
+					);
+
 					if (tooltip.crosshairs[i]) {
 						tooltip.crosshairs[i].attr({ d: path, visibility: VISIBLE });
 					} else {

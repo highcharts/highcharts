@@ -107,6 +107,7 @@
             <file name="BarSeries.js"/>
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
+            <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
 
@@ -148,6 +149,7 @@
             <file name="StockNavigation.js"/>
             <file name="StockChart.js"/>
             <file name="OrdinalAxis.js"/>
+            <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
 
@@ -230,10 +232,12 @@
     </target>
 
     <!-- This target convert any mixed line endings to crlf. -->
+	<!-- TODO: Display warning for mixed line endings 
     <target name="check-crlf" depends="assemble">
         <fixcrlf srcDir="${basedir}/js" includes="**/*.js" eol="crlf" fixlast="false"/>
         <fixcrlf srcDir="${basedir}/test" includes="**/*.js" eol="crlf" fixlast="false"/>
     </target>
+	-->
 
     <!-- Runs jslint on generated source code. -->
     <target name="do-lint" depends="check-crlf">
@@ -512,18 +516,12 @@
         <!-- replace these references with local paths here -->
         <replace dir="${dist.dir}">
             <replacefilter>
-                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-exporting.js"></script>]]></replacetoken>
-                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highcharts.js"></script>
-<script type="text/javascript" src="../../js/modules/exporting.js"></script>]]></replacevalue>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/stock/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <replacefilter>
-                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-stock.js"></script>]]></replacetoken>
-                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highstock.js"></script>]]></replacevalue>
-            </replacefilter>
-            <replacefilter>
-                <replacetoken><![CDATA[<script type="text/javascript" src="http://www.highcharts.com/js/testing-stock-exporting.js"></script>]]></replacetoken>
-                <replacevalue><![CDATA[<script type="text/javascript" src="../../js/highstock.js"></script>
-<script type="text/javascript" src="../../js/modules/exporting.js"></script>]]></replacevalue>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <include name="**/index.htm"/>
         </replace>
@@ -750,5 +748,97 @@
         <exec executable="${browser}" spawn="true">
             <arg value="${file}"/>
         </exec>
+    </target>
+    
+    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
+    <target name="deploy-highcharts">
+    	<property file="git-ignore-me.properties"/>
+    	<property file="build.properties"/>
+    	
+    	<!-- The zip file -->
+		<copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" 
+    		tofile="${basedir}/build/dist/Highcharts.zip" />
+        <ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/downloads/zips">
+	   		<fileset dir="${basedir}/build/dist">
+      			<include name="Highcharts-${highcharts.product.version}.zip"/>
+      			<include name="Highcharts.zip"/>
+    		</fileset>
+    	</ftp>
+  		
+        <!-- Upload the .js files to code.highcharts.com/version -->
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			action="mkdir"
+	   			remotedir="/www/code/${highcharts.product.version}" />
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code/${highcharts.product.version}">
+	   		<fileset dir="${basedir}/build/dist/highcharts/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp> 
+  		
+  		<!-- Upload the .js files to code.highcharts.com root -->   	
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code">
+	   		<fileset dir="${basedir}/build/dist/highcharts/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp>
+    </target>
+    
+    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
+    <target name="deploy-highstock">
+    	<property file="git-ignore-me.properties"/>
+    	<property file="build.properties"/>
+    	
+    	<!-- The zip file -->
+		<copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" 
+    		tofile="${basedir}/build/dist/Highstock.zip" />
+        <ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/downloads/zips">
+	   		<fileset dir="${basedir}/build/dist">
+      			<include name="Highstock-${highstock.product.version}.zip"/>
+      			<include name="Highstock.zip"/>
+    		</fileset>
+    	</ftp>
+  		
+        <!-- Upload the .js files to code.highcharts.com/version -->
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			action="mkdir"
+	   			remotedir="/www/code/stock/${highstock.product.version}" />
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code/stock/${highstock.product.version}">
+	   		<fileset dir="${basedir}/build/dist/highstock/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp> 
+  		
+  		<!-- Upload the .js files to code.highcharts.com root -->   	
+		<ftp server="${ftp.server}"
+	   			userid="${ftp.userid}"
+	   			password="${ftp.password}"
+	   			remotedir="/www/code/stock">
+	   		<fileset dir="${basedir}/build/dist/highstock/js">
+      			<include name="*.js"/>
+      			<include name="*/*.js"/>
+    		</fileset>    		
+  		</ftp>
     </target>
 </project>

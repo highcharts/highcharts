@@ -320,7 +320,8 @@ extend(Chart.prototype, {
 		// create the form
 		form = createElement('form', {
 			method: 'post',
-			action: options.url
+			action: options.url,
+			enctype: 'multipart/form-data'
 		}, {
 			display: NONE
 		}, doc.body);

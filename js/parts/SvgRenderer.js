@@ -416,16 +416,6 @@ SVGElement.prototype = {
 		this.element['on' + eventType] = fn;
 		return this;
 	},
-	
-	/**
-	 * Set the coordinates needed to draw a consistent radial gradient across
-	 * pie slices regardless of positioning inside the chart. The format is
-	 * [centerX, centerY, diameter] in pixels.
-	 */
-	setRadialReference: function(coordinates) {
-		this.element.radialReference = coordinates;
-		return this;
-	},
 
 
 	/**
@@ -516,6 +506,7 @@ SVGElement.prototype = {
 		}
 
 		var wrapper = this,
+			renderer = wrapper.renderer,
 			elem = wrapper.element,
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0,
@@ -545,7 +536,7 @@ SVGElement.prototype = {
 		// apply inversion
 		if (wrapper.inverted) { // wrapper is a group
 			each(elem.childNodes, function (child) {
-				wrapper.renderer.invertChild(child, elem);
+				renderer.invertChild(child, elem);
 			});
 		}
 
@@ -553,7 +544,7 @@ SVGElement.prototype = {
 
 			var width, height,
 				rotation = wrapper.rotation,
-				lineHeight,
+				baseline,
 				radians = 0,
 				costheta = 1,
 				sintheta = 0,
@@ -596,14 +587,14 @@ SVGElement.prototype = {
 				}
 
 				// correct x and y
-				lineHeight = mathRound((pInt(elem.style.fontSize) || 12) * 1.2);
+				baseline = renderer.fontMetrics(elem.style.fontSize).b;
 				xCorr = costheta < 0 && -width;
 				yCorr = sintheta < 0 && -height;
 
-				// correct for lineHeight and corners spilling out after rotation
+				// correct for baseline and corners spilling out after rotation
 				quad = costheta * sintheta < 0;
-				xCorr += sintheta * lineHeight * (quad ? 1 - alignCorrection : alignCorrection);
-				yCorr -= costheta * lineHeight * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
+				xCorr += sintheta * baseline * (quad ? 1 - alignCorrection : alignCorrection);
+				yCorr -= costheta * baseline * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
 
 				// correct for the length/height of the text
 				if (nonLeft) {
@@ -1014,7 +1005,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
 		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, '')
-			.replace(/\(/g, '\\(').replace(/\)/g, '\\)'); // Page url used for internal references. #24, #672.
+			.replace(/([\('\)])/g, '\\$1'); // Page url used for internal references. #24, #672.
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
@@ -1709,57 +1700,41 @@ SVGRenderer.prototype = {
 	 * @param {Object} color The color or config object
 	 */
 	color: function (color, elem, prop) {
-		var renderer = this,
-			colorObject,
-			regexRgba = /^rgba/,
-			gradName;
-		
-		// Apply linear or radial gradients
+		var colorObject,
+			regexRgba = /^rgba/;
 		if (color && color.linearGradient) {
-			gradName = 'linearGradient';
-		} else if (color && color.radialGradient) {
-			gradName = 'radialGradient';
-		}
-		
-		if (gradName) {
-			var gradAttr = color[gradName],
+			var renderer = this,
+				linearGradient = color[LINEAR_GRADIENT],
+				relativeToShape = !isArray(linearGradient), // keep backwards compatibility
+				id,
+				gradients = renderer.gradients,
 				gradientObject,
+				x1 = linearGradient.x1 || linearGradient[0] || 0,
+				y1 = linearGradient.y1 || linearGradient[1] || 0,
+				x2 = linearGradient.x2 || linearGradient[2] || 0,
+				y2 = linearGradient.y2 || linearGradient[3] || 0,
 				stopColor,
 				stopOpacity,
-				radialReference = elem.radialReference;
-			
-			// If the gradient with the same setup is already created, gradAttr.id is already
-			// set. If else, create it now.
-			if (!gradAttr.id) {
-				
-				// Keep < 2.2 kompatibility
-				if (isArray(gradAttr)) {
-					color[gradName] = gradAttr = {
-						x1: gradAttr[0],
-						y1: gradAttr[1],
-						x2: gradAttr[2],
-						y2: gradAttr[3],
-						gradientUnits: 'userSpaceOnUse'
-					};				
-				}
-				
-				// Correct the radial gradient for the radial reference system
-				if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-					extend(gradAttr, {
-						cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-						cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-						r: gradAttr.r * radialReference[2],
-						gradientUnits: 'userSpaceOnUse'
-					});
-				}
+				// Create a unique key in order to reuse gradient objects. #671.
+				key = [relativeToShape, x1, y1, x2, y2, color.stops.join(',')].join(',');
 
-				// Set the id and create the element
-				gradAttr.id = PREFIX + idCounter++;
-				gradientObject = renderer.createElement(gradName)
-					.attr(gradAttr)
+			// If the gradient with the same setup is already created, reuse it
+			if (gradients[key]) {
+				id = attr(gradients[key].element, 'id');
+
+			// If not, create a new one and keep the reference.
+			} else {
+				id = PREFIX + idCounter++;
+				gradientObject = renderer.createElement(LINEAR_GRADIENT)
+					.attr(extend({
+						id: id,
+						x1: x1,
+						y1: y1,
+						x2: x2,
+						y2: y2
+					}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
 					.add(renderer.defs);
-				
-				
+
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
 				each(color.stops, function (stop) {
@@ -1781,11 +1756,14 @@ SVGRenderer.prototype = {
 					// Add the stop element to the gradient
 					gradientObject.stops.push(stopObject);
 				});
+
+				// Keep a reference to the gradient object so it is possible to reuse it and
+				// destroy it later
+				gradients[key] = gradientObject;
 			}
 
-			// Return the reference to the gradient object
-			return 'url(' + renderer.url + '#' + gradAttr.id + ')';
-			
+			return 'url(' + this.url + '#' + id + ')';
+
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
 			colorObject = Color(color);
@@ -1943,6 +1921,23 @@ SVGRenderer.prototype = {
 	},
 
 	/**
+	 * Utility to return the baseline offset and total line height from the font size
+	 */
+	fontMetrics: function (fontSize) {
+		fontSize = pInt(fontSize || 11);
+		
+		// Empirical values found by comparing font size and bounding box height.
+		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
+		var lineHeight = fontSize < 24 ? fontSize + 4 : mathRound(fontSize * 1.2),
+			baseline = mathRound(lineHeight * 0.8);
+		
+		return {
+			h: lineHeight, 
+			b: baseline
+		};
+	},
+
+	/**
 	 * Add a label, a text item that can hold a colored or gradient background
 	 * as well as a border and shadow.
 	 * @param {string} str
@@ -1952,11 +1947,14 @@ SVGRenderer.prototype = {
 	 * @param {Number} anchorX In case the shape has a pointer, like a flag, this is the
 	 *    coordinates it should be pinned to
 	 * @param {Number} anchorY
+	 * @param {Boolean} baseline Whether to position the label relative to the text baseline,
+	 *    like renderer.text, or to the upper border of the rectangle. 
+	 * @param {String} className Class name for the group 
 	 */
-	label: function (str, x, y, shape, anchorX, anchorY, useHTML) {
+	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
 		var renderer = this,
-			wrapper = renderer.g(),
+			wrapper = renderer.g(className),
 			text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
@@ -1972,6 +1970,7 @@ SVGRenderer.prototype = {
 			wrapperY,
 			crispAdjust = 0,
 			deferredAttr = {},
+			baselineOffset,
 			attrSetters = wrapper.attrSetters;
 
 		/**
@@ -1980,16 +1979,25 @@ SVGRenderer.prototype = {
 		 * box and reflect it in the border box.
 		 */
 		function updateBoxSize() {
+			var boxY,
+				style = text.element.style;
+				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
 				text.getBBox(true);
 			wrapper.width = (width || bBox.width) + 2 * padding;
 			wrapper.height = (height || bBox.height) + 2 * padding;
-
+			
+			// update the label-scoped y offset
+			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
+			
+			
 			// create the border box if it is not already present
 			if (!box) {
+				boxY = baseline ? -baselineOffset : 0;
+			
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, 0, 0, wrapper.width, wrapper.height) :
-					renderer.rect(0, 0, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+					renderer.symbol(shape, 0, boxY, wrapper.width, wrapper.height) :
+					renderer.rect(0, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 				box.add(wrapper);
 			}
 
@@ -2008,8 +2016,10 @@ SVGRenderer.prototype = {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = padding,
-				style = wrapper.element.style,
-				y = padding + mathRound(pInt((style && style.fontSize) || 11) * 1.2);
+				y;
+			
+			// determin y based on the baseline
+			y = baseline ? 0 : baselineOffset;
 
 			// compensate for alignment
 			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
@@ -2072,8 +2082,10 @@ SVGRenderer.prototype = {
 			return false;
 		};
 		attrSetters.padding = function (value) {
-			padding = value;
-			updateTextPadding();
+			if (defined(value) && value !== padding) {
+				padding = value;
+				updateTextPadding();
+			}
 
 			return false;
 		};
@@ -2083,7 +2095,7 @@ SVGRenderer.prototype = {
 			align = value;
 			return false; // prevent setting text-anchor on the group
 		};
-
+		
 		// apply these to the box and the text alike
 		attrSetters.text = function (value, key) {
 			text.attr(key, value);
@@ -2112,18 +2124,18 @@ SVGRenderer.prototype = {
 			boxAttr(key, value - wrapperY);
 			return false;
 		};
-
+		
 		// rename attributes
 		attrSetters.x = function (value) {
-			wrapperX = value;
-			wrapperX -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding);
-
-			wrapper.attr('translateX', mathRound(wrapperX));
+			value -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding);
+			wrapperX = wrapper.x = mathRound(value); // wrapper.x is for animation getter
+			
+			wrapper.attr('translateX', wrapperX);
 			return false;
 		};
 		attrSetters.y = function (value) {
-			wrapperY = value;
-			wrapper.attr('translateY', mathRound(value));
+			wrapperY = wrapper.y = mathRound(value);
+			wrapper.attr('translateY', value);
 			return false;
 		};
 

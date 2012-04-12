@@ -764,8 +764,8 @@ Axis.prototype = {
 		max = axis.max;
 
 		if (isLog) {
-			if (!secondPass && axis.min <= 0) {
-				error(10); // Can't plot negative values on log axis
+			if (!secondPass && mathMin(min, axis.dataMin) <= 0) {
+				error(10, 1); // Can't plot negative values on log axis
 			}
 			axis.min = min = log2lin(min);
 			axis.max = max = log2lin(max);
@@ -863,12 +863,6 @@ Axis.prototype = {
 			axis.tickPositions = tickPositions;
 		}
 
-		// post process positions, used in ordinal axes in Highstock. 
-		// TODO: combine with getNonLinearTimeTicks
-		fireEvent(axis, 'afterSetTickPositions', {
-			tickPositions: tickPositions
-		});
-
 		if (!isLinked) {
 
 			// reset min/max or remove extremes based on start/end on tick
@@ -944,11 +938,11 @@ Axis.prototype = {
 	 */
 	setScale: function () {
 		var axis = this,
-			chart = axis.chart,
 			stacks = axis.stacks,
 			type,
 			i,
-			isDirtyData;
+			isDirtyData,
+			isDirtyAxisLength;
 
 		axis.oldMin = axis.min;
 		axis.oldMax = axis.max;
@@ -956,7 +950,8 @@ Axis.prototype = {
 
 		// set the new axisLength
 		axis.len = axis.horiz ? axis.width : axis.height;
-		
+		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
+
 		// is there new data?
 		each(axis.series, function (series) {
 			if (series.isDirtyData || series.isDirty ||
@@ -966,7 +961,7 @@ Axis.prototype = {
 		});
 
 		// do we really need to go through all this?
-		if (axis.len !== axis.oldAxisLength || isDirtyData || axis.isLinked ||
+		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
 
 			// get data extremes if needed
@@ -990,7 +985,7 @@ Axis.prototype = {
 
 			// Mark as dirty if it is not already set to dirty and extremes have changed. #595.
 			if (!axis.isDirty) {
-				axis.isDirty = chart.isDirtyBox || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
+				axis.isDirty = isDirtyAxisLength || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
 			}
 		}
 	},
@@ -1022,6 +1017,9 @@ Axis.prototype = {
 
 			axis.userMin = newMin;
 			axis.userMax = newMax;
+
+			// Mark for running afterSetExtremes
+			axis.isDirtyExtremes = true;
 
 			// redraw
 			if (redraw) {
@@ -1331,8 +1329,13 @@ Axis.prototype = {
 				});
 			}
 
-			// major ticks
-			each(tickPositions, function (pos, i) {
+			// Major ticks. Pull out the first item and render it last so that
+			// we can get the position of the neighbour label. #808.
+			each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
+
+				// Reorganize the indices
+				i = (i === tickPositions.length - 1) ? 0 : i + 1;
+
 				// linked axes need an extra check to find out if
 				if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
 
@@ -1496,7 +1499,7 @@ Axis.prototype = {
 
 		// hide tooltip and hover states
 		if (chart.tracker.resetTracker) {
-			chart.tracker.resetTracker();
+			chart.tracker.resetTracker(true);
 		}
 
 		// render the axis

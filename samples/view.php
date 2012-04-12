@@ -6,6 +6,44 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z\-]+$/', $path)) {
 
 $i = (int)$_GET['i'];
 $next = $i + 1;
+
+
+function getResources() {
+	global $path;
+	
+	// No idea why file_get_contents doesn't work here...
+	ob_start();
+	include("$path/demo.details");
+	$s = ob_get_clean();
+	
+	$html = '';
+	if ($s) {
+		$lines = explode("\n", $s);
+		
+		$run = false;
+		foreach ($lines as $line) {
+			if ($run && substr(trim($line), 0, 1) != '-') {
+				$run = false;
+			}
+			
+			if ($run) {
+				$url = trim($line, " -\r");
+				
+				if (preg_match('/\.js$/', $url)) {
+					$html .= "<script src='$url'></script>\n";
+				} elseif (preg_match('/\.css$/', $url)) {
+					$html .= "<link rel='stylesheet' href='$url'></script>\n";
+				}
+			}
+			
+			
+			if (trim($line) === 'resources:') {
+				$run = true;
+			}
+		}
+	}
+	return $html;
+}
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -13,6 +51,7 @@ $next = $i + 1;
 		<title>Highstock Example</title>
 		
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<?php echo getResources(); ?>
 		<script type="text/javascript">
 		<?php @include("$path/demo.js"); ?>
 		</script>
@@ -67,23 +106,38 @@ $next = $i + 1;
 		</script>
 		
 		<style type="text/css">
-			h1 {
-				text-align: center;
+			.top-bar {
+				color: white; 
+				font-family: Arial, sans-serif; 
+				font-size: 0.8em; 
+				padding: 0.5em; 
+				height: 3.5em;
+				background: #57544A;
+				background: -webkit-linear-gradient(top, #57544A, #37342A); 
+				background: -moz-linear-gradient(top, #57544A, #37342A);
+				box-shadow: 0px 0px 8px #888;
 			}
 		</style>
 		
 	</head>
 	<body style="margin: 0">
 		
-		<div style="text-align: center; background: #57544A; color: silver; padding: 0.3em">
-			<button id="next" disabled="disabled">Next</button>
-			<button id="reload" style="margin-left: 1em">Reload</button>
-			<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
-				href="http://jsfiddle.net/gh/get/jquery/1.6/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
-				target="_blank">» jsFiddle</a>
+		<div class="top-bar">
+			
+			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2> 
+			
+			<div style="text-align: center">
+				<button id="next" disabled="disabled">Next</button>
+				<button id="reload" style="margin-left: 1em">Reload</button>
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
+					href="../compare-svg/view.php?path=<?php echo $path ?>">Compare</a>
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
+					href="http://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+					target="_blank">» jsFiddle</a>
+			</div>
 		</div>
 		<div style="margin: 1em">
-		<h1><?php echo ($next - 1) ?>. /samples/<?php echo $path ?></h1> 
+		
 		<?php @include("$path/demo.html"); ?>
 		</div>
 		

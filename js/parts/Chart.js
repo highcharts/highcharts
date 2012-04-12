@@ -4,12 +4,13 @@
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-function Chart(options, callback) {
+function Chart(userOptions, callback) {
 	// Handle regular options
-	var seriesOptions = options.series; // skip merging data points to increase performance
-	options.series = null;
-	options = merge(defaultOptions, options); // do the merge
-	options.series = seriesOptions; // set back the series data
+	var options,
+		seriesOptions = userOptions.series; // skip merging data points to increase performance
+	userOptions.series = null;
+	options = merge(defaultOptions, userOptions); // do the merge
+	options.series = userOptions.series = seriesOptions; // set back the series data
 
 	var optionsChart = options.chart,
 		optionsMargin = optionsChart.margin,
@@ -240,9 +241,16 @@ Chart.prototype = {
 
 			// redraw axes
 			each(axes, function (axis) {
-				fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751					
-				if (axis.isDirty) {					
-					axis.redraw();					
+				
+				// Fire 'afterSetExtremes' only if extremes are set
+				if (axis.isDirtyExtremes) { // #821
+					axis.isDirtyExtremes = false;
+					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
+				}
+								
+				if (axis.isDirty || isDirtyBox) {					
+					axis.redraw();
+					isDirtyBox = true; // #792
 				}
 			});
 
@@ -274,9 +282,9 @@ Chart.prototype = {
 		});
 
 
-		// hide tooltip and hover states
+		// move tooltip or reset
 		if (tracker && tracker.resetTracker) {
-			tracker.resetTracker();
+			tracker.resetTracker(true);
 		}
 
 		// redraw if canvas
@@ -494,10 +502,11 @@ Chart.prototype = {
 	 * @param {Object} event
 	 */
 	zoom: function (event) {
-		// add button to reset selection
 		var chart = this,
-			animate = chart.pointCount < 100,
-			hasZoomed;
+			optionsChart = chart.options.chart;
+
+		// add button to reset selection
+		var hasZoomed;
 
 		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
 			chart.showResetZoom();
@@ -525,7 +534,9 @@ Chart.prototype = {
 
 		// Redraw
 		if (hasZoomed) {
-			chart.redraw(true, animate);
+			chart.redraw(
+				pick(optionsChart.animation, chart.pointCount < 100) // animation
+			);
 		}
 	},
 
@@ -599,7 +610,7 @@ Chart.prototype = {
 				.attr({
 					align: chartTitleOptions.align,
 					'class': PREFIX + name,
-					zIndex: 1
+					zIndex: chartTitleOptions.zIndex || 4
 				})
 				.css(chartTitleOptions.style)
 				.add()
@@ -855,7 +866,7 @@ Chart.prototype = {
 		function reflow(e) {
 			var width = optionsChart.width || renderTo.offsetWidth,
 				height = optionsChart.height || renderTo.offsetHeight,
-				target = e.target;
+				target = e ? e.target : win; // #805 - MooTools doesn't supply e
 				
 			// Width and height checks for display:none. Target is doc in IE8 and Opera,
 			// win in Firefox, Chrome and IE9.

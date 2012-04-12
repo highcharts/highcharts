@@ -11,7 +11,7 @@ extend(defaultOptions, {
 			height: 16,
 			padding: 1,
 			r: 0,
-			zIndex: 10 // #484
+			zIndex: 7 // #484, #852
 		//	states: {
 		//		hover: {},
 		//		select: {}
@@ -87,11 +87,17 @@ RangeSelector.prototype = {
 			buttons = rangeSelector.buttons,
 			baseAxis = chart.xAxis[0],
 			extremes = baseAxis && baseAxis.getExtremes(),
-			now,
-			dataMin = extremes && extremes.dataMin,
-			dataMax = extremes && extremes.dataMax,
+			navAxis = chart.scroller && chart.scroller.xAxis,
+			navExtremes = navAxis && navAxis.getExtremes && navAxis.getExtremes(),
+			navDataMin = navExtremes && navExtremes.dataMin,
+			navDataMax = navExtremes && navExtremes.dataMax,
+			baseDataMin = extremes && extremes.dataMin,
+			baseDataMax = extremes && extremes.dataMax,
+			dataMin = mathMin(baseDataMin, pick(navDataMin, baseDataMin)),
+			dataMax = mathMax(baseDataMax, pick(navDataMax, baseDataMax)),
 			newMin,
 			newMax = baseAxis && mathMin(extremes.max, dataMax),
+			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
 			count = rangeOptions.count,

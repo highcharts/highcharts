@@ -338,6 +338,11 @@
 			 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 			 */
 			xAxis.postProcessTickInterval = function (tickInterval) {
+				// TODO: http://jsfiddle.net/highcharts/FQm4E/1/
+				// This is a case where this algorithm doesn't work optimally. In this case, the 
+				// tick labels are spread out per week, but all the gaps reside within weeks. So 
+				// we have a situation where the labels are courser than the ordinal gaps, and 
+				// thus the tick interval should not be altered				
 				var ordinalSlope = this.ordinalSlope;
 				
 				return ordinalSlope ? 
@@ -362,7 +367,8 @@
 					info,
 					posLength,
 					outsideMax,
-					groupPositions = [];
+					groupPositions = [],
+					tickPixelIntervalOption = xAxis.options.tickPixelInterval;
 					
 				// The positions are not always defined, for example for ordinal positions when data
 				// has regular interval
@@ -379,9 +385,10 @@
 					outsideMax = end && positions[end - 1] > max;
 					
 					if (positions[end] < min) { // Set the last position before min
-						start = end;
+						start = end;						
+					}
 					
-					} else if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
+					if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
 						
 						// For each segment, calculate the tick positions from the getTimeTicks utility
 						// function. The interval will be the same regardless of how long the segment is.
@@ -424,41 +431,53 @@
 				}
 				
 				// Save the info
-				groupPositions.info = info;				
+				groupPositions.info = info;
 				
 				
-				// Return it
-				return groupPositions;
 				
-			};
-			
-			/**
-			 * Post process tick positions. The tickPositions array is altered. Don't show ticks 
-			 * within a gap in the ordinal axis, where the space between
-			 * two points is greater than a portion of the tick pixel interval
-			 */
-			addEvent(xAxis, 'afterSetTickPositions', function (e) {
-				
-				var options = xAxis.options,
-					tickPixelIntervalOption = options.tickPixelInterval,
-					tickPositions = e.tickPositions;
-				
-				if (xAxis.ordinalPositions && defined(tickPixelIntervalOption)) { // check for squashed ticks
-					var i = tickPositions.length,
+				// Don't show ticks within a gap in the ordinal axis, where the space between
+				// two points is greater than a portion of the tick pixel interval
+				if (findHigherRanks && defined(tickPixelIntervalOption)) { // check for squashed ticks
+					
+					var length = groupPositions.length,
+						i = length,
 						itemToRemove,
 						translated,
+						translatedArr = [],
 						lastTranslated,
-						tickInfo = tickPositions.info,
-						higherRanks = tickInfo ? tickInfo.higherRanks : [];
-					
-					while (i--) {
-						translated = xAxis.translate(tickPositions[i]);
+						medianDistance,
+						distance,
+						distances = [];
 						
-						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right 
-						if (lastTranslated && lastTranslated - translated < tickPixelIntervalOption * 0.6) {
+					// Find median pixel distance in order to keep a reasonably even distance between
+					// ticks (#748)
+					while (i--) {
+						translated = xAxis.translate(groupPositions[i]);
+						if (lastTranslated) {
+							distances[i] = lastTranslated - translated;
+						}
+						translatedArr[i] = lastTranslated = translated; 
+					}
+					distances.sort();
+					medianDistance = distances[mathFloor(distances.length / 2)];
+					if (medianDistance < tickPixelIntervalOption * 0.6) {
+						medianDistance = null;
+					}
+					
+					// Now loop over again and remove ticks where needed
+					i = groupPositions[length - 1] > max ? length - 1 : length; // #817
+					lastTranslated = undefined;
+					while (i--) {
+						translated = translatedArr[i];
+						distance = lastTranslated - translated;
+	
+						// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right,
+						// but not if it is close to the median distance (#748).
+						if (lastTranslated && distance < tickPixelIntervalOption * 0.8 && 
+								(medianDistance === null || distance < medianDistance * 0.8)) {
 							
 							// Is this a higher ranked position with a normal position to the right?
-							if (higherRanks[tickPositions[i]] && !higherRanks[tickPositions[i + 1]]) {
+							if (higherRanks[groupPositions[i]] && !higherRanks[groupPositions[i + 1]]) {
 								
 								// Yes: remove the lower ranked neighbour to the right
 								itemToRemove = i + 1;
@@ -470,14 +489,16 @@
 								itemToRemove = i;
 							}
 							
-							tickPositions.splice(itemToRemove, 1);
+							groupPositions.splice(itemToRemove, 1);
 							
 						} else {
 							lastTranslated = translated;
 						}
 					}
 				}
-			});
+				
+				return groupPositions;
+			};
 			
 			
 			/**

@@ -125,7 +125,8 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			index = chart.inverted ? e.chartY : e.chartX - chart.plotLeft; // wtf?
+			// the index in the tooltipPoints array, corresponding to pixel position in plot area
+			index = chart.inverted ? chart.plotHeight + chart.plotTop - e.chartY : e.chartX - chart.plotLeft;
 
 		// shared tooltip
 		if (chart.tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -178,26 +179,37 @@ MouseTracker.prototype = {
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
 	 */
-	resetTracker: function () {
+	resetTracker: function (allowMove) {
 		var mouseTracker = this,
 			chart = mouseTracker.chart,
 			hoverSeries = chart.hoverSeries,
-			hoverPoint = chart.hoverPoint;
+			hoverPoint = chart.hoverPoint,
+			tooltipPoints = chart.hoverPoints || hoverPoint,
+			tooltip = chart.tooltip;
 
-		if (hoverPoint) {
-			hoverPoint.onMouseOut();
+		// Just move the tooltip, #349
+		if (allowMove && tooltip && tooltipPoints) {
+			tooltip.refresh(tooltipPoints);
+
+		// Full reset
+		} else {
+
+			if (hoverPoint) {
+				hoverPoint.onMouseOut();
+			}
+
+			if (hoverSeries) {
+				hoverSeries.onMouseOut();
+			}
+
+			if (tooltip) {
+				tooltip.hide();
+				tooltip.hideCrosshairs();
+			}
+
+			mouseTracker.hoverX = null;
+
 		}
-
-		if (hoverSeries) {
-			hoverSeries.onMouseOut();
-		}
-
-		if (chart.tooltip) {
-			chart.tooltip.hide();
-			chart.tooltip.hideCrosshairs();
-		}
-
-		mouseTracker.hoverX = null;
 	},
 
 	/**
@@ -268,6 +280,7 @@ MouseTracker.prototype = {
 
 			css(chart.container, { cursor: 'auto' });
 
+			chart.cancelClick = hasDragged; // #370
 			chart.mouseIsDown = hasDragged = false;
 			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
 		}
@@ -276,13 +289,15 @@ MouseTracker.prototype = {
 		 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
 		 */
 		mouseTracker.hideTooltipOnMouseMove = function (e) {
-			var pageX = defined(e.pageX) ? e.pageX : e.page.x, // In mootools the event is wrapped and the page x/y position is named e.page.x
-				pageY = defined(e.pageX) ? e.pageY : e.page.y; // Ref: http://mootools.net/docs/core/Types/DOMEvent
 
+			// Get e.pageX and e.pageY back in MooTools
+			washMouseEvent(e);
+
+			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition &&
-					!chart.isInsidePlot(pageX - mouseTracker.chartPosition.left - chart.plotLeft,
-						pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
-				mouseTracker.resetTracker();
+				!chart.isInsidePlot(e.pageX - mouseTracker.chartPosition.left - chart.plotLeft,
+				e.pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
+					mouseTracker.resetTracker();
 			}
 		};
 
@@ -308,6 +323,7 @@ MouseTracker.prototype = {
 
 			// record the start position
 			chart.mouseIsDown = true;
+			chart.cancelClick = false;
 			chart.mouseDownX = mouseTracker.mouseDownX = e.chartX;
 			mouseTracker.mouseDownY = e.chartY;
 
@@ -477,8 +493,9 @@ MouseTracker.prototype = {
 			e.cancelBubble = true; // IE specific
 
 
-			if (!hasDragged) {
-				if (hoverPoint && attr(e.target, 'isTracker')) {
+			if (!chart.cancelClick) {
+				// Detect clicks on trackers or tracker groups, #783
+				if (hoverPoint && (attr(e.target, 'isTracker') || attr(e.target.parentNode, 'isTracker'))) {
 					var plotX = hoverPoint.plotX,
 						plotY = hoverPoint.plotY;
 
@@ -509,8 +526,6 @@ MouseTracker.prototype = {
 
 
 			}
-			// reset mouseIsDown and hasDragged
-			hasDragged = false;
 		};
 
 	},
