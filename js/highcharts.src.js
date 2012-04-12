@@ -8741,8 +8741,8 @@ Legend.prototype = {
 		legend.legendHeight = legendHeight = legend.lastItemY + legend.itemHeight;
 
 		if (legendBorderWidth || legendBackgroundColor) {
-			legend.legendWidth = legendWidth += padding;
-			legend.legendHeight = legendHeight += padding;
+			legendWidth += padding;
+			legendHeight += padding;
 
 			if (!box) {
 				legend.box = box = renderer.rect(
@@ -8792,8 +8792,8 @@ Legend.prototype = {
 
 		if (allItems.length) {
 			legendGroup.align(extend(options, {
-				width: legendWidth,
-				height: legendHeight
+				width: legend.legendWidth,
+				height: legend.legendHeight
 			}), true, chart.spacingBox);
 		}
 
