@@ -398,14 +398,15 @@ var PieSeries = {
 			if (graphic) {
 				graphic.animate(shapeArgs);
 			} else {
-				point.graphic =
-					renderer.arc(shapeArgs)
+				point.graphic = graphic = renderer.arc(shapeArgs)
+					.setRadialReference(series.center)
 					.attr(extend(
 						point.pointAttr[NORMAL_STATE],
 						{ 'stroke-linejoin': 'round' }
 					))
 					.add(point.group)
 					.shadow(shadow, shadowGroup);
+				
 			}
 
 			// detect point specific visibility

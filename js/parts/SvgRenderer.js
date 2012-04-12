@@ -416,6 +416,16 @@ SVGElement.prototype = {
 		this.element['on' + eventType] = fn;
 		return this;
 	},
+	
+	/**
+	 * Set the coordinates needed to draw a consistent radial gradient across
+	 * pie slices regardless of positioning inside the chart. The format is
+	 * [centerX, centerY, diameter] in pixels.
+	 */
+	setRadialReference: function(coordinates) {
+		this.element.radialReference = coordinates;
+		return this;
+	},
 
 
 	/**
@@ -1699,41 +1709,57 @@ SVGRenderer.prototype = {
 	 * @param {Object} color The color or config object
 	 */
 	color: function (color, elem, prop) {
-		var colorObject,
-			regexRgba = /^rgba/;
+		var renderer = this,
+			colorObject,
+			regexRgba = /^rgba/,
+			gradName;
+		
+		// Apply linear or radial gradients
 		if (color && color.linearGradient) {
-			var renderer = this,
-				linearGradient = color[LINEAR_GRADIENT],
-				relativeToShape = !isArray(linearGradient), // keep backwards compatibility
-				id,
-				gradients = renderer.gradients,
+			gradName = 'linearGradient';
+		} else if (color && color.radialGradient) {
+			gradName = 'radialGradient';
+		}
+		
+		if (gradName) {
+			var gradAttr = color[gradName],
 				gradientObject,
-				x1 = linearGradient.x1 || linearGradient[0] || 0,
-				y1 = linearGradient.y1 || linearGradient[1] || 0,
-				x2 = linearGradient.x2 || linearGradient[2] || 0,
-				y2 = linearGradient.y2 || linearGradient[3] || 0,
 				stopColor,
 				stopOpacity,
-				// Create a unique key in order to reuse gradient objects. #671.
-				key = [relativeToShape, x1, y1, x2, y2, color.stops.join(',')].join(',');
+				radialReference = elem.radialReference;
+			
+			// If the gradient with the same setup is already created, gradAttr.id is already
+			// set. If else, create it now.
+			if (!gradAttr.id) {
+				
+				// Keep < 2.2 kompatibility
+				if (isArray(gradAttr)) {
+					color[gradName] = gradAttr = {
+						x1: gradAttr[0],
+						y1: gradAttr[1],
+						x2: gradAttr[2],
+						y2: gradAttr[3],
+						gradientUnits: 'userSpaceOnUse'
+					};				
+				}
+				
+				// Correct the radial gradient for the radial reference system
+				if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+					extend(gradAttr, {
+						cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+						cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+						r: gradAttr.r * radialReference[2],
+						gradientUnits: 'userSpaceOnUse'
+					});
+				}
 
-			// If the gradient with the same setup is already created, reuse it
-			if (gradients[key]) {
-				id = attr(gradients[key].element, 'id');
-
-			// If not, create a new one and keep the reference.
-			} else {
-				id = PREFIX + idCounter++;
-				gradientObject = renderer.createElement(LINEAR_GRADIENT)
-					.attr(extend({
-						id: id,
-						x1: x1,
-						y1: y1,
-						x2: x2,
-						y2: y2
-					}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
+				// Set the id and create the element
+				gradAttr.id = PREFIX + idCounter++;
+				gradientObject = renderer.createElement(gradName)
+					.attr(gradAttr)
 					.add(renderer.defs);
-
+				
+				
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
 				each(color.stops, function (stop) {
@@ -1755,14 +1781,11 @@ SVGRenderer.prototype = {
 					// Add the stop element to the gradient
 					gradientObject.stops.push(stopObject);
 				});
-
-				// Keep a reference to the gradient object so it is possible to reuse it and
-				// destroy it later
-				gradients[key] = gradientObject;
 			}
 
-			return 'url(' + this.url + '#' + id + ')';
-
+			// Return the reference to the gradient object
+			return 'url(' + renderer.url + '#' + gradAttr.id + ')';
+			
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
 			colorObject = Color(color);
