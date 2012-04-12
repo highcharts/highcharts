@@ -3950,8 +3950,8 @@ SVGRenderer.prototype = {
 				boxY = baseline ? -baselineOffset : 0;
 			
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, 0, boxY, wrapper.width, wrapper.height) :
-					renderer.rect(0, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+					renderer.symbol(shape, -padding, boxY, wrapper.width, wrapper.height) :
+					renderer.rect(-padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 				box.add(wrapper);
 			}
 
@@ -3969,7 +3969,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = padding,
+				x = 0,
 				y;
 			
 			// determin y based on the baseline
@@ -4081,8 +4081,9 @@ SVGRenderer.prototype = {
 		
 		// rename attributes
 		attrSetters.x = function (value) {
-			value -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding);
-			wrapperX = wrapper.x = mathRound(value); // wrapper.x is for animation getter
+			wrapper.x = value; // for animation getter
+			value -= { left: 0, center: 0.5, right: 1 }[align] * (width || bBox.width);
+			wrapperX = mathRound(value); 
 			
 			wrapper.attr('translateX', wrapperX);
 			return false;
