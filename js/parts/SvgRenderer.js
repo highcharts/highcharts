@@ -62,6 +62,7 @@ SVGElement.prototype = {
 			nodeName = element.nodeName,
 			renderer = wrapper.renderer,
 			skipAttr,
+			titleNode,
 			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
@@ -197,9 +198,12 @@ SVGElement.prototype = {
 
 					// Title requires a subnode, #431
 					} else if (key === 'title') {
-						var title = doc.createElementNS(SVG_NS, 'title');
-						title.appendChild(doc.createTextNode(value));
-						element.appendChild(title);
+						titleNode = element.getElementsByTagName('title')[0];
+						if (!titleNode) {
+							titleNode = doc.createElementNS(SVG_NS, 'title');
+							element.appendChild(titleNode);
+						}
+						titleNode.textContent = value;
 					}
 
 					// jQuery animate changes case
