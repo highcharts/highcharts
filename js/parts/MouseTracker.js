@@ -68,7 +68,7 @@ MouseTracker.prototype = {
 		this.chartPosition = chartPosition = offset(this.chart.container);
 
 		// chartX and chartY
-		if (isIE) { // IE including IE9 that has pageX but in a different meaning
+		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
 			chartX = e.x;
 			chartY = e.y;
 		} else {

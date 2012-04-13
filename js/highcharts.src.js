@@ -1934,6 +1934,7 @@ SVGElement.prototype = {
 			nodeName = element.nodeName,
 			renderer = wrapper.renderer,
 			skipAttr,
+			titleNode,
 			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
@@ -2069,9 +2070,12 @@ SVGElement.prototype = {
 
 					// Title requires a subnode, #431
 					} else if (key === 'title') {
-						var title = doc.createElementNS(SVG_NS, 'title');
-						title.appendChild(doc.createTextNode(value));
-						element.appendChild(title);
+						titleNode = element.getElementsByTagName('title')[0];
+						if (!titleNode) {
+							titleNode = doc.createElementNS(SVG_NS, 'title');
+							element.appendChild(titleNode);
+						}
+						titleNode.textContent = value;
 					}
 
 					// jQuery animate changes case
@@ -3856,7 +3860,7 @@ SVGRenderer.prototype = {
 				.add(wrapper),
 			box,
 			bBox,
-			align = 'left',
+			alignFactor = 0,
 			padding = 3,
 			width,
 			height,
@@ -3890,8 +3894,8 @@ SVGRenderer.prototype = {
 				boxY = baseline ? -baselineOffset : 0;
 			
 				wrapper.box = box = shape ?
-					renderer.symbol(shape, 0, boxY, wrapper.width, wrapper.height) :
-					renderer.rect(0, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+					renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
+					renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 				box.add(wrapper);
 			}
 
@@ -3909,7 +3913,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = padding,
+				x = padding * (1 - alignFactor),
 				y;
 			
 			// determin y based on the baseline
@@ -3986,7 +3990,7 @@ SVGRenderer.prototype = {
 
 		// change local variable and set attribue as well
 		attrSetters.align = function (value) {
-			align = value;
+			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
 			return false; // prevent setting text-anchor on the group
 		};
 		
@@ -4021,8 +4025,9 @@ SVGRenderer.prototype = {
 		
 		// rename attributes
 		attrSetters.x = function (value) {
-			value -= { left: 0, center: 0.5, right: 1 }[align] * ((width || bBox.width) + padding);
-			wrapperX = wrapper.x = mathRound(value); // wrapper.x is for animation getter
+			wrapper.x = value; // for animation getter
+			value -= alignFactor * ((width || bBox.width) + padding);
+			wrapperX = mathRound(value); 
 			
 			wrapper.attr('translateX', wrapperX);
 			return false;
@@ -7860,7 +7865,7 @@ MouseTracker.prototype = {
 		this.chartPosition = chartPosition = offset(this.chart.container);
 
 		// chartX and chartY
-		if (isIE) { // IE including IE9 that has pageX but in a different meaning
+		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
 			chartX = e.x;
 			chartY = e.y;
 		} else {
@@ -9502,7 +9507,7 @@ Chart.prototype = {
 			css(renderToClone, {
 				position: ABSOLUTE,
 				top: '-9999px',
-				display: ''
+				display: 'block' // #833
 			});
 			doc.body.appendChild(renderToClone);
 		}

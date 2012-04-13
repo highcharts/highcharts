@@ -675,7 +675,7 @@ Chart.prototype = {
 			css(renderToClone, {
 				position: ABSOLUTE,
 				top: '-9999px',
-				display: ''
+				display: 'block' // #833
 			});
 			doc.body.appendChild(renderToClone);
 		}
