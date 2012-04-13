@@ -197,9 +197,19 @@ SVGElement.prototype = {
 
 					// Title requires a subnode, #431
 					} else if (key === 'title') {
-						var title = doc.createElementNS(SVG_NS, 'title');
-						title.appendChild(doc.createTextNode(value));
-						element.appendChild(title);
+						var found = false;
+						for (i = 0; i < element.childNodes.length; i++) {
+							if (element.childNodes[i].nodeName === 'title') {
+								element.childNodes[i].textContent = value;
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							var title = doc.createElementNS(SVG_NS, 'title');
+							title.appendChild(doc.createTextNode(value));
+							element.appendChild(title);
+						}
 					}
 
 					// jQuery animate changes case
