@@ -3218,10 +3218,15 @@ SVGRenderer.prototype = {
 	 * @param {Array} path An SVG path in array form
 	 */
 	path: function (path) {
-		return this.createElement('path').attr({
-			d: path,
+		var attr = {
 			fill: NONE
-		});
+		};
+		if (isArray(path)) {
+			attr.d = path;
+		} else if (isObject(path)) { // attributes
+			extend(attr, path);
+		}
+		return this.createElement('path').attr(attr);
 	},
 
 	/**
