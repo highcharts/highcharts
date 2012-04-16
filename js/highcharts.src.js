@@ -3032,8 +3032,15 @@ SVGRenderer.prototype = {
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
 			GET_COMPUTED_STYLE = 'getComputedStyle',
-			i = childNodes.length;
-
+			i = childNodes.length,
+			linePositions = [];
+			
+		// Needed in IE9 because it doesn't report tspan's offsetHeight (#893)
+		function getLineHeightByBBox(lineNo) {
+			linePositions[lineNo] = textNode.getBBox().height;
+			return mathRound(linePositions[lineNo] - (linePositions[lineNo - 1] || 0));
+		}
+		
 		// remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
@@ -3110,7 +3117,7 @@ SVGRenderer.prototype = {
 								pInt(win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height'));
 
 							if (!lineHeight || isNaN(lineHeight)) {
-								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
+								lineHeight = textLineHeight || lastLine.offsetHeight || getLineHeightByBBox(lineNo) || 18;
 							}
 							attr(tspan, 'dy', lineHeight);
 						}
