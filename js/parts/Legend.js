@@ -23,6 +23,8 @@ function Legend(chart) {
 	legend.itemMarginTop = itemMarginTop;
 	legend.padding = padding;
 	legend.initialItemX = padding;
+	legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
+	legend.maxItemWidth = 0;
 	legend.chart = chart;
 	//legend.allItems = UNDEFINED;
 	//legend.legendWidth = UNDEFINED;
@@ -178,7 +180,10 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			optionsChart = chart.options.chart,
+			spacingTop = optionsChart.spacingTop,
+			spacingBottom = optionsChart.spacingBottom;
 
 		if (!li) { // generate it once, later move it
 
@@ -266,6 +271,16 @@ Legend.prototype = {
 			legend.itemX = initialItemX;
 			legend.itemY += itemMarginTop + itemHeight + itemMarginBottom;
 		}
+
+		// If the item exceeds the height, start a new column
+		if (!horizontal && legend.itemY + options.y + itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
+			legend.itemY = legend.initialItemY;
+			legend.itemX += legend.maxItemWidth;
+			legend.maxItemWidth = 0;
+		}
+
+		// Set the edge positions
+		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
 		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
 
 		// cache the position of the newly generated or reordered items
@@ -306,7 +321,7 @@ Legend.prototype = {
 			legendBackgroundColor = options.backgroundColor;
 
 		legend.itemX = legend.initialItemX;
-		legend.itemY = padding - 5; // 5 is the number of pixels above the text
+		legend.itemY = legend.initialItemY;
 		legend.offsetWidth = 0;
 		legend.lastItemY = 0;
 
