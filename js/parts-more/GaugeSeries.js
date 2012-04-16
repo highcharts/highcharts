@@ -11,7 +11,7 @@
  * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
  * - Tooltip
  * - Should the gauge series be called angular gauge as opposed to linear gauges?
- * - POC with two axes - for example km/h and m/h. For this we need either an option to make it 
+ * - POC with two axes - for example km/h and m/h. For this we need an option to make it 
  *   circular. Axis extension could be loaded on axis init.
  * - Targets? Could perhaps be implemented as a separate series type, inherited from GaugeSeries
  */
@@ -285,6 +285,16 @@ var gaugeValueAxisMixin = {
 	
 };
 
+
+Axis.prototype.init = (function (func) {
+	return function (chart) {
+		if (chart.angular) {
+			console.log('TODO: extend the angular X and Y axis here instead of in bindAxes');	
+		}
+		func.apply(this, arguments);	
+	};
+}(Axis.prototype.init));
+
 /**
  * Add special cases within the Tick class' methods for radial axes. 
  * TODO: If we go for a RadialAxis class, add a RadialTick class too.
@@ -376,6 +386,10 @@ var gaugeXAxisMixin = {
 var GaugeSeries = {
 	type: 'gauge',
 	pointClass: GaugePoint,
+	
+	// chart.angular will be set to true when a gauge series is present, and this will
+	// be used on the axes
+	angular: true, 
 	
 	/**
 	 * Extend the bindAxes method by adding radial features to the axes

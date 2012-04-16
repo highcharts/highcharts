@@ -3,151 +3,191 @@
  * @param {Object} chart
  * @param {Object} options
  */
-function Axis(chart, userOptions) {
-	var options,
-		isXAxis = userOptions.isX,
-		axis = this;
-
-	// Flag, is the axis horizontal
-	axis.horiz = chart.inverted ? !isXAxis : isXAxis;
-
-	axis.opposite = userOptions.opposite; // needed in setOptions
-	axis.side = axis.horiz ?
-			(axis.opposite ? 0 : 2) : // top : bottom
-			(axis.opposite ? 1 : 3);  // right : left
-
-	// Store the merged options
-	axis.options = options = merge(
-			isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
-			[defaultTopAxisOptions, defaultRightAxisOptions,
-				defaultBottomAxisOptions, defaultLeftAxisOptions][axis.side],
-			userOptions
-		);
-
-	var type = options.type,
-		isDatetimeAxis = type === 'datetime';
-
-	axis.labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
-			function () {
-				var value = this.value,
-					dateTimeLabelFormat = this.dateTimeLabelFormat,
-					ret;
-
-				if (dateTimeLabelFormat) { // datetime axis
-					ret = dateFormat(dateTimeLabelFormat, value);
-
-				} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
-					ret = (value / 1000000) + 'M';
-
-				} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
-					ret = (value / 1000) + 'k';
-
-				} else if (!axis.categories && value >= 1000) { // add thousands separators
-					ret = numberFormat(value, 0);
-
-				} else { // strings (categories) and small numbers
-					ret = value;
-				}
-				return ret;
-			};
-
-	// Flag, stagger lines or not
-	axis.staggerLines = axis.horiz && options.labels.staggerLines;
-	axis.userOptions = userOptions;
-
-	//axis.axisTitleMargin = UNDEFINED,// = options.title.margin,
-	axis.minPixelPadding = 0;
-	//axis.ignoreMinPadding = UNDEFINED; // can be set to true by a column or bar series
-	//axis.ignoreMaxPadding = UNDEFINED;
-
-	axis.chart = chart;
-	axis.reversed = options.reversed;
-
-	// Initial categories
-	axis.categories = options.categories;
-
-	// Elements
-	//axis.axisGroup = UNDEFINED;
-	//axis.gridGroup = UNDEFINED;
-	//axis.axisTitle = UNDEFINED;
-	//axis.axisLine = UNDEFINED;
-
-	// Flag if type === logarithmic
-	axis.isLog = type === 'logarithmic';
-
-	// Flag, if axis is linked to another axis
-	axis.isLinked = defined(options.linkedTo);
-	// Linked axis.
-	//axis.linkedParent = UNDEFINED;
-
-	// Flag if type === datetime
-	axis.isDatetimeAxis = isDatetimeAxis;
-
-	// Flag if percentage mode
-	//axis.usePercentage = UNDEFINED;
-
-	// Flag, isXAxis
-	axis.isXAxis = isXAxis;
-	axis.xOrY = isXAxis ? 'x' : 'y';
-
-	// Tick positions
-	//axis.tickPositions = UNDEFINED; // array containing predefined positions
-	// Tick intervals
-	//axis.tickInterval = UNDEFINED;
-	//axis.minorTickInterval = UNDEFINED;
-
-	// Major ticks
-	axis.ticks = {};
-	// Minor ticks
-	axis.minorTicks = {};
-	//axis.tickAmount = UNDEFINED;
-
-	// List of plotLines/Bands
-	axis.plotLinesAndBands = [];
-
-	// Alternate bands
-	axis.alternateBands = {};
-
-	// Axis metrics
-	//axis.left = UNDEFINED;
-	//axis.top = UNDEFINED;
-	//axis.width = UNDEFINED;
-	//axis.height = UNDEFINED;
-	//axis.bottom = UNDEFINED;
-	//axis.right = UNDEFINED;
-	//axis.transA = UNDEFINED;
-	//axis.transB = UNDEFINED;
-	//axis.oldTransA = UNDEFINED;
-	axis.len = 0;
-	//axis.oldMin = UNDEFINED;
-	//axis.oldMax = UNDEFINED;
-	//axis.oldUserMin = UNDEFINED;
-	//axis.oldUserMax = UNDEFINED;
-	//axis.oldAxisLength = UNDEFINED;
-	axis.minRange = options.minRange || options.maxZoom;
-	axis.range = options.range;
-	axis.offset = options.offset || 0;
-
-
-	// Dictionary for stacks
-	axis.stacks = {};
-
-	// Min and max in the data
-	//axis.dataMin = UNDEFINED,
-	//axis.dataMax = UNDEFINED,
-
-	// The axis range
-	axis.max = null;
-	axis.min = null;
-
-	// User set min and max
-	//axis.userMin = UNDEFINED,
-	//axis.userMax = UNDEFINED,
-
-	axis.init();
+function Axis() {
+	this.init.apply(this, arguments);
 }
 
 Axis.prototype = {
+	/**
+	 * Initialize the axis
+	 */
+	init: function (chart, userOptions) {
+			
+		
+		var options,
+			isXAxis = userOptions.isX,
+			axis = this;
+	
+		// Flag, is the axis horizontal
+		axis.horiz = chart.inverted ? !isXAxis : isXAxis;
+	
+		axis.opposite = userOptions.opposite; // needed in setOptions
+		axis.side = axis.horiz ?
+				(axis.opposite ? 0 : 2) : // top : bottom
+				(axis.opposite ? 1 : 3);  // right : left
+	
+		// Store the merged options
+		axis.options = options = merge(
+				isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
+				[defaultTopAxisOptions, defaultRightAxisOptions,
+					defaultBottomAxisOptions, defaultLeftAxisOptions][axis.side],
+				userOptions
+			);
+	
+		var type = options.type,
+			isDatetimeAxis = type === 'datetime';
+	
+		axis.labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
+				function () {
+					var value = this.value,
+						dateTimeLabelFormat = this.dateTimeLabelFormat,
+						ret;
+	
+					if (dateTimeLabelFormat) { // datetime axis
+						ret = dateFormat(dateTimeLabelFormat, value);
+	
+					} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
+						ret = (value / 1000000) + 'M';
+	
+					} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
+						ret = (value / 1000) + 'k';
+	
+					} else if (!axis.categories && value >= 1000) { // add thousands separators
+						ret = numberFormat(value, 0);
+	
+					} else { // strings (categories) and small numbers
+						ret = value;
+					}
+					return ret;
+				};
+	
+		// Flag, stagger lines or not
+		axis.staggerLines = axis.horiz && options.labels.staggerLines;
+		axis.userOptions = userOptions;
+	
+		//axis.axisTitleMargin = UNDEFINED,// = options.title.margin,
+		axis.minPixelPadding = 0;
+		//axis.ignoreMinPadding = UNDEFINED; // can be set to true by a column or bar series
+		//axis.ignoreMaxPadding = UNDEFINED;
+	
+		axis.chart = chart;
+		axis.reversed = options.reversed;
+	
+		// Initial categories
+		axis.categories = options.categories;
+	
+		// Elements
+		//axis.axisGroup = UNDEFINED;
+		//axis.gridGroup = UNDEFINED;
+		//axis.axisTitle = UNDEFINED;
+		//axis.axisLine = UNDEFINED;
+	
+		// Flag if type === logarithmic
+		axis.isLog = type === 'logarithmic';
+	
+		// Flag, if axis is linked to another axis
+		axis.isLinked = defined(options.linkedTo);
+		// Linked axis.
+		//axis.linkedParent = UNDEFINED;
+	
+		// Flag if type === datetime
+		axis.isDatetimeAxis = isDatetimeAxis;
+	
+		// Flag if percentage mode
+		//axis.usePercentage = UNDEFINED;
+	
+		// Flag, isXAxis
+		axis.isXAxis = isXAxis;
+		axis.xOrY = isXAxis ? 'x' : 'y';
+	
+		// Tick positions
+		//axis.tickPositions = UNDEFINED; // array containing predefined positions
+		// Tick intervals
+		//axis.tickInterval = UNDEFINED;
+		//axis.minorTickInterval = UNDEFINED;
+	
+		// Major ticks
+		axis.ticks = {};
+		// Minor ticks
+		axis.minorTicks = {};
+		//axis.tickAmount = UNDEFINED;
+	
+		// List of plotLines/Bands
+		axis.plotLinesAndBands = [];
+	
+		// Alternate bands
+		axis.alternateBands = {};
+	
+		// Axis metrics
+		//axis.left = UNDEFINED;
+		//axis.top = UNDEFINED;
+		//axis.width = UNDEFINED;
+		//axis.height = UNDEFINED;
+		//axis.bottom = UNDEFINED;
+		//axis.right = UNDEFINED;
+		//axis.transA = UNDEFINED;
+		//axis.transB = UNDEFINED;
+		//axis.oldTransA = UNDEFINED;
+		axis.len = 0;
+		//axis.oldMin = UNDEFINED;
+		//axis.oldMax = UNDEFINED;
+		//axis.oldUserMin = UNDEFINED;
+		//axis.oldUserMax = UNDEFINED;
+		//axis.oldAxisLength = UNDEFINED;
+		axis.minRange = options.minRange || options.maxZoom;
+		axis.range = options.range;
+		axis.offset = options.offset || 0;
+	
+	
+		// Dictionary for stacks
+		axis.stacks = {};
+	
+		// Min and max in the data
+		//axis.dataMin = UNDEFINED,
+		//axis.dataMax = UNDEFINED,
+	
+		// The axis range
+		axis.max = null;
+		axis.min = null;
+	
+		// User set min and max
+		//axis.userMin = UNDEFINED,
+		//axis.userMax = UNDEFINED,
+
+		// Run Axis
+		
+		var eventType,
+			events = axis.options.events;
+
+		// Register
+		chart.axes.push(axis);
+		chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
+
+		axis.series = []; // populated by Series
+
+		// inverted charts have reversed xAxes as default
+		if (chart.inverted && isXAxis && axis.reversed === UNDEFINED) {
+			axis.reversed = true;
+		}
+
+		axis.removePlotBand = axis.removePlotBandOrLine;
+		axis.removePlotLine = axis.removePlotBandOrLine;
+		axis.addPlotBand = axis.addPlotBandOrLine;
+		axis.addPlotLine = axis.addPlotBandOrLine;
+
+
+		// register event listeners
+		for (eventType in events) {
+			addEvent(axis, eventType, events[eventType]);
+		}
+
+		// extend logarithmic axis
+		if (axis.isLog) {
+			axis.val2lin = log2lin;
+			axis.lin2val = lin2log;
+		}
+	},
+	
 	/**
 	 * Get the minimum and maximum for the series of each axis
 	 */
@@ -1573,45 +1613,8 @@ Axis.prototype = {
 				axis[prop] = axis[prop].destroy();
 			}
 		});
-	},
-
-
-	init: function () {
-		var axis = this,
-			chart = axis.chart,
-			isXAxis = axis.isXAxis,
-			eventType,
-			events = axis.options.events;
-
-		// Run Axis
-
-		// Register
-		chart.axes.push(axis);
-		chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
-
-		axis.series = []; // populated by Series
-
-		// inverted charts have reversed xAxes as default
-		if (chart.inverted && isXAxis && axis.reversed === UNDEFINED) {
-			axis.reversed = true;
-		}
-
-		axis.removePlotBand = axis.removePlotBandOrLine;
-		axis.removePlotLine = axis.removePlotBandOrLine;
-		axis.addPlotBand = axis.addPlotBandOrLine;
-		axis.addPlotLine = axis.addPlotBandOrLine;
-
-
-		// register event listeners
-		for (eventType in events) {
-			addEvent(axis, eventType, events[eventType]);
-		}
-
-		// extend logarithmic axis
-		if (axis.isLog) {
-			axis.val2lin = log2lin;
-			axis.lin2val = lin2log;
-		}
 	}
+
+	
 }; // end Axis
 
