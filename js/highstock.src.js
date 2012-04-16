@@ -3471,7 +3471,8 @@ SVGRenderer.prototype = {
 
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
-			imageSize;
+			imageSize,
+			centerImage;
 
 		if (path) {
 
@@ -3492,14 +3493,19 @@ SVGRenderer.prototype = {
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
 
-			var centerImage = function (img, size) {
+			// On image load, set the size and position
+			centerImage = function (img, size) {
 				img.attr({
 					width: size[0],
 					height: size[1]
-				}).translate(
-					-mathRound(size[0] / 2),
-					-mathRound(size[1] / 2)
-				);
+				});
+				
+				if (!img.alignByTranslate) { // #185
+					img.translate(
+						-mathRound(size[0] / 2),
+						-mathRound(size[1] / 2)
+					);
+				}
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
