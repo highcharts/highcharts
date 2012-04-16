@@ -1986,9 +1986,12 @@ function Chart(userOptions, callback) {
 								visibility: VISIBLE,
 								zIndex: 6
 							})
-							.translate(plotLeft, plotTop)
 							.add();
 				}
+
+				// plotLeft/Top will change when y axis gets wider so we need to translate the
+				// stackTotalGroup at every render call. See bug #506 and #516
+				stackTotalGroup.translate(plotLeft, plotTop);
 
 				// Render each stack total
 				for (stackKey in stacks) {
