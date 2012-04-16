@@ -515,6 +515,8 @@ Scroller.prototype = {
 		 * Event handler for the mouse down event.
 		 */
 		scroller.mouseDownHandler = function (e) {
+			e = chart.tracker.normalizeMouseEvent(e);
+
 			var zoomedMin = scroller.zoomedMin,
 				zoomedMax = scroller.zoomedMax,
 				top = scroller.top,
@@ -529,8 +531,6 @@ Scroller.prototype = {
 				handleSensitivity = hasTouch ? 10 : 7,
 				left,
 				isOnNavigator;
-
-			e = chart.tracker.normalizeMouseEvent(e);
 
 			if (chartY > top && chartY < top + height + scrollbarHeight) { // we're vertically inside the navigator
 				isOnNavigator = !scroller.scrollbarEnabled || chartY < top + height;
