@@ -220,7 +220,7 @@ Chart.prototype = {
 					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
 				}
 								
-				if (axis.isDirty || isDirtyBox) {					
+				if (axis.isDirty || isDirtyBox || hasStackedSeries) {
 					axis.redraw();
 					isDirtyBox = true; // #792
 				}
@@ -683,35 +683,6 @@ Chart.prototype = {
 			// If we need canvg library, extend and configure the renderer
 			// to get the tracker for translating mouse events
 			chart.renderer.create(chart, container, chartWidth, chartHeight);
-		}
-
-		// Issue 110 workaround:
-		// In Firefox, if a div is positioned by percentage, its pixel position may land
-		// between pixels. The container itself doesn't display this, but an SVG element
-		// inside this container will be drawn at subpixel precision. In order to draw
-		// sharp lines, this must be compensated for. This doesn't seem to work inside
-		// iframes though (like in jsFiddle).
-		var subPixelFix, rect;
-		if (isFirefox && container.getBoundingClientRect) {
-			subPixelFix = function () {
-				css(container, { left: 0, top: 0 });
-				rect = container.getBoundingClientRect();
-				css(container, {
-					left: (-(rect.left - pInt(rect.left))) + PX,
-					top: (-(rect.top - pInt(rect.top))) + PX
-				});
-			};
-
-			// run the fix now
-			subPixelFix();
-
-			// run it on resize
-			addEvent(win, 'resize', subPixelFix);
-
-			// remove it on chart destroy
-			addEvent(chart, 'destroy', function () {
-				removeEvent(win, 'resize', subPixelFix);
-			});
 		}
 	},
 

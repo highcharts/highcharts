@@ -272,6 +272,8 @@ extend(Chart.prototype, {
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
 			.replace(/ href=/g, ' xlink:href=')
+			.replace(/\n/, ' ')
+			.replace(/<\/svg>.*?$/, '</svg>') // any HTML added to the container after the SVG (#894)
 			/* This fails in IE < 8
 			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
 				return s2 +'.'+ s3[0];
