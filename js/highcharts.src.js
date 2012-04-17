@@ -3017,7 +3017,7 @@ SVGRenderer.prototype = {
 		}
 		
 		// Remove sub pixel fix handler
-		removeEvent(win, 'resize', wrapper.subPixelFix);
+		removeEvent(win, 'resize', renderer.subPixelFix);
 
 		renderer.alignedObjects = null;
 
@@ -8916,7 +8916,7 @@ function Chart(userOptions, callback) {
 					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
 				}
 								
-				if (axis.isDirty || isDirtyBox) {					
+				if (axis.isDirty || isDirtyBox || hasStackedSeries) {
 					axis.redraw();
 					isDirtyBox = true; // #792
 				}
