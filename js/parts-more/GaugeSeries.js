@@ -291,6 +291,16 @@ var gaugeValueAxisMixin = {
 	
 };
 
+
+Axis.prototype.init = (function (func) {
+	return function (chart) {
+		if (chart.angular) {
+			console.log('TODO: extend the angular X and Y axis here instead of in bindAxes');	
+		}
+		func.apply(this, arguments);	
+	};
+}(Axis.prototype.init));
+
 /**
  * Add special cases within the Tick class' methods for radial axes. 
  * TODO: If we go for a RadialAxis class, add a RadialTick class too.
@@ -382,6 +392,10 @@ var gaugeXAxisMixin = {
 var GaugeSeries = {
 	type: 'gauge',
 	pointClass: GaugePoint,
+	
+	// chart.angular will be set to true when a gauge series is present, and this will
+	// be used on the axes
+	angular: true, 
 	
 	/**
 	 * Extend the bindAxes method by adding radial features to the axes

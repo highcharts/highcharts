@@ -75,38 +75,10 @@ Chart.prototype = {
 	 */
 	initSeries: function (options) {
 		var chart = this,
-			inverted = chart.inverted,
-			optionsChart = chart.options.chart;
+			optionsChart = chart.options.chart,
+			type = options.type || optionsChart.type || optionsChart.defaultSeriesType;		
 
-		var type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
-			typeClass = seriesTypes[type],
-			serie,
-			hasRendered = this.hasRendered;
-
-		// an inverted chart can't take a column series and vice versa
-		if (hasRendered) {
-			if (inverted && type === 'column') {
-				typeClass = seriesTypes.bar;
-			} else if (!inverted && type === 'bar') {
-				typeClass = seriesTypes.column;
-			}
-		}
-
-		serie = new typeClass();
-
-		serie.init(this, options);
-
-		// set internal chart properties
-		if (!hasRendered && serie.inverted) {
-			inverted = true;
-		}
-		if (serie.isCartesian) {
-			chart.hasCartesianSeries = serie.isCartesian;
-		}
-
-		chart.series.push(serie);
-
-		return serie;
+		return new seriesTypes[type]().init(this, options);
 	},
 
 	/**
@@ -1127,32 +1099,44 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Detect whether the chart is inverted, either by setting the chart.inverted option
-	 * or adding a bar series to the configuration options
+	 * Detect whether a certain chart property is needed based on inspecting its options
+	 * and series. This mainly applies to the chart.invert property, and in extensions to 
+	 * the chart.angular and chart.polar properties.
 	 */
-	setInverted: function () {
+	propFromSeries: function () {
 		var chart = this,
-			optionsChart = chart.options.chart;
-
-		var BAR = 'bar',
-			isInverted = (
-				chart.inverted || // it is set before
-				optionsChart.inverted ||
-				optionsChart.type === BAR || // default series type
-				optionsChart.defaultSeriesType === BAR // backwards compatible
-			),
+			optionsChart = chart.options.chart,
+			klass,
 			seriesOptions = chart.options.series,
+			i,
+			value;
+			
+			
+		each(['inverted', 'angular'], function (key) {
+			
+			// The default series type's class
+			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
+			
+			// Get the value from available chart-wide properties
+			value = (
+				chart[key] || // 1. it is set before
+				optionsChart[key] || // 2. it is set in the options
+				(klass && klass.prototype[key]) // 3. it's default series class requires it
+			);
+	
+			// 4. Check if any the chart's series require it
 			i = seriesOptions && seriesOptions.length;
-
-		// check if a bar series is present in the config options
-		while (!isInverted && i--) {
-			if (seriesOptions[i].type === BAR) {
-				isInverted = true;
+			while (!value && i--) {
+				klass = seriesTypes[seriesOptions[i].type];
+				if (klass && klass.prototype[key]) {
+					value = true;
+				}
 			}
-		}
-
-		// set the chart property
-		chart.inverted = isInverted;
+	
+			// Set the chart property
+			chart[key] = value;	
+		});
+		
 	},
 
 	/**
@@ -1373,8 +1357,8 @@ Chart.prototype = {
 		chart.resetMargins();
 		chart.setChartSize();
 
-		// Set the common inversion and transformation for inverted series after initSeries
-		chart.setInverted();
+		// Set the common chart properties (mainly invert) from the given series
+		chart.propFromSeries();
 
 		// get axes
 		chart.getAxes();

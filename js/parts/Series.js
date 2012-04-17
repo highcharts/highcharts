@@ -570,7 +570,14 @@ Series.prototype = {
 
 		// set the data
 		series.setData(options.data, false);
+		
+		// Mark cartesian
+		if (series.isCartesian) {
+			chart.hasCartesianSeries = true;
+		}
 
+		// Register it in the chart
+		chart.series.push(series);
 	},
 	
 	/**

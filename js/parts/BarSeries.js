@@ -14,10 +14,7 @@ defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
  */
 var BarSeries = extendClass(ColumnSeries, {
 	type: 'bar',
-	init: function () {
-		this.inverted = true;
-		ColumnSeries.prototype.init.apply(this, arguments);
-	}
+	inverted: true
 });
 seriesTypes.bar = BarSeries;
 
