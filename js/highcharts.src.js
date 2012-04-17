@@ -7607,8 +7607,8 @@ Tooltip.prototype = {
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			distance = pick(this.options.distance, 12),
-			pointX = point.x,
-			pointY = point.y,
+			pointX = point.plotX,
+			pointY = point.plotY,
 			x = pointX + plotLeft + (chart.inverted ? distance : -boxWidth - distance),
 			y = pointY - boxHeight + plotTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
 			alignedRight;
@@ -7756,14 +7756,15 @@ Tooltip.prototype = {
 				stroke: borderColor
 			});
 
-			placedTooltipPoint = this.getPosition(
+			placedTooltipPoint = (options.positioner || tooltip.getPosition).call( // docs
+				tooltip,
 				label.width,
 				label.height,
-				{x: x, y: y}
+				{ plotX: x, plotY: y }
 			);
 
 			// do the move
-			this.move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
+			tooltip.move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
 			
 			
 			tooltip.tooltipIsHidden = false;
