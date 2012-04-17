@@ -14,8 +14,7 @@ Axis.prototype = {
 	init: function (chart, userOptions) {
 			
 		
-		var options,
-			isXAxis = userOptions.isX,
+		var isXAxis = userOptions.isX,
 			axis = this;
 	
 		// Flag, is the axis horizontal
@@ -26,15 +25,11 @@ Axis.prototype = {
 				(axis.opposite ? 0 : 2) : // top : bottom
 				(axis.opposite ? 1 : 3);  // right : left
 	
-		// Store the merged options
-		axis.options = options = merge(
-				isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
-				[defaultTopAxisOptions, defaultRightAxisOptions,
-					defaultBottomAxisOptions, defaultLeftAxisOptions][axis.side],
-				userOptions
-			);
+		axis.setOptions(userOptions);
+		
 	
-		var type = options.type,
+		var options = this.options,
+			type = options.type,
 			isDatetimeAxis = type === 'datetime';
 	
 		axis.labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
@@ -186,6 +181,18 @@ Axis.prototype = {
 			axis.val2lin = log2lin;
 			axis.lin2val = lin2log;
 		}
+	},
+	
+	/**
+	 * Merge and set options
+	 */
+	setOptions: function (userOptions) {
+		this.options = merge(
+			this.isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
+			[defaultTopAxisOptions, defaultRightAxisOptions,
+				defaultBottomAxisOptions, defaultLeftAxisOptions][this.side],
+			userOptions
+		);
 	},
 	
 	/**

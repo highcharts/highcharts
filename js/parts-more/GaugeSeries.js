@@ -71,12 +71,12 @@ var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
 var gaugeValueAxisMixin = {
 	isRadial: true,
 	
-	/**
+	/* *
 	 * Set special default options for the radial axis. Since the radial axis is
 	 * extended after the initial options are merged, we need to do it here. If
 	 * we create a RadialAxis class we should handle it in a setOptions method and
 	 * merge in these options the usual way
-	 */
+	 * /
 	onBind: function () {
 		var axis = this,
 			userOptions = axis.userOptions,
@@ -136,6 +136,18 @@ var gaugeValueAxisMixin = {
 			
 			options.plotBands.unshift(config);
 		});
+	},*/
+	
+	/**
+	 * Merge and set options
+	 */
+	setOptions: function (userOptions) {
+		this.options = merge({
+				labels: {},
+				center: []
+			}, // circular axis options
+			userOptions
+		);
 	},
 	
 	/**
@@ -295,9 +307,16 @@ var gaugeValueAxisMixin = {
 Axis.prototype.init = (function (func) {
 	return function (chart) {
 		if (chart.angular) {
-			console.log('TODO: extend the angular X and Y axis here instead of in bindAxes');	
+			//console.log('TODO: extend the angular X and Y axis here instead of in bindAxes');
+			extend(this, this.isXAxis ? gaugeXAxisMixin : gaugeValueAxisMixin);
+			
+			if (this.onBind) {
+				console.log('TODO: extend setOptions instead')
+				this.onBind();
+			}	
 		}
-		func.apply(this, arguments);	
+		
+		func.apply(this, arguments);
 	};
 }(Axis.prototype.init));
 
@@ -397,16 +416,16 @@ var GaugeSeries = {
 	// be used on the axes
 	angular: true, 
 	
-	/**
+	/* *
 	 * Extend the bindAxes method by adding radial features to the axes
-	 */
-	bindAxes: function () {
+	 * /
+	_bindAxes: function () {
 		Series.prototype.bindAxes.call(this);
 		
 		extend(this.xAxis, gaugeXAxisMixin);
 		extend(this.yAxis, gaugeValueAxisMixin);
 		this.yAxis.onBind();
-	},
+	},*/
 	
 	/**
 	 * Calculate paths etc
