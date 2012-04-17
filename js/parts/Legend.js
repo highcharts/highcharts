@@ -16,19 +16,15 @@ function Legend(chart) {
 		padding = pick(options.padding, 8), // docs
 		itemMarginTop = options.itemMarginTop || 0;
 
-	var symbolWidth = options.symbolWidth,
-		symbolPadding = options.symbolPadding;
-
 	legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 	legend.itemStyle = itemStyle;
 	legend.itemHoverStyle = itemHoverStyle;
 	legend.itemHiddenStyle = itemHiddenStyle;
 	legend.itemMarginTop = itemMarginTop;
-	legend.itemMarginBottom = options.itemMarginBottom || 0;
-	legend.maxItemWidth = 0;
 	legend.padding = padding;
-	legend.initialItemX = 4 + padding + symbolWidth + symbolPadding;
-	legend.initialItemY = padding + itemMarginTop - 5; // 5 is the number of pixels above the text
+	legend.initialItemX = padding;
+	legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
+	legend.maxItemWidth = 0;
 	legend.chart = chart;
 	//legend.allItems = UNDEFINED;
 	//legend.legendWidth = UNDEFINED;
@@ -285,7 +281,7 @@ Legend.prototype = {
 
 		// Set the edge positions
 		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
-		legend.lastItemY = mathMax(legend.lastItemY, legend.itemY + itemMarginBottom);
+		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
 
 		// cache the position of the newly generated or reordered items
 		item._legendItemPos = [legend.itemX, legend.itemY];
@@ -299,7 +295,7 @@ Legend.prototype = {
 
 		// the width of the widest item
 		legend.offsetWidth = widthOption || mathMax(
-			(legend.itemX - initialItemX) + (horizontal ? 0 : itemWidth),
+			horizontal ? legend.itemX - initialItemX : itemWidth,
 			legend.offsetWidth
 		);
 	},
@@ -378,8 +374,8 @@ Legend.prototype = {
 		legend.legendHeight = legendHeight = legend.lastItemY + legend.itemHeight;
 
 		if (legendBorderWidth || legendBackgroundColor) {
-			legendWidth += padding;
-			legendHeight += padding;
+			legend.legendWidth = legendWidth += padding;
+			legend.legendHeight = legendHeight += padding;
 
 			if (!box) {
 				legend.box = box = renderer.rect(
@@ -429,8 +425,8 @@ Legend.prototype = {
 
 		if (allItems.length) {
 			legendGroup.align(extend(options, {
-				width: legend.legendWidth,
-				height: legend.legendHeight
+				width: legendWidth,
+				height: legendHeight
 			}), true, chart.spacingBox);
 		}
 

@@ -2,18 +2,16 @@
  * The GaugeSeries class
  * 
  * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
- * Clock:       http://jsfiddle.net/highcharts/BFN2F/
+ * Clock:	   http://jsfiddle.net/highcharts/BFN2F/
  * 
  * TODO:
- * - Fix shape: arc for backgrounds (options.from and options.to should fall back to min and max)
- * - Radial gradients
+ * - Radial gradients.
+ *	 - Fix issue with linearGradient being present from merging background options
+ *	 - Experiment more with pattern in VML
  * - Size to the actual space given, for example by vu-meters
  * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
- * - Tooltip
- * - Should the gauge series be called angular gauge as opposed to linear gauges?
- * - POC with two axes - for example km/h and m/h. For this we need an option to make it 
+ * - POC with two axes - for example km/h and m/h. For this we need either an option to make it 
  *   circular. Axis extension could be loaded on axis init.
- * - Targets? Could perhaps be implemented as a separate series type, inherited from GaugeSeries
  */
 
 
@@ -49,6 +47,9 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		//borderColor: 'silver',
 		//backgroundColor: 'black'
 	},
+	tooltip: {
+		headerFormat: ''
+	},
 	showInLegend: false
 });
 
@@ -56,7 +57,12 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
  * Extend the point object
  */
 var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
-	
+	/**
+	 * Don't do any hover colors or anything
+	 */
+	setState: function (state) {
+		this.state = state;
+	}
 });
 
 /**
@@ -119,9 +125,9 @@ var gaugeValueAxisMixin = {
 					[1, '#DDD']
 				]
 			},
-			from: 1,
+			from: Number.MIN_VALUE, // corrected to axis min
 			innerRadius: 0,
-			to: 1,
+			to: Number.MAX_VALUE, // corrected to axis max
 			outerRadius: '105%'
 		};
 		each(Highcharts.splat(background).reverse(), function (config) {
@@ -422,23 +428,29 @@ var GaugeSeries = {
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1;
 				
-			point.path = [
-				'M', 
-				-rearLength, -baseWidth / 2, 
-				'L', 
-				baseLength, -baseWidth / 2,
-				radius, -topWidth / 2,
-				radius, topWidth / 2,
-				baseLength, baseWidth / 2,
-				-rearLength, baseWidth / 2
-			];
-			point.rotation = (yAxis.startAngleRad + yAxis.translate(point.y)) * 180 / Math.PI;
+			point.shapeType = 'path';
+			point.shapeArgs = {
+				d: dialOptions.path || [
+					'M', 
+					-rearLength, -baseWidth / 2, 
+					'L', 
+					baseLength, -baseWidth / 2,
+					radius, -topWidth / 2,
+					radius, topWidth / 2,
+					baseLength, baseWidth / 2,
+					-rearLength, baseWidth / 2
+				],
+				translateX: center[0],
+				translateY: center[1],
+				x: 0, // base of rotation
+				y: 0,
+				rotation: (yAxis.startAngleRad + yAxis.translate(point.y)) * 180 / Math.PI
+			};
 			
 			// Positions for data label
 			point.plotX = center[0];
 			point.plotY = center[1];
 		});
-		//this.setTooltipPoints();
 	},
 	
 	/**
@@ -456,27 +468,18 @@ var GaugeSeries = {
 		each(series.points, function (point) {
 			
 			var graphic = point.graphic,
-				path = point.path,
-				rotation = point.rotation;
+				shapeArgs = point.shapeArgs,
+				d = shapeArgs.d;
 			
 			if (graphic) {
-				graphic.animate({
-					d: path,
-					translateX: center[0],
-					translateY: center[1],
-					rotation: rotation
-				});
+				graphic.animate(shapeArgs);
+				shapeArgs.d = d; // animate alters it
 			} else {
-				point.graphic = series.chart.renderer.path(path)
+				point.graphic = series.chart.renderer[point.shapeType](shapeArgs)
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
-						fill: dialOptions.backgroundColor || 'black',
-						x: 0, // base of rotation
-						y: 0,
-						translateX: center[0],
-						translateY: center[1],
-						rotation: rotation
+						fill: dialOptions.backgroundColor || 'black'
 					})
 					.add(series.group);
 			}
@@ -516,7 +519,7 @@ var GaugeSeries = {
 
 				// animate
 				graphic.animate({
-					rotation: point.rotation
+					rotation: point.shapeArgs.rotation
 				}, series.options.animation);
 			}
 		});
@@ -531,6 +534,6 @@ var GaugeSeries = {
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: noop
+	drawTracker: seriesTypes.column.prototype.drawTracker
 };
 seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);
