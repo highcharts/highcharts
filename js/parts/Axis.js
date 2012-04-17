@@ -8,6 +8,186 @@ function Axis() {
 }
 
 Axis.prototype = {
+	
+	/**
+	 * Default options for the X axis - the Y axis has extended defaults 
+	 */
+	defaultOptions: {
+		// allowDecimals: null,
+		// alternateGridColor: null,
+		// categories: [],
+		dateTimeLabelFormats: {
+			millisecond: '%H:%M:%S.%L',
+			second: '%H:%M:%S',
+			minute: '%H:%M',
+			hour: '%H:%M',
+			day: '%e. %b',
+			week: '%e. %b',
+			month: '%b \'%y',
+			year: '%Y'
+		},
+		endOnTick: false,
+		gridLineColor: '#C0C0C0',
+		// gridLineDashStyle: 'solid',
+		// gridLineWidth: 0,
+		// reversed: false,
+	
+		labels: defaultLabelOptions,
+			// { step: null },
+		lineColor: '#C0D0E0',
+		lineWidth: 1,
+		//linkedTo: null,
+		max: null,
+		min: null,
+		minPadding: 0.01,
+		maxPadding: 0.01,
+		//minRange: null,
+		minorGridLineColor: '#E0E0E0',
+		// minorGridLineDashStyle: null,
+		minorGridLineWidth: 1,
+		minorTickColor: '#A0A0A0',
+		//minorTickInterval: null,
+		minorTickLength: 2,
+		minorTickPosition: 'outside', // inside or outside
+		//minorTickWidth: 0,
+		//opposite: false,
+		//offset: 0,
+		//plotBands: [{
+		//	events: {},
+		//	zIndex: 1,
+		//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
+		//}],
+		//plotLines: [{
+		//	events: {}
+		//  dashStyle: {}
+		//	zIndex:
+		//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
+		//}],
+		//reversed: false,
+		// showFirstLabel: true,
+		// showLastLabel: true,
+		startOfWeek: 1,
+		startOnTick: false,
+		tickColor: '#C0D0E0',
+		//tickInterval: null,
+		tickLength: 5,
+		tickmarkPlacement: 'between', // on or between
+		tickPixelInterval: 100,
+		tickPosition: 'outside',
+		tickWidth: 1,
+		title: {
+			//text: null,
+			align: 'middle', // low, middle or high
+			//margin: 0 for horizontal, 10 for vertical axes,
+			//rotation: 0,
+			//side: 'outside',
+			style: {
+				color: '#6D869F',
+				//font: defaultFont.replace('normal', 'bold')
+				fontWeight: 'bold'
+			}
+			//x: 0,
+			//y: 0
+		},
+		type: 'linear' // linear, logarithmic or datetime
+	},
+	
+	/**
+	 * This options set extends the defaultOptions for Y axes
+	 */
+	defaultYAxisOptions: {
+		endOnTick: true,
+		gridLineWidth: 1,
+		tickPixelInterval: 72,
+		showLastLabel: true,
+		labels: {
+			align: 'right',
+			x: -8,
+			y: 3
+		},
+		lineWidth: 0,
+		maxPadding: 0.05,
+		minPadding: 0.05,
+		startOnTick: true,
+		tickWidth: 0,
+		title: {
+			rotation: 270,
+			text: 'Y-values'
+		},
+		stackLabels: {
+			enabled: false,
+			//align: dynamic,
+			//y: dynamic,
+			//x: dynamic,
+			//verticalAlign: dynamic,
+			//textAlign: dynamic,
+			//rotation: 0,
+			formatter: function () {
+				return this.total;
+			},
+			style: defaultLabelOptions.style
+		}
+	},
+	
+	/**
+	 * These options extend the defaultOptions for left axes
+	 */
+	defaultLeftAxisOptions: {
+		labels: {
+			align: 'right',
+			x: -8,
+			y: null
+		},
+		title: {
+			rotation: 270
+		}
+	},
+	
+	/**
+	 * These options extend the defaultOptions for right axes
+	 */
+	defaultRightAxisOptions: {
+		labels: {
+			align: 'left',
+			x: 8,
+			y: null
+		},
+		title: {
+			rotation: 90
+		}
+	},
+	
+	/**
+	 * These options extend the defaultOptions for bottom axes
+	 */
+	defaultBottomAxisOptions: {
+		labels: {
+			align: 'center',
+			x: 0,
+			y: 14
+			// overflow: undefined // docs - can be 'justify'
+			// staggerLines: null
+		},
+		title: {
+			rotation: 0
+		}
+	},
+	/**
+	 * These options extend the defaultOptions for left axes
+	 */
+	defaultTopAxisOptions: {
+		labels: {
+			align: 'center',
+			x: 0,
+			y: -5,
+			overflow: 'justify'
+			// staggerLines: null
+		},
+		title: {
+			rotation: 0
+		}
+	},
+	
 	/**
 	 * Initialize the axis
 	 */
@@ -19,6 +199,11 @@ Axis.prototype = {
 	
 		// Flag, is the axis horizontal
 		axis.horiz = chart.inverted ? !isXAxis : isXAxis;
+		
+		// Flag, isXAxis
+		axis.isXAxis = isXAxis;
+		axis.xOrY = isXAxis ? 'x' : 'y';
+	
 	
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = axis.horiz ?
@@ -91,10 +276,7 @@ Axis.prototype = {
 		// Flag if percentage mode
 		//axis.usePercentage = UNDEFINED;
 	
-		// Flag, isXAxis
-		axis.isXAxis = isXAxis;
-		axis.xOrY = isXAxis ? 'x' : 'y';
-	
+		
 		// Tick positions
 		//axis.tickPositions = UNDEFINED; // array containing predefined positions
 		// Tick intervals
@@ -188,9 +370,10 @@ Axis.prototype = {
 	 */
 	setOptions: function (userOptions) {
 		this.options = merge(
-			this.isXAxis ? defaultXAxisOptions : defaultYAxisOptions,
-			[defaultTopAxisOptions, defaultRightAxisOptions,
-				defaultBottomAxisOptions, defaultLeftAxisOptions][this.side],
+			this.defaultOptions,
+			this.isXAxis ? {} : this.defaultYAxisOptions,
+			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
+				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			userOptions
 		);
 	},

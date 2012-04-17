@@ -65,6 +65,15 @@ var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
 	}
 });
 
+
+/**
+ * Augmented methods for the x axis in order to hide it completely
+ */
+var gaugeXAxisMixin = {
+	setScale: noop,
+	render: noop
+};
+
 /**
  * Augmented methods for the value axis
  */
@@ -130,6 +139,9 @@ var gaugeValueAxisMixin = {
 			to: Number.MAX_VALUE, // corrected to axis max
 			outerRadius: '105%'
 		};
+		
+		background = userOptions.background || {}, // start out with one default background
+			
 		each(Highcharts.splat(background).reverse(), function (config) {
 			config = merge(defaultBackground, config);
 			config.color = config.backgroundColor; // due to naming in plotBands
@@ -139,15 +151,66 @@ var gaugeValueAxisMixin = {
 	},*/
 	
 	/**
+	 * The default options extend defaultYAxisOptions
+	 */
+	defaultCircularAxisOptions: {
+		center: ['50%', '50%'],
+		labels: {
+			align: 'center',
+			x: 0
+		},
+		plotBands: [],
+		size: ['90%'],
+		title: {
+			rotation: 0
+		},
+		zIndex: 2 // behind dials, points in the series group
+	},
+	
+	/**
+	 * The default background options
+	 */
+	defaultBackgroundOptions: {
+		shape: 'circle',
+		borderWidth: 1,
+		borderColor: 'silver',
+		backgroundColor: {
+		linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			stops: [
+				[0, '#FFF'],
+				[1, '#DDD']
+			]
+		},
+		from: Number.MIN_VALUE, // corrected to axis min
+		innerRadius: 0,
+		to: Number.MAX_VALUE, // corrected to axis max
+		outerRadius: '105%'
+	},
+	
+	/**
 	 * Merge and set options
 	 */
 	setOptions: function (userOptions) {
-		this.options = merge({
-				labels: {},
-				center: []
-			}, // circular axis options
+		
+		var axis = this,
+			background,
+			options;
+		
+		axis.options = options = merge(
+			axis.defaultOptions,
+			axis.defaultCircularAxisOptions,
 			userOptions
 		);
+		
+		// Handle backgrounds
+		background = userOptions.background || {}; // start out with one default background
+			
+		each(Highcharts.splat(background).reverse(), function (config) {
+			config = merge(axis.defaultBackgroundOptions, config);
+			config.color = config.backgroundColor; // due to naming in plotBands
+			
+			options.plotBands.unshift(config);
+		});
 	},
 	
 	/**
@@ -155,7 +218,6 @@ var gaugeValueAxisMixin = {
 	 * axis
 	 */
 	getOffset: function () {
-		
 		// Call the Axis prototype method (the method we're in now is on the instance)
 		Axis.prototype.getOffset.call(this);
 		
@@ -172,7 +234,6 @@ var gaugeValueAxisMixin = {
 	getLinePath: function () {
 		var center = this.center,
 			radius = center[2] / 2;
-		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
 			this.top + center[1],
@@ -303,20 +364,31 @@ var gaugeValueAxisMixin = {
 	
 };
 
-
+/**
+ * Override Axis.prototype.init to mix in special axis instance functions and function overrides
+ */
 Axis.prototype.init = (function (func) {
-	return function (chart) {
-		if (chart.angular) {
-			//console.log('TODO: extend the angular X and Y axis here instead of in bindAxes');
-			extend(this, this.isXAxis ? gaugeXAxisMixin : gaugeValueAxisMixin);
+	return function (chart, userOptions) {
+		var angular = chart.angular,
+			options;
 			
-			if (this.onBind) {
-				console.log('TODO: extend setOptions instead')
-				this.onBind();
-			}	
+		// Before prototype.init
+		if (angular) {
+			extend(this, userOptions.isX ? gaugeXAxisMixin : gaugeValueAxisMixin);
 		}
 		
+		// Run prototype.init
 		func.apply(this, arguments);
+		
+		// After prototype.init
+		if (angular) {
+			//Start and end angle options are
+			// given in degrees relative to top, while internal computations are
+			// in radians relative to right (like SVG).
+			options = this.options;
+			this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
+			this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
+		}
 	};
 }(Axis.prototype.init));
 
@@ -397,13 +469,6 @@ tickProto.getMarkPath = (function (func) {
 }(tickProto.getMarkPath));
 
 
-/**
- * Augmented methods for the x axis in order to hide it completely
- */
-var gaugeXAxisMixin = {
-	setScale: noop,
-	render: noop
-};
 
 /**
  * Add the series type
