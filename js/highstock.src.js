@@ -7331,9 +7331,12 @@ Axis.prototype = {
 							visibility: VISIBLE,
 							zIndex: 6
 						})
-						.translate(chart.plotLeft, chart.plotTop)
 						.add();
 			}
+
+			// plotLeft/Top will change when y axis gets wider so we need to translate the
+			// stackTotalGroup at every render call. See bug #506 and #516
+			stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
 			// Render each stack total
 			for (stackKey in stacks) {
