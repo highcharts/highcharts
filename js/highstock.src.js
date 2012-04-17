@@ -2044,7 +2044,7 @@ SVGElement.prototype = {
 					}
 
 					// symbols
-					if (wrapper.symbolName && /^(x|y|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
+					if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
 
 
 						if (!hasSetSymbolSize) {
@@ -2914,7 +2914,14 @@ SVGRenderer.prototype = {
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
 			GET_COMPUTED_STYLE = 'getComputedStyle',
-			i = childNodes.length;
+			i = childNodes.length,
+			linePositions = [];
+
+		// Needed in IE9 because it doesn't report tspan's offsetHeight (#893)
+		function getLineHeightByBBox(lineNo) {
+			linePositions[lineNo] = textNode.getBBox().height;
+			return mathRound(linePositions[lineNo] - (linePositions[lineNo - 1] || 0));
+		}
 
 		// remove old text
 		while (i--) {
@@ -2992,7 +2999,7 @@ SVGRenderer.prototype = {
 								pInt(win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height'));
 
 							if (!lineHeight || isNaN(lineHeight)) {
-								lineHeight = textLineHeight || lastLine.offsetHeight || 18;
+								lineHeight = textLineHeight || lastLine.offsetHeight || getLineHeightByBBox(lineNo) || 18;
 							}
 							attr(tspan, 'dy', lineHeight);
 						}
@@ -7279,9 +7286,12 @@ Axis.prototype = {
 							visibility: VISIBLE,
 							zIndex: 6
 						})
-						.translate(chart.plotLeft, chart.plotTop)
 						.add();
 			}
+
+			// plotLeft/Top will change when y axis gets wider so we need to translate the
+			// stackTotalGroup at every render call. See bug #506 and #516
+			stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
 			// Render each stack total
 			for (stackKey in stacks) {
