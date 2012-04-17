@@ -717,51 +717,6 @@ ChartCounters.prototype =  {
 	}
 };
 
-/**
- * Utility method extracted from Tooltip code that places a tooltip in a chart without spilling over
- * and not covering the point it self.
- */
-function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHeight, point, distance, preferRight) {
-	
-	// keep the box within the chart area
-	var pointX = point.x,
-		pointY = point.y,
-		x = pointX + outerLeft + (preferRight ? distance : -boxWidth - distance),
-		y = pointY - boxHeight + outerTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
-		alignedRight;
-
-	// it is too far to the left, adjust it
-	if (x < 7) {
-		x = outerLeft + pointX + distance;
-	}
-
-	// Test to see if the tooltip is too far to the right,
-	// if it is, move it back to be inside and then up to not cover the point.
-	if ((x + boxWidth) > (outerLeft + outerWidth)) {
-		x -= (x + boxWidth) - (outerLeft + outerWidth);
-		y = pointY - boxHeight + outerTop - distance;
-		alignedRight = true;
-	}
-
-	// if it is now above the plot area, align it to the top of the plot area
-	if (y < outerTop + 5) {
-		y = outerTop + 5;
-
-		// If the tooltip is still covering the point, move it below instead
-		if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
-			y = pointY + outerTop + distance; // below
-		}
-	} 
-
-	// Now if the tooltip is below the chart, move it up. It's better to cover the
-	// point than to disappear outside the chart. #834.
-	if (y + boxHeight > outerTop + outerHeight) {
-		y = outerTop + outerHeight - boxHeight - distance; // below
-	}
-	
-
-	return {x: x, y: y};
-}
 
 /**
  * Utility method that sorts an object array and keeping the order of equal items.
@@ -7628,6 +7583,58 @@ Tooltip.prototype = {
 
 		return map(ret, mathRound);
 	},
+	
+	/**
+	 * Place the tooltip in a chart without spilling over
+	 * and not covering the point it self.
+	 */
+	getPosition: function (boxWidth, boxHeight, point) {
+		
+		// Set up the variables
+		var chart = this.chart,
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
+			distance = pick(this.options.distance, 12),
+			pointX = point.x,
+			pointY = point.y,
+			x = pointX + plotLeft + (chart.inverted ? distance : -boxWidth - distance),
+			y = pointY - boxHeight + plotTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
+			alignedRight;
+	
+		// It is too far to the left, adjust it
+		if (x < 7) {
+			x = plotLeft + pointX + distance;
+		}
+	
+		// Test to see if the tooltip is too far to the right,
+		// if it is, move it back to be inside and then up to not cover the point.
+		if ((x + boxWidth) > (plotLeft + plotWidth)) {
+			x -= (x + boxWidth) - (plotLeft + plotWidth);
+			y = pointY - boxHeight + plotTop - distance;
+			alignedRight = true;
+		}
+	
+		// If it is now above the plot area, align it to the top of the plot area
+		if (y < plotTop + 5) {
+			y = plotTop + 5;
+	
+			// If the tooltip is still covering the point, move it below instead
+			if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
+				y = pointY + plotTop + distance; // below
+			}
+		} 
+	
+		// Now if the tooltip is below the chart, move it up. It's better to cover the
+		// point than to disappear outside the chart. #834.
+		if (y + boxHeight > plotTop + plotHeight) {
+			y = plotTop + plotHeight - boxHeight - distance; // below
+		}
+		
+	
+		return {x: x, y: y};
+	},
 
 	/**
 	 * Refresh the tooltip's text and position.
@@ -7726,7 +7733,6 @@ Tooltip.prototype = {
 			// show it
 			if (tooltip.tooltipIsHidden) {
 				label.show();
-				tooltip.tooltipIsHidden = false;
 			}
 
 			// update text
@@ -7740,20 +7746,17 @@ Tooltip.prototype = {
 				stroke: borderColor
 			});
 
-			placedTooltipPoint = placeBox(
+			placedTooltipPoint = this.getPosition(
 				label.width,
 				label.height,
-				chart.plotLeft,
-				chart.plotTop,
-				chart.plotWidth,
-				chart.plotHeight,
-				{x: x, y: y},
-				pick(options.distance, 12),
-				chart.inverted
+				{x: x, y: y}
 			);
 
 			// do the move
 			this.move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
+			
+			
+			tooltip.tooltipIsHidden = false;
 		}
 
 		// crosshairs
@@ -17415,25 +17418,28 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  *****************************************************************************/
 // global variables
 extend(Highcharts, {
-	Chart: Chart,
+	
+	// Constructors
 	Axis: Axis,
+	CanVGRenderer: CanVGRenderer,
+	Chart: Chart,
+	Color: Color,
+	Point: Point,
 	Tick: Tick,
+	Tooltip: Tooltip,
+	Renderer: Renderer,
+	Series: Series,
+	SVGRenderer: SVGRenderer,
+	VMLRenderer: VMLRenderer,
+	
+	// Various
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	numberFormat: numberFormat,
-	Point: Point,
-	Color: Color,
-	Renderer: Renderer,
-	SVGRenderer: SVGRenderer,
-	VMLRenderer: VMLRenderer,
-	CanVGRenderer: CanVGRenderer,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
-	Series: Series,
-
-	// Expose utility funcitons for modules
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	createElement: createElement,
@@ -17446,7 +17452,6 @@ extend(Highcharts, {
 	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
-	placeBox: placeBox,
 	pInt: pInt,
 	product: 'Highstock',
 	version: '1.1.5'
