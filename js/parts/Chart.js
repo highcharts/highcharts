@@ -220,7 +220,7 @@ Chart.prototype = {
 					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
 				}
 								
-				if (axis.isDirty || isDirtyBox) {					
+				if (axis.isDirty || isDirtyBox || hasStackedSeries) {
 					axis.redraw();
 					isDirtyBox = true; // #792
 				}
