@@ -382,6 +382,7 @@ var PieSeries = extendClass(Series, {
 			options = series.options.dataLabels,
 			connectorPadding = pick(options.connectorPadding, 10),
 			connectorWidth = pick(options.connectorWidth, 1),
+			connectorZIndex = pick(options.connectorZIndex,3),
 			connector,
 			connectorPath,
 			softConnector = pick(options.softConnector, true),
@@ -606,7 +607,7 @@ var PieSeries = extendClass(Series, {
 							'stroke-width': connectorWidth,
 							stroke: options.connectorColor || point.color || '#606060',
 							visibility: visibility,
-							zIndex: 3
+							zIndex: connectorZIndex
 						})
 						.translate(chart.plotLeft, chart.plotTop)
 						.add();

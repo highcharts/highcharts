@@ -531,6 +531,8 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorWidth: 1,
 		// connectorColor: point.color,
 		// connectorPadding: 5,
+		// connectorZIndex: 3,
+		
 		distance: 30,
 		enabled: true,
 		formatter: function () {
