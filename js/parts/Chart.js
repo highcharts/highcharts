@@ -1498,7 +1498,7 @@ function Chart(userOptions, callback) {
 			oldAxisLength = axisLength;
 
 			// set the new axisLength
-			axisLength = horiz ? axisWidth : axisHeight;
+			setAxisSize();
 			isDirtyAxisLength = axisLength !== oldAxisLength;
 
 			// is there new data?
@@ -1631,7 +1631,7 @@ function Chart(userOptions, callback) {
 			axisHeight = pick(options.height, plotHeight);
 			axisBottom = chartHeight - axisHeight - axisTop;
 			axisRight = chartWidth - axisWidth - axisLeft;
-			axisLength = horiz ? axisWidth : axisHeight;
+			axisLength = mathMax(horiz ? axisWidth : axisHeight, 0); // mathMax fixes #905
 
 			// expose to use in Series object and navigator
 			axis.left = axisLeft;

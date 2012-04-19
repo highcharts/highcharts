@@ -6731,7 +6731,7 @@ function Chart(userOptions, callback) {
 			oldAxisLength = axisLength;
 
 			// set the new axisLength
-			axisLength = horiz ? axisWidth : axisHeight;
+			setAxisSize();
 			isDirtyAxisLength = axisLength !== oldAxisLength;
 
 			// is there new data?
@@ -6864,7 +6864,7 @@ function Chart(userOptions, callback) {
 			axisHeight = pick(options.height, plotHeight);
 			axisBottom = chartHeight - axisHeight - axisTop;
 			axisRight = chartWidth - axisWidth - axisLeft;
-			axisLength = horiz ? axisWidth : axisHeight;
+			axisLength = mathMax(horiz ? axisWidth : axisHeight, 0); // mathMax fixes #905
 
 			// expose to use in Series object and navigator
 			axis.left = axisLeft;
@@ -12749,13 +12749,15 @@ var ColumnSeries = extendClass(Series, {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			trackerGroup = series.drawTrackerGroup(),
-			rel;
+			rel,
+			plotY;
 			
 		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
+			plotY = point.plotY;
 			delete shapeArgs.strokeWidth;
-			if (point.y !== null) {
+			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 
