@@ -1498,7 +1498,7 @@ function Chart(userOptions, callback) {
 			oldAxisLength = axisLength;
 
 			// set the new axisLength
-			setAxisSize();
+			axis.setAxisSize();
 			isDirtyAxisLength = axisLength !== oldAxisLength;
 
 			// is there new data?
@@ -2672,7 +2672,8 @@ function Chart(userOptions, callback) {
 					},
 					selectionBox = selectionMarker.getBBox(),
 					selectionLeft = selectionBox.x - plotLeft,
-					selectionTop = selectionBox.y - plotTop;
+					selectionTop = selectionBox.y - plotTop,
+					runZoom;
 
 
 				// a selection has been made
@@ -2702,15 +2703,19 @@ function Chart(userOptions, callback) {
 									0,
 									1
 								);
-
-								selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
-									axis: axis,
-									min: mathMin(selectionMin, selectionMax), // for reversed axes,
-									max: mathMax(selectionMin, selectionMax)
-								});
+								if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
+									selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
+										axis: axis,
+										min: mathMin(selectionMin, selectionMax), // for reversed axes,
+										max: mathMax(selectionMin, selectionMax)
+									});
+									runZoom = true;
+								}
 						}
 					});
-					fireEvent(chart, 'selection', selectionData, zoom);
+					if (runZoom) {
+						fireEvent(chart, 'selection', selectionData, zoom);
+					}
 
 				}
 				selectionMarker = selectionMarker.destroy();
