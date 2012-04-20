@@ -12,6 +12,7 @@
  * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
  * - POC with two axes - for example km/h and m/h. For this we need either an option to make it 
  *   circular. Axis extension could be loaded on axis init.
+ * - Fix errors on export (invalide attributes)
  */
 
 

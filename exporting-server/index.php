@@ -74,8 +74,14 @@ if (isset($typeString)) {
 		echo "Error while converting SVG. ";
 		
 		if (strpos($output, 'SVGConverter.error.while.rasterizing.file') !== false) {
-			echo "SVG code for debugging: <hr/>";
-			echo htmlentities($svg);
+			echo "
+			<script>var svg = '$svg';</script>
+			<form method='post' action='http://validator.w3.org/check' onsubmit='document.getElementById(\"fragment\").value=svg'>
+				<input type='hidden' name='fragment' value='' id='fragment' />
+				<input type='hidden' name='doctype' value='SVG 1.1 Basic' />
+				<input type='submit' name='Validate SVG' />
+			</form>
+			";
 		}
 	} 
 	
