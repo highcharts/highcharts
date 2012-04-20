@@ -619,7 +619,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			var stopColor,
 				stopOpacity,
-				gradient = color[fillType],
+				gradient = color.linearGradient || color.radialGradient,
 				x1,
 				y1, 
 				x2,
@@ -629,7 +629,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				opacity2,
 				fillAttr = '',
 				colors = [];
-				
+			
 			// Handle linear gradient angle
 			if (fillType === 'gradient') {
 				x1 = gradient.x1 || gradient[0] || 0;
@@ -642,9 +642,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					) * 180 / mathPI;
 				
 			} else { // fillType === 'pattern'
-				fillAttr = 'src="http://midiwebconcept.free.fr/grad1.jpg" ' +
+				/*fillAttr = 'src="http://midiwebconcept.free.fr/grad1.jpg" ' +
 					'size="1,1" ' +
-					'origin="100,100" ';
+					'origin="100,100" ';*/
+					console.log("TODO: implement radial gradient");
 			}
 
 			// Compute the stops
@@ -745,12 +746,17 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Array} path
 	 */
 	path: function (path) {
-		// create the shape
-		return this.createElement('shape').attr({
+		var attr = {
 			// subpixel precision down to 0.1 (width and height = 1px)
-			coordsize: '10 10',
-			d: path
-		});
+			coordsize: '10 10'
+		};
+		if (isArray(path)) {
+			attr.d = path;
+		} else if (isObject(path)) { // attributes
+			extend(attr, path);
+		}
+		// create the shape
+		return this.createElement('shape').attr(attr);
 	},
 
 	/**

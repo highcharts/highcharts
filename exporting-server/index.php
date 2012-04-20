@@ -75,13 +75,14 @@ if (isset($typeString)) {
 		
 		if (strpos($output, 'SVGConverter.error.while.rasterizing.file') !== false) {
 			echo "
-			<script>var svg = '$svg';</script>
-			<form method='post' action='http://validator.w3.org/check' onsubmit='document.getElementById(\"fragment\").value=svg'>
-				<input type='hidden' name='fragment' value='' id='fragment' />
-				<input type='hidden' name='doctype' value='SVG 1.1 Basic' />
-				<input type='submit' name='Validate SVG' />
-			</form>
-			";
+			<h4>Debug steps</h4>
+			<ol>
+			<li>Copy the SVG: <textarea>" . htmlentities($svg) . "</textarea></li>
+			<li>Go to <a href='http://validator.w3.org/#validate_by_input' target='_blank'>validator.w3.org/#validate_by_input</a></li>
+			<li>Paste the SVG</li>
+			<li>Click More Options and select SVG 1.1 for Use Doctype</li>
+			<li>Click the Check button</li>
+			</ol>";
 		}
 	} 
 	
