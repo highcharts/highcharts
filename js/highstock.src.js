@@ -12755,14 +12755,16 @@ var ColumnSeries = extendClass(Series, {
 			css = cursor && { cursor: cursor },
 			trackerGroup = series.drawTrackerGroup(),
 			rel,
-			plotY;
+			plotY,
+			validPlotY;
 			
 		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
 			plotY = point.plotY;
+			validPlotY = !series.isCartesian || (plotY !== UNDEFINED && !isNaN(plotY));
 			delete shapeArgs.strokeWidth;
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			if (point.y !== null && validPlotY) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 
