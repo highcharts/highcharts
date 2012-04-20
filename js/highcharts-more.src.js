@@ -759,8 +759,6 @@ var GaugeSeries = {
 				],
 				translateX: center[0],
 				translateY: center[1],
-				x: 0, // base of rotation
-				y: 0,
 				rotation: (yAxis.startAngleRad + yAxis.translate(point.y)) * 180 / Math.PI
 			};
 			

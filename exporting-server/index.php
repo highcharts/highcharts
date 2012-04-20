@@ -77,7 +77,7 @@ if (isset($typeString)) {
 			echo "
 			<h4>Debug steps</h4>
 			<ol>
-			<li>Copy the SVG: <textarea>" . htmlentities($svg) . "</textarea></li>
+			<li>Copy the SVG:<br/><textarea rows=5>" . htmlentities(str_replace('>', ">\n", $svg)) . "</textarea></li>
 			<li>Go to <a href='http://validator.w3.org/#validate_by_input' target='_blank'>validator.w3.org/#validate_by_input</a></li>
 			<li>Paste the SVG</li>
 			<li>Click More Options and select SVG 1.1 for Use Doctype</li>

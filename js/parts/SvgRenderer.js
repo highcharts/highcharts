@@ -101,7 +101,6 @@ SVGElement.prototype = {
 				result = attrSetters[key] && attrSetters[key](value, key);
 
 				if (result !== false) {
-
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
 					}
@@ -663,7 +662,7 @@ SVGElement.prototype = {
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
-			transform.push('rotate(' + rotation + ' ' + wrapper.x + ' ' + wrapper.y + ')');
+			transform.push('rotate(' + rotation + ' ' + (wrapper.x || 0) + ' ' + (wrapper.y || 0) + ')');
 		}
 
 		if (transform.length) {
@@ -2129,10 +2128,14 @@ SVGRenderer.prototype = {
 			wrapper.attr({
 				text: str, // alignment is available now
 				x: x,
-				y: y,
-				anchorX: anchorX,
-				anchorY: anchorY
+				y: y
 			});
+			if (wrapper.symbolName) {
+				wrapper.attr({
+					anchorX: anchorX,
+					anchorY: anchorY
+				});
+			}
 		}
 
 		/**
