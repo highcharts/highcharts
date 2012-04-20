@@ -2,47 +2,66 @@
  * The overview of the chart's series
  */
 function Legend(chart) {
-	var legend = this,
-		options = legend.options = chart.options.legend;
 
-	if (!options.enabled) {
-		return;
-	}
-
-	var //style = options.style || {}, // deprecated
-		itemStyle = options.itemStyle,
-		itemHoverStyle = options.itemHoverStyle,
-		itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle),
-		padding = pick(options.padding, 8), // docs
-		itemMarginTop = options.itemMarginTop || 0;
-
-	legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
-	legend.itemStyle = itemStyle;
-	legend.itemHoverStyle = itemHoverStyle;
-	legend.itemHiddenStyle = itemHiddenStyle;
-	legend.itemMarginTop = itemMarginTop;
-	legend.padding = padding;
-	legend.initialItemX = padding;
-	legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
-	legend.maxItemWidth = 0;
-	legend.chart = chart;
-	//legend.allItems = UNDEFINED;
-	//legend.legendWidth = UNDEFINED;
-	//legend.legendHeight = UNDEFINED;
-	//legend.offsetWidth = UNDEFINED;
-	legend.itemHeight = 0;
-	//legend.itemX = UNDEFINED;
-	//legend.itemY = UNDEFINED;
-	//legend.lastItemY = UNDEFINED;
-
-	// Elements
-	//legend.group = UNDEFINED;
-	//legend.box = UNDEFINED;
-
-	legend.init();
+	this.init(chart);
 }
 
 Legend.prototype = {
+	
+	/**
+	 * Initialize the legend
+	 */
+	init: function (chart) {
+		var legend = this,
+			options = legend.options = chart.options.legend;
+	
+		if (!options.enabled) {
+			return;
+		}
+	
+		var //style = options.style || {}, // deprecated
+			itemStyle = options.itemStyle,
+			padding = pick(options.padding, 8), // docs
+			itemMarginTop = options.itemMarginTop || 0;
+	
+		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
+		legend.itemStyle = itemStyle;
+		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		legend.itemMarginTop = itemMarginTop;
+		legend.padding = padding;
+		legend.initialItemX = padding;
+		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
+		legend.maxItemWidth = 0;
+		legend.chart = chart;
+		//legend.allItems = UNDEFINED;
+		//legend.legendWidth = UNDEFINED;
+		//legend.legendHeight = UNDEFINED;
+		//legend.offsetWidth = UNDEFINED;
+		legend.itemHeight = 0;
+		//legend.itemX = UNDEFINED;
+		//legend.itemY = UNDEFINED;
+		//legend.lastItemY = UNDEFINED;
+	
+		// Elements
+		//legend.group = UNDEFINED;
+		//legend.box = UNDEFINED;
+
+		// run legend
+		legend.renderLegend();
+
+		// move checkboxes
+		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
+
+/*		// expose
+		return {
+			colorizeItem: colorizeItem,
+			destroyItem: destroyItem,
+			renderLegend: renderLegend,
+			destroy: destroy,
+			getLegendWidth: getLegendWidth,
+			getLegendHeight: getLegendHeight
+		};*/
+	},
 
 	/**
 	 * Set the colors for the legend item
@@ -213,7 +232,7 @@ Legend.prototype = {
 			// Set the events on the item group
 			item.legendGroup.on('mouseover', function () {
 					item.setState(HOVER_STATE);
-					li.css(legend.itemHoverStyle);
+					li.css(legend.options.itemHoverStyle);
 				})
 				.on('mouseout', function () {
 					li.css(item.visible ? itemStyle : itemHiddenStyle);
@@ -433,26 +452,7 @@ Legend.prototype = {
 		if (!chart.isResizing) {
 			this.positionCheckboxes();
 		}
-	},
-
-	init: function () {
-		var legend = this;
-
-		// run legend
-		legend.renderLegend();
-
-		// move checkboxes
-		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
-
-/*		// expose
-		return {
-			colorizeItem: colorizeItem,
-			destroyItem: destroyItem,
-			renderLegend: renderLegend,
-			destroy: destroy,
-			getLegendWidth: getLegendWidth,
-			getLegendHeight: getLegendHeight
-		};*/
 	}
+	
 };
 
