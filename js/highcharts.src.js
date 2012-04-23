@@ -5521,7 +5521,7 @@ function Chart(userOptions, callback) {
 			getLabelSize: function () {
 				var label = this.label;
 				return label ?
-					((this.labelBBox = label.getBBox()))[horiz ? 'height' : 'width'] :
+					((this.labelBBox = label.getBBox(true)))[horiz ? 'height' : 'width'] :
 					0;
 			},
 			
