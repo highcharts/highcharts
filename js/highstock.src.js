@@ -6690,7 +6690,6 @@ function Chart(userOptions, callback) {
 		 * number of ticks in that group
 		 */
 		function adjustTickAmount() {
-
 			if (maxTicks && maxTicks[xOrY] && !isDatetimeAxis && !categories && !isLinked && options.alignTicks !== false) { // only apply to linear scale
 				var oldTickAmount = tickAmount,
 					calculatedTickAmount = tickPositions.length;
@@ -6732,6 +6731,7 @@ function Chart(userOptions, callback) {
 
 			// set the new axisLength
 			axis.setAxisSize();
+			//axisLength = horiz ? axisWidth : axisHeight;
 			isDirtyAxisLength = axisLength !== oldAxisLength;
 
 			// is there new data?
@@ -6751,7 +6751,7 @@ function Chart(userOptions, callback) {
 
 				// get fixed positions based on tickInterval
 				setTickPositions();
-
+				
 				// record old values to decide whether a rescale is necessary later on (#540)
 				oldUserMin = userMin;
 				oldUserMax = userMax;
@@ -9723,6 +9723,8 @@ function Chart(userOptions, callback) {
 			axis.setScale();
 		});
 		getMargins();
+		
+		maxTicks = null; // reset for second pass
 		each(axes, function (axis) {
 			axis.setTickPositions(true); // update to reflect the new margins
 		});
