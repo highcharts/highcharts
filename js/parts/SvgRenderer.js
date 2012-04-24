@@ -2024,8 +2024,8 @@ SVGRenderer.prototype = {
 				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
 				text.getBBox(true);
-			wrapper.width = (width || bBox.width) + 2 * padding;
-			wrapper.height = (height || bBox.height) + 2 * padding;
+			wrapper.width = (width || bBox.width || 0) + 2 * padding;
+			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 			
 			// update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
