@@ -870,13 +870,14 @@ Series.prototype = {
 			initialColor = series.initialColor,
 			chart = series.chart,
 			firstPoint = null,
+			xAxis = series.xAxis,
 			i,
 			pointProto = series.pointClass.prototype;
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = (series.xAxis && series.xAxis.categories && 1) || options.pointRange;
-		
+		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
+
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
 		}
@@ -950,6 +951,11 @@ Series.prototype = {
 			if (oldData[i] && oldData[i].destroy) {
 				oldData[i].destroy();
 			}
+		}
+
+		// reset minRange (#878)
+		if (xAxis) {
+			xAxis.minRange = UNDEFINED;
 		}
 
 		// redraw
