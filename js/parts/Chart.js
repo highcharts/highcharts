@@ -1136,6 +1136,8 @@ Chart.prototype = {
 			axis.setScale();
 		});
 		chart.getMargins();
+
+		chart.maxTicks = null; // reset for second pass
 		each(axes, function (axis) {
 			axis.setTickPositions(true); // update to reflect the new margins
 		});

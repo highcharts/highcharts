@@ -6867,6 +6867,7 @@ Axis.prototype = {
 
 		// set the new axisLength
 		axis.setAxisSize();
+		//axisLength = horiz ? axisWidth : axisHeight;
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
@@ -10070,6 +10071,8 @@ Chart.prototype = {
 			axis.setScale();
 		});
 		chart.getMargins();
+
+		chart.maxTicks = null; // reset for second pass
 		each(axes, function (axis) {
 			axis.setTickPositions(true); // update to reflect the new margins
 		});

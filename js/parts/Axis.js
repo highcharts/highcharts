@@ -1180,6 +1180,7 @@ Axis.prototype = {
 
 		// set the new axisLength
 		axis.setAxisSize();
+		//axisLength = horiz ? axisWidth : axisHeight;
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
