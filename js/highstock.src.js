@@ -13676,10 +13676,13 @@ var PieSeries = {
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.
 	 */
-	setData: function () {
-		Series.prototype.setData.apply(this, arguments);
+	setData: function (data, redraw) {
+		Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		} 
 	},
 	
 	/**
