@@ -103,7 +103,7 @@ Tick.prototype = {
 		var label = this.label,
 			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
+			((this.labelBBox = label.getBBox(true)))[axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 

@@ -191,10 +191,13 @@ var PieSeries = {
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.
 	 */
-	setData: function () {
-		Series.prototype.setData.apply(this, arguments);
+	setData: function (data, redraw) {
+		Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		} 
 	},
 	
 	/**
@@ -314,7 +317,7 @@ var PieSeries = {
 					angle < circ / 4 ? 'left' : 'right', // alignment
 				angle // center angle
 			];
-
+			
 			// API properties
 			point.percentage = fraction * 100;
 			point.total = total;
@@ -478,7 +481,7 @@ var PieSeries = {
 		// assume equal label heights
 		labelHeight = halves[0][0] && halves[0][0].dataLabel && halves[0][0].dataLabel.getBBox().height;
 
-		/* Loop over the points in each quartile, starting from the top and bottom
+		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
 		while (i--) {
@@ -608,8 +611,10 @@ var PieSeries = {
 
 				// get the x - use the natural x position for first and last slot, to prevent the top
 				// and botton slice connectors from touching each other on either side
-				x = series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
-
+				x = options.justify ? 
+					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
+					series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
+				
 				// move or place the data label
 				dataLabel
 					.attr({

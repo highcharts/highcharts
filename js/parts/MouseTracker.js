@@ -235,8 +235,8 @@ MouseTracker.prototype = {
 					},
 					selectionBox = mouseTracker.selectionMarker.getBBox(),
 					selectionLeft = selectionBox.x - chart.plotLeft,
-					selectionTop = selectionBox.y - chart.plotTop;
-
+					selectionTop = selectionBox.y - chart.plotTop,
+					runZoom;
 
 				// a selection has been made
 				if (hasDragged) {
@@ -265,14 +265,19 @@ MouseTracker.prototype = {
 									1
 								);
 
-								selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
-									axis: axis,
-									min: mathMin(selectionMin, selectionMax), // for reversed axes,
-									max: mathMax(selectionMin, selectionMax)
-								});
+								if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
+									selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
+										axis: axis,
+										min: mathMin(selectionMin, selectionMax), // for reversed axes,
+										max: mathMax(selectionMin, selectionMax)
+									});
+									runZoom = true;
+								}
 						}
 					});
-					fireEvent(chart, 'selection', selectionData, function (args) { chart.zoom(args); });
+					if (runZoom) {
+						fireEvent(chart, 'selection', selectionData, function (args) { chart.zoom(args); });
+					}
 
 				}
 				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();

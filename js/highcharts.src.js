@@ -3727,8 +3727,8 @@ SVGRenderer.prototype = {
 				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
 				text.getBBox(true);
-			wrapper.width = (width || bBox.width) + 2 * padding;
-			wrapper.height = (height || bBox.height) + 2 * padding;
+			wrapper.width = (width || bBox.width || 0) + 2 * padding;
+			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 			
 			// update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
@@ -5127,7 +5127,7 @@ Tick.prototype = {
 		var label = this.label,
 			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
+			((this.labelBBox = label.getBBox(true)))[axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -6866,7 +6866,8 @@ Axis.prototype = {
 		axis.oldAxisLength = axis.len;
 
 		// set the new axisLength
-		axis.len = axis.horiz ? axis.width : axis.height;
+		axis.setAxisSize();
+		//axisLength = horiz ? axisWidth : axisHeight;
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
@@ -6965,6 +6966,7 @@ Axis.prototype = {
 		axis.bottom = chart.chartHeight - axis.height - axis.top;
 		axis.right = chart.chartWidth - axis.width - axis.left;
 		axis.len = axis.horiz ? axis.width : axis.height;
+		axis.length = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
 	},
 
 	/**
@@ -8132,8 +8134,8 @@ MouseTracker.prototype = {
 					},
 					selectionBox = mouseTracker.selectionMarker.getBBox(),
 					selectionLeft = selectionBox.x - chart.plotLeft,
-					selectionTop = selectionBox.y - chart.plotTop;
-
+					selectionTop = selectionBox.y - chart.plotTop,
+					runZoom;
 
 				// a selection has been made
 				if (hasDragged) {
@@ -8162,14 +8164,19 @@ MouseTracker.prototype = {
 									1
 								);
 
-								selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
-									axis: axis,
-									min: mathMin(selectionMin, selectionMax), // for reversed axes,
-									max: mathMax(selectionMin, selectionMax)
-								});
+								if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
+									selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
+										axis: axis,
+										min: mathMin(selectionMin, selectionMax), // for reversed axes,
+										max: mathMax(selectionMin, selectionMax)
+									});
+									runZoom = true;
+								}
 						}
 					});
-					fireEvent(chart, 'selection', selectionData, function (args) { chart.zoom(args); });
+					if (runZoom) {
+						fireEvent(chart, 'selection', selectionData, function (args) { chart.zoom(args); });
+					}
 
 				}
 				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();
@@ -10064,6 +10071,8 @@ Chart.prototype = {
 			axis.setScale();
 		});
 		chart.getMargins();
+
+		chart.maxTicks = null; // reset for second pass
 		each(axes, function (axis) {
 			axis.setTickPositions(true); // update to reflect the new margins
 		});
@@ -11243,13 +11252,14 @@ Series.prototype = {
 			initialColor = series.initialColor,
 			chart = series.chart,
 			firstPoint = null,
+			xAxis = series.xAxis,
 			i,
 			pointProto = series.pointClass.prototype;
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = (series.xAxis && series.xAxis.categories && 1) || options.pointRange;
-		
+		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
+
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
 		}
@@ -11323,6 +11333,11 @@ Series.prototype = {
 			if (oldData[i] && oldData[i].destroy) {
 				oldData[i].destroy();
 			}
+		}
+
+		// reset minRange (#878)
+		if (xAxis) {
+			xAxis.minRange = UNDEFINED;
 		}
 
 		// redraw
@@ -13258,13 +13273,17 @@ var ColumnSeries = extendClass(Series, {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			trackerGroup = series.drawTrackerGroup(),
-			rel;
+			rel,
+			plotY,
+			validPlotY;
 			
 		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
+			plotY = point.plotY;
+			validPlotY = !series.isCartesian || (plotY !== UNDEFINED && !isNaN(plotY));
 			delete shapeArgs.strokeWidth;
-			if (point.y !== null) {
+			if (point.y !== null && validPlotY) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 
@@ -13668,10 +13687,13 @@ var PieSeries = {
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.
 	 */
-	setData: function () {
-		Series.prototype.setData.apply(this, arguments);
+	setData: function (data, redraw) {
+		Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		} 
 	},
 	
 	/**
@@ -13791,7 +13813,7 @@ var PieSeries = {
 					angle < circ / 4 ? 'left' : 'right', // alignment
 				angle // center angle
 			];
-
+			
 			// API properties
 			point.percentage = fraction * 100;
 			point.total = total;
@@ -13955,7 +13977,7 @@ var PieSeries = {
 		// assume equal label heights
 		labelHeight = halves[0][0] && halves[0][0].dataLabel && halves[0][0].dataLabel.getBBox().height;
 
-		/* Loop over the points in each quartile, starting from the top and bottom
+		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
 		while (i--) {
@@ -14085,8 +14107,10 @@ var PieSeries = {
 
 				// get the x - use the natural x position for first and last slot, to prevent the top
 				// and botton slice connectors from touching each other on either side
-				x = series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
-
+				x = options.justify ? 
+					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
+					series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
+				
 				// move or place the data label
 				dataLabel
 					.attr({

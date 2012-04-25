@@ -9,7 +9,22 @@ elseif ($product == 'highstock') $dir = 'stock';
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highstock Example</title>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
 		
+		<script>
+			$(function () {
+				$("#batch-compare").click(function() {
+					var currentLi = document.currentLi || $('#li1')[0];
+					if (currentLi) {
+						var href = currentLi.getElementsByTagName("a")[0].href;
+					
+						href = href.replace("/samples/", "/compare-svg/");
+						window.parent.frames[1].location.href = href;
+					}
+				});
+			});
+			
+		</script>
 		<style type="text/css">
 			* {
 				font-family: Arial, Verdana;
@@ -38,13 +53,22 @@ elseif ($product == 'highstock') $dir = 'stock';
 				color: gray;
 			}
 			li.hilighted {
-				background: #FCFFC5;
 				border-color: silver;
 				font-weight: bold;
 			}
 			li.hilighted a {
 				color: black;
 			}
+			
+			li.identical, li.identical a {
+				background: green;
+				color: white;
+			}
+			
+			li.different, li.different a {
+				background: red;
+				color: white;
+			}ß
 			
 		</style>
 		
@@ -53,6 +77,8 @@ elseif ($product == 'highstock') $dir = 'stock';
 	<body>
 		
 	Product: <a href='?product=highcharts'>Highcharts</a> | <a href='?product=highstock'>Highstock</a>
+	<br/>
+	<button id="batch-compare">Batch compare</button>
 		<hr/>	
 
 	<?php
