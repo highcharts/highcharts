@@ -560,7 +560,7 @@
         </exec>
         <!--
         <java jar="${jstestdriver.jar}">
-            <arg value="--port"/>
+            <arg value="/-/-port"/>
             <arg value="4224"/>
         </java>
         -->

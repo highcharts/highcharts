@@ -500,7 +500,9 @@ var gaugeValueAxisMixin = {
 		
 		Axis.prototype.setAxisSize.call(this);
 		
-		this.len = this.height = this.center[2] * (this.endAngleRad - this.startAngleRad) / 2;
+		if (this.center) { // it's not defined the first time
+			this.len = this.height = this.center[2] * (this.endAngleRad - this.startAngleRad) / 2;
+		}
 	},
 	
 	/**
