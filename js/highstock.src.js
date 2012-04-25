@@ -16083,7 +16083,10 @@ Scroller.prototype = {
 		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
 		// This needs to be done prior to chart.resize
 		chart.setSize = function (width, height, animation) {
-			xAxis.options.top = yAxis.options.top = scroller.top = top = scroller.getAxisTop(height);
+			top = scroller.getAxisTop(height);
+			if (xAxis && yAxis) { // false if navigator is disabled (#904)
+				xAxis.options.top = yAxis.options.top = scroller.top = top;
+			}
 			baseChartSetSize.call(chart, width, height, animation);
 		};
 
