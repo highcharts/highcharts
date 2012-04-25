@@ -6866,7 +6866,7 @@ Axis.prototype = {
 		axis.oldAxisLength = axis.len;
 
 		// set the new axisLength
-		axis.len = axis.horiz ? axis.width : axis.height;
+		axis.setAxisSize();
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
@@ -6965,6 +6965,7 @@ Axis.prototype = {
 		axis.bottom = chart.chartHeight - axis.height - axis.top;
 		axis.right = chart.chartWidth - axis.width - axis.left;
 		axis.len = axis.horiz ? axis.width : axis.height;
+		axis.length = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
 	},
 
 	/**
@@ -13258,13 +13259,15 @@ var ColumnSeries = extendClass(Series, {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			trackerGroup = series.drawTrackerGroup(),
-			rel;
+			rel,
+			plotY;
 			
 		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
+			plotY = point.plotY;
 			delete shapeArgs.strokeWidth;
-			if (point.y !== null) {
+			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 

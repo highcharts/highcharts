@@ -260,13 +260,15 @@ var ColumnSeries = extendClass(Series, {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			trackerGroup = series.drawTrackerGroup(),
-			rel;
+			rel,
+			plotY;
 			
 		each(series.points, function (point) {
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
+			plotY = point.plotY;
 			delete shapeArgs.strokeWidth;
-			if (point.y !== null) {
+			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				if (tracker) {// update
 					tracker.attr(shapeArgs);
 
