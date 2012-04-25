@@ -811,11 +811,12 @@ Series.prototype = {
 			initialColor = series.initialColor,
 			chart = series.chart,
 			firstPoint = null,
+			xAxis = series.xAxis,
 			i;
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = (series.xAxis && series.xAxis.categories && 1) || options.pointRange;
+		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
 		
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -890,6 +891,13 @@ Series.prototype = {
 			if (oldData[i] && oldData[i].destroy) {
 				oldData[i].destroy();
 			}
+		}
+		
+		// reset minRange (#878)
+		// TODO: In protofy, run this code instead:
+		// if (xAxis) xAxis.minRange = UNDEFINED;
+		if (xAxis && xAxis.setMinRange) {
+			xAxis.setMinRange(); // to undefined
 		}
 
 		// redraw

@@ -6496,6 +6496,12 @@ function Chart(userOptions, callback) {
 					});
 					minRange = mathMin(closestDataRange * 5, dataMax - dataMin);
 				}
+				
+				// A hook for resetting the minRange in series.setData (#878)
+				// TODO: remove this in protofy, where xAxis.minRange can be set directly
+				axis.setMinRange = function (newMinRange) {
+					minRange = newMinRange;
+				};
 			}
 			
 			// if minRange is exceeded, adjust
@@ -10869,11 +10875,12 @@ Series.prototype = {
 			initialColor = series.initialColor,
 			chart = series.chart,
 			firstPoint = null,
+			xAxis = series.xAxis,
 			i;
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = (series.xAxis && series.xAxis.categories && 1) || options.pointRange;
+		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
 		
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -10948,6 +10955,13 @@ Series.prototype = {
 			if (oldData[i] && oldData[i].destroy) {
 				oldData[i].destroy();
 			}
+		}
+		
+		// reset minRange (#878)
+		// TODO: In protofy, run this code instead:
+		// if (xAxis) xAxis.minRange = UNDEFINED;
+		if (xAxis && xAxis.setMinRange) {
+			xAxis.setMinRange(); // to undefined
 		}
 
 		// redraw

@@ -1263,6 +1263,12 @@ function Chart(userOptions, callback) {
 					});
 					minRange = mathMin(closestDataRange * 5, dataMax - dataMin);
 				}
+				
+				// A hook for resetting the minRange in series.setData (#878)
+				// TODO: remove this in protofy, where xAxis.minRange can be set directly
+				axis.setMinRange = function (newMinRange) {
+					minRange = newMinRange;
+				};
 			}
 			
 			// if minRange is exceeded, adjust
