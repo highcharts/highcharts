@@ -3444,14 +3444,14 @@ SVGRenderer.prototype = {
 		
 		if (gradName) {
 			var gradAttr = color[gradName],
+				gradients = renderer.gradients,
 				gradientObject,
 				stopColor,
 				stopOpacity,
 				radialReference = elem.radialReference;
 			
-			// If the gradient with the same setup is already created, gradAttr.id is already
-			// set. If else, create it now.
-			if (!gradAttr.id) {
+			// Check if a gradient object with the same config object is created within this renderer
+			if (!gradAttr.id || !gradients[gradAttr.id]) {
 				
 				// Keep < 2.2 kompatibility
 				if (isArray(gradAttr)) {
@@ -3476,7 +3476,7 @@ SVGRenderer.prototype = {
 
 				// Set the id and create the element
 				gradAttr.id = PREFIX + idCounter++;
-				gradientObject = renderer.createElement(gradName)
+				gradients[gradAttr.id] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
 				
@@ -8918,9 +8918,9 @@ Legend.prototype = {
 			i = 4;
 		while (i--) {
 			prop = props[i];
-			if (style[prop] && style[prop] !== 'auto') {
+			if (options.style[prop] && options.style[prop] !== 'auto') {
 				options[i < 2 ? 'align' : 'verticalAlign'] = prop;
-				options[i < 2 ? 'x' : 'y'] = pInt(style[prop]) * (i % 2 ? -1 : 1);
+				options[i < 2 ? 'x' : 'y'] = pInt(options.style[prop]) * (i % 2 ? -1 : 1);
 			}
 		}*/
 

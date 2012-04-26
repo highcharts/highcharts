@@ -441,9 +441,9 @@ Legend.prototype = {
 			i = 4;
 		while (i--) {
 			prop = props[i];
-			if (style[prop] && style[prop] !== 'auto') {
+			if (options.style[prop] && options.style[prop] !== 'auto') {
 				options[i < 2 ? 'align' : 'verticalAlign'] = prop;
-				options[i < 2 ? 'x' : 'y'] = pInt(style[prop]) * (i % 2 ? -1 : 1);
+				options[i < 2 ? 'x' : 'y'] = pInt(options.style[prop]) * (i % 2 ? -1 : 1);
 			}
 		}*/
 
