@@ -159,77 +159,7 @@ UtilTest.prototype.testLin2Log = function () {
 	// TODO: implement
 };
 
-/**
- * Tests if a point is inside a rectangle
- * The rectangle coordinate system is: x and y specifies the _top_ left corner width is the width and height is the height.
- */
-UtilTest.prototype.pointInRect = function (x, y, rect) {
-	var inside =
-		x >= rect.x && x <= (rect.x + rect.width) &&
-		y >= rect.y && y <= (rect.y + rect.height)
-	return inside;
-};
 
-/**
- * Tests if a small rectangle is inside a bigger rectangle by testing each corner.
- */
-UtilTest.prototype.rectInRect = function (smallRect, largeRect) {
-	// (Maybe only two corners need to be tested)
-	var inside = this.pointInRect(smallRect.x, smallRect.y, largeRect); // left top
-	inside = inside && this.pointInRect(smallRect.x + smallRect.width, smallRect.y, largeRect); // right top
-	inside = inside && this.pointInRect(smallRect.x + smallRect.width, smallRect.y + smallRect.height, largeRect); // right bottom
-	inside = inside && this.pointInRect(smallRect.x, smallRect.y + smallRect.height, largeRect); // left bottom
-	return inside;
-};
-
-/**
- * Test the placeBox utility function. It should adjust a tooltip rectangle to be inside the chart but not cover the point itself.
- */
-UtilTest.prototype.testPlaceBox = function () {
-	var chartRect = {x: 0, y: 0, width: 100, height: 100 },
-		tooltipSize = {width: 50, height: 20},
-		dataPoint = {x: 0, y: 50},
-		tooltipPoint,
-		boxPoint;
-
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
-	extend(boxPoint, tooltipSize);
-	assertTrue('Left rectInRect chart', this.rectInRect(boxPoint, chartRect));
-	assertFalse('Left tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
-
-	dataPoint.x = 100;
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
-	extend(boxPoint, tooltipSize);
-	assertTrue('Right rectInRect chart', this.rectInRect(boxPoint, chartRect));
-	assertFalse('Right tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
-
-	dataPoint.x = 50;
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
-	extend(boxPoint, tooltipSize);
-	assertTrue('Mid rectInRect chart', this.rectInRect(boxPoint, chartRect));
-	assertFalse('Mid tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
-
-	dataPoint.x = 75;
-	dataPoint.y = 5;
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
-	extend(boxPoint, tooltipSize);
-	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, chartRect));
-	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
-	
-	// #834
-	tooltipSize.width = 64;
-	tooltipSize.height = 46;
-	dataPoint.x = 13;
-	dataPoint.y = 48;
-	chartRect.x = 32;
-	chartRect.y = 10;
-	chartRect.width = 78;
-	chartRect.height = 63;
-	boxPoint = placeBox(tooltipSize.width, tooltipSize.height, chartRect.x, chartRect.y, chartRect.width, chartRect.height, dataPoint, 12);
-	extend(boxPoint, tooltipSize);
-	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, chartRect));
-	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
-};
 
 /**
  * Tests that the stable sort utility works.

@@ -1,5 +1,7 @@
-
-
+/**
+ * Set the default options for spline
+ */
+defaultPlotOptions.spline = merge(defaultSeriesOptions);
 
 /**
  * SplineSeries object

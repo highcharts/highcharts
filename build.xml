@@ -37,6 +37,7 @@
 
         <!-- highcharts/highstock src -->
         <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
+		<property name="highchartsmore.parts.dir" location="${basedir}/js/parts-more"/>
 
         <property name="highcharts.src.name" value="highcharts.src.js"/>
         <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}"/>
@@ -44,6 +45,9 @@
         <property name="highstock.src.name" value="highstock.src.js"/>
         <property name="highstock.src.file" value="${basedir}/js/${highstock.src.name}"/>
         <property name="highstock.minified.name" value="highstock.js"/>
+        <property name="highchartsmore.src.name" value="highcharts-more.src.js"/>
+        <property name="highchartsmore.src.file" value="${basedir}/js/${highchartsmore.src.name}"/>
+        <property name="highchartsmore.minified.name" value="highcharts-more.js"/>
         <property name="mootools.src.name" value="mootools-adapter.src.js"/>
         <property name="prototype.src.name" value="prototype-adapter.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
@@ -86,6 +90,13 @@
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
             <file name="CanVGRenderer.js"/>
+            <file name="Tick.js"/>
+            <file name="PlotLineOrBand.js"/>
+            <file name="StackItem.js"/>
+            <file name="Axis.js"/>
+            <file name="Tooltip.js"/>
+            <file name="MouseTracker.js"/>
+            <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -112,6 +123,13 @@
             <file name="SvgRenderer.js"/>
             <file name="VmlRenderer.js"/>
             <file name="CanVGRenderer.js"/>
+            <file name="Tick.js"/>
+            <file name="PlotLineOrBand.js"/>
+            <file name="StackItem.js"/>
+            <file name="Axis.js"/>
+            <file name="Tooltip.js"/>
+            <file name="MouseTracker.js"/>
+            <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
@@ -126,10 +144,21 @@
             <file name="OHLCSeries.js"/>
             <file name="CandlestickSeries.js"/>
             <file name="FlagsSeries.js"/>
+            <file name="Scroller.js"/>
+            <file name="RangeSelector.js"/>
             <file name="StockNavigation.js"/>
             <file name="StockChart.js"/>
             <file name="OrdinalAxis.js"/>
             <file name="Facade.js"/>
+            <file name="Outro.js"/>
+        </filelist>
+
+        <!-- This is the list of files for highstock -->
+        <filelist id="highchartsmore.files" dir="${highchartsmore.parts.dir}">
+            <file name="Intro.js"/>
+            <file name="Globals.js"/>
+            <file name="AreaRangeSeries.js"/>
+            <file name="GaugeSeries.js"/>
             <file name="Outro.js"/>
         </filelist>
     </target>
@@ -182,6 +211,19 @@
             </filterchain>
         </concat>
 
+        <!-- Concat highcharts-more src and replace the product name and version -->
+        <concat destfile="${highchartsmore.src.file}">
+            <filelist refid="highchartsmore.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+
         <!-- Concat canvg library together with rgbcolor script -->
         <concat destfile="build/canvas-tools.src.js">
             <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
@@ -190,17 +232,18 @@
     </target>
 
     <!-- This target convert any mixed line endings to crlf. -->
-    <target name="check-crlf" depends="assemble">
+	<target name="check-crlf" depends="assemble">
         <fixcrlf srcDir="${basedir}/js" includes="**/*.js" fixlast="false"/>
-        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" fixlast="false"/>
+        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" fixlast="false"/>       	
     </target>
 
-    <!-- Runs jslint on source code. -->
+    <!-- Runs jslint on generated source code. -->
     <target name="do-lint" depends="check-crlf">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
             <formatter type="plain"/>
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
             <fileset file="${highstock.src.file}"/>
+            <fileset file="${highchartsmore.src.file}"/>
             <fileset file="${mootools.src.file}"/>
             <fileset file="${prototype.src.file}"/>
             <fileset file="${exporting.src.file}"/>
@@ -219,11 +262,54 @@
 
     <!-- This target is only run if there are unused variables. -->
     <target name="lint" depends="do-lint" if="lint.variable.error">
-        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'"/>
+        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'."/>
+    </target>
+    
+    <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
+    <target name="do-lint-parts" depends="set.properties">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
+            <formatter type="plain"/>
+            <formatter type="report" destfile="${build.dir}/lintreport.html"/>
+            <fileset dir="${highcharts.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+            <fileset dir="${highchartsmore.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+            <fileset dir="${highchartsmore.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+            <fileset dir="${highchartsmore.parts.dir}">
+            	<include name="*.js" />
+            	<exclude name="Intro.js" />
+            	<exclude name="Outro.js" />
+            </fileset>
+        </jslint>
+
+        <!-- Set a property that tells if there are unused variables. -->
+        <condition property="lint.parts.variable.error">
+        	<resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
+        </condition>
+        
+        <echo message="General warning: This target won't reveal undefined variables. Run 'ant lint' in addition."/>
+    </target>
+
+    <!-- This target is only run if there are unused variables. -->
+    <target name="lint-parts" depends="do-lint-parts" if="lint.parts.variable.error">
+        <echo message="Warning: Unused variables exist. Run 'start build/lintreport.html', search for 'Unused'."/>
     </target>
 
     <!-- Runs google closure compiler and yui compressor on src. -->
     <target name="compile">
+        <!-- This command sets the logging level in current task to only include echo messages. -->
+        <script language="javascript">project.getBuildListeners().firstElement().setMessageOutputLevel(1);</script>
+
         <echo message="Minifying ${param.src}"/>
         <java jar="${gcc.jar}" fork="true">
             <arg value="--compilation_level"/>
@@ -242,11 +328,22 @@
         </java>
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
+        <!-- Create a temporary zipfile to get the zipped size -->
+        <copy file="${param.out}" tofile="${build.dir}/zipme.js"/>
+        <zip destfile="${build.dir}/zipped.zip" basedir="${build.dir}" includes="zipme.js"/>
+        <length file="${build.dir}/zipped.zip" property="zipped.output.length"/>
+
         <length file="${param.out}.yui-min.js" property="yuicomp.output.length"/>
+        <!-- Create a temporary zipfile to get the zipped size -->
+        <copy file="${param.out}.yui-min.js" tofile="${build.dir}/yuizipme.js"/>
+        <zip destfile="${build.dir}/yuizipped.zip" basedir="${build.dir}" includes="yuizipme.js"/>
+        <length file="${build.dir}/yuizipped.zip" property="yui.zipped.output.length"/>
         <!-- We are not distributing this file, its only used to make sure compilation works. -->
         <delete file="${param.out}.yui-min.js" quiet="true"/>
-        <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes."/>
-        <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes."/>
+
+        <echo message="Google Closure compiler: ${input.length} bytes -> ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)."/>
+        <echo message="Yahoo YUI Compressor:    ${input.length} bytes -> ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)."/>
+        <echo message=""/>
     </target>
 
     <!-- Runs minifiers on source code. -->
@@ -259,6 +356,11 @@
         <antcall target="compile">
             <param name="param.src" value="${highstock.src.file}"/>
             <param name="param.out" value="${dist.dir}/highstock/js/${highstock.minified.name}"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="${highchartsmore.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highcharts/js/${highchartsmore.minified.name}"/>
         </antcall>
 
         <antcall target="compile">
@@ -453,9 +555,15 @@
 
     <!-- Starts the test driver server. -->
     <target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
-        <exec executable="cmd" dir="${basedir}" >
+        <exec executable="cmd" dir="${basedir}" osfamily="windows">
             <arg value="/k start java -jar ${jstestdriver.jar} --port 4224"/>
         </exec>
+        <!--
+        <java jar="${jstestdriver.jar}">
+            <arg value="/-/-port"/>
+            <arg value="4224"/>
+        </java>
+        -->
         <echo message="Test server started at localhost:4224"/>
         <echo message="Before running tests, remember to capture one or more browsers."/>
         <echo message="Exit the server by pressing Control-C in the java window."/>

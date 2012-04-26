@@ -213,12 +213,13 @@ defaultOptions = {
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
-		style: {
+		/*style: {
 			padding: '5px'
-		},
+		},*/
 		itemStyle: {
 			cursor: 'pointer',
-			color: '#3E576F'
+			color: '#3E576F',
+			fontSize: '12px'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -299,260 +300,12 @@ defaultOptions = {
 	}
 };
 
-// Axis defaults
-/*jslint white: true*/
-var defaultXAxisOptions = {
-	// allowDecimals: null,
-	// alternateGridColor: null,
-	// categories: [],
-	dateTimeLabelFormats: hash(
-		MILLISECOND, '%H:%M:%S.%L',
-		SECOND, '%H:%M:%S',
-		MINUTE, '%H:%M',
-		HOUR, '%H:%M',
-		DAY, '%e. %b',
-		WEEK, '%e. %b',
-		MONTH, '%b \'%y',
-		YEAR, '%Y'
-	),
-	endOnTick: false,
-	gridLineColor: '#C0C0C0',
-	// gridLineDashStyle: 'solid',
-	// gridLineWidth: 0,
-	// reversed: false,
-
-	labels: defaultLabelOptions,
-		// { step: null },
-	lineColor: '#C0D0E0',
-	lineWidth: 1,
-	//linkedTo: null,
-	max: null,
-	min: null,
-	minPadding: 0.01,
-	maxPadding: 0.01,
-	//minRange: null,
-	minorGridLineColor: '#E0E0E0',
-	// minorGridLineDashStyle: null,
-	minorGridLineWidth: 1,
-	minorTickColor: '#A0A0A0',
-	//minorTickInterval: null,
-	minorTickLength: 2,
-	minorTickPosition: 'outside', // inside or outside
-	//minorTickWidth: 0,
-	//opposite: false,
-	//offset: 0,
-	//plotBands: [{
-	//	events: {},
-	//	zIndex: 1,
-	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
-	//}],
-	//plotLines: [{
-	//	events: {}
-	//  dashStyle: {}
-	//	zIndex:
-	//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
-	//}],
-	//reversed: false,
-	// showFirstLabel: true,
-	// showLastLabel: true,
-	startOfWeek: 1,
-	startOnTick: false,
-	tickColor: '#C0D0E0',
-	//tickInterval: null,
-	tickLength: 5,
-	tickmarkPlacement: 'between', // on or between
-	tickPixelInterval: 100,
-	tickPosition: 'outside',
-	tickWidth: 1,
-	title: {
-		//text: null,
-		align: 'middle', // low, middle or high
-		//margin: 0 for horizontal, 10 for vertical axes,
-		//rotation: 0,
-		//side: 'outside',
-		style: {
-			color: '#6D869F',
-			//font: defaultFont.replace('normal', 'bold')
-			fontWeight: 'bold'
-		}
-		//x: 0,
-		//y: 0
-	},
-	type: 'linear' // linear, logarithmic or datetime
-},
-
-defaultYAxisOptions = merge(defaultXAxisOptions, {
-	endOnTick: true,
-	gridLineWidth: 1,
-	tickPixelInterval: 72,
-	showLastLabel: true,
-	labels: {
-		align: 'right',
-		x: -8,
-		y: 3
-	},
-	lineWidth: 0,
-	maxPadding: 0.05,
-	minPadding: 0.05,
-	startOnTick: true,
-	tickWidth: 0,
-	title: {
-		rotation: 270,
-		text: 'Y-values'
-	},
-	stackLabels: {
-		enabled: false,
-		//align: dynamic,
-		//y: dynamic,
-		//x: dynamic,
-		//verticalAlign: dynamic,
-		//textAlign: dynamic,
-		//rotation: 0,
-		formatter: function () {
-			return this.total;
-		},
-		style: defaultLabelOptions.style
-	}
-}),
-
-defaultLeftAxisOptions = {
-	labels: {
-		align: 'right',
-		x: -8,
-		y: null
-	},
-	title: {
-		rotation: 270
-	}
-},
-defaultRightAxisOptions = {
-	labels: {
-		align: 'left',
-		x: 8,
-		y: null
-	},
-	title: {
-		rotation: 90
-	}
-},
-defaultBottomAxisOptions = { // horizontal axis
-	labels: {
-		align: 'center',
-		x: 0,
-		y: 14
-		// overflow: undefined // docs - can be 'justify'
-		// staggerLines: null
-	},
-	title: {
-		rotation: 0
-	}
-},
-defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
-	labels: {
-		y: -5,
-		overflow: 'justify'
-		// staggerLines: null
-	}
-});
-/*jslint white: false*/
 
 
 
 // Series defaults
 var defaultPlotOptions = defaultOptions.plotOptions,
 	defaultSeriesOptions = defaultPlotOptions.line;
-//defaultPlotOptions.line = merge(defaultSeriesOptions);
-defaultPlotOptions.spline = merge(defaultSeriesOptions);
-defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
-	lineWidth: 0,
-	states: {
-		hover: {
-			lineWidth: 0
-		}
-	},
-	tooltip: {
-		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
-	}
-});
-defaultPlotOptions.area = merge(defaultSeriesOptions, {
-	threshold: 0
-	// lineColor: null, // overrides color, but lets fillColor be unaltered
-	// fillOpacity: 0.75,
-	// fillColor: null
-
-});
-defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
-defaultPlotOptions.column = merge(defaultSeriesOptions, {
-	borderColor: '#FFFFFF',
-	borderWidth: 1,
-	borderRadius: 0,
-	//colorByPoint: undefined,
-	groupPadding: 0.2,
-	marker: null, // point options are specified in the base options
-	pointPadding: 0.1,
-	//pointWidth: null,
-	minPointLength: 0,
-	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
-	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
-	states: {
-		hover: {
-			brightness: 0.1,
-			shadow: false
-		},
-		select: {
-			color: '#C0C0C0',
-			borderColor: '#000000',
-			shadow: false
-		}
-	},
-	dataLabels: {
-		y: null,
-		verticalAlign: null
-	},
-	threshold: 0
-});
-defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
-	dataLabels: {
-		align: 'left',
-		x: 5,
-		y: null,
-		verticalAlign: 'middle'
-	}
-});
-defaultPlotOptions.pie = merge(defaultSeriesOptions, {
-	//dragType: '', // n/a
-	borderColor: '#FFFFFF',
-	borderWidth: 1,
-	center: ['50%', '50%'],
-	colorByPoint: true, // always true for pies
-	dataLabels: {
-		// align: null,
-		// connectorWidth: 1,
-		// connectorColor: point.color,
-		// connectorPadding: 5,
-		distance: 30,
-		enabled: true,
-		formatter: function () {
-			return this.point.name;
-		},
-		// softConnector: true,
-		y: 5
-	},
-	//innerSize: 0,
-	legendType: 'point',
-	marker: null, // point options are specified in the base options
-	size: '75%',
-	showInLegend: false,
-	slicedOffset: 10,
-	states: {
-		hover: {
-			brightness: 0.1,
-			shadow: false
-		}
-	}
-
-});
 
 // set the default time methods
 setTimeMethods();
@@ -599,9 +352,9 @@ function setTimeMethods() {
 function setOptions(options) {
 	
 	// Pull out axis options and apply them to the respective default axis options 
-	defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
+	/*defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
 	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
-	options.xAxis = options.yAxis = UNDEFINED;
+	options.xAxis = options.yAxis = UNDEFINED;*/
 	
 	// Merge in the default options
 	defaultOptions = merge(defaultOptions, options);

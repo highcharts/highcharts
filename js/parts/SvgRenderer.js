@@ -66,6 +66,7 @@ SVGElement.prototype = {
 			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
+			doTransform,
 			ret = wrapper;
 
 		// single key-value pair
@@ -100,7 +101,6 @@ SVGElement.prototype = {
 				result = attrSetters[key] && attrSetters[key](value, key);
 
 				if (result !== false) {
-
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
 					}
@@ -113,7 +113,7 @@ SVGElement.prototype = {
 						if (/(NaN| {2}|^$)/.test(value)) {
 							value = 'M 0 0';
 						}
-						wrapper.d = value; // shortcut for animations
+						//wrapper.d = value; // shortcut for animations
 
 					// update child tspans x values
 					} else if (key === 'x' && nodeName === 'text') {
@@ -149,8 +149,7 @@ SVGElement.prototype = {
 
 					// translation and text rotation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'verticalAlign') {
-						wrapper[key] = value;
-						wrapper.updateTransform();
+						doTransform = true;
 						skipAttr = true;
 
 					// apply opacity as subnode (required by legacy WebKit and Batik)
@@ -240,7 +239,13 @@ SVGElement.prototype = {
 						value = 0;
 					}
 
-
+					// Record for animation and quick access without polling the DOM
+					wrapper[key] = value;
+					
+					// Update transform
+					if (doTransform) {
+						wrapper.updateTransform();
+					}
 
 
 					if (key === 'text') {
@@ -414,7 +419,16 @@ SVGElement.prototype = {
 		this.element['on' + eventType] = fn;
 		return this;
 	},
-
+	
+	/**
+	 * Set the coordinates needed to draw a consistent radial gradient across
+	 * pie slices regardless of positioning inside the chart. The format is
+	 * [centerX, centerY, diameter] in pixels.
+	 */
+	setRadialReference: function (coordinates) {
+		this.element.radialReference = coordinates;
+		return this;
+	},
 
 	/**
 	 * Move an object and its children by x and y values
@@ -648,7 +662,7 @@ SVGElement.prototype = {
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
-			transform.push('rotate(' + rotation + ' ' + wrapper.x + ' ' + wrapper.y + ')');
+			transform.push('rotate(' + rotation + ' ' + (wrapper.x || 0) + ' ' + (wrapper.y || 0) + ')');
 		}
 
 		if (transform.length) {
@@ -1009,8 +1023,8 @@ SVGRenderer.prototype = {
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
 
 		renderer.setSize(width, height, false);
-		
-		
+
+
 
 		// Issue 110 workaround:
 		// In Firefox, if a div is positioned by percentage, its pixel position may land
@@ -1028,7 +1042,7 @@ SVGRenderer.prototype = {
 					top: (-(rect.top - pInt(rect.top))) + PX
 				});
 			};
-			
+
 			// run the fix now
 			subPixelFix();
 
@@ -1055,7 +1069,7 @@ SVGRenderer.prototype = {
 		if (rendererDefs) {
 			renderer.defs = rendererDefs.destroy();
 		}
-		
+
 		// Remove sub pixel fix handler
 		removeEvent(win, 'resize', renderer.subPixelFix);
 
@@ -1103,13 +1117,13 @@ SVGRenderer.prototype = {
 			GET_COMPUTED_STYLE = 'getComputedStyle',
 			i = childNodes.length,
 			linePositions = [];
-			
+
 		// Needed in IE9 because it doesn't report tspan's offsetHeight (#893)
 		function getLineHeightByBBox(lineNo) {
 			linePositions[lineNo] = textNode.getBBox().height;
 			return mathRound(linePositions[lineNo] - (linePositions[lineNo - 1] || 0));
 		}
-		
+
 		// remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
@@ -1367,10 +1381,15 @@ SVGRenderer.prototype = {
 	 * @param {Array} path An SVG path in array form
 	 */
 	path: function (path) {
-		return this.createElement('path').attr({
-			d: path,
+		var attr = {
 			fill: NONE
-		});
+		};
+		if (isArray(path)) {
+			attr.d = path;
+		} else if (isObject(path)) { // attributes
+			extend(attr, path);
+		}
+		return this.createElement('path').attr(attr);
 	},
 
 	/**
@@ -1575,7 +1594,7 @@ SVGRenderer.prototype = {
 					width: size[0],
 					height: size[1]
 				});
-				
+
 				if (!img.alignByTranslate) { // #185
 					img.translate(
 						-mathRound(size[0] / 2),
@@ -1688,7 +1707,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				L,
+				options.open ? M : L,
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
@@ -1740,41 +1759,57 @@ SVGRenderer.prototype = {
 	 * @param {Object} color The color or config object
 	 */
 	color: function (color, elem, prop) {
-		var colorObject,
-			regexRgba = /^rgba/;
+		var renderer = this,
+			colorObject,
+			regexRgba = /^rgba/,
+			gradName;
+		
+		// Apply linear or radial gradients
 		if (color && color.linearGradient) {
-			var renderer = this,
-				linearGradient = color[LINEAR_GRADIENT],
-				relativeToShape = !isArray(linearGradient), // keep backwards compatibility
-				id,
-				gradients = renderer.gradients,
+			gradName = 'linearGradient';
+		} else if (color && color.radialGradient) {
+			gradName = 'radialGradient';
+		}
+		
+		if (gradName) {
+			var gradAttr = color[gradName],
 				gradientObject,
-				x1 = linearGradient.x1 || linearGradient[0] || 0,
-				y1 = linearGradient.y1 || linearGradient[1] || 0,
-				x2 = linearGradient.x2 || linearGradient[2] || 0,
-				y2 = linearGradient.y2 || linearGradient[3] || 0,
 				stopColor,
 				stopOpacity,
-				// Create a unique key in order to reuse gradient objects. #671.
-				key = [relativeToShape, x1, y1, x2, y2, color.stops.join(',')].join(',');
+				radialReference = elem.radialReference;
+			
+			// If the gradient with the same setup is already created, gradAttr.id is already
+			// set. If else, create it now.
+			if (!gradAttr.id) {
+				
+				// Keep < 2.2 kompatibility
+				if (isArray(gradAttr)) {
+					color[gradName] = gradAttr = {
+						x1: gradAttr[0],
+						y1: gradAttr[1],
+						x2: gradAttr[2],
+						y2: gradAttr[3],
+						gradientUnits: 'userSpaceOnUse'
+					};				
+				}
+				
+				// Correct the radial gradient for the radial reference system
+				if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+					extend(gradAttr, {
+						cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+						cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+						r: gradAttr.r * radialReference[2],
+						gradientUnits: 'userSpaceOnUse'
+					});
+				}
 
-			// If the gradient with the same setup is already created, reuse it
-			if (gradients[key]) {
-				id = attr(gradients[key].element, 'id');
-
-			// If not, create a new one and keep the reference.
-			} else {
-				id = PREFIX + idCounter++;
-				gradientObject = renderer.createElement(LINEAR_GRADIENT)
-					.attr(extend({
-						id: id,
-						x1: x1,
-						y1: y1,
-						x2: x2,
-						y2: y2
-					}, relativeToShape ? null : { gradientUnits: 'userSpaceOnUse' }))
+				// Set the id and create the element
+				gradAttr.id = PREFIX + idCounter++;
+				gradientObject = renderer.createElement(gradName)
+					.attr(gradAttr)
 					.add(renderer.defs);
-
+				
+				
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
 				each(color.stops, function (stop) {
@@ -1796,14 +1831,11 @@ SVGRenderer.prototype = {
 					// Add the stop element to the gradient
 					gradientObject.stops.push(stopObject);
 				});
-
-				// Keep a reference to the gradient object so it is possible to reuse it and
-				// destroy it later
-				gradients[key] = gradientObject;
 			}
 
-			return 'url(' + this.url + '#' + id + ')';
-
+			// Return the reference to the gradient object
+			return 'url(' + renderer.url + '#' + gradAttr.id + ')';
+			
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
 			colorObject = Color(color);
@@ -2096,10 +2128,14 @@ SVGRenderer.prototype = {
 			wrapper.attr({
 				text: str, // alignment is available now
 				x: x,
-				y: y,
-				anchorX: anchorX,
-				anchorY: anchorY
+				y: y
 			});
+			if (wrapper.symbolName) {
+				wrapper.attr({
+					anchorX: anchorX,
+					anchorY: anchorY
+				});
+			}
 		}
 
 		/**

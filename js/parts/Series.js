@@ -570,10 +570,15 @@ Series.prototype = {
 
 		// set the data
 		series.setData(options.data, false);
+		
+		// Mark cartesian
+		if (series.isCartesian) {
+			chart.hasCartesianSeries = true;
+		}
 
+		// Register it in the chart
+		chart.series.push(series);
 	},
-	
-	
 	
 	/**
 	 * Set the xAxis and yAxis properties of cartesian series, and register the series
@@ -731,6 +736,60 @@ Series.prototype = {
 	},
 
 	/**
+	 * Get the series' symbol in the legend. This method should be overridable to create custom 
+	 * symbols through Highcharts.seriesTypes[type].prototype.drawLegendSymbols.
+	 * 
+	 * @param {Object} legend The legend object
+	 */
+	drawLegendSymbol: function (legend) {
+		
+		var options = this.options,
+			markerOptions = options.marker,
+			radius,
+			legendOptions = legend.options,
+			legendSymbol,
+			symbolWidth = legendOptions.symbolWidth,
+			renderer = this.chart.renderer,
+			legendItemGroup = this.legendGroup,
+			baseline = legend.baseline,
+			attr;
+			
+		// Draw the line
+		if (options.lineWidth) {
+			attr = {
+				'stroke-width': options.lineWidth
+			};
+			if (options.dashStyle) {
+				attr.dashstyle = options.dashStyle;
+			}
+			this.legendLine = renderer.path([
+				M,
+				0,
+				baseline - 4,
+				L,
+				symbolWidth,
+				baseline - 4
+			])
+			.attr(attr)
+			.add(legendItemGroup);
+		}
+		
+		// Draw the marker
+		if (markerOptions && markerOptions.enabled) {
+			radius = markerOptions.radius;
+			this.legendSymbol = legendSymbol = renderer.symbol(
+				this.symbol,
+				(symbolWidth / 2) - radius,
+				baseline - 4 - radius,
+				2 * radius,
+				2 * radius
+			)
+			.attr(this.pointAttr[NORMAL_STATE])
+			.add(legendItemGroup);
+		}
+	},
+
+	/**
 	 * Add a point dynamically after chart load time
 	 * @param {Object} options Point options as given in series.data
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
@@ -812,12 +871,13 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			i;
+			i,
+			pointProto = series.pointClass.prototype;
 
 		// reset properties
 		series.xIncrement = null;
 		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
-		
+
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
 		}
@@ -828,7 +888,7 @@ Series.prototype = {
 			dataLength = data ? data.length : [],
 			turboThreshold = options.turboThreshold || 1000,
 			pt,
-			ohlc = series.valueCount === 4;
+			valueCount = series.valueCount;
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -855,11 +915,11 @@ Series.prototype = {
 				}
 				series.xIncrement = x;
 			} else if (isArray(firstPoint)) { // assume all points are arrays
-				if (ohlc) { // [x, o, h, l, c]
+				if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 					for (i = 0; i < dataLength; i++) {
 						pt = data[i];
 						xData[i] = pt[0];
-						yData[i] = pt.slice(1, 5);
+						yData[i] = pt.slice(1, valueCount + 1);
 					}
 				} else { // [x, y]
 					for (i = 0; i < dataLength; i++) {
@@ -874,9 +934,9 @@ Series.prototype = {
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				pt = { series: series };
-				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
+				pointProto.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = ohlc ? [pt.open, pt.high, pt.low, pt.close] : pt.y;
+				yData[i] = pointProto.toYData ? pointProto.toYData.apply(pt) : pt.y;
 			}
 		}
 
@@ -892,12 +952,10 @@ Series.prototype = {
 				oldData[i].destroy();
 			}
 		}
-		
+
 		// reset minRange (#878)
-		// TODO: In protofy, run this code instead:
-		// if (xAxis) xAxis.minRange = UNDEFINED;
-		if (xAxis && xAxis.setMinRange) {
-			xAxis.setMinRange(); // to undefined
+		if (xAxis) {
+			xAxis.minRange = UNDEFINED;
 		}
 
 		// redraw
@@ -1603,7 +1661,7 @@ Series.prototype = {
 		}
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker'], function (prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker', 'trackerGroup'], function (prop) {
 			if (series[prop]) {
 
 				// issue 134 workaround
@@ -1822,6 +1880,44 @@ Series.prototype = {
 			});
 		}
 	},
+	
+	/**
+	 * Return the graph path of a segment
+	 */
+	getSegmentPath: function (segment) {		
+		var series = this,
+			segmentPath = [];
+		
+		// build the segment line
+		each(segment, function (point, i) {
+
+			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
+
+			} else {
+
+				// moveTo or lineTo
+				segmentPath.push(i ? L : M);
+
+				// step line?
+				if (i && series.options.step) {
+					var lastPoint = segment[i - 1];
+					segmentPath.push(
+						point.plotX,
+						lastPoint.plotY
+					);
+				}
+
+				// normal line to next point
+				segmentPath.push(
+					point.plotX,
+					point.plotY
+				);
+			}
+		});
+		
+		return segmentPath;
+	},
 
 	/**
 	 * Draw the actual graph
@@ -1832,121 +1928,32 @@ Series.prototype = {
 			chart = series.chart,
 			graph = series.graph,
 			graphPath = [],
-			fillColor,
-			area = series.area,
 			group = series.group,
 			color = options.lineColor || series.color,
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			segmentPath,
 			renderer = chart.renderer,
-			translatedThreshold = series.yAxis.getThreshold(options.threshold),
-			useArea = /^area/.test(series.type),
 			singlePoints = [], // used in drawTracker
-			areaPath = [],
 			attribs;
 
 
 		// divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
-			segmentPath = [];
-
-			// build the segment line
-			each(segment, function (point, i) {
-
-				if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-					segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
-
-				} else {
-
-					// moveTo or lineTo
-					segmentPath.push(i ? L : M);
-
-					// step line?
-					if (i && options.step) {
-						var lastPoint = segment[i - 1];
-						segmentPath.push(
-							point.plotX,
-							lastPoint.plotY
-						);
-					}
-
-					// normal line to next point
-					segmentPath.push(
-						point.plotX,
-						point.plotY
-					);
-				}
-			});
-
+			
+			segmentPath = series.getSegmentPath(segment);
+			
 			// add the segment to the graph, or a single point for tracking
 			if (segment.length > 1) {
 				graphPath = graphPath.concat(segmentPath);
 			} else {
 				singlePoints.push(segment[0]);
 			}
-
-			// build the area
-			if (useArea) {
-				var areaSegmentPath = [],
-					i,
-					segLength = segmentPath.length;
-				for (i = 0; i < segLength; i++) {
-					areaSegmentPath.push(segmentPath[i]);
-				}
-				if (segLength === 3) { // for animation from 1 to two points
-					areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
-				}
-				if (options.stacking && series.type !== 'areaspline') {
-					
-					// Follow stack back. Todo: implement areaspline. A general solution could be to 
-					// reverse the entire graphPath of the previous series, though may be hard with
-					// splines and with series with different extremes
-					for (i = segment.length - 1; i >= 0; i--) {
-					
-						// step line?
-						if (i < segment.length - 1 && options.step) {
-							areaSegmentPath.push(segment[i + 1].plotX, segment[i].yBottom);
-						}
-						
-						areaSegmentPath.push(segment[i].plotX, segment[i].yBottom);
-					}
-
-				} else { // follow zero line back
-					areaSegmentPath.push(
-						L,
-						segment[segment.length - 1].plotX,
-						translatedThreshold,
-						L,
-						segment[0].plotX,
-						translatedThreshold
-					);
-				}
-				areaPath = areaPath.concat(areaSegmentPath);
-			}
 		});
 
 		// used in drawTracker:
 		series.graphPath = graphPath;
 		series.singlePoints = singlePoints;
-
-		// draw the area if area series or areaspline
-		if (useArea) {
-			fillColor = pick(
-				options.fillColor,
-				Color(series.color).setOpacity(options.fillOpacity || 0.75).get()
-			);
-			if (area) {
-				area.animate({ d: areaPath });
-
-			} else {
-				// draw the area
-				series.area = series.chart.renderer.path(areaPath)
-					.attr({
-						fill: fillColor
-					}).add(group);
-			}
-		}
 
 		// draw the graph
 		if (graph) {
@@ -1956,7 +1963,7 @@ Series.prototype = {
 		} else {
 			if (lineWidth) {
 				attribs = {
-					'stroke': color,
+					stroke: color,
 					'stroke-width': lineWidth
 				};
 				if (dashStyle) {
@@ -2005,6 +2012,28 @@ Series.prototype = {
 		// On subsequent render and redraw, just do setInvert without setting up events again
 		series.invertGroups = setInvert;
 	},
+	
+	/**
+	 * Create the series group
+	 */
+	createGroup: function (doClip) {
+		
+		var chart = this.chart,
+			group = this.group = chart.renderer.g('series');
+
+		if (doClip) {
+			group.clip(this.clipRect);
+		}
+		group.attr({
+				visibility: this.visible ? VISIBLE : HIDDEN,
+				zIndex: this.options.zIndex
+			})
+			.translate(this.xAxis.left, this.yAxis.top)
+			.add(chart.seriesGroup);
+		
+		// Only run this once
+		this.createGroup = noop;
+	},
 
 	/**
 	 * Render the graph and markers
@@ -2039,6 +2068,7 @@ Series.prototype = {
 		
 
 		// the group
+		series.createGroup(doClip);
 		if (!series.group) {
 			group = series.group = renderer.g('series');
 
@@ -2048,6 +2078,8 @@ Series.prototype = {
 				})
 				.translate(series.xAxis.left, series.yAxis.top)
 				.add(chart.seriesGroup);
+		} else {
+			group = series.group;
 		}
 
 		series.drawDataLabels();
@@ -2315,7 +2347,8 @@ Series.prototype = {
 	drawTracker: function () {
 		var series = this,
 			options = series.options,
-			trackerPath = [].concat(series.graphPath),
+			trackByArea = options.trackByArea,
+			trackerPath = [].concat(trackByArea ? series.areaPath : series.graphPath),
 			trackerPathLength = trackerPath.length,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -2330,7 +2363,7 @@ Series.prototype = {
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
-		if (trackerPathLength) {
+		if (trackerPathLength && !trackByArea) {
 			i = trackerPathLength + 1;
 			while (i--) {
 				if (trackerPath[i] === M) { // extend left side
@@ -2360,11 +2393,11 @@ Series.prototype = {
 			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
-					stroke: TRACKER_FILL,
-					fill: NONE,
 					'stroke-linejoin': 'bevel',
-					'stroke-width' : options.lineWidth + 2 * snap,
-					visibility: series.visible ? VISIBLE : HIDDEN
+					visibility: series.visible ? VISIBLE : HIDDEN,
+					stroke: TRACKER_FILL,
+					fill: trackByArea ? TRACKER_FILL : NONE,
+					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
 				})
 				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
 					if (chart.hoverSeries !== series) {

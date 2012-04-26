@@ -1,4 +1,37 @@
 /**
+ * Set the default options for column
+ */
+defaultPlotOptions.column = merge(defaultSeriesOptions, {
+	borderColor: '#FFFFFF',
+	borderWidth: 1,
+	borderRadius: 0,
+	//colorByPoint: undefined,
+	groupPadding: 0.2,
+	marker: null, // point options are specified in the base options
+	pointPadding: 0.1,
+	//pointWidth: null,
+	minPointLength: 0,
+	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
+	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
+	states: {
+		hover: {
+			brightness: 0.1,
+			shadow: false
+		},
+		select: {
+			color: '#C0C0C0',
+			borderColor: '#000000',
+			shadow: false
+		}
+	},
+	dataLabels: {
+		y: null,
+		verticalAlign: null
+	},
+	threshold: 0
+});
+
+/**
  * ColumnSeries object
  */
 var ColumnSeries = extendClass(Series, {
@@ -147,6 +180,26 @@ var ColumnSeries = extendClass(Series, {
 	getSymbol: function () {
 	},
 
+	/**
+	 * Get the series' symbol in the legend
+	 * 
+	 * @param {Object} legend The legend object
+	 * @param {Object} item The series (this) or point
+	 */
+	drawLegendSymbol: function (legend, item) {
+		
+		item.legendSymbol = this.chart.renderer.rect(
+			0,
+			legend.baseline - 11,
+			legend.options.symbolWidth,
+			12,
+			2
+		).attr({
+			zIndex: 3
+		}).add(item.legendGroup);		
+		
+	},
+	
 	/**
 	 * Columns have no graph
 	 */

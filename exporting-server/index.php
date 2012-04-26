@@ -74,8 +74,15 @@ if (isset($typeString)) {
 		echo "Error while converting SVG. ";
 		
 		if (strpos($output, 'SVGConverter.error.while.rasterizing.file') !== false) {
-			echo "SVG code for debugging: <hr/>";
-			echo htmlentities($svg);
+			echo "
+			<h4>Debug steps</h4>
+			<ol>
+			<li>Copy the SVG:<br/><textarea rows=5>" . htmlentities(str_replace('>', ">\n", $svg)) . "</textarea></li>
+			<li>Go to <a href='http://validator.w3.org/#validate_by_input' target='_blank'>validator.w3.org/#validate_by_input</a></li>
+			<li>Paste the SVG</li>
+			<li>Click More Options and select SVG 1.1 for Use Doctype</li>
+			<li>Click the Check button</li>
+			</ol>";
 		}
 	} 
 	
