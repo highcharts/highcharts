@@ -8515,6 +8515,7 @@ Legend.prototype = {
 		//legend.legendHeight = UNDEFINED;
 		//legend.offsetWidth = UNDEFINED;
 		legend.itemHeight = 0;
+		legend.lastLineHeight = 0;
 		//legend.itemX = UNDEFINED;
 		//legend.itemY = UNDEFINED;
 		//legend.lastItemY = UNDEFINED;
@@ -8765,7 +8766,8 @@ Legend.prototype = {
 		if (horizontal && legend.itemX - initialItemX + itemWidth >
 				(widthOption || (chart.chartWidth - 2 * padding - initialItemX))) {
 			legend.itemX = initialItemX;
-			legend.itemY += itemMarginTop + itemHeight + itemMarginBottom;
+			legend.itemY += itemMarginTop + legend.lastLineHeight + itemMarginBottom;
+			legend.lastLineHeight = 0; // reset for next line
 		}
 
 		// If the item exceeds the height, start a new column
@@ -8778,6 +8780,7 @@ Legend.prototype = {
 		// Set the edge positions
 		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
 		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
+		legend.lastLineHeight = mathMax(itemHeight, legend.lastLineHeight); // #915
 
 		// cache the position of the newly generated or reordered items
 		item._legendItemPos = [legend.itemX, legend.itemY];
@@ -8785,8 +8788,10 @@ Legend.prototype = {
 		// advance
 		if (horizontal) {
 			legend.itemX += itemWidth;
+
 		} else {
 			legend.itemY += itemMarginTop + itemHeight + itemMarginBottom;
+			legend.lastLineHeight = itemHeight;
 		}
 
 		// the width of the widest item
@@ -8867,7 +8872,7 @@ Legend.prototype = {
 
 		// Draw the border
 		legend.legendWidth = legendWidth = widthOption || legend.offsetWidth;
-		legend.legendHeight = legendHeight = legend.lastItemY + legend.itemHeight;
+		legend.legendHeight = legendHeight = legend.lastItemY + legend.lastLineHeight;
 
 		if (legendBorderWidth || legendBackgroundColor) {
 			legend.legendWidth = legendWidth += padding;
