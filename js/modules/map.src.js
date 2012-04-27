@@ -136,7 +136,7 @@
 					legendItems.push(Highcharts.extend({
 						name: name,
 						options: {},
-						type: 'pie', // force simpleSymbol (yes, it's bad design)
+						drawLegendSymbol: function () {}, //Highcharts.seriesTypes.column.prototype.drawLegendSymbol,
 						visible: true,
 						setState: function() {},
 						setVisible: function() {}
