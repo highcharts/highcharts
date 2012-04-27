@@ -17493,7 +17493,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 		// call base method
 		baseGetSegments.apply(series);
 		
-		if (series.xAxis.options.ordinal && gapSize) {
+		if (gapSize) {
 		
 			// properties
 			segments = series.segments;
