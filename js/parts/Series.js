@@ -464,7 +464,7 @@ Point.prototype = {
 			// graphic for the hover state
 			if (state) {
 				if (!stateMarkerGraphic) {
-					radius = markerOptions.radius;
+					radius = markerStateOptions.radius;
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
 						series.symbol,
 						-radius,
