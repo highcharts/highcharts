@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weatherdata>
+  <location>
+    <name>Bergen</name>
+    <type>City - large town</type>
+    <country>Norway</country>
+    <timezone id="Europe/Oslo" utcoffsetMinutes="60"/>
+    <location altitude="6" latitude="60.3929932744419" longitude="5.32415240610052" geobase="ssr" geobaseid="92416"/>
+  </location>
+  <credit>
+    <!--In order to use the free weather data from yr no, you HAVE to display 
+the following text clearly visible on your web page. The text should be a 
+link to the specified URL.-->
+    <!--Please read more about our conditions and guidelines at http://www.yr.no/verdata/ -->
+    <link text="Weather forecast from yr.no, delivered by the Norwegian Meteorological Institute and the NRK" url="http://www.yr.no/place/Norway/Hordaland/Bergen/Bergen/"/>
+  </credit>
+  <links>
+    <link id="xmlSource" url="http://www.yr.no/place/Norway/Hordaland/Bergen/Bergen/forecast.xml"/>
+    <link id="overview" url="http://www.yr.no/place/Norway/Hordaland/Bergen/Bergen/"/>
+    <link id="hourByHour" url="http://www.yr.no/place/Norway/Hordaland/Bergen/Bergen/hour_by_hour.html"/>
+    <link id="weekend" url="http://www.yr.no/place/Norway/Hordaland/Bergen/Bergen/weekend.html"/>
+    <link id="longTermForecast" url="http://www.yr.no/place/Norway/Hordaland/Bergen/Bergen/long.html"/>
+    <link id="radar" url="http://www.yr.no/place/Norway/Hordaland/Bergen/Bergen/radar.html"/>
+  </links>
+  <meta>
+    <lastupdate>2010-11-12T10:30:00</lastupdate>
+    <nextupdate>2010-11-12T18:30:00</nextupdate>
+  </meta>
+  <sun rise="2010-11-12T08:30:56" set="2010-11-12T16:13:58"/>
+  <forecast>
+    <text>
+      <location name="Bergen">
+        <time from="2010-11-12" to="2010-11-13">
+          <title>Friday and Saturday</title>
+          <body>&lt;strong&gt;Hordaland:&lt;/strong&gt; Skiftende bris. Skyet eller delvis skyet, enkelte regnbyger. Snøbyger over 400-600 m. Økende bygeaktivitet lørdag.</body>
+        </time>
+        <time from="2010-11-14" to="2010-11-14">
+          <title>Sunday</title>
+          <body>&lt;strong&gt;Vestlandet sør for Stad:&lt;/strong&gt; Skiftende bris. Litt regn eller sludd av og til, snø i høyden, men lite nedbør i nord. Omtrent uendret temperatur.</body>
+        </time>
+        <time from="2010-11-15" to="2010-11-16">
+          <title>Monday and Tuesday</title>
+          <body>&lt;strong&gt;Sør-Norge:&lt;/strong&gt; Mandag skiftende bris. Litt regn eller sludd av og til, snø i høyden. Lite nedbør i øst. Tirsdag økende til sørlig kuling på kysten i nordvest. Mulighet for regn, særlig i nordvest, ellers lite eller ingen nedbør. Litt synkende temperatur.</body>
+        </time>
+        <time from="2010-11-17" to="2010-11-20">
+          <title>Wednesday to Saturday</title>
+          <body>&lt;strong&gt;Norge og Spitsbergen:&lt;/strong&gt; Lavtrykk blir liggende vest for landet og beveger seg nord-nordøstover over Spitsbergen, mens ett høytrkk ligger øst for oss. Dette gir for en stor del vind mellom sørøst og sørvest, perioder med kuling utsatte steder. Litt nedbør av og til, og stigende temperatur. Spitsbergen får variabel vind, perioder med kuling og snø og etter hvert synkende temperatur.</body>
+        </time>
+      </location>
+    </text>
+    <tabular>
+      <time from="2010-11-12T18:00:00" to="2010-11-13T00:00:00" period="3">
+        <!-- Valid from 2010-11-12T18:00:00 to 2010-11-13T00:00:00 -->
+        <symbol number="4" name="Cloudy" var="04"/>
+        <precipitation value="0.0" minvalue="0.0" maxvalue="0.0"/>
+        <!-- Valid at 2010-11-12T18:00:00 -->
+        <windDirection deg="137.7" code="SE" name="Southeast"/>
+        <windSpeed mps="1.5" name="Light air"/>
+        <temperature unit="celcius" value="4"/>
+        <pressure unit="hPa" value="972.5"/>
+      </time>
+      <time from="2010-11-13T00:00:00" to="2010-11-13T06:00:00" period="0">
+        <!-- Valid from 2010-11-13T00:00:00 to 2010-11-13T06:00:00 -->
+        <symbol number="3" name="Partly cloudy" var="mf/03n.22"/>
+        <precipitation value="0.0" minvalue="0.0" maxvalue="0.0"/>
+        <!-- Valid at 2010-11-13T00:00:00 -->
+        <windDirection deg="328.8" code="NNW" name="North-northwest"/>
+        <windSpeed mps="0.2" name="Calm"/>
+        <temperature unit="celcius" value="3"/>
+        <pressure unit="hPa" value="973.7"/>
+      </time>
+      <time from="2010-11-13T06:00:00" to="2010-11-13T12:00:00" period="1">
+        <!-- Valid from 2010-11-13T06:00:00 to 2010-11-13T12:00:00 -->
+        <symbol number="3" name="Partly cloudy" var="03d"/>
+        <precipitation value="0.0" minvalue="0.0" maxvalue="0.0"/>
+        <!-- Valid at 2010-11-13T06:00:00 -->
+        <windDirection deg="202.5" code="SSW" name="South-southwest"/>
+        <windSpeed mps="1.7" name="Light breeze"/>
+        <temperature unit="celcius" value="2"/>
+        <pressure unit="hPa" value="975.9"/>
+      </time>
+      <time from="2010-11-13T12:00:00" to="2010-11-13T18:00:00" period="2">
+        <!-- Valid from 2010-11-13T12:00:00 to 2010-11-13T18:00:00 -->
+        <symbol number="5" name="Rain showers" var="05d"/>
+        <precipitation value="1.6" minvalue="0.0" maxvalue="0.9"/>
+        <!-- Valid at 2010-11-13T12:00:00 -->
+        <windDirection deg="144.3" code="SE" name="Southeast"/>
+        <windSpeed mps="0.4" name="Light air"/>
+        <temperature unit="celcius" value="5"/>
+        <pressure unit="hPa" value="979.1"/>
+      </time>
+      <time from="2010-11-13T18:00:00" to="2010-11-14T00:00:00" period="3">
+        <!-- Valid from 2010-11-13T18:00:00 to 2010-11-14T00:00:00 -->
+        <symbol number="9" name="Rain" var="09"/>
+        <precipitation value="2.4" minvalue="1.3" maxvalue="3.7"/>
+        <!-- Valid at 2010-11-13T18:00:00 -->
+        <windDirection deg="62.1" code="ENE" name="East-northeast"/>
+        <windSpeed mps="1.6" name="Light breeze"/>
+        <temperature unit="celcius" value="3"/>
+        <pressure unit="hPa" value="981.1"/>
+      </time>
+      <time from="2010-11-14T00:00:00" to="2010-11-14T06:00:00" period="0">
+        <!-- Valid from 2010-11-14T00:00:00 to 2010-11-14T06:00:00 -->
+        <symbol number="9" name="Rain" var="09"/>
+        <precipitation value="1.6" minvalue="0.4" maxvalue="5.0"/>
+        <!-- Valid at 2010-11-14T00:00:00 -->
+        <windDirection deg="52.3" code="NE" name="Northeast"/>
+        <windSpeed mps="1.7" name="Light breeze"/>
+        <temperature unit="celcius" value="5"/>
+        <pressure unit="hPa" value="983.6"/>
+      </time>
+      <time from="2010-11-14T06:00:00" to="2010-11-14T12:00:00" period="1">
+        <!-- Valid from 2010-11-14T06:00:00 to 2010-11-14T12:00:00 -->
+        <symbol number="4" name="Cloudy" var="04"/>
+        <precipitation value="0.0" minvalue="0.0" maxvalue="0.6"/>
+        <!-- Valid at 2010-11-14T06:00:00 -->
+        <windDirection deg="79.3" code="E" name="East"/>
+        <windSpeed mps="1.7" name="Light breeze"/>
+        <temperature unit="celcius" value="5"/>
+        <pressure unit="hPa" value="987.2"/>
+      </time>
+      <time from="2010-11-14T12:00:00" to="2010-11-14T18:00:00" period="2">
+        <!-- Valid from 2010-11-14T12:00:00 to 2010-11-14T18:00:00 -->
+        <symbol number="4" name="Cloudy" var="04"/>
+        <precipitation value="0.5" minvalue="0.0" maxvalue="0.0"/>
+        <!-- Valid at 2010-11-14T12:00:00 -->
+        <windDirection deg="69.5" code="ENE" name="East-northeast"/>
+        <windSpeed mps="0.4" name="Light air"/>
+        <temperature unit="celcius" value="6"/>
+        <pressure unit="hPa" value="991.5"/>
+      </time>
+      <time from="2010-11-14T19:00:00" to="2010-11-15T01:00:00" period="3">
+        <!-- Valid from 2010-11-14T19:00:00 to 2010-11-15T01:00:00 -->
+        <symbol number="12" name="Sleet" var="12"/>
+        <precipitation value="1.6"/>
+        <!-- Valid at 2010-11-14T19:00:00 -->
+        <windDirection deg="126.5" code="SE" name="Southeast"/>
+        <windSpeed mps="2.1" name="Light breeze"/>
+        <temperature unit="celcius" value="3"/>
+        <pressure unit="hPa" value="988.7"/>
+      </time>
+      <time from="2010-11-15T01:00:00" to="2010-11-15T07:00:00" period="0">
+        <!-- Valid from 2010-11-15T01:00:00 to 2010-11-15T07:00:00 -->
+        <symbol number="3" name="Partly cloudy" var="mf/03n.29"/>
+        <precipitation value="0.3"/>
+        <!-- Valid at 2010-11-15T01:00:00 -->
+        <windDirection deg="27.4" code="NNE" name="North-northeast"/>
+        <windSpeed mps="1.8" name="Light breeze"/>
+        <temperature unit="celcius" value="1"/>
+        <pressure unit="hPa" value="996.8"/>
+      </time>
+      <time from="2010-11-15T07:00:00" to="2010-11-15T13:00:00" period="1">
+        <!-- Valid from 2010-11-15T07:00:00 to 2010-11-15T13:00:00 -->
+        <symbol number="3" name="Partly cloudy" var="03d"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-15T07:00:00 -->
+        <windDirection deg="346.9" code="NNW" name="North-northwest"/>
+        <windSpeed mps="1.9" name="Light breeze"/>
+        <temperature unit="celcius" value="1"/>
+        <pressure unit="hPa" value="999.9"/>
+      </time>
+      <time from="2010-11-15T13:00:00" to="2010-11-15T19:00:00" period="2">
+        <!-- Valid from 2010-11-15T13:00:00 to 2010-11-15T19:00:00 -->
+        <symbol number="3" name="Partly cloudy" var="03d"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-15T13:00:00 -->
+        <windDirection deg="5.5" code="N" name="North"/>
+        <windSpeed mps="1.8" name="Light breeze"/>
+        <temperature unit="celcius" value="2"/>
+        <pressure unit="hPa" value="1005.8"/>
+      </time>
+      <time from="2010-11-15T19:00:00" to="2010-11-16T01:00:00" period="3">
+        <!-- Valid from 2010-11-15T19:00:00 to 2010-11-16T01:00:00 -->
+        <symbol number="1" name="Fair" var="mf/01n.32"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-15T19:00:00 -->
+        <windDirection deg="78.0" code="ENE" name="East-northeast"/>
+        <windSpeed mps="1.9" name="Light breeze"/>
+        <temperature unit="celcius" value="-1"/>
+        <pressure unit="hPa" value="1010.6"/>
+      </time>
+      <time from="2010-11-16T01:00:00" to="2010-11-16T07:00:00" period="0">
+        <!-- Valid from 2010-11-16T01:00:00 to 2010-11-16T07:00:00 -->
+        <symbol number="3" name="Partly cloudy" var="mf/03n.33"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-16T01:00:00 -->
+        <windDirection deg="72.9" code="ENE" name="East-northeast"/>
+        <windSpeed mps="2.1" name="Light breeze"/>
+        <temperature unit="celcius" value="-2"/>
+        <pressure unit="hPa" value="1015.3"/>
+      </time>
+      <time from="2010-11-16T07:00:00" to="2010-11-16T13:00:00" period="1">
+        <!-- Valid from 2010-11-16T07:00:00 to 2010-11-16T13:00:00 -->
+        <symbol number="2" name="Fair" var="02d"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-16T07:00:00 -->
+        <windDirection deg="74.0" code="ENE" name="East-northeast"/>
+        <windSpeed mps="2.5" name="Light breeze"/>
+        <temperature unit="celcius" value="-3"/>
+        <pressure unit="hPa" value="1018.0"/>
+      </time>
+      <time from="2010-11-16T13:00:00" to="2010-11-16T19:00:00" period="2">
+        <!-- Valid from 2010-11-16T13:00:00 to 2010-11-16T19:00:00 -->
+        <symbol number="1" name="Fair" var="01d"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-16T13:00:00 -->
+        <windDirection deg="87.0" code="E" name="East"/>
+        <windSpeed mps="3.3" name="Light breeze"/>
+        <temperature unit="celcius" value="-1"/>
+        <pressure unit="hPa" value="1021.2"/>
+      </time>
+      <time from="2010-11-16T19:00:00" to="2010-11-17T01:00:00" period="3">
+        <!-- Valid from 2010-11-16T19:00:00 to 2010-11-17T01:00:00 -->
+        <symbol number="1" name="Fair" var="mf/01n.35"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-16T19:00:00 -->
+        <windDirection deg="78.3" code="ENE" name="East-northeast"/>
+        <windSpeed mps="3.6" name="Gentle breeze"/>
+        <temperature unit="celcius" value="-4"/>
+        <pressure unit="hPa" value="1023.2"/>
+      </time>
+      <time from="2010-11-17T13:00:00" to="2010-11-17T19:00:00" period="2">
+        <!-- Valid from 2010-11-17T13:00:00 to 2010-11-17T19:00:00 -->
+        <symbol number="1" name="Fair" var="01d"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-17T13:00:00 -->
+        <windDirection deg="76.6" code="ENE" name="East-northeast"/>
+        <windSpeed mps="4.3" name="Gentle breeze"/>
+        <temperature unit="celcius" value="-2"/>
+        <pressure unit="hPa" value="1024.0"/>
+      </time>
+      <time from="2010-11-18T13:00:00" to="2010-11-18T19:00:00" period="2">
+        <!-- Valid from 2010-11-18T13:00:00 to 2010-11-18T19:00:00 -->
+        <symbol number="4" name="Cloudy" var="04"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-18T13:00:00 -->
+        <windDirection deg="81.8" code="E" name="East"/>
+        <windSpeed mps="4.6" name="Gentle breeze"/>
+        <temperature unit="celcius" value="-1"/>
+        <pressure unit="hPa" value="1021.9"/>
+      </time>
+      <time from="2010-11-19T13:00:00" to="2010-11-19T19:00:00" period="2">
+        <!-- Valid from 2010-11-19T13:00:00 to 2010-11-19T19:00:00 -->
+        <symbol number="4" name="Cloudy" var="04"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-19T13:00:00 -->
+        <windDirection deg="96.1" code="E" name="East"/>
+        <windSpeed mps="3.7" name="Gentle breeze"/>
+        <temperature unit="celcius" value="0"/>
+        <pressure unit="hPa" value="1022.0"/>
+      </time>
+      <time from="2010-11-20T13:00:00" to="2010-11-20T19:00:00" period="2">
+        <!-- Valid from 2010-11-20T13:00:00 to 2010-11-20T19:00:00 -->
+        <symbol number="3" name="Partly cloudy" var="03d"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-20T13:00:00 -->
+        <windDirection deg="76.5" code="ENE" name="East-northeast"/>
+        <windSpeed mps="3.1" name="Light breeze"/>
+        <temperature unit="celcius" value="0"/>
+        <pressure unit="hPa" value="1021.9"/>
+      </time>
+      <time from="2010-11-21T13:00:00" to="2010-11-21T19:00:00" period="2">
+        <!-- Valid from 2010-11-21T13:00:00 to 2010-11-21T19:00:00 -->
+        <symbol number="4" name="Cloudy" var="04"/>
+        <precipitation value="0.0"/>
+        <!-- Valid at 2010-11-21T13:00:00 -->
+        <windDirection deg="78.3" code="ENE" name="East-northeast"/>
+        <windSpeed mps="3.2" name="Light breeze"/>
+        <temperature unit="celcius" value="0"/>
+        <pressure unit="hPa" value="1020.5"/>
+      </time>
+    </tabular>
+  </forecast>
+</weatherdata>

@@ -97,7 +97,7 @@ elseif ($product == 'highstock') $dir = 'stock';
 					if ($innerHandle = opendir(dirname(__FILE__). '/' . $dir . '/'. $file)) {
 						while (false !== ($innerFile = readdir($innerHandle))) {
 							$next = $i + 1;
-							if (preg_match('/^[a-z\-]+$/', $innerFile)) {
+							if (preg_match('/^[a-z0-9\-]+$/', $innerFile)) {
 								echo "
 								<li id='li$i'>$i. <a target='main' id='i$i' href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
 								";

@@ -15,11 +15,10 @@ $(function () {
             layout: 'vertical',
             backgroundColor: '#FFFFFF',
             floating: true,
-            style: {
-                left: '100px',
-                top: '70px',
-                bottom: 'auto'
-            }
+            align: 'left',
+            x: 100,
+            verticalAlign: 'top',
+            y: 70
         },
         tooltip: {
             formatter: function() {
