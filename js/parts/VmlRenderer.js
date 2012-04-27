@@ -355,7 +355,8 @@ var VMLElement = {
 	clip: function (clipRect) {
 		var wrapper = this,
 			clipMembers = clipRect.members,
-			element = wrapper.element;
+			element = wrapper.element,
+			parentNode = element.parentNode;
 
 		clipMembers.push(wrapper);
 		wrapper.destroyClip = function () {
@@ -363,11 +364,11 @@ var VMLElement = {
 		};
 		
 		// Issue #863 workaround - related to #140, #61, #74
-		if (element.parentNode.className === 'highcharts-tracker' && !docMode8) {
+		if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
 			css(element, { visibility: HIDDEN });
 		}
 		
-		return wrapper.css(clipRect.getCSS(wrapper.inverted));
+		return wrapper.css(clipRect.getCSS(wrapper));
 	},
 
 	/**
@@ -559,8 +560,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			top: y,
 			width: width,
 			height: height,
-			getCSS: function (inverted) {
-				var rect = this,//clipRect.element.style,
+			getCSS: function (wrapper) {
+				var inverted = wrapper.inverted,
+					rect = this,
 					top = rect.top,
 					left = rect.left,
 					right = left + rect.width,
@@ -574,7 +576,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					};
 
 				// issue 74 workaround
-				if (!inverted && docMode8) {
+				if (!inverted && docMode8 && wrapper.element.nodeName !== 'IMG') {
 					extend(ret, {
 						width: right + PX,
 						height: bottom + PX
@@ -587,7 +589,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
 				each(clipRect.members, function (member) {
-					member.css(clipRect.getCSS(member.inverted));
+					member.css(clipRect.getCSS(member));
 				});
 			}
 		});

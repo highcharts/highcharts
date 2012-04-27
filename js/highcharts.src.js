@@ -4301,7 +4301,8 @@ var VMLElement = {
 	clip: function (clipRect) {
 		var wrapper = this,
 			clipMembers = clipRect.members,
-			element = wrapper.element;
+			element = wrapper.element,
+			parentNode = element.parentNode;
 
 		clipMembers.push(wrapper);
 		wrapper.destroyClip = function () {
@@ -4309,11 +4310,11 @@ var VMLElement = {
 		};
 		
 		// Issue #863 workaround - related to #140, #61, #74
-		if (element.parentNode.className === 'highcharts-tracker' && !docMode8) {
+		if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
 			css(element, { visibility: HIDDEN });
 		}
 		
-		return wrapper.css(clipRect.getCSS(wrapper.inverted));
+		return wrapper.css(clipRect.getCSS(wrapper));
 	},
 
 	/**
@@ -4505,8 +4506,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			top: y,
 			width: width,
 			height: height,
-			getCSS: function (inverted) {
-				var rect = this,//clipRect.element.style,
+			getCSS: function (wrapper) {
+				var inverted = wrapper.inverted,
+					rect = this,
 					top = rect.top,
 					left = rect.left,
 					right = left + rect.width,
@@ -4520,7 +4522,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					};
 
 				// issue 74 workaround
-				if (!inverted && docMode8) {
+				if (!inverted && docMode8 && wrapper.element.nodeName !== 'IMG') {
 					extend(ret, {
 						width: right + PX,
 						height: bottom + PX
@@ -4533,7 +4535,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
 				each(clipRect.members, function (member) {
-					member.css(clipRect.getCSS(member.inverted));
+					member.css(clipRect.getCSS(member));
 				});
 			}
 		});
@@ -8812,6 +8814,7 @@ Legend.prototype = {
 			renderer = chart.renderer,
 			legendGroup = legend.group,
 			allItems,
+			display,
 			legendWidth,
 			legendHeight,
 			box = legend.box,
@@ -8864,6 +8867,7 @@ Legend.prototype = {
 		}
 
 		legend.allItems = allItems;
+		legend.display = display = !!allItems.length;
 
 		// render the items
 		each(allItems, function (item) {
@@ -8903,7 +8907,7 @@ Legend.prototype = {
 			}
 
 			// hide the border if no items
-			box[allItems.length ? 'show' : 'hide']();
+			box[display ? 'show' : 'hide']();
 		}
 
 		// Now that the legend width and height are extablished, put the items in the 
@@ -8924,7 +8928,7 @@ Legend.prototype = {
 			}
 		}*/
 
-		if (allItems.length) {
+		if (display) {
 			legendGroup.align(extend(options, {
 				width: legendWidth,
 				height: legendHeight
@@ -9645,10 +9649,8 @@ Chart.prototype = {
 			optionsMarginRight = chart.optionsMarginRight,
 			optionsMarginBottom = chart.optionsMarginBottom,
 			chartTitleOptions = chart.chartTitleOptions,
-			chartSubtitleOptions = chart.chartSubtitleOptions;
-
-
-		var legendOptions = chart.options.legend,
+			chartSubtitleOptions = chart.chartSubtitleOptions,
+			legendOptions = chart.options.legend,
 			legendMargin = pick(legendOptions.margin, 10),
 			legendX = legendOptions.x,
 			legendY = legendOptions.y,
@@ -9670,7 +9672,7 @@ Chart.prototype = {
 			}
 		}
 		// adjust for legend
-		if (legendOptions.enabled && !legendOptions.floating) {
+		if (legend.display && !legendOptions.floating) {
 			if (align === 'right') { // horizontal alignment handled first
 				if (!defined(optionsMarginRight)) {
 					chart.marginRight = mathMax(

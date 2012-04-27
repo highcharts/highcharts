@@ -705,10 +705,8 @@ Chart.prototype = {
 			optionsMarginRight = chart.optionsMarginRight,
 			optionsMarginBottom = chart.optionsMarginBottom,
 			chartTitleOptions = chart.chartTitleOptions,
-			chartSubtitleOptions = chart.chartSubtitleOptions;
-
-
-		var legendOptions = chart.options.legend,
+			chartSubtitleOptions = chart.chartSubtitleOptions,
+			legendOptions = chart.options.legend,
 			legendMargin = pick(legendOptions.margin, 10),
 			legendX = legendOptions.x,
 			legendY = legendOptions.y,
@@ -730,7 +728,7 @@ Chart.prototype = {
 			}
 		}
 		// adjust for legend
-		if (legendOptions.enabled && !legendOptions.floating) {
+		if (legend.display && !legendOptions.floating) {
 			if (align === 'right') { // horizontal alignment handled first
 				if (!defined(optionsMarginRight)) {
 					chart.marginRight = mathMax(

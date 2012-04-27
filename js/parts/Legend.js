@@ -335,6 +335,7 @@ Legend.prototype = {
 			renderer = chart.renderer,
 			legendGroup = legend.group,
 			allItems,
+			display,
 			legendWidth,
 			legendHeight,
 			box = legend.box,
@@ -387,6 +388,7 @@ Legend.prototype = {
 		}
 
 		legend.allItems = allItems;
+		legend.display = display = !!allItems.length;
 
 		// render the items
 		each(allItems, function (item) {
@@ -426,7 +428,7 @@ Legend.prototype = {
 			}
 
 			// hide the border if no items
-			box[allItems.length ? 'show' : 'hide']();
+			box[display ? 'show' : 'hide']();
 		}
 
 		// Now that the legend width and height are extablished, put the items in the 
@@ -447,7 +449,7 @@ Legend.prototype = {
 			}
 		}*/
 
-		if (allItems.length) {
+		if (display) {
 			legendGroup.align(extend(options, {
 				width: legendWidth,
 				height: legendHeight
