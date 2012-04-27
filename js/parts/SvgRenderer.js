@@ -1052,6 +1052,14 @@ SVGRenderer.prototype = {
 	},
 
 	/**
+	 * Detect whether the renderer is hidden. This happens when one of the parent elements
+	 * has display: none. #608.
+	 */
+	isHidden: function () {
+		return !this.box.getBBox().width;			
+	},
+
+	/**
 	 * Destroys the renderer and its allocated members.
 	 */
 	destroy: function () {

@@ -100,8 +100,9 @@ Chart.prototype = {
 			redraw = pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
-				series = chart.initSeries(options);
-				series.isDirty = true;
+				chart.initSeries(options);
+				//series = chart.initSeries(options);
+				//series.isDirty = true;
 
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				if (redraw) {
@@ -149,17 +150,22 @@ Chart.prototype = {
 			axes = chart.axes,
 			series = chart.series,
 			tracker = chart.tracker,
-			legend = chart.legend;
-
-		var redrawLegend = chart.isDirtyLegend,
+			legend = chart.legend,
+			redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
 			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
 			clipRect = chart.clipRect,
-			serie;
-
+			serie,
+			renderer = chart.renderer,
+			isHiddenChart = renderer.isHidden();
+			
 		setAnimation(animation, chart);
+		
+		if (isHiddenChart) {
+			chart.cloneRenderTo();
+		}
 
 		// link stacked series
 		while (i--) {
@@ -260,10 +266,14 @@ Chart.prototype = {
 		}
 
 		// redraw if canvas
-		chart.renderer.draw();
+		renderer.draw();
 
 		// fire the event
 		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
+		
+		if (isHiddenChart) {
+			chart.cloneRenderTo(true);
+		}
 	},
 
 
@@ -611,6 +621,40 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Create a clone of the chart's renderTo div and place it outside the viewport to allow
+	 * size computation on chart.render and chart.redraw
+	 */
+	cloneRenderTo: function (revert) {
+		var clone = this.renderToClone,
+			container = this.container;
+		
+		// Destroy the clone and bring the container back to the real renderTo div
+		if (revert) {
+			if (clone) {
+				this.renderTo.appendChild(container);
+				discardElement(clone);
+				delete this.renderToClone;
+			}
+		
+		// Set up the clone
+		} else {
+			if (container) {
+				this.renderTo.removeChild(container); // do not clone this
+			}
+			this.renderToClone = clone = this.renderTo.cloneNode(0);
+			css(clone, {
+				position: ABSOLUTE,
+				top: '-9999px',
+				display: 'block' // #833
+			});
+			doc.body.appendChild(clone);
+			if (container) {
+				clone.appendChild(container);
+			}
+		}
+	},
+
+	/**
 	 * Get the containing element, determine the size and create the inner container
 	 * div to hold the chart
 	 */
@@ -621,7 +665,6 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			renderTo,
-			renderToClone,
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
@@ -644,13 +687,7 @@ Chart.prototype = {
 		// state to determine the size, else the legend and tooltips won't render
 		// properly
 		if (!renderTo.offsetWidth) {
-			chart.renderToClone = renderToClone = renderTo.cloneNode(0);
-			css(renderToClone, {
-				position: ABSOLUTE,
-				top: '-9999px',
-				display: 'block' // #833
-			});
-			doc.body.appendChild(renderToClone);
+			chart.cloneRenderTo();
 		}
 
 		// get the width and height
@@ -672,7 +709,7 @@ Chart.prototype = {
 				textAlign: 'left',
 				lineHeight: 'normal' // #427
 			}, optionsChart.style),
-			renderToClone || renderTo
+			chart.renderToClone || renderTo
 		);
 
 		chart.renderer =
@@ -1365,10 +1402,7 @@ Chart.prototype = {
 		
 		
 		// If the chart was rendered outside the top container, put it back in
-		if (chart.renderToClone) {
-			chart.renderTo.appendChild(chart.container);
-			discardElement(chart.renderToClone);
-		}
+		chart.cloneRenderTo(true);
 
 		fireEvent(chart, 'load');
 

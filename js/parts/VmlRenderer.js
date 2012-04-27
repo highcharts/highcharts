@@ -538,6 +538,15 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		}
 	},
+	
+	
+	/**
+	 * Detect whether the renderer is hidden. This happens when one of the parent elements
+	 * has display: none
+	 */
+	isHidden: function () {
+		return !this.box.offsetWidth;			
+	},
 
 	/**
 	 * Define a clipping rectangle. In VML it is accomplished by storing the values
