@@ -100,6 +100,19 @@ return {
 			});
 		}
 	},
+	
+	/**
+	 * Run a general method on the framework, following jQuery syntax
+	 * @param {Object} el The HTML element
+	 * @param {String} method Which method to run on the wrapped element
+	 */
+	adapterRun: function (el, method) {
+		
+		// This currently works for getting inner width and height. If adding
+		// more methods later, we need a conditional implementation for each.
+		return parseInt($(el).getStyle(method), 10);
+		
+	},
 
 	/**
 	 * Downloads a script and executes a callback when done.

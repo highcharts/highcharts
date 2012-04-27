@@ -109,25 +109,6 @@ var UNDEFINED,
 	setMonth,
 	setFullYear,
 
-	// check for a custom HighchartsAdapter defined prior to this file
-	globalAdapter = win.HighchartsAdapter,
-	adapter = globalAdapter || {},
-
-	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
-	// and all the utility functions will be null. In that case they are populated by the
-	// default adapters below.
-	getScript = adapter.getScript,
-	each = adapter.each,
-	grep = adapter.grep,
-	offset = adapter.offset,
-	map = adapter.map,
-	merge = adapter.merge,
-	addEvent = adapter.addEvent,
-	removeEvent = adapter.removeEvent,
-	fireEvent = adapter.fireEvent,
-	washMouseEvent = adapter.washMouseEvent,
-	animate = adapter.animate,
-	stop = adapter.stop,
 
 	// lookup over the types and the associated classes
 	seriesTypes = {};
@@ -960,6 +941,29 @@ function setAnimation(animation, chart) {
 	globalAnimation = pick(animation, chart.animation);
 }
 
+
+
+// check for a custom HighchartsAdapter defined prior to this file
+var globalAdapter = win.HighchartsAdapter,
+	adapter = globalAdapter || {},
+
+	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
+	// and all the utility functions will be null. In that case they are populated by the
+	// default adapters below.
+	adapterRun = adapter.adapterRun,
+	getScript = adapter.getScript,
+	each = adapter.each,
+	grep = adapter.grep,
+	offset = adapter.offset,
+	map = adapter.map,
+	merge = adapter.merge,
+	addEvent = adapter.addEvent,
+	removeEvent = adapter.removeEvent,
+	fireEvent = adapter.fireEvent,
+	washMouseEvent = adapter.washMouseEvent,
+	animate = adapter.animate,
+	stop = adapter.stop;
+
 /*
  * Define the adapter for frameworks. If an external adapter is not defined,
  * Highcharts reverts to the built-in jQuery adapter.
@@ -978,6 +982,15 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Function} callback
 	 */
 	getScript = jQ.getScript;
+	
+	/**
+	 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
+	 * @param {Object} elem The HTML element
+	 * @param {String} method Which method to run on the wrapped element
+	 */
+	adapterRun = function (elem, method) {
+		return jQ(elem)[method]();
+	};
 
 	/**
 	 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
@@ -9542,11 +9555,12 @@ Chart.prototype = {
 	getChartSize: function () {
 		var chart = this,
 			optionsChart = chart.options.chart,
-			renderTo = chart.renderTo,
-			renderToClone = chart.renderToClone;
+			renderTo = chart.renderToClone || chart.renderTo;
 
-		chart.containerWidth = (renderToClone || renderTo).offsetWidth;
-		chart.containerHeight = (renderToClone || renderTo).offsetHeight;
+		// get inner width and height from jQuery (#824)
+		chart.containerWidth = adapterRun(renderTo, 'width');
+		chart.containerHeight = adapterRun(renderTo, 'height');
+		
 		chart.chartWidth = optionsChart.width || chart.containerWidth || 600;
 		chart.chartHeight = optionsChart.height ||
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
@@ -9749,8 +9763,8 @@ Chart.prototype = {
 
 		var reflowTimeout;
 		function reflow(e) {
-			var width = optionsChart.width || renderTo.offsetWidth,
-				height = optionsChart.height || renderTo.offsetHeight,
+			var width = optionsChart.width || adapterRun(renderTo, 'width'),
+				height = optionsChart.height || adapterRun(renderTo, 'height'),
 				target = e ? e.target : win; // #805 - MooTools doesn't supply e
 				
 			// Width and height checks for display:none. Target is doc in IE8 and Opera,

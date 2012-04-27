@@ -558,12 +558,10 @@
         <exec executable="cmd" dir="${basedir}" osfamily="windows">
             <arg value="/k start java -jar ${jstestdriver.jar} --port 4224"/>
         </exec>
-        <!--
-        <java jar="${jstestdriver.jar}">
-            <arg value="/-/-port"/>
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--port"/>
             <arg value="4224"/>
         </java>
-        -->
         <echo message="Test server started at localhost:4224"/>
         <echo message="Before running tests, remember to capture one or more browsers."/>
         <echo message="Exit the server by pressing Control-C in the java window."/>

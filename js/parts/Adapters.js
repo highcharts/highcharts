@@ -9,6 +9,29 @@ function setAnimation(animation, chart) {
 	globalAnimation = pick(animation, chart.animation);
 }
 
+
+
+// check for a custom HighchartsAdapter defined prior to this file
+var globalAdapter = win.HighchartsAdapter,
+	adapter = globalAdapter || {},
+
+	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
+	// and all the utility functions will be null. In that case they are populated by the
+	// default adapters below.
+	adapterRun = adapter.adapterRun,
+	getScript = adapter.getScript,
+	each = adapter.each,
+	grep = adapter.grep,
+	offset = adapter.offset,
+	map = adapter.map,
+	merge = adapter.merge,
+	addEvent = adapter.addEvent,
+	removeEvent = adapter.removeEvent,
+	fireEvent = adapter.fireEvent,
+	washMouseEvent = adapter.washMouseEvent,
+	animate = adapter.animate,
+	stop = adapter.stop;
+
 /*
  * Define the adapter for frameworks. If an external adapter is not defined,
  * Highcharts reverts to the built-in jQuery adapter.
@@ -27,6 +50,15 @@ if (!globalAdapter && win.jQuery) {
 	 * @param {Function} callback
 	 */
 	getScript = jQ.getScript;
+	
+	/**
+	 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
+	 * @param {Object} elem The HTML element
+	 * @param {String} method Which method to run on the wrapped element
+	 */
+	adapterRun = function (elem, method) {
+		return jQ(elem)[method]();
+	};
 
 	/**
 	 * Utility for iterating over an array. Parameters are reversed compared to jQuery.

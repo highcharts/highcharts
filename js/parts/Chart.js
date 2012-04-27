@@ -598,11 +598,12 @@ Chart.prototype = {
 	getChartSize: function () {
 		var chart = this,
 			optionsChart = chart.options.chart,
-			renderTo = chart.renderTo,
-			renderToClone = chart.renderToClone;
+			renderTo = chart.renderToClone || chart.renderTo;
 
-		chart.containerWidth = (renderToClone || renderTo).offsetWidth;
-		chart.containerHeight = (renderToClone || renderTo).offsetHeight;
+		// get inner width and height from jQuery (#824)
+		chart.containerWidth = adapterRun(renderTo, 'width');
+		chart.containerHeight = adapterRun(renderTo, 'height');
+		
 		chart.chartWidth = optionsChart.width || chart.containerWidth || 600;
 		chart.chartHeight = optionsChart.height ||
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
@@ -805,8 +806,8 @@ Chart.prototype = {
 
 		var reflowTimeout;
 		function reflow(e) {
-			var width = optionsChart.width || renderTo.offsetWidth,
-				height = optionsChart.height || renderTo.offsetHeight,
+			var width = optionsChart.width || adapterRun(renderTo, 'width'),
+				height = optionsChart.height || adapterRun(renderTo, 'height'),
 				target = e ? e.target : win; // #805 - MooTools doesn't supply e
 				
 			// Width and height checks for display:none. Target is doc in IE8 and Opera,

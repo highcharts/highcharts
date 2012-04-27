@@ -16,6 +16,21 @@ AdaptersTest.prototype.tearDown = function() {
 };
 
 /**
+ * Test general adapterRun.
+ */
+AdaptersTest.prototype.testAdapterRun = function() {
+	
+	// Issue #824, inner width of container not computed
+	/*:DOC += <div id="outer" style="width: 100px"><div style="border: 10px solid red; padding: 10px" id="inner">Inner</div></div>*/
+	var inner = document.getElementById('inner');
+
+	assertNotUndefined('Inner div not undefined', inner);
+
+	
+	assertEquals('Inner width', 60, adapterRun(inner, 'width'));
+};
+
+/**
  * Test the each method.
  */
 AdaptersTest.prototype.testEach = function() {
