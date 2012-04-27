@@ -7,6 +7,7 @@ extend(Highcharts, {
 	CanVGRenderer: CanVGRenderer,
 	Chart: Chart,
 	Color: Color,
+	Legend: Legend,
 	Point: Point,
 	Tick: Tick,
 	Tooltip: Tooltip,
