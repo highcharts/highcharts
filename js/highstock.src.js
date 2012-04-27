@@ -7432,11 +7432,12 @@ Axis.prototype = {
 	setTitle: function (newTitleOptions, redraw) {
 		var axis = this,
 			chart = axis.chart,
-			options = axis.options;
+			options = axis.options,
+			axisTitle;
 
 		options.title = merge(options.title, newTitleOptions);
 
-		axis.axisTitle = axis.axisTitle.destroy();
+		axis.axisTitle = axisTitle && axisTitle.destroy(); // #922
 		axis.isDirty = true;
 
 		if (pick(redraw, true)) {
