@@ -408,7 +408,7 @@ var gaugeValueAxisMixin = {
 		borderWidth: 1,
 		borderColor: 'silver',
 		backgroundColor: {
-		linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
 			stops: [
 				[0, '#FFF'],
 				[1, '#DDD']
@@ -426,7 +426,6 @@ var gaugeValueAxisMixin = {
 	setOptions: function (userOptions) {
 		
 		var axis = this,
-			background,
 			options;
 		
 		axis.options = options = merge(
@@ -436,9 +435,10 @@ var gaugeValueAxisMixin = {
 		);
 		
 		// Handle backgrounds
-		background = userOptions.background || {}; // start out with one default background
-			
-		each(Highcharts.splat(background).reverse(), function (config) {
+		// In the first parameter, pick up the background options, or use one empty object that is
+		// filled with default background options. Concatenate this with an empty array, which creates
+		// a copy so that the .reverse() operation is not repeated for export.
+		each([].concat(Highcharts.splat(userOptions.background || {})).reverse(), function (config) {
 			config = merge(axis.defaultBackgroundOptions, config);
 			config.color = config.backgroundColor; // due to naming in plotBands
 			

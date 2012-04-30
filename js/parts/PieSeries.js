@@ -676,7 +676,7 @@ var PieSeries = {
 	/**
 	 * Use a simple symbol from column prototype
 	 */
-	drawLegendSymbol: ColumnSeries.prototype.drawLegendSymbol,
+	drawLegendSymbol: AreaSeries.prototype.drawLegendSymbol,
 
 	/**
 	 * Pies don't have point marker symbols
