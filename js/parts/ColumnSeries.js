@@ -179,26 +179,12 @@ var ColumnSeries = extendClass(Series, {
 
 	getSymbol: function () {
 	},
-
+	
 	/**
-	 * Get the series' symbol in the legend
-	 * 
-	 * @param {Object} legend The legend object
-	 * @param {Object} item The series (this) or point
+	 * Use a solid rectangle like the area series types
 	 */
-	drawLegendSymbol: function (legend, item) {
-		
-		item.legendSymbol = this.chart.renderer.rect(
-			0,
-			legend.baseline - 11,
-			legend.options.symbolWidth,
-			12,
-			2
-		).attr({
-			zIndex: 3
-		}).add(item.legendGroup);		
-		
-	},
+	drawLegendSymbol: AreaSeries.prototype.drawLegendSymbol,
+	
 	
 	/**
 	 * Columns have no graph
