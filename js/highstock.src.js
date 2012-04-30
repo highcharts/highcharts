@@ -3381,6 +3381,7 @@ SVGRenderer.prototype = {
 				radius = options.r || w || h,
 				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
 				innerRadius = options.innerR,
+				open = options.open,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
@@ -3399,7 +3400,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				options.open ? M : L,
+				open ? M : L,
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
@@ -3411,7 +3412,7 @@ SVGRenderer.prototype = {
 				x + innerRadius * cosStart,
 				y + innerRadius * sinStart,
 
-				'Z' // close
+				open ? '' : 'Z' // close
 			];
 		}
 	},
@@ -7061,8 +7062,8 @@ Axis.prototype = {
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
-			hasData = axis.series.length && defined(axis.min) && defined(axis.max),
-			showAxis = hasData || pick(options.showEmpty, true),
+			hasData,
+			showAxis,
 			titleOffset = 0,
 			titleOffsetOption,
 			titleMargin = 0,
@@ -7072,7 +7073,13 @@ Axis.prototype = {
 			axisOffset = chart.axisOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
+			
+			
+		// For reuse in Axis.render
+		axis.hasData = hasData = (axis.series.length || (defined(axis.min) && defined(axis.max))) && tickPositions;
+		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
+		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 7 })
@@ -7081,7 +7088,6 @@ Axis.prototype = {
 				.attr({ zIndex: options.gridZIndex || 1 })
 				.add();
 		}
-
 
 		if (hasData || axis.isLinked) {
 			each(tickPositions, function (pos) {
@@ -7146,10 +7152,11 @@ Axis.prototype = {
 			// hide or show the title depending on whether showEmpty is set
 			axis.axisTitle[showAxis ? 'show' : 'hide']();
 		}
-
+		
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
-
+		
+		
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
@@ -7254,8 +7261,8 @@ Axis.prototype = {
 			linePath,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
-			hasData = axis.series.length && defined(axis.min) && defined(axis.max),
-			showAxis = hasData || pick(options.showEmpty, true),
+			hasData = axis.hasData,
+			showAxis = axis.showAxis,
 			from,
 			to;
 
@@ -10918,7 +10925,7 @@ Point.prototype = {
 			// graphic for the hover state
 			if (state) {
 				if (!stateMarkerGraphic) {
-					radius = markerOptions.radius;
+					radius = markerStateOptions.radius;
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
 						series.symbol,
 						-radius,

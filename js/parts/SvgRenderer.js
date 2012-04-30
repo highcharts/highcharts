@@ -1697,6 +1697,7 @@ SVGRenderer.prototype = {
 				radius = options.r || w || h,
 				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
 				innerRadius = options.innerR,
+				open = options.open,
 				cosStart = mathCos(start),
 				sinStart = mathSin(start),
 				cosEnd = mathCos(end),
@@ -1715,7 +1716,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				options.open ? M : L,
+				open ? M : L,
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
@@ -1727,7 +1728,7 @@ SVGRenderer.prototype = {
 				x + innerRadius * cosStart,
 				y + innerRadius * sinStart,
 
-				'Z' // close
+				open ? '' : 'Z' // close
 			];
 		}
 	},

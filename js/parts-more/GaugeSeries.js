@@ -2,7 +2,7 @@
  * The GaugeSeries class
  * 
  * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
- * Clock:	   http://jsfiddle.net/highcharts/BFN2F/
+ * Clock:       http://jsfiddle.net/highcharts/BFN2F/
  * 
  * TODO:
  * - Radial gradients.
@@ -10,9 +10,9 @@
  *	 - Experiment more with pattern in VML
  * - Size to the actual space given, for example by vu-meters
  * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
- * - POC with two axes - for example km/h and m/h. For this we need either an option to make it 
- *   circular. Axis extension could be loaded on axis init.
- * - Fix errors on export (invalide attributes)
+ * - Bouncing labels on update in IE (redrawing axis is not required at all)
+ * - Missing axis line in IE, dual axes example
+ * - Export fails in dual axes example
  */
 
 
@@ -160,8 +160,16 @@ var gaugeValueAxisMixin = {
 			align: 'center',
 			x: 0
 		},
+		minorGridLineWidth: 0,
+		minorTickInterval: 'auto',
+		minorTickLength: 10,
+		minorTickPosition: 'inside',
+		minorTickWidth: 1,
 		plotBands: [],
 		size: ['90%'],
+		tickLength: 10,
+		tickPosition: 'inside',
+		tickWidth: 2,
 		title: {
 			rotation: 0
 		},
@@ -234,15 +242,16 @@ var gaugeValueAxisMixin = {
 	 */
 	getLinePath: function () {
 		var center = this.center,
-			radius = center[2] / 2;
+			radius = center[2] / 2 - this.offset;
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
 			this.top + center[1],
 			radius,
-			radius,
+			radius, 
 			{
 				start: this.startAngleRad,
 				end: this.endAngleRad,
+				open: true,
 				innerR: 0
 			}
 		);
@@ -281,8 +290,7 @@ var gaugeValueAxisMixin = {
 		var chart = this.chart,
 			center = this.center,
 			angle = this.startAngleRad + this.translate(value),
-			radius = pick(length, center[2] / 2);
-		
+			radius = pick(length, center[2] / 2) - this.offset;
 		return {
 			x: chart.plotLeft + center[0] + Math.cos(angle) * radius,
 			y: chart.plotTop + center[1] + Math.sin(angle) * radius
@@ -391,6 +399,7 @@ Axis.prototype.init = (function (func) {
 			options = this.options;
 			this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
 			this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
+			this.offset = options.offset || 0;
 		}
 	};
 }(Axis.prototype.init));

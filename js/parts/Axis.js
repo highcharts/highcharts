@@ -1342,8 +1342,8 @@ Axis.prototype = {
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
-			hasData = axis.series.length && defined(axis.min) && defined(axis.max),
-			showAxis = hasData || pick(options.showEmpty, true),
+			hasData,
+			showAxis,
 			titleOffset = 0,
 			titleOffsetOption,
 			titleMargin = 0,
@@ -1353,7 +1353,13 @@ Axis.prototype = {
 			axisOffset = chart.axisOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
+			
+			
+		// For reuse in Axis.render
+		axis.hasData = hasData = (axis.series.length || (defined(axis.min) && defined(axis.max))) && tickPositions;
+		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
+		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 7 })
@@ -1362,7 +1368,6 @@ Axis.prototype = {
 				.attr({ zIndex: options.gridZIndex || 1 })
 				.add();
 		}
-
 
 		if (hasData || axis.isLinked) {
 			each(tickPositions, function (pos) {
@@ -1427,10 +1432,11 @@ Axis.prototype = {
 			// hide or show the title depending on whether showEmpty is set
 			axis.axisTitle[showAxis ? 'show' : 'hide']();
 		}
-
+		
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
-
+		
+		
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
@@ -1535,8 +1541,8 @@ Axis.prototype = {
 			linePath,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
-			hasData = axis.series.length && defined(axis.min) && defined(axis.max),
-			showAxis = hasData || pick(options.showEmpty, true),
+			hasData = axis.hasData,
+			showAxis = axis.showAxis,
 			from,
 			to;
 
