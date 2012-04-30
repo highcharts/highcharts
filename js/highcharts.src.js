@@ -8558,7 +8558,7 @@ Legend.prototype = {
 		//legend.box = UNDEFINED;
 
 		// run legend
-		legend.renderLegend();
+		legend.render();
 
 		// move checkboxes
 		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
@@ -8567,7 +8567,7 @@ Legend.prototype = {
 		return {
 			colorizeItem: colorizeItem,
 			destroyItem: destroyItem,
-			renderLegend: renderLegend,
+			render: render,
 			destroy: destroy,
 			getLegendWidth: getLegendWidth,
 			getLegendHeight: getLegendHeight
@@ -8839,7 +8839,7 @@ Legend.prototype = {
 	 * chart.render. If called after, it will only rearrange items instead
 	 * of creating new ones.
 	 */
-	renderLegend: function () {
+	render: function () {
 		var legend = this,
 			chart = legend.chart,
 			renderer = chart.renderer,
@@ -8851,7 +8851,6 @@ Legend.prototype = {
 			box = legend.box,
 			options = legend.options,
 			padding = legend.padding,
-			widthOption = options.width,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor;
 
@@ -8906,7 +8905,7 @@ Legend.prototype = {
 		});
 
 		// Draw the border
-		legend.legendWidth = legendWidth = widthOption || legend.offsetWidth;
+		legend.legendWidth = legendWidth = options.width || legend.offsetWidth;
 		legend.legendHeight = legendHeight = legend.lastItemY + legend.lastLineHeight;
 
 		if (legendBorderWidth || legendBackgroundColor) {
@@ -8960,10 +8959,10 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(extend(options, {
+			legendGroup.align(extend({
 				width: legendWidth,
 				height: legendHeight
-			}), true, chart.spacingBox);
+			}, options), true, chart.spacingBox);
 		}
 
 		if (!chart.isResizing) {
@@ -9172,7 +9171,7 @@ Chart.prototype = {
 		// handle added or removed series
 		if (redrawLegend && legend.options.enabled) { // series or pie points are added or removed
 			// draw legend graphics
-			legend.renderLegend();
+			legend.render();
 
 			chart.isDirtyLegend = false;
 		}

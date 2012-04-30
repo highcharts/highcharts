@@ -197,7 +197,7 @@ Chart.prototype = {
 		// handle added or removed series
 		if (redrawLegend && legend.options.enabled) { // series or pie points are added or removed
 			// draw legend graphics
-			legend.renderLegend();
+			legend.render();
 
 			chart.isDirtyLegend = false;
 		}
