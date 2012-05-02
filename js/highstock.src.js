@@ -11964,7 +11964,7 @@ Series.prototype = {
 				stroke: seriesColor,
 				fill: seriesColor
 			},
-			points = series.points,
+			points = series.points || [], // #927
 			i,
 			point,
 			seriesPointAttr = [],
