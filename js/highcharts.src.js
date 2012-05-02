@@ -2716,14 +2716,16 @@ SVGRenderer.prototype = {
 		// inside this container will be drawn at subpixel precision. In order to draw
 		// sharp lines, this must be compensated for. This doesn't seem to work inside
 		// iframes though (like in jsFiddle).
-		var subPixelFix, rect;
+		var subPixelFix, rect, leftCorrection, topCorrection;
 		if (isFirefox && container.getBoundingClientRect) {
 			renderer.subPixelFix = subPixelFix = function () {
 				css(container, { left: 0, top: 0 });
 				rect = container.getBoundingClientRect();
+				leftCorrection = 1 - (rect.left % 1);
+				topCorrection = 1 - (rect.top % 1);
 				css(container, {
-					left: (-(rect.left - pInt(rect.left))) + PX,
-					top: (-(rect.top - pInt(rect.top))) + PX
+					left: (leftCorrection < 1 ? leftCorrection : 0) + PX,
+					top: (topCorrection < 1 ? topCorrection : 0) + PX
 				});
 			};
 
