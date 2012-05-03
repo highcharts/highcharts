@@ -242,9 +242,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
  *	 - Experiment more with pattern in VML
  * - Size to the actual space given, for example by vu-meters
  * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
- * - Bouncing labels on update in IE (redrawing axis is not required at all)
  * - Missing axis line in IE, dual axes example
- * - Export fails in dual axes example
  */
 
 
@@ -303,8 +301,15 @@ var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
  * Augmented methods for the x axis in order to hide it completely
  */
 var gaugeXAxisMixin = {
+	redraw: function () {
+		this.isDirty = false; // prevent setting Y axis dirty
+	},
+	render: function () {
+		this.isDirty = false; // prevent setting Y axis dirty
+	},
 	setScale: noop,
-	render: noop
+	setCategories: noop,
+	setTitle: noop
 };
 
 /**

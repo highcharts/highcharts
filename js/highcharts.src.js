@@ -5759,8 +5759,8 @@ Axis.prototype = {
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
 		//linkedTo: null,
-		max: null,
-		min: null,
+		//max: undefined,
+		//min: undefined,
 		minPadding: 0.01,
 		maxPadding: 0.01,
 		//minRange: null,
@@ -6891,6 +6891,7 @@ Axis.prototype = {
 	setScale: function () {
 		var axis = this,
 			stacks = axis.stacks,
+			options = axis.options,
 			type,
 			i,
 			isDirtyData,
@@ -6906,12 +6907,14 @@ Axis.prototype = {
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
-		each(axis.series, function (series) {
-			if (series.isDirtyData || series.isDirty ||
-					series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
-				isDirtyData = true;
-			}
-		});
+		if (options.min === axis.userSetMin === UNDEFINED) { // do not mark as dirty data if the axis extremes are explicitly set
+			each(axis.series, function (series) {
+				if (series.isDirtyData || series.isDirty ||
+						series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
+					isDirtyData = true;
+				}
+			});
+		}
 
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
