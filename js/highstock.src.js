@@ -6716,7 +6716,6 @@ Axis.prototype = {
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
 			isLinked = axis.isLinked,
-			xOrY = axis.xOrY,
 			tickPositioner = axis.options.tickPositioner,
 			magnitude,
 			maxPadding = options.maxPadding,
@@ -6864,21 +6863,31 @@ Axis.prototype = {
 			} else if (max < roundedMax) {
 				tickPositions.pop();
 			}
-
-			// record the greatest number of ticks for multi axis
-			var maxTicks = chart.maxTicks;
-			if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
-				maxTicks = {
-					x: 0,
-					y: 0
-				};
-			}
-
-			if (!isDatetimeAxis && tickPositions.length > maxTicks[xOrY] && options.alignTicks !== false) {
-				maxTicks[xOrY] = tickPositions.length;
-			}
-			chart.maxTicks = maxTicks;
+			
 		}
+	},
+	
+	/**
+	 * Set the max ticks of either the x and y axis collection
+	 */
+	setMaxTicks: function () {
+		
+		var chart = this.chart,
+			maxTicks = chart.maxTicks,
+			tickPositions = this.tickPositions,
+			xOrY = this.xOrY;
+		
+		if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
+			maxTicks = {
+				x: 0,
+				y: 0
+			};
+		}
+
+		if (!this.isLinked && !this.isDatetimeAxis && tickPositions.length > maxTicks[xOrY] && this.options.alignTicks !== false) {
+			maxTicks[xOrY] = tickPositions.length;
+		}
+		chart.maxTicks = maxTicks;
 	},
 
 	/**
@@ -6923,7 +6932,6 @@ Axis.prototype = {
 	setScale: function () {
 		var axis = this,
 			stacks = axis.stacks,
-			options = axis.options,
 			type,
 			i,
 			isDirtyData,
@@ -6939,15 +6947,13 @@ Axis.prototype = {
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
-		if (options.min === axis.userSetMin === UNDEFINED) { // do not mark as dirty data if the axis extremes are explicitly set
-			each(axis.series, function (series) {
-				if (series.isDirtyData || series.isDirty ||
-						series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
-					isDirtyData = true;
-				}
-			});
-		}
-
+		each(axis.series, function (series) {
+			if (series.isDirtyData || series.isDirty ||
+					series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
+				isDirtyData = true;
+			}
+		});
+		
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
@@ -6976,6 +6982,9 @@ Axis.prototype = {
 				axis.isDirty = isDirtyAxisLength || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
 			}
 		}
+		
+		// Set the maximum tick amount
+		axis.setMaxTicks();
 	},
 
 	/**
@@ -10194,6 +10203,7 @@ Chart.prototype = {
 		chart.maxTicks = null; // reset for second pass
 		each(axes, function (axis) {
 			axis.setTickPositions(true); // update to reflect the new margins
+			axis.setMaxTicks();
 		});
 		chart.adjustTickAmounts();
 		chart.getMargins(); // second pass to check for new labels

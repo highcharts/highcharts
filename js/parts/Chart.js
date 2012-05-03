@@ -1176,6 +1176,7 @@ Chart.prototype = {
 		chart.maxTicks = null; // reset for second pass
 		each(axes, function (axis) {
 			axis.setTickPositions(true); // update to reflect the new margins
+			axis.setMaxTicks();
 		});
 		chart.adjustTickAmounts();
 		chart.getMargins(); // second pass to check for new labels
