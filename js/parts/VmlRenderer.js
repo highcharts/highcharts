@@ -638,29 +638,13 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				angle,
 				opacity1,
 				opacity2,
+				color1,
+				color2,
 				fillAttr = '',
 				stops = color.stops,
 				firstStop,
 				lastStop,
 				colors = [];
-			
-			// Handle linear gradient angle
-			if (fillType === 'gradient') {
-				x1 = gradient.x1 || gradient[0] || 0;
-				y1 = gradient.y1 || gradient[1] || 0;
-				x2 = gradient.x2 || gradient[2] || 0;
-				y2 = gradient.y2 || gradient[3] || 0;
-				angle = 90  - math.atan(
-					(y2 - y1) / // y vector
-					(x2 - x1) // x vector
-					) * 180 / mathPI;
-				
-			} else { // fillType === 'pattern'
-				/*fillAttr = 'src="http://midiwebconcept.free.fr/grad1.jpg" ' +
-					'size="1,1" ' +
-					'origin="100,100" ';*/
-					console.log("TODO: implement radial gradient");
-			}
 			
 			// Extend from 0 to 1
 			firstStop = stops[0];
@@ -695,10 +679,39 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				// Only start and end opacities are allowed, so we use the first and the last
 				if (!i) {
 					opacity1 = stopOpacity;
+					color1 = stopColor;
 				} else {
 					opacity2 = stopOpacity;
+					color2 = stopColor;
 				}
 			});
+			
+			// Handle linear gradient angle
+			if (fillType === 'gradient') {
+				x1 = gradient.x1 || gradient[0] || 0;
+				y1 = gradient.y1 || gradient[1] || 0;
+				x2 = gradient.x2 || gradient[2] || 0;
+				y2 = gradient.y2 || gradient[3] || 0;
+				angle = 90  - math.atan(
+					(y2 - y1) / // y vector
+					(x2 - x1) // x vector
+					) * 180 / mathPI;
+				
+			// Radial (circular) gradient
+			} else { 
+				// http://jsfiddle.net/highcharts/XRbCc/
+				// TODO:
+				// - first color becomes black in IE8 standards mode
+				// - implement cx, cy and r through "size" and "origin" attributes, see http://midiwebconcept.free.fr/RadialGrad.htm
+				// - check whether gradient stops are supported
+				// - add global option for gradient image
+				// - make new gradient image, try using PNG
+				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.jpg" ' +
+					'color="' + color1 + '" ' +
+					'color2="' + color2 + '" ';
+			}
+			
+			
 
 			// Apply the gradient to fills only.
 			if (prop === 'fill') {
