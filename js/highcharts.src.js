@@ -2740,7 +2740,7 @@ SVGRenderer.prototype = {
 	 * has display: none. #608.
 	 */
 	isHidden: function () {
-		return !this.box.getBBox().width;			
+		return !this.boxWrapper.getBBox().width;			
 	},
 
 	/**
