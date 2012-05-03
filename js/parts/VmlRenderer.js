@@ -639,6 +639,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				opacity1,
 				opacity2,
 				fillAttr = '',
+				stops = color.stops,
+				firstStop,
+				lastStop,
 				colors = [];
 			
 			// Handle linear gradient angle
@@ -658,9 +661,25 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					'origin="100,100" ';*/
 					console.log("TODO: implement radial gradient");
 			}
+			
+			// Extend from 0 to 1
+			firstStop = stops[0];
+			lastStop = stops[stops.length - 1];
+			if (firstStop[0] > 0) {
+				stops.unshift([
+					0,
+					firstStop[1]
+				]);
+			}
+			if (lastStop[0] < 1) {
+				stops.push([
+					1,
+					lastStop[1]
+				]);
+			}
 
 			// Compute the stops
-			each(color.stops, function (stop, i) {
+			each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
