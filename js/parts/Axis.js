@@ -996,8 +996,8 @@ Axis.prototype = {
 			if (!secondPass && mathMin(min, axis.dataMin) <= 0) {
 				error(10, 1); // Can't plot negative values on log axis
 			}
-			axis.min = min = log2lin(min);
-			axis.max = max = log2lin(max);
+			axis.min = min = correctFloat(log2lin(min)); // correctFloat cures #934
+			axis.max = max = correctFloat(log2lin(max));
 		}
 
 		// handle zoomed range
