@@ -16051,6 +16051,14 @@ Scroller.prototype = {
 
 				scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 			}
+			if(hasDragged) {
+				chart.xAxis[0].setExtremes(
+					xAxis.translate(zoomedMin, true),
+					xAxis.translate(zoomedMax, true),
+					true,
+					false
+				);
+			}
 		};
 
 		/**
