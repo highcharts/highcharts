@@ -706,7 +706,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				// - check whether gradient stops are supported
 				// - add global option for gradient image
 				// - make new gradient image, try using PNG
-				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.jpg" ' +
+				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.png" ' +
+					'size="1,1" ' +
+					'origin="0,0" ' +
 					'color="' + color1 + '" ' +
 					'color2="' + color2 + '" ';
 			}
