@@ -330,6 +330,18 @@ function extendClass(parent, members) {
 }
 
 /**
+ * How many decimals are there in a number
+ */
+function getDecimals(number) {
+	
+	number = (number || 0).toString();
+	
+	return number.indexOf('.') > -1 ? 
+		number.split('.')[1].length :
+		0;
+}
+
+/**
  * Format a number and return a string based on input settings
  * @param {Number} number The input number to format
  * @param {Number} decimals The amount of decimals
@@ -340,7 +352,9 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = number,
-		c = isNaN(decimals = mathAbs(decimals)) ? 2 : decimals,
+		c = decimals === -1 ?
+			getDecimals(number) :
+			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",
@@ -4674,7 +4688,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				// - check whether gradient stops are supported
 				// - add global option for gradient image
 				// - make new gradient image, try using PNG
-				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.jpg" ' +
+				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.png" ' +
+					'size="1,1" ' +
+					'origin="0,0" ' +
 					'color="' + color1 + '" ' +
 					'color2="' + color2 + '" ';
 			}
@@ -5969,29 +5985,8 @@ Axis.prototype = {
 			type = options.type,
 			isDatetimeAxis = type === 'datetime';
 	
-		axis.labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
-				function () {
-					var value = this.value,
-						dateTimeLabelFormat = this.dateTimeLabelFormat,
-						ret;
+		axis.labelFormatter = options.labels.formatter || axis.defaultLabelFormatter; // can be overwritten by dynamic format
 	
-					if (dateTimeLabelFormat) { // datetime axis
-						ret = dateFormat(dateTimeLabelFormat, value);
-	
-					} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
-						ret = (value / 1000000) + 'M';
-	
-					} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
-						ret = (value / 1000) + 'k';
-	
-					} else if (!axis.categories && value >= 1000) { // add thousands separators
-						ret = numberFormat(value, 0);
-	
-					} else { // strings (categories) and small numbers
-						ret = value;
-					}
-					return ret;
-				};
 	
 		// Flag, stagger lines or not
 		axis.staggerLines = axis.horiz && options.labels.staggerLines;
@@ -6128,6 +6123,34 @@ Axis.prototype = {
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			userOptions
 		);
+	},
+	
+	
+	/** 
+	 * The default label formatter. The context is a special config object for the label.
+	 */
+	defaultLabelFormatter: function () {
+		var axis = this.axis,
+			value = this.value,
+			dateTimeLabelFormat = this.dateTimeLabelFormat,
+			ret;
+
+		if (dateTimeLabelFormat) { // datetime axis
+			ret = dateFormat(dateTimeLabelFormat, value);
+
+		} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
+			ret = (value / 1000000) + 'M';
+
+		} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
+			ret = (value / 1000) + 'k';
+
+		} else if (!axis.categories && value >= 1000) { // add thousands separators
+			ret = numberFormat(value, 0);
+
+		} else { // strings (categories) and small numbers
+			ret = numberFormat(value, -1);
+		}
+		return ret;
 	},
 	
 	/**
@@ -10730,8 +10753,6 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			split = String(point.y).split('.'),
-			originalDecimals = split[1] ? split[1].length : 0,
 			match = pointFormat.match(/\{(series|point)\.[a-zA-Z]+\}/g),
 			splitter = /[{\.}]/,
 			obj,
@@ -10755,7 +10776,7 @@ Point.prototype = {
 				if (obj === point && (prop === 'y' || prop === 'open' || prop === 'high' || 
 						prop === 'low' || prop === 'close')) { 
 					replacement = (seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix || '') + 
-						numberFormat(point[prop], pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, originalDecimals)) +
+						numberFormat(point[prop], pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, -1)) +
 						(seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix || '');
 				
 				// Automatic replacement

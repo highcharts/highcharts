@@ -231,3 +231,20 @@ UtilTest.prototype.testDestroyObjectProperties = function () {
 	assertUndefined('Property should be undefined', testObject.label);
 	assertUndefined('Property should be undefined', testObject.noDestroy);
 };
+
+/**
+ * Test number formatting
+ */
+UtilTest.prototype.testNumberFormat = function () {
+	
+	assertEquals('Integer with decimals', "1.00", numberFormat(1, 2));
+	assertEquals('Integer with decimal point', "1,0", numberFormat(1, 1, ','));
+	assertEquals('Integer with thousands sep', "1 000", numberFormat(1000, null, null, ' '));
+	
+	// auto decimals
+	assertEquals('Auto decimals', "1.234", numberFormat(1.234, -1));
+	assertEquals('Auto decimals on string', "0", numberFormat("String", -1));
+	assertEquals('Auto decimals on integer', "10", numberFormat(10, -1));
+	assertEquals('Auto decimals on undefined', "0", numberFormat(undefined, -1));
+	assertEquals('Auto decimals on null', "0", numberFormat(null, -1));
+}

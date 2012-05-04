@@ -217,29 +217,8 @@ Axis.prototype = {
 			type = options.type,
 			isDatetimeAxis = type === 'datetime';
 	
-		axis.labelFormatter = options.labels.formatter ||  // can be overwritten by dynamic format
-				function () {
-					var value = this.value,
-						dateTimeLabelFormat = this.dateTimeLabelFormat,
-						ret;
+		axis.labelFormatter = options.labels.formatter || axis.defaultLabelFormatter; // can be overwritten by dynamic format
 	
-					if (dateTimeLabelFormat) { // datetime axis
-						ret = dateFormat(dateTimeLabelFormat, value);
-	
-					} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
-						ret = (value / 1000000) + 'M';
-	
-					} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
-						ret = (value / 1000) + 'k';
-	
-					} else if (!axis.categories && value >= 1000) { // add thousands separators
-						ret = numberFormat(value, 0);
-	
-					} else { // strings (categories) and small numbers
-						ret = value;
-					}
-					return ret;
-				};
 	
 		// Flag, stagger lines or not
 		axis.staggerLines = axis.horiz && options.labels.staggerLines;
@@ -376,6 +355,34 @@ Axis.prototype = {
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			userOptions
 		);
+	},
+	
+	
+	/** 
+	 * The default label formatter. The context is a special config object for the label.
+	 */
+	defaultLabelFormatter: function () {
+		var axis = this.axis,
+			value = this.value,
+			dateTimeLabelFormat = this.dateTimeLabelFormat,
+			ret;
+
+		if (dateTimeLabelFormat) { // datetime axis
+			ret = dateFormat(dateTimeLabelFormat, value);
+
+		} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
+			ret = (value / 1000000) + 'M';
+
+		} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
+			ret = (value / 1000) + 'k';
+
+		} else if (!axis.categories && value >= 1000) { // add thousands separators
+			ret = numberFormat(value, 0);
+
+		} else { // strings (categories) and small numbers
+			ret = numberFormat(value, -1);
+		}
+		return ret;
 	},
 	
 	/**
