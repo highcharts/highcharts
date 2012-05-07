@@ -4598,7 +4598,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		var colorObject,
 			regexRgba = /^rgba/,
 			markup,
-			fillType;
+			fillType,
+			ret = NONE;
 
 		// Check for linear or radial gradient
 		if (color && color.linearGradient) {
@@ -4661,10 +4662,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				// Only start and end opacities are allowed, so we use the first and the last
 				if (!i) {
 					opacity1 = stopOpacity;
-					color1 = stopColor;
+					color2 = stopColor;
 				} else {
 					opacity2 = stopOpacity;
-					color2 = stopColor;
+					color1 = stopColor;
 				}
 			});
 			
@@ -4681,18 +4682,22 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				
 			// Radial (circular) gradient
 			} else { 
+				// reference: http://jsfiddle.net/highcharts/etznJ/
 				// http://jsfiddle.net/highcharts/XRbCc/
+				// http://jsfiddle.net/highcharts/F3fwR/
 				// TODO:
-				// - first color becomes black in IE8 standards mode
 				// - implement cx, cy and r through "size" and "origin" attributes, see http://midiwebconcept.free.fr/RadialGrad.htm
 				// - check whether gradient stops are supported
 				// - add global option for gradient image
-				// - make new gradient image, try using PNG
+				var size = gradient.r * 2;
 				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.png" ' +
-					'size="1,1" ' +
+					'size="' + size + ',' + size + '" ' +
 					'origin="0,0" ' +
-					'color="' + color1 + '" ' +
 					'color2="' + color2 + '" ';
+				
+				// The fill element's color attribute is broken in IE8 standards mode, so we
+				// need to set the parent shape's fillcolor attribute instead.
+				ret = color1;
 			}
 			
 			
@@ -4709,7 +4714,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			
 			// Gradients are not supported for VML stroke, return the first color. #722.
 			} else {
-				return stopColor;
+				ret = stopColor;
 			}
 
 
@@ -4722,7 +4727,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
 			createElement(this.prepVML(markup), null, null, elem);
 
-			return colorObject.get('rgb');
+			ret = colorObject.get('rgb');
 
 
 		} else {
@@ -4730,9 +4735,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			if (strokeNodes.length) {
 				strokeNodes[0].opacity = 1;
 			}
-			return color;
+			ret = color;
 		}
 
+		return ret;
 	},
 
 	/**
