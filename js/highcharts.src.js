@@ -11644,12 +11644,10 @@ Series.prototype = {
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
 
-		// don't waste resources if tracker is disabled
 		if (series.options.enableMouseTracking === false) {
 			return;
 		}
 
-		// renew
 		if (renew) {
 			series.tooltipPoints = null;
 		}
@@ -11659,8 +11657,6 @@ Series.prototype = {
 			points = points.concat(segment);
 		});
 
-		// loop the concatenated points and apply each point to all the closest
-		// pixel positions
 		if (xAxis && xAxis.reversed) {
 			points = points.reverse();
 		}
@@ -11670,13 +11666,16 @@ Series.prototype = {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			low = points[i - 1] ? points[i - 1]._high + 1 : 0;
-			high = point._high = points[i + 1] ?
+			high = points[i + 1] ?
 				(mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
 				plotSize;
 
-			while (low <= high) {
-				tooltipPoints[low++] = point;
+			if (low > 0) {
+				while (low <= high) {
+					tooltipPoints[low++] = point;
+				}
 			}
+			point._high = high;
 		}
 		series.tooltipPoints = tooltipPoints;
 	},
