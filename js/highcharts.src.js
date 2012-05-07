@@ -6148,22 +6148,27 @@ Axis.prototype = {
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
 			value = this.value,
+			categories = axis.categories,
+			tickInterval = axis.tickInterval,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			ret;
 
-		if (dateTimeLabelFormat) { // datetime axis
+		if (categories) {
+			ret = value;
+		
+		} else if (dateTimeLabelFormat) { // datetime axis
 			ret = dateFormat(dateTimeLabelFormat, value);
 
-		} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
+		} else if (tickInterval % 1000000 === 0) { // use M abbreviation
 			ret = (value / 1000000) + 'M';
 
-		} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
+		} else if (tickInterval % 1000 === 0) { // use k abbreviation
 			ret = (value / 1000) + 'k';
 
-		} else if (!axis.categories && value >= 1000) { // add thousands separators
+		} else if (value >= 1000) { // add thousands separators
 			ret = numberFormat(value, 0);
 
-		} else { // strings (categories) and small numbers
+		} else { // small numbers
 			ret = numberFormat(value, -1);
 		}
 		return ret;
