@@ -159,6 +159,7 @@
             <file name="Globals.js"/>
             <file name="AreaRangeSeries.js"/>
             <file name="GaugeSeries.js"/>
+            <file name="Polar.js"/>
             <file name="Outro.js"/>
         </filelist>
     </target>

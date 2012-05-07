@@ -83,7 +83,7 @@ var gaugeXAxisMixin = {
 /**
  * Augmented methods for the value axis
  */
-var gaugeValueAxisMixin = {
+var circularAxisMixin = {
 	isRadial: true,
 	
 	/* *
@@ -243,11 +243,14 @@ var gaugeValueAxisMixin = {
 	},
 	
 	/**
-	 * Get the path for the axis line
+	 * Get the path for the axis line. This method is borrowed by the angularAxisMixin's getPlotLinePath
+	 * method.
 	 */
-	getLinePath: function () {
-		var center = this.center,
-			radius = center[2] / 2 - this.offset;
+	getLinePath: function (radius) {
+		var center = this.center;
+		
+		radius = pick(radius, center[2] / 2 - this.offset);
+		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
 			this.top + center[1],
@@ -271,7 +274,9 @@ var gaugeValueAxisMixin = {
 		
 		Axis.prototype.setAxisTranslation.call(this);
 		
-		this.transA = (this.endAngleRad - this.startAngleRad) / ((this.max - this.min) || 1);
+		this.transA = (this.endAngleRad - this.startAngleRad) / ((this.max - this.min + this.closestPointRange) || 1);
+
+		this.minPixelPadding = 0; // TODO: handle this
 	},
 	
 	/**
@@ -390,7 +395,7 @@ Axis.prototype.init = (function (func) {
 			
 		// Before prototype.init
 		if (angular) {
-			extend(this, userOptions.isX ? gaugeXAxisMixin : gaugeValueAxisMixin);
+			extend(this, userOptions.isX ? gaugeXAxisMixin : circularAxisMixin);
 		}
 		
 		// Run prototype.init
@@ -418,7 +423,7 @@ tickProto.getPosition = (function (func) {
 		var axis = this.axis,
 			args = arguments;
 		
-		return axis.isRadial ? 
+		return axis.getPosition ? 
 			axis.getPosition(args[1]) :
 			func.apply(this, args);	
 	};
@@ -505,7 +510,7 @@ var GaugeSeries = {
 		Series.prototype.bindAxes.call(this);
 		
 		extend(this.xAxis, gaugeXAxisMixin);
-		extend(this.yAxis, gaugeValueAxisMixin);
+		extend(this.yAxis, circularAxisMixin);
 		this.yAxis.onBind();
 	},*/
 	
