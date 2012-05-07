@@ -6995,18 +6995,19 @@ Axis.prototype = {
 			axis.oldUserMin = axis.userMin;
 			axis.oldUserMax = axis.userMax;
 
-			// reset stacks
-			if (!axis.isXAxis) {
-				for (type in stacks) {
-					for (i in stacks[type]) {
-						stacks[type][i].cum = stacks[type][i].total;
-					}
-				}
-			}
-
 			// Mark as dirty if it is not already set to dirty and extremes have changed. #595.
 			if (!axis.isDirty) {
 				axis.isDirty = isDirtyAxisLength || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
+			}
+		}
+		
+		
+		// reset stacks
+		if (!axis.isXAxis) {
+			for (type in stacks) {
+				for (i in stacks[type]) {
+					stacks[type][i].cum = stacks[type][i].total;
+				}
 			}
 		}
 		
