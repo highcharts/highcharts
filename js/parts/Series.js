@@ -1935,7 +1935,6 @@ Series.prototype = {
 			singlePoints = [], // used in drawTracker
 			attribs;
 
-
 		// divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
 			
@@ -1959,7 +1958,7 @@ Series.prototype = {
 			graph.animate({ d: graphPath });
 
 		} else {
-			if (lineWidth) {
+			if (lineWidth || options.states.hover.lineWidth) { // #940
 				attribs = {
 					stroke: color,
 					'stroke-width': lineWidth
