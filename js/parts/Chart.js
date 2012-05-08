@@ -1119,7 +1119,7 @@ Chart.prototype = {
 			value;
 			
 			
-		each(['inverted', 'angular'], function (key) {
+		each(['inverted', 'angular', 'polar'], function (key) {
 			
 			// The default series type's class
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];

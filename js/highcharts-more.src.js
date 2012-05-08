@@ -37,11 +37,12 @@ var radialAxisMixin = {
 	/**
 	 * The default options extend defaultYAxisOptions
 	 */
-	defaultCircularAxisOptions: {
+	defaultRadialGaugeOptions: {
 		center: ['50%', '50%'],
 		labels: {
 			align: 'center',
-			x: 0
+			x: 0,
+			y: null // auto
 		},
 		minorGridLineWidth: 0,
 		minorTickInterval: 'auto',
@@ -57,6 +58,31 @@ var radialAxisMixin = {
 			rotation: 0
 		},
 		zIndex: 2 // behind dials, points in the series group
+	},
+	
+	defaultRadialXOptions: {
+		center: ['50%', '50%'],
+		labels: {
+			align: 'center',
+			distance: 15,
+			x: 0,
+			y: null // auto
+		},
+		maxPadding: 0,
+		minPadding: 0,
+		size: ['90%']
+		
+	},
+	
+	defaultRadialYOptions: {
+		center: ['50%', '50%'],
+		labels: {
+			align: 'left',
+			x: 2,
+			y: -2
+		},
+		size: ['90%'],
+		tickWidth: 0
 	},
 	
 	/**
@@ -89,7 +115,7 @@ var radialAxisMixin = {
 		
 		axis.options = options = merge(
 			axis.defaultOptions,
-			axis.defaultCircularAxisOptions,
+			axis.defaultRadialOptions,
 			userOptions
 		);
 		
@@ -151,16 +177,15 @@ var radialAxisMixin = {
 	setAxisTranslation: function () {
 		
 		axisProto.setAxisTranslation.call(this);
-		
+		var m = this.minPixelPadding;
 			
 		if (this.center) { // it's not defined the first time
 			this.transA = this.isCircular ? 
 				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min + (this.closestPointRange || 0)) || 1) : 
 				(this.center[2] / 2) / ((this.max - this.min) || 1);
-				
+			
+			this.minPixelPadding = this.transA * ((this.pointRange || 0) / 2);
 		}
-
-		this.minPixelPadding = 0; // TODO: handle this
 	},
 	
 	/**
@@ -188,17 +213,26 @@ var radialAxisMixin = {
 			value = this.min;	
 		}
 		
-		var chart = this.chart,
-			center = this.center,
-			angle = this.startAngleRad + this.translate(value),
-			radius = pick(length, center[2] / 2) - this.offset;
+		return this.postTranslate(
+			this.translate(value),
+			pick(length, this.center[2] / 2) - this.offset
+		);		
+	},
+	
+	/**
+	 * Translate from intermediate plotX (angle), plotY (axis.len - radius) to final chart coordinates. 
+	 */
+	postTranslate: function (angle, radius) {
 		
+		var chart = this.chart,
+			center = this.center;
+			
+		angle = this.startAngleRad + angle;
 		
 		return {
 			x: chart.plotLeft + center[0] + Math.cos(angle) * radius,
 			y: chart.plotTop + center[1] + Math.sin(angle) * radius
 		};
-		
 		
 	},
 	
@@ -295,7 +329,7 @@ var radialAxisMixin = {
 axisProto.init = (function (func) {
 	return function (chart, userOptions) {
 		var angular = chart.angular,
-			polar = chart.options.chart.polar,
+			polar = chart.polar,
 			isX = userOptions.isX,
 			isCircular,
 			options;
@@ -305,11 +339,15 @@ axisProto.init = (function (func) {
 			//extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
 			extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
 			isCircular =  !isX;
+			if (isCircular) {
+				this.defaultRadialOptions = this.defaultGaugeOptions;
+			}
 			
 		} else if (polar) {
 			//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 			extend(this, radialAxisMixin);
 			isCircular = isX;
+			this.defaultRadialOptions = isX ? this.defaultRadialXOptions : this.defaultRadialYOptions;
 		}
 		
 		// Run prototype.init
@@ -356,6 +394,7 @@ tickProto.getLabelPosition = (function (func) {
 		var axis = this.axis,
 			labelOptions = axis.options.labels,
 			label = this.label,
+			optionsY = labelOptions.y,
 			ret;
 		
 		if (axis.isRadial) {
@@ -368,11 +407,12 @@ tickProto.getLabelPosition = (function (func) {
 				});
 			
 			// Vertically centered
-			} else if (labelOptions.y === null) {
-				// TODO: new fontMetric logic
-				ret.y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+			} else if (optionsY === null) {
+				optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
 			}
 			
+			ret.x += labelOptions.x;
+			ret.y += optionsY;
 			
 		} else {
 			ret = func.apply(this, arguments);
@@ -849,15 +889,23 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * - http://jsfiddle.net/highcharts/2Y5yF/
  */
 
+var seriesProto = Series.prototype,
+	columnProto = seriesTypes.column.prototype;
 
-Series.prototype.translate = (function (func) {
+
+/**
+ * Override translate. The plotX and plotY values are computed as if the polar chart were a
+ * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
+ * center. 
+ */
+seriesProto.translate = (function (func) {
 	return function () {
 		
 		// Run uber method
 		func.apply(this, arguments);
 		
 		// Postprocess plot coordinates
-		if (this.xAxis.getPosition) {
+		if (this.xAxis.getPosition && this.type !== 'column') { // TODO: do not use this.type
 			var points = this.points,
 				i = points.length,
 				point,
@@ -865,12 +913,92 @@ Series.prototype.translate = (function (func) {
 				xy;
 			while (i--) {
 				point = points[i];
-				xy = this.xAxis.getPosition(point.x, this.yAxis.len - point.plotY);
-				point.plotX = xy.x - chart.plotLeft;
-				point.plotY = xy.y - chart.plotTop;
+				
+				// save rectangular plotX, plotY for later computation
+				point.rectPlotX = point.plotX;
+				point.rectPlotY = point.plotY;
+				
+				// find the polar plotX and plotY
+				xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
+				point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+				point.plotY = point.polarPlotY = xy.y - chart.plotTop;
 			}
 		}
 	};
-}(Series.prototype.translate));
+}(seriesProto.translate));
+
+columnProto.translate = (function (func) {
+	return function () {
+		
+		var xAxis = this.xAxis,
+			len = this.yAxis.len,
+			center = xAxis.center,
+			startAngleRad = xAxis.startAngleRad,
+			renderer = this.chart.renderer;
+		
+		// Run uber method
+		func.apply(this, arguments);
+		
+		// Postprocess plot coordinates
+		if (xAxis.isRadial) {
+			each(this.points, function (point) {
+				point.shapeType = 'path';
+				point.shapeArgs = renderer.symbols.arc(
+					center[0],
+					center[1],
+					len - point.plotY,
+					null, 
+					{
+						start: startAngleRad + point.barX,
+						end: startAngleRad + point.barX + point.pointWidth,
+						//open: true,
+						innerR: 0
+					}
+				);
+			});
+		}
+	};
+}(columnProto.translate));
+
+
+/*seriesProto.getSegmentPath = (function (func) {
+	return function () {
+		
+		var segmentPath,
+			i,
+			xy,
+			chart = this.chart,
+			isRadial = this.xAxis.isRadial;
+		
+		// To rectangle coordinate system
+		if (isRadial) {
+			each(this.points, function (point) {
+				point.plotX = point.rectPlotX;
+				point.plotY = point.rectPlotY;
+			});
+		}
+		
+		// Run uber method
+		segmentPath = func.apply(this, arguments);
+		
+		if (isRadial) {
+			for (i = 0; i < segmentPath.length; i++) {
+				if (typeof segmentPath[i] === 'number') {
+					xy = this.xAxis.postTranslate(segmentPath[i], this.yAxis.len - segmentPath[i + 1]);
+					segmentPath[i] = xy.x - chart.plotLeft;
+					segmentPath[i + 1] = xy.y - chart.plotTop;
+					i = i + 1;
+				}
+			}
+			
+			// To polar coordinate system
+			each(this.points, function (point) {
+				point.plotX = point.polarPlotX;
+				point.plotY = point.polarPlotY;
+			});
+		}
+		return segmentPath;
+	};
+}(seriesProto.getSegmentPath));*/
 
 }(Highcharts));

@@ -11,11 +11,12 @@ var radialAxisMixin = {
 	/**
 	 * The default options extend defaultYAxisOptions
 	 */
-	defaultCircularAxisOptions: {
+	defaultRadialGaugeOptions: {
 		center: ['50%', '50%'],
 		labels: {
 			align: 'center',
-			x: 0
+			x: 0,
+			y: null // auto
 		},
 		minorGridLineWidth: 0,
 		minorTickInterval: 'auto',
@@ -31,6 +32,31 @@ var radialAxisMixin = {
 			rotation: 0
 		},
 		zIndex: 2 // behind dials, points in the series group
+	},
+	
+	defaultRadialXOptions: {
+		center: ['50%', '50%'],
+		labels: {
+			align: 'center',
+			distance: 15,
+			x: 0,
+			y: null // auto
+		},
+		maxPadding: 0,
+		minPadding: 0,
+		size: ['90%']
+		
+	},
+	
+	defaultRadialYOptions: {
+		center: ['50%', '50%'],
+		labels: {
+			align: 'left',
+			x: 2,
+			y: -2
+		},
+		size: ['90%'],
+		tickWidth: 0
 	},
 	
 	/**
@@ -63,7 +89,7 @@ var radialAxisMixin = {
 		
 		axis.options = options = merge(
 			axis.defaultOptions,
-			axis.defaultCircularAxisOptions,
+			axis.defaultRadialOptions,
 			userOptions
 		);
 		
@@ -125,16 +151,15 @@ var radialAxisMixin = {
 	setAxisTranslation: function () {
 		
 		axisProto.setAxisTranslation.call(this);
-		
+		var m = this.minPixelPadding;
 			
 		if (this.center) { // it's not defined the first time
 			this.transA = this.isCircular ? 
 				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min + (this.closestPointRange || 0)) || 1) : 
 				(this.center[2] / 2) / ((this.max - this.min) || 1);
-				
+			
+			this.minPixelPadding = this.transA * ((this.pointRange || 0) / 2);
 		}
-
-		this.minPixelPadding = 0; // TODO: handle this
 	},
 	
 	/**
@@ -162,17 +187,26 @@ var radialAxisMixin = {
 			value = this.min;	
 		}
 		
-		var chart = this.chart,
-			center = this.center,
-			angle = this.startAngleRad + this.translate(value),
-			radius = pick(length, center[2] / 2) - this.offset;
+		return this.postTranslate(
+			this.translate(value),
+			pick(length, this.center[2] / 2) - this.offset
+		);		
+	},
+	
+	/**
+	 * Translate from intermediate plotX (angle), plotY (axis.len - radius) to final chart coordinates. 
+	 */
+	postTranslate: function (angle, radius) {
 		
+		var chart = this.chart,
+			center = this.center;
+			
+		angle = this.startAngleRad + angle;
 		
 		return {
 			x: chart.plotLeft + center[0] + Math.cos(angle) * radius,
 			y: chart.plotTop + center[1] + Math.sin(angle) * radius
 		};
-		
 		
 	},
 	
@@ -269,7 +303,7 @@ var radialAxisMixin = {
 axisProto.init = (function (func) {
 	return function (chart, userOptions) {
 		var angular = chart.angular,
-			polar = chart.options.chart.polar,
+			polar = chart.polar,
 			isX = userOptions.isX,
 			isCircular,
 			options;
@@ -279,11 +313,15 @@ axisProto.init = (function (func) {
 			//extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
 			extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
 			isCircular =  !isX;
+			if (isCircular) {
+				this.defaultRadialOptions = this.defaultGaugeOptions;
+			}
 			
 		} else if (polar) {
 			//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 			extend(this, radialAxisMixin);
 			isCircular = isX;
+			this.defaultRadialOptions = isX ? this.defaultRadialXOptions : this.defaultRadialYOptions;
 		}
 		
 		// Run prototype.init
@@ -330,6 +368,7 @@ tickProto.getLabelPosition = (function (func) {
 		var axis = this.axis,
 			labelOptions = axis.options.labels,
 			label = this.label,
+			optionsY = labelOptions.y,
 			ret;
 		
 		if (axis.isRadial) {
@@ -342,11 +381,12 @@ tickProto.getLabelPosition = (function (func) {
 				});
 			
 			// Vertically centered
-			} else if (labelOptions.y === null) {
-				// TODO: new fontMetric logic
-				ret.y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+			} else if (optionsY === null) {
+				optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
 			}
 			
+			ret.x += labelOptions.x;
+			ret.y += optionsY;
 			
 		} else {
 			ret = func.apply(this, arguments);

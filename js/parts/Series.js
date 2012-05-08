@@ -1185,7 +1185,8 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
+			//point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1); // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {

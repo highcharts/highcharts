@@ -4,15 +4,23 @@
  * - http://jsfiddle.net/highcharts/2Y5yF/
  */
 
+var seriesProto = Series.prototype,
+	columnProto = seriesTypes.column.prototype;
 
-Series.prototype.translate = (function (func) {
+
+/**
+ * Override translate. The plotX and plotY values are computed as if the polar chart were a
+ * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
+ * center. 
+ */
+seriesProto.translate = (function (func) {
 	return function () {
 		
 		// Run uber method
 		func.apply(this, arguments);
 		
 		// Postprocess plot coordinates
-		if (this.xAxis.getPosition) {
+		if (this.xAxis.getPosition && this.type !== 'column') { // TODO: do not use this.type
 			var points = this.points,
 				i = points.length,
 				point,
@@ -20,10 +28,90 @@ Series.prototype.translate = (function (func) {
 				xy;
 			while (i--) {
 				point = points[i];
-				xy = this.xAxis.getPosition(point.x, this.yAxis.len - point.plotY);
-				point.plotX = xy.x - chart.plotLeft;
-				point.plotY = xy.y - chart.plotTop;
+				
+				// save rectangular plotX, plotY for later computation
+				point.rectPlotX = point.plotX;
+				point.rectPlotY = point.plotY;
+				
+				// find the polar plotX and plotY
+				xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
+				point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+				point.plotY = point.polarPlotY = xy.y - chart.plotTop;
 			}
 		}
 	};
-}(Series.prototype.translate));
+}(seriesProto.translate));
+
+columnProto.translate = (function (func) {
+	return function () {
+		
+		var xAxis = this.xAxis,
+			len = this.yAxis.len,
+			center = xAxis.center,
+			startAngleRad = xAxis.startAngleRad,
+			renderer = this.chart.renderer;
+		
+		// Run uber method
+		func.apply(this, arguments);
+		
+		// Postprocess plot coordinates
+		if (xAxis.isRadial) {
+			each(this.points, function (point) {
+				point.shapeType = 'path';
+				point.shapeArgs = renderer.symbols.arc(
+					center[0],
+					center[1],
+					len - point.plotY,
+					null, 
+					{
+						start: startAngleRad + point.barX,
+						end: startAngleRad + point.barX + point.pointWidth,
+						//open: true,
+						innerR: 0
+					}
+				);
+			});
+		}
+	};
+}(columnProto.translate));
+
+
+/*seriesProto.getSegmentPath = (function (func) {
+	return function () {
+		
+		var segmentPath,
+			i,
+			xy,
+			chart = this.chart,
+			isRadial = this.xAxis.isRadial;
+		
+		// To rectangle coordinate system
+		if (isRadial) {
+			each(this.points, function (point) {
+				point.plotX = point.rectPlotX;
+				point.plotY = point.rectPlotY;
+			});
+		}
+		
+		// Run uber method
+		segmentPath = func.apply(this, arguments);
+		
+		if (isRadial) {
+			for (i = 0; i < segmentPath.length; i++) {
+				if (typeof segmentPath[i] === 'number') {
+					xy = this.xAxis.postTranslate(segmentPath[i], this.yAxis.len - segmentPath[i + 1]);
+					segmentPath[i] = xy.x - chart.plotLeft;
+					segmentPath[i + 1] = xy.y - chart.plotTop;
+					i = i + 1;
+				}
+			}
+			
+			// To polar coordinate system
+			each(this.points, function (point) {
+				point.plotX = point.polarPlotX;
+				point.plotY = point.polarPlotY;
+			});
+		}
+		return segmentPath;
+	};
+}(seriesProto.getSegmentPath));*/

@@ -101,14 +101,15 @@ var ColumnSeries = extendClass(Series, {
 		// the number of column series in the plot, the groupPadding
 		// and the pointPadding options
 		var points = series.points,
-			categoryWidth = mathAbs(xAxis.translationSlope) * (xAxis.ordinalSlope || xAxis.closestPointRange || 1),
+			categoryWidth = mathAbs(xAxis.transA) * (xAxis.ordinalSlope || xAxis.closestPointRange || 1),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
 			optionPointWidth = options.pointWidth,
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
-			pointWidth = mathCeil(mathMax(pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), 1 + 2 * borderWidth)),
+			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
+			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
 			colIndex = (reversedXAxis ? columnCount -
 				series.columnIndex : series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
@@ -130,7 +131,7 @@ var ColumnSeries = extendClass(Series, {
 
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
 			if (stacking && series.visible && stack && stack[point.x]) {
-				stack[point.x].setOffset(pointXOffset, pointWidth);
+				stack[point.x].setOffset(pointXOffset, barW);
 			}
 
 			// handle options.minPointLength
@@ -147,8 +148,9 @@ var ColumnSeries = extendClass(Series, {
 			extend(point, {
 				barX: barX,
 				barY: barY,
-				barW: pointWidth,
-				barH: barH
+				barW: barW,
+				barH: barH,
+				pointWidth: pointWidth
 			});
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
@@ -156,7 +158,7 @@ var ColumnSeries = extendClass(Series, {
 			shapeArgs = {
 				x: barX,
 				y: barY,
-				width: pointWidth,
+				width: barW,
 				height: barH,
 				r: options.borderRadius,
 				strokeWidth: borderWidth
