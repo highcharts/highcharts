@@ -8,6 +8,25 @@ var seriesProto = Series.prototype,
 	columnProto = seriesTypes.column.prototype;
 
 
+
+/**
+ * Translate a point's plotX and plotY from the internal angle and radius measures to 
+ * true plotX, plotY coordinates
+ */
+seriesProto.toXY = function (point) {
+	var xy,
+		chart = this.chart;
+	
+	// save rectangular plotX, plotY for later computation
+	point.rectPlotX = point.plotX;
+	point.rectPlotY = point.plotY;
+	
+	// find the polar plotX and plotY
+	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
+	point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+	point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+};
+
 /**
  * Override translate. The plotX and plotY values are computed as if the polar chart were a
  * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
@@ -22,21 +41,10 @@ seriesProto.translate = (function (func) {
 		// Postprocess plot coordinates
 		if (this.xAxis.getPosition && this.type !== 'column') { // TODO: do not use this.type
 			var points = this.points,
-				i = points.length,
-				point,
-				chart = this.chart,
-				xy;
+				i = points.length;
 			while (i--) {
-				point = points[i];
-				
-				// save rectangular plotX, plotY for later computation
-				point.rectPlotX = point.plotX;
-				point.rectPlotY = point.plotY;
-				
-				// find the polar plotX and plotY
-				xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
-				point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
-				point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+				// Translate plotX, plotY from angle and radius to true plot coordinates
+				this.toXY(points[i]);
 			}
 		}
 	};
@@ -49,28 +57,36 @@ columnProto.translate = (function (func) {
 			len = this.yAxis.len,
 			center = xAxis.center,
 			startAngleRad = xAxis.startAngleRad,
-			renderer = this.chart.renderer;
+			renderer = this.chart.renderer,
+			points,
+			point,
+			i;
 		
 		// Run uber method
 		func.apply(this, arguments);
 		
 		// Postprocess plot coordinates
 		if (xAxis.isRadial) {
-			each(this.points, function (point) {
+			points = this.points;
+			i = points.length;
+			while (i--) {
+				point = points[i];
 				point.shapeType = 'path';
-				point.shapeArgs = renderer.symbols.arc(
-					center[0],
-					center[1],
-					len - point.plotY,
-					null, 
-					{
-						start: startAngleRad + point.barX,
-						end: startAngleRad + point.barX + point.pointWidth,
-						//open: true,
-						innerR: 0
-					}
-				);
-			});
+				point.shapeArgs = {
+					d: renderer.symbols.arc(
+						center[0],
+						center[1],
+						len - point.plotY,
+						null, 
+						{
+							start: startAngleRad + point.barX,
+							end: startAngleRad + point.barX + point.pointWidth,
+							innerR: len - point.yBottom
+						}
+					)
+				};
+				this.toXY(point); // provide correct plotX, plotY for tooltip
+			}
 		}
 	};
 }(columnProto.translate));

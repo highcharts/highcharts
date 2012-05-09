@@ -27,6 +27,21 @@ var each = Highcharts.each,
 	noop = function () {};
 var axisProto = Axis.prototype,
 	tickProto = Tick.prototype;
+	
+/**
+ * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges
+ */
+var hiddenAxisMixin = {
+	redraw: function () {
+		this.isDirty = false; // prevent setting Y axis dirty
+	},
+	render: function () {
+		this.isDirty = false; // prevent setting Y axis dirty
+	},
+	setScale: noop,
+	setCategories: noop,
+	setTitle: noop
+};
 
 /**
  * Augmented methods for the value axis
@@ -78,11 +93,14 @@ var radialAxisMixin = {
 		center: ['50%', '50%'],
 		labels: {
 			align: 'left',
-			x: 2,
+			x: 3,
 			y: -2
 		},
 		size: ['90%'],
-		tickWidth: 0
+		title: {
+			x: -4,
+			text: null
+		}
 	},
 	
 	/**
@@ -115,6 +133,7 @@ var radialAxisMixin = {
 		
 		axis.options = options = merge(
 			axis.defaultOptions,
+			axis.isXAxis ? {} : axis.defaultYAxisOptions,
 			axis.defaultRadialOptions,
 			userOptions
 		);
@@ -175,10 +194,11 @@ var radialAxisMixin = {
 	 * any given value.
 	 */
 	setAxisTranslation: function () {
-		
+
+		// Call uber method		
 		axisProto.setAxisTranslation.call(this);
-		var m = this.minPixelPadding;
 			
+		// Set transA and minPixelPadding
 		if (this.center) { // it's not defined the first time
 			this.transA = this.isCircular ? 
 				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min + (this.closestPointRange || 0)) || 1) : 
@@ -336,8 +356,7 @@ axisProto.init = (function (func) {
 			
 		// Before prototype.init
 		if (angular) {
-			//extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
-			extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
+			extend(this, isX ? hiddenAxisMixin : radialAxisMixin);
 			isCircular =  !isX;
 			if (isCircular) {
 				this.defaultRadialOptions = this.defaultGaugeOptions;
@@ -718,24 +737,6 @@ var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
 
 
 /**
- * Augmented methods for the x axis in order to hide it completely
- */
-var gaugeXAxisMixin = {
-	redraw: function () {
-		this.isDirty = false; // prevent setting Y axis dirty
-	},
-	render: function () {
-		this.isDirty = false; // prevent setting Y axis dirty
-	},
-	setScale: noop,
-	setCategories: noop,
-	setTitle: noop
-};
-
-
-
-
-/**
  * Add the series type
  */
 var GaugeSeries = {
@@ -893,6 +894,25 @@ var seriesProto = Series.prototype,
 	columnProto = seriesTypes.column.prototype;
 
 
+
+/**
+ * Translate a point's plotX and plotY from the internal angle and radius measures to 
+ * true plotX, plotY coordinates
+ */
+seriesProto.toXY = function (point) {
+	var xy,
+		chart = this.chart;
+	
+	// save rectangular plotX, plotY for later computation
+	point.rectPlotX = point.plotX;
+	point.rectPlotY = point.plotY;
+	
+	// find the polar plotX and plotY
+	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
+	point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+	point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+};
+
 /**
  * Override translate. The plotX and plotY values are computed as if the polar chart were a
  * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
@@ -907,21 +927,10 @@ seriesProto.translate = (function (func) {
 		// Postprocess plot coordinates
 		if (this.xAxis.getPosition && this.type !== 'column') { // TODO: do not use this.type
 			var points = this.points,
-				i = points.length,
-				point,
-				chart = this.chart,
-				xy;
+				i = points.length;
 			while (i--) {
-				point = points[i];
-				
-				// save rectangular plotX, plotY for later computation
-				point.rectPlotX = point.plotX;
-				point.rectPlotY = point.plotY;
-				
-				// find the polar plotX and plotY
-				xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
-				point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
-				point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+				// Translate plotX, plotY from angle and radius to true plot coordinates
+				this.toXY(points[i]);
 			}
 		}
 	};
@@ -934,28 +943,36 @@ columnProto.translate = (function (func) {
 			len = this.yAxis.len,
 			center = xAxis.center,
 			startAngleRad = xAxis.startAngleRad,
-			renderer = this.chart.renderer;
+			renderer = this.chart.renderer,
+			points,
+			point,
+			i;
 		
 		// Run uber method
 		func.apply(this, arguments);
 		
 		// Postprocess plot coordinates
 		if (xAxis.isRadial) {
-			each(this.points, function (point) {
+			points = this.points;
+			i = points.length;
+			while (i--) {
+				point = points[i];
 				point.shapeType = 'path';
-				point.shapeArgs = renderer.symbols.arc(
-					center[0],
-					center[1],
-					len - point.plotY,
-					null, 
-					{
-						start: startAngleRad + point.barX,
-						end: startAngleRad + point.barX + point.pointWidth,
-						//open: true,
-						innerR: 0
-					}
-				);
-			});
+				point.shapeArgs = {
+					d: renderer.symbols.arc(
+						center[0],
+						center[1],
+						len - point.plotY,
+						null, 
+						{
+							start: startAngleRad + point.barX,
+							end: startAngleRad + point.barX + point.pointWidth,
+							innerR: len - point.yBottom
+						}
+					)
+				};
+				this.toXY(point); // provide correct plotX, plotY for tooltip
+			}
 		}
 	};
 }(columnProto.translate));

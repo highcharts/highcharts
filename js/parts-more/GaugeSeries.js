@@ -65,24 +65,6 @@ var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
 
 
 /**
- * Augmented methods for the x axis in order to hide it completely
- */
-var gaugeXAxisMixin = {
-	redraw: function () {
-		this.isDirty = false; // prevent setting Y axis dirty
-	},
-	render: function () {
-		this.isDirty = false; // prevent setting Y axis dirty
-	},
-	setScale: noop,
-	setCategories: noop,
-	setTitle: noop
-};
-
-
-
-
-/**
  * Add the series type
  */
 var GaugeSeries = {

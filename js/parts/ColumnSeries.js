@@ -214,7 +214,7 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
-					graphic.animate(renderer.Element.prototype.crisp.apply({}, [
+					graphic.animate(shapeArgs.d ? merge(shapeArgs) : renderer.Element.prototype.crisp.apply({}, [
 						shapeArgs.strokeWidth,
 						shapeArgs.x,
 						shapeArgs.y,

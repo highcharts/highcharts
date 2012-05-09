@@ -1,6 +1,21 @@
 
 var axisProto = Axis.prototype,
 	tickProto = Tick.prototype;
+	
+/**
+ * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges
+ */
+var hiddenAxisMixin = {
+	redraw: function () {
+		this.isDirty = false; // prevent setting Y axis dirty
+	},
+	render: function () {
+		this.isDirty = false; // prevent setting Y axis dirty
+	},
+	setScale: noop,
+	setCategories: noop,
+	setTitle: noop
+};
 
 /**
  * Augmented methods for the value axis
@@ -52,11 +67,14 @@ var radialAxisMixin = {
 		center: ['50%', '50%'],
 		labels: {
 			align: 'left',
-			x: 2,
+			x: 3,
 			y: -2
 		},
 		size: ['90%'],
-		tickWidth: 0
+		title: {
+			x: -4,
+			text: null
+		}
 	},
 	
 	/**
@@ -89,6 +107,7 @@ var radialAxisMixin = {
 		
 		axis.options = options = merge(
 			axis.defaultOptions,
+			axis.isXAxis ? {} : axis.defaultYAxisOptions,
 			axis.defaultRadialOptions,
 			userOptions
 		);
@@ -149,10 +168,11 @@ var radialAxisMixin = {
 	 * any given value.
 	 */
 	setAxisTranslation: function () {
-		
+
+		// Call uber method		
 		axisProto.setAxisTranslation.call(this);
-		var m = this.minPixelPadding;
 			
+		// Set transA and minPixelPadding
 		if (this.center) { // it's not defined the first time
 			this.transA = this.isCircular ? 
 				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min + (this.closestPointRange || 0)) || 1) : 
@@ -310,8 +330,7 @@ axisProto.init = (function (func) {
 			
 		// Before prototype.init
 		if (angular) {
-			//extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
-			extend(this, isX ? gaugeXAxisMixin : radialAxisMixin);
+			extend(this, isX ? hiddenAxisMixin : radialAxisMixin);
 			isCircular =  !isX;
 			if (isCircular) {
 				this.defaultRadialOptions = this.defaultGaugeOptions;
