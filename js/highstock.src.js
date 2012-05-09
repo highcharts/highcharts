@@ -4883,11 +4883,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var parentStyle = parentNode.style;
-		console.log('Warning in VMLRenderer.js: We may have to replace 10 for 1 below after changing the coordsize');
 		css(element, {
 			flip: 'x',
-			left: pInt(parentStyle.width) - 10,
-			top: pInt(parentStyle.height) - 10,
+			left: pInt(parentStyle.width) - 1,
+			top: pInt(parentStyle.height) - 1,
 			rotation: -90
 		});
 	},
@@ -12354,7 +12353,9 @@ Series.prototype = {
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
 					
-					var align = options.align;
+					var align = options.align,
+						attr,
+						name;
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
@@ -12385,6 +12386,23 @@ Series.prototype = {
 							});
 					// create new label
 					} else if (defined(str)) {
+						attr = {
+							align: align,
+							fill: options.backgroundColor,
+							stroke: options.borderColor,
+							'stroke-width': options.borderWidth,
+							r: options.borderRadius || 0,
+							rotation: options.rotation,
+							padding: options.padding,
+							zIndex: 1
+						};
+						// Remove unused attributes (#947)
+						for (name in attr) {
+							if (attr[name] === UNDEFINED) {
+								delete attr[name];
+							}
+						}
+						
 						dataLabel = point.dataLabel = renderer[options.rotation ? 'text' : 'label']( // labels don't support rotation
 							str,
 							x,
@@ -12395,16 +12413,7 @@ Series.prototype = {
 							options.useHTML,
 							true // baseline for backwards compat
 						)
-						.attr({
-							align: align,
-							fill: options.backgroundColor,
-							stroke: options.borderColor,
-							'stroke-width': options.borderWidth,
-							r: options.borderRadius || 0,
-							rotation: options.rotation,
-							padding: options.padding,
-							zIndex: 1
-						})
+						.attr(attr)
 						.css(options.style)
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);

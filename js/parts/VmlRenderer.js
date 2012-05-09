@@ -901,11 +901,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var parentStyle = parentNode.style;
-		console.log('Warning in VMLRenderer.js: We may have to replace 10 for 1 below after changing the coordsize');
 		css(element, {
 			flip: 'x',
-			left: pInt(parentStyle.width) - 10,
-			top: pInt(parentStyle.height) - 10,
+			left: pInt(parentStyle.width) - 1,
+			top: pInt(parentStyle.height) - 1,
 			rotation: -90
 		});
 	},
