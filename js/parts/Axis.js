@@ -1303,8 +1303,7 @@ Axis.prototype = {
 		axis.height = pick(options.height, chart.plotHeight);
 		axis.bottom = chart.chartHeight - axis.height - axis.top;
 		axis.right = chart.chartWidth - axis.width - axis.left;
-		axis.len = axis.horiz ? axis.width : axis.height;
-		axis.length = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
+		axis.len = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
 	},
 
 	/**
