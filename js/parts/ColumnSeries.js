@@ -155,20 +155,12 @@ var ColumnSeries = extendClass(Series, {
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
 			point.shapeType = 'rect';
-			shapeArgs = {
-				x: barX,
-				y: barY,
-				width: barW,
-				height: barH,
-				r: options.borderRadius,
-				strokeWidth: borderWidth
-			};
+			point.shapeArgs = shapeArgs = chart.renderer.Element.prototype.crisp.call(0, borderWidth, barX, barY, barW, barH); 
 			
 			if (borderWidth % 2) { // correct for shorting in crisp method, visible in stacked columns with 1px border
 				shapeArgs.y -= 1;
 				shapeArgs.height += 1;
 			}
-			point.shapeArgs = shapeArgs;
 
 			// make small columns responsive to mouse
 			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
@@ -214,20 +206,13 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
-					graphic.animate(shapeArgs.d ? merge(shapeArgs) : renderer.Element.prototype.crisp.apply({}, [
-						shapeArgs.strokeWidth,
-						shapeArgs.x,
-						shapeArgs.y,
-						shapeArgs.width,
-						shapeArgs.height
-					]));
+					graphic.animate(merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
 						.add(series.group)
-						.shadow(options.shadow);
-						
+						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
 			}

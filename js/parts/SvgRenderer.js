@@ -230,7 +230,7 @@ SVGElement.prototype = {
 					if (shadows && /^(width|height|visibility|x|y|d|transform)$/.test(key)) {
 						i = shadows.length;
 						while (i--) {
-							attr(shadows[i], key, value);
+							attr(shadows[i], key, mathMax(value - ((key === 'height' && shadows[i].cutHeight) || 0), 0));
 						}
 					}
 
@@ -944,11 +944,12 @@ SVGElement.prototype = {
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
 	 * @param {Boolean} apply
 	 */
-	shadow: function (apply, group) {
+	shadow: function (apply, group, cutOff) {
 		var shadows = [],
 			i,
 			shadow,
 			element = this.element,
+			strokeWidth,
 
 			// compensate for inverted plot area
 			transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
@@ -957,14 +958,19 @@ SVGElement.prototype = {
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				shadow = element.cloneNode(0);
+				strokeWidth = 7 - 2 * i;
 				attr(shadow, {
 					'isShadow': 'true',
 					'stroke': 'rgb(0, 0, 0)',
 					'stroke-opacity': 0.05 * i,
-					'stroke-width': 7 - 2 * i,
+					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
 					'fill': NONE
 				});
+				if (cutOff) {
+					attr(shadow, 'height', attr(shadow, 'height') - strokeWidth);
+					shadow.cutHeight = strokeWidth;
+				}
 
 				if (group) {
 					group.element.appendChild(shadow);
@@ -1445,7 +1451,7 @@ SVGRenderer.prototype = {
 			end: end || 0
 		});
 	},
-
+	
 	/**
 	 * Draw and return a rectangle
 	 * @param {Number} x Left position
@@ -1456,21 +1462,20 @@ SVGRenderer.prototype = {
 	 * @param {Number} strokeWidth A stroke width can be supplied to allow crisp drawing
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
-		if (isObject(x)) {
-			y = x.y;
-			width = x.width;
-			height = x.height;
-			r = x.r;
-			strokeWidth = x.strokeWidth;
-			x = x.x;
-		}
+		
+		r = isObject(x) ? x.r : r;
+		
 		var wrapper = this.createElement('rect').attr({
-			rx: r,
-			ry: r,
-			fill: NONE
-		});
-
-		return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
+				rx: r,
+				ry: r,
+				fill: NONE
+			});
+		return wrapper.attr(
+				isObject(x) ? 
+					x : 
+					// do not crispify when an object is passed in (as in column charts)
+					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
+			);
 	},
 
 	/**

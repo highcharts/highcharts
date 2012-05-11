@@ -92,5 +92,6 @@ StackItem.prototype = {
 				.align(this.alignOptions, null, stackBox)	// align the label to the box
 				.attr({visibility: VISIBLE});				// set visibility
 		}
+		
 	}
 };
