@@ -16428,6 +16428,19 @@ RangeSelector.prototype = {
 		} else if (type === 'ytd') {
 			date = new Date(0);
 			now = new Date(dataMax);
+             if(!dataMax){
+                var maxDate = 0;
+                each(chart.options.series, function (obj) {
+                    if(obj && obj.data){
+                        if(obj.data[obj.data.length -1][0] > maxDate){
+                            maxDate = obj.data[obj.data.length -1][0];
+                        }
+                    }
+                });
+                if(maxDate){
+                    now = new Date(maxDate);
+                }
+            }
 			year = now.getFullYear();
 			date.setFullYear(year);
 
