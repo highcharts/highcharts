@@ -8379,6 +8379,7 @@ MouseTracker.prototype = {
 
 			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition &&
+				chart.hoverSeries && chart.hoverSeries.isCartesian &&
 				!chart.isInsidePlot(e.pageX - mouseTracker.chartPosition.left - chart.plotLeft,
 				e.pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
 					mouseTracker.resetTracker();
