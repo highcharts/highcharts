@@ -264,6 +264,16 @@ defaultOptions = {
 		backgroundColor: 'rgba(255, 255, 255, .85)',
 		borderWidth: 2,
 		borderRadius: 5,
+		dateTimeLabelFormats: { 
+			millisecond: '%A, %b %e, %H:%M:%S.%L',
+			second: '%A, %b %e, %H:%M:%S',
+			minute: '%A, %b %e, %H:%M',
+			hour: '%A, %b %e, %H:%M',
+			day: '%A, %b %e, %Y',
+			week: 'Week from %A, %b %e, %Y',
+			month: '%B %Y',
+			year: '%Y'
+		},
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',

@@ -700,17 +700,27 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				
 			// Radial (circular) gradient
 			} else { 
+				// pie:       http://jsfiddle.net/highcharts/66g8H/
 				// reference: http://jsfiddle.net/highcharts/etznJ/
 				// http://jsfiddle.net/highcharts/XRbCc/
 				// http://jsfiddle.net/highcharts/F3fwR/
 				// TODO:
-				// - implement cx, cy and r through "size" and "origin" attributes, see http://midiwebconcept.free.fr/RadialGrad.htm
+				// - correct for radialRefeence
 				// - check whether gradient stops are supported
-				// - add global option for gradient image
-				var size = gradient.r * 2;
+				// - add global option for gradient image (must relate to version)
+				var r = gradient.r,
+					size = r * 2,
+					cx = gradient.cx,
+					cy = gradient.cy;
+					//radialReference = elem.radialReference;
+				
+				//if (radialReference) {
+					// Try setting pixel size, or other way to adjust the gradient size to the bounding box
+				//}
 				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.png" ' +
 					'size="' + size + ',' + size + '" ' +
-					'origin="0,0" ' +
+					'origin="0.5,0.5" ' +
+					'position="' + cx + ',' + cy + '" ' +
 					'color2="' + color2 + '" ';
 				
 				// The fill element's color attribute is broken in IE8 standards mode, so we
@@ -891,11 +901,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var parentStyle = parentNode.style;
-		console.log('Warning in VMLRenderer.js: We may have to replace 10 for 1 below after changing the coordsize');
 		css(element, {
 			flip: 'x',
-			left: pInt(parentStyle.width) - 10,
-			top: pInt(parentStyle.height) - 10,
+			left: pInt(parentStyle.width) - 1,
+			top: pInt(parentStyle.height) - 1,
 			rotation: -90
 		});
 	},

@@ -1497,6 +1497,16 @@ defaultOptions = {
 		backgroundColor: 'rgba(255, 255, 255, .85)',
 		borderWidth: 2,
 		borderRadius: 5,
+		dateTimeLabelFormats: { 
+			millisecond: '%A, %b %e, %H:%M:%S.%L',
+			second: '%A, %b %e, %H:%M:%S',
+			minute: '%A, %b %e, %H:%M',
+			hour: '%A, %b %e, %H:%M',
+			day: '%A, %b %e, %Y',
+			week: 'Week from %A, %b %e, %Y',
+			month: '%B %Y',
+			year: '%Y'
+		},
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
@@ -4682,17 +4692,27 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				
 			// Radial (circular) gradient
 			} else { 
+				// pie:       http://jsfiddle.net/highcharts/66g8H/
 				// reference: http://jsfiddle.net/highcharts/etznJ/
 				// http://jsfiddle.net/highcharts/XRbCc/
 				// http://jsfiddle.net/highcharts/F3fwR/
 				// TODO:
-				// - implement cx, cy and r through "size" and "origin" attributes, see http://midiwebconcept.free.fr/RadialGrad.htm
+				// - correct for radialRefeence
 				// - check whether gradient stops are supported
-				// - add global option for gradient image
-				var size = gradient.r * 2;
+				// - add global option for gradient image (must relate to version)
+				var r = gradient.r,
+					size = r * 2,
+					cx = gradient.cx,
+					cy = gradient.cy;
+					//radialReference = elem.radialReference;
+				
+				//if (radialReference) {
+					// Try setting pixel size, or other way to adjust the gradient size to the bounding box
+				//}
 				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.png" ' +
 					'size="' + size + ',' + size + '" ' +
-					'origin="0,0" ' +
+					'origin="0.5,0.5" ' +
+					'position="' + cx + ',' + cy + '" ' +
 					'color2="' + color2 + '" ';
 				
 				// The fill element's color attribute is broken in IE8 standards mode, so we
@@ -4873,11 +4893,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var parentStyle = parentNode.style;
-		console.log('Warning in VMLRenderer.js: We may have to replace 10 for 1 below after changing the coordsize');
 		css(element, {
 			flip: 'x',
-			left: pInt(parentStyle.width) - 10,
-			top: pInt(parentStyle.height) - 10,
+			left: pInt(parentStyle.width) - 1,
+			top: pInt(parentStyle.height) - 1,
 			rotation: -90
 		});
 	},
@@ -6138,22 +6157,27 @@ Axis.prototype = {
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
 			value = this.value,
+			categories = axis.categories,
+			tickInterval = axis.tickInterval,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			ret;
 
-		if (dateTimeLabelFormat) { // datetime axis
+		if (categories) {
+			ret = value;
+		
+		} else if (dateTimeLabelFormat) { // datetime axis
 			ret = dateFormat(dateTimeLabelFormat, value);
 
-		} else if (axis.tickInterval % 1000000 === 0) { // use M abbreviation
+		} else if (tickInterval % 1000000 === 0) { // use M abbreviation
 			ret = (value / 1000000) + 'M';
 
-		} else if (axis.tickInterval % 1000 === 0) { // use k abbreviation
+		} else if (tickInterval % 1000 === 0) { // use k abbreviation
 			ret = (value / 1000) + 'k';
 
-		} else if (!axis.categories && value >= 1000) { // add thousands separators
+		} else if (value >= 1000) { // add thousands separators
 			ret = numberFormat(value, 0);
 
-		} else { // strings (categories) and small numbers
+		} else { // small numbers
 			ret = numberFormat(value, -1);
 		}
 		return ret;
@@ -7072,8 +7096,7 @@ Axis.prototype = {
 		axis.height = pick(options.height, chart.plotHeight);
 		axis.bottom = chart.chartHeight - axis.height - axis.top;
 		axis.right = chart.chartWidth - axis.width - axis.left;
-		axis.len = axis.horiz ? axis.width : axis.height;
-		axis.length = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
+		axis.len = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
 	},
 
 	/**
@@ -10174,7 +10197,7 @@ Chart.prototype = {
 			value;
 			
 			
-		each(['inverted', 'angular'], function (key) {
+		each(['inverted', 'angular', 'polar'], function (key) {
 			
 			// The default series type's class
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
@@ -11721,7 +11744,8 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
+			//point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1); // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -11816,11 +11840,11 @@ Series.prototype = {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			low = points[i - 1] ? points[i - 1]._high + 1 : 0;
-			high = point._high = points[i + 1] ?
+			point._high = high = points[i + 1] ?
 				(mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
 				plotSize;
 
-			while (low <= high) {
+			while (low >= 0 && low <= high) {
 				tooltipPoints[low++] = point;
 			}
 		}
@@ -11833,9 +11857,20 @@ Series.prototype = {
 	tooltipHeaderFormatter: function (key) {
 		var series = this,
 			tooltipOptions = series.tooltipOptions,
-			xDateFormat = tooltipOptions.xDateFormat || '%A, %b %e, %Y',
+			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime';
+			isDateTime = xAxis && xAxis.options.type === 'datetime',
+			n;
+			
+		// Guess the best date format based on the closest point distance (#568) // docs
+		if (isDateTime && !xDateFormat) {
+			for (n in timeUnits) {
+				if (timeUnits[n] >= xAxis.closestPointRange) {
+					xDateFormat = tooltipOptions.dateTimeLabelFormats[n];
+					break;
+				}	
+			}		
+		}
 		
 		return tooltipOptions.headerFormat
 			.replace('{point.key}', isDateTime ? dateFormat(xDateFormat, key) :  key)
@@ -12338,7 +12373,9 @@ Series.prototype = {
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
 					
-					var align = options.align;
+					var align = options.align,
+						attr,
+						name;
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
@@ -12369,6 +12406,23 @@ Series.prototype = {
 							});
 					// create new label
 					} else if (defined(str)) {
+						attr = {
+							align: align,
+							fill: options.backgroundColor,
+							stroke: options.borderColor,
+							'stroke-width': options.borderWidth,
+							r: options.borderRadius || 0,
+							rotation: options.rotation,
+							padding: options.padding,
+							zIndex: 1
+						};
+						// Remove unused attributes (#947)
+						for (name in attr) {
+							if (attr[name] === UNDEFINED) {
+								delete attr[name];
+							}
+						}
+						
 						dataLabel = point.dataLabel = renderer[options.rotation ? 'text' : 'label']( // labels don't support rotation
 							str,
 							x,
@@ -12379,16 +12433,7 @@ Series.prototype = {
 							options.useHTML,
 							true // baseline for backwards compat
 						)
-						.attr({
-							align: align,
-							fill: options.backgroundColor,
-							stroke: options.borderColor,
-							'stroke-width': options.borderWidth,
-							r: options.borderRadius || 0,
-							rotation: options.rotation,
-							padding: options.padding,
-							zIndex: 1
-						})
+						.attr(attr)
 						.css(options.style)
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);
@@ -13285,14 +13330,15 @@ var ColumnSeries = extendClass(Series, {
 		// the number of column series in the plot, the groupPadding
 		// and the pointPadding options
 		var points = series.points,
-			categoryWidth = mathAbs(xAxis.translationSlope) * (xAxis.ordinalSlope || xAxis.closestPointRange || 1),
+			categoryWidth = mathAbs(xAxis.transA) * (xAxis.ordinalSlope || xAxis.closestPointRange || 1),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
 			optionPointWidth = options.pointWidth,
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
-			pointWidth = mathCeil(mathMax(pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), 1 + 2 * borderWidth)),
+			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
+			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
 			colIndex = (reversedXAxis ? columnCount -
 				series.columnIndex : series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
@@ -13314,7 +13360,7 @@ var ColumnSeries = extendClass(Series, {
 
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
 			if (stacking && series.visible && stack && stack[point.x]) {
-				stack[point.x].setOffset(pointXOffset, pointWidth);
+				stack[point.x].setOffset(pointXOffset, barW);
 			}
 
 			// handle options.minPointLength
@@ -13331,8 +13377,9 @@ var ColumnSeries = extendClass(Series, {
 			extend(point, {
 				barX: barX,
 				barY: barY,
-				barW: pointWidth,
-				barH: barH
+				barW: barW,
+				barH: barH,
+				pointWidth: pointWidth
 			});
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
@@ -13340,7 +13387,7 @@ var ColumnSeries = extendClass(Series, {
 			shapeArgs = {
 				x: barX,
 				y: barY,
-				width: pointWidth,
+				width: barW,
 				height: barH,
 				r: options.borderRadius,
 				strokeWidth: borderWidth
@@ -13396,7 +13443,7 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
-					graphic.animate(renderer.Element.prototype.crisp.apply({}, [
+					graphic.animate(shapeArgs.d ? merge(shapeArgs) : renderer.Element.prototype.crisp.apply({}, [
 						shapeArgs.strokeWidth,
 						shapeArgs.x,
 						shapeArgs.y,

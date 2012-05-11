@@ -157,8 +157,10 @@
         <filelist id="highchartsmore.files" dir="${highchartsmore.parts.dir}">
             <file name="Intro.js"/>
             <file name="Globals.js"/>
+            <file name="RadialAxis.js"/>
             <file name="AreaRangeSeries.js"/>
             <file name="GaugeSeries.js"/>
+            <file name="Polar.js"/>
             <file name="Outro.js"/>
         </filelist>
     </target>

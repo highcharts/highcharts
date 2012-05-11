@@ -1185,7 +1185,8 @@ Series.prototype = {
 				pointStackTotal;
 				
 			// get the plotX translation
-			point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
+			//point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1); // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1280,11 +1281,11 @@ Series.prototype = {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			low = points[i - 1] ? points[i - 1]._high + 1 : 0;
-			high = point._high = points[i + 1] ?
+			point._high = high = points[i + 1] ?
 				(mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
 				plotSize;
 
-			while (low <= high) {
+			while (low >= 0 && low <= high) {
 				tooltipPoints[low++] = point;
 			}
 		}
@@ -1297,9 +1298,20 @@ Series.prototype = {
 	tooltipHeaderFormatter: function (key) {
 		var series = this,
 			tooltipOptions = series.tooltipOptions,
-			xDateFormat = tooltipOptions.xDateFormat || '%A, %b %e, %Y',
+			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime';
+			isDateTime = xAxis && xAxis.options.type === 'datetime',
+			n;
+			
+		// Guess the best date format based on the closest point distance (#568) // docs
+		if (isDateTime && !xDateFormat) {
+			for (n in timeUnits) {
+				if (timeUnits[n] >= xAxis.closestPointRange) {
+					xDateFormat = tooltipOptions.dateTimeLabelFormats[n];
+					break;
+				}	
+			}		
+		}
 		
 		return tooltipOptions.headerFormat
 			.replace('{point.key}', isDateTime ? dateFormat(xDateFormat, key) :  key)
@@ -1802,7 +1814,9 @@ Series.prototype = {
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
 					
-					var align = options.align;
+					var align = options.align,
+						attr,
+						name;
 				
 					// Get the string
 					str = options.formatter.call(point.getLabelConfig(), options);
@@ -1833,6 +1847,23 @@ Series.prototype = {
 							});
 					// create new label
 					} else if (defined(str)) {
+						attr = {
+							align: align,
+							fill: options.backgroundColor,
+							stroke: options.borderColor,
+							'stroke-width': options.borderWidth,
+							r: options.borderRadius || 0,
+							rotation: options.rotation,
+							padding: options.padding,
+							zIndex: 1
+						};
+						// Remove unused attributes (#947)
+						for (name in attr) {
+							if (attr[name] === UNDEFINED) {
+								delete attr[name];
+							}
+						}
+						
 						dataLabel = point.dataLabel = renderer[options.rotation ? 'text' : 'label']( // labels don't support rotation
 							str,
 							x,
@@ -1843,16 +1874,7 @@ Series.prototype = {
 							options.useHTML,
 							true // baseline for backwards compat
 						)
-						.attr({
-							align: align,
-							fill: options.backgroundColor,
-							stroke: options.borderColor,
-							'stroke-width': options.borderWidth,
-							r: options.borderRadius || 0,
-							rotation: options.rotation,
-							padding: options.padding,
-							zIndex: 1
-						})
+						.attr(attr)
 						.css(options.style)
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);
