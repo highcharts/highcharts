@@ -230,7 +230,13 @@ SVGElement.prototype = {
 					if (shadows && /^(width|height|visibility|x|y|d|transform)$/.test(key)) {
 						i = shadows.length;
 						while (i--) {
-							attr(shadows[i], key, mathMax(value - ((key === 'height' && shadows[i].cutHeight) || 0), 0));
+							attr(
+								shadows[i], 
+								key, 
+								key === 'height' ? 
+									mathMax(value - (shadows[i].cutHeight || 0), 0) :
+									value
+							);
 						}
 					}
 
