@@ -1938,7 +1938,7 @@ SVGElement.prototype = {
 					if (shadows && /^(width|height|visibility|x|y|d|transform)$/.test(key)) {
 						i = shadows.length;
 						while (i--) {
-							attr(shadows[i], key, value);
+							attr(shadows[i], key, mathMax(value - ((key === 'height' && shadows[i].cutHeight) || 0), 0));
 						}
 					}
 
@@ -2652,11 +2652,12 @@ SVGElement.prototype = {
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
 	 * @param {Boolean} apply
 	 */
-	shadow: function (apply, group) {
+	shadow: function (apply, group, cutOff) {
 		var shadows = [],
 			i,
 			shadow,
 			element = this.element,
+			strokeWidth,
 
 			// compensate for inverted plot area
 			transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
@@ -2665,14 +2666,19 @@ SVGElement.prototype = {
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				shadow = element.cloneNode(0);
+				strokeWidth = 7 - 2 * i;
 				attr(shadow, {
 					'isShadow': 'true',
 					'stroke': 'rgb(0, 0, 0)',
 					'stroke-opacity': 0.05 * i,
-					'stroke-width': 7 - 2 * i,
+					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
 					'fill': NONE
 				});
+				if (cutOff) {
+					attr(shadow, 'height', attr(shadow, 'height') - strokeWidth);
+					shadow.cutHeight = strokeWidth;
+				}
 
 				if (group) {
 					group.element.appendChild(shadow);
@@ -3153,7 +3159,7 @@ SVGRenderer.prototype = {
 			end: end || 0
 		});
 	},
-
+	
 	/**
 	 * Draw and return a rectangle
 	 * @param {Number} x Left position
@@ -3164,21 +3170,20 @@ SVGRenderer.prototype = {
 	 * @param {Number} strokeWidth A stroke width can be supplied to allow crisp drawing
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
-		if (isObject(x)) {
-			y = x.y;
-			width = x.width;
-			height = x.height;
-			r = x.r;
-			strokeWidth = x.strokeWidth;
-			x = x.x;
-		}
+		
+		r = isObject(x) ? x.r : r;
+		
 		var wrapper = this.createElement('rect').attr({
-			rx: r,
-			ry: r,
-			fill: NONE
-		});
-
-		return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
+				rx: r,
+				ry: r,
+				fill: NONE
+			});
+		return wrapper.attr(
+				isObject(x) ? 
+					x : 
+					// do not crispify when an object is passed in (as in column charts)
+					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
+			);
 	},
 
 	/**
@@ -4205,7 +4210,7 @@ var VMLElement = {
 						if (shadows) {
 							i = shadows.length;
 							while (i--) {
-								shadows[i].path = value;
+								shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
 							}
 						}
 						skipAttr = true;
@@ -4424,12 +4429,28 @@ var VMLElement = {
 		};
 		return this;
 	},
+	
+	/**
+	 * In stacked columns, cut off the shadows so that they don't overlap
+	 */
+	cutOffPath: function (path, length) {
+		
+		var len;
+		
+		path = path.split(/[ ,]/);
+		len = path.length;
+		
+		if (len === 9 || len === 11) {
+			path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
+		}
+		return path.join(' ');		
+	},
 
 	/**
 	 * Apply a drop shadow by copying elements and giving them different strokes
 	 * @param {Boolean} apply
 	 */
-	shadow: function (apply, group) {
+	shadow: function (apply, group, cutOff) {
 		var shadows = [],
 			i,
 			element = this.element,
@@ -4437,25 +4458,40 @@ var VMLElement = {
 			shadow,
 			elemStyle = element.style,
 			markup,
-			path = element.path;
+			path = element.path,
+			strokeWidth,
+			modifiedPath;
 
 		// some times empty paths are not strings
 		if (path && typeof path.value !== 'string') {
 			path = 'x';
 		}
+		modifiedPath = path;
 
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
+				
+				strokeWidth = 7 - 2 * i;
+				
+				// Cut off shadows for stacked column items
+				if (cutOff) {
+					modifiedPath = this.cutOffPath(path.value, strokeWidth + 0.5);
+				}
+				
 				markup = ['<shape isShadow="true" strokeweight="', (7 - 2 * i),
-					'" filled="false" path="', path,
+					'" filled="false" path="', modifiedPath,
 					'" coordsize="10 10" style="', element.style.cssText, '" />'];
+				
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
 						left: pInt(elemStyle.left) + 1,
 						top: pInt(elemStyle.top) + 1
 					}
 				);
-
+				if (cutOff) {
+					shadow.cutOff = strokeWidth + 1;
+				}
+				
 				// apply the opacity
 				markup = ['<stroke color="black" opacity="', (0.05 * i), '"/>'];
 				createElement(renderer.prepVML(markup), null, null, shadow);
@@ -4995,58 +5031,62 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		 */
 
 		rect: function (left, top, width, height, options) {
-			/*for (var n in r) {
-				logTime && console .log(n)
-				}*/
-
-			if (!defined(options)) {
-				return [];
-			}
+			
 			var right = left + width,
 				bottom = top + height,
-				r = mathMin(options.r || 0, width, height);
+				ret,
+				r;
 
-			return [
-				M,
-				left + r, top,
-
-				L,
-				right - r, top,
-				'wa',
-				right - 2 * r, top,
-				right, top + 2 * r,
-				right - r, top,
-				right, top + r,
-
-				L,
-				right, bottom - r,
-				'wa',
-				right - 2 * r, bottom - 2 * r,
-				right, bottom,
-				right, bottom - r,
-				right - r, bottom,
-
-				L,
-				left + r, bottom,
-				'wa',
-				left, bottom - 2 * r,
-				left + 2 * r, bottom,
-				left + r, bottom,
-				left, bottom - r,
-
-				L,
-				left, top + r,
-				'wa',
-				left, top,
-				left + 2 * r, top + 2 * r,
-				left, top + r,
-				left + r, top,
-
-
-				'x',
-				'e'
-			];
-
+			// No radius, return the more lightweight square
+			if (!defined(options) || !options.r) {
+				ret = SVGRenderer.prototype.symbols.square.apply(0, arguments);
+				
+			// Has radius add arcs for the corners
+			} else {
+			
+				r = mathMin(options.r, width, height);
+				ret = [
+					M,
+					left + r, top,
+	
+					L,
+					right - r, top,
+					'wa',
+					right - 2 * r, top,
+					right, top + 2 * r,
+					right - r, top,
+					right, top + r,
+	
+					L,
+					right, bottom - r,
+					'wa',
+					right - 2 * r, bottom - 2 * r,
+					right, bottom,
+					right, bottom - r,
+					right - r, bottom,
+	
+					L,
+					left + r, bottom,
+					'wa',
+					left, bottom - 2 * r,
+					left + 2 * r, bottom,
+					left + r, bottom,
+					left, bottom - r,
+	
+					L,
+					left, top + r,
+					'wa',
+					left, top,
+					left + 2 * r, top + 2 * r,
+					left, top + r,
+					left + r, top,
+	
+	
+					'x',
+					'e'
+				];
+			}
+			return ret;
 		}
 	}
 };
@@ -5789,6 +5829,7 @@ StackItem.prototype = {
 				.align(this.alignOptions, null, stackBox)	// align the label to the box
 				.attr({visibility: VISIBLE});				// set visibility
 		}
+		
 	}
 };
 /**
@@ -13384,20 +13425,12 @@ var ColumnSeries = extendClass(Series, {
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
 			point.shapeType = 'rect';
-			shapeArgs = {
-				x: barX,
-				y: barY,
-				width: barW,
-				height: barH,
-				r: options.borderRadius,
-				strokeWidth: borderWidth
-			};
+			point.shapeArgs = shapeArgs = chart.renderer.Element.prototype.crisp.call(0, borderWidth, barX, barY, barW, barH); 
 			
 			if (borderWidth % 2) { // correct for shorting in crisp method, visible in stacked columns with 1px border
 				shapeArgs.y -= 1;
 				shapeArgs.height += 1;
 			}
-			point.shapeArgs = shapeArgs;
 
 			// make small columns responsive to mouse
 			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
@@ -13443,20 +13476,13 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
-					graphic.animate(shapeArgs.d ? merge(shapeArgs) : renderer.Element.prototype.crisp.apply({}, [
-						shapeArgs.strokeWidth,
-						shapeArgs.x,
-						shapeArgs.y,
-						shapeArgs.width,
-						shapeArgs.height
-					]));
+					graphic.animate(merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
 						.add(series.group)
-						.shadow(options.shadow);
-						
+						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
 			}
