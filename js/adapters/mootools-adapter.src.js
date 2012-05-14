@@ -257,6 +257,7 @@ win.HighchartsAdapter = {
 			// el.removeEvents below apperantly calls this method again. Do not quite understand why, so for now just bail out.
 			return;
 		}
+		
 		win.HighchartsAdapter.extendWithEvents(el);
 		if (type) {
 			if (type === 'unload') { // Moo self destructs before custom unload events
@@ -265,7 +266,7 @@ win.HighchartsAdapter = {
 
 			if (fn) {
 				el.removeEvent(type, fn);
-			} else {
+			} else if (el.removeEvents) { // #958
 				el.removeEvents(type);
 			}
 		} else {
