@@ -1097,6 +1097,14 @@ if (!globalAdapter && win.jQuery) {
 			detachedType = 'detached' + type,
 			defaultPrevented;
 
+		// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+		// never uses these properties, Chrome includes them in the default click event and
+		// raises the warning when they are copied over in the extend statement below.
+		if (eventArguments) {
+			delete eventArguments.layerX;
+			delete eventArguments.layerY;
+		}
+
 		extend(event, eventArguments);
 
 		// Prevent jQuery from triggering the object method that is named the
@@ -8162,6 +8170,7 @@ MouseTracker.prototype = {
 		return extend(e, {
 			chartX: mathRound(chartX),
 			chartY: mathRound(chartY)
+		
 		});
 	},
 
@@ -8577,7 +8586,9 @@ MouseTracker.prototype = {
 
 		// MooTools 1.2.3 doesn't fire this in IE when using addEvent
 		container.onclick = function (e) {
-			var hoverPoint = chart.hoverPoint;
+			var hoverPoint = chart.hoverPoint, 
+				plotX,
+				plotY;
 			e = mouseTracker.normalizeMouseEvent(e);
 
 			e.cancelBubble = true; // IE specific
@@ -8586,8 +8597,8 @@ MouseTracker.prototype = {
 			if (!chart.cancelClick) {
 				// Detect clicks on trackers or tracker groups, #783
 				if (hoverPoint && (attr(e.target, 'isTracker') || attr(e.target.parentNode, 'isTracker'))) {
-					var plotX = hoverPoint.plotX,
-						plotY = hoverPoint.plotY;
+					plotX = hoverPoint.plotX;
+					plotY = hoverPoint.plotY;
 
 					// add page position info
 					extend(hoverPoint, {

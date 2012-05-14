@@ -151,6 +151,14 @@ if (!globalAdapter && win.jQuery) {
 			detachedType = 'detached' + type,
 			defaultPrevented;
 
+		// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+		// never uses these properties, Chrome includes them in the default click event and
+		// raises the warning when they are copied over in the extend statement below.
+		if (eventArguments) {
+			delete eventArguments.layerX;
+			delete eventArguments.layerY;
+		}
+
 		extend(event, eventArguments);
 
 		// Prevent jQuery from triggering the object method that is named the
