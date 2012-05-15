@@ -209,6 +209,13 @@ defaultOptions = {
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
+		navigation: { // docs
+			// animation: true,
+			activeColor: '#3E576F',
+			// arrowSize: 12
+			inactiveColor: '#CCC'
+			// style: {} // text styles
+		},
 		// margin: 10,
 		// reversed: false,
 		shadow: false,
@@ -223,10 +230,10 @@ defaultOptions = {
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '#000000'
+			color: '#000'
 		},
 		itemHiddenStyle: {
-			color: '#C0C0C0'
+			color: '#CCC'
 		},
 		itemCheckboxStyle: {
 			position: ABSOLUTE,

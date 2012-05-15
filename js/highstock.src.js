@@ -1450,6 +1450,13 @@ defaultOptions = {
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
+		navigation: { // docs
+			// animation: true,
+			activeColor: '#3E576F',
+			// arrowSize: 12
+			inactiveColor: '#CCC'
+			// style: {} // text styles
+		},
 		// margin: 10,
 		// reversed: false,
 		shadow: false,
@@ -1464,10 +1471,10 @@ defaultOptions = {
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '#000000'
+			color: '#000'
 		},
 		itemHiddenStyle: {
-			color: '#C0C0C0'
+			color: '#CCC'
 		},
 		itemCheckboxStyle: {
 			position: ABSOLUTE,
@@ -8872,10 +8879,7 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox,
-			optionsChart = chart.options.chart,
-			spacingTop = optionsChart.spacingTop,
-			spacingBottom = optionsChart.spacingBottom;
+			showCheckbox = itemOptions.showCheckbox;
 
 		if (!li) { // generate it once, later move it
 
@@ -8883,7 +8887,7 @@ Legend.prototype = {
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
 				.attr({ zIndex: 1 })
-				.add(legend.group);
+				.add(legend.scrollGroup);
 
 			// Draw the legend symbol inside the group box
 			series.drawLegendSymbol(legend, item);
@@ -8966,11 +8970,11 @@ Legend.prototype = {
 		}
 
 		// If the item exceeds the height, start a new column
-		if (!horizontal && legend.itemY + options.y + itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
+		/*if (!horizontal && legend.itemY + options.y + itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
 			legend.itemY = legend.initialItemY;
 			legend.itemX += legend.maxItemWidth;
 			legend.maxItemWidth = 0;
-		}
+		}*/
 
 		// Set the edge positions
 		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
@@ -9028,6 +9032,12 @@ Legend.prototype = {
 				// and trackers above tooltips
 				.attr({ zIndex: 7 }) 
 				.add();
+			legend.contentGroup = renderer.g()
+				.add(legendGroup);
+			legend.scrollGroup = renderer.g()
+				.add(legend.contentGroup);
+			legend.clipRect = renderer.clipRect(0, 0, chart.chartWidth, chart.chartHeight);
+			legend.contentGroup.clip(legend.clipRect);
 		}
 
 		// add each series or point
@@ -9067,12 +9077,15 @@ Legend.prototype = {
 		});
 
 		// Draw the border
-		legend.legendWidth = legendWidth = options.width || legend.offsetWidth;
-		legend.legendHeight = legendHeight = legend.lastItemY + legend.lastLineHeight;
+		legendWidth = options.width || legend.offsetWidth;
+		legendHeight = legend.lastItemY + legend.lastLineHeight;
+		
+		
+		legendHeight = legend.handleOverflow(legendHeight);
 
 		if (legendBorderWidth || legendBackgroundColor) {
-			legend.legendWidth = legendWidth += padding;
-			legend.legendHeight = legendHeight += padding;
+			legendWidth += padding;
+			legendHeight += padding;
 
 			if (!box) {
 				legend.box = box = renderer.rect(
@@ -9101,8 +9114,11 @@ Legend.prototype = {
 			// hide the border if no items
 			box[display ? 'show' : 'hide']();
 		}
+		
+		legend.legendWidth = legendWidth;
+		legend.legendHeight = legendHeight;
 
-		// Now that the legend width and height are extablished, put the items in the 
+		// Now that the legend width and height are established, put the items in the 
 		// final position
 		each(allItems, function (item) {
 			legend.positionItem(item);
@@ -9130,6 +9146,139 @@ Legend.prototype = {
 		if (!chart.isResizing) {
 			this.positionCheckboxes();
 		}
+	},
+	
+	/**
+	 * Set up the overflow handling by adding navigation with up and down arrows below the
+	 * legend.
+	 */
+	handleOverflow: function (legendHeight) {
+		var legend = this,
+			chart = this.chart,
+			renderer = chart.renderer,
+			pageCount,
+			options = this.options,
+			optionsY = options.y,
+			alignTop = options.verticalAlign === 'top',
+			spaceHeight = chart.spacingBox.height + (alignTop ? -optionsY : optionsY) - this.padding,
+			clipHeight,
+			clipRect = this.clipRect,
+			navOptions = options.navigation,
+			animation = pick(navOptions.animation, true),
+			arrowSize = navOptions.arrowSize || 12,
+			nav = this.nav;
+			
+		if (options.layout === 'horizontal') {
+			spaceHeight /= 2;
+		}
+		
+		// Reset the legend height and adjust the clipping rectangle
+		if (legendHeight > spaceHeight) {
+			
+			this.clipHeight = clipHeight = spaceHeight - 20;
+			this.pageCount = pageCount = mathCeil(legendHeight / clipHeight);
+			this.currentPage = pick(this.currentPage, 1);
+			this.fullHeight = legendHeight;
+			
+			clipRect.attr({
+				height: clipHeight
+			});
+			
+			// Add navigation elements
+			if (!nav) {
+				this.nav = nav = renderer.g().add(this.group);
+				this.up = renderer.symbol('triangle', 0, 0, arrowSize, arrowSize)
+					.on('click', function () {
+						legend.scroll(-1, animation);
+					})
+					.add(nav);
+				this.pager = renderer.text('', 15, 10)
+					.css(navOptions.style)
+					.add(nav);
+				this.down = renderer.symbol('triangle-down', 0, 0, arrowSize, arrowSize)
+					.on('click', function () {
+						legend.scroll(1, animation);
+					})
+					.add(nav);
+			}
+			
+			// Set initial position
+			legend.scroll(0);
+			
+			legendHeight = spaceHeight;
+			
+		} else if (nav) {
+			clipRect.attr({
+				height: chart.chartHeight
+			});
+			nav.hide();
+			this.scrollGroup.attr({
+				translateY: 1
+			});
+		}
+	 
+		return legendHeight;
+	},
+	
+	/**
+	 * Scroll the legend by a number of pages
+	 * @param {Object} scrollBy
+	 * @param {Object} animation
+	 */
+	scroll: function (scrollBy, animation) {
+		var pageCount = this.pageCount,
+			currentPage = this.currentPage + scrollBy,
+			clipHeight = this.clipHeight,
+			navOptions = this.options.navigation,
+			activeColor = navOptions.activeColor,
+			inactiveColor = navOptions.inactiveColor,
+			pager = this.pager,
+			padding = this.padding;
+		
+		// When resizing while looking at the last page
+		if (currentPage > pageCount) {
+			currentPage = pageCount;
+		}
+		
+		if (currentPage > 0) {
+			
+			if (animation !== UNDEFINED) {
+				setAnimation(animation, this.chart);
+			}
+			
+			this.nav.attr({
+				translateX: padding,
+				translateY: clipHeight + 7,
+				visibility: VISIBLE
+			});
+			this.up.attr({
+					fill: currentPage === 1 ? inactiveColor : activeColor
+				})
+				.css({
+					cursor: currentPage === 1 ? 'default' : 'pointer'
+				});
+			pager.attr({
+				text: currentPage + '/' + this.pageCount
+			});
+			this.down.attr({
+					x: 18 + this.pager.getBBox().width, // adjust to text width
+					fill: currentPage === pageCount ? inactiveColor : activeColor
+				})
+				.css({
+					cursor: currentPage === pageCount ? 'default' : 'pointer'
+				});
+			
+			this.scrollGroup.animate({
+				translateY: -mathMin(clipHeight * (currentPage - 1), this.fullHeight - clipHeight + padding) + 1
+			});
+			pager.attr({
+				text: currentPage + '/' + pageCount
+			});
+			
+			
+			this.currentPage = currentPage;
+		}
+			
 	}
 	
 };
