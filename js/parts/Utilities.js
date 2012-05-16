@@ -522,7 +522,10 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 	minYear = minDate[getFullYear]();
 	var time = minDate.getTime(),
 		minMonth = minDate[getMonth](),
-		minDateDate = minDate[getDate]();
+		minDateDate = minDate[getDate](),
+		timezoneOffset = useUTC ? 
+			0 : 
+			(24 * 3600 * 1000 + minDate.getTimezoneOffset() * 60 * 1000) % (24 * 3600 * 1000); // #950
 
 	// iterate and add tick positions at appropriate values
 	while (time < max) {
@@ -547,7 +550,7 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 			time += interval * count;
 			
 			// mark new days if the time is dividable by day
-			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === 0) {
+			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === timezoneOffset) {
 				higherRanks[time] = DAY;
 			}
 		}
