@@ -1380,7 +1380,7 @@ Axis.prototype = {
 			
 			
 		// For reuse in Axis.render
-		axis.hasData = hasData = (axis.series.length || (defined(axis.min) && defined(axis.max))) && tickPositions;
+		axis.hasData = hasData = axis.series.length && defined(axis.min) && defined(axis.max);
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 		// Create the axisGroup and gridGroup elements on first iteration

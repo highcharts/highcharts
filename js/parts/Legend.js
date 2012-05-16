@@ -538,7 +538,7 @@ Legend.prototype = {
 				translateY: 1
 			});
 		}
-	 	
+		
 		return legendHeight;
 	},
 	
