@@ -354,6 +354,7 @@ Legend.prototype = {
 				.attr({ zIndex: 7 }) 
 				.add();
 			legend.contentGroup = renderer.g()
+				.attr({ zIndex: 1 }) // above background
 				.add(legendGroup);
 			legend.scrollGroup = renderer.g()
 				.add(legend.contentGroup);
@@ -537,7 +538,7 @@ Legend.prototype = {
 				translateY: 1
 			});
 		}
-	 
+	 	
 		return legendHeight;
 	},
 	
