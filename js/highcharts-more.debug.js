@@ -4,8 +4,10 @@
 
 var files = [
     "Globals.js",
+    "RadialAxis.js",
     "AreaRangeSeries.js",
-	"GaugeSeries.js"
+	"GaugeSeries.js",
+	"Polar.js"
 ];
 
 // Parse the path from the script tag

@@ -2,6 +2,13 @@
  * Extensions for polar charts
  * 
  * - http://jsfiddle.net/highcharts/2Y5yF/
+ * 
+ * TODO:
+ * - Supply additional ticks to connect across 0.
+ * - Animation
+ * - Areas back to zero point is wrong
+ * - Stacked areas?
+ * - Splines are bulgy and connected ends are sharp
  */
 
 var seriesProto = Series.prototype,
@@ -50,6 +57,23 @@ seriesProto.translate = (function (func) {
 	};
 }(seriesProto.translate));
 
+seriesProto.getSegmentPath = (function (func) {
+	return function (segment) {
+		
+		var points = this.points;
+		
+		// Connect the path across 0 to provide a closed circle
+		if (this.chart.polar && this.options.connectEnds !== false && 
+				segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
+			segment = [].concat(segment, [points[0]]);
+		}
+		
+		// Run uber method
+		return func.call(this, segment);
+		
+	};
+}(seriesProto.getSegmentPath));
+
 columnProto.translate = (function (func) {
 	return function () {
 		
@@ -90,44 +114,3 @@ columnProto.translate = (function (func) {
 		}
 	};
 }(columnProto.translate));
-
-
-/*seriesProto.getSegmentPath = (function (func) {
-	return function () {
-		
-		var segmentPath,
-			i,
-			xy,
-			chart = this.chart,
-			isRadial = this.xAxis.isRadial;
-		
-		// To rectangle coordinate system
-		if (isRadial) {
-			each(this.points, function (point) {
-				point.plotX = point.rectPlotX;
-				point.plotY = point.rectPlotY;
-			});
-		}
-		
-		// Run uber method
-		segmentPath = func.apply(this, arguments);
-		
-		if (isRadial) {
-			for (i = 0; i < segmentPath.length; i++) {
-				if (typeof segmentPath[i] === 'number') {
-					xy = this.xAxis.postTranslate(segmentPath[i], this.yAxis.len - segmentPath[i + 1]);
-					segmentPath[i] = xy.x - chart.plotLeft;
-					segmentPath[i + 1] = xy.y - chart.plotTop;
-					i = i + 1;
-				}
-			}
-			
-			// To polar coordinate system
-			each(this.points, function (point) {
-				point.plotX = point.polarPlotX;
-				point.plotY = point.polarPlotY;
-			});
-		}
-		return segmentPath;
-	};
-}(seriesProto.getSegmentPath));*/

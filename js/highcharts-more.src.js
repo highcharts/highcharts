@@ -53,7 +53,7 @@ var radialAxisMixin = {
 	 * The default options extend defaultYAxisOptions
 	 */
 	defaultRadialGaugeOptions: {
-		center: ['50%', '50%'],
+		background: {}, // extended to defaultBackgroundOptions
 		labels: {
 			align: 'center',
 			x: 0,
@@ -65,7 +65,6 @@ var radialAxisMixin = {
 		minorTickPosition: 'inside',
 		minorTickWidth: 1,
 		plotBands: [],
-		size: ['90%'],
 		tickLength: 10,
 		tickPosition: 'inside',
 		tickWidth: 2,
@@ -76,7 +75,7 @@ var radialAxisMixin = {
 	},
 	
 	defaultRadialXOptions: {
-		center: ['50%', '50%'],
+		gridLineWidth: 1, // spokes
 		labels: {
 			align: 'center',
 			distance: 15,
@@ -85,18 +84,18 @@ var radialAxisMixin = {
 		},
 		maxPadding: 0,
 		minPadding: 0,
-		size: ['90%']
-		
+		plotBands: [],
+		tickLength: 0
 	},
 	
 	defaultRadialYOptions: {
-		center: ['50%', '50%'],
 		labels: {
 			align: 'left',
 			x: 3,
 			y: -2
 		},
-		size: ['90%'],
+		plotBands: [],
+		showLastLabel: false,
 		title: {
 			x: -4,
 			text: null
@@ -129,11 +128,11 @@ var radialAxisMixin = {
 	setOptions: function (userOptions) {
 		
 		var axis = this,
-			options;
+			options,
+			backgroundOption;
 		
 		axis.options = options = merge(
 			axis.defaultOptions,
-			axis.isXAxis ? {} : axis.defaultYAxisOptions,
 			axis.defaultRadialOptions,
 			userOptions
 		);
@@ -142,12 +141,15 @@ var radialAxisMixin = {
 		// In the first parameter, pick up the background options, or use one empty object that is
 		// filled with default background options. Concatenate this with an empty array, which creates
 		// a copy so that the .reverse() operation is not repeated for export.
-		each([].concat(Highcharts.splat(userOptions.background || {})).reverse(), function (config) {
-			config = merge(axis.defaultBackgroundOptions, config);
-			config.color = config.backgroundColor; // due to naming in plotBands
-			
-			options.plotBands.unshift(config);
-		});
+		backgroundOption = options.background;
+		if (backgroundOption) {
+			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+				config = merge(axis.defaultBackgroundOptions, config);
+				config.color = config.backgroundColor; // due to naming in plotBands
+				
+				options.plotBands.unshift(config);
+			});
+		}
 	},
 	
 	/**
@@ -352,32 +354,43 @@ axisProto.init = (function (func) {
 			polar = chart.polar,
 			isX = userOptions.isX,
 			isCircular,
-			options;
+			options,
+			pane,
+			paneOptions = chart.options.pane;
 			
 		// Before prototype.init
 		if (angular) {
 			extend(this, isX ? hiddenAxisMixin : radialAxisMixin);
 			isCircular =  !isX;
 			if (isCircular) {
-				this.defaultRadialOptions = this.defaultGaugeOptions;
+				this.defaultRadialOptions = this.defaultRadialGaugeOptions;
 			}
 			
 		} else if (polar) {
 			//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 			extend(this, radialAxisMixin);
 			isCircular = isX;
-			this.defaultRadialOptions = isX ? this.defaultRadialXOptions : this.defaultRadialYOptions;
+			this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
+			
 		}
 		
 		// Run prototype.init
 		func.apply(this, arguments);
+		
+		// Set the pane options. This can later be extended and adopted by basic Highcharts and Highstock
+		this.pane = pane = paneOptions ?
+			Highcharts.splat(paneOptions)[userOptions.pane || 0] : 
+			{};
+		options = this.options;
+		
+		// All pane options override the axis options
+		extend(options, pane);
 		
 		// After prototype.init
 		if (angular || polar) {
 			// Start and end angle options are
 			// given in degrees relative to top, while internal computations are
 			// in radians relative to right (like SVG).
-			options = this.options;
 			this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
 			this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
 			this.offset = options.offset || 0;
@@ -888,6 +901,13 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * Extensions for polar charts
  * 
  * - http://jsfiddle.net/highcharts/2Y5yF/
+ * 
+ * TODO:
+ * - Supply additional ticks to connect across 0.
+ * - Animation
+ * - Areas back to zero point is wrong
+ * - Stacked areas?
+ * - Splines are bulgy and connected ends are sharp
  */
 
 var seriesProto = Series.prototype,
@@ -936,6 +956,23 @@ seriesProto.translate = (function (func) {
 	};
 }(seriesProto.translate));
 
+seriesProto.getSegmentPath = (function (func) {
+	return function (segment) {
+		
+		var points = this.points;
+		
+		// Connect the path across 0 to provide a closed circle
+		if (this.chart.polar && this.options.connectEnds !== false && 
+				segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
+			segment = [].concat(segment, [points[0]]);
+		}
+		
+		// Run uber method
+		return func.call(this, segment);
+		
+	};
+}(seriesProto.getSegmentPath));
+
 columnProto.translate = (function (func) {
 	return function () {
 		
@@ -976,46 +1013,5 @@ columnProto.translate = (function (func) {
 		}
 	};
 }(columnProto.translate));
-
-
-/*seriesProto.getSegmentPath = (function (func) {
-	return function () {
-		
-		var segmentPath,
-			i,
-			xy,
-			chart = this.chart,
-			isRadial = this.xAxis.isRadial;
-		
-		// To rectangle coordinate system
-		if (isRadial) {
-			each(this.points, function (point) {
-				point.plotX = point.rectPlotX;
-				point.plotY = point.rectPlotY;
-			});
-		}
-		
-		// Run uber method
-		segmentPath = func.apply(this, arguments);
-		
-		if (isRadial) {
-			for (i = 0; i < segmentPath.length; i++) {
-				if (typeof segmentPath[i] === 'number') {
-					xy = this.xAxis.postTranslate(segmentPath[i], this.yAxis.len - segmentPath[i + 1]);
-					segmentPath[i] = xy.x - chart.plotLeft;
-					segmentPath[i + 1] = xy.y - chart.plotTop;
-					i = i + 1;
-				}
-			}
-			
-			// To polar coordinate system
-			each(this.points, function (point) {
-				point.plotX = point.polarPlotX;
-				point.plotY = point.polarPlotY;
-			});
-		}
-		return segmentPath;
-	};
-}(seriesProto.getSegmentPath));*/
 
 }(Highcharts));
