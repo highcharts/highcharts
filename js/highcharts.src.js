@@ -13531,7 +13531,9 @@ var ColumnSeries = extendClass(Series, {
 					}
 					columnIndex = stackGroups[stackKey];
 				} else {
-					columnIndex = columnCount++;
+					if (otherSeries.visible){
+						columnIndex = columnCount++;
+					}
 				}
 				otherSeries.columnIndex = columnIndex;
 			}
