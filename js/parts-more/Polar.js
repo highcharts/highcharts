@@ -1,5 +1,6 @@
 /**
- * Extensions for polar charts
+ * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
+ * gathered in RadialAxes.js.
  * 
  * - http://jsfiddle.net/highcharts/2Y5yF/
  * 
@@ -9,6 +10,7 @@
  * - Areas back to zero point is wrong
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
+ * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
  */
 
 var seriesProto = Series.prototype,

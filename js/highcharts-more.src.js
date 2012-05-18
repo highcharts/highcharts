@@ -85,6 +85,7 @@ var radialAxisMixin = {
 		maxPadding: 0,
 		minPadding: 0,
 		plotBands: [],
+		showLastLabel: false,
 		tickLength: 0
 	},
 	
@@ -203,7 +204,7 @@ var radialAxisMixin = {
 		// Set transA and minPixelPadding
 		if (this.center) { // it's not defined the first time
 			this.transA = this.isCircular ? 
-				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min + (this.closestPointRange || 0)) || 1) : 
+				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min) || 1) : 
 				(this.center[2] / 2) / ((this.max - this.min) || 1);
 			
 			this.minPixelPadding = this.transA * ((this.pointRange || 0) / 2);
@@ -898,7 +899,8 @@ var GaugeSeries = {
 	drawTracker: seriesTypes.column.prototype.drawTracker
 };
 seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
- * Extensions for polar charts
+ * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
+ * gathered in RadialAxes.js.
  * 
  * - http://jsfiddle.net/highcharts/2Y5yF/
  * 
@@ -908,6 +910,7 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * - Areas back to zero point is wrong
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
+ * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
  */
 
 var seriesProto = Series.prototype,

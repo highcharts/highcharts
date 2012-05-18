@@ -59,6 +59,7 @@ var radialAxisMixin = {
 		maxPadding: 0,
 		minPadding: 0,
 		plotBands: [],
+		showLastLabel: false,
 		tickLength: 0
 	},
 	
@@ -177,7 +178,7 @@ var radialAxisMixin = {
 		// Set transA and minPixelPadding
 		if (this.center) { // it's not defined the first time
 			this.transA = this.isCircular ? 
-				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min + (this.closestPointRange || 0)) || 1) : 
+				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min) || 1) : 
 				(this.center[2] / 2) / ((this.max - this.min) || 1);
 			
 			this.minPixelPadding = this.transA * ((this.pointRange || 0) / 2);
