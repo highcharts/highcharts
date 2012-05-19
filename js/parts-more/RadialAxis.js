@@ -64,9 +64,10 @@ var radialAxisMixin = {
 	},
 	
 	defaultRadialYOptions: {
+		gridLineInterpolation: 'circle',
 		labels: {
-			align: 'left',
-			x: 3,
+			align: 'right',
+			x: -3,
 			y: -2
 		},
 		plotBands: [],
@@ -286,18 +287,31 @@ var radialAxisMixin = {
 	 * Find the path for plot lines perpendicular to the radial axis.
 	 */
 	getPlotLinePath: function (value) {
-		var center = this.center,
-			chart = this.chart,
-			end = this.getPosition(value),
+		var axis = this,
+			center = axis.center,
+			chart = axis.chart,
+			end = axis.getPosition(value),
+			xAxis,
+			xy,
 			ret;
-			
-		if (this.isCircular) {
-			// Spokes 
+		
+		// Spokes
+		if (axis.isCircular) {
 			ret = ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
 		
+		// Concentric circles			
+		} else if (axis.options.gridLineInterpolation === 'circle') {
+			ret = axis.getLinePath(axis.translate(value));
+		
+		// Concentric polygons 
 		} else {
-			// Concentric circles
-			ret = radialAxisMixin.getLinePath.call(this, this.translate(value));
+			xAxis = chart.xAxis[0];
+			ret = [];
+			each(xAxis.tickPositions, function (pos, i) {
+				xy = xAxis.getPosition(pos, axis.translate(value));
+				ret.push(i ? 'L' : 'M', xy.x, xy.y);
+			});
+			
 		}
 		return ret;
 	},

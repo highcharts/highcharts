@@ -11,6 +11,8 @@
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
  * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
+ * - Overlapping shadows on columns (same problem as bar charts)
+ * - Tooltips on line-like charts
  */
 
 var seriesProto = Series.prototype,
