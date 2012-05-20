@@ -8212,6 +8212,17 @@ MouseTracker.prototype = {
 		});
 		return coordinates;
 	},
+	
+	/**
+	 * Return the index in the tooltipPoints array, corresponding to pixel position in 
+	 * the plot area.
+	 */
+	getIndex: function (e) {
+		var chart = this.chart;
+		return chart.inverted ? 
+			chart.plotHeight + chart.plotTop - e.chartY : 
+			e.chartX - chart.plotLeft;
+	},
 
 	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse
@@ -8220,6 +8231,7 @@ MouseTracker.prototype = {
 		var mouseTracker = this,
 			chart = mouseTracker.chart,
 			series = chart.series,
+			tooltip = chart.tooltip,
 			point,
 			points,
 			hoverPoint = chart.hoverPoint,
@@ -8227,11 +8239,10 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			// the index in the tooltipPoints array, corresponding to pixel position in plot area
-			index = chart.inverted ? chart.plotHeight + chart.plotTop - e.chartY : e.chartX - chart.plotLeft;
+			index = mouseTracker.getIndex(e);
 
 		// shared tooltip
-		if (chart.tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
+		if (tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
 			points = [];
 
 			// loop over all series and find the ones with points closest to the mouse
@@ -8241,7 +8252,7 @@ MouseTracker.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point.plotX);
+					point._dist = mathAbs(index - point[series[j].tooltipPosName || 'plotX']);
 					distance = mathMin(distance, point._dist);
 					points.push(point);
 				}
@@ -8255,7 +8266,7 @@ MouseTracker.prototype = {
 			}
 			// refresh the tooltip if necessary
 			if (points.length && (points[0].plotX !== mouseTracker.hoverX)) {
-				chart.tooltip.refresh(points);
+				tooltip.refresh(points);
 				mouseTracker.hoverX = points[0].plotX;
 			}
 		}
@@ -12013,13 +12024,13 @@ Series.prototype = {
 	 */
 	setTooltipPoints: function (renew) {
 		var series = this,
-			chart = series.chart,
 			points = [],
 			pointsLength,
-			plotSize = chart.plotSizeX,
 			low,
 			high,
 			xAxis = series.xAxis,
+			axisLength = xAxis.tooltipLen || xAxis.len, // tooltipLen and tooltipPosName used in polar
+			plotX = xAxis.tooltipPosName || 'plotX',
 			point,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
@@ -12039,8 +12050,7 @@ Series.prototype = {
 			points = points.concat(segment);
 		});
 
-		// loop the concatenated points and apply each point to all the closest
-		// pixel positions
+		// Reverse the points in case the X axis is reversed
 		if (xAxis && xAxis.reversed) {
 			points = points.reverse();
 		}
@@ -12049,10 +12059,12 @@ Series.prototype = {
 		pointsLength = points.length;
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
-			low = points[i - 1] ? points[i - 1]._high + 1 : 0;
-			point._high = high = points[i + 1] ?
-				(mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
-				plotSize;
+			// Set this range's low to the last range's high plus one
+			low = points[i - 1] ? high + 1 : 0;
+			// Now find the new high
+			high = points[i + 1] ?
+				(mathFloor((point[plotX] + (points[i + 1] ? points[i + 1][plotX] : axisLength)) / 2)) :
+				axisLength;
 
 			while (low >= 0 && low <= high) {
 				tooltipPoints[low++] = point;
@@ -17914,6 +17926,7 @@ extend(Highcharts, {
 	Chart: Chart,
 	Color: Color,
 	Legend: Legend,
+	MouseTracker: MouseTracker,
 	Point: Point,
 	Tick: Tick,
 	Tooltip: Tooltip,

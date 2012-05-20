@@ -924,14 +924,15 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * - Animation
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
- * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
  * - Overlapping shadows on columns (same problem as bar charts)
- * - Tooltips on line-like charts - translate back from x,y to axis values
- * - Click events with axis positions
+ * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
+ *   backwards translate.
+ * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
  */
 
 var seriesProto = Series.prototype,
-	columnProto = seriesTypes.column.prototype;
+	columnProto = seriesTypes.column.prototype,
+	mouseTrackerProto = Highcharts.MouseTracker.prototype;
 
 
 
@@ -941,14 +942,19 @@ var seriesProto = Series.prototype,
  */
 seriesProto.toXY = function (point) {
 	var xy,
-		chart = this.chart;
+		chart = this.chart,
+		plotX = point.plotX,
+		plotY = point.plotY;
 	
-	// save rectangular plotX, plotY for later computation
-	point.rectPlotX = point.plotX;
-	point.rectPlotY = point.plotY;
+	// Save rectangular plotX, plotY for later computation
+	point.rectPlotX = plotX;
+	point.rectPlotY = plotY;
 	
-	// find the polar plotX and plotY
-	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
+	// Record the angle in degrees for use in tooltip
+	point.deg = plotX / Math.PI * 180;
+	
+	// Find the polar plotX and plotY
+	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
 	point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
 	point.plotY = point.polarPlotY = xy.y - chart.plotTop;
 };
@@ -957,14 +963,22 @@ seriesProto.toXY = function (point) {
  * Overridden method to close a segment path. While in a cartesian plane the area 
  * goes down to the threshold, in the polar chart it goes to the center.
  */
-seriesTypes.area.prototype.closeSegment = function (path) {
-	var center = this.xAxis.center;
-	path.push(
-		'L',
-		center[0],
-		center[1]
-	);
-};
+seriesTypes.area.prototype.closeSegment = (function (func) { 
+	
+	return function (path) {
+		
+		if (this.chart.polar) {
+			var center = this.xAxis.center;
+			path.push(
+				'L',
+				center[0],
+				center[1]
+			);
+		} else {
+			func.apply(this, arguments);
+		}
+	};
+}(seriesTypes.area.prototype.closeSegment));
 
 /**
  * Override translate. The plotX and plotY values are computed as if the polar chart were a
@@ -1006,6 +1020,29 @@ seriesProto.getSegmentPath = (function (func) {
 	};
 }(seriesProto.getSegmentPath));
 
+/**
+ * Throw in a couple of properties to let setTooltipPoints know we're indexing the points
+ * in degrees (0-360), not plot pixel width.
+ */
+seriesProto.setTooltipPoints = (function (func) {
+	return function () {
+		
+		if (this.chart.polar) {
+			extend(this.xAxis, {
+				tooltipLen: 360, // degrees are the resolution unit of the tooltipPoints array
+				tooltipPosName: 'deg'
+			});	
+		}
+		
+		// Run uber method
+		return func.apply(this, arguments);
+	};
+}(seriesProto.setTooltipPoints));
+
+
+/**
+ * Extend the column prototype's translate method
+ */
 columnProto.translate = (function (func) {
 	return function () {
 		
@@ -1047,4 +1084,31 @@ columnProto.translate = (function (func) {
 	};
 }(columnProto.translate));
 
+/**
+ * Extend the mouse tracker to return the tooltip position index in terms of
+ * degrees rather than pixels
+ */
+mouseTrackerProto.getIndex = (function (func) {
+	return function (e) {
+		var ret,
+			chart = this.chart,
+			center,
+			x,
+			y;
+		
+		if (chart.polar) {
+			center = chart.xAxis[0].center;
+			x = e.chartX - center[0] - chart.plotLeft;
+			y = e.chartY - center[1] - chart.plotTop;
+			
+			ret = 180 - Math.round(Math.atan2(x, y) / Math.PI * 180);
+		
+		} else {
+		
+			// Run uber method
+			ret = func.apply(this, arguments);
+		}
+		return ret;
+	};
+}(mouseTrackerProto.getIndex));
 }(Highcharts));
