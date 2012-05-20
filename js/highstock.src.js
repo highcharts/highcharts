@@ -13239,8 +13239,7 @@ var AreaSeries = extendClass(Series, {
 			areaSegmentPath = [].concat(segmentPath), // work on a copy for the area path
 			i,
 			options = this.options,
-			segLength = segmentPath.length,
-			translatedThreshold = this.yAxis.getThreshold(options.threshold);
+			segLength = segmentPath.length;
 		
 		if (segLength === 3) { // for animation from 1 to two points
 			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
@@ -13261,18 +13260,27 @@ var AreaSeries = extendClass(Series, {
 			}
 
 		} else { // follow zero line back
-			areaSegmentPath.push(
-				L,
-				segment[segment.length - 1].plotX,
-				translatedThreshold,
-				L,
-				segment[0].plotX,
-				translatedThreshold
-			);
+			this.closeSegment(areaSegmentPath, segment);
 		}
 		this.areaPath = this.areaPath.concat(areaSegmentPath);
 		
 		return segmentPath;
+	},
+	
+	/**
+	 * Extendable method to close the segment path of an area. This is overridden in polar 
+	 * charts.
+	 */
+	closeSegment: function (path, segment) {
+		var translatedThreshold = this.yAxis.getThreshold(this.options.threshold);
+		path.push(
+			L,
+			segment[segment.length - 1].plotX,
+			translatedThreshold,
+			L,
+			segment[0].plotX,
+			translatedThreshold
+		);
 	},
 	
 	/**

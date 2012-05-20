@@ -307,8 +307,9 @@ var radialAxisMixin = {
 		} else {
 			xAxis = chart.xAxis[0];
 			ret = [];
+			value = axis.translate(value);
 			each(xAxis.tickPositions, function (pos, i) {
-				xy = xAxis.getPosition(pos, axis.translate(value));
+				xy = xAxis.getPosition(pos, value);
 				ret.push(i ? 'L' : 'M', xy.x, xy.y);
 			});
 			

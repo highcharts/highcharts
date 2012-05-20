@@ -333,8 +333,9 @@ var radialAxisMixin = {
 		} else {
 			xAxis = chart.xAxis[0];
 			ret = [];
+			value = axis.translate(value);
 			each(xAxis.tickPositions, function (pos, i) {
-				xy = xAxis.getPosition(pos, axis.translate(value));
+				xy = xAxis.getPosition(pos, value);
 				ret.push(i ? 'L' : 'M', xy.x, xy.y);
 			});
 			
@@ -921,12 +922,12 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * TODO:
  * - Supply additional ticks to connect across 0.
  * - Animation
- * - Areas back to zero point is wrong
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
  * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
  * - Overlapping shadows on columns (same problem as bar charts)
- * - Tooltips on line-like charts
+ * - Tooltips on line-like charts - translate back from x,y to axis values
+ * - Click events with axis positions
  */
 
 var seriesProto = Series.prototype,
@@ -950,6 +951,19 @@ seriesProto.toXY = function (point) {
 	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - point.plotY);
 	point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
 	point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+};
+
+/**
+ * Overridden method to close a segment path. While in a cartesian plane the area 
+ * goes down to the threshold, in the polar chart it goes to the center.
+ */
+seriesTypes.area.prototype.closeSegment = function (path) {
+	var center = this.xAxis.center;
+	path.push(
+		'L',
+		center[0],
+		center[1]
+	);
 };
 
 /**
