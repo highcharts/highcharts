@@ -7238,7 +7238,7 @@ Axis.prototype = {
 			
 			
 		// For reuse in Axis.render
-		axis.hasData = hasData = (axis.series.length || (defined(axis.min) && defined(axis.max))) && tickPositions;
+		axis.hasData = hasData = axis.series.length && defined(axis.min) && defined(axis.max);
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 		// Create the axisGroup and gridGroup elements on first iteration
@@ -9036,6 +9036,7 @@ Legend.prototype = {
 				.attr({ zIndex: 7 }) 
 				.add();
 			legend.contentGroup = renderer.g()
+				.attr({ zIndex: 1 }) // above background
 				.add(legendGroup);
 			legend.scrollGroup = renderer.g()
 				.add(legend.contentGroup);
@@ -9219,7 +9220,7 @@ Legend.prototype = {
 				translateY: 1
 			});
 		}
-	 
+		
 		return legendHeight;
 	},
 	
@@ -14374,7 +14375,7 @@ var PieSeries = {
 		};
 
 		// assume equal label heights
-		labelHeight = halves[0][0] && halves[0][0].dataLabel && halves[0][0].dataLabel.getBBox().height;
+		labelHeight = halves[0][0] && halves[0][0].dataLabel && (halves[0][0].dataLabel.getBBox().height || 21); // 21 is for #968
 
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
