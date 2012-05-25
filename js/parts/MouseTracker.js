@@ -154,7 +154,7 @@ MouseTracker.prototype = {
 			}
 			// refresh the tooltip if necessary
 			if (points.length && (points[0].plotX !== mouseTracker.hoverX)) {
-				chart.tooltip.refresh(points);
+				chart.tooltip.refresh(points, e);
 				mouseTracker.hoverX = points[0].plotX;
 			}
 		}
