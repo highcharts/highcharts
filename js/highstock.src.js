@@ -9365,9 +9365,11 @@ Chart.prototype = {
 	initSeries: function (options) {
 		var chart = this,
 			optionsChart = chart.options.chart,
-			type = options.type || optionsChart.type || optionsChart.defaultSeriesType;		
+			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
+			series = new seriesTypes[type]();
 
-		return new seriesTypes[type]().init(this, options);
+		series.init(this, options);
+		return series;
 	},
 
 	/**
