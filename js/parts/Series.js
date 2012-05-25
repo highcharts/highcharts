@@ -874,7 +874,7 @@ Series.prototype = {
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
+		series.pointRange = /*(xAxis && xAxis.categories && 1) || */options.pointRange;
 
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -1162,7 +1162,8 @@ Series.prototype = {
 			hasModifyValue = !!series.modifyValue,
 			isLastSeries,
 			allStackSeries = yAxis.series,
-			i = allStackSeries.length;
+			i = allStackSeries.length,
+			placeBetween = options.pointPlacement === 'between';
 			
 		// Is it the last visible series?
 		while (i--) {
@@ -1186,7 +1187,7 @@ Series.prototype = {
 				
 			// get the plotX translation
 			//point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1941,24 +1942,15 @@ Series.prototype = {
 	},
 
 	/**
-	 * Draw the actual graph
+	 * Get the graph path
 	 */
-	drawGraph: function () {
+	getGraphPath: function () {
 		var series = this,
-			options = series.options,
-			chart = series.chart,
-			graph = series.graph,
 			graphPath = [],
-			group = series.group,
-			color = options.lineColor || series.color,
-			lineWidth = options.lineWidth,
-			dashStyle =  options.dashStyle,
 			segmentPath,
-			renderer = chart.renderer,
-			singlePoints = [], // used in drawTracker
-			attribs;
+			singlePoints = []; // used in drawTracker
 
-		// divide into segments and build graph and area paths
+		// Divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
 			
 			segmentPath = series.getSegmentPath(segment);
@@ -1971,9 +1963,27 @@ Series.prototype = {
 			}
 		});
 
-		// used in drawTracker:
-		series.graphPath = graphPath;
+		// Record it for use in drawGraph and drawTracker, and return graphPath
 		series.singlePoints = singlePoints;
+		series.graphPath = graphPath;
+		
+		return graphPath;
+		
+	},
+	
+	/**
+	 * Draw the actual graph
+	 */
+	drawGraph: function () {		
+		var options = this.options,
+			graph = this.graph,
+			group = this.group,
+			color = options.lineColor || this.color,
+			lineWidth = options.lineWidth,
+			dashStyle =  options.dashStyle,
+			attribs,
+			graphPath = this.getGraphPath();
+			
 
 		// draw the graph
 		if (graph) {
@@ -1990,7 +2000,7 @@ Series.prototype = {
 					attribs.dashstyle = dashStyle;
 				}
 
-				series.graph = renderer.path(graphPath)
+				this.graph = this.chart.renderer.path(graphPath)
 					.attr(attribs).add(group).shadow(options.shadow);
 			}
 		}

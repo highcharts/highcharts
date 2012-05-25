@@ -3,15 +3,20 @@
  * gathered in RadialAxes.js.
  * 
  * - http://jsfiddle.net/highcharts/2Y5yF/
+ * - http://jsfiddle.net/highcharts/2yAtb/
  * 
  * TODO:
  * - Supply additional ticks to connect across 0.
  * - Animation
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
+ * - Columns have bad position when not stacked
  * - Overlapping shadows on columns (same problem as bar charts)
+ * - Issues with categories: http://jsfiddle.net/highcharts/2yAtb/
+ *   - labels overlap axis, should be aligned right or left like in pie charts
  * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
  *   backwards translate.
+ * - Shared tooltip
  * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
  */
 
@@ -48,7 +53,7 @@ seriesProto.toXY = function (point) {
  * Overridden method to close a segment path. While in a cartesian plane the area 
  * goes down to the threshold, in the polar chart it goes to the center.
  */
-seriesTypes.area.prototype.closeSegment = (function (func) { 
+seriesTypes.area.prototype.closeSegment = seriesTypes.areaspline.prototype.closeSegment = (function (func) { 
 	
 	return function (path) {
 		
@@ -66,7 +71,7 @@ seriesTypes.area.prototype.closeSegment = (function (func) {
 }(seriesTypes.area.prototype.closeSegment));
 
 /**
- * Override translate. The plotX and plotY values are computed as if the polar chart were a
+ * Extend translate. The plotX and plotY values are computed as if the polar chart were a
  * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
  * center. 
  */
@@ -77,7 +82,7 @@ seriesProto.translate = (function (func) {
 		func.apply(this, arguments);
 		
 		// Postprocess plot coordinates
-		if (this.xAxis.getPosition && this.type !== 'column') { // TODO: do not use this.type
+		if (this.chart.polar && this.type !== 'column') { // TODO: do not use this.type
 			var points = this.points,
 				i = points.length;
 			while (i--) {
@@ -88,12 +93,16 @@ seriesProto.translate = (function (func) {
 	};
 }(seriesProto.translate));
 
+/** 
+ * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in 
+ * line-like series.
+ */
 seriesProto.getSegmentPath = (function (func) {
 	return function (segment) {
 		
 		var points = this.points;
 		
-		// Connect the path across 0 to provide a closed circle
+		// Connect the path
 		if (this.chart.polar && this.options.connectEnds !== false && 
 				segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
 			segment = [].concat(segment, [points[0]]);
@@ -104,6 +113,28 @@ seriesProto.getSegmentPath = (function (func) {
 		
 	};
 }(seriesProto.getSegmentPath));
+
+/*function wrap(obj, method, wrapperFunc) {
+	obj[method] = (function (func) {
+		return wrapperFunc;
+	}(obj[method]));
+}
+
+
+wrap(seriesProto, 'getSegmentPath', function (func, segment) {
+		
+	var points = this.points;
+	
+	// Connect the path across 0 to provide a closed circle
+	if (this.chart.polar && this.options.connectEnds !== false && 
+			segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
+		segment = [].concat(segment, [points[0]]);
+	}
+	
+	// Run uber method
+	return func.call(this, segment);
+	
+});*/
 
 /**
  * Throw in a couple of properties to let setTooltipPoints know we're indexing the points

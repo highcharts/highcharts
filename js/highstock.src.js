@@ -6374,12 +6374,6 @@ Axis.prototype = {
 								y = series.modifyValue(y);
 							}
 
-							// get the smallest distance between points
-							/*if (i) {
-								distance = mathAbs(xData[i] - xData[i - 1]);
-								pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
-							}*/
-
 							// for points within the visible range, including the first point outside the
 							// visible range, consider y extremes
 							if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
@@ -6397,12 +6391,6 @@ Axis.prototype = {
 							}
 						}
 					}
-
-					// record the least unit distance
-					/*if (findPointRange) {
-						series.pointRange = pointRange || 1;
-					}
-					series.closestPointRange = pointRange;*/
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If the length of activeYData is 0, continue with null values.
@@ -6430,7 +6418,7 @@ Axis.prototype = {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog) {
+	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacemenBetween) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -6467,7 +6455,8 @@ Axis.prototype = {
 				val = axis.val2lin(val);
 			}
 
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
+			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding) + 
+				(pointPlacemenBetween ? localA * axis.pointRange / 2 : 0);
 		}
 
 		return returnValue;
@@ -6784,6 +6773,7 @@ Axis.prototype = {
 		var axis = this,
 			range = axis.max - axis.min,
 			pointRange = 0,
+			minPadding = 0,
 			closestPointRange,
 			seriesClosestPointRange,
 			transA = axis.transA;
@@ -6795,7 +6785,21 @@ Axis.prototype = {
 			} else {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
+					
+					
+					// minPadding is the value padding to the left of the axis in order to make
+					// room for points with a pointRange, typically columns. When the pointPlacement option
+					// is 'between', this padding does not apply.
+					minPadding = mathMax(
+						minPadding, 
+						series.options.pointPlacement === 'between' ?
+							0 :
+							series.pointRange / 2
+					);
+						
+					// Set the closestPointRange
 					seriesClosestPointRange = series.closestPointRange;
+					
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
 							mathMin(closestPointRange, seriesClosestPointRange) :
@@ -6803,6 +6807,9 @@ Axis.prototype = {
 					}
 				});
 			}
+			
+			// record minPadding
+			axis.minPadding = minPadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = pointRange;
@@ -6811,13 +6818,14 @@ Axis.prototype = {
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
 			// is some other value
 			axis.closestPointRange = closestPointRange;
+			
 		}
 
 		// secondary values
 		axis.oldTransA = transA;
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRange) || 1);
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPadding)) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
-		axis.minPixelPadding = transA * (pointRange / 2);
+		axis.minPixelPadding = transA * minPadding;
 	},
 
 	/**
@@ -11654,7 +11662,7 @@ Series.prototype = {
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
+		series.pointRange = /*(xAxis && xAxis.categories && 1) || */options.pointRange;
 
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -11942,7 +11950,8 @@ Series.prototype = {
 			hasModifyValue = !!series.modifyValue,
 			isLastSeries,
 			allStackSeries = yAxis.series,
-			i = allStackSeries.length;
+			i = allStackSeries.length,
+			placeBetween = options.pointPlacement === 'between';
 			
 		// Is it the last visible series?
 		while (i--) {
@@ -11966,7 +11975,7 @@ Series.prototype = {
 				
 			// get the plotX translation
 			//point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -12721,24 +12730,15 @@ Series.prototype = {
 	},
 
 	/**
-	 * Draw the actual graph
+	 * Get the graph path
 	 */
-	drawGraph: function () {
+	getGraphPath: function () {
 		var series = this,
-			options = series.options,
-			chart = series.chart,
-			graph = series.graph,
 			graphPath = [],
-			group = series.group,
-			color = options.lineColor || series.color,
-			lineWidth = options.lineWidth,
-			dashStyle =  options.dashStyle,
 			segmentPath,
-			renderer = chart.renderer,
-			singlePoints = [], // used in drawTracker
-			attribs;
+			singlePoints = []; // used in drawTracker
 
-		// divide into segments and build graph and area paths
+		// Divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
 			
 			segmentPath = series.getSegmentPath(segment);
@@ -12751,9 +12751,27 @@ Series.prototype = {
 			}
 		});
 
-		// used in drawTracker:
-		series.graphPath = graphPath;
+		// Record it for use in drawGraph and drawTracker, and return graphPath
 		series.singlePoints = singlePoints;
+		series.graphPath = graphPath;
+		
+		return graphPath;
+		
+	},
+	
+	/**
+	 * Draw the actual graph
+	 */
+	drawGraph: function () {		
+		var options = this.options,
+			graph = this.graph,
+			group = this.group,
+			color = options.lineColor || this.color,
+			lineWidth = options.lineWidth,
+			dashStyle =  options.dashStyle,
+			attribs,
+			graphPath = this.getGraphPath();
+			
 
 		// draw the graph
 		if (graph) {
@@ -12770,7 +12788,7 @@ Series.prototype = {
 					attribs.dashstyle = dashStyle;
 				}
 
-				series.graph = renderer.path(graphPath)
+				this.graph = this.chart.renderer.path(graphPath)
 					.attr(attribs).add(group).shadow(options.shadow);
 			}
 		}
@@ -13418,6 +13436,36 @@ var SplineSeries = extendClass(Series, {
 			point.rightContY = rightContY;
 
 		}
+		
+		// Visualize control points
+		this.chart.renderer.circle(leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop, 2)
+			.attr({
+				stroke: 'red',
+				'stroke-width': 1,
+				fill: 'none'
+			})
+			.add();
+		this.chart.renderer.path(['M', leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop,
+			'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+			.attr({
+				stroke: 'red',
+				'stroke-width': 1
+			})
+			.add();
+		this.chart.renderer.circle(rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop, 2)
+			.attr({
+				stroke: 'green',
+				'stroke-width': 1,
+				fill: 'none'
+			})
+			.add();
+		this.chart.renderer.path(['M', rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop,
+			'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+			.attr({
+				stroke: 'green',
+				'stroke-width': 1
+			})
+			.add();
 
 		// moveTo or lineTo
 		if (!i) {
@@ -13453,6 +13501,7 @@ var areaProto = AreaSeries.prototype,
 		
 		// Mix in methods from the area series
 		getSegmentPath: areaProto.getSegmentPath,
+		closeSegment: areaProto.closeSegment,
 		drawGraph: areaProto.drawGraph
 	});
 seriesTypes.areaspline = AreaSplineSeries;

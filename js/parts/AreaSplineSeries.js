@@ -12,6 +12,7 @@ var areaProto = AreaSeries.prototype,
 		
 		// Mix in methods from the area series
 		getSegmentPath: areaProto.getSegmentPath,
+		closeSegment: areaProto.closeSegment,
 		drawGraph: areaProto.drawGraph
 	});
 seriesTypes.areaspline = AreaSplineSeries;

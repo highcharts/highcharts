@@ -85,7 +85,7 @@ var radialAxisMixin = {
 		maxPadding: 0,
 		minPadding: 0,
 		plotBands: [],
-		showLastLabel: false,
+		//showLastLabel: 
 		tickLength: 0
 	},
 	
@@ -198,17 +198,33 @@ var radialAxisMixin = {
 	 * any given value.
 	 */
 	setAxisTranslation: function () {
+		
+		var circleConnectRange;
 
 		// Call uber method		
 		axisProto.setAxisTranslation.call(this);
 			
 		// Set transA and minPixelPadding
 		if (this.center) { // it's not defined the first time
-			this.transA = this.isCircular ? 
-				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min) || 1) : 
-				(this.center[2] / 2) / ((this.max - this.min) || 1);
+			if (this.isCircular) {
+				
+				// If the axis maximum is not explicitly given, assume a full circle,
+				// and to make sure that the maximum value doesn't fall together with the
+				// miminum, add one closestPointRange
+				circleConnectRange = this.autoConnect ?
+					this.closestPointRange :
+					0;
+					
+				this.transA = (this.endAngleRad - this.startAngleRad) / 
+					((this.max - this.min + circleConnectRange) || 1);
+				
+			} else { 
+				this.transA = (this.center[2] / 2) / ((this.max - this.min) || 1);
+			}
 			
-			this.minPixelPadding = this.transA * ((this.pointRange || 0) / 2);
+			if (this.isXAxis) {
+				this.minPixelPadding = this.transA * this.minPadding;
+			}
 		}
 	},
 	
@@ -319,6 +335,7 @@ var radialAxisMixin = {
 			end = axis.getPosition(value),
 			xAxis,
 			xy,
+			tickPositions,
 			ret;
 		
 		// Spokes
@@ -334,7 +351,11 @@ var radialAxisMixin = {
 			xAxis = chart.xAxis[0];
 			ret = [];
 			value = axis.translate(value);
-			each(xAxis.tickPositions, function (pos, i) {
+			tickPositions = xAxis.tickPositions;
+			if (xAxis.autoConnect) {
+				tickPositions = tickPositions.concat([tickPositions[0]]);
+			}
+			each(tickPositions, function (pos, i) {
 				xy = xAxis.getPosition(pos, value);
 				ret.push(i ? 'L' : 'M', xy.x, xy.y);
 			});
@@ -412,6 +433,12 @@ axisProto.init = (function (func) {
 			this.offset = options.offset || 0;
 			
 			this.isCircular = isCircular;
+			
+			// Automatically connect grid lines?
+			if (isCircular && userOptions.max === UNDEFINED) {
+				this.autoConnect = true;
+			}
+			
 		}
 		
 		
@@ -918,15 +945,20 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * gathered in RadialAxes.js.
  * 
  * - http://jsfiddle.net/highcharts/2Y5yF/
+ * - http://jsfiddle.net/highcharts/2yAtb/
  * 
  * TODO:
  * - Supply additional ticks to connect across 0.
  * - Animation
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
+ * - Columns have bad position when not stacked
  * - Overlapping shadows on columns (same problem as bar charts)
+ * - Issues with categories: http://jsfiddle.net/highcharts/2yAtb/
+ *   - labels overlap axis, should be aligned right or left like in pie charts
  * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
  *   backwards translate.
+ * - Shared tooltip
  * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
  */
 
@@ -963,7 +995,7 @@ seriesProto.toXY = function (point) {
  * Overridden method to close a segment path. While in a cartesian plane the area 
  * goes down to the threshold, in the polar chart it goes to the center.
  */
-seriesTypes.area.prototype.closeSegment = (function (func) { 
+seriesTypes.area.prototype.closeSegment = seriesTypes.areaspline.prototype.closeSegment = (function (func) { 
 	
 	return function (path) {
 		
@@ -981,7 +1013,7 @@ seriesTypes.area.prototype.closeSegment = (function (func) {
 }(seriesTypes.area.prototype.closeSegment));
 
 /**
- * Override translate. The plotX and plotY values are computed as if the polar chart were a
+ * Extend translate. The plotX and plotY values are computed as if the polar chart were a
  * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
  * center. 
  */
@@ -992,7 +1024,7 @@ seriesProto.translate = (function (func) {
 		func.apply(this, arguments);
 		
 		// Postprocess plot coordinates
-		if (this.xAxis.getPosition && this.type !== 'column') { // TODO: do not use this.type
+		if (this.chart.polar && this.type !== 'column') { // TODO: do not use this.type
 			var points = this.points,
 				i = points.length;
 			while (i--) {
@@ -1003,12 +1035,16 @@ seriesProto.translate = (function (func) {
 	};
 }(seriesProto.translate));
 
+/** 
+ * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in 
+ * line-like series.
+ */
 seriesProto.getSegmentPath = (function (func) {
 	return function (segment) {
 		
 		var points = this.points;
 		
-		// Connect the path across 0 to provide a closed circle
+		// Connect the path
 		if (this.chart.polar && this.options.connectEnds !== false && 
 				segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
 			segment = [].concat(segment, [points[0]]);
@@ -1019,6 +1055,28 @@ seriesProto.getSegmentPath = (function (func) {
 		
 	};
 }(seriesProto.getSegmentPath));
+
+/*function wrap(obj, method, wrapperFunc) {
+	obj[method] = (function (func) {
+		return wrapperFunc;
+	}(obj[method]));
+}
+
+
+wrap(seriesProto, 'getSegmentPath', function (func, segment) {
+		
+	var points = this.points;
+	
+	// Connect the path across 0 to provide a closed circle
+	if (this.chart.polar && this.options.connectEnds !== false && 
+			segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
+		segment = [].concat(segment, [points[0]]);
+	}
+	
+	// Run uber method
+	return func.call(this, segment);
+	
+});*/
 
 /**
  * Throw in a couple of properties to let setTooltipPoints know we're indexing the points

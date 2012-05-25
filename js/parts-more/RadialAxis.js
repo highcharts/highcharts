@@ -59,7 +59,7 @@ var radialAxisMixin = {
 		maxPadding: 0,
 		minPadding: 0,
 		plotBands: [],
-		showLastLabel: false,
+		//showLastLabel: 
 		tickLength: 0
 	},
 	
@@ -172,17 +172,33 @@ var radialAxisMixin = {
 	 * any given value.
 	 */
 	setAxisTranslation: function () {
+		
+		var circleConnectRange;
 
 		// Call uber method		
 		axisProto.setAxisTranslation.call(this);
 			
 		// Set transA and minPixelPadding
 		if (this.center) { // it's not defined the first time
-			this.transA = this.isCircular ? 
-				(this.endAngleRad - this.startAngleRad) / ((this.max - this.min) || 1) : 
-				(this.center[2] / 2) / ((this.max - this.min) || 1);
+			if (this.isCircular) {
+				
+				// If the axis maximum is not explicitly given, assume a full circle,
+				// and to make sure that the maximum value doesn't fall together with the
+				// miminum, add one closestPointRange
+				circleConnectRange = this.autoConnect ?
+					this.closestPointRange :
+					0;
+					
+				this.transA = (this.endAngleRad - this.startAngleRad) / 
+					((this.max - this.min + circleConnectRange) || 1);
+				
+			} else { 
+				this.transA = (this.center[2] / 2) / ((this.max - this.min) || 1);
+			}
 			
-			this.minPixelPadding = this.transA * ((this.pointRange || 0) / 2);
+			if (this.isXAxis) {
+				this.minPixelPadding = this.transA * this.minPadding;
+			}
 		}
 	},
 	
@@ -293,6 +309,7 @@ var radialAxisMixin = {
 			end = axis.getPosition(value),
 			xAxis,
 			xy,
+			tickPositions,
 			ret;
 		
 		// Spokes
@@ -308,7 +325,11 @@ var radialAxisMixin = {
 			xAxis = chart.xAxis[0];
 			ret = [];
 			value = axis.translate(value);
-			each(xAxis.tickPositions, function (pos, i) {
+			tickPositions = xAxis.tickPositions;
+			if (xAxis.autoConnect) {
+				tickPositions = tickPositions.concat([tickPositions[0]]);
+			}
+			each(tickPositions, function (pos, i) {
 				xy = xAxis.getPosition(pos, value);
 				ret.push(i ? 'L' : 'M', xy.x, xy.y);
 			});
@@ -386,6 +407,12 @@ axisProto.init = (function (func) {
 			this.offset = options.offset || 0;
 			
 			this.isCircular = isCircular;
+			
+			// Automatically connect grid lines?
+			if (isCircular && userOptions.max === UNDEFINED) {
+				this.autoConnect = true;
+			}
+			
 		}
 		
 		

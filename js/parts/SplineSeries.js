@@ -67,6 +67,36 @@ var SplineSeries = extendClass(Series, {
 			point.rightContY = rightContY;
 
 		}
+		
+		// Visualize control points
+		this.chart.renderer.circle(leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop, 2)
+			.attr({
+				stroke: 'red',
+				'stroke-width': 1,
+				fill: 'none'
+			})
+			.add();
+		this.chart.renderer.path(['M', leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop,
+			'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+			.attr({
+				stroke: 'red',
+				'stroke-width': 1
+			})
+			.add();
+		this.chart.renderer.circle(rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop, 2)
+			.attr({
+				stroke: 'green',
+				'stroke-width': 1,
+				fill: 'none'
+			})
+			.add();
+		this.chart.renderer.path(['M', rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop,
+			'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+			.attr({
+				stroke: 'green',
+				'stroke-width': 1
+			})
+			.add();
 
 		// moveTo or lineTo
 		if (!i) {
