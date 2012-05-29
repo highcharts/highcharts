@@ -1028,13 +1028,13 @@ Chart.prototype = {
 			chartBackground = chart.chartBackground,
 			plotBackground = chart.plotBackground,
 			plotBorder = chart.plotBorder,
-			plotBGImage = chart.plotBGImage;
-
-		var chartBorderWidth = optionsChart.borderWidth || 0,
+			plotBGImage = chart.plotBGImage,
+			chartBorderWidth = optionsChart.borderWidth || 0,
 			chartBackgroundColor = optionsChart.backgroundColor,
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
 			mgn,
+			bgAttr,
 			plotSize = {
 				x: chart.plotLeft,
 				y: chart.plotTop,
@@ -1047,13 +1047,17 @@ Chart.prototype = {
 
 		if (chartBorderWidth || chartBackgroundColor) {
 			if (!chartBackground) {
+				
+				bgAttr = {
+					fill: chartBackgroundColor || NONE
+				};
+				if (chartBorderWidth) { // #980
+					bgAttr.stroke = optionsChart.borderColor;
+					bgAttr['stroke-width'] = chartBorderWidth;
+				}
 				chart.chartBackground = renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn,
 						optionsChart.borderRadius, chartBorderWidth)
-					.attr({
-						stroke: optionsChart.borderColor,
-						'stroke-width': chartBorderWidth,
-						fill: chartBackgroundColor || NONE
-					})
+					.attr(bgAttr)
 					.add()
 					.shadow(optionsChart.shadow);
 			} else { // resize
