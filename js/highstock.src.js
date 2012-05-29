@@ -9194,7 +9194,7 @@ Legend.prototype = {
 			
 			// Add navigation elements
 			if (!nav) {
-				this.nav = nav = renderer.g().add(this.group);
+				this.nav = nav = renderer.g().attr({ zIndex: 1 }).add(this.group);
 				this.up = renderer.symbol('triangle', 0, 0, arrowSize, arrowSize)
 					.on('click', function () {
 						legend.scroll(-1, animation);
