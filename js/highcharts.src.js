@@ -1110,6 +1110,10 @@ if (!globalAdapter && win.jQuery) {
 
 		extend(event, eventArguments);
 
+		// If another event was passed as eventArguments (for instance, click for
+	    // legendItemClick), the extend will have overwritten the type.
+		event.type = type
+
 		// Prevent jQuery from triggering the object method that is named the
 		// same as the event. For example, if the event is 'select', jQuery
 		// attempts calling el.select and it goes into a loop.
@@ -8932,7 +8936,7 @@ Legend.prototype = {
 					li.css(item.visible ? itemStyle : itemHiddenStyle);
 					item.setState();
 				})
-				.on('click', function () {
+				.on('click', function (event) {
 					var strLegendItemClick = 'legendItemClick',
 						fnLegendItemClick = function () {
 							item.setVisible();
@@ -8940,9 +8944,9 @@ Legend.prototype = {
 
 					// click the name or symbol
 					if (item.firePointEvent) { // point
-						item.firePointEvent(strLegendItemClick, null, fnLegendItemClick);
+						item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
 					} else {
-						fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
+						fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
 					}
 				});
 
