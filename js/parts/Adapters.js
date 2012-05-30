@@ -242,15 +242,26 @@ if (!globalAdapter && win.jQuery) {
 	/*jslint unparam: false*/
 
 	// extend the animate function to allow SVG animations
-	var jFx = jQuery.fx,
+	var jFx = jQ.fx,
 		jStep = jFx.step;
 
 	// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 	each(['cur', '_default', 'width', 'height'], function (fn, i) {
-		var obj = i ? jStep : jFx.prototype, // 'cur', the getter' relates to jFx.prototype
-			base = obj[fn],
+		var obj = jStep,
+			base,
 			elem;
+			
+		// Handle different parent objects
+		if (fn === 'cur') {
+			obj = jFx.prototype; // 'cur', the getter, relates to jFx.prototype
+		
+		} else if (fn === '_default' && jQ.Tween) { // jQuery 1.8 model
+			obj = jQ.Tween.propHooks[fn];
+			fn = 'set';
+		}
 
+		// Overwrite the method
+		base = obj[fn];
 		if (base) { // step.width and step.height don't exist in jQuery < 1.7
 
 			// create the extended function replacement
@@ -265,7 +276,7 @@ if (!globalAdapter && win.jQuery) {
 				// jFX.prototype.cur returns the current value. The other ones are setters
 				// and returning a value has no effect.
 				return elem.attr ? // is SVG element wrapper
-					elem.attr(fx.prop, fx.now) : // apply the SVG wrapper's method
+					elem.attr(fx.prop, fn === 'cur' ? UNDEFINED : fx.now) : // apply the SVG wrapper's method
 					base.apply(this, arguments); // use jQuery's built-in method
 			};
 		}
