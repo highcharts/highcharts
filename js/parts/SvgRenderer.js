@@ -595,7 +595,7 @@ SVGElement.prototype = {
 				height = pick(wrapper.elemHeight, elem.offsetHeight);
 
 				// update textWidth
-				if (width > textWidth) {
+				if (width > textWidth && /[ \-]/.test(elem.innerText)) { // #983
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',

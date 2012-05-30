@@ -2321,7 +2321,7 @@ SVGElement.prototype = {
 				height = pick(wrapper.elemHeight, elem.offsetHeight);
 
 				// update textWidth
-				if (width > textWidth) {
+				if (width > textWidth && /[ \-]/.test(elem.innerText)) { // #983
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
@@ -5220,12 +5220,12 @@ Tick.prototype = {
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
+			tickPositions = axis.tickPositions,
 			width = (categories && horiz && categories.length &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
-				chart.plotWidth / categories.length) ||
+				chart.plotWidth / tickPositions.length) ||
 				(!horiz && chart.plotWidth / 2),
-			tickPositions = axis.tickPositions,
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,

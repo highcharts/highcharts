@@ -26,12 +26,12 @@ Tick.prototype = {
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
+			tickPositions = axis.tickPositions,
 			width = (categories && horiz && categories.length &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
-				chart.plotWidth / categories.length) ||
+				chart.plotWidth / tickPositions.length) ||
 				(!horiz && chart.plotWidth / 2),
-			tickPositions = axis.tickPositions,
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
