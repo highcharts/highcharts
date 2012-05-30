@@ -974,7 +974,7 @@ SVGElement.prototype = {
 					'fill': NONE
 				});
 				if (cutOff) {
-					attr(shadow, 'height', attr(shadow, 'height') - strokeWidth);
+					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
 					shadow.cutHeight = strokeWidth;
 				}
 
