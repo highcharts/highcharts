@@ -2828,7 +2828,11 @@ SVGRenderer.prototype = {
 		}
 
 		// Remove sub pixel fix handler
-		removeEvent(win, 'resize', renderer.subPixelFix);
+		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
+		// See issue #982
+		if (renderer.subPixelFix) {
+			removeEvent(win, 'resize', renderer.subPixelFix);
+		}
 
 		renderer.alignedObjects = null;
 
