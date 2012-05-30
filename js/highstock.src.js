@@ -5540,10 +5540,6 @@ Tick.prototype = {
 		if (label && !isNaN(x)) {
 			xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
-			// Cache x and y to be able to read final position before animation
-			label.x = x;
-			label.y = y;
-
 			// apply show first and show last
 			if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
 					(tick.isLast && !pick(options.showLastLabel, 1))) {
