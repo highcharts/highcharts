@@ -18,7 +18,7 @@ elseif ($product == 'highstock') $dir = 'stock';
 					if (currentLi) {
 						var href = currentLi.getElementsByTagName("a")[0].href;
 					
-						href = href.replace("/samples/", "/compare-svg/");
+						href = href.replace("/samples/", "/compare-svg/") + '&continue=true';
 						window.parent.frames[1].location.href = href;
 					}
 				});
