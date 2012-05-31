@@ -77,7 +77,7 @@ function getResources() {
 						
 						$(li).addClass('hilighted');
 						$(contentDoc.body).animate({
-							scrollTop: $(li).offset().top - 50
+							scrollTop: $(li).offset().top - 70
 						},'slow');
 
 						contentDoc.currentLi = li;
