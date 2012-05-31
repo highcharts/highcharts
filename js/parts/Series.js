@@ -1303,7 +1303,7 @@ Series.prototype = {
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
 			n;
 			
-		// Guess the best date format based on the closest point distance (#568) // docs
+		// Guess the best date format based on the closest point distance (#568)
 		if (isDateTime && !xDateFormat) {
 			for (n in timeUnits) {
 				if (timeUnits[n] >= xAxis.closestPointRange) {

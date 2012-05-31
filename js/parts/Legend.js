@@ -21,7 +21,7 @@ Legend.prototype = {
 	
 		var //style = options.style || {}, // deprecated
 			itemStyle = options.itemStyle,
-			padding = pick(options.padding, 8), // docs
+			padding = pick(options.padding, 8),
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype

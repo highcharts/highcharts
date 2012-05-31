@@ -332,7 +332,7 @@ Tooltip.prototype = {
 				stroke: borderColor
 			});
 
-			placedTooltipPoint = (options.positioner || tooltip.getPosition).call( // docs
+			placedTooltipPoint = (options.positioner || tooltip.getPosition).call(
 				tooltip,
 				label.width,
 				label.height,

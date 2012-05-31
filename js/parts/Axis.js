@@ -165,7 +165,7 @@ Axis.prototype = {
 			align: 'center',
 			x: 0,
 			y: 14
-			// overflow: undefined // docs - can be 'justify'
+			// overflow: undefined,
 			// staggerLines: null
 		},
 		title: {
@@ -179,8 +179,8 @@ Axis.prototype = {
 		labels: {
 			align: 'center',
 			x: 0,
-			y: -5,
-			overflow: 'justify'
+			y: -5
+			// overflow: undefined
 			// staggerLines: null
 		},
 		title: {

@@ -3,7 +3,7 @@
  */
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
 	threshold: 0
-	// trackByArea: false, // docs
+	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
 	// fillOpacity: 0.75,
 	// fillColor: null
