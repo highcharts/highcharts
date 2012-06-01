@@ -192,11 +192,7 @@ extend(Chart.prototype, {
 		if (!doc.createElementNS) {
 			/*jslint unparam: true*//* allow unused parameter ns in function below */
 			doc.createElementNS = function (ns, tagName) {
-				var elem = doc.createElement(tagName);
-				elem.getBBox = function () {
-					return HC.Renderer.prototype.Element.prototype.getBBox.apply({ element: elem });
-				};
-				return elem;
+				return doc.createElement(tagName);
 			};
 			/*jslint unparam: false*/
 		}
