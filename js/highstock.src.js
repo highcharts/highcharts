@@ -8049,8 +8049,7 @@ Tooltip.prototype = {
 				tooltip,
 				label.width,
 				label.height,
-				{ plotX: x, plotY: y },
-				mouseEvent // docs
+				{ plotX: x, plotY: y }
 			);
 
 			// do the move
@@ -11904,7 +11903,7 @@ Series.prototype = {
 			if (!hasGroupedData) {
 				if (data[cursor]) {
 					point = data[cursor];
-				} else {
+				} else if (dataOptions[cursor] !== UNDEFINED) { // #970
 					data[cursor] = point = (new pointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
 				points[i] = point;

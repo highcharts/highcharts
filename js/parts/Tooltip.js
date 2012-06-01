@@ -336,8 +336,7 @@ Tooltip.prototype = {
 				tooltip,
 				label.width,
 				label.height,
-				{ plotX: x, plotY: y },
-				mouseEvent // docs
+				{ plotX: x, plotY: y }
 			);
 
 			// do the move
