@@ -8932,17 +8932,22 @@ Legend.prototype = {
 					li.css(item.visible ? itemStyle : itemHiddenStyle);
 					item.setState();
 				})
-				.on('click', function () {
+				.on('click', function (event) {
 					var strLegendItemClick = 'legendItemClick',
 						fnLegendItemClick = function () {
 							item.setVisible();
 						};
+						
+					// Pass over the click/touch event. #4.
+					event = {
+						browserEvent: event
+					};
 
 					// click the name or symbol
 					if (item.firePointEvent) { // point
-						item.firePointEvent(strLegendItemClick, null, fnLegendItemClick);
+						item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
 					} else {
-						fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
+						fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
 					}
 				});
 
