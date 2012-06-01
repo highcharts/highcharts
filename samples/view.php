@@ -96,11 +96,6 @@ function getResources() {
 						$('#next')[0].disabled = false;
 					}
 					
-					// the reload button
-					$('#reload').click(function() {
-						location.reload();
-					});
-					
 				}
 			});
 		</script>
@@ -128,7 +123,7 @@ function getResources() {
 			
 			<div style="text-align: center">
 				<button id="next" disabled="disabled">Next</button>
-				<button id="reload" style="margin-left: 1em">Reload</button>
+				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
 					href="../compare-svg/view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
