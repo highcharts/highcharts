@@ -11270,7 +11270,7 @@ Point.prototype = {
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
-			if (state) {
+			if (state && markerStateOptions) {
 				if (!stateMarkerGraphic) {
 					radius = markerStateOptions.radius;
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
