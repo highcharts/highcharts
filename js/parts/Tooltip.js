@@ -293,7 +293,8 @@ Tooltip.prototype = {
 			});
 
 			textConfig = {
-				x: point[0].category
+				x: point[0].category,
+				y: point[0].y
 			};
 			textConfig.points = pointConfig;
 			point = point[0];
