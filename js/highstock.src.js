@@ -16802,7 +16802,7 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (buttons[rangeSelector.selected]) {
+				if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 					buttons[rangeSelector.selected].setState(0);
 				}
 				rangeSelector.selected = null;
