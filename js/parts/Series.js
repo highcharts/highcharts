@@ -1299,7 +1299,7 @@ Series.prototype = {
 			point = points[i];
 			low = points[i - 1] ? points[i - 1]._high + 1 : 0;
 			point._high = high = points[i + 1] ?
-				(mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
+				mathMax(0, mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
 				plotSize;
 
 			while (low >= 0 && low <= high) {
