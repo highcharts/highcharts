@@ -1998,7 +1998,7 @@ Series.prototype = {
 			graph.animate({ d: graphPath });
 
 		} else {
-			if (lineWidth || options.states.hover.lineWidth) { // #940
+			if (lineWidth) {
 				attribs = {
 					stroke: color,
 					'stroke-width': lineWidth
