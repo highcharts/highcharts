@@ -16881,7 +16881,7 @@ RangeSelector.prototype = {
 
 
 		input.onfocus = input.onblur = function (e) {
-			e = e || window.event;
+			e = e || window.event || {};
 			input.hasFocus = e.type === 'focus';
 			rangeSelector.setInputValue(input);
 		};
