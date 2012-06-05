@@ -893,9 +893,8 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			spacingBox = chart.spacingBox;
-
-		var chartTitle = chart.title,
+			spacingBox,
+			chartTitle = chart.title,
 			chartSubtitle = chart.subtitle;
 
 		chart.isResizing += 1;
@@ -940,6 +939,7 @@ Chart.prototype = {
 		chart.getMargins();
 
 		// move titles
+		spacingBox = chart.spacingBox;
 		if (chartTitle) {
 			chartTitle.align(null, null, spacingBox);
 		}
