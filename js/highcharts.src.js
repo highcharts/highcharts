@@ -9184,6 +9184,7 @@ Legend.prototype = {
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
 			spaceHeight = chart.spacingBox.height + (alignTop ? -optionsY : optionsY) - this.padding,
+			maxHeight = options.maxHeight, // docs
 			clipHeight,
 			clipRect = this.clipRect,
 			navOptions = options.navigation,
@@ -9191,8 +9192,12 @@ Legend.prototype = {
 			arrowSize = navOptions.arrowSize || 12,
 			nav = this.nav;
 			
+		// Adjust the height
 		if (options.layout === 'horizontal') {
 			spaceHeight /= 2;
+		}
+		if (maxHeight) {
+			spaceHeight = mathMin(spaceHeight, maxHeight);
 		}
 		
 		// Reset the legend height and adjust the clipping rectangle
