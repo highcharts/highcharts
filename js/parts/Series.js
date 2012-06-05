@@ -1150,6 +1150,7 @@ Series.prototype = {
 				}
 				if (data[i]) {
 					data[i].destroyElements();
+					data[i].plotX = UNDEFINED; // #1003
 				}
 			}
 		}
