@@ -158,7 +158,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			i,
 			point,
 			graphic,
-			connector,
+			tracker,
 			stackIndex,
 			crisp = (options.lineWidth % 2 / 2),
 			anchorX,
@@ -177,7 +177,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			anchorY = stackIndex ? UNDEFINED : point.plotY;
 
 			graphic = point.graphic;
-			connector = point.connector;
+			tracker = point.tracker;
 
 			// only draw the point if y is defined
 			if (plotY !== UNDEFINED) {
@@ -227,6 +227,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();
+				if (tracker) {
+					tracker.attr('y', -9999);
+				}
 			}
 
 		}
