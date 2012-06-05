@@ -1103,7 +1103,10 @@ if (!globalAdapter && win.jQuery) {
 		// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
 		// never uses these properties, Chrome includes them in the default click event and
 		// raises the warning when they are copied over in the extend statement below.
-		if (eventArguments && eventArguments.layerX !== UNDEFINED) {
+		//
+		// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
+		// testing if they are there (warning in chrome) the only option is to test if running IE.
+		if (!isIE && eventArguments) {
 			delete eventArguments.layerX;
 			delete eventArguments.layerY;
 		}
