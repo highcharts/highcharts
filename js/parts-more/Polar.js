@@ -6,14 +6,10 @@
  * - http://jsfiddle.net/highcharts/2yAtb/
  * 
  * TODO:
- * - Supply additional ticks to connect across 0.
  * - Animation
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
- * - Columns have bad position when not stacked
  * - Overlapping shadows on columns (same problem as bar charts)
- * - Issues with categories: http://jsfiddle.net/highcharts/2yAtb/
- *   - labels overlap axis, should be aligned right or left like in pie charts
  * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
  *   backwards translate.
  * - Shared tooltip
@@ -190,7 +186,7 @@ columnProto.translate = (function (func) {
 						{
 							start: startAngleRad + point.barX,
 							end: startAngleRad + point.barX + point.pointWidth,
-							innerR: len - point.yBottom
+							innerR: len - pick(point.yBottom, len)
 						}
 					)
 				};

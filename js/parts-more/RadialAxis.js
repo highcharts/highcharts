@@ -51,7 +51,7 @@ var radialAxisMixin = {
 	defaultRadialXOptions: {
 		gridLineWidth: 1, // spokes
 		labels: {
-			align: 'center',
+			align: null, // auto
 			distance: 15,
 			x: 0,
 			y: null // auto
@@ -444,7 +444,9 @@ tickProto.getLabelPosition = (function (func) {
 			labelOptions = axis.options.labels,
 			label = this.label,
 			optionsY = labelOptions.y,
-			ret;
+			ret,
+			align = labelOptions.align,
+			angle = (axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180;
 		
 		if (axis.isRadial) {
 			ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
@@ -452,12 +454,31 @@ tickProto.getLabelPosition = (function (func) {
 			// Automatically rotated
 			if (labelOptions.rotation === 'auto') {
 				label.attr({ 
-					rotation: (axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180  
+					rotation: angle
 				});
 			
 			// Vertically centered
 			} else if (optionsY === null) {
 				optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+			
+			}
+			
+			// Automatic alignment
+			if (align === null) {
+				if (axis.isCircular) {
+					if (angle > 20 && angle < 160) {
+						align = 'left'; // right hemisphere
+					} else if (angle > 200 && angle < 340) {
+						align = 'right'; // left hemisphere
+					} else {
+						align = 'center'; // top or bottom
+					}
+				} else {
+					align = 'center';
+				}
+				label.attr({
+					align: align
+				});
 			}
 			
 			ret.x += labelOptions.x;
