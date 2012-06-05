@@ -547,7 +547,7 @@ Chart.prototype = {
 			});
 		}
 
-		if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+		if (xAxis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
 			xAxis.setExtremes(newMin, newMax, true, false);
 		}
 

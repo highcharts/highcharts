@@ -509,7 +509,7 @@
 			chart.pan = function (chartX) {
 				var xAxis = chart.xAxis[0],
 					runBase = false;
-				if (xAxis.options.ordinal) {
+				if (xAxis.options.ordinal && xAxis.series.length) {
 					
 					var mouseDownX = chart.mouseDownX,
 						extremes = xAxis.getExtremes(),

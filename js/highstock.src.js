@@ -9860,7 +9860,7 @@ Chart.prototype = {
 			});
 		}
 
-		if (newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+		if (xAxis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
 			xAxis.setExtremes(newMin, newMax, true, false);
 		}
 
@@ -17825,7 +17825,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			chart.pan = function (chartX) {
 				var xAxis = chart.xAxis[0],
 					runBase = false;
-				if (xAxis.options.ordinal) {
+				if (xAxis.options.ordinal && xAxis.series.length) {
 					
 					var mouseDownX = chart.mouseDownX,
 						extremes = xAxis.getExtremes(),
