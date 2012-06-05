@@ -165,7 +165,7 @@ Axis.prototype = {
 			align: 'center',
 			x: 0,
 			y: 14
-			// overflow: undefined // docs - can be 'justify'
+			// overflow: undefined,
 			// staggerLines: null
 		},
 		title: {
@@ -179,8 +179,8 @@ Axis.prototype = {
 		labels: {
 			align: 'center',
 			x: 0,
-			y: -5,
-			overflow: 'justify'
+			y: -5
+			// overflow: undefined
 			// staggerLines: null
 		},
 		title: {
@@ -890,22 +890,26 @@ Axis.prototype = {
 			if (spaceAvailable) { // if space is available, stay within the data range
 				minArgs[2] = axis.dataMin;
 			}
-			axis.min = min = arrayMax(minArgs);
+			min = arrayMax(minArgs);
 
 			maxArgs = [min + minRange, pick(options.max, min + minRange)];
 			if (spaceAvailable) { // if space is availabe, stay within the data range
 				maxArgs[2] = axis.dataMax;
 			}
 
-			axis.max = max = arrayMin(maxArgs);
+			max = arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
 			if (max - min < minRange) {
 				minArgs[0] = max - minRange;
 				minArgs[1] = pick(options.min, max - minRange);
-				axis.min = arrayMax(minArgs);
+				min = arrayMax(minArgs);
 			}
 		}
+		
+		// Record modified extremes
+		axis.min = min;
+		axis.max = max;
 	},
 
 	/**
@@ -991,9 +995,7 @@ Axis.prototype = {
 			tickIntervalOption = options.tickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
-			categories = axis.categories,
-			min,
-			max;
+			categories = axis.categories;
 
 		// linked axis gets the extremes from the parent axis
 		if (isLinked) {
@@ -1009,21 +1011,18 @@ Axis.prototype = {
 			axis.max = pick(axis.userMax, options.max, axis.dataMax);
 		}
 
-		min = axis.min;
-		max = axis.max;
-
 		if (isLog) {
-			if (!secondPass && mathMin(min, axis.dataMin) <= 0) {
+			if (!secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
 				error(10, 1); // Can't plot negative values on log axis
 			}
-			axis.min = min = correctFloat(log2lin(min)); // correctFloat cures #934
-			axis.max = max = correctFloat(log2lin(max));
+			axis.min = correctFloat(log2lin(axis.min)); // correctFloat cures #934
+			axis.max = correctFloat(log2lin(axis.max));
 		}
 
 		// handle zoomed range
 		if (axis.range) {
-			axis.userMin = axis.min = min = mathMax(min, max - axis.range); // #618
-			axis.userMax = max;
+			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
+			axis.userMax = axis.max;
 			if (secondPass) {
 				axis.range = null;  // don't use it when running setExtremes
 			}
@@ -1033,18 +1032,18 @@ Axis.prototype = {
 		axis.adjustForMinRange();
 
 		// pad the values to get clear of the chart's edges
-		if (!categories && !axis.usePercentage && !isLinked && defined(min) && defined(max)) {
-			length = (max - min) || 1;
+		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+			length = (axis.max - axis.min) || 1;
 			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
-				min = axis.min -= length * minPadding;
+				axis.min -= length * minPadding;
 			}
 			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
-				max = axis.max += length * maxPadding;
+				axis.max += length * maxPadding;
 			}
 		}
 
 		// get tickInterval
-		if (min === max || min === undefined || max === undefined) {
+		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
 			axis.tickInterval = 1;
 		} else if (isLinked && !tickIntervalOption &&
 				tickPixelIntervalOption === axis.linkedParent.options.tickPixelInterval) {
@@ -1054,7 +1053,7 @@ Axis.prototype = {
 				tickIntervalOption,
 				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
-					(max - min) * tickPixelIntervalOption / (axis.len || 1)
+					(axis.max - axis.min) * tickPixelIntervalOption / (axis.len || 1)
 			);
 		}
 
@@ -1062,7 +1061,7 @@ Axis.prototype = {
 		// is in turn needed in order to find tick positions in ordinal axes. 
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
-				series.processData(min !== axis.oldMin || max !== axis.oldMax);
+				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
 			});
 		}
 
@@ -1092,22 +1091,22 @@ Axis.prototype = {
 				axis.tickInterval / 5 : options.minorTickInterval;
 
 		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [min, max]));
+		axis.tickPositions = tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
 		if (!tickPositions) {
 			if (isDatetimeAxis) {
 				tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
 					normalizeTimeTickInterval(axis.tickInterval, options.units),
-					min,
-					max,
+					axis.min,
+					axis.max,
 					options.startOfWeek,
 					axis.ordinalPositions,
 					axis.closestPointRange,
 					true
 				);
 			} else if (isLog) {
-				tickPositions = axis.getLogTickPositions(axis.tickInterval, min, max);
+				tickPositions = axis.getLogTickPositions(axis.tickInterval, axis.min, axis.max);
 			} else {
-				tickPositions = axis.getLinearTickPositions(axis.tickInterval, min, max);
+				tickPositions = axis.getLinearTickPositions(axis.tickInterval, axis.min, axis.max);
 			}
 			axis.tickPositions = tickPositions;
 		}
@@ -1125,8 +1124,8 @@ Axis.prototype = {
 			}
 
 			if (options.endOnTick) {
-				axis.max = max = roundedMax;
-			} else if (max < roundedMax) {
+				axis.max = roundedMax;
+			} else if (axis.max < roundedMax) {
 				tickPositions.pop();
 			}
 			
@@ -1388,7 +1387,7 @@ Axis.prototype = {
 			
 			
 		// For reuse in Axis.render
-		axis.hasData = hasData = (axis.series.length || (defined(axis.min) && defined(axis.max))) && tickPositions;
+		axis.hasData = hasData = axis.series.length && defined(axis.min) && defined(axis.max);
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 		// Create the axisGroup and gridGroup elements on first iteration

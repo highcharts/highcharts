@@ -23,6 +23,7 @@ PlotLineOrBand.prototype = {
 	render: function () {
 		var plotLine = this,
 			axis = plotLine.axis,
+			horiz = axis.horiz,
 			halfPointRange = (axis.pointRange || 0) / 2,
 			options = plotLine.options,
 			optionsLabel = options.label,
@@ -30,8 +31,8 @@ PlotLineOrBand.prototype = {
 			width = options.width,
 			to = options.to,
 			from = options.from,
+			isBand = defined(from) && defined(to),
 			value = options.value,
-			toPath, // bands only
 			dashStyle = options.dashStyle,
 			svgElem = plotLine.svgElem,
 			path = [],
@@ -64,7 +65,7 @@ PlotLineOrBand.prototype = {
 			if (dashStyle) {
 				attribs.dashstyle = dashStyle;
 			}
-		} else if (defined(from) && defined(to)) { // plot band
+		} else if (isBand) { // plot band
 			
 			// keep within plot area
 			from = mathMax(from, axis.min - halfPointRange);
@@ -118,13 +119,12 @@ PlotLineOrBand.prototype = {
 		// the plot band/line label
 		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
 			// apply defaults
-			var horiz = axis.horiz;
 			optionsLabel = merge({
-				align: horiz && toPath && 'center',
-				x: horiz ? !toPath && 4 : 10,
-				verticalAlign : !horiz && toPath && 'middle',
-				y: horiz ? toPath ? 16 : 10 : toPath ? 6 : -4,
-				rotation: horiz && !toPath && 90
+				align: horiz && isBand && 'center',
+				x: horiz ? !isBand && 4 : 10,
+				verticalAlign : !horiz && isBand && 'middle',
+				y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
+				rotation: horiz && !isBand && 90
 			}, optionsLabel);
 
 			// add the SVG element

@@ -1,6 +1,6 @@
 <?php
 $path = $_GET['path'];
-if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-]+$/', $path)) {
+if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input');
 }
 
@@ -77,7 +77,7 @@ function getResources() {
 						
 						$(li).addClass('hilighted');
 						$(contentDoc.body).animate({
-							scrollTop: $(li).offset().top - 50
+							scrollTop: $(li).offset().top - 70
 						},'slow');
 
 						contentDoc.currentLi = li;
@@ -95,11 +95,6 @@ function getResources() {
 						});
 						$('#next')[0].disabled = false;
 					}
-					
-					// the reload button
-					$('#reload').click(function() {
-						location.reload();
-					});
 					
 				}
 			});
@@ -128,9 +123,9 @@ function getResources() {
 			
 			<div style="text-align: center">
 				<button id="next" disabled="disabled">Next</button>
-				<button id="reload" style="margin-left: 1em">Reload</button>
+				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
-					href="../compare-svg/view.php?path=<?php echo $path ?>">Compare</a>
+					href="../compare-svg/view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
 					href="http://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>

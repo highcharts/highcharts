@@ -209,7 +209,7 @@ defaultOptions = {
 		borderWidth: 1,
 		borderColor: '#909090',
 		borderRadius: 5,
-		navigation: { // docs
+		navigation: {
 			// animation: true,
 			activeColor: '#3E576F',
 			// arrowSize: 12

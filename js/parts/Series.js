@@ -229,9 +229,24 @@ Point.prototype = {
 			obj,
 			key,
 			replacement,
+			repOptionKey,
 			parts,
 			prop,
-			i;
+			i,
+			cfg = { // docs: percentageDecimals, percentagePrefix, percentageSuffix, totalDecimals, totalPrefix, totalSuffix
+				y: 0, // 0: use 'value' for repOptionKey
+				open: 0,
+				high: 0,
+				low: 0,
+				close: 0,
+				percentage: 1, // 1: use the self name for repOptionKey
+				total: 1
+			};
+		
+		// Backwards compatibility to y naming in early Highstock
+		seriesTooltipOptions.valuePrefix = seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix;
+		seriesTooltipOptions.valueDecimals = seriesTooltipOptions.valueDecimals || seriesTooltipOptions.yDecimals;
+		seriesTooltipOptions.valueSuffix = seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix;
 
 		// loop over the variables defined on the form {series.name}, {point.y} etc
 		for (i in match) {
@@ -244,11 +259,11 @@ Point.prototype = {
 				prop = parts[2];
 				
 				// Add some preformatting
-				if (obj === point && (prop === 'y' || prop === 'open' || prop === 'high' || 
-						prop === 'low' || prop === 'close')) { 
-					replacement = (seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix || '') + 
-						numberFormat(point[prop], pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals, -1)) +
-						(seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix || '');
+				if (obj === point && cfg.hasOwnProperty(prop)) {
+					repOptionKey = cfg[prop] ? prop : 'value';
+					replacement = (seriesTooltipOptions[repOptionKey + 'Prefix'] || '') + 
+						numberFormat(point[prop], pick(seriesTooltipOptions[repOptionKey + 'Decimals'], -1)) +
+						(seriesTooltipOptions[repOptionKey + 'Suffix'] || '');
 				
 				// Automatic replacement
 				} else {
@@ -460,7 +475,7 @@ Point.prototype = {
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
-			if (state) {
+			if (state && markerStateOptions) {
 				if (!stateMarkerGraphic) {
 					radius = markerStateOptions.radius;
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
@@ -710,9 +725,11 @@ Series.prototype = {
 	 * Get the series' color
 	 */
 	getColor: function () {
-		var defaultColors = this.chart.options.colors,
+		var options = this.options,
+			defaultColors = this.chart.options.colors,
 			counters = this.chart.counters;
-		this.color = this.options.color || defaultColors[counters.color++] || '#0000ff';
+		this.color = options.color ||
+			(!options.colorByPoint && defaultColors[counters.color++]) || 'gray';
 		counters.wrapColor(defaultColors.length);
 	},
 	/**
@@ -1114,7 +1131,7 @@ Series.prototype = {
 			if (!hasGroupedData) {
 				if (data[cursor]) {
 					point = data[cursor];
-				} else {
+				} else if (dataOptions[cursor] !== UNDEFINED) { // #970
 					data[cursor] = point = (new pointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
 				points[i] = point;
@@ -1133,6 +1150,7 @@ Series.prototype = {
 				}
 				if (data[i]) {
 					data[i].destroyElements();
+					data[i].plotX = UNDEFINED; // #1003
 				}
 			}
 		}
@@ -1284,7 +1302,7 @@ Series.prototype = {
 			low = points[i - 1] ? high + 1 : 0;
 			// Now find the new high
 			high = points[i + 1] ?
-				(mathFloor((point[plotX] + (points[i + 1] ? points[i + 1][plotX] : axisLength)) / 2)) :
+				mathMax(0, mathFloor((point[plotX] + (points[i + 1] ? points[i + 1][plotX] : axisLength)) / 2)) :
 				axisLength;
 
 			while (low >= 0 && low <= high) {
@@ -1305,7 +1323,7 @@ Series.prototype = {
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
 			n;
 			
-		// Guess the best date format based on the closest point distance (#568) // docs
+		// Guess the best date format based on the closest point distance (#568)
 		if (isDateTime && !xDateFormat) {
 			for (n in timeUnits) {
 				if (timeUnits[n] >= xAxis.closestPointRange) {
@@ -1991,7 +2009,7 @@ Series.prototype = {
 			graph.animate({ d: graphPath });
 
 		} else {
-			if (lineWidth || options.states.hover.lineWidth) { // #940
+			if (lineWidth) {
 				attribs = {
 					stroke: color,
 					'stroke-width': lineWidth

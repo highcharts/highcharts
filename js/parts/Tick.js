@@ -26,12 +26,12 @@ Tick.prototype = {
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
+			tickPositions = axis.tickPositions,
 			width = (categories && horiz && categories.length &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
-				chart.plotWidth / categories.length) ||
+				chart.plotWidth / tickPositions.length) ||
 				(!horiz && chart.plotWidth / 2),
-			tickPositions = axis.tickPositions,
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
@@ -126,14 +126,13 @@ Tick.prototype = {
 	 * Handle the label overflow by adjusting the labels to the left and right edge, or
 	 * hide them if they collide into the neighbour label.
 	 */
-	handleOverflow: function (index) {
+	handleOverflow: function (index, xy) {
 		var show = true,
 			axis = this.axis,
 			chart = axis.chart,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
-			label = this.label,
-			x = label.x,
+			x = xy.x,
 			reversed = axis.reversed,
 			tickPositions = axis.tickPositions;
 
@@ -145,7 +144,7 @@ Tick.prototype = {
 				plotLeft = chart.plotLeft,
 				plotRight = plotLeft + axis.len,
 				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
-				neighbourEdge = neighbour && neighbour.label.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+				neighbourEdge = neighbour && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
@@ -176,7 +175,7 @@ Tick.prototype = {
 			}
 
 			// Set the modified x position of the label
-			label.x = x;
+			xy.x = x;
 		}
 		return show;
 	},
@@ -344,19 +343,15 @@ Tick.prototype = {
 
 		// the label is created on init - now move it into place
 		if (label && !isNaN(x)) {
-			xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
-
-			// Cache x and y to be able to read final position before animation
-			label.x = x;
-			label.y = y;
+			label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
 			// apply show first and show last
 			if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
 					(tick.isLast && !pick(options.showLastLabel, 1))) {
 				show = false;
 
-				// Handle label overflow and show or hide accordingly
-			} else if (!staggerLines && horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index)) {
+			// Handle label overflow and show or hide accordingly
+			} else if (!staggerLines && horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index, xy)) {
 				show = false;
 			}
 

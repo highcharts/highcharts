@@ -21,7 +21,7 @@ Legend.prototype = {
 	
 		var //style = options.style || {}, // deprecated
 			itemStyle = options.itemStyle,
-			padding = pick(options.padding, 8), // docs
+			padding = pick(options.padding, 8),
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
@@ -236,17 +236,22 @@ Legend.prototype = {
 					li.css(item.visible ? itemStyle : itemHiddenStyle);
 					item.setState();
 				})
-				.on('click', function () {
+				.on('click', function (event) {
 					var strLegendItemClick = 'legendItemClick',
 						fnLegendItemClick = function () {
 							item.setVisible();
 						};
+						
+					// Pass over the click/touch event. #4.
+					event = {
+						browserEvent: event
+					};
 
 					// click the name or symbol
 					if (item.firePointEvent) { // point
-						item.firePointEvent(strLegendItemClick, null, fnLegendItemClick);
+						item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
 					} else {
-						fireEvent(item, strLegendItemClick, null, fnLegendItemClick);
+						fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
 					}
 				});
 
@@ -354,10 +359,11 @@ Legend.prototype = {
 				.attr({ zIndex: 7 }) 
 				.add();
 			legend.contentGroup = renderer.g()
+				.attr({ zIndex: 1 }) // above background
 				.add(legendGroup);
 			legend.scrollGroup = renderer.g()
 				.add(legend.contentGroup);
-			legend.clipRect = renderer.clipRect(0, 0, chart.chartWidth, chart.chartHeight);
+			legend.clipRect = renderer.clipRect(0, 0, 9999, chart.chartHeight);
 			legend.contentGroup.clip(legend.clipRect);
 		}
 
@@ -482,6 +488,7 @@ Legend.prototype = {
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
 			spaceHeight = chart.spacingBox.height + (alignTop ? -optionsY : optionsY) - this.padding,
+			maxHeight = options.maxHeight, // docs
 			clipHeight,
 			clipRect = this.clipRect,
 			navOptions = options.navigation,
@@ -489,8 +496,12 @@ Legend.prototype = {
 			arrowSize = navOptions.arrowSize || 12,
 			nav = this.nav;
 			
+		// Adjust the height
 		if (options.layout === 'horizontal') {
 			spaceHeight /= 2;
+		}
+		if (maxHeight) {
+			spaceHeight = mathMin(spaceHeight, maxHeight);
 		}
 		
 		// Reset the legend height and adjust the clipping rectangle
@@ -507,7 +518,7 @@ Legend.prototype = {
 			
 			// Add navigation elements
 			if (!nav) {
-				this.nav = nav = renderer.g().add(this.group);
+				this.nav = nav = renderer.g().attr({ zIndex: 1 }).add(this.group);
 				this.up = renderer.symbol('triangle', 0, 0, arrowSize, arrowSize)
 					.on('click', function () {
 						legend.scroll(-1, animation);
@@ -537,7 +548,7 @@ Legend.prototype = {
 				translateY: 1
 			});
 		}
-	 
+		
 		return legendHeight;
 	},
 	

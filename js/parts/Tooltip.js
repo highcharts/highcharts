@@ -135,7 +135,7 @@ Tooltip.prototype = {
 	 * Extendable method to get the anchor position of the tooltip
 	 * from a point or set of points
 	 */
-	getAnchor: function (points) {
+	getAnchor: function (points, mouseEvent) {
 		var ret,
 			chart = this.chart,
 			inverted = chart.inverted,
@@ -159,7 +159,9 @@ Tooltip.prototype = {
 			
 			ret = [
 				inverted ? chart.plotWidth - plotY : plotX,
-				inverted ? chart.plotHeight - plotX : plotY
+				this.shared && !inverted && points.length > 1 && mouseEvent ? 
+					mouseEvent.chartY - chart.plotTop : // place shared tooltip next to the mouse (#424)
+					inverted ? chart.plotHeight - plotX : plotY
 			];
 		}
 
@@ -222,7 +224,7 @@ Tooltip.prototype = {
 	 * Refresh the tooltip's text and position.
 	 * @param {Object} point
 	 */
-	refresh: function (point) {
+	refresh: function (point, mouseEvent) {
 		var tooltip = this,
 			chart = tooltip.chart,
 			label = tooltip.label,
@@ -264,15 +266,17 @@ Tooltip.prototype = {
 			hoverPoints = chart.hoverPoints,
 			placedTooltipPoint,
 			borderColor,
-			crosshairsOptions = options.crosshairs;
+			crosshairsOptions = options.crosshairs,
+			shared = tooltip.shared,
+			currentSeries;
 			
 		// get the reference point coordinates (pie charts use tooltipPos)
-		anchor = tooltip.getAnchor(point);
+		anchor = tooltip.getAnchor(point, mouseEvent);
 		x = anchor[0];
 		y = anchor[1];
 
 		// shared tooltip, array is sent over
-		if (tooltip.shared && !(point.series && point.series.noSharedTooltip)) {
+		if (shared && !(point.series && point.series.noSharedTooltip)) {
 			
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -301,11 +305,11 @@ Tooltip.prototype = {
 		text = formatter.call(textConfig);
 
 		// register the current series
-		tooltip.currentSeries = point.series;
+		currentSeries = point.series;
 
 
 		// For line type series, hide tooltip if the point falls outside the plot
-		show = tooltip.shared || !tooltip.currentSeries.isCartesian || tooltip.currentSeries.tooltipOutsidePlot || chart.isInsidePlot(x, y);
+		show = shared || !currentSeries.isCartesian || currentSeries.tooltipOutsidePlot || chart.isInsidePlot(x, y);
 
 		// update the inner HTML
 		if (text === false || !show) {
@@ -323,12 +327,12 @@ Tooltip.prototype = {
 			});
 
 			// set the stroke color of the box
-			borderColor = options.borderColor || point.color || tooltip.currentSeries.color || '#606060';
+			borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
 			label.attr({
 				stroke: borderColor
 			});
 
-			placedTooltipPoint = (options.positioner || tooltip.getPosition).call( // docs
+			placedTooltipPoint = (options.positioner || tooltip.getPosition).call(
 				tooltip,
 				label.width,
 				label.height,

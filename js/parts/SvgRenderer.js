@@ -595,7 +595,7 @@ SVGElement.prototype = {
 				height = pick(wrapper.elemHeight, elem.offsetHeight);
 
 				// update textWidth
-				if (width > textWidth) {
+				if (width > textWidth && /[ \-]/.test(elem.innerText)) { // #983
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
@@ -754,14 +754,14 @@ SVGElement.prototype = {
 			rad = rotation * deg2rad;
 
 		// SVG elements
-		if (element.namespaceURI === SVG_NS) {
+		if (element.namespaceURI === SVG_NS || wrapper.renderer.forExport) {
 			try { // Fails in Firefox if the container has display: none.
 				
 				bBox = element.getBBox ?
 					// SVG: use extend because IE9 is not allowed to change width and height in case
 					// of rotation (below)
 					extend({}, element.getBBox()) :
-					// Canvas renderer: // TODO: can this be removed now that we're checking for the SVG NS?
+					// Canvas renderer and legacy IE in export mode
 					{
 						width: element.offsetWidth,
 						height: element.offsetHeight
@@ -974,7 +974,7 @@ SVGElement.prototype = {
 					'fill': NONE
 				});
 				if (cutOff) {
-					attr(shadow, 'height', attr(shadow, 'height') - strokeWidth);
+					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
 					shadow.cutHeight = strokeWidth;
 				}
 
@@ -1091,7 +1091,11 @@ SVGRenderer.prototype = {
 		}
 
 		// Remove sub pixel fix handler
-		removeEvent(win, 'resize', renderer.subPixelFix);
+		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
+		// See issue #982
+		if (renderer.subPixelFix) {
+			removeEvent(win, 'resize', renderer.subPixelFix);
+		}
 
 		renderer.alignedObjects = null;
 
@@ -2150,7 +2154,8 @@ SVGRenderer.prototype = {
 				x: x,
 				y: y
 			});
-			if (wrapper.symbolName) {
+			
+			if (defined(anchorX)) {
 				wrapper.attr({
 					anchorX: anchorX,
 					anchorY: anchorY

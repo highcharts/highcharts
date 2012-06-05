@@ -165,7 +165,7 @@ MouseTracker.prototype = {
 			}
 			// refresh the tooltip if necessary
 			if (points.length && (points[0].plotX !== mouseTracker.hoverX)) {
-				tooltip.refresh(points);
+				tooltip.refresh(points, e);
 				mouseTracker.hoverX = points[0].plotX;
 			}
 		}
@@ -198,9 +198,17 @@ MouseTracker.prototype = {
 			hoverPoint = chart.hoverPoint,
 			tooltipPoints = chart.hoverPoints || hoverPoint,
 			tooltip = chart.tooltip;
+			
+		// Narrow in allowMove
+		allowMove = allowMove && tooltip && tooltipPoints;
+			
+		// Check if the points have moved outside the plot area, #1003
+		if (allowMove && splat(tooltipPoints)[0].plotX === UNDEFINED) {
+			allowMove = false;
+		}	
 
 		// Just move the tooltip, #349
-		if (allowMove && tooltip && tooltipPoints) {
+		if (allowMove) {
 			tooltip.refresh(tooltipPoints);
 
 		// Full reset

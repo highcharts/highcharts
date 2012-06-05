@@ -18,7 +18,7 @@ elseif ($product == 'highstock') $dir = 'stock';
 					if (currentLi) {
 						var href = currentLi.getElementsByTagName("a")[0].href;
 					
-						href = href.replace("/samples/", "/compare-svg/");
+						href = href.replace("/samples/", "/compare-svg/") + '&continue=true';
 						window.parent.frames[1].location.href = href;
 					}
 				});
@@ -68,7 +68,33 @@ elseif ($product == 'highstock') $dir = 'stock';
 			li.different, li.different a {
 				background: red;
 				color: white;
-			}ß
+			}
+			
+			body {
+				margin: 0;
+			}
+			#top-nav {
+				color: white; 
+				font-family: Arial, sans-serif; 
+				padding: 0.5em; 
+				height: 3.5em;
+				background: #57544A;
+				background: -webkit-linear-gradient(top, #57544A, #37342A); 
+				background: -moz-linear-gradient(top, #57544A, #37342A);
+				box-shadow: 0px 0px 8px #888;
+				position: fixed;
+				top: 0;
+				width: 100%;
+			}
+			#top-nav a {
+				color: white;
+				font-weight: bold;
+				
+			}
+			#main-nav {
+				margin-top: 60px;
+				margin-left: 10px;
+			}
 			
 		</style>
 		
@@ -76,11 +102,13 @@ elseif ($product == 'highstock') $dir = 'stock';
 	</head>
 	<body>
 		
-	Product: <a href='?product=highcharts'>Highcharts</a> | <a href='?product=highstock'>Highstock</a>
-	<br/>
-	<button id="batch-compare">Batch compare</button>
-		<hr/>	
+	<div id="top-nav">
+		Product: <a href='?product=highcharts'>Highcharts</a> | <a href='?product=highstock'>Highstock</a>
+		<br/>
+		<button id="batch-compare">Batch compare</button>
+	</div>
 
+	<div id="main-nav">
 	<?php
 	if (isset($dir)) {
 		if ($handle = opendir(dirname(__FILE__). '/' . $dir)) {
@@ -97,7 +125,7 @@ elseif ($product == 'highstock') $dir = 'stock';
 					if ($innerHandle = opendir(dirname(__FILE__). '/' . $dir . '/'. $file)) {
 						while (false !== ($innerFile = readdir($innerHandle))) {
 							$next = $i + 1;
-							if (preg_match('/^[a-z0-9\-]+$/', $innerFile)) {
+							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
 								echo "
 								<li id='li$i'>$i. <a target='main' id='i$i' href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
 								";
@@ -115,5 +143,6 @@ elseif ($product == 'highstock') $dir = 'stock';
 		}
 	}
 ?>
+</div>
 </body>
 </html>
