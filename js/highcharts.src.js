@@ -6172,6 +6172,7 @@ Axis.prototype = {
 		axis.range = options.range;
 		axis.offset = options.offset || 0;
 	
+	
 		// Dictionary for stacks
 		axis.stacks = {};
 	

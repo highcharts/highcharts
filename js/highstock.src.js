@@ -6172,6 +6172,7 @@ Axis.prototype = {
 		axis.range = options.range;
 		axis.offset = options.offset || 0;
 	
+	
 		// Dictionary for stacks
 		axis.stacks = {};
 	
@@ -14883,7 +14884,6 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
-		groupedData = series.groupedData,
 		hasGroupedData;
 
 	// run base method
@@ -14894,12 +14894,8 @@ seriesProto.processData = function () {
 		return;
 		
 	} else {
-		// clear previous groups, #622, #740
-		each(groupedData || [], function (point, i) {
-			if (point) {
-				groupedData[i] = point.destroy ? point.destroy() : null;
-			}
-		});
+		series.destroyGroupedData();
+		
 	}
 	
 	var i,
@@ -14978,13 +14974,32 @@ seriesProto.processData = function () {
 	series.hasGroupedData = hasGroupedData;
 };
 
-seriesProto.generatePoints = function () {
-	var series = this;
+/**
+ * Destroy the grouped data points. #622, #740
+ */
+seriesProto.destroyGroupedData = function () {
+	
+	var groupedData = this.groupedData;
+	
+	// clear previous groups
+	each(groupedData || [], function (point, i) {
+		if (point) {
+			groupedData[i] = point.destroy ? point.destroy() : null;
+		}
+	});
+	this.groupedData = null;	
+};
 
-	baseGeneratePoints.apply(series);
+/**
+ * Override the generatePoints method by adding a reference to grouped data
+ */
+seriesProto.generatePoints = function () {
+	
+	baseGeneratePoints.apply(this);
 
 	// record grouped data in order to let it be destroyed the next time processData runs
-	series.groupedData = series.hasGroupedData ? series.points : null;
+	this.destroyGroupedData(); // #622
+	this.groupedData = this.hasGroupedData ? this.points : null;
 };
 
 /**
