@@ -266,7 +266,8 @@
 						fakeSeries = {
 							xAxis: fakeAxis,
 							xData: series.xData,
-							chart: chart
+							chart: chart,
+							destroyGroupedData: noop
 						};
 						fakeSeries.options = {
 							dataGrouping : grouping ? {

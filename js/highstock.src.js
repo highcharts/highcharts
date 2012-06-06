@@ -17604,7 +17604,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						fakeSeries = {
 							xAxis: fakeAxis,
 							xData: series.xData,
-							chart: chart
+							chart: chart,
+							destroyGroupedData: noop
 						};
 						fakeSeries.options = {
 							dataGrouping : grouping ? {
