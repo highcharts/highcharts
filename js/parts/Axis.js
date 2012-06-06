@@ -290,7 +290,7 @@ Axis.prototype = {
 		//axis.oldUserMin = UNDEFINED;
 		//axis.oldUserMax = UNDEFINED;
 		//axis.oldAxisLength = UNDEFINED;
-		axis.minRange = options.minRange || options.maxZoom;
+		axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
 		axis.range = options.range;
 		axis.offset = options.offset || 0;
 	

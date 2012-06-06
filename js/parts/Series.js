@@ -970,7 +970,7 @@ Series.prototype = {
 
 		// reset minRange (#878)
 		if (xAxis) {
-			xAxis.minRange = UNDEFINED;
+			xAxis.minRange = xAxis.userMinRange;
 		}
 
 		// redraw

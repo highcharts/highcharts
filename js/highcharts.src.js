@@ -6168,10 +6168,9 @@ Axis.prototype = {
 		//axis.oldUserMin = UNDEFINED;
 		//axis.oldUserMax = UNDEFINED;
 		//axis.oldAxisLength = UNDEFINED;
-		axis.minRange = options.minRange || options.maxZoom;
+		axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
 		axis.range = options.range;
 		axis.offset = options.offset || 0;
-	
 	
 		// Dictionary for stacks
 		axis.stacks = {};
@@ -11787,7 +11786,7 @@ Series.prototype = {
 
 		// reset minRange (#878)
 		if (xAxis) {
-			xAxis.minRange = UNDEFINED;
+			xAxis.minRange = xAxis.userMinRange;
 		}
 
 		// redraw
