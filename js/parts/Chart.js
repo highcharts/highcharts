@@ -1347,7 +1347,7 @@ Chart.prototype = {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(chart.firstRender, options.global.canvasToolsURL);
+				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
 			} else {
 				doc.attachEvent(ONREADYSTATECHANGE, function () {
 					doc.detachEvent(ONREADYSTATECHANGE, chart.firstRender);
