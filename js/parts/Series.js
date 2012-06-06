@@ -2053,14 +2053,11 @@ Series.prototype = {
 	/**
 	 * Create the series group
 	 */
-	createGroup: function (doClip) {
+	createGroup: function () {
 		
 		var chart = this.chart,
 			group = this.group = chart.renderer.g('series');
 
-		if (doClip) {
-			group.clip(this.clipRect);
-		}
 		group.attr({
 				visibility: this.visible ? VISIBLE : HIDDEN,
 				zIndex: this.options.zIndex
@@ -2105,20 +2102,10 @@ Series.prototype = {
 		
 
 		// the group
-		series.createGroup(doClip);
-		if (!series.group) {
-			group = series.group = renderer.g('series');
-
-			group.attr({
-					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: options.zIndex
-				})
-				.translate(series.xAxis.left, series.yAxis.top)
-				.add(chart.seriesGroup);
-		} else {
-			group = series.group;
-		}
-
+		series.createGroup();
+		group = series.group;
+		
+		
 		series.drawDataLabels();
 
 		// initiate the animation
