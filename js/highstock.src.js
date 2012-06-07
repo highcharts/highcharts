@@ -8016,7 +8016,8 @@ Tooltip.prototype = {
 			});
 
 			textConfig = {
-				x: point[0].category
+				x: point[0].category,
+				y: point[0].y
 			};
 			textConfig.points = pointConfig;
 			point = point[0];
@@ -10677,7 +10678,7 @@ Chart.prototype = {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(chart.firstRender, options.global.canvasToolsURL);
+				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
 			} else {
 				doc.attachEvent(ONREADYSTATECHANGE, function () {
 					doc.detachEvent(ONREADYSTATECHANGE, chart.firstRender);
