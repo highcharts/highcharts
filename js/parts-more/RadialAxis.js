@@ -367,7 +367,7 @@ axisProto.init = (function (func) {
 			isCircular,
 			options,
 			pane,
-			paneOptions = chart.options.pane;
+			paneOptions;
 			
 		// Before prototype.init
 		if (angular) {
@@ -389,9 +389,13 @@ axisProto.init = (function (func) {
 		func.apply(this, arguments);
 		
 		// Set the pane options. This can later be extended and adopted by basic Highcharts and Highstock
-		this.pane = pane = paneOptions ?
-			Highcharts.splat(paneOptions)[userOptions.pane || 0] : 
-			{};
+		paneOptions = merge({
+			center: ['50%', '50%'],
+			size: '90%',
+			startAngle: 0,
+			endAngle: 360
+		}, chart.options.pane);
+		this.pane = pane = Highcharts.splat(paneOptions)[userOptions.pane || 0];
 		options = this.options;
 		
 		// All pane options override the axis options
@@ -399,6 +403,11 @@ axisProto.init = (function (func) {
 		
 		// After prototype.init
 		if (angular || polar) {
+			
+			// Disable certain features on angular and polar axes
+			chart.inverted = false;
+			chart.options.chart.zoomType = null;
+			
 			// Start and end angle options are
 			// given in degrees relative to top, while internal computations are
 			// in radians relative to right (like SVG).

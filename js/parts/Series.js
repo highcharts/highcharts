@@ -891,7 +891,7 @@ Series.prototype = {
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = /*(xAxis && xAxis.categories && 1) || */options.pointRange;
+		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
 
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -1268,8 +1268,8 @@ Series.prototype = {
 			low,
 			high,
 			xAxis = series.xAxis,
-			axisLength = xAxis.tooltipLen || xAxis.len, // tooltipLen and tooltipPosName used in polar
-			plotX = xAxis.tooltipPosName || 'plotX',
+			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
+			plotX = (xAxis && xAxis.tooltipPosName) || 'plotX',
 			point,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
