@@ -13,11 +13,6 @@
  * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
  *   backwards translate.
  * - Shared tooltip
- * - Test chart.polar in combination with all options on axes and series and others. Run entire API suite with chart.polar.
- * - Testing against samples
- *   - reversed axes
- *   - Y axis name covers labels
- *   - demo/spline-plot-bands: Bands on Y axis are misplaced.
  */
 
 var seriesProto = Series.prototype,

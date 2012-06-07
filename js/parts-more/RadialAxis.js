@@ -73,8 +73,9 @@ var radialAxisMixin = {
 		plotBands: [],
 		showLastLabel: false,
 		title: {
-			x: -4,
-			text: null
+			x: 4,
+			text: null,
+			rotation: 90
 		}
 	},
 	
@@ -197,7 +198,8 @@ var radialAxisMixin = {
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPadding;
+				this.minPixelPadding = this.transA * this.minPadding +
+					(this.reversed ? Math.PI / 10 : 0); // ???
 			}
 		}
 	},
@@ -246,7 +248,7 @@ var radialAxisMixin = {
 		return {
 			x: chart.plotLeft + center[0] + Math.cos(angle) * radius,
 			y: chart.plotTop + center[1] + Math.sin(angle) * radius
-		};
+		}; 
 		
 	},
 	
@@ -265,8 +267,15 @@ var radialAxisMixin = {
 			percentRegex = /%$/,
 			start,
 			end,
-			open;
+			open,
+			isCircular = this.isCircular; // X axis in a polar chart
 			
+		// Plot bands on Y axis (radial axis) - inner and outer radius depend on to and from
+		if (!isCircular) {
+			radii[0] = this.translate(from);
+			radii[1] = this.translate(to);
+		}
+		
 		// Convert percentages to pixel values
 		radii = map(radii, function (radius) {
 			if (percentRegex.test(radius)) {
@@ -276,7 +285,7 @@ var radialAxisMixin = {
 		});
 		
 		// Handle full circle
-		if (options.shape === 'circle') {
+		if (options.shape === 'circle' || !isCircular) {
 			start = -Math.PI / 2;
 			end = Math.PI * 1.5;
 			open = true;
@@ -296,7 +305,7 @@ var radialAxisMixin = {
 				innerR: pick(radii[1], radii[0] - radii[2]),
 				open: open
 			}
-		);		
+		);
 	},
 	
 	/**
