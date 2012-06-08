@@ -3377,7 +3377,7 @@ SVGRenderer.prototype = {
 				});
 
 			if (imageSize) {
-				centerImage(obj, imageSize);
+				setTimeout(function () { centerImage(obj, imageSize); }, 0);
 			} else {
 				// initialize image to be 0 size so export will still function if there's no cached sizes
 				obj.attr({ width: 0, height: 0 });
@@ -3387,7 +3387,7 @@ SVGRenderer.prototype = {
 					onload: function () {
 						var img = this;
 
-						centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]);
+						setTimeout(function () { centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]); }, 0);
 					},
 					src: imageSrc
 				});
