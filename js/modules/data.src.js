@@ -24,7 +24,9 @@
 		var col = columns.length, 
 			row,
 			val,
-			floatVal;
+			floatVal,
+			trimVal,
+			dateVal;
 			
 		while (col--) {
 			row = columns[col].length;
@@ -34,10 +36,18 @@
 				trimVal = trim(val);
 				if (trimVal == floatVal) { // is numeric
 					columns[col][row] = floatVal;
-					columns[col].isNumeric = true;
+					columns[col].isNumeric = true;					
 				
-				} else { // string
-					columns[col][row] = trimVal;
+				} else { // string, continue to determine if it is a date string or really a string
+					dateVal = Date.parse(val);
+					
+					if (typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
+						columns[col][row] = dateVal;
+						columns[col].isDatetime = true;
+					
+					} else { // string
+						columns[col][row] = trimVal;
+					}
 				}
 				
 			}
@@ -85,7 +95,8 @@
     	// into a Highcharts options object.
     	if (options.complete) {
     		var categories,
-    			firstCol;
+    			firstCol,
+    			type;
             
             // Use first column for X data or categories?
             if (columns.length > 1) {
@@ -95,9 +106,13 @@
 	        	}
 	            
 	            // Use the first column for categories or X values
-	            hasXData = firstCol.isNumeric;
+	            hasXData = firstCol.isNumeric || firstCol.isDatetime;
 	            if (!hasXData) { // means type is neither datetime nor linear
 	            	categories = firstCol;
+	            }
+	            
+	            if (firstCol.isDatetime) {
+	            	type = 'datetime';
 	            }
 	        }
             
@@ -126,7 +141,8 @@
             
             options.complete({
                 xAxis: {
-                    categories: categories
+                    categories: categories,
+                    type: type
                 },
                 series: series
             });
