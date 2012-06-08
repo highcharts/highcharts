@@ -11780,6 +11780,7 @@ Series.prototype = {
 				xData[i] = pt.x;
 				yData[i] = pointProto.toYData ? pointProto.toYData.apply(pt) : pt.y;
 			}
+			series.xIncrement = null; // reset
 		}
 
 		series.data = [];
@@ -12069,7 +12070,7 @@ Series.prototype = {
 			point.plotY = (typeof yValue === 'number') ? 
 				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				UNDEFINED;
-
+			
 			// set client related positions for mouse tracking
 			point.clientX = chart.inverted ?
 				chart.plotHeight - point.plotX :
@@ -13494,35 +13495,39 @@ var SplineSeries = extendClass(Series, {
 
 		}
 		
-		// Visualize control points
-		this.chart.renderer.circle(leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop, 2)
-			.attr({
-				stroke: 'red',
-				'stroke-width': 1,
-				fill: 'none'
-			})
-			.add();
-		this.chart.renderer.path(['M', leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop,
-			'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-			.attr({
-				stroke: 'red',
-				'stroke-width': 1
-			})
-			.add();
-		this.chart.renderer.circle(rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop, 2)
-			.attr({
-				stroke: 'green',
-				'stroke-width': 1,
-				fill: 'none'
-			})
-			.add();
-		this.chart.renderer.path(['M', rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop,
-			'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-			.attr({
-				stroke: 'green',
-				'stroke-width': 1
-			})
-			.add();
+		// Visualize control points for debugging
+		/*
+		if (leftContX) {
+			this.chart.renderer.circle(leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop, 2)
+				.attr({
+					stroke: 'red',
+					'stroke-width': 1,
+					fill: 'none'
+				})
+				.add();
+			this.chart.renderer.path(['M', leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop,
+				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+				.attr({
+					stroke: 'red',
+					'stroke-width': 1
+				})
+				.add();
+			this.chart.renderer.circle(rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop, 2)
+				.attr({
+					stroke: 'green',
+					'stroke-width': 1,
+					fill: 'none'
+				})
+				.add();
+			this.chart.renderer.path(['M', rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop,
+				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+				.attr({
+					stroke: 'green',
+					'stroke-width': 1
+				})
+				.add();
+		}
+		// */
 
 		// moveTo or lineTo
 		if (!i) {
@@ -13736,8 +13741,7 @@ var ColumnSeries = extendClass(Series, {
 
 	},
 
-	getSymbol: function () {
-	},
+	getSymbol: noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
@@ -13748,7 +13752,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: function () {},
+	drawGraph: noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates

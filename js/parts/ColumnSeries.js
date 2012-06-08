@@ -171,8 +171,7 @@ var ColumnSeries = extendClass(Series, {
 
 	},
 
-	getSymbol: function () {
-	},
+	getSymbol: noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
@@ -183,7 +182,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: function () {},
+	drawGraph: noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates

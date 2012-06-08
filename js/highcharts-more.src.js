@@ -21,6 +21,7 @@ var each = Highcharts.each,
 	pInt = Highcharts.pInt,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
+	extendClass = Highcharts.extendClass,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
 	Series = Highcharts.Series,
@@ -562,12 +563,8 @@ tickProto.getMarkPath = (function (func) {
 }(tickProto.getMarkPath));/* 
  * The AreaRangeSeries class
  * 
- * http://jsfiddle.net/highcharts/DFANM/
+ * http://jsfiddle.net/highcharts/fRBFH/
  * 
- * TODO:
- * - Check out inverted
- * - Disable stateMarker (or concatenize paths for the markers?)
- * - Test series.data point config formats
  */
 
 /**
@@ -575,6 +572,7 @@ tickProto.getMarkPath = (function (func) {
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	lineWidth: 0,
+	marker: null,
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.low} - {point.high}' 
@@ -613,7 +611,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 			
 		} else if (options.length) { // array
 			// with leading x value
-			if (options.length === 3) {
+			if (options.length > 2) {
 				if (typeof options[0] === 'string') {
 					point.name = options[0];
 				} else if (typeof options[0] === 'number') {
@@ -636,6 +634,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 		if (point.x === UNDEFINED && series) {
 			point.x = series.autoIncrement();
 		}
+		
 		return point;
 	},
 	
@@ -764,7 +763,66 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	
 	},
 	
+	getSymbol: seriesTypes.column.prototype.getSymbol,
+	
 	drawPoints: noop
+});/**
+ * The AreaSplineRangeSeries class
+ */
+
+defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
+
+/**
+ * AreaSplineRangeSeries object
+ */
+seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
+	type: 'areasplinerange',
+	getPointSpline: seriesTypes.spline.prototype.getPointSpline
+});/**
+ * The AreaSplineRangeSeries class
+ */
+
+var colProto = seriesTypes.column.prototype;
+
+defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+	lineWidth: 1,
+	pointRange: null
+});
+
+/**
+ * AreaSplineRangeSeries object
+ */
+seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
+	type: 'columnrange',
+	/**
+	 * Translate data points from raw values x and y to plotX and plotY
+	 */
+	translate: function () {
+		var series = this,
+			yAxis = series.yAxis,
+			plotHigh;
+
+		colProto.translate.apply(series);
+
+		// Set plotLow and plotHigh
+		each(series.points, function (point) {
+			var shapeArgs = point.shapeArgs;
+			
+			point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
+			point.plotLow = point.plotY;
+			
+			// adjust shape
+			shapeArgs.y = plotHigh;
+			shapeArgs.height = point.plotY - plotHigh;
+			
+			point.trackerArgs = shapeArgs;
+		});
+	},
+	drawGraph: noop,
+	pointAttrToOptions: colProto.pointAttrToOptions,
+	drawPoints: colProto.drawPoints,
+	drawTracker: colProto.drawTracker,
+	animate: colProto.animate
 });/* 
  * The GaugeSeries class
  * 

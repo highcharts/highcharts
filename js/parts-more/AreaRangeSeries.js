@@ -1,12 +1,8 @@
 /* 
  * The AreaRangeSeries class
  * 
- * http://jsfiddle.net/highcharts/DFANM/
+ * http://jsfiddle.net/highcharts/fRBFH/
  * 
- * TODO:
- * - Check out inverted
- * - Disable stateMarker (or concatenize paths for the markers?)
- * - Test series.data point config formats
  */
 
 /**
@@ -14,6 +10,7 @@
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	lineWidth: 0,
+	marker: null,
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.low} - {point.high}' 
@@ -52,7 +49,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 			
 		} else if (options.length) { // array
 			// with leading x value
-			if (options.length === 3) {
+			if (options.length > 2) {
 				if (typeof options[0] === 'string') {
 					point.name = options[0];
 				} else if (typeof options[0] === 'number') {
@@ -75,6 +72,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 		if (point.x === UNDEFINED && series) {
 			point.x = series.autoIncrement();
 		}
+		
 		return point;
 	},
 	
@@ -202,6 +200,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		uberMethod.apply(this, arguments);
 	
 	},
+	
+	getSymbol: seriesTypes.column.prototype.getSymbol,
 	
 	drawPoints: noop
 });

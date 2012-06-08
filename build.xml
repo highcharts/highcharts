@@ -159,6 +159,8 @@
             <file name="Globals.js"/>
             <file name="RadialAxis.js"/>
             <file name="AreaRangeSeries.js"/>
+            <file name="AreaSplineRangeSeries.js"/>
+            <file name="ColumnRangeSeries.js"/>
             <file name="GaugeSeries.js"/>
             <file name="Polar.js"/>
             <file name="Outro.js"/>
