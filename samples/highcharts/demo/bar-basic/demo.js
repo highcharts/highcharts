@@ -23,6 +23,9 @@ $(function () {
                 title: {
                     text: 'Population (millions)',
                     align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
                 }
             },
             tooltip: {
