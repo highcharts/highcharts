@@ -1740,15 +1740,14 @@ Axis.prototype = {
 	 * Update the axis title by options
 	 */
 	setTitle: function (newTitleOptions, redraw) {
-		var axis = this,
-			chart = axis.chart,
-			options = axis.options,
-			axisTitle;
+		var chart = this.chart,
+			options = this.options,
+			axisTitle = this.axisTitle;
 
 		options.title = merge(options.title, newTitleOptions);
 
-		axis.axisTitle = axisTitle && axisTitle.destroy(); // #922
-		axis.isDirty = true;
+		this.axisTitle = axisTitle && axisTitle.destroy(); // #922
+		this.isDirty = true;
 
 		if (pick(redraw, true)) {
 			chart.redraw();
