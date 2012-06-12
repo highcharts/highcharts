@@ -308,6 +308,9 @@ var VMLElement = {
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
 						wrapper[key] = value;
+						// Correction for the 1x1 size of the shape container. Used in gauge needles.
+						element.style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
+						element.style.top = mathRound(mathCos(value * deg2rad)) + PX;
 
 					// translation for animation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {

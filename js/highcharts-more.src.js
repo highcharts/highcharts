@@ -133,7 +133,8 @@ var radialAxisMixin = {
 		
 		var axis = this,
 			options,
-			backgroundOption;
+			backgroundOption,
+			backgroundColor;
 		
 		axis.options = options = merge(
 			axis.defaultOptions,
@@ -148,9 +149,12 @@ var radialAxisMixin = {
 		backgroundOption = options.background;
 		if (backgroundOption) {
 			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+				backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
 				config = merge(axis.defaultBackgroundOptions, config);
+				if (backgroundColor) {
+					config.backgroundColor = backgroundColor;
+				}
 				config.color = config.backgroundColor; // due to naming in plotBands
-				
 				options.plotBands.unshift(config);
 			});
 		}
@@ -457,7 +461,6 @@ axisProto.init = (function (func) {
 			if (isCircular && userOptions.max === UNDEFINED) {
 				this.autoConnect = true;
 			}
-			
 		}
 		
 		
@@ -779,7 +782,7 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 	type: 'areasplinerange',
 	getPointSpline: seriesTypes.spline.prototype.getPointSpline
 });/**
- * The AreaSplineRangeSeries class
+ * The ColumnRangeSeries class
  */
 
 var colProto = seriesTypes.column.prototype;
@@ -790,7 +793,7 @@ defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOpt
 });
 
 /**
- * AreaSplineRangeSeries object
+ * ColumnRangeSeries object
  */
 seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 	type: 'columnrange',
@@ -830,12 +833,9 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
  * Clock:       http://jsfiddle.net/highcharts/BFN2F/
  * 
  * TODO:
- * - Radial gradients.
- *	 - Fix issue with linearGradient being present from merging background options
- *	 - Experiment more with pattern in VML
- * - Size to the actual space given, for example by vu-meters
- * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
- * - Missing axis line in IE, dual axes example
+ * - Finalize radial gradients in VMLRenderer
+ * - lineWidth option not taking effect in dual axis example
+ * - Fix dual axis, work around hasData test
  */
 
 
@@ -980,7 +980,8 @@ var GaugeSeries = {
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
-						fill: dialOptions.backgroundColor || 'black'
+						fill: dialOptions.backgroundColor || 'black',
+						rotation: shapeArgs.rotation // required by VML when animation is false
 					})
 					.add(series.group);
 			}

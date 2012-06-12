@@ -4345,6 +4345,9 @@ var VMLElement = {
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
 						wrapper[key] = value;
+						// Correction for the 1x1 size of the shape container. Used in gauge needles.
+						element.style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
+						element.style.top = mathRound(mathCos(value * deg2rad)) + PX;
 
 					// translation for animation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
@@ -6159,7 +6162,7 @@ Axis.prototype = {
 		//axis.oldUserMin = UNDEFINED;
 		//axis.oldUserMax = UNDEFINED;
 		//axis.oldAxisLength = UNDEFINED;
-		axis.minRange = options.minRange || options.maxZoom;
+		axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
 		axis.range = options.range;
 		axis.offset = options.offset || 0;
 	
@@ -6385,6 +6388,12 @@ Axis.prototype = {
 								y = series.modifyValue(y);
 							}
 
+							// get the smallest distance between points
+							/*if (i) {
+								distance = mathAbs(xData[i] - xData[i - 1]);
+								pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
+							}*/
+
 							// for points within the visible range, including the first point outside the
 							// visible range, consider y extremes
 							if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
@@ -6402,6 +6411,12 @@ Axis.prototype = {
 							}
 						}
 					}
+
+					// record the least unit distance
+					/*if (findPointRange) {
+						series.pointRange = pointRange || 1;
+					}
+					series.closestPointRange = pointRange;*/
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If the length of activeYData is 0, continue with null values.
@@ -6429,7 +6444,7 @@ Axis.prototype = {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacemenBetween) {
+	translate: function (val, backwards, cvsCoord, old, handleLog) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -6466,8 +6481,7 @@ Axis.prototype = {
 				val = axis.val2lin(val);
 			}
 
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding) + 
-				(pointPlacemenBetween ? localA * axis.pointRange / 2 : 0);
+			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
 		}
 
 		return returnValue;
@@ -6788,7 +6802,6 @@ Axis.prototype = {
 		var axis = this,
 			range = axis.max - axis.min,
 			pointRange = 0,
-			minPadding = 0,
 			closestPointRange,
 			seriesClosestPointRange,
 			transA = axis.transA;
@@ -6800,21 +6813,7 @@ Axis.prototype = {
 			} else {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
-					
-					
-					// minPadding is the value padding to the left of the axis in order to make
-					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between', this padding does not apply.
-					minPadding = mathMax(
-						minPadding, 
-						series.options.pointPlacement === 'between' ?
-							0 :
-							series.pointRange / 2
-					);
-						
-					// Set the closestPointRange
 					seriesClosestPointRange = series.closestPointRange;
-					
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
 							mathMin(closestPointRange, seriesClosestPointRange) :
@@ -6822,9 +6821,6 @@ Axis.prototype = {
 					}
 				});
 			}
-			
-			// record minPadding
-			axis.minPadding = minPadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = pointRange;
@@ -6833,14 +6829,13 @@ Axis.prototype = {
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
 			// is some other value
 			axis.closestPointRange = closestPointRange;
-			
 		}
 
 		// secondary values
 		axis.oldTransA = transA;
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPadding)) || 1);
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRange) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
-		axis.minPixelPadding = transA * minPadding;
+		axis.minPixelPadding = transA * (pointRange / 2);
 	},
 
 	/**
@@ -7617,15 +7612,14 @@ Axis.prototype = {
 	 * Update the axis title by options
 	 */
 	setTitle: function (newTitleOptions, redraw) {
-		var axis = this,
-			chart = axis.chart,
-			options = axis.options,
-			axisTitle;
+		var chart = this.chart,
+			options = this.options,
+			axisTitle = this.axisTitle;
 
 		options.title = merge(options.title, newTitleOptions);
 
-		axis.axisTitle = axisTitle && axisTitle.destroy(); // #922
-		axis.isDirty = true;
+		this.axisTitle = axisTitle && axisTitle.destroy(); // #922
+		this.isDirty = true;
 
 		if (pick(redraw, true)) {
 			chart.redraw();

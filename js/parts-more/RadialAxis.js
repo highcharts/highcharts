@@ -106,7 +106,8 @@ var radialAxisMixin = {
 		
 		var axis = this,
 			options,
-			backgroundOption;
+			backgroundOption,
+			backgroundColor;
 		
 		axis.options = options = merge(
 			axis.defaultOptions,
@@ -121,9 +122,12 @@ var radialAxisMixin = {
 		backgroundOption = options.background;
 		if (backgroundOption) {
 			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+				backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
 				config = merge(axis.defaultBackgroundOptions, config);
+				if (backgroundColor) {
+					config.backgroundColor = backgroundColor;
+				}
 				config.color = config.backgroundColor; // due to naming in plotBands
-				
 				options.plotBands.unshift(config);
 			});
 		}
@@ -430,7 +434,6 @@ axisProto.init = (function (func) {
 			if (isCircular && userOptions.max === UNDEFINED) {
 				this.autoConnect = true;
 			}
-			
 		}
 		
 		

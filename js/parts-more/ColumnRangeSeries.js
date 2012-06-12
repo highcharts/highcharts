@@ -1,5 +1,5 @@
 /**
- * The AreaSplineRangeSeries class
+ * The ColumnRangeSeries class
  */
 
 var colProto = seriesTypes.column.prototype;
@@ -10,7 +10,7 @@ defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOpt
 });
 
 /**
- * AreaSplineRangeSeries object
+ * ColumnRangeSeries object
  */
 seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 	type: 'columnrange',

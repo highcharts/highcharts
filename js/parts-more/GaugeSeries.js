@@ -5,12 +5,9 @@
  * Clock:       http://jsfiddle.net/highcharts/BFN2F/
  * 
  * TODO:
- * - Radial gradients.
- *	 - Fix issue with linearGradient being present from merging background options
- *	 - Experiment more with pattern in VML
- * - Size to the actual space given, for example by vu-meters
- * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
- * - Missing axis line in IE, dual axes example
+ * - Finalize radial gradients in VMLRenderer
+ * - lineWidth option not taking effect in dual axis example
+ * - Fix dual axis, work around hasData test
  */
 
 
@@ -155,7 +152,8 @@ var GaugeSeries = {
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
-						fill: dialOptions.backgroundColor || 'black'
+						fill: dialOptions.backgroundColor || 'black',
+						rotation: shapeArgs.rotation // required by VML when animation is false
 					})
 					.add(series.group);
 			}
