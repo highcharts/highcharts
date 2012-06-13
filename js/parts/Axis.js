@@ -400,6 +400,8 @@ Axis.prototype = {
 			posStack = [],
 			negStack = [],
 			i;
+		
+		axis.hasVisibleSeries = false;
 
 		// reset dataMin and dataMax in case we're redrawing
 		axis.dataMin = axis.dataMax = null;
@@ -424,6 +426,8 @@ Axis.prototype = {
 					yDataLength,
 					activeYData = [],
 					activeCounter = 0;
+					
+				axis.hasVisibleSeries = true;	
 					
 				// Validate threshold in logarithmic axes
 				if (axis.isLog && threshold <= 0) {
@@ -566,6 +570,7 @@ Axis.prototype = {
 				}
 			}
 		});
+		
 	},
 
 	/**
@@ -1379,9 +1384,10 @@ Axis.prototype = {
 			
 			
 		// For reuse in Axis.render
-		axis.hasData = hasData = axis.series.length && defined(axis.min) && defined(axis.max);
+		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
-
+		
+		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.axisGroup = renderer.g('axis')
@@ -1678,7 +1684,6 @@ Axis.prototype = {
 
 			// show or hide the line depending on options.showEmpty
 			axis.axisLine[showAxis ? 'show' : 'hide']();
-
 		}
 
 		if (axisTitle && showAxis) {

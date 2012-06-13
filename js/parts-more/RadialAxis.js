@@ -6,6 +6,7 @@ var axisProto = Axis.prototype,
  * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges
  */
 var hiddenAxisMixin = {
+	getOffset: noop,
 	redraw: function () {
 		this.isDirty = false; // prevent setting Y axis dirty
 	},
@@ -149,14 +150,13 @@ var radialAxisMixin = {
 	},
 
 	/**
-	 * Get the path for the axis line. This method is borrowed by the angularAxisMixin's getPlotLinePath
+	 * Get the path for the axis line. This method is also referenced in the getPlotLinePath
 	 * method.
 	 */
-	getLinePath: function (radius) {
+	getLinePath: function (lineWidth, radius) {
 		var center = this.center;
 		
 		radius = pick(radius, center[2] / 2 - this.offset);
-		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
 			this.top + center[1],
@@ -331,7 +331,7 @@ var radialAxisMixin = {
 		
 		// Concentric circles			
 		} else if (axis.options.gridLineInterpolation === 'circle') {
-			ret = axis.getLinePath(axis.translate(value));
+			ret = axis.getLinePath(0, axis.translate(value));
 		
 		// Concentric polygons 
 		} else {
