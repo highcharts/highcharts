@@ -6,8 +6,7 @@
  * 
  * TODO:
  * - Finalize radial gradients in VMLRenderer
- * - lineWidth option not taking effect in dual axis example in IE8
- * - The background should be on the pane object?
+ * - Should the background be on the pane object?
  */
 
 

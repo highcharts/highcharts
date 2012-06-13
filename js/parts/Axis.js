@@ -577,7 +577,7 @@ Axis.prototype = {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog) {
+	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacementBetween) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -614,7 +614,8 @@ Axis.prototype = {
 				val = axis.val2lin(val);
 			}
 
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
+			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding) +
+				(pointPlacementBetween ? localA * axis.pointRange / 2 : 0);
 		}
 
 		return returnValue;
@@ -937,6 +938,7 @@ Axis.prototype = {
 			pointRange = 0,
 			closestPointRange,
 			seriesClosestPointRange,
+			minPointOffset = 0,
 			transA = axis.transA;
 
 		// adjust translation for padding
@@ -946,6 +948,18 @@ Axis.prototype = {
 			} else {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
+					
+					// minPointOffset is the value padding to the left of the axis in order to make
+					// room for points with a pointRange, typically columns. When the pointPlacement option
+					// is 'between', this padding does not apply.
+					minPointOffset = mathMax(
+						minPointOffset, 
+						series.options.pointPlacement === 'between' ?
+							0 :
+							series.pointRange / 2
+					);
+
+					// Set the closestPointRange
 					seriesClosestPointRange = series.closestPointRange;
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
@@ -954,6 +968,9 @@ Axis.prototype = {
 					}
 				});
 			}
+			
+			// Record minPointOffse
+			axis.minPointOffset = minPointOffset;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = pointRange;
@@ -966,9 +983,9 @@ Axis.prototype = {
 
 		// secondary values
 		axis.oldTransA = transA;
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRange) || 1);
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
-		axis.minPixelPadding = transA * (pointRange / 2);
+		axis.minPixelPadding = transA * minPointOffset;
 	},
 
 	/**

@@ -184,6 +184,7 @@ var radialAxisMixin = {
 		var center = this.center;
 		
 		radius = pick(radius, center[2] / 2 - this.offset);
+		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
 			this.top + center[1],
@@ -229,7 +230,7 @@ var radialAxisMixin = {
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPadding +
+				this.minPixelPadding = this.transA * this.minPointOffset +
 					(this.reversed ? Math.PI / 10 : 0); // ???
 			}
 		}
@@ -834,8 +835,7 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
  * 
  * TODO:
  * - Finalize radial gradients in VMLRenderer
- * - lineWidth option not taking effect in dual axis example in IE8
- * - The background should be on the pane object?
+ * - Should the background be on the pane object?
  */
 
 
