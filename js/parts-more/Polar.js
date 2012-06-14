@@ -12,7 +12,7 @@
  * - Overlapping shadows on columns (same problem as bar charts)
  * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
  *   backwards translate.
- * - Shared tooltip
+ * - 2Y5yF looks crappy in VML
  */
 
 var seriesProto = Series.prototype,
@@ -109,27 +109,68 @@ seriesProto.getSegmentPath = (function (func) {
 	};
 }(seriesProto.getSegmentPath));
 
-/*function wrap(obj, method, wrapperFunc) {
-	obj[method] = (function (func) {
-		return wrapperFunc;
-	}(obj[method]));
+
+function polarAnimate(proceed, init) {
+	var chart = this.chart,
+		clipRect = this.clipRect,
+		animation = this.options.animation,
+		group = this.group,
+		center = this.xAxis.center,
+		plotLeft = chart.plotLeft,
+		plotTop = chart.plotTop;
+
+	// Specific animation for polar charts
+	if (chart.polar && chart.renderer.isSVG) {
+
+		if (animation === true) {
+			animation = {};
+		}
+
+		// Initialize the animation
+		if (init) {
+			
+			// Create an SVG specific attribute setter for scaleX and scaleY
+			group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
+				group[key] = value;
+				if (group.scaleX !== UNDEFINED && group.scaleY !== UNDEFINED) {
+					group.element.setAttribute('transform', 'translate(' + group.translateX + ',' + group.translateY + ') scale(' + 
+						group.scaleX + ',' + group.scaleY + ')');
+				}
+				return false;
+			};
+			
+			// Scale down the group and place it in the center
+			group.attr({
+				translateX: center[0] + plotLeft,
+				translateY: center[1] + plotTop,
+				scaleX: 0,
+				scaleY: 0
+			});
+			
+		// Run the animation
+		} else {
+			
+			group.animate({
+				translateX: plotLeft,
+				translateY: plotTop,
+				scaleX: 1,
+				scaleY: 1
+			}, animation);
+			
+			// Delete this function to allow it only once
+			this.animate = null;
+		}
+	
+	// For non-polar charts, revert to the basic animation
+	} else {
+		proceed.call(this, init);
+	} 
 }
 
+// Define the animate method for both regular series and column series and their derivatives
+wrap(seriesProto, 'animate', polarAnimate);
+wrap(colProto, 'animate', polarAnimate);
 
-wrap(seriesProto, 'getSegmentPath', function (func, segment) {
-		
-	var points = this.points;
-	
-	// Connect the path across 0 to provide a closed circle
-	if (this.chart.polar && this.options.connectEnds !== false && 
-			segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
-		segment = [].concat(segment, [points[0]]);
-	}
-	
-	// Run uber method
-	return func.call(this, segment);
-	
-});*/
 
 /**
  * Throw in a couple of properties to let setTooltipPoints know we're indexing the points

@@ -6,7 +6,6 @@
 function Tooltip(chart, options) {
 	var borderWidth = options.borderWidth,
 		style = options.style,
-		shared = options.shared,
 		padding = pInt(style.padding);
 
 	// Save the chart and options
@@ -52,7 +51,7 @@ function Tooltip(chart, options) {
 	}
 
 	// Public property for getting the shared state.
-	this.shared = shared;
+	this.shared = options.shared;
 }
 
 Tooltip.prototype = {

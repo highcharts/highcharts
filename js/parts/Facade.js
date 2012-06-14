@@ -38,6 +38,7 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
+	wrap: wrap,
 	product: '@product.name@',
 	version: '@product.version@'
 });

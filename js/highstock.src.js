@@ -376,6 +376,23 @@ function pad(number, length) {
 }
 
 /**
+ * Wrap a method with extended functionality, preserving the original function
+ * @param {Object} obj The context object that the method belongs to 
+ * @param {String} method The name of the method to extend
+ * @param {Function} func A wrapper function callback. This function is called with the same arguments
+ * as the original function, except that the original function is unshifted and passed as the first 
+ * argument. 
+ */
+function wrap(obj, method, func) {
+	var proceed = obj[method];
+	obj[method] = function () {
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift(proceed);
+		func.apply(this, args);
+	};
+}
+
+/**
  * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
  * @param {Number} timestamp
@@ -7745,7 +7762,6 @@ Axis.prototype = {
 function Tooltip(chart, options) {
 	var borderWidth = options.borderWidth,
 		style = options.style,
-		shared = options.shared,
 		padding = pInt(style.padding);
 
 	// Save the chart and options
@@ -7791,7 +7807,7 @@ function Tooltip(chart, options) {
 	}
 
 	// Public property for getting the shared state.
-	this.shared = shared;
+	this.shared = options.shared;
 }
 
 Tooltip.prototype = {
@@ -8291,7 +8307,7 @@ MouseTracker.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point[series[j].tooltipPosName || 'plotX']);
+					point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
 					distance = mathMin(distance, point._dist);
 					points.push(point);
 				}
@@ -18086,6 +18102,7 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
+	wrap: wrap,
 	product: 'Highstock',
 	version: '1.1.5'
 });

@@ -7,6 +7,7 @@
  * TODO:
  * - Finalize radial gradients in VMLRenderer
  * - Should the background be on the pane object?
+ * - Printing dual axes example in IE8: data label is extended across the chart
  */
 
 
