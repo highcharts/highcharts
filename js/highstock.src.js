@@ -2884,7 +2884,9 @@ SVGRenderer.prototype = {
 
 		// Needed in IE9 because it doesn't report tspan's offsetHeight (#893)
 		function getLineHeightByBBox(lineNo) {
-			linePositions[lineNo] = textNode.getBBox().height;
+			linePositions[lineNo] = textNode.getBBox ?
+				textNode.getBBox().height :
+				wrapper.renderer.fontMetrics(textNode.style.fontSize).h; // #990
 			return mathRound(linePositions[lineNo] - (linePositions[lineNo - 1] || 0));
 		}
 
