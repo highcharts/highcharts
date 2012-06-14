@@ -10,7 +10,7 @@
  * Demo: http://jsfiddle.net/highcharts/SnLFj/
  */
 
-(function(Highcharts) {	
+(function (Highcharts) {	
 	
 	// Utilities
 	var each = Highcharts.each;
@@ -31,67 +31,95 @@
 		this.options = options;
 		this.columns = [];
 		
-        
-        // Parse a CSV if options.csv is given
-        this.parseCSV();
-        
-        // Interpret the values into right types
-        this.parseTypes();
-        
-        // Use first row for series names?
-        this.findHeaderRow();
-        
-        // Complete if a complete callback is given
-        this.complete();
-        
-    },
-    
-    /**
-     * Parse a CSV input string
-     */
-    parseCSV: function () {
-    	var options = this.options,
-    		csv = options.csv,
-    		columns = this.columns,
-    		lines;
-    		
-    	if (csv) {
-        	lines = csv.split(options.lineDelimiter || '\n');
-        	
-        	each(lines, function (line, rowNo) {
-        		var items = line.split(options.itemDelimiter || ',');
-        		each(items, function (item, colNo) {
-        			
-        			if (!columns[colNo]) {
-        				columns[colNo] = [];
-        			
-        			}
-        			
-        			columns[colNo][rowNo] = item;
-        		});
-        	});
-        }
-    },
-    
-    /**
-     * Find the header row. For now, we just check whether the first row contains
-     * numbers or strings. Later we could loop down and find the first row with 
-     * numbers.
-     */
-    findHeaderRow: function () {
-    	var headerRow = 0;
-    	each(this.columns, function (column) {
-        	if (typeof column[0] !== 'string') {
-        		headerRow = null;
-        	}
-        });
-        this.headerRow = 0;        	
-    },
-    
-   	/**
-   	 * Trim a string from whitespace
-   	 */
-   	trim: function (str) {
+		
+		// Parse a CSV string if options.csv is given
+		this.parseCSV();
+		
+		// Parse a HTML table if options.table is given
+		this.parseTable();
+		
+		// Interpret the values into right types
+		this.parseTypes();
+		
+		// Use first row for series names?
+		this.findHeaderRow();
+		
+		// Complete if a complete callback is given
+		this.complete();
+		
+	},
+	
+	/**
+	 * Parse a CSV input string
+	 */
+	parseCSV: function () {
+		var options = this.options,
+			csv = options.csv,
+			columns = this.columns,
+			lines;
+			
+		if (csv) {
+			lines = csv.split(options.lineDelimiter || '\n');
+			
+			each(lines, function (line, rowNo) {
+				var items = line.split(options.itemDelimiter || ',');
+				each(items, function (item, colNo) {
+					
+					if (!columns[colNo]) {
+						columns[colNo] = [];					
+					}
+					
+					columns[colNo][rowNo] = item;
+				});
+			});
+		}
+	},
+	
+	/**
+	 * Parse a HTML table
+	 */
+	parseTable: function () {
+		var options = this.options,
+			table = options.table,
+			columns = this.columns,
+			colNo;
+			
+		if (table) {
+			each(table.getElementsByTagName('tr'), function (tr, rowNo) {
+				colNo = 0; 
+				each(tr.childNodes, function (item) {
+					if (item.tagName === 'TD' || item.tagName === 'TH') {
+						if (!columns[colNo]) {
+							columns[colNo] = [];					
+						}
+						columns[colNo][rowNo] = item.innerHTML;
+						
+						colNo += 1;
+					}
+				});
+			});
+		}
+	},
+	
+	/**
+	 * Find the header row. For now, we just check whether the first row contains
+	 * numbers or strings. Later we could loop down and find the first row with 
+	 * numbers.
+	 */
+	findHeaderRow: function () {
+		var headerRow = 0;
+		each(this.columns, function (column) {
+			if (typeof column[0] !== 'string') {
+				headerRow = null;
+			}
+		});
+		this.headerRow = 0;			
+	},
+	
+	/**
+	 * Trim a string from whitespace
+	 */
+	trim: function (str) {
 		return str.replace(/^\s+|\s+$/g, '');
 	},
 	
@@ -114,7 +142,9 @@
 				val = columns[col][row];
 				floatVal = parseFloat(val);
 				trimVal = this.trim(val);
+				/*jslint eqeq: true*/
 				if (trimVal == floatVal) { // is numeric
+				/*jslint eqeq: false*/
 					columns[col][row] = floatVal;
 					
 					// If the number is greater than milliseconds in a year, assume datetime
@@ -159,57 +189,57 @@
 			j;
 			
 		
-    	if (options.complete) {
-    	    
-            // Use first column for X data or categories?
-            if (columns.length > 1) {
-	        	firstCol = columns.shift();
-	        	if (this.headerRow === 0) {
-	        		firstCol.shift(); // remove the first cell
-	        	}
-	            
-	            // Use the first column for categories or X values
-	            hasXData = firstCol.isNumeric || firstCol.isDatetime;
-	            if (!hasXData) { // means type is neither datetime nor linear
-	            	categories = firstCol;
-	            }
-	            
-	            if (firstCol.isDatetime) {
-	            	type = 'datetime';
-	            }
-	        }
-            
-            // Use the next columns for series
-            series = [];
-            for (i = 0; i < columns.length; i++) {
-            	if (this.headerRow === 0) {
-                	name = columns[i].shift();
-               	}
-                data = [];
-                for (j = 0; j < columns[i].length; j++) {
-                    data[j] = columns[i][j] !== undefined ?
-                        (hasXData ?
-                        	[firstCol[j], columns[i][j]] :
-                        	columns[i][j]
-                        ) :
-                        null
-                }
-                series[i] = {
-                    name: name,
-                    data: data
-                };
-            }
-            
-            // Do the callback
-            options.complete({
-                xAxis: {
-                    categories: categories,
-                    type: type
-                },
-                series: series
-            });
-        }
-    }
+		if (options.complete) {
+			
+			// Use first column for X data or categories?
+			if (columns.length > 1) {
+				firstCol = columns.shift();
+				if (this.headerRow === 0) {
+					firstCol.shift(); // remove the first cell
+				}
+				
+				// Use the first column for categories or X values
+				hasXData = firstCol.isNumeric || firstCol.isDatetime;
+				if (!hasXData) { // means type is neither datetime nor linear
+					categories = firstCol;
+				}
+				
+				if (firstCol.isDatetime) {
+					type = 'datetime';
+				}
+			}
+			
+			// Use the next columns for series
+			series = [];
+			for (i = 0; i < columns.length; i++) {
+				if (this.headerRow === 0) {
+					name = columns[i].shift();
+				}
+				data = [];
+				for (j = 0; j < columns[i].length; j++) {
+					data[j] = columns[i][j] !== undefined ?
+						(hasXData ?
+							[firstCol[j], columns[i][j]] :
+							columns[i][j]
+						) :
+						null;
+				}
+				series[i] = {
+					name: name,
+					data: data
+				};
+			}
+			
+			// Do the callback
+			options.complete({
+				xAxis: {
+					categories: categories,
+					type: type
+				},
+				series: series
+			});
+		}
+	}
 	});
 	
 	// Register the Data prototype and data function on Highcharts
@@ -217,4 +247,4 @@
 	Highcharts.data = function (options) {
 		return new Data(options);
 	};
-})(Highcharts);
+}(Highcharts));
