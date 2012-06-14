@@ -6,13 +6,11 @@
  * - http://jsfiddle.net/highcharts/2yAtb/
  * 
  * TODO:
- * - Animation
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
  * - Overlapping shadows on columns (same problem as bar charts)
  * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
  *   backwards translate.
- * - 2Y5yF looks crappy in VML
  */
 
 var seriesProto = Series.prototype,
@@ -120,45 +118,50 @@ function polarAnimate(proceed, init) {
 		plotTop = chart.plotTop;
 
 	// Specific animation for polar charts
-	if (chart.polar && chart.renderer.isSVG) {
+	if (chart.polar) {
+		
+		// Enable animation on polar charts only in SVG. In VML, the scaling is different, plus animation
+		// would be so slow it would't matter. // docs
+		if (chart.renderer.isSVG) {
 
-		if (animation === true) {
-			animation = {};
-		}
-
-		// Initialize the animation
-		if (init) {
-			
-			// Create an SVG specific attribute setter for scaleX and scaleY
-			group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-				group[key] = value;
-				if (group.scaleX !== UNDEFINED && group.scaleY !== UNDEFINED) {
-					group.element.setAttribute('transform', 'translate(' + group.translateX + ',' + group.translateY + ') scale(' + 
-						group.scaleX + ',' + group.scaleY + ')');
-				}
-				return false;
-			};
-			
-			// Scale down the group and place it in the center
-			group.attr({
-				translateX: center[0] + plotLeft,
-				translateY: center[1] + plotTop,
-				scaleX: 0,
-				scaleY: 0
-			});
-			
-		// Run the animation
-		} else {
-			
-			group.animate({
-				translateX: plotLeft,
-				translateY: plotTop,
-				scaleX: 1,
-				scaleY: 1
-			}, animation);
-			
-			// Delete this function to allow it only once
-			this.animate = null;
+			if (animation === true) {
+				animation = {};
+			}
+	
+			// Initialize the animation
+			if (init) {
+				
+				// Create an SVG specific attribute setter for scaleX and scaleY
+				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
+					group[key] = value;
+					if (group.scaleX !== UNDEFINED && group.scaleY !== UNDEFINED) {
+						group.element.setAttribute('transform', 'translate(' + group.translateX + ',' + group.translateY + ') scale(' + 
+							group.scaleX + ',' + group.scaleY + ')');
+					}
+					return false;
+				};
+				
+				// Scale down the group and place it in the center
+				group.attr({
+					translateX: center[0] + plotLeft,
+					translateY: center[1] + plotTop,
+					scaleX: 0,
+					scaleY: 0
+				});
+				
+			// Run the animation
+			} else {
+				
+				group.animate({
+					translateX: plotLeft,
+					translateY: plotTop,
+					scaleX: 1,
+					scaleY: 1
+				}, animation);
+				
+				// Delete this function to allow it only once
+				this.animate = null;
+			}
 		}
 	
 	// For non-polar charts, revert to the basic animation

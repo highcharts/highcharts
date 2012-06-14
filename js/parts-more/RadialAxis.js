@@ -332,8 +332,10 @@ var radialAxisMixin = {
 		
 		// Concentric circles			
 		} else if (axis.options.gridLineInterpolation === 'circle') {
-			ret = axis.getLinePath(0, axis.translate(value));
-		
+			value = axis.translate(value);
+			if (value) { // a value of 0 is in the center
+				ret = axis.getLinePath(0, value);
+			}
 		// Concentric polygons 
 		} else {
 			xAxis = chart.xAxis[0];
