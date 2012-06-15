@@ -868,19 +868,6 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Fires endResize event on chart instance.
-	 */
-	fireEndResize: function () {
-		var chart = this;
-
-		if (chart) {
-			fireEvent(chart, 'endResize', null, function () {
-				chart.isResizing -= 1;
-			});
-		}
-	},
-
-	/**
 	 * Resize the chart to a given width and height
 	 * @param {Number} width
 	 * @param {Number} height
@@ -893,9 +880,18 @@ Chart.prototype = {
 			chartHeight,
 			spacingBox,
 			chartTitle = chart.title,
-			chartSubtitle = chart.subtitle;
+			chartSubtitle = chart.subtitle,
+			fireEndResize;
 
+		// Handle the isResizing counter
 		chart.isResizing += 1;
+		fireEndResize = function () {
+			if (chart) {
+				fireEvent(chart, 'endResize', null, function () {
+					chart.isResizing -= 1;
+				});
+			}
+		};
 
 		// set the animation for the current process
 		setAnimation(animation, chart);
@@ -954,9 +950,9 @@ Chart.prototype = {
 		// fire endResize and set isResizing back
 		// If animation is disabled, fire without delay
 		if (globalAnimation === false) {
-			chart.fireEndResize();
+			fireEndResize();
 		} else { // else set a timeout with the animation duration
-			setTimeout(chart.fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
+			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
 		}
 	},
 
