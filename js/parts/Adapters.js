@@ -5,7 +5,7 @@
 	win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
 		
 		/**
-		 * Initialize the adapter by applying some extensions to $uery
+		 * Initialize the adapter by applying some extensions to jQuery
 		 */
 		init: function (pathAnim) {
 			
@@ -35,14 +35,14 @@
 				if (fn === 'cur') {
 					obj = Fx.prototype; // 'cur', the getter, relates to Fx.prototype
 				
-				} else if (fn === '_default' && Tween) { // $uery 1.8 model
+				} else if (fn === '_default' && Tween) { // jQuery 1.8 model
 					obj = propHooks[fn];
 					fn = 'set';
 				}
 		
 				// Overwrite the method
 				base = obj[fn];
-				if (base) { // step.width and step.height don't exist in $uery < 1.7
+				if (base) { // step.width and step.height don't exist in jQuery < 1.7
 		
 					// create the extended function replacement
 					obj[fn] = function (fx) {
@@ -57,7 +57,7 @@
 						// and returning a value has no effect.
 						return elem.attr ? // is SVG element wrapper
 							elem.attr(fx.prop, fn === 'cur' ? UNDEFINED : fx.now) : // apply the SVG wrapper's method
-							base.apply(this, arguments); // use $uery's built-in method
+							base.apply(this, arguments); // use jQuery's built-in method
 					};
 				}
 			});
@@ -103,7 +103,7 @@
 		getScript: $.getScript,
 		
 		/**
-		 * A direct link to $uery methods. MooTools and Prototype adapters must be implemented for each case of method.
+		 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
 		 * @param {Object} elem The HTML element
 		 * @param {String} method Which method to run on the wrapped element
 		 */
@@ -112,7 +112,7 @@
 		},
 	
 		/**
-		 * Utility for iterating over an array. Parameters are reversed compared to $uery.
+		 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
 		 * @param {Array} arr
 		 * @param {Function} fn
 		 */
@@ -137,7 +137,7 @@
 		 * @param {Function} fn
 		 */
 		map: function (arr, fn) {
-			//return $uery.map(arr, fn);
+			//return jQuery.map(arr, fn);
 			var results = [],
 				i = 0,
 				len = arr.length;
@@ -180,8 +180,8 @@
 		 * @param {Function} handler The function to remove
 		 */
 		removeEvent: function (el, eventType, handler) {
-			// workaround for $uery issue with unbinding custom events:
-			// http://forum.$uery.com/topic/javascript-error-when-unbinding-a-custom-event-using-$uery-1-4-2
+			// workaround for jQuery issue with unbinding custom events:
+			// http://forum.jQuery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jQuery-1-4-2
 			var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
 			if (doc[func] && !el[func]) {
 				el[func] = function () {};
@@ -215,8 +215,8 @@
 	
 			extend(event, eventArguments);
 	
-			// Prevent $uery from triggering the object method that is named the
-			// same as the event. For example, if the event is 'select', $uery
+			// Prevent jQuery from triggering the object method that is named the
+			// same as the event. For example, if the event is 'select', jQuery
 			// attempts calling el.select and it goes into a loop.
 			if (el[type]) {
 				el[detachedType] = el[type];
@@ -264,13 +264,13 @@
 		 * Animate a HTML element or SVG element wrapper
 		 * @param {Object} el
 		 * @param {Object} params
-		 * @param {Object} options $uery-like animation options: duration, easing, callback
+		 * @param {Object} options jQuery-like animation options: duration, easing, callback
 		 */
 		animate: function (el, params, options) {
 			var $el = $(el);
 			if (params.d) {
 				el.toD = params.d; // keep the array form for paths, used in $.fx.step.d
-				params.d = 1; // because in $uery, animating to an array has a different meaning
+				params.d = 1; // because in jQuery, animating to an array has a different meaning
 			}
 	
 			$el.stop();
@@ -310,7 +310,7 @@ var globalAdapter = win.HighchartsAdapter,
 
 /*
  * Define the adapter for frameworks. If an external adapter is not defined,
- * Highcharts reverts to the built-in $uery adapter.
+ * Highcharts reverts to the built-in jQuery adapter.
  */
 if (globalAdapter && globalAdapter.init) {
 	// Initialize the adapter with the pathAnim object that takes care
