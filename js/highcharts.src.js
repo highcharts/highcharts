@@ -8230,7 +8230,7 @@ MouseTracker.prototype = {
 				value: axis.translate(
 					isHorizontal ?
 						e.chartX - chart.plotLeft :
-						chart.plotHeight - e.chartY + chart.plotTop,
+						axis.top + axis.len - e.chartY, // #1051
 					true
 				)
 			});
