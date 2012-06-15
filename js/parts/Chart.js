@@ -102,10 +102,8 @@ Chart.prototype = {
 			redraw = pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
-				chart.initSeries(options);
-				//series = chart.initSeries(options);
-				//series.isDirty = true;
-
+				series = chart.initSeries(options);
+				
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				if (redraw) {
 					chart.redraw();
