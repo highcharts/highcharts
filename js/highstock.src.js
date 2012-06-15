@@ -9341,6 +9341,11 @@ function Chart(userOptions, callback) {
 	var options,
 		seriesOptions = userOptions.series; // skip merging data points to increase performance
 	userOptions.series = null;
+	
+	// fix for default xAxis and yAxis options not coming through on StockCharts
+	if ( userOptions.xAxis instanceof Array && defaultOptions.xAxis !== undefined ) defaultOptions.xAxis = [ defaultOptions.xAxis ];
+	if ( userOptions.yAxis instanceof Array && defaultOptions.yAxis !== undefined ) defaultOptions.yAxis = [ defaultOptions.yAxis ];
+	
 	options = merge(defaultOptions, userOptions); // do the merge
 	options.series = userOptions.series = seriesOptions; // set back the series data
 
