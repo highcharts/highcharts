@@ -9830,7 +9830,7 @@ Chart.prototype = {
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
 				if (axis.options.zoomEnabled !== false) {
-					axis.setExtremes(null, null, false);
+					axis.setExtremes(null, null, false, UNDEFINED, { trigger: 'zoomout' });
 					hasZoomed = true;
 				}
 			});
@@ -9840,7 +9840,7 @@ Chart.prototype = {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false);
+					axis.setExtremes(axisData.min, axisData.max, false, UNDEFINED, { trigger: 'zoom' });
 					hasZoomed = true;
 				}
 			});
@@ -9878,7 +9878,7 @@ Chart.prototype = {
 		}
 
 		if (xAxis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-			xAxis.setExtremes(newMin, newMax, true, false);
+			xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
 		}
 
 		chart.mouseDownX = chartX; // set new reference for next run
@@ -16342,7 +16342,8 @@ Scroller.prototype = {
 							xAxis.translate(left, true),
 							xAxis.translate(left + range, true),
 							true,
-							false
+							false,
+							{ trigger: 'navigator' }
 						);
 					}
 				}
@@ -16405,7 +16406,8 @@ Scroller.prototype = {
 					xAxis.translate(zoomedMin, true),
 					xAxis.translate(zoomedMax, true),
 					true,
-					false
+					false,
+					{ trigger: 'navigator' }
 				);
 			}
 			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
@@ -16784,8 +16786,11 @@ RangeSelector.prototype = {
 					newMin,
 					newMax,
 					pick(redraw, 1),
-					0,
-					{ rangeSelectorButton: rangeOptions }
+					0, 
+					{ 
+						trigger: 'rangeSelectorButton', // docs
+						rangeSelectorButton: rangeOptions
+					}
 				);
 				rangeSelector.selected = i;
 			}, 1);
@@ -16916,7 +16921,10 @@ RangeSelector.prototype = {
 			) {
 				chart.xAxis[0].setExtremes(
 					isMin ? value : extremes.min,
-					isMin ? extremes.max : value
+					isMin ? extremes.max : value,
+					UNDEFINED,
+					UNDEFINED,
+					{ trigger: 'rangeSelectorInput' }
 				);
 			}
 		};
@@ -17912,7 +17920,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 						// Apply it if it is within the available data range
 						if (newMin > mathMin(extremes.dataMin, min) && newMax < mathMax(dataMax, max)) {
-							xAxis.setExtremes(newMin, newMax, true, false);
+							xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
 						}
 				
 						chart.mouseDownX = chartX; // set new reference for next run

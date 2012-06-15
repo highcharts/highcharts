@@ -9830,7 +9830,7 @@ Chart.prototype = {
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
 				if (axis.options.zoomEnabled !== false) {
-					axis.setExtremes(null, null, false);
+					axis.setExtremes(null, null, false, UNDEFINED, { trigger: 'zoomout' });
 					hasZoomed = true;
 				}
 			});
@@ -9840,7 +9840,7 @@ Chart.prototype = {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false);
+					axis.setExtremes(axisData.min, axisData.max, false, UNDEFINED, { trigger: 'zoom' });
 					hasZoomed = true;
 				}
 			});
@@ -9878,7 +9878,7 @@ Chart.prototype = {
 		}
 
 		if (xAxis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-			xAxis.setExtremes(newMin, newMax, true, false);
+			xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
 		}
 
 		chart.mouseDownX = chartX; // set new reference for next run

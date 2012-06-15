@@ -573,7 +573,7 @@
 						
 						// Apply it if it is within the available data range
 						if (newMin > mathMin(extremes.dataMin, min) && newMax < mathMax(dataMax, max)) {
-							xAxis.setExtremes(newMin, newMax, true, false);
+							xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
 						}
 				
 						chart.mouseDownX = chartX; // set new reference for next run

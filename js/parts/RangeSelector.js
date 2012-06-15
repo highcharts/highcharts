@@ -173,8 +173,11 @@ RangeSelector.prototype = {
 					newMin,
 					newMax,
 					pick(redraw, 1),
-					0,
-					{ rangeSelectorButton: rangeOptions }
+					0, 
+					{ 
+						trigger: 'rangeSelectorButton', // docs
+						rangeSelectorButton: rangeOptions
+					}
 				);
 				rangeSelector.selected = i;
 			}, 1);
@@ -305,7 +308,10 @@ RangeSelector.prototype = {
 			) {
 				chart.xAxis[0].setExtremes(
 					isMin ? value : extremes.min,
-					isMin ? extremes.max : value
+					isMin ? extremes.max : value,
+					UNDEFINED,
+					UNDEFINED,
+					{ trigger: 'rangeSelectorInput' }
 				);
 			}
 		};
