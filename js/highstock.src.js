@@ -388,7 +388,7 @@ function wrap(obj, method, func) {
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift(proceed);
-		func.apply(this, args);
+		return func.apply(this, args);
 	};
 }
 

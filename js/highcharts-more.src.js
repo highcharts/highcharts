@@ -1052,9 +1052,6 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * TODO:
  * - Stacked areas?
  * - Splines are bulgy and connected ends are sharp
- * - Overlapping shadows on columns (same problem as bar charts)
- * - Click events with axis positions - use the positioning logic as tooltips. Perhaps include this in axis
- *   backwards translate.
  */
 
 var seriesProto = Series.prototype,
@@ -1287,27 +1284,61 @@ columnProto.translate = (function (func) {
  * Extend the mouse tracker to return the tooltip position index in terms of
  * degrees rather than pixels
  */
-mouseTrackerProto.getIndex = (function (func) {
-	return function (e) {
-		var ret,
-			chart = this.chart,
-			center,
-			x,
-			y;
+wrap(mouseTrackerProto, 'getIndex', function (proceed, e) {
+	var ret,
+		chart = this.chart,
+		center,
+		x,
+		y;
+	
+	if (chart.polar) {
+		center = chart.xAxis[0].center;
+		x = e.chartX - center[0] - chart.plotLeft;
+		y = e.chartY - center[1] - chart.plotTop;
 		
-		if (chart.polar) {
-			center = chart.xAxis[0].center;
-			x = e.chartX - center[0] - chart.plotLeft;
-			y = e.chartY - center[1] - chart.plotTop;
+		ret = 180 - Math.round(Math.atan2(x, y) / Math.PI * 180);
+	
+	} else {
+	
+		// Run uber method
+		ret = proceed.call(this, e);
+	}
+	return ret;
+});
+
+/**
+ * Extend getMouseCoordinates to prepare for polar axis values
+ */
+wrap(mouseTrackerProto, 'getMouseCoordinates', function (proceed, e) {
+	var chart = this.chart,
+		ret = {
+			xAxis: [],
+			yAxis: []
+		};
+	
+	if (chart.polar) {	
+
+		each(chart.axes, function (axis) {
+			var isXAxis = axis.isXAxis,
+				center = axis.center,
+				x = e.chartX - center[0] - chart.plotLeft,
+				y = e.chartY - center[1] - chart.plotTop;
 			
-			ret = 180 - Math.round(Math.atan2(x, y) / Math.PI * 180);
+			ret[isXAxis ? 'xAxis' : 'yAxis'].push({
+				axis: axis,
+				value: axis.translate(
+					isXAxis ?
+						Math.PI - Math.atan2(x, y) : // angle 
+						Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)), // distance from center
+					true
+				)
+			});
+		});
 		
-		} else {
-		
-			// Run uber method
-			ret = func.apply(this, arguments);
-		}
-		return ret;
-	};
-}(mouseTrackerProto.getIndex));
+	} else {
+		ret = proceed.call(this, e);
+	}
+	
+	return ret;
+});
 }(Highcharts));
