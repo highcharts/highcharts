@@ -476,23 +476,24 @@ Point.prototype = {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
 			if (state && markerStateOptions) {
-				if (!stateMarkerGraphic) {
-					radius = markerStateOptions.radius;
+				radius = markerStateOptions.radius;
+				if (!stateMarkerGraphic) { // add
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
 						series.symbol,
-						-radius,
-						-radius,
+						plotX - radius,
+						plotY - radius,
 						2 * radius,
 						2 * radius
 					)
 					.attr(pointAttr[state])
 					.add(series.group);
+				
+				} else { // update
+					stateMarkerGraphic.attr({ // #1054
+						x: plotX - radius,
+						y: plotY - radius
+					});
 				}
-
-				stateMarkerGraphic.translate(
-					plotX,
-					plotY
-				);
 			}
 
 			if (stateMarkerGraphic) {
