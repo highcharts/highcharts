@@ -378,167 +378,156 @@ var radialAxisMixin = {
 /**
  * Override axisProto.init to mix in special axis instance functions and function overrides
  */
-axisProto.init = (function (func) {
-	return function (chart, userOptions) {
-		var angular = chart.angular,
-			polar = chart.polar,
-			isX = userOptions.isX,
-			isCircular,
-			options,
-			pane,
-			paneOptions;
-			
-		// Before prototype.init
-		if (angular) {
-			extend(this, isX ? hiddenAxisMixin : radialAxisMixin);
-			isCircular =  !isX;
-			if (isCircular) {
-				this.defaultRadialOptions = this.defaultRadialGaugeOptions;
-			}
-			
-		} else if (polar) {
-			//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
-			extend(this, radialAxisMixin);
-			isCircular = isX;
-			this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
-			
+wrap(axisProto, 'init', function (proceed, chart, userOptions) {
+	var angular = chart.angular,
+		polar = chart.polar,
+		isX = userOptions.isX,
+		isCircular,
+		options,
+		pane,
+		paneOptions;
+		
+	// Before prototype.init
+	if (angular) {
+		extend(this, isX ? hiddenAxisMixin : radialAxisMixin);
+		isCircular =  !isX;
+		if (isCircular) {
+			this.defaultRadialOptions = this.defaultRadialGaugeOptions;
 		}
 		
-		// Run prototype.init
-		func.apply(this, arguments);
+	} else if (polar) {
+		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
+		extend(this, radialAxisMixin);
+		isCircular = isX;
+		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
 		
-		// Set the pane options. This can later be extended and adopted by basic Highcharts and Highstock
-		paneOptions = merge({
-			center: ['50%', '50%'],
-			size: '90%',
-			startAngle: 0,
-			endAngle: 360
-		}, chart.options.pane);
-		this.pane = pane = Highcharts.splat(paneOptions)[userOptions.pane || 0];
-		options = this.options;
+	}
+	
+	// Run prototype.init
+	proceed.call(this, chart, userOptions);
+	
+	// Set the pane options. This can later be extended and adopted by basic Highcharts and Highstock
+	paneOptions = merge({
+		center: ['50%', '50%'],
+		size: '90%',
+		startAngle: 0,
+		endAngle: 360
+	}, chart.options.pane);
+	this.pane = pane = Highcharts.splat(paneOptions)[userOptions.pane || 0];
+	options = this.options;
+	
+	// All pane options override the axis options
+	extend(options, pane);
+	
+	// After prototype.init
+	if (angular || polar) {
 		
-		// All pane options override the axis options
-		extend(options, pane);
+		// Disable certain features on angular and polar axes
+		chart.inverted = false;
+		chart.options.chart.zoomType = null;
 		
-		// After prototype.init
-		if (angular || polar) {
-			
-			// Disable certain features on angular and polar axes
-			chart.inverted = false;
-			chart.options.chart.zoomType = null;
-			
-			// Start and end angle options are
-			// given in degrees relative to top, while internal computations are
-			// in radians relative to right (like SVG).
-			this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
-			this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
-			this.offset = options.offset || 0;
-			
-			this.isCircular = isCircular;
-			
-			// Automatically connect grid lines?
-			if (isCircular && userOptions.max === UNDEFINED) {
-				this.autoConnect = true;
-			}
+		// Start and end angle options are
+		// given in degrees relative to top, while internal computations are
+		// in radians relative to right (like SVG).
+		this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
+		this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
+		this.offset = options.offset || 0;
+		
+		this.isCircular = isCircular;
+		
+		// Automatically connect grid lines?
+		if (isCircular && userOptions.max === UNDEFINED) {
+			this.autoConnect = true;
 		}
-		
-		
-	};
-}(axisProto.init));
+	}
+	
+	
+});
 
 /**
  * Add special cases within the Tick class' methods for radial axes.
  */	
-tickProto.getPosition = (function (func) {
-	return function () {
-		var axis = this.axis,
-			args = arguments;
-		
-		return axis.getPosition ? 
-			axis.getPosition(args[1]) :
-			func.apply(this, args);	
-	};
-}(tickProto.getPosition));
+wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {
+	var axis = this.axis;
+	
+	return axis.getPosition ? 
+		axis.getPosition(pos) :
+		proceed.call(this, horiz, pos, tickmarkOffset, old);	
+});
 
 /**
  * Wrap the getLabelPosition function to find the center position of the label
  * based on the distance option
  */	
-tickProto.getLabelPosition = (function (func) {
-	return function () {
-		var axis = this.axis,
-			labelOptions = axis.options.labels,
-			label = this.label,
-			optionsY = labelOptions.y,
-			ret,
-			align = labelOptions.align,
-			angle = (axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180;
+wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+	var axis = this.axis,
+		optionsY = labelOptions.y,
+		ret,
+		align = labelOptions.align,
+		angle = (axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180;
+	
+	if (axis.isRadial) {
+		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
 		
-		if (axis.isRadial) {
-			ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
-			
-			// Automatically rotated
-			if (labelOptions.rotation === 'auto') {
-				label.attr({ 
-					rotation: angle
-				});
-			
-			// Vertically centered
-			} else if (optionsY === null) {
-				optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
-			
-			}
-			
-			// Automatic alignment
-			if (align === null) {
-				if (axis.isCircular) {
-					if (angle > 20 && angle < 160) {
-						align = 'left'; // right hemisphere
-					} else if (angle > 200 && angle < 340) {
-						align = 'right'; // left hemisphere
-					} else {
-						align = 'center'; // top or bottom
-					}
-				} else {
-					align = 'center';
-				}
-				label.attr({
-					align: align
-				});
-			}
-			
-			ret.x += labelOptions.x;
-			ret.y += optionsY;
-			
-		} else {
-			ret = func.apply(this, arguments);
+		// Automatically rotated
+		if (labelOptions.rotation === 'auto') {
+			label.attr({ 
+				rotation: angle
+			});
+		
+		// Vertically centered
+		} else if (optionsY === null) {
+			optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+		
 		}
-		return ret;
-	};
-}(tickProto.getLabelPosition));
+		
+		// Automatic alignment
+		if (align === null) {
+			if (axis.isCircular) {
+				if (angle > 20 && angle < 160) {
+					align = 'left'; // right hemisphere
+				} else if (angle > 200 && angle < 340) {
+					align = 'right'; // left hemisphere
+				} else {
+					align = 'center'; // top or bottom
+				}
+			} else {
+				align = 'center';
+			}
+			label.attr({
+				align: align
+			});
+		}
+		
+		ret.x += labelOptions.x;
+		ret.y += optionsY;
+		
+	} else {
+		ret = proceed.call(this, x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
+	}
+	return ret;
+});
 
 /**
  * Wrap the getMarkPath function to return the path of the radial marker
  */
-tickProto.getMarkPath = (function (func) {
-	return function (x, y, tickLength) {
-		var axis = this.axis,
-			endPoint,
-			ret;
-			
-		if (axis.isRadial) {
-			endPoint = axis.getPosition(this.pos, axis.center[2] / 2 + tickLength);
-			ret = [
-				'M',
-				x,
-				y,
-				'L',
-				endPoint.x,
-				endPoint.y
-			];
-		} else {
-			ret = func.apply(this, arguments);
-		}
-		return ret;
-	};
-}(tickProto.getMarkPath));
+wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength) {
+	var axis = this.axis,
+		endPoint,
+		ret;
+		
+	if (axis.isRadial) {
+		endPoint = axis.getPosition(this.pos, axis.center[2] / 2 + tickLength);
+		ret = [
+			'M',
+			x,
+			y,
+			'L',
+			endPoint.x,
+			endPoint.y
+		];
+	} else {
+		ret = proceed.apply(this, x, y, tickLength);
+	}
+	return ret;
+});

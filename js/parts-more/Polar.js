@@ -5,8 +5,6 @@
  * - http://jsfiddle.net/highcharts/2Y5yF/
  * - http://jsfiddle.net/highcharts/2yAtb/
  * 
- * TODO:
- * - Implement wrap throughout (search for "func")
  */
 
 var seriesProto = Series.prototype,
@@ -176,23 +174,21 @@ wrap(seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment,
  * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
  * center. 
  */
-seriesProto.translate = (function (func) {
-	return function () {
+wrap(seriesProto, 'translate', function (proceed) {
 		
-		// Run uber method
-		func.apply(this, arguments);
-		
-		// Postprocess plot coordinates
-		if (this.chart.polar && this.type !== 'column') { // TODO: do not use this.type
-			var points = this.points,
-				i = points.length;
-			while (i--) {
-				// Translate plotX, plotY from angle and radius to true plot coordinates
-				this.toXY(points[i]);
-			}
+	// Run uber method
+	proceed.call(this);
+	
+	// Postprocess plot coordinates
+	if (this.chart.polar && this.type !== 'column') { // TODO: do not use this.type
+		var points = this.points,
+			i = points.length;
+		while (i--) {
+			// Translate plotX, plotY from angle and radius to true plot coordinates
+			this.toXY(points[i]);
 		}
-	};
-}(seriesProto.translate));
+	}
+});
 
 /** 
  * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in 
@@ -285,65 +281,61 @@ wrap(colProto, 'animate', polarAnimate);
  * Throw in a couple of properties to let setTooltipPoints know we're indexing the points
  * in degrees (0-360), not plot pixel width.
  */
-seriesProto.setTooltipPoints = (function (func) {
-	return function () {
+wrap(seriesProto, 'setTooltipPoints', function (proceed, renew) {
 		
-		if (this.chart.polar) {
-			extend(this.xAxis, {
-				tooltipLen: 360, // degrees are the resolution unit of the tooltipPoints array
-				tooltipPosName: 'deg'
-			});	
-		}
-		
-		// Run uber method
-		return func.apply(this, arguments);
-	};
-}(seriesProto.setTooltipPoints));
+	if (this.chart.polar) {
+		extend(this.xAxis, {
+			tooltipLen: 360, // degrees are the resolution unit of the tooltipPoints array
+			tooltipPosName: 'deg'
+		});	
+	}
+	
+	// Run uber method
+	return proceed.call(this, renew);
+});
 
 
 /**
  * Extend the column prototype's translate method
  */
-columnProto.translate = (function (func) {
-	return function () {
+wrap(columnProto, 'translate', function (proceed) {
 		
-		var xAxis = this.xAxis,
-			len = this.yAxis.len,
-			center = xAxis.center,
-			startAngleRad = xAxis.startAngleRad,
-			renderer = this.chart.renderer,
-			points,
-			point,
-			i;
-		
-		// Run uber method
-		func.apply(this, arguments);
-		
-		// Postprocess plot coordinates
-		if (xAxis.isRadial) {
-			points = this.points;
-			i = points.length;
-			while (i--) {
-				point = points[i];
-				point.shapeType = 'path';
-				point.shapeArgs = {
-					d: renderer.symbols.arc(
-						center[0],
-						center[1],
-						len - point.plotY,
-						null, 
-						{
-							start: startAngleRad + point.barX,
-							end: startAngleRad + point.barX + point.pointWidth,
-							innerR: len - pick(point.yBottom, len)
-						}
-					)
-				};
-				this.toXY(point); // provide correct plotX, plotY for tooltip
-			}
+	var xAxis = this.xAxis,
+		len = this.yAxis.len,
+		center = xAxis.center,
+		startAngleRad = xAxis.startAngleRad,
+		renderer = this.chart.renderer,
+		points,
+		point,
+		i;
+	
+	// Run uber method
+	proceed.call(this);
+	
+	// Postprocess plot coordinates
+	if (xAxis.isRadial) {
+		points = this.points;
+		i = points.length;
+		while (i--) {
+			point = points[i];
+			point.shapeType = 'path';
+			point.shapeArgs = {
+				d: renderer.symbols.arc(
+					center[0],
+					center[1],
+					len - point.plotY,
+					null, 
+					{
+						start: startAngleRad + point.barX,
+						end: startAngleRad + point.barX + point.pointWidth,
+						innerR: len - pick(point.yBottom, len)
+					}
+				)
+			};
+			this.toXY(point); // provide correct plotX, plotY for tooltip
 		}
-	};
-}(columnProto.translate));
+	}
+});
 
 /**
  * Extend the mouse tracker to return the tooltip position index in terms of
