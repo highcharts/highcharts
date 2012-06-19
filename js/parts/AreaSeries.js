@@ -30,7 +30,7 @@ var AreaSeries = extendClass(Series, {
 		if (segLength === 3) { // for animation from 1 to two points
 			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
 		}
-		if (options.stacking && this.type !== 'areaspline') {
+		if (options.stacking && !this.closedStacks) {
 			
 			// Follow stack back. Todo: implement areaspline. A general solution could be to 
 			// reverse the entire graphPath of the previous series, though may be hard with

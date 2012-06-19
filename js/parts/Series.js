@@ -1179,16 +1179,17 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries,
+			isBottomSeries,
 			allStackSeries = yAxis.series,
 			i = allStackSeries.length,
 			placeBetween = options.pointPlacement === 'between';
+			//nextSeriesDown;
 			
 		// Is it the last visible series?
 		while (i--) {
 			if (allStackSeries[i].visible) {
 				if (i === series.index) {
-					isLastSeries = true;
+					isBottomSeries = true;
 				}
 				break;
 			}
@@ -1215,8 +1216,8 @@ Series.prototype = {
 				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
 				yValue = yBottom + yValue;
 				
-				if (isLastSeries) {
-					yBottom = options.threshold;
+				if (isBottomSeries) {
+					yBottom = pick(options.threshold, yAxis.min);
 				}
 				
 				if (stacking === 'percent') {

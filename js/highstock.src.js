@@ -12039,16 +12039,17 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries,
+			isBottomSeries,
 			allStackSeries = yAxis.series,
 			i = allStackSeries.length,
 			placeBetween = options.pointPlacement === 'between';
+			//nextSeriesDown;
 			
 		// Is it the last visible series?
 		while (i--) {
 			if (allStackSeries[i].visible) {
 				if (i === series.index) {
-					isLastSeries = true;
+					isBottomSeries = true;
 				}
 				break;
 			}
@@ -12075,8 +12076,8 @@ Series.prototype = {
 				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
 				yValue = yBottom + yValue;
 				
-				if (isLastSeries) {
-					yBottom = options.threshold;
+				if (isBottomSeries) {
+					yBottom = pick(options.threshold, yAxis.min);
 				}
 				
 				if (stacking === 'percent') {
@@ -13365,7 +13366,7 @@ var AreaSeries = extendClass(Series, {
 		if (segLength === 3) { // for animation from 1 to two points
 			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
 		}
-		if (options.stacking && this.type !== 'areaspline') {
+		if (options.stacking && !this.closedStacks) {
 			
 			// Follow stack back. Todo: implement areaspline. A general solution could be to 
 			// reverse the entire graphPath of the previous series, though may be hard with
@@ -13594,6 +13595,7 @@ defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
 var areaProto = AreaSeries.prototype,
 	AreaSplineSeries = extendClass(SplineSeries, {
 		type: 'areaspline',
+		closedStacks: true, // instead of following the previous graph back, follow the threshold back
 		
 		// Mix in methods from the area series
 		getSegmentPath: areaProto.getSegmentPath,

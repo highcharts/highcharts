@@ -1052,8 +1052,6 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/**
  * - http://jsfiddle.net/highcharts/2yAtb/
  * 
  * TODO:
- * - Stacked areas?
- * - Ticks must continue to end: http://jsfiddle.net/highcharts/DXnPa/1/
  * - Implement wrap throughout (search for "func")
  */
 
@@ -1086,26 +1084,35 @@ seriesProto.toXY = function (point) {
 	point.plotY = point.polarPlotY = xy.y - chart.plotTop;
 };
 
+
 /**
- * Overridden method to close a segment path. While in a cartesian plane the area 
- * goes down to the threshold, in the polar chart it goes to the center.
+ * Add some special init logic to areas and areasplines
  */
-seriesTypes.area.prototype.closeSegment = seriesTypes.areaspline.prototype.closeSegment = (function (func) { 
-	
-	return function (path) {
+function initArea(proceed, chart, options) {
+	proceed.call(this, chart, options);
+	if (this.chart.polar) {
 		
-		if (this.chart.polar) {
+		/**
+		 * Overridden method to close a segment path. While in a cartesian plane the area 
+		 * goes down to the threshold, in the polar chart it goes to the center.
+		 */
+		this.closeSegment = function (path) {
 			var center = this.xAxis.center;
 			path.push(
 				'L',
 				center[0],
 				center[1]
-			);
-		} else {
-			func.apply(this, arguments);
-		}
-	};
-}(seriesTypes.area.prototype.closeSegment));
+			);			
+		};
+		
+		// Instead of complicated logic to draw an area around the inner area in a stack,
+		// just draw it behind
+		this.closedStacks = true;
+	}
+}
+wrap(seriesTypes.area.prototype, 'init', initArea);
+wrap(seriesTypes.areaspline.prototype, 'init', initArea);
+		
 
 /**
  * Overridden method for calculating a spline from one point to the next
