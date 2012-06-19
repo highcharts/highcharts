@@ -77,6 +77,7 @@ var radialAxisMixin = {
 		zIndex: 2 // behind dials, points in the series group
 	},
 	
+	// Circular axis around the perimeter of a polar chart
 	defaultRadialXOptions: {
 		gridLineWidth: 1, // spokes
 		labels: {
@@ -88,10 +89,11 @@ var radialAxisMixin = {
 		maxPadding: 0,
 		minPadding: 0,
 		plotBands: [],
-		//showLastLabel: 
+		showLastLabel: false, 
 		tickLength: 0
 	},
 	
+	// Radial axis, like a spoke in a polar chart
 	defaultRadialYOptions: {
 		gridLineInterpolation: 'circle',
 		labels: {
@@ -207,8 +209,6 @@ var radialAxisMixin = {
 	 */
 	setAxisTranslation: function () {
 		
-		var circleConnectRange;
-
 		// Call uber method		
 		axisProto.setAxisTranslation.call(this);
 			
@@ -216,15 +216,8 @@ var radialAxisMixin = {
 		if (this.center) { // it's not defined the first time
 			if (this.isCircular) {
 				
-				// If the axis maximum is not explicitly given, assume a full circle,
-				// and to make sure that the maximum value doesn't fall together with the
-				// miminum, add one closestPointRange
-				circleConnectRange = this.autoConnect ?
-					this.closestPointRange :
-					0;
-					
 				this.transA = (this.endAngleRad - this.startAngleRad) / 
-					((this.max - this.min + circleConnectRange) || 1);
+					((this.max - this.min) || 1);
 				
 			} else { 
 				this.transA = (this.center[2] / 2) / ((this.max - this.min) || 1);
@@ -234,6 +227,16 @@ var radialAxisMixin = {
 				this.minPixelPadding = this.transA * this.minPointOffset +
 					(this.reversed ? Math.PI / 10 : 0); // ???
 			}
+		}
+	},
+	
+	/**
+	 * In case of auto connect, add one closestPointRange to the max value right before
+	 * tickPositions are computed, so that ticks will extend passed the real max.
+	 */
+	beforeSetTickPositions: function () {
+		if (this.autoConnect) {
+			this.max += this.closestPointRange;
 		}
 	},
 	
@@ -472,8 +475,7 @@ axisProto.init = (function (func) {
 }(axisProto.init));
 
 /**
- * Add special cases within the Tick class' methods for radial axes. 
- * TODO: If we go for a RadialAxis class, add a RadialTick class too.
+ * Add special cases within the Tick class' methods for radial axes.
  */	
 tickProto.getPosition = (function (func) {
 	return function () {

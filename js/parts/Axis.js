@@ -1080,9 +1080,9 @@ Axis.prototype = {
 		}
 
 		// set the translation factor used in translate function
-		axis.setAxisTranslation();
+		axis.setAxisTranslation(secondPass);
 
-		// hook for ordinal axes. To do: merge with below
+		// hook for ordinal axes and radial axes
 		if (axis.beforeSetTickPositions) {
 			axis.beforeSetTickPositions();
 		}
