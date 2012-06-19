@@ -13470,7 +13470,7 @@ var SplineSeries = extendClass(Series, {
 	type: 'spline',
 
 	/**
-	 * Draw the actual graph
+	 * Get the spline segment from a given point's previous neighbour to the given point
 	 */
 	getPointSpline: function (segment, point, i) {
 		var smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc
@@ -13486,7 +13486,8 @@ var SplineSeries = extendClass(Series, {
 			ret;
 
 		// find control points
-		if (i && i < segment.length - 1) {
+		if (lastPoint && nextPoint) {
+		
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,

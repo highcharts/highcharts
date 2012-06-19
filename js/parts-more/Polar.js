@@ -7,7 +7,8 @@
  * 
  * TODO:
  * - Stacked areas?
- * - Splines are bulgy and connected ends are sharp
+ * - Ticks must continue to end: http://jsfiddle.net/highcharts/DXnPa/1/
+ * - Implement wrap throughout (search for "func")
  */
 
 var seriesProto = Series.prototype,
@@ -61,6 +62,109 @@ seriesTypes.area.prototype.closeSegment = seriesTypes.areaspline.prototype.close
 }(seriesTypes.area.prototype.closeSegment));
 
 /**
+ * Overridden method for calculating a spline from one point to the next
+ */
+wrap(seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
+	
+	var ret,
+		smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc;
+		denom = smoothing + 1,
+		plotX, 
+		plotY,
+		lastPoint,
+		nextPoint,
+		lastX,
+		lastY,
+		nextX,
+		nextY,
+		leftContX,
+		leftContY,
+		rightContX,
+		rightContY,
+		distanceLeftControlPoint,
+		distanceRightControlPoint,
+		leftContAngle,
+		rightContAngle,
+		jointAngle;
+		
+		
+	if (this.chart.polar) {
+		
+		plotX = point.plotX;
+		plotY = point.plotY;
+		lastPoint = segment[i - 1];
+		nextPoint = segment[i + 1];
+			
+		// Connect ends
+		if (this.connectEnds) {
+			if (!lastPoint) {
+				lastPoint = segment[segment.length - 2]; // not the last but the second last, because the segment is already connected
+			}
+			if (!nextPoint) {
+				nextPoint = segment[1];
+			}	
+		}
+
+		// find control points
+		if (lastPoint && nextPoint) {
+		
+			lastX = lastPoint.plotX;
+			lastY = lastPoint.plotY;
+			nextX = nextPoint.plotX;
+			nextY = nextPoint.plotY;
+			leftContX = (smoothing * plotX + lastX) / denom;
+			leftContY = (smoothing * plotY + lastY) / denom;
+			rightContX = (smoothing * plotX + nextX) / denom;
+			rightContY = (smoothing * plotY + nextY) / denom;
+			distanceLeftControlPoint = Math.sqrt(Math.pow(leftContX - plotX, 2) + Math.pow(leftContY - plotY, 2));
+			distanceRightControlPoint = Math.sqrt(Math.pow(rightContX - plotX, 2) + Math.pow(rightContY - plotY, 2));
+			leftContAngle = Math.atan2(leftContY - plotY, leftContX - plotX);
+			rightContAngle = Math.atan2(rightContY - plotY, rightContX - plotX);
+			jointAngle = (Math.PI / 2) + ((leftContAngle + rightContAngle) / 2);
+				
+				
+			// Ensure the right direction, jointAngle should be in the same quadrant as leftContAngle
+			if (Math.abs(leftContAngle - jointAngle) > Math.PI / 2) {
+				jointAngle -= Math.PI;
+			}
+			
+			// Find the corrected control points for a spline straight through the point
+			leftContX = plotX + Math.cos(jointAngle) * distanceLeftControlPoint;
+			leftContY = plotY + Math.sin(jointAngle) * distanceLeftControlPoint;
+			rightContX = plotX + Math.cos(Math.PI + jointAngle) * distanceRightControlPoint;
+			rightContY = plotY + Math.sin(Math.PI + jointAngle) * distanceRightControlPoint;
+			
+			// Record for drawing in next point
+			point.rightContX = rightContX;
+			point.rightContY = rightContY;
+
+		}
+		
+		
+		// moveTo or lineTo
+		if (!i) {
+			ret = ['M', plotX, plotY];
+		} else { // curve from last point to this
+			ret = [
+				'C',
+				lastPoint.rightContX || lastPoint.plotX,
+				lastPoint.rightContY || lastPoint.plotY,
+				leftContX || plotX,
+				leftContY || plotY,
+				plotX,
+				plotY
+			];
+			lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
+		}
+		
+		
+	} else {
+		ret = proceed.call(this, segment, point, i);
+	}
+	return ret;
+});
+
+/**
  * Extend translate. The plotX and plotY values are computed as if the polar chart were a
  * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
  * center. 
@@ -87,27 +191,25 @@ seriesProto.translate = (function (func) {
  * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in 
  * line-like series.
  */
-seriesProto.getSegmentPath = (function (func) {
-	return function (segment) {
+wrap(seriesProto, 'getSegmentPath', function (proceed, segment) {
 		
-		var points = this.points;
-		
-		// Connect the path
-		if (this.chart.polar && this.options.connectEnds !== false && 
-				segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
-			segment = [].concat(segment, [points[0]]);
-		}
-		
-		// Run uber method
-		return func.call(this, segment);
-		
-	};
-}(seriesProto.getSegmentPath));
+	var points = this.points;
+	
+	// Connect the path
+	if (this.chart.polar && this.options.connectEnds !== false && 
+			segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
+		this.connectEnds = true; // re-used in splines
+		segment = [].concat(segment, [points[0]]);
+	}
+	
+	// Run uber method
+	return proceed.call(this, segment);
+	
+});
 
 
 function polarAnimate(proceed, init) {
 	var chart = this.chart,
-		clipRect = this.clipRect,
 		animation = this.options.animation,
 		group = this.group,
 		center = this.xAxis.center,
