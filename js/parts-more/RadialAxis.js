@@ -28,7 +28,6 @@ var radialAxisMixin = {
 	 * The default options extend defaultYAxisOptions
 	 */
 	defaultRadialGaugeOptions: {
-		background: {}, // extended to defaultBackgroundOptions
 		labels: {
 			align: 'center',
 			x: 0,
@@ -83,26 +82,6 @@ var radialAxisMixin = {
 	},
 	
 	/**
-	 * The default background options
-	 */
-	defaultBackgroundOptions: {
-		shape: 'circle',
-		borderWidth: 1,
-		borderColor: 'silver',
-		backgroundColor: {
-			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-			stops: [
-				[0, '#FFF'],
-				[1, '#DDD']
-			]
-		},
-		from: Number.MIN_VALUE, // corrected to axis min
-		innerRadius: 0,
-		to: Number.MAX_VALUE, // corrected to axis max
-		outerRadius: '105%'
-	},
-	
-	/**
 	 * Merge and set options
 	 */
 	setOptions: function (userOptions) {
@@ -122,7 +101,7 @@ var radialAxisMixin = {
 		// In the first parameter, pick up the background options, or use one empty object that is
 		// filled with default background options. Concatenate this with an empty array, which creates
 		// a copy so that the .reverse() operation is not repeated for export.
-		backgroundOption = options.background;
+		/*backgroundOption = options.background;
 		if (backgroundOption) {
 			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
 				backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
@@ -133,7 +112,7 @@ var radialAxisMixin = {
 				config.color = config.backgroundColor; // due to naming in plotBands
 				options.plotBands.unshift(config);
 			});
-		}
+		}*/
 	},
 	
 	/**
@@ -148,7 +127,7 @@ var radialAxisMixin = {
 		this.chart.axisOffset[this.side] = 0;
 		
 		// Set the center array
-		this.center = seriesTypes.pie.prototype.getCenter.call(this);
+		this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
 	},
 
 	/**
@@ -379,9 +358,11 @@ var radialAxisMixin = {
  * Override axisProto.init to mix in special axis instance functions and function overrides
  */
 wrap(axisProto, 'init', function (proceed, chart, userOptions) {
-	var angular = chart.angular,
+	var axis = this,
+		angular = chart.angular,
 		polar = chart.polar,
 		isX = userOptions.isX,
+		isHidden = angular && isX,
 		isCircular,
 		options,
 		pane,
@@ -389,7 +370,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		
 	// Before prototype.init
 	if (angular) {
-		extend(this, isX ? hiddenAxisMixin : radialAxisMixin);
+		extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
 		isCircular =  !isX;
 		if (isCircular) {
 			this.defaultRadialOptions = this.defaultRadialGaugeOptions;
@@ -406,41 +387,45 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	// Run prototype.init
 	proceed.call(this, chart, userOptions);
 	
-	// Set the pane options. This can later be extended and adopted by basic Highcharts and Highstock
-	paneOptions = merge({
-		center: ['50%', '50%'],
-		size: '90%',
-		startAngle: 0,
-		endAngle: 360
-	}, chart.options.pane);
-	this.pane = pane = Highcharts.splat(paneOptions)[userOptions.pane || 0];
-	options = this.options;
-	
-	// All pane options override the axis options
-	extend(options, pane);
-	
-	// After prototype.init
-	if (angular || polar) {
+	if (!isHidden) {
+		options = this.options;
 		
-		// Disable certain features on angular and polar axes
-		chart.inverted = false;
-		chart.options.chart.zoomType = null;
+		// Create the pane and set the pane options.
+		if (!chart.panes) {
+			chart.panes = map(Highcharts.splat(chart.options.pane), function (paneOptions) {
+				return new Pane(paneOptions, chart, axis);
+			});
+		}
+		this.pane = pane = chart.panes[userOptions.pane || 0];
+		paneOptions = pane.options;
 		
-		// Start and end angle options are
-		// given in degrees relative to top, while internal computations are
-		// in radians relative to right (like SVG).
-		this.startAngleRad = (options.startAngle - 90) * Math.PI / 180;
-		this.endAngleRad = (options.endAngle - 90) * Math.PI / 180;
-		this.offset = options.offset || 0;
+		// Copy some options over from the pane to the axis itself
+		//options.center = paneOptions.center;
+		//options.size = paneOptions.size;
 		
-		this.isCircular = isCircular;
 		
-		// Automatically connect grid lines?
-		if (isCircular && userOptions.max === UNDEFINED) {
-			this.autoConnect = true;
+		// After prototype.init
+		if (angular || polar) {
+			
+			// Disable certain features on angular and polar axes
+			chart.inverted = false;
+			chart.options.chart.zoomType = null;
+			
+			// Start and end angle options are
+			// given in degrees relative to top, while internal computations are
+			// in radians relative to right (like SVG).
+			this.startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
+			this.endAngleRad = (paneOptions.endAngle - 90) * Math.PI / 180;
+			this.offset = options.offset || 0;
+			
+			this.isCircular = isCircular;
+			
+			// Automatically connect grid lines?
+			if (isCircular && userOptions.max === UNDEFINED) {
+				this.autoConnect = true;
+			}
 		}
 	}
-	
 	
 });
 

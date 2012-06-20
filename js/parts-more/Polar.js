@@ -8,7 +8,6 @@
  */
 
 var seriesProto = Series.prototype,
-	columnProto = seriesTypes.column.prototype,
 	mouseTrackerProto = Highcharts.MouseTracker.prototype;
 
 
@@ -180,7 +179,7 @@ wrap(seriesProto, 'translate', function (proceed) {
 	proceed.call(this);
 	
 	// Postprocess plot coordinates
-	if (this.chart.polar && this.type !== 'column') { // TODO: do not use this.type
+	if (this.chart.polar && !this.preventPostTranslate) {
 		var points = this.points,
 			i = points.length;
 		while (i--) {
@@ -298,7 +297,7 @@ wrap(seriesProto, 'setTooltipPoints', function (proceed, renew) {
 /**
  * Extend the column prototype's translate method
  */
-wrap(columnProto, 'translate', function (proceed) {
+wrap(colProto, 'translate', function (proceed) {
 		
 	var xAxis = this.xAxis,
 		len = this.yAxis.len,
@@ -308,6 +307,8 @@ wrap(columnProto, 'translate', function (proceed) {
 		points,
 		point,
 		i;
+	
+	this.preventPostTranslate = true;
 	
 	// Run uber method
 	proceed.call(this);

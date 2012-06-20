@@ -1,9 +1,6 @@
 /**
  * The ColumnRangeSeries class
  */
-
-var colProto = seriesTypes.column.prototype;
-
 defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 	lineWidth: 1,
 	pointRange: null
