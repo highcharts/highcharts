@@ -1052,6 +1052,16 @@ pathAnim = {
 				// animate paths
 				Step.d = dSetter;
 			}
+			
+			
+			// Register Highcharts as a jQuery plugin // docs
+			// TODO: MooTools and prototype as well?
+			// TODO: StockChart
+			/*$.fn.highcharts = function(options, callback) {
+		        options.chart = merge(options.chart, { renderTo: this[0] });
+		        this.chart = new Chart(options, callback);
+		        return this;
+		    };*/
 		},
 	
 		/**
@@ -12840,7 +12850,8 @@ Series.prototype = {
 			if (lineWidth) {
 				attribs = {
 					stroke: color,
-					'stroke-width': lineWidth
+					'stroke-width': lineWidth,
+					zIndex: 1 // #1069
 				};
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
@@ -13378,7 +13389,8 @@ var AreaSeries = extendClass(Series, {
 					fill: pick(
 						options.fillColor,
 						Color(this.color).setOpacity(options.fillOpacity || 0.75).get()
-					)
+					),
+					zIndex: 0 // #1069
 				}).add(this.group);
 		}
 	},

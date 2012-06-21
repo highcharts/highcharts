@@ -2002,7 +2002,8 @@ Series.prototype = {
 			if (lineWidth) {
 				attribs = {
 					stroke: color,
-					'stroke-width': lineWidth
+					'stroke-width': lineWidth,
+					zIndex: 1 // #1069
 				};
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;

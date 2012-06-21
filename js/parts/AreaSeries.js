@@ -89,7 +89,8 @@ var AreaSeries = extendClass(Series, {
 					fill: pick(
 						options.fillColor,
 						Color(this.color).setOpacity(options.fillOpacity || 0.75).get()
-					)
+					),
+					zIndex: 0 // #1069
 				}).add(this.group);
 		}
 	},
