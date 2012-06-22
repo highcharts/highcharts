@@ -15513,6 +15513,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
+	takeOrdinalPosition: false, // #1074
 	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series
@@ -17439,7 +17440,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					
 					each(axis.series, function (series, i) {
 						
-						if (series.visible !== false) {
+						if (series.visible !== false && series.takeOrdinalPosition !== false) {
 							
 							// concatenate the processed X data into the existing positions, or the empty array 
 							ordinalPositions = ordinalPositions.concat(series.processedXData);

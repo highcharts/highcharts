@@ -33,6 +33,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
+	takeOrdinalPosition: false, // #1074
 	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series
