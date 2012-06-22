@@ -12072,7 +12072,7 @@ Series.prototype = {
 				}
 
 				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
-				point.stackTotal = pointStackTotal;
+				point.total = point.stackTotal = pointStackTotal;
 				point.stackY = yValue;
 			}
 
