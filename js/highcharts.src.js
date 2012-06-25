@@ -3683,6 +3683,13 @@ SVGRenderer.prototype = {
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
 			});
+		
+		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079)	
+		if (!hasSVG && renderer.forExport) {
+			wrapper.css({
+				whiteSpace: 'nowrap'
+			});
+		}
 
 		wrapper.x = x;
 		wrapper.y = y;
