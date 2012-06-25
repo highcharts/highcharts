@@ -1912,10 +1912,10 @@ SVGRenderer.prototype = {
 				fontSize: defaultChartStyle.fontSize
 			});
 		
-		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079)	
+		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)	
 		if (!hasSVG && renderer.forExport) {
 			wrapper.css({
-				whiteSpace: 'nowrap'
+				position: ABSOLUTE
 			});
 		}
 

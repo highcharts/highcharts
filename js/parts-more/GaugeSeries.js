@@ -3,6 +3,7 @@
  * 
  * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
  * Clock:       http://jsfiddle.net/highcharts/BFN2F/
+ * Minimal:     http://jsfiddle.net/highcharts/9XgY7/
  * 
  * TODO:
  * - Radial gradients.
