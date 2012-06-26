@@ -22,17 +22,16 @@ function Tooltip(chart, options) {
 	this.crosshairs = [];
 
 	// Current values of x and y when animating
-	this.currentX = 0;
-	this.currentY = 0;
+	this.now = { x: 0, y: 0 };
 
 	// The tooltipTick function, initialized to nothing
 	//this.tooltipTick = UNDEFINED;
 
 	// The tooltip is initially hidden
-	this.tooltipIsHidden = true;
+	this.isHidden = true;
 
 	// create the label
-	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML, null, 'tooltip')
+	this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,
@@ -74,24 +73,30 @@ Tooltip.prototype = {
 	/**
 	 * Provide a soft movement for the tooltip
 	 *
-	 * @param {Number} finalX
-	 * @param {Number} finalY
+	 * @param {Number} x
+	 * @param {Number} y
 	 * @private
 	 */
-	move: function (finalX, finalY) {
-		var tooltip = this;
+	move: function (x, y, anchorX, anchorY) {
+		var tooltip = this,
+			now = tooltip.now,
+			isHidden = tooltip.isHidden;
 
 		// get intermediate values for animation
-		tooltip.currentX = tooltip.tooltipIsHidden ? finalX : (2 * tooltip.currentX + finalX) / 3;
-		tooltip.currentY = tooltip.tooltipIsHidden ? finalY : (tooltip.currentY + finalY) / 2;
+		extend(now, {
+			x: isHidden ? x : (2 * now.x + x) / 3,
+			y: isHidden ? y : (now.y + y) / 2,
+			anchorX: isHidden ? anchorX : (2 * now.anchorX + anchorX) / 3,
+			anchorY: isHidden ? anchorY : (now.anchorY + anchorY) / 2
+		});
 
 		// move to the intermediate value
-		tooltip.label.attr({ x: tooltip.currentX, y: tooltip.currentY });
+		tooltip.label.attr(now);
 
 		// run on next tick of the mouse tracker
-		if (mathAbs(finalX - tooltip.currentX) > 1 || mathAbs(finalY - tooltip.currentY) > 1) {
+		if (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1) {
 			tooltip.tooltipTick = function () {
-				tooltip.move(finalX, finalY);
+				tooltip.move(x, y, anchorX, anchorY);
 			};
 		} else {
 			tooltip.tooltipTick = null;
@@ -102,7 +107,7 @@ Tooltip.prototype = {
 	 * Hide the tooltip
 	 */
 	hide: function () {
-		if (!this.tooltipIsHidden) {
+		if (!this.isHidden) {
 			var hoverPoints = this.chart.hoverPoints;
 
 			this.label.hide();
@@ -115,7 +120,7 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
-			this.tooltipIsHidden = true;
+			this.isHidden = true;
 		}
 	},
 
@@ -212,7 +217,7 @@ Tooltip.prototype = {
 		// Now if the tooltip is below the chart, move it up. It's better to cover the
 		// point than to disappear outside the chart. #834.
 		if (y + boxHeight > plotTop + plotHeight) {
-			y = plotTop + plotHeight - boxHeight - distance; // below
+			y = mathMax(plotTop, plotTop + plotHeight - boxHeight - distance); // below
 		}
 		
 	
@@ -292,7 +297,8 @@ Tooltip.prototype = {
 			});
 
 			textConfig = {
-				x: point[0].category
+				x: point[0].category,
+				y: point[0].y
 			};
 			textConfig.points = pointConfig;
 			point = point[0];
@@ -316,7 +322,7 @@ Tooltip.prototype = {
 		} else {
 
 			// show it
-			if (tooltip.tooltipIsHidden) {
+			if (tooltip.isHidden) {
 				label.show();
 			}
 
@@ -339,10 +345,15 @@ Tooltip.prototype = {
 			);
 
 			// do the move
-			tooltip.move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
+			tooltip.move(
+				mathRound(placedTooltipPoint.x), 
+				mathRound(placedTooltipPoint.y), 
+				x + chart.plotLeft, 
+				y + chart.plotTop
+			);
 			
 			
-			tooltip.tooltipIsHidden = false;
+			tooltip.isHidden = false;
 		}
 
 		// crosshairs

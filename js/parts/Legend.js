@@ -220,7 +220,7 @@ Legend.prototype = {
 					legend.baseline,
 					options.useHTML
 				)
-				.css(item.visible ? itemStyle : itemHiddenStyle)
+				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2

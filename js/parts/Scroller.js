@@ -580,7 +580,8 @@ Scroller.prototype = {
 							xAxis.translate(left, true),
 							xAxis.translate(left + range, true),
 							true,
-							false
+							false,
+							{ trigger: 'navigator' }
 						);
 					}
 				}
@@ -643,7 +644,8 @@ Scroller.prototype = {
 					xAxis.translate(zoomedMin, true),
 					xAxis.translate(zoomedMax, true),
 					true,
-					false
+					false,
+					{ trigger: 'navigator' }
 				);
 			}
 			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;

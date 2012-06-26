@@ -33,6 +33,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
+	takeOrdinalPosition: false, // #1074
 	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series
@@ -240,16 +241,17 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Extend the column trackers with listeners to expand and contract stacks
 	 */
 	drawTracker: function () {
-		var series = this;
-
-		seriesTypes.column.prototype.drawTracker.apply(series);
+		
+		seriesTypes.column.prototype.drawTracker.apply(this);
 
 		// put each point in front on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis
-		each(series.points, function (point) {
-			addEvent(point.tracker.element, 'mouseover', function () {
-				point.graphic.toFront();
-			});
+		each(this.points, function (point) {
+			if (point.tracker) { // #1046
+				addEvent(point.tracker.element, 'mouseover', function () {
+					point.graphic.toFront();
+				});
+			}
 		});
 	},
 

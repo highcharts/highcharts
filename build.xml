@@ -51,12 +51,15 @@
         <property name="mootools.src.name" value="mootools-adapter.src.js"/>
         <property name="prototype.src.name" value="prototype-adapter.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
+        <property name="data.src.name" value="data.src.js"/>
         <property name="mootools.minified.name" value="mootools-adapter.js"/>
         <property name="prototype.minified.name" value="prototype-adapter.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
+        <property name="data.minified.name" value="data.js"/>
         <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
         <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
+		<property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
@@ -252,6 +255,7 @@
             <fileset file="${mootools.src.file}"/>
             <fileset file="${prototype.src.file}"/>
             <fileset file="${exporting.src.file}"/>
+            <fileset file="${data.src.file}"/>
             <fileset dir="${themes.dir}"/>
             <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
@@ -381,6 +385,11 @@
         <antcall target="compile">
             <param name="param.src" value="${exporting.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="${data.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${data.minified.name}"/>
         </antcall>
 
         <antcall target="compile">

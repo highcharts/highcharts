@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.2.4 (2012-05-31)
+ * @license Highcharts JS v2.2.5 (2012-06-08)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -888,6 +888,7 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
  * 
  * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
  * Clock:       http://jsfiddle.net/highcharts/BFN2F/
+ * Minimal:     http://jsfiddle.net/highcharts/9XgY7/
  * 
  * TODO:
  * - Finalize radial gradients in VMLRenderer

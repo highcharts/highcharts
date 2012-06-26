@@ -737,6 +737,16 @@ function correctFloat(num) {
 }
 
 /**
+ * Set the global animation to either a given value, or fall back to the
+ * given chart's animation option
+ * @param {Object} animation
+ * @param {Object} chart
+ */
+function setAnimation(animation, chart) {
+	globalAnimation = pick(animation, chart.animation);
+}
+
+/**
  * The time unit lookup
  */
 /*jslint white: true*/

@@ -24,7 +24,6 @@
 		extend = Highcharts.extend,
 		merge = Highcharts.merge,
 		addEvent = Highcharts.addEvent,
-		placeBox = Highcharts.placeBox,
 		createElement = Highcharts.createElement,
 		discardElement = Highcharts.discardElement;
 
@@ -125,7 +124,7 @@
 				tooltipDiv.innerHTML = args.text;
 
 				// Compute the best position for the tooltip based on the divs size and container size.
-				position = placeBox(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, offsetLeft, offsetTop, chartContainer.offsetWidth, chartContainer.offsetHeight, {x: args.x, y: args.y}, 12);
+				position = chart.tooltip.getPosition(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, {plotX: args.x, plotY: args.y});
 
 				css(tooltipDiv, {
 					visibility: VISIBLE,

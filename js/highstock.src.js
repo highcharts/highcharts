@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.1.5 (2012-03-15)
+ * @license Highstock JS v1.1.6 (2012-06-08)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -854,6 +854,16 @@ function correctFloat(num) {
 }
 
 /**
+ * Set the global animation to either a given value, or fall back to the
+ * given chart's animation option
+ * @param {Object} animation
+ * @param {Object} chart
+ */
+function setAnimation(animation, chart) {
+	globalAnimation = pick(animation, chart.animation);
+}
+
+/**
  * The time unit lookup
  */
 /*jslint white: true*/
@@ -964,17 +974,303 @@ pathAnim = {
 	}
 };
 
-
-/**
- * Set the global animation to either a given value, or fall back to the
- * given chart's animation option
- * @param {Object} animation
- * @param {Object} chart
- */
-function setAnimation(animation, chart) {
-	globalAnimation = pick(animation, chart.animation);
-}
-
+(function ($) {
+	/**
+	 * The default HighchartsAdapter for jQuery
+	 */
+	win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
+		
+		/**
+		 * Initialize the adapter by applying some extensions to jQuery
+		 */
+		init: function (pathAnim) {
+			
+			// extend the animate function to allow SVG animations
+			var Fx = $.fx,
+				Step = Fx.step,
+				dSetter,
+				Tween = $.Tween,
+				propHooks = Tween && Tween.propHooks;
+			
+			/*jslint unparam: true*//* allow unused param x in this function */
+			$.extend($.easing, {
+				easeOutQuad: function (x, t, b, c, d) {
+					return -c * (t /= d) * (t - 2) + b;
+				}
+			});
+			/*jslint unparam: false*/
+		
+		
+			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
+			each(['cur', '_default', 'width', 'height'], function (fn, i) {
+				var obj = Step,
+					base,
+					elem;
+					
+				// Handle different parent objects
+				if (fn === 'cur') {
+					obj = Fx.prototype; // 'cur', the getter, relates to Fx.prototype
+				
+				} else if (fn === '_default' && Tween) { // jQuery 1.8 model
+					obj = propHooks[fn];
+					fn = 'set';
+				}
+		
+				// Overwrite the method
+				base = obj[fn];
+				if (base) { // step.width and step.height don't exist in jQuery < 1.7
+		
+					// create the extended function replacement
+					obj[fn] = function (fx) {
+		
+						// Fx.prototype.cur does not use fx argument
+						fx = i ? fx : this;
+		
+						// shortcut
+						elem = fx.elem;
+		
+						// Fx.prototype.cur returns the current value. The other ones are setters
+						// and returning a value has no effect.
+						return elem.attr ? // is SVG element wrapper
+							elem.attr(fx.prop, fn === 'cur' ? UNDEFINED : fx.now) : // apply the SVG wrapper's method
+							base.apply(this, arguments); // use jQuery's built-in method
+					};
+				}
+			});
+			
+			
+			// Define the setter function for d (path definitions)
+			dSetter = function (fx) {
+				var elem = fx.elem,
+					ends;
+		
+				// Normally start and end should be set in state == 0, but sometimes,
+				// for reasons unknown, this doesn't happen. Perhaps state == 0 is skipped
+				// in these cases
+				if (!fx.started) {
+					ends = pathAnim.init(elem, elem.d, elem.toD);
+					fx.start = ends[0];
+					fx.end = ends[1];
+					fx.started = true;
+				}
+		
+		
+				// interpolate each value of the path
+				elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
+			};
+			
+			// jQuery 1.8 style
+			if (Tween) {
+				propHooks.d = {
+					set: dSetter
+				};
+			// pre 1.8
+			} else {
+				// animate paths
+				Step.d = dSetter;
+			}
+			
+			
+			// Register Highcharts as a jQuery plugin // docs
+			// TODO: MooTools and prototype as well?
+			// TODO: StockChart
+			/*$.fn.highcharts = function(options, callback) {
+		        options.chart = merge(options.chart, { renderTo: this[0] });
+		        this.chart = new Chart(options, callback);
+		        return this;
+		    };*/
+		},
+	
+		/**
+		 * Downloads a script and executes a callback when done.
+		 * @param {String} scriptLocation
+		 * @param {Function} callback
+		 */
+		getScript: $.getScript,
+		
+		/**
+		 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
+		 * @param {Object} elem The HTML element
+		 * @param {String} method Which method to run on the wrapped element
+		 */
+		adapterRun: function (elem, method) {
+			return $(elem)[method]();
+		},
+	
+		/**
+		 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+		 * @param {Array} arr
+		 * @param {Function} fn
+		 */
+		each: function (arr, fn) {
+			var i = 0,
+				len = arr.length;
+			for (; i < len; i++) {
+				if (fn.call(arr[i], arr[i], i, arr) === false) {
+					return i;
+				}
+			}
+		},
+	
+		/**
+		 * Filter an array
+		 */
+		grep: $.grep,
+	
+		/**
+		 * Map an array
+		 * @param {Array} arr
+		 * @param {Function} fn
+		 */
+		map: function (arr, fn) {
+			//return jQuery.map(arr, fn);
+			var results = [],
+				i = 0,
+				len = arr.length;
+			for (; i < len; i++) {
+				results[i] = fn.call(arr[i], arr[i], i, arr);
+			}
+			return results;
+	
+		},
+	
+		/**
+		 * Deep merge two objects and return a third object
+		 */
+		merge: function () {
+			var args = arguments;
+			return $.extend(true, null, args[0], args[1], args[2], args[3]);
+		},
+	
+		/**
+		 * Get the position of an element relative to the top left of the page
+		 */
+		offset: function (el) {
+			return $(el).offset();
+		},
+	
+		/**
+		 * Add an event listener
+		 * @param {Object} el A HTML element or custom object
+		 * @param {String} event The event type
+		 * @param {Function} fn The event handler
+		 */
+		addEvent: function (el, event, fn) {
+			$(el).bind(event, fn);
+		},
+	
+		/**
+		 * Remove event added with addEvent
+		 * @param {Object} el The object
+		 * @param {String} eventType The event type. Leave blank to remove all events.
+		 * @param {Function} handler The function to remove
+		 */
+		removeEvent: function (el, eventType, handler) {
+			// workaround for jQuery issue with unbinding custom events:
+			// http://forum.jQuery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jQuery-1-4-2
+			var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
+			if (doc[func] && !el[func]) {
+				el[func] = function () {};
+			}
+	
+			$(el).unbind(eventType, handler);
+		},
+	
+		/**
+		 * Fire an event on a custom object
+		 * @param {Object} el
+		 * @param {String} type
+		 * @param {Object} eventArguments
+		 * @param {Function} defaultFunction
+		 */
+		fireEvent: function (el, type, eventArguments, defaultFunction) {
+			var event = $.Event(type),
+				detachedType = 'detached' + type,
+				defaultPrevented;
+	
+			// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+			// never uses these properties, Chrome includes them in the default click event and
+			// raises the warning when they are copied over in the extend statement below.
+			//
+			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
+			// testing if they are there (warning in chrome) the only option is to test if running IE.
+			if (!isIE && eventArguments) {
+				delete eventArguments.layerX;
+				delete eventArguments.layerY;
+			}
+	
+			extend(event, eventArguments);
+	
+			// Prevent jQuery from triggering the object method that is named the
+			// same as the event. For example, if the event is 'select', jQuery
+			// attempts calling el.select and it goes into a loop.
+			if (el[type]) {
+				el[detachedType] = el[type];
+				el[type] = null;
+			}
+	
+			// Wrap preventDefault and stopPropagation in try/catch blocks in
+			// order to prevent JS errors when cancelling events on non-DOM
+			// objects. #615.
+			each(['preventDefault', 'stopPropagation'], function (fn) {
+				var base = event[fn];
+				event[fn] = function () {
+					try {
+						base.call(event);
+					} catch (e) {
+						if (fn === 'preventDefault') {
+							defaultPrevented = true;
+						}
+					}
+				};
+			});
+	
+			// trigger it
+			$(el).trigger(event);
+	
+			// attach the method
+			if (el[detachedType]) {
+				el[type] = el[detachedType];
+				el[detachedType] = null;
+			}
+	
+			if (defaultFunction && !event.isDefaultPrevented() && !defaultPrevented) {
+				defaultFunction(event);
+			}
+		},
+		
+		/**
+		 * Extension method needed for MooTools
+		 */
+		washMouseEvent: function (e) {
+			return e;
+		},
+	
+		/**
+		 * Animate a HTML element or SVG element wrapper
+		 * @param {Object} el
+		 * @param {Object} params
+		 * @param {Object} options jQuery-like animation options: duration, easing, callback
+		 */
+		animate: function (el, params, options) {
+			var $el = $(el);
+			if (params.d) {
+				el.toD = params.d; // keep the array form for paths, used in $.fx.step.d
+				params.d = 1; // because in jQuery, animating to an array has a different meaning
+			}
+	
+			$el.stop();
+			$el.animate(params, options);
+	
+		},
+		/**
+		 * Stop running animation
+		 */
+		stop: function (el) {
+			$(el).stop();
+		}
+	});
+}(win.jQuery));
 
 
 // check for a custom HighchartsAdapter defined prior to this file
@@ -1007,268 +1303,7 @@ if (globalAdapter && globalAdapter.init) {
 	// of path animations.
 	globalAdapter.init(pathAnim);
 }
-if (!globalAdapter && win.jQuery) {
-	var jQ = jQuery;
 
-	/**
-	 * Downloads a script and executes a callback when done.
-	 * @param {String} scriptLocation
-	 * @param {Function} callback
-	 */
-	getScript = jQ.getScript;
-	
-	/**
-	 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
-	 * @param {Object} elem The HTML element
-	 * @param {String} method Which method to run on the wrapped element
-	 */
-	adapterRun = function (elem, method) {
-		return jQ(elem)[method]();
-	};
-
-	/**
-	 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
-	 * @param {Array} arr
-	 * @param {Function} fn
-	 */
-	each = function (arr, fn) {
-		var i = 0,
-			len = arr.length;
-		for (; i < len; i++) {
-			if (fn.call(arr[i], arr[i], i, arr) === false) {
-				return i;
-			}
-		}
-	};
-
-	/**
-	 * Filter an array
-	 */
-	grep = jQ.grep;
-
-	/**
-	 * Map an array
-	 * @param {Array} arr
-	 * @param {Function} fn
-	 */
-	map = function (arr, fn) {
-		//return jQuery.map(arr, fn);
-		var results = [],
-			i = 0,
-			len = arr.length;
-		for (; i < len; i++) {
-			results[i] = fn.call(arr[i], arr[i], i, arr);
-		}
-		return results;
-
-	};
-
-	/**
-	 * Deep merge two objects and return a third object
-	 */
-	merge = function () {
-		var args = arguments;
-		return jQ.extend(true, null, args[0], args[1], args[2], args[3]);
-	};
-
-	/**
-	 * Get the position of an element relative to the top left of the page
-	 */
-	offset = function (el) {
-		return jQ(el).offset();
-	};
-
-	/**
-	 * Add an event listener
-	 * @param {Object} el A HTML element or custom object
-	 * @param {String} event The event type
-	 * @param {Function} fn The event handler
-	 */
-	addEvent = function (el, event, fn) {
-		jQ(el).bind(event, fn);
-	};
-
-	/**
-	 * Remove event added with addEvent
-	 * @param {Object} el The object
-	 * @param {String} eventType The event type. Leave blank to remove all events.
-	 * @param {Function} handler The function to remove
-	 */
-	removeEvent = function (el, eventType, handler) {
-		// workaround for jQuery issue with unbinding custom events:
-		// http://forum.jquery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jquery-1-4-2
-		var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
-		if (doc[func] && !el[func]) {
-			el[func] = function () {};
-		}
-
-		jQ(el).unbind(eventType, handler);
-	};
-
-	/**
-	 * Fire an event on a custom object
-	 * @param {Object} el
-	 * @param {String} type
-	 * @param {Object} eventArguments
-	 * @param {Function} defaultFunction
-	 */
-	fireEvent = function (el, type, eventArguments, defaultFunction) {
-		var event = jQ.Event(type),
-			detachedType = 'detached' + type,
-			defaultPrevented;
-
-		// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
-		// never uses these properties, Chrome includes them in the default click event and
-		// raises the warning when they are copied over in the extend statement below.
-		if (eventArguments && eventArguments.layerX !== UNDEFINED) {
-			delete eventArguments.layerX;
-			delete eventArguments.layerY;
-		}
-
-		extend(event, eventArguments);
-
-		// Prevent jQuery from triggering the object method that is named the
-		// same as the event. For example, if the event is 'select', jQuery
-		// attempts calling el.select and it goes into a loop.
-		if (el[type]) {
-			el[detachedType] = el[type];
-			el[type] = null;
-		}
-
-		// Wrap preventDefault and stopPropagation in try/catch blocks in
-		// order to prevent JS errors when cancelling events on non-DOM
-		// objects. #615.
-		each(['preventDefault', 'stopPropagation'], function (fn) {
-			var base = event[fn];
-			event[fn] = function () {
-				try {
-					base.call(event);
-				} catch (e) {
-					if (fn === 'preventDefault') {
-						defaultPrevented = true;
-					}
-				}
-			};
-		});
-
-		// trigger it
-		jQ(el).trigger(event);
-
-		// attach the method
-		if (el[detachedType]) {
-			el[type] = el[detachedType];
-			el[detachedType] = null;
-		}
-
-		if (defaultFunction && !event.isDefaultPrevented() && !defaultPrevented) {
-			defaultFunction(event);
-		}
-	};
-	
-	/**
-	 * Extension method needed for MooTools
-	 */
-	washMouseEvent = function (e) {
-		return e;
-	};
-
-	/**
-	 * Animate a HTML element or SVG element wrapper
-	 * @param {Object} el
-	 * @param {Object} params
-	 * @param {Object} options jQuery-like animation options: duration, easing, callback
-	 */
-	animate = function (el, params, options) {
-		var $el = jQ(el);
-		if (params.d) {
-			el.toD = params.d; // keep the array form for paths, used in jQ.fx.step.d
-			params.d = 1; // because in jQuery, animating to an array has a different meaning
-		}
-
-		$el.stop();
-		$el.animate(params, options);
-
-	};
-	/**
-	 * Stop running animation
-	 */
-	stop = function (el) {
-		jQ(el).stop();
-	};
-
-
-	//=== Extend jQuery on init
-
-	/*jslint unparam: true*//* allow unused param x in this function */
-	jQ.extend(jQ.easing, {
-		easeOutQuad: function (x, t, b, c, d) {
-			return -c * (t /= d) * (t - 2) + b;
-		}
-	});
-	/*jslint unparam: false*/
-
-	// extend the animate function to allow SVG animations
-	var jFx = jQ.fx,
-		jStep = jFx.step;
-
-	// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-	each(['cur', '_default', 'width', 'height'], function (fn, i) {
-		var obj = jStep,
-			base,
-			elem;
-			
-		// Handle different parent objects
-		if (fn === 'cur') {
-			obj = jFx.prototype; // 'cur', the getter, relates to jFx.prototype
-		
-		} else if (fn === '_default' && jQ.Tween) { // jQuery 1.8 model
-			obj = jQ.Tween.propHooks[fn];
-			fn = 'set';
-		}
-
-		// Overwrite the method
-		base = obj[fn];
-		if (base) { // step.width and step.height don't exist in jQuery < 1.7
-
-			// create the extended function replacement
-			obj[fn] = function (fx) {
-
-				// jFx.prototype.cur does not use fx argument
-				fx = i ? fx : this;
-
-				// shortcut
-				elem = fx.elem;
-
-				// jFX.prototype.cur returns the current value. The other ones are setters
-				// and returning a value has no effect.
-				return elem.attr ? // is SVG element wrapper
-					elem.attr(fx.prop, fn === 'cur' ? UNDEFINED : fx.now) : // apply the SVG wrapper's method
-					base.apply(this, arguments); // use jQuery's built-in method
-			};
-		}
-	});
-
-	// animate paths
-	jStep.d = function (fx) {
-		var elem = fx.elem;
-
-
-		// Normally start and end should be set in state == 0, but sometimes,
-		// for reasons unknown, this doesn't happen. Perhaps state == 0 is skipped
-		// in these cases
-		if (!fx.started) {
-			var ends = pathAnim.init(elem, elem.d, elem.toD);
-			fx.start = ends[0];
-			fx.end = ends[1];
-			fx.started = true;
-		}
-
-
-		// interpolate each value of the path
-		elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
-
-	};
-}
 
 /* ****************************************************************************
  * Handle the options                                                         *
@@ -1308,7 +1343,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.1.5/modules/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.1.6/modules/canvas-tools.js'
 	},
 	chart: {
 		//animation: true,
@@ -2898,7 +2933,9 @@ SVGRenderer.prototype = {
 
 		// Needed in IE9 because it doesn't report tspan's offsetHeight (#893)
 		function getLineHeightByBBox(lineNo) {
-			linePositions[lineNo] = textNode.getBBox().height;
+			linePositions[lineNo] = textNode.getBBox ?
+				textNode.getBBox().height :
+				wrapper.renderer.fontMetrics(textNode.style.fontSize).h; // #990
 			return mathRound(linePositions[lineNo] - (linePositions[lineNo - 1] || 0));
 		}
 
@@ -3663,6 +3700,13 @@ SVGRenderer.prototype = {
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
 			});
+		
+		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)	
+		if (!hasSVG && renderer.forExport) {
+			wrapper.css({
+				position: ABSOLUTE
+			});
+		}
 
 		wrapper.x = x;
 		wrapper.y = y;
@@ -5185,6 +5229,12 @@ if (useCanVG) {
 	};
 
 	/**
+	 * Start with an empty symbols object. This is needed when exporting is used (exporting.src.js will add a few symbols), but 
+	 * the implementation from SvgRenderer will not be merged in until first render.
+	 */
+	CanVGRenderer.prototype.symbols = {};
+
+	/**
 	 * Handles on demand download of canvg rendering support.
 	 */
 	CanVGController = (function () {
@@ -5375,7 +5425,7 @@ Tick.prototype = {
 				plotLeft = chart.plotLeft,
 				plotRight = plotLeft + axis.len,
 				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
-				neighbourEdge = neighbour && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+				neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
@@ -6243,7 +6293,10 @@ Axis.prototype = {
 			this.isXAxis ? {} : this.defaultYAxisOptions,
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
-			userOptions
+			merge(
+				defaultOptions[this.isXAxis ? 'xAxis' : 'yAxis'], // if set in setOptions (#1053)
+				userOptions
+			)
 		);
 	},
 	
@@ -7778,17 +7831,16 @@ function Tooltip(chart, options) {
 	this.crosshairs = [];
 
 	// Current values of x and y when animating
-	this.currentX = 0;
-	this.currentY = 0;
+	this.now = { x: 0, y: 0 };
 
 	// The tooltipTick function, initialized to nothing
 	//this.tooltipTick = UNDEFINED;
 
 	// The tooltip is initially hidden
-	this.tooltipIsHidden = true;
+	this.isHidden = true;
 
 	// create the label
-	this.label = chart.renderer.label('', 0, 0, null, null, null, options.useHTML, null, 'tooltip')
+	this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
 		.attr({
 			padding: padding,
 			fill: options.backgroundColor,
@@ -7830,24 +7882,30 @@ Tooltip.prototype = {
 	/**
 	 * Provide a soft movement for the tooltip
 	 *
-	 * @param {Number} finalX
-	 * @param {Number} finalY
+	 * @param {Number} x
+	 * @param {Number} y
 	 * @private
 	 */
-	move: function (finalX, finalY) {
-		var tooltip = this;
+	move: function (x, y, anchorX, anchorY) {
+		var tooltip = this,
+			now = tooltip.now,
+			isHidden = tooltip.isHidden;
 
 		// get intermediate values for animation
-		tooltip.currentX = tooltip.tooltipIsHidden ? finalX : (2 * tooltip.currentX + finalX) / 3;
-		tooltip.currentY = tooltip.tooltipIsHidden ? finalY : (tooltip.currentY + finalY) / 2;
+		extend(now, {
+			x: isHidden ? x : (2 * now.x + x) / 3,
+			y: isHidden ? y : (now.y + y) / 2,
+			anchorX: isHidden ? anchorX : (2 * now.anchorX + anchorX) / 3,
+			anchorY: isHidden ? anchorY : (now.anchorY + anchorY) / 2
+		});
 
 		// move to the intermediate value
-		tooltip.label.attr({ x: tooltip.currentX, y: tooltip.currentY });
+		tooltip.label.attr(now);
 
 		// run on next tick of the mouse tracker
-		if (mathAbs(finalX - tooltip.currentX) > 1 || mathAbs(finalY - tooltip.currentY) > 1) {
+		if (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1) {
 			tooltip.tooltipTick = function () {
-				tooltip.move(finalX, finalY);
+				tooltip.move(x, y, anchorX, anchorY);
 			};
 		} else {
 			tooltip.tooltipTick = null;
@@ -7858,7 +7916,7 @@ Tooltip.prototype = {
 	 * Hide the tooltip
 	 */
 	hide: function () {
-		if (!this.tooltipIsHidden) {
+		if (!this.isHidden) {
 			var hoverPoints = this.chart.hoverPoints;
 
 			this.label.hide();
@@ -7871,7 +7929,7 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
-			this.tooltipIsHidden = true;
+			this.isHidden = true;
 		}
 	},
 
@@ -7968,7 +8026,7 @@ Tooltip.prototype = {
 		// Now if the tooltip is below the chart, move it up. It's better to cover the
 		// point than to disappear outside the chart. #834.
 		if (y + boxHeight > plotTop + plotHeight) {
-			y = plotTop + plotHeight - boxHeight - distance; // below
+			y = mathMax(plotTop, plotTop + plotHeight - boxHeight - distance); // below
 		}
 		
 	
@@ -8048,7 +8106,8 @@ Tooltip.prototype = {
 			});
 
 			textConfig = {
-				x: point[0].category
+				x: point[0].category,
+				y: point[0].y
 			};
 			textConfig.points = pointConfig;
 			point = point[0];
@@ -8072,7 +8131,7 @@ Tooltip.prototype = {
 		} else {
 
 			// show it
-			if (tooltip.tooltipIsHidden) {
+			if (tooltip.isHidden) {
 				label.show();
 			}
 
@@ -8095,10 +8154,15 @@ Tooltip.prototype = {
 			);
 
 			// do the move
-			tooltip.move(mathRound(placedTooltipPoint.x), mathRound(placedTooltipPoint.y));
+			tooltip.move(
+				mathRound(placedTooltipPoint.x), 
+				mathRound(placedTooltipPoint.y), 
+				x + chart.plotLeft, 
+				y + chart.plotTop
+			);
 			
 			
-			tooltip.tooltipIsHidden = false;
+			tooltip.isHidden = false;
 		}
 
 		// crosshairs
@@ -8260,7 +8324,7 @@ MouseTracker.prototype = {
 				value: axis.translate(
 					isHorizontal ?
 						e.chartX - chart.plotLeft :
-						chart.plotHeight - e.chartY + chart.plotTop,
+						axis.top + axis.len - e.chartY, // #1051
 					true
 				)
 			});
@@ -8976,7 +9040,7 @@ Legend.prototype = {
 					legend.baseline,
 					options.useHTML
 				)
-				.css(item.visible ? itemStyle : itemHiddenStyle)
+				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -9475,10 +9539,8 @@ Chart.prototype = {
 			redraw = pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
-				chart.initSeries(options);
-				//series = chart.initSeries(options);
-				//series.isDirty = true;
-
+				series = chart.initSeries(options);
+				
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				if (redraw) {
 					chart.redraw();
@@ -9873,7 +9935,7 @@ Chart.prototype = {
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
 				if (axis.options.zoomEnabled !== false) {
-					axis.setExtremes(null, null, false);
+					axis.setExtremes(null, null, false, UNDEFINED, { trigger: 'zoomout' });
 					hasZoomed = true;
 				}
 			});
@@ -9883,7 +9945,7 @@ Chart.prototype = {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false);
+					axis.setExtremes(axisData.min, axisData.max, false, UNDEFINED, { trigger: 'zoom' });
 					hasZoomed = true;
 				}
 			});
@@ -9921,7 +9983,7 @@ Chart.prototype = {
 		}
 
 		if (xAxis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-			xAxis.setExtremes(newMin, newMax, true, false);
+			xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
 		}
 
 		chart.mouseDownX = chartX; // set new reference for next run
@@ -10243,19 +10305,6 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Fires endResize event on chart instance.
-	 */
-	fireEndResize: function () {
-		var chart = this;
-
-		if (chart) {
-			fireEvent(chart, 'endResize', null, function () {
-				chart.isResizing -= 1;
-			});
-		}
-	},
-
-	/**
 	 * Resize the chart to a given width and height
 	 * @param {Number} width
 	 * @param {Number} height
@@ -10268,9 +10317,18 @@ Chart.prototype = {
 			chartHeight,
 			spacingBox,
 			chartTitle = chart.title,
-			chartSubtitle = chart.subtitle;
+			chartSubtitle = chart.subtitle,
+			fireEndResize;
 
+		// Handle the isResizing counter
 		chart.isResizing += 1;
+		fireEndResize = function () {
+			if (chart) {
+				fireEvent(chart, 'endResize', null, function () {
+					chart.isResizing -= 1;
+				});
+			}
+		};
 
 		// set the animation for the current process
 		setAnimation(animation, chart);
@@ -10329,9 +10387,9 @@ Chart.prototype = {
 		// fire endResize and set isResizing back
 		// If animation is disabled, fire without delay
 		if (globalAnimation === false) {
-			chart.fireEndResize();
+			fireEndResize();
 		} else { // else set a timeout with the animation duration
-			setTimeout(chart.fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
+			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
 		}
 	},
 
@@ -10720,7 +10778,7 @@ Chart.prototype = {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(chart.firstRender, options.global.canvasToolsURL);
+				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
 			} else {
 				doc.attachEvent(ONREADYSTATECHANGE, function () {
 					doc.detachEvent(ONREADYSTATECHANGE, chart.firstRender);
@@ -11336,23 +11394,24 @@ Point.prototype = {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
 			if (state && markerStateOptions) {
-				if (!stateMarkerGraphic) {
-					radius = markerStateOptions.radius;
+				radius = markerStateOptions.radius;
+				if (!stateMarkerGraphic) { // add
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
 						series.symbol,
-						-radius,
-						-radius,
+						plotX - radius,
+						plotY - radius,
 						2 * radius,
 						2 * radius
 					)
 					.attr(pointAttr[state])
 					.add(series.group);
+				
+				} else { // update
+					stateMarkerGraphic.attr({ // #1054
+						x: plotX - radius,
+						y: plotY - radius
+					});
 				}
-
-				stateMarkerGraphic.translate(
-					plotX,
-					plotY
-				);
 			}
 
 			if (stateMarkerGraphic) {
@@ -11831,7 +11890,7 @@ Series.prototype = {
 
 		// reset minRange (#878)
 		if (xAxis) {
-			xAxis.minRange = UNDEFINED;
+			xAxis.minRange = xAxis.userMinRange;
 		}
 
 		// redraw
@@ -12086,7 +12145,7 @@ Series.prototype = {
 				}
 
 				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
-				point.stackTotal = pointStackTotal;
+				point.total = point.stackTotal = pointStackTotal;
 				point.stackY = yValue;
 			}
 
@@ -12874,7 +12933,8 @@ Series.prototype = {
 			if (lineWidth) {
 				attribs = {
 					stroke: color,
-					'stroke-width': lineWidth
+					'stroke-width': lineWidth,
+					zIndex: 1 // #1069
 				};
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
@@ -12926,14 +12986,11 @@ Series.prototype = {
 	/**
 	 * Create the series group
 	 */
-	createGroup: function (doClip) {
+	createGroup: function () {
 		
 		var chart = this.chart,
 			group = this.group = chart.renderer.g('series');
 
-		if (doClip) {
-			group.clip(this.clipRect);
-		}
 		group.attr({
 				visibility: this.visible ? VISIBLE : HIDDEN,
 				zIndex: this.options.zIndex
@@ -12978,20 +13035,10 @@ Series.prototype = {
 		
 
 		// the group
-		series.createGroup(doClip);
-		if (!series.group) {
-			group = series.group = renderer.g('series');
-
-			group.attr({
-					visibility: series.visible ? VISIBLE : HIDDEN,
-					zIndex: options.zIndex
-				})
-				.translate(series.xAxis.left, series.yAxis.top)
-				.add(chart.seriesGroup);
-		} else {
-			group = series.group;
-		}
-
+		series.createGroup();
+		group = series.group;
+		
+		
 		series.drawDataLabels();
 
 		// initiate the animation
@@ -13433,7 +13480,8 @@ var AreaSeries = extendClass(Series, {
 					fill: pick(
 						options.fillColor,
 						Color(this.color).setOpacity(options.fillOpacity || 0.75).get()
-					)
+					),
+					zIndex: 0 // #1069
 				}).add(this.group);
 		}
 	},
@@ -13613,6 +13661,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
+	//grouping: true, // docs
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
 	//pointWidth: null,
@@ -13687,21 +13736,26 @@ var ColumnSeries = extendClass(Series, {
 		// Get the total number of column type series.
 		// This is called on every series. Consider moving this logic to a
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
-		each(chart.series, function (otherSeries) {
-			if (otherSeries.type === series.type && otherSeries.visible &&
-					series.options.group === otherSeries.options.group) { // used in Stock charts navigator series
-				if (otherSeries.options.stacking) {
-					stackKey = otherSeries.stackKey;
-					if (stackGroups[stackKey] === UNDEFINED) {
-						stackGroups[stackKey] = columnCount++;
+		if (options.grouping === false) {
+			columnCount = 1;
+		
+		} else {
+			each(chart.series, function (otherSeries) {
+				if (otherSeries.type === series.type && otherSeries.visible &&
+						series.options.group === otherSeries.options.group) { // used in Stock charts navigator series
+					if (otherSeries.options.stacking) {
+						stackKey = otherSeries.stackKey;
+						if (stackGroups[stackKey] === UNDEFINED) {
+							stackGroups[stackKey] = columnCount++;
+						}
+						columnIndex = stackGroups[stackKey];
+					} else {
+						columnIndex = columnCount++;
 					}
-					columnIndex = stackGroups[stackKey];
-				} else {
-					columnIndex = columnCount++;
+					otherSeries.columnIndex = columnIndex;
 				}
-				otherSeries.columnIndex = columnIndex;
-			}
-		});
+			});
+		}
 
 		// calculate the width and position of each column based on
 		// the number of column series in the plot, the groupPadding
@@ -14984,7 +15038,6 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
-		groupedData = series.groupedData,
 		hasGroupedData;
 
 	// run base method
@@ -14995,12 +15048,8 @@ seriesProto.processData = function () {
 		return;
 		
 	} else {
-		// clear previous groups, #622, #740
-		each(groupedData || [], function (point, i) {
-			if (point) {
-				groupedData[i] = point.destroy ? point.destroy() : null;
-			}
-		});
+		series.destroyGroupedData();
+		
 	}
 	
 	var i,
@@ -15079,13 +15128,32 @@ seriesProto.processData = function () {
 	series.hasGroupedData = hasGroupedData;
 };
 
-seriesProto.generatePoints = function () {
-	var series = this;
+/**
+ * Destroy the grouped data points. #622, #740
+ */
+seriesProto.destroyGroupedData = function () {
+	
+	var groupedData = this.groupedData;
+	
+	// clear previous groups
+	each(groupedData || [], function (point, i) {
+		if (point) {
+			groupedData[i] = point.destroy ? point.destroy() : null;
+		}
+	});
+	this.groupedData = null;	
+};
 
-	baseGeneratePoints.apply(series);
+/**
+ * Override the generatePoints method by adding a reference to grouped data
+ */
+seriesProto.generatePoints = function () {
+	
+	baseGeneratePoints.apply(this);
 
 	// record grouped data in order to let it be destroyed the next time processData runs
-	series.groupedData = series.hasGroupedData ? series.points : null;
+	this.destroyGroupedData(); // #622
+	this.groupedData = this.hasGroupedData ? this.points : null;
 };
 
 /**
@@ -15578,6 +15646,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
+	takeOrdinalPosition: false, // #1074
 	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series
@@ -15785,16 +15854,17 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Extend the column trackers with listeners to expand and contract stacks
 	 */
 	drawTracker: function () {
-		var series = this;
-
-		seriesTypes.column.prototype.drawTracker.apply(series);
+		
+		seriesTypes.column.prototype.drawTracker.apply(this);
 
 		// put each point in front on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis
-		each(series.points, function (point) {
-			addEvent(point.tracker.element, 'mouseover', function () {
-				point.graphic.toFront();
-			});
+		each(this.points, function (point) {
+			if (point.tracker) { // #1046
+				addEvent(point.tracker.element, 'mouseover', function () {
+					point.graphic.toFront();
+				});
+			}
 		});
 	},
 
@@ -16440,7 +16510,8 @@ Scroller.prototype = {
 							xAxis.translate(left, true),
 							xAxis.translate(left + range, true),
 							true,
-							false
+							false,
+							{ trigger: 'navigator' }
 						);
 					}
 				}
@@ -16503,7 +16574,8 @@ Scroller.prototype = {
 					xAxis.translate(zoomedMin, true),
 					xAxis.translate(zoomedMax, true),
 					true,
-					false
+					false,
+					{ trigger: 'navigator' }
 				);
 			}
 			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
@@ -16882,8 +16954,11 @@ RangeSelector.prototype = {
 					newMin,
 					newMax,
 					pick(redraw, 1),
-					0,
-					{ rangeSelectorButton: rangeOptions }
+					0, 
+					{ 
+						trigger: 'rangeSelectorButton', // docs
+						rangeSelectorButton: rangeOptions
+					}
 				);
 				rangeSelector.selected = i;
 			}, 1);
@@ -16990,7 +17065,7 @@ RangeSelector.prototype = {
 
 
 		input.onfocus = input.onblur = function (e) {
-			e = e || window.event;
+			e = e || window.event || {};
 			input.hasFocus = e.type === 'focus';
 			rangeSelector.setInputValue(input);
 		};
@@ -17014,7 +17089,10 @@ RangeSelector.prototype = {
 			) {
 				chart.xAxis[0].setExtremes(
 					isMin ? value : extremes.min,
-					isMin ? extremes.max : value
+					isMin ? extremes.max : value,
+					UNDEFINED,
+					UNDEFINED,
+					{ trigger: 'rangeSelectorInput' }
 				);
 			}
 		};
@@ -17495,7 +17573,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					
 					each(axis.series, function (series, i) {
 						
-						if (series.visible !== false) {
+						if (series.visible !== false && series.takeOrdinalPosition !== false) {
 							
 							// concatenate the processed X data into the existing positions, or the empty array 
 							ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -17703,7 +17781,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						fakeSeries = {
 							xAxis: fakeAxis,
 							xData: series.xData,
-							chart: chart
+							chart: chart,
+							destroyGroupedData: noop
 						};
 						fakeSeries.options = {
 							dataGrouping : grouping ? {
@@ -18009,7 +18088,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 						// Apply it if it is within the available data range
 						if (newMin > mathMin(extremes.dataMin, min) && newMax < mathMax(dataMax, max)) {
-							xAxis.setExtremes(newMin, newMax, true, false);
+							xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
 						}
 				
 						chart.mouseDownX = chartX; // set new reference for next run
@@ -18107,6 +18186,6 @@ extend(Highcharts, {
 	pInt: pInt,
 	wrap: wrap,
 	product: 'Highstock',
-	version: '1.1.5'
+	version: '1.1.6'
 });
 }());
