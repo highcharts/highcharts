@@ -13550,6 +13550,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
+	//grouping: true, // docs
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
 	//pointWidth: null,
@@ -13624,21 +13625,26 @@ var ColumnSeries = extendClass(Series, {
 		// Get the total number of column type series.
 		// This is called on every series. Consider moving this logic to a
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
-		each(chart.series, function (otherSeries) {
-			if (otherSeries.type === series.type && otherSeries.visible &&
-					series.options.group === otherSeries.options.group) { // used in Stock charts navigator series
-				if (otherSeries.options.stacking) {
-					stackKey = otherSeries.stackKey;
-					if (stackGroups[stackKey] === UNDEFINED) {
-						stackGroups[stackKey] = columnCount++;
+		if (options.grouping === false) {
+			columnCount = 1;
+		
+		} else {
+			each(chart.series, function (otherSeries) {
+				if (otherSeries.type === series.type && otherSeries.visible &&
+						series.options.group === otherSeries.options.group) { // used in Stock charts navigator series
+					if (otherSeries.options.stacking) {
+						stackKey = otherSeries.stackKey;
+						if (stackGroups[stackKey] === UNDEFINED) {
+							stackGroups[stackKey] = columnCount++;
+						}
+						columnIndex = stackGroups[stackKey];
+					} else {
+						columnIndex = columnCount++;
 					}
-					columnIndex = stackGroups[stackKey];
-				} else {
-					columnIndex = columnCount++;
+					otherSeries.columnIndex = columnIndex;
 				}
-				otherSeries.columnIndex = columnIndex;
-			}
-		});
+			});
+		}
 
 		// calculate the width and position of each column based on
 		// the number of column series in the plot, the groupPadding
