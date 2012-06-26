@@ -604,7 +604,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 /**
  * Wrap the getMarkPath function to return the path of the radial marker
  */
-wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength) {
+wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, horiz, renderer) {
 	var axis = this.axis,
 		endPoint,
 		ret;
@@ -620,7 +620,7 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength) {
 			endPoint.y
 		];
 	} else {
-		ret = proceed.apply(this, x, y, tickLength);
+		ret = proceed.call(this, x, y, tickLength, tickWidth, horiz, renderer);
 	}
 	return ret;
 });/* 
