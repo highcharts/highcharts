@@ -180,8 +180,10 @@
 
         <mkdir dir="${dist.dir}/js/adapters"/>
         <mkdir dir="${dist.dir}/js/modules"/>
+        <mkdir dir="${dist.dir}/highcharts/gfx"/>
         <mkdir dir="${dist.dir}/highcharts/js/adapters"/>
         <mkdir dir="${dist.dir}/highcharts/js/modules"/>
+        <mkdir dir="${dist.dir}/highstock/gfx"/>
         <mkdir dir="${dist.dir}/highstock/js/adapters"/>
         <mkdir dir="${dist.dir}/highstock/js/modules"/>
         <mkdir dir="${testoutput.dir}"/>
@@ -503,6 +505,9 @@
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx"><filterset refid="highcharts.filter"/></copy>
+		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx"><filterset refid="highstock.filter"/></copy>
 
         <copy todir="${dist.dir}/highcharts/js/themes">
             <fileset dir="${themes.dir}"/>

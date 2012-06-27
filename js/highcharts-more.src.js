@@ -892,7 +892,6 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
  * 
  * TODO:
  * - Finalize radial gradients in VMLRenderer
- * - Printing dual axes example in IE8: data label is extended across the chart
  */
 
 

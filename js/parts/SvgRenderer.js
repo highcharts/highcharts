@@ -496,7 +496,7 @@ SVGElement.prototype = {
 
 		// faking getBBox in exported SVG in legacy IE
 		if (!bBox || refresh) {
-			// faking getBBox in exported SVG in legacy IE
+			// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
 			if (element.nodeName === 'text') {
 				element.style.position = ABSOLUTE;
 			}

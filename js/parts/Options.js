@@ -36,7 +36,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js'
+		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png' // docs
 	},
 	chart: {
 		//animation: true,
