@@ -341,8 +341,8 @@ SVGElement.prototype = {
 		// normalize for crisp edges
 		values.x = mathFloor(x || wrapper.x || 0) + normalizer;
 		values.y = mathFloor(y || wrapper.y || 0) + normalizer;
-		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
-		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
+		values.width = mathFloor((width || wrapper.width || 0));
+		values.height = mathFloor((height || wrapper.height || 0));
 		values.strokeWidth = strokeWidth;
 
 		for (key in values) {

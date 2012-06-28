@@ -2131,8 +2131,8 @@ SVGElement.prototype = {
 		// normalize for crisp edges
 		values.x = mathFloor(x || wrapper.x || 0) + normalizer;
 		values.y = mathFloor(y || wrapper.y || 0) + normalizer;
-		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
-		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
+		values.width = mathFloor((width || wrapper.width || 0));
+		values.height = mathFloor((height || wrapper.height || 0));
 		values.strokeWidth = strokeWidth;
 
 		for (key in values) {
@@ -10475,13 +10475,18 @@ Chart.prototype = {
 			chartBackgroundColor = optionsChart.backgroundColor,
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
+			plotBorderWidth = optionsChart.plotBorderWidth,
 			mgn,
 			bgAttr,
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
 			plotSize = {
-				x: chart.plotLeft,
-				y: chart.plotTop,
-				width: chart.plotWidth,
-				height: chart.plotHeight
+				x: plotLeft,
+				y: plotTop,
+				width: plotWidth,
+				height: plotHeight
 			};
 
 		// Chart area
@@ -10513,7 +10518,7 @@ Chart.prototype = {
 		// Plot background
 		if (plotBackgroundColor) {
 			if (!plotBackground) {
-				chart.plotBackground = renderer.rect(chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight, 0)
+				chart.plotBackground = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0)
 					.attr({
 						fill: plotBackgroundColor
 					})
@@ -10525,7 +10530,7 @@ Chart.prototype = {
 		}
 		if (plotBackgroundImage) {
 			if (!plotBGImage) {
-				chart.plotBGImage = renderer.image(plotBackgroundImage, chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight)
+				chart.plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight)
 					.add();
 			} else {
 				plotBGImage.animate(plotSize);
@@ -10533,18 +10538,18 @@ Chart.prototype = {
 		}
 
 		// Plot area border
-		if (optionsChart.plotBorderWidth) {
+		if (plotBorderWidth) {
 			if (!plotBorder) {
-				chart.plotBorder = renderer.rect(chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight, 0, optionsChart.plotBorderWidth)
+				chart.plotBorder = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0, plotBorderWidth)
 					.attr({
 						stroke: optionsChart.plotBorderColor,
-						'stroke-width': optionsChart.plotBorderWidth,
+						'stroke-width': plotBorderWidth,
 						zIndex: 4
 					})
 					.add();
 			} else {
 				plotBorder.animate(
-					plotBorder.crisp(null, chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight)
+					plotBorder.crisp(null, plotLeft, plotTop, plotWidth, plotHeight)
 				);
 			}
 		}

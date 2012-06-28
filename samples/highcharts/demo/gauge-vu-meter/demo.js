@@ -16,13 +16,13 @@ $(function () {
 	        startAngle: -45,
 	        endAngle: 45,
 	        background: null,
-	        center: ['25%', '150%'],
+	        center: ['25%', '145%'],
 	        size: 300
 	    }, {
 	    	startAngle: -45,
 	    	endAngle: 45,
 	    	background: null,
-	        center: ['75%', '150%'],
+	        center: ['75%', '145%'],
 	        size: 300
 	    }],	    		        
 	
