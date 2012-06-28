@@ -13012,6 +13012,25 @@ Series.prototype = {
 		// Only run this once
 		this.createGroup = noop;
 	},
+	
+	/**
+	 * Add plot area clipping rectangle. If this is before chart.hasRendered,
+	 * create one shared clipRect.
+	 */
+	getClipRect: function () {
+		var chart = this.chart,
+			clipRect = this.clipRect;
+		
+		if (!clipRect) {
+			this.clipRect = clipRect = !chart.hasRendered && chart.clipRect ?
+				chart.clipRect :
+				chart.renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY + 1);
+			if (!chart.clipRect) {
+				chart.clipRect = clipRect;
+			}
+		}
+		return clipRect;
+	},
 
 	/**
 	 * Render the graph and markers
@@ -13025,25 +13044,8 @@ Series.prototype = {
 			animation = options.animation,
 			doAnimation = animation && series.animate,
 			duration = doAnimation ? (animation && animation.duration) || 500 : 0,
-			clipRect = series.clipRect,
+			clipRect = series.getClipRect(),
 			renderer = chart.renderer;
-
-
-		// Add plot area clipping rectangle. If this is before chart.hasRendered,
-		// create one shared clipRect.
-
-		// Todo: since creating the clip property, the clipRect is created but
-		// never used when clip is false. A better way would be that the animation
-		// would run, then the clipRect destroyed.
-		if (!clipRect) {
-			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect ?
-				chart.clipRect :
-				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY + 1);
-			if (!chart.clipRect) {
-				chart.clipRect = clipRect;
-			}
-		}
-		
 
 		// the group
 		series.createGroup();

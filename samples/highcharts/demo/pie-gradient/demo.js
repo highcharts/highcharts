@@ -1,9 +1,19 @@
 $(function () {
     var chart;
-    
-    $(document).ready(function () {
+    $(document).ready(function() {
     	
-    	// Build the chart
+    	// Radialize the colors
+		Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+		    return {
+		        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+		        stops: [
+		            [0, color],
+		            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+		        ]
+		    };
+		});
+		
+		// Build the chart
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',
@@ -24,9 +34,13 @@ $(function () {
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
+                        enabled: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        formatter: function() {
+                            return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+                        }
+                    }
                 }
             },
             series: [{

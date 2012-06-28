@@ -5,8 +5,6 @@
  * Clock:       http://jsfiddle.net/highcharts/BFN2F/
  * Minimal:     http://jsfiddle.net/highcharts/9XgY7/
  * 
- * TODO:
- * - Finalize radial gradients in VMLRenderer
  */
 
 
@@ -204,6 +202,9 @@ var GaugeSeries = {
 	render: function () {
 		this.createGroup();
 		seriesTypes.pie.prototype.render.call(this);
+		this.group.clip(
+			this.getClipRect()
+		);
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
