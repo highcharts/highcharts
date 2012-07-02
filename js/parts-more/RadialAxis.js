@@ -169,14 +169,15 @@ var radialAxisMixin = {
 				
 				this.transA = (this.endAngleRad - this.startAngleRad) / 
 					((this.max - this.min) || 1);
+					
 				
 			} else { 
 				this.transA = (this.center[2] / 2) / ((this.max - this.min) || 1);
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPointOffset +
-					(this.reversed ? Math.PI / 10 : 0); // ???
+				this.minPixelPadding = this.transA * this.minPointOffset -
+					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 2 : 0); // ???
 			}
 		}
 	},
@@ -364,6 +365,8 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		isX = userOptions.isX,
 		isHidden = angular && isX,
 		isCircular,
+		startAngleRad,
+		endAngleRad,
 		options,
 		pane,
 		paneOptions;
@@ -414,14 +417,14 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			// Start and end angle options are
 			// given in degrees relative to top, while internal computations are
 			// in radians relative to right (like SVG).
-			this.startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
-			this.endAngleRad = (paneOptions.endAngle - 90) * Math.PI / 180;
+			this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
+			this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
 			this.offset = options.offset || 0;
 			
 			this.isCircular = isCircular;
 			
 			// Automatically connect grid lines?
-			if (isCircular && userOptions.max === UNDEFINED) {
+			if (isCircular && userOptions.max === UNDEFINED && endAngleRad - startAngleRad === 2 * Math.PI) {
 				this.autoConnect = true;
 			}
 		}

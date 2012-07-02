@@ -56,21 +56,28 @@
 		var options = this.options,
 			csv = options.csv,
 			columns = this.columns,
+			startRow = options.startRow || 0,
+			endRow = options.endRow || Number.MAX_VALUE,
+			startColumn = options.startColumn || 0,
+			endColumn = options.endColumn || Number.MAX_VALUE,
 			lines;
 			
 		if (csv) {
 			lines = csv.split(options.lineDelimiter || '\n');
 			
 			each(lines, function (line, rowNo) {
-				var items = line.split(options.itemDelimiter || ',');
-				each(items, function (item, colNo) {
-					
-					if (!columns[colNo]) {
-						columns[colNo] = [];					
-					}
-					
-					columns[colNo][rowNo] = item;
-				});
+				if (rowNo >= startRow && rowNo <= endRow) {
+					var items = line.split(options.itemDelimiter || ',');
+					each(items, function (item, colNo) {
+						if (colNo >= startColumn && colNo <= endColumn) {
+							if (!columns[colNo - startColumn]) {
+								columns[colNo - startColumn] = [];					
+							}
+							
+							columns[colNo - startColumn][rowNo - startRow] = item;
+						}
+					});
+				}
 			});
 		}
 	},
@@ -82,21 +89,32 @@
 		var options = this.options,
 			table = options.table,
 			columns = this.columns,
+			startRow = options.startRow || 0,
+			endRow = options.endRow || Number.MAX_VALUE,
+			startColumn = options.startColumn || 0,
+			endColumn = options.endColumn || Number.MAX_VALUE,
 			colNo;
 			
 		if (table) {
+			
+			if (typeof table === 'string') {
+				table = document.getElementById(table);
+			}
+			
 			each(table.getElementsByTagName('tr'), function (tr, rowNo) {
 				colNo = 0; 
-				each(tr.childNodes, function (item) {
-					if (item.tagName === 'TD' || item.tagName === 'TH') {
-						if (!columns[colNo]) {
-							columns[colNo] = [];					
+				if (rowNo >= startRow && rowNo <= endRow) {
+					each(tr.childNodes, function (item) {
+						if ((item.tagName === 'TD' || item.tagName === 'TH') && colNo >= startColumn && colNo <= endColumn) {
+							if (!columns[colNo]) {
+								columns[colNo] = [];					
+							}
+							columns[colNo][rowNo - startRow] = item.innerHTML;
+							
+							colNo += 1;
 						}
-						columns[colNo][rowNo] = item.innerHTML;
-						
-						colNo += 1;
-					}
-				});
+					});
+				}
 			});
 		}
 	},

@@ -52,8 +52,8 @@ extend(Pane.prototype, {
 		// background: {conditional},
 		center: ['50%', '50%'],
 		size: '90%',
-		startAngle: 0,
-		endAngle: 360
+		startAngle: 0
+		//endAngle: startAngle + 360
 	},	
 	
 	/**

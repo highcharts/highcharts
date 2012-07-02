@@ -957,7 +957,7 @@ Axis.prototype = {
 					// is 'between', this padding does not apply.
 					minPointOffset = mathMax(
 						minPointOffset, 
-						series.options.pointPlacement === 'between' ?
+						series.options.pointPlacement ? // 'on' or 'between' // docs
 							0 :
 							series.pointRange / 2
 					);

@@ -2,9 +2,6 @@
  * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
  * gathered in RadialAxes.js.
  * 
- * - http://jsfiddle.net/highcharts/2Y5yF/
- * - http://jsfiddle.net/highcharts/2yAtb/
- * 
  */
 
 var seriesProto = Series.prototype,

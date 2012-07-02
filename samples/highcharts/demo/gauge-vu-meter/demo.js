@@ -97,16 +97,20 @@ $(function () {
 	    setInterval(function() {
 	        var left = chart.series[0].points[0],
 	            right = chart.series[1].points[0],
-	            newVal, 
+	            leftVal, 
 	            inc = (Math.random() - 0.5) * 3;
 	
-	        newVal =  left.y + inc;
-	        if (newVal < -20 || newVal > 6) {
-	            newVal = left.y - inc;
+	        leftVal =  left.y + inc;
+	        rightVal = leftVal + inc / 3;
+	        if (leftVal < -20 || leftVal > 6) {
+	            leftVal = left.y - inc;
+	        }
+	        if (rightVal < -20 || rightVal > 6) {
+	            rightVal = leftVal;
 	        }
 	
-	        left.update(newVal, false);
-	        right.update(newVal, false);
+	        left.update(leftVal, false);
+	        right.update(rightVal, false);
 	        chart.redraw();
 	
 	    }, 500);
