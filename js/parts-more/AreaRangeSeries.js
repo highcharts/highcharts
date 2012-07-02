@@ -36,7 +36,10 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 	applyOptions: function (options) {
 		var point = this,
 			series = point.series,
-			i = 0;
+			pointArrayMap = series.pointArrayMap,
+			i = 0,
+			j = 0,
+			valueCount = pointArrayMap.length;
 
 
 		// object input
@@ -49,7 +52,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 			
 		} else if (options.length) { // array
 			// with leading x value
-			if (options.length > 2) {
+			if (options.length > valueCount) {
 				if (typeof options[0] === 'string') {
 					point.name = options[0];
 				} else if (typeof options[0] === 'number') {
@@ -57,15 +60,16 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 				}
 				i++;
 			}
-			point.low = options[i++];
-			point.high = options[i++];
+			while (j < valueCount) {
+				point[pointArrayMap[j++]] = options[i++];
+			}
 		}
 
 		// Handle null and make low alias y
-		if (point.high === null) {
+		/*if (point.high === null) {
 			point.low = null;
-		}
-		point.y = point.low;
+		}*/
+		point.y = point[series.pointValKey];
 		
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
@@ -89,8 +93,9 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
  */
 seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	type: 'arearange',
-	valueCount: 2, // two values per point
-	pointClass: RangePoint, 
+	pointArrayMap: ['low', 'high'],
+	pointClass: RangePoint,
+	pointValKey: 'low',
 	
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY

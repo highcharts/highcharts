@@ -37,20 +37,23 @@ var OHLCPoint = extendClass(Point, {
 	applyOptions: function (options) {
 		var point = this,
 			series = point.series,
-			i = 0;
+			pointArrayMap = series.pointArrayMap,
+			i = 0,
+			j = 0,
+			valueCount = pointArrayMap.length;
 
 
-		// object input for example:
-		// { x: Date(2010, 0, 1), open: 7.88, high: 7.99, low: 7.02, close: 7.65 }
+		// object input
 		if (typeof options === 'object' && typeof options.length !== 'number') {
 
 			// copy options directly to point
 			extend(point, options);
 
 			point.options = options;
+			
 		} else if (options.length) { // array
 			// with leading x value
-			if (options.length === 5) {
+			if (options.length > valueCount) {
 				if (typeof options[0] === 'string') {
 					point.name = options[0];
 				} else if (typeof options[0] === 'number') {
@@ -58,20 +61,19 @@ var OHLCPoint = extendClass(Point, {
 				}
 				i++;
 			}
-			point.open = options[i++];
-			point.high = options[i++];
-			point.low = options[i++];
-			point.close = options[i++];
+			while (j < valueCount) {
+				point[pointArrayMap[j++]] = options[i++];
+			}
 		}
 
-		/*
-		 * If no x is set by now, get auto incremented value. All points must have an
-		 * x value, however the y value can be null to create a gap in the series
-		 */
-		point.y = point.high;
+		point.y = point[series.pointValKey];
+		
+		// If no x is set by now, get auto incremented value. All points must have an
+		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
 			point.x = series.autoIncrement();
 		}
+		
 		return point;
 	},
 
@@ -102,7 +104,8 @@ var OHLCPoint = extendClass(Point, {
 // 3 - Create the OHLCSeries object
 var OHLCSeries = extendClass(seriesTypes.column, {
 	type: 'ohlc',
-	valueCount: 4, // four values per point
+	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
+	pointValKey: 'high',
 	pointClass: OHLCPoint,
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options

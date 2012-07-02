@@ -1,7 +1,6 @@
 $(function () {
-    //$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function(data) {
-    $.getJSON('http://www.vikjavev.no/ver/range.jsonp.php?callback=?', function(data) {
-    	
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function(data) {
+    
     	window.chart = new Highcharts.Chart({
     	
 		    chart: {

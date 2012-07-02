@@ -11758,8 +11758,9 @@ Series.prototype = {
 			yData = series.yData,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
-			point;
-			//point = (new series.pointClass()).init(series, options);
+			point,
+			proto = series.pointClass.prototype,
+			xIncrement = series.xIncrement;
 
 		setAnimation(animation, chart);
 
@@ -11780,10 +11781,11 @@ Series.prototype = {
 		// Get options and push the point to xData, yData and series.options. In series.generatePoints
 		// the Point instance will be created on demand and pushed to the series.data array.
 		point = { series: series };
-		series.pointClass.prototype.applyOptions.apply(point, [options]);
+		proto.applyOptions.apply(point, [options]);
 		xData.push(point.x);
-		yData.push(series.valueCount === 4 ? [point.open, point.high, point.low, point.close] : point.y);
+		yData.push(proto.toYData ? proto.toYData.call(point) : point.y);
 		dataOptions.push(options);
+		series.xIncrement = xIncrement; // reset
 
 
 		// Shift the first point off the parallel arrays
@@ -11838,7 +11840,8 @@ Series.prototype = {
 			dataLength = data ? data.length : [],
 			turboThreshold = options.turboThreshold || 1000,
 			pt,
-			valueCount = series.valueCount;
+			pointArrayMap = series.pointArrayMap,
+			valueCount = pointArrayMap && pointArrayMap.length;
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -11886,7 +11889,7 @@ Series.prototype = {
 				pt = { series: series };
 				pointProto.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = pointProto.toYData ? pointProto.toYData.apply(pt) : pt.y;
+				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
 			series.xIncrement = null; // reset
 		}
