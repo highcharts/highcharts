@@ -31,10 +31,14 @@ $(function () {
 	    },
 	    
 	    plotOptions: {
-	        arearange: {
-	            marker: {
-	                enabled: true
-	            }
+	        columnrange: {
+	        	dataLabels: {
+	        		enabled: true,
+	        		formatter: function () {
+	        			return this.y + '°C';
+	        		},
+	        		y: 0
+	        	}
 	        }
 	    },
 	    

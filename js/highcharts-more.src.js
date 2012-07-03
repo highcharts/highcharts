@@ -645,8 +645,10 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	},
 	trackByArea: true,
 	dataLabels: {
-		yHigh: -6,
-		yLow: 16
+		xLow: 0,
+		xHigh: 0,
+		yLow: 16,
+		yHigh: -6		
 	}
 });
 
@@ -793,7 +795,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			originalDataLabels = [],
 			uberMethod = Series.prototype.drawDataLabels,
 			dataLabelOptions = this.options.dataLabels,
-			point;
+			point,
+			inverted = this.chart.inverted;
 			
 		// Step 1: set preliminary values for plotY and dataLabel and draw the upper labels
 		i = length;
@@ -809,8 +812,13 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			originalDataLabels[i] = point.dataLabel;
 			point.dataLabel = point.dataLabelUpper;
 			
-			// Set the default y offset
-			dataLabelOptions.y = dataLabelOptions.yHigh;
+			// Set the default offset
+			if (inverted) {
+				dataLabelOptions.align = 'left';
+				dataLabelOptions.x = dataLabelOptions.xHigh;								
+			} else {
+				dataLabelOptions.y = dataLabelOptions.yHigh;
+			}
 		}
 		uberMethod.apply(this, arguments);
 		
@@ -827,8 +835,13 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			point.y = point.low;
 			point.plotY = point.plotLow;
 			
-			// Set the default y offset
-			dataLabelOptions.y = dataLabelOptions.yLow;
+			// Set the default offset
+			if (inverted) {
+				dataLabelOptions.align = 'right';
+				dataLabelOptions.x = dataLabelOptions.xLow;
+			} else {
+				dataLabelOptions.y = dataLabelOptions.yLow;
+			}
 		}
 		uberMethod.apply(this, arguments);
 	

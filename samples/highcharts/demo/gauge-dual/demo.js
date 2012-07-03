@@ -4,7 +4,10 @@ $(function () {
 	    chart: {
 	        renderTo: 'container',
 	        type: 'gauge',
-	        alignTicks: false
+	        alignTicks: false,
+	        plotBackgroundColor: null,
+	        plotBorderWidth: 0,
+	        plotShadow: false
 	    },
 	
 	    title: {
@@ -76,15 +79,7 @@ $(function () {
 	        tooltip: {
 	            valueSuffix: ' km/h'
 	        }
-	    }],
-	    
-	    exporting: {
-	    	chartOptions: {
-	    		chart: {
-	    			width: 400
-	    		}
-	    	}
-	    }
+	    }]
 	
 	},
 	// Add some life

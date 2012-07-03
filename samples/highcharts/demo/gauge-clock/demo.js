@@ -21,6 +21,9 @@ $(function () {
 	    chart: {
 	        renderTo: 'container',
 	        type: 'gauge',
+	        plotBackgroundColor: null,
+	        plotBorderWidth: 0,
+	        plotShadow: false,
 	        height: 200
 	    },
 	    
@@ -114,16 +117,7 @@ $(function () {
 	        dataLabels: {
 	            enabled: false
 	        }
-	    }],
-	    
-	    exporting: {
-	    	chartOptions: {
-	    		chart: {
-	    			width: 200
-	    		}
-	    	}
-	    }
-	
+	    }]
 	}, 
 	                                 
 	// Move
