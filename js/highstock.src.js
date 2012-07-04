@@ -18209,6 +18209,9 @@ extend(Highcharts, {
 	extendClass: extendClass,
 	pInt: pInt,
 	wrap: wrap,
+	svg: hasSVG,
+	canvas: useCanVG,
+	vml: !hasSVG && !useCanVG,
 	product: 'Highstock',
 	version: '1.1.6'
 });

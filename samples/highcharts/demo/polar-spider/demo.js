@@ -1,5 +1,5 @@
 $(function () {
-    
+
 	window.chart = new Highcharts.Chart({
 	            
 	    chart: {
@@ -14,19 +14,19 @@ $(function () {
 	    },
 	    
 	    pane: {
-	        startAngle: 0,
-	        endAngle: 360
+	    	size: '80%'
 	    },
-	
+	    
 	    xAxis: {
 	        categories: ['Sales', 'Marketing', 'Development', 'Customer Support', 
-	                     'Information Technology', 'Administration'],
+	                'Information Technology', 'Administration'],
 	        tickmarkPlacement: 'on',
 	        lineWidth: 0
 	    },
 	        
 	    yAxis: {
 	        gridLineInterpolation: 'polygon',
+	        lineWidth: 0,
 	        min: 0
 	    },
 	    

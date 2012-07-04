@@ -22,6 +22,7 @@ $(function () {
 	        renderTo: 'container',
 	        type: 'gauge',
 	        plotBackgroundColor: null,
+	        plotBackgroundImage: null,
 	        plotBorderWidth: 0,
 	        plotShadow: false,
 	        height: 200
@@ -39,8 +40,8 @@ $(function () {
 	    	background: [{
 	    		// default background
 	    	}, {
-	    		// reflex
-	    		backgroundColor: {
+	    		// reflex for supported browsers
+	    		backgroundColor: Highcharts.svg ? {
 		    		radialGradient: {
 		    			cx: 0.5,
 		    			cy: -0.4,
@@ -50,7 +51,7 @@ $(function () {
 		    			[0.5, 'rgba(255, 255, 255, 0.2)'],
 		    			[0.5, 'rgba(200, 200, 200, 0.2)']
 		    		]
-		    	}
+		    	} : null
 	    	}]
 	    },
 	    

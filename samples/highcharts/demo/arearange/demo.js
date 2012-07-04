@@ -24,6 +24,7 @@ $(function () {
 		
 		    tooltip: {
 		        crosshairs: true,
+		        shared: true,
 		        valueSuffix: '°C'
 		    },
 		    

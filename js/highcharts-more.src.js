@@ -81,7 +81,7 @@ extend(Pane.prototype, {
 	defaultOptions: {
 		// background: {conditional},
 		center: ['50%', '50%'],
-		size: '90%',
+		size: '85%',
 		startAngle: 0
 		//endAngle: startAngle + 360
 	},	
@@ -243,6 +243,7 @@ var radialAxisMixin = {
 	 * method.
 	 */
 	getLinePath: function (lineWidth, radius) {
+		
 		var center = this.center;
 		
 		radius = pick(radius, center[2] / 2 - this.offset);
@@ -284,8 +285,8 @@ var radialAxisMixin = {
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPointOffset -
-					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 2 : 0); // ???
+				this.minPixelPadding = this.transA * this.minPointOffset +
+					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 4 : 0); // ???
 			}
 		}
 	},
@@ -364,50 +365,62 @@ var radialAxisMixin = {
 			start,
 			end,
 			open,
-			isCircular = this.isCircular; // X axis in a polar chart
+			isCircular = this.isCircular, // X axis in a polar chart
+			ret;
 			
-		// Plot bands on Y axis (radial axis) - inner and outer radius depend on to and from
-		if (!isCircular) {
-			radii[0] = this.translate(from);
-			radii[1] = this.translate(to);
-		}
+		// Polygonal plot bands
+		if (this.options.gridLineInterpolation === 'polygon') {
+			ret = this.getPlotLinePath(from).concat(this.getPlotLinePath(to, true));
 		
-		// Convert percentages to pixel values
-		radii = map(radii, function (radius) {
-			if (percentRegex.test(radius)) {
-				radius = (pInt(radius, 10) * fullRadius) / 100;
-			}
-			return radius;
-		});
-		
-		// Handle full circle
-		if (options.shape === 'circle' || !isCircular) {
-			start = -Math.PI / 2;
-			end = Math.PI * 1.5;
-			open = true;
+		// Circular grid bands
 		} else {
-			start = startAngleRad + this.translate(from);
-			end = startAngleRad + this.translate(to);
-		}
-		
-		return this.chart.renderer.symbols.arc(
-			this.left + center[0],
-			this.top + center[1],
-			radii[0],
-			radii[0],
-			{
-				start: start,
-				end: end,
-				innerR: pick(radii[1], radii[0] - radii[2]),
-				open: open
+			
+			// Plot bands on Y axis (radial axis) - inner and outer radius depend on to and from
+			if (!isCircular) {
+				radii[0] = this.translate(from);
+				radii[1] = this.translate(to);
 			}
-		);
+			
+			// Convert percentages to pixel values
+			radii = map(radii, function (radius) {
+				if (percentRegex.test(radius)) {
+					radius = (pInt(radius, 10) * fullRadius) / 100;
+				}
+				return radius;
+			});
+			
+			// Handle full circle
+			if (options.shape === 'circle' || !isCircular) {
+				start = -Math.PI / 2;
+				end = Math.PI * 1.5;
+				open = true;
+			} else {
+				start = startAngleRad + this.translate(from);
+				end = startAngleRad + this.translate(to);
+			}
+		
+		
+			ret = this.chart.renderer.symbols.arc(
+				this.left + center[0],
+				this.top + center[1],
+				radii[0],
+				radii[0],
+				{
+					start: start,
+					end: end,
+					innerR: pick(radii[1], radii[0] - radii[2]),
+					open: open
+				}
+			);
+		}
+		 
+		return ret;
 	},
 	
 	/**
 	 * Find the path for plot lines perpendicular to the radial axis.
 	 */
-	getPlotLinePath: function (value) {
+	getPlotLinePath: function (value, reverse) {
 		var axis = this,
 			center = axis.center,
 			chart = axis.chart,
@@ -436,6 +449,11 @@ var radialAxisMixin = {
 			if (xAxis.autoConnect) {
 				tickPositions = tickPositions.concat([tickPositions[0]]);
 			}
+			// Reverse the positions for concatenation of polygonal plot bands
+			if (reverse) {
+				tickPositions = [].concat(tickPositions).reverse();
+			}
+				
 			each(tickPositions, function (pos, i) {
 				xy = xAxis.getPosition(pos, value);
 				ret.push(i ? 'L' : 'M', xy.x, xy.y);

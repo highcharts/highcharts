@@ -6,6 +6,7 @@ $(function () {
 	        type: 'gauge',
 	        alignTicks: false,
 	        plotBackgroundColor: null,
+	        plotBackgroundImage: null,
 	        plotBorderWidth: 0,
 	        plotShadow: false
 	    },

@@ -1,11 +1,12 @@
 $(function () {
 	
-	var chart = new Highcharts.Chart({
+    var chart = new Highcharts.Chart({
 	
 	    chart: {
 	        renderTo: 'container',
 	        type: 'gauge',
 	        plotBackgroundColor: null,
+	        plotBackgroundImage: null,
 	        plotBorderWidth: 0,
 	        plotShadow: false
 	    },

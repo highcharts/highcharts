@@ -5,6 +5,15 @@ $(function () {
 	        renderTo: 'container',
 	        type: 'gauge',
 	        plotBorderWidth: 1,
+	        plotBackgroundColor: {
+	        	linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+	        	stops: [
+	        		[0, '#FFF4C6'],
+	        		[0.3, '#FFFFFF'],
+	        		[1, '#FFF4C6']
+	        	]
+	        },
+	        plotBackgroundImage: null,
 	        height: 200
 	    },
 	

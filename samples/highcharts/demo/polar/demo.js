@@ -30,7 +30,7 @@ $(function () {
 	    yAxis: {
 	        min: 0
 	    },
-	        
+	    
 	    plotOptions: {
 	        series: {
 	            pointStart: 0,

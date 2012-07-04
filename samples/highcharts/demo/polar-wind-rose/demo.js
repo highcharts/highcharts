@@ -6,10 +6,12 @@ $(function () {
     	startRow: 1,
     	endRow: 17,
     	endColumn: 7,
+    	
     	complete: function (options) {
     		
     		// Some further processing of the options
     		options.series.reverse(); // to get the stacking right
+    			
     		
     		// Create the chart
     		window.chart = new Highcharts.Chart(Highcharts.merge(options, {
@@ -29,7 +31,7 @@ $(function () {
 			    },
 			    
 			    pane: {
-			        startAngle: 90 // the data set starts east
+			    	size: '85%'
 			    },
 			    
 			    legend: {
@@ -41,7 +43,6 @@ $(function () {
 			    },
 			    
 			    xAxis: {
-			    	reversed: true, // the data table is anti-clockwise
 			    	tickmarkPlacement: 'on'
 			    },
 			        

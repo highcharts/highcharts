@@ -44,6 +44,9 @@
 		// Use first row for series names?
 		this.findHeaderRow();
 		
+		// Handle columns if a handleColumns callback is given
+		this.parsed();
+		
 		// Complete if a complete callback is given
 		this.complete();
 		
@@ -186,6 +189,12 @@
 				
 			}
 		}		
+	},
+	
+	parsed: function () {
+		if (this.options.parsed) {
+			this.options.parsed.call(this, this.columns);
+		}
 	},
 	
 	/**
