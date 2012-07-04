@@ -5093,12 +5093,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				y + radius * sinEnd  // end y
 			];
 
-			if (options.open) {
+			if (options.open && !innerRadius) {
 				ret.push(
 					'e',
 					M, 
-					x - innerRadius, 
-					y - innerRadius
+					x,// - innerRadius, 
+					y// - innerRadius
 				);
 			}
 
