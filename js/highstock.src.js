@@ -15008,7 +15008,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			if (approximation === 'ohlc') {
 				
 				var index = series.cropStart + i,
-					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]),
+					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
 					open = point.open,
 					high = point.high,
 					low = point.low,
@@ -15297,6 +15297,7 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 		}
 	},
 	threshold: null
+	//upColor: undefined
 });
 
 // 2- Create the OHLCPoint object
@@ -15386,7 +15387,30 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
+	upColorProp: 'stroke',
+	
+	/**
+	 * Postprocess mapping between options and SVG attributes
+	 */
+	getAttribs: function () {
+		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		var series = this,
+			options = series.options,
+			stateOptions = options.states,
+			upColor = options.upColor || series.color,
+			seriesDownPointAttr = merge(series.pointAttr),
+			upColorProp = series.upColorProp;
 
+		seriesDownPointAttr[''][upColorProp] = upColor;
+		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
+		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+
+		each(series.points, function (point) {
+			if (point.open < point.close) {
+				point.pointAttr = seriesDownPointAttr;
+			}
+		});
+	},
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -15533,28 +15557,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth'
 	},
-
-	/**
-	 * Postprocess mapping between options and SVG attributes
-	 */
-	getAttribs: function () {
-		OHLCSeries.prototype.getAttribs.apply(this, arguments);
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upColor = options.upColor,
-			seriesDownPointAttr = merge(series.pointAttr);
-
-		seriesDownPointAttr[''].fill = upColor;
-		seriesDownPointAttr.hover.fill = stateOptions.hover.upColor || upColor;
-		seriesDownPointAttr.select.fill = stateOptions.select.upColor || upColor;
-
-		each(series.points, function (point) {
-			if (point.open < point.close) {
-				point.pointAttr = seriesDownPointAttr;
-			}
-		});
-	},
+	upColorProp: 'fill',
 
 	/**
 	 * Draw the data points

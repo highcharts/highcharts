@@ -183,7 +183,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			if (approximation === 'ohlc') {
 				
 				var index = series.cropStart + i,
-					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({}, [dataOptions[index]]),
+					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
 					open = point.open,
 					high = point.high,
 					low = point.low,

@@ -23,6 +23,7 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 		}
 	},
 	threshold: null
+	//upColor: undefined
 });
 
 // 2- Create the OHLCPoint object
@@ -112,7 +113,30 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
+	upColorProp: 'stroke',
+	
+	/**
+	 * Postprocess mapping between options and SVG attributes
+	 */
+	getAttribs: function () {
+		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		var series = this,
+			options = series.options,
+			stateOptions = options.states,
+			upColor = options.upColor || series.color,
+			seriesDownPointAttr = merge(series.pointAttr),
+			upColorProp = series.upColorProp;
 
+		seriesDownPointAttr[''][upColorProp] = upColor;
+		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
+		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+
+		each(series.points, function (point) {
+			if (point.open < point.close) {
+				point.pointAttr = seriesDownPointAttr;
+			}
+		});
+	},
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
