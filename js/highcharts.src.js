@@ -8741,7 +8741,12 @@ MouseTracker.prototype = {
 			chart.tooltip = new Tooltip(chart, options);
 
 			// set the fixed interval ticking for the smooth tooltip
-			this.tooltipInterval = setInterval(function () { chart.tooltip.tick(); }, 32);
+			this.tooltipInterval = setInterval(function () {
+				// The interval function may still be running during destroy, so check that the chart is really there before calling.
+				if (chart && chart.tooltip) {
+					chart.tooltip.tick();
+				}
+			}, 32);
 		}
 
 		this.setDOMEvents();
