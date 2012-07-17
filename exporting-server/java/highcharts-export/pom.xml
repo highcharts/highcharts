@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.highsoft.cloud.export</groupId>
+	<groupId>com.highcharts.export</groupId>
 	<artifactId>highcharts-export-server</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0-RELEASE</version>
 	<name>highcharts-export</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.6.1</slf4j.version>
 		<java.version>1.7</java.version>
 		<batik.version>1.7</batik.version>
@@ -62,24 +62,22 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-	</dependencies>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>repository.springframework.maven.milestone</id>
-			<name>Spring Framework Maven Milestone Repository</name>
-			<url>http://maven.springframework.org/milestone</url>
-		</pluginRepository>
-	</pluginRepositories>
+		<dependency>
+			<groupId>net.sf.uadetector</groupId>
+			<artifactId>uadetector-resources</artifactId>
+			<version>2012.04</version>
+		</dependency>		
+	</dependencies>	
 	<build>
-		<finalName>batik-export-server</finalName>
-		<plugins>						
+		<finalName>highcharts-export-server</finalName>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<!-- webXml>src/main/webapp/WEB-INF/web.xml</webXml-->
+					<!-- webXml>src/main/webapp/WEB-INF/web.xml</webXml -->
 					<warName>highcharts-export</warName>
 				</configuration>
 			</plugin>
@@ -113,13 +111,13 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<configuration>
-					<url>http://50.112.111.0/manager/html</url>
+					<url>http://export.highcharts.com/manager/html</url>
 					<server>highsoft-ec2</server>
-					<path>/sky-rest-provider</path>
+					<path>/highcharts-export</path>
 					<!-- <url>http://localhost:8080/manager/html</url> -->
 					<!-- <server>highsoft-test</server> -->
 				</configuration>
-			</plugin>			
+			</plugin>
 		</plugins>
 	</build>
 </project>

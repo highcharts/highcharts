@@ -27,7 +27,8 @@ public enum MimeType
 
      public String getType() { return type; }
 
-     public static MimeType get(String type) { 
+     public static MimeType get(String type) {
+    	  
           return lookup.get(type); 
      }
 }
