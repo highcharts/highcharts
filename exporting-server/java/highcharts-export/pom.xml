@@ -106,18 +106,7 @@
 					<wtpapplicationxml>true</wtpapplicationxml>
 					<wtpversion>2.0</wtpversion>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>tomcat-maven-plugin</artifactId>
-				<configuration>
-					<url>http://export.highcharts.com/manager/html</url>
-					<server>highsoft-ec2</server>
-					<path>/highcharts-export</path>
-					<!-- <url>http://localhost:8080/manager/html</url> -->
-					<!-- <server>highsoft-test</server> -->
-				</configuration>
-			</plugin>
+			</plugin>			
 		</plugins>
 	</build>
 </project>
