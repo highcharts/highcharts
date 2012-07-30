@@ -451,19 +451,17 @@ Chart.prototype = {
 			btnOptions = chart.options.chart.resetZoomButton,
 			theme = btnOptions.theme,
 			states = theme.states,
-			box = btnOptions.relativeTo === 'chart' ? null : {
-				x: chart.plotLeft,
-				y: chart.plotTop,
-				width: chart.plotWidth,
-				height: chart.plotHeight
-			};
+			alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
+			
 		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
 			})
 			.add()
-			.align(btnOptions.position, false, box);
+			.align(btnOptions.position, false, chart[alignTo]);
+		this.resetZoomButton.alignTo = alignTo;	
+			
 	},
 
 	/**
@@ -879,6 +877,7 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			spacingBox,
+			resetZoomButton = chart.resetZoomButton,
 			chartTitle = chart.title,
 			chartSubtitle = chart.subtitle,
 			fireEndResize;
@@ -940,6 +939,11 @@ Chart.prototype = {
 		if (chartSubtitle) {
 			chartSubtitle.align(null, null, spacingBox);
 		}
+		
+		// Move resize button (#1115)
+		if (resetZoomButton) {
+			resetZoomButton.align(null, null, chart[resetZoomButton.alignTo]);
+		}
 
 		chart.redraw(animation);
 
@@ -969,21 +973,32 @@ Chart.prototype = {
 			spacingTop = optionsChart.spacingTop,
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
-			spacingLeft = optionsChart.spacingLeft;
+			spacingLeft = optionsChart.spacingLeft,
+			plotLeft,
+			plotTop,
+			plotWidth,
+			plotHeight;
 
-		chart.plotLeft = mathRound(chart.plotLeft);
-		chart.plotTop = mathRound(chart.plotTop);
-		chart.plotWidth = mathRound(chartWidth - chart.plotLeft - chart.marginRight);
-		chart.plotHeight = mathRound(chartHeight - chart.plotTop - chart.marginBottom);
+		chart.plotLeft = plotLeft = mathRound(chart.plotLeft);
+		chart.plotTop = plotTop = mathRound(chart.plotTop);
+		chart.plotWidth = plotWidth = mathRound(chartWidth - plotLeft - chart.marginRight);
+		chart.plotHeight = plotHeight = mathRound(chartHeight - plotTop - chart.marginBottom);
 
-		chart.plotSizeX = inverted ? chart.plotHeight : chart.plotWidth;
-		chart.plotSizeY = inverted ? chart.plotWidth : chart.plotHeight;
+		chart.plotSizeX = inverted ? plotHeight : plotWidth;
+		chart.plotSizeY = inverted ? plotWidth : plotHeight;
 
+		// Set boxes used for alignment
 		chart.spacingBox = {
 			x: spacingLeft,
 			y: spacingTop,
 			width: chartWidth - spacingLeft - spacingRight,
 			height: chartHeight - spacingTop - spacingBottom
+		};
+		chart.plotBox = {
+			x: plotLeft,
+			y: plotTop,
+			width: plotWidth,
+			height: plotHeight
 		};
 
 		each(chart.axes, function (axis) {
@@ -1029,12 +1044,7 @@ Chart.prototype = {
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
 			mgn,
 			bgAttr,
-			plotSize = {
-				x: chart.plotLeft,
-				y: chart.plotTop,
-				width: chart.plotWidth,
-				height: chart.plotHeight
-			};
+			plotBox = chart.plotBox;
 
 		// Chart area
 		mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
@@ -1072,7 +1082,7 @@ Chart.prototype = {
 					.add()
 					.shadow(optionsChart.plotShadow);
 			} else {
-				plotBackground.animate(plotSize);
+				plotBackground.animate(plotBox);
 			}
 		}
 		if (plotBackgroundImage) {
@@ -1080,7 +1090,7 @@ Chart.prototype = {
 				chart.plotBGImage = renderer.image(plotBackgroundImage, chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight)
 					.add();
 			} else {
-				plotBGImage.animate(plotSize);
+				plotBGImage.animate(plotBox);
 			}
 		}
 
