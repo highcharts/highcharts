@@ -5557,7 +5557,7 @@ Tick.prototype = {
 		}
 
 		// create the tick mark
-		if (tickWidth) {
+		if (tickWidth && tickLength) {
 
 			// negate the length
 			if (tickPosition === 'inside') {
@@ -7761,9 +7761,6 @@ function Tooltip(chart, options) {
 	this.chart = chart;
 	this.options = options;
 
-	// remove padding CSS and apply padding on box instead
-	style.padding = 0;
-
 	// Keep track of the current series
 	//this.currentSeries = UNDEFINED;
 
@@ -7789,6 +7786,7 @@ function Tooltip(chart, options) {
 			zIndex: 8
 		})
 		.css(style)
+		.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
 		.hide()
 		.add();
 
