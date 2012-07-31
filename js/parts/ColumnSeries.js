@@ -44,6 +44,10 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	
+	/**
+	 * Initialize the series
+	 */
 	init: function () {
 		Series.prototype.init.apply(this, arguments);
 
