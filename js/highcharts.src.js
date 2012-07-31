@@ -2699,52 +2699,142 @@ SVGElement.prototype = {
 		}
 	},
 
-	/**
-	 * Add a shadow to the element. Must be done after the element is added to the DOM
-	 * @param {Boolean} apply
-	 */
-	shadow: function (apply, group, cutOff) {
-		var shadows = [],
-			i,
-			shadow,
-			element = this.element,
-			strokeWidth,
+    /**
+     * Add a shadow to the element. Must be done after the element is added to the DOM
+     * @param {Boolean|Object} shadowOptions Either a custom shadow object or boolean for default shadow
+     */
+    shadow: function (shadowOptions, group, cutOff) {
+        // The following vars are used for custom shadows
+        var renderer = this.renderer,
+            filterObject,
+            shadowPosition,
+            shadowType;
 
-			// compensate for inverted plot area
-			transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
+        // The following vars are used for standard shadows
+        var shadows = [],
+            i,
+            shadow,
+            element = this.element,
+            strokeWidth,
+        // compensate for inverted plot area
+            transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
 
+        if (shadowOptions && shadowOptions.innerShadow) {
+            shadowPosition = {
+                operator: 'arithmetic',
+                in2: 'SourceAlpha',
+                k2: -1,
+                k3: 1,
+                result: 'shadowDiff'
+            };
+            shadowType = "innerShadow";
+        } else if (shadowOptions && shadowOptions.outerShadow) {
+            shadowPosition = {
+                operator: 'arithmetic',
+                in2: 'SourceAlpha',
+                k2: 1,
+                k3: -1,
+                result: 'shadowDiff'
+            };
+            shadowType = "outerShadow";
+        }
+        if (shadowPosition && shadowType) {
+            var shadowAttr = shadowOptions[shadowType];
 
-		if (apply) {
-			for (i = 1; i <= 3; i++) {
-				shadow = element.cloneNode(0);
-				strokeWidth = 7 - 2 * i;
-				attr(shadow, {
-					'isShadow': 'true',
-					'stroke': 'rgb(0, 0, 0)',
-					'stroke-opacity': 0.05 * i,
-					'stroke-width': strokeWidth,
-					'transform': 'translate' + transform,
-					'fill': NONE
-				});
-				if (cutOff) {
-					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
-					shadow.cutHeight = strokeWidth;
-				}
+            // Check if a shadow object with the same config object is created within this renderer
+            if (!shadowAttr.id || !shadows[shadowAttr.id]) {
+                if (isArray(shadowAttr)) {
+                    shadowOptions[shadowType] = shadowAttr = {
+                        x: shadowAttr[0] || 0,
+                        y: shadowAttr[1] || 0,
+                        blur: shadowAttr[2] || 0,
+                        color: shadowAttr[3] || 'black',
+                        opacity: shadowAttr[4] || 1
+                    };
+                }
+            }
 
-				if (group) {
-					group.element.appendChild(shadow);
-				} else {
-					element.parentNode.insertBefore(shadow, element);
-				}
+            // Set the id and create the element
+            shadowAttr.id = PREFIX + idCounter++;
+            shadows[shadowAttr.id] = filterObject = renderer.createElement('filter')
+                .attr({
+                    'inkscape:label': 'Outer_Shadow',
+                    'id': shadowAttr.id
+                })
+                .add(renderer.defs);
 
-				shadows.push(shadow);
-			}
+            renderer.createElement('feGaussianBlur')
+                .attr({
+                    in: 'SourceAlpha',
+                    stdDeviation: shadowAttr.blur,
+                    result: 'blur'
+                })
+                .add(filterObject);
 
-			this.shadows = shadows;
-		}
-		return this;
+            renderer.createElement('feOffset')
+                .attr({
+                    dy: shadowAttr.y,
+                    dx: shadowAttr.x
+                }).add(filterObject);
 
-	}
+            renderer.createElement('feComposite')
+                .attr(shadowPosition)
+                .add(filterObject);
+
+            renderer.createElement('feFlood')
+                .attr({
+                    'flood-color': shadowAttr.color,
+                    'flood-opacity': shadowAttr.opacity
+                })
+                .add(filterObject);
+
+            renderer.createElement('feComposite')
+                .attr({
+                    in2: 'shadowDiff',
+                    operator: 'in'
+                })
+                .add(filterObject)
+
+            renderer.createElement('feComposite')
+                .attr({
+                    in2: 'SourceGraphic',
+                    operator: 'over'
+                })
+                .add(filterObject)
+
+            // Apply the filter to the SVG object
+            this.css({ filter: 'url(' + renderer.url + '#' + shadowAttr.id + ')' });
+        } else if (shadowOptions) {
+            for (i = 1; i <= 3; i++) {
+                shadow = element.cloneNode(0);
+                strokeWidth = 7 - 2 * i;
+                attr(shadow, {
+                    'isShadow': 'true',
+                    'stroke': 'rgb(0, 0, 0)',
+                    'stroke-opacity': 0.05 * i,
+                    'stroke-width': strokeWidth,
+                    'transform': 'translate' + transform,
+                    'fill': NONE
+                });
+                if (cutOff) {
+                    attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
+                    shadow.cutHeight = strokeWidth;
+                }
+
+                if (group) {
+                    group.element.appendChild(shadow);
+                } else {
+                    element.parentNode.insertBefore(shadow, element);
+                }
+
+                shadows.push(shadow);
+            }
+
+            this.shadows = shadows;
+        }
+
+        return this;
+    }
 };
 
 
@@ -14022,6 +14112,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderWidth: 1,
 	center: ['50%', '50%'],
 	colorByPoint: true, // always true for pies
+    cumulative: -0.25, // start at top
 	dataLabels: {
 		// align: null,
 		// connectorWidth: 1,
@@ -14252,9 +14343,9 @@ var PieSeries = {
 		
 		var total = 0,
 			series = this,
-			cumulative = -0.25, // start at top
 			precision = 1000, // issue #172
 			options = series.options,
+            cumulative = options.cumulative,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
 			positions,
