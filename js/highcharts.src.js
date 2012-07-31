@@ -2703,10 +2703,13 @@ SVGElement.prototype = {
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
 	 * @param {Boolean} apply
 	 */
-	shadow: function (apply, group, cutOff) {
+	shadow: function (apply, group, cutOff, color, opacityFactor, widthParams) {
 		var shadows = [],
 			i,
 			shadow,
+			color = color ? color : 'rgb(0, 0, 0)',
+			opacityFactor = opacityFactor ? opacityFactor : 0.05,
+			widthParams = widthParams ? widthParams : [7, 2],
 			element = this.element,
 			strokeWidth,
 
@@ -2717,11 +2720,11 @@ SVGElement.prototype = {
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				shadow = element.cloneNode(0);
-				strokeWidth = 7 - 2 * i;
+				strokeWidth = widthParams[0] - widthParams[1] * i;
 				attr(shadow, {
 					'isShadow': 'true',
-					'stroke': 'rgb(0, 0, 0)',
-					'stroke-opacity': 0.05 * i,
+					'stroke': color,
+					'stroke-opacity': opacityFactor * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
 					'fill': NONE
@@ -4517,12 +4520,15 @@ var VMLElement = {
 	 * Apply a drop shadow by copying elements and giving them different strokes
 	 * @param {Boolean} apply
 	 */
-	shadow: function (apply, group, cutOff) {
+	shadow: function (apply, group, cutOff, color, opacityFactor, widthParams) {
 		var shadows = [],
 			i,
 			element = this.element,
 			renderer = this.renderer,
 			shadow,
+			color = color ? color : 'rgb(0, 0, 0)',
+			opacityFactor = opacityFactor ? opacityFactor : 0.05,
+			widthParams = widthParams ? widthParams : [7, 2],
 			elemStyle = element.style,
 			markup,
 			path = element.path,
@@ -4538,14 +4544,14 @@ var VMLElement = {
 		if (apply) {
 			for (i = 1; i <= 3; i++) {
 				
-				strokeWidth = 7 - 2 * i;
 				
+				strokeWidth = widthParams[0] - widthParams[1] * i;
 				// Cut off shadows for stacked column items
 				if (cutOff) {
 					modifiedPath = this.cutOffPath(path.value, strokeWidth + 0.5);
 				}
 				
-				markup = ['<shape isShadow="true" strokeweight="', (7 - 2 * i),
+				markup = ['<shape isShadow="true" strokeweight="', (widthParams[0] - widthParams[1] * i),
 					'" filled="false" path="', modifiedPath,
 					'" coordsize="10 10" style="', element.style.cssText, '" />'];
 				
@@ -4560,7 +4566,7 @@ var VMLElement = {
 				}
 				
 				// apply the opacity
-				markup = ['<stroke color="black" opacity="', (0.05 * i), '"/>'];
+				markup = ['<stroke color="'+color+'" opacity="', (opacityFactor * i), '"/>'];
 				createElement(renderer.prepVML(markup), null, null, shadow);
 
 
@@ -7794,7 +7800,7 @@ function Tooltip(chart, options) {
 	// When using canVG the shadow shows up as a gray circle
 	// even if the tooltip is hidden.
 	if (!useCanVG) {
-		this.label.shadow(options.shadow);
+		this.label.shadow(options.shadow, null, false, options.shadowColor, options.shadowOpacityFactor, options.shadowWidthParams);
 	}
 
 	// Public property for getting the shared state.
@@ -9181,7 +9187,7 @@ Legend.prototype = {
 					fill: legendBackgroundColor || NONE
 				})
 				.add(legendGroup)
-				.shadow(options.shadow);
+				.shadow(options.shadow, null, false, options.shadowColor, options.shadowOpacityFactor, options.shadowWidthParams);
 				box.isNew = true;
 
 			} else if (legendWidth > 0 && legendHeight > 0) {
@@ -10434,7 +10440,7 @@ Chart.prototype = {
 						optionsChart.borderRadius, chartBorderWidth)
 					.attr(bgAttr)
 					.add()
-					.shadow(optionsChart.shadow);
+					.shadow(optionsChart.shadow, null, false, optionsChart.shadowColor, optionsChart.shadowOpacityFactor, optionsChart.shadowWidthParams);
 			} else { // resize
 				chartBackground.animate(
 					chartBackground.crisp(null, null, null, chartWidth - mgn, chartHeight - mgn)
@@ -10451,7 +10457,7 @@ Chart.prototype = {
 						fill: plotBackgroundColor
 					})
 					.add()
-					.shadow(optionsChart.plotShadow);
+					.shadow(optionsChart.plotShadow, null, false, optionsChart.plotShadowColor, optionsChart.plotShadowOpacityFactor, optionsChart.plotShadowWidthParams);
 			} else {
 				plotBackground.animate(plotBox);
 			}
@@ -12769,7 +12775,7 @@ Series.prototype = {
 						.attr(attr)
 						.css(options.style)
 						.add(dataLabelsGroup)
-						.shadow(options.shadow);
+						.shadow(options.shadow, null, false, options.shadowColor, options.shadowOpacityFactor, options.shadowWidthParams);
 					}
 	
 					if (isBarLike && seriesOptions.stacking && dataLabel) {
@@ -12883,7 +12889,7 @@ Series.prototype = {
 				}
 
 				series.graph = renderer.path(graphPath)
-					.attr(attribs).add(group).shadow(options.shadow);
+					.attr(attribs).add(group).shadow(options.shadow, null, false, options.shadowColor, options.shadowOpacityFactor, options.shadowWidthParams);
 			}
 		}
 	},
@@ -13772,7 +13778,7 @@ var ColumnSeries = extendClass(Series, {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
 						.add(series.group)
-						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
+						.shadow(options.shadow, null, options.stacking && !options.borderRadius, options.shadowColor, options.shadowOpacityFactor, options.shadowWidthParams);
 				}
 
 			}
@@ -14381,7 +14387,7 @@ var PieSeries = {
 			//center,
 			graphic,
 			group,
-			shadow = series.options.shadow,
+			options = series.options,
 			shadowGroup,
 			shapeArgs;
 
@@ -14424,7 +14430,7 @@ var PieSeries = {
 						{ 'stroke-linejoin': 'round' }
 					))
 					.add(point.group)
-					.shadow(shadow, shadowGroup);
+					.shadow(options.shadow, shadowGroup, false, options.shadowColor, options.shadowOpacityFactor, options.shadowWidthParams);
 				
 			}
 
