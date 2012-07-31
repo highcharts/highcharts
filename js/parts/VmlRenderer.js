@@ -451,9 +451,9 @@ var VMLElement = {
 
 	/**
 	 * Apply a drop shadow by copying elements and giving them different strokes
-	 * @param {Boolean} apply
+	 * @param {Boolean|Object} shadowOptions
 	 */
-	shadow: function (apply, group, cutOff) {
+	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
 			i,
 			element = this.element,
@@ -463,7 +463,9 @@ var VMLElement = {
 			markup,
 			path = element.path,
 			strokeWidth,
-			modifiedPath;
+			modifiedPath,
+			shadowWidth,
+			shadowElementOpacity;
 
 		// some times empty paths are not strings
 		if (path && typeof path.value !== 'string') {
@@ -471,24 +473,26 @@ var VMLElement = {
 		}
 		modifiedPath = path;
 
-		if (apply) {
+		if (shadowOptions) {
+			shadowWidth = pick(shadowOptions.width, 3);
+			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			for (i = 1; i <= 3; i++) {
 				
-				strokeWidth = 7 - 2 * i;
+				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				
 				// Cut off shadows for stacked column items
 				if (cutOff) {
 					modifiedPath = this.cutOffPath(path.value, strokeWidth + 0.5);
 				}
 				
-				markup = ['<shape isShadow="true" strokeweight="', (7 - 2 * i),
+				markup = ['<shape isShadow="true" strokeweight="', strokeWidth,
 					'" filled="false" path="', modifiedPath,
 					'" coordsize="10 10" style="', element.style.cssText, '" />'];
 				
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
-						left: pInt(elemStyle.left) + 1,
-						top: pInt(elemStyle.top) + 1
+						left: pInt(elemStyle.left) + (shadowOptions.offsetX || 1),
+						top: pInt(elemStyle.top) + (shadowOptions.offsetY || 1)
 					}
 				);
 				if (cutOff) {
@@ -496,7 +500,7 @@ var VMLElement = {
 				}
 				
 				// apply the opacity
-				markup = ['<stroke color="black" opacity="', (0.05 * i), '"/>'];
+				markup = ['<stroke color="', shadowOptions.color || 'black', '" opacity="', shadowElementOpacity * i, '"/>'];
 				createElement(renderer.prepVML(markup), null, null, shadow);
 
 

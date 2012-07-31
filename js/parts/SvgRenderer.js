@@ -929,27 +929,34 @@ SVGElement.prototype = {
 
 	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
-	 * @param {Boolean} apply
+	 * @param {Boolean|Object} shadowOptions // docs
 	 */
-	shadow: function (apply, group, cutOff) {
+	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
 			i,
 			shadow,
 			element = this.element,
 			strokeWidth,
+			shadowWidth,
+			shadowElementOpacity,
 
 			// compensate for inverted plot area
-			transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
+			transform;
 
 
-		if (apply) {
-			for (i = 1; i <= 3; i++) {
+		if (shadowOptions) {
+			shadowWidth = pick(shadowOptions.width, 3);
+			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
+			transform = this.parentInverted ? 
+				'(-1,-1)' : // this doesn't work 
+				'(' + (shadowOptions.offsetX || 1) + ', ' + (shadowOptions.offsetY || 1) + ')';
+			for (i = 1; i <= shadowWidth; i++) {
 				shadow = element.cloneNode(0);
-				strokeWidth = 7 - 2 * i;
+				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				attr(shadow, {
 					'isShadow': 'true',
-					'stroke': 'rgb(0, 0, 0)',
-					'stroke-opacity': 0.05 * i,
+					'stroke': shadowOptions.color || 'black',
+					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
 					'fill': NONE
