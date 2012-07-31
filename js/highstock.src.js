@@ -12954,8 +12954,7 @@ Series.prototype = {
 			options = series.options,
 			doClip = options.clip !== false,
 			animation = options.animation,
-			doAnimation = animation && series.animate,
-			duration = doAnimation ? (animation && animation.duration) || 500 : 0,
+			doAnimation = animation && !!series.animate,
 			clipRect = series.clipRect,
 			renderer = chart.renderer;
 
@@ -12967,7 +12966,7 @@ Series.prototype = {
 		// never used when clip is false. A better way would be that the animation
 		// would run, then the clipRect destroyed.
 		if (!clipRect) {
-			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect ?
+			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect && doAnimation ?
 				chart.clipRect :
 				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
 			if (!chart.clipRect) {
@@ -13033,7 +13032,7 @@ Series.prototype = {
 				}
 				clipRect.destroy();
 			}
-		}, duration);
+		}, (animation && animation.duration) || 1000); // #1134
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
