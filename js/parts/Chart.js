@@ -705,7 +705,8 @@ Chart.prototype = {
 				width: chartWidth + PX,
 				height: chartHeight + PX,
 				textAlign: 'left',
-				lineHeight: 'normal' // #427
+				lineHeight: 'normal', // #427
+				zIndex: 0 // #1072
 			}, optionsChart.style),
 			chart.renderToClone || renderTo
 		);
