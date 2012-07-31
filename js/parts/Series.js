@@ -2107,7 +2107,7 @@ Series.prototype = {
 		if (!clipRect) {
 			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect ?
 				chart.clipRect :
-				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY + 1);
+				renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY);
 			if (!chart.clipRect) {
 				chart.clipRect = clipRect;
 			}

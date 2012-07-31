@@ -1375,7 +1375,8 @@ SVGRenderer.prototype = {
 		// points format: [M, 0, 0, L, 100, 0]
 		// normalize to a crisp line
 		if (points[1] === points[4]) {
-			points[1] = points[4] = mathRound(points[1]) + (width % 2 / 2);
+			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
+			points[1] = points[4] = mathRound(points[1]) - (width % 2 / 2); 
 		}
 		if (points[2] === points[5]) {
 			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
