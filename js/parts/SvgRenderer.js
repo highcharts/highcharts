@@ -1016,9 +1016,15 @@ SVGRenderer.prototype = {
 		renderer.box = boxWrapper.element;
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
+		
+		// Page url used for internal references. #24, #672, #1070
 		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ? 
-			loc.href.replace(/#.*?$/, '').replace(/([\('\)])/g, '\\$1') :
-			''; // Page url used for internal references. #24, #672, #1070
+			loc.href
+				.replace(/#.*?$/, '') // remove the hash
+				.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
+				.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
+			''; 
+			
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
