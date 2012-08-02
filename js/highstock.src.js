@@ -2575,6 +2575,10 @@ SVGElement.prototype = {
 			otherZIndex,
 			i,
 			inserted;
+			
+		if (parent) {
+			this.parentGroup = parent;
+		}
 
 		// mark as inverted
 		this.parentInverted = parent && parent.inverted;
@@ -3745,33 +3749,55 @@ SVGRenderer.prototype = {
 			wrapper.add = function (svgGroupWrapper) {
 
 				var htmlGroup,
-					htmlGroupStyle,
-					container = renderer.box.parentNode;
+					container = renderer.box.parentNode,
+					parentGroup,
+					parents = [];
 
 				// Create a mock group to hold the HTML elements
 				if (svgGroupWrapper) {
 					htmlGroup = svgGroupWrapper.div;
 					if (!htmlGroup) {
-						htmlGroup = svgGroupWrapper.div = createElement(DIV, {
-							className: attr(svgGroupWrapper.element, 'class')
-						}, {
-							position: ABSOLUTE,
-							left: svgGroupWrapper.attr('translateX') + PX,
-							top: svgGroupWrapper.attr('translateY') + PX
-						}, container);
-
-						// Ensure dynamic updating position
-						htmlGroupStyle = htmlGroup.style;
-						extend(svgGroupWrapper.attrSetters, {
-							translateX: function (value) {
-								htmlGroupStyle.left = value + PX;
-							},
-							translateY: function (value) {
-								htmlGroupStyle.top = value + PX;
-							},
-							visibility: function (value, key) {
-								htmlGroupStyle[key] = value;
-							}
+						
+						// Read the parent chain into an array and read from top down
+						parentGroup = svgGroupWrapper;
+						while (parentGroup) {
+						
+							parents.push(parentGroup);
+						
+							// Move up to the next parent group
+							parentGroup = parentGroup.parentGroup;
+						}
+						
+						// Ensure dynamically updating position when any parent is translated
+						each(parents.reverse(), function (parentGroup) {
+							var htmlGroupStyle;
+								
+							// Create a HTML div and append it to the parent div to emulate 
+							// the SVG group structure
+							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, {
+								className: attr(parentGroup.element, 'class')
+							}, {
+								position: ABSOLUTE,
+								left: (parentGroup.translateX || 0) + PX,
+								top: (parentGroup.translateY || 0) + PX
+							}, htmlGroup || container); // the top group is appended to container
+							
+							// Shortcut
+							htmlGroupStyle = htmlGroup.style;
+							
+							// Set listeners to update the HTML div's position whenever the SVG group
+							// position is changed
+							extend(parentGroup.attrSetters, {
+								translateX: function (value) {
+									htmlGroupStyle.left = value + PX;
+								},
+								translateY: function (value) {
+									htmlGroupStyle.top = value + PX;
+								},
+								visibility: function (value, key) {
+									htmlGroupStyle[key] = value;
+								}
+							});
 						});
 
 					}
@@ -3831,8 +3857,8 @@ SVGRenderer.prototype = {
 			text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
-				})
-				.add(wrapper),
+				}),
+				//.add(wrapper),
 			box,
 			bBox,
 			alignFactor = 0,
@@ -3926,6 +3952,7 @@ SVGRenderer.prototype = {
 		}
 
 		function getSizeAfterAdd() {
+			text.add(wrapper);
 			wrapper.attr({
 				text: str, // alignment is available now
 				x: x,
