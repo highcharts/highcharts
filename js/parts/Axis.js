@@ -1387,12 +1387,12 @@ Axis.prototype = {
 
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
-			axis.axisGroup = renderer.g('axis')
-				.attr({ zIndex: options.zIndex || 7 })
-				.add();
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
 				.add();
+			axis.axisGroup = renderer.g('axis')
+				.attr({ zIndex: options.zIndex || 2 })
+				.add();			
 		}
 
 		if (hasData || axis.isLinked) {
@@ -1674,7 +1674,7 @@ Axis.prototype = {
 						'stroke-width': lineWidth,
 						zIndex: 7
 					})
-					.add();
+					.add(axis.axisGroup);
 			} else {
 				axis.axisLine.animate({ d: linePath });
 			}

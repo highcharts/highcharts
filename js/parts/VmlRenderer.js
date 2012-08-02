@@ -354,21 +354,27 @@ var VMLElement = {
 	 */
 	clip: function (clipRect) {
 		var wrapper = this,
-			clipMembers = clipRect.members,
+			clipMembers,
 			element = wrapper.element,
 			parentNode = element.parentNode;
 
-		clipMembers.push(wrapper);
-		wrapper.destroyClip = function () {
-			erase(clipMembers, wrapper);
-		};
+		if (!clipRect) {
+			wrapper.destroyClip();
+		} else {
+			clipMembers = clipRect.members;
+			clipMembers.push(wrapper);
+			wrapper.destroyClip = function () {
+				erase(clipMembers, wrapper);
+			};
 		
-		// Issue #863 workaround - related to #140, #61, #74
-		if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
-			css(element, { visibility: HIDDEN });
+			// Issue #863 workaround - related to #140, #61, #74
+			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
+				css(element, { visibility: HIDDEN });
+			}
+			
 		}
 		
-		return wrapper.css(clipRect.getCSS(wrapper));
+		return wrapper.css(clipRect ? clipRect.getCSS(wrapper) : { clip: 'inherit' });	
 	},
 
 	/**
