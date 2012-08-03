@@ -1357,9 +1357,9 @@ Series.prototype = {
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
 
-		if (!hasTouch && chart.mouseIsDown) {
+		/*if (!hasTouch && chart.mouseIsDown) {
 			return;
-		}
+		}*/
 
 		// set normal state to previous series
 		if (hoverSeries && hoverSeries !== series) {

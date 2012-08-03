@@ -179,6 +179,8 @@ MouseTracker.prototype = {
 
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
+	 * 
+	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
 	resetTracker: function (allowMove) {
 		var mouseTracker = this,
@@ -449,8 +451,10 @@ MouseTracker.prototype = {
 					}
 				}
 
-			} else if (!isOutsidePlot) {
-				// show the tooltip
+			} 
+			
+			// Show the tooltip and run mouse over events (#977)			
+			if (!isOutsidePlot) {
 				mouseTracker.onmousemove(e);
 			}
 
