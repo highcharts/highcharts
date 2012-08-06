@@ -78,8 +78,9 @@ win.HighchartsAdapter = {
 		
 		// This currently works for getting inner width and height. If adding
 		// more methods later, we need a conditional implementation for each.
-		return $(el).getStyle(method).toInt();
-		
+		if (method === 'width' || method === 'height') {
+			return $(el).getCoordinates()[method];
+		}
 	},
 
 	/**
