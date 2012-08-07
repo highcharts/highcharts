@@ -234,6 +234,7 @@ MouseTracker.prototype = {
 		}
 	},
 	
+	// http://jsfiddle.net/highcharts/PZH37/
 	pinchHandler: function (e) {
 		var mouseTracker = this,
 			pinchDown = mouseTracker.pinchDown;
