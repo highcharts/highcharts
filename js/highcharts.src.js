@@ -6319,13 +6319,15 @@ Axis.prototype = {
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
 			value = this.value,
-			categories = axis.categories,
-			tickInterval = axis.tickInterval,
+			categories = axis.categories, 
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			numericSymbols = defaultOptions.lang.numericSymbols,
 			i = numericSymbols.length,
 			multi,
-			ret;
+			ret,
+			
+			// make sure the same symbol is added for all labels on a linear axis
+			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
 
 		if (categories) {
 			ret = value;
@@ -6333,13 +6335,13 @@ Axis.prototype = {
 		} else if (dateTimeLabelFormat) { // datetime axis
 			ret = dateFormat(dateTimeLabelFormat, value);
 		
-		} else if (tickInterval >= 1000) {
+		} else if (numericSymbolDetector >= 1000) {
 			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
 			// If we are to enable this in tooltip or other places as well, we can move this
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
-				if (tickInterval >= multi) {
+				if (numericSymbolDetector >= multi) {
 					ret = numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
