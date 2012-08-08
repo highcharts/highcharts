@@ -1337,6 +1337,7 @@ defaultOptions = {
 		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		decimalPoint: '.',
+		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels // docs
 		resetZoom: 'Reset zoom',
 		resetZoomTitle: 'Reset zoom level 1:1',
 		thousandsSep: ','
@@ -6321,6 +6322,9 @@ Axis.prototype = {
 			categories = axis.categories,
 			tickInterval = axis.tickInterval,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
+			numericSymbols = defaultOptions.lang.numericSymbols,
+			i = numericSymbols.length,
+			multi,
 			ret;
 
 		if (categories) {
@@ -6328,19 +6332,28 @@ Axis.prototype = {
 		
 		} else if (dateTimeLabelFormat) { // datetime axis
 			ret = dateFormat(dateTimeLabelFormat, value);
-
-		} else if (tickInterval % 1000000 === 0) { // use M abbreviation
-			ret = (value / 1000000) + 'M';
-
-		} else if (tickInterval % 1000 === 0) { // use k abbreviation
-			ret = (value / 1000) + 'k';
-
-		} else if (value >= 1000) { // add thousands separators
-			ret = numberFormat(value, 0);
-
-		} else { // small numbers
-			ret = numberFormat(value, -1);
+		
+		} else if (tickInterval >= 1000) {
+			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
+			// If we are to enable this in tooltip or other places as well, we can move this
+			// logic to the numberFormatter and enable it by a parameter.
+			while (i-- && ret === UNDEFINED) {
+				multi = Math.pow(1000, i + 1);
+				if (tickInterval >= multi) {
+					ret = numberFormat(value / multi, -1) + numericSymbols[i];
+				}
+			}
 		}
+		
+		if (ret === UNDEFINED) {
+			if (value >= 1000) { // add thousands separators
+				ret = numberFormat(value, 0);
+
+			} else { // small numbers
+				ret = numberFormat(value, -1);
+			}
+		}
+		
 		return ret;
 	},
 	
