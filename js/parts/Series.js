@@ -2072,7 +2072,9 @@ Series.prototype = {
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
-			chart = this.chart;
+			chart = this.chart,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis;
 		
 		// Generate it on first call
 		if (!group) {	
@@ -2085,7 +2087,10 @@ Series.prototype = {
 				
 		}
 		// Place it on first and subsequent (redraw) calls
-		group.translate(this.xAxis.left, this.yAxis.top);
+		group.translate(
+			xAxis ? xAxis.left : chart.plotLeft, 
+			yAxis ? yAxis.top : chart.plotTop
+		);
 		
 		return group;
 		
