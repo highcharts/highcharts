@@ -270,25 +270,6 @@ SVGElement.prototype = {
 
 		}
 		
-		// Workaround for our #732, WebKit's issue https://bugs.webkit.org/show_bug.cgi?id=78385
-		// TODO: If the WebKit team fix this bug before the final release of Chrome 18, remove the workaround.
-		if (isWebKit && /Chrome\/(18|19)/.test(userAgent)) {
-			if (nodeName === 'text' && (hash.x !== UNDEFINED || hash.y !== UNDEFINED)) {
-				var parent = element.parentNode,
-					next = element.nextSibling;
-			
-				if (parent) {
-					parent.removeChild(element);
-					if (next) {
-						parent.insertBefore(element, next);
-					} else {
-						parent.appendChild(element);
-					}
-				}
-			}
-		}
-		// End of workaround for #732
-		
 		return ret;
 	},
 
@@ -315,7 +296,7 @@ SVGElement.prototype = {
 	 * @param {String} id
 	 */
 	clip: function (clipRect) {
-		return this.attr('clip-path', 'url(' + this.renderer.url + '#' + clipRect.id + ')');
+		return this.attr('clip-path', clipRect ? 'url(' + this.renderer.url + '#' + clipRect.id + ')' : NONE);
 	},
 
 	/**
@@ -822,6 +803,10 @@ SVGElement.prototype = {
 			otherZIndex,
 			i,
 			inserted;
+			
+		if (parent) {
+			this.parentGroup = parent;
+		}
 
 		// mark as inverted
 		this.parentInverted = parent && parent.inverted;
@@ -948,27 +933,34 @@ SVGElement.prototype = {
 
 	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
-	 * @param {Boolean} apply
+	 * @param {Boolean|Object} shadowOptions // docs
 	 */
-	shadow: function (apply, group, cutOff) {
+	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
 			i,
 			shadow,
 			element = this.element,
 			strokeWidth,
+			shadowWidth,
+			shadowElementOpacity,
 
 			// compensate for inverted plot area
-			transform = this.parentInverted ? '(-1,-1)' : '(1,1)';
+			transform;
 
 
-		if (apply) {
-			for (i = 1; i <= 3; i++) {
+		if (shadowOptions) {
+			shadowWidth = pick(shadowOptions.width, 3);
+			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
+			transform = this.parentInverted ? 
+				'(-1,-1)' : // this doesn't work 
+				'(' + (shadowOptions.offsetX || 1) + ', ' + (shadowOptions.offsetY || 1) + ')';
+			for (i = 1; i <= shadowWidth; i++) {
 				shadow = element.cloneNode(0);
-				strokeWidth = 7 - 2 * i;
+				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				attr(shadow, {
 					'isShadow': 'true',
-					'stroke': 'rgb(0, 0, 0)',
-					'stroke-opacity': 0.05 * i,
+					'stroke': shadowOptions.color || 'black',
+					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
 					'fill': NONE
@@ -1028,8 +1020,15 @@ SVGRenderer.prototype = {
 		renderer.box = boxWrapper.element;
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
-		renderer.url = isIE ? '' : loc.href.replace(/#.*?$/, '')
-			.replace(/([\('\)])/g, '\\$1'); // Page url used for internal references. #24, #672.
+		
+		// Page url used for internal references. #24, #672, #1070
+		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ? 
+			loc.href
+				.replace(/#.*?$/, '') // remove the hash
+				.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
+				.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
+			''; 
+			
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
@@ -1393,7 +1392,8 @@ SVGRenderer.prototype = {
 		// points format: [M, 0, 0, L, 100, 0]
 		// normalize to a crisp line
 		if (points[1] === points[4]) {
-			points[1] = points[4] = mathRound(points[1]) + (width % 2 / 2);
+			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
+			points[1] = points[4] = mathRound(points[1]) - (width % 2 / 2); 
 		}
 		if (points[2] === points[5]) {
 			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
@@ -1977,33 +1977,55 @@ SVGRenderer.prototype = {
 			wrapper.add = function (svgGroupWrapper) {
 
 				var htmlGroup,
-					htmlGroupStyle,
-					container = renderer.box.parentNode;
+					container = renderer.box.parentNode,
+					parentGroup,
+					parents = [];
 
 				// Create a mock group to hold the HTML elements
 				if (svgGroupWrapper) {
 					htmlGroup = svgGroupWrapper.div;
 					if (!htmlGroup) {
-						htmlGroup = svgGroupWrapper.div = createElement(DIV, {
-							className: attr(svgGroupWrapper.element, 'class')
-						}, {
-							position: ABSOLUTE,
-							left: svgGroupWrapper.attr('translateX') + PX,
-							top: svgGroupWrapper.attr('translateY') + PX
-						}, container);
-
-						// Ensure dynamic updating position
-						htmlGroupStyle = htmlGroup.style;
-						extend(svgGroupWrapper.attrSetters, {
-							translateX: function (value) {
-								htmlGroupStyle.left = value + PX;
-							},
-							translateY: function (value) {
-								htmlGroupStyle.top = value + PX;
-							},
-							visibility: function (value, key) {
-								htmlGroupStyle[key] = value;
-							}
+						
+						// Read the parent chain into an array and read from top down
+						parentGroup = svgGroupWrapper;
+						while (parentGroup) {
+						
+							parents.push(parentGroup);
+						
+							// Move up to the next parent group
+							parentGroup = parentGroup.parentGroup;
+						}
+						
+						// Ensure dynamically updating position when any parent is translated
+						each(parents.reverse(), function (parentGroup) {
+							var htmlGroupStyle;
+								
+							// Create a HTML div and append it to the parent div to emulate 
+							// the SVG group structure
+							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, {
+								className: attr(parentGroup.element, 'class')
+							}, {
+								position: ABSOLUTE,
+								left: (parentGroup.translateX || 0) + PX,
+								top: (parentGroup.translateY || 0) + PX
+							}, htmlGroup || container); // the top group is appended to container
+							
+							// Shortcut
+							htmlGroupStyle = htmlGroup.style;
+							
+							// Set listeners to update the HTML div's position whenever the SVG group
+							// position is changed
+							extend(parentGroup.attrSetters, {
+								translateX: function (value) {
+									htmlGroupStyle.left = value + PX;
+								},
+								translateY: function (value) {
+									htmlGroupStyle.top = value + PX;
+								},
+								visibility: function (value, key) {
+									htmlGroupStyle[key] = value;
+								}
+							});
 						});
 
 					}
@@ -2063,8 +2085,8 @@ SVGRenderer.prototype = {
 			text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
-				})
-				.add(wrapper),
+				}),
+				//.add(wrapper),
 			box,
 			bBox,
 			alignFactor = 0,
@@ -2158,6 +2180,7 @@ SVGRenderer.prototype = {
 		}
 
 		function getSizeAfterAdd() {
+			text.add(wrapper);
 			wrapper.attr({
 				text: str, // alignment is available now
 				x: x,

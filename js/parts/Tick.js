@@ -315,7 +315,7 @@ Tick.prototype = {
 		}
 
 		// create the tick mark
-		if (tickWidth) {
+		if (tickWidth && tickLength) {
 
 			// negate the length
 			if (tickPosition === 'inside') {

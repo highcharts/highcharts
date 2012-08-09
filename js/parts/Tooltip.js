@@ -12,9 +12,6 @@ function Tooltip(chart, options) {
 	this.chart = chart;
 	this.options = options;
 
-	// remove padding CSS and apply padding on box instead
-	style.padding = 0;
-
 	// Keep track of the current series
 	//this.currentSeries = UNDEFINED;
 
@@ -40,6 +37,7 @@ function Tooltip(chart, options) {
 			zIndex: 8
 		})
 		.css(style)
+		.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
 		.hide()
 		.add();
 
@@ -180,10 +178,13 @@ Tooltip.prototype = {
 		
 		// Set up the variables
 		var chart = this.chart,
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
+			series = point.series,
+			xAxis = series && series.xAxis,
+			yAxis = series && series.yAxis,
+			plotLeft = (xAxis && xAxis.left) || chart.plotLeft,
+			plotTop = (yAxis && yAxis.top) || chart.plotTop,
+			plotWidth = (xAxis && xAxis.len) || chart.plotWidth,
+			plotHeight = (yAxis && yAxis.len) || chart.plotHeight,
 			distance = pick(this.options.distance, 12),
 			pointX = point.plotX,
 			pointY = point.plotY,
@@ -272,6 +273,7 @@ Tooltip.prototype = {
 			borderColor,
 			crosshairsOptions = options.crosshairs,
 			shared = tooltip.shared,
+			singlePoint,
 			currentSeries;
 			
 		// get the reference point coordinates (pie charts use tooltipPos)
@@ -306,6 +308,7 @@ Tooltip.prototype = {
 		// single point tooltip
 		} else {
 			textConfig = point.getLabelConfig();
+			singlePoint = point;
 		}
 		text = formatter.call(textConfig);
 
@@ -341,7 +344,7 @@ Tooltip.prototype = {
 				tooltip,
 				label.width,
 				label.height,
-				{ plotX: x, plotY: y }
+				singlePoint || { plotX: x, plotY: y }
 			);
 
 			// do the move

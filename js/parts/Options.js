@@ -137,6 +137,7 @@ defaultOptions = {
 				//fillColor: null,
 				states: { // states for a single point
 					hover: {
+						enabled: true
 						//radius: base + 2
 					},
 					select: {

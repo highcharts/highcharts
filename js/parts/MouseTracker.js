@@ -190,6 +190,8 @@ MouseTracker.prototype = {
 
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
+	 * 
+	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
 	resetTracker: function (allowMove) {
 		var mouseTracker = this,
@@ -460,8 +462,10 @@ MouseTracker.prototype = {
 					}
 				}
 
-			} else if (!isOutsidePlot) {
-				// show the tooltip
+			} 
+			
+			// Show the tooltip and run mouse over events (#977)			
+			if (!isOutsidePlot) {
 				mouseTracker.onmousemove(e);
 			}
 
@@ -592,7 +596,12 @@ MouseTracker.prototype = {
 			chart.tooltip = new Tooltip(chart, options);
 
 			// set the fixed interval ticking for the smooth tooltip
-			this.tooltipInterval = setInterval(function () { chart.tooltip.tick(); }, 32);
+			this.tooltipInterval = setInterval(function () {
+				// The interval function may still be running during destroy, so check that the chart is really there before calling.
+				if (chart && chart.tooltip) {
+					chart.tooltip.tick();
+				}
+			}, 32);
 		}
 
 		this.setDOMEvents();

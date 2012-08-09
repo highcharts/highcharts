@@ -60,6 +60,11 @@ Point.prototype = {
 			if (options.dataLabels) {
 				series._hasPointLabels = true;
 			}
+			
+			// Same approach as above for markers
+			if (options.marker) {
+				series._hasPointMarkers = true;
+			}
 		} else if (typeof options[0] === 'string') { // categorized data with name in first position
 			point.name = options[0];
 			point.y = options[1];
@@ -486,7 +491,7 @@ Point.prototype = {
 						2 * radius
 					)
 					.attr(pointAttr[state])
-					.add(series.group);
+					.add(series.markerGroup);
 				
 				} else { // update
 					stateMarkerGraphic.attr({ // #1054
@@ -497,7 +502,7 @@ Point.prototype = {
 			}
 
 			if (stateMarkerGraphic) {
-				stateMarkerGraphic[state ? 'show' : 'hide']();
+				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
 			}
 		}
 
@@ -541,9 +546,7 @@ Series.prototype = {
 	init: function (chart, options) {
 		var series = this,
 			eventType,
-			events,
-			//pointEvent,
-			index = chart.series.length;
+			events;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -553,8 +556,7 @@ Series.prototype = {
 
 		// set some variables
 		extend(series, {
-			index: index,
-			name: options.name || 'Series ' + (index + 1),
+			name: options.name,
 			state: NORMAL_STATE,
 			pointAttr: {},
 			visible: options.visible !== false, // true by default
@@ -592,6 +594,15 @@ Series.prototype = {
 
 		// Register it in the chart
 		chart.series.push(series);
+		
+		// Sort series according to index option (#248, #1123)  // docs: series.index option
+		chart.series.sort(function (a, b) {
+			return (a.options.index || 0) - (b.options.index || 0);
+		});
+		each(chart.series, function (series, i) {
+			series.index = i;
+			series.name = series.name || 'Series ' + (i + 1);
+		});
 	},
 	
 	/**
@@ -698,17 +709,17 @@ Series.prototype = {
 	 * @param {Object} itemOptions
 	 */
 	setOptions: function (itemOptions) {
-		var series = this,
-			chart = series.chart,
+		var chart = this.chart,
 			chartOptions = chart.options,
 			plotOptions = chartOptions.plotOptions,
+			typeOptions = plotOptions[this.type],
 			data = itemOptions.data,
 			options;
 
 		itemOptions.data = null; // remove from merge to prevent looping over the data set
 
 		options = merge(
-			plotOptions[this.type],
+			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
@@ -717,7 +728,12 @@ Series.prototype = {
 		options.data = itemOptions.data = data;
 		
 		// the tooltip options are merged between global and series specific options
-		series.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
+		this.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
+		
+		// Delte marker object if not allowed (#1125)
+		if (typeOptions.marker === null) {
+			delete options.marker;
+		}
 		
 		return options;
 
@@ -1353,9 +1369,9 @@ Series.prototype = {
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
 
-		if (!hasTouch && chart.mouseIsDown) {
+		/*if (!hasTouch && chart.mouseIsDown) {
 			return;
-		}
+		}*/
 
 		// set normal state to previous series
 		if (hoverSeries && hoverSeries !== series) {
@@ -1409,10 +1425,9 @@ Series.prototype = {
 	 * Animate in the series
 	 */
 	animate: function (init) {
-		var series = this,
-			chart = series.chart,
-			clipRect = series.clipRect,
-			animation = series.options.animation;
+		var chart = this.chart,
+			clipRect = this.clipRect,
+			animation = this.options.animation;
 
 		if (animation && !isObject(animation)) {
 			animation = {};
@@ -1426,7 +1441,7 @@ Series.prototype = {
 
 		} else { // run the animation
 			clipRect.animate({
-				width: chart.plotSizeX
+				width: chart.plotSizeX - chart.plotBorderWidth
 			}, animation);
 
 			// delete this function to allow it only once
@@ -1450,23 +1465,37 @@ Series.prototype = {
 			radius,
 			symbol,
 			isImage,
-			graphic;
+			graphic,
+			options = series.options,
+			seriesMarkerOptions = options.marker,
+			pointMarkerOptions,
+			enabled,
+			markerGroup = series.plotGroup(
+				'markerGroup', 
+				'markers', 
+				series.visible ? VISIBLE : HIDDEN, 
+				options.zIndex, 
+				chart.seriesGroup
+			);
 
-		if (series.options.marker.enabled) {
+		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
+			
 			i = points.length;
 			while (i--) {
 				point = points[i];
 				plotX = point.plotX;
 				plotY = point.plotY;
 				graphic = point.graphic;
+				pointMarkerOptions = point.marker || {};
+				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
 
 				// only draw the point if y is defined
-				if (plotY !== UNDEFINED && !isNaN(plotY)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && chart.isInsidePlot(plotX, plotY, chart.inverted)) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 					radius = pointAttr.r;
-					symbol = pick(point.marker && point.marker.symbol, series.symbol);
+					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
@@ -1478,7 +1507,7 @@ Series.prototype = {
 							height: 2 * radius
 						} : {}));
 					} else if (radius > 0 || isImage) {
-						point.graphic = chart.renderer.symbol(
+						point.graphic = graphic = chart.renderer.symbol(
 							symbol,
 							plotX - radius,
 							plotY - radius,
@@ -1486,8 +1515,11 @@ Series.prototype = {
 							2 * radius
 						)
 						.attr(pointAttr)
-						.add(series.group);
+						.add(markerGroup);
 					}
+				
+				} else if (graphic) {
+					point.graphic = graphic.destroy();
 				}
 			}
 		}
@@ -1737,7 +1769,7 @@ Series.prototype = {
 				pointOptions,
 				generalOptions,
 				str,
-				dataLabelsGroup = series.dataLabelsGroup,
+				dataLabelsGroup,
 				chart = series.chart,
 				xAxis = series.xAxis,
 				groupLeft = xAxis ? xAxis.left : chart.plotLeft,
@@ -1787,18 +1819,12 @@ Series.prototype = {
 
 
 			// create a separate group for the data labels to avoid rotation
-			if (!dataLabelsGroup) {
-				dataLabelsGroup = series.dataLabelsGroup =
-					renderer.g('data-labels')
-						.attr({
-							visibility: series.visible ? VISIBLE : HIDDEN,
-							zIndex: 6
-						})
-						.translate(groupLeft, groupTop)
-						.add();
-			} else {
-				dataLabelsGroup.translate(groupLeft, groupTop);
-			}
+			dataLabelsGroup = series.plotGroup(
+				'dataLabelsGroup', 
+				'data-labels', 
+				series.visible ? VISIBLE : HIDDEN, 
+				6
+			);
 			
 			// make the labels for each point
 			generalOptions = options;
@@ -2038,6 +2064,7 @@ Series.prototype = {
 		var series = this,
 			group = series.group,
 			trackerGroup = series.trackerGroup,
+			markerGroup = series.markerGroup,
 			chart = series.chart;
 		
 		// A fixed size is needed for inversion to work
@@ -2047,13 +2074,11 @@ Series.prototype = {
 				height: series.xAxis.len
 			};
 			
-			// Set the series.group size
-			group.attr(size).invert();
-			
-			// Set the tracker group size
-			if (trackerGroup) {
-				trackerGroup.attr(size).invert();
-			}
+			each(['group', 'trackerGroup', 'markerGroup'], function (groupName) {
+				if (series[groupName]) {
+					series[groupName].attr(size).invert();
+				}
+			});
 		}
 
 		addEvent(chart, 'resize', setInvert); // do it on resize
@@ -2069,22 +2094,33 @@ Series.prototype = {
 	},
 	
 	/**
-	 * Create the series group
+	 * General abstraction for creating plot groups like series.group, series.trackerGroup, series.dataLabelsGroup and 
+	 * series.markerGroup. On subsequent calls, the group will only be adjusted to the updated plot size.
 	 */
-	createGroup: function () {
+	plotGroup: function (prop, name, visibility, zIndex, parent) {
+		var group = this[prop],
+			chart = this.chart,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis;
 		
-		var chart = this.chart,
-			group = this.group = chart.renderer.g('series');
-
-		group.attr({
-				visibility: this.visible ? VISIBLE : HIDDEN,
-				zIndex: this.options.zIndex
-			})
-			.translate(this.xAxis.left, this.yAxis.top)
-			.add(chart.seriesGroup);
+		// Generate it on first call
+		if (!group) {	
+			this[prop] = group = chart.renderer.g(name)
+				.attr({
+					visibility: visibility,
+					zIndex: zIndex
+				})
+				.add(parent);
+				
+		}
+		// Place it on first and subsequent (redraw) calls
+		group.translate(
+			xAxis ? xAxis.left : chart.plotLeft, 
+			yAxis ? yAxis.top : chart.plotTop
+		);
 		
-		// Only run this once
-		this.createGroup = noop;
+		return group;
+		
 	},
 	
 	/**
@@ -2116,15 +2152,37 @@ Series.prototype = {
 			options = series.options,
 			doClip = options.clip !== false,
 			animation = options.animation,
-			doAnimation = animation && series.animate,
-			duration = doAnimation ? (animation && animation.duration) || 500 : 0,
-			clipRect = series.getClipRect(),
-			renderer = chart.renderer;
+			doAnimation = animation && !!series.animate,
+			clipRect = series.clipRect,
+			renderer = chart.renderer,
+			markerGroup,
+			plotBorderWidth = chart.plotBorderWidth;
+
+
+		// Add plot area clipping rectangle. If this is before chart.hasRendered,
+		// create one shared clipRect.
+
+		// Todo: since creating the clip property, the clipRect is created but
+		// never used when clip is false. A better way would be that the animation
+		// would run, then the clipRect destroyed.
+		if (!clipRect) {
+			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect && doAnimation ?
+				chart.clipRect :
+				renderer.clipRect(plotBorderWidth / 2, plotBorderWidth / 2, chart.plotSizeX - plotBorderWidth, chart.plotSizeY - plotBorderWidth);
+			if (!chart.clipRect) {
+				chart.clipRect = clipRect;
+			}
+		}
+		
 
 		// the group
-		series.createGroup();
-		group = series.group;
-		
+		group = series.group || series.plotGroup(
+			'group', 
+			'series', 
+			series.visible ? VISIBLE : HIDDEN, 
+			options.zIndex, 
+			chart.seriesGroup
+		);
 		
 		series.drawDataLabels();
 
@@ -2160,6 +2218,10 @@ Series.prototype = {
 			if (series.trackerGroup) {
 				series.trackerGroup.clip(chart.clipRect);
 			}
+			markerGroup = series.markerGroup;
+			if (markerGroup) {
+				markerGroup.clip(clipRect);
+			}
 		}
 			
 
@@ -2178,7 +2240,10 @@ Series.prototype = {
 				}
 				clipRect.destroy();
 			}
-		}, duration);
+			if (markerGroup) {
+				markerGroup.clip();
+			}
+		}, (animation && animation.duration) || 1000); // #1134
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -2262,6 +2327,7 @@ Series.prototype = {
 			seriesGroup = series.group,
 			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
+			markerGroup = series.markerGroup,
 			showOrHide,
 			i,
 			points = series.points,
@@ -2276,6 +2342,9 @@ Series.prototype = {
 		// show or hide series
 		if (seriesGroup) { // pies don't have one
 			seriesGroup[showOrHide]();
+		}
+		if (markerGroup) {
+			markerGroup[showOrHide]();
 		}
 
 		// show or hide trackers
@@ -2356,33 +2425,6 @@ Series.prototype = {
 	},
 
 	/**
-	 * Create a group that holds the tracking object or objects. This allows for
-	 * individual clipping and placement of each series tracker.
-	 */
-	drawTrackerGroup: function () {
-		var trackerGroup = this.trackerGroup,
-			chart = this.chart;
-		
-		if (this.isCartesian) {
-		
-			// Generate it on first call
-			if (!trackerGroup) {	
-				this.trackerGroup = trackerGroup = chart.renderer.g()
-					.attr({
-						zIndex: this.options.zIndex || 1
-					})
-					.add(chart.trackerGroup);
-					
-			}
-			// Place it on first and subsequent (redraw) calls
-			trackerGroup.translate(this.xAxis.left, this.yAxis.top);
-			
-		}
-		
-		return trackerGroup;
-	},
-	
-	/**
 	 * Draw the tracker object that sits above all data labels and markers to
 	 * track mouse events on the graph or points. For the line type charts
 	 * the tracker uses the same graphPath, but with a greater stroke width
@@ -2401,7 +2443,7 @@ Series.prototype = {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
-			trackerGroup = series.drawTrackerGroup(),
+			trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
 			i;
 

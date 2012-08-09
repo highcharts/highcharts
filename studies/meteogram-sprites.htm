@@ -6,10 +6,11 @@
         <!-- 1. Add these JavaScript inclusions in the head of your page -->
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
         </script>
-        <script type="text/javascript" src="/js/testing.js">
+        <script type="text/javascript" src="http://code.highcharts.com/v2.3Beta/highcharts.js">
         </script>
         <!-- 2. Add the JavaScript to initialize the chart on document ready -->
         <script type="text/javascript">
+        
         	var chart;
             $(function() {
 				// parallel arrays for the chart data
@@ -25,6 +26,147 @@
 					locationCountry,
 					pointStart,
 					tooltips;
+					
+				// Sprites as laid out at http://om.yr.no/forklaring/symbol/
+				var symbolSize = 30;
+				var symbolSprites = {
+					'01d': {
+						x: 0,
+						y: 0
+					},
+					'01n': {
+						x: 1 * symbolSize,
+						y: 0
+					},
+					'16': {
+						x: 2 * symbolSize,
+						y: 0
+					},
+					'02d': {
+						x: 0,
+						y: 1 * symbolSize
+					},
+					'02n': {
+						x: 1 * symbolSize,
+						y: 1 * symbolSize
+					},
+					'03d': {
+						x: 0,
+						y: 2 * symbolSize
+					},
+					'03n': {
+						x: 1 * symbolSize,
+						y: 2 * symbolSize
+					},
+					'17': {
+						x: 2 * symbolSize,
+						y: 2 * symbolSize
+					},
+					'04': {
+						x: 0,
+						y: 3 * symbolSize
+					},
+					'05d': {
+						x: 0, 
+						y: 4 * symbolSize
+					},
+					'05n': {
+						x: symbolSize,
+						y: 4 * symbolSize,
+					},
+					'18': {
+						x: 2 * symbolSize,
+						y: 4 * symbolSize
+					},
+					'06d': {
+						x: 0,
+						y: 5 * symbolSize
+					},
+					'06n': {
+						x: 1 * symbolSize,
+						y: 5 * symbolSize
+					},
+					'07d': {
+						x: 0,
+						y: 6 * symbolSize
+					},
+					'07n': {
+						x: 1 * symbolSize,
+						y: 6 * symbolSize
+					},
+					'08d': {
+						x: 0,
+						y: 7 * symbolSize
+					},
+					'08n': {
+						x: 1 * symbolSize,
+						y: 7 * symbolSize
+					},
+					'19': {
+						x: 2 * symbolSize,
+						y: 7 * symbolSize
+					},
+					'09': {
+						x: 0,
+						y: 8 * symbolSize
+					},
+					'10': {
+						x: 0,
+						y: 9 * symbolSize
+					},
+					'11': {
+						x: 0,
+						y: 10 * symbolSize
+					},
+					'12': {
+						x: 0,
+						y: 11 * symbolSize
+					},
+					'13': {
+						x: 0,
+						y: 12 * symbolSize
+					},
+					'14': {
+						x: 0,
+						y: 13 * symbolSize
+					},
+					'15': {
+						x: 0,
+						y: 14 * symbolSize
+					},
+					'20d': {
+						x: 0,
+						y: 15 * symbolSize
+					},
+					'20n': {
+						x: 1 * symbolSize,
+						y: 15 * symbolSize
+					},
+					'20m': {
+						x: 2 * symbolSize,
+						y: 15 * symbolSize
+					},
+					'21d': {
+						x: 0,
+						y: 16 * symbolSize
+					},
+					'21n': {
+						x: 1 * symbolSize,
+						y: 16 * symbolSize
+					},
+					'21m': {
+						x: 2 * symbolSize,
+						y: 16 * symbolSize
+					},
+					'22': {
+						x: 0,
+						y: 17 * symbolSize
+					},
+					'23': {
+						x: 0,
+						y: 18 * symbolSize
+					}
+				};
 				
 				// Create the chart
 				function createChart() {
@@ -43,6 +185,7 @@
 									[1, 'white']
 								]
 							},
+							plotBorderWidth: 1,
 							spacingTop: 5
 	                    },
 						
@@ -76,8 +219,9 @@
 						
 	                    xAxis: [{
 	                        type: 'datetime',
-	                        tickInterval: 6 * 3600 * 1000,
+	                        tickInterval: 2 * 3600 * 1000,
 							tickPosition: 'inside',
+							minorTickInterval: 1 * 3600 * 1000,
 							tickLength: 30,
 							gridLineWidth: 1,
 							gridLineColor: '#F0F0F0',
@@ -133,6 +277,7 @@
 								color: '#C0C0C0',
 								width: 1
 							}],
+							tickInterval: 1,
 							gridLineColor: '#F0F0F0',
 							maxPadding: 0.3 // make room for symbols
 							
@@ -188,63 +333,76 @@
 							yAxis: 2,
 							groupPadding: 0,
 							pointPadding: 0,
-							borderWidth: 0,
+							borderWidth: 1,
 							shadow: false,
 							dataLabels: {
-								enabled: true
+								enabled: true,
+								formatter: function () {
+									if (this.y > 0) {
+										return this.y;
+									}
+								},
+								style: {
+									fontSize: '8px'
+								}
 							}
+							//pointPlacement: 'between'
 	                    }]
 	                
 	                }, function(chart) {
 						
 						$.each(chart.series[0].data, function(i, point) {
 							
-							// Draw the weather symbols on the temperature graph
-							var clipRect = chart.renderer.clipRect(
-								point.plotX + chart.plotLeft - 15 + 5,
-								point.plotY + chart.plotTop - 30,
-								15,
-								30
-							)
-							chart.renderer.image(
-								'http://symbol.yr.no/grafikk/sym/b38/'+ symbols[i] +'.png',
-								point.plotX + chart.plotLeft - 15,
-								point.plotY + chart.plotTop - 30,
-								30,
-								30
-							)
-							.clip(clipRect)
-							.attr({
-								zIndex: 5
-							})
-							.add();
-							
-							
-							// wind direction code
-							var windDirection = (Math.round(windDirections[i] / 5) * 5 % 360).toString();
-							while (windDirection.length < 3) { // pad
-								windDirection = '0' + windDirection;
+							if (i % 2 === 0) {
+								// Draw the weather symbols on the temperature graph
+								var sprite = symbolSprites[symbols[i]];
+								if (sprite) {
+									chart.renderer.image(
+										//'http://symbol.yr.no/grafikk/sym/b38/'+ symbols[i] +'.png',
+										'meteogram-symbols-30px.png',
+										point.plotX + chart.plotLeft - 15,
+										point.plotY + chart.plotTop - 30,
+										90,
+										570
+									)
+									.clip(chart.renderer.clipRect(
+										point.plotX + chart.plotLeft - 15 + sprite.x,
+										point.plotY + chart.plotTop - 30 + sprite.y,
+										30,
+										30
+									))
+									.translate(-sprite.x, -sprite.y)
+									.attr({
+										zIndex: 5
+									})
+									.add();
+								}
+								
+								// wind direction code
+								var windDirection = (Math.round(windDirections[i] / 5) * 5 % 360).toString();
+								while (windDirection.length < 3) { // pad
+									windDirection = '0' + windDirection;
+								}
+								
+								// wind speed code
+								var windSpeed = (Math.floor(windSpeeds[i] / 25) * 25).toString();
+								while (windSpeed.length < 4) { // pad
+									windSpeed = '0' + windSpeed;
+								}
+								
+								// Draw the wind arrows
+								chart.renderer.image(
+									'http://fil.nrk.no/yr/grafikk/vindpiler/32/vindpil.'+ windSpeed +'.'+ windDirection +'.png',
+									point.plotX + chart.plotLeft - 15,
+									240,
+									30,
+									30
+								)
+								.attr({
+									zIndex: 5
+								})
+								.add();
 							}
-							
-							// wind speed code
-							var windSpeed = (Math.floor(windSpeeds[i] / 25) * 25).toString();
-							while (windSpeed.length < 4) { // pad
-								windSpeed = '0' + windSpeed;
-							}
-							
-							// Draw the wind arrows
-							chart.renderer.image(
-								'http://fil.nrk.no/yr/grafikk/vindpiler/32/vindpil.'+ windSpeed +'.'+ windDirection +'.png',
-								point.plotX + chart.plotLeft - 15,
-								240,
-								30,
-								30
-							)
-							.attr({
-								zIndex: 5
-							})
-							.add();
-							
 						})
 						
 	                    
