@@ -408,7 +408,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	// Run prototype.init
 	proceed.call(this, chart, userOptions);
 	
-	if (!isHidden) {
+	if (!isHidden && (angular || polar)) {
 		options = this.options;
 		
 		// Create the pane and set the pane options.
@@ -420,31 +420,23 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		this.pane = pane = chart.panes[userOptions.pane || 0];
 		paneOptions = pane.options;
 		
-		// Copy some options over from the pane to the axis itself
-		//options.center = paneOptions.center;
-		//options.size = paneOptions.size;
+			
+		// Disable certain features on angular and polar axes
+		chart.inverted = false;
+		chart.options.chart.zoomType = null;
 		
+		// Start and end angle options are
+		// given in degrees relative to top, while internal computations are
+		// in radians relative to right (like SVG).
+		this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
+		this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
+		this.offset = options.offset || 0;
 		
-		// After prototype.init
-		if (angular || polar) {
-			
-			// Disable certain features on angular and polar axes
-			chart.inverted = false;
-			chart.options.chart.zoomType = null;
-			
-			// Start and end angle options are
-			// given in degrees relative to top, while internal computations are
-			// in radians relative to right (like SVG).
-			this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
-			this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
-			this.offset = options.offset || 0;
-			
-			this.isCircular = isCircular;
-			
-			// Automatically connect grid lines?
-			if (isCircular && userOptions.max === UNDEFINED && endAngleRad - startAngleRad === 2 * Math.PI) {
-				this.autoConnect = true;
-			}
+		this.isCircular = isCircular;
+		
+		// Automatically connect grid lines?
+		if (isCircular && userOptions.max === UNDEFINED && endAngleRad - startAngleRad === 2 * Math.PI) {
+			this.autoConnect = true;
 		}
 	}
 	

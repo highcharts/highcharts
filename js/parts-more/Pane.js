@@ -14,7 +14,6 @@ extend(Pane.prototype, {
 	 * Initiate the Pane object
 	 */
 	init: function (options, chart, firstAxis) {
-		
 		var pane = this,
 			backgroundOption,
 			defaultOptions = pane.defaultOptions;
