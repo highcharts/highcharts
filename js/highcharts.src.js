@@ -13136,7 +13136,7 @@ Series.prototype = {
 			if (markerGroup) {
 				markerGroup.clip();
 			}
-		}, (animation && animation.duration) || 1000); // #1134
+		}, doAnimation ? (animation && animation.duration) || 500 : 0);
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
