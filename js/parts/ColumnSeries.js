@@ -91,15 +91,16 @@ var ColumnSeries = extendClass(Series, {
 		
 		} else {
 			each(chart.series, function (otherSeries) {
+				var otherOptions = otherSeries.options;
 				if (otherSeries.type === series.type && otherSeries.visible &&
-						series.options.group === otherSeries.options.group) { // used in Stock charts navigator series
-					if (otherSeries.options.stacking) {
+						series.options.group === otherOptions.group) { // used in Stock charts navigator series
+					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
 						if (stackGroups[stackKey] === UNDEFINED) {
 							stackGroups[stackKey] = columnCount++;
 						}
 						columnIndex = stackGroups[stackKey];
-					} else {
+					} else if (otherOptions.grouping !== false) { // #1162
 						columnIndex = columnCount++;
 					}
 					otherSeries.columnIndex = columnIndex;
