@@ -60,6 +60,11 @@ Point.prototype = {
 			if (options.dataLabels) {
 				series._hasPointLabels = true;
 			}
+			
+			// Same approach as above for markers
+			if (options.marker) {
+				series._hasPointMarkers = true;
+			}
 		} else if (typeof options[0] === 'string') { // categorized data with name in first position
 			point.name = options[0];
 			point.y = options[1];
@@ -1454,15 +1459,19 @@ Series.prototype = {
 			symbol,
 			isImage,
 			graphic,
+			options = series.options,
+			seriesMarkerOptions = options.marker,
+			pointMarkerOptions,
+			enabled,
 			markerGroup = series.plotGroup(
 				'markerGroup', 
 				'markers', 
 				series.visible ? VISIBLE : HIDDEN, 
-				series.options.zIndex, 
+				options.zIndex, 
 				chart.seriesGroup
 			);
 
-		if (series.options.marker.enabled) {
+		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
 			
 			i = points.length;
 			while (i--) {
@@ -1470,14 +1479,16 @@ Series.prototype = {
 				plotX = point.plotX;
 				plotY = point.plotY;
 				graphic = point.graphic;
+				pointMarkerOptions = point.marker || {};
+				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
 
 				// only draw the point if y is defined
-				if (plotY !== UNDEFINED && !isNaN(plotY) && chart.isInsidePlot(plotX, plotY, chart.inverted)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && chart.isInsidePlot(plotX, plotY, chart.inverted)) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 					radius = pointAttr.r;
-					symbol = pick(point.marker && point.marker.symbol, series.symbol);
+					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
