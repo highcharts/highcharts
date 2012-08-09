@@ -370,7 +370,7 @@ Axis.prototype = {
 			categories = axis.categories, 
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			numericSymbols = defaultOptions.lang.numericSymbols,
-			i = numericSymbols.length,
+			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
 			
@@ -383,13 +383,13 @@ Axis.prototype = {
 		} else if (dateTimeLabelFormat) { // datetime axis
 			ret = dateFormat(dateTimeLabelFormat, value);
 		
-		} else if (numericSymbolDetector >= 1000) {
+		} else if (i && numericSymbolDetector >= 1000) {
 			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
 			// If we are to enable this in tooltip or other places as well, we can move this
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
-				if (numericSymbolDetector >= multi) {
+				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
 					ret = numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
