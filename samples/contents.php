@@ -95,7 +95,8 @@ elseif ($product == 'highstock') $dir = 'stock';
 				margin-top: 60px;
 				margin-left: 10px;
 			}
-			
+			.batch {
+			}
 		</style>
 		
 		
@@ -125,9 +126,14 @@ elseif ($product == 'highstock') $dir = 'stock';
 					if ($innerHandle = opendir(dirname(__FILE__). '/' . $dir . '/'. $file)) {
 						while (false !== ($innerFile = readdir($innerHandle))) {
 							$next = $i + 1;
+							$batchClass = 'class="batch"';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
+								$yaml = file_get_contents((dirname(__FILE__) ."/$dir/$file/$innerFile/demo.details"));
+								if (strstr($yaml, 'requiresManualTesting: true')) {
+									$batchClass = '';
+								}
 								echo "
-								<li id='li$i'>$i. <a target='main' id='i$i' href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
+								<li id='li$i'>$i. <a target='main' id='i$i' $batchClass href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
 								";
 								$i++;
 							}
