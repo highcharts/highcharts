@@ -456,7 +456,7 @@ var PieSeries = {
 			j;
 
 		// get out if not enabled
-		if (!options.enabled) {
+		if (!options.enabled && !series._hasPointLabels) {
 			return;
 		}
 
