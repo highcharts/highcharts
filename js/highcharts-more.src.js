@@ -1124,7 +1124,13 @@ var GaugeSeries = {
 	},
 	
 	render: function () {
-		this.createGroup();
+		this.group = this.plotGroup(
+			'group', 
+			'series', 
+			this.visible ? 'visible' : 'hidden', 
+			this.options.zIndex, 
+			this.chart.seriesGroup
+		);
 		seriesTypes.pie.prototype.render.call(this);
 		this.group.clip(
 			this.getClipRect()
