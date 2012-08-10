@@ -2236,7 +2236,7 @@ Series.prototype = {
 		}
 		
 		// Initial clipping, must be defined after inverting groups for VML
-		if (options.clip !== false) {
+		if (options.clip !== false && !series.sharedClipKey) {
 			group.clip(chart.clipRect);
 		}
 
