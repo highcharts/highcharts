@@ -1895,7 +1895,7 @@ SVGElement.prototype = {
 				value = hash[key];
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](value, key);
+				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
 
 				if (result !== false) {
 					if (result !== UNDEFINED) {
@@ -4292,7 +4292,7 @@ var VMLElement = {
 				skipAttr = false;
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](value, key);
+				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
 
 				if (result !== false && value !== null) { // #620
 
@@ -12465,9 +12465,10 @@ Series.prototype = {
 				chart[sharedClipKey] = clipRect = renderer.clipRect(
 					extend(clipBox, { width: 0 })
 				);
+				
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
-					inverted ? 0 : clipBox.x, 
-					inverted ? clipBox.y : 0, 
+					0, 
+					inverted ? -chart.plotLeft : -chart.plotTop, 
 					0,
 					inverted ? chart.chartWidth : chart.chartHeight
 				);
@@ -12516,11 +12517,14 @@ Series.prototype = {
 		if (trackerGroup) {
 			trackerGroup.clip(chart.clipRect);
 		}
-		
-		if (sharedClipKey && chart[sharedClipKey]) {
-			chart[sharedClipKey] = chart[sharedClipKey].destroy();
-			chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
-		}
+
+		// Remove the shared clipping rectancgle when all series are shown		
+		setTimeout(function () {
+			if (sharedClipKey && chart[sharedClipKey]) {
+				chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+			}
+		}, 100);
 	},
 
 	/**
@@ -14238,7 +14242,7 @@ var ScatterSeries = extendClass(Series, {
 		
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			series.group
+			series.markerGroup
 				.attr({
 					isTracker: true
 				})
@@ -14257,7 +14261,6 @@ var ScatterSeries = extendClass(Series, {
 		} else {
 			series._hasTracking = true;
 		}
-
 	}
 });
 seriesTypes.scatter = ScatterSeries;

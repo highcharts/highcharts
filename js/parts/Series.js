@@ -1451,9 +1451,10 @@ Series.prototype = {
 				chart[sharedClipKey] = clipRect = renderer.clipRect(
 					extend(clipBox, { width: 0 })
 				);
+				
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
-					inverted ? 0 : clipBox.x, 
-					inverted ? clipBox.y : 0, 
+					0, 
+					inverted ? -chart.plotLeft : -chart.plotTop, 
 					0,
 					inverted ? chart.chartWidth : chart.chartHeight
 				);
@@ -1502,11 +1503,14 @@ Series.prototype = {
 		if (trackerGroup) {
 			trackerGroup.clip(chart.clipRect);
 		}
-		
-		if (sharedClipKey && chart[sharedClipKey]) {
-			chart[sharedClipKey] = chart[sharedClipKey].destroy();
-			chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
-		}
+
+		// Remove the shared clipping rectancgle when all series are shown		
+		setTimeout(function () {
+			if (sharedClipKey && chart[sharedClipKey]) {
+				chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+			}
+		}, 100);
 	},
 
 	/**

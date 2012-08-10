@@ -163,7 +163,7 @@ var VMLElement = {
 				skipAttr = false;
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](value, key);
+				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
 
 				if (result !== false && value !== null) { // #620
 

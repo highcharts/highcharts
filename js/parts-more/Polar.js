@@ -211,9 +211,11 @@ function polarAnimate(proceed, init) {
 	var chart = this.chart,
 		animation = this.options.animation,
 		group = this.group,
+		markerGroup = this.markerGroup,
 		center = this.xAxis.center,
 		plotLeft = chart.plotLeft,
-		plotTop = chart.plotTop;
+		plotTop = chart.plotTop,
+		attribs;
 
 	// Specific animation for polar charts
 	if (chart.polar) {
@@ -231,31 +233,40 @@ function polarAnimate(proceed, init) {
 				
 				// Create an SVG specific attribute setter for scaleX and scaleY
 				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-					group[key] = value;
-					if (group.scaleX !== UNDEFINED && group.scaleY !== UNDEFINED) {
-						group.element.setAttribute('transform', 'translate(' + group.translateX + ',' + group.translateY + ') scale(' + 
-							group.scaleX + ',' + group.scaleY + ')');
+					this[key] = value;
+					if (this.scaleX !== UNDEFINED && this.scaleY !== UNDEFINED) {
+						this.element.setAttribute('transform', 'translate(' + this.translateX + ',' + this.translateY + ') scale(' + 
+							this.scaleX + ',' + this.scaleY + ')');
 					}
 					return false;
 				};
 				
 				// Scale down the group and place it in the center
-				group.attr({
+				attribs = {
 					translateX: center[0] + plotLeft,
 					translateY: center[1] + plotTop,
 					scaleX: 0,
 					scaleY: 0
-				});
+				};
+					
+				group.attr(attribs);
+				if (markerGroup) {
+					markerGroup.attrSetters = group.attrSetters;
+					markerGroup.attr(attribs);
+				}
 				
 			// Run the animation
 			} else {
-				
-				group.animate({
+				attribs = {
 					translateX: plotLeft,
 					translateY: plotTop,
 					scaleX: 1,
 					scaleY: 1
-				}, animation);
+				};
+				group.animate(attribs, animation);
+				if (markerGroup) {
+					markerGroup.animate(attribs, animation);
+				}
 				
 				// Delete this function to allow it only once
 				this.animate = null;

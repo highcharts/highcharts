@@ -208,9 +208,7 @@ var GaugeSeries = {
 			this.chart.seriesGroup
 		);
 		seriesTypes.pie.prototype.render.call(this);
-		this.group.clip(
-			this.getClipRect()
-		);
+		this.group.clip(this.chart.clipRect);
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
