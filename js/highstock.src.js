@@ -9669,7 +9669,6 @@ Chart.prototype = {
 			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
-			clipRect = chart.clipRect,
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden();
@@ -9751,16 +9750,6 @@ Chart.prototype = {
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			chart.drawChartBox();
-
-			// move clip rect
-			if (clipRect) {
-				stop(clipRect);
-				clipRect.animate({ // for chart resize
-					width: chart.plotSizeX,
-					height: chart.plotSizeY + 1
-				});
-			}
-
 		}
 
 
@@ -10491,7 +10480,8 @@ Chart.prototype = {
 			plotLeft,
 			plotTop,
 			plotWidth,
-			plotHeight;
+			plotHeight,
+			plotBorderWidth;
 
 		chart.plotLeft = plotLeft = mathRound(chart.plotLeft);
 		chart.plotTop = plotTop = mathRound(chart.plotTop);
@@ -10501,7 +10491,7 @@ Chart.prototype = {
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
 		
-		chart.plotBorderWidth = optionsChart.plotBorderWidth || 0;
+		chart.plotBorderWidth = plotBorderWidth = optionsChart.plotBorderWidth || 0;
 
 		// Set boxes used for alignment
 		chart.spacingBox = {
@@ -10515,6 +10505,12 @@ Chart.prototype = {
 			y: plotTop,
 			width: plotWidth,
 			height: plotHeight
+		};
+		chart.clipBox = {
+			x: plotBorderWidth / 2, 
+			y: plotBorderWidth / 2, 
+			width: chart.plotSizeX - plotBorderWidth, 
+			height: chart.plotSizeY - plotBorderWidth
 		};
 
 		each(chart.axes, function (axis) {
@@ -10558,14 +10554,16 @@ Chart.prototype = {
 			chartBackgroundColor = optionsChart.backgroundColor,
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
-			plotBorderWidth = optionsChart.plotBorderWidth,
+			plotBorderWidth = optionsChart.plotBorderWidth || 0,
 			mgn,
 			bgAttr,
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
-			plotBox = chart.plotBox;
+			plotBox = chart.plotBox,
+			clipRect = chart.clipRect,
+			clipBox = chart.clipBox;
 
 		// Chart area
 		mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
@@ -10585,6 +10583,7 @@ Chart.prototype = {
 					.attr(bgAttr)
 					.add()
 					.shadow(optionsChart.shadow);
+
 			} else { // resize
 				chartBackground.animate(
 					chartBackground.crisp(null, null, null, chartWidth - mgn, chartHeight - mgn)
@@ -10614,6 +10613,13 @@ Chart.prototype = {
 				plotBGImage.animate(plotBox);
 			}
 		}
+		
+		// Plot clip
+		if (!clipRect) {
+			chart.clipRect = renderer.clipRect(clipBox);
+		} else {
+			clipRect.animate(clipBox);
+		}
 
 		// Plot area border
 		if (plotBorderWidth) {
@@ -10622,7 +10628,7 @@ Chart.prototype = {
 					.attr({
 						stroke: optionsChart.plotBorderColor,
 						'stroke-width': plotBorderWidth,
-						zIndex: 4
+						zIndex: 1
 					})
 					.add();
 			} else {
@@ -12437,30 +12443,82 @@ Series.prototype = {
 	 * Animate in the series
 	 */
 	animate: function (init) {
-		var chart = this.chart,
-			clipRect = this.clipRect,
-			animation = this.options.animation;
+		var series = this,
+			chart = series.chart,
+			renderer = chart.renderer,
+			clipRect,
+			markerClipRect,
+			animation = series.options.animation,
+			sharedClipKey;
 
+		// Animation option is set to true
 		if (animation && !isObject(animation)) {
-			animation = {};
+			animation = defaultPlotOptions[series.type].animation;
 		}
+		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
 
-		if (init) { // initialize the animation
-			if (!clipRect.isAnimating) { // apply it only for one of the series
-				clipRect.attr('width', 0);
-				clipRect.isAnimating = true;
+		// Initialize the animation. Set up the clipping rectangle.
+		if (init) { 
+			
+			// If a clipping rectangle with the same properties is currently present in the chart, use that. 
+			clipRect = chart[sharedClipKey];
+			markerClipRect = chart[sharedClipKey + 'm'];
+			if (!clipRect) {
+				chart[sharedClipKey] = clipRect = renderer.clipRect(
+					extend(chart.clipBox, { width: 0 })
+				);
+				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(chart.clipBox.x, 0, 0, chart.chartHeight);
+			}
+			series.group.clip(clipRect);
+			series.markerGroup.clip(markerClipRect);
+			series.sharedClipKey = sharedClipKey;
+
+		// Run the animation
+		} else { 
+			clipRect = chart[sharedClipKey];
+			if (clipRect) {
+				clipRect.animate({
+					width: chart.plotSizeX
+				}, animation);
+				chart[sharedClipKey + 'm'].animate({
+					width: chart.plotSizeX
+				}, animation);
 			}
 
-		} else { // run the animation
-			clipRect.animate({
-				width: chart.plotSizeX - chart.plotBorderWidth
-			}, animation);
-
-			// delete this function to allow it only once
-			this.animate = null;
+			// Delete this function to allow it only once
+			series.animate = null;
+			
+			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
+			// which should be available to the user).
+			series.animationTimeout = setTimeout(function () {
+				series.afterAnimate();
+			}, animation.duration);
 		}
 	},
-
+	
+	/**
+	 * This runs after animation to land on the final plot clipping
+	 */
+	afterAnimate: function () {
+		var chart = this.chart,
+			sharedClipKey = this.sharedClipKey,
+			group = this.group,
+			trackerGroup = this.trackerGroup;
+			
+		if (group && this.options.clip !== false) {
+			group.clip(chart.clipRect);
+			this.markerGroup.clip(); // no clip
+		}
+		
+		if (trackerGroup) {
+			trackerGroup.clip(chart.clipRect);
+		}
+		
+		if (sharedClipKey && chart[sharedClipKey]) {
+			chart[sharedClipKey] = chart[sharedClipKey].destroy();
+			chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+		}
+	},
 
 	/**
 	 * Draw the markers
@@ -12482,13 +12540,7 @@ Series.prototype = {
 			seriesMarkerOptions = options.marker,
 			pointMarkerOptions,
 			enabled,
-			markerGroup = series.plotGroup(
-				'markerGroup', 
-				'markers', 
-				series.visible ? VISIBLE : HIDDEN, 
-				options.zIndex, 
-				chart.seriesGroup
-			);
+			markerGroup = series.markerGroup;
 
 		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
 			
@@ -12734,11 +12786,8 @@ Series.prototype = {
 		}
 		series.points = null;
 
-		// If this series clipRect is not the global one (which is removed on chart.destroy) we
-		// destroy it here.
-		if (seriesClipRect && seriesClipRect !== chart.clipRect) {
-			series.clipRect = seriesClipRect.destroy();
-		}
+		// Clear the animation timeout if we are destroying the series during initial animation
+		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
 		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker', 'trackerGroup'], function (prop) {
@@ -13136,25 +13185,6 @@ Series.prototype = {
 	},
 	
 	/**
-	 * Add plot area clipping rectangle. If this is before chart.hasRendered,
-	 * create one shared clipRect.
-	 */
-	getClipRect: function () {
-		var chart = this.chart,
-			clipRect = this.clipRect;
-		
-		if (!clipRect) {
-			this.clipRect = clipRect = !chart.hasRendered && chart.clipRect ?
-				chart.clipRect :
-				chart.renderer.clipRect(0, 0, chart.plotSizeX, chart.plotSizeY + 1);
-			if (!chart.clipRect) {
-				chart.clipRect = clipRect;
-			}
-		}
-		return clipRect;
-	},
-
-	/**
 	 * Render the graph and markers
 	 */
 	render: function () {
@@ -13165,35 +13195,28 @@ Series.prototype = {
 			doClip = options.clip !== false,
 			animation = options.animation,
 			doAnimation = animation && !!series.animate,
-			clipRect = series.clipRect,
 			renderer = chart.renderer,
 			markerGroup,
-			plotBorderWidth = chart.plotBorderWidth;
-
-
-		// Add plot area clipping rectangle. If this is before chart.hasRendered,
-		// create one shared clipRect.
-
-		// Todo: since creating the clip property, the clipRect is created but
-		// never used when clip is false. A better way would be that the animation
-		// would run, then the clipRect destroyed.
-		if (!clipRect) {
-			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect && doAnimation ?
-				chart.clipRect :
-				renderer.clipRect(plotBorderWidth / 2, plotBorderWidth / 2, chart.plotSizeX - plotBorderWidth, chart.plotSizeY - plotBorderWidth);
-			if (!chart.clipRect) {
-				chart.clipRect = clipRect;
-			}
-		}
+			plotBorderWidth = chart.plotBorderWidth,
+			visibility = series.visible ? VISIBLE : HIDDEN,
+			zIndex = options.zIndex,
+			chartSeriesGroup = chart.seriesGroup;
 		
-
 		// the group
 		group = series.group || series.plotGroup(
 			'group', 
 			'series', 
-			series.visible ? VISIBLE : HIDDEN, 
-			options.zIndex, 
-			chart.seriesGroup
+			visibility, 
+			zIndex, 
+			chartSeriesGroup
+		).clip(chart.clipRect);
+		
+		series.markerGroup = series.plotGroup(
+			'markerGroup', 
+			'markers', 
+			visibility, 
+			zIndex, 
+			chartSeriesGroup
 		);
 		
 		series.drawDataLabels();
@@ -13222,46 +13245,20 @@ Series.prototype = {
 		// Handle inverted series and tracker groups
 		if (chart.inverted) {
 			series.invertGroups();
-		}
-		
-		// Do the initial clipping. This must be done after inverting for VML.
-		if (doClip && !series.hasRendered) {
-			group.clip(clipRect);
-			if (series.trackerGroup) {
-				series.trackerGroup.clip(chart.clipRect);
-			}
-			markerGroup = series.markerGroup;
-			if (markerGroup) {
-				markerGroup.clip(clipRect);
-			}
-		}
-			
+		}			
 
-		// run the animation
+		// Run the animation
 		if (doAnimation) {
 			series.animate();
+		} else if (!series.hasRendered) {
+			series.afterAnimate();	
 		}
-
-		// finish the individual clipRect
-		setTimeout(function () {
-			clipRect.isAnimating = false;
-			group = series.group; // can be destroyed during the timeout
-			if (group && clipRect !== chart.clipRect && clipRect.renderer) {
-				if (doClip) {
-					group.clip((series.clipRect = chart.clipRect));
-				}
-				clipRect.destroy();
-			}
-			if (markerGroup) {
-				markerGroup.clip();
-			}
-		}, (animation && animation.duration) || 1000); // #1134
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
 	},
-
+	
 	/**
 	 * Redraw the series after an update in the axes.
 	 */
