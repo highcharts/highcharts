@@ -142,7 +142,8 @@ Tooltip.prototype = {
 			chart = this.chart,
 			inverted = chart.inverted,
 			plotX = 0,
-			plotY = 0;
+			plotY = 0,
+			yAxis;
 		
 		points = splat(points);
 		
@@ -152,8 +153,10 @@ Tooltip.prototype = {
 		// When shared, use the average position
 		if (!ret) {
 			each(points, function (point) {
+				yAxis = point.series.yAxis;
 				plotX += point.plotX;
-				plotY += point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY;
+				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
+					(!inverted && yAxis ? yAxis.top - chart.plotTop : 0); // #1151
 			});
 			
 			plotX /= points.length;
@@ -178,13 +181,10 @@ Tooltip.prototype = {
 		
 		// Set up the variables
 		var chart = this.chart,
-			series = point.series,
-			xAxis = series && series.xAxis,
-			yAxis = series && series.yAxis,
-			plotLeft = (xAxis && xAxis.left) || chart.plotLeft,
-			plotTop = (yAxis && yAxis.top) || chart.plotTop,
-			plotWidth = (xAxis && xAxis.len) || chart.plotWidth,
-			plotHeight = (yAxis && yAxis.len) || chart.plotHeight,
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
 			distance = pick(this.options.distance, 12),
 			pointX = point.plotX,
 			pointY = point.plotY,
@@ -273,7 +273,6 @@ Tooltip.prototype = {
 			borderColor,
 			crosshairsOptions = options.crosshairs,
 			shared = tooltip.shared,
-			singlePoint,
 			currentSeries;
 			
 		// get the reference point coordinates (pie charts use tooltipPos)
@@ -308,7 +307,6 @@ Tooltip.prototype = {
 		// single point tooltip
 		} else {
 			textConfig = point.getLabelConfig();
-			singlePoint = point;
 		}
 		text = formatter.call(textConfig);
 
@@ -344,7 +342,7 @@ Tooltip.prototype = {
 				tooltip,
 				label.width,
 				label.height,
-				singlePoint || { plotX: x, plotY: y }
+				{ plotX: x, plotY: y }
 			);
 
 			// do the move
