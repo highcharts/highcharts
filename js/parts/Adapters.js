@@ -267,7 +267,7 @@
 		 * Extension method needed for MooTools
 		 */
 		washMouseEvent: function (e) {
-			return e;
+			return e.originalEvent || e;
 		},
 	
 		/**

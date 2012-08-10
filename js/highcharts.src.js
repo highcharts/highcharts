@@ -1243,7 +1243,7 @@ pathAnim = {
 		 * Extension method needed for MooTools
 		 */
 		washMouseEvent: function (e) {
-			return e;
+			return e.originalEvent || e;
 		},
 	
 		/**
@@ -8334,16 +8334,9 @@ MouseTracker.prototype = {
 			e.target = e.srcElement;
 		}
 
-		// jQuery only copies over some properties. IE needs e.x and iOS needs touches.
-		if (e.originalEvent) {
-			e = e.originalEvent;
-		}
-
-		// The same for MooTools. It renames e.pageX to e.page.x. #445.
-		if (e.event) {
-			e = e.event;
-		}
-
+		// Framework specific normalizing (#1165)
+		e = washMouseEvent(e);
+		
 		// iOS
 		ePos = e.touches ? e.touches.item(0) : e;
 
@@ -8362,7 +8355,6 @@ MouseTracker.prototype = {
 		return extend(e, {
 			chartX: mathRound(chartX),
 			chartY: mathRound(chartY)
-		
 		});
 	},
 
