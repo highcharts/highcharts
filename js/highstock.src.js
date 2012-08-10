@@ -127,7 +127,12 @@ function extend(a, b) {
 		a = {};
 	}
 	for (n in b) {
+		try {
 		a[n] = b[n];
+		} catch (e) {
+		console.log([n, b[n]].join(','));
+		die();
+		}
 	}
 	return a;
 }
@@ -4485,9 +4490,7 @@ var VMLElement = {
 			element = wrapper.element,
 			parentNode = element.parentNode;
 
-		if (!clipRect) {
-			wrapper.destroyClip();
-		} else {
+		if (clipRect) {
 			clipMembers = clipRect.members;
 			clipMembers.push(wrapper);
 			wrapper.destroyClip = function () {
@@ -4499,6 +4502,8 @@ var VMLElement = {
 				css(element, { visibility: HIDDEN });
 			}
 			
+		} else if (wrapper.destroyClip) {
+			wrapper.destroyClip();
 		}
 		
 		return wrapper.css(clipRect ? clipRect.getCSS(wrapper) : { clip: 'inherit' });	
@@ -4728,15 +4733,16 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	clipRect: function (x, y, width, height) {
 
 		// create a dummy element
-		var clipRect = this.createElement();
-
+		var clipRect = this.createElement(),
+			isObj = isObject(x);
+		
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
-			left: x,
-			top: y,
-			width: width,
-			height: height,
+			left: isObj ? x.x : x,
+			top: isObj ? x.y : y,
+			width: isObj ? x.width : width,
+			height: isObj ? x.height : height,
 			getCSS: function (wrapper) {
 				var inverted = wrapper.inverted,
 					rect = this,
@@ -12441,6 +12447,8 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
+			clipBox = chart.clipBox,
+			inverted = chart.inverted,
 			sharedClipKey;
 
 		// Animation option is set to true
@@ -12457,9 +12465,14 @@ Series.prototype = {
 			markerClipRect = chart[sharedClipKey + 'm'];
 			if (!clipRect) {
 				chart[sharedClipKey] = clipRect = renderer.clipRect(
-					extend(chart.clipBox, { width: 0 })
+					extend(clipBox, { width: 0 })
 				);
-				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(chart.clipBox.x, 0, 0, chart.chartHeight);
+				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
+					inverted ? 0 : clipBox.x, 
+					inverted ? clipBox.y : 0, 
+					0,
+					inverted ? chart.chartWidth : chart.chartHeight
+				);
 			}
 			series.group.clip(clipRect);
 			series.markerGroup.clip(markerClipRect);
@@ -13184,7 +13197,6 @@ Series.prototype = {
 			chart = series.chart,
 			group,
 			options = series.options,
-			doClip = options.clip !== false,
 			animation = options.animation,
 			doAnimation = animation && !!series.animate,
 			renderer = chart.renderer,
@@ -13201,7 +13213,7 @@ Series.prototype = {
 			visibility, 
 			zIndex, 
 			chartSeriesGroup
-		).clip(chart.clipRect);
+		);
 		
 		series.markerGroup = series.plotGroup(
 			'markerGroup', 
@@ -13237,7 +13249,12 @@ Series.prototype = {
 		// Handle inverted series and tracker groups
 		if (chart.inverted) {
 			series.invertGroups();
-		}			
+		}
+		
+		// Initial clipping, must be defined after inverting groups for VML
+		if (options.clip !== false) {
+			group.clip(chart.clipRect);
+		}
 
 		// Run the animation
 		if (doAnimation) {

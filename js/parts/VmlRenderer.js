@@ -361,9 +361,7 @@ var VMLElement = {
 			element = wrapper.element,
 			parentNode = element.parentNode;
 
-		if (!clipRect) {
-			wrapper.destroyClip();
-		} else {
+		if (clipRect) {
 			clipMembers = clipRect.members;
 			clipMembers.push(wrapper);
 			wrapper.destroyClip = function () {
@@ -375,6 +373,8 @@ var VMLElement = {
 				css(element, { visibility: HIDDEN });
 			}
 			
+		} else if (wrapper.destroyClip) {
+			wrapper.destroyClip();
 		}
 		
 		return wrapper.css(clipRect ? clipRect.getCSS(wrapper) : { clip: 'inherit' });	
@@ -604,15 +604,16 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	clipRect: function (x, y, width, height) {
 
 		// create a dummy element
-		var clipRect = this.createElement();
-
+		var clipRect = this.createElement(),
+			isObj = isObject(x);
+		
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
-			left: x,
-			top: y,
-			width: width,
-			height: height,
+			left: isObj ? x.x : x,
+			top: isObj ? x.y : y,
+			width: isObj ? x.width : width,
+			height: isObj ? x.height : height,
 			getCSS: function (wrapper) {
 				var inverted = wrapper.inverted,
 					rect = this,
