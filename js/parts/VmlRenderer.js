@@ -682,7 +682,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				y1, 
 				x2,
 				y2,
-				angle,
 				opacity1,
 				opacity2,
 				color1,

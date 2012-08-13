@@ -10,12 +10,7 @@ function extend(a, b) {
 		a = {};
 	}
 	for (n in b) {
-		try {
 		a[n] = b[n];
-		} catch (e) {
-		console.log([n, b[n]].join(','));
-		die();
-		}
 	}
 	return a;
 }

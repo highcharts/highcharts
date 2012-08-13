@@ -127,12 +127,7 @@ function extend(a, b) {
 		a = {};
 	}
 	for (n in b) {
-		try {
 		a[n] = b[n];
-		} catch (e) {
-		console.log([n, b[n]].join(','));
-		die();
-		}
 	}
 	return a;
 }
@@ -1007,7 +1002,7 @@ pathAnim = {
 		
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-			each(['cur', '_default', 'width', 'height'], function (fn, i) {
+			$.each(['cur', '_default', 'width', 'height'], function (i, fn) {
 				var obj = Step,
 					base,
 					elem;
@@ -1217,7 +1212,8 @@ pathAnim = {
 			// Wrap preventDefault and stopPropagation in try/catch blocks in
 			// order to prevent JS errors when cancelling events on non-DOM
 			// objects. #615.
-			each(['preventDefault', 'stopPropagation'], function (fn) {
+			/*jslint unparam: true*/
+			$.each(['preventDefault', 'stopPropagation'], function (i, fn) {
 				var base = event[fn];
 				event[fn] = function () {
 					try {
@@ -1229,6 +1225,7 @@ pathAnim = {
 					}
 				};
 			});
+			/*jslint unparam: false*/
 	
 			// trigger it
 			$(el).trigger(event);
@@ -4811,7 +4808,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				y1, 
 				x2,
 				y2,
-				angle,
 				opacity1,
 				opacity2,
 				color1,
@@ -12760,7 +12756,6 @@ Series.prototype = {
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
-			seriesClipRect = series.clipRect,
 			issue134 = /AppleWebKit\/533/.test(userAgent),
 			destroy,
 			i,
@@ -12845,10 +12840,6 @@ Series.prototype = {
 				str,
 				dataLabelsGroup,
 				chart = series.chart,
-				xAxis = series.xAxis,
-				groupLeft = xAxis ? xAxis.left : chart.plotLeft,
-				yAxis = series.yAxis,
-				groupTop = yAxis ? yAxis.top : chart.plotTop,
 				renderer = chart.renderer,
 				inverted = chart.inverted,
 				seriesType = series.type,
@@ -13136,9 +13127,6 @@ Series.prototype = {
 	 */
 	invertGroups: function () {
 		var series = this,
-			group = series.group,
-			trackerGroup = series.trackerGroup,
-			markerGroup = series.markerGroup,
 			chart = series.chart;
 		
 		// A fixed size is needed for inversion to work
@@ -13207,9 +13195,6 @@ Series.prototype = {
 			options = series.options,
 			animation = options.animation,
 			doAnimation = animation && !!series.animate,
-			renderer = chart.renderer,
-			markerGroup,
-			plotBorderWidth = chart.plotBorderWidth,
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			chartSeriesGroup = chart.seriesGroup;

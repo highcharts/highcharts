@@ -11,6 +11,5 @@ var each = Highcharts.each,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
 	Series = Highcharts.Series,
-	addEvent = Highcharts.addEvent,
 	colProto = seriesTypes.column.prototype,
 	noop = function () {};

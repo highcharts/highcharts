@@ -26,7 +26,7 @@
 		
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-			each(['cur', '_default', 'width', 'height'], function (fn, i) {
+			$.each(['cur', '_default', 'width', 'height'], function (i, fn) {
 				var obj = Step,
 					base,
 					elem;
@@ -236,7 +236,8 @@
 			// Wrap preventDefault and stopPropagation in try/catch blocks in
 			// order to prevent JS errors when cancelling events on non-DOM
 			// objects. #615.
-			each(['preventDefault', 'stopPropagation'], function (fn) {
+			/*jslint unparam: true*/
+			$.each(['preventDefault', 'stopPropagation'], function (i, fn) {
 				var base = event[fn];
 				event[fn] = function () {
 					try {
@@ -248,6 +249,7 @@
 					}
 				};
 			});
+			/*jslint unparam: false*/
 	
 			// trigger it
 			$(el).trigger(event);

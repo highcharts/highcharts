@@ -26,7 +26,6 @@ var each = Highcharts.each,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
 	Series = Highcharts.Series,
-	addEvent = Highcharts.addEvent,
 	colProto = seriesTypes.column.prototype,
 	noop = function () {};/**
  * The Pane object allows options that are common to a set of X and Y axes.
@@ -62,7 +61,7 @@ extend(Pane.prototype, {
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
 			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
-				backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
+				var backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
 				config = merge(pane.defaultBackgroundOptions, config);
 				if (backgroundColor) {
 					config.backgroundColor = backgroundColor;
@@ -128,6 +127,7 @@ var hiddenAxisMixin = {
 /**
  * Augmented methods for the value axis
  */
+/*jslint unparam: true*/
 var radialAxisMixin = {
 	isRadial: true,
 	
@@ -193,33 +193,12 @@ var radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		var axis = this,
-			options,
-			backgroundOption,
-			backgroundColor;
-		
-		axis.options = options = merge(
-			axis.defaultOptions,
-			axis.defaultRadialOptions,
+		this.options = merge(
+			this.defaultOptions,
+			this.defaultRadialOptions,
 			userOptions
 		);
 		
-		// Handle backgrounds
-		// In the first parameter, pick up the background options, or use one empty object that is
-		// filled with default background options. Concatenate this with an empty array, which creates
-		// a copy so that the .reverse() operation is not repeated for export.
-		/*backgroundOption = options.background;
-		if (backgroundOption) {
-			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
-				backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
-				config = merge(axis.defaultBackgroundOptions, config);
-				if (backgroundColor) {
-					config.backgroundColor = backgroundColor;
-				}
-				config.color = config.backgroundColor; // due to naming in plotBands
-				options.plotBands.unshift(config);
-			});
-		}*/
 	},
 	
 	/**
@@ -237,14 +216,13 @@ var radialAxisMixin = {
 		this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
 	},
 
+
 	/**
 	 * Get the path for the axis line. This method is also referenced in the getPlotLinePath
 	 * method.
 	 */
 	getLinePath: function (lineWidth, radius) {
-		
 		var center = this.center;
-		
 		radius = pick(radius, center[2] / 2 - this.offset);
 		
 		return this.chart.renderer.symbols.arc(
@@ -478,7 +456,7 @@ var radialAxisMixin = {
 	}
 	
 };
-
+/*jslint unparam: false*/
 
 /**
  * Override axisProto.init to mix in special axis instance functions and function overrides
