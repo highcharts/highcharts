@@ -2221,6 +2221,9 @@ Series.prototype = {
 		// cache attributes for shapes
 		series.getAttribs();
 
+		// SVGRenderer needs to know this before drawing elements (#1089)
+		group.inverted = chart.inverted;
+		
 		// draw the graph if any
 		if (series.drawGraph) {
 			series.drawGraph();
