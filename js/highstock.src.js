@@ -1524,6 +1524,7 @@ defaultOptions = {
 	},
 
 	tooltip: {
+      animation: true,
 		enabled: true,
 		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
@@ -7730,6 +7731,7 @@ function Tooltip(chart, options) {
 	var borderWidth = options.borderWidth,
 		style = options.style,
 		shared = options.shared,
+      animation = options.animation,
 		padding = pInt(style.padding);
 
 	// Save the chart and options
@@ -7776,6 +7778,9 @@ function Tooltip(chart, options) {
 
 	// Public property for getting the shared state.
 	this.shared = shared;
+
+	// Public property for getting the animation state.
+	this.animation = animation;
 }
 
 Tooltip.prototype = {
@@ -7803,23 +7808,29 @@ Tooltip.prototype = {
 	 * @private
 	 */
 	move: function (finalX, finalY) {
-		var tooltip = this;
+      var tooltip = this;
+      if (!tooltip.animation) {
+         tooltip.currentX = finalX;
+         tooltip.currentY = finalY;
+         tooltip.label.attr({ x: finalX, y: finalY });
+      }
+      else {
+         // get intermediate values for animation
+         tooltip.currentX = tooltip.tooltipIsHidden ? finalX : (2 * tooltip.currentX + finalX) / 3;
+         tooltip.currentY = tooltip.tooltipIsHidden ? finalY : (tooltip.currentY + finalY) / 2;
 
-		// get intermediate values for animation
-		tooltip.currentX = tooltip.tooltipIsHidden ? finalX : (2 * tooltip.currentX + finalX) / 3;
-		tooltip.currentY = tooltip.tooltipIsHidden ? finalY : (tooltip.currentY + finalY) / 2;
+         // move to the intermediate value
+         tooltip.label.attr({ x: tooltip.currentX, y: tooltip.currentY });
 
-		// move to the intermediate value
-		tooltip.label.attr({ x: tooltip.currentX, y: tooltip.currentY });
-
-		// run on next tick of the mouse tracker
-		if (mathAbs(finalX - tooltip.currentX) > 1 || mathAbs(finalY - tooltip.currentY) > 1) {
-			tooltip.tooltipTick = function () {
-				tooltip.move(finalX, finalY);
-			};
-		} else {
-			tooltip.tooltipTick = null;
-		}
+         // run on next tick of the mouse tracker
+         if (mathAbs(finalX - tooltip.currentX) > 1 || mathAbs(finalY - tooltip.currentY) > 1) {
+            tooltip.tooltipTick = function () {
+               tooltip.move(finalX, finalY);
+            };
+         } else {
+            tooltip.tooltipTick = null;
+         }
+      }
 	},
 
 	/**
