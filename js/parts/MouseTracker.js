@@ -94,9 +94,9 @@ MouseTracker.prototype = {
 			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
 				value: axis.translate(
-					isHorizontal ?
+					(isHorizontal ?
 						e.chartX - chart.plotLeft :
-						axis.top + axis.len - e.chartY, // #1051
+						axis.top + axis.len - e.chartY) - axis.minPixelPadding, // #1051
 					true
 				)
 			});
@@ -270,9 +270,10 @@ MouseTracker.prototype = {
 									1
 								),
 								selectionMax = axis.translate(
-									isHorizontal ?
-										selectionLeft + selectionBox.width :
-										chart.plotHeight - selectionTop,
+									(isHorizontal ?
+											selectionLeft + selectionBox.width :
+											chart.plotHeight - selectionTop) -  
+										2 * axis.minPixelPadding, // #875
 									true,
 									0,
 									0,
