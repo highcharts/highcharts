@@ -12224,7 +12224,7 @@ Series.prototype = {
 		// Is it the last visible series?
 		while (i--) {
 			if (allStackSeries[i].visible) {
-				if (i === series.index) {
+				if (allStackSeries[i] === series) { // #809
 					isBottomSeries = true;
 				}
 				break;
