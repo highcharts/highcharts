@@ -7955,21 +7955,21 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			isHidden = tooltip.isHidden;
+			animate = tooltip.options.animation !== false && !tooltip.isHidden; // docs: animation
 
 		// get intermediate values for animation
 		extend(now, {
-			x: isHidden ? x : (2 * now.x + x) / 3,
-			y: isHidden ? y : (now.y + y) / 2,
-			anchorX: isHidden ? anchorX : (2 * now.anchorX + anchorX) / 3,
-			anchorY: isHidden ? anchorY : (now.anchorY + anchorY) / 2
+			x: animate ? (2 * now.x + x) / 3 : x,
+			y: animate ? (now.y + y) / 2 : y,
+			anchorX: animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+			anchorY: animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
 		// move to the intermediate value
 		tooltip.label.attr(now);
 
 		// run on next tick of the mouse tracker
-		if (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1) {
+		if (animate && (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1)) {
 			tooltip.tooltipTick = function () {
 				tooltip.move(x, y, anchorX, anchorY);
 			};

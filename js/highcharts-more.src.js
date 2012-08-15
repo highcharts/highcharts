@@ -450,7 +450,7 @@ var radialAxisMixin = {
 		
 		return { 
 			x: chart.plotLeft + center[0] + (titleOptions.x || 0), 
-			y: chart.plotTop + center[1] - ({ high: 0.5, middle: 0.25, low: 0 }[this.options.title.align] * 
+			y: chart.plotTop + center[1] - ({ high: 0.5, middle: 0.25, low: 0 }[titleOptions.align] * 
 				center[2]) + (titleOptions.y || 0)  
 		};
 	}
