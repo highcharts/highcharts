@@ -10080,8 +10080,9 @@ Chart.prototype = {
 				chartTitleOptions = arr[2];
 
 			if (title && titleOptions) {
-				title = title.destroy(); // remove old
+				chart[name] = title = title.destroy(); // remove old
 			}
+			
 			if (chartTitleOptions && chartTitleOptions.text && !title) {
 				chart[name] = chart.renderer.text(
 					chartTitleOptions.text,
