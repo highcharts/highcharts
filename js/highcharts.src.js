@@ -189,6 +189,7 @@ function isNumber(n) {
 	return typeof n === 'number';
 }
 
+
 function log2lin(num) {
 	return math.log(num) / math.LN10;
 }
@@ -1089,6 +1090,11 @@ pathAnim = {
 		getScript: $.getScript,
 		
 		/**
+		 * Return the index of an item in an array, or -1 if not found
+		 */
+		inArray: $.inArray,
+		
+		/**
 		 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
 		 * @param {Object} elem The HTML element
 		 * @param {String} method Which method to run on the wrapped element
@@ -1284,6 +1290,7 @@ var globalAdapter = win.HighchartsAdapter,
 	// default adapters below.
 	adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
+	inArray = adapter.inArray,
 	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
@@ -8162,12 +8169,13 @@ Tooltip.prototype = {
 		if (shared && !(point.series && point.series.noSharedTooltip)) {
 			
 			// hide previous hoverPoints and set new
+			
+			chart.hoverPoints = point;
 			if (hoverPoints) {
 				each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
-			chart.hoverPoints = point;
 
 			each(point, function (item) {
 				item.setState(HOVER_STATE);
@@ -11232,11 +11240,15 @@ Point.prototype = {
 	},
 
 	onMouseOut: function () {
-		var point = this;
-		point.firePointEvent('mouseOut');
-
-		point.setState();
-		point.series.chart.hoverPoint = null;
+		var chart = this.series.chart,
+			hoverPoints = chart.hoverPoints;
+		
+		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887
+			this.firePointEvent('mouseOut');
+	
+			this.setState();
+			chart.hoverPoint = null;
+		}
 	},
 
 	/**

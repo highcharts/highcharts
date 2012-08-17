@@ -113,6 +113,11 @@
 		getScript: $.getScript,
 		
 		/**
+		 * Return the index of an item in an array, or -1 if not found
+		 */
+		inArray: $.inArray,
+		
+		/**
 		 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
 		 * @param {Object} elem The HTML element
 		 * @param {String} method Which method to run on the wrapped element
@@ -308,6 +313,7 @@ var globalAdapter = win.HighchartsAdapter,
 	// default adapters below.
 	adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
+	inArray = adapter.inArray,
 	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,

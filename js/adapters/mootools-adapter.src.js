@@ -182,6 +182,13 @@ win.HighchartsAdapter = {
 	grep: function (arr, fn) {
 		return arr.filter(fn);
 	},
+	
+	/**
+	 * Return the index of an item in an array, or -1 if not matched
+	 */
+	inArray: function (item, arr, from) {
+		return arr.indexOf(item, from);
+	},
 
 	/**
 	 * Deep merge two objects and return a third

@@ -200,6 +200,10 @@ return {
 	each: function (arr, fn) {
 		$A(arr).each(fn);
 	},
+	
+	inArray: function (item, arr) {
+		return arr.indexOf(item);
+	},
 
 	/**
 	 * Get the cumulative offset relative to the top left of the page. This method, unlike its
