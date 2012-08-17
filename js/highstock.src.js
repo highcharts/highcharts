@@ -189,7 +189,6 @@ function isNumber(n) {
 	return typeof n === 'number';
 }
 
-
 function log2lin(num) {
 	return math.log(num) / math.LN10;
 }
@@ -8611,7 +8610,7 @@ MouseTracker.prototype = {
 		mouseTracker.hideTooltipOnMouseMove = function (e) {
 
 			// Get e.pageX and e.pageY back in MooTools
-			washMouseEvent(e);
+			e = washMouseEvent(e);
 
 			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition && chart.hoverSeries && chart.hoverSeries.isCartesian &&
