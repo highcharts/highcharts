@@ -52,13 +52,6 @@ elseif ($product == 'highstock') $dir = 'stock';
 			li.visited a {
 				color: gray;
 			}
-			li.hilighted {
-				border-color: silver;
-				font-weight: bold;
-			}
-			li.hilighted a {
-				color: black;
-			}
 			
 			li.identical, li.identical a {
 				background: green;
@@ -70,6 +63,14 @@ elseif ($product == 'highstock') $dir = 'stock';
 				color: white;
 			}
 			
+			li.hilighted {
+				border-color: silver;
+				font-weight: bold;
+				background: black !important;
+			}
+			li.hilighted a {
+				color: white;
+			}
 			body {
 				margin: 0;
 			}
