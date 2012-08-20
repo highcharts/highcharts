@@ -79,8 +79,6 @@ Point.prototype = {
 			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
 		
-		
-
 	},
 
 	/**
@@ -1551,7 +1549,7 @@ Series.prototype = {
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
 
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && chart.isInsidePlot(plotX, plotY, chart.inverted)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
@@ -1578,9 +1576,10 @@ Series.prototype = {
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
+					
+					// Since the marker group isn't clipped, each individual marker must be toggled
+					graphic[chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide']();
 				
-				} else if (graphic) {
-					point.graphic = graphic.destroy();
 				}
 			}
 		}

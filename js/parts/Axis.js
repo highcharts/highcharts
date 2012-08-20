@@ -1153,7 +1153,7 @@ Axis.prototype = {
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1],
-				minPointOffset = axis.minPointOffset;
+				minPointOffset = axis.minPointOffset || 0;
 
 			if (options.startOnTick) {
 				axis.min = roundedMin;
