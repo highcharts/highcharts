@@ -2752,7 +2752,7 @@ SVGElement.prototype = {
 			shadowWidth = pick(shadowOptions.width, 3);
 			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			transform = this.parentInverted ? 
-				'(-1,-1)' : // this doesn't work 
+				'(-1,-1)' : 
 				'(' + (shadowOptions.offsetX || 1) + ', ' + (shadowOptions.offsetY || 1) + ')';
 			for (i = 1; i <= shadowWidth; i++) {
 				shadow = element.cloneNode(0);
@@ -2766,8 +2766,8 @@ SVGElement.prototype = {
 					'fill': NONE
 				});
 				if (cutOff) {
-					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
-					shadow.cutHeight = strokeWidth;
+					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth - 1, 0));
+					shadow.cutHeight = strokeWidth + 1;
 				}
 
 				if (group) {
@@ -11895,7 +11895,6 @@ Series.prototype = {
 		xData.push(point.x);
 		yData.push(proto.toYData ? proto.toYData.call(point) : point.y);
 		dataOptions.push(options);
-		series.xIncrement = xIncrement; // reset
 
 
 		// Shift the first point off the parallel arrays
@@ -12001,7 +12000,6 @@ Series.prototype = {
 				xData[i] = pt.x;
 				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
-			series.xIncrement = null; // reset
 		}
 
 		series.data = [];

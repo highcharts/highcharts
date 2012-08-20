@@ -869,7 +869,6 @@ Series.prototype = {
 		xData.push(point.x);
 		yData.push(proto.toYData ? proto.toYData.call(point) : point.y);
 		dataOptions.push(options);
-		series.xIncrement = xIncrement; // reset
 
 
 		// Shift the first point off the parallel arrays
@@ -975,7 +974,6 @@ Series.prototype = {
 				xData[i] = pt.x;
 				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
-			series.xIncrement = null; // reset
 		}
 
 		series.data = [];
