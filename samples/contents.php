@@ -56,20 +56,24 @@ elseif ($product == 'highstock') $dir = 'stock';
 			li.identical, li.identical a {
 				background: green;
 				color: white;
+				font-weight: bold;
 			}
 			
 			li.different, li.different a {
 				background: red;
 				color: white;
+				font-weight: bold;
 			}
 			
 			li.hilighted {
 				border-color: silver;
 				font-weight: bold;
 				background: black !important;
+				color: white;
 			}
 			li.hilighted a {
 				color: white;
+				background: black;
 			}
 			body {
 				margin: 0;

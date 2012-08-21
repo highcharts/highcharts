@@ -258,7 +258,6 @@ var VMLElement = {
 
 					// x and y
 					} else if (key === 'x' || key === 'y') {
-
 						wrapper[key] = value; // used in getter
 						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 
@@ -367,7 +366,6 @@ var VMLElement = {
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
 			};
-		
 			// Issue #863 workaround - related to #140, #61, #74
 			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
 				css(element, { visibility: HIDDEN });
@@ -642,7 +640,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
-				each(clipRect.members, function (member) {
+				each(clipRect.members, function (member, i) {
 					member.css(clipRect.getCSS(member));
 				});
 			}

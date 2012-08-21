@@ -1110,7 +1110,10 @@ Chart.prototype = {
 		if (!clipRect) {
 			chart.clipRect = renderer.clipRect(clipBox);
 		} else {
-			clipRect.animate(clipBox);
+			clipRect.animate({
+				width: clipBox.width,
+				height: clipBox.height
+			});
 		}
 
 		// Plot area border

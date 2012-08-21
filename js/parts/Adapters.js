@@ -274,7 +274,13 @@
 		 * Extension method needed for MooTools
 		 */
 		washMouseEvent: function (e) {
-			return e.originalEvent || e;
+			var ret = e.originalEvent || e;
+			
+			// computed by jQuery, needed by IE8
+			ret.pageX = e.pageX;
+			ret.pageY = e.pageY;
+			
+			return ret;
 		},
 	
 		/**

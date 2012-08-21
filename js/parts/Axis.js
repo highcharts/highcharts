@@ -961,7 +961,7 @@ Axis.prototype = {
 		// adjust translation for padding
 		if (axis.isXAxis) {
 			if (axis.isLinked) {
-				pointRange = axis.linkedParent.pointRange;
+				minPointOffset = axis.linkedParent.minPointOffset;
 			} else {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);

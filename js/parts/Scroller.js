@@ -649,7 +649,9 @@ Scroller.prototype = {
 				);
 			}
 			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
-			bodyStyle.cursor = defaultBodyCursor;
+			
+			bodyStyle.cursor = defaultBodyCursor || '';
+			
 		};
 
 		scroller.updatedDataHandler = function () {

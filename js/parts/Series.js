@@ -1453,9 +1453,9 @@ Series.prototype = {
 				);
 				
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
-					0, 
+					-99, // include the width of the first marker
 					inverted ? -chart.plotLeft : -chart.plotTop, 
-					0,
+					99,
 					inverted ? chart.chartWidth : chart.chartHeight
 				);
 			}
@@ -1471,7 +1471,7 @@ Series.prototype = {
 					width: chart.plotSizeX
 				}, animation);
 				chart[sharedClipKey + 'm'].animate({
-					width: chart.plotSizeX
+					width: chart.plotSizeX + 99
 				}, animation);
 			}
 
@@ -1533,6 +1533,7 @@ Series.prototype = {
 			seriesMarkerOptions = options.marker,
 			pointMarkerOptions,
 			enabled,
+			isInside,
 			markerGroup = series.markerGroup;
 
 		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
@@ -1545,7 +1546,8 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-
+				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
 
@@ -1556,14 +1558,18 @@ Series.prototype = {
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
-						graphic.animate(extend({
-							x: plotX - radius,
-							y: plotY - radius
-						}, graphic.symbolName ? { // don't apply to image symbols #507
-							width: 2 * radius,
-							height: 2 * radius
-						} : {}));
-					} else if (radius > 0 || isImage) {
+						graphic
+							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
+								visibility: isInside ? (hasSVG ? 'inherit' : VISIBLE) : HIDDEN
+							})
+							.animate(extend({
+								x: plotX - radius,
+								y: plotY - radius
+							}, graphic.symbolName ? { // don't apply to image symbols #507
+								width: 2 * radius,
+								height: 2 * radius
+							} : {}));
+					} else if (isInside && (radius > 0 || isImage)) {
 						point.graphic = graphic = chart.renderer.symbol(
 							symbol,
 							plotX - radius,
@@ -1574,10 +1580,6 @@ Series.prototype = {
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
-					
-					// Since the marker group isn't clipped, each individual marker must be toggled
-					graphic[chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide']();
-				
 				}
 			}
 		}
@@ -1783,7 +1785,7 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker', 'trackerGroup'], function (prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup'], function (prop) {
 			if (series[prop]) {
 
 				// issue 134 workaround
@@ -2155,10 +2157,9 @@ Series.prototype = {
 			this[prop] = group = chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
-					zIndex: zIndex
+					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
-				
 		}
 		// Place it on first and subsequent (redraw) calls
 		group.translate(
@@ -2182,10 +2183,11 @@ Series.prototype = {
 			doAnimation = animation && !!series.animate,
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
+			hasRendered = series.hasRendered,
 			chartSeriesGroup = chart.seriesGroup;
 		
 		// the group
-		group = series.group || series.plotGroup(
+		group = series.plotGroup(
 			'group', 
 			'series', 
 			visibility, 
@@ -2233,15 +2235,15 @@ Series.prototype = {
 		}
 		
 		// Initial clipping, must be defined after inverting groups for VML
-		if (options.clip !== false && !series.sharedClipKey) {
+		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
 		}
 
 		// Run the animation
 		if (doAnimation) {
 			series.animate();
-		} else if (!series.hasRendered) {
-			series.afterAnimate();	
+		} else if (!hasRendered) {
+			series.afterAnimate();
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see

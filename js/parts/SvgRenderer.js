@@ -322,8 +322,8 @@ SVGElement.prototype = {
 		// normalize for crisp edges
 		values.x = mathFloor(x || wrapper.x || 0) + normalizer;
 		values.y = mathFloor(y || wrapper.y || 0) + normalizer;
-		values.width = mathFloor((width || wrapper.width || 0));
-		values.height = mathFloor((height || wrapper.height || 0));
+		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
+		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
 		values.strokeWidth = strokeWidth;
 
 		for (key in values) {
@@ -966,8 +966,8 @@ SVGElement.prototype = {
 					'fill': NONE
 				});
 				if (cutOff) {
-					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth - 1, 0));
-					shadow.cutHeight = strokeWidth + 1;
+					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
+					shadow.cutHeight = strokeWidth;
 				}
 
 				if (group) {

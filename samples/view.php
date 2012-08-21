@@ -12,6 +12,7 @@ ob_start();
 include("$path/demo.html");
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/high', '/code.highcharts.com/dev/high', $html);
+$html = str_replace('/code.highcharts.com/stock/', '/code.highcharts.com/dev/', $html);
 	
 
 
@@ -89,6 +90,7 @@ function getResources() {
 						},'slow');
 
 						contentDoc.currentLi = li;
+						$(li).addClass('hilighted');
 					}
 					
 					// add the next button
