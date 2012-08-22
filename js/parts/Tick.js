@@ -84,7 +84,7 @@ Tick.prototype = {
 						.attr(attr)
 						// without position absolute, IE export sometimes is wrong
 						.css(css)
-						.add(axis.axisGroup) :
+						.add(axis.labelGroup) :
 					null;
 
 		// update

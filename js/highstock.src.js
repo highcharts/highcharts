@@ -1250,7 +1250,13 @@ pathAnim = {
 		 * Extension method needed for MooTools
 		 */
 		washMouseEvent: function (e) {
-			return e.originalEvent || e;
+			var ret = e.originalEvent || e;
+			
+			// computed by jQuery, needed by IE8
+			ret.pageX = e.pageX;
+			ret.pageY = e.pageY;
+			
+			return ret;
 		},
 	
 		/**
@@ -2122,8 +2128,8 @@ SVGElement.prototype = {
 		// normalize for crisp edges
 		values.x = mathFloor(x || wrapper.x || 0) + normalizer;
 		values.y = mathFloor(y || wrapper.y || 0) + normalizer;
-		values.width = mathFloor((width || wrapper.width || 0));
-		values.height = mathFloor((height || wrapper.height || 0));
+		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
+		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
 		values.strokeWidth = strokeWidth;
 
 		for (key in values) {
@@ -2766,8 +2772,8 @@ SVGElement.prototype = {
 					'fill': NONE
 				});
 				if (cutOff) {
-					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth - 1, 0));
-					shadow.cutHeight = strokeWidth + 1;
+					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
+					shadow.cutHeight = strokeWidth;
 				}
 
 				if (group) {
@@ -4390,7 +4396,6 @@ var VMLElement = {
 
 					// x and y
 					} else if (key === 'x' || key === 'y') {
-
 						wrapper[key] = value; // used in getter
 						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 
@@ -4499,7 +4504,6 @@ var VMLElement = {
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
 			};
-		
 			// Issue #863 workaround - related to #140, #61, #74
 			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
 				css(element, { visibility: HIDDEN });
@@ -5419,7 +5423,7 @@ Tick.prototype = {
 						.attr(attr)
 						// without position absolute, IE export sometimes is wrong
 						.css(css)
-						.add(axis.axisGroup) :
+						.add(axis.labelGroup) :
 					null;
 
 		// update
@@ -6955,7 +6959,7 @@ Axis.prototype = {
 		// adjust translation for padding
 		if (axis.isXAxis) {
 			if (axis.isLinked) {
-				pointRange = axis.linkedParent.pointRange;
+				minPointOffset = axis.linkedParent.minPointOffset;
 			} else {
 				each(axis.series, function (series) {
 					pointRange = mathMax(pointRange, series.pointRange);
@@ -7430,7 +7434,10 @@ Axis.prototype = {
 				.add();
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })
-				.add();			
+				.add();
+			axis.labelGroup = renderer.g('axis-labels')
+				.attr({ zIndex: labelOptions.zIndex || 7 })
+				.add();
 		}
 
 		if (hasData || axis.isLinked) {
@@ -7872,7 +7879,7 @@ Axis.prototype = {
 		});
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'axisTitle'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'labelGroup', 'axisTitle'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
@@ -8487,8 +8494,8 @@ MouseTracker.prototype = {
 			chart = mouseTracker.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltipPoints = chart.hoverPoints || hoverPoint,
-			tooltip = chart.tooltip;
+			tooltip = chart.tooltip,
+			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
 			
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
@@ -10626,7 +10633,10 @@ Chart.prototype = {
 		if (!clipRect) {
 			chart.clipRect = renderer.clipRect(clipBox);
 		} else {
-			clipRect.animate(clipBox);
+			clipRect.animate({
+				width: clipBox.width,
+				height: clipBox.height
+			});
 		}
 
 		// Plot area border
@@ -11869,8 +11879,7 @@ Series.prototype = {
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
 			point,
-			proto = series.pointClass.prototype,
-			xIncrement = series.xIncrement;
+			proto = series.pointClass.prototype;
 
 		setAnimation(animation, chart);
 
@@ -12001,6 +12010,11 @@ Series.prototype = {
 				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
 		}
+
+		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
+		if (isString(yData[0])) {
+			error(14, true);
+		} 
 
 		series.data = [];
 		series.options.data = data;
@@ -12479,9 +12493,9 @@ Series.prototype = {
 				);
 				
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
-					0, 
+					-99, // include the width of the first marker
 					inverted ? -chart.plotLeft : -chart.plotTop, 
-					0,
+					99,
 					inverted ? chart.chartWidth : chart.chartHeight
 				);
 			}
@@ -12497,7 +12511,7 @@ Series.prototype = {
 					width: chart.plotSizeX
 				}, animation);
 				chart[sharedClipKey + 'm'].animate({
-					width: chart.plotSizeX
+					width: chart.plotSizeX + 99
 				}, animation);
 			}
 
@@ -12559,6 +12573,7 @@ Series.prototype = {
 			seriesMarkerOptions = options.marker,
 			pointMarkerOptions,
 			enabled,
+			isInside,
 			markerGroup = series.markerGroup;
 
 		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
@@ -12571,7 +12586,8 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-
+				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
 
@@ -12582,14 +12598,18 @@ Series.prototype = {
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
-						graphic.animate(extend({
-							x: plotX - radius,
-							y: plotY - radius
-						}, graphic.symbolName ? { // don't apply to image symbols #507
-							width: 2 * radius,
-							height: 2 * radius
-						} : {}));
-					} else if (radius > 0 || isImage) {
+						graphic
+							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
+								visibility: isInside ? (hasSVG ? 'inherit' : VISIBLE) : HIDDEN
+							})
+							.animate(extend({
+								x: plotX - radius,
+								y: plotY - radius
+							}, graphic.symbolName ? { // don't apply to image symbols #507
+								width: 2 * radius,
+								height: 2 * radius
+							} : {}));
+					} else if (isInside && (radius > 0 || isImage)) {
 						point.graphic = graphic = chart.renderer.symbol(
 							symbol,
 							plotX - radius,
@@ -12600,10 +12620,6 @@ Series.prototype = {
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
-					
-					// Since the marker group isn't clipped, each individual marker must be toggled
-					graphic[chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide']();
-				
 				}
 			}
 		}
@@ -12809,7 +12825,7 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker', 'trackerGroup'], function (prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup'], function (prop) {
 			if (series[prop]) {
 
 				// issue 134 workaround
@@ -13181,10 +13197,9 @@ Series.prototype = {
 			this[prop] = group = chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
-					zIndex: zIndex
+					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
-				
 		}
 		// Place it on first and subsequent (redraw) calls
 		group.translate(
@@ -13208,10 +13223,11 @@ Series.prototype = {
 			doAnimation = animation && !!series.animate,
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
+			hasRendered = series.hasRendered,
 			chartSeriesGroup = chart.seriesGroup;
 		
 		// the group
-		group = series.group || series.plotGroup(
+		group = series.plotGroup(
 			'group', 
 			'series', 
 			visibility, 
@@ -13259,15 +13275,15 @@ Series.prototype = {
 		}
 		
 		// Initial clipping, must be defined after inverting groups for VML
-		if (options.clip !== false && !series.sharedClipKey) {
+		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
 		}
 
 		// Run the animation
 		if (doAnimation) {
 			series.animate();
-		} else if (!series.hasRendered) {
-			series.afterAnimate();	
+		} else if (!hasRendered) {
+			series.afterAnimate();
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -16743,7 +16759,9 @@ Scroller.prototype = {
 				);
 			}
 			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
-			bodyStyle.cursor = defaultBodyCursor;
+			
+			bodyStyle.cursor = defaultBodyCursor || '';
+			
 		};
 
 		scroller.updatedDataHandler = function () {

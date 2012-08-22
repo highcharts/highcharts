@@ -1436,7 +1436,10 @@ Axis.prototype = {
 				.add();
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })
-				.add();			
+				.add();
+			axis.labelGroup = renderer.g('axis-labels')
+				.attr({ zIndex: labelOptions.zIndex || 7 })
+				.add();
 		}
 
 		if (hasData || axis.isLinked) {
@@ -1878,7 +1881,7 @@ Axis.prototype = {
 		});
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'axisTitle'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'labelGroup', 'axisTitle'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}

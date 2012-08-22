@@ -191,7 +191,7 @@ MouseTracker.prototype = {
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
 			tooltip = chart.tooltip,
-			tooltipPoints = tooltip.shared ? chart.hoverPoints : hoverPoint;
+			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
 			
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;

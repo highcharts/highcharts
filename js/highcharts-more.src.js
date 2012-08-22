@@ -650,7 +650,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 	 *
 	 * @param {Object} options
 	 */
-	applyOptions: function (options) {
+	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
 			pointArrayMap = series.pointArrayMap,
@@ -691,7 +691,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
-			point.x = series.autoIncrement();
+			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
 		
 		return point;

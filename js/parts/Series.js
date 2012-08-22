@@ -843,8 +843,7 @@ Series.prototype = {
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
 			point,
-			proto = series.pointClass.prototype,
-			xIncrement = series.xIncrement;
+			proto = series.pointClass.prototype;
 
 		setAnimation(animation, chart);
 
@@ -975,6 +974,11 @@ Series.prototype = {
 				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
 		}
+
+		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
+		if (isString(yData[0])) {
+			error(14, true);
+		} 
 
 		series.data = [];
 		series.options.data = data;

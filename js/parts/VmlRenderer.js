@@ -640,7 +640,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
-				each(clipRect.members, function (member, i) {
+				each(clipRect.members, function (member) {
 					member.css(clipRect.getCSS(member));
 				});
 			}
