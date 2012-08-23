@@ -1071,7 +1071,7 @@ pathAnim = {
 			}
 			
 			
-			// Register Highcharts as a jQuery plugin // docs
+			// Register Highcharts as a jQuery plugin
 			// TODO: MooTools and prototype as well?
 			// TODO: StockChart
 			/*$.fn.highcharts = function(options, callback) {
@@ -1351,7 +1351,7 @@ defaultOptions = {
 		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		decimalPoint: '.',
-		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels // docs
+		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 		resetZoom: 'Reset zoom',
 		resetZoomTitle: 'Reset zoom level 1:1',
 		thousandsSep: ','
@@ -1359,7 +1359,7 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		canvasToolsURL: 'http://code.highcharts.com/2.3Beta/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/2.3Beta/gfx/vml-radial-gradient.png' // docs
+		VMLRadialGradientURL: 'http://code.highcharts.com/2.3Beta/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -2739,7 +2739,7 @@ SVGElement.prototype = {
 
 	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
-	 * @param {Boolean|Object} shadowOptions // docs
+	 * @param {Boolean|Object} shadowOptions
 	 */
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
@@ -6952,8 +6952,8 @@ Axis.prototype = {
 			range = axis.max - axis.min,
 			pointRange = 0,
 			closestPointRange,
-			seriesClosestPointRange,
 			minPointOffset = 0,
+			pointRangePadding = 0,
 			transA = axis.transA;
 
 		// adjust translation for padding
@@ -6962,20 +6962,28 @@ Axis.prototype = {
 				minPointOffset = axis.linkedParent.minPointOffset;
 			} else {
 				each(axis.series, function (series) {
-					pointRange = mathMax(pointRange, series.pointRange);
+					var seriesPointRange = series.pointRange,
+						pointPlacement = series.options.pointPlacement,
+						seriesClosestPointRange = series.closestPointRange;
+						
+					pointRange = mathMax(pointRange, seriesPointRange);
 					
 					// minPointOffset is the value padding to the left of the axis in order to make
 					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between', this padding does not apply.
+					// is 'between' or 'on', this padding does not apply.
 					minPointOffset = mathMax(
 						minPointOffset, 
-						series.options.pointPlacement ? // 'on' or 'between' // docs
-							0 :
-							series.pointRange / 2
+						pointPlacement ? 0 : seriesPointRange / 2
+					);
+					
+					// Determine the total padding needed to the length of the axis to make room for the 
+					// pointRange. If the series' pointPlacement is 'on', no padding is added.
+					pointRangePadding = mathMax(
+						pointRangePadding,
+						pointPlacement === 'on' ? 0 : seriesPointRange
 					);
 
 					// Set the closestPointRange
-					seriesClosestPointRange = series.closestPointRange;
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
 							mathMin(closestPointRange, seriesClosestPointRange) :
@@ -6998,7 +7006,8 @@ Axis.prototype = {
 
 		// secondary values
 		axis.oldTransA = transA;
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
+		//axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
 	},
@@ -7110,7 +7119,7 @@ Axis.prototype = {
 		
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
 		if (!tickIntervalOption && axis.tickInterval < minTickIntervalOption) {
-			axis.tickInterval = minTickIntervalOption; // docs 
+			axis.tickInterval = minTickIntervalOption;
 		}
 
 		// for linear axes, get magnitude and normalize the interval
@@ -7969,7 +7978,7 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden; // docs: animation
+			animate = tooltip.options.animation !== false && !tooltip.isHidden;
 
 		// get intermediate values for animation
 		extend(now, {
@@ -9394,7 +9403,7 @@ Legend.prototype = {
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
 			spaceHeight = chart.spacingBox.height + (alignTop ? -optionsY : optionsY) - this.padding,
-			maxHeight = options.maxHeight, // docs
+			maxHeight = options.maxHeight,
 			clipHeight,
 			clipRect = this.clipRect,
 			navOptions = options.navigation,
@@ -11633,7 +11642,7 @@ Series.prototype = {
 		// Register it in the chart
 		chart.series.push(series);
 		
-		// Sort series according to index option (#248, #1123)  // docs: series.index option
+		// Sort series according to index option (#248, #1123)
 		chart.series.sort(function (a, b) {
 			return (a.options.index || 0) - (b.options.index || 0);
 		});
@@ -13831,7 +13840,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
-	//grouping: true, // docs
+	//grouping: true,
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
 	//pointWidth: null,

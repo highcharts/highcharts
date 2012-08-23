@@ -954,8 +954,8 @@ Axis.prototype = {
 			range = axis.max - axis.min,
 			pointRange = 0,
 			closestPointRange,
-			seriesClosestPointRange,
 			minPointOffset = 0,
+			pointRangePadding = 0,
 			transA = axis.transA;
 
 		// adjust translation for padding
@@ -964,20 +964,28 @@ Axis.prototype = {
 				minPointOffset = axis.linkedParent.minPointOffset;
 			} else {
 				each(axis.series, function (series) {
-					pointRange = mathMax(pointRange, series.pointRange);
+					var seriesPointRange = series.pointRange,
+						pointPlacement = series.options.pointPlacement,
+						seriesClosestPointRange = series.closestPointRange;
+						
+					pointRange = mathMax(pointRange, seriesPointRange);
 					
 					// minPointOffset is the value padding to the left of the axis in order to make
 					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between', this padding does not apply.
+					// is 'between' or 'on', this padding does not apply.
 					minPointOffset = mathMax(
 						minPointOffset, 
-						series.options.pointPlacement ? // 'on' or 'between' // docs
-							0 :
-							series.pointRange / 2
+						pointPlacement ? 0 : seriesPointRange / 2
+					);
+					
+					// Determine the total padding needed to the length of the axis to make room for the 
+					// pointRange. If the series' pointPlacement is 'on', no padding is added.
+					pointRangePadding = mathMax(
+						pointRangePadding,
+						pointPlacement === 'on' ? 0 : seriesPointRange
 					);
 
 					// Set the closestPointRange
-					seriesClosestPointRange = series.closestPointRange;
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
 							mathMin(closestPointRange, seriesClosestPointRange) :
@@ -1000,7 +1008,8 @@ Axis.prototype = {
 
 		// secondary values
 		axis.oldTransA = transA;
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
+		//axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
 	},
@@ -1112,7 +1121,7 @@ Axis.prototype = {
 		
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
 		if (!tickIntervalOption && axis.tickInterval < minTickIntervalOption) {
-			axis.tickInterval = minTickIntervalOption; // docs 
+			axis.tickInterval = minTickIntervalOption;
 		}
 
 		// for linear axes, get magnitude and normalize the interval

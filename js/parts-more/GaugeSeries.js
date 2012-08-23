@@ -1,10 +1,5 @@
 /* 
  * The GaugeSeries class
- * 
- * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
- * Clock:       http://jsfiddle.net/highcharts/BFN2F/
- * Minimal:     http://jsfiddle.net/highcharts/9XgY7/
- * 
  */
 
 
@@ -110,7 +105,8 @@ var GaugeSeries = {
 					radius, -topWidth / 2,
 					radius, topWidth / 2,
 					baseLength, baseWidth / 2,
-					-rearLength, baseWidth / 2
+					-rearLength, baseWidth / 2,
+					'z'
 				],
 				translateX: center[0],
 				translateY: center[1],

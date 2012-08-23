@@ -616,8 +616,6 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
 });/* 
  * The AreaRangeSeries class
  * 
- * http://jsfiddle.net/highcharts/fRBFH/
- * 
  */
 
 /**
@@ -893,11 +891,6 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 	animate: colProto.animate
 });/* 
  * The GaugeSeries class
- * 
- * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
- * Clock:       http://jsfiddle.net/highcharts/BFN2F/
- * Minimal:     http://jsfiddle.net/highcharts/9XgY7/
- * 
  */
 
 
@@ -1003,7 +996,8 @@ var GaugeSeries = {
 					radius, -topWidth / 2,
 					radius, topWidth / 2,
 					baseLength, baseWidth / 2,
-					-rearLength, baseWidth / 2
+					-rearLength, baseWidth / 2,
+					'z'
 				],
 				translateX: center[0],
 				translateY: center[1],
@@ -1330,7 +1324,7 @@ function polarAnimate(proceed, init) {
 	if (chart.polar) {
 		
 		// Enable animation on polar charts only in SVG. In VML, the scaling is different, plus animation
-		// would be so slow it would't matter. // docs
+		// would be so slow it would't matter.
 		if (chart.renderer.isSVG) {
 
 			if (animation === true) {

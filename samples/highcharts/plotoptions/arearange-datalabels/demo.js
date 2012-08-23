@@ -1,6 +1,9 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function(data) {
-    
+    	
+    	// Shorten the data
+    	data = data.splice(181, 14);
+  
     	window.chart = new Highcharts.Chart({
     	
 		    chart: {
@@ -31,10 +34,18 @@ $(function () {
 		    legend: {
 		        enabled: false
 		    },
-		
+		    
 		    series: [{
 		        name: 'Temperatures',
-		        data: data
+		        data: data,
+		        dataLabels: {
+		        	enabled: true,
+		        	yHigh: 16,
+		        	yLow: -5,
+		        	style: {
+		        		color: 'white'
+		        	}
+		        }
 		    }]
 		
 		});

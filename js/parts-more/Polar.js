@@ -221,7 +221,7 @@ function polarAnimate(proceed, init) {
 	if (chart.polar) {
 		
 		// Enable animation on polar charts only in SVG. In VML, the scaling is different, plus animation
-		// would be so slow it would't matter. // docs
+		// would be so slow it would't matter.
 		if (chart.renderer.isSVG) {
 
 			if (animation === true) {

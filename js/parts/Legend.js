@@ -488,7 +488,7 @@ Legend.prototype = {
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
 			spaceHeight = chart.spacingBox.height + (alignTop ? -optionsY : optionsY) - this.padding,
-			maxHeight = options.maxHeight, // docs
+			maxHeight = options.maxHeight,
 			clipHeight,
 			clipRect = this.clipRect,
 			navOptions = options.navigation,

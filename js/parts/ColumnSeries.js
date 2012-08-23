@@ -7,7 +7,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
-	//grouping: true, // docs
+	//grouping: true,
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
 	//pointWidth: null,

@@ -933,7 +933,7 @@ SVGElement.prototype = {
 
 	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
-	 * @param {Boolean|Object} shadowOptions // docs
+	 * @param {Boolean|Object} shadowOptions
 	 */
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],

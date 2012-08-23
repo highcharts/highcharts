@@ -95,7 +95,7 @@
 			}
 			
 			
-			// Register Highcharts as a jQuery plugin // docs
+			// Register Highcharts as a jQuery plugin
 			// TODO: MooTools and prototype as well?
 			// TODO: StockChart
 			/*$.fn.highcharts = function(options, callback) {

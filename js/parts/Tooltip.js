@@ -78,7 +78,7 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden; // docs: animation
+			animate = tooltip.options.animation !== false && !tooltip.isHidden;
 
 		// get intermediate values for animation
 		extend(now, {

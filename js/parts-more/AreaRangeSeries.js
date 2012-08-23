@@ -1,8 +1,6 @@
 /* 
  * The AreaRangeSeries class
  * 
- * http://jsfiddle.net/highcharts/fRBFH/
- * 
  */
 
 /**

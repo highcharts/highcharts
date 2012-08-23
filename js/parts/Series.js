@@ -597,7 +597,7 @@ Series.prototype = {
 		// Register it in the chart
 		chart.series.push(series);
 		
-		// Sort series according to index option (#248, #1123)  // docs: series.index option
+		// Sort series according to index option (#248, #1123)
 		chart.series.sort(function (a, b) {
 			return (a.options.index || 0) - (b.options.index || 0);
 		});
