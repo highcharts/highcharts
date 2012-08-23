@@ -5,11 +5,6 @@
 // 1 - Set default options
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
-	dataGrouping: {
-		approximation: 'ohlc',
-		enabled: true,
-		groupPixelWidth: 5 // allows to be packed tighter than candlesticks
-	},
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
 			'Open: {point.open}<br/>' +

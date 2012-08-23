@@ -4,10 +4,6 @@
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
-	dataGrouping: {
-		approximation: 'ohlc',
-		enabled: true
-	},
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {

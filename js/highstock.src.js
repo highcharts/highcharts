@@ -14999,6 +14999,7 @@ var DATA_GROUPING = 'dataGrouping',
 	
 	commonOptions = {
 			approximation: 'average', // average, open, high, low, close, sum
+			enabled: true,
 			//forced: undefined,
 			groupPixelWidth: 2,
 			// the first one is the point or start value, the second is the start value if we're dealing with range,
@@ -15094,7 +15095,7 @@ var DATA_GROUPING = 'dataGrouping',
 		close: function (arr) {
 			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : UNDEFINED);
 		},
-		// ohlc is a special case where a multidimensional array is input and an array is output
+		// ohlc and range are special cases where a multidimensional array is input and an array is output
 		ohlc: function (open, high, low, close) {
 			open = approximations.open(open);
 			high = approximations.high(high);
@@ -15103,6 +15104,15 @@ var DATA_GROUPING = 'dataGrouping',
 			
 			if (typeof open === NUMBER || typeof high === NUMBER || typeof low === NUMBER || typeof close === NUMBER) {
 				return [open, high, low, close];
+			} 
+			// else, return is undefined
+		},
+		range: function (low, high) {
+			low = approximations.low(low);
+			high = approximations.high(high);
+			
+			if (typeof low === NUMBER || typeof high === NUMBER) {
+				return [low, high];
 			} 
 			// else, return is undefined
 		}
@@ -15125,11 +15135,10 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		pointY,
 		groupedY,
 		handleYData = !!yData, // when grouping the fake extended axis for panning, we don't need to consider y
-		values1 = [],
-		values2 = [],
-		values3 = [],
-		values4 = [],
+		values = [[], [], [], []],
 		approximationFn = typeof approximation === 'function' ? approximation : approximations[approximation],
+		pointArrayMap = series.pointArrayMap,
+		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
 		i;
 	
 		for (i = 0; i <= dataLength; i++) {
@@ -15140,7 +15149,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 				// get group x and y 
 				pointX = groupPositions.shift();				
-				groupedY = approximationFn(values1, values2, values3, values4);
+				groupedY = approximationFn.apply(0, values);
 				
 				// push the grouped data		
 				if (groupedY !== UNDEFINED) {
@@ -15149,10 +15158,10 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 				}
 				
 				// reset the aggregate arrays
-				values1 = [];
-				values2 = [];
-				values3 = [];
-				values4 = [];
+				values[0] = [];
+				values[1] = [];
+				values[2] = [];
+				values[3] = [];
 				
 				// don't loop beyond the last group
 				if (i === dataLength) {
@@ -15166,45 +15175,29 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			}
 			
 			// for each raw data point, push it to an array that contains all values for this specific group
-			pointY = handleYData ? yData[i] : null;
-			if (approximation === 'ohlc') {
+			if (pointArrayMap) {
 				
 				var index = series.cropStart + i,
 					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
-					open = point.open,
-					high = point.high,
-					low = point.low,
-					close = point.close;
-				
-				
-				if (typeof open === NUMBER) {
-					values1.push(open);
-				} else if (open === null) {
-					values1.hasNulls = true;
+					j,
+					val;
+					
+				for (j = 0; j < pointArrayMapLength; j++) {
+					val = point[pointArrayMap[j]];
+					if (typeof val === NUMBER) {
+						values[j].push(val);
+					} else if (val === null) {
+						values[j].hasNulls = true;
+					}					
 				}
 				
-				if (typeof high === NUMBER) {
-					values2.push(high);
-				} else if (high === null) {
-					values2.hasNulls = true;
-				}
-				
-				if (typeof low === NUMBER) {
-					values3.push(low);
-				} else if (low === null) {
-					values3.hasNulls = true;
-				}
-				
-				if (typeof close === NUMBER) {
-					values4.push(close);
-				} else if (close === null) {
-					values4.hasNulls = true;
-				}
 			} else {
+				pointY = handleYData ? yData[i] : null;
+			
 				if (typeof pointY === NUMBER) {
-					values1.push(pointY);
+					values[0].push(pointY);
 				} else if (pointY === null) {
-					values1.hasNulls = true;
+					values[0].hasNulls = true;
 				}
 			}
 
@@ -15419,19 +15412,54 @@ seriesProto.destroy = function () {
 };
 
 
-// Extend the plot options
+// Handle default options for data grouping
+wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
+	
+	var options = proceed.call(this, itemOptions),
+		typeSpecificOptions = {};
+	
+	typeSpecificOptions.column = typeSpecificOptions.ohlc = typeSpecificOptions.candlestick = {
+		approximation: 'sum',
+		groupPixelWidth: 10
+	};
+	
+	typeSpecificOptions.arearange = typeSpecificOptions.areasplinerange = {
+		approximation: 'range'
+	};
+		
+	typeSpecificOptions.columnrange = {
+		approximation: 'range',
+		groupPixelWidth: 10
+	};
+	
+	typeSpecificOptions.candlestick = {
+		approximation: 'ohlc',
+		groupPixelWidth: 10
+	};
+	
+	typeSpecificOptions.candlestick = {
+		approximation: 'ohlc',
+		groupPixelWidth: 5
+	};
+	
+	options.dataGrouping = merge(commonOptions, typeSpecificOptions[this.type], itemOptions.dataGrouping);
+	
+	return options;
+});
+
 
 // line types
-defaultPlotOptions.line[DATA_GROUPING] =
+/*defaultPlotOptions.line[DATA_GROUPING] =
 	defaultPlotOptions.spline[DATA_GROUPING] =
 	defaultPlotOptions.area[DATA_GROUPING] =
-	defaultPlotOptions.areaspline[DATA_GROUPING] = commonOptions;
+	defaultPlotOptions.areaspline[DATA_GROUPING] = 
+	commonOptions;
 
 // bar-like types (OHLC and candleticks inherit this as the classes are not yet built)
 defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
 		approximation: 'sum',
 		groupPixelWidth: 10
-});
+});*/
 /* ****************************************************************************
  * End data grouping module												   *
  ******************************************************************************//* ****************************************************************************
@@ -15441,11 +15469,6 @@ defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
 // 1 - Set default options
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
-	dataGrouping: {
-		approximation: 'ohlc',
-		enabled: true,
-		groupPixelWidth: 5 // allows to be packed tighter than candlesticks
-	},
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
 			'Open: {point.open}<br/>' +
@@ -15691,10 +15714,6 @@ seriesTypes.ohlc = OHLCSeries;
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
-	dataGrouping: {
-		approximation: 'ohlc',
-		enabled: true
-	},
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {
@@ -17517,10 +17536,11 @@ Highcharts.StockChart = function (options, callback) {
 				hover: {
 					lineWidth: 2
 				}
-			},
-			dataGrouping: {
-				enabled: true
 			}
+		},
+		columnOptions = {
+			shadow: false,
+			borderWidth: 0
 		};
 
 	// apply X axis options to both single and multi y axes
@@ -17591,13 +17611,10 @@ Highcharts.StockChart = function (options, callback) {
 			spline: lineOptions,
 			area: lineOptions,
 			areaspline: lineOptions,
-			column: {
-				shadow: false,
-				borderWidth: 0,
-				dataGrouping: {
-					enabled: true
-				}
-			}
+			arearange: lineOptions,
+			areasplinerange: lineOptions,
+			column: columnOptions,
+			columnrange: columnOptions
 		}
 
 	},
