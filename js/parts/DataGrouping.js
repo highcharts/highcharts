@@ -11,52 +11,82 @@ var DATA_GROUPING = 'dataGrouping',
 	NUMBER = 'number',
 	
 	commonOptions = {
-			approximation: 'average', // average, open, high, low, close, sum
-			enabled: true,
-			//forced: undefined,
-			groupPixelWidth: 2,
-			// the first one is the point or start value, the second is the start value if we're dealing with range,
-			// the third one is the end value if dealing with a range
-			dateTimeLabelFormats: hash( 
-				MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
-				SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
-				MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-				HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-				DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-				WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-				MONTH, ['%B %Y', '%B', '-%B %Y'],
-				YEAR, ['%Y', '%Y', '-%Y']
-			)
-			// smoothed = false, // enable this for navigator series only
+		approximation: 'average', // average, open, high, low, close, sum
+		//enabled: true, // this is set to default in the StockChart constructor only
+		//forced: undefined,
+		groupPixelWidth: 2,
+		// the first one is the point or start value, the second is the start value if we're dealing with range,
+		// the third one is the end value if dealing with a range
+		dateTimeLabelFormats: hash( 
+			MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
+			SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
+			MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			MONTH, ['%B %Y', '%B', '-%B %Y'],
+			YEAR, ['%Y', '%Y', '-%Y']
+		)
+		// smoothed = false, // enable this for navigator series only
+	},
+	
+	specificOptions = { // extends common options
+		line: {}, 
+		spline: {},
+		area: {},
+		areaspline: {},
+		column: {
+			approximation: 'sum',
+			groupPixelWidth: 10
 		},
-		
-		// units are defined in a separate array to allow complete overriding in case of a user option
-		defaultDataGroupingUnits = [[
-				MILLISECOND, // unit name
-				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-			], [
-				SECOND,
-				[1, 2, 5, 10, 15, 30]
-			], [
-				MINUTE,
-				[1, 2, 5, 10, 15, 30]
-			], [
-				HOUR,
-				[1, 2, 3, 4, 6, 8, 12]
-			], [
-				DAY,
-				[1]
-			], [
-				WEEK,
-				[1]
-			], [
-				MONTH,
-				[1, 3, 6]
-			], [
-				YEAR,
-				null
-			]
-		],
+		arearange: {
+			approximation: 'range'
+		},
+		areasplinerange: {
+			approximation: 'range'
+		},
+		columnrange: {
+			approximation: 'range',
+			groupPixelWidth: 10
+		},
+		candlestick: {
+			approximation: 'ohlc',
+			groupPixelWidth: 10
+		},
+		ohlc: {
+			approximation: 'ohlc',
+			groupPixelWidth: 5
+		}
+	},
+	
+	// units are defined in a separate array to allow complete overriding in case of a user option
+	defaultDataGroupingUnits = [[
+			MILLISECOND, // unit name
+			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+		], [
+			SECOND,
+			[1, 2, 5, 10, 15, 30]
+		], [
+			MINUTE,
+			[1, 2, 5, 10, 15, 30]
+		], [
+			HOUR,
+			[1, 2, 3, 4, 6, 8, 12]
+		], [
+			DAY,
+			[1]
+		], [
+			WEEK,
+			[1]
+		], [
+			MONTH,
+			[1, 3, 6]
+		], [
+			YEAR,
+			null
+		]
+	],
+	
 	
 	/**
 	 * Define the available approximation types. The data grouping approximations takes an array
@@ -424,57 +454,28 @@ seriesProto.destroy = function () {
 };
 
 
-// Handle default options for data grouping
+// Handle default options for data grouping. This must be set at runtime because some series types are
+// defined after this.
 wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	
 	var options = proceed.call(this, itemOptions),
-		typeSpecificOptions = {};
-	
-	typeSpecificOptions.line = typeSpecificOptions.spline = typeSpecificOptions.area = typeSpecificOptions.areaspline = {}; // enabled
-	
-	typeSpecificOptions.column = {
-		approximation: 'sum',
-		groupPixelWidth: 10
-	};
-	
-	typeSpecificOptions.arearange = typeSpecificOptions.areasplinerange = {
-		approximation: 'range'
-	};
+		type = this.type;
 		
-	typeSpecificOptions.columnrange = {
-		approximation: 'range',
-		groupPixelWidth: 10
-	};
-	
-	typeSpecificOptions.candlestick = {
-		approximation: 'ohlc',
-		groupPixelWidth: 10
-	};
-	
-	typeSpecificOptions.ohlc = {
-		approximation: 'ohlc',
-		groupPixelWidth: 5
-	};
-	
-	if (typeSpecificOptions[this.type]) {
-		options.dataGrouping = merge(commonOptions, typeSpecificOptions[this.type], itemOptions.dataGrouping);
+	if (!defaultPlotOptions[type].dataGrouping) {
+		defaultPlotOptions[type].dataGrouping = merge(commonOptions, specificOptions[type]);
 	}
+	
+	options.dataGrouping = merge(
+		defaultPlotOptions[this.type].dataGrouping, 
+		this.chart.options.plotOptions[this.type].dataGrouping, // Set by the StockChart constructor
+		itemOptions.dataGrouping
+	);
+	
 	return options;
 });
 
 
-// line types
-/*defaultPlotOptions.line[DATA_GROUPING] =
-	defaultPlotOptions.spline[DATA_GROUPING] =
-	defaultPlotOptions.area[DATA_GROUPING] =
-	defaultPlotOptions.areaspline[DATA_GROUPING] = 
-	commonOptions;
 
-// bar-like types (OHLC and candleticks inherit this as the classes are not yet built)
-defaultPlotOptions.column[DATA_GROUPING] = merge(commonOptions, {
-		approximation: 'sum',
-		groupPixelWidth: 10
-});*/
 /* ****************************************************************************
  * End data grouping module												   *
  ******************************************************************************/

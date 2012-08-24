@@ -10,7 +10,6 @@ Highcharts.StockChart = function (options, callback) {
 				enabled: false,
 				states: {
 					hover: {
-						enabled: true,
 						radius: 5
 					}
 				}
@@ -21,11 +20,17 @@ Highcharts.StockChart = function (options, callback) {
 				hover: {
 					lineWidth: 2
 				}
+			},
+			dataGrouping: {
+				enabled: true // only for stock charts
 			}
 		},
 		columnOptions = {
 			shadow: false,
-			borderWidth: 0
+			borderWidth: 0,
+			dataGrouping: {
+				enabled: true
+			}
 		};
 
 	// apply X axis options to both single and multi y axes
