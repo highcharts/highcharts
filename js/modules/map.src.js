@@ -134,9 +134,10 @@
 					
 					// Add a mock object to the legend items
 					legendItems.push(Highcharts.extend({
+						chart: series.chart,
 						name: name,
 						options: {},
-						drawLegendSymbol: function () {}, //Highcharts.seriesTypes.column.prototype.drawLegendSymbol,
+						drawLegendSymbol: Highcharts.seriesTypes.area.prototype.drawLegendSymbol,
 						visible: true,
 						setState: function() {},
 						setVisible: function() {}
