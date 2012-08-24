@@ -240,7 +240,6 @@ seriesProto.processData = function () {
 		series.destroyGroupedData();
 		
 	}
-	
 	var i,
 		chart = series.chart,
 		processedXData = series.processedXData,
@@ -431,7 +430,9 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	var options = proceed.call(this, itemOptions),
 		typeSpecificOptions = {};
 	
-	typeSpecificOptions.column = typeSpecificOptions.ohlc = typeSpecificOptions.candlestick = {
+	typeSpecificOptions.line = typeSpecificOptions.spline = typeSpecificOptions.area = typeSpecificOptions.areaspline = {}; // enabled
+	
+	typeSpecificOptions.column = {
 		approximation: 'sum',
 		groupPixelWidth: 10
 	};
@@ -450,13 +451,14 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 		groupPixelWidth: 10
 	};
 	
-	typeSpecificOptions.candlestick = {
+	typeSpecificOptions.ohlc = {
 		approximation: 'ohlc',
 		groupPixelWidth: 5
 	};
 	
-	options.dataGrouping = merge(commonOptions, typeSpecificOptions[this.type], itemOptions.dataGrouping);
-	
+	if (typeSpecificOptions[this.type]) {
+		options.dataGrouping = merge(commonOptions, typeSpecificOptions[this.type], itemOptions.dataGrouping);
+	}
 	return options;
 });
 
