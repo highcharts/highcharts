@@ -156,7 +156,7 @@
             <file name="Outro.js"/>
         </filelist>
 
-        <!-- This is the list of files for highstock -->
+        <!-- This is the list of files for highcharts-more -->
         <filelist id="highchartsmore.files" dir="${highchartsmore.parts.dir}">
             <file name="Intro.js"/>
             <file name="Globals.js"/>
@@ -291,16 +291,6 @@
             	<exclude name="Intro.js" />
             	<exclude name="Outro.js" />
             </fileset>
-            <fileset dir="${highchartsmore.parts.dir}">
-            	<include name="*.js" />
-            	<exclude name="Intro.js" />
-            	<exclude name="Outro.js" />
-            </fileset>
-            <fileset dir="${highchartsmore.parts.dir}">
-            	<include name="*.js" />
-            	<exclude name="Intro.js" />
-            	<exclude name="Outro.js" />
-            </fileset>
         </jslint>
 
         <!-- Set a property that tells if there are unused variables. -->
@@ -372,6 +362,11 @@
         <antcall target="compile">
             <param name="param.src" value="${highchartsmore.src.file}"/>
             <param name="param.out" value="${dist.dir}/highcharts/js/${highchartsmore.minified.name}"/>
+        </antcall>
+
+        <antcall target="compile">
+            <param name="param.src" value="${highchartsmore.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highstock/js/${highchartsmore.minified.name}"/>
         </antcall>
 
         <antcall target="compile">
@@ -500,6 +495,11 @@
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
@@ -807,7 +807,10 @@
 	   		<fileset dir="${basedir}/build/dist/highcharts/js">
       			<include name="*.js"/>
       			<include name="*/*.js"/>
-    		</fileset>    		
+    		</fileset>
+    		<fileset dir="${basedir}/build/dist/highcharts">
+      			<include name="gfx/*.png"/>
+    		</fileset>
   		</ftp> 
   		
   		<!-- Upload the .js files to code.highcharts.com root -->   	
@@ -818,7 +821,10 @@
 	   		<fileset dir="${basedir}/build/dist/highcharts/js">
       			<include name="*.js"/>
       			<include name="*/*.js"/>
-    		</fileset>    		
+    		</fileset>   
+    		<fileset dir="${basedir}/build/dist/highcharts">
+      			<include name="gfx/*.png"/>
+    		</fileset> 	
   		</ftp>
     </target>
     
@@ -853,7 +859,10 @@
 	   		<fileset dir="${basedir}/build/dist/highstock/js">
       			<include name="*.js"/>
       			<include name="*/*.js"/>
-    		</fileset>    		
+    		</fileset>    
+    		<fileset dir="${basedir}/build/dist/highstock">
+      			<include name="gfx/*.png"/>
+    		</fileset>		
   		</ftp> 
   		
   		<!-- Upload the .js files to code.highcharts.com root -->   	
@@ -864,7 +873,10 @@
 	   		<fileset dir="${basedir}/build/dist/highstock/js">
       			<include name="*.js"/>
       			<include name="*/*.js"/>
-    		</fileset>    		
+    		</fileset>  
+    		<fileset dir="${basedir}/build/dist/highstock">
+      			<include name="gfx/*.png"/>
+    		</fileset>  		
   		</ftp>
     </target>
 </project>

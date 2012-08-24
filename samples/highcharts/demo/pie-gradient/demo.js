@@ -2,13 +2,6 @@ $(function () {
     var chart;
     $(document).ready(function() {
     	
-    	// This will be default in the stable release
-    	Highcharts.setOptions({
-    		global: {
-    			VMLRadialGradientURL: 'http://code.highcharts.com/gfx/radial-gradient.png'
-    		}
-    	});
-    	
     	// Radialize the colors
 		Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
 		    return {
