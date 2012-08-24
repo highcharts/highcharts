@@ -6,7 +6,6 @@
 function Tooltip(chart, options) {
 	var borderWidth = options.borderWidth,
 		style = options.style,
-		shared = options.shared,
 		padding = pInt(style.padding);
 
 	// Save the chart and options
@@ -49,7 +48,7 @@ function Tooltip(chart, options) {
 	}
 
 	// Public property for getting the shared state.
-	this.shared = shared;
+	this.shared = options.shared;
 }
 
 Tooltip.prototype = {
@@ -79,21 +78,21 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			isHidden = tooltip.isHidden;
+			animate = tooltip.options.animation !== false && !tooltip.isHidden;
 
 		// get intermediate values for animation
 		extend(now, {
-			x: isHidden ? x : (2 * now.x + x) / 3,
-			y: isHidden ? y : (now.y + y) / 2,
-			anchorX: isHidden ? anchorX : (2 * now.anchorX + anchorX) / 3,
-			anchorY: isHidden ? anchorY : (now.anchorY + anchorY) / 2
+			x: animate ? (2 * now.x + x) / 3 : x,
+			y: animate ? (now.y + y) / 2 : y,
+			anchorX: animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+			anchorY: animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
 		// move to the intermediate value
 		tooltip.label.attr(now);
 
 		// run on next tick of the mouse tracker
-		if (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1) {
+		if (animate && (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1)) {
 			tooltip.tooltipTick = function () {
 				tooltip.move(x, y, anchorX, anchorY);
 			};
@@ -143,7 +142,8 @@ Tooltip.prototype = {
 			chart = this.chart,
 			inverted = chart.inverted,
 			plotX = 0,
-			plotY = 0;
+			plotY = 0,
+			yAxis;
 		
 		points = splat(points);
 		
@@ -153,8 +153,10 @@ Tooltip.prototype = {
 		// When shared, use the average position
 		if (!ret) {
 			each(points, function (point) {
+				yAxis = point.series.yAxis;
 				plotX += point.plotX;
-				plotY += point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY;
+				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
+					(!inverted && yAxis ? yAxis.top - chart.plotTop : 0); // #1151
 			});
 			
 			plotX /= points.length;
@@ -179,13 +181,10 @@ Tooltip.prototype = {
 		
 		// Set up the variables
 		var chart = this.chart,
-			series = point.series,
-			xAxis = series && series.xAxis,
-			yAxis = series && series.yAxis,
-			plotLeft = (xAxis && xAxis.left) || chart.plotLeft,
-			plotTop = (yAxis && yAxis.top) || chart.plotTop,
-			plotWidth = (xAxis && xAxis.len) || chart.plotWidth,
-			plotHeight = (yAxis && yAxis.len) || chart.plotHeight,
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
 			distance = pick(this.options.distance, 12),
 			pointX = point.plotX,
 			pointY = point.plotY,
@@ -274,7 +273,6 @@ Tooltip.prototype = {
 			borderColor,
 			crosshairsOptions = options.crosshairs,
 			shared = tooltip.shared,
-			singlePoint,
 			currentSeries;
 			
 		// get the reference point coordinates (pie charts use tooltipPos)
@@ -286,12 +284,13 @@ Tooltip.prototype = {
 		if (shared && !(point.series && point.series.noSharedTooltip)) {
 			
 			// hide previous hoverPoints and set new
+			
+			chart.hoverPoints = point;
 			if (hoverPoints) {
 				each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
-			chart.hoverPoints = point;
 
 			each(point, function (item) {
 				item.setState(HOVER_STATE);
@@ -309,7 +308,6 @@ Tooltip.prototype = {
 		// single point tooltip
 		} else {
 			textConfig = point.getLabelConfig();
-			singlePoint = point;
 		}
 		text = formatter.call(textConfig);
 
@@ -345,7 +343,7 @@ Tooltip.prototype = {
 				tooltip,
 				label.width,
 				label.height,
-				singlePoint || { plotX: x, plotY: y }
+				{ plotX: x, plotY: y }
 			);
 
 			// do the move

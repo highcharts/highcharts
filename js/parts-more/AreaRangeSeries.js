@@ -1,12 +1,6 @@
 /* 
  * The AreaRangeSeries class
  * 
- * http://jsfiddle.net/highcharts/DFANM/
- * 
- * TODO:
- * - Check out inverted
- * - Disable stateMarker (or concatenize paths for the markers?)
- * - Test series.data point config formats
  */
 
 /**
@@ -14,14 +8,17 @@
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	lineWidth: 0,
+	marker: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.low} - {point.high}' 
+		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.low}</b> - <b>{point.high}</b><br/>' 
 	},
 	trackByArea: true,
 	dataLabels: {
-		yHigh: -6,
-		yLow: 16
+		xLow: 0,
+		xHigh: 0,
+		yLow: 16,
+		yHigh: -6		
 	}
 });
 
@@ -36,10 +33,13 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 	 *
 	 * @param {Object} options
 	 */
-	applyOptions: function (options) {
+	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			i = 0;
+			pointArrayMap = series.pointArrayMap,
+			i = 0,
+			j = 0,
+			valueCount = pointArrayMap.length;
 
 
 		// object input
@@ -52,7 +52,7 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 			
 		} else if (options.length) { // array
 			// with leading x value
-			if (options.length === 3) {
+			if (options.length > valueCount) {
 				if (typeof options[0] === 'string') {
 					point.name = options[0];
 				} else if (typeof options[0] === 'number') {
@@ -60,21 +60,23 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 				}
 				i++;
 			}
-			point.low = options[i++];
-			point.high = options[i++];
+			while (j < valueCount) {
+				point[pointArrayMap[j++]] = options[i++];
+			}
 		}
 
 		// Handle null and make low alias y
-		if (point.high === null) {
+		/*if (point.high === null) {
 			point.low = null;
-		}
-		point.y = point.low;
+		}*/
+		point.y = point[series.pointValKey];
 		
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
-			point.x = series.autoIncrement();
+			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
+		
 		return point;
 	},
 	
@@ -91,8 +93,9 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
  */
 seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	type: 'arearange',
-	valueCount: 2, // two values per point
-	pointClass: RangePoint, 
+	pointArrayMap: ['low', 'high'],
+	pointClass: RangePoint,
+	pointValKey: 'low',
 	
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -162,7 +165,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			originalDataLabels = [],
 			uberMethod = Series.prototype.drawDataLabels,
 			dataLabelOptions = this.options.dataLabels,
-			point;
+			point,
+			inverted = this.chart.inverted;
 			
 		// Step 1: set preliminary values for plotY and dataLabel and draw the upper labels
 		i = length;
@@ -178,8 +182,13 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			originalDataLabels[i] = point.dataLabel;
 			point.dataLabel = point.dataLabelUpper;
 			
-			// Set the default y offset
-			dataLabelOptions.y = dataLabelOptions.yHigh;
+			// Set the default offset
+			if (inverted) {
+				dataLabelOptions.align = 'left';
+				dataLabelOptions.x = dataLabelOptions.xHigh;								
+			} else {
+				dataLabelOptions.y = dataLabelOptions.yHigh;
+			}
 		}
 		uberMethod.apply(this, arguments);
 		
@@ -196,12 +205,19 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			point.y = point.low;
 			point.plotY = point.plotLow;
 			
-			// Set the default y offset
-			dataLabelOptions.y = dataLabelOptions.yLow;
+			// Set the default offset
+			if (inverted) {
+				dataLabelOptions.align = 'right';
+				dataLabelOptions.x = dataLabelOptions.xLow;
+			} else {
+				dataLabelOptions.y = dataLabelOptions.yLow;
+			}
 		}
 		uberMethod.apply(this, arguments);
 	
 	},
+	
+	getSymbol: seriesTypes.column.prototype.getSymbol,
 	
 	drawPoints: noop
 });

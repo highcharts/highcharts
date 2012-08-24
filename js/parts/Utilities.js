@@ -259,6 +259,23 @@ function pad(number, length) {
 }
 
 /**
+ * Wrap a method with extended functionality, preserving the original function
+ * @param {Object} obj The context object that the method belongs to 
+ * @param {String} method The name of the method to extend
+ * @param {Function} func A wrapper function callback. This function is called with the same arguments
+ * as the original function, except that the original function is unshifted and passed as the first 
+ * argument. 
+ */
+function wrap(obj, method, func) {
+	var proceed = obj[method];
+	obj[method] = function () {
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift(proceed);
+		return func.apply(this, args);
+	};
+}
+
+/**
  * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
  * @param {Number} timestamp

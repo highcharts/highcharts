@@ -61,7 +61,7 @@ var ScatterSeries = extendClass(Series, {
 		
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			series.group
+			series.markerGroup
 				.attr({
 					isTracker: true
 				})
@@ -80,7 +80,6 @@ var ScatterSeries = extendClass(Series, {
 		} else {
 			series._hasTracking = true;
 		}
-
 	}
 });
 seriesTypes.scatter = ScatterSeries;

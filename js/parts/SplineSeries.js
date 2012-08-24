@@ -10,7 +10,7 @@ var SplineSeries = extendClass(Series, {
 	type: 'spline',
 
 	/**
-	 * Draw the actual graph
+	 * Get the spline segment from a given point's previous neighbour to the given point
 	 */
 	getPointSpline: function (segment, point, i) {
 		var smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc
@@ -26,7 +26,8 @@ var SplineSeries = extendClass(Series, {
 			ret;
 
 		// find control points
-		if (i && i < segment.length - 1) {
+		if (lastPoint && nextPoint) {
+		
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -67,6 +68,40 @@ var SplineSeries = extendClass(Series, {
 			point.rightContY = rightContY;
 
 		}
+		
+		// Visualize control points for debugging
+		/*
+		if (leftContX) {
+			this.chart.renderer.circle(leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop, 2)
+				.attr({
+					stroke: 'red',
+					'stroke-width': 1,
+					fill: 'none'
+				})
+				.add();
+			this.chart.renderer.path(['M', leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop,
+				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+				.attr({
+					stroke: 'red',
+					'stroke-width': 1
+				})
+				.add();
+			this.chart.renderer.circle(rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop, 2)
+				.attr({
+					stroke: 'green',
+					'stroke-width': 1,
+					fill: 'none'
+				})
+				.add();
+			this.chart.renderer.path(['M', rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop,
+				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+				.attr({
+					stroke: 'green',
+					'stroke-width': 1
+				})
+				.add();
+		}
+		// */
 
 		// moveTo or lineTo
 		if (!i) {

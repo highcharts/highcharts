@@ -55,13 +55,14 @@ $(function () {
                 }];
     
         function setChart(name, categories, data, color) {
-            chart.xAxis[0].setCategories(categories);
-            chart.series[0].remove();
-            chart.addSeries({
-                name: name,
-                data: data,
-                color: color || 'white'
-            });
+			chart.xAxis[0].setCategories(categories, false);
+			chart.series[0].remove(false);
+			chart.addSeries({
+				name: name,
+				data: data,
+				color: color || 'white'
+			}, false);
+			chart.redraw();
         }
     
         chart = new Highcharts.Chart({

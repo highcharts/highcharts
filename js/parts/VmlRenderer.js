@@ -163,7 +163,7 @@ var VMLElement = {
 				skipAttr = false;
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](value, key);
+				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
 
 				if (result !== false && value !== null) { // #620
 
@@ -258,7 +258,6 @@ var VMLElement = {
 
 					// x and y
 					} else if (key === 'x' || key === 'y') {
-
 						wrapper[key] = value; // used in getter
 						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
 
@@ -300,7 +299,7 @@ var VMLElement = {
 						} else {
 							element.filled = value !== NONE ? true : false;
 
-							value = renderer.color(value, element, key);
+							value = renderer.color(value, element, key, wrapper);
 
 							key = 'fillcolor';
 						}
@@ -308,6 +307,9 @@ var VMLElement = {
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
 						wrapper[key] = value;
+						// Correction for the 1x1 size of the shape container. Used in gauge needles.
+						element.style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
+						element.style.top = mathRound(mathCos(value * deg2rad)) + PX;
 
 					// translation for animation
 					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
@@ -358,20 +360,19 @@ var VMLElement = {
 			element = wrapper.element,
 			parentNode = element.parentNode;
 
-		if (!clipRect) {
-			wrapper.destroyClip();
-		} else {
+		if (clipRect) {
 			clipMembers = clipRect.members;
 			clipMembers.push(wrapper);
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
 			};
-		
 			// Issue #863 workaround - related to #140, #61, #74
 			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
 				css(element, { visibility: HIDDEN });
 			}
 			
+		} else if (wrapper.destroyClip) {
+			wrapper.destroyClip();
 		}
 		
 		return wrapper.css(clipRect ? clipRect.getCSS(wrapper) : { clip: 'inherit' });	
@@ -601,15 +602,16 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	clipRect: function (x, y, width, height) {
 
 		// create a dummy element
-		var clipRect = this.createElement();
-
+		var clipRect = this.createElement(),
+			isObj = isObject(x);
+		
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
-			left: x,
-			top: y,
-			width: width,
-			height: height,
+			left: isObj ? x.x : x,
+			top: isObj ? x.y : y,
+			width: isObj ? x.width : width,
+			height: isObj ? x.height : height,
 			getCSS: function (wrapper) {
 				var inverted = wrapper.inverted,
 					rect = this,
@@ -653,8 +655,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 *
 	 * @param {Object} color The color or config object
 	 */
-	color: function (color, elem, prop) {
-		var colorObject,
+	color: function (color, elem, prop, wrapper) {
+		var renderer = this,
+			colorObject,
 			regexRgba = /^rgba/,
 			markup,
 			fillType,
@@ -677,7 +680,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				y1, 
 				x2,
 				y2,
-				angle,
 				opacity1,
 				opacity2,
 				color1,
@@ -686,7 +688,14 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				stops = color.stops,
 				firstStop,
 				lastStop,
-				colors = [];
+				colors = [],
+				addFillNode = function () {
+					// Add the fill subnode. When colors attribute is used, the meanings of opacity and o:opacity2
+					// are reversed.
+					markup = ['<fill colors="' + colors.join(',') + '" opacity="', opacity2, '" o:opacity2="', opacity1,
+						'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
+					createElement(renderer.prepVML(markup), null, null, elem);
+				};
 			
 			// Extend from 0 to 1
 			firstStop = stops[0];
@@ -728,64 +737,66 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				}
 			});
 			
-			// Handle linear gradient angle
-			if (fillType === 'gradient') {
-				x1 = gradient.x1 || gradient[0] || 0;
-				y1 = gradient.y1 || gradient[1] || 0;
-				x2 = gradient.x2 || gradient[2] || 0;
-				y2 = gradient.y2 || gradient[3] || 0;
-				angle = 90  - math.atan(
-					(y2 - y1) / // y vector
-					(x2 - x1) // x vector
-					) * 180 / mathPI;
-				
-			// Radial (circular) gradient
-			} else { 
-				// pie:       http://jsfiddle.net/highcharts/66g8H/
-				// reference: http://jsfiddle.net/highcharts/etznJ/
-				// http://jsfiddle.net/highcharts/XRbCc/
-				// http://jsfiddle.net/highcharts/F3fwR/
-				// TODO:
-				// - correct for radialRefeence
-				// - check whether gradient stops are supported
-				// - add global option for gradient image (must relate to version)
-				var r = gradient.r,
-					size = r * 2,
-					cx = gradient.cx,
-					cy = gradient.cy;
-					//radialReference = elem.radialReference;
-				
-				//if (radialReference) {
-					// Try setting pixel size, or other way to adjust the gradient size to the bounding box
-				//}
-				fillAttr = 'src="http://code.highcharts.com/gfx/radial-gradient.png" ' +
-					'size="' + size + ',' + size + '" ' +
-					'origin="0.5,0.5" ' +
-					'position="' + cx + ',' + cy + '" ' +
-					'color2="' + color2 + '" ';
-				
-				// The fill element's color attribute is broken in IE8 standards mode, so we
-				// need to set the parent shape's fillcolor attribute instead.
-				ret = color1;
-			}
-			
-			
-
 			// Apply the gradient to fills only.
 			if (prop === 'fill') {
 				
-				// when colors attribute is used, the meanings of opacity and o:opacity2
-				// are reversed.
-				markup = ['<fill colors="' + colors.join(',') + '" angle="', angle,
-					'" opacity="', opacity2, '" o:opacity2="', opacity1,
-					'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
-				createElement(this.prepVML(markup), null, null, elem);
+				// Handle linear gradient angle
+				if (fillType === 'gradient') {
+					x1 = gradient.x1 || gradient[0] || 0;
+					y1 = gradient.y1 || gradient[1] || 0;
+					x2 = gradient.x2 || gradient[2] || 0;
+					y2 = gradient.y2 || gradient[3] || 0;
+					fillAttr = 'angle="' + (90  - math.atan(
+						(y2 - y1) / // y vector
+						(x2 - x1) // x vector
+						) * 180 / mathPI) + '"';
+						
+					addFillNode();
+					
+				// Radial (circular) gradient
+				} else { 
+					
+					var r = gradient.r,
+						sizex = r * 2,
+						sizey = r * 2,
+						cx = gradient.cx,
+						cy = gradient.cy,
+						radialReference = elem.radialReference,
+						bBox,
+						applyRadialGradient = function () {
+							if (radialReference) {
+								bBox = wrapper.getBBox();
+								cx += (radialReference[0] - bBox.x) / bBox.width - 0.5;
+								cy += (radialReference[1] - bBox.y) / bBox.height - 0.5;
+								sizex *= radialReference[2] / bBox.width;
+								sizey *= radialReference[2] / bBox.height;							
+							}
+							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
+								'size="' + sizex + ',' + sizey + '" ' +
+								'origin="0.5,0.5" ' +
+								'position="' + cx + ',' + cy + '" ' +
+								'color2="' + color2 + '" ';
+							
+							addFillNode();
+						};
+					
+					// Apply radial gradient
+					if (wrapper.added) {
+						applyRadialGradient();
+					} else {
+						// We need to know the bounding box to get the size and position right
+						addEvent(wrapper, 'add', applyRadialGradient);
+					}
+					
+					// The fill element's color attribute is broken in IE8 standards mode, so we
+					// need to set the parent shape's fillcolor attribute instead.
+					ret = color1;
+				}
 			
 			// Gradients are not supported for VML stroke, return the first color. #722.
 			} else {
 				ret = stopColor;
 			}
-
 
 		// if the color is an rgba color, split it and add a fill node
 		// to hold the opacity component
@@ -991,11 +1002,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				y + radius * sinEnd  // end y
 			];
 
-			if (options.open) {
+			if (options.open && !innerRadius) {
 				ret.push(
+					'e',
 					M, 
-					x - innerRadius, 
-					y - innerRadius
+					x,// - innerRadius, 
+					y// - innerRadius
 				);
 			}
 

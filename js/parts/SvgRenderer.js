@@ -98,7 +98,7 @@ SVGElement.prototype = {
 				value = hash[key];
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](value, key);
+				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
 
 				if (result !== false) {
 					if (result !== UNDEFINED) {
@@ -477,7 +477,7 @@ SVGElement.prototype = {
 
 		// faking getBBox in exported SVG in legacy IE
 		if (!bBox || refresh) {
-			// faking getBBox in exported SVG in legacy IE
+			// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
 			if (element.nodeName === 'text') {
 				element.style.position = ABSOLUTE;
 			}
@@ -785,7 +785,7 @@ SVGElement.prototype = {
 	hide: function () {
 		return this.attr({ visibility: HIDDEN });
 	},
-
+	
 	/**
 	 * Add the element
 	 * @param {Object|Undefined} parent Can be an element, an element wrapper or undefined
@@ -933,7 +933,7 @@ SVGElement.prototype = {
 
 	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
-	 * @param {Boolean|Object} shadowOptions // docs
+	 * @param {Boolean|Object} shadowOptions
 	 */
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
@@ -952,7 +952,7 @@ SVGElement.prototype = {
 			shadowWidth = pick(shadowOptions.width, 3);
 			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			transform = this.parentInverted ? 
-				'(-1,-1)' : // this doesn't work 
+				'(-1,-1)' : 
 				'(' + (shadowOptions.offsetX || 1) + ', ' + (shadowOptions.offsetY || 1) + ')';
 			for (i = 1; i <= shadowWidth; i++) {
 				shadow = element.cloneNode(0);

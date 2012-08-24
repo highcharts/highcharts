@@ -1,17 +1,5 @@
 /* 
  * The GaugeSeries class
- * 
- * Speedometer: http://jsfiddle.net/highcharts/qPeFM/
- * Clock:       http://jsfiddle.net/highcharts/BFN2F/
- * Minimal:     http://jsfiddle.net/highcharts/9XgY7/
- * 
- * TODO:
- * - Radial gradients.
- *	 - Fix issue with linearGradient being present from merging background options
- *	 - Experiment more with pattern in VML
- * - Size to the actual space given, for example by vu-meters
- * - Dials are not perfectly centered in IE. Consider altering translation in updateTransform.
- * - Missing axis line in IE, dual axes example
  */
 
 
@@ -117,7 +105,8 @@ var GaugeSeries = {
 					radius, -topWidth / 2,
 					radius, topWidth / 2,
 					baseLength, baseWidth / 2,
-					-rearLength, baseWidth / 2
+					-rearLength, baseWidth / 2,
+					'z'
 				],
 				translateX: center[0],
 				translateY: center[1],
@@ -156,7 +145,8 @@ var GaugeSeries = {
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
-						fill: dialOptions.backgroundColor || 'black'
+						fill: dialOptions.backgroundColor || 'black',
+						rotation: shapeArgs.rotation // required by VML when animation is false
 					})
 					.add(series.group);
 			}
@@ -206,8 +196,15 @@ var GaugeSeries = {
 	},
 	
 	render: function () {
-		this.createGroup();
+		this.group = this.plotGroup(
+			'group', 
+			'series', 
+			this.visible ? 'visible' : 'hidden', 
+			this.options.zIndex, 
+			this.chart.seriesGroup
+		);
 		seriesTypes.pie.prototype.render.call(this);
+		this.group.clip(this.chart.clipRect);
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,

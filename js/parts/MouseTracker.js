@@ -51,16 +51,9 @@ MouseTracker.prototype = {
 			e.target = e.srcElement;
 		}
 
-		// jQuery only copies over some properties. IE needs e.x and iOS needs touches.
-		if (e.originalEvent) {
-			e = e.originalEvent;
-		}
-
-		// The same for MooTools. It renames e.pageX to e.page.x. #445.
-		if (e.event) {
-			e = e.event;
-		}
-
+		// Framework specific normalizing (#1165)
+		e = washMouseEvent(e);
+		
 		// iOS
 		ePos = e.touches ? e.touches.item(0) : e;
 
@@ -79,7 +72,6 @@ MouseTracker.prototype = {
 		return extend(e, {
 			chartX: mathRound(chartX),
 			chartY: mathRound(chartY)
-		
 		});
 	},
 
@@ -102,14 +94,25 @@ MouseTracker.prototype = {
 			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
 				value: axis.translate(
-					isHorizontal ?
+					(isHorizontal ?
 						e.chartX - chart.plotLeft :
-						axis.top + axis.len - e.chartY, // #1051
+						axis.top + axis.len - e.chartY) - axis.minPixelPadding, // #1051
 					true
 				)
 			});
 		});
 		return coordinates;
+	},
+	
+	/**
+	 * Return the index in the tooltipPoints array, corresponding to pixel position in 
+	 * the plot area.
+	 */
+	getIndex: function (e) {
+		var chart = this.chart;
+		return chart.inverted ? 
+			chart.plotHeight + chart.plotTop - e.chartY : 
+			e.chartX - chart.plotLeft;
 	},
 
 	/**
@@ -119,6 +122,7 @@ MouseTracker.prototype = {
 		var mouseTracker = this,
 			chart = mouseTracker.chart,
 			series = chart.series,
+			tooltip = chart.tooltip,
 			point,
 			points,
 			hoverPoint = chart.hoverPoint,
@@ -126,11 +130,10 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			// the index in the tooltipPoints array, corresponding to pixel position in plot area
-			index = chart.inverted ? chart.plotHeight + chart.plotTop - e.chartY : e.chartX - chart.plotLeft;
+			index = mouseTracker.getIndex(e);
 
 		// shared tooltip
-		if (chart.tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
+		if (tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
 			points = [];
 
 			// loop over all series and find the ones with points closest to the mouse
@@ -140,7 +143,7 @@ MouseTracker.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point.plotX);
+					point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
 					distance = mathMin(distance, point._dist);
 					points.push(point);
 				}
@@ -154,7 +157,7 @@ MouseTracker.prototype = {
 			}
 			// refresh the tooltip if necessary
 			if (points.length && (points[0].plotX !== mouseTracker.hoverX)) {
-				chart.tooltip.refresh(points, e);
+				tooltip.refresh(points, e);
 				mouseTracker.hoverX = points[0].plotX;
 			}
 		}
@@ -187,8 +190,8 @@ MouseTracker.prototype = {
 			chart = mouseTracker.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltipPoints = chart.hoverPoints || hoverPoint,
-			tooltip = chart.tooltip;
+			tooltip = chart.tooltip,
+			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
 			
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
@@ -267,9 +270,10 @@ MouseTracker.prototype = {
 									1
 								),
 								selectionMax = axis.translate(
-									isHorizontal ?
-										selectionLeft + selectionBox.width :
-										chart.plotHeight - selectionTop,
+									(isHorizontal ?
+											selectionLeft + selectionBox.width :
+											chart.plotHeight - selectionTop) -  
+										2 * axis.minPixelPadding, // #875
 									true,
 									0,
 									0,
@@ -309,7 +313,7 @@ MouseTracker.prototype = {
 		mouseTracker.hideTooltipOnMouseMove = function (e) {
 
 			// Get e.pageX and e.pageY back in MooTools
-			washMouseEvent(e);
+			e = washMouseEvent(e);
 
 			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition && chart.hoverSeries && chart.hoverSeries.isCartesian &&

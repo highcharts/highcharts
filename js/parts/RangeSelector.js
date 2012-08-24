@@ -175,7 +175,7 @@ RangeSelector.prototype = {
 					pick(redraw, 1),
 					0, 
 					{ 
-						trigger: 'rangeSelectorButton', // docs
+						trigger: 'rangeSelectorButton',
 						rangeSelectorButton: rangeOptions
 					}
 				);

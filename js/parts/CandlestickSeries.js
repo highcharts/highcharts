@@ -4,10 +4,6 @@
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
-	dataGrouping: {
-		approximation: 'ohlc',
-		enabled: true
-	},
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {
@@ -32,28 +28,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth'
 	},
-
-	/**
-	 * Postprocess mapping between options and SVG attributes
-	 */
-	getAttribs: function () {
-		OHLCSeries.prototype.getAttribs.apply(this, arguments);
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upColor = options.upColor,
-			seriesDownPointAttr = merge(series.pointAttr);
-
-		seriesDownPointAttr[''].fill = upColor;
-		seriesDownPointAttr.hover.fill = stateOptions.hover.upColor || upColor;
-		seriesDownPointAttr.select.fill = stateOptions.select.upColor || upColor;
-
-		each(series.points, function (point) {
-			if (point.open < point.close) {
-				point.pointAttr = seriesDownPointAttr;
-			}
-		});
-	},
+	upColorProp: 'fill',
 
 	/**
 	 * Draw the data points

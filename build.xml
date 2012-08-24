@@ -160,8 +160,11 @@
         <filelist id="highchartsmore.files" dir="${highchartsmore.parts.dir}">
             <file name="Intro.js"/>
             <file name="Globals.js"/>
+            <file name="Pane.js"/>
             <file name="RadialAxis.js"/>
             <file name="AreaRangeSeries.js"/>
+            <file name="AreaSplineRangeSeries.js"/>
+            <file name="ColumnRangeSeries.js"/>
             <file name="GaugeSeries.js"/>
             <file name="Polar.js"/>
             <file name="Outro.js"/>
@@ -177,8 +180,10 @@
 
         <mkdir dir="${dist.dir}/js/adapters"/>
         <mkdir dir="${dist.dir}/js/modules"/>
+        <mkdir dir="${dist.dir}/highcharts/gfx"/>
         <mkdir dir="${dist.dir}/highcharts/js/adapters"/>
         <mkdir dir="${dist.dir}/highcharts/js/modules"/>
+        <mkdir dir="${dist.dir}/highstock/gfx"/>
         <mkdir dir="${dist.dir}/highstock/js/adapters"/>
         <mkdir dir="${dist.dir}/highstock/js/modules"/>
         <mkdir dir="${testoutput.dir}"/>
@@ -501,6 +506,9 @@
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
+		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx"><filterset refid="highcharts.filter"/></copy>
+		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx"><filterset refid="highstock.filter"/></copy>
+
         <copy todir="${dist.dir}/highcharts/js/themes">
             <fileset dir="${themes.dir}"/>
         </copy>
@@ -587,6 +595,11 @@
         <!-- jquery versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
+            <param name="testrun.name" value="jquery-1.8.0"/>
+            <param name="required.lib" value="jquery-1.8.0.js"/>
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="jquery-1.7.2"/>
             <param name="required.lib" value="jquery-1.7.2.js"/>
         </antcall>
@@ -643,24 +656,24 @@
     <target name="test" description="Runs the unit tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="jquery-1.7.2"/>
-            <param name="required.lib" value="jquery-1.7.2.js"/>
+            <param name="testrun.name" value="jquery-1.8.0"/>
+            <param name="required.lib" value="jquery-1.8.0.js"/>
         </antcall>
     </target>
 
     <target name="it" description="Runs the integration tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="it"/>
-            <param name="testrun.name" value="jquery-1.7.2"/>
-            <param name="required.lib" value="jquery-1.7.2.js"/>
+            <param name="testrun.name" value="jquery-1.8.0"/>
+            <param name="required.lib" value="jquery-1.8.0.js"/>
         </antcall>
     </target>
 
     <target name="gc" description="Runs the leaks tests using latest jquery. The server must be running (i.e. 'server').">
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="gc"/>
-            <param name="testrun.name" value="jquery-1.7.2"/>
-            <param name="required.lib" value="jquery-1.7.2.js"/>
+            <param name="testrun.name" value="jquery-1.8.0"/>
+            <param name="required.lib" value="jquery-1.8.0.js"/>
         </antcall>
     </target>
 

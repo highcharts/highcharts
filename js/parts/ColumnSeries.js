@@ -7,7 +7,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
-	//grouping: true, // docs
+	//grouping: true,
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
 	//pointWidth: null,
@@ -182,8 +182,7 @@ var ColumnSeries = extendClass(Series, {
 
 	},
 
-	getSymbol: function () {
-	},
+	getSymbol: noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
@@ -194,7 +193,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: function () {},
+	drawGraph: noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates

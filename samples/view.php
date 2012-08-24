@@ -7,6 +7,15 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 $i = (int)$_GET['i'];
 $next = $i + 1;
 
+// Get HTML and use dev server
+ob_start();
+include("$path/demo.html");
+$html = ob_get_clean();
+$html = str_replace('/code.highcharts.com/high', '/code.highcharts.com/dev/high', $html);
+$html = str_replace('/code.highcharts.com/stock/', '/code.highcharts.com/dev/', $html);
+$html = str_replace('/code.highcharts.com/modules/', '/code.highcharts.com/dev/modules/', $html);
+	
+
 
 function getResources() {
 	global $path;
@@ -44,6 +53,8 @@ function getResources() {
 	}
 	return $html;
 }
+
+
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -75,12 +86,12 @@ function getResources() {
 							$(contentDoc.currentLi).addClass('visited');
 						}
 						
-						$(li).addClass('hilighted');
 						$(contentDoc.body).animate({
 							scrollTop: $(li).offset().top - 70
 						},'slow');
 
 						contentDoc.currentLi = li;
+						$(li).addClass('hilighted');
 					}
 					
 					// add the next button
@@ -133,7 +144,7 @@ function getResources() {
 		</div>
 		<div style="margin: 1em">
 		
-		<?php @include("$path/demo.html"); ?>
+		<?php echo $html ?>
 		</div>
 		
 	</body>

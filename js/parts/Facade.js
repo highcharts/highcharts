@@ -8,6 +8,7 @@ extend(Highcharts, {
 	Chart: Chart,
 	Color: Color,
 	Legend: Legend,
+	MouseTracker: MouseTracker,
 	Point: Point,
 	Tick: Tick,
 	Tooltip: Tooltip,
@@ -37,6 +38,10 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
+	wrap: wrap,
+	svg: hasSVG,
+	canvas: useCanVG,
+	vml: !hasSVG && !useCanVG,
 	product: '@product.name@',
 	version: '@product.version@'
 });

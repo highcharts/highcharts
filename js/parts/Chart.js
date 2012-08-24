@@ -160,7 +160,6 @@ Chart.prototype = {
 			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
-			clipRect = chart.clipRect,
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden();
@@ -242,16 +241,6 @@ Chart.prototype = {
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			chart.drawChartBox();
-
-			// move clip rect
-			if (clipRect) {
-				stop(clipRect);
-				clipRect.animate({ // for chart resize
-					width: chart.plotSizeX,
-					height: chart.plotSizeY + 1
-				});
-			}
-
 		}
 
 
@@ -582,8 +571,9 @@ Chart.prototype = {
 				chartTitleOptions = arr[2];
 
 			if (title && titleOptions) {
-				title = title.destroy(); // remove old
+				chart[name] = title = title.destroy(); // remove old
 			}
+			
 			if (chartTitleOptions && chartTitleOptions.text && !title) {
 				chart[name] = chart.renderer.text(
 					chartTitleOptions.text,
@@ -982,7 +972,8 @@ Chart.prototype = {
 			plotLeft,
 			plotTop,
 			plotWidth,
-			plotHeight;
+			plotHeight,
+			plotBorderWidth;
 
 		chart.plotLeft = plotLeft = mathRound(chart.plotLeft);
 		chart.plotTop = plotTop = mathRound(chart.plotTop);
@@ -992,7 +983,7 @@ Chart.prototype = {
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
 		
-		chart.plotBorderWidth = optionsChart.plotBorderWidth || 0;
+		chart.plotBorderWidth = plotBorderWidth = optionsChart.plotBorderWidth || 0;
 
 		// Set boxes used for alignment
 		chart.spacingBox = {
@@ -1006,6 +997,12 @@ Chart.prototype = {
 			y: plotTop,
 			width: plotWidth,
 			height: plotHeight
+		};
+		chart.clipBox = {
+			x: plotBorderWidth / 2, 
+			y: plotBorderWidth / 2, 
+			width: chart.plotSizeX - plotBorderWidth, 
+			height: chart.plotSizeY - plotBorderWidth
 		};
 
 		each(chart.axes, function (axis) {
@@ -1049,9 +1046,16 @@ Chart.prototype = {
 			chartBackgroundColor = optionsChart.backgroundColor,
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
+			plotBorderWidth = optionsChart.plotBorderWidth || 0,
 			mgn,
 			bgAttr,
-			plotBox = chart.plotBox;
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
+			plotBox = chart.plotBox,
+			clipRect = chart.clipRect,
+			clipBox = chart.clipBox;
 
 		// Chart area
 		mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
@@ -1071,6 +1075,7 @@ Chart.prototype = {
 					.attr(bgAttr)
 					.add()
 					.shadow(optionsChart.shadow);
+
 			} else { // resize
 				chartBackground.animate(
 					chartBackground.crisp(null, null, null, chartWidth - mgn, chartHeight - mgn)
@@ -1082,7 +1087,7 @@ Chart.prototype = {
 		// Plot background
 		if (plotBackgroundColor) {
 			if (!plotBackground) {
-				chart.plotBackground = renderer.rect(chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight, 0)
+				chart.plotBackground = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0)
 					.attr({
 						fill: plotBackgroundColor
 					})
@@ -1094,26 +1099,36 @@ Chart.prototype = {
 		}
 		if (plotBackgroundImage) {
 			if (!plotBGImage) {
-				chart.plotBGImage = renderer.image(plotBackgroundImage, chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight)
+				chart.plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight)
 					.add();
 			} else {
 				plotBGImage.animate(plotBox);
 			}
 		}
+		
+		// Plot clip
+		if (!clipRect) {
+			chart.clipRect = renderer.clipRect(clipBox);
+		} else {
+			clipRect.animate({
+				width: clipBox.width,
+				height: clipBox.height
+			});
+		}
 
 		// Plot area border
-		if (optionsChart.plotBorderWidth) {
+		if (plotBorderWidth) {
 			if (!plotBorder) {
-				chart.plotBorder = renderer.rect(chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight, 0, optionsChart.plotBorderWidth)
+				chart.plotBorder = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0, plotBorderWidth)
 					.attr({
 						stroke: optionsChart.plotBorderColor,
-						'stroke-width': optionsChart.plotBorderWidth,
+						'stroke-width': plotBorderWidth,
 						zIndex: 1
 					})
 					.add();
 			} else {
 				plotBorder.animate(
-					plotBorder.crisp(null, chart.plotLeft, chart.plotTop, chart.plotWidth, chart.plotHeight)
+					plotBorder.crisp(null, plotLeft, plotTop, plotWidth, plotHeight)
 				);
 			}
 		}

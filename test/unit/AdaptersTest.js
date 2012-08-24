@@ -46,6 +46,16 @@ AdaptersTest.prototype.testEach = function() {
 	assertEquals('each value', 2, arr[0]);
 };
 
+
+AdaptersTest.prototype.testInArray = function() {
+	
+	// test with no match
+	assertEquals("In array -1", -1, inArray("bar", ["foo", "baz"]));
+	
+	// test with match
+	assertEquals("In array 1", 1, inArray("bar", ["foo", "bar"]));
+};
+
 /**
  * Test each method on arrays.
  */

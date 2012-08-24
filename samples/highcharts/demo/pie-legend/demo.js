@@ -1,6 +1,9 @@
 $(function () {
     var chart;
-    $(document).ready(function() {
+    
+    $(document).ready(function () {
+    	
+    	// Build the chart
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',

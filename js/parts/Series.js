@@ -79,8 +79,6 @@ Point.prototype = {
 			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
 		
-		
-
 	},
 
 	/**
@@ -213,11 +211,15 @@ Point.prototype = {
 	},
 
 	onMouseOut: function () {
-		var point = this;
-		point.firePointEvent('mouseOut');
-
-		point.setState();
-		point.series.chart.hoverPoint = null;
+		var chart = this.series.chart,
+			hoverPoints = chart.hoverPoints;
+		
+		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887
+			this.firePointEvent('mouseOut');
+	
+			this.setState();
+			chart.hoverPoint = null;
+		}
 	},
 
 	/**
@@ -595,7 +597,7 @@ Series.prototype = {
 		// Register it in the chart
 		chart.series.push(series);
 		
-		// Sort series according to index option (#248, #1123)  // docs: series.index option
+		// Sort series according to index option (#248, #1123)
 		chart.series.sort(function (a, b) {
 			return (a.options.index || 0) - (b.options.index || 0);
 		});
@@ -840,8 +842,8 @@ Series.prototype = {
 			yData = series.yData,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
-			point;
-			//point = (new series.pointClass()).init(series, options);
+			point,
+			proto = series.pointClass.prototype;
 
 		setAnimation(animation, chart);
 
@@ -862,9 +864,9 @@ Series.prototype = {
 		// Get options and push the point to xData, yData and series.options. In series.generatePoints
 		// the Point instance will be created on demand and pushed to the series.data array.
 		point = { series: series };
-		series.pointClass.prototype.applyOptions.apply(point, [options]);
+		proto.applyOptions.apply(point, [options]);
 		xData.push(point.x);
-		yData.push(series.valueCount === 4 ? [point.open, point.high, point.low, point.close] : point.y);
+		yData.push(proto.toYData ? proto.toYData.call(point) : point.y);
 		dataOptions.push(options);
 
 
@@ -908,7 +910,7 @@ Series.prototype = {
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = (xAxis && xAxis.categories && 1) || options.pointRange;
+		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
 
 		if (defined(initialColor)) { // reset colors for pie
 			chart.counters.color = initialColor;
@@ -920,7 +922,8 @@ Series.prototype = {
 			dataLength = data ? data.length : [],
 			turboThreshold = options.turboThreshold || 1000,
 			pt,
-			valueCount = series.valueCount;
+			pointArrayMap = series.pointArrayMap,
+			valueCount = pointArrayMap && pointArrayMap.length;
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -968,9 +971,14 @@ Series.prototype = {
 				pt = { series: series };
 				pointProto.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = pointProto.toYData ? pointProto.toYData.apply(pt) : pt.y;
+				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
 		}
+
+		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
+		if (isString(yData[0])) {
+			error(14, true);
+		} 
 
 		series.data = [];
 		series.options.data = data;
@@ -1195,15 +1203,17 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isLastSeries,
+			isBottomSeries,
 			allStackSeries = yAxis.series,
-			i = allStackSeries.length;
+			i = allStackSeries.length,
+			placeBetween = options.pointPlacement === 'between';
+			//nextSeriesDown;
 			
 		// Is it the last visible series?
 		while (i--) {
 			if (allStackSeries[i].visible) {
-				if (i === series.index) {
-					isLastSeries = true;
+				if (allStackSeries[i] === series) { // #809
+					isBottomSeries = true;
 				}
 				break;
 			}
@@ -1221,7 +1231,7 @@ Series.prototype = {
 				
 			// get the plotX translation
 			//point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1230,8 +1240,8 @@ Series.prototype = {
 				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
 				yValue = yBottom + yValue;
 				
-				if (isLastSeries) {
-					yBottom = options.threshold;
+				if (isBottomSeries) {
+					yBottom = pick(options.threshold, yAxis.min);
 				}
 				
 				if (stacking === 'percent') {
@@ -1258,7 +1268,7 @@ Series.prototype = {
 			point.plotY = (typeof yValue === 'number') ? 
 				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				UNDEFINED;
-
+			
 			// set client related positions for mouse tracking
 			point.clientX = chart.inverted ?
 				chart.plotHeight - point.plotX :
@@ -1279,13 +1289,13 @@ Series.prototype = {
 	 */
 	setTooltipPoints: function (renew) {
 		var series = this,
-			chart = series.chart,
 			points = [],
 			pointsLength,
-			plotSize = chart.plotSizeX,
 			low,
 			high,
 			xAxis = series.xAxis,
+			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
+			plotX = (xAxis && xAxis.tooltipPosName) || 'plotX',
 			point,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
@@ -1305,8 +1315,7 @@ Series.prototype = {
 			points = points.concat(segment);
 		});
 
-		// loop the concatenated points and apply each point to all the closest
-		// pixel positions
+		// Reverse the points in case the X axis is reversed
 		if (xAxis && xAxis.reversed) {
 			points = points.reverse();
 		}
@@ -1315,10 +1324,12 @@ Series.prototype = {
 		pointsLength = points.length;
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
-			low = points[i - 1] ? points[i - 1]._high + 1 : 0;
-			point._high = high = points[i + 1] ?
-				mathMax(0, mathFloor((point.plotX + (points[i + 1] ? points[i + 1].plotX : plotSize)) / 2)) :
-				plotSize;
+			// Set this range's low to the last range's high plus one
+			low = points[i - 1] ? high + 1 : 0;
+			// Now find the new high
+			high = points[i + 1] ?
+				mathMax(0, mathFloor((point[plotX] + (points[i + 1] ? points[i + 1][plotX] : axisLength)) / 2)) :
+				axisLength;
 
 			while (low >= 0 && low <= high) {
 				tooltipPoints[low++] = point;
@@ -1418,30 +1429,93 @@ Series.prototype = {
 	 * Animate in the series
 	 */
 	animate: function (init) {
-		var chart = this.chart,
-			clipRect = this.clipRect,
-			animation = this.options.animation;
+		var series = this,
+			chart = series.chart,
+			renderer = chart.renderer,
+			clipRect,
+			markerClipRect,
+			animation = series.options.animation,
+			clipBox = chart.clipBox,
+			inverted = chart.inverted,
+			sharedClipKey;
 
+		// Animation option is set to true
 		if (animation && !isObject(animation)) {
-			animation = {};
+			animation = defaultPlotOptions[series.type].animation;
 		}
+		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
 
-		if (init) { // initialize the animation
-			if (!clipRect.isAnimating) { // apply it only for one of the series
-				clipRect.attr('width', 0);
-				clipRect.isAnimating = true;
+		// Initialize the animation. Set up the clipping rectangle.
+		if (init) { 
+			
+			// If a clipping rectangle with the same properties is currently present in the chart, use that. 
+			clipRect = chart[sharedClipKey];
+			markerClipRect = chart[sharedClipKey + 'm'];
+			if (!clipRect) {
+				chart[sharedClipKey] = clipRect = renderer.clipRect(
+					extend(clipBox, { width: 0 })
+				);
+				
+				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
+					-99, // include the width of the first marker
+					inverted ? -chart.plotLeft : -chart.plotTop, 
+					99,
+					inverted ? chart.chartWidth : chart.chartHeight
+				);
+			}
+			series.group.clip(clipRect);
+			series.markerGroup.clip(markerClipRect);
+			series.sharedClipKey = sharedClipKey;
+
+		// Run the animation
+		} else { 
+			clipRect = chart[sharedClipKey];
+			if (clipRect) {
+				clipRect.animate({
+					width: chart.plotSizeX
+				}, animation);
+				chart[sharedClipKey + 'm'].animate({
+					width: chart.plotSizeX + 99
+				}, animation);
 			}
 
-		} else { // run the animation
-			clipRect.animate({
-				width: chart.plotSizeX - chart.plotBorderWidth
-			}, animation);
-
-			// delete this function to allow it only once
-			this.animate = null;
+			// Delete this function to allow it only once
+			series.animate = null;
+			
+			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
+			// which should be available to the user).
+			series.animationTimeout = setTimeout(function () {
+				series.afterAnimate();
+			}, animation.duration);
 		}
 	},
+	
+	/**
+	 * This runs after animation to land on the final plot clipping
+	 */
+	afterAnimate: function () {
+		var chart = this.chart,
+			sharedClipKey = this.sharedClipKey,
+			group = this.group,
+			trackerGroup = this.trackerGroup;
+			
+		if (group && this.options.clip !== false) {
+			group.clip(chart.clipRect);
+			this.markerGroup.clip(); // no clip
+		}
+		
+		if (trackerGroup) {
+			trackerGroup.clip(chart.clipRect);
+		}
 
+		// Remove the shared clipping rectancgle when all series are shown		
+		setTimeout(function () {
+			if (sharedClipKey && chart[sharedClipKey]) {
+				chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+			}
+		}, 100);
+	},
 
 	/**
 	 * Draw the markers
@@ -1463,13 +1537,8 @@ Series.prototype = {
 			seriesMarkerOptions = options.marker,
 			pointMarkerOptions,
 			enabled,
-			markerGroup = series.plotGroup(
-				'markerGroup', 
-				'markers', 
-				series.visible ? VISIBLE : HIDDEN, 
-				options.zIndex, 
-				chart.seriesGroup
-			);
+			isInside,
+			markerGroup = series.markerGroup;
 
 		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
 			
@@ -1481,9 +1550,10 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-
+				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && chart.isInsidePlot(plotX, plotY, chart.inverted)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
@@ -1492,14 +1562,18 @@ Series.prototype = {
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
-						graphic.animate(extend({
-							x: plotX - radius,
-							y: plotY - radius
-						}, graphic.symbolName ? { // don't apply to image symbols #507
-							width: 2 * radius,
-							height: 2 * radius
-						} : {}));
-					} else if (radius > 0 || isImage) {
+						graphic
+							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
+								visibility: isInside ? (hasSVG ? 'inherit' : VISIBLE) : HIDDEN
+							})
+							.animate(extend({
+								x: plotX - radius,
+								y: plotY - radius
+							}, graphic.symbolName ? { // don't apply to image symbols #507
+								width: 2 * radius,
+								height: 2 * radius
+							} : {}));
+					} else if (isInside && (radius > 0 || isImage)) {
 						point.graphic = graphic = chart.renderer.symbol(
 							symbol,
 							plotX - radius,
@@ -1510,9 +1584,6 @@ Series.prototype = {
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
-				
-				} else if (graphic) {
-					point.graphic = graphic.destroy();
 				}
 			}
 		}
@@ -1676,7 +1747,6 @@ Series.prototype = {
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
-			seriesClipRect = series.clipRect,
 			issue134 = /AppleWebKit\/533/.test(userAgent),
 			destroy,
 			i,
@@ -1715,14 +1785,11 @@ Series.prototype = {
 		}
 		series.points = null;
 
-		// If this series clipRect is not the global one (which is removed on chart.destroy) we
-		// destroy it here.
-		if (seriesClipRect && seriesClipRect !== chart.clipRect) {
-			series.clipRect = seriesClipRect.destroy();
-		}
+		// Clear the animation timeout if we are destroying the series during initial animation
+		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'tracker', 'trackerGroup'], function (prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup'], function (prop) {
 			if (series[prop]) {
 
 				// issue 134 workaround
@@ -1764,10 +1831,6 @@ Series.prototype = {
 				str,
 				dataLabelsGroup,
 				chart = series.chart,
-				xAxis = series.xAxis,
-				groupLeft = xAxis ? xAxis.left : chart.plotLeft,
-				yAxis = series.yAxis,
-				groupTop = yAxis ? yAxis.top : chart.plotTop,
 				renderer = chart.renderer,
 				inverted = chart.inverted,
 				seriesType = series.type,
@@ -1985,24 +2048,15 @@ Series.prototype = {
 	},
 
 	/**
-	 * Draw the actual graph
+	 * Get the graph path
 	 */
-	drawGraph: function () {
+	getGraphPath: function () {
 		var series = this,
-			options = series.options,
-			chart = series.chart,
-			graph = series.graph,
 			graphPath = [],
-			group = series.group,
-			color = options.lineColor || series.color,
-			lineWidth = options.lineWidth,
-			dashStyle =  options.dashStyle,
 			segmentPath,
-			renderer = chart.renderer,
-			singlePoints = [], // used in drawTracker
-			attribs;
+			singlePoints = []; // used in drawTracker
 
-		// divide into segments and build graph and area paths
+		// Divide into segments and build graph and area paths
 		each(series.segments, function (segment) {
 			
 			segmentPath = series.getSegmentPath(segment);
@@ -2015,9 +2069,27 @@ Series.prototype = {
 			}
 		});
 
-		// used in drawTracker:
-		series.graphPath = graphPath;
+		// Record it for use in drawGraph and drawTracker, and return graphPath
 		series.singlePoints = singlePoints;
+		series.graphPath = graphPath;
+		
+		return graphPath;
+		
+	},
+	
+	/**
+	 * Draw the actual graph
+	 */
+	drawGraph: function () {		
+		var options = this.options,
+			graph = this.graph,
+			group = this.group,
+			color = options.lineColor || this.color,
+			lineWidth = options.lineWidth,
+			dashStyle =  options.dashStyle,
+			attribs,
+			graphPath = this.getGraphPath();
+			
 
 		// draw the graph
 		if (graph) {
@@ -2035,7 +2107,7 @@ Series.prototype = {
 					attribs.dashstyle = dashStyle;
 				}
 
-				series.graph = renderer.path(graphPath)
+				this.graph = this.chart.renderer.path(graphPath)
 					.attr(attribs).add(group).shadow(options.shadow);
 			}
 		}
@@ -2046,9 +2118,6 @@ Series.prototype = {
 	 */
 	invertGroups: function () {
 		var series = this,
-			group = series.group,
-			trackerGroup = series.trackerGroup,
-			markerGroup = series.markerGroup,
 			chart = series.chart;
 		
 		// A fixed size is needed for inversion to work
@@ -2092,10 +2161,9 @@ Series.prototype = {
 			this[prop] = group = chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
-					zIndex: zIndex
+					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
-				
 		}
 		// Place it on first and subsequent (redraw) calls
 		group.translate(
@@ -2106,7 +2174,7 @@ Series.prototype = {
 		return group;
 		
 	},
-
+	
 	/**
 	 * Render the graph and markers
 	 */
@@ -2115,38 +2183,28 @@ Series.prototype = {
 			chart = series.chart,
 			group,
 			options = series.options,
-			doClip = options.clip !== false,
 			animation = options.animation,
 			doAnimation = animation && !!series.animate,
-			clipRect = series.clipRect,
-			renderer = chart.renderer,
-			markerGroup,
-			plotBorderWidth = chart.plotBorderWidth;
-
-
-		// Add plot area clipping rectangle. If this is before chart.hasRendered,
-		// create one shared clipRect.
-
-		// Todo: since creating the clip property, the clipRect is created but
-		// never used when clip is false. A better way would be that the animation
-		// would run, then the clipRect destroyed.
-		if (!clipRect) {
-			clipRect = series.clipRect = !chart.hasRendered && chart.clipRect && doAnimation ?
-				chart.clipRect :
-				renderer.clipRect(plotBorderWidth / 2, plotBorderWidth / 2, chart.plotSizeX - plotBorderWidth, chart.plotSizeY - plotBorderWidth);
-			if (!chart.clipRect) {
-				chart.clipRect = clipRect;
-			}
-		}
+			visibility = series.visible ? VISIBLE : HIDDEN,
+			zIndex = options.zIndex,
+			hasRendered = series.hasRendered,
+			chartSeriesGroup = chart.seriesGroup;
 		
-
 		// the group
-		group = series.group || series.plotGroup(
+		group = series.plotGroup(
 			'group', 
 			'series', 
-			series.visible ? VISIBLE : HIDDEN, 
-			options.zIndex, 
-			chart.seriesGroup
+			visibility, 
+			zIndex, 
+			chartSeriesGroup
+		);
+		
+		series.markerGroup = series.plotGroup(
+			'markerGroup', 
+			'markers', 
+			visibility, 
+			zIndex, 
+			chartSeriesGroup
 		);
 		
 		series.drawDataLabels();
@@ -2159,6 +2217,9 @@ Series.prototype = {
 		// cache attributes for shapes
 		series.getAttribs();
 
+		// SVGRenderer needs to know this before drawing elements (#1089)
+		group.inverted = chart.inverted;
+		
 		// draw the graph if any
 		if (series.drawGraph) {
 			series.drawGraph();
@@ -2177,44 +2238,23 @@ Series.prototype = {
 			series.invertGroups();
 		}
 		
-		// Do the initial clipping. This must be done after inverting for VML.
-		if (doClip && !series.hasRendered) {
-			group.clip(clipRect);
-			if (series.trackerGroup) {
-				series.trackerGroup.clip(chart.clipRect);
-			}
-			markerGroup = series.markerGroup;
-			if (markerGroup) {
-				markerGroup.clip(clipRect);
-			}
+		// Initial clipping, must be defined after inverting groups for VML
+		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
+			group.clip(chart.clipRect);
 		}
-			
 
-		// run the animation
+		// Run the animation
 		if (doAnimation) {
 			series.animate();
+		} else if (!hasRendered) {
+			series.afterAnimate();
 		}
-
-		// finish the individual clipRect
-		setTimeout(function () {
-			clipRect.isAnimating = false;
-			group = series.group; // can be destroyed during the timeout
-			if (group && clipRect !== chart.clipRect && clipRect.renderer) {
-				if (doClip) {
-					group.clip((series.clipRect = chart.clipRect));
-				}
-				clipRect.destroy();
-			}
-			if (markerGroup) {
-				markerGroup.clip();
-			}
-		}, doAnimation ? (animation && animation.duration) || 500 : 0);
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
 	},
-
+	
 	/**
 	 * Redraw the series after an update in the axes.
 	 */

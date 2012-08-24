@@ -367,29 +367,43 @@ Axis.prototype = {
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
 			value = this.value,
-			categories = axis.categories,
-			tickInterval = axis.tickInterval,
+			categories = axis.categories, 
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			ret;
+			numericSymbols = defaultOptions.lang.numericSymbols,
+			i = numericSymbols && numericSymbols.length,
+			multi,
+			ret,
+			
+			// make sure the same symbol is added for all labels on a linear axis
+			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
 
 		if (categories) {
 			ret = value;
 		
 		} else if (dateTimeLabelFormat) { // datetime axis
 			ret = dateFormat(dateTimeLabelFormat, value);
-
-		} else if (tickInterval % 1000000 === 0) { // use M abbreviation
-			ret = (value / 1000000) + 'M';
-
-		} else if (tickInterval % 1000 === 0) { // use k abbreviation
-			ret = (value / 1000) + 'k';
-
-		} else if (value >= 1000) { // add thousands separators
-			ret = numberFormat(value, 0);
-
-		} else { // small numbers
-			ret = numberFormat(value, -1);
+		
+		} else if (i && numericSymbolDetector >= 1000) {
+			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
+			// If we are to enable this in tooltip or other places as well, we can move this
+			// logic to the numberFormatter and enable it by a parameter.
+			while (i-- && ret === UNDEFINED) {
+				multi = Math.pow(1000, i + 1);
+				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
+					ret = numberFormat(value / multi, -1) + numericSymbols[i];
+				}
+			}
 		}
+		
+		if (ret === UNDEFINED) {
+			if (value >= 1000) { // add thousands separators
+				ret = numberFormat(value, 0);
+
+			} else { // small numbers
+				ret = numberFormat(value, -1);
+			}
+		}
+		
 		return ret;
 	},
 	
@@ -403,6 +417,8 @@ Axis.prototype = {
 			posStack = [],
 			negStack = [],
 			i;
+		
+		axis.hasVisibleSeries = false;
 
 		// reset dataMin and dataMax in case we're redrawing
 		axis.dataMin = axis.dataMax = null;
@@ -427,6 +443,8 @@ Axis.prototype = {
 					yDataLength,
 					activeYData = [],
 					activeCounter = 0;
+					
+				axis.hasVisibleSeries = true;	
 					
 				// Validate threshold in logarithmic axes
 				if (axis.isLog && threshold <= 0) {
@@ -569,13 +587,14 @@ Axis.prototype = {
 				}
 			}
 		});
+		
 	},
 
 	/**
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog) {
+	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacementBetween) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -612,7 +631,8 @@ Axis.prototype = {
 				val = axis.val2lin(val);
 			}
 
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding);
+			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding) +
+				(pointPlacementBetween ? localA * axis.pointRange / 2 : 0);
 		}
 
 		return returnValue;
@@ -934,17 +954,38 @@ Axis.prototype = {
 			range = axis.max - axis.min,
 			pointRange = 0,
 			closestPointRange,
-			seriesClosestPointRange,
+			minPointOffset = 0,
+			pointRangePadding = 0,
 			transA = axis.transA;
 
 		// adjust translation for padding
 		if (axis.isXAxis) {
 			if (axis.isLinked) {
-				pointRange = axis.linkedParent.pointRange;
+				minPointOffset = axis.linkedParent.minPointOffset;
 			} else {
 				each(axis.series, function (series) {
-					pointRange = mathMax(pointRange, series.pointRange);
-					seriesClosestPointRange = series.closestPointRange;
+					var seriesPointRange = series.pointRange,
+						pointPlacement = series.options.pointPlacement,
+						seriesClosestPointRange = series.closestPointRange;
+						
+					pointRange = mathMax(pointRange, seriesPointRange);
+					
+					// minPointOffset is the value padding to the left of the axis in order to make
+					// room for points with a pointRange, typically columns. When the pointPlacement option
+					// is 'between' or 'on', this padding does not apply.
+					minPointOffset = mathMax(
+						minPointOffset, 
+						pointPlacement ? 0 : seriesPointRange / 2
+					);
+					
+					// Determine the total padding needed to the length of the axis to make room for the 
+					// pointRange. If the series' pointPlacement is 'on', no padding is added.
+					pointRangePadding = mathMax(
+						pointRangePadding,
+						pointPlacement === 'on' ? 0 : seriesPointRange
+					);
+
+					// Set the closestPointRange
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
 							mathMin(closestPointRange, seriesClosestPointRange) :
@@ -952,6 +993,9 @@ Axis.prototype = {
 					}
 				});
 			}
+			
+			// Record minPointOffse
+			axis.minPointOffset = minPointOffset;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = pointRange;
@@ -964,9 +1008,10 @@ Axis.prototype = {
 
 		// secondary values
 		axis.oldTransA = transA;
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRange) || 1);
+		//axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
-		axis.minPixelPadding = transA * (pointRange / 2);
+		axis.minPixelPadding = transA * minPointOffset;
 	},
 
 	/**
@@ -988,6 +1033,7 @@ Axis.prototype = {
 			length,
 			linkedParentExtremes,
 			tickIntervalOption = options.tickInterval,
+			minTickIntervalOption = options.minTickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
 			categories = axis.categories;
@@ -1061,9 +1107,9 @@ Axis.prototype = {
 		}
 
 		// set the translation factor used in translate function
-		axis.setAxisTranslation();
+		axis.setAxisTranslation(secondPass);
 
-		// hook for ordinal axes. To do: merge with below
+		// hook for ordinal axes and radial axes
 		if (axis.beforeSetTickPositions) {
 			axis.beforeSetTickPositions();
 		}
@@ -1072,11 +1118,16 @@ Axis.prototype = {
 		if (axis.postProcessTickInterval) {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
+		
+		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
+		if (!tickIntervalOption && axis.tickInterval < minTickIntervalOption) {
+			axis.tickInterval = minTickIntervalOption;
+		}
 
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog) { // linear
 			magnitude = math.pow(10, mathFloor(math.log(axis.tickInterval) / math.LN10));
-			if (!defined(options.tickInterval)) {
+			if (!tickIntervalOption) {
 				axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, magnitude, options);
 			}
 		}
@@ -1110,17 +1161,18 @@ Axis.prototype = {
 
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
-				roundedMax = tickPositions[tickPositions.length - 1];
+				roundedMax = tickPositions[tickPositions.length - 1],
+				minPointOffset = axis.minPointOffset || 0;
 
 			if (options.startOnTick) {
 				axis.min = roundedMin;
-			} else if (axis.min > roundedMin) {
+			} else if (axis.min - minPointOffset > roundedMin) {
 				tickPositions.shift();
 			}
 
 			if (options.endOnTick) {
 				axis.max = roundedMax;
-			} else if (axis.max < roundedMax) {
+			} else if (axis.max + minPointOffset < roundedMax) {
 				tickPositions.pop();
 			}
 			
@@ -1382,9 +1434,10 @@ Axis.prototype = {
 			
 			
 		// For reuse in Axis.render
-		axis.hasData = hasData = axis.series.length && defined(axis.min) && defined(axis.max);
+		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
-
+		
+		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
@@ -1392,7 +1445,10 @@ Axis.prototype = {
 				.add();
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })
-				.add();			
+				.add();
+			axis.labelGroup = renderer.g('axis-labels')
+				.attr({ zIndex: labelOptions.zIndex || 7 })
+				.add();
 		}
 
 		if (hasData || axis.isLinked) {
@@ -1681,7 +1737,6 @@ Axis.prototype = {
 
 			// show or hide the line depending on options.showEmpty
 			axis.axisLine[showAxis ? 'show' : 'hide']();
-
 		}
 
 		if (axisTitle && showAxis) {
@@ -1835,7 +1890,7 @@ Axis.prototype = {
 		});
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'axisTitle'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'labelGroup', 'axisTitle'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}

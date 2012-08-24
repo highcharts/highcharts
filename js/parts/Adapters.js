@@ -26,7 +26,7 @@
 		
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-			each(['cur', '_default', 'width', 'height'], function (fn, i) {
+			$.each(['cur', '_default', 'width', 'height'], function (i, fn) {
 				var obj = Step,
 					base,
 					elem;
@@ -95,7 +95,7 @@
 			}
 			
 			
-			// Register Highcharts as a jQuery plugin // docs
+			// Register Highcharts as a jQuery plugin
 			// TODO: MooTools and prototype as well?
 			// TODO: StockChart
 			/*$.fn.highcharts = function(options, callback) {
@@ -111,6 +111,11 @@
 		 * @param {Function} callback
 		 */
 		getScript: $.getScript,
+		
+		/**
+		 * Return the index of an item in an array, or -1 if not found
+		 */
+		inArray: $.inArray,
 		
 		/**
 		 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
@@ -236,7 +241,8 @@
 			// Wrap preventDefault and stopPropagation in try/catch blocks in
 			// order to prevent JS errors when cancelling events on non-DOM
 			// objects. #615.
-			each(['preventDefault', 'stopPropagation'], function (fn) {
+			/*jslint unparam: true*/
+			$.each(['preventDefault', 'stopPropagation'], function (i, fn) {
 				var base = event[fn];
 				event[fn] = function () {
 					try {
@@ -248,6 +254,7 @@
 					}
 				};
 			});
+			/*jslint unparam: false*/
 	
 			// trigger it
 			$(el).trigger(event);
@@ -267,7 +274,13 @@
 		 * Extension method needed for MooTools
 		 */
 		washMouseEvent: function (e) {
-			return e;
+			var ret = e.originalEvent || e;
+			
+			// computed by jQuery, needed by IE8
+			ret.pageX = e.pageX;
+			ret.pageY = e.pageY;
+			
+			return ret;
 		},
 	
 		/**
@@ -306,6 +319,7 @@ var globalAdapter = win.HighchartsAdapter,
 	// default adapters below.
 	adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
+	inArray = adapter.inArray,
 	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
