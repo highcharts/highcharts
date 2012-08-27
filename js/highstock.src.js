@@ -9305,7 +9305,7 @@ Legend.prototype = {
 
 		// sort by legendIndex
 		stableSort(allItems, function (a, b) {
-			return (a.options.legendIndex || 0) - (b.options.legendIndex || 0);
+			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
 		// reversed legend
@@ -14375,7 +14375,8 @@ var PiePoint = extendClass(Point, {
 	 */
 	setVisible: function (vis) {
 		var point = this,
-			chart = point.series.chart,
+			series = point.series,
+			chart = series.chart,
 			tracker = point.tracker,
 			dataLabel = point.dataLabel,
 			connector = point.connector,
@@ -14402,6 +14403,12 @@ var PiePoint = extendClass(Point, {
 		}
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
+		}
+		
+		// Handle ignore hidden slices
+		if (!series.isDirty && series.options.ignoreHiddenSlices) {
+			series.isDirty = true;
+			chart.redraw();
 		}
 	},
 
@@ -14556,7 +14563,8 @@ var PieSeries = {
 			fraction,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
-			labelDistance = options.dataLabels.distance;
+			labelDistance = options.dataLabels.distance,
+			ignoreHiddenSlices = options.ignoreHiddenSlices; // docs - http://jsfiddle.net/highcharts/bAcLn/
 
 		// get positions - either an integer or a percentage string must be given
 		series.center = positions = series.getCenter();
@@ -14573,14 +14581,16 @@ var PieSeries = {
 
 		// get the total sum
 		each(points, function (point) {
-			total += point.y;
+			total += (ignoreHiddenSlices && !point.visible) ? 0 : point.y;
 		});
 
 		each(points, function (point) {
 			// set start and end angle
 			fraction = total ? point.y / total : 0;
 			start = mathRound(cumulative * circ * precision) / precision;
-			cumulative += fraction;
+			if (!ignoreHiddenSlices || point.visible) {
+				cumulative += fraction;
+			}
 			end = mathRound(cumulative * circ * precision) / precision;
 
 			// set the shape

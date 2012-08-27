@@ -387,7 +387,7 @@ Legend.prototype = {
 
 		// sort by legendIndex
 		stableSort(allItems, function (a, b) {
-			return (a.options.legendIndex || 0) - (b.options.legendIndex || 0);
+			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
 		// reversed legend
