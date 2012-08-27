@@ -64,8 +64,6 @@ function RangeSelector(chart) {
 			text: 'All'
 		}];
 
-	chart.resetZoomEnabled = false;
-
 	this.chart = chart;
 	this.buttons = [];
 	this.boxSpanElements = {};

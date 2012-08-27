@@ -131,7 +131,7 @@ function Scroller(chart) {
 	this.scrollbarButtons = [];
 	this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
 
-	chart.resetZoomEnabled = false;
+	chart.xAxis[0].zoomingCausesButton = false; // because we can use the navigator to zoom out
 
 	this.chart = chart;
 	this.height = height;

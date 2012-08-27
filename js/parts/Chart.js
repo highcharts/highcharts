@@ -476,19 +476,14 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		var chart = this,
-			optionsChart = chart.options.chart;
-
-		// add button to reset selection
-		var hasZoomed;
-
-		if (chart.resetZoomEnabled !== false && !chart.resetZoomButton) { // hook for Stock charts etc.
-			chart.showResetZoom();
-		}
+			optionsChart = chart.options.chart,
+			hasZoomed,
+			showButton;
 
 		// if zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
-				if (axis.options.zoomEnabled !== false) {
+				if (axis.options.zoomEnabled !== false && axis.zoomingCausesButton !== false) { // stock chart specials
 					axis.setExtremes(null, null, false, UNDEFINED, { trigger: 'zoomout' });
 					hasZoomed = true;
 				}
@@ -501,9 +496,18 @@ Chart.prototype = {
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
 					axis.setExtremes(axisData.min, axisData.max, false, UNDEFINED, { trigger: 'zoom' });
 					hasZoomed = true;
+					if (axis.zoomingCausesButton !== false) { // hook for stock charts
+						showButton = true;
+					}	
 				}
 			});
 		}
+		
+		// Show the Reset zoom button
+		if (showButton && !chart.resetZoomButton) {
+			chart.showResetZoom();
+		}
+		
 
 		// Redraw
 		if (hasZoomed) {
