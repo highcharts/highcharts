@@ -12286,7 +12286,7 @@ Series.prototype = {
 				yValue = yBottom + yValue;
 				
 				if (isBottomSeries) {
-					yBottom = pick(options.threshold, yAxis.min);
+					yBottom = pick(options.threshold, yAxis.isLog ? null : yAxis.min); // #1200
 				}
 				
 				if (stacking === 'percent') {
