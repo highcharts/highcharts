@@ -261,6 +261,8 @@ Axis.prototype = {
 		// Tick intervals
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
+		
+		axis.tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
 	
 		// Major ticks
 		axis.ticks = {};
@@ -1619,6 +1621,7 @@ Axis.prototype = {
 			alternateBands = axis.alternateBands,
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
+			tickmarkOffset = axis.tickmarkOffset,
 			lineWidth = options.lineWidth,
 			linePath,
 			hasRendered = chart.hasRendered,
@@ -1681,8 +1684,8 @@ Axis.prototype = {
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new PlotLineOrBand(axis);
 						}
-						from = pos;
-						to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : axis.max;
+						from = pos + tickmarkOffset; // #949
+						to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max;
 						alternateBands[pos].options = {
 							from: isLog ? lin2log(from) : from,
 							to: isLog ? lin2log(to) : to,

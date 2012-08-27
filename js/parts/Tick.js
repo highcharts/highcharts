@@ -277,7 +277,7 @@ Tick.prototype = {
 			step = labelOptions.step,
 			attribs,
 			show = true,
-			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
+			tickmarkOffset = axis.tickmarkOffset,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
