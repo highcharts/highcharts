@@ -319,12 +319,16 @@
             <arg value="${param.src}"/>
             <arg value="--js_output_file"/>
             <arg value="${param.out}"/>
+            <arg value="--charset"/>
+            <arg value="UTF-8"/>
         </java>
         <java jar="${yuicomp.jar}" fork="true">
             <arg value="--type"/>
             <arg value="js"/>
             <arg value="-o"/>
             <arg value="${param.out}.yui-min.js"/>
+            <arg value="--charset"/>
+            <arg value="UTF-8"/>
             <arg value="${param.src}"/>
         </java>
         <length file="${param.src}" property="input.length"/>
