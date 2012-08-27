@@ -19,10 +19,7 @@ Point.prototype = {
 
 		if (series.options.colorByPoint) {
 			defaultColors = series.chart.options.colors;
-			if (!point.options) {
-				point.options = {};
-			}
-			point.color = point.options.color = point.color || defaultColors[counters.color++];
+			point.color = point.color || defaultColors[counters.color++];
 
 			// loop back to zero
 			counters.wrapColor(defaultColors.length);
@@ -1680,8 +1677,8 @@ Series.prototype = {
 			if (normalOptions && normalOptions.enabled === false) {
 				normalOptions.radius = 0;
 			}
-			hasPointSpecificOptions = false;
-
+			hasPointSpecificOptions = series.options.colorByPoint; // #868
+			
 			// check if the point has specific visual options
 			if (point.options) {
 				for (key in pointAttrToOptions) {
@@ -1696,22 +1693,25 @@ Series.prototype = {
 			// a specific marker config object is defined for the individual point:
 			// create it's own attribute collection
 			if (hasPointSpecificOptions) {
-
+				normalOptions = normalOptions || {};
 				pointAttr = [];
 				stateOptions = normalOptions.states || {}; // reassign for individual point
 				pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
 
-				// if no hover color is given, brighten the normal color
+				// Handle colors for column and pies
 				if (!series.options.marker) { // column, bar, point
+					// if no hover color is given, brighten the normal color
 					pointStateOptionsHover.color =
-						Color(pointStateOptionsHover.color || point.options.color)
+						Color(pointStateOptionsHover.color || point.color)
 							.brighten(pointStateOptionsHover.brightness ||
 								stateOptionsHover.brightness).get();
 
 				}
 
 				// normal point state inherits series wide normal state
-				pointAttr[NORMAL_STATE] = series.convertAttribs(normalOptions, seriesPointAttr[NORMAL_STATE]);
+				pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
+					color: point.color // #868
+				}, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 				// inherit from point normal and series hover
 				pointAttr[HOVER_STATE] = series.convertAttribs(
