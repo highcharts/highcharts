@@ -274,7 +274,7 @@ var radialAxisMixin = {
 	 */
 	beforeSetTickPositions: function () {
 		if (this.autoConnect) {
-			this.max += this.closestPointRange;
+			this.max += (this.categories && 1) || this.pointRange || this.closestPointRange; // #1197
 		}
 	},
 	
