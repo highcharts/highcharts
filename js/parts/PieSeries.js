@@ -101,7 +101,7 @@ var PiePoint = extendClass(Point, {
 		}
 		
 		// Handle ignore hidden slices
-		if (!series.isDirty && series.options.ignoreHiddenSlices) {
+		if (!series.isDirty && series.options.ignoreHiddenPoint) {
 			series.isDirty = true;
 			chart.redraw();
 		}
@@ -259,7 +259,7 @@ var PieSeries = {
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance,
-			ignoreHiddenSlices = options.ignoreHiddenSlices; // docs - http://jsfiddle.net/highcharts/bAcLn/
+			ignoreHiddenPoint = options.ignoreHiddenPoint; // docs - http://jsfiddle.net/highcharts/bAcLn/
 
 		// get positions - either an integer or a percentage string must be given
 		series.center = positions = series.getCenter();
@@ -276,14 +276,14 @@ var PieSeries = {
 
 		// get the total sum
 		each(points, function (point) {
-			total += (ignoreHiddenSlices && !point.visible) ? 0 : point.y;
+			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		});
 
 		each(points, function (point) {
 			// set start and end angle
 			fraction = total ? point.y / total : 0;
 			start = mathRound(cumulative * circ * precision) / precision;
-			if (!ignoreHiddenSlices || point.visible) {
+			if (!ignoreHiddenPoint || point.visible) {
 				cumulative += fraction;
 			}
 			end = mathRound(cumulative * circ * precision) / precision;
