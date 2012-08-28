@@ -17,7 +17,8 @@ var UNDEFINED,
 
 	// some variables
 	userAgent = navigator.userAgent,
-	isIE = /msie/i.test(userAgent) && !win.opera,
+	isOpera = win.opera,
+	isIE = /msie/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),

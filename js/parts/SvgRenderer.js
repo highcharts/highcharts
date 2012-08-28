@@ -255,7 +255,10 @@ SVGElement.prototype = {
 
 
 					if (key === 'text') {
-						// only one node allowed
+						// Delete bBox memo when the text changes
+						if (value !== wrapper.textStr) {
+							delete wrapper.bBox;
+						}
 						wrapper.textStr = value;
 						if (wrapper.added) {
 							renderer.buildText(wrapper);
@@ -470,13 +473,13 @@ SVGElement.prototype = {
 	 * @return {Object} A hash containing values for x, y, width and height
 	 */
 
-	htmlGetBBox: function (refresh) {
+	htmlGetBBox: function () {
 		var wrapper = this,
 			element = wrapper.element,
 			bBox = wrapper.bBox;
 
 		// faking getBBox in exported SVG in legacy IE
-		if (!bBox || refresh) {
+		if (!bBox) {
 			// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
 			if (element.nodeName === 'text') {
 				element.style.position = ABSOLUTE;
@@ -551,25 +554,34 @@ SVGElement.prototype = {
 				textWidth = pInt(wrapper.textWidth),
 				xCorr = wrapper.xCorr || 0,
 				yCorr = wrapper.yCorr || 0,
-				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
+				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(','),
+				rotationStyle = {},
+				prefix;
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
 
 				if (defined(rotation)) {
-					radians = rotation * deg2rad; // deg to rad
-					costheta = mathCos(radians);
-					sintheta = mathSin(radians);
-
-					// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
-					// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
-					// has support for CSS3 transform. The getBBox method also needs to be updated
-					// to compensate for the rotation, like it currently does for SVG.
-					// Test case: http://highcharts.com/tests/?file=text-rotation
-					css(elem, {
-						filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
-							', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-							', sizingMethod=\'auto expand\')'].join('') : NONE
-					});
+					
+					if (renderer.isSVG) { // #916
+						prefix = isIE ? '-ms' : isWebKit ? '-webkit' : isFirefox ? '-moz' : isOpera ? '-o' : '';
+						rotationStyle[prefix + '-transform'] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
+						
+					} else {
+						radians = rotation * deg2rad; // deg to rad
+						costheta = mathCos(radians);
+						sintheta = mathSin(radians);
+	
+						// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
+						// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
+						// has support for CSS3 transform. The getBBox method also needs to be updated
+						// to compensate for the rotation, like it currently does for SVG.
+						// Test case: http://highcharts.com/tests/?file=text-rotation
+						rotationStyle.filter = rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
+								', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
+								', sizingMethod=\'auto expand\')'].join('') : NONE;
+					}
+					
+					css(elem, rotationStyle);
 				}
 
 				width = pick(wrapper.elemWidth, elem.offsetWidth);
@@ -725,50 +737,61 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function (refresh) {
+	getBBox: function () {
 		var wrapper = this,
-			bBox,
+			bBox = wrapper.bBox,
+			renderer = wrapper.renderer,
 			width,
 			height,
 			rotation = wrapper.rotation,
 			element = wrapper.element,
 			rad = rotation * deg2rad;
 
-		// SVG elements
-		if (element.namespaceURI === SVG_NS || wrapper.renderer.forExport) {
-			try { // Fails in Firefox if the container has display: none.
+		if (!bBox) {
+			// SVG elements
+			if (element.namespaceURI === SVG_NS || renderer.forExport) {
+				try { // Fails in Firefox if the container has display: none.
+					
+					bBox = element.getBBox ?
+						// SVG: use extend because IE9 is not allowed to change width and height in case
+						// of rotation (below)
+						extend({}, element.getBBox()) :
+						// Canvas renderer and legacy IE in export mode
+						{
+							width: element.offsetWidth,
+							height: element.offsetHeight
+						};
+				} catch (e) {}
 				
-				bBox = element.getBBox ?
-					// SVG: use extend because IE9 is not allowed to change width and height in case
-					// of rotation (below)
-					extend({}, element.getBBox()) :
-					// Canvas renderer and legacy IE in export mode
-					{
-						width: element.offsetWidth,
-						height: element.offsetHeight
-					};
-			} catch (e) {}
-			
-			// If the bBox is not set, the try-catch block above failed. The other condition
-			// is for Opera that returns a width of -Infinity on hidden elements.
-			if (!bBox || bBox.width < 0) {
-				bBox = { width: 0, height: 0 };
+				// If the bBox is not set, the try-catch block above failed. The other condition
+				// is for Opera that returns a width of -Infinity on hidden elements.
+				if (!bBox || bBox.width < 0) {
+					bBox = { width: 0, height: 0 };
+				}
+				
+	
+			// VML Renderer or useHTML within SVG
+			} else {
+				
+				bBox = wrapper.htmlGetBBox();
+				
 			}
 			
-			width = bBox.width;
-			height = bBox.height;
-
-			// adjust for rotated text
-			if (rotation) {
-				bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
-				bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
+			// True SVG elements as well as HTML elements in modern browsers using the .useHTML option
+			// need to compensated for rotation
+			if (renderer.isSVG) {
+				width = bBox.width;
+				height = bBox.height;
+	
+				// Adjust for rotated text
+				if (rotation) {
+					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
+					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
+				}
 			}
-
-		// VML Renderer or useHTML within SVG
-		} else {
-			bBox = wrapper.htmlGetBBox(refresh);
+			
+			wrapper.bBox = bBox;
 		}
-
 		return bBox;
 	},
 
@@ -1942,6 +1965,9 @@ SVGRenderer.prototype = {
 
 		// Text setter
 		attrSetters.text = function (value) {
+			if (value !== element.innerHTML) {
+				delete this.bBox;
+			}
 			element.innerHTML = value;
 			return false;
 		};
@@ -2110,7 +2136,7 @@ SVGRenderer.prototype = {
 				style = text.element.style;
 				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
-				text.getBBox(true);
+				text.getBBox();
 			wrapper.width = (width || bBox.width || 0) + 2 * padding;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 			
