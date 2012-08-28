@@ -63,10 +63,6 @@ $(function() {
 				data : data,
 				dataGrouping: {
 					enabled: false
-				},
-				marker: {
-					enabled: true,
-					radius: 2
 				}
 			}]
 		});
