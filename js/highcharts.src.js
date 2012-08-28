@@ -1071,6 +1071,25 @@ pathAnim = {
 				Step.d = dSetter;
 			}
 			
+			/**
+			 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+			 * @param {Array} arr
+			 * @param {Function} fn
+			 */
+			this.each = Array.prototype.forEach ?
+				function (arr, fn) { // modern browsers
+					return Array.prototype.forEach.call(arr, fn);
+					
+				} : 
+				function (arr, fn) { // legacy
+					var i = 0, 
+						len = arr.length;
+					for (; i < len; i++) {
+						if (fn.call(arr[i], arr[i], i, arr) === false) {
+							return i;
+						}
+					}
+				};
 			
 			// Register Highcharts as a jQuery plugin
 			// TODO: MooTools and prototype as well?
@@ -1101,21 +1120,6 @@ pathAnim = {
 		 */
 		adapterRun: function (elem, method) {
 			return $(elem)[method]();
-		},
-	
-		/**
-		 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
-		 * @param {Array} arr
-		 * @param {Function} fn
-		 */
-		each: function (arr, fn) {
-			var i = 0,
-				len = arr.length;
-			for (; i < len; i++) {
-				if (fn.call(arr[i], arr[i], i, arr) === false) {
-					return i;
-				}
-			}
 		},
 	
 		/**
@@ -1289,12 +1293,18 @@ pathAnim = {
 
 // check for a custom HighchartsAdapter defined prior to this file
 var globalAdapter = win.HighchartsAdapter,
-	adapter = globalAdapter || {},
+	adapter = globalAdapter || {};
+	
+// Initialize the adapter
+if (globalAdapter) {
+	globalAdapter.init.call(globalAdapter, pathAnim);
+}
+
 
 	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 	// and all the utility functions will be null. In that case they are populated by the
 	// default adapters below.
-	adapterRun = adapter.adapterRun,
+var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
 	inArray = adapter.inArray,
 	each = adapter.each,
@@ -1309,15 +1319,6 @@ var globalAdapter = win.HighchartsAdapter,
 	animate = adapter.animate,
 	stop = adapter.stop;
 
-/*
- * Define the adapter for frameworks. If an external adapter is not defined,
- * Highcharts reverts to the built-in jQuery adapter.
- */
-if (globalAdapter && globalAdapter.init) {
-	// Initialize the adapter with the pathAnim object that takes care
-	// of path animations.
-	globalAdapter.init(pathAnim);
-}
 
 
 /* ****************************************************************************
@@ -10805,8 +10806,8 @@ Chart.prototype = {
 
 		// Labels
 		if (labels.items) {
-			each(labels.items, function () {
-				var style = extend(labels.style, this.style),
+			each(labels.items, function (label) {
+				var style = extend(labels.style, label.style),
 					x = pInt(style.left) + chart.plotLeft,
 					y = pInt(style.top) + chart.plotTop + 12;
 
@@ -10815,7 +10816,7 @@ Chart.prototype = {
 				delete style.top;
 
 				renderer.text(
-					this.html,
+					label.html,
 					x,
 					y
 				)

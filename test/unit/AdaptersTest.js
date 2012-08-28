@@ -44,6 +44,13 @@ AdaptersTest.prototype.testEach = function() {
 
 	// Assert
 	assertEquals('each value', 2, arr[0]);
+	
+	// Test scope in handler (#1184)
+	/*var arr = [{}];
+	each (arr, function () {
+		this.foo = 'bar';
+	});
+	assertEquals('each scope', 'bar', arr[0].foo);*/
 };
 
 
