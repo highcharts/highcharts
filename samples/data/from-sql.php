@@ -32,8 +32,8 @@ mysql_query("SET time_zone = '+00:00'");
 
 // set some utility variables
 $range = $end - $start;
-$startTime = date('Y-m-d H:i:s', $start / 1000); // JS to MySQL
-$endTime = date('Y-m-d H:i:s', $end / 1000);
+$startTime = gmstrftime('%Y-%m-%d %H:%M:%S', $start / 1000);
+$endTime = gmstrftime('%Y-%m-%d %H:%M:%S', $end / 1000);
 
 // find the right table
 // two days range loads minute data
@@ -52,7 +52,6 @@ if ($range < 2 * 24 * 3600 * 1000) {
 } else {
 	$table = 'stockquotes_month';
 } 
-
 
 $sql = "
 	select 
@@ -80,7 +79,7 @@ while ($row = mysql_fetch_assoc($result)) {
 // print it
 header('Content-Type: text/javascript');
 
-echo "/* start = $start, end = $end, \$_GET['start'] = $_GET[start], \$_GET['end'] = $_GET[end], startTime = $startTime, endTime = $endTime */";
+echo "/* console.log(' start = $start, end = $end, startTime = $startTime, endTime = $endTime '); */";
 echo $callback ."([\n" . join(",\n", $rows) ."\n]);";
 
 

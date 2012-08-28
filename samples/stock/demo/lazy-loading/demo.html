@@ -1,23 +1,6 @@
-<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/master/highstock.js"></script>
 <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
 
-<div id="container" style="height: 500px"></div>
-
-<div class="info">In this example Highcharts' data grouping is turned off. Instead, new data 
-	with a suitable resolution is loaded from the server every time the
-	extremes of the x axis change.</div>
+<div id="container" style="height: 500px; min-width: 600px"></div>
 
 
-<pre>
-To do lazy-loading
-
-- Range selector buttons not taking the pressed state. This, along with the minPadding and maxPadding issue, should be solved by preventing setData from resetting the extremes on the x axis when there are userMin and userMax
-- loading data after Sep 30 is impossible though there is data on the server
-- fails on ordinal when zooming in too narrow
-- Make cache tables on the server
-
-Problem 1:
-This code, in StockNavigation.js, always runs because stickToMin is always true because we are loading data within the previous range. This causes the second
-setExtremes: 
-- baseXAxis.setExtremes(newMin, newMax, true, false);
-</pre>

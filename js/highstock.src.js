@@ -16885,7 +16885,8 @@ Scroller.prototype = {
 
 			// update the extremes
 			if (hasSetExtremes && (stickToMin || stickToMax)) {
-				baseXAxis.setExtremes(newMin, newMax, true, false);
+				baseXAxis.setExtremes(newMin, newMax, true, false, { trigger: 'updatedData' });
+				
 			// if it is not at any edge, just move the scroller window to reflect the new series data
 			} else {
 				if (doRedraw) {
@@ -16969,9 +16970,12 @@ Scroller.prototype = {
 			// add the series
 			navigatorSeries = chart.initSeries(mergedNavSeriesOptions);
 
-			// respond to updated data in the base series
-			// todo: use similiar hook when base series is not yet initialized
-			addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
+			// Respond to updated data in the base series.
+			// Abort if lazy-loading data from the server.
+			if (navigatorOptions.adaptToUpdatedData !== false) { // docs
+				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
+			}
+			
 
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {

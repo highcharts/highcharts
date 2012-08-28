@@ -1,53 +1,69 @@
 $(function() {
 	$.getJSON('http://www.highcharts.com/samples/data/from-sql.php?callback=?', function(data) {
 		
-		data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null]]);
-		
+		// Add a null value for the end date 
+		data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);
+				
 		// create the chart
 		window.chart = new Highcharts.StockChart({
 			chart : {
 				renderTo : 'container',
+				type: 'candlestick',
 				zoomType: 'x'
 			},
 
 			navigator : {
-				//enabled: false,
+				adaptToUpdatedData: false,
 				series : {
 					data : data
 				}
 			},
 			
-			scrollbar: {
-				//enabled: false
+			title: {
+				text: 'AAPL history by the minute from 1998 to 2011'
+			},
+			
+			subtitle: {
+				text: 'Displaying 1.7 million data points in Highcharts Stock by async server loading'
 			},
 			
 			rangeSelector : {
-				//enabled: false,
-				selected : 5 // All
-			},
-			
-			tooltip: {
-				//xDateFormat: '%Y-%m-%d %H:%M:%S'
+				buttons: [{
+					type: 'hour',
+					count: 1,
+					text: '1h'
+				}, {
+					type: 'day',
+					count: 1,
+					text: '1d'
+				}, {
+					type: 'month',
+					count: 1,
+					text: '1m'
+				}, {
+					type: 'year',
+					count: 1,
+					text: '1y'
+				}, {
+					type: 'all',
+					text: 'All'
+				}],
+				inputEnabled: false, // it supports only days
+				selected : 4 // all
 			},
 			
 			xAxis : {
 				events : {
-					setExtremes : onSetExtremes
+					afterSetExtremes : afterSetExtremes
 				},
-				ordinal: false,
 				minRange: 3600 * 1000 // one hour
-			},
-			
-			plotOptions: {
-				series: {
-					dataGrouping: {
-						enabled: false
-					}
-				}
 			},
 
 			series : [{
 				data : data,
+				dataGrouping: {
+					enabled: false
+				},
 				marker: {
 					enabled: true,
 					radius: 2
@@ -61,24 +77,18 @@ $(function() {
 /**
  * Load new data depending on the selected min and max
  */
-function onSetExtremes(e) { console.log('onSetExtremes')
+function afterSetExtremes(e) {
+
 	var url,
 		currentExtremes = this.getExtremes(),
 		range = e.max - e.min;
 	
-	// cancel if we're reloading the same range, or too narrow range
-	/*if (e.min === currentExtremes.min && e.max === currentExtremes.max || e.max - e.min < this.options.minRange) {
-		return false;
-	}*/
-	
 	chart.showLoading('Loading data from server...');
 	$.getJSON('http://www.highcharts.com/samples/data/from-sql.php?start='+ Math.round(e.min) +
 			'&end='+ Math.round(e.max) +'&callback=?', function(data) {
+		
 		chart.series[0].setData(data);
 		chart.hideLoading();
 	});
 	
-	// Stop set extremes. When the new data arrives from the server, the x axis will 
-	// reflect data min and max automatically.
-	//return false;
 }
