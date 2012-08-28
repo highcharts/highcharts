@@ -10805,8 +10805,8 @@ Chart.prototype = {
 
 		// Labels
 		if (labels.items) {
-			each(labels.items, function () {
-				var style = extend(labels.style, this.style),
+			each(labels.items, function (label) {
+				var style = extend(label.style, this.style),
 					x = pInt(style.left) + chart.plotLeft,
 					y = pInt(style.top) + chart.plotTop + 12;
 
@@ -10815,7 +10815,7 @@ Chart.prototype = {
 				delete style.top;
 
 				renderer.text(
-					this.html,
+					label.html,
 					x,
 					y
 				)
