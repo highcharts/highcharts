@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
@@ -16,54 +17,64 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.JPEGTranscoder;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.fop.svg.PDFTranscoder;
 import org.apache.log4j.Logger;
 
 import com.highcharts.export.util.MimeType;
-import com.highcharts.export.util.SVGRasterizer;
-import com.highcharts.export.util.SVGRasterizerException;
 
-@WebServlet(name = "Highcharts-Chart-Export", urlPatterns = { "/*" })
+/**
+ * Servlet implementation class BatikExport
+ */
+@WebServlet(name = "Highcharts-Export", urlPatterns = { "/*" })
 @MultipartConfig
 public class ExportController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String REQUEST_METHOD_POST = "POST";
-	private static final String CONTENT_TYPE_MULTIPART = "multipart/";
-	private static final String FORBIDDEN_WORD = "<!ENTITY";
+	private static final String CONTENT_TYPE_MULTIPART = "multipart/";	
 	protected static Logger logger = Logger.getLogger("exportservlet");
-	
 
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
 	public ExportController() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public void init() {		
-	}
-
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		processrequest(request, response);
 	}
 
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		processrequest(request, response);
 	}
-
+	
 	public void processrequest(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 
 		try {
 			boolean multi = isMultipartRequest(request);			
+
 			String svg = getParameter(request, "svg", multi);
 			if (svg == null || svg.isEmpty()) {
 				throw new ServletException(
-					"The required - svg - post parameter is missing");
-			}
-			
-			if (svg.indexOf(FORBIDDEN_WORD) > -1 || svg.indexOf(FORBIDDEN_WORD.toLowerCase()) > -1){
-				//throw new ServletException(
-				//	"The - svg - post parameter could contain a malicious attack");
+						"The required - svg - post parameter is missing");
 			}
 
 			String filename = getFilename(getParameter(request, "filename",
@@ -74,16 +85,10 @@ public class ExportController extends HttpServlet {
 			ExportController.writeFileContentToHttpResponse(svg, filename,
 					width, mime, response);
 
-		} catch (IOException ioe) {
-			logger.error("Oops something happened here redirect to error-page, "
-					+ ioe.getMessage());
-			sendError(request, response, ioe);
-		} catch ( ServletException sce) {
-			logger.error("Oops something happened here redirect to error-page, "
-					+ sce.getMessage());
+		} catch (IOException | ServletException sce) {
+			logger.error("Oops something happened here, redirect to error-page, " + sce.getMessage());
 			sendError(request, response, sce);
 		}
-		
 	}
 
 	/*
@@ -98,16 +103,29 @@ public class ExportController extends HttpServlet {
 
 		if (!MimeType.SVG.equals(mime)) {
 			try {
-				stream = SVGRasterizer.getInstance().transcode(stream, svg,
-						mime, width);
-			} catch (SVGRasterizerException sre) {
-				logger.error("Error while transcoding svg file to an image", sre);
+				// Create the transcoder input
+				TranscoderInput input = new TranscoderInput(new StringReader(
+						svg));
+
+				// Create the transcoder output
+				TranscoderOutput transOutput = new TranscoderOutput(stream);
+
+				// get right Transcoder, depends on mime
+				SVGAbstractTranscoder transcoder = ExportController
+						.getTranscoder(mime);
+				if (width != null) {
+					/*
+					 * If the raster image height is not provided (using the
+					 * KEY_HEIGHT), the transcoder will compute the raster image
+					 * height by keeping the aspect ratio of the SVG document.
+					 */
+					transcoder.addTranscodingHint(
+							SVGAbstractTranscoder.KEY_WIDTH, width);
+				}
+				transcoder.transcode(input, transOutput);
+			} catch (TranscoderException te) {
 				stream.close();
-				throw new ServletException(
-						"Error while transcoding svg file to an image");
-			} catch (TranscoderException te){
 				logger.error("Error while transcoding svg file to an image", te);
-				stream.close();
 				throw new ServletException(
 						"Error while transcoding svg file to an image");
 			}
@@ -127,6 +145,27 @@ public class ExportController extends HttpServlet {
 		// Send content to Browser
 		out.write(stream.toByteArray());
 		out.flush();
+	}
+
+	public static SVGAbstractTranscoder getTranscoder(MimeType mime) {
+
+		SVGAbstractTranscoder transcoder = null;
+
+		switch (mime) {
+		case PNG:
+			transcoder = new PNGTranscoder();
+			break;
+		case JPEG:
+			transcoder = new JPEGTranscoder();
+			transcoder.addTranscodingHint(JPEGTranscoder.KEY_QUALITY,
+					new Float(0.99));
+			break;
+		case PDF:
+			transcoder = new PDFTranscoder();
+		default:
+			break;
+		}
+		return transcoder;
 	}
 
 	public static final boolean isMultipartRequest(HttpServletRequest request) {
@@ -165,7 +204,7 @@ public class ExportController extends HttpServlet {
 	private static Float getWidth(String width) {
 		if (width != null && !width.isEmpty()) {
 			Float parsedWidth = Float.valueOf(width);
-			if (parsedWidth.compareTo(0.0F) > 0) {
+			if(parsedWidth.compareTo(0.0F)>0){
 				return parsedWidth;
 			}
 		}
@@ -178,9 +217,7 @@ public class ExportController extends HttpServlet {
 			return type;
 		}
 		return MimeType.PNG;
-	}
-
-	
+	}	
 
 	protected void sendError(HttpServletRequest request,
 			HttpServletResponse response, Throwable ex) throws IOException,
@@ -227,3 +264,6 @@ public class ExportController extends HttpServlet {
 
 	}
 }
+
+
+	

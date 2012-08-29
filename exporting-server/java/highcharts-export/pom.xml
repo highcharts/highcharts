@@ -9,8 +9,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<slf4j.version>1.6.1</slf4j.version>
-		<java.version>1.7</java.version>
+		<java.version>1.6</java.version>
 		<batik.version>1.7</batik.version>
 	</properties>
 	<dependencies>
@@ -72,7 +71,7 @@
 				<version>2.2</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<!-- webXml>src/main/webapp/WEB-INF/web.xml</webXml -->
+					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
 					<warName>highcharts-export</warName>
 				</configuration>
 			</plugin>
