@@ -7367,6 +7367,15 @@ Axis.prototype = {
 	},
 	
 	/**
+	 * Overridable method for zooming chart. Pulled out in a separate method to allow overriding
+	 * in stock charts.
+	 */
+	zoom: function (newMin, newMax) {
+		this.setExtremes(newMin, newMax, false, UNDEFINED, { trigger: 'zoom' });
+		return true;
+	},
+	
+	/**
 	 * Update the axis metrics
 	 */
 	setAxisSize: function () {
@@ -10039,17 +10048,12 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		var chart = this,
-			optionsChart = chart.options.chart,
-			hasZoomed,
-			showButton;
+			hasZoomed;
 
 		// if zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
-				if (axis.options.zoomEnabled !== false && axis.zoomingCausesButton !== false) { // stock chart specials
-					axis.setExtremes(null, null, false, UNDEFINED, { trigger: 'zoomout' });
-					hasZoomed = true;
-				}
+				hasZoomed = axis.zoom();
 			});
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
@@ -10057,17 +10061,13 @@ Chart.prototype = {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false, UNDEFINED, { trigger: 'zoom' });
-					hasZoomed = true;
-					if (axis.zoomingCausesButton !== false) { // hook for stock charts
-						showButton = true;
-					}	
+					hasZoomed = axis.zoom(axisData.min, axisData.max);
 				}
 			});
 		}
 		
 		// Show the Reset zoom button
-		if (showButton && !chart.resetZoomButton) {
+		if (!chart.resetZoomButton) {
 			chart.showResetZoom();
 		}
 		
@@ -10075,7 +10075,7 @@ Chart.prototype = {
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				pick(optionsChart.animation, chart.pointCount < 100) // animation
+				pick(chart.options.chart.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},
@@ -16316,9 +16316,7 @@ function Scroller(chart) {
 	this.handles = [];
 	this.scrollbarButtons = [];
 	this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
-
-	chart.xAxis[0].zoomingCausesButton = false; // because we can use the navigator to zoom out
-
+	
 	this.chart = chart;
 	this.height = height;
 	this.scrollbarHeight = scrollbarHeight;
@@ -17037,6 +17035,47 @@ Scroller.prototype = {
 };
 
 Highcharts.Scroller = Scroller;
+
+/**
+ * For Stock charts, override selection zooming with some special features because 
+ * X axis zooming is already allowed by the Navigator and Range selector. 
+ */
+wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+	var chart = this.chart,
+		chartOptions = chart.options,
+		zoomType = chartOptions.chart.zoomType,
+		previousZoom,
+		ret;
+	
+	if (this.isXAxis && ((chartOptions.navigator && chartOptions.navigator.enabled) || 
+			(chartOptions.scrollbar && chartOptions.scrollbar.enabled))) {
+		
+		// For x only zooming, fool the chart.zoom method not to create the zoom button 
+		// because the property already exists
+		if (zoomType === 'x') {
+			chart.resetZoomButton = 'blocked';
+			
+		// For y only zooming, ignore the X axis completely
+		} else if (zoomType === 'y') {
+			ret = false;
+		
+		// For xy zooming, record the state of the zoom before zoom selection, then when 
+		// the reset button is pressed, revert to this state
+		} else if (zoomType === 'xy') {
+			previousZoom = this.previousZoom;
+			if (defined(newMin)) {
+				this.previousZoom = [this.min, this.max];
+			} else if (previousZoom) {
+				newMin = previousZoom[0];
+				newMax = previousZoom[1];
+				delete this.previousZoom;
+			}
+		}
+		
+	}
+	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
+});
+
 
 /* ****************************************************************************
  * End Scroller code														  *

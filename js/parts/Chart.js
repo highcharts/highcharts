@@ -476,17 +476,12 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		var chart = this,
-			optionsChart = chart.options.chart,
-			hasZoomed,
-			showButton;
+			hasZoomed;
 
 		// if zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
-				if (axis.options.zoomEnabled !== false && axis.zoomingCausesButton !== false) { // stock chart specials
-					axis.setExtremes(null, null, false, UNDEFINED, { trigger: 'zoomout' });
-					hasZoomed = true;
-				}
+				hasZoomed = axis.zoom();
 			});
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
@@ -494,17 +489,13 @@ Chart.prototype = {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false, UNDEFINED, { trigger: 'zoom' });
-					hasZoomed = true;
-					if (axis.zoomingCausesButton !== false) { // hook for stock charts
-						showButton = true;
-					}	
+					hasZoomed = axis.zoom(axisData.min, axisData.max);
 				}
 			});
 		}
 		
 		// Show the Reset zoom button
-		if (showButton && !chart.resetZoomButton) {
+		if (!chart.resetZoomButton) {
 			chart.showResetZoom();
 		}
 		
@@ -512,7 +503,7 @@ Chart.prototype = {
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				pick(optionsChart.animation, chart.pointCount < 100) // animation
+				pick(chart.options.chart.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},

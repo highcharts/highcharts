@@ -1341,6 +1341,15 @@ Axis.prototype = {
 	},
 	
 	/**
+	 * Overridable method for zooming chart. Pulled out in a separate method to allow overriding
+	 * in stock charts.
+	 */
+	zoom: function (newMin, newMax) {
+		this.setExtremes(newMin, newMax, false, UNDEFINED, { trigger: 'zoom' });
+		return true;
+	},
+	
+	/**
 	 * Update the axis metrics
 	 */
 	setAxisSize: function () {
