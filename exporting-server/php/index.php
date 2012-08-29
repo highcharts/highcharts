@@ -30,8 +30,8 @@ if (get_magic_quotes_gpc()) {
 }
 
 // check for malicious attack in SVG
-if(strpos($svg,"<!ENTITY") !== false){
-	exit("Execution is topped, the posted SVG could contain code for a mailcious attack");
+if (strpos($svg, '<!ENTITY') !== false) {
+	exit('Execution is stopped, the posted SVG could contain code for a mailcious attack');
 }
 
 $tempName = md5(rand());
