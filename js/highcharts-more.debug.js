@@ -3,7 +3,8 @@
  */
 
 var files = [
-    "Globals.js",
+	"Globals.js",
+    "Pane.js",
     "RadialAxis.js",
     "AreaRangeSeries.js",
     "AreaSplineRangeSeries.js",
@@ -18,6 +19,5 @@ var $tag = $('script[src$="highcharts-more.debug.js"]'),
 
 // Include the individual files
 $.each(files, function (i, file) {
-	console.log(file);
 	document.write('<script src="' + path + file + '"></script>')	
 });
