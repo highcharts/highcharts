@@ -622,7 +622,7 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
-	lineWidth: 0,
+	lineWidth: 1, // docs - changed default value
 	marker: null,
 	threshold: null,
 	tooltip: {
@@ -634,7 +634,8 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		xHigh: 0,
 		yLow: 16,
 		yHigh: -6		
-	}
+	},
+	shadow: false // docs - changed default
 });
 
 /**
