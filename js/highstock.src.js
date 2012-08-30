@@ -16723,8 +16723,13 @@ Scroller.prototype = {
 				// grab the zoomed range
 				} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
 					scroller.grabbedCenter = chartX;
-					defaultBodyCursor = bodyStyle.cursor;
-					bodyStyle.cursor = 'ew-resize';
+						
+					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
+					// and IE8 isn't able to show it while dragging anyway.
+					if (chart.renderer.isSVG) {
+						defaultBodyCursor = bodyStyle.cursor;
+						bodyStyle.cursor = 'ew-resize';
+					}
 
 					dragOffset = chartX - zoomedMin;
 
