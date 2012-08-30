@@ -358,7 +358,8 @@ var VMLElement = {
 		var wrapper = this,
 			clipMembers,
 			element = wrapper.element,
-			parentNode = element.parentNode;
+			parentNode = element.parentNode,
+			cssRet;
 
 		if (clipRect) {
 			clipMembers = clipRect.members;
@@ -370,12 +371,17 @@ var VMLElement = {
 			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
 				css(element, { visibility: HIDDEN });
 			}
+			cssRet = clipRect.getCSS(wrapper);
 			
-		} else if (wrapper.destroyClip) {
-			wrapper.destroyClip();
+		} else {
+			if (wrapper.destroyClip) {
+				wrapper.destroyClip();
+			}
+			cssRet = { clip: docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
 		}
 		
-		return wrapper.css(clipRect ? clipRect.getCSS(wrapper) : { clip: 'inherit' });	
+		return wrapper.css(cssRet);
+			
 	},
 
 	/**
