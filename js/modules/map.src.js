@@ -322,6 +322,10 @@
 					point.y = null;
 				}
 			});
+			
+			
+			this.markerGroup.destroy();
+			this.markerGroup = this.group; // to be used in drawTracker
 		}
 	});
 	
