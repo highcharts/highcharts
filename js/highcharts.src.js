@@ -4241,11 +4241,6 @@ var VMLElement = {
 			renderer.invertChild(element, parentNode);
 		}
 
-		// issue #140 workaround - related to #61 and #74
-		if (docMode8 && parentNode.gVis === HIDDEN) {
-			css(element, { visibility: HIDDEN });
-		}
-
 		// append it
 		parentNode.appendChild(element);
 
@@ -4259,26 +4254,6 @@ var VMLElement = {
 		fireEvent(wrapper, 'add');
 
 		return wrapper;
-	},
-
-	/**
-	 * In IE8 documentMode 8, we need to recursively set the visibility down in the DOM
-	 * tree for nested groups. Related to #61, #586.
-	 */
-	toggleChildren: function (element, visibility) {
-		var childNodes = element.childNodes,
-			i = childNodes.length;
-			
-		while (i--) {
-			
-			// apply the visibility
-			css(childNodes[i], { visibility: visibility });
-			
-			// we have a nested group, apply it to its children again
-			if (childNodes[i].nodeName === 'DIV') {
-				this.toggleChildren(childNodes[i], visibility);
-			}
-		}
 	},
 
 	/**
@@ -4384,24 +4359,38 @@ var VMLElement = {
 						}
 						skipAttr = true;
 
-					// directly mapped to css
-					} else if (key === 'zIndex' || key === 'visibility') {
+					// handle visibility
+					} else if (key === 'visibility') {
 
-						// workaround for #61 and #586
-						if (docMode8 && key === 'visibility' && nodeName === 'DIV') {
-							element.gVis = value;
-							wrapper.toggleChildren(element, value);
-							if (value === VISIBLE) { // #74
-								value = null;
+						// let the shadow follow the main element
+						if (shadows) {
+							i = shadows.length;
+							while (i--) {
+								shadows[i].style[key] = value;
 							}
 						}
+						
+						// Instead of toggling the visibility CSS property, move the div out of the viewport. 
+						// This works around #61 and #586							
+						if (nodeName === 'DIV') {
+							if (value === HIDDEN) { // cache it
+								wrapper.top = elemStyle.top;
+								value = '-9999em';
+							} else {
+								value = wrapper.top || 0;
+							}
+							key = 'top';
+						}
+						
+						elemStyle[key] = value;	
+						skipAttr = true;
+
+					// directly mapped to css
+					} else if (key === 'zIndex') {
 
 						if (value) {
 							elemStyle[key] = value;
 						}
-
-
-
 						skipAttr = true;
 
 					// width and height
@@ -4491,16 +4480,6 @@ var VMLElement = {
 						skipAttr = true;
 					}
 
-					// let the shadow follow the main element
-					if (shadows && key === 'visibility') {
-						i = shadows.length;
-						while (i--) {
-							shadows[i].style[key] = value;
-						}
-					}
-
-
-
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
 							element[key] = value;
@@ -4563,8 +4542,7 @@ var VMLElement = {
 	safeRemoveChild: function (element) {
 		// discardElement will detach the node from its parent before attaching it
 		// to the garbage bin. Therefore it is important that the node is attached and have parent.
-		var parentNode = element.parentNode;
-		if (parentNode) {
+		if (element.parentNode) {
 			discardElement(element);
 		}
 	},
@@ -4573,13 +4551,11 @@ var VMLElement = {
 	 * Extend element.destroy by removing it from the clip members array
 	 */
 	destroy: function () {
-		var wrapper = this;
-
-		if (wrapper.destroyClip) {
-			wrapper.destroyClip();
+		if (this.destroyClip) {
+			this.destroyClip();
 		}
 
-		return SVGElement.prototype.destroy.apply(wrapper);
+		return SVGElement.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -12581,18 +12557,13 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			trackerGroup = this.trackerGroup;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
 			this.markerGroup.clip(); // no clip
 		}
 		
-		if (trackerGroup) {
-			trackerGroup.clip(chart.clipRect);
-		}
-
 		// Remove the shared clipping rectancgle when all series are shown		
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
@@ -13337,6 +13308,9 @@ Series.prototype = {
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
+			if (this.trackerGroup) {
+				this.trackerGroup.clip(chart.clipRect);
+			}
 		}
 
 		// Run the animation

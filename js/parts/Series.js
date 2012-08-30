@@ -1493,18 +1493,13 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			trackerGroup = this.trackerGroup;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
 			this.markerGroup.clip(); // no clip
 		}
 		
-		if (trackerGroup) {
-			trackerGroup.clip(chart.clipRect);
-		}
-
 		// Remove the shared clipping rectancgle when all series are shown		
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
@@ -2249,6 +2244,9 @@ Series.prototype = {
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
+			if (this.trackerGroup) {
+				this.trackerGroup.clip(chart.clipRect);
+			}
 		}
 
 		// Run the animation
