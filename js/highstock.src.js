@@ -17169,8 +17169,9 @@ RangeSelector.prototype = {
 			navDataMax = navExtremes && navExtremes.dataMax,
 			baseDataMin = extremes && extremes.dataMin,
 			baseDataMax = extremes && extremes.dataMax,
-			dataMin = mathMin(baseDataMin, pick(navDataMin, baseDataMin)),
-			dataMax = mathMax(baseDataMax, pick(navDataMax, baseDataMax)),
+			// if both are defined, get Math.min, else, pick the one that is defined
+			dataMin = ((defined(baseDataMin) && defined(navDataMin)) ? mathMin : pick)(baseDataMin, navDataMin),
+			dataMax = ((defined(baseDataMax) && defined(navDataMax)) ? mathMax : pick)(baseDataMax, navDataMax),
 			newMin,
 			newMax = baseAxis && mathMin(extremes.max, dataMax),
 			now,
