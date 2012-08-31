@@ -12,9 +12,8 @@ $(function () {
                 text: 'Browser market shares at a specific website, 2010'
             },
             tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
-                }
+        	    pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+            	percentageDecimals: 1
             },
             plotOptions: {
                 pie: {

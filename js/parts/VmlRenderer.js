@@ -207,12 +207,7 @@ var VMLElement = {
 						// Instead of toggling the visibility CSS property, move the div out of the viewport. 
 						// This works around #61 and #586							
 						if (nodeName === 'DIV') {
-							if (value === HIDDEN) { // cache it
-								wrapper.top = elemStyle.top;
-								value = '-9999em';
-							} else {
-								value = wrapper.top || 0;
-							}
+							value = value === HIDDEN ? '-999em' : 0;
 							key = 'top';
 						}
 						
