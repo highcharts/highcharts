@@ -365,7 +365,7 @@ SVGElement.prototype = {
 
 		// store object
 		elemWrapper.styles = styles;
-
+		
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
 			if (textWidth) {
@@ -1271,6 +1271,7 @@ SVGRenderer.prototype = {
 							rest = [];
 
 						while (words.length || rest.length) {
+							delete wrapper.bBox; // delete cache
 							actualWidth = wrapper.getBBox().width;
 							tooLong = actualWidth > width;
 							if (!tooLong || words.length === 1) { // new line needed

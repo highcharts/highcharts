@@ -2173,7 +2173,7 @@ SVGElement.prototype = {
 
 		// store object
 		elemWrapper.styles = styles;
-
+		
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
 			if (textWidth) {
@@ -3079,6 +3079,7 @@ SVGRenderer.prototype = {
 							rest = [];
 
 						while (words.length || rest.length) {
+							delete wrapper.bBox; // delete cache
 							actualWidth = wrapper.getBBox().width;
 							tooLong = actualWidth > width;
 							if (!tooLong || words.length === 1) { // new line needed
@@ -12977,7 +12978,7 @@ Series.prototype = {
 				
 				// Check if the individual label must be disabled due to either falling
 				// ouside the plot area, or the enabled option being switched off
-				if (series.isCartesian && !chart.isInsidePlot(x, y)) {
+				if (series.isCartesian && !chart.isInsidePlot(x - options.x, y)) {
 					enabled = false;
 				}
 				
@@ -17705,7 +17706,9 @@ Highcharts.StockChart = function (options, callback) {
 			arearange: lineOptions,
 			areasplinerange: lineOptions,
 			column: columnOptions,
-			columnrange: columnOptions
+			columnrange: columnOptions,
+			candlestick: columnOptions,
+			ohlc: columnOptions
 		}
 
 	},

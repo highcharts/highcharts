@@ -1913,7 +1913,7 @@ Series.prototype = {
 				
 				// Check if the individual label must be disabled due to either falling
 				// ouside the plot area, or the enabled option being switched off
-				if (series.isCartesian && !chart.isInsidePlot(x, y)) {
+				if (series.isCartesian && !chart.isInsidePlot(x - options.x, y)) {
 					enabled = false;
 				}
 				

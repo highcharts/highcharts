@@ -104,7 +104,9 @@ Highcharts.StockChart = function (options, callback) {
 			arearange: lineOptions,
 			areasplinerange: lineOptions,
 			column: columnOptions,
-			columnrange: columnOptions
+			columnrange: columnOptions,
+			candlestick: columnOptions,
+			ohlc: columnOptions
 		}
 
 	},
