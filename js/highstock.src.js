@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.2.0 (2012-08-24)
+ * @license Highstock JS v1.2.2 (2012-08-31)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1360,8 +1360,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.2.0/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.2.0/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.2.2/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.2.2/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -4374,12 +4374,7 @@ var VMLElement = {
 						// Instead of toggling the visibility CSS property, move the div out of the viewport. 
 						// This works around #61 and #586							
 						if (nodeName === 'DIV') {
-							if (value === HIDDEN) { // cache it
-								wrapper.top = elemStyle.top;
-								value = '-9999em';
-							} else {
-								value = wrapper.top || 0;
-							}
+							value = value === HIDDEN ? '-999em' : 0;
 							key = 'top';
 						}
 						
@@ -14583,7 +14578,7 @@ var PieSeries = {
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance,
-			ignoreHiddenPoint = options.ignoreHiddenPoint; // docs - http://jsfiddle.net/highcharts/bAcLn/
+			ignoreHiddenPoint = options.ignoreHiddenPoint;
 
 		// get positions - either an integer or a percentage string must be given
 		series.center = positions = series.getCenter();
@@ -16967,7 +16962,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) { // docs
+			if (navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 			}
 			
@@ -18491,6 +18486,6 @@ extend(Highcharts, {
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
 	product: 'Highstock',
-	version: '1.2.0'
+	version: '1.2.2'
 });
 }());

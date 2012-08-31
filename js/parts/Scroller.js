@@ -789,7 +789,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) { // docs
+			if (navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 			}
 			

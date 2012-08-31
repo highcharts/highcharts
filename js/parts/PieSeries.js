@@ -259,7 +259,7 @@ var PieSeries = {
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance,
-			ignoreHiddenPoint = options.ignoreHiddenPoint; // docs - http://jsfiddle.net/highcharts/bAcLn/
+			ignoreHiddenPoint = options.ignoreHiddenPoint;
 
 		// get positions - either an integer or a percentage string must be given
 		series.center = positions = series.getCenter();
