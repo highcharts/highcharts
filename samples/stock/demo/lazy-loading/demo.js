@@ -1,4 +1,6 @@
 $(function() {
+	
+	// See source code from the JSONP handler at https://github.com/highslide-software/highcharts.com/blob/master/samples/data/from-sql.php
 	$.getJSON('http://www.highcharts.com/samples/data/from-sql.php?callback=?', function(data) {
 		
 		// Add a null value for the end date 

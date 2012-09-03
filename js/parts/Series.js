@@ -595,7 +595,7 @@ Series.prototype = {
 		chart.series.push(series);
 		
 		// Sort series according to index option (#248, #1123)
-		chart.series.sort(function (a, b) {
+		stableSort(chart.series, function (a, b) {
 			return (a.options.index || 0) - (b.options.index || 0);
 		});
 		each(chart.series, function (series, i) {
@@ -1493,18 +1493,13 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			trackerGroup = this.trackerGroup;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
 			this.markerGroup.clip(); // no clip
 		}
 		
-		if (trackerGroup) {
-			trackerGroup.clip(chart.clipRect);
-		}
-
 		// Remove the shared clipping rectancgle when all series are shown		
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
@@ -1840,9 +1835,7 @@ Series.prototype = {
 				yIsNull = options.y === null,
 				fontMetrics = renderer.fontMetrics(options.style.fontSize), // height and baseline
 				fontLineHeight = fontMetrics.h,
-				fontBaseline = fontMetrics.b,
-				dataLabel,
-				enabled;
+				fontBaseline = fontMetrics.b;
 
 			if (isBarLike) {
 				var defaultYs = {
@@ -1886,7 +1879,11 @@ Series.prototype = {
 			generalOptions = options;
 			each(points, function (point) {
 				
-				dataLabel = point.dataLabel;
+				var plotX,
+					plotY,
+					individualYDelta,
+					enabled,
+					dataLabel = point.dataLabel;
 				
 				// Merge in individual options from point
 				options = generalOptions; // reset changes from previous points
@@ -1898,24 +1895,30 @@ Series.prototype = {
 				
 				// Get the positions
 				if (enabled) {
-					var plotX = (point.barX && point.barX + point.barW / 2) || pick(point.plotX, -999),
-						plotY = pick(point.plotY, -999),
+					plotX = (point.barX && point.barX + point.barW / 2) || pick(point.plotX, -999);
+					plotY = pick(point.plotY, -999);
 						
-						// if options.y is null, which happens by default on column charts, set the position
-						// above or below the column depending on the threshold
-						individualYDelta = options.y === null ? 
-							(point.y >= seriesOptions.threshold ? 
-								-fontLineHeight + fontBaseline : // below the threshold 
-								fontBaseline) : // above the threshold
-							options.y;
+					// if options.y is null, which happens by default on column charts, set the position
+					// above or below the column depending on the threshold
+					individualYDelta = options.y === null ? 
+						(point.y >= seriesOptions.threshold ? 
+							-fontLineHeight + fontBaseline : // below the threshold 
+							fontBaseline) : // above the threshold
+						options.y;
 					
 					x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 					y = mathRound((inverted ? chart.plotHeight - plotX : plotY) + individualYDelta);
 					
 				}
 				
+				// Check if the individual label must be disabled due to either falling
+				// ouside the plot area, or the enabled option being switched off
+				if (series.isCartesian && !chart.isInsidePlot(x - options.x, y)) {
+					enabled = false;
+				}
+				
 				// If the point is outside the plot area, destroy it. #678, #820
-				if (dataLabel && series.isCartesian && (!chart.isInsidePlot(x, y) || !enabled)) {
+				if (dataLabel && !enabled) {
 					point.dataLabel = dataLabel.destroy();
 				
 				// Individual labels are disabled if the are explicitly disabled 
@@ -2241,6 +2244,9 @@ Series.prototype = {
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
+			if (this.trackerGroup) {
+				this.trackerGroup.clip(chart.clipRect);
+			}
 		}
 
 		// Run the animation

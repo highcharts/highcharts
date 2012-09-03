@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.0 (2012-08-24)
+ * @license Highcharts JS v2.3.2 (2012-08-31)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -622,7 +622,7 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
-	lineWidth: 0,
+	lineWidth: 1, // docs - changed default value
 	marker: null,
 	threshold: null,
 	tooltip: {
@@ -634,7 +634,8 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		xHigh: 0,
 		yLow: 16,
 		yHigh: -6		
-	}
+	},
+	shadow: false // docs - changed default
 });
 
 /**
@@ -774,61 +775,64 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	 */
 	drawDataLabels: function () {
 		
-		var points = this.points,
-			length = points.length,
+		var data = this.data,
+			length = data.length,
 			i,
 			originalDataLabels = [],
-			uberMethod = Series.prototype.drawDataLabels,
+			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			point,
 			inverted = this.chart.inverted;
 			
-		// Step 1: set preliminary values for plotY and dataLabel and draw the upper labels
-		i = length;
-		while (i--) {
-			point = points[i];
+		if (dataLabelOptions.enabled || this._hasPointLabels) {
 			
-			// Set preliminary values
-			point.y = point.high;
-			point.plotY = point.plotHigh;
-			
-			// Store original data labels and set preliminary label objects to be picked up 
-			// in the uber method
-			originalDataLabels[i] = point.dataLabel;
-			point.dataLabel = point.dataLabelUpper;
-			
-			// Set the default offset
-			if (inverted) {
-				dataLabelOptions.align = 'left';
-				dataLabelOptions.x = dataLabelOptions.xHigh;								
-			} else {
-				dataLabelOptions.y = dataLabelOptions.yHigh;
+			// Step 1: set preliminary values for plotY and dataLabel and draw the upper labels
+			i = length;
+			while (i--) {
+				point = data[i];
+				
+				// Set preliminary values
+				point.y = point.high;
+				point.plotY = point.plotHigh;
+				
+				// Store original data labels and set preliminary label objects to be picked up 
+				// in the uber method
+				originalDataLabels[i] = point.dataLabel;
+				point.dataLabel = point.dataLabelUpper;
+				
+				// Set the default offset
+				if (inverted) {
+					dataLabelOptions.align = 'left';
+					dataLabelOptions.x = dataLabelOptions.xHigh;								
+				} else {
+					dataLabelOptions.y = dataLabelOptions.yHigh;
+				}
 			}
-		}
-		uberMethod.apply(this, arguments);
-		
-		// Step 2: reorganize and handle data labels for the lower values
-		i = length;
-		while (i--) {
-			point = points[i];
+			seriesProto.drawDataLabels.apply(this, arguments); // #1209
 			
-			// Move the generated labels from step 1, and reassign the original data labels
-			point.dataLabelUpper = point.dataLabel;
-			point.dataLabel = originalDataLabels[i];
-			
-			// Reset values
-			point.y = point.low;
-			point.plotY = point.plotLow;
-			
-			// Set the default offset
-			if (inverted) {
-				dataLabelOptions.align = 'right';
-				dataLabelOptions.x = dataLabelOptions.xLow;
-			} else {
-				dataLabelOptions.y = dataLabelOptions.yLow;
+			// Step 2: reorganize and handle data labels for the lower values
+			i = length;
+			while (i--) {
+				point = data[i];
+				
+				// Move the generated labels from step 1, and reassign the original data labels
+				point.dataLabelUpper = point.dataLabel;
+				point.dataLabel = originalDataLabels[i];
+				
+				// Reset values
+				point.y = point.low;
+				point.plotY = point.plotLow;
+				
+				// Set the default offset
+				if (inverted) {
+					dataLabelOptions.align = 'right';
+					dataLabelOptions.x = dataLabelOptions.xLow;
+				} else {
+					dataLabelOptions.y = dataLabelOptions.yLow;
+				}
 			}
+			seriesProto.drawDataLabels.apply(this, arguments);
 		}
-		uberMethod.apply(this, arguments);
 	
 	},
 	

@@ -1,4 +1,15 @@
 <?php
+/**
+ * This file loads content from four different data tables depending on the required time range.
+ * The stockquotes table containts 1.7 million data points. Since we are loading OHLC data and
+ * MySQL has no concept of first and last in a data group, we have extracted groups by hours, days
+ * and months into separate tables. If we were to load a line series with average data, we wouldn't
+ * have to do this.
+ * 
+ * @param callback {String} The name of the JSONP callback to pad the JSON within
+ * @param start {Integer} The starting point in JS time
+ * @param end {Integer} The ending point in JS time
+ */
 
 // get the parameters
 
@@ -45,7 +56,7 @@ if ($range < 2 * 24 * 3600 * 1000) {
 	$table = 'stockquotes_hour';
 	
 // one year range loads daily data
-} elseif ($range < 12 * 31 * 24 * 3600 * 1000) {
+} elseif ($range < 15 * 31 * 24 * 3600 * 1000) {
 	$table = 'stockquotes_day';
 
 // greater range loads monthly data

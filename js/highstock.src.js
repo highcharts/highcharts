@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.2.0 (2012-08-24)
+ * @license Highstock JS v1.2.2 (2012-08-31)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -1360,8 +1360,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.2.0/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.2.0/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.2.2/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.2.2/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -2173,7 +2173,7 @@ SVGElement.prototype = {
 
 		// store object
 		elemWrapper.styles = styles;
-
+		
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
 			if (textWidth) {
@@ -3079,6 +3079,7 @@ SVGRenderer.prototype = {
 							rest = [];
 
 						while (words.length || rest.length) {
+							delete wrapper.bBox; // delete cache
 							actualWidth = wrapper.getBBox().width;
 							tooLong = actualWidth > width;
 							if (!tooLong || words.length === 1) { // new line needed
@@ -4241,11 +4242,6 @@ var VMLElement = {
 			renderer.invertChild(element, parentNode);
 		}
 
-		// issue #140 workaround - related to #61 and #74
-		if (docMode8 && parentNode.gVis === HIDDEN) {
-			css(element, { visibility: HIDDEN });
-		}
-
 		// append it
 		parentNode.appendChild(element);
 
@@ -4259,26 +4255,6 @@ var VMLElement = {
 		fireEvent(wrapper, 'add');
 
 		return wrapper;
-	},
-
-	/**
-	 * In IE8 documentMode 8, we need to recursively set the visibility down in the DOM
-	 * tree for nested groups. Related to #61, #586.
-	 */
-	toggleChildren: function (element, visibility) {
-		var childNodes = element.childNodes,
-			i = childNodes.length;
-			
-		while (i--) {
-			
-			// apply the visibility
-			css(childNodes[i], { visibility: visibility });
-			
-			// we have a nested group, apply it to its children again
-			if (childNodes[i].nodeName === 'DIV') {
-				this.toggleChildren(childNodes[i], visibility);
-			}
-		}
 	},
 
 	/**
@@ -4384,24 +4360,33 @@ var VMLElement = {
 						}
 						skipAttr = true;
 
-					// directly mapped to css
-					} else if (key === 'zIndex' || key === 'visibility') {
+					// handle visibility
+					} else if (key === 'visibility') {
 
-						// workaround for #61 and #586
-						if (docMode8 && key === 'visibility' && nodeName === 'DIV') {
-							element.gVis = value;
-							wrapper.toggleChildren(element, value);
-							if (value === VISIBLE) { // #74
-								value = null;
+						// let the shadow follow the main element
+						if (shadows) {
+							i = shadows.length;
+							while (i--) {
+								shadows[i].style[key] = value;
 							}
 						}
+						
+						// Instead of toggling the visibility CSS property, move the div out of the viewport. 
+						// This works around #61 and #586							
+						if (nodeName === 'DIV') {
+							value = value === HIDDEN ? '-999em' : 0;
+							key = 'top';
+						}
+						
+						elemStyle[key] = value;	
+						skipAttr = true;
+
+					// directly mapped to css
+					} else if (key === 'zIndex') {
 
 						if (value) {
 							elemStyle[key] = value;
 						}
-
-
-
 						skipAttr = true;
 
 					// width and height
@@ -4491,16 +4476,6 @@ var VMLElement = {
 						skipAttr = true;
 					}
 
-					// let the shadow follow the main element
-					if (shadows && key === 'visibility') {
-						i = shadows.length;
-						while (i--) {
-							shadows[i].style[key] = value;
-						}
-					}
-
-
-
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
 							element[key] = value;
@@ -4524,7 +4499,8 @@ var VMLElement = {
 		var wrapper = this,
 			clipMembers,
 			element = wrapper.element,
-			parentNode = element.parentNode;
+			parentNode = element.parentNode,
+			cssRet;
 
 		if (clipRect) {
 			clipMembers = clipRect.members;
@@ -4536,12 +4512,17 @@ var VMLElement = {
 			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
 				css(element, { visibility: HIDDEN });
 			}
+			cssRet = clipRect.getCSS(wrapper);
 			
-		} else if (wrapper.destroyClip) {
-			wrapper.destroyClip();
+		} else {
+			if (wrapper.destroyClip) {
+				wrapper.destroyClip();
+			}
+			cssRet = { clip: docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
 		}
 		
-		return wrapper.css(clipRect ? clipRect.getCSS(wrapper) : { clip: 'inherit' });	
+		return wrapper.css(cssRet);
+			
 	},
 
 	/**
@@ -4557,8 +4538,7 @@ var VMLElement = {
 	safeRemoveChild: function (element) {
 		// discardElement will detach the node from its parent before attaching it
 		// to the garbage bin. Therefore it is important that the node is attached and have parent.
-		var parentNode = element.parentNode;
-		if (parentNode) {
+		if (element.parentNode) {
 			discardElement(element);
 		}
 	},
@@ -4567,13 +4547,11 @@ var VMLElement = {
 	 * Extend element.destroy by removing it from the clip members array
 	 */
 	destroy: function () {
-		var wrapper = this;
-
-		if (wrapper.destroyClip) {
-			wrapper.destroyClip();
+		if (this.destroyClip) {
+			this.destroyClip();
 		}
 
-		return SVGElement.prototype.destroy.apply(wrapper);
+		return SVGElement.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -7367,6 +7345,15 @@ Axis.prototype = {
 	},
 	
 	/**
+	 * Overridable method for zooming chart. Pulled out in a separate method to allow overriding
+	 * in stock charts.
+	 */
+	zoom: function (newMin, newMax) {
+		this.setExtremes(newMin, newMax, false, UNDEFINED, { trigger: 'zoom' });
+		return true;
+	},
+	
+	/**
 	 * Update the axis metrics
 	 */
 	setAxisSize: function () {
@@ -7570,6 +7557,8 @@ Axis.prototype = {
 			horiz = this.horiz,
 			lineLeft = this.left + (opposite ? this.width : 0) + offset,
 			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
+			
+		this.lineTop = lineTop; // used by flag series
 
 		return chart.renderer.crispLine([
 				M,
@@ -10039,17 +10028,12 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		var chart = this,
-			optionsChart = chart.options.chart,
-			hasZoomed,
-			showButton;
+			hasZoomed;
 
 		// if zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
-				if (axis.options.zoomEnabled !== false && axis.zoomingCausesButton !== false) { // stock chart specials
-					axis.setExtremes(null, null, false, UNDEFINED, { trigger: 'zoomout' });
-					hasZoomed = true;
-				}
+				hasZoomed = axis.zoom();
 			});
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
@@ -10057,17 +10041,13 @@ Chart.prototype = {
 
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
-					axis.setExtremes(axisData.min, axisData.max, false, UNDEFINED, { trigger: 'zoom' });
-					hasZoomed = true;
-					if (axis.zoomingCausesButton !== false) { // hook for stock charts
-						showButton = true;
-					}	
+					hasZoomed = axis.zoom(axisData.min, axisData.max);
 				}
 			});
 		}
 		
 		// Show the Reset zoom button
-		if (showButton && !chart.resetZoomButton) {
+		if (!chart.resetZoomButton) {
 			chart.showResetZoom();
 		}
 		
@@ -10075,7 +10055,7 @@ Chart.prototype = {
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				pick(optionsChart.animation, chart.pointCount < 100) // animation
+				pick(chart.options.chart.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},
@@ -11675,7 +11655,7 @@ Series.prototype = {
 		chart.series.push(series);
 		
 		// Sort series according to index option (#248, #1123)
-		chart.series.sort(function (a, b) {
+		stableSort(chart.series, function (a, b) {
 			return (a.options.index || 0) - (b.options.index || 0);
 		});
 		each(chart.series, function (series, i) {
@@ -12573,18 +12553,13 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			trackerGroup = this.trackerGroup;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
 			this.markerGroup.clip(); // no clip
 		}
 		
-		if (trackerGroup) {
-			trackerGroup.clip(chart.clipRect);
-		}
-
 		// Remove the shared clipping rectancgle when all series are shown		
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
@@ -12920,9 +12895,7 @@ Series.prototype = {
 				yIsNull = options.y === null,
 				fontMetrics = renderer.fontMetrics(options.style.fontSize), // height and baseline
 				fontLineHeight = fontMetrics.h,
-				fontBaseline = fontMetrics.b,
-				dataLabel,
-				enabled;
+				fontBaseline = fontMetrics.b;
 
 			if (isBarLike) {
 				var defaultYs = {
@@ -12966,7 +12939,11 @@ Series.prototype = {
 			generalOptions = options;
 			each(points, function (point) {
 				
-				dataLabel = point.dataLabel;
+				var plotX,
+					plotY,
+					individualYDelta,
+					enabled,
+					dataLabel = point.dataLabel;
 				
 				// Merge in individual options from point
 				options = generalOptions; // reset changes from previous points
@@ -12978,24 +12955,30 @@ Series.prototype = {
 				
 				// Get the positions
 				if (enabled) {
-					var plotX = (point.barX && point.barX + point.barW / 2) || pick(point.plotX, -999),
-						plotY = pick(point.plotY, -999),
+					plotX = (point.barX && point.barX + point.barW / 2) || pick(point.plotX, -999);
+					plotY = pick(point.plotY, -999);
 						
-						// if options.y is null, which happens by default on column charts, set the position
-						// above or below the column depending on the threshold
-						individualYDelta = options.y === null ? 
-							(point.y >= seriesOptions.threshold ? 
-								-fontLineHeight + fontBaseline : // below the threshold 
-								fontBaseline) : // above the threshold
-							options.y;
+					// if options.y is null, which happens by default on column charts, set the position
+					// above or below the column depending on the threshold
+					individualYDelta = options.y === null ? 
+						(point.y >= seriesOptions.threshold ? 
+							-fontLineHeight + fontBaseline : // below the threshold 
+							fontBaseline) : // above the threshold
+						options.y;
 					
 					x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
 					y = mathRound((inverted ? chart.plotHeight - plotX : plotY) + individualYDelta);
 					
 				}
 				
+				// Check if the individual label must be disabled due to either falling
+				// ouside the plot area, or the enabled option being switched off
+				if (series.isCartesian && !chart.isInsidePlot(x - options.x, y)) {
+					enabled = false;
+				}
+				
 				// If the point is outside the plot area, destroy it. #678, #820
-				if (dataLabel && series.isCartesian && (!chart.isInsidePlot(x, y) || !enabled)) {
+				if (dataLabel && !enabled) {
 					point.dataLabel = dataLabel.destroy();
 				
 				// Individual labels are disabled if the are explicitly disabled 
@@ -13321,6 +13304,9 @@ Series.prototype = {
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
+			if (this.trackerGroup) {
+				this.trackerGroup.clip(chart.clipRect);
+			}
 		}
 
 		// Run the animation
@@ -14592,7 +14578,7 @@ var PieSeries = {
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance,
-			ignoreHiddenPoint = options.ignoreHiddenPoint; // docs - http://jsfiddle.net/highcharts/bAcLn/
+			ignoreHiddenPoint = options.ignoreHiddenPoint;
 
 		// get positions - either an integer or a percentage string must be given
 		series.center = positions = series.getCenter();
@@ -15938,7 +15924,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			step = onSeries && onSeries.options.step,
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
-			xAxisExt = series.xAxis.getExtremes(),
+			xAxis = series.xAxis,
+			xAxisExt = xAxis.getExtremes(),
 			leftPoint,
 			lastX,
 			rightPoint;
@@ -15990,7 +15977,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
 			if (point.plotY === UNDEFINED) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
-					point.plotY = chart.plotHeight;
+					point.plotY = xAxis.lineTop - chart.plotTop;
 				} else {
 					point.shapeArgs = {}; // 847
 				}
@@ -16316,9 +16303,7 @@ function Scroller(chart) {
 	this.handles = [];
 	this.scrollbarButtons = [];
 	this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
-
-	chart.xAxis[0].zoomingCausesButton = false; // because we can use the navigator to zoom out
-
+	
 	this.chart = chart;
 	this.height = height;
 	this.scrollbarHeight = scrollbarHeight;
@@ -16734,8 +16719,13 @@ Scroller.prototype = {
 				// grab the zoomed range
 				} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
 					scroller.grabbedCenter = chartX;
-					defaultBodyCursor = bodyStyle.cursor;
-					bodyStyle.cursor = 'ew-resize';
+						
+					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
+					// and IE8 isn't able to show it while dragging anyway.
+					if (chart.renderer.isSVG) {
+						defaultBodyCursor = bodyStyle.cursor;
+						bodyStyle.cursor = 'ew-resize';
+					}
 
 					dragOffset = chartX - zoomedMin;
 
@@ -16972,7 +16962,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) { // docs
+			if (navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 			}
 			
@@ -17037,6 +17027,47 @@ Scroller.prototype = {
 };
 
 Highcharts.Scroller = Scroller;
+
+/**
+ * For Stock charts, override selection zooming with some special features because 
+ * X axis zooming is already allowed by the Navigator and Range selector. 
+ */
+wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+	var chart = this.chart,
+		chartOptions = chart.options,
+		zoomType = chartOptions.chart.zoomType,
+		previousZoom,
+		ret;
+	
+	if (this.isXAxis && ((chartOptions.navigator && chartOptions.navigator.enabled) || 
+			(chartOptions.scrollbar && chartOptions.scrollbar.enabled))) {
+		
+		// For x only zooming, fool the chart.zoom method not to create the zoom button 
+		// because the property already exists
+		if (zoomType === 'x') {
+			chart.resetZoomButton = 'blocked';
+			
+		// For y only zooming, ignore the X axis completely
+		} else if (zoomType === 'y') {
+			ret = false;
+		
+		// For xy zooming, record the state of the zoom before zoom selection, then when 
+		// the reset button is pressed, revert to this state
+		} else if (zoomType === 'xy') {
+			previousZoom = this.previousZoom;
+			if (defined(newMin)) {
+				this.previousZoom = [this.min, this.max];
+			} else if (previousZoom) {
+				newMin = previousZoom[0];
+				newMax = previousZoom[1];
+				delete this.previousZoom;
+			}
+		}
+		
+	}
+	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
+});
+
 
 /* ****************************************************************************
  * End Scroller code														  *
@@ -17134,8 +17165,9 @@ RangeSelector.prototype = {
 			navDataMax = navExtremes && navExtremes.dataMax,
 			baseDataMin = extremes && extremes.dataMin,
 			baseDataMax = extremes && extremes.dataMax,
-			dataMin = mathMin(baseDataMin, pick(navDataMin, baseDataMin)),
-			dataMax = mathMax(baseDataMax, pick(navDataMax, baseDataMax)),
+			// if both are defined, get Math.min, else, pick the one that is defined
+			dataMin = ((defined(baseDataMin) && defined(navDataMin)) ? mathMin : pick)(baseDataMin, navDataMin),
+			dataMax = ((defined(baseDataMax) && defined(navDataMax)) ? mathMax : pick)(baseDataMax, navDataMax),
 			newMin,
 			newMax = baseAxis && mathMin(extremes.max, dataMax),
 			now,
@@ -17669,7 +17701,9 @@ Highcharts.StockChart = function (options, callback) {
 			arearange: lineOptions,
 			areasplinerange: lineOptions,
 			column: columnOptions,
-			columnrange: columnOptions
+			columnrange: columnOptions,
+			candlestick: columnOptions,
+			ohlc: columnOptions
 		}
 
 	},
@@ -18452,6 +18486,6 @@ extend(Highcharts, {
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
 	product: 'Highstock',
-	version: '1.2.0'
+	version: '1.2.2'
 });
 }());

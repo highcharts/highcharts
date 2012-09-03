@@ -130,9 +130,7 @@ function Scroller(chart) {
 	this.handles = [];
 	this.scrollbarButtons = [];
 	this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
-
-	chart.xAxis[0].zoomingCausesButton = false; // because we can use the navigator to zoom out
-
+	
 	this.chart = chart;
 	this.height = height;
 	this.scrollbarHeight = scrollbarHeight;
@@ -548,8 +546,13 @@ Scroller.prototype = {
 				// grab the zoomed range
 				} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
 					scroller.grabbedCenter = chartX;
-					defaultBodyCursor = bodyStyle.cursor;
-					bodyStyle.cursor = 'ew-resize';
+						
+					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
+					// and IE8 isn't able to show it while dragging anyway.
+					if (chart.renderer.isSVG) {
+						defaultBodyCursor = bodyStyle.cursor;
+						bodyStyle.cursor = 'ew-resize';
+					}
 
 					dragOffset = chartX - zoomedMin;
 
@@ -786,7 +789,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) { // docs
+			if (navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 			}
 			
@@ -851,6 +854,47 @@ Scroller.prototype = {
 };
 
 Highcharts.Scroller = Scroller;
+
+/**
+ * For Stock charts, override selection zooming with some special features because 
+ * X axis zooming is already allowed by the Navigator and Range selector. 
+ */
+wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+	var chart = this.chart,
+		chartOptions = chart.options,
+		zoomType = chartOptions.chart.zoomType,
+		previousZoom,
+		ret;
+	
+	if (this.isXAxis && ((chartOptions.navigator && chartOptions.navigator.enabled) || 
+			(chartOptions.scrollbar && chartOptions.scrollbar.enabled))) {
+		
+		// For x only zooming, fool the chart.zoom method not to create the zoom button 
+		// because the property already exists
+		if (zoomType === 'x') {
+			chart.resetZoomButton = 'blocked';
+			
+		// For y only zooming, ignore the X axis completely
+		} else if (zoomType === 'y') {
+			ret = false;
+		
+		// For xy zooming, record the state of the zoom before zoom selection, then when 
+		// the reset button is pressed, revert to this state
+		} else if (zoomType === 'xy') {
+			previousZoom = this.previousZoom;
+			if (defined(newMin)) {
+				this.previousZoom = [this.min, this.max];
+			} else if (previousZoom) {
+				newMin = previousZoom[0];
+				newMax = previousZoom[1];
+				delete this.previousZoom;
+			}
+		}
+		
+	}
+	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
+});
+
 
 /* ****************************************************************************
  * End Scroller code														  *

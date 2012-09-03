@@ -322,6 +322,20 @@
 					point.y = null;
 				}
 			});
+			
+		},
+		
+		/**
+		 * The map points (areas) are drawn in the series.group because it inherits column series'
+		 * drawPoints method, but the scatter series' drawTracker method applies the 
+		 * mouse listener to the markerGroup. So we need some switching around. Probably 
+		 * this can be done in a smarter way to reduce bloat.
+		 */
+		drawTracker: function () {
+			var markerGroup = this.markerGroup;
+			this.markerGroup = this.group;
+			Highcharts.seriesTypes.scatter.prototype.drawTracker.call(this);
+			this.markerGroup = markerGroup;
 		}
 	});
 	
