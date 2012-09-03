@@ -62,8 +62,8 @@ public class ExportController extends HttpServlet {
 			}
 			
 			if (svg.indexOf(FORBIDDEN_WORD) > -1 || svg.indexOf(FORBIDDEN_WORD.toLowerCase()) > -1){
-				//throw new ServletException(
-				//	"The - svg - post parameter could contain a malicious attack");
+				throw new ServletException(
+					"The - svg - post parameter could contain a malicious attack");
 			}
 
 			String filename = getFilename(getParameter(request, "filename",
