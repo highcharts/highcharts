@@ -815,7 +815,6 @@ Series.prototype = {
 				2 * radius,
 				2 * radius
 			)
-			.attr(this.pointAttr[NORMAL_STATE])
 			.add(legendItemGroup);
 		}
 	},

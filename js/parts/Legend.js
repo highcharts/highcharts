@@ -77,7 +77,12 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? item.color : hiddenColor;
+			symbolColor = visible ? item.color : hiddenColor,
+			markerOptions = item.options && item.options.marker,
+			symbolAttr = markerOptions ? item.convertAttribs(markerOptions) : {
+				stroke: symbolColor,
+				fill: symbolColor
+			};
 
 		if (legendItem) {
 			legendItem.css({ fill: textColor });
@@ -86,10 +91,7 @@ Legend.prototype = {
 			legendLine.attr({ stroke: symbolColor });
 		}
 		if (legendSymbol) {
-			legendSymbol.attr({
-				stroke: symbolColor,
-				fill: symbolColor
-			});
+			legendSymbol.attr(symbolAttr);
 		}
 	},
 
