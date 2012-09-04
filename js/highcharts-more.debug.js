@@ -10,6 +10,7 @@ var files = [
     "AreaSplineRangeSeries.js",
     "ColumnRangeSeries.js",
 	"GaugeSeries.js",
+	"BoxPlotSeries.js",
 	"Polar.js"
 ];
 

@@ -12,4 +12,6 @@ var each = Highcharts.each,
 	Tick = Highcharts.Tick,
 	Series = Highcharts.Series,
 	colProto = seriesTypes.column.prototype,
+	math = Math,
+	mathRound = math.round,
 	noop = function () {};

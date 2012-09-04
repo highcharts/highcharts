@@ -11115,45 +11115,53 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			optionsType = typeof options;
+			pointArrayMap = series.pointArrayMap || ['y'],
+			valueCount = pointArrayMap.length,
+			i = 0,
+			j = 0,
+			optionsType = typeof options,
+			firstItemType,
+			pointValKey = series.pointValKey;
 
-		point.config = options;
-
-		// onedimensional array input
 		if (optionsType === 'number' || options === null) {
 			point.y = options;
-		} else if (typeof options[0] === 'number') { // two-dimentional array
-			point.x = options[0];
-			point.y = options[1];
-		} else if (optionsType === 'object' && typeof options.length !== 'number') { // object input
+		 
+		// object input
+		} else if (typeof options === 'object' && typeof options.length !== 'number') {
+
 			// copy options directly to point
 			extend(point, options);
+
 			point.options = options;
 			
-			// This is the fastest way to detect if there are individual point dataLabels that need 
-			// to be considered in drawDataLabels. These can only occur in object configs.
-			if (options.dataLabels) {
-				series._hasPointLabels = true;
+		} else if (options.length) { // array
+			// with leading x value
+			if (options.length > valueCount) {
+				firstItemType = typeof options[0];
+				if (firstItemType === 'string') {
+					point.name = options[0];
+				} else if (firstItemType === 'number') {
+					point.x = options[0];
+				}
+				i++;
 			}
-			
-			// Same approach as above for markers
-			if (options.marker) {
-				series._hasPointMarkers = true;
+			while (j < valueCount) {
+				point[pointArrayMap[j++]] = options[i++];
 			}
-		} else if (typeof options[0] === 'string') { // categorized data with name in first position
-			point.name = options[0];
-			point.y = options[1];
+		}
+
+		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
+		if (pointValKey) {
+			point.y = point[pointValKey];
 		}
 		
-		/*
-		 * If no x is set by now, get auto incremented value. All points must have an
-		 * x value, however the y value can be null to create a gap in the series
-		 */
-		// todo: skip this? It is only used in applyOptions, in translate it should not be used
-		if (point.x === UNDEFINED) {
+		// If no x is set by now, get auto incremented value. All points must have an
+		// x value, however the y value can be null to create a gap in the series
+		if (point.x === UNDEFINED && series) {
 			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
 		
+		return point;
 	},
 
 	/**
@@ -11306,7 +11314,7 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			match = pointFormat.match(/\{(series|point)\.[a-zA-Z]+\}/g),
+			match = pointFormat.match(/\{(series|point)\.[a-zA-Z0-9]+\}/g),
 			splitter = /[{\.}]/,
 			obj,
 			key,
@@ -11916,8 +11924,7 @@ Series.prototype = {
 			yData = series.yData,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
-			point,
-			proto = series.pointClass.prototype;
+			point;
 
 		setAnimation(animation, chart);
 
@@ -11938,9 +11945,9 @@ Series.prototype = {
 		// Get options and push the point to xData, yData and series.options. In series.generatePoints
 		// the Point instance will be created on demand and pushed to the series.data array.
 		point = { series: series };
-		proto.applyOptions.apply(point, [options]);
+		series.pointClass.prototype.applyOptions.apply(point, [options]);
 		xData.push(point.x);
-		yData.push(proto.toYData ? proto.toYData.call(point) : point.y);
+		yData.push(series.toYData ? series.toYData(point) : point.y);
 		dataOptions.push(options);
 
 
@@ -11979,8 +11986,7 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			i,
-			pointProto = series.pointClass.prototype;
+			i;
 
 		// reset properties
 		series.xIncrement = null;
@@ -12043,9 +12049,9 @@ Series.prototype = {
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				pt = { series: series };
-				pointProto.applyOptions.apply(pt, [data[i]]);
+				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
+				yData[i] = series.toYData ? series.toYData(pt) : pt.y;
 			}
 		}
 
@@ -15536,88 +15542,14 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	//upColor: undefined
 });
 
-// 2- Create the OHLCPoint object
-var OHLCPoint = extendClass(Point, {
-	/**
-	 * Apply the options containing the x and OHLC data and possible some extra properties.
-	 * This is called on point init or from point.update. Extends base Point by adding
-	 * multiple y-like values.
-	 *
-	 * @param {Object} options
-	 */
-	applyOptions: function (options) {
-		var point = this,
-			series = point.series,
-			pointArrayMap = series.pointArrayMap,
-			i = 0,
-			j = 0,
-			valueCount = pointArrayMap.length;
-
-
-		// object input
-		if (typeof options === 'object' && typeof options.length !== 'number') {
-
-			// copy options directly to point
-			extend(point, options);
-
-			point.options = options;
-			
-		} else if (options.length) { // array
-			// with leading x value
-			if (options.length > valueCount) {
-				if (typeof options[0] === 'string') {
-					point.name = options[0];
-				} else if (typeof options[0] === 'number') {
-					point.x = options[0];
-				}
-				i++;
-			}
-			while (j < valueCount) {
-				point[pointArrayMap[j++]] = options[i++];
-			}
-		}
-
-		point.y = point[series.pointValKey];
-		
-		// If no x is set by now, get auto incremented value. All points must have an
-		// x value, however the y value can be null to create a gap in the series
-		if (point.x === UNDEFINED && series) {
-			point.x = series.autoIncrement();
-		}
-		
-		return point;
-	},
-
-	/**
-	 * A specific OHLC tooltip formatter
-	 */
-	tooltipFormatter: function () {
-		var point = this,
-			series = point.series;
-
-		return ['<span style="color:' + series.color + ';font-weight:bold">', (point.name || series.name), '</span><br/>',
-			'Open: ', point.open, '<br/>',
-			'High: ', point.high, '<br/>',
-			'Low: ', point.low, '<br/>',
-			'Close: ', point.close, '<br/>'].join('');
-
-	},
-	
-	/**
-	 * Return a plain array for speedy calculation
-	 */
-	toYData: function () {
-		return [this.open, this.high, this.low, this.close];
-	}
-
-});
-
-// 3 - Create the OHLCSeries object
+// 2 - Create the OHLCSeries object
 var OHLCSeries = extendClass(seriesTypes.column, {
 	type: 'ohlc',
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
+	toYData: function (point) { // return a plain array for speedy calculation
+		return [point.open, point.high, point.low, point.close];
+	},
 	pointValKey: 'high',
-	pointClass: OHLCPoint,
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
