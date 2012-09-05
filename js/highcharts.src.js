@@ -7941,9 +7941,6 @@ function Tooltip(chart, options) {
 	// Current values of x and y when animating
 	this.now = { x: 0, y: 0 };
 
-	// The tooltipTick function, initialized to nothing
-	//this.tooltipTick = UNDEFINED;
-
 	// The tooltip is initially hidden
 	this.isHidden = true;
 
@@ -8011,13 +8008,21 @@ Tooltip.prototype = {
 		// move to the intermediate value
 		tooltip.label.attr(now);
 
+		
 		// run on next tick of the mouse tracker
 		if (animate && (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1)) {
-			tooltip.tooltipTick = function () {
-				tooltip.move(x, y, anchorX, anchorY);
-			};
-		} else {
-			tooltip.tooltipTick = null;
+		
+			// never allow two timeouts
+			clearTimeout(this.tooltipTimeout);
+			
+			// set the fixed interval ticking for the smooth tooltip
+			this.tooltipTimeout = setTimeout(function () {
+				// The interval function may still be running during destroy, so check that the chart is really there before calling.
+				if (tooltip) {
+					tooltip.move(x, y, anchorX, anchorY);
+				}
+			}, 32);
+			
 		}
 	},
 
@@ -8320,15 +8325,6 @@ Tooltip.prototype = {
 				y: y + chart.plotTop,
 				borderColor: borderColor
 			});
-	},
-
-	/**
-	 * Runs the tooltip animation one tick.
-	 */
-	tick: function () {
-		if (this.tooltipTick) {
-			this.tooltipTick();
-		}
 	}
 };
 /**
@@ -8350,7 +8346,7 @@ function MouseTracker(chart, options) {
 	this.chart = chart;
 
 	// The interval id
-	//this.tooltipInterval = UNDEFINED;
+	//this.tooltipTimeout = UNDEFINED;
 
 	// The cached x hover position
 	//this.hoverX = UNDEFINED;
@@ -8907,7 +8903,7 @@ MouseTracker.prototype = {
 		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 
 		// memory and CPU leak
-		clearInterval(this.tooltipInterval);
+		clearInterval(this.tooltipTimeout);
 	},
 
 	// Run MouseTracker
@@ -8920,14 +8916,6 @@ MouseTracker.prototype = {
 
 		if (options.enabled) {
 			chart.tooltip = new Tooltip(chart, options);
-
-			// set the fixed interval ticking for the smooth tooltip
-			this.tooltipInterval = setInterval(function () {
-				// The interval function may still be running during destroy, so check that the chart is really there before calling.
-				if (chart && chart.tooltip) {
-					chart.tooltip.tick();
-				}
-			}, 32);
 		}
 
 		this.setDOMEvents();

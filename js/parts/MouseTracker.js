@@ -17,7 +17,7 @@ function MouseTracker(chart, options) {
 	this.chart = chart;
 
 	// The interval id
-	//this.tooltipInterval = UNDEFINED;
+	//this.tooltipTimeout = UNDEFINED;
 
 	// The cached x hover position
 	//this.hoverX = UNDEFINED;
@@ -574,7 +574,7 @@ MouseTracker.prototype = {
 		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 
 		// memory and CPU leak
-		clearInterval(this.tooltipInterval);
+		clearInterval(this.tooltipTimeout);
 	},
 
 	// Run MouseTracker
@@ -587,14 +587,6 @@ MouseTracker.prototype = {
 
 		if (options.enabled) {
 			chart.tooltip = new Tooltip(chart, options);
-
-			// set the fixed interval ticking for the smooth tooltip
-			this.tooltipInterval = setInterval(function () {
-				// The interval function may still be running during destroy, so check that the chart is really there before calling.
-				if (chart && chart.tooltip) {
-					chart.tooltip.tick();
-				}
-			}, 32);
 		}
 
 		this.setDOMEvents();
