@@ -864,10 +864,12 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,
 		previousZoom,
+		navigator = chartOptions.navigator,
+		rangeSelector = chartOptions.rangeSelector,
 		ret;
 	
-	if (this.isXAxis && ((chartOptions.navigator && chartOptions.navigator.enabled) || 
-			(chartOptions.scrollbar && chartOptions.scrollbar.enabled))) {
+	if (this.isXAxis && ((navigator && navigator.enabled) || 
+			(rangeSelector && rangeSelector.enabled))) {
 		
 		// For x only zooming, fool the chart.zoom method not to create the zoom button 
 		// because the property already exists
