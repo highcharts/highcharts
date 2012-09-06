@@ -8,9 +8,9 @@
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" />
 		
-		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/highcharts.src.js"></script>
-		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/map.src.js"></script>
-		<script type="text/javascript" src="https://raw.github.com/highslide-software/highcharts.com/master/js/modules/googlespreadsheet.src.js"></script>
+		<script type="text/javascript" src="http://code.highcharts.com/master/highcharts.src.js"></script>
+		<script type="text/javascript" src="http://code.highcharts.com/master/modules/map.src.js"></script>
+		<script type="text/javascript" src="http://code.highcharts.com/master/modules/googlespreadsheet.src.js"></script>
 		
 		 
 		
@@ -125,7 +125,6 @@
 									ySuffix: ' %'
 								},
 								cursor: 'pointer',
-								
 								valueRanges: [{
 									from: -100,
 									to: 0,
@@ -143,24 +142,6 @@
 						// Populate the data points
 						// The following are the center coordinates in the original SVG coordinate system. 
 						// After re-implementing x and y axis and translation, these can be used again.
-						/*var dataLabelOptions = { 
-							ak: [110, 490],
-							ca: [80, 300],
-							dc: [800, 250],
-							fl: [760, 500],
-							id: [190, 150],
-							hi: [280, 550],
-							ok: [450, 360],
-							ky: [670, 300],
-							ma: [870, 150],
-							md: [800, 235],
-							mi: [660, 180],
-							mn: [500, 130],
-							la: [560, 460],
-							sc: [760, 370],
-							va: [780, 280],
-							wv: [740, 260]
-						};*/
 						var dataLabelOptions = { 
 							ak: {
 								y: -10
@@ -173,27 +154,25 @@
 							fl: {
 								x: 40
 							},
-							id: {},
+							id: {
+								y: 40
+							},
 							hi: {
 								color: 'black',
 								y: 15
 							},
-							ok: {},
-							ky: {},
-							ma: {},
-							md: {},
-							mi: {},
-							mn: {},
-							la: {},
-							sc: {},
-							va: {},
-							wv: {}
+							la: {
+								x: -20
+							},
+							tn: {
+								y: 5
+							}
 						};
 						for (var i = 1; i < keys.length; i++) {
 							var key = keys[i];
 							
 							options.series[0].data.push({
-								y : percent[i],
+								y : parseFloat(percent[i]),
 								name : names[i],
 								key: key,
 								row: i,
@@ -213,73 +192,5 @@
 	<body>
 		<!-- 3. Add the container -->
 		<div id="container" style="width: 800px; height: 550px; margin: 0 auto"></div>
-		
-		
-		<!-- Load the Highcharts parts -->
-		<!--
-		<script type="text/javascript" src="../js/parts/Globals.js"></script>
-		<script type="text/javascript" src="../js/parts/Utilities.js"></script>
-		<script type="text/javascript" src="../js/parts/PathAnimation.js"></script>
-		<script type="text/javascript" src="../js/parts/Adapters.js"></script>
-		<script type="text/javascript" src="../js/parts/Options.js"></script>
-		<script type="text/javascript" src="../js/parts/Color.js"></script>
-		<script type="text/javascript" src="../js/parts/SvgRenderer.js"></script>
-		<script type="text/javascript" src="../js/parts/VmlRenderer.js"></script>
-		<script type="text/javascript" src="../js/parts/Chart.js"></script>
-		<script type="text/javascript" src="../js/parts/Series.js"></script>
-		<script type="text/javascript" src="../js/parts/LineSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/AreaSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/SplineSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/AreaSplineSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/ColumnSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/BarSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/ScatterSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/PieSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/DataGrouping.js"></script>
-		<script type="text/javascript" src="../js/parts/OHLCSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/CandlestickSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/FlagsSeries.js"></script>
-		<script type="text/javascript" src="../js/parts/StockNavigation.js"></script>
-		<script type="text/javascript" src="../js/parts/StockChart.js"></script>
-		<script type="text/javascript" src="../samples/data/usdeur.js"></script>
-		<script type="text/javascript">
-			// global variables
-			extend(Highcharts, {
-				Chart : Chart,
-				dateFormat : dateFormat,
-				pathAnim : pathAnim,
-				getOptions : getOptions,
-				numberFormat : numberFormat,
-				Point : Point,
-				Color : Color,
-				Renderer : Renderer,
-				seriesTypes : seriesTypes,
-				setOptions : setOptions,
-				Series : Series,
-	
-				// Expose utility funcitons for modules
-				addEvent : addEvent,
-				removeEvent : removeEvent,
-				createElement : createElement,
-				discardElement : discardElement,
-				css : css,
-				each : each,
-				extend : extend,
-				map : map,
-				merge : merge,
-				pick : pick,
-				splat : splat,
-				extendClass : extendClass,
-				product : '@product.name@',
-				version : '@product.version@'
-			});
-	
-		</script>
-	
-	
-		<script type="text/javascript" src="../js/modules/map.src.js"></script>
-		<script type="text/javascript" src="../js/modules/googlespreadsheet.src.js"></script>
-		-->	
-		
 	</body>
 </html>

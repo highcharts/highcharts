@@ -580,7 +580,7 @@ SVGElement.prototype = {
 								', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 								', sizingMethod=\'auto expand\')'].join('') : NONE;
 					}
-					
+					 
 					css(elem, rotationStyle);
 				}
 

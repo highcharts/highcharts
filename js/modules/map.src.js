@@ -55,7 +55,11 @@
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
 			shadow: false,
-			borderColor: 'silver'
+			borderColor: 'silver',
+			marker: null,
+			tooltip: {
+				pointFormat: '{point.name}: {point.y}'
+			}
 		}
 	);
 	
@@ -100,6 +104,7 @@
 		type: 'map',
 		pointClass: MapPoint,
 		pointAttrToOptions: Highcharts.seriesTypes.column.prototype.pointAttrToOptions,
+		getSymbol: noop,
 		init: function(chart) {
 			var series = this,
 				valueDecimals = chart.options.legend.valueDecimals,
@@ -314,8 +319,8 @@
 					bBox.y + bBox.height / 2
 				];
 				// for data labels
-				point.plotX = point.tooltipPos[0] - chart.plotLeft;
-				point.plotY = point.tooltipPos[1] - chart.plotTop; 
+				point.plotX = point.tooltipPos[0];
+				point.plotY = point.tooltipPos[1]; 
 				
 				// Reset escapted null points
 				if (point.isNull) {
