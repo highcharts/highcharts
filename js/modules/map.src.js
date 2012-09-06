@@ -152,17 +152,24 @@
 			}
 		},
 		
+		/**
+		 * Get the bounding box of all paths in the map combined.
+		 */
 		getBox: function() {
-			var series = this,
-				//chart = series.chart,
+			var chart = this.chart,
 				maxX = -Math.pow(2, 31), 
 				minX =  Math.pow(2, 31) - 1, 
 				maxY = -Math.pow(2, 31), 
-				minY =  Math.pow(2, 31) - 1
+				minY =  Math.pow(2, 31) - 1,
+				xyRatio,
+				ratioCorrection,
+				plotWidth = chart.plotWidth, 
+				plotHeight = chart.plotHeight,
+				pad;
 			
 			
 			// Find the bounding box
-			each(series.options.data, function(point) {
+			each(this.options.data, function(point) {
 				var path = point.path,
 					i = path.length,
 					even = false; // while loop reads from the end
@@ -181,29 +188,31 @@
 				}
 			});
 			
-			// fit into the least of plot width or plot height
-			/*factor = Math.min(
-				chart.plotWidth / (maxX - minX),
-				chart.plotHeight / (maxY - minY)
-			);*/
-			extend(series.xAxis.options, {
+			// Correct for ratio
+			// TODO: this doesn't work with resizing. We probably need to override the
+			// axis.getSeriesExtremes method and set the dataMin and dataMax there, as well
+			// as some xyRatio handling. The xyRatio must also be respected for selection
+			// zoom.
+			xyRatio = (maxX - minX) / (maxY - minY);
+			ratioCorrection = (xyRatio / (plotWidth / plotHeight));
+			if (ratioCorrection > 1) {
+				pad = ((maxY - minY) * (ratioCorrection - 1)) / 2;
+				minY -= pad;
+				maxY += pad;
+			} else {
+				pad = ((maxX - minX) * (ratioCorrection - 1)) / 2;
+				minX += pad; // pad is negative now
+				maxX -= pad;
+			}
+			
+			extend(this.xAxis.options, {
 				min: minX,
 				max: maxX
 			});
-			extend(series.yAxis.options, {
+			extend(this.yAxis.options, {
 				min: minY,
 				max: maxY
 			});
-			//series.xData = [minX, maxX];
-			//series.yData = [minY, maxY];
-			
-			
-			/*console.log('set xData', series.xData)
-			series.mapTranslation = {
-				minX: minX,
-				minY: minY,
-				factor: factor 
-			}*/
 		},
 		
 		
@@ -212,28 +221,25 @@
 		 * Translate the path so that it automatically fits into the plot area box
 		 * @param {Object} path
 		 */
-		translatePath: function(path) {
+		translatePath: function (path) {
 			
 			var series = this,
 				chart = series.chart,
 				even = false, // while loop reads from the end
-				//mapTranslation = series.mapTranslation,
-				//minX = mapTranslation.minX,
-				//minY = mapTranslation.minY,
 				xAxis = series.xAxis,
 				yAxis = series.yAxis;
-				//factor = mapTranslation.factor;
-			
+				
+			// Preserve the original
+			path = [].concat(path);
+				
 			// Do the translation
 			i = path.length;
 			while(i--) {
 				if (typeof path[i] === 'number') {
 					if (even) { // even = x
-						//path[i] = Math.round(chart.plotLeft + ((path[i] - minX) * factor));
 						path[i] = Math.round(xAxis.translate(path[i]));
 					} else { // odd = Y
-						//path[i] = Math.round(chart.plotTop + ((path[i] - minY) * factor));
-						path[i] = Math.round(yAxis.translate(path[i]));
+						path[i] = yAxis.len - Math.round(yAxis.translate(path[i]));
 					}
 					even = !even;
 				}
@@ -241,7 +247,7 @@
 			return path;
 		},
 		
-		setData: function() {
+		setData: function () {
 			Highcharts.Series.prototype.setData.apply(this, arguments);
 			this.getBox();
 		},
@@ -263,8 +269,9 @@
 			each(series.data, function (point) {
 				
 				point.shapeType = 'path';
-				point.shapeArgs = series.translatePath(point.path);
-				
+				point.shapeArgs = {
+					d: series.translatePath(point.path)
+				};
 				if (point.y > maxValue) {
 					maxValue = point.y;
 				}
@@ -272,20 +279,6 @@
 			});
 			
 		},
-		
-		
-		
-		/**
-		 * Disable data labels. To enable them, try using the column prototype and extend it
-		 * with a label position similar to the tooltipPos in this plugin.
-		 */
-		/*
-		drawDataLabels: function() {
-			var series = this;
-			
-			Highcharts.seriesTypes.line.prototype.drawDataLabels.apply(series);
-		}, 
-		*/
 		
 		drawGraph: noop,
 		
@@ -372,7 +365,7 @@
 				type: 'map'
 			},
 			xAxis: hiddenAxis,
-			yAxis: hiddenAxis	
+			yAxis: merge(hiddenAxis, { reversed: true })	
 		},
 		options, // user's options
 	
