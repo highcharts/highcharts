@@ -1196,13 +1196,11 @@ SVGRenderer.prototype = {
 			each(spans, function (span) {
 				if (span !== '' || spans.length === 1) {
 					var attributes = {},
-						tspan = doc.createElementNS(SVG_NS, 'tspan');
+						tspan = doc.createElementNS(SVG_NS, 'tspan'),
+						spanStyle; // #390
 					if (styleRegex.test(span)) {
-						attr(
-							tspan,
-							'style',
-							span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2')
-						);
+						spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
+						attr(tspan, 'style', spanStyle);
 					}
 					if (hrefRegex.test(span)) {
 						attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
@@ -1283,6 +1281,9 @@ SVGRenderer.prototype = {
 										dy: textLineHeight || 16,
 										x: parentX
 									});
+									if (spanStyle) { // #390
+										attr(tspan, 'style', spanStyle);
+									}
 									textNode.appendChild(tspan);
 
 									if (actualWidth > width) { // a single word is pressing it out
