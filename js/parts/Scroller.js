@@ -727,7 +727,7 @@ Scroller.prototype = {
 		scroller.top = top = scroller.getAxisTop(chart.chartHeight);
 
 		if (scroller.navigatorEnabled) {
-			var baseOptions = baseSeries.options,
+			var baseOptions = baseSeries ? baseSeries.options : {},
 				mergedNavSeriesOptions,
 				baseData = baseOptions.data,
 				navigatorSeriesOptions = navigatorOptions.series;
@@ -738,7 +738,7 @@ Scroller.prototype = {
 
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
-				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+				ordinal: baseSeries && baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
 			}, navigatorOptions.xAxis, {
 				isX: true,
 				type: 'datetime',
@@ -765,7 +765,7 @@ Scroller.prototype = {
 			}));
 
 			// dmerge the series options
-			mergedNavSeriesOptions = merge(baseSeries.options, navigatorSeriesOptions, {
+			mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
 				threshold: null,
 				clip: false,
 				enableMouseTracking: false,
