@@ -245,7 +245,7 @@ Tooltip.prototype = {
 				s;
 
 			// build the header
-			s = [series.tooltipHeaderFormatter(items[0].key)];
+			s = [series.tooltipHeaderFormatter(items[0])];
 
 			// build the values
 			each(items, function (item) {

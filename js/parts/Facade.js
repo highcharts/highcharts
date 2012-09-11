@@ -14,11 +14,14 @@ extend(Highcharts, {
 	Tooltip: Tooltip,
 	Renderer: Renderer,
 	Series: Series,
+	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
+	VMLElement: VMLElement,
 	VMLRenderer: VMLRenderer,
 	
 	// Various
 	dateFormat: dateFormat,
+	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,

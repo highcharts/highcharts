@@ -247,4 +247,94 @@ UtilTest.prototype.testNumberFormat = function () {
 	assertEquals('Auto decimals on integer', "10", numberFormat(10, -1));
 	assertEquals('Auto decimals on undefined', "0", numberFormat(undefined, -1));
 	assertEquals('Auto decimals on null', "0", numberFormat(null, -1));
-}
+};
+
+
+UtilTest.prototype.testFormat = function () {
+	
+	// Arrange
+	var point = {
+	    key: 'January',
+	    value: Math.PI,
+	    long: 12345.6789,
+	    date: Date.UTC(2012, 0, 1),
+	    deep: {
+	        deeper: 123
+	    }
+	};
+	
+	
+    assertEquals('Basic replacement', Math.PI, format("{point.value}", { point: point }));
+    
+    assertEquals('Replacement with two decimals', '3.14', format("{point.value:.2f}", { point: point }));
+    
+    
+    // localized thousands separator and decimal point
+    setOptions({
+        lang: {
+            decimalPoint: ',',
+            thousandsSep: ' '
+        }
+    });
+    assertEquals('Localized format', "12 345,68", format("{point.long:,.2f}", { point: point }));
+    
+    
+    // default thousands separator and decimal point
+    setOptions({
+        lang: {
+            decimalPoint: '.',
+            thousandsSep: ','
+        }
+    });
+    assertEquals('Thousands separator format', '12,345.68', format("{point.long:,.2f}", { point: point }));
+    
+    
+    // Date format with colon
+    assertEquals('Date format with colon', '00:00:00', format("{point.date:%H:%M:%S}", { point: point }));
+    
+    // Deep access
+    assertEquals('Deep access format', '123', format("{point.deep.deeper}", { point: point }));    
+    
+    // Shallow access
+    assertEquals('Shallow access format', '123', format("{value}", { value: 123 }));
+    
+    // Formatted shallow access
+    assertEquals('Shallow access format with decimals', '123.00', format("{value:.2f}", { value: 123 }));
+    
+    // Six decimals by default
+    assertEquals('Six decimals by default', '12345.000000', format("{value:f}", { value: 12345 }));
+    
+    // Complicated string format
+    assertEquals(
+    	'Complex string format',
+    	"Key: January, value: 3.14, date: 2012-01-01.",
+    	format("Key: {point.key}, value: {point.value:.2f}, date: {point.date:%Y-%m-%d}.", { point: point })
+    );
+};
+
+// Test run
+
+
+/*
+// TODO formatting
+- Fix the tooltipHeader formatter for Highstock. Use the new wrap, and also redirect to default formatter earlier.
+- Test with IE
+- Add formatting for Axis labels and data labels
+
+
+
+test("Number formats", function () {
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+});    
+test("Complicated string", function () {
+    
+});​*/

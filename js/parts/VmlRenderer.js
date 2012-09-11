@@ -12,13 +12,13 @@
 /**
  * @constructor
  */
-var VMLRenderer;
+var VMLRenderer, VMLElement;
 if (!hasSVG && !useCanVG) {
 
 /**
  * The VML element wrapper.
  */
-var VMLElement = {
+VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string

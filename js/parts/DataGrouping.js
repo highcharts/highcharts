@@ -377,7 +377,7 @@ seriesProto.generatePoints = function () {
 /**
  * Make the tooltip's header reflect the grouped range
  */
-seriesProto.tooltipHeaderFormatter = function (key) {
+seriesProto.tooltipHeaderFormatter = function (point) {
 	var series = this,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
@@ -421,9 +421,9 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 		}
 		
 		// now format the key
-		formattedKey = dateFormat(xDateFormat, key);
+		formattedKey = dateFormat(xDateFormat, point.key);
 		if (xDateFormatEnd) {
-			formattedKey += dateFormat(xDateFormatEnd, key + currentDataGrouping.totalRange - 1);
+			formattedKey += dateFormat(xDateFormatEnd, point.key + currentDataGrouping.totalRange - 1);
 		}
 		
 		// return the replaced format
@@ -431,7 +431,7 @@ seriesProto.tooltipHeaderFormatter = function (key) {
 	
 	// else, fall back to the regular formatter
 	} else {
-		ret = baseTooltipHeaderFormatter.apply(series, [key]);
+		ret = baseTooltipHeaderFormatter.call(series, point);
 	}
 	
 	return ret;

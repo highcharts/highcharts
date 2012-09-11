@@ -350,6 +350,73 @@ dateFormat = function (format, timestamp, capitalize) {
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
 
+/** 
+ * Format a single variable. Similar to sprintf, without the % prefix.
+ */
+function formatSingle(format, val) {
+	var floatRegex = /f$/,
+		decRegex = /\.([0-9])/,
+		lang = defaultOptions.lang,
+		decimals;
+
+	if (floatRegex.test(format)) { // float
+		decimals = format.match(decRegex);
+		decimals = decimals ? decimals[1] : 6;
+		val = numberFormat(
+			val,
+			decimals,
+			lang.decimalPoint,
+			format.indexOf(',') > -1 ? lang.thousandsSep : ''
+		);
+	} else {
+		val = dateFormat(format, val);
+	}
+	return val;
+}
+
+/**
+ * Format a string according to a subset of the rules of Python's String.format method.
+ */
+function format(str, ctx) {
+	var splitter = /(\{)([a-zA-Z0-9: %,\-\.]+)(\})/g,
+		arr = str.split(splitter),
+		valueAndFormat,
+		path,
+		i = 0,
+		len = arr.length,
+		j,
+		jLen,
+		ret = [],
+		val;
+
+	for (; i < len; i++) {
+		// Entering a variable
+		if (arr[i] === '{' && arr[i + 2] === '}') {
+			valueAndFormat = arr[i + 1].split(':');
+			path = valueAndFormat.shift().split('.'); // get first and leave format
+			jLen = path.length;
+			val = ctx;
+
+			// Assign deeper paths
+			for (j = 0; j < jLen; j++) {
+				val = val[path[j]];
+			}
+
+			// Format the replacement
+			if (valueAndFormat.length) {
+				val = formatSingle(valueAndFormat.join(':'), val);
+			}
+
+			// Push the result and advance the cursor
+			ret.push(val);
+			i += 3;
+		}
+
+		ret.push(arr[i]);
+	}
+	return ret.join('');
+}
+
 /**
  * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
  * @param {Number} interval

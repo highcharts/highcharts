@@ -233,60 +233,29 @@ Point.prototype = {
 	 * @return {String} A string to be concatenated in to the common tooltip text
 	 */
 	tooltipFormatter: function (pointFormat) {
-		var point = this,
-			series = point.series,
+		
+		// Insert options for valueDecimals, valuePrefix, and valueSuffix
+		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			match = pointFormat.match(/\{(series|point)\.[a-zA-Z0-9]+\}/g),
-			splitter = /[{\.}]/,
-			obj,
-			key,
-			replacement,
-			repOptionKey,
-			parts,
-			prop,
-			i,
-			cfg = { // docs: percentageDecimals, percentagePrefix, percentageSuffix, totalDecimals, totalPrefix, totalSuffix
-				y: 0, // 0: use 'value' for repOptionKey
-				open: 0,
-				high: 0,
-				low: 0,
-				close: 0,
-				percentage: 1, // 1: use the self name for repOptionKey
-				total: 1
-			};
-		
-		// Backwards compatibility to y naming in early Highstock
-		seriesTooltipOptions.valuePrefix = seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix;
-		seriesTooltipOptions.valueDecimals = seriesTooltipOptions.valueDecimals || seriesTooltipOptions.yDecimals;
-		seriesTooltipOptions.valueSuffix = seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix;
-
-		// loop over the variables defined on the form {series.name}, {point.y} etc
-		for (i in match) {
-			key = match[i];
-			if (isString(key) && key !== pointFormat) { // IE matches more than just the variables
-				
-				// Split it further into parts
-				parts = (' ' + key).split(splitter); // add empty string because IE and the rest handles it differently
-				obj = { 'point': point, 'series': series }[parts[1]];
-				prop = parts[2];
-				
-				// Add some preformatting
-				if (obj === point && cfg.hasOwnProperty(prop)) {
-					repOptionKey = cfg[prop] ? prop : 'value';
-					replacement = (seriesTooltipOptions[repOptionKey + 'Prefix'] || '') + 
-						numberFormat(point[prop], pick(seriesTooltipOptions[repOptionKey + 'Decimals'], -1)) +
-						(seriesTooltipOptions[repOptionKey + 'Suffix'] || '');
-				
-				// Automatic replacement
-				} else {
-					replacement = obj[prop];
-				}
-				
-				pointFormat = pointFormat.replace(key, replacement);
+			valueDecimals = seriesTooltipOptions.valueDecimals,
+			valuePrefix = seriesTooltipOptions.valuePrefix || '',
+			valueSuffix = seriesTooltipOptions.valueSuffix || '';
+			
+		// Loop over the point array map and replace unformatted values with sprintf formatting markup
+		each(series.pointArrayMap || ['y'], function (key) {
+			key = '{point.' + key; // without the closing bracket
+			if (valuePrefix || valueSuffix) {
+				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
 			}
-		}
+			if (isNumber(valueDecimals)) {
+				pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
+			}
+		});
 		
-		return pointFormat;
+		return format(pointFormat, {
+			point: this,
+			series: this.series
+		});
 	},
 
 	/**
@@ -1343,12 +1312,13 @@ Series.prototype = {
 	/**
 	 * Format the header of the tooltip
 	 */
-	tooltipHeaderFormatter: function (key) {
+	tooltipHeaderFormatter: function (point) {
 		var series = this,
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
+			headerFormat = tooltipOptions.headerFormat,
 			n;
 			
 		// Guess the best date format based on the closest point distance (#568)
@@ -1361,10 +1331,15 @@ Series.prototype = {
 			}		
 		}
 		
-		return tooltipOptions.headerFormat
-			.replace('{point.key}', isDateTime ? dateFormat(xDateFormat, key) :  key)
-			.replace('{series.name}', series.name)
-			.replace('{series.color}', series.color);
+		// Insert the header date format if any
+		if (isDateTime && xDateFormat) {
+			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
+		}
+		
+		return format(headerFormat, {
+			point: point,
+			series: series
+		});
 	},
 
 	/**
