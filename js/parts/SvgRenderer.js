@@ -1146,6 +1146,7 @@ SVGRenderer.prototype = {
 	 */
 	buildText: function (wrapper) {
 		var textNode = wrapper.element,
+			renderer = this,
 			lines = pick(wrapper.textStr, '').toString()
 				.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
 				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
@@ -1159,20 +1160,9 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = textStyles && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
-			lastLine,
-			GET_COMPUTED_STYLE = 'getComputedStyle',
-			i = childNodes.length,
-			linePositions = [];
+			i = childNodes.length;
 
-		// Needed in IE9 because it doesn't report tspan's offsetHeight (#893)
-		function getLineHeightByBBox(lineNo) {
-			linePositions[lineNo] = textNode.getBBox ?
-				textNode.getBBox().height :
-				wrapper.renderer.fontMetrics(textNode.style.fontSize).h; // #990
-			return mathRound(linePositions[lineNo] - (linePositions[lineNo - 1] || 0));
-		}
-
-		// remove old text
+		/// remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
 		}
@@ -1188,7 +1178,7 @@ SVGRenderer.prototype = {
 
 		// build the lines
 		each(lines, function (line, lineNo) {
-			var spans, spanNo = 0, lineHeight;
+			var spans, spanNo = 0;
 
 			line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 			spans = line.split('|||');
@@ -1213,16 +1203,6 @@ SVGRenderer.prototype = {
 						.replace(/&lt;/g, '<')
 						.replace(/&gt;/g, '>');
 
-					// issue #38 workaround.
-					/*if (reverse) {
-						arr = [];
-						i = span.length;
-						while (i--) {
-							arr.push(span.charAt(i));
-						}
-						span = arr.join('');
-					}*/
-
 					// add the text node
 					tspan.appendChild(doc.createTextNode(span));
 
@@ -1233,33 +1213,32 @@ SVGRenderer.prototype = {
 						attributes.dx = 3; // space
 					}
 
-					// first span on subsequent line, add the line height
-					if (!spanNo) {
-						if (lineNo) {
-
-							// allow getting the right offset height in exporting in IE
-							if (!hasSVG && wrapper.renderer.forExport) {
-								css(tspan, { display: 'block' });
-							}
-
-							// Webkit and opera sometimes return 'normal' as the line height. In that
-							// case, webkit uses offsetHeight, while Opera falls back to 18
-							lineHeight = win[GET_COMPUTED_STYLE] &&
-								pInt(win[GET_COMPUTED_STYLE](lastLine, null).getPropertyValue('line-height'));
-
-							if (!lineHeight || isNaN(lineHeight)) {
-								lineHeight = textLineHeight || lastLine.offsetHeight || getLineHeightByBBox(lineNo) || 18;
-							}
-							attr(tspan, 'dy', lineHeight);
-						}
-						lastLine = tspan; // record for use in next line
-					}
-
 					// add attributes
 					attr(tspan, attributes);
 
 					// append it
 					textNode.appendChild(tspan);
+
+					// first span on subsequent line, add the line height
+					if (!spanNo && lineNo) {
+
+						// allow getting the right offset height in exporting in IE
+						if (!hasSVG && renderer.forExport) {
+							css(tspan, { display: 'block' });
+						}
+
+						// Set the line height based on the font size of either 
+						// the text element or the tspan element
+						attr(
+							tspan, 
+							'dy',
+							textLineHeight || renderer.fontMetrics(
+								/px$/.test(tspan.style.fontSize) ?
+									tspan.style.fontSize : 
+									textStyles.fontSize
+							).h
+						);
+					}
 
 					spanNo++;
 

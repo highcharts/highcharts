@@ -8,3 +8,4 @@
 /build
 /.project
 /git-ignore-me.properties
+/*.pydevproject
