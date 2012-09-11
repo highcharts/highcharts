@@ -375,11 +375,15 @@ Axis.prototype = {
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
+			formatOption = axis.options.labels.format, // docs
 			
 			// make sure the same symbol is added for all labels on a linear axis
 			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
 
-		if (categories) {
+		if (formatOption) {
+			ret = format(formatOption, this);
+		
+		} else if (categories) {
 			ret = value;
 		
 		} else if (dateTimeLabelFormat) { // datetime axis

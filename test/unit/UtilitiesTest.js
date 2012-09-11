@@ -312,29 +312,3 @@ UtilTest.prototype.testFormat = function () {
     );
 };
 
-// Test run
-
-
-/*
-// TODO formatting
-- Fix the tooltipHeader formatter for Highstock. Use the new wrap, and also redirect to default formatter earlier.
-- Test with IE
-- Add formatting for Axis labels and data labels
-
-
-
-test("Number formats", function () {
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-});    
-test("Complicated string", function () {
-    
-});​*/
