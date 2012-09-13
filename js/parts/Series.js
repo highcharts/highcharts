@@ -1907,10 +1907,13 @@ Series.prototype = {
 					
 					var align = options.align,
 						attr,
-						name;
+						name,
+						labelConfig = point.getLabelConfig();
 				
 					// Get the string
-					str = options.formatter.call(point.getLabelConfig(), options);
+					str = options.format ? // docs
+						format(options.format, labelConfig) : 
+						options.formatter.call(labelConfig, options);
 					
 					// in columns, align the string to the column
 					if (seriesType === 'column') {

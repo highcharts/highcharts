@@ -233,7 +233,7 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormatter.call(item),
+					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item), // docs,
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
 					options.useHTML

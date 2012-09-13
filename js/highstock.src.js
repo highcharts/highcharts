@@ -9218,7 +9218,7 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormatter.call(item),
+					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item), // docs,
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
 					options.useHTML
@@ -13035,10 +13035,13 @@ Series.prototype = {
 					
 					var align = options.align,
 						attr,
-						name;
+						name,
+						labelConfig = point.getLabelConfig();
 				
 					// Get the string
-					str = options.formatter.call(point.getLabelConfig(), options);
+					str = options.format ? // docs
+						format(options.format, labelConfig) : 
+						options.formatter.call(labelConfig, options);
 					
 					// in columns, align the string to the column
 					if (seriesType === 'column') {
