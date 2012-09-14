@@ -1,4 +1,3 @@
-
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -100,7 +99,7 @@ function erase(arr, item) {
  * @param {Object} obj
  */
 function defined(obj) {
-	return obj !== UNDEFINED && obj !== null;
+	return typeof obj !== UNDEFINED && obj !== null;
 }
 
 /**
