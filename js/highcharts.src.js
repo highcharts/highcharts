@@ -496,28 +496,30 @@ function formatSingle(format, val) {
  * Format a string according to a subset of the rules of Python's String.format method.
  */
 function format(str, ctx) {
-	var splitter = /(\{)([a-zA-Z0-9: %,\-\.]+)(\})/g,
-		arr = str.split(splitter),
+	var splitter = '{',
+		isInside = false,
+		segment,
 		valueAndFormat,
 		path,
-		i = 0,
-		len = arr.length,
-		j,
-		jLen,
+		i,
+		len,
 		ret = [],
-		val;
-
-	for (; i < len; i++) {
-		// Entering a variable
-		if (arr[i] === '{' && arr[i + 2] === '}') {
-			valueAndFormat = arr[i + 1].split(':');
+		val,
+		index;
+	
+	while ((index = str.indexOf(splitter)) !== -1) {
+		
+		segment = str.slice(0, index);
+		if (isInside) { // we're on the closing bracket looking back
+			
+			valueAndFormat = segment.split(':');
 			path = valueAndFormat.shift().split('.'); // get first and leave format
-			jLen = path.length;
+			len = path.length;
 			val = ctx;
 
 			// Assign deeper paths
-			for (j = 0; j < jLen; j++) {
-				val = val[path[j]];
+			for (i = 0; i < len; i++) {
+				val = val[path[i]];
 			}
 
 			// Format the replacement
@@ -527,11 +529,16 @@ function format(str, ctx) {
 
 			// Push the result and advance the cursor
 			ret.push(val);
-			i += 3;
+			
+		} else {
+			ret.push(segment);
+			
 		}
-
-		ret.push(arr[i]);
+		str = str.slice(index + 1); // the rest
+		isInside = !isInside; // toggle
+		splitter = isInside ? '}' : '{'; // now look for next matching bracket
 	}
+	ret.push(str);
 	return ret.join('');
 }
 
@@ -1160,12 +1167,12 @@ pathAnim = {
 			
 			// Register Highcharts as a jQuery plugin
 			// TODO: MooTools and prototype as well?
-			// TODO: StockChart
-			/*$.fn.highcharts = function(options, callback) {
-		        options.chart = merge(options.chart, { renderTo: this[0] });
-		        this.chart = new Chart(options, callback);
-		        return this;
-		    };*/
+			// TODO: StockChart/Map
+			$.fn.highcharts = function (options, callback) {
+				options.chart = merge(options.chart, { renderTo: this[0] });
+				this.chart = new Chart(options, callback);
+				return this;
+			};
 		},
 	
 		/**

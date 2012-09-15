@@ -186,6 +186,10 @@ extend(Chart.prototype, {
 			sandbox,
 			svg,
 			seriesOptions,
+			sourceWidth,
+			sourceHeight,
+			cssWidth,
+			cssHeight,
 			options = merge(chart.options, additionalOptions); // copy the options and add extra options
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
@@ -204,11 +208,26 @@ extend(Chart.prototype, {
 			width: chart.chartWidth + PX,
 			height: chart.chartHeight + PX
 		}, doc.body);
+		
+		// get the source size
+		cssWidth = chart.renderTo.style.width;
+		cssHeight = chart.renderTo.style.height;
+		sourceWidth = options.exporting.sourceWidth ||
+			options.chart.width ||
+			(/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
+			600;
+		sourceHeight = options.exporting.sourceHeight ||
+			options.chart.height ||
+			(/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
+			400;
+		
 
 		// override some options
 		extend(options.chart, {
 			renderTo: sandbox,
-			forExport: true
+			forExport: true,
+			width: sourceWidth, // docs,
+			height: sourceHeight // docs
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
@@ -310,7 +329,16 @@ extend(Chart.prototype, {
 	exportChart: function (options, chartOptions) {
 		var form,
 			chart = this,
-			svg = chart.getSVG(merge(chart.options.exporting.chartOptions, chartOptions)); // docs
+			svg = chart.getSVG(merge(
+				chart.options.exporting.chartOptions, // docs
+				chartOptions, 
+				{
+					exporting: {
+						sourceWidth: options.sourceWidth, // docs
+						sourceHeight: options.sourceHeight // docs
+					}
+				}
+			));
 
 		// merge the options
 		options = merge(chart.options.exporting, options);
@@ -325,7 +353,7 @@ extend(Chart.prototype, {
 		}, doc.body);
 
 		// add the values
-		each(['filename', 'type', 'width', 'svg'], function (name) {
+		each(['filename', 'type', 'width', 'svg', 'scale'], function (name) {
 			createElement('input', {
 				type: HIDDEN,
 				name: name,
@@ -333,6 +361,7 @@ extend(Chart.prototype, {
 					filename: options.filename || 'chart',
 					type: options.type,
 					width: options.width,
+					scale: options.scale,
 					svg: svg
 				}[name]
 			}, null, form);
