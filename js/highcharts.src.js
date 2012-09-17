@@ -1914,7 +1914,7 @@ SVGElement.prototype = {
 					if (result !== UNDEFINED) {
 						value = result; // the attribute setter has returned a new value to set
 					}
-
+					
 					// paths
 					if (key === 'd') {
 						if (value && value.join) { // join path
@@ -12311,7 +12311,11 @@ Series.prototype = {
 				yValue = yBottom + yValue;
 				
 				if (isBottomSeries) {
-					yBottom = pick(options.threshold, yAxis.isLog ? null : yAxis.min); // #1200
+					yBottom = pick(options.threshold, yAxis.min);
+				}
+				
+				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
+					yBottom = null;
 				}
 				
 				if (stacking === 'percent') {

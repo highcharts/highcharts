@@ -135,7 +135,7 @@ var GaugeSeries = {
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
 				d = shapeArgs.d,
-				dialOptions = merge(options.dial, point.dial);
+				dialOptions = merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);
