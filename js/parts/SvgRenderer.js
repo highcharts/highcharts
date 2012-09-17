@@ -896,7 +896,6 @@ SVGElement.prototype = {
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
-			box = wrapper.box,
 			key,
 			i;
 
