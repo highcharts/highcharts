@@ -104,7 +104,8 @@ defaultOptions.exporting = {
 	//filename: 'chart',
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
-	width: 800,
+	//width: undefined, // docs
+	//scale: 2 // docs 
 	buttons: {
 		exportButton: {
 			//enabled: true,
@@ -253,7 +254,7 @@ extend(Chart.prototype, {
 		});
 
 		// generate the chart copy
-		chartCopy = new Highcharts.Chart(options);
+		chartCopy = new Highcharts.Chart(options, chart.callback);
 
 		// reflect axis extremes in the export
 		each(['xAxis', 'yAxis'], function (axisType) {
@@ -327,6 +328,9 @@ extend(Chart.prototype, {
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function (options, chartOptions) {
+		
+		options = options || {};
+		
 		var form,
 			chart = this,
 			svg = chart.getSVG(merge(
@@ -351,7 +355,8 @@ extend(Chart.prototype, {
 		}, {
 			display: NONE
 		}, doc.body);
-
+		
+		
 		// add the values
 		each(['filename', 'type', 'width', 'svg', 'scale'], function (name) {
 			createElement('input', {
@@ -361,7 +366,7 @@ extend(Chart.prototype, {
 					filename: options.filename || 'chart',
 					type: options.type,
 					width: options.width,
-					scale: options.scale,
+					scale: options.scale || 2,
 					svg: svg
 				}[name]
 			}, null, form);
