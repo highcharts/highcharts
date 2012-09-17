@@ -162,7 +162,8 @@ Chart.prototype = {
 			i = seriesLength,
 			serie,
 			renderer = chart.renderer,
-			isHiddenChart = renderer.isHidden();
+			isHiddenChart = renderer.isHidden(),
+			afterRedraw = [];
 			
 		setAnimation(animation, chart);
 		
@@ -226,7 +227,9 @@ Chart.prototype = {
 				// Fire 'afterSetExtremes' only if extremes are set
 				if (axis.isDirtyExtremes) { // #821
 					axis.isDirtyExtremes = false;
-					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
+					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
+						fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
+					});
 				}
 								
 				if (axis.isDirty || isDirtyBox || hasStackedSeries) {
@@ -267,6 +270,11 @@ Chart.prototype = {
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
 		}
+		
+		// Fire callbacks that are put on hold until after the redraw
+		each(afterRedraw, function (callback) {
+			callback.call();
+		});
 	},
 
 
@@ -1337,8 +1345,6 @@ Chart.prototype = {
 				discardElement(container);
 			}
 
-			// IE6 leak
-			container = null;
 		}
 
 		// clean it all up
@@ -1346,8 +1352,6 @@ Chart.prototype = {
 			delete chart[i];
 		}
 
-		chart.options = null;
-		chart = null;
 	},
 
 	/**

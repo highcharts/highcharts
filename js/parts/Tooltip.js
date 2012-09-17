@@ -21,9 +21,6 @@ function Tooltip(chart, options) {
 	// Current values of x and y when animating
 	this.now = { x: 0, y: 0 };
 
-	// The tooltipTick function, initialized to nothing
-	//this.tooltipTick = UNDEFINED;
-
 	// The tooltip is initially hidden
 	this.isHidden = true;
 
@@ -91,13 +88,21 @@ Tooltip.prototype = {
 		// move to the intermediate value
 		tooltip.label.attr(now);
 
+		
 		// run on next tick of the mouse tracker
 		if (animate && (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1)) {
-			tooltip.tooltipTick = function () {
-				tooltip.move(x, y, anchorX, anchorY);
-			};
-		} else {
-			tooltip.tooltipTick = null;
+		
+			// never allow two timeouts
+			clearTimeout(this.tooltipTimeout);
+			
+			// set the fixed interval ticking for the smooth tooltip
+			this.tooltipTimeout = setTimeout(function () {
+				// The interval function may still be running during destroy, so check that the chart is really there before calling.
+				if (tooltip) {
+					tooltip.move(x, y, anchorX, anchorY);
+				}
+			}, 32);
+			
 		}
 	},
 
@@ -400,14 +405,5 @@ Tooltip.prototype = {
 				y: y + chart.plotTop,
 				borderColor: borderColor
 			});
-	},
-
-	/**
-	 * Runs the tooltip animation one tick.
-	 */
-	tick: function () {
-		if (this.tooltipTick) {
-			this.tooltipTick();
-		}
 	}
 };

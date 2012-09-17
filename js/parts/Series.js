@@ -2193,8 +2193,6 @@ Series.prototype = {
 			chartSeriesGroup
 		);
 		
-		series.drawDataLabels();
-
 		// initiate the animation
 		if (doAnimation) {
 			series.animate(true);
@@ -2213,6 +2211,10 @@ Series.prototype = {
 
 		// draw the points
 		series.drawPoints();
+		
+		// draw the data labels
+		series.drawDataLabels();
+
 
 		// draw the mouse tracking area
 		if (series.options.enableMouseTracking !== false) {

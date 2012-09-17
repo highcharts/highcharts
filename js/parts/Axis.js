@@ -522,7 +522,8 @@ Axis.prototype = {
 
 								y = pointStack[x] =
 									defined(pointStack[x]) ?
-									pointStack[x] + y : y;
+										correctFloat(pointStack[x] + y) : 
+										y;
 
 
 								// add the series
@@ -962,12 +963,15 @@ Axis.prototype = {
 			closestPointRange,
 			minPointOffset = 0,
 			pointRangePadding = 0,
+			linkedParent = axis.linkedParent,
 			transA = axis.transA;
 
 		// adjust translation for padding
 		if (axis.isXAxis) {
-			if (axis.isLinked) {
-				minPointOffset = axis.linkedParent.minPointOffset;
+			if (linkedParent) {
+				minPointOffset = linkedParent.minPointOffset;
+				pointRangePadding = linkedParent.pointRangePadding;
+				
 			} else {
 				each(axis.series, function (series) {
 					var seriesPointRange = series.pointRange,
@@ -1000,8 +1004,9 @@ Axis.prototype = {
 				});
 			}
 			
-			// Record minPointOffse
+			// Record minPointOffset and pointRangePadding
 			axis.minPointOffset = minPointOffset;
+			axis.pointRangePadding = pointRangePadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = pointRange;

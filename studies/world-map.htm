@@ -37,7 +37,8 @@
 						var options = {
 							chart : {
 								renderTo : 'container',
-								borderWidth : 1
+								borderWidth : 1,
+								zoomType: 'xy'
 							},
 							
 							title : {
@@ -99,6 +100,7 @@
 						};
 		
 						// Populate the data points
+						//countryCodes = countryCodes.splice(0, 3);
 						for (var i = 1; i < countryCodes.length; i++) {
 		
 							if (shapes[countryCodes[i]]) {
@@ -120,6 +122,7 @@
 						chart = new Highcharts.Map(options);
 				    }
 				});
+				
 			});
 
 		</script>
