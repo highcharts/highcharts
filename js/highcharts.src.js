@@ -12430,7 +12430,7 @@ Series.prototype = {
 		}
 		
 		return tooltipOptions.headerFormat
-			.replace('{point.key}', isDateTime ? dateFormat(xDateFormat, key) :  key)
+			.replace('{point.key}', isDateTime && isNumber(key) ? dateFormat(xDateFormat, key) :  key)
 			.replace('{series.name}', series.name)
 			.replace('{series.color}', series.color);
 	},
