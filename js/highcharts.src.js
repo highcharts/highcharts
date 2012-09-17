@@ -1258,8 +1258,10 @@ pathAnim = {
 			var ret = e.originalEvent || e;
 			
 			// computed by jQuery, needed by IE8
-			ret.pageX = e.pageX;
-			ret.pageY = e.pageY;
+			if (ret.pageX === UNDEFINED) { // #1236
+				ret.pageX = e.pageX;
+				ret.pageY = e.pageY;
+			}
 			
 			return ret;
 		},
