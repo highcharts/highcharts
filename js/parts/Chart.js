@@ -1345,8 +1345,6 @@ Chart.prototype = {
 				discardElement(container);
 			}
 
-			// IE6 leak
-			container = null;
 		}
 
 		// clean it all up
@@ -1354,8 +1352,6 @@ Chart.prototype = {
 			delete chart[i];
 		}
 
-		chart.options = null;
-		chart = null;
 	},
 
 	/**

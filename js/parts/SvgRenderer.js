@@ -926,11 +926,6 @@ SVGElement.prototype = {
 			});
 		}
 
-		// destroy label box
-		if (box) {
-			box.destroy();
-		}
-
 		// remove from alignObjects
 		erase(wrapper.renderer.alignedObjects, wrapper);
 
@@ -2345,8 +2340,10 @@ SVGRenderer.prototype = {
 				removeEvent(wrapper.element, 'mouseleave');
 
 				if (text) {
-					// Destroy the text element
 					text = text.destroy();
+				}
+				if (box) {
+					box = box.destroy();
 				}
 				// Call base implementation to destroy the rest
 				SVGElement.prototype.destroy.call(wrapper);
