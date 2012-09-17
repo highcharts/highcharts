@@ -1023,14 +1023,14 @@ var GaugeSeries = {
 			center = series.yAxis.center,
 			pivot = series.pivot,
 			options = series.options,
-			pivotOptions = options.pivot,
-			dialOptions = options.dial;
+			pivotOptions = options.pivot;
 		
 		each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
-				d = shapeArgs.d;
+				d = shapeArgs.d,
+				dialOptions = merge(options.dial, point.dial);
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);
