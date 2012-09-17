@@ -1332,7 +1332,7 @@ Series.prototype = {
 		}
 		
 		// Insert the header date format if any
-		if (isDateTime && xDateFormat) {
+		if (isDateTime && xDateFormat && isNumber(point.key)) {
 			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 		

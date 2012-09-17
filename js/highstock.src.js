@@ -1332,8 +1332,10 @@ pathAnim = {
 			var ret = e.originalEvent || e;
 			
 			// computed by jQuery, needed by IE8
-			ret.pageX = e.pageX;
-			ret.pageY = e.pageY;
+			if (ret.pageX === UNDEFINED) { // #1236
+				ret.pageX = e.pageX;
+				ret.pageY = e.pageY;
+			}
 			
 			return ret;
 		},
@@ -2462,7 +2464,7 @@ SVGElement.prototype = {
 								', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 								', sizingMethod=\'auto expand\')'].join('') : NONE;
 					}
-					
+					 
 					css(elem, rotationStyle);
 				}
 
@@ -2778,7 +2780,6 @@ SVGElement.prototype = {
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
-			box = wrapper.box,
 			key,
 			i;
 
@@ -2806,11 +2807,6 @@ SVGElement.prototype = {
 			each(shadows, function (shadow) {
 				wrapper.safeRemoveChild(shadow);
 			});
-		}
-
-		// destroy label box
-		if (box) {
-			box.destroy();
 		}
 
 		// remove from alignObjects
@@ -3068,13 +3064,11 @@ SVGRenderer.prototype = {
 			each(spans, function (span) {
 				if (span !== '' || spans.length === 1) {
 					var attributes = {},
-						tspan = doc.createElementNS(SVG_NS, 'tspan');
+						tspan = doc.createElementNS(SVG_NS, 'tspan'),
+						spanStyle; // #390
 					if (styleRegex.test(span)) {
-						attr(
-							tspan,
-							'style',
-							span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2')
-						);
+						spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
+						attr(tspan, 'style', spanStyle);
 					}
 					if (hrefRegex.test(span)) {
 						attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
@@ -3144,6 +3138,9 @@ SVGRenderer.prototype = {
 										dy: textLineHeight || 16,
 										x: parentX
 									});
+									if (spanStyle) { // #390
+										attr(tspan, 'style', spanStyle);
+									}
 									textNode.appendChild(tspan);
 
 									if (actualWidth > width) { // a single word is pressing it out
@@ -4205,8 +4202,10 @@ SVGRenderer.prototype = {
 				removeEvent(wrapper.element, 'mouseleave');
 
 				if (text) {
-					// Destroy the text element
 					text = text.destroy();
+				}
+				if (box) {
+					box = box.destroy();
 				}
 				// Call base implementation to destroy the rest
 				SVGElement.prototype.destroy.call(wrapper);
@@ -6579,7 +6578,8 @@ Axis.prototype = {
 
 								y = pointStack[x] =
 									defined(pointStack[x]) ?
-									pointStack[x] + y : y;
+										correctFloat(pointStack[x] + y) : 
+										y;
 
 
 								// add the series
@@ -7019,12 +7019,15 @@ Axis.prototype = {
 			closestPointRange,
 			minPointOffset = 0,
 			pointRangePadding = 0,
+			linkedParent = axis.linkedParent,
 			transA = axis.transA;
 
 		// adjust translation for padding
 		if (axis.isXAxis) {
-			if (axis.isLinked) {
-				minPointOffset = axis.linkedParent.minPointOffset;
+			if (linkedParent) {
+				minPointOffset = linkedParent.minPointOffset;
+				pointRangePadding = linkedParent.pointRangePadding;
+				
 			} else {
 				each(axis.series, function (series) {
 					var seriesPointRange = series.pointRange,
@@ -7057,8 +7060,9 @@ Axis.prototype = {
 				});
 			}
 			
-			// Record minPointOffse
+			// Record minPointOffset and pointRangePadding
 			axis.minPointOffset = minPointOffset;
+			axis.pointRangePadding = pointRangePadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = pointRange;
@@ -7998,9 +8002,6 @@ function Tooltip(chart, options) {
 	// Current values of x and y when animating
 	this.now = { x: 0, y: 0 };
 
-	// The tooltipTick function, initialized to nothing
-	//this.tooltipTick = UNDEFINED;
-
 	// The tooltip is initially hidden
 	this.isHidden = true;
 
@@ -8068,13 +8069,21 @@ Tooltip.prototype = {
 		// move to the intermediate value
 		tooltip.label.attr(now);
 
+		
 		// run on next tick of the mouse tracker
 		if (animate && (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1)) {
-			tooltip.tooltipTick = function () {
-				tooltip.move(x, y, anchorX, anchorY);
-			};
-		} else {
-			tooltip.tooltipTick = null;
+		
+			// never allow two timeouts
+			clearTimeout(this.tooltipTimeout);
+			
+			// set the fixed interval ticking for the smooth tooltip
+			this.tooltipTimeout = setTimeout(function () {
+				// The interval function may still be running during destroy, so check that the chart is really there before calling.
+				if (tooltip) {
+					tooltip.move(x, y, anchorX, anchorY);
+				}
+			}, 32);
+			
 		}
 	},
 
@@ -8377,15 +8386,6 @@ Tooltip.prototype = {
 				y: y + chart.plotTop,
 				borderColor: borderColor
 			});
-	},
-
-	/**
-	 * Runs the tooltip animation one tick.
-	 */
-	tick: function () {
-		if (this.tooltipTick) {
-			this.tooltipTick();
-		}
 	}
 };
 /**
@@ -8407,7 +8407,7 @@ function MouseTracker(chart, options) {
 	this.chart = chart;
 
 	// The interval id
-	//this.tooltipInterval = UNDEFINED;
+	//this.tooltipTimeout = UNDEFINED;
 
 	// The cached x hover position
 	//this.hoverX = UNDEFINED;
@@ -8964,7 +8964,7 @@ MouseTracker.prototype = {
 		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 
 		// memory and CPU leak
-		clearInterval(this.tooltipInterval);
+		clearInterval(this.tooltipTimeout);
 	},
 
 	// Run MouseTracker
@@ -8977,14 +8977,6 @@ MouseTracker.prototype = {
 
 		if (options.enabled) {
 			chart.tooltip = new Tooltip(chart, options);
-
-			// set the fixed interval ticking for the smooth tooltip
-			this.tooltipInterval = setInterval(function () {
-				// The interval function may still be running during destroy, so check that the chart is really there before calling.
-				if (chart && chart.tooltip) {
-					chart.tooltip.tick();
-				}
-			}, 32);
 		}
 
 		this.setDOMEvents();
@@ -9789,7 +9781,8 @@ Chart.prototype = {
 			i = seriesLength,
 			serie,
 			renderer = chart.renderer,
-			isHiddenChart = renderer.isHidden();
+			isHiddenChart = renderer.isHidden(),
+			afterRedraw = [];
 			
 		setAnimation(animation, chart);
 		
@@ -9853,7 +9846,9 @@ Chart.prototype = {
 				// Fire 'afterSetExtremes' only if extremes are set
 				if (axis.isDirtyExtremes) { // #821
 					axis.isDirtyExtremes = false;
-					fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
+					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
+						fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
+					});
 				}
 								
 				if (axis.isDirty || isDirtyBox || hasStackedSeries) {
@@ -9894,6 +9889,11 @@ Chart.prototype = {
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
 		}
+		
+		// Fire callbacks that are put on hold until after the redraw
+		each(afterRedraw, function (callback) {
+			callback.call();
+		});
 	},
 
 
@@ -10964,8 +10964,6 @@ Chart.prototype = {
 				discardElement(container);
 			}
 
-			// IE6 leak
-			container = null;
 		}
 
 		// clean it all up
@@ -10973,8 +10971,6 @@ Chart.prototype = {
 			delete chart[i];
 		}
 
-		chart.options = null;
-		chart = null;
 	},
 
 	/**
@@ -12467,7 +12463,7 @@ Series.prototype = {
 		}
 		
 		// Insert the header date format if any
-		if (isDateTime && xDateFormat) {
+		if (isDateTime && xDateFormat && isNumber(point.key)) {
 			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 		
@@ -13328,8 +13324,6 @@ Series.prototype = {
 			chartSeriesGroup
 		);
 		
-		series.drawDataLabels();
-
 		// initiate the animation
 		if (doAnimation) {
 			series.animate(true);
@@ -13348,6 +13342,10 @@ Series.prototype = {
 
 		// draw the points
 		series.drawPoints();
+		
+		// draw the data labels
+		series.drawDataLabels();
+
 
 		// draw the mouse tracking area
 		if (series.options.enableMouseTracking !== false) {
@@ -15469,7 +15467,7 @@ seriesProto.tooltipHeaderFormatter = function (point) {
 		ret;
 	
 	// apply only to grouped series
-	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
 		
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;		
@@ -16884,7 +16882,7 @@ Scroller.prototype = {
 		scroller.top = top = scroller.getAxisTop(chart.chartHeight);
 
 		if (scroller.navigatorEnabled) {
-			var baseOptions = baseSeries.options,
+			var baseOptions = baseSeries ? baseSeries.options : {},
 				mergedNavSeriesOptions,
 				baseData = baseOptions.data,
 				navigatorSeriesOptions = navigatorOptions.series;
@@ -16895,7 +16893,7 @@ Scroller.prototype = {
 
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
-				ordinal: baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+				ordinal: baseSeries && baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
 			}, navigatorOptions.xAxis, {
 				isX: true,
 				type: 'datetime',
@@ -16922,7 +16920,7 @@ Scroller.prototype = {
 			}));
 
 			// dmerge the series options
-			mergedNavSeriesOptions = merge(baseSeries.options, navigatorSeriesOptions, {
+			mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
 				threshold: null,
 				clip: false,
 				enableMouseTracking: false,
@@ -17021,10 +17019,12 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,
 		previousZoom,
+		navigator = chartOptions.navigator,
+		rangeSelector = chartOptions.rangeSelector,
 		ret;
 	
-	if (this.isXAxis && ((chartOptions.navigator && chartOptions.navigator.enabled) || 
-			(chartOptions.scrollbar && chartOptions.scrollbar.enabled))) {
+	if (this.isXAxis && ((navigator && navigator.enabled) || 
+			(rangeSelector && rangeSelector.enabled))) {
 		
 		// For x only zooming, fool the chart.zoom method not to create the zoom button 
 		// because the property already exists
