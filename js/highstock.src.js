@@ -6519,7 +6519,8 @@ Axis.prototype = {
 
 								y = pointStack[x] =
 									defined(pointStack[x]) ?
-									pointStack[x] + y : y;
+										correctFloat(pointStack[x] + y) : 
+										y;
 
 
 								// add the series
