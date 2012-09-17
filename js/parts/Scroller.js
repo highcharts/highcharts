@@ -324,11 +324,11 @@ Scroller.prototype = {
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
 
-		// handles are allowed to cross
-		scroller.zoomedMin = zoomedMin = pInt(mathMin(pxMin, pxMax));
-		scroller.zoomedMax = zoomedMax = pInt(mathMax(pxMin, pxMax));
+		// handles are allowed to cross, but never exceed the plot area
+		scroller.zoomedMin = zoomedMin = mathMax(pInt(mathMin(pxMin, pxMax)), 0);
+		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
 		scroller.range = range = zoomedMax - zoomedMin;
-
+		
 		// on first render, create all elements
 		if (!scroller.rendered) {
 
