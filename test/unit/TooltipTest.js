@@ -38,8 +38,7 @@ TooltipTest.prototype.rectInRect = function (smallRect, largeRect) {
  * Test the getPosition method. It should adjust a tooltip rectangle to be inside the chart but not cover the point itself.
  */
 TooltipTest.prototype.testGetPosition = function () {
-	var getPosition = Tooltip.prototype.getPosition,
-		// the tooltip context
+	function reset () {
 		tooltip = {
 			chart: { 
 				plotLeft: 0, 
@@ -50,12 +49,21 @@ TooltipTest.prototype.testGetPosition = function () {
 			options: {
 				
 			}
-		},
-		tooltipSize = {width: 50, height: 20},
-		dataPoint = { plotX: 0, plotY: 50 },
+		};
+		tooltipSize = {width: 50, height: 20};
+		dataPoint = { plotX: 0, plotY: 50 };
+		tooltipPoint = undefined;
+		boxPoint = undefined;
+	}
+	
+	var getPosition = Tooltip.prototype.getPosition,
+		tooltip,
+		tooltipSize,
+		dataPoint,
 		tooltipPoint,
 		boxPoint;
 		
+	reset();
 		
 	boxPoint = getPosition.call(tooltip, tooltipSize.width, tooltipSize.height, dataPoint);
 	extend(boxPoint, tooltipSize);
@@ -82,6 +90,7 @@ TooltipTest.prototype.testGetPosition = function () {
 	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 	
 	// #834
+	reset();
 	tooltipSize.width = 64;
 	tooltipSize.height = 46;
 	dataPoint.plotX = 13;
@@ -94,4 +103,20 @@ TooltipTest.prototype.testGetPosition = function () {
 	extend(boxPoint, tooltipSize);
 	assertTrue('TopRight rectInRect chart', this.rectInRect(boxPoint, tooltip.chart));
 	assertFalse('TopRight tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
+	
+	// #1231
+	reset();
+	tooltipSize.width = 96;
+	tooltipSize.height = 35;
+	dataPoint.plotX = -41;
+	dataPoint.plotY = 19;
+	tooltip.chart.plotLeft = 25;
+	tooltip.chart.plotTop = 40;
+	tooltip.chart.plotWidth = 165;
+	tooltip.chart.plotHeight = 75;
+	tooltip.chart.inverted = true;
+	boxPoint = getPosition.call(tooltip, tooltipSize.width, tooltipSize.height, dataPoint);
+	extend(boxPoint, tooltipSize);
+	assertTrue('Inverted rectInRect chart', this.rectInRect(boxPoint, tooltip.chart));
+	assertFalse('Inverted tooltip cover point', this.pointInRect(dataPoint.x, dataPoint.y, boxPoint));
 };

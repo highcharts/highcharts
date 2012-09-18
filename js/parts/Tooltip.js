@@ -199,7 +199,7 @@ Tooltip.prototype = {
 	
 		// It is too far to the left, adjust it
 		if (x < 7) {
-			x = plotLeft + pointX + distance;
+			x = plotLeft + mathMax(pointX, 0) + distance;
 		}
 	
 		// Test to see if the tooltip is too far to the right,
@@ -225,7 +225,6 @@ Tooltip.prototype = {
 		if (y + boxHeight > plotTop + plotHeight) {
 			y = mathMax(plotTop, plotTop + plotHeight - boxHeight - distance); // below
 		}
-		
 	
 		return {x: x, y: y};
 	},
