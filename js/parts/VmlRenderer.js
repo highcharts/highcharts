@@ -475,8 +475,8 @@ var VMLElement = {
 				
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
-						left: pInt(elemStyle.left) + (shadowOptions.offsetX || 1),
-						top: pInt(elemStyle.top) + (shadowOptions.offsetY || 1)
+						left: pInt(elemStyle.left) + pick(shadowOptions.offsetX, 1),
+						top: pInt(elemStyle.top) + pick(shadowOptions.offsetY, 1)
 					}
 				);
 				if (cutOff) {
