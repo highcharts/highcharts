@@ -556,15 +556,15 @@ SVGElement.prototype = {
 				yCorr = wrapper.yCorr || 0,
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(','),
 				rotationStyle = {},
-				prefix;
+				cssTransformKey;
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
 
 				if (defined(rotation)) {
 					
 					if (renderer.isSVG) { // #916
-						prefix = isIE ? '-ms' : isWebKit ? '-webkit' : isFirefox ? '-moz' : isOpera ? '-o' : '';
-						rotationStyle[prefix + '-transform'] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
+						cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
+						rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 						
 					} else {
 						radians = rotation * deg2rad; // deg to rad
@@ -580,7 +580,6 @@ SVGElement.prototype = {
 								', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 								', sizingMethod=\'auto expand\')'].join('') : NONE;
 					}
-					 
 					css(elem, rotationStyle);
 				}
 
