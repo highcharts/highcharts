@@ -1,0 +1,160 @@
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Map</title>
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" />
+		
+		<script type="text/javascript" src="http://code.highcharts.com/dev/highcharts.src.js"></script>
+		<script type="text/javascript" src="http://code.highcharts.com/dev/modules/map.src.js"></script>
+		<script type="text/javascript" src="http://code.highcharts.com/dev/modules/data.src.js"></script>
+		
+		
+		
+		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
+		<script type="text/javascript">
+			
+			var chart,
+				file;
+				
+			var maps = {
+				
+				// Finished
+				'World1': 'http://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg',
+				'World2': 'http://upload.wikimedia.org/wikipedia/commons/7/76/World_V2.0.svg',
+				'Canada': 'http://upload.wikimedia.org/wikipedia/commons/3/38/Canada_blank_map.svg',
+				'Germany': 'http://upload.wikimedia.org/wikipedia/commons/2/2c/Karte_Bundesrepublik_Deutschland.svg',
+				'Netherlands': 'http://upload.wikimedia.org/wikipedia/commons/b/bb/Carte_des_Pays-Bas_%28netherlands%29_without_names.svg',
+				'Norway': 'http://upload.wikimedia.org/wikipedia/commons/8/87/Norwegian_parliamentary_election_2009_map_KrF_reps.svg',
+				'Australia': 'http://upload.wikimedia.org/wikipedia/commons/c/c2/Australia_states_blank.svg',
+				'Europe1': 'http://upload.wikimedia.org/wikipedia/commons/6/66/Blank_map_of_Europe_cropped.svg',
+				'Europe2': 'http://upload.wikimedia.org/wikipedia/commons/2/25/BlankMap-Europe.svg',
+				'Africa': 'http://upload.wikimedia.org/wikipedia/commons/f/f9/BlankMap-Africa.svg',
+				'South-America': 'http://upload.wikimedia.org/wikipedia/commons/b/b0/Southamerica_blank.svg',
+				'USA': 'http://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg'
+				
+			};
+			
+			function drawMap(key, file) {
+				if (chart) {
+					chart.destroy();
+				}
+				file = file || maps[key];
+				Highcharts.data.loadSVG({
+					url: 'http://dev.highcharts.com/maps/file.php?file=' + file,
+					success: function (data) {
+						//console.log(JSON.stringify(data));
+						chart = new Highcharts.Map({
+							chart : {
+								renderTo : 'container',
+								borderWidth : 1,
+								zoomType: 'xy'
+							},
+							
+							title: {
+								text: key
+							},
+							
+							legend: {
+								enabled: false
+							},
+							
+							series : [{
+								data : data,
+								dataLabels: {
+									//enabled: true,
+									format: '{point.name}',
+									backgroundColor: 'rgba(255,255,255,0.4)'
+								},
+								states: {
+									hover: {
+										color: 'orange'
+									}
+								}
+							}]
+						});
+					}
+				});
+				
+			}
+				
+			$(function() {
+				var $links = $('#links'),
+					$current;
+				
+				// Build the links
+				for (var n in maps) {;
+					var $a = $('<a id="' + n + '" href="#' + n + '">' + n + '</a>')
+						.click(function () {
+							drawMap(this.innerHTML);
+							
+							// Mark the current map
+							if ($current) {
+								$current.removeClass('current');
+							}
+							$current = $(this);
+							$current.addClass('current');
+							
+							// View SVG
+							$('#view-svg')[0].href = maps[this.innerHTML];
+						})
+						.appendTo($links);
+				}
+				
+				$(location.hash || '#World2').click();
+				
+				$('#load-submit').click(function () {
+					drawMap('Online SVG', $('#load')[0].value);
+				});
+			});
+
+		</script>
+		
+		<style>
+			a, p, label {
+				font-family: Arial, Verdana, sans-serif;
+				font-size: 0.8em;
+			}
+			a {
+				display: block;
+				text-decoration: none;
+				border: 1px solid white;
+				border-radius: 5px;
+				padding: 2px;
+				margin-right: 1em;
+			}
+			
+			#links a:hover {
+				background: #bada55;
+			}
+			#links a.current {
+				border: 1px solid silver;
+			}
+			
+			.buttons {
+			}
+		</style>
+	</head>
+	<body>
+		<h1 style="text-align:center">Highcharts maps from SVG sources</h1>
+		<div style="width: 1000px; margin: auto">
+			<div style="width: 180px;float: left">
+				<div id="links"></div>
+				<hr/>
+				<div class="buttons">
+					<a id="view-svg" target="_blank">View SVG</a>
+				</div>
+				<hr/>
+				<div style="padding-left: 2px">
+					<label>Load an online SVG: </label>
+					<input type="text/javascript" id="load" style="width: 120px">
+					<input type="submit" value="Load" id="load-submit" />
+				</div>
+			</div>
+			<div id="container" style="width: 800px; height: 550px; float: left"></div>
+		</div>
+	</body>
+</html>

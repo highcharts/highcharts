@@ -58,7 +58,8 @@
 			borderColor: 'silver',
 			marker: null,
 			tooltip: {
-				pointFormat: '{point.name}: {point.y}'
+				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
+				pointFormat: '{series.name}: {point.y}<br/>'
 			}
 		}
 	);
