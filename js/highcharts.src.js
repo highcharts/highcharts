@@ -5060,9 +5060,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			.attr({ src: src });
 
 		if (arguments.length > 1) {
-			obj.css({
-				left: x,
-				top: y,
+			obj.attr({
+				x: x,
+				y: y,
 				width: width,
 				height: height
 			});
