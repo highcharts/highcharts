@@ -18,7 +18,8 @@
 		<script type="text/javascript">
 			
 			var chart,
-				file;
+				file,
+				$current;
 				
 			var maps = {
 				
@@ -30,24 +31,51 @@
 				'Netherlands': 'http://upload.wikimedia.org/wikipedia/commons/b/bb/Carte_des_Pays-Bas_%28netherlands%29_without_names.svg',
 				'Norway': 'http://upload.wikimedia.org/wikipedia/commons/8/87/Norwegian_parliamentary_election_2009_map_KrF_reps.svg',
 				'Australia': 'http://upload.wikimedia.org/wikipedia/commons/c/c2/Australia_states_blank.svg',
-				'Europe1': 'http://upload.wikimedia.org/wikipedia/commons/6/66/Blank_map_of_Europe_cropped.svg',
-				'Europe2': 'http://upload.wikimedia.org/wikipedia/commons/2/25/BlankMap-Europe.svg',
+				'Europe': 'http://upload.wikimedia.org/wikipedia/commons/2/25/BlankMap-Europe.svg',
 				'Africa': 'http://upload.wikimedia.org/wikipedia/commons/f/f9/BlankMap-Africa.svg',
 				'South-America': 'http://upload.wikimedia.org/wikipedia/commons/b/b0/Southamerica_blank.svg',
-				'USA': 'http://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg'
+				'USA': 'http://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg',
+				'France': 'http://upload.wikimedia.org/wikipedia/commons/3/3c/Carte_vierge_d%C3%A9partements_fran%C3%A7ais_avec_DOM.svg',
+				'Sogn-og-Fjordane-Norway': 'http://upload.wikimedia.org/wikipedia/commons/4/4f/NO_1417_Vik.svg'
 				
 			};
 			
+			// Some maps, like USA and France, have separator lines in between paths. We want to 
+			// identify those and assign to a separate series
+			function identifyLines(data, key) {
+				var lines = [],
+					lineNames = {
+						'France' : ['path2408', 'path3387', 'path5327'],
+						'USA': ['path57']
+					}[key],
+					i,
+					point;
+				
+				if (lineNames) {
+					for (i = 0; i < data.length; i++) {
+						point = data[i];
+						if ($.inArray(point.name, lineNames) !== -1) {
+							lines.push(data.splice(i, 1)[0]);
+							i -= 1;
+						}
+					}
+					return lines;
+				}
+			}
+			
 			function drawMap(key, file) {
 				if (chart) {
-					chart.destroy();
+					chart = chart.destroy();
 				}
+				$('#container').html('');
 				file = file || maps[key];
 				Highcharts.data.loadSVG({
 					url: 'http://dev.highcharts.com/maps/file.php?file=' + file,
 					success: function (data) {
-						//console.log(JSON.stringify(data));
-						chart = new Highcharts.Map({
+						
+						var lines = identifyLines(data, key);
+						
+						var options = {
 							chart : {
 								renderTo : 'container',
 								borderWidth : 1,
@@ -75,36 +103,69 @@
 									}
 								}
 							}]
-						});
+						};
+						
+						// Add separator lines
+						if (lines) {
+							options.series.splice(0, 0, {
+								color: 'none',
+								borderColor: 'gray',
+								enableMouseTracking: false,
+								showInLegend: false,
+								data: lines
+							});	
+						}
+						
+						// Create the map
+						chart = new Highcharts.Map(options);
+						
+						
+						// View data
+						var strData = JSON.stringify(data);
+						$('#view-data')
+							.html('View data (' + Highcharts.numberFormat(strData.length / 1024, 1, '.') + ' kB)')
+							.click(function () {
+								if (chart) {
+									chart = chart.destroy();
+								}
+								$('#container').html(
+									'<div style="font-family:courier new;font-size: 0.8em; color: green">' + 
+										strData + '</div>'
+								);
+							});
 					}
 				});
+				
+				
+							
+				// Mark the current map
+				if ($current) {
+					$current.removeClass('current');
+				}
+				if (key) {
+					$current = $('#' + key + '_');
+					$current.addClass('current');
+				}
+				
+				// View SVG
+				$('#view-svg')[0].href = file;
+				
 				
 			}
 				
 			$(function() {
-				var $links = $('#links'),
-					$current;
+				var $links = $('#links');
 				
 				// Build the links
 				for (var n in maps) {;
-					var $a = $('<a id="' + n + '" href="#' + n + '">' + n + '</a>')
+					var $a = $('<a id="' + n + '_" href="#' + n + '">' + n + '</a>')
 						.click(function () {
 							drawMap(this.innerHTML);
-							
-							// Mark the current map
-							if ($current) {
-								$current.removeClass('current');
-							}
-							$current = $(this);
-							$current.addClass('current');
-							
-							// View SVG
-							$('#view-svg')[0].href = maps[this.innerHTML];
 						})
 						.appendTo($links);
 				}
 				
-				$(location.hash || '#World2').click();
+				$(location.hash ? location.hash + '_' : '#_World2_').click();
 				
 				$('#load-submit').click(function () {
 					drawMap('Online SVG', $('#load')[0].value);
@@ -124,14 +185,15 @@
 				border: 1px solid white;
 				border-radius: 5px;
 				padding: 2px;
-				margin-right: 1em;
 			}
 			
+			
 			#links a:hover {
-				background: #bada55;
+				border-color: gray !important;
 			}
 			#links a.current {
 				border: 1px solid silver;
+				background: #bada55;
 			}
 			
 			.buttons {
@@ -141,20 +203,21 @@
 	<body>
 		<h1 style="text-align:center">Highcharts maps from SVG sources</h1>
 		<div style="width: 1000px; margin: auto">
-			<div style="width: 180px;float: left">
+			<div style="width: 170px;margin-right: 10px;float: left">
 				<div id="links"></div>
+				
+				<div style="padding-left: 2px">
+					<label style="color: gray; font-size: 0.7em">.. or load an online SVG: </label>
+					<input type="text/javascript" id="load" style="width: 110px">
+					<input type="submit" value="Load" id="load-submit" />
+				</div>
 				<hr/>
 				<div class="buttons">
 					<a id="view-svg" target="_blank">View SVG</a>
-				</div>
-				<hr/>
-				<div style="padding-left: 2px">
-					<label>Load an online SVG: </label>
-					<input type="text/javascript" id="load" style="width: 120px">
-					<input type="submit" value="Load" id="load-submit" />
+					<a id="view-data" target="_blank" href="javascript:;">View data</a>
 				</div>
 			</div>
-			<div id="container" style="width: 800px; height: 550px; float: left"></div>
+			<div id="container" style="width: 800px; height: 550px; float: left; overflow: auto"></div>
 		</div>
 	</body>
 </html>

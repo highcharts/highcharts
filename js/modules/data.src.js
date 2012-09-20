@@ -352,6 +352,8 @@
 					path[i] += translate[position % 2];
 				}
 				
+				path[i] = Math.round(path[i] * 10) / 10;
+				
 				// Set the fixed point for the next pair
 				if (position === positions - 1) {
 					fixedPoint = [path[i-1], path[i]];
@@ -379,6 +381,10 @@
 				translate = transform && transform.match(/translate\(([0-9\-\. ]+),([0-9\-\. ]+)\)/);
 			
 			return translate && [parseFloat(translate[1]), parseFloat(translate[2])]; 
+		}
+		
+		function getName(elem) {
+			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
 		}
 		
 		$.ajax({
@@ -429,11 +435,14 @@
 						var groupPath = [],
 							translate = getTranslate(g);
 						each(g.getElementsByTagName('path'), function (path) {
-							groupPath = groupPath.concat(Highcharts.data.pathToArray(path.getAttribute('d'), translate));
+							groupPath = groupPath.concat(
+								Highcharts.data.pathToArray(path.getAttribute('d'), translate)
+							);
+							
 							path.isUsed = true;
 						});
 						arr.push({
-							name: g.getAttribute('id'),
+							name: getName(g),
 							path: groupPath
 						});
 					});
@@ -443,7 +452,7 @@
 				each(allPaths, function (path) {
 					if (!path.isUsed) {
 						arr.push({
-							name: path.getAttribute('id'),
+							name: getName(path),
 							path: Highcharts.data.pathToArray(path.getAttribute('d'))
 						});
 					}			
