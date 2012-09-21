@@ -69,13 +69,20 @@
 				}
 				$('#container').html('');
 				file = file || maps[key];
-				Highcharts.data.loadSVG({
-					url: 'http://dev.highcharts.com/maps/file.php?file=' + file,
-					success: function (data) {
+				Highcharts.data({
+					svg: '/maps/file.php?file=' + file,
+					complete: function (options) {
 						
-						var lines = identifyLines(data, key);
+						var data = options.series[0].data,
+							lines = identifyLines(data, key);
+							
+						// For the sake of the demo, add some random values
+						$.each(data, function (i, point) {
+							point.y = Math.round(Math.random() * 100);
+						});
 						
-						var options = {
+						// Merge the options from the Data module with our own settings
+						options = Highcharts.merge(options, {
 							chart : {
 								renderTo : 'container',
 								borderWidth : 1,
@@ -90,20 +97,29 @@
 								enabled: false
 							},
 							
-							series : [{
-								data : data,
-								dataLabels: {
-									//enabled: true,
-									format: '{point.name}',
-									backgroundColor: 'rgba(255,255,255,0.4)'
-								},
-								states: {
-									hover: {
-										color: 'orange'
+							plotOptions: {
+								map: {
+									name: 'Random',
+									colorRange: {
+										from: '#cedae8',
+										to: '#1a416d'
+									},
+									dataLabels: {
+										//enabled: true,
+										format: '{point.name}',
+										backgroundColor: 'rgba(255,255,255,0.4)'
+									},
+									tooltip: {
+										valueSuffix: '%'
+									},
+									states: {
+										hover: {
+											color: 'orange'
+										}
 									}
 								}
-							}]
-						};
+							}
+						});
 						
 						// Add separator lines
 						if (lines) {

@@ -1818,7 +1818,6 @@ var Color = function (input) {
 				rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
 			}
 		}
-
 	}
 	/**
 	 * Return the color a specified format
@@ -1839,6 +1838,7 @@ var Color = function (input) {
 		} else {
 			ret = input;
 		}
+		
 		return ret;
 	}
 
@@ -1878,6 +1878,7 @@ var Color = function (input) {
 	return {
 		get: get,
 		brighten: brighten,
+		rgba: rgba,
 		setOpacity: setOpacity
 	};
 };
@@ -12751,7 +12752,7 @@ Series.prototype = {
 			// if no hover radius is given, default to normal radius + 2
 			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + 2;
 			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + 1;
-
+			
 		} else { // column, bar, pie
 
 			// if no hover color is given, brighten the normal color

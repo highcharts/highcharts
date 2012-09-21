@@ -1620,7 +1620,7 @@ Series.prototype = {
 			// if no hover radius is given, default to normal radius + 2
 			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + 2;
 			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + 1;
-
+			
 		} else { // column, bar, pie
 
 			// if no hover color is given, brighten the normal color

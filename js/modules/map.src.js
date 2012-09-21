@@ -21,6 +21,7 @@
 		merge = Highcharts.merge,
 		numberFormat = Highcharts.numberFormat,
 		plotOptions = Highcharts.getOptions().plotOptions,
+		Color = Highcharts.Color,
 		noop = function() {};
 	
 	/**
@@ -75,25 +76,44 @@
 		init: function () {
 
 			var point = Highcharts.Point.prototype.init.apply(this, arguments),
-				valueRanges = point.series.options.valueRanges,
+				series = point.series,
+				seriesOptions = series.options,
+				valueRanges = seriesOptions.valueRanges,
+				colorRange = seriesOptions.colorRange,
+				yAxis = series.yAxis,
 				range,
 				from,
 				to,
-				i;
+				i,
+				pos,
+				rgba = [];
 			
 			if (valueRanges) {
 				i = valueRanges.length;
-				while(i--) {
+				while (i--) {
 					range = valueRanges[i];
 					from = range.from;
 					to = range.to;
 					if ((from === UNDEFINED || point.y >= from) && (to === UNDEFINED || point.y <= to)) {
-						point.color = point.options.color = range.color;
+						/*point.color = */point.options.color = range.color;
 						break;
 					}
 						
 				}
+			} else if (colorRange && point.y !== undefined) {
+				from = Color(colorRange.from);
+				to = Color(colorRange.to);
+				
+				pos = (yAxis.dataMax - point.y) / (yAxis.dataMax - yAxis.dataMin);
+				i = 4;
+				while (i--) {
+					rgba[i] = Math.round(
+						to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
+					);
+				}
+				/*point.color = */point.options.color = 'rgba(' + rgba.join(',') + ')';
 			}
+			
 			return point;
 		}
 	});
