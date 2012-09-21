@@ -127,7 +127,7 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold,
-			translatedThreshold = series.yAxis.getThreshold(threshold),
+			translatedThreshold = series.translatedThreshold = series.yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
@@ -156,13 +156,7 @@ var ColumnSeries = extendClass(Series, {
 				}
 			}
 
-			extend(point, {
-				barX: barX,
-				barY: barY,
-				barW: barW,
-				barH: barH,
-				pointWidth: pointWidth
-			});
+			point.pointWidth = pointWidth;
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
 			point.shapeType = 'rect';

@@ -181,7 +181,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
 				crispX = mathRound(point.plotX) + crispCorr;
-				halfWidth = mathRound(point.barW / 2);
+				halfWidth = mathRound(point.shapeArgs.width / 2);
 
 				// the vertical stem
 				path = [

@@ -710,7 +710,7 @@ SVGElement.prototype = {
 
 
 		// align
-		if (/^(right|center)$/.test(align)) {
+		if (align === 'right' || align === 'center') {
 			x += (box.width - (alignOptions.width || 0)) /
 					{ right: 1, center: 2 }[align];
 		}
@@ -718,11 +718,12 @@ SVGElement.prototype = {
 
 
 		// vertical align
-		if (/^(bottom|middle)$/.test(vAlign)) {
+		if (vAlign === 'bottom' || vAlign === 'middle') {
 			y += (box.height - (alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 
 		}
+		y += (alignOptions.baselineCorr || 0);
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 
 		// animate only if already placed
@@ -1150,13 +1151,13 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			width = textStyles && pInt(textStyles.width),
+			width = textStyles && textStyles.width && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
 			lastLine,
 			GET_COMPUTED_STYLE = 'getComputedStyle',
 			i = childNodes.length,
 			linePositions = [];
-
+		
 		// Needed in IE9 because it doesn't report tspan's offsetHeight (#893)
 		function getLineHeightByBBox(lineNo) {
 			linePositions[lineNo] = textNode.getBBox ?
