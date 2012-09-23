@@ -448,6 +448,8 @@ Axis.prototype = {
 					threshold = seriesOptions.threshold,
 					yDataLength,
 					activeYData = [],
+					seriesDataMin,
+					seriesDataMax,
 					activeCounter = 0;
 					
 				axis.hasVisibleSeries = true;	
@@ -476,7 +478,6 @@ Axis.prototype = {
 						//pointRange,
 						j,
 						hasModifyValue = !!series.modifyValue;
-
 
 					// Handle stacking
 					stacking = seriesOptions.stacking;
@@ -544,15 +545,10 @@ Axis.prototype = {
 								y = series.modifyValue(y);
 							}
 
-							// get the smallest distance between points
-							/*if (i) {
-								distance = mathAbs(xData[i] - xData[i - 1]);
-								pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
-							}*/
-
-							// for points within the visible range, including the first point outside the
+							// For points within the visible range, including the first point outside the
 							// visible range, consider y extremes
-							if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
+							if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min && 
+								(xData[i - 1] || x) <= xExtremes.max)) {
 
 								j = y.length;
 								if (j) { // array, like ohlc or range data
@@ -577,8 +573,10 @@ Axis.prototype = {
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If the length of activeYData is 0, continue with null values.
 					if (!axis.usePercentage && activeYData.length) {
-						axis.dataMin = mathMin(pick(axis.dataMin, activeYData[0]), arrayMin(activeYData));
-						axis.dataMax = mathMax(pick(axis.dataMax, activeYData[0]), arrayMax(activeYData));
+						series.dataMin = seriesDataMin = arrayMin(activeYData);
+						series.dataMax = seriesDataMax = arrayMax(activeYData);
+						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
+						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
 
 					// Adjust to threshold

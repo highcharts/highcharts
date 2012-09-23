@@ -80,7 +80,6 @@
 				seriesOptions = series.options,
 				valueRanges = seriesOptions.valueRanges,
 				colorRange = seriesOptions.colorRange,
-				yAxis = series.yAxis,
 				range,
 				from,
 				to,
@@ -103,8 +102,7 @@
 			} else if (colorRange && point.y !== undefined) {
 				from = Color(colorRange.from);
 				to = Color(colorRange.to);
-				
-				pos = (yAxis.dataMax - point.y) / (yAxis.dataMax - yAxis.dataMin);
+				pos = (series.dataMax - point.y) / (series.dataMax - series.dataMin);
 				i = 4;
 				while (i--) {
 					rgba[i] = Math.round(
@@ -113,7 +111,6 @@
 				}
 				/*point.color = */point.options.color = 'rgba(' + rgba.join(',') + ')';
 			}
-			
 			return point;
 		}
 	});
@@ -126,6 +123,7 @@
 		pointClass: MapPoint,
 		pointAttrToOptions: Highcharts.seriesTypes.column.prototype.pointAttrToOptions,
 		getSymbol: noop,
+		getExtremesFromAll: true,
 		init: function(chart) {
 			var series = this,
 				valueDecimals = chart.options.legend.valueDecimals,
