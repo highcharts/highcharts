@@ -234,6 +234,20 @@
 				</div>
 			</div>
 			<div id="container" style="width: 800px; height: 550px; float: left; overflow: auto"></div>
+			
+			<h4>Tips</h4>
+			<p>This page uses the Highcharts Data plugin to create Highcharts Maps out of SVG files.</p>
+			<p>SVG maps can be found online. For a starting point, try Googling for "Blank SVG maps".</p>
+			<p>Not all maps are successfully parsed using this tool. If you are having problems try opening the file
+				in Inkscape, the free SVG editor, and simplify the shapes. Inkscape also has a "Save optimized" option
+				that reduces file size. If that doesn't help, give us a note, and we might be able to improve the
+				parser.</p>
+			<p>To add names to geographic areas, the easisest way is to open the SVG in Inkscape and apply
+				a label to each shape.</p>
+			<p>Loading and parsing the SVG file has some performance penalty. To avoid this, you can set 
+				the paths directly in the Highcharts JavaScript options. When your SVG is loaded above,
+				click the "View data" link and copy the code. The array is Highcharts' definition of point objects 
+				except the data value (y) itself.</p>
 		</div>
 	</body>
 </html>
