@@ -85,12 +85,21 @@ StackItem.prototype = {
 					y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
 					width: inverted ? h : xWidth,
 					height: inverted ? xWidth : h
-			};
+			},
+			label = this.label,
+			alignAttr;
+			
 
-		if (this.label) {
-			this.label
-				.align(this.alignOptions, null, stackBox)	// align the label to the box
-				.attr({visibility: VISIBLE});				// set visibility
+		if (label) {
+			label.align(this.alignOptions, null, stackBox);	// align the label to the box
+				
+			// Set visibility (#678)
+			alignAttr = label.alignAttr;
+			label.attr({ 
+				visibility: chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+					(hasSVG ? 'inherit' : VISIBLE) : 
+					HIDDEN
+			});
 		}
 		
 	}

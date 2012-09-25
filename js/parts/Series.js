@@ -1969,8 +1969,6 @@ Series.prototype = {
 			}
 			
 			// Show or hide based on the final aligned position
-			console.log(alignAttr.x, alignAttr.y, chart.isInsidePlot(alignAttr.x, alignAttr.y));
-				
 			dataLabel.attr({ // docs: crop
 				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
 					(hasSVG ? 'inherit' : VISIBLE) : 
