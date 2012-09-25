@@ -507,44 +507,40 @@ Axis.prototype = {
 					for (i = 0; i < yDataLength; i++) {
 						x = xData[i];
 						y = yData[i];
-						if (y !== null && y !== UNDEFINED) {
+						
+						// Read stacked values into a stack based on the x value,
+						// the sign of y and the stack key. Stacking is also handled for null values (#739)
+						if (stacking) {
+							isNegative = y < threshold;
+							pointStack = isNegative ? negPointStack : posPointStack;
+							key = isNegative ? negKey : stackKey;
 
-							// read stacked values into a stack based on the x value,
-							// the sign of y and the stack key
-							if (stacking) {
-								isNegative = y < threshold;
-								pointStack = isNegative ? negPointStack : posPointStack;
-								key = isNegative ? negKey : stackKey;
-
-								y = pointStack[x] =
-									defined(pointStack[x]) ?
-										correctFloat(pointStack[x] + y) : 
-										y;
-
-
-								// add the series
-								if (!stacks[key]) {
-									stacks[key] = {};
-								}
-
-								// If the StackItem is there, just update the values,
-								// if not, create one first
-								if (!stacks[key][x]) {
-									stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
-								}
-								stacks[key][x].setTotal(y);
+							y = pointStack[x] =
+								defined(pointStack[x]) ?
+									correctFloat(pointStack[x] + y) : 
+									y;
 
 
-							// general hook, used for Highstock compare values feature
-							} else if (hasModifyValue) {
-								y = series.modifyValue(y);
+							// add the series
+							if (!stacks[key]) {
+								stacks[key] = {};
 							}
 
-							// get the smallest distance between points
-							/*if (i) {
-								distance = mathAbs(xData[i] - xData[i - 1]);
-								pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
-							}*/
+							// If the StackItem is there, just update the values,
+							// if not, create one first
+							if (!stacks[key][x]) {
+								stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
+							}
+							stacks[key][x].setTotal(y);
+						}
+						
+						// Handle non null values
+						if (y !== null && y !== UNDEFINED) {							
+
+							// general hook, used for Highstock compare values feature
+							if (hasModifyValue) {
+								y = series.modifyValue(y);
+							}
 
 							// for points within the visible range, including the first point outside the
 							// visible range, consider y extremes
