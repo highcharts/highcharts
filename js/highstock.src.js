@@ -14001,6 +14001,7 @@ var ColumnSeries = extendClass(Series, {
 				}
 			}
 
+			point.barX = barX;
 			point.pointWidth = pointWidth;
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
