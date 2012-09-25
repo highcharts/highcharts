@@ -723,7 +723,6 @@ SVGElement.prototype = {
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 
 		}
-		y += (alignOptions.baselineCorr || 0);
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 
 		// animate only if already placed

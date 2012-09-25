@@ -5408,7 +5408,7 @@ Tick.prototype = {
 		// prepare CSS
 		css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
 		css = extend(css, labelOptions.style);
-		
+
 		// first call
 		if (!defined(label)) {
 			attr = {
@@ -12891,29 +12891,15 @@ Series.prototype = {
 		
 		var series = this,
 			seriesOptions = series.options,
-			options = seriesOptions.dataLabels;
+			options = seriesOptions.dataLabels,
+			points = series.points,
+			pointOptions,
+			generalOptions,
+			str,
+			dataLabelsGroup;
 		
 		if (options.enabled || series._hasPointLabels) {
-			var x,
-				y,
-				points = series.points,
-				pointOptions,
-				generalOptions,
-				str,
-				dataLabelsGroup,
-				chart = series.chart,
-				renderer = chart.renderer,
-				inverted = chart.inverted,
-				seriesType = series.type,
-				stacking = seriesOptions.stacking,
-				isBarLike = seriesType === 'column' || seriesType === 'bar',
-				vAlignIsNull = options.verticalAlign === null,
-				yIsNull = options.y === null,
-				fontMetrics = renderer.fontMetrics(options.style.fontSize), // height and baseline
-				fontLineHeight = fontMetrics.h,
-				fontBaseline = fontMetrics.b;
-
-			
+						
 			// Process default alignment of data labels for columns
 			if (series.dlProcessOptions) {
 				series.dlProcessOptions(options);
@@ -12931,18 +12917,16 @@ Series.prototype = {
 			generalOptions = options;
 			each(points, function (point) {
 				
-				var plotX,
-					plotY,
-					individualYOffset,
-					enabled,
+				var enabled,
 					dataLabel = point.dataLabel,
 					attr,
-					name, 
+					name,
+					rotation,
 					isNew = true;
 				
 				// Determine if each data label is enabled
-				pointOptions = point.options && pointOptions.dataLabels;
-				enabled = options.enabled || pointOptions.enabled;
+				pointOptions = point.options && point.options.dataLabels;
+				enabled = generalOptions.enabled || (pointOptions && pointOptions.enabled);
 				
 				
 				// If the point is outside the plot area, destroy it. #678, #820
@@ -12952,6 +12936,8 @@ Series.prototype = {
 				// Individual labels are disabled if the are explicitly disabled 
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
+					
+					rotation = options.rotation;
 					
 					// Create individual options structure that can be extended without 
 					// affecting others
@@ -12980,7 +12966,7 @@ Series.prototype = {
 							stroke: options.borderColor,
 							'stroke-width': options.borderWidth,
 							r: options.borderRadius || 0,
-							rotation: options.rotation,
+							rotation: rotation,
 							padding: options.padding,
 							zIndex: 1
 						};
@@ -12991,110 +12977,80 @@ Series.prototype = {
 							}
 						}
 						
-						dataLabel = point.dataLabel = renderer[options.rotation ? 'text' : 'label']( // labels don't support rotation
+						dataLabel = point.dataLabel = series.chart.renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 							str,
 							0,
 							0,
 							null,
 							null,
 							null,
-							options.useHTML//,
-							//true // baseline for backwards compat
+							options.useHTML
 						)
 						.attr(attr)
 						.css(options.style)
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);
+						
 					}
 					
-					series.alignDataLabel(point, dataLabel, options, isNew, chart);
-					
+					// Now the data label is created and placed at 0,0, so we need to align it
+					series.alignDataLabel(point, dataLabel, options, null, isNew);
 				}
 			});
 		}
 	},
 	
 	/**
-	 * Align each individual data label.
-	 * TODO: 
-	 * - Check if baseline logic can be removed
-	 * - Rotation
-	 * - X position on bars have changed
-	 * - Add show/hide depending on aligned position
-	 * - Check all bugs related to data labels
-	 * - Fix bug with radial charts
-	 * - Check ranges
+	 * Align each individual data label
 	 */
-	alignDataLabel: function (point, dataLabel, options, isNew) {
+	alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
 		var chart = this.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
 			inverted = chart.inverted,
 			plotX = pick(point.plotX, -999),
 			plotY = pick(point.plotY, -999),
 			bBox = dataLabel.getBBox(),
-			translatedThreshold = this.translatedThreshold || chart.plotSizeY,
-			above = point.plotY >= translatedThreshold,
-			positioner = options.positioner,
-			shapeArgs = point.shapeArgs,
-			inside = (this.options.stacking || options.inside) && !!shapeArgs, // draw it inside the box?
-			alignTo;
+			alignAttr, // the final position
+			positioner = options.positioner;
 				
-		// Compute the alignment box
-		if (inside) {
-			alignTo = inverted ? { // The box must be rotated
-					x: plotWidth - shapeArgs.y - shapeArgs.height,
-					y: plotHeight - shapeArgs.x - shapeArgs.width,
-					width: shapeArgs.height,
-					height: shapeArgs.width
-				} : 
-				merge(shapeArgs);
-				
-		// If not inside, the alignment box is a singular point
-		} else {
-			alignTo = {
-				x: (inverted ? plotWidth - plotY : plotX) + options.x,
-				y: mathRound((inverted ? plotHeight - plotX : plotY) + options.y),
-				width: 0,
-				height: 0
-			};
-		}
-			
+		// The alignment box is a singular point
+		alignTo = extend({
+			x: (inverted ? chart.plotWidth - plotY : plotX) + options.x,
+			y: mathRound((inverted ? chart.plotHeight - plotX : plotY) + options.y),
+			width: 0,
+			height: 0
+		}, alignTo);
 		
 		// Add the text size for alignment calculation
 		extend(options, {
 			width: bBox.width,
 			height: bBox.height
 		});
-			
-		
-		// When alignment is undefined (typically columns and bars), display the individual 
-		// point below or above the point depending on the threshold
-		if (inverted) {
-			
-			if (!defined(options.align)) {
-				options.align = inside ? 'center' : above ? 'right' : 'left';
-			}
-		} else {
-			if (!defined(options.verticalAlign)) {
-				options .verticalAlign = inside ? 'middle' : above ? 'top' : 'bottom';
-			}
-		}
 		
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (!positioner || positioner.call(point, options, alignTo) !== false) { // docs
-			dataLabel.align(options, null, alignTo);
-		}
-		
-	},
-	
-	/**
-	 * Get the individual Y offset for data labels
-	 */
-	dlGetIndividualYOffset: function (point, fontLineHeight, fontBaseline) {
-		return point.y >= this.options.threshold ? 
-			-fontLineHeight + fontBaseline : // below the threshold 
-			fontBaseline; // above the threshold
+			
+			if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+				alignAttr = {
+					align: options.align,
+					x: alignTo.x + options.x + alignTo.width / 2,
+					y: alignTo.y + options.y + alignTo.height / 2
+				};
+				dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
+			} else {
+				dataLabel.align(options, null, alignTo);
+				alignAttr = dataLabel.alignAttr;
+			}
+			
+			// Show or hide based on the final aligned position
+			console.log(alignAttr.x, alignAttr.y, chart.isInsidePlot(alignAttr.x, alignAttr.y));
+				
+			dataLabel.attr({ // docs: crop
+				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+					(hasSVG ? 'inherit' : VISIBLE) : 
+					HIDDEN
+			});
+			
+		}		
 	},
 	
 	/**
@@ -13907,8 +13863,9 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		}
 	},
 	dataLabels: {
-		y: null,
-		verticalAlign: null
+		align: null, // auto
+		verticalAlign: null, // auto
+		y: null
 	},
 	threshold: 0
 });
@@ -14163,32 +14120,51 @@ var ColumnSeries = extendClass(Series, {
 		});
 	},
 	
-	/**
-	 * Process default alignment options for data labels
+	/** 
+	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
-	/*dlProcessOptions: function (options) {
-		var fontMetrics = Renderer.prototype.fontMetrics(options.style.fontSize), // height and baseline
-			fontLineHeight = fontMetrics.h,
-			fontBaseline = fontMetrics.b,
-			inside = this.options.stacking || options.inside, // docs
-			defaultYs = {
-				top: fontBaseline, 
-				middle: fontBaseline - fontLineHeight / 2, 
-				bottom: -fontLineHeight + fontBaseline
+	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
+		var chart = this.chart,
+			inverted = chart.inverted,
+			below = point.below || (point.plotY > (this.translatedThreshold || chart.plotSizeY)),
+			inside = (this.options.stacking || options.inside); // draw it inside the box?
+		
+		// Align to the column itself, or the top of it
+		alignTo = merge(point.shapeArgs);
+		if (inverted) {
+			alignTo = {
+				x: chart.plotWidth - alignTo.y - alignTo.height,
+				y: chart.plotHeight - alignTo.x - alignTo.width,
+				width: alignTo.height,
+				height: alignTo.width
 			};
-		
-		// Handle default label placement
-		if (!defined(options.verticalAlign)) {
-			extend(options, { 
-				verticalAlign: inside ? 'middle' : 'top'
-			});
-		
-		
-		// If no y delta is specified, try to create a good default (like default bar)
-		} else if (!defined(options.y)) {
-			extend(options, { y: defaultYs[options.verticalAlign] });
 		}
-	},*/
+				
+		// Compute the alignment box
+		if (!inside) {
+			if (inverted) {
+				alignTo.x += below ? 0 : alignTo.width;
+				alignTo.width = 0;
+			} else {
+				alignTo.y += below ? alignTo.height : 0;
+				alignTo.height = 0;
+			}
+		}
+		
+		// When alignment is undefined (typically columns and bars), display the individual 
+		// point below or above the point depending on the threshold
+		options.align = pick(
+			options.align, 
+			!inverted || inside ? 'center' : below ? 'right' : 'left'
+		);
+		options.verticalAlign = pick(
+			options.verticalAlign, 
+			inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+		);
+		
+		// Call the parent method
+		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+	},
 
 
 	/**
@@ -14262,12 +14238,7 @@ seriesTypes.column = ColumnSeries;
 /**
  * Set the default options for bar
  */
-defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
-	dataLabels: {
-		align: null,
-		verticalAlign: 'middle'
-	}
-});
+defaultPlotOptions.bar = merge(defaultPlotOptions.column);
 /**
  * The Bar series class
  */
@@ -14380,9 +14351,9 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		enabled: true,
 		formatter: function () {
 			return this.point.name;
-		},
+		}
 		// softConnector: true,
-		y: 5
+		//y: 0
 	},
 	//innerSize: 0,
 	legendType: 'point',
@@ -14998,7 +14969,7 @@ var PieSeries = {
 					})[dataLabel.moved ? 'animate' : 'attr']({
 						x: x + options.x +
 							({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
-						y: y + options.y
+						y: y + options.y - 10 // 10 is for the baseline (label vs text)
 					});
 				dataLabel.moved = true;
 
@@ -15042,6 +15013,8 @@ var PieSeries = {
 			}
 		}
 	},
+	
+	alignDataLabel: noop,
 
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.

@@ -630,10 +630,11 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	},
 	trackByArea: true,
 	dataLabels: {
+		verticalAlign: null,
 		xLow: 0,
 		xHigh: 0,
-		yLow: 16,
-		yHigh: -6		
+		yLow: 0,
+		yHigh: 0	
 	},
 	shadow: false // docs - changed default
 });
@@ -801,6 +802,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.dataLabel = point.dataLabelUpper;
 				
 				// Set the default offset
+				point.below = false;
 				if (inverted) {
 					dataLabelOptions.align = 'left';
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
@@ -824,6 +826,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.plotY = point.plotLow;
 				
 				// Set the default offset
+				point.below = true;
 				if (inverted) {
 					dataLabelOptions.align = 'right';
 					dataLabelOptions.x = dataLabelOptions.xLow;
@@ -835,6 +838,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		}
 	
 	},
+	
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	
 	getSymbol: seriesTypes.column.prototype.getSymbol,
 	

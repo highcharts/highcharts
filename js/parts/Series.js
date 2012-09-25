@@ -1818,29 +1818,15 @@ Series.prototype = {
 		
 		var series = this,
 			seriesOptions = series.options,
-			options = seriesOptions.dataLabels;
+			options = seriesOptions.dataLabels,
+			points = series.points,
+			pointOptions,
+			generalOptions,
+			str,
+			dataLabelsGroup;
 		
 		if (options.enabled || series._hasPointLabels) {
-			var x,
-				y,
-				points = series.points,
-				pointOptions,
-				generalOptions,
-				str,
-				dataLabelsGroup,
-				chart = series.chart,
-				renderer = chart.renderer,
-				inverted = chart.inverted,
-				seriesType = series.type,
-				stacking = seriesOptions.stacking,
-				isBarLike = seriesType === 'column' || seriesType === 'bar',
-				vAlignIsNull = options.verticalAlign === null,
-				yIsNull = options.y === null,
-				fontMetrics = renderer.fontMetrics(options.style.fontSize), // height and baseline
-				fontLineHeight = fontMetrics.h,
-				fontBaseline = fontMetrics.b;
-
-			
+						
 			// Process default alignment of data labels for columns
 			if (series.dlProcessOptions) {
 				series.dlProcessOptions(options);
@@ -1858,10 +1844,7 @@ Series.prototype = {
 			generalOptions = options;
 			each(points, function (point) {
 				
-				var plotX,
-					plotY,
-					individualYOffset,
-					enabled,
+				var enabled,
 					dataLabel = point.dataLabel,
 					attr,
 					name,
@@ -1869,8 +1852,8 @@ Series.prototype = {
 					isNew = true;
 				
 				// Determine if each data label is enabled
-				pointOptions = point.options && pointOptions.dataLabels;
-				enabled = options.enabled || pointOptions.enabled;
+				pointOptions = point.options && point.options.dataLabels;
+				enabled = generalOptions.enabled || (pointOptions && pointOptions.enabled);
 				
 				
 				// If the point is outside the plot area, destroy it. #678, #820
@@ -1921,7 +1904,7 @@ Series.prototype = {
 							}
 						}
 						
-						dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
+						dataLabel = point.dataLabel = series.chart.renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 							str,
 							0,
 							0,
@@ -1935,70 +1918,34 @@ Series.prototype = {
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);
 						
-						// Compensate text (vs labels) for baseline
-						if (rotation) {
-							options.baselineCorr = fontBaseline;	
-						}
 					}
 					
-					
-					series.alignDataLabel(point, dataLabel, options, isNew, chart);
-					
+					// Now the data label is created and placed at 0,0, so we need to align it
+					series.alignDataLabel(point, dataLabel, options, null, isNew);
 				}
 			});
 		}
 	},
 	
 	/**
-	 * Align each individual data label.
-	 * TODO: 
-	 * - Check if baseline logic can be removed
-	 * - Rotation
-	 * - Grouped bar chart
-	 * - X position on bars have changed
-	 * - Add show/hide depending on aligned position
-	 * - Check all bugs related to data labels
-	 * - Fix bug with radial charts
-	 * - Check ranges
+	 * Align each individual data label
 	 */
-	alignDataLabel: function (point, dataLabel, options, isNew) {
+	alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
 		var chart = this.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
 			inverted = chart.inverted,
 			plotX = pick(point.plotX, -999),
 			plotY = pick(point.plotY, -999),
 			bBox = dataLabel.getBBox(),
-			translatedThreshold = this.translatedThreshold || chart.plotSizeY,
-			above = point.plotY >= translatedThreshold,
-			positioner = options.positioner,
-			shapeArgs = point.shapeArgs,
-			inside = (this.options.stacking || options.inside) && !!shapeArgs, // draw it inside the box?
-			alignTo;
-			
-		// Invert shape args (for bars)
-		if (inverted && shapeArgs) {
-			shapeArgs = {
-				x: plotWidth - shapeArgs.y - shapeArgs.height,
-				y: plotHeight - shapeArgs.x - shapeArgs.width,
-				width: shapeArgs.height,
-				height: shapeArgs.width
-			};
-		}
+			alignAttr, // the final position
+			positioner = options.positioner;
 				
-		// Compute the alignment box
-		if (inside) {
-			alignTo = merge(shapeArgs);
-				
-		// If not inside, the alignment box is a singular point
-		} else {
-			alignTo = {
-				x: (inverted ? plotWidth - plotY : plotX) + options.x,
-				y: mathRound((inverted ? plotHeight - plotX : plotY) + options.y),
-				width: 0,
-				height: 0
-			};
-		}
+		// The alignment box is a singular point
+		alignTo = extend({
+			x: (inverted ? chart.plotWidth - plotY : plotX) + options.x,
+			y: mathRound((inverted ? chart.plotHeight - plotX : plotY) + options.y),
+			width: 0,
+			height: 0
+		}, alignTo);
 		
 		// Add the text size for alignment calculation
 		extend(options, {
@@ -2006,23 +1953,31 @@ Series.prototype = {
 			height: bBox.height
 		});
 		
-		// When alignment is undefined (typically columns and bars), display the individual 
-		// point below or above the point depending on the threshold
-		if (inverted) {
-			if (!defined(options.align)) {
-				options.align = inside ? 'center' : above ? 'right' : 'left';
-			}
-		} else {
-			if (!defined(options.verticalAlign)) {
-				options .verticalAlign = inside ? 'middle' : above ? 'top' : 'bottom';
-			}
-		}
-		
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (!positioner || positioner.call(point, options, alignTo) !== false) { // docs
-			dataLabel.align(options, null, alignTo);
-		}
-		
+			
+			if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+				alignAttr = {
+					align: options.align,
+					x: alignTo.x + options.x + alignTo.width / 2,
+					y: alignTo.y + options.y + alignTo.height / 2
+				};
+				dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
+			} else {
+				dataLabel.align(options, null, alignTo);
+				alignAttr = dataLabel.alignAttr;
+			}
+			
+			// Show or hide based on the final aligned position
+			console.log(alignAttr.x, alignAttr.y, chart.isInsidePlot(alignAttr.x, alignAttr.y));
+				
+			dataLabel.attr({ // docs: crop
+				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+					(hasSVG ? 'inherit' : VISIBLE) : 
+					HIDDEN
+			});
+			
+		}		
 	},
 	
 	/**

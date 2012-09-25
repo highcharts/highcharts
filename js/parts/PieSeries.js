@@ -15,9 +15,9 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		enabled: true,
 		formatter: function () {
 			return this.point.name;
-		},
+		}
 		// softConnector: true,
-		y: 5
+		//y: 0
 	},
 	//innerSize: 0,
 	legendType: 'point',
@@ -633,7 +633,7 @@ var PieSeries = {
 					})[dataLabel.moved ? 'animate' : 'attr']({
 						x: x + options.x +
 							({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
-						y: y + options.y
+						y: y + options.y - 10 // 10 is for the baseline (label vs text)
 					});
 				dataLabel.moved = true;
 
@@ -677,6 +677,8 @@ var PieSeries = {
 			}
 		}
 	},
+	
+	alignDataLabel: noop,
 
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.
