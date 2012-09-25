@@ -1,7 +1,8 @@
 /**
  * The class for stack items
  */
-function StackItem(axis, options, isNegative, x, stackOption) {
+function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+	
 	var inverted = axis.chart.inverted;
 
 	this.axis = axis;
@@ -15,8 +16,9 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 	// Save the x value to be able to position the label later
 	this.x = x;
 
-	// Save the stack option on the series configuration object
+	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
+	this.percent = stacking === 'percent';
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -59,9 +61,11 @@ StackItem.prototype = {
 			this.label =
 				this.axis.chart.renderer.text(str, 0, 0)		// dummy positions, actual position updated with setOffset method in columnseries
 					.css(this.options.style)				// apply style
-					.attr({align: this.textAlign,			// fix the text-anchor
+					.attr({
+						align: this.textAlign,				// fix the text-anchor
 						rotation: this.options.rotation,	// rotation
-						visibility: HIDDEN })				// hidden until setOffset is called
+						visibility: HIDDEN					// hidden until setOffset is called
+					})				
 					.add(group);							// add to the labels-group
 		}
 	},
@@ -75,32 +79,30 @@ StackItem.prototype = {
 			chart = axis.chart,
 			inverted = chart.inverted,
 			neg = this.isNegative,							// special treatment is needed for negative stacks
-			y = axis.translate(this.total, 0, 0, 0, 1),		// stack value translated mapped to chart coordinates
+			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
 			plotHeight = chart.plotHeight,
 			stackBox = {	// this is the box for the complete stack
-					x: inverted ? (neg ? y : y - h) : x,
-					y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
-					width: inverted ? h : xWidth,
-					height: inverted ? xWidth : h
+				x: inverted ? (neg ? y : y - h) : x,
+				y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
+				width: inverted ? h : xWidth,
+				height: inverted ? xWidth : h
 			},
 			label = this.label,
 			alignAttr;
-			
-
+		
 		if (label) {
 			label.align(this.alignOptions, null, stackBox);	// align the label to the box
 				
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
 			label.attr({ 
-				visibility: chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
 					(hasSVG ? 'inherit' : VISIBLE) : 
 					HIDDEN
 			});
 		}
-		
 	}
 };

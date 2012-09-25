@@ -530,7 +530,7 @@ Axis.prototype = {
 								// If the StackItem is there, just update the values,
 								// if not, create one first
 								if (!stacks[key][x]) {
-									stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption);
+									stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
 								}
 								stacks[key][x].setTotal(y);
 
