@@ -36,6 +36,7 @@
 				'South-America': 'http://upload.wikimedia.org/wikipedia/commons/b/b0/Southamerica_blank.svg',
 				'USA': 'http://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg',
 				'France': 'http://upload.wikimedia.org/wikipedia/commons/3/3c/Carte_vierge_d%C3%A9partements_fran%C3%A7ais_avec_DOM.svg',
+				'Spain': 'http://upload.wikimedia.org/wikipedia/commons/5/5a/Provinces_of_Spain.svg',
 				'Sogn-og-Fjordane-Norway': 'http://upload.wikimedia.org/wikipedia/commons/4/4f/NO_1417_Vik.svg'
 				
 			};
@@ -45,7 +46,8 @@
 			function identifyLines(data, key) {
 				var lines = [],
 					lineNames = {
-						'France' : ['path2408', 'path3387', 'path5327'],
+						'France': ['path2408', 'path3387', 'path5327'],
+						'Spain': ['path3682'], 
 						'USA': ['path57']
 					}[key],
 					i,

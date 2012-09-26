@@ -209,11 +209,12 @@
 				if (isRelative) {
 					path[i] += fixedPoint[position % 2];
 				
-				} else if (translate) { // only translate absolute points
+				} 
+				if (translate && (!isRelative || (operator === 'm' && i < 3))) { // only translate absolute points or initial moveTo
 					path[i] += translate[position % 2];
 				}
 				
-				path[i] = Math.round(path[i] * 10) / 10;
+				path[i] = Math.round(path[i] * 100) / 100;
 				
 				// Set the fixed point for the next pair
 				if (position === positions - 1) {
@@ -260,33 +261,43 @@
 					allPaths = xml.getElementsByTagName('path'),
 					commonLineage,
 					lastCommonAncestor,
-					handleGroups;
+					handleGroups,
+					defs = xml.getElementsByTagName('defs')[0],
+					clipPaths;
+					
+				// Skip clip paths
+				clipPaths = defs && defs.getElementsByTagName('path');
+				each(clipPaths, function (path) {
+					path.skip = true;
+				});
 					
 					
 				// If not all paths belong to the same group, handle groups
 				each(allPaths, function (path, i) {
-					var itemLineage = [],
-						parentNode,
-						j;
-					
-					if (i > 0 && path.parentNode !== currentParent) {
-						handleGroups = true;
-					}
-					currentParent = path.parentNode;
-					
-					// Handle common lineage
-					parentNode = path;
-					while ((parentNode = parentNode.parentNode)) {
-						itemLineage.push(parentNode);
-					}
-					itemLineage.reverse();
-					
-					if (!commonLineage) {
-						commonLineage = itemLineage; // first iteration
-					} else {
-						for (j = 0; j < commonLineage.length; j++) {
-							if (commonLineage[j] !== itemLineage[j]) {
-								commonLineage.slice(0, j);
+					if (!path.skip) {
+						var itemLineage = [],
+							parentNode,
+							j;
+						
+						if (i > 0 && path.parentNode !== currentParent) {
+							handleGroups = true;
+						}
+						currentParent = path.parentNode;
+						
+						// Handle common lineage
+						parentNode = path;
+						while ((parentNode = parentNode.parentNode)) {
+							itemLineage.push(parentNode);
+						}
+						itemLineage.reverse();
+						
+						if (!commonLineage) {
+							commonLineage = itemLineage; // first iteration
+						} else {
+							for (j = 0; j < commonLineage.length; j++) {
+								if (commonLineage[j] !== itemLineage[j]) {
+									commonLineage.slice(0, j);
+								}
 							}
 						}
 					}
@@ -298,12 +309,15 @@
 					each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
 						var groupPath = [],
 							translate = getTranslate(g);
+						
 						each(g.getElementsByTagName('path'), function (path) {
-							groupPath = groupPath.concat(
-								data.pathToArray(path.getAttribute('d'), translate)
-							);
-							
-							path.isUsed = true;
+							if (!path.skip) {
+								groupPath = groupPath.concat(
+									data.pathToArray(path.getAttribute('d'), translate)
+								);
+								
+								path.skip = true;
+							}
 						});
 						arr.push({
 							name: getName(g),
@@ -314,10 +328,10 @@
 				
 				// Iterate the remaining paths that are not parts of groups
 				each(allPaths, function (path) {
-					if (!path.isUsed) {
+					if (!path.skip) {
 						arr.push({
 							name: getName(path),
-							path: data.pathToArray(path.getAttribute('d'))
+							path: data.pathToArray(path.getAttribute('d'), getTranslate(path))
 						});
 					}			
 				});
