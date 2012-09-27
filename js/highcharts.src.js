@@ -12987,7 +12987,7 @@ Series.prototype = {
 						dataLabel = point.dataLabel = series.chart.renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 							str,
 							0,
-							0,
+							-999,
 							null,
 							null,
 							null,
