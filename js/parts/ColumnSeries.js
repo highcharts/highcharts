@@ -200,15 +200,14 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			options = series.options,
 			renderer = series.chart.renderer,
-			graphic,
 			shapeArgs;
 
 
 		// draw the columns
 		each(series.points, function (point) {
-			var plotY = point.plotY;
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			var plotY = point.plotY,
 				graphic = point.graphic;
+			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
@@ -221,6 +220,8 @@ var ColumnSeries = extendClass(Series, {
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
+			} else if (graphic) {
+				point.graphic = graphic.destroy(); // #1269
 			}
 		});
 	},

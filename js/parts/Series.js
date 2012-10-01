@@ -1579,6 +1579,9 @@ Series.prototype = {
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
+					
+				} else if (graphic) {
+					point.graphic = graphic.destroy(); // #1269
 				}
 			}
 		}
