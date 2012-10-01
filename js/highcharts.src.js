@@ -10908,7 +10908,7 @@ Chart.prototype = {
 		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
-			if (prop) {
+			if (prop && prop.destroy) {
 				chart[name] = prop.destroy();
 			}
 		});
