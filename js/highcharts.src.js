@@ -3073,7 +3073,8 @@ SVGRenderer.prototype = {
 
 					// check width and apply soft breaks
 					if (width) {
-						var words = span.replace(/-/g, '- ').split(' '),
+					var spanText = (span.match(/^[^-].+$/)) ? span.replace(/-/g, '- ') :span,
+							words = spanText.split(' '),
 							tooLong,
 							actualWidth,
 							rest = [];
