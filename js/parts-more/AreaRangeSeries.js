@@ -7,7 +7,7 @@
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
-	lineWidth: 1, // docs - changed default value
+	lineWidth: 1,
 	marker: null,
 	threshold: null,
 	tooltip: {
@@ -21,7 +21,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		yLow: 0,
 		yHigh: 0	
 	},
-	shadow: false // docs - changed default
+	shadow: false
 });
 
 /**

@@ -11319,7 +11319,7 @@ Point.prototype = {
 			parts,
 			prop,
 			i,
-			cfg = { // docs: percentageDecimals, percentagePrefix, percentageSuffix, totalDecimals, totalPrefix, totalSuffix
+			cfg = {
 				y: 0, // 0: use 'value' for repOptionKey
 				open: 0,
 				high: 0,
@@ -13028,8 +13028,8 @@ Series.prototype = {
 				
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: (inverted ? chart.plotWidth - plotY : plotX) + options.x,
-			y: mathRound((inverted ? chart.plotHeight - plotX : plotY) + options.y),
+			x: inverted ? chart.plotWidth - plotY : plotX,
+			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -13057,7 +13057,7 @@ Series.prototype = {
 			
 			// Show or hide based on the final aligned position
 			dataLabel.attr({ // docs: crop
-				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
 					(hasSVG ? 'inherit' : VISIBLE) : 
 					HIDDEN
 			});
@@ -14144,24 +14144,26 @@ var ColumnSeries = extendClass(Series, {
 			inside = (this.options.stacking || options.inside); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it
-		alignTo = merge(point.shapeArgs);
-		if (inverted) {
-			alignTo = {
-				x: chart.plotWidth - alignTo.y - alignTo.height,
-				y: chart.plotHeight - alignTo.x - alignTo.width,
-				width: alignTo.height,
-				height: alignTo.width
-			};
-		}
-				
-		// Compute the alignment box
-		if (!inside) {
+		if (point.shapeArgs) { // Area range uses this method but not alignTo
+			alignTo = merge(point.shapeArgs);
 			if (inverted) {
-				alignTo.x += below ? 0 : alignTo.width;
-				alignTo.width = 0;
-			} else {
-				alignTo.y += below ? alignTo.height : 0;
-				alignTo.height = 0;
+				alignTo = {
+					x: chart.plotWidth - alignTo.y - alignTo.height,
+					y: chart.plotHeight - alignTo.x - alignTo.width,
+					width: alignTo.height,
+					height: alignTo.width
+				};
+			}
+				
+			// Compute the alignment box
+			if (!inside) {
+				if (inverted) {
+					alignTo.x += below ? 0 : alignTo.width;
+					alignTo.width = 0;
+				} else {
+					alignTo.y += below ? alignTo.height : 0;
+					alignTo.height = 0;
+				}
 			}
 		}
 		

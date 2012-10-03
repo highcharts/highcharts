@@ -622,7 +622,7 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
-	lineWidth: 1, // docs - changed default value
+	lineWidth: 1,
 	marker: null,
 	threshold: null,
 	tooltip: {
@@ -636,7 +636,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		yLow: 0,
 		yHigh: 0	
 	},
-	shadow: false // docs - changed default
+	shadow: false
 });
 
 /**
@@ -910,7 +910,7 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
-		y: 30,
+		y: 35, // docs: new default
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,

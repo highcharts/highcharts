@@ -40,8 +40,8 @@ $(function () {
 		        data: data,
 		        dataLabels: {
 		        	enabled: true,
-		        	yHigh: 16,
-		        	yLow: -5,
+		        	yHigh: 20,
+		        	yLow: -20,
 		        	style: {
 		        		color: 'white'
 		        	}

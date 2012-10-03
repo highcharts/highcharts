@@ -237,7 +237,7 @@ Point.prototype = {
 			parts,
 			prop,
 			i,
-			cfg = { // docs: percentageDecimals, percentagePrefix, percentageSuffix, totalDecimals, totalPrefix, totalSuffix
+			cfg = {
 				y: 0, // 0: use 'value' for repOptionKey
 				open: 0,
 				high: 0,
@@ -1946,8 +1946,8 @@ Series.prototype = {
 				
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: (inverted ? chart.plotWidth - plotY : plotX) + options.x,
-			y: mathRound((inverted ? chart.plotHeight - plotX : plotY) + options.y),
+			x: inverted ? chart.plotWidth - plotY : plotX,
+			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -1975,7 +1975,7 @@ Series.prototype = {
 			
 			// Show or hide based on the final aligned position
 			dataLabel.attr({ // docs: crop
-				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
 					(hasSVG ? 'inherit' : VISIBLE) : 
 					HIDDEN
 			});

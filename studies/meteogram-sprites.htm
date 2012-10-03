@@ -6,7 +6,7 @@
         <!-- 1. Add these JavaScript inclusions in the head of your page -->
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
         </script>
-        <script type="text/javascript" src="http://code.highcharts.com/v2.3Beta/highcharts.js">
+        <script type="text/javascript" src="http://code.highcharts.com/master/highcharts.js">
         </script>
         <!-- 2. Add the JavaScript to initialize the chart on document ready -->
         <script type="text/javascript">
@@ -201,13 +201,7 @@
 						},
 						
 						tooltip: {
-							shared: true,
-							
-							formatter: function() {
-								var html = Highcharts.dateFormat('%A, %b %e, %Y (%H:00-', this.points[0].point.from) +
-									Highcharts.dateFormat('%H:00)', this.points[0].point.to);
-								return html;
-							}
+							shared: true
 						},
 	                    
 	                    credits: {
@@ -245,9 +239,8 @@
 							tickInterval: 24 * 3600 * 1000,
 	                        labels: {
 	                            formatter: function(){
-	                                
-									return Highcharts.dateFormat(
-										'<span style="font-size: 12px; font-weight: bold">%a</span>, %b %e', 
+	                                return Highcharts.dateFormat(
+										'<span style="font-size: 12px; font-weight: bold">%a</span> %b %e', 
 										this.value
 									);
 	                            },
@@ -324,6 +317,9 @@
 									}
 								}
 							},
+							tooltip: {
+								valueSuffix: '°C'
+							},
 							zIndex: 1
 	                    }, {
 							name: 'Precipitation',
@@ -332,8 +328,8 @@
 							color: '#68CFE8',
 							yAxis: 2,
 							groupPadding: 0,
-							pointPadding: 0,
-							borderWidth: 1,
+							//pointPadding: 0,
+							borderWidth: 0,
 							shadow: false,
 							dataLabels: {
 								enabled: true,
@@ -345,6 +341,9 @@
 								style: {
 									fontSize: '8px'
 								}
+							},
+							tooltip: {
+								valueSuffix: 'mm'
 							}
 							//pointPlacement: 'between'
 	                    }]

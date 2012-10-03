@@ -295,24 +295,26 @@ var ColumnSeries = extendClass(Series, {
 			inside = (this.options.stacking || options.inside); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it
-		alignTo = merge(point.shapeArgs);
-		if (inverted) {
-			alignTo = {
-				x: chart.plotWidth - alignTo.y - alignTo.height,
-				y: chart.plotHeight - alignTo.x - alignTo.width,
-				width: alignTo.height,
-				height: alignTo.width
-			};
-		}
-				
-		// Compute the alignment box
-		if (!inside) {
+		if (point.shapeArgs) { // Area range uses this method but not alignTo
+			alignTo = merge(point.shapeArgs);
 			if (inverted) {
-				alignTo.x += below ? 0 : alignTo.width;
-				alignTo.width = 0;
-			} else {
-				alignTo.y += below ? alignTo.height : 0;
-				alignTo.height = 0;
+				alignTo = {
+					x: chart.plotWidth - alignTo.y - alignTo.height,
+					y: chart.plotHeight - alignTo.x - alignTo.width,
+					width: alignTo.height,
+					height: alignTo.width
+				};
+			}
+				
+			// Compute the alignment box
+			if (!inside) {
+				if (inverted) {
+					alignTo.x += below ? 0 : alignTo.width;
+					alignTo.width = 0;
+				} else {
+					alignTo.y += below ? alignTo.height : 0;
+					alignTo.height = 0;
+				}
 			}
 		}
 		

@@ -10,7 +10,7 @@
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
-		y: 30,
+		y: 35, // docs: new default
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,
