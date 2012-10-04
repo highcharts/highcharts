@@ -10523,7 +10523,7 @@ Chart.prototype = {
 		}
 		
 		// Move resize button (#1115)
-		if (resetZoomButton) {
+		if (resetZoomButton && resetZoomButton.align) {
 			resetZoomButton.align(null, null, chart[resetZoomButton.alignTo]);
 		}
 
