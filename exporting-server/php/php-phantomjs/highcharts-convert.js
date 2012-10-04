@@ -3,18 +3,8 @@ var page = require('webpage').create(),
 	system = require('system'),
 	args;
 
-var HC = {};
-
-HC.imagesLoaded = 'Highcharts.imagesLoaded:7a7dfcb5df73aaa51e67c9f38c5b07cb';
-window.imagesLoaded = false;
-
 page.onConsoleMessage = function (msg) {
 	console.log(msg);
-	/* Ugly hack, but only way to get messages out of the 'page.evaluate()' sandbox.
-	If any, please contribute with improvements on this! */
-	if (msg === HC.imagesLoaded) {
-		window.imagesLoaded = true;
-	}
 };
 
 page.onAlert = function (msg) {
@@ -70,8 +60,13 @@ if (args.length < 1 ) {
 	console.log('Usage: highcharts-convert.js -infile URL -outfile filename -scale 2.5 -width 300 -constr Chart -callback callback.js');
 	phantom.exit(1);
 } else {
-	var input = args.infile, output = pick(args.outfile,"chart.png"), constr = pick(args.constr, 'Chart'),
-	callback = args.callback, callbackStr, optionsStr, width = args.width, outputExtension, pdfOutput;
+	var input = args.infile, 
+	output = pick(args.outfile,"chart.png"), 
+	constr = pick(args.constr, 'Chart'),
+	callback = args.callback, 
+	callbackStr, optionsStr, 
+	width = args.width, 
+	outputExtension, pdfOutput;
 
 	outputExtension = output.split('.').pop();
 	pdfOutput = outputExtension === 'pdf' ? true : false;
@@ -99,37 +94,11 @@ if (args.length < 1 ) {
 		// load chart in page and return svg height and width
 		var svg = page.evaluate(function(width, constr, optionsStr, callbackStr, pdfOutput) {
 
-			var imagesLoadedMsg = 'Highcharts.imagesLoaded:7a7dfcb5df73aaa51e67c9f38c5b07cb';
-
 			// dynamic script insertion
 			function loadScript(varStr, codeStr){
 				var $script = $('<script>').attr('type','text/javascript');
 				$script.html('var ' + varStr + ' = ' + codeStr);
 				document.getElementsByTagName("head")[0].appendChild($script[0]);
-			}
-
-			// are all images loaded in time?
-			function loadImages() {
-				// are images loaded?
-				$images = $('svg image');
-				if ($images > 0) {
-					var counter = $images.length;
-					for(var i=0 ; i < $images.length; i += 1){
-						var img = new Image();
-						img.onload = function(){
-							counter = counter - 1;
-							console.log(counter + ' to go');
-							if(counter < 1){
-								console.log(imagesLoadedMsg);
-							}
-						};
-						console.log($images[i].getAttribute('href'));
-						img.src = $images[i].getAttribute('href');
-					}
-				}
-				else{
-					console.log(imagesLoadedMsg);
-				}
 			}
 
 			if (optionsStr != 'undefined') {
@@ -153,10 +122,7 @@ if (args.length < 1 ) {
 			options.chart.width = width ? width : options.chart.width ?  options.chart.width : 600;
 
 			var chart = new Highcharts[constr](options,callback);
-
-			// ensure images are all loaded
-			loadImages();
-
+			
 			if (pdfOutput) {
 				/* remove stroke-opacity paths, Qt shows them as fully
 				 * opaque in the PDF */
@@ -183,24 +149,41 @@ if (args.length < 1 ) {
 				f.write(svg.html);
 				f.close();
 				phantom.exit();
-			} else {
-				var timer;
-				// check every 50 ms if all images are loaded
-				window.setInterval(function() {
-					if (window.imagesLoaded) {
-						scaleAndClipPage(svg);
-						page.render(output);
-						clearTimeout(timer);
-						phantom.exit();
-					}
-				}, 50);
-				// we have a 1 sec timeframe..
-				timer = window.setTimeout(function() {
+			} else {				
+				if (svg.html.indexOf('href') > -1) {
+					// set in namespace for images, xlink
+					sanitizedSvg = svg.html
+						.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
+						.replace(/ href=/g, ' xlink:href=');
+					//save a temp file with the svg content
+					var svgFile = output.slice(0,-3) + 'svg'; 
+					f = fs.open(svgFile, "w");
+					f.write(sanitizedSvg);
+					f.close();
+					page.open(svgFile, function (status) {
+						if (status !== 'success') {
+							console.log('Unable to load the svg tmp file from address!');
+							phantom.exit();
+						} else {
+							
+								scaleAndClipPage(svg);
+								page.render(output);
+								//fs.remove(svgFile);
+							window.setTimeout(function(){	
+								phantom.exit();
+							},1000);
+						}
+					});					
+				} else {
+					ddd.ttt;
+					scaleAndClipPage(svg);
+					page.render(output);					
 					phantom.exit();
-				}, 1000);
+				}
 			}
 	    } catch (e) {
 	       		console.log(e);
+	       		phantom.exit();
 		}
 	} else {
 		/* render page directly from svg file */
