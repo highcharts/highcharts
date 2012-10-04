@@ -2561,6 +2561,7 @@ SVGElement.prototype = {
 			height,
 			rotation = wrapper.rotation,
 			element = wrapper.element,
+			styles = wrapper.styles,
 			rad = rotation * deg2rad;
 
 		if (!bBox) {
@@ -2604,6 +2605,11 @@ SVGElement.prototype = {
 					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 				}
+			}
+			
+			// Workaround for wrong bounding box in IE9 and IE10 (#1101)
+			if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+				bBox.height = 14;
 			}
 			
 			wrapper.bBox = bBox;
