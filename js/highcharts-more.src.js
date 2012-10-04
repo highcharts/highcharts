@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.2 (2012-08-31)
+ * @license Highcharts JS v2.3.3 (2012-10-04)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -910,14 +910,14 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
-		y: 15, // docs: new default
+		y: 15,
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,
 		style: {
 			fontWeight: 'bold'
 		},
-		verticalAlign: 'top' // docs: new default
+		verticalAlign: 'top'
 	},
 	dial: {
 		// radius: '80%',

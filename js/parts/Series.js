@@ -1941,8 +1941,7 @@ Series.prototype = {
 			plotX = pick(point.plotX, -999),
 			plotY = pick(point.plotY, -999),
 			bBox = dataLabel.getBBox(),
-			alignAttr, // the final position
-			positioner = options.positioner;
+			alignAttr; // the final position;
 				
 		// The alignment box is a singular point
 		alignTo = extend({
@@ -1959,28 +1958,25 @@ Series.prototype = {
 		});
 		
 		// Allow a hook for changing alignment in the last moment, then do the alignment
-		if (!positioner || positioner.call(point, options, alignTo) !== false) { // docs
-			
-			if (options.rotation) { // Fancy box alignment isn't supported for rotated text
-				alignAttr = {
-					align: options.align,
-					x: alignTo.x + options.x + alignTo.width / 2,
-					y: alignTo.y + options.y + alignTo.height / 2
-				};
-				dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
-			} else {
-				dataLabel.align(options, null, alignTo);
-				alignAttr = dataLabel.alignAttr;
-			}
-			
-			// Show or hide based on the final aligned position
-			dataLabel.attr({ // docs: crop
-				visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
-					(hasSVG ? 'inherit' : VISIBLE) : 
-					HIDDEN
-			});
-			
-		}		
+		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+			alignAttr = {
+				align: options.align,
+				x: alignTo.x + options.x + alignTo.width / 2,
+				y: alignTo.y + options.y + alignTo.height / 2
+			};
+			dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
+		} else {
+			dataLabel.align(options, null, alignTo);
+			alignAttr = dataLabel.alignAttr;
+		}
+		
+		// Show or hide based on the final aligned position
+		dataLabel.attr({
+			visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
+				(hasSVG ? 'inherit' : VISIBLE) : 
+				HIDDEN
+		});
+				
 	},
 	
 	/**
