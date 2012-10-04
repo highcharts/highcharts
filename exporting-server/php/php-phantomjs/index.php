@@ -59,15 +59,7 @@ function execute($cmd){
 	}
 
 	if($forceKill == true) {
-		$ppid = $status['pid'];
-		echo "killing overexecuted process \n";
-		//use ps to get all the children of this process, and kill them
-		$pids = preg_split('/\s+/', `ps -o pid --no-heading --ppid $ppid`);
-		foreach($pids as $pid) {
-			if(is_numeric($pid)) {
-				posix_kill($pid, 9); //9 is the SIGKILL signal
-			}
-		}
+		proc_terminate($proc, 9);		
 	}
 
 	return $stdout;
@@ -98,7 +90,7 @@ if(empty($options) || $options == '') {
 	if(strpos($svg,"<!ENTITY") !== false) {
 		// TODO: THis was an exploit in Apache/Batik. Possibly better to remove this in Phantom.js?
 		exit("Execution is stopped, the posted SVG could contain code for a mailcious attack");
-	}
+	}	
 	$filecontent = $svg;
 } else {
 	$infile = "tmp/$tmpName.json";
@@ -131,23 +123,17 @@ $cmd = "$cmd -outfile $outfile";
 if (isset($ext) && (empty($options) && $ext == 'svg') == 0) {
 	// width
 	if ($_POST['width']) {
-		$width = "-width " . (int)$_POST['width'];
+		/*TODO: add stripslashes */
+		$width = "-width " . (int) strip_magic_slashes($_POST['width']);
 	}
 
 	if ($_POST['scale']) {
-		$scale = "-scale " . (double)$_POST['scale'];
+		$scale = "-scale " . (double) strip_magic_slashes($_POST['scale']);
 	}
 
 	// constructor
 	if ($_POST['constr']) {
-		$constr = "-constr " . (string)$_POST['constr'];
-	} else {
-		$constr = "-constr Chart";
-	}
-
-	// stripslashes and generate the temporary file
-	if (get_magic_quotes_gpc()) {
-		$filecontent = stripslashes($filecontent);
+		$constr = "-constr " . (string) strip_magic_slashes($_POST['constr']);
 	}
 
 	if (!file_put_contents($infile, $filecontent)) {
