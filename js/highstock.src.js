@@ -15525,16 +15525,19 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 		type = this.type,
 		plotOptions = this.chart.options.plotOptions;
 		
-	if (!defaultPlotOptions[type].dataGrouping) {
-		defaultPlotOptions[type].dataGrouping = merge(commonOptions, specificOptions[type]);
+	if (specificOptions[type]) { // #1284
+		if (!defaultPlotOptions[type].dataGrouping) {
+			defaultPlotOptions[type].dataGrouping = merge(commonOptions, specificOptions[type]);
+		}
+		
+		options.dataGrouping = merge(
+			defaultPlotOptions[type].dataGrouping,
+			plotOptions.series && plotOptions.series.dataGrouping, // #1228
+			plotOptions[type].dataGrouping, // Set by the StockChart constructor
+			itemOptions.dataGrouping
+		);
 	}
 	
-	options.dataGrouping = merge(
-		defaultPlotOptions[this.type].dataGrouping,
-		plotOptions.series && plotOptions.series.dataGrouping, // #1228
-		plotOptions[this.type].dataGrouping, // Set by the StockChart constructor
-		itemOptions.dataGrouping
-	);
 	return options;
 });
 
