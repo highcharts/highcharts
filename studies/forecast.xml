@@ -1,552 +1,554 @@
 <?xml version="1.0" encoding="utf-8"?>
 <weatherdata>
   <location>
-    <name>Tromsø</name>
-    <type>City - large town</type>
-    <country>Norway</country>
+    <name>Vik</name>
+    <type>Tettsted</type>
+    <country>Norge</country>
     <timezone id="Europe/Oslo" utcoffsetMinutes="120" />
-    <location altitude="6" latitude="69.6488988129118" longitude="18.9550842363326" geobase="ssr" geobaseid="305409" />
+    <location altitude="5" latitude="61.087421677125" longitude="6.57910627161179" geobase="ssr" geobaseid="137606" />
   </location>
   <credit>
-    <!--In order to use the free weather data from yr no, you HAVE to display 
-the following text clearly visible on your web page. The text should be a 
-link to the specified URL.-->
-    <!--Please read more about our conditions and guidelines at http://www.yr.no/verdata/ -->
-    <link text="Weather forecast from yr.no, delivered by the Norwegian Meteorological Institute and the NRK" url="http://www.yr.no/place/Norway/Troms/Tromsø/Tromsø/" />
+    <!--For å bruke gratis værdata fra yr.no, MÅ du vise følgende tekst godt synlig på nettsiden din. Teksten skal være en lenke til URL-en som er spesifisert.-->
+    <!--Les mer om vilkår for bruk av gratis værdata + retningslinjer på 
+http://om.yr.no/verdata/ -->
+    <link text="Værvarsel fra yr.no, levert av NRK og Meteorologisk institutt" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/" />
   </credit>
   <links>
-    <link id="xmlSource" url="http://www.yr.no/place/Norway/Troms/Tromsø/Tromsø/forecast.xml" />
-    <link id="xmlSourceHourByHour" url="http://www.yr.no/place/Norway/Troms/Tromsø/Tromsø/forecast_hour_by_hour.xml" />
-    <link id="overview" url="http://www.yr.no/place/Norway/Troms/Tromsø/Tromsø/" />
-    <link id="hourByHour" url="http://www.yr.no/place/Norway/Troms/Tromsø/Tromsø/hour_by_hour" />
-    <link id="longTermForecast" url="http://www.yr.no/place/Norway/Troms/Tromsø/Tromsø/long" />
-    <link id="radar" url="http://www.yr.no/place/Norway/Troms/Tromsø/Tromsø/radar.html" />
+    <link id="xmlSource" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/varsel.xml" />
+    <link id="xmlSourceHourByHour" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/varsel_time_for_time.xml" />
+    <link id="overview" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/" />
+    <link id="hourByHour" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/time_for_time.html" />
+    <link id="longTermForecast" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/langtidsvarsel.html" />
+    <link id="radar" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/radar.html" />
   </links>
   <meta>
-    <lastupdate>2012-07-13T19:37:00</lastupdate>
-    <nextupdate>2012-07-14T08:00:00</nextupdate>
+    <lastupdate>2012-10-04T06:45:57</lastupdate>
+    <nextupdate>2012-10-04T20:00:00</nextupdate>
   </meta>
-  <sun never_set="true" />
+  <sun rise="2012-10-04T07:48:14" set="2012-10-04T18:55:00" />
   <forecast>
     <text>
-      <location name="Tromsø">
-        <time from="2012-07-13" to="2012-07-14">
-          <title>Friday and Saturday</title>
-          <body>&lt;strong&gt;Troms:&lt;/strong&gt; Bris omkring øst, av og til frisk bris 10 m/s utsatte steder. Enkelte regnbyger, vesentlig i indre strøk. Lørdag skiftende bris, først på dagen opp i østlig liten kuling 12 på kysten i nord. Lørdag kveld sørvestlig liten kuling 12 på kysten. Regn. Mest nedbør i indre strøk.</body>
+      <location name="Vik">
+        <time from="2012-10-04" to="2012-10-05">
+          <title>torsdag og fredag</title>
+          <body>&lt;strong&gt;Sogn og Fjordane:&lt;/strong&gt; Sørvest liten kuling 12 m/s på kysten, i ettermiddag opp i sterk kuling 20 ved Stad. For det meste skyet, enkelte regnbyger, snøbyger over 1000-1200 m. Fra i natt sørvest frisk bris 10 på kysten, liten kuling ved Stad, fra fredag ettermiddag sørlig frisk bris på kysten. Delvis skyet, regnbyger. Fra fredag ettermiddag stort sett oppholdsvær og til dels pent vær i sørlige og indre strøk.</body>
         </time>
-        <time from="2012-07-15" to="2012-07-15">
-          <title>Sunday</title>
-          <body>&lt;strong&gt;Troms:&lt;/strong&gt; Sørvestlig bris, på kysten liten kuling 12, kan hende periodevis stiv kuling 15. Skyet og regn, men fra søndag formiddag opphold og perioder med sol i indre strøk og aust for Lyngsalpan.</body>
+        <time from="2012-10-06" to="2012-10-06">
+          <title>lørdag</title>
+          <body>&lt;strong&gt;Sogn og Fjordane:&lt;/strong&gt; Sørlig frisk bris og til dels liten kuling 12 m/s på kysten, fra lørdag morgen dreiende sørvest. Regnbyger. Om ettermiddagen dreining til nordvest frisk bris 10 på kysten, om kvelden liten kuling. Regn og regnbyger.</body>
         </time>
-        <time from="2012-07-16" to="2012-07-16">
-          <title>Monday</title>
-          <body>&lt;strong&gt;Troms:&lt;/strong&gt; Sørvestlig kuling på kysten. Regn, senere enkelte regnbyger. Litt synkende temperatur.</body>
+        <time from="2012-10-07" to="2012-10-07">
+          <title>søndag</title>
+          <body>&lt;strong&gt;Vestlandet sør for Stad:&lt;/strong&gt; Nordvestlig bris, periodevis kuling på kysten. Enkelte regnbyger, senere oppholdsvær i sør. Omtrent uendret temperatur.</body>
         </time>
-        <time from="2012-07-17" to="2012-07-18">
-          <title>Tuesday and Wednesday</title>
-          <body>&lt;strong&gt;Nord-Norge:&lt;/strong&gt; Bris mellom nordvest og nordøst, tirsdag kan hende kuling på kysten av Troms og Finnmark. Tirsdag enkelte regnbyger, men stort sett opphold på Finnmarksvidda. Onsdag stort sett opphold i hele landsdelen. Synkende temperatur i Troms og Finnmark, omtrent uendret i Nordland.</body>
+        <time from="2012-10-08" to="2012-10-09">
+          <title>mandag og tirsdag</title>
+          <body>&lt;strong&gt;Vestlandet sør for Stad:&lt;/strong&gt; Skiftende bris. Mandag enkelte regnbyger, tirsdag oppholdsvær og perioder med sol. Omtrent uendret temperatur.</body>
         </time>
-        <time from="2012-07-19" to="2012-07-22">
-          <title>Thursday to Sunday</title>
-          <body>&lt;strong&gt;Norge og Spitsbergen:&lt;/strong&gt; På Spitsbergen og i Nord-Norge ventes rolige vindforhold. Enkelte byger i Nordland, ellers lite eller ingen nedbør. Uendret eller litt stigende temperatur. I Sør-Norge fortsatt ustabilt vær med byger, men til helgen er det mulighet for lengre perioder med oppholdsvær og rolige vindforhold. Uendret eller litt stigende temperatur.</body>
+        <time from="2012-10-10" to="2012-10-13">
+          <title>onsdag til lørdag</title>
+          <body>&lt;strong&gt;Sør-Norge:&lt;/strong&gt; Sør-Norge får onsdag rolige vindforhold, stort sett oppholdsvær og perioder med sol. Senere i perioden vil lavtrykksaktivitet ved Island gi bris mellom sørøst og sørvest, periodevis kuling utsatte steder. Nedbør av og til, vesentlig på Vestlandet. Omtrent uendret temperatur.</body>
         </time>
       </location>
     </text>
     <tabular>
-      <time from="2012-07-13T22:00:00" to="2012-07-13T23:00:00">
-        <!-- Valid from 2012-07-13T22:00:00 to 2012-07-13T23:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0" minvalue="0" maxvalue="0.1" />
-        <!-- Valid at 2012-07-13T22:00:00 -->
-        <windDirection deg="84.4" code="E" name="East" />
-        <windSpeed mps="4.3" name="Gentle breeze" />
-        <temperature unit="celsius" value="17" />
-        <pressure unit="hPa" value="999.4" />
-      </time>
-      <time from="2012-07-13T23:00:00" to="2012-07-14T00:00:00">
-        <!-- Valid from 2012-07-13T23:00:00 to 2012-07-14T00:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0" />
-        <!-- Valid at 2012-07-13T23:00:00 -->
-        <windDirection deg="84.7" code="E" name="East" />
-        <windSpeed mps="4.9" name="Gentle breeze" />
-        <temperature unit="celsius" value="17" />
-        <pressure unit="hPa" value="998.8" />
-      </time>
-      <time from="2012-07-14T00:00:00" to="2012-07-14T01:00:00">
-        <!-- Valid from 2012-07-14T00:00:00 to 2012-07-14T01:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0" />
-        <!-- Valid at 2012-07-14T00:00:00 -->
-        <windDirection deg="106.0" code="ESE" name="East-southeast" />
-        <windSpeed mps="4.8" name="Gentle breeze" />
-        <temperature unit="celsius" value="17" />
-        <pressure unit="hPa" value="998.6" />
-      </time>
-      <time from="2012-07-14T01:00:00" to="2012-07-14T02:00:00">
-        <!-- Valid from 2012-07-14T01:00:00 to 2012-07-14T02:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0" />
-        <!-- Valid at 2012-07-14T01:00:00 -->
-        <windDirection deg="107.8" code="ESE" name="East-southeast" />
-        <windSpeed mps="4.7" name="Gentle breeze" />
-        <temperature unit="celsius" value="16" />
-        <pressure unit="hPa" value="998.0" />
-      </time>
-      <time from="2012-07-14T02:00:00" to="2012-07-14T03:00:00">
-        <!-- Valid from 2012-07-14T02:00:00 to 2012-07-14T03:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0" />
-        <!-- Valid at 2012-07-14T02:00:00 -->
-        <windDirection deg="102.9" code="ESE" name="East-southeast" />
-        <windSpeed mps="4.7" name="Gentle breeze" />
-        <temperature unit="celsius" value="16" />
-        <pressure unit="hPa" value="997.5" />
-      </time>
-      <time from="2012-07-14T03:00:00" to="2012-07-14T04:00:00">
-        <!-- Valid from 2012-07-14T03:00:00 to 2012-07-14T04:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0" />
-        <!-- Valid at 2012-07-14T03:00:00 -->
-        <windDirection deg="84.2" code="E" name="East" />
-        <windSpeed mps="5.0" name="Gentle breeze" />
-        <temperature unit="celsius" value="16" />
+      <time from="2012-10-04T17:00:00" to="2012-10-04T18:00:00">
+        <!-- Valid from 2012-10-04T17:00:00 to 2012-10-04T18:00:00 -->
+        <symbol number="5" name="Regnbyger" var="05d" />
+        <precipitation value="0.4" minvalue="0.2" maxvalue="2.2" />
+        <!-- Valid at 2012-10-04T17:00:00 -->
+        <windDirection deg="232.1" code="SW" name="Sørvest" />
+        <windSpeed mps="2.5" name="Svak vind" />
+        <temperature unit="celsius" value="9" />
         <pressure unit="hPa" value="996.9" />
       </time>
-      <time from="2012-07-14T04:00:00" to="2012-07-14T05:00:00">
-        <!-- Valid from 2012-07-14T04:00:00 to 2012-07-14T05:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0" />
-        <!-- Valid at 2012-07-14T04:00:00 -->
-        <windDirection deg="91.7" code="E" name="East" />
-        <windSpeed mps="4.7" name="Gentle breeze" />
-        <temperature unit="celsius" value="16" />
-        <pressure unit="hPa" value="996.8" />
+      <time from="2012-10-04T18:00:00" to="2012-10-04T19:00:00">
+        <!-- Valid from 2012-10-04T18:00:00 to 2012-10-04T19:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="1.2" minvalue="0.3" maxvalue="2.2" />
+        <!-- Valid at 2012-10-04T18:00:00 -->
+        <windDirection deg="219.9" code="SW" name="Sørvest" />
+        <windSpeed mps="2.0" name="Svak vind" />
+        <temperature unit="celsius" value="8" />
+        <pressure unit="hPa" value="997.7" />
       </time>
-      <time from="2012-07-14T05:00:00" to="2012-07-14T06:00:00">
-        <!-- Valid from 2012-07-14T05:00:00 to 2012-07-14T06:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0" />
-        <!-- Valid at 2012-07-14T05:00:00 -->
-        <windDirection deg="82.8" code="E" name="East" />
-        <windSpeed mps="4.5" name="Gentle breeze" />
-        <temperature unit="celsius" value="14" />
-        <pressure unit="hPa" value="996.1" />
+      <time from="2012-10-04T19:00:00" to="2012-10-04T20:00:00">
+        <!-- Valid from 2012-10-04T19:00:00 to 2012-10-04T20:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="1.2" minvalue="0.4" maxvalue="2.2" />
+        <!-- Valid at 2012-10-04T19:00:00 -->
+        <windDirection deg="214.7" code="SW" name="Sørvest" />
+        <windSpeed mps="1.9" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="998.6" />
       </time>
-      <time from="2012-07-14T06:00:00" to="2012-07-14T07:00:00">
-        <!-- Valid from 2012-07-14T06:00:00 to 2012-07-14T07:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
+      <time from="2012-10-04T20:00:00" to="2012-10-04T21:00:00">
+        <!-- Valid from 2012-10-04T20:00:00 to 2012-10-04T21:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="1.1" minvalue="0.3" maxvalue="2.2" />
+        <!-- Valid at 2012-10-04T20:00:00 -->
+        <windDirection deg="189.6" code="S" name="Sør" />
+        <windSpeed mps="2.2" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="999.1" />
+      </time>
+      <time from="2012-10-04T21:00:00" to="2012-10-04T22:00:00">
+        <!-- Valid from 2012-10-04T21:00:00 to 2012-10-04T22:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="0.9" minvalue="0.4" maxvalue="2.0" />
+        <!-- Valid at 2012-10-04T21:00:00 -->
+        <windDirection deg="218.4" code="SW" name="Sørvest" />
+        <windSpeed mps="2.5" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="999.8" />
+      </time>
+      <time from="2012-10-04T22:00:00" to="2012-10-04T23:00:00">
+        <!-- Valid from 2012-10-04T22:00:00 to 2012-10-04T23:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="0.6" minvalue="0.2" maxvalue="2.2" />
+        <!-- Valid at 2012-10-04T22:00:00 -->
+        <windDirection deg="203.0" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="2.5" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="999.9" />
+      </time>
+      <time from="2012-10-04T23:00:00" to="2012-10-05T00:00:00">
+        <!-- Valid from 2012-10-04T23:00:00 to 2012-10-05T00:00:00 -->
+        <symbol number="5" name="Regnbyger" var="mf/05n.62" />
+        <precipitation value="0.3" minvalue="0" maxvalue="1.2" />
+        <!-- Valid at 2012-10-04T23:00:00 -->
+        <windDirection deg="220.6" code="SW" name="Sørvest" />
+        <windSpeed mps="2.6" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1000.7" />
+      </time>
+      <time from="2012-10-05T00:00:00" to="2012-10-05T01:00:00">
+        <!-- Valid from 2012-10-05T00:00:00 to 2012-10-05T01:00:00 -->
+        <symbol number="5" name="Regnbyger" var="mf/05n.65" />
+        <precipitation value="0.3" minvalue="0" maxvalue="1.6" />
+        <!-- Valid at 2012-10-05T00:00:00 -->
+        <windDirection deg="201.0" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="2.4" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1001.1" />
+      </time>
+      <time from="2012-10-05T01:00:00" to="2012-10-05T02:00:00">
+        <!-- Valid from 2012-10-05T01:00:00 to 2012-10-05T02:00:00 -->
+        <symbol number="5" name="Regnbyger" var="mf/05n.65" />
+        <precipitation value="0.3" minvalue="0.2" maxvalue="1.2" />
+        <!-- Valid at 2012-10-05T01:00:00 -->
+        <windDirection deg="206.5" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="2.3" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1001.1" />
+      </time>
+      <time from="2012-10-05T02:00:00" to="2012-10-05T03:00:00">
+        <!-- Valid from 2012-10-05T02:00:00 to 2012-10-05T03:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="1.1" minvalue="0.3" maxvalue="3.0" />
+        <!-- Valid at 2012-10-05T02:00:00 -->
+        <windDirection deg="216.0" code="SW" name="Sørvest" />
+        <windSpeed mps="1.8" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1001.5" />
+      </time>
+      <time from="2012-10-05T03:00:00" to="2012-10-05T04:00:00">
+        <!-- Valid from 2012-10-05T03:00:00 to 2012-10-05T04:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="1.2" minvalue="0.4" maxvalue="2.4" />
+        <!-- Valid at 2012-10-05T03:00:00 -->
+        <windDirection deg="197.9" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="1.5" name="Flau vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1001.8" />
+      </time>
+      <time from="2012-10-05T04:00:00" to="2012-10-05T05:00:00">
+        <!-- Valid from 2012-10-05T04:00:00 to 2012-10-05T05:00:00 -->
+        <symbol number="9" name="Regn" var="09" />
+        <precipitation value="1.2" minvalue="0.4" maxvalue="2.2" />
+        <!-- Valid at 2012-10-05T04:00:00 -->
+        <windDirection deg="207.9" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="2.2" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1001.8" />
+      </time>
+      <time from="2012-10-05T05:00:00" to="2012-10-05T06:00:00">
+        <!-- Valid from 2012-10-05T05:00:00 to 2012-10-05T06:00:00 -->
+        <symbol number="5" name="Regnbyger" var="mf/05n.65" />
+        <precipitation value="0.5" minvalue="0.1" maxvalue="2.4" />
+        <!-- Valid at 2012-10-05T05:00:00 -->
+        <windDirection deg="199.5" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="2.3" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1001.7" />
+      </time>
+      <time from="2012-10-05T06:00:00" to="2012-10-05T07:00:00">
+        <!-- Valid from 2012-10-05T06:00:00 to 2012-10-05T07:00:00 -->
+        <symbol number="4" name="Skyet" var="04" />
+        <precipitation value="0.1" minvalue="0" maxvalue="2.4" />
+        <!-- Valid at 2012-10-05T06:00:00 -->
+        <windDirection deg="191.6" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="2.1" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1001.8" />
+      </time>
+      <time from="2012-10-05T07:00:00" to="2012-10-05T08:00:00">
+        <!-- Valid from 2012-10-05T07:00:00 to 2012-10-05T08:00:00 -->
+        <symbol number="4" name="Skyet" var="04" />
+        <precipitation value="0.1" minvalue="0" maxvalue="1.1" />
+        <!-- Valid at 2012-10-05T07:00:00 -->
+        <windDirection deg="174.2" code="S" name="Sør" />
+        <windSpeed mps="2.3" name="Svak vind" />
+        <temperature unit="celsius" value="5" />
+        <pressure unit="hPa" value="1001.8" />
+      </time>
+      <time from="2012-10-05T08:00:00" to="2012-10-05T09:00:00">
+        <!-- Valid from 2012-10-05T08:00:00 to 2012-10-05T09:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" minvalue="0" maxvalue="0.3" />
+        <!-- Valid at 2012-10-05T08:00:00 -->
+        <windDirection deg="167.4" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="2.1" name="Svak vind" />
+        <temperature unit="celsius" value="5" />
+        <pressure unit="hPa" value="1001.8" />
+      </time>
+      <time from="2012-10-05T09:00:00" to="2012-10-05T10:00:00">
+        <!-- Valid from 2012-10-05T09:00:00 to 2012-10-05T10:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
         <precipitation value="0" minvalue="0" maxvalue="0.1" />
-        <!-- Valid at 2012-07-14T06:00:00 -->
-        <windDirection deg="79.4" code="E" name="East" />
-        <windSpeed mps="4.8" name="Gentle breeze" />
-        <temperature unit="celsius" value="14" />
-        <pressure unit="hPa" value="995.5" />
+        <!-- Valid at 2012-10-05T09:00:00 -->
+        <windDirection deg="170.6" code="S" name="Sør" />
+        <windSpeed mps="1.2" name="Flau vind" />
+        <temperature unit="celsius" value="5" />
+        <pressure unit="hPa" value="1001.7" />
       </time>
-      <time from="2012-07-14T07:00:00" to="2012-07-14T08:00:00">
-        <!-- Valid from 2012-07-14T07:00:00 to 2012-07-14T08:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
+      <time from="2012-10-05T10:00:00" to="2012-10-05T11:00:00">
+        <!-- Valid from 2012-10-05T10:00:00 to 2012-10-05T11:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
         <precipitation value="0" minvalue="0" maxvalue="0.1" />
-        <!-- Valid at 2012-07-14T07:00:00 -->
-        <windDirection deg="66.6" code="ENE" name="East-northeast" />
-        <windSpeed mps="4.4" name="Gentle breeze" />
-        <temperature unit="celsius" value="14" />
-        <pressure unit="hPa" value="995.1" />
+        <!-- Valid at 2012-10-05T10:00:00 -->
+        <windDirection deg="164.6" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="0.6" name="Flau vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1001.4" />
       </time>
-      <time from="2012-07-14T08:00:00" to="2012-07-14T09:00:00">
-        <!-- Valid from 2012-07-14T08:00:00 to 2012-07-14T09:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0" maxvalue="0.1" />
-        <!-- Valid at 2012-07-14T08:00:00 -->
-        <windDirection deg="62.5" code="ENE" name="East-northeast" />
-        <windSpeed mps="4.5" name="Gentle breeze" />
-        <temperature unit="celsius" value="14" />
-        <pressure unit="hPa" value="994.7" />
+      <time from="2012-10-05T11:00:00" to="2012-10-05T12:00:00">
+        <!-- Valid from 2012-10-05T11:00:00 to 2012-10-05T12:00:00 -->
+        <symbol number="2" name="Lettskyet" var="02d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T11:00:00 -->
+        <windDirection deg="72.3" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.2" name="Flau vind" />
+        <temperature unit="celsius" value="8" />
+        <pressure unit="hPa" value="1000.9" />
       </time>
-      <time from="2012-07-14T09:00:00" to="2012-07-14T10:00:00">
-        <!-- Valid from 2012-07-14T09:00:00 to 2012-07-14T10:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0.1" maxvalue="0.5" />
-        <!-- Valid at 2012-07-14T09:00:00 -->
-        <windDirection deg="63.3" code="ENE" name="East-northeast" />
-        <windSpeed mps="4.2" name="Gentle breeze" />
-        <temperature unit="celsius" value="15" />
-        <pressure unit="hPa" value="994.2" />
+      <time from="2012-10-05T12:00:00" to="2012-10-05T13:00:00">
+        <!-- Valid from 2012-10-05T12:00:00 to 2012-10-05T13:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T12:00:00 -->
+        <windDirection deg="96.3" code="E" name="Øst" />
+        <windSpeed mps="0.7" name="Flau vind" />
+        <temperature unit="celsius" value="9" />
+        <pressure unit="hPa" value="1000.5" />
       </time>
-      <time from="2012-07-14T10:00:00" to="2012-07-14T11:00:00">
-        <!-- Valid from 2012-07-14T10:00:00 to 2012-07-14T11:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0.1" maxvalue="0.7" />
-        <!-- Valid at 2012-07-14T10:00:00 -->
-        <windDirection deg="61.3" code="ENE" name="East-northeast" />
-        <windSpeed mps="3.9" name="Gentle breeze" />
-        <temperature unit="celsius" value="15" />
-        <pressure unit="hPa" value="993.9" />
+      <time from="2012-10-05T13:00:00" to="2012-10-05T14:00:00">
+        <!-- Valid from 2012-10-05T13:00:00 to 2012-10-05T14:00:00 -->
+        <symbol number="2" name="Lettskyet" var="02d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T13:00:00 -->
+        <windDirection deg="68.7" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.0" name="Flau vind" />
+        <temperature unit="celsius" value="9" />
+        <pressure unit="hPa" value="999.6" />
       </time>
-      <time from="2012-07-14T11:00:00" to="2012-07-14T12:00:00">
-        <!-- Valid from 2012-07-14T11:00:00 to 2012-07-14T12:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0" maxvalue="0.4" />
-        <!-- Valid at 2012-07-14T11:00:00 -->
-        <windDirection deg="57.1" code="ENE" name="East-northeast" />
-        <windSpeed mps="3.5" name="Gentle breeze" />
-        <temperature unit="celsius" value="14" />
-        <pressure unit="hPa" value="993.6" />
-      </time>
-      <time from="2012-07-14T12:00:00" to="2012-07-14T13:00:00">
-        <!-- Valid from 2012-07-14T12:00:00 to 2012-07-14T13:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.2" minvalue="0.1" maxvalue="0.5" />
-        <!-- Valid at 2012-07-14T12:00:00 -->
-        <windDirection deg="55.5" code="NE" name="Northeast" />
-        <windSpeed mps="3.0" name="Light breeze" />
-        <temperature unit="celsius" value="15" />
-        <pressure unit="hPa" value="993.4" />
-      </time>
-      <time from="2012-07-14T13:00:00" to="2012-07-14T14:00:00">
-        <!-- Valid from 2012-07-14T13:00:00 to 2012-07-14T14:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.3" minvalue="0.1" maxvalue="1.1" />
-        <!-- Valid at 2012-07-14T13:00:00 -->
-        <windDirection deg="48.2" code="NE" name="Northeast" />
-        <windSpeed mps="2.9" name="Light breeze" />
-        <temperature unit="celsius" value="15" />
-        <pressure unit="hPa" value="993.2" />
-      </time>
-      <time from="2012-07-14T14:00:00" to="2012-07-14T15:00:00">
-        <!-- Valid from 2012-07-14T14:00:00 to 2012-07-14T15:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.3" minvalue="0.1" maxvalue="0.9" />
-        <!-- Valid at 2012-07-14T14:00:00 -->
-        <windDirection deg="50.0" code="NE" name="Northeast" />
-        <windSpeed mps="2.0" name="Light breeze" />
-        <temperature unit="celsius" value="15" />
-        <pressure unit="hPa" value="992.9" />
-      </time>
-      <time from="2012-07-14T15:00:00" to="2012-07-14T16:00:00">
-        <!-- Valid from 2012-07-14T15:00:00 to 2012-07-14T16:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="1.2" minvalue="0.7" maxvalue="2.0" />
-        <!-- Valid at 2012-07-14T15:00:00 -->
-        <windDirection deg="50.0" code="NE" name="Northeast" />
-        <windSpeed mps="2.2" name="Light breeze" />
-        <temperature unit="celsius" value="15" />
-        <pressure unit="hPa" value="992.9" />
-      </time>
-      <time from="2012-07-14T16:00:00" to="2012-07-14T17:00:00">
-        <!-- Valid from 2012-07-14T16:00:00 to 2012-07-14T17:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="1.6" minvalue="0.8" maxvalue="3.0" />
-        <!-- Valid at 2012-07-14T16:00:00 -->
-        <windDirection deg="339.8" code="NNW" name="North-northwest" />
-        <windSpeed mps="1.2" name="Light air" />
-        <temperature unit="celsius" value="15" />
-        <pressure unit="hPa" value="992.3" />
-      </time>
-      <time from="2012-07-14T17:00:00" to="2012-07-14T18:00:00">
-        <!-- Valid from 2012-07-14T17:00:00 to 2012-07-14T18:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.9" minvalue="0.4" maxvalue="2.1" />
-        <!-- Valid at 2012-07-14T17:00:00 -->
-        <windDirection deg="278.8" code="W" name="West" />
-        <windSpeed mps="5.6" name="Moderate breeze" />
-        <temperature unit="celsius" value="13" />
-        <pressure unit="hPa" value="992.6" />
-      </time>
-      <time from="2012-07-14T18:00:00" to="2012-07-14T19:00:00">
-        <!-- Valid from 2012-07-14T18:00:00 to 2012-07-14T19:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="1.6" minvalue="0.9" maxvalue="3.0" />
-        <!-- Valid at 2012-07-14T18:00:00 -->
-        <windDirection deg="259.8" code="W" name="West" />
-        <windSpeed mps="5.4" name="Gentle breeze" />
-        <temperature unit="celsius" value="12" />
-        <pressure unit="hPa" value="992.9" />
-      </time>
-      <time from="2012-07-14T19:00:00" to="2012-07-14T20:00:00">
-        <!-- Valid from 2012-07-14T19:00:00 to 2012-07-14T20:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="2.2" minvalue="1.5" maxvalue="3.1" />
-        <!-- Valid at 2012-07-14T19:00:00 -->
-        <windDirection deg="254.7" code="WSW" name="West-southwest" />
-        <windSpeed mps="6.3" name="Moderate breeze" />
-        <temperature unit="celsius" value="11" />
-        <pressure unit="hPa" value="992.9" />
-      </time>
-      <time from="2012-07-14T20:00:00" to="2012-07-14T21:00:00">
-        <!-- Valid from 2012-07-14T20:00:00 to 2012-07-14T21:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="2.1" minvalue="1.7" maxvalue="2.6" />
-        <!-- Valid at 2012-07-14T20:00:00 -->
-        <windDirection deg="247.7" code="WSW" name="West-southwest" />
-        <windSpeed mps="6.3" name="Moderate breeze" />
-        <temperature unit="celsius" value="11" />
-        <pressure unit="hPa" value="993.0" />
-      </time>
-      <time from="2012-07-14T21:00:00" to="2012-07-14T22:00:00">
-        <!-- Valid from 2012-07-14T21:00:00 to 2012-07-14T22:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="1.2" minvalue="0.8" maxvalue="1.8" />
-        <!-- Valid at 2012-07-14T21:00:00 -->
-        <windDirection deg="236.8" code="WSW" name="West-southwest" />
-        <windSpeed mps="7.4" name="Moderate breeze" />
-        <temperature unit="celsius" value="11" />
-        <pressure unit="hPa" value="993.0" />
-      </time>
-      <time from="2012-07-14T22:00:00" to="2012-07-14T23:00:00">
-        <!-- Valid from 2012-07-14T22:00:00 to 2012-07-14T23:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.9" minvalue="0.7" maxvalue="1.5" />
-        <!-- Valid at 2012-07-14T22:00:00 -->
-        <windDirection deg="233.3" code="SW" name="Southwest" />
-        <windSpeed mps="8.4" name="Fresh breeze" />
-        <temperature unit="celsius" value="11" />
-        <pressure unit="hPa" value="993.0" />
-      </time>
-      <time from="2012-07-14T23:00:00" to="2012-07-15T00:00:00">
-        <!-- Valid from 2012-07-14T23:00:00 to 2012-07-15T00:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.8" minvalue="0.5" maxvalue="1.5" />
-        <!-- Valid at 2012-07-14T23:00:00 -->
-        <windDirection deg="233.7" code="SW" name="Southwest" />
-        <windSpeed mps="8.4" name="Fresh breeze" />
-        <temperature unit="celsius" value="11" />
-        <pressure unit="hPa" value="992.6" />
-      </time>
-      <time from="2012-07-15T00:00:00" to="2012-07-15T01:00:00">
-        <!-- Valid from 2012-07-15T00:00:00 to 2012-07-15T01:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.8" minvalue="0.6" maxvalue="1.5" />
-        <!-- Valid at 2012-07-15T00:00:00 -->
-        <windDirection deg="233.7" code="SW" name="Southwest" />
-        <windSpeed mps="8.3" name="Fresh breeze" />
+      <time from="2012-10-05T14:00:00" to="2012-10-05T15:00:00">
+        <!-- Valid from 2012-10-05T14:00:00 to 2012-10-05T15:00:00 -->
+        <symbol number="2" name="Lettskyet" var="02d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T14:00:00 -->
+        <windDirection deg="247.0" code="WSW" name="Vest-sørvest" />
+        <windSpeed mps="0.6" name="Flau vind" />
         <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.7" />
+        <pressure unit="hPa" value="999.4" />
       </time>
-      <time from="2012-07-15T01:00:00" to="2012-07-15T02:00:00">
-        <!-- Valid from 2012-07-15T01:00:00 to 2012-07-15T02:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.8" minvalue="0.4" maxvalue="1.8" />
-        <!-- Valid at 2012-07-15T01:00:00 -->
-        <windDirection deg="234.0" code="SW" name="Southwest" />
-        <windSpeed mps="8.2" name="Fresh breeze" />
+      <time from="2012-10-05T15:00:00" to="2012-10-05T16:00:00">
+        <!-- Valid from 2012-10-05T15:00:00 to 2012-10-05T16:00:00 -->
+        <symbol number="2" name="Lettskyet" var="02d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T15:00:00 -->
+        <windDirection deg="340.3" code="NNW" name="Nord-nordvest" />
+        <windSpeed mps="0.5" name="Flau vind" />
         <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.6" />
+        <pressure unit="hPa" value="999.3" />
       </time>
-      <time from="2012-07-15T02:00:00" to="2012-07-15T03:00:00">
-        <!-- Valid from 2012-07-15T02:00:00 to 2012-07-15T03:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.7" minvalue="0.4" maxvalue="1.4" />
-        <!-- Valid at 2012-07-15T02:00:00 -->
-        <windDirection deg="233.1" code="SW" name="Southwest" />
-        <windSpeed mps="9.0" name="Fresh breeze" />
+      <time from="2012-10-05T16:00:00" to="2012-10-05T17:00:00">
+        <!-- Valid from 2012-10-05T16:00:00 to 2012-10-05T17:00:00 -->
+        <symbol number="2" name="Lettskyet" var="02d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T16:00:00 -->
+        <windDirection deg="10.4" code="N" name="Nord" />
+        <windSpeed mps="0.7" name="Flau vind" />
         <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.6" />
+        <pressure unit="hPa" value="998.8" />
       </time>
-      <time from="2012-07-15T03:00:00" to="2012-07-15T04:00:00">
-        <!-- Valid from 2012-07-15T03:00:00 to 2012-07-15T04:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.5" minvalue="0.3" maxvalue="1.0" />
-        <!-- Valid at 2012-07-15T03:00:00 -->
-        <windDirection deg="233.8" code="SW" name="Southwest" />
-        <windSpeed mps="9.4" name="Fresh breeze" />
+      <time from="2012-10-05T17:00:00" to="2012-10-05T18:00:00">
+        <!-- Valid from 2012-10-05T17:00:00 to 2012-10-05T18:00:00 -->
+        <symbol number="2" name="Lettskyet" var="02d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T17:00:00 -->
+        <windDirection deg="34.4" code="NE" name="Nordøst" />
+        <windSpeed mps="1.1" name="Flau vind" />
         <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.7" />
+        <pressure unit="hPa" value="998.7" />
       </time>
-      <time from="2012-07-15T04:00:00" to="2012-07-15T05:00:00">
-        <!-- Valid from 2012-07-15T04:00:00 to 2012-07-15T05:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.3" minvalue="0.1" maxvalue="0.6" />
-        <!-- Valid at 2012-07-15T04:00:00 -->
-        <windDirection deg="231.7" code="SW" name="Southwest" />
-        <windSpeed mps="9.9" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.6" />
+      <time from="2012-10-05T18:00:00" to="2012-10-05T19:00:00">
+        <!-- Valid from 2012-10-05T18:00:00 to 2012-10-05T19:00:00 -->
+        <symbol number="2" name="Lettskyet" var="02d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T18:00:00 -->
+        <windDirection deg="61.3" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.2" name="Flau vind" />
+        <temperature unit="celsius" value="9" />
+        <pressure unit="hPa" value="999.2" />
       </time>
-      <time from="2012-07-15T05:00:00" to="2012-07-15T06:00:00">
-        <!-- Valid from 2012-07-15T05:00:00 to 2012-07-15T06:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0.1" minvalue="0" maxvalue="0.5" />
-        <!-- Valid at 2012-07-15T05:00:00 -->
-        <windDirection deg="223.4" code="SW" name="Southwest" />
-        <windSpeed mps="8.8" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.6" />
+      <time from="2012-10-05T19:00:00" to="2012-10-05T20:00:00">
+        <!-- Valid from 2012-10-05T19:00:00 to 2012-10-05T20:00:00 -->
+        <symbol number="2" name="Lettskyet" var="mf/02n.65" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T19:00:00 -->
+        <windDirection deg="70.8" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.1" name="Flau vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="999.9" />
       </time>
-      <time from="2012-07-15T06:00:00" to="2012-07-15T07:00:00">
-        <!-- Valid from 2012-07-15T06:00:00 to 2012-07-15T07:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0" maxvalue="0.3" />
-        <!-- Valid at 2012-07-15T06:00:00 -->
-        <windDirection deg="225.8" code="SW" name="Southwest" />
-        <windSpeed mps="9.6" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.4" />
+      <time from="2012-10-05T20:00:00" to="2012-10-05T21:00:00">
+        <!-- Valid from 2012-10-05T20:00:00 to 2012-10-05T21:00:00 -->
+        <symbol number="2" name="Lettskyet" var="mf/02n.65" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T20:00:00 -->
+        <windDirection deg="78.8" code="E" name="Øst" />
+        <windSpeed mps="0.9" name="Flau vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1000.6" />
       </time>
-      <time from="2012-07-15T07:00:00" to="2012-07-15T08:00:00">
-        <!-- Valid from 2012-07-15T07:00:00 to 2012-07-15T08:00:00 -->
-        <symbol number="5" name="Rain showers" var="05d" />
-        <precipitation value="0.2" minvalue="0.1" maxvalue="0.4" />
-        <!-- Valid at 2012-07-15T07:00:00 -->
-        <windDirection deg="225.3" code="SW" name="Southwest" />
-        <windSpeed mps="9.1" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.5" />
+      <time from="2012-10-05T21:00:00" to="2012-10-05T22:00:00">
+        <!-- Valid from 2012-10-05T21:00:00 to 2012-10-05T22:00:00 -->
+        <symbol number="2" name="Lettskyet" var="mf/02n.65" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T21:00:00 -->
+        <windDirection deg="149.1" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="0.7" name="Flau vind" />
+        <temperature unit="celsius" value="5" />
+        <pressure unit="hPa" value="1001.5" />
       </time>
-      <time from="2012-07-15T08:00:00" to="2012-07-15T09:00:00">
-        <!-- Valid from 2012-07-15T08:00:00 to 2012-07-15T09:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.3" minvalue="0.1" maxvalue="0.6" />
-        <!-- Valid at 2012-07-15T08:00:00 -->
-        <windDirection deg="222.6" code="SW" name="Southwest" />
-        <windSpeed mps="9.5" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.4" />
+      <time from="2012-10-05T22:00:00" to="2012-10-05T23:00:00">
+        <!-- Valid from 2012-10-05T22:00:00 to 2012-10-05T23:00:00 -->
+        <symbol number="2" name="Lettskyet" var="mf/02n.65" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T22:00:00 -->
+        <windDirection deg="137.1" code="SE" name="Sørøst" />
+        <windSpeed mps="1.1" name="Flau vind" />
+        <temperature unit="celsius" value="4" />
+        <pressure unit="hPa" value="1001.5" />
       </time>
-      <time from="2012-07-15T09:00:00" to="2012-07-15T10:00:00">
-        <!-- Valid from 2012-07-15T09:00:00 to 2012-07-15T10:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
-        <precipitation value="0.2" minvalue="0" maxvalue="0.6" />
-        <!-- Valid at 2012-07-15T09:00:00 -->
-        <windDirection deg="227.0" code="SW" name="Southwest" />
-        <windSpeed mps="9.7" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="992.7" />
+      <time from="2012-10-05T23:00:00" to="2012-10-06T00:00:00">
+        <!-- Valid from 2012-10-05T23:00:00 to 2012-10-06T00:00:00 -->
+        <symbol number="1" name="Klarvær" var="mf/01n.65" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-05T23:00:00 -->
+        <windDirection deg="184.0" code="S" name="Sør" />
+        <windSpeed mps="1.6" name="Svak vind" />
+        <temperature unit="celsius" value="5" />
+        <pressure unit="hPa" value="1001.8" />
       </time>
-      <time from="2012-07-15T10:00:00" to="2012-07-15T11:00:00">
-        <!-- Valid from 2012-07-15T10:00:00 to 2012-07-15T11:00:00 -->
-        <symbol number="3" name="Partly cloudy" var="03d" />
+      <time from="2012-10-06T00:00:00" to="2012-10-06T01:00:00">
+        <!-- Valid from 2012-10-06T00:00:00 to 2012-10-06T01:00:00 -->
+        <symbol number="1" name="Klarvær" var="mf/01n.69" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T00:00:00 -->
+        <windDirection deg="167.7" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="1.7" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.0" />
+      </time>
+      <time from="2012-10-06T01:00:00" to="2012-10-06T02:00:00">
+        <!-- Valid from 2012-10-06T01:00:00 to 2012-10-06T02:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="mf/03n.69" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T01:00:00 -->
+        <windDirection deg="167.9" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="1.2" name="Flau vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1002.0" />
+      </time>
+      <time from="2012-10-06T02:00:00" to="2012-10-06T03:00:00">
+        <!-- Valid from 2012-10-06T02:00:00 to 2012-10-06T03:00:00 -->
+        <symbol number="2" name="Lettskyet" var="mf/02n.69" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T02:00:00 -->
+        <windDirection deg="180.6" code="S" name="Sør" />
+        <windSpeed mps="1.5" name="Flau vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1002.1" />
+      </time>
+      <time from="2012-10-06T03:00:00" to="2012-10-06T04:00:00">
+        <!-- Valid from 2012-10-06T03:00:00 to 2012-10-06T04:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="mf/03n.69" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T03:00:00 -->
+        <windDirection deg="198.9" code="SSW" name="Sør-sørvest" />
+        <windSpeed mps="1.8" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.3" />
+      </time>
+      <time from="2012-10-06T04:00:00" to="2012-10-06T05:00:00">
+        <!-- Valid from 2012-10-06T04:00:00 to 2012-10-06T05:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="mf/03n.69" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T04:00:00 -->
+        <windDirection deg="190.2" code="S" name="Sør" />
+        <windSpeed mps="2.2" name="Svak vind" />
+        <temperature unit="celsius" value="5" />
+        <pressure unit="hPa" value="1002.6" />
+      </time>
+      <time from="2012-10-06T05:00:00" to="2012-10-06T06:00:00">
+        <!-- Valid from 2012-10-06T05:00:00 to 2012-10-06T06:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="mf/03n.69" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T05:00:00 -->
+        <windDirection deg="180.2" code="S" name="Sør" />
+        <windSpeed mps="2.7" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.3" />
+      </time>
+      <time from="2012-10-06T06:00:00" to="2012-10-06T07:00:00">
+        <!-- Valid from 2012-10-06T06:00:00 to 2012-10-06T07:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="mf/03n.69" />
+        <precipitation value="0" minvalue="0" maxvalue="0.1" />
+        <!-- Valid at 2012-10-06T06:00:00 -->
+        <windDirection deg="173.9" code="S" name="Sør" />
+        <windSpeed mps="2.0" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.2" />
+      </time>
+      <time from="2012-10-06T07:00:00" to="2012-10-06T08:00:00">
+        <!-- Valid from 2012-10-06T07:00:00 to 2012-10-06T08:00:00 -->
+        <symbol number="4" name="Skyet" var="04" />
         <precipitation value="0" minvalue="0" maxvalue="0.2" />
-        <!-- Valid at 2012-07-15T10:00:00 -->
-        <windDirection deg="223.6" code="SW" name="Southwest" />
-        <windSpeed mps="9.9" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="993.1" />
+        <!-- Valid at 2012-10-06T07:00:00 -->
+        <windDirection deg="155.0" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="1.3" name="Flau vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.7" />
       </time>
-      <time from="2012-07-15T11:00:00" to="2012-07-15T12:00:00">
-        <!-- Valid from 2012-07-15T11:00:00 to 2012-07-15T12:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0" maxvalue="0.3" />
-        <!-- Valid at 2012-07-15T11:00:00 -->
-        <windDirection deg="223.1" code="SW" name="Southwest" />
-        <windSpeed mps="10.0" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="993.6" />
+      <time from="2012-10-06T08:00:00" to="2012-10-06T09:00:00">
+        <!-- Valid from 2012-10-06T08:00:00 to 2012-10-06T09:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" minvalue="0" maxvalue="0.2" />
+        <!-- Valid at 2012-10-06T08:00:00 -->
+        <windDirection deg="136.1" code="SE" name="Sørøst" />
+        <windSpeed mps="1.1" name="Flau vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.8" />
       </time>
-      <time from="2012-07-15T12:00:00" to="2012-07-15T13:00:00">
-        <!-- Valid from 2012-07-15T12:00:00 to 2012-07-15T13:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0" maxvalue="0.3" />
-        <!-- Valid at 2012-07-15T12:00:00 -->
-        <windDirection deg="225.2" code="SW" name="Southwest" />
-        <windSpeed mps="9.9" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="993.8" />
+      <time from="2012-10-06T09:00:00" to="2012-10-06T10:00:00">
+        <!-- Valid from 2012-10-06T09:00:00 to 2012-10-06T10:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" minvalue="0" maxvalue="0.1" />
+        <!-- Valid at 2012-10-06T09:00:00 -->
+        <windDirection deg="166.7" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="1.7" name="Svak vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.9" />
       </time>
-      <time from="2012-07-15T13:00:00" to="2012-07-15T14:00:00">
-        <!-- Valid from 2012-07-15T13:00:00 to 2012-07-15T14:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.1" minvalue="0.1" maxvalue="0.4" />
-        <!-- Valid at 2012-07-15T13:00:00 -->
-        <windDirection deg="227.7" code="SW" name="Southwest" />
-        <windSpeed mps="10.1" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="994.0" />
+      <time from="2012-10-06T10:00:00" to="2012-10-06T11:00:00">
+        <!-- Valid from 2012-10-06T10:00:00 to 2012-10-06T11:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" minvalue="0" maxvalue="0.1" />
+        <!-- Valid at 2012-10-06T10:00:00 -->
+        <windDirection deg="152.2" code="SSE" name="Sør-sørøst" />
+        <windSpeed mps="0.8" name="Flau vind" />
+        <temperature unit="celsius" value="6" />
+        <pressure unit="hPa" value="1002.8" />
       </time>
-      <time from="2012-07-15T14:00:00" to="2012-07-15T15:00:00">
-        <!-- Valid from 2012-07-15T14:00:00 to 2012-07-15T15:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.2" minvalue="0.1" maxvalue="0.4" />
-        <!-- Valid at 2012-07-15T14:00:00 -->
-        <windDirection deg="226.0" code="SW" name="Southwest" />
-        <windSpeed mps="9.9" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="994.3" />
+      <time from="2012-10-06T11:00:00" to="2012-10-06T12:00:00">
+        <!-- Valid from 2012-10-06T11:00:00 to 2012-10-06T12:00:00 -->
+        <symbol number="4" name="Skyet" var="04" />
+        <precipitation value="0" minvalue="0" maxvalue="0.1" />
+        <!-- Valid at 2012-10-06T11:00:00 -->
+        <windDirection deg="74.7" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.1" name="Flau vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1002.7" />
       </time>
-      <time from="2012-07-15T15:00:00" to="2012-07-15T16:00:00">
-        <!-- Valid from 2012-07-15T15:00:00 to 2012-07-15T16:00:00 -->
-        <symbol number="4" name="Cloudy" var="04" />
-        <precipitation value="0.2" minvalue="0.1" maxvalue="0.6" />
-        <!-- Valid at 2012-07-15T15:00:00 -->
-        <windDirection deg="221.5" code="SW" name="Southwest" />
-        <windSpeed mps="9.0" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="994.5" />
+      <time from="2012-10-06T12:00:00" to="2012-10-06T13:00:00">
+        <!-- Valid from 2012-10-06T12:00:00 to 2012-10-06T13:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T12:00:00 -->
+        <windDirection deg="73.5" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.6" name="Svak vind" />
+        <temperature unit="celsius" value="7" />
+        <pressure unit="hPa" value="1002.5" />
       </time>
-      <time from="2012-07-15T16:00:00" to="2012-07-15T17:00:00">
-        <!-- Valid from 2012-07-15T16:00:00 to 2012-07-15T17:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.3" minvalue="0.1" maxvalue="1.0" />
-        <!-- Valid at 2012-07-15T16:00:00 -->
-        <windDirection deg="224.4" code="SW" name="Southwest" />
-        <windSpeed mps="8.9" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="994.4" />
+      <time from="2012-10-06T13:00:00" to="2012-10-06T14:00:00">
+        <!-- Valid from 2012-10-06T13:00:00 to 2012-10-06T14:00:00 -->
+        <symbol number="4" name="Skyet" var="04" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T13:00:00 -->
+        <windDirection deg="72.7" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.8" name="Svak vind" />
+        <temperature unit="celsius" value="8" />
+        <pressure unit="hPa" value="1002.1" />
       </time>
-      <time from="2012-07-15T17:00:00" to="2012-07-15T18:00:00">
-        <!-- Valid from 2012-07-15T17:00:00 to 2012-07-15T18:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.3" minvalue="0.2" maxvalue="1.5" />
-        <!-- Valid at 2012-07-15T17:00:00 -->
-        <windDirection deg="226.2" code="SW" name="Southwest" />
-        <windSpeed mps="8.6" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="994.3" />
-      </time>
-      <time from="2012-07-15T18:00:00" to="2012-07-15T19:00:00">
-        <!-- Valid from 2012-07-15T18:00:00 to 2012-07-15T19:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.7" minvalue="0.4" maxvalue="1.2" />
-        <!-- Valid at 2012-07-15T18:00:00 -->
-        <windDirection deg="230.3" code="SW" name="Southwest" />
-        <windSpeed mps="8.3" name="Fresh breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="994.3" />
-      </time>
-      <time from="2012-07-15T19:00:00" to="2012-07-15T20:00:00">
-        <!-- Valid from 2012-07-15T19:00:00 to 2012-07-15T20:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="0.8" minvalue="0.5" maxvalue="1.5" />
-        <!-- Valid at 2012-07-15T19:00:00 -->
-        <windDirection deg="242.7" code="WSW" name="West-southwest" />
-        <windSpeed mps="7.7" name="Moderate breeze" />
-        <temperature unit="celsius" value="10" />
-        <pressure unit="hPa" value="994.5" />
-      </time>
-      <time from="2012-07-15T20:00:00" to="2012-07-15T21:00:00">
-        <!-- Valid from 2012-07-15T20:00:00 to 2012-07-15T21:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="1.4" minvalue="0.7" maxvalue="2.0" />
-        <!-- Valid at 2012-07-15T20:00:00 -->
-        <windDirection deg="244.3" code="WSW" name="West-southwest" />
-        <windSpeed mps="6.7" name="Moderate breeze" />
+      <time from="2012-10-06T14:00:00" to="2012-10-06T15:00:00">
+        <!-- Valid from 2012-10-06T14:00:00 to 2012-10-06T15:00:00 -->
+        <symbol number="4" name="Skyet" var="04" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T14:00:00 -->
+        <windDirection deg="70.4" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.7" name="Svak vind" />
         <temperature unit="celsius" value="9" />
-        <pressure unit="hPa" value="994.5" />
+        <pressure unit="hPa" value="1002.2" />
       </time>
-      <time from="2012-07-15T21:00:00" to="2012-07-15T22:00:00">
-        <!-- Valid from 2012-07-15T21:00:00 to 2012-07-15T22:00:00 -->
-        <symbol number="9" name="Rain" var="09" />
-        <precipitation value="1.4" minvalue="0.9" maxvalue="2.0" />
-        <!-- Valid at 2012-07-15T21:00:00 -->
-        <windDirection deg="246.3" code="WSW" name="West-southwest" />
-        <windSpeed mps="6.4" name="Moderate breeze" />
+      <time from="2012-10-06T15:00:00" to="2012-10-06T16:00:00">
+        <!-- Valid from 2012-10-06T15:00:00 to 2012-10-06T16:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T15:00:00 -->
+        <windDirection deg="63.7" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.9" name="Svak vind" />
         <temperature unit="celsius" value="9" />
-        <pressure unit="hPa" value="994.7" />
+        <pressure unit="hPa" value="1002.2" />
+      </time>
+      <time from="2012-10-06T16:00:00" to="2012-10-06T17:00:00">
+        <!-- Valid from 2012-10-06T16:00:00 to 2012-10-06T17:00:00 -->
+        <symbol number="3" name="Delvis skyet" var="03d" />
+        <precipitation value="0" />
+        <!-- Valid at 2012-10-06T16:00:00 -->
+        <windDirection deg="57.4" code="ENE" name="Øst-nordøst" />
+        <windSpeed mps="1.9" name="Svak vind" />
+        <temperature unit="celsius" value="9" />
+        <pressure unit="hPa" value="1002.2" />
       </time>
     </tabular>
   </forecast>
   <observations>
-    <weatherstation stno="90450" sttype="eklima" name="Tromsø" distance="886" lat="69.65370" lon="18.93680" source="Meteorologisk Institutt">
-      <symbol number="4" name="Cloudy" time="2012-07-13T18:00:00Z" />
-      <temperature unit="celsius" value="20" time="2012-07-13T19:00:00Z" />
-      <windDirection deg="65.0" code="ENE" name="East-northeast" time="2012-07-13T19:00:00Z" />
-      <windSpeed mps="2.8" name="Light breeze" time="2012-07-13T19:00:00Z" />
+    <weatherstation stno="53101" sttype="eklima" name="Vangsnes" distance="10006" lat="61.17120" lon="6.64700" source="Meteorologisk Institutt">
+      <temperature unit="celsius" value="10" time="2012-10-04T14:00:00Z" />
+      <windDirection deg="256.0" code="WSW" name="Vest-sørvest" time="2012-10-04T14:00:00Z" />
+      <windSpeed mps="1.5" name="Flau vind" time="2012-10-04T14:00:00Z" />
     </weatherstation>
-    <weatherstation stno="90400" sttype="eklima" name="Tromsø (Holt)" distance="1947" lat="69.65230" lon="18.90570" source="Meteorologisk Institutt">
-      <temperature unit="celsius" value="20" time="2012-07-13T19:00:00Z" />
+    <weatherstation stno="55700" sttype="eklima" name="Sogndal lufthamn" distance="31202" lat="61.15800" lon="7.14130" source="Meteorologisk Institutt">
+      <temperature unit="celsius" value="8" time="2012-10-04T14:00:00Z" />
+      <windDirection deg="240.0" code="WSW" name="Vest-sørvest" time="2012-10-04T14:00:00Z" />
+      <windSpeed mps="5.4" name="Lett bris" time="2012-10-04T14:00:00Z" />
     </weatherstation>
-    <weatherstation stno="90510" sttype="eklima" name="Tromsdalen" distance="2000" lat="69.65080" lon="19.00650" source="Meteorologisk Institutt">
-      <temperature unit="celsius" value="20" time="2012-07-13T19:00:00Z" />
+    <weatherstation stno="55820" sttype="eklima" name="Fjærland" distance="38648" lat="61.42330" lon="6.76420" source="Meteorologisk Institutt">
+      <temperature unit="celsius" value="11" time="2012-10-04T14:00:00Z" />
+      <windDirection deg="190.0" code="S" name="Sør" time="2012-10-04T14:00:00Z" />
+      <windSpeed mps="1.5" name="Flau vind" time="2012-10-04T14:00:00Z" />
     </weatherstation>
   </observations>
 </weatherdata>

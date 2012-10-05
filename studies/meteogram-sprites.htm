@@ -175,6 +175,7 @@
 	                    chart: {
 	                        renderTo: 'container',
 	                        marginBottom: 60,
+	                        marginRight: 40,
 							borderWidth: 3,
 							borderColor: '#C7D5D5',
 							borderRadius: 0,
@@ -274,22 +275,6 @@
 							gridLineColor: '#F0F0F0',
 							maxPadding: 0.3 // make room for symbols
 							
-						}, { //  temperature axis
-							title: {
-								text: null
-							},
-							labels: {
-								formatter: function() {
-									return this.value +'°'
-								},
-								style: {
-									fontSize: '10px'
-								},
-								x: 3
-							},
-							gridLineWidth: 0,
-							opposite: true,
-							linkedTo: 0
 						}, { // precipitation axis
 							title: {
 								text: null
@@ -298,6 +283,22 @@
 								enabled: false
 							},
 							gridLineWidth: 0
+						
+						}, { //  air pressure
+							allowDecimals: false,
+							title: null,
+							labels: {
+								formatter: function () {
+									return this.isLast ? 'hPa' : this.value; // skip numberFormat
+								},
+								style: {
+									fontSize: '8px',
+									color: Highcharts.getOptions().colors[2] 
+								},
+								y: 2
+							},
+							gridLineWidth: 0,
+							opposite: true
 						}],
 	                    
 	                    legend: {
@@ -326,9 +327,9 @@
 	                        data: precipitations,
 							type: 'column',
 							color: '#68CFE8',
-							yAxis: 2,
+							yAxis: 1,
 							groupPadding: 0,
-							//pointPadding: 0,
+							pointPadding: 0,
 							borderWidth: 0,
 							shadow: false,
 							dataLabels: {
@@ -346,10 +347,22 @@
 								valueSuffix: 'mm'
 							}
 							//pointPlacement: 'between'
+	                    }, {
+							name: 'Air pressure',
+							color: Highcharts.getOptions().colors[2],
+	                        data: pressures,
+	                        marker: {
+	                        	enabled: false
+	                        },
+							shadow: false,
+							tooltip: {
+								valueSuffix: ' hPa'
+							},
+							dashStyle: 'shortdot',
+							yAxis: 2
 	                    }]
 	                
 	                }, function(chart) {
-						
 						$.each(chart.series[0].data, function(i, point) {
 							
 							if (i % 2 === 0) {
@@ -443,7 +456,10 @@
 								from: from,
 								to: to
 							});
-							pressures.push(parseFloat($('pressure', time).attr('value')));
+							pressures.push({
+								x: middle,
+								y: parseFloat($('pressure', time).attr('value'))
+							});
 							
 							if (i == 0) {
 								pointStart = middle;

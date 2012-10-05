@@ -176,7 +176,7 @@
 					}					
 				
 				} else { // string, continue to determine if it is a date string or really a string
-					dateVal = Date.parse(val);
+					dateVal = this.parseDate(val);
 					
 					if (col === 0 && typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
 						columns[col][row] = dateVal;
@@ -189,6 +189,15 @@
 				
 			}
 		}		
+	},
+	
+	/**
+	 * Parse a date and return it as a number. Overridable through options.parseDate.
+	 */
+	parseDate: function (val) {
+		var parseDate = this.options.parseDate;
+		
+		return parseDate ? parseDate(val) : Date.parse(val);
 	},
 	
 	parsed: function () {
