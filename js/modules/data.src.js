@@ -200,6 +200,9 @@
 		return parseDate ? parseDate(val) : Date.parse(val);
 	},
 	
+	/**
+	 * A hook for working directly on the parsed columns
+	 */
 	parsed: function () {
 		if (this.options.parsed) {
 			this.options.parsed.call(this, this.columns);
