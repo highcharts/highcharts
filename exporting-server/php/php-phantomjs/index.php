@@ -154,22 +154,11 @@ if ( ((empty($svg) && empty($options)) != 1 ) && (empty($options) && $ext == 'sv
 
 	// catch error
 	if (!is_file($outfile) || filesize($outfile) < 10) {
+		echo "<h4>PhantomJs messages</h4>";
 		echo "<pre>$output</pre>";
-		echo "Error while converting SVG. ";
-		// TODO: add debug message for javascript .. not only for svg
-		if (strpos($output, 'SVGConverter.error.while.rasterizing.file') !== false) {
-			echo "
-			<h4>Debug steps</h4>
-			<ol>
-			<li>Copy the SVG:<br/><textarea rows=5>" . htmlentities(str_replace('>', ">\n", $filecontent)) . "</textarea></li>
-			<li>Go to <a href='http://validator.w3.org/#validate_by_input' target='_blank'>validator.w3.org/#validate_by_input</a></li>
-			<li>Paste the SVG</li>
-			<li>Click More Options and select SVG 1.1 for Use Doctype</li>
-			<li>Click the Check button</li>
-			</ol>";
-		}
+		echo "Error while converting. ";		
 	}
-	// stream it
+	// stream it 
 	else {
 		header("Content-Disposition: attachment; filename=\"$filename.$ext\"");
 		header("Content-Type: $type");
