@@ -20,7 +20,6 @@ Point.prototype = {
 		if (series.options.colorByPoint) {
 			defaultColors = series.chart.options.colors;
 			point.color = point.color || defaultColors[counters.color++];
-
 			// loop back to zero
 			counters.wrapColor(defaultColors.length);
 		}
@@ -249,7 +248,7 @@ Point.prototype = {
 		
 		// Backwards compatibility to y naming in early Highstock
 		seriesTooltipOptions.valuePrefix = seriesTooltipOptions.valuePrefix || seriesTooltipOptions.yPrefix;
-		seriesTooltipOptions.valueDecimals = seriesTooltipOptions.valueDecimals || seriesTooltipOptions.yDecimals;
+		seriesTooltipOptions.valueDecimals = pick(seriesTooltipOptions.valueDecimals, seriesTooltipOptions.yDecimals); // #1248
 		seriesTooltipOptions.valueSuffix = seriesTooltipOptions.valueSuffix || seriesTooltipOptions.ySuffix;
 
 		// loop over the variables defined on the form {series.name}, {point.y} etc
