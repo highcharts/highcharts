@@ -1818,7 +1818,16 @@ SVGRenderer.prototype = {
 		var renderer = this,
 			colorObject,
 			regexRgba = /^rgba/,
-			gradName;
+			gradName, 
+			gradAttr,
+			gradients,
+			gradientObject,
+			stops,
+			stopColor,
+			stopOpacity,
+			radialReference,
+			n,
+			key = [];
 		
 		// Apply linear or radial gradients
 		if (color && color.linearGradient) {
@@ -1828,47 +1837,56 @@ SVGRenderer.prototype = {
 		}
 		
 		if (gradName) {
-			var gradAttr = color[gradName],
-				gradients = renderer.gradients,
-				gradientObject,
-				stopColor,
-				stopOpacity,
-				radialReference = elem.radialReference;
+			gradAttr = color[gradName];
+			gradients = renderer.gradients;
+			stops = color.stops;
+			radialReference = elem.radialReference;
+			
+			// Keep < 2.2 kompatibility
+			if (isArray(gradAttr)) {
+				color[gradName] = gradAttr = {
+					x1: gradAttr[0],
+					y1: gradAttr[1],
+					x2: gradAttr[2],
+					y2: gradAttr[3],
+					gradientUnits: 'userSpaceOnUse'
+				};				
+			}
+			
+			// Correct the radial gradient for the radial reference system
+			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+				extend(gradAttr, {
+					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+					r: gradAttr.r * radialReference[2],
+					gradientUnits: 'userSpaceOnUse'
+				});
+			}
+			
+			// Build the unique key to detect whether we need to create a new element (#1282)
+			for (n in gradAttr) {
+				if (n !== 'id') {
+					key.push(n, gradAttr[n]);
+				}
+			}
+			for (n in stops) {
+				key.push(stops[n]);
+			}
+			key = key.join(',');
 			
 			// Check if a gradient object with the same config object is created within this renderer
-			if (!gradAttr.id || !gradients[gradAttr.id]) {
-				
-				// Keep < 2.2 kompatibility
-				if (isArray(gradAttr)) {
-					color[gradName] = gradAttr = {
-						x1: gradAttr[0],
-						y1: gradAttr[1],
-						x2: gradAttr[2],
-						y2: gradAttr[3],
-						gradientUnits: 'userSpaceOnUse'
-					};				
-				}
-				
-				// Correct the radial gradient for the radial reference system
-				if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-					extend(gradAttr, {
-						cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-						cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-						r: gradAttr.r * radialReference[2],
-						gradientUnits: 'userSpaceOnUse'
-					});
-				}
+			if (!gradients[key]) {
 
 				// Set the id and create the element
 				gradAttr.id = PREFIX + idCounter++;
-				gradients[gradAttr.id] = gradientObject = renderer.createElement(gradName)
+				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
 				
 				
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
-				each(color.stops, function (stop) {
+				each(stops, function (stop) {
 					var stopObject;
 					if (regexRgba.test(stop[1])) {
 						colorObject = Color(stop[1]);
