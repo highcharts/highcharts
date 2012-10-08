@@ -5,7 +5,7 @@
 
 	var config = {
 		/* define locations of mandatory javascript files */
-		HIGHCHARTS: 'highstock.src.js',
+		HIGHCHARTS: 'highstock.js',
 		HIGHCHARTS_MORE: 'highcharts-more',
 		JQUERY: 'jquery-1.7.1.min.js'
 	},

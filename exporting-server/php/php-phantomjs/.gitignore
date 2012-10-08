@@ -2,4 +2,5 @@
 *sublime*
 *.zip
 /.settings/
+/.codeintel/
 /tmp/*
