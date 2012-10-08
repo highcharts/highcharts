@@ -405,7 +405,7 @@
 								// Draw the wind arrows
 								chart.renderer.image(
 									'http://fil.nrk.no/yr/grafikk/vindpiler/32/vindpil.'+ windSpeed +'.'+ windDirection +'.png',
-									point.plotX + chart.plotLeft - 15,
+									point.plotX + chart.plotLeft - 5,
 									240,
 									30,
 									30
@@ -420,10 +420,12 @@
 	                    
 	                });
 				}
-				
 				// Load the data
+				if (!location.hash) {
+					location.hash = 'http://www.yr.no/place/Norway/Sogn_og_Fjordane/Vik/Voll/forecast_hour_by_hour.xml';
+				}
                 $.ajax({
-                    url: 'forecast.xml',
+                    url: '../samples/data/xml.php?url=' + location.hash.substr(1),
                     dataType: 'xml',
                     success: function (xmldoc) {
                     	$('tabular time', xmldoc).each(function(i, time) {

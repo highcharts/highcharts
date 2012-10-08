@@ -66,7 +66,11 @@
 			lines;
 			
 		if (csv) {
-			lines = csv.split(options.lineDelimiter || '\n');
+    		
+			lines = csv
+				.replace(/\r\n/g, "\n") // Unix
+				.replace(/\r/g, "\n") // Mac
+				.split(options.lineDelimiter || "\n");
 			
 			each(lines, function (line, rowNo) {
 				if (rowNo >= startRow && rowNo <= endRow) {
