@@ -19,7 +19,7 @@ function strip_magic_slashes($str)
 	return get_magic_quotes_gpc() ? stripslashes($str) : $str;
 }
 
-function execute($cmd){
+function execute($cmd) {
 	$descriptors = array(
 			0 => array('pipe', 'r'),  // stdin
 			1 => array('pipe', 'w'),  // stdout
@@ -120,7 +120,7 @@ if ($type == 'image/jpeg') {
 $outfile = "tmp/$tmpName.$ext";
 $cmd = "$cmd -outfile $outfile";
 
-if (isset($ext) && (empty($options) && $ext == 'svg') == 0) {
+if ( ((empty($svg) && empty($options)) != 1 ) && (empty($options) && $ext == 'svg') == 0) {
 	// width
 	if ($_POST['width']) {
 		/*TODO: add stripslashes */
