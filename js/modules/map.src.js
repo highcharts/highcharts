@@ -10,12 +10,12 @@
  * See www.highcharts.com/studies/world-map.htm for use case.
  *
  * To do:
- * - Implement legend with specified value ranges
  * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
- * 
+ * - Zoom and pan GUI
  */
  (function(Highcharts) {
 	var UNDEFINED,
+		Axis = Highcharts.Axis,
 		each = Highcharts.each,
 		extend = Highcharts.extend,
 		merge = Highcharts.merge,
@@ -27,8 +27,7 @@
 	/**
 	 * Utility for reading SVG paths directly.
 	 * 
-	 * @todo Automatically detect strings in SVGElement.attr and use this. Split it into
-	 * array only on demand, a) when transforming VML and b) before animation
+	 * @todo This is moved to the Data plugin. Make sure it is deleted here.
 	 */
 	Highcharts.pathToArray = function (path) {
 		// Move letters apart
@@ -46,7 +45,58 @@
 		}
 		return path;
 	};
+	
+	/**
+	 * Extend the Axis object with methods specific to maps
+	 */
+	Highcharts.wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+		
+		if (chart.options.chart.type === 'map') {
+			extend(this, {
+				getSeriesExtremes: function () {
+					var isXAxis = this.isXAxis,
+						dataMin = Number.MAX_VALUE,
+						dataMax = Number.MIN_VALUE;
+					each(this.series, function (series) {
+						dataMin = Math.min(dataMin, series[isXAxis ? 'minX' : 'minY']);
+						dataMax = Math.max(dataMax, series[isXAxis ? 'maxX' : 'maxY']);
+					});
+					this.dataMin = dataMin;
+					this.dataMax = dataMax;
+					this.dataRange = dataMax - dataMin;
+				},
 				
+				setAxisTranslation: function () {
+					var chart = this.chart,
+						mapRatio = chart.mapRatio,
+						plotRatio = chart.plotWidth / chart.plotHeight,
+						isXAxis = this.isXAxis,
+						otherAxis = chart[isXAxis ? 'yAxis' : 'xAxis'][0];
+					
+					Axis.prototype.setAxisTranslation.call(this);
+					
+					// When handling the Y axis, compute the ratio out of both the X and Y axis.
+					// This has to be updated when plotWidth or plotHeight change (chart.resize).
+					if (!isXAxis && (mapRatio === UNDEFINED || plotRatio !== chart.plotRatio)) {
+						chart.mapRatio = plotRatio / (otherAxis.dataRange / this.dataRange);
+						chart.plotRatio = plotRatio;
+					}
+					
+					// Perform the correction
+					if (mapRatio !== undefined) {
+						if (isXAxis && mapRatio > 1) { // portrait map, landscape plot area
+							this.transA = otherAxis.transA;
+						} else if (!isXAxis && mapRatio < 1) { // landscape map, portrait plot area
+							this.transA = otherAxis.transA;
+						}
+					}
+				}
+			});
+		}	
+		
+		return proceed.call(this, chart, userOptions);
+	});
+	
 	/**
 	 * Extend the default options with map options
 	 */
@@ -206,14 +256,19 @@
 					}
 				}
 			});
+			this.minY = minY;
+			this.maxY = maxY;
+			this.minX = minX;
+			this.maxX = maxX;
 			
 			// Correct for ratio
 			// TODO: this doesn't work with resizing. We probably need to override the
 			// axis.getSeriesExtremes method and set the dataMin and dataMax there, as well
 			// as some xyRatio handling. The xyRatio must also be respected for selection
 			// zoom.
-			xyRatio = (maxX - minX) / (maxY - minY);
+			/*xyRatio = (maxX - minX) / (maxY - minY);
 			ratioCorrection = (xyRatio / (plotWidth / plotHeight));
+			
 			if (ratioCorrection > 1) {
 				pad = ((maxY - minY) * (ratioCorrection - 1)) / 2;
 				minY -= pad;
@@ -231,7 +286,7 @@
 			extend(this.yAxis.options, {
 				min: minY,
 				max: maxY
-			});
+			});*/
 		},
 		
 		
