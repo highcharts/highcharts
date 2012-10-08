@@ -1,3 +1,5 @@
 .project
+*sublime*
+*.zip
 /.settings/
 /tmp/*
