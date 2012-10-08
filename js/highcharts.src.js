@@ -4534,6 +4534,7 @@ var VMLElement = {
 
 		if (clipRect) {
 			clipMembers = clipRect.members;
+			erase(clipMembers, wrapper); // Ensure unique list of elements (#1258)
 			clipMembers.push(wrapper);
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
