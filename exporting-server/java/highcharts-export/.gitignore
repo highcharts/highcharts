@@ -1,0 +1,6 @@
+/target/
+/.settings/
+.project
+.settings
+.classpath
+*sublime*
