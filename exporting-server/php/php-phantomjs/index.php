@@ -26,7 +26,7 @@ function execute($cmd) {
 			2 => array('pipe', 'w')   // stderr
 	);
 	$stdout = '';	
-	$proc = proc_open($cmd, $descriptors,$pipes);
+	$proc = proc_open(escapeshellcmd($cmd), $descriptors,$pipes);
 
 	if (!is_resource($proc)) {
 		throw new \Exception('Could not execute process');
