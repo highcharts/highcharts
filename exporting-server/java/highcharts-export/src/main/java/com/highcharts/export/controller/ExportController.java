@@ -155,6 +155,10 @@ public class ExportController extends HttpServlet {
 		for (int length = 0; (length = reader.read(buffer)) > 0;) {
 			value.append(buffer, 0, length);
 		}
+		// browser can send width post parameter as 'undefined'
+		if (value.toString().compareTo("undefined") == 0) {
+			return null;
+		}
 		return value.toString();
 	}
 
@@ -162,8 +166,8 @@ public class ExportController extends HttpServlet {
 		return (name != null) ? name : "chart";
 	}
 
-	private static Float getWidth(String width) {
-		if (width != null && !width.isEmpty()) {
+	private static Float getWidth(String width) {		
+		if (width != null && !width.isEmpty()) {			
 			Float parsedWidth = Float.valueOf(width);
 			if (parsedWidth.compareTo(0.0F) > 0) {
 				return parsedWidth;
