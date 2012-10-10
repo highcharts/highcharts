@@ -267,11 +267,12 @@
 					
 				// Skip clip paths
 				clipPaths = defs && defs.getElementsByTagName('path');
-				each(clipPaths, function (path) {
-					path.skip = true;
-				});
-					
-					
+				if (clipPaths) {
+					each(clipPaths, function (path) {
+						path.skip = true;
+					});
+				}
+				
 				// If not all paths belong to the same group, handle groups
 				each(allPaths, function (path, i) {
 					if (!path.skip) {

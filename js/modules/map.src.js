@@ -53,6 +53,11 @@
 		
 		if (chart.options.chart.type === 'map') {
 			extend(this, {
+				
+				/**
+				 * Override to use the extreme coordinates from the SVG shape, not the
+				 * data values
+				 */
 				getSeriesExtremes: function () {
 					var isXAxis = this.isXAxis,
 						dataMin = Number.MAX_VALUE,
@@ -63,33 +68,39 @@
 					});
 					this.dataMin = dataMin;
 					this.dataMax = dataMax;
-					this.dataRange = dataMax - dataMin;
 				},
 				
+				/**
+				 * Override axis translation to make sure the aspect ratio is always kept
+				 */
 				setAxisTranslation: function () {
 					var chart = this.chart,
-						mapRatio = chart.mapRatio,
+						mapRatio,
 						plotRatio = chart.plotWidth / chart.plotHeight,
 						isXAxis = this.isXAxis,
-						otherAxis = chart[isXAxis ? 'yAxis' : 'xAxis'][0];
+						adjustedAxisLength,
+						xAxis = chart.xAxis[0],
+						padAxis;
 					
+					// Run the parent method
 					Axis.prototype.setAxisTranslation.call(this);
 					
-					// When handling the Y axis, compute the ratio out of both the X and Y axis.
-					// This has to be updated when plotWidth or plotHeight change (chart.resize).
-					if (!isXAxis && (mapRatio === UNDEFINED || plotRatio !== chart.plotRatio)) {
-						chart.mapRatio = plotRatio / (otherAxis.dataRange / this.dataRange);
-						chart.plotRatio = plotRatio;
+					// On Y axis, handle both
+					if (!isXAxis && xAxis.transA !== UNDEFINED) {
+						
+						// Use the same translation for both axes
+						this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
+						
+						mapRatio = (xAxis.max - xAxis.min) / (this.max - this.min);
+						
+						// What axis to pad to put the map in the middle
+						padAxis = mapRatio > plotRatio ? this : xAxis;
+						
+						// Pad it
+						adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
+						padAxis.minPixelPadding = (padAxis.len - adjustedAxisLength) / 2;
 					}
 					
-					// Perform the correction
-					if (mapRatio !== undefined) {
-						if (isXAxis && mapRatio > 1) { // portrait map, landscape plot area
-							this.transA = otherAxis.transA;
-						} else if (!isXAxis && mapRatio < 1) { // landscape map, portrait plot area
-							this.transA = otherAxis.transA;
-						}
-					}
 				}
 			});
 		}	
@@ -116,62 +127,15 @@
 	);
 	
 	/**
-	 * Extend the point object (or area in the choropleth map) to pick the 
-	 * color from value ranges
-	 */
-	var MapPoint = Highcharts.extendClass(Highcharts.Point, {
-		/**
-		 * Override the init method
-		 */
-		init: function () {
-
-			var point = Highcharts.Point.prototype.init.apply(this, arguments),
-				series = point.series,
-				seriesOptions = series.options,
-				valueRanges = seriesOptions.valueRanges,
-				colorRange = seriesOptions.colorRange,
-				range,
-				from,
-				to,
-				i,
-				pos,
-				rgba = [];
-			
-			if (valueRanges) {
-				i = valueRanges.length;
-				while (i--) {
-					range = valueRanges[i];
-					from = range.from;
-					to = range.to;
-					if ((from === UNDEFINED || point.y >= from) && (to === UNDEFINED || point.y <= to)) {
-						/*point.color = */point.options.color = range.color;
-						break;
-					}
-						
-				}
-			} else if (colorRange && point.y !== undefined) {
-				from = Color(colorRange.from);
-				to = Color(colorRange.to);
-				pos = (series.dataMax - point.y) / (series.dataMax - series.dataMin);
-				i = 4;
-				while (i--) {
-					rgba[i] = Math.round(
-						to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
-					);
-				}
-				/*point.color = */point.options.color = 'rgba(' + rgba.join(',') + ')';
-			}
-			return point;
-		}
-	});
-	
-	/**
 	 * Add the series type
 	 */
 	Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 		type: 'map',
-		pointClass: MapPoint,
-		pointAttrToOptions: Highcharts.seriesTypes.column.prototype.pointAttrToOptions,
+		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+			stroke: 'borderColor',
+			'stroke-width': 'borderWidth',
+			fill: 'color'
+		},
 		getSymbol: noop,
 		getExtremesFromAll: true,
 		init: function(chart) {
@@ -261,32 +225,6 @@
 			this.minX = minX;
 			this.maxX = maxX;
 			
-			// Correct for ratio
-			// TODO: this doesn't work with resizing. We probably need to override the
-			// axis.getSeriesExtremes method and set the dataMin and dataMax there, as well
-			// as some xyRatio handling. The xyRatio must also be respected for selection
-			// zoom.
-			/*xyRatio = (maxX - minX) / (maxY - minY);
-			ratioCorrection = (xyRatio / (plotWidth / plotHeight));
-			
-			if (ratioCorrection > 1) {
-				pad = ((maxY - minY) * (ratioCorrection - 1)) / 2;
-				minY -= pad;
-				maxY += pad;
-			} else {
-				pad = ((maxX - minX) * (ratioCorrection - 1)) / 2;
-				minX += pad; // pad is negative now
-				maxX -= pad;
-			}
-			
-			extend(this.xAxis.options, {
-				min: minX,
-				max: maxX
-			});
-			extend(this.yAxis.options, {
-				min: minY,
-				max: maxY
-			});*/
 		},
 		
 		
@@ -313,7 +251,7 @@
 					if (even) { // even = x
 						path[i] = Math.round(xAxis.translate(path[i]));
 					} else { // odd = Y
-						path[i] = yAxis.len - Math.round(yAxis.translate(path[i]));
+						path[i] = Math.round(yAxis.len - yAxis.translate(path[i]));
 					}
 					even = !even;
 				}
@@ -332,7 +270,8 @@
 		translate: function () {
 			var series = this,
 				options = series.options,
-				maxValue = 0,
+				dataMin = Number.MAX_VALUE,
+				dataMax = Number.MIN_VALUE,
 				opacity,
 				minOpacity = options.minOpacity,
 				path,
@@ -346,12 +285,62 @@
 				point.shapeArgs = {
 					d: series.translatePath(point.path)
 				};
-				if (point.y > maxValue) {
-					maxValue = point.y;
-				}
 				
+				// TODO: do point colors in drawPoints instead of point.init
+				if (typeof point.y === 'number') {
+					if (point.y > dataMax) {
+						dataMax = point.y;
+					} else if (point.y < dataMin) {
+						dataMin = point.y;
+					}
+				}
 			});
 			
+			series.translateColors(dataMin, dataMax);
+		},
+		
+		/**
+		 * In choropleth maps, the color is a result of the value, so this needs translation tood
+		 */
+		translateColors: function (dataMin, dataMax) {
+			
+			var seriesOptions = this.options,
+				valueRanges = seriesOptions.valueRanges,
+				colorRange = seriesOptions.colorRange;
+			
+			each(this.data, function (point) {
+				var y = point.y,
+					rgba = [],
+					range,
+					from,
+					to,
+					i,
+					pos;
+				if (valueRanges) {
+					i = valueRanges.length;
+					while (i--) {
+						range = valueRanges[i];
+						from = range.from;
+						to = range.to;
+						if ((from === UNDEFINED || y >= from) && (to === UNDEFINED || y <= to)) {
+							point.options.color = range.color;
+							break;
+						}
+							
+					}
+				} else if (colorRange && y !== undefined) {
+					from = Color(colorRange.from);
+					to = Color(colorRange.to);
+					pos = (dataMax - y) / (dataMax - dataMin);
+					i = 4;
+					while (i--) {
+						rgba[i] = Math.round(
+							to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
+						);
+					}
+					point.options.color = 'rgba(' + rgba.join(',') + ')';
+				}
+			});
 		},
 		
 		drawGraph: noop,
@@ -379,6 +368,7 @@
 			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			
 			each(series.data, function (point) {
+				
 				bBox = point.graphic.getBBox();
 				// for tooltip
 				point.tooltipPos = [
@@ -389,7 +379,7 @@
 				point.plotX = point.tooltipPos[0];
 				point.plotY = point.tooltipPos[1]; 
 				
-				// Reset escapted null points
+				// Reset escaped null points
 				if (point.isNull) {
 					point.y = null;
 				}
