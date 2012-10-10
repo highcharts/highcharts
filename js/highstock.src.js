@@ -3961,7 +3961,8 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			attrSetters = wrapper.attrSetters;
+			attrSetters = wrapper.attrSetters,
+			needsBox;
 
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
@@ -3979,24 +3980,26 @@ SVGRenderer.prototype = {
 			
 			// update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
-			
-			
-			// create the border box if it is not already present
-			if (!box) {
-				boxY = baseline ? -baselineOffset : 0;
-			
-				wrapper.box = box = shape ?
-					renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
-					renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-				box.add(wrapper);
+				
+			if (needsBox) {
+				
+				// create the border box if it is not already present
+				if (!box) {
+					boxY = baseline ? -baselineOffset : 0;
+				
+					wrapper.box = box = shape ?
+						renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
+						renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+					box.add(wrapper);
+				}
+	
+				// apply the box attributes
+				box.attr(merge({
+					width: wrapper.width,
+					height: wrapper.height
+				}, deferredAttr));
+				deferredAttr = null;
 			}
-
-			// apply the box attributes
-			box.attr(merge({
-				width: wrapper.width,
-				height: wrapper.height
-			}, deferredAttr));
-			deferredAttr = null;
 		}
 
 		/**
@@ -4050,7 +4053,7 @@ SVGRenderer.prototype = {
 				y: y
 			});
 			
-			if (defined(anchorX)) {
+			if (box && defined(anchorX)) {
 				wrapper.attr({
 					anchorX: anchorX,
 					anchorY: anchorY
@@ -4102,11 +4105,15 @@ SVGRenderer.prototype = {
 
 		// apply these to the box but not to the text
 		attrSetters[STROKE_WIDTH] = function (value, key) {
+			needsBox = true;
 			crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
 			return false;
 		};
 		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (value, key) {
+			if (key === 'fill') {
+				needsBox = true;
+			}
 			boxAttr(key, value);
 			return false;
 		};
@@ -4160,13 +4167,20 @@ SVGRenderer.prototype = {
 			 * Return the bounding box of the box, not the group
 			 */
 			getBBox: function () {
-				return box.getBBox();
+				return box ? box.getBBox() : {
+					width: bBox.width + 2 * padding,
+					height: bBox.height + 2 * padding,
+					x: bBox.x - padding,
+					y: bBox.y - padding
+				};
 			},
 			/**
 			 * Apply the shadow to the box
 			 */
 			shadow: function (b) {
-				box.shadow(b);
+				if (box) {
+					box.shadow(b);
+				}
 				return wrapper;
 			},
 			/**
