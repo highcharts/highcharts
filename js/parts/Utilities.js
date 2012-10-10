@@ -492,7 +492,9 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
-	
+	if (isNaN(min) || isNaN(max)) {     // #1300
+		return tickPositions;
+	}
 
 	if (interval >= timeUnits[SECOND]) { // second
 		minDate.setMilliseconds(0);
