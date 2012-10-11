@@ -11,7 +11,8 @@
  * - log axis
  * - disable data grouping
  * - inverted
- * - point padding
+ * - point padding,
+ * - optionslly allow bubbles below threshold with a specific color
  */
 
 // 1 - set default options
