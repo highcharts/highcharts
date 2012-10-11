@@ -1,23 +1,14 @@
 /* ****************************************************************************
- * Start Box plot series code											  *
+ * Start Box plot series code											      *
  *****************************************************************************/
-
-/*
- * To do : 
- * - Separate options for stem dash style and widths of horizontal lines. This calls for multiple
- *   shapes for each point, which is new. Consider letting point.graphic be a group.
- * - Data labels? Some of the logic from range series can be used for inspiration
- * - Disallow data grouping
- */
 
 // 1 - set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	fillColor: 'white',
-	lineColor: 'black',
 	lineWidth: 2,
 	states: {
 		hover: {
-			lineWidth: 2
+			brightness: -0.3
 		}
 	},
 	threshold: null,
@@ -39,7 +30,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.low, point.q1, point.median, point.q3, point.high];
 	},
-	pointValKey: 'high',
+	pointValKey: 'median',
 	
 	/**
 	 * One-to-one mapping from options to SVG attributes
@@ -69,6 +60,11 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			});
 		});
 	},
+	
+	/**
+	 * Disable data labels for box plot
+	 */
+	drawDataLabels: noop, // docs
 
 	/**
 	 * Draw the data points
