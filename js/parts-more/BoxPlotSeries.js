@@ -40,6 +40,12 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
+	
+	/**
+	 * Disable data labels and animation for box plot
+	 */
+	drawDataLabels: noop, // docs	
+	animate: noop, // docs
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -60,11 +66,6 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			});
 		});
 	},
-	
-	/**
-	 * Disable data labels for box plot
-	 */
-	drawDataLabels: noop, // docs
 
 	/**
 	 * Draw the data points
@@ -159,7 +160,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					medianPlot,
 					
 					// close
-					'Z'
+					'z'
 				);
 
 				if (graphic) {
