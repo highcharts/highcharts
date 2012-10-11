@@ -11,6 +11,7 @@ var files = [
     "ColumnRangeSeries.js",
 	"GaugeSeries.js",
 	"BoxPlotSeries.js",
+	"BubbleSeries.js",
 	"Polar.js"
 ];
 

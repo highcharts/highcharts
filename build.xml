@@ -167,6 +167,7 @@
             <file name="ColumnRangeSeries.js"/>
             <file name="GaugeSeries.js"/>
             <file name="BoxPlotSeries.js"/>
+            <file name="BubbleSeries.js"/>
             <file name="Polar.js"/>
             <file name="Outro.js"/>
         </filelist>
