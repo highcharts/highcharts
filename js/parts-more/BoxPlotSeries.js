@@ -30,7 +30,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.low, point.q1, point.median, point.q3, point.high];
 	},
-	pointValKey: 'median',
+	pointValKey: 'high', // defines the top of the tracker
 	
 	/**
 	 * One-to-one mapping from options to SVG attributes
