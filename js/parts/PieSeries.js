@@ -15,9 +15,9 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		enabled: true,
 		formatter: function () {
 			return this.point.name;
-		},
+		}
 		// softConnector: true,
-		y: 5
+		//y: 0
 	},
 	//innerSize: 0,
 	legendType: 'point',
@@ -259,7 +259,10 @@ var PieSeries = {
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance,
-			ignoreHiddenPoint = options.ignoreHiddenPoint;
+			ignoreHiddenPoint = options.ignoreHiddenPoint,
+			i,
+			len = points.length,
+			point;
 
 		// get positions - either an integer or a percentage string must be given
 		series.center = positions = series.getCenter();
@@ -275,11 +278,16 @@ var PieSeries = {
 		};
 
 		// get the total sum
-		each(points, function (point) {
+		for (i = 0; i < len; i++) {
+			point = points[i];
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
-		});
+		}
 
-		each(points, function (point) {
+		// Calculate the geometry for each point
+		for (i = 0; i < len; i++) {
+			
+			point = points[i];
+			
 			// set start and end angle
 			fraction = total ? point.y / total : 0;
 			start = mathRound(cumulative * circ * precision) / precision;
@@ -332,7 +340,7 @@ var PieSeries = {
 			point.percentage = fraction * 100;
 			point.total = total;
 
-		});
+		}
 
 
 		this.setTooltipPoints();
@@ -633,7 +641,7 @@ var PieSeries = {
 					})[dataLabel.moved ? 'animate' : 'attr']({
 						x: x + options.x +
 							({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
-						y: y + options.y
+						y: y + options.y - 10 // 10 is for the baseline (label vs text)
 					});
 				dataLabel.moved = true;
 
@@ -677,6 +685,8 @@ var PieSeries = {
 			}
 		}
 	},
+	
+	alignDataLabel: noop,
 
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.

@@ -11,11 +11,12 @@ $(function () {
                 dataLabels: {
                     enabled: true,
                     align: 'left',
-                    x: 10,
-                    y: 4,
+                    crop: false,
                     style: {
                         fontWeight: 'bold'
-                    }
+                    },
+                    x: 3,
+                    verticalAlign: 'middle'
                 },
                 y: 54.4
             }]

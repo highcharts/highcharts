@@ -4,7 +4,7 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  *
- * (c) 2009-2011 Torstein Hønsi
+ * (c) 2009-2012 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */

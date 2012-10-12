@@ -7,7 +7,7 @@
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
-	lineWidth: 1, // docs - changed default value
+	lineWidth: 1,
 	marker: null,
 	threshold: null,
 	tooltip: {
@@ -15,12 +15,13 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	},
 	trackByArea: true,
 	dataLabels: {
+		verticalAlign: null,
 		xLow: 0,
 		xHigh: 0,
-		yLow: 16,
-		yHigh: -6		
+		yLow: 0,
+		yHigh: 0	
 	},
-	shadow: false // docs - changed default
+	shadow: false
 });
 
 /**
@@ -122,6 +123,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.dataLabel = point.dataLabelUpper;
 				
 				// Set the default offset
+				point.below = false;
 				if (inverted) {
 					dataLabelOptions.align = 'left';
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
@@ -145,6 +147,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.plotY = point.plotLow;
 				
 				// Set the default offset
+				point.below = true;
 				if (inverted) {
 					dataLabelOptions.align = 'right';
 					dataLabelOptions.x = dataLabelOptions.xLow;
@@ -156,6 +159,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		}
 	
 	},
+	
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	
 	getSymbol: seriesTypes.column.prototype.getSymbol,
 	

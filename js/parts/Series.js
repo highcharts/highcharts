@@ -20,7 +20,6 @@ Point.prototype = {
 		if (series.options.colorByPoint) {
 			defaultColors = series.chart.options.colors;
 			point.color = point.color || defaultColors[counters.color++];
-
 			// loop back to zero
 			counters.wrapColor(defaultColors.length);
 		}
@@ -132,7 +131,7 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'tracker', 'dataLabel', 'group', 'connector', 'shadowGroup'],
+			props = ['graphic', 'tracker', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
 			prop,
 			i = 6;
 		while (i--) {
@@ -1212,7 +1211,11 @@ Series.prototype = {
 				yValue = yBottom + yValue;
 				
 				if (isBottomSeries) {
-					yBottom = pick(options.threshold, yAxis.isLog ? null : yAxis.min); // #1200
+					yBottom = pick(options.threshold, yAxis.min);
+				}
+				
+				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
+					yBottom = null;
 				}
 				
 				if (stacking === 'percent') {
@@ -1556,6 +1559,9 @@ Series.prototype = {
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
+					
+				} else if (graphic) {
+					point.graphic = graphic.destroy(); // #1269
 				}
 			}
 		}
@@ -1795,59 +1801,21 @@ Series.prototype = {
 		
 		var series = this,
 			seriesOptions = series.options,
-			options = seriesOptions.dataLabels;
+			options = seriesOptions.dataLabels,
+			points = series.points,
+			pointOptions,
+			generalOptions,
+			str,
+			dataLabelsGroup;
 		
 		if (options.enabled || series._hasPointLabels) {
-			var x,
-				y,
-				points = series.points,
-				pointOptions,
-				generalOptions,
-				str,
-				dataLabelsGroup,
-				chart = series.chart,
-				renderer = chart.renderer,
-				inverted = chart.inverted,
-				seriesType = series.type,
-				stacking = seriesOptions.stacking,
-				isBarLike = seriesType === 'column' || seriesType === 'bar',
-				vAlignIsNull = options.verticalAlign === null,
-				yIsNull = options.y === null,
-				fontMetrics = renderer.fontMetrics(options.style.fontSize), // height and baseline
-				fontLineHeight = fontMetrics.h,
-				fontBaseline = fontMetrics.b;
-
-			if (isBarLike) {
-				var defaultYs = {
-					top: fontBaseline, 
-					middle: fontBaseline - fontLineHeight / 2, 
-					bottom: -fontLineHeight + fontBaseline
-				};
-				if (stacking) {
-					// In stacked series the default label placement is inside the bars
-					if (vAlignIsNull) {
-						options = merge(options, {verticalAlign: 'middle'});
-					}
-
-					// If no y delta is specified, try to create a good default
-					if (yIsNull) {
-						options = merge(options, { y: defaultYs[options.verticalAlign]});
-					}
-				} else {
-					// In non stacked series the default label placement is on top of the bars
-					if (vAlignIsNull) {
-						options = merge(options, {verticalAlign: 'top'});
-					
-					// If no y delta is specified, try to create a good default (like default bar)
-					} else if (yIsNull) {
-						options = merge(options, { y: defaultYs[options.verticalAlign]});
-					}
-					
-				}
+						
+			// Process default alignment of data labels for columns
+			if (series.dlProcessOptions) {
+				series.dlProcessOptions(options);
 			}
 
-
-			// create a separate group for the data labels to avoid rotation
+			// Create a separate group for the data labels to avoid rotation
 			dataLabelsGroup = series.plotGroup(
 				'dataLabelsGroup', 
 				'data-labels', 
@@ -1855,47 +1823,21 @@ Series.prototype = {
 				6
 			);
 			
-			// make the labels for each point
+			// Make the labels for each point
 			generalOptions = options;
 			each(points, function (point) {
 				
-				var plotX,
-					plotY,
-					individualYDelta,
-					enabled,
-					dataLabel = point.dataLabel;
+				var enabled,
+					dataLabel = point.dataLabel,
+					attr,
+					name,
+					rotation,
+					isNew = true;
 				
-				// Merge in individual options from point
-				options = generalOptions; // reset changes from previous points
-				pointOptions = point.options;
-				if (pointOptions && pointOptions.dataLabels) {
-					options = merge(options, pointOptions.dataLabels);
-				}
-				enabled = options.enabled;
+				// Determine if each data label is enabled
+				pointOptions = point.options && point.options.dataLabels;
+				enabled = generalOptions.enabled || (pointOptions && pointOptions.enabled);
 				
-				// Get the positions
-				if (enabled) {
-					plotX = (point.barX && point.barX + point.barW / 2) || pick(point.plotX, -999);
-					plotY = pick(point.plotY, -999);
-						
-					// if options.y is null, which happens by default on column charts, set the position
-					// above or below the column depending on the threshold
-					individualYDelta = options.y === null ? 
-						(point.y >= seriesOptions.threshold ? 
-							-fontLineHeight + fontBaseline : // below the threshold 
-							fontBaseline) : // above the threshold
-						options.y;
-					
-					x = (inverted ? chart.plotWidth - plotY : plotX) + options.x;
-					y = mathRound((inverted ? chart.plotHeight - plotX : plotY) + individualYDelta);
-					
-				}
-				
-				// Check if the individual label must be disabled due to either falling
-				// ouside the plot area, or the enabled option being switched off
-				if (series.isCartesian && !chart.isInsidePlot(x - options.x, y)) {
-					enabled = false;
-				}
 				
 				// If the point is outside the plot area, destroy it. #678, #820
 				if (dataLabel && !enabled) {
@@ -1905,25 +1847,16 @@ Series.prototype = {
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
 					
-					var align = options.align,
-						attr,
-						name,
-						labelConfig = point.getLabelConfig();
+					rotation = options.rotation;
+					
+					// Create individual options structure that can be extended without 
+					// affecting others
+					options = merge(generalOptions, pointOptions);
 				
 					// Get the string
 					str = options.format ? // docs
 						format(options.format, labelConfig) : 
 						options.formatter.call(labelConfig, options);
-					
-					// in columns, align the string to the column
-					if (seriesType === 'column') {
-						x += { left: -1, right: 1 }[align] * point.barW / 2 || 0;
-					}
-	
-					if (!stacking && inverted && point.y < 0) {
-						align = 'right';
-						x -= 10;
-					}
 					
 					// Determine the color
 					options.style.color = pick(options.color, options.style.color, series.color, 'black');
@@ -1935,19 +1868,17 @@ Series.prototype = {
 						dataLabel
 							.attr({
 								text: str
-							}).animate({
-								x: x,
-								y: y
 							});
+						isNew = false;
 					// create new label
 					} else if (defined(str)) {
 						attr = {
-							align: align,
+							//align: align,
 							fill: options.backgroundColor,
 							stroke: options.borderColor,
 							'stroke-width': options.borderWidth,
 							r: options.borderRadius || 0,
-							rotation: options.rotation,
+							rotation: rotation,
 							padding: options.padding,
 							zIndex: 1
 						};
@@ -1958,41 +1889,76 @@ Series.prototype = {
 							}
 						}
 						
-						dataLabel = point.dataLabel = renderer[options.rotation ? 'text' : 'label']( // labels don't support rotation
+						dataLabel = point.dataLabel = series.chart.renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 							str,
-							x,
-							y,
+							0,
+							-999,
 							null,
 							null,
 							null,
-							options.useHTML,
-							true // baseline for backwards compat
+							options.useHTML
 						)
 						.attr(attr)
 						.css(options.style)
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);
-					}
-	
-					if (isBarLike && seriesOptions.stacking && dataLabel) {
-						var barX = point.barX,
-							barY = point.barY,
-							barW = point.barW,
-							barH = point.barH;
-	
-						dataLabel.align(options, null,
-							{
-								x: inverted ? chart.plotWidth - barY - barH : barX,
-								y: inverted ? chart.plotHeight - barX - barW : barY,
-								width: inverted ? barH : barW,
-								height: inverted ? barW : barH
-							});
+						
 					}
 					
-					
+					// Now the data label is created and placed at 0,0, so we need to align it
+					if (dataLabel) {
+						series.alignDataLabel(point, dataLabel, options, null, isNew);
+					}
 				}
 			});
 		}
+	},
+	
+	/**
+	 * Align each individual data label
+	 */
+	alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
+		var chart = this.chart,
+			inverted = chart.inverted,
+			plotX = pick(point.plotX, -999),
+			plotY = pick(point.plotY, -999),
+			bBox = dataLabel.getBBox(),
+			alignAttr; // the final position;
+				
+		// The alignment box is a singular point
+		alignTo = extend({
+			x: inverted ? chart.plotWidth - plotY : plotX,
+			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
+			width: 0,
+			height: 0
+		}, alignTo);
+		
+		// Add the text size for alignment calculation
+		extend(options, {
+			width: bBox.width,
+			height: bBox.height
+		});
+		
+		// Allow a hook for changing alignment in the last moment, then do the alignment
+		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+			alignAttr = {
+				align: options.align,
+				x: alignTo.x + options.x + alignTo.width / 2,
+				y: alignTo.y + options.y + alignTo.height / 2
+			};
+			dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
+		} else {
+			dataLabel.align(options, null, alignTo);
+			alignAttr = dataLabel.alignAttr;
+		}
+		
+		// Show or hide based on the final aligned position
+		dataLabel.attr({
+			visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
+				(hasSVG ? 'inherit' : VISIBLE) : 
+				HIDDEN
+		});
+				
 	},
 	
 	/**

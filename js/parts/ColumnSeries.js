@@ -26,8 +26,9 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		}
 	},
 	dataLabels: {
-		y: null,
-		verticalAlign: null
+		align: null, // auto
+		verticalAlign: null, // auto
+		y: null
 	},
 	threshold: 0
 });
@@ -127,7 +128,7 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold,
-			translatedThreshold = series.yAxis.getThreshold(threshold),
+			translatedThreshold = series.translatedThreshold = series.yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
@@ -156,13 +157,8 @@ var ColumnSeries = extendClass(Series, {
 				}
 			}
 
-			extend(point, {
-				barX: barX,
-				barY: barY,
-				barW: barW,
-				barH: barH,
-				pointWidth: pointWidth
-			});
+			point.barX = barX;
+			point.pointWidth = pointWidth;
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
 			point.shapeType = 'rect';
@@ -204,15 +200,14 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			options = series.options,
 			renderer = series.chart.renderer,
-			graphic,
 			shapeArgs;
 
 
 		// draw the columns
 		each(series.points, function (point) {
-			var plotY = point.plotY;
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			var plotY = point.plotY,
 				graphic = point.graphic;
+			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
@@ -225,6 +220,8 @@ var ColumnSeries = extendClass(Series, {
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
+			} else if (graphic) {
+				point.graphic = graphic.destroy(); // #1269
 			}
 		});
 	},
@@ -286,6 +283,54 @@ var ColumnSeries = extendClass(Series, {
 				}
 			}
 		});
+	},
+	
+	/** 
+	 * Override the basic data label alignment by adjusting for the position of the column
+	 */
+	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
+		var chart = this.chart,
+			inverted = chart.inverted,
+			below = point.below || (point.plotY > (this.translatedThreshold || chart.plotSizeY)),
+			inside = (this.options.stacking || options.inside); // draw it inside the box?
+		
+		// Align to the column itself, or the top of it
+		if (point.shapeArgs) { // Area range uses this method but not alignTo
+			alignTo = merge(point.shapeArgs);
+			if (inverted) {
+				alignTo = {
+					x: chart.plotWidth - alignTo.y - alignTo.height,
+					y: chart.plotHeight - alignTo.x - alignTo.width,
+					width: alignTo.height,
+					height: alignTo.width
+				};
+			}
+				
+			// Compute the alignment box
+			if (!inside) {
+				if (inverted) {
+					alignTo.x += below ? 0 : alignTo.width;
+					alignTo.width = 0;
+				} else {
+					alignTo.y += below ? alignTo.height : 0;
+					alignTo.height = 0;
+				}
+			}
+		}
+		
+		// When alignment is undefined (typically columns and bars), display the individual 
+		// point below or above the point depending on the threshold
+		options.align = pick(
+			options.align, 
+			!inverted || inside ? 'center' : below ? 'right' : 'left'
+		);
+		options.verticalAlign = pick(
+			options.verticalAlign, 
+			inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+		);
+		
+		// Call the parent method
+		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
 	},
 
 

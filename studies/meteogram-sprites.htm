@@ -6,7 +6,7 @@
         <!-- 1. Add these JavaScript inclusions in the head of your page -->
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
         </script>
-        <script type="text/javascript" src="http://code.highcharts.com/v2.3Beta/highcharts.js">
+        <script type="text/javascript" src="http://code.highcharts.com/master/highcharts.js">
         </script>
         <!-- 2. Add the JavaScript to initialize the chart on document ready -->
         <script type="text/javascript">
@@ -175,6 +175,7 @@
 	                    chart: {
 	                        renderTo: 'container',
 	                        marginBottom: 60,
+	                        marginRight: 40,
 							borderWidth: 3,
 							borderColor: '#C7D5D5',
 							borderRadius: 0,
@@ -201,13 +202,7 @@
 						},
 						
 						tooltip: {
-							shared: true,
-							
-							formatter: function() {
-								var html = Highcharts.dateFormat('%A, %b %e, %Y (%H:00-', this.points[0].point.from) +
-									Highcharts.dateFormat('%H:00)', this.points[0].point.to);
-								return html;
-							}
+							shared: true
 						},
 	                    
 	                    credits: {
@@ -245,9 +240,8 @@
 							tickInterval: 24 * 3600 * 1000,
 	                        labels: {
 	                            formatter: function(){
-	                                
-									return Highcharts.dateFormat(
-										'<span style="font-size: 12px; font-weight: bold">%a</span>, %b %e', 
+	                                return Highcharts.dateFormat(
+										'<span style="font-size: 12px; font-weight: bold">%a</span> %b %e', 
 										this.value
 									);
 	                            },
@@ -281,22 +275,6 @@
 							gridLineColor: '#F0F0F0',
 							maxPadding: 0.3 // make room for symbols
 							
-						}, { //  temperature axis
-							title: {
-								text: null
-							},
-							labels: {
-								formatter: function() {
-									return this.value +'°'
-								},
-								style: {
-									fontSize: '10px'
-								},
-								x: 3
-							},
-							gridLineWidth: 0,
-							opposite: true,
-							linkedTo: 0
 						}, { // precipitation axis
 							title: {
 								text: null
@@ -305,6 +283,22 @@
 								enabled: false
 							},
 							gridLineWidth: 0
+						
+						}, { //  air pressure
+							allowDecimals: false,
+							title: null,
+							labels: {
+								formatter: function () {
+									return this.isLast ? 'hPa' : this.value; // skip numberFormat
+								},
+								style: {
+									fontSize: '8px',
+									color: Highcharts.getOptions().colors[2] 
+								},
+								y: 2
+							},
+							gridLineWidth: 0,
+							opposite: true
 						}],
 	                    
 	                    legend: {
@@ -324,16 +318,19 @@
 									}
 								}
 							},
+							tooltip: {
+								valueSuffix: '°C'
+							},
 							zIndex: 1
 	                    }, {
 							name: 'Precipitation',
 	                        data: precipitations,
 							type: 'column',
 							color: '#68CFE8',
-							yAxis: 2,
+							yAxis: 1,
 							groupPadding: 0,
 							pointPadding: 0,
-							borderWidth: 1,
+							borderWidth: 0,
 							shadow: false,
 							dataLabels: {
 								enabled: true,
@@ -345,12 +342,27 @@
 								style: {
 									fontSize: '8px'
 								}
+							},
+							tooltip: {
+								valueSuffix: 'mm'
 							}
 							//pointPlacement: 'between'
+	                    }, {
+							name: 'Air pressure',
+							color: Highcharts.getOptions().colors[2],
+	                        data: pressures,
+	                        marker: {
+	                        	enabled: false
+	                        },
+							shadow: false,
+							tooltip: {
+								valueSuffix: ' hPa'
+							},
+							dashStyle: 'shortdot',
+							yAxis: 2
 	                    }]
 	                
 	                }, function(chart) {
-						
 						$.each(chart.series[0].data, function(i, point) {
 							
 							if (i % 2 === 0) {
@@ -393,7 +405,7 @@
 								// Draw the wind arrows
 								chart.renderer.image(
 									'http://fil.nrk.no/yr/grafikk/vindpiler/32/vindpil.'+ windSpeed +'.'+ windDirection +'.png',
-									point.plotX + chart.plotLeft - 15,
+									point.plotX + chart.plotLeft - 5,
 									240,
 									30,
 									30
@@ -408,10 +420,12 @@
 	                    
 	                });
 				}
-				
 				// Load the data
+				if (!location.hash) {
+					location.hash = 'http://www.yr.no/place/Norway/Sogn_og_Fjordane/Vik/Voll/forecast_hour_by_hour.xml';
+				}
                 $.ajax({
-                    url: 'forecast.xml',
+                    url: '../samples/data/xml.php?url=' + location.hash.substr(1),
                     dataType: 'xml',
                     success: function (xmldoc) {
                     	$('tabular time', xmldoc).each(function(i, time) {
@@ -444,7 +458,10 @@
 								from: from,
 								to: to
 							});
-							pressures.push(parseFloat($('pressure', time).attr('value')));
+							pressures.push({
+								x: middle,
+								y: parseFloat($('pressure', time).attr('value'))
+							});
 							
 							if (i == 0) {
 								pointStart = middle;

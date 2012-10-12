@@ -835,9 +835,9 @@ Chart.prototype = {
 	initReflow: function () {
 		var chart = this,
 			optionsChart = chart.options.chart,
-			renderTo = chart.renderTo;
-
-		var reflowTimeout;
+			renderTo = chart.renderTo,
+			reflowTimeout;
+			
 		function reflow(e) {
 			var width = optionsChart.width || adapterRun(renderTo, 'width'),
 				height = optionsChart.height || adapterRun(renderTo, 'height'),
@@ -849,8 +849,10 @@ Chart.prototype = {
 				
 				if (width !== chart.containerWidth || height !== chart.containerHeight) {
 					clearTimeout(reflowTimeout);
-					reflowTimeout = setTimeout(function () {
-						chart.resize(width, height, false);
+					chart.reflowTimeout = reflowTimeout = setTimeout(function () {
+						if (chart.container) { // It may have been destroyed in the meantime (#1257)
+							chart.resize(width, height, false);
+						}
 					}, 100);
 				}
 				chart.containerWidth = width;
@@ -939,7 +941,7 @@ Chart.prototype = {
 		}
 		
 		// Move resize button (#1115)
-		if (resetZoomButton) {
+		if (resetZoomButton && resetZoomButton.align) {
 			resetZoomButton.align(null, null, chart[resetZoomButton.alignTo]);
 		}
 
@@ -1297,17 +1299,9 @@ Chart.prototype = {
 		var chart = this,
 			axes = chart.axes,
 			series = chart.series,
-			container = chart.container;
-
-		var i,
+			container = chart.container,
+			i,
 			parentNode = container && container.parentNode;
-
-		// If the chart is destroyed already, do nothing.
-		// This will happen if if a script invokes chart.destroy and
-		// then it will be called again on win.unload
-		if (chart === null) {
-			return;
-		}
 
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
@@ -1329,10 +1323,12 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
+		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 
+				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
-			if (prop) {
+			if (prop && prop.destroy) {
 				chart[name] = prop.destroy();
 			}
 		});

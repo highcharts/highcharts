@@ -337,6 +337,7 @@ VMLElement = {
 
 		if (clipRect) {
 			clipMembers = clipRect.members;
+			erase(clipMembers, wrapper); // Ensure unique list of elements (#1258)
 			clipMembers.push(wrapper);
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
@@ -475,8 +476,8 @@ VMLElement = {
 				
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
-						left: pInt(elemStyle.left) + (shadowOptions.offsetX || 1),
-						top: pInt(elemStyle.top) + (shadowOptions.offsetY || 1)
+						left: pInt(elemStyle.left) + pick(shadowOptions.offsetX, 1),
+						top: pInt(elemStyle.top) + pick(shadowOptions.offsetY, 1)
 					}
 				);
 				if (cutOff) {
@@ -895,9 +896,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			.attr({ src: src });
 
 		if (arguments.length > 1) {
-			obj.css({
-				left: x,
-				top: y,
+			obj.attr({
+				x: x,
+				y: y,
 				width: width,
 				height: height
 			});

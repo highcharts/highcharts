@@ -20,17 +20,11 @@ Highcharts.StockChart = function (options, callback) {
 				hover: {
 					lineWidth: 2
 				}
-			},
-			dataGrouping: {
-				enabled: true // only for stock charts
 			}
 		},
 		columnOptions = {
 			shadow: false,
-			borderWidth: 0,
-			dataGrouping: {
-				enabled: true
-			}
+			borderWidth: 0
 		};
 
 	// apply X axis options to both single and multi y axes
@@ -113,6 +107,7 @@ Highcharts.StockChart = function (options, callback) {
 	options, // user's options
 
 	{ // forced options
+		_stock: true, // internal flag
 		chart: {
 			inverted: false
 		}

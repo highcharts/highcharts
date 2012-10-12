@@ -152,10 +152,11 @@ defaultOptions = {
 			},
 			dataLabels: merge(defaultLabelOptions, {
 				enabled: false,
-				y: -6,
 				formatter: function () {
 					return this.y;
-				}
+				},
+				verticalAlign: 'bottom', // above singular point
+				y: 0
 				// backgroundColor: undefined,
 				// borderColor: undefined,
 				// borderRadius: undefined,

@@ -312,6 +312,7 @@ wrap(colProto, 'translate', function (proceed) {
 		center = xAxis.center,
 		startAngleRad = xAxis.startAngleRad,
 		renderer = this.chart.renderer,
+		start,
 		points,
 		point,
 		i;
@@ -327,6 +328,7 @@ wrap(colProto, 'translate', function (proceed) {
 		i = points.length;
 		while (i--) {
 			point = points[i];
+			start = point.barX + startAngleRad;
 			point.shapeType = 'path';
 			point.shapeArgs = {
 				d: renderer.symbols.arc(
@@ -335,8 +337,8 @@ wrap(colProto, 'translate', function (proceed) {
 					len - point.plotY,
 					null, 
 					{
-						start: startAngleRad + point.barX,
-						end: startAngleRad + point.barX + point.pointWidth,
+						start: start,
+						end: start + point.pointWidth,
 						innerR: len - pick(point.yBottom, len)
 					}
 				)
@@ -344,6 +346,46 @@ wrap(colProto, 'translate', function (proceed) {
 			this.toXY(point); // provide correct plotX, plotY for tooltip
 		}
 	}
+});
+
+
+/**
+ * Align column data labels outside the columns. #1199.
+ */
+wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo, isNew) {
+	
+	if (this.chart.polar) {
+		var angle = point.rectPlotX / Math.PI * 180,
+			align,
+			verticalAlign;
+		
+		// Align nicely outside the perimeter of the columns
+		if (options.align === null) {
+			if (angle > 20 && angle < 160) {
+				align = 'left'; // right hemisphere
+			} else if (angle > 200 && angle < 340) {
+				align = 'right'; // left hemisphere
+			} else {
+				align = 'center'; // top or bottom
+			}
+			options.align = align;
+		}
+		if (options.verticalAlign === null) {
+			if (angle < 45 || angle > 315) {
+				verticalAlign = 'bottom'; // top part
+			} else if (angle > 135 && angle < 225) {
+				verticalAlign = 'top'; // bottom part
+			} else {
+				verticalAlign = 'middle'; // left or right
+			}
+			options.verticalAlign = verticalAlign;
+		}
+		
+		seriesProto.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+	} else {
+		proceed.call(this, point, dataLabel, options, alignTo, isNew);
+	}
+	
 });
 
 /**

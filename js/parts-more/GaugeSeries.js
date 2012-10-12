@@ -10,13 +10,14 @@
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
-		y: 30,
+		y: 15,
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,
 		style: {
 			fontWeight: 'bold'
-		}
+		},
+		verticalAlign: 'top'
 	},
 	dial: {
 		// radius: '80%',
@@ -128,14 +129,14 @@ var GaugeSeries = {
 			center = series.yAxis.center,
 			pivot = series.pivot,
 			options = series.options,
-			pivotOptions = options.pivot,
-			dialOptions = options.dial;
+			pivotOptions = options.pivot;
 		
 		each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
-				d = shapeArgs.d;
+				d = shapeArgs.d,
+				dialOptions = merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);

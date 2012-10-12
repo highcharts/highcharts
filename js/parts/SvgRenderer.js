@@ -59,7 +59,7 @@ SVGElement.prototype = {
 			i,
 			child,
 			element = wrapper.element,
-			nodeName = element.nodeName,
+			nodeName = element.nodeName.toLowerCase(), // Android2 requires lower for "text"
 			renderer = wrapper.renderer,
 			skipAttr,
 			titleNode,
@@ -346,7 +346,7 @@ SVGElement.prototype = {
 		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
 			elem = elemWrapper.element,
-			textWidth = styles && styles.width && elem.nodeName === 'text',
+			textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text',
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
@@ -366,6 +366,12 @@ SVGElement.prototype = {
 		// store object
 		elemWrapper.styles = styles;
 		
+		
+		// Don't handle line wrap on canvas
+		if (useCanVG && textWidth) {
+			delete styles.width;
+		}
+			
 		// serialize and set style attribute
 		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
 			if (textWidth) {
@@ -556,15 +562,15 @@ SVGElement.prototype = {
 				yCorr = wrapper.yCorr || 0,
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(','),
 				rotationStyle = {},
-				prefix;
+				cssTransformKey;
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
 
 				if (defined(rotation)) {
 					
 					if (renderer.isSVG) { // #916
-						prefix = isIE ? '-ms' : isWebKit ? '-webkit' : isFirefox ? '-moz' : isOpera ? '-o' : '';
-						rotationStyle[prefix + '-transform'] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
+						cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
+						rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 						
 					} else {
 						radians = rotation * deg2rad; // deg to rad
@@ -580,7 +586,6 @@ SVGElement.prototype = {
 								', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 								', sizingMethod=\'auto expand\')'].join('') : NONE;
 					}
-					 
 					css(elem, rotationStyle);
 				}
 
@@ -711,7 +716,7 @@ SVGElement.prototype = {
 
 
 		// align
-		if (/^(right|center)$/.test(align)) {
+		if (align === 'right' || align === 'center') {
 			x += (box.width - (alignOptions.width || 0)) /
 					{ right: 1, center: 2 }[align];
 		}
@@ -719,7 +724,7 @@ SVGElement.prototype = {
 
 
 		// vertical align
-		if (/^(bottom|middle)$/.test(vAlign)) {
+		if (vAlign === 'bottom' || vAlign === 'middle') {
 			y += (box.height - (alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 
@@ -745,6 +750,7 @@ SVGElement.prototype = {
 			height,
 			rotation = wrapper.rotation,
 			element = wrapper.element,
+			styles = wrapper.styles,
 			rad = rotation * deg2rad;
 
 		if (!bBox) {
@@ -788,6 +794,11 @@ SVGElement.prototype = {
 					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 				}
+			}
+			
+			// Workaround for wrong bounding box in IE9 and IE10 (#1101)
+			if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+				bBox.height = 14;
 			}
 			
 			wrapper.bBox = bBox;
@@ -970,7 +981,7 @@ SVGElement.prototype = {
 			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			transform = this.parentInverted ? 
 				'(-1,-1)' : 
-				'(' + (shadowOptions.offsetX || 1) + ', ' + (shadowOptions.offsetY || 1) + ')';
+				'(' + pick(shadowOptions.offsetX, 1) + ', ' + pick(shadowOptions.offsetY, 1) + ')';
 			for (i = 1; i <= shadowWidth; i++) {
 				shadow = element.cloneNode(0);
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
@@ -1152,7 +1163,7 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="([^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			width = textStyles && pInt(textStyles.width),
+			width = textStyles && textStyles.width && pInt(textStyles.width),
 			textLineHeight = textStyles && textStyles.lineHeight,
 			i = childNodes.length;
 
@@ -1236,7 +1247,7 @@ SVGRenderer.prototype = {
 
 					// check width and apply soft breaks
 					if (width) {
-						var words = span.replace(/-/g, '- ').split(' '),
+						var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
 							tooLong,
 							actualWidth,
 							rest = [];
@@ -1786,7 +1797,16 @@ SVGRenderer.prototype = {
 		var renderer = this,
 			colorObject,
 			regexRgba = /^rgba/,
-			gradName;
+			gradName, 
+			gradAttr,
+			gradients,
+			gradientObject,
+			stops,
+			stopColor,
+			stopOpacity,
+			radialReference,
+			n,
+			key = [];
 		
 		// Apply linear or radial gradients
 		if (color && color.linearGradient) {
@@ -1796,47 +1816,56 @@ SVGRenderer.prototype = {
 		}
 		
 		if (gradName) {
-			var gradAttr = color[gradName],
-				gradients = renderer.gradients,
-				gradientObject,
-				stopColor,
-				stopOpacity,
-				radialReference = elem.radialReference;
+			gradAttr = color[gradName];
+			gradients = renderer.gradients;
+			stops = color.stops;
+			radialReference = elem.radialReference;
+			
+			// Keep < 2.2 kompatibility
+			if (isArray(gradAttr)) {
+				color[gradName] = gradAttr = {
+					x1: gradAttr[0],
+					y1: gradAttr[1],
+					x2: gradAttr[2],
+					y2: gradAttr[3],
+					gradientUnits: 'userSpaceOnUse'
+				};				
+			}
+			
+			// Correct the radial gradient for the radial reference system
+			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+				extend(gradAttr, {
+					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+					r: gradAttr.r * radialReference[2],
+					gradientUnits: 'userSpaceOnUse'
+				});
+			}
+			
+			// Build the unique key to detect whether we need to create a new element (#1282)
+			for (n in gradAttr) {
+				if (n !== 'id') {
+					key.push(n, gradAttr[n]);
+				}
+			}
+			for (n in stops) {
+				key.push(stops[n]);
+			}
+			key = key.join(',');
 			
 			// Check if a gradient object with the same config object is created within this renderer
-			if (!gradAttr.id || !gradients[gradAttr.id]) {
-				
-				// Keep < 2.2 kompatibility
-				if (isArray(gradAttr)) {
-					color[gradName] = gradAttr = {
-						x1: gradAttr[0],
-						y1: gradAttr[1],
-						x2: gradAttr[2],
-						y2: gradAttr[3],
-						gradientUnits: 'userSpaceOnUse'
-					};				
-				}
-				
-				// Correct the radial gradient for the radial reference system
-				if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-					extend(gradAttr, {
-						cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-						cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-						r: gradAttr.r * radialReference[2],
-						gradientUnits: 'userSpaceOnUse'
-					});
-				}
+			if (!gradients[key]) {
 
 				// Set the id and create the element
 				gradAttr.id = PREFIX + idCounter++;
-				gradients[gradAttr.id] = gradientObject = renderer.createElement(gradName)
+				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
 				
 				
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
-				each(color.stops, function (stop) {
+				each(stops, function (stop) {
 					var stopObject;
 					if (regexRgba.test(stop[1])) {
 						colorObject = Color(stop[1]);
@@ -1890,6 +1919,7 @@ SVGRenderer.prototype = {
 		// declare variables
 		var renderer = this,
 			defaultChartStyle = defaultOptions.chart.style,
+			fakeSVG = useCanVG || (!hasSVG && renderer.forExport),
 			wrapper;
 
 		if (useHTML && !renderer.forExport) {
@@ -1911,7 +1941,7 @@ SVGRenderer.prototype = {
 			});
 		
 		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)	
-		if (!hasSVG && renderer.forExport) {
+		if (fakeSVG) {
 			wrapper.css({
 				position: ABSOLUTE
 			});
@@ -2099,7 +2129,8 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			attrSetters = wrapper.attrSetters;
+			attrSetters = wrapper.attrSetters,
+			needsBox;
 
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
@@ -2117,24 +2148,26 @@ SVGRenderer.prototype = {
 			
 			// update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
-			
-			
-			// create the border box if it is not already present
-			if (!box) {
-				boxY = baseline ? -baselineOffset : 0;
-			
-				wrapper.box = box = shape ?
-					renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
-					renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-				box.add(wrapper);
+				
+			if (needsBox) {
+				
+				// create the border box if it is not already present
+				if (!box) {
+					boxY = baseline ? -baselineOffset : 0;
+				
+					wrapper.box = box = shape ?
+						renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
+						renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+					box.add(wrapper);
+				}
+	
+				// apply the box attributes
+				box.attr(merge({
+					width: wrapper.width,
+					height: wrapper.height
+				}, deferredAttr));
+				deferredAttr = null;
 			}
-
-			// apply the box attributes
-			box.attr(merge({
-				width: wrapper.width,
-				height: wrapper.height
-			}, deferredAttr));
-			deferredAttr = null;
 		}
 
 		/**
@@ -2188,7 +2221,7 @@ SVGRenderer.prototype = {
 				y: y
 			});
 			
-			if (defined(anchorX)) {
+			if (box && defined(anchorX)) {
 				wrapper.attr({
 					anchorX: anchorX,
 					anchorY: anchorY
@@ -2240,11 +2273,15 @@ SVGRenderer.prototype = {
 
 		// apply these to the box but not to the text
 		attrSetters[STROKE_WIDTH] = function (value, key) {
+			needsBox = true;
 			crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
 			return false;
 		};
 		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (value, key) {
+			if (key === 'fill') {
+				needsBox = true;
+			}
 			boxAttr(key, value);
 			return false;
 		};
@@ -2298,13 +2335,20 @@ SVGRenderer.prototype = {
 			 * Return the bounding box of the box, not the group
 			 */
 			getBBox: function () {
-				return box.getBBox();
+				return box ? box.getBBox() : {
+					width: bBox.width + 2 * padding,
+					height: bBox.height + 2 * padding,
+					x: bBox.x - padding,
+					y: bBox.y - padding
+				};
 			},
 			/**
 			 * Apply the shadow to the box
 			 */
 			shadow: function (b) {
-				box.shadow(b);
+				if (box) {
+					box.shadow(b);
+				}
 				return wrapper;
 			},
 			/**

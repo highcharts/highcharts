@@ -1,10 +1,7 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function(data) {
-    	
-    	// Shorten the data
-    	data = data.splice(181, 14);
-  
-    	window.chart = new Highcharts.Chart({
+    
+    	window.chart = new Highcharts.StockChart({
     	
 		    chart: {
 		        renderTo: 'container',
@@ -12,7 +9,7 @@ $(function () {
 		    },
 		    
 		    title: {
-		        text: 'Temperature variation by day'
+		        text: 'Data grouping on individual series. Groups should be weeks.'
 		    },
 		
 		    xAxis: {
@@ -34,17 +31,12 @@ $(function () {
 		    legend: {
 		        enabled: false
 		    },
-		    
+		
 		    series: [{
 		        name: 'Temperatures',
 		        data: data,
-		        dataLabels: {
-		        	enabled: true,
-		        	yHigh: 20,
-		        	yLow: -20,
-		        	style: {
-		        		color: 'white'
-		        	}
+		        dataGrouping: {
+		        	groupPixelWidth: 20
 		        }
 		    }]
 		

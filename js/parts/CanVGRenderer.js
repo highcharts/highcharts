@@ -14,7 +14,8 @@ if (useCanVG) {
 	 * together with the canvg library.
 	 */
 	CanVGRenderer = function () {
-		// Empty constructor
+		// Override the global SVG namespace to fake SVG/HTML that accepts CSS
+		SVG_NS = 'http://www.w3.org/1999/xhtml';
 	};
 
 	/**

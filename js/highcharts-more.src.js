@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.2 (2012-08-31)
+ * @license Highcharts JS v2.3.3 (2012-10-04)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -624,7 +624,7 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
-	lineWidth: 1, // docs - changed default value
+	lineWidth: 1,
 	marker: null,
 	threshold: null,
 	tooltip: {
@@ -632,12 +632,13 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	},
 	trackByArea: true,
 	dataLabels: {
+		verticalAlign: null,
 		xLow: 0,
 		xHigh: 0,
-		yLow: 16,
-		yHigh: -6		
+		yLow: 0,
+		yHigh: 0	
 	},
-	shadow: false // docs - changed default
+	shadow: false
 });
 
 /**
@@ -739,6 +740,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.dataLabel = point.dataLabelUpper;
 				
 				// Set the default offset
+				point.below = false;
 				if (inverted) {
 					dataLabelOptions.align = 'left';
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
@@ -762,6 +764,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.plotY = point.plotLow;
 				
 				// Set the default offset
+				point.below = true;
 				if (inverted) {
 					dataLabelOptions.align = 'right';
 					dataLabelOptions.x = dataLabelOptions.xLow;
@@ -773,6 +776,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		}
 	
 	},
+	
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	
 	getSymbol: seriesTypes.column.prototype.getSymbol,
 	
@@ -843,13 +848,14 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
-		y: 30,
+		y: 15,
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,
 		style: {
 			fontWeight: 'bold'
-		}
+		},
+		verticalAlign: 'top'
 	},
 	dial: {
 		// radius: '80%',
@@ -961,14 +967,14 @@ var GaugeSeries = {
 			center = series.yAxis.center,
 			pivot = series.pivot,
 			options = series.options,
-			pivotOptions = options.pivot,
-			dialOptions = options.dial;
+			pivotOptions = options.pivot;
 		
 		each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
-				d = shapeArgs.d;
+				d = shapeArgs.d,
+				dialOptions = merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);
@@ -1672,6 +1678,7 @@ wrap(colProto, 'translate', function (proceed) {
 		center = xAxis.center,
 		startAngleRad = xAxis.startAngleRad,
 		renderer = this.chart.renderer,
+		start,
 		points,
 		point,
 		i;
@@ -1687,6 +1694,7 @@ wrap(colProto, 'translate', function (proceed) {
 		i = points.length;
 		while (i--) {
 			point = points[i];
+			start = point.barX + startAngleRad;
 			point.shapeType = 'path';
 			point.shapeArgs = {
 				d: renderer.symbols.arc(
@@ -1695,8 +1703,8 @@ wrap(colProto, 'translate', function (proceed) {
 					len - point.plotY,
 					null, 
 					{
-						start: startAngleRad + point.barX,
-						end: startAngleRad + point.barX + point.pointWidth,
+						start: start,
+						end: start + point.pointWidth,
 						innerR: len - pick(point.yBottom, len)
 					}
 				)
@@ -1704,6 +1712,46 @@ wrap(colProto, 'translate', function (proceed) {
 			this.toXY(point); // provide correct plotX, plotY for tooltip
 		}
 	}
+});
+
+
+/**
+ * Align column data labels outside the columns. #1199.
+ */
+wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo, isNew) {
+	
+	if (this.chart.polar) {
+		var angle = point.rectPlotX / Math.PI * 180,
+			align,
+			verticalAlign;
+		
+		// Align nicely outside the perimeter of the columns
+		if (options.align === null) {
+			if (angle > 20 && angle < 160) {
+				align = 'left'; // right hemisphere
+			} else if (angle > 200 && angle < 340) {
+				align = 'right'; // left hemisphere
+			} else {
+				align = 'center'; // top or bottom
+			}
+			options.align = align;
+		}
+		if (options.verticalAlign === null) {
+			if (angle < 45 || angle > 315) {
+				verticalAlign = 'bottom'; // top part
+			} else if (angle > 135 && angle < 225) {
+				verticalAlign = 'top'; // bottom part
+			} else {
+				verticalAlign = 'middle'; // left or right
+			}
+			options.verticalAlign = verticalAlign;
+		}
+		
+		seriesProto.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+	} else {
+		proceed.call(this, point, dataLabel, options, alignTo, isNew);
+	}
+	
 });
 
 /**

@@ -512,36 +512,38 @@ Axis.prototype = {
 					for (i = 0; i < yDataLength; i++) {
 						x = xData[i];
 						y = yData[i];
-						if (y !== null && y !== UNDEFINED) {
+						
+						// Read stacked values into a stack based on the x value,
+						// the sign of y and the stack key. Stacking is also handled for null values (#739)
+						if (stacking) {
+							isNegative = y < threshold;
+							pointStack = isNegative ? negPointStack : posPointStack;
+							key = isNegative ? negKey : stackKey;
 
-							// read stacked values into a stack based on the x value,
-							// the sign of y and the stack key
-							if (stacking) {
-								isNegative = y < threshold;
-								pointStack = isNegative ? negPointStack : posPointStack;
-								key = isNegative ? negKey : stackKey;
-
-								y = pointStack[x] =
-									defined(pointStack[x]) ?
-										correctFloat(pointStack[x] + y) : 
-										y;
+							y = pointStack[x] =
+								defined(pointStack[x]) ?
+									correctFloat(pointStack[x] + y) : 
+									y;
 
 
-								// add the series
-								if (!stacks[key]) {
-									stacks[key] = {};
-								}
+							// add the series
+							if (!stacks[key]) {
+								stacks[key] = {};
+							}
 
-								// If the StackItem is there, just update the values,
-								// if not, create one first
-								if (!stacks[key][x]) {
-									stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption);
-								}
-								stacks[key][x].setTotal(y);
-
+							// If the StackItem is there, just update the values,
+							// if not, create one first
+							if (!stacks[key][x]) {
+								stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
+							}
+							stacks[key][x].setTotal(y);
+						}
+						
+						// Handle non null values
+						if (y !== null && y !== UNDEFINED) {							
 
 							// general hook, used for Highstock compare values feature
-							} else if (hasModifyValue) {
+							if (hasModifyValue) {
 								y = series.modifyValue(y);
 							}
 
@@ -1672,28 +1674,30 @@ Axis.prototype = {
 
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
-			each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
-
-				// Reorganize the indices
-				i = (i === tickPositions.length - 1) ? 0 : i + 1;
-
-				// linked axes need an extra check to find out if
-				if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
-
-					if (!ticks[pos]) {
-						ticks[pos] = new Tick(axis, pos);
+			if (tickPositions.length) { // #1300
+				each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
+	
+					// Reorganize the indices
+					i = (i === tickPositions.length - 1) ? 0 : i + 1;
+	
+					// linked axes need an extra check to find out if
+					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
+	
+						if (!ticks[pos]) {
+							ticks[pos] = new Tick(axis, pos);
+						}
+	
+						// render new ticks in old position
+						if (slideInTicks && ticks[pos].isNew) {
+							ticks[pos].render(i, true);
+						}
+	
+						ticks[pos].isActive = true;
+						ticks[pos].render(i);
 					}
-
-					// render new ticks in old position
-					if (slideInTicks && ticks[pos].isNew) {
-						ticks[pos].render(i, true);
-					}
-
-					ticks[pos].isActive = true;
-					ticks[pos].render(i);
-				}
-
-			});
+	
+				});
+			}
 
 			// alternate grid color
 			if (alternateGridColor) {

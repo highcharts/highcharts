@@ -12,7 +12,7 @@ var DATA_GROUPING = 'dataGrouping',
 	
 	commonOptions = {
 		approximation: 'average', // average, open, high, low, close, sum
-		//enabled: true, // this is set to default in the StockChart constructor only
+		//enabled: null, // (true for stock charts, false for basic),
 		//forced: undefined,
 		groupPixelWidth: 2,
 		// the first one is the point or start value, the second is the start value if we're dealing with range,
@@ -254,9 +254,10 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
  */
 seriesProto.processData = function () {
 	var series = this,
+		chart = series.chart,
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
-		groupingEnabled = dataGroupingOptions && dataGroupingOptions.enabled,
+		groupingEnabled = dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
 		hasGroupedData;
 
 	// run base method
@@ -271,7 +272,6 @@ seriesProto.processData = function () {
 		
 	}
 	var i,
-		chart = series.chart,
 		processedXData = series.processedXData,
 		processedYData = series.processedYData,
 		plotSizeX = chart.plotSizeX,
@@ -459,17 +459,21 @@ seriesProto.destroy = function () {
 wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	
 	var options = proceed.call(this, itemOptions),
-		type = this.type;
+		type = this.type,
+		plotOptions = this.chart.options.plotOptions;
 		
-	if (!defaultPlotOptions[type].dataGrouping) {
-		defaultPlotOptions[type].dataGrouping = merge(commonOptions, specificOptions[type]);
+	if (specificOptions[type]) { // #1284
+		if (!defaultPlotOptions[type].dataGrouping) {
+			defaultPlotOptions[type].dataGrouping = merge(commonOptions, specificOptions[type]);
+		}
+		
+		options.dataGrouping = merge(
+			defaultPlotOptions[type].dataGrouping,
+			plotOptions.series && plotOptions.series.dataGrouping, // #1228
+			plotOptions[type].dataGrouping, // Set by the StockChart constructor
+			itemOptions.dataGrouping
+		);
 	}
-	
-	options.dataGrouping = merge(
-		defaultPlotOptions[this.type].dataGrouping, 
-		this.chart.options.plotOptions[this.type].dataGrouping, // Set by the StockChart constructor
-		itemOptions.dataGrouping
-	);
 	
 	return options;
 });

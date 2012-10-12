@@ -10,4 +10,4 @@ $(function () {
             text: 'Chart with no series option and no data'
         }
     });
-});​
+ });
