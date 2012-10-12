@@ -6,17 +6,20 @@
  * http://jsfiddle.net/highcharts/FbjMs/
  * 
  * Todo
- * - fill opacity by default
- * - data labels
- * - log axis
- * - disable data grouping
- * - inverted
- * - point padding,
- * - optionslly allow bubbles below threshold with a specific color
+ * - Data labels: Create a box that the label can be aligned to.
+ * - Add point padding
+ * - Optionally allow bubbles below threshold with a specific color
  */
 
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
+	dataLabels: {
+		verticalAlign: 'middle'
+	},
+	// fillOpacity: 0.75,
+	marker: {
+		lineWidth: 1
+	},
 	minSize: 8,
 	maxSize: '20%',
 	shadow: false,
@@ -35,9 +38,23 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	 * Mapping between SVG attributes and the corresponding options
 	 */
 	pointAttrToOptions: { 
-		stroke: 'lineColor',
+		stroke: 'color',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
+		fill: 'color'
+	},
+	
+	/**
+	 * Extend the convertAttribs method by applying opacity to the fill
+	 */
+	convertAttribs: function () {
+		var obj = Series.prototype.convertAttribs.apply(this, arguments),
+			fillOpacity = pick(this.options.fillOpacity, 0.75);
+		
+		if (fillOpacity !== 1) {
+			obj.fill = Highcharts.Color(obj.fill).setOpacity(fillOpacity).get('rgba');
+		}
+		
+		return obj;
 	},
 	
 	/**
