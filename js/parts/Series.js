@@ -889,11 +889,13 @@ Series.prototype = {
 		// parallel arrays
 		var xData = [],
 			yData = [],
+			zData = [],
 			dataLength = data ? data.length : [],
 			turboThreshold = options.turboThreshold || 1000,
 			pt,
 			pointArrayMap = series.pointArrayMap,
-			valueCount = pointArrayMap && pointArrayMap.length;
+			valueCount = pointArrayMap && pointArrayMap.length,
+			hasToYData = !!series.toYData;
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -941,7 +943,8 @@ Series.prototype = {
 				pt = { series: series };
 				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 				xData[i] = pt.x;
-				yData[i] = series.toYData ? series.toYData(pt) : pt.y;
+				yData[i] = hasToYData ? series.toYData(pt) : pt.y;
+				zData[i] = pt.z; 
 			}
 		}
 
@@ -954,6 +957,7 @@ Series.prototype = {
 		series.options.data = data;
 		series.xData = xData;
 		series.yData = yData;
+		series.zData = zData;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
@@ -1829,6 +1833,7 @@ Series.prototype = {
 				
 				var enabled,
 					dataLabel = point.dataLabel,
+					labelConfig,
 					attr,
 					name,
 					rotation,
@@ -1854,6 +1859,7 @@ Series.prototype = {
 					options = merge(generalOptions, pointOptions);
 				
 					// Get the string
+					labelConfig = point.getLabelConfig();
 					str = options.format ? // docs
 						format(options.format, labelConfig) : 
 						options.formatter.call(labelConfig, options);

@@ -60,8 +60,8 @@ function getResources() {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highstock Example</title>
-		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script -->
+		<script src="/lib/jquery-1.7.2.js"></script>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
 		<?php @include("$path/demo.js"); ?>

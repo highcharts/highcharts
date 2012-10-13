@@ -136,7 +136,7 @@
 			'stroke-width': 'borderWidth',
 			fill: 'color'
 		},
-		useMarkerGroup: true,
+		trackerGroupKey: 'group',
 		getSymbol: noop,
 		getExtremesFromAll: true,
 		init: function(chart) {

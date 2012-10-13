@@ -216,7 +216,7 @@ var ColumnSeries = extendClass(Series, {
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
-						.add(series.useMarkerGroup ? series.markerGroup : series.group)
+						.add(series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
@@ -291,12 +291,13 @@ var ColumnSeries = extendClass(Series, {
 	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
 		var chart = this.chart,
 			inverted = chart.inverted,
+			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > (this.translatedThreshold || chart.plotSizeY)),
 			inside = (this.options.stacking || options.inside); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it
-		if (point.shapeArgs) { // Area range uses this method but not alignTo
-			alignTo = merge(point.shapeArgs);
+		if (dlBox) { // Area range uses this method but not alignTo
+			alignTo = merge(dlBox);
 			if (inverted) {
 				alignTo = {
 					x: chart.plotWidth - alignTo.y - alignTo.height,

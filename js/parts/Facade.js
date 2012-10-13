@@ -20,6 +20,8 @@ extend(Highcharts, {
 	VMLRenderer: VMLRenderer,
 	
 	// Various
+	arrayMin: arrayMin,
+	arrayMax: arrayMax,
 	dateFormat: dateFormat,
 	format: format,
 	pathAnim: pathAnim,

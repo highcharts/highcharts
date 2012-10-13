@@ -13,7 +13,9 @@
 /*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts, UNDEFINED) {
-var each = Highcharts.each,
+var arrayMin = Highcharts.arrayMin,
+	arrayMax = Highcharts.arrayMax,
+	each = Highcharts.each,
 	extend = Highcharts.extend,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
@@ -1241,33 +1243,48 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
  * http://jsfiddle.net/highcharts/FbjMs/
  * 
  * Todo
- * - Data labels: Create a box that the label can be aligned to.
- * - Add point padding
- * - Optionally allow bubbles below threshold with a specific color
+ * - Solid lines with gradient color? Consider separate fillColor option.
+ * - Move tooltip away from mouse (all scatter-inherited series)
+ * - Individual colors. Don't use marker structure?
+ * - Axis.setAxisTranslation
+ *   - Check redrawing/resizing.
+ *   - Add minPadding/maxPadding.
+ *   - How does this work in combination with columns?
+ *   - Stress test with larger bubbles. It might need to be recursive to 
+ *     re-check with the new transA, since other bubbles may take the edge 
+ *     position when transA changes.
+ *   - Do not use with user set extremes.
  */
 
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
+		inside: true,
+		style: {
+			color: 'white'
+		},
 		verticalAlign: 'middle'
 	},
-	// fillOpacity: 0.75,
+	// displayNegative: true,
+	// fillOpacity: 0.5,
 	marker: {
 		lineWidth: 1
 	},
 	minSize: 8,
 	maxSize: '20%',
+	// negativeColor: null,
 	shadow: false,
 	tooltip: {
 		pointFormat: 'x: {point.x}, y: {point.y}, z: {point.z}'
-	}
+	},
+	zThreshold: 0
 });
 
 // 2 - Create the series object
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
-	useMarkerGroup: true,
+	trackerGroupKey: 'group',
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -1279,35 +1296,74 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	},
 	
 	/**
+	 * Apply the fillOpacity to all fill positions
+	 */
+	applyOpacity: function (fill) {
+		var fillOpacity = pick(this.options.fillOpacity, 0.5);
+		
+		if (fillOpacity !== 1) {
+			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
+		}
+		return fill;
+	},
+	
+	/**
 	 * Extend the convertAttribs method by applying opacity to the fill
 	 */
 	convertAttribs: function () {
-		var obj = Series.prototype.convertAttribs.apply(this, arguments),
-			fillOpacity = pick(this.options.fillOpacity, 0.75);
+		var obj = Series.prototype.convertAttribs.apply(this, arguments);
 		
-		if (fillOpacity !== 1) {
-			obj.fill = Highcharts.Color(obj.fill).setOpacity(fillOpacity).get('rgba');
-		}
+		obj.fill = this.applyOpacity(obj.fill);
 		
 		return obj;
 	},
 	
 	/**
-	 * Extend the base translate method to handle bubble size
+	 * Postprocess mapping between options and SVG attributes in order to apply Z threshold
 	 */
-	translate: function () {
+	getAttribs: function () {
+		
+		var options = this.options,
+			stateOptions = options.states,
+			negColor = options.negativeColor,
+			seriesNegPointAttr;
+
+		Series.prototype.getAttribs.apply(this, arguments);
+		
+		if (negColor) {
+			seriesNegPointAttr = merge(this.pointAttr);
+			
+			seriesNegPointAttr[''].fill = this.applyOpacity(negColor);
+			seriesNegPointAttr.hover.fill = this.applyOpacity(stateOptions.hover.negativeColor || negColor);
+			seriesNegPointAttr.select.fill = this.applyOpacity(stateOptions.select.negativeColor || negColor);
+	
+			each(this.points, function (point) {
+				if (point.z < options.zThreshold) {
+					point.pointAttr = seriesNegPointAttr;
+				}
+			});
+		}
+	},
+	
+	setData: function () {
 		
 		var chart = this.chart,
 			options = this.options,
 			data = this.data,
 			extremes = {},
 			smallestSize = Math.min(chart.plotWidth, chart.plotHeight),
+			cutThreshold = options.displayNegative === false ? options.zThreshold : -Number.MAX_VALUE,
+			len,
 			i,
-			point,
+			z,
 			minSize,
 			pos,
+			radius,
+			zData,
+			radii = [],
 			zMin = Number.MAX_VALUE,
-			zMax = Number.MIN_VALUE;
+			zMax = -Number.MAX_VALUE,
+			zRange;
 			
 		// Translate the size extremes to pixel values
 		each(['minSize', 'maxSize'], function (prop) {
@@ -1320,45 +1376,109 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 				length;
 			
 		});
-		minSize = extremes.minSize;
+		this.minPxSize = minSize = extremes.minSize;
+		
+		// Run the parent method
+		Series.prototype.setData.apply(this, arguments);
+		
+		// Find the min and max Z
+		zData = this.zData;
+		zMin = arrayMin(zData);
+		zMax = arrayMax(zData);
+		
+		// Set the shape type and arguments to be picked up in drawPoints
+		for (i = 0, len = zData.length; i < len; i++) {
+			zRange = zMax - zMin;
+			pos = zRange > 0 ? // relative size, a number between 0 and 1
+				(zData[i] - zMin) / (zMax - zMin) : 
+				0.5;
+			radii.push(Math.round(minSize + pos * (extremes.maxSize - minSize)) / 2);
+		}
+		this.radii = radii;
+	},
+	
+	/**
+	 * Extend the base translate method to handle bubble size
+	 */
+	translate: function () {
+		
+		var i,
+			data = this.data,
+			point,
+			radius,
+			radii = this.radii;
 		
 		// Run the parent method
 		seriesTypes.scatter.prototype.translate.call(this);
-		
-		// Find the min and max Z
-		i = data.length;
-		while(i--) {
-			point = data[i];
-			
-			if (typeof point.z === 'number') {
-				if (point.z < zMin) {
-					zMin = point.z;
-				}
-				if (point.z > zMax) {
-					zMax = point.z;
-				}
-			} else {
-				point.y = null; // force hide it
-			}
-		}
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
 		while(i--) {
 			point = data[i];
+			radius = radii[i];
 			
-			pos = (point.z - zMin) / (zMax - zMin); // relative size, a number between 0 and 1
-			
-			point.shapeType = 'circle';
-			point.shapeArgs = {
-				x: point.plotX,
-				y: point.plotY,
-				r: (minSize + pos * (extremes.maxSize - minSize)) / 2 // the radius
-			};
+			if (radius >= this.minPxSize / 2) {
+				// Shape arguments
+				point.shapeType = 'circle';
+				point.shapeArgs = {
+					x: point.plotX,
+					y: point.plotY,
+					r: radius
+				};
+				
+				// Alignment box for the data label
+				point.dlBox = {
+					x: point.plotX - radius,
+					y: point.plotY - radius,
+					width: 2 * radius,
+					height: 2 * radius
+				};
+			} else { // below zThreshold
+				point.shapeArgs = point.plotY = point.dlBox = null;
+			}
 		}
 	},
 	
-	drawPoints: seriesTypes.column.prototype.drawPoints
+	drawPoints: seriesTypes.column.prototype.drawPoints,
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel
+});
+
+/**
+ * Wrap the setAxisTranslation with logic to pad each axis with the amount of pixels
+ * necessary to avoid the bubbles to overflow.
+ */
+wrap(Axis.prototype, 'setAxisTranslation', function (proceed, final) {
+	var chart = this.chart,
+		axisLength = this.len,
+		pxMin = 0, 
+		pxMax = axisLength,
+		dataKey = this.isXAxis ? 'xData' : 'yData',
+		transA = this.transA,
+		transB = this.transB,
+		plotLength = this.horiz ? chart.plotWidth : chart.plotHeight,
+		min = this.min;
+	
+	proceed.call(this);
+	
+	if (final && pick(this.options.min, this.userMin) === UNDEFINED) {
+		each(this.series, function (series) {
+			var data = series[dataKey],
+				i = data.length,
+				radius,
+				radii = series.radii;
+			if (series.type === 'bubble') {
+				while (i--) {
+					radius = radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
+			}
+		});
+		pxMax -= axisLength;
+		pxMin *= -1;
+		this.minPixelPadding = Math.max(this.minPixelPadding, pxMin);
+		this.transA = (plotLength - pxMax - pxMin) / (this.max - min);
+	}
 });
 
 /* ****************************************************************************

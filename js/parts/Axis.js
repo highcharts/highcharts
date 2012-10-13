@@ -1118,7 +1118,7 @@ Axis.prototype = {
 		}
 
 		// set the translation factor used in translate function
-		axis.setAxisTranslation(secondPass);
+		axis.setAxisTranslation();
 
 		// hook for ordinal axes and radial axes
 		if (axis.beforeSetTickPositions) {
