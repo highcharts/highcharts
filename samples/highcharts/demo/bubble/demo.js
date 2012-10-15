@@ -23,7 +23,7 @@ $(function () {
 	
 	    series: [{
 	        _data: [
-	            [50, 0, 1],
+	            [0, 0, 1],
 	            [100, 100, 0]
 	        ],
 	        data: (function() {
@@ -41,11 +41,57 @@ $(function () {
 	        dataLabels: {
 	            //enabled: true
 	        },
-	        _color: {
+	        color: {
 	             radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
 	             stops: [
-	                 [0, 'white'],
-	                [1, 'blue']
+	                 [0, 'rgba(255, 255, 255, 0.5)'],
+	                 [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.5).get('rgba')]
+	             ]
+	        }
+	    }, {
+	        data: (function() {
+	            var arr = [];
+	            for (var i = 0; i < 10; i++) {
+	                arr.push([
+	                    Math.round(Math.random() * 100),
+	                    Math.round(Math.random() * 100),
+	                    Math.round(Math.random() * 100)
+	                ]);
+	            }
+	            console.log('data: ' + JSON.stringify(arr));
+	            return arr;
+	        }()),
+	        dataLabels: {
+	            //enabled: true
+	        },
+	        color: {
+	             radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+	             stops: [
+	                 [0, 'rgba(255, 255, 255, 0.5)'],
+	                 [1, Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.5).get('rgba')]
+	             ]
+	        }
+	    }, {
+	        data: (function() {
+	            var arr = [];
+	            for (var i = 0; i < 10; i++) {
+	                arr.push([
+	                    Math.round(Math.random() * 100),
+	                    Math.round(Math.random() * 100),
+	                    Math.round(Math.random() * 100)
+	                ]);
+	            }
+	            console.log('data: ' + JSON.stringify(arr));
+	            return arr;
+	        }()),
+	        dataLabels: {
+	            //enabled: true
+	        },
+	        color: {
+	             radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+	             stops: [
+	                 [0, 'rgba(255, 255, 255, 0.5)'],
+	                 [1, Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.5).get('rgba')]
 	             ]
 	        }
 	    }]

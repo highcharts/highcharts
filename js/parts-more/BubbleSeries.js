@@ -9,6 +9,9 @@
  * - Solid lines with gradient color? Consider separate fillColor option.
  * - Move tooltip away from mouse (all scatter-inherited series)
  * - Individual colors. Don't use marker structure?
+ * - Animation
+ * - For multiple series, the legend marker icons are wrong.
+ * - Fill opacity (and perhaps fill color) must be reflected in the legend symbol.
  * - Axis.setAxisTranslation
  *   - Check redrawing/resizing.
  *   - Add minPadding/maxPadding.
