@@ -3639,6 +3639,7 @@ SVGRenderer.prototype = {
 			stopOpacity,
 			radialReference,
 			n,
+			id,
 			key = [];
 		
 		// Apply linear or radial gradients
@@ -3687,10 +3688,13 @@ SVGRenderer.prototype = {
 			key = key.join(',');
 			
 			// Check if a gradient object with the same config object is created within this renderer
-			if (!gradients[key]) {
+			if (gradients[key]) {
+				id = gradients[key].id;
+				
+			} else {
 
 				// Set the id and create the element
-				gradAttr.id = PREFIX + idCounter++;
+				gradAttr.id = id = PREFIX + idCounter++;
 				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
@@ -3720,7 +3724,7 @@ SVGRenderer.prototype = {
 			}
 
 			// Return the reference to the gradient object
-			return 'url(' + renderer.url + '#' + gradAttr.id + ')';
+			return 'url(' + renderer.url + '#' + id + ')';
 			
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
