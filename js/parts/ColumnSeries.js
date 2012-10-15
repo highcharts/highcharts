@@ -291,7 +291,7 @@ var ColumnSeries = extendClass(Series, {
 	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
 		var chart = this.chart,
 			inverted = chart.inverted,
-			below = point.below || (point.plotY > (this.translatedThreshold || chart.plotSizeY)),
+			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
 			inside = (this.options.stacking || options.inside); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it
