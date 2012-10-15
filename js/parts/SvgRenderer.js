@@ -752,7 +752,7 @@ SVGElement.prototype = {
 			element = wrapper.element,
 			styles = wrapper.styles,
 			rad = rotation * deg2rad;
-
+			
 		if (!bBox) {
 			// SVG elements
 			if (element.namespaceURI === SVG_NS || renderer.forExport) {
@@ -788,17 +788,17 @@ SVGElement.prototype = {
 			if (renderer.isSVG) {
 				width = bBox.width;
 				height = bBox.height;
-	
+				
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101)
+				if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+					bBox.height = height = 14;
+				}
+			
 				// Adjust for rotated text
 				if (rotation) {
 					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 				}
-			}
-			
-			// Workaround for wrong bounding box in IE9 and IE10 (#1101)
-			if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
-				bBox.height = 14;
 			}
 			
 			wrapper.bBox = bBox;
