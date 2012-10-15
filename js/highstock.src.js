@@ -4168,7 +4168,7 @@ SVGRenderer.prototype = {
 			 * Return the bounding box of the box, not the group
 			 */
 			getBBox: function () {
-				return box ? box.getBBox() : {
+				return {
 					width: bBox.width + 2 * padding,
 					height: bBox.height + 2 * padding,
 					x: bBox.x - padding,
