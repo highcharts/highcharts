@@ -1372,10 +1372,6 @@ Series.prototype = {
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
 
-		/*if (!hasTouch && chart.mouseIsDown) {
-			return;
-		}*/
-
 		// set normal state to previous series
 		if (hoverSeries && hoverSeries !== series) {
 			hoverSeries.onMouseOut();
@@ -2424,7 +2420,17 @@ Series.prototype = {
 			singlePoints = series.singlePoints,
 			trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
-			i;
+			i,
+			onMouseOver = function () {
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+			},
+			onMouseOut = function () {
+				if (!options.stickyTracking) {
+					series.onMouseOut();
+				}
+			};
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -2455,7 +2461,7 @@ Series.prototype = {
 
 		} else { // create
 				
-			series.tracker = renderer.path(trackerPath)
+			series.tracker = tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
 					'stroke-linejoin': 'round', // #1225
@@ -2464,18 +2470,14 @@ Series.prototype = {
 					fill: trackByArea ? TRACKER_FILL : NONE,
 					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
-					if (chart.hoverSeries !== series) {
-						series.onMouseOver();
-					}
-				})
-				.on('mouseout', function () {
-					if (!options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
+				.on('mouseover', onMouseOver)
+				.on('mouseout', onMouseOut)
 				.css(css)
 				.add(trackerGroup);
+				
+			if (hasTouch) {
+				tracker.on('touchstart', onMouseOver);
+			} 
 		}
 
 	}

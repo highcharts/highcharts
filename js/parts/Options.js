@@ -290,7 +290,7 @@ defaultOptions = {
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
 		shared: useCanVG,
-		snap: hasTouch ? 25 : 10,
+		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			fontSize: '12px',

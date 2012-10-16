@@ -37,6 +37,7 @@ var UNDEFINED,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
+	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
@@ -1616,7 +1617,7 @@ defaultOptions = {
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
 		shared: useCanVG,
-		snap: hasTouch ? 25 : 10,
+		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			fontSize: '12px',
@@ -2214,17 +2215,15 @@ SVGElement.prototype = {
 	 * @param {Function} handler
 	 */
 	on: function (eventType, handler) {
-		var fn = handler;
 		// touch
 		if (hasTouch && eventType === 'click') {
-			eventType = 'touchstart';
-			fn = function (e) {
+			this.element.ontouchstart = function (e) {
 				e.preventDefault();
 				handler();
 			};
 		}
 		// simplest possible event model for internal use
-		this.element['on' + eventType] = fn;
+		this.element['on' + eventType] = handler;
 		return this;
 	},
 	
@@ -8700,7 +8699,10 @@ MouseTracker.prototype = {
 				chart.mouseIsDown = hasDragged = false;
 			}
 
-			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			removeEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				removeEvent(doc, 'touchend', drop);
+			}
 		}
 
 		/**
@@ -8735,7 +8737,7 @@ MouseTracker.prototype = {
 			e = mouseTracker.normalizeMouseEvent(e);
 
 			// issue #295, dragging not always working in Firefox
-			if (!hasTouch && e.preventDefault) {
+			if (e.type.indexOf('touch') === -1 && e.preventDefault) {
 				e.preventDefault();
 			}
 
@@ -8745,11 +8747,15 @@ MouseTracker.prototype = {
 			chart.mouseDownX = mouseTracker.mouseDownX = e.chartX;
 			mouseTracker.mouseDownY = e.chartY;
 
-			addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			addEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				addEvent(doc, 'touchend', drop);
+			}
 		};
 
 		// The mousemove, touchmove and touchstart event handler
 		var mouseMove = function (e) {
+			
 			// let the system handle multitouch operations like two finger scroll
 			// and pinching
 			if (e && e.touches && e.touches.length > 1) {
@@ -8758,16 +8764,19 @@ MouseTracker.prototype = {
 
 			// normalize
 			e = mouseTracker.normalizeMouseEvent(e);
-			if (!hasTouch) { // not for touch devices
+
+			var type = e.type,
+				chartX = e.chartX,
+				chartY = e.chartY,
+				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
+				
+			
+			if (type.indexOf('touch') === -1) {  // not for touch actions
 				e.returnValue = false;
 			}
 
-			var chartX = e.chartX,
-				chartY = e.chartY,
-				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
-
 			// on touch devices, only trigger click if a handler is defined
-			if (hasTouch && e.type === 'touchstart') {
+			if (type === 'touchstart') {
 				if (attr(e.target, 'isTracker')) {
 					if (!chart.runTrackerClick) {
 						e.preventDefault();
@@ -8800,7 +8809,7 @@ MouseTracker.prototype = {
 				}
 			}
 
-			if (chart.mouseIsDown && e.type !== 'touchstart') { // make selection
+			if (chart.mouseIsDown && type !== 'touchstart') { // make selection
 
 				// determine if the mouse has moved more than 10px
 				hasDragged = Math.sqrt(
@@ -12505,10 +12514,6 @@ Series.prototype = {
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
 
-		/*if (!hasTouch && chart.mouseIsDown) {
-			return;
-		}*/
-
 		// set normal state to previous series
 		if (hoverSeries && hoverSeries !== series) {
 			hoverSeries.onMouseOut();
@@ -13557,7 +13562,17 @@ Series.prototype = {
 			singlePoints = series.singlePoints,
 			trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
-			i;
+			i,
+			onMouseOver = function () {
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+			},
+			onMouseOut = function () {
+				if (!options.stickyTracking) {
+					series.onMouseOut();
+				}
+			};
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -13588,7 +13603,7 @@ Series.prototype = {
 
 		} else { // create
 				
-			series.tracker = renderer.path(trackerPath)
+			series.tracker = tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
 					'stroke-linejoin': 'round', // #1225
@@ -13597,18 +13612,14 @@ Series.prototype = {
 					fill: trackByArea ? TRACKER_FILL : NONE,
 					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
-					if (chart.hoverSeries !== series) {
-						series.onMouseOver();
-					}
-				})
-				.on('mouseout', function () {
-					if (!options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
+				.on('mouseover', onMouseOver)
+				.on('mouseout', onMouseOut)
 				.css(css)
 				.add(trackerGroup);
+				
+			if (hasTouch) {
+				tracker.on('touchstart', onMouseOver);
+			} 
 		}
 
 	}
@@ -14123,7 +14134,7 @@ var ColumnSeries = extendClass(Series, {
 	},
 	/**
 	 * Draw the individual tracker elements.
-	 * This method is inherited by scatter and pie charts too.
+	 * This method is inherited by pie charts too.
 	 */
 	drawTracker: function () {
 		var series = this,
@@ -14138,9 +14149,28 @@ var ColumnSeries = extendClass(Series, {
 			trackerGroup = series.isCartesian && series.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			rel,
 			plotY,
-			validPlotY;
+			validPlotY,
+			points = series.points,
+			point,
+			i = points.length,
+			onMouseOver = function (event) {
+				rel = event.relatedTarget || event.fromElement;
+				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
+					series.onMouseOver();
+				}
+				points[event.target._i].onMouseOver();
+			},
+			onMouseOut = function (event) {
+				if (!options.stickyTracking) {
+					rel = event.relatedTarget || event.toElement;
+					if (attr(rel, 'isTracker') !== trackerLabel) {
+						series.onMouseOut();
+					}
+				}
+			};
 			
-		each(series.points, function (point) {
+		while (i--) {
+			point = points[i];
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
 			plotY = point.plotY;
@@ -14151,34 +14181,25 @@ var ColumnSeries = extendClass(Series, {
 					tracker.attr(shapeArgs);
 
 				} else {
-					point.tracker =
+					point.tracker = tracker =
 						renderer[point.shapeType](shapeArgs)
 						.attr({
 							isTracker: trackerLabel,
 							fill: TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN
 						})
-						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
-							rel = event.relatedTarget || event.fromElement;
-							if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
-								series.onMouseOver();
-							}
-							point.onMouseOver();
-
-						})
-						.on('mouseout', function (event) {
-							if (!options.stickyTracking) {
-								rel = event.relatedTarget || event.toElement;
-								if (attr(rel, 'isTracker') !== trackerLabel) {
-									series.onMouseOut();
-								}
-							}
-						})
+						.on('mouseover', onMouseOver)
+						.on('mouseout', onMouseOut)
 						.css(css)
 						.add(point.group || trackerGroup); // pies have point group - see issue #118
+						
+					if (hasTouch) {
+						tracker.on('touchstart', onMouseOver);
+					}
 				}
+				tracker.element._i = i;
 			}
-		});
+		}
 	},
 	
 	/** 
@@ -14362,7 +14383,19 @@ var ScatterSeries = extendClass(Series, {
 			css = cursor && { cursor: cursor },
 			points = series.points,
 			i = points.length,
-			graphic;
+			graphic,
+			markerGroup = series.markerGroup,
+			onMouseOver = function (e) {
+				series.onMouseOver();
+				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
+					points[e.target._i].onMouseOver();
+				}
+			},
+			onMouseOut = function () {
+				if (!series.options.stickyTracking) {
+					series.onMouseOut();
+				}
+			};
 
 		// Set an expando property for the point index, used below
 		while (i--) {
@@ -14374,22 +14407,17 @@ var ScatterSeries = extendClass(Series, {
 		
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			series.markerGroup
+			markerGroup
 				.attr({
 					isTracker: true
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function (e) {
-					series.onMouseOver();
-					if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-						points[e.target._i].onMouseOver();
-					}
-				})
-				.on('mouseout', function () {
-					if (!series.options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
+				.on('mouseover', onMouseOver)
+				.on('mouseout', onMouseOut)
 				.css(css);
+			if (hasTouch) {
+				markerGroup.on('touchstart', onMouseOver);
+			}
+			
 		} else {
 			series._hasTracking = true;
 		}
@@ -16265,11 +16293,6 @@ if (Renderer === VMLRenderer) {
 /* ****************************************************************************
  * End Flags series code													  *
  *****************************************************************************/
-// constants
-var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
-	MOUSEMOVE = hasTouch ? 'touchmove' : 'mousemove',
-	MOUSEUP = hasTouch ? 'touchend' : 'mouseup';
-
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
@@ -16351,7 +16374,7 @@ extend(defaultOptions, {
 	},
 	scrollbar: {
 		//enabled: true
-		height: hasTouch ? 20 : 14,
+		height: isTouchDevice ? 20 : 14,
 		barBackgroundColor: buttonGradient,
 		barBorderRadius: 2,
 		barBorderWidth: 1,
@@ -16733,26 +16756,46 @@ Scroller.prototype = {
 	 * Set up the mouse and touch events for the navigator and scrollbar
 	 */
 	addEvents: function () {
-		var scroller = this,
-			chart = scroller.chart;
-
-		addEvent(chart.container, MOUSEDOWN, scroller.mouseDownHandler);
-		addEvent(chart.container, MOUSEMOVE, scroller.mouseMoveHandler);
-		addEvent(document, MOUSEUP, scroller.mouseUpHandler);
+		var container = this.chart.container,
+			mouseDownHandler = this.mouseDownHandler,
+			mouseMoveHandler = this.mouseMoveHandler,
+			mouseUpHandler = this.mouseUpHandler,
+			_events;
+		
+		// Mouse events
+		_events = [
+			[container, 'mousedown', mouseDownHandler],
+			[container, 'mousemove', mouseMoveHandler],
+			[document, 'mouseup', mouseUpHandler]
+		];
+		
+		// Touch events
+		if (hasTouch) {
+			_events.push(
+				[container, 'touchstart', mouseDownHandler],
+				[container, 'touchmove', mouseMoveHandler],
+				[document, 'touchend', mouseUpHandler]
+			);
+		}
+		
+		// Add them all
+		each(_events, function (args) {
+			addEvent.apply(null, args);
+		});
+		this._events = _events;
 	},
 
 	/**
 	 * Removes the event handlers attached previously with addEvents.
 	 */
 	removeEvents: function () {
-		var scroller = this,
-			chart = scroller.chart;
-
-		removeEvent(chart.container, MOUSEDOWN, scroller.mouseDownHandler);
-		removeEvent(chart.container, MOUSEMOVE, scroller.mouseMoveHandler);
-		removeEvent(document, MOUSEUP, scroller.mouseUpHandler);
-		if (scroller.navigatorEnabled) {
-			removeEvent(scroller.baseSeries, 'updatedData', scroller.updatedDataHandler);
+		
+		each(this._events, function (args) {
+			removeEvent.apply(null, args);
+		});
+		this._events = UNDEFINED;
+		if (this.navigatorEnabled) {
+			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
 		}
 	},
 
@@ -16793,7 +16836,7 @@ Scroller.prototype = {
 				range = scroller.range,
 				chartX = e.chartX,
 				chartY = e.chartY,
-				handleSensitivity = hasTouch ? 10 : 7,
+				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
 				isOnNavigator;
 
@@ -16856,6 +16899,10 @@ Scroller.prototype = {
 					}
 				}
 			}
+			// Prevent iPad from passing the handler on from touchstart to mousedown 
+			if (e.type === 'touchstart') {
+				e.preventDefault();
+			}
 		};
 
 		/**
@@ -16867,38 +16914,45 @@ Scroller.prototype = {
 				navigatorWidth = scroller.navigatorWidth,
 				scrollerLeft = scroller.scrollerLeft,
 				scrollerWidth = scroller.scrollerWidth,
-				range = scroller.range;
-
-			e = chart.tracker.normalizeMouseEvent(e);
-			var chartX = e.chartX;
-
-			// validation for handle dragging
-			if (chartX < navigatorLeft) {
-				chartX = navigatorLeft;
-			} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-				chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
-			}
-
-			// drag left handle
-			if (scroller.grabbedLeft) {
-				hasDragged = true;
-				scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
-
-			// drag right handle
-			} else if (scroller.grabbedRight) {
-				hasDragged = true;
-				scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
-
-			// drag scrollbar or open area in navigator
-			} else if (scroller.grabbedCenter) {
-				hasDragged = true;
-				if (chartX < dragOffset) { // outside left
-					chartX = dragOffset;
-				} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
-					chartX = navigatorWidth + dragOffset - range;
+				range = scroller.range,
+				chartX;
+				
+			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
+			// down in the center of the scrollbar. This should be ignored.
+			if (e.pageX !== 0) {
+			
+				e = chart.tracker.normalizeMouseEvent(e);
+				chartX = e.chartX;
+	
+				// validation for handle dragging
+				if (chartX < navigatorLeft) {
+					chartX = navigatorLeft;
+				} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
+					chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
 				}
-
-				scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+	
+				// drag left handle
+				if (scroller.grabbedLeft) {
+					hasDragged = true;
+					scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
+	
+				// drag right handle
+				} else if (scroller.grabbedRight) {
+					hasDragged = true;
+					scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
+	
+				// drag scrollbar or open area in navigator
+				} else if (scroller.grabbedCenter) {
+					
+					hasDragged = true;
+					if (chartX < dragOffset) { // outside left
+						chartX = dragOffset;
+					} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
+						chartX = navigatorWidth + dragOffset - range;
+					}
+	
+					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+				}
 			}
 		};
 
@@ -17381,7 +17435,7 @@ RangeSelector.prototype = {
 			}
 		};
 
-		addEvent(chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
+		addEvent(chart.container, 'mousedown', rangeSelector.mouseDownHandler);
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
@@ -17591,7 +17645,7 @@ RangeSelector.prototype = {
 			divAbsolute = rangeSelector.divAbsolute,
 			zoomText = rangeSelector.zoomText;
 
-		removeEvent(rangeSelector.chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
+		removeEvent(rangeSelector.chart.container, 'mousedown', rangeSelector.mouseDownHandler);
 
 		// Destroy elements in collections
 		each([rangeSelector.buttons], function (coll) {
@@ -18556,6 +18610,7 @@ extend(Highcharts, {
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
+	isTouchDevice: isTouchDevice,
 	numberFormat: numberFormat,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
