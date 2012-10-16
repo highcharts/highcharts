@@ -2639,7 +2639,7 @@ SVGElement.prototype = {
 			element = wrapper.element,
 			styles = wrapper.styles,
 			rad = rotation * deg2rad;
-
+			
 		if (!bBox) {
 			// SVG elements
 			if (element.namespaceURI === SVG_NS || renderer.forExport) {
@@ -2675,17 +2675,17 @@ SVGElement.prototype = {
 			if (renderer.isSVG) {
 				width = bBox.width;
 				height = bBox.height;
-	
+				
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101)
+				if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+					bBox.height = height = 14;
+				}
+			
 				// Adjust for rotated text
 				if (rotation) {
 					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 				}
-			}
-			
-			// Workaround for wrong bounding box in IE9 and IE10 (#1101)
-			if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
-				bBox.height = 14;
 			}
 			
 			wrapper.bBox = bBox;
@@ -3693,6 +3693,7 @@ SVGRenderer.prototype = {
 			stopOpacity,
 			radialReference,
 			n,
+			id,
 			key = [];
 		
 		// Apply linear or radial gradients
@@ -3741,10 +3742,13 @@ SVGRenderer.prototype = {
 			key = key.join(',');
 			
 			// Check if a gradient object with the same config object is created within this renderer
-			if (!gradients[key]) {
+			if (gradients[key]) {
+				id = gradients[key].id;
+				
+			} else {
 
 				// Set the id and create the element
-				gradAttr.id = PREFIX + idCounter++;
+				gradAttr.id = id = PREFIX + idCounter++;
 				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
@@ -3774,7 +3778,7 @@ SVGRenderer.prototype = {
 			}
 
 			// Return the reference to the gradient object
-			return 'url(' + renderer.url + '#' + gradAttr.id + ')';
+			return 'url(' + renderer.url + '#' + id + ')';
 			
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
@@ -4222,7 +4226,7 @@ SVGRenderer.prototype = {
 			 * Return the bounding box of the box, not the group
 			 */
 			getBBox: function () {
-				return box ? box.getBBox() : {
+				return {
 					width: bBox.width + 2 * padding,
 					height: bBox.height + 2 * padding,
 					x: bBox.x - padding,
@@ -4256,6 +4260,9 @@ SVGRenderer.prototype = {
 				}
 				// Call base implementation to destroy the rest
 				SVGElement.prototype.destroy.call(wrapper);
+				
+				// Release local pointers (#1298)
+				wrapper = renderer = updateBoxSize = updateTextPadding = boxAttr = getSizeAfterAdd = null;
 			}
 		});
 	}
@@ -13640,7 +13647,7 @@ Series.prototype = {
 			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
-					'stroke-linejoin': 'bevel',
+					'stroke-linejoin': 'round', // #1225
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					stroke: TRACKER_FILL,
 					fill: trackByArea ? TRACKER_FILL : NONE,
@@ -14021,6 +14028,7 @@ var ColumnSeries = extendClass(Series, {
 			borderWidth = options.borderWidth,
 			columnCount = 0,
 			xAxis = series.xAxis,
+			yAxis = series.yAxis,
 			reversedXAxis = xAxis.reversed,
 			stackGroups = {},
 			stackKey,
@@ -14072,17 +14080,17 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold,
-			translatedThreshold = series.translatedThreshold = series.yAxis.getThreshold(threshold),
+			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
 		each(points, function (point) {
-			var plotY = point.plotY,
+			var plotY = mathMin(mathMax(-999, point.plotY), yAxis.len + 999), // Don't draw too far outside plot area (#1303)
 				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
-				stack = series.yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
 				shapeArgs;
 
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
@@ -14236,7 +14244,7 @@ var ColumnSeries = extendClass(Series, {
 		var chart = this.chart,
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = point.below || (point.plotY > (this.translatedThreshold || chart.plotSizeY)),
+			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
 			inside = (this.options.stacking || options.inside); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it
