@@ -210,29 +210,26 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 });
 
 /**
- * Wrap the setAxisTranslation with logic to pad each axis with the amount of pixels
+ * Add logic to pad each axis with the amount of pixels
  * necessary to avoid the bubbles to overflow.
  */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed, final) {
+Axis.prototype.beforePadding = function () {
 	var chart = this.chart,
 		axisLength = this.len,
 		pxMin = 0, 
 		pxMax = axisLength,
 		dataKey = this.isXAxis ? 'xData' : 'yData',
-		transA = this.transA,
-		transB = this.transB,
 		plotLength = this.horiz ? chart.plotWidth : chart.plotHeight,
-		min = this.min;
+		min = this.min,
+		transA = axisLength / (this.max - min);
 	
-	proceed.call(this);
-	
-	if (final && pick(this.options.min, this.userMin) === UNDEFINED) {
+	if (pick(this.options.min, this.userMin) === UNDEFINED) {
 		each(this.series, function (series) {
 			var data = series[dataKey],
 				i = data.length,
 				radius,
 				radii = series.radii;
-			if (series.type === 'bubble') {
+			if (series.type === 'bubble' && series.visible) {
 				while (i--) {
 					radius = radii[i];
 					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
@@ -240,12 +237,13 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed, final) {
 				}
 			}
 		});
+		
 		pxMax -= axisLength;
-		pxMin *= -1;
-		this.minPixelPadding = Math.max(this.minPixelPadding, pxMin);
-		this.transA = (plotLength - pxMax - pxMin) / (this.max - min);
+		transA *= (axisLength + pxMin - pxMax) / axisLength;
+		this.min += pxMin / transA;
+		this.max += pxMax / transA;
 	}
-});
+};
 
 /* ****************************************************************************
  * End Bubble series code                                                     *

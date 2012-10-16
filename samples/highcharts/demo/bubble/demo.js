@@ -4,7 +4,7 @@ $(function () {
 	    chart: {
 	        renderTo: 'container',
 	        type: 'bubble',
-	        plotBorderWidth: 1,
+	        //plotBorderWidth: 1,
 	        zoomType: 'xy'
 	    },
 	    
