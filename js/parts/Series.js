@@ -2447,7 +2447,7 @@ Series.prototype = {
 			series.tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
-					'stroke-linejoin': 'bevel',
+					'stroke-linejoin': 'round', // #1225
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					stroke: TRACKER_FILL,
 					fill: trackByArea ? TRACKER_FILL : NONE,

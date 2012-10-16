@@ -116,7 +116,7 @@ win.HighchartsAdapter = {
 			el.getStyle = el.attr;
 			el.setStyle = function () { // property value is given as array in Moo - break it down
 				var args = arguments;
-				el.attr.call(el, args[0], args[1][0]);
+				this.attr.call(this, args[0], args[1][0]);
 			};
 			// dirty hack to trick Moo into handling el as an element wrapper
 			el.$family = function () { return true; };
@@ -266,19 +266,20 @@ win.HighchartsAdapter = {
 			return;
 		}
 		
-		win.HighchartsAdapter.extendWithEvents(el);
-		if (type) {
-			if (type === 'unload') { // Moo self destructs before custom unload events
-				type = 'beforeunload';
+		if (el.addEvent) { // If el doesn't have an addEvent method, there are no events to remove
+			if (type) {
+				if (type === 'unload') { // Moo self destructs before custom unload events
+					type = 'beforeunload';
+				}
+	
+				if (fn) {
+					el.removeEvent(type, fn);
+				} else if (el.removeEvents) { // #958
+					el.removeEvents(type);
+				}
+			} else {
+				el.removeEvents();
 			}
-
-			if (fn) {
-				el.removeEvent(type, fn);
-			} else if (el.removeEvents) { // #958
-				el.removeEvents(type);
-			}
-		} else {
-			el.removeEvents();
 		}
 	},
 

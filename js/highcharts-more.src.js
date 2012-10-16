@@ -951,7 +951,7 @@ var GaugeSeries = {
 				],
 				translateX: center[0],
 				translateY: center[1],
-				rotation: (yAxis.startAngleRad + yAxis.translate(point.y)) * 180 / Math.PI
+				rotation: (yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true)) * 180 / Math.PI
 			};
 			
 			// Positions for data label

@@ -77,6 +77,7 @@ var ColumnSeries = extendClass(Series, {
 			borderWidth = options.borderWidth,
 			columnCount = 0,
 			xAxis = series.xAxis,
+			yAxis = series.yAxis,
 			reversedXAxis = xAxis.reversed,
 			stackGroups = {},
 			stackKey,
@@ -128,17 +129,17 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold,
-			translatedThreshold = series.translatedThreshold = series.yAxis.getThreshold(threshold),
+			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
 		each(points, function (point) {
-			var plotY = point.plotY,
+			var plotY = mathMin(mathMax(-999, point.plotY), yAxis.len + 999), // Don't draw too far outside plot area (#1303)
 				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
-				stack = series.yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
 				shapeArgs;
 
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
@@ -292,7 +293,7 @@ var ColumnSeries = extendClass(Series, {
 		var chart = this.chart,
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = point.below || (point.plotY > (this.translatedThreshold || chart.plotSizeY)),
+			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
 			inside = (this.options.stacking || options.inside); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it

@@ -752,7 +752,7 @@ SVGElement.prototype = {
 			element = wrapper.element,
 			styles = wrapper.styles,
 			rad = rotation * deg2rad;
-
+			
 		if (!bBox) {
 			// SVG elements
 			if (element.namespaceURI === SVG_NS || renderer.forExport) {
@@ -788,17 +788,17 @@ SVGElement.prototype = {
 			if (renderer.isSVG) {
 				width = bBox.width;
 				height = bBox.height;
-	
+				
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101)
+				if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+					bBox.height = height = 14;
+				}
+			
 				// Adjust for rotated text
 				if (rotation) {
 					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
 					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
 				}
-			}
-			
-			// Workaround for wrong bounding box in IE9 and IE10 (#1101)
-			if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
-				bBox.height = 14;
 			}
 			
 			wrapper.bBox = bBox;
@@ -1806,6 +1806,7 @@ SVGRenderer.prototype = {
 			stopOpacity,
 			radialReference,
 			n,
+			id,
 			key = [];
 		
 		// Apply linear or radial gradients
@@ -1854,10 +1855,13 @@ SVGRenderer.prototype = {
 			key = key.join(',');
 			
 			// Check if a gradient object with the same config object is created within this renderer
-			if (!gradients[key]) {
+			if (gradients[key]) {
+				id = gradients[key].id;
+				
+			} else {
 
 				// Set the id and create the element
-				gradAttr.id = PREFIX + idCounter++;
+				gradAttr.id = id = PREFIX + idCounter++;
 				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
@@ -1887,7 +1891,7 @@ SVGRenderer.prototype = {
 			}
 
 			// Return the reference to the gradient object
-			return 'url(' + renderer.url + '#' + gradAttr.id + ')';
+			return 'url(' + renderer.url + '#' + id + ')';
 			
 		// Webkit and Batik can't show rgba.
 		} else if (regexRgba.test(color)) {
@@ -2335,7 +2339,7 @@ SVGRenderer.prototype = {
 			 * Return the bounding box of the box, not the group
 			 */
 			getBBox: function () {
-				return box ? box.getBBox() : {
+				return {
 					width: bBox.width + 2 * padding,
 					height: bBox.height + 2 * padding,
 					x: bBox.x - padding,
@@ -2369,6 +2373,9 @@ SVGRenderer.prototype = {
 				}
 				// Call base implementation to destroy the rest
 				SVGElement.prototype.destroy.call(wrapper);
+				
+				// Release local pointers (#1298)
+				wrapper = renderer = updateBoxSize = updateTextPadding = boxAttr = getSizeAfterAdd = null;
 			}
 		});
 	}
