@@ -7439,7 +7439,37 @@ Axis.prototype = {
 		axis.bottom = chart.chartHeight - axis.height - axis.top;
 		axis.right = chart.chartWidth - axis.width - axis.left;
 		axis.len = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
+		if (!axis.isXAxis) {
+			axis.clipBox = {
+				x: chart.plotBorderWidth / 2,
+				y: chart.plotBorderWidth / 2,
+				width: chart.inverted ? axis.height : axis.width,
+				height: chart.inverted ? axis.width : axis.height
+			};
+		}
 	},
+
+	/**
+	 * Check whether a given point is within the clip area for this axis
+	 *
+	 * @param {Number} plotX Pixel x relative to the plot area
+	 * @param {Number} plotY Pixel y relative to the plot area
+	 *
+	 * Note that we intentionally don't have an inverted parameter.
+	 * The clip is always oriented normally and the graph is rotated if inverted,
+	 * so the orientation of plotX, plotY is always correct
+	 */
+	isInsideClip: function (plotX, plotY) {
+		var result = true,
+			clipBox = this.clipBox;
+
+		if (clipBox) {
+			result =  plotX >= clipBox.x && plotX <= (clipBox.x + clipBox.width) &&
+				plotY >= clipBox.y && plotY <= (clipBox.y + clipBox.height);
+		}
+		return result;
+	},
+
 
 	/**
 	 * Get the actual axis extremes
@@ -7787,6 +7817,17 @@ Axis.prototype = {
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
+			}
+
+			if (axis.clipBox) {
+				if (!axis.clipRect) {
+					axis.clipRect = renderer.clipRect(axis.clipBox);
+				} else {
+					axis.clipRect.animate({
+						width: axis.clipBox.width,
+						height: axis.clipBox.height
+					});
+				}
 			}
 
 		} // end if hasData
@@ -12628,10 +12669,17 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			clipRect;
 			
 		if (group && this.options.clip !== false) {
-			group.clip(chart.clipRect);
+			if (this.yAxis.clipRect) {
+				clipRect = this.yAxis.clipRect;
+			} else {
+				clipRect = chart.clipRect;
+			}
+			group.clip(clipRect);
+
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -12677,7 +12725,8 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				isInside = series.yAxis.isInsideClip(plotX, plotY) &&
+							chart.isInsidePlot(plotX, plotY, chart.inverted);
 				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
@@ -13269,8 +13318,8 @@ Series.prototype = {
 		}
 		// Place it on first and subsequent (redraw) calls
 		group.translate(
-			xAxis ? xAxis.left : chart.plotLeft, 
-			yAxis ? yAxis.top : chart.plotTop
+			chart.inverted ? (yAxis ? yAxis.left : chart.plotLeft) : (xAxis ? xAxis.left : chart.plotLeft),
+			chart.inverted ? (xAxis ? xAxis.top : chart.plotTop) : (yAxis ? yAxis.top : chart.plotTop)
 		);
 		
 		return group;
@@ -13290,7 +13339,8 @@ Series.prototype = {
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
-			chartSeriesGroup = chart.seriesGroup;
+			chartSeriesGroup = chart.seriesGroup,
+			clipRect;
 		
 		// the group
 		group = series.plotGroup(
@@ -13344,9 +13394,14 @@ Series.prototype = {
 		
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
-			group.clip(chart.clipRect);
+			if (series.yAxis.clipRect) {
+				clipRect = series.yAxis.clipRect;
+			} else {
+				clipRect = chart.clipRect;
+			}
+			group.clip(clipRect);
 			if (this.trackerGroup) {
-				this.trackerGroup.clip(chart.clipRect);
+				this.trackerGroup.clip(clipRect);
 			}
 		}
 
