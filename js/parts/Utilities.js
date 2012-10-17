@@ -343,7 +343,9 @@ dateFormat = function (format, timestamp, capitalize) {
 
 	// do the replaces
 	for (key in replacements) {
-		format = format.replace(new RegExp('%' + key, 'g'), replacements[key]);
+		while (format.indexOf('%' + key) !== -1) { // regex would do it in one line, but this is faster
+			format = format.replace('%' + key, replacements[key]);
+		}
 	}
 
 	// Optionally capitalize the string and return
