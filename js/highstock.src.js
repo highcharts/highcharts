@@ -6911,6 +6911,7 @@ Axis.prototype = {
 	 */
 	getMinorTickPositions: function () {
 		var axis = this,
+			options = axis.options,
 			tickPositions = axis.tickPositions,
 			minorTickInterval = axis.minorTickInterval;
 
@@ -6926,13 +6927,20 @@ Axis.prototype = {
 					axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
 				);	
 			}
-		
+		} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
+			minorTickPositions = minorTickPositions.concat(
+				getTimeTicks(
+					normalizeTimeTickInterval(minorTickInterval),
+					axis.min,
+					axis.max,
+					options.startOfWeek
+				)
+			);
 		} else {			
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 				minorTickPositions.push(pos);	
 			}
 		}
-		
 		return minorTickPositions;
 	},
 
