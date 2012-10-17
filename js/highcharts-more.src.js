@@ -1416,7 +1416,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
-		while(i--) {
+		while (i--) {
 			point = data[i];
 			radius = radii[i];
 			

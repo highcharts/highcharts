@@ -77,7 +77,7 @@
 			lines;
 			
 		if (csv) {
-    		
+			
 			lines = csv
 				.replace(/\r\n/g, "\n") // Unix
 				.replace(/\r/g, "\n") // Mac
@@ -222,7 +222,7 @@
 				
 				// Set the fixed point for the next pair
 				if (position === positions - 1) {
-					fixedPoint = [path[i-1], path[i]];
+					fixedPoint = [path[i - 1], path[i]];
 				}
 				
 				// Reset to zero position (x/y switching)
@@ -238,7 +238,7 @@
 	
 	/**
 	 * Load an SVG file and extract the paths
- 	 * @param {Object} url
+	 * @param {Object} url
 	 */
 	loadSVG: function () {
 		
@@ -291,8 +291,9 @@
 						
 						// Handle common lineage
 						parentNode = path;
-						while ((parentNode = parentNode.parentNode)) {
+						while (parentNode) {
 							itemLineage.push(parentNode);
+							parentNode = parentNode.parentNode;
 						}
 						itemLineage.reverse();
 						

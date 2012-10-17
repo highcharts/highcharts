@@ -1,19 +1,16 @@
 /**
- * @license Highcharts JS v2.1.4 (2011-03-02)
- * Funnel module, Beta
+ * @license 
+ * Highcharts funnel module, Beta
  *
  * (c) 2010 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
 
-/*
- * To do:
- * - Bugs on width and height. Experiment with different container size and funnel positions.
- * - Tooltip missing on last point
- */
-
-(function(Highcharts){
+/*global Highcharts */
+(function (Highcharts) {
+	
+'use strict';
 
 // create shortcuts
 var addEvent = Highcharts.addEvent,
@@ -47,16 +44,17 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	/**
 	 * Overrides the pie translate method
 	 */
-	translate: function() {
-		// get positions - either an integer or a percentage string must be given
-		function getLength(length, relativeTo) {
-			return /%$/.test(length) ?
-				relativeTo * parseInt(length, 10) / 100:
-				parseInt(length, 10);
-		};
-
-
-		var sum = 0,
+	translate: function () {
+		
+		var 
+			// Get positions - either an integer or a percentage string must be given
+			getLength = function (length, relativeTo) {
+				return (/%$/).test(length) ?
+					relativeTo * parseInt(length, 10) / 100 :
+					parseInt(length, 10);
+			},
+			
+			sum = 0,
 			series = this,
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
@@ -75,18 +73,25 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			neckY = height - neckHeight,
 			data = series.data,
 			path,
+			fraction,
 
-			x1, y1, x2, x3, y3, x4, y5;
+			x1, 
+			y1, 
+			x2, 
+			x3, 
+			y3, 
+			x4, 
+			y5;
 
 		// Return the width at a specific y coordinate
-		series.getWidthAt = getWidthAt = function(y) {
+		series.getWidthAt = getWidthAt = function (y) {
 			return y > height - neckHeight ?
 				neckWidth :
 				neckWidth + (width - neckWidth) * ((height - neckHeight - y) / (height - neckHeight));
 		};
 		series.getX = function (y) {
 			return centerX - (getWidthAt(y) / 2) - options.dataLabels.distance;	
-		}
+		};
 
 		// Expose
 		series.center = [centerX, centerY, height];
@@ -115,11 +120,11 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 
 
 		// get the total sum
-		each (data, function(point) {
+		each(data, function (point) {
 			sum += point.y;
 		});
 
-		each (data, function(point) {
+		each(data, function (point) {
 			// set start and end positions
 			y5 = null;
 			fraction = sum ? point.y / sum : 0;
@@ -137,10 +142,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			if (y1 > neckY) {
 				x1 = x3 = centerX - neckWidth / 2;
 				x2 = x4 = centerX + neckWidth / 2;
-			}
-
+			
 			// the base of the neck
-			else if (y3 > neckY) {
+			} else if (y3 > neckY) {
 				y5 = y3;
 
 				tempWidth = getWidthAt(neckY);
@@ -191,7 +195,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	 * @param {Object} color The color of the point
 	 * @param {Number} brightness The brightness relative to the color
 	 */
-	drawPoints: function(point) {
+	drawPoints: function (point) {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
@@ -200,7 +204,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop;
 
-		each (series.data, function(point) {
+		each(series.data, function (point) {
 			
 			var group = point.group,
 				graphic = point.graphic,
@@ -228,6 +232,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		});
 	},
 	
+	/**
+	 * Extend the pie data label method
+	 */
 	drawDataLabels: function () {
 		var data = this.data,
 			labelDistance = this.options.dataLabels.distance,
@@ -240,7 +247,6 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		// from one labelDistance above to one labelDistance below the pie. In funnels
 		// we don't want this.
 		this.center[2] -= 2 * labelDistance;
-		
 		
 		// Set the label position array for each point.
 		while (i--) {
@@ -262,44 +268,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		}
 		
 		seriesTypes.pie.prototype.drawDataLabels.call(this);
-	},
-
-	_drawDataLabels: function() {
-		var series = this,
-			dataLabelOptions = series.options.dataLabels,
-			connectorWidth = dataLabelOptions.connectorWidth;
-
-		Highcharts.Series.prototype.drawDataLabels.apply(series);
-
-		each(series.data, function(point) {
-			var bBox = point.dataLabel.getBBox(),
-				y = bBox.y + bBox.height / 2 + connectorWidth / 2 % 1
-			point.connector = series.chart.renderer.path([
-				'M',
-				bBox.x + bBox.width + 5, y,
-				'L',
-				series.centerX - series.getWidthAt(y) / 2 - 5, y
-			]).attr({
-				'stroke-width': connectorWidth,
-				stroke: dataLabelOptions.connectorColor
-			}).add(point.group);
-		});
 	}
-
-	/* *
-	 * Draw a connector from an individual point to its data label
-	 * /
-	drawConnector: function(point) {
-		var series = this,
-			dataLabelOptions = series.options.dataLabels,
-			bBox = point.dataLabel.getBBox(),
-			connectorWidth = dataLabelOptions.connectorWidth,
-			y = bBox.y + bBox.height / 2 + connectorWidth / 2 % 1;
-
-
-	}*/
 
 });
 
 
-})(Highcharts);
+}(Highcharts));

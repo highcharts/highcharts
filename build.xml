@@ -262,7 +262,9 @@
             <fileset file="${data.src.file}"/>
             <fileset dir="${themes.dir}"/>
             <fileset file="js/modules/canvgrenderer-extended.src.js"/>
+            <fileset file="js/modules/funnel.src.js"/>
         </jslint>
+        
 
         <!-- Set a property that tells if there are unused variables. -->
         <condition property="lint.variable.error">
