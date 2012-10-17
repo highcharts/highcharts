@@ -165,7 +165,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 
 			// prepare for using shared dr
 			point.shapeType = 'path';
-			point.shapeArgs = path;
+			point.shapeArgs = { d: path };
 
 
 			// for tooltips and data labels
@@ -199,26 +199,31 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			trackerRect = chart.trackerRect,
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop;
-			//y = point.y,
-			//height = point.height;
 
 		each (series.data, function(point) {
+			
+			var group = point.group,
+				graphic = point.graphic,
+				shapeArgs = point.shapeArgs;
 
-			if (!point.group) {
-
+			if (!group) { // Create the shapes
 				point.group = renderer.g('point').add(series.group).
 					translate(plotLeft, plotTop);
-
-
-				point.graphic = renderer.path(point.shapeArgs).
+					
+				point.graphic = renderer.path(shapeArgs).
 					attr({
-						//fill: Color(color).brighten(brightness).get(ctx),
 						fill: point.color,
 						stroke: options.borderColor,
 						'stroke-width': options.borderWidth
 					}).
 					add(point.group);
-
+					
+			} else { // Update the shapes
+				group.animate({
+					translateX: plotLeft, 
+					translateY: plotTop
+				});
+				graphic.animate(shapeArgs);
 			}
 		});
 	},
