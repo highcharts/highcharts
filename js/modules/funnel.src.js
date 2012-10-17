@@ -13,17 +13,16 @@
  * - Tooltip missing on last point
  */
 
-(function(){
+(function(Highcharts){
 
 // create shortcuts
-var HC = Highcharts,
-	addEvent = HC.addEvent,
-	defaultOptions = HC.getOptions(),
+var addEvent = Highcharts.addEvent,
+	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
-	seriesTypes = HC.seriesTypes,
-	map = HC.map,
-	merge = HC.merge,
-	each = HC.each,
+	seriesTypes = Highcharts.seriesTypes,
+	map = Highcharts.map,
+	merge = Highcharts.merge,
+	each = Highcharts.each,
 	math = Math;
 
 // set default options
@@ -39,7 +38,9 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 	}
 });
 
-var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
+
+seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
+	
 	type: 'funnel',
 
 
@@ -82,10 +83,13 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 			return y > height - neckHeight ?
 				neckWidth :
 				neckWidth + (width - neckWidth) * ((height - neckHeight - y) / (height - neckHeight));
-
 		};
+		series.getX = function (y) {
+			return centerX - (getWidthAt(y) / 2) - options.dataLabels.distance;	
+		}
 
 		// Expose
+		series.center = [centerX, centerY, height];
 		series.centerX = centerX;
 
 		/*
@@ -218,13 +222,49 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 			}
 		});
 	},
+	
+	drawDataLabels: function () {
+		var data = this.data,
+			labelDistance = this.options.dataLabels.distance,
+			point,
+			i = data.length,
+			x,
+			y;
+		
+		// In the original pie label anticollision logic, the slots are distributed
+		// from one labelDistance above to one labelDistance below the pie. In funnels
+		// we don't want this.
+		this.center[2] -= 2 * labelDistance;
+		
+		
+		// Set the label position array for each point.
+		while (i--) {
+			point = data[i];
+			y = point.plotY;
+			x = this.getX(y);
+				
+			// set the anchor point for data labels
+			point.labelPos = [
+				0, // first break of connector
+				y, // a/a
+				x + labelDistance - 10, // second break, right outside point shape
+				y, // a/a
+				x + labelDistance, // landing point for connector
+				y, // a/a
+				'right', // alignment
+				0 // center angle
+			];
+		}
+		
+		seriesTypes.pie.prototype.drawDataLabels.call(this);
+	},
 
-	drawDataLabels: function() {
+	_drawDataLabels: function() {
 		var series = this,
 			dataLabelOptions = series.options.dataLabels,
 			connectorWidth = dataLabelOptions.connectorWidth;
 
-		HC.Series.prototype.drawDataLabels.apply(series);
+		Highcharts.Series.prototype.drawDataLabels.apply(series);
 
 		each(series.data, function(point) {
 			var bBox = point.dataLabel.getBBox(),
@@ -255,7 +295,6 @@ var FunnelSeries = Highcharts.extendClass(seriesTypes.pie, {
 	}*/
 
 });
-seriesTypes.funnel = FunnelSeries;
 
 
-})();
+})(Highcharts);

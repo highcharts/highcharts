@@ -14979,7 +14979,7 @@ var PieSeries = {
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
 						slotY = pos + chart.plotTop;
 					if (!isNaN(slotX)) {
-						chart.renderer.rect(slotX, slotY - 7, 100, labelHeight)
+						chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
 								'stroke-width': 1,
 								stroke: 'silver'
