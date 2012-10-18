@@ -304,7 +304,10 @@ MouseTracker.prototype = {
 				chart.mouseIsDown = hasDragged = false;
 			}
 
-			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			removeEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				removeEvent(doc, 'touchend', drop);
+			}
 		}
 
 		/**
@@ -339,7 +342,7 @@ MouseTracker.prototype = {
 			e = mouseTracker.normalizeMouseEvent(e);
 
 			// issue #295, dragging not always working in Firefox
-			if (!hasTouch && e.preventDefault) {
+			if (e.type.indexOf('touch') === -1 && e.preventDefault) {
 				e.preventDefault();
 			}
 
@@ -349,11 +352,15 @@ MouseTracker.prototype = {
 			chart.mouseDownX = mouseTracker.mouseDownX = e.chartX;
 			mouseTracker.mouseDownY = e.chartY;
 
-			addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			addEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				addEvent(doc, 'touchend', drop);
+			}
 		};
 
 		// The mousemove, touchmove and touchstart event handler
 		var mouseMove = function (e) {
+			
 			// let the system handle multitouch operations like two finger scroll
 			// and pinching
 			if (e && e.touches && e.touches.length > 1) {
@@ -362,16 +369,19 @@ MouseTracker.prototype = {
 
 			// normalize
 			e = mouseTracker.normalizeMouseEvent(e);
-			if (!hasTouch) { // not for touch devices
+
+			var type = e.type,
+				chartX = e.chartX,
+				chartY = e.chartY,
+				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
+				
+			
+			if (type.indexOf('touch') === -1) {  // not for touch actions
 				e.returnValue = false;
 			}
 
-			var chartX = e.chartX,
-				chartY = e.chartY,
-				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
-
 			// on touch devices, only trigger click if a handler is defined
-			if (hasTouch && e.type === 'touchstart') {
+			if (type === 'touchstart') {
 				if (attr(e.target, 'isTracker')) {
 					if (!chart.runTrackerClick) {
 						e.preventDefault();
@@ -404,7 +414,7 @@ MouseTracker.prototype = {
 				}
 			}
 
-			if (chart.mouseIsDown && e.type !== 'touchstart') { // make selection
+			if (chart.mouseIsDown && type !== 'touchstart') { // make selection
 
 				// determine if the mouse has moved more than 10px
 				hasDragged = Math.sqrt(

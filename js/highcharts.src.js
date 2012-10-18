@@ -37,6 +37,7 @@ var UNDEFINED,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
+	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
@@ -462,7 +463,9 @@ dateFormat = function (format, timestamp, capitalize) {
 
 	// do the replaces
 	for (key in replacements) {
-		format = format.replace('%' + key, replacements[key]);
+		while (format.indexOf('%' + key) !== -1) { // regex would do it in one line, but this is faster
+			format = format.replace('%' + key, replacements[key]);
+		}
 	}
 
 	// Optionally capitalize the string and return
@@ -611,91 +614,91 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
-	
-
-	if (interval >= timeUnits[SECOND]) { // second
-		minDate.setMilliseconds(0);
-		minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
-			count * mathFloor(minDate.getSeconds() / count));
-	}
-
-	if (interval >= timeUnits[MINUTE]) { // minute
-		minDate[setMinutes](interval >= timeUnits[HOUR] ? 0 :
-			count * mathFloor(minDate[getMinutes]() / count));
-	}
-
-	if (interval >= timeUnits[HOUR]) { // hour
-		minDate[setHours](interval >= timeUnits[DAY] ? 0 :
-			count * mathFloor(minDate[getHours]() / count));
-	}
-
-	if (interval >= timeUnits[DAY]) { // day
-		minDate[setDate](interval >= timeUnits[MONTH] ? 1 :
-			count * mathFloor(minDate[getDate]() / count));
-	}
-
-	if (interval >= timeUnits[MONTH]) { // month
-		minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
-			count * mathFloor(minDate[getMonth]() / count));
-		minYear = minDate[getFullYear]();
-	}
-
-	if (interval >= timeUnits[YEAR]) { // year
-		minYear -= minYear % count;
-		minDate[setFullYear](minYear);
-	}
-
-	// week is a special case that runs outside the hierarchy
-	if (interval === timeUnits[WEEK]) {
-		// get start of current week, independent of count
-		minDate[setDate](minDate[getDate]() - minDate[getDay]() +
-			pick(startOfWeek, 1));
-	}
-
-
-	// get tick positions
-	i = 1;
-	minYear = minDate[getFullYear]();
-	var time = minDate.getTime(),
-		minMonth = minDate[getMonth](),
-		minDateDate = minDate[getDate](),
-		timezoneOffset = useUTC ? 
-			0 : 
-			(24 * 3600 * 1000 + minDate.getTimezoneOffset() * 60 * 1000) % (24 * 3600 * 1000); // #950
-
-	// iterate and add tick positions at appropriate values
-	while (time < max) {
-		tickPositions.push(time);
-
-		// if the interval is years, use Date.UTC to increase years
-		if (interval === timeUnits[YEAR]) {
-			time = makeTime(minYear + i * count, 0);
-
-		// if the interval is months, use Date.UTC to increase months
-		} else if (interval === timeUnits[MONTH]) {
-			time = makeTime(minYear, minMonth + i * count);
-
-		// if we're using global time, the interval is not fixed as it jumps
-		// one hour at the DST crossover
-		} else if (!useUTC && (interval === timeUnits[DAY] || interval === timeUnits[WEEK])) {
-			time = makeTime(minYear, minMonth, minDateDate +
-				i * count * (interval === timeUnits[DAY] ? 1 : 7));
-
-		// else, the interval is fixed and we use simple addition
-		} else {
-			time += interval * count;
-			
-			// mark new days if the time is dividable by day
-			if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === timezoneOffset) {
-				higherRanks[time] = DAY;
-			}
+	if (defined(min)) { // #1300
+		if (interval >= timeUnits[SECOND]) { // second
+			minDate.setMilliseconds(0);
+			minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
+				count * mathFloor(minDate.getSeconds() / count));
 		}
-
-		i++;
-	}
 	
-	// push the last time
-	tickPositions.push(time);
+		if (interval >= timeUnits[MINUTE]) { // minute
+			minDate[setMinutes](interval >= timeUnits[HOUR] ? 0 :
+				count * mathFloor(minDate[getMinutes]() / count));
+		}
+	
+		if (interval >= timeUnits[HOUR]) { // hour
+			minDate[setHours](interval >= timeUnits[DAY] ? 0 :
+				count * mathFloor(minDate[getHours]() / count));
+		}
+	
+		if (interval >= timeUnits[DAY]) { // day
+			minDate[setDate](interval >= timeUnits[MONTH] ? 1 :
+				count * mathFloor(minDate[getDate]() / count));
+		}
+	
+		if (interval >= timeUnits[MONTH]) { // month
+			minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
+				count * mathFloor(minDate[getMonth]() / count));
+			minYear = minDate[getFullYear]();
+		}
+	
+		if (interval >= timeUnits[YEAR]) { // year
+			minYear -= minYear % count;
+			minDate[setFullYear](minYear);
+		}
+	
+		// week is a special case that runs outside the hierarchy
+		if (interval === timeUnits[WEEK]) {
+			// get start of current week, independent of count
+			minDate[setDate](minDate[getDate]() - minDate[getDay]() +
+				pick(startOfWeek, 1));
+		}
+	
+	
+		// get tick positions
+		i = 1;
+		minYear = minDate[getFullYear]();
+		var time = minDate.getTime(),
+			minMonth = minDate[getMonth](),
+			minDateDate = minDate[getDate](),
+			timezoneOffset = useUTC ? 
+				0 : 
+				(24 * 3600 * 1000 + minDate.getTimezoneOffset() * 60 * 1000) % (24 * 3600 * 1000); // #950
+	
+		// iterate and add tick positions at appropriate values
+		while (time < max) {
+			tickPositions.push(time);
+	
+			// if the interval is years, use Date.UTC to increase years
+			if (interval === timeUnits[YEAR]) {
+				time = makeTime(minYear + i * count, 0);
+	
+			// if the interval is months, use Date.UTC to increase months
+			} else if (interval === timeUnits[MONTH]) {
+				time = makeTime(minYear, minMonth + i * count);
+	
+			// if we're using global time, the interval is not fixed as it jumps
+			// one hour at the DST crossover
+			} else if (!useUTC && (interval === timeUnits[DAY] || interval === timeUnits[WEEK])) {
+				time = makeTime(minYear, minMonth, minDateDate +
+					i * count * (interval === timeUnits[DAY] ? 1 : 7));
+	
+			// else, the interval is fixed and we use simple addition
+			} else {
+				time += interval * count;
+				
+				// mark new days if the time is dividable by day
+				if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === timezoneOffset) {
+					higherRanks[time] = DAY;
+				}
+			}
+	
+			i++;
+		}
+	
+		// push the last time
+		tickPositions.push(time);
+	}
 
 	// record information on the chosen unit - for dynamic label formatter
 	tickPositions.info = extend(normalizedInterval, {
@@ -1616,7 +1619,7 @@ defaultOptions = {
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
 		shared: useCanVG,
-		snap: hasTouch ? 25 : 10,
+		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			fontSize: '12px',
@@ -2214,17 +2217,15 @@ SVGElement.prototype = {
 	 * @param {Function} handler
 	 */
 	on: function (eventType, handler) {
-		var fn = handler;
 		// touch
 		if (hasTouch && eventType === 'click') {
-			eventType = 'touchstart';
-			fn = function (e) {
+			this.element.ontouchstart = function (e) {
 				e.preventDefault();
 				handler();
 			};
 		}
 		// simplest possible event model for internal use
-		this.element['on' + eventType] = fn;
+		this.element['on' + eventType] = handler;
 		return this;
 	},
 	
@@ -6912,6 +6913,7 @@ Axis.prototype = {
 	 */
 	getMinorTickPositions: function () {
 		var axis = this,
+			options = axis.options,
 			tickPositions = axis.tickPositions,
 			minorTickInterval = axis.minorTickInterval;
 
@@ -6927,13 +6929,20 @@ Axis.prototype = {
 					axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
 				);	
 			}
-		
+		} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
+			minorTickPositions = minorTickPositions.concat(
+				getTimeTicks(
+					normalizeTimeTickInterval(minorTickInterval),
+					axis.min,
+					axis.max,
+					options.startOfWeek
+				)
+			);
 		} else {			
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 				minorTickPositions.push(pos);	
 			}
 		}
-		
 		return minorTickPositions;
 	},
 
@@ -8741,7 +8750,10 @@ MouseTracker.prototype = {
 				chart.mouseIsDown = hasDragged = false;
 			}
 
-			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			removeEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				removeEvent(doc, 'touchend', drop);
+			}
 		}
 
 		/**
@@ -8776,7 +8788,7 @@ MouseTracker.prototype = {
 			e = mouseTracker.normalizeMouseEvent(e);
 
 			// issue #295, dragging not always working in Firefox
-			if (!hasTouch && e.preventDefault) {
+			if (e.type.indexOf('touch') === -1 && e.preventDefault) {
 				e.preventDefault();
 			}
 
@@ -8786,11 +8798,15 @@ MouseTracker.prototype = {
 			chart.mouseDownX = mouseTracker.mouseDownX = e.chartX;
 			mouseTracker.mouseDownY = e.chartY;
 
-			addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			addEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				addEvent(doc, 'touchend', drop);
+			}
 		};
 
 		// The mousemove, touchmove and touchstart event handler
 		var mouseMove = function (e) {
+			
 			// let the system handle multitouch operations like two finger scroll
 			// and pinching
 			if (e && e.touches && e.touches.length > 1) {
@@ -8799,16 +8815,19 @@ MouseTracker.prototype = {
 
 			// normalize
 			e = mouseTracker.normalizeMouseEvent(e);
-			if (!hasTouch) { // not for touch devices
+
+			var type = e.type,
+				chartX = e.chartX,
+				chartY = e.chartY,
+				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
+				
+			
+			if (type.indexOf('touch') === -1) {  // not for touch actions
 				e.returnValue = false;
 			}
 
-			var chartX = e.chartX,
-				chartY = e.chartY,
-				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
-
 			// on touch devices, only trigger click if a handler is defined
-			if (hasTouch && e.type === 'touchstart') {
+			if (type === 'touchstart') {
 				if (attr(e.target, 'isTracker')) {
 					if (!chart.runTrackerClick) {
 						e.preventDefault();
@@ -8841,7 +8860,7 @@ MouseTracker.prototype = {
 				}
 			}
 
-			if (chart.mouseIsDown && e.type !== 'touchstart') { // make selection
+			if (chart.mouseIsDown && type !== 'touchstart') { // make selection
 
 				// determine if the mouse has moved more than 10px
 				hasDragged = Math.sqrt(
@@ -12546,10 +12565,6 @@ Series.prototype = {
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
 
-		/*if (!hasTouch && chart.mouseIsDown) {
-			return;
-		}*/
-
 		// set normal state to previous series
 		if (hoverSeries && hoverSeries !== series) {
 			hoverSeries.onMouseOut();
@@ -13612,7 +13627,17 @@ Series.prototype = {
 			singlePoints = series.singlePoints,
 			trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
-			i;
+			i,
+			onMouseOver = function () {
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+			},
+			onMouseOut = function () {
+				if (!options.stickyTracking) {
+					series.onMouseOut();
+				}
+			};
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -13643,7 +13668,7 @@ Series.prototype = {
 
 		} else { // create
 				
-			series.tracker = renderer.path(trackerPath)
+			series.tracker = tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
 					'stroke-linejoin': 'round', // #1225
@@ -13652,18 +13677,14 @@ Series.prototype = {
 					fill: trackByArea ? TRACKER_FILL : NONE,
 					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
-					if (chart.hoverSeries !== series) {
-						series.onMouseOver();
-					}
-				})
-				.on('mouseout', function () {
-					if (!options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
+				.on('mouseover', onMouseOver)
+				.on('mouseout', onMouseOut)
 				.css(css)
 				.add(trackerGroup);
+				
+			if (hasTouch) {
+				tracker.on('touchstart', onMouseOver);
+			} 
 		}
 
 	}
@@ -14178,7 +14199,7 @@ var ColumnSeries = extendClass(Series, {
 	},
 	/**
 	 * Draw the individual tracker elements.
-	 * This method is inherited by scatter and pie charts too.
+	 * This method is inherited by pie charts too.
 	 */
 	drawTracker: function () {
 		var series = this,
@@ -14193,9 +14214,28 @@ var ColumnSeries = extendClass(Series, {
 			trackerGroup = series.isCartesian && series.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			rel,
 			plotY,
-			validPlotY;
+			validPlotY,
+			points = series.points,
+			point,
+			i = points.length,
+			onMouseOver = function (event) {
+				rel = event.relatedTarget || event.fromElement;
+				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
+					series.onMouseOver();
+				}
+				points[event.target._i].onMouseOver();
+			},
+			onMouseOut = function (event) {
+				if (!options.stickyTracking) {
+					rel = event.relatedTarget || event.toElement;
+					if (attr(rel, 'isTracker') !== trackerLabel) {
+						series.onMouseOut();
+					}
+				}
+			};
 			
-		each(series.points, function (point) {
+		while (i--) {
+			point = points[i];
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
 			plotY = point.plotY;
@@ -14206,34 +14246,25 @@ var ColumnSeries = extendClass(Series, {
 					tracker.attr(shapeArgs);
 
 				} else {
-					point.tracker =
+					point.tracker = tracker =
 						renderer[point.shapeType](shapeArgs)
 						.attr({
 							isTracker: trackerLabel,
 							fill: TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN
 						})
-						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
-							rel = event.relatedTarget || event.fromElement;
-							if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
-								series.onMouseOver();
-							}
-							point.onMouseOver();
-
-						})
-						.on('mouseout', function (event) {
-							if (!options.stickyTracking) {
-								rel = event.relatedTarget || event.toElement;
-								if (attr(rel, 'isTracker') !== trackerLabel) {
-									series.onMouseOut();
-								}
-							}
-						})
+						.on('mouseover', onMouseOver)
+						.on('mouseout', onMouseOut)
 						.css(css)
 						.add(point.group || trackerGroup); // pies have point group - see issue #118
+						
+					if (hasTouch) {
+						tracker.on('touchstart', onMouseOver);
+					}
 				}
+				tracker.element._i = i;
 			}
-		});
+		}
 	},
 	
 	/** 
@@ -14417,7 +14448,19 @@ var ScatterSeries = extendClass(Series, {
 			css = cursor && { cursor: cursor },
 			points = series.points,
 			i = points.length,
-			graphic;
+			graphic,
+			markerGroup = series.markerGroup,
+			onMouseOver = function (e) {
+				series.onMouseOver();
+				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
+					points[e.target._i].onMouseOver();
+				}
+			},
+			onMouseOut = function () {
+				if (!series.options.stickyTracking) {
+					series.onMouseOut();
+				}
+			};
 
 		// Set an expando property for the point index, used below
 		while (i--) {
@@ -14429,22 +14472,17 @@ var ScatterSeries = extendClass(Series, {
 		
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			series.markerGroup
+			markerGroup
 				.attr({
 					isTracker: true
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function (e) {
-					series.onMouseOver();
-					if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-						points[e.target._i].onMouseOver();
-					}
-				})
-				.on('mouseout', function () {
-					if (!series.options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
+				.on('mouseover', onMouseOver)
+				.on('mouseout', onMouseOut)
 				.css(css);
+			if (hasTouch) {
+				markerGroup.on('touchstart', onMouseOver);
+			}
+			
 		} else {
 			series._hasTracking = true;
 		}
@@ -14629,7 +14667,7 @@ var PieSeries = {
 			if (graphic) {
 				// start values
 				graphic.attr({
-					r: 0,
+					r: series.center[3] / 2, // animate from inner radius (#779)
 					start: up,
 					end: up
 				});
@@ -15185,6 +15223,7 @@ extend(Highcharts, {
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
+	isTouchDevice: isTouchDevice,
 	numberFormat: numberFormat,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,

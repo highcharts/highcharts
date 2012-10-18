@@ -66,7 +66,7 @@
 			lines;
 			
 		if (csv) {
-    		
+			
 			lines = csv
 				.replace(/\r\n/g, "\n") // Unix
 				.replace(/\r/g, "\n") // Mac

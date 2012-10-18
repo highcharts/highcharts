@@ -175,7 +175,7 @@ var PieSeries = {
 			if (graphic) {
 				// start values
 				graphic.attr({
-					r: 0,
+					r: series.center[3] / 2, // animate from inner radius (#779)
 					start: up,
 					end: up
 				});

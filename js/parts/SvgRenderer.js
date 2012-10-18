@@ -402,17 +402,15 @@ SVGElement.prototype = {
 	 * @param {Function} handler
 	 */
 	on: function (eventType, handler) {
-		var fn = handler;
 		// touch
 		if (hasTouch && eventType === 'click') {
-			eventType = 'touchstart';
-			fn = function (e) {
+			this.element.ontouchstart = function (e) {
 				e.preventDefault();
 				handler();
 			};
 		}
 		// simplest possible event model for internal use
-		this.element['on' + eventType] = fn;
+		this.element['on' + eventType] = handler;
 		return this;
 	},
 	

@@ -10,24 +10,23 @@
 // JSLint options:
 /*global Highcharts, document, window, Math, setTimeout */
 
-(function () { // encapsulate
+(function (Highcharts) { // encapsulate
 
 // create shortcuts
-var HC = Highcharts,
-	Chart = HC.Chart,
-	addEvent = HC.addEvent,
-	removeEvent = HC.removeEvent,
-	createElement = HC.createElement,
-	discardElement = HC.discardElement,
-	css = HC.css,
-	merge = HC.merge,
-	each = HC.each,
-	extend = HC.extend,
+var Chart = Highcharts.Chart,
+	addEvent = Highcharts.addEvent,
+	removeEvent = Highcharts.removeEvent,
+	createElement = Highcharts.createElement,
+	discardElement = Highcharts.discardElement,
+	css = Highcharts.css,
+	merge = Highcharts.merge,
+	each = Highcharts.each,
+	extend = Highcharts.extend,
 	math = Math,
 	mathMax = math.max,
 	doc = document,
 	win = window,
-	hasTouch = doc.documentElement.ontouchstart !== undefined,
+	isTouchDevice = Highcharts.isTouchDevice,
 	M = 'M',
 	L = 'L',
 	DIV = 'div',
@@ -37,7 +36,8 @@ var HC = Highcharts,
 	ABSOLUTE = 'absolute',
 	PX = 'px',
 	UNDEFINED,
-	defaultOptions = HC.getOptions();
+	symbols = Highcharts.Renderer.prototype.symbols,
+	defaultOptions = Highcharts.getOptions();
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -60,7 +60,7 @@ defaultOptions.navigation = {
 		padding: '0 5px',
 		background: NONE,
 		color: '#303030',
-		fontSize: hasTouch ? '14px' : '11px'
+		fontSize: isTouchDevice ? '14px' : '11px'
 	},
 	menuItemHoverStyle: {
 		background: '#4572A5',
@@ -462,7 +462,7 @@ extend(Chart.prototype, {
 						cursor: 'pointer'
 					}, menuItemStyle), innerMenu);
 
-					div[hasTouch ? 'ontouchstart' : 'onclick'] = function () {
+					div.onclick = function () {
 						hide();
 						item.onclick.apply(chart, arguments);
 					};
@@ -665,7 +665,7 @@ function crisp(arr) {
 }
 
 // Create the export icon
-HC.Renderer.prototype.symbols.exportIcon = function (x, y, width, height) {
+symbols.exportIcon = function (x, y, width, height) {
 	return crisp([
 		M, // the disk
 		x, y + width,
@@ -687,7 +687,7 @@ HC.Renderer.prototype.symbols.exportIcon = function (x, y, width, height) {
 	]);
 };
 // Create the print icon
-HC.Renderer.prototype.symbols.printIcon = function (x, y, width, height) {
+symbols.printIcon = function (x, y, width, height) {
 	return crisp([
 		M, // the printer
 		x, y + height * 0.7,
@@ -733,4 +733,4 @@ Chart.prototype.callbacks.push(function (chart) {
 });
 
 
-}());
+}(Highcharts));
