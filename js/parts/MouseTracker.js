@@ -109,10 +109,15 @@ MouseTracker.prototype = {
 	 * the plot area.
 	 */
 	getIndex: function (e) {
-		var chart = this.chart;
+		var chart = this.chart,
+			hoverSeries = chart.hoverSeries,
+			left = hoverSeries ? hoverSeries.xAxis.left : chart.plotLeft,
+			bottom = hoverSeries ? hoverSeries.xAxis.top + hoverSeries.xAxis.height : chart.plotTop + chart.plotHeight;
+			//bottom =
 		return chart.inverted ? 
-			chart.plotHeight + chart.plotTop - e.chartY : 
-			e.chartX - chart.plotLeft;
+			//chart.plotHeight + chart.plotTop - e.chartY :
+			bottom - e.chartY :
+			e.chartX - left;
 	},
 
 	/**
@@ -143,9 +148,12 @@ MouseTracker.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
-					distance = mathMin(distance, point._dist);
-					points.push(point);
+					//toddo -adjust for group offset
+					if (series[j].isInsideClip(point.plotX, point.plotY)) {
+						point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
+						distance = mathMin(distance, point._dist);
+						points.push(point);
+					}
 				}
 			}
 			// remove furthest points
@@ -164,12 +172,11 @@ MouseTracker.prototype = {
 
 		// separate tooltip and general mouse events
 		if (hoverSeries && hoverSeries.tracker) { // only use for line-type series with common tracker
-
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
 
 			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint) {
+			if (point && point !== hoverPoint && hoverSeries.isInsideClip(point.plotX, point.plotY)) {
 
 				// trigger the events
 				point.onMouseOver();

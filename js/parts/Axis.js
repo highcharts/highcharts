@@ -1378,37 +1378,7 @@ Axis.prototype = {
 		axis.bottom = chart.chartHeight - axis.height - axis.top;
 		axis.right = chart.chartWidth - axis.width - axis.left;
 		axis.len = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
-		if (!axis.isXAxis) {
-			axis.clipBox = {
-				x: chart.plotBorderWidth / 2,
-				y: chart.plotBorderWidth / 2,
-				width: chart.inverted ? axis.height : axis.width,
-				height: chart.inverted ? axis.width : axis.height
-			};
-		}
 	},
-
-	/**
-	 * Check whether a given point is within the clip area for this axis
-	 *
-	 * @param {Number} plotX Pixel x relative to the plot area
-	 * @param {Number} plotY Pixel y relative to the plot area
-	 *
-	 * Note that we intentionally don't have an inverted parameter.
-	 * The clip is always oriented normally and the graph is rotated if inverted,
-	 * so the orientation of plotX, plotY is always correct
-	 */
-	isInsideClip: function (plotX, plotY) {
-		var result = true,
-			clipBox = this.clipBox;
-
-		if (clipBox) {
-			result =  plotX >= clipBox.x && plotX <= (clipBox.x + clipBox.width) &&
-				plotY >= clipBox.y && plotY <= (clipBox.y + clipBox.height);
-		}
-		return result;
-	},
-
 
 	/**
 	 * Get the actual axis extremes
@@ -1756,17 +1726,6 @@ Axis.prototype = {
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
-			}
-
-			if (axis.clipBox) {
-				if (!axis.clipRect) {
-					axis.clipRect = renderer.clipRect(axis.clipBox);
-				} else {
-					axis.clipRect.animate({
-						width: axis.clipBox.width,
-						height: axis.clipBox.height
-					});
-				}
 			}
 
 		} // end if hasData

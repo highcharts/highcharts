@@ -7448,37 +7448,7 @@ Axis.prototype = {
 		axis.bottom = chart.chartHeight - axis.height - axis.top;
 		axis.right = chart.chartWidth - axis.width - axis.left;
 		axis.len = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
-		if (!axis.isXAxis) {
-			axis.clipBox = {
-				x: chart.plotBorderWidth / 2,
-				y: chart.plotBorderWidth / 2,
-				width: chart.inverted ? axis.height : axis.width,
-				height: chart.inverted ? axis.width : axis.height
-			};
-		}
 	},
-
-	/**
-	 * Check whether a given point is within the clip area for this axis
-	 *
-	 * @param {Number} plotX Pixel x relative to the plot area
-	 * @param {Number} plotY Pixel y relative to the plot area
-	 *
-	 * Note that we intentionally don't have an inverted parameter.
-	 * The clip is always oriented normally and the graph is rotated if inverted,
-	 * so the orientation of plotX, plotY is always correct
-	 */
-	isInsideClip: function (plotX, plotY) {
-		var result = true,
-			clipBox = this.clipBox;
-
-		if (clipBox) {
-			result =  plotX >= clipBox.x && plotX <= (clipBox.x + clipBox.width) &&
-				plotY >= clipBox.y && plotY <= (clipBox.y + clipBox.height);
-		}
-		return result;
-	},
-
 
 	/**
 	 * Get the actual axis extremes
@@ -7826,17 +7796,6 @@ Axis.prototype = {
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
-			}
-
-			if (axis.clipBox) {
-				if (!axis.clipRect) {
-					axis.clipRect = renderer.clipRect(axis.clipBox);
-				} else {
-					axis.clipRect.animate({
-						width: axis.clipBox.width,
-						height: axis.clipBox.height
-					});
-				}
 			}
 
 		} // end if hasData
@@ -8555,10 +8514,15 @@ MouseTracker.prototype = {
 	 * the plot area.
 	 */
 	getIndex: function (e) {
-		var chart = this.chart;
+		var chart = this.chart,
+			hoverSeries = chart.hoverSeries,
+			left = hoverSeries ? hoverSeries.xAxis.left : chart.plotLeft,
+			bottom = hoverSeries ? hoverSeries.xAxis.top + hoverSeries.xAxis.height : chart.plotTop + chart.plotHeight;
+			//bottom =
 		return chart.inverted ? 
-			chart.plotHeight + chart.plotTop - e.chartY : 
-			e.chartX - chart.plotLeft;
+			//chart.plotHeight + chart.plotTop - e.chartY :
+			bottom - e.chartY :
+			e.chartX - left;
 	},
 
 	/**
@@ -8589,9 +8553,12 @@ MouseTracker.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
-					distance = mathMin(distance, point._dist);
-					points.push(point);
+					//toddo -adjust for group offset
+					if (series[j].isInsideClip(point.plotX, point.plotY)) {
+						point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
+						distance = mathMin(distance, point._dist);
+						points.push(point);
+					}
 				}
 			}
 			// remove furthest points
@@ -8610,12 +8577,11 @@ MouseTracker.prototype = {
 
 		// separate tooltip and general mouse events
 		if (hoverSeries && hoverSeries.tracker) { // only use for line-type series with common tracker
-
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
 
 			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint) {
+			if (point && point !== hoverPoint && hoverSeries.isInsideClip(point.plotX, point.plotY)) {
 
 				// trigger the events
 				point.onMouseOver();
@@ -12623,15 +12589,17 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
-			clipBox = chart.clipBox,
+			clipBox = series.clipBox,
 			inverted = chart.inverted,
-			sharedClipKey;
+			sharedClipKey,
+			sharedClipBox = extend(null, clipBox);
 
 		// Animation option is set to true
 		if (animation && !isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
-		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
+		sharedClipKey = '_sharedClip' + animation.duration + animation.easing +
+			clipBox.x + '-' + clipBox.y + '-' + clipBox.width + '-' + clipBox.height;
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) { 
@@ -12641,7 +12609,7 @@ Series.prototype = {
 			markerClipRect = chart[sharedClipKey + 'm'];
 			if (!clipRect) {
 				chart[sharedClipKey] = clipRect = renderer.clipRect(
-					extend(clipBox, { width: 0 })
+					extend(sharedClipBox, { width: 0 })
 				);
 				
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
@@ -12683,17 +12651,16 @@ Series.prototype = {
 	 */
 	afterAnimate: function () {
 		var chart = this.chart,
+			series = this,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			clipRect;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
-			if (this.yAxis.clipRect) {
-				clipRect = this.yAxis.clipRect;
-			} else {
-				clipRect = chart.clipRect;
+			if (!series.clipRect) {
+				series.clipRect = chart.renderer.clipRect(series.clipBox);
 			}
-			group.clip(clipRect);
+
+			group.clip(series.clipRect);
 
 			this.markerGroup.clip(); // no clip
 		}
@@ -12705,6 +12672,27 @@ Series.prototype = {
 				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 			}
 		}, 100);
+	},
+
+	/**
+	 * Check whether a given point is within the clip area for this series
+	 *
+	 * @param {Number} plotX Pixel x relative to the plot area
+	 * @param {Number} plotY Pixel y relative to the plot area
+	 *
+	 * Note that we intentionally don't have an inverted parameter.
+	 * The clip is always oriented normally and the graph is rotated if inverted,
+	 * so the orientation of plotX, plotY is always correct
+	 */
+	isInsideClip: function (plotX, plotY) {
+		var result = true,
+			clipBox = this.clipBox;
+
+		if (clipBox) {
+			result =  plotX >= clipBox.x && plotX <= (clipBox.x + clipBox.width) &&
+				plotY >= clipBox.y && plotY <= (clipBox.y + clipBox.height);
+		}
+		return result;
 	},
 
 	/**
@@ -12740,8 +12728,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = series.yAxis.isInsideClip(plotX, plotY) &&
-							chart.isInsidePlot(plotX, plotY, chart.inverted);
+				isInside = series.isInsideClip(plotX, plotY);
 				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
@@ -13354,8 +13341,7 @@ Series.prototype = {
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
-			chartSeriesGroup = chart.seriesGroup,
-			clipRect;
+			chartSeriesGroup = chart.seriesGroup;
 		
 		// the group
 		group = series.plotGroup(
@@ -13373,7 +13359,10 @@ Series.prototype = {
 			zIndex, 
 			chartSeriesGroup
 		);
-		
+
+		// determine clipping region - must be defined before animiation init
+		series.clipBox = createClipBoxFromAxes(series.xAxis, series.yAxis);
+
 		// initiate the animation
 		if (doAnimation) {
 			series.animate(true);
@@ -13409,14 +13398,12 @@ Series.prototype = {
 		
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
-			if (series.yAxis.clipRect) {
-				clipRect = series.yAxis.clipRect;
-			} else {
-				clipRect = chart.clipRect;
+			if (!series.clipRect) {
+				series.clipRect = chart.renderer.clipRect(series.clipBox);
 			}
-			group.clip(clipRect);
+			group.clip(series.clipRect);
 			if (this.trackerGroup) {
-				this.trackerGroup.clip(clipRect);
+				this.trackerGroup.clip(series.clipRect);
 			}
 		}
 
@@ -13430,6 +13417,16 @@ Series.prototype = {
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
+
+		// helper function
+		function createClipBoxFromAxes(xAxis, yAxis) {
+			return {
+				x: chart.plotBorderWidth / 2,
+				y: chart.plotBorderWidth / 2,
+				width: chart.inverted ? xAxis.height : xAxis.width,
+				height: chart.inverted ? yAxis.width : yAxis.height
+			};
+		}
 	},
 	
 	/**
