@@ -5,7 +5,7 @@
 // 1 - set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	fillColor: 'white',
-	lineWidth: 2,
+	lineWidth: 1,
 	states: {
 		hover: {
 			brightness: -0.3
@@ -20,7 +20,14 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Higher quartile: {point.q3}<br/>' +
 			'Maximum: {point.high}<br/>'
 	},
-	whiskerLength: '50%'
+	whiskerLength: '50%',
+	whiskerWidth: 2,
+	//whiskerColor: undefined,
+	medianWidth: 2,
+	//medianColor: undefined,
+	//stemWidth: undefined,
+	//stemColor: undefined,
+	//stemDashStyle: 'solid'
 });
 
 // 2 - Create the series object
@@ -73,7 +80,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	drawPoints: function () {
 		var series = this,  //state = series.state,
 			points = series.points,
+			options = series.options,
 			chart = series.chart,
+			renderer = chart.renderer,
 			pointAttr,
 			q1Plot,
 			q3Plot,
@@ -84,40 +93,59 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			crispX,
 			graphic,
 			path,
+			stemPath,
+			stemAttr,
+			boxPath,
+			whiskerPath,
+			whiskersAttr,
+			medianPath,
+			medianAttr,
 			halfWidth,
+			shapeArgs,
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
 
 		each(points, function (point) {
 
 			graphic = point.graphic;
+			shapeArgs = point.shapeArgs; // the box
+			stemAttr = {};
+			whiskersAttr = {};
+			medianAttr = {};
+			
 			if (point.plotY !== UNDEFINED) {
 
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
-				// crisp vector coordinates (todo: do this in translate?)
-				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathRound(point.plotX) + crispCorr;
-				halfWidth = mathRound(point.barW / 2);
-				q1Plot = mathRound(point.q1Plot) + crispCorr;
-				q3Plot = mathRound(point.q3Plot) + crispCorr;
-				medianPlot = mathRound(point.medianPlot) + crispCorr;
-				highPlot = mathRound(point.highPlot) + crispCorr;
-				lowPlot = mathRound(point.lowPlot) + crispCorr;
-
-				// create the box
-				path = [
-					'M',
-					crispX - halfWidth, q3Plot,
-					'L',
-					crispX - halfWidth, q1Plot,
-					'L',
-					crispX + halfWidth, q1Plot,
-					'L',
-					crispX + halfWidth, q3Plot,
-					'L',
-					crispX - halfWidth, q3Plot,
-					
+				// crisp vector coordinates
+				width = shapeArgs.width,
+				left = mathFloor(shapeArgs.x),
+				right = left + width,
+				halfWidth = mathRound(width / 2);
+				//crispX = mathRound(left + halfWidth) + crispCorr;
+				q1Plot = mathFloor(point.q1Plot);// + crispCorr;
+				q3Plot = mathFloor(point.q3Plot);// + crispCorr;
+				highPlot = mathFloor(point.highPlot);// + crispCorr;
+				lowPlot = mathFloor(point.lowPlot);// + crispCorr;
+				
+				// Stem attributes
+				stemAttr.stroke = point.stemColor || options.stemColor || series.color;
+				stemAttr['stroke-width'] = point.stemWidth || options.stemWidth || options.lineWidth;
+				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
+				
+				// Whiskers attributes
+				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || series.color;
+				whiskersAttr['stroke-width'] = point.whiskerWidth || options.whiskerWidth || options.lineWidth;
+				
+				// Median attributes
+				medianAttr.stroke = point.medianColor || options.medianColor || series.color;
+				medianAttr['stroke-width'] = point.medianWidth || options.medianWidth || options.lineWidth;
+				
+				
+				// The stem
+				crispCorr = (stemAttr['stroke-width'] % 2) / 2;
+				crispX = left + halfWidth + crispCorr;				
+				stemPath = [
 					// stem up
 					'M',
 					crispX, q3Plot,
@@ -128,12 +156,38 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					crispX, q1Plot,
 					'L',
-					crispX, lowPlot
+					crispX, lowPlot,
+					'z'
 				];
 				
+				// The box
+				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispX = mathFloor(crispX) + crispCorr;
+				q1Plot = mathFloor(q1Plot) + crispCorr;
+				q3Plot = mathFloor(q3Plot) + crispCorr;
+				left += crispCorr;
+				right += crispCorr;
+				boxPath = [
+					'M',
+					left, q3Plot,
+					'L',
+					left, q1Plot,
+					'L',
+					right, q1Plot,
+					'L',
+					right, q3Plot,
+					'L',
+					left, q3Plot,
+					'z'
+				];
+				
+				// The whiskers
 				if (whiskerLength) {
-					path.push(					
-						// high whisker
+					crispCorr = (whiskersAttr['stroke-width'] % 2) / 2;
+					highPlot = highPlot + crispCorr;
+					lowPlot = lowPlot + crispCorr;
+					whiskersPath = [
+						// High whisker
 						'M',
 						crispX - halfWidth * whiskerLength, 
 						highPlot,
@@ -141,36 +195,60 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 						crispX + halfWidth * whiskerLength, 
 						highPlot,
 						
-						// low whisker
+						// Low whisker
 						'M',
 						crispX - halfWidth * whiskerLength, 
 						lowPlot,
 						'L',
 						crispX + halfWidth * whiskerLength, 
 						lowPlot
-					);
+					];
 				}
-					
-				path.push(
-					// median
+				
+				// The median
+				crispCorr = (medianAttr['stroke-width'] % 2) / 2;				
+				medianPlot = mathRound(point.medianPlot) + crispCorr;
+				medianPath = [
 					'M',
-					crispX - halfWidth, 
+					left, 
 					medianPlot,
-					crispX + halfWidth, 
+					right, 
 					medianPlot,
-					
-					// close
 					'z'
-				);
-
-				if (graphic) {
-					graphic.animate({ d: path });
-				} else {
-					point.graphic = chart.renderer.path(path)
-						.attr(pointAttr)
+				];
+				
+				// Create or update the graphics
+				if (graphic) { // update
+					
+					point.stem.animate({ d: stemPath });
+					if (whiskerLength) {
+						point.whiskers.animate({ d: whiskersPath });
+					}
+					point.box.animate({ d: boxPath });
+					point.medianShape.animate({ d: medianPath });
+					
+				} else { // create new
+					point.graphic = graphic = renderer.g()
 						.add(series.group);
+					
+					point.stem = renderer.path(stemPath)
+						.attr(stemAttr)
+						.add(graphic);
+						
+					if (whiskerLength) {
+						point.whiskers = renderer.path(whiskersPath) 
+							.attr(whiskersAttr)
+							.add(graphic);
+					}
+					
+					point.box = renderer.path(boxPath)
+						.attr(pointAttr)
+						.add(graphic);
+						
+					point.medianShape = renderer.path(medianPath)
+						.attr(medianAttr)
+						.add(graphic);		
 				}
-
 			}
 		});
 

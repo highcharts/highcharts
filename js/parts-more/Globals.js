@@ -16,4 +16,5 @@ var arrayMin = Highcharts.arrayMin,
 	colProto = seriesTypes.column.prototype,
 	math = Math,
 	mathRound = math.round,
+	mathFloor = math.floor,
 	noop = function () {};
