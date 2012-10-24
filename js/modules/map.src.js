@@ -118,6 +118,7 @@
 			nullColor: '#F8F8F8',
 			shadow: false,
 			borderColor: 'silver',
+			borderWidth: 1,
 			marker: null,
 			tooltip: {
 				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
