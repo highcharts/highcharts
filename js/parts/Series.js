@@ -1430,15 +1430,17 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
-			clipBox = chart.clipBox,
+			clipBox = series.clipBox,
 			inverted = chart.inverted,
-			sharedClipKey;
+			sharedClipKey,
+			sharedClipBox = extend(null, clipBox);
 
 		// Animation option is set to true
 		if (animation && !isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
-		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
+		sharedClipKey = '_sharedClip' + animation.duration + animation.easing +
+			clipBox.x + '-' + clipBox.y + '-' + clipBox.width + '-' + clipBox.height;
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) { 
@@ -1448,7 +1450,7 @@ Series.prototype = {
 			markerClipRect = chart[sharedClipKey + 'm'];
 			if (!clipRect) {
 				chart[sharedClipKey] = clipRect = renderer.clipRect(
-					extend(clipBox, { width: 0 })
+					extend(sharedClipBox, { width: 0 })
 				);
 				
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
@@ -1490,11 +1492,17 @@ Series.prototype = {
 	 */
 	afterAnimate: function () {
 		var chart = this.chart,
+			series = this,
 			sharedClipKey = this.sharedClipKey,
 			group = this.group;
 			
 		if (group && this.options.clip !== false) {
-			group.clip(chart.clipRect);
+			if (!series.clipRect) {
+				series.clipRect = chart.renderer.clipRect(series.clipBox);
+			}
+
+			group.clip(series.clipRect);
+
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -1505,6 +1513,27 @@ Series.prototype = {
 				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 			}
 		}, 100);
+	},
+
+	/**
+	 * Check whether a given point is within the clip area for this series
+	 *
+	 * @param {Number} plotX Pixel x relative to the plot area
+	 * @param {Number} plotY Pixel y relative to the plot area
+	 *
+	 * Note that we intentionally don't have an inverted parameter.
+	 * The clip is always oriented normally and the graph is rotated if inverted,
+	 * so the orientation of plotX, plotY is always correct
+	 */
+	isInsideClip: function (plotX, plotY) {
+		var result = true,
+			clipBox = this.clipBox;
+
+		if (clipBox) {
+			result =  plotX >= clipBox.x && plotX <= (clipBox.x + clipBox.width) &&
+				plotY >= clipBox.y && plotY <= (clipBox.y + clipBox.height);
+		}
+		return result;
 	},
 
 	/**
@@ -1540,7 +1569,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				isInside = series.isInsideClip(plotX, plotY);
 				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
@@ -2132,8 +2161,8 @@ Series.prototype = {
 		}
 		// Place it on first and subsequent (redraw) calls
 		group.translate(
-			xAxis ? xAxis.left : chart.plotLeft, 
-			yAxis ? yAxis.top : chart.plotTop
+			chart.inverted ? (yAxis ? yAxis.left : chart.plotLeft) : (xAxis ? xAxis.left : chart.plotLeft),
+			chart.inverted ? (xAxis ? xAxis.top : chart.plotTop) : (yAxis ? yAxis.top : chart.plotTop)
 		);
 		
 		return group;
@@ -2171,7 +2200,10 @@ Series.prototype = {
 			zIndex, 
 			chartSeriesGroup
 		);
-		
+
+		// determine clipping region - must be defined before animiation init
+		series.clipBox = createClipBoxFromAxes(series.xAxis, series.yAxis);
+
 		// initiate the animation
 		if (doAnimation) {
 			series.animate(true);
@@ -2207,9 +2239,12 @@ Series.prototype = {
 		
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
-			group.clip(chart.clipRect);
+			if (!series.clipRect) {
+				series.clipRect = chart.renderer.clipRect(series.clipBox);
+			}
+			group.clip(series.clipRect);
 			if (this.trackerGroup) {
-				this.trackerGroup.clip(chart.clipRect);
+				this.trackerGroup.clip(series.clipRect);
 			}
 		}
 
@@ -2223,6 +2258,16 @@ Series.prototype = {
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
+
+		// helper function
+		function createClipBoxFromAxes(xAxis, yAxis) {
+			return {
+				x: chart.plotBorderWidth / 2,
+				y: chart.plotBorderWidth / 2,
+				width: chart.inverted ? xAxis.height : xAxis.width,
+				height: chart.inverted ? yAxis.width : yAxis.height
+			};
+		}
 	},
 	
 	/**
