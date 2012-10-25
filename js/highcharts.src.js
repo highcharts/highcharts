@@ -10964,6 +10964,7 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = UNDEFINED;
+		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
 		removeEvent(chart);
@@ -15181,12 +15182,9 @@ extend(Highcharts, {
 	VMLRenderer: VMLRenderer,
 	
 	// Various
-<<<<<<< HEAD
-=======
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
 	charts: charts, // docs
->>>>>>> c0e2b87... Added a global lookup array, Highcharts.charts, holding all available chart instances in the page. This prevents issues with writing multiple charts to the same div.
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
