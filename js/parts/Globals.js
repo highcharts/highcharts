@@ -37,6 +37,7 @@ var UNDEFINED,
 	pathAnim,
 	timeUnits,
 	noop = function () {},
+	charts = [],
 
 	// some constants for frequently used strings
 	DIV = 'div',

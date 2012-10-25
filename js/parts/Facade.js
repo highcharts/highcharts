@@ -22,6 +22,7 @@ extend(Highcharts, {
 	// Various
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
+	charts: charts, // docs
 	dateFormat: dateFormat,
 	format: format,
 	pathAnim: pathAnim,
