@@ -53,6 +53,7 @@ var UNDEFINED,
 	pathAnim,
 	timeUnits,
 	noop = function () {},
+	charts = [],
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -10304,6 +10305,8 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			renderTo,
+			indexAttrName = 'data-highcharts-chart',
+			oldChartIndex,
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
@@ -10317,6 +10320,15 @@ Chart.prototype = {
 		if (!renderTo) {
 			error(13, true);
 		}
+		
+		// If the container already holds a chart, destroy it
+		oldChartIndex = pInt(attr(renderTo, indexAttrName));
+		if (!isNaN(oldChartIndex) && charts[oldChartIndex]) {
+			charts[oldChartIndex].destroy();
+		}		
+		
+		// Make a reference to the chart from the div
+		attr(renderTo, indexAttrName, chart.index);
 
 		// remove previous chart
 		renderTo.innerHTML = '';
@@ -10946,9 +10958,12 @@ Chart.prototype = {
 			container = chart.container,
 			i,
 			parentNode = container && container.parentNode;
-
+			
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
+		
+		// Delete the chart from charts lookup array
+		charts[chart.index] = UNDEFINED;
 
 		// remove events
 		removeEvent(chart);
@@ -11085,7 +11100,9 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			eventType;
 
-		// Run chart
+		// Add the chart to the global lookup
+		chart.index = charts.length;
+		charts.push(chart);
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -18616,6 +18633,12 @@ extend(Highcharts, {
 	VMLRenderer: VMLRenderer,
 	
 	// Various
+<<<<<<< HEAD
+=======
+	arrayMin: arrayMin,
+	arrayMax: arrayMax,
+	charts: charts, // docs
+>>>>>>> c0e2b87... Added a global lookup array, Highcharts.charts, holding all available chart instances in the page. This prevents issues with writing multiple charts to the same div.
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
