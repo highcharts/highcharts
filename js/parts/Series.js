@@ -1979,10 +1979,15 @@ Series.prototype = {
 	 */
 	getSegmentPath: function (segment) {		
 		var series = this,
-			segmentPath = [];
-		
+			segmentPath = [],
+			step = series.options.step;
+			
 		// build the segment line
 		each(segment, function (point, i) {
+			
+			var plotX = point.plotX,
+				plotY = point.plotY,
+				lastPoint;
 
 			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
 				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
@@ -1993,12 +1998,28 @@ Series.prototype = {
 				segmentPath.push(i ? L : M);
 
 				// step line?
-				if (i && series.options.step) {
-					var lastPoint = segment[i - 1];
-					segmentPath.push(
-						point.plotX,
-						lastPoint.plotY
-					);
+				if (step && i) {
+					lastPoint = segment[i - 1];
+					if (step === 'right') { // docs
+						segmentPath.push(
+							lastPoint.plotX,
+							plotY
+						);
+						
+					} else if (step === 'center') {
+						segmentPath.push(
+							(lastPoint.plotX + plotX) / 2,
+							lastPoint.plotY,
+							(lastPoint.plotX + plotX) / 2,
+							plotY
+						);
+						
+					} else {
+						segmentPath.push(
+							plotX,
+							lastPoint.plotY
+						);
+					}
 				}
 
 				// normal line to next point
