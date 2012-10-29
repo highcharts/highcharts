@@ -1498,10 +1498,14 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			trackerGroup = this.trackerGroup;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
+			if (trackerGroup) {
+				trackerGroup.clip(chart.clipRect); // #484
+			}
 			this.markerGroup.clip(); // no clip
 		}
 		
