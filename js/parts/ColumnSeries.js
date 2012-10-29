@@ -39,6 +39,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	tooltipOutsidePlot: true,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -383,6 +384,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 	},
+	
 	/**
 	 * Remove this series from the chart
 	 */

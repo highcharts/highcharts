@@ -146,6 +146,7 @@ var PieSeries = {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',

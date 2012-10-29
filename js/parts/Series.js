@@ -512,6 +512,7 @@ Series.prototype = {
 	type: 'line',
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
+	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
@@ -946,6 +947,12 @@ Series.prototype = {
 				yData[i] = hasToYData ? series.toYData(pt) : pt.y;
 				zData[i] = pt.z; 
 			}
+		}
+		
+		// Unsorted data is not supported by the line tooltip as well as data grouping and 
+		// navigation in Stock charts (#725)
+		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
+			error(15);
 		}
 
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		

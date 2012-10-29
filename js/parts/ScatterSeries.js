@@ -20,6 +20,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 var ScatterSeries = extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
+	requireSorting: false,
 	/**
 	 * Extend the base Series' translate method by adding shape type and
 	 * arguments for the point trackers
@@ -80,7 +81,9 @@ var ScatterSeries = extendClass(Series, {
 		} else {
 			series._hasTracking = true;
 		}
-	}
+	},
+	
+	setTooltipPoints: noop
 });
 seriesTypes.scatter = ScatterSeries;
 

@@ -475,6 +475,10 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 		);
 	}
 	
+	if (this.chart.options._stock) {
+		this.requireSorting = true;
+	}
+	
 	return options;
 });
 

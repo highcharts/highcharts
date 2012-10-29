@@ -11729,6 +11729,7 @@ Series.prototype = {
 	type: 'line',
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
+	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
@@ -12163,6 +12164,12 @@ Series.prototype = {
 				yData[i] = hasToYData ? series.toYData(pt) : pt.y;
 				zData[i] = pt.z; 
 			}
+		}
+		
+		// Unsorted data is not supported by the line tooltip as well as data grouping and 
+		// navigation in Stock charts (#725)
+		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
+			error(15);
 		}
 
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
@@ -14007,6 +14014,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	tooltipOutsidePlot: true,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -14351,6 +14359,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 	},
+	
 	/**
 	 * Remove this series from the chart
 	 */
@@ -14407,6 +14416,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 var ScatterSeries = extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
+	requireSorting: false,
 	/**
 	 * Extend the base Series' translate method by adding shape type and
 	 * arguments for the point trackers
@@ -14467,7 +14477,9 @@ var ScatterSeries = extendClass(Series, {
 		} else {
 			series._hasTracking = true;
 		}
-	}
+	},
+	
+	setTooltipPoints: noop
 });
 seriesTypes.scatter = ScatterSeries;
 
@@ -14619,6 +14631,7 @@ var PieSeries = {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -15161,7 +15174,7 @@ var PieSeries = {
 			
 			// Draw the connectors
 			if (outside && connectorWidth) {
-				each (this.points, function (point) {
+				each(this.points, function (point) {
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
@@ -15228,7 +15241,7 @@ var PieSeries = {
 		if (centerOption[0] !== null) { // Fixed center
 			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize); // docs: minSize
 			
-		} else { // Auto center
+		} else { // Auto center
 			newSize = mathMax(
 				center[2] - overflow[1] - overflow[3], // horizontal overflow					
 				minSize
@@ -15240,7 +15253,7 @@ var PieSeries = {
 		if (centerOption[1] !== null) { // Fixed center
 			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize); // docs: minSize
 			
-		} else { // Auto center
+		} else { // Auto center
 			newSize = mathMax(
 				mathMin(
 					newSize,		
@@ -15274,7 +15287,7 @@ var PieSeries = {
 	 * fall within the plot area.
 	 */
 	placeDataLabels: function () {
-		each (this.points, function (point) {
+		each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
 			
@@ -15787,6 +15800,10 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor
 			itemOptions.dataGrouping
 		);
+	}
+	
+	if (this.chart.options._stock) {
+		this.requireSorting = true;
 	}
 	
 	return options;
