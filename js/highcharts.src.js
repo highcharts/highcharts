@@ -11705,6 +11705,7 @@ Series.prototype = {
 	type: 'line',
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
+	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
@@ -12138,6 +12139,12 @@ Series.prototype = {
 				xData[i] = pt.x;
 				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
+		}
+		
+		// Unsorted data is not supported by the line tooltip as well as data grouping and 
+		// navigation in Stock charts (#725)
+		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
+			error(15);
 		}
 
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
@@ -13994,6 +14001,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	tooltipOutsidePlot: true,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -14347,6 +14355,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 	},
+	
 	/**
 	 * Remove this series from the chart
 	 */
@@ -14403,6 +14412,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 var ScatterSeries = extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
+	requireSorting: false,
 	/**
 	 * Extend the base Series' translate method by adding shape type and
 	 * arguments for the point trackers
@@ -14470,7 +14480,9 @@ var ScatterSeries = extendClass(Series, {
 		} else {
 			series._hasTracking = true;
 		}
-	}
+	},
+	
+	setTooltipPoints: noop
 });
 seriesTypes.scatter = ScatterSeries;
 
@@ -14622,6 +14634,7 @@ var PieSeries = {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -15109,6 +15122,7 @@ var PieSeries = {
 					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
 					series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
 				
+<<<<<<< HEAD
 				// move or place the data label
 				dataLabel
 					.attr({
@@ -15123,6 +15137,57 @@ var PieSeries = {
 
 				// draw the connector
 				if (outside && connectorWidth) {
+=======
+			
+				// Record the placement and visibility
+				dataLabel._attr = {
+					visibility: visibility,
+					align: labelPos[6]
+				};
+				dataLabel._pos = {
+					x: x + options.x +
+						({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
+					y: y + options.y - 10 // 10 is for the baseline (label vs text)
+				};
+				dataLabel.connX = x;
+				dataLabel.connY = y;
+				
+						
+				// Detect overflowing data labels
+				if (this.options.size === null) {
+					dataLabelWidth = dataLabel.width;
+					// Overflow left
+					if (x - dataLabelWidth < connectorPadding) {
+						overflow[3] = mathMax(mathRound(dataLabelWidth - x + connectorPadding), overflow[3]);
+						
+					// Overflow right
+					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
+						overflow[1] = mathMax(mathRound(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
+					}
+					
+					// Overflow top
+					if (y - labelHeight / 2 < 0) {
+						overflow[0] = mathMax(mathRound(-y + labelHeight / 2), overflow[0]);
+						
+					// Overflow left
+					} else if (y + labelHeight / 2 > plotHeight) {
+						overflow[2] = mathMax(mathRound(y + labelHeight / 2 - plotHeight), overflow[2]);
+					}
+				}
+			} // for each point
+		} // for each half
+		
+		// Do not apply the final placement and draw the connectors until we have verified
+		// that labels are not spilling over. 
+		if (arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
+			
+			// Place the labels in the final position
+			this.placeDataLabels();
+			
+			// Draw the connectors
+			if (outside && connectorWidth) {
+				each(this.points, function (point) {
+>>>>>>> 234b388... Implemented warning on unsorted data for line charts and stock charts. Closes #725.
 					connector = point.connector;
 
 					connectorPath = softConnector ? [
@@ -15157,6 +15222,91 @@ var PieSeries = {
 						.translate(chart.plotLeft, chart.plotTop)
 						.add();
 					}
+<<<<<<< HEAD
+=======
+				});
+			}			
+		}
+	},
+	
+	/**
+	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
+	 * label positioning to keep them inside the plot area. Returns true when data labels are ready 
+	 * to draw.
+	 */
+	verifyDataLabelOverflow: function (overflow) {
+		
+		var center = this.center,
+			options = this.options,
+			centerOption = options.center,
+			minSize = options.minSize || 80,
+			newSize = minSize,
+			sizeBox = this.sizeBox || this.chart.plotBox,
+			ret;
+			
+		// Handle horizontal size and center
+		if (centerOption[0] !== null) { // Fixed center
+			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize); // docs: minSize
+			
+		} else { // Auto center
+			newSize = mathMax(
+				center[2] - overflow[1] - overflow[3], // horizontal overflow					
+				minSize
+			);
+			center[0] += (overflow[3] - overflow[1]) / 2; // horizontal center
+		}
+		
+		// Handle vertical size and center
+		if (centerOption[1] !== null) { // Fixed center
+			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize); // docs: minSize
+			
+		} else { // Auto center
+			newSize = mathMax(
+				mathMin(
+					newSize,		
+					center[2] - overflow[0] - overflow[2] // vertical overflow
+				),
+				minSize
+			);
+			center[1] += (overflow[0] - overflow[2]) / 2; // vertical center
+		}
+		
+		// If the size must be decreased, we need to run translate and drawDataLabels again
+		if (newSize < center[2]) {
+			center[2] = newSize;
+			this.translate(center);
+			each(this.points, function (point) {
+				if (point.dataLabel) {
+					point.dataLabel._pos = null; // reset
+				}
+			});
+			this.drawDataLabels();
+			
+		// Else, return true to indicate that the pie and its labels is within the plot area
+		} else {
+			ret = true;
+		}
+		return ret;
+	},
+	
+	/**
+	 * Perform the final placement of the data labels after we have verified that they
+	 * fall within the plot area.
+	 */
+	placeDataLabels: function () {
+		each(this.points, function (point) {
+			var dataLabel = point.dataLabel,
+				_pos;
+			
+			if (dataLabel) {
+				_pos = dataLabel._pos;
+				if (_pos) {
+					dataLabel.attr(dataLabel._attr);			
+					dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
+					dataLabel.moved = true;
+				} else if (dataLabel) {
+					dataLabel.attr({ y: -999 });
+>>>>>>> 234b388... Implemented warning on unsorted data for line charts and stock charts. Closes #725.
 				}
 			}
 		}
