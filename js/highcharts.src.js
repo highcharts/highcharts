@@ -9196,9 +9196,10 @@ Legend.prototype = {
 			translateY = alignAttr.translateY;
 			each(this.allItems, function (item) {
 				var checkbox = item.checkbox,
-					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+					top;
 				
 				if (checkbox) {
+					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
 					css(checkbox, {
 						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
 						top: top + PX,
