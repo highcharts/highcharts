@@ -1,0 +1,177 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<title>
+AntCallBack</title>
+
+<meta content="DocBook XSL Stylesheets V1.60.1" name="generator">
+
+<link rel="home" href="index.html" title="Antelope Users Guide">
+
+<link rel="up" href="bk03.html" title="Additional Ant Tasks">
+
+<link rel="previous" href="bk03ch14.html" title="Chapter&nbsp;14.&nbsp;AntFetch">
+
+<link rel="next" href="bk03ch16.html" title="Chapter&nbsp;16.&nbsp;Call Task">
+
+</head>
+
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title">
+<a name="antcallback">
+</a>
+AntCallBack</h2>
+</div>
+</div>
+<div>
+</div>
+</div>
+<p>
+
+AntCallBack is identical to the standard 'antcall' task, except that it allows properties set in the called target to be available in the calling target.
+</p>
+<p>
+
+</p>
+<p>
+
+Some background may be in order: When the &lt;antcall&gt; task is used, in actuality, a new Ant project is created, and depending on the inheritAll property, it is populated with properties from the original project. Then the requested target in this new project is executed. Any properties set in the new project remain with that project, they do not get "passed back" to the original project. So, for example, if the target in the new project sets a property named "image.directory", there is no reference to that property in the original. Here's an example of what I mean:
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;target name="testCallback" description="Test CallBack"&gt;
+        &lt;antcallback target="-testcb" return="a, b"/&gt;
+        &lt;echo&gt;a = ${a}&lt;/echo&gt;
+        &lt;echo&gt;b = ${b}&lt;/echo&gt;
+    &lt;/target&gt;
+
+    &lt;target name="-testcb"&gt;
+        &lt;property name="a" value="A"/&gt;
+        &lt;property name="b" value="B"/&gt;
+    &lt;/target&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+The output from executing "testCallback" looks like this:
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+a = A
+b = B
+</pre>
+</td>
+</tr>
+</table>
+
+Contrast with this output from "antcall":
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+a = ${a}
+b = ${b}
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+This is an often requested feature for Ant, at least judging from the Ant mailing lists. I assume this is because it allows a more functional programming style than Ant natively supports. The proper Ant way of doing the above is like this:
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;target name="testCallback" description="Test CallBack" depends="-testcb"&gt;
+        &lt;echo&gt;a = ${a}&lt;/echo&gt;
+        &lt;echo&gt;b = ${b}&lt;/echo&gt;
+    &lt;/target&gt;
+
+    &lt;target name="-testcb"&gt;
+        &lt;property name="a" value="A"/&gt;
+        &lt;property name="b" value="B"/&gt;
+    &lt;/target&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+This is actually looks cleaner in this situation, and is faster, too. There is significant overhead in using both "antcall" and "antcallback" in that they both require a lot of object instantiation and property copying. That said, many people prefer to use "antcall" and "antcallback" as it better fits their logic and style.
+</p>
+<p>
+
+The attributes for AntCallBack are identical to the 'antcall' task, with one additional, optional attibute. This attribute is named "return" and can be either a single property name or a comma separated list of property names.
+<div class="table">
+<a name="N10B76">
+</a>
+<p class="title">
+<b>
+Table&nbsp;15.1.&nbsp;AntCallBack Attributes</b>
+</p>
+<table summary="AntCallBack Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+return</td>
+<td>
+A comma separated list of property names. Whitespace is allowed, so either "a,b" or "a, b" are acceptable.</td>
+<td>
+None</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+For other attribute and nested element information and more examples, see the documentation for the "antcall" task in the Ant documentation.
+</p>
+</div>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+</body>
+</html>

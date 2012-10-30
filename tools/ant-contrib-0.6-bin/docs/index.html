@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Ant-Contrib Tasks</title>
+  </head>
+
+  <body>
+    <h1>Ant-Contrib Tasks</h1>
+
+    <h2>Contents</h2>
+
+    <ul>
+      <li><a href="#intro">What's this?</a></li>
+      <li><a href="#install">Installation</a></li>
+      <li><a href="tasks/index.html">Tasks</a></li>
+    </ul>
+
+    <h2><a name="intro">What's this?</a></h2>
+
+    <p>The Ant-Contrib project is a collection of tasks (and at one
+    point maybe types and other tools) for <a
+    href="http://ant.apache.org/">Apache Ant</a>.</p>
+
+    <p>This Software is distributed under the <a
+    href="LICENSE.txt">Apache Software License</a>.</p>
+
+    <h2><a name="install">Installation</a></h2>
+
+    <p>First you must install Apache Ant itself, most of the
+    Ant-Contrib tasks require Ant 1.5 or higher to work properly.  You can download Ant <a
+    href="http://ant.apache.org/bindownload.cgi">from
+    Apache</a>.</p>
+
+    <p>Then you need the Ant-Contrib tasks themselves.  As there is no
+    release of these tasks yet, you have to build them from sources.
+    Fortunately this is easy, check out the sources (grab the
+    <code>ant-contrib</code> module from <a
+    href="http://sourceforge.net/cvs/?group_id=36177">CVS</a>), change
+    into the source directory of ant-contrib and type
+    <code>ant</code>.  After Ant has completed, you'll find
+    <code>ant-contrib-0.4.jar</code> in the <code>lib</code>
+    subdirectory.</p>
+
+    <p>You now have the choice:</p>
+
+    <ol>
+      <li>Copy <code>ant-contrib-0.4.jar</code> to the
+      <code>lib</code> directory of your Ant installation.  If you
+      want to use one of the tasks in your own project, add the line
+<pre>
+&lt;taskdef resource=&quot;net/sf/antcontrib/antcontrib.properties&quot;/&gt;
+</pre>
+        to your build file.</li>
+
+      <li>Keep <code>ant-contrib-0.4.jar</code> in a separate
+      location.  You now have to tell Ant explicitly where to find it
+      (say in <code>/usr/share/java/lib</code>):
+<pre>
+&lt;taskdef resource=&quot;net/sf/antcontrib/antcontrib.properties&quot;&gt;
+  &lt;classpath&gt;
+    &lt;pathelement location=&quot;/usr/share/java/lib/ant-contrib-0.4.jar&quot;/&gt;
+  &lt;/classpath&gt;
+&lt;/taskdef&gt;
+</pre>
+        </li>
+
+    <hr>
+    <p align="center">Copyright &copy; 2002-2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+
+  </body>
+</html>

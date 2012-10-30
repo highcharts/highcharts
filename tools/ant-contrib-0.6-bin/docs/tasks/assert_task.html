@@ -1,0 +1,260 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Assert Task</title>
+<meta content="DocBook XSL Stylesheets V1.60.1" name="generator">
+<link rel="home" href="index.html" title="Antelope Users Guide">
+<link rel="up" href="bk03.html" title="Additional Ant Tasks">
+<link rel="previous" href="bk03ch03.html" title="Chapter&nbsp;3.&nbsp;Installation">
+<link rel="next" href="bk03ch05.html" title="Chapter&nbsp;5.&nbsp;If Task">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title">
+<a name="Assert">
+</a>
+Assert Task</h2>
+</div>
+</div>
+<div>
+</div>
+</div>
+<p>
+
+The Assert task adds an assertion capability to Ant projects. This task works in a manner very similar to the Java <tt class="computeroutput">
+assert</tt>
+ keyword, and provides a limited "design by contract" facility to Ant. This is very useful for testing build scripts prior to putting them into production.
+</p>
+<p>
+
+The Assert task verifies that a given property has a
+given value and throws a BuildException if the property value is not as expected
+or the property does not exist.
+</p>
+<p>
+
+Also like Java's <tt class="computeroutput">
+assert</tt>
+ keyword, the Assert task must be 'turned on' using the property <tt class="computeroutput">
+ant.enable.asserts</tt>
+. If not set, or is set to <tt class="computeroutput">
+false</tt>
+, the Assert task works exactly like the Sequential task. If the <a href="variable_task.html" title="Variable Task">
+Variable task</a>
+ is used to define this property, then it can be turned on and off as needed throughout a build.
+</p>
+<p>
+
+This task can hold other tasks including Assert.
+</p>
+<p>
+
+The Assert task may contain one 'bool' element. The 'bool' element is identical to the ConditionTask, but unlike the ConditionTask, is actually a Task. The 'bool' element can contain all the conditions permitted by the ConditionTask, plus the <a href="bk03ch05s02.html" title="More Conditions">
+IsPropertyTrue</a>
+, <a href="more_conditions.html" title="More Conditions">
+IsPropertyFalse</a>
+,
+<a href="more_conditions.html" title="More Conditions">
+StartsWith</a>
+,
+<a href="more_conditions.html" title="More Conditions">
+EndsWith</a>
+,
+<a href="more_conditions.html" title="More Conditions">
+IsGreaterThan</a>
+,
+<a href="more_conditions.html" title="More Conditions">
+IsLessThan</a>
+ and conditions.
+See the If task for examples of using these conditionals.
+</p>
+
+<p>
+
+<div class="table">
+<a name="N10583">
+</a>
+<p class="title">
+<b>
+Table&nbsp;4.1.&nbsp;Assert Task Attributes</b>
+</p>
+<table summary="Assert Task Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+name</td>
+<td>
+The name of the property to test for.</td>
+<td>
+none</td>
+<td>
+Yes</td>
+</tr>
+<tr>
+<td>
+exists</td>
+<td>
+Test for existence or non-existence of the property.</td>
+<td>
+True</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+value</td>
+<td>
+The value to test for, implies 'exists=true'. If the value in the project is different than this value, a BuildException will be thrown and the build will stop.</td>
+<td>
+none</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+execute</td>
+<td>
+Should the tasks contained in this task be executed? It may be useful to set this to false when testing build files.</td>
+<td>
+True</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+failonerror</td>
+<td>
+Should the build halt if the assertion fails? Setting this to false is contrary to the intented use of assertions, but may be useful in certain situations. </td>
+<td>
+True</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</p>
+<p>
+
+As stated above, the Assert task may contain a nested "bool" task, otherwise,
+the Assert task does not support any nested
+elements apart from Ant tasks. Any valid Ant task may be embedded within the
+assert task.
+</p>
+<p>
+
+In the following example, the first <tt class="computeroutput">
+assert</tt>
+ task checks that the <tt class="computeroutput">
+wait</tt>
+ property exists and does not execute the <tt class="computeroutput">
+echo</tt>
+ and <tt class="computeroutput">
+sleep</tt>
+ tasks. The second <tt class="computeroutput">
+assert</tt>
+ task checks that the <tt class="computeroutput">
+wait</tt>
+ property exists, has a value of 2, and executes the <tt class="computeroutput">
+echo</tt>
+ task.
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+     &lt;property name="wait" value="2"/&gt;
+     &lt;assert name="wait" execute="false"&gt;
+        &lt;echo&gt;
+            Waiting ${wait} seconds...
+            Click the red button to stop waiting.
+        &lt;/echo&gt;
+        &lt;sleep seconds="${wait}"/&gt;
+     &lt;/assert&gt;
+     &lt;assert name="wait" value="2" execute="true"&gt;
+        &lt;echo&gt;done waiting!&lt;/echo&gt;
+     &lt;/assert&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+The next example shows Assert being used in a unit test for the "limit" task:
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+  &lt;property name="ant.enable.asserts" value="true"/&gt;
+  &lt;target name="test2"&gt;
+    &lt;!-- should not stop 'sleep' task, should print out '_passed_' --&gt;
+    &lt;stopwatch name="timer"/&gt;
+    &lt;limit maxwait="5"&gt;
+        &lt;sleep seconds="1"/&gt;
+        &lt;echo&gt;_passed_&lt;/echo&gt;
+    &lt;/limit&gt;
+    &lt;stopwatch name="timer" action="total"/&gt;
+    &lt;assert message="Too much time."&gt;
+        &lt;bool&gt;
+            &lt;islessthan arg1="${timer}" arg2="2"/&gt;
+        &lt;/bool&gt;
+    &lt;/assert&gt;
+  &lt;/target&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+If the <tt class="computeroutput">
+ant.enable.asserts</tt>
+ property is set to false, then in the above example, the <tt class="computeroutput">
+echo</tt>
+, <tt class="computeroutput">
+sleep</tt>
+, and <tt class="computeroutput">
+echo</tt>
+ tasks will all execute.
+</p>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+</div>
+</body>
+</html>

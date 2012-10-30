@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Highcharts build file -->
-<project name="build" default="Usage">
+<project name="build" default="Usage" xmlns:ac="antlib:net.sf.antcontrib">
   <!-- Describes the usage of the build file by invoking -projecthelp. -->
   <target name="Usage">
     <java classname="org.apache.tools.ant.Main">
@@ -69,6 +69,10 @@
     <!-- google js-test-driver -->
     <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver" />
     <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3d.jar" />
+    <!-- ant-contrib -->
+    <property name="ant.contrib.dir" value="${tools.dir}/ant-contrib-0.6-bin" />
+    <property name="ant.contrib.jar" location="${ant.contrib.dir}/lib/ant-contrib-0.6.jar" />
+    <taskdef uri="antlib:net.sf.antcontrib" resource="net/sf/antcontrib/antlib.xml" classpath="${ant.contrib.jar}" />
     <!-- This is the list of files for highcharts -->
     <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
       <file name="Intro.js" />
@@ -316,6 +320,9 @@
     <echo message="Google Closure compiler: ${input.length} bytes -&gt; ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)." />
     <echo message="Yahoo YUI Compressor: ${input.length} bytes -&gt; ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)." />
     <echo message="" />
+    <echo message="gzipping:  ${param.out}" />
+    <gzip src="${param.out}" destfile="${param.out}.gz" />
+    <move file="${param.out}.gz" tofile="${param.out}" overwrite="true" failonerror="true"/>
   </target>
   <!-- Runs minifiers on source code. -->
   <target name="minify" depends="assemble">
@@ -357,7 +364,8 @@
     </antcall>
   </target>
   <!-- Builds the source and runts lint and minify. -->
-  <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify."></target>
+  <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
+  </target>
   <scriptdef name="listfiles" language="javascript">
     <![CDATA[
                 var dir = project.getProperty("samples.dir");
@@ -526,18 +534,18 @@
       <replacefilter>
         <replacetoken>
           <![CDATA[<script src="http://code.highcharts.com/stock/]]>
-</replacetoken>
+        </replacetoken>
         <replacevalue>
           <![CDATA[<script src="../../js/]]>
-</replacevalue>
+        </replacevalue>
       </replacefilter>
       <replacefilter>
         <replacetoken>
           <![CDATA[<script src="http://code.highcharts.com/]]>
-</replacetoken>
+        </replacetoken>
         <replacevalue>
           <![CDATA[<script src="../../js/]]>
-</replacevalue>
+        </replacevalue>
       </replacefilter>
       <include name="**/index.htm" />
     </replace>
@@ -818,65 +826,117 @@
       </fileset>
     </ftp>
   </target>
-  <!-- experimental deploy to S3 -->
-  <target name="deploy-highcharts-S3">
+
+
+  <!-- here starts experimental deploy to S3 -->
+  <target name="deploy-highcharts-zip-S3">
     <property file="git-ignore-me.properties" />
     <property file="build.properties" />
     <!-- Copy version based zip file to general zip -->
     <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
-
     <!-- upload zip files for linking from website -->
-    <!-- HINT!!  to upload just the contents, specify the directory with a trailing slash, if you want to upload the whole directory specify the directory without trailing slash -->
     <exec executable="s3cmd" failonerror="true">
       <!--s3cmd dpends on python and must be executable, otherwise executable must be python [path to s3cmd as extra <arg>] -->
       <arg value="--guess-mime-type" />
       <arg value="--encoding=UTF-8" />
-      <arg value="--skip-existing" />
       <arg value="--recursive" />
       <arg value="--acl-public" />
       <arg value="put" />
-      <!--arg value="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" />
-      <arg value="${basedir}/build/dist/Highcharts.zip" /-->
       <arg value="--exclude=*" />
       <arg value="--include=*.zip" />
-      <arg value="${basedir}/build/dist/"/>
+      <arg value="${basedir}/build/dist/" />
       <arg value="s3://cdn.highcharts.com/zip/" />
     </exec>
+  </target>
 
-    <!-- Upload the .js files to code.highcharts.com/${highcharts.product.version} -->
+  <target name="sync-js-files-to-S3">
+    <!-- HINT:  to upload just the contents, specify the directory with a trailing slash, if you want to upload the whole directory specify the directory without trailing slash -->
+    <!-- HINT: The sync command will compare checksums and sizes of the remote vs local files and only want to upload those that are new. When using skip-existing only file presence is check not! the content -->
+    <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
+     <!-- Upload the .js files to remote S3 version folder -->
     <exec executable="s3cmd" failonerror="true">
-      <!--s3cmd dpends on python and must be executable, otherwise executable must be python [path to s3cmd as extra <arg>] -->
       <arg value="--guess-mime-type" />
+      <arg value="--add-header=Vary:Accept-Encoding" /><!-- tell proxies to only serve this compressed content to a client who has the accept-encoding header: http://blog.port80software.com/2005/01/21/; NOT REALLY NECESSARY in our case were only serving gzipped js. But it will maybe help for proxy-servers in transition to only gzipped fiels -->
+      <arg value="--add-header=Content-Encoding:gzip" />
       <arg value="--encoding=UTF-8" />
-      <arg value="--skip-existing" />
       <arg value="--recursive" />
       <arg value="--acl-public" />
       <arg value="--exclude=*" />
-      <arg value="--include=*.js" />
+      <arg value="--include=${include.pattern}" />
+      <arg value="--dry-run" />
       <arg value="sync" />
-      <arg value="${basedir}/build/dist/highcharts/js/" />
-      <arg value="s3://cdn.highcharts.com/${highcharts.product.version}/" />
+      <arg value="${local}" />
+      <arg value="${remote}/" />
     </exec>
-                                 <!-- <fileset dir="${basedir}/build/dist/highcharts/js">
-                                        <include name="*.js"/>
-                                        <include name="*/*.js"/>
-                                </fileset>
-                                <fileset dir="${basedir}/build/dist/highcharts">
-                                        <include name="gfx/*.png"/>
-                                </fileset> -->
+  </target>
 
-    <!-- Upload the .js files to code.highcharts.com root -->
-    <!--<ftp server="${ftp.server}"
-                                        userid="${ftp.userid}"
-                                        password="${ftp.password}"
-                                        remotedir="/www/code">
-                                <fileset dir="${basedir}/build/dist/highcharts/js">
-                                        <include name="*.js"/>
-                                        <include name="*/*.js"/>
-                                </fileset>
-                                <fileset dir="${basedir}/build/dist/highcharts">
-                                        <include name="gfx/*.png"/>
-                                </fileset>
-                        </ftp> -->
+  <target name="sync-nonjs-files-to-S3">
+    <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
+    <exec executable="s3cmd" failonerror="true">
+      <arg value="--guess-mime-type" />
+      <arg value="--encoding=UTF-8" />
+      <arg value="--recursive" />
+      <arg value="--acl-public" />
+      <arg value="--exclude=*" />
+      <arg value="--include=${include.pattern}" />
+      <arg value="--dry-run" />
+      <arg value="sync" />
+      <arg value="${local}" />
+      <arg value="${remote}/" />
+    </exec>
+  </target>
+
+  <!-- for gzipped js; set Content-Type to 'application/javascript' and Content-Encoding to 'gzip' -->
+  <target name="test-props" depends="set.properties">
+    <ac:var name="path.var" value="" />
+    <ac:for list="${highcharts.product.version}" delimiter="." param="val">
+      <sequential>
+        <ac:if>
+          <length string="${path.var}" length="0" />
+          <then>
+            <ac:var name="path.var" value="@{val}" />
+            <!-- Copy js/* to Root on S3 -->
+            <antcall target="sync-js-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/js/"/>
+              <param name="remote" value="s3://cdn.highcharts.com"/>
+              <param name="include.pattern" value="*.js" />
+            </antcall>
+            <!-- copy gfx folder -->
+            <antcall target="sync-nonjs-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/"/>
+              <param name="remote" value="s3://cdn.highcharts.com"/>
+              <param name="include.pattern" value="gfx/*.png" />
+            </antcall>
+            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+            <antcall target="sync-js-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/js/"/>
+              <param name="remote" value="s3://cdn.highcharts.com/${path.var}"/>
+              <param name="include.pattern" value="*.js" />
+            </antcall>
+            <!-- copy gfx folder -->
+            <antcall target="sync-nonjs-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/"/>
+              <param name="remote" value="s3://cdn.highcharts.com"/>
+              <param name="include.pattern" value="gfx/*.png" />
+            </antcall>
+          </then>
+          <else>
+            <ac:var name="path.var" value="${path.var}.@{val}" />
+           <!-- Copy js/* to version [= ${path.var} ] on S3 -->
+           <antcall target="sync-js-files-to-S3">
+             <param name="local" value="${basedir}/build/dist/highcharts/js/"/>
+             <param name="remote" value="s3://cdn.highcharts.com/${path.var}"/>
+             <param name="include.pattern" value="*.js" />
+           </antcall>
+           <!-- copy gfx folder -->
+           <antcall target="sync-nonjs-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/"/>
+              <param name="remote" value="s3://cdn.highcharts.com"/>
+              <param name="include.pattern" value="gfx/*.png" />
+            </antcall>
+          </else>
+        </ac:if>
+      </sequential>
+    </ac:for>
   </target>
 </project>
