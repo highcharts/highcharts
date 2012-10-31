@@ -1083,17 +1083,6 @@ Axis.prototype = {
 		// adjust min and max for the minimum range
 		axis.adjustForMinRange();
 
-		// pad the values to get clear of the chart's edges
-		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
-			length = (axis.max - axis.min) || 1;
-			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
-				axis.min -= length * minPadding;
-			}
-			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
-				axis.max += length * maxPadding;
-			}
-		}
-
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
 			axis.tickInterval = 1;
@@ -1107,6 +1096,18 @@ Axis.prototype = {
 					1 :
 					(axis.max - axis.min) * tickPixelIntervalOption / (axis.len || 1)
 			);
+		}
+
+		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
+		// into account, we do this after computing tick interval (#1337).
+		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+			length = (axis.max - axis.min) || 1;
+			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
+				axis.min -= length * minPadding;
+			}
+			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
+				axis.max += length * maxPadding;
+			}
 		}
 
 		// Now we're finished detecting min and max, crop and group series data. This
