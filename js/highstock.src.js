@@ -2447,6 +2447,11 @@ SVGElement.prototype = {
 				left: (x + xCorr) + PX,
 				top: (y + yCorr) + PX
 			});
+			
+			// force reflow in webkit to apply the left and top on useHTML element (#1249)
+			if (isWebKit) {
+				height = elem.offsetHeight; // assigned to height for JSLint purpose
+			}
 
 			// record current text transform
 			wrapper.cTT = currentTextTransform;
