@@ -4506,7 +4506,7 @@ var VMLElement = {
 
 						if (nodeName === 'SPAN') { // text color
 							elemStyle.color = value;
-						} else {
+						} else if (nodeName !== 'IMG') { // #1336
 							element.filled = value !== NONE ? true : false;
 
 							value = renderer.color(value, element, key, wrapper);
