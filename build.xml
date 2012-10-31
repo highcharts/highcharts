@@ -73,6 +73,19 @@
     <property name="ant.contrib.dir" value="${tools.dir}/ant-contrib-0.6-bin" />
     <property name="ant.contrib.jar" location="${ant.contrib.dir}/lib/ant-contrib-0.6.jar" />
     <taskdef uri="antlib:net.sf.antcontrib" resource="net/sf/antcontrib/antlib.xml" classpath="${ant.contrib.jar}" />
+    <!-- cache-control Amamzon S3 -->
+    <tstamp>
+      <format property="http.expires.five.years" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="1825" />
+    </tstamp>
+    <tstamp>
+      <format property="http.expires.one.month" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="31" />
+    </tstamp>
+    <tstamp>
+      <format property="http.expires.one.day" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="1" />
+    </tstamp>
+    <property name="max.age.five.years" value="157680000" />
+    <property name="max.age.one.month" value="2592001" />
+    <property name="max.age.one.day" value="86400" />
     <!-- This is the list of files for highcharts -->
     <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
       <file name="Intro.js" />
@@ -320,9 +333,6 @@
     <echo message="Google Closure compiler: ${input.length} bytes -&gt; ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)." />
     <echo message="Yahoo YUI Compressor: ${input.length} bytes -&gt; ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)." />
     <echo message="" />
-    <echo message="gzipping:  ${param.out}" />
-    <gzip src="${param.out}" destfile="${param.out}.gz" />
-    <move file="${param.out}.gz" tofile="${param.out}" overwrite="true" failonerror="true"/>
   </target>
   <!-- Runs minifiers on source code. -->
   <target name="minify" depends="assemble">
@@ -364,8 +374,7 @@
     </antcall>
   </target>
   <!-- Builds the source and runts lint and minify. -->
-  <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify.">
-  </target>
+  <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify."></target>
   <scriptdef name="listfiles" language="javascript">
     <![CDATA[
                 var dir = project.getProperty("samples.dir");
@@ -534,18 +543,18 @@
       <replacefilter>
         <replacetoken>
           <![CDATA[<script src="http://code.highcharts.com/stock/]]>
-        </replacetoken>
+</replacetoken>
         <replacevalue>
           <![CDATA[<script src="../../js/]]>
-        </replacevalue>
+</replacevalue>
       </replacefilter>
       <replacefilter>
         <replacetoken>
           <![CDATA[<script src="http://code.highcharts.com/]]>
-        </replacetoken>
+</replacetoken>
         <replacevalue>
           <![CDATA[<script src="../../js/]]>
-        </replacevalue>
+</replacevalue>
       </replacefilter>
       <include name="**/index.htm" />
     </replace>
@@ -827,67 +836,134 @@
     </ftp>
   </target>
 
+  <!-- DEPLOY TO AMAZON S3 -->
 
-  <!-- here starts experimental deploy to S3 -->
-  <target name="deploy-highcharts-zip-S3">
-    <property file="git-ignore-me.properties" />
-    <property file="build.properties" />
-    <!-- Copy version based zip file to general zip -->
-    <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
-    <!-- upload zip files for linking from website -->
-    <exec executable="s3cmd" failonerror="true">
-      <!--s3cmd dpends on python and must be executable, otherwise executable must be python [path to s3cmd as extra <arg>] -->
-      <arg value="--guess-mime-type" />
-      <arg value="--encoding=UTF-8" />
-      <arg value="--recursive" />
-      <arg value="--acl-public" />
-      <arg value="put" />
-      <arg value="--exclude=*" />
-      <arg value="--include=*.zip" />
-      <arg value="${basedir}/build/dist/" />
-      <arg value="s3://cdn.highcharts.com/zip/" />
-    </exec>
+  <!-- gzip javascript files in folder -->
+  <target name="gzip-js" description="gzip all javascript versions for upload to Amazon S3" depends="set.properties">
+    <property name="gzip.dir" value="${js.dir}/../js-gzip" />
+    <delete dir="${gzip.dir}" />
+    <mkdir dir="${gzip.dir}" />
+    <echo message="placing zipped folder structure in ${gzip.dir}" />
+    <!-- make copy so we don't double-compress files -->
+    <sync todir="${gzip.dir}" includeEmptyDirs="true" overwrite="true">
+      <fileset dir="${js.dir}" includes="**/*.js" />
+    </sync>
+    <ac:for param="file">
+      <path>
+        <fileset dir="${gzip.dir}" />
+      </path>
+      <sequential>
+        <!-- we keep the filenames the same and transparently serve gzipped content via http headers -->
+        <gzip src="@{file}" destfile="@{file}.gz" />
+        <move file="@{file}.gz" tofile="@{file}" overwrite="true" />
+      </sequential>
+    </ac:for>
   </target>
 
-  <target name="sync-js-files-to-S3">
+  <target name="put-gzipped-files-to-S3">
     <!-- HINT:  to upload just the contents, specify the directory with a trailing slash, if you want to upload the whole directory specify the directory without trailing slash -->
     <!-- HINT: The sync command will compare checksums and sizes of the remote vs local files and only want to upload those that are new. When using skip-existing only file presence is check not! the content -->
     <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
-     <!-- Upload the .js files to remote S3 version folder -->
+    <!-- Upload the .js files to remote S3 version folder -->
     <exec executable="s3cmd" failonerror="true">
       <arg value="--guess-mime-type" />
-      <arg value="--add-header=Vary:Accept-Encoding" /><!-- tell proxies to only serve this compressed content to a client who has the accept-encoding header: http://blog.port80software.com/2005/01/21/; NOT REALLY NECESSARY in our case were only serving gzipped js. But it will maybe help for proxy-servers in transition to only gzipped fiels -->
+      <arg value="--add-header=Vary:Accept-Encoding" />
+      <!-- tell proxies to only serve this compressed content to a client who has the accept-encoding header: http://blog.port80software.com/2005/01/21/; NOT REALLY NECESSARY in our case were only serving gzipped js. But it will maybe help for proxy-servers in transition to only gzipped files -->
       <arg value="--add-header=Content-Encoding:gzip" />
+      <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+      <arg value="--add-header=Expires:${http.expires}" />
       <arg value="--encoding=UTF-8" />
       <arg value="--recursive" />
       <arg value="--acl-public" />
       <arg value="--exclude=*" />
       <arg value="--include=${include.pattern}" />
-      <arg value="--dry-run" />
-      <arg value="sync" />
+      <arg value="--verbose" />
+      <arg value="--force" />
+      <arg value="--no-preserve" />
+      <!--arg value="-!-dry-run" /-->
+      <arg value="put" />
       <arg value="${local}" />
       <arg value="${remote}/" />
     </exec>
   </target>
-
-  <target name="sync-nonjs-files-to-S3">
-    <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
+  <!-- synch all files to S3 recursively, but ommit .js files -->
+  <target name="put-files-to-S3">
+    <echo message="synch local folder: ${local} with remote S3 path: ${remote} " />
     <exec executable="s3cmd" failonerror="true">
+      <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+      <arg value="--add-header=Expires:${http.expires}" />
       <arg value="--guess-mime-type" />
       <arg value="--encoding=UTF-8" />
       <arg value="--recursive" />
       <arg value="--acl-public" />
+      <arg value="--exclude=**/*.js" />
+      <!--arg value="-!-dry-run" /-->
+      <arg value="put" />
+      <arg value="${local}" />
+      <arg value="${remote}/" />
+    </exec>
+  </target>
+  <target name="put-zipfile-to-S3">
+    <echo message="copy a file to : ${local} with remote S3 path: ${remote}" />
+    <exec executable="s3cmd" failonerror="true">
+      <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+      <arg value="--add-header=Expires:${http.expires}" />
+      <arg value="--guess-mime-type" />
+      <arg value="--encoding=UTF-8" />
+      <arg value="--acl-public" />
       <arg value="--exclude=*" />
       <arg value="--include=${include.pattern}" />
-      <arg value="--dry-run" />
-      <arg value="sync" />
+      <!--arg value="-!-dry-run" /-->
+      <arg value="put" />
+      <arg value="${local}" />
+      <arg value="${remote}/" />
+    </exec>
+  </target>
+  <target name="copy-folder-on-S3">
+    <echo message="copy a folders and files from : ${from.s3} to: ${to.s3}" />
+    <exec executable="s3cmd" failonerror="true">
+      <arg value="--recursive" />
+      <arg value="--guess-mime-type" />
+      <arg value="--encoding=UTF-8" />
+      <arg value="--acl-public" />
+      <arg value="cp" />
+      <arg value="${from.s3}" />
+      <arg value="${to.s3}/" />
+    </exec>
+  </target>
+  <target name="put-all-versions-nonjs-files-to-S3">
+    <!-- This is used to push all versions from local machine to S3 -->
+    <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
+    <echo message="copying all files and folders other than .js" />
+    <exec executable="s3cmd" failonerror="true">
+      <!--arg value="-!-skip-existing" /-->
+       <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+      <arg value="--add-header=Expires:${http.expires}" />
+      <arg value="--guess-mime-type" />
+      <arg value="--encoding=UTF-8" />
+      <arg value="--recursive" />
+      <arg value="--acl-public" />
+      <arg value="--exclude=**/*.js" />
+      <arg value="--exclude=*.js" />
+      <arg value="--exclude=*.php" />
+      <arg value="--exclude=*.htaccess" />
+      <!--arg value="-!-dry-run" /-->
+      <arg value="put" />
       <arg value="${local}" />
       <arg value="${remote}/" />
     </exec>
   </target>
 
-  <!-- for gzipped js; set Content-Type to 'application/javascript' and Content-Encoding to 'gzip' -->
-  <target name="test-props" depends="set.properties">
+  <target name="deploy-highcharts-S3" depends="set.properties">
+    <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
+    <antcall target="put-zipfile-to-S3">
+      <param name="local" value="${basedir}/build/dist/Highcharts.zip" />
+      <param name="remote" value="${amazon.s3.bucketname}" />
+      <param name="include.pattern" value="*.zip" />
+    </antcall>
+    <antcall target="gzip-js">
+      <param name="js.dir" value="${basedir}/build/dist/highcharts/js/" />
+    </antcall>
     <ac:var name="path.var" value="" />
     <ac:for list="${highcharts.product.version}" delimiter="." param="val">
       <sequential>
@@ -895,48 +971,184 @@
           <length string="${path.var}" length="0" />
           <then>
             <ac:var name="path.var" value="@{val}" />
-            <!-- Copy js/* to Root on S3 -->
-            <antcall target="sync-js-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/js/"/>
-              <param name="remote" value="s3://cdn.highcharts.com"/>
+            <!-- this will be used later to do a remote copy on S3 -->
+            <property name="copy.version" value="@{val}" />
+
+            <!-- Copy zipped js/* to Root on S3 -->
+            <antcall target="put-gzipped-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
+              <param name="remote" value="${amazon.s3.bucketname}" />
               <param name="include.pattern" value="*.js" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
             </antcall>
-            <!-- copy gfx folder -->
-            <antcall target="sync-nonjs-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/"/>
-              <param name="remote" value="s3://cdn.highcharts.com"/>
-              <param name="include.pattern" value="gfx/*.png" />
+            <!-- copy gfx folder to Root -->
+            <antcall target="put-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
+              <param name="remote" value="${amazon.s3.bucketname}" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
             </antcall>
             <!-- Copy to js/* version [= ${path.var} ] on S3 -->
-            <antcall target="sync-js-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/js/"/>
-              <param name="remote" value="s3://cdn.highcharts.com/${path.var}"/>
+            <antcall target="put-gzipped-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
+              <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
               <param name="include.pattern" value="*.js" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
             </antcall>
-            <!-- copy gfx folder -->
-            <antcall target="sync-nonjs-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/"/>
-              <param name="remote" value="s3://cdn.highcharts.com"/>
-              <param name="include.pattern" value="gfx/*.png" />
+            <!-- copy gfx folder to version folder on S3-->
+            <antcall target="put-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
+              <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
             </antcall>
           </then>
+          <elseif>
+            <length string="${path.var}" length="3" />
+            <then>
+              <ac:var name="path.var" value="${path.var}.@{val}" />
+               <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+            <antcall target="put-gzipped-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
+              <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
+              <param name="include.pattern" value="*.js" />
+              <param name="http.expires" value="${http.expires.one.month}" />
+              <param name="max.age" value="${max.age.one.month}" />
+            </antcall>
+            <!-- copy gfx folder to version folder on S3-->
+            <antcall target="put-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
+              <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
+              <param name="http.expires" value="${http.expires.one.month}" />
+              <param name="max.age" value="${max.age.one.month}" />
+            </antcall>
+            </then>
+          </elseif>
           <else>
+            <!-- concatenate version name and assign to path.var-->
             <ac:var name="path.var" value="${path.var}.@{val}" />
-           <!-- Copy js/* to version [= ${path.var} ] on S3 -->
-           <antcall target="sync-js-files-to-S3">
-             <param name="local" value="${basedir}/build/dist/highcharts/js/"/>
-             <param name="remote" value="s3://cdn.highcharts.com/${path.var}"/>
-             <param name="include.pattern" value="*.js" />
-           </antcall>
-           <!-- copy gfx folder -->
-           <antcall target="sync-nonjs-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/"/>
-              <param name="remote" value="s3://cdn.highcharts.com"/>
-              <param name="include.pattern" value="gfx/*.png" />
+            <antcall target="copy-folder-on-S3">
+              <param name="from.s3" value="${amazon.s3.bucketname}/${copy.version}/" />
+              <param name="to.s3" value="${amazon.s3.bucketname}/${path.var}" />
             </antcall>
           </else>
         </ac:if>
       </sequential>
     </ac:for>
+    <delete dir="${basedir}/build/dist/highcharts/js-gzip" />
+  </target>
+  <!-- Deploy Highstock to S3 -->
+   <target name="deploy-highstock-S3" depends="set.properties">
+    <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip" />
+    <antcall target="put-zipfile-to-S3">
+      <param name="local" value="${basedir}/build/dist/Highstock.zip" />
+      <param name="remote" value="${amazon.s3.bucketname}" />
+      <param name="include.pattern" value="*.zip" />
+    </antcall>
+    <antcall target="gzip-js">
+      <param name="js.dir" value="${basedir}/build/dist/highstock/js/" />
+    </antcall>
+    <ac:var name="path.var" value="" />
+    <ac:for list="${highstock.product.version}" delimiter="." param="val">
+      <sequential>
+        <ac:if>
+          <length string="${path.var}" length="0" />
+          <then>
+            <ac:var name="path.var" value="@{val}" />
+            <!-- this will be used later to do a remote copy on S3 -->
+            <property name="copy.version" value="@{val}" />
+
+            <!-- Copy zipped js/* to Root on S3 -->
+            <antcall target="put-gzipped-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
+              <param name="remote" value="${amazon.s3.bucketname}/stock" />
+              <param name="include.pattern" value="*.js" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
+            </antcall>
+            <!-- copy gfx folder to Root -->
+            <antcall target="put-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highstock/gfx" />
+              <param name="remote" value="${amazon.s3.bucketname}/stock" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
+            </antcall>
+            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+            <antcall target="put-gzipped-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
+              <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+              <param name="include.pattern" value="*.js" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
+            </antcall>
+            <!-- copy gfx folder to version folder on S3-->
+            <antcall target="put-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highstock/gfx" />
+              <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+              <param name="http.expires" value="${http.expires.one.day}" />
+              <param name="max.age" value="${max.age.one.day}" />
+            </antcall>
+          </then>
+          <elseif>
+            <length string="${path.var}" length="3" />
+            <then>
+              <ac:var name="path.var" value="${path.var}.@{val}" />
+               <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+            <antcall target="put-gzipped-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
+              <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+              <param name="include.pattern" value="*.js" />
+              <param name="http.expires" value="${http.expires.one.month}" />
+              <param name="max.age" value="${max.age.one.month}" />
+            </antcall>
+            <!-- copy gfx folder to version folder on S3-->
+            <antcall target="put-files-to-S3">
+              <param name="local" value="${basedir}/build/dist/highstock/gfx" />
+              <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+              <param name="http.expires" value="${http.expires.one.month}" />
+              <param name="max.age" value="${max.age.one.month}" />
+            </antcall>
+            </then>
+          </elseif>
+          <else>
+            <!-- concatenate version name and assign to path.var-->
+            <ac:var name="path.var" value="${path.var}.@{val}" />
+            <antcall target="copy-folder-on-S3">
+              <param name="from.s3" value="${amazon.s3.bucketname}/stock/${copy.version}/" />
+              <param name="to.s3" value="${amazon.s3.bucketname}/stock/${path.var}" />
+            </antcall>
+          </else>
+        </ac:if>
+      </sequential>
+    </ac:for>
+    <delete dir="${basedir}/build/dist/highstock/js-gzip" />
+  </target>
+
+  <!-- push whole versions structure from local machine to Amazon S3 -->
+  <target name="push-all-versions-to-S3" depends="set.properties">
+    <!-- copy base folder containing all versions to seperate folder for gzipping *.js files. The user is asked om source directory containing all versions -->
+    <input message="Please enter which directory you want to gzip, WITHOUT trailing slash!!! :" addproperty="src.versions.dir" />
+    <antcall target="gzip-js">
+      <param name="js.dir" value="${src.versions.dir}" />
+    </antcall>
+    <!-- synch gzipped files and folders to S3, only containing javascript files with *.js -->
+    <antcall target="put-gzipped-files-to-S3">
+      <param name="local" value="${src.versions.dir}/../js-gzip/" />
+      <param name="remote" value="${amazon.s3.bucketname}" />
+      <param name="http.expires" value="${http.expires.one.month}" />
+      <param name="max.age" value="${max.age.one.month}" />
+      <param name="include.pattern" value="*.js" />
+    </antcall>
+    <!-- synch files and folders containing non-gzipped content -->
+    <antcall target="put-all-versions-nonjs-files-to-S3">
+      <param name="local" value="${src.versions.dir}/" />
+      <param name="remote" value="${amazon.s3.bucketname}" />
+      <param name="http.expires" value="${http.expires.one.month}" />
+      <param name="max.age" value="${max.age.one.month}" />
+    </antcall>
+    <delete dir="${src.versions.dir}/../js-gzip" />
+    <echo message="finished!" />
   </target>
 </project>
