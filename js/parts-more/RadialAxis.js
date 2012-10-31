@@ -397,7 +397,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			chart.panes = [];
 		}
 		this.pane = chart.panes[paneIndex] = pane = new Pane(
-			chartOptions.pane[paneIndex],
+			splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
 		);

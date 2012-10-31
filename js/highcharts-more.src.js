@@ -22,6 +22,7 @@ var each = Highcharts.each,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
 	extendClass = Highcharts.extendClass,
+	splat = Highcharts.splat,
 	wrap = Highcharts.wrap,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
@@ -60,7 +61,7 @@ extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+			each([].concat(splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
 				config = merge(pane.defaultBackgroundOptions, config);
 				if (backgroundColor) {
@@ -502,7 +503,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			chart.panes = [];
 		}
 		this.pane = chart.panes[paneIndex] = pane = new Pane(
-			chartOptions.pane[paneIndex],
+			splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
 		);
@@ -1041,7 +1042,8 @@ var GaugeSeries = {
 			center = series.yAxis.center,
 			pivot = series.pivot,
 			options = series.options,
-			pivotOptions = options.pivot;
+			pivotOptions = options.pivot,
+			renderer = series.chart.renderer;
 		
 		each(series.points, function (point) {
 			
@@ -1054,7 +1056,7 @@ var GaugeSeries = {
 				graphic.animate(shapeArgs);
 				shapeArgs.d = d; // animate alters it
 			} else {
-				point.graphic = series.chart.renderer[point.shapeType](shapeArgs)
+				point.graphic = renderer[point.shapeType](shapeArgs)
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
@@ -1067,17 +1069,18 @@ var GaugeSeries = {
 		
 		// Add or move the pivot
 		if (pivot) {
-			pivot.animate({
-				cx: center[0],
-				cy: center[1]
+			pivot.animate({ // #1235
+				translateX: center[0],
+				translateY: center[1]
 			});
 		} else {
-			series.pivot = series.chart.renderer.circle(center[0], center[1], pick(pivotOptions.radius, 5))
+			series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
 					fill: pivotOptions.backgroundColor || 'black'
 				})
+				.translate(center[0], center[1])
 				.add(series.group);
 		}
 	},

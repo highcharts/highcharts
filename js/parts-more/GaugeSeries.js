@@ -129,7 +129,8 @@ var GaugeSeries = {
 			center = series.yAxis.center,
 			pivot = series.pivot,
 			options = series.options,
-			pivotOptions = options.pivot;
+			pivotOptions = options.pivot,
+			renderer = series.chart.renderer;
 		
 		each(series.points, function (point) {
 			
@@ -142,7 +143,7 @@ var GaugeSeries = {
 				graphic.animate(shapeArgs);
 				shapeArgs.d = d; // animate alters it
 			} else {
-				point.graphic = series.chart.renderer[point.shapeType](shapeArgs)
+				point.graphic = renderer[point.shapeType](shapeArgs)
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
@@ -155,17 +156,18 @@ var GaugeSeries = {
 		
 		// Add or move the pivot
 		if (pivot) {
-			pivot.animate({
-				cx: center[0],
-				cy: center[1]
+			pivot.animate({ // #1235
+				translateX: center[0],
+				translateY: center[1]
 			});
 		} else {
-			series.pivot = series.chart.renderer.circle(center[0], center[1], pick(pivotOptions.radius, 5))
+			series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
 					fill: pivotOptions.backgroundColor || 'black'
 				})
+				.translate(center[0], center[1])
 				.add(series.group);
 		}
 	},
