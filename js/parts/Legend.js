@@ -226,7 +226,8 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
 
@@ -244,7 +245,7 @@ Legend.prototype = {
 					options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
-					options.useHTML
+					useHTML
 				)
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
@@ -253,8 +254,8 @@ Legend.prototype = {
 				})
 				.add(item.legendGroup);
 
-			// Set the events on the item group
-			item.legendGroup.on('mouseover', function () {
+			// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+			(useHTML ? li : item.legendGroup).on('mouseover', function () {
 					item.setState(HOVER_STATE);
 					li.css(legend.options.itemHoverStyle);
 				})
