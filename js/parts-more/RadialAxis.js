@@ -365,6 +365,8 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		startAngleRad,
 		endAngleRad,
 		options,
+		chartOptions = chart.options,
+		paneIndex = userOptions.pane || 0,
 		pane,
 		paneOptions;
 		
@@ -392,17 +394,19 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		
 		// Create the pane and set the pane options.
 		if (!chart.panes) {
-			chart.panes = map(Highcharts.splat(chart.options.pane), function (paneOptions) {
-				return new Pane(paneOptions, chart, axis);
-			});
+			chart.panes = [];
 		}
-		this.pane = pane = chart.panes[userOptions.pane || 0];
+		this.pane = chart.panes[paneIndex] = pane = new Pane(
+			chartOptions.pane[paneIndex],
+			chart,
+			axis
+		);
 		paneOptions = pane.options;
 		
 			
 		// Disable certain features on angular and polar axes
 		chart.inverted = false;
-		chart.options.chart.zoomType = null;
+		chartOptions.chart.zoomType = null;
 		
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are

@@ -41,7 +41,6 @@ extend(Pane.prototype, {
 				firstAxis.options.plotBands.unshift(config);
 			});
 		}
-		
 	},
 	
 	/**
