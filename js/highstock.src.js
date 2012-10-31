@@ -3833,7 +3833,7 @@ SVGRenderer.prototype = {
 				y: mathRound(y)
 			})
 			.css({
-				position: 'relative',
+				position: ABSOLUTE,
 				whiteSpace: 'nowrap',
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
@@ -5765,10 +5765,9 @@ Tick.prototype = {
 			// Set the new position, and show or hide
 			if (show) {
 				label[tick.isNew ? 'attr' : 'animate'](xy);
-				label.show();
 				tick.isNew = false;
 			} else {
-				label.hide();
+				label.attr('y', -9999); // #1338
 			}
 		}
 	},

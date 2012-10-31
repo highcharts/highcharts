@@ -2017,7 +2017,7 @@ SVGRenderer.prototype = {
 				y: mathRound(y)
 			})
 			.css({
-				position: 'relative',
+				position: ABSOLUTE,
 				whiteSpace: 'nowrap',
 				fontFamily: defaultChartStyle.fontFamily,
 				fontSize: defaultChartStyle.fontSize
