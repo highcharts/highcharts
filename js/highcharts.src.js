@@ -53,6 +53,7 @@ var UNDEFINED,
 	pathAnim,
 	timeUnits,
 	noop = function () {},
+	charts = [],
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -2406,7 +2407,7 @@ SVGElement.prototype = {
 				height = pick(wrapper.elemHeight, elem.offsetHeight);
 
 				// update textWidth
-				if (width > textWidth && /[ \-]/.test(elem.innerText)) { // #983
+				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
@@ -2446,6 +2447,11 @@ SVGElement.prototype = {
 				left: (x + xCorr) + PX,
 				top: (y + yCorr) + PX
 			});
+			
+			// force reflow in webkit to apply the left and top on useHTML element (#1249)
+			if (isWebKit) {
+				height = elem.offsetHeight; // assigned to height for JSLint purpose
+			}
 
 			// record current text transform
 			wrapper.cTT = currentTextTransform;
@@ -4500,7 +4506,7 @@ var VMLElement = {
 
 						if (nodeName === 'SPAN') { // text color
 							elemStyle.color = value;
-						} else {
+						} else if (nodeName !== 'IMG') { // #1336
 							element.filled = value !== NONE ? true : false;
 
 							value = renderer.color(value, element, key, wrapper);
@@ -5764,10 +5770,9 @@ Tick.prototype = {
 			// Set the new position, and show or hide
 			if (show) {
 				label[tick.isNew ? 'attr' : 'animate'](xy);
-				label.show();
 				tick.isNew = false;
 			} else {
-				label.hide();
+				label.attr('y', -9999); // #1338
 			}
 		}
 	},
@@ -7153,17 +7158,6 @@ Axis.prototype = {
 		// adjust min and max for the minimum range
 		axis.adjustForMinRange();
 
-		// pad the values to get clear of the chart's edges
-		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
-			length = (axis.max - axis.min) || 1;
-			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
-				axis.min -= length * minPadding;
-			}
-			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
-				axis.max += length * maxPadding;
-			}
-		}
-
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
 			axis.tickInterval = 1;
@@ -7177,6 +7171,18 @@ Axis.prototype = {
 					1 :
 					(axis.max - axis.min) * tickPixelIntervalOption / (axis.len || 1)
 			);
+		}
+
+		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
+		// into account, we do this after computing tick interval (#1337).
+		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+			length = (axis.max - axis.min) || 1;
+			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
+				axis.min -= length * minPadding;
+			}
+			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
+				axis.max += length * maxPadding;
+			}
 		}
 
 		// Now we're finished detecting min and max, crop and group series data. This
@@ -9186,19 +9192,27 @@ Legend.prototype = {
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
-	positionCheckboxes: function () {
-		var legend = this;
+	positionCheckboxes: function (scrollOffset) {
+		var alignAttr = this.group.alignAttr,
+			translateY,
+			clipHeight = this.clipHeight || this.legendHeight;
 
-		each(legend.allItems, function (item) {
-			var checkbox = item.checkbox,
-				alignAttr = legend.group.alignAttr;
-			if (checkbox) {
-				css(checkbox, {
-					left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
-					top: (alignAttr.translateY + checkbox.y + 3) + PX
-				});
-			}
-		});
+		if (alignAttr) {
+			translateY = alignAttr.translateY;
+			each(this.allItems, function (item) {
+				var checkbox = item.checkbox,
+					top;
+				
+				if (checkbox) {
+					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+					css(checkbox, {
+						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
+						top: top + PX,
+						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
+					});
+				}
+			});
+		}
 	},
 
 	/**
@@ -9227,7 +9241,8 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
 
@@ -9245,7 +9260,7 @@ Legend.prototype = {
 					options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
-					options.useHTML
+					useHTML
 				)
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
@@ -9254,8 +9269,8 @@ Legend.prototype = {
 				})
 				.add(item.legendGroup);
 
-			// Set the events on the item group
-			item.legendGroup.on('mouseover', function () {
+			// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+			(useHTML ? li : item.legendGroup).on('mouseover', function () {
 					item.setState(HOVER_STATE);
 					li.css(legend.options.itemHoverStyle);
 				})
@@ -9592,7 +9607,8 @@ Legend.prototype = {
 			activeColor = navOptions.activeColor,
 			inactiveColor = navOptions.inactiveColor,
 			pager = this.pager,
-			padding = this.padding;
+			padding = this.padding,
+			scrollOffset;
 		
 		// When resizing while looking at the last page
 		if (currentPage > pageCount) {
@@ -9627,8 +9643,9 @@ Legend.prototype = {
 					cursor: currentPage === pageCount ? 'default' : 'pointer'
 				});
 			
+			scrollOffset = -mathMin(clipHeight * (currentPage - 1), this.fullHeight - clipHeight + padding) + 1;
 			this.scrollGroup.animate({
-				translateY: -mathMin(clipHeight * (currentPage - 1), this.fullHeight - clipHeight + padding) + 1
+				translateY: scrollOffset
 			});
 			pager.attr({
 				text: currentPage + '/' + pageCount
@@ -9636,6 +9653,7 @@ Legend.prototype = {
 			
 			
 			this.currentPage = currentPage;
+			this.positionCheckboxes(scrollOffset);
 		}
 			
 	}
@@ -10304,6 +10322,8 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			renderTo,
+			indexAttrName = 'data-highcharts-chart',
+			oldChartIndex,
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
@@ -10317,6 +10337,15 @@ Chart.prototype = {
 		if (!renderTo) {
 			error(13, true);
 		}
+		
+		// If the container already holds a chart, destroy it
+		oldChartIndex = pInt(attr(renderTo, indexAttrName));
+		if (!isNaN(oldChartIndex) && charts[oldChartIndex]) {
+			charts[oldChartIndex].destroy();
+		}		
+		
+		// Make a reference to the chart from the div
+		attr(renderTo, indexAttrName, chart.index);
 
 		// remove previous chart
 		renderTo.innerHTML = '';
@@ -10489,13 +10518,14 @@ Chart.prototype = {
 				
 			// Width and height checks for display:none. Target is doc in IE8 and Opera,
 			// win in Firefox, Chrome and IE9.
-			if (width && height && (target === win || target === doc)) {
+			if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
 				
 				if (width !== chart.containerWidth || height !== chart.containerHeight) {
 					clearTimeout(reflowTimeout);
 					chart.reflowTimeout = reflowTimeout = setTimeout(function () {
 						if (chart.container) { // It may have been destroyed in the meantime (#1257)
-							chart.resize(width, height, false);
+							chart.setSize(width, height, false);
+							chart.hasUserSize = null;
 						}
 					}, 100);
 				}
@@ -10515,8 +10545,7 @@ Chart.prototype = {
 	 * @param {Number} height
 	 * @param {Object|Boolean} animation
 	 */
-	// TODO: This method is called setSize in the api
-	resize: function (width, height, animation) {
+	setSize: function (width, height, animation) {
 		var chart = this,
 			chartWidth,
 			chartHeight,
@@ -10543,6 +10572,7 @@ Chart.prototype = {
 		chart.oldChartWidth = chart.chartWidth;
 		if (defined(width)) {
 			chart.chartWidth = chartWidth = mathRound(width);
+			chart.hasUserSize = !!chartWidth;
 		}
 		if (defined(height)) {
 			chart.chartHeight = chartHeight = mathRound(height);
@@ -10946,9 +10976,13 @@ Chart.prototype = {
 			container = chart.container,
 			i,
 			parentNode = container && container.parentNode;
-
+			
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
+		
+		// Delete the chart from charts lookup array
+		charts[chart.index] = UNDEFINED;
+		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
 		removeEvent(chart);
@@ -11085,7 +11119,9 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			eventType;
 
-		// Run chart
+		// Add the chart to the global lookup
+		chart.index = charts.length;
+		charts.push(chart);
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -11104,45 +11140,8 @@ Chart.prototype = {
 
 		// Expose methods and variables
 		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
-		chart.setSize = chart.resize;
 		chart.pointCount = 0;
 		chart.counters = new ChartCounters();
-		/*
-		if ($) $(function () {
-			$container = $('#container');
-			var origChartWidth,
-				origChartHeight;
-			if ($container) {
-				$('<button>+</button>')
-					.insertBefore($container)
-					.click(function () {
-						if (origChartWidth === UNDEFINED) {
-							origChartWidth = chartWidth;
-							origChartHeight = chartHeight;
-						}
-						chart.resize(chartWidth *= 1.1, chartHeight *= 1.1);
-					});
-				$('<button>-</button>')
-					.insertBefore($container)
-					.click(function () {
-						if (origChartWidth === UNDEFINED) {
-							origChartWidth = chartWidth;
-							origChartHeight = chartHeight;
-						}
-						chart.resize(chartWidth *= 0.9, chartHeight *= 0.9);
-					});
-				$('<button>1:1</button>')
-					.insertBefore($container)
-					.click(function () {
-						if (origChartWidth === UNDEFINED) {
-							origChartWidth = chartWidth;
-							origChartHeight = chartHeight;
-						}
-						chart.resize(origChartWidth, origChartHeight);
-					});
-			}
-		})
-		*/
 
 		chart.firstRender();
 	}
@@ -11687,6 +11686,7 @@ Series.prototype = {
 	type: 'line',
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
+	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
@@ -12120,6 +12120,12 @@ Series.prototype = {
 				xData[i] = pt.x;
 				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
+		}
+		
+		// Unsorted data is not supported by the line tooltip as well as data grouping and 
+		// navigation in Stock charts (#725)
+		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
+			error(15);
 		}
 
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
@@ -12643,10 +12649,14 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			trackerGroup = this.trackerGroup;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
+			if (trackerGroup) {
+				trackerGroup.clip(chart.clipRect); // #484
+			}
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -13131,10 +13141,15 @@ Series.prototype = {
 	 */
 	getSegmentPath: function (segment) {		
 		var series = this,
-			segmentPath = [];
-		
+			segmentPath = [],
+			step = series.options.step;
+			
 		// build the segment line
 		each(segment, function (point, i) {
+			
+			var plotX = point.plotX,
+				plotY = point.plotY,
+				lastPoint;
 
 			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
 				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
@@ -13145,12 +13160,28 @@ Series.prototype = {
 				segmentPath.push(i ? L : M);
 
 				// step line?
-				if (i && series.options.step) {
-					var lastPoint = segment[i - 1];
-					segmentPath.push(
-						point.plotX,
-						lastPoint.plotY
-					);
+				if (step && i) {
+					lastPoint = segment[i - 1];
+					if (step === 'right') { // docs
+						segmentPath.push(
+							lastPoint.plotX,
+							plotY
+						);
+						
+					} else if (step === 'center') {
+						segmentPath.push(
+							(lastPoint.plotX + plotX) / 2,
+							lastPoint.plotY,
+							(lastPoint.plotX + plotX) / 2,
+							plotY
+						);
+						
+					} else {
+						segmentPath.push(
+							plotX,
+							lastPoint.plotY
+						);
+					}
 				}
 
 				// normal line to next point
@@ -14006,7 +14037,6 @@ var ColumnSeries = extendClass(Series, {
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
 		if (options.grouping === false) {
 			columnCount = 1;
-		
 		} else {
 			each(chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options;
@@ -14039,8 +14069,9 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
-			colIndex = (reversedXAxis ? columnCount -
-				series.columnIndex : series.columnIndex) || 0,
+			colIndex = (reversedXAxis ? 
+				columnCount - (series.columnIndex || 0) : // #1251
+				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
@@ -14308,6 +14339,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 	},
+	
 	/**
 	 * Remove this series from the chart
 	 */
@@ -14364,6 +14396,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 var ScatterSeries = extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
+	requireSorting: false,
 	/**
 	 * Extend the base Series' translate method by adding shape type and
 	 * arguments for the point trackers
@@ -14431,7 +14464,9 @@ var ScatterSeries = extendClass(Series, {
 		} else {
 			series._hasTracking = true;
 		}
-	}
+	},
+	
+	setTooltipPoints: noop
 });
 seriesTypes.scatter = ScatterSeries;
 
@@ -14583,6 +14618,7 @@ var PieSeries = {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -15164,6 +15200,9 @@ extend(Highcharts, {
 	VMLRenderer: VMLRenderer,
 	
 	// Various
+	arrayMin: arrayMin,
+	arrayMax: arrayMax,
+	charts: charts, // docs
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,

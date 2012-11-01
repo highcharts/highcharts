@@ -364,10 +364,9 @@ Tick.prototype = {
 			// Set the new position, and show or hide
 			if (show) {
 				label[tick.isNew ? 'attr' : 'animate'](xy);
-				label.show();
 				tick.isNew = false;
 			} else {
-				label.hide();
+				label.attr('y', -9999); // #1338
 			}
 		}
 	},

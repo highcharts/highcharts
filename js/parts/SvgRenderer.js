@@ -591,7 +591,7 @@ SVGElement.prototype = {
 				height = pick(wrapper.elemHeight, elem.offsetHeight);
 
 				// update textWidth
-				if (width > textWidth && /[ \-]/.test(elem.innerText)) { // #983
+				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
@@ -631,6 +631,11 @@ SVGElement.prototype = {
 				left: (x + xCorr) + PX,
 				top: (y + yCorr) + PX
 			});
+			
+			// force reflow in webkit to apply the left and top on useHTML element (#1249)
+			if (isWebKit) {
+				height = elem.offsetHeight; // assigned to height for JSLint purpose
+			}
 
 			// record current text transform
 			wrapper.cTT = currentTextTransform;

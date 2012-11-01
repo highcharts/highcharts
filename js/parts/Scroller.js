@@ -89,6 +89,7 @@ extend(defaultOptions, {
 		buttonBorderColor: '#666',
 		buttonBorderRadius: 2,
 		buttonBorderWidth: 1,
+		minWidth: 6, // docs
 		rifleColor: '#666',
 		trackBackgroundColor: hash(
 			LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -272,6 +273,7 @@ Scroller.prototype = {
 			scrollbarEnabled = scroller.scrollbarEnabled,
 			navigatorOptions = scroller.navigatorOptions,
 			scrollbarOptions = scroller.scrollbarOptions,
+			scrollbarMinWidth = scrollbarOptions.minWidth, // docs
 			height = scroller.height,
 			top = scroller.top,
 			navigatorEnabled = scroller.navigatorEnabled,
@@ -280,6 +282,9 @@ Scroller.prototype = {
 			zoomedMin,
 			zoomedMax,
 			range,
+			scrX,
+			scrWidth,
+			scrollbarPad = 0,
 			outlineHeight = scroller.outlineHeight,
 			barBorderRadius = scrollbarOptions.barBorderRadius,
 			strokeWidth,
@@ -429,9 +434,18 @@ Scroller.prototype = {
 				width: scrollerWidth
 			});
 
+			// prevent the scrollbar from drawing to small (#1246)
+			scrX = scrollbarHeight + zoomedMin;
+			scrWidth = range - scrollbarStrokeWidth;
+			if (scrWidth < scrollbarMinWidth) {
+				scrollbarPad = (scrollbarMinWidth - scrWidth) / 2;
+				scrWidth = scrollbarMinWidth;
+				scrX -= scrollbarPad;
+			}
+			scroller.scrollbarPad = scrollbarPad;
 			scrollbar.attr({
-				x: mathRound(scrollbarHeight + zoomedMin) + (scrollbarStrokeWidth % 2 / 2),
-				width: range - scrollbarStrokeWidth
+				x: mathFloor(scrX) + (scrollbarStrokeWidth % 2 / 2),
+				width: scrWidth
 			});
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
@@ -538,6 +552,7 @@ Scroller.prototype = {
 				scrollerWidth = scroller.scrollerWidth,
 				navigatorLeft = scroller.navigatorLeft,
 				navigatorWidth = scroller.navigatorWidth,
+				scrollbarPad = scroller.scrollbarPad,
 				range = scroller.range,
 				chartX = e.chartX,
 				chartY = e.chartY,
@@ -559,7 +574,7 @@ Scroller.prototype = {
 					scroller.otherHandlePos = zoomedMin;
 
 				// grab the zoomed range
-				} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
+				} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
 					scroller.grabbedCenter = chartX;
 						
 					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
@@ -570,6 +585,7 @@ Scroller.prototype = {
 					}
 
 					dragOffset = chartX - zoomedMin;
+					
 
 				// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
 				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {

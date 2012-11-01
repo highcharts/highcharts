@@ -18,6 +18,9 @@ extend(Highcharts, {
 	VMLRenderer: VMLRenderer,
 	
 	// Various
+	arrayMin: arrayMin,
+	arrayMax: arrayMax,
+	charts: charts, // docs
 	dateFormat: dateFormat,
 	pathAnim: pathAnim,
 	getOptions: getOptions,

@@ -31,7 +31,7 @@ extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+			each([].concat(splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
 				config = merge(pane.defaultBackgroundOptions, config);
 				if (backgroundColor) {
@@ -41,7 +41,6 @@ extend(Pane.prototype, {
 				firstAxis.options.plotBands.unshift(config);
 			});
 		}
-		
 	},
 	
 	/**

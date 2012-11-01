@@ -535,6 +535,7 @@ Series.prototype = {
 	type: 'line',
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
+	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
@@ -968,6 +969,12 @@ Series.prototype = {
 				xData[i] = pt.x;
 				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
 			}
+		}
+		
+		// Unsorted data is not supported by the line tooltip as well as data grouping and 
+		// navigation in Stock charts (#725)
+		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
+			error(15);
 		}
 
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
@@ -1491,10 +1498,14 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			trackerGroup = this.trackerGroup;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
+			if (trackerGroup) {
+				trackerGroup.clip(chart.clipRect); // #484
+			}
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -1979,10 +1990,15 @@ Series.prototype = {
 	 */
 	getSegmentPath: function (segment) {		
 		var series = this,
-			segmentPath = [];
-		
+			segmentPath = [],
+			step = series.options.step;
+			
 		// build the segment line
 		each(segment, function (point, i) {
+			
+			var plotX = point.plotX,
+				plotY = point.plotY,
+				lastPoint;
 
 			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
 				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
@@ -1993,12 +2009,28 @@ Series.prototype = {
 				segmentPath.push(i ? L : M);
 
 				// step line?
-				if (i && series.options.step) {
-					var lastPoint = segment[i - 1];
-					segmentPath.push(
-						point.plotX,
-						lastPoint.plotY
-					);
+				if (step && i) {
+					lastPoint = segment[i - 1];
+					if (step === 'right') { // docs
+						segmentPath.push(
+							lastPoint.plotX,
+							plotY
+						);
+						
+					} else if (step === 'center') {
+						segmentPath.push(
+							(lastPoint.plotX + plotX) / 2,
+							lastPoint.plotY,
+							(lastPoint.plotX + plotX) / 2,
+							plotY
+						);
+						
+					} else {
+						segmentPath.push(
+							plotX,
+							lastPoint.plotY
+						);
+					}
 				}
 
 				// normal line to next point

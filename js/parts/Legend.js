@@ -177,19 +177,27 @@ Legend.prototype = {
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
-	positionCheckboxes: function () {
-		var legend = this;
+	positionCheckboxes: function (scrollOffset) {
+		var alignAttr = this.group.alignAttr,
+			translateY,
+			clipHeight = this.clipHeight || this.legendHeight;
 
-		each(legend.allItems, function (item) {
-			var checkbox = item.checkbox,
-				alignAttr = legend.group.alignAttr;
-			if (checkbox) {
-				css(checkbox, {
-					left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
-					top: (alignAttr.translateY + checkbox.y + 3) + PX
-				});
-			}
-		});
+		if (alignAttr) {
+			translateY = alignAttr.translateY;
+			each(this.allItems, function (item) {
+				var checkbox = item.checkbox,
+					top;
+				
+				if (checkbox) {
+					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+					css(checkbox, {
+						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
+						top: top + PX,
+						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
+					});
+				}
+			});
+		}
 	},
 
 	/**
@@ -218,7 +226,8 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
 
@@ -236,7 +245,7 @@ Legend.prototype = {
 					options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
-					options.useHTML
+					useHTML
 				)
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
@@ -245,8 +254,8 @@ Legend.prototype = {
 				})
 				.add(item.legendGroup);
 
-			// Set the events on the item group
-			item.legendGroup.on('mouseover', function () {
+			// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+			(useHTML ? li : item.legendGroup).on('mouseover', function () {
 					item.setState(HOVER_STATE);
 					li.css(legend.options.itemHoverStyle);
 				})
@@ -583,7 +592,8 @@ Legend.prototype = {
 			activeColor = navOptions.activeColor,
 			inactiveColor = navOptions.inactiveColor,
 			pager = this.pager,
-			padding = this.padding;
+			padding = this.padding,
+			scrollOffset;
 		
 		// When resizing while looking at the last page
 		if (currentPage > pageCount) {
@@ -618,8 +628,9 @@ Legend.prototype = {
 					cursor: currentPage === pageCount ? 'default' : 'pointer'
 				});
 			
+			scrollOffset = -mathMin(clipHeight * (currentPage - 1), this.fullHeight - clipHeight + padding) + 1;
 			this.scrollGroup.animate({
-				translateY: -mathMin(clipHeight * (currentPage - 1), this.fullHeight - clipHeight + padding) + 1
+				translateY: scrollOffset
 			});
 			pager.attr({
 				text: currentPage + '/' + pageCount
@@ -627,6 +638,7 @@ Legend.prototype = {
 			
 			
 			this.currentPage = currentPage;
+			this.positionCheckboxes(scrollOffset);
 		}
 			
 	}

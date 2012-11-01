@@ -22,6 +22,7 @@ var each = Highcharts.each,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
 	extendClass = Highcharts.extendClass,
+	splat = Highcharts.splat,
 	wrap = Highcharts.wrap,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
@@ -60,7 +61,7 @@ extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+			each([].concat(splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
 				config = merge(pane.defaultBackgroundOptions, config);
 				if (backgroundColor) {
@@ -70,7 +71,6 @@ extend(Pane.prototype, {
 				firstAxis.options.plotBands.unshift(config);
 			});
 		}
-		
 	},
 	
 	/**
@@ -471,6 +471,8 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		startAngleRad,
 		endAngleRad,
 		options,
+		chartOptions = chart.options,
+		paneIndex = userOptions.pane || 0,
 		pane,
 		paneOptions;
 		
@@ -498,17 +500,19 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		
 		// Create the pane and set the pane options.
 		if (!chart.panes) {
-			chart.panes = map(Highcharts.splat(chart.options.pane), function (paneOptions) {
-				return new Pane(paneOptions, chart, axis);
-			});
+			chart.panes = [];
 		}
-		this.pane = pane = chart.panes[userOptions.pane || 0];
+		this.pane = chart.panes[paneIndex] = pane = new Pane(
+			splat(chartOptions.pane)[paneIndex],
+			chart,
+			axis
+		);
 		paneOptions = pane.options;
 		
 			
 		// Disable certain features on angular and polar axes
 		chart.inverted = false;
-		chart.options.chart.zoomType = null;
+		chartOptions.chart.zoomType = null;
 		
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are
@@ -745,6 +749,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			point,
 			linePath,
 			lowerPath,
+			options = this.options,
+			step = options.step,
 			higherPath;
 			
 		// Make a segment with plotX and plotY for the top values
@@ -758,7 +764,14 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		
 		// Get the paths
 		lowerPath = baseGetSegmentPath.call(this, segment);
+		if (step) {
+			if (step === true) {
+				step = 'left';
+			}
+			options.step = { left: 'right', center: 'center', right: 'left' }[step]; // swap for reading in getSegmentPath
+		}
 		higherPath = baseGetSegmentPath.call(this, highSegment);
+		options.step = step;
 		
 		// Create a line on both top and bottom of the range
 		linePath = [].concat(lowerPath, higherPath);
@@ -1029,7 +1042,8 @@ var GaugeSeries = {
 			center = series.yAxis.center,
 			pivot = series.pivot,
 			options = series.options,
-			pivotOptions = options.pivot;
+			pivotOptions = options.pivot,
+			renderer = series.chart.renderer;
 		
 		each(series.points, function (point) {
 			
@@ -1042,7 +1056,7 @@ var GaugeSeries = {
 				graphic.animate(shapeArgs);
 				shapeArgs.d = d; // animate alters it
 			} else {
-				point.graphic = series.chart.renderer[point.shapeType](shapeArgs)
+				point.graphic = renderer[point.shapeType](shapeArgs)
 					.attr({
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
@@ -1055,17 +1069,18 @@ var GaugeSeries = {
 		
 		// Add or move the pivot
 		if (pivot) {
-			pivot.animate({
-				cx: center[0],
-				cy: center[1]
+			pivot.animate({ // #1235
+				translateX: center[0],
+				translateY: center[1]
 			});
 		} else {
-			series.pivot = series.chart.renderer.circle(center[0], center[1], pick(pivotOptions.radius, 5))
+			series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
 					fill: pivotOptions.backgroundColor || 'black'
 				})
+				.translate(center[0], center[1])
 				.add(series.group);
 		}
 	},

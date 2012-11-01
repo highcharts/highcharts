@@ -660,6 +660,8 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			renderTo,
+			indexAttrName = 'data-highcharts-chart',
+			oldChartIndex,
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
@@ -673,6 +675,15 @@ Chart.prototype = {
 		if (!renderTo) {
 			error(13, true);
 		}
+		
+		// If the container already holds a chart, destroy it
+		oldChartIndex = pInt(attr(renderTo, indexAttrName));
+		if (!isNaN(oldChartIndex) && charts[oldChartIndex]) {
+			charts[oldChartIndex].destroy();
+		}		
+		
+		// Make a reference to the chart from the div
+		attr(renderTo, indexAttrName, chart.index);
 
 		// remove previous chart
 		renderTo.innerHTML = '';
@@ -845,13 +856,14 @@ Chart.prototype = {
 				
 			// Width and height checks for display:none. Target is doc in IE8 and Opera,
 			// win in Firefox, Chrome and IE9.
-			if (width && height && (target === win || target === doc)) {
+			if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
 				
 				if (width !== chart.containerWidth || height !== chart.containerHeight) {
 					clearTimeout(reflowTimeout);
 					chart.reflowTimeout = reflowTimeout = setTimeout(function () {
 						if (chart.container) { // It may have been destroyed in the meantime (#1257)
-							chart.resize(width, height, false);
+							chart.setSize(width, height, false);
+							chart.hasUserSize = null;
 						}
 					}, 100);
 				}
@@ -871,8 +883,7 @@ Chart.prototype = {
 	 * @param {Number} height
 	 * @param {Object|Boolean} animation
 	 */
-	// TODO: This method is called setSize in the api
-	resize: function (width, height, animation) {
+	setSize: function (width, height, animation) {
 		var chart = this,
 			chartWidth,
 			chartHeight,
@@ -899,6 +910,7 @@ Chart.prototype = {
 		chart.oldChartWidth = chart.chartWidth;
 		if (defined(width)) {
 			chart.chartWidth = chartWidth = mathRound(width);
+			chart.hasUserSize = !!chartWidth;
 		}
 		if (defined(height)) {
 			chart.chartHeight = chartHeight = mathRound(height);
@@ -1302,9 +1314,13 @@ Chart.prototype = {
 			container = chart.container,
 			i,
 			parentNode = container && container.parentNode;
-
+			
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
+		
+		// Delete the chart from charts lookup array
+		charts[chart.index] = UNDEFINED;
+		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
 		removeEvent(chart);
@@ -1441,7 +1457,9 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			eventType;
 
-		// Run chart
+		// Add the chart to the global lookup
+		chart.index = charts.length;
+		charts.push(chart);
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -1460,45 +1478,8 @@ Chart.prototype = {
 
 		// Expose methods and variables
 		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
-		chart.setSize = chart.resize;
 		chart.pointCount = 0;
 		chart.counters = new ChartCounters();
-		/*
-		if ($) $(function () {
-			$container = $('#container');
-			var origChartWidth,
-				origChartHeight;
-			if ($container) {
-				$('<button>+</button>')
-					.insertBefore($container)
-					.click(function () {
-						if (origChartWidth === UNDEFINED) {
-							origChartWidth = chartWidth;
-							origChartHeight = chartHeight;
-						}
-						chart.resize(chartWidth *= 1.1, chartHeight *= 1.1);
-					});
-				$('<button>-</button>')
-					.insertBefore($container)
-					.click(function () {
-						if (origChartWidth === UNDEFINED) {
-							origChartWidth = chartWidth;
-							origChartHeight = chartHeight;
-						}
-						chart.resize(chartWidth *= 0.9, chartHeight *= 0.9);
-					});
-				$('<button>1:1</button>')
-					.insertBefore($container)
-					.click(function () {
-						if (origChartWidth === UNDEFINED) {
-							origChartWidth = chartWidth;
-							origChartHeight = chartHeight;
-						}
-						chart.resize(origChartWidth, origChartHeight);
-					});
-			}
-		})
-		*/
 
 		chart.firstRender();
 	}

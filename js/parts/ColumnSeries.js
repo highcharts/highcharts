@@ -90,7 +90,6 @@ var ColumnSeries = extendClass(Series, {
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
 		if (options.grouping === false) {
 			columnCount = 1;
-		
 		} else {
 			each(chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options;
@@ -123,8 +122,9 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
-			colIndex = (reversedXAxis ? columnCount -
-				series.columnIndex : series.columnIndex) || 0,
+			colIndex = (reversedXAxis ? 
+				columnCount - (series.columnIndex || 0) : // #1251
+				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
@@ -392,6 +392,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 	},
+	
 	/**
 	 * Remove this series from the chart
 	 */
