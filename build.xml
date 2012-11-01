@@ -949,6 +949,7 @@
     </exec>
   </target>
   <target name="deploy-highcharts-S3" depends="set.properties" description="deploy highcharts distribution to Amazon S3">
+  	<property file="git-ignore-me.properties" />
     <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
     <antcall target="put-zipfile-to-S3">
       <param name="local" value="${basedir}/build/dist/Highcharts.zip" />
@@ -1034,6 +1035,7 @@
   </target>
   <!-- Deploy Highstock to S3 -->
   <target name="deploy-highstock-S3" depends="set.properties" description="deploy highstock distribution to Amazon S3">
+  	<property file="git-ignore-me.properties" />
     <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip" />
     <antcall target="put-zipfile-to-S3">
       <param name="local" value="${basedir}/build/dist/Highstock.zip" />
@@ -1119,6 +1121,7 @@
   </target>
   <!-- push whole versions structure from local machine to Amazon S3 -->
   <target name="push-all-versions-to-S3" depends="set.properties">
+  	<property file="git-ignore-me.properties" />
     <!-- copy base folder containing all versions to seperate folder for gzipping *.js files. The user is asked om source directory containing all versions -->
     <input message="Please enter which directory you want to gzip, WITHOUT trailing slash!!! :" addproperty="src.versions.dir" />
     <antcall target="gzip-js">
