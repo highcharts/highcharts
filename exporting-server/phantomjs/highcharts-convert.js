@@ -1,3 +1,11 @@
+/**
+ * @license Highcharts JS v2.3.3 (2012-11-02)
+ *
+ * (c) 2009-2011 Gert Vaartjes
+ *
+ * License: www.highcharts.com/license
+ */
+
 /*global window, require, phantom, console, $, document, Image, Highcharts, clearTimeout, options */
 
 (function () {
