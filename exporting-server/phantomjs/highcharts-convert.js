@@ -7,7 +7,7 @@
 		/* define locations of mandatory javascript files */
 		HIGHCHARTS: 'highstock.js',
 		HIGHCHARTS_MORE: 'highcharts-more',
-		JQUERY: 'jquery-1.7.1.min.js'
+		JQUERY: 'jquery-1.8.2.min.js'
 	},
 	/* Internal */
 		page = require('webpage').create(),
@@ -114,7 +114,7 @@
 			// load necessary libraries
 			page.injectJs(config.JQUERY);
 			page.injectJs(config.HIGHCHARTS);
-			page.injectJs(config.HIGHCHARTS_MORE);			
+			page.injectJs(config.HIGHCHARTS_MORE);
 
 			// load options from file
 			if (input !== undefined) {
