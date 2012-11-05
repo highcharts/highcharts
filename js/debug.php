@@ -8,7 +8,7 @@ $xml = simplexml_load_file('../build.xml');
 
 $files = $xml->xpath("/project/target[@name=\"set.properties\"]/filelist[@id=\"$target.files\"]/file");
 
-header('Content-Type', 'text/javascript');
+header('Content-Type: text/javascript');
 echo "window.console && console.log('Running $target.js from parts');\n"; 
 foreach ($files as $file) {
 	include('parts/'. $file['name']);
