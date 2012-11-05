@@ -1,0 +1,5 @@
+# For testing purposes, redirect .js to higcharts.js.php
+RewriteEngine On
+RewriteRule highcharts.js debug.php?target=highcharts
+RewriteRule highstock.js debug.php?target=highstock
+RewriteRule highcharts-more.js debug.php?target=highchartsmore
