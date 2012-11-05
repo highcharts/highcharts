@@ -1,8 +1,3 @@
-// constants
-var MOUSEDOWN = hasTouch ? 'touchstart' : 'mousedown',
-	MOUSEMOVE = hasTouch ? 'touchmove' : 'mousemove',
-	MOUSEUP = hasTouch ? 'touchend' : 'mouseup';
-
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
@@ -84,7 +79,7 @@ extend(defaultOptions, {
 	},
 	scrollbar: {
 		//enabled: true
-		height: hasTouch ? 20 : 14,
+		height: isTouchDevice ? 20 : 14,
 		barBackgroundColor: buttonGradient,
 		barBorderRadius: 2,
 		barBorderWidth: 1,
@@ -94,6 +89,7 @@ extend(defaultOptions, {
 		buttonBorderColor: '#666',
 		buttonBorderRadius: 2,
 		buttonBorderWidth: 1,
+		minWidth: 6, // docs
 		rifleColor: '#666',
 		trackBackgroundColor: hash(
 			LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -277,6 +273,7 @@ Scroller.prototype = {
 			scrollbarEnabled = scroller.scrollbarEnabled,
 			navigatorOptions = scroller.navigatorOptions,
 			scrollbarOptions = scroller.scrollbarOptions,
+			scrollbarMinWidth = scrollbarOptions.minWidth, // docs
 			height = scroller.height,
 			top = scroller.top,
 			navigatorEnabled = scroller.navigatorEnabled,
@@ -285,6 +282,9 @@ Scroller.prototype = {
 			zoomedMin,
 			zoomedMax,
 			range,
+			scrX,
+			scrWidth,
+			scrollbarPad = 0,
 			outlineHeight = scroller.outlineHeight,
 			barBorderRadius = scrollbarOptions.barBorderRadius,
 			strokeWidth,
@@ -434,9 +434,18 @@ Scroller.prototype = {
 				width: scrollerWidth
 			});
 
+			// prevent the scrollbar from drawing to small (#1246)
+			scrX = scrollbarHeight + zoomedMin;
+			scrWidth = range - scrollbarStrokeWidth;
+			if (scrWidth < scrollbarMinWidth) {
+				scrollbarPad = (scrollbarMinWidth - scrWidth) / 2;
+				scrWidth = scrollbarMinWidth;
+				scrX -= scrollbarPad;
+			}
+			scroller.scrollbarPad = scrollbarPad;
 			scrollbar.attr({
-				x: mathRound(scrollbarHeight + zoomedMin) + (scrollbarStrokeWidth % 2 / 2),
-				width: range - scrollbarStrokeWidth
+				x: mathFloor(scrX) + (scrollbarStrokeWidth % 2 / 2),
+				width: scrWidth
 			});
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
@@ -466,26 +475,46 @@ Scroller.prototype = {
 	 * Set up the mouse and touch events for the navigator and scrollbar
 	 */
 	addEvents: function () {
-		var scroller = this,
-			chart = scroller.chart;
-
-		addEvent(chart.container, MOUSEDOWN, scroller.mouseDownHandler);
-		addEvent(chart.container, MOUSEMOVE, scroller.mouseMoveHandler);
-		addEvent(document, MOUSEUP, scroller.mouseUpHandler);
+		var container = this.chart.container,
+			mouseDownHandler = this.mouseDownHandler,
+			mouseMoveHandler = this.mouseMoveHandler,
+			mouseUpHandler = this.mouseUpHandler,
+			_events;
+		
+		// Mouse events
+		_events = [
+			[container, 'mousedown', mouseDownHandler],
+			[container, 'mousemove', mouseMoveHandler],
+			[document, 'mouseup', mouseUpHandler]
+		];
+		
+		// Touch events
+		if (hasTouch) {
+			_events.push(
+				[container, 'touchstart', mouseDownHandler],
+				[container, 'touchmove', mouseMoveHandler],
+				[document, 'touchend', mouseUpHandler]
+			);
+		}
+		
+		// Add them all
+		each(_events, function (args) {
+			addEvent.apply(null, args);
+		});
+		this._events = _events;
 	},
 
 	/**
 	 * Removes the event handlers attached previously with addEvents.
 	 */
 	removeEvents: function () {
-		var scroller = this,
-			chart = scroller.chart;
-
-		removeEvent(chart.container, MOUSEDOWN, scroller.mouseDownHandler);
-		removeEvent(chart.container, MOUSEMOVE, scroller.mouseMoveHandler);
-		removeEvent(document, MOUSEUP, scroller.mouseUpHandler);
-		if (scroller.navigatorEnabled) {
-			removeEvent(scroller.baseSeries, 'updatedData', scroller.updatedDataHandler);
+		
+		each(this._events, function (args) {
+			removeEvent.apply(null, args);
+		});
+		this._events = UNDEFINED;
+		if (this.navigatorEnabled) {
+			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
 		}
 	},
 
@@ -523,10 +552,11 @@ Scroller.prototype = {
 				scrollerWidth = scroller.scrollerWidth,
 				navigatorLeft = scroller.navigatorLeft,
 				navigatorWidth = scroller.navigatorWidth,
+				scrollbarPad = scroller.scrollbarPad,
 				range = scroller.range,
 				chartX = e.chartX,
 				chartY = e.chartY,
-				handleSensitivity = hasTouch ? 10 : 7,
+				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
 				isOnNavigator;
 
@@ -544,7 +574,7 @@ Scroller.prototype = {
 					scroller.otherHandlePos = zoomedMin;
 
 				// grab the zoomed range
-				} else if (chartX > navigatorLeft + zoomedMin && chartX < navigatorLeft + zoomedMax) {
+				} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
 					scroller.grabbedCenter = chartX;
 						
 					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
@@ -555,6 +585,7 @@ Scroller.prototype = {
 					}
 
 					dragOffset = chartX - zoomedMin;
+					
 
 				// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
 				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
@@ -589,6 +620,10 @@ Scroller.prototype = {
 					}
 				}
 			}
+			// Prevent iPad from passing the handler on from touchstart to mousedown 
+			if (e.type === 'touchstart') {
+				e.preventDefault();
+			}
 		};
 
 		/**
@@ -600,38 +635,45 @@ Scroller.prototype = {
 				navigatorWidth = scroller.navigatorWidth,
 				scrollerLeft = scroller.scrollerLeft,
 				scrollerWidth = scroller.scrollerWidth,
-				range = scroller.range;
-
-			e = chart.tracker.normalizeMouseEvent(e);
-			var chartX = e.chartX;
-
-			// validation for handle dragging
-			if (chartX < navigatorLeft) {
-				chartX = navigatorLeft;
-			} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-				chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
-			}
-
-			// drag left handle
-			if (scroller.grabbedLeft) {
-				hasDragged = true;
-				scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
-
-			// drag right handle
-			} else if (scroller.grabbedRight) {
-				hasDragged = true;
-				scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
-
-			// drag scrollbar or open area in navigator
-			} else if (scroller.grabbedCenter) {
-				hasDragged = true;
-				if (chartX < dragOffset) { // outside left
-					chartX = dragOffset;
-				} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
-					chartX = navigatorWidth + dragOffset - range;
+				range = scroller.range,
+				chartX;
+				
+			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
+			// down in the center of the scrollbar. This should be ignored.
+			if (e.pageX !== 0) {
+			
+				e = chart.tracker.normalizeMouseEvent(e);
+				chartX = e.chartX;
+	
+				// validation for handle dragging
+				if (chartX < navigatorLeft) {
+					chartX = navigatorLeft;
+				} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
+					chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
 				}
-
-				scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+	
+				// drag left handle
+				if (scroller.grabbedLeft) {
+					hasDragged = true;
+					scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
+	
+				// drag right handle
+				} else if (scroller.grabbedRight) {
+					hasDragged = true;
+					scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
+	
+				// drag scrollbar or open area in navigator
+				} else if (scroller.grabbedCenter) {
+					
+					hasDragged = true;
+					if (chartX < dragOffset) { // outside left
+						chartX = dragOffset;
+					} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
+						chartX = navigatorWidth + dragOffset - range;
+					}
+	
+					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+				}
 			}
 		};
 

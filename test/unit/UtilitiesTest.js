@@ -312,3 +312,13 @@ UtilTest.prototype.testFormat = function () {
     );
 };
 
+
+/**
+ * Test date formatting
+ */
+UtilTest.prototype.testDateFormat = function () {
+	
+	// Issue #953
+	assertEquals('Two occurences of a pattern', '2012-01-01, 00:00 - 00:59', 
+		dateFormat('%Y-%m-%d, %H:00 - %H:59', Date.UTC(2012, 0, 1, 0, 0, 0)));
+}

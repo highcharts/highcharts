@@ -50,7 +50,19 @@ var ScatterSeries = extendClass(Series, {
 			css = cursor && { cursor: cursor },
 			points = series.points,
 			i = points.length,
-			graphic;
+			graphic,
+			markerGroup = series.markerGroup,
+			onMouseOver = function (e) {
+				series.onMouseOver();
+				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
+					points[e.target._i].onMouseOver();
+				}
+			},
+			onMouseOut = function () {
+				if (!series.options.stickyTracking) {
+					series.onMouseOut();
+				}
+			};
 
 		// Set an expando property for the point index, used below
 		while (i--) {
@@ -66,18 +78,13 @@ var ScatterSeries = extendClass(Series, {
 				.attr({
 					isTracker: true
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function (e) {
-					series.onMouseOver();
-					if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-						points[e.target._i].onMouseOver();
-					}
-				})
-				.on('mouseout', function () {
-					if (!series.options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
+				.on('mouseover', onMouseOver)
+				.on('mouseout', onMouseOut)
 				.css(css);
+			if (hasTouch) {
+				markerGroup.on('touchstart', onMouseOver);
+			}
+			
 		} else {
 			series._hasTracking = true;
 		}

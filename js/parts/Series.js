@@ -1364,10 +1364,6 @@ Series.prototype = {
 			chart = series.chart,
 			hoverSeries = chart.hoverSeries;
 
-		/*if (!hasTouch && chart.mouseIsDown) {
-			return;
-		}*/
-
 		// set normal state to previous series
 		if (hoverSeries && hoverSeries !== series) {
 			hoverSeries.onMouseOut();
@@ -1487,10 +1483,14 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			trackerGroup = this.trackerGroup;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
+			if (trackerGroup) {
+				trackerGroup.clip(chart.clipRect); // #484
+			}
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -1979,10 +1979,15 @@ Series.prototype = {
 	 */
 	getSegmentPath: function (segment) {		
 		var series = this,
-			segmentPath = [];
-		
+			segmentPath = [],
+			step = series.options.step;
+			
 		// build the segment line
 		each(segment, function (point, i) {
+			
+			var plotX = point.plotX,
+				plotY = point.plotY,
+				lastPoint;
 
 			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
 				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
@@ -1993,12 +1998,28 @@ Series.prototype = {
 				segmentPath.push(i ? L : M);
 
 				// step line?
-				if (i && series.options.step) {
-					var lastPoint = segment[i - 1];
-					segmentPath.push(
-						point.plotX,
-						lastPoint.plotY
-					);
+				if (step && i) {
+					lastPoint = segment[i - 1];
+					if (step === 'right') { // docs
+						segmentPath.push(
+							lastPoint.plotX,
+							plotY
+						);
+						
+					} else if (step === 'center') {
+						segmentPath.push(
+							(lastPoint.plotX + plotX) / 2,
+							lastPoint.plotY,
+							(lastPoint.plotX + plotX) / 2,
+							plotY
+						);
+						
+					} else {
+						segmentPath.push(
+							plotX,
+							lastPoint.plotY
+						);
+					}
 				}
 
 				// normal line to next point
@@ -2420,7 +2441,17 @@ Series.prototype = {
 			singlePoints = series.singlePoints,
 			trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
-			i;
+			i,
+			onMouseOver = function () {
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+			},
+			onMouseOut = function () {
+				if (!options.stickyTracking) {
+					series.onMouseOut();
+				}
+			};
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -2451,7 +2482,7 @@ Series.prototype = {
 
 		} else { // create
 				
-			series.tracker = renderer.path(trackerPath)
+			series.tracker = tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
 					'stroke-linejoin': 'round', // #1225
@@ -2460,18 +2491,14 @@ Series.prototype = {
 					fill: trackByArea ? TRACKER_FILL : NONE,
 					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
 				})
-				.on(hasTouch ? 'touchstart' : 'mouseover', function () {
-					if (chart.hoverSeries !== series) {
-						series.onMouseOver();
-					}
-				})
-				.on('mouseout', function () {
-					if (!options.stickyTracking) {
-						series.onMouseOut();
-					}
-				})
+				.on('mouseover', onMouseOver)
+				.on('mouseout', onMouseOut)
 				.css(css)
 				.add(trackerGroup);
+				
+			if (hasTouch) {
+				tracker.on('touchstart', onMouseOver);
+			} 
 		}
 
 	}

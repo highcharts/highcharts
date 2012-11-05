@@ -1,20 +1,31 @@
 $(function () {
     var chart = new Highcharts.Chart({
+
         chart: {
             renderTo: 'container'
         },
+        
+        title: {
+        	text: 'Step line types'
+        },
+    
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-        
-        plotOptions: {
-            series: {
-                step: true
-            }
-        },
-        
+    
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]        
+            data: [1,2,3,4,null,6,7,null,9],
+            step: 'right',
+            name: 'Right'
+        }, {
+            data: [5,6,7,8,null,10,11,null,13],
+            step: 'center',
+            name: 'Center'
+        }, {
+            data: [9,10,11,12,null,14,15,null,17],
+            step: 'left',
+            name: 'Left'
         }]
+    
     });
 });

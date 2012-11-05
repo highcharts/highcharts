@@ -186,9 +186,10 @@ Legend.prototype = {
 			translateY = alignAttr.translateY;
 			each(this.allItems, function (item) {
 				var checkbox = item.checkbox,
-					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+					top;
 				
 				if (checkbox) {
+					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
 					css(checkbox, {
 						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
 						top: top + PX,
@@ -225,7 +226,8 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
 
@@ -243,7 +245,7 @@ Legend.prototype = {
 					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item), // docs,
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
-					options.useHTML
+					useHTML
 				)
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
@@ -252,8 +254,8 @@ Legend.prototype = {
 				})
 				.add(item.legendGroup);
 
-			// Set the events on the item group
-			item.legendGroup.on('mouseover', function () {
+			// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+			(useHTML ? li : item.legendGroup).on('mouseover', function () {
 					item.setState(HOVER_STATE);
 					li.css(legend.options.itemHoverStyle);
 				})

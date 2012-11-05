@@ -66,6 +66,8 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			point,
 			linePath,
 			lowerPath,
+			options = this.options,
+			step = options.step,
 			higherPath;
 			
 		// Make a segment with plotX and plotY for the top values
@@ -79,7 +81,14 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 		
 		// Get the paths
 		lowerPath = baseGetSegmentPath.call(this, segment);
+		if (step) {
+			if (step === true) {
+				step = 'left';
+			}
+			options.step = { left: 'right', center: 'center', right: 'left' }[step]; // swap for reading in getSegmentPath
+		}
 		higherPath = baseGetSegmentPath.call(this, highSegment);
+		options.step = step;
 		
 		// Create a line on both top and bottom of the range
 		linePath = [].concat(lowerPath, higherPath);

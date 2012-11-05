@@ -91,7 +91,6 @@ var ColumnSeries = extendClass(Series, {
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
 		if (options.grouping === false) {
 			columnCount = 1;
-		
 		} else {
 			each(chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options;
@@ -124,8 +123,9 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
-			colIndex = (reversedXAxis ? columnCount -
-				series.columnIndex : series.columnIndex) || 0,
+			colIndex = (reversedXAxis ? 
+				columnCount - (series.columnIndex || 0) : // #1251
+				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
@@ -229,7 +229,7 @@ var ColumnSeries = extendClass(Series, {
 	},
 	/**
 	 * Draw the individual tracker elements.
-	 * This method is inherited by scatter and pie charts too.
+	 * This method is inherited by pie charts too.
 	 */
 	drawTracker: function () {
 		var series = this,
@@ -244,9 +244,28 @@ var ColumnSeries = extendClass(Series, {
 			trackerGroup = series.isCartesian && series.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			rel,
 			plotY,
-			validPlotY;
+			validPlotY,
+			points = series.points,
+			point,
+			i = points.length,
+			onMouseOver = function (event) {
+				rel = event.relatedTarget || event.fromElement;
+				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
+					series.onMouseOver();
+				}
+				points[event.target._i].onMouseOver();
+			},
+			onMouseOut = function (event) {
+				if (!options.stickyTracking) {
+					rel = event.relatedTarget || event.toElement;
+					if (attr(rel, 'isTracker') !== trackerLabel) {
+						series.onMouseOut();
+					}
+				}
+			};
 			
-		each(series.points, function (point) {
+		while (i--) {
+			point = points[i];
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
 			plotY = point.plotY;
@@ -257,34 +276,25 @@ var ColumnSeries = extendClass(Series, {
 					tracker.attr(shapeArgs);
 
 				} else {
-					point.tracker =
+					point.tracker = tracker =
 						renderer[point.shapeType](shapeArgs)
 						.attr({
 							isTracker: trackerLabel,
 							fill: TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN
 						})
-						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
-							rel = event.relatedTarget || event.fromElement;
-							if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
-								series.onMouseOver();
-							}
-							point.onMouseOver();
-
-						})
-						.on('mouseout', function (event) {
-							if (!options.stickyTracking) {
-								rel = event.relatedTarget || event.toElement;
-								if (attr(rel, 'isTracker') !== trackerLabel) {
-									series.onMouseOut();
-								}
-							}
-						})
+						.on('mouseover', onMouseOver)
+						.on('mouseout', onMouseOut)
 						.css(css)
 						.add(point.group || trackerGroup); // pies have point group - see issue #118
+						
+					if (hasTouch) {
+						tracker.on('touchstart', onMouseOver);
+					}
 				}
+				tracker.element._i = i;
 			}
-		});
+		}
 	},
 	
 	/** 

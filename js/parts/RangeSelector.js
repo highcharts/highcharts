@@ -211,7 +211,7 @@ RangeSelector.prototype = {
 			}
 		};
 
-		addEvent(chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
+		addEvent(chart.container, 'mousedown', rangeSelector.mouseDownHandler);
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
@@ -421,7 +421,7 @@ RangeSelector.prototype = {
 			divAbsolute = rangeSelector.divAbsolute,
 			zoomText = rangeSelector.zoomText;
 
-		removeEvent(rangeSelector.chart.container, MOUSEDOWN, rangeSelector.mouseDownHandler);
+		removeEvent(rangeSelector.chart.container, 'mousedown', rangeSelector.mouseDownHandler);
 
 		// Destroy elements in collections
 		each([rangeSelector.buttons], function (coll) {

@@ -402,17 +402,15 @@ SVGElement.prototype = {
 	 * @param {Function} handler
 	 */
 	on: function (eventType, handler) {
-		var fn = handler;
 		// touch
 		if (hasTouch && eventType === 'click') {
-			eventType = 'touchstart';
-			fn = function (e) {
+			this.element.ontouchstart = function (e) {
 				e.preventDefault();
 				handler();
 			};
 		}
 		// simplest possible event model for internal use
-		this.element['on' + eventType] = fn;
+		this.element['on' + eventType] = handler;
 		return this;
 	},
 	
@@ -593,7 +591,7 @@ SVGElement.prototype = {
 				height = pick(wrapper.elemHeight, elem.offsetHeight);
 
 				// update textWidth
-				if (width > textWidth && /[ \-]/.test(elem.innerText)) { // #983
+				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
@@ -633,6 +631,11 @@ SVGElement.prototype = {
 				left: (x + xCorr) + PX,
 				top: (y + yCorr) + PX
 			});
+			
+			// force reflow in webkit to apply the left and top on useHTML element (#1249)
+			if (isWebKit) {
+				height = elem.offsetHeight; // assigned to height for JSLint purpose
+			}
 
 			// record current text transform
 			wrapper.cTT = currentTextTransform;
