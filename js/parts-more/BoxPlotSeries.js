@@ -23,7 +23,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	whiskerLength: '50%',
 	whiskerWidth: 2,
 	//whiskerColor: undefined,
-	medianWidth: 2,
+	medianWidth: 2
 	//medianColor: undefined,
 	//stemWidth: undefined,
 	//stemColor: undefined,
@@ -100,6 +100,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			whiskersAttr,
 			medianPath,
 			medianAttr,
+			width,
+			left,
+			right,
 			halfWidth,
 			shapeArgs,
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
@@ -118,9 +121,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
 				// crisp vector coordinates
-				width = shapeArgs.width,
-				left = mathFloor(shapeArgs.x),
-				right = left + width,
+				width = shapeArgs.width;
+				left = mathFloor(shapeArgs.x);
+				right = left + width;
 				halfWidth = mathRound(width / 2);
 				//crispX = mathRound(left + halfWidth) + crispCorr;
 				q1Plot = mathFloor(point.q1Plot);// + crispCorr;

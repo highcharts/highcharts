@@ -26,7 +26,7 @@
 		
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-			$.each(['cur', '_default', 'width', 'height'], function (i, fn) {
+			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
 				var obj = Step,
 					base,
 					elem;
@@ -303,6 +303,9 @@
 			}
 	
 			$el.stop();
+			if (params.opacity !== UNDEFINED) { 
+				params.opacity += 'px'; // force jQuery to use same logic as width and height
+			}
 			$el.animate(params, options);
 	
 		},

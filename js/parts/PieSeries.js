@@ -30,6 +30,10 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 			brightness: 0.1,
 			shadow: false
 		}
+	},
+	stickyTracking: false, // docs
+	tooltip: {
+		followPointer: true // docs
 	}
 });
 
@@ -749,7 +753,6 @@ var PieSeries = {
 			centerOption = options.center,
 			minSize = options.minSize || 80,
 			newSize = minSize,
-			sizeBox = this.sizeBox || this.chart.plotBox,
 			ret;
 			
 		// Handle horizontal size and center

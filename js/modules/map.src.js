@@ -120,7 +120,9 @@
 			borderColor: 'silver',
 			borderWidth: 1,
 			marker: null,
+			stickyTracking: false,
 			tooltip: {
+				followPointer: true,
 				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
 				pointFormat: '{series.name}: {point.y}<br/>'
 			}

@@ -53,15 +53,6 @@ Legend.prototype = {
 		// move checkboxes
 		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
 
-/*		// expose
-		return {
-			colorizeItem: colorizeItem,
-			destroyItem: destroyItem,
-			render: render,
-			destroy: destroy,
-			getLegendWidth: getLegendWidth,
-			getLegendHeight: getLegendHeight
-		};*/
 	},
 
 	/**

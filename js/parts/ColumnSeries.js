@@ -253,7 +253,7 @@ var ColumnSeries = extendClass(Series, {
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i].onMouseOver();
+				points[event.target._i].onMouseOver(event);
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {

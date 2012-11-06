@@ -130,7 +130,8 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			index = mouseTracker.getIndex(e);
+			index = mouseTracker.getIndex(e),
+			anchor;
 
 		// shared tooltip
 		if (tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -172,9 +173,13 @@ MouseTracker.prototype = {
 			if (point && point !== hoverPoint) {
 
 				// trigger the events
-				point.onMouseOver();
+				point.onMouseOver(e);
 
 			}
+			
+		} else if (tooltip && tooltip.followPointer && !tooltip.isHidden) {
+			anchor = tooltip.getAnchor([{}], e);
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
 	},
 

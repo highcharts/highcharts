@@ -55,7 +55,7 @@ var ScatterSeries = extendClass(Series, {
 			onMouseOver = function (e) {
 				series.onMouseOver();
 				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-					points[e.target._i].onMouseOver();
+					points[e.target._i].onMouseOver(e);
 				}
 			},
 			onMouseOut = function () {

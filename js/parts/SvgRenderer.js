@@ -25,6 +25,10 @@ SVGElement.prototype = {
 		wrapper.attrSetters = {};
 	},
 	/**
+	 * Default base for animation
+	 */
+	opacity: 1,
+	/**
 	 * Animate a given attribute
 	 * @param {Object} params
 	 * @param {Number} options The same options as in jQuery animation
@@ -85,7 +89,6 @@ SVGElement.prototype = {
 				key = 'stroke-width';
 			}
 			ret = attr(element, key) || wrapper[key] || 0;
-
 			if (key !== 'd' && key !== 'visibility') { // 'd' is string in animation step
 				ret = parseFloat(ret);
 			}
@@ -105,6 +108,7 @@ SVGElement.prototype = {
 						value = result; // the attribute setter has returned a new value to set
 					}
 
+				
 					// paths
 					if (key === 'd') {
 						if (value && value.join) { // join path
@@ -821,6 +825,17 @@ SVGElement.prototype = {
 	 */
 	hide: function () {
 		return this.attr({ visibility: HIDDEN });
+	},
+	
+	fadeOut: function (duration) {
+		this.animate({
+			opacity: 0
+		}, {
+			duration: duration || 150,
+			complete: function () {
+				this.hide();
+			}
+		});
 	},
 	
 	/**

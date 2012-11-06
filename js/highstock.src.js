@@ -1082,7 +1082,7 @@ pathAnim = {
 		
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-			$.each(['cur', '_default', 'width', 'height'], function (i, fn) {
+			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
 				var obj = Step,
 					base,
 					elem;
@@ -1359,6 +1359,9 @@ pathAnim = {
 			}
 	
 			$el.stop();
+			if (params.opacity !== UNDEFINED) { 
+				params.opacity += 'px'; // force jQuery to use same logic as width and height
+			}
 			$el.animate(params, options);
 	
 		},
@@ -1916,6 +1919,10 @@ SVGElement.prototype = {
 		wrapper.attrSetters = {};
 	},
 	/**
+	 * Default base for animation
+	 */
+	opacity: 1,
+	/**
 	 * Animate a given attribute
 	 * @param {Object} params
 	 * @param {Number} options The same options as in jQuery animation
@@ -1976,7 +1983,6 @@ SVGElement.prototype = {
 				key = 'stroke-width';
 			}
 			ret = attr(element, key) || wrapper[key] || 0;
-
 			if (key !== 'd' && key !== 'visibility') { // 'd' is string in animation step
 				ret = parseFloat(ret);
 			}
@@ -1996,6 +2002,7 @@ SVGElement.prototype = {
 						value = result; // the attribute setter has returned a new value to set
 					}
 
+				
 					// paths
 					if (key === 'd') {
 						if (value && value.join) { // join path
@@ -2712,6 +2719,17 @@ SVGElement.prototype = {
 	 */
 	hide: function () {
 		return this.attr({ visibility: HIDDEN });
+	},
+	
+	fadeOut: function (duration) {
+		this.animate({
+			opacity: 0
+		}, {
+			duration: duration || 150,
+			complete: function () {
+				this.hide();
+			}
+		});
 	},
 	
 	/**
@@ -8183,7 +8201,10 @@ Tooltip.prototype = {
 		if (!this.isHidden) {
 			var hoverPoints = this.chart.hoverPoints;
 
-			this.label.hide();
+			this.hideTimer = setTimeout(function (tooltip) {
+				tooltip.label.fadeOut();
+				tooltip.isHidden = true;
+			}, pick(this.options.hideDelay, 500), this); // docs
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -8193,7 +8214,6 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
-			this.isHidden = true;
 		}
 	},
 
@@ -8216,6 +8236,7 @@ Tooltip.prototype = {
 		var ret,
 			chart = this.chart,
 			inverted = chart.inverted,
+			plotTop = chart.plotTop,
 			plotX = 0,
 			plotY = 0,
 			yAxis;
@@ -8225,13 +8246,23 @@ Tooltip.prototype = {
 		// Pie uses a special tooltipPos
 		ret = points[0].tooltipPos;
 		
+		// When tooltip follows mouse, relate the position to the mouse
+		if (this.followPointer) {
+			if (mouseEvent.chartX === UNDEFINED) {
+				mouseEvent = chart.tracker.normalizeMouseEvent(mouseEvent);
+			}
+			ret = [
+				mouseEvent.chartX - chart.plotLeft,
+				mouseEvent.chartY - plotTop
+			];
+		}
 		// When shared, use the average position
 		if (!ret) {
 			each(points, function (point) {
 				yAxis = point.series.yAxis;
 				plotX += point.plotX;
 				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
-					(!inverted && yAxis ? yAxis.top - chart.plotTop : 0); // #1151
+					(!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
 			});
 			
 			plotX /= points.length;
@@ -8240,7 +8271,7 @@ Tooltip.prototype = {
 			ret = [
 				inverted ? chart.plotWidth - plotY : plotX,
 				this.shared && !inverted && points.length > 1 && mouseEvent ? 
-					mouseEvent.chartY - chart.plotTop : // place shared tooltip next to the mouse (#424)
+					mouseEvent.chartY - plotTop : // place shared tooltip next to the mouse (#424)
 					inverted ? chart.plotHeight - plotX : plotY
 			];
 		}
@@ -8343,13 +8374,15 @@ Tooltip.prototype = {
 			pointConfig = [],
 			formatter = options.formatter || defaultFormatter,
 			hoverPoints = chart.hoverPoints,
-			placedTooltipPoint,
 			borderColor,
 			crosshairsOptions = options.crosshairs,
 			shared = tooltip.shared,
 			currentSeries;
 			
+		clearTimeout(this.hideTimer);
+		
 		// get the reference point coordinates (pie charts use tooltipPos)
+		tooltip.followPointer = splat(point)[0].series.tooltipOptions.followPointer;
 		anchor = tooltip.getAnchor(point, mouseEvent);
 		x = anchor[0];
 		y = anchor[1];
@@ -8399,7 +8432,8 @@ Tooltip.prototype = {
 
 			// show it
 			if (tooltip.isHidden) {
-				label.show();
+				stop(label);
+				label.attr('opacity', 1).show();
 			}
 
 			// update text
@@ -8412,24 +8446,10 @@ Tooltip.prototype = {
 			label.attr({
 				stroke: borderColor
 			});
-
-			placedTooltipPoint = (options.positioner || tooltip.getPosition).call(
-				tooltip,
-				label.width,
-				label.height,
-				{ plotX: x, plotY: y }
-			);
-
-			// do the move
-			tooltip.move(
-				mathRound(placedTooltipPoint.x), 
-				mathRound(placedTooltipPoint.y), 
-				x + chart.plotLeft, 
-				y + chart.plotTop
-			);
 			
-			
-			tooltip.isHidden = false;
+			tooltip.updatePosition({ plotX: x, plotY: y });
+		
+			this.isHidden = false;
 		}
 
 		// crosshairs
@@ -8474,6 +8494,28 @@ Tooltip.prototype = {
 				y: y + chart.plotTop,
 				borderColor: borderColor
 			});
+	},
+	
+	/**
+	 * Find the new position and perform the move
+	 */
+	updatePosition: function (point) {
+		var chart = this.chart,
+			label = this.label, 
+			pos = (this.options.positioner || this.getPosition).call(
+				this,
+				label.width,
+				label.height,
+				point
+			);
+
+		// do the move
+		this.move(
+			mathRound(pos.x), 
+			mathRound(pos.y), 
+			point.plotX + chart.plotLeft, 
+			point.plotY + chart.plotTop
+		);
 	}
 };
 /**
@@ -8608,7 +8650,8 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			index = mouseTracker.getIndex(e);
+			index = mouseTracker.getIndex(e),
+			anchor;
 
 		// shared tooltip
 		if (tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -8650,9 +8693,13 @@ MouseTracker.prototype = {
 			if (point && point !== hoverPoint) {
 
 				// trigger the events
-				point.onMouseOver();
+				point.onMouseOver(e);
 
 			}
+			
+		} else if (tooltip && tooltip.followPointer && !tooltip.isHidden) {
+			anchor = tooltip.getAnchor([{}], e);
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
 	},
 
@@ -9135,15 +9182,6 @@ Legend.prototype = {
 		// move checkboxes
 		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
 
-/*		// expose
-		return {
-			colorizeItem: colorizeItem,
-			destroyItem: destroyItem,
-			render: render,
-			destroy: destroy,
-			getLegendWidth: getLegendWidth,
-			getLegendHeight: getLegendHeight
-		};*/
 	},
 
 	/**
@@ -11407,7 +11445,10 @@ Point.prototype = {
 		});
 	},
 
-	onMouseOver: function () {
+	/**
+	 * Runs on mouse over the point
+	 */
+	onMouseOver: function (e) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
@@ -11424,14 +11465,17 @@ Point.prototype = {
 
 		// update the tooltip
 		if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
-			tooltip.refresh(point);
+			tooltip.refresh(point, e);
 		}
 
 		// hover this
 		point.setState(HOVER_STATE);
 		chart.hoverPoint = point;
 	},
-
+	
+	/**
+	 * Runs on mouse out from the point
+	 */
 	onMouseOut: function () {
 		var chart = this.series.chart,
 			hoverPoints = chart.hoverPoints;
@@ -14256,7 +14300,7 @@ var ColumnSeries = extendClass(Series, {
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i].onMouseOver();
+				points[event.target._i].onMouseOver(event);
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {
@@ -14489,7 +14533,7 @@ var ScatterSeries = extendClass(Series, {
 			onMouseOver = function (e) {
 				series.onMouseOver();
 				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-					points[e.target._i].onMouseOver();
+					points[e.target._i].onMouseOver(e);
 				}
 			},
 			onMouseOut = function () {
@@ -14560,6 +14604,10 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 			brightness: 0.1,
 			shadow: false
 		}
+	},
+	stickyTracking: false, // docs
+	tooltip: {
+		followPointer: true // docs
 	}
 });
 
@@ -15279,7 +15327,6 @@ var PieSeries = {
 			centerOption = options.center,
 			minSize = options.minSize || 80,
 			newSize = minSize,
-			sizeBox = this.sizeBox || this.chart.plotBox,
 			ret;
 			
 		// Handle horizontal size and center

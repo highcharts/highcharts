@@ -1092,7 +1092,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	whiskerLength: '50%',
 	whiskerWidth: 2,
 	//whiskerColor: undefined,
-	medianWidth: 2,
+	medianWidth: 2
 	//medianColor: undefined,
 	//stemWidth: undefined,
 	//stemColor: undefined,
@@ -1169,6 +1169,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			whiskersAttr,
 			medianPath,
 			medianAttr,
+			width,
+			left,
+			right,
 			halfWidth,
 			shapeArgs,
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
@@ -1187,9 +1190,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
 				// crisp vector coordinates
-				width = shapeArgs.width,
-				left = mathFloor(shapeArgs.x),
-				right = left + width,
+				width = shapeArgs.width;
+				left = mathFloor(shapeArgs.x);
+				right = left + width;
 				halfWidth = mathRound(width / 2);
 				//crispX = mathRound(left + halfWidth) + crispCorr;
 				q1Plot = mathFloor(point.q1Plot);// + crispCorr;
@@ -1333,26 +1336,6 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
  * Start Bubble series code											          *
  *****************************************************************************/
 
-/*
- * http://jsfiddle.net/highcharts/FbjMs/
- * 
- * Todo
- * - Solid lines with gradient color? Consider separate fillColor option.
- * - Move tooltip away from mouse (all scatter-inherited series)
- * - Individual colors. Don't use marker structure?
- * - Animation
- * - For multiple series, the legend marker icons are wrong.
- * - Fill opacity (and perhaps fill color) must be reflected in the legend symbol.
- * - Axis.setAxisTranslation
- *   - Check redrawing/resizing.
- *   - Add minPadding/maxPadding.
- *   - How does this work in combination with columns?
- *   - Stress test with larger bubbles. It might need to be recursive to 
- *     re-check with the new transA, since other bubbles may take the edge 
- *     position when transA changes.
- *   - Do not use with user set extremes.
- */
-
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
@@ -1363,15 +1346,18 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 		verticalAlign: 'middle'
 	},
 	// displayNegative: true,
-	// fillOpacity: 0.5,
 	marker: {
+		// fillOpacity: 0.5,
+		lineColor: null, // inherit from series.color
 		lineWidth: 1
 	},
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
 	shadow: false,
+	stickyTracking: false,
 	tooltip: {
+		followPointer: true,
 		pointFormat: 'x: {point.x}, y: {point.y}, z: {point.z}'
 	},
 	zThreshold: 0
@@ -1387,16 +1373,20 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	 * Mapping between SVG attributes and the corresponding options
 	 */
 	pointAttrToOptions: { 
-		stroke: 'color',
+		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
-		fill: 'color'
+		fill: 'fillColor'
 	},
 	
 	/**
 	 * Apply the fillOpacity to all fill positions
 	 */
 	applyOpacity: function (fill) {
-		var fillOpacity = pick(this.options.fillOpacity, 0.5);
+		var markerOptions = this.options.marker,
+			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
+		
+		// When called from Legend.colorizeItem, the fill isn't predefined
+		fill = fill || markerOptions.fillColor || this.color; 
 		
 		if (fillOpacity !== 1) {
 			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
@@ -1442,6 +1432,9 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		}
 	},
 	
+	/**
+	 * Extend the Series.setData method by finding Z data
+	 */
 	setData: function () {
 		
 		var chart = this.chart,
@@ -1495,6 +1488,33 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	},
 	
 	/**
+	 * Perform animation on the bubbles
+	 */
+	animate: function (init) {
+		var animation = this.options.animation;
+		
+		if (!init) { // run the animation
+			each(this.points, function (point) {
+				var graphic = point.graphic,
+					shapeArgs = point.shapeArgs;
+
+				if (graphic) {
+					// start values
+					graphic.attr('r', 1);
+
+					// animate
+					graphic.animate({
+						r: shapeArgs.r
+					}, animation);
+				}
+			});
+
+			// delete this function to allow it only once
+			this.animate = null;
+		}
+	},
+	
+	/**
 	 * Extend the base translate method to handle bubble size
 	 */
 	translate: function () {
@@ -1534,6 +1554,25 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 				point.shapeArgs = point.plotY = point.dlBox = null;
 			}
 		}
+	},
+	
+	/**
+	 * Get the series' symbol in the legend
+	 * 
+	 * @param {Object} legend The legend object
+	 * @param {Object} item The series (this) or point
+	 */
+	drawLegendSymbol: function (legend, item) {
+		var radius = pInt(legend.itemStyle.fontSize) / 2;
+		
+		item.legendSymbol = this.chart.renderer.circle(
+			radius,
+			legend.baseline - radius,
+			radius
+		).attr({
+			zIndex: 3
+		}).add(item.legendGroup);		
+		
 	},
 	
 	drawPoints: seriesTypes.column.prototype.drawPoints,

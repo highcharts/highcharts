@@ -189,7 +189,10 @@ Point.prototype = {
 		});
 	},
 
-	onMouseOver: function () {
+	/**
+	 * Runs on mouse over the point
+	 */
+	onMouseOver: function (e) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
@@ -206,14 +209,17 @@ Point.prototype = {
 
 		// update the tooltip
 		if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
-			tooltip.refresh(point);
+			tooltip.refresh(point, e);
 		}
 
 		// hover this
 		point.setState(HOVER_STATE);
 		chart.hoverPoint = point;
 	},
-
+	
+	/**
+	 * Runs on mouse out from the point
+	 */
 	onMouseOut: function () {
 		var chart = this.series.chart,
 			hoverPoints = chart.hoverPoints;
