@@ -79,8 +79,10 @@
 		return map;
 	};
 
-	scaleAndClipPage = function (svg) { /* scale and clip the page */
-		var zoom = 2,
+	/* scale and clip the page */
+	scaleAndClipPage = function (svg) {
+
+		var zoom = 1,
 			pageWidth = pick(svg.sourceWidth, args.width, svg.width);
 
 		if (parseInt(pageWidth, 10) === pageWidth) {
