@@ -5156,7 +5156,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
-		console.log([x, y, r].join(', '));
 		if (isObject(x)) {
 			r = x.r;
 			y = x.y;
