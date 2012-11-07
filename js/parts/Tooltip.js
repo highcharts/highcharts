@@ -110,13 +110,16 @@ Tooltip.prototype = {
 	 * Hide the tooltip
 	 */
 	hide: function () {
+		var tooltip = this,
+			hoverPoints;
+			
 		if (!this.isHidden) {
-			var hoverPoints = this.chart.hoverPoints;
+			hoverPoints = this.chart.hoverPoints;
 
-			this.hideTimer = setTimeout(function (tooltip) {
+			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(this.options.hideDelay, 500), this); // docs
+			}, pick(this.options.hideDelay, 500)); // docs
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -159,7 +162,7 @@ Tooltip.prototype = {
 		ret = points[0].tooltipPos;
 		
 		// When tooltip follows mouse, relate the position to the mouse
-		if (this.followPointer) {
+		if (this.followPointer && mouseEvent) {
 			if (mouseEvent.chartX === UNDEFINED) {
 				mouseEvent = chart.tracker.normalizeMouseEvent(mouseEvent);
 			}

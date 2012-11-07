@@ -5156,6 +5156,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
+		console.log([x, y, r].join(', '));
+		if (isObject(x)) {
+			r = x.r;
+			y = x.y;
+			x = x.x;
+		}
 		return this.symbol('circle').attr({ x: x - r, y: y - r, width: 2 * r, height: 2 * r });
 	},
 
@@ -8198,13 +8204,16 @@ Tooltip.prototype = {
 	 * Hide the tooltip
 	 */
 	hide: function () {
+		var tooltip = this,
+			hoverPoints;
+			
 		if (!this.isHidden) {
-			var hoverPoints = this.chart.hoverPoints;
+			hoverPoints = this.chart.hoverPoints;
 
-			this.hideTimer = setTimeout(function (tooltip) {
+			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(this.options.hideDelay, 500), this); // docs
+			}, pick(this.options.hideDelay, 500)); // docs
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -8247,7 +8256,7 @@ Tooltip.prototype = {
 		ret = points[0].tooltipPos;
 		
 		// When tooltip follows mouse, relate the position to the mouse
-		if (this.followPointer) {
+		if (this.followPointer && mouseEvent) {
 			if (mouseEvent.chartX === UNDEFINED) {
 				mouseEvent = chart.tracker.normalizeMouseEvent(mouseEvent);
 			}
