@@ -1,0 +1,136 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Chapter&nbsp;10.&nbsp;Limit</title>
+<meta content="DocBook XSL Stylesheets V1.60.1" name="generator">
+<link rel="home" href="index.html" title="Antelope Users Guide">
+<link rel="up" href="bk03.html" title="Additional Ant Tasks">
+<link rel="previous" href="bk03ch09.html" title="Chapter&nbsp;9.&nbsp;Stopwatch">
+<link rel="next" href="bk03ch11.html" title="Chapter&nbsp;11.&nbsp;Math">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title">
+<a name="Limit">
+</a>
+Limit</h2>
+</div>
+</div>
+<div>
+</div>
+</div>
+<p>
+
+The Limit task is a task container (that is, it holds other tasks) and sets a time limit on how long the nested tasks are allowed to run. This is useful for unit tests that go awry, hung socket connections, or other potentially long running tasks that need to be shut off without stopping the build.
+</p>
+
+<p>
+
+<div class="table">
+<a name="N1096A">
+</a>
+<p class="title">
+<b>
+Table&nbsp;10.1.&nbsp;Limit Task Attributes</b>
+</p>
+<table summary="Limit Task Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+maxwait</td>
+<td>
+How long to wait for nested tasks to finish, this is in seconds.</td>
+<td>
+180 seconds (3 minutes)</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+failonerror</td>
+<td>
+Should the build fail if the time limit has been exceeded?</td>
+<td>
+false</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+Examples:
+</p>
+<p>
+
+Neither the echo nor the fail will happen in this example. The build will continue once the time has expired.
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+&lt;limit maxwait="3"&gt;
+   &lt;sleep seconds="10"/&gt;
+   &lt;echo&gt;This won't happen...&lt;/echo&gt;
+   &lt;fail&gt;This won't happen either...&lt;/fail&gt;
+&lt;/limit&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+Neither the echo nore the fail will happen in this example. The build will not continue once the time has expired.
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+&lt;limit maxwait="3" failonerror="true"&gt;
+   &lt;sleep seconds="10"/&gt;
+   &lt;echo&gt;This won't happen...&lt;/echo&gt;
+   &lt;fail&gt;This won't happen either...&lt;/fail&gt;
+&lt;/limit&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+</div>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+</body>
+</html>

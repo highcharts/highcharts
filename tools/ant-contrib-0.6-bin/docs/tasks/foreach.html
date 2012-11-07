@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Ant-contrib Tasks: Foreach</title>
+  </head>
+
+  <body>
+    <h1>Foreach</h1>
+
+    <p>The foreach task iterates over a list, a list of paths, or
+    both.  If both, list and paths, are specified, the list will be
+    evaluated first.  Nested paths are evaluated in the order they
+    appear in the task.</p>
+
+    <h2>Parameters</h2>
+    <table border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Required</th>
+      </tr>
+      <tr>
+        <td valign="top">list</td>
+        <td valign="top">The list of values to process, with the
+        delimiter character, indicated by the &quot;delimiter&quot;
+        attribute, separating each value.</td>
+        <td align="center" valign="top">Yes, unless a nested Fileset
+        has been specified.</td>
+      </tr>
+      <tr>
+        <td valign="top">target</td>
+        <td valign="top">Name of the target to call for each token or
+        matched file.</td>
+        <td align="center" valign="top">Yes</td>
+      </tr>
+      <tr>
+        <td valign="top">param</td>
+        <td valign="top">Name of the parameter to pass the tokens or
+        files in as to the target.</td>
+        <td align="center" valign="top">Yes</td>
+      </tr>
+      <tr>
+        <td valign="top">delimiter</td>
+        <td valign="top">The delimiter string that separates the
+        values in the &quot;list&quot; attribute.</td>
+        <td align="center" valign="top">No, defaults to &quot;,&quot;.</td>
+      </tr>
+      <tr>
+        <td valign="top">inheritall</td>
+        <td valign="top">If <code>true</code>, pass all properties to
+        the called target.  Defaults to <code>false</code>.</td>
+        <td align="center" valign="top">No</td>
+      </tr>
+      <tr>
+        <td valign="top">inheritrefs</td> 
+        <td valign="top">If <code>true</code>, pass all references to the
+        the called target.  Defaults to <code>false</code>.</td>
+        <td align="center" valign="top">No</td>
+      </tr>  
+      <tr>
+        <td valign="top">parallel</td> 
+        <td valign="top">If <code>true</code>, all instances of the called
+        target will execute in parallel.  Defaults to <code>false</code>,
+        which forces sequential execution of the targets.  It is up to
+        the caller to ensure that parallel execution is safe.  This is
+        accomplished through the means of the "parallel" task contained
+        in the ANT core.</td>
+        <td align="center" valign="top">No</td>
+      </tr>  
+      <tr>
+        <td valign="top">maxThreads</td>
+        <td valign="top">The maximum number of allowable threads when executing
+            in parallel.  If you are using ANT 1.6 or above, as soon as one thread
+            finishes executing, another will start.  However, any ANT version before
+            that will wait until all of the currently running threads are finished
+            before starting the next group of threads.</td>
+        <td align="center" valign="top">No. Defaults to 5.</td>
+      </tr>
+      <tr>
+        <td valign="top">trim</td>
+        <td valign="top">If <code>true</code>, any leading or trailing
+        whitespace will be removed from the list item before it is passed
+        to the requested target
+        </td>
+        <td align="center" valign="top">No. Defaults to false.</td>
+      </tr>
+    </table>
+
+    <h2>Parameters specified as nested elements</h2>
+
+    <a name="path"><h3>path</h3></a>
+
+    <p><a href="http://ant.apache.org/manual/using.html#path">Path</a>s
+    are used to select sets of files or directories to iterate over.</p>
+
+    <p>Using a path allows you to determine the order by which files
+    are considered by using 
+    <a href="http://ant.apache.org/manual/CoreTypes/filelist.html">filelist</a>s
+    or explicit <code>pathelements</code>.  You also can specify
+    whether you want to iterate over files or directories by chosing
+    either filesets or
+    <a href="http://ant.apache.org/manual/CoreTypes/dirset.html">dirset</a>s.</p>
+
+    <a name="fileset"><h3>fileset</h3></a>
+
+    <p><a href="http://ant.apache.org/manual/CoreTypes/fileset.html">FileSet</a>s
+    are used to select sets of files to iterate over.  <strong>This
+    element is deprecated, use <a href="#path">nested path elements</a>
+    instead.</strong></p>
+
+    <h3>param</h3>
+
+    <p>Specifies the properties to set before running the specified
+    target. See <a href="http://ant.apache.org/manual/CoreTasks/property.html">property</a>
+    for usage guidelines.</p>
+
+    <h3><a name="reference">reference</a></h3>
+
+    <p>Used to chose references that shall be copied into the new
+    project, optionally changing their id.</p>
+
+    <table border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Required</th>
+      </tr>
+      <tr>
+        <td valign="top">refid</td>
+        <td valign="top">The id of the reference in the calling project.</td>
+        <td valign="top" align="center">Yes</td>
+      </tr>
+      <tr>
+        <td valign="top">torefid</td>
+        <td valign="top">The id of the reference in the called project.</td>
+        <td valign="top" align="center">No, defaults to the value of
+        refid.</td>
+      </tr>
+    </table>
+
+    <hr>
+    <p align="center">Copyright &copy; 2002-2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+
+  </body>
+</html>

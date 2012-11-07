@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Ant-contrib Tasks: For</title>
+  </head>
+
+  <body>
+    <h1>For</h1>
+
+    <p>The for task iterates over a list, a list of paths, or
+    both.  If both, list and paths, are specified, the list will be
+    evaluated first.  Nested paths are evaluated in the order they
+    appear in the task.</p>
+    <p>
+      This task is the same as the &lt;foreach&gt; task, except
+      that it uses a nested sequential for each iteration.
+      It makes use of ant's macrodef task, so the @{} notation
+      is used for parameter substition.
+    </p>
+    <p><em>
+      This task only works for ant version greater than or equal
+      to ant 1.6beta3.
+      </em>
+    </p>
+      
+    <h2>Parameters</h2>
+    <table border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Required</th>
+      </tr>
+      <tr>
+        <td valign="top">list</td>
+        <td valign="top">The list of values to process, with the
+        delimiter character, indicated by the &quot;delimiter&quot;
+        attribute, separating each value.</td>
+        <td align="center" valign="top">Yes, unless a nested path
+        has been specified.</td>
+      </tr>
+      <tr>
+        <td valign="top">param</td>
+        <td valign="top">Name of the parameter to pass the tokens or
+        files in as to the sequential.</td>
+        <td align="center" valign="top">Yes</td>
+      </tr>
+      <tr>
+        <td valign="top">delimiter</td>
+        <td valign="top">The delimiter string that separates the
+        values in the &quot;list&quot; attribute.</td>
+        <td align="center" valign="top">No, defaults to &quot;,&quot;.</td>
+      </tr>
+      <tr>
+        <td valign="top">trim</td>
+        <td valign="top">If <code>true</code>, any leading or trailing
+        whitespace will be removed from the list item before it is passed
+        to the sequential.
+        </td>
+        <td align="center" valign="top">No. Defaults to false.</td>
+      </tr>
+    </table>
+
+    <h2>Parameters specified as nested elements</h2>
+
+    <a name="path"><h3>path</h3></a>
+
+    <p><a href="http://ant.apache.org/manual/using.html#path">Path</a>s
+    are used to select sets of files or directories to iterate over.</p>
+
+    <p>Using a path allows you to determine the order by which files
+    are considered by using 
+    <a href="http://ant.apache.org/manual/CoreTypes/filelist.html">filelist</a>s
+    or explicit <code>pathelements</code>.  You also can specify
+    whether you want to iterate over files or directories by chosing
+    either filesets or
+    <a href="http://ant.apache.org/manual/CoreTypes/dirset.html">dirset</a>s.</p>
+
+    <a name="seqential"><h3>sequential</h3></a>
+    This is the list of tasks to be run for each iteration of
+    the list.
+    <h3>Example</h3>
+    <p>
+      To print out the first five letters of the latin alphabet:
+    </p>
+    <blockquote>
+      <pre>
+&lt;echo message="The first five letters of the alphabet are:"/&gt;
+&lt;for list="a,b,c,d,e" param="letter"&gt;
+  &lt;sequential&gt;
+    &lt;echo&gt;Letter @{letter}&lt;/echo&gt;
+  &lt;/sequential&gt;
+&lt;/for&gt;
+        </pre>
+      </blockquote>
+      <p>
+        A more complicated example to to iterate over a set
+        of c++ source files and invoke the cc task on them:
+      </p>
+      <blockquote>
+        <pre>
+&lt;for param="file"&gt;
+  &lt;path&gt;
+    &lt;fileset dir="${test.dir}/mains" includes="*.cpp"/&gt;
+  &lt;/path&gt;
+  &lt;sequential&gt;
+    &lt;propertyregex override="yes"
+      property="program"  input="@{file}"
+      regexp=".*/([^\.]*)\.cpp" replace="\1"/&gt;
+    &lt;mkdir dir="${obj.dir}/${program}"/&gt;
+    &lt;mkdir dir="${build.bin.dir}"/&gt;
+    &lt;cc link="executable" objdir="${obj.dir}/${program}"
+        outfile="${build.bin.dir}/${program}"&gt;
+      &lt;compiler refid="compiler.options"/&gt;
+      &lt;fileset file="@{file}"/&gt;
+      &lt;linker refid="linker-libs"/&gt;
+    &lt;/cc&gt;
+  &lt;/sequential&gt;
+&lt;/for&gt;
+        </pre>
+      </blockquote>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+
+  </body>
+</html>
