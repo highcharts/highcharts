@@ -83,24 +83,35 @@ var AreaSeries = extendClass(Series, {
 		Series.prototype.drawGraph.apply(this);
 		
 		// Define local variables
-		var areaPath = this.areaPath,
+		var series = this,
+			areaPath = this.areaPath,
 			options = this.options,
-			area = this.area;
+			negativeColor = options.negativeColor,
+			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		// Create or update the area
-		if (area) { // update
-			area.animate({ d: areaPath });
-
-		} else { // create
-			this.area = this.chart.renderer.path(areaPath)
-				.attr({
-					fill: pick(
-						options.fillColor,
-						Color(this.color).setOpacity(options.fillOpacity || 0.75).get()
-					),
-					zIndex: 0 // #1069
-				}).add(this.group);
+		if (negativeColor) {
+			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]); // docs: negativeFillColor
 		}
+		
+		each(props, function (prop) {
+			var areaKey = prop[0],
+				area = series[areaKey];
+				
+			// Create or update the area
+			if (area) { // update
+				area.animate({ d: areaPath });
+	
+			} else { // create
+				series[areaKey] = series.chart.renderer.path(areaPath)
+					.attr({
+						fill: pick(
+							prop[2],
+							Color(prop[1]).setOpacity(options.fillOpacity || 0.75).get()
+						),
+						zIndex: 0 // #1069
+					}).add(series.group);
+			}
+		});
 	},
 	
 	/**

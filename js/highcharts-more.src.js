@@ -1358,7 +1358,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	stickyTracking: false,
 	tooltip: {
 		followPointer: true,
-		pointFormat: 'x: {point.x}, y: {point.y}, z: {point.z}'
+		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 	zThreshold: 0
 });

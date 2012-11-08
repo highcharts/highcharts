@@ -2072,37 +2072,95 @@ Series.prototype = {
 	/**
 	 * Draw the actual graph
 	 */
-	drawGraph: function () {		
-		var options = this.options,
-			graph = this.graph,
-			group = this.group,
-			color = options.lineColor || this.color,
+	drawGraph: function () {
+		var series = this,
+			options = this.options,
+			props = [['graph', options.lineColor || this.color]],
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
-			attribs,
-			graphPath = this.getGraphPath();
+			graphPath = this.getGraphPath(),
+			negativeColor = options.negativeColor;
 			
-
-		// draw the graph
-		if (graph) {
-			stop(graph); // cancel running animations, #459
-			graph.animate({ d: graphPath });
-
-		} else {
-			if (lineWidth) {
-				attribs = {
-					stroke: color,
-					'stroke-width': lineWidth,
-					zIndex: 1 // #1069
-				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
-				}
-
-				this.graph = this.chart.renderer.path(graphPath)
-					.attr(attribs).add(group).shadow(options.shadow);
-			}
+		if (negativeColor) {
+			props.push(['graphNeg', negativeColor]);
 		}
+		
+		// draw the graph
+		each(props, function (prop, i) {
+			var graphKey = prop[0],
+				graph = series[graphKey],
+				attribs;
+			
+			if (graph) {
+				stop(graph); // cancel running animations, #459
+				graph.animate({ d: graphPath });
+	
+			} else {
+				if (lineWidth) {
+					attribs = {
+						stroke: prop[1],
+						'stroke-width': lineWidth,
+						zIndex: 1 // #1069
+					};
+					if (dashStyle) {
+						attribs.dashstyle = dashStyle;
+					}
+	
+					series[graphKey] = series.chart.renderer.path(graphPath)
+						.attr(attribs)
+						.add(series.group)
+						.shadow(!i && options.shadow);
+				}
+			}
+		});
+	},
+	
+	/**
+	 * Clip the graphs into the positive and negative coloured graphs
+	 */
+	clipNeg: function () {
+		var options = this.options,
+			chart = this.chart,
+			renderer = chart.renderer,
+			negativeColor = options.negativeColor,
+			translatedThreshold,
+			posAttr,
+			negAttr,
+			posClip = this.posClip,
+			negClip = this.negClip,
+			chartWidth = chart.chartWidth;
+		
+		if (negativeColor) {
+			translatedThreshold = chart.plotHeight - this.yAxis.translate(options.threshold || 0);
+			posAttr = {
+				x: 0,
+				y: 0,
+				width: chartWidth,
+				height: translatedThreshold
+			};
+			negAttr = {
+				x: 0,
+				y: translatedThreshold,
+				width: chartWidth,
+				height: chart.chartHeight
+			};
+			
+			if (posClip) { // update
+				posClip.animate(posAttr);
+				negClip.animate(negAttr);
+			} else {
+				this.posClip = posClip = renderer.clipRect(posAttr);
+				this.graph.clip(posClip);
+				
+				this.negClip = negClip = renderer.clipRect(negAttr);
+				this.graphNeg.clip(negClip);
+				
+				if (this.area) {
+					this.area.clip(posClip);
+					this.areaNeg.clip(negClip);
+				} 
+			} 
+		}	
 	},
 
 	/**
@@ -2213,6 +2271,7 @@ Series.prototype = {
 		// draw the graph if any
 		if (series.drawGraph) {
 			series.drawGraph();
+			series.clipNeg();
 		}
 
 		// draw the points
