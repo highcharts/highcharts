@@ -128,17 +128,9 @@ RangeSelector.prototype = {
 			newMin = mathMax(date.getTime(), dataMin);
 			range = 30 * 24 * 3600 * 1000 * count;
 		} else if (type === 'ytd') {
-			date = new Date(0);
 			now = new Date(dataMax);
 			year = now.getFullYear();
-			date.setFullYear(year);
-
-			// workaround for IE6 bug, which sets year to next year instead of current
-			if (String(year) !== dateFormat('%Y', date)) {
-				date.setFullYear(year - 1);
-			}
-
-			newMin = rangeMin = mathMax(dataMin || 0, date.getTime());
+			newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
 			now = now.getTime();
 			newMax = mathMin(dataMax || now, now);
 		} else if (type === 'year') {
