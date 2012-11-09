@@ -62,7 +62,7 @@
 		var args = arguments, i, arg, length = args.length;
 		for (i = 0; i < length; i += 1) {
 			arg = args[i];
-			if (arg !== undefined && arg !== null && arg !== 'null') {
+			if (arg !== undefined && arg !== null && arg !== 'null' && arg != '0') {
 				return arg;
 			}
 		}
@@ -85,12 +85,15 @@
 		var zoom = 1,
 			pageWidth = pick(svg.sourceWidth, args.width, svg.width);
 
-		if (parseInt(pageWidth, 10) === pageWidth) {
+		if (parseInt(pageWidth, 10) == pageWidth) {
 			zoom = pageWidth / svg.width;
 		}
 
-		/* setting the scale factor has a higher precedence */
-		page.zoomFactor = args.scale ? zoom * args.scale : zoom;
+		/* setting the scale factor has a higher precedence, see this line */
+		//scale has precedence : page.zoomFactor = args.scale  ? zoom * args.scale : zoom;
+
+		// args.width has a higher precedence over scaling, to not break backover compatibility
+		page.zoomFactor = args.scale && args.width == undefined  ? zoom * args.scale : zoom;
 
 		/* define the clip-rectangle */
 		page.clipRect = {
@@ -121,6 +124,7 @@
 
 		if (input.split('.').pop() === 'json') {
 			// We have a json file, -> go headless!
+
 			// load necessary libraries
 			page.injectJs(config.JQUERY);
 			page.injectJs(config.HIGHCHARTS);
