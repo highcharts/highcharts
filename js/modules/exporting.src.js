@@ -418,6 +418,7 @@ extend(Chart.prototype, {
 			boxShadow = '3px 3px 10px #888',
 			innerMenu,
 			hide,
+			hideTimer,
 			menuStyle;
 
 		// create the menu only the first time
@@ -444,7 +445,13 @@ extend(Chart.prototype, {
 				css(menu, { display: NONE });
 			};
 
-			addEvent(menu, 'mouseleave', hide);
+			// Hide the menu some time after mouse leave (#1357)
+			addEvent(menu, 'mouseleave', function () {
+				hideTimer = setTimeout(hide, 500);
+			});
+			addEvent(menu, 'mouseenter', function () {
+				clearTimeout(hideTimer);
+			});
 
 
 			// create the items
