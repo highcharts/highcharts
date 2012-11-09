@@ -80,28 +80,40 @@
 	};
 
 	/* scale and clip the page */
-	scaleAndClipPage = function (svg) {
+	scaleAndClipPage = function (svg, pdf) {
+		/*	param: svg: The scg configuration object
+				param: pdf: boolean, if true set papersize
+		*/
 
 		var zoom = 1,
-			pageWidth = pick(svg.sourceWidth, args.width, svg.width);
+			pageWidth = pick(args.width, svg.width),
+			clipwidth, clipheight;
 
 		if (parseInt(pageWidth, 10) == pageWidth) {
 			zoom = pageWidth / svg.width;
 		}
 
-		/* setting the scale factor has a higher precedence, see this line */
-		//scale has precedence : page.zoomFactor = args.scale  ? zoom * args.scale : zoom;
+		/* set this line when scale factor has a higher precedence
+		scale has precedence : page.zoomFactor = args.scale  ? zoom * args.scale : zoom;*/
 
-		// args.width has a higher precedence over scaling, to not break backover compatibility
-		page.zoomFactor = args.scale && args.width == undefined  ? zoom * args.scale : zoom;
+		/* args.width has a higher precedence over scaling, to not break backover compatibility */
+		page.zoomFactor = args.scale && args.width == undefined ? zoom * args.scale : zoom;
+
+		clipwidth = svg.width * page.zoomFactor;
+		clipheight = svg.height * page.zoomFactor;
 
 		/* define the clip-rectangle */
 		page.clipRect = {
 			top: 0,
 			left: 0,
-			width: svg.width * page.zoomFactor,
-			height: svg.height * page.zoomFactor
+			width: clipwidth,
+			height: clipheight
 		};
+
+		/* for pdf we need a bit more paperspace in some cases for example (w:600,h:400), I don't know why.*/
+		if (pdf) {
+			page.paperSize = { width: clipwidth, height: clipheight + 2};
+		}
 	};
 
 	/* get the arguments from the commandline and map them */
@@ -109,6 +121,7 @@
 
 	if (args.length < 1) {
 		console.log('Usage: highcharts-convert.js -infile URL -outfile filename -scale 2.5 -width 300 -constr Chart -callback callback.js');
+		console.log('Commandline parameter width is used for scaling, not for creating the chart');
 		phantom.exit(1);
 	} else {
 		input = args.infile;
@@ -118,7 +131,7 @@
 		width = args.width;
 
 		outputExtension = output.split('.').pop();
-		pdfOutput = outputExtension === 'pdf' ? true : false;
+		pdfOutput = outputExtension === 'pdf';
 
 		/* Decide to generate the page from javascript or to load from svg file. */
 
@@ -200,11 +213,21 @@
 				// disable animations
 				Highcharts.SVGRenderer.prototype.Element.prototype.animate = Highcharts.SVGRenderer.prototype.Element.prototype.attr;
 
+				if (!options.chart) {
+					options.chart = {};
+				}
+
 				options.chart.renderTo = $container[0];
 
 				// check if witdh is set. Order of precedence:
 				// args.width, options.chart.width and 600px
-				options.chart.width = width || options.chart.width || 600;
+
+				// OLD. options.chart.width = width || options.chart.width || 600;
+				// Notice we don't use commandline parameter width here. Commandline parameter width is used for scaling.
+				options.chart.width = (options.exporting && options.exporting.sourceWidth) || options.chart.width || 600;
+				options.chart.height = (options.exporting && options.exporting.sourceHeight) || options.chart.height || 400;
+
+
 
 				chart = new Highcharts[constr](options, callback);
 
@@ -229,8 +252,7 @@
 				return {
 					html: $container[0].firstChild.innerHTML,
 					width: chart.chartWidth,
-					height: chart.chartHeight,
-					sourceWidth: options.exporting && options.exporting.sourceWidth
+					height: chart.chartHeight
 				};
 
 			}, width, constr, optionsStr, callbackStr, pdfOutput);
@@ -246,9 +268,11 @@
 				} else {
 					// check every 50 ms if all images are loaded
 					window.setInterval(function () {
-						console.log('loaded ' + window.imagesLoaded);
-						if (window.imagesLoaded) {
-							scaleAndClipPage(svg);
+						if (!window.imagesLoaded) {
+							console.log('loading images...');
+						} else {
+							console.log('done loading images');
+							scaleAndClipPage(svg, pdfOutput);
 							page.render(output);
 							clearTimeout(timer);
 							phantom.exit();
@@ -293,7 +317,7 @@
 						};
 					}, pdfOutput);
 
-					scaleAndClipPage(svg);
+					scaleAndClipPage(svg, pdfOutput);
 					page.render(output);
 					phantom.exit();
 				}
