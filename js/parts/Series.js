@@ -1183,6 +1183,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
+			handleNegative = !!options.negativeColor,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
 			categories = xAxis.categories,
@@ -1193,7 +1194,8 @@ Series.prototype = {
 			isBottomSeries,
 			allStackSeries = yAxis.series,
 			i = allStackSeries.length,
-			placeBetween = options.pointPlacement === 'between';
+			placeBetween = options.pointPlacement === 'between',
+			threshold = options.threshold;
 			//nextSeriesDown;
 			
 		// Is it the last visible series?
@@ -1212,10 +1214,10 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(yValue < options.threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
-				
+			
 			// get the plotX translation
 			//point.plotX = mathRound(xAxis.translate(xValue, 0, 0, 0, 1) * 10) / 10; // Math.round fixes #591
 			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
@@ -1228,7 +1230,7 @@ Series.prototype = {
 				yValue = yBottom + yValue;
 				
 				if (isBottomSeries) {
-					yBottom = pick(options.threshold, yAxis.min);
+					yBottom = pick(threshold, yAxis.min);
 				}
 				
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -1264,6 +1266,8 @@ Series.prototype = {
 			point.clientX = chart.inverted ?
 				chart.plotHeight - point.plotX :
 				point.plotX; // for mouse tracking
+				
+			point.negative = point.y < (threshold || 0);
 
 			// some API data
 			point.category = categories && categories[point.x] !== UNDEFINED ?
@@ -1619,7 +1623,8 @@ Series.prototype = {
 	 */
 	getAttribs: function () {
 		var series = this,
-			normalOptions = defaultPlotOptions[series.type].marker ? series.options.marker : series.options,
+			seriesOptions = series.options,
+			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
@@ -1635,10 +1640,11 @@ Series.prototype = {
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions,
+			negativeColor = seriesOptions.negativeColor,
 			key;
 
 		// series type specific modifications
-		if (series.options.marker) { // line, spline, area, areaspline, scatter
+		if (seriesOptions.marker) { // line, spline, area, areaspline, scatter
 
 			// if no hover radius is given, default to normal radius + 2
 			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + 2;
@@ -1675,7 +1681,12 @@ Series.prototype = {
 			if (normalOptions && normalOptions.enabled === false) {
 				normalOptions.radius = 0;
 			}
-			hasPointSpecificOptions = series.options.colorByPoint; // #868
+			
+			if (point.negative) {
+				point.color = point.fillColor = negativeColor;
+			}
+			
+			hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
 			
 			// check if the point has specific visual options
 			if (point.options) {
@@ -1686,8 +1697,6 @@ Series.prototype = {
 				}
 			}
 
-
-
 			// a specific marker config object is defined for the individual point:
 			// create it's own attribute collection
 			if (hasPointSpecificOptions) {
@@ -1697,7 +1706,7 @@ Series.prototype = {
 				pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
 
 				// Handle colors for column and pies
-				if (!series.options.marker) { // column, bar, point
+				if (!seriesOptions.marker) { // column, bar, point
 					// if no hover color is given, brighten the normal color
 					pointStateOptionsHover.color =
 						Color(pointStateOptionsHover.color || point.color)
@@ -1717,6 +1726,7 @@ Series.prototype = {
 					seriesPointAttr[HOVER_STATE],
 					pointAttr[NORMAL_STATE]
 				);
+				
 				// inherit from point normal and series hover
 				pointAttr[SELECT_STATE] = series.convertAttribs(
 					stateOptions[SELECT_STATE],
@@ -1724,6 +1734,11 @@ Series.prototype = {
 					pointAttr[NORMAL_STATE]
 				);
 
+				// Force the fill to negativeColor on markers
+				if (point.negative && seriesOptions.marker) {
+					pointAttr[NORMAL_STATE].fill = pointAttr[HOVER_STATE].fill = pointAttr[SELECT_STATE].fill = 
+						negativeColor;
+				}
 
 
 			// no marker config object is created: copy a reference to the series-wide
@@ -2130,7 +2145,7 @@ Series.prototype = {
 			negClip = this.negClip,
 			chartWidth = chart.chartWidth;
 		
-		if (negativeColor) {
+		if (negativeColor && this.graph) {
 			translatedThreshold = chart.plotHeight - this.yAxis.translate(options.threshold || 0);
 			posAttr = {
 				x: 0,
