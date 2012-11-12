@@ -222,28 +222,27 @@ VMLElement = {
 						}
 						skipAttr = true;
 
-					// width and height
-					} else if (key === 'width' || key === 'height') {
+					// x, y, width, height
+					} else if (inArray(key, ['x', 'y', 'width', 'height']) !== -1) {
 						
-						value = mathMax(0, value); // don't set width or height below zero (#311)
+						wrapper[key] = value; // used in getter
 						
-						this[key] = value; // used in getter
-
+						if (key === 'x' || key === 'y') {
+							key = { x: 'left', y: 'top' }[key];
+						} else {
+							value = mathMax(0, value); // don't set width or height below zero (#311)
+						}
+						
 						// clipping rectangle special
 						if (wrapper.updateClipping) {
-							wrapper[key] = value;
+							wrapper[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
 							wrapper.updateClipping();
 						} else {
 							// normal
 							elemStyle[key] = value;
 						}
 
-						skipAttr = true;
-
-					// x and y
-					} else if (key === 'x' || key === 'y') {
-						wrapper[key] = value; // used in getter
-						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
+						skipAttr = true;						
 
 					// class name
 					} else if (key === 'class') {
@@ -591,9 +590,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			width: isObj ? x.width : width,
 			height: isObj ? x.height : height,
 			getCSS: function (wrapper) {
-				var inverted = wrapper.inverted,
+				var element = wrapper.element,
+					nodeName = element.nodeName,
+					isShape = nodeName === 'shape',
+					inverted = wrapper.inverted,
 					rect = this,
-					top = rect.top,
+					top = rect.top - (isShape ? element.offsetTop : 0),
 					left = rect.left,
 					right = left + rect.width,
 					bottom = top + rect.height,
@@ -606,7 +608,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					};
 
 				// issue 74 workaround
-				if (!inverted && docMode8 && wrapper.element.nodeName !== 'IMG') {
+				if (!inverted && docMode8 && nodeName === 'DIV') {
 					extend(ret, {
 						width: right + PX,
 						height: bottom + PX

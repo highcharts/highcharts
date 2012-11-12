@@ -2143,22 +2143,54 @@ Series.prototype = {
 			negAttr,
 			posClip = this.posClip,
 			negClip = this.negClip,
-			chartWidth = chart.chartWidth;
+			chartWidth = chart.chartWidth,
+			chartHeight = chart.chartHeight,
+			above,
+			below;
 		
 		if (negativeColor && this.graph) {
-			translatedThreshold = chart.plotHeight - this.yAxis.translate(options.threshold || 0);
-			posAttr = {
+			translatedThreshold = mathCeil(this.yAxis.len - this.yAxis.translate(options.threshold || 0));
+			above = {
 				x: 0,
 				y: 0,
 				width: chartWidth,
 				height: translatedThreshold
 			};
-			negAttr = {
+			below = {
 				x: 0,
 				y: translatedThreshold,
 				width: chartWidth,
-				height: chart.chartHeight
+				height: chartHeight
 			};
+			if (chart.inverted) {
+				if (this.yAxis.reversed) {
+					
+				} else {
+					posAttr = {
+						x: 0,
+						y: 0,
+						width: chartHeight,
+						height: translatedThreshold
+					};
+					negAttr = {
+						x: 0,
+						y: translatedThreshold,
+						width: chartHeight,
+						height: translatedThreshold
+					};
+						
+				}
+				
+			} else {
+				
+				if (this.yAxis.reversed) {
+					posAttr = below;
+					negAttr = above;
+				} else {
+					posAttr = above;
+					negAttr = below;
+				}
+			}
 			
 			if (posClip) { // update
 				posClip.animate(posAttr);
