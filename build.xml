@@ -449,6 +449,12 @@
     <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js">
       <filterset refid="highcharts.filter" />
     </copy>
+    <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js">
+      <filterset refid="highcharts.filter" />
+    </copy>
+    <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js">
+      <filterset refid="highstock.filter" />
+    </copy>
     <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js">
       <filterset refid="highstock.filter" />
     </copy>
