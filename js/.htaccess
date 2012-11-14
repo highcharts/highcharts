@@ -1,5 +1,13 @@
 # For testing purposes, redirect .js to higcharts.js.php
 RewriteEngine On
+
+# Files concatenated from parts
 RewriteRule highcharts.js debug.php?target=highcharts
 RewriteRule highstock.js debug.php?target=highstock
 RewriteRule highcharts-more.js debug.php?target=highchartsmore
+
+# Stock directory
+RewriteRule ^stock/(.*?) /$1
+
+# Source files
+RewriteRule (.*?)exporting.js $1exporting.src.js
