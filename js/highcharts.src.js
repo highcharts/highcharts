@@ -14645,7 +14645,7 @@ var PieSeries = {
 		var series = this,
 			points = series.points,
 			startAngleRad = series.startAngleRad;
-console.log('animate', startAngleRad);
+
 		each(points, function (point) {
 			var graphic = point.graphic,
 				args = point.shapeArgs;
@@ -14742,7 +14742,6 @@ console.log('animate', startAngleRad);
 			i,
 			len = points.length,
 			point;
-			
 
 		// get positions - either an integer or a percentage string must be given
 		series.center = positions = series.getCenter();
@@ -14955,9 +14954,16 @@ console.log('animate', startAngleRad);
 			y,
 			visibility,
 			rankArr,
-			sort,
 			i = 2,
-			j;
+			j,
+			sort = function (a, b) {
+				return b.y - a.y;
+			},
+			sortByAngle = function (points, sign) {
+				points.sort(function (a, b) {
+					return (b.angle - a.angle) * sign;
+				});
+			};
 
 		// get out if not enabled
 		if (!options.enabled && !series._hasPointLabels) {
@@ -14973,11 +14979,6 @@ console.log('animate', startAngleRad);
 				halves[point.half].push(point);
 			}
 		});
-
-		// define the rank sorting algorithm
-		sort = function (a, b) {
-			return b.y - a.y;
-		};
 
 		// assume equal label heights
 		labelHeight = halves[0][0] && halves[0][0].dataLabel && (halves[0][0].dataLabel.getBBox().height || 21); // 21 is for #968
@@ -14996,9 +14997,7 @@ console.log('animate', startAngleRad);
 				slotIndex;
 				
 			// Sort by angle
-			points.sort(function (a, b) {
-				return (b.angle - a.angle) * (i - 0.5);
-			});
+			sortByAngle(points, i - 0.5);
 
 			// Only do anti-collision when we are outside the pie and have connectors (#856)
 			if (distanceOption > 0) {
