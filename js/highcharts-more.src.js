@@ -1407,7 +1407,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	
 	/**
 	 * Postprocess mapping between options and SVG attributes in order to apply Z threshold
-	 */
+	 * /
 	getAttribs: function () {
 		
 		var options = this.options,
@@ -1430,16 +1430,15 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 				}
 			});
 		}
-	},
+	},*/
 	
 	/**
 	 * Extend the Series.setData method by finding Z data
 	 */
-	setData: function () {
+	setData: function (data, redraw) {
 		
 		var chart = this.chart,
 			options = this.options,
-			data = this.data,
 			extremes = {},
 			smallestSize = Math.min(chart.plotWidth, chart.plotHeight),
 			cutThreshold = options.displayNegative === false ? options.zThreshold : -Number.MAX_VALUE,
@@ -1468,12 +1467,12 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		});
 		this.minPxSize = minSize = extremes.minSize;
 		
-		// Run the parent method
-		Series.prototype.setData.apply(this, arguments);
+		// Run the parent method, but do not redraw yet
+		Series.prototype.setData.call(this, data, false);
 		
 		// Find the min and max Z
 		zData = this.zData;
-		zMin = arrayMin(zData);
+		zMin = math.max(arrayMin(zData), cutThreshold);
 		zMax = arrayMax(zData);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
@@ -1482,9 +1481,14 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos = zRange > 0 ? // relative size, a number between 0 and 1
 				(zData[i] - zMin) / (zMax - zMin) : 
 				0.5;
-			radii.push(Math.round(minSize + pos * (extremes.maxSize - minSize)) / 2);
+			radii.push(math.round(minSize + pos * (extremes.maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
+		
+		// Now redraw
+		if (pick(redraw, true)) {
+			chart.redraw(false);
+		}
 	},
 	
 	/**
@@ -1498,7 +1502,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs;
 
-				if (graphic) {
+				if (graphic && shapeArgs) {
 					// start values
 					graphic.attr('r', 1);
 
@@ -1530,9 +1534,13 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
+		
 		while (i--) {
 			point = data[i];
 			radius = radii[i];
+
+			// Flag for negativeColor to be applied in Series.js
+			point.negative = point.z < (this.options.zThreshold || 0);
 			
 			if (radius >= this.minPxSize / 2) {
 				// Shape arguments

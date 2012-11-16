@@ -13003,7 +13003,7 @@ Series.prototype = {
 				// Force the fill to negativeColor on markers
 				if (point.negative && seriesOptions.marker) {
 					pointAttr[NORMAL_STATE].fill = pointAttr[HOVER_STATE].fill = pointAttr[SELECT_STATE].fill = 
-						negativeColor;
+						series.convertAttribs({ fillColor: negativeColor }).fill;
 				}
 
 
@@ -13068,7 +13068,8 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup'], function (prop) {
+		each('area,graph,dataLabelsGroup,group,markerGroup,tracker,trackerGroup,' +
+				'graphNeg,areaNeg,posClip,negClip'.split(','), function (prop) {
 			if (series[prop]) {
 
 				// issue 134 workaround
@@ -13411,6 +13412,7 @@ Series.prototype = {
 			negClip = this.negClip,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
+			chartSizeMax = mathMax(chartWidth, chartHeight),
 			above,
 			below;
 		
@@ -13419,45 +13421,42 @@ Series.prototype = {
 			above = {
 				x: 0,
 				y: 0,
-				width: chartWidth,
+				width: chartSizeMax,
 				height: translatedThreshold
 			};
 			below = {
 				x: 0,
 				y: translatedThreshold,
-				width: chartWidth,
-				height: chartHeight
+				width: chartSizeMax,
+				height: chartSizeMax - translatedThreshold
 			};
 			if (chart.inverted) {
-				if (this.yAxis.reversed) {
-					
-				} else {
-					posAttr = {
-						x: 0,
-						y: 0,
-						width: chartHeight,
-						height: translatedThreshold
-					};
-					negAttr = {
-						x: 0,
-						y: translatedThreshold,
-						width: chartHeight,
-						height: translatedThreshold
-					};
-						
-				}
 				
-			} else {
-				
-				if (this.yAxis.reversed) {
-					posAttr = below;
-					negAttr = above;
-				} else {
-					posAttr = above;
-					negAttr = below;
-				}
+				// VML
+				/*
+				above = {
+					x: chart.plotLeft + translatedThreshold,
+					y: 0,
+					width: chartWidth,
+					height: chartHeight
+				};
+				below = {
+					x: 0,
+					y: 0,
+					width: chart.plotLeft + translatedThreshold,
+					height: chartWidth
+				};
+				// */
 			}
 			
+			if (this.yAxis.reversed) {
+				posAttr = below;
+				negAttr = above;
+			} else {
+				posAttr = above;
+				negAttr = below;
+			}
+		
 			if (posClip) { // update
 				posClip.animate(posAttr);
 				negClip.animate(negAttr);
@@ -13664,8 +13663,10 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			graph = series.graph,
+			graphNeg = series.graphNeg,
 			stateOptions = options.states,
-			lineWidth = options.lineWidth;
+			lineWidth = options.lineWidth,
+			attribs;
 
 		state = state || NORMAL_STATE;
 
@@ -13681,9 +13682,14 @@ Series.prototype = {
 			}
 
 			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML
-				graph.attr({ // use attr because animate will cause any other animation on the graph to stop
+				attribs = {
 					'stroke-width': lineWidth
-				}, state ? 0 : 500);
+				};
+				// use attr because animate will cause any other animation on the graph to stop
+				graph.attr(attribs);
+				if (graphNeg) {
+					graphNeg.attr(attribs);
+				}
 			}
 		}
 	},
