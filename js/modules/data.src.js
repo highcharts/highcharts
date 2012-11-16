@@ -29,7 +29,7 @@
 	 */
 	init: function (options) {
 		this.options = options;
-		this.columns = [];
+		this.columns = options.columns || [];
 		
 		
 		// Parse a CSV string if options.csv is given
@@ -145,7 +145,7 @@
 	 * Trim a string from whitespace
 	 */
 	trim: function (str) {
-		return str.replace(/^\s+|\s+$/g, '');
+		return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, '');
 	},
 	
 	/**
