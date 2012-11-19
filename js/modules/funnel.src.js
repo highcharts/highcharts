@@ -31,6 +31,7 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 	neckHeight: '25%',
 
 	dataLabels: {
+		//position: 'right',
 		connectorWidth: 1,
 		connectorColor: '#606060'
 	},
@@ -76,6 +77,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			data = series.data,
 			path,
 			fraction,
+			half = options.dataLabels.position === 'left' ? 1 : 0,
 
 			x1, 
 			y1, 
@@ -91,8 +93,8 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 				neckWidth :
 				neckWidth + (width - neckWidth) * ((height - neckHeight - y) / (height - neckHeight));
 		};
-		series.getX = function (y) {
-			return centerX - (getWidthAt(y) / 2) - options.dataLabels.distance;	
+		series.getX = function (y, half) {
+			return centerX + (half ? -1 : 1) * ((getWidthAt(y) / 2) + options.dataLabels.distance);
 		};
 
 		// Expose
@@ -184,6 +186,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 				centerX,
 				point.plotY
 			];
+			
+			// Mimicking pie data label placement logic
+			point.half = half;
 
 			cumulative += fraction;
 		});
@@ -240,6 +245,8 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	drawDataLabels: function () {
 		var data = this.data,
 			labelDistance = this.options.dataLabels.distance,
+			leftSide,
+			sign,
 			point,
 			i = data.length,
 			x,
@@ -253,18 +260,20 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		// Set the label position array for each point.
 		while (i--) {
 			point = data[i];
+			leftSide = point.half;
+			sign = leftSide ? 1 : -1;
 			y = point.plotY;
-			x = this.getX(y);
+			x = this.getX(y, leftSide);
 				
 			// set the anchor point for data labels
 			point.labelPos = [
 				0, // first break of connector
 				y, // a/a
-				x + labelDistance - 10, // second break, right outside point shape
+				x + (labelDistance - 5) * sign, // second break, right outside point shape
 				y, // a/a
-				x + labelDistance, // landing point for connector
+				x + labelDistance * sign, // landing point for connector
 				y, // a/a
-				'right', // alignment
+				leftSide ? 'right' : 'left', // alignment
 				0 // center angle
 			];
 		}

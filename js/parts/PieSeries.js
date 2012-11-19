@@ -515,7 +515,7 @@ var PieSeries = {
 		});
 
 		// assume equal label heights
-		labelHeight = halves[0][0] && halves[0][0].dataLabel && (halves[0][0].dataLabel.getBBox().height || 21); // 21 is for #968
+		labelHeight = data[0] && data[0].dataLabel && (data[0].dataLabel.getBBox().height || 21); // 21 is for #968
 
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
@@ -539,6 +539,7 @@ var PieSeries = {
 				// build the slots
 				for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
 					slots.push(pos);
+					
 					// visualize the slot
 					/*
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),

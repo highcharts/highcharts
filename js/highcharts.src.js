@@ -13739,6 +13739,11 @@ Series.prototype = {
 				}
 			}
 		}
+		
+		// hide tooltip (#1361)
+		if (chart.hoverSeries === series) {
+			series.onMouseOut();
+		}
 
 
 		if (dataLabelsGroup) {
@@ -14877,19 +14882,19 @@ var PieSeries = {
 	 */
 	animate: function () {
 		var series = this,
-			points = series.points;
+			points = series.points,
+			startAngleRad = series.startAngleRad;
 
 		each(points, function (point) {
 			var graphic = point.graphic,
-				args = point.shapeArgs,
-				up = -mathPI / 2;
+				args = point.shapeArgs;
 
 			if (graphic) {
 				// start values
 				graphic.attr({
 					r: series.center[3] / 2, // animate from inner radius (#779)
-					start: up,
-					end: up
+					start: startAngleRad,
+					end: startAngleRad
 				});
 
 				// animate
@@ -14956,7 +14961,7 @@ var PieSeries = {
 		
 		var total = 0,
 			series = this,
-			cumulative = -0.25, // start at top
+			cumulative = 0,
 			precision = 1000, // issue #172
 			options = series.options,
 			slicedOffset = options.slicedOffset,
@@ -14965,6 +14970,7 @@ var PieSeries = {
 			start,
 			end,
 			angle,
+			startAngleRad = series.startAngleRad = mathPI / 180 * ((options.startAngle || 0) % 360 - 90), // docs
 			points = series.points,
 			circ = 2 * mathPI,
 			fraction,
@@ -15006,11 +15012,11 @@ var PieSeries = {
 			
 			// set start and end angle
 			fraction = total ? point.y / total : 0;
-			start = mathRound(cumulative * circ * precision) / precision;
+			start = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
 			if (!ignoreHiddenPoint || point.visible) {
 				cumulative += fraction;
 			}
-			end = mathRound(cumulative * circ * precision) / precision;
+			end = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
 
 			// set the shape
 			point.shapeType = 'arc';
@@ -15025,6 +15031,9 @@ var PieSeries = {
 
 			// center for the sliced out slice
 			angle = (end + start) / 2;
+			if (angle > 0.75 * circ) {
+				angle -= 2 * mathPI;
+			}
 			point.slicedTranslation = map([
 				mathCos(angle) * slicedOffset + chart.plotLeft,
 				mathSin(angle) * slicedOffset + chart.plotTop
@@ -15037,6 +15046,9 @@ var PieSeries = {
 				positions[0] + radiusX * 0.7,
 				positions[1] + radiusY * 0.7
 			];
+			
+			point.half = angle < circ / 4 ? 0 : 1;
+			point.angle = angle;
 
 			// set the anchor point for data labels
 			point.labelPos = [
@@ -15048,7 +15060,7 @@ var PieSeries = {
 				positions[1] + radiusY, // a/a
 				labelDistance < 0 ? // alignment
 					'center' :
-					angle < circ / 4 ? 'left' : 'right', // alignment
+					point.half ? 'right' : 'left', // alignment
 				angle // center angle
 			];
 			
@@ -15187,10 +15199,17 @@ var PieSeries = {
 			y,
 			visibility,
 			rankArr,
-			sort,
 			i = 2,
+			j,
 			overflow = [0, 0, 0, 0], // top, right, bottom, left
-			j;
+			sort = function (a, b) {
+				return b.y - a.y;
+			},
+			sortByAngle = function (points, sign) {
+				points.sort(function (a, b) {
+					return (b.angle - a.angle) * sign;
+				});
+			};
 
 		// get out if not enabled
 		if (!options.enabled && !series._hasPointLabels) {
@@ -15203,20 +15222,12 @@ var PieSeries = {
 		// arrange points for detection collision
 		each(data, function (point) {
 			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
-				halves[
-					point.labelPos[7] < mathPI / 2 ? 0 : 1
-				].push(point);
+				halves[point.half].push(point);
 			}
 		});
-		halves[1].reverse();
-
-		// define the sorting algorithm
-		sort = function (a, b) {
-			return b.y - a.y;
-		};
 
 		// assume equal label heights
-		labelHeight = halves[0][0] && halves[0][0].dataLabel && (halves[0][0].dataLabel.getBBox().height || 21); // 21 is for #968
+		labelHeight = data[0] && data[0].dataLabel && (data[0].dataLabel.getBBox().height || 21); // 21 is for #968
 
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
@@ -15230,6 +15241,9 @@ var PieSeries = {
 				pos,
 				length = points.length,
 				slotIndex;
+				
+			// Sort by angle
+			sortByAngle(points, i - 0.5);
 
 			// Only do anti-collision when we are outside the pie and have connectors (#856)
 			if (distanceOption > 0) {
@@ -15237,6 +15251,7 @@ var PieSeries = {
 				// build the slots
 				for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
 					slots.push(pos);
+					
 					// visualize the slot
 					/*
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
