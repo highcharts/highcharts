@@ -1802,8 +1802,8 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each('area,graph,dataLabelsGroup,group,markerGroup,tracker,trackerGroup,' +
-				'graphNeg,areaNeg,posClip,negClip'.split(','), function (prop) {
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup',
+				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
 			if (series[prop]) {
 
 				// issue 134 workaround

@@ -24,6 +24,7 @@ var addEvent = Highcharts.addEvent,
 
 // set default options
 defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
+	center: ['50%', '50%'],
 	width: '90%',
 	neckWidth: '30%',
 	height: '100%',
@@ -32,14 +33,15 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 	dataLabels: {
 		connectorWidth: 1,
 		connectorColor: '#606060'
-	}
+	},
+	size: true // to avoid adapting to data label size in Pie.drawDataLabels
 });
 
 
 seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
 	type: 'funnel',
-
+	animate: function () {},
 
 	/**
 	 * Overrides the pie translate method
