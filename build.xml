@@ -1,1154 +1,1183 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Highcharts build file -->
 <project name="build" default="usage" xmlns:ac="antlib:net.sf.antcontrib">
-  <!-- Describes the usage of the build file by invoking -projecthelp. -->
-  <target name="usage">
-    <java classname="org.apache.tools.ant.Main">
-      <arg value="-projecthelp" />
-      <arg value="-quiet" />
-    </java>
-  </target>
-  <!-- Sets various properties needed during the build. -->
-  <target name="set.properties">
-    <!-- Read the release names and versions for our products. -->
-    <property file="build.properties" />
-    <filterset id="highcharts.filter">
-      <filter token="product.name" value="${highcharts.product.name}" />
-      <filter token="product.cdnpath" value="${highcharts.product.cdnpath}" />
-      <filter token="product.version" value="${highcharts.product.version}" />
-      <filter token="product.date" value="${highcharts.product.date}" />
-    </filterset>
-    <filterset id="highstock.filter">
-      <filter token="product.name" value="${highstock.product.name}" />
-      <filter token="product.cdnpath" value="${highstock.product.cdnpath}" />
-      <filter token="product.version" value="${highstock.product.version}" />
-      <filter token="product.date" value="${highstock.product.date}" />
-    </filterset>
-    <!-- folder names -->
-    <property name="tools.dir" value="${basedir}/tools" />
-    <property name="build.dir" value="${basedir}/build" />
-    <property name="dist.dir" value="${build.dir}/dist" />
-    <property name="testoutput.dir" value="${build.dir}/tests" />
-    <property name="coveragereport.dir" value="${build.dir}/coverage-report" />
-    <property name="themes.dir" value="${basedir}/js/themes" />
-    <!-- highcharts/highstock src -->
-    <property name="highcharts.parts.dir" location="${basedir}/js/parts" />
-    <property name="highchartsmore.parts.dir" location="${basedir}/js/parts-more" />
-    <property name="highcharts.src.name" value="highcharts.src.js" />
-    <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}" />
-    <property name="highcharts.minified.name" value="highcharts.js" />
-    <property name="highstock.src.name" value="highstock.src.js" />
-    <property name="highstock.src.file" value="${basedir}/js/${highstock.src.name}" />
-    <property name="highstock.minified.name" value="highstock.js" />
-    <property name="highchartsmore.src.name" value="highcharts-more.src.js" />
-    <property name="highchartsmore.src.file" value="${basedir}/js/${highchartsmore.src.name}" />
-    <property name="highchartsmore.minified.name" value="highcharts-more.js" />
-    <property name="mootools.src.name" value="mootools-adapter.src.js" />
-    <property name="prototype.src.name" value="prototype-adapter.src.js" />
-    <property name="exporting.src.name" value="exporting.src.js" />
-    <property name="data.src.name" value="data.src.js" />
-    <property name="mootools.minified.name" value="mootools-adapter.js" />
-    <property name="prototype.minified.name" value="prototype-adapter.js" />
-    <property name="exporting.minified.name" value="exporting.js" />
-    <property name="data.minified.name" value="data.js" />
-    <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}" />
-    <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}" />
-    <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}" />
-    <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}" />
-    <!-- jsLint -->
-    <property name="jslint4java.dir" value="${tools.dir}/jslint4java" />
-    <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-2.0.0.jar" />
-    <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${jslint4java.jar}" />
-    <!-- google closure compiler -->
-    <property name="gcc.dir" value="${tools.dir}/google-closure-compiler" />
-    <property name="gcc.jar" location="${gcc.dir}/compiler.jar" />
-    <!-- YUI compressor -->
-    <property name="yuicomp.dir" value="${tools.dir}/yui-compressor" />
-    <property name="yuicomp.jar" location="${yuicomp.dir}/yuicompressor-2.4.6.jar" />
-    <property name="yuicomp.output.name" value="highcharts.min-yui.js" />
-    <!-- google js-test-driver -->
-    <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver" />
-    <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3d.jar" />
-    <!-- ant-contrib -->
-    <property name="ant.contrib.dir" value="${tools.dir}/ant-contrib-0.6-bin" />
-    <property name="ant.contrib.jar" location="${ant.contrib.dir}/lib/ant-contrib-0.6.jar" />
-    <taskdef uri="antlib:net.sf.antcontrib" resource="net/sf/antcontrib/antlib.xml" classpath="${ant.contrib.jar}" />
-    <!-- cache-control Amamzon S3 -->
-    <tstamp>
-      <format property="http.expires.five.years" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="1825" />
-    </tstamp>
-    <tstamp>
-      <format property="http.expires.one.month" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="31" />
-    </tstamp>
-    <tstamp>
-      <format property="http.expires.one.day" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="1" />
-    </tstamp>
-    <property name="max.age.five.years" value="157680000" />
-    <property name="max.age.one.month" value="2592001" />
-    <property name="max.age.one.day" value="86400" />
-    <!-- This is the list of files for highcharts -->
-    <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
-      <file name="Intro.js" />
-      <file name="Globals.js" />
-      <file name="Utilities.js" />
-      <file name="PathAnimation.js" />
-      <file name="Adapters.js" />
-      <file name="Options.js" />
-      <file name="Color.js" />
-      <file name="SvgRenderer.js" />
-      <file name="VmlRenderer.js" />
-      <file name="CanVGRenderer.js" />
-      <file name="Tick.js" />
-      <file name="PlotLineOrBand.js" />
-      <file name="StackItem.js" />
-      <file name="Axis.js" />
-      <file name="Tooltip.js" />
-      <file name="MouseTracker.js" />
-      <file name="Legend.js" />
-      <file name="Chart.js" />
-      <file name="Series.js" />
-      <file name="LineSeries.js" />
-      <file name="AreaSeries.js" />
-      <file name="SplineSeries.js" />
-      <file name="AreaSplineSeries.js" />
-      <file name="ColumnSeries.js" />
-      <file name="BarSeries.js" />
-      <file name="ScatterSeries.js" />
-      <file name="PieSeries.js" />
-      <file name="Facade.js" />
-      <file name="Outro.js" />
-    </filelist>
-    <!-- This is the list of files for highstock -->
-    <filelist id="highstock.files" dir="${highcharts.parts.dir}">
-      <file name="Intro.js" />
-      <file name="Globals.js" />
-      <file name="Utilities.js" />
-      <file name="PathAnimation.js" />
-      <file name="Adapters.js" />
-      <file name="Options.js" />
-      <file name="Color.js" />
-      <file name="SvgRenderer.js" />
-      <file name="VmlRenderer.js" />
-      <file name="CanVGRenderer.js" />
-      <file name="Tick.js" />
-      <file name="PlotLineOrBand.js" />
-      <file name="StackItem.js" />
-      <file name="Axis.js" />
-      <file name="Tooltip.js" />
-      <file name="MouseTracker.js" />
-      <file name="Legend.js" />
-      <file name="Chart.js" />
-      <file name="Series.js" />
-      <file name="LineSeries.js" />
-      <file name="AreaSeries.js" />
-      <file name="SplineSeries.js" />
-      <file name="AreaSplineSeries.js" />
-      <file name="ColumnSeries.js" />
-      <file name="BarSeries.js" />
-      <file name="ScatterSeries.js" />
-      <file name="PieSeries.js" />
-      <file name="DataGrouping.js" />
-      <file name="OHLCSeries.js" />
-      <file name="CandlestickSeries.js" />
-      <file name="FlagsSeries.js" />
-      <file name="Scroller.js" />
-      <file name="RangeSelector.js" />
-      <file name="StockNavigation.js" />
-      <file name="StockChart.js" />
-      <file name="OrdinalAxis.js" />
-      <file name="Facade.js" />
-      <file name="Outro.js" />
-    </filelist>
-    <!-- This is the list of files for highcharts-more -->
-    <filelist id="highchartsmore.files" dir="${highchartsmore.parts.dir}">
-      <file name="Intro.js" />
-      <file name="Globals.js" />
-      <file name="Pane.js" />
-      <file name="RadialAxis.js" />
-      <file name="AreaRangeSeries.js" />
-      <file name="AreaSplineRangeSeries.js" />
-      <file name="ColumnRangeSeries.js" />
-      <file name="GaugeSeries.js" />
-      <file name="Polar.js" />
-      <file name="Outro.js" />
-    </filelist>
-  </target>
-  <!-- Set up a clean build folder. -->
-  <target name="clean" depends="set.properties">
-    <mkdir dir="${build.dir}" />
-    <delete includeemptydirs="true">
-      <fileset dir="${build.dir}" includes="**/*" />
-    </delete>
-    <mkdir dir="${dist.dir}/js/adapters" />
-    <mkdir dir="${dist.dir}/js/modules" />
-    <mkdir dir="${dist.dir}/highcharts/gfx" />
-    <mkdir dir="${dist.dir}/highcharts/js/adapters" />
-    <mkdir dir="${dist.dir}/highcharts/js/modules" />
-    <mkdir dir="${dist.dir}/highstock/gfx" />
-    <mkdir dir="${dist.dir}/highstock/js/adapters" />
-    <mkdir dir="${dist.dir}/highstock/js/modules" />
-    <mkdir dir="${testoutput.dir}" />
-    <mkdir dir="${coveragereport.dir}" />
-    <delete file="${basedir}/jsTestDriver.conf" failonerror="false" />
-    <delete file="${basedir}/jsTestDriverCoverage.conf" failonerror="false" />
-  </target>
-  <!-- Assembles the source parts into one file. -->
-  <target name="assemble" depends="clean">
-    <!-- Concat highcharts src and replace the product name and version -->
-    <concat destfile="${highcharts.src.file}">
-      <filelist refid="highcharts.files" />
-      <filterchain>
-        <replacetokens>
-          <token key="product.name" value="${highcharts.product.name}" />
-          <token key="product.cdnpath" value="${highcharts.product.cdnpath}" />
-          <token key="product.version" value="${highcharts.product.version}" />
-          <token key="product.date" value="${highcharts.product.date}" />
-        </replacetokens>
-      </filterchain>
-    </concat>
-    <!-- Concat highstock src and replace the product name and version -->
-    <concat destfile="${highstock.src.file}">
-      <filelist refid="highstock.files" />
-      <filterchain>
-        <replacetokens>
-          <token key="product.name" value="${highstock.product.name}" />
-          <token key="product.cdnpath" value="${highstock.product.cdnpath}" />
-          <token key="product.version" value="${highstock.product.version}" />
-          <token key="product.date" value="${highstock.product.date}" />
-        </replacetokens>
-      </filterchain>
-    </concat>
-    <!-- Concat highcharts-more src and replace the product name and version -->
-    <concat destfile="${highchartsmore.src.file}">
-      <filelist refid="highchartsmore.files" />
-      <filterchain>
-        <replacetokens>
-          <token key="product.name" value="${highcharts.product.name}" />
-          <token key="product.cdnpath" value="${highcharts.product.cdnpath}" />
-          <token key="product.version" value="${highcharts.product.version}" />
-          <token key="product.date" value="${highcharts.product.date}" />
-        </replacetokens>
-      </filterchain>
-    </concat>
-    <!-- Concat canvg library together with rgbcolor script -->
-    <concat destfile="build/canvas-tools.src.js">
-      <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js" />
-      <filelist dir="js/modules/" files="canvgrenderer-extended.src.js" />
-    </concat>
-  </target>
-  <!-- This target convert any mixed line endings to crlf. -->
-  <target name="check-crlf" depends="assemble">
-    <fixcrlf srcDir="${basedir}/js" includes="**/*.js" fixlast="false" />
-    <fixcrlf srcDir="${basedir}/test" includes="**/*.js" fixlast="false" />
-  </target>
-  <!-- Runs jslint on generated source code. -->
-  <target name="do-lint" depends="check-crlf">
-    <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
-      <formatter type="plain" />
-      <formatter type="report" destfile="${build.dir}/lintreport.html" />
-      <fileset file="${highstock.src.file}" />
-      <fileset file="${highchartsmore.src.file}" />
-      <fileset file="${mootools.src.file}" />
-      <fileset file="${prototype.src.file}" />
-      <fileset file="${exporting.src.file}" />
-      <fileset file="${data.src.file}" />
-      <fileset dir="${themes.dir}" />
-      <fileset file="js/modules/canvgrenderer-extended.src.js" />
-    </jslint>
-    <!-- Set a property that tells if there are unused variables. -->
-    <condition property="lint.variable.error">
-      <or>
-        <resourcecontains resource="${build.dir}/lintreport.html" substring="Undefined variable" />
-        <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable" />
-      </or>
-    </condition>
-  </target>
-  <!-- This target is only run if there are unused variables. -->
-  <target name="lint" depends="do-lint" if="lint.variable.error">
-    <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'." />
-  </target>
-  <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
-  <target name="do-lint-parts" depends="set.properties">
-    <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
-      <formatter type="plain" />
-      <formatter type="report" destfile="${build.dir}/lintreport.html" />
-      <fileset dir="${highcharts.parts.dir}">
-        <include name="*.js" />
-        <exclude name="Intro.js" />
-        <exclude name="Outro.js" />
-      </fileset>
-      <fileset dir="${highchartsmore.parts.dir}">
-        <include name="*.js" />
-        <exclude name="Intro.js" />
-        <exclude name="Outro.js" />
-      </fileset>
-    </jslint>
-    <!-- Set a property that tells if there are unused variables. -->
-    <condition property="lint.parts.variable.error">
-      <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable" />
-    </condition>
-    <echo message="General warning: This target won't reveal undefined variables. Run 'ant lint' in addition." />
-  </target>
-  <!-- This target is only run if there are unused variables. -->
-  <target name="lint-parts" depends="do-lint-parts" if="lint.parts.variable.error">
-    <echo message="Warning: Unused variables exist. Run 'start build/lintreport.html', search for 'Unused'." />
-  </target>
-  <!-- Runs google closure compiler and yui compressor on src. -->
-  <target name="compile">
-    <!-- This command sets the logging level in current task to only include echo messages. -->
-    <script language="javascript">project.getBuildListeners().firstElement().setMessageOutputLevel(1);</script>
-    <echo message="Minifying ${param.src}" />
-    <java jar="${gcc.jar}" fork="true">
-      <arg value="--compilation_level" />
-      <arg value="SIMPLE_OPTIMIZATIONS" />
-      <arg value="--js" />
-      <arg value="${param.src}" />
-      <arg value="--js_output_file" />
-      <arg value="${param.out}" />
-      <arg value="--charset" />
-      <arg value="UTF-8" />
-    </java>
-    <java jar="${yuicomp.jar}" fork="true">
-      <arg value="--type" />
-      <arg value="js" />
-      <arg value="-o" />
-      <arg value="${param.out}.yui-min.js" />
-      <arg value="--charset" />
-      <arg value="UTF-8" />
-      <arg value="${param.src}" />
-    </java>
-    <length file="${param.src}" property="input.length" />
-    <length file="${param.out}" property="gcc.output.length" />
-    <!-- Create a temporary zipfile to get the zipped size -->
-    <copy file="${param.out}" tofile="${build.dir}/zipme.js" />
-    <zip destfile="${build.dir}/zipped.zip" basedir="${build.dir}" includes="zipme.js" />
-    <length file="${build.dir}/zipped.zip" property="zipped.output.length" />
-    <length file="${param.out}.yui-min.js" property="yuicomp.output.length" />
-    <!-- Create a temporary zipfile to get the zipped size -->
-    <copy file="${param.out}.yui-min.js" tofile="${build.dir}/yuizipme.js" />
-    <zip destfile="${build.dir}/yuizipped.zip" basedir="${build.dir}" includes="yuizipme.js" />
-    <length file="${build.dir}/yuizipped.zip" property="yui.zipped.output.length" />
-    <!-- We are not distributing this file, its only used to make sure compilation works. -->
-    <delete file="${param.out}.yui-min.js" quiet="true" />
-    <echo message="Google Closure compiler: ${input.length} bytes -&gt; ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)." />
-    <echo message="Yahoo YUI Compressor: ${input.length} bytes -&gt; ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)." />
-    <echo message="" />
-  </target>
-  <!-- Runs minifiers on source code. -->
-  <target name="minify" depends="assemble">
-    <antcall target="compile">
-      <param name="param.src" value="${highcharts.src.file}" />
-      <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="${highstock.src.file}" />
-      <param name="param.out" value="${dist.dir}/highstock/js/${highstock.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="${highchartsmore.src.file}" />
-      <param name="param.out" value="${dist.dir}/highcharts/js/${highchartsmore.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="${highchartsmore.src.file}" />
-      <param name="param.out" value="${dist.dir}/highstock/js/${highchartsmore.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="${mootools.src.file}" />
-      <param name="param.out" value="${dist.dir}/js/adapters/${mootools.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="${prototype.src.file}" />
-      <param name="param.out" value="${dist.dir}/js/adapters/${prototype.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="${exporting.src.file}" />
-      <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="${data.src.file}" />
-      <param name="param.out" value="${dist.dir}/js/modules/${data.minified.name}" />
-    </antcall>
-    <antcall target="compile">
-      <param name="param.src" value="build/canvas-tools.src.js" />
-      <param name="param.out" value="build/canvas-tools.js" />
-    </antcall>
-  </target>
-  <!-- Builds the source and runts lint and minify. -->
-  <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify."></target>
-  <scriptdef name="listfiles" language="javascript">
-    <![CDATA[
-                var dir = project.getProperty("samples.dir");
-                var fs = project.createDataType("fileset");
-                fs.setDir(new java.io.File(dir));
-                fs.setIncludes("**/demo.js");
+    <!-- Describes the usage of the build file by invoking -projecthelp. -->
+    <target name="usage">
+         <java classname="org.apache.tools.ant.Main">
+             <arg value="-projecthelp" />
+             <arg value="-quiet" />
+        </java>
+    </target>
+    
+    <!-- Sets various properties needed during the build. -->
+    <target name="set.properties">
+        <!-- Read the release names and versions for our products. -->
+        <property file="build.properties" />
+        <filterset id="highcharts.filter">
+            <filter token="product.name" value="${highcharts.product.name}" />
+            <filter token="product.cdnpath" value="${highcharts.product.cdnpath}" />
+            <filter token="product.version" value="${highcharts.product.version}" />
+            <filter token="product.date" value="${highcharts.product.date}" />
+        </filterset>
+        <filterset id="highstock.filter">
+            <filter token="product.name" value="${highstock.product.name}" />
+            <filter token="product.cdnpath" value="${highstock.product.cdnpath}" />
+            <filter token="product.version" value="${highstock.product.version}" />
+            <filter token="product.date" value="${highstock.product.date}" />
+        </filterset>
+        <!-- folder names -->
+        <property name="tools.dir" value="${basedir}/tools" />
+        <property name="build.dir" value="${basedir}/build" />
+        <property name="dist.dir" value="${build.dir}/dist" />
+        <property name="testoutput.dir" value="${build.dir}/tests" />
+        <property name="coveragereport.dir" value="${build.dir}/coverage-report" />
+        <property name="themes.dir" value="${basedir}/js/themes" />
+        <!-- highcharts/highstock src -->
+        <property name="highcharts.parts.dir" location="${basedir}/js/parts" />
+        <property name="highchartsmore.parts.dir" location="${basedir}/js/parts-more" />
+        <property name="highcharts.src.name" value="highcharts.src.js" />
+        <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}" />
+        <property name="highcharts.minified.name" value="highcharts.js" />
+        <property name="highstock.src.name" value="highstock.src.js" />
+        <property name="highstock.src.file" value="${basedir}/js/${highstock.src.name}" />
+        <property name="highstock.minified.name" value="highstock.js" />
+        <property name="highchartsmore.src.name" value="highcharts-more.src.js" />
+        <property name="highchartsmore.src.file" value="${basedir}/js/${highchartsmore.src.name}" />
+        <property name="highchartsmore.minified.name" value="highcharts-more.js" />
+        <property name="mootools.src.name" value="mootools-adapter.src.js" />
+        <property name="prototype.src.name" value="prototype-adapter.src.js" />
+        <property name="exporting.src.name" value="exporting.src.js" />
+        <property name="data.src.name" value="data.src.js" />
+        <property name="mootools.minified.name" value="mootools-adapter.js" />
+        <property name="prototype.minified.name" value="prototype-adapter.js" />
+        <property name="exporting.minified.name" value="exporting.js" />
+        <property name="data.minified.name" value="data.js" />
+        <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}" />
+        <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}" />
+        <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}" />
+        <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}" />
+        <!-- jsLint -->
+        <property name="jslint4java.dir" value="${tools.dir}/jslint4java" />
+        <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-2.0.0.jar" />
+        <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${jslint4java.jar}" />
+        <!-- google closure compiler -->
+        <property name="gcc.dir" value="${tools.dir}/google-closure-compiler" />
+        <property name="gcc.jar" location="${gcc.dir}/compiler.jar" />
+        <!-- YUI compressor -->
+        <property name="yuicomp.dir" value="${tools.dir}/yui-compressor" />
+        <property name="yuicomp.jar" location="${yuicomp.dir}/yuicompressor-2.4.6.jar" />
+        <property name="yuicomp.output.name" value="highcharts.min-yui.js" />
+        <!-- google js-test-driver -->
+        <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver" />
+        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3d.jar" />
+        <!-- ant-contrib -->
+        <property name="ant.contrib.dir" value="${tools.dir}/ant-contrib-0.6-bin" />
+        <property name="ant.contrib.jar" location="${ant.contrib.dir}/lib/ant-contrib-0.6.jar" />
+        <taskdef uri="antlib:net.sf.antcontrib" resource="net/sf/antcontrib/antlib.xml" classpath="${ant.contrib.jar}" />
+        <!-- cache-control Amamzon S3 -->
+        <tstamp>
+            <format property="http.expires.five.years" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="1825" />
+        </tstamp>
+        <tstamp>
+            <format property="http.expires.one.month" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="31" />
+        </tstamp>
+        <tstamp>
+            <format property="http.expires.one.day" pattern="E, dd MMM yyyy hh:mm:ss" locale="en,US" offset="1" />
+        </tstamp>
+        <property name="max.age.five.years" value="157680000" />
+        <property name="max.age.one.month" value="2592001" />
+        <property name="max.age.one.day" value="86400" />
+        <!-- This is the list of files for highcharts -->
+        <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
+            <file name="Intro.js" />
+            <file name="Globals.js" />
+            <file name="Utilities.js" />
+            <file name="PathAnimation.js" />
+            <file name="Adapters.js" />
+            <file name="Options.js" />
+            <file name="Color.js" />
+            <file name="SvgRenderer.js" />
+            <file name="VmlRenderer.js" />
+            <file name="CanVGRenderer.js" />
+            <file name="Tick.js" />
+            <file name="PlotLineOrBand.js" />
+            <file name="StackItem.js" />
+            <file name="Axis.js" />
+            <file name="Tooltip.js" />
+            <file name="MouseTracker.js" />
+            <file name="Legend.js" />
+            <file name="Chart.js" />
+            <file name="Series.js" />
+            <file name="LineSeries.js" />
+            <file name="AreaSeries.js" />
+            <file name="SplineSeries.js" />
+            <file name="AreaSplineSeries.js" />
+            <file name="ColumnSeries.js" />
+            <file name="BarSeries.js" />
+            <file name="ScatterSeries.js" />
+            <file name="PieSeries.js" />
+            <file name="Facade.js" />
+            <file name="Outro.js" />
+        </filelist>
+        <!-- This is the list of files for highstock -->
+        <filelist id="highstock.files" dir="${highcharts.parts.dir}">
+            <file name="Intro.js" />
+            <file name="Globals.js" />
+            <file name="Utilities.js" />
+            <file name="PathAnimation.js" />
+            <file name="Adapters.js" />
+            <file name="Options.js" />
+            <file name="Color.js" />
+            <file name="SvgRenderer.js" />
+            <file name="VmlRenderer.js" />
+            <file name="CanVGRenderer.js" />
+            <file name="Tick.js" />
+            <file name="PlotLineOrBand.js" />
+            <file name="StackItem.js" />
+            <file name="Axis.js" />
+            <file name="Tooltip.js" />
+            <file name="MouseTracker.js" />
+            <file name="Legend.js" />
+            <file name="Chart.js" />
+            <file name="Series.js" />
+            <file name="LineSeries.js" />
+            <file name="AreaSeries.js" />
+            <file name="SplineSeries.js" />
+            <file name="AreaSplineSeries.js" />
+            <file name="ColumnSeries.js" />
+            <file name="BarSeries.js" />
+            <file name="ScatterSeries.js" />
+            <file name="PieSeries.js" />
+            <file name="DataGrouping.js" />
+            <file name="OHLCSeries.js" />
+            <file name="CandlestickSeries.js" />
+            <file name="FlagsSeries.js" />
+            <file name="Scroller.js" />
+            <file name="RangeSelector.js" />
+            <file name="StockNavigation.js" />
+            <file name="StockChart.js" />
+            <file name="OrdinalAxis.js" />
+            <file name="Facade.js" />
+            <file name="Outro.js" />
+        </filelist>
+        <!-- This is the list of files for highcharts-more -->
+        <filelist id="highchartsmore.files" dir="${highchartsmore.parts.dir}">
+            <file name="Intro.js" />
+            <file name="Globals.js" />
+            <file name="Pane.js" />
+            <file name="RadialAxis.js" />
+            <file name="AreaRangeSeries.js" />
+            <file name="AreaSplineRangeSeries.js" />
+            <file name="ColumnRangeSeries.js" />
+            <file name="GaugeSeries.js" />
+            <file name="Polar.js" />
+            <file name="Outro.js" />
+        </filelist>
+    </target>
+    
+    <!-- Set up a clean build folder. -->
+    <target name="clean" depends="set.properties">
+        <mkdir dir="${build.dir}" />
+        <delete includeemptydirs="true">
+            <fileset dir="${build.dir}" includes="**/*" />
+        </delete>
+        <mkdir dir="${dist.dir}/js/adapters" />
+        <mkdir dir="${dist.dir}/js/modules" />
+        <mkdir dir="${dist.dir}/highcharts/gfx" />
+        <mkdir dir="${dist.dir}/highcharts/js/adapters" />
+        <mkdir dir="${dist.dir}/highcharts/js/modules" />
+        <mkdir dir="${dist.dir}/highstock/gfx" />
+        <mkdir dir="${dist.dir}/highstock/js/adapters" />
+        <mkdir dir="${dist.dir}/highstock/js/modules" />
+        <mkdir dir="${testoutput.dir}" />
+        <mkdir dir="${coveragereport.dir}" />
+        <delete file="${basedir}/jsTestDriver.conf" failonerror="false" />
+        <delete file="${basedir}/jsTestDriverCoverage.conf" failonerror="false" />
+    </target>
+    
+    <!-- Assembles the source parts into one file. -->
+    <target name="assemble" depends="clean">
+        <!-- Concat highcharts src and replace the product name and version -->
+        <concat destfile="${highcharts.src.file}">
+            <filelist refid="highcharts.files" />
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}" />
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}" />
+                    <token key="product.version" value="${highcharts.product.version}" />
+                    <token key="product.date" value="${highcharts.product.date}" />
+                </replacetokens>
+            </filterchain>
+        </concat>
+        <!-- Concat highstock src and replace the product name and version -->
+        <concat destfile="${highstock.src.file}">
+            <filelist refid="highstock.files" />
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highstock.product.name}" />
+                    <token key="product.cdnpath" value="${highstock.product.cdnpath}" />
+                    <token key="product.version" value="${highstock.product.version}" />
+                    <token key="product.date" value="${highstock.product.date}" />
+                </replacetokens>
+            </filterchain>
+        </concat>
+        <!-- Concat highcharts-more src and replace the product name and version -->
+        <concat destfile="${highchartsmore.src.file}">
+            <filelist refid="highchartsmore.files" />
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}" />
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}" />
+                    <token key="product.version" value="${highcharts.product.version}" />
+                    <token key="product.date" value="${highcharts.product.date}" />
+                </replacetokens>
+            </filterchain>
+        </concat>
+        <!-- Concat canvg library together with rgbcolor script -->
+        <concat destfile="build/canvas-tools.src.js">
+            <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js" />
+            <filelist dir="js/modules/" files="canvgrenderer-extended.src.js" />
+        </concat>
+    </target>
+    
+    <!-- This target convert any mixed line endings to crlf. -->
+    <target name="check-crlf" depends="assemble">
+        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" fixlast="false" />
+        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" fixlast="false" />
+    </target>
+    
+    <!-- Runs jslint on generated source code. -->
+    <target name="do-lint" depends="check-crlf">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
+            <formatter type="plain" />
+            <formatter type="report" destfile="${build.dir}/lintreport.html" />
+            <fileset file="${highstock.src.file}" />
+            <fileset file="${highchartsmore.src.file}" />
+            <fileset file="${mootools.src.file}" />
+            <fileset file="${prototype.src.file}" />
+            <fileset file="${exporting.src.file}" />
+            <fileset file="${data.src.file}" />
+            <fileset dir="${themes.dir}" />
+            <fileset file="js/modules/canvgrenderer-extended.src.js" />
+        </jslint>
+        <!-- Set a property that tells if there are unused variables. -->
+        <condition property="lint.variable.error">
+            <or>
+                <resourcecontains resource="${build.dir}/lintreport.html" substring="Undefined variable" />
+                <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable" />
+            </or>
+        </condition>
+    </target>
+    
+    <!-- This target is only run if there are unused variables. -->
+    <target name="lint" depends="do-lint" if="lint.variable.error">
+        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'." />
+    </target>
+    
+    <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
+    <target name="do-lint-parts" depends="set.properties">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
+            <formatter type="plain" />
+            <formatter type="report" destfile="${build.dir}/lintreport.html" />
+            <fileset dir="${highcharts.parts.dir}">
+                <include name="*.js" />
+                <exclude name="Intro.js" />
+                <exclude name="Outro.js" />
+            </fileset>
+            <fileset dir="${highchartsmore.parts.dir}">
+                <include name="*.js" />
+                <exclude name="Intro.js" />
+                <exclude name="Outro.js" />
+            </fileset>
+        </jslint>
+        <!-- Set a property that tells if there are unused variables. -->
+        <condition property="lint.parts.variable.error">
+            <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable" />
+        </condition>
+        <echo message="General warning: This target won't reveal undefined variables. Run 'ant lint' in addition." />
+    </target>
+    
+    <!-- This target is only run if there are unused variables. -->
+    <target name="lint-parts" depends="do-lint-parts" if="lint.parts.variable.error">
+        <echo message="Warning: Unused variables exist. Run 'start build/lintreport.html', search for 'Unused'." />
+    </target>
+    
+    <!-- Runs google closure compiler and yui compressor on src. -->
+    <target name="compile">
+        <!-- This command sets the logging level in current task to only include echo messages. -->
+        <script language="javascript">project.getBuildListeners().firstElement().setMessageOutputLevel(1);</script>
+        <echo message="Minifying ${param.src}" />
+        <java jar="${gcc.jar}" fork="true">
+            <arg value="--compilation_level" />
+            <arg value="SIMPLE_OPTIMIZATIONS" />
+            <arg value="--js" />
+            <arg value="${param.src}" />
+            <arg value="--js_output_file" />
+            <arg value="${param.out}" />
+            <arg value="--charset" />
+            <arg value="UTF-8" />
+        </java>
+        <java jar="${yuicomp.jar}" fork="true">
+            <arg value="--type" />
+            <arg value="js" />
+            <arg value="-o" />
+            <arg value="${param.out}.yui-min.js" />
+            <arg value="--charset" />
+            <arg value="UTF-8" />
+            <arg value="${param.src}" />
+        </java>
+        <length file="${param.src}" property="input.length" />
+        <length file="${param.out}" property="gcc.output.length" />
+        <!-- Create a temporary zipfile to get the zipped size -->
+        <copy file="${param.out}" tofile="${build.dir}/zipme.js" />
+        <zip destfile="${build.dir}/zipped.zip" basedir="${build.dir}" includes="zipme.js" />
+        <length file="${build.dir}/zipped.zip" property="zipped.output.length" />
+        <length file="${param.out}.yui-min.js" property="yuicomp.output.length" />
+        <!-- Create a temporary zipfile to get the zipped size -->
+        <copy file="${param.out}.yui-min.js" tofile="${build.dir}/yuizipme.js" />
+        <zip destfile="${build.dir}/yuizipped.zip" basedir="${build.dir}" includes="yuizipme.js" />
+        <length file="${build.dir}/yuizipped.zip" property="yui.zipped.output.length" />
+        <!-- We are not distributing this file, its only used to make sure compilation works. -->
+        <delete file="${param.out}.yui-min.js" quiet="true" />
+        <echo message="Google Closure compiler: ${input.length} bytes -&gt; ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)." />
+        <echo message="Yahoo YUI Compressor: ${input.length} bytes -&gt; ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)." />
+        <echo message="" />
+    </target>
+    
+    <!-- Runs minifiers on source code. -->
+    <target name="minify" depends="assemble">
+        <antcall target="compile">
+            <param name="param.src" value="${highcharts.src.file}" />
+            <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${highstock.src.file}" />
+            <param name="param.out" value="${dist.dir}/highstock/js/${highstock.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${highchartsmore.src.file}" />
+            <param name="param.out" value="${dist.dir}/highcharts/js/${highchartsmore.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${highchartsmore.src.file}" />
+            <param name="param.out" value="${dist.dir}/highstock/js/${highchartsmore.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${mootools.src.file}" />
+            <param name="param.out" value="${dist.dir}/js/adapters/${mootools.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${prototype.src.file}" />
+            <param name="param.out" value="${dist.dir}/js/adapters/${prototype.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${exporting.src.file}" />
+            <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${data.src.file}" />
+            <param name="param.out" value="${dist.dir}/js/modules/${data.minified.name}" />
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="build/canvas-tools.src.js" />
+            <param name="param.out" value="build/canvas-tools.js" />
+        </antcall>
+    </target>
+    
+    <!-- Builds the source and runts lint and minify. -->
+    <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify."></target>
+    <scriptdef name="listfiles" language="javascript">
+        <![CDATA[
+                                var dir = project.getProperty("samples.dir");
+                                var fs = project.createDataType("fileset");
+                                fs.setDir(new java.io.File(dir));
+                                fs.setIncludes("**/demo.js");
 
-                // Get the files (array) of that fileset
-                var ds = fs.getDirectoryScanner(project);
-                var demoFiles = ds.getIncludedFiles();
-                // get the values via Java API
-                var basedir  = fs.getDir(project);
-                // Iterate over the demo files
-                for (i = 0; i < demoFiles.length; i++) {
-                        var filename = demoFiles[i];
-                        var file = new java.io.File(basedir, filename);
+                                // Get the files (array) of that fileset
+                                var ds = fs.getDirectoryScanner(project);
+                                var demoFiles = ds.getIncludedFiles();
+                                // get the values via Java API
+                                var basedir    = fs.getDir(project);
+                                // Iterate over the demo files
+                                for (i = 0; i < demoFiles.length; i++) {
+                                                var filename = demoFiles[i];
+                                                var file = new java.io.File(basedir, filename);
 
-                        project.setProperty('demo.name', file.getParentFile().getName());
-                        project.setProperty('demo.html.name', file.getParent() + '/demo.html');
-                        project.setProperty('demo.js.name', file.getParent() + '/demo.js');
-                        project.executeTarget('create-sample');
-                }
-                ]]>
-</scriptdef>
-  <target name="create-sample">
-    <antcall target="create-sample-param" />
-  </target>
-  <target name="create-sample-param">
-    <!-- Load the two demo files into properties -->
-    <loadfile property="demo.js" srcFile="${demo.js.name}" />
-    <loadfile property="demo.html" srcFile="${demo.html.name}" />
-    <!-- Copy the template file and replace the properties -->
-    <copy file="samples/template-example.htm" tofile="${samples.dist.dir}/examples/${demo.name}/index.htm">
-      <filterchain>
-        <replacetokens>
-          <token key="demo.title" value="${demo.title}" />
-          <token key="demo.js" value="${demo.js}" />
-          <token key="demo.html" value="${demo.html}" />
-        </replacetokens>
-      </filterchain>
-    </copy>
-  </target>
-  <target name="create-samples">
-    <listfiles></listfiles>
-  </target>
-  <!-- Builds the source and assembles a distribution package. -->
-  <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
-    <echo message="" />
-    <echo message="--- Building distribution packages for ---" />
-    <echo message="" />
-    <echo message=" ${highcharts.product.name} - ${highcharts.product.version} (${highcharts.product.date})" />
-    <echo message=" ${highstock.product.name} - ${highstock.product.version} (${highstock.product.date})" />
-    <echo message="" />
-    <!-- 1. Check for any console statements -->
-    <!-- fail message="Source contains console or alert statements">
-                        <condition>
-                                <or>
-                                        <resourcecontains resource="${highcharts.src.file}" substring="console."/>
-                                        <resourcecontains resource="${highstock.src.file}" substring="console."/>
-                                        <resourcecontains resource="${mootools.src.file}" substring="console."/>
-                                        <resourcecontains resource="${prototype.src.file}" substring="console."/>
-                                        <resourcecontains resource="${exporting.src.file}" substring="console."/>
-                                        <resourcecontains resource="${highcharts.src.file}" substring="alert("/>
-                                        <resourcecontains resource="${highstock.src.file}" substring="alert("/>
-                                        <resourcecontains resource="${mootools.src.file}" substring="alert("/>
-                                        <resourcecontains resource="${prototype.src.file}" substring="alert("/>
-                                        <resourcecontains resource="${exporting.src.file}" substring="alert("/>
-                                </or>
-                        </condition>
-                </fail -->
-    <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
-    <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highstock/js/adapters">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${prototype.src.file}" todir="${dist.dir}/highcharts/js/adapters">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules">
-      <filterset refid="highcharts.filter" />
-    </copy>
-    <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules">
-      <filterset refid="highstock.filter" />
-    </copy>
-    <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx" />
-    <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx" />
-    <copy todir="${dist.dir}/highcharts/js/themes">
-      <fileset dir="${themes.dir}" />
-    </copy>
-    <copy todir="${dist.dir}/highstock/js/themes">
-      <fileset dir="${themes.dir}" />
-    </copy>
-    <!-- 3. Create samples -->
-    <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
-    <antcall target="create-samples">
-      <param name="demo.title" value="Highcharts" />
-      <param name="samples.dir" value="samples/highcharts/demo" />
-      <param name="samples.dist.dir" value="${dist.dir}/highcharts/" />
-    </antcall>
-    <antcall target="create-samples">
-      <param name="demo.title" value="Highstock" />
-      <param name="samples.dir" value="samples/stock/demo" />
-      <param name="samples.dist.dir" value="${dist.dir}/highstock/" />
-    </antcall>
-    <sleep seconds="1" />
-    <!-- The demos are checked in with references to highcharts.com to be able to run them from jsfiddle -->
-    <!-- replace these references with local paths here -->
-    <replace dir="${dist.dir}">
-      <replacefilter>
-        <replacetoken>
-          <![CDATA[<script src="http://code.highcharts.com/stock/]]>
+                                                project.setProperty('demo.name', file.getParentFile().getName());
+                                                project.setProperty('demo.html.name', file.getParent() + '/demo.html');
+                                                project.setProperty('demo.js.name', file.getParent() + '/demo.js');
+                                                project.executeTarget('create-sample');
+                                }
+                                ]]>
+    </scriptdef>
+    <target name="create-sample">
+        <antcall target="create-sample-param" />
+    </target>
+    <target name="create-sample-param">
+        <!-- Load the two demo files into properties -->
+        <loadfile property="demo.js" srcFile="${demo.js.name}" />
+        <loadfile property="demo.html" srcFile="${demo.html.name}" />
+        <!-- Copy the template file and replace the properties -->
+        <copy file="samples/template-example.htm" tofile="${samples.dist.dir}/examples/${demo.name}/index.htm">
+            <filterchain>
+                <replacetokens>
+                    <token key="demo.title" value="${demo.title}" />
+                    <token key="demo.js" value="${demo.js}" />
+                    <token key="demo.html" value="${demo.html}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+    <target name="create-samples">
+        <listfiles></listfiles>
+    </target>
+    
+    <!-- Builds the source and assembles a distribution package. -->
+    <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
+        <echo message="" />
+        <echo message="--- Building distribution packages for ---" />
+        <echo message="" />
+        <echo message=" ${highcharts.product.name} - ${highcharts.product.version} (${highcharts.product.date})" />
+        <echo message=" ${highstock.product.name} - ${highstock.product.version} (${highstock.product.date})" />
+        <echo message="" />
+        <!-- 1. Check for any console statements -->
+        <!-- fail message="Source contains console or alert statements">
+                                                <condition>
+                                                                <or>
+                                                                                <resourcecontains resource="${highcharts.src.file}" substring="console."/>
+                                                                                <resourcecontains resource="${highstock.src.file}" substring="console."/>
+                                                                                <resourcecontains resource="${mootools.src.file}" substring="console."/>
+                                                                                <resourcecontains resource="${prototype.src.file}" substring="console."/>
+                                                                                <resourcecontains resource="${exporting.src.file}" substring="console."/>
+                                                                                <resourcecontains resource="${highcharts.src.file}" substring="alert("/>
+                                                                                <resourcecontains resource="${highstock.src.file}" substring="alert("/>
+                                                                                <resourcecontains resource="${mootools.src.file}" substring="alert("/>
+                                                                                <resourcecontains resource="${prototype.src.file}" substring="alert("/>
+                                                                                <resourcecontains resource="${exporting.src.file}" substring="alert("/>
+                                                                </or>
+                                                </condition>
+                                </fail -->
+        <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
+        <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highstock/js/adapters">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highcharts/js/adapters">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules">
+            <filterset refid="highcharts.filter" />
+        </copy>
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules">
+            <filterset refid="highstock.filter" />
+        </copy>
+        <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx" />
+        <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx" />
+        <copy todir="${dist.dir}/highcharts/js/themes">
+            <fileset dir="${themes.dir}" />
+        </copy>
+        <copy todir="${dist.dir}/highstock/js/themes">
+            <fileset dir="${themes.dir}" />
+        </copy>
+        <!-- 3. Create samples -->
+        <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highcharts" />
+            <param name="samples.dir" value="samples/highcharts/demo" />
+            <param name="samples.dist.dir" value="${dist.dir}/highcharts/" />
+        </antcall>
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highstock" />
+            <param name="samples.dir" value="samples/stock/demo" />
+            <param name="samples.dist.dir" value="${dist.dir}/highstock/" />
+        </antcall>
+        <sleep seconds="1" />
+        <!-- The demos are checked in with references to highcharts.com to be able to run them from jsfiddle -->
+        <!-- replace these references with local paths here -->
+        <replace dir="${dist.dir}">
+            <replacefilter>
+                <replacetoken>
+                    <![CDATA[<script src="http://code.highcharts.com/stock/]]>
 </replacetoken>
-        <replacevalue>
-          <![CDATA[<script src="../../js/]]>
+                <replacevalue>
+                    <![CDATA[<script src="../../js/]]>
 </replacevalue>
-      </replacefilter>
-      <replacefilter>
-        <replacetoken>
-          <![CDATA[<script src="http://code.highcharts.com/]]>
+            </replacefilter>
+            <replacefilter>
+                <replacetoken>
+                    <![CDATA[<script src="http://code.highcharts.com/]]>
 </replacetoken>
-        <replacevalue>
-          <![CDATA[<script src="../../js/]]>
+                <replacevalue>
+                    <![CDATA[<script src="../../js/]]>
 </replacevalue>
-      </replacefilter>
-      <include name="**/index.htm" />
-    </replace>
-    <!-- Copy the analytics.tsv file to example -->
-    <copy file="samples/highcharts/demo/line-ajax/analytics.tsv" todir="${dist.dir}/highcharts/examples/line-ajax/" />
-    <!-- Copy index files -->
-    <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/" />
-    <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/" />
-    <!-- Copy graphic files -->
-    <copy todir="${dist.dir}/highcharts/graphics">
-      <fileset dir="samples/graphics" />
-    </copy>
-    <copy todir="${dist.dir}/highstock/graphics">
-      <fileset dir="samples/graphics" />
-    </copy>
-    <!-- 4. Copy php export server -->
-    <copy todir="${dist.dir}/highcharts/exporting-server">
-      <fileset dir="exporting-server" />
-    </copy>
-    <copy todir="${dist.dir}/highstock/exporting-server">
-      <fileset dir="exporting-server" />
-    </copy>
-    <!-- Make sure files in the zip have lf line endings -->
-    <!-- even if being built on windows -->
-    <sleep seconds="5" />
-    <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf" />
-    <!-- 5. Create zip files -->
-    <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts" />
-    <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock" />
-  </target>
-  <!-- Starts the test driver server. -->
-  <target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
-    <exec executable="cmd" dir="${basedir}" osfamily="windows">
-      <arg value="/k start java -jar ${jstestdriver.jar} --port 4224" />
-    </exec>
-    <java jar="${jstestdriver.jar}" fork="true">
-      <arg value="--port" />
-      <arg value="4224" />
-    </java>
-    <echo message="Test server started at localhost:4224" />
-    <echo message="Before running tests, remember to capture one or more browsers." />
-    <echo message="Exit the server by pressing Control-C in the java window." />
-  </target>
-  <target name="test-all" description="Runs the unit tests on all adapters. The server must be running (i.e. 'server').">
-    <!-- Param "testrun.name" used in echo output and to build a folder name where test result goes. -->
-    <!-- Param "testrun.type" tells which type of test this is, also corresponds to the path name for the conf file. -->
-    <!-- Param "required.lib" specifies wich third-party lib is used while testing. -->
-    <!-- Param "required.adapter" specifies the corresponding adapter that matches the lib. Leave unset for the built-in jquery support. -->
-    <!-- jquery versions -->
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="jquery-1.8.0" />
-      <param name="required.lib" value="jquery-1.8.0.js" />
-    </antcall>
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="jquery-1.7.2" />
-      <param name="required.lib" value="jquery-1.7.2.js" />
-    </antcall>
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="jquery-1.6.4" />
-      <param name="required.lib" value="jquery-1.6.4.js" />
-    </antcall>
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="jquery-1.5.2" />
-      <param name="required.lib" value="jquery-1.5.2.js" />
-    </antcall>
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="jquery-1.4.4" />
-      <param name="required.lib" value="jquery-1.4.4.js" />
-    </antcall>
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="jquery-1.3.2" />
-      <param name="required.lib" value="jquery-1.3.2.js" />
-    </antcall>
-    <!-- mootools versions -->
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="mootools-1.4.5" />
-      <param name="required.lib" value="mootools-core-1.4.5-full-nocompat.js" />
-      <param name="required.adapter" value="js/adapters/mootools-adapter.src.js" />
-    </antcall>
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="mootools-1.3.2" />
-      <param name="required.lib" value="mootools-core-1.3.2-full-compat.js" />
-      <param name="required.adapter" value="js/adapters/mootools-adapter.src.js" />
-    </antcall>
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="mootools-1.2.5" />
-      <param name="required.lib" value="mootools-1.2.5-core-nc.js" />
-      <param name="required.adapter" value="js/adapters/mootools-adapter.src.js" />
-    </antcall>
-    <!-- prototype versions -->
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="prototype-1.7.0.0" />
-      <param name="required.lib" value="prototype-1.7.0.0.js" />
-      <param name="required.adapter" value="js/adapters/prototype-adapter.src.js" />
-    </antcall>
-  </target>
-  <target name="test" description="Runs the unit tests using latest jquery. The server must be running (i.e. 'server').">
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="unit" />
-      <param name="testrun.name" value="jquery-1.8.0" />
-      <param name="required.lib" value="jquery-1.8.0.js" />
-    </antcall>
-  </target>
-  <target name="it" description="Runs the integration tests using latest jquery. The server must be running (i.e. 'server').">
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="it" />
-      <param name="testrun.name" value="jquery-1.8.0" />
-      <param name="required.lib" value="jquery-1.8.0.js" />
-    </antcall>
-  </target>
-  <target name="gc" description="Runs the leaks tests using latest jquery. The server must be running (i.e. 'server').">
-    <antcall target="test-specific-lib">
-      <param name="testrun.type" value="gc" />
-      <param name="testrun.name" value="jquery-1.8.0" />
-      <param name="required.lib" value="jquery-1.8.0.js" />
-    </antcall>
-  </target>
-  <!-- Replace the lib with the specified ones, if set. -->
-  <target name="replace-lib" if="required.lib">
-    <replace file="jsTestDriver.conf" token="#required.lib" value=" - lib/${required.lib}" />
-  </target>
-  <!-- Replace the adapter with the specified ones, if set. -->
-  <target name="replace-adapter" if="required.adapter">
-    <replace file="jsTestDriver.conf" token="#required.adapter" value=" - ${required.adapter}" />
-  </target>
-  <target name="test-specific-lib" depends="set.properties">
-    <!-- Copy the templated jsTestDriver configuration to root. -->
-    <copy file="test/${testrun.type}/jsTestDriver.conf" todir="${basedir}" overwrite="true" />
-    <!-- Expand the tokens to valid js files. -->
-    <antcall target="replace-lib" />
-    <antcall target="replace-adapter" />
-    <!-- Create the folder where the report is stored. -->
-    <mkdir dir="${testoutput.dir}/${testrun.name}" />
-    <!-- Run the tests -->
-    <antcall target="run-test" />
-  </target>
-  <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
-  <target name="run-test" depends="set.properties">
-    <echo message="/------------------------------------------------------------" />
-    <echo message=" Running ${testrun.type} tests using: ${testrun.name}" />
-    <echo message="" />
-    <echo message="" />
-    <java jar="${jstestdriver.jar}" fork="true">
-      <arg value="--config" />
-      <arg value="jsTestDriver.conf" />
-      <arg value="--testOutput" />
-      <arg value="${testoutput.dir}/${testrun.name}" />
-      <arg value="--tests" />
-      <arg value="all" />
-      <arg value="--reset" />
-    </java>
-    <echo message="" />
-    <echo message="" />
-    <echo message="\------------------------------------------------------------" />
-  </target>
-  <!-- Starts the test driver server with coverage enabled. -->
-  <!-- This must be done on a separate port to the test-server. -->
-  <target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
-    <!-- Copy the jsTestDriverCoverage configuration to root. -->
-    <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true" />
-    <exec executable="cmd" dir="${basedir}">
-      <arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225" />
-    </exec>
-    <echo message="Coverage test server started at localhost:5225" />
-    <echo message="Before running tests, remember to capture one or more browsers." />
-    <echo message="Exit the server by pressing Control-C in the java window." />
-  </target>
-  <!-- Runs coverage analysis for the tests. -->
-  <target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
-    <!-- Copy the jsTestDriverCoverage configuration to root. -->
-    <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true" />
-    <!-- Run the tests with coverage enabled. -->
-    <java jar="${jstestdriver.jar}" fork="true">
-      <arg value="--config" />
-      <arg value="jsTestDriverCoverage.conf" />
-      <arg value="--testOutput" />
-      <arg value="${testoutput.dir}" />
-      <arg value="--tests" />
-      <arg value="all" />
-      <arg value="--verbose" />
-    </java>
-  </target>
-  <!-- Generates a code-coverage report based on the output from the 'test-coverage' task. -->
-  <target name="test-report" depends="set.properties" description="Generates a code-coverage report based on the output from the 'test-coverage' task.">
-    <!-- When running on windows, the output from coverage is windows-style, but the report requires unix-style paths. -->
-    <!-- Replace dos-drive 'C:' with unix style '/C'. -->
-    <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="SF:C:" value="SF:/C" summary="true" />
-    <!-- Replace dos-paths '\' with unix style '/'. -->
-    <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="\" value="/" summary="true" />
-    <!-- Run perl and the genhtml script to create the report. -->
-    <exec executable="perl" dir="${basedir}">
-      <arg value="-w" />
-      <arg value="tools/lcov-1.9/bin/genhtml" />
-      <arg line="-o ${coveragereport.dir} --no-branch-coverage --no-function-coverage --legend --title 'Highcharts test coverage' build/tests/jsTestDriver.conf-coverage.dat" />
-    </exec>
-    <!-- Point the browser to the report. -->
-    <property name="browser" location="C:/Program Files (x86)/Mozilla Firefox/firefox.exe" />
-    <property name="file" location="${coveragereport.dir}/index.html" />
-    <exec executable="${browser}" spawn="true">
-      <arg value="${file}" />
-    </exec>
-  </target>
-  <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
-  <target name="deploy-highcharts">
-    <property file="git-ignore-me.properties" />
-    <property file="build.properties" />
-    <!-- The zip file -->
-    <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/downloads/zips">
-      <fileset dir="${basedir}/build/dist">
-        <include name="Highcharts-${highcharts.product.version}.zip" />
-        <include name="Highcharts.zip" />
-      </fileset>
-    </ftp>
-    <!-- Upload the .js files to code.highcharts.com/version -->
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" action="mkdir" remotedir="/www/code/${highcharts.product.version}" />
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/${highcharts.product.version}">
-      <fileset dir="${basedir}/build/dist/highcharts/js">
-        <include name="*.js" />
-        <include name="*/*.js" />
-      </fileset>
-      <fileset dir="${basedir}/build/dist/highcharts">
-        <include name="gfx/*.png" />
-      </fileset>
-    </ftp>
-    <!-- Upload the .js files to code.highcharts.com root -->
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code">
-      <fileset dir="${basedir}/build/dist/highcharts/js">
-        <include name="*.js" />
-        <include name="*/*.js" />
-      </fileset>
-      <fileset dir="${basedir}/build/dist/highcharts">
-        <include name="gfx/*.png" />
-      </fileset>
-    </ftp>
-  </target>
-  <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
-  <target name="deploy-highstock">
-    <property file="git-ignore-me.properties" />
-    <property file="build.properties" />
-    <!-- The zip file -->
-    <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip" />
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/downloads/zips">
-      <fileset dir="${basedir}/build/dist">
-        <include name="Highstock-${highstock.product.version}.zip" />
-        <include name="Highstock.zip" />
-      </fileset>
-    </ftp>
-    <!-- Upload the .js files to code.highcharts.com/version -->
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" action="mkdir" remotedir="/www/code/stock/${highstock.product.version}" />
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/stock/${highstock.product.version}">
-      <fileset dir="${basedir}/build/dist/highstock/js">
-        <include name="*.js" />
-        <include name="*/*.js" />
-      </fileset>
-      <fileset dir="${basedir}/build/dist/highstock">
-        <include name="gfx/*.png" />
-      </fileset>
-    </ftp>
-    <!-- Upload the .js files to code.highcharts.com root -->
-    <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/stock">
-      <fileset dir="${basedir}/build/dist/highstock/js">
-        <include name="*.js" />
-        <include name="*/*.js" />
-      </fileset>
-      <fileset dir="${basedir}/build/dist/highstock">
-        <include name="gfx/*.png" />
-      </fileset>
-    </ftp>
-  </target>
-  <!-- DEPLOY TO AMAZON S3 -->
-  <!-- gzip javascript files in folder -->
-  <target name="gzip-js" description="gzip all javascript versions for upload to Amazon S3" depends="set.properties">
-    <property name="gzip.dir" value="${js.dir}/../js-gzip" />
-    <delete dir="${gzip.dir}" />
-    <mkdir dir="${gzip.dir}" />
-    <echo message="placing zipped folder structure in ${gzip.dir}" />
-    <!-- make copy so we don't double-compress files -->
-    <sync todir="${gzip.dir}" includeEmptyDirs="true" overwrite="true">
-      <fileset dir="${js.dir}" includes="**/*.js" />
-    </sync>
-    <ac:for param="file">
-      <path>
-        <fileset dir="${gzip.dir}" />
-      </path>
-      <sequential>
-        <!-- we keep the filenames the same and transparently serve gzipped content via http headers -->
-        <gzip src="@{file}" destfile="@{file}.gz" />
-        <move file="@{file}.gz" tofile="@{file}" overwrite="true" />
-      </sequential>
-    </ac:for>
-  </target>
-  <target name="put-gzipped-files-to-S3">
-    <!-- HINT:  to upload just the contents, specify the directory with a trailing slash, if you want to upload the whole directory specify the directory without trailing slash -->
-    <!-- HINT: The sync command will compare checksums and sizes of the remote vs local files and only want to upload those that are new. When using skip-existing only file presence is check not! the content -->
-    <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
-    <!-- Upload the .js files to remote S3 version folder -->
-    <exec executable="s3cmd" failonerror="true">
-      <arg value="--guess-mime-type" />
-      <arg value="--add-header=Vary:Accept-Encoding" />
-      <!-- tell proxies to only serve this compressed content to a client who has the accept-encoding header: http://blog.port80software.com/2005/01/21/; NOT REALLY NECESSARY in our case were only serving gzipped js. But it will maybe help for proxy-servers in transition to only gzipped files -->
-      <arg value="--add-header=Content-Encoding:gzip" />
-      <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
-      <arg value="--add-header=Expires:${http.expires}" />
-      <arg value="--encoding=UTF-8" />
-      <arg value="--recursive" />
-      <arg value="--acl-public" />
-      <arg value="--exclude=*" />
-      <arg value="--include=${include.pattern}" />
-      <arg value="--verbose" />
-      <arg value="--no-preserve" />
-      <!--arg value="-!-dry-run" /-->
-      <arg value="put" />
-      <arg value="${local}" />
-      <arg value="${remote}/" />
-    </exec>
-  </target>
-  <!-- synch all files to S3 recursively, but ommit .js files -->
-  <target name="put-files-to-S3">
-    <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
-    <exec executable="s3cmd" failonerror="true">
-      <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
-      <arg value="--add-header=Expires:${http.expires}" />
-      <arg value="--guess-mime-type" />
-      <arg value="--encoding=UTF-8" />
-      <arg value="--recursive" />
-      <arg value="--acl-public" />
-      <arg value="--no-preserve" />
-      <arg value="--exclude=**/*.js" />
-      <!--arg value="-!-dry-run" /-->
-      <arg value="put" />
-      <arg value="${local}" />
-      <arg value="${remote}/" />
-    </exec>
-  </target>
-  <target name="put-zipfile-to-S3">
-    <echo message="copy a file to : ${local} with remote S3 path: ${remote}" />
-    <exec executable="s3cmd" failonerror="true">
-      <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
-      <arg value="--add-header=Expires:${http.expires}" />
-      <arg value="--guess-mime-type" />
-      <arg value="--encoding=UTF-8" />
-      <arg value="--acl-public" />
-      <arg value="--no-preserve" />
-      <arg value="--exclude=*" />
-      <arg value="--include=${include.pattern}" />
-      <!--arg value="-!-dry-run" /-->
-      <arg value="put" />
-      <arg value="${local}" />
-      <arg value="${remote}/" />
-    </exec>
-  </target>
-  <target name="copy-folder-on-S3">
-    <echo message="copy a folders and files from : ${from.s3} to: ${to.s3}" />
-    <exec executable="s3cmd" failonerror="true">
-      <arg value="--recursive" />
-      <arg value="--guess-mime-type" />
-      <arg value="--encoding=UTF-8" />
-      <arg value="--acl-public" />
-      <arg value="cp" />
-      <arg value="${from.s3}" />
-      <arg value="${to.s3}/" />
-    </exec>
-  </target>
-  <target name="put-all-versions-nonjs-files-to-S3">
-    <!-- This is used to push all versions from local machine to S3 -->
-    <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
-    <echo message="copying all files and folders other than .js" />
-    <exec executable="s3cmd" failonerror="true">
-      <!--arg value="-!-skip-existing" /-->
-      <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
-      <arg value="--add-header=Expires:${http.expires}" />
-      <arg value="--guess-mime-type" />
-      <arg value="--encoding=UTF-8" />
-      <arg value="--recursive" />
-      <arg value="--acl-public" />
-      <arg value="--no-preserve" />
-      <arg value="--exclude=**/*.js" />
-      <arg value="--exclude=*.js" />
-      <arg value="--exclude=*.php" />
-      <arg value="--exclude=*.htaccess" />
-      <!--arg value="-!-dry-run" /-->
-      <arg value="put" />
-      <arg value="${local}" />
-      <arg value="${remote}/" />
-    </exec>
-  </target>
-  <target name="deploy-highcharts-S3" depends="set.properties" description="deploy highcharts distribution to Amazon S3">
-  	<property file="git-ignore-me.properties" />
-    <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
-    <antcall target="put-zipfile-to-S3">
-      <param name="local" value="${basedir}/build/dist/Highcharts.zip" />
-      <param name="remote" value="${amazon.s3.bucketname}" />
-      <param name="include.pattern" value="*.zip" />
-    </antcall>
-    <antcall target="gzip-js">
-      <param name="js.dir" value="${basedir}/build/dist/highcharts/js/" />
-    </antcall>
-    <ac:var name="path.var" value="" />
-    <ac:for list="${highcharts.product.version}" delimiter="." param="val">
-      <sequential>
-        <ac:if>
-          <length string="${path.var}" length="0" />
-          <then>
-            <ac:var name="path.var" value="@{val}" />
-            <!-- this will be used later to do a remote copy on S3 -->
-            <property name="copy.version" value="@{val}" />
-            <!-- Copy zipped js/* to Root on S3 -->
-            <antcall target="put-gzipped-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
-              <param name="remote" value="${amazon.s3.bucketname}" />
-              <param name="include.pattern" value="*.js" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-            <!-- copy gfx folder to Root -->
-            <antcall target="put-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
-              <param name="remote" value="${amazon.s3.bucketname}" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
-            <antcall target="put-gzipped-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
-              <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
-              <param name="include.pattern" value="*.js" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-            <!-- copy gfx folder to version folder on S3-->
-            <antcall target="put-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
-              <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-          </then>
-          <elseif>
-            <length string="${path.var}" length="3" />
-            <then>
-              <ac:var name="path.var" value="${path.var}.@{val}" />
-              <!-- Copy to js/* version [= ${path.var} ] on S3 -->
-              <antcall target="put-gzipped-files-to-S3">
-                <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
-                <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
-                <param name="include.pattern" value="*.js" />
-                <param name="http.expires" value="${http.expires.one.month}" />
-                <param name="max.age" value="${max.age.one.month}" />
-              </antcall>
-              <!-- copy gfx folder to version folder on S3-->
-              <antcall target="put-files-to-S3">
-                <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
-                <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
-                <param name="http.expires" value="${http.expires.one.month}" />
-                <param name="max.age" value="${max.age.one.month}" />
-              </antcall>
-            </then>
-          </elseif>
-          <else>
-            <!-- concatenate version name and assign to path.var-->
-            <ac:var name="path.var" value="${path.var}.@{val}" />
-            <antcall target="copy-folder-on-S3">
-              <param name="from.s3" value="${amazon.s3.bucketname}/${copy.version}/" />
-              <param name="to.s3" value="${amazon.s3.bucketname}/${path.var}" />
-            </antcall>
-          </else>
-        </ac:if>
-      </sequential>
-    </ac:for>
-    <delete dir="${basedir}/build/dist/highcharts/js-gzip" />
-  </target>
-  <!-- Deploy Highstock to S3 -->
-  <target name="deploy-highstock-S3" depends="set.properties" description="deploy highstock distribution to Amazon S3">
-  	<property file="git-ignore-me.properties" />
-    <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip" />
-    <antcall target="put-zipfile-to-S3">
-      <param name="local" value="${basedir}/build/dist/Highstock.zip" />
-      <param name="remote" value="${amazon.s3.bucketname}" />
-      <param name="include.pattern" value="*.zip" />
-    </antcall>
-    <antcall target="gzip-js">
-      <param name="js.dir" value="${basedir}/build/dist/highstock/js/" />
-    </antcall>
-    <ac:var name="path.var" value="" />
-    <ac:for list="${highstock.product.version}" delimiter="." param="val">
-      <sequential>
-        <ac:if>
-          <length string="${path.var}" length="0" />
-          <then>
-            <ac:var name="path.var" value="@{val}" />
-            <!-- this will be used later to do a remote copy on S3 -->
-            <property name="copy.version" value="@{val}" />
-            <!-- Copy zipped js/* to Root on S3 -->
-            <antcall target="put-gzipped-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
-              <param name="remote" value="${amazon.s3.bucketname}/stock" />
-              <param name="include.pattern" value="*.js" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-            <!-- copy gfx folder to Root -->
-            <antcall target="put-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highstock/gfx" />
-              <param name="remote" value="${amazon.s3.bucketname}/stock" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
-            <antcall target="put-gzipped-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
-              <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
-              <param name="include.pattern" value="*.js" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-            <!-- copy gfx folder to version folder on S3-->
-            <antcall target="put-files-to-S3">
-              <param name="local" value="${basedir}/build/dist/highstock/gfx" />
-              <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
-              <param name="http.expires" value="${http.expires.one.day}" />
-              <param name="max.age" value="${max.age.one.day}" />
-            </antcall>
-          </then>
-          <elseif>
-            <length string="${path.var}" length="3" />
-            <then>
-              <ac:var name="path.var" value="${path.var}.@{val}" />
-              <!-- Copy to js/* version [= ${path.var} ] on S3 -->
-              <antcall target="put-gzipped-files-to-S3">
-                <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
-                <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
-                <param name="include.pattern" value="*.js" />
-                <param name="http.expires" value="${http.expires.one.month}" />
-                <param name="max.age" value="${max.age.one.month}" />
-              </antcall>
-              <!-- copy gfx folder to version folder on S3-->
-              <antcall target="put-files-to-S3">
-                <param name="local" value="${basedir}/build/dist/highstock/gfx" />
-                <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
-                <param name="http.expires" value="${http.expires.one.month}" />
-                <param name="max.age" value="${max.age.one.month}" />
-              </antcall>
-            </then>
-          </elseif>
-          <else>
-            <!-- concatenate version name and assign to path.var-->
-            <ac:var name="path.var" value="${path.var}.@{val}" />
-            <antcall target="copy-folder-on-S3">
-              <param name="from.s3" value="${amazon.s3.bucketname}/stock/${copy.version}/" />
-              <param name="to.s3" value="${amazon.s3.bucketname}/stock/${path.var}" />
-            </antcall>
-          </else>
-        </ac:if>
-      </sequential>
-    </ac:for>
-    <delete dir="${basedir}/build/dist/highstock/js-gzip" />
-  </target>
-  <!-- push whole versions structure from local machine to Amazon S3 -->
-  <target name="push-all-versions-to-S3" depends="set.properties">
-  	<property file="git-ignore-me.properties" />
-    <!-- copy base folder containing all versions to seperate folder for gzipping *.js files. The user is asked om source directory containing all versions -->
-    <input message="Please enter which directory you want to gzip, WITHOUT trailing slash!!! :" addproperty="src.versions.dir" />
-    <antcall target="gzip-js">
-      <param name="js.dir" value="${src.versions.dir}" />
-    </antcall>
-    <!-- synch gzipped files and folders to S3, only containing javascript files with *.js -->
-    <antcall target="put-gzipped-files-to-S3">
-      <param name="local" value="${src.versions.dir}/../js-gzip/" />
-      <param name="remote" value="${amazon.s3.bucketname}" />
-      <param name="http.expires" value="${http.expires.one.month}" />
-      <param name="max.age" value="${max.age.one.month}" />
-      <param name="include.pattern" value="*.js" />
-    </antcall>
-    <!-- synch files and folders containing non-gzipped content -->
-    <antcall target="put-all-versions-nonjs-files-to-S3">
-      <param name="local" value="${src.versions.dir}/" />
-      <param name="remote" value="${amazon.s3.bucketname}" />
-      <param name="http.expires" value="${http.expires.one.month}" />
-      <param name="max.age" value="${max.age.one.month}" />
-    </antcall>
-    <delete dir="${src.versions.dir}/../js-gzip" />
-    <echo message="finished!" />
-  </target>
+            </replacefilter>
+            <include name="**/index.htm" />
+        </replace>
+        <!-- Copy the analytics.tsv file to example -->
+        <copy file="samples/highcharts/demo/line-ajax/analytics.tsv" todir="${dist.dir}/highcharts/examples/line-ajax/" />
+        <!-- Copy index files -->
+        <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/" />
+        <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/" />
+        <!-- Copy graphic files -->
+        <copy todir="${dist.dir}/highcharts/graphics">
+            <fileset dir="samples/graphics" />
+        </copy>
+        <copy todir="${dist.dir}/highstock/graphics">
+            <fileset dir="samples/graphics" />
+        </copy>
+        <!-- 4. Copy php export server -->
+        <copy todir="${dist.dir}/highcharts/exporting-server">
+            <fileset dir="exporting-server" />
+        </copy>
+        <copy todir="${dist.dir}/highstock/exporting-server">
+            <fileset dir="exporting-server" />
+        </copy>
+        <!-- Make sure files in the zip have lf line endings -->
+        <!-- even if being built on windows -->
+        <sleep seconds="5" />
+        <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf" />
+        <!-- 5. Create zip files -->
+        <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts" />
+        <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock" />
+    </target>
+    
+    <!-- Starts the test driver server. -->
+    <target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
+        <exec executable="cmd" dir="${basedir}" osfamily="windows">
+            <arg value="/k start java -jar ${jstestdriver.jar} --port 4224" />
+        </exec>
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--port" />
+            <arg value="4224" />
+        </java>
+        <echo message="Test server started at localhost:4224" />
+        <echo message="Before running tests, remember to capture one or more browsers." />
+        <echo message="Exit the server by pressing Control-C in the java window." />
+    </target>
+    
+    <target name="test-all" description="Runs the unit tests on all adapters. The server must be running (i.e. 'server').">
+        <!-- Param "testrun.name" used in echo output and to build a folder name where test result goes. -->
+        <!-- Param "testrun.type" tells which type of test this is, also corresponds to the path name for the conf file. -->
+        <!-- Param "required.lib" specifies wich third-party lib is used while testing. -->
+        <!-- Param "required.adapter" specifies the corresponding adapter that matches the lib. Leave unset for the built-in jquery support. -->
+        <!-- jquery versions -->
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="jquery-1.8.0" />
+            <param name="required.lib" value="jquery-1.8.0.js" />
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="jquery-1.7.2" />
+            <param name="required.lib" value="jquery-1.7.2.js" />
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="jquery-1.6.4" />
+            <param name="required.lib" value="jquery-1.6.4.js" />
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="jquery-1.5.2" />
+            <param name="required.lib" value="jquery-1.5.2.js" />
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="jquery-1.4.4" />
+            <param name="required.lib" value="jquery-1.4.4.js" />
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="jquery-1.3.2" />
+            <param name="required.lib" value="jquery-1.3.2.js" />
+        </antcall>
+        <!-- mootools versions -->
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="mootools-1.4.5" />
+            <param name="required.lib" value="mootools-core-1.4.5-full-nocompat.js" />
+            <param name="required.adapter" value="js/adapters/mootools-adapter.src.js" />
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="mootools-1.3.2" />
+            <param name="required.lib" value="mootools-core-1.3.2-full-compat.js" />
+            <param name="required.adapter" value="js/adapters/mootools-adapter.src.js" />
+        </antcall>
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="mootools-1.2.5" />
+            <param name="required.lib" value="mootools-1.2.5-core-nc.js" />
+            <param name="required.adapter" value="js/adapters/mootools-adapter.src.js" />
+        </antcall>
+        <!-- prototype versions -->
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="prototype-1.7.0.0" />
+            <param name="required.lib" value="prototype-1.7.0.0.js" />
+            <param name="required.adapter" value="js/adapters/prototype-adapter.src.js" />
+        </antcall>
+    </target>
+    
+    <target name="test" description="Runs the unit tests using latest jquery. The server must be running (i.e. 'server').">
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="unit" />
+            <param name="testrun.name" value="jquery-1.8.0" />
+            <param name="required.lib" value="jquery-1.8.0.js" />
+        </antcall>
+    </target>
+    
+    <target name="it" description="Runs the integration tests using latest jquery. The server must be running (i.e. 'server').">
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="it" />
+            <param name="testrun.name" value="jquery-1.8.0" />
+            <param name="required.lib" value="jquery-1.8.0.js" />
+        </antcall>
+    </target>
+    
+    <target name="gc" description="Runs the leaks tests using latest jquery. The server must be running (i.e. 'server').">
+        <antcall target="test-specific-lib">
+            <param name="testrun.type" value="gc" />
+            <param name="testrun.name" value="jquery-1.8.0" />
+            <param name="required.lib" value="jquery-1.8.0.js" />
+        </antcall>
+    </target>
+    
+    <!-- Replace the lib with the specified ones, if set. -->
+    <target name="replace-lib" if="required.lib">
+        <replace file="jsTestDriver.conf" token="#required.lib" value=" - lib/${required.lib}" />
+    </target>
+    
+    <!-- Replace the adapter with the specified ones, if set. -->
+    <target name="replace-adapter" if="required.adapter">
+        <replace file="jsTestDriver.conf" token="#required.adapter" value=" - ${required.adapter}" />
+    </target>
+    
+    <target name="test-specific-lib" depends="set.properties">
+        <!-- Copy the templated jsTestDriver configuration to root. -->
+        <copy file="test/${testrun.type}/jsTestDriver.conf" todir="${basedir}" overwrite="true" />
+        <!-- Expand the tokens to valid js files. -->
+        <antcall target="replace-lib" />
+        <antcall target="replace-adapter" />
+        <!-- Create the folder where the report is stored. -->
+        <mkdir dir="${testoutput.dir}/${testrun.name}" />
+        <!-- Run the tests -->
+        <antcall target="run-test" />
+    </target>
+    
+    <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
+    <target name="run-test" depends="set.properties">
+        <echo message="/------------------------------------------------------------" />
+        <echo message=" Running ${testrun.type} tests using: ${testrun.name}" />
+        <echo message="" />
+        <echo message="" />
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--config" />
+            <arg value="jsTestDriver.conf" />
+            <arg value="--testOutput" />
+            <arg value="${testoutput.dir}/${testrun.name}" />
+            <arg value="--tests" />
+            <arg value="all" />
+            <arg value="--reset" />
+        </java>
+        <echo message="" />
+        <echo message="" />
+        <echo message="\------------------------------------------------------------" />
+    </target>
+    
+    <!-- Starts the test driver server with coverage enabled. -->
+    <!-- This must be done on a separate port to the test-server. -->
+    <target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
+        <!-- Copy the jsTestDriverCoverage configuration to root. -->
+        <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true" />
+        <exec executable="cmd" dir="${basedir}">
+            <arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225" />
+        </exec>
+        <echo message="Coverage test server started at localhost:5225" />
+        <echo message="Before running tests, remember to capture one or more browsers." />
+        <echo message="Exit the server by pressing Control-C in the java window." />
+    </target>
+    
+    <!-- Runs coverage analysis for the tests. -->
+    <target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
+        <!-- Copy the jsTestDriverCoverage configuration to root. -->
+        <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true" />
+        <!-- Run the tests with coverage enabled. -->
+        <java jar="${jstestdriver.jar}" fork="true">
+            <arg value="--config" />
+            <arg value="jsTestDriverCoverage.conf" />
+            <arg value="--testOutput" />
+            <arg value="${testoutput.dir}" />
+            <arg value="--tests" />
+            <arg value="all" />
+            <arg value="--verbose" />
+        </java>
+    </target>
+    
+    <!-- Generates a code-coverage report based on the output from the 'test-coverage' task. -->
+    <target name="test-report" depends="set.properties" description="Generates a code-coverage report based on the output from the 'test-coverage' task.">
+        <!-- When running on windows, the output from coverage is windows-style, but the report requires unix-style paths. -->
+        <!-- Replace dos-drive 'C:' with unix style '/C'. -->
+        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="SF:C:" value="SF:/C" summary="true" />
+        <!-- Replace dos-paths '\' with unix style '/'. -->
+        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="\" value="/" summary="true" />
+        <!-- Run perl and the genhtml script to create the report. -->
+        <exec executable="perl" dir="${basedir}">
+            <arg value="-w" />
+            <arg value="tools/lcov-1.9/bin/genhtml" />
+            <arg line="-o ${coveragereport.dir} --no-branch-coverage --no-function-coverage --legend --title 'Highcharts test coverage' build/tests/jsTestDriver.conf-coverage.dat" />
+        </exec>
+        <!-- Point the browser to the report. -->
+        <property name="browser" location="C:/Program Files (x86)/Mozilla Firefox/firefox.exe" />
+        <property name="file" location="${coveragereport.dir}/index.html" />
+        <exec executable="${browser}" spawn="true">
+            <arg value="${file}" />
+        </exec>
+    </target>
+    
+    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
+    <target name="deploy-highcharts">
+        <property file="git-ignore-me.properties" />
+        <property file="build.properties" />
+        <!-- The zip file -->
+        <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/downloads/zips">
+            <fileset dir="${basedir}/build/dist">
+                <include name="Highcharts-${highcharts.product.version}.zip" />
+                <include name="Highcharts.zip" />
+            </fileset>
+        </ftp>
+        <!-- Upload the .js files to code.highcharts.com/version -->
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" action="mkdir" remotedir="/www/code/${highcharts.product.version}" />
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/${highcharts.product.version}">
+            <fileset dir="${basedir}/build/dist/highcharts/js">
+                <include name="*.js" />
+                <include name="*/*.js" />
+            </fileset>
+            <fileset dir="${basedir}/build/dist/highcharts">
+                <include name="gfx/*.png" />
+            </fileset>
+        </ftp>
+        <!-- Upload the .js files to code.highcharts.com root -->
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code">
+            <fileset dir="${basedir}/build/dist/highcharts/js">
+                <include name="*.js" />
+                <include name="*/*.js" />
+            </fileset>
+            <fileset dir="${basedir}/build/dist/highcharts">
+                <include name="gfx/*.png" />
+            </fileset>
+        </ftp>
+    </target>
+    
+    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
+    <target name="deploy-highstock">
+        <property file="git-ignore-me.properties" />
+        <property file="build.properties" />
+        <!-- The zip file -->
+        <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip" />
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/downloads/zips">
+            <fileset dir="${basedir}/build/dist">
+                <include name="Highstock-${highstock.product.version}.zip" />
+                <include name="Highstock.zip" />
+            </fileset>
+        </ftp>
+        <!-- Upload the .js files to code.highcharts.com/version -->
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" action="mkdir" remotedir="/www/code/stock/${highstock.product.version}" />
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/stock/${highstock.product.version}">
+            <fileset dir="${basedir}/build/dist/highstock/js">
+                <include name="*.js" />
+                <include name="*/*.js" />
+            </fileset>
+            <fileset dir="${basedir}/build/dist/highstock">
+                <include name="gfx/*.png" />
+            </fileset>
+        </ftp>
+        <!-- Upload the .js files to code.highcharts.com root -->
+        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/stock">
+            <fileset dir="${basedir}/build/dist/highstock/js">
+                <include name="*.js" />
+                <include name="*/*.js" />
+            </fileset>
+            <fileset dir="${basedir}/build/dist/highstock">
+                <include name="gfx/*.png" />
+            </fileset>
+        </ftp>
+    </target>
+    
+    <!-- DEPLOY TO AMAZON S3 -->
+    <!-- gzip javascript files in folder -->
+    <target name="gzip-js" description="gzip all javascript versions for upload to Amazon S3" depends="set.properties">
+        <property name="gzip.dir" value="${js.dir}/../js-gzip" />
+        <delete dir="${gzip.dir}" />
+        <mkdir dir="${gzip.dir}" />
+        <echo message="placing zipped folder structure in ${gzip.dir}" />
+        <!-- make copy so we don't double-compress files -->
+        <sync todir="${gzip.dir}" includeEmptyDirs="true" overwrite="true">
+            <fileset dir="${js.dir}" includes="**/*.js" />
+        </sync>
+        <ac:for param="file">
+            <path>
+                <fileset dir="${gzip.dir}" />
+            </path>
+            <sequential>
+                <!-- we keep the filenames the same and transparently serve gzipped content via http headers -->
+                <gzip src="@{file}" destfile="@{file}.gz" />
+                <move file="@{file}.gz" tofile="@{file}" overwrite="true" />
+            </sequential>
+        </ac:for>
+    </target>
+    <target name="put-gzipped-files-to-S3">
+        <!-- HINT:    to upload just the contents, specify the directory with a trailing slash, if you want to upload the whole directory specify the directory without trailing slash -->
+        <!-- HINT: The sync command will compare checksums and sizes of the remote vs local files and only want to upload those that are new. When using skip-existing only file presence is check not! the content -->
+        <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
+        <!-- Upload the .js files to remote S3 version folder -->
+        <exec executable="s3cmd" failonerror="true">
+            <arg value="--guess-mime-type" />
+            <arg value="--add-header=Vary:Accept-Encoding" />
+            <!-- tell proxies to only serve this compressed content to a client who has the accept-encoding header: http://blog.port80software.com/2005/01/21/; NOT REALLY NECESSARY in our case were only serving gzipped js. But it will maybe help for proxy-servers in transition to only gzipped files -->
+            <arg value="--add-header=Content-Encoding:gzip" />
+            <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+            <arg value="--add-header=Expires:${http.expires}" />
+            <arg value="--encoding=UTF-8" />
+            <arg value="--recursive" />
+            <arg value="--acl-public" />
+            <arg value="--exclude=*" />
+            <arg value="--include=${include.pattern}" />
+            <arg value="--verbose" />
+            <arg value="--no-preserve" />
+            <!--arg value="-!-dry-run" /-->
+            <arg value="put" />
+            <arg value="${local}" />
+            <arg value="${remote}/" />
+        </exec>
+    </target>
+    <!-- synch all files to S3 recursively, but ommit .js files -->
+    <target name="put-files-to-S3">
+        <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
+        <exec executable="s3cmd" failonerror="true">
+            <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+            <arg value="--add-header=Expires:${http.expires}" />
+            <arg value="--guess-mime-type" />
+            <arg value="--encoding=UTF-8" />
+            <arg value="--recursive" />
+            <arg value="--acl-public" />
+            <arg value="--no-preserve" />
+            <arg value="--exclude=**/*.js" />
+            <!--arg value="-!-dry-run" /-->
+            <arg value="put" />
+            <arg value="${local}" />
+            <arg value="${remote}/" />
+        </exec>
+    </target>
+    <target name="put-zipfile-to-S3">
+        <echo message="copy a file to : ${local} with remote S3 path: ${remote}" />
+        <exec executable="s3cmd" failonerror="true">
+            <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+            <arg value="--add-header=Expires:${http.expires}" />
+            <arg value="--guess-mime-type" />
+            <arg value="--encoding=UTF-8" />
+            <arg value="--acl-public" />
+            <arg value="--no-preserve" />
+            <arg value="--exclude=*" />
+            <arg value="--include=${include.pattern}" />
+            <!--arg value="-!-dry-run" /-->
+            <arg value="put" />
+            <arg value="${local}" />
+            <arg value="${remote}/" />
+        </exec>
+    </target>
+    <target name="copy-folder-on-S3">
+        <echo message="copy a folders and files from : ${from.s3} to: ${to.s3}" />
+        <exec executable="s3cmd" failonerror="true">
+            <arg value="--recursive" />
+            <arg value="--guess-mime-type" />
+            <arg value="--encoding=UTF-8" />
+            <arg value="--acl-public" />
+            <arg value="cp" />
+            <arg value="${from.s3}" />
+            <arg value="${to.s3}/" />
+        </exec>
+    </target>
+    <target name="put-all-versions-nonjs-files-to-S3">
+        <!-- This is used to push all versions from local machine to S3 -->
+        <echo message="synch local folder: ${local} with remote S3 path: ${remote}" />
+        <echo message="copying all files and folders other than .js" />
+        <exec executable="s3cmd" failonerror="true">
+            <!--arg value="-!-skip-existing" /-->
+            <arg value="--add-header=Cache-Control:public, max-age=${max.age}" />
+            <arg value="--add-header=Expires:${http.expires}" />
+            <arg value="--guess-mime-type" />
+            <arg value="--encoding=UTF-8" />
+            <arg value="--recursive" />
+            <arg value="--acl-public" />
+            <arg value="--no-preserve" />
+            <arg value="--exclude=**/*.js" />
+            <arg value="--exclude=*.js" />
+            <arg value="--exclude=*.php" />
+            <arg value="--exclude=*.htaccess" />
+            <!--arg value="-!-dry-run" /-->
+            <arg value="put" />
+            <arg value="${local}" />
+            <arg value="${remote}/" />
+        </exec>
+    </target>
+    <target name="deploy-highcharts-S3" depends="set.properties" description="deploy highcharts distribution to Amazon S3">
+        <property file="git-ignore-me.properties" />
+        <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip" />
+        <antcall target="put-zipfile-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highcharts.zip" />
+            <param name="remote" value="${amazon.s3.bucketname}" />
+            <param name="include.pattern" value="*.zip" />
+        </antcall>
+        <antcall target="gzip-js">
+            <param name="js.dir" value="${basedir}/build/dist/highcharts/js/" />
+        </antcall>
+        <ac:var name="path.var" value="" />
+        <ac:for list="${highcharts.product.version}" delimiter="." param="val">
+            <sequential>
+                <ac:if>
+                    <length string="${path.var}" length="0" />
+                    <then>
+                        <ac:var name="path.var" value="@{val}" />
+                        <!-- this will be used later to do a remote copy on S3 -->
+                        <property name="copy.version" value="@{val}" />
+                        <!-- Copy zipped js/* to Root on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
+                            <param name="remote" value="${amazon.s3.bucketname}" />
+                            <param name="include.pattern" value="*.js" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                        <!-- copy gfx folder to Root -->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
+                            <param name="remote" value="${amazon.s3.bucketname}" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                        <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
+                            <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
+                            <param name="include.pattern" value="*.js" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                        <!-- copy gfx folder to version folder on S3-->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
+                            <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                    </then>
+                    <elseif>
+                        <length string="${path.var}" length="3" />
+                        <then>
+                            <ac:var name="path.var" value="${path.var}.@{val}" />
+                            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                            <antcall target="put-gzipped-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/" />
+                                <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
+                                <param name="include.pattern" value="*.js" />
+                                <param name="http.expires" value="${http.expires.one.month}" />
+                                <param name="max.age" value="${max.age.one.month}" />
+                            </antcall>
+                            <!-- copy gfx folder to version folder on S3-->
+                            <antcall target="put-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highcharts/gfx" />
+                                <param name="remote" value="${amazon.s3.bucketname}/${path.var}" />
+                                <param name="http.expires" value="${http.expires.one.month}" />
+                                <param name="max.age" value="${max.age.one.month}" />
+                            </antcall>
+                        </then>
+                    </elseif>
+                    <else>
+                        <!-- concatenate version name and assign to path.var-->
+                        <ac:var name="path.var" value="${path.var}.@{val}" />
+                        <antcall target="copy-folder-on-S3">
+                            <param name="from.s3" value="${amazon.s3.bucketname}/${copy.version}/" />
+                            <param name="to.s3" value="${amazon.s3.bucketname}/${path.var}" />
+                        </antcall>
+                    </else>
+                </ac:if>
+            </sequential>
+        </ac:for>
+        <delete dir="${basedir}/build/dist/highcharts/js-gzip" />
+    </target>
+    
+    <!-- Deploy Highstock to S3 -->
+    <target name="deploy-highstock-S3" depends="set.properties" description="deploy highstock distribution to Amazon S3">
+        <property file="git-ignore-me.properties" />
+        <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip" />
+        <antcall target="put-zipfile-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highstock.zip" />
+            <param name="remote" value="${amazon.s3.bucketname}" />
+            <param name="include.pattern" value="*.zip" />
+        </antcall>
+        <antcall target="gzip-js">
+            <param name="js.dir" value="${basedir}/build/dist/highstock/js/" />
+        </antcall>
+        <ac:var name="path.var" value="" />
+        <ac:for list="${highstock.product.version}" delimiter="." param="val">
+            <sequential>
+                <ac:if>
+                    <length string="${path.var}" length="0" />
+                    <then>
+                        <ac:var name="path.var" value="@{val}" />
+                        <!-- this will be used later to do a remote copy on S3 -->
+                        <property name="copy.version" value="@{val}" />
+                        <!-- Copy zipped js/* to Root on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
+                            <param name="remote" value="${amazon.s3.bucketname}/stock" />
+                            <param name="include.pattern" value="*.js" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                        <!-- copy gfx folder to Root -->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highstock/gfx" />
+                            <param name="remote" value="${amazon.s3.bucketname}/stock" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                        <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
+                            <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+                            <param name="include.pattern" value="*.js" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                        <!-- copy gfx folder to version folder on S3-->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highstock/gfx" />
+                            <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+                            <param name="http.expires" value="${http.expires.one.day}" />
+                            <param name="max.age" value="${max.age.one.day}" />
+                        </antcall>
+                    </then>
+                    <elseif>
+                        <length string="${path.var}" length="3" />
+                        <then>
+                            <ac:var name="path.var" value="${path.var}.@{val}" />
+                            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                            <antcall target="put-gzipped-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highstock/js-gzip/" />
+                                <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+                                <param name="include.pattern" value="*.js" />
+                                <param name="http.expires" value="${http.expires.one.month}" />
+                                <param name="max.age" value="${max.age.one.month}" />
+                            </antcall>
+                            <!-- copy gfx folder to version folder on S3-->
+                            <antcall target="put-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highstock/gfx" />
+                                <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}" />
+                                <param name="http.expires" value="${http.expires.one.month}" />
+                                <param name="max.age" value="${max.age.one.month}" />
+                            </antcall>
+                        </then>
+                    </elseif>
+                    <else>
+                        <!-- concatenate version name and assign to path.var-->
+                        <ac:var name="path.var" value="${path.var}.@{val}" />
+                        <antcall target="copy-folder-on-S3">
+                            <param name="from.s3" value="${amazon.s3.bucketname}/stock/${copy.version}/" />
+                            <param name="to.s3" value="${amazon.s3.bucketname}/stock/${path.var}" />
+                        </antcall>
+                    </else>
+                </ac:if>
+            </sequential>
+        </ac:for>
+        <delete dir="${basedir}/build/dist/highstock/js-gzip" />
+    </target>
+    
+    <!-- push whole versions structure from local machine to Amazon S3 -->
+    <target name="push-all-versions-to-S3" depends="set.properties">
+        <property file="git-ignore-me.properties" />
+        <!-- copy base folder containing all versions to seperate folder for gzipping *.js files. The user is asked om source directory containing all versions -->
+        <input message="Please enter which directory you want to gzip, WITHOUT trailing slash!!! :" addproperty="src.versions.dir" />
+        <antcall target="gzip-js">
+            <param name="js.dir" value="${src.versions.dir}" />
+        </antcall>
+        <!-- synch gzipped files and folders to S3, only containing javascript files with *.js -->
+        <antcall target="put-gzipped-files-to-S3">
+            <param name="local" value="${src.versions.dir}/../js-gzip/" />
+            <param name="remote" value="${amazon.s3.bucketname}" />
+            <param name="http.expires" value="${http.expires.one.month}" />
+            <param name="max.age" value="${max.age.one.month}" />
+            <param name="include.pattern" value="*.js" />
+        </antcall>
+        <!-- synch files and folders containing non-gzipped content -->
+        <antcall target="put-all-versions-nonjs-files-to-S3">
+            <param name="local" value="${src.versions.dir}/" />
+            <param name="remote" value="${amazon.s3.bucketname}" />
+            <param name="http.expires" value="${http.expires.one.month}" />
+            <param name="max.age" value="${max.age.one.month}" />
+        </antcall>
+        <delete dir="${src.versions.dir}/../js-gzip" />
+        <echo message="finished!" />
+    </target>
 </project>
