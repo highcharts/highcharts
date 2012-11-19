@@ -1,0 +1,334 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+HTTP Post</title>
+<meta content="DocBook XSL Stylesheets V1.60.1" name="generator">
+<link rel="home" href="index.html" title="Antelope Users Guide">
+<link rel="up" href="bk03.html" title="Additional Ant Tasks">
+<link rel="previous" href="bk03ch11.html" title="Chapter&nbsp;11.&nbsp;Math">
+<link rel="next" href="bk03ch13.html" title="Chapter&nbsp;13.&nbsp;SSH and SCP">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title">
+<a name="post">
+</a>
+HTTP Post</h2>
+</div>
+</div>
+<div>
+</div>
+</div>
+<p>
+
+The Post task is a companion to the standard Ant "Get" task. This task does a post and does not necessarily expect anything in return. Almost always, there will be some sort of returned data, this can be logged or written to a file if needed.
+</p>
+
+
+<p>
+
+Basically, an HTTP POST sends name/value pairs to a web server. A very common usage is for html forms for submitting data. A typical use of this task is to send data to a servlet for updating a web page with the status of a build.
+</p>
+<p>
+
+The Post task has three ways of specifying the data to be posted. Nested "prop" elements can be used. A "prop" element represents a single name/value pair. The second way is to specify a property file as an attribute to the Post. All properties from the file will be sent as part of the Post data. The third way is to just type in some defined Ant properties. Is it allowed to use all three ways at once, that is, read some properties from a file, specify others via "prop" elements, and just type in some Ant properties.
+</p>
+<p>
+
+<div class="table">
+<a name="N10A61">
+</a>
+<p class="title">
+<b>
+Table&nbsp;12.1.&nbsp;Post Task Attributes</b>
+</p>
+<table summary="Post Task Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+to</td>
+<td>
+The URL of the remote server to send the post.</td>
+<td>
+None</td>
+<td>
+Yes</td>
+</tr>
+<tr>
+<td>
+encoding</td>
+<td>
+Character encoding for the name/value pairs.</td>
+<td>
+UTF-8</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+logfile</td>
+<td>
+The name of a file to write any response to. Ignored if wantresponse is set to false.</td>
+<td>
+None</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+append</td>
+<td>
+Should an existing log file be appended to or overwritten?</td>
+<td>
+True, append to an existing file.</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+file</td>
+<td>
+A file to read POST data from. All Ant properties contained in this file will be resolved (that is, ${} syntax will be expanded to their values) prior to sending the file contents.</td>
+<td>
+None</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+maxwait</td>
+<td>
+The maximum amount of time in seconds to wait for the data to be sent or for a response from the remote server. Setting this to zero means wait forever.</td>
+<td>
+180 (3 minutes)</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+wantresponse</td>
+<td>
+Whether to wait for a response from the remote server or not. In many cases this can greatly improve the performance of the build script as the server response may be large and useless to the script. Use this with caution - while the response from the server may not be required for the client, the server may require that the client accept the response prior to processing the post data.</td>
+<td>
+true</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+failonerror</td>
+<td>
+Whether the build should fail if the post fails.</td>
+<td>
+false</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+Post supports nested "prop" elements. As an HTTP POST basically sends a list of names and values, the "prop" element represents one name/value pair. A Post may contain any number of "prop" elements.
+</p>
+<p>
+
+<div class="table">
+<a name="N10ABF">
+</a>
+<p class="title">
+<b>
+Table&nbsp;12.2.&nbsp;Prop Attributes</b>
+</p>
+<table summary="Prop Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+name</td>
+<td>
+The name of a property to post.</td>
+<td>
+None</td>
+<td>
+Yes</td>
+</tr>
+<tr>
+<td>
+value</td>
+<td>
+The value associated with the name.</td>
+<td>
+None</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+The "value" attribute is not strictly required. This provides a short-cut method in cases where the property data is an already-defined Ant property. Suppose the build file has this property defined:
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;property name="src.dir" value="/home/user/project/src"/&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+Then the following are equivalent:
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;prop name="src.dir"/&gt;
+    &lt;prop name="src.dir" value="${src.dir}"/&gt;
+    &lt;prop name="src.dir" value="/home/user/project/src"/&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+Defined Ant properties can be entered directly into the post element. Again, suppose the build file has this property defined:
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;property name="src.dir" value="/home/user/project/src"/&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+Then the following are equivalent:
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    ${src.dir}
+    &lt;prop name="src.dir"/&gt;
+    &lt;prop name="src.dir" value="${src.dir}"/&gt;
+    &lt;prop name="src.dir" value="/home/user/project/src"/&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+I googled for the URL in the following example.
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;property name="test.val" value="here's my test value"/&gt;
+    &lt;property name="test.val2" value="second test value"/&gt;
+    &lt;post to="http://wwwj.cs.unc.edu:8888/tang/servlet/tangGetPostServlet"
+        verbose="true"&gt;
+        &lt;prop name="prop1" value="val1 ${test.val}"/&gt;
+        &lt;prop name="prop2" value="val1 value 2"/&gt;
+        &lt;prop name="prop3" value="val got some spaces %funky ^$* chars"/&gt;
+        &lt;prop name="prop4" value="&amp;amp; do an ampersand like this &amp;amp;amp; or
+        Ant will whine"/&gt;
+        &lt;prop name="thanks" value="dude, thanks for the echo server!"/&gt;
+        &lt;prop name="test.val"/&gt;
+        ${test.val2}
+    &lt;/post&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+</div>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+</body>
+</html>

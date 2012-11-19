@@ -1,0 +1,223 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Variable Task</title>
+<meta content="DocBook XSL Stylesheets V1.60.1" name="generator">
+<link rel="home" href="index.html" title="Antelope Users Guide">
+<link rel="up" href="bk03.html" title="Additional Ant Tasks">
+<link rel="previous" href="bk03ch07.html" title="Chapter&nbsp;7.&nbsp;Try Task">
+<link rel="next" href="bk03ch09.html" title="Chapter&nbsp;9.&nbsp;Stopwatch">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title">
+<a name="Variable">
+</a>
+Chapter&nbsp;8.&nbsp;Variable Task</h2>
+</div>
+</div>
+<div>
+</div>
+</div>
+<p>
+
+The Variable task provides a mutable property to Ant and works much like variable assignment in Java. This task is similar to the standard Ant Property task, except that THESE PROPERTIES ARE MUTABLE. While this goes against the standard Ant use of properties, occasionally it is useful to be able to change a property value within the build. <span class="bold">
+<b>
+In general, use of this task is DISCOURAGED, and the standard Ant Property should be used if possible.</b>
+</span>
+ Having said that, in real life I use this a lot.
+</p>
+
+<p>
+
+Variables can be set individually or loaded from a standard properties file. A 'feature' of variables is that they can override properties, but properties cannot override variables. So if an already established property exists, its value can be reassigned by use of this task.
+</p>
+<p>
+
+<div class="table">
+<a name="N108CD">
+</a>
+<p class="title">
+<b>
+Table&nbsp;8.1.&nbsp;Variable Task Attributes</b>
+</p>
+<table summary="Variable Task Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+name</td>
+<td>
+The name of the property to set.</td>
+<td>
+None</td>
+<td>
+Yes, unless 'file' is used.</td>
+</tr>
+<tr>
+<td>
+value</td>
+<td>
+The value of the property.</td>
+<td>
+""</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+file</td>
+<td>
+The name of a standard properties file to load variables from.</td>
+<td>
+None</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+In the following example, the property <tt class="computeroutput">
+x</tt>
+ is first set to "6", then evaluated by the <tt class="computeroutput">
+if</tt>
+, and reassigned the value "12". The <tt class="computeroutput">
+echo</tt>
+ task will print out 12.
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;var name="x" value="6"/&gt;
+    &lt;if name="x" value="6"&gt;
+        &lt;var name="x" value="12"/&gt;
+    &lt;/if&gt;
+    &lt;echo&gt;${x}&lt;/echo&gt;   &lt;!-- will print 12 --&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+The following shows some more uses of the Variable task. It is especially handy for property appending. Notice a couple of things: the property task can't override a var value, however, if the var value is set to "", then it can as in the case of the format example.
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;var name="x" value="6"/&gt;
+    &lt;echo&gt;x = ${x}&lt;/echo&gt;   &lt;!-- print: 6 --&gt;
+
+    &lt;var name="x" value="12"/&gt;
+    &lt;echo&gt;x = ${x}&lt;/echo&gt;   &lt;!-- print: 12 --&gt;
+
+    &lt;var name="x" value="6 + ${x}"/&gt;
+    &lt;echo&gt;x = ${x}&lt;/echo&gt;   &lt;!-- print: 6 + 12 --&gt;
+
+    &lt;var name="str" value="I "/&gt;
+    &lt;var name="str" value="${str} am "/&gt;
+    &lt;var name="str" value="${str} a "/&gt;
+    &lt;var name="str" value="${str} string."/&gt;
+    &lt;echo&gt;${str}&lt;/echo&gt;     &lt;!-- print: I am a string. --&gt;
+
+    &lt;var name="x" value="6"/&gt;
+    &lt;echo&gt;x = ${x}&lt;/echo&gt;   &lt;!-- print: 6 --&gt;
+
+    &lt;property name="x" value="12"/&gt;
+    &lt;echo&gt;x = ${x}&lt;/echo&gt;   &lt;!-- print: 6 (property can't override) --&gt;
+
+    &lt;var name="x" value="blue"/&gt;
+    &lt;tstamp&gt;
+        &lt;format property="x" pattern="EEEE"/&gt;
+    &lt;/tstamp&gt;
+    &lt;echo&gt;Today is ${x}.&lt;/echo&gt; &lt;!-- print: Today is blue. --&gt;
+
+    &lt;var name="x" value=""/&gt;
+    &lt;tstamp&gt;
+        &lt;format property="x" pattern="EEEE"/&gt;
+    &lt;/tstamp&gt;
+    &lt;echo&gt;Today is ${x}.&lt;/echo&gt; &lt;!-- print: Today is Friday. --&gt;
+
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+<p>
+
+<!--
+The next example shows Variable, If, Assert, and Try working together to make sure e-mail is sent from the right address and that if the mail fails to be sent for any reason, the build will not fail.
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+   &lt;var name="valid_email" value="false"/&gt;
+   &lt;if name="email_from" value="buildteam@mycompany.com"&gt;
+      &lt;var name="valid_email" value="true"/&gt;
+   &lt;/if&gt;
+   &lt;if name="email_from" value="buildsite@mycompany.com"&gt;
+      &lt;var name="valid_email" value="true"/&gt;
+   &lt;/if&gt;
+   &lt;assert name="valid_email" value="true" failonerror="false"&gt;
+      &lt;try&gt;
+         &lt;mail from="${email_from}" tolist="${email_to}"
+            message="New release available"/&gt;
+      &lt;/try&gt;
+   &lt;/assert&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+-->
+</p>
+</div>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+</body>
+</html>

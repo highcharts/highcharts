@@ -173,7 +173,34 @@ defaultOptions.exporting = {
 	}
 };
 
+// Add the Highcharts.post utility
+Highcharts.post = function (url, data) {
+	var name;
+	
+	// create the form
+	form = createElement('form', {
+		method: 'post',
+		action: url,
+		enctype: 'multipart/form-data'
+	}, {
+		display: NONE
+	}, doc.body);
 
+	// add the data
+	for (name in data) {
+		createElement('input', {
+			type: HIDDEN,
+			name: name,
+			value: data[name]
+		}, null, form);
+	}
+
+	// submit
+	form.submit();
+
+	// clean up
+	discardElement(form);
+};
 
 extend(Chart.prototype, {
 	/**
@@ -346,39 +373,18 @@ extend(Chart.prototype, {
 
 		// merge the options
 		options = merge(chart.options.exporting, options);
-
-		// create the form
-		form = createElement('form', {
-			method: 'post',
-			action: options.url,
-			enctype: 'multipart/form-data'
-		}, {
-			display: NONE
-		}, doc.body);
 		
-		
-		// add the values
-		each(['filename', 'type', 'width', 'svg', 'scale'], function (name) {
-			createElement('input', {
-				type: HIDDEN,
-				name: name,
-				value: {
-					filename: options.filename || 'chart',
-					type: options.type,
-					width: options.width,
-					scale: options.scale || 2,
-					svg: svg
-				}[name]
-			}, null, form);
+		// do the post
+		Highcharts.post(options.url, {
+			filename: options.filename || 'chart',
+			type: options.type,
+			width: options.width,
+			scale: options.scale || 2,
+			svg: svg
 		});
 
-		// submit
-		form.submit();
-
-		// clean up
-		discardElement(form);
 	},
-
+	
 	/**
 	 * Print the chart
 	 */
@@ -452,6 +458,7 @@ extend(Chart.prototype, {
 			boxShadow = '3px 3px 10px #888',
 			innerMenu,
 			hide,
+			hideTimer,
 			menuStyle;
 
 		// create the menu only the first time
@@ -478,7 +485,13 @@ extend(Chart.prototype, {
 				css(menu, { display: NONE });
 			};
 
-			addEvent(menu, 'mouseleave', hide);
+			// Hide the menu some time after mouse leave (#1357)
+			addEvent(menu, 'mouseleave', function () {
+				hideTimer = setTimeout(hide, 500);
+			});
+			addEvent(menu, 'mouseenter', function () {
+				clearTimeout(hideTimer);
+			});
 
 
 			// create the items

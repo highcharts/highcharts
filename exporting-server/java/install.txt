@@ -8,3 +8,4 @@
 	exporting:{
 				url:'http://new.server.com/highcharts-export'
 	}
+5. When using this application in a non SUN-java environment, it's necessary to change the propertie-files in: .m2/repository/org/apache/xmlgraphics/batik-codec/1.7/batik-codec.jar/META-INF/services

@@ -2473,6 +2473,11 @@ Series.prototype = {
 				}
 			}
 		}
+		
+		// hide tooltip (#1361)
+		if (chart.hoverSeries === series) {
+			series.onMouseOut();
+		}
 
 
 		if (dataLabelsGroup) {

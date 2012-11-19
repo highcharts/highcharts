@@ -1,0 +1,358 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Math</title>
+<meta content="DocBook XSL Stylesheets V1.60.1" name="generator">
+<link rel="home" href="index.html" title="Antelope Users Guide">
+<link rel="up" href="bk03.html" title="Additional Ant Tasks">
+<link rel="previous" href="bk03ch10.html" title="Chapter&nbsp;10.&nbsp;Limit">
+<link rel="next" href="bk03ch12.html" title="Chapter&nbsp;12.&nbsp;HTTP Post">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title">
+<a name="math">
+</a>
+Math</h2>
+</div>
+</div>
+<div>
+</div>
+</div>
+<p>
+
+The Math task provides support for all the basic mathematical operations
+provided by the java.lang.Math and java.lang.StrictMath classed. It supports int, long, float and double data types. Nesting of operations is supported to allow computation of formulas like (6 + (7.25 * 3.9))/(2 * 3 * 3) or calculating the area of a circle given a radius (I'm sure this comes up often in builds controlled by Ant!).
+</p>
+<p>
+
+In addition to the operations provided by the java.lang.Math and java.lang.StrictMath classes, the Math task provides several additional operations: "add", "subtract", "multiply", "divide", and "mod", which duplicate the basic Java mathematical operations "+", "-", "*", "/", and "%", respectively. In fact, either notation can be used, that is, the operation can be set to "add" or "+", depending only on which you feel is more convenient.
+</p>
+
+<p>
+
+<div class="table">
+<a name="N109AE">
+</a>
+<p class="title">
+<b>
+Table&nbsp;11.1.&nbsp;Math Task Attributes</b>
+</p>
+<table summary="Math Task Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+result</td>
+<td>
+The name of the property to hold the result of the operation.</td>
+<td>
+None</td>
+<td>
+Yes</td>
+</tr>
+<tr>
+<td>
+datatype</td>
+<td>
+Sets the datatype of the calculation. Allowed values are
+"int", "long", "float", or "double". Optional, if
+used, will be applied to all numbers in this math operation.</td>
+<td>
+double</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+strict</td>
+<td>
+If true, use the methods in the java.lang.StrictMath class.</td>
+<td>
+false</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+operation</td>
+<td>
+If used, any nested Ops will be ignored. This is for convenience for simple calculations.</td>
+<td>
+None</td>
+<td>
+No</td>
+</tr>
+<tr>
+<td>
+operand1</td>
+<td>
+A number to use with the operation specified in the 'operation' attribute.</td>
+<td>
+None</td>
+<td>
+Depends on the specific operation.</td>
+</tr>
+<tr>
+<td>
+operand2</td>
+<td>
+A number to use with the operation specified in the 'operation' attribute.</td>
+<td>
+None</td>
+<td>
+Depends on the specific operation.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+The 'result' property is reusable.
+</p>
+
+
+The Math task supports nested "Op" elements. An Op element represents single mathematical operation, such as "min" or "add".
+
+<p>
+
+<div class="table">
+<a name="N109FB">
+</a>
+<p class="title">
+<b>
+Table&nbsp;11.2.&nbsp;Op Attributes</b>
+</p>
+<table summary="Op Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+op</td>
+<td>
+Set the name of this operation. Allowed values are
+one of the method names from java.lang.Math or java.lang.StrictMath, or one of "add", "subtract", "multiply", "divide", or "mod" (or "+", "-", "*", "/", or "%", respectively)</td>
+<td>
+None</td>
+<td>
+Yes</td>
+</tr>
+<tr>
+<td>
+datatype</td>
+<td>
+Sets the datatype of this calculation. Allowed values are
+"int", "long", "float", or "double". Optional, default
+is "double". If the parent Math task has a datatype set, this value will be ignored and the datatype specifed in the task will be used.</td>
+<td>
+"int"</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+The Op element supports nested "Op" elements and nested "Num" elements. A Num represents a number. When an Op is nested in another Op, the nested Op is treated as a Num. The nested elements can be any combination of Op or Num as appropriate for the formula being calculated. Most of the operations provided by java.lang.Math and java.lang.StrictMath operate on one or two numbers. The "+", "-", "*", "/", and "%" operations can task any number of nested numbers.
+</p>
+<p>
+
+<div class="table">
+<a name="N10A23">
+</a>
+<p class="title">
+<b>
+Table&nbsp;11.3.&nbsp;Num Attributes</b>
+</p>
+<table summary="Num Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+value</td>
+<td>
+Set the value for this number. Must be able to parse to the datatype set by the parent element or the default datatype set by the task. Two special numbers, pi and e, can be represented by PI and E respectively. ("PI" is the ratio of the diameter of a circle to its radius, "E" is Euler's e, the base for natural logrithms.)</td>
+<td>
+None</td>
+<td>
+Yes</td>
+</tr>
+<tr>
+<td>
+datatype</td>
+<td>
+Sets the datatype of this number. Allowed values are
+"int", "long", "float", or "double". Optional, default
+is "double". If the parent Math task has a datatype set, this value will be ignored and the datatype specifed in the task will be used.</td>
+<td>
+double</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+Some examples:
+</p>
+<p>
+
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+    &lt;var name="op1" value="12"/&gt;
+    &lt;var name="op2" value="6"/&gt;
+    &lt;var name="op" value="+"/&gt;
+
+    &lt;!-- demo plus --&gt;
+    &lt;math result="result" operand1="${op1}" operation="${op}" operand2="${op2}" datatype="int"/&gt;
+    &lt;echo&gt;${op1} ${op} ${op2} = ${result}&lt;/echo&gt;
+    &lt;assert name="result" value="18"/&gt;
+
+    &lt;!-- demo reusing result --&gt;
+    &lt;math result="result" operand1="${result}" operation="${op}" operand2="${op2}" datatype="int"/&gt;
+    &lt;echo&gt;${op1} ${op} ${op2} = ${result}&lt;/echo&gt;
+    &lt;assert name="result" value="24"/&gt;
+
+    &lt;!-- demo minus --&gt;
+    &lt;var name="op" value="-"/&gt;
+    &lt;math result="result" operand1="${op1}" operation="${op}" operand2="${op2}" datatype="int"/&gt;
+    &lt;echo&gt;${op1} ${op} ${op2} = ${result}&lt;/echo&gt;
+    &lt;assert name="result" value="6"/&gt;
+
+    &lt;!-- demo multiply --&gt;
+    &lt;var name="op" value="*"/&gt;
+    &lt;math result="result" operand1="${op1}" operation="${op}" operand2="${op2}" datatype="int"/&gt;
+    &lt;echo&gt;${op1} ${op} ${op2} = ${result}&lt;/echo&gt;
+    &lt;assert name="result" value="72"/&gt;
+
+    &lt;!-- demo divide --&gt;
+    &lt;var name="op" value="/"/&gt;
+    &lt;math result="result" operand1="${op1}" operation="${op}" operand2="${op2}" datatype="int"/&gt;
+    &lt;echo&gt;${op1} ${op} ${op2} = ${result}&lt;/echo&gt;
+    &lt;assert name="result" value="2"/&gt;
+
+    &lt;!-- demo modulo --&gt;
+    &lt;var name="op" value="%"/&gt;
+    &lt;math result="result" operand1="${op1}" operation="${op}" operand2="${op2}" datatype="int"/&gt;
+    &lt;echo&gt;${op1} ${op} ${op2} = ${result}&lt;/echo&gt;
+    &lt;assert name="result" value="0"/&gt;
+
+    &lt;!-- demo calculating the area of a circle --&gt;
+    &lt;!-- first, calculate the radius --&gt;
+    &lt;math result="radius"&gt;  &lt;!-- defaults to double datatype --&gt;
+        &lt;op type="*"&gt;
+            &lt;num value="1"/&gt;
+            &lt;num value="2"/&gt;
+            &lt;num value="3"/&gt;
+            &lt;num value="4"/&gt;
+            &lt;num value="5"/&gt;
+        &lt;/op&gt;
+    &lt;/math&gt;
+    &lt;echo&gt; 1 * 2 * 3 * 4 * 5 = ${radius}&lt;/echo&gt;
+
+    &lt;!-- now calculate the area --&gt;
+    &lt;math result="area" precision="float"&gt;
+        &lt;op type="*"&gt;
+            &lt;num value="PI"/&gt;
+            &lt;op type="pow"&gt;
+                &lt;num value="${radius}"/&gt;
+                &lt;num value="2"/&gt;
+            &lt;/op&gt;
+        &lt;/op&gt;
+    &lt;/math&gt;
+    &lt;echo&gt;area = PI * radius ^ 2 = ${area}&lt;/echo&gt;
+
+    &lt;!-- demo calculating a random number between 0 and 100 --&gt;
+    &lt;math result="result"&gt;
+        &lt;op op="rint"&gt;
+            &lt;op op="*"&gt;
+                &lt;num value="100"/&gt;
+                &lt;op op="random"/&gt;
+            &lt;/op&gt;
+        &lt;/op&gt;
+    &lt;/math&gt;
+    &lt;echo&gt;a random number between 0 and 100: ${result}&lt;/echo&gt;
+
+    &lt;!-- demo another multiplication --&gt;
+    &lt;math result="result" operation="multiply" operand1="17" operand2="13"/&gt;
+    &lt;echo&gt;${result}&lt;/echo&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+</div>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+</body>
+</html>

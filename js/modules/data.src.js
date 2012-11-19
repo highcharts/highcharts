@@ -7,7 +7,65 @@
  */
 
 /*
+ * The Highcharts Data plugin is a utility to ease parsing of input sources like
+ * CSV, HTML tables or grid views into basing configuration options for use 
+ * directly in the Highcharts constructor.
+ *
  * Demo: http://jsfiddle.net/highcharts/SnLFj/
+ *
+ * --- OPTIONS ---
+ *
+ * - columns : Array<Array<Mixed>>
+ * A two-dimensional array representing the input data on tabular form. This input can
+ * be used when the data is already parsed, for example from a grid view component.
+ * Each cell can be a string or number. If not switchRowsAndColumns is set, the columns
+ * are interpreted as series. See also the rows option.
+ *
+ * - complete : Function(chartOptions)
+ * The callback that is evaluated when the data is finished loading, optionally from an 
+ * external source, and parsed. The first argument passed is a finished chart options
+ * object, containing series and an xAxis with categories if applicable. Thise options
+ * can be extended with additional options and passed directly to the chart constructor.
+ *
+ * - csv : String
+ * A comma delimited string to be parsed. Related options are startRow, endRow, startColumn
+ * and endColumn to delimit what part of the table is used. The lineDelimiter and 
+ * itemDelimiter options define the CSV delimiter formats.
+ * 
+ * - endColumn : Integer
+ * In tabular input data, the first row (indexed by 0) to use. Defaults to the last 
+ * column containing data.
+ *
+ * - endRow : Integer
+ * In tabular input data, the last row (indexed by 0) to use. Defaults to the last row
+ * containing data.
+ *
+ * - itemDilimiter : String
+ * Item or cell delimiter for parsing CSV. Defaults to ",".
+ *
+ * - lineDilimiter : String
+ * Line delimiter for parsing CSV. Defaults to "\n".
+ *
+ * - parsed : Function
+ * A callback function to access the parsed columns, the two-dimentional input data
+ * array directly, before they are interpreted into series data and categories.
+ *
+ * - parseDate : Function
+ * A callback function to parse string representations of dates into JavaScript timestamps.
+ * Return an integer on success.
+ *
+ * - rows : Array<Array<Mixed>>
+ * The same as the columns input option, but defining rows intead of columns.
+ *
+ * - startColumn : Integer
+ * In tabular input data, the first column (indexed by 0) to use. 
+ *
+ * - startRow : Integer
+ * In tabular input data, the first row (indexed by 0) to use.
+ *
+ * - table : String|HTMLElement
+ * A HTML table or the id of such to be parsed as input data. Related options ara startRow,
+ * endRow, startColumn and endColumn to delimit what part of the table is used.
  */
 
 (function (Highcharts) {	
@@ -32,7 +90,7 @@
 		var async = false;
 		
 		this.options = options;
-		this.columns = [];
+		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
 		
 		
 		// Parse a CSV string if options.csv is given
@@ -371,7 +429,7 @@
 	 * Trim a string from whitespace
 	 */
 	trim: function (str) {
-		return str.replace(/^\s+|\s+$/g, '');
+		return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, '');
 	},
 	
 	/**
@@ -428,6 +486,32 @@
 		var parseDate = this.options.parseDate;
 		
 		return parseDate ? parseDate(val) : Date.parse(val);
+	},
+	
+	/**
+	 * Reorganize rows into columns
+	 */
+	rowsToColumns: function (rows) {
+		var row,
+			rowsLength,
+			col,
+			colsLength,
+			columns;
+
+		if (rows) {
+			columns = [];
+			rowsLength = rows.length;
+			for (row = 0; row < rowsLength; row++) {
+				colsLength = rows[row].length;
+				for (col = 0; col < colsLength; col++) {
+					if (!columns[col]) {
+						columns[col] = [];
+					}
+					columns[col][row] = rows[row][col];
+				}
+			}
+		}
+		return columns;
 	},
 	
 	/**

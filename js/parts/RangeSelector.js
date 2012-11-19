@@ -16,17 +16,18 @@ extend(defaultOptions, {
 		//		hover: {},
 		//		select: {}
 		// }
-		}
+		},
+		inputPosition: { // docs
+			align: 'right'
+		},
 		// inputDateFormat: '%b %e, %Y',
 		// inputEditDateFormat: '%Y-%m-%d',
 		// inputEnabled: true,
-		// inputStyle: {}
-		// labelStyle: {}
+		//inputStyle: {},
+		labelStyle: {
+			color: '#666'
+		}
 		// selected: undefined
-		// todo:
-		// - button styles for normal, hover and select state
-		// - CSS text styles
-		// - styles for the inputs and labels
 	}
 });
 defaultOptions.lang = merge(defaultOptions.lang, {
@@ -40,36 +41,9 @@ defaultOptions.lang = merge(defaultOptions.lang, {
  * @param {Object} chart
  */
 function RangeSelector(chart) {
-	var defaultButtons = [{
-			type: 'month',
-			count: 1,
-			text: '1m'
-		}, {
-			type: 'month',
-			count: 3,
-			text: '3m'
-		}, {
-			type: 'month',
-			count: 6,
-			text: '6m'
-		}, {
-			type: 'ytd',
-			text: 'YTD'
-		}, {
-			type: 'year',
-			count: 1,
-			text: '1y'
-		}, {
-			type: 'all',
-			text: 'All'
-		}];
-
-	this.chart = chart;
-	this.buttons = [];
-	this.boxSpanElements = {};
 
 	// Run RangeSelector
-	this.init(defaultButtons);
+	this.init(chart);
 }
 
 RangeSelector.prototype = {
@@ -128,17 +102,9 @@ RangeSelector.prototype = {
 			newMin = mathMax(date.getTime(), dataMin);
 			range = 30 * 24 * 3600 * 1000 * count;
 		} else if (type === 'ytd') {
-			date = new Date(0);
 			now = new Date(dataMax);
 			year = now.getFullYear();
-			date.setFullYear(year);
-
-			// workaround for IE6 bug, which sets year to next year instead of current
-			if (String(year) !== dateFormat('%Y', date)) {
-				date.setFullYear(year - 1);
-			}
-
-			newMin = rangeMin = mathMax(dataMin || 0, date.getTime());
+			newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
 			now = now.getTime();
 			newMax = mathMin(dataMax || now, now);
 		} else if (type === 'year') {
@@ -182,36 +148,62 @@ RangeSelector.prototype = {
 			}, 1);
 		}
 	},
+	
+	/**
+	 * The default buttons for pre-selecting time frames
+	 */
+	defaultButtons: [{
+		type: 'month',
+		count: 1,
+		text: '1m'
+	}, {
+		type: 'month',
+		count: 3,
+		text: '3m'
+	}, {
+		type: 'month',
+		count: 6,
+		text: '6m'
+	}, {
+		type: 'ytd',
+		text: 'YTD'
+	}, {
+		type: 'year',
+		count: 1,
+		text: '1y'
+	}, {
+		type: 'all',
+		text: 'All'
+	}],
 
 	/**
 	 * Initialize the range selector
 	 */
-	init: function (defaultButtons) {
+	init: function (chart) {
+		
 		var rangeSelector = this,
-			chart = rangeSelector.chart,
 			options = chart.options.rangeSelector,
-			buttonOptions = options.buttons || defaultButtons,
-			buttons = rangeSelector.buttons,
-			leftBox = rangeSelector.leftBox,
-			rightBox = rangeSelector.rightBox,
-			selectedOption = options.selected;
+			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
+			buttons = rangeSelector.buttons = [],
+			selectedOption = options.selected,
+			blurInputs = rangeSelector.blurInputs = function () {
+				var minInput = rangeSelector.minInput,
+					maxInput = rangeSelector.maxInput;
+				if (minInput) {
+					minInput.blur();
+				}
+				if (maxInput) {
+					maxInput.blur();
+				}
+			};
 
+		rangeSelector.chart = chart;
+		
 		chart.extraTopMargin = 25;
 		rangeSelector.buttonOptions = buttonOptions;
 
-		/**
-		 * The handler connected to container that handles mousedown.
-		 */
-		rangeSelector.mouseDownHandler = function () {
-			if (leftBox) {
-				leftBox.blur();
-			}
-			if (rightBox) {
-				rightBox.blur();
-			}
-		};
-
-		addEvent(chart.container, 'mousedown', rangeSelector.mouseDownHandler);
+		addEvent(chart.container, 'mousedown', blurInputs);
+		addEvent(chart, 'resize', blurInputs);
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
@@ -228,24 +220,21 @@ RangeSelector.prototype = {
 			});
 		});
 	},
-
-
+	
 	/**
 	 * Set the internal and displayed value of a HTML input for the dates
-	 * @param {Object} input
+	 * @param {String} name
 	 * @param {Number} time
 	 */
-	setInputValue: function (input, time) {
-		var rangeSelector = this,
-			chart = rangeSelector.chart,
-			options = chart.options.rangeSelector,
-			format = input.hasFocus ? options.inputEditDateFormat || '%Y-%m-%d' : options.inputDateFormat || '%b %e, %Y';
+	setInputValue: function (name, time) {
+		var options = this.chart.options.rangeSelector;
 
 		if (time) {
-			input.HCTime = time;
+			this[name + 'Input'].HCTime = time;
 		}
-
-		input.value = dateFormat(format, input.HCTime);
+		
+		this[name + 'Input'].value = dateFormat(options.inputEditDateFormat || '%Y-%m-%d', this[name + 'Input'].HCTime);
+		this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
 	},
 
 	/**
@@ -255,37 +244,75 @@ RangeSelector.prototype = {
 	drawInput: function (name) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
+			chartStyle = chart.options.chart.style,
+			renderer = chart.renderer,
 			options = chart.options.rangeSelector,
-			boxSpanElements = rangeSelector.boxSpanElements,
 			lang = defaultOptions.lang,
 			div = rangeSelector.div,
 			isMin = name === 'min',
-			input;
+			input,
+			label,
+			dateBox,
+			inputGroup = this.inputGroup;
 
-		// create the text label
-		boxSpanElements[name] = createElement('span', {
-			innerHTML: lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo']
-		}, options.labelStyle, div);
+		// Create the text label
+		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
+			.attr({
+				padding: 1
+			})
+			.css(merge(chartStyle, options.labelStyle))
+			.add(inputGroup);
+		inputGroup.offset += label.width + 5;
+		
+		// Create an SVG label that shows updated date ranges and and records click events that 
+		// bring in the HTML input.
+		this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
+			.attr({
+				padding: 1,
+				width: 90,
+				height: 16,
+				stroke: 'silver',
+				'stroke-width': 1
+			})
+			.css(merge({
+				textAlign: 'center'
+			}, chartStyle, options.inputStyle))
+			.on('click', function () {
+				rangeSelector[name + 'Input'].focus();
+			})
+			.add(inputGroup);
+		inputGroup.offset += dateBox.width + (isMin ? 10 : 0);
+		
 
-		// create the input element
-		input = createElement('input', {
+		// Create the HTML input element. This is placed off screen and moved on top of the label
+		// when activated.
+		this[name + 'Input'] = input = createElement('input', {
 			name: name,
 			className: PREFIX + 'range-selector',
 			type: 'text'
 		}, extend({
-			width: '80px',
-			height: '16px',
-			border: '1px solid silver',
-			marginLeft: '5px',
-			marginRight: isMin ? '5px' : '0',
-			textAlign: 'center'
+			position: ABSOLUTE,
+			border: '2px solid silver',
+			top: '-9999em',
+			textAlign: 'center',
+			fontSize: chartStyle.fontSize,
+			fontFamily: chartStyle.fontFamily
 		}, options.inputStyle), div);
 
 
-		input.onfocus = input.onblur = function (e) {
-			e = e || window.event || {};
-			input.hasFocus = e.type === 'focus';
-			rangeSelector.setInputValue(input);
+		input.onfocus = function () {
+			css(this, {
+				left: (inputGroup.translateX + dateBox.x) + PX,
+				top: inputGroup.translateY + PX,
+				width: (dateBox.width - 2) + PX,
+				height: (dateBox.height - 2) + PX
+			});
+		};
+		input.onblur = function () {
+			css(this, {
+				top: '-9999em'
+			});
+			rangeSelector.setInputValue(name);
 		};
 
 		// handle changes in the input boxes
@@ -302,8 +329,8 @@ RangeSelector.prototype = {
 			}
 
 			if (!isNaN(value) &&
-				((isMin && (value >= extremes.dataMin && value <= rangeSelector.rightBox.HCTime)) ||
-				(!isMin && (value <= extremes.dataMax && value >= rangeSelector.leftBox.HCTime)))
+				((isMin && (value >= extremes.dataMin && value <= rangeSelector.maxInput.HCTime)) ||
+				(!isMin && (value <= extremes.dataMax && value >= rangeSelector.minInput.HCTime)))
 			) {
 				chart.xAxis[0].setExtremes(
 					isMin ? value : extremes.min,
@@ -314,8 +341,6 @@ RangeSelector.prototype = {
 				);
 			}
 		};
-
-		return input;
 	},
 
 	/**
@@ -330,15 +355,19 @@ RangeSelector.prototype = {
 			chart = rangeSelector.chart,
 			renderer = chart.renderer,
 			container = chart.container,
-			options = chart.options.rangeSelector,
+			chartOptions = chart.options,
+			navButtonOptions = chartOptions.exporting && chart.options.navigation.buttonOptions, 
+			options = chartOptions.rangeSelector,
 			buttons = rangeSelector.buttons,
 			lang = defaultOptions.lang,
 			div = rangeSelector.div,
-			chartStyle = chart.options.chart.style,
+			inputGroup = rangeSelector.inputGroup,
+			chartStyle = chartOptions.chart.style,
 			buttonTheme = options.buttonTheme,
 			inputEnabled = options.inputEnabled !== false,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
+			yAlign,
 			buttonLeft;
 
 		// create the elements
@@ -379,31 +408,38 @@ RangeSelector.prototype = {
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
 			if (inputEnabled) {
-				rangeSelector.divRelative = div = createElement('div', null, {
+				rangeSelector.div = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
-					fontFamily: chartStyle.fontFamily,
-					fontSize: chartStyle.fontSize,
 					zIndex: 1 // above container
 				});
 
 				container.parentNode.insertBefore(div, container);
 
-				// create an absolutely positionied div to keep the inputs
-				rangeSelector.divAbsolute = rangeSelector.div = div = createElement('div', null, extend({
-					position: 'absolute',
-					top: (chart.plotTop - 25) + 'px',
-					right: (chart.chartWidth - chart.plotLeft - chart.plotWidth) + 'px'
-				}, options.inputBoxStyle), div);
+				// Create the group to keep the inputs
+				rangeSelector.inputGroup = inputGroup = renderer.g('input-group')
+					.add();
+				inputGroup.offset = 0;
 
-				rangeSelector.leftBox = rangeSelector.drawInput('min');
-				rangeSelector.rightBox = rangeSelector.drawInput('max');
+				rangeSelector.drawInput('min');
+				rangeSelector.drawInput('max');	
 			}
 		}
+		
+		// Update the alignment to the updated spacing box
+		yAlign = chart.plotTop - 35;		
+		inputGroup.align(extend({
+			y: yAlign,
+			width: inputGroup.offset,
+			// detect collision with the exporting buttons
+			x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
+				-60 : 0
+		}, options.inputPosition), true, chart.spacingBox);
 
+		// Set or reset the input values
 		if (inputEnabled) {
-			rangeSelector.setInputValue(rangeSelector.leftBox, min);
-			rangeSelector.setInputValue(rangeSelector.rightBox, max);
+			rangeSelector.setInputValue('min', min);
+			rangeSelector.setInputValue('max', max);
 		}
 
 		rangeSelector.rendered = true;
@@ -413,41 +449,38 @@ RangeSelector.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
-		var rangeSelector = this,
-			leftBox = rangeSelector.leftBox,
-			rightBox = rangeSelector.rightBox,
-			boxSpanElements = rangeSelector.boxSpanElements,
-			divRelative = rangeSelector.divRelative,
-			divAbsolute = rangeSelector.divAbsolute,
-			zoomText = rangeSelector.zoomText;
+		var minInput = this.minInput,
+			maxInput = this.maxInput,
+			chart = this.chart,
+			blurInputs = this.blurInputs,
+			key,
+			item;
 
-		removeEvent(rangeSelector.chart.container, 'mousedown', rangeSelector.mouseDownHandler);
+		removeEvent(chart.container, 'mousedown', blurInputs);
+		removeEvent(chart, 'resize', blurInputs);
 
 		// Destroy elements in collections
-		each([rangeSelector.buttons], function (coll) {
-			destroyObjectProperties(coll);
-		});
-
-		// Destroy zoomText
-		if (zoomText) {
-			rangeSelector.zoomText = zoomText.destroy();
-		}
-
+		destroyObjectProperties(this.buttons);
+		
 		// Clear input element events
-		if (leftBox) {
-			leftBox.onfocus = leftBox.onblur = leftBox.onchange = null;
+		if (minInput) {
+			minInput.onfocus = minInput.onblur = minInput.onchange = null;
 		}
-		if (rightBox) {
-			rightBox.onfocus = rightBox.onblur = rightBox.onchange = null;
+		if (maxInput) {
+			maxInput.onfocus = maxInput.onblur = maxInput.onchange = null;
 		}
 
-		// Discard divs and spans
-		each([leftBox, rightBox, boxSpanElements.min, boxSpanElements.max, divAbsolute, divRelative], function (item) {
-			discardElement(item);
-		});
-
-		// Null the references
-		rangeSelector.leftBox = rangeSelector.rightBox = rangeSelector.boxSpanElements = rangeSelector.div = rangeSelector.divAbsolute = rangeSelector.divRelative = null;
+		// Destroy HTML and SVG elements
+		for (key in this) {
+			if (this[key] && key !== 'chart') {
+				if (this[key].destroy) { // SVGElement
+					this[key].destroy();
+				} else if (this[key].nodeType) { // HTML element
+					discardElement(this[key]);
+				}
+			}
+			this[key] = null;
+		}
 	}
 };
 

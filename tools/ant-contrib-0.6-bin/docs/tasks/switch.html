@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Ant-contrib Tasks: Switch</title>
+  </head>
+
+  <body>
+    <h1>Switch</h1>
+
+    <p>Task definition for the ANT task to switch on a particular value.</p>
+
+    <h2>Parameters</h2>
+    <table border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Required</th>
+      </tr>
+      <tr>
+        <td valign="top">value</td>
+        <td valign="top">The value to switch on.</td>
+        <td align="center" valign="top">Yes.</td>
+      </tr>
+      <tr>
+        <td valign="top">caseinsensitive</td>
+        <td valign="top">Should we do case insensitive comparisons?</td>
+        <td align="center" valign="top">No, default is &quot;false&quot;</td>
+      </tr>
+    </table>
+
+    <h2>Parameters specified as nested elements</h2>
+
+    <p>At least one <code>&lt;case&gt;</code> or
+    <code>&lt;default&gt;</code> is required.</p>
+
+    <h3>case</h3>
+
+    <p>An individual case to consider, if the value that is being
+    switched on matches to value attribute of the case, then the
+    nested tasks will be executed.</p>
+
+    <h4>Parameters</h4>
+    <table border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Required</th>
+      </tr>
+      <tr>
+        <td valign="top">value</td>
+        <td valign="top">The value to match against the tasks value attribute.</td>
+        <td align="center" valign="top">Yes.</td>
+      </tr>
+    </table>
+
+    <h3>default</h3>
+
+    <p>The default case for when no match is found.  Must not appear
+    more than once per task.</p>
+
+    <h2>Example</h2>
+
+<pre>
+&lt;switch value=&quot;${foo}&quot;&gt;
+  &lt;case value=&quot;bar&quot;&gt;
+    &lt;echo message=&quot;The value of property foo is bar&quot; /&gt;
+  &lt;/case&gt;
+  &lt;case value=&quot;baz&quot;&gt;
+    &lt;echo message=&quot;The value of property foo is baz&quot; /&gt;
+  &lt;/case&gt;
+  &lt;default&gt;
+    &lt;echo message=&quot;The value of property foo is not sensible&quot; /&gt;
+  &lt;/default&gt;
+&lt;/switch&gt;
+</pre>
+
+    <hr>
+    <p align="center">Copyright &copy; 2002 Ant-Contrib Project. All
+    rights Reserved.</p>
+
+  </body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Ant-contrib Tasks: PropertySelector</title>
+  </head>
+
+  <body>
+    <h1>PropertySelector</h1>
+
+    <p>Selects property names that match a given regular expression and
+       returns them in a delimited list</p>
+
+    <h2>Parameters</h2>
+    <table border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Required</th>
+      </tr>
+      <tr>
+        <td valign="top">property</td>
+        <td valign="top">The name of the property you wish to set.</td>
+        <td align="center" valign="top">Yes.</td>
+      </tr>
+      <tr>
+        <td valign="top">override</td>
+        <td valign="top">If the property is already set, should we change it's value.
+            Can be <code>true</code> or <code>false</code></td>
+        <td align="center" valign="top">No. Defaults to <code>false</code></td>
+      </tr>
+      <tr>
+        <td valign="top">match</td>
+        <td valign="top">The regular expression which is used to select
+            property names for inclusion in the list.  This follows
+            the standard regular expression syntax accepted by ant's
+            regular expression tasks.</td>
+        <td align="center" valign="top">Yes.</td>
+      </tr>
+      <tr>
+        <td valign="top">select</td>
+        <td valign="top">A pattern which indicates what selection pattern you want
+            in the returned list.  This used the substitution pattern
+            syntax to indicate where to insert groupings created as a result
+            of the regular expression match.</td>
+        <td align="center" valign="top">No. default is &quot;\0&quot;.</td>
+      </tr>
+      <tr>
+        <td valign="top">casesensitive</td>
+        <td valign="top">Should the match be case sensitive</td>
+        <td align="center" valign="top">No. default is &quot;true&quot;.</td>
+      </tr>
+      <tr>
+        <td valign="top">delimiter</td>
+        <td valign="top">The delimiter used to seperate entries in the resulting
+               property</td>
+        <td align="center" valign="top">No. default is &quot;,&quot;.</td>
+      </tr>
+      <tr>
+        <td valign="top">distinct</td>
+        <td valign="top">Should the returned entries be a distinct set (no duplicate
+               entries)</td>
+        <td align="center" valign="top">No. default is &quot;false&quot;.</td>
+      </tr>
+    </table>
+
+   <h2>Select expressions</h2>
+
+   Expressions are selected in a the same syntax as a regular expression
+   substitution pattern.
+
+   <ul type="o">
+    <li><code>\0</code> indicates the entire property name (default).
+    <li><code>\1</code> indicates the first grouping
+    <li><code>\2</code> indicates the second grouping
+    <li>etc...
+   </ul>
+
+    <h2>Example</h2>
+
+    The following code
+
+    <pre>
+    <code>
+    &lt;property name="package.ABC.name" value="abc pack name" /&gt;
+    &lt;property name="package.DEF.name" value="def pack name" /&gt;
+    &lt;property name="package.GHI.name" value="ghi pack name" /&gt;
+    &lt;property name="package.JKL.name" value="jkl pack name" /&gt;
+
+    &lt;propertyselector property="pack.list"
+                         delimiter=","
+                         match="package\.([^\.]*)\.name"
+                         select="\1"
+                         casesensitive="false" /&gt;
+
+    </code>
+    </pre>
+
+    would yield the results
+
+    <pre>
+    <code>
+    ABC,DEF,GHI,JKL
+    </code>
+    </pre>
+
+    You could then iterate through this list using the <a href="foreach.html"
+    >ForEach Task</a> as follows:
+
+    <pre>
+    <code>
+    &lt;foreach list="${pack.list}"
+                delimiter=","
+                target="print.name"
+                param="pack.id" /&gt;
+
+    &lt;target name="print.name" &gt;
+      &lt;propertycopy name="pack.name" value="package.${pack.id}.name" /&gt;
+      &lt;echo message="${pack.name}" /&gt;
+    &lt;/target&gt;
+    </code>
+    </pre>
+
+    Would print
+
+    <pre>
+    <code>
+      [echo] abc pack name
+      [echo] def pack name
+      [echo] ghi pack name
+      [echo] jkl pack name
+    </code>
+    </pre>
+
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+
+  </body>
+</html>
