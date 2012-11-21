@@ -11,9 +11,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	type: 'waterfall',
 
 	translate: function () {
-		seriesTypes.column.prototype.translate.apply(this);
-
 		var previous;
+
+		seriesTypes.column.prototype.translate.apply(this);
 
 		each(this.points, function (point) {
 			var shapeArgs = point.shapeArgs,
@@ -26,15 +26,13 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				if (point.y >= 0) {
 					y -= height;
 					previous = y;
-				}
-				else {
+				} else {
 					previous = y + height;
 				}
 
 				shapeArgs.y = y;
 				shapeArgs.height = height;
-			}
-			else {
+			} else {
 				previous = y;
 			}
 		});
