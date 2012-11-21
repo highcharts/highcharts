@@ -362,7 +362,6 @@ RangeSelector.prototype = {
 			lang = defaultOptions.lang,
 			div = rangeSelector.div,
 			inputGroup = rangeSelector.inputGroup,
-			chartStyle = chartOptions.chart.style,
 			buttonTheme = options.buttonTheme,
 			inputEnabled = options.inputEnabled !== false,
 			states = buttonTheme && buttonTheme.states,
@@ -453,8 +452,7 @@ RangeSelector.prototype = {
 			maxInput = this.maxInput,
 			chart = this.chart,
 			blurInputs = this.blurInputs,
-			key,
-			item;
+			key;
 
 		removeEvent(chart.container, 'mousedown', blurInputs);
 		removeEvent(chart, 'resize', blurInputs);

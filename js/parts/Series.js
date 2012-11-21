@@ -1183,7 +1183,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			handleNegative = !!options.negativeColor,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
 			categories = xAxis.categories,
@@ -2164,10 +2163,10 @@ Series.prototype = {
 				width: chartSizeMax,
 				height: chartSizeMax - translatedThreshold
 			};
+			/*
 			if (chart.inverted) {
 				
 				// VML
-				/*
 				above = {
 					x: chart.plotLeft + translatedThreshold,
 					y: 0,
@@ -2180,8 +2179,8 @@ Series.prototype = {
 					width: chart.plotLeft + translatedThreshold,
 					height: chartWidth
 				};
-				// */
 			}
+			// */
 			
 			if (this.yAxis.reversed) {
 				posAttr = below;

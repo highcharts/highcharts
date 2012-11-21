@@ -115,11 +115,13 @@
 				};
 			
 			// Register Highcharts as a jQuery plugin
-			// TODO: MooTools and prototype as well?
-			// TODO: StockChart/Map
-			$.fn.highcharts = function (options, callback) {
-				options.chart = merge(options.chart, { renderTo: this[0] });
-				this.chart = new Chart(options, callback);
+			/* TODO:
+				- MooTools and prototype as well?
+				- StockChart
+				*/
+			$.fn.chart = function (options, callback) {
+				options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
+				this.chart = new Highcharts.Chart(options, callback);
 				return this;
 			};
 		},

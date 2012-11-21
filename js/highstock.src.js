@@ -1171,11 +1171,13 @@ pathAnim = {
 				};
 			
 			// Register Highcharts as a jQuery plugin
-			// TODO: MooTools and prototype as well?
-			// TODO: StockChart/Map
-			$.fn.highcharts = function (options, callback) {
-				options.chart = merge(options.chart, { renderTo: this[0] });
-				this.chart = new Chart(options, callback);
+			/* TODO:
+				- MooTools and prototype as well?
+				- StockChart
+				*/
+			$.fn.chart = function (options, callback) {
+				options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
+				this.chart = new Highcharts.Chart(options, callback);
 				return this;
 			};
 		},
@@ -12449,7 +12451,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			handleNegative = !!options.negativeColor,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
 			categories = xAxis.categories,
@@ -13430,10 +13431,10 @@ Series.prototype = {
 				width: chartSizeMax,
 				height: chartSizeMax - translatedThreshold
 			};
+			/*
 			if (chart.inverted) {
 				
 				// VML
-				/*
 				above = {
 					x: chart.plotLeft + translatedThreshold,
 					y: 0,
@@ -13446,8 +13447,8 @@ Series.prototype = {
 					width: chart.plotLeft + translatedThreshold,
 					height: chartWidth
 				};
-				// */
 			}
+			// */
 			
 			if (this.yAxis.reversed) {
 				posAttr = below;
@@ -17963,7 +17964,6 @@ RangeSelector.prototype = {
 			lang = defaultOptions.lang,
 			div = rangeSelector.div,
 			inputGroup = rangeSelector.inputGroup,
-			chartStyle = chartOptions.chart.style,
 			buttonTheme = options.buttonTheme,
 			inputEnabled = options.inputEnabled !== false,
 			states = buttonTheme && buttonTheme.states,
@@ -18054,8 +18054,7 @@ RangeSelector.prototype = {
 			maxInput = this.maxInput,
 			chart = this.chart,
 			blurInputs = this.blurInputs,
-			key,
-			item;
+			key;
 
 		removeEvent(chart.container, 'mousedown', blurInputs);
 		removeEvent(chart, 'resize', blurInputs);
