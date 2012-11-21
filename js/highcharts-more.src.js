@@ -1161,11 +1161,10 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			crispCorr,
 			crispX,
 			graphic,
-			path,
 			stemPath,
 			stemAttr,
 			boxPath,
-			whiskerPath,
+			whiskersPath,
 			whiskersAttr,
 			medianPath,
 			medianAttr,
@@ -1444,10 +1443,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			cutThreshold = options.displayNegative === false ? options.zThreshold : -Number.MAX_VALUE,
 			len,
 			i,
-			z,
 			minSize,
 			pos,
-			radius,
 			zData,
 			radii = [],
 			zMin = Number.MAX_VALUE,
@@ -1592,12 +1589,10 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
  * necessary to avoid the bubbles to overflow.
  */
 Axis.prototype.beforePadding = function () {
-	var chart = this.chart,
-		axisLength = this.len,
+	var axisLength = this.len,
 		pxMin = 0, 
 		pxMax = axisLength,
 		dataKey = this.isXAxis ? 'xData' : 'yData',
-		plotLength = this.horiz ? chart.plotWidth : chart.plotHeight,
 		min = this.min,
 		transA = axisLength / (this.max - min);
 	

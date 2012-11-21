@@ -68,6 +68,9 @@
  * endRow, startColumn and endColumn to delimit what part of the table is used.
  */
 
+// JSLint options:
+/*global jQuery */
+
 (function (Highcharts) {	
 	
 	// Utilities
@@ -314,7 +317,7 @@
 			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
 		}
 		
-		$.ajax({
+		jQuery.ajax({
 			url: options.svg,
 			dataType: 'xml',
 			success: function (xml) {

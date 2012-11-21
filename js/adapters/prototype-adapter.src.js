@@ -100,6 +100,14 @@ return {
 			});
 		}
 	},
+
+	/**
+	 * Register Highcharts as a plugin in Prototype. 
+	 * TODO: implement
+	 */
+	plugin: function () {
+	},
+	
 	
 	/**
 	 * Run a general method on the framework, following jQuery syntax

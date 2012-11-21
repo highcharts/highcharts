@@ -1,4 +1,7 @@
 
+// Register the constructor as a framework plugin
+globalAdapter.plugin('Chart');
+
 /**
  * The chart class
  * @param {Object} options

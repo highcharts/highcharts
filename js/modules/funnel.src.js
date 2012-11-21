@@ -13,14 +13,11 @@
 'use strict';
 
 // create shortcuts
-var addEvent = Highcharts.addEvent,
-	defaultOptions = Highcharts.getOptions(),
+var defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
-	map = Highcharts.map,
 	merge = Highcharts.merge,
-	each = Highcharts.each,
-	math = Math;
+	each = Highcharts.each;
 
 // set default options
 defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
@@ -202,12 +199,11 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	 * @param {Object} color The color of the point
 	 * @param {Number} brightness The brightness relative to the color
 	 */
-	drawPoints: function (point) {
+	drawPoints: function () {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
-			trackerRect = chart.trackerRect,
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop;
 
