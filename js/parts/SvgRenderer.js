@@ -152,7 +152,8 @@ SVGElement.prototype = {
 						skipAttr = true;
 
 					// translation and text rotation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || key === 'verticalAlign') {
+					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' || 
+							key === 'verticalAlign' || key === 'scaleX' || key === 'scaleY') {
 						doTransform = true;
 						skipAttr = true;
 
@@ -654,6 +655,8 @@ SVGElement.prototype = {
 		var wrapper = this,
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0,
+			scaleX = wrapper.scaleX,
+			scaleY = wrapper.scaleY,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
 			transform = [];
@@ -674,6 +677,11 @@ SVGElement.prototype = {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
 			transform.push('rotate(' + rotation + ' ' + (wrapper.x || 0) + ' ' + (wrapper.y || 0) + ')');
+		}
+
+		// apply scale
+		if (scaleX || scaleY) {
+			transform.push('scale(' + (scaleX || 1) + ' ' + (scaleY || 1) + ')');
 		}
 
 		if (transform.length) {

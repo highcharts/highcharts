@@ -232,46 +232,78 @@ MouseTracker.prototype = {
 
 		}
 	},
+
+	/**
+	 * Scale series groups to a certain scale and translation
+	 */
+	scaleGroups: function (attribs) {
+
+		// Scale each series
+		each(this.chart.series, function (series) {
+			series.group.attr(attribs);
+			if (series.markerGroup) {
+				series.markerGroup.attr(attribs);
+			}
+			if (series.dataLabelsGroup) {
+				series.dataLabelsGroup.attr(attribs);
+			}
+		});
+	},
 	
-	// http://jsfiddle.net/highcharts/PZH37/
+	/**
+	 * Handle touch events with two touches
+	 */
 	pinchHandler: function (e) {
 		var mouseTracker = this,
-			pinchDown = mouseTracker.pinchDown;
+			chart = mouseTracker.chart,
+			pinchDown = mouseTracker.pinchDown,
+			touches = e.touches,
+			chart1X,
+			chart2X,
+			scaleX,
+			zoomHor = mouseTracker.zoomHor,
+			zoomVert = mouseTracker.zoomVert,
+			selectionMarker = mouseTracker.selectionMarker,
+			plotWidth = chart.plotWidth;
 		
-		map(e.touches, function (e) {
+		// Normalize each touch
+		map(touches, function (e) {
 			return mouseTracker.normalizeMouseEvent(e);
 		});
 		
+		// Handle touch move/pinching
 		if (pinchDown[0] && pinchDown[1]) {
-			each(mouseTracker.chart.series, function (series) {
-				// Create an SVG specific attribute setter for scaleX and scaleY
-				var group = series.group;
-				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-					group[key] = value;
-					if (group.scaleX !== UNDEFINED && group.scaleY !== UNDEFINED) {
-						group.element.setAttribute('transform', 'translate(' + group.translateX + ',' + group.translateY + ') scale(' + 
-							group.scaleX + ',' + group.scaleY + ')');
-					}
-					return false;
-				};
-				
-				var chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX),
-					chartX2 = mathMin(e.touches[0].chartX, e.touches[1].chartX),
-					scaleX = mathAbs(e.touches[0].chartX - e.touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
-				series.group.attr({
-					translateX: chartX2 - (chartX1 - mouseTracker.chart.plotLeft) * scaleX,
-					scaleX: scaleX,
-					scaleY: 1
-				});
-			});
+			chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX);
+			chartX2 = mathMin(touches[0].chartX, touches[1].chartX);
+			scaleX = mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
 			
+			this.scaleGroups({
+				translateX: chartX2 - (chartX1 - chart.plotLeft) * scaleX,
+				scaleX: scaleX,
+				scaleY: 1
+			});
+
+			// Set the marker
+			if (!selectionMarker) {
+				mouseTracker.selectionMarker = selectionMarker = {
+					x: chart.plotLeft,
+					y: chart.plotTop,
+					width: zoomHor ? 1 : plotWidth,
+					height: zoomVert ? 1 : chart.plotHeight,
+					destroy: noop
+				};
+			}
+			if (zoomHor) {
+				selectionMarker.x = ((chart.plotLeft - chartX2) / scaleX) + chartX1;
+				selectionMarker.width = plotWidth / scaleX;
+				mouseTracker.hasPinched = true;
+			}
 		} 
 			
-		each(e.touches, function (e, i) {
-			
-			
+		// Register the touch start position
+		each(touches, function (e, i) {
 			if (!pinchDown[i]) {
-				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY, plotLeft: mouseTracker.chart.plotLeft };
+				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY, plotLeft: chart.plotLeft };
 			}
 		});
 		return false;
@@ -286,8 +318,8 @@ MouseTracker.prototype = {
 			chart = mouseTracker.chart,
 			container = chart.container,
 			hasDragged,
-			zoomHor = (mouseTracker.zoomX && !chart.inverted) || (mouseTracker.zoomY && chart.inverted),
-			zoomVert = (mouseTracker.zoomY && !chart.inverted) || (mouseTracker.zoomX && chart.inverted);
+			zoomHor = this.zoomHor = (mouseTracker.zoomX && !chart.inverted) || (mouseTracker.zoomY && chart.inverted),
+			zoomVert = this.zoomVert = (mouseTracker.zoomY && !chart.inverted) || (mouseTracker.zoomX && chart.inverted);
 
 		/**
 		 * Mouse up or outside the plot area
@@ -298,13 +330,12 @@ MouseTracker.prototype = {
 						xAxis: [],
 						yAxis: []
 					},
-					selectionBox = mouseTracker.selectionMarker.getBBox(),
+					selectionBox = mouseTracker.selectionMarker,
 					selectionLeft = selectionBox.x - chart.plotLeft,
 					selectionTop = selectionBox.y - chart.plotTop,
 					runZoom;
-
 				// a selection has been made
-				if (hasDragged) {
+				if (hasDragged || mouseTracker.hasPinched) {
 
 					// record each axis' min and max
 					each(chart.axes, function (axis) {
@@ -342,17 +373,30 @@ MouseTracker.prototype = {
 						}
 					});
 					if (runZoom) {
-						fireEvent(chart, 'selection', selectionData, function (args) { chart.zoom(args); });
+						fireEvent(chart, 'selection', selectionData, function (args) { 
+							chart.zoom(extend(args, mouseTracker.hasPinched ? { animation: false } : null)); 
+						});
 					}
 
 				}
 				mouseTracker.selectionMarker = mouseTracker.selectionMarker.destroy();
+
+				// Reset scaling preview
+				if (mouseTracker.hasPinched) {
+					mouseTracker.scaleGroups({
+						translateX: chart.plotLeft,
+						translateY: chart.plotTop,
+						scaleX: 1,
+						scaleY: 1
+					});
+				}
 			}
 
 			if (chart) { // it may be destroyed on mouse up - #877
 				css(container, { cursor: 'auto' });
 				chart.cancelClick = hasDragged; // #370
-				chart.mouseIsDown = hasDragged = false;
+				chart.mouseIsDown = hasDragged = mouseTracker.hasPinched = false;
+				mouseTracker.pinchDown = [];
 			}
 
 			removeEvent(doc, 'mouseup', drop);
