@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Ant-contrib Tasks: TimestampSelector</title>
+  </head>
+
+  <body>
+    <h1>TimestampSelector</h1>
+
+    <p>The TimestampSelector task takes either a nested &lt;path&gt; element,
+       or a path reference, and sets either a named property, or a <code>path</code>
+       instance to absolute pathnames of the files with either the N latest or earliest
+       modification dates (based on the <code>age</code> attribute)</p>
+
+    <h2>Parameters</h2>
+    <table border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Required</th>
+      </tr>
+      <tr>
+        <td valign="top">property</td>
+        <td valign="top">The property to set with the most recently modified file.  Mutually
+            exclusive with the <code>outputsetid</code> attribute.</td>
+        <td align="center" valign="top">Yes, if <code>outputsetid</code> is not specified.</td>
+      </tr>
+      <tr>
+        <td valign="top">outputsetid</td>
+        <td valign="top">The id of a <code>path</code> instance which will contain the
+           resulting list of files.  This id should not already exist.  Mutually exclusive
+           with the <code>property</code> attribute</td>
+        <td align="center" valign="top">Yes, if <code>property</code> is note specified.</td>
+      </tr>
+      <tr>
+        <td valign="top">count</td>
+        <td valign="top">The number of files to find.  If more than 1, than the
+           files in the output appear in the order indicated by the <code>age</code>
+           attribute.</td>
+        <td align="center" valign="top">No.  Defaults to <code>1<code></td>
+      </tr>
+      <tr>
+        <td valign="top">age</td>
+        <td valign="top">The age of the files to retrieve, either <code>eldest</code>
+            or <code>youngest</code>.  Defaults to <code>youngest</code>.</td>
+        <td align="center" valign="top">No.  Defaults to <code>1<code></td>
+      </tr>
+      <tr>
+        <td valign="top">pathSep</td>
+        <td valign="top">The path separator to separate paths with when using the
+            <code>property</code> attribute in conjunction with the <code>count</code>
+            attribute</td>
+        <td align="center" valign="top">No.  Defaults to <code>,<code></td>
+      </tr>
+      <tr>
+        <td valign="top">pathref</td>
+        <td valign="top">Id of the path to find the most recently modified file in.</td>
+        <td align="center" valign="top">No, if a <code>path</code> subelement is
+                 specified.</td>
+      </tr>
+    </table>
+
+    <h2>Parameters specified as nested elements</h2>
+
+    <a name="path"><h3>path</h3></a>
+
+    <p><a href="http://ant.apache.org/manual/using.html#path">Path</a>
+    is used to select sets of files or directories in which to find the
+    most recently modified file</p>
+
+    <h2>Example</h2>
+
+    <h3>Using a path reference</h3>
+    <pre>
+    <code>
+
+    &lt;path id="mypath"&gt;
+       &lt;fileset dir="${log.dir}"&gt;
+         &lt;include name="update*.log" /&gt;
+       &lt;/fileset&gt;
+    &lt;path&gt;
+    &lt;timestampselector property="most.recent.logs"
+                        pathref="mypath" count="3"
+                        pathsep=";" /&gt;
+
+    &lt;echo message="${most.recent.logs}" /&gt;
+    </code>
+    </pre>
+
+    <h3>Using a nested <code>path</code> element</h3>
+    <pre>
+    <code>
+
+    &lt;timestampselector property="most.recent.logs"
+                        count="3"
+                        pathsep=";" &gt;
+      &lt;path&gt;
+         &lt;fileset dir="${log.dir}"&gt;
+           &lt;include name="update*.log" /&gt;
+         &lt;/fileset&gt;
+      &lt;path&gt;
+    &lt;/timestampselector&gt;
+
+    &lt;echo message="${most.recent.logs}" /&gt;
+    </code>
+    </pre>
+
+    <h3>Outputing to a <code>path</code> element</h3>
+    <pre>
+    <code>
+
+    &lt;timestampselector outputsetref="most.recent.logs"
+                        pathref="mypath" count="3"&gt;
+      &lt;path&gt;
+         &lt;fileset dir="${log.dir}"&gt;
+           &lt;include name="update*.log" /&gt;
+         &lt;/fileset&gt;
+      &lt;path&gt;
+    &lt;/timestampselector&gt;
+
+    &lt;copy todir="somedir"&gt;
+      &lt;path refid="most.recent.logs" /&gt;
+    &lt;/copy&gt;
+    </code>
+    </pre>
+
+    <hr>
+    <p align="center">Copyright &copy; 2002-2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+
+  </body>
+</html>

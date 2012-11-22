@@ -30,6 +30,7 @@ defaultOptions = {
 		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		decimalPoint: '.',
+		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 		resetZoom: 'Reset zoom',
 		resetZoomTitle: 'Reset zoom level 1:1',
 		thousandsSep: ','
@@ -37,7 +38,7 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png' // docs
+		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -136,6 +137,7 @@ defaultOptions = {
 				//fillColor: null,
 				states: { // states for a single point
 					hover: {
+						enabled: true
 						//radius: base + 2
 					},
 					select: {
@@ -150,10 +152,11 @@ defaultOptions = {
 			},
 			dataLabels: merge(defaultLabelOptions, {
 				enabled: false,
-				y: -6,
 				formatter: function () {
 					return this.y;
-				}
+				},
+				verticalAlign: 'bottom', // above singular point
+				y: 0
 				// backgroundColor: undefined,
 				// borderColor: undefined,
 				// borderRadius: undefined,
@@ -287,7 +290,7 @@ defaultOptions = {
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
 		shared: useCanVG,
-		snap: hasTouch ? 25 : 10,
+		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			fontSize: '12px',

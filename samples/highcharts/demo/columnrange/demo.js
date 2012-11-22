@@ -36,8 +36,7 @@ $(function () {
 	        		enabled: true,
 	        		formatter: function () {
 	        			return this.y + '°C';
-	        		},
-	        		y: 0
+	        		}
 	        	}
 	        }
 	    },

@@ -14,14 +14,21 @@ extend(Highcharts, {
 	Tooltip: Tooltip,
 	Renderer: Renderer,
 	Series: Series,
+	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
+	VMLElement: VMLElement,
 	VMLRenderer: VMLRenderer,
 	
 	// Various
+	arrayMin: arrayMin,
+	arrayMax: arrayMax,
+	charts: charts, // docs
 	dateFormat: dateFormat,
+	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
+	isTouchDevice: isTouchDevice,
 	numberFormat: numberFormat,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,

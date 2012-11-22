@@ -118,14 +118,13 @@
 	                for (var j = 0; j < columns[i].length; j++) {
 	                    data[j] = columns[i][j] !== undefined ?
 	                        parseInt(columns[i][j]) :
-	                        null
+	                        null;
 	                }
 	                series[i] = {
 	                    name: name,
 	                    data: data
 	                };
 	            }
-	            
 	            options.complete({
 	                xAxis: {
 	                    categories: categories

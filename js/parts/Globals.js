@@ -17,10 +17,12 @@ var UNDEFINED,
 
 	// some variables
 	userAgent = navigator.userAgent,
-	isIE = /msie/i.test(userAgent) && !win.opera,
+	isOpera = win.opera,
+	isIE = /msie/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
+	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
@@ -36,6 +38,7 @@ var UNDEFINED,
 	pathAnim,
 	timeUnits,
 	noop = function () {},
+	charts = [],
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -54,12 +57,13 @@ var UNDEFINED,
 	 * IE7: 0.002
 	 * IE8: 0.002
 	 * IE9: 0.00000000001 (unlimited)
+	 * IE10: 0.0001 (exporting only)
 	 * FF: 0.00000000001 (unlimited)
 	 * Chrome: 0.000001
 	 * Safari: 0.000001
 	 * Opera: 0.00000000001 (unlimited)
 	 */
-	TRACKER_FILL = 'rgba(192,192,192,' + (hasSVG ? 0.000001 : 0.002) + ')', // invisible but clickable
+	TRACKER_FILL = 'rgba(192,192,192,' + (hasSVG ? 0.0001 : 0.002) + ')', // invisible but clickable
 	//TRACKER_FILL = 'rgba(192,192,192,0.5)',
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',

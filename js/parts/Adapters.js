@@ -26,7 +26,7 @@
 		
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-			each(['cur', '_default', 'width', 'height'], function (fn, i) {
+			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
 				var obj = Step,
 					base,
 					elem;
@@ -94,15 +94,39 @@
 				Step.d = dSetter;
 			}
 			
+			/**
+			 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+			 * @param {Array} arr
+			 * @param {Function} fn
+			 */
+			this.each = Array.prototype.forEach ?
+				function (arr, fn) { // modern browsers
+					return Array.prototype.forEach.call(arr, fn);
+					
+				} : 
+				function (arr, fn) { // legacy
+					var i = 0, 
+						len = arr.length;
+					for (; i < len; i++) {
+						if (fn.call(arr[i], arr[i], i, arr) === false) {
+							return i;
+						}
+					}
+				};
 			
-			// Register Highcharts as a jQuery plugin // docs
-			// TODO: MooTools and prototype as well?
-			// TODO: StockChart
-			/*$.fn.highcharts = function(options, callback) {
-		        options.chart = merge(options.chart, { renderTo: this[0] });
-		        this.chart = new Chart(options, callback);
-		        return this;
-		    };*/
+
+		},
+
+		/**
+		 * Register Highcharts as a plugin in the respective framework
+		 */
+		plugin: function (constr) {
+			var lcConstr = constr.toLowerCase();
+			$.fn[lcConstr] = function (options, callback) {
+				options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
+				this[lcConstr] = new Highcharts[constr](options, callback);
+				return this;
+			};
 		},
 	
 		/**
@@ -113,27 +137,17 @@
 		getScript: $.getScript,
 		
 		/**
+		 * Return the index of an item in an array, or -1 if not found
+		 */
+		inArray: $.inArray,
+		
+		/**
 		 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
 		 * @param {Object} elem The HTML element
 		 * @param {String} method Which method to run on the wrapped element
 		 */
 		adapterRun: function (elem, method) {
 			return $(elem)[method]();
-		},
-	
-		/**
-		 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
-		 * @param {Array} arr
-		 * @param {Function} fn
-		 */
-		each: function (arr, fn) {
-			var i = 0,
-				len = arr.length;
-			for (; i < len; i++) {
-				if (fn.call(arr[i], arr[i], i, arr) === false) {
-					return i;
-				}
-			}
 		},
 	
 		/**
@@ -236,7 +250,8 @@
 			// Wrap preventDefault and stopPropagation in try/catch blocks in
 			// order to prevent JS errors when cancelling events on non-DOM
 			// objects. #615.
-			each(['preventDefault', 'stopPropagation'], function (fn) {
+			/*jslint unparam: true*/
+			$.each(['preventDefault', 'stopPropagation'], function (i, fn) {
 				var base = event[fn];
 				event[fn] = function () {
 					try {
@@ -248,6 +263,7 @@
 					}
 				};
 			});
+			/*jslint unparam: false*/
 	
 			// trigger it
 			$(el).trigger(event);
@@ -267,7 +283,15 @@
 		 * Extension method needed for MooTools
 		 */
 		washMouseEvent: function (e) {
-			return e;
+			var ret = e.originalEvent || e;
+			
+			// computed by jQuery, needed by IE8
+			if (ret.pageX === UNDEFINED) { // #1236
+				ret.pageX = e.pageX;
+				ret.pageY = e.pageY;
+			}
+			
+			return ret;
 		},
 	
 		/**
@@ -284,6 +308,9 @@
 			}
 	
 			$el.stop();
+			if (params.opacity !== UNDEFINED) { 
+				params.opacity += 'px'; // force jQuery to use same logic as width and height
+			}
 			$el.animate(params, options);
 	
 		},
@@ -299,13 +326,20 @@
 
 // check for a custom HighchartsAdapter defined prior to this file
 var globalAdapter = win.HighchartsAdapter,
-	adapter = globalAdapter || {},
+	adapter = globalAdapter || {};
+	
+// Initialize the adapter
+if (globalAdapter) {
+	globalAdapter.init.call(globalAdapter, pathAnim);
+}
+
 
 	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 	// and all the utility functions will be null. In that case they are populated by the
 	// default adapters below.
-	adapterRun = adapter.adapterRun,
+var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
+	inArray = adapter.inArray,
 	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
@@ -318,14 +352,5 @@ var globalAdapter = win.HighchartsAdapter,
 	animate = adapter.animate,
 	stop = adapter.stop;
 
-/*
- * Define the adapter for frameworks. If an external adapter is not defined,
- * Highcharts reverts to the built-in jQuery adapter.
- */
-if (globalAdapter && globalAdapter.init) {
-	// Initialize the adapter with the pathAnim object that takes care
-	// of path animations.
-	globalAdapter.init(pathAnim);
-}
 
 

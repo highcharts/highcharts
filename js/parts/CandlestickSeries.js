@@ -4,10 +4,6 @@
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
-	dataGrouping: {
-		approximation: 'ohlc',
-		enabled: true
-	},
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {
@@ -67,7 +63,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				plotClose = mathRound(point.plotClose) + crispCorr;
 				topBox = math.min(plotOpen, plotClose);
 				bottomBox = math.max(plotOpen, plotClose);
-				halfWidth = mathRound(point.barW / 2);
+				halfWidth = mathRound(point.shapeArgs.width / 2);
 
 				// create the path
 				path = [

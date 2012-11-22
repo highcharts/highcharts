@@ -19,7 +19,6 @@ function makeJSON ($q, $startdate, $enddate, $props) {
 	
 	foreach ($csv as $line) {
 		list ($date, $open, $high, $low, $close, $volume) = explode(',', $line);
-		
 		$date = strtotime("$date UTC");
 		$thisMonth = date('M Y', $date);
 		
@@ -40,6 +39,18 @@ function makeJSON ($q, $startdate, $enddate, $props) {
 			if ($open < $low || $open == '') {
 				$open = $low;
 			}
+			if ($open < 0.01) {
+				$open = 'null';
+			}
+			if ($high < 0.01) {
+				$high = 'null';
+			}
+			if ($low < 0.01) {
+				$low = 'null';
+			}
+			if ($close < 0.01) {
+				$close = 'null';
+			}
 			
 			// push it
 			if ($props == 'c') {
@@ -58,13 +69,14 @@ function makeJSON ($q, $startdate, $enddate, $props) {
 	}
 	
 	$s = "/* $q historical OHLC data from the Google Finance API */\n[\n". join(",\n", $arr) . "\n]";
-	//$s = "/* AAPL historical OHLC data from the Google Finance API */\n[\n". join(";\n", $arr) . "\n]";
+	// $s = "/* AAPL historical OHLC data from the Google Finance API */\n[\n". join(";\n", $arr) . "\n]";
 	
 	
 	
 	// write the files
 	$q = strtolower($q);
 	file_put_contents("$q-$props.json", $s);
+	//echo $s;
 }
 //makeJSON('AAPL', $startdate, $enddate, 'ohlc');
 

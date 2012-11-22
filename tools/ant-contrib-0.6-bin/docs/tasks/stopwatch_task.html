@@ -1,0 +1,115 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Stopwatch</title>
+<meta content="DocBook XSL Stylesheets V1.60.1" name="generator">
+<link rel="home" href="index.html" title="Antelope Users Guide">
+<link rel="up" href="bk03.html" title="Additional Ant Tasks">
+<link rel="previous" href="bk03ch08.html" title="Chapter&nbsp;8.&nbsp;Variable Task">
+<link rel="next" href="bk03ch10.html" title="Chapter&nbsp;10.&nbsp;Limit">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title">
+<a name="stopwatch">
+</a>
+Stopwatch</h2>
+</div>
+</div>
+<div>
+</div>
+</div>
+<p>
+
+The Stopwatch task makes it easy to add performance timing to Ant targets. Stopwatches are named so that multiple watches can run simultaneously.
+</p>
+
+<p>
+
+<div class="table">
+<a name="N1092E">
+</a>
+<p class="title">
+<b>
+Table&nbsp;9.1.&nbsp;Stopwatch Task Attributes</b>
+</p>
+<table summary="Stopwatch Task Attributes" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>
+Attribute</th>
+<th>
+Description</th>
+<th>
+Default</th>
+<th>
+Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+name</td>
+<td>
+The name for the stopwatch. The elapsed time or total time will be stored as an Ant property with this name.</td>
+<td>
+None</td>
+<td>
+Yes</td>
+</tr>
+<tr>
+<td>
+action</td>
+<td>
+Valid values are "start", "stop", "elapsed", and "total".</td>
+<td>
+"start"</td>
+<td>
+No</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</p>
+<p>
+
+The stopwatch is started with the "start" action. When the action is "elapsed" or "total", the running time of the stopwatch is printed out. Both "stop" and "total" stop the stopwatch and reset it to zero. "elapsed" prints out the current running time of the stopwatch without stopping it.
+</p>
+<p>
+
+Example:
+<table border="0" bgcolor="#E0E0E0">
+<tr>
+<td>
+<pre class="programlisting">
+
+
+&lt;stopwatch name="timer1"/&gt;
+&lt;!-- do some tasks here... --&gt;
+&lt;stopwatch name="timer1" action="elapsed"/&gt; &lt;!-- print the elapsed time --&gt;
+&lt;!-- do some more tasks here... --&gt;
+&lt;stopwatch name="timer1" action="total"/&gt; &lt;!-- print out the total time --&gt;
+
+</pre>
+</td>
+</tr>
+</table>
+
+</p>
+</div>
+    <hr>
+    <p align="center">Copyright &copy; 2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+</body>
+</html>

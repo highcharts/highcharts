@@ -7,6 +7,15 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 $i = (int)$_GET['i'];
 $next = $i + 1;
 
+// Get HTML and use dev server
+ob_start();
+include("$path/demo.html");
+$html = ob_get_clean();
+$html = str_replace('/code.highcharts.com/high', '/code.highcharts.com/dev/high', $html);
+$html = str_replace('/code.highcharts.com/stock/', '/code.highcharts.com/dev/', $html);
+$html = str_replace('/code.highcharts.com/modules/', '/code.highcharts.com/dev/modules/', $html);
+	
+
 
 function getResources() {
 	global $path;
@@ -44,13 +53,15 @@ function getResources() {
 	}
 	return $html;
 }
+
+
 ?><!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highstock Example</title>
-		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script -->
+		<script src="/lib/jquery-1.7.2.js"></script>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
 		<?php @include("$path/demo.js"); ?>
@@ -75,12 +86,12 @@ function getResources() {
 							$(contentDoc.currentLi).addClass('visited');
 						}
 						
-						$(li).addClass('hilighted');
 						$(contentDoc.body).animate({
 							scrollTop: $(li).offset().top - 70
 						},'slow');
 
 						contentDoc.currentLi = li;
+						$(li).addClass('hilighted');
 					}
 					
 					// add the next button
@@ -127,13 +138,13 @@ function getResources() {
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
 					href="../compare-svg/view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
-					href="http://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/jquery/1.8.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>
 			</div>
 		</div>
 		<div style="margin: 1em">
 		
-		<?php @include("$path/demo.html"); ?>
+		<?php echo $html ?>
 		</div>
 		
 	</body>

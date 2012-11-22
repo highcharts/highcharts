@@ -53,15 +53,6 @@ Legend.prototype = {
 		// move checkboxes
 		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
 
-/*		// expose
-		return {
-			colorizeItem: colorizeItem,
-			destroyItem: destroyItem,
-			render: render,
-			destroy: destroy,
-			getLegendWidth: getLegendWidth,
-			getLegendHeight: getLegendHeight
-		};*/
 	},
 
 	/**
@@ -77,19 +68,37 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? item.color : hiddenColor;
+			symbolColor = visible ? item.color : hiddenColor,
+			markerOptions = item.options && item.options.marker,
+			symbolAttr = {
+				stroke: symbolColor,
+				fill: symbolColor
+			},
+			key,
+			val;
 
+		
 		if (legendItem) {
 			legendItem.css({ fill: textColor });
 		}
 		if (legendLine) {
 			legendLine.attr({ stroke: symbolColor });
 		}
+		
 		if (legendSymbol) {
-			legendSymbol.attr({
-				stroke: symbolColor,
-				fill: symbolColor
-			});
+			
+			// Apply marker options
+			if (markerOptions) {
+				markerOptions = item.convertAttribs(markerOptions);
+				for (key in markerOptions) {
+					val = markerOptions[key];
+					if (val !== UNDEFINED) {
+						symbolAttr[key] = val;
+					}
+				}
+			}
+
+			legendSymbol.attr(symbolAttr);
 		}
 	},
 
@@ -159,19 +168,27 @@ Legend.prototype = {
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
-	positionCheckboxes: function () {
-		var legend = this;
+	positionCheckboxes: function (scrollOffset) {
+		var alignAttr = this.group.alignAttr,
+			translateY,
+			clipHeight = this.clipHeight || this.legendHeight;
 
-		each(legend.allItems, function (item) {
-			var checkbox = item.checkbox,
-				alignAttr = legend.group.alignAttr;
-			if (checkbox) {
-				css(checkbox, {
-					left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
-					top: (alignAttr.translateY + checkbox.y + 3) + PX
-				});
-			}
-		});
+		if (alignAttr) {
+			translateY = alignAttr.translateY;
+			each(this.allItems, function (item) {
+				var checkbox = item.checkbox,
+					top;
+				
+				if (checkbox) {
+					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+					css(checkbox, {
+						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
+						top: top + PX,
+						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
+					});
+				}
+			});
+		}
 	},
 
 	/**
@@ -200,7 +217,8 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series || item,
 			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox;
+			showCheckbox = itemOptions.showCheckbox,
+			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
 
@@ -215,10 +233,10 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormatter.call(item),
+					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item), // docs,
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
-					options.useHTML
+					useHTML
 				)
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
@@ -227,8 +245,8 @@ Legend.prototype = {
 				})
 				.add(item.legendGroup);
 
-			// Set the events on the item group
-			item.legendGroup.on('mouseover', function () {
+			// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+			(useHTML ? li : item.legendGroup).on('mouseover', function () {
 					item.setState(HOVER_STATE);
 					li.css(legend.options.itemHoverStyle);
 				})
@@ -387,7 +405,7 @@ Legend.prototype = {
 
 		// sort by legendIndex
 		stableSort(allItems, function (a, b) {
-			return (a.options.legendIndex || 0) - (b.options.legendIndex || 0);
+			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
 		// reversed legend
@@ -488,7 +506,7 @@ Legend.prototype = {
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
 			spaceHeight = chart.spacingBox.height + (alignTop ? -optionsY : optionsY) - this.padding,
-			maxHeight = options.maxHeight, // docs
+			maxHeight = options.maxHeight,
 			clipHeight,
 			clipRect = this.clipRect,
 			navOptions = options.navigation,
@@ -565,7 +583,8 @@ Legend.prototype = {
 			activeColor = navOptions.activeColor,
 			inactiveColor = navOptions.inactiveColor,
 			pager = this.pager,
-			padding = this.padding;
+			padding = this.padding,
+			scrollOffset;
 		
 		// When resizing while looking at the last page
 		if (currentPage > pageCount) {
@@ -600,8 +619,9 @@ Legend.prototype = {
 					cursor: currentPage === pageCount ? 'default' : 'pointer'
 				});
 			
+			scrollOffset = -mathMin(clipHeight * (currentPage - 1), this.fullHeight - clipHeight + padding) + 1;
 			this.scrollGroup.animate({
-				translateY: -mathMin(clipHeight * (currentPage - 1), this.fullHeight - clipHeight + padding) + 1
+				translateY: scrollOffset
 			});
 			pager.attr({
 				text: currentPage + '/' + pageCount
@@ -609,6 +629,7 @@ Legend.prototype = {
 			
 			
 			this.currentPage = currentPage;
+			this.positionCheckboxes(scrollOffset);
 		}
 			
 	}

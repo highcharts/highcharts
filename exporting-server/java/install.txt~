@@ -1,0 +1,10 @@
+1. First, download Maven (http://maven.apache.org/download.html) and follow the installation instructions (http://maven.apache.org/download.html#Installation). 
+
+2. After that, type the following in a terminal or in a command prompt: mvn clean package
+
+3. Now you have a highcharts-export.war file which you can upload/copy to your application server.
+
+4. Change you url configuration in the exporting option, that it is pointing to your new installed exporting-server.
+	exporting:{
+				url:'http://new.server.com/highcharts-export'
+	}

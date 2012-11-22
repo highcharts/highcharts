@@ -25,7 +25,7 @@ $(function () {
                     backgroundColor: 'rgba(252, 255, 197, 0.7)',
                     borderWidth: 1,
                     borderColor: '#AAA',
-                    y: -12
+                    y: -6
                 }
             }
         },
@@ -38,7 +38,6 @@ $(function () {
                     borderWidth: 2,
                     padding: 5,
                     shadow: true,
-                    y: -20,
                     style: {
                         fontWeight: 'bold'
                     }

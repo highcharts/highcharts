@@ -7,7 +7,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
-	//grouping: true, // docs
+	//grouping: true,
 	marker: null, // point options are specified in the base options
 	pointPadding: 0.1,
 	//pointWidth: null,
@@ -26,8 +26,9 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		}
 	},
 	dataLabels: {
-		y: null,
-		verticalAlign: null
+		align: null, // auto
+		verticalAlign: null, // auto
+		y: null
 	},
 	threshold: 0
 });
@@ -38,12 +39,17 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	tooltipOutsidePlot: true,
+	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	
+	/**
+	 * Initialize the series
+	 */
 	init: function () {
 		Series.prototype.init.apply(this, arguments);
 
@@ -72,6 +78,7 @@ var ColumnSeries = extendClass(Series, {
 			borderWidth = options.borderWidth,
 			columnCount = 0,
 			xAxis = series.xAxis,
+			yAxis = series.yAxis,
 			reversedXAxis = xAxis.reversed,
 			stackGroups = {},
 			stackKey,
@@ -84,18 +91,18 @@ var ColumnSeries = extendClass(Series, {
 		// chart.orderStacks() function and call it on init, addSeries and removeSeries
 		if (options.grouping === false) {
 			columnCount = 1;
-		
 		} else {
 			each(chart.series, function (otherSeries) {
+				var otherOptions = otherSeries.options;
 				if (otherSeries.type === series.type && otherSeries.visible &&
-						series.options.group === otherSeries.options.group) { // used in Stock charts navigator series
-					if (otherSeries.options.stacking) {
+						series.options.group === otherOptions.group) { // used in Stock charts navigator series
+					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
 						if (stackGroups[stackKey] === UNDEFINED) {
 							stackGroups[stackKey] = columnCount++;
 						}
 						columnIndex = stackGroups[stackKey];
-					} else {
+					} else if (otherOptions.grouping !== false) { // #1162
 						columnIndex = columnCount++;
 					}
 					otherSeries.columnIndex = columnIndex;
@@ -116,23 +123,24 @@ var ColumnSeries = extendClass(Series, {
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
-			colIndex = (reversedXAxis ? columnCount -
-				series.columnIndex : series.columnIndex) || 0,
+			colIndex = (reversedXAxis ? 
+				columnCount - (series.columnIndex || 0) : // #1251
+				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1),
 			threshold = options.threshold,
-			translatedThreshold = series.yAxis.getThreshold(threshold),
+			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5);
 
 		// record the new values
 		each(points, function (point) {
-			var plotY = point.plotY,
+			var plotY = mathMin(mathMax(-999, point.plotY), yAxis.len + 999), // Don't draw too far outside plot area (#1303)
 				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
-				stack = series.yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
 				shapeArgs;
 
 			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
@@ -151,13 +159,8 @@ var ColumnSeries = extendClass(Series, {
 				}
 			}
 
-			extend(point, {
-				barX: barX,
-				barY: barY,
-				barW: barW,
-				barH: barH,
-				pointWidth: pointWidth
-			});
+			point.barX = barX;
+			point.pointWidth = pointWidth;
 
 			// create shape type and shape args that are reused in drawPoints and drawTracker
 			point.shapeType = 'rect';
@@ -199,15 +202,14 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			options = series.options,
 			renderer = series.chart.renderer,
-			graphic,
 			shapeArgs;
 
 
 		// draw the columns
 		each(series.points, function (point) {
-			var plotY = point.plotY;
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			var plotY = point.plotY,
 				graphic = point.graphic;
+			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 				if (graphic) { // update
 					stop(graphic);
@@ -220,12 +222,14 @@ var ColumnSeries = extendClass(Series, {
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
+			} else if (graphic) {
+				point.graphic = graphic.destroy(); // #1269
 			}
 		});
 	},
 	/**
 	 * Draw the individual tracker elements.
-	 * This method is inherited by scatter and pie charts too.
+	 * This method is inherited by pie charts too.
 	 */
 	drawTracker: function () {
 		var series = this,
@@ -237,12 +241,31 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
-			trackerGroup = series.drawTrackerGroup(),
+			trackerGroup = series.isCartesian && series.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			rel,
 			plotY,
-			validPlotY;
+			validPlotY,
+			points = series.points,
+			point,
+			i = points.length,
+			onMouseOver = function (event) {
+				rel = event.relatedTarget || event.fromElement;
+				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
+					series.onMouseOver();
+				}
+				points[event.target._i].onMouseOver(event);
+			},
+			onMouseOut = function (event) {
+				if (!options.stickyTracking) {
+					rel = event.relatedTarget || event.toElement;
+					if (attr(rel, 'isTracker') !== trackerLabel) {
+						series.onMouseOut();
+					}
+				}
+			};
 			
-		each(series.points, function (point) {
+		while (i--) {
+			point = points[i];
 			tracker = point.tracker;
 			shapeArgs = point.trackerArgs || point.shapeArgs;
 			plotY = point.plotY;
@@ -253,34 +276,74 @@ var ColumnSeries = extendClass(Series, {
 					tracker.attr(shapeArgs);
 
 				} else {
-					point.tracker =
+					point.tracker = tracker =
 						renderer[point.shapeType](shapeArgs)
 						.attr({
 							isTracker: trackerLabel,
 							fill: TRACKER_FILL,
 							visibility: series.visible ? VISIBLE : HIDDEN
 						})
-						.on(hasTouch ? 'touchstart' : 'mouseover', function (event) {
-							rel = event.relatedTarget || event.fromElement;
-							if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
-								series.onMouseOver();
-							}
-							point.onMouseOver();
-
-						})
-						.on('mouseout', function (event) {
-							if (!options.stickyTracking) {
-								rel = event.relatedTarget || event.toElement;
-								if (attr(rel, 'isTracker') !== trackerLabel) {
-									series.onMouseOut();
-								}
-							}
-						})
+						.on('mouseover', onMouseOver)
+						.on('mouseout', onMouseOut)
 						.css(css)
 						.add(point.group || trackerGroup); // pies have point group - see issue #118
+						
+					if (hasTouch) {
+						tracker.on('touchstart', onMouseOver);
+					}
+				}
+				tracker.element._i = i;
+			}
+		}
+	},
+	
+	/** 
+	 * Override the basic data label alignment by adjusting for the position of the column
+	 */
+	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
+		var chart = this.chart,
+			inverted = chart.inverted,
+			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
+			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
+			inside = (this.options.stacking || options.inside); // draw it inside the box?
+		
+		// Align to the column itself, or the top of it
+		if (dlBox) { // Area range uses this method but not alignTo
+			alignTo = merge(dlBox);
+			if (inverted) {
+				alignTo = {
+					x: chart.plotWidth - alignTo.y - alignTo.height,
+					y: chart.plotHeight - alignTo.x - alignTo.width,
+					width: alignTo.height,
+					height: alignTo.width
+				};
+			}
+				
+			// Compute the alignment box
+			if (!inside) {
+				if (inverted) {
+					alignTo.x += below ? 0 : alignTo.width;
+					alignTo.width = 0;
+				} else {
+					alignTo.y += below ? alignTo.height : 0;
+					alignTo.height = 0;
 				}
 			}
-		});
+		}
+		
+		// When alignment is undefined (typically columns and bars), display the individual 
+		// point below or above the point depending on the threshold
+		options.align = pick(
+			options.align, 
+			!inverted || inside ? 'center' : below ? 'right' : 'left'
+		);
+		options.verticalAlign = pick(
+			options.verticalAlign, 
+			inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+		);
+		
+		// Call the parent method
+		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
 	},
 
 
@@ -331,6 +394,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 	},
+	
 	/**
 	 * Remove this series from the chart
 	 */

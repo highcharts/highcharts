@@ -8,9 +8,7 @@ $(function () {
         
         xAxis: {
             type: 'datetime',
-            tickInterval: 24 * 3600 * 1000,
-            minPadding: 0.1,
-            maxPadding: 0.1
+            tickInterval: 24 * 3600 * 1000
         },
         
         yAxis: [{

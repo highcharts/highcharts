@@ -1,0 +1,133 @@
+<html lang="en-us">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>Compile With Walls Task</title>
+</head>
+
+<body>
+
+<h2><a name="javac">Compile With Walls Task</a></h2>
+<p>Creator: Dean Hiller (<a href="mailto:dean@xsoftware.biz">dean@xsoftware.biz</a>)</p>
+<h3>Description</h3>
+<p>Puts up walls in a the same source tree to ensure that designs are not violated</p>
+<p>This task helps someone separate out packages and prevent dependencies from occurring on accident.  For example, if there are three packages in one source tree
+<ul>
+<li>biz.xsoftware.mod</li>
+<li>biz.xsoftware.modA</li>
+<li>biz.xsoftware.modB</li>
+</ul>
+and modB and modA should be able to compiled independently, you can put a wall up in between the two so that if anyone adds a dependency between modA and modB, the build will break.  This is particularly good if the builds are automated.</p>
+
+<p>This task is for low level design.  For architectural walls like client and server, I would suggest using multiple source trees and compiling those source trees independently as two different ant compile targets.</p>
+
+One pattern I personally like to follow can be seen on the vmaster project on sourceforge.  Instructions to check it out and look at are <a href="https://sourceforge.net/cvs/?group_id=46703">HERE.</a>  The interesting files in vmaster to look at our here....
+<ul>
+<li>vmaster/vmasterdiff/conf/build.xml(ant file using compilewithwalls)</li>
+<li>vmaster/vmasterdiff/conf/dependencies.xml(The compilewithwalls task references this file as the walls)</li>
+</ul>
+Looking at some of the 2nd file(dependencies.xml), one can see apis separated out for many non-GUI and GUI components in these packages
+<ul>
+<li>api.biz.xsoftware.difflib.file.*</li>
+<li>api.biz.xsoftware.difflib.dir.*</li>
+<li> more api.* packages</li>
+<li>org.vmasterdiff.gui.dirdiff.impl.*</li>
+</ul>
+Looking closely at the api.* packages, each one has a Factory.  This factory uses reflection to create the implementation components.  Basically, the api should not know of the implementation so there are walls around the api.  Reflection to instantiate the implementation gets around these walls.  My bigger components that use the smaller one's use these factories.  In my design you are guaranteed these components are replaceable.  Feel free to checkout vmaster and look at the factories also.
+<p>
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">walls</td>
+    <td valign="top">Specifies the external dependency file to use(see example below)</td>
+    <td align="center" valign="top">Either this or a nested walls element is required</td>
+  </tr>
+  <tr>
+    <td valign="top">intermediaryBuildDir</td>
+    <td valign="top">Specifies scratch area for the compilewithwalls task to do the building and ensure dependencies are not violated</td>
+    <td align="center" valign="top">required</td>
+  </tr>
+</table>
+
+<h3>Parameters specified as nested elements</h3>
+<p>This task can contain one nested javac task and one nested walls task.  See the <a href="PUT JAVAC REF HERE">javac task</a> for it's attributes and nested elements.
+
+</p>
+<h3>Walls element</h3>
+<p>
+The nested walls element or the walls attribute must be specified.  Only one may be used.  The walls element contains nested package elements.  These nested package elements have the following attributes.  If any package depends on another, it must be listed after the package it depends on in the walls element.
+</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">A smaller nickname for the package to reference in depends</td>
+    <td align="center" valign="top">Required</td>
+  </tr>
+  <tr>
+    <td valign="top">package</td>
+    <td valign="top">The package to compile such as biz.xsoftware.* to
+		include the immediate package only or
+		biz.xsoftware.** to include biz.xsoftware and all subpackages.</td>
+    <td align="center" valign="top">Required</td>
+  </tr>
+  <tr>
+    <td valign="top">depends</td>
+    <td valign="top">If a package need one of the previously specified packages to compile, it's name would be added here in a comma separated list.  For example depends="modA,modB"</td>
+    <td align="center" valign="top">Optional</td>
+  </tr>
+</table>
+
+<h3>Examples</h3>
+
+In the examples, I will show the javac as a null element, because it's use is documented in the <a href="PUT JAVAC REF HERE">javac task</a> documentation.
+
+<h4>Walls Nested Element....</h4>
+<pre>
+  &lt;compilewithwalls&gt;
+     &lt;walls&gt;
+        &lt;package name=&quot;modA&quot; package=&quot;biz.xsoftware.mod.modA&quot;/&gt;
+        &lt;package name=&quot;modB&quot; package=&quot;biz.xsoftware.mod.modB&quot;/&gt;
+        &lt;package name=&quot;mod&quot; package=&quot;biz.xsoftware.mod.modA&quot; depends=&quot;modA,modB&quot;/&gt;
+     &lt;/walls&gt;
+     <a href="PUT JAVAC TASK LINK HERE">&lt;javac&gt;&lt;/javac&gt;</a>
+  &lt;/compilewithwalls&gt;</pre>
+<p>
+Notice that the package named mod had to come after the packages it depended on.  Now if anybody puts code in modA that uses classes in modB, the build will break telling them they are violating a design constraint.  I personally have had many a devoloper accidentally put dependencies in that we agreed in the design should not be there.  This includes myself.  This prevents this from happening as long as someone doesn't change the ant build file....If someone does though, at least you can view the package dependencies and now what they are.
+</p>
+
+<h4>Walls attribute......</h4>
+<pre>
+These next lines would be in build.xml.....
+  &lt;compilewithwalls walls="dependencies.xml"&gt;
+     <a href="PUT JAVAC TASK LINK HERE">&lt;javac&gt;&lt;/javac&gt;</a>
+  &lt;/compilewithwalls&gt;</pre>
+
+<pre>
+These lines would be in dependencies.xml.....
+  &lt;walls&gt;
+     &lt;package name=&quot;modA&quot; package=&quot;biz.xsoftware.mod.modA&quot;/&gt;
+     &lt;package name=&quot;modB&quot; package=&quot;biz.xsoftware.mod.modB&quot;/&gt;
+     &lt;package name=&quot;mod&quot; package=&quot;biz.xsoftware.mod.modA&quot; depends=&quot;modA,modB&quot;/&gt;
+  &lt;/walls&gt;</pre>
+
+
+
+
+<hr>
+    <p align="center">Copyright &copy; 2002-2003 Ant-Contrib Project. All
+    rights Reserved.</p>
+
+</body>
+</html>
+

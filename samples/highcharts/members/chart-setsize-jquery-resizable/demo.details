@@ -5,4 +5,5 @@
  resources:
    - http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js
    - http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css
+ requiresManualTesting: true
 ...

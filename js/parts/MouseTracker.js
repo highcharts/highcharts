@@ -19,7 +19,7 @@ function MouseTracker(chart, options) {
 	this.pinchDown = [];
 
 	// The interval id
-	//this.tooltipInterval = UNDEFINED;
+	//this.tooltipTimeout = UNDEFINED;
 
 	// The cached x hover position
 	//this.hoverX = UNDEFINED;
@@ -53,16 +53,9 @@ MouseTracker.prototype = {
 			e.target = e.srcElement;
 		}
 
-		// jQuery only copies over some properties. IE needs e.x and iOS needs touches.
-		if (e.originalEvent) {
-			e = e.originalEvent;
-		}
-
-		// The same for MooTools. It renames e.pageX to e.page.x. #445.
-		if (e.event) {
-			e = e.event;
-		}
-
+		// Framework specific normalizing (#1165)
+		e = washMouseEvent(e);
+		
 		// iOS
 		ePos = e.touches ? e.touches.item(0) : e;
 
@@ -81,7 +74,6 @@ MouseTracker.prototype = {
 		return extend(e, {
 			chartX: mathRound(chartX),
 			chartY: mathRound(chartY)
-		
 		});
 	},
 
@@ -104,9 +96,9 @@ MouseTracker.prototype = {
 			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
 				value: axis.translate(
-					isHorizontal ?
+					(isHorizontal ?
 						e.chartX - chart.plotLeft :
-						axis.top + axis.len - e.chartY, // #1051
+						axis.top + axis.len - e.chartY) - axis.minPixelPadding, // #1051
 					true
 				)
 			});
@@ -140,7 +132,8 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			index = mouseTracker.getIndex(e);
+			index = mouseTracker.getIndex(e),
+			anchor;
 
 		// shared tooltip
 		if (tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
@@ -182,9 +175,13 @@ MouseTracker.prototype = {
 			if (point && point !== hoverPoint) {
 
 				// trigger the events
-				point.onMouseOver();
+				point.onMouseOver(e);
 
 			}
+			
+		} else if (tooltip && tooltip.followPointer && !tooltip.isHidden) {
+			anchor = tooltip.getAnchor([{}], e);
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
 	},
 
@@ -192,14 +189,16 @@ MouseTracker.prototype = {
 
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
+	 * 
+	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
 	resetTracker: function (allowMove) {
 		var mouseTracker = this,
 			chart = mouseTracker.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltipPoints = chart.hoverPoints || hoverPoint,
-			tooltip = chart.tooltip;
+			tooltip = chart.tooltip,
+			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
 			
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
@@ -322,9 +321,10 @@ MouseTracker.prototype = {
 									1
 								),
 								selectionMax = axis.translate(
-									isHorizontal ?
-										selectionLeft + selectionBox.width :
-										chart.plotHeight - selectionTop,
+									(isHorizontal ?
+											selectionLeft + selectionBox.width :
+											chart.plotHeight - selectionTop) -  
+										2 * axis.minPixelPadding, // #875
 									true,
 									0,
 									0,
@@ -355,7 +355,10 @@ MouseTracker.prototype = {
 				chart.mouseIsDown = hasDragged = false;
 			}
 
-			removeEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			removeEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				removeEvent(doc, 'touchend', drop);
+			}
 		}
 
 		/**
@@ -364,7 +367,7 @@ MouseTracker.prototype = {
 		mouseTracker.hideTooltipOnMouseMove = function (e) {
 
 			// Get e.pageX and e.pageY back in MooTools
-			washMouseEvent(e);
+			e = washMouseEvent(e);
 
 			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition && chart.hoverSeries && chart.hoverSeries.isCartesian &&
@@ -390,7 +393,7 @@ MouseTracker.prototype = {
 			e = mouseTracker.normalizeMouseEvent(e);
 
 			// issue #295, dragging not always working in Firefox
-			if (!hasTouch && e.preventDefault) {
+			if (e.type.indexOf('touch') === -1 && e.preventDefault) {
 				e.preventDefault();
 			}
 
@@ -400,11 +403,15 @@ MouseTracker.prototype = {
 			chart.mouseDownX = mouseTracker.mouseDownX = e.chartX;
 			mouseTracker.mouseDownY = e.chartY;
 
-			addEvent(doc, hasTouch ? 'touchend' : 'mouseup', drop);
+			addEvent(doc, 'mouseup', drop);
+			if (hasTouch) {
+				addEvent(doc, 'touchend', drop);
+			}
 		};
 
 		// The mousemove, touchmove and touchstart event handler
 		var mouseMove = function (e) {
+			
 			// let the system handle multitouch operations like two finger scroll
 			// and pinching
 			if (e && e.touches) {
@@ -417,16 +424,19 @@ MouseTracker.prototype = {
 
 			// normalize
 			e = mouseTracker.normalizeMouseEvent(e);
-			if (!hasTouch) { // not for touch devices
+
+			var type = e.type,
+				chartX = e.chartX,
+				chartY = e.chartY,
+				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
+				
+			
+			if (type.indexOf('touch') === -1) {  // not for touch actions
 				e.returnValue = false;
 			}
 
-			var chartX = e.chartX,
-				chartY = e.chartY,
-				isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
-
 			// on touch devices, only trigger click if a handler is defined
-			if (hasTouch && e.type === 'touchstart') {
+			if (type === 'touchstart') {
 				if (attr(e.target, 'isTracker')) {
 					if (!chart.runTrackerClick) {
 						e.preventDefault();
@@ -459,7 +469,7 @@ MouseTracker.prototype = {
 				}
 			}
 
-			if (chart.mouseIsDown && e.type !== 'touchstart') { // make selection
+			if (chart.mouseIsDown && type !== 'touchstart') { // make selection
 
 				// determine if the mouse has moved more than 10px
 				hasDragged = Math.sqrt(
@@ -510,8 +520,10 @@ MouseTracker.prototype = {
 					}
 				}
 
-			} else if (!isOutsidePlot) {
-				// show the tooltip
+			} 
+			
+			// Show the tooltip and run mouse over events (#977)			
+			if (!isOutsidePlot) {
 				mouseTracker.onmousemove(e);
 			}
 
@@ -627,7 +639,7 @@ MouseTracker.prototype = {
 		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 
 		// memory and CPU leak
-		clearInterval(this.tooltipInterval);
+		clearInterval(this.tooltipTimeout);
 	},
 
 	// Run MouseTracker
@@ -640,9 +652,6 @@ MouseTracker.prototype = {
 
 		if (options.enabled) {
 			chart.tooltip = new Tooltip(chart, options);
-
-			// set the fixed interval ticking for the smooth tooltip
-			this.tooltipInterval = setInterval(function () { chart.tooltip.tick(); }, 32);
 		}
 
 		this.setDOMEvents();

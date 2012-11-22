@@ -24,9 +24,8 @@ $seriesCountOptions = array(1, 2, 4, 8, 16, 32);
 $pointCountOptions = array(2, 4, 8, 16, 32, 64, 128, 500, 1000, 2000, 4000);
 $chartWidthOptions = array(1000, 500, 250);
 $libSourceOptions = array(
-	'1.2.5/highcharts.js',
-	'2.0.5/highcharts.js',
-	'/highcharts.src.js'
+	'2.2.5/highcharts.js',
+	'dev/highcharts.js'
 );
 
 
@@ -49,15 +48,8 @@ function randomData() {
 		
 		
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-		<script type="text/javascript" src="../js/<?php echo $libSource ?>"></script>
-		
-		<?php if ($libSource != 'prerelease/highcharts.1.3.src.js') : ?>
-		<!--[if IE]>
-			<script type="text/javascript" src="../js/excanvas.compiled.js"></script>
-		<![endif]-->
-		<?php endif; ?>
-		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="http://code.highcharts.com/<?php echo $libSource ?>"></script>
 		
 		<script type="text/javascript">
 			var countLoaded = 0;

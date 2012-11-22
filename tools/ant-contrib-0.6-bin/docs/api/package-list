@@ -1,0 +1,15 @@
+net.sf.antcontrib.antclipse
+net.sf.antcontrib.antserver
+net.sf.antcontrib.antserver.client
+net.sf.antcontrib.antserver.commands
+net.sf.antcontrib.antserver.server
+net.sf.antcontrib.inifile
+net.sf.antcontrib.input
+net.sf.antcontrib.logic
+net.sf.antcontrib.logic.condition
+net.sf.antcontrib.net
+net.sf.antcontrib.perf
+net.sf.antcontrib.platform
+net.sf.antcontrib.process
+net.sf.antcontrib.property
+net.sf.antcontrib.walls

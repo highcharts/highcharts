@@ -28,14 +28,6 @@ $(function () {
 		        valueSuffix: '°C'
 		    },
 		    
-		    plotOptions: {
-		        arearange: {
-		            marker: {
-		                enabled: true
-		            }
-		        }
-		    },
-		    
 		    legend: {
 		        enabled: false
 		    },

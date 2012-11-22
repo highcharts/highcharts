@@ -2,13 +2,6 @@ $(function () {
     var chart;
     $(document).ready(function() {
     	
-    	// This will be default in the stable release
-    	Highcharts.setOptions({
-    		global: {
-    			VMLRadialGradientURL: 'http://code.highcharts.com/gfx/radial-gradient.png'
-    		}
-    	});
-    	
     	// Radialize the colors
 		Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
 		    return {
@@ -32,9 +25,8 @@ $(function () {
                 text: 'Browser market shares at a specific website, 2010'
             },
             tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
-                }
+        	    pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+            	percentageDecimals: 1
             },
             plotOptions: {
                 pie: {

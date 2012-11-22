@@ -10,24 +10,24 @@
  * See www.highcharts.com/studies/world-map.htm for use case.
  *
  * To do:
- * - Implement legend with specified value ranges
  * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
- * 
+ * - Zoom and pan GUI
  */
  (function(Highcharts) {
 	var UNDEFINED,
+		Axis = Highcharts.Axis,
 		each = Highcharts.each,
 		extend = Highcharts.extend,
 		merge = Highcharts.merge,
 		numberFormat = Highcharts.numberFormat,
 		plotOptions = Highcharts.getOptions().plotOptions,
+		Color = Highcharts.Color,
 		noop = function() {};
 	
 	/**
 	 * Utility for reading SVG paths directly.
 	 * 
-	 * @todo Automatically detect strings in SVGElement.attr and use this. Split it into
-	 * array only on demand, a) when transforming VML and b) before animation
+	 * @todo This is moved to the Data plugin. Make sure it is deleted here.
 	 */
 	Highcharts.pathToArray = function (path) {
 		// Move letters apart
@@ -45,7 +45,69 @@
 		}
 		return path;
 	};
+	
+	/**
+	 * Extend the Axis object with methods specific to maps
+	 */
+	Highcharts.wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+		
+		if (chart.options.chart.type === 'map') {
+			extend(this, {
 				
+				/**
+				 * Override to use the extreme coordinates from the SVG shape, not the
+				 * data values
+				 */
+				getSeriesExtremes: function () {
+					var isXAxis = this.isXAxis,
+						dataMin = Number.MAX_VALUE,
+						dataMax = Number.MIN_VALUE;
+					each(this.series, function (series) {
+						dataMin = Math.min(dataMin, series[isXAxis ? 'minX' : 'minY']);
+						dataMax = Math.max(dataMax, series[isXAxis ? 'maxX' : 'maxY']);
+					});
+					this.dataMin = dataMin;
+					this.dataMax = dataMax;
+				},
+				
+				/**
+				 * Override axis translation to make sure the aspect ratio is always kept
+				 */
+				setAxisTranslation: function () {
+					var chart = this.chart,
+						mapRatio,
+						plotRatio = chart.plotWidth / chart.plotHeight,
+						isXAxis = this.isXAxis,
+						adjustedAxisLength,
+						xAxis = chart.xAxis[0],
+						padAxis;
+					
+					// Run the parent method
+					Axis.prototype.setAxisTranslation.call(this);
+					
+					// On Y axis, handle both
+					if (!isXAxis && xAxis.transA !== UNDEFINED) {
+						
+						// Use the same translation for both axes
+						this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
+						
+						mapRatio = (xAxis.max - xAxis.min) / (this.max - this.min);
+						
+						// What axis to pad to put the map in the middle
+						padAxis = mapRatio > plotRatio ? this : xAxis;
+						
+						// Pad it
+						adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
+						padAxis.minPixelPadding = (padAxis.len - adjustedAxisLength) / 2;
+					}
+					
+				}
+			});
+		}	
+		
+		return proceed.call(this, chart, userOptions);
+	});
+	
 	/**
 	 * Extend the default options with map options
 	 */
@@ -55,51 +117,31 @@
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
 			shadow: false,
-			borderColor: 'silver'
+			borderColor: 'silver',
+			borderWidth: 1,
+			marker: null,
+			stickyTracking: false,
+			tooltip: {
+				followPointer: true,
+				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
+				pointFormat: '{series.name}: {point.y}<br/>'
+			}
 		}
 	);
-	
-	/**
-	 * Extend the point object (or area in the choropleth map) to pick the 
-	 * color from value ranges
-	 */
-	var MapPoint = Highcharts.extendClass(Highcharts.Point, {
-		/**
-		 * Override the init method
-		 */
-		init: function () {
-
-			var point = Highcharts.Point.prototype.init.apply(this, arguments),
-				valueRanges = point.series.options.valueRanges,
-				range,
-				from,
-				to,
-				i;
-			
-			if (valueRanges) {
-				i = valueRanges.length;
-				while(i--) {
-					range = valueRanges[i];
-					from = range.from;
-					to = range.to;
-					if ((from === UNDEFINED || point.y >= from) && (to === UNDEFINED || point.y <= to)) {
-						point.color = point.options.color = range.color;
-						break;
-					}
-						
-				}
-			}
-			return point;
-		}
-	});
 	
 	/**
 	 * Add the series type
 	 */
 	Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 		type: 'map',
-		pointClass: MapPoint,
-		pointAttrToOptions: Highcharts.seriesTypes.column.prototype.pointAttrToOptions,
+		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+			stroke: 'borderColor',
+			'stroke-width': 'borderWidth',
+			fill: 'color'
+		},
+		trackerGroupKey: 'group',
+		getSymbol: noop,
+		getExtremesFromAll: true,
 		init: function(chart) {
 			var series = this,
 				valueDecimals = chart.options.legend.valueDecimals,
@@ -134,9 +176,10 @@
 					
 					// Add a mock object to the legend items
 					legendItems.push(Highcharts.extend({
+						chart: series.chart,
 						name: name,
 						options: {},
-						drawLegendSymbol: function () {}, //Highcharts.seriesTypes.column.prototype.drawLegendSymbol,
+						drawLegendSymbol: Highcharts.seriesTypes.area.prototype.drawLegendSymbol,
 						visible: true,
 						setState: function() {},
 						setVisible: function() {}
@@ -146,17 +189,24 @@
 			}
 		},
 		
+		/**
+		 * Get the bounding box of all paths in the map combined.
+		 */
 		getBox: function() {
-			var series = this,
-				//chart = series.chart,
+			var chart = this.chart,
 				maxX = -Math.pow(2, 31), 
 				minX =  Math.pow(2, 31) - 1, 
 				maxY = -Math.pow(2, 31), 
-				minY =  Math.pow(2, 31) - 1
+				minY =  Math.pow(2, 31) - 1,
+				xyRatio,
+				ratioCorrection,
+				plotWidth = chart.plotWidth, 
+				plotHeight = chart.plotHeight,
+				pad;
 			
 			
 			// Find the bounding box
-			each(series.options.data, function(point) {
+			each(this.options.data, function(point) {
 				var path = point.path,
 					i = path.length,
 					even = false; // while loop reads from the end
@@ -174,30 +224,11 @@
 					}
 				}
 			});
+			this.minY = minY;
+			this.maxY = maxY;
+			this.minX = minX;
+			this.maxX = maxX;
 			
-			// fit into the least of plot width or plot height
-			/*factor = Math.min(
-				chart.plotWidth / (maxX - minX),
-				chart.plotHeight / (maxY - minY)
-			);*/
-			extend(series.xAxis.options, {
-				min: minX,
-				max: maxX
-			});
-			extend(series.yAxis.options, {
-				min: minY,
-				max: maxY
-			});
-			//series.xData = [minX, maxX];
-			//series.yData = [minY, maxY];
-			
-			
-			/*console.log('set xData', series.xData)
-			series.mapTranslation = {
-				minX: minX,
-				minY: minY,
-				factor: factor 
-			}*/
 		},
 		
 		
@@ -206,28 +237,25 @@
 		 * Translate the path so that it automatically fits into the plot area box
 		 * @param {Object} path
 		 */
-		translatePath: function(path) {
+		translatePath: function (path) {
 			
 			var series = this,
 				chart = series.chart,
 				even = false, // while loop reads from the end
-				//mapTranslation = series.mapTranslation,
-				//minX = mapTranslation.minX,
-				//minY = mapTranslation.minY,
 				xAxis = series.xAxis,
 				yAxis = series.yAxis;
-				//factor = mapTranslation.factor;
-			
+				
+			// Preserve the original
+			path = [].concat(path);
+				
 			// Do the translation
 			i = path.length;
 			while(i--) {
 				if (typeof path[i] === 'number') {
 					if (even) { // even = x
-						//path[i] = Math.round(chart.plotLeft + ((path[i] - minX) * factor));
 						path[i] = Math.round(xAxis.translate(path[i]));
 					} else { // odd = Y
-						//path[i] = Math.round(chart.plotTop + ((path[i] - minY) * factor));
-						path[i] = Math.round(yAxis.translate(path[i]));
+						path[i] = Math.round(yAxis.len - yAxis.translate(path[i]));
 					}
 					even = !even;
 				}
@@ -235,7 +263,7 @@
 			return path;
 		},
 		
-		setData: function() {
+		setData: function () {
 			Highcharts.Series.prototype.setData.apply(this, arguments);
 			this.getBox();
 		},
@@ -246,7 +274,8 @@
 		translate: function () {
 			var series = this,
 				options = series.options,
-				maxValue = 0,
+				dataMin = Number.MAX_VALUE,
+				dataMax = Number.MIN_VALUE,
 				opacity,
 				minOpacity = options.minOpacity,
 				path,
@@ -257,29 +286,66 @@
 			each(series.data, function (point) {
 				
 				point.shapeType = 'path';
-				point.shapeArgs = series.translatePath(point.path);
+				point.shapeArgs = {
+					d: series.translatePath(point.path)
+				};
 				
-				if (point.y > maxValue) {
-					maxValue = point.y;
+				// TODO: do point colors in drawPoints instead of point.init
+				if (typeof point.y === 'number') {
+					if (point.y > dataMax) {
+						dataMax = point.y;
+					} else if (point.y < dataMin) {
+						dataMin = point.y;
+					}
 				}
-				
 			});
 			
+			series.translateColors(dataMin, dataMax);
 		},
 		
-		
-		
 		/**
-		 * Disable data labels. To enable them, try using the column prototype and extend it
-		 * with a label position similar to the tooltipPos in this plugin.
+		 * In choropleth maps, the color is a result of the value, so this needs translation tood
 		 */
-		/*
-		drawDataLabels: function() {
-			var series = this;
+		translateColors: function (dataMin, dataMax) {
 			
-			Highcharts.seriesTypes.line.prototype.drawDataLabels.apply(series);
-		}, 
-		*/
+			var seriesOptions = this.options,
+				valueRanges = seriesOptions.valueRanges,
+				colorRange = seriesOptions.colorRange;
+			
+			each(this.data, function (point) {
+				var y = point.y,
+					rgba = [],
+					range,
+					from,
+					to,
+					i,
+					pos;
+				if (valueRanges) {
+					i = valueRanges.length;
+					while (i--) {
+						range = valueRanges[i];
+						from = range.from;
+						to = range.to;
+						if ((from === UNDEFINED || y >= from) && (to === UNDEFINED || y <= to)) {
+							point.options.color = range.color;
+							break;
+						}
+							
+					}
+				} else if (colorRange && y !== undefined) {
+					from = Color(colorRange.from);
+					to = Color(colorRange.to);
+					pos = (dataMax - y) / (dataMax - dataMin);
+					i = 4;
+					while (i--) {
+						rgba[i] = Math.round(
+							to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
+						);
+					}
+					point.options.color = 'rgba(' + rgba.join(',') + ')';
+				}
+			});
+		},
 		
 		drawGraph: noop,
 		
@@ -306,6 +372,7 @@
 			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			
 			each(series.data, function (point) {
+				
 				bBox = point.graphic.getBBox();
 				// for tooltip
 				point.tooltipPos = [
@@ -313,14 +380,15 @@
 					bBox.y + bBox.height / 2
 				];
 				// for data labels
-				point.plotX = point.tooltipPos[0] - chart.plotLeft;
-				point.plotY = point.tooltipPos[1] - chart.plotTop; 
+				point.plotX = point.tooltipPos[0];
+				point.plotY = point.tooltipPos[1]; 
 				
-				// Reset escapted null points
+				// Reset escaped null points
 				if (point.isNull) {
 					point.y = null;
 				}
 			});
+			
 		}
 	});
 	
@@ -352,7 +420,7 @@
 				type: 'map'
 			},
 			xAxis: hiddenAxis,
-			yAxis: hiddenAxis	
+			yAxis: merge(hiddenAxis, { reversed: true })	
 		},
 		options, // user's options
 	

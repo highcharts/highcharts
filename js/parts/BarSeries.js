@@ -1,14 +1,7 @@
 /**
  * Set the default options for bar
  */
-defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
-	dataLabels: {
-		align: 'left',
-		x: 5,
-		y: null,
-		verticalAlign: 'middle'
-	}
-});
+defaultPlotOptions.bar = merge(defaultPlotOptions.column);
 /**
  * The Bar series class
  */

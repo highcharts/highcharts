@@ -49,7 +49,12 @@ $(function () {
             }, {
                 type: 'spline',
                 name: 'Average',
-                data: [3, 2.67, 3, 6.33, 3.33]
+                data: [3, 2.67, 3, 6.33, 3.33],
+                marker: {
+                	lineWidth: 2,
+                	lineColor: Highcharts.getOptions().colors[3],
+                	fillColor: 'white'
+                }
             }, {
                 type: 'pie',
                 name: 'Total consumption',

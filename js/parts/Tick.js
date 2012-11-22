@@ -84,7 +84,7 @@ Tick.prototype = {
 						.attr(attr)
 						// without position absolute, IE export sometimes is wrong
 						.css(css)
-						.add(axis.axisGroup) :
+						.add(axis.labelGroup) :
 					null;
 
 		// update
@@ -103,7 +103,7 @@ Tick.prototype = {
 		var label = this.label,
 			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox(true)))[axis.horiz ? 'height' : 'width'] :
+			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -277,7 +277,7 @@ Tick.prototype = {
 			step = labelOptions.step,
 			attribs,
 			show = true,
-			tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0,
+			tickmarkOffset = axis.tickmarkOffset,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
@@ -315,7 +315,7 @@ Tick.prototype = {
 		}
 
 		// create the tick mark
-		if (tickWidth) {
+		if (tickWidth && tickLength) {
 
 			// negate the length
 			if (tickPosition === 'inside') {
@@ -364,10 +364,9 @@ Tick.prototype = {
 			// Set the new position, and show or hide
 			if (show) {
 				label[tick.isNew ? 'attr' : 'animate'](xy);
-				label.show();
 				tick.isNew = false;
 			} else {
-				label.hide();
+				label.attr('y', -9999); // #1338
 			}
 		}
 	},

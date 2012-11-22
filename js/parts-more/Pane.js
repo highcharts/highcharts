@@ -14,7 +14,6 @@ extend(Pane.prototype, {
 	 * Initiate the Pane object
 	 */
 	init: function (options, chart, firstAxis) {
-		
 		var pane = this,
 			backgroundOption,
 			defaultOptions = pane.defaultOptions;
@@ -32,8 +31,8 @@ extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
-				backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
+			each([].concat(splat(backgroundOption)).reverse(), function (config) {
+				var backgroundColor = config.backgroundColor; // if defined, replace the old one (specific for gradients)
 				config = merge(pane.defaultBackgroundOptions, config);
 				if (backgroundColor) {
 					config.backgroundColor = backgroundColor;
@@ -42,7 +41,6 @@ extend(Pane.prototype, {
 				firstAxis.options.plotBands.unshift(config);
 			});
 		}
-		
 	},
 	
 	/**

@@ -12,13 +12,13 @@
 /**
  * @constructor
  */
-var VMLRenderer;
+var VMLRenderer, VMLElement;
 if (!hasSVG && !useCanVG) {
 
 /**
  * The VML element wrapper.
  */
-var VMLElement = {
+VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -75,11 +75,6 @@ var VMLElement = {
 			renderer.invertChild(element, parentNode);
 		}
 
-		// issue #140 workaround - related to #61 and #74
-		if (docMode8 && parentNode.gVis === HIDDEN) {
-			css(element, { visibility: HIDDEN });
-		}
-
 		// append it
 		parentNode.appendChild(element);
 
@@ -93,26 +88,6 @@ var VMLElement = {
 		fireEvent(wrapper, 'add');
 
 		return wrapper;
-	},
-
-	/**
-	 * In IE8 documentMode 8, we need to recursively set the visibility down in the DOM
-	 * tree for nested groups. Related to #61, #586.
-	 */
-	toggleChildren: function (element, visibility) {
-		var childNodes = element.childNodes,
-			i = childNodes.length;
-			
-		while (i--) {
-			
-			// apply the visibility
-			css(childNodes[i], { visibility: visibility });
-			
-			// we have a nested group, apply it to its children again
-			if (childNodes[i].nodeName === 'DIV') {
-				this.toggleChildren(childNodes[i], visibility);
-			}
-		}
 	},
 
 	/**
@@ -163,7 +138,7 @@ var VMLElement = {
 				skipAttr = false;
 
 				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key](value, key);
+				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
 
 				if (result !== false && value !== null) { // #620
 
@@ -218,49 +193,56 @@ var VMLElement = {
 						}
 						skipAttr = true;
 
-					// directly mapped to css
-					} else if (key === 'zIndex' || key === 'visibility') {
+					// handle visibility
+					} else if (key === 'visibility') {
 
-						// workaround for #61 and #586
-						if (docMode8 && key === 'visibility' && nodeName === 'DIV') {
-							element.gVis = value;
-							wrapper.toggleChildren(element, value);
-							if (value === VISIBLE) { // #74
-								value = null;
+						// let the shadow follow the main element
+						if (shadows) {
+							i = shadows.length;
+							while (i--) {
+								shadows[i].style[key] = value;
 							}
 						}
+						
+						// Instead of toggling the visibility CSS property, move the div out of the viewport. 
+						// This works around #61 and #586							
+						if (nodeName === 'DIV') {
+							value = value === HIDDEN ? '-999em' : 0;
+							key = 'top';
+						}
+						
+						elemStyle[key] = value;	
+						skipAttr = true;
+
+					// directly mapped to css
+					} else if (key === 'zIndex') {
 
 						if (value) {
 							elemStyle[key] = value;
 						}
-
-
-
 						skipAttr = true;
 
-					// width and height
-					} else if (key === 'width' || key === 'height') {
+					// x, y, width, height
+					} else if (inArray(key, ['x', 'y', 'width', 'height']) !== -1) {
 						
-						value = mathMax(0, value); // don't set width or height below zero (#311)
+						wrapper[key] = value; // used in getter
 						
-						this[key] = value; // used in getter
-
+						if (key === 'x' || key === 'y') {
+							key = { x: 'left', y: 'top' }[key];
+						} else {
+							value = mathMax(0, value); // don't set width or height below zero (#311)
+						}
+						
 						// clipping rectangle special
 						if (wrapper.updateClipping) {
-							wrapper[key] = value;
+							wrapper[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
 							wrapper.updateClipping();
 						} else {
 							// normal
 							elemStyle[key] = value;
 						}
 
-						skipAttr = true;
-
-					// x and y
-					} else if (key === 'x' || key === 'y') {
-
-						wrapper[key] = value; // used in getter
-						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
+						skipAttr = true;						
 
 					// class name
 					} else if (key === 'class') {
@@ -297,7 +279,7 @@ var VMLElement = {
 
 						if (nodeName === 'SPAN') { // text color
 							elemStyle.color = value;
-						} else {
+						} else if (nodeName !== 'IMG') { // #1336
 							element.filled = value !== NONE ? true : false;
 
 							value = renderer.color(value, element, key, wrapper);
@@ -326,16 +308,6 @@ var VMLElement = {
 						skipAttr = true;
 					}
 
-					// let the shadow follow the main element
-					if (shadows && key === 'visibility') {
-						i = shadows.length;
-						while (i--) {
-							shadows[i].style[key] = value;
-						}
-					}
-
-
-
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
 							element[key] = value;
@@ -357,21 +329,33 @@ var VMLElement = {
 	 */
 	clip: function (clipRect) {
 		var wrapper = this,
-			clipMembers = clipRect.members,
+			clipMembers,
 			element = wrapper.element,
-			parentNode = element.parentNode;
+			parentNode = element.parentNode,
+			cssRet;
 
-		clipMembers.push(wrapper);
-		wrapper.destroyClip = function () {
-			erase(clipMembers, wrapper);
-		};
-		
-		// Issue #863 workaround - related to #140, #61, #74
-		if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
-			css(element, { visibility: HIDDEN });
+		if (clipRect) {
+			clipMembers = clipRect.members;
+			erase(clipMembers, wrapper); // Ensure unique list of elements (#1258)
+			clipMembers.push(wrapper);
+			wrapper.destroyClip = function () {
+				erase(clipMembers, wrapper);
+			};
+			// Issue #863 workaround - related to #140, #61, #74
+			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
+				css(element, { visibility: HIDDEN });
+			}
+			cssRet = clipRect.getCSS(wrapper);
+			
+		} else {
+			if (wrapper.destroyClip) {
+				wrapper.destroyClip();
+			}
+			cssRet = { clip: docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
 		}
 		
-		return wrapper.css(clipRect.getCSS(wrapper));
+		return wrapper.css(cssRet);
+			
 	},
 
 	/**
@@ -387,8 +371,7 @@ var VMLElement = {
 	safeRemoveChild: function (element) {
 		// discardElement will detach the node from its parent before attaching it
 		// to the garbage bin. Therefore it is important that the node is attached and have parent.
-		var parentNode = element.parentNode;
-		if (parentNode) {
+		if (element.parentNode) {
 			discardElement(element);
 		}
 	},
@@ -397,13 +380,11 @@ var VMLElement = {
 	 * Extend element.destroy by removing it from the clip members array
 	 */
 	destroy: function () {
-		var wrapper = this;
-
-		if (wrapper.destroyClip) {
-			wrapper.destroyClip();
+		if (this.destroyClip) {
+			this.destroyClip();
 		}
 
-		return SVGElement.prototype.destroy.apply(wrapper);
+		return SVGElement.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -454,9 +435,9 @@ var VMLElement = {
 
 	/**
 	 * Apply a drop shadow by copying elements and giving them different strokes
-	 * @param {Boolean} apply
+	 * @param {Boolean|Object} shadowOptions
 	 */
-	shadow: function (apply, group, cutOff) {
+	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
 			i,
 			element = this.element,
@@ -466,7 +447,9 @@ var VMLElement = {
 			markup,
 			path = element.path,
 			strokeWidth,
-			modifiedPath;
+			modifiedPath,
+			shadowWidth,
+			shadowElementOpacity;
 
 		// some times empty paths are not strings
 		if (path && typeof path.value !== 'string') {
@@ -474,24 +457,26 @@ var VMLElement = {
 		}
 		modifiedPath = path;
 
-		if (apply) {
+		if (shadowOptions) {
+			shadowWidth = pick(shadowOptions.width, 3);
+			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			for (i = 1; i <= 3; i++) {
 				
-				strokeWidth = 7 - 2 * i;
+				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				
 				// Cut off shadows for stacked column items
 				if (cutOff) {
 					modifiedPath = this.cutOffPath(path.value, strokeWidth + 0.5);
 				}
 				
-				markup = ['<shape isShadow="true" strokeweight="', (7 - 2 * i),
+				markup = ['<shape isShadow="true" strokeweight="', strokeWidth,
 					'" filled="false" path="', modifiedPath,
 					'" coordsize="10 10" style="', element.style.cssText, '" />'];
 				
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
-						left: pInt(elemStyle.left) + 1,
-						top: pInt(elemStyle.top) + 1
+						left: pInt(elemStyle.left) + pick(shadowOptions.offsetX, 1),
+						top: pInt(elemStyle.top) + pick(shadowOptions.offsetY, 1)
 					}
 				);
 				if (cutOff) {
@@ -499,7 +484,7 @@ var VMLElement = {
 				}
 				
 				// apply the opacity
-				markup = ['<stroke color="black" opacity="', (0.05 * i), '"/>'];
+				markup = ['<stroke color="', shadowOptions.color || 'black', '" opacity="', shadowElementOpacity * i, '"/>'];
 				createElement(renderer.prepVML(markup), null, null, shadow);
 
 
@@ -594,19 +579,23 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	clipRect: function (x, y, width, height) {
 
 		// create a dummy element
-		var clipRect = this.createElement();
-
+		var clipRect = this.createElement(),
+			isObj = isObject(x);
+		
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
-			left: x,
-			top: y,
-			width: width,
-			height: height,
+			left: isObj ? x.x : x,
+			top: isObj ? x.y : y,
+			width: isObj ? x.width : width,
+			height: isObj ? x.height : height,
 			getCSS: function (wrapper) {
-				var inverted = wrapper.inverted,
+				var element = wrapper.element,
+					nodeName = element.nodeName,
+					isShape = nodeName === 'shape',
+					inverted = wrapper.inverted,
 					rect = this,
-					top = rect.top,
+					top = rect.top - (isShape ? element.offsetTop : 0),
 					left = rect.left,
 					right = left + rect.width,
 					bottom = top + rect.height,
@@ -619,7 +608,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					};
 
 				// issue 74 workaround
-				if (!inverted && docMode8 && wrapper.element.nodeName !== 'IMG') {
+				if (!inverted && docMode8 && nodeName === 'DIV') {
 					extend(ret, {
 						width: right + PX,
 						height: bottom + PX
@@ -671,7 +660,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				y1, 
 				x2,
 				y2,
-				angle,
 				opacity1,
 				opacity2,
 				color1,
@@ -872,6 +860,11 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
+		if (isObject(x)) {
+			r = x.r;
+			y = x.y;
+			x = x.x;
+		}
 		return this.symbol('circle').attr({ x: x - r, y: y - r, width: 2 * r, height: 2 * r });
 	},
 
@@ -910,9 +903,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			.attr({ src: src });
 
 		if (arguments.length > 1) {
-			obj.css({
-				left: x,
-				top: y,
+			obj.attr({
+				x: x,
+				y: y,
 				width: width,
 				height: height
 			});

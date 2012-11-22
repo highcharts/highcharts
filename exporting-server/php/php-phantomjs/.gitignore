@@ -1,0 +1,6 @@
+.project
+*sublime*
+*.zip
+/.settings/
+/.codeintel/
+/tmp/*

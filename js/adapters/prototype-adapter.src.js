@@ -100,6 +100,14 @@ return {
 			});
 		}
 	},
+
+	/**
+	 * Register Highcharts as a plugin in Prototype. 
+	 * TODO: implement
+	 */
+	plugin: function () {
+	},
+	
 	
 	/**
 	 * Run a general method on the framework, following jQuery syntax
@@ -199,6 +207,10 @@ return {
 	// um.. each
 	each: function (arr, fn) {
 		$A(arr).each(fn);
+	},
+	
+	inArray: function (item, arr) {
+		return arr.indexOf(item);
 	},
 
 	/**

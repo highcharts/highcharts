@@ -98,9 +98,7 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
-                }
+        	    valueSuffix: '%'
             },
             series: [{
                 name: 'Browsers',

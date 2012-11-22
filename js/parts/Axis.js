@@ -261,6 +261,8 @@ Axis.prototype = {
 		// Tick intervals
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
+		
+		axis.tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
 	
 		// Major ticks
 		axis.ticks = {};
@@ -367,29 +369,47 @@ Axis.prototype = {
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
 			value = this.value,
-			categories = axis.categories,
-			tickInterval = axis.tickInterval,
+			categories = axis.categories, 
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			ret;
+			numericSymbols = defaultOptions.lang.numericSymbols,
+			i = numericSymbols && numericSymbols.length,
+			multi,
+			ret,
+			formatOption = axis.options.labels.format, // docs
+			
+			// make sure the same symbol is added for all labels on a linear axis
+			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
 
-		if (categories) {
+		if (formatOption) {
+			ret = format(formatOption, this);
+		
+		} else if (categories) {
 			ret = value;
 		
 		} else if (dateTimeLabelFormat) { // datetime axis
 			ret = dateFormat(dateTimeLabelFormat, value);
-
-		} else if (tickInterval % 1000000 === 0) { // use M abbreviation
-			ret = (value / 1000000) + 'M';
-
-		} else if (tickInterval % 1000 === 0) { // use k abbreviation
-			ret = (value / 1000) + 'k';
-
-		} else if (value >= 1000) { // add thousands separators
-			ret = numberFormat(value, 0);
-
-		} else { // small numbers
-			ret = numberFormat(value, -1);
+		
+		} else if (i && numericSymbolDetector >= 1000) {
+			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
+			// If we are to enable this in tooltip or other places as well, we can move this
+			// logic to the numberFormatter and enable it by a parameter.
+			while (i-- && ret === UNDEFINED) {
+				multi = Math.pow(1000, i + 1);
+				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
+					ret = numberFormat(value / multi, -1) + numericSymbols[i];
+				}
+			}
 		}
+		
+		if (ret === UNDEFINED) {
+			if (value >= 1000) { // add thousands separators
+				ret = numberFormat(value, 0);
+
+			} else { // small numbers
+				ret = numberFormat(value, -1);
+			}
+		}
+		
 		return ret;
 	},
 	
@@ -428,6 +448,8 @@ Axis.prototype = {
 					threshold = seriesOptions.threshold,
 					yDataLength,
 					activeYData = [],
+					seriesDataMin,
+					seriesDataMax,
 					activeCounter = 0;
 					
 				axis.hasVisibleSeries = true;	
@@ -456,7 +478,6 @@ Axis.prototype = {
 						//pointRange,
 						j,
 						hasModifyValue = !!series.modifyValue;
-
 
 					// Handle stacking
 					stacking = seriesOptions.stacking;
@@ -491,47 +512,45 @@ Axis.prototype = {
 					for (i = 0; i < yDataLength; i++) {
 						x = xData[i];
 						y = yData[i];
-						if (y !== null && y !== UNDEFINED) {
+						
+						// Read stacked values into a stack based on the x value,
+						// the sign of y and the stack key. Stacking is also handled for null values (#739)
+						if (stacking) {
+							isNegative = y < threshold;
+							pointStack = isNegative ? negPointStack : posPointStack;
+							key = isNegative ? negKey : stackKey;
 
-							// read stacked values into a stack based on the x value,
-							// the sign of y and the stack key
-							if (stacking) {
-								isNegative = y < threshold;
-								pointStack = isNegative ? negPointStack : posPointStack;
-								key = isNegative ? negKey : stackKey;
-
-								y = pointStack[x] =
-									defined(pointStack[x]) ?
-									pointStack[x] + y : y;
+							y = pointStack[x] =
+								defined(pointStack[x]) ?
+									correctFloat(pointStack[x] + y) : 
+									y;
 
 
-								// add the series
-								if (!stacks[key]) {
-									stacks[key] = {};
-								}
+							// add the series
+							if (!stacks[key]) {
+								stacks[key] = {};
+							}
 
-								// If the StackItem is there, just update the values,
-								// if not, create one first
-								if (!stacks[key][x]) {
-									stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption);
-								}
-								stacks[key][x].setTotal(y);
-
+							// If the StackItem is there, just update the values,
+							// if not, create one first
+							if (!stacks[key][x]) {
+								stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
+							}
+							stacks[key][x].setTotal(y);
+						}
+						
+						// Handle non null values
+						if (y !== null && y !== UNDEFINED) {							
 
 							// general hook, used for Highstock compare values feature
-							} else if (hasModifyValue) {
+							if (hasModifyValue) {
 								y = series.modifyValue(y);
 							}
 
-							// get the smallest distance between points
-							/*if (i) {
-								distance = mathAbs(xData[i] - xData[i - 1]);
-								pointRange = pointRange === UNDEFINED ? distance : mathMin(distance, pointRange);
-							}*/
-
-							// for points within the visible range, including the first point outside the
+							// For points within the visible range, including the first point outside the
 							// visible range, consider y extremes
-							if (cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
+							if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min && 
+								(xData[i - 1] || x) <= xExtremes.max)) {
 
 								j = y.length;
 								if (j) { // array, like ohlc or range data
@@ -556,8 +575,10 @@ Axis.prototype = {
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If the length of activeYData is 0, continue with null values.
 					if (!axis.usePercentage && activeYData.length) {
-						axis.dataMin = mathMin(pick(axis.dataMin, activeYData[0]), arrayMin(activeYData));
-						axis.dataMax = mathMax(pick(axis.dataMax, activeYData[0]), arrayMax(activeYData));
+						series.dataMin = seriesDataMin = arrayMin(activeYData);
+						series.dataMax = seriesDataMax = arrayMax(activeYData);
+						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
+						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
 
 					// Adjust to threshold
@@ -830,6 +851,7 @@ Axis.prototype = {
 	 */
 	getMinorTickPositions: function () {
 		var axis = this,
+			options = axis.options,
 			tickPositions = axis.tickPositions,
 			minorTickInterval = axis.minorTickInterval;
 
@@ -845,13 +867,20 @@ Axis.prototype = {
 					axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
 				);	
 			}
-		
+		} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
+			minorTickPositions = minorTickPositions.concat(
+				getTimeTicks(
+					normalizeTimeTickInterval(minorTickInterval),
+					axis.min,
+					axis.max,
+					options.startOfWeek
+				)
+			);
 		} else {			
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 				minorTickPositions.push(pos);	
 			}
 		}
-		
 		return minorTickPositions;
 	},
 
@@ -940,30 +969,41 @@ Axis.prototype = {
 			range = axis.max - axis.min,
 			pointRange = 0,
 			closestPointRange,
-			seriesClosestPointRange,
 			minPointOffset = 0,
+			pointRangePadding = 0,
+			linkedParent = axis.linkedParent,
 			transA = axis.transA;
 
 		// adjust translation for padding
 		if (axis.isXAxis) {
-			if (axis.isLinked) {
-				pointRange = axis.linkedParent.pointRange;
+			if (linkedParent) {
+				minPointOffset = linkedParent.minPointOffset;
+				pointRangePadding = linkedParent.pointRangePadding;
+				
 			} else {
 				each(axis.series, function (series) {
-					pointRange = mathMax(pointRange, series.pointRange);
+					var seriesPointRange = series.pointRange,
+						pointPlacement = series.options.pointPlacement,
+						seriesClosestPointRange = series.closestPointRange;
+						
+					pointRange = mathMax(pointRange, seriesPointRange);
 					
 					// minPointOffset is the value padding to the left of the axis in order to make
 					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between', this padding does not apply.
+					// is 'between' or 'on', this padding does not apply.
 					minPointOffset = mathMax(
 						minPointOffset, 
-						series.options.pointPlacement ? // 'on' or 'between' // docs
-							0 :
-							series.pointRange / 2
+						pointPlacement ? 0 : seriesPointRange / 2
+					);
+					
+					// Determine the total padding needed to the length of the axis to make room for the 
+					// pointRange. If the series' pointPlacement is 'on', no padding is added.
+					pointRangePadding = mathMax(
+						pointRangePadding,
+						pointPlacement === 'on' ? 0 : seriesPointRange
 					);
 
 					// Set the closestPointRange
-					seriesClosestPointRange = series.closestPointRange;
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
 							mathMin(closestPointRange, seriesClosestPointRange) :
@@ -972,8 +1012,9 @@ Axis.prototype = {
 				});
 			}
 			
-			// Record minPointOffse
+			// Record minPointOffset and pointRangePadding
 			axis.minPointOffset = minPointOffset;
+			axis.pointRangePadding = pointRangePadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = pointRange;
@@ -986,7 +1027,8 @@ Axis.prototype = {
 
 		// secondary values
 		axis.oldTransA = transA;
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
+		//axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
+		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
 	},
@@ -1010,6 +1052,7 @@ Axis.prototype = {
 			length,
 			linkedParentExtremes,
 			tickIntervalOption = options.tickInterval,
+			minTickIntervalOption = options.minTickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
 			categories = axis.categories;
@@ -1044,20 +1087,14 @@ Axis.prototype = {
 				axis.range = null;  // don't use it when running setExtremes
 			}
 		}
+		
+		// Hook for adjusting this.min and this.max. Used by bubble series.
+		if (axis.beforePadding) {
+			axis.beforePadding();
+		}
 
 		// adjust min and max for the minimum range
 		axis.adjustForMinRange();
-
-		// pad the values to get clear of the chart's edges
-		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
-			length = (axis.max - axis.min) || 1;
-			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
-				axis.min -= length * minPadding;
-			}
-			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
-				axis.max += length * maxPadding;
-			}
-		}
 
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
@@ -1074,6 +1111,18 @@ Axis.prototype = {
 			);
 		}
 
+		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
+		// into account, we do this after computing tick interval (#1337).
+		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+			length = (axis.max - axis.min) || 1;
+			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
+				axis.min -= length * minPadding;
+			}
+			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
+				axis.max += length * maxPadding;
+			}
+		}
+
 		// Now we're finished detecting min and max, crop and group series data. This
 		// is in turn needed in order to find tick positions in ordinal axes. 
 		if (isXAxis && !secondPass) {
@@ -1083,7 +1132,7 @@ Axis.prototype = {
 		}
 
 		// set the translation factor used in translate function
-		axis.setAxisTranslation(secondPass);
+		axis.setAxisTranslation();
 
 		// hook for ordinal axes and radial axes
 		if (axis.beforeSetTickPositions) {
@@ -1094,11 +1143,16 @@ Axis.prototype = {
 		if (axis.postProcessTickInterval) {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
+		
+		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
+		if (!tickIntervalOption && axis.tickInterval < minTickIntervalOption) {
+			axis.tickInterval = minTickIntervalOption;
+		}
 
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog) { // linear
 			magnitude = math.pow(10, mathFloor(math.log(axis.tickInterval) / math.LN10));
-			if (!defined(options.tickInterval)) {
+			if (!tickIntervalOption) {
 				axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, magnitude, options);
 			}
 		}
@@ -1132,17 +1186,18 @@ Axis.prototype = {
 
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
-				roundedMax = tickPositions[tickPositions.length - 1];
+				roundedMax = tickPositions[tickPositions.length - 1],
+				minPointOffset = axis.minPointOffset || 0;
 
 			if (options.startOnTick) {
 				axis.min = roundedMin;
-			} else if (axis.min > roundedMin) {
+			} else if (axis.min - minPointOffset > roundedMin) {
 				tickPositions.shift();
 			}
 
 			if (options.endOnTick) {
 				axis.max = roundedMax;
-			} else if (axis.max < roundedMax) {
+			} else if (axis.max + minPointOffset < roundedMax) {
 				tickPositions.pop();
 			}
 			
@@ -1309,6 +1364,15 @@ Axis.prototype = {
 	},
 	
 	/**
+	 * Overridable method for zooming chart. Pulled out in a separate method to allow overriding
+	 * in stock charts.
+	 */
+	zoom: function (newMin, newMax) {
+		this.setExtremes(newMin, newMax, false, UNDEFINED, { trigger: 'zoom' });
+		return true;
+	},
+	
+	/**
 	 * Update the axis metrics
 	 */
 	setAxisSize: function () {
@@ -1410,11 +1474,14 @@ Axis.prototype = {
 		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
-			axis.axisGroup = renderer.g('axis')
-				.attr({ zIndex: options.zIndex || 7 })
-				.add();
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
+				.add();
+			axis.axisGroup = renderer.g('axis')
+				.attr({ zIndex: options.zIndex || 2 })
+				.add();
+			axis.labelGroup = renderer.g('axis-labels')
+				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.add();
 		}
 
@@ -1509,6 +1576,8 @@ Axis.prototype = {
 			horiz = this.horiz,
 			lineLeft = this.left + (opposite ? this.width : 0) + offset,
 			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
+			
+		this.lineTop = lineTop; // used by flag series
 
 		return chart.renderer.crispLine([
 				M,
@@ -1586,6 +1655,7 @@ Axis.prototype = {
 			alternateBands = axis.alternateBands,
 			stackLabelOptions = options.stackLabels,
 			alternateGridColor = options.alternateGridColor,
+			tickmarkOffset = axis.tickmarkOffset,
 			lineWidth = options.lineWidth,
 			linePath,
 			hasRendered = chart.hasRendered,
@@ -1618,28 +1688,30 @@ Axis.prototype = {
 
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
-			each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
-
-				// Reorganize the indices
-				i = (i === tickPositions.length - 1) ? 0 : i + 1;
-
-				// linked axes need an extra check to find out if
-				if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
-
-					if (!ticks[pos]) {
-						ticks[pos] = new Tick(axis, pos);
+			if (tickPositions.length) { // #1300
+				each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
+	
+					// Reorganize the indices
+					i = (i === tickPositions.length - 1) ? 0 : i + 1;
+	
+					// linked axes need an extra check to find out if
+					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
+	
+						if (!ticks[pos]) {
+							ticks[pos] = new Tick(axis, pos);
+						}
+	
+						// render new ticks in old position
+						if (slideInTicks && ticks[pos].isNew) {
+							ticks[pos].render(i, true);
+						}
+	
+						ticks[pos].isActive = true;
+						ticks[pos].render(i);
 					}
-
-					// render new ticks in old position
-					if (slideInTicks && ticks[pos].isNew) {
-						ticks[pos].render(i, true);
-					}
-
-					ticks[pos].isActive = true;
-					ticks[pos].render(i);
-				}
-
-			});
+	
+				});
+			}
 
 			// alternate grid color
 			if (alternateGridColor) {
@@ -1648,8 +1720,8 @@ Axis.prototype = {
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new PlotLineOrBand(axis);
 						}
-						from = pos;
-						to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] : axis.max;
+						from = pos + tickmarkOffset; // #949
+						to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max;
 						alternateBands[pos].options = {
 							from: isLog ? lin2log(from) : from,
 							to: isLog ? lin2log(to) : to,
@@ -1697,7 +1769,7 @@ Axis.prototype = {
 						'stroke-width': lineWidth,
 						zIndex: 7
 					})
-					.add();
+					.add(axis.axisGroup);
 			} else {
 				axis.axisLine.animate({ d: linePath });
 			}
@@ -1857,7 +1929,7 @@ Axis.prototype = {
 		});
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'axisTitle'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'labelGroup', 'axisTitle'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
