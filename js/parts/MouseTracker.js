@@ -244,7 +244,7 @@ MouseTracker.prototype = {
 		});
 		
 		if (pinchDown[0] && pinchDown[1]) {
-			each (mouseTracker.chart.series, function (series) {
+			each(mouseTracker.chart.series, function (series) {
 				// Create an SVG specific attribute setter for scaleX and scaleY
 				var group = series.group;
 				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
@@ -260,7 +260,7 @@ MouseTracker.prototype = {
 					chartX2 = mathMin(e.touches[0].chartX, e.touches[1].chartX),
 					scaleX = mathAbs(e.touches[0].chartX - e.touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
 				series.group.attr({
-					translateX: (chartX2 - chartX1 + mouseTracker.chart.plotLeft) * scaleX,
+					translateX: chartX2 - (chartX1 - mouseTracker.chart.plotLeft) * scaleX,
 					scaleX: scaleX,
 					scaleY: 1
 				});
@@ -408,7 +408,7 @@ MouseTracker.prototype = {
 			// let the system handle multitouch operations like two finger scroll
 			// and pinching
 			if (e && e.touches) {
-				if (e.touches.length == 2) {
+				if (e.touches.length === 2) {
 					return mouseTracker.pinchHandler(e);
 				} else if (e.touches.length > 2) {
 					return true;

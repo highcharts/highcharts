@@ -8246,6 +8246,8 @@ function MouseTracker(chart, options) {
 
 	// Reference to the chart
 	this.chart = chart;
+	
+	this.pinchDown = [];
 
 	// The interval id
 	//this.tooltipInterval = UNDEFINED;
@@ -8462,6 +8464,50 @@ MouseTracker.prototype = {
 
 		}
 	},
+	
+	// http://jsfiddle.net/highcharts/PZH37/
+	pinchHandler: function (e) {
+		var mouseTracker = this,
+			pinchDown = mouseTracker.pinchDown;
+		
+		map(e.touches, function (e) {
+			return mouseTracker.normalizeMouseEvent(e);
+		});
+		
+		if (pinchDown[0] && pinchDown[1]) {
+			each(mouseTracker.chart.series, function (series) {
+				// Create an SVG specific attribute setter for scaleX and scaleY
+				var group = series.group;
+				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
+					group[key] = value;
+					if (group.scaleX !== UNDEFINED && group.scaleY !== UNDEFINED) {
+						group.element.setAttribute('transform', 'translate(' + group.translateX + ',' + group.translateY + ') scale(' + 
+							group.scaleX + ',' + group.scaleY + ')');
+					}
+					return false;
+				};
+				
+				var chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX),
+					chartX2 = mathMin(e.touches[0].chartX, e.touches[1].chartX),
+					scaleX = mathAbs(e.touches[0].chartX - e.touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
+				series.group.attr({
+					translateX: chartX2 - (chartX1 - mouseTracker.chart.plotLeft) * scaleX,
+					scaleX: scaleX,
+					scaleY: 1
+				});
+			});
+			
+		} 
+			
+		each(e.touches, function (e, i) {
+			
+			
+			if (!pinchDown[i]) {
+				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY, plotLeft: mouseTracker.chart.plotLeft };
+			}
+		});
+		return false;
+	},
 
 	/**
 	 * Set the JS events on the container element
@@ -8592,8 +8638,12 @@ MouseTracker.prototype = {
 		var mouseMove = function (e) {
 			// let the system handle multitouch operations like two finger scroll
 			// and pinching
-			if (e && e.touches && e.touches.length > 1) {
-				return;
+			if (e && e.touches) {
+				if (e.touches.length === 2) {
+					return mouseTracker.pinchHandler(e);
+				} else if (e.touches.length > 2) {
+					return true;
+				}
 			}
 
 			// normalize
