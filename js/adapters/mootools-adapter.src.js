@@ -70,7 +70,8 @@ win.HighchartsAdapter = {
 	},
 
 	/**
-	 * Register Highcharts as a plugin in the respective framework
+	 * Register Highcharts as a plugin in MooTools. 
+	 * TODO: implement
 	 */
 	plugin: function () {
 	},
