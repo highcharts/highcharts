@@ -9528,7 +9528,7 @@ Legend.prototype = {
 		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
-			if (!seriesOptions.showInLegend) {
+			if (!seriesOptions.showInLegend || defined(seriesOptions.linkedTo)) {
 				return;
 			}
 
@@ -11796,7 +11796,8 @@ Series.prototype = {
 	init: function (chart, options) {
 		var series = this,
 			eventType,
-			events;
+			events,
+			linkedTo;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -11853,6 +11854,20 @@ Series.prototype = {
 			series.index = i;
 			series.name = series.name || 'Series ' + (i + 1);
 		});
+
+		// Linked series
+		linkedTo = options.linkedTo; // docs: '_previous' or Series.id
+		series.linkedSeries = [];
+		if (isString(linkedTo)) {
+			if (linkedTo === '_previous') {
+				linkedTo = chart.series[series.index - 1];
+			} else {
+				linkedTo = chart.get(linkedTo);
+			}
+			if (linkedTo) {
+				linkedTo.linkedSeries.push(series);
+			}
+		}
 	},
 	
 	/**
@@ -11995,8 +12010,9 @@ Series.prototype = {
 		var options = this.options,
 			defaultColors = this.chart.options.colors,
 			counters = this.chart.counters;
-		this.color = options.color ||
+		this.color = options.color || defaultPlotOptions[this.type].color ||
 			(!options.colorByPoint && defaultColors[counters.color++]) || 'gray';
+		
 		counters.wrapColor(defaultColors.length);
 	},
 	/**
@@ -12009,7 +12025,6 @@ Series.prototype = {
 			defaultSymbols = chart.options.symbols,
 			counters = chart.counters;
 		series.symbol = seriesMarkerOption.symbol || defaultSymbols[counters.symbol++];
-		
 		// don't substract radius in image symbols (#604)
 		if (/^url/.test(series.symbol)) {
 			seriesMarkerOption.radius = 0;
@@ -13766,6 +13781,11 @@ Series.prototype = {
 				}
 			});
 		}
+
+		// show or hide linked series
+		each(series.linkedSeries, function (otherSeries) {
+			otherSeries.setVisible(vis, false);
+		});
 
 		if (ignoreHiddenSeries) {
 			chart.isDirtyBox = true;

@@ -390,7 +390,7 @@ Legend.prototype = {
 		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
-			if (!seriesOptions.showInLegend) {
+			if (!seriesOptions.showInLegend || defined(seriesOptions.linkedTo)) {
 				return;
 			}
 
