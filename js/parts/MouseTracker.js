@@ -399,13 +399,7 @@ MouseTracker.prototype = {
 			// cancel on mouse outside
 			if (isOutsidePlot) {
 
-				/*if (!lastWasOutsidePlot) {
-					// reset the tracker
-					resetTracker();
-				}*/
-
 				// drop the selection if any and reset mouseIsDown and hasDragged
-				//drop();
 				if (chartX < chart.plotLeft) {
 					chartX = chart.plotLeft;
 				} else if (chartX > chart.plotLeft + chart.plotWidth) {

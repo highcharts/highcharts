@@ -1173,6 +1173,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			right,
 			halfWidth,
 			shapeArgs,
+			doQuartiles = series.doQuartiles !== false, // error bar inherits this series type but doesn't do quartiles
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
 
@@ -1194,8 +1195,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				right = left + width;
 				halfWidth = mathRound(width / 2);
 				//crispX = mathRound(left + halfWidth) + crispCorr;
-				q1Plot = mathFloor(point.q1Plot);// + crispCorr;
-				q3Plot = mathFloor(point.q3Plot);// + crispCorr;
+				q1Plot = mathFloor(doQuartiles ? point.q1Plot : point.lowPlot);// + crispCorr;
+				q3Plot = mathFloor(doQuartiles ? point.q3Plot : point.lowPlot);// + crispCorr;
 				highPlot = mathFloor(point.highPlot);// + crispCorr;
 				lowPlot = mathFloor(point.lowPlot);// + crispCorr;
 				
@@ -1232,25 +1233,27 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				];
 				
 				// The box
-				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathFloor(crispX) + crispCorr;
-				q1Plot = mathFloor(q1Plot) + crispCorr;
-				q3Plot = mathFloor(q3Plot) + crispCorr;
-				left += crispCorr;
-				right += crispCorr;
-				boxPath = [
-					'M',
-					left, q3Plot,
-					'L',
-					left, q1Plot,
-					'L',
-					right, q1Plot,
-					'L',
-					right, q3Plot,
-					'L',
-					left, q3Plot,
-					'z'
-				];
+				if (doQuartiles) {
+					crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+					crispX = mathFloor(crispX) + crispCorr;
+					q1Plot = mathFloor(q1Plot) + crispCorr;
+					q3Plot = mathFloor(q3Plot) + crispCorr;
+					left += crispCorr;
+					right += crispCorr;
+					boxPath = [
+						'M',
+						left, q3Plot,
+						'L',
+						left, q1Plot,
+						'L',
+						right, q1Plot,
+						'L',
+						right, q3Plot,
+						'L',
+						left, q3Plot,
+						'z'
+					];
+				}
 				
 				// The whiskers
 				if (whiskerLength) {
@@ -1295,7 +1298,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					if (whiskerLength) {
 						point.whiskers.animate({ d: whiskersPath });
 					}
-					point.box.animate({ d: boxPath });
+					if (doQuartiles) {
+						point.box.animate({ d: boxPath });
+					}
 					point.medianShape.animate({ d: medianPath });
 					
 				} else { // create new
@@ -1311,11 +1316,11 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 							.attr(whiskersAttr)
 							.add(graphic);
 					}
-					
-					point.box = renderer.path(boxPath)
-						.attr(pointAttr)
-						.add(graphic);
-						
+					if (doQuartiles) {
+						point.box = renderer.path(boxPath)
+							.attr(pointAttr)
+							.add(graphic);
+					}	
 					point.medianShape = renderer.path(medianPath)
 						.attr(medianAttr)
 						.add(graphic);		
@@ -1330,6 +1335,33 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
 /* ****************************************************************************
  * End Box plot series code												*
+ *****************************************************************************/
+/* ****************************************************************************
+ * Start error bar series code                                                *
+ *****************************************************************************/
+
+// 1 - set default options
+defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
+	tooltip: {
+		pointFormat: defaultPlotOptions.arearange.tooltip.pointFormat
+	},
+	showInLegend: false,
+	whiskerWidth: 1
+});
+
+// 2 - Create the series object
+seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
+	type: 'errorbar',
+	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
+	toYData: function (point) { // return a plain array for speedy calculation
+		return [point.low, point.high];
+	},
+	pointValKey: 'high', // defines the top of the tracker
+	doQuartiles: false
+});
+
+/* ****************************************************************************
+ * End error bar series code                                                  *
  *****************************************************************************/
 /* ****************************************************************************
  * Start Bubble series code											          *
