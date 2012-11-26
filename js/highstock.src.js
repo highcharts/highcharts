@@ -8803,7 +8803,10 @@ MouseTracker.prototype = {
 			touches = e.touches,
 			chart1X,
 			chart2X,
+			chart1Y,
+			chart2Y,
 			scaleX,
+			scaleY,
 			zoomHor = mouseTracker.zoomHor,
 			zoomVert = mouseTracker.zoomVert,
 			selectionMarker = mouseTracker.selectionMarker,
@@ -8818,12 +8821,16 @@ MouseTracker.prototype = {
 		if (pinchDown[0] && pinchDown[1]) {
 			chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX);
 			chartX2 = mathMin(touches[0].chartX, touches[1].chartX);
+			chartY1 = mathMin(pinchDown[0].chartY, pinchDown[1].chartY);
+			chartY2 = mathMin(touches[0].chartY, touches[1].chartY);
 			scaleX = mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
+			scaleY = mathAbs(touches[0].chartY - touches[1].chartY) / mathAbs(pinchDown[1].chartY - pinchDown[0].chartY);
 			
 			this.scaleGroups({
 				translateX: chartX2 - (chartX1 - chart.plotLeft) * scaleX,
+				translateY: chartY2 - (chartY1 - chart.plotTop) * scaleY,
 				scaleX: scaleX,
-				scaleY: 1
+				scaleY: scaleY
 			});
 
 			// Set the marker
@@ -8841,12 +8848,17 @@ MouseTracker.prototype = {
 				selectionMarker.width = plotWidth / scaleX;
 				mouseTracker.hasPinched = true;
 			}
+			if (zoomVert) {
+				selectionMarker.y = ((chart.plotTop - chartY2) / scaleY) + chartY1;
+				selectionMarker.height = chart.plotHeight / scaleY;
+				mouseTracker.hasPinched = true;
+			}
 		} 
 			
 		// Register the touch start position
 		each(touches, function (e, i) {
 			if (!pinchDown[i]) {
-				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY, plotLeft: chart.plotLeft };
+				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
 			}
 		});
 		return false;
@@ -9036,13 +9048,7 @@ MouseTracker.prototype = {
 			// cancel on mouse outside
 			if (isOutsidePlot) {
 
-				/*if (!lastWasOutsidePlot) {
-					// reset the tracker
-					resetTracker();
-				}*/
-
 				// drop the selection if any and reset mouseIsDown and hasDragged
-				//drop();
 				if (chartX < chart.plotLeft) {
 					chartX = chart.plotLeft;
 				} else if (chartX > chart.plotLeft + chart.plotWidth) {
