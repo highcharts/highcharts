@@ -8,7 +8,7 @@
 
 /*
  * The Highcharts Data plugin is a utility to ease parsing of input sources like
- * CSV, HTML tables or grid views into basing configuration options for use 
+ * CSV, HTML tables or grid views into basic configuration options for use 
  * directly in the Highcharts constructor.
  *
  * Demo: http://jsfiddle.net/highcharts/SnLFj/
@@ -44,7 +44,7 @@
  * A Google Spreadsheet key. See https://developers.google.com/gdata/samples/spreadsheet_sample
  * for general information on GS.
  *
- * - worksheet : String 
+ * - googleSpreadsheetKey : String 
  * The Google Spreadsheet worksheet. The available id's can be read from 
  * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
  *
@@ -215,42 +215,42 @@
 
 		if (googleSpreadsheetKey) {
 			$.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
-	                  googleSpreadsheetKey +'/'+ (options.googleSpreadsheetWorksheet || 'od6') +
-	                  '/public/values?alt=json-in-script&callback=?',
-	                  function(json) {
-	                
-	            // Prepare the data from the spreadsheat
-	            var data = [],
-	                cells = json.feed.entry,
-	                cell,
-	                cellCount = cells.length,
-	                colCount = 0,
-	                rowCount = 0,
-	                i;
-	        
-	            // First, find the total number of columns and rows that 
-	            // are actually filled with data
-	            for (i = 0; i < cellCount; i++) {
-	                cell = cells[i];
-	                colCount = Math.max(colCount, cell.gs$cell.col);
-	                rowCount = Math.max(rowCount, cell.gs$cell.row);            
-	            }
-	        
-	            // Set up arrays containing the column data
-	            for (i = 0; i < colCount; i++) {
-	                columns[i] = new Array(rowCount);
-	            }
-	            
-	            // Loop over the cells and assign the value to the right
-	            // place in the column arrays
-	            for (i = 0; i < cellCount; i++) {
-	                cell = cells[i];
-	                columns[cell.gs$cell.col - 1][cell.gs$cell.row - 1] = 
-	                    cell.content.$t;
-	            }
-	        	self.dataFound();
-	        });
-	    }
+				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
+					  '/public/values?alt=json-in-script&callback=?',
+					  function (json) {
+					
+				// Prepare the data from the spreadsheat
+				var data = [],
+					cells = json.feed.entry,
+					cell,
+					cellCount = cells.length,
+					colCount = 0,
+					rowCount = 0,
+					i;
+			
+				// First, find the total number of columns and rows that 
+				// are actually filled with data
+				for (i = 0; i < cellCount; i++) {
+					cell = cells[i];
+					colCount = Math.max(colCount, cell.gs$cell.col);
+					rowCount = Math.max(rowCount, cell.gs$cell.row);			
+				}
+			
+				// Set up arrays containing the column data
+				for (i = 0; i < colCount; i++) {
+					columns[i] = new Array(rowCount);
+				}
+				
+				// Loop over the cells and assign the value to the right
+				// place in the column arrays
+				for (i = 0; i < cellCount; i++) {
+					cell = cells[i];
+					columns[cell.gs$cell.col - 1][cell.gs$cell.row - 1] = 
+						cell.content.$t;
+				}
+				self.dataFound();
+			});
+		}
 	},
 	
 	/**
@@ -444,4 +444,22 @@
 	Highcharts.data = function (options) {
 		return new Data(options);
 	};
+
+	// Extend Chart.init so that the Chart constructor accepts a new configuration
+	// option group, data.
+	Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptions, callback) {
+		var chart = this;
+
+		if (userOptions.data) {
+			Highcharts.data(Highcharts.extend(userOptions.data, {
+				complete: function (options) {
+					userOptions = Highcharts.merge(userOptions, options);
+					proceed.call(chart, userOptions, callback);
+				}
+			}));
+		} else {
+			proceed.call(chart, userOptions, callback);
+		}
+	});
+
 }(Highcharts));
