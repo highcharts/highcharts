@@ -210,8 +210,8 @@ SVGElement.prototype = {
 						key = 'stroke-width';
 					}
 
-					// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)
-					if (isWebKit && key === 'stroke-width' && value === 0) {
+					// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461), #1369
+					if (key === 'stroke-width' && value === 0 && (isWebKit || renderer.forExport)) {
 						value = 0.000001;
 					}
 

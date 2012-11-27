@@ -2026,8 +2026,8 @@ SVGElement.prototype = {
 						key = 'stroke-width';
 					}
 
-					// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)
-					if (isWebKit && key === 'stroke-width' && value === 0) {
+					// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461), #1369
+					if (key === 'stroke-width' && value === 0 && (isWebKit || renderer.forExport)) {
 						value = 0.000001;
 					}
 
@@ -9666,7 +9666,7 @@ Legend.prototype = {
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-function Chart(userOptions, callback) {
+function Chart() {
 	this.init.apply(this, arguments);
 }
 
@@ -11078,7 +11078,7 @@ Chart.prototype = {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
+				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
 				doc.attachEvent('onreadystatechange', function () {
 					doc.detachEvent('onreadystatechange', chart.firstRender);

@@ -174,7 +174,8 @@ defaultOptions.exporting = {
 
 // Add the Highcharts.post utility
 Highcharts.post = function (url, data) {
-	var name;
+	var name,
+		form;
 	
 	// create the form
 	form = createElement('form', {
@@ -335,12 +336,11 @@ extend(Chart.prototype, {
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function (options, chartOptions) {
-		var form,
-			chart = this,
-			svg = chart.getSVG(merge(chart.options.exporting.chartOptions, chartOptions)); // docs
+		var exportingOptions = this.options.exporting,
+			svg = this.getSVG(merge(exportingOptions.chartOptions, chartOptions)); // docs
 
 		// merge the options
-		options = merge(chart.options.exporting, options);
+		options = merge(exportingOptions, options);
 		
 		// do the post
 		Highcharts.post(options.url, {
