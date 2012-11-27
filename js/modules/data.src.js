@@ -1,7 +1,8 @@
 /**
- * @license Data plugin for Highcharts v0.1
+ * @license Data plugin for Highcharts
  *
  * (c) 2012 Torstein Hønsi
+ * Last revision 2012-11-27
  *
  * License: www.highcharts.com/license
  */
@@ -112,6 +113,9 @@
 
 	},
 
+	/**
+	 * Proceed when the data is found and loaded
+	 */
 	dataFound: function () {
 		
 		// Interpret the values into right types
@@ -162,6 +166,8 @@
 					});
 				}
 			});
+
+			this.dataFound();
 		}
 	},
 	
@@ -199,6 +205,8 @@
 					});
 				}
 			});
+
+			this.dataFound();
 		}
 	},
 	
@@ -429,14 +437,13 @@
 			columns = this.columns;
 
 		if (googleSpreadsheetKey) {
-			$.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
+			jQuery.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
 				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
 					  '/public/values?alt=json-in-script&callback=?',
 					  function (json) {
 					
 				// Prepare the data from the spreadsheat
-				var data = [],
-					cells = json.feed.entry,
+				var cells = json.feed.entry,
 					cell,
 					cellCount = cells.length,
 					colCount = 0,

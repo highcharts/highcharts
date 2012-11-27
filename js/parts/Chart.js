@@ -7,7 +7,7 @@ globalAdapter.plugin('Chart');
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-function Chart(userOptions, callback) {
+function Chart() {
 	this.init.apply(this, arguments);
 }
 
@@ -1419,7 +1419,7 @@ Chart.prototype = {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
+				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
 				doc.attachEvent('onreadystatechange', function () {
 					doc.detachEvent('onreadystatechange', chart.firstRender);
