@@ -40,6 +40,14 @@
  * In tabular input data, the last row (indexed by 0) to use. Defaults to the last row
  * containing data.
  *
+ * - googleSpreadsheetKey : String 
+ * A Google Spreadsheet key. See https://developers.google.com/gdata/samples/spreadsheet_sample
+ * for general information on GS.
+ *
+ * - worksheet : String 
+ * The Google Spreadsheet worksheet. The available id's can be read from 
+ * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
+ *
  * - itemDilimiter : String
  * Item or cell delimiter for parsing CSV. Defaults to ",".
  *
@@ -95,6 +103,13 @@
 		
 		// Parse a HTML table if options.table is given
 		this.parseTable();
+
+		// Parse a Google Spreadsheet 
+		this.parseGoogleSpreadsheet();
+
+	},
+
+	dataFound: function () {
 		
 		// Interpret the values into right types
 		this.parseTypes();
@@ -143,7 +158,8 @@
 						}
 					});
 				}
-			});
+			}); 
+			this.dataFound();
 		}
 	},
 	
@@ -181,7 +197,60 @@
 					});
 				}
 			});
+
+			this.dataFound(); // continue
 		}
+	},
+
+	/**
+	 * TODO: 
+	 * - switchRowsAndColumns
+	 * - startRow, endRow etc.
+	 */
+	parseGoogleSpreadsheet: function () {
+		var self = this,
+			options = this.options,
+			googleSpreadsheetKey = options.googleSpreadsheetKey,
+			columns = this.columns;
+
+		if (googleSpreadsheetKey) {
+			$.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
+	                  googleSpreadsheetKey +'/'+ (options.googleSpreadsheetWorksheet || 'od6') +
+	                  '/public/values?alt=json-in-script&callback=?',
+	                  function(json) {
+	                
+	            // Prepare the data from the spreadsheat
+	            var data = [],
+	                cells = json.feed.entry,
+	                cell,
+	                cellCount = cells.length,
+	                colCount = 0,
+	                rowCount = 0,
+	                i;
+	        
+	            // First, find the total number of columns and rows that 
+	            // are actually filled with data
+	            for (i = 0; i < cellCount; i++) {
+	                cell = cells[i];
+	                colCount = Math.max(colCount, cell.gs$cell.col);
+	                rowCount = Math.max(rowCount, cell.gs$cell.row);            
+	            }
+	        
+	            // Set up arrays containing the column data
+	            for (i = 0; i < colCount; i++) {
+	                columns[i] = new Array(rowCount);
+	            }
+	            
+	            // Loop over the cells and assign the value to the right
+	            // place in the column arrays
+	            for (i = 0; i < cellCount; i++) {
+	                cell = cells[i];
+	                columns[cell.gs$cell.col - 1][cell.gs$cell.row - 1] = 
+	                    cell.content.$t;
+	            }
+	        	self.dataFound();
+	        });
+	    }
 	},
 	
 	/**
@@ -203,7 +272,8 @@
 	 * Trim a string from whitespace
 	 */
 	trim: function (str) {
-		return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, '');
+		//return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, ''); // fails with spreadsheet
+		return typeof str === 'string' ? str.replace(/^\s+|\s+$/g, '') : str;
 	},
 	
 	/**
@@ -250,7 +320,7 @@
 				}
 				
 			}
-		}		
+		}
 	},
 	
 	/**
