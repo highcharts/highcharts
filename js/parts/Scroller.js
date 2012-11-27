@@ -325,10 +325,13 @@ Scroller.prototype = {
 		pxMax = pick(pxMax, xAxis.translate(max));
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMin = zoomedMin = mathMax(pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
+		scroller.zoomedMin = zoomedMin = scroller.fixedRange ? 
+			zoomedMax - scroller.fixedRange :
+			mathMax(pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.range = range = zoomedMax - zoomedMin;
-		
+		scroller.fixedRange = null;
+
 		// on first render, create all elements
 		if (!scroller.rendered) {
 
@@ -610,6 +613,7 @@ Scroller.prototype = {
 						left = navigatorWidth - range;
 					}
 					if (left !== zoomedMin) { // it has actually moved
+						scroller.fixedRange = range; // #1370
 						chart.xAxis[0].setExtremes(
 							xAxis.translate(left, true),
 							xAxis.translate(left + range, true),
