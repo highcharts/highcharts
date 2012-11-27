@@ -9784,70 +9784,106 @@ globalAdapter.plugin('Chart');
  * @param {Function} callback Function to run when the chart has loaded
  */
 function Chart(userOptions, callback) {
-	// Handle regular options
-	var options,
-		seriesOptions = userOptions.series; // skip merging data points to increase performance
-	userOptions.series = null;
-	options = merge(defaultOptions, userOptions); // do the merge
-	options.series = userOptions.series = seriesOptions; // set back the series data
-
-	var optionsChart = options.chart,
-		optionsMargin = optionsChart.margin,
-		margin = isObject(optionsMargin) ?
-			optionsMargin :
-			[optionsMargin, optionsMargin, optionsMargin, optionsMargin];
-
-	this.optionsMarginTop = pick(optionsChart.marginTop, margin[0]);
-	this.optionsMarginRight = pick(optionsChart.marginRight, margin[1]);
-	this.optionsMarginBottom = pick(optionsChart.marginBottom, margin[2]);
-	this.optionsMarginLeft = pick(optionsChart.marginLeft, margin[3]);
-
-	var chartEvents = optionsChart.events;
-
-	this.runChartClick = chartEvents && !!chartEvents.click;
-	this.callback = callback;
-	this.isResizing = 0;
-	this.options = options;
-	//chartTitleOptions = UNDEFINED;
-	//chartSubtitleOptions = UNDEFINED;
-
-	this.axes = [];
-	this.series = [];
-	this.hasCartesianSeries = optionsChart.showAxes;
-	//this.axisOffset = UNDEFINED;
-	//this.maxTicks = UNDEFINED; // handle the greatest amount of ticks on grouped axes
-	//this.inverted = UNDEFINED;
-	//this.loadingShown = UNDEFINED;
-	//this.container = UNDEFINED;
-	//this.chartWidth = UNDEFINED;
-	//this.chartHeight = UNDEFINED;
-	//this.marginRight = UNDEFINED;
-	//this.marginBottom = UNDEFINED;
-	//this.containerWidth = UNDEFINED;
-	//this.containerHeight = UNDEFINED;
-	//this.oldChartWidth = UNDEFINED;
-	//this.oldChartHeight = UNDEFINED;
-
-	//this.renderTo = UNDEFINED;
-	//this.renderToClone = UNDEFINED;
-	//this.tracker = UNDEFINED;
-
-	//this.spacingBox = UNDEFINED
-
-	//this.legend = UNDEFINED;
-
-	// Elements
-	//this.chartBackground = UNDEFINED;
-	//this.plotBackground = UNDEFINED;
-	//this.plotBGImage = UNDEFINED;
-	//this.plotBorder = UNDEFINED;
-	//this.loadingDiv = UNDEFINED;
-	//this.loadingSpan = UNDEFINED;
-
-	this.init(chartEvents);
+	this.init.apply(this, arguments);
 }
 
 Chart.prototype = {
+
+	/**
+	 * Initialize the chart
+	 */
+	init: function (userOptions, callback) {
+
+		// Handle regular options
+		var options,
+			seriesOptions = userOptions.series; // skip merging data points to increase performance
+
+		userOptions.series = null;
+		options = merge(defaultOptions, userOptions); // do the merge
+		options.series = userOptions.series = seriesOptions; // set back the series data
+
+		var optionsChart = options.chart,
+			optionsMargin = optionsChart.margin,
+			margin = isObject(optionsMargin) ?
+				optionsMargin :
+				[optionsMargin, optionsMargin, optionsMargin, optionsMargin];
+
+		this.optionsMarginTop = pick(optionsChart.marginTop, margin[0]);
+		this.optionsMarginRight = pick(optionsChart.marginRight, margin[1]);
+		this.optionsMarginBottom = pick(optionsChart.marginBottom, margin[2]);
+		this.optionsMarginLeft = pick(optionsChart.marginLeft, margin[3]);
+
+		var chartEvents = optionsChart.events;
+
+		this.runChartClick = chartEvents && !!chartEvents.click;
+		this.callback = callback;
+		this.isResizing = 0;
+		this.options = options;
+		//chartTitleOptions = UNDEFINED;
+		//chartSubtitleOptions = UNDEFINED;
+
+		this.axes = [];
+		this.series = [];
+		this.hasCartesianSeries = optionsChart.showAxes;
+		//this.axisOffset = UNDEFINED;
+		//this.maxTicks = UNDEFINED; // handle the greatest amount of ticks on grouped axes
+		//this.inverted = UNDEFINED;
+		//this.loadingShown = UNDEFINED;
+		//this.container = UNDEFINED;
+		//this.chartWidth = UNDEFINED;
+		//this.chartHeight = UNDEFINED;
+		//this.marginRight = UNDEFINED;
+		//this.marginBottom = UNDEFINED;
+		//this.containerWidth = UNDEFINED;
+		//this.containerHeight = UNDEFINED;
+		//this.oldChartWidth = UNDEFINED;
+		//this.oldChartHeight = UNDEFINED;
+
+		//this.renderTo = UNDEFINED;
+		//this.renderToClone = UNDEFINED;
+		//this.tracker = UNDEFINED;
+
+		//this.spacingBox = UNDEFINED
+
+		//this.legend = UNDEFINED;
+
+		// Elements
+		//this.chartBackground = UNDEFINED;
+		//this.plotBackground = UNDEFINED;
+		//this.plotBGImage = UNDEFINED;
+		//this.plotBorder = UNDEFINED;
+		//this.loadingDiv = UNDEFINED;
+		//this.loadingSpan = UNDEFINED;
+
+		var chart = this,
+			eventType;
+
+		// Add the chart to the global lookup
+		chart.index = charts.length;
+		charts.push(chart);
+
+		// Set up auto resize
+		if (optionsChart.reflow !== false) {
+			addEvent(chart, 'load', chart.initReflow);
+		}
+
+		// Chart event handlers
+		if (chartEvents) {
+			for (eventType in chartEvents) {
+				addEvent(chart, eventType, chartEvents[eventType]);
+			}
+		}
+
+		chart.xAxis = [];
+		chart.yAxis = [];
+
+		// Expose methods and variables
+		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
+		chart.pointCount = 0;
+		chart.counters = new ChartCounters();
+
+		chart.firstRender();
+	},
 
 	/**
 	 * Initialize an individual series, called internally before render time
@@ -11145,6 +11181,34 @@ Chart.prototype = {
 
 	},
 
+
+	/**
+	 * VML namespaces can't be added until after complete. Listening
+	 * for Perini's doScroll hack is not enough.
+	 */
+	isReadyToRender: function () {
+		var chart = this;
+
+		// Note: in spite of JSLint's complaints, win == win.top is required
+		/*jslint eqeq: true*/
+		if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) {
+		/*jslint eqeq: false*/
+			if (useCanVG) {
+				// Delay rendering until canvg library is downloaded and ready
+				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
+			} else {
+				doc.attachEvent('onreadystatechange', function () {
+					doc.detachEvent('onreadystatechange', chart.firstRender);
+					if (doc.readyState === 'complete') {
+						chart.firstRender();
+					}
+				});
+			}
+			return false;
+		}
+		return true;
+	},
+
 	/**
 	 * Prepare for first rendering after all data are loaded
 	 */
@@ -11153,29 +11217,12 @@ Chart.prototype = {
 			options = chart.options,
 			callback = chart.callback;
 
-		// VML namespaces can't be added until after complete. Listening
-		// for Perini's doScroll hack is not enough.
-		var ONREADYSTATECHANGE = 'onreadystatechange',
-		COMPLETE = 'complete';
-		// Note: in spite of JSLint's complaints, win == win.top is required
-		/*jslint eqeq: true*/
-		if ((!hasSVG && (win == win.top && doc.readyState !== COMPLETE)) || (useCanVG && !win.canvg)) {
-		/*jslint eqeq: false*/
-			if (useCanVG) {
-				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
-			} else {
-				doc.attachEvent(ONREADYSTATECHANGE, function () {
-					doc.detachEvent(ONREADYSTATECHANGE, chart.firstRender);
-					if (doc.readyState === COMPLETE) {
-						chart.firstRender();
-					}
-				});
-			}
+		// Check whether the chart is ready to render
+		if (!chart.isReadyToRender()) {
 			return;
 		}
 
-		// create the container
+		// Create the container
 		chart.getContainer();
 
 		// Run an early event after the container and renderer are established
@@ -11229,38 +11276,6 @@ Chart.prototype = {
 
 		fireEvent(chart, 'load');
 
-	},
-
-	init: function (chartEvents) {
-		var chart = this,
-			optionsChart = chart.options.chart,
-			eventType;
-
-		// Add the chart to the global lookup
-		chart.index = charts.length;
-		charts.push(chart);
-
-		// Set up auto resize
-		if (optionsChart.reflow !== false) {
-			addEvent(chart, 'load', chart.initReflow);
-		}
-
-		// Chart event handlers
-		if (chartEvents) {
-			for (eventType in chartEvents) {
-				addEvent(chart, eventType, chartEvents[eventType]);
-			}
-		}
-
-		chart.xAxis = [];
-		chart.yAxis = [];
-
-		// Expose methods and variables
-		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
-		chart.pointCount = 0;
-		chart.counters = new ChartCounters();
-
-		chart.firstRender();
 	}
 }; // end Chart
 
