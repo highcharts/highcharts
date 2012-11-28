@@ -54,7 +54,7 @@ $(function () {
                 enabled: enableDataLabels
             }
         });
-        enableDataLabels = !enableDataLabels
+        enableDataLabels = !enableDataLabels;
     });
 
     // Toggle point markers
@@ -65,7 +65,16 @@ $(function () {
                 enabled: enableMarkers
             }
         });
-        enableMarkers = !enableMarkers
+        enableMarkers = !enableMarkers;
+    });
+
+    // Toggle point markers
+    var color = false;
+    $('#color').click(function() {
+        chart.series[0].update({
+            color: color ? null : Highcharts.getOptions().colors[1]
+        });
+        color = !color;
     });
 
     // Set type

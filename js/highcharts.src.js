@@ -6477,8 +6477,10 @@ Axis.prototype = {
 			events = axis.options.events;
 
 		// Register
-		chart.axes.push(axis);
-		chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
+		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
+			chart.axes.push(axis);
+			chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
+		}
 
 		axis.series = []; // populated by Series
 
@@ -6520,7 +6522,23 @@ Axis.prototype = {
 			)
 		);
 	},
-	
+
+	/**
+	 * Update the axis with a new options structure
+	 */
+	update: function (newOptions, redraw) {
+		var chart = this.chart,
+			series = this.series;
+
+		newOptions = merge(this.userOptions, newOptions);
+
+		this.destroy();
+		this.init(chart, newOptions);
+		this.series = series;
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+	},	
 	
 	/** 
 	 * The default label formatter. The context is a special config object for the label.
@@ -7625,7 +7643,6 @@ Axis.prototype = {
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
-			
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
@@ -7709,7 +7726,6 @@ Axis.prototype = {
 		
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
-		
 		
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
@@ -13602,12 +13618,13 @@ Series.prototype = {
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
+			isNew = !group,
 			chart = this.chart,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis;
 		
 		// Generate it on first call
-		if (!group) {	
+		if (isNew) {	
 			this[prop] = group = chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
@@ -13616,10 +13633,10 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group.translate(
-			xAxis ? xAxis.left : chart.plotLeft, 
-			yAxis ? yAxis.top : chart.plotTop
-		);
+		group[isNew ? 'attr' : 'animate']({
+			translateX: xAxis ? xAxis.left : chart.plotLeft, 
+			translateY: yAxis ? yAxis.top : chart.plotTop
+		});
 		
 		return group;
 		
