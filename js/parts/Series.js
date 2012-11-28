@@ -11,7 +11,6 @@ Point.prototype = {
 	 */
 	init: function (series, options, x) {
 		var point = this,
-			counters = series.chart.counters,
 			defaultColors;
 		point.series = series;
 		point.applyOptions(options, x);
@@ -19,9 +18,11 @@ Point.prototype = {
 
 		if (series.options.colorByPoint) {
 			defaultColors = series.chart.options.colors;
-			point.color = point.color || defaultColors[counters.color++];
+			point.color = point.color || defaultColors[series.colorCounter++];
 			// loop back to zero
-			counters.wrapColor(defaultColors.length);
+			if (series.colorCounter === defaultColors.length) {
+				series.colorCounter = 0;
+			}
 		}
 
 		series.chart.pointCount++;
@@ -525,6 +526,7 @@ Series.prototype = {
 		fill: 'fillColor',
 		r: 'radius'
 	},
+	colorCounter: 0,
 	init: function (chart, options) {
 		var series = this,
 			eventType,
@@ -534,7 +536,7 @@ Series.prototype = {
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
-		
+
 		// bind the axes
 		series.bindAxes();
 
@@ -1798,7 +1800,7 @@ Series.prototype = {
 
 	},
 	/**
-	 * Update the series with a new set of options // docs
+	 * Update the series with a new set of options // docs (demo: members/series-update)
 	 */
 	update: function (newOptions, redraw) {
 		var chart = this.chart,
@@ -1821,7 +1823,7 @@ Series.prototype = {
 		// Use only new or only old data
 		newOptions.data = newData || oldData;
 
-		this.remove();
+		this.remove(false);
 		chart.addSeries(newOptions, pick(redraw, true), false);
 	},
 

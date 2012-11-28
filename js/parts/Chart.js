@@ -137,7 +137,6 @@ Chart.prototype = {
 			chart = this;
 
 		if (options) {
-			setAnimation(animation, chart);
 			redraw = pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
@@ -145,7 +144,7 @@ Chart.prototype = {
 				
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				if (redraw) {
-					chart.redraw();
+					chart.redraw(animation);
 				}
 			});
 		}
