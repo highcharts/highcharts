@@ -452,8 +452,22 @@
 
 		if (userOptions.data) {
 			Highcharts.data(Highcharts.extend(userOptions.data, {
-				complete: function (options) {
-					userOptions = Highcharts.merge(userOptions, options);
+				complete: function (dataOptions) {
+					var datasets = []; 
+					
+					// Don't merge the data arrays themselves
+					each(dataOptions.series, function (series, i) {
+						datasets[i] = series.data;
+						series.data = null;
+					});
+					
+					// Do the merge
+					userOptions = Highcharts.merge(dataOptions, userOptions);
+					
+					// Re-insert the data
+					each(datasets, function (data, i) {
+						userOptions.series[i].data = data;
+					});
 					proceed.call(chart, userOptions, callback);
 				}
 			}));
