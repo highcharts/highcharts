@@ -76,7 +76,7 @@ Axis.prototype = {
 		tickPosition: 'outside',
 		tickWidth: 1,
 		title: {
-			//text: null,
+			//text: null, // docs: pulled from name, then text
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
@@ -108,11 +108,11 @@ Axis.prototype = {
 		lineWidth: 0,
 		maxPadding: 0.05,
 		minPadding: 0.05,
+		name: 'Values', // docs
 		startOnTick: true,
 		tickWidth: 0,
 		title: {
-			rotation: 270,
-			text: 'Y-values'
+			rotation: 270
 		},
 		stackLabels: {
 			enabled: false,
@@ -1292,7 +1292,7 @@ Axis.prototype = {
 		});
 		
 		// do we really need to go through all this?
-		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
+		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
 
 			// get data extremes if needed
@@ -1471,7 +1471,6 @@ Axis.prototype = {
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 		
-		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
@@ -1519,10 +1518,10 @@ Axis.prototype = {
 			}
 		}
 
-		if (axisTitleOptions && axisTitleOptions.text) {
+		if (axisTitleOptions && (axisTitleOptions.text || options.name) && axisTitleOptions.enabled !== false) { // docs: enabled
 			if (!axis.axisTitle) {
 				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
+					axisTitleOptions.text || options.name,
 					0,
 					0,
 					axisTitleOptions.useHTML

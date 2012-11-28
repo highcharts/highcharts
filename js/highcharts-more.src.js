@@ -1071,15 +1071,20 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ***
  * Start Box plot series code											      *
  *****************************************************************************/
 
-// 1 - set default options
+// Set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
+	//medianColor: undefined,
+	medianWidth: 2,
 	states: {
 		hover: {
 			brightness: -0.3
 		}
 	},
+	//stemColor: undefined,
+	//stemDashStyle: 'solid'
+	//stemWidth: undefined,
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
@@ -1089,17 +1094,12 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Higher quartile: {point.q3}<br/>' +
 			'Maximum: {point.high}<br/>'
 	},
-	whiskerLength: '50%',
-	whiskerWidth: 2,
 	//whiskerColor: undefined,
-	medianWidth: 2
-	//medianColor: undefined,
-	//stemWidth: undefined,
-	//stemColor: undefined,
-	//stemDashStyle: 'solid'
+	whiskerLength: '50%',
+	whiskerWidth: 2
 });
 
-// 2 - Create the series object
+// Create the series object
 seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
@@ -1343,7 +1343,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	color: 'black',
-	linkedTo: '_previous',
+	linkedTo: ':previous',
 	tooltip: {
 		pointFormat: defaultPlotOptions.arearange.tooltip.pointFormat
 	},

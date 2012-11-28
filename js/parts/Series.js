@@ -529,7 +529,8 @@ Series.prototype = {
 		var series = this,
 			eventType,
 			events,
-			linkedTo;
+			linkedTo,
+			chartSeries = chart.series;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -576,23 +577,24 @@ Series.prototype = {
 		}
 
 		// Register it in the chart
-		chart.series.push(series);
+		chartSeries.push(series);
+		series._i = chartSeries.length - 1;
 		
 		// Sort series according to index option (#248, #1123)
-		stableSort(chart.series, function (a, b) {
-			return (a.options.index || 0) - (b.options.index || 0);
+		stableSort(chartSeries, function (a, b) {
+			return pick(a.options.index, a._i) - pick(b.options.index, a._i);
 		});
-		each(chart.series, function (series, i) {
+		each(chartSeries, function (series, i) {
 			series.index = i;
 			series.name = series.name || 'Series ' + (i + 1);
 		});
 
 		// Linked series
-		linkedTo = options.linkedTo; // docs: '_previous' or Series.id
+		linkedTo = options.linkedTo; // docs: ':previous' or Series.id
 		series.linkedSeries = [];
 		if (isString(linkedTo)) {
-			if (linkedTo === '_previous') {
-				linkedTo = chart.series[series.index - 1];
+			if (linkedTo === ':previous') {
+				linkedTo = chartSeries[series.index - 1];
 			} else {
 				linkedTo = chart.get(linkedTo);
 			}
@@ -713,6 +715,8 @@ Series.prototype = {
 			data = itemOptions.data,
 			options;
 
+		this.userOptions = itemOptions;
+
 		itemOptions.data = null; // remove from merge to prevent looping over the data set
 
 		options = merge(
@@ -740,11 +744,25 @@ Series.prototype = {
 	 */
 	getColor: function () {
 		var options = this.options,
+			userOptions = this.userOptions,
 			defaultColors = this.chart.options.colors,
-			counters = this.chart.counters;
-		this.color = options.color || defaultPlotOptions[this.type].color ||
-			(!options.colorByPoint && defaultColors[counters.color++]) || 'gray';
+			counters = this.chart.counters,
+			color,
+			colorIndex;
+
+		color = options.color || defaultPlotOptions[this.type].color;
+
+		if (!color && !options.colorByPoint) {
+			if (defined(userOptions._colorIndex)) { // after Series.update()
+				colorIndex = userOptions._colorIndex;
+			} else {
+				userOptions._colorIndex = counters.color;
+				colorIndex = counters.color++;
+			}
+			color = defaultColors[colorIndex];
+		}
 		
+		this.color = color;
 		counters.wrapColor(defaultColors.length);
 	},
 	/**
@@ -752,11 +770,24 @@ Series.prototype = {
 	 */
 	getSymbol: function () {
 		var series = this,
+			userOptions = series.userOptions,
 			seriesMarkerOption = series.options.marker,
 			chart = series.chart,
 			defaultSymbols = chart.options.symbols,
-			counters = chart.counters;
-		series.symbol = seriesMarkerOption.symbol || defaultSymbols[counters.symbol++];
+			counters = chart.counters,
+			symbolIndex;
+
+		series.symbol = seriesMarkerOption.symbol;
+		if (!series.symbol) {
+			if (defined(userOptions._symbolIndex)) { // after Series.update()
+				symbolIndex = userOptions._symbolIndex;
+			} else {
+				userOptions._symbolIndex = counters.symbol;
+				symbolIndex = counters.symbol++;
+			}
+		}
+		series.symbol = defaultSymbols[symbolIndex];
+
 		// don't substract radius in image symbols (#604)
 		if (/^url/.test(series.symbol)) {
 			seriesMarkerOption.radius = 0;
@@ -1766,7 +1797,33 @@ Series.prototype = {
 		}
 
 	},
+	/**
+	 * Update the series with a new set of options // docs
+	 */
+	update: function (newOptions, redraw) {
+		var chart = this.chart,
+			// must use user options when changing type because this.options is merged
+			// in with type specific plotOptions
+			oldOptions = this.userOptions, 
+			index = this.index,
+			oldData = this.options.data,
+			newData = newOptions.data;
 
+		// Don't merge data, it's expensive
+		oldOptions.data = newOptions.data = null;
+
+		// Do the merge, with some forced options
+		newOptions = merge(oldOptions, {
+			animation: false,
+			index: index
+		}, newOptions);
+
+		// Use only new or only old data
+		newOptions.data = newData || oldData;
+
+		this.remove();
+		chart.addSeries(newOptions, pick(redraw, true), false);
+	},
 
 	/**
 	 * Clear DOM objects and free up memory
@@ -1793,7 +1850,7 @@ Series.prototype = {
 			axis = series[AXIS];
 			if (axis) {
 				erase(axis.series, series);
-				axis.isDirty = true;
+				axis.isDirty = axis.forceRedraw = true;
 			}
 		});
 
@@ -2464,7 +2521,7 @@ Series.prototype = {
 			oldVisibility = series.visible;
 
 		// if called without an argument, toggle visibility
-		series.visible = vis = vis === UNDEFINED ? !oldVisibility : vis;
+		series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide series

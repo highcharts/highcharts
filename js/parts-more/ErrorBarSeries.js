@@ -5,7 +5,7 @@
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	color: 'black',
-	linkedTo: '_previous',
+	linkedTo: ':previous',
 	tooltip: {
 		pointFormat: defaultPlotOptions.arearange.tooltip.pointFormat
 	},
