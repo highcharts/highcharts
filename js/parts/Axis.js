@@ -376,6 +376,7 @@ Axis.prototype = {
 		this.destroy();
 		this.init(chart, newOptions);
 		this.series = series;
+		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
 			chart.redraw();
 		}

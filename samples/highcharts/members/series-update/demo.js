@@ -77,8 +77,13 @@ $(function () {
         color = !color;
     });
 
+    // Shift
+    $('#addpoint').click(function () {
+        chart.series[0].addPoint(Math.random() * 200, true);
+    });
+
     // Set type
-    $.each(['line', 'spline', 'area', 'areaspline', 'scatter', 'pie'], function (i, type) {
+    $.each(['line', 'column', 'spline', 'area', 'areaspline', 'scatter', 'pie'], function (i, type) {
         $('#' + type).click(function () {
             chart.series[0].update({
                 type: type

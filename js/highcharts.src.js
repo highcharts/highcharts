@@ -6535,6 +6535,7 @@ Axis.prototype = {
 		this.destroy();
 		this.init(chart, newOptions);
 		this.series = series;
+		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
 			chart.redraw();
 		}
@@ -13103,10 +13104,10 @@ Series.prototype = {
 		var chart = this.chart,
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
-			oldOptions = this.userOptions, 
-			index = this.index,
+			oldOptions = this.userOptions,
 			oldData = this.options.data,
-			newData = newOptions.data;
+			newData = newOptions.data,
+			oldType = this.type;
 
 		// Don't merge data, it's expensive
 		oldOptions.data = newOptions.data = null;
@@ -13114,14 +13115,22 @@ Series.prototype = {
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
 			animation: false,
-			index: index
+			index: this.index,
+			pointStart: this.xData[0] // when updating after addPoint
 		}, newOptions);
 
 		// Use only new or only old data
 		newOptions.data = newData || oldData;
 
+		// Destroy the series and reinsert methods from the type prototype
 		this.remove(false);
-		chart.addSeries(newOptions, pick(redraw, true), false);
+		extend(this, seriesTypes[newOptions.type || oldType].prototype);
+		
+
+		this.init(chart, newOptions);
+		if (pick(redraw, true)) {
+			chart.redraw(false);
+		}
 	},
 
 	/**
