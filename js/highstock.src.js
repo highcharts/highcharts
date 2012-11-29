@@ -11335,41 +11335,14 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			pointArrayMap = series.pointArrayMap || ['y'],
-			valueCount = pointArrayMap.length,
-			i = 0,
-			j = 0,
-			optionsType = typeof options,
-			firstItemType,
 			pointValKey = series.pointValKey;
 
-		if (optionsType === 'number' || options === null) {
-			point.y = options;
-		 
-		// object input
-		} else if (typeof options === 'object' && typeof options.length !== 'number') {
+		options = Point.prototype.optionsToObject.call(this, options);
 
-			// copy options directly to point
-			extend(point, options);
-
-			point.options = options;
+		// copy options directly to point
+		extend(point, options);
+		point.options = point.options ? extend(point.options, options) : options;
 			
-		} else if (options.length) { // array
-			// with leading x value
-			if (options.length > valueCount) {
-				firstItemType = typeof options[0];
-				if (firstItemType === 'string') {
-					point.name = options[0];
-				} else if (firstItemType === 'number') {
-					point.x = options[0];
-				}
-				i++;
-			}
-			while (j < valueCount) {
-				point[pointArrayMap[j++]] = options[i++];
-			}
-		}
-
 		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
 		if (pointValKey) {
 			point.y = point[pointValKey];
@@ -11382,6 +11355,41 @@ Point.prototype = {
 		}
 		
 		return point;
+	},
+
+	/**
+	 * Transform number or array configs into objects
+	 */
+	optionsToObject: function (options) {
+		var ret,
+			pointArrayMap = this.series.pointArrayMap || ['y'],
+			valueCount = pointArrayMap.length,
+			firstItemType,
+			i = 0,
+			j = 0;
+
+		if (typeof options === 'number' || options === null) {
+			ret = { y: options };
+
+		} else if (isArray(options)) {
+			ret = {};
+			// with leading x value
+			if (options.length > valueCount) {
+				firstItemType = typeof options[0];
+				if (firstItemType === 'string') {
+					ret.name = options[0];
+				} else if (firstItemType === 'number') {
+					ret.x = options[0];
+				}
+				i++;
+			}
+			while (j < valueCount) {
+				ret[pointArrayMap[j++]] = options[i++];
+			}			
+		} else if (typeof options === 'object') {
+			ret = options;
+		}
+		return ret;
 	},
 
 	/**
@@ -11472,14 +11480,17 @@ Point.prototype = {
 
 		// fire the event with the defalut handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
-			point.selected = selected;
+			point.selected = point.options.selected = selected;
+			series.options.data[inArray(point, series.data)] = point.options;
+			
 			point.setState(selected && SELECT_STATE);
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
 				each(chart.getSelectedPoints(), function (loopPoint) {
 					if (loopPoint.selected && loopPoint !== point) {
-						loopPoint.selected = false;
+						loopPoint.selected = loopPoint.options.selected = false;
+						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
 						loopPoint.setState(NORMAL_STATE);
 						loopPoint.firePointEvent('unselect');
 					}
@@ -11577,7 +11588,6 @@ Point.prototype = {
 			graphic = point.graphic,
 			i,
 			data = series.data,
-			dataLength = data.length,
 			chart = series.chart;
 
 		redraw = pick(redraw, true);
@@ -11596,14 +11606,10 @@ Point.prototype = {
 			}
 
 			// record changes in the parallel arrays
-			for (i = 0; i < dataLength; i++) {
-				if (data[i] === point) {
-					series.xData[i] = point.x;
-					series.yData[i] = point.y;
-					series.options.data[i] = options;
-					break;
-				}
-			}
+			i = inArray(point, data);
+			series.xData[i] = point.x;
+			series.yData[i] = point.y;
+			series.options.data[i] = point.options;
 
 			// redraw
 			series.isDirty = true;
@@ -11625,8 +11631,7 @@ Point.prototype = {
 			series = point.series,
 			chart = series.chart,
 			i,
-			data = series.data,
-			dataLength = data.length;
+			data = series.data;
 
 		setAnimation(animation, chart);
 		redraw = pick(redraw, true);
@@ -11634,19 +11639,12 @@ Point.prototype = {
 		// fire the event with a default handler of removing the point
 		point.firePointEvent('remove', null, function () {
 
-			//erase(series.data, point);
-
-			for (i = 0; i < dataLength; i++) {
-				if (data[i] === point) {
-
-					// splice all the parallel arrays
-					data.splice(i, 1);
-					series.options.data.splice(i, 1);
-					series.xData.splice(i, 1);
-					series.yData.splice(i, 1);
-					break;
-				}
-			}
+			// splice all the parallel arrays
+			i = inArray(point, data);
+			data.splice(i, 1);
+			series.options.data.splice(i, 1);
+			series.xData.splice(i, 1);
+			series.yData.splice(i, 1);
 
 			point.destroy();
 
@@ -14914,8 +14912,9 @@ var PiePoint = extendClass(Point, {
 			method;
 
 		// if called without an argument, toggle visibility
-		point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-
+		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		
 		method = vis ? 'show' : 'hide';
 
 		point.group[method]();
@@ -14960,7 +14959,8 @@ var PiePoint = extendClass(Point, {
 		redraw = pick(redraw, true);
 
 		// if called without an argument, toggle
-		sliced = point.sliced = defined(sliced) ? sliced : !point.sliced;
+		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = {
 			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),

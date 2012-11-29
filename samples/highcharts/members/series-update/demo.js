@@ -14,6 +14,7 @@ $(function () {
         },
         
         series: [{
+            allowPointSelect: true,
             data: [ // use names for display in pie data labels
                 ['January',    29.9], 
                 ['February',   71.5], 
@@ -32,7 +33,8 @@ $(function () {
                 ['October',   194.1],
                 ['November',   95.6], 
                 ['December',   54.4]
-            ]        
+            ],
+            showInLegend: true
         }]
     });
     
@@ -75,11 +77,6 @@ $(function () {
             color: color ? null : Highcharts.getOptions().colors[1]
         });
         color = !color;
-    });
-
-    // Shift
-    $('#addpoint').click(function () {
-        chart.series[0].addPoint(Math.random() * 200, true);
     });
 
     // Set type
