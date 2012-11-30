@@ -15825,7 +15825,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		each(series.points, function (point) {
+		each(series.points || [], function (point) {
 			if (point.open < point.close) {
 				point.pointAttr = seriesDownPointAttr;
 			}
