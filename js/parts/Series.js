@@ -310,7 +310,7 @@ Point.prototype = {
 			// record changes in the parallel arrays
 			i = inArray(point, data);
 			series.xData[i] = point.x;
-			series.yData[i] = point.y;
+			series.yData[i] = series.toYData ? series.toYData(point) : point.y;
 			series.options.data[i] = point.options;
 
 			// redraw
