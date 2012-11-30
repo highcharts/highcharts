@@ -515,11 +515,14 @@ Axis.prototype = {
 							pointStack = isNegative ? negPointStack : posPointStack;
 							key = isNegative ? negKey : stackKey;
 
-							y = pointStack[x] =
-								defined(pointStack[x]) ?
-									correctFloat(pointStack[x] + y) : 
-									y;
+							// Set the stack value and y for extremes
+							if (defined(pointStack[x])) { // we're adding to the stack
+								pointStack[x] = correctFloat(pointStack[x] + y);
+								y = [y, pointStack[x]]; // consider both the actual value and the stack (#1376)
 
+							} else { // it's the first point in the stack
+								pointStack[x] = y;
+							}
 
 							// add the series
 							if (!stacks[key]) {
@@ -531,7 +534,7 @@ Axis.prototype = {
 							if (!stacks[key][x]) {
 								stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
 							}
-							stacks[key][x].setTotal(y);
+							stacks[key][x].setTotal(pointStack[x]);
 						}
 						
 						// Handle non null values
