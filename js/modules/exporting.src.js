@@ -526,6 +526,7 @@ extend(Chart.prototype, {
 			box,
 			symbol,
 			button,
+			menuKey,
 			borderWidth = btnOptions.borderWidth,
 			boxAttr = {
 				stroke: btnOptions.borderColor
@@ -536,6 +537,11 @@ extend(Chart.prototype, {
 				fill: btnOptions.symbolFill
 			},
 			symbolSize = btnOptions.symbolSize || 12;
+
+		if (!chart.btnCount) {
+			chart.btnCount = 0;
+		}
+		menuKey = chart.btnCount++;
 
 		// Keeps references to the button elements
 		if (!chart.exportDivElements) {
@@ -602,10 +608,11 @@ extend(Chart.prototype, {
 
 		// add the click event
 		if (menuItems) {
+
 			onclick = function () {
 				revert();
 				var bBox = button.getBBox();
-				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
+				chart.contextMenu('menu' + menuKey, menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
 			};
 		}
 		/*addEvent(button.element, 'click', function() {
