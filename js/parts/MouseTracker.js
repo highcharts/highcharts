@@ -141,7 +141,7 @@ MouseTracker.prototype = {
 			for (j = 0; j < i; j++) {
 				if (series[j].visible &&
 						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
+						!series[j].noSharedTooltip && series[j].tooltipPoints && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
 					point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
 					distance = mathMin(distance, point._dist);

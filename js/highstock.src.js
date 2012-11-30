@@ -3471,8 +3471,8 @@ SVGRenderer.prototype = {
 
 				if (!img.alignByTranslate) { // #185
 					img.translate(
-						-mathRound(size[0] / 2),
-						-mathRound(size[1] / 2)
+						mathRound((width - size[0]) / 2), // #1378
+						mathRound((height - size[1]) / 2)
 					);
 				}
 			};
@@ -8552,7 +8552,7 @@ MouseTracker.prototype = {
 			for (j = 0; j < i; j++) {
 				if (series[j].visible &&
 						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
+						!series[j].noSharedTooltip && series[j].tooltipPoints && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
 					point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
 					distance = mathMin(distance, point._dist);

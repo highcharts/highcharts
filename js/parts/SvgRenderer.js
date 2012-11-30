@@ -1655,8 +1655,8 @@ SVGRenderer.prototype = {
 
 				if (!img.alignByTranslate) { // #185
 					img.translate(
-						-mathRound(size[0] / 2),
-						-mathRound(size[1] / 2)
+						mathRound((width - size[0]) / 2), // #1378
+						mathRound((height - size[1]) / 2)
 					);
 				}
 			};
