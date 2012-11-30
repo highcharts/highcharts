@@ -317,7 +317,7 @@ Point.prototype = {
 			for (i = 0; i < dataLength; i++) {
 				if (data[i] === point) {
 					series.xData[i] = point.x;
-					series.yData[i] = point.y;
+					series.yData[i] = point.toYData ? point.toYData() : point.y;
 					series.options.data[i] = options;
 					break;
 				}
