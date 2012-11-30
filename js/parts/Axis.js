@@ -1456,8 +1456,14 @@ Axis.prototype = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options) {
-		var obj = new PlotLineOrBand(this, options).render();
-		this.plotLinesAndBands.push(obj);
+		var obj = new PlotLineOrBand(this, options).render(),
+			collection = obj.coll,
+			userOptions = this.userOptions;
+
+		userOptions[collection] = (userOptions[collection] || []);
+		userOptions[collection].push(options);
+		this.plotLinesAndBands.push(obj); 
+		// TODO: Fix Axis.update --- console.log(userOptions) // http://jsfiddle.net/highcharts/UKAVD/
 		return obj;
 	},
 

@@ -35,7 +35,7 @@
 			"file": "js/parts/MouseTracker.js",
 			"settings":
 			{
-				"buffer_size": 19080,
+				"buffer_size": 16075,
 				"line_ending": "Unix"
 			}
 		},
@@ -43,7 +43,15 @@
 			"file": "js/parts/Chart.js",
 			"settings":
 			{
-				"buffer_size": 38603,
+				"buffer_size": 38723,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/parts/Axis.js",
+			"settings":
+			{
+				"buffer_size": 53045,
 				"line_ending": "Unix"
 			}
 		}
@@ -72,6 +80,7 @@
 	},
 	"file_history":
 	[
+		"/Users/torstein/Dropbox/Sites/highcharts.com/highcharts.com.sublime-project",
 		"/Users/torstein/Dropbox/Sites/highcharts.com/js/parts/Globals.js",
 		"/Users/torstein/Dropbox/Sites/highcharts.com/js/parts/Axis.js",
 		"/Users/torstein/Dropbox/Sites/highcharts.com/js/parts-more/AreaRangeSeries.js",
@@ -187,7 +196,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -222,28 +231,15 @@
 					"file": "js/parts/MouseTracker.js",
 					"settings":
 					{
-						"buffer_size": 19080,
+						"buffer_size": 16075,
 						"regions":
 						{
-							"mark":
-							{
-								"flags": 144,
-								"icon": "dot",
-								"regions":
-								[
-									[
-										6048,
-										6074
-									]
-								],
-								"scope": "mark"
-							}
 						},
 						"selection":
 						[
 							[
-								5989,
-								5989
+								131,
+								168
 							]
 						],
 						"settings":
@@ -252,7 +248,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3724.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -262,15 +258,15 @@
 					"file": "js/parts/Chart.js",
 					"settings":
 					{
-						"buffer_size": 38603,
+						"buffer_size": 38723,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11731,
-								11731
+								0,
+								0
 							]
 						],
 						"settings":
@@ -280,6 +276,33 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 6735.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "js/parts/Axis.js",
+					"settings":
+					{
+						"buffer_size": 53045,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								51650,
+								51650
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 28230.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -329,6 +352,10 @@
 		"selected_items":
 		[
 			[
+				"axis",
+				"js/parts/Axis.js"
+			],
+			[
 				"global",
 				"js/parts/Globals.js"
 			],
@@ -343,10 +370,6 @@
 			[
 				"columnra",
 				"js/parts-more/ColumnRangeSeries.js"
-			],
-			[
-				"axis",
-				"js/parts/Axis.js"
 			],
 			[
 				"chart",

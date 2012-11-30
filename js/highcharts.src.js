@@ -5879,10 +5879,9 @@ function PlotLineOrBand(axis, options) {
 	if (options) {
 		this.options = options;
 		this.id = options.id;
+		this.isBand = defined(options.from) && defined(options.to);
+		this.coll = this.isBand ? 'plotBands' : 'plotLines'; // collection name
 	}
-
-	//plotLine.render()
-	return this;
 }
 
 PlotLineOrBand.prototype = {
@@ -5902,7 +5901,7 @@ PlotLineOrBand.prototype = {
 			width = options.width,
 			to = options.to,
 			from = options.from,
-			isBand = defined(from) && defined(to),
+			isBand = plotLine.isBand,
 			value = options.value,
 			dashStyle = options.dashStyle,
 			svgElem = plotLine.svgElem,
@@ -7615,8 +7614,14 @@ Axis.prototype = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options) {
-		var obj = new PlotLineOrBand(this, options).render();
-		this.plotLinesAndBands.push(obj);
+		var obj = new PlotLineOrBand(this, options).render(),
+			collection = obj.coll,
+			userOptions = this.userOptions;
+
+		userOptions[collection] = (userOptions[collection] || []);
+		userOptions[collection].push(options);
+		this.plotLinesAndBands.push(obj); 
+		// TODO: Fix Axis.update --- console.log(userOptions) // http://jsfiddle.net/highcharts/UKAVD/
 		return obj;
 	},
 
@@ -9155,9 +9160,9 @@ MouseTracker.prototype = {
 /**
  * The overview of the chart's series
  */
-function Legend(chart) {
+function Legend(chart, options) {
 
-	this.init(chart);
+	this.init(chart, options);
 }
 
 Legend.prototype = {
@@ -9165,10 +9170,9 @@ Legend.prototype = {
 	/**
 	 * Initialize the legend
 	 */
-	init: function (chart) {
-		var legend = this,
-			options = legend.options = chart.options.legend;
-	
+	init: function (chart, options) {
+		var legend = this;
+
 		if (!options.enabled) {
 			return;
 		}
@@ -9178,6 +9182,7 @@ Legend.prototype = {
 			padding = pick(options.padding, 8),
 			itemMarginTop = options.itemMarginTop || 0;
 	
+		legend.options = options;
 		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
@@ -11043,7 +11048,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Legend(chart);
+		chart.legend = new Legend(chart, options.legend);
 
 		// Get margins by pre-rendering axes
 		// set axes scales
