@@ -9429,7 +9429,7 @@ Legend.prototype = {
 							serie)
 			);
 		});
-
+console.log('allItems.length', allItems.length);
 		// sort by legendIndex
 		stableSort(allItems, function (a, b) {
 			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
@@ -9941,11 +9941,11 @@ Chart.prototype = {
 
 
 		}
-
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			chart.drawChartBox();
 		}
+
 
 
 		// redraw affected series
@@ -9955,7 +9955,6 @@ Chart.prototype = {
 				serie.redraw();
 			}
 		});
-
 
 		// move tooltip or reset
 		if (tracker && tracker.resetTracker) {
@@ -11999,6 +11998,7 @@ Series.prototype = {
 	 */
 	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
+			seriesOptions = series.options,
 			data = series.data,
 			graph = series.graph,
 			area = series.area,
@@ -12006,7 +12006,7 @@ Series.prototype = {
 			xData = series.xData,
 			yData = series.yData,
 			currentShift = (graph && graph.shift) || 0,
-			dataOptions = series.options.data,
+			dataOptions = seriesOptions.data,
 			point,
 			proto = series.pointClass.prototype;
 
@@ -12034,6 +12034,10 @@ Series.prototype = {
 		yData.push(proto.toYData ? proto.toYData.call(point) : point.y);
 		dataOptions.push(options);
 
+		// Generate points to be added to the legend (#1329) 
+		if (seriesOptions.legendType === 'point') {
+			series.generatePoints();
+		}
 
 		// Shift the first point off the parallel arrays
 		// todo: consider series.removePoint(i) method

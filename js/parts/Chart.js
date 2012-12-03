@@ -276,11 +276,11 @@ Chart.prototype = {
 
 
 		}
-
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			chart.drawChartBox();
 		}
+
 
 
 		// redraw affected series
@@ -290,7 +290,6 @@ Chart.prototype = {
 				serie.redraw();
 			}
 		});
-
 
 		// move tooltip or reset
 		if (tracker && tracker.resetTracker) {

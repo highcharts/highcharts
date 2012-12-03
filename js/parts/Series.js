@@ -830,6 +830,7 @@ Series.prototype = {
 	 */
 	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
+			seriesOptions = series.options,
 			data = series.data,
 			graph = series.graph,
 			area = series.area,
@@ -837,7 +838,7 @@ Series.prototype = {
 			xData = series.xData,
 			yData = series.yData,
 			currentShift = (graph && graph.shift) || 0,
-			dataOptions = series.options.data,
+			dataOptions = seriesOptions.data,
 			point,
 			proto = series.pointClass.prototype;
 
@@ -865,6 +866,10 @@ Series.prototype = {
 		yData.push(proto.toYData ? proto.toYData.call(point) : point.y);
 		dataOptions.push(options);
 
+		// Generate points to be added to the legend (#1329) 
+		if (seriesOptions.legendType === 'point') {
+			series.generatePoints();
+		}
 
 		// Shift the first point off the parallel arrays
 		// todo: consider series.removePoint(i) method
