@@ -322,14 +322,37 @@
 			}
 		}
 	},
-	
+	//*
+	dateFormats: {
+		'YYYY-mm-dd': {
+			regex: '^([0-9]{4})-([0-9]{2})-([0-9]{2})$',
+			parser: function (match) {
+				return Date.UTC(+match[1], match[2] - 1, +match[3]);
+			}
+		}
+	},
+	// */
 	/**
 	 * Parse a date and return it as a number. Overridable through options.parseDate.
 	 */
 	parseDate: function (val) {
-		var parseDate = this.options.parseDate;
-		
-		return parseDate ? parseDate(val) : Date.parse(val);
+		var parseDate = this.options.parseDate,
+			ret,
+			key,
+			format,
+			match;
+
+		if (parseDate) {
+			ret = parseDate;
+		}
+		for (key in this.dateFormats) {
+			format = this.dateFormats[key];
+			match = val.match(format.regex);
+			if (match) {
+				ret = format.parser(match);
+			}
+		}
+		return ret;
 	},
 	
 	/**
@@ -450,7 +473,7 @@
 	Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptions, callback) {
 		var chart = this;
 
-		if (userOptions.data) {
+		if (userOptions && userOptions.data) {
 			Highcharts.data(Highcharts.extend(userOptions.data, {
 				complete: function (dataOptions) {
 					var datasets = []; 
