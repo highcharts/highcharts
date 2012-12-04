@@ -8,8 +8,6 @@ function PlotLineOrBand(axis, options) {
 	if (options) {
 		this.options = options;
 		this.id = options.id;
-		this.isBand = defined(options.from) && defined(options.to);
-		this.coll = this.isBand ? 'plotBands' : 'plotLines'; // collection name
 	}
 }
 
@@ -30,7 +28,7 @@ PlotLineOrBand.prototype = {
 			width = options.width,
 			to = options.to,
 			from = options.from,
-			isBand = plotLine.isBand,
+			isBand = defined(from) && defined(to),
 			value = options.value,
 			dashStyle = options.dashStyle,
 			svgElem = plotLine.svgElem,
