@@ -326,11 +326,11 @@ Scroller.prototype = {
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
-		scroller.zoomedMin = zoomedMin = scroller.fixedRange ? 
-			zoomedMax - scroller.fixedRange :
+		scroller.zoomedMin = zoomedMin = scroller.fixedWidth ? 
+			zoomedMax - scroller.fixedWidth :
 			mathMax(pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.range = range = zoomedMax - zoomedMin;
-		scroller.fixedRange = null;
+		scroller.fixedWidth = null;
 
 		// on first render, create all elements
 		if (!scroller.rendered) {
@@ -557,8 +557,11 @@ Scroller.prototype = {
 				navigatorWidth = scroller.navigatorWidth,
 				scrollbarPad = scroller.scrollbarPad,
 				range = scroller.range,
+				dataRange,
 				chartX = e.chartX,
 				chartY = e.chartY,
+				baseXAxis = chart.xAxis[0],
+				leftValue,
 				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
 				isOnNavigator;
@@ -613,10 +616,14 @@ Scroller.prototype = {
 						left = navigatorWidth - range;
 					}
 					if (left !== zoomedMin) { // it has actually moved
-						scroller.fixedRange = range; // #1370
-						chart.xAxis[0].setExtremes(
-							xAxis.translate(left, true),
-							xAxis.translate(left + range, true),
+						scroller.fixedWidth = range; // #1370
+						if (!baseXAxis.ordinalPositions) {
+							baseXAxis.fixedRange = baseXAxis.max - baseXAxis.min;
+						}
+						leftValue = xAxis.translate(left, true);
+						baseXAxis.setExtremes(
+							leftValue,
+							baseXAxis.fixedRange ? leftValue + baseXAxis.fixedRange : xAxis.translate(left + range, true),
 							true,
 							false,
 							{ trigger: 'navigator' }
