@@ -96,16 +96,23 @@
 	init: function (options) {
 		this.options = options;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
-		
-		
-		// Parse a CSV string if options.csv is given
-		this.parseCSV();
-		
-		// Parse a HTML table if options.table is given
-		this.parseTable();
 
-		// Parse a Google Spreadsheet 
-		this.parseGoogleSpreadsheet();
+		// No need to parse or interpret anything
+		if (this.columns.length) {
+			this.dataFound();
+
+		// Parse and interpret
+		} else {
+
+			// Parse a CSV string if options.csv is given
+			this.parseCSV();
+			
+			// Parse a HTML table if options.table is given
+			this.parseTable();
+
+			// Parse a Google Spreadsheet 
+			this.parseGoogleSpreadsheet();	
+		}
 
 	},
 
