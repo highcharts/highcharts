@@ -345,11 +345,14 @@
 		if (parseDate) {
 			ret = parseDate;
 		}
-		for (key in this.dateFormats) {
-			format = this.dateFormats[key];
-			match = val.match(format.regex);
-			if (match) {
-				ret = format.parser(match);
+			
+		if (typeof val === 'string') {
+			for (key in this.dateFormats) {
+				format = this.dateFormats[key];
+				match = val.match(format.regex);
+				if (match) {
+					ret = format.parser(match);
+				}
 			}
 		}
 		return ret;
