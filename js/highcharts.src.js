@@ -8779,7 +8779,7 @@ MouseTracker.prototype = {
 	/**
 	 * Scale series groups to a certain scale and translation
 	 */
-	scaleGroups: function (attribs, selectionMarker) {
+	scaleGroups: function (attribs, clip) {
 
 		var chart = this.chart;
 
@@ -8788,7 +8788,7 @@ MouseTracker.prototype = {
 			series.group.attr(attribs);
 			if (series.markerGroup) {
 				series.markerGroup.attr(attribs);
-				series.markerGroup.clip(chart.clipRect);
+				series.markerGroup.clip(clip ? chart.clipRect : null);
 			}
 			if (series.dataLabelsGroup) {
 				series.dataLabelsGroup.attr(attribs);
@@ -8796,12 +8796,12 @@ MouseTracker.prototype = {
 		});
 		
 		// TODO: shorten. This is just a translated version of selectionMarker
-		chart.clipRect.attr({
-			x: selectionMarker.x - this.chart.plotLeft,
-			y: selectionMarker.y - this.chart.plotTop,
-			width: selectionMarker.width,
-			height: selectionMarker.height
-		});
+		chart.clipRect.attr(clip ? {
+			x: clip.x - chart.plotLeft,
+			y: clip.y - chart.plotTop,
+			width: clip.width,
+			height: clip.height
+		} : chart.clipBox);
 	},
 	
 	/**
@@ -8959,7 +8959,7 @@ MouseTracker.prototype = {
 						translateY: chart.plotTop,
 						scaleX: 1,
 						scaleY: 1
-					}, chart.plotBox);
+					});
 				}
 			}
 
