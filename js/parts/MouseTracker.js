@@ -236,17 +236,28 @@ MouseTracker.prototype = {
 	/**
 	 * Scale series groups to a certain scale and translation
 	 */
-	scaleGroups: function (attribs) {
+	scaleGroups: function (attribs, selectionMarker) {
+
+		var chart = this.chart;
 
 		// Scale each series
-		each(this.chart.series, function (series) {
+		each(chart.series, function (series) {
 			series.group.attr(attribs);
 			if (series.markerGroup) {
 				series.markerGroup.attr(attribs);
+				series.markerGroup.clip(chart.clipRect);
 			}
 			if (series.dataLabelsGroup) {
 				series.dataLabelsGroup.attr(attribs);
 			}
+		});
+		
+		// TODO: shorten. This is just a translated version of selectionMarker
+		chart.clipRect.attr({
+			x: selectionMarker.x - this.chart.plotLeft,
+			y: selectionMarker.y - this.chart.plotTop,
+			width: selectionMarker.width,
+			height: selectionMarker.height
 		});
 	},
 	
@@ -267,7 +278,8 @@ MouseTracker.prototype = {
 			zoomHor = mouseTracker.zoomHor,
 			zoomVert = mouseTracker.zoomVert,
 			selectionMarker = mouseTracker.selectionMarker,
-			plotWidth = chart.plotWidth;
+			plotWidth = chart.plotWidth,
+			transform = {};
 		
 		// Normalize each touch
 		map(touches, function (e) {
@@ -276,20 +288,7 @@ MouseTracker.prototype = {
 		
 		// Handle touch move/pinching
 		if (pinchDown[0] && pinchDown[1]) {
-			chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX);
-			chartX2 = mathMin(touches[0].chartX, touches[1].chartX);
-			chartY1 = mathMin(pinchDown[0].chartY, pinchDown[1].chartY);
-			chartY2 = mathMin(touches[0].chartY, touches[1].chartY);
-			scaleX = mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
-			scaleY = mathAbs(touches[0].chartY - touches[1].chartY) / mathAbs(pinchDown[1].chartY - pinchDown[0].chartY);
 			
-			this.scaleGroups({
-				translateX: chartX2 - (chartX1 - chart.plotLeft) * scaleX,
-				translateY: chartY2 - (chartY1 - chart.plotTop) * scaleY,
-				scaleX: scaleX,
-				scaleY: scaleY
-			});
-
 			// Set the marker
 			if (!selectionMarker) {
 				mouseTracker.selectionMarker = selectionMarker = {
@@ -301,15 +300,32 @@ MouseTracker.prototype = {
 				};
 			}
 			if (zoomHor) {
+				chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX);
+				chartX2 = mathMin(touches[0].chartX, touches[1].chartX);
+				
+				transform.scaleX = scaleX = mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
+				transform.translateX = chartX2 - (chartX1 - chart.plotLeft) * scaleX;
+			
 				selectionMarker.x = ((chart.plotLeft - chartX2) / scaleX) + chartX1;
 				selectionMarker.width = plotWidth / scaleX;
 				mouseTracker.hasPinched = true;
 			}
 			if (zoomVert) {
+				chartY1 = mathMin(pinchDown[0].chartY, pinchDown[1].chartY);
+				chartY2 = mathMin(touches[0].chartY, touches[1].chartY);
+				
+				transform.scaleY = scaleY = mathAbs(touches[0].chartY - touches[1].chartY) / mathAbs(pinchDown[1].chartY - pinchDown[0].chartY);
+				transform.translateY = chartY2 - (chartY1 - chart.plotTop) * scaleY;
+
 				selectionMarker.y = ((chart.plotTop - chartY2) / scaleY) + chartY1;
 				selectionMarker.height = chart.plotHeight / scaleY;
 				mouseTracker.hasPinched = true;
 			}
+
+			// Scale and translate the groups to provide visual feedback during pinching
+			this.scaleGroups(transform, selectionMarker);
+
+			
 		} 
 			
 		// Register the touch start position
@@ -400,7 +416,7 @@ MouseTracker.prototype = {
 						translateY: chart.plotTop,
 						scaleX: 1,
 						scaleY: 1
-					});
+					}, chart.plotBox);
 				}
 			}
 
