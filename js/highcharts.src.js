@@ -8892,10 +8892,10 @@ MouseTracker.prototype = {
 			return isOutsidePlot || !chart.hasCartesianSeries;
 		};
 
-		/*
-		 * When the mouse enters the container, run mouseMove
-		 */
-		container.onmousemove = mouseMove;
+		// When the mouse enters the container, run mouseMove
+		if (!/Android 4\.0/.test(userAgent)) { // This hurts. Best effort for #1385.
+			container.onmousemove = mouseMove;
+		}
 
 		/*
 		 * When the mouse leaves the container, hide the tracking (tooltip).
@@ -8905,7 +8905,9 @@ MouseTracker.prototype = {
 		// issue #149 workaround
 		// The mouseleave event above does not always fire. Whenever the mouse is moving
 		// outside the plotarea, hide the tooltip
-		addEvent(doc, 'mousemove', mouseTracker.hideTooltipOnMouseMove);
+		if (!hasTouch) { // #1385
+			addEvent(doc, 'mousemove', mouseTracker.hideTooltipOnMouseMove);
+		}
 
 		container.ontouchstart = function (e) {
 			// For touch devices, use touchmove to zoom
