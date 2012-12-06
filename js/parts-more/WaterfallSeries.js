@@ -102,7 +102,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				L = 'L',
 				prevArgs,
 				pointArgs,
-				i, d;
+				i,
+				d;
 
 		for (i = 1; i < length; i++) {
 			pointArgs = data[i].shapeArgs;
