@@ -16829,7 +16829,6 @@ Scroller.prototype = {
 				scrWidth = scrollbarMinWidth;
 				scrX -= scrollbarPad;
 			}
-			scroller.scrollbarPad = scrollbarPad;
 			scrollbar.attr({
 				x: mathFloor(scrX) + (scrollbarStrokeWidth % 2 / 2),
 				width: scrWidth
@@ -16855,6 +16854,7 @@ Scroller.prototype = {
 			});
 		}
 
+		scroller.scrollbarPad = scrollbarPad;
 		scroller.rendered = true;
 	},
 
@@ -17014,6 +17014,7 @@ Scroller.prototype = {
 						);
 					}
 				}
+
 			}
 			// Prevent iPad from passing the handler on from touchstart to mousedown 
 			if (e.type === 'touchstart') {
