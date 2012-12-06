@@ -1,9 +1,9 @@
 /**
  * The overview of the chart's series
  */
-function Legend(chart) {
+function Legend(chart, options) {
 
-	this.init(chart);
+	this.init(chart, options);
 }
 
 Legend.prototype = {
@@ -11,10 +11,9 @@ Legend.prototype = {
 	/**
 	 * Initialize the legend
 	 */
-	init: function (chart) {
-		var legend = this,
-			options = legend.options = chart.options.legend;
-	
+	init: function (chart, options) {
+		var legend = this;
+
 		if (!options.enabled) {
 			return;
 		}
@@ -24,6 +23,7 @@ Legend.prototype = {
 			padding = pick(options.padding, 8),
 			itemMarginTop = options.itemMarginTop || 0;
 	
+		legend.options = options;
 		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);

@@ -310,7 +310,8 @@ Point.prototype = {
 			// record changes in the parallel arrays
 			i = inArray(point, data);
 			series.xData[i] = point.x;
-			series.yData[i] = point.y;
+			series.yData[i] = series.toYData ? series.toYData(point) : point.y;
+			series.zData[i] = point.z;
 			series.options.data[i] = point.options;
 
 			// redraw
@@ -347,6 +348,7 @@ Point.prototype = {
 			series.options.data.splice(i, 1);
 			series.xData.splice(i, 1);
 			series.yData.splice(i, 1);
+			series.zData.splice(i, 1);
 
 			point.destroy();
 
@@ -865,6 +867,7 @@ Series.prototype = {
 			chart = series.chart,
 			xData = series.xData,
 			yData = series.yData,
+			zData = series.zData,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
 			point;
@@ -891,6 +894,7 @@ Series.prototype = {
 		series.pointClass.prototype.applyOptions.apply(point, [options]);
 		xData.push(point.x);
 		yData.push(series.toYData ? series.toYData(point) : point.y);
+		zData.push(point.z);
 		dataOptions.push(options);
 
 
@@ -903,6 +907,7 @@ Series.prototype = {
 				data.shift();
 				xData.shift();
 				yData.shift();
+				zData.shift();
 				dataOptions.shift();
 			}
 		}

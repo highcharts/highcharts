@@ -323,7 +323,7 @@ Axis.prototype = {
 			chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
 		}
 
-		axis.series = []; // populated by Series
+		axis.series = axis.series || []; // populated by Series
 
 		// inverted charts have reversed xAxes as default
 		if (chart.inverted && isXAxis && axis.reversed === UNDEFINED) {
@@ -332,8 +332,6 @@ Axis.prototype = {
 
 		axis.removePlotBand = axis.removePlotBandOrLine;
 		axis.removePlotLine = axis.removePlotBandOrLine;
-		axis.addPlotBand = axis.addPlotBandOrLine;
-		axis.addPlotLine = axis.addPlotBandOrLine;
 
 
 		// register event listeners
@@ -368,14 +366,14 @@ Axis.prototype = {
 	 * Update the axis with a new options structure
 	 */
 	update: function (newOptions, redraw) {
-		var chart = this.chart,
-			series = this.series;
+		var chart = this.chart;
 
 		newOptions = merge(this.userOptions, newOptions);
 
 		this.destroy();
+
 		this.init(chart, newOptions);
-		this.series = series;
+
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
 			chart.redraw();
@@ -1450,14 +1448,31 @@ Axis.prototype = {
 		return axis.translate(threshold, 0, 1, 0, 1);
 	},
 
+	addPlotBand: function (options) {
+		this.addPlotBandOrLine(options, 'plotBands');
+	},
+	
+	addPlotLine: function (options) {
+		this.addPlotBandOrLine(options, 'plotLines');
+	},
+
 	/**
 	 * Add a plot band or plot line after render time
 	 *
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
-	addPlotBandOrLine: function (options) {
-		var obj = new PlotLineOrBand(this, options).render();
-		this.plotLinesAndBands.push(obj);
+	addPlotBandOrLine: function (options, coll) {
+		var obj = new PlotLineOrBand(this, options).render(),
+			userOptions = this.userOptions;
+
+		// Add it to the user options for exporting and Axis.update
+		if (coll) {
+			userOptions[coll] = userOptions[coll] || [];
+			userOptions[coll].push(options); 
+		}
+		
+		this.plotLinesAndBands.push(obj); 
+		
 		return obj;
 	},
 
@@ -1752,7 +1767,6 @@ Axis.prototype = {
 			// custom plot lines and bands
 			if (!axis._addedPlotLB) { // only first time
 				each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
-					//plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
@@ -1853,18 +1867,7 @@ Axis.prototype = {
 	 * Update the axis title by options
 	 */
 	setTitle: function (newTitleOptions, redraw) {
-		var chart = this.chart,
-			options = this.options,
-			axisTitle = this.axisTitle;
-
-		options.title = merge(options.title, newTitleOptions);
-
-		this.axisTitle = axisTitle && axisTitle.destroy(); // #922
-		this.isDirty = true;
-
-		if (pick(redraw, true)) {
-			chart.redraw();
-		}
+		this.update({ title: newTitleOptions }, redraw);
 	},
 
 	/**
@@ -1896,29 +1899,11 @@ Axis.prototype = {
 
 	/**
 	 * Set new axis categories and optionally redraw
-	 * @param {Array} newCategories
-	 * @param {Boolean} doRedraw
+	 * @param {Array} categories
+	 * @param {Boolean} redraw
 	 */
-	setCategories: function (newCategories, doRedraw) {
-		var axis = this,
-			chart = axis.chart;
-
-		// set the categories
-		axis.categories = axis.userOptions.categories = newCategories;
-
-		// force reindexing tooltips
-		each(axis.series, function (series) {
-			series.translate();
-			series.setTooltipPoints(true);
-		});
-
-
-		// optionally redraw
-		axis.isDirty = true;
-
-		if (pick(doRedraw, true)) {
-			chart.redraw();
-		}
+	setCategories: function (categories, redraw) {
+		this.update({ categories: categories }, redraw);
 	},
 
 	/**

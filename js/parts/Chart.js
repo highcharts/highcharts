@@ -1251,7 +1251,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Legend(chart);
+		chart.legend = new Legend(chart, options.legend);
 
 		// Get margins by pre-rendering axes
 		// set axes scales

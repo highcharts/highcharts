@@ -5880,9 +5880,6 @@ function PlotLineOrBand(axis, options) {
 		this.options = options;
 		this.id = options.id;
 	}
-
-	//plotLine.render()
-	return this;
 }
 
 PlotLineOrBand.prototype = {
@@ -6482,7 +6479,7 @@ Axis.prototype = {
 			chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
 		}
 
-		axis.series = []; // populated by Series
+		axis.series = axis.series || []; // populated by Series
 
 		// inverted charts have reversed xAxes as default
 		if (chart.inverted && isXAxis && axis.reversed === UNDEFINED) {
@@ -6491,8 +6488,6 @@ Axis.prototype = {
 
 		axis.removePlotBand = axis.removePlotBandOrLine;
 		axis.removePlotLine = axis.removePlotBandOrLine;
-		axis.addPlotBand = axis.addPlotBandOrLine;
-		axis.addPlotLine = axis.addPlotBandOrLine;
 
 
 		// register event listeners
@@ -6527,14 +6522,14 @@ Axis.prototype = {
 	 * Update the axis with a new options structure
 	 */
 	update: function (newOptions, redraw) {
-		var chart = this.chart,
-			series = this.series;
+		var chart = this.chart;
 
 		newOptions = merge(this.userOptions, newOptions);
 
 		this.destroy();
+
 		this.init(chart, newOptions);
-		this.series = series;
+
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
 			chart.redraw();
@@ -7609,14 +7604,31 @@ Axis.prototype = {
 		return axis.translate(threshold, 0, 1, 0, 1);
 	},
 
+	addPlotBand: function (options) {
+		this.addPlotBandOrLine(options, 'plotBands');
+	},
+	
+	addPlotLine: function (options) {
+		this.addPlotBandOrLine(options, 'plotLines');
+	},
+
 	/**
 	 * Add a plot band or plot line after render time
 	 *
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
-	addPlotBandOrLine: function (options) {
-		var obj = new PlotLineOrBand(this, options).render();
-		this.plotLinesAndBands.push(obj);
+	addPlotBandOrLine: function (options, coll) {
+		var obj = new PlotLineOrBand(this, options).render(),
+			userOptions = this.userOptions;
+
+		// Add it to the user options for exporting and Axis.update
+		if (coll) {
+			userOptions[coll] = userOptions[coll] || [];
+			userOptions[coll].push(options); 
+		}
+		
+		this.plotLinesAndBands.push(obj); 
+		
 		return obj;
 	},
 
@@ -7911,7 +7923,6 @@ Axis.prototype = {
 			// custom plot lines and bands
 			if (!axis._addedPlotLB) { // only first time
 				each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
-					//plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
@@ -8012,18 +8023,7 @@ Axis.prototype = {
 	 * Update the axis title by options
 	 */
 	setTitle: function (newTitleOptions, redraw) {
-		var chart = this.chart,
-			options = this.options,
-			axisTitle = this.axisTitle;
-
-		options.title = merge(options.title, newTitleOptions);
-
-		this.axisTitle = axisTitle && axisTitle.destroy(); // #922
-		this.isDirty = true;
-
-		if (pick(redraw, true)) {
-			chart.redraw();
-		}
+		this.update({ title: newTitleOptions }, redraw);
 	},
 
 	/**
@@ -8055,29 +8055,11 @@ Axis.prototype = {
 
 	/**
 	 * Set new axis categories and optionally redraw
-	 * @param {Array} newCategories
-	 * @param {Boolean} doRedraw
+	 * @param {Array} categories
+	 * @param {Boolean} redraw
 	 */
-	setCategories: function (newCategories, doRedraw) {
-		var axis = this,
-			chart = axis.chart;
-
-		// set the categories
-		axis.categories = axis.userOptions.categories = newCategories;
-
-		// force reindexing tooltips
-		each(axis.series, function (series) {
-			series.translate();
-			series.setTooltipPoints(true);
-		});
-
-
-		// optionally redraw
-		axis.isDirty = true;
-
-		if (pick(doRedraw, true)) {
-			chart.redraw();
-		}
+	setCategories: function (categories, redraw) {
+		this.update({ categories: categories }, redraw);
 	},
 
 	/**
@@ -9155,9 +9137,9 @@ MouseTracker.prototype = {
 /**
  * The overview of the chart's series
  */
-function Legend(chart) {
+function Legend(chart, options) {
 
-	this.init(chart);
+	this.init(chart, options);
 }
 
 Legend.prototype = {
@@ -9165,10 +9147,9 @@ Legend.prototype = {
 	/**
 	 * Initialize the legend
 	 */
-	init: function (chart) {
-		var legend = this,
-			options = legend.options = chart.options.legend;
-	
+	init: function (chart, options) {
+		var legend = this;
+
 		if (!options.enabled) {
 			return;
 		}
@@ -9178,6 +9159,7 @@ Legend.prototype = {
 			padding = pick(options.padding, 8),
 			itemMarginTop = options.itemMarginTop || 0;
 	
+		legend.options = options;
 		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
@@ -11043,7 +11025,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Legend(chart);
+		chart.legend = new Legend(chart, options.legend);
 
 		// Get margins by pre-rendering axes
 		// set axes scales
@@ -11608,7 +11590,8 @@ Point.prototype = {
 			// record changes in the parallel arrays
 			i = inArray(point, data);
 			series.xData[i] = point.x;
-			series.yData[i] = point.y;
+			series.yData[i] = series.toYData ? series.toYData(point) : point.y;
+			series.zData[i] = point.z;
 			series.options.data[i] = point.options;
 
 			// redraw
@@ -11645,6 +11628,7 @@ Point.prototype = {
 			series.options.data.splice(i, 1);
 			series.xData.splice(i, 1);
 			series.yData.splice(i, 1);
+			series.zData.splice(i, 1);
 
 			point.destroy();
 
@@ -12163,6 +12147,7 @@ Series.prototype = {
 			chart = series.chart,
 			xData = series.xData,
 			yData = series.yData,
+			zData = series.zData,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
 			point;
@@ -12189,6 +12174,7 @@ Series.prototype = {
 		series.pointClass.prototype.applyOptions.apply(point, [options]);
 		xData.push(point.x);
 		yData.push(series.toYData ? series.toYData(point) : point.y);
+		zData.push(point.z);
 		dataOptions.push(options);
 
 
@@ -12201,6 +12187,7 @@ Series.prototype = {
 				data.shift();
 				xData.shift();
 				yData.shift();
+				zData.shift();
 				dataOptions.shift();
 			}
 		}
