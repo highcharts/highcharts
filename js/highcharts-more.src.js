@@ -1372,7 +1372,6 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 });
 
-
 // 2 - Create the series object
 seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	type: 'waterfall',
@@ -1458,6 +1457,40 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				point.pointAttr = seriesDownPointAttr;
 			}
 		});
+	},
+
+	getGraphPath: function () {
+
+		var data = this.data,
+				length = data.length,
+				path = [],
+				M = 'M',
+				L = 'L',
+				prevArgs,
+				pointArgs,
+				i,
+				d;
+
+		for (i = 1; i < length; i++) {
+			pointArgs = data[i].shapeArgs;
+			prevArgs = data[i - 1].shapeArgs;
+
+			d = [
+				M,
+				prevArgs.x + prevArgs.width, prevArgs.y,
+				L,
+				pointArgs.x, prevArgs.y
+			];
+
+			if (data[i - 1].y < 0) {
+				d[2] += prevArgs.height;
+				d[5] += prevArgs.height;
+			}
+
+			path = path.concat(d);
+		}
+
+		return path;
 	},
 
 	drawGraph: Series.prototype.drawGraph
