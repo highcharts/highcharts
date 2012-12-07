@@ -644,10 +644,10 @@ Chart.prototype = {
 		chart.containerWidth = adapterRun(renderTo, 'width');
 		chart.containerHeight = adapterRun(renderTo, 'height');
 		
-		chart.chartWidth = optionsChart.width || chart.containerWidth || 600;
-		chart.chartHeight = optionsChart.height ||
+		chart.chartWidth = mathMax(0, pick(optionsChart.width, chart.containerWidth, 600));
+		chart.chartHeight = mathMax(0, pick(optionsChart.height,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-			(chart.containerHeight > 19 ? chart.containerHeight : 400);
+			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
 
 	/**
@@ -944,11 +944,11 @@ Chart.prototype = {
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathRound(width);
+			chart.chartWidth = chartWidth = mathMax(0, mathRound(width));
 			chart.hasUserSize = !!chartWidth;
 		}
 		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathRound(height);
+			chart.chartHeight = chartHeight = mathMax(0, mathRound(height));
 		}
 
 		css(chart.container, {
@@ -1029,8 +1029,8 @@ Chart.prototype = {
 
 		chart.plotLeft = plotLeft = mathRound(chart.plotLeft);
 		chart.plotTop = plotTop = mathRound(chart.plotTop);
-		chart.plotWidth = plotWidth = mathRound(chartWidth - plotLeft - chart.marginRight);
-		chart.plotHeight = plotHeight = mathRound(chartHeight - plotTop - chart.marginBottom);
+		chart.plotWidth = plotWidth = mathMax(0, mathRound(chartWidth - plotLeft - chart.marginRight));
+		chart.plotHeight = plotHeight = mathMax(0, mathRound(chartHeight - plotTop - chart.marginBottom));
 
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
