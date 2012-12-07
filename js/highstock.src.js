@@ -15721,7 +15721,7 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
-			'Close: {point.close}<br/>'	
+			'Close: {point.close}<br/>'
 	},
 	states: {
 		hover: {
@@ -15820,7 +15820,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		'stroke-width': 'lineWidth'
 	},
 	upColorProp: 'stroke',
-	
+
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
@@ -15831,17 +15831,25 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
 			seriesDownPointAttr = merge(series.pointAttr),
-			upColorProp = series.upColorProp;
+			upColorProp = series.upColorProp,
+			points = series.points,
+			length = points.length,
+			isUpDay,
+			point,
+			i;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		each(series.points || [], function (point) {
-			if (point.open < point.close) {
+		for (i = 0; i < length; i++) {
+			point = points[i];
+			isUpDay = i > 0 ? points[i - 1].close < point.close : point.open < point.close;
+
+			if (isUpDay) {
 				point.pointAttr = seriesDownPointAttr;
 			}
-		});
+		}
 	},
 
 	/**
