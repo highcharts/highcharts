@@ -16,6 +16,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 	pointValKey: 'y',
 
+	/**
+	 * Translate data points from raw values
+	 */
 	translate: function () {
 		var previous;
 
@@ -44,6 +47,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		});
 	},
 
+	/**
+	 * Call default processData then override yData to reflect waterfall's extremes on yAxis
+	 */
 	processData: function (force) {
 		Series.prototype.processData.call(this, force);
 
@@ -67,11 +73,17 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 	},
 
+	/**
+	 * Return [y, low] array, if low is not defined, it's replaced with null for further calculations
+	 */
 	toYData: function (pt) {
 		var low = pt.low === UNDEFINED ? null : pt.low;
 		return [pt.y, low];
 	},
 
+	/**
+	 * Postprocess mapping between options and SVG attributes
+	 */
 	getAttribs: function () {
 		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 
@@ -93,6 +105,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		});
 	},
 
+	/**
+	 * Draw columns' connector lines
+	 */
 	getGraphPath: function () {
 
 		var data = this.data,
