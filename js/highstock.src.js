@@ -15832,7 +15832,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 			upColor = options.upColor || series.color,
 			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp,
-			points = series.points,
+			points = series.points || [],
 			length = points.length,
 			isUpDay,
 			point,
