@@ -1368,7 +1368,23 @@ Axis.prototype = {
 	 * in stock charts.
 	 */
 	zoom: function (newMin, newMax) {
-		this.setExtremes(newMin, newMax, false, UNDEFINED, { trigger: 'zoom' });
+		
+		// Prevent pinch zooming out of range
+		if (newMin < this.dataMin) {
+			newMin = UNDEFINED;
+		}
+		if (newMax > this.dataMax) {
+			newMax = UNDEFINED;
+		}
+
+		// Do it
+		this.setExtremes(
+			newMin,
+			newMax,
+			false, 
+			UNDEFINED, 
+			{ trigger: 'zoom' }
+		);
 		return true;
 	},
 	
