@@ -17,7 +17,7 @@ var files = [
 
 // Parse the path from the script tag
 var $tag = $('script[src$="highcharts-more.debug.js"]'),
-	path = $tag.attr('src').replace('highcharts-more.debug.js', '') + 'parts/';
+	path = $tag.attr('src').replace('highcharts-more.debug.js', '') + 'parts-more/';
 
 // Include the individual files
 $.each(files, function (i, file) {

@@ -1071,15 +1071,20 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ***
  * Start Box plot series code											      *
  *****************************************************************************/
 
-// 1 - set default options
+// Set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
+	//medianColor: undefined,
+	medianWidth: 2,
 	states: {
 		hover: {
 			brightness: -0.3
 		}
 	},
+	//stemColor: undefined,
+	//stemDashStyle: 'solid'
+	//stemWidth: undefined,
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
@@ -1089,17 +1094,12 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Higher quartile: {point.q3}<br/>' +
 			'Maximum: {point.high}<br/>'
 	},
-	whiskerLength: '50%',
-	whiskerWidth: 2,
 	//whiskerColor: undefined,
-	medianWidth: 2
-	//medianColor: undefined,
-	//stemWidth: undefined,
-	//stemColor: undefined,
-	//stemDashStyle: 'solid'
+	whiskerLength: '50%',
+	whiskerWidth: 2
 });
 
-// 2 - Create the series object
+// Create the series object
 seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
@@ -1342,10 +1342,11 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
+	color: 'black',
+	linkedTo: ':previous',
 	tooltip: {
 		pointFormat: defaultPlotOptions.arearange.tooltip.pointFormat
 	},
-	showInLegend: false,
 	whiskerWidth: 1
 });
 
@@ -1381,6 +1382,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 	pointValKey: 'y',
 
+	/**
+	 * Translate data points from raw values
+	 */
 	translate: function () {
 		var previous;
 
@@ -1409,6 +1413,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		});
 	},
 
+	/**
+	 * Call default processData then override yData to reflect waterfall's extremes on yAxis
+	 */
 	processData: function (force) {
 		Series.prototype.processData.call(this, force);
 
@@ -1432,11 +1439,17 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 	},
 
+	/**
+	 * Return [y, low] array, if low is not defined, it's replaced with null for further calculations
+	 */
 	toYData: function (pt) {
 		var low = pt.low === UNDEFINED ? null : pt.low;
 		return [pt.y, low];
 	},
 
+	/**
+	 * Postprocess mapping between options and SVG attributes
+	 */
 	getAttribs: function () {
 		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 
@@ -1458,10 +1471,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		});
 	},
 
+	/**
+	 * Draw columns' connector lines
+	 */
 	getGraphPath: function () {
 
 		var data = this.data,
 				length = data.length,
+				lineWidth = this.options.lineWidth,
+				normalizer = mathRound(lineWidth) % 2 / 2,
 				path = [],
 				M = 'M',
 				L = 'L',
@@ -1476,9 +1494,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			d = [
 				M,
-				prevArgs.x + prevArgs.width, prevArgs.y,
+				prevArgs.x + prevArgs.width, prevArgs.y + normalizer,
 				L,
-				pointArgs.x, prevArgs.y
+				pointArgs.x, prevArgs.y + normalizer
 			];
 
 			if (data[i - 1].y < 0) {
@@ -1570,74 +1588,19 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 		return obj;
 	},
-	
-	/**
-	 * Postprocess mapping between options and SVG attributes in order to apply Z threshold
-	 * /
-	getAttribs: function () {
-		
-		var options = this.options,
-			stateOptions = options.states,
-			negColor = options.negativeColor,
-			seriesNegPointAttr;
 
-		Series.prototype.getAttribs.apply(this, arguments);
-		
-		if (negColor) {
-			seriesNegPointAttr = merge(this.pointAttr);
-			
-			seriesNegPointAttr[''].fill = this.applyOpacity(negColor);
-			seriesNegPointAttr.hover.fill = this.applyOpacity(stateOptions.hover.negativeColor || negColor);
-			seriesNegPointAttr.select.fill = this.applyOpacity(stateOptions.select.negativeColor || negColor);
-	
-			each(this.points, function (point) {
-				if (point.z < options.zThreshold) {
-					point.pointAttr = seriesNegPointAttr;
-				}
-			});
-		}
-	},*/
-	
 	/**
-	 * Extend the Series.setData method by finding Z data
+	 * Get the radius for each point based on the minSize, maxSize and each point's Z value. This
+	 * must be done prior to Series.translate because the axis needs to add padding in 
+	 * accordance with the point sizes.
 	 */
-	setData: function (data, redraw) {
-		
-		var chart = this.chart,
-			options = this.options,
-			extremes = {},
-			smallestSize = Math.min(chart.plotWidth, chart.plotHeight),
-			cutThreshold = options.displayNegative === false ? options.zThreshold : -Number.MAX_VALUE,
-			len,
+	getRadii: function (zMin, zMax, minSize, maxSize) {
+		var len,
 			i,
-			minSize,
 			pos,
-			zData,
+			zData = this.zData,
 			radii = [],
-			zMin = Number.MAX_VALUE,
-			zMax = -Number.MAX_VALUE,
 			zRange;
-			
-		// Translate the size extremes to pixel values
-		each(['minSize', 'maxSize'], function (prop) {
-			var length = options[prop],
-				isPercent = /%$/.test(length);
-			
-			length = pInt(length);
-			extremes[prop] = isPercent ?
-				smallestSize * length / 100 :
-				length;
-			
-		});
-		this.minPxSize = minSize = extremes.minSize;
-		
-		// Run the parent method, but do not redraw yet
-		Series.prototype.setData.call(this, data, false);
-		
-		// Find the min and max Z
-		zData = this.zData;
-		zMin = math.max(arrayMin(zData), cutThreshold);
-		zMax = arrayMax(zData);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		for (i = 0, len = zData.length; i < len; i++) {
@@ -1645,14 +1608,10 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos = zRange > 0 ? // relative size, a number between 0 and 1
 				(zData[i] - zMin) / (zMax - zMin) : 
 				0.5;
-			radii.push(math.round(minSize + pos * (extremes.maxSize - minSize)) / 2);
+			radii.push(math.round(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
-		
-		// Now redraw
-		if (pick(redraw, true)) {
-			chart.redraw(false);
-		}
+	
 	},
 	
 	/**
@@ -1757,24 +1716,74 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
  */
 Axis.prototype.beforePadding = function () {
 	var axisLength = this.len,
+		chart = this.chart,
 		pxMin = 0, 
 		pxMax = axisLength,
-		dataKey = this.isXAxis ? 'xData' : 'yData',
+		isXAxis = this.isXAxis,
+		dataKey = isXAxis ? 'xData' : 'yData',
 		min = this.min,
-		transA = axisLength / (this.max - min);
-	
-	if (pick(this.options.min, this.userMin) === UNDEFINED) {
+		extremes = {},
+		smallestSize = math.min(chart.plotWidth, chart.plotHeight),
+		zMin = Number.MAX_VALUE,
+		zMax = -Number.MAX_VALUE,
+		transA = axisLength / (this.max - min),
+		activeSeries = [];
+
+	// Handle padding on the second pass, or on redraw
+	if (pick(this.options.min, this.userMin) === UNDEFINED && this.tickPositions) {
 		each(this.series, function (series) {
+
+			var seriesOptions = series.options,
+				zData;
+
+			if (series.type === 'bubble' && series.visible) {
+
+				// Cache it
+				activeSeries.push(series);
+
+				if (isXAxis) { // because X axis is evaluated first
+				
+					// For each series, translate the size extremes to pixel values
+					each(['minSize', 'maxSize'], function (prop) {
+						var length = seriesOptions[prop],
+							isPercent = /%$/.test(length);
+						
+						length = pInt(length);
+						extremes[prop] = isPercent ?
+							smallestSize * length / 100 :
+							length;
+						
+					});
+					series.minPxSize = extremes.minSize;
+					
+					// Find the min and max Z
+					zData = series.zData;
+					zMin = math.min(
+						zMin,
+						math.max(
+							arrayMin(zData), 
+							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
+						)
+					);
+					zMax = math.max(zMax, arrayMax(zData));
+				}
+			}
+		});
+
+		each(activeSeries, function (series) {
+
 			var data = series[dataKey],
 				i = data.length,
-				radius,
-				radii = series.radii;
-			if (series.type === 'bubble' && series.visible) {
-				while (i--) {
-					radius = radii[i];
-					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
-				}
+				radius;
+
+			if (isXAxis) {
+				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
+			}
+			
+			while (i--) {
+				radius = series.radii[i];
+				pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+				pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
 			}
 		});
 		

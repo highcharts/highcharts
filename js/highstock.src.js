@@ -5888,9 +5888,6 @@ function PlotLineOrBand(axis, options) {
 		this.options = options;
 		this.id = options.id;
 	}
-
-	//plotLine.render()
-	return this;
 }
 
 PlotLineOrBand.prototype = {
@@ -6243,7 +6240,7 @@ Axis.prototype = {
 		tickPosition: 'outside',
 		tickWidth: 1,
 		title: {
-			//text: null,
+			//text: null, // docs: pulled from name, then text
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
@@ -6275,11 +6272,11 @@ Axis.prototype = {
 		lineWidth: 0,
 		maxPadding: 0.05,
 		minPadding: 0.05,
+		name: 'Values', // docs
 		startOnTick: true,
 		tickWidth: 0,
 		title: {
-			rotation: 270,
-			text: 'Y-values'
+			rotation: 270
 		},
 		stackLabels: {
 			enabled: false,
@@ -6485,10 +6482,12 @@ Axis.prototype = {
 			events = axis.options.events;
 
 		// Register
-		chart.axes.push(axis);
-		chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
+		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
+			chart.axes.push(axis);
+			chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
+		}
 
-		axis.series = []; // populated by Series
+		axis.series = axis.series || []; // populated by Series
 
 		// inverted charts have reversed xAxes as default
 		if (chart.inverted && isXAxis && axis.reversed === UNDEFINED) {
@@ -6497,8 +6496,6 @@ Axis.prototype = {
 
 		axis.removePlotBand = axis.removePlotBandOrLine;
 		axis.removePlotLine = axis.removePlotBandOrLine;
-		axis.addPlotBand = axis.addPlotBandOrLine;
-		axis.addPlotLine = axis.addPlotBandOrLine;
 
 
 		// register event listeners
@@ -6528,7 +6525,24 @@ Axis.prototype = {
 			)
 		);
 	},
-	
+
+	/**
+	 * Update the axis with a new options structure
+	 */
+	update: function (newOptions, redraw) {
+		var chart = this.chart;
+
+		newOptions = merge(this.userOptions, newOptions);
+
+		this.destroy();
+
+		this.init(chart, newOptions);
+
+		chart.isDirtyBox = true;
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+	},	
 	
 	/** 
 	 * The default label formatter. The context is a special config object for the label.
@@ -7459,7 +7473,7 @@ Axis.prototype = {
 		});
 		
 		// do we really need to go through all this?
-		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
+		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
 
 			// get data extremes if needed
@@ -7614,14 +7628,31 @@ Axis.prototype = {
 		return axis.translate(threshold, 0, 1, 0, 1);
 	},
 
+	addPlotBand: function (options) {
+		this.addPlotBandOrLine(options, 'plotBands');
+	},
+	
+	addPlotLine: function (options) {
+		this.addPlotBandOrLine(options, 'plotLines');
+	},
+
 	/**
 	 * Add a plot band or plot line after render time
 	 *
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
-	addPlotBandOrLine: function (options) {
-		var obj = new PlotLineOrBand(this, options).render();
-		this.plotLinesAndBands.push(obj);
+	addPlotBandOrLine: function (options, coll) {
+		var obj = new PlotLineOrBand(this, options).render(),
+			userOptions = this.userOptions;
+
+		// Add it to the user options for exporting and Axis.update
+		if (coll) {
+			userOptions[coll] = userOptions[coll] || [];
+			userOptions[coll].push(options); 
+		}
+		
+		this.plotLinesAndBands.push(obj); 
+		
 		return obj;
 	},
 
@@ -7649,11 +7680,9 @@ Axis.prototype = {
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
-			
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
-		
 		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
@@ -7702,10 +7731,10 @@ Axis.prototype = {
 			}
 		}
 
-		if (axisTitleOptions && axisTitleOptions.text) {
+		if (axisTitleOptions && (axisTitleOptions.text || options.name) && axisTitleOptions.enabled !== false) { // docs: enabled
 			if (!axis.axisTitle) {
 				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
+					axisTitleOptions.text || options.name,
 					0,
 					0,
 					axisTitleOptions.useHTML
@@ -7734,7 +7763,6 @@ Axis.prototype = {
 		
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
-		
 		
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
@@ -7919,7 +7947,6 @@ Axis.prototype = {
 			// custom plot lines and bands
 			if (!axis._addedPlotLB) { // only first time
 				each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
-					//plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
@@ -8020,18 +8047,7 @@ Axis.prototype = {
 	 * Update the axis title by options
 	 */
 	setTitle: function (newTitleOptions, redraw) {
-		var chart = this.chart,
-			options = this.options,
-			axisTitle = this.axisTitle;
-
-		options.title = merge(options.title, newTitleOptions);
-
-		this.axisTitle = axisTitle && axisTitle.destroy(); // #922
-		this.isDirty = true;
-
-		if (pick(redraw, true)) {
-			chart.redraw();
-		}
+		this.update({ title: newTitleOptions }, redraw);
 	},
 
 	/**
@@ -8063,29 +8079,11 @@ Axis.prototype = {
 
 	/**
 	 * Set new axis categories and optionally redraw
-	 * @param {Array} newCategories
-	 * @param {Boolean} doRedraw
+	 * @param {Array} categories
+	 * @param {Boolean} redraw
 	 */
-	setCategories: function (newCategories, doRedraw) {
-		var axis = this,
-			chart = axis.chart;
-
-		// set the categories
-		axis.categories = axis.userOptions.categories = newCategories;
-
-		// force reindexing tooltips
-		each(axis.series, function (series) {
-			series.translate();
-			series.setTooltipPoints(true);
-		});
-
-
-		// optionally redraw
-		axis.isDirty = true;
-
-		if (pick(doRedraw, true)) {
-			chart.redraw();
-		}
+	setCategories: function (categories, redraw) {
+		this.update({ categories: categories }, redraw);
 	},
 
 	/**
@@ -9285,9 +9283,9 @@ MouseTracker.prototype = {
 /**
  * The overview of the chart's series
  */
-function Legend(chart) {
+function Legend(chart, options) {
 
-	this.init(chart);
+	this.init(chart, options);
 }
 
 Legend.prototype = {
@@ -9295,10 +9293,9 @@ Legend.prototype = {
 	/**
 	 * Initialize the legend
 	 */
-	init: function (chart) {
-		var legend = this,
-			options = legend.options = chart.options.legend;
-	
+	init: function (chart, options) {
+		var legend = this;
+
 		if (!options.enabled) {
 			return;
 		}
@@ -9308,6 +9305,7 @@ Legend.prototype = {
 			padding = pick(options.padding, 8),
 			itemMarginTop = options.itemMarginTop || 0;
 	
+		legend.options = options;
 		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
@@ -9674,7 +9672,7 @@ Legend.prototype = {
 		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
-			if (!seriesOptions.showInLegend) {
+			if (!seriesOptions.showInLegend || defined(seriesOptions.linkedTo)) {
 				return;
 			}
 
@@ -9929,71 +9927,107 @@ globalAdapter.plugin('Chart');
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-function Chart(userOptions, callback) {
-	// Handle regular options
-	var options,
-		seriesOptions = userOptions.series; // skip merging data points to increase performance
-	userOptions.series = null;
-	options = merge(defaultOptions, userOptions); // do the merge
-	options.series = userOptions.series = seriesOptions; // set back the series data
-
-	var optionsChart = options.chart,
-		optionsMargin = optionsChart.margin,
-		margin = isObject(optionsMargin) ?
-			optionsMargin :
-			[optionsMargin, optionsMargin, optionsMargin, optionsMargin];
-
-	this.optionsMarginTop = pick(optionsChart.marginTop, margin[0]);
-	this.optionsMarginRight = pick(optionsChart.marginRight, margin[1]);
-	this.optionsMarginBottom = pick(optionsChart.marginBottom, margin[2]);
-	this.optionsMarginLeft = pick(optionsChart.marginLeft, margin[3]);
-
-	var chartEvents = optionsChart.events;
-
-	this.runChartClick = chartEvents && !!chartEvents.click;
-	this.callback = callback;
-	this.isResizing = 0;
-	this.options = options;
-	//chartTitleOptions = UNDEFINED;
-	//chartSubtitleOptions = UNDEFINED;
-
-	this.axes = [];
-	this.series = [];
-	this.hasCartesianSeries = optionsChart.showAxes;
-	//this.axisOffset = UNDEFINED;
-	//this.maxTicks = UNDEFINED; // handle the greatest amount of ticks on grouped axes
-	//this.inverted = UNDEFINED;
-	//this.loadingShown = UNDEFINED;
-	//this.container = UNDEFINED;
-	//this.chartWidth = UNDEFINED;
-	//this.chartHeight = UNDEFINED;
-	//this.marginRight = UNDEFINED;
-	//this.marginBottom = UNDEFINED;
-	//this.containerWidth = UNDEFINED;
-	//this.containerHeight = UNDEFINED;
-	//this.oldChartWidth = UNDEFINED;
-	//this.oldChartHeight = UNDEFINED;
-
-	//this.renderTo = UNDEFINED;
-	//this.renderToClone = UNDEFINED;
-	//this.tracker = UNDEFINED;
-
-	//this.spacingBox = UNDEFINED
-
-	//this.legend = UNDEFINED;
-
-	// Elements
-	//this.chartBackground = UNDEFINED;
-	//this.plotBackground = UNDEFINED;
-	//this.plotBGImage = UNDEFINED;
-	//this.plotBorder = UNDEFINED;
-	//this.loadingDiv = UNDEFINED;
-	//this.loadingSpan = UNDEFINED;
-
-	this.init(chartEvents);
+function Chart() {
+	this.init.apply(this, arguments);
 }
 
 Chart.prototype = {
+
+	/**
+	 * Initialize the chart
+	 */
+	init: function (userOptions, callback) {
+
+		// Handle regular options
+		var options,
+			seriesOptions = userOptions.series; // skip merging data points to increase performance
+
+		userOptions.series = null;
+		options = merge(defaultOptions, userOptions); // do the merge
+		options.series = userOptions.series = seriesOptions; // set back the series data
+
+		var optionsChart = options.chart,
+			optionsMargin = optionsChart.margin,
+			margin = isObject(optionsMargin) ?
+				optionsMargin :
+				[optionsMargin, optionsMargin, optionsMargin, optionsMargin];
+
+		this.optionsMarginTop = pick(optionsChart.marginTop, margin[0]);
+		this.optionsMarginRight = pick(optionsChart.marginRight, margin[1]);
+		this.optionsMarginBottom = pick(optionsChart.marginBottom, margin[2]);
+		this.optionsMarginLeft = pick(optionsChart.marginLeft, margin[3]);
+
+		var chartEvents = optionsChart.events;
+
+		this.runChartClick = chartEvents && !!chartEvents.click;
+		this.callback = callback;
+		this.isResizing = 0;
+		this.options = options;
+		//chartTitleOptions = UNDEFINED;
+		//chartSubtitleOptions = UNDEFINED;
+
+		this.axes = [];
+		this.series = [];
+		this.hasCartesianSeries = optionsChart.showAxes;
+		//this.axisOffset = UNDEFINED;
+		//this.maxTicks = UNDEFINED; // handle the greatest amount of ticks on grouped axes
+		//this.inverted = UNDEFINED;
+		//this.loadingShown = UNDEFINED;
+		//this.container = UNDEFINED;
+		//this.chartWidth = UNDEFINED;
+		//this.chartHeight = UNDEFINED;
+		//this.marginRight = UNDEFINED;
+		//this.marginBottom = UNDEFINED;
+		//this.containerWidth = UNDEFINED;
+		//this.containerHeight = UNDEFINED;
+		//this.oldChartWidth = UNDEFINED;
+		//this.oldChartHeight = UNDEFINED;
+
+		//this.renderTo = UNDEFINED;
+		//this.renderToClone = UNDEFINED;
+		//this.tracker = UNDEFINED;
+
+		//this.spacingBox = UNDEFINED
+
+		//this.legend = UNDEFINED;
+
+		// Elements
+		//this.chartBackground = UNDEFINED;
+		//this.plotBackground = UNDEFINED;
+		//this.plotBGImage = UNDEFINED;
+		//this.plotBorder = UNDEFINED;
+		//this.loadingDiv = UNDEFINED;
+		//this.loadingSpan = UNDEFINED;
+
+		var chart = this,
+			eventType;
+
+		// Add the chart to the global lookup
+		chart.index = charts.length;
+		charts.push(chart);
+
+		// Set up auto resize
+		if (optionsChart.reflow !== false) {
+			addEvent(chart, 'load', chart.initReflow);
+		}
+
+		// Chart event handlers
+		if (chartEvents) {
+			for (eventType in chartEvents) {
+				addEvent(chart, eventType, chartEvents[eventType]);
+			}
+		}
+
+		chart.xAxis = [];
+		chart.yAxis = [];
+
+		// Expose methods and variables
+		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
+		chart.pointCount = 0;
+		chart.counters = new ChartCounters();
+
+		chart.firstRender();
+	},
 
 	/**
 	 * Initialize an individual series, called internally before render time
@@ -10023,7 +10057,6 @@ Chart.prototype = {
 			chart = this;
 
 		if (options) {
-			setAnimation(animation, chart);
 			redraw = pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
@@ -10031,7 +10064,7 @@ Chart.prototype = {
 				
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				if (redraw) {
-					chart.redraw();
+					chart.redraw(animation);
 				}
 			});
 		}
@@ -11138,7 +11171,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Legend(chart);
+		chart.legend = new Legend(chart, options.legend);
 
 		// Get margins by pre-rendering axes
 		// set axes scales
@@ -11291,6 +11324,34 @@ Chart.prototype = {
 
 	},
 
+
+	/**
+	 * VML namespaces can't be added until after complete. Listening
+	 * for Perini's doScroll hack is not enough.
+	 */
+	isReadyToRender: function () {
+		var chart = this;
+
+		// Note: in spite of JSLint's complaints, win == win.top is required
+		/*jslint eqeq: true*/
+		if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) {
+		/*jslint eqeq: false*/
+			if (useCanVG) {
+				// Delay rendering until canvg library is downloaded and ready
+				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+			} else {
+				doc.attachEvent('onreadystatechange', function () {
+					doc.detachEvent('onreadystatechange', chart.firstRender);
+					if (doc.readyState === 'complete') {
+						chart.firstRender();
+					}
+				});
+			}
+			return false;
+		}
+		return true;
+	},
+
 	/**
 	 * Prepare for first rendering after all data are loaded
 	 */
@@ -11299,29 +11360,12 @@ Chart.prototype = {
 			options = chart.options,
 			callback = chart.callback;
 
-		// VML namespaces can't be added until after complete. Listening
-		// for Perini's doScroll hack is not enough.
-		var ONREADYSTATECHANGE = 'onreadystatechange',
-		COMPLETE = 'complete';
-		// Note: in spite of JSLint's complaints, win == win.top is required
-		/*jslint eqeq: true*/
-		if ((!hasSVG && (win == win.top && doc.readyState !== COMPLETE)) || (useCanVG && !win.canvg)) {
-		/*jslint eqeq: false*/
-			if (useCanVG) {
-				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, options.global.canvasToolsURL);
-			} else {
-				doc.attachEvent(ONREADYSTATECHANGE, function () {
-					doc.detachEvent(ONREADYSTATECHANGE, chart.firstRender);
-					if (doc.readyState === COMPLETE) {
-						chart.firstRender();
-					}
-				});
-			}
+		// Check whether the chart is ready to render
+		if (!chart.isReadyToRender()) {
 			return;
 		}
 
-		// create the container
+		// Create the container
 		chart.getContainer();
 
 		// Run an early event after the container and renderer are established
@@ -11375,38 +11419,6 @@ Chart.prototype = {
 
 		fireEvent(chart, 'load');
 
-	},
-
-	init: function (chartEvents) {
-		var chart = this,
-			optionsChart = chart.options.chart,
-			eventType;
-
-		// Add the chart to the global lookup
-		chart.index = charts.length;
-		charts.push(chart);
-
-		// Set up auto resize
-		if (optionsChart.reflow !== false) {
-			addEvent(chart, 'load', chart.initReflow);
-		}
-
-		// Chart event handlers
-		if (chartEvents) {
-			for (eventType in chartEvents) {
-				addEvent(chart, eventType, chartEvents[eventType]);
-			}
-		}
-
-		chart.xAxis = [];
-		chart.yAxis = [];
-
-		// Expose methods and variables
-		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
-		chart.pointCount = 0;
-		chart.counters = new ChartCounters();
-
-		chart.firstRender();
 	}
 }; // end Chart
 
@@ -11425,7 +11437,6 @@ Point.prototype = {
 	 */
 	init: function (series, options, x) {
 		var point = this,
-			counters = series.chart.counters,
 			defaultColors;
 		point.series = series;
 		point.applyOptions(options, x);
@@ -11433,9 +11444,11 @@ Point.prototype = {
 
 		if (series.options.colorByPoint) {
 			defaultColors = series.chart.options.colors;
-			point.color = point.color || defaultColors[counters.color++];
+			point.color = point.color || defaultColors[series.colorCounter++];
 			// loop back to zero
-			counters.wrapColor(defaultColors.length);
+			if (series.colorCounter === defaultColors.length) {
+				series.colorCounter = 0;
+			}
 		}
 
 		series.chart.pointCount++;
@@ -11450,41 +11463,14 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			pointArrayMap = series.pointArrayMap || ['y'],
-			valueCount = pointArrayMap.length,
-			i = 0,
-			j = 0,
-			optionsType = typeof options,
-			firstItemType,
 			pointValKey = series.pointValKey;
 
-		if (optionsType === 'number' || options === null) {
-			point.y = options;
-		 
-		// object input
-		} else if (typeof options === 'object' && typeof options.length !== 'number') {
+		options = Point.prototype.optionsToObject.call(this, options);
 
-			// copy options directly to point
-			extend(point, options);
-
-			point.options = options;
+		// copy options directly to point
+		extend(point, options);
+		point.options = point.options ? extend(point.options, options) : options;
 			
-		} else if (options.length) { // array
-			// with leading x value
-			if (options.length > valueCount) {
-				firstItemType = typeof options[0];
-				if (firstItemType === 'string') {
-					point.name = options[0];
-				} else if (firstItemType === 'number') {
-					point.x = options[0];
-				}
-				i++;
-			}
-			while (j < valueCount) {
-				point[pointArrayMap[j++]] = options[i++];
-			}
-		}
-
 		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
 		if (pointValKey) {
 			point.y = point[pointValKey];
@@ -11497,6 +11483,41 @@ Point.prototype = {
 		}
 		
 		return point;
+	},
+
+	/**
+	 * Transform number or array configs into objects
+	 */
+	optionsToObject: function (options) {
+		var ret,
+			pointArrayMap = this.series.pointArrayMap || ['y'],
+			valueCount = pointArrayMap.length,
+			firstItemType,
+			i = 0,
+			j = 0;
+
+		if (typeof options === 'number' || options === null) {
+			ret = { y: options };
+
+		} else if (isArray(options)) {
+			ret = {};
+			// with leading x value
+			if (options.length > valueCount) {
+				firstItemType = typeof options[0];
+				if (firstItemType === 'string') {
+					ret.name = options[0];
+				} else if (firstItemType === 'number') {
+					ret.x = options[0];
+				}
+				i++;
+			}
+			while (j < valueCount) {
+				ret[pointArrayMap[j++]] = options[i++];
+			}			
+		} else if (typeof options === 'object') {
+			ret = options;
+		}
+		return ret;
 	},
 
 	/**
@@ -11587,14 +11608,17 @@ Point.prototype = {
 
 		// fire the event with the defalut handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
-			point.selected = selected;
+			point.selected = point.options.selected = selected;
+			series.options.data[inArray(point, series.data)] = point.options;
+			
 			point.setState(selected && SELECT_STATE);
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
 				each(chart.getSelectedPoints(), function (loopPoint) {
 					if (loopPoint.selected && loopPoint !== point) {
-						loopPoint.selected = false;
+						loopPoint.selected = loopPoint.options.selected = false;
+						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
 						loopPoint.setState(NORMAL_STATE);
 						loopPoint.firePointEvent('unselect');
 					}
@@ -11692,7 +11716,6 @@ Point.prototype = {
 			graphic = point.graphic,
 			i,
 			data = series.data,
-			dataLength = data.length,
 			chart = series.chart;
 
 		redraw = pick(redraw, true);
@@ -11711,14 +11734,11 @@ Point.prototype = {
 			}
 
 			// record changes in the parallel arrays
-			for (i = 0; i < dataLength; i++) {
-				if (data[i] === point) {
-					series.xData[i] = point.x;
-					series.yData[i] = point.y;
-					series.options.data[i] = options;
-					break;
-				}
-			}
+			i = inArray(point, data);
+			series.xData[i] = point.x;
+			series.yData[i] = series.toYData ? series.toYData(point) : point.y;
+			series.zData[i] = point.z;
+			series.options.data[i] = point.options;
 
 			// redraw
 			series.isDirty = true;
@@ -11740,8 +11760,7 @@ Point.prototype = {
 			series = point.series,
 			chart = series.chart,
 			i,
-			data = series.data,
-			dataLength = data.length;
+			data = series.data;
 
 		setAnimation(animation, chart);
 		redraw = pick(redraw, true);
@@ -11749,19 +11768,13 @@ Point.prototype = {
 		// fire the event with a default handler of removing the point
 		point.firePointEvent('remove', null, function () {
 
-			//erase(series.data, point);
-
-			for (i = 0; i < dataLength; i++) {
-				if (data[i] === point) {
-
-					// splice all the parallel arrays
-					data.splice(i, 1);
-					series.options.data.splice(i, 1);
-					series.xData.splice(i, 1);
-					series.yData.splice(i, 1);
-					break;
-				}
-			}
+			// splice all the parallel arrays
+			i = inArray(point, data);
+			data.splice(i, 1);
+			series.options.data.splice(i, 1);
+			series.xData.splice(i, 1);
+			series.yData.splice(i, 1);
+			series.zData.splice(i, 1);
 
 			point.destroy();
 
@@ -11939,14 +11952,17 @@ Series.prototype = {
 		fill: 'fillColor',
 		r: 'radius'
 	},
+	colorCounter: 0,
 	init: function (chart, options) {
 		var series = this,
 			eventType,
-			events;
+			events,
+			linkedTo,
+			chartSeries = chart.series;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
-		
+
 		// bind the axes
 		series.bindAxes();
 
@@ -11989,16 +12005,31 @@ Series.prototype = {
 		}
 
 		// Register it in the chart
-		chart.series.push(series);
+		chartSeries.push(series);
+		series._i = chartSeries.length - 1;
 		
 		// Sort series according to index option (#248, #1123)
-		stableSort(chart.series, function (a, b) {
-			return (a.options.index || 0) - (b.options.index || 0);
+		stableSort(chartSeries, function (a, b) {
+			return pick(a.options.index, a._i) - pick(b.options.index, a._i);
 		});
-		each(chart.series, function (series, i) {
+		each(chartSeries, function (series, i) {
 			series.index = i;
 			series.name = series.name || 'Series ' + (i + 1);
 		});
+
+		// Linked series
+		linkedTo = options.linkedTo; // docs: ':previous' or Series.id
+		series.linkedSeries = [];
+		if (isString(linkedTo)) {
+			if (linkedTo === ':previous') {
+				linkedTo = chartSeries[series.index - 1];
+			} else {
+				linkedTo = chart.get(linkedTo);
+			}
+			if (linkedTo) {
+				linkedTo.linkedSeries.push(series);
+			}
+		}
 	},
 	
 	/**
@@ -12112,6 +12143,8 @@ Series.prototype = {
 			data = itemOptions.data,
 			options;
 
+		this.userOptions = itemOptions;
+
 		itemOptions.data = null; // remove from merge to prevent looping over the data set
 
 		options = merge(
@@ -12139,10 +12172,25 @@ Series.prototype = {
 	 */
 	getColor: function () {
 		var options = this.options,
+			userOptions = this.userOptions,
 			defaultColors = this.chart.options.colors,
-			counters = this.chart.counters;
-		this.color = options.color ||
-			(!options.colorByPoint && defaultColors[counters.color++]) || 'gray';
+			counters = this.chart.counters,
+			color,
+			colorIndex;
+
+		color = options.color || defaultPlotOptions[this.type].color;
+
+		if (!color && !options.colorByPoint) {
+			if (defined(userOptions._colorIndex)) { // after Series.update()
+				colorIndex = userOptions._colorIndex;
+			} else {
+				userOptions._colorIndex = counters.color;
+				colorIndex = counters.color++;
+			}
+			color = defaultColors[colorIndex];
+		}
+		
+		this.color = color;
 		counters.wrapColor(defaultColors.length);
 	},
 	/**
@@ -12150,12 +12198,24 @@ Series.prototype = {
 	 */
 	getSymbol: function () {
 		var series = this,
+			userOptions = series.userOptions,
 			seriesMarkerOption = series.options.marker,
 			chart = series.chart,
 			defaultSymbols = chart.options.symbols,
-			counters = chart.counters;
-		series.symbol = seriesMarkerOption.symbol || defaultSymbols[counters.symbol++];
-		
+			counters = chart.counters,
+			symbolIndex;
+
+		series.symbol = seriesMarkerOption.symbol;
+		if (!series.symbol) {
+			if (defined(userOptions._symbolIndex)) { // after Series.update()
+				symbolIndex = userOptions._symbolIndex;
+			} else {
+				userOptions._symbolIndex = counters.symbol;
+				symbolIndex = counters.symbol++;
+			}
+		}
+		series.symbol = defaultSymbols[symbolIndex];
+
 		// don't substract radius in image symbols (#604)
 		if (/^url/.test(series.symbol)) {
 			seriesMarkerOption.radius = 0;
@@ -12233,6 +12293,7 @@ Series.prototype = {
 			chart = series.chart,
 			xData = series.xData,
 			yData = series.yData,
+			zData = series.zData,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = series.options.data,
 			point;
@@ -12259,6 +12320,7 @@ Series.prototype = {
 		series.pointClass.prototype.applyOptions.apply(point, [options]);
 		xData.push(point.x);
 		yData.push(series.toYData ? series.toYData(point) : point.y);
+		zData.push(point.z);
 		dataOptions.push(options);
 
 
@@ -12271,6 +12333,7 @@ Series.prototype = {
 				data.shift();
 				xData.shift();
 				yData.shift();
+				zData.shift();
 				dataOptions.shift();
 			}
 		}
@@ -13165,7 +13228,41 @@ Series.prototype = {
 		}
 
 	},
+	/**
+	 * Update the series with a new set of options // docs (demo: members/series-update)
+	 */
+	update: function (newOptions, redraw) {
+		var chart = this.chart,
+			// must use user options when changing type because this.options is merged
+			// in with type specific plotOptions
+			oldOptions = this.userOptions,
+			oldData = this.options.data,
+			newData = newOptions.data,
+			oldType = this.type;
 
+		// Don't merge data, it's expensive
+		oldOptions.data = newOptions.data = null;
+
+		// Do the merge, with some forced options
+		newOptions = merge(oldOptions, {
+			animation: false,
+			index: this.index,
+			pointStart: this.xData[0] // when updating after addPoint
+		}, newOptions);
+
+		// Use only new or only old data
+		newOptions.data = newData || oldData;
+
+		// Destroy the series and reinsert methods from the type prototype
+		this.remove(false);
+		extend(this, seriesTypes[newOptions.type || oldType].prototype);
+		
+
+		this.init(chart, newOptions);
+		if (pick(redraw, true)) {
+			chart.redraw(false);
+		}
+	},
 
 	/**
 	 * Clear DOM objects and free up memory
@@ -13192,7 +13289,7 @@ Series.prototype = {
 			axis = series[AXIS];
 			if (axis) {
 				erase(axis.series, series);
-				axis.isDirty = true;
+				axis.isDirty = axis.forceRedraw = true;
 			}
 		});
 
@@ -13661,12 +13758,13 @@ Series.prototype = {
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
+			isNew = !group,
 			chart = this.chart,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis;
 		
 		// Generate it on first call
-		if (!group) {	
+		if (isNew) {	
 			this[prop] = group = chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
@@ -13675,10 +13773,10 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group.translate(
-			xAxis ? xAxis.left : chart.plotLeft, 
-			yAxis ? yAxis.top : chart.plotTop
-		);
+		group[isNew ? 'attr' : 'animate']({
+			translateX: xAxis ? xAxis.left : chart.plotLeft, 
+			translateY: yAxis ? yAxis.top : chart.plotTop
+		});
 		
 		return group;
 		
@@ -13863,7 +13961,7 @@ Series.prototype = {
 			oldVisibility = series.visible;
 
 		// if called without an argument, toggle visibility
-		series.visible = vis = vis === UNDEFINED ? !oldVisibility : vis;
+		series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide series
@@ -13912,6 +14010,11 @@ Series.prototype = {
 				}
 			});
 		}
+
+		// show or hide linked series
+		each(series.linkedSeries, function (otherSeries) {
+			otherSeries.setVisible(vis, false);
+		});
 
 		if (ignoreHiddenSeries) {
 			chart.isDirtyBox = true;
@@ -14942,8 +15045,9 @@ var PiePoint = extendClass(Point, {
 			method;
 
 		// if called without an argument, toggle visibility
-		point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-
+		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		
 		method = vis ? 'show' : 'hide';
 
 		point.group[method]();
@@ -14988,7 +15092,8 @@ var PiePoint = extendClass(Point, {
 		redraw = pick(redraw, true);
 
 		// if called without an argument, toggle
-		sliced = point.sliced = defined(sliced) ? sliced : !point.sliced;
+		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = {
 			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
@@ -17636,6 +17741,8 @@ Scroller.prototype = {
 			// Abort if lazy-loading data from the server.
 			if (navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
+				// Survive Series.update()
+				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
 			}
 			
 

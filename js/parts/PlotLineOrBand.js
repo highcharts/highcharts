@@ -9,9 +9,6 @@ function PlotLineOrBand(axis, options) {
 		this.options = options;
 		this.id = options.id;
 	}
-
-	//plotLine.render()
-	return this;
 }
 
 PlotLineOrBand.prototype = {

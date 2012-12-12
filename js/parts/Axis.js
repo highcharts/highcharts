@@ -76,7 +76,7 @@ Axis.prototype = {
 		tickPosition: 'outside',
 		tickWidth: 1,
 		title: {
-			//text: null,
+			//text: null, // docs: pulled from name, then text
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
@@ -108,11 +108,11 @@ Axis.prototype = {
 		lineWidth: 0,
 		maxPadding: 0.05,
 		minPadding: 0.05,
+		name: 'Values', // docs
 		startOnTick: true,
 		tickWidth: 0,
 		title: {
-			rotation: 270,
-			text: 'Y-values'
+			rotation: 270
 		},
 		stackLabels: {
 			enabled: false,
@@ -318,10 +318,12 @@ Axis.prototype = {
 			events = axis.options.events;
 
 		// Register
-		chart.axes.push(axis);
-		chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
+		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
+			chart.axes.push(axis);
+			chart[isXAxis ? 'xAxis' : 'yAxis'].push(axis);
+		}
 
-		axis.series = []; // populated by Series
+		axis.series = axis.series || []; // populated by Series
 
 		// inverted charts have reversed xAxes as default
 		if (chart.inverted && isXAxis && axis.reversed === UNDEFINED) {
@@ -330,8 +332,6 @@ Axis.prototype = {
 
 		axis.removePlotBand = axis.removePlotBandOrLine;
 		axis.removePlotLine = axis.removePlotBandOrLine;
-		axis.addPlotBand = axis.addPlotBandOrLine;
-		axis.addPlotLine = axis.addPlotBandOrLine;
 
 
 		// register event listeners
@@ -361,7 +361,24 @@ Axis.prototype = {
 			)
 		);
 	},
-	
+
+	/**
+	 * Update the axis with a new options structure
+	 */
+	update: function (newOptions, redraw) {
+		var chart = this.chart;
+
+		newOptions = merge(this.userOptions, newOptions);
+
+		this.destroy();
+
+		this.init(chart, newOptions);
+
+		chart.isDirtyBox = true;
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+	},	
 	
 	/** 
 	 * The default label formatter. The context is a special config object for the label.
@@ -1292,7 +1309,7 @@ Axis.prototype = {
 		});
 		
 		// do we really need to go through all this?
-		if (isDirtyAxisLength || isDirtyData || axis.isLinked ||
+		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
 
 			// get data extremes if needed
@@ -1447,14 +1464,31 @@ Axis.prototype = {
 		return axis.translate(threshold, 0, 1, 0, 1);
 	},
 
+	addPlotBand: function (options) {
+		this.addPlotBandOrLine(options, 'plotBands');
+	},
+	
+	addPlotLine: function (options) {
+		this.addPlotBandOrLine(options, 'plotLines');
+	},
+
 	/**
 	 * Add a plot band or plot line after render time
 	 *
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
-	addPlotBandOrLine: function (options) {
-		var obj = new PlotLineOrBand(this, options).render();
-		this.plotLinesAndBands.push(obj);
+	addPlotBandOrLine: function (options, coll) {
+		var obj = new PlotLineOrBand(this, options).render(),
+			userOptions = this.userOptions;
+
+		// Add it to the user options for exporting and Axis.update
+		if (coll) {
+			userOptions[coll] = userOptions[coll] || [];
+			userOptions[coll].push(options); 
+		}
+		
+		this.plotLinesAndBands.push(obj); 
+		
 		return obj;
 	},
 
@@ -1482,11 +1516,9 @@ Axis.prototype = {
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
-			
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
-		
 		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
@@ -1535,10 +1567,10 @@ Axis.prototype = {
 			}
 		}
 
-		if (axisTitleOptions && axisTitleOptions.text) {
+		if (axisTitleOptions && (axisTitleOptions.text || options.name) && axisTitleOptions.enabled !== false) { // docs: enabled
 			if (!axis.axisTitle) {
 				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
+					axisTitleOptions.text || options.name,
 					0,
 					0,
 					axisTitleOptions.useHTML
@@ -1567,7 +1599,6 @@ Axis.prototype = {
 		
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
-		
 		
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
@@ -1752,7 +1783,6 @@ Axis.prototype = {
 			// custom plot lines and bands
 			if (!axis._addedPlotLB) { // only first time
 				each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
-					//plotLinesAndBands.push(new PlotLineOrBand(plotLineOptions).render());
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
@@ -1853,18 +1883,7 @@ Axis.prototype = {
 	 * Update the axis title by options
 	 */
 	setTitle: function (newTitleOptions, redraw) {
-		var chart = this.chart,
-			options = this.options,
-			axisTitle = this.axisTitle;
-
-		options.title = merge(options.title, newTitleOptions);
-
-		this.axisTitle = axisTitle && axisTitle.destroy(); // #922
-		this.isDirty = true;
-
-		if (pick(redraw, true)) {
-			chart.redraw();
-		}
+		this.update({ title: newTitleOptions }, redraw);
 	},
 
 	/**
@@ -1896,29 +1915,11 @@ Axis.prototype = {
 
 	/**
 	 * Set new axis categories and optionally redraw
-	 * @param {Array} newCategories
-	 * @param {Boolean} doRedraw
+	 * @param {Array} categories
+	 * @param {Boolean} redraw
 	 */
-	setCategories: function (newCategories, doRedraw) {
-		var axis = this,
-			chart = axis.chart;
-
-		// set the categories
-		axis.categories = axis.userOptions.categories = newCategories;
-
-		// force reindexing tooltips
-		each(axis.series, function (series) {
-			series.translate();
-			series.setTooltipPoints(true);
-		});
-
-
-		// optionally redraw
-		axis.isDirty = true;
-
-		if (pick(doRedraw, true)) {
-			chart.redraw();
-		}
+	setCategories: function (categories, redraw) {
+		this.update({ categories: categories }, redraw);
 	},
 
 	/**

@@ -833,6 +833,8 @@ Scroller.prototype = {
 			// Abort if lazy-loading data from the server.
 			if (navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
+				// Survive Series.update()
+				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
 			}
 			
 

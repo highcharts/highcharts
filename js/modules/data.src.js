@@ -1,14 +1,15 @@
 /**
- * @license Data plugin for Highcharts v0.1
+ * @license Data plugin for Highcharts
  *
  * (c) 2012 Torstein Hønsi
+ * Last revision 2012-11-27
  *
  * License: www.highcharts.com/license
  */
 
 /*
  * The Highcharts Data plugin is a utility to ease parsing of input sources like
- * CSV, HTML tables or grid views into basing configuration options for use 
+ * CSV, HTML tables or grid views into basic configuration options for use 
  * directly in the Highcharts constructor.
  *
  * Demo: http://jsfiddle.net/highcharts/SnLFj/
@@ -39,6 +40,14 @@
  * - endRow : Integer
  * In tabular input data, the last row (indexed by 0) to use. Defaults to the last row
  * containing data.
+ *
+ * - googleSpreadsheetKey : String 
+ * A Google Spreadsheet key. See https://developers.google.com/gdata/samples/spreadsheet_sample
+ * for general information on GS.
+ *
+ * - googleSpreadsheetKey : String 
+ * The Google Spreadsheet worksheet. The available id's can be read from 
+ * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
  *
  * - itemDilimiter : String
  * Item or cell delimiter for parsing CSV. Defaults to ",".
@@ -89,9 +98,6 @@
 	 * Initialize the Data object with the given options
 	 */
 	init: function (options) {
-		
-		var async = false;
-		
 		this.options = options;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
 		
@@ -101,12 +107,16 @@
 		
 		// Parse a HTML table if options.table is given
 		this.parseTable();
-		
-		// Load and parse SVG
-		if (options.svg) {
-			this.loadSVG();
-			async = true;
-		}
+
+		// Parse a Google Spreadsheet 
+		this.parseGoogleSpreadsheet();
+
+	},
+
+	/**
+	 * Proceed when the data is found and loaded
+	 */
+	dataFound: function () {
 		
 		// Interpret the values into right types
 		this.parseTypes();
@@ -118,9 +128,7 @@
 		this.parsed();
 		
 		// Complete if a complete callback is given
-		if (!async) {
-			this.complete();
-		}
+		this.complete();
 		
 	},
 	
@@ -158,6 +166,8 @@
 					});
 				}
 			});
+
+			this.dataFound();
 		}
 	},
 	
@@ -195,6 +205,8 @@
 					});
 				}
 			});
+
+			this.dataFound();
 		}
 	},
 	
@@ -412,6 +424,56 @@
 			}
 		});
 	},
+
+	/**
+	 * TODO: 
+	 * - switchRowsAndColumns
+	 * - startRow, endRow etc.
+	 */
+	parseGoogleSpreadsheet: function () {
+		var self = this,
+			options = this.options,
+			googleSpreadsheetKey = options.googleSpreadsheetKey,
+			columns = this.columns;
+
+		if (googleSpreadsheetKey) {
+			jQuery.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
+				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
+					  '/public/values?alt=json-in-script&callback=?',
+					  function (json) {
+					
+				// Prepare the data from the spreadsheat
+				var cells = json.feed.entry,
+					cell,
+					cellCount = cells.length,
+					colCount = 0,
+					rowCount = 0,
+					i;
+			
+				// First, find the total number of columns and rows that 
+				// are actually filled with data
+				for (i = 0; i < cellCount; i++) {
+					cell = cells[i];
+					colCount = Math.max(colCount, cell.gs$cell.col);
+					rowCount = Math.max(rowCount, cell.gs$cell.row);			
+				}
+			
+				// Set up arrays containing the column data
+				for (i = 0; i < colCount; i++) {
+					columns[i] = new Array(rowCount);
+				}
+				
+				// Loop over the cells and assign the value to the right
+				// place in the column arrays
+				for (i = 0; i < cellCount; i++) {
+					cell = cells[i];
+					columns[cell.gs$cell.col - 1][cell.gs$cell.row - 1] = 
+						cell.content.$t;
+				}
+				self.dataFound();
+			});
+		}
+	},
 	
 	/**
 	 * Find the header row. For now, we just check whether the first row contains
@@ -432,7 +494,8 @@
 	 * Trim a string from whitespace
 	 */
 	trim: function (str) {
-		return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, '');
+		//return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, '');
+		return typeof str === 'string' ? str.replace(/^\s+|\s+$/g, '') : str;
 	},
 	
 	/**
@@ -603,6 +666,22 @@
 	Highcharts.data = function (options) {
 		return new Data(options);
 	};
-	
-	
+
+	// Extend Chart.init so that the Chart constructor accepts a new configuration
+	// option group, data.
+	Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptions, callback) {
+		var chart = this;
+
+		if (userOptions.data) {
+			Highcharts.data(Highcharts.extend(userOptions.data, {
+				complete: function (options) {
+					userOptions = Highcharts.merge(userOptions, options);
+					proceed.call(chart, userOptions, callback);
+				}
+			}));
+		} else {
+			proceed.call(chart, userOptions, callback);
+		}
+	});
+
 }(Highcharts));

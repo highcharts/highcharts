@@ -83,8 +83,9 @@ var PiePoint = extendClass(Point, {
 			method;
 
 		// if called without an argument, toggle visibility
-		point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-
+		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		
 		method = vis ? 'show' : 'hide';
 
 		point.group[method]();
@@ -129,7 +130,8 @@ var PiePoint = extendClass(Point, {
 		redraw = pick(redraw, true);
 
 		// if called without an argument, toggle
-		sliced = point.sliced = defined(sliced) ? sliced : !point.sliced;
+		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = {
 			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
