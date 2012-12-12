@@ -7731,10 +7731,10 @@ Axis.prototype = {
 			}
 		}
 
-		if (axisTitleOptions && (axisTitleOptions.text || options.name) && axisTitleOptions.enabled !== false) { // docs: enabled
+		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) { 
 			if (!axis.axisTitle) {
 				axis.axisTitle = renderer.text(
-					axisTitleOptions.text || options.name,
+					axisTitleOptions.text,
 					0,
 					0,
 					axisTitleOptions.useHTML
