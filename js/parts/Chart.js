@@ -560,9 +560,8 @@ Chart.prototype = {
 	 * the first chartX position in the dragging operation.
 	 */
 	pan: function (chartX) {
-		var chart = this;
-
-		var xAxis = chart.xAxis[0],
+		var chart = this,
+			xAxis = chart.xAxis[0],
 			mouseDownX = chart.mouseDownX,
 			halfPointRange = xAxis.pointRange / 2,
 			extremes = xAxis.getExtremes(),

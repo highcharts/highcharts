@@ -289,15 +289,16 @@ MouseTracker.prototype = {
 			plotWidth = chart.plotWidth,
 			transform = {};
 
+
 		e.preventDefault();
-		
+			
 		// Normalize each touch
 		map(touches, function (e) {
 			return mouseTracker.normalizeMouseEvent(e);
 		});
-		
+	
 		// Handle touch move/pinching
-		if (pinchDown[0] && pinchDown[1]) {
+		if (pinchDown.length === 2) {
 			
 			// Set the marker
 			if (!selectionMarker) {
@@ -309,6 +310,7 @@ MouseTracker.prototype = {
 					destroy: noop
 				};
 			}
+
 			if (zoomHor) {
 				chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX);
 				chartX2 = mathMin(touches[0].chartX, touches[1].chartX);
@@ -344,8 +346,18 @@ MouseTracker.prototype = {
 				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
 			}
 		});
+	},
 
-		return false;
+	dragStart: function (e) {
+		var chart = this.chart;
+
+		e = this.normalizeMouseEvent(e);
+
+		// Record the start position
+		chart.mouseIsDown = e.type;
+		chart.cancelClick = false;
+		chart.mouseDownX = this.mouseDownX = e.chartX;
+		this.mouseDownY = e.chartY;
 	},
 
 	/**
@@ -516,34 +528,25 @@ MouseTracker.prototype = {
 
 	
 
-	onMouseDownContainer: function (e) {
-
-		var chart = this.chart;
-
-		e = this.normalizeMouseEvent(e);
+	onContainerMouseDown: function (e) {
 
 		// issue #295, dragging not always working in Firefox
-		if (e.type.indexOf('touch') === -1 && e.preventDefault) {
-			e.preventDefault();
-		}
-
-		// record the start position
-		chart.mouseIsDown = true;
-		chart.cancelClick = false;
-		chart.mouseDownX = this.mouseDownX = e.chartX;
-		this.mouseDownY = e.chartY;
+		e.preventDefault();
+		
+		this.dragStart(e);
 	},
 
 	
 
-	onMouseUpDocument: function () {
+	onDocumentMouseUp: function () {
 		this.drop();
 	},
 
 	/**
 	 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
+	 * Issue #149 workaround. The mouseleave event does not always fire. 
 	 */
-	onMouseMoveDocument: function (e) {
+	onDocumentMouseMove: function (e) {
 		var chart = this.chart,
 			chartPosition = this.chartPosition,
 			hoverSeries = chart.hoverSeries;
@@ -562,29 +565,32 @@ MouseTracker.prototype = {
 	/**
 	 * When mouse leaves the container, hide the tooltip.
 	 */
-	onMouseLeaveContainer: function () {
+	onContainerMouseLeave: function () {
 		this.resetTracker();
 		this.chartPosition = null; // also reset the chart position, used in #149 fix
 	},
 
 	// The mousemove, touchmove and touchstart event handler
-	onMouseMoveContainer: function (e) {
+	onContainerMouseMove: function (e) {
+
+		var chart = this.chart;
 
 		// normalize
 		e = this.normalizeMouseEvent(e);
 
-		var type = e.type,
-			chart = this.chart,
-			isOutsidePlot = !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop);
+		/*var type = e.type,
+			chart = this.chart;*/
 			
 		
-		if (type.indexOf('touch') === -1) {  // not for touch actions
-			e.returnValue = false;
-		}
+		//if (type.indexOf('touch') === -1) {  // not for touch actions
+
+		// #295
+		e.returnValue = false;
+		//}/
 
 		// on touch devices, only trigger click if a handler is defined
 		// TODO: check if this is necessary after the refactoring
-		if (type === 'touchstart') {
+		/*if (type === 'touchstart') {
 			if (attr(e.target, 'isTracker')) {
 				if (!chart.runTrackerClick) {
 					e.preventDefault();
@@ -592,26 +598,23 @@ MouseTracker.prototype = {
 			} else if (!chart.runChartClick && !isOutsidePlot) {
 				e.preventDefault();
 			}
-		}
+		}*/
 
 		
-		// TODO: touchstart is hardly needed here
-		if (chart.mouseIsDown && type !== 'touchstart') { // make selection
-
+		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);
-
 		} 
 		
 		// Show the tooltip and run mouse over events (#977)			
-		if (!isOutsidePlot) {
+		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			this.runPointActions(e);
 		}
 
 		// when outside plot, allow touch-drag by returning true
-		return isOutsidePlot || !chart.hasCartesianSeries;
+		//return isOutsidePlot || !chart.hasCartesianSeries;
 	},
 
-	onClickContainer: function (e) {
+	onContainerClick: function (e) {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
 			plotLeft = chart.plotLeft,
@@ -661,86 +664,140 @@ MouseTracker.prototype = {
 		}
 	},
 
-	onTouchStartContainer: function (e) {
-		// let the system handle multitouch operations like two finger scroll
-		// and pinching
-		if (e.touches) {
-			if (e.touches.length === 2) {
-				return this.pinch(e);
-			} 
-		}
-	},
+	onContainerTouchStart: function (e) {
+		var chart = this.chart;
 
-	onTouchMoveContainer: function (e) {
-		if (e.touches) {
-			if (e.touches.length === 2) {
-				return this.pinch(e);
+		if (e.touches.length === 1) {
+
+			e = this.normalizeMouseEvent(e);
+
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+
+				// Prevent the click pseudo event from firing unless it is set in the options
+				if (!chart.runChartClick) {
+					e.preventDefault();
+				}
+			
+				// Run mouse events and display tooltip etc
+				this.runPointActions(e);
+
+				// Register starting point for panning
+				this.dragStart(e);
 			}
+
+		} else if (e.touches.length === 2) {
+			this.pinch(e);	
+		}		
+	},
+
+	onContainerTouchMove: function (e) {
+
+		if (e.touches.length === 1) {
+			e.preventDefault();
+			this.normalizeMouseEvent(e);
+			this.chart.pan(e.chartX);
+
+		} else if (e.touches.length === 2) {
+			this.pinch(e);
 		}
 	},
 
-	onTouchEndDocument: function () {
+	onDocumentTouchEnd: function (e) {
 		this.drop();
 	},
 
 	/**
-	 * Set the JS DOM events on the container and document
+	 * Set the JS DOM events on the container and document. This method should contain
+	 * a one-to-one assignment between methods and their handlers. Any advanced logic should
+	 * be moved to the handler reflecting the event's name.
 	 */
 	setDOMEvents: function () {
-		var mouseTracker = this,
-			container = mouseTracker.chart.container;
 
-		/*
-		 * Record the starting position of a dragoperation
-		 */
+		var tracker = this,
+			container = tracker.chart.container;
+
 		container.onmousedown = function (e) {
-			mouseTracker.onMouseDownContainer(e);
+			tracker.onContainerMouseDown(e);
 		};
 
-		/*
-		 * When the mouse enters the container, run mouseMove
-		 */
 		container.onmousemove = function (e) {
-			mouseTracker.onMouseMoveContainer(e);
+			tracker.onContainerMouseMove(e);
 		};
 
-		/*
-		 * When the mouse leaves the container, hide the tracking (tooltip).
-		 */
+		container.onclick = function (e) {
+			tracker.onContainerClick(e);
+		};
+		
 		addEvent(container, 'mouseleave', function (e) {
-			mouseTracker.onMouseLeaveContainer(e);
+			tracker.onContainerMouseLeave(e);
 		});
 
-		// issue #149 workaround
-		// The mouseleave event above does not always fire. Whenever the mouse is moving
-		// outside the plotarea, hide the tooltip
 		addEvent(doc, 'mousemove', function (e) {
-			mouseTracker.onMouseMoveDocument(e);
+			tracker.onDocumentMouseMove(e);
 		});
 
 		addEvent(doc, 'mouseup', function (e) {
-			mouseTracker.onMouseUpDocument(e);
+			tracker.onDocumentMouseUp(e);
 		});
 
-		// MooTools 1.2.3 doesn't fire this in IE when using addEvent
-		container.onclick = function (e) {
-			mouseTracker.onClickContainer(e);
-		};
-
+		
 		if (hasTouch) {
 			
 			container.ontouchstart = function (e) {
-				mouseTracker.onTouchStartContainer(e);
+				tracker.onContainerTouchStart(e);
 			};
 			
 			container.ontouchmove = function (e) {
-				mouseTracker.onTouchMoveContainer(e);
+				tracker.onContainerTouchMove(e);
 			};
 			
 			addEvent(doc, 'touchend', function (e) {
-				mouseTracker.onTouchEndDocument(e);
+				tracker.onDocumentTouchEnd(e);
 			});
 		}
+
+		/*
+		
+		// The automatic version of the above. It is harder to read, about the same amount of
+		// code and the only real advantage is that it automatically picks up user defined
+		// onSomething methods, but this can be added anyway through the DOM.
+		var tracker = this,
+			prop;
+
+		for (prop in tracker) {
+			if (prop.indexOf('on') === 0 && (hasTouch || prop.indexOf('Touch') === -1)) {
+				(function () {
+					var method = prop,
+						from,
+						type,
+						element,
+						handler = function (e) {
+							tracker[method](e);
+						};
+
+					// Identify the element to add the event to
+					if (prop.indexOf('Container') === 2) {
+						element = tracker.chart.container;
+						from = 11;
+					} else if (prop.indexOf('Document') === 2) {
+						element = doc;
+						from = 10;
+					}
+
+					// The type of event
+					type = prop.substring(from).toLowerCase();
+
+					// Some events need to be added via addEvent, others need to be set 
+					// directly as an attribute in order to work.
+					if (element === doc || type === 'mouseleave') {
+						addEvent(element, type, handler);
+					} else {
+						element['on' + type] = handler;
+					}
+				}());
+			}
+		}
+		*/
 	},
 
 	/**
