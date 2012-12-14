@@ -27,6 +27,8 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 	neckWidth: '30%',
 	height: '100%',
 	neckHeight: '25%',
+	relativeWidth: false,
+	relativeHeight: true,
 
 	dataLabels: {
 		//position: 'right',
@@ -134,33 +136,49 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		});
 
 		each(data, function (point) {
+			var pointPrev = data[point.x - 1];
+			var pointNext = data[point.x + 1];
+
 			// set start and end positions
 			y5 = null;
-			fraction = sum ? point.y / sum : 0;
+			fraction = options.relativeHeight === false ? 1 / data.length : sum ? point.y / sum : 0;
 			y1 = cumulative * height;
 			y3 = y1 + fraction * height;
-			//tempWidth = neckWidth + (width - neckWidth) * ((height - neckHeight - y1) / (height - neckHeight));
-			tempWidth = getWidthAt(y1);
-			x1 = centerX - tempWidth / 2;
-			x2 = x1 + tempWidth;
-			tempWidth = getWidthAt(y3);
+
+			if (pointPrev && x3 !== undefined && x4 !== undefined) {
+				x1 = x3;
+				x2 = x4;
+			} else {
+				tempWidth = getWidthAt(y1);
+				x1 = centerX - tempWidth / 2;
+				x2 = x1 + tempWidth;
+			}
+
+			if (options.relativeWidth === true && pointNext) {
+				tempWidth = Math.max((((point.y + pointNext.y) / 2) / data[0].y) * width, neckWidth);
+			} else {
+				tempWidth = getWidthAt(y3);
+			}
+
 			x3 = centerX - tempWidth / 2;
 			x4 = x3 + tempWidth;
 
-			// the entire point is within the neck
-			if (y1 > neckY) {
-				x1 = x3 = centerX - neckWidth / 2;
-				x2 = x4 = centerX + neckWidth / 2;
-			
-			// the base of the neck
-			} else if (y3 > neckY) {
-				y5 = y3;
+			if (options.relativeWidth === false) {
+				// the entire point is within the neck
+				if (y1 > neckY) {
+					x1 = x3 = centerX - neckWidth / 2;
+					x2 = x4 = centerX + neckWidth / 2;
 
-				tempWidth = getWidthAt(neckY);
-				x3 = centerX - tempWidth / 2;
-				x4 = x3 + tempWidth;
+				// the base of the neck
+				} else if (y3 > neckY) {
+					y5 = y3;
 
-				y3 = neckY;
+					tempWidth = getWidthAt(neckY);
+					x3 = centerX - tempWidth / 2;
+					x4 = x3 + tempWidth;
+
+					y3 = neckY;
+				}
 			}
 
 			// save the path
