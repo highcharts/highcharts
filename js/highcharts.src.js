@@ -8829,7 +8829,7 @@ MouseTracker.prototype = {
 	/**
 	 * Handle touch events with two touches
 	 */
-	pinchHandler: function (e) {
+	pinch: function (e) {
 		var mouseTracker = this,
 			chart = mouseTracker.chart,
 			pinchDown = mouseTracker.pinchDown,
@@ -8845,6 +8845,8 @@ MouseTracker.prototype = {
 			selectionMarker = mouseTracker.selectionMarker,
 			plotWidth = chart.plotWidth,
 			transform = {};
+
+		e.preventDefault();
 		
 		// Normalize each touch
 		map(touches, function (e) {
@@ -8899,34 +8901,98 @@ MouseTracker.prototype = {
 				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
 			}
 		});
+
 		return false;
 	},
 
-	
+	/**
+	 * Perform a drag operation in response to a mousemove event while the mouse is down
+	 */
+	drag: function (e) {
 
-	onMouseDownContainer: function (e) {
+		var chart = this.chart,
+			chartOptions = chart.options.chart,
+			chartX = e.chartX,
+			chartY = e.chartY,
+			zoomHor = this.zoomHor,
+			zoomVert = this.zoomVert,
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
+			clickedInside,
+			size,
+			mouseDownX = this.mouseDownX,
+			mouseDownY = this.mouseDownY;
 
-		var chart = this.chart;
-
-		e = this.normalizeMouseEvent(e);
-
-		// issue #295, dragging not always working in Firefox
-		if (e.type.indexOf('touch') === -1 && e.preventDefault) {
-			e.preventDefault();
+		// If the mouse is outside the plot area, adjust to cooordinates
+		// inside to prevent the selection marker from going outside
+		if (chartX < plotLeft) {
+			chartX = plotLeft;
+		} else if (chartX > plotLeft + plotWidth) {
+			chartX = plotLeft + plotWidth;
 		}
 
-		// record the start position
-		chart.mouseIsDown = true;
-		chart.cancelClick = false;
-		chart.mouseDownX = this.mouseDownX = e.chartX;
-		this.mouseDownY = e.chartY;
+		if (chartY < plotTop) {
+			chartY = plotTop;
+		} else if (chartY > plotTop + plotHeight) {
+			chartY = plotTop + plotHeight;
+		}
+		
+		// determine if the mouse has moved more than 10px
+		this.hasDragged = Math.sqrt(
+			Math.pow(mouseDownX - chartX, 2) +
+			Math.pow(mouseDownY - chartY, 2)
+		);
+		if (this.hasDragged > 10) {
+			clickedInside = chart.isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
+
+			// make a selection
+			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside) {
+				if (!this.selectionMarker) {
+					this.selectionMarker = chart.renderer.rect(
+						plotLeft,
+						plotTop,
+						zoomHor ? 1 : plotWidth,
+						zoomVert ? 1 : plotHeight,
+						0
+					)
+					.attr({
+						fill: chartOptions.selectionMarkerFill || 'rgba(69,114,167,0.25)',
+						zIndex: 7
+					})
+					.add();
+				}
+			}
+
+			// adjust the width of the selection marker
+			if (this.selectionMarker && zoomHor) {
+				size = chartX - mouseDownX;
+				this.selectionMarker.attr({
+					width: mathAbs(size),
+					x: (size > 0 ? 0 : size) + mouseDownX
+				});
+			}
+			// adjust the height of the selection marker
+			if (this.selectionMarker && zoomVert) {
+				size = chartY - mouseDownY;
+				this.selectionMarker.attr({
+					height: mathAbs(size),
+					y: (size > 0 ? 0 : size) + mouseDownY
+				});
+			}
+
+			// panning
+			if (clickedInside && !this.selectionMarker && chartOptions.panning) {
+				chart.pan(chartX);
+			}
+		}
 	},
 
 	/**
-	 * Mouse up or outside the plot area
+	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
-	onMouseUpDocument: function () {
-
+	drop: function () {
 		var chart = this.chart;
 
 		if (this.selectionMarker) {
@@ -8996,12 +9062,39 @@ MouseTracker.prototype = {
 			}
 		}
 
+		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
 			css(chart.container, { cursor: 'auto' });
 			chart.cancelClick = this.hasDragged; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
 		}
+	},
+
+	
+
+	onMouseDownContainer: function (e) {
+
+		var chart = this.chart;
+
+		e = this.normalizeMouseEvent(e);
+
+		// issue #295, dragging not always working in Firefox
+		if (e.type.indexOf('touch') === -1 && e.preventDefault) {
+			e.preventDefault();
+		}
+
+		// record the start position
+		chart.mouseIsDown = true;
+		chart.cancelClick = false;
+		chart.mouseDownX = this.mouseDownX = e.chartX;
+		this.mouseDownY = e.chartY;
+	},
+
+	
+
+	onMouseUpDocument: function () {
+		this.drop();
 	},
 
 	/**
@@ -9034,26 +9127,12 @@ MouseTracker.prototype = {
 	// The mousemove, touchmove and touchstart event handler
 	onMouseMoveContainer: function (e) {
 
-		// let the system handle multitouch operations like two finger scroll
-		// and pinching
-		if (e && e.touches) {
-			if (e.touches.length === 2) {
-				return this.pinchHandler(e);
-			} else if (e.touches.length > 2) {
-				return true;
-			}
-		}
-
 		// normalize
 		e = this.normalizeMouseEvent(e);
 
 		var type = e.type,
 			chart = this.chart,
-			chartX = e.chartX,
-			chartY = e.chartY,
-			zoomHor = this.zoomHor,
-			zoomVert = this.zoomVert,
-			isOutsidePlot = !chart.isInsidePlot(chartX - chart.plotLeft, chartY - chart.plotTop);
+			isOutsidePlot = !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop);
 			
 		
 		if (type.indexOf('touch') === -1) {  // not for touch actions
@@ -9061,6 +9140,7 @@ MouseTracker.prototype = {
 		}
 
 		// on touch devices, only trigger click if a handler is defined
+		// TODO: check if this is necessary after the refactoring
 		if (type === 'touchstart') {
 			if (attr(e.target, 'isTracker')) {
 				if (!chart.runTrackerClick) {
@@ -9071,73 +9151,11 @@ MouseTracker.prototype = {
 			}
 		}
 
-		// cancel on mouse outside
-		if (isOutsidePlot) {
-
-			// drop the selection if any and reset mouseIsDown and hasDragged
-			if (chartX < chart.plotLeft) {
-				chartX = chart.plotLeft;
-			} else if (chartX > chart.plotLeft + chart.plotWidth) {
-				chartX = chart.plotLeft + chart.plotWidth;
-			}
-
-			if (chartY < chart.plotTop) {
-				chartY = chart.plotTop;
-			} else if (chartY > chart.plotTop + chart.plotHeight) {
-				chartY = chart.plotTop + chart.plotHeight;
-			}
-		}
-
+		
+		// TODO: touchstart is hardly needed here
 		if (chart.mouseIsDown && type !== 'touchstart') { // make selection
 
-			// determine if the mouse has moved more than 10px
-			this.hasDragged = Math.sqrt(
-				Math.pow(this.mouseDownX - chartX, 2) +
-				Math.pow(this.mouseDownY - chartY, 2)
-			);
-			if (this.hasDragged > 10) {
-				var clickedInside = chart.isInsidePlot(this.mouseDownX - chart.plotLeft, this.mouseDownY - chart.plotTop);
-
-				// make a selection
-				if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside) {
-					if (!this.selectionMarker) {
-						this.selectionMarker = chart.renderer.rect(
-							chart.plotLeft,
-							chart.plotTop,
-							zoomHor ? 1 : chart.plotWidth,
-							zoomVert ? 1 : chart.plotHeight,
-							0
-						)
-						.attr({
-							fill: this.options.chart.selectionMarkerFill || 'rgba(69,114,167,0.25)',
-							zIndex: 7
-						})
-						.add();
-					}
-				}
-
-				// adjust the width of the selection marker
-				if (this.selectionMarker && zoomHor) {
-					var xSize = chartX - this.mouseDownX;
-					this.selectionMarker.attr({
-						width: mathAbs(xSize),
-						x: (xSize > 0 ? 0 : xSize) + this.mouseDownX
-					});
-				}
-				// adjust the height of the selection marker
-				if (this.selectionMarker && zoomVert) {
-					var ySize = chartY - this.mouseDownY;
-					this.selectionMarker.attr({
-						height: mathAbs(ySize),
-						y: (ySize > 0 ? 0 : ySize) + this.mouseDownY
-					});
-				}
-
-				// panning
-				if (clickedInside && !this.selectionMarker && this.options.chart.panning) {
-					chart.pan(chartX);
-				}
-			}
+			this.drag(e);
 
 		} 
 		
@@ -9200,6 +9218,28 @@ MouseTracker.prototype = {
 		}
 	},
 
+	onTouchStartContainer: function (e) {
+		// let the system handle multitouch operations like two finger scroll
+		// and pinching
+		if (e.touches) {
+			if (e.touches.length === 2) {
+				return this.pinch(e);
+			} 
+		}
+	},
+
+	onTouchMoveContainer: function (e) {
+		if (e.touches) {
+			if (e.touches.length === 2) {
+				return this.pinch(e);
+			}
+		}
+	},
+
+	onTouchEndDocument: function () {
+		this.drop();
+	},
+
 	/**
 	 * Set the JS DOM events on the container and document
 	 */
@@ -9245,33 +9285,17 @@ MouseTracker.prototype = {
 		};
 
 		if (hasTouch) {
+			
 			container.ontouchstart = function (e) {
-				// For touch devices, use touchmove to zoom
-				if (mouseTracker.zoomX || mouseTracker.zoomY) {
-					mouseTracker.onMouseDownContainer(e);
-				}
-				// Show tooltip and prevent the lower mouse pseudo event
-				mouseTracker.onMouseMoveContainer(e);
+				mouseTracker.onTouchStartContainer(e);
 			};
-
-			/*
-			 * Allow dragging the finger over the chart to read the values on touch
-			 * devices
-			 */
-			 // TODO: optional, perhaps with own wrapper
+			
 			container.ontouchmove = function (e) {
-				mouseTracker.onMouseMoveContainer(e);
+				mouseTracker.onTouchMoveContainer(e);
 			};
-
-			// What is this?
-			container.ontouchend = function () {
-				if (mouseTracker.hasDragged) {
-					mouseTracker.resetTracker();
-				}
-			};
-
+			
 			addEvent(doc, 'touchend', function (e) {
-				mouseTracker.onMouseUpDocument(e);
+				mouseTracker.onTouchEndDocument(e);
 			});
 		}
 	},
