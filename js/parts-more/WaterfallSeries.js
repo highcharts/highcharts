@@ -20,18 +20,29 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Translate data points from raw values
 	 */
 	translate: function () {
-		var previous;
+		var previous,
+			sum = 0;
 
 		seriesTypes.column.prototype.translate.apply(this);
 
 		each(this.points, function (point) {
 			var shapeArgs = point.shapeArgs,
 				height = shapeArgs.height,
-				y = shapeArgs.y;
+				y = shapeArgs.y,
+				axis,
+				zero;
 
-			if (previous && !point.yBottom) {
+			// sum only points with value, not intermediate or total sum
+			if (point.y) {
+				sum += point.y;
+			}
+
+
+			// if previous point is specified we start from its end value
+			if (previous) {
 				y = previous;
 
+				// calculate up or down points based on y value
 				if (point.y >= 0) {
 					y -= height;
 					previous = y;
@@ -39,8 +50,22 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 					previous = y + height;
 				}
 
+
+				// calculate sum points
+				if (point.isSum) {
+
+					axis = point.series.yAxis;
+
+					point.plotY = previous;
+					height = axis.len - previous;
+
+					point.y = sum;
+				}
+
 				shapeArgs.y = y;
 				shapeArgs.height = height;
+
+			// otherwise we start from 0
 			} else {
 				previous = y;
 			}
@@ -69,6 +94,10 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				current[1] = current[1] + previous[0] + previous[1];
 			}
 
+			if (current[0] === null) {
+				current[0] = previous[0];
+			}
+
 			current[2] = current[0] + current[1];
 		}
 	},
@@ -77,8 +106,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Return [y, low] array, if low is not defined, it's replaced with null for further calculations
 	 */
 	toYData: function (pt) {
-		var low = pt.low === UNDEFINED ? null : pt.low;
-		return [pt.y, low];
+		var y = pt.y === UNDEFINED ? null : pt.y;
+				low = pt.low === UNDEFINED ? null : pt.low;
+		return [y, low];
 	},
 
 	/**
@@ -142,6 +172,29 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 
 		return path;
+	},
+
+	/**
+	 * Place sums' dataLabels on the top of column regardles of its value
+	 */
+	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
+		var dlBox;
+
+		if (point.isSum) {
+			dlBox = point.dlBox || point.shapeArgs;
+
+			if (dlBox) {
+				alignTo = merge(dlBox);
+			}
+
+			alignTo.height = 0;
+			options.verticalAlign = 'bottom';
+			options.align = pick(options.align, 'center');
+
+			Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+		} else {
+			seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+		}
 	},
 
 	drawGraph: Series.prototype.drawGraph
