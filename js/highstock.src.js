@@ -16952,7 +16952,6 @@ Scroller.prototype = {
 				navigatorWidth = scroller.navigatorWidth,
 				scrollbarPad = scroller.scrollbarPad,
 				range = scroller.range,
-				dataRange,
 				chartX = e.chartX,
 				chartY = e.chartY,
 				baseXAxis = chart.xAxis[0],

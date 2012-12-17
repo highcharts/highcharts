@@ -76,6 +76,7 @@
  * endRow, startColumn and endColumn to delimit what part of the table is used.
  */
 
+/*global jQuery */
 (function (Highcharts) {	
 	
 	// Utilities
@@ -221,14 +222,13 @@
 			columns = this.columns;
 
 		if (googleSpreadsheetKey) {
-			$.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
+			jQuery.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
 				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
 					  '/public/values?alt=json-in-script&callback=?',
 					  function (json) {
 					
 				// Prepare the data from the spreadsheat
-				var data = [],
-					cells = json.feed.entry,
+				var cells = json.feed.entry,
 					cell,
 					cellCount = cells.length,
 					colCount = 0,
