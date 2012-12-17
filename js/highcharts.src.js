@@ -13025,7 +13025,7 @@ Series.prototype = {
 				'dataLabelsGroup', 
 				'data-labels', 
 				series.visible ? VISIBLE : HIDDEN, 
-				6
+				options.zIndex || 6 // docs: zIndex
 			);
 			
 			// Make the labels for each point
