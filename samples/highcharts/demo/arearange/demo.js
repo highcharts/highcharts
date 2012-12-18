@@ -5,7 +5,8 @@ $(function () {
     	
 		    chart: {
 		        renderTo: 'container',
-		        type: 'arearange'
+		        type: 'arearange',
+		        zoomType: 'x'
 		    },
 		    
 		    title: {

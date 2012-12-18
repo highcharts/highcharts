@@ -10,4 +10,5 @@ RewriteRule highcharts-more.js debug.php?target=highchartsmore
 RewriteRule ^stock/(.*?) /$1
 
 # Source files
-RewriteRule (.*?)exporting.js $1exporting.src.js
+RewriteRule (.*?)\.src.js $1.js
+RewriteRule (.*?)\.js $1.src.js

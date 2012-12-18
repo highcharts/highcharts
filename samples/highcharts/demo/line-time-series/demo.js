@@ -26,8 +26,6 @@ $(function () {
                 title: {
                     text: 'Exchange rate'
                 },
-                min: 0.6,
-                startOnTick: false,
                 showFirstLabel: false
             },
             tooltip: {
@@ -60,7 +58,8 @@ $(function () {
                         hover: {
                             lineWidth: 1
                         }
-                    }
+                    },
+                    threshold: null
                 }
             },
     
