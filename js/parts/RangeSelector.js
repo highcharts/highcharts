@@ -32,8 +32,8 @@ extend(defaultOptions, {
 });
 defaultOptions.lang = merge(defaultOptions.lang, {
 	rangeSelectorZoom: 'Zoom',
-	rangeSelectorFrom: 'From:',
-	rangeSelectorTo: 'To:'
+	rangeSelectorFrom: 'From',
+	rangeSelectorTo: 'To'
 });
 
 /**
@@ -428,18 +428,19 @@ RangeSelector.prototype = {
 			}
 		}
 		
-		// Update the alignment to the updated spacing box
-		yAlign = chart.plotTop - 35;		
-		inputGroup.align(extend({
-			y: yAlign,
-			width: inputGroup.offset,
-			// detect collision with the exporting buttons
-			x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
-				-60 : 0
-		}, options.inputPosition), true, chart.spacingBox);
-
-		// Set or reset the input values
 		if (inputEnabled) {
+		
+			// Update the alignment to the updated spacing box
+			yAlign = chart.plotTop - 35;		
+			inputGroup.align(extend({
+				y: yAlign,
+				width: inputGroup.offset,
+				// detect collision with the exporting buttons
+				x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
+					-60 : 0
+			}, options.inputPosition), true, chart.spacingBox);
+	
+			// Set or reset the input values
 			rangeSelector.setInputValue('min', min);
 			rangeSelector.setInputValue('max', max);
 		}

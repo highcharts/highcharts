@@ -1984,7 +1984,7 @@ Series.prototype = {
 		// Show or hide based on the final aligned position
 		dataLabel.attr({
 			visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
-				'inherit' : 
+				(chart.renderer.isSVG ? 'inherit' : VISIBLE) : 
 				HIDDEN
 		});
 				
