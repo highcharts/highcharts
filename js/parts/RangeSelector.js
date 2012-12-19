@@ -17,7 +17,7 @@ extend(defaultOptions, {
 		//		select: {}
 		// }
 		},
-		inputPosition: { // docs
+		inputPosition: {
 			align: 'right'
 		},
 		// inputDateFormat: '%b %e, %Y',

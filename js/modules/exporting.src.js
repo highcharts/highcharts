@@ -331,7 +331,7 @@ extend(Chart.prototype, {
 	 */
 	exportChart: function (options, chartOptions) {
 		var exportingOptions = this.options.exporting,
-			svg = this.getSVG(merge(exportingOptions.chartOptions, chartOptions)); // docs
+			svg = this.getSVG(merge(exportingOptions.chartOptions, chartOptions));
 
 		// merge the options
 		options = merge(exportingOptions, options);

@@ -1851,7 +1851,7 @@ Series.prototype = {
 				'dataLabelsGroup', 
 				'data-labels', 
 				series.visible ? VISIBLE : HIDDEN, 
-				options.zIndex || 6 // docs: zIndex
+				options.zIndex || 6
 			);
 			
 			// Make the labels for each point
@@ -2016,7 +2016,7 @@ Series.prototype = {
 				// step line?
 				if (step && i) {
 					lastPoint = segment[i - 1];
-					if (step === 'right') { // docs
+					if (step === 'right') {
 						segmentPath.push(
 							lastPoint.plotX,
 							plotY

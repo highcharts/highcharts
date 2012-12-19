@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.3 (2012-10-04)
+ * @license Highcharts JS v2.3.5 (2012-12-19)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -931,7 +931,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 			fontWeight: 'bold'
 		},
 		verticalAlign: 'top',
-		zIndex: 2 // docs
+		zIndex: 2
 	},
 	dial: {
 		// radius: '80%',

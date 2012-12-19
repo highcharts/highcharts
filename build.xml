@@ -75,7 +75,7 @@
 
         <!-- google js-test-driver -->
         <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
-        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.3d.jar"/>
+        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.5.jar"/>
         <!-- ant-contrib -->
         <property name="ant.contrib.dir" value="${tools.dir}/ant-contrib-0.6-bin"/>
         <property name="ant.contrib.jar" location="${ant.contrib.dir}/lib/ant-contrib-0.6.jar"/>
@@ -627,9 +627,11 @@
 
     <!-- Starts the test driver server. -->
     <target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
+        <!--
         <exec executable="cmd" dir="${basedir}" osfamily="windows">
-            <arg value="/k start java -jar ${jstestdriver.jar} --port 4224"/>
+            <arg value="/k start java -jar ${jstestdriver.jar} - -port 4224"/>
         </exec>
+        -->
         <java jar="${jstestdriver.jar}" fork="true">
             <arg value="--port"/>
             <arg value="4224"/>
@@ -732,12 +734,12 @@
 
     <!-- Replace the lib with the specified ones, if set. -->
     <target name="replace-lib" if="required.lib">
-        <replace file="jsTestDriver.conf" token="#required.lib" value=" - lib/${required.lib}"/>
+        <replace file="jsTestDriver.conf" token="#required.lib" value="  - lib/${required.lib}"/>
     </target>
 
     <!-- Replace the adapter with the specified ones, if set. -->
     <target name="replace-adapter" if="required.adapter">
-        <replace file="jsTestDriver.conf" token="#required.adapter" value=" - ${required.adapter}"/>
+        <replace file="jsTestDriver.conf" token="#required.adapter" value="  - ${required.adapter}"/>
     </target>
 
     <target name="test-specific-lib" depends="set.properties">

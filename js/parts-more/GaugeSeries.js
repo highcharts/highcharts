@@ -18,7 +18,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 			fontWeight: 'bold'
 		},
 		verticalAlign: 'top',
-		zIndex: 2 // docs
+		zIndex: 2
 	},
 	dial: {
 		// radius: '80%',
