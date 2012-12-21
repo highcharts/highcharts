@@ -250,7 +250,13 @@ defaultOptions = {
 		verticalAlign: 'bottom',
 		// width: undefined,
 		x: 0,
-		y: 0
+		y: 0,
+		title: { // docs
+			//text: null,
+			style: {
+				fontWeight: 'bold'
+			}
+		}			
 	},
 
 	loading: {
