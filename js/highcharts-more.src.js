@@ -1386,8 +1386,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Translate data points from raw values
 	 */
 	translate: function () {
-		var previous,
-			sum = 0;
+		var intermediateSum = 0,
+			sum = 0,
+			previous;
 
 		seriesTypes.column.prototype.translate.apply(this);
 
@@ -1400,6 +1401,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// sum only points with value, not intermediate or total sum
 			if (point.y) {
+				intermediateSum += point.y;
 				sum += point.y;
 			}
 
@@ -1418,14 +1420,19 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 
 				// calculate sum points
-				if (point.isSum) {
+				if (point.isSum || point.isIntermediateSum) {
 
 					axis = point.series.yAxis;
 
 					point.plotY = previous;
 					height = axis.len - previous;
 
-					point.y = sum;
+					if (point.isIntermediateSum) {
+						point.y = intermediateSum;
+						intermediateSum = 0;
+					} else {
+						point.y = sum;
+					}
 				}
 
 				shapeArgs.y = y;
@@ -1546,7 +1553,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
 		var dlBox;
 
-		if (point.isSum) {
+		if (point.isSum || point.isIntermediateSum) {
 			dlBox = point.dlBox || point.shapeArgs;
 
 			if (dlBox) {
