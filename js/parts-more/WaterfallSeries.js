@@ -113,8 +113,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Return [y, low] array, if low is not defined, it's replaced with null for further calculations
 	 */
 	toYData: function (pt) {
-		var y = pt.y === UNDEFINED ? null : pt.y;
-				low = pt.low === UNDEFINED ? null : pt.low;
+		var y = pt.y === UNDEFINED ? null : pt.y,
+			low = pt.low === UNDEFINED ? null : pt.low;
 		return [y, low];
 	},
 
@@ -148,16 +148,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	getGraphPath: function () {
 
 		var data = this.data,
-				length = data.length,
-				lineWidth = this.options.lineWidth + this.options.borderWidth,
-				normalizer = mathRound(lineWidth) % 2 / 2,
-				path = [],
-				M = 'M',
-				L = 'L',
-				prevArgs,
-				pointArgs,
-				i,
-				d;
+			length = data.length,
+			lineWidth = this.options.lineWidth + this.options.borderWidth,
+			normalizer = mathRound(lineWidth) % 2 / 2,
+			path = [],
+			M = 'M',
+			L = 'L',
+			prevArgs,
+			pointArgs,
+			i,
+			d;
 
 		for (i = 1; i < length; i++) {
 			pointArgs = data[i].shapeArgs;
