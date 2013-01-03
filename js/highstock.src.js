@@ -9397,18 +9397,18 @@ Legend.prototype = {
 	 * Initialize the legend
 	 */
 	init: function (chart, options) {
-		var legend = this;
+		
+		var legend = this,
+			itemStyle = options.itemStyle,
+			padding = pick(options.padding, 8),
+			itemMarginTop = options.itemMarginTop || 0;
+	
+		this.options = options;
 
 		if (!options.enabled) {
 			return;
 		}
 	
-		var //style = options.style || {}, // deprecated
-			itemStyle = options.itemStyle,
-			padding = pick(options.padding, 8),
-			itemMarginTop = options.itemMarginTop || 0;
-	
-		legend.options = options;
 		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
@@ -9418,25 +9418,16 @@ Legend.prototype = {
 		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
 		legend.maxItemWidth = 0;
 		legend.chart = chart;
-		//legend.allItems = UNDEFINED;
-		//legend.legendWidth = UNDEFINED;
-		//legend.legendHeight = UNDEFINED;
-		//legend.offsetWidth = UNDEFINED;
 		legend.itemHeight = 0;
 		legend.lastLineHeight = 0;
-		//legend.itemX = UNDEFINED;
-		//legend.itemY = UNDEFINED;
-		//legend.lastItemY = UNDEFINED;
-	
-		// Elements
-		//legend.group = UNDEFINED;
-		//legend.box = UNDEFINED;
 
-		// run legend
+		// Render it
 		legend.render();
 
 		// move checkboxes
-		addEvent(legend.chart, 'endResize', function () { legend.positionCheckboxes(); });
+		addEvent(legend.chart, 'endResize', function () { 
+			legend.positionCheckboxes();
+		});
 
 	},
 
