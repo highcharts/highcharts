@@ -13332,6 +13332,7 @@ Series.prototype = {
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
+			isNew = !group,
 			chart = this.chart,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis;
@@ -13346,10 +13347,10 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group.translate(
-			xAxis ? xAxis.left : chart.plotLeft, 
-			yAxis ? yAxis.top : chart.plotTop
-		);
+		group[isNew ? 'attr' : 'animate']({
+			translateX: xAxis ? xAxis.left : chart.plotLeft, 
+			translateY: yAxis ? yAxis.top : chart.plotTop
+		});
 		
 		return group;
 		
