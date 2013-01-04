@@ -1942,10 +1942,8 @@ SVGElement.prototype = {
 							}
 						}
 
-						if (wrapper.rotation) {
-							attr(element, 'transform', 'rotate(' + wrapper.rotation + ' ' + value + ' ' +
-								pInt(hash.y || attr(element, 'y')) + ')');
-						}
+					} else if (wrapper.rotation && (key === 'x' || key === 'y')) {
+						doTransform = true;
 
 					// apply gradients
 					} else if (key === 'fill') {
@@ -2064,12 +2062,7 @@ SVGElement.prototype = {
 					// Record for animation and quick access without polling the DOM
 					wrapper[key] = value;
 					
-					// Update transform
-					if (doTransform) {
-						wrapper.updateTransform();
-					}
-
-
+					
 					if (key === 'text') {
 						// Delete bBox memo when the text changes
 						if (value !== wrapper.textStr) {
@@ -2085,6 +2078,12 @@ SVGElement.prototype = {
 
 				}
 
+			}
+
+			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
+			// of attributes.
+			if (doTransform) {
+				wrapper.updateTransform();
 			}
 
 		}
