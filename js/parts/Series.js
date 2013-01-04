@@ -1863,6 +1863,7 @@ Series.prototype = {
 					attr,
 					name,
 					rotation,
+					connector = point.connector,
 					isNew = true;
 				
 				// Determine if each data label is enabled
@@ -1893,12 +1894,21 @@ Series.prototype = {
 					
 					// update existing label
 					if (dataLabel) {
-						// vertically centered
-						dataLabel
-							.attr({
-								text: str
-							});
-						isNew = false;
+						
+						if (defined(str)) {
+							dataLabel
+								.attr({
+									text: str
+								});
+							isNew = false;
+						
+						} else { // #1437 - the label is shown conditionally
+							point.dataLabel = dataLabel = dataLabel.destroy();
+							if (connector) {
+								point.connector = connector.destroy();
+							}
+						}
+						
 					// create new label
 					} else if (defined(str)) {
 						attr = {
