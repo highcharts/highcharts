@@ -25,3 +25,6 @@ The file highcharts-convert.js is a [PhantomJS](http://phantomjs.org/) script to
 	        'stroke-width' : 1
 	     }).add();
 	}
+
+#Installation#
+See http://phantomjs.org/download.html
