@@ -1,3 +1,12 @@
+/**
+ * @license Highcharts JS v2.3.3 (2012-11-02)
+ *
+ * (c) 20012-2014
+ * 
+ * Author: Gert Vaartjes
+ *
+ * License: www.highcharts.com/license
+ */
 package com.highcharts.export.util;
 
 import java.io.ByteArrayOutputStream;
@@ -13,6 +22,7 @@ import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 import org.apache.log4j.Logger;
+
 public class SVGRasterizer {
 
 	protected static Logger logger = Logger.getLogger("rasterizer");
@@ -22,14 +32,13 @@ public class SVGRasterizer {
 		return INSTANCE;
 	}
 
-
-
 	private SVGRasterizer() {
 	}
 
 	public synchronized ByteArrayOutputStream transcode(
-			ByteArrayOutputStream stream, String svg, MimeType mime, Float width, Float scale)
-			throws SVGRasterizerException, TranscoderException {
+			ByteArrayOutputStream stream, String svg, MimeType mime,
+			Float width, Float scale) throws SVGRasterizerException,
+			TranscoderException {
 
 		TranscoderInput input = new TranscoderInput(new StringReader(svg));
 		TranscoderOutput transOutput = new TranscoderOutput(stream);
@@ -49,9 +58,9 @@ public class SVGRasterizer {
 		if (width == null && scale != null && scale != 0.00) {
 			Float svgWidth = getWidthFromSvg(svg);
 			// calculate width from svg
-			if (svgWidth != null ) {
+			if (svgWidth != null) {
 				transcoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH,
-					svgWidth * scale);
+						svgWidth * scale);
 			}
 		}
 
@@ -82,7 +91,7 @@ public class SVGRasterizer {
 			break;
 		}
 
-		if(transcoder == null){
+		if (transcoder == null) {
 			throw new SVGRasterizerException("MimeType not supported");
 		}
 
@@ -90,9 +99,10 @@ public class SVGRasterizer {
 	}
 
 	public Float getWidthFromSvg(String svg) {
-		Pattern pattern = Pattern.compile("^<svg[^>]*width=\\\"([0-9]+)", Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile("^<svg[^>]*width=\\\"([0-9]+)",
+				Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(svg);
-		if (matcher.lookingAt()){
+		if (matcher.lookingAt()) {
 			return Float.valueOf(matcher.group(1));
 		}
 		return null;
