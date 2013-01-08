@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.net.URL;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -31,8 +29,8 @@ public class SVGCreator {
 	}
 
 	public synchronized String createSVG(String location, String options,
-			String constructor, String callback, String scale)
-			throws IOException, InterruptedException, TimeoutException {
+			String constructor, String callback) throws IOException,
+			InterruptedException, TimeoutException {
 
 		// create options file
 		File infile = createUniqueFile(options, ".json");

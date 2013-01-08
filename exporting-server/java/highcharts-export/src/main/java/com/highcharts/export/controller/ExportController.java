@@ -32,6 +32,8 @@ import com.highcharts.export.util.SVGRasterizerException;
 public class ExportController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String FORBIDDEN_WORD = "<!ENTITY";
+	private static final Float MAX_WIDTH = 2000.0F;
+	private static final Float MAX_SCALE = 4.0F;
 	protected static Logger logger = Logger.getLogger("exporter");
 
 	@Autowired
@@ -53,8 +55,8 @@ public class ExportController extends HttpServlet {
 
 		MimeType mime = getMime(type);
 		filename = getFilename(filename);
-		Float parsedWidth = toFloat(width);
-		Float parsedScale = toFloat(scale);
+		Float parsedWidth = widthToFloat(width);
+		Float parsedScale = scaleToFloat(scale);
 
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
@@ -71,7 +73,7 @@ public class ExportController extends HttpServlet {
 			String location = servletContext.getRealPath("/") + "/WEB-INF";
 
 			svg = SVGCreator.getInstance().createSVG(location, options,
-					constructor, callback, scale);
+					constructor, callback);
 			if (svg.equals("no-svg")) {
 				throw new ServletException(
 						"Could not create an SVG out of the options");
@@ -157,7 +159,6 @@ public class ExportController extends HttpServlet {
 			try {
 				stream = SVGRasterizer.getInstance().transcode(stream, svg,
 						mime, width, scale);
-
 			} catch (SVGRasterizerException sre) {
 				logger.error("Error while transcoding svg file to an image",
 						sre);
@@ -200,12 +201,28 @@ public class ExportController extends HttpServlet {
 		return MimeType.PNG;
 	}
 
-	private static Float toFloat(String width) {
+	private static Float widthToFloat(String width) {
 		if (width != null && !width.isEmpty()
 				&& !(width.compareToIgnoreCase("undefined") == 0)) {
 			Float parsedWidth = Float.valueOf(width);
+			if (parsedWidth.compareTo(MAX_WIDTH) > 0) {
+				return MAX_WIDTH;
+			}
 			if (parsedWidth.compareTo(0.0F) > 0) {
 				return parsedWidth;
+			}
+		}
+		return null;
+	}
+
+	private static Float scaleToFloat(String scale) {
+		if (scale != null && !scale.isEmpty()
+				&& !(scale.compareToIgnoreCase("undefined") == 0)) {
+			Float parsedScale = Float.valueOf(scale);
+			if (parsedScale.compareTo(MAX_SCALE) > 0) {
+				return MAX_SCALE;
+			} else if (parsedScale.compareTo(0.0F) > 0) {
+				return parsedScale;
 			}
 		}
 		return null;

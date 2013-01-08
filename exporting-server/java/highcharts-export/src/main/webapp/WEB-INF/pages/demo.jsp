@@ -112,13 +112,13 @@
 				<option value="image/svg+xml">image/svg+xml</option>
 				<option value="application/pdf">application/pdf</option>
 			</select> <br /> <label for="width">Width</label>
-			<div class="info">The pixelwidth of the exported image.
-				Defaults to chart.width or 600px.</div>
-			<input id="width" name="width" type="text" value="" /> <br /> <label
+			<div class="info">The exact pixelwidth of the exported image.
+				Defaults to chart.width or 600px. Maximum width is set to 2000px</div>
+			<input id="width" name="width" type="text" value="" /> <br/> <label
 				for="scales">Scale</label> <input id="scale" name="scale"
 				type="text" value="" />
 			<div class="info">Give in a scaling factor for a higher image
-				resolution. Remember that the width parameter has a higher
+				resolution. Maximum scaling is set to 4x. Remember that the width parameter has a higher
 				precedence over scaling.</div>
 			<br /> <label for="constructor">Constructor</label>
 			<div class="info">
