@@ -1174,15 +1174,29 @@ pathAnim = {
 		},
 
 		/**
-		 * Register Highcharts as a plugin in the respective framework
+		 * Register Highcharts as a plugin in the respective framework // docs
 		 */
 		plugin: function (constr) {
-			var lcConstr = constr.toLowerCase();
-			$.fn[lcConstr] = function (options, callback) {
-				options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
-				this[lcConstr] = new Highcharts[constr](options, callback);
-				return this;
+			var lcConstr = constr.toLowerCase(), // shortcut, like $.chart, $.stockchart
+				nsConstr = 'Highcharts' + constr; // namespaced plugin, like $.HighchartsChart
+
+			$.fn[nsConstr] = function (options, callback) {
+				// When called without parameters, get a predefined chart
+				if (options === UNDEFINED) {
+					return charts[attr(this[0], 'data-highcharts-chart')];
+
+				// Create the chart
+				} else {
+					options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
+					this[lcConstr] = new Highcharts[constr](options, callback);
+					return this;
+				}
 			};
+
+			// If a plugin isn't already created with the shortcut name, apply it
+			if (!$.fn[lcConstr]) {
+				$.fn[lcConstr] = $.fn[nsConstr];
+			}
 		},
 	
 		/**
@@ -9011,7 +9025,8 @@ MouseTracker.prototype = {
 	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
 	drop: function () {
-		var chart = this.chart;
+		var chart = this.chart,
+			hasPinched = this.hasPinched;
 
 		if (this.selectionMarker) {
 			var selectionData = {
@@ -9023,7 +9038,7 @@ MouseTracker.prototype = {
 				selectionTop = selectionBox.y - chart.plotTop,
 				runZoom;
 			// a selection has been made
-			if (this.hasDragged || this.hasPinched) {
+			if (this.hasDragged || hasPinched) {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
@@ -9062,7 +9077,7 @@ MouseTracker.prototype = {
 				});
 				if (runZoom) {
 					fireEvent(chart, 'selection', selectionData, function (args) { 
-						chart.zoom(extend(args, this.hasPinched ? { animation: false } : null)); 
+						chart.zoom(extend(args, hasPinched ? { animation: false } : null)); 
 					});
 				}
 
@@ -9070,7 +9085,7 @@ MouseTracker.prototype = {
 			this.selectionMarker = this.selectionMarker.destroy();
 
 			// Reset scaling preview
-			if (this.hasPinched) {
+			if (hasPinched) {
 				this.scaleGroups({
 					translateX: chart.plotLeft,
 					translateY: chart.plotTop,
