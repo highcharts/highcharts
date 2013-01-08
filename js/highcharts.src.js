@@ -8864,6 +8864,7 @@ MouseTracker.prototype = {
 			zoomVert = mouseTracker.zoomVert,
 			selectionMarker = mouseTracker.selectionMarker,
 			plotWidth = chart.plotWidth,
+			singleTouch = pinchDown.length === 1,
 			transform = {};
 
 
@@ -8875,7 +8876,7 @@ MouseTracker.prototype = {
 		});
 	
 		// Handle touch move/pinching
-		if (pinchDown.length === 2) {
+		if (singleTouch || pinchDown.length === 2) {
 			
 			// Set the marker
 			if (!selectionMarker) {
@@ -8889,21 +8890,21 @@ MouseTracker.prototype = {
 			}
 
 			if (zoomHor) {
-				chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX);
-				chartX2 = mathMin(touches[0].chartX, touches[1].chartX);
+				chartX1 = pinchDown[0].chartX;
+				chartX2 = touches[0].chartX;
 				
-				transform.scaleX = scaleX = mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
+				transform.scaleX = scaleX = singleTouch ? 1 : mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
 				transform.translateX = chartX2 - (chartX1 - chart.plotLeft) * scaleX;
-			
+				
 				selectionMarker.x = ((chart.plotLeft - chartX2) / scaleX) + chartX1;
 				selectionMarker.width = plotWidth / scaleX;
 				mouseTracker.hasPinched = true;
 			}
 			if (zoomVert) {
-				chartY1 = mathMin(pinchDown[0].chartY, pinchDown[1].chartY);
-				chartY2 = mathMin(touches[0].chartY, touches[1].chartY);
+				chartY1 = pinchDown[0].chartY;
+				chartY2 = touches[0].chartY;
 				
-				transform.scaleY = scaleY = mathAbs(touches[0].chartY - touches[1].chartY) / mathAbs(pinchDown[1].chartY - pinchDown[0].chartY);
+				transform.scaleY = scaleY = singleTouch ? 1 : mathAbs(touches[0].chartY - touches[1].chartY) / mathAbs(pinchDown[1].chartY - pinchDown[0].chartY);
 				transform.translateY = chartY2 - (chartY1 - chart.plotTop) * scaleY;
 
 				selectionMarker.y = ((chart.plotTop - chartY2) / scaleY) + chartY1;
@@ -9065,14 +9066,14 @@ MouseTracker.prototype = {
 								1
 							);
 
-							if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-								selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
-									axis: axis,
-									min: mathMin(selectionMin, selectionMax), // for reversed axes,
-									max: mathMax(selectionMin, selectionMax)
-								});
-								runZoom = true;
-							}
+						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
+							selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
+								axis: axis,
+								min: mathMin(selectionMin, selectionMax), // for reversed axes,
+								max: mathMax(selectionMin, selectionMax)
+							});
+							runZoom = true;
+						}
 					}
 				});
 				if (runZoom) {
@@ -9270,12 +9271,13 @@ MouseTracker.prototype = {
 
 	onContainerTouchMove: function (e) {
 
-		if (e.touches.length === 1) {
+		/*if (e.touches.length === 1) {
 			e.preventDefault();
 			this.normalizeMouseEvent(e);
 			this.chart.pan(e.chartX);
 
-		} else if (e.touches.length === 2) {
+		} else */
+		if (e.touches.length === 1 || e.touches.length === 2) {
 			this.pinch(e);
 		}
 	},
