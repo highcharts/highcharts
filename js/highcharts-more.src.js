@@ -1409,16 +1409,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			point = points[i];
 			shapeArgs = point.shapeArgs;
 
-			// sum only points with value, not intermediate or total sum
-			if (point.y) {
-				sum += point.y;
-				subSum += point.y;
-			}
-
 			// set new intermediate sum values after reset
 			if (subSumStart === null) {
 				subSumStart = point;
 				subSum = 0;
+			}
+
+			// sum only points with value, not intermediate or total sum
+			if (point.y && !point.isSum && !point.isIntermediateSum) {
+				sum += point.y;
+				subSum += point.y;
 			}
 
 			// if previous point is specified we start from its end value
