@@ -306,7 +306,7 @@ Point.prototype = {
 			point.applyOptions(options);
 
 			// update visuals
-			if (isObject(options)) {
+			if (redraw && isObject(options)) {
 				series.getAttribs();
 				if (graphic) {
 					graphic.attr(point.pointAttr[series.state]);
