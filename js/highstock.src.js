@@ -7082,6 +7082,9 @@ Axis.prototype = {
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 						
+					if (seriesPointRange > range) { // #1446
+						seriesPointRange = 0;
+					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 					
 					// minPointOffset is the value padding to the left of the axis in order to make
@@ -7113,7 +7116,7 @@ Axis.prototype = {
 			axis.pointRangePadding = pointRangePadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
-			axis.pointRange = pointRange;
+			axis.pointRange = mathMin(pointRange, range);
 
 			// closestPointRange means the closest distance between points. In columns
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
