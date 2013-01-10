@@ -12772,6 +12772,7 @@ Series.prototype = {
 
 					if (graphic) { // update
 						graphic
+							.attr(pointAttr)
 							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
 								visibility: isInside ? (hasSVG ? 'inherit' : VISIBLE) : HIDDEN
 							})
