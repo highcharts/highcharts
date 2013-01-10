@@ -10183,7 +10183,7 @@ Chart.prototype = {
 	 */
 	showResetZoom: function () {
 		var chart = this,
-			lang = defaultOptions.lang,
+			lang = this.options.lang,
 			btnOptions = chart.options.chart.resetZoomButton,
 			theme = btnOptions.theme,
 			states = theme.states,
