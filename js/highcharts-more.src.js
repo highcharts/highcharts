@@ -1481,14 +1481,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		for (i = 0; i < length; i++) {
 			curr = yData[i];
 
-			// curr[1] and curr[2] keep information about sum points
-			if (curr[1] === true) {
-				yData[i] = [sum, prev];
-			} else if (curr[2] === true) {
-				yData[i] = [subSum, prev];
-				subSum = prev;
-			} else {
-				yData[i] = [prev, prev + curr[0]];
+			// processed yData only if it's not already processed
+			if (typeof curr[0] !== 'number' || typeof curr[1] !== 'number') {
+				if (curr[1] === true) { // isSum
+					yData[i] = [sum, prev];
+				} else if (curr[2] === true) { // isIntermediateSum
+					yData[i] = [subSum, prev];
+					subSum = prev;
+				} else {
+					yData[i] = [prev, prev + curr[0]];
+				}
 			}
 
 			// yData[i] has this format now: [low, y]
