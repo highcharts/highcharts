@@ -101,26 +101,32 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		Series.prototype.processData.call(this, force);
 
 		var series = this,
+			options = series.options,
 			yData = series.yData,
 			length = yData.length,
-			previous,
-			current,
+			prev,
+			curr,
+			subSum,
+			sum,
 			i;
 
+		prev = sum = subSum = options.threshold;
 
-		for (i = 1; i < length; i++) {
-			current = yData[i];
-			previous = yData[i - 1];
+		for (i = 0; i < length; i++) {
+			curr = yData[i];
 
-			if (current[1] === null) {
-				current[1] = current[1] + previous[0] + previous[1];
+			// curr[1] and curr[2] keep information about sum points
+			if (curr[1] === true) {
+				yData[i] = [sum, prev];
+			} else if (curr[2] === true) {
+				yData[i] = [subSum, prev];
+				subSum = prev;
+			} else {
+				yData[i] = [prev, prev + curr[0]];
 			}
 
-			if (current[0] === null) {
-				current[0] = previous[0];
-			}
-
-			current[2] = current[0] + current[1];
+			// yData[i] has this format now: [low, y]
+			prev = yData[i][1];
 		}
 	},
 
@@ -128,9 +134,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Return [y, low] array, if low is not defined, it's replaced with null for further calculations
 	 */
 	toYData: function (pt) {
-		var y = pt.y === UNDEFINED ? null : pt.y,
-			low = pt.low === UNDEFINED ? null : pt.low;
-		return [y, low];
+		return [pt.y, pt.isSum, pt.isIntermediateSum];
 	},
 
 	/**
