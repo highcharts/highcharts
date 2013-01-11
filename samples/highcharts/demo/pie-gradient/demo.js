@@ -3,7 +3,7 @@ $(function () {
     $(document).ready(function() {
     	
     	// Radialize the colors
-		Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+		Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
 		    return {
 		        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
 		        stops: [
