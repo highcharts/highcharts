@@ -74,21 +74,6 @@ var OHLCPoint = extendClass(Point, {
 	},
 
 	/**
-	 * A specific OHLC tooltip formatter
-	 */
-	tooltipFormatter: function () {
-		var point = this,
-			series = point.series;
-
-		return ['<span style="color:' + series.color + ';font-weight:bold">', (point.name || series.name), '</span><br/>',
-			'Open: ', point.open, '<br/>',
-			'High: ', point.high, '<br/>',
-			'Low: ', point.low, '<br/>',
-			'Close: ', point.close, '<br/>'].join('');
-
-	},
-	
-	/**
 	 * Return a plain array for speedy calculation
 	 */
 	toYData: function () {

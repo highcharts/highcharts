@@ -243,7 +243,8 @@ Point.prototype = {
 				low: 0,
 				close: 0,
 				percentage: 1, // 1: use the self name for repOptionKey
-				total: 1
+				total: 1,
+				text: 1
 			};
 		
 		// Backwards compatibility to y naming in early Highstock
@@ -262,7 +263,7 @@ Point.prototype = {
 				prop = parts[2];
 				
 				// Add some preformatting
-				if (obj === point && cfg.hasOwnProperty(prop)) {
+				if (obj === point && cfg.hasOwnProperty(prop) && prop !== 'text') {
 					repOptionKey = cfg[prop] ? prop : 'value';
 					replacement = (seriesTooltipOptions[repOptionKey + 'Prefix'] || '') + 
 						numberFormat(point[prop], pick(seriesTooltipOptions[repOptionKey + 'Decimals'], -1)) +

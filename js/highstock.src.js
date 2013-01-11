@@ -11454,7 +11454,8 @@ Point.prototype = {
 				low: 0,
 				close: 0,
 				percentage: 1, // 1: use the self name for repOptionKey
-				total: 1
+				total: 1,
+				text: 1
 			};
 		
 		// Backwards compatibility to y naming in early Highstock
@@ -11473,7 +11474,7 @@ Point.prototype = {
 				prop = parts[2];
 				
 				// Add some preformatting
-				if (obj === point && cfg.hasOwnProperty(prop)) {
+				if (obj === point && cfg.hasOwnProperty(prop) && prop !== 'text') {
 					repOptionKey = cfg[prop] ? prop : 'value';
 					replacement = (seriesTooltipOptions[repOptionKey + 'Prefix'] || '') + 
 						numberFormat(point[prop], pick(seriesTooltipOptions[repOptionKey + 'Decimals'], -1)) +
@@ -15835,21 +15836,6 @@ var OHLCPoint = extendClass(Point, {
 	},
 
 	/**
-	 * A specific OHLC tooltip formatter
-	 */
-	tooltipFormatter: function () {
-		var point = this,
-			series = point.series;
-
-		return ['<span style="color:' + series.color + ';font-weight:bold">', (point.name || series.name), '</span><br/>',
-			'Open: ', point.open, '<br/>',
-			'High: ', point.high, '<br/>',
-			'Low: ', point.low, '<br/>',
-			'Close: ', point.close, '<br/>'].join('');
-
-	},
-	
-	/**
 	 * Return a plain array for speedy calculation
 	 */
 	toYData: function () {
@@ -16150,6 +16136,9 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 		fontWeight: 'bold',
 		textAlign: 'center'
 	},
+	tooltip: {
+		pointFormat: '{point.text}<br/>'
+	},
 	threshold: null,
 	y: -30
 });
@@ -16380,14 +16369,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				});
 			}
 		});
-	},
-
-	/**
-	 * Override the regular tooltip formatter by returning the point text given
-	 * in the options
-	 */
-	tooltipFormatter: function (item) {
-		return item.point.text;
 	},
 
 	/**
