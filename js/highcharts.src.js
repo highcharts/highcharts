@@ -445,6 +445,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'b': lang.shortMonths[month], // Short month, like 'Jan'
 			'B': lang.months[month], // Long month, like 'January'
 			'm': pad(month + 1), // Two digit month number, 01 through 12
+			'-m': month + 1, // Month number, 1 through 12
 
 			// Year
 			'y': fullYear.toString().substr(2, 2), // Two digits year, like 09 for 2009
@@ -452,6 +453,7 @@ dateFormat = function (format, timestamp, capitalize) {
 
 			// Time
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
+			'k': hours, // Hours in 24h format, 0 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
 			'M': pad(date[getMinutes]()), // Two digits minutes, 00 through 59
