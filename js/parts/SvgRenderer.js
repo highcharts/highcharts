@@ -1060,7 +1060,8 @@ SVGRenderer.prototype = {
 	init: function (container, width, height, forExport) {
 		var renderer = this,
 			loc = location,
-			boxWrapper;
+			boxWrapper,
+			desc;
 
 		boxWrapper = renderer.createElement('svg')
 			.attr({
@@ -1083,6 +1084,11 @@ SVGRenderer.prototype = {
 				.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
 			''; 
 			
+		// Add description
+		desc = this.createElement('desc').add();
+		desc.element.appendChild(doc.createTextNode('Created with ' + PRODUCT + ' ' + VERSION));
+
+		
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored

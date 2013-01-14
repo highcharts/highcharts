@@ -54,6 +54,8 @@ var UNDEFINED,
 	timeUnits,
 	noop = function () {},
 	charts = [],
+	PRODUCT = 'Highstock',
+	VERSION = '1.2.4',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -2979,7 +2981,8 @@ SVGRenderer.prototype = {
 	init: function (container, width, height, forExport) {
 		var renderer = this,
 			loc = location,
-			boxWrapper;
+			boxWrapper,
+			desc;
 
 		boxWrapper = renderer.createElement('svg')
 			.attr({
@@ -3002,6 +3005,11 @@ SVGRenderer.prototype = {
 				.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
 			''; 
 			
+		// Add description
+		desc = this.createElement('desc').add();
+		desc.element.appendChild(doc.createTextNode('Created with ' + PRODUCT + ' ' + VERSION));
+
+		
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
@@ -7569,15 +7577,18 @@ Axis.prototype = {
 	 * in stock charts.
 	 */
 	zoom: function (newMin, newMax) {
-		
+
 		// Prevent pinch zooming out of range
-		if (newMin < this.dataMin) {
+		if (newMin <= this.dataMin) {
 			newMin = UNDEFINED;
 		}
-		if (newMax > this.dataMax) {
+		if (newMax >= this.dataMax) {
 			newMax = UNDEFINED;
 		}
 
+		// In full view, displaying the reset zoom button is not required
+		this.displayBtn = newMin !== UNDEFINED || newMax !== UNDEFINED;
+		
 		// Do it
 		this.setExtremes(
 			newMin,
@@ -8607,6 +8618,7 @@ MouseTracker.prototype = {
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
 
 		this.pinchDown = [];
+		this.lastValidTouch = {};
 
 		if (!chart.trackerGroup) {
 			chart.trackerGroup = chart.renderer.g('tracker')
@@ -8838,49 +8850,124 @@ MouseTracker.prototype = {
 		});
 		
 		// TODO: shorten. This is just a translated version of selectionMarker
-		chart.clipRect.attr(clip ? {
-			x: clip.x - chart.plotLeft,
-			y: clip.y - chart.plotTop,
-			width: clip.width,
-			height: clip.height
-		} : chart.clipBox);
+		chart.clipRect.attr(clip || chart.clipBox);
+	},
+
+	/**
+	 * Run translation operations for each direction (horizontal and vertical) independently
+	 */
+	pinchTranslateDirection: function (horiz, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+		var chart = this.chart,
+			xy = horiz ? 'x' : 'y',
+			XY = horiz ? 'X' : 'Y',
+			sChartXY = 'chart' + XY,
+			wh = horiz ? 'width' : 'height',
+			plotLeftTop = chart['plot' + (horiz ? 'Left' : 'Top')],
+			selectionWH,
+			selectionXY,
+			clipXY,
+			scale = 1,
+			bounds = chart.bounds[horiz ? 'h' : 'v'],
+			singleTouch = pinchDown.length === 1,
+			touch0Start = pinchDown[0][sChartXY],
+			touch0Now = touches[0][sChartXY],
+			touch1Start = !singleTouch && pinchDown[1][sChartXY],
+			touch1Now = !singleTouch && touches[1][sChartXY],
+			outOfBounds,
+			setScale = function () {
+				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
+					scale = mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);	
+				}
+				
+				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
+				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
+			};
+
+		
+		setScale();
+
+		selectionXY = clipXY; // the clip position (x or y) is altered if out of bounds, the selection position is not
+
+		// Out of bounds
+		if (selectionXY < bounds.min) {
+			selectionXY = bounds.min;
+			outOfBounds = true;
+		} else if (selectionXY + selectionWH > bounds.max) {
+			selectionXY = bounds.max - selectionWH;
+			outOfBounds = true;
+		}
+		
+		if (outOfBounds) {
+			touch0Now -= 0.8 * (touch0Now - lastValidTouch[xy][0]);
+			if (!singleTouch) {
+				touch1Now -= 0.8 * (touch1Now - lastValidTouch[xy][1]);
+			}
+
+			// Repetition of the above
+			setScale();
+
+		} else {
+			lastValidTouch[xy] = [touch0Now, touch1Now];
+		}
+
+		// Set geometry for clipping, selection and transformation
+		clip[xy] = clipXY - plotLeftTop;
+		clip[wh] = selectionWH;
+		selectionMarker[wh] = selectionWH;
+		selectionMarker[xy] = selectionXY;
+		transform['scale' + XY] = scale;
+		transform['translate' + XY] = (scale * plotLeftTop) + (touch0Now - (scale * touch0Start));
+
 	},
 	
 	/**
 	 * Handle touch events with two touches
 	 */
 	pinch: function (e) {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
-			pinchDown = mouseTracker.pinchDown,
+
+		var self = this,
+			chart = self.chart,
+			pinchDown = self.pinchDown,
 			touches = e.touches,
-			chartX1,
-			chartX2,
-			chartY1,
-			chartY2,
-			scaleX,
-			scaleY,
-			zoomHor = mouseTracker.zoomHor,
-			zoomVert = mouseTracker.zoomVert,
-			selectionMarker = mouseTracker.selectionMarker,
+			lastValidTouch = self.lastValidTouch,
+			zoomHor = self.zoomHor,
+			zoomVert = self.zoomVert,
+			selectionMarker = self.selectionMarker,
 			plotWidth = chart.plotWidth,
-			singleTouch = pinchDown.length === 1,
-			transform = {};
+			transform = {},
+			clip = {};
 
-
+		// Run
 		e.preventDefault();
 			
 		// Normalize each touch
 		map(touches, function (e) {
-			return mouseTracker.normalizeMouseEvent(e);
+			return self.normalizeMouseEvent(e);
 		});
-	
-		// Handle touch move/pinching
-		if (singleTouch || pinchDown.length === 2) {
 			
+		// Register the touch start position
+		if (e.type === 'touchstart') {
+			each(touches, function (e, i) {
+				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
+			});
+			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] && pinchDown[1].chartX];
+			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] && pinchDown[1].chartY];
+
+			// Identify the data bounds in pixels
+			each(chart.axes, function (axis) {
+				var bounds = chart.bounds[axis.horiz ? 'h' : 'v'];
+				// TODO: bounds are wrong for Y-axis
+				bounds.min = mathMin(chart.plotLeft, chart.plotLeft - axis.minPixelPadding + axis.translate(axis.dataMin));
+				bounds.max = mathMax(chart.plotLeft + chart.plotWidth, chart.plotLeft + axis.minPixelPadding + axis.translate(axis.dataMax));
+			});
+		
+		// Event type is touchmove, handle panning and pinching
+		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
+			
+
 			// Set the marker
 			if (!selectionMarker) {
-				mouseTracker.selectionMarker = selectionMarker = {
+				self.selectionMarker = selectionMarker = {
 					x: chart.plotLeft,
 					y: chart.plotTop,
 					width: zoomHor ? 1 : plotWidth,
@@ -8889,41 +8976,22 @@ MouseTracker.prototype = {
 				};
 			}
 
+			
+
 			if (zoomHor) {
-				chartX1 = pinchDown[0].chartX;
-				chartX2 = touches[0].chartX;
-				
-				transform.scaleX = scaleX = singleTouch ? 1 : mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
-				transform.translateX = chartX2 - (chartX1 - chart.plotLeft) * scaleX;
-				
-				selectionMarker.x = ((chart.plotLeft - chartX2) / scaleX) + chartX1;
-				selectionMarker.width = plotWidth / scaleX;
-				mouseTracker.hasPinched = true;
+				self.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 			}
 			if (zoomVert) {
-				chartY1 = pinchDown[0].chartY;
-				chartY2 = touches[0].chartY;
-				
-				transform.scaleY = scaleY = singleTouch ? 1 : mathAbs(touches[0].chartY - touches[1].chartY) / mathAbs(pinchDown[1].chartY - pinchDown[0].chartY);
-				transform.translateY = chartY2 - (chartY1 - chart.plotTop) * scaleY;
-
-				selectionMarker.y = ((chart.plotTop - chartY2) / scaleY) + chartY1;
-				selectionMarker.height = chart.plotHeight / scaleY;
-				mouseTracker.hasPinched = true;
+				self.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 			}
+
+			self.hasPinched = zoomHor || zoomVert;
 
 			// Scale and translate the groups to provide visual feedback during pinching
-			this.scaleGroups(transform, selectionMarker);
-
+			self.scaleGroups(transform, clip);
 			
-		} 
 			
-		// Register the touch start position
-		each(touches, function (e, i) {
-			if (!pinchDown[i]) {
-				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
-			}
-		});
+		}
 	},
 
 	dragStart: function (e) {
@@ -9261,7 +9329,8 @@ MouseTracker.prototype = {
 				this.runPointActions(e);
 
 				// Register starting point for panning
-				this.dragStart(e);
+				//this.dragStart(e);
+				this.pinch(e);
 			}
 
 		} else if (e.touches.length === 2) {
@@ -9282,7 +9351,7 @@ MouseTracker.prototype = {
 		}
 	},
 
-	onDocumentTouchEnd: function (e) {
+	onDocumentTouchEnd: function () {
 		this.drop();
 	},
 
@@ -10094,6 +10163,8 @@ Chart.prototype = {
 		var chartEvents = optionsChart.events;
 
 		this.runChartClick = chartEvents && !!chartEvents.click;
+		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
+
 		this.callback = callback;
 		this.isResizing = 0;
 		this.options = options;
@@ -10561,13 +10632,9 @@ Chart.prototype = {
 	 * Zoom out to 1:1
 	 */
 	zoomOut: function () {
-		var chart = this,
-			resetZoomButton = chart.resetZoomButton;
-
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { chart.zoom(); });
-		if (resetZoomButton) {
-			chart.resetZoomButton = resetZoomButton.destroy();
-		}
+		fireEvent(this, 'selection', { resetSelection: true }, function (e) { 
+			e.target.zoom();
+		});
 	},
 
 	/**
@@ -10576,9 +10643,11 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		var chart = this,
-			hasZoomed;
+			hasZoomed,
+			displayButton = false,
+			resetZoomButton = chart.resetZoomButton;
 
-		// if zoom is called with no arguments, reset the axes
+		// If zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
 				hasZoomed = axis.zoom();
@@ -10590,13 +10659,18 @@ Chart.prototype = {
 				// don't zoom more than minRange
 				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
+					if (axis.displayBtn) {
+						displayButton = true;
+					}
 				}
 			});
 		}
 		
-		// Show the Reset zoom button
-		if (!chart.resetZoomButton) {
+		// Show or hide the Reset zoom button
+		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
+		} else if (!displayButton && resetZoomButton) {
+			chart.resetZoomButton = resetZoomButton.destroy();
 		}
 		
 
@@ -19435,7 +19509,7 @@ extend(Highcharts, {
 	svg: hasSVG,
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
-	product: 'Highstock',
-	version: '1.2.4'
+	product: PRODUCT,
+	version: VERSION
 });
 }());

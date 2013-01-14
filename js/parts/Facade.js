@@ -49,6 +49,6 @@ extend(Highcharts, {
 	svg: hasSVG,
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
-	product: '@product.name@',
-	version: '@product.version@'
+	product: PRODUCT,
+	version: VERSION
 });

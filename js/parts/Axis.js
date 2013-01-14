@@ -1385,15 +1385,18 @@ Axis.prototype = {
 	 * in stock charts.
 	 */
 	zoom: function (newMin, newMax) {
-		
+
 		// Prevent pinch zooming out of range
-		if (newMin < this.dataMin) {
+		if (newMin <= this.dataMin) {
 			newMin = UNDEFINED;
 		}
-		if (newMax > this.dataMax) {
+		if (newMax >= this.dataMax) {
 			newMax = UNDEFINED;
 		}
 
+		// In full view, displaying the reset zoom button is not required
+		this.displayBtn = newMin !== UNDEFINED || newMax !== UNDEFINED;
+		
 		// Do it
 		this.setExtremes(
 			newMin,
