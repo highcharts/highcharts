@@ -2179,7 +2179,8 @@ SVGRenderer.prototype = {
 		 * box and reflect it in the border box.
 		 */
 		function updateBoxSize() {
-			var boxY,
+			var boxX,
+				boxY,
 				style = text.element.style;
 				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
@@ -2194,11 +2195,12 @@ SVGRenderer.prototype = {
 				
 				// create the border box if it is not already present
 				if (!box) {
+					boxX = mathRound(-alignFactor * padding);
 					boxY = baseline ? -baselineOffset : 0;
 				
 					wrapper.box = box = shape ?
-						renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
-						renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height) :
+						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 					box.add(wrapper);
 				}
 	
@@ -2348,7 +2350,7 @@ SVGRenderer.prototype = {
 		};
 		attrSetters.y = function (value) {
 			wrapperY = wrapper.y = mathRound(value);
-			wrapper.attr('translateY', value);
+			wrapper.attr('translateY', wrapperY);
 			return false;
 		};
 
