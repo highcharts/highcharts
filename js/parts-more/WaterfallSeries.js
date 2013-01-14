@@ -43,16 +43,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			point = points[i];
 			shapeArgs = point.shapeArgs;
 
-			// sum only points with value, not intermediate or total sum
-			if (point.y) {
-				sum += point.y;
-				subSum += point.y;
-			}
-
 			// set new intermediate sum values after reset
 			if (subSumStart === null) {
 				subSumStart = point;
 				subSum = 0;
+			}
+
+			// sum only points with value, not intermediate or total sum
+			if (point.y && !point.isSum && !point.isIntermediateSum) {
+				sum += point.y;
+				subSum += point.y;
 			}
 
 			// if previous point is specified we start from its end value
@@ -101,26 +101,34 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		Series.prototype.processData.call(this, force);
 
 		var series = this,
+			options = series.options,
 			yData = series.yData,
 			length = yData.length,
-			previous,
-			current,
+			prev,
+			curr,
+			subSum,
+			sum,
 			i;
 
+		prev = sum = subSum = options.threshold;
 
-		for (i = 1; i < length; i++) {
-			current = yData[i];
-			previous = yData[i - 1];
+		for (i = 0; i < length; i++) {
+			curr = yData[i];
 
-			if (current[1] === null) {
-				current[1] = current[1] + previous[0] + previous[1];
+			// processed yData only if it's not already processed
+			if (typeof curr[0] !== 'number' || typeof curr[1] !== 'number') {
+				if (curr[1] === true) { // isSum
+					yData[i] = [sum, prev];
+				} else if (curr[2] === true) { // isIntermediateSum
+					yData[i] = [subSum, prev];
+					subSum = prev;
+				} else {
+					yData[i] = [prev, prev + curr[0]];
+				}
 			}
 
-			if (current[0] === null) {
-				current[0] = previous[0];
-			}
-
-			current[2] = current[0] + current[1];
+			// yData[i] has this format now: [low, y]
+			prev = yData[i][1];
 		}
 	},
 
@@ -128,9 +136,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Return [y, low] array, if low is not defined, it's replaced with null for further calculations
 	 */
 	toYData: function (pt) {
-		var y = pt.y === UNDEFINED ? null : pt.y,
-			low = pt.low === UNDEFINED ? null : pt.low;
-		return [y, low];
+		return [pt.y, pt.isSum, pt.isIntermediateSum];
 	},
 
 	/**
@@ -143,16 +149,18 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
+			hoverColor = Highcharts.Color(upColor).brighten(0.1).get(),
 			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
-		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
+		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
 		each(series.points, function (point) {
 			if (point.y > 0 && !point.color) {
 				point.pointAttr = seriesDownPointAttr;
+				point.color = upColor;
 			}
 		});
 	},
