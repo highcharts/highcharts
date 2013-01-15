@@ -295,7 +295,7 @@ MouseTracker.prototype = {
 				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
 			};
 
-		
+		// Set the scale, first pass
 		setScale();
 
 		selectionXY = clipXY; // the clip position (x or y) is altered if out of bounds, the selection position is not
@@ -309,13 +309,17 @@ MouseTracker.prototype = {
 			outOfBounds = true;
 		}
 		
+		// Is the chart dragged off its bounds, determined by dataMin and dataMax?
 		if (outOfBounds) {
+
+			// Modify the touchNow position in order to create an elastic drag movement. This indicates
+			// to the user that the chart is responsive but can't be dragged further.
 			touch0Now -= 0.8 * (touch0Now - lastValidTouch[xy][0]);
 			if (!singleTouch) {
 				touch1Now -= 0.8 * (touch1Now - lastValidTouch[xy][1]);
 			}
 
-			// Repetition of the above
+			// Set the scale, second pass to adapt to the modified touchNow positions
 			setScale();
 
 		} else {
@@ -367,10 +371,23 @@ MouseTracker.prototype = {
 
 			// Identify the data bounds in pixels
 			each(chart.axes, function (axis) {
-				var bounds = chart.bounds[axis.horiz ? 'h' : 'v'];
-				// TODO: bounds are wrong for Y-axis
-				bounds.min = mathMin(chart.plotLeft, chart.plotLeft - axis.minPixelPadding + axis.translate(axis.dataMin));
-				bounds.max = mathMax(chart.plotLeft + chart.plotWidth, chart.plotLeft + axis.minPixelPadding + axis.translate(axis.dataMax));
+				var horiz = axis.horiz,
+					bounds = chart.bounds[horiz ? 'h' : 'v'],
+					plotLeftTop = chart[horiz ? 'plotLeft' : 'plotTop'],
+					dataMin = axis.translate(axis.dataMin),
+					dataMax = axis.translate(axis.dataMax),
+					translatedMin = mathMin(dataMin, dataMax),
+					translatedMax = mathMax(dataMin, dataMax);
+
+				if (!horiz) {
+					translatedMin = axis.len - translatedMax;
+					translatedMax = axis.len - mathMin(dataMin, dataMax);
+				}
+
+				// Store the bounds for use in the touchmove handler
+				bounds.min = mathMin(plotLeftTop, plotLeftTop - axis.minPixelPadding + translatedMin);
+				bounds.max = mathMax(plotLeftTop + axis.len, plotLeftTop + axis.minPixelPadding + translatedMax);
+				
 			});
 		
 		// Event type is touchmove, handle panning and pinching
