@@ -6824,25 +6824,30 @@ Axis.prototype = {
 			localA = axis.transA;
 		}
 
-		if (cvsCoord) {
+		// In vertical axes, the canvas coordinates start from 0 at the top like in 
+		// SVG. 
+		if (cvsCoord && !axis.horiz) {
 			sign *= -1; // canvas coordinates inverts the value
 			cvsOffset = axisLength;
 		}
-		if (axis.reversed) { // reversed axis
+
+		// Handle reversed axis
+		if (axis.reversed) { 
 			sign *= -1;
 			cvsOffset -= sign * axisLength;
 		}
 
+		// From pixels to value
 		if (backwards) { // reverse translation
-			if (axis.reversed) {
-				val = axisLength - val;
-			}
+			
+			val = val * sign + cvsOffset;
 			returnValue = val / localA + localMin; // from chart pixel to value
 			if (postTranslate) { // log and ordinal axes
 				returnValue = axis.lin2val(returnValue);
 			}
 
-		} else { // normal translation, from axis value to pixel, relative to plot
+		// From value to pixels
+		} else {
 			if (postTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
@@ -6852,6 +6857,26 @@ Axis.prototype = {
 		}
 
 		return returnValue;
+	},
+
+	/**
+	 * Utility method to translate an axis value to pixel position. 
+	 * @param {Number} value A value in terms of axis units
+	 * @param {Boolean} paneCoordinates Whether to return the pixel coordinate relative to the chart
+	 *        or just the axis/pane itself.
+	 */
+	toPixels: function (value, paneCoordinates) { // docs
+		return this.translate(value, false, true, null, true) + (paneCoordinates ? 0 : this.position);
+	},
+
+	/*
+	 * Utility method to translate a pixel position in to an axis value
+	 * @param {Number} pixel The pixel value coordinate
+	 * @param {Boolean} paneCoordiantes Whether the input pixel is relative to the chart or just the
+	 *        axis/pane itself.
+	 */
+	toValue: function (pixel, paneCoordinates) { // docs
+		return this.translate(pixel - (paneCoordinates ? 0 : this.position), true, true, null, true);
 	},
 
 	/**
@@ -7234,9 +7259,8 @@ Axis.prototype = {
 			axis.closestPointRange = closestPointRange;
 		}
 
-		// secondary values
+		// Secondary values
 		axis.oldTransA = transA;
-		//axis.translationSlope = axis.transA = transA = axis.len / ((range + (2 * minPointOffset)) || 1);
 		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
@@ -7604,22 +7628,27 @@ Axis.prototype = {
 	 * Update the axis metrics
 	 */
 	setAxisSize: function () {
-		var axis = this,
-			chart = axis.chart,
-			options = axis.options;
+		var chart = this.chart,
+			options = this.options,
+			offsetLeft = options.offsetLeft || 0,
+			offsetRight = options.offsetRight || 0,
+			horiz = this.horiz,
+			width,
+			height,
+			top,
+			left;
 
-		var offsetLeft = options.offsetLeft || 0,
-			offsetRight = options.offsetRight || 0;
+		// Expose basic values to use in Series object and navigator
+		this.left = left = pick(options.left, chart.plotLeft + offsetLeft);
+		this.top = top = pick(options.top, chart.plotTop);
+		this.width = width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight);
+		this.height = height = pick(options.height, chart.plotHeight);
+		this.bottom = chart.chartHeight - height - top;
+		this.right = chart.chartWidth - width - left;
 
-		// basic values
-		// expose to use in Series object and navigator
-		axis.left = pick(options.left, chart.plotLeft + offsetLeft);
-		axis.top = pick(options.top, chart.plotTop);
-		axis.width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight);
-		axis.height = pick(options.height, chart.plotHeight);
-		axis.bottom = chart.chartHeight - axis.height - axis.top;
-		axis.right = chart.chartWidth - axis.width - axis.left;
-		axis.len = mathMax(axis.horiz ? axis.width : axis.height, 0); // mathMax fixes #905
+		// Direction agnostic properties
+		this.len = mathMax(horiz ? width : height, 0); // mathMax fixes #905
+		this.position = horiz ? left : top; // distance from SVG origin
 	},
 
 	/**
