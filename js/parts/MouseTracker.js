@@ -371,23 +371,18 @@ MouseTracker.prototype = {
 
 			// Identify the data bounds in pixels
 			each(chart.axes, function (axis) {
-				var horiz = axis.horiz,
-					bounds = chart.bounds[horiz ? 'h' : 'v'],
-					plotLeftTop = chart[horiz ? 'plotLeft' : 'plotTop'],
-					dataMin = axis.translate(axis.dataMin),
-					dataMax = axis.translate(axis.dataMax),
-					translatedMin = mathMin(dataMin, dataMax),
-					translatedMax = mathMax(dataMin, dataMax);
 
-				if (!horiz) {
-					translatedMin = axis.len - translatedMax;
-					translatedMax = axis.len - mathMin(dataMin, dataMax);
-				}
+				var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+					minPixelPadding = axis.minPixelPadding,
+					min = axis.toPixels(axis.dataMin),
+					max = axis.toPixels(axis.dataMax),
+					absMin = mathMin(min, max),
+					absMax = mathMax(min, max);
 
 				// Store the bounds for use in the touchmove handler
-				bounds.min = mathMin(plotLeftTop, plotLeftTop - axis.minPixelPadding + translatedMin);
-				bounds.max = mathMax(plotLeftTop + axis.len, plotLeftTop + axis.minPixelPadding + translatedMax);
-				
+				bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
+				bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+
 			});
 		
 		// Event type is touchmove, handle panning and pinching
@@ -532,8 +527,8 @@ MouseTracker.prototype = {
 					yAxis: []
 				},
 				selectionBox = this.selectionMarker,
-				selectionLeft = selectionBox.x - chart.plotLeft,
-				selectionTop = selectionBox.y - chart.plotTop,
+				selectionLeft = selectionBox.x,
+				selectionTop = selectionBox.y,
 				runZoom;
 			// a selection has been made
 			if (this.hasDragged || hasPinched) {
@@ -541,30 +536,12 @@ MouseTracker.prototype = {
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
 					if (axis.options.zoomEnabled !== false) {
-						var isXAxis = axis.isXAxis,
-							isHorizontal = chart.inverted ? !isXAxis : isXAxis,
-							selectionMin = axis.translate(
-								isHorizontal ?
-									selectionLeft :
-									chart.plotHeight - selectionTop - selectionBox.height,
-								true,
-								0,
-								0,
-								1
-							),
-							selectionMax = axis.translate(
-								(isHorizontal ?
-										selectionLeft + selectionBox.width :
-										chart.plotHeight - selectionTop) -  
-									2 * axis.minPixelPadding, // #875
-								true,
-								0,
-								0,
-								1
-							);
+						var horiz = axis.horiz,
+							selectionMin = axis.toValue(horiz ? selectionLeft : selectionTop),
+							selectionMax = axis.toValue(horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height);
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-							selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
+							selectionData[axis.xOrY + 'Axis'].push({
 								axis: axis,
 								min: mathMin(selectionMin, selectionMax), // for reversed axes,
 								max: mathMax(selectionMin, selectionMax)

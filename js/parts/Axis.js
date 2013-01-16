@@ -626,6 +626,7 @@ Axis.prototype = {
 			localA = old ? axis.oldTransA : axis.transA,
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
+			minPixelPadding = axis.minPixelPadding,
 			postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
 
 		if (!localA) {
@@ -649,6 +650,7 @@ Axis.prototype = {
 		if (backwards) { // reverse translation
 			
 			val = val * sign + cvsOffset;
+			val -= minPixelPadding;
 			returnValue = val / localA + localMin; // from chart pixel to value
 			if (postTranslate) { // log and ordinal axes
 				returnValue = axis.lin2val(returnValue);
@@ -660,7 +662,7 @@ Axis.prototype = {
 				val = axis.val2lin(val);
 			}
 
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * axis.minPixelPadding) +
+			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
 				(pointPlacementBetween ? localA * axis.pointRange / 2 : 0);
 		}
 
@@ -674,7 +676,7 @@ Axis.prototype = {
 	 *        or just the axis/pane itself.
 	 */
 	toPixels: function (value, paneCoordinates) { // docs
-		return this.translate(value, false, true, null, true) + (paneCoordinates ? 0 : this.position);
+		return this.translate(value, false, true, null, true) + (paneCoordinates ? 0 : this.pos);
 	},
 
 	/*
@@ -684,7 +686,7 @@ Axis.prototype = {
 	 *        axis/pane itself.
 	 */
 	toValue: function (pixel, paneCoordinates) { // docs
-		return this.translate(pixel - (paneCoordinates ? 0 : this.position), true, true, null, true);
+		return this.translate(pixel - (paneCoordinates ? 0 : this.pos), true, true, null, true);
 	},
 
 	/**
@@ -1456,7 +1458,7 @@ Axis.prototype = {
 
 		// Direction agnostic properties
 		this.len = mathMax(horiz ? width : height, 0); // mathMax fixes #905
-		this.position = horiz ? left : top; // distance from SVG origin
+		this.pos = horiz ? left : top; // distance from SVG origin
 	},
 
 	/**

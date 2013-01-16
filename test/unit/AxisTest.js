@@ -17,10 +17,17 @@ AxisTest.prototype.testToPixelsAndValues = function () {
 			renderTo: this.container,
 			alignTicks: false
 		},
-		xAxis: {
+		xAxis: [{
 			min: 0,
-			max: 10
-		},
+			max: 10,
+			categories: []
+		}, {
+			min: 0,
+			max: 10,
+			categories: [],
+			reversed: true,
+			opposite: true
+		}],
 		yAxis: [{
 			type: 'logarithmic',
 			min: 1,
@@ -42,15 +49,15 @@ AxisTest.prototype.testToPixelsAndValues = function () {
 
 	// Axis.toPixels
 	assertEquals(
-		'Axis.toPixels() in horizontal linear axis, chart coordinates', 
-		150, 
-		chart.xAxis[0].toPixels(5)
+		'Axis.toPixels() in horizontal categorized axis, chart coordinates', 
+		114, 
+		Math.round(chart.xAxis[0].toPixels(1))
 	);
 
 	assertEquals(
-		'Axis.toPixels() in horizontal linear axis, plot coordinates', 
+		'Axis.toPixels() in horizontal categorized axis, plot coordinates', 
 		50, 
-		chart.xAxis[0].toPixels(5, true)
+		Math.round(chart.xAxis[0].toPixels(5, true))
 	);
 
 	assertEquals(
@@ -73,15 +80,21 @@ AxisTest.prototype.testToPixelsAndValues = function () {
 
 	// Axis.toValue
 	assertEquals(
-		'Axis.toValue() in horizontal linear axis, chart coordinates',
+		'Axis.toValue() in horizontal categorized axis, chart coordinates',
 		5,
-		chart.xAxis[0].toValue(150)
+		Math.round(chart.xAxis[0].toValue(150))
 	);
 	
 	assertEquals(
-		'Axis.toValue() in horizontal linear axis, plot coordinates',
+		'Axis.toValue() in horizontal categorized axis, plot coordinates',
 		5,
-		chart.xAxis[0].toValue(50, true)
+		Math.round(chart.xAxis[0].toValue(50, true))
+	);
+
+	assertEquals(
+		'Axis.toValue() in horizontal reversed categorized axis, plot coordinates',
+		5,
+		Math.round(chart.xAxis[1].toValue(50, true))
 	);
 
 	assertEquals(
