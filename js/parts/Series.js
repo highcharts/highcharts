@@ -1560,7 +1560,7 @@ Series.prototype = {
 				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
 				
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];

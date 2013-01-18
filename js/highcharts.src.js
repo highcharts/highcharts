@@ -12799,7 +12799,7 @@ Series.prototype = {
 				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
 				
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
@@ -13800,6 +13800,54 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
  */
 var AreaSeries = extendClass(Series, {
 	type: 'area',
+	
+	/**
+	 * For stacks, don't split segments on null values. Instead, draw null values with 
+	 * no marker. Also insert dummy points for any X position that exists in other series
+	 * in the stack.
+	 */ 
+	getSegments: function () {
+		var segments = [],
+			stack = this.yAxis.stacks.area,
+			pointMap = {},
+			plotY,
+			points = this.points,
+			i,
+			x;
+
+		if (this.options.stacking) {
+			// Create a map where we can quickly look up the points by their X value.
+			for (i = 0; i < points.length; i++) {
+				pointMap[points[i].x] = points[i];
+			}
+
+			for (x in stack) {
+				// The point exists, push it to the segment
+				if (pointMap[x]) {
+					segments.push(pointMap[x]);
+
+				// There is no point for this X value in this series, so we 
+				// insert a dummy point in order for the areas to be drawn
+				// correctly.
+				} else {
+					plotY = this.yAxis.translate(stack[x].cum, 0, 1, 0, 1);
+					segments.push({ 
+						y: null, 
+						plotX: this.xAxis.translate(x), 
+						plotY: plotY, 
+						yBottom: plotY,
+						onMouseOver: noop
+					});
+				}
+			}
+			segments = [segments];
+
+		} else {
+			segments = Series.prototype.getSegments.call(this);	
+		}
+		this.segments = segments;
+		
+	},
 	
 	/**
 	 * Extend the base Series getSegmentPath method by adding the path for the area.
