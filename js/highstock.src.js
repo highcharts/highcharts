@@ -8979,8 +8979,16 @@ MouseTracker.prototype = {
 			transform = {},
 			clip = {};
 
-		// Run
-		e.preventDefault();
+		// On touch devices, only proceed to trigger click if a handler is defined
+		if (e.type === 'touchstart') {
+			if (attr(e.target, 'isTracker')) {
+				if (!chart.runTrackerClick) {
+					e.preventDefault();
+				}
+			} else if (!chart.runChartClick) {
+				e.preventDefault();
+			}
+		}
 			
 		// Normalize each touch
 		map(touches, function (e) {
@@ -9201,8 +9209,6 @@ MouseTracker.prototype = {
 		}
 	},
 
-	
-
 	onContainerMouseDown: function (e) {
 
 		// issue #295, dragging not always working in Firefox
@@ -9253,28 +9259,9 @@ MouseTracker.prototype = {
 		// normalize
 		e = this.normalizeMouseEvent(e);
 
-		/*var type = e.type,
-			chart = this.chart;*/
-			
-		
-		//if (type.indexOf('touch') === -1) {  // not for touch actions
-
 		// #295
 		e.returnValue = false;
-		//}/
-
-		// on touch devices, only trigger click if a handler is defined
-		// TODO: check if this is necessary after the refactoring
-		/*if (type === 'touchstart') {
-			if (attr(e.target, 'isTracker')) {
-				if (!chart.runTrackerClick) {
-					e.preventDefault();
-				}
-			} else if (!chart.runChartClick && !isOutsidePlot) {
-				e.preventDefault();
-			}
-		}*/
-
+		
 		
 		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);
@@ -9284,9 +9271,6 @@ MouseTracker.prototype = {
 		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			this.runPointActions(e);
 		}
-
-		// when outside plot, allow touch-drag by returning true
-		//return isOutsidePlot || !chart.hasCartesianSeries;
 	},
 
 	onContainerClick: function (e) {
@@ -9302,7 +9286,6 @@ MouseTracker.prototype = {
 		e = this.normalizeMouseEvent(e);
 		e.cancelBubble = true; // IE specific
 
-
 		if (!chart.cancelClick) {
 			// Detect clicks on trackers or tracker groups, #783
 			if (hoverPoint && (attr(e.target, 'isTracker') || attr(e.target.parentNode, 'isTracker'))) {
@@ -9317,7 +9300,7 @@ MouseTracker.prototype = {
 					pageY: chartPosition.top + plotTop +
 						(inverted ? chart.plotHeight - plotX : plotY)
 				});
-
+			
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {
 					point: hoverPoint
@@ -9349,15 +9332,13 @@ MouseTracker.prototype = {
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 
 				// Prevent the click pseudo event from firing unless it is set in the options
-				if (!chart.runChartClick) {
+				/*if (!chart.runChartClick) {
 					e.preventDefault();
-				}
+				}*/
 			
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);
 
-				// Register starting point for panning
-				//this.dragStart(e);
 				this.pinch(e);
 			}
 
