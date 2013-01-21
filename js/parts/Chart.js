@@ -193,7 +193,7 @@ Chart.prototype = {
 		var chart = this,
 			axes = chart.axes,
 			series = chart.series,
-			tracker = chart.tracker,
+			pointer = chart.pointer,
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
@@ -297,8 +297,8 @@ Chart.prototype = {
 
 
 		// move tooltip or reset
-		if (tracker && tracker.resetTracker) {
-			tracker.resetTracker(true);
+		if (pointer && pointer.reset) {
+			pointer.reset(true);
 		}
 
 		// redraw if canvas
@@ -534,7 +534,7 @@ Chart.prototype = {
 				var axis = axisData.axis;
 
 				// don't zoom more than minRange
-				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
+				if (chart.pointer[axis.isXAxis ? 'zoomX' : 'zoomY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
 					if (axis.displayBtn) {
 						displayButton = true;
@@ -1483,7 +1483,7 @@ Chart.prototype = {
 		}
 
 		// depends on inverted and on margins being set
-		chart.tracker = new MouseTracker(chart, options);
+		chart.pointer = new Pointer(chart, options);
 
 		chart.render();
 

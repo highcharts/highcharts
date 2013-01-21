@@ -32,7 +32,7 @@
 			}
 		},
 		{
-			"file": "js/parts/MouseTracker.js",
+			"file": "js/parts/Pointer.js",
 			"settings":
 			{
 				"buffer_size": 19080,
@@ -219,7 +219,7 @@
 				},
 				{
 					"buffer": 1,
-					"file": "js/parts/MouseTracker.js",
+					"file": "js/parts/Pointer.js",
 					"settings":
 					{
 						"buffer_size": 19080,
@@ -334,7 +334,7 @@
 			],
 			[
 				"mouse",
-				"js/parts/MouseTracker.js"
+				"js/parts/Pointer.js"
 			],
 			[
 				"arearange",

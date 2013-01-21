@@ -1907,7 +1907,7 @@ Axis.prototype.beforePadding = function () {
  */
 
 var seriesProto = Series.prototype,
-	mouseTrackerProto = Highcharts.MouseTracker.prototype;
+	pointerProto = Highcharts.Pointer.prototype;
 
 
 
@@ -2294,7 +2294,7 @@ wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, a
  * Extend the mouse tracker to return the tooltip position index in terms of
  * degrees rather than pixels
  */
-wrap(mouseTrackerProto, 'getIndex', function (proceed, e) {
+wrap(pointerProto, 'getIndex', function (proceed, e) {
 	var ret,
 		chart = this.chart,
 		center,
@@ -2319,7 +2319,7 @@ wrap(mouseTrackerProto, 'getIndex', function (proceed, e) {
 /**
  * Extend getMouseCoordinates to prepare for polar axis values
  */
-wrap(mouseTrackerProto, 'getMouseCoordinates', function (proceed, e) {
+wrap(pointerProto, 'getMouseCoordinates', function (proceed, e) {
 	var chart = this.chart,
 		ret = {
 			xAxis: [],

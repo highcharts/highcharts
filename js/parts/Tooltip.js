@@ -164,7 +164,7 @@ Tooltip.prototype = {
 		// When tooltip follows mouse, relate the position to the mouse
 		if (this.followPointer && mouseEvent) {
 			if (mouseEvent.chartX === UNDEFINED) {
-				mouseEvent = chart.tracker.normalizeMouseEvent(mouseEvent);
+				mouseEvent = chart.pointer.normalize(mouseEvent);
 			}
 			ret = [
 				mouseEvent.chartX - chart.plotLeft,

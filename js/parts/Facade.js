@@ -8,7 +8,7 @@ extend(Highcharts, {
 	Chart: Chart,
 	Color: Color,
 	Legend: Legend,
-	MouseTracker: MouseTracker,
+	Pointer: Pointer,
 	Point: Point,
 	Tick: Tick,
 	Tooltip: Tooltip,

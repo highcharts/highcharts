@@ -4,13 +4,13 @@
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
-function MouseTracker(chart, options) {
+function Pointer(chart, options) {
 	this.init(chart, options);
 }
 
-MouseTracker.prototype = {
+Pointer.prototype = {
 	/**
-	 * Initialize MouseTracker
+	 * Initialize Pointer
 	 */
 	init: function (chart, options) {
 		
@@ -49,7 +49,7 @@ MouseTracker.prototype = {
 	 * Add crossbrowser support for chartX and chartY
 	 * @param {Object} e The event object in standard browsers
 	 */
-	normalizeMouseEvent: function (e) {
+	normalize: function (e) {
 		var chartPosition,
 			chartX,
 			chartY,
@@ -130,8 +130,8 @@ MouseTracker.prototype = {
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
 	runPointActions: function (e) {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
+		var pointer = this,
+			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
 			point,
@@ -141,11 +141,11 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			index = mouseTracker.getIndex(e),
+			index = pointer.getIndex(e),
 			anchor;
 
 		// shared tooltip
-		if (tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
+		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
 			points = [];
 
 			// loop over all series and find the ones with points closest to the mouse
@@ -168,9 +168,9 @@ MouseTracker.prototype = {
 				}
 			}
 			// refresh the tooltip if necessary
-			if (points.length && (points[0].plotX !== mouseTracker.hoverX)) {
+			if (points.length && (points[0].plotX !== pointer.hoverX)) {
 				tooltip.refresh(points, e);
-				mouseTracker.hoverX = points[0].plotX;
+				pointer.hoverX = points[0].plotX;
 			}
 		}
 
@@ -201,9 +201,9 @@ MouseTracker.prototype = {
 	 * 
 	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
-	resetTracker: function (allowMove) {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
+	reset: function (allowMove) {
+		var pointer = this,
+			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
 			tooltip = chart.tooltip,
@@ -237,7 +237,7 @@ MouseTracker.prototype = {
 				tooltip.hideCrosshairs();
 			}
 
-			mouseTracker.hoverX = null;
+			pointer.hoverX = null;
 
 		}
 	},
@@ -373,7 +373,7 @@ MouseTracker.prototype = {
 			
 		// Normalize each touch
 		map(touches, function (e) {
-			return self.normalizeMouseEvent(e);
+			return self.normalize(e);
 		});
 			
 		// Register the touch start position
@@ -431,7 +431,7 @@ MouseTracker.prototype = {
 	dragStart: function (e) {
 		var chart = this.chart;
 
-		e = this.normalizeMouseEvent(e);
+		e = this.normalize(e);
 
 		// Record the start position
 		chart.mouseIsDown = e.type;
@@ -620,7 +620,7 @@ MouseTracker.prototype = {
 		if (chartPosition && hoverSeries && hoverSeries.isCartesian &&
 			!chart.isInsidePlot(e.pageX - chartPosition.left - chart.plotLeft,
 			e.pageY - chartPosition.top - chart.plotTop)) {
-				this.resetTracker();
+				this.reset();
 		}
 	},
 
@@ -628,7 +628,7 @@ MouseTracker.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		this.resetTracker();
+		this.reset();
 		this.chartPosition = null; // also reset the chart position, used in #149 fix
 	},
 
@@ -638,7 +638,7 @@ MouseTracker.prototype = {
 		var chart = this.chart;
 
 		// normalize
-		e = this.normalizeMouseEvent(e);
+		e = this.normalize(e);
 
 		// #295
 		e.returnValue = false;
@@ -664,7 +664,7 @@ MouseTracker.prototype = {
 			plotX,
 			plotY;
 		
-		e = this.normalizeMouseEvent(e);
+		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
@@ -708,7 +708,7 @@ MouseTracker.prototype = {
 
 		if (e.touches.length === 1) {
 
-			e = this.normalizeMouseEvent(e);
+			e = this.normalize(e);
 
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 
@@ -833,11 +833,11 @@ MouseTracker.prototype = {
 	},
 
 	/**
-	 * Destroys the MouseTracker object and disconnects DOM events.
+	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
+		var pointer = this,
+			chart = pointer.chart,
 			container = chart.container;
 
 		// Destroy the tracker group element
@@ -845,8 +845,8 @@ MouseTracker.prototype = {
 			chart.trackerGroup = chart.trackerGroup.destroy();
 		}
 
-		removeEvent(container, 'mouseleave', mouseTracker.hideTooltipOnMouseLeave);
-		removeEvent(doc, 'mousemove', mouseTracker.hideTooltipOnMouseMove);
+		removeEvent(container, 'mouseleave', pointer.hideTooltipOnMouseLeave);
+		removeEvent(doc, 'mousemove', pointer.hideTooltipOnMouseMove);
 		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 
 		// memory and CPU leak

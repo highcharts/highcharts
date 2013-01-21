@@ -113,7 +113,7 @@
             <file name="StackItem.js"/>
             <file name="Axis.js"/>
             <file name="Tooltip.js"/>
-            <file name="MouseTracker.js"/>
+            <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
@@ -146,7 +146,7 @@
             <file name="StackItem.js"/>
             <file name="Axis.js"/>
             <file name="Tooltip.js"/>
-            <file name="MouseTracker.js"/>
+            <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>

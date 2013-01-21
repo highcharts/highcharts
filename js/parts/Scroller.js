@@ -542,7 +542,7 @@ Scroller.prototype = {
 		 * Event handler for the mouse down event.
 		 */
 		scroller.mouseDownHandler = function (e) {
-			e = chart.tracker.normalizeMouseEvent(e);
+			e = chart.pointer.normalize(e);
 
 			var zoomedMin = scroller.zoomedMin,
 				zoomedMax = scroller.zoomedMax,
@@ -642,7 +642,7 @@ Scroller.prototype = {
 			// down in the center of the scrollbar. This should be ignored.
 			if (e.pageX !== 0) {
 			
-				e = chart.tracker.normalizeMouseEvent(e);
+				e = chart.pointer.normalize(e);
 				chartX = e.chartX;
 	
 				// validation for handle dragging

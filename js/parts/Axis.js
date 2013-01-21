@@ -1925,11 +1925,12 @@ Axis.prototype = {
 	 */
 	redraw: function () {
 		var axis = this,
-			chart = axis.chart;
+			chart = axis.chart,
+			pointer = chart.pointer;
 
 		// hide tooltip and hover states
-		if (chart.tracker.resetTracker) {
-			chart.tracker.resetTracker(true);
+		if (pointer.reset) {
+			pointer.reset(true);
 		}
 
 		// render the axis
