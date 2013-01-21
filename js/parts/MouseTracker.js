@@ -261,7 +261,7 @@ MouseTracker.prototype = {
 			}
 		});
 		
-		// TODO: shorten. This is just a translated version of selectionMarker
+		// Clip
 		chart.clipRect.attr(clip || chart.clipBox);
 	},
 
@@ -279,6 +279,7 @@ MouseTracker.prototype = {
 			selectionXY,
 			clipXY,
 			scale = 1,
+			inverted = chart.inverted,
 			bounds = chart.bounds[horiz ? 'h' : 'v'],
 			singleTouch = pinchDown.length === 1,
 			touch0Start = pinchDown[0][sChartXY],
@@ -286,6 +287,8 @@ MouseTracker.prototype = {
 			touch1Start = !singleTouch && pinchDown[1][sChartXY],
 			touch1Now = !singleTouch && touches[1][sChartXY],
 			outOfBounds,
+			transformScale,
+			scaleKey,
 			setScale = function () {
 				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
 					scale = mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);	
@@ -326,14 +329,19 @@ MouseTracker.prototype = {
 			lastValidTouch[xy] = [touch0Now, touch1Now];
 		}
 
+		
 		// Set geometry for clipping, selection and transformation
-		clip[xy] = clipXY - plotLeftTop;
-		clip[wh] = selectionWH;
+		if (!inverted) { // TODO: implement clipping for inverted charts
+			clip[xy] = clipXY - plotLeftTop;
+			clip[wh] = selectionWH;
+		}
+		scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+		transformScale = inverted ? 1 / scale : scale;
+
 		selectionMarker[wh] = selectionWH;
 		selectionMarker[xy] = selectionXY;
-		transform['scale' + XY] = scale;
-		transform['translate' + XY] = (scale * plotLeftTop) + (touch0Now - (scale * touch0Start));
-
+		transform[scaleKey] = scale;
+		transform['translate' + XY] = (transformScale * plotLeftTop) + (touch0Now - (transformScale * touch0Start));
 	},
 	
 	/**
@@ -349,7 +357,6 @@ MouseTracker.prototype = {
 			zoomHor = self.zoomHor,
 			zoomVert = self.zoomVert,
 			selectionMarker = self.selectionMarker,
-			plotWidth = chart.plotWidth,
 			transform = {},
 			clip = {};
 
@@ -382,7 +389,6 @@ MouseTracker.prototype = {
 				// Store the bounds for use in the touchmove handler
 				bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
 				bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
-
 			});
 		
 		// Event type is touchmove, handle panning and pinching
@@ -391,13 +397,9 @@ MouseTracker.prototype = {
 
 			// Set the marker
 			if (!selectionMarker) {
-				self.selectionMarker = selectionMarker = {
-					x: chart.plotLeft,
-					y: chart.plotTop,
-					width: zoomHor ? 1 : plotWidth,
-					height: zoomVert ? 1 : chart.plotHeight,
+				self.selectionMarker = selectionMarker = extend({
 					destroy: noop
-				};
+				}, chart.plotBox);
 			}
 
 			
@@ -537,8 +539,9 @@ MouseTracker.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.options.zoomEnabled !== false) {
 						var horiz = axis.horiz,
-							selectionMin = axis.toValue(horiz ? selectionLeft : selectionTop),
-							selectionMax = axis.toValue(horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height);
+							minPixelPadding = axis.minPixelPadding,
+							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height) - minPixelPadding);
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.xOrY + 'Axis'].push({
@@ -745,13 +748,6 @@ MouseTracker.prototype = {
 	},
 
 	onContainerTouchMove: function (e) {
-
-		/*if (e.touches.length === 1) {
-			e.preventDefault();
-			this.normalizeMouseEvent(e);
-			this.chart.pan(e.chartX);
-
-		} else */
 		if (e.touches.length === 1 || e.touches.length === 2) {
 			this.pinch(e);
 		}

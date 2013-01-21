@@ -108,6 +108,51 @@ AxisTest.prototype.testToPixelsAndValues = function () {
 		5, 
 		Math.round(chart.yAxis[0].toValue(30, true))
 	);
+	chart.destroy();
 
+	// Test on inverted chart
+	chart = new Chart({
+		chart: {
+			width: 300,
+			height: 300,
+			margin: [100, 100, 100, 100],
+			renderTo: this.container,
+			inverted: true
+		},
+		xAxis: {
+			min: 0,
+			max: 10
+		},
+		yAxis: {
+			min: 0,
+			max: 10
+		},
+		series: [{
+			data: [1, 4, 2, 4],
+			yAxis: 0
+		}]
+	});
+
+	assertEquals(
+		'Axis.toPixels() in inverted Y axis', 
+		100, 
+		Math.round(chart.yAxis[0].toPixels(0))
+	);
+	assertEquals(
+		'Axis.toValue() in inverted Y axis', 
+		0, 
+		Math.round(chart.yAxis[0].toValue(100))
+	);
+	assertEquals(
+		'Axis.toPixels() in inverted X axis', 
+		100, 
+		Math.round(chart.xAxis[0].toPixels(0))
+	);
+	assertEquals(
+		'Axis.toValue() in inverted X axis', 
+		0, 
+		Math.round(chart.xAxis[0].toValue(100))
+	);
+	chart.destroy();
 	
 }

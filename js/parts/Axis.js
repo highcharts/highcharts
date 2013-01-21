@@ -635,7 +635,7 @@ Axis.prototype = {
 
 		// In vertical axes, the canvas coordinates start from 0 at the top like in 
 		// SVG. 
-		if (cvsCoord && !axis.horiz) {
+		if (cvsCoord) {
 			sign *= -1; // canvas coordinates inverts the value
 			cvsOffset = axisLength;
 		}
@@ -676,7 +676,7 @@ Axis.prototype = {
 	 *        or just the axis/pane itself.
 	 */
 	toPixels: function (value, paneCoordinates) { // docs
-		return this.translate(value, false, true, null, true) + (paneCoordinates ? 0 : this.pos);
+		return this.translate(value, false, !this.horiz, null, true) + (paneCoordinates ? 0 : this.pos);
 	},
 
 	/*
@@ -686,7 +686,7 @@ Axis.prototype = {
 	 *        axis/pane itself.
 	 */
 	toValue: function (pixel, paneCoordinates) { // docs
-		return this.translate(pixel - (paneCoordinates ? 0 : this.pos), true, true, null, true);
+		return this.translate(pixel - (paneCoordinates ? 0 : this.pos), true, !this.horiz, null, true);
 	},
 
 	/**
