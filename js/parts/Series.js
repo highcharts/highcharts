@@ -718,9 +718,11 @@ Series.prototype = {
 
 		itemOptions.data = null; // remove from merge to prevent looping over the data set
 
+		// Merge options from genereal plotOptions.series, plotOptions[type] and series item
+		// options in that order (#1463)
 		options = merge(
-			typeOptions,
 			plotOptions.series,
+			typeOptions,
 			itemOptions
 		);
 		
