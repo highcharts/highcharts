@@ -521,8 +521,9 @@ Chart.prototype = {
 	zoom: function (event) {
 		var chart = this,
 			hasZoomed,
+			pointer = chart.pointer,
 			displayButton = false,
-			resetZoomButton = chart.resetZoomButton;
+			resetZoomButton;
 
 		// If zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
@@ -531,10 +532,11 @@ Chart.prototype = {
 			});
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
-				var axis = axisData.axis;
+				var axis = axisData.axis,
+					isXAxis = axis.isXAxis;
 
 				// don't zoom more than minRange
-				if (chart.pointer[axis.isXAxis ? 'zoomX' : 'zoomY']) {
+				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
 					if (axis.displayBtn) {
 						displayButton = true;
@@ -544,6 +546,7 @@ Chart.prototype = {
 		}
 		
 		// Show or hide the Reset zoom button
+		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
 		} else if (!displayButton && resetZoomButton) {

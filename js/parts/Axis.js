@@ -231,6 +231,7 @@ Axis.prototype = {
 	
 		axis.chart = chart;
 		axis.reversed = options.reversed;
+		axis.zoomEnabled = options.zoomEnabled !== false;
 	
 		// Initial categories
 		axis.categories = options.categories;

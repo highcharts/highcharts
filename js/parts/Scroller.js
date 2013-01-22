@@ -906,7 +906,7 @@ Highcharts.Scroller = Scroller;
 wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
-		zoomType = chartOptions.chart.zoomType,
+		zoomType = chartOptions.chart.pinchType || chartOptions.chart.zoomType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,

@@ -242,13 +242,15 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			series.group.attr(attribs);
-			if (series.markerGroup) {
-				series.markerGroup.attr(attribs);
-				series.markerGroup.clip(clip ? chart.clipRect : null);
-			}
-			if (series.dataLabelsGroup) {
-				series.dataLabelsGroup.attr(attribs);
+			if (series.xAxis.zoomEnabled) {
+				series.group.attr(attribs);
+				if (series.markerGroup) {
+					series.markerGroup.attr(attribs);
+					series.markerGroup.clip(clip ? chart.clipRect : null);
+				}
+				if (series.dataLabelsGroup) {
+					series.dataLabelsGroup.attr(attribs);
+				}
 			}
 		});
 		
@@ -345,8 +347,8 @@ Pointer.prototype = {
 			pinchDown = self.pinchDown,
 			touches = e.touches,
 			lastValidTouch = self.lastValidTouch,
-			zoomHor = self.zoomHor,
-			zoomVert = self.zoomVert,
+			zoomHor = self.zoomHor || self.pinchHor,
+			zoomVert = self.zoomVert || self.pinchVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			clip = {};
@@ -377,17 +379,18 @@ Pointer.prototype = {
 
 			// Identify the data bounds in pixels
 			each(chart.axes, function (axis) {
+				if (axis.zoomEnabled) {
+					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+						minPixelPadding = axis.minPixelPadding,
+						min = axis.toPixels(axis.dataMin),
+						max = axis.toPixels(axis.dataMax),
+						absMin = mathMin(min, max),
+						absMax = mathMax(min, max);
 
-				var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
-					minPixelPadding = axis.minPixelPadding,
-					min = axis.toPixels(axis.dataMin),
-					max = axis.toPixels(axis.dataMax),
-					absMin = mathMin(min, max),
-					absMax = mathMax(min, max);
-
-				// Store the bounds for use in the touchmove handler
-				bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
-				bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+					// Store the bounds for use in the touchmove handler
+					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
+					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+				}
 			});
 		
 		// Event type is touchmove, handle panning and pinching
@@ -536,7 +539,7 @@ Pointer.prototype = {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.options.zoomEnabled !== false) {
+					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
 							minPixelPadding = axis.minPixelPadding,
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),

@@ -6423,6 +6423,7 @@ Axis.prototype = {
 	
 		axis.chart = chart;
 		axis.reversed = options.reversed;
+		axis.zoomEnabled = options.zoomEnabled !== false;
 	
 		// Initial categories
 		axis.categories = options.categories;
@@ -8209,6 +8210,7 @@ function Tooltip(chart, options) {
 	// The tooltip is initially hidden
 	this.isHidden = true;
 
+
 	// create the label
 	this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
 		.attr({
@@ -8862,13 +8864,15 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			series.group.attr(attribs);
-			if (series.markerGroup) {
-				series.markerGroup.attr(attribs);
-				series.markerGroup.clip(clip ? chart.clipRect : null);
-			}
-			if (series.dataLabelsGroup) {
-				series.dataLabelsGroup.attr(attribs);
+			if (series.xAxis.zoomEnabled) {
+				series.group.attr(attribs);
+				if (series.markerGroup) {
+					series.markerGroup.attr(attribs);
+					series.markerGroup.clip(clip ? chart.clipRect : null);
+				}
+				if (series.dataLabelsGroup) {
+					series.dataLabelsGroup.attr(attribs);
+				}
 			}
 		});
 		
@@ -8965,8 +8969,8 @@ Pointer.prototype = {
 			pinchDown = self.pinchDown,
 			touches = e.touches,
 			lastValidTouch = self.lastValidTouch,
-			zoomHor = self.zoomHor,
-			zoomVert = self.zoomVert,
+			zoomHor = self.zoomHor || self.pinchHor,
+			zoomVert = self.zoomVert || self.pinchVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			clip = {};
@@ -8997,17 +9001,18 @@ Pointer.prototype = {
 
 			// Identify the data bounds in pixels
 			each(chart.axes, function (axis) {
+				if (axis.zoomEnabled) {
+					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+						minPixelPadding = axis.minPixelPadding,
+						min = axis.toPixels(axis.dataMin),
+						max = axis.toPixels(axis.dataMax),
+						absMin = mathMin(min, max),
+						absMax = mathMax(min, max);
 
-				var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
-					minPixelPadding = axis.minPixelPadding,
-					min = axis.toPixels(axis.dataMin),
-					max = axis.toPixels(axis.dataMax),
-					absMin = mathMin(min, max),
-					absMax = mathMax(min, max);
-
-				// Store the bounds for use in the touchmove handler
-				bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
-				bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+					// Store the bounds for use in the touchmove handler
+					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
+					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+				}
 			});
 		
 		// Event type is touchmove, handle panning and pinching
@@ -9156,7 +9161,7 @@ Pointer.prototype = {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.options.zoomEnabled !== false) {
+					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
 							minPixelPadding = axis.minPixelPadding,
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
@@ -10638,8 +10643,9 @@ Chart.prototype = {
 	zoom: function (event) {
 		var chart = this,
 			hasZoomed,
+			pointer = chart.pointer,
 			displayButton = false,
-			resetZoomButton = chart.resetZoomButton;
+			resetZoomButton;
 
 		// If zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
@@ -10648,10 +10654,11 @@ Chart.prototype = {
 			});
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
-				var axis = axisData.axis;
+				var axis = axisData.axis,
+					isXAxis = axis.isXAxis;
 
 				// don't zoom more than minRange
-				if (chart.pointer[axis.isXAxis ? 'zoomX' : 'zoomY']) {
+				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
 					if (axis.displayBtn) {
 						displayButton = true;
@@ -10661,6 +10668,7 @@ Chart.prototype = {
 		}
 		
 		// Show or hide the Reset zoom button
+		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
 		} else if (!displayButton && resetZoomButton) {

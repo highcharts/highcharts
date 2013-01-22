@@ -24,6 +24,7 @@ function Tooltip(chart, options) {
 	// The tooltip is initially hidden
 	this.isHidden = true;
 
+
 	// create the label
 	this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
 		.attr({
