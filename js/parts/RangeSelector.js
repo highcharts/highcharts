@@ -324,24 +324,31 @@ RangeSelector.prototype = {
 				value = Date.parse(inputValue),
 				extremes = chart.xAxis[0].getExtremes();
 
-			// if the value isn't parsed directly to a value by the browser's Date.parse method,
+			// If the value isn't parsed directly to a value by the browser's Date.parse method,
 			// like YYYY-MM-DD in IE, try parsing it a different way
 			if (isNaN(value)) {
 				value = inputValue.split('-');
 				value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
 			}
 
-			if (!isNaN(value) &&
-				((isMin && (value >= extremes.dataMin && value <= rangeSelector.maxInput.HCTime)) ||
-				(!isMin && (value <= extremes.dataMax && value >= rangeSelector.minInput.HCTime)))
-			) {
-				chart.xAxis[0].setExtremes(
-					isMin ? value : extremes.min,
-					isMin ? extremes.max : value,
-					UNDEFINED,
-					UNDEFINED,
-					{ trigger: 'rangeSelectorInput' }
-				);
+			if (!isNaN(value)) {
+
+				// Correct for timezone offset (#433)
+				if (!defaultOptions.global.useUTC) {
+					value = value + new Date().getTimezoneOffset() * 60 * 1000;
+				}
+
+			    // Set the extremes
+				if ((isMin && (value >= extremes.dataMin && value <= rangeSelector.maxInput.HCTime)) ||
+					(!isMin && (value <= extremes.dataMax && value >= rangeSelector.minInput.HCTime))) {
+					chart.xAxis[0].setExtremes(
+						isMin ? value : extremes.min,
+						isMin ? extremes.max : value,
+						UNDEFINED,
+						UNDEFINED,
+						{ trigger: 'rangeSelectorInput' }
+					);
+				}
 			}
 		};
 	},
