@@ -8708,27 +8708,18 @@ Pointer.prototype = {
 	/**
 	 * Get the click position in terms of axis values.
 	 *
-	 * @param {Object} e A mouse event
+	 * @param {Object} e A pointer event
 	 */
-	getMouseCoordinates: function (e) {
+	getCoordinates: function (e) {
 		var coordinates = {
 				xAxis: [],
 				yAxis: []
-			},
-			chart = this.chart;
+			};
 
-		each(chart.axes, function (axis) {
-			var isXAxis = axis.isXAxis,
-				isHorizontal = chart.inverted ? !isXAxis : isXAxis;
-
-			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
+		each(this.chart.axes, function (axis) {
+			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
-				value: axis.translate(
-					(isHorizontal ?
-						e.chartX - chart.plotLeft :
-						axis.top + axis.len - e.chartY) - axis.minPixelPadding, // #1051
-					true
-				)
+				value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
 			});
 		});
 		return coordinates;
@@ -9311,7 +9302,7 @@ Pointer.prototype = {
 				hoverPoint.firePointEvent('click', e);
 
 			} else {
-				extend(e, this.getMouseCoordinates(e));
+				extend(e, this.getCoordinates(e));
 
 				// fire a click event in the chart
 				if (chart.isInsidePlot(e.chartX - plotLeft, e.chartY - plotTop)) {

@@ -2317,9 +2317,9 @@ wrap(pointerProto, 'getIndex', function (proceed, e) {
 });
 
 /**
- * Extend getMouseCoordinates to prepare for polar axis values
+ * Extend getCoordinates to prepare for polar axis values
  */
-wrap(pointerProto, 'getMouseCoordinates', function (proceed, e) {
+wrap(pointerProto, 'getCoordinates', function (proceed, e) {
 	var chart = this.chart,
 		ret = {
 			xAxis: [],
