@@ -549,7 +549,7 @@ Chart.prototype = {
 		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
-		} else if (!displayButton && resetZoomButton) {
+		} else if (!displayButton && isObject(resetZoomButton)) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
 		

@@ -422,6 +422,9 @@ Pointer.prototype = {
 		}
 	},
 
+	/**
+	 * Start a drag operation
+	 */
 	dragStart: function (e) {
 		var chart = this.chart;
 
