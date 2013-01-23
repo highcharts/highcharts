@@ -950,6 +950,14 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
 });
 
+// Initialize scroller for stock charts
+addEvent(Chart.prototype, 'beforeRender', function (e) {
+	var chart = e.target,
+		options = chart.options;
+	if (options.navigator.enabled || options.scrollbar.enabled) {
+		chart.scroller = new Scroller(chart);
+	}
+});
 
 /* ****************************************************************************
  * End Scroller code														  *

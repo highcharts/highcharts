@@ -9821,7 +9821,9 @@ Chart.prototype = {
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
-			addEvent(chart, 'load', chart.initReflow);
+			addEvent(chart, 'load', function () {
+				chart.initReflow();
+			});
 		}
 
 		// Chart event handlers
@@ -11184,11 +11186,7 @@ Chart.prototype = {
 		// Run an early event after the container and renderer are established
 		fireEvent(chart, 'init');
 
-		// Initialize range selector for stock charts
-		if (Highcharts.RangeSelector && options.rangeSelector.enabled) {
-			chart.rangeSelector = new Highcharts.RangeSelector(chart);
-		}
-
+		
 		chart.resetMargins();
 		chart.setChartSize();
 
@@ -11203,13 +11201,10 @@ Chart.prototype = {
 			chart.initSeries(serieOptions);
 		});
 
-		// Run an event where series and axes can be added
-		//fireEvent(chart, 'beforeRender');
-
-		// Initialize scroller for stock charts
-		if (Highcharts.Scroller && (options.navigator.enabled || options.scrollbar.enabled)) {
-			chart.scroller = new Highcharts.Scroller(chart);
-		}
+		// Run an event after axes and series are initialized, but before render. At this stage,
+		// the series data is indexed and cached in the xData and yData arrays, so we can access
+		// those before rendering. Used in Highstock. 
+		fireEvent(chart, 'beforeRender'); 
 
 		// depends on inverted and on margins being set
 		chart.tracker = new MouseTracker(chart, options);
@@ -17453,6 +17448,14 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
 });
 
+// Initialize scroller for stock charts
+addEvent(Chart.prototype, 'beforeRender', function (e) {
+	var chart = e.target,
+		options = chart.options;
+	if (options.navigator.enabled || options.scrollbar.enabled) {
+		chart.scroller = new Scroller(chart);
+	}
+});
 
 /* ****************************************************************************
  * End Scroller code														  *
@@ -17561,11 +17564,39 @@ RangeSelector.prototype = {
 			newMin = mathMax(date.getTime(), dataMin);
 			range = 30 * 24 * 3600 * 1000 * count;
 		} else if (type === 'ytd') {
-			now = new Date(dataMax);
-			year = now.getFullYear();
-			newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
-			now = now.getTime();
-			newMax = mathMin(dataMax || now, now);
+
+			// On user clicks on the buttons, or a delayed action running from the beforeRender 
+			// event (below), the baseAxis is defined.
+			if (baseAxis) {
+
+				// When "ytd" is the pre-selected button for the initial view, its calculation
+				// is delayed and rerun in the beforeRender event (below). When the series
+				// are initialized, but before the chart is rendered, we have access to the xData
+				// array (#942).
+				if (dataMax === UNDEFINED) {
+					dataMin = Number.MAX_VALUE;
+					dataMax = Number.MIN_VALUE;
+					each(chart.series, function (series) {
+						var xData = series.xData; // reassign it to the last item
+						dataMin = mathMin(xData[0], dataMin);
+						dataMax = mathMax(xData[xData.length - 1], dataMax);
+					});
+					redraw = false;
+				}
+				now = new Date(dataMax);
+				year = now.getFullYear();
+				newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
+				now = now.getTime();
+				newMax = mathMin(dataMax || now, now);
+
+			// "ytd" is pre-selected. We don't yet have access to processed point and extremes data
+			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
+			} else {
+				addEvent(chart, 'beforeRender', function () {
+					rangeSelector.clickButton(i, rangeOptions);
+				});
+				return;
+			}
 		} else if (type === 'year') {
 			date.setFullYear(date.getFullYear() - count);
 			newMin = mathMax(dataMin, date.getTime());
@@ -17592,19 +17623,17 @@ RangeSelector.prototype = {
 			);
 			rangeSelector.selected = i;
 		} else { // existing axis object; after render time
-			setTimeout(function () { // make sure the visual state is set before the heavy process begins
-				baseAxis.setExtremes(
-					newMin,
-					newMax,
-					pick(redraw, 1),
-					0, 
-					{ 
-						trigger: 'rangeSelectorButton',
-						rangeSelectorButton: rangeOptions
-					}
-				);
-				rangeSelector.selected = i;
-			}, 1);
+			baseAxis.setExtremes(
+				newMin,
+				newMax,
+				pick(redraw, 1),
+				0, 
+				{ 
+					trigger: 'rangeSelectorButton',
+					rangeSelectorButton: rangeOptions
+				}
+			);
+			rangeSelector.selected = i;
 		}
 	},
 	
@@ -17951,6 +17980,16 @@ RangeSelector.prototype = {
 		}
 	}
 };
+
+// Initialize scroller for stock charts
+addEvent(Chart.prototype, 'init', function (e) {
+	var chart = e.target,
+		options = chart.options;
+	if (options.rangeSelector.enabled) {
+		chart.rangeSelector = new RangeSelector(chart);
+	}
+});
+
 
 Highcharts.RangeSelector = RangeSelector;
 

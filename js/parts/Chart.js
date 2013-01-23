@@ -85,7 +85,9 @@ Chart.prototype = {
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
-			addEvent(chart, 'load', chart.initReflow);
+			addEvent(chart, 'load', function () {
+				chart.initReflow();
+			});
 		}
 
 		// Chart event handlers
@@ -1448,11 +1450,7 @@ Chart.prototype = {
 		// Run an early event after the container and renderer are established
 		fireEvent(chart, 'init');
 
-		// Initialize range selector for stock charts
-		if (Highcharts.RangeSelector && options.rangeSelector.enabled) {
-			chart.rangeSelector = new Highcharts.RangeSelector(chart);
-		}
-
+		
 		chart.resetMargins();
 		chart.setChartSize();
 
@@ -1467,13 +1465,10 @@ Chart.prototype = {
 			chart.initSeries(serieOptions);
 		});
 
-		// Run an event where series and axes can be added
-		//fireEvent(chart, 'beforeRender');
-
-		// Initialize scroller for stock charts
-		if (Highcharts.Scroller && (options.navigator.enabled || options.scrollbar.enabled)) {
-			chart.scroller = new Highcharts.Scroller(chart);
-		}
+		// Run an event after axes and series are initialized, but before render. At this stage,
+		// the series data is indexed and cached in the xData and yData arrays, so we can access
+		// those before rendering. Used in Highstock. 
+		fireEvent(chart, 'beforeRender'); 
 
 		// depends on inverted and on margins being set
 		chart.tracker = new MouseTracker(chart, options);

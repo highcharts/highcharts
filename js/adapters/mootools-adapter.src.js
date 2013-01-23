@@ -291,6 +291,12 @@ win.HighchartsAdapter = {
 		// create an event object that keeps all functions
 		event = legacyEvent ? new Event(eventArgs) : new DOMEvent(eventArgs);
 		event = $extend(event, eventArguments);
+
+		// When running an event on the Chart.prototype, MooTools nests the target in event.event
+		if (!event.target && event.event) {
+			event.target = event.event.target;
+		}
+
 		// override the preventDefault function to be able to use
 		// this for custom events
 		event.preventDefault = function () {

@@ -321,6 +321,7 @@ return {
 					}
 				},
 				_highcharts_fire: function (name, args) {
+					var target = this;
 					(this._highchart_events[name] || []).each(function (fn) {
 						// args is never null here
 						if (args.stopped) {
@@ -331,6 +332,7 @@ return {
 						args.preventDefault = function () {
 							args.defaultPrevented = true;
 						};
+						args.target = target;
 
 						// If the event handler return false, prevent the default handler from executing
 						if (fn.bind(this)(args) === false) {
