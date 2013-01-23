@@ -17562,6 +17562,19 @@ RangeSelector.prototype = {
 			range = 30 * 24 * 3600 * 1000 * count;
 		} else if (type === 'ytd') {
 			now = new Date(dataMax);
+             if(!dataMax){
+                var maxDate = 0;
+                each(chart.options.series, function (obj) {
+                    if(obj && obj.data){
+                        if(obj.data[obj.data.length -1][0] > maxDate){
+                            maxDate = obj.data[obj.data.length -1][0];
+                        }
+                    }
+                });
+                if(maxDate){
+                    now = new Date(maxDate);
+                }
+            }
 			year = now.getFullYear();
 			newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
 			now = now.getTime();
