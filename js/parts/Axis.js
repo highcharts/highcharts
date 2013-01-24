@@ -1764,8 +1764,6 @@ Axis.prototype = {
 						minorTicks[pos].render(null, true);
 					}
 
-
-					minorTicks[pos].isActive = true;
 					minorTicks[pos].render();
 				});
 			}
@@ -1790,11 +1788,19 @@ Axis.prototype = {
 							ticks[pos].render(i, true);
 						}
 	
-						ticks[pos].isActive = true;
 						ticks[pos].render(i);
 					}
 	
 				});
+				// In a categorized axis, the tick marks are displayed between labels. So
+				// we need to add a tick mark and grid line at the left edge of the X axis.
+				if (tickmarkOffset && axis.min === 0) {
+					if (!ticks[-1]) {
+						ticks[-1] = new Tick(axis, -1, null, true);
+					}
+					ticks[-1].render(-1);
+				}
+				
 			}
 
 			// alternate grid color

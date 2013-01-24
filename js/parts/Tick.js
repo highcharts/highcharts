@@ -1,13 +1,13 @@
 /**
  * The Tick class
  */
-function Tick(axis, pos, type) {
+function Tick(axis, pos, type, noLabel) {
 	this.axis = axis;
 	this.pos = pos;
 	this.type = type || '';
 	this.isNew = true;
 
-	if (!type) {
+	if (!type && !noLabel) {
 		this.addLabel();
 	}
 }
@@ -282,6 +282,8 @@ Tick.prototype = {
 			x = xy.x,
 			y = xy.y,
 			staggerLines = axis.staggerLines;
+
+		this.isActive = true;
 		
 		// create the grid line
 		if (gridLineWidth) {
