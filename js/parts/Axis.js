@@ -697,7 +697,7 @@ Axis.prototype = {
 	 * @param {Number} lineWidth Used for calculation crisp line
 	 * @param {Number] old Use old coordinates (for resizing and rescaling)
 	 */
-	getPlotLinePath: function (value, lineWidth, old) {
+	getPlotLinePath: function (value, lineWidth, old, force) {
 		var axis = this,
 			chart = axis.chart,
 			axisLeft = axis.left,
@@ -732,7 +732,7 @@ Axis.prototype = {
 				skip = true;
 			}
 		}
-		return skip ?
+		return skip && !force ?
 			null :
 			chart.renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 0);
 	},
@@ -1009,7 +1009,7 @@ Axis.prototype = {
 	/**
 	 * Update translation information
 	 */
-	setAxisTranslation: function () {
+	setAxisTranslation: function (saveOld) {
 		var axis = this,
 			range = axis.max - axis.min,
 			pointRange = 0,
@@ -1071,7 +1071,9 @@ Axis.prototype = {
 		}
 
 		// Secondary values
-		axis.oldTransA = transA;
+		if (saveOld) {
+			axis.oldTransA = transA;
+		}
 		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
@@ -1176,7 +1178,7 @@ Axis.prototype = {
 		}
 
 		// set the translation factor used in translate function
-		axis.setAxisTranslation();
+		axis.setAxisTranslation(true);
 
 		// hook for ordinal axes and radial axes
 		if (axis.beforeSetTickPositions) {
@@ -1764,7 +1766,7 @@ Axis.prototype = {
 						minorTicks[pos].render(null, true);
 					}
 
-					minorTicks[pos].render();
+					minorTicks[pos].render(null, false, 1);
 				});
 			}
 
@@ -1788,7 +1790,7 @@ Axis.prototype = {
 							ticks[pos].render(i, true);
 						}
 	
-						ticks[pos].render(i);
+						ticks[pos].render(i, false, 1);
 					}
 	
 				});
@@ -1833,17 +1835,37 @@ Axis.prototype = {
 
 		} // end if hasData
 
-		// remove inactive ticks
+		// Remove inactive ticks
 		each([ticks, minorTicks, alternateBands], function (coll) {
-			var pos;
+			var pos, 
+				i,
+				forDestruction = [];
+
 			for (pos in coll) {
-				if (!coll[pos].isActive) {
-					coll[pos].destroy();
-					delete coll[pos];
+
+				// These ticks are still active, now reset the isActive flag for the 
+				// next run.
+				if (coll[pos].isActive) {
+					coll[pos].isActive = false;
+					
+				// These ticks have not been marked active in the current run. Fade them
+				// out and mark them for destruction.
 				} else {
-					coll[pos].isActive = false; // reset
+					coll[pos].render(pos, false, 0);
+					forDestruction.push(pos);
 				}
 			}
+
+			// When the objects are finished fading out, destroy them
+			setTimeout(function () {
+				i = forDestruction.length;
+				while (i--) {
+					coll[forDestruction[i]].destroy();
+					delete coll[forDestruction[i]];	
+				}
+				
+			}, coll === alternateBands ? 
+					0 : (globalAnimation && globalAnimation.duration) || 500);
 		});
 
 		// Static items. As the axis group is cleared on subsequent calls

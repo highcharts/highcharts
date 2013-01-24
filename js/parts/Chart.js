@@ -1069,7 +1069,7 @@ Chart.prototype = {
 
 		each(chart.axes, function (axis) {
 			axis.setAxisSize();
-			axis.setAxisTranslation(true);
+			axis.setAxisTranslation();
 		});
 	},
 
