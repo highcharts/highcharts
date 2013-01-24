@@ -7531,6 +7531,8 @@ Axis.prototype = {
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
 
+			axis.forceRedraw = false;
+
 			// get data extremes if needed
 			axis.getSeriesExtremes();
 

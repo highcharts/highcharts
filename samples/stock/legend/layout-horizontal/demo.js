@@ -5,10 +5,6 @@ $(function() {
 	        renderTo: 'container'
 	    },
 	    
-	    navigator: {
-	    	top: 295
-	    },
-	    
 	    legend: {
 	    	enabled: true
 	    },

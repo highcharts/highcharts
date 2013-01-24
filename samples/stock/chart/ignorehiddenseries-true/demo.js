@@ -6,10 +6,6 @@ $(function() {
 	        // ignoreHiddenSeries: true // by default 
 	    },
         
-        navigator: {
-            top: 295
-        },
-	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
