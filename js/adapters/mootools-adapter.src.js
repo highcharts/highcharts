@@ -315,10 +315,14 @@ win.HighchartsAdapter = {
 	},
 	
 	/**
-	 * Set back e.pageX and e.pageY that MooTools has abstracted away
+	 * Set back e.pageX and e.pageY that MooTools has abstracted away. #1165, #1346.
 	 */
 	washMouseEvent: function (e) {
-		return e.event || e;
+		if (e.page) {
+			e.pageX = e.page.x;
+			e.pageY = e.page.y;
+		}
+		return e;
 	},
 
 	/**
