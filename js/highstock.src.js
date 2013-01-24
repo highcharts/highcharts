@@ -6064,7 +6064,8 @@ StackItem.prototype = {
 	 * Renders the stack total label and adds it to the stack label group.
 	 */
 	render: function (group) {
-		var str = this.options.formatter.call(this);  // format the text in the label
+		var options = this.options,
+			str = options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
@@ -6072,11 +6073,11 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, 0, 0)		// dummy positions, actual position updated with setOffset method in columnseries
-					.css(this.options.style)				// apply style
+				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries // docs: useHTML for stackLabels
+					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
-						rotation: this.options.rotation,	// rotation
+						rotation: options.rotation,	// rotation
 						visibility: HIDDEN					// hidden until setOffset is called
 					})				
 					.add(group);							// add to the labels-group
