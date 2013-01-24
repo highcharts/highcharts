@@ -154,7 +154,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			plotY,
 			options = series.options,
 			optionsY = options.y,
-			shape = options.shape,
+			shape,
 			box,
 			bBox,
 			i,
@@ -171,6 +171,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			point = points[i];
 			plotX = point.plotX + crisp;
 			stackIndex = point.stackIndex;
+			shape = point.options.shape || options.shape; // docs: individual point shape
 			plotY = point.plotY;
 			if (plotY !== UNDEFINED) {
 				plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
