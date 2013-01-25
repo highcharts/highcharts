@@ -19,8 +19,8 @@ $(function () {
                 from: 0,
                 to: 60,
                 color: '#89A54E',
-                innerRadius: '100%',
-                outerRadius: '105%'
+                outerRadius: '105%',
+                thickness: '5%'
             }]
         },                  
         
