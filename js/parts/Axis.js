@@ -1839,7 +1839,15 @@ Axis.prototype = {
 		each([ticks, minorTicks, alternateBands], function (coll) {
 			var pos, 
 				i,
-				forDestruction = [];
+				forDestruction = [],
+				destroyInactiveItems = function () {
+					i = forDestruction.length;
+					while (i--) {
+						coll[forDestruction[i]].destroy();
+						delete coll[forDestruction[i]];	
+					}
+					
+				};
 
 			for (pos in coll) {
 
@@ -1857,15 +1865,11 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			setTimeout(function () {
-				i = forDestruction.length;
-				while (i--) {
-					coll[forDestruction[i]].destroy();
-					delete coll[forDestruction[i]];	
-				}
-				
-			}, coll === alternateBands ? 
-					0 : (globalAnimation && globalAnimation.duration) || 500);
+			if (coll === alternateBands || !chart.hasRendered) {
+				destroyInactiveItems();
+			} else {
+				setTimeout(destroyInactiveItems, (globalAnimation && globalAnimation.duration) || 500);
+			}
 		});
 
 		// Static items. As the axis group is cleared on subsequent calls

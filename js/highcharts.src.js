@@ -4625,6 +4625,13 @@ VMLElement = {
 
 							key = 'fillcolor';
 						}
+
+					// opacity: don't bother - animation is too slow and filters introduce artifacts
+					} else if (key === 'opacity') {
+						/*css(element, {
+							opacity: value
+						});*/
+						skipAttr = true;
 						
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
@@ -4645,7 +4652,8 @@ VMLElement = {
 						this.bBox = null;
 						element.innerHTML = value;
 						skipAttr = true;
-					}
+					} 
+
 
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
@@ -8040,7 +8048,15 @@ Axis.prototype = {
 		each([ticks, minorTicks, alternateBands], function (coll) {
 			var pos, 
 				i,
-				forDestruction = [];
+				forDestruction = [],
+				destroyInactiveItems = function () {
+					i = forDestruction.length;
+					while (i--) {
+						coll[forDestruction[i]].destroy();
+						delete coll[forDestruction[i]];	
+					}
+					
+				};
 
 			for (pos in coll) {
 
@@ -8058,15 +8074,11 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			setTimeout(function () {
-				i = forDestruction.length;
-				while (i--) {
-					coll[forDestruction[i]].destroy();
-					delete coll[forDestruction[i]];	
-				}
-				
-			}, coll === alternateBands ? 
-					0 : (globalAnimation && globalAnimation.duration) || 500);
+			if (coll === alternateBands || !chart.hasRendered) {
+				destroyInactiveItems();
+			} else {
+				setTimeout(destroyInactiveItems, (globalAnimation && globalAnimation.duration) || 500);
+			}
 		});
 
 		// Static items. As the axis group is cleared on subsequent calls
