@@ -71,7 +71,8 @@ Highcharts.StockChart = function (options, callback) {
 
 	options = merge({
 		chart: {
-			panning: true
+			panning: true,
+			pinchType: 'x'
 		},
 		navigator: {
 			enabled: true
@@ -121,6 +122,18 @@ Highcharts.StockChart = function (options, callback) {
 
 	return new Chart(options, callback);
 };
+
+// Implement the pinchType option
+wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+
+	var pinchType = options.chart.pinchType || ''; // docs: pinchType (for Highstock only)
+		
+	proceed.call(this, chart, options);
+
+	// Pinch status
+	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
+	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
+});
 
 
 /* ****************************************************************************

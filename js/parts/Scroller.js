@@ -142,13 +142,6 @@ function Scroller(chart) {
 
 Scroller.prototype = {
 	/**
-	 * Return the top of the navigation 
-	 */
-	getAxisTop: function (chartHeight) {
-		return this.navigatorOptions.top || chartHeight - this.height - this.scrollbarHeight - this.chart.options.chart.spacingBottom;
-	},
-
-	/**
 	 * Draw one of the handles on the side of the zoomed range in the navigator
 	 * @param {Number} x The x center for the handle
 	 * @param {Number} index 0 for left and 1 for right
@@ -196,7 +189,11 @@ Scroller.prototype = {
 			elementsToDestroy.push(tempElem);
 		}
 
-		handles[index].translate(scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10), scroller.top + scroller.height / 2 - 8);
+		// Place it
+		handles[index][scroller.rendered ? 'animate' : 'attr']({
+			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10), 
+			translateY: scroller.top + scroller.height / 2 - 8
+		});
 	},
 
 	/**
@@ -266,6 +263,7 @@ Scroller.prototype = {
 			scrollerLeft,
 			scrollerWidth,
 			scrollbarGroup = scroller.scrollbarGroup,
+			navigatorGroup = scroller.navigatorGroup,
 			scrollbar = scroller.scrollbar,
 			xAxis = scroller.xAxis,
 			scrollbarTrack = scroller.scrollbarTrack,
@@ -290,7 +288,8 @@ Scroller.prototype = {
 			strokeWidth,
 			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
 			centerBarX,
-			outlineTop = top + halfOutline;
+			outlineTop = top + halfOutline,
+			verb;
 
 		// don't render the navigator until we have data (#486)
 		if (isNaN(min)) {
@@ -334,29 +333,33 @@ Scroller.prototype = {
 
 			if (navigatorEnabled) {
 
-				scroller.leftShade = renderer.rect()
+				// draw the navigator group
+				scroller.navigatorGroup = navigatorGroup = renderer.g('navigator')
 					.attr({
-						fill: navigatorOptions.maskFill,
-						zIndex: 3
-					}).add();
-				scroller.rightShade = renderer.rect()
-					.attr({
-						fill: navigatorOptions.maskFill,
-						zIndex: 3
-					}).add();
-				scroller.outline = renderer.path()
-					.attr({
-						'stroke-width': outlineWidth,
-						stroke: navigatorOptions.outlineColor,
 						zIndex: 3
 					})
 					.add();
+
+				scroller.leftShade = renderer.rect()
+					.attr({
+						fill: navigatorOptions.maskFill
+					}).add(navigatorGroup);
+				scroller.rightShade = renderer.rect()
+					.attr({
+						fill: navigatorOptions.maskFill
+					}).add(navigatorGroup);
+				scroller.outline = renderer.path()
+					.attr({
+						'stroke-width': outlineWidth,
+						stroke: navigatorOptions.outlineColor
+					})
+					.add(navigatorGroup);
 			}
 
 			if (scrollbarEnabled) {
 
 				// draw the scrollbar group
-				scroller.scrollbarGroup = scrollbarGroup = renderer.g().add();
+				scroller.scrollbarGroup = scrollbarGroup = renderer.g('scrollbar').add();
 
 				// the scrollbar track
 				strokeWidth = scrollbarOptions.trackBorderWidth;
@@ -391,20 +394,21 @@ Scroller.prototype = {
 		}
 
 		// place elements
+		verb = scroller.rendered ? 'animate' : 'attr';
 		if (navigatorEnabled) {
-			scroller.leftShade.attr({
+			scroller.leftShade[verb]({
 				x: navigatorLeft,
 				y: top,
 				width: zoomedMin,
 				height: height
 			});
-			scroller.rightShade.attr({
+			scroller.rightShade[verb]({
 				x: navigatorLeft + zoomedMax,
 				y: top,
 				width: navigatorWidth - zoomedMax,
 				height: height
 			});
-			scroller.outline.attr({ d: [
+			scroller.outline[verb]({ d: [
 				M,
 				scrollerLeft, outlineTop, // left
 				L,
@@ -428,9 +432,12 @@ Scroller.prototype = {
 			scroller.drawScrollbarButton(0);
 			scroller.drawScrollbarButton(1);
 
-			scrollbarGroup.translate(scrollerLeft, mathRound(outlineTop + height));
+			scrollbarGroup[verb]({
+				translateX: scrollerLeft, 
+				translateY: mathRound(outlineTop + height)
+			});
 
-			scrollbarTrack.attr({
+			scrollbarTrack[verb]({
 				width: scrollerWidth
 			});
 
@@ -443,14 +450,14 @@ Scroller.prototype = {
 				scrX -= scrollbarPad;
 			}
 			scroller.scrollbarPad = scrollbarPad;
-			scrollbar.attr({
+			scrollbar[verb]({
 				x: mathFloor(scrX) + (scrollbarStrokeWidth % 2 / 2),
 				width: scrWidth
 			});
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
 
-			scroller.scrollbarRifles.attr({ d: [
+			scroller.scrollbarRifles[verb]({ d: [
 					M,
 					centerBarX - 3, scrollbarHeight / 4,
 					L,
@@ -542,7 +549,7 @@ Scroller.prototype = {
 		 * Event handler for the mouse down event.
 		 */
 		scroller.mouseDownHandler = function (e) {
-			e = chart.tracker.normalizeMouseEvent(e);
+			e = chart.pointer.normalize(e);
 
 			var zoomedMin = scroller.zoomedMin,
 				zoomedMax = scroller.zoomedMax,
@@ -642,7 +649,7 @@ Scroller.prototype = {
 			// down in the center of the scrollbar. This should be ignored.
 			if (e.pageX !== 0) {
 			
-				e = chart.tracker.normalizeMouseEvent(e);
+				e = chart.pointer.normalize(e);
 				chartX = e.chartX;
 	
 				// validation for handle dragging
@@ -760,14 +767,11 @@ Scroller.prototype = {
 		};
 
 		var xAxisIndex = chart.xAxis.length,
-			yAxisIndex = chart.yAxis.length,
-			baseChartSetSize = chart.setSize;
+			yAxisIndex = chart.yAxis.length;
 
 		// make room below the chart
 		chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
-		// get the top offset
-		scroller.top = top = scroller.getAxisTop(chart.chartHeight);
-
+		
 		if (scroller.navigatorEnabled) {
 			var baseOptions = baseSeries ? baseSeries.options : {},
 				mergedNavSeriesOptions,
@@ -786,7 +790,6 @@ Scroller.prototype = {
 				type: 'datetime',
 				index: xAxisIndex,
 				height: height,
-				top: top,
 				offset: 0,
 				offsetLeft: scrollbarHeight,
 				offsetRight: -scrollbarHeight,
@@ -800,7 +803,6 @@ Scroller.prototype = {
 			scroller.yAxis = yAxis = new Axis(chart, merge(navigatorOptions.yAxis, {
 				alignTicks: false,
 				height: height,
-				top: top,
 				offset: 0,
 				index: yAxisIndex,
 				zoomEnabled: false
@@ -859,16 +861,30 @@ Scroller.prototype = {
 		// Expose the navigator seris
 		scroller.series = navigatorSeries;
 
-		// Override the chart.setSize method to adjust the xAxis and yAxis top option as well.
-		// This needs to be done prior to chart.resize
-		chart.setSize = function (width, height, animation) {
-			scroller.top = top = scroller.getAxisTop(height);
-			if (xAxis && yAxis) { // false if navigator is disabled (#904)
-				xAxis.options.top = yAxis.options.top = top;
-			}
+		/**
+		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
+		 * of the navigator once the height of the chart, including the legend, is determined. #367.
+		 */
+		wrap(chart, 'getMargins', function (proceed) {
+
+			var legend = this.legend,
+				legendOptions = legend.options;
+
+			proceed.call(this);
 			
-			baseChartSetSize.call(chart, width, height, animation);
-		};
+			// Compute the top position
+			scroller.top = top = scroller.navigatorOptions.top || this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom - 
+						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled ? legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+
+			if (xAxis && yAxis) { // false if navigator is disabled (#904)
+
+				xAxis.options.top = yAxis.options.top = top;
+
+				xAxis.setAxisSize();
+				yAxis.setAxisSize();
+			}
+		});
+		
 
 		scroller.addEvents();
 	},
@@ -899,6 +915,7 @@ Scroller.prototype = {
 
 Highcharts.Scroller = Scroller;
 
+
 /**
  * For Stock charts, override selection zooming with some special features because 
  * X axis zooming is already allowed by the Navigator and Range selector. 
@@ -906,7 +923,7 @@ Highcharts.Scroller = Scroller;
 wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
-		zoomType = chartOptions.chart.zoomType,
+		zoomType = chartOptions.chart.pinchType || chartOptions.chart.zoomType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,

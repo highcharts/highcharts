@@ -113,7 +113,7 @@
             <file name="StackItem.js"/>
             <file name="Axis.js"/>
             <file name="Tooltip.js"/>
-            <file name="MouseTracker.js"/>
+            <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
@@ -146,7 +146,7 @@
             <file name="StackItem.js"/>
             <file name="Axis.js"/>
             <file name="Tooltip.js"/>
-            <file name="MouseTracker.js"/>
+            <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
@@ -215,7 +215,7 @@
     <!-- Assembles the source parts into one file. -->
     <target name="assemble" depends="clean">
         <!-- Concat highcharts src and replace the product name and version -->
-        <concat destfile="${highcharts.src.file}">
+        <concat destfile="${highcharts.src.file}" encoding="UTF-8">
             <filelist refid="highcharts.files"/>
             <filterchain>
                 <replacetokens>
@@ -228,7 +228,7 @@
         </concat>
 
         <!-- Concat highstock src and replace the product name and version -->
-        <concat destfile="${highstock.src.file}">
+        <concat destfile="${highstock.src.file}" encoding="UTF-8">
             <filelist refid="highstock.files"/>
             <filterchain>
                 <replacetokens>
@@ -241,7 +241,7 @@
         </concat>
 
         <!-- Concat highcharts-more src and replace the product name and version -->
-        <concat destfile="${highchartsmore.src.file}">
+        <concat destfile="${highchartsmore.src.file}" encoding="UTF-8">
             <filelist refid="highchartsmore.files"/>
             <filterchain>
                 <replacetokens>
@@ -262,13 +262,13 @@
 
     <!-- This target convert any mixed line endings to crlf. -->
     <target name="check-crlf" depends="assemble">
-        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" fixlast="false"/>
-        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" fixlast="false"/>
+        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
+        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
     </target>
 
     <!-- Runs jslint on generated source code. -->
     <target name="do-lint" depends="check-crlf">
-        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue">
+        <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue" encoding="UTF-8">
             <formatter type="plain"/>
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
             <fileset file="${highstock.src.file}"/>
@@ -575,7 +575,7 @@
         <!-- Make sure files in the zip have lf line endings -->
         <!-- even if being built on windows -->
         <sleep seconds="5"/>
-        <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf"/>
+        <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf" encoding="UTF-8" />
 
         <!-- 5. Create zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>

@@ -24,6 +24,7 @@ function Tooltip(chart, options) {
 	// The tooltip is initially hidden
 	this.isHidden = true;
 
+
 	// create the label
 	this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
 		.attr({
@@ -164,7 +165,7 @@ Tooltip.prototype = {
 		// When tooltip follows mouse, relate the position to the mouse
 		if (this.followPointer && mouseEvent) {
 			if (mouseEvent.chartX === UNDEFINED) {
-				mouseEvent = chart.tracker.normalizeMouseEvent(mouseEvent);
+				mouseEvent = chart.pointer.normalize(mouseEvent);
 			}
 			ret = [
 				mouseEvent.chartX - chart.plotLeft,

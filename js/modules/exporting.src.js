@@ -45,19 +45,21 @@ var Chart = Highcharts.Chart,
 		downloadJPEG: 'Download JPEG image',
 		downloadPDF: 'Download PDF document',
 		downloadSVG: 'Download SVG vector image',
-		exportButtonTitle: 'Export to raster or vector image',
-		printButtonTitle: 'Print the chart'
+		contextButtonTitle: 'Chart context menu'
 	});
+
+// docs: update the new defaults and explain the compatibility pack
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
 defaultOptions.navigation = {
 	menuStyle: {
 		border: '1px solid #A0A0A0',
-		background: '#FFFFFF'
+		background: '#FFFFFF',
+		padding: '5px 0'
 	},
 	menuItemStyle: {
-		padding: '0 5px',
+		padding: '0 10px',
 		background: NONE,
 		color: '#303030',
 		fontSize: isTouchDevice ? '14px' : '11px'
@@ -69,30 +71,24 @@ defaultOptions.navigation = {
 
 	buttonOptions: {
 		align: 'right',
-		backgroundColor: {
-			linearGradient: [0, 0, 0, 20],
-			stops: [
-				[0.4, '#F7F7F7'],
-				[0.6, '#E3E3E3']
-			]
-		},
-		borderColor: '#B0B0B0',
+		backgroundColor: null,
+		borderColor: 'transparent',
 		borderRadius: 3,
 		borderWidth: 1,
 		//enabled: true,
-		height: 20,
+		height: 22,
 		hoverBorderColor: '#909090',
 		hoverSymbolFill: '#81A7CF',
-		hoverSymbolStroke: '#4572A5',
+		hoverSymbolStroke: '#333',
 		symbolFill: '#E0E0E0',
-		//symbolSize: 12,
-		symbolStroke: '#A0A0A0',
-		//symbolStrokeWidth: 1,
+		symbolSize: 14,
+		symbolStroke: '#333',
+		symbolStrokeWidth: 2,
 		symbolX: 11.5,
 		symbolY: 10.5,
 		verticalAlign: 'top',
 		width: 24,
-		y: 10
+		y: 8
 	}
 };
 
@@ -107,15 +103,18 @@ defaultOptions.exporting = {
 	//width: undefined, // docs
 	//scale: 2 // docs 
 	buttons: {
-		exportButton: {
-			//enabled: true,
-			symbol: 'exportIcon',
+		contextButton: { // docs
 			x: -10,
-			symbolFill: '#A8BF77',
-			hoverSymbolFill: '#768F3E',
-			_id: 'exportButton',
-			_titleKey: 'exportButtonTitle',
+			symbol: 'menu',
+			_titleKey: 'contextButtonTitle',
 			menuItems: [{
+				text: 'Print chart',
+				onclick: function () {
+					this.print();
+				}
+			}, {
+				separator: true
+			}, {
 				textKey: 'downloadPNG',
 				onclick: function () {
 					this.exportChart();
@@ -156,19 +155,6 @@ defaultOptions.exporting = {
 				}
 			} // */
 			]
-
-		},
-		printButton: {
-			//enabled: true,
-			symbol: 'printIcon',
-			x: -36,
-			symbolFill: '#B5C9DF',
-			hoverSymbolFill: '#779ABF',
-			_id: 'printButton',
-			_titleKey: 'printButtonTitle',
-			onclick: function () {
-				this.print();
-			}
 		}
 	}
 };
@@ -497,25 +483,27 @@ extend(Chart.prototype, {
 			// create the items
 			each(items, function (item) {
 				if (item) {
-					var div = createElement(DIV, {
-						onmouseover: function () {
-							css(this, navOptions.menuItemHoverStyle);
-						},
-						onmouseout: function () {
-							css(this, menuItemStyle);
-						},
-						innerHTML: item.text || chart.options.lang[item.textKey]
-					}, extend({
-						cursor: 'pointer'
-					}, menuItemStyle), innerMenu);
+					var element = item.separator ? 
+						createElement('hr', null, null, innerMenu) :
+						createElement(DIV, {
+							onmouseover: function () {
+								css(this, navOptions.menuItemHoverStyle);
+							},
+							onmouseout: function () {
+								css(this, menuItemStyle);
+							},
+							onclick: function () {
+								hide();
+								item.onclick.apply(chart, arguments);
+							},
+							innerHTML: item.text || chart.options.lang[item.textKey]
+						}, extend({
+							cursor: 'pointer'
+						}, menuItemStyle), innerMenu);
 
-					div.onclick = function () {
-						hide();
-						item.onclick.apply(chart, arguments);
-					};
 
 					// Keep references to menu divs to be able to destroy them
-					chart.exportDivElements.push(div);
+					chart.exportDivElements.push(element);
 				}
 			});
 
@@ -548,6 +536,7 @@ extend(Chart.prototype, {
 	 * Add the export button to the chart
 	 */
 	addButton: function (options) {
+
 		var chart = this,
 			renderer = chart.renderer,
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
@@ -632,6 +621,7 @@ extend(Chart.prototype, {
 			.on('click', revert)
 			.add();
 
+
 		// add the click event
 		if (menuItems) {
 			onclick = function () {
@@ -697,69 +687,18 @@ extend(Chart.prototype, {
 	}
 });
 
-/**
- * Crisp for 1px stroke width, which is default. In the future, consider a smarter,
- * global function.
- */
-function crisp(arr) {
-	var i = arr.length;
-	while (i--) {
-		if (typeof arr[i] === 'number') {
-			arr[i] = Math.round(arr[i]) - 0.5;		
-		}
-	}
+
+symbols.menu = function (x, y, width, height) {
+	var arr = [
+		M, x, y + 2,
+		L, x + width, y + 2,
+		M, x, y + height / 2,
+		L, x + width, y + height / 2,
+		M, x, y + height - 2,
+		L, x + width, y + height - 2
+	];
 	return arr;
-}
-
-// Create the export icon
-symbols.exportIcon = function (x, y, width, height) {
-	return crisp([
-		M, // the disk
-		x, y + width,
-		L,
-		x + width, y + height,
-		x + width, y + height * 0.8,
-		x, y + height * 0.8,
-		'Z',
-		M, // the arrow
-		x + width * 0.5, y + height * 0.8,
-		L,
-		x + width * 0.8, y + height * 0.4,
-		x + width * 0.4, y + height * 0.4,
-		x + width * 0.4, y,
-		x + width * 0.6, y,
-		x + width * 0.6, y + height * 0.4,
-		x + width * 0.2, y + height * 0.4,
-		'Z'
-	]);
 };
-// Create the print icon
-symbols.printIcon = function (x, y, width, height) {
-	return crisp([
-		M, // the printer
-		x, y + height * 0.7,
-		L,
-		x + width, y + height * 0.7,
-		x + width, y + height * 0.4,
-		x, y + height * 0.4,
-		'Z',
-		M, // the upper sheet
-		x + width * 0.2, y + height * 0.4,
-		L,
-		x + width * 0.2, y,
-		x + width * 0.8, y,
-		x + width * 0.8, y + height * 0.4,
-		'Z',
-		M, // the lower sheet
-		x + width * 0.2, y + height * 0.7,
-		L,
-		x, y + height,
-		x + width, y + height,
-		x + width * 0.8, y + height * 0.7,
-		'Z'
-	]);
-};
-
 
 // Add the buttons on chart load
 Chart.prototype.callbacks.push(function (chart) {

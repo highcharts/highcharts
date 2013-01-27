@@ -118,15 +118,29 @@
 		},
 
 		/**
-		 * Register Highcharts as a plugin in the respective framework
+		 * Register Highcharts as a plugin in the respective framework // docs
 		 */
 		plugin: function (constr) {
-			var lcConstr = constr.toLowerCase();
-			$.fn[lcConstr] = function (options, callback) {
-				options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
-				this[lcConstr] = new Highcharts[constr](options, callback);
-				return this;
+			var lcConstr = constr.toLowerCase(), // shortcut, like $.chart, $.stockchart
+				nsConstr = 'Highcharts' + constr; // namespaced plugin, like $.HighchartsChart
+
+			$.fn[nsConstr] = function (options, callback) {
+				// When called without parameters, get a predefined chart
+				if (options === UNDEFINED) {
+					return charts[attr(this[0], 'data-highcharts-chart')];
+
+				// Create the chart
+				} else {
+					options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
+					this[lcConstr] = new Highcharts[constr](options, callback);
+					return this;
+				}
 			};
+
+			// If a plugin isn't already created with the shortcut name, apply it
+			if (!$.fn[lcConstr]) {
+				$.fn[lcConstr] = $.fn[nsConstr];
+			}
 		},
 	
 		/**

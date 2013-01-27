@@ -4,13 +4,13 @@
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
-function MouseTracker(chart, options) {
+function Pointer(chart, options) {
 	this.init(chart, options);
 }
 
-MouseTracker.prototype = {
+Pointer.prototype = {
 	/**
-	 * Initialize MouseTracker
+	 * Initialize Pointer
 	 */
 	init: function (chart, options) {
 		
@@ -30,6 +30,7 @@ MouseTracker.prototype = {
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
 
 		this.pinchDown = [];
+		this.lastValidTouch = {};
 
 		if (!chart.trackerGroup) {
 			chart.trackerGroup = chart.renderer.g('tracker')
@@ -48,7 +49,7 @@ MouseTracker.prototype = {
 	 * Add crossbrowser support for chartX and chartY
 	 * @param {Object} e The event object in standard browsers
 	 */
-	normalizeMouseEvent: function (e) {
+	normalize: function (e) {
 		var chartPosition,
 			chartX,
 			chartY,
@@ -87,27 +88,18 @@ MouseTracker.prototype = {
 	/**
 	 * Get the click position in terms of axis values.
 	 *
-	 * @param {Object} e A mouse event
+	 * @param {Object} e A pointer event
 	 */
-	getMouseCoordinates: function (e) {
+	getCoordinates: function (e) {
 		var coordinates = {
 				xAxis: [],
 				yAxis: []
-			},
-			chart = this.chart;
+			};
 
-		each(chart.axes, function (axis) {
-			var isXAxis = axis.isXAxis,
-				isHorizontal = chart.inverted ? !isXAxis : isXAxis;
-
-			coordinates[isXAxis ? 'xAxis' : 'yAxis'].push({
+		each(this.chart.axes, function (axis) {
+			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
-				value: axis.translate(
-					(isHorizontal ?
-						e.chartX - chart.plotLeft :
-						axis.top + axis.len - e.chartY) - axis.minPixelPadding, // #1051
-					true
-				)
+				value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
 			});
 		});
 		return coordinates;
@@ -129,8 +121,8 @@ MouseTracker.prototype = {
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
 	runPointActions: function (e) {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
+		var pointer = this,
+			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
 			point,
@@ -140,11 +132,11 @@ MouseTracker.prototype = {
 			i,
 			j,
 			distance = chart.chartWidth,
-			index = mouseTracker.getIndex(e),
+			index = pointer.getIndex(e),
 			anchor;
 
 		// shared tooltip
-		if (tooltip && mouseTracker.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
+		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
 			points = [];
 
 			// loop over all series and find the ones with points closest to the mouse
@@ -167,9 +159,9 @@ MouseTracker.prototype = {
 				}
 			}
 			// refresh the tooltip if necessary
-			if (points.length && (points[0].plotX !== mouseTracker.hoverX)) {
+			if (points.length && (points[0].plotX !== pointer.hoverX)) {
 				tooltip.refresh(points, e);
-				mouseTracker.hoverX = points[0].plotX;
+				pointer.hoverX = points[0].plotX;
 			}
 		}
 
@@ -200,9 +192,9 @@ MouseTracker.prototype = {
 	 * 
 	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
-	resetTracker: function (allowMove) {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
+	reset: function (allowMove) {
+		var pointer = this,
+			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
 			tooltip = chart.tooltip,
@@ -236,7 +228,7 @@ MouseTracker.prototype = {
 				tooltip.hideCrosshairs();
 			}
 
-			mouseTracker.hoverX = null;
+			pointer.hoverX = null;
 
 		}
 	},
@@ -250,108 +242,193 @@ MouseTracker.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			series.group.attr(attribs);
-			if (series.markerGroup) {
-				series.markerGroup.attr(attribs);
-				series.markerGroup.clip(clip ? chart.clipRect : null);
-			}
-			if (series.dataLabelsGroup) {
-				series.dataLabelsGroup.attr(attribs);
+			if (series.xAxis.zoomEnabled) {
+				series.group.attr(attribs);
+				if (series.markerGroup) {
+					series.markerGroup.attr(attribs);
+					series.markerGroup.clip(clip ? chart.clipRect : null);
+				}
+				if (series.dataLabelsGroup) {
+					series.dataLabelsGroup.attr(attribs);
+				}
 			}
 		});
 		
-		// TODO: shorten. This is just a translated version of selectionMarker
-		chart.clipRect.attr(clip ? {
-			x: clip.x - chart.plotLeft,
-			y: clip.y - chart.plotTop,
-			width: clip.width,
-			height: clip.height
-		} : chart.clipBox);
+		// Clip
+		chart.clipRect.attr(clip || chart.clipBox);
+	},
+
+	/**
+	 * Run translation operations for each direction (horizontal and vertical) independently
+	 */
+	pinchTranslateDirection: function (horiz, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+		var chart = this.chart,
+			xy = horiz ? 'x' : 'y',
+			XY = horiz ? 'X' : 'Y',
+			sChartXY = 'chart' + XY,
+			wh = horiz ? 'width' : 'height',
+			plotLeftTop = chart['plot' + (horiz ? 'Left' : 'Top')],
+			selectionWH,
+			selectionXY,
+			clipXY,
+			scale = 1,
+			inverted = chart.inverted,
+			bounds = chart.bounds[horiz ? 'h' : 'v'],
+			singleTouch = pinchDown.length === 1,
+			touch0Start = pinchDown[0][sChartXY],
+			touch0Now = touches[0][sChartXY],
+			touch1Start = !singleTouch && pinchDown[1][sChartXY],
+			touch1Now = !singleTouch && touches[1][sChartXY],
+			outOfBounds,
+			transformScale,
+			scaleKey,
+			setScale = function () {
+				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
+					scale = mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);	
+				}
+				
+				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
+				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
+			};
+
+		// Set the scale, first pass
+		setScale();
+
+		selectionXY = clipXY; // the clip position (x or y) is altered if out of bounds, the selection position is not
+
+		// Out of bounds
+		if (selectionXY < bounds.min) {
+			selectionXY = bounds.min;
+			outOfBounds = true;
+		} else if (selectionXY + selectionWH > bounds.max) {
+			selectionXY = bounds.max - selectionWH;
+			outOfBounds = true;
+		}
+		
+		// Is the chart dragged off its bounds, determined by dataMin and dataMax?
+		if (outOfBounds) {
+
+			// Modify the touchNow position in order to create an elastic drag movement. This indicates
+			// to the user that the chart is responsive but can't be dragged further.
+			touch0Now -= 0.8 * (touch0Now - lastValidTouch[xy][0]);
+			if (!singleTouch) {
+				touch1Now -= 0.8 * (touch1Now - lastValidTouch[xy][1]);
+			}
+
+			// Set the scale, second pass to adapt to the modified touchNow positions
+			setScale();
+
+		} else {
+			lastValidTouch[xy] = [touch0Now, touch1Now];
+		}
+
+		
+		// Set geometry for clipping, selection and transformation
+		if (!inverted) { // TODO: implement clipping for inverted charts
+			clip[xy] = clipXY - plotLeftTop;
+			clip[wh] = selectionWH;
+		}
+		scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+		transformScale = inverted ? 1 / scale : scale;
+
+		selectionMarker[wh] = selectionWH;
+		selectionMarker[xy] = selectionXY;
+		transform[scaleKey] = scale;
+		transform['translate' + XY] = (transformScale * plotLeftTop) + (touch0Now - (transformScale * touch0Start));
 	},
 	
 	/**
 	 * Handle touch events with two touches
 	 */
 	pinch: function (e) {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
-			pinchDown = mouseTracker.pinchDown,
+
+		var self = this,
+			chart = self.chart,
+			pinchDown = self.pinchDown,
 			touches = e.touches,
-			chartX1,
-			chartX2,
-			chartY1,
-			chartY2,
-			scaleX,
-			scaleY,
-			zoomHor = mouseTracker.zoomHor,
-			zoomVert = mouseTracker.zoomVert,
-			selectionMarker = mouseTracker.selectionMarker,
-			plotWidth = chart.plotWidth,
-			transform = {};
+			lastValidTouch = self.lastValidTouch,
+			zoomHor = self.zoomHor || self.pinchHor,
+			zoomVert = self.zoomVert || self.pinchVert,
+			selectionMarker = self.selectionMarker,
+			transform = {},
+			clip = {};
 
-
-		e.preventDefault();
+		// On touch devices, only proceed to trigger click if a handler is defined
+		if (e.type === 'touchstart') {
+			if (attr(e.target, 'isTracker')) {
+				if (!chart.runTrackerClick) {
+					e.preventDefault();
+				}
+			} else if (!chart.runChartClick) {
+				e.preventDefault();
+			}
+		}
 			
 		// Normalize each touch
 		map(touches, function (e) {
-			return mouseTracker.normalizeMouseEvent(e);
+			return self.normalize(e);
 		});
-	
-		// Handle touch move/pinching
-		if (pinchDown.length === 2) {
-			
-			// Set the marker
-			if (!selectionMarker) {
-				mouseTracker.selectionMarker = selectionMarker = {
-					x: chart.plotLeft,
-					y: chart.plotTop,
-					width: zoomHor ? 1 : plotWidth,
-					height: zoomVert ? 1 : chart.plotHeight,
-					destroy: noop
-				};
-			}
-
-			if (zoomHor) {
-				chartX1 = mathMin(pinchDown[0].chartX, pinchDown[1].chartX);
-				chartX2 = mathMin(touches[0].chartX, touches[1].chartX);
-				
-				transform.scaleX = scaleX = mathAbs(touches[0].chartX - touches[1].chartX) / mathAbs(pinchDown[1].chartX - pinchDown[0].chartX);
-				transform.translateX = chartX2 - (chartX1 - chart.plotLeft) * scaleX;
-			
-				selectionMarker.x = ((chart.plotLeft - chartX2) / scaleX) + chartX1;
-				selectionMarker.width = plotWidth / scaleX;
-				mouseTracker.hasPinched = true;
-			}
-			if (zoomVert) {
-				chartY1 = mathMin(pinchDown[0].chartY, pinchDown[1].chartY);
-				chartY2 = mathMin(touches[0].chartY, touches[1].chartY);
-				
-				transform.scaleY = scaleY = mathAbs(touches[0].chartY - touches[1].chartY) / mathAbs(pinchDown[1].chartY - pinchDown[0].chartY);
-				transform.translateY = chartY2 - (chartY1 - chart.plotTop) * scaleY;
-
-				selectionMarker.y = ((chart.plotTop - chartY2) / scaleY) + chartY1;
-				selectionMarker.height = chart.plotHeight / scaleY;
-				mouseTracker.hasPinched = true;
-			}
-
-			// Scale and translate the groups to provide visual feedback during pinching
-			this.scaleGroups(transform, selectionMarker);
-
-			
-		} 
 			
 		// Register the touch start position
-		each(touches, function (e, i) {
-			if (!pinchDown[i]) {
+		if (e.type === 'touchstart') {
+			each(touches, function (e, i) {
 				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
+			});
+			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] && pinchDown[1].chartX];
+			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] && pinchDown[1].chartY];
+
+			// Identify the data bounds in pixels
+			each(chart.axes, function (axis) {
+				if (axis.zoomEnabled) {
+					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+						minPixelPadding = axis.minPixelPadding,
+						min = axis.toPixels(axis.dataMin),
+						max = axis.toPixels(axis.dataMax),
+						absMin = mathMin(min, max),
+						absMax = mathMax(min, max);
+
+					// Store the bounds for use in the touchmove handler
+					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
+					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+				}
+			});
+		
+		// Event type is touchmove, handle panning and pinching
+		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
+			
+
+			// Set the marker
+			if (!selectionMarker) {
+				self.selectionMarker = selectionMarker = extend({
+					destroy: noop
+				}, chart.plotBox);
 			}
-		});
+
+			
+
+			if (zoomHor) {
+				self.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+			}
+			if (zoomVert) {
+				self.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+			}
+
+			self.hasPinched = zoomHor || zoomVert;
+
+			// Scale and translate the groups to provide visual feedback during pinching
+			self.scaleGroups(transform, clip);
+			
+			
+		}
 	},
 
+	/**
+	 * Start a drag operation
+	 */
 	dragStart: function (e) {
 		var chart = this.chart;
 
-		e = this.normalizeMouseEvent(e);
+		e = this.normalize(e);
 
 		// Record the start position
 		chart.mouseIsDown = e.type;
@@ -448,7 +525,8 @@ MouseTracker.prototype = {
 	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
 	drop: function () {
-		var chart = this.chart;
+		var chart = this.chart,
+			hasPinched = this.hasPinched;
 
 		if (this.selectionMarker) {
 			var selectionData = {
@@ -456,50 +534,33 @@ MouseTracker.prototype = {
 					yAxis: []
 				},
 				selectionBox = this.selectionMarker,
-				selectionLeft = selectionBox.x - chart.plotLeft,
-				selectionTop = selectionBox.y - chart.plotTop,
+				selectionLeft = selectionBox.x,
+				selectionTop = selectionBox.y,
 				runZoom;
 			// a selection has been made
-			if (this.hasDragged || this.hasPinched) {
+			if (this.hasDragged || hasPinched) {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.options.zoomEnabled !== false) {
-						var isXAxis = axis.isXAxis,
-							isHorizontal = chart.inverted ? !isXAxis : isXAxis,
-							selectionMin = axis.translate(
-								isHorizontal ?
-									selectionLeft :
-									chart.plotHeight - selectionTop - selectionBox.height,
-								true,
-								0,
-								0,
-								1
-							),
-							selectionMax = axis.translate(
-								(isHorizontal ?
-										selectionLeft + selectionBox.width :
-										chart.plotHeight - selectionTop) -  
-									2 * axis.minPixelPadding, // #875
-								true,
-								0,
-								0,
-								1
-							);
+					if (axis.zoomEnabled) {
+						var horiz = axis.horiz,
+							minPixelPadding = axis.minPixelPadding,
+							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height) - minPixelPadding);
 
-							if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-								selectionData[isXAxis ? 'xAxis' : 'yAxis'].push({
-									axis: axis,
-									min: mathMin(selectionMin, selectionMax), // for reversed axes,
-									max: mathMax(selectionMin, selectionMax)
-								});
-								runZoom = true;
-							}
+						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
+							selectionData[axis.xOrY + 'Axis'].push({
+								axis: axis,
+								min: mathMin(selectionMin, selectionMax), // for reversed axes,
+								max: mathMax(selectionMin, selectionMax)
+							});
+							runZoom = true;
+						}
 					}
 				});
 				if (runZoom) {
 					fireEvent(chart, 'selection', selectionData, function (args) { 
-						chart.zoom(extend(args, this.hasPinched ? { animation: false } : null)); 
+						chart.zoom(extend(args, hasPinched ? { animation: false } : null)); 
 					});
 				}
 
@@ -507,7 +568,7 @@ MouseTracker.prototype = {
 			this.selectionMarker = this.selectionMarker.destroy();
 
 			// Reset scaling preview
-			if (this.hasPinched) {
+			if (hasPinched) {
 				this.scaleGroups({
 					translateX: chart.plotLeft,
 					translateY: chart.plotTop,
@@ -525,8 +586,6 @@ MouseTracker.prototype = {
 			this.pinchDown = [];
 		}
 	},
-
-	
 
 	onContainerMouseDown: function (e) {
 
@@ -558,7 +617,7 @@ MouseTracker.prototype = {
 		if (chartPosition && hoverSeries && hoverSeries.isCartesian &&
 			!chart.isInsidePlot(e.pageX - chartPosition.left - chart.plotLeft,
 			e.pageY - chartPosition.top - chart.plotTop)) {
-				this.resetTracker();
+				this.reset();
 		}
 	},
 
@@ -566,7 +625,7 @@ MouseTracker.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		this.resetTracker();
+		this.reset();
 		this.chartPosition = null; // also reset the chart position, used in #149 fix
 	},
 
@@ -576,30 +635,11 @@ MouseTracker.prototype = {
 		var chart = this.chart;
 
 		// normalize
-		e = this.normalizeMouseEvent(e);
-
-		/*var type = e.type,
-			chart = this.chart;*/
-			
-		
-		//if (type.indexOf('touch') === -1) {  // not for touch actions
+		e = this.normalize(e);
 
 		// #295
 		e.returnValue = false;
-		//}/
-
-		// on touch devices, only trigger click if a handler is defined
-		// TODO: check if this is necessary after the refactoring
-		/*if (type === 'touchstart') {
-			if (attr(e.target, 'isTracker')) {
-				if (!chart.runTrackerClick) {
-					e.preventDefault();
-				}
-			} else if (!chart.runChartClick && !isOutsidePlot) {
-				e.preventDefault();
-			}
-		}*/
-
+		
 		
 		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);
@@ -609,9 +649,6 @@ MouseTracker.prototype = {
 		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			this.runPointActions(e);
 		}
-
-		// when outside plot, allow touch-drag by returning true
-		//return isOutsidePlot || !chart.hasCartesianSeries;
 	},
 
 	onContainerClick: function (e) {
@@ -624,9 +661,8 @@ MouseTracker.prototype = {
 			plotX,
 			plotY;
 		
-		e = this.normalizeMouseEvent(e);
+		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
-
 
 		if (!chart.cancelClick) {
 			// Detect clicks on trackers or tracker groups, #783
@@ -642,7 +678,7 @@ MouseTracker.prototype = {
 					pageY: chartPosition.top + plotTop +
 						(inverted ? chart.plotHeight - plotX : plotY)
 				});
-
+			
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {
 					point: hoverPoint
@@ -652,7 +688,7 @@ MouseTracker.prototype = {
 				hoverPoint.firePointEvent('click', e);
 
 			} else {
-				extend(e, this.getMouseCoordinates(e));
+				extend(e, this.getCoordinates(e));
 
 				// fire a click event in the chart
 				if (chart.isInsidePlot(e.chartX - plotLeft, e.chartY - plotTop)) {
@@ -669,20 +705,19 @@ MouseTracker.prototype = {
 
 		if (e.touches.length === 1) {
 
-			e = this.normalizeMouseEvent(e);
+			e = this.normalize(e);
 
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 
 				// Prevent the click pseudo event from firing unless it is set in the options
-				if (!chart.runChartClick) {
+				/*if (!chart.runChartClick) {
 					e.preventDefault();
-				}
+				}*/
 			
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);
 
-				// Register starting point for panning
-				this.dragStart(e);
+				this.pinch(e);
 			}
 
 		} else if (e.touches.length === 2) {
@@ -691,18 +726,12 @@ MouseTracker.prototype = {
 	},
 
 	onContainerTouchMove: function (e) {
-
-		if (e.touches.length === 1) {
-			e.preventDefault();
-			this.normalizeMouseEvent(e);
-			this.chart.pan(e.chartX);
-
-		} else if (e.touches.length === 2) {
+		if (e.touches.length === 1 || e.touches.length === 2) {
 			this.pinch(e);
 		}
 	},
 
-	onDocumentTouchEnd: function (e) {
+	onDocumentTouchEnd: function () {
 		this.drop();
 	},
 
@@ -801,11 +830,11 @@ MouseTracker.prototype = {
 	},
 
 	/**
-	 * Destroys the MouseTracker object and disconnects DOM events.
+	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var mouseTracker = this,
-			chart = mouseTracker.chart,
+		var pointer = this,
+			chart = pointer.chart,
 			container = chart.container;
 
 		// Destroy the tracker group element
@@ -813,8 +842,8 @@ MouseTracker.prototype = {
 			chart.trackerGroup = chart.trackerGroup.destroy();
 		}
 
-		removeEvent(container, 'mouseleave', mouseTracker.hideTooltipOnMouseLeave);
-		removeEvent(doc, 'mousemove', mouseTracker.hideTooltipOnMouseMove);
+		removeEvent(container, 'mouseleave', pointer.hideTooltipOnMouseLeave);
+		removeEvent(doc, 'mousemove', pointer.hideTooltipOnMouseMove);
 		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
 
 		// memory and CPU leak
