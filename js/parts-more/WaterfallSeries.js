@@ -18,7 +18,7 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 	// recalculate extremes for each waterfall stack
 	each(axis.series, function (series) {
 		// process only visible, waterfall series, one from each stack
-		if (!series.visible || series.type !== 'waterfall' || visitedStacks.indexOf(series.stackKey) !== -1) {
+		if (!series.visible || !series.stackKey || series.type !== 'waterfall' || visitedStacks.indexOf(series.stackKey) !== -1) {
 			return;
 		}
 
@@ -102,6 +102,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 */
 	translate: function () {
 		var series = this,
+			stacking = series.options.stacking,
 			axis = series.yAxis,
 			len,
 			i,
@@ -115,6 +116,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			subSumStart = 0,
 			edges,
 			cumulative,
+			previous,
 			prevStack,
 			prevY,
 			stack,
@@ -128,16 +130,17 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		points = this.points;
 		subSumStart = sumStart = points[0];
 
-
 		for (i = 1, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
 			shapeArgs = point.shapeArgs;
 
-			// get current and previous stack
-			stack = series.getStack(i);
-			prevStack = series.getStack(i - 1);
-			prevY = series.getStackY(prevStack);
+			if (stacking) {
+				// get current and previous stack
+				stack = series.getStack(i);
+				prevStack = series.getStack(i - 1);
+				prevY = series.getStackY(prevStack);
+			}
 
 			// set new intermediate sum values after reset
 			if (subSumStart === null) {
@@ -169,16 +172,20 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// calculate other (up or down) points based on y value
 			} else if (point.y < 0) {
 
-				// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
-				cumulative = stack._cum === null ? prevStack.total : stack._cum;
-				stack._cum = cumulative + point.y;
-				y = mathCeil(axis.translate(cumulative, 0, 1));
-				h = mathCeil(axis.translate(stack._cum, 0, 1));
+				if (stacking) {
+					// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
+					cumulative = stack._cum === null ? prevStack.total : stack._cum;
+					stack._cum = cumulative + point.y;
+					y = mathCeil(axis.translate(cumulative, 0, 1));
+					h = mathCeil(axis.translate(stack._cum, 0, 1));
+				}
 
 				shapeArgs.y = y;
 				shapeArgs.height = h - y;
 			} else {
-				if (shapeArgs.y + shapeArgs.height > prevY) {
+				if (!stacking) {
+					shapeArgs.y -= points[i - 1].shapeArgs.height;
+				} else if (shapeArgs.y + shapeArgs.height > prevY) {
 					shapeArgs.height = prevY - shapeArgs.y;
 				}
 			}
