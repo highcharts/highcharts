@@ -155,6 +155,27 @@ Chart.prototype = {
 	},
 
 	/**
+     * Add an axis to the chart
+     * @param {Object} options The axis option
+     * @param {Boolean} isX Whether it is an X axis or a value axis
+     */
+	addAxis: function (options, isX, redraw, animation) { // docs
+		var key = isX ? 'xAxis' : 'yAxis',
+			chartOptions = this.options,
+			axis = new Axis(this, merge(options, {
+				index: chart[key].length
+			}));
+
+		// Push the new axis options to the chart options
+		chartOptions[key] = splat(chartOptions[key] || {});
+		chartOptions[key].push(options);
+
+		if (pick(redraw, true)) {
+			chart.redraw(animation);
+		}
+	},
+
+	/**
 	 * Check whether a given point is within the plot area
 	 *
 	 * @param {Number} plotX Pixel x relative to the plot area

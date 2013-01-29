@@ -4884,6 +4884,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 
 		// generate the containing box
+		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
 
@@ -6590,6 +6591,28 @@ Axis.prototype = {
 		}
 	},	
 	
+	/**
+     * Remove the axis from the chart
+     */
+	remove: function (redraw) { // docs
+		var chart = this.chart;
+
+		// Remove associated series
+		each(this.series, function (series) {
+			series.remove(false);
+		});
+
+		// Remove the axis
+		erase(chart.axes, this);
+		erase(chart[this.xOrY + 'Axis'], this);
+		this.destroy();
+		chart.isDirtyBox = true;
+
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+	},
+	
 	/** 
 	 * The default label formatter. The context is a special config object for the label.
 	 */
@@ -8052,8 +8075,10 @@ Axis.prototype = {
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
-						coll[forDestruction[i]].destroy();
-						delete coll[forDestruction[i]];	
+						if (coll[forDestruction[i]]) { // when resizing rapidly, the same items may be destroyed in different timeouts
+							coll[forDestruction[i]].destroy();
+							delete coll[forDestruction[i]];
+						}
 					}
 					
 				};
@@ -10331,6 +10356,27 @@ Chart.prototype = {
 	},
 
 	/**
+     * Add an axis to the chart
+     * @param {Object} options The axis option
+     * @param {Boolean} isX Whether it is an X axis or a value axis
+     */
+	addAxis: function (options, isX, redraw, animation) { // docs
+		var key = isX ? 'xAxis' : 'yAxis',
+			chartOptions = this.options,
+			axis = new Axis(this, merge(options, {
+				index: chart[key].length
+			}));
+
+		// Push the new axis options to the chart options
+		chartOptions[key] = splat(chartOptions[key] || {});
+		chartOptions[key].push(options);
+
+		if (pick(redraw, true)) {
+			chart.redraw(animation);
+		}
+	},
+
+	/**
 	 * Check whether a given point is within the plot area
 	 *
 	 * @param {Number} plotX Pixel x relative to the plot area
@@ -12316,6 +12362,7 @@ Series.prototype = {
 					// apply if the series xAxis or yAxis option mathches the number of the 
 					// axis, or if undefined, use the first axis
 					if ((seriesOptions[AXIS] === axisOptions.index) ||
+							(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) || // docs: series.xAxis and series.yAxis can point to axis.id
 							(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
 						
 						// register this series in the axis.series lookup
@@ -12328,7 +12375,12 @@ Series.prototype = {
 						axis.isDirty = true;
 					}
 				});
-				
+
+				// The series needs an X and an Y axis
+				if (!series[AXIS]) {
+					error(17, true);
+				}
+
 			});
 		}
 	},
@@ -13941,24 +13993,21 @@ Series.prototype = {
 				width: chartSizeMax,
 				height: chartSizeMax - translatedThreshold
 			};
-			/*
-			if (chart.inverted) {
-				
-				// VML
+			
+			if (chart.inverted && renderer.isVML) {
 				above = {
-					x: chart.plotLeft + translatedThreshold,
+					x: chart.plotWidth - translatedThreshold - chart.plotLeft,
 					y: 0,
 					width: chartWidth,
 					height: chartHeight
 				};
 				below = {
-					x: 0,
+					x: translatedThreshold + chart.plotLeft - chartWidth,
 					y: 0,
 					width: chart.plotLeft + translatedThreshold,
 					height: chartWidth
 				};
 			}
-			// */
 			
 			if (this.yAxis.reversed) {
 				posAttr = below;

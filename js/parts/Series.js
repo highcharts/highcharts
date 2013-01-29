@@ -627,6 +627,7 @@ Series.prototype = {
 					// apply if the series xAxis or yAxis option mathches the number of the 
 					// axis, or if undefined, use the first axis
 					if ((seriesOptions[AXIS] === axisOptions.index) ||
+							(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) || // docs: series.xAxis and series.yAxis can point to axis.id
 							(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
 						
 						// register this series in the axis.series lookup
@@ -639,7 +640,12 @@ Series.prototype = {
 						axis.isDirty = true;
 					}
 				});
-				
+
+				// The series needs an X and an Y axis
+				if (!series[AXIS]) {
+					error(17, true);
+				}
+
 			});
 		}
 	},
@@ -2252,24 +2258,21 @@ Series.prototype = {
 				width: chartSizeMax,
 				height: chartSizeMax - translatedThreshold
 			};
-			/*
-			if (chart.inverted) {
-				
-				// VML
+			
+			if (chart.inverted && renderer.isVML) {
 				above = {
-					x: chart.plotLeft + translatedThreshold,
+					x: chart.plotWidth - translatedThreshold - chart.plotLeft,
 					y: 0,
 					width: chartWidth,
 					height: chartHeight
 				};
 				below = {
-					x: 0,
+					x: translatedThreshold + chart.plotLeft - chartWidth,
 					y: 0,
 					width: chart.plotLeft + translatedThreshold,
 					height: chartWidth
 				};
 			}
-			// */
 			
 			if (this.yAxis.reversed) {
 				posAttr = below;

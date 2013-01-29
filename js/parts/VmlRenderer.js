@@ -545,6 +545,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 
 		// generate the containing box
+		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
 

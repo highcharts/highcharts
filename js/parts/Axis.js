@@ -381,6 +381,28 @@ Axis.prototype = {
 		}
 	},	
 	
+	/**
+     * Remove the axis from the chart
+     */
+	remove: function (redraw) { // docs
+		var chart = this.chart;
+
+		// Remove associated series
+		each(this.series, function (series) {
+			series.remove(false);
+		});
+
+		// Remove the axis
+		erase(chart.axes, this);
+		erase(chart[this.xOrY + 'Axis'], this);
+		this.destroy();
+		chart.isDirtyBox = true;
+
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+	},
+	
 	/** 
 	 * The default label formatter. The context is a special config object for the label.
 	 */
@@ -1843,8 +1865,10 @@ Axis.prototype = {
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
-						coll[forDestruction[i]].destroy();
-						delete coll[forDestruction[i]];	
+						if (coll[forDestruction[i]]) { // when resizing rapidly, the same items may be destroyed in different timeouts
+							coll[forDestruction[i]].destroy();
+							delete coll[forDestruction[i]];
+						}
 					}
 					
 				};
