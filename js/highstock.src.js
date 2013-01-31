@@ -9222,14 +9222,15 @@ Pointer.prototype = {
 	/**
 	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
-	drop: function () {
+	drop: function (e) {
 		var chart = this.chart,
 			hasPinched = this.hasPinched;
 
 		if (this.selectionMarker) {
 			var selectionData = {
 					xAxis: [],
-					yAxis: []
+					yAxis: [],
+					originalEvent: e.originalEvent || e
 				},
 				selectionBox = this.selectionMarker,
 				selectionLeft = selectionBox.x,
@@ -9295,8 +9296,8 @@ Pointer.prototype = {
 
 	
 
-	onDocumentMouseUp: function () {
-		this.drop();
+	onDocumentMouseUp: function (e) {
+		this.drop(e);
 	},
 
 	/**
@@ -9429,8 +9430,8 @@ Pointer.prototype = {
 		}
 	},
 
-	onDocumentTouchEnd: function () {
-		this.drop();
+	onDocumentTouchEnd: function (e) {
+		this.drop(e);
 	},
 
 	/**
