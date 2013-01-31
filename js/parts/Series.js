@@ -718,11 +718,9 @@ Series.prototype = {
 
 		itemOptions.data = null; // remove from merge to prevent looping over the data set
 
-		// Merge options from genereal plotOptions.series, plotOptions[type] and series item
-		// options in that order (#1463)
 		options = merge(
-			plotOptions.series,
 			typeOptions,
+			plotOptions.series,
 			itemOptions
 		);
 		
@@ -1244,6 +1242,7 @@ Series.prototype = {
 			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
 
 			// calculate the bottom y value for stacked series
+
 			if (stacking && series.visible && stack && stack[xValue]) {
 				pointStack = stack[xValue];
 				pointStackTotal = pointStack.total;
