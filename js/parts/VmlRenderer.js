@@ -286,6 +286,13 @@ VMLElement = {
 
 							key = 'fillcolor';
 						}
+
+					// opacity: don't bother - animation is too slow and filters introduce artifacts
+					} else if (key === 'opacity') {
+						/*css(element, {
+							opacity: value
+						});*/
+						skipAttr = true;
 						
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
@@ -306,7 +313,8 @@ VMLElement = {
 						this.bBox = null;
 						element.innerHTML = value;
 						skipAttr = true;
-					}
+					} 
+
 
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
@@ -537,6 +545,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 
 		// generate the containing box
+		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
 
