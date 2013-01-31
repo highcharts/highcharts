@@ -11243,6 +11243,7 @@ Point.prototype = {
 	 * @param {Object} options The data in either number, array or object format
 	 */
 	init: function (series, options, x) {
+
 		var point = this,
 			counters = series.chart.counters,
 			defaultColors;
@@ -12203,10 +12204,12 @@ Series.prototype = {
 			}*/
 		} else {
 			for (i = 0; i < dataLength; i++) {
-				pt = { series: series };
-				pointProto.applyOptions.apply(pt, [data[i]]);
-				xData[i] = pt.x;
-				yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
+				if (data[i] !== UNDEFINED) { // stray commas in oldIE
+					pt = { series: series };
+					pointProto.applyOptions.apply(pt, [data[i]]);
+					xData[i] = pt.x;
+					yData[i] = pointProto.toYData ? pointProto.toYData.call(pt) : pt.y;
+				}
 			}
 		}
 		
