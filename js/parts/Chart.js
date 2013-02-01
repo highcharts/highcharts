@@ -163,7 +163,7 @@ Chart.prototype = {
 		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
 			axis = new Axis(this, merge(options, {
-				index: chart[key].length
+				index: this[key].length
 			}));
 
 		// Push the new axis options to the chart options
@@ -171,7 +171,7 @@ Chart.prototype = {
 		chartOptions[key].push(options);
 
 		if (pick(redraw, true)) {
-			chart.redraw(animation);
+			this.redraw(animation);
 		}
 	},
 
@@ -521,8 +521,7 @@ Chart.prototype = {
 				title: lang.resetZoomTitle
 			})
 			.add()
-			.align(btnOptions.position, false, chart[alignTo]);
-		this.resetZoomButton.alignTo = alignTo;	
+			.align(btnOptions.position, false, alignTo);
 			
 	},
 
@@ -657,7 +656,7 @@ Chart.prototype = {
 				})
 				.css(chartTitleOptions.style)
 				.add()
-				.align(chartTitleOptions, false, chart.spacingBox);
+				.align(chartTitleOptions, false, 'spacingBox');
 			}
 		});
 
@@ -953,10 +952,6 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			spacingBox,
-			resetZoomButton = chart.resetZoomButton,
-			chartTitle = chart.title,
-			chartSubtitle = chart.subtitle,
 			fireEndResize;
 
 		// Handle the isResizing counter
@@ -986,11 +981,8 @@ Chart.prototype = {
 			width: chartWidth + PX,
 			height: chartHeight + PX
 		});
+		chart.setChartSize(true);
 		chart.renderer.setSize(chartWidth, chartHeight, animation);
-
-		// update axis lengths for more correct tick intervals:
-		chart.plotWidth = chartWidth - chart.plotLeft - chart.marginRight;
-		chart.plotHeight = chartHeight - chart.plotTop - chart.marginBottom;
 
 		// handle axes
 		chart.maxTicks = null;
@@ -1008,20 +1000,6 @@ Chart.prototype = {
 		chart.isDirtyBox = true; // force redraw of plot and chart border
 
 		chart.getMargins();
-
-		// move titles
-		spacingBox = chart.spacingBox;
-		if (chartTitle) {
-			chartTitle.align(null, null, spacingBox);
-		}
-		if (chartSubtitle) {
-			chartSubtitle.align(null, null, spacingBox);
-		}
-		
-		// Move resize button (#1115)
-		if (resetZoomButton && resetZoomButton.align) {
-			resetZoomButton.align(null, null, chart[resetZoomButton.alignTo]);
-		}
 
 		chart.redraw(animation);
 
@@ -1042,9 +1020,10 @@ Chart.prototype = {
 	 * Set the public chart properties. This is done before and after the pre-render
 	 * to determine margin sizes
 	 */
-	setChartSize: function () {
+	setChartSize: function (skipAxes) {
 		var chart = this,
 			inverted = chart.inverted,
+			renderer = chart.renderer,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			optionsChart = chart.options.chart,
@@ -1069,13 +1048,13 @@ Chart.prototype = {
 		chart.plotBorderWidth = plotBorderWidth = optionsChart.plotBorderWidth || 0;
 
 		// Set boxes used for alignment
-		chart.spacingBox = {
+		chart.spacingBox = renderer.spacingBox = {
 			x: spacingLeft,
 			y: spacingTop,
 			width: chartWidth - spacingLeft - spacingRight,
 			height: chartHeight - spacingTop - spacingBottom
 		};
-		chart.plotBox = {
+		chart.plotBox = renderer.plotBox = {
 			x: plotLeft,
 			y: plotTop,
 			width: plotWidth,
@@ -1088,10 +1067,12 @@ Chart.prototype = {
 			height: chart.plotSizeY - plotBorderWidth
 		};
 
-		each(chart.axes, function (axis) {
-			axis.setAxisSize();
-			axis.setAxisTranslation();
-		});
+		if (!skipAxes) {
+			each(chart.axes, function (axis) {
+				axis.setAxisSize();
+				axis.setAxisTranslation();
+			});
+		}
 	},
 
 	/**

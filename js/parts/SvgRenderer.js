@@ -704,33 +704,49 @@ SVGElement.prototype = {
 	 *
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
-	 * @param {Object} box The box to align to, needs a width and height
+	 * @param {String[Object} box The box to align to, needs a width and height. When the
+	 *        box is a string, it refers to an object in the Renderer. For example, when 
+	 *        box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
+	 *        x and y properties.
 	 *
 	 */
 	align: function (alignOptions, alignByTranslate, box) {
-		var elemWrapper = this;
+		var align,
+			vAlign,
+			x,
+			y,
+			attribs = {},
+			alignTo,
+			renderer = this.renderer,
+			alignedObjects = renderer.alignedObjects;
 
-		if (!alignOptions) { // called on resize
-			alignOptions = elemWrapper.alignOptions;
-			alignByTranslate = elemWrapper.alignByTranslate;
-		} else { // first call on instanciate
-			elemWrapper.alignOptions = alignOptions;
-			elemWrapper.alignByTranslate = alignByTranslate;
-			if (!box) { // boxes other than renderer handle this internally
-				elemWrapper.renderer.alignedObjects.push(elemWrapper);
+		// First call on instanciate
+		if (alignOptions) {
+			this.alignOptions = alignOptions;
+			this.alignByTranslate = alignByTranslate;
+			if (!box || isString(box)) { // boxes other than renderer handle this internally
+				this.alignTo = alignTo = box || 'renderer';
+				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
+				alignedObjects.push(this);
+				box = null; // reassign it below
 			}
+		
+		// When called on resize, no arguments are supplied
+		} else {
+			alignOptions = this.alignOptions;
+			alignByTranslate = this.alignByTranslate;
+			alignTo = this.alignTo;
 		}
 
-		box = pick(box, elemWrapper.renderer);
+		box = pick(box, renderer[alignTo], renderer);
 
-		var align = alignOptions.align,
-			vAlign = alignOptions.verticalAlign,
-			x = (box.x || 0) + (alignOptions.x || 0), // default: left align
-			y = (box.y || 0) + (alignOptions.y || 0), // default: top align
-			attribs = {};
+		// Assign variables
+		align = alignOptions.align;
+		vAlign = alignOptions.verticalAlign;
+		x = (box.x || 0) + (alignOptions.x || 0); // default: left align
+		y = (box.y || 0) + (alignOptions.y || 0); // default: top align
 
-
-		// align
+		// Align
 		if (align === 'right' || align === 'center') {
 			x += (box.width - (alignOptions.width || 0)) /
 					{ right: 1, center: 2 }[align];
@@ -738,7 +754,7 @@ SVGElement.prototype = {
 		attribs[alignByTranslate ? 'translateX' : 'x'] = mathRound(x);
 
 
-		// vertical align
+		// Vertical align
 		if (vAlign === 'bottom' || vAlign === 'middle') {
 			y += (box.height - (alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
@@ -746,12 +762,12 @@ SVGElement.prototype = {
 		}
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 
-		// animate only if already placed
-		elemWrapper[elemWrapper.placed ? 'animate' : 'attr'](attribs);
-		elemWrapper.placed = true;
-		elemWrapper.alignAttr = attribs;
+		// Animate only if already placed
+		this[this.placed ? 'animate' : 'attr'](attribs);
+		this.placed = true;
+		this.alignAttr = attribs;
 
-		return elemWrapper;
+		return this;
 	},
 
 	/**
@@ -963,7 +979,9 @@ SVGElement.prototype = {
 		}
 
 		// remove from alignObjects
-		erase(wrapper.renderer.alignedObjects, wrapper);
+		if (wrapper.alignTo) {
+			erase(wrapper.renderer.alignedObjects, wrapper);
+		}
 
 		for (key in wrapper) {
 			delete wrapper[key];
@@ -1331,7 +1349,7 @@ SVGRenderer.prototype = {
 	 * @param {Object} pressedState
 	 */
 	button: function (text, x, y, callback, normalState, hoverState, pressedState) {
-		var label = this.label(text, x, y),
+		var label = this.label(text, x, y, null, null, null, null, null, 'button'),
 			curState = 0,
 			stateOptions,
 			stateStyle,
@@ -2158,6 +2176,7 @@ SVGRenderer.prototype = {
 			bBox,
 			alignFactor = 0,
 			padding = 3,
+			paddingLeft = 0,
 			width,
 			height,
 			wrapperX,
@@ -2179,7 +2198,7 @@ SVGRenderer.prototype = {
 				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
 				text.getBBox();
-			wrapper.width = (width || bBox.width || 0) + 2 * padding;
+			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 			
 			// update the label-scoped y offset
@@ -2212,7 +2231,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = padding * (1 - alignFactor),
+				x = paddingLeft + padding * (1 - alignFactor),
 				y;
 			
 			// determin y based on the baseline
@@ -2284,14 +2303,21 @@ SVGRenderer.prototype = {
 			height = value;
 			return false;
 		};
-		attrSetters.padding = function (value) {
+		attrSetters.padding =  function (value) {
 			if (defined(value) && value !== padding) {
 				padding = value;
 				updateTextPadding();
 			}
-
 			return false;
 		};
+		attrSetters.paddingLeft =  function (value) {
+			if (defined(value) && value !== paddingLeft) {
+				paddingLeft = value;
+				updateTextPadding();
+			}
+			return false;
+		};
+		
 
 		// change local variable and set attribue as well
 		attrSetters.align = function (value) {

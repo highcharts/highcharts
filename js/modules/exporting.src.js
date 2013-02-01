@@ -37,7 +37,8 @@ var Chart = Highcharts.Chart,
 	PX = 'px',
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
-	defaultOptions = Highcharts.getOptions();
+	defaultOptions = Highcharts.getOptions(),
+	buttonOffset;
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -69,26 +70,22 @@ defaultOptions.navigation = {
 		color: '#FFFFFF'
 	},
 
-	buttonOptions: {
-		align: 'right',
-		backgroundColor: null,
-		borderColor: 'transparent',
-		borderRadius: 3,
-		borderWidth: 1,
-		//enabled: true,
-		height: 22,
-		hoverBorderColor: '#909090',
-		hoverSymbolFill: '#81A7CF',
-		hoverSymbolStroke: '#333',
+	buttonOptions: { // docs
 		symbolFill: '#E0E0E0',
 		symbolSize: 14,
-		symbolStroke: '#333',
-		symbolStrokeWidth: 2,
-		symbolX: 11.5,
+		symbolStroke: '#666',
+		symbolStrokeWidth: 3,
+		symbolX: 12.5,
 		symbolY: 10.5,
+		align: 'right',
+		buttonSpacing: 3, 
+		height: 22,
+		theme: {
+			fill: 'none',
+			stroke: 'white'
+		},
 		verticalAlign: 'top',
-		width: 24,
-		y: 8
+		width: 24
 	}
 };
 
@@ -104,7 +101,7 @@ defaultOptions.exporting = {
 	//scale: 2 // docs 
 	buttons: {
 		contextButton: { // docs
-			x: -10,
+			//x: -10, // docs: x is different now
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
 			menuItems: [{
@@ -190,6 +187,7 @@ Highcharts.post = function (url, data) {
 };
 
 extend(Chart.prototype, {
+
 	/**
 	 * Return an SVG representation of the chart
 	 *
@@ -432,7 +430,7 @@ extend(Chart.prototype, {
 	 * @param {Number} width The width of the opener button
 	 * @param {Number} height The height of the opener button
 	 */
-	contextMenu: function (name, items, x, y, width, height) {
+	contextMenu: function (name, items, x, y, width, height, button) {
 		var chart = this,
 			navOptions = chart.options.navigation,
 			menuItemStyle = navOptions.menuItemStyle,
@@ -469,6 +467,9 @@ extend(Chart.prototype, {
 			// hide on mouse out
 			hide = function () {
 				css(menu, { display: NONE });
+				if (button) {
+					button.setState(0);
+				}
 			};
 
 			// Hide the menu some time after mouse leave (#1357)
@@ -542,16 +543,16 @@ extend(Chart.prototype, {
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
 			onclick = btnOptions.onclick,
 			menuItems = btnOptions.menuItems,
-			buttonWidth = btnOptions.width,
-			buttonHeight = btnOptions.height,
-			box,
+			//buttonWidth = btnOptions.width,
+			//buttonHeight = btnOptions.height,
+			//box,
 			symbol,
 			button,
-			borderWidth = btnOptions.borderWidth,
-			boxAttr = {
+			//borderWidth = btnOptions.borderWidth,
+			/*boxAttr = {
 				stroke: btnOptions.borderColor
 
-			},
+			},*/
 			symbolAttr = {
 				stroke: btnOptions.symbolStroke,
 				fill: btnOptions.symbolFill
@@ -568,14 +569,15 @@ extend(Chart.prototype, {
 			return;
 		}
 
+
 		// element to capture the click
-		function revert() {
+		/*function revert() {
 			symbol.attr(symbolAttr);
 			box.attr(boxAttr);
-		}
+		}*/
 
 		// the box border
-		box = renderer.rect(
+		/*box = renderer.rect(
 			0,
 			0,
 			buttonWidth,
@@ -589,70 +591,75 @@ extend(Chart.prototype, {
 			fill: btnOptions.backgroundColor,
 			'stroke-width': borderWidth,
 			zIndex: 19
-		}, boxAttr)).add();
+		}, boxAttr)).add();*/
+		var attr = btnOptions.theme,
+			states = attr.states,
+			hover = states && states.hover,
+			select = states && states.select,
+			callback;
 
-		// the invisible element to track the clicks
-		button = renderer.rect(
-				0,
-				0,
-				buttonWidth,
-				buttonHeight,
-				0
-			)
-			.align(btnOptions)
-			.attr({
-				id: btnOptions._id,
-				fill: 'rgba(255, 255, 255, 0.001)',
-				title: chart.options.lang[btnOptions._titleKey],
-				zIndex: 21
-			}).css({
-				cursor: 'pointer'
-			})
-			.on('mouseover', function () {
-				symbol.attr({
-					stroke: btnOptions.hoverSymbolStroke,
-					fill: btnOptions.hoverSymbolFill
-				});
-				box.attr({
-					stroke: btnOptions.hoverBorderColor
-				});
-			})
-			.on('mouseout', revert)
-			.on('click', revert)
-			.add();
+		delete attr.states;
 
+		if (onclick) {
+			callback = function () {
+				onclick.apply(chart, arguments);
+			};
 
-		// add the click event
-		if (menuItems) {
-			onclick = function () {
-				revert();
-				var bBox = button.getBBox();
-				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
+		} else if (menuItems) {
+			callback = function () {
+				chart.contextMenu(
+					'contextmenu', 
+					menuItems, 
+					button.translateX, 
+					button.translateY, 
+					button.width, 
+					button.height,
+					button
+				);
+				button.setState(2);
 			};
 		}
-		/*addEvent(button.element, 'click', function() {
-			onclick.apply(chart, arguments);
-		});*/
-		button.on('click', function () {
-			onclick.apply(chart, arguments);
-		});
 
-		// the icon
-		symbol = renderer.symbol(
-				btnOptions.symbol,
-				btnOptions.symbolX - (symbolSize / 2),
-				btnOptions.symbolY - (symbolSize / 2),
-				symbolSize,				
-				symbolSize
-			)
-			.align(btnOptions, true)
-			.attr(extend(symbolAttr, {
-				'stroke-width': btnOptions.symbolStrokeWidth || 1,
-				zIndex: 20
-			})).add();
 
-		// Keep references to the renderer element so to be able to destroy them later.
-		chart.exportSVGElements.push(box, button, symbol);
+		if (btnOptions.text && btnOptions.symbol) {
+			attr.paddingLeft = 20;
+		
+		} else if (!btnOptions.text) {
+			extend(attr, {
+				width: btnOptions.width,
+				height: btnOptions.height,
+				padding: 0
+			});
+		}
+
+		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
+			.attr({
+				title: chart.options.lang[btnOptions._titleKey],
+				'stroke-linecap': 'round'
+			});
+
+		if (btnOptions.symbol) {
+			symbol = renderer.symbol(
+					btnOptions.symbol,
+					btnOptions.symbolX - (symbolSize / 2),
+					btnOptions.symbolY - (symbolSize / 2),
+					symbolSize,				
+					symbolSize
+				)
+				.attr(extend(symbolAttr, {
+					'stroke-width': btnOptions.symbolStrokeWidth || 1,
+					zIndex: 1
+				})).add(button);
+		}
+
+		button.add()
+			.align(extend(btnOptions, {
+				width: button.width,
+				x: buttonOffset
+			}), true, 'spacingBox');
+
+		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
+
 	},
 
 	/**
@@ -690,12 +697,12 @@ extend(Chart.prototype, {
 
 symbols.menu = function (x, y, width, height) {
 	var arr = [
-		M, x, y + 2,
-		L, x + width, y + 2,
-		M, x, y + height / 2,
-		L, x + width, y + height / 2,
-		M, x, y + height - 2,
-		L, x + width, y + height - 2
+		M, x, y + 2.5,
+		L, x + width, y + 2.5,
+		M, x, y + height / 2 + 0.5,
+		L, x + width, y + height / 2 + 0.5,
+		M, x, y + height - 1.5,
+		L, x + width, y + height - 1.5
 	];
 	return arr;
 };
@@ -705,6 +712,8 @@ Chart.prototype.callbacks.push(function (chart) {
 	var n,
 		exportingOptions = chart.options.exporting,
 		buttons = exportingOptions.buttons;
+
+	buttonOffset = 0;
 
 	if (exportingOptions.enabled !== false) {
 

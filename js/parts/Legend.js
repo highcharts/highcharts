@@ -498,7 +498,7 @@ Legend.prototype = {
 			legendGroup.align(extend({
 				width: legendWidth,
 				height: legendHeight
-			}, options), true, chart.spacingBox);
+			}, options), true, 'spacingBox');
 		}
 
 		if (!chart.isResizing) {

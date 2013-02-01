@@ -433,7 +433,7 @@ RangeSelector.prototype = {
 			// detect collision with the exporting buttons
 			x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
 				-60 : 0
-		}, options.inputPosition), true, chart.spacingBox);
+		}, options.inputPosition), true, 'spacingBox');
 
 		// Set or reset the input values
 		if (inputEnabled) {
