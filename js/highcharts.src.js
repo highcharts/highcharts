@@ -5842,13 +5842,14 @@ Tick.prototype = {
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
+			reverseCrisp = ((horiz && x === axis.pos) || (!horiz && y === axis.pos + axis.len)) ? -1 : 1, // #1480
 			staggerLines = axis.staggerLines;
 
 		this.isActive = true;
 		
 		// create the grid line
 		if (gridLineWidth) {
-			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth, old, true);
+			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
 			if (gridLine === UNDEFINED) {
 				attribs = {
@@ -5892,7 +5893,7 @@ Tick.prototype = {
 				tickLength = -tickLength;
 			}
 
-			markPath = tick.getMarkPath(x, y, tickLength, tickWidth, horiz, renderer);
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
 
 			if (mark) { // updating
 				mark.animate({
@@ -7922,6 +7923,9 @@ Axis.prototype = {
 			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
 			
 		this.lineTop = lineTop; // used by flag series
+		if (!opposite) {
+			lineWidth *= -1; // crispify the other way - #1480
+		}
 
 		return chart.renderer.crispLine([
 				M,
