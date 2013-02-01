@@ -6118,6 +6118,9 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Save the x value to be able to position the label later
 	this.x = x;
 
+	// Initialize total value
+	this.total = 0;
+
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
 	this.percent = stacking === 'percent';
@@ -6147,6 +6150,13 @@ StackItem.prototype = {
 	setTotal: function (total) {
 		this.total = total;
 		this.cum = total;
+	},
+
+	/**
+	 * Adds value to stack total, this method takes care of correcting floats
+	 */
+	addValue: function (y) {
+		return this.setTotal(correctFloat(this.total + y));
 	},
 
 	/**
@@ -6662,18 +6672,17 @@ Axis.prototype = {
 		
 		return ret;
 	},
-	
+
 	/**
 	 * Get the minimum and maximum for the series of each axis
 	 */
 	getSeriesExtremes: function () {
 		var axis = this,
 			chart = axis.chart,
-			stacks = axis.stacks,
-			posStack = [],
-			negStack = [],
-			i;
-		
+			stacks = [],
+			xMin,
+			xMax;
+
 		axis.hasVisibleSeries = false;
 
 		// reset dataMin and dataMax in case we're redrawing
@@ -6686,24 +6695,15 @@ Axis.prototype = {
 
 				var seriesOptions = series.options,
 					stacking,
-					posPointStack,
-					negPointStack,
-					stackKey,
-					stackOption,
-					negKey,
 					xData,
-					yData,
-					x,
-					y,
 					threshold = seriesOptions.threshold,
-					yDataLength,
-					activeYData = [],
+					stackKey = series.stackKey,
+					seriesExtremes,
 					seriesDataMin,
-					seriesDataMax,
-					activeCounter = 0;
-					
-				axis.hasVisibleSeries = true;	
-					
+					seriesDataMax;
+
+				axis.hasVisibleSeries = true;
+
 				// Validate threshold in logarithmic axes
 				if (axis.isLog && threshold <= 0) {
 					threshold = seriesOptions.threshold = null;
@@ -6719,114 +6719,46 @@ Axis.prototype = {
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 				} else {
-					var isNegative,
-						pointStack,
-						key,
-						cropped = series.cropped,
-						xExtremes = series.xAxis.getExtremes(),
-						//findPointRange,
-						//pointRange,
-						j,
-						hasModifyValue = !!series.modifyValue;
 
 					// Handle stacking
 					stacking = seriesOptions.stacking;
 					axis.usePercentage = stacking === 'percent';
 
 					// create a stack for this particular series type
-					if (stacking) {
-						stackOption = seriesOptions.stack;
-						stackKey = series.type + pick(stackOption, '');
-						negKey = '-' + stackKey;
-						series.stackKey = stackKey; // used in translate
-
-						posPointStack = posStack[stackKey] || []; // contains the total values for each x
-						posStack[stackKey] = posPointStack;
-
-						negPointStack = negStack[negKey] || [];
-						negStack[negKey] = negPointStack;
-					}
 					if (axis.usePercentage) {
 						axis.dataMin = 0;
 						axis.dataMax = 99;
 					}
 
-					// processData can alter series.pointRange, so this goes after
-					//findPointRange = series.pointRange === null;
-
-					xData = series.processedXData;
-					yData = series.processedYData;
-					yDataLength = yData.length;
-
-					// loop over the non-null y values and read them into a local array
-					for (i = 0; i < yDataLength; i++) {
-						x = xData[i];
-						y = yData[i];
-						
-						// Read stacked values into a stack based on the x value,
-						// the sign of y and the stack key. Stacking is also handled for null values (#739)
-						if (stacking) {
-							isNegative = y < threshold;
-							pointStack = isNegative ? negPointStack : posPointStack;
-							key = isNegative ? negKey : stackKey;
-
-							y = pointStack[x] =
-								defined(pointStack[x]) ?
-									correctFloat(pointStack[x] + y) : 
-									y;
-
-
-							// add the series
-							if (!stacks[key]) {
-								stacks[key] = {};
-							}
-
-							// If the StackItem is there, just update the values,
-							// if not, create one first
-							if (!stacks[key][x]) {
-								stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
-							}
-							stacks[key][x].setTotal(y);
-						}
-						
-						// Handle non null values
-						if (y !== null && y !== UNDEFINED && (!axis.isLog || y > 0)) {							
-
-							// general hook, used for Highstock compare values feature
-							if (hasModifyValue) {
-								y = series.modifyValue(y);
-							}
-
-							// For points within the visible range, including the first point outside the
-							// visible range, consider y extremes
-							if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min && 
-								(xData[i - 1] || x) <= xExtremes.max)) {
-
-								j = y.length;
-								if (j) { // array, like ohlc or range data
-									while (j--) {
-										if (y[j] !== null) {
-											activeYData[activeCounter++] = y[j];
-										}
-									}
-								} else {
-									activeYData[activeCounter++] = y;
-								}
-							}
-						}
+					if (stacking && inArray(stackKey, stacks) === -1) {
+						// push both positive and negative stack keys
+						stacks.push(stackKey, '-' + stackKey);
 					}
 
-					// record the least unit distance
-					/*if (findPointRange) {
-						series.pointRange = pointRange || 1;
+
+					// get this particular series extremes
+					seriesExtremes = series.getExtremes();
+					seriesDataMin = seriesExtremes.yMin;
+					seriesDataMax = seriesExtremes.yMax;
+
+					// if xMin or xMax is undefined set it to values returend from the first series
+					if (xMin === UNDEFINED || xMax === UNDEFINED) {
+						xMin = seriesExtremes.xMin;
+						xMax = seriesExtremes.xMax;
+					} else {
+						if (seriesExtremes.xMin < xMin) {
+							xMin = seriesExtremes.xMin;
+						}
+
+						if (seriesExtremes.xMax > xMax) {
+							xMax = seriesExtremes.xMax;
+						}
 					}
-					series.closestPointRange = pointRange;*/
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
-					// always 0 and 100. If the length of activeYData is 0, continue with null values.
-					if (!axis.usePercentage && activeYData.length) {
-						series.dataMin = seriesDataMin = arrayMin(activeYData);
-						series.dataMax = seriesDataMax = arrayMax(activeYData);
+					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series
+					// doesn't have active y data, we continue with nulls
+					if (!axis.usePercentage && seriesDataMin !== null && seriesDataMax !== null) {
 						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
 						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
@@ -6844,7 +6776,22 @@ Axis.prototype = {
 				}
 			}
 		});
-		
+
+		// loop throught this axis' stacks
+		each(stacks, function (key) {
+			var stack = axis.stacks[key],
+				x;
+
+			// iterate over visible x values
+			for (x = xMin; x < xMax; x++) {
+
+				// check if given stack exist and has point in this particular x
+				if (stack && stack[x]) {
+					axis.dataMin = mathMin(axis.dataMin, stack[x].total);
+					axis.dataMax = mathMax(axis.dataMax, stack[x].total);
+				}
+			}
+		});
 	},
 
 	/**
@@ -9045,8 +8992,8 @@ Pointer.prototype = {
 			pinchDown = self.pinchDown,
 			touches = e.touches,
 			lastValidTouch = self.lastValidTouch,
-			zoomHor = self.zoomHor || self.pinchHor,
-			zoomVert = self.zoomVert || self.pinchVert,
+			zoomHor = self.zoomHor || self.pinchHor,
+			zoomVert = self.zoomVert || self.pinchVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			clip = {};
@@ -10362,7 +10309,8 @@ Chart.prototype = {
      * @param {Boolean} isX Whether it is an X axis or a value axis
      */
 	addAxis: function (options, isX, redraw, animation) { // docs
-		var key = isX ? 'xAxis' : 'yAxis',
+		var chart = this,
+			key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
 			axis = new Axis(this, merge(options, {
 				index: chart[key].length
@@ -10450,6 +10398,9 @@ Chart.prototype = {
 					serie.isDirty = true;
 				}
 			}
+
+			// render stacks
+			chart.getStacks();
 		}
 
 		// handle updated data in the series
@@ -10703,6 +10654,36 @@ Chart.prototype = {
 	getSelectedSeries: function () {
 		return grep(this.series, function (serie) {
 			return serie.selected;
+		});
+	},
+
+	/**
+	 * Generate stacks for each series and calculate stacks total values
+	 */
+	getStacks: function () {
+		var chart = this;
+
+		// reset stacks for each yAxis
+		each(chart.yAxis, function (axis) {
+			axis.stacks = {};
+		});
+
+		each(chart.series, function (series) {
+			if ((series.visible === false && chart.options.chart.ignoreHiddenSeries) || !series.options.stacking) {
+				return;
+			}
+
+			var seriesOptions = series.options,
+				stackOption,
+				stackKey;
+
+			// create a stack for this particular series type
+			stackOption = seriesOptions.stack;
+			stackKey = series.type + pick(stackOption, '');
+			series.stackKey = stackKey; // used in translate
+
+			series.processData();
+			series.setStackedPoints();
 		});
 	},
 
@@ -11482,6 +11463,9 @@ Chart.prototype = {
 
 		// Legend
 		chart.legend = new Legend(chart, options.legend);
+
+		// render stacks
+		chart.getStacks();
 
 		// Get margins by pre-rendering axes
 		// set axes scales
@@ -12447,6 +12431,7 @@ Series.prototype = {
 		// register it
 		series.segments = segments;
 	},
+	
 	/**
 	 * Set the series options by merging from the options tree
 	 * @param {Object} itemOptions
@@ -12962,6 +12947,136 @@ Series.prototype = {
 
 		series.data = data;
 		series.points = points;
+	},
+
+	/**
+	 * Adds series' points value to corresponding stack
+	 */
+	setStackedPoints: function () {
+		var series = this,
+			xData = series.processedXData,
+			yData = series.processedYData,
+			yDataLength = yData.length,
+			seriesOptions = series.options,
+			threshold = seriesOptions.threshold,
+			stackOption = seriesOptions.stack,
+			stacking = seriesOptions.stacking,
+			stackKey = series.stackKey,
+			negKey = '-' + stackKey,
+			axis = series.yAxis,
+			stacks = axis.stacks,
+			isNegative,
+			key,
+			i,
+			x,
+			y;
+
+		// loop over the non-null y values and read them into a local array
+		for (i = 0; i < yDataLength; i++) {
+			x = xData[i];
+			y = yData[i];
+
+			// Read stacked values into a stack based on the x value,
+			// the sign of y and the stack key. Stacking is also handled for null values (#739)
+			isNegative = y < threshold;
+			key = isNegative ? negKey : stackKey;
+
+			// add the series
+			if (!stacks[key]) {
+				stacks[key] = {};
+			}
+
+			// If the StackItem is there, just update the values,
+			// if not, create one first
+			if (!stacks[key][x]) {
+				stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
+			}
+
+			// add value to the stack total
+			stacks[key][x].addValue(y);
+		}
+	},
+
+	/**
+	 * Calculate x and y extremes for visible data
+	 */
+	getExtremes: function () {
+		var series = this,
+			xData = series.processedXData,
+			yData = series.processedYData,
+			yDataLength = yData.length,
+			cropped = series.cropped,
+			xExtremes = series.xAxis.getExtremes(),
+			hasModifyValue = !!series.modifyValue,
+			activeCounter = 0,
+			activeYData = [],
+			xMin,
+			xMax,
+			i,
+			j,
+			x,
+			y;
+
+		// reset x extremes
+		xMin = xMax = xData[0];
+
+		// loop over the non-null y values and read them into a local array
+		for (i = 0; i < yDataLength; i++) {
+			x = xData[i];
+			y = yData[i];
+
+			// Handle non null values
+			if (y !== null && y !== UNDEFINED && (!series.yAxis.isLog || y > 0)) {
+
+				// general hook, used for Highstock compare values feature
+				if (hasModifyValue) {
+					y = series.modifyValue(y);
+				}
+
+				// For points within the visible range, including the first point outside the
+				// visible range, consider y extremes
+				if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min &&
+					(xData[i - 1] || x) <= xExtremes.max)) {
+
+					j = y.length;
+					if (j) { // array, like ohlc or range data
+						while (j--) {
+							if (y[j] !== null) {
+								activeYData[activeCounter++] = y[j];
+							}
+						}
+					} else {
+						activeYData[activeCounter++] = y;
+					}
+
+
+					// find x extremes, probably we can call arrayMin/Max on xData instead of this
+					if (x < xMin) {
+						xMin = x;
+					}
+
+					if (x > xMax) {
+						xMax = x;
+					}
+
+				}
+			}
+		}
+
+		// find series active data min and max
+		if (activeYData.length) {
+			series.dataMin = arrayMin(activeYData);
+			series.dataMax = arrayMax(activeYData);
+		} else {
+			series.dataMin = series.dataMax = null;
+		}
+
+		return {
+			yMin: series.dataMin,
+			yMax: series.dataMax,
+			xMin: xMin,
+			xMax: xMax
+		};
 	},
 
 	/**

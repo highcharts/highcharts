@@ -160,7 +160,8 @@ Chart.prototype = {
      * @param {Boolean} isX Whether it is an X axis or a value axis
      */
 	addAxis: function (options, isX, redraw, animation) { // docs
-		var key = isX ? 'xAxis' : 'yAxis',
+		var chart = this,
+			key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
 			axis = new Axis(this, merge(options, {
 				index: chart[key].length
@@ -248,6 +249,9 @@ Chart.prototype = {
 					serie.isDirty = true;
 				}
 			}
+
+			// render stacks
+			chart.getStacks();
 		}
 
 		// handle updated data in the series
@@ -501,6 +505,36 @@ Chart.prototype = {
 	getSelectedSeries: function () {
 		return grep(this.series, function (serie) {
 			return serie.selected;
+		});
+	},
+
+	/**
+	 * Generate stacks for each series and calculate stacks total values
+	 */
+	getStacks: function () {
+		var chart = this;
+
+		// reset stacks for each yAxis
+		each(chart.yAxis, function (axis) {
+			axis.stacks = {};
+		});
+
+		each(chart.series, function (series) {
+			if ((series.visible === false && chart.options.chart.ignoreHiddenSeries) || !series.options.stacking) {
+				return;
+			}
+
+			var seriesOptions = series.options,
+				stackOption,
+				stackKey;
+
+			// create a stack for this particular series type
+			stackOption = seriesOptions.stack;
+			stackKey = series.type + pick(stackOption, '');
+			series.stackKey = stackKey; // used in translate
+
+			series.processData();
+			series.setStackedPoints();
 		});
 	},
 
@@ -1280,6 +1314,9 @@ Chart.prototype = {
 
 		// Legend
 		chart.legend = new Legend(chart, options.legend);
+
+		// render stacks
+		chart.getStacks();
 
 		// Get margins by pre-rendering axes
 		// set axes scales

@@ -16,6 +16,9 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Save the x value to be able to position the label later
 	this.x = x;
 
+	// Initialize total value
+	this.total = 0;
+
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
 	this.percent = stacking === 'percent';
@@ -45,6 +48,13 @@ StackItem.prototype = {
 	setTotal: function (total) {
 		this.total = total;
 		this.cum = total;
+	},
+
+	/**
+	 * Adds value to stack total, this method takes care of correcting floats
+	 */
+	addValue: function (y) {
+		return this.setTotal(correctFloat(this.total + y));
 	},
 
 	/**
