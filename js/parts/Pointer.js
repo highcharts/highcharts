@@ -428,8 +428,6 @@ Pointer.prototype = {
 	dragStart: function (e) {
 		var chart = this.chart;
 
-		e = this.normalize(e);
-
 		// Record the start position
 		chart.mouseIsDown = e.type;
 		chart.cancelClick = false;
@@ -590,8 +588,12 @@ Pointer.prototype = {
 
 	onContainerMouseDown: function (e) {
 
+		e = this.normalize(e);
+
 		// issue #295, dragging not always working in Firefox
-		e.preventDefault();
+		if (e.preventDefault) {
+			e.preventDefault();
+		}
 		
 		this.dragStart(e);
 	},

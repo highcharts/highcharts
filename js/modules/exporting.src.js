@@ -570,28 +570,6 @@ extend(Chart.prototype, {
 		}
 
 
-		// element to capture the click
-		/*function revert() {
-			symbol.attr(symbolAttr);
-			box.attr(boxAttr);
-		}*/
-
-		// the box border
-		/*box = renderer.rect(
-			0,
-			0,
-			buttonWidth,
-			buttonHeight,
-			btnOptions.borderRadius,
-			borderWidth
-		)
-		//.translate(buttonLeft, buttonTop) // to allow gradients
-		.align(btnOptions, true)
-		.attr(extend({
-			fill: btnOptions.backgroundColor,
-			'stroke-width': borderWidth,
-			zIndex: 19
-		}, boxAttr)).add();*/
 		var attr = btnOptions.theme,
 			states = attr.states,
 			hover = states && states.hover,
@@ -659,6 +637,8 @@ extend(Chart.prototype, {
 			}), true, 'spacingBox');
 
 		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
+
+		chart.exportSVGElements.push(button, symbol);
 
 	},
 
