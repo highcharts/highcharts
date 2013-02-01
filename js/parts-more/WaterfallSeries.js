@@ -98,6 +98,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	pointValKey: 'y',
 
 	/**
+	 * Init waterfall series, force stacking
+	 */
+	init: function (chart, options) {
+		options.stacking = true;
+		seriesTypes.column.prototype.init.call(this, chart, options);
+	},
+
+
+	/**
 	 * Translate data points from raw values
 	 */
 	translate: function () {
@@ -116,7 +125,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			subSumStart = 0,
 			edges,
 			cumulative,
-			previous,
 			prevStack,
 			prevY,
 			stack,
@@ -190,7 +198,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				}
 			}
 		}
-
 	},
 
 	/**
