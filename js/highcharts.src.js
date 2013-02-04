@@ -1172,35 +1172,40 @@ pathAnim = {
 					}
 				};
 			
+			/**
+			 * Register Highcharts as a plugin in the respective framework // docs
+			 */
+			$.fn.highcharts = function () {
+				var constr = 'Chart', // default constructor
+					args = arguments,
+					options,
+					ret,
+					chart;
 
-		},
+				if (isString(args[0])) {
+					constr = args[0];
+					args = Array.prototype.slice.call(args, 1); 
+				}
+				options = args[0];
 
-		/**
-		 * Register Highcharts as a plugin in the respective framework // docs
-		 */
-		plugin: function (constr) {
-			var lcConstr = constr.toLowerCase(), // shortcut, like $.chart, $.stockchart
-				nsConstr = 'Highcharts' + constr; // namespaced plugin, like $.HighchartsChart
-
-			$.fn[nsConstr] = function (options, callback) {
 				// When called without parameters, get a predefined chart
 				if (options === UNDEFINED) {
-					return charts[attr(this[0], 'data-highcharts-chart')];
+					ret = charts[attr(this[0], 'data-highcharts-chart')];
 
 				// Create the chart
 				} else {
+					/*jslint unused:false*/
 					options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
-					this[lcConstr] = new Highcharts[constr](options, callback);
-					return this;
+					chart = new Highcharts[constr](options, args[1]);
+					ret = this;
+					/*jslint unused:true*/
 				}
+				return ret;
 			};
 
-			// If a plugin isn't already created with the shortcut name, apply it
-			if (!$.fn[lcConstr]) {
-				$.fn[lcConstr] = $.fn[nsConstr];
-			}
 		},
-	
+
+		
 		/**
 		 * Downloads a script and executes a callback when done.
 		 * @param {String} scriptLocation
@@ -10232,10 +10237,6 @@ Legend.prototype = {
 	
 };
 
-
-// Register the constructor as a framework plugin
-globalAdapter.plugin('Chart');
-
 /**
  * The chart class
  * @param {Object} options
@@ -10396,9 +10397,13 @@ Chart.prototype = {
 	addAxis: function (options, isX, redraw, animation) { // docs
 		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
-			axis = new Axis(this, merge(options, {
-				index: this[key].length
-			}));
+			axis;
+
+		/*jslint unused: false*/
+		axis = new Axis(this, merge(options, {
+			index: this[key].length
+		}));
+		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});

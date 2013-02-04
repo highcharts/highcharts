@@ -1,6 +1,3 @@
-// Register the constructor as a framework plugin
-globalAdapter.plugin('StockChart');
-
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */

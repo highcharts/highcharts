@@ -68,13 +68,6 @@ win.HighchartsAdapter = {
 		};
 		/*jslint unparam: false*/
 	},
-
-	/**
-	 * Register Highcharts as a plugin in MooTools. 
-	 * TODO: implement
-	 */
-	plugin: function () {
-	},
 	
 	/**
 	 * Run a general method on the framework, following jQuery syntax

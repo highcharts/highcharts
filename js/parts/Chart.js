@@ -1,7 +1,3 @@
-
-// Register the constructor as a framework plugin
-globalAdapter.plugin('Chart');
-
 /**
  * The chart class
  * @param {Object} options
@@ -162,9 +158,13 @@ Chart.prototype = {
 	addAxis: function (options, isX, redraw, animation) { // docs
 		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
-			axis = new Axis(this, merge(options, {
-				index: this[key].length
-			}));
+			axis;
+
+		/*jslint unused: false*/
+		axis = new Axis(this, merge(options, {
+			index: this[key].length
+		}));
+		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
