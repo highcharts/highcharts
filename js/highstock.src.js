@@ -17143,10 +17143,6 @@ Scroller.prototype = {
 				}
 
 			}
-			// Prevent iPad from passing the handler on from touchstart to mousedown 
-			if (e.type === 'touchstart') {
-				e.preventDefault();
-			}
 		};
 
 		/**
