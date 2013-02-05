@@ -1,0 +1,30 @@
+<h1>Bubble series</h1>
+
+<p>A bubble series is a three dimensional series type where each point renders an X, Y and Z value. Each points is drawn as a bubble where the position along the X and Y axes mark the X and Y values, and the size of the bubble relates to the Z value.</p>
+
+<h2>Bubble size</h2>
+<p>The size of the bubbles is controlled by the <a href="http://api.highcharts.com#plotOptions.bubble.minSize">minSize</a> and <a href="http://api.highcharts.com#plotOptions.bubble.maxSize">maxSize</a> options. These options can be given as either pixels or percentages, where the percentage relates to the plot area size. When multiple bubble series are present in the same chart, the bubble sizes are computed from the combined points.
+<pre>
+	minSize: 8,    // pixel value
+	maxSize: '20%' // percentage value
+</pre>
+</p>
+
+<h2>Bubble color</h2>
+<p>By default, the bubbles' line (border) color is inherited from the <a href="http://api.highcharts.com#plotOptions.bubble.color">series.color</a> option, and the fill is the series.color with a default opacity of 0.5. These values ensure that overlapping bubbles are clearly visible. For customization the <a href="http://api.highcharts.com#plotOptions.bubble.lineColor">lineColor</a> and <a href="http://api.highcharts.com#plotOptions.bubble.fillColor">fillColor</a> can be set independently.</p>
+<p>A common application of the fill color is to apply a radial gradient to give the impression of 3D bubbles floating in space. This can be done by setting the <code>fillColor</code> option to a radial gradient:
+<pre>
+fillColor: {
+    radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+    stops: [
+        [0, 'rgba(255,255,255,0.5)'],
+        [1, 'rgba(69,114,167,0.5)']
+    ]
+}
+</pre>
+See <a href="http://www.highcharts.com/sample/plotoptions/bubble-radialgradient/">radial gradients demonstrated</a>.
+</p>
+
+<h2>Data labels</h2>
+<p>By default, data labels for bubble series are placed on top of the bubbles by setting the <code>align</code> option to <code>"center"</code>, <code>verticalAlign</code> to <code>"middle"</code>
+	and <code>inside</code> to <code>true</code>. In the <code>dataLabels.style</code> option, the labels are given a default color of "white", and in modern browsers a black text shadow to make it stand out from the background. See <a href="http://www.highcharts.com/sample/plotoptions/bubble-datalabels/">bubble data labels demonstrated</a>.</p>

@@ -7,7 +7,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		inside: true,
 		style: {
-			color: 'white'
+			color: 'white',
+			textShadow: '0px 0px 3px black'
 		},
 		verticalAlign: 'middle'
 	},
