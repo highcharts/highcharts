@@ -567,7 +567,8 @@ extend(Chart.prototype, {
 		.attr(extend({
 			fill: btnOptions.backgroundColor,
 			'stroke-width': borderWidth,
-			zIndex: 19
+			zIndex: 19,
+			'class': btnOptions._id
 		}, boxAttr)).add();
 
 		// the invisible element to track the clicks
@@ -583,7 +584,8 @@ extend(Chart.prototype, {
 				id: btnOptions._id,
 				fill: 'rgba(255, 255, 255, 0.001)',
 				title: chart.options.lang[btnOptions._titleKey],
-				zIndex: 21
+				zIndex: 21,
+				'class': btnOptions._id
 			}).css({
 				cursor: 'pointer'
 			})
@@ -627,7 +629,8 @@ extend(Chart.prototype, {
 			.align(btnOptions, true)
 			.attr(extend(symbolAttr, {
 				'stroke-width': btnOptions.symbolStrokeWidth || 1,
-				zIndex: 20
+				zIndex: 20,
+				'class': btnOptions._id
 			})).add();
 
 		// Keep references to the renderer element so to be able to destroy them later.
