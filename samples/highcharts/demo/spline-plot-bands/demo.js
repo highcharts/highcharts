@@ -110,15 +110,7 @@ $(function () {
                         }
                     },
                     marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: true,
-                                symbol: 'circle',
-                                radius: 5,
-                                lineWidth: 1
-                            }
-                        }
+                        enabled: false
                     },
                     pointInterval: 3600000, // one hour
                     pointStart: Date.UTC(2009, 9, 6, 0, 0, 0)
