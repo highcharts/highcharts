@@ -18652,6 +18652,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					posLength,
 					outsideMax,
 					groupPositions = [],
+					lastGroupPosition = Number.MIN_VALUE,
 					tickPixelIntervalOption = xAxis.options.tickPixelInterval;
 					
 				// The positions are not always defined, for example for ordinal positions when data
@@ -18676,10 +18677,20 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						
 						// For each segment, calculate the tick positions from the getTimeTicks utility
 						// function. The interval will be the same regardless of how long the segment is.
-						segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);		
-						
-						groupPositions = groupPositions.concat(segmentPositions);
-						
+						if (positions[end] > lastGroupPosition) { // #1475
+							segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);
+							sliceStart = 0;
+							
+							// Prevent duplicate groups, for example for multiple segments within one larger time frame (#1475)
+							while (segmentPositions.length && segmentPositions[0] <= lastGroupPosition) {
+								segmentPositions.shift();
+							}
+							if (segmentPositions.length) {
+								lastGroupPosition = segmentPositions[segmentPositions.length - 1];
+							}
+							
+							groupPositions = groupPositions.concat(segmentPositions);
+						}
 						// Set start of next segment
 						start = end + 1;						
 					}
@@ -18780,7 +18791,6 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						}
 					}
 				}
-				
 				return groupPositions;
 			};
 			
