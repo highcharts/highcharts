@@ -1161,7 +1161,20 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+
 		
+		// cache active data min and max
+		if (processedYData.length) {
+			series.yDataMin = arrayMin(processedYData);
+			series.yDataMax = arrayMax(processedYData);
+		} else {
+			series.yDataMin = series.yDataMax = null;
+		}
+		
+		series.xDataMin = arrayMin(processedXData);
+		series.xDataMax = arrayMax(processedXData);
+
+
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
 		}
@@ -1245,7 +1258,10 @@ Series.prototype = {
 			negKey = '-' + stackKey,
 			axis = series.yAxis,
 			stacks = axis.stacks,
+			stacksMax = axis.stacksMax,
 			isNegative,
+			total,
+			stack,
 			key,
 			i,
 			x,
@@ -1264,6 +1280,7 @@ Series.prototype = {
 			// add the series
 			if (!stacks[key]) {
 				stacks[key] = {};
+				stacksMax[key] = y;
 			}
 
 			// If the StackItem is there, just update the values,
@@ -1272,92 +1289,23 @@ Series.prototype = {
 				stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
 			}
 
+			stack = stacks[key][x];
+			total = stack.total;
+
 			// add value to the stack total
-			stacks[key][x].addValue(y);
+			stack.addValue(y);
+			stack.cacheExtremes(series, [total, total + y]);
+
+			if (stack.total > stacksMax[key]) {
+				stacksMax[key] = stack.total;
+			}
 		}
 	},
 
 	/**
 	 * Calculate x and y extremes for visible data
 	 */
-	getExtremes: function () {
-		var series = this,
-			xData = series.processedXData,
-			yData = series.processedYData,
-			yDataLength = yData.length,
-			cropped = series.cropped,
-			xExtremes = series.xAxis.getExtremes(),
-			hasModifyValue = !!series.modifyValue,
-			activeCounter = 0,
-			activeYData = [],
-			xMin,
-			xMax,
-			i,
-			j,
-			x,
-			y;
-
-		// reset x extremes
-		xMin = xMax = xData[0];
-
-		// loop over the non-null y values and read them into a local array
-		for (i = 0; i < yDataLength; i++) {
-			x = xData[i];
-			y = yData[i];
-
-			// Handle non null values
-			if (y !== null && y !== UNDEFINED && (!series.yAxis.isLog || y > 0)) {
-
-				// general hook, used for Highstock compare values feature
-				if (hasModifyValue) {
-					y = series.modifyValue(y);
-				}
-
-				// For points within the visible range, including the first point outside the
-				// visible range, consider y extremes
-				if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min &&
-					(xData[i - 1] || x) <= xExtremes.max)) {
-
-					j = y.length;
-					if (j) { // array, like ohlc or range data
-						while (j--) {
-							if (y[j] !== null) {
-								activeYData[activeCounter++] = y[j];
-							}
-						}
-					} else {
-						activeYData[activeCounter++] = y;
-					}
-
-
-					// find x extremes, probably we can call arrayMin/Max on xData instead of this
-					if (x < xMin) {
-						xMin = x;
-					}
-
-					if (x > xMax) {
-						xMax = x;
-					}
-
-				}
-			}
-		}
-
-		// find series active data min and max
-		if (activeYData.length) {
-			series.dataMin = arrayMin(activeYData);
-			series.dataMax = arrayMax(activeYData);
-		} else {
-			series.dataMin = series.dataMax = null;
-		}
-
-		return {
-			yMin: series.dataMin,
-			yMax: series.dataMax,
-			xMin: xMin,
-			xMax: xMax
-		};
-	},
+	getExtremes: noop,
 
 	/**
 	 * Translate data points from raw data values to chart specific positioning data

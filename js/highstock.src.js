@@ -6121,6 +6121,9 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Initialize total value
 	this.total = 0;
 
+	// This will keep each points' extremes stored by series.index
+	this.points = {};
+
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
 	this.percent = stacking === 'percent';
@@ -6180,6 +6183,10 @@ StackItem.prototype = {
 					})				
 					.add(group);							// add to the labels-group
 		}
+	},
+
+	cacheExtremes: function (series, extremes) {
+		this.points[series.index] = extremes;
 	},
 
 	/**
@@ -6520,6 +6527,9 @@ Axis.prototype = {
 	
 		// Dictionary for stacks
 		axis.stacks = {};
+
+		// Dictionary for stacks max values
+		axis.stacksMax = {};
 	
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
@@ -6678,10 +6688,7 @@ Axis.prototype = {
 	 */
 	getSeriesExtremes: function () {
 		var axis = this,
-			chart = axis.chart,
-			stacks = [],
-			xMin,
-			xMax;
+			chart = axis.chart;
 
 		axis.hasVisibleSeries = false;
 
@@ -6698,7 +6705,6 @@ Axis.prototype = {
 					xData,
 					threshold = seriesOptions.threshold,
 					stackKey = series.stackKey,
-					seriesExtremes,
 					seriesDataMin,
 					seriesDataMax;
 
@@ -6730,29 +6736,13 @@ Axis.prototype = {
 						axis.dataMax = 99;
 					}
 
-					if (stacking && inArray(stackKey, stacks) === -1) {
-						// push both positive and negative stack keys
-						stacks.push(stackKey, '-' + stackKey);
-					}
-
-
-					// get this particular series extremes
-					seriesExtremes = series.getExtremes();
-					seriesDataMin = seriesExtremes.yMin;
-					seriesDataMax = seriesExtremes.yMax;
-
-					// if xMin or xMax is undefined set it to values returend from the first series
-					if (xMin === UNDEFINED || xMax === UNDEFINED) {
-						xMin = seriesExtremes.xMin;
-						xMax = seriesExtremes.xMax;
+					if (stacking) {
+						seriesDataMax = axis.stacksMax[stackKey];
+						seriesDataMin = axis.stacksMax['-' + stackKey];
 					} else {
-						if (seriesExtremes.xMin < xMin) {
-							xMin = seriesExtremes.xMin;
-						}
-
-						if (seriesExtremes.xMax > xMax) {
-							xMax = seriesExtremes.xMax;
-						}
+						// get this particular series extremes
+						seriesDataMax = series.yDataMax;
+						seriesDataMin = series.yDataMin;
 					}
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
@@ -6773,22 +6763,6 @@ Axis.prototype = {
 							axis.ignoreMaxPadding = true;
 						}
 					}
-				}
-			}
-		});
-
-		// loop throught this axis' stacks
-		each(stacks, function (key) {
-			var stack = axis.stacks[key],
-				x;
-
-			// iterate over visible x values
-			for (x = xMin; x < xMax; x++) {
-
-				// check if given stack exist and has point in this particular x
-				if (stack && stack[x]) {
-					axis.dataMin = mathMin(axis.dataMin, stack[x].total);
-					axis.dataMax = mathMax(axis.dataMax, stack[x].total);
 				}
 			}
 		});
@@ -8992,8 +8966,8 @@ Pointer.prototype = {
 			pinchDown = self.pinchDown,
 			touches = e.touches,
 			lastValidTouch = self.lastValidTouch,
-			zoomHor = self.zoomHor || self.pinchHor,
-			zoomVert = self.zoomVert || self.pinchVert,
+			zoomHor = self.zoomHor || self.pinchHor,
+			zoomVert = self.zoomVert || self.pinchVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			clip = {};
@@ -12881,7 +12855,20 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+
 		
+		// cache active data min and max
+		if (processedYData.length) {
+			series.yDataMin = arrayMin(processedYData);
+			series.yDataMax = arrayMax(processedYData);
+		} else {
+			series.yDataMin = series.yDataMax = null;
+		}
+		
+		series.xDataMin = arrayMin(processedXData);
+		series.xDataMax = arrayMax(processedXData);
+
+
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
 		}
@@ -12965,7 +12952,10 @@ Series.prototype = {
 			negKey = '-' + stackKey,
 			axis = series.yAxis,
 			stacks = axis.stacks,
+			stacksMax = axis.stacksMax,
 			isNegative,
+			total,
+			stack,
 			key,
 			i,
 			x,
@@ -12984,6 +12974,7 @@ Series.prototype = {
 			// add the series
 			if (!stacks[key]) {
 				stacks[key] = {};
+				stacksMax[key] = y;
 			}
 
 			// If the StackItem is there, just update the values,
@@ -12992,92 +12983,23 @@ Series.prototype = {
 				stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
 			}
 
+			stack = stacks[key][x];
+			total = stack.total;
+
 			// add value to the stack total
-			stacks[key][x].addValue(y);
+			stack.addValue(y);
+			stack.cacheExtremes(series, [total, total + y]);
+
+			if (stack.total > stacksMax[key]) {
+				stacksMax[key] = stack.total;
+			}
 		}
 	},
 
 	/**
 	 * Calculate x and y extremes for visible data
 	 */
-	getExtremes: function () {
-		var series = this,
-			xData = series.processedXData,
-			yData = series.processedYData,
-			yDataLength = yData.length,
-			cropped = series.cropped,
-			xExtremes = series.xAxis.getExtremes(),
-			hasModifyValue = !!series.modifyValue,
-			activeCounter = 0,
-			activeYData = [],
-			xMin,
-			xMax,
-			i,
-			j,
-			x,
-			y;
-
-		// reset x extremes
-		xMin = xMax = xData[0];
-
-		// loop over the non-null y values and read them into a local array
-		for (i = 0; i < yDataLength; i++) {
-			x = xData[i];
-			y = yData[i];
-
-			// Handle non null values
-			if (y !== null && y !== UNDEFINED && (!series.yAxis.isLog || y > 0)) {
-
-				// general hook, used for Highstock compare values feature
-				if (hasModifyValue) {
-					y = series.modifyValue(y);
-				}
-
-				// For points within the visible range, including the first point outside the
-				// visible range, consider y extremes
-				if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min &&
-					(xData[i - 1] || x) <= xExtremes.max)) {
-
-					j = y.length;
-					if (j) { // array, like ohlc or range data
-						while (j--) {
-							if (y[j] !== null) {
-								activeYData[activeCounter++] = y[j];
-							}
-						}
-					} else {
-						activeYData[activeCounter++] = y;
-					}
-
-
-					// find x extremes, probably we can call arrayMin/Max on xData instead of this
-					if (x < xMin) {
-						xMin = x;
-					}
-
-					if (x > xMax) {
-						xMax = x;
-					}
-
-				}
-			}
-		}
-
-		// find series active data min and max
-		if (activeYData.length) {
-			series.dataMin = arrayMin(activeYData);
-			series.dataMax = arrayMax(activeYData);
-		} else {
-			series.dataMin = series.dataMax = null;
-		}
-
-		return {
-			yMin: series.dataMin,
-			yMax: series.dataMax,
-			xMin: xMin,
-			xMax: xMax
-		};
-	},
+	getExtremes: noop,
 
 	/**
 	 * Translate data points from raw data values to chart specific positioning data

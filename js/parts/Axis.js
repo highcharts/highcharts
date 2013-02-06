@@ -300,6 +300,9 @@ Axis.prototype = {
 	
 		// Dictionary for stacks
 		axis.stacks = {};
+
+		// Dictionary for stacks max values
+		axis.stacksMax = {};
 	
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
@@ -458,10 +461,7 @@ Axis.prototype = {
 	 */
 	getSeriesExtremes: function () {
 		var axis = this,
-			chart = axis.chart,
-			stacks = [],
-			xMin,
-			xMax;
+			chart = axis.chart;
 
 		axis.hasVisibleSeries = false;
 
@@ -478,7 +478,6 @@ Axis.prototype = {
 					xData,
 					threshold = seriesOptions.threshold,
 					stackKey = series.stackKey,
-					seriesExtremes,
 					seriesDataMin,
 					seriesDataMax;
 
@@ -510,29 +509,13 @@ Axis.prototype = {
 						axis.dataMax = 99;
 					}
 
-					if (stacking && inArray(stackKey, stacks) === -1) {
-						// push both positive and negative stack keys
-						stacks.push(stackKey, '-' + stackKey);
-					}
-
-
-					// get this particular series extremes
-					seriesExtremes = series.getExtremes();
-					seriesDataMin = seriesExtremes.yMin;
-					seriesDataMax = seriesExtremes.yMax;
-
-					// if xMin or xMax is undefined set it to values returend from the first series
-					if (xMin === UNDEFINED || xMax === UNDEFINED) {
-						xMin = seriesExtremes.xMin;
-						xMax = seriesExtremes.xMax;
+					if (stacking) {
+						seriesDataMax = axis.stacksMax[stackKey];
+						seriesDataMin = axis.stacksMax['-' + stackKey];
 					} else {
-						if (seriesExtremes.xMin < xMin) {
-							xMin = seriesExtremes.xMin;
-						}
-
-						if (seriesExtremes.xMax > xMax) {
-							xMax = seriesExtremes.xMax;
-						}
+						// get this particular series extremes
+						seriesDataMax = series.yDataMax;
+						seriesDataMin = series.yDataMin;
 					}
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
@@ -553,22 +536,6 @@ Axis.prototype = {
 							axis.ignoreMaxPadding = true;
 						}
 					}
-				}
-			}
-		});
-
-		// loop throught this axis' stacks
-		each(stacks, function (key) {
-			var stack = axis.stacks[key],
-				x;
-
-			// iterate over visible x values
-			for (x = xMin; x < xMax; x++) {
-
-				// check if given stack exist and has point in this particular x
-				if (stack && stack[x]) {
-					axis.dataMin = mathMin(axis.dataMin, stack[x].total);
-					axis.dataMax = mathMax(axis.dataMax, stack[x].total);
 				}
 			}
 		});

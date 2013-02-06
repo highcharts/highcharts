@@ -19,6 +19,9 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Initialize total value
 	this.total = 0;
 
+	// This will keep each points' extremes stored by series.index
+	this.points = {};
+
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
 	this.percent = stacking === 'percent';
@@ -78,6 +81,10 @@ StackItem.prototype = {
 					})				
 					.add(group);							// add to the labels-group
 		}
+	},
+
+	cacheExtremes: function (series, extremes) {
+		this.points[series.index] = extremes;
 	},
 
 	/**
