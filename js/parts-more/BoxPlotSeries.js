@@ -4,18 +4,18 @@
 
 // Set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
-	fillColor: 'white',
+	fillColor: '#FFFFFF',
 	lineWidth: 1,
-	//medianColor: undefined,
+	//medianColor: null,
 	medianWidth: 2,
 	states: {
 		hover: {
 			brightness: -0.3
 		}
 	},
-	//stemColor: undefined,
+	//stemColor: null,
 	//stemDashStyle: 'solid'
-	//stemWidth: undefined,
+	//stemWidth: null,
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
@@ -25,7 +25,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Higher quartile: {point.q3}<br/>' +
 			'Maximum: {point.high}<br/>'
 	},
-	//whiskerColor: undefined,
+	//whiskerColor: null,
 	whiskerLength: '50%',
 	whiskerWidth: 2
 });
@@ -51,8 +51,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	/**
 	 * Disable data labels and animation for box plot
 	 */
-	drawDataLabels: noop, // docs	
-	animate: noop, // docs
+	drawDataLabels: noop,
+	animate: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
