@@ -6737,8 +6737,8 @@ Axis.prototype = {
 					}
 
 					if (stacking) {
-						seriesDataMax = axis.stacksMax[stackKey];
-						seriesDataMin = axis.stacksMax['-' + stackKey];
+						seriesDataMax = axis.stacksMax[stackKey] || series.yDataMax;
+						seriesDataMin = axis.stacksMax['-' + stackKey] || series.yDataMin;
 					} else {
 						// get this particular series extremes
 						seriesDataMax = series.yDataMax;
