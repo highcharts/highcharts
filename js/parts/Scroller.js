@@ -18,6 +18,7 @@ units[5] = [WEEK, [1, 2, 3]]; // allow more weeks
 extend(defaultOptions, {
 	navigator: {
 		//enabled: true,
+		handlesCanCross: true,
 		handles: {
 			backgroundColor: '#FFF',
 			borderColor: '#666'
@@ -643,15 +644,17 @@ Scroller.prototype = {
 				scrollerLeft = scroller.scrollerLeft,
 				scrollerWidth = scroller.scrollerWidth,
 				range = scroller.range,
-				chartX;
-				
+				chartX,
+				posX;
+
 			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
 			// down in the center of the scrollbar. This should be ignored.
 			if (e.pageX !== 0) {
 			
 				e = chart.tracker.normalizeMouseEvent(e);
 				chartX = e.chartX;
-	
+				posX = chartX - navigatorLeft;
+
 				// validation for handle dragging
 				if (chartX < navigatorLeft) {
 					chartX = navigatorLeft;
@@ -661,14 +664,22 @@ Scroller.prototype = {
 	
 				// drag left handle
 				if (scroller.grabbedLeft) {
+					if (!navigatorOptions.handlesCanCross) {
+						posX = Math.min(posX, scroller.otherHandlePos);
+					}
+
 					hasDragged = true;
-					scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
-	
+					scroller.render(0, 0, posX, scroller.otherHandlePos);
+
 				// drag right handle
 				} else if (scroller.grabbedRight) {
+					if (!navigatorOptions.handlesCanCross) {
+						posX = Math.max(posX, scroller.otherHandlePos);
+					}
+
 					hasDragged = true;
-					scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
-	
+					scroller.render(0, 0, scroller.otherHandlePos, posX);
+
 				// drag scrollbar or open area in navigator
 				} else if (scroller.grabbedCenter) {
 					
