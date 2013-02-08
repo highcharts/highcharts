@@ -1164,7 +1164,7 @@ Series.prototype = {
 
 
 		// cache active data min and max
-		if (processedYData.length) {
+		if (processedYData && processedYData.length) {
 			series.dataMin = arrayMin(processedYData);
 			series.dataMax = arrayMax(processedYData);
 		} else {
