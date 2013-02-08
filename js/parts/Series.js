@@ -1162,19 +1162,15 @@ Series.prototype = {
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
 
-		
+
 		// cache active data min and max
 		if (processedYData.length) {
-			series.yDataMin = arrayMin(processedYData);
-			series.yDataMax = arrayMax(processedYData);
+			series.dataMin = arrayMin(processedYData);
+			series.dataMax = arrayMax(processedYData);
 		} else {
-			series.yDataMin = series.yDataMax = null;
+			series.dataMin = series.dataMax = null;
 		}
 		
-		series.xDataMin = arrayMin(processedXData);
-		series.xDataMax = arrayMax(processedXData);
-
-
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
 		}
@@ -1305,7 +1301,12 @@ Series.prototype = {
 	/**
 	 * Calculate x and y extremes for visible data
 	 */
-	getExtremes: noop,
+	getExtremes: function () {
+		return {
+			dataMax: this.dataMax,
+			dataMin: this.dataMin
+		};
+	},
 
 	/**
 	 * Translate data points from raw data values to chart specific positioning data

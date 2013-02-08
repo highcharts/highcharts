@@ -478,6 +478,7 @@ Axis.prototype = {
 					xData,
 					threshold = seriesOptions.threshold,
 					stackKey = series.stackKey,
+					seriesExtremes,
 					seriesDataMin,
 					seriesDataMax;
 
@@ -510,12 +511,13 @@ Axis.prototype = {
 					}
 
 					if (stacking) {
-						seriesDataMax = axis.stacksMax[stackKey] || series.yDataMax;
-						seriesDataMin = axis.stacksMax['-' + stackKey] || series.yDataMin;
+						seriesDataMax = axis.stacksMax[stackKey] || series.dataMax;
+						seriesDataMin = axis.stacksMax['-' + stackKey] || series.dataMin;
 					} else {
 						// get this particular series extremes
-						seriesDataMax = series.yDataMax;
-						seriesDataMin = series.yDataMin;
+						seriesExtremes = series.getExtremes();
+						seriesDataMax = seriesExtremes.dataMax;
+						seriesDataMin = seriesExtremes.dataMin;
 					}
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
@@ -1099,7 +1101,10 @@ Axis.prototype = {
 		// is in turn needed in order to find tick positions in ordinal axes. 
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
-				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
+				// For stacked series we call processData in Chart.getStacks, there's no need to calculate it again
+				if (!series.processedXData) {
+					series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
+				}
 			});
 		}
 
