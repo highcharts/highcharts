@@ -3,7 +3,7 @@
  * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
  */
-function Tooltip(chart, options) {
+function Tooltip() {
 	this.init.apply(this, arguments);
 }
 
