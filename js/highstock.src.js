@@ -10638,7 +10638,6 @@ Chart.prototype = {
 	 * Generate stacks for each series and calculate stacks total values
 	 */
 	getStacks: function () {
-		console.log('get stacks');
 		var chart = this;
 
 		// reset stacks for each yAxis
@@ -12788,15 +12787,12 @@ Series.prototype = {
 	 * than the crop threshold. This saves computing time for lage series.
 	 */
 	processData: function (force) {
-		console.log('process data ' + this.name);
-
 		var series = this,
 			processedXData = series.xData, // copied during slice operation below
 			processedYData = series.yData,
 			dataLength = processedXData.length,
 			croppedData,
 			cropStart = 0,
-			cropEnd = dataLength,
 			cropped,
 			distance,
 			closestPointRange,
@@ -12869,8 +12865,6 @@ Series.prototype = {
 	 * This method iterates over xData, crop values between min and max, returns cropped xData and corresponding part of yData
 	 */
 	cropData: function (xData, yData, min, max) {
-		console.log('cropData ' + this.name);
-
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
@@ -12978,8 +12972,6 @@ Series.prototype = {
 	 * Adds series' points value to corresponding stack
 	 */
 	setStackedPoints: function () {
-		console.log('setStackedPoints ' + this.name);
-
 		var series = this,
 			xData = series.xData,
 			yData = series.yData,
@@ -13040,7 +13032,6 @@ Series.prototype = {
 	 * Calculate x and y extremes for visible data
 	 */
 	getExtremes: function () {
-		console.log('get extremes ' + this.name);
 		var series = this,
 			dataMax = series.dataMax,
 			dataMin = series.dataMin,

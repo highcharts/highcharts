@@ -1097,7 +1097,6 @@ Series.prototype = {
 			dataLength = processedXData.length,
 			croppedData,
 			cropStart = 0,
-			cropEnd = dataLength,
 			cropped,
 			distance,
 			closestPointRange,
