@@ -1095,6 +1095,7 @@ Series.prototype = {
 			processedXData = series.xData, // copied during slice operation below
 			processedYData = series.yData,
 			dataLength = processedXData.length,
+			croppedData,
 			cropStart = 0,
 			cropEnd = dataLength,
 			cropped,
@@ -1111,6 +1112,7 @@ Series.prototype = {
 		if (isCartesian && !series.isDirty && !xAxis.isDirty && !series.yAxis.isDirty && !force) {
 			return false;
 		}
+		
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
@@ -1125,24 +1127,10 @@ Series.prototype = {
 			
 			// only crop if it's actually spilling out
 			} else if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
-
-				// iterate up to find slice start
-				for (i = 0; i < dataLength; i++) {
-					if (processedXData[i] >= min) {
-						cropStart = mathMax(0, i - 1);
-						break;
-					}
-				}
-				// proceed to find slice end
-				for (; i < dataLength; i++) {
-					if (processedXData[i] > max) {
-						cropEnd = i + 1;
-						break;
-					}
-					
-				}
-				processedXData = processedXData.slice(cropStart, cropEnd);
-				processedYData = processedYData.slice(cropStart, cropEnd);
+				croppedData = this.cropData(series.xData, series.yData, min, max);
+				processedXData = croppedData.xData;
+				processedYData = croppedData.yData;
+				cropStart = croppedData.start;
 				cropped = true;
 			}
 		}
@@ -1176,6 +1164,53 @@ Series.prototype = {
 		}
 		series.closestPointRange = closestPointRange;
 		
+	},
+
+	/**
+	 * This method iterates over xData, crop values between min and max, returns cropped xData and corresponding part of yData
+	 */
+	cropData: function (xData, yData, min, max) {
+		var dataLength = xData.length,
+			cropStart = 0,
+			cropEnd = dataLength,
+			dataMin,
+			dataMax,
+			i;
+
+		// iterate up to find slice start
+		for (i = 0; i < dataLength; i++) {
+			if (xData[i] >= min) {
+				cropStart = mathMax(0, i - 1);
+				break;
+			}
+		}
+
+		dataMin = dataMax = yData[i];
+
+		// proceed to find slice end
+		for (; i < dataLength; i++) {
+			if (xData[i] > max) {
+				cropEnd = i + 1;
+				break;
+			}
+
+			if (dataMin > yData[i]) {
+				dataMin = yData[i];
+			}
+
+			if (dataMax < yData[i]) {
+				dataMax = yData[i];
+			}
+		}
+
+		return {
+			xData: xData.slice(cropStart, cropEnd),
+			yData: yData.slice(cropStart, cropEnd),
+			dataMin: dataMin,
+			dataMax: dataMax,
+			start: cropStart,
+			end: cropEnd
+		};
 	},
 
 	/**
@@ -1243,8 +1278,8 @@ Series.prototype = {
 	 */
 	setStackedPoints: function () {
 		var series = this,
-			xData = series.processedXData,
-			yData = series.processedYData,
+			xData = series.xData,
+			yData = series.yData,
 			yDataLength = yData.length,
 			seriesOptions = series.options,
 			threshold = seriesOptions.threshold,
@@ -1302,9 +1337,24 @@ Series.prototype = {
 	 * Calculate x and y extremes for visible data
 	 */
 	getExtremes: function () {
+		var series = this,
+			dataMax = series.dataMax,
+			dataMin = series.dataMin,
+			xData = series.processedXData,
+			yData = series.processedYData,
+			xAxis = series.xAxis,
+			xExtremes = xAxis.getExtremes(),
+			croppedData;
+
+		if (!series.cropped) {
+			croppedData = series.cropData(xData, yData, xExtremes.min, xExtremes.max);
+			dataMax = croppedData.dataMax;
+			dataMin = croppedData.dataMin;
+		}
+
 		return {
-			dataMax: this.dataMax,
-			dataMin: this.dataMin
+			dataMax: dataMax,
+			dataMin: dataMin
 		};
 	},
 

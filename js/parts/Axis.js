@@ -1102,9 +1102,7 @@ Axis.prototype = {
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
 				// For stacked series we call processData in Chart.getStacks, there's no need to calculate it again
-				if (!series.processedXData) {
-					series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
-				}
+				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
 			});
 		}
 

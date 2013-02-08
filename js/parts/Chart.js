@@ -533,7 +533,6 @@ Chart.prototype = {
 			stackKey = series.type + pick(stackOption, '');
 			series.stackKey = stackKey; // used in translate
 
-			series.processData();
 			series.setStackedPoints();
 		});
 	},
