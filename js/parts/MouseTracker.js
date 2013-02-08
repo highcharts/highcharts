@@ -58,15 +58,15 @@ MouseTracker.prototype = {
 		ePos = e.touches ? e.touches.item(0) : e;
 
 		// get mouse position
-		this.chartPosition = chartPosition = offset(this.chart.container);
+		this.chartPosition = chartPosition = this.chart.container.getPosition();
 
 		// chartX and chartY
 		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
 			chartX = e.x;
 			chartY = e.y;
 		} else {
-			chartX = ePos.pageX - chartPosition.left;
-			chartY = ePos.pageY - chartPosition.top;
+			chartX = ePos.pageX - chartPosition.x;
+			chartY = ePos.pageY - chartPosition.y;
 		}
 
 		return extend(e, {
@@ -320,8 +320,8 @@ MouseTracker.prototype = {
 
 			// If we're outside, hide the tooltip
 			if (mouseTracker.chartPosition && chart.hoverSeries && chart.hoverSeries.isCartesian &&
-				!chart.isInsidePlot(e.pageX - mouseTracker.chartPosition.left - chart.plotLeft,
-				e.pageY - mouseTracker.chartPosition.top - chart.plotTop)) {
+				!chart.isInsidePlot(e.pageX - mouseTracker.chartPosition.x - chart.plotLeft,
+				e.pageY - mouseTracker.chartPosition.y - chart.plotTop)) {
 					mouseTracker.resetTracker();
 			}
 		};
@@ -539,9 +539,9 @@ MouseTracker.prototype = {
 
 					// add page position info
 					extend(hoverPoint, {
-						pageX: mouseTracker.chartPosition.left + chart.plotLeft +
+						pageX: mouseTracker.chartPosition.x + chart.plotLeft +
 							(chart.inverted ? chart.plotWidth - plotY : plotX),
-						pageY: mouseTracker.chartPosition.top + chart.plotTop +
+						pageY: mouseTracker.chartPosition.y + chart.plotTop +
 							(chart.inverted ? chart.plotHeight - plotX : plotY)
 					});
 
