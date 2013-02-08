@@ -1076,18 +1076,18 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ***
 
 // Set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
-	fillColor: 'white',
+	fillColor: '#FFFFFF',
 	lineWidth: 1,
-	//medianColor: undefined,
+	//medianColor: null,
 	medianWidth: 2,
 	states: {
 		hover: {
 			brightness: -0.3
 		}
 	},
-	//stemColor: undefined,
+	//stemColor: null,
 	//stemDashStyle: 'solid'
-	//stemWidth: undefined,
+	//stemWidth: null,
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
@@ -1097,7 +1097,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Higher quartile: {point.q3}<br/>' +
 			'Maximum: {point.high}<br/>'
 	},
-	//whiskerColor: undefined,
+	//whiskerColor: null,
 	whiskerLength: '50%',
 	whiskerWidth: 2
 });
@@ -1123,8 +1123,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	/**
 	 * Disable data labels and animation for box plot
 	 */
-	drawDataLabels: noop, // docs	
-	animate: noop, // docs
+	drawDataLabels: noop,
+	animate: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1346,11 +1346,12 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	color: 'black',
+	grouping: false, // exclude from docs
 	linkedTo: ':previous',
 	tooltip: {
 		pointFormat: defaultPlotOptions.arearange.tooltip.pointFormat
 	},
-	whiskerWidth: 1
+	whiskerWidth: null
 });
 
 // 2 - Create the series object
@@ -1761,7 +1762,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		inside: true,
 		style: {
-			color: 'white'
+			color: 'white',
+			textShadow: '0px 0px 3px black'
 		},
 		verticalAlign: 'middle'
 	},

@@ -8301,52 +8301,58 @@ Axis.prototype = {
  * @param {Object} options Tooltip options
  */
 function Tooltip(chart, options) {
-	var borderWidth = options.borderWidth,
-		style = options.style,
-		padding = pInt(style.padding);
-
-	// Save the chart and options
-	this.chart = chart;
-	this.options = options;
-
-	// Keep track of the current series
-	//this.currentSeries = UNDEFINED;
-
-	// List of crosshairs
-	this.crosshairs = [];
-
-	// Current values of x and y when animating
-	this.now = { x: 0, y: 0 };
-
-	// The tooltip is initially hidden
-	this.isHidden = true;
-
-
-	// create the label
-	this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
-		.attr({
-			padding: padding,
-			fill: options.backgroundColor,
-			'stroke-width': borderWidth,
-			r: options.borderRadius,
-			zIndex: 8
-		})
-		.css(style)
-		.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
-		.hide()
-		.add();
-
-	// When using canVG the shadow shows up as a gray circle
-	// even if the tooltip is hidden.
-	if (!useCanVG) {
-		this.label.shadow(options.shadow);
-	}
-
-	// Public property for getting the shared state.
-	this.shared = options.shared;
+	this.init.apply(this, arguments);
 }
 
 Tooltip.prototype = {
+
+	init: function (chart, options) {
+
+		var borderWidth = options.borderWidth,
+			style = options.style,
+			padding = pInt(style.padding);
+
+		// Save the chart and options
+		this.chart = chart;
+		this.options = options;
+
+		// Keep track of the current series
+		//this.currentSeries = UNDEFINED;
+
+		// List of crosshairs
+		this.crosshairs = [];
+
+		// Current values of x and y when animating
+		this.now = { x: 0, y: 0 };
+
+		// The tooltip is initially hidden
+		this.isHidden = true;
+
+
+		// create the label
+		this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
+			.attr({
+				padding: padding,
+				fill: options.backgroundColor,
+				'stroke-width': borderWidth,
+				r: options.borderRadius,
+				zIndex: 8
+			})
+			.css(style)
+			.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
+			.hide()
+			.add();
+
+		// When using canVG the shadow shows up as a gray circle
+		// even if the tooltip is hidden.
+		if (!useCanVG) {
+			this.label.shadow(options.shadow);
+		}
+
+		// Public property for getting the shared state.
+		this.shared = options.shared;
+	},
+
 	/**
 	 * Destroy the tooltip and its elements.
 	 */
@@ -8544,6 +8550,31 @@ Tooltip.prototype = {
 	},
 
 	/**
+	 * In case no user defined formatter is given, this will be used. Note that the context
+	 * here is an object holding point, series, x, y etc.
+	 */
+	defaultFormatter: function (tooltip) {
+		var items = this.points || splat(this),
+			series = items[0].series,
+			s;
+
+		// build the header
+		s = [series.tooltipHeaderFormatter(items[0])];
+
+		// build the values
+		each(items, function (item) {
+			series = item.series;
+			s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
+				item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
+		});
+
+		// footer
+		s.push(tooltip.options.footerFormat || '');
+
+		return s.join('');
+	},
+
+	/**
 	 * Refresh the tooltip's text and position.
 	 * @param {Object} point
 	 */
@@ -8551,41 +8582,15 @@ Tooltip.prototype = {
 		var tooltip = this,
 			chart = tooltip.chart,
 			label = tooltip.label,
-			options = tooltip.options;
-
-		/**
-		 * In case no user defined formatter is given, this will be used
-		 */
-		function defaultFormatter() {
-			var pThis = this,
-				items = pThis.points || splat(pThis),
-				series = items[0].series,
-				s;
-
-			// build the header
-			s = [series.tooltipHeaderFormatter(items[0])];
-
-			// build the values
-			each(items, function (item) {
-				series = item.series;
-				s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-					item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
-			});
-
-			// footer
-			s.push(options.footerFormat || '');
-
-			return s.join('');
-		}
-
-		var x,
+			options = tooltip.options,
+			x,
 			y,
 			show,
 			anchor,
 			textConfig = {},
 			text,
 			pointConfig = [],
-			formatter = options.formatter || defaultFormatter,
+			formatter = options.formatter || tooltip.defaultFormatter,
 			hoverPoints = chart.hoverPoints,
 			borderColor,
 			crosshairsOptions = options.crosshairs,
@@ -8629,7 +8634,7 @@ Tooltip.prototype = {
 		} else {
 			textConfig = point.getLabelConfig();
 		}
-		text = formatter.call(textConfig);
+		text = formatter.call(textConfig, tooltip);
 
 		// register the current series
 		currentSeries = point.series;
@@ -15075,7 +15080,7 @@ var ColumnSeries = extendClass(Series, {
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
-			inside = (this.options.stacking || options.inside); // draw it inside the box?
+			inside = (this.options.stacking || options.inside); // draw it inside the box? // docs: inside
 		
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
