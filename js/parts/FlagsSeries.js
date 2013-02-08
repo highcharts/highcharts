@@ -201,7 +201,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						plotY,
 						shape,
 						anchorX,
-						anchorY
+						anchorY,
+						options.useHTML // docs: plotOptions.flags.useHTML
 					)
 					.css(merge(options.style, point.style))
 					.attr(pointAttr)
