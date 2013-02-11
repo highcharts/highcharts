@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     var perShapeGradient = {
             x1: 0,
             y1: 0,
@@ -66,4 +64,3 @@ $(function () {
             },
         });
     });
-});

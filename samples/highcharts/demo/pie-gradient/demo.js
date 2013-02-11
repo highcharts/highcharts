@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     	
     	// Radialize the colors
 		Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
@@ -61,4 +59,3 @@ $(function () {
         });
     });
     
-});

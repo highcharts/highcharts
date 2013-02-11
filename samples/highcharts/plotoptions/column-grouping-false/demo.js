@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     	
     	// First, let's make the colors transparent
     	Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function (color) {
@@ -87,4 +85,3 @@ $(function () {
         });
     });
     
-});

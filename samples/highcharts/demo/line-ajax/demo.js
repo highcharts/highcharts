@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     
         // define the options
         var options = {
@@ -161,4 +159,3 @@ $(function () {
         });
     });
     
-});

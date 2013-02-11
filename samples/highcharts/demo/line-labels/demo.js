@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
         $('#container').highcharts({
             chart: {
                 type: 'line'
@@ -44,4 +42,3 @@ $(function () {
         });
     });
     
-});

@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     
         var colors = Highcharts.getOptions().colors,
             categories = ['MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera'],
@@ -124,4 +122,3 @@ $(function () {
         });
     });
     
-});

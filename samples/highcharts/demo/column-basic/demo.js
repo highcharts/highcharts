@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
         $('#container').highcharts({
             chart: {
                 type: 'column'
@@ -75,4 +73,3 @@ $(function () {
         });
     });
     
-});

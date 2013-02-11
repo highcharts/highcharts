@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
         $('#container').highcharts({
             chart: {
                 zoomType: 'xy'
@@ -79,4 +77,3 @@ $(function () {
         });
     });
     
-});
