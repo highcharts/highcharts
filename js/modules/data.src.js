@@ -322,7 +322,7 @@
 						columns[col].isDatetime = true;
 					
 					} else { // string
-						columns[col][row] = trimVal;
+						columns[col][row] = trimVal === '' ? null : trimVal;
 					}
 				}
 				

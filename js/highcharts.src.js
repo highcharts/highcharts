@@ -11678,8 +11678,10 @@ Point.prototype = {
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
+			pointMarker = point.marker || {},
 			chart = series.chart,
 			radius,
+			newSymbol,
 			pointAttr = point.pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
@@ -11715,9 +11717,18 @@ Point.prototype = {
 			// graphic for the hover state
 			if (state && markerStateOptions) {
 				radius = markerStateOptions.radius;
-				if (!stateMarkerGraphic) { // add
+				newSymbol = pointMarker.symbol || series.symbol;
+
+				// If the point has another symbol than the previous one, throw away the 
+				// state marker graphic and force a new one (#1459)
+				if (stateMarkerGraphic && stateMarkerGraphic.currentSymbol !== newSymbol) {				
+					stateMarkerGraphic = stateMarkerGraphic.destroy();
+				}
+
+				// Add a new state marker graphic
+				if (!stateMarkerGraphic) {
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
-						series.symbol,
+						newSymbol,
 						plotX - radius,
 						plotY - radius,
 						2 * radius,
@@ -11725,8 +11736,10 @@ Point.prototype = {
 					)
 					.attr(pointAttr[state])
 					.add(series.markerGroup);
+					stateMarkerGraphic.currentSymbol = newSymbol;
 				
-				} else { // update
+				// Move the existing graphic
+				} else {
 					stateMarkerGraphic.attr({ // #1054
 						x: plotX - radius,
 						y: plotY - radius
@@ -14257,7 +14270,7 @@ var ColumnSeries = extendClass(Series, {
 					barY =
 						mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
+							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0); // use exact yAxis.translation (#1485)
 				}
 			}
 
