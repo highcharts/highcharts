@@ -802,8 +802,8 @@ SVGElement.prototype = {
 				width = bBox.width;
 				height = bBox.height;
 				
-				// Workaround for wrong bounding box in IE9 and IE10 (#1101)
-				if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505)
+				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === 22.7) {
 					bBox.height = height = 14;
 				}
 			
