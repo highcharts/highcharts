@@ -592,7 +592,7 @@ Series.prototype = {
 		});
 
 		// Linked series
-		linkedTo = options.linkedTo; // docs: ':previous' or Series.id
+		linkedTo = options.linkedTo; // docs: ':previous' or Series.id - set up demo with linked temperature range and mean temperature
 		series.linkedSeries = [];
 		if (isString(linkedTo)) {
 			if (linkedTo === ':previous') {

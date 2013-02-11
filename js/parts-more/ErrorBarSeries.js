@@ -4,7 +4,7 @@
 
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
-	color: 'black',
+	color: '#000000',
 	grouping: false, // exclude from docs
 	linkedTo: ':previous',
 	tooltip: {
