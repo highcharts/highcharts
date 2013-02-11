@@ -236,6 +236,7 @@ extend(Chart.prototype, {
 		// override some options
 		extend(options.chart, {
 			renderTo: sandbox,
+			animation: false,
 			forExport: true
 		});
 		options.exporting.enabled = false; // hide buttons in print
