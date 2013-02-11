@@ -1,9 +1,8 @@
 $(function () {
     var chart;
     $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 zoomType: 'x',
                 spacingRight: 20
             },

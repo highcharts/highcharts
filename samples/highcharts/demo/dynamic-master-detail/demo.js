@@ -120,7 +120,7 @@ $(function () {
     
         // create the master chart
         function createMaster() {
-            masterChart = new Highcharts.Chart({
+            master$('#container').highcharts({
                 chart: {
                     renderTo: 'master-container',
                     reflow: false,
@@ -267,7 +267,7 @@ $(function () {
             });
     
             // create a detail chart referenced by a global variable
-            detailChart = new Highcharts.Chart({
+            detail$('#container').highcharts({
                 chart: {
                     marginBottom: 120,
                     renderTo: 'detail-container',

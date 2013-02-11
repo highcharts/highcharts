@@ -65,9 +65,8 @@ $(function () {
 			chart.redraw();
         }
     
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'column'
             },
             title: {

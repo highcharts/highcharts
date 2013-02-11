@@ -14,9 +14,8 @@ $(function () {
 		});
 		
 		// Build the chart
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false

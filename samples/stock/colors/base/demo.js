@@ -2,10 +2,9 @@ $(function() {
 	Highcharts.setOptions({
     	colors: ['green', 'blue']
 	});
-	var chart = new Highcharts.StockChart({
+	$('#container').highcharts('StockChart', {
 	    
 	    chart: {
-	        renderTo: 'container'
 	    },
 	    
 	    rangeSelector: {

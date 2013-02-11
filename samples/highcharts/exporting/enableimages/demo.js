@@ -1,8 +1,7 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
     
         chart: {
-            renderTo: 'container',
             events: {
                 load: function() {
                     this.renderer.image('http://highsoft.com/images/media/Highsoft-Solutions-143px.png', 80, 40, 143, 57)

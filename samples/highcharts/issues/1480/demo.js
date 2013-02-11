@@ -1,7 +1,6 @@
 $(function() {
-	var chart = new Highcharts.Chart({
+	$('#container').highcharts({
 	    chart: {
-	        renderTo: 'container'
 	    },
 	    title: {
 	    	text: 'Minor grid lines on datetime axis'

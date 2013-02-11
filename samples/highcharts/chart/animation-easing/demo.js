@@ -1,8 +1,7 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
     
         chart: {
-            renderTo: 'container',
             animation: {
                 duration: 1500,
                 easing: 'easeOutBounce'

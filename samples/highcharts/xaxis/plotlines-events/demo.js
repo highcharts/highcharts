@@ -1,9 +1,8 @@
 $(function () {
     var $report = $('#report');
     
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container'
         },
         xAxis: {
             plotLines: [{ // mark the weekend

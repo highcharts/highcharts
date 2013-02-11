@@ -9,9 +9,8 @@ $(function () {
     			.get('rgba');
     	});
     	
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'column'
             },
             title: {

@@ -4,10 +4,9 @@ $(function () {
     	// Shorten the data
     	data = data.splice(181, 14);
   
-    	window.chart = new Highcharts.Chart({
+    	window.$('#container').highcharts({
     	
 		    chart: {
-		        renderTo: 'container',
 		        type: 'arearange'
 		    },
 		    

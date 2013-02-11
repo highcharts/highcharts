@@ -6,9 +6,8 @@ $(function() {
 		var start = + new Date();
 	
 		// Create the chart
-		var chart = new Highcharts.StockChart({
+		$('#container').highcharts('StockChart', {
 		    chart: {
-		        renderTo: 'container',
 				events: {
 					load: function(chart) {
 						this.setTitle(null, {

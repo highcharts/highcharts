@@ -1,8 +1,7 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
 
 	    chart: {
-	        renderTo: 'container',
 	        type: 'bubble',
 	        //plotBorderWidth: 1,
 	        zoomType: 'xy'

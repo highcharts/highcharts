@@ -1,9 +1,8 @@
 $(function() {
 	var w = 1;
-	var chart = new Highcharts.Chart({
+	$('#container').highcharts({
 
 	    chart: {
-	        renderTo: 'container',
 	        plotBorderWidth: w,
 	        plotBorderColor: 'red',
 	        width: 400

@@ -6,7 +6,6 @@ $(function () {
         var options = {
     
             chart: {
-                renderTo: 'container'
             },
     
             title: {
@@ -158,7 +157,7 @@ $(function () {
             options.series[0].data = allVisits;
             options.series[1].data = newVisitors;
     
-            chart = new Highcharts.Chart(options);
+            $('#container').highcharts(options);
         });
     });
     
