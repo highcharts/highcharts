@@ -11,9 +11,9 @@ $next = $i + 1;
 ob_start();
 include("$path/demo.html");
 $html = ob_get_clean();
-$html = str_replace('/code.highcharts.com/high', '/codev.highcharts.com/high', $html);
-$html = str_replace('/code.highcharts.com/stock/', '/codev.highcharts.com/', $html);
-$html = str_replace('/code.highcharts.com/modules/', '/codev.highcharts.com/modules/', $html);
+$html = str_replace('/code.highcharts.com/high', '/dev.highcharts.com/js/high', $html);
+$html = str_replace('/code.highcharts.com/stock/', '/dev.highcharts.com/js/', $html);
+$html = str_replace('/code.highcharts.com/modules/', '/dev.highcharts.com/js/modules/', $html);
 	
 
 
