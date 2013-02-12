@@ -793,8 +793,8 @@ Series.prototype = {
 				userOptions._symbolIndex = counters.symbol;
 				symbolIndex = counters.symbol++;
 			}
+			series.symbol = defaultSymbols[symbolIndex];
 		}
-		series.symbol = defaultSymbols[symbolIndex];
 
 		// don't substract radius in image symbols (#604)
 		if (/^url/.test(series.symbol)) {
