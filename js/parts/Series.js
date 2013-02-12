@@ -891,8 +891,7 @@ Series.prototype = {
 			zData = series.zData,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
-			point,
-			proto = series.pointClass.prototype;
+			point;
 
 		setAnimation(animation, chart);
 
@@ -1026,7 +1025,7 @@ Series.prototype = {
 			for (i = 0; i < dataLength; i++) {
 				if (data[i] !== UNDEFINED) { // stray commas in oldIE
 					pt = { series: series };
-					pointProto.applyOptions.apply(pt, [data[i]]);
+					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 					xData[i] = pt.x;
 					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
 				}

@@ -122,7 +122,6 @@
 					args = arguments,
 					options,
 					ret,
-					returnChart,
 					chart;
 
 				if (isString(args[0])) {

@@ -350,7 +350,7 @@ extend(Chart.prototype, {
 			));
 
 		// merge the options
-		options = merge(exportingOptions, options);
+		options = merge(chart.options.exporting, options);
 		
 		// do the post
 		Highcharts.post(options.url, {
@@ -537,21 +537,14 @@ extend(Chart.prototype, {
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
 			onclick = btnOptions.onclick,
 			menuItems = btnOptions.menuItems,
-			//buttonWidth = btnOptions.width,
-			//buttonHeight = btnOptions.height,
-			//box,
 			symbol,
 			button,
-			//borderWidth = btnOptions.borderWidth,
-			/*boxAttr = {
-				stroke: btnOptions.borderColor
-
-			},*/
 			symbolAttr = {
 				stroke: btnOptions.symbolStroke,
 				fill: btnOptions.symbolFill
 			},
-			symbolSize = btnOptions.symbolSize || 12;
+			symbolSize = btnOptions.symbolSize || 12,
+			menuKey;
 
 		if (!chart.btnCount) {
 			chart.btnCount = 0;
