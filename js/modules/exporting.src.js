@@ -255,12 +255,6 @@ extend(Chart.prototype, {
 			});
 
 			if (!seriesOptions.isInternal) { // used for the navigator series that has its own option set
-
-				// remove image markers
-				if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) {
-					seriesOptions.marker.symbol = 'circle';
-				}
-
 				options.series.push(seriesOptions);
 			}
 		});
@@ -356,7 +350,7 @@ extend(Chart.prototype, {
 			));
 
 		// merge the options
-		options = merge(chart.options.exporting, options);
+		options = merge(exportingOptions, options);
 		
 		// do the post
 		Highcharts.post(options.url, {
@@ -558,6 +552,11 @@ extend(Chart.prototype, {
 				fill: btnOptions.symbolFill
 			},
 			symbolSize = btnOptions.symbolSize || 12;
+
+		if (!chart.btnCount) {
+			chart.btnCount = 0;
+		}
+		menuKey = chart.btnCount++;
 
 		// Keeps references to the button elements
 		if (!chart.exportDivElements) {

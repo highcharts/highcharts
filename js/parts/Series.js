@@ -10,6 +10,7 @@ Point.prototype = {
 	 * @param {Object} options The data in either number, array or object format
 	 */
 	init: function (series, options, x) {
+
 		var point = this,
 			defaultColors;
 		point.series = series;
@@ -427,8 +428,10 @@ Point.prototype = {
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
+			pointMarker = point.marker || {},
 			chart = series.chart,
 			radius,
+			newSymbol,
 			pointAttr = point.pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
@@ -464,9 +467,18 @@ Point.prototype = {
 			// graphic for the hover state
 			if (state && markerStateOptions) {
 				radius = markerStateOptions.radius;
-				if (!stateMarkerGraphic) { // add
+				newSymbol = pointMarker.symbol || series.symbol;
+
+				// If the point has another symbol than the previous one, throw away the 
+				// state marker graphic and force a new one (#1459)
+				if (stateMarkerGraphic && stateMarkerGraphic.currentSymbol !== newSymbol) {				
+					stateMarkerGraphic = stateMarkerGraphic.destroy();
+				}
+
+				// Add a new state marker graphic
+				if (!stateMarkerGraphic) {
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
-						series.symbol,
+						newSymbol,
 						plotX - radius,
 						plotY - radius,
 						2 * radius,
@@ -474,8 +486,10 @@ Point.prototype = {
 					)
 					.attr(pointAttr[state])
 					.add(series.markerGroup);
+					stateMarkerGraphic.currentSymbol = newSymbol;
 				
-				} else { // update
+				// Move the existing graphic
+				} else {
 					stateMarkerGraphic.attr({ // #1054
 						x: plotX - radius,
 						y: plotY - radius
@@ -867,6 +881,7 @@ Series.prototype = {
 	 */
 	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
+			seriesOptions = series.options,
 			data = series.data,
 			graph = series.graph,
 			area = series.area,
@@ -875,8 +890,9 @@ Series.prototype = {
 			yData = series.yData,
 			zData = series.zData,
 			currentShift = (graph && graph.shift) || 0,
-			dataOptions = series.options.data,
-			point;
+			dataOptions = seriesOptions.data,
+			point,
+			proto = series.pointClass.prototype;
 
 		setAnimation(animation, chart);
 
@@ -903,6 +919,10 @@ Series.prototype = {
 		zData.push(point.z);
 		dataOptions.push(options);
 
+		// Generate points to be added to the legend (#1329) 
+		if (seriesOptions.legendType === 'point') {
+			series.generatePoints();
+		}
 
 		// Shift the first point off the parallel arrays
 		// todo: consider series.removePoint(i) method
@@ -1004,11 +1024,12 @@ Series.prototype = {
 			}*/
 		} else {
 			for (i = 0; i < dataLength; i++) {
-				pt = { series: series };
-				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-				xData[i] = pt.x;
-				yData[i] = hasToYData ? series.toYData(pt) : pt.y;
-				zData[i] = pt.z; 
+				if (data[i] !== UNDEFINED) { // stray commas in oldIE
+					pt = { series: series };
+					pointProto.applyOptions.apply(pt, [data[i]]);
+					xData[i] = pt.x;
+					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
+				}
 			}
 		}
 		
@@ -1609,7 +1630,7 @@ Series.prototype = {
 				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
 				
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
@@ -1947,7 +1968,7 @@ Series.prototype = {
 				'dataLabelsGroup', 
 				'data-labels', 
 				series.visible ? VISIBLE : HIDDEN, 
-				6
+				options.zIndex || 6
 			);
 			
 			// Make the labels for each point
@@ -1960,6 +1981,7 @@ Series.prototype = {
 					attr,
 					name,
 					rotation,
+					connector = point.connector,
 					isNew = true;
 				
 				// Determine if each data label is enabled
@@ -1993,12 +2015,21 @@ Series.prototype = {
 					
 					// update existing label
 					if (dataLabel) {
-						// vertically centered
-						dataLabel
-							.attr({
-								text: str
-							});
-						isNew = false;
+						
+						if (defined(str)) {
+							dataLabel
+								.attr({
+									text: str
+								});
+							isNew = false;
+						
+						} else { // #1437 - the label is shown conditionally
+							point.dataLabel = dataLabel = dataLabel.destroy();
+							if (connector) {
+								point.connector = connector.destroy();
+							}
+						}
+						
 					// create new label
 					} else if (defined(str)) {
 						attr = {
@@ -2083,8 +2114,8 @@ Series.prototype = {
 		
 		// Show or hide based on the final aligned position
 		dataLabel.attr({
-			visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
-				(hasSVG ? 'inherit' : VISIBLE) : 
+			visibility: options.crop === false || /*chart.isInsidePlot(alignAttr.x, alignAttr.y) || */chart.isInsidePlot(plotX, plotY, inverted) ?
+				(chart.renderer.isSVG ? 'inherit' : VISIBLE) : 
 				HIDDEN
 		});
 				
@@ -2116,7 +2147,7 @@ Series.prototype = {
 				// step line?
 				if (step && i) {
 					lastPoint = segment[i - 1];
-					if (step === 'right') { // docs
+					if (step === 'right') {
 						segmentPath.push(
 							lastPoint.plotX,
 							plotY

@@ -1,9 +1,6 @@
 $(function () {
     $('#container').highcharts({
 
-        chart: {
-        },
-
         title: {
             text: 'Custom tick positions'
         },
@@ -17,12 +14,12 @@ $(function () {
         },
 
         yAxis: {
-            tickPositioner: function (min, max) {
+            tickPositioner: function () {
                 var positions = [],
-                    tick = Math.floor(min),
-                    increment = Math.ceil((max - min) / 6);
+                    tick = Math.floor(this.dataMin),
+                    increment = Math.ceil((this.dataMax - this.dataMin) / 6);
 
-                for (; tick - increment <= max; tick += increment) {
+                for (; tick - increment <= this.dataMax; tick += increment) {
                     positions.push(tick);
                 }
                 return positions;

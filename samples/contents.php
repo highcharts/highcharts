@@ -134,11 +134,13 @@ elseif ($product == 'highstock') $dir = 'stock';
 							$batchClass = 'class="batch"';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
 								$yaml = file_get_contents((dirname(__FILE__) ."/$dir/$file/$innerFile/demo.details"));
+								$suffix = '';
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
+									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
 								echo "
-								<li id='li$i'>$i. <a target='main' id='i$i' $batchClass href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a></li>
+								<li id='li$i'>$i. $suffix <a target='main' id='i$i' $batchClass href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a> </li>
 								";
 								$i++;
 							}

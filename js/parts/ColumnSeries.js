@@ -155,7 +155,7 @@ var ColumnSeries = extendClass(Series, {
 					barY =
 						mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
+							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0); // use exact yAxis.translation (#1485)
 				}
 			}
 
@@ -253,7 +253,7 @@ var ColumnSeries = extendClass(Series, {
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i].onMouseOver(event);
+				points[event.target._i + series.cropStart].onMouseOver();
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {

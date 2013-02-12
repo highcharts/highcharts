@@ -4,7 +4,8 @@ $(function () {
     	$('#container').highcharts({
     	
 		    chart: {
-		        type: 'arearange'
+		        type: 'arearange',
+		        zoomType: 'x'
 		    },
 		    
 		    title: {

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.3 (2012-10-04)
+ * @license Highcharts JS v2.3.5 (2012-12-19)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -874,7 +874,8 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		style: {
 			fontWeight: 'bold'
 		},
-		verticalAlign: 'top'
+		verticalAlign: 'top',
+		zIndex: 2
 	},
 	dial: {
 		// radius: '80%',
@@ -940,18 +941,26 @@ var GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
+			options = series.options,
 			center = yAxis.center;
 			
 		series.generatePoints();
 		
 		each(series.points, function (point) {
 			
-			var dialOptions = merge(series.options.dial, point.dial),
+			var dialOptions = merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
-				topWidth = dialOptions.topWidth || 1;
+				topWidth = dialOptions.topWidth || 1,
+				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
+
+			// Handle the wrap option // docs
+			if (options.wrap === false) {
+				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
+			}
+			rotation = rotation * 180 / Math.PI;
 				
 			point.shapeType = 'path';
 			point.shapeArgs = {
@@ -968,7 +977,7 @@ var GaugeSeries = {
 				],
 				translateX: center[0],
 				translateY: center[1],
-				rotation: (yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true)) * 180 / Math.PI
+				rotation: rotation
 			};
 			
 			// Positions for data label

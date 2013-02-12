@@ -100,23 +100,29 @@
 	init: function (options) {
 		this.options = options;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
-		
-		
-		// Parse a CSV string if options.csv is given
-		this.parseCSV();
-		
-		// Parse a HTML table if options.table is given
-		this.parseTable();
 
-		// Parse a Google Spreadsheet 
-		this.parseGoogleSpreadsheet();
+		// No need to parse or interpret anything
+		if (this.columns.length) {
+			this.dataFound();
+
+		// Parse and interpret
+		} else {
+
+			// Parse a CSV string if options.csv is given
+			this.parseCSV();
+			
+			// Parse a HTML table if options.table is given
+			this.parseTable();
+
+			// Parse a Google Spreadsheet 
+			this.parseGoogleSpreadsheet();	
+		}
 
 	},
 
-	/**
-	 * Proceed when the data is found and loaded
-	 */
 	dataFound: function () {
+		// Handle raw data if a callback is given
+		this.raw();
 		
 		// Interpret the values into right types
 		this.parseTypes();
@@ -165,8 +171,7 @@
 						}
 					});
 				}
-			});
-
+			}); 
 			this.dataFound();
 		}
 	},
@@ -206,223 +211,8 @@
 				}
 			});
 
-			this.dataFound();
+			this.dataFound(); // continue
 		}
-	},
-	
-	/**
-	 * Parse an SVG path into a simplified array that Highcharts can read
-	 */
-	pathToArray: function (path, translate) {
-		
-		var i = 0,
-			position = 0,
-			positions,
-			fixedPoint = [0, 0],
-			isRelative,
-			isString,
-			operator;
-		path = path
-			// Move letters apart
-			.replace(/([A-Za-z])/g, ' $1 ')
-			// Add space before minus
-			.replace(/-/g, ' -')
-			// Trim
-			.replace(/^\s*/, "").replace(/\s*$/, "")
-		
-			// Split on spaces, minus and commas
-			.split(/[ ,]+/);
-		
-		// Blank path
-		if (path.length === 1) {
-			return [];	
-		}
-		
-		// Real path
-		for (i = 0; i < path.length; i++) {
-			isString = /[a-zA-Z]/.test(path[i]);
-			
-			// Handle strings
-			if (isString) {
-				operator = path[i];
-				positions = 2;
-				
-				// Curves have six positions
-				if (operator === 'c' || operator === 'C') {
-					positions = 6;
-				}
-				
-				// Enter or exit relative mode
-				if (operator === 'm' || operator === 'l' || operator === 'c') {
-					path[i] = operator.toUpperCase();
-					isRelative = true;
-				} else if (operator === 'M' || operator === 'L' || operator === 'C') {
-					isRelative = false;
-				
-				
-				// Horizontal and vertical line to
-				} else if (operator === 'h') {
-					isRelative = true;
-					path[i] = 'L';
-					path.splice(i + 2, 0, 0);
-				} else if (operator === 'v') {
-					isRelative = true;
-					path[i] = 'L';
-					path.splice(i + 1, 0, 0);
-				} else if (operator === 'H' || operator === 'h') {
-					isRelative = false;
-					path[i] = 'L';
-					path.splice(i + 2, 0, fixedPoint[1]);
-				} else if (operator === 'V' || operator === 'v') {
-					isRelative = false;
-					path[i] = 'L';
-					path.splice(i + 1, 0, fixedPoint[0]);
-				}
-			
-			// Handle numbers
-			} else {
-				
-				path[i] = parseFloat(path[i]);
-				if (isRelative) {
-					path[i] += fixedPoint[position % 2];
-				
-				} 
-				if (translate && (!isRelative || (operator === 'm' && i < 3))) { // only translate absolute points or initial moveTo
-					path[i] += translate[position % 2];
-				}
-				
-				path[i] = Math.round(path[i] * 100) / 100;
-				
-				// Set the fixed point for the next pair
-				if (position === positions - 1) {
-					fixedPoint = [path[i - 1], path[i]];
-				}
-				
-				// Reset to zero position (x/y switching)
-				if (position === positions - 1) {
-					position = 0;
-				} else {
-					position += 1;
-				}
-			}
-		}
-		return path;
-	},
-	
-	/**
-	 * Load an SVG file and extract the paths
-	 * @param {Object} url
-	 */
-	loadSVG: function () {
-		
-		var data = this,
-			options = this.options;
-		
-		function getTranslate(elem) {
-			var transform = elem.getAttribute('transform'),
-				translate = transform && transform.match(/translate\(([0-9\-\. ]+),([0-9\-\. ]+)\)/);
-			
-			return translate && [parseFloat(translate[1]), parseFloat(translate[2])]; 
-		}
-		
-		function getName(elem) {
-			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
-		}
-		
-		jQuery.ajax({
-			url: options.svg,
-			dataType: 'xml',
-			success: function (xml) {
-				var arr = [],
-					currentParent,
-					allPaths = xml.getElementsByTagName('path'),
-					commonLineage,
-					lastCommonAncestor,
-					handleGroups,
-					defs = xml.getElementsByTagName('defs')[0],
-					clipPaths;
-					
-				// Skip clip paths
-				clipPaths = defs && defs.getElementsByTagName('path');
-				if (clipPaths) {
-					each(clipPaths, function (path) {
-						path.skip = true;
-					});
-				}
-				
-				// If not all paths belong to the same group, handle groups
-				each(allPaths, function (path, i) {
-					if (!path.skip) {
-						var itemLineage = [],
-							parentNode,
-							j;
-						
-						if (i > 0 && path.parentNode !== currentParent) {
-							handleGroups = true;
-						}
-						currentParent = path.parentNode;
-						
-						// Handle common lineage
-						parentNode = path;
-						while (parentNode) {
-							itemLineage.push(parentNode);
-							parentNode = parentNode.parentNode;
-						}
-						itemLineage.reverse();
-						
-						if (!commonLineage) {
-							commonLineage = itemLineage; // first iteration
-						} else {
-							for (j = 0; j < commonLineage.length; j++) {
-								if (commonLineage[j] !== itemLineage[j]) {
-									commonLineage.slice(0, j);
-								}
-							}
-						}
-					}
-				});
-				lastCommonAncestor = commonLineage[commonLineage.length - 1];
-				
-				// Iterate groups to find sub paths
-				if (handleGroups) {
-					each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
-						var groupPath = [],
-							translate = getTranslate(g);
-						
-						each(g.getElementsByTagName('path'), function (path) {
-							if (!path.skip) {
-								groupPath = groupPath.concat(
-									data.pathToArray(path.getAttribute('d'), translate)
-								);
-								
-								path.skip = true;
-							}
-						});
-						arr.push({
-							name: getName(g),
-							path: groupPath
-						});
-					});
-				}
-				
-				// Iterate the remaining paths that are not parts of groups
-				each(allPaths, function (path) {
-					if (!path.skip) {
-						arr.push({
-							name: getName(path),
-							path: data.pathToArray(path.getAttribute('d'), getTranslate(path))
-						});
-					}			
-				});
-				
-				// Do the callback
-				options.complete({
-					series: [{
-						data: arr
-					}]
-				});
-			}
-		});
 	},
 
 	/**
@@ -494,7 +284,7 @@
 	 * Trim a string from whitespace
 	 */
 	trim: function (str) {
-		//return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, '');
+		//return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, ''); // fails with spreadsheet
 		return typeof str === 'string' ? str.replace(/^\s+|\s+$/g, '') : str;
 	},
 	
@@ -537,21 +327,47 @@
 						columns[col].isDatetime = true;
 					
 					} else { // string
-						columns[col][row] = trimVal;
+						columns[col][row] = trimVal === '' ? null : trimVal;
 					}
 				}
 				
 			}
-		}		
+		}
 	},
-	
+	//*
+	dateFormats: {
+		'YYYY-mm-dd': {
+			regex: '^([0-9]{4})-([0-9]{2})-([0-9]{2})$',
+			parser: function (match) {
+				return Date.UTC(+match[1], match[2] - 1, +match[3]);
+			}
+		}
+	},
+	// */
 	/**
 	 * Parse a date and return it as a number. Overridable through options.parseDate.
 	 */
 	parseDate: function (val) {
-		var parseDate = this.options.parseDate;
-		
-		return parseDate ? parseDate(val) : Date.parse(val);
+		var parseDate = this.options.parseDate,
+			ret,
+			key,
+			format,
+			match;
+
+		if (parseDate) {
+			ret = parseDate;
+		}
+			
+		if (typeof val === 'string') {
+			for (key in this.dateFormats) {
+				format = this.dateFormats[key];
+				match = val.match(format.regex);
+				if (match) {
+					ret = format.parser(match);
+				}
+			}
+		}
+		return ret;
 	},
 	
 	/**
@@ -578,6 +394,15 @@
 			}
 		}
 		return columns;
+	},
+
+	/**
+	 * A hook for working directly on the parsed columns structure but before the cell values have types.
+	 */
+	raw: function () {
+		if (this.options.raw) {
+			this.options.raw.call(this, this.columns);
+		}
 	},
 	
 	/**
@@ -672,10 +497,24 @@
 	Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptions, callback) {
 		var chart = this;
 
-		if (userOptions.data) {
+		if (userOptions && userOptions.data) {
 			Highcharts.data(Highcharts.extend(userOptions.data, {
-				complete: function (options) {
-					userOptions = Highcharts.merge(userOptions, options);
+				complete: function (dataOptions) {
+					var datasets = []; 
+					
+					// Don't merge the data arrays themselves
+					each(dataOptions.series, function (series, i) {
+						datasets[i] = series.data;
+						series.data = null;
+					});
+					
+					// Do the merge
+					userOptions = Highcharts.merge(dataOptions, userOptions);
+					
+					// Re-insert the data
+					each(datasets, function (data, i) {
+						userOptions.series[i].data = data;
+					});
 					proceed.call(chart, userOptions, callback);
 				}
 			}));

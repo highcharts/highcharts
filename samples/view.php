@@ -74,6 +74,8 @@ function getResources() {
 		<script type="text/javascript">
 			$(function() {
 				
+				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+				
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document;
 					
@@ -129,6 +131,8 @@ function getResources() {
 	<body style="margin: 0">
 		
 		<div class="top-bar">
+			
+			<div id="version" style="float:right; color: white"></div>
 			
 			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2> 
 			

@@ -130,10 +130,8 @@ SVGElement.prototype = {
 							}
 						}
 
-						if (wrapper.rotation) {
-							attr(element, 'transform', 'rotate(' + wrapper.rotation + ' ' + value + ' ' +
-								pInt(hash.y || attr(element, 'y')) + ')');
-						}
+					} else if (wrapper.rotation && (key === 'x' || key === 'y')) {
+						doTransform = true;
 
 					// apply gradients
 					} else if (key === 'fill') {
@@ -215,9 +213,20 @@ SVGElement.prototype = {
 						key = 'stroke-width';
 					}
 
-					// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)
-					if (isWebKit && key === 'stroke-width' && value === 0) {
-						value = 0.000001;
+					// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
+					// width is 0. #1369
+					if (key === 'stroke-width' || key === 'stroke') {
+						wrapper[key] = value;
+						// Only apply the stroke attribute if the stroke width is defined and larger than 0
+						if (wrapper.stroke && wrapper['stroke-width']) {
+							attr(element, 'stroke', wrapper.stroke);
+							attr(element, 'stroke-width', wrapper['stroke-width']);
+							wrapper.hasStroke = true;
+						} else if (key === 'stroke-width' && value === 0 && wrapper.hasStroke) {
+							element.removeAttribute('stroke');
+							wrapper.hasStroke = false;
+						}
+						skipAttr = true;
 					}
 
 					// symbols
@@ -253,12 +262,7 @@ SVGElement.prototype = {
 					// Record for animation and quick access without polling the DOM
 					wrapper[key] = value;
 					
-					// Update transform
-					if (doTransform) {
-						wrapper.updateTransform();
-					}
-
-
+					
 					if (key === 'text') {
 						// Delete bBox memo when the text changes
 						if (value !== wrapper.textStr) {
@@ -274,6 +278,12 @@ SVGElement.prototype = {
 
 				}
 
+			}
+
+			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
+			// of attributes.
+			if (doTransform) {
+				wrapper.updateTransform();
 			}
 
 		}
@@ -820,8 +830,8 @@ SVGElement.prototype = {
 				width = bBox.width;
 				height = bBox.height;
 				
-				// Workaround for wrong bounding box in IE9 and IE10 (#1101)
-				if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505)
+				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === 22.7) {
 					bBox.height = height = 14;
 				}
 			
@@ -1648,6 +1658,7 @@ SVGRenderer.prototype = {
 				options
 			),
 
+			imageElement,
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
@@ -1674,23 +1685,25 @@ SVGRenderer.prototype = {
 
 			// On image load, set the size and position
 			centerImage = function (img, size) {
-				img.attr({
-					width: size[0],
-					height: size[1]
-				});
+				if (img.element) { // it may be destroyed in the meantime (#1390)
+					img.attr({
+						width: size[0],
+						height: size[1]
+					});
 
-				if (!img.alignByTranslate) { // #185
-					img.translate(
-						-mathRound(size[0] / 2),
-						-mathRound(size[1] / 2)
-					);
+					if (!img.alignByTranslate) { // #185
+						img.translate(
+							mathRound((width - size[0]) / 2), // #1378
+							mathRound((height - size[1]) / 2)
+						);
+					}
 				}
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
 			imageSize = symbolSizes[imageSrc];
 
-			// create the image synchronously, add attribs async
+			// Ireate the image synchronously, add attribs async
 			obj = this.image(imageSrc)
 				.attr({
 					x: x,
@@ -1700,15 +1713,15 @@ SVGRenderer.prototype = {
 			if (imageSize) {
 				centerImage(obj, imageSize);
 			} else {
-				// initialize image to be 0 size so export will still function if there's no cached sizes
+				// Initialize image to be 0 size so export will still function if there's no cached sizes.
+				// 
 				obj.attr({ width: 0, height: 0 });
 
-				// create a dummy JavaScript image to get the width and height
-				createElement('img', {
+				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
+				// the created element must be assigned to a variable in order to load (#292).
+				imageElement = createElement('img', {
 					onload: function () {
-						var img = this;
-
-						centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]);
+						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
 					},
 					src: imageSrc
 				});
@@ -2193,7 +2206,8 @@ SVGRenderer.prototype = {
 		 * box and reflect it in the border box.
 		 */
 		function updateBoxSize() {
-			var boxY,
+			var boxX,
+				boxY,
 				style = text.element.style;
 				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
@@ -2208,11 +2222,12 @@ SVGRenderer.prototype = {
 				
 				// create the border box if it is not already present
 				if (!box) {
+					boxX = mathRound(-alignFactor * padding);
 					boxY = baseline ? -baselineOffset : 0;
 				
 					wrapper.box = box = shape ?
-						renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
-						renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height) :
+						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 					box.add(wrapper);
 				}
 	
@@ -2369,7 +2384,7 @@ SVGRenderer.prototype = {
 		};
 		attrSetters.y = function (value) {
 			wrapperY = wrapper.y = mathRound(value);
-			wrapper.attr('translateY', value);
+			wrapper.attr('translateY', wrapperY);
 			return false;
 		};
 

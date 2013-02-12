@@ -578,6 +578,7 @@ Legend.prototype = {
 			this.scrollGroup.attr({
 				translateY: 1
 			});
+			this.clipHeight = 0; // #1379
 		}
 		
 		return legendHeight;

@@ -1,7 +1,7 @@
 $(function () {
     	
     	// First, let's make the colors transparent
-    	Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function (color) {
+    	Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
     		return Highcharts.Color(color)
     			.setOpacity(0.5)
     			.get('rgba');
