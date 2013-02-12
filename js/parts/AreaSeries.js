@@ -57,10 +57,10 @@ var AreaSeries = extendClass(Series, {
 			segments = [segments];
 
 		} else {
-			segments = Series.prototype.getSegments.call(this);	
+			Series.prototype.getSegments.call(this);
+			segments = this.segments;
 		}
 		this.segments = segments;
-		
 	},
 	
 	/**
