@@ -122,6 +122,7 @@
 					args = arguments,
 					options,
 					ret,
+					returnChart,
 					chart;
 
 				if (isString(args[0])) {
@@ -130,18 +131,21 @@
 				}
 				options = args[0];
 
-				// When called without parameters, get a predefined chart
-				if (options === UNDEFINED) {
-					ret = charts[attr(this[0], 'data-highcharts-chart')];
-
 				// Create the chart
-				} else {
+				if (options !== UNDEFINED) {
 					/*jslint unused:false*/
 					options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
 					chart = new Highcharts[constr](options, args[1]);
 					ret = this;
 					/*jslint unused:true*/
 				}
+
+				// When called without parameters or with the return argument, get a predefined chart
+				if (options === UNDEFINED || args[2] === true) {
+					ret = charts[attr(this[0], 'data-highcharts-chart')];
+				}	
+
+				
 				return ret;
 			};
 

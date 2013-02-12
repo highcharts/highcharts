@@ -22,10 +22,7 @@ $(function () {
             yAxis: {
                 title: {
                     text: 'Exchange rate'
-                },
-                min: 0.6,
-                startOnTick: false,
-                showFirstLabel: false
+                }
             },
             tooltip: {
                 shared: true
@@ -44,20 +41,15 @@ $(function () {
                     },
                     lineWidth: 1,
                     marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: true,
-                                radius: 5
-                            }
-                        }
+                        enabled: false
                     },
                     shadow: false,
                     states: {
                         hover: {
                             lineWidth: 1
                         }
-                    }
+                    },
+                    threshold: null
                 }
             },
     

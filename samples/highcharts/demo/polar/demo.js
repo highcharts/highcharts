@@ -1,6 +1,6 @@
 $(function () {
     
-    window.$('#container').highcharts({
+    $('#container').highcharts({
         
 	    chart: {
 	        polar: true

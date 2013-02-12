@@ -1,7 +1,7 @@
 $(function () {
         
     // Build the chart
-    window.$('#container').highcharts({
+    $('#container').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,

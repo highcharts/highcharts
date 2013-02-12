@@ -1,6 +1,6 @@
 $(function () {
 
-	window.$('#container').highcharts({
+	$('#container').highcharts({
 	            
 	    chart: {
 	        polar: true,
@@ -31,7 +31,7 @@ $(function () {
 	    
 	    tooltip: {
 	    	shared: true,
-	        valuePrefix: '$'
+	        pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
 	    },
 	    
 	    legend: {

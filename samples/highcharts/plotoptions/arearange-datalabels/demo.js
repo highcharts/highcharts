@@ -4,7 +4,7 @@ $(function () {
     	// Shorten the data
     	data = data.splice(181, 14);
   
-    	window.$('#container').highcharts({
+    	$('#container').highcharts({
     	
 		    chart: {
 		        type: 'arearange'

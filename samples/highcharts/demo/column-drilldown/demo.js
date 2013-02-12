@@ -63,7 +63,7 @@ $(function () {
 			chart.redraw();
         }
     
-        $('#container').highcharts({
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'column'
             },
@@ -128,6 +128,6 @@ $(function () {
             exporting: {
                 enabled: false
             }
-        });
+        }, null, true);
     });
     
