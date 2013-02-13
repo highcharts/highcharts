@@ -45,7 +45,7 @@
  * A Google Spreadsheet key. See https://developers.google.com/gdata/samples/spreadsheet_sample
  * for general information on GS.
  *
- * - googleSpreadsheetKey : String 
+ * - googleSpreadsheetWorksheet : String 
  * The Google Spreadsheet worksheet. The available id's can be read from 
  * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
  *

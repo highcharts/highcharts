@@ -18,11 +18,11 @@ $(function () {
         
         exporting: {
             buttons: {
-                exportButton: {
-                    menuItems: null,
-                    onclick: function() {
-                        this.exportChart();
-                    }
+                contextButton: {
+                    symbol: 'circle',
+                    symbolStrokeWidth: 1,
+                    symbolFill: '#bada55',
+                    symbolStroke: '#330033'
                 }
             }
         }

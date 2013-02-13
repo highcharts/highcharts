@@ -14,8 +14,22 @@ $(function () {
         
         navigation: {
             buttonOptions: {
-                backgroundColor: 'white'
+                theme: {
+                    'stroke-width': 1,
+                    stroke: 'silver',
+                    r: 0,
+                    states: {
+                        hover: {
+                            fill: '#bada55'
+                        },
+                        select: {
+                            stroke: '#039',
+                            fill: '#bada55'
+                        }
+                    }
+                }
             }
         }
+        
     });
 });

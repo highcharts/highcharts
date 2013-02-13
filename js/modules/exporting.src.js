@@ -532,7 +532,6 @@ extend(Chart.prototype, {
 	 * Add the export button to the chart
 	 */
 	addButton: function (options) {
-
 		var chart = this,
 			renderer = chart.renderer,
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
@@ -593,7 +592,7 @@ extend(Chart.prototype, {
 
 
 		if (btnOptions.text && btnOptions.symbol) {
-			attr.paddingLeft = 20;
+			attr.paddingLeft = Highcharts.pick(attr.paddingLeft, 25);
 		
 		} else if (!btnOptions.text) {
 			extend(attr, {

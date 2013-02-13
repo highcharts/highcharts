@@ -14,7 +14,8 @@ $(function () {
         
         exporting: {
             buttons: {
-                exportButton: {
+                contextButton: {
+                    symbol: 'circle',
                     symbolFill: 'blue'
                 }
             }

@@ -18,7 +18,7 @@ $(function () {
         
         exporting: {
             buttons: {
-                exportButton: {
+                contextButton: {
                     menuItems: [{
                         text: 'Export to PNG (small)',
                         onclick: function() {
@@ -29,12 +29,14 @@ $(function () {
                     }, {
                         text: 'Export to PNG (large)',
                         onclick: function() {
-                            this.exportChart(); // 800px by default
-                        }
-                    },
-                    null, 
-                    null
-                    ]
+                            this.exportChart();
+                        },
+                        separator: false
+                    }, 
+                    null,
+                    null,
+                    null,
+                    null]
                 }
             }
         }
