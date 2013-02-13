@@ -101,7 +101,7 @@ var SplineSeries = extendClass(Series, {
 				})
 				.add();
 		}
-		// */
+		*/
 
 		// moveTo or lineTo
 		if (!i) {
