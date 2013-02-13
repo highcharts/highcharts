@@ -2235,22 +2235,20 @@ Series.prototype = {
 				stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 	
-			} else {
-				if (lineWidth) {
-					attribs = {
-						stroke: prop[1],
-						'stroke-width': lineWidth,
-						zIndex: 1 // #1069
-					};
-					if (dashStyle) {
-						attribs.dashstyle = dashStyle;
-					}
-	
-					series[graphKey] = series.chart.renderer.path(graphPath)
-						.attr(attribs)
-						.add(series.group)
-						.shadow(!i && options.shadow);
+			} else if (lineWidth && graphPath.length) { // #1487
+				attribs = {
+					stroke: prop[1],
+					'stroke-width': lineWidth,
+					zIndex: 1 // #1069
+				};
+				if (dashStyle) {
+					attribs.dashstyle = dashStyle;
 				}
+
+				series[graphKey] = series.chart.renderer.path(graphPath)
+					.attr(attribs)
+					.add(series.group)
+					.shadow(!i && options.shadow);
 			}
 		});
 	},
