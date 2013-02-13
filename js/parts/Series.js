@@ -1277,8 +1277,8 @@ Series.prototype = {
 	 */
 	setStackedPoints: function () {
 		var series = this,
-			xData = series.xData,
-			yData = series.yData,
+			xData = series.processedXData,
+			yData = series.processedYData,
 			yDataLength = yData.length,
 			seriesOptions = series.options,
 			threshold = seriesOptions.threshold,

@@ -219,6 +219,7 @@ Chart.prototype = {
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
+			hasDirtyStacks,
 			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
@@ -236,12 +237,17 @@ Chart.prototype = {
 		// link stacked series
 		while (i--) {
 			serie = series[i];
-			if (serie.isDirty && serie.options.stacking) {
+
+			if (serie.options.stacking) {
 				hasStackedSeries = true;
-				break;
+				
+				if (serie.isDirty) {
+					hasDirtyStacks = true;
+					break;
+				}
 			}
 		}
-		if (hasStackedSeries) { // mark others as dirty
+		if (hasDirtyStacks) { // mark others as dirty
 			i = seriesLength;
 			while (i--) {
 				serie = series[i];
@@ -249,8 +255,10 @@ Chart.prototype = {
 					serie.isDirty = true;
 				}
 			}
+		}
 
-			// render stacks
+		// render stacks
+		if (hasStackedSeries) {
 			chart.getStacks();
 		}
 
@@ -525,15 +533,10 @@ Chart.prototype = {
 			}
 
 			var seriesOptions = series.options,
-				stackOption,
-				stackKey;
+				stackOption = seriesOptions.stack,
+				stackKey = series.type + pick(stackOption, '');
 
-			// create a stack for this particular series type
-			stackOption = seriesOptions.stack;
-			stackKey = series.type + pick(stackOption, '');
 			series.stackKey = stackKey; // used in translate
-
-			series.setStackedPoints();
 		});
 	},
 
@@ -1314,14 +1317,14 @@ Chart.prototype = {
 		// Legend
 		chart.legend = new Legend(chart, options.legend);
 
-		// render stacks
-		chart.getStacks();
+		chart.getStacks(); // render stacks
 
 		// Get margins by pre-rendering axes
 		// set axes scales
 		each(axes, function (axis) {
 			axis.setScale();
 		});
+
 		chart.getMargins();
 
 		chart.maxTicks = null; // reset for second pass
