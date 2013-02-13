@@ -393,6 +393,7 @@ extend(Chart.prototype, {
 		body.appendChild(container);
 
 		// print
+		win.focus(); // #1510
 		win.print();
 
 		// allow the browser to prepare before reverting
