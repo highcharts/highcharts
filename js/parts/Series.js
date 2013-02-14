@@ -1286,9 +1286,12 @@ Series.prototype = {
 			stacking = seriesOptions.stacking,
 			stackKey = series.stackKey,
 			negKey = '-' + stackKey,
-			axis = series.yAxis,
-			stacks = axis.stacks,
-			stacksMax = axis.stacksMax,
+			yAxis = series.yAxis,
+			xAxis = series.xAxis,
+			stacks = yAxis.stacks,
+			cropped = series.cropped,
+			stacksMax = yAxis.stacksMax,
+			xExtremes = xAxis.getExtremes(),
 			isNegative,
 			total,
 			stack,
@@ -1313,21 +1316,22 @@ Series.prototype = {
 				stacksMax[key] = y;
 			}
 
-			// If the StackItem is there, just update the values,
-			// if not, create one first
+			// If the StackItem doesn't exist, create it first
 			if (!stacks[key][x]) {
-				stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
+				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
 			}
 
-			stack = stacks[key][x];
-			total = stack.total;
+			if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
+				stack = stacks[key][x];
+				total = stack.total;
 
-			// add value to the stack total
-			stack.addValue(y);
-			stack.cacheExtremes(series, [total, total + y]);
+				// add value to the stack total
+				stack.addValue(y);
+				stack.cacheExtremes(series, [total, total + y]);
 
-			if (stack.total > stacksMax[key]) {
-				stacksMax[key] = stack.total;
+				if (stack.total > stacksMax[key]) {
+					stacksMax[key] = stack.total;
+				}
 			}
 		}
 	},
