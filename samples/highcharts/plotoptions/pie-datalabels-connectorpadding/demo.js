@@ -3,7 +3,9 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+        title: {
+            text: 'connectorPadding is set to zero'
+        },
         plotOptions: {
             pie: {
                 dataLabels: {
@@ -11,7 +13,7 @@ $(function () {
                 }
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

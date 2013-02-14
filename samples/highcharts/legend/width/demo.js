@@ -1,47 +1,47 @@
 $(function () {
     $('#container').highcharts({
-        
+
         chart: {
             marginBottom: 120,
             marginLeft: 80,
             width: 500
         },
-        
+
         legend: {
-            width: 400,
+            width: 300,
             floating: true,
             align: 'left',
             x: 70, // = marginLeft - default spacingLeft
-            itemWidth: 80
+            itemWidth: 70
         },
-        
+
         series: [{
             data: [6,4,2],
             name: 'First'
         }, {
             data: [7,3,2],
-            name: 'Second'   
+            name: 'Second'
         }, {
             data: [9,4,8],
-            name: 'Third'   
+            name: 'Third'
         }, {
             data: [1,2,6],
-            name: 'Fourth'        
+            name: 'Fourth'
         }, {
             data: [4,6,4],
-            name: 'Fifth'        
+            name: 'Fifth'
         }, {
             data: [1,2,7],
-            name: 'Sixth'        
+            name: 'Sixth'
         }, {
             data: [4,2,5],
-            name: 'Seventh'        
+            name: 'Seventh'
         }, {
             data: [8,3,2],
-            name: 'Eighth'        
+            name: 'Eighth'
         }, {
             data: [4,5,6],
-            name: 'Ninth'        
+            name: 'Ninth'
         }]
     });
 });
