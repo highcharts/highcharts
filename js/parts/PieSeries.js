@@ -544,7 +544,7 @@ var PieSeries = {
 								fill: 'silver'
 							}).add();
 					}
-					// */
+					*/
 				}
 				slotsLength = slots.length;
 	
