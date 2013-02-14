@@ -24,7 +24,7 @@ seriesProto.toXY = function (point) {
 	point.rectPlotY = plotY;
 	
 	// Record the angle in degrees for use in tooltip
-	point.deg = plotX / Math.PI * 180;
+	point.clientX = plotX / Math.PI * 180;
 	
 	// Find the polar plotX and plotY
 	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
@@ -292,8 +292,7 @@ wrap(seriesProto, 'setTooltipPoints', function (proceed, renew) {
 		
 	if (this.chart.polar) {
 		extend(this.xAxis, {
-			tooltipLen: 360, // degrees are the resolution unit of the tooltipPoints array
-			tooltipPosName: 'deg'
+			tooltipLen: 360 // degrees are the resolution unit of the tooltipPoints array
 		});	
 	}
 	

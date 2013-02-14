@@ -1259,7 +1259,6 @@ Series.prototype = {
 		}
 		this.generatePoints();
 		var series = this,
-			chart = series.chart,
 			options = series.options,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
@@ -1343,10 +1342,8 @@ Series.prototype = {
 				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				UNDEFINED;
 			
-			// set client related positions for mouse tracking
-			point.clientX = chart.inverted ?
-				chart.plotHeight - point.plotX :
-				point.plotX; // for mouse tracking
+			// Set client related positions for mouse tracking
+			point.clientX = placeBetween ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
 				
 			point.negative = point.y < (threshold || 0);
 
@@ -1371,7 +1368,6 @@ Series.prototype = {
 			high,
 			xAxis = series.xAxis,
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
-			plotX = (xAxis && xAxis.tooltipPosName) || 'plotX',
 			point,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
@@ -1404,7 +1400,7 @@ Series.prototype = {
 			low = points[i - 1] ? high + 1 : 0;
 			// Now find the new high
 			high = points[i + 1] ?
-				mathMax(0, mathFloor((point[plotX] + (points[i + 1] ? points[i + 1][plotX] : axisLength)) / 2)) :
+				mathMax(0, mathFloor((point.clientX + (points[i + 1] ? points[i + 1].clientX : axisLength)) / 2)) :
 				axisLength;
 
 			while (low >= 0 && low <= high) {
