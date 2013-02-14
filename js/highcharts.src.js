@@ -5897,7 +5897,7 @@ Tick.prototype = {
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
-			reverseCrisp = ((horiz && x === axis.pos) || (!horiz && y === axis.pos + axis.len)) ? -1 : 1, // #1480
+			reverseCrisp = ((horiz && x === axis.pos) || (!horiz && y === axis.pos + axis.len)) ? -1 : 1, // #1480
 			staggerLines = axis.staggerLines;
 
 		this.isActive = true;
@@ -12866,6 +12866,7 @@ Series.prototype = {
 					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 					xData[i] = pt.x;
 					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
+					zData[i] = pt.z;
 				}
 			}
 		}
@@ -15139,8 +15140,10 @@ var ColumnSeries = extendClass(Series, {
 		each(series.points, function (point) {
 			var plotY = point.plotY,
 				graphic = point.graphic;
+
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
+				
 				if (graphic) { // update
 					stop(graphic);
 					graphic.animate(merge(shapeArgs));

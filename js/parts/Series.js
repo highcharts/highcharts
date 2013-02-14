@@ -1028,6 +1028,7 @@ Series.prototype = {
 					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 					xData[i] = pt.x;
 					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
+					zData[i] = pt.z;
 				}
 			}
 		}
