@@ -6369,7 +6369,7 @@ Axis.prototype = {
 		tickPosition: 'outside',
 		tickWidth: 1,
 		title: {
-			//text: null, // docs: pulled from name, then text
+			//text: null,
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
@@ -6401,11 +6401,11 @@ Axis.prototype = {
 		lineWidth: 0,
 		maxPadding: 0.05,
 		minPadding: 0.05,
-		name: 'Values', // docs
 		startOnTick: true,
 		tickWidth: 0,
 		title: {
-			rotation: 270
+			rotation: 270,
+			text: 'Values' // docs
 		},
 		stackLabels: {
 			enabled: false,
@@ -6678,7 +6678,7 @@ Axis.prototype = {
 	/**
      * Remove the axis from the chart
      */
-	remove: function (redraw) { // docs
+	remove: function (redraw) {
 		var chart = this.chart;
 
 		// Remove associated series
@@ -9861,7 +9861,8 @@ Legend.prototype = {
 		
 		if (titleOptions.text) {
 			if (!this.title) {
-				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4)
+				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4, null, null, null, null, null, 'legend-title')
+					.attr({ zIndex: 1 })
 					.css(titleOptions.style)
 					.add(this.group);
 			}
@@ -10437,8 +10438,15 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
-			series = new seriesTypes[type]();
+			series,
+			constr = seriesTypes[type];
 
+		// No such series type
+		if (!constr) {
+			error(17, true);
+		}
+
+		series = new constr();
 		series.init(this, options);
 		return series;
 	},

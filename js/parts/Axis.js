@@ -76,7 +76,7 @@ Axis.prototype = {
 		tickPosition: 'outside',
 		tickWidth: 1,
 		title: {
-			//text: null, // docs: pulled from name, then text
+			//text: null,
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
@@ -108,11 +108,11 @@ Axis.prototype = {
 		lineWidth: 0,
 		maxPadding: 0.05,
 		minPadding: 0.05,
-		name: 'Values', // docs
 		startOnTick: true,
 		tickWidth: 0,
 		title: {
-			rotation: 270
+			rotation: 270,
+			text: 'Values' // docs
 		},
 		stackLabels: {
 			enabled: false,
@@ -385,7 +385,7 @@ Axis.prototype = {
 	/**
      * Remove the axis from the chart
      */
-	remove: function (redraw) { // docs
+	remove: function (redraw) {
 		var chart = this.chart;
 
 		// Remove associated series

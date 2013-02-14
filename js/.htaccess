@@ -12,3 +12,4 @@ RewriteRule ^stock/(.*?) /$1
 # Source files
 RewriteRule (.*?)exporting.js $1exporting.src.js
 RewriteRule (.*?)data.js $1data.src.js
+RewriteRule (.*?)funnel.js $1funnel.src.js

@@ -1463,6 +1463,12 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 
 // 1 - set default options
 defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
+	lineWidth: 1,
+	lineColor: '#333',
+	dashStyle: 'dot',
+	borderWidth: 1,
+	borderColor: '#333',
+	shadow: false
 });
 
 
@@ -1576,6 +1582,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 					shapeArgs.height = prevY - shapeArgs.y;
 				}
 			}
+			
 		}
 	},
 

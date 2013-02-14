@@ -116,8 +116,15 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
-			series = new seriesTypes[type]();
+			series,
+			constr = seriesTypes[type];
 
+		// No such series type
+		if (!constr) {
+			error(17, true);
+		}
+
+		series = new constr();
 		series.init(this, options);
 		return series;
 	},
