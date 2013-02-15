@@ -36,7 +36,10 @@ Tick.prototype = {
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
 			attr,
-			value = categories && defined(categories[pos]) ? categories[pos] : pos,
+			//value = categories && defined(categories[pos]) ? categories[pos] : pos,
+			value = categories ? 
+				pick(categories[pos], axis.series[0] && axis.series[0].names && axis.series[0].names[pos], pos) : 
+				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
 			dateTimeLabelFormat;

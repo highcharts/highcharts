@@ -959,6 +959,7 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
+			names = xAxis && xAxis.categories && !xAxis.categories.length ? [] : false,
 			i;
 
 		// reset properties
@@ -1029,6 +1030,9 @@ Series.prototype = {
 					xData[i] = pt.x;
 					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
 					zData[i] = pt.z;
+					if (names && pt.name) {
+						names[i] = pt.name;
+					}
 				}
 			}
 		}
@@ -1049,6 +1053,7 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 		series.zData = zData;
+		series.names = names;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
