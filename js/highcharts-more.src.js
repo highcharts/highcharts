@@ -1457,6 +1457,19 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 
 		// remember series' stack key
 		visitedStacks.push(series.stackKey);
+
+
+
+		// Adjust to threshold. This code is duplicated from the parent getSeriesExtremes method.
+		if (typeof threshold === 'number') {
+			if (axis.dataMin >= threshold) {
+				axis.dataMin = threshold;
+				axis.ignoreMinPadding = true;
+			} else if (axis.dataMax < threshold) {
+				axis.dataMax = threshold;
+				axis.ignoreMaxPadding = true;
+			}
+		}
 	});
 });
 
@@ -1496,7 +1509,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 */
 	translate: function () {
 		var series = this,
-			stacking = series.options.stacking,
+			options = series.options,
+			stacking = options.stacking,
 			axis = series.yAxis,
 			len,
 			i,
@@ -1514,7 +1528,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			prevY,
 			stack,
 			y,
-			h;
+			h,
+			crispCorr = (options.borderWidth % 2) / 2;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
@@ -1569,20 +1584,19 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 					// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
 					cumulative = stack._cum === null ? prevStack.total : stack._cum;
 					stack._cum = cumulative + point.y;
-					y = mathCeil(axis.translate(cumulative, 0, 1));
-					h = mathCeil(axis.translate(stack._cum, 0, 1));
+					y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
+					h = axis.translate(stack._cum, 0, 1);
 				}
 
 				shapeArgs.y = y;
-				shapeArgs.height = h - y;
+				shapeArgs.height = mathCeil(h - y);
 			} else {
 				if (!stacking) {
 					shapeArgs.y -= points[i - 1].shapeArgs.height;
 				} else if (shapeArgs.y + shapeArgs.height > prevY) {
-					shapeArgs.height = prevY - shapeArgs.y;
+					shapeArgs.height = mathFloor(prevY - shapeArgs.y);
 				}
 			}
-			
 		}
 	},
 
@@ -1743,7 +1757,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	/**
 	 * Place sums' dataLabels on the top of column regardles of its value
 	 */
-	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
+	_alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
 		var dlBox;
 
 		if (point.isSum || point.isIntermediateSum) {
