@@ -10,9 +10,10 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
+/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, define */
 
 (function () {
+	function init(jQuery) {
 // encapsulated variables
 var UNDEFINED,
 	doc = document,
@@ -115,10 +116,10 @@ var UNDEFINED,
 
 
 	// lookup over the types and the associated classes
-	seriesTypes = {};
+	seriesTypes = {},
 
-// The Highcharts namespace
-win.Highcharts = win.Highcharts ? error(16, true) : {};
+	// The Highcharts namespace
+	Highcharts = {};
 
 /**
  * Extend an object with the members of another
@@ -1295,7 +1296,7 @@ pathAnim = {
 			$(el).stop();
 		}
 	});
-}(win.jQuery));
+}(jQuery));
 
 
 // check for a custom HighchartsAdapter defined prior to this file
@@ -18973,4 +18974,12 @@ extend(Highcharts, {
 	product: 'Highstock',
 	version: '1.2.5'
 });
+		return Highcharts;
+	} // End of init function
+
+	if (typeof define === 'function' && define.amd) {
+		define('highcharts', ['jquery'], init);
+	} else {
+		window.Highcharts = window.Highcharts ? error(16, true) : init(window.jQuery);
+	}
 }());

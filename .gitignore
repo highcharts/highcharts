@@ -9,3 +9,6 @@
 /.project
 /git-ignore-me.properties
 /highcharts.com.sublime-project
+*.iml
+*.ipr
+*.iws
