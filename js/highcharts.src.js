@@ -12807,7 +12807,8 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			isCartesian = series.isCartesian;
+			isCartesian = series.isCartesian,
+			dataExtremes = {};
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
@@ -12844,6 +12845,11 @@ Series.prototype = {
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 			}
+
+			// don't search dataMin/dataMax again for cropped data
+			if (!cropped && processedYData) {
+				series.getDataMinMax(processedYData[i], dataExtremes);
+			}
 		}
 		
 		// Record the properties
@@ -12851,16 +12857,9 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+		series.dataMax = cropped ? croppedData.dataMax : dataExtremes.max;
+		series.dataMin = cropped ? croppedData.dataMin : dataExtremes.min;
 
-
-		// cache active data min and max
-		if (processedYData && processedYData.length) {
-			series.dataMin = arrayMin(processedYData);
-			series.dataMax = arrayMax(processedYData);
-		} else {
-			series.dataMin = series.dataMax = null;
-		}
-		
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
 		}
@@ -12869,14 +12868,15 @@ Series.prototype = {
 	},
 
 	/**
-	 * This method iterates over xData, crop values between min and max, returns cropped xData and corresponding part of yData
+	 * Iterate over xData and crop values between min and max. Returns object containing crop start/end
+	 * cropped xData with corresponding part of yData, dataMin and dataMax within the cropped range
 	 */
 	cropData: function (xData, yData, min, max) {
-		var dataLength = xData.length,
+		var series = this,
+			dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
-			dataMin,
-			dataMax,
+			dataExtremes = {},
 			i;
 
 		// iterate up to find slice start
@@ -12887,32 +12887,56 @@ Series.prototype = {
 			}
 		}
 
-		dataMin = dataMax = yData[i];
-
 		// proceed to find slice end
 		for (; i < dataLength; i++) {
+			series.getDataMinMax(yData[i], dataExtremes);
+
 			if (xData[i] > max) {
 				cropEnd = i + 1;
 				break;
-			}
-
-			if (dataMin > yData[i]) {
-				dataMin = yData[i];
-			}
-
-			if (dataMax < yData[i]) {
-				dataMax = yData[i];
 			}
 		}
 
 		return {
 			xData: xData.slice(cropStart, cropEnd),
 			yData: yData.slice(cropStart, cropEnd),
-			dataMin: dataMin,
-			dataMax: dataMax,
+			dataMin: dataExtremes.min,
+			dataMax: dataExtremes.max,
 			start: cropStart,
 			end: cropEnd
 		};
+	},
+	
+	/**
+	 * Process single yData point, find dataMin/dataMax and store them in the object referenced by 2nd argument
+	 */
+	getDataMinMax: function (y, e) {
+		var j;
+
+		// exit if y is null
+		if (y === null || y === UNDEFINED) { return; }
+
+		// handle arrays, like OHLC or range points
+		j = y.length;
+
+		if (j) {
+			while (j--) {
+				// handle null values in arrays
+				if (y[j] !== null) {
+					// find extreme values or set current if dataMin or dataMax is null
+					if (y[j] < e.min || e.min === UNDEFINED) { e.min = y[j]; }
+					if (y[j] > e.max || e.max === UNDEFINED) { e.max = y[j]; }
+				}
+			}
+		} else {
+			// set default values
+			if (e.min === UNDEFINED) { e.min = y; }
+			if (e.max === UNDEFINED) { e.max = y; }
+			
+			// set extremes
+			if (e.min > y) { e.min = y; }
+			if (e.max < y) { e.max = y; }
+		}
 	},
 
 	/**
