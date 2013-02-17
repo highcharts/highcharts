@@ -6,9 +6,8 @@ $(function () {
             '70-74', '75-79', '80-84', '85-89', '90-94',
             '95-99', '100 +'];
     $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'bar'
             },
             title: {

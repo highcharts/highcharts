@@ -2,7 +2,7 @@ $(function () {
     var container = document.createElement('div');
     document.body.appendChild(container);
     
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
             renderTo: container,
             height: 400

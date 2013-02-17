@@ -17,7 +17,7 @@ extend(defaultOptions, {
 		//		select: {}
 		// }
 		},
-		inputPosition: { // docs
+		inputPosition: {
 			align: 'right'
 		},
 		// inputDateFormat: '%b %e, %Y',
@@ -32,8 +32,8 @@ extend(defaultOptions, {
 });
 defaultOptions.lang = merge(defaultOptions.lang, {
 	rangeSelectorZoom: 'Zoom',
-	rangeSelectorFrom: 'From:',
-	rangeSelectorTo: 'To:'
+	rangeSelectorFrom: 'From',
+	rangeSelectorTo: 'To'
 });
 
 /**
@@ -102,11 +102,39 @@ RangeSelector.prototype = {
 			newMin = mathMax(date.getTime(), dataMin);
 			range = 30 * 24 * 3600 * 1000 * count;
 		} else if (type === 'ytd') {
-			now = new Date(dataMax);
-			year = now.getFullYear();
-			newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
-			now = now.getTime();
-			newMax = mathMin(dataMax || now, now);
+
+			// On user clicks on the buttons, or a delayed action running from the beforeRender 
+			// event (below), the baseAxis is defined.
+			if (baseAxis) {
+
+				// When "ytd" is the pre-selected button for the initial view, its calculation
+				// is delayed and rerun in the beforeRender event (below). When the series
+				// are initialized, but before the chart is rendered, we have access to the xData
+				// array (#942).
+				if (dataMax === UNDEFINED) {
+					dataMin = Number.MAX_VALUE;
+					dataMax = Number.MIN_VALUE;
+					each(chart.series, function (series) {
+						var xData = series.xData; // reassign it to the last item
+						dataMin = mathMin(xData[0], dataMin);
+						dataMax = mathMax(xData[xData.length - 1], dataMax);
+					});
+					redraw = false;
+				}
+				now = new Date(dataMax);
+				year = now.getFullYear();
+				newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
+				now = now.getTime();
+				newMax = mathMin(dataMax || now, now);
+
+			// "ytd" is pre-selected. We don't yet have access to processed point and extremes data
+			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
+			} else {
+				addEvent(chart, 'beforeRender', function () {
+					rangeSelector.clickButton(i, rangeOptions);
+				});
+				return;
+			}
 		} else if (type === 'year') {
 			date.setFullYear(date.getFullYear() - count);
 			newMin = mathMax(dataMin, date.getTime());
@@ -133,19 +161,17 @@ RangeSelector.prototype = {
 			);
 			rangeSelector.selected = i;
 		} else { // existing axis object; after render time
-			setTimeout(function () { // make sure the visual state is set before the heavy process begins
-				baseAxis.setExtremes(
-					newMin,
-					newMax,
-					pick(redraw, 1),
-					0, 
-					{ 
-						trigger: 'rangeSelectorButton',
-						rangeSelectorButton: rangeOptions
-					}
-				);
-				rangeSelector.selected = i;
-			}, 1);
+			baseAxis.setExtremes(
+				newMin,
+				newMax,
+				pick(redraw, 1),
+				0, 
+				{ 
+					trigger: 'rangeSelectorButton',
+					rangeSelectorButton: rangeOptions
+				}
+			);
+			rangeSelector.selected = i;
 		}
 	},
 	
@@ -213,10 +239,13 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
-					buttons[rangeSelector.selected].setState(0);
+				if (this.fixedRange !== this.max - this.min) {
+					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
+						buttons[rangeSelector.selected].setState(0);
+					}
+					rangeSelector.selected = null;
 				}
-				rangeSelector.selected = null;
+				this.fixedRange = null;
 			});
 		});
 	},
@@ -321,24 +350,31 @@ RangeSelector.prototype = {
 				value = Date.parse(inputValue),
 				extremes = chart.xAxis[0].getExtremes();
 
-			// if the value isn't parsed directly to a value by the browser's Date.parse method,
+			// If the value isn't parsed directly to a value by the browser's Date.parse method,
 			// like YYYY-MM-DD in IE, try parsing it a different way
 			if (isNaN(value)) {
 				value = inputValue.split('-');
 				value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
 			}
 
-			if (!isNaN(value) &&
-				((isMin && (value >= extremes.dataMin && value <= rangeSelector.maxInput.HCTime)) ||
-				(!isMin && (value <= extremes.dataMax && value >= rangeSelector.minInput.HCTime)))
-			) {
-				chart.xAxis[0].setExtremes(
-					isMin ? value : extremes.min,
-					isMin ? extremes.max : value,
-					UNDEFINED,
-					UNDEFINED,
-					{ trigger: 'rangeSelectorInput' }
-				);
+			if (!isNaN(value)) {
+
+				// Correct for timezone offset (#433)
+				if (!defaultOptions.global.useUTC) {
+					value = value + new Date().getTimezoneOffset() * 60 * 1000;
+				}
+
+			    // Set the extremes
+				if ((isMin && (value >= extremes.dataMin && value <= rangeSelector.maxInput.HCTime)) ||
+					(!isMin && (value <= extremes.dataMax && value >= rangeSelector.minInput.HCTime))) {
+					chart.xAxis[0].setExtremes(
+						isMin ? value : extremes.min,
+						isMin ? extremes.max : value,
+						UNDEFINED,
+						UNDEFINED,
+						{ trigger: 'rangeSelectorInput' }
+					);
+				}
 			}
 		};
 	},
@@ -425,18 +461,19 @@ RangeSelector.prototype = {
 			}
 		}
 		
-		// Update the alignment to the updated spacing box
-		yAlign = chart.plotTop - 35;		
-		inputGroup.align(extend({
-			y: yAlign,
-			width: inputGroup.offset,
-			// detect collision with the exporting buttons
-			x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
-				-60 : 0
-		}, options.inputPosition), true, chart.spacingBox);
-
-		// Set or reset the input values
 		if (inputEnabled) {
+		
+			// Update the alignment to the updated spacing box
+			yAlign = chart.plotTop - 35;		
+			inputGroup.align(extend({
+				y: yAlign,
+				width: inputGroup.offset,
+				// detect collision with the exporting buttons
+				x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
+					-60 : 0
+			}, options.inputPosition), true, chart.spacingBox);
+	
+			// Set or reset the input values
 			rangeSelector.setInputValue('min', min);
 			rangeSelector.setInputValue('max', max);
 		}
@@ -481,6 +518,16 @@ RangeSelector.prototype = {
 		}
 	}
 };
+
+// Initialize scroller for stock charts
+addEvent(Chart.prototype, 'init', function (e) {
+	var chart = e.target,
+		options = chart.options;
+	if (options.rangeSelector.enabled) {
+		chart.rangeSelector = new RangeSelector(chart);
+	}
+});
+
 
 Highcharts.RangeSelector = RangeSelector;
 

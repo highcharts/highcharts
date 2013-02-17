@@ -13,13 +13,20 @@ $(function () {
 	    };
 	};
 	
+	/**
+	 * Pad numbers
+	 */
+	function pad(number, length) {
+		// Create an array of the remaining length +1 and join it with 0's
+		return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+	}
+	
 	var now = getNow();
 	
 	// Create the chart
-	var chart = new Highcharts.Chart({
+	$('#container').highcharts({
 	
 	    chart: {
-	        renderTo: 'container',
 	        type: 'gauge',
 	        plotBackgroundColor: null,
 	        plotBackgroundImage: null,
@@ -87,6 +94,12 @@ $(function () {
 	            y: 10
 	        }       
 	    },
+	    
+	    tooltip: {
+	    	formatter: function () {
+	    		return chart.tooltipText;
+	    	}
+	    },
 	
 	    series: [{
 	        data: [{
@@ -134,6 +147,12 @@ $(function () {
 	                {
 	                    easing: 'easeOutElastic'
 	                };
+	                
+	        // Cache the tooltip text
+	        chart.tooltipText = 
+				pad(Math.floor(now.hours), 2) + ':' + 
+	    		pad(Math.floor(now.minutes * 5), 2) + ':' + 
+	    		pad(now.seconds * 5, 2);
 	        
 	        hour.update(now.hours, true, animation);
 	        minute.update(now.minutes, true, animation);

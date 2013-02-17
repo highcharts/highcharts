@@ -7,9 +7,8 @@ $(function () {
         });
     
         var chart;
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'spline',
                 marginRight: 10,
                 events: {

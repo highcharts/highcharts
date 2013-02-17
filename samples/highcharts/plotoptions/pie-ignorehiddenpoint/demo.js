@@ -1,9 +1,8 @@
 $(function () {
         
     // Build the chart
-    window.chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             plotBackgroundColor: null,
             plotBorderWidth: null,
             plotShadow: false

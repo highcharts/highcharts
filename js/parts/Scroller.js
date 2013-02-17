@@ -89,7 +89,7 @@ extend(defaultOptions, {
 		buttonBorderColor: '#666',
 		buttonBorderRadius: 2,
 		buttonBorderWidth: 1,
-		minWidth: 6, // docs
+		minWidth: 6,
 		rifleColor: '#666',
 		trackBackgroundColor: hash(
 			LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -271,7 +271,7 @@ Scroller.prototype = {
 			scrollbarEnabled = scroller.scrollbarEnabled,
 			navigatorOptions = scroller.navigatorOptions,
 			scrollbarOptions = scroller.scrollbarOptions,
-			scrollbarMinWidth = scrollbarOptions.minWidth, // docs
+			scrollbarMinWidth = scrollbarOptions.minWidth,
 			height = scroller.height,
 			top = scroller.top,
 			navigatorEnabled = scroller.navigatorEnabled,
@@ -324,10 +324,13 @@ Scroller.prototype = {
 		pxMax = pick(pxMax, xAxis.translate(max));
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMin = zoomedMin = mathMax(pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
+		scroller.zoomedMin = zoomedMin = scroller.fixedWidth ? 
+			zoomedMax - scroller.fixedWidth :
+			mathMax(pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.range = range = zoomedMax - zoomedMin;
-		
+		scroller.fixedWidth = null;
+
 		// on first render, create all elements
 		if (!scroller.rendered) {
 
@@ -475,6 +478,7 @@ Scroller.prototype = {
 			});
 		}
 
+		scroller.scrollbarPad = scrollbarPad;
 		scroller.rendered = true;
 	},
 
@@ -563,6 +567,8 @@ Scroller.prototype = {
 				range = scroller.range,
 				chartX = e.chartX,
 				chartY = e.chartY,
+				baseXAxis = chart.xAxis[0],
+				leftValue,
 				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
 				isOnNavigator;
@@ -617,19 +623,21 @@ Scroller.prototype = {
 						left = navigatorWidth - range;
 					}
 					if (left !== zoomedMin) { // it has actually moved
-						chart.xAxis[0].setExtremes(
-							xAxis.translate(left, true),
-							xAxis.translate(left + range, true),
+						scroller.fixedWidth = range; // #1370
+						if (!baseXAxis.ordinalPositions) {
+							baseXAxis.fixedRange = baseXAxis.max - baseXAxis.min;
+						}
+						leftValue = xAxis.translate(left, true);
+						baseXAxis.setExtremes(
+							leftValue,
+							baseXAxis.fixedRange ? leftValue + baseXAxis.fixedRange : xAxis.translate(left + range, true),
 							true,
 							false,
 							{ trigger: 'navigator' }
 						);
 					}
 				}
-			}
-			// Prevent iPad from passing the handler on from touchstart to mousedown 
-			if (e.type === 'touchstart') {
-				e.preventDefault();
+
 			}
 		};
 
@@ -958,6 +966,14 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
 });
 
+// Initialize scroller for stock charts
+addEvent(Chart.prototype, 'beforeRender', function (e) {
+	var chart = e.target,
+		options = chart.options;
+	if (options.navigator.enabled || options.scrollbar.enabled) {
+		chart.scroller = new Scroller(chart);
+	}
+});
 
 /* ****************************************************************************
  * End Scroller code														  *

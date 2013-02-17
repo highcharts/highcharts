@@ -1,11 +1,11 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function(data) {
     
-    	window.chart = new Highcharts.Chart({
+    	$('#container').highcharts({
     	
 		    chart: {
-		        renderTo: 'container',
-		        type: 'arearange'
+		        type: 'arearange',
+		        zoomType: 'x'
 		    },
 		    
 		    title: {

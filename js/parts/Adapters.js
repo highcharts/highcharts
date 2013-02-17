@@ -114,35 +114,43 @@
 					}
 				};
 			
+			/**
+			 * Register Highcharts as a plugin in the respective framework // docs
+			 */
+			$.fn.highcharts = function () {
+				var constr = 'Chart', // default constructor
+					args = arguments,
+					options,
+					ret,
+					chart;
 
-		},
-
-		/**
-		 * Register Highcharts as a plugin in the respective framework // docs
-		 */
-		plugin: function (constr) {
-			var lcConstr = constr.toLowerCase(), // shortcut, like $.chart, $.stockchart
-				nsConstr = 'Highcharts' + constr; // namespaced plugin, like $.HighchartsChart
-
-			$.fn[nsConstr] = function (options, callback) {
-				// When called without parameters, get a predefined chart
-				if (options === UNDEFINED) {
-					return charts[attr(this[0], 'data-highcharts-chart')];
+				if (isString(args[0])) {
+					constr = args[0];
+					args = Array.prototype.slice.call(args, 1); 
+				}
+				options = args[0];
 
 				// Create the chart
-				} else {
+				if (options !== UNDEFINED) {
+					/*jslint unused:false*/
 					options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
-					this[lcConstr] = new Highcharts[constr](options, callback);
-					return this;
+					chart = new Highcharts[constr](options, args[1]);
+					ret = this;
+					/*jslint unused:true*/
 				}
+
+				// When called without parameters or with the return argument, get a predefined chart
+				if (options === UNDEFINED || args[2] === true) {
+					ret = charts[attr(this[0], 'data-highcharts-chart')];
+				}	
+
+				
+				return ret;
 			};
 
-			// If a plugin isn't already created with the shortcut name, apply it
-			if (!$.fn[lcConstr]) {
-				$.fn[lcConstr] = $.fn[nsConstr];
-			}
 		},
-	
+
+		
 		/**
 		 * Downloads a script and executes a callback when done.
 		 * @param {String} scriptLocation
@@ -322,7 +330,7 @@
 			}
 	
 			$el.stop();
-			if (params.opacity !== UNDEFINED) { 
+			if (params.opacity !== UNDEFINED && el.attr) {
 				params.opacity += 'px'; // force jQuery to use same logic as width and height
 			}
 			$el.animate(params, options);

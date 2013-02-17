@@ -24,6 +24,9 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 		fontWeight: 'bold',
 		textAlign: 'center'
 	},
+	tooltip: {
+		pointFormat: '{point.text}<br/>'
+	},
 	threshold: null,
 	y: -30
 });
@@ -201,7 +204,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						plotY,
 						shape,
 						anchorX,
-						anchorY
+						anchorY,
+						options.useHTML // docs: plotOptions.flags.useHTML
 					)
 					.css(merge(options.style, point.style))
 					.attr(pointAttr)
@@ -255,14 +259,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				});
 			}
 		});
-	},
-
-	/**
-	 * Override the regular tooltip formatter by returning the point text given
-	 * in the options
-	 */
-	tooltipFormatter: function (item) {
-		return item.point.text;
 	},
 
 	/**

@@ -192,7 +192,8 @@ Legend.prototype = {
 		
 		if (titleOptions.text) {
 			if (!this.title) {
-				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4)
+				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4, null, null, null, null, null, 'legend-title')
+					.attr({ zIndex: 1 })
 					.css(titleOptions.style)
 					.add(this.group);
 			}
@@ -498,7 +499,7 @@ Legend.prototype = {
 			legendGroup.align(extend({
 				width: legendWidth,
 				height: legendHeight
-			}, options), true, chart.spacingBox);
+			}, options), true, 'spacingBox');
 		}
 
 		if (!chart.isResizing) {
@@ -578,6 +579,7 @@ Legend.prototype = {
 			this.scrollGroup.attr({
 				translateY: 1
 			});
+			this.clipHeight = 0; // #1379
 		}
 		
 		return legendHeight;

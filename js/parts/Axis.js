@@ -76,7 +76,7 @@ Axis.prototype = {
 		tickPosition: 'outside',
 		tickWidth: 1,
 		title: {
-			//text: null, // docs: pulled from name, then text
+			//text: null,
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
@@ -108,11 +108,11 @@ Axis.prototype = {
 		lineWidth: 0,
 		maxPadding: 0.05,
 		minPadding: 0.05,
-		name: 'Values', // docs
 		startOnTick: true,
 		tickWidth: 0,
 		title: {
-			rotation: 270
+			rotation: 270,
+			text: 'Values' // docs
 		},
 		stackLabels: {
 			enabled: false,
@@ -234,7 +234,7 @@ Axis.prototype = {
 		axis.zoomEnabled = options.zoomEnabled !== false;
 	
 		// Initial categories
-		axis.categories = options.categories;
+		axis.categories = options.categories || type === 'category'; // docs
 	
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -242,16 +242,15 @@ Axis.prototype = {
 		//axis.axisTitle = UNDEFINED;
 		//axis.axisLine = UNDEFINED;
 	
-		// Flag if type === logarithmic
+		// Shorthand types
 		axis.isLog = type === 'logarithmic';
+		axis.isDatetimeAxis = isDatetimeAxis;
 	
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
 		// Linked axis.
 		//axis.linkedParent = UNDEFINED;
 	
-		// Flag if type === datetime
-		axis.isDatetimeAxis = isDatetimeAxis;
 	
 		// Flag if percentage mode
 		//axis.usePercentage = UNDEFINED;
@@ -303,7 +302,9 @@ Axis.prototype = {
 
 		// Dictionary for stacks max values
 		axis.stacksMax = {};
-	
+
+		axis._stacksTouched = 0;
+
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
 		//axis.dataMax = UNDEFINED,
@@ -387,7 +388,7 @@ Axis.prototype = {
 	/**
      * Remove the axis from the chart
      */
-	remove: function (redraw) { // docs
+	remove: function (redraw) {
 		var chart = this.chart;
 
 		// Remove associated series
@@ -518,6 +519,7 @@ Axis.prototype = {
 						seriesExtremes = series.getExtremes();
 						seriesDataMax = seriesExtremes.dataMax;
 						seriesDataMin = seriesExtremes.dataMin;
+
 					}
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
@@ -959,6 +961,9 @@ Axis.prototype = {
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 						
+					if (seriesPointRange > range) { // #1446
+						seriesPointRange = 0;
+					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 					
 					// minPointOffset is the value padding to the left of the axis in order to make
@@ -990,7 +995,7 @@ Axis.prototype = {
 			axis.pointRangePadding = pointRangePadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
-			axis.pointRange = pointRange;
+			axis.pointRange = mathMin(pointRange, range);
 
 			// closestPointRange means the closest distance between points. In columns
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
@@ -1069,6 +1074,20 @@ Axis.prototype = {
 
 		// adjust min and max for the minimum range
 		axis.adjustForMinRange();
+		
+		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
+		// into account, we do this after computing tick interval (#1337).
+		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+			length = axis.max - axis.min;
+			if (length) {
+				if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
+					axis.min -= length * minPadding;
+				}
+				if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
+					axis.max += length * maxPadding;
+				}
+			}
+		}
 
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
@@ -1083,18 +1102,6 @@ Axis.prototype = {
 					1 :
 					(axis.max - axis.min) * tickPixelIntervalOption / (axis.len || 1)
 			);
-		}
-
-		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
-		// into account, we do this after computing tick interval (#1337).
-		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
-			length = (axis.max - axis.min) || 1;
-			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
-				axis.min -= length * minPadding;
-			}
-			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
-				axis.max += length * maxPadding;
-			}
 		}
 
 		// Now we're finished detecting min and max, crop and group series data. This
@@ -1166,7 +1173,8 @@ Axis.prototype = {
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1],
-				minPointOffset = axis.minPointOffset || 0;
+				minPointOffset = axis.minPointOffset || 0,
+				singlePad;
 
 			if (options.startOnTick) {
 				axis.min = roundedMin;
@@ -1180,6 +1188,14 @@ Axis.prototype = {
 				tickPositions.pop();
 			}
 			
+			// When there is only one point, or all points have the same value on this axis, then min
+			// and max are equal and tickPositions.length is 1. In this case, add some padding
+			// in order to center the point, but leave it with one tick. #1337.
+			if (tickPositions.length === 1) {
+				singlePad = 1e-9; // The lowest possible number to avoid extra padding on columns
+				axis.min -= singlePad;
+				axis.max += singlePad;
+			}
 		}
 	},
 	
@@ -1597,6 +1613,9 @@ Axis.prototype = {
 			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
 			
 		this.lineTop = lineTop; // used by flag series
+		if (!opposite) {
+			lineWidth *= -1; // crispify the other way - #1480
+		}
 
 		return chart.renderer.crispLine([
 				M,

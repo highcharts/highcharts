@@ -146,7 +146,7 @@ Pointer.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point[series[j].xAxis.tooltipPosName || 'plotX']);
+					point._dist = mathAbs(index - point.clientX);
 					distance = mathMin(distance, point._dist);
 					points.push(point);
 				}
@@ -159,9 +159,9 @@ Pointer.prototype = {
 				}
 			}
 			// refresh the tooltip if necessary
-			if (points.length && (points[0].plotX !== pointer.hoverX)) {
+			if (points.length && (points[0].clientX !== pointer.hoverX)) {
 				tooltip.refresh(points, e);
-				pointer.hoverX = points[0].plotX;
+				pointer.hoverX = points[0].clientX;
 			}
 		}
 
@@ -428,8 +428,6 @@ Pointer.prototype = {
 	dragStart: function (e) {
 		var chart = this.chart;
 
-		e = this.normalize(e);
-
 		// Record the start position
 		chart.mouseIsDown = e.type;
 		chart.cancelClick = false;
@@ -590,8 +588,12 @@ Pointer.prototype = {
 
 	onContainerMouseDown: function (e) {
 
+		e = this.normalize(e);
+
 		// issue #295, dragging not always working in Firefox
-		e.preventDefault();
+		if (e.preventDefault) {
+			e.preventDefault();
+		}
 		
 		this.dragStart(e);
 	},

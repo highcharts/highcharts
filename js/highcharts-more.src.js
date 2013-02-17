@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.3 (2012-10-04)
+ * @license Highcharts JS v2.3.5 (2012-12-19)
  *
  * (c) 2009-2011 Torstein Hønsi
  *
@@ -874,7 +874,8 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		style: {
 			fontWeight: 'bold'
 		},
-		verticalAlign: 'top'
+		verticalAlign: 'top',
+		zIndex: 2
 	},
 	dial: {
 		// radius: '80%',
@@ -940,18 +941,26 @@ var GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
+			options = series.options,
 			center = yAxis.center;
 			
 		series.generatePoints();
 		
 		each(series.points, function (point) {
 			
-			var dialOptions = merge(series.options.dial, point.dial),
+			var dialOptions = merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
-				topWidth = dialOptions.topWidth || 1;
+				topWidth = dialOptions.topWidth || 1,
+				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
+
+			// Handle the wrap option // docs
+			if (options.wrap === false) {
+				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
+			}
+			rotation = rotation * 180 / Math.PI;
 				
 			point.shapeType = 'path';
 			point.shapeArgs = {
@@ -968,7 +977,7 @@ var GaugeSeries = {
 				],
 				translateX: center[0],
 				translateY: center[1],
-				rotation: (yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true)) * 180 / Math.PI
+				rotation: rotation
 			};
 			
 			// Positions for data label
@@ -1076,18 +1085,18 @@ seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ***
 
 // Set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
-	fillColor: 'white',
+	fillColor: '#FFFFFF',
 	lineWidth: 1,
-	//medianColor: undefined,
+	//medianColor: null,
 	medianWidth: 2,
 	states: {
 		hover: {
 			brightness: -0.3
 		}
 	},
-	//stemColor: undefined,
+	//stemColor: null,
 	//stemDashStyle: 'solid'
-	//stemWidth: undefined,
+	//stemWidth: null,
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
@@ -1097,7 +1106,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Higher quartile: {point.q3}<br/>' +
 			'Maximum: {point.high}<br/>'
 	},
-	//whiskerColor: undefined,
+	//whiskerColor: null,
 	whiskerLength: '50%',
 	whiskerWidth: 2
 });
@@ -1123,8 +1132,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	/**
 	 * Disable data labels and animation for box plot
 	 */
-	drawDataLabels: noop, // docs	
-	animate: noop, // docs
+	drawDataLabels: noop,
+	animate: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1345,12 +1354,13 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
-	color: 'black',
+	color: '#000000',
+	grouping: false, // exclude from docs
 	linkedTo: ':previous',
 	tooltip: {
 		pointFormat: defaultPlotOptions.arearange.tooltip.pointFormat
 	},
-	whiskerWidth: 1
+	whiskerWidth: null
 });
 
 // 2 - Create the series object
@@ -1453,6 +1463,12 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 
 // 1 - set default options
 defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
+	lineWidth: 1,
+	lineColor: '#333',
+	dashStyle: 'dot',
+	borderWidth: 1,
+	borderColor: '#333',
+	shadow: false
 });
 
 
@@ -1566,6 +1582,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 					shapeArgs.height = prevY - shapeArgs.y;
 				}
 			}
+			
 		}
 	},
 
@@ -1761,7 +1778,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		inside: true,
 		style: {
-			color: 'white'
+			color: 'white',
+			textShadow: '0px 0px 3px black'
 		},
 		verticalAlign: 'middle'
 	},
@@ -1847,7 +1865,6 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radii.push(math.round(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
-	
 	},
 	
 	/**
@@ -2059,7 +2076,7 @@ seriesProto.toXY = function (point) {
 	point.rectPlotY = plotY;
 	
 	// Record the angle in degrees for use in tooltip
-	point.deg = plotX / Math.PI * 180;
+	point.clientX = plotX / Math.PI * 180;
 	
 	// Find the polar plotX and plotY
 	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
@@ -2327,8 +2344,7 @@ wrap(seriesProto, 'setTooltipPoints', function (proceed, renew) {
 		
 	if (this.chart.polar) {
 		extend(this.xAxis, {
-			tooltipLen: 360, // degrees are the resolution unit of the tooltipPoints array
-			tooltipPosName: 'deg'
+			tooltipLen: 360 // degrees are the resolution unit of the tooltipPoints array
 		});	
 	}
 	

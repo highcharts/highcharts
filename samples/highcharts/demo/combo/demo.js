@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container'
             },
             title: {
                 text: 'Combination chart'
@@ -81,4 +78,3 @@ $(function () {
         });
     });
     
-});

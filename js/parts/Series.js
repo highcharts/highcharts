@@ -10,6 +10,7 @@ Point.prototype = {
 	 * @param {Object} options The data in either number, array or object format
 	 */
 	init: function (series, options, x) {
+
 		var point = this,
 			defaultColors;
 		point.series = series;
@@ -427,8 +428,10 @@ Point.prototype = {
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
+			pointMarker = point.marker || {},
 			chart = series.chart,
 			radius,
+			newSymbol,
 			pointAttr = point.pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
@@ -464,9 +467,18 @@ Point.prototype = {
 			// graphic for the hover state
 			if (state && markerStateOptions) {
 				radius = markerStateOptions.radius;
-				if (!stateMarkerGraphic) { // add
+				newSymbol = pointMarker.symbol || series.symbol;
+
+				// If the point has another symbol than the previous one, throw away the 
+				// state marker graphic and force a new one (#1459)
+				if (stateMarkerGraphic && stateMarkerGraphic.currentSymbol !== newSymbol) {				
+					stateMarkerGraphic = stateMarkerGraphic.destroy();
+				}
+
+				// Add a new state marker graphic
+				if (!stateMarkerGraphic) {
 					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
-						series.symbol,
+						newSymbol,
 						plotX - radius,
 						plotY - radius,
 						2 * radius,
@@ -474,8 +486,10 @@ Point.prototype = {
 					)
 					.attr(pointAttr[state])
 					.add(series.markerGroup);
+					stateMarkerGraphic.currentSymbol = newSymbol;
 				
-				} else { // update
+				// Move the existing graphic
+				} else {
 					stateMarkerGraphic.attr({ // #1054
 						x: plotX - radius,
 						y: plotY - radius
@@ -592,7 +606,7 @@ Series.prototype = {
 		});
 
 		// Linked series
-		linkedTo = options.linkedTo; // docs: ':previous' or Series.id
+		linkedTo = options.linkedTo; // docs: ':previous' or Series.id - set up demo with linked temperature range and mean temperature
 		series.linkedSeries = [];
 		if (isString(linkedTo)) {
 			if (linkedTo === ':previous') {
@@ -794,8 +808,8 @@ Series.prototype = {
 				userOptions._symbolIndex = counters.symbol;
 				symbolIndex = counters.symbol++;
 			}
+			series.symbol = defaultSymbols[symbolIndex];
 		}
-		series.symbol = defaultSymbols[symbolIndex];
 
 		// don't substract radius in image symbols (#604)
 		if (/^url/.test(series.symbol)) {
@@ -868,6 +882,7 @@ Series.prototype = {
 	 */
 	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
+			seriesOptions = series.options,
 			data = series.data,
 			graph = series.graph,
 			area = series.area,
@@ -875,8 +890,9 @@ Series.prototype = {
 			xData = series.xData,
 			yData = series.yData,
 			zData = series.zData,
+			names = series.names,
 			currentShift = (graph && graph.shift) || 0,
-			dataOptions = series.options.data,
+			dataOptions = seriesOptions.data,
 			point;
 
 		setAnimation(animation, chart);
@@ -902,8 +918,15 @@ Series.prototype = {
 		xData.push(point.x);
 		yData.push(series.toYData ? series.toYData(point) : point.y);
 		zData.push(point.z);
+		if (names) {
+			names[point.x] = point.name;
+		}
 		dataOptions.push(options);
 
+		// Generate points to be added to the legend (#1329) 
+		if (seriesOptions.legendType === 'point') {
+			series.generatePoints();
+		}
 
 		// Shift the first point off the parallel arrays
 		// todo: consider series.removePoint(i) method
@@ -941,6 +964,7 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
+			names = xAxis && xAxis.categories && !xAxis.categories.length ? [] : null,
 			i;
 
 		// reset properties
@@ -1005,11 +1029,16 @@ Series.prototype = {
 			}*/
 		} else {
 			for (i = 0; i < dataLength; i++) {
-				pt = { series: series };
-				series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-				xData[i] = pt.x;
-				yData[i] = hasToYData ? series.toYData(pt) : pt.y;
-				zData[i] = pt.z; 
+				if (data[i] !== UNDEFINED) { // stray commas in oldIE
+					pt = { series: series };
+					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
+					xData[i] = pt.x;
+					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
+					zData[i] = pt.z;
+					if (names && pt.name) {
+						names[i] = pt.name;
+					}
+				}
 			}
 		}
 		
@@ -1029,6 +1058,7 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 		series.zData = zData;
+		series.names = names;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
@@ -1395,7 +1425,6 @@ Series.prototype = {
 		}
 		this.generatePoints();
 		var series = this,
-			chart = series.chart,
 			options = series.options,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
@@ -1479,10 +1508,8 @@ Series.prototype = {
 				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				UNDEFINED;
 			
-			// set client related positions for mouse tracking
-			point.clientX = chart.inverted ?
-				chart.plotHeight - point.plotX :
-				point.plotX; // for mouse tracking
+			// Set client related positions for mouse tracking
+			point.clientX = placeBetween ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
 				
 			point.negative = point.y < (threshold || 0);
 
@@ -1507,7 +1534,6 @@ Series.prototype = {
 			high,
 			xAxis = series.xAxis,
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
-			plotX = (xAxis && xAxis.tooltipPosName) || 'plotX',
 			point,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
@@ -1540,7 +1566,7 @@ Series.prototype = {
 			low = points[i - 1] ? high + 1 : 0;
 			// Now find the new high
 			high = points[i + 1] ?
-				mathMax(0, mathFloor((point[plotX] + (points[i + 1] ? points[i + 1][plotX] : axisLength)) / 2)) :
+				mathMax(0, mathFloor((point.clientX + (points[i + 1] ? points[i + 1].clientX : axisLength)) / 2)) :
 				axisLength;
 
 			while (low >= 0 && low <= high) {
@@ -1766,7 +1792,7 @@ Series.prototype = {
 				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
 				
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY)) {
+				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
@@ -2104,7 +2130,7 @@ Series.prototype = {
 				'dataLabelsGroup', 
 				'data-labels', 
 				series.visible ? VISIBLE : HIDDEN, 
-				6
+				options.zIndex || 6
 			);
 			
 			// Make the labels for each point
@@ -2117,6 +2143,7 @@ Series.prototype = {
 					attr,
 					name,
 					rotation,
+					connector = point.connector,
 					isNew = true;
 				
 				// Determine if each data label is enabled
@@ -2150,12 +2177,21 @@ Series.prototype = {
 					
 					// update existing label
 					if (dataLabel) {
-						// vertically centered
-						dataLabel
-							.attr({
-								text: str
-							});
-						isNew = false;
+						
+						if (defined(str)) {
+							dataLabel
+								.attr({
+									text: str
+								});
+							isNew = false;
+						
+						} else { // #1437 - the label is shown conditionally
+							point.dataLabel = dataLabel = dataLabel.destroy();
+							if (connector) {
+								point.connector = connector.destroy();
+							}
+						}
+						
 					// create new label
 					} else if (defined(str)) {
 						attr = {
@@ -2240,8 +2276,8 @@ Series.prototype = {
 		
 		// Show or hide based on the final aligned position
 		dataLabel.attr({
-			visibility: options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) || chart.isInsidePlot(plotX, plotY, inverted) ? 
-				(hasSVG ? 'inherit' : VISIBLE) : 
+			visibility: options.crop === false || /*chart.isInsidePlot(alignAttr.x, alignAttr.y) || */chart.isInsidePlot(plotX, plotY, inverted) ?
+				(chart.renderer.isSVG ? 'inherit' : VISIBLE) : 
 				HIDDEN
 		});
 				
@@ -2273,7 +2309,7 @@ Series.prototype = {
 				// step line?
 				if (step && i) {
 					lastPoint = segment[i - 1];
-					if (step === 'right') { // docs
+					if (step === 'right') {
 						segmentPath.push(
 							lastPoint.plotX,
 							plotY
@@ -2362,22 +2398,20 @@ Series.prototype = {
 				stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 	
-			} else {
-				if (lineWidth) {
-					attribs = {
-						stroke: prop[1],
-						'stroke-width': lineWidth,
-						zIndex: 1 // #1069
-					};
-					if (dashStyle) {
-						attribs.dashstyle = dashStyle;
-					}
-	
-					series[graphKey] = series.chart.renderer.path(graphPath)
-						.attr(attribs)
-						.add(series.group)
-						.shadow(!i && options.shadow);
+			} else if (lineWidth && graphPath.length) { // #1487
+				attribs = {
+					stroke: prop[1],
+					'stroke-width': lineWidth,
+					zIndex: 1 // #1069
+				};
+				if (dashStyle) {
+					attribs.dashstyle = dashStyle;
 				}
+
+				series[graphKey] = series.chart.renderer.path(graphPath)
+					.attr(attribs)
+					.add(series.group)
+					.shadow(!i && options.shadow);
 			}
 		});
 	},

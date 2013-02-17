@@ -155,7 +155,7 @@ var ColumnSeries = extendClass(Series, {
 					barY =
 						mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (plotY <= translatedThreshold ? minPointLength : 0);
+							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0); // use exact yAxis.translation (#1485)
 				}
 			}
 
@@ -209,8 +209,10 @@ var ColumnSeries = extendClass(Series, {
 		each(series.points, function (point) {
 			var plotY = point.plotY,
 				graphic = point.graphic;
+
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
+				
 				if (graphic) { // update
 					stop(graphic);
 					graphic.animate(merge(shapeArgs));
@@ -253,7 +255,7 @@ var ColumnSeries = extendClass(Series, {
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i].onMouseOver(event);
+				points[event.target._i + series.cropStart].onMouseOver();
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {
@@ -305,7 +307,7 @@ var ColumnSeries = extendClass(Series, {
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
-			inside = (this.options.stacking || options.inside); // draw it inside the box?
+			inside = (this.options.stacking || options.inside); // draw it inside the box? // docs: inside
 		
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo

@@ -1,18 +1,11 @@
 $(function () {
-    var chart = new Highcharts.Chart({
-
-        chart: {
-            renderTo: 'container'
-        },
-        
+    $('#container').highcharts({
         title: {
-        	text: 'Step line types'
+        	text: 'Step line types, with null values in the series'
         },
-    
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-    
         series: [{
             data: [1,2,3,4,null,6,7,null,9],
             step: 'right',
@@ -26,6 +19,6 @@ $(function () {
             step: 'left',
             name: 'Left'
         }]
-    
+
     });
 });

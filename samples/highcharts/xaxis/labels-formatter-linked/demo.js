@@ -5,9 +5,8 @@ $(function () {
         'Foobar': 'http://www.google.com/serach?q=foobar'
     };
     
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container'
         },
         
         xAxis: {

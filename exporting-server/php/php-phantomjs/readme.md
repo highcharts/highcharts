@@ -2,7 +2,7 @@ Locate these lines in index.php
 	define ('PHANTOMJS_PATH', '/usr/local/bin/phantomjs');
 	define ("PHANTOMJS_SCRIPT", 'highcharts-convert.js');
 
-1. specify in index.php location of phantom: f.eks. /usr/local/highcharts-convert.js
+1. specify in index.php location of the phantom executable: f.eks. /usr/local/bin/phantomjs
 2. specify in index.php location of the phantom script: highcharts-convert.js
 
 Open highcharts-convert.js script and locate the config object

@@ -1,8 +1,7 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
+	$('#container').highcharts('StockChart', {
 	    
 	    chart: {
-	        renderTo: 'container',
         	events: {
             	redraw: function() {
                 	alert ('The chart is being redrawn');
