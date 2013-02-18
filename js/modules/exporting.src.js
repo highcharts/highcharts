@@ -81,8 +81,8 @@ defaultOptions.navigation = {
 		buttonSpacing: 3, 
 		height: 22,
 		theme: {
-			fill: 'none',
-			stroke: 'white'
+			fill: 'white', // capture hover
+			stroke: 'none'
 		},
 		verticalAlign: 'top',
 		width: 24

@@ -1598,6 +1598,7 @@ Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			axisOffset = chart.axisOffset,
+			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
@@ -1695,6 +1696,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
+		clipOffset[side] = mathMax(clipOffset[side], options.lineWidth);
 
 	},
 	
