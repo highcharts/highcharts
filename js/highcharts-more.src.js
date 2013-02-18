@@ -1598,11 +1598,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			length = yData.length,
 			prev,
 			curr,
-			subSum,
-			sum,
 			i;
 
-		prev = sum = subSum = options.threshold;
+		prev = options.threshold;
 
 		for (i = 0; i < length; i++) {
 			curr = yData[i];
@@ -1610,15 +1608,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// processed yData only if it's not already processed
 			if (curr !== null && typeof curr !== 'number') {
 
-				if (curr === "sum") {
+				if (curr === "sum" || curr === "intermediateSum") {
 					yData[i] = null;
-
-				} else if (curr === "intermediateSum") {
-					yData[i] = null;
-					subSum = prev;
 
 				} else {
-					yData[i] = curr[0];// + prev;
+					yData[i] = curr[0];
 				}
 
 				prev = yData[i];
