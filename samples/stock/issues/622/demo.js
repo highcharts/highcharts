@@ -27,8 +27,8 @@ $(function() {
                 alignTicks: false,
                 zoomType: 'y',
                 events: {
-                    load: function () {
-                        this.yAxis[0].setExtremes(500, 550);
+                    load: function (e) {
+                        e.target.yAxis[0].setExtremes(500, 550);
                     }
                 }
             },

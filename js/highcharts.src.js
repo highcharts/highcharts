@@ -3329,16 +3329,16 @@ SVGRenderer.prototype = {
 		/*jslint white: true*/
 		normalState = merge(hash(
 			STROKE_WIDTH, 1,
-			STROKE, '#999',
+			STROKE, '#CCCCCC',
 			FILL, hash(
 				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
-					[0, '#FFF'],
-					[1, '#DDD']
+					[0, '#FEFEFE'],
+					[1, '#F6F6F6']
 				]
 			),
-			'r', 3,
-			'padding', 3,
+			'r', 2,
+			'padding', 5,
 			STYLE, hash(
 				'color', 'black'
 			)
@@ -15209,11 +15209,14 @@ var ColumnSeries = extendClass(Series, {
 			point,
 			i = points.length,
 			onMouseOver = function (event) {
+				var pointIndex = event.target._i + series.cropStart;
 				rel = event.relatedTarget || event.fromElement;
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i + series.cropStart].onMouseOver();
+				if (points[pointIndex]) {
+					points[pointIndex].onMouseOver();
+				}
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {

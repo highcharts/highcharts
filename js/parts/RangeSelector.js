@@ -520,12 +520,16 @@ RangeSelector.prototype = {
 };
 
 // Initialize scroller for stock charts
-addEvent(Chart.prototype, 'init', function (e) {
-	var chart = e.target,
-		options = chart.options;
-	if (options.rangeSelector.enabled) {
-		chart.rangeSelector = new RangeSelector(chart);
-	}
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+	
+	addEvent(this, 'init', function () {
+		if (this.options.rangeSelector.enabled) {
+			this.rangeSelector = new RangeSelector(this);
+		}
+	});
+
+	proceed.call(this, options, callback);
+	
 });
 
 

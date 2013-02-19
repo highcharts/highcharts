@@ -3329,16 +3329,16 @@ SVGRenderer.prototype = {
 		/*jslint white: true*/
 		normalState = merge(hash(
 			STROKE_WIDTH, 1,
-			STROKE, '#999',
+			STROKE, '#CCCCCC',
 			FILL, hash(
 				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
-					[0, '#FFF'],
-					[1, '#DDD']
+					[0, '#FEFEFE'],
+					[1, '#F6F6F6']
 				]
 			),
-			'r', 3,
-			'padding', 3,
+			'r', 2,
+			'padding', 5,
 			STYLE, hash(
 				'color', 'black'
 			)
@@ -15209,11 +15209,14 @@ var ColumnSeries = extendClass(Series, {
 			point,
 			i = points.length,
 			onMouseOver = function (event) {
+				var pointIndex = event.target._i + series.cropStart;
 				rel = event.relatedTarget || event.fromElement;
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i + series.cropStart].onMouseOver();
+				if (points[pointIndex]) {
+					points[pointIndex].onMouseOver();
+				}
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {
@@ -18267,7 +18270,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) {
+			if (baseSeries && navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 				// Survive Series.update()
 				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
@@ -18357,7 +18360,7 @@ Highcharts.Scroller = Scroller;
 wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
-		zoomType = chartOptions.chart.pinchType || chartOptions.chart.zoomType,
+		zoomType = chartOptions.chart.zoomType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,
@@ -18393,12 +18396,17 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize scroller for stock charts
-addEvent(Chart.prototype, 'beforeRender', function (e) {
-	var chart = e.target,
-		options = chart.options;
-	if (options.navigator.enabled || options.scrollbar.enabled) {
-		chart.scroller = new Scroller(chart);
-	}
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+	
+	addEvent(this, 'beforeRender', function () {
+		var options = this.options;
+		if (options.navigator.enabled || options.scrollbar.enabled) {
+			this.scroller = new Scroller(this);
+		}
+	});
+
+	proceed.call(this, options, callback);
+
 });
 
 /* ****************************************************************************
@@ -18875,8 +18883,8 @@ RangeSelector.prototype = {
 				y: yAlign,
 				width: inputGroup.offset,
 				// detect collision with the exporting buttons
-				x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
-					-60 : 0
+				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
+					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
 	
 			// Set or reset the input values
@@ -18926,12 +18934,16 @@ RangeSelector.prototype = {
 };
 
 // Initialize scroller for stock charts
-addEvent(Chart.prototype, 'init', function (e) {
-	var chart = e.target,
-		options = chart.options;
-	if (options.rangeSelector.enabled) {
-		chart.rangeSelector = new RangeSelector(chart);
-	}
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+	
+	addEvent(this, 'init', function () {
+		if (this.options.rangeSelector.enabled) {
+			this.rangeSelector = new RangeSelector(this);
+		}
+	});
+
+	proceed.call(this, options, callback);
+	
 });
 
 

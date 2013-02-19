@@ -841,7 +841,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) {
+			if (baseSeries && navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 				// Survive Series.update()
 				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
@@ -931,7 +931,7 @@ Highcharts.Scroller = Scroller;
 wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
-		zoomType = chartOptions.chart.pinchType || chartOptions.chart.zoomType,
+		zoomType = chartOptions.chart.zoomType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,
@@ -967,12 +967,17 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize scroller for stock charts
-addEvent(Chart.prototype, 'beforeRender', function (e) {
-	var chart = e.target,
-		options = chart.options;
-	if (options.navigator.enabled || options.scrollbar.enabled) {
-		chart.scroller = new Scroller(chart);
-	}
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+	
+	addEvent(this, 'beforeRender', function () {
+		var options = this.options;
+		if (options.navigator.enabled || options.scrollbar.enabled) {
+			this.scroller = new Scroller(this);
+		}
+	});
+
+	proceed.call(this, options, callback);
+
 });
 
 /* ****************************************************************************
