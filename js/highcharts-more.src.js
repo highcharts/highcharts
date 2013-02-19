@@ -10,7 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
+/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts, UNDEFINED) {
 var arrayMin = Highcharts.arrayMin,
@@ -1397,7 +1397,7 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 	// recalculate extremes for each waterfall stack
 	each(axis.series, function (series) {
 		// process only visible, waterfall series, one from each stack
-		if (!series.visible || !series.stackKey || series.type !== 'waterfall' || visitedStacks.indexOf(series.stackKey) !== -1) {
+		if (!series.visible || !series.stackKey || series.type !== 'waterfall' || HighchartsAdapter.inArray(series.stackKey) !== -1) {
 			return;
 		}
 
