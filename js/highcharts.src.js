@@ -2646,8 +2646,8 @@ SVGElement.prototype = {
 		}
 
 		// apply scale
-		if (scaleX || scaleY) {
-			transform.push('scale(' + (scaleX || 1) + ' ' + (scaleY || 1) + ')');
+		if (defined(scaleX) || defined(scaleY)) {
+			transform.push('scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')');
 		}
 
 		if (transform.length) {

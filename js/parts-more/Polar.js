@@ -215,14 +215,19 @@ function polarAnimate(proceed, init) {
 		center = this.xAxis.center,
 		plotLeft = chart.plotLeft,
 		plotTop = chart.plotTop,
-		attribs;
+		attribs,
+		issue1499;
 
 	// Specific animation for polar charts
 	if (chart.polar) {
+
+		// TODO: This applies to IE10 at least version 10.0.9200.16384 and 10.0.9200.16466
+		// Revisit this with future versions
+		issue1499 = /MSIE 10\.0/.test(navigator.userAgent);
 		
 		// Enable animation on polar charts only in SVG. In VML, the scaling is different, plus animation
 		// would be so slow it would't matter.
-		if (chart.renderer.isSVG) {
+		if (chart.renderer.isSVG && !issue1499) {
 
 			if (animation === true) {
 				animation = {};
@@ -230,16 +235,6 @@ function polarAnimate(proceed, init) {
 	
 			// Initialize the animation
 			if (init) {
-				
-				// Create an SVG specific attribute setter for scaleX and scaleY
-				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-					this[key] = value;
-					if (this.scaleX !== UNDEFINED && this.scaleY !== UNDEFINED) {
-						this.element.setAttribute('transform', 'translate(' + this.translateX + ',' + this.translateY + ') scale(' + 
-							this.scaleX + ',' + this.scaleY + ')');
-					}
-					return false;
-				};
 				
 				// Scale down the group and place it in the center
 				attribs = {
