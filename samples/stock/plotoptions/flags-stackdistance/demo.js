@@ -1,13 +1,13 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
-	    
+
 	    chart: {
 	    },
-	    
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 	        name: 'USD to EUR',
 	        id: 'dataseries',
@@ -17,15 +17,15 @@ $(function() {
 	        data: [{
 				x: Date.UTC(2011, 3, 25),
 				title: 'H',
-				text: 'Euro Contained by Channel Resistance'	
+				text: 'Euro Contained by Channel Resistance'
 			}, {
 				x: Date.UTC(2011, 3, 28),
 				title: 'G',
-				text: 'EURUSD: Bulls Clear Path to 1.50 Figure'	
+				text: 'EURUSD: Bulls Clear Path to 1.50 Figure'
 			}, {
 				x: Date.UTC(2011, 4, 4),
 				title: 'F',
-				text: 'EURUSD: Rate Decision to End Standstill'	
+				text: 'EURUSD: Rate Decision to End Standstill'
 			}, {
 	            x: Date.UTC(2011, 4, 5),
 	            title: 'E',

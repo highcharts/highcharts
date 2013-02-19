@@ -1,13 +1,14 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
-	    
-	    chart: {
+
+	    title: {
+	    	text: 'Start at the first of April'
 	    },
-	    
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 			name: 'Temperature',
 			data: temperatures,

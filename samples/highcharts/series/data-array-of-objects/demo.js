@@ -3,11 +3,11 @@ $(function () {
         chart: {
             type: 'column'
         },
-        
+
         xAxis: {
             categories: ['Green', 'Pink']
         },
-        
+
         series: [{
             data: [{
                 name: 'Point 1',
