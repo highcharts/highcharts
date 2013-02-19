@@ -1373,16 +1373,16 @@ SVGRenderer.prototype = {
 		/*jslint white: true*/
 		normalState = merge(hash(
 			STROKE_WIDTH, 1,
-			STROKE, '#999',
+			STROKE, '#CCCCCC',
 			FILL, hash(
 				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
-					[0, '#FFF'],
-					[1, '#DDD']
+					[0, '#FEFEFE'],
+					[1, '#F6F6F6']
 				]
 			),
-			'r', 3,
-			'padding', 3,
+			'r', 2,
+			'padding', 5,
 			STYLE, hash(
 				'color', 'black'
 			)

@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
@@ -15,6 +12,6 @@ $(function() {
 	});
 	
 	$('#button').click(function() {
-		chart.destroy();
+		$('#container').highcharts().destroy();
 	});
 });

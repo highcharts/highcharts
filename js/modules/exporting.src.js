@@ -637,9 +637,9 @@ extend(Chart.prototype, {
 	/**
 	 * Destroy the buttons.
 	 */
-	destroyExport: function () {
-		var i,
-			chart = this,
+	destroyExport: function (e) {
+		var chart = e.target,
+			i,
 			elem;
 
 		// Destroy the extra buttons added
