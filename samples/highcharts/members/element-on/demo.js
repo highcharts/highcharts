@@ -1,10 +1,10 @@
 $(function () {
     var renderer = new Highcharts.Renderer(
-        $('#container')[0], 
+        $('#container')[0],
         400,
         300
     );
-    
+
     var rect = renderer.rect(100, 100, 100, 100, 5)
         .attr({
             'stroke-width': 2,
