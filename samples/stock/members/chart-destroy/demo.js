@@ -1,4 +1,5 @@
 $(function() {
+
 	var chart = $('#container').highcharts('StockChart', {
 
 	    rangeSelector: {
@@ -9,10 +10,10 @@ $(function() {
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
+
 	}, null, true);
 
 	$('#button').click(function() {
-		//console.log(chart.exportSVGElements);
-		chart.destroy();
+		$('#container').highcharts().destroy();
 	});
 });

@@ -5639,11 +5639,12 @@ Tick.prototype = {
 			chart = axis.chart,
 			horiz = axis.horiz,
 			categories = axis.categories,
+			names = axis.series[0] && axis.series[0].names,
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
 			tickPositions = axis.tickPositions,
-			width = (categories && horiz && categories.length &&
+			width = (horiz && categories &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
@@ -5652,9 +5653,8 @@ Tick.prototype = {
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
 			attr,
-			//value = categories && defined(categories[pos]) ? categories[pos] : pos,
-			value = categories ? 
-				pick(categories[pos], axis.series[0] && axis.series[0].names && axis.series[0].names[pos], pos) : 
+			value = categories ?
+				pick(categories[pos], names && names[pos], pos) : 
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -6558,7 +6558,7 @@ Axis.prototype = {
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
 		
-		axis.tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
+		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
 	
 		// Major ticks
 		axis.ticks = {};
@@ -7894,6 +7894,7 @@ Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			axisOffset = chart.axisOffset,
+			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
@@ -7991,6 +7992,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
+		clipOffset[side] = mathMax(clipOffset[side], options.lineWidth);
 
 	},
 	
@@ -11363,6 +11365,9 @@ Chart.prototype = {
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
 			spacingLeft = optionsChart.spacingLeft,
+			clipOffset = chart.clipOffset,
+			clipX,
+			clipY,
 			plotLeft,
 			plotTop,
 			plotWidth,
@@ -11392,11 +11397,13 @@ Chart.prototype = {
 			width: plotWidth,
 			height: plotHeight
 		};
+		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
-			x: plotBorderWidth / 2, 
-			y: plotBorderWidth / 2, 
-			width: chart.plotSizeX - plotBorderWidth, 
-			height: chart.plotSizeY - plotBorderWidth
+			x: clipX, 
+			y: clipY, 
+			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: mathFloor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY)
 		};
 
 		if (!skipAxes) {
@@ -11423,6 +11430,7 @@ Chart.prototype = {
 		chart.marginBottom = pick(chart.optionsMarginBottom, spacingBottom);
 		chart.plotLeft = pick(chart.optionsMarginLeft, spacingLeft);
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
+		chart.clipOffset = [0, 0, 0, 0];
 	},
 
 	/**
@@ -11905,7 +11913,8 @@ Point.prototype = {
 	 */
 	optionsToObject: function (options) {
 		var ret,
-			pointArrayMap = this.series.pointArrayMap || ['y'],
+			series = this.series,
+			pointArrayMap = series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
 			firstItemType,
 			i = 0,
@@ -11931,6 +11940,17 @@ Point.prototype = {
 			}			
 		} else if (typeof options === 'object') {
 			ret = options;
+
+			// This is the fastest way to detect if there are individual point dataLabels that need 
+			// to be considered in drawDataLabels. These can only occur in object configs.
+			if (options.dataLabels) {
+				series._hasPointLabels = true;
+			}
+
+			// Same approach as above for markers
+			if (options.marker) {
+				series._hasPointMarkers = true;
+			}
 		}
 		return ret;
 	},
@@ -15245,7 +15265,7 @@ var ColumnSeries = extendClass(Series, {
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
-			inside = (this.options.stacking || options.inside); // draw it inside the box? // docs: inside
+			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box? // docs: inside
 		
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
@@ -15293,46 +15313,33 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	animate: function (init) {
 		var series = this,
-			points = series.points,
-			options = series.options;
+			yAxis = this.yAxis,
+			options = series.options,
+			inverted = this.chart.inverted,
+			attr = {},
+			translatedThreshold;
 
-		if (!init) { // run the animation
-			/*
-			 * Note: Ideally the animation should be initialized by calling
-			 * series.group.hide(), and then calling series.group.show()
-			 * after the animation was started. But this rendered the shadows
-			 * invisible in IE8 standards mode. If the columns flicker on large
-			 * datasets, this is the cause.
-			 */
-
-			each(points, function (point) {
-				var graphic = point.graphic,
-					shapeArgs = point.shapeArgs,
-					yAxis = series.yAxis,
-					threshold = options.threshold;
-
-				if (graphic) {
-					// start values
-					graphic.attr({
-						height: 0,
-						y: defined(threshold) ? 
-							yAxis.getThreshold(threshold) :
-							yAxis.translate(yAxis.getExtremes().min, 0, 1, 0, 1)
-					});
-
-					// animate
-					graphic.animate({
-						height: shapeArgs.height,
-						y: shapeArgs.y
-					}, options.animation);
+		if (hasSVG) { // VML is too slow anyway // docs
+			if (init) {
+				attr.scaleY = 0.001;
+				translatedThreshold = mathMin(yAxis.pos + yAxis.len, mathMax(yAxis.pos, yAxis.toPixels(options.threshold)));
+				if (inverted) {
+					attr.translateX = translatedThreshold - yAxis.len;
+				} else {
+					attr.translateY = translatedThreshold;
 				}
-			});
+				series.group.attr(attr);
 
+			} else { // run the animation
+				
+				attr.scaleY = 1;
+				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
+				series.group.animate(attr, series.options.animation);
 
-			// delete this function to allow it only once
-			series.animate = null;
+				// delete this function to allow it only once
+				series.animate = null;
+			}
 		}
-
 	},
 	
 	/**

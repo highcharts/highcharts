@@ -251,11 +251,14 @@ var ColumnSeries = extendClass(Series, {
 			point,
 			i = points.length,
 			onMouseOver = function (event) {
+				var pointIndex = event.target._i + series.cropStart;
 				rel = event.relatedTarget || event.fromElement;
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i + series.cropStart].onMouseOver();
+				if (points[pointIndex]) {
+					points[pointIndex].onMouseOver();
+				}
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {
@@ -307,7 +310,7 @@ var ColumnSeries = extendClass(Series, {
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
-			inside = (this.options.stacking || options.inside); // draw it inside the box? // docs: inside
+			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box? // docs: inside
 		
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
@@ -355,46 +358,33 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	animate: function (init) {
 		var series = this,
-			points = series.points,
-			options = series.options;
+			yAxis = this.yAxis,
+			options = series.options,
+			inverted = this.chart.inverted,
+			attr = {},
+			translatedThreshold;
 
-		if (!init) { // run the animation
-			/*
-			 * Note: Ideally the animation should be initialized by calling
-			 * series.group.hide(), and then calling series.group.show()
-			 * after the animation was started. But this rendered the shadows
-			 * invisible in IE8 standards mode. If the columns flicker on large
-			 * datasets, this is the cause.
-			 */
-
-			each(points, function (point) {
-				var graphic = point.graphic,
-					shapeArgs = point.shapeArgs,
-					yAxis = series.yAxis,
-					threshold = options.threshold;
-
-				if (graphic) {
-					// start values
-					graphic.attr({
-						height: 0,
-						y: defined(threshold) ? 
-							yAxis.getThreshold(threshold) :
-							yAxis.translate(yAxis.getExtremes().min, 0, 1, 0, 1)
-					});
-
-					// animate
-					graphic.animate({
-						height: shapeArgs.height,
-						y: shapeArgs.y
-					}, options.animation);
+		if (hasSVG) { // VML is too slow anyway // docs
+			if (init) {
+				attr.scaleY = 0.001;
+				translatedThreshold = mathMin(yAxis.pos + yAxis.len, mathMax(yAxis.pos, yAxis.toPixels(options.threshold)));
+				if (inverted) {
+					attr.translateX = translatedThreshold - yAxis.len;
+				} else {
+					attr.translateY = translatedThreshold;
 				}
-			});
+				series.group.attr(attr);
 
+			} else { // run the animation
+				
+				attr.scaleY = 1;
+				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
+				series.group.animate(attr, series.options.animation);
 
-			// delete this function to allow it only once
-			series.animate = null;
+				// delete this function to allow it only once
+				series.animate = null;
+			}
 		}
-
 	},
 	
 	/**
