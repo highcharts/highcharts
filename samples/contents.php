@@ -1,5 +1,5 @@
 <?php
-$product = $_GET['product'];
+$product = @$_GET['product'];
 
 if ($product == 'highcharts') $dir = 'highcharts';
 elseif ($product == 'highstock') $dir = 'stock';
