@@ -16795,15 +16795,16 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
-		plotOptions = this.chart.options.plotOptions;
+		plotOptions = this.chart.options.plotOptions,
+		defaultOptions = defaultPlotOptions[type].dataGrouping;
 		
 	if (specificOptions[type]) { // #1284
-		if (!defaultPlotOptions[type].dataGrouping) {
-			defaultPlotOptions[type].dataGrouping = merge(commonOptions, specificOptions[type]);
+		if (!defaultOptions) {
+			defaultOptions = merge(commonOptions, specificOptions[type]);
 		}
 		
 		options.dataGrouping = merge(
-			defaultPlotOptions[type].dataGrouping,
+			defaultOptions,
 			plotOptions.series && plotOptions.series.dataGrouping, // #1228
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor
 			itemOptions.dataGrouping
