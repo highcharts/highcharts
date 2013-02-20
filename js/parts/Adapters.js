@@ -313,7 +313,7 @@
 			$(el).stop();
 		}
 	});
-}(win.jQuery));
+}(jQuery));
 
 
 // check for a custom HighchartsAdapter defined prior to this file

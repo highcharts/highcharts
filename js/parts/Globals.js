@@ -100,7 +100,7 @@ var UNDEFINED,
 
 
 	// lookup over the types and the associated classes
-	seriesTypes = {};
+	seriesTypes = {},
 
-// The Highcharts namespace
-win.Highcharts = win.Highcharts ? error(16, true) : {};
+	// The Highcharts namespace
+	Highcharts = {};
