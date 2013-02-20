@@ -1891,6 +1891,7 @@ Axis.prototype = {
 			var pos, 
 				i,
 				forDestruction = [],
+				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
@@ -1918,10 +1919,10 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered) {
+			if (coll === alternateBands || !chart.hasRendered || !delay) {
 				destroyInactiveItems();
-			} else {
-				setTimeout(destroyInactiveItems, (globalAnimation && globalAnimation.duration) || 500);
+			} else if (delay) {
+				setTimeout(destroyInactiveItems, delay);
 			}
 		});
 
