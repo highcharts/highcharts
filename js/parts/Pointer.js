@@ -797,10 +797,14 @@ Pointer.prototype = {
 		}
 
 		// Release all DOM events
-		each(pointer._events, function (eventConfig) {			
-			delete eventConfig[0][eventConfig[1]];
-			removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
+		each(pointer._events, function (eventConfig) {	
+			if (eventConfig[1].indexOf('on') === 0) {
+				delete eventConfig[0][eventConfig[1]];
+			} else {		
+				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
+			}
 		});
+		delete pointer._events;
 
 		// memory and CPU leak
 		clearInterval(pointer.tooltipTimeout);

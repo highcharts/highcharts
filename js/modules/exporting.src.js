@@ -356,7 +356,7 @@ extend(Chart.prototype, {
 		Highcharts.post(options.url, {
 			filename: options.filename || 'chart',
 			type: options.type,
-			width: options.width,
+			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
 			scale: options.scale || 2,
 			svg: svg
 		});

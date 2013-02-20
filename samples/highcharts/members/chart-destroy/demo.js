@@ -15,6 +15,6 @@ $(function () {
     // the button handler
     $('#button').click(function() {
         $('#container').highcharts().destroy();
-        $(this).disabled = true;
+        $(this).attr('disabled', true);
     });
 });
