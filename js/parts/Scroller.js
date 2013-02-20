@@ -99,8 +99,9 @@ extend(defaultOptions, {
 			]
 		),
 		trackBorderColor: '#CCC',
-		trackBorderWidth: 1
+		trackBorderWidth: 1,
 		// trackBorderRadius: 0
+		liveRedraw: hasSVG // docs
 	}
 });
 /*jslint white:false */
@@ -689,28 +690,33 @@ Scroller.prototype = {
 	
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 				}
+				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
+					setTimeout(function () {
+						scroller.mouseUpHandler(false);
+					}, 0);
+				}
 			}
 		};
 
 		/**
 		 * Event handler for the mouse up event.
 		 */
-		scroller.mouseUpHandler = function () {
-			var zoomedMin = scroller.zoomedMin,
-				zoomedMax = scroller.zoomedMax;
-
+		scroller.mouseUpHandler = function (reset) {
+			
 			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
-					xAxis.translate(zoomedMin, true),
-					xAxis.translate(zoomedMax, true),
+					xAxis.translate(scroller.zoomedMin, true),
+					xAxis.translate(scroller.zoomedMax, true),
 					true,
 					false,
 					{ trigger: 'navigator' }
 				);
 			}
-			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
-			
-			bodyStyle.cursor = defaultBodyCursor || '';
+
+			if (reset !== false) {
+				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
+				bodyStyle.cursor = defaultBodyCursor || '';
+			}
 			
 		};
 
