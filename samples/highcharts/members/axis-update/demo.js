@@ -1,5 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
+    $('#container').highcharts({
     
         title: {
             text: 'Axis.update() demo'
@@ -13,10 +13,11 @@ $(function () {
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
     
-    }, null, true);
+    });
     
 
-    var type = 1,
+    var chart = $('#container').highcharts(),
+        type = 1,
         types = ['linear', 'datetime', 'logarithmic'];
     $('#toggle-type').click(function() {
         chart.yAxis[0].update({

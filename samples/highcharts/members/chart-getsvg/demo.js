@@ -1,8 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
-
-        chart: {
-        },
+    $('#container').highcharts({
 
         credits: {
             enabled: false
@@ -16,13 +13,14 @@ $(function () {
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
 
-    }, null, true);
+    });
 
     // the button handler
     $('#button').click(function() {
-        var svg = chart.getSVG()
-            .replace(/</g, '\n&lt;') // make it slightly more readable
-            .replace(/>/g, '&gt;');
+        var chart = $('#container').highcharts()
+            svg = chart.getSVG()
+                .replace(/</g, '\n&lt;') // make it slightly more readable
+                .replace(/>/g, '&gt;');
 
         document.body.innerHTML = '<pre>'+ svg +'</pre>';
     });

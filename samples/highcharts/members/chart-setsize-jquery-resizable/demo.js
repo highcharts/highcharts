@@ -1,8 +1,6 @@
 $(function () {
-    var container = $('#container')[0],
-    chart = $('#container').highcharts({
+    $('#container').highcharts({
         chart: {
-            renderTo: container,
             spacingTop: 3,
             spacingRight: 0,
             spacingBottom: 3,
@@ -21,8 +19,9 @@ $(function () {
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
 
-    }, null, true);
+    });
 
+    var chart = $('#container').highcharts();
     $('#resizer').resizable({
         // On resize, set the chart size to that of the
         // resizer minus padding. If your chart has a lot of data or other

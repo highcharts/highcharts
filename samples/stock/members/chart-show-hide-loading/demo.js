@@ -1,5 +1,5 @@
 $(function() {
-	var chart = $('#container').highcharts('StockChart', {
+	$('#container').highcharts('StockChart', {
 
 	    rangeSelector: {
 	    	selected: 1
@@ -9,10 +9,12 @@ $(function() {
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
-	}, null, true);
+	
+	});
 
 	// the button handler
-	var isLoading = false,
+	var chart = $('#container').highcharts(),
+        isLoading = false,
 	    $button = $('#button');
 	$button.click(function() {
 	    if (!isLoading) {

@@ -1,5 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
+    $('#container').highcharts({
 
         chart: {
             backgroundColor: {
@@ -28,10 +28,11 @@ $(function () {
                 enabled: false
             }
         }
-    }, null, true);
+    });
 
     // the button handler
     $('#button').click(function() {
+        var chart = $('#container').highcharts();
         chart.print();
     });
 });

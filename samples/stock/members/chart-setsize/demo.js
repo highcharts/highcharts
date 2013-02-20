@@ -1,6 +1,6 @@
 $(function() {
 
-	var container = $('#container')[0];
+	var chart;
 	$('#resizer').resizable({
 	    // On resize, set the chart size to that of the
 	    // resizer minus padding. If your chart has a lot of data or other
@@ -15,7 +15,7 @@ $(function() {
 	    }
 	});
 
-	var chart = $('#container').highcharts('StockChart', {
+	$('#container').highcharts('StockChart', {
 	    rangeSelector: {
 	    	selected: 1
 	    },
@@ -23,5 +23,7 @@ $(function() {
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
-	}, null, true);
+	});
+	chart = $('#container').highcharts();
+        
 });

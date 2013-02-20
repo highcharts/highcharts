@@ -1,8 +1,5 @@
 $(function() {
-	var chart = $('#container').highcharts('StockChart', {
-
-	    chart: {
-	    },
+	$('#container').highcharts('StockChart', {
 
 	    rangeSelector: {
 	    	selected: 1,
@@ -24,9 +21,10 @@ $(function() {
 	    		}
 	    	}
 	    }
-	}, null, true);
+	});
 
 	$('#button').click(function() {
-		chart.exportChart();
+		var chart = $('#container').highcharts();
+        chart.exportChart();
 	});
 });

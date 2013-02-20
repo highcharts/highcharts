@@ -1,5 +1,5 @@
 $(function() {
-	var chart = $('#container').highcharts('StockChart', {
+	$('#container').highcharts('StockChart', {
 
 	    rangeSelector: {
 	    	selected: 1
@@ -9,10 +9,11 @@ $(function() {
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
-	}, null, true);
+	});
 
 	$('#button').click(function() {
-		chart.series[0].remove();
+		var chart = $('#container').highcharts();
+        chart.series[0].remove();
 		this.disabled = true;
 
 	});

@@ -1,5 +1,5 @@
 $(function() {
-	var chart = $('#container').highcharts('StockChart', {
+	$('#container').highcharts('StockChart', {
 
 	    rangeSelector: {
 	    	selected: 1
@@ -9,10 +9,11 @@ $(function() {
 	        name: 'MSFT',
 	        data: MSFT
 	    }]
-	}, null, true);
+	});
 
 	$('#button').click(function() {
-		chart.series[0].setData(ADBE);
+		var chart = $('#container').highcharts();
+        chart.series[0].setData(ADBE);
 		this.disabled = true;
 	});
 });

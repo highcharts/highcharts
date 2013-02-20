@@ -249,8 +249,8 @@ $(function () {
     
             }, function(masterChart) {
                 createDetail(masterChart)
-            },
-            true);
+            })
+            .highcharts(); // return chart instance
         }
     
         // create the detail chart
@@ -331,7 +331,7 @@ $(function () {
                     enabled: false
                 }
     
-            }, null, true);
+            }).highcharts(); // return chart
         }
     
         // make the container smaller and add a second container for the master chart

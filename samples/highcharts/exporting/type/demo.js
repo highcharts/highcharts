@@ -1,8 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
-
-        chart: {
-        },
+    $('#container').highcharts({
 
         credits: {
             enabled: false
@@ -25,10 +22,11 @@ $(function () {
             type: 'image/jpeg'
         }
 
-    }, null, true);
+    });
 
     // button handler
     $('#button').click(function() {
+        var chart = $('#container').highcharts();
         chart.exportChart();
     });
 });

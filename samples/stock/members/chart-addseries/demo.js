@@ -1,10 +1,7 @@
 $(function() {
-	var chart = $('#container').highcharts('StockChart', {
+	$('#container').highcharts('StockChart', {
 
-	    chart: {
-	    },
-
-        scrollbar: {
+	    scrollbar: {
             enabled: true
         },
 
@@ -20,13 +17,14 @@ $(function() {
 			name: 'MSFT',
 			data: MSFT
         }]
-	}, null, true);
+	});
 
 	$('#button').click(function() {
-		chart.addSeries({
+		var chart = $('#container').highcharts();
+        chart.addSeries({
 			name: 'ADBE',
 			data: ADBE
 		});
-        $('#button')[0].disabled = true;
+        $(this).attr('disabled', true);
 	});
 });

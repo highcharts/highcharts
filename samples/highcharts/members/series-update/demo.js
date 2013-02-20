@@ -1,8 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
-        chart: {
-        },
-
+    $('#container').highcharts({
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             showEmpty: false
@@ -35,9 +32,10 @@ $(function () {
             ],
             showInLegend: true
         }]
-    }, null, true);
+    });
 
-
+    var chart = $('#container').highcharts();
+        
     // Toggle names
     var name = false;
     $('#name').click(function() {
