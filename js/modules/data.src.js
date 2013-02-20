@@ -118,9 +118,6 @@
 	},
 
 	dataFound: function () {
-		// Handle raw data if a callback is given
-		this.raw();
-		
 		// Interpret the values into right types
 		this.parseTypes();
 		
@@ -391,15 +388,6 @@
 			}
 		}
 		return columns;
-	},
-
-	/**
-	 * A hook for working directly on the parsed columns structure but before the cell values have types.
-	 */
-	raw: function () {
-		if (this.options.raw) {
-			this.options.raw.call(this, this.columns);
-		}
 	},
 	
 	/**
