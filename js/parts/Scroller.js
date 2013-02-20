@@ -191,7 +191,7 @@ Scroller.prototype = {
 		}
 
 		// Place it
-		handles[index][scroller.rendered ? 'animate' : 'attr']({
+		handles[index][chart.isResizing ? 'animate' : 'attr']({
 			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10), 
 			translateY: scroller.top + scroller.height / 2 - 8
 		});
@@ -398,7 +398,7 @@ Scroller.prototype = {
 		}
 
 		// place elements
-		verb = scroller.rendered ? 'animate' : 'attr';
+		verb = chart.isResizing ? 'animate' : 'attr';
 		if (navigatorEnabled) {
 			scroller.leftShade[verb]({
 				x: navigatorLeft,
@@ -461,22 +461,25 @@ Scroller.prototype = {
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
 
-			scroller.scrollbarRifles[verb]({ d: [
-					M,
-					centerBarX - 3, scrollbarHeight / 4,
-					L,
-					centerBarX - 3, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX, scrollbarHeight / 4,
-					L,
-					centerBarX, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX + 3, scrollbarHeight / 4,
-					L,
-					centerBarX + 3, 2 * scrollbarHeight / 3
-				],
-				visibility: range > 12 ? VISIBLE : HIDDEN
-			});
+			scroller.scrollbarRifles
+				.attr({
+					visibility: range > 12 ? VISIBLE : HIDDEN
+				})[verb]({ 
+					d: [
+						M,
+						centerBarX - 3, scrollbarHeight / 4,
+						L,
+						centerBarX - 3, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX, scrollbarHeight / 4,
+						L,
+						centerBarX, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX + 3, scrollbarHeight / 4,
+						L,
+						centerBarX + 3, 2 * scrollbarHeight / 3
+					]
+				});
 		}
 
 		scroller.scrollbarPad = scrollbarPad;

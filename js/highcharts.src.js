@@ -1198,11 +1198,10 @@ pathAnim = {
 				}
 
 				// When called without parameters or with the return argument, get a predefined chart
-				if (options === UNDEFINED || args[2] === true) {
+				if (options === UNDEFINED) {
 					ret = charts[attr(this[0], 'data-highcharts-chart')];
 				}	
 
-				
 				return ret;
 			};
 
@@ -4638,7 +4637,6 @@ VMLElement = {
 							value = value === HIDDEN ? '-999em' : 0;
 							key = 'top';
 						}
-						
 						elemStyle[key] = value;	
 						skipAttr = true;
 
@@ -9563,91 +9561,43 @@ Pointer.prototype = {
 	 */
 	setDOMEvents: function () {
 
-		var tracker = this,
-			container = tracker.chart.container;
+		var pointer = this,
+			container = pointer.chart.container,
+			events;
 
-		container.onmousedown = function (e) {
-			tracker.onContainerMouseDown(e);
-		};
+		this._events = events = [
+			[container, 'onmousedown', 'onContainerMouseDown'],
+			[container, 'onmousemove', 'onContainerMouseMove'],
+			[container, 'onclick', 'onContainerClick'],
+			[container, 'mouseleave', 'onContainerMouseLeave'],
+			[doc, 'mousemove', 'onDocumentMouseMove'],
+			[doc, 'mouseup', 'onDocumentMouseUp']
+		];
 
-		container.onmousemove = function (e) {
-			tracker.onContainerMouseMove(e);
-		};
-
-		container.onclick = function (e) {
-			tracker.onContainerClick(e);
-		};
-		
-		addEvent(container, 'mouseleave', function (e) {
-			tracker.onContainerMouseLeave(e);
-		});
-
-		addEvent(doc, 'mousemove', function (e) {
-			tracker.onDocumentMouseMove(e);
-		});
-
-		addEvent(doc, 'mouseup', function (e) {
-			tracker.onDocumentMouseUp(e);
-		});
-
-		
 		if (hasTouch) {
-			
-			container.ontouchstart = function (e) {
-				tracker.onContainerTouchStart(e);
-			};
-			
-			container.ontouchmove = function (e) {
-				tracker.onContainerTouchMove(e);
-			};
-			
-			addEvent(doc, 'touchend', function (e) {
-				tracker.onDocumentTouchEnd(e);
-			});
+			events.push(
+				[container, 'ontouchstart', 'onContainerTouchStart'],
+				[container, 'ontouchmove', 'onContainerTouchMove'],
+				[doc, 'touchend', 'onDocumentTouchEnd']
+			);
 		}
 
-		/*
-		
-		// The automatic version of the above. It is harder to read, about the same amount of
-		// code and the only real advantage is that it automatically picks up user defined
-		// onSomething methods, but this can be added anyway through the DOM.
-		var tracker = this,
-			prop;
+		each(events, function (eventConfig) {
 
-		for (prop in tracker) {
-			if (prop.indexOf('on') === 0 && (hasTouch || prop.indexOf('Touch') === -1)) {
-				(function () {
-					var method = prop,
-						from,
-						type,
-						element,
-						handler = function (e) {
-							tracker[method](e);
-						};
+			// First, create the callback function that in turn calls the method on Pointer
+			pointer['_' + eventConfig[2]] = function (e) {
+				pointer[eventConfig[2]](e);
+			};
 
-					// Identify the element to add the event to
-					if (prop.indexOf('Container') === 2) {
-						element = tracker.chart.container;
-						from = 11;
-					} else if (prop.indexOf('Document') === 2) {
-						element = doc;
-						from = 10;
-					}
-
-					// The type of event
-					type = prop.substring(from).toLowerCase();
-
-					// Some events need to be added via addEvent, others need to be set 
-					// directly as an attribute in order to work.
-					if (element === doc || type === 'mouseleave') {
-						addEvent(element, type, handler);
-					} else {
-						element['on' + type] = handler;
-					}
-				}());
+			// Now attach the function, either as a direct property or through addEvent
+			if (eventConfig[1].indexOf('on') === 0) {
+				eventConfig[0][eventConfig[1]] = pointer['_' + eventConfig[2]];
+			} else {
+				addEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
 			}
-		}
-		*/
+		});
+
+		
 	},
 
 	/**
@@ -9655,20 +9605,21 @@ Pointer.prototype = {
 	 */
 	destroy: function () {
 		var pointer = this,
-			chart = pointer.chart,
-			container = chart.container;
+			chart = this.chart;
 
 		// Destroy the tracker group element
 		if (chart.trackerGroup) {
 			chart.trackerGroup = chart.trackerGroup.destroy();
 		}
 
-		removeEvent(container, 'mouseleave', pointer.hideTooltipOnMouseLeave);
-		removeEvent(doc, 'mousemove', pointer.hideTooltipOnMouseMove);
-		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
+		// Release all DOM events
+		each(pointer._events, function (eventConfig) {			
+			delete eventConfig[0][eventConfig[1]];
+			removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
+		});
 
 		// memory and CPU leak
-		clearInterval(this.tooltipTimeout);
+		clearInterval(pointer.tooltipTimeout);
 	}
 };
 /**
@@ -11727,7 +11678,7 @@ Chart.prototype = {
 
 		// ==== Destroy chart properties:
 		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 

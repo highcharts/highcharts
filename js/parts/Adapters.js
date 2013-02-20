@@ -140,11 +140,10 @@
 				}
 
 				// When called without parameters or with the return argument, get a predefined chart
-				if (options === UNDEFINED || args[2] === true) {
+				if (options === UNDEFINED) {
 					ret = charts[attr(this[0], 'data-highcharts-chart')];
 				}	
 
-				
 				return ret;
 			};
 

@@ -223,7 +223,6 @@ VMLElement = {
 							value = value === HIDDEN ? '-999em' : 0;
 							key = 'top';
 						}
-						
 						elemStyle[key] = value;	
 						skipAttr = true;
 
