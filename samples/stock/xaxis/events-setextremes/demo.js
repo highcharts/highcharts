@@ -1,9 +1,5 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
-	    
-	    chart: {
-	    },
-	    
 	    xAxis: {
 	    	events: {
 	    		setExtremes: function(e) {
@@ -12,11 +8,9 @@ $(function() {
 	    		}
 	    	}
 	    },
-	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur

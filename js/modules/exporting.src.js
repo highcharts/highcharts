@@ -81,8 +81,8 @@ defaultOptions.navigation = {
 		buttonSpacing: 3, 
 		height: 22,
 		theme: {
-			fill: 'none',
-			stroke: 'white'
+			fill: 'white', // capture hover
+			stroke: 'none'
 		},
 		verticalAlign: 'top',
 		width: 24
@@ -637,9 +637,9 @@ extend(Chart.prototype, {
 	/**
 	 * Destroy the buttons.
 	 */
-	destroyExport: function () {
-		var i,
-			chart = this,
+	destroyExport: function (e) {
+		var chart = e.target,
+			i,
 			elem;
 
 		// Destroy the extra buttons added

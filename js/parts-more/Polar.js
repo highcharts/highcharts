@@ -231,22 +231,12 @@ function polarAnimate(proceed, init) {
 			// Initialize the animation
 			if (init) {
 				
-				// Create an SVG specific attribute setter for scaleX and scaleY
-				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-					this[key] = value;
-					if (this.scaleX !== UNDEFINED && this.scaleY !== UNDEFINED) {
-						this.element.setAttribute('transform', 'translate(' + this.translateX + ',' + this.translateY + ') scale(' + 
-							this.scaleX + ',' + this.scaleY + ')');
-					}
-					return false;
-				};
-				
 				// Scale down the group and place it in the center
 				attribs = {
 					translateX: center[0] + plotLeft,
 					translateY: center[1] + plotTop,
-					scaleX: 0,
-					scaleY: 0
+					scaleX: 0.001, // #1499
+					scaleY: 0.001
 				};
 					
 				group.attr(attribs);

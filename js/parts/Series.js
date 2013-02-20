@@ -65,7 +65,8 @@ Point.prototype = {
 	 */
 	optionsToObject: function (options) {
 		var ret,
-			pointArrayMap = this.series.pointArrayMap || ['y'],
+			series = this.series,
+			pointArrayMap = series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
 			firstItemType,
 			i = 0,
@@ -91,6 +92,17 @@ Point.prototype = {
 			}			
 		} else if (typeof options === 'object') {
 			ret = options;
+
+			// This is the fastest way to detect if there are individual point dataLabels that need 
+			// to be considered in drawDataLabels. These can only occur in object configs.
+			if (options.dataLabels) {
+				series._hasPointLabels = true;
+			}
+
+			// Same approach as above for markers
+			if (options.marker) {
+				series._hasPointMarkers = true;
+			}
 		}
 		return ret;
 	},

@@ -1,9 +1,9 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
-	    
-	    chart: {
+	    title: {
+	    	text: 'yAxis: {showFirstLabel: false}'
 	    },
-	    
+
 	    yAxis: {
 	    	showFirstLabel: false,
 	    	showLastLabel: true,
@@ -11,11 +11,11 @@ $(function() {
 	    		y: 12
 	    	}
 	    },
-	    
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur

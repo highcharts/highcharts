@@ -1,17 +1,17 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
-	    
-	    chart: {
-	    },
-	    
+		title: {
+			text: 'legend is horizontal by default'
+		},
+
 	    legend: {
 	    	enabled: true
 	    },
-	    
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 	        name: 'ADBE',
 	        data: ADBE

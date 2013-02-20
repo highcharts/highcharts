@@ -1039,6 +1039,9 @@ Chart.prototype = {
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
 			spacingLeft = optionsChart.spacingLeft,
+			clipOffset = chart.clipOffset,
+			clipX,
+			clipY,
 			plotLeft,
 			plotTop,
 			plotWidth,
@@ -1068,11 +1071,13 @@ Chart.prototype = {
 			width: plotWidth,
 			height: plotHeight
 		};
+		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
-			x: plotBorderWidth / 2, 
-			y: plotBorderWidth / 2, 
-			width: chart.plotSizeX - plotBorderWidth, 
-			height: chart.plotSizeY - plotBorderWidth
+			x: clipX, 
+			y: clipY, 
+			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: mathFloor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY)
 		};
 
 		if (!skipAxes) {
@@ -1099,6 +1104,7 @@ Chart.prototype = {
 		chart.marginBottom = pick(chart.optionsMarginBottom, spacingBottom);
 		chart.plotLeft = pick(chart.optionsMarginLeft, spacingLeft);
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
+		chart.clipOffset = [0, 0, 0, 0];
 	},
 
 	/**

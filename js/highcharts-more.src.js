@@ -10,7 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
+/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts, UNDEFINED) {
 var arrayMin = Highcharts.arrayMin,
@@ -1397,7 +1397,7 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 	// recalculate extremes for each waterfall stack
 	each(axis.series, function (series) {
 		// process only visible, waterfall series, one from each stack
-		if (!series.visible || !series.stackKey || series.type !== 'waterfall' || visitedStacks.indexOf(series.stackKey) !== -1) {
+		if (!series.visible || !series.stackKey || series.type !== 'waterfall' || HighchartsAdapter.inArray(series.stackKey) !== -1) {
 			return;
 		}
 
@@ -1479,7 +1479,6 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
-	borderWidth: 1,
 	borderColor: '#333',
 	shadow: false
 });
@@ -2297,22 +2296,12 @@ function polarAnimate(proceed, init) {
 			// Initialize the animation
 			if (init) {
 				
-				// Create an SVG specific attribute setter for scaleX and scaleY
-				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-					this[key] = value;
-					if (this.scaleX !== UNDEFINED && this.scaleY !== UNDEFINED) {
-						this.element.setAttribute('transform', 'translate(' + this.translateX + ',' + this.translateY + ') scale(' + 
-							this.scaleX + ',' + this.scaleY + ')');
-					}
-					return false;
-				};
-				
 				// Scale down the group and place it in the center
 				attribs = {
 					translateX: center[0] + plotLeft,
 					translateY: center[1] + plotTop,
-					scaleX: 0,
-					scaleY: 0
+					scaleX: 0.001, // #1499
+					scaleY: 0.001
 				};
 					
 				group.attr(attribs);

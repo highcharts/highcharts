@@ -2646,8 +2646,8 @@ SVGElement.prototype = {
 		}
 
 		// apply scale
-		if (scaleX || scaleY) {
-			transform.push('scale(' + (scaleX || 1) + ' ' + (scaleY || 1) + ')');
+		if (defined(scaleX) || defined(scaleY)) {
+			transform.push('scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')');
 		}
 
 		if (transform.length) {
@@ -3329,16 +3329,16 @@ SVGRenderer.prototype = {
 		/*jslint white: true*/
 		normalState = merge(hash(
 			STROKE_WIDTH, 1,
-			STROKE, '#999',
+			STROKE, '#CCCCCC',
 			FILL, hash(
 				LINEAR_GRADIENT, verticalGradient,
 				STOPS, [
-					[0, '#FFF'],
-					[1, '#DDD']
+					[0, '#FEFEFE'],
+					[1, '#F6F6F6']
 				]
 			),
-			'r', 3,
-			'padding', 3,
+			'r', 2,
+			'padding', 5,
 			STYLE, hash(
 				'color', 'black'
 			)
@@ -7894,6 +7894,7 @@ Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			axisOffset = chart.axisOffset,
+			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
@@ -7991,6 +7992,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
+		clipOffset[side] = mathMax(clipOffset[side], options.lineWidth);
 
 	},
 	
@@ -11363,6 +11365,9 @@ Chart.prototype = {
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
 			spacingLeft = optionsChart.spacingLeft,
+			clipOffset = chart.clipOffset,
+			clipX,
+			clipY,
 			plotLeft,
 			plotTop,
 			plotWidth,
@@ -11392,11 +11397,13 @@ Chart.prototype = {
 			width: plotWidth,
 			height: plotHeight
 		};
+		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
-			x: plotBorderWidth / 2, 
-			y: plotBorderWidth / 2, 
-			width: chart.plotSizeX - plotBorderWidth, 
-			height: chart.plotSizeY - plotBorderWidth
+			x: clipX, 
+			y: clipY, 
+			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: mathFloor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY)
 		};
 
 		if (!skipAxes) {
@@ -11423,6 +11430,7 @@ Chart.prototype = {
 		chart.marginBottom = pick(chart.optionsMarginBottom, spacingBottom);
 		chart.plotLeft = pick(chart.optionsMarginLeft, spacingLeft);
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
+		chart.clipOffset = [0, 0, 0, 0];
 	},
 
 	/**
@@ -11905,7 +11913,8 @@ Point.prototype = {
 	 */
 	optionsToObject: function (options) {
 		var ret,
-			pointArrayMap = this.series.pointArrayMap || ['y'],
+			series = this.series,
+			pointArrayMap = series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
 			firstItemType,
 			i = 0,
@@ -11931,6 +11940,17 @@ Point.prototype = {
 			}			
 		} else if (typeof options === 'object') {
 			ret = options;
+
+			// This is the fastest way to detect if there are individual point dataLabels that need 
+			// to be considered in drawDataLabels. These can only occur in object configs.
+			if (options.dataLabels) {
+				series._hasPointLabels = true;
+			}
+
+			// Same approach as above for markers
+			if (options.marker) {
+				series._hasPointMarkers = true;
+			}
 		}
 		return ret;
 	},
@@ -15189,11 +15209,14 @@ var ColumnSeries = extendClass(Series, {
 			point,
 			i = points.length,
 			onMouseOver = function (event) {
+				var pointIndex = event.target._i + series.cropStart;
 				rel = event.relatedTarget || event.fromElement;
 				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
 					series.onMouseOver();
 				}
-				points[event.target._i + series.cropStart].onMouseOver();
+				if (points[pointIndex]) {
+					points[pointIndex].onMouseOver();
+				}
 			},
 			onMouseOut = function (event) {
 				if (!options.stickyTracking) {

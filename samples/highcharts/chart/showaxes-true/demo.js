@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = $('#container').highcharts({
         chart: {
             type: 'line',
             showAxes: true
@@ -7,9 +7,9 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         }
-        
-    });
-    
+
+    }, null, true);
+
     // add the button action
     $('#button').click(function() {
         chart.addSeries({
