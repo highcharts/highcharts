@@ -147,10 +147,18 @@ var PieSeries = {
 	isCartesian: false,
 	pointClass: PiePoint,
 	requireSorting: false,
+	radiusValued: false,
+	minRadius: 40,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
 		fill: 'color'
+	},
+
+	init: function (chart, options) {
+		Series.prototype.init.apply(this, arguments);
+		this.radiusValued = options.radiusValued || false;
+		this.minRadius = options.minRadius || 40;
 	},
 
 	/**
@@ -205,11 +213,11 @@ var PieSeries = {
 		this.generatePoints();
 		if (pick(redraw, true)) {
 			this.chart.redraw();
-		} 
+		}
 	},
-	
+
 	/**
-	 * Get the center of the pie based on the size and center options relative to the  
+	 * Get the center of the pie based on the size and center options relative to the
 	 * plot area. Borrowed by the polar and gauge series types.
 	 */
 	getCenter: function () {
@@ -220,7 +228,7 @@ var PieSeries = {
 			plotHeight = chart.plotHeight,
 			positions = options.center.concat([options.size, options.innerSize || 0]),
 			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent;			
+			isPercent;
 		
 		return map(positions, function (length, i) {
 
@@ -243,6 +251,9 @@ var PieSeries = {
 		this.generatePoints();
 		
 		var total = 0,
+			maxR = 0,
+			rappR = 0,
+			radius = 0,
 			series = this,
 			cumulative = 0,
 			precision = 1000, // issue #172
@@ -259,7 +270,9 @@ var PieSeries = {
 			circ = 2 * mathPI,
 			fraction,
 			radiusX, // the x component of the radius vector for a given point
+			radiusX2,
 			radiusY,
+			radiusY2,
 			labelDistance = options.dataLabels.distance,
 			ignoreHiddenPoint = options.ignoreHiddenPoint,
 			i,
@@ -278,11 +291,18 @@ var PieSeries = {
 				(left ? -1 : 1) *
 				(mathCos(angle) * (positions[2] / 2 + labelDistance));
 		};
-
 		// get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
+			if (this.radiusValued === true) {
+				if ((ignoreHiddenPoint && !point.visible) ? 0 : point.r > maxR) {
+					maxR = point.r;
+				}
+			}
+		}
+		if (this.radiusValued === true) {
+			rappR = this.minRadius / maxR;
 		}
 
 		// Calculate the geometry for each point
@@ -298,33 +318,45 @@ var PieSeries = {
 			}
 			end = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
 
+			angle = (end + start) / 2;
+			if (angle > 0.75 * circ) {
+				angle -= 2 * mathPI;
+			}
+
+			if (this.radiusValued === true) {
+				radius = (((rappR * point.r) + (100 - this.minRadius)) * (positions[2] / 2)) / 100;
+				radiusX2 = mathCos(angle) * positions[2] / 2;
+				radiusY2 = mathSin(angle) * positions[2] / 2;
+			} else {
+				radius = positions[2] / 2;
+				radiusX2 = mathCos(angle) * radius;
+				radiusY2 = mathSin(angle) * radius;
+			}
+			radiusX = mathCos(angle) * radius;
+			radiusY = mathSin(angle) * radius;
+
 			// set the shape
 			point.shapeType = 'arc';
 			point.shapeArgs = {
 				x: positions[0],
 				y: positions[1],
-				r: positions[2] / 2,
+				//r: positions[2] / 2,
+				r: radius,
 				innerR: positions[3] / 2,
 				start: start,
 				end: end
 			};
 
 			// center for the sliced out slice
-			angle = (end + start) / 2;
-			if (angle > 0.75 * circ) {
-				angle -= 2 * mathPI;
-			}
 			point.slicedTranslation = map([
 				mathCos(angle) * slicedOffset + chart.plotLeft,
 				mathSin(angle) * slicedOffset + chart.plotTop
 			], mathRound);
 
 			// set the anchor point for tooltips
-			radiusX = mathCos(angle) * positions[2] / 2;
-			radiusY = mathSin(angle) * positions[2] / 2;
 			point.tooltipPos = [
-				positions[0] + radiusX * 0.7,
-				positions[1] + radiusY * 0.7
+				positions[0] + radiusX2 * 0.7,
+				positions[1] + radiusY2 * 0.7
 			];
 			
 			point.half = angle < circ / 4 ? 0 : 1;
@@ -332,10 +364,12 @@ var PieSeries = {
 
 			// set the anchor point for data labels
 			point.labelPos = [
-				positions[0] + radiusX + mathCos(angle) * labelDistance, // first break of connector
-				positions[1] + radiusY + mathSin(angle) * labelDistance, // a/a
-				positions[0] + radiusX + mathCos(angle) * connectorOffset, // second break, right outside pie
-				positions[1] + radiusY + mathSin(angle) * connectorOffset, // a/a
+				positions[0] + radiusX2 + mathCos(angle) * labelDistance, // first break of connector
+				positions[1] + radiusY2 + mathSin(angle) * labelDistance, // a/a
+				positions[0] + radiusX2 + mathCos(angle) * connectorOffset, // second break, right outside pie
+				positions[1] + radiusY2 + mathSin(angle) * connectorOffset, // a/a
+				positions[0] + radiusX2, // landing point for connector
+				positions[1] + radiusY2, // a/a
 				positions[0] + radiusX, // landing point for connector
 				positions[1] + radiusY, // a/a
 				labelDistance < 0 ? // alignment
@@ -647,10 +681,12 @@ var PieSeries = {
 				dataLabel
 					.attr({
 						visibility: visibility,
-						align: labelPos[6]
+						// align: labelPos[6]
+						align: labelPos[8]
 					})[dataLabel.moved ? 'animate' : 'attr']({
 						x: x + options.x +
-							({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
+							//({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
+							({ left: connectorPadding, right: -connectorPadding }[labelPos[8]] || 0),
 						y: y + options.y - 10 // 10 is for the baseline (label vs text)
 					});
 				dataLabel.moved = true;
@@ -661,20 +697,25 @@ var PieSeries = {
 
 					connectorPath = softConnector ? [
 						M,
-						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+						//x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+						x + (labelPos[8] === 'left' ? 5 : -5), y, // end of the string at the label
 						'C',
 						x, y, // first break, next to the label
 						2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
 						labelPos[2], labelPos[3], // second break
 						L,
-						labelPos[4], labelPos[5] // base
+						labelPos[4], labelPos[5],
+						L,
+						labelPos[6], labelPos[7]
 					] : [
 						M,
-						x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+						x + (labelPos[8] === 'left' ? 5 : -5), y, // end of the string at the label
 						L,
 						labelPos[2], labelPos[3], // second break
 						L,
-						labelPos[4], labelPos[5] // base
+						labelPos[4], labelPos[5], // base
+						L,
+						labelPos[6], labelPos[7] // base
 					];
 
 					if (connector) {
