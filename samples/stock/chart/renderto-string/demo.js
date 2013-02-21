@@ -1,5 +1,9 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.Chart({
+
+		chart: {
+			renderTo: 'container'
+		},
 
 	    rangeSelector: {
 	    	selected: 1

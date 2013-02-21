@@ -1,7 +1,7 @@
 $(function () {
     var $container = $('<div>').appendTo(document.body);
     
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         chart: {
             renderTo: $container[0],
             height: 400
