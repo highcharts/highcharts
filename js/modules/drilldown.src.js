@@ -79,10 +79,12 @@
 			oldSeries = chart.series[0],
 			newSeries = chart.addSeries(level.seriesOptions, false);
 
-		newSeries.animate = newSeries.animateDrillupTo || noop;
+        if (newSeries.type === oldSeries.type) {
+		    newSeries.animate = newSeries.animateDrillupTo || noop;
 
-		if (oldSeries.animateDrillupFrom) {
-			oldSeries.animateDrillupFrom(newSeries, level);
+            if (oldSeries.animateDrillupFrom) {
+			    oldSeries.animateDrillupFrom(newSeries, level);
+            }
 		}
 
 		oldSeries.remove(false);
@@ -293,7 +295,10 @@
 				xAxis.oldPos = xAxis.pos;
 			}
 
-            newSeries.animate = newSeries.animateDrilldown || noop;
+            // Run fancy cross-animation on supported and equal types
+            if (series.type === newSeries.type) {
+                newSeries.animate = newSeries.animateDrilldown || noop;
+            }
 			
 			series.remove(false);
 			
