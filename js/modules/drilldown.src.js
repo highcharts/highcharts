@@ -79,6 +79,8 @@
 			oldSeries = chart.series[0],
 			newSeries = chart.addSeries(level.seriesOptions, false);
 
+        HighchartsAdapter.fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+
         if (newSeries.type === oldSeries.type) {
 		    newSeries.animate = newSeries.animateDrillupTo || noop;
 
@@ -279,6 +281,9 @@
 		}
 		
 		if (ddOptions) {
+
+
+            HighchartsAdapter.fireEvent(chart, 'drilldown', { seriesOptions: ddOptions });
 			
 			ddOptions = H.extend({
 				color: color
