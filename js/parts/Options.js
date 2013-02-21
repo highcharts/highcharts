@@ -300,7 +300,7 @@ defaultOptions = {
 		style: {
 			color: '#333333',
 			fontSize: '12px',
-			padding: '5px',
+			padding: '8px', // docs
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',

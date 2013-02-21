@@ -23,15 +23,12 @@ $(function () {
         },
 
         tooltip: {
-            pointFormat: '${point.y:,.2f} USD',
-            style: {
-                fontWeight: 'bold'
-            }
+            pointFormat: '<b>${point.y:,.2f}</b> USD'
         },
 
         series: [{
-            upColor: '#89A54E',
-            color: '#AA4643',
+            upColor: Highcharts.getOptions().colors[2],
+            color: Highcharts.getOptions().colors[3],
             data: [{
                 name: 'Start',
                 y: 120000
@@ -44,7 +41,7 @@ $(function () {
             }, {
                 name: 'Positive Balance',
                 isIntermediateSum: true,
-                color: '#0066FF'
+                color: Highcharts.getOptions().colors[1]
             }, {
                 name: 'Fixed Costs',
                 y: -342000
@@ -54,7 +51,7 @@ $(function () {
             }, {
                 name: 'Balance',
                 isSum: true,
-                color: '#0066FF'
+                color: Highcharts.getOptions().colors[1]
             }],
             dataLabels: {
                 enabled: true,

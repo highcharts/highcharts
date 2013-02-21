@@ -1589,6 +1589,7 @@ Axis.prototype = {
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
+			invertedSide = chart.inverted ? [1, 0, 3, 2][side] : side,
 			hasData,
 			showAxis,
 			titleOffset = 0,
@@ -1696,7 +1697,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
-		clipOffset[side] = mathMax(clipOffset[side], options.lineWidth);
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], options.lineWidth);
 
 	},
 	
