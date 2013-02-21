@@ -29,7 +29,7 @@ var AreaSeries = extendClass(Series, {
 			i,
 			x;
 
-		if (this.options.stacking) {
+		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
 			// Create a map where we can quickly look up the points by their X value.
 			for (i = 0; i < points.length; i++) {
 				pointMap[points[i].x] = points[i];

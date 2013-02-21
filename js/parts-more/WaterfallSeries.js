@@ -100,8 +100,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
-	borderColor: '#333',
-	shadow: false
+	borderColor: '#333'
 });
 
 

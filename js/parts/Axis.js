@@ -82,7 +82,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#6D869F',
+				color: '#4d759e',
 				//font: defaultFont.replace('normal', 'bold')
 				fontWeight: 'bold'
 			}

@@ -116,7 +116,6 @@
 			animation: false, // makes the complex shapes slow
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
-			shadow: false,
 			borderColor: 'silver',
 			borderWidth: 1,
 			marker: null,

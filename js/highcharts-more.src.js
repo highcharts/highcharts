@@ -647,8 +647,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		xHigh: 0,
 		yLow: 0,
 		yHigh: 0	
-	},
-	shadow: false
+	}
 });
 
 /**
@@ -1479,8 +1478,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
-	borderColor: '#333',
-	shadow: false
+	borderColor: '#333'
 });
 
 
@@ -1805,7 +1803,6 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
-	shadow: false,
 	stickyTracking: false,
 	tooltip: {
 		followPointer: true,

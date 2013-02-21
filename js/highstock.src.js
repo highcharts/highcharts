@@ -1455,8 +1455,8 @@ defaultLabelOptions = {
 };
 
 defaultOptions = {
-	colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
-		'#DB843D', '#92A8CD', '#A47D7C', '#B5CA92'],
+	colors: ['#2f7ed8', '#0d233a', /*'#7da32d'*/ '#8bbc21', '#c42525', '#6d4999', '#1b90ad',
+		'#f28f43', '#77a1e5', '#a35c5b', '#a6c96a'], // docs
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1529,7 +1529,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		y: 15,
 		style: {
-			color: '#3E576F',
+			color: '#274b6d',//#3E576F',
 			fontSize: '16px'
 		}
 
@@ -1542,7 +1542,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		y: 30,
 		style: {
-			color: '#6D869F'
+			color: '#4d759e'
 		}
 	},
 
@@ -1561,7 +1561,7 @@ defaultOptions = {
 			events: {},
 			//legendIndex: 0,
 			lineWidth: 2,
-			shadow: true,
+			//shadow: false, // docs
 			// stacking: null,
 			marker: {
 				enabled: true,
@@ -1650,7 +1650,7 @@ defaultOptions = {
 		borderRadius: 5,
 		navigation: {
 			// animation: true,
-			activeColor: '#3E576F',
+			activeColor: '#274b6d', // docs
 			// arrowSize: 12
 			inactiveColor: '#CCC'
 			// style: {} // text styles
@@ -1664,7 +1664,7 @@ defaultOptions = {
 		},*/
 		itemStyle: {
 			cursor: 'pointer',
-			color: '#3E576F',
+			color: '#274b6d', // docs
 			fontSize: '12px'
 		},
 		itemHoverStyle: {
@@ -1714,8 +1714,8 @@ defaultOptions = {
 		enabled: true,
 		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
-		borderWidth: 2,
-		borderRadius: 5,
+		borderWidth: 1, // docs
+		borderRadius: 3, // docs
 		dateTimeLabelFormats: { 
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
 			second: '%A, %b %e, %H:%M:%S',
@@ -6376,7 +6376,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#6D869F',
+				color: '#4d759e',
 				//font: defaultFont.replace('normal', 'bold')
 				fontWeight: 'bold'
 			}
@@ -14613,7 +14613,7 @@ var AreaSeries = extendClass(Series, {
 			i,
 			x;
 
-		if (this.options.stacking) {
+		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
 			// Create a map where we can quickly look up the points by their X value.
 			for (i = 0; i < points.length; i++) {
 				pointMap[points[i].x] = points[i];
@@ -19000,7 +19000,6 @@ Highcharts.StockChart = function (options, callback) {
 				}
 			},
 			// gapSize: 0,
-			shadow: false,
 			states: {
 				hover: {
 					lineWidth: 2
