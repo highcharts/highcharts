@@ -2,9 +2,9 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.2.5 (2012-12-19)
+ * @license Highstock JS v1.3Beta (2013-02-21)
  *
- * (c) 2009-2012 Torstein Hønsi
+ * (c) 2009-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highstock',
-	VERSION = '1.2.5',
+	VERSION = '1.3Beta',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1472,8 +1472,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.2.5/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.2.5/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.3Beta/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3Beta/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,

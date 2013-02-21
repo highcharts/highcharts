@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
- * (c) 2010-2011 Torstein Hønsi
+ * (c) 2010-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
