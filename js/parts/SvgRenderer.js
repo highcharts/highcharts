@@ -1299,7 +1299,10 @@ SVGRenderer.prototype = {
 								/px$/.test(tspan.style.fontSize) ?
 									tspan.style.fontSize : 
 									textStyles.fontSize
-							).h
+							).h,
+							// Safari 6.0.2 - too optimized for its own good (#1539)
+							// TODO: revisit this with future versions of Safari
+							isWebKit && tspan.offsetHeight
 						);
 					}
 
