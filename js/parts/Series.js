@@ -1383,7 +1383,9 @@ Series.prototype = {
 				stack.addValue(y);
 				stack.cacheExtremes(series, [total, total + y]);
 
-				if (stack.total > stacksMax[key]) {
+				if (stack.total > stacksMax[key] && !isNegative) {
+					stacksMax[key] = stack.total;
+				} else if (stack.total < stacksMax[key] && isNegative) {
 					stacksMax[key] = stack.total;
 				}
 			}
