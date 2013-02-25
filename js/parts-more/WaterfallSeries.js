@@ -19,7 +19,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 	upColorProp: 'fill',
 
-	pointArrayMap: ['y', 'low'],
+	pointArrayMap: ['low', 'y'],
 
 	pointValKey: 'y',
 
@@ -27,7 +27,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Init waterfall series, force stacking
 	 */
 	init: function (chart, options) {
+		// force stacking
 		options.stacking = true;
+
 		seriesTypes.column.prototype.init.call(this, chart, options);
 	},
 
@@ -38,93 +40,63 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	translate: function () {
 		var series = this,
 			options = series.options,
-			stacking = options.stacking,
 			axis = series.yAxis,
 			len,
 			i,
-
 			points,
 			point,
 			shapeArgs,
-			sum = 0,
-			sumStart = 0,
-			subSum = 0,
-			subSumStart = 0,
-			edges,
-			cumulative,
-			prevStack,
-			prevY,
 			stack,
 			y,
-			h,
+			previousY,
+			stackPoint,
+			threshold = options.threshold,
 			crispCorr = (options.borderWidth % 2) / 2;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
 
+		previousY = threshold;
+		points = series.points;
 
-		points = this.points;
-		subSumStart = sumStart = points[0];
-
-		for (i = 1, len = points.length; i < len; i++) {
+		for (i = 0, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
 			shapeArgs = point.shapeArgs;
 
-			if (stacking) {
-				// get current and previous stack
-				stack = series.getStack(i);
-				prevStack = series.getStack(i - 1);
-				prevY = series.getStackY(prevStack);
+			// get current stack
+			stack = series.getStack(i);
+			stackPoint = stack.points[series.index];
+
+			// override point value for sums
+			if (isNaN(point.y)) {
+				point.y = series.yData[i];
 			}
 
-			// set new intermediate sum values after reset
-			if (subSumStart === null) {
-				subSumStart = point;
-				subSum = 0;
-			}
+			// up points
+			y = mathMax(previousY, previousY + point.y) + stackPoint[0];
+			shapeArgs.y = axis.translate(y, 0, 1);
 
-			// sum only points with value, not intermediate or total sum
-			if (point.y && !point.isSum && !point.isIntermediateSum) {
-				sum += point.y;
-				subSum += point.y;
-			}
 
-			// calculate sum points
+			// sum points
 			if (point.isSum || point.isIntermediateSum) {
+				shapeArgs.y = axis.translate(stackPoint[1], 0, 1);
+				shapeArgs.height = axis.translate(stackPoint[0], 0, 1) - shapeArgs.y;
 
-				if (point.isIntermediateSum) {
-					edges = series.getSumEdges(subSumStart, points[i - 1]);
-					point.y = subSum;
-					subSumStart = null;
-				} else {
-					edges = series.getSumEdges(sumStart, points[i - 1]);
-					point.y = sum;
-				}
-
-				shapeArgs.y = point.plotY = edges[1];
-				shapeArgs.height = edges[0] - edges[1];
-
-			// calculate other (up or down) points based on y value
-			} else if (point.y < 0) {
-
-				if (stacking) {
-					// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
-					cumulative = stack._cum === null ? prevStack.total : stack._cum;
-					stack._cum = cumulative + point.y;
-					y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
-					h = axis.translate(stack._cum, 0, 1);
-				}
-
-				shapeArgs.y = y;
-				shapeArgs.height = mathCeil(h - y);
+			// if it's not the sum point, update previous stack end position
 			} else {
-				if (!stacking) {
-					shapeArgs.y -= points[i - 1].shapeArgs.height;
-				} else if (shapeArgs.y + shapeArgs.height > prevY) {
-					shapeArgs.height = mathFloor(prevY - shapeArgs.y);
-				}
+				previousY += stack.total;
 			}
+
+			// negative points
+			if (shapeArgs.height < 0) {
+				shapeArgs.y += shapeArgs.height;
+				shapeArgs.height *= -1;
+			}
+
+			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - crispCorr;
+			shapeArgs.height = mathRound(shapeArgs.height);
+			point.yBottom = shapeArgs.y + shapeArgs.height;
 		}
 	},
 
@@ -132,38 +104,37 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Call default processData then override yData to reflect waterfall's extremes on yAxis
 	 */
 	processData: function (force) {
-		Series.prototype.processData.call(this, force);
-
 		var series = this,
 			options = series.options,
 			yData = series.yData,
-			length = yData.length,
-			prev,
-			curr,
+			dataLength = yData.length,
+			threshold = options.threshold,
+			subSum,
+			sum,
+			y,
 			i;
 
-		prev = options.threshold;
+		sum = subSum = threshold;
 
-		for (i = 0; i < length; i++) {
-			curr = yData[i];
+		for (i = 0; i < dataLength; i++) {
+			y = yData[i];
 
-			// processed yData only if it's not already processed
-			if (curr !== null && typeof curr !== 'number') {
-
-				if (curr === "sum" || curr === "intermediateSum") {
-					yData[i] = null;
-
-				} else {
-					yData[i] = curr[0];
-				}
-
-				prev = yData[i];
+			if (y === "sum") {
+				yData[i] = sum;
+			} else if (y === "intermediateSum") {
+				yData[i] = subSum;
+				subSum = threshold;
+			} else {
+				sum += y;
+				subSum += y;
 			}
 		}
+
+		Series.prototype.processData.call(this, force);
 	},
 
 	/**
-	 * Return [y, low] array, if low is not defined, it's replaced with null for further calculations
+	 * Return y value or string if point is sum
 	 */
 	toYData: function (pt) {
 		if (pt.isSum) {
@@ -172,7 +143,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			return "intermediateSum";
 		}
 
-		return [pt.y];
+		return pt.y;
 	},
 
 	/**
@@ -240,6 +211,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		return path;
 	},
 
+	/**
+	 * Return stack for given index
+	 */
 	getStack: function (i) {
 		var axis = this.yAxis,
 			stacks = axis.stacks,
@@ -250,10 +224,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 
 		return stacks[key][i];
-	},
-
-	getStackY: function (stack) {
-		return mathCeil(this.yAxis.translate(stack.total, null, true));
 	},
 
 	/**
