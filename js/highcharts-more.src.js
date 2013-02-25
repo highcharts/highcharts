@@ -1371,7 +1371,16 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 		return [point.low, point.high];
 	},
 	pointValKey: 'high', // defines the top of the tracker
-	doQuartiles: false
+	doQuartiles: false,
+
+	/**
+	 * Get the width and X offset, either on top of the linked series column
+	 * or standalone
+	 */
+	getColumnMetrics: function () {
+		return (this.linkedParent && this.linkedParent.columnMetrics) || 
+			seriesTypes.column.prototype.getColumnMetrics.call(this);
+	}
 });
 
 /* ****************************************************************************

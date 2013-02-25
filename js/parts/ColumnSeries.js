@@ -68,23 +68,20 @@ var ColumnSeries = extendClass(Series, {
 	},
 
 	/**
-	 * Translate each point to the plot area coordinate system and find shape positions
+	 * Return the width and x offset of the columns adjusted for grouping, groupPadding, pointPadding,
+	 * pointWidth etc. 
 	 */
-	translate: function () {
+	getColumnMetrics: function () {
+
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			stacking = options.stacking,
-			borderWidth = options.borderWidth,
-			columnCount = 0,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
+			xAxis = this.xAxis,
 			reversedXAxis = xAxis.reversed,
-			stackGroups = {},
 			stackKey,
-			columnIndex;
-
-		Series.prototype.translate.apply(series);
+			stackGroups = {},
+			columnIndex,
+			columnCount = 0;
 
 		// Get the total number of column type series.
 		// This is called on every series. Consider moving this logic to a
@@ -110,11 +107,7 @@ var ColumnSeries = extendClass(Series, {
 			});
 		}
 
-		// calculate the width and position of each column based on
-		// the number of column series in the plot, the groupPadding
-		// and the pointPadding options
-		var points = series.points,
-			categoryWidth = mathMin(
+		var categoryWidth = mathMin(
 				mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || 1), 
 				xAxis.len // #1535
 			),
@@ -125,19 +118,43 @@ var ColumnSeries = extendClass(Series, {
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
-			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
 			colIndex = (reversedXAxis ? 
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
-				(reversedXAxis ? -1 : 1),
+				(reversedXAxis ? -1 : 1);
+
+		// Save it for reading in linked series (Error bars particularly)
+		return (series.columnMetrics = { 
+			width: pointWidth, 
+			offset: pointXOffset 
+		});
+			
+	},
+
+	/**
+	 * Translate each point to the plot area coordinate system and find shape positions
+	 */
+	translate: function () {
+		var series = this,
+			chart = series.chart,
+			options = series.options,
+			stacking = options.stacking,
+			borderWidth = options.borderWidth,
+			yAxis = series.yAxis,
 			threshold = options.threshold,
 			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
-			minPointLength = pick(options.minPointLength, 5);
+			minPointLength = pick(options.minPointLength, 5),
+			metrics = series.getColumnMetrics(),
+			pointWidth = metrics.width,
+			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
+			pointXOffset = metrics.offset;
+
+		Series.prototype.translate.apply(series);
 
 		// record the new values
-		each(points, function (point) {
+		each(series.points, function (point) {
 			var plotY = mathMin(mathMax(-999, point.plotY), yAxis.len + 999), // Don't draw too far outside plot area (#1303)
 				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
