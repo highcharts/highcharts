@@ -1,5 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
+    $('#container').highcharts({
         
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -18,9 +18,10 @@ $(function () {
             data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
             color: '#F33'   
         }]
-    }, null, true);
+    });
     
     // the button handlera
+    var chart = $('#container').highcharts();
     $('#add').click(function() {
         chart.addAxis({ // Secondary yAxis
             id: 'rainfall-axis',

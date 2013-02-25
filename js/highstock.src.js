@@ -2,9 +2,9 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.2.5 (2012-12-19)
+ * @license Highstock JS v1.3Beta (2013-02-21)
  *
- * (c) 2009-2012 Torstein Hønsi
+ * (c) 2009-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highstock',
-	VERSION = '1.2.5',
+	VERSION = '1.3Beta',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1198,11 +1198,10 @@ pathAnim = {
 				}
 
 				// When called without parameters or with the return argument, get a predefined chart
-				if (options === UNDEFINED || args[2] === true) {
+				if (options === UNDEFINED) {
 					ret = charts[attr(this[0], 'data-highcharts-chart')];
 				}	
 
-				
 				return ret;
 			};
 
@@ -1456,8 +1455,8 @@ defaultLabelOptions = {
 };
 
 defaultOptions = {
-	colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
-		'#DB843D', '#92A8CD', '#A47D7C', '#B5CA92'],
+	colors: ['#2f7ed8', '#0d233a', /*'#7da32d'*/ '#8bbc21', '#c42525', '#6d4999', '#1b90ad',
+		'#f28f43', '#77a1e5', '#a35c5b', '#a6c96a'], // docs
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1473,8 +1472,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.2.5/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.2.5/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.3Beta/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3Beta/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1530,7 +1529,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		y: 15,
 		style: {
-			color: '#3E576F',
+			color: '#274b6d',//#3E576F',
 			fontSize: '16px'
 		}
 
@@ -1543,7 +1542,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		y: 30,
 		style: {
-			color: '#6D869F'
+			color: '#4d759e'
 		}
 	},
 
@@ -1562,7 +1561,7 @@ defaultOptions = {
 			events: {},
 			//legendIndex: 0,
 			lineWidth: 2,
-			shadow: true,
+			//shadow: false, // docs
 			// stacking: null,
 			marker: {
 				enabled: true,
@@ -1651,7 +1650,7 @@ defaultOptions = {
 		borderRadius: 5,
 		navigation: {
 			// animation: true,
-			activeColor: '#3E576F',
+			activeColor: '#274b6d', // docs
 			// arrowSize: 12
 			inactiveColor: '#CCC'
 			// style: {} // text styles
@@ -1665,7 +1664,7 @@ defaultOptions = {
 		},*/
 		itemStyle: {
 			cursor: 'pointer',
-			color: '#3E576F',
+			color: '#274b6d', // docs
 			fontSize: '12px'
 		},
 		itemHoverStyle: {
@@ -1715,8 +1714,8 @@ defaultOptions = {
 		enabled: true,
 		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
-		borderWidth: 2,
-		borderRadius: 5,
+		borderWidth: 1, // docs
+		borderRadius: 3, // docs
 		dateTimeLabelFormats: { 
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
 			second: '%A, %b %e, %H:%M:%S',
@@ -1736,7 +1735,7 @@ defaultOptions = {
 		style: {
 			color: '#333333',
 			fontSize: '12px',
-			padding: '5px',
+			padding: '8px', // docs
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',
@@ -4638,7 +4637,6 @@ VMLElement = {
 							value = value === HIDDEN ? '-999em' : 0;
 							key = 'top';
 						}
-						
 						elemStyle[key] = value;	
 						skipAttr = true;
 
@@ -5906,7 +5904,7 @@ Tick.prototype = {
 		this.isActive = true;
 		
 		// create the grid line
-		if (gridLineWidth) {
+		if (gridLineWidth && pos >= axis.min && pos <= axis.max) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
 			if (gridLine === UNDEFINED) {
@@ -6378,7 +6376,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#6D869F',
+				color: '#4d759e',
 				//font: defaultFont.replace('normal', 'bold')
 				fontWeight: 'bold'
 			}
@@ -7885,6 +7883,7 @@ Axis.prototype = {
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
+			invertedSide = chart.inverted ? [1, 0, 3, 2][side] : side,
 			hasData,
 			showAxis,
 			titleOffset = 0,
@@ -7992,7 +7991,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
-		clipOffset[side] = mathMax(clipOffset[side], options.lineWidth);
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], options.lineWidth);
 
 	},
 	
@@ -8187,6 +8186,7 @@ Axis.prototype = {
 			var pos, 
 				i,
 				forDestruction = [],
+				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
@@ -8214,10 +8214,10 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered) {
+			if (coll === alternateBands || !chart.hasRendered || !delay) {
 				destroyInactiveItems();
-			} else {
-				setTimeout(destroyInactiveItems, (globalAnimation && globalAnimation.duration) || 500);
+			} else if (delay) {
+				setTimeout(destroyInactiveItems, delay);
 			}
 		});
 
@@ -9563,91 +9563,43 @@ Pointer.prototype = {
 	 */
 	setDOMEvents: function () {
 
-		var tracker = this,
-			container = tracker.chart.container;
+		var pointer = this,
+			container = pointer.chart.container,
+			events;
 
-		container.onmousedown = function (e) {
-			tracker.onContainerMouseDown(e);
-		};
+		this._events = events = [
+			[container, 'onmousedown', 'onContainerMouseDown'],
+			[container, 'onmousemove', 'onContainerMouseMove'],
+			[container, 'onclick', 'onContainerClick'],
+			[container, 'mouseleave', 'onContainerMouseLeave'],
+			[doc, 'mousemove', 'onDocumentMouseMove'],
+			[doc, 'mouseup', 'onDocumentMouseUp']
+		];
 
-		container.onmousemove = function (e) {
-			tracker.onContainerMouseMove(e);
-		};
-
-		container.onclick = function (e) {
-			tracker.onContainerClick(e);
-		};
-		
-		addEvent(container, 'mouseleave', function (e) {
-			tracker.onContainerMouseLeave(e);
-		});
-
-		addEvent(doc, 'mousemove', function (e) {
-			tracker.onDocumentMouseMove(e);
-		});
-
-		addEvent(doc, 'mouseup', function (e) {
-			tracker.onDocumentMouseUp(e);
-		});
-
-		
 		if (hasTouch) {
-			
-			container.ontouchstart = function (e) {
-				tracker.onContainerTouchStart(e);
-			};
-			
-			container.ontouchmove = function (e) {
-				tracker.onContainerTouchMove(e);
-			};
-			
-			addEvent(doc, 'touchend', function (e) {
-				tracker.onDocumentTouchEnd(e);
-			});
+			events.push(
+				[container, 'ontouchstart', 'onContainerTouchStart'],
+				[container, 'ontouchmove', 'onContainerTouchMove'],
+				[doc, 'touchend', 'onDocumentTouchEnd']
+			);
 		}
 
-		/*
-		
-		// The automatic version of the above. It is harder to read, about the same amount of
-		// code and the only real advantage is that it automatically picks up user defined
-		// onSomething methods, but this can be added anyway through the DOM.
-		var tracker = this,
-			prop;
+		each(events, function (eventConfig) {
 
-		for (prop in tracker) {
-			if (prop.indexOf('on') === 0 && (hasTouch || prop.indexOf('Touch') === -1)) {
-				(function () {
-					var method = prop,
-						from,
-						type,
-						element,
-						handler = function (e) {
-							tracker[method](e);
-						};
+			// First, create the callback function that in turn calls the method on Pointer
+			pointer['_' + eventConfig[2]] = function (e) {
+				pointer[eventConfig[2]](e);
+			};
 
-					// Identify the element to add the event to
-					if (prop.indexOf('Container') === 2) {
-						element = tracker.chart.container;
-						from = 11;
-					} else if (prop.indexOf('Document') === 2) {
-						element = doc;
-						from = 10;
-					}
-
-					// The type of event
-					type = prop.substring(from).toLowerCase();
-
-					// Some events need to be added via addEvent, others need to be set 
-					// directly as an attribute in order to work.
-					if (element === doc || type === 'mouseleave') {
-						addEvent(element, type, handler);
-					} else {
-						element['on' + type] = handler;
-					}
-				}());
+			// Now attach the function, either as a direct property or through addEvent
+			if (eventConfig[1].indexOf('on') === 0) {
+				eventConfig[0][eventConfig[1]] = pointer['_' + eventConfig[2]];
+			} else {
+				addEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
 			}
-		}
-		*/
+		});
+
+		
 	},
 
 	/**
@@ -9655,20 +9607,25 @@ Pointer.prototype = {
 	 */
 	destroy: function () {
 		var pointer = this,
-			chart = pointer.chart,
-			container = chart.container;
+			chart = this.chart;
 
 		// Destroy the tracker group element
 		if (chart.trackerGroup) {
 			chart.trackerGroup = chart.trackerGroup.destroy();
 		}
 
-		removeEvent(container, 'mouseleave', pointer.hideTooltipOnMouseLeave);
-		removeEvent(doc, 'mousemove', pointer.hideTooltipOnMouseMove);
-		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
+		// Release all DOM events
+		each(pointer._events, function (eventConfig) {	
+			if (eventConfig[1].indexOf('on') === 0) {
+				delete eventConfig[0][eventConfig[1]];
+			} else {		
+				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
+			}
+		});
+		delete pointer._events;
 
 		// memory and CPU leak
-		clearInterval(this.tooltipTimeout);
+		clearInterval(pointer.tooltipTimeout);
 	}
 };
 /**
@@ -11727,7 +11684,7 @@ Chart.prototype = {
 
 		// ==== Destroy chart properties:
 		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
@@ -12476,6 +12433,7 @@ Series.prototype = {
 			}
 			if (linkedTo) {
 				linkedTo.linkedSeries.push(series);
+				series.linkedParent = linkedTo;
 			}
 		}
 	},
@@ -14657,7 +14615,7 @@ var AreaSeries = extendClass(Series, {
 			i,
 			x;
 
-		if (this.options.stacking) {
+		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
 			// Create a map where we can quickly look up the points by their X value.
 			for (i = 0; i < points.length; i++) {
 				pointMap[points[i].x] = points[i];
@@ -15026,23 +14984,20 @@ var ColumnSeries = extendClass(Series, {
 	},
 
 	/**
-	 * Translate each point to the plot area coordinate system and find shape positions
+	 * Return the width and x offset of the columns adjusted for grouping, groupPadding, pointPadding,
+	 * pointWidth etc. 
 	 */
-	translate: function () {
+	getColumnMetrics: function () {
+
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			stacking = options.stacking,
-			borderWidth = options.borderWidth,
-			columnCount = 0,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
+			xAxis = this.xAxis,
 			reversedXAxis = xAxis.reversed,
-			stackGroups = {},
 			stackKey,
-			columnIndex;
-
-		Series.prototype.translate.apply(series);
+			stackGroups = {},
+			columnIndex,
+			columnCount = 0;
 
 		// Get the total number of column type series.
 		// This is called on every series. Consider moving this logic to a
@@ -15068,11 +15023,10 @@ var ColumnSeries = extendClass(Series, {
 			});
 		}
 
-		// calculate the width and position of each column based on
-		// the number of column series in the plot, the groupPadding
-		// and the pointPadding options
-		var points = series.points,
-			categoryWidth = mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || 1),
+		var categoryWidth = mathMin(
+				mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || 1), 
+				xAxis.len // #1535
+			),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
@@ -15080,19 +15034,43 @@ var ColumnSeries = extendClass(Series, {
 			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
-			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
 			colIndex = (reversedXAxis ? 
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
-				(reversedXAxis ? -1 : 1),
+				(reversedXAxis ? -1 : 1);
+
+		// Save it for reading in linked series (Error bars particularly)
+		return (series.columnMetrics = { 
+			width: pointWidth, 
+			offset: pointXOffset 
+		});
+			
+	},
+
+	/**
+	 * Translate each point to the plot area coordinate system and find shape positions
+	 */
+	translate: function () {
+		var series = this,
+			chart = series.chart,
+			options = series.options,
+			stacking = options.stacking,
+			borderWidth = options.borderWidth,
+			yAxis = series.yAxis,
 			threshold = options.threshold,
 			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
-			minPointLength = pick(options.minPointLength, 5);
+			minPointLength = pick(options.minPointLength, 5),
+			metrics = series.getColumnMetrics(),
+			pointWidth = metrics.width,
+			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
+			pointXOffset = metrics.offset;
+
+		Series.prototype.translate.apply(series);
 
 		// record the new values
-		each(points, function (point) {
+		each(series.points, function (point) {
 			var plotY = mathMin(mathMax(-999, point.plotY), yAxis.len + 999), // Don't draw too far outside plot area (#1303)
 				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
@@ -16795,15 +16773,16 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
-		plotOptions = this.chart.options.plotOptions;
+		plotOptions = this.chart.options.plotOptions,
+		defaultOptions = defaultPlotOptions[type].dataGrouping;
 		
 	if (specificOptions[type]) { // #1284
-		if (!defaultPlotOptions[type].dataGrouping) {
-			defaultPlotOptions[type].dataGrouping = merge(commonOptions, specificOptions[type]);
+		if (!defaultOptions) {
+			defaultOptions = merge(commonOptions, specificOptions[type]);
 		}
 		
 		options.dataGrouping = merge(
-			defaultPlotOptions[type].dataGrouping,
+			defaultOptions,
 			plotOptions.series && plotOptions.series.dataGrouping, // #1228
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor
 			itemOptions.dataGrouping
@@ -17528,8 +17507,9 @@ extend(defaultOptions, {
 			]
 		),
 		trackBorderColor: '#CCC',
-		trackBorderWidth: 1
+		trackBorderWidth: 1,
 		// trackBorderRadius: 0
+		liveRedraw: hasSVG // docs
 	}
 });
 /*jslint white:false */
@@ -17619,7 +17599,7 @@ Scroller.prototype = {
 		}
 
 		// Place it
-		handles[index][scroller.rendered ? 'animate' : 'attr']({
+		handles[index][chart.isResizing ? 'animate' : 'attr']({
 			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10), 
 			translateY: scroller.top + scroller.height / 2 - 8
 		});
@@ -17826,7 +17806,7 @@ Scroller.prototype = {
 		}
 
 		// place elements
-		verb = scroller.rendered ? 'animate' : 'attr';
+		verb = chart.isResizing ? 'animate' : 'attr';
 		if (navigatorEnabled) {
 			scroller.leftShade[verb]({
 				x: navigatorLeft,
@@ -17889,22 +17869,25 @@ Scroller.prototype = {
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
 
-			scroller.scrollbarRifles[verb]({ d: [
-					M,
-					centerBarX - 3, scrollbarHeight / 4,
-					L,
-					centerBarX - 3, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX, scrollbarHeight / 4,
-					L,
-					centerBarX, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX + 3, scrollbarHeight / 4,
-					L,
-					centerBarX + 3, 2 * scrollbarHeight / 3
-				],
-				visibility: range > 12 ? VISIBLE : HIDDEN
-			});
+			scroller.scrollbarRifles
+				.attr({
+					visibility: range > 12 ? VISIBLE : HIDDEN
+				})[verb]({ 
+					d: [
+						M,
+						centerBarX - 3, scrollbarHeight / 4,
+						L,
+						centerBarX - 3, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX, scrollbarHeight / 4,
+						L,
+						centerBarX, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX + 3, scrollbarHeight / 4,
+						L,
+						centerBarX + 3, 2 * scrollbarHeight / 3
+					]
+				});
 		}
 
 		scroller.scrollbarPad = scrollbarPad;
@@ -18118,28 +18101,33 @@ Scroller.prototype = {
 	
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 				}
+				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
+					setTimeout(function () {
+						scroller.mouseUpHandler(false);
+					}, 0);
+				}
 			}
 		};
 
 		/**
 		 * Event handler for the mouse up event.
 		 */
-		scroller.mouseUpHandler = function () {
-			var zoomedMin = scroller.zoomedMin,
-				zoomedMax = scroller.zoomedMax;
-
+		scroller.mouseUpHandler = function (reset) {
+			
 			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
-					xAxis.translate(zoomedMin, true),
-					xAxis.translate(zoomedMax, true),
+					xAxis.translate(scroller.zoomedMin, true),
+					xAxis.translate(scroller.zoomedMax, true),
 					true,
 					false,
 					{ trigger: 'navigator' }
 				);
 			}
-			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
-			
-			bodyStyle.cursor = defaultBodyCursor || '';
+
+			if (reset !== false) {
+				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
+				bodyStyle.cursor = defaultBodyCursor || '';
+			}
 			
 		};
 
@@ -19034,7 +19022,6 @@ Highcharts.StockChart = function (options, callback) {
 				}
 			},
 			// gapSize: 0,
-			shadow: false,
 			states: {
 				hover: {
 					lineWidth: 2

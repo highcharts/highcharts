@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
- * (c) 2010-2011 Torstein Hønsi
+ * (c) 2010-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -356,7 +356,7 @@ extend(Chart.prototype, {
 		Highcharts.post(options.url, {
 			filename: options.filename || 'chart',
 			type: options.type,
-			width: options.width,
+			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
 			scale: options.scale || 2,
 			svg: svg
 		});

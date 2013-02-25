@@ -45,10 +45,10 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 
 		// set new stack totals including preceding values, finds new min and max values
 		for (i = 0; i < yDataLength; i++) {
-			key = yData[i] < 0 ? negKey : stackKey;
+			key = yData[i] < threshold ? negKey : stackKey;
 			total = stacks[key][i].total;
 
-			if (i > 0) {
+			if (i > threshold) {
 				total += previous;
 				stacks[key][i].setTotal(total);
 
@@ -100,8 +100,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
-	borderColor: '#333',
-	shadow: false
+	borderColor: '#333'
 });
 
 
@@ -343,7 +342,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			stacks = axis.stacks,
 			key = this.stackKey;
 
-		if (this.processedYData[i] < 0) {
+		if (this.processedYData[i] < this.options.threshold) {
 			key = '-' + key;
 		}
 
@@ -360,10 +359,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	getSumEdges: function (pointA, pointB) {
 		var valueA,
 			valueB,
-			tmp;
+			tmp,
+			threshold = this.options.threshold;
 
-		valueA = pointA.y >= 0 ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
-		valueB = pointB.y >= 0 ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
+		valueA = pointA.y >= threshold ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
+		valueB = pointB.y >= threshold ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
 
 		if (valueB > valueA) {
 			tmp = valueA;
@@ -372,29 +372,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 
 		return [valueA, valueB];
-	},
-
-	/**
-	 * Place sums' dataLabels on the top of column regardles of its value
-	 */
-	_alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
-		var dlBox;
-
-		if (point.isSum || point.isIntermediateSum) {
-			dlBox = point.dlBox || point.shapeArgs;
-
-			if (dlBox) {
-				alignTo = merge(dlBox);
-			}
-
-			alignTo.height = 0;
-			options.verticalAlign = 'bottom';
-			options.align = pick(options.align, 'center');
-
-			Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-		} else {
-			seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
-		}
 	},
 
 	drawGraph: Series.prototype.drawGraph

@@ -628,6 +628,7 @@ Series.prototype = {
 			}
 			if (linkedTo) {
 				linkedTo.linkedSeries.push(series);
+				series.linkedParent = linkedTo;
 			}
 		}
 	},

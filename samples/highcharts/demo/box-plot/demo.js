@@ -52,6 +52,7 @@ $(function () {
 	        }
 	    }, {
 	        name: 'Outlier',
+	        color: Highcharts.getOptions().colors[0],
 	        type: 'scatter',
 	        data: [ // x, y positions where 0 is the first category
 	            [0, 644],

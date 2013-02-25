@@ -82,7 +82,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#6D869F',
+				color: '#4d759e',
 				//font: defaultFont.replace('normal', 'bold')
 				fontWeight: 'bold'
 			}
@@ -1589,6 +1589,7 @@ Axis.prototype = {
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
+			invertedSide = chart.inverted ? [1, 0, 3, 2][side] : side,
 			hasData,
 			showAxis,
 			titleOffset = 0,
@@ -1696,7 +1697,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
-		clipOffset[side] = mathMax(clipOffset[side], options.lineWidth);
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], options.lineWidth);
 
 	},
 	
@@ -1891,6 +1892,7 @@ Axis.prototype = {
 			var pos, 
 				i,
 				forDestruction = [],
+				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
@@ -1918,10 +1920,10 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered) {
+			if (coll === alternateBands || !chart.hasRendered || !delay) {
 				destroyInactiveItems();
-			} else {
-				setTimeout(destroyInactiveItems, (globalAnimation && globalAnimation.duration) || 500);
+			} else if (delay) {
+				setTimeout(destroyInactiveItems, delay);
 			}
 		});
 

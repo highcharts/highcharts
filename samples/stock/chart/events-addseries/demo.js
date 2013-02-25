@@ -1,5 +1,5 @@
 $(function() {
-	var chart = $('#container').highcharts('StockChart', {
+	$('#container').highcharts('StockChart', {
 
 	    chart: {
         	events: {
@@ -17,16 +17,17 @@ $(function() {
 	        name: 'MSFT',
 	        data: MSFT
 	    }]
-	}, null, true);
+	});
 
 
 	// activate the button
 	$('#button').click(function() {
-	    chart.addSeries({
+	    var chart = $('#container').highcharts();
+        chart.addSeries({
 	    	name: 'ADBE',
 	        data: ADBE
 	    });
 
-	    $('#button').unbind('click');
+	    $(this).attr('disabled', true);
 	});
 });

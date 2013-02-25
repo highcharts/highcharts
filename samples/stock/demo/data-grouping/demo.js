@@ -6,7 +6,7 @@ $(function() {
 		var start = + new Date();
 
 		// Create the chart
-		var chart = $('#container').highcharts('StockChart', {
+		$('#container').highcharts('StockChart', {
 		    chart: {
 				events: {
 					load: function(chart) {
@@ -71,6 +71,6 @@ $(function() {
 		        }
 		    }]
 
-		}, null, true);
+		});
 	});
 });

@@ -49,10 +49,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	},
 	
 	/**
-	 * Disable data labels and animation for box plot
+	 * Disable data labels for box plot
 	 */
 	drawDataLabels: noop,
-	animate: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -104,6 +103,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			right,
 			halfWidth,
 			shapeArgs,
+			color,
 			doQuartiles = series.doQuartiles !== false, // error bar inherits this series type but doesn't do quartiles
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
@@ -115,6 +115,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			stemAttr = {};
 			whiskersAttr = {};
 			medianAttr = {};
+			color = point.color || series.color;
 			
 			if (point.plotY !== UNDEFINED) {
 
@@ -132,16 +133,16 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				lowPlot = mathFloor(point.lowPlot);// + crispCorr;
 				
 				// Stem attributes
-				stemAttr.stroke = point.stemColor || options.stemColor || series.color;
+				stemAttr.stroke = point.stemColor || options.stemColor || color;
 				stemAttr['stroke-width'] = point.stemWidth || options.stemWidth || options.lineWidth;
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
 				
 				// Whiskers attributes
-				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || series.color;
+				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
 				whiskersAttr['stroke-width'] = point.whiskerWidth || options.whiskerWidth || options.lineWidth;
 				
 				// Median attributes
-				medianAttr.stroke = point.medianColor || options.medianColor || series.color;
+				medianAttr.stroke = point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = point.medianWidth || options.medianWidth || options.lineWidth;
 				
 				

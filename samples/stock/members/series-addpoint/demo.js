@@ -2,10 +2,7 @@ $(function() {
 	var data = usdeur.splice(0, 500);
 
 
-	var chart = $('#container').highcharts('StockChart', {
-
-	    chart: {
-	    },
+	$('#container').highcharts('StockChart', {
 
 	    rangeSelector: {
 	    	selected: 1
@@ -15,10 +12,11 @@ $(function() {
 	        name: 'USD to EUR',
 	        data: data
 	    }]
-	}, null, true);
+	});
 
 	$('#button').click(function() {
-		var i = 0,
+		var chart = $('#container').highcharts(),
+        	i = 0,
 			series = chart.series[0];
 		data = usdeur.splice(0, 100);
 		for (i; i < data.length; i++) {

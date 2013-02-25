@@ -1,5 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
+    $('#container').highcharts({
         title: {
             text: 'Exports a pdf with name: my-pdf'
         },
@@ -20,10 +20,11 @@ $(function () {
                 enabled: false
             }
         }
-    }, null, true);
+    });
 
     // the button handler
     $('#button').click(function() {
+        var chart = $('#container').highcharts();
         chart.exportChart({
             type: 'application/pdf',
             filename: 'my-pdf'

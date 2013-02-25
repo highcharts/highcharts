@@ -290,7 +290,7 @@ Tick.prototype = {
 		this.isActive = true;
 		
 		// create the grid line
-		if (gridLineWidth) {
+		if (gridLineWidth && pos >= axis.min && pos <= axis.max) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
 			if (gridLine === UNDEFINED) {

@@ -2,9 +2,9 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.5 (2012-12-19)
+ * @license Highcharts JS v3.0Beta (2013-02-21)
  *
- * (c) 2009-2011 Torstein Hønsi
+ * (c) 2009-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -647,8 +647,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		xHigh: 0,
 		yLow: 0,
 		yHigh: 0	
-	},
-	shadow: false
+	}
 });
 
 /**
@@ -1130,10 +1129,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	},
 	
 	/**
-	 * Disable data labels and animation for box plot
+	 * Disable data labels for box plot
 	 */
 	drawDataLabels: noop,
-	animate: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1185,6 +1183,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			right,
 			halfWidth,
 			shapeArgs,
+			color,
 			doQuartiles = series.doQuartiles !== false, // error bar inherits this series type but doesn't do quartiles
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
@@ -1196,6 +1195,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			stemAttr = {};
 			whiskersAttr = {};
 			medianAttr = {};
+			color = point.color || series.color;
 			
 			if (point.plotY !== UNDEFINED) {
 
@@ -1213,16 +1213,16 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				lowPlot = mathFloor(point.lowPlot);// + crispCorr;
 				
 				// Stem attributes
-				stemAttr.stroke = point.stemColor || options.stemColor || series.color;
+				stemAttr.stroke = point.stemColor || options.stemColor || color;
 				stemAttr['stroke-width'] = point.stemWidth || options.stemWidth || options.lineWidth;
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
 				
 				// Whiskers attributes
-				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || series.color;
+				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
 				whiskersAttr['stroke-width'] = point.whiskerWidth || options.whiskerWidth || options.lineWidth;
 				
 				// Median attributes
-				medianAttr.stroke = point.medianColor || options.medianColor || series.color;
+				medianAttr.stroke = point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = point.medianWidth || options.medianWidth || options.lineWidth;
 				
 				
@@ -1371,7 +1371,16 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 		return [point.low, point.high];
 	},
 	pointValKey: 'high', // defines the top of the tracker
-	doQuartiles: false
+	doQuartiles: false,
+
+	/**
+	 * Get the width and X offset, either on top of the linked series column
+	 * or standalone
+	 */
+	getColumnMetrics: function () {
+		return (this.linkedParent && this.linkedParent.columnMetrics) || 
+			seriesTypes.column.prototype.getColumnMetrics.call(this);
+	}
 });
 
 /* ****************************************************************************
@@ -1424,10 +1433,10 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 
 		// set new stack totals including preceding values, finds new min and max values
 		for (i = 0; i < yDataLength; i++) {
-			key = yData[i] < 0 ? negKey : stackKey;
+			key = yData[i] < threshold ? negKey : stackKey;
 			total = stacks[key][i].total;
 
-			if (i > 0) {
+			if (i > threshold) {
 				total += previous;
 				stacks[key][i].setTotal(total);
 
@@ -1479,8 +1488,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
-	borderColor: '#333',
-	shadow: false
+	borderColor: '#333'
 });
 
 
@@ -1722,7 +1730,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			stacks = axis.stacks,
 			key = this.stackKey;
 
-		if (this.processedYData[i] < 0) {
+		if (this.processedYData[i] < this.options.threshold) {
 			key = '-' + key;
 		}
 
@@ -1739,10 +1747,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	getSumEdges: function (pointA, pointB) {
 		var valueA,
 			valueB,
-			tmp;
+			tmp,
+			threshold = this.options.threshold;
 
-		valueA = pointA.y >= 0 ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
-		valueB = pointB.y >= 0 ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
+		valueA = pointA.y >= threshold ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
+		valueB = pointB.y >= threshold ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
 
 		if (valueB > valueA) {
 			tmp = valueA;
@@ -1751,29 +1760,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 
 		return [valueA, valueB];
-	},
-
-	/**
-	 * Place sums' dataLabels on the top of column regardles of its value
-	 */
-	_alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
-		var dlBox;
-
-		if (point.isSum || point.isIntermediateSum) {
-			dlBox = point.dlBox || point.shapeArgs;
-
-			if (dlBox) {
-				alignTo = merge(dlBox);
-			}
-
-			alignTo.height = 0;
-			options.verticalAlign = 'bottom';
-			options.align = pick(options.align, 'center');
-
-			Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-		} else {
-			seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
-		}
 	},
 
 	drawGraph: Series.prototype.drawGraph
@@ -1805,7 +1791,6 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
-	shadow: false,
 	stickyTracking: false,
 	tooltip: {
 		followPointer: true,

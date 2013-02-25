@@ -91,7 +91,8 @@ $(function () {
             },
             plotOptions: {
                 pie: {
-                    shadow: false
+                    shadow: false,
+                    center: ['50%', '50%']
                 }
             },
             tooltip: {

@@ -1,7 +1,6 @@
 $(function () {
-    var chart = $('#container').highcharts({
-        chart: {
-        },
+    $('#container').highcharts({
+    
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -15,12 +14,13 @@ $(function () {
             name: 'Second series',
             data: [216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5]
         }]
-    }, null, true);
+    });
 
 
     // The button action
     $('#button').click(function() {
-        var series = chart.get('series-1');
+        var chart = $('#container').highcharts(),
+            series = chart.get('series-1');
         alert ('The first series\' name is '+ series.name);
     });
 });

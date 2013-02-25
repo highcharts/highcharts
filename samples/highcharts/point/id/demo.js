@@ -1,5 +1,5 @@
 $(function () {
-    var chart = $('#container').highcharts({
+    $('#container').highcharts({
         chart: {
             type: 'line'
         },
@@ -14,11 +14,12 @@ $(function () {
                 id: 'highest'
             }, 194.1, 95.6, 54.4]
         }]
-    }, null, true);
+    });
 
     // button handler
     $('#button').click(function() {
-        var highest = chart.get('highest');
+        var chart = $('#container').highcharts(),
+            highest = chart.get('highest');
         if (highest) {
             highest.remove();
         }

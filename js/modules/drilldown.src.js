@@ -17,7 +17,8 @@
 
 	"use strict";
 
-    var noop = function () {};
+    var noop = function () {},
+        defaultOptions = H.getOptions();
 
     // Utilities
     function tweenColors(startColor, endColor, pos) {
@@ -30,15 +31,35 @@
         return 'rgba(' + rgba.join(',') + ')';
     }
 
+    // Add language
+    H.extend(defaultOptions.lang, {
+        drillUpText: '◁ Back to {series.name}'
+    });
+
+    /**
+     * A general fadeIn method
+     */
+    H.SVGRenderer.prototype.Element.prototype.fadeIn = function () {
+        this
+        .attr({
+            opacity: 0
+        })
+        .show()
+        .animate({
+            opacity: 1
+        }, {
+            duration: 250
+        });
+    };
+
     // Extend the Chart prototype
 	H.Chart.prototype.drilldownLevels = [];
 
     H.Chart.prototype.getDrilldownBackText = function () {
         var lastLevel = this.drilldownLevels[this.drilldownLevels.length - 1];
 
-        return lastLevel.seriesOptions.name ?
-                '◁ Back to ' + lastLevel.seriesOptions.name : 
-                '◁ Back';
+        return this.options.lang.drillUpText.replace('{series.name}', lastLevel.seriesOptions.name);
+
     };
 
 	H.Chart.prototype.showResetDrilldown = function () {
@@ -52,7 +73,7 @@
 				null,
 				null,
 				function () {
-					chart.resetDrilldown(); 
+					chart.drillUp(); 
 				}
             )
 			.attr({
@@ -73,16 +94,21 @@
         }
 	};
 
-	H.Chart.prototype.resetDrilldown = function () {
+    H.Chart.prototype.drillUp = function () {
 		var chart = this,
             level = chart.drilldownLevels.pop(),
 			oldSeries = chart.series[0],
 			newSeries = chart.addSeries(level.seriesOptions, false);
 
-		newSeries.animate = newSeries.animateDrillupTo || noop;
+        HighchartsAdapter.fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
 
-		if (oldSeries.animateDrillupFrom) {
-			oldSeries.animateDrillupFrom(newSeries, level);
+        if (newSeries.type === oldSeries.type) {
+            newSeries.drilldownLevel = level;
+		    newSeries.animate = newSeries.animateDrillupTo || noop;
+
+            if (oldSeries.animateDrillupFrom) {
+			    oldSeries.animateDrillupFrom(newSeries, level);
+            }
 		}
 
 		oldSeries.remove(false);
@@ -172,25 +198,37 @@
      * When drilling up, keep the upper series invisible until the lower series has
      * moved into place
      */
-    H.seriesTypes.pie.prototype.animateDrillupTo = function (init) {
+    H.seriesTypes.pie.prototype.animateDrillupTo = 
+            H.seriesTypes.column.prototype.animateDrillupTo = function (init) {
         if (!init) {
-            var newSeries = this, 
-                animationOptions = this.chart.options.drilldown.animation;
+            var newSeries = this,
+                pointIndex = newSeries.drilldownLevel.pointIndex;
 
-            H.each(this.points, function (point) {
+            H.each(this.points, function (point, i) {
                 point.graphic.hide();
+                if (point.dataLabel) {
+                    point.dataLabel.hide();
+                }
+                if (point.connector) {
+                    point.connector.hide();
+                }
             });
 
+
             // Do dummy animation on first point to get to complete
-            this.points[0].graphic.animate({
-                opacity: 1 // dummy
-            }, H.merge(animationOptions, {
-                complete: function () {
-                    H.each(newSeries.points, function (point) {                        
-                        point.graphic.show();
-                    });
-                }
-            }));
+            setTimeout(function () {
+                H.each(newSeries.points, function (point, i) {  
+                    // Fade in other points              
+                    var verb = i === pointIndex ? 'show' : 'fadeIn';
+                    point.graphic[verb]();
+                    if (point.dataLabel) {
+                        point.dataLabel[verb]();
+                    }
+                    if (point.connector) {
+                        point.connector[verb]();
+                    }
+                });
+            }, Math.max(this.chart.options.drilldown.animation.duration - 50, 0));
         }
 
     };
@@ -241,24 +279,30 @@
      * When drilling up, keep the upper series invisible until the lower series has
      * moved into place
      */
-    H.seriesTypes.column.prototype.animateDrillupTo = function (init) {
+    /*H.seriesTypes.column.prototype.animateDrillupTo = function (init) {
         if (!init) {
             var animationOptions = this.chart.options.drilldown.animation,
                 newSeries = this,
                 group = this.group;
 
             group
-                .hide()
+                .attr({
+                    opacity: 0
+                })
                 .animate({
-                    opacity: 1 // dummy
+                    width: 0 // dummy
                 }, H.merge(animationOptions, {
                     complete: function () {
-                        group.show();
+                        group.animate({
+                            opacity: 1
+                        }, {
+                            duration: 250
+                        });
                     }
                 }));
         }
 
-    };
+    };*/
 	
 	H.Point.prototype.doDrilldown = function () {
 		var series = this.series,
@@ -268,7 +312,9 @@
 			ddOptions,
 			xAxis = series.xAxis,
             color = this.color || series.color,
-			newSeries;
+			newSeries,
+            pointIndex,
+            level;
 		
 		while (i-- && !ddOptions) {
 			if (drilldown.series[i].id === this.drilldown) {
@@ -277,23 +323,38 @@
 		}
 		
 		if (ddOptions) {
-			
+
+            HighchartsAdapter.inArray(this, series.points);
+            
+            
 			ddOptions = H.extend({
 				color: color
 			}, ddOptions);
-			
-			chart.drilldownLevels.push({
+            pointIndex = HighchartsAdapter.inArray(this, series.points);
+            level = {
                 seriesOptions: series.userOptions,
                 shapeArgs: this.shapeArgs,
-                color: color
+                color: color,
+                newSeries: ddOptions,
+                pointOptions: series.options.data[pointIndex],
+                pointIndex: pointIndex
+            };
+
+            HighchartsAdapter.fireEvent(chart, 'drilldown', { 
+                drilldown: level 
             });
+            
+            chart.drilldownLevels.push(level);
 
 			newSeries = chart.addSeries(ddOptions, false);
 			if (xAxis) {
 				xAxis.oldPos = xAxis.pos;
 			}
 
-            newSeries.animate = newSeries.animateDrilldown || noop;
+            // Run fancy cross-animation on supported and equal types
+            if (series.type === newSeries.type) {
+                newSeries.animate = newSeries.animateDrilldown || noop;
+            }
 			
 			series.remove(false);
 			

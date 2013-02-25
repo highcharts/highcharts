@@ -18,7 +18,7 @@ $(function () {
         });
 
         // create the chart
-        var chart = $('#container').highcharts('StockChart', {
+        $('#container').highcharts('StockChart', {
 
 
             rangeSelector : {
@@ -35,9 +35,10 @@ $(function () {
                 threshold: null,
                 turboThreshold: 2000 // to accept point object configuration
             }]
-        }, null, true);
+        });
 
-
+        var chart = $('#container').highcharts();
+        
         // Toggle point markers
         var enableMarkers = true;
         $('#markers').click(function() {

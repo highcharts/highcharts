@@ -1,8 +1,5 @@
 $(function() {
-	var chart = $('#container').highcharts('StockChart', {
-
-	    chart: {
-	    },
+	$('#container').highcharts('StockChart', {
 
 	    loading: {
 	    	style: {
@@ -21,9 +18,10 @@ $(function() {
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
-	}, null, true);
+	});
 
-	$('#showloading').click(function() {
+	var chart = $('#container').highcharts();
+    $('#showloading').click(function() {
 		chart.showLoading();
 	});
 	$('#hideloading').click(function() {

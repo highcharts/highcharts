@@ -128,6 +128,7 @@ $(function () {
             exporting: {
                 enabled: false
             }
-        }, null, true);
+        })
+        .highcharts(); // return chart
     });
     

@@ -21,7 +21,6 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
-	shadow: false,
 	stickyTracking: false,
 	tooltip: {
 		followPointer: true,

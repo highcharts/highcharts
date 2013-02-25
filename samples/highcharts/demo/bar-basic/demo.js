@@ -26,10 +26,7 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y +' millions';
-                }
+                valueSuffix: ' millions'
             },
             plotOptions: {
                 bar: {
