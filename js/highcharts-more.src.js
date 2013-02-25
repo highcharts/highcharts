@@ -33,8 +33,6 @@ var arrayMin = Highcharts.arrayMin,
 	math = Math,
 	mathRound = math.round,
 	mathFloor = math.floor,
-	mathCeil = math.ceil,
-	mathMin = math.min,
 	mathMax = math.max,
 	noop = function () {};/**
  * The Pane object allows options that are common to a set of X and Y axes.
