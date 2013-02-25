@@ -235,7 +235,8 @@ Chart.prototype = {
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
-			afterRedraw = [];
+			afterRedraw = [],
+			l;
 			
 		setAnimation(animation, chart);
 		
@@ -264,11 +265,6 @@ Chart.prototype = {
 					serie.isDirty = true;
 				}
 			}
-		}
-
-		// render stacks
-		if (hasStackedSeries) {
-			chart.getStacks();
 		}
 
 		// handle updated data in the series
@@ -327,6 +323,18 @@ Chart.prototype = {
 			chart.drawChartBox();
 		}
 
+
+		// render stacks
+		if (hasStackedSeries) {
+			chart.getStacks();
+			l = seriesLength;
+
+			for (i = 0; i < l; i++) {
+				if (series[i].options.stacking) {
+					series[i].setStackedPoints();
+				}
+			}
+		}
 
 
 		// redraw affected series
