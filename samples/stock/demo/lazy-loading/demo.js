@@ -19,6 +19,10 @@ $(function() {
 					data : data
 				}
 			},
+
+			scrollbar: {
+				liveRedraw: false
+			},
 			
 			title: {
 				text: 'AAPL history by the minute from 1998 to 2011'
