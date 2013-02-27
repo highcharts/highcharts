@@ -8957,9 +8957,11 @@ Pointer.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point.clientX);
-					distance = mathMin(distance, point._dist);
-					points.push(point);
+					if (point.series) { // not a dummy point, #1544
+						point._dist = mathAbs(index - point.clientX);
+						distance = mathMin(distance, point._dist);
+						points.push(point);
+					}
 				}
 			}
 			// remove furthest points
@@ -14603,6 +14605,7 @@ var AreaSeries = extendClass(Series, {
 		var segments = [],
 			stack = this.yAxis.stacks.area,
 			pointMap = {},
+			plotX,
 			plotY,
 			points = this.points,
 			i,
@@ -14623,10 +14626,12 @@ var AreaSeries = extendClass(Series, {
 				// insert a dummy point in order for the areas to be drawn
 				// correctly.
 				} else {
-					plotY = this.yAxis.translate(stack[x].cum, 0, 1, 0, 1);
+					plotX = this.xAxis.translate(x);
+					plotY = this.yAxis.toPixels(stack[x].cum, true);
 					segments.push({ 
 						y: null, 
-						plotX: this.xAxis.translate(x), 
+						plotX: plotX,
+						clientX: plotX, 
 						plotY: plotY, 
 						yBottom: plotY,
 						onMouseOver: noop
