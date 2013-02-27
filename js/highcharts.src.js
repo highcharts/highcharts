@@ -15888,7 +15888,7 @@ var PieSeries = {
 				point.graphic = graphic = renderer.arc(shapeArgs)
 					.setRadialReference(series.center)
 					.attr(extend(
-						point.pointAttr[NORMAL_STATE],
+						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE],
 						{ 'stroke-linejoin': 'round' }
 					))
 					.add(point.group)
