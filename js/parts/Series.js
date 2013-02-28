@@ -12,16 +12,16 @@ Point.prototype = {
 	init: function (series, options, x) {
 
 		var point = this,
-			defaultColors;
+			colors;
 		point.series = series;
 		point.applyOptions(options, x);
 		point.pointAttr = {};
 
 		if (series.options.colorByPoint) {
-			defaultColors = series.chart.options.colors;
-			point.color = point.color || defaultColors[series.colorCounter++];
+			colors = series.options.colors || series.chart.options.colors; // docs: series.options.colors when colorByPoint is true
+			point.color = point.color || colors[series.colorCounter++];
 			// loop back to zero
-			if (series.colorCounter === defaultColors.length) {
+			if (series.colorCounter === colors.length) {
 				series.colorCounter = 0;
 			}
 		}
@@ -972,7 +972,6 @@ Series.prototype = {
 		var series = this,
 			oldData = series.points,
 			options = series.options,
-			initialColor = series.initialColor,
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
@@ -983,9 +982,7 @@ Series.prototype = {
 		series.xIncrement = null;
 		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
 
-		if (defined(initialColor)) { // reset colors for pie
-			chart.counters.color = initialColor;
-		}
+		series.colorCounter = 0; // for series with colorByPoint (#1547)
 		
 		// parallel arrays
 		var xData = [],

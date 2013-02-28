@@ -162,10 +162,7 @@ var PieSeries = {
 	/**
 	 * Pies have one color each point
 	 */
-	getColor: function () {
-		// record first color for use in setData
-		this.initialColor = this.chart.counters.color;
-	},
+	getColor: noop,
 
 	/**
 	 * Animate the pies in
