@@ -51,6 +51,11 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
+		// Disallow negative values (#1530)
+		if (point.y < 0) {
+			point.y = null;
+		}
+
 		//visible: options.visible !== false,
 		extend(point, {
 			visible: point.visible !== false,
