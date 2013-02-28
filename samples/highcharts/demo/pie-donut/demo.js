@@ -112,6 +112,7 @@ $(function () {
             }, {
                 name: 'Versions',
                 data: versionsData,
+                size: '80%',
                 innerSize: '60%',
                 dataLabels: {
                     formatter: function() {
