@@ -191,31 +191,6 @@ win.HighchartsAdapter = {
 	},
 
 	/**
-	 * Deep merge two objects and return a third
-	 */
-	merge: function () {
-		var args = arguments,
-			args13 = [{}], // MooTools 1.3+
-			i = args.length,
-			ret;
-
-		if (legacy) {
-			ret = $merge.apply(null, args);
-		} else {
-			while (i--) {
-				// Boolean argumens should not be merged.
-				// JQuery explicitly skips this, so we do it here as well.
-				if (typeof args[i] !== 'boolean') {
-					args13[i + 1] = args[i];
-				}
-			}
-			ret = Object.merge.apply(Object, args13);
-		}
-
-		return ret;
-	},
-
-	/**
 	 * Get the offset of an element relative to the top left corner of the web page
 	 */
 	offset: function (el) {

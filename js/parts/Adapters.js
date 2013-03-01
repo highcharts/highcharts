@@ -133,7 +133,8 @@
 				// Create the chart
 				if (options !== UNDEFINED) {
 					/*jslint unused:false*/
-					options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
+					options.chart = options.chart || {};
+					options.chart.renderTo = this[0];
 					chart = new Highcharts[constr](options, args[1]);
 					ret = this;
 					/*jslint unused:true*/
@@ -191,14 +192,6 @@
 			}
 			return results;
 	
-		},
-	
-		/**
-		 * Deep merge two objects and return a third object
-		 */
-		merge: function () {
-			var args = arguments;
-			return $.extend(true, null, args[0], args[1], args[2], args[3]);
 		},
 	
 		/**
@@ -355,9 +348,9 @@ if (globalAdapter) {
 }
 
 
-	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
-	// and all the utility functions will be null. In that case they are populated by the
-	// default adapters below.
+// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
+// and all the utility functions will be null. In that case they are populated by the
+// default adapters below.
 var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
 	inArray = adapter.inArray,
@@ -365,7 +358,6 @@ var adapterRun = adapter.adapterRun,
 	grep = adapter.grep,
 	offset = adapter.offset,
 	map = adapter.map,
-	merge = adapter.merge,
 	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,

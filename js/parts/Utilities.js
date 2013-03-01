@@ -14,6 +14,45 @@ function extend(a, b) {
 	}
 	return a;
 }
+	
+/**
+ * Deep merge two or more objects and return a third object.
+ * Previously this function redirected to jQuery.extend(true), but this had two limitations.
+ * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
+ * it copied properties from extended prototypes. 
+ */
+function merge() {
+	var i,
+		len = arguments.length,
+		ret = {},
+		doCopy = function (copy, original) {
+			var value, key;
+
+			for (key in original) {
+				if (original.hasOwnProperty(key)) {
+					value = original[key];
+					
+					// Copy the contents of objects, but not arrays or DOM nodes
+					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
+							&& typeof value.nodeType !== 'number') {
+						copy[key] = doCopy(copy[key] || {}, value);
+
+					// Primitives and arrays are copied over directly
+					} else {
+						copy[key] = original[key];
+					}
+				}
+			}
+			return copy;
+		};
+
+	// For each argument, extend the return
+	for (i = 0; i < len; i++) {
+		ret = doCopy(ret, arguments[i]);
+	}
+
+	return ret;
+}
 
 /**
  * Take an array and turn into a hash with even number arguments as keys and odd numbers as

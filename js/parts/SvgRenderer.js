@@ -2400,7 +2400,7 @@ SVGRenderer.prototype = {
 			css: function (styles) {
 				if (styles) {
 					var textStyles = {};
-					styles = merge({}, styles); // create a copy to avoid altering the original object (#537)
+					styles = merge(styles); // create a copy to avoid altering the original object (#537)
 					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width'], function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];

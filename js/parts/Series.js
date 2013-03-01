@@ -747,21 +747,15 @@ Series.prototype = {
 			chartOptions = chart.options,
 			plotOptions = chartOptions.plotOptions,
 			typeOptions = plotOptions[this.type],
-			data = itemOptions.data,
 			options;
 
 		this.userOptions = itemOptions;
-
-		itemOptions.data = null; // remove from merge to prevent looping over the data set
 
 		options = merge(
 			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
-		
-		// Re-insert the data array to the options and the original config (#717)
-		options.data = itemOptions.data = data;
 		
 		// the tooltip options are merged between global and series specific options
 		this.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
@@ -1856,12 +1850,7 @@ Series.prototype = {
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
-			oldData = this.options.data,
-			newData = newOptions.data,
 			oldType = this.type;
-
-		// Don't merge data, it's expensive
-		oldOptions.data = newOptions.data = null;
 
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
@@ -1869,9 +1858,6 @@ Series.prototype = {
 			index: this.index,
 			pointStart: this.xData[0] // when updating after addPoint
 		}, newOptions);
-
-		// Use only new or only old data
-		newOptions.data = newData || oldData;
 
 		// Destroy the series and reinsert methods from the type prototype
 		this.remove(false);

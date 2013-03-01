@@ -137,6 +137,45 @@ function extend(a, b) {
 	}
 	return a;
 }
+	
+/**
+ * Deep merge two or more objects and return a third object.
+ * Previously this function redirected to jQuery.extend(true), but this had two limitations.
+ * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
+ * it copied properties from extended prototypes. 
+ */
+function merge() {
+	var i,
+		len = arguments.length,
+		ret = {},
+		doCopy = function (copy, original) {
+			var value, key;
+
+			for (key in original) {
+				if (original.hasOwnProperty(key)) {
+					value = original[key];
+					
+					// Copy the contents of objects, but not arrays or DOM nodes
+					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
+							&& typeof value.nodeType !== 'number') {
+						copy[key] = doCopy(copy[key] || {}, value);
+
+					// Primitives and arrays are copied over directly
+					} else {
+						copy[key] = original[key];
+					}
+				}
+			}
+			return copy;
+		};
+
+	// For each argument, extend the return
+	for (i = 0; i < len; i++) {
+		ret = doCopy(ret, arguments[i]);
+	}
+
+	return ret;
+}
 
 /**
  * Take an array and turn into a hash with even number arguments as keys and odd numbers as
@@ -1182,7 +1221,8 @@ pathAnim = {
 				// Create the chart
 				if (options !== UNDEFINED) {
 					/*jslint unused:false*/
-					options.chart = Highcharts.merge(options.chart, { renderTo: this[0] });
+					options.chart = options.chart || {};
+					options.chart.renderTo = this[0];
 					chart = new Highcharts[constr](options, args[1]);
 					ret = this;
 					/*jslint unused:true*/
@@ -1240,14 +1280,6 @@ pathAnim = {
 			}
 			return results;
 	
-		},
-	
-		/**
-		 * Deep merge two objects and return a third object
-		 */
-		merge: function () {
-			var args = arguments;
-			return $.extend(true, null, args[0], args[1], args[2], args[3]);
 		},
 	
 		/**
@@ -1404,9 +1436,9 @@ if (globalAdapter) {
 }
 
 
-	// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
-	// and all the utility functions will be null. In that case they are populated by the
-	// default adapters below.
+// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
+// and all the utility functions will be null. In that case they are populated by the
+// default adapters below.
 var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
 	inArray = adapter.inArray,
@@ -1414,7 +1446,6 @@ var adapterRun = adapter.adapterRun,
 	grep = adapter.grep,
 	offset = adapter.offset,
 	map = adapter.map,
-	merge = adapter.merge,
 	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
@@ -4346,7 +4377,7 @@ SVGRenderer.prototype = {
 			css: function (styles) {
 				if (styles) {
 					var textStyles = {};
-					styles = merge({}, styles); // create a copy to avoid altering the original object (#537)
+					styles = merge(styles); // create a copy to avoid altering the original object (#537)
 					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width'], function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];
@@ -12548,21 +12579,15 @@ Series.prototype = {
 			chartOptions = chart.options,
 			plotOptions = chartOptions.plotOptions,
 			typeOptions = plotOptions[this.type],
-			data = itemOptions.data,
 			options;
 
 		this.userOptions = itemOptions;
-
-		itemOptions.data = null; // remove from merge to prevent looping over the data set
 
 		options = merge(
 			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
-		
-		// Re-insert the data array to the options and the original config (#717)
-		options.data = itemOptions.data = data;
 		
 		// the tooltip options are merged between global and series specific options
 		this.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
@@ -13657,12 +13682,7 @@ Series.prototype = {
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
-			oldData = this.options.data,
-			newData = newOptions.data,
 			oldType = this.type;
-
-		// Don't merge data, it's expensive
-		oldOptions.data = newOptions.data = null;
 
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
@@ -13670,9 +13690,6 @@ Series.prototype = {
 			index: this.index,
 			pointStart: this.xData[0] // when updating after addPoint
 		}, newOptions);
-
-		// Use only new or only old data
-		newOptions.data = newData || oldData;
 
 		// Destroy the series and reinsert methods from the type prototype
 		this.remove(false);

@@ -500,21 +500,17 @@
 		if (userOptions && userOptions.data) {
 			Highcharts.data(Highcharts.extend(userOptions.data, {
 				complete: function (dataOptions) {
-					var datasets = []; 
 					
-					// Don't merge the data arrays themselves
-					each(dataOptions.series, function (series, i) {
-						datasets[i] = series.data;
-						series.data = null;
-					});
-					
+					// Merge series configs
+					if (userOptions.series) {
+						each(userOptions.series, function (series, i) {
+							userOptions.series[i] = Highcharts.merge(series, dataOptions.series[i]);
+						});
+					}
+
 					// Do the merge
 					userOptions = Highcharts.merge(dataOptions, userOptions);
-					
-					// Re-insert the data
-					each(datasets, function (data, i) {
-						userOptions.series[i].data = data;
-					});
+
 					proceed.call(chart, userOptions, callback);
 				}
 			}));

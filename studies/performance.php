@@ -24,10 +24,10 @@ $seriesCountOptions = array(1, 2, 4, 8, 16, 32);
 $pointCountOptions = array(2, 4, 8, 16, 32, 64, 128, 500, 1000, 2000, 4000);
 $chartWidthOptions = array(1000, 500, 250);
 $libSourceOptions = array(
-	'2.2.5/highcharts.js',
-	'dev/highcharts.js'
+	'http://code.highcharts.com/2.2/highcharts.js',
+	'http://code.highcharts.com/2.3/highcharts.js',
+	'http://codev.highcharts.com/highcharts.js'
 );
-
 
 
 function randomData() {
@@ -49,7 +49,7 @@ function randomData() {
 		
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script type="text/javascript" src="http://code.highcharts.com/<?php echo $libSource ?>"></script>
+		<script type="text/javascript" src="<?php echo $libSource ?>"></script>
 		
 		<script type="text/javascript">
 			var countLoaded = 0;
@@ -123,6 +123,7 @@ if ($seriesType == 'line - no markers') {
 	$seriesType = 'line';
 	$noMarkers = true;
 }
+
 		?>
 		<div id="result" style="background: green; color: white; margin: 5px 0; padding: 5px"></div>
 		
@@ -171,11 +172,13 @@ if ($seriesType == 'line - no markers') {
 				},
 				<?php endif ?>
 				series: [
-				<?php for ($seriesNumber = 0; $seriesNumber < $seriesPerChart; $seriesNumber++) : ?>
-					{
-					data: [<?php echo join(randomData(), ',') ?>]
-				},
-				<?php endfor ?>
+				<?php 
+				$series = array();
+				for ($seriesNumber = 0; $seriesNumber < $seriesPerChart; $seriesNumber++) {
+					$series[] = '{ data: [' . join(randomData(), ',') . ']}';
+				}
+				echo join($series, ",\n");
+				?>
 				]
 			});
 			

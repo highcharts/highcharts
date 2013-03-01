@@ -797,7 +797,6 @@ Scroller.prototype = {
 
 			// remove it to prevent merging one by one
 			navigatorData = navigatorSeriesOptions.data;
-			baseOptions.data = navigatorSeriesOptions.data = null;
 
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
@@ -841,8 +840,6 @@ Scroller.prototype = {
 			});
 
 			// set the data back
-			baseOptions.data = baseData;
-			navigatorSeriesOptions.data = navigatorData;
 			mergedNavSeriesOptions.data = navigatorData || baseData;
 
 			// add the series
