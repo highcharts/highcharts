@@ -7621,19 +7621,12 @@ Axis.prototype = {
 	setMaxTicks: function () {
 		
 		var chart = this.chart,
-			maxTicks = chart.maxTicks,
+			maxTicks = chart.maxTicks || {},
 			tickPositions = this.tickPositions,
-			xOrY = this.xOrY;
+			key = this._maxTicksKey = [this.xOrY, this.pos, this.len].join('-');
 		
-		if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
-			maxTicks = {
-				x: 0,
-				y: 0
-			};
-		}
-
-		if (!this.isLinked && !this.isDatetimeAxis && tickPositions.length > maxTicks[xOrY] && this.options.alignTicks !== false) {
-			maxTicks[xOrY] = tickPositions.length;
+		if (!this.isLinked && !this.isDatetimeAxis && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
+			maxTicks[key] = tickPositions.length;
 		}
 		chart.maxTicks = maxTicks;
 	},
@@ -7645,17 +7638,17 @@ Axis.prototype = {
 	adjustTickAmount: function () {
 		var axis = this,
 			chart = axis.chart,
-			xOrY = axis.xOrY,
+			key = axis._maxTicksKey,
 			tickPositions = axis.tickPositions,
 			maxTicks = chart.maxTicks;
 
-		if (maxTicks && maxTicks[xOrY] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
+		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
 				tickAmount;
 
 			// set the axis-level tickAmount to use below
-			axis.tickAmount = tickAmount = maxTicks[xOrY];
+			axis.tickAmount = tickAmount = maxTicks[key];
 
 			if (calculatedTickAmount < tickAmount) {
 				while (tickPositions.length < tickAmount) {

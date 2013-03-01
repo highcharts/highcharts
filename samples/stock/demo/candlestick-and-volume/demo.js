@@ -32,10 +32,7 @@ $(function() {
 
 		// create the chart
 		$('#container').highcharts('StockChart', {
-		    chart: {
-		        alignTicks: false
-		    },
-
+		    
 		    rangeSelector: {
 		        selected: 1
 		    },
