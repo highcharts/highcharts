@@ -69,7 +69,7 @@ Legend.prototype = {
 
 		
 		if (legendItem) {
-			legendItem.css({ fill: textColor });
+			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE
 		}
 		if (legendLine) {
 			legendLine.attr({ stroke: symbolColor });
