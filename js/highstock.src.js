@@ -10528,6 +10528,12 @@ Chart.prototype = {
 			chart.isDirtyLegend = false;
 		}
 
+		// reset stacks
+		if (hasStackedSeries) {
+			chart.getStacks();
+		}
+
+
 		if (chart.hasCartesianSeries) {
 			if (!chart.isResizing) {
 
@@ -10564,19 +10570,6 @@ Chart.prototype = {
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			chart.drawChartBox();
-		}
-
-
-		// render stacks
-		if (hasStackedSeries) {
-			chart.getStacks();
-			l = seriesLength;
-
-			for (i = 0; i < l; i++) {
-				if (series[i].options.stacking) {
-					series[i].setStackedPoints();
-				}
-			}
 		}
 
 
