@@ -14952,10 +14952,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	threshold: 0,
-	tooltip: {
-		followPointer: true
-	}
+	threshold: 0
 });
 
 /**
@@ -15179,7 +15176,7 @@ var ColumnSeries = extendClass(Series, {
 	 * Draw the individual tracker elements.
 	 * This method is inherited by pie charts too.
 	 */
-	_drawTracker: function () {
+	drawTracker: function () {
 		var series = this,
 			chart = series.chart,
 			renderer = chart.renderer,
