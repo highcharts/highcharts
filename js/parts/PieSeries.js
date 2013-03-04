@@ -302,7 +302,12 @@ var PieSeries = {
 			}
 		}
 		if (this.radiusValued === true) {
+		    rappR=0;
+		    if(maxR>0){
 			rappR = this.minRadius / maxR;
+		    }else{
+			this.minRadius=0;
+		    }
 		}
 
 		// Calculate the geometry for each point
