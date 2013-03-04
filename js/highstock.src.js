@@ -14952,7 +14952,10 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	threshold: 0
+	threshold: 0,
+	tooltip: {
+		followPointer: true
+	}
 });
 
 /**
@@ -15171,11 +15174,12 @@ var ColumnSeries = extendClass(Series, {
 			}
 		});
 	},
+
 	/**
 	 * Draw the individual tracker elements.
 	 * This method is inherited by pie charts too.
 	 */
-	drawTracker: function () {
+	_drawTracker: function () {
 		var series = this,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -19161,30 +19165,40 @@ var seriesInit = seriesProto.init,
  */
 seriesProto.init = function () {
 	
-	// call base method
+	// Call base method
 	seriesInit.apply(this, arguments);
 	
-	// local variables
-	var series = this,
-		compare = series.options.compare;
-	
-	if (compare) {
-		series.modifyValue = function (value, point) {
-			var compareValue = this.compareValue;
+	// Set comparison mode
+	this.setCompare(this.options.compare);
+};
+
+/**
+ * The setCompare method can be called also from the outside after render time // docs
+ */
+seriesProto.setCompare = function (compare) {
+
+	// Set or unset the modifyValue method
+	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
+		var compareValue = this.compareValue;
+		
+		// get the modified value
+		value = compare === 'value' ? 
+			value - compareValue : // compare value
+			value = 100 * (value / compareValue) - 100; // compare percent
 			
-			// get the modified value
-			value = compare === 'value' ? 
-				value - compareValue : // compare value
-				value = 100 * (value / compareValue) - 100; // compare percent
-				
-			// record for tooltip etc.
-			if (point) {
-				point.change = value;
-			}
-			
-			return value;
-		};
-	}	
+		// record for tooltip etc.
+		if (point) {
+			point.change = value;
+		}
+		
+		return value;
+	} : null;
+
+	// Mark dirty
+	if (this.chart.hasRendered) {
+		this.isDirty = true;
+	}
+
 };
 
 /**
@@ -19212,6 +19226,20 @@ seriesProto.processData = function () {
 				series.compareValue = processedYData[i];
 				break;
 			}
+		}
+	}
+};
+
+/**
+ * Add a utility method, setCompare, to the Y axis // docs
+ */
+Axis.prototype.setCompare = function (compare, redraw) {
+	if (!this.isXAxis) {
+		each(this.series, function (series) {
+			series.setCompare(compare);
+		});
+		if (pick(redraw, true)) {
+			chart.redraw();
 		}
 	}
 };
