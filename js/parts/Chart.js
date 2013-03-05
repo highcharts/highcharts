@@ -63,7 +63,6 @@ Chart.prototype = {
 
 		//this.renderTo = UNDEFINED;
 		//this.renderToClone = UNDEFINED;
-		//this.tracker = UNDEFINED;
 
 		//this.spacingBox = UNDEFINED
 

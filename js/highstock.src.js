@@ -10037,9 +10037,6 @@ Legend.prototype = {
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
-				// #414, #759. Trackers will be drawn above the legend, but we have 
-				// to sacrifice that because tooltips need to be above the legend
-				// and trackers above tooltips
 				.attr({ zIndex: 7 }) 
 				.add();
 			legend.contentGroup = renderer.g()
@@ -10370,7 +10367,6 @@ Chart.prototype = {
 
 		//this.renderTo = UNDEFINED;
 		//this.renderToClone = UNDEFINED;
-		//this.tracker = UNDEFINED;
 
 		//this.spacingBox = UNDEFINED
 
@@ -11982,7 +11978,7 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'tracker', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
+			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
 			prop,
 			i = 6;
 		while (i--) {
@@ -14386,13 +14382,9 @@ Series.prototype = {
 			chart = series.chart,
 			legendItem = series.legendItem,
 			seriesGroup = series.group,
-			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
 			markerGroup = series.markerGroup,
 			showOrHide,
-			i,
-			points = series.points,
-			point,
 			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
 			oldVisibility = series.visible;
 
@@ -14408,19 +14400,6 @@ Series.prototype = {
 			markerGroup[showOrHide]();
 		}
 
-		// show or hide trackers
-		if (seriesTracker) {
-			seriesTracker[showOrHide]();
-		} else if (points) {
-			i = points.length;
-			while (i--) {
-				point = points[i];
-				if (point.tracker) {
-					point.tracker[showOrHide]();
-				}
-			}
-		}
-		
 		// hide tooltip (#1361)
 		if (chart.hoverSeries === series) {
 			series.onMouseOut();
@@ -15212,7 +15191,9 @@ var ColumnSeries = extendClass(Series, {
 			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
-						.addClass(PREFIX + 'tracker')
+						.attr({
+							isTracker: true
+						})
 						.on('mouseover', onMouseOver)
 						.on('mouseout', onMouseOut)
 						.css(css);
@@ -15459,7 +15440,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			tracker = point.tracker,
 			dataLabel = point.dataLabel,
 			connector = point.connector,
 			shadowGroup = point.shadowGroup,
@@ -15472,9 +15452,6 @@ var PiePoint = extendClass(Point, {
 		method = vis ? 'show' : 'hide';
 
 		point.group[method]();
-		if (tracker) {
-			tracker[method]();
-		}
 		if (dataLabel) {
 			dataLabel[method]();
 		}
@@ -17159,7 +17136,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			i,
 			point,
 			graphic,
-			tracker,
 			stackIndex,
 			crisp = (options.lineWidth % 2 / 2),
 			anchorX,
@@ -17179,7 +17155,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			anchorY = stackIndex ? UNDEFINED : point.plotY;
 
 			graphic = point.graphic;
-			tracker = point.tracker;
 
 			// only draw the point if y is defined
 			if (plotY !== UNDEFINED) {
@@ -17230,9 +17205,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();
-				if (tracker) {
-					tracker.attr('y', -9999);
-				}
 			}
 
 		}
@@ -17249,8 +17221,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		// put each point in front on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis
 		each(this.points, function (point) {
-			if (point.tracker) { // #1046
-				addEvent(point.tracker.element, 'mouseover', function () {
+			if (point.graphic) {
+				addEvent(point.graphic.element, 'mouseover', function () {
 					point.graphic.toFront();
 				});
 			}

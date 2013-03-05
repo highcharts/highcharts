@@ -82,7 +82,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			tracker = point.tracker,
 			dataLabel = point.dataLabel,
 			connector = point.connector,
 			shadowGroup = point.shadowGroup,
@@ -95,9 +94,6 @@ var PiePoint = extendClass(Point, {
 		method = vis ? 'show' : 'hide';
 
 		point.group[method]();
-		if (tracker) {
-			tracker[method]();
-		}
 		if (dataLabel) {
 			dataLabel[method]();
 		}

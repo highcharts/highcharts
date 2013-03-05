@@ -153,7 +153,7 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'tracker', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
+			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
 			prop,
 			i = 6;
 		while (i--) {
@@ -2557,13 +2557,9 @@ Series.prototype = {
 			chart = series.chart,
 			legendItem = series.legendItem,
 			seriesGroup = series.group,
-			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
 			markerGroup = series.markerGroup,
 			showOrHide,
-			i,
-			points = series.points,
-			point,
 			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
 			oldVisibility = series.visible;
 
@@ -2579,19 +2575,6 @@ Series.prototype = {
 			markerGroup[showOrHide]();
 		}
 
-		// show or hide trackers
-		if (seriesTracker) {
-			seriesTracker[showOrHide]();
-		} else if (points) {
-			i = points.length;
-			while (i--) {
-				point = points[i];
-				if (point.tracker) {
-					point.tracker[showOrHide]();
-				}
-			}
-		}
-		
 		// hide tooltip (#1361)
 		if (chart.hoverSeries === series) {
 			series.onMouseOut();
