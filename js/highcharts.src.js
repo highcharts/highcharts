@@ -1752,7 +1752,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
-		shared: useCanVG,
+		shared: true, // docs - new default
 		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
@@ -15094,11 +15094,6 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs.height += 1;
 			}
 
-			// make small columns responsive to mouse
-			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
-				height: 6,
-				y: barY - 3
-			});
 		});
 
 	},

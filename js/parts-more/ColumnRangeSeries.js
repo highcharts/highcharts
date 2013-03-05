@@ -32,7 +32,6 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 			shapeArgs.y = plotHigh;
 			shapeArgs.height = point.plotY - plotHigh;
 			
-			point.trackerArgs = shapeArgs;
 		});
 	},
 	drawGraph: noop,

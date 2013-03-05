@@ -192,11 +192,6 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs.height += 1;
 			}
 
-			// make small columns responsive to mouse
-			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
-				height: 6,
-				y: barY - 3
-			});
 		});
 
 	},
