@@ -291,6 +291,22 @@ SVGElement.prototype = {
 		return ret;
 	},
 
+	/* 
+	// Proposal for class name handling: 
+	addClass: function (className) {
+		return this.attr({
+			'class': this.attr('class') + ' ' + className
+		});
+	},
+	hasClass: function (className) {
+		return attr(this.element, 'class').indexOf(className) !== -1;
+	},
+	removeClass: function (className) {
+		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		return this;
+	},
+	*/
+
 	/**
 	 * If one of the symbol size affecting parameters are changed,
 	 * check all the others only once for each call to an element's

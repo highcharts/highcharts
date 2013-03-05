@@ -32,12 +32,6 @@ Pointer.prototype = {
 		this.pinchDown = [];
 		this.lastValidTouch = {};
 
-		if (!chart.trackerGroup) {
-			chart.trackerGroup = chart.renderer.g('tracker')
-				.attr({ zIndex: 9 })
-				.add();
-		}
-
 		if (options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
 		}
@@ -790,13 +784,7 @@ Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var pointer = this,
-			chart = this.chart;
-
-		// Destroy the tracker group element
-		if (chart.trackerGroup) {
-			chart.trackerGroup = chart.trackerGroup.destroy();
-		}
+		var pointer = this;
 
 		// Release all DOM events
 		each(pointer._events, function (eventConfig) {	

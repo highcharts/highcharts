@@ -1583,14 +1583,10 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			trackerGroup = this.trackerGroup;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
-			if (trackerGroup) {
-				trackerGroup.clip(chart.clipRect); // #484
-			}
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -1918,7 +1914,7 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup',
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
 				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
 			if (series[prop]) {
 
@@ -2334,7 +2330,7 @@ Series.prototype = {
 	},
 
 	/**
-	 * Initialize and perform group inversion on series.group and series.trackerGroup
+	 * Initialize and perform group inversion on series.group and series.markerGroup
 	 */
 	invertGroups: function () {
 		var series = this,
@@ -2347,7 +2343,7 @@ Series.prototype = {
 				height: series.xAxis.len
 			};
 			
-			each(['group', 'trackerGroup', 'markerGroup'], function (groupName) {
+			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
 					series[groupName].attr(size).invert();
 				}
@@ -2367,7 +2363,7 @@ Series.prototype = {
 	},
 	
 	/**
-	 * General abstraction for creating plot groups like series.group, series.trackerGroup, series.dataLabelsGroup and 
+	 * General abstraction for creating plot groups like series.group, series.dataLabelsGroup and 
 	 * series.markerGroup. On subsequent calls, the group will only be adjusted to the updated plot size.
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
@@ -2465,9 +2461,6 @@ Series.prototype = {
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
-			if (this.trackerGroup) {
-				this.trackerGroup.clip(chart.clipRect);
-			}
 		}
 
 		// Run the animation
@@ -2692,7 +2685,6 @@ Series.prototype = {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
-			//trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
 			i,
 			onMouseOver = function () {

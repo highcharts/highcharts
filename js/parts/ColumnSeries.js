@@ -289,9 +289,7 @@ var ColumnSeries = extendClass(Series, {
 			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
-						.attr({
-							isTracker: true
-						})
+						.addClass(PREFIX + 'tracker')
 						.on('mouseover', onMouseOver)
 						.on('mouseout', onMouseOut)
 						.css(css);
