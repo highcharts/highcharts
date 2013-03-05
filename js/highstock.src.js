@@ -2940,7 +2940,7 @@ SVGElement.prototype = {
 			i;
 
 		// remove events
-		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
+		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
@@ -13891,9 +13891,12 @@ Series.prototype = {
 						
 					}
 					
-					// Now the data label is created and placed at 0,0, so we need to align it
 					if (dataLabel) {
+						// Now the data label is created and placed at 0,0, so we need to align it
 						series.alignDataLabel(point, dataLabel, options, null, isNew);
+
+						// Make trackable
+						dataLabel.element.point = point;
 					}
 				}
 			});
@@ -14970,6 +14973,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Initialize the series
@@ -15171,6 +15175,11 @@ var ColumnSeries = extendClass(Series, {
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269
 			}
+
+			// Cross-reference for tracking
+			if (graphic) {
+				graphic.element.point = point;
+			}
 		});
 	},
 
@@ -15182,14 +15191,18 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
-			points = series.points,
-			i = points.length,
-			graphic,
-			trackerGroup = series[series.trackerGroupKey || 'group'],
 			onMouseOver = function (e) {
+				var target = e.target,
+					point;
+
 				series.onMouseOver();
-				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-					points[e.target._i].onMouseOver(e);
+
+				while (target && !point) {
+					point = target.point;
+					target = target.parentNode;
+				}
+				if (point !== UNDEFINED) { // undefined on graph in scatterchart
+					point.onMouseOver(e);
 				}
 			},
 			onMouseOut = function () {
@@ -15198,26 +15211,22 @@ var ColumnSeries = extendClass(Series, {
 				}
 			};
 
-		// Set an expando property for the point index, used below
-		while (i--) {
-			graphic = points[i].graphic;
-			if (graphic) { // doesn't exist for null points
-				graphic.element._i = i; 
-			}
-		}
-		
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			trackerGroup
-				.attr({
-					isTracker: true
-				})
-				.on('mouseover', onMouseOver)
-				.on('mouseout', onMouseOut)
-				.css(css);
-			if (hasTouch) {
-				trackerGroup.on('touchstart', onMouseOver);
-			}
+			each(series.trackerGroups, function (key) {
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
+						.attr({
+							isTracker: true
+						})
+						.on('mouseover', onMouseOver)
+						.on('mouseout', onMouseOut)
+						.css(css);
+					if (hasTouch) {
+						series[key].on('touchstart', onMouseOver);
+					}
+				}
+			});
 			
 		} else {
 			series._hasTracking = true;
@@ -15364,7 +15373,7 @@ var ScatterSeries = extendClass(Series, {
 	sorted: false,
 	requireSorting: false,
 	noSharedTooltip: true,
-	trackerGroupKey: 'markerGroup',
+	trackerGroups: ['markerGroup'],
 
 	drawTracker: ColumnSeries.prototype.drawTracker,
 	
@@ -15535,6 +15544,7 @@ var PieSeries = {
 	pointClass: PiePoint,
 	requireSorting: false,
 	noSharedTooltip: true,
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -15636,7 +15646,6 @@ var PieSeries = {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			chart = series.chart,
 			start,
 			end,
 			angle,
@@ -15747,31 +15756,6 @@ var PieSeries = {
 	drawGraph: noop,
 
 	/**
-	 * Render the slices
-	 * /
-	render: function () {
-		
-		this.drawDataLabels();
-
-		// cache attributes for shapes
-		this.getAttribs();
-
-		this.drawPoints();
-
-		// draw the mouse tracking area
-		if (this.options.enableMouseTracking !== false) {
-			this.drawTracker();
-		}
-
-		if (this.options.animation && this.animate) {
-			this.animate();
-		}
-
-		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
-		this.isDirty = false; // means data is in accordance with what you see
-	},*/
-
-	/**
 	 * Draw the data points
 	 */
 	drawPoints: function () {
@@ -15800,15 +15784,6 @@ var PieSeries = {
 					.add();
 			}
 
-			// create the group the first time
-			/*
-			if (!group) {
-				group = point.group = renderer.g('point')
-					.attr({ zIndex: 5 })
-					.add();
-			}
-			*/
-
 			// if the point is sliced, use special translation, else use plot area traslation
 			groupTranslation = point.sliced ? point.slicedTranslation : {
 				translateX: 0,
@@ -15835,6 +15810,7 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 			graphic.attr(groupTranslation);
+			graphic.element.point = point; // for tracking
 
 			// detect point specific visibility
 			if (point.visible === false) {

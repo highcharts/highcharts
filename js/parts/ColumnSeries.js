@@ -46,6 +46,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Initialize the series
@@ -247,6 +248,11 @@ var ColumnSeries = extendClass(Series, {
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269
 			}
+
+			// Cross-reference for tracking
+			if (graphic) {
+				graphic.element.point = point;
+			}
 		});
 	},
 
@@ -258,14 +264,18 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
-			points = series.points,
-			i = points.length,
-			graphic,
-			trackerGroup = series[series.trackerGroupKey || 'group'],
 			onMouseOver = function (e) {
+				var target = e.target,
+					point;
+
 				series.onMouseOver();
-				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-					points[e.target._i].onMouseOver(e);
+
+				while (target && !point) {
+					point = target.point;
+					target = target.parentNode;
+				}
+				if (point !== UNDEFINED) { // undefined on graph in scatterchart
+					point.onMouseOver(e);
 				}
 			},
 			onMouseOut = function () {
@@ -274,26 +284,22 @@ var ColumnSeries = extendClass(Series, {
 				}
 			};
 
-		// Set an expando property for the point index, used below
-		while (i--) {
-			graphic = points[i].graphic;
-			if (graphic) { // doesn't exist for null points
-				graphic.element._i = i; 
-			}
-		}
-		
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			trackerGroup
-				.attr({
-					isTracker: true
-				})
-				.on('mouseover', onMouseOver)
-				.on('mouseout', onMouseOut)
-				.css(css);
-			if (hasTouch) {
-				trackerGroup.on('touchstart', onMouseOver);
-			}
+			each(series.trackerGroups, function (key) {
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
+						.attr({
+							isTracker: true
+						})
+						.on('mouseover', onMouseOver)
+						.on('mouseout', onMouseOut)
+						.css(css);
+					if (hasTouch) {
+						series[key].on('touchstart', onMouseOver);
+					}
+				}
+			});
 			
 		} else {
 			series._hasTracking = true;

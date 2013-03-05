@@ -161,6 +161,7 @@ var PieSeries = {
 	pointClass: PiePoint,
 	requireSorting: false,
 	noSharedTooltip: true,
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -262,7 +263,6 @@ var PieSeries = {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			chart = series.chart,
 			start,
 			end,
 			angle,
@@ -373,31 +373,6 @@ var PieSeries = {
 	drawGraph: noop,
 
 	/**
-	 * Render the slices
-	 * /
-	render: function () {
-		
-		this.drawDataLabels();
-
-		// cache attributes for shapes
-		this.getAttribs();
-
-		this.drawPoints();
-
-		// draw the mouse tracking area
-		if (this.options.enableMouseTracking !== false) {
-			this.drawTracker();
-		}
-
-		if (this.options.animation && this.animate) {
-			this.animate();
-		}
-
-		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
-		this.isDirty = false; // means data is in accordance with what you see
-	},*/
-
-	/**
 	 * Draw the data points
 	 */
 	drawPoints: function () {
@@ -426,15 +401,6 @@ var PieSeries = {
 					.add();
 			}
 
-			// create the group the first time
-			/*
-			if (!group) {
-				group = point.group = renderer.g('point')
-					.attr({ zIndex: 5 })
-					.add();
-			}
-			*/
-
 			// if the point is sliced, use special translation, else use plot area traslation
 			groupTranslation = point.sliced ? point.slicedTranslation : {
 				translateX: 0,
@@ -461,6 +427,7 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 			graphic.attr(groupTranslation);
+			graphic.element.point = point; // for tracking
 
 			// detect point specific visibility
 			if (point.visible === false) {

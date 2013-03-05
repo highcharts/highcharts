@@ -19,7 +19,7 @@ var ScatterSeries = extendClass(Series, {
 	sorted: false,
 	requireSorting: false,
 	noSharedTooltip: true,
-	trackerGroupKey: 'markerGroup',
+	trackerGroups: ['markerGroup'],
 
 	drawTracker: ColumnSeries.prototype.drawTracker,
 	
