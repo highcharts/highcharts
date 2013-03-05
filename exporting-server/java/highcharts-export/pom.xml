@@ -116,30 +116,6 @@
 			<version>${cglib.version}</version>
 		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>develop</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<filters>
-					<filter>src/main/properties/dev.properties</filter>
-				</filters>
-			</build>
-		</profile>
-		<profile>
-			<id>production</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<filters>
-					<filter>src/main/properties/prod.properties</filter>
-				</filters>
-			</build>
-		</profile>
-	</profiles>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>

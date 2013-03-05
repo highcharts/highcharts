@@ -8,13 +8,6 @@ The java based Highcharts export-server has the following prerequisites:
 - installed Phantom on the server, <a href="https://github.com/highslide-software/highcharts.com/blob/master/exporting-server/phantomjs/readme.md">see here</a> This isn't required when you don't want to create graphs serverside
 
 ###Configuration###
-- Edit the app.properties file in <a href="https://github.com/highslide-software/highcharts.com/blob/master/exporting-server/java/highcharts-export/src/main/webapp/WEB-INF/spring/app.properties">highcharts-export/src/main/webapp/WEB-INF/spring/app.properties</a> and change the <pre>webapp.url=http://my.exportserver.com</pre> property to the url for of your export-server
-- Do the same for dev.properties and prod.properties in highcharts-export/src/main/properties. With these properties you can compile the project for development- or production environment. You can do this with specifying the right profile during compiling. 
-
-    mvn clean package -Pproduction 
-or for during development
-    mvn clean package -Pdevelopment
-    
 - Specify the location of PhantomJS and the highcharts-convert script in the SVGCreator.java file. This is found here: <a href="https://github.com/highslide-software/highcharts.com/blob/master/exporting-server/java/highcharts-export/src/main/java/com/highcharts/export/util/SVGCreator.java">highcharts-export/src/main/java/com/highcharts/export/util/SVGCreator.java</a> change these lines:
 
     private final String PHANTOM_EXEC = "/usr/local/bin/phantomjs";
@@ -24,7 +17,7 @@ or for during development
 
 
 ###Building a .war file###
-Now you have configured the application, such that it's pointing to your new Highcharts export-server, you can compile the project files. Browse to the Highchart-Export folder and while standing here type the following in a terminal: <ul style="list-style-type:none"><li><pre>mvn clean package -Pproduction</pre></li></ul>
+Now you have configured the application, such that it's pointing to your new Highcharts export-server, you can compile the project files. Browse to the Highchart-Export folder and while standing here type the following in a terminal: <ul style="list-style-type:none"><li><pre>mvn clean package</pre></li></ul>
 After compiling you will find a highcharts-export.war residing in the target folder. Upload/copy this to the application server.
 
 ###Testing###
