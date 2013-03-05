@@ -13890,9 +13890,6 @@ Series.prototype = {
 					if (dataLabel) {
 						// Now the data label is created and placed at 0,0, so we need to align it
 						series.alignDataLabel(point, dataLabel, options, null, isNew);
-
-						// Make trackable
-						dataLabel.element.point = point;
 					}
 				}
 			});
@@ -15145,11 +15142,6 @@ var ColumnSeries = extendClass(Series, {
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269
 			}
-
-			// Cross-reference for tracking
-			if (graphic) {
-				graphic.element.point = point;
-			}
 		});
 	},
 
@@ -15180,6 +15172,16 @@ var ColumnSeries = extendClass(Series, {
 					series.onMouseOut();
 				}
 			};
+
+		// Add reference to the point
+		each(series.points, function (point) {
+			if (point.graphic) {
+				point.graphic.element.point = point;
+			}
+			if (point.dataLabel) {
+				point.dataLabel.element.point = point;
+			}
+		});
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
@@ -15779,7 +15781,6 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 			graphic.attr(groupTranslation);
-			graphic.element.point = point; // for tracking
 
 			// detect point specific visibility
 			if (point.visible === false) {

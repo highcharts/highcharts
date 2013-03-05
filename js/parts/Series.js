@@ -2065,9 +2065,6 @@ Series.prototype = {
 					if (dataLabel) {
 						// Now the data label is created and placed at 0,0, so we need to align it
 						series.alignDataLabel(point, dataLabel, options, null, isNew);
-
-						// Make trackable
-						dataLabel.element.point = point;
 					}
 				}
 			});

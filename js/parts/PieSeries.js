@@ -426,7 +426,6 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 			graphic.attr(groupTranslation);
-			graphic.element.point = point; // for tracking
 
 			// detect point specific visibility
 			if (point.visible === false) {

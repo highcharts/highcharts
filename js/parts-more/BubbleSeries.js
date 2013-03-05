@@ -31,6 +31,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options

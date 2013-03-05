@@ -243,11 +243,6 @@ var ColumnSeries = extendClass(Series, {
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269
 			}
-
-			// Cross-reference for tracking
-			if (graphic) {
-				graphic.element.point = point;
-			}
 		});
 	},
 
@@ -278,6 +273,16 @@ var ColumnSeries = extendClass(Series, {
 					series.onMouseOut();
 				}
 			};
+
+		// Add reference to the point
+		each(series.points, function (point) {
+			if (point.graphic) {
+				point.graphic.element.point = point;
+			}
+			if (point.dataLabel) {
+				point.dataLabel.element.point = point;
+			}
+		});
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
