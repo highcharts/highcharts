@@ -383,18 +383,21 @@ var PieSeries = {
 			shadowGroup,
 			shapeArgs;
 
+		if (shadow && !series.shadowGroup) {
+			series.shadowGroup = renderer.g('shadow')
+				.add(series.group);
+		}
+
 		// draw the slices
 		each(series.points, function (point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
-			//group = point.group;
 			shadowGroup = point.shadowGroup;
 
 			// put the shadow behind all points
 			if (shadow && !shadowGroup) {
 				shadowGroup = point.shadowGroup = renderer.g('shadow')
-					.attr({ zIndex: 4 })
-					.add();
+					.add(series.shadowGroup);
 			}
 
 			// if the point is sliced, use special translation, else use plot area traslation
