@@ -8,7 +8,7 @@ $chartCount = $_GET ? $_GET['chartCount'] : 16;
 $pointsPerSeries = $_GET ? $_GET['pointsPerSeries'] : 16;
 $seriesPerChart = $_GET ? $_GET['seriesPerChart'] : 2;
 $chartWidth = $_GET ? $_GET['chartWidth'] : 250;
-$libSource = $_GET ? $_GET['libSource'] : 'highcharts.js';
+$libSource = $_GET ? $_GET['libSource'] : 'http://code.highcharts.com/highcharts.js';
 
 
 $seriesTypeOptions = array(
@@ -27,6 +27,8 @@ $chartWidthOptions = array(1000, 500, 250);
 $libSourceOptions = array(
 	'http://code.highcharts.com/2.2/highcharts.js',
 	'http://code.highcharts.com/2.3/highcharts.js',
+	'http://code.highcharts.com/highcharts.js',
+	'http://github.highcharts.com/master/highcharts.js',
 	'http://codev.highcharts.com/highcharts.js'
 );
 

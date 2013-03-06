@@ -350,8 +350,6 @@ VMLElement = {
 	clip: function (clipRect) {
 		var wrapper = this,
 			clipMembers,
-			element = wrapper.element,
-			parentNode = element.parentNode,
 			cssRet;
 
 		if (clipRect) {
@@ -361,10 +359,6 @@ VMLElement = {
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
 			};
-			// Issue #863 workaround - related to #140, #61, #74
-			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
-				css(element, { visibility: HIDDEN });
-			}
 			cssRet = clipRect.getCSS(wrapper);
 			
 		} else {

@@ -4805,8 +4805,6 @@ VMLElement = {
 	clip: function (clipRect) {
 		var wrapper = this,
 			clipMembers,
-			element = wrapper.element,
-			parentNode = element.parentNode,
 			cssRet;
 
 		if (clipRect) {
@@ -4816,10 +4814,6 @@ VMLElement = {
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
 			};
-			// Issue #863 workaround - related to #140, #61, #74
-			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
-				css(element, { visibility: HIDDEN });
-			}
 			cssRet = clipRect.getCSS(wrapper);
 			
 		} else {
@@ -14380,9 +14374,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			legendItem = series.legendItem,
-			seriesGroup = series.group,
-			dataLabelsGroup = series.dataLabelsGroup,
-			markerGroup = series.markerGroup,
 			showOrHide,
 			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
 			oldVisibility = series.visible;
@@ -14391,23 +14382,19 @@ Series.prototype = {
 		series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
 		showOrHide = vis ? 'show' : 'hide';
 
-		// show or hide series
-		if (seriesGroup) { // pies don't have one
-			seriesGroup[showOrHide]();
-		}
-		if (markerGroup) {
-			markerGroup[showOrHide]();
-		}
+		// show or hide elements
+		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+			if (series[key]) {
+				series[key][showOrHide]();
+			}
+		});
 
+		
 		// hide tooltip (#1361)
 		if (chart.hoverSeries === series) {
 			series.onMouseOut();
 		}
 
-
-		if (dataLabelsGroup) {
-			dataLabelsGroup[showOrHide]();
-		}
 
 		if (legendItem) {
 			chart.legend.colorizeItem(series, vis);
@@ -14857,7 +14844,7 @@ var SplineSeries = extendClass(Series, {
 				})
 				.add();
 		}
-		// */
+		*/
 
 		// moveTo or lineTo
 		if (!i) {
@@ -15899,7 +15886,7 @@ var PieSeries = {
 								fill: 'silver'
 							}).add();
 					}
-					// */
+					*/
 				}
 				slotsLength = slots.length;
 	

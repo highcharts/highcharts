@@ -2553,9 +2553,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			legendItem = series.legendItem,
-			seriesGroup = series.group,
-			dataLabelsGroup = series.dataLabelsGroup,
-			markerGroup = series.markerGroup,
 			showOrHide,
 			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
 			oldVisibility = series.visible;
@@ -2564,23 +2561,19 @@ Series.prototype = {
 		series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
 		showOrHide = vis ? 'show' : 'hide';
 
-		// show or hide series
-		if (seriesGroup) { // pies don't have one
-			seriesGroup[showOrHide]();
-		}
-		if (markerGroup) {
-			markerGroup[showOrHide]();
-		}
+		// show or hide elements
+		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+			if (series[key]) {
+				series[key][showOrHide]();
+			}
+		});
 
+		
 		// hide tooltip (#1361)
 		if (chart.hoverSeries === series) {
 			series.onMouseOut();
 		}
 
-
-		if (dataLabelsGroup) {
-			dataLabelsGroup[showOrHide]();
-		}
 
 		if (legendItem) {
 			chart.legend.colorizeItem(series, vis);
