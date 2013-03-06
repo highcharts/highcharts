@@ -237,6 +237,7 @@ extend(Chart.prototype, {
 
 		// override some options
 		extend(options.chart, {
+			animation: false,
 			renderTo: sandbox,
 			forExport: true,
 			width: sourceWidth, // docs,
