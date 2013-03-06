@@ -2,6 +2,8 @@
 
 
 $seriesType = $_GET ? $_GET['seriesType'] : 'line';
+$markers = $_GET ? $_GET['markers'] : true;
+$dataLabels = $_GET ? $_GET['dataLabels'] : false;
 $chartCount = $_GET ? $_GET['chartCount'] : 16;
 $pointsPerSeries = $_GET ? $_GET['pointsPerSeries'] : 16;
 $seriesPerChart = $_GET ? $_GET['seriesPerChart'] : 2;
@@ -14,7 +16,6 @@ $seriesTypeOptions = array(
 	'areaspline',	
 	'column',
 	'line',
-	'line - no markers',
 	'pie',
 	'scatter',
 	'spline'
@@ -55,10 +56,29 @@ function randomData() {
 			var countLoaded = 0;
 		</script>
 		
-		
+		<link rel="stylesheet" href="/templates/yoo_symphony/css/template.css" type="text/css" />
+  		<link rel="stylesheet" href="/templates/yoo_symphony/css/variations/brown.css" type="text/css" />
+  		<style type="text/css">
+  		.benchmark {
+  			font-weight: bold;
+  			font-size: 2em;
+  		}
+  		input[type="submit"] {
+  			line-height: 2em;
+  			background: green;
+  			color: white;
+  			padding: 0 1em;
+  			font-weight: bold;
+  			border-radius: 5px;
+  			border: 1px solid darkgreen;
+  		}
+  		input[type="submit"]:hover {
+  			border-color: black;
+  		}
+  		</style>
 		
 	</head>
-	<body>
+	<body style="margin: 10px">
 		<form action="" method="get">
 			Series type:
 			<select name="seriesType">
@@ -68,6 +88,14 @@ function randomData() {
 						<?php echo $option ?></option>
 			<? endforeach ?>
 			</select>
+
+			<input type="checkbox" name="markers" id="markers" <?php if ($markers) echo 'checked="checked"'; ?> />
+			<label for="markers">Markers</label>
+			
+			<input type="checkbox" name="dataLabels" id="dataLabels" <?php if ($dataLabels) echo 'checked="checked"'; ?> />
+			<label for="dataLabels">Data Labels</label>
+
+			<br/>
 			
 			Number of charts:
 			<select name="chartCount">
@@ -117,14 +145,6 @@ function randomData() {
 			<input type="submit" value="Go" />
 			
 		</form>
-<?php 		
-		// special
-if ($seriesType == 'line - no markers') {
-	$seriesType = 'line';
-	$noMarkers = true;
-}
-
-		?>
 		<div id="result" style="background: green; color: white; margin: 5px 0; padding: 5px"></div>
 		
 		<script type="text/javascript">
@@ -152,25 +172,21 @@ if ($seriesType == 'line - no markers') {
 							
 							if (countLoaded >= <?php echo $chartCount ?>) {
 								var time = (new Date).getTime() - startTime;
-								$('#result').html('<?php echo $chartCount ?> charts loaded in '+ time +' milliseconds.');
+								$('#result').html('<?php echo $chartCount ?> charts loaded in <span class="benchmark">'+ time +'</span> milliseconds.');
 							}
 						}
 					}
 				},
-				<?php if ($noMarkers): ?>
 				plotOptions: {
 					series: {
+						dataLabels: {
+							enabled: <?php echo $dataLabels ? 'true' : 'false' ?>
+						},
 						marker: {
-							enabled: false,
-							states: {
-								hover: {
-									enabled: true
-								}
-							}
+							enabled: <?php echo $markers ? 'true' : 'false' ?>
 						}
 					}
 				},
-				<?php endif ?>
 				series: [
 				<?php 
 				$series = array();
