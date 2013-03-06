@@ -66,6 +66,7 @@ var Color = function (input) {
 		} else {
 			ret = input;
 		}
+		
 		return ret;
 	}
 
@@ -110,6 +111,7 @@ var Color = function (input) {
 	return {
 		get: get,
 		brighten: brighten,
+		rgba: rgba,
 		setOpacity: setOpacity
 	};
 };

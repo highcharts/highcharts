@@ -1,4 +1,3 @@
-
 /**
  * The chart class
  * @param {Object} options
@@ -37,9 +36,13 @@ Chart.prototype = {
 		var chartEvents = optionsChart.events;
 
 		this.runChartClick = chartEvents && !!chartEvents.click;
+		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
+
 		this.callback = callback;
 		this.isResizing = 0;
 		this.options = options;
+		//chartTitleOptions = UNDEFINED;
+		//chartSubtitleOptions = UNDEFINED;
 
 		this.axes = [];
 		this.series = [];
@@ -60,7 +63,6 @@ Chart.prototype = {
 
 		//this.renderTo = UNDEFINED;
 		//this.renderToClone = UNDEFINED;
-		//this.tracker = UNDEFINED;
 
 		//this.spacingBox = UNDEFINED
 
@@ -113,8 +115,15 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
-			series = new seriesTypes[type]();
+			series,
+			constr = seriesTypes[type];
 
+		// No such series type
+		if (!constr) {
+			error(17, true);
+		}
+
+		series = new constr();
 		series.init(this, options);
 		return series;
 	},
@@ -134,7 +143,6 @@ Chart.prototype = {
 			chart = this;
 
 		if (options) {
-			setAnimation(animation, chart);
 			redraw = pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
@@ -142,12 +150,37 @@ Chart.prototype = {
 				
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				if (redraw) {
-					chart.redraw();
+					chart.redraw(animation);
 				}
 			});
 		}
 
 		return series;
+	},
+
+	/**
+     * Add an axis to the chart
+     * @param {Object} options The axis option
+     * @param {Boolean} isX Whether it is an X axis or a value axis
+     */
+	addAxis: function (options, isX, redraw, animation) { // docs
+		var key = isX ? 'xAxis' : 'yAxis',
+			chartOptions = this.options,
+			axis;
+
+		/*jslint unused: false*/
+		axis = new Axis(this, merge(options, {
+			index: this[key].length
+		}));
+		/*jslint unused: true*/
+
+		// Push the new axis options to the chart options
+		chartOptions[key] = splat(chartOptions[key] || {});
+		chartOptions[key].push(options);
+
+		if (pick(redraw, true)) {
+			this.redraw(animation);
+		}
 	},
 
 	/**
@@ -189,7 +222,7 @@ Chart.prototype = {
 		var chart = this,
 			axes = chart.axes,
 			series = chart.series,
-			tracker = chart.tracker,
+			pointer = chart.pointer,
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
@@ -292,8 +325,8 @@ Chart.prototype = {
 		});
 
 		// move tooltip or reset
-		if (tracker && tracker.resetTracker) {
-			tracker.resetTracker(true);
+		if (pointer && pointer.reset) {
+			pointer.reset(true);
 		}
 
 		// redraw if canvas
@@ -495,8 +528,7 @@ Chart.prototype = {
 				title: lang.resetZoomTitle
 			})
 			.add()
-			.align(btnOptions.position, false, chart[alignTo]);
-		this.resetZoomButton.alignTo = alignTo;	
+			.align(btnOptions.position, false, alignTo);
 			
 	},
 
@@ -504,13 +536,9 @@ Chart.prototype = {
 	 * Zoom out to 1:1
 	 */
 	zoomOut: function () {
-		var chart = this,
-			resetZoomButton = chart.resetZoomButton;
-
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { chart.zoom(); });
-		if (resetZoomButton) {
-			chart.resetZoomButton = resetZoomButton.destroy();
-		}
+		fireEvent(this, 'selection', { resetSelection: true }, function (e) { 
+			e.target.zoom();
+		});
 	},
 
 	/**
@@ -519,34 +547,44 @@ Chart.prototype = {
 	 */
 	zoom: function (event) {
 		var chart = this,
-			hasZoomed;
+			hasZoomed,
+			pointer = chart.pointer,
+			displayButton = false,
+			resetZoomButton;
 
-		// if zoom is called with no arguments, reset the axes
+		// If zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
 			each(chart.axes, function (axis) {
 				hasZoomed = axis.zoom();
 			});
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
-				var axis = axisData.axis;
+				var axis = axisData.axis,
+					isXAxis = axis.isXAxis;
 
 				// don't zoom more than minRange
-				if (chart.tracker[axis.isXAxis ? 'zoomX' : 'zoomY']) {
+				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
+					if (axis.displayBtn) {
+						displayButton = true;
+					}
 				}
 			});
 		}
 		
-		// Show the Reset zoom button
-		if (!chart.resetZoomButton) {
+		// Show or hide the Reset zoom button
+		resetZoomButton = chart.resetZoomButton;
+		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
+		} else if (!displayButton && isObject(resetZoomButton)) {
+			chart.resetZoomButton = resetZoomButton.destroy();
 		}
 		
 
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				pick(chart.options.chart.animation, chart.pointCount < 100) // animation
+				pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},
@@ -557,9 +595,8 @@ Chart.prototype = {
 	 * the first chartX position in the dragging operation.
 	 */
 	pan: function (chartX) {
-		var chart = this;
-
-		var xAxis = chart.xAxis[0],
+		var chart = this,
+			xAxis = chart.xAxis[0],
 			mouseDownX = chart.mouseDownX,
 			halfPointRange = xAxis.pointRange / 2,
 			extremes = xAxis.getExtremes(),
@@ -626,7 +663,7 @@ Chart.prototype = {
 				})
 				.css(chartTitleOptions.style)
 				.add()
-				.align(chartTitleOptions, false, chart.spacingBox);
+				.align(chartTitleOptions, false, 'spacingBox');
 			}
 		});
 
@@ -922,10 +959,6 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			spacingBox,
-			resetZoomButton = chart.resetZoomButton,
-			chartTitle = chart.title,
-			chartSubtitle = chart.subtitle,
 			fireEndResize;
 
 		// Handle the isResizing counter
@@ -955,11 +988,8 @@ Chart.prototype = {
 			width: chartWidth + PX,
 			height: chartHeight + PX
 		});
+		chart.setChartSize(true);
 		chart.renderer.setSize(chartWidth, chartHeight, animation);
-
-		// update axis lengths for more correct tick intervals:
-		chart.plotWidth = chartWidth - chart.plotLeft - chart.marginRight;
-		chart.plotHeight = chartHeight - chart.plotTop - chart.marginBottom;
 
 		// handle axes
 		chart.maxTicks = null;
@@ -977,20 +1007,6 @@ Chart.prototype = {
 		chart.isDirtyBox = true; // force redraw of plot and chart border
 
 		chart.getMargins();
-
-		// move titles
-		spacingBox = chart.spacingBox;
-		if (chartTitle) {
-			chartTitle.align(null, null, spacingBox);
-		}
-		if (chartSubtitle) {
-			chartSubtitle.align(null, null, spacingBox);
-		}
-		
-		// Move resize button (#1115)
-		if (resetZoomButton && resetZoomButton.align) {
-			resetZoomButton.align(null, null, chart[resetZoomButton.alignTo]);
-		}
 
 		chart.redraw(animation);
 
@@ -1011,9 +1027,10 @@ Chart.prototype = {
 	 * Set the public chart properties. This is done before and after the pre-render
 	 * to determine margin sizes
 	 */
-	setChartSize: function () {
+	setChartSize: function (skipAxes) {
 		var chart = this,
 			inverted = chart.inverted,
+			renderer = chart.renderer,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			optionsChart = chart.options.chart,
@@ -1021,6 +1038,9 @@ Chart.prototype = {
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
 			spacingLeft = optionsChart.spacingLeft,
+			clipOffset = chart.clipOffset,
+			clipX,
+			clipY,
 			plotLeft,
 			plotTop,
 			plotWidth,
@@ -1038,29 +1058,33 @@ Chart.prototype = {
 		chart.plotBorderWidth = plotBorderWidth = optionsChart.plotBorderWidth || 0;
 
 		// Set boxes used for alignment
-		chart.spacingBox = {
+		chart.spacingBox = renderer.spacingBox = {
 			x: spacingLeft,
 			y: spacingTop,
 			width: chartWidth - spacingLeft - spacingRight,
 			height: chartHeight - spacingTop - spacingBottom
 		};
-		chart.plotBox = {
+		chart.plotBox = renderer.plotBox = {
 			x: plotLeft,
 			y: plotTop,
 			width: plotWidth,
 			height: plotHeight
 		};
+		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
-			x: plotBorderWidth / 2, 
-			y: plotBorderWidth / 2, 
-			width: chart.plotSizeX - plotBorderWidth, 
-			height: chart.plotSizeY - plotBorderWidth
+			x: clipX, 
+			y: clipY, 
+			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: mathFloor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY)
 		};
 
-		each(chart.axes, function (axis) {
-			axis.setAxisSize();
-			axis.setAxisTranslation();
-		});
+		if (!skipAxes) {
+			each(chart.axes, function (axis) {
+				axis.setAxisSize();
+				axis.setAxisTranslation();
+			});
+		}
 	},
 
 	/**
@@ -1079,6 +1103,7 @@ Chart.prototype = {
 		chart.marginBottom = pick(chart.optionsMarginBottom, spacingBottom);
 		chart.plotLeft = pick(chart.optionsMarginLeft, spacingLeft);
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
+		chart.clipOffset = [0, 0, 0, 0];
 	},
 
 	/**
@@ -1248,7 +1273,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Legend(chart);
+		chart.legend = new Legend(chart, options.legend);
 
 		// Get margins by pre-rendering axes
 		// set axes scales
@@ -1375,7 +1400,7 @@ Chart.prototype = {
 
 		// ==== Destroy chart properties:
 		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
@@ -1469,7 +1494,7 @@ Chart.prototype = {
 		fireEvent(chart, 'beforeRender'); 
 
 		// depends on inverted and on margins being set
-		chart.tracker = new MouseTracker(chart, options);
+		chart.pointer = new Pointer(chart, options);
 
 		chart.render();
 

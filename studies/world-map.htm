@@ -6,9 +6,9 @@
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		
-		<script type="text/javascript" src="http://code.highcharts.com/master/highcharts.src.js"></script>
-		<script type="text/javascript" src="http://code.highcharts.com/master/modules/map.src.js"></script>
-		<script type="text/javascript" src="http://code.highcharts.com/master/modules/googlespreadsheet.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/f5579fe4/highcharts.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/f5579fe4/modules/map.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/f5579fe4/modules/data.src.js"></script>
 		
 		<!-- 2. Insert the shapes -->
 		<script type="text/javascript" src="world-map-shapes.js"></script>
@@ -18,16 +18,17 @@
 			
 			var chart;
 
-			$(document).ready(function() {
+			$(function() {
 				
 				// Load the data from a Google Spreadsheet 
 				// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
-				Highcharts.getGoogleSpreadsheet({
+				Highcharts.data({
+
 				    
-				    key: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
+				    googleSpreadsheetKey: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
 				    
-				    // custom handler for columns
-				    columns: function(columns) {
+				    // custom handler when the spreadsheet is parsed
+				    parsed: function(columns) {
 				    	
 				    	// Make the columns easier to read
 				    	var countryCodes = columns[0],
@@ -110,7 +111,7 @@
 									path : Highcharts.pathToArray(shapes[countryCodes[i]]),
 									states: {
 										hover: {
-											color: 'orange'
+											color: '#FF7F00' // orange
 										}
 									}
 								

@@ -16,7 +16,7 @@ var files = [
 	"StackItem.js",
 	"Axis.js",
 	"Tooltip.js",
-	"MouseTracker.js",
+	"Pointer.js",
 	"Legend.js",
 	"Chart.js",
 	"Series.js",

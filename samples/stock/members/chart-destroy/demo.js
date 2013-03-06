@@ -1,21 +1,20 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
-	    chart: {
-	        renderTo: 'container'
-	    },
-	    
+
+	$('#container').highcharts('StockChart', {
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
+
 	});
-	
+
 	$('#button').click(function() {
-		chart.destroy();
+		$('#container').highcharts().destroy();
+		$(this).attr('disabled', true);
 	});
 });

@@ -1,22 +1,18 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
-	    chart: {
-	        renderTo: 'container'
-	    },
-	    
+	$('#container').highcharts('StockChart', {
+
 	    rangeSelector: {
 	    	selected: 1,
 			inputBoxStyle: {
 				right: '80px'
 			}
 	    },
-	    
+
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }],
-	    
+
 	    exporting: {
 	    	chartOptions: {
 	    		chart: {
@@ -26,8 +22,9 @@ $(function() {
 	    	}
 	    }
 	});
-	
+
 	$('#button').click(function() {
-		chart.exportChart();
+		var chart = $('#container').highcharts();
+        chart.exportChart();
 	});
 });

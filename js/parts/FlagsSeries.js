@@ -157,13 +157,12 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			plotY,
 			options = series.options,
 			optionsY = options.y,
-			shape = options.shape,
+			shape,
 			box,
 			bBox,
 			i,
 			point,
 			graphic,
-			tracker,
 			stackIndex,
 			crisp = (options.lineWidth % 2 / 2),
 			anchorX,
@@ -174,6 +173,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			point = points[i];
 			plotX = point.plotX + crisp;
 			stackIndex = point.stackIndex;
+			shape = point.options.shape || options.shape; // docs: individual point shape
 			plotY = point.plotY;
 			if (plotY !== UNDEFINED) {
 				plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
@@ -182,7 +182,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			anchorY = stackIndex ? UNDEFINED : point.plotY;
 
 			graphic = point.graphic;
-			tracker = point.tracker;
 
 			// only draw the point if y is defined
 			if (plotY !== UNDEFINED) {
@@ -203,7 +202,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						plotY,
 						shape,
 						anchorX,
-						anchorY
+						anchorY,
+						options.useHTML // docs: plotOptions.flags.useHTML
 					)
 					.css(merge(options.style, point.style))
 					.attr(pointAttr)
@@ -232,9 +232,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();
-				if (tracker) {
-					tracker.attr('y', -9999);
-				}
 			}
 
 		}
@@ -251,8 +248,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		// put each point in front on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis
 		each(this.points, function (point) {
-			if (point.tracker) { // #1046
-				addEvent(point.tracker.element, 'mouseover', function () {
+			if (point.graphic) {
+				addEvent(point.graphic.element, 'mouseover', function () {
 					point.graphic.toFront();
 				});
 			}

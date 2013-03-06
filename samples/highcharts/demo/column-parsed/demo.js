@@ -33,13 +33,12 @@ $(function () {
                 });
             });
     
-            var chart = new Highcharts.Chart(options);
+            $('#container').highcharts(options);
         }
     
         var table = document.getElementById('datatable'),
         options = {
             chart: {
-                renderTo: 'container',
                 type: 'column'
             },
             title: {

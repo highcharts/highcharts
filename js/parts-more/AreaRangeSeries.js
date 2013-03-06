@@ -20,73 +20,6 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		xHigh: 0,
 		yLow: 0,
 		yHigh: 0	
-	},
-	shadow: false
-});
-
-/**
- * Extend the point object
- */
-var RangePoint = Highcharts.extendClass(Highcharts.Point, {
-	/**
-	 * Apply the options containing the x and low/high data and possible some extra properties.
-	 * This is called on point init or from point.update. Extends base Point by adding
-	 * multiple y-like values.
-	 *
-	 * @param {Object} options
-	 */
-	applyOptions: function (options, x) {
-		var point = this,
-			series = point.series,
-			pointArrayMap = series.pointArrayMap,
-			i = 0,
-			j = 0,
-			valueCount = pointArrayMap.length;
-
-
-		// object input
-		if (typeof options === 'object' && typeof options.length !== 'number') {
-
-			// copy options directly to point
-			extend(point, options);
-
-			point.options = options;
-			
-		} else if (options.length) { // array
-			// with leading x value
-			if (options.length > valueCount) {
-				if (typeof options[0] === 'string') {
-					point.name = options[0];
-				} else if (typeof options[0] === 'number') {
-					point.x = options[0];
-				}
-				i++;
-			}
-			while (j < valueCount) {
-				point[pointArrayMap[j++]] = options[i++];
-			}
-		}
-
-		// Handle null and make low alias y
-		/*if (point.high === null) {
-			point.low = null;
-		}*/
-		point.y = point[series.pointValKey];
-		
-		// If no x is set by now, get auto incremented value. All points must have an
-		// x value, however the y value can be null to create a gap in the series
-		if (point.x === UNDEFINED && series) {
-			point.x = x === UNDEFINED ? series.autoIncrement() : x;
-		}
-		
-		return point;
-	},
-	
-	/**
-	 * Return a plain array for speedy calculation
-	 */
-	toYData: function () {
-		return [this.low, this.high];
 	}
 });
 
@@ -96,7 +29,9 @@ var RangePoint = Highcharts.extendClass(Highcharts.Point, {
 seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
-	pointClass: RangePoint,
+	toYData: function (point) {
+		return [point.low, point.high];
+	},
 	pointValKey: 'low',
 	
 	/**

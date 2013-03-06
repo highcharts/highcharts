@@ -14,6 +14,45 @@ function extend(a, b) {
 	}
 	return a;
 }
+	
+/**
+ * Deep merge two or more objects and return a third object.
+ * Previously this function redirected to jQuery.extend(true), but this had two limitations.
+ * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
+ * it copied properties from extended prototypes. 
+ */
+function merge() {
+	var i,
+		len = arguments.length,
+		ret = {},
+		doCopy = function (copy, original) {
+			var value, key;
+
+			for (key in original) {
+				if (original.hasOwnProperty(key)) {
+					value = original[key];
+					
+					// Copy the contents of objects, but not arrays or DOM nodes
+					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
+							&& typeof value.nodeType !== 'number') {
+						copy[key] = doCopy(copy[key] || {}, value);
+
+					// Primitives and arrays are copied over directly
+					} else {
+						copy[key] = original[key];
+					}
+				}
+			}
+			return copy;
+		};
+
+	// For each argument, extend the return
+	for (i = 0; i < len; i++) {
+		ret = doCopy(ret, arguments[i]);
+	}
+
+	return ret;
+}
 
 /**
  * Take an array and turn into a hash with even number arguments as keys and odd numbers as
@@ -297,19 +336,10 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
-		/* // uncomment this and the 'W' format key below to enable week numbers
-		weekNumber = function () {
-			var clone = new Date(date.valueOf()),
-				day = clone[getDay]() == 0 ? 7 : clone[getDay](),
-				dayNumber;
-			clone.setDate(clone[getDate]() + 4 - day);
-			dayNumber = mathFloor((clone.getTime() - new Date(clone[getFullYear](), 0, 1, -6)) / 86400000);
-			return 1 + mathFloor(dayNumber / 7);
-		},
-		*/
 
-		// list all format keys
-		replacements = {
+		// List all format keys. Custom formats can be added from the outside. 
+		// See http://jsfiddle.net/highcharts/7PB5N/ // docs
+		replacements = extend({
 
 			// Day
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
@@ -338,19 +368,93 @@ dateFormat = function (format, timestamp, capitalize) {
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
 			'L': pad(mathRound(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
-		};
+		}, Highcharts.dateFormats);
 
 
 	// do the replaces
 	for (key in replacements) {
 		while (format.indexOf('%' + key) !== -1) { // regex would do it in one line, but this is faster
-			format = format.replace('%' + key, replacements[key]);
+			format = format.replace('%' + key, typeof replacements[key] === 'function' ? replacements[key](timestamp) : replacements[key]);
 		}
 	}
 
 	// Optionally capitalize the string and return
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
+
+/** 
+ * Format a single variable. Similar to sprintf, without the % prefix.
+ */
+function formatSingle(format, val) {
+	var floatRegex = /f$/,
+		decRegex = /\.([0-9])/,
+		lang = defaultOptions.lang,
+		decimals;
+
+	if (floatRegex.test(format)) { // float
+		decimals = format.match(decRegex);
+		decimals = decimals ? decimals[1] : 6;
+		val = numberFormat(
+			val,
+			decimals,
+			lang.decimalPoint,
+			format.indexOf(',') > -1 ? lang.thousandsSep : ''
+		);
+	} else {
+		val = dateFormat(format, val);
+	}
+	return val;
+}
+
+/**
+ * Format a string according to a subset of the rules of Python's String.format method.
+ */
+function format(str, ctx) {
+	var splitter = '{',
+		isInside = false,
+		segment,
+		valueAndFormat,
+		path,
+		i,
+		len,
+		ret = [],
+		val,
+		index;
+	
+	while ((index = str.indexOf(splitter)) !== -1) {
+		
+		segment = str.slice(0, index);
+		if (isInside) { // we're on the closing bracket looking back
+			
+			valueAndFormat = segment.split(':');
+			path = valueAndFormat.shift().split('.'); // get first and leave format
+			len = path.length;
+			val = ctx;
+
+			// Assign deeper paths
+			for (i = 0; i < len; i++) {
+				val = val[path[i]];
+			}
+
+			// Format the replacement
+			if (valueAndFormat.length) {
+				val = formatSingle(valueAndFormat.join(':'), val);
+			}
+
+			// Push the result and advance the cursor
+			ret.push(val);
+			
+		} else {
+			ret.push(segment);
+			
+		}
+		str = str.slice(index + 1); // the rest
+		isInside = !isInside; // toggle
+		splitter = isInside ? '}' : '{'; // now look for next matching bracket
+	}
+	ret.push(str);
+	return ret.join('');
+}
 
 /**
  * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5

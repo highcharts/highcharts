@@ -1,10 +1,10 @@
 $(function () {
     var renderer = new Highcharts.Renderer(
-        $('#container')[0], 
+        $('#container')[0],
         400,
         300
     );
-    
+
     var rect = renderer.rect(100, 100, 100, 100, 5)
         .attr({
             'stroke-width': 2,
@@ -20,6 +20,17 @@ $(function () {
                 height: 20,
                 'stroke-width': 10
             });
+
         })
         .add();
+
+    $('<button>Add</button>').click(function () {
+        rect.addClass('red');
+    }).appendTo(document.body);
+    $('<button>Has</button>').click(function () {
+        console.log(rect.hasClass('red'));
+    }).appendTo(document.body);
+    $('<button>Remove</button>').click(function () {
+        rect.removeClass('red');
+    }).appendTo(document.body);
 });

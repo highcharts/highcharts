@@ -8,4 +8,6 @@
 /build
 /.project
 /git-ignore-me.properties
+/.pydevproject
 /highcharts.com.sublime-project
+/highcharts.com.sublime-workspace

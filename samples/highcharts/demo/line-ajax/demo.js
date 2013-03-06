@@ -1,22 +1,19 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-    
+
         // define the options
         var options = {
-    
+
             chart: {
-                renderTo: 'container'
             },
-    
+
             title: {
                 text: 'Daily visits at www.highcharts.com'
             },
-    
+
             subtitle: {
                 text: 'Source: Google Analytics'
             },
-    
+
             xAxis: {
                 type: 'datetime',
                 tickInterval: 7 * 24 * 3600 * 1000, // one week
@@ -28,7 +25,7 @@ $(function () {
                     y: -3
                 }
             },
-    
+
             yAxis: [{ // left y axis
                 title: {
                     text: null
@@ -59,7 +56,7 @@ $(function () {
                 },
                 showFirstLabel: false
             }],
-    
+
             legend: {
                 align: 'left',
                 verticalAlign: 'top',
@@ -67,12 +64,12 @@ $(function () {
                 floating: true,
                 borderWidth: 0
             },
-    
+
             tooltip: {
                 shared: true,
                 crosshairs: true
             },
-    
+
             plotOptions: {
                 series: {
                     cursor: 'pointer',
@@ -97,7 +94,7 @@ $(function () {
                     }
                 }
             },
-    
+
             series: [{
                 name: 'All visits',
                 lineWidth: 4,
@@ -108,8 +105,8 @@ $(function () {
                 name: 'New visitors'
             }]
         };
-    
-    
+
+
         // Load data asynchronously using jQuery. On success, add the data
         // to the options and initiate the chart.
         // This data is obtained by exporting a GA custom report to TSV.
@@ -118,32 +115,32 @@ $(function () {
             var lines = [],
                 listen = false,
                 date,
-    
+
                 // set up the two data series
                 allVisits = [],
                 newVisitors = [];
-    
+
             // inconsistency
             if (typeof tsv !== 'string') {
                 tsv = xhr.responseText;
             }
-    
+
             // split the data return into lines and parse them
             tsv = tsv.split(/\n/g);
             jQuery.each(tsv, function(i, line) {
-    
+
                 // listen for data lines between the Graph and Table headers
                 if (tsv[i - 3] == '# Graph') {
                     listen = true;
                 } else if (line == '' || line.charAt(0) == '#') {
                     listen = false;
                 }
-    
+
                 // all data lines start with a double quote
                 if (listen) {
                     line = line.split(/\t/);
                     date = Date.parse(line[0] +' UTC');
-    
+
                     allVisits.push([
                         date,
                         parseInt(line[1].replace(',', ''), 10)
@@ -154,12 +151,11 @@ $(function () {
                     ]);
                 }
             });
-    
+
             options.series[0].data = allVisits;
             options.series[1].data = newVisitors;
-    
-            chart = new Highcharts.Chart(options);
+
+            $('#container').highcharts(options);
         });
     });
-    
-});
+

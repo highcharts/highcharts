@@ -396,7 +396,6 @@
 						// function. The interval will be the same regardless of how long the segment is.
 						if (positions[end] > lastGroupPosition) { // #1475
 							segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);
-							sliceStart = 0;
 							
 							// Prevent duplicate groups, for example for multiple segments within one larger time frame (#1475)
 							while (segmentPositions.length && segmentPositions[0] <= lastGroupPosition) {

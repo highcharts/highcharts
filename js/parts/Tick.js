@@ -1,13 +1,13 @@
 /**
  * The Tick class
  */
-function Tick(axis, pos, type) {
+function Tick(axis, pos, type, noLabel) {
 	this.axis = axis;
 	this.pos = pos;
 	this.type = type || '';
 	this.isNew = true;
 
-	if (!type) {
+	if (!type && !noLabel) {
 		this.addLabel();
 	}
 }
@@ -23,11 +23,12 @@ Tick.prototype = {
 			chart = axis.chart,
 			horiz = axis.horiz,
 			categories = axis.categories,
+			names = axis.series[0] && axis.series[0].names,
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
 			tickPositions = axis.tickPositions,
-			width = (categories && horiz && categories.length &&
+			width = (horiz && categories &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
@@ -36,7 +37,9 @@ Tick.prototype = {
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
 			attr,
-			value = categories && defined(categories[pos]) ? categories[pos] : pos,
+			value = categories ?
+				pick(categories[pos], names && names[pos], pos) : 
+				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
 			dateTimeLabelFormat;
@@ -250,7 +253,7 @@ Tick.prototype = {
 	 * @param index {Number}
 	 * @param old {Boolean} Use old coordinates to prepare an animation into new position
 	 */
-	render: function (index, old) {
+	render: function (index, old, opacity) {
 		var tick = this,
 			axis = tick.axis,
 			options = axis.options,
@@ -281,11 +284,14 @@ Tick.prototype = {
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
+			reverseCrisp = ((horiz && x === axis.pos) || (!horiz && y === axis.pos + axis.len)) ? -1 : 1, // #1480
 			staggerLines = axis.staggerLines;
+
+		this.isActive = true;
 		
 		// create the grid line
-		if (gridLineWidth) {
-			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth, old);
+		if (gridLineWidth && pos >= axis.min && pos <= axis.max) {
+			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
 			if (gridLine === UNDEFINED) {
 				attribs = {
@@ -298,6 +304,9 @@ Tick.prototype = {
 				if (!type) {
 					attribs.zIndex = 1;
 				}
+				if (old) {
+					attribs.opacity = 0;
+				}
 				tick.gridLine = gridLine =
 					gridLineWidth ?
 						renderer.path(gridLinePath)
@@ -309,7 +318,8 @@ Tick.prototype = {
 			// by another call, therefore do not do any animations this time
 			if (!old && gridLine && gridLinePath) {
 				gridLine[tick.isNew ? 'attr' : 'animate']({
-					d: gridLinePath
+					d: gridLinePath,
+					opacity: opacity
 				});
 			}
 		}
@@ -325,18 +335,20 @@ Tick.prototype = {
 				tickLength = -tickLength;
 			}
 
-			markPath = tick.getMarkPath(x, y, tickLength, tickWidth, horiz, renderer);
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
 
 			if (mark) { // updating
 				mark.animate({
-					d: markPath
+					d: markPath,
+					opacity: opacity
 				});
 			} else { // first time
 				tick.mark = renderer.path(
 					markPath
 				).attr({
 					stroke: tickColor,
-					'stroke-width': tickWidth
+					'stroke-width': tickWidth,
+					opacity: opacity
 				}).add(axis.axisGroup);
 			}
 		}
@@ -363,6 +375,7 @@ Tick.prototype = {
 
 			// Set the new position, and show or hide
 			if (show) {
+				xy.opacity = opacity;
 				label[tick.isNew ? 'attr' : 'animate'](xy);
 				tick.isNew = false;
 			} else {

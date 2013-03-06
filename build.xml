@@ -63,7 +63,10 @@
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
         <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-2.0.0.jar"/>
-        <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${jslint4java.jar}"/>
+        <taskdef name="jslint"
+            classname="com.googlecode.jslint4java.ant.JSLintTask"
+            classpath="${jslint4java.jar}"/>
+
         <!-- google closure compiler -->
         <property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
         <property name="gcc.jar" location="${gcc.dir}/compiler.jar"/>
@@ -110,7 +113,7 @@
             <file name="StackItem.js"/>
             <file name="Axis.js"/>
             <file name="Tooltip.js"/>
-            <file name="MouseTracker.js"/>
+            <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
@@ -143,7 +146,7 @@
             <file name="StackItem.js"/>
             <file name="Axis.js"/>
             <file name="Tooltip.js"/>
-            <file name="MouseTracker.js"/>
+            <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="Series.js"/>
@@ -178,6 +181,10 @@
             <file name="AreaSplineRangeSeries.js"/>
             <file name="ColumnRangeSeries.js"/>
             <file name="GaugeSeries.js"/>
+            <file name="BoxPlotSeries.js"/>
+            <file name="ErrorBarSeries.js"/>
+            <file name="WaterfallSeries.js"/>
+            <file name="BubbleSeries.js"/>
             <file name="Polar.js"/>
             <file name="Outro.js"/>
         </filelist>
@@ -272,6 +279,7 @@
             <fileset file="${data.src.file}"/>
             <fileset dir="${themes.dir}"/>
             <fileset file="js/modules/canvgrenderer-extended.src.js"/>
+            <fileset file="js/modules/funnel.src.js"/>
         </jslint>
         
 
@@ -480,80 +488,37 @@
         </fail -->
 
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
-        <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highstock/js/adapters">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${prototype.src.file}" todir="${dist.dir}/highcharts/js/adapters">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules">
-            <filterset refid="highcharts.filter"/>
-        </copy>
-        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules">
-            <filterset refid="highstock.filter"/>
-        </copy>
-        <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx"/>
-        <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx"/>
+        <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx"><filterset refid="highcharts.filter"/></copy>
+		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx"><filterset refid="highstock.filter"/></copy>
+
         <copy todir="${dist.dir}/highcharts/js/themes">
             <fileset dir="${themes.dir}"/>
         </copy>
@@ -578,20 +543,12 @@
         <!-- replace these references with local paths here -->
         <replace dir="${dist.dir}">
             <replacefilter>
-                <replacetoken>
-                    <![CDATA[<script src="http://code.highcharts.com/stock/]]>
-</replacetoken>
-                <replacevalue>
-                    <![CDATA[<script src="../../js/]]>
-</replacevalue>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/stock/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <replacefilter>
-                <replacetoken>
-                    <![CDATA[<script src="http://code.highcharts.com/]]>
-</replacetoken>
-                <replacevalue>
-                    <![CDATA[<script src="../../js/]]>
-</replacevalue>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <include name="**/index.htm"/>
         </replace>
@@ -752,6 +709,7 @@
 
         <!-- Create the folder where the report is stored. -->
         <mkdir dir="${testoutput.dir}/${testrun.name}"/>
+
         <!-- Run the tests -->
         <antcall target="run-test"/>
     </target>
@@ -759,7 +717,7 @@
     <!-- Runs the tests without coverage. This is much faster than with coverage enabled. -->
     <target name="run-test" depends="set.properties">
         <echo message="/------------------------------------------------------------"/>
-        <echo message=" Running ${testrun.type} tests using: ${testrun.name}"/>
+        <echo message="  Running ${testrun.type} tests using: ${testrun.name}"/>
         <echo message=""/>
         <echo message=""/>
         <java jar="${jstestdriver.jar}" fork="true">
@@ -781,7 +739,8 @@
     <target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
         <!-- Copy the jsTestDriverCoverage configuration to root. -->
         <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
-        <exec executable="cmd" dir="${basedir}">
+
+        <exec executable="cmd" dir="${basedir}" >
             <arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225"/>
         </exec>
         <echo message="Coverage test server started at localhost:5225"/>
@@ -793,6 +752,7 @@
     <target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
         <!-- Copy the jsTestDriverCoverage configuration to root. -->
         <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
+
         <!-- Run the tests with coverage enabled. -->
         <java jar="${jstestdriver.jar}" fork="true">
             <arg value="--config"/>
@@ -812,12 +772,14 @@
         <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="SF:C:" value="SF:/C" summary="true"/>
         <!-- Replace dos-paths '\' with unix style '/'. -->
         <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="\" value="/" summary="true"/>
+
         <!-- Run perl and the genhtml script to create the report. -->
         <exec executable="perl" dir="${basedir}">
             <arg value="-w"/>
             <arg value="tools/lcov-1.9/bin/genhtml"/>
             <arg line="-o ${coveragereport.dir} --no-branch-coverage --no-function-coverage --legend --title 'Highcharts test coverage' build/tests/jsTestDriver.conf-coverage.dat"/>
         </exec>
+
         <!-- Point the browser to the report. -->
         <property name="browser" location="C:/Program Files (x86)/Mozilla Firefox/firefox.exe"/>
         <property name="file" location="${coveragereport.dir}/index.html"/>

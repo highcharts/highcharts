@@ -18,7 +18,7 @@ HighchartsConfig = function () {
 		{name: 'StackItem', component: 'Core', group: "Core"},
 		{name: 'Axis', component: 'Core', group: "Core"},
 		{name: 'Tooltip', component: 'Core', group: "Core"},
-		{name: 'MouseTracker', component: 'Core', group: "Core"},
+		{name: 'Pointer', component: 'Core', group: "Core"},
 		{name: 'Legend', component: 'Core', group: "Core"},
 		{name: 'Chart', component: 'Core', group: "Core"},
 		{name: 'Series', component: 'Core', group: "Core"},

@@ -1,8 +1,7 @@
 $(function () {
     // create the chart
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             events: {
                 load: function(event) {
                     alert ('Chart loaded');

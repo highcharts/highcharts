@@ -5,7 +5,7 @@
  */
 
 var seriesProto = Series.prototype,
-	mouseTrackerProto = Highcharts.MouseTracker.prototype;
+	pointerProto = Highcharts.Pointer.prototype;
 
 
 
@@ -24,7 +24,7 @@ seriesProto.toXY = function (point) {
 	point.rectPlotY = plotY;
 	
 	// Record the angle in degrees for use in tooltip
-	point.deg = plotX / Math.PI * 180;
+	point.clientX = plotX / Math.PI * 180;
 	
 	// Find the polar plotX and plotY
 	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
@@ -231,22 +231,12 @@ function polarAnimate(proceed, init) {
 			// Initialize the animation
 			if (init) {
 				
-				// Create an SVG specific attribute setter for scaleX and scaleY
-				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-					this[key] = value;
-					if (this.scaleX !== UNDEFINED && this.scaleY !== UNDEFINED) {
-						this.element.setAttribute('transform', 'translate(' + this.translateX + ',' + this.translateY + ') scale(' + 
-							this.scaleX + ',' + this.scaleY + ')');
-					}
-					return false;
-				};
-				
 				// Scale down the group and place it in the center
 				attribs = {
 					translateX: center[0] + plotLeft,
 					translateY: center[1] + plotTop,
-					scaleX: 0,
-					scaleY: 0
+					scaleX: 0.001, // #1499
+					scaleY: 0.001
 				};
 					
 				group.attr(attribs);
@@ -292,8 +282,7 @@ wrap(seriesProto, 'setTooltipPoints', function (proceed, renew) {
 		
 	if (this.chart.polar) {
 		extend(this.xAxis, {
-			tooltipLen: 360, // degrees are the resolution unit of the tooltipPoints array
-			tooltipPosName: 'deg'
+			tooltipLen: 360 // degrees are the resolution unit of the tooltipPoints array
 		});	
 	}
 	
@@ -392,7 +381,7 @@ wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, a
  * Extend the mouse tracker to return the tooltip position index in terms of
  * degrees rather than pixels
  */
-wrap(mouseTrackerProto, 'getIndex', function (proceed, e) {
+wrap(pointerProto, 'getIndex', function (proceed, e) {
 	var ret,
 		chart = this.chart,
 		center,
@@ -415,9 +404,9 @@ wrap(mouseTrackerProto, 'getIndex', function (proceed, e) {
 });
 
 /**
- * Extend getMouseCoordinates to prepare for polar axis values
+ * Extend getCoordinates to prepare for polar axis values
  */
-wrap(mouseTrackerProto, 'getMouseCoordinates', function (proceed, e) {
+wrap(pointerProto, 'getCoordinates', function (proceed, e) {
 	var chart = this.chart,
 		ret = {
 			xAxis: [],

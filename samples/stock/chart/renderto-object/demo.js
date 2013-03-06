@@ -1,6 +1,5 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
+	var chart = new Highcharts.StockChart({    
 	    chart: {
 	        renderTo: document.getElementById('container') 
 	    },

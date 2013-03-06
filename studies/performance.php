@@ -2,6 +2,8 @@
 
 
 $seriesType = $_GET ? $_GET['seriesType'] : 'line';
+$markers = $_GET ? $_GET['markers'] : true;
+$dataLabels = $_GET ? $_GET['dataLabels'] : false;
 $chartCount = $_GET ? $_GET['chartCount'] : 16;
 $pointsPerSeries = $_GET ? $_GET['pointsPerSeries'] : 16;
 $seriesPerChart = $_GET ? $_GET['seriesPerChart'] : 2;
@@ -14,7 +16,6 @@ $seriesTypeOptions = array(
 	'areaspline',	
 	'column',
 	'line',
-	'line - no markers',
 	'pie',
 	'scatter',
 	'spline'
@@ -24,10 +25,10 @@ $seriesCountOptions = array(1, 2, 4, 8, 16, 32);
 $pointCountOptions = array(2, 4, 8, 16, 32, 64, 128, 500, 1000, 2000, 4000);
 $chartWidthOptions = array(1000, 500, 250);
 $libSourceOptions = array(
-	'2.2.5/highcharts.js',
-	'dev/highcharts.js'
+	'http://code.highcharts.com/2.2/highcharts.js',
+	'http://code.highcharts.com/2.3/highcharts.js',
+	'http://codev.highcharts.com/highcharts.js'
 );
-
 
 
 function randomData() {
@@ -49,16 +50,35 @@ function randomData() {
 		
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script type="text/javascript" src="http://code.highcharts.com/<?php echo $libSource ?>"></script>
+		<script type="text/javascript" src="<?php echo $libSource ?>"></script>
 		
 		<script type="text/javascript">
 			var countLoaded = 0;
 		</script>
 		
-		
+		<link rel="stylesheet" href="/templates/yoo_symphony/css/template.css" type="text/css" />
+  		<link rel="stylesheet" href="/templates/yoo_symphony/css/variations/brown.css" type="text/css" />
+  		<style type="text/css">
+  		.benchmark {
+  			font-weight: bold;
+  			font-size: 2em;
+  		}
+  		input[type="submit"] {
+  			line-height: 2em;
+  			background: green;
+  			color: white;
+  			padding: 0 1em;
+  			font-weight: bold;
+  			border-radius: 5px;
+  			border: 1px solid darkgreen;
+  		}
+  		input[type="submit"]:hover {
+  			border-color: black;
+  		}
+  		</style>
 		
 	</head>
-	<body>
+	<body style="margin: 10px">
 		<form action="" method="get">
 			Series type:
 			<select name="seriesType">
@@ -68,6 +88,14 @@ function randomData() {
 						<?php echo $option ?></option>
 			<? endforeach ?>
 			</select>
+
+			<input type="checkbox" name="markers" id="markers" <?php if ($markers) echo 'checked="checked"'; ?> />
+			<label for="markers">Markers</label>
+			
+			<input type="checkbox" name="dataLabels" id="dataLabels" <?php if ($dataLabels) echo 'checked="checked"'; ?> />
+			<label for="dataLabels">Data Labels</label>
+
+			<br/>
 			
 			Number of charts:
 			<select name="chartCount">
@@ -117,13 +145,6 @@ function randomData() {
 			<input type="submit" value="Go" />
 			
 		</form>
-<?php 		
-		// special
-if ($seriesType == 'line - no markers') {
-	$seriesType = 'line';
-	$noMarkers = true;
-}
-		?>
 		<div id="result" style="background: green; color: white; margin: 5px 0; padding: 5px"></div>
 		
 		<script type="text/javascript">
@@ -151,31 +172,29 @@ if ($seriesType == 'line - no markers') {
 							
 							if (countLoaded >= <?php echo $chartCount ?>) {
 								var time = (new Date).getTime() - startTime;
-								$('#result').html('<?php echo $chartCount ?> charts loaded in '+ time +' milliseconds.');
+								$('#result').html('<?php echo $chartCount ?> charts loaded in <span class="benchmark">'+ time +'</span> milliseconds.');
 							}
 						}
 					}
 				},
-				<?php if ($noMarkers): ?>
 				plotOptions: {
 					series: {
+						dataLabels: {
+							enabled: <?php echo $dataLabels ? 'true' : 'false' ?>
+						},
 						marker: {
-							enabled: false,
-							states: {
-								hover: {
-									enabled: true
-								}
-							}
+							enabled: <?php echo $markers ? 'true' : 'false' ?>
 						}
 					}
 				},
-				<?php endif ?>
 				series: [
-				<?php for ($seriesNumber = 0; $seriesNumber < $seriesPerChart; $seriesNumber++) : ?>
-					{
-					data: [<?php echo join(randomData(), ',') ?>]
-				},
-				<?php endfor ?>
+				<?php 
+				$series = array();
+				for ($seriesNumber = 0; $seriesNumber < $seriesPerChart; $seriesNumber++) {
+					$series[] = '{ data: [' . join(randomData(), ',') . ']}';
+				}
+				echo join($series, ",\n");
+				?>
 				]
 			});
 			

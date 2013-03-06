@@ -8,9 +8,9 @@
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" />
 		
-		<script type="text/javascript" src="http://code.highcharts.com/master/highcharts.src.js"></script>
-		<script type="text/javascript" src="http://code.highcharts.com/master/modules/map.src.js"></script>
-		<script type="text/javascript" src="http://code.highcharts.com/master/modules/googlespreadsheet.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/v3.0Beta/highcharts.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/v3.0Beta/modules/map.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/v3.0Beta/modules/data.src.js"></script>
 		
 		 
 		
@@ -26,12 +26,12 @@
 			$(document).ready(function() {
 				// Load the data from a Google Spreadsheet 
 				// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
-				Highcharts.getGoogleSpreadsheet({
+				Highcharts.data({
 				    
-				    key: '0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc',
+				    googleSpreadsheetKey: '0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc',
 				    
 				    // custom handler for columns
-				    columns: function(columns) {
+				    parsed: function(columns) {
 						
 						/**
 						 * Event handler for clicking points. Use jQuery UI to pop up 

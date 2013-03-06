@@ -1,7 +1,8 @@
 /**
- * @license Data plugin for Highcharts v0.1
+ * @license Data plugin for Highcharts
  *
- * (c) 2012 Torstein Hønsi
+ * (c) 2012-2013 Torstein Hønsi
+ * Last revision 2012-11-27
  *
  * License: www.highcharts.com/license
  */
@@ -44,7 +45,7 @@
  * A Google Spreadsheet key. See https://developers.google.com/gdata/samples/spreadsheet_sample
  * for general information on GS.
  *
- * - googleSpreadsheetWorksheet : String
+ * - googleSpreadsheetWorksheet : String 
  * The Google Spreadsheet worksheet. The available id's can be read from 
  * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
  *
@@ -76,7 +77,9 @@
  * endRow, startColumn and endColumn to delimit what part of the table is used.
  */
 
+// JSLint options:
 /*global jQuery */
+
 (function (Highcharts) {	
 	
 	// Utilities
@@ -503,21 +506,17 @@
 		if (userOptions && userOptions.data) {
 			Highcharts.data(Highcharts.extend(userOptions.data, {
 				complete: function (dataOptions) {
-					var datasets = []; 
 					
-					// Don't merge the data arrays themselves
-					each(dataOptions.series, function (series, i) {
-						datasets[i] = series.data;
-						series.data = null;
-					});
-					
+					// Merge series configs
+					if (userOptions.series) {
+						each(userOptions.series, function (series, i) {
+							userOptions.series[i] = Highcharts.merge(series, dataOptions.series[i]);
+						});
+					}
+
 					// Do the merge
 					userOptions = Highcharts.merge(dataOptions, userOptions);
-					
-					// Re-insert the data
-					each(datasets, function (data, i) {
-						userOptions.series[i].data = data;
-					});
+
 					proceed.call(chart, userOptions, callback);
 				}
 			}));

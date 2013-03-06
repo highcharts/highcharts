@@ -12,13 +12,13 @@
 /**
  * @constructor
  */
-var VMLRenderer;
+var VMLRenderer, VMLElement;
 if (!hasSVG && !useCanVG) {
 
 /**
  * The VML element wrapper.
  */
-var VMLElement = {
+VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -223,7 +223,6 @@ var VMLElement = {
 							value = value === HIDDEN ? '-999em' : 0;
 							key = 'top';
 						}
-						
 						elemStyle[key] = value;	
 						skipAttr = true;
 
@@ -235,28 +234,27 @@ var VMLElement = {
 						}
 						skipAttr = true;
 
-					// width and height
-					} else if (key === 'width' || key === 'height') {
+					// x, y, width, height
+					} else if (inArray(key, ['x', 'y', 'width', 'height']) !== -1) {
 						
-						value = mathMax(0, value); // don't set width or height below zero (#311)
+						wrapper[key] = value; // used in getter
 						
-						this[key] = value; // used in getter
-
+						if (key === 'x' || key === 'y') {
+							key = { x: 'left', y: 'top' }[key];
+						} else {
+							value = mathMax(0, value); // don't set width or height below zero (#311)
+						}
+						
 						// clipping rectangle special
 						if (wrapper.updateClipping) {
-							wrapper[key] = value;
+							wrapper[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
 							wrapper.updateClipping();
 						} else {
 							// normal
 							elemStyle[key] = value;
 						}
 
-						skipAttr = true;
-
-					// x and y
-					} else if (key === 'x' || key === 'y') {
-						wrapper[key] = value; // used in getter
-						elemStyle[{ x: 'left', y: 'top' }[key]] = value;
+						skipAttr = true;						
 
 					// class name
 					} else if (key === 'class') {
@@ -300,6 +298,13 @@ var VMLElement = {
 
 							key = 'fillcolor';
 						}
+
+					// opacity: don't bother - animation is too slow and filters introduce artifacts
+					} else if (key === 'opacity') {
+						/*css(element, {
+							opacity: value
+						});*/
+						skipAttr = true;
 						
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
@@ -320,7 +325,8 @@ var VMLElement = {
 						this.bBox = null;
 						element.innerHTML = value;
 						skipAttr = true;
-					}
+					} 
+
 
 					if (!skipAttr) {
 						if (docMode8) { // IE8 setAttribute bug
@@ -551,6 +557,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 
 		// generate the containing box
+		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
 
@@ -604,9 +611,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			width: isObj ? x.width : width,
 			height: isObj ? x.height : height,
 			getCSS: function (wrapper) {
-				var inverted = wrapper.inverted,
+				var element = wrapper.element,
+					nodeName = element.nodeName,
+					isShape = nodeName === 'shape',
+					inverted = wrapper.inverted,
 					rect = this,
-					top = rect.top,
+					top = rect.top - (isShape ? element.offsetTop : 0),
 					left = rect.left,
 					right = left + rect.width,
 					bottom = top + rect.height,
@@ -619,7 +629,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					};
 
 				// issue 74 workaround
-				if (!inverted && docMode8 && wrapper.element.nodeName !== 'IMG') {
+				if (!inverted && docMode8 && nodeName === 'DIV') {
 					extend(ret, {
 						width: right + PX,
 						height: bottom + PX
@@ -871,6 +881,11 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
+		if (isObject(x)) {
+			r = x.r;
+			y = x.y;
+			x = x.x;
+		}
 		return this.symbol('circle').attr({ x: x - r, y: y - r, width: 2 * r, height: 2 * r });
 	},
 

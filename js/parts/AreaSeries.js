@@ -24,12 +24,13 @@ var AreaSeries = extendClass(Series, {
 		var segments = [],
 			stack = this.yAxis.stacks.area,
 			pointMap = {},
+			plotX,
 			plotY,
 			points = this.points,
 			i,
 			x;
 
-		if (this.options.stacking) {
+		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
 			// Create a map where we can quickly look up the points by their X value.
 			for (i = 0; i < points.length; i++) {
 				pointMap[points[i].x] = points[i];
@@ -44,10 +45,12 @@ var AreaSeries = extendClass(Series, {
 				// insert a dummy point in order for the areas to be drawn
 				// correctly.
 				} else {
-					plotY = this.yAxis.translate(stack[x].cum, 0, 1, 0, 1);
+					plotX = this.xAxis.translate(x);
+					plotY = this.yAxis.toPixels(stack[x].cum, true);
 					segments.push({ 
 						y: null, 
-						plotX: this.xAxis.translate(x), 
+						plotX: plotX,
+						clientX: plotX, 
 						plotY: plotY, 
 						yBottom: plotY,
 						onMouseOver: noop
@@ -57,10 +60,10 @@ var AreaSeries = extendClass(Series, {
 			segments = [segments];
 
 		} else {
-			segments = Series.prototype.getSegments.call(this);	
+			Series.prototype.getSegments.call(this);
+			segments = this.segments;
 		}
 		this.segments = segments;
-		
 	},
 	
 	/**
@@ -131,24 +134,35 @@ var AreaSeries = extendClass(Series, {
 		Series.prototype.drawGraph.apply(this);
 		
 		// Define local variables
-		var areaPath = this.areaPath,
+		var series = this,
+			areaPath = this.areaPath,
 			options = this.options,
-			area = this.area;
+			negativeColor = options.negativeColor,
+			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		// Create or update the area
-		if (area) { // update
-			area.animate({ d: areaPath });
-
-		} else { // create
-			this.area = this.chart.renderer.path(areaPath)
-				.attr({
-					fill: pick(
-						options.fillColor,
-						Color(this.color).setOpacity(options.fillOpacity || 0.75).get()
-					),
-					zIndex: 0 // #1069
-				}).add(this.group);
+		if (negativeColor) {
+			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]); // docs: negativeFillColor
 		}
+		
+		each(props, function (prop) {
+			var areaKey = prop[0],
+				area = series[areaKey];
+				
+			// Create or update the area
+			if (area) { // update
+				area.animate({ d: areaPath });
+	
+			} else { // create
+				series[areaKey] = series.chart.renderer.path(areaPath)
+					.attr({
+						fill: pick(
+							prop[2],
+							Color(prop[1]).setOpacity(options.fillOpacity || 0.75).get()
+						),
+						zIndex: 0 // #1069
+					}).add(series.group);
+			}
+		});
 	},
 	
 	/**

@@ -39,6 +39,8 @@ var UNDEFINED,
 	timeUnits,
 	noop = function () {},
 	charts = [],
+	PRODUCT = '@product.name@',
+	VERSION = '@product.version@',
 
 	// some constants for frequently used strings
 	DIV = 'div',

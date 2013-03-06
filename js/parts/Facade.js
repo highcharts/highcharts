@@ -8,13 +8,15 @@ extend(Highcharts, {
 	Chart: Chart,
 	Color: Color,
 	Legend: Legend,
-	MouseTracker: MouseTracker,
+	Pointer: Pointer,
 	Point: Point,
 	Tick: Tick,
 	Tooltip: Tooltip,
 	Renderer: Renderer,
 	Series: Series,
+	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
+	VMLElement: VMLElement,
 	VMLRenderer: VMLRenderer,
 	
 	// Various
@@ -22,6 +24,7 @@ extend(Highcharts, {
 	arrayMax: arrayMax,
 	charts: charts,
 	dateFormat: dateFormat,
+	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
@@ -46,6 +49,6 @@ extend(Highcharts, {
 	svg: hasSVG,
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
-	product: '@product.name@',
-	version: '@product.version@'
+	product: PRODUCT,
+	version: VERSION
 });
