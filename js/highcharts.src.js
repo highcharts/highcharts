@@ -7625,7 +7625,7 @@ Axis.prototype = {
 			tickPositions = this.tickPositions,
 			key = this._maxTicksKey = [this.xOrY, this.pos, this.len].join('-');
 		
-		if (!this.isLinked && !this.isDatetimeAxis && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
+		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
 			maxTicks[key] = tickPositions.length;
 		}
 		chart.maxTicks = maxTicks;

@@ -221,7 +221,7 @@ Axis.prototype.setCompare = function (compare, redraw) {
 			series.setCompare(compare);
 		});
 		if (pick(redraw, true)) {
-			chart.redraw();
+			this.chart.redraw();
 		}
 	}
 };
