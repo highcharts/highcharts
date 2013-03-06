@@ -9,12 +9,6 @@ $(function () {
             xAxis: {
                 categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
             },
-            tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y +'';
-                }
-            },
             credits: {
                 enabled: false
             },

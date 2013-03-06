@@ -43,10 +43,8 @@ $(function () {
                 enabled: false
             },
             tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.x +' km: '+ this.y +'°C';
-                }
+                headerFormat: '<b>{series.name}</b><br/>',
+                pointFormat: '{point.x} km: {point.y}°C'
             },
             plotOptions: {
                 spline: {

@@ -93,10 +93,7 @@ $(function () {
                 }]
             },
             tooltip: {
-                formatter: function() {
-                        return ''+
-                        Highcharts.dateFormat('%e. %b %Y, %H:00', this.x) +': '+ this.y +' m/s';
-                }
+                valueSuffix: ' m/s'
             },
             plotOptions: {
                 spline: {

@@ -24,12 +24,6 @@ $(function () {
                     text: 'Weight (kg)'
                 }
             },
-            tooltip: {
-                formatter: function() {
-                        return ''+
-                        this.x +' cm, '+ this.y +' kg';
-                }
-            },
             legend: {
                 layout: 'vertical',
                 align: 'left',
@@ -57,6 +51,10 @@ $(function () {
                                 enabled: false
                             }
                         }
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{series.name}</b><br>',
+                        pointFormat: '{point.x} cm, {point.y} kg'
                     }
                 }
             },

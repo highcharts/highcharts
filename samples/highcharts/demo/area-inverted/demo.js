@@ -46,12 +46,6 @@ $(function () {
                 },
                 min: 0
             },
-            tooltip: {
-                formatter: function() {
-                    return ''+
-                    this.x +': '+ this.y;
-                }
-            },
             plotOptions: {
                 area: {
                     fillOpacity: 0.5

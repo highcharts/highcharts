@@ -27,10 +27,8 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.x +': '+ Highcharts.numberFormat(this.y, 0, ',') +' millions';
-                }
+                shared: true,
+                valueSuffix: ' millions'
             },
             plotOptions: {
                 area: {

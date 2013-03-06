@@ -50,10 +50,8 @@ $(function () {
                 shadow: true
             },
             tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.x +': '+ this.y +' mm';
-                }
+                shared: true,
+                valueSuffix: ' mm'
             },
             plotOptions: {
                 column: {

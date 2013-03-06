@@ -19,12 +19,6 @@ $(function () {
                 backgroundColor: '#FFFFFF',
                 reversed: true
             },
-            tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y +'';
-                }
-            },
             plotOptions: {
                 series: {
                     stacking: 'normal'

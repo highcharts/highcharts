@@ -38,10 +38,8 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return ''+
-                    this.x +': '+ this.y +' units';
-                }
+                shared: true,
+                valueSuffix: ' units'
             },
             credits: {
                 enabled: false
