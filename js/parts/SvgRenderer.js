@@ -1787,7 +1787,7 @@ SVGRenderer.prototype = {
 		'arc': function (x, y, w, h, options) {
 			var start = options.start,
 				radius = options.r || w || h,
-				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
+				end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 				innerRadius = options.innerR,
 				open = options.open,
 				cosStart = mathCos(start),
