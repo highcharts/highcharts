@@ -383,9 +383,6 @@ Legend.prototype = {
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
-				// #414, #759. Trackers will be drawn above the legend, but we have 
-				// to sacrifice that because tooltips need to be above the legend
-				// and trackers above tooltips
 				.attr({ zIndex: 7 }) 
 				.add();
 			legend.contentGroup = renderer.g()

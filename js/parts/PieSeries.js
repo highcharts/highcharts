@@ -82,7 +82,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			tracker = point.tracker,
 			dataLabel = point.dataLabel,
 			connector = point.connector,
 			shadowGroup = point.shadowGroup,
@@ -95,9 +94,6 @@ var PiePoint = extendClass(Point, {
 		method = vis ? 'show' : 'hide';
 
 		point.group[method]();
-		if (tracker) {
-			tracker[method]();
-		}
 		if (dataLabel) {
 			dataLabel[method]();
 		}
@@ -127,7 +123,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			slicedTranslation = point.slicedTranslation,
 			translation;
 
 		setAnimation(animation, chart);
@@ -139,11 +134,13 @@ var PiePoint = extendClass(Point, {
 		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
 		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-		translation = {
-			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
-			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
+		translation = sliced ? point.slicedTranslation : {
+			translateX: 0,
+			translateY: 0
 		};
-		point.group.animate(translation);
+
+		point.graphic.animate(translation);
+		
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
@@ -160,6 +157,7 @@ var PieSeries = {
 	pointClass: PiePoint,
 	requireSorting: false,
 	noSharedTooltip: true,
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -174,35 +172,36 @@ var PieSeries = {
 	/**
 	 * Animate the pies in
 	 */
-	animate: function () {
+	animate: function (init) {
 		var series = this,
 			points = series.points,
 			startAngleRad = series.startAngleRad;
 
-		each(points, function (point) {
-			var graphic = point.graphic,
-				args = point.shapeArgs;
+		if (!init) {
+			each(points, function (point) {
+				var graphic = point.graphic,
+					args = point.shapeArgs;
 
-			if (graphic) {
-				// start values
-				graphic.attr({
-					r: series.center[3] / 2, // animate from inner radius (#779)
-					start: startAngleRad,
-					end: startAngleRad
-				});
+				if (graphic) {
+					// start values
+					graphic.attr({
+						r: series.center[3] / 2, // animate from inner radius (#779)
+						start: startAngleRad,
+						end: startAngleRad
+					});
 
-				// animate
-				graphic.animate({
-					r: args.r,
-					start: args.start,
-					end: args.end
-				}, series.options.animation);
-			}
-		});
+					// animate
+					graphic.animate({
+						r: args.r,
+						start: args.start,
+						end: args.end
+					}, series.options.animation);
+				}
+			});
 
-		// delete this function to allow it only once
-		series.animate = null;
-
+			// delete this function to allow it only once
+			series.animate = null;
+		}
 	},
 
 	/**
@@ -260,7 +259,6 @@ var PieSeries = {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			chart = series.chart,
 			start,
 			end,
 			angle,
@@ -328,10 +326,10 @@ var PieSeries = {
 			if (angle > 0.75 * circ) {
 				angle -= 2 * mathPI;
 			}
-			point.slicedTranslation = map([
-				mathCos(angle) * slicedOffset + chart.plotLeft,
-				mathSin(angle) * slicedOffset + chart.plotTop
-			], mathRound);
+			point.slicedTranslation = {
+				translateX: mathRound(mathCos(angle) * slicedOffset),
+				translateY: mathRound(mathSin(angle) * slicedOffset)
+			};
 
 			// set the anchor point for tooltips
 			radiusX = mathCos(angle) * positions[2] / 2;
@@ -368,30 +366,7 @@ var PieSeries = {
 		this.setTooltipPoints();
 	},
 
-	/**
-	 * Render the slices
-	 */
-	render: function () {
-		
-		this.drawDataLabels();
-
-		// cache attributes for shapes
-		this.getAttribs();
-
-		this.drawPoints();
-
-		// draw the mouse tracking area
-		if (this.options.enableMouseTracking !== false) {
-			this.drawTracker();
-		}
-
-		if (this.options.animation && this.animate) {
-			this.animate();
-		}
-
-		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
-		this.isDirty = false; // means data is in accordance with what you see
-	},
+	drawGraph: noop,
 
 	/**
 	 * Draw the data points
@@ -403,37 +378,37 @@ var PieSeries = {
 			groupTranslation,
 			//center,
 			graphic,
-			group,
+			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
 			shapeArgs;
+
+		if (shadow && !series.shadowGroup) {
+			series.shadowGroup = renderer.g('shadow')
+				.add(series.group);
+		}
 
 		// draw the slices
 		each(series.points, function (point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
-			group = point.group;
 			shadowGroup = point.shadowGroup;
 
 			// put the shadow behind all points
 			if (shadow && !shadowGroup) {
 				shadowGroup = point.shadowGroup = renderer.g('shadow')
-					.attr({ zIndex: 4 })
-					.add();
-			}
-
-			// create the group the first time
-			if (!group) {
-				group = point.group = renderer.g('point')
-					.attr({ zIndex: 5 })
-					.add();
+					.add(series.shadowGroup);
 			}
 
 			// if the point is sliced, use special translation, else use plot area traslation
-			groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-			group.translate(groupTranslation[0], groupTranslation[1]);
+			groupTranslation = point.sliced ? point.slicedTranslation : {
+				translateX: 0,
+				translateY: 0
+			};
+
+			//group.translate(groupTranslation[0], groupTranslation[1]);
 			if (shadowGroup) {
-				shadowGroup.translate(groupTranslation[0], groupTranslation[1]);
+				shadowGroup.attr(groupTranslation);
 			}
 
 			// draw the slice
@@ -446,10 +421,11 @@ var PieSeries = {
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE],
 						{ 'stroke-linejoin': 'round' }
 					))
-					.add(point.group)
-					.shadow(shadow, shadowGroup);
-				
+					//.add(point.group)
+					.add(series.group)
+					.shadow(shadow, shadowGroup);	
 			}
+			graphic.attr(groupTranslation);
 
 			// detect point specific visibility
 			if (point.visible === false) {

@@ -30,7 +30,11 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	threshold: 0
+	stickyTracking: false,
+	threshold: 0,
+	tooltip: {
+		followPointer: true
+	}
 });
 
 /**
@@ -46,6 +50,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Initialize the series
@@ -191,11 +196,6 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs.height += 1;
 			}
 
-			// make small columns responsive to mouse
-			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
-				height: 6,
-				y: barY - 3
-			});
 		});
 
 	},
@@ -251,75 +251,62 @@ var ColumnSeries = extendClass(Series, {
 	},
 
 	/**
-	 * Draw the individual tracker elements.
-	 * This method is inherited by pie charts too.
+	 * Add tracking event listener to the series group, so the point graphics
+	 * themselves act as trackers
 	 */
 	drawTracker: function () {
 		var series = this,
-			chart = series.chart,
-			renderer = chart.renderer,
-			shapeArgs,
-			tracker,
-			trackerLabel = +new Date(),
-			options = series.options,
-			cursor = options.cursor,
+			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
-			trackerGroup = series.isCartesian && series.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
-			rel,
-			plotY,
-			validPlotY,
-			points = series.points,
-			point,
-			i = points.length,
-			onMouseOver = function (event) {
-				var pointIndex = event.target._i + series.cropStart;
-				rel = event.relatedTarget || event.fromElement;
-				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
-					series.onMouseOver();
+			onMouseOver = function (e) {
+				var target = e.target,
+					point;
+
+				series.onMouseOver();
+
+				while (target && !point) {
+					point = target.point;
+					target = target.parentNode;
 				}
-				if (points[pointIndex]) {
-					points[pointIndex].onMouseOver();
+				if (point !== UNDEFINED) { // undefined on graph in scatterchart
+					point.onMouseOver(e);
 				}
 			},
-			onMouseOut = function (event) {
-				if (!options.stickyTracking) {
-					rel = event.relatedTarget || event.toElement;
-					if (attr(rel, 'isTracker') !== trackerLabel) {
-						series.onMouseOut();
-					}
+			onMouseOut = function () {
+				if (!series.options.stickyTracking) {
+					series.onMouseOut();
 				}
 			};
-			
-		while (i--) {
-			point = points[i];
-			tracker = point.tracker;
-			shapeArgs = point.trackerArgs || point.shapeArgs;
-			plotY = point.plotY;
-			validPlotY = !series.isCartesian || (plotY !== UNDEFINED && !isNaN(plotY));
-			delete shapeArgs.strokeWidth;
-			if (point.y !== null && validPlotY) {
-				if (tracker) {// update
-					tracker.attr(shapeArgs);
 
-				} else {
-					point.tracker = tracker =
-						renderer[point.shapeType](shapeArgs)
+		// Add reference to the point
+		each(series.points, function (point) {
+			if (point.graphic) {
+				point.graphic.element.point = point;
+			}
+			if (point.dataLabel) {
+				point.dataLabel.element.point = point;
+			}
+		});
+
+		// Add the event listeners, we need to do this only once
+		if (!series._hasTracking) {
+			each(series.trackerGroups, function (key) {
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
 						.attr({
-							isTracker: trackerLabel,
-							fill: TRACKER_FILL,
-							visibility: series.visible ? VISIBLE : HIDDEN
+							isTracker: true
 						})
 						.on('mouseover', onMouseOver)
 						.on('mouseout', onMouseOut)
-						.css(css)
-						.add(point.group || trackerGroup); // pies have point group - see issue #118
-						
+						.css(css);
 					if (hasTouch) {
-						tracker.on('touchstart', onMouseOver);
+						series[key].on('touchstart', onMouseOver);
 					}
 				}
-				tracker.element._i = i;
-			}
+			});
+			
+		} else {
+			series._hasTracking = true;
 		}
 	},
 	

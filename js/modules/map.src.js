@@ -138,7 +138,6 @@
 			'stroke-width': 'borderWidth',
 			fill: 'color'
 		},
-		trackerGroupKey: 'group',
 		getSymbol: noop,
 		getExtremesFromAll: true,
 		init: function(chart) {

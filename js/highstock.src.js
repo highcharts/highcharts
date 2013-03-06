@@ -1752,7 +1752,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
-		shared: useCanVG,
+		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
@@ -2267,6 +2267,22 @@ SVGElement.prototype = {
 		
 		return ret;
 	},
+
+	/* 
+	// Proposal for class name handling: 
+	addClass: function (className) {
+		return this.attr({
+			'class': this.attr('class') + ' ' + className
+		});
+	},
+	hasClass: function (className) {
+		return attr(this.element, 'class').indexOf(className) !== -1;
+	},
+	removeClass: function (className) {
+		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		return this;
+	},
+	*/
 
 	/**
 	 * If one of the symbol size affecting parameters are changed,
@@ -2940,7 +2956,7 @@ SVGElement.prototype = {
 			i;
 
 		// remove events
-		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
+		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
@@ -8870,12 +8886,6 @@ Pointer.prototype = {
 		this.pinchDown = [];
 		this.lastValidTouch = {};
 
-		if (!chart.trackerGroup) {
-			chart.trackerGroup = chart.renderer.g('tracker')
-				.attr({ zIndex: 9 })
-				.add();
-		}
-
 		if (options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
 		}
@@ -9628,13 +9638,7 @@ Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var pointer = this,
-			chart = this.chart;
-
-		// Destroy the tracker group element
-		if (chart.trackerGroup) {
-			chart.trackerGroup = chart.trackerGroup.destroy();
-		}
+		var pointer = this;
 
 		// Release all DOM events
 		each(pointer._events, function (eventConfig) {	
@@ -10035,9 +10039,6 @@ Legend.prototype = {
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
-				// #414, #759. Trackers will be drawn above the legend, but we have 
-				// to sacrifice that because tooltips need to be above the legend
-				// and trackers above tooltips
 				.attr({ zIndex: 7 }) 
 				.add();
 			legend.contentGroup = renderer.g()
@@ -10368,7 +10369,6 @@ Chart.prototype = {
 
 		//this.renderTo = UNDEFINED;
 		//this.renderToClone = UNDEFINED;
-		//this.tracker = UNDEFINED;
 
 		//this.spacingBox = UNDEFINED
 
@@ -11980,7 +11980,7 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'tracker', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
+			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
 			prop,
 			i = 6;
 		while (i--) {
@@ -13330,7 +13330,7 @@ Series.prototype = {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking && !tooltip.shared) {
+		if (tooltip && !options.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
 			tooltip.hide();
 		}
 
@@ -13410,14 +13410,10 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			trackerGroup = this.trackerGroup;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
-			if (trackerGroup) {
-				trackerGroup.clip(chart.clipRect); // #484
-			}
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -13745,7 +13741,7 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup',
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
 				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
 			if (series[prop]) {
 
@@ -13893,8 +13889,8 @@ Series.prototype = {
 						
 					}
 					
-					// Now the data label is created and placed at 0,0, so we need to align it
 					if (dataLabel) {
+						// Now the data label is created and placed at 0,0, so we need to align it
 						series.alignDataLabel(point, dataLabel, options, null, isNew);
 					}
 				}
@@ -14158,7 +14154,7 @@ Series.prototype = {
 	},
 
 	/**
-	 * Initialize and perform group inversion on series.group and series.trackerGroup
+	 * Initialize and perform group inversion on series.group and series.markerGroup
 	 */
 	invertGroups: function () {
 		var series = this,
@@ -14171,7 +14167,7 @@ Series.prototype = {
 				height: series.xAxis.len
 			};
 			
-			each(['group', 'trackerGroup', 'markerGroup'], function (groupName) {
+			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
 					series[groupName].attr(size).invert();
 				}
@@ -14191,7 +14187,7 @@ Series.prototype = {
 	},
 	
 	/**
-	 * General abstraction for creating plot groups like series.group, series.trackerGroup, series.dataLabelsGroup and 
+	 * General abstraction for creating plot groups like series.group, series.dataLabelsGroup and 
 	 * series.markerGroup. On subsequent calls, the group will only be adjusted to the updated plot size.
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
@@ -14269,11 +14265,11 @@ Series.prototype = {
 			series.clipNeg();
 		}
 
+		// draw the data labels (inn pies they go before the points)
+		series.drawDataLabels();
+		
 		// draw the points
 		series.drawPoints();
-		
-		// draw the data labels
-		series.drawDataLabels();
 
 
 		// draw the mouse tracking area
@@ -14289,9 +14285,6 @@ Series.prototype = {
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
-			if (this.trackerGroup) {
-				this.trackerGroup.clip(chart.clipRect);
-			}
 		}
 
 		// Run the animation
@@ -14388,13 +14381,9 @@ Series.prototype = {
 			chart = series.chart,
 			legendItem = series.legendItem,
 			seriesGroup = series.group,
-			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
 			markerGroup = series.markerGroup,
 			showOrHide,
-			i,
-			points = series.points,
-			point,
 			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
 			oldVisibility = series.visible;
 
@@ -14410,19 +14399,6 @@ Series.prototype = {
 			markerGroup[showOrHide]();
 		}
 
-		// show or hide trackers
-		if (seriesTracker) {
-			seriesTracker[showOrHide]();
-		} else if (points) {
-			i = points.length;
-			while (i--) {
-				point = points[i];
-				if (point.tracker) {
-					point.tracker[showOrHide]();
-				}
-			}
-		}
-		
 		// hide tooltip (#1361)
 		if (chart.hoverSeries === series) {
 			series.onMouseOut();
@@ -14516,7 +14492,6 @@ Series.prototype = {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
-			trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
 			i,
 			onMouseOver = function () {
@@ -14562,16 +14537,18 @@ Series.prototype = {
 			series.tracker = tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
+					'class': PREFIX + 'tracker',
 					'stroke-linejoin': 'round', // #1225
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					stroke: TRACKER_FILL,
 					fill: trackByArea ? TRACKER_FILL : NONE,
-					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
+					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
+					zIndex: 2
 				})
 				.on('mouseover', onMouseOver)
 				.on('mouseout', onMouseOut)
 				.css(css)
-				.add(trackerGroup);
+				.add(series.group);
 				
 			if (hasTouch) {
 				tracker.on('touchstart', onMouseOver);
@@ -14954,7 +14931,11 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	threshold: 0
+	stickyTracking: false,
+	threshold: 0,
+	tooltip: {
+		followPointer: true
+	}
 });
 
 /**
@@ -14970,6 +14951,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Initialize the series
@@ -15115,11 +15097,6 @@ var ColumnSeries = extendClass(Series, {
 				shapeArgs.height += 1;
 			}
 
-			// make small columns responsive to mouse
-			point.trackerArgs = mathAbs(barH) < 3 && merge(point.shapeArgs, {
-				height: 6,
-				y: barY - 3
-			});
 		});
 
 	},
@@ -15175,75 +15152,62 @@ var ColumnSeries = extendClass(Series, {
 	},
 
 	/**
-	 * Draw the individual tracker elements.
-	 * This method is inherited by pie charts too.
+	 * Add tracking event listener to the series group, so the point graphics
+	 * themselves act as trackers
 	 */
 	drawTracker: function () {
 		var series = this,
-			chart = series.chart,
-			renderer = chart.renderer,
-			shapeArgs,
-			tracker,
-			trackerLabel = +new Date(),
-			options = series.options,
-			cursor = options.cursor,
+			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
-			trackerGroup = series.isCartesian && series.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
-			rel,
-			plotY,
-			validPlotY,
-			points = series.points,
-			point,
-			i = points.length,
-			onMouseOver = function (event) {
-				var pointIndex = event.target._i + series.cropStart;
-				rel = event.relatedTarget || event.fromElement;
-				if (chart.hoverSeries !== series && attr(rel, 'isTracker') !== trackerLabel) {
-					series.onMouseOver();
+			onMouseOver = function (e) {
+				var target = e.target,
+					point;
+
+				series.onMouseOver();
+
+				while (target && !point) {
+					point = target.point;
+					target = target.parentNode;
 				}
-				if (points[pointIndex]) {
-					points[pointIndex].onMouseOver();
+				if (point !== UNDEFINED) { // undefined on graph in scatterchart
+					point.onMouseOver(e);
 				}
 			},
-			onMouseOut = function (event) {
-				if (!options.stickyTracking) {
-					rel = event.relatedTarget || event.toElement;
-					if (attr(rel, 'isTracker') !== trackerLabel) {
-						series.onMouseOut();
-					}
+			onMouseOut = function () {
+				if (!series.options.stickyTracking) {
+					series.onMouseOut();
 				}
 			};
-			
-		while (i--) {
-			point = points[i];
-			tracker = point.tracker;
-			shapeArgs = point.trackerArgs || point.shapeArgs;
-			plotY = point.plotY;
-			validPlotY = !series.isCartesian || (plotY !== UNDEFINED && !isNaN(plotY));
-			delete shapeArgs.strokeWidth;
-			if (point.y !== null && validPlotY) {
-				if (tracker) {// update
-					tracker.attr(shapeArgs);
 
-				} else {
-					point.tracker = tracker =
-						renderer[point.shapeType](shapeArgs)
+		// Add reference to the point
+		each(series.points, function (point) {
+			if (point.graphic) {
+				point.graphic.element.point = point;
+			}
+			if (point.dataLabel) {
+				point.dataLabel.element.point = point;
+			}
+		});
+
+		// Add the event listeners, we need to do this only once
+		if (!series._hasTracking) {
+			each(series.trackerGroups, function (key) {
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
 						.attr({
-							isTracker: trackerLabel,
-							fill: TRACKER_FILL,
-							visibility: series.visible ? VISIBLE : HIDDEN
+							isTracker: true
 						})
 						.on('mouseover', onMouseOver)
 						.on('mouseout', onMouseOut)
-						.css(css)
-						.add(point.group || trackerGroup); // pies have point group - see issue #118
-						
+						.css(css);
 					if (hasTouch) {
-						tracker.on('touchstart', onMouseOver);
+						series[key].on('touchstart', onMouseOver);
 					}
 				}
-				tracker.element._i = i;
-			}
+			});
+			
+		} else {
+			series._hasTracking = true;
 		}
 	},
 	
@@ -15371,15 +15335,12 @@ seriesTypes.bar = BarSeries;
  */
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
-	states: {
-		hover: {
-			lineWidth: 0
-		}
-	},
 	tooltip: {
 		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
-	}
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
+		followPointer: true // docs
+	},
+	stickyTracking: false // docs: new default
 });
 
 /**
@@ -15390,74 +15351,9 @@ var ScatterSeries = extendClass(Series, {
 	sorted: false,
 	requireSorting: false,
 	noSharedTooltip: true,
-	/**
-	 * Extend the base Series' translate method by adding shape type and
-	 * arguments for the point trackers
-	 */
-	translate: function () {
-		var series = this;
+	trackerGroups: ['markerGroup'],
 
-		Series.prototype.translate.apply(series);
-
-		each(series.points, function (point) {
-			point.shapeType = 'circle';
-			point.shapeArgs = {
-				x: point.plotX,
-				y: point.plotY,
-				r: series.chart.options.tooltip.snap
-			};
-		});
-	},
-
-	/**
-	 * Add tracking event listener to the series group, so the point graphics
-	 * themselves act as trackers
-	 */
-	drawTracker: function () {
-		var series = this,
-			cursor = series.options.cursor,
-			css = cursor && { cursor: cursor },
-			points = series.points,
-			i = points.length,
-			graphic,
-			markerGroup = series.markerGroup,
-			onMouseOver = function (e) {
-				series.onMouseOver();
-				if (e.target._i !== UNDEFINED) { // undefined on graph in scatterchart
-					points[e.target._i].onMouseOver(e);
-				}
-			},
-			onMouseOut = function () {
-				if (!series.options.stickyTracking) {
-					series.onMouseOut();
-				}
-			};
-
-		// Set an expando property for the point index, used below
-		while (i--) {
-			graphic = points[i].graphic;
-			if (graphic) { // doesn't exist for null points
-				graphic.element._i = i; 
-			}
-		}
-		
-		// Add the event listeners, we need to do this only once
-		if (!series._hasTracking) {
-			series[series.trackerGroupKey || 'markerGroup']
-				.attr({
-					isTracker: true
-				})
-				.on('mouseover', onMouseOver)
-				.on('mouseout', onMouseOut)
-				.css(css);
-			if (hasTouch) {
-				markerGroup.on('touchstart', onMouseOver);
-			}
-			
-		} else {
-			series._hasTracking = true;
-		}
-	},
+	drawTracker: ColumnSeries.prototype.drawTracker,
 	
 	setTooltipPoints: noop
 });
@@ -15547,7 +15443,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			tracker = point.tracker,
 			dataLabel = point.dataLabel,
 			connector = point.connector,
 			shadowGroup = point.shadowGroup,
@@ -15560,9 +15455,6 @@ var PiePoint = extendClass(Point, {
 		method = vis ? 'show' : 'hide';
 
 		point.group[method]();
-		if (tracker) {
-			tracker[method]();
-		}
 		if (dataLabel) {
 			dataLabel[method]();
 		}
@@ -15592,7 +15484,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			slicedTranslation = point.slicedTranslation,
 			translation;
 
 		setAnimation(animation, chart);
@@ -15604,11 +15495,13 @@ var PiePoint = extendClass(Point, {
 		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
 		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-		translation = {
-			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
-			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
+		translation = sliced ? point.slicedTranslation : {
+			translateX: 0,
+			translateY: 0
 		};
-		point.group.animate(translation);
+
+		point.graphic.animate(translation);
+		
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
@@ -15625,6 +15518,7 @@ var PieSeries = {
 	pointClass: PiePoint,
 	requireSorting: false,
 	noSharedTooltip: true,
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -15639,35 +15533,36 @@ var PieSeries = {
 	/**
 	 * Animate the pies in
 	 */
-	animate: function () {
+	animate: function (init) {
 		var series = this,
 			points = series.points,
 			startAngleRad = series.startAngleRad;
 
-		each(points, function (point) {
-			var graphic = point.graphic,
-				args = point.shapeArgs;
+		if (!init) {
+			each(points, function (point) {
+				var graphic = point.graphic,
+					args = point.shapeArgs;
 
-			if (graphic) {
-				// start values
-				graphic.attr({
-					r: series.center[3] / 2, // animate from inner radius (#779)
-					start: startAngleRad,
-					end: startAngleRad
-				});
+				if (graphic) {
+					// start values
+					graphic.attr({
+						r: series.center[3] / 2, // animate from inner radius (#779)
+						start: startAngleRad,
+						end: startAngleRad
+					});
 
-				// animate
-				graphic.animate({
-					r: args.r,
-					start: args.start,
-					end: args.end
-				}, series.options.animation);
-			}
-		});
+					// animate
+					graphic.animate({
+						r: args.r,
+						start: args.start,
+						end: args.end
+					}, series.options.animation);
+				}
+			});
 
-		// delete this function to allow it only once
-		series.animate = null;
-
+			// delete this function to allow it only once
+			series.animate = null;
+		}
 	},
 
 	/**
@@ -15725,7 +15620,6 @@ var PieSeries = {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			chart = series.chart,
 			start,
 			end,
 			angle,
@@ -15793,10 +15687,10 @@ var PieSeries = {
 			if (angle > 0.75 * circ) {
 				angle -= 2 * mathPI;
 			}
-			point.slicedTranslation = map([
-				mathCos(angle) * slicedOffset + chart.plotLeft,
-				mathSin(angle) * slicedOffset + chart.plotTop
-			], mathRound);
+			point.slicedTranslation = {
+				translateX: mathRound(mathCos(angle) * slicedOffset),
+				translateY: mathRound(mathSin(angle) * slicedOffset)
+			};
 
 			// set the anchor point for tooltips
 			radiusX = mathCos(angle) * positions[2] / 2;
@@ -15833,30 +15727,7 @@ var PieSeries = {
 		this.setTooltipPoints();
 	},
 
-	/**
-	 * Render the slices
-	 */
-	render: function () {
-		
-		this.drawDataLabels();
-
-		// cache attributes for shapes
-		this.getAttribs();
-
-		this.drawPoints();
-
-		// draw the mouse tracking area
-		if (this.options.enableMouseTracking !== false) {
-			this.drawTracker();
-		}
-
-		if (this.options.animation && this.animate) {
-			this.animate();
-		}
-
-		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
-		this.isDirty = false; // means data is in accordance with what you see
-	},
+	drawGraph: noop,
 
 	/**
 	 * Draw the data points
@@ -15868,37 +15739,37 @@ var PieSeries = {
 			groupTranslation,
 			//center,
 			graphic,
-			group,
+			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
 			shapeArgs;
+
+		if (shadow && !series.shadowGroup) {
+			series.shadowGroup = renderer.g('shadow')
+				.add(series.group);
+		}
 
 		// draw the slices
 		each(series.points, function (point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
-			group = point.group;
 			shadowGroup = point.shadowGroup;
 
 			// put the shadow behind all points
 			if (shadow && !shadowGroup) {
 				shadowGroup = point.shadowGroup = renderer.g('shadow')
-					.attr({ zIndex: 4 })
-					.add();
-			}
-
-			// create the group the first time
-			if (!group) {
-				group = point.group = renderer.g('point')
-					.attr({ zIndex: 5 })
-					.add();
+					.add(series.shadowGroup);
 			}
 
 			// if the point is sliced, use special translation, else use plot area traslation
-			groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-			group.translate(groupTranslation[0], groupTranslation[1]);
+			groupTranslation = point.sliced ? point.slicedTranslation : {
+				translateX: 0,
+				translateY: 0
+			};
+
+			//group.translate(groupTranslation[0], groupTranslation[1]);
 			if (shadowGroup) {
-				shadowGroup.translate(groupTranslation[0], groupTranslation[1]);
+				shadowGroup.attr(groupTranslation);
 			}
 
 			// draw the slice
@@ -15911,10 +15782,11 @@ var PieSeries = {
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE],
 						{ 'stroke-linejoin': 'round' }
 					))
-					.add(point.group)
-					.shadow(shadow, shadowGroup);
-				
+					//.add(point.group)
+					.add(series.group)
+					.shadow(shadow, shadowGroup);	
 			}
+			graphic.attr(groupTranslation);
 
 			// detect point specific visibility
 			if (point.visible === false) {
@@ -17269,7 +17141,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			i,
 			point,
 			graphic,
-			tracker,
 			stackIndex,
 			crisp = (options.lineWidth % 2 / 2),
 			anchorX,
@@ -17289,7 +17160,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			anchorY = stackIndex ? UNDEFINED : point.plotY;
 
 			graphic = point.graphic;
-			tracker = point.tracker;
 
 			// only draw the point if y is defined
 			if (plotY !== UNDEFINED) {
@@ -17340,9 +17210,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();
-				if (tracker) {
-					tracker.attr('y', -9999);
-				}
 			}
 
 		}
@@ -17359,8 +17226,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		// put each point in front on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis
 		each(this.points, function (point) {
-			if (point.tracker) { // #1046
-				addEvent(point.tracker.element, 'mouseover', function () {
+			if (point.graphic) {
+				addEvent(point.graphic.element, 'mouseover', function () {
 					point.graphic.toFront();
 				});
 			}

@@ -846,7 +846,6 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 			shapeArgs.y = plotHigh;
 			shapeArgs.height = point.plotY - plotHigh;
 			
-			point.trackerArgs = shapeArgs;
 		});
 	},
 	drawGraph: noop,
@@ -1791,9 +1790,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
-	stickyTracking: false,
 	tooltip: {
-		followPointer: true,
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 	zThreshold: 0
@@ -1803,7 +1800,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
-	trackerGroupKey: 'group',
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options

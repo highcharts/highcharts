@@ -153,7 +153,7 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'tracker', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
+			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
 			prop,
 			i = 6;
 		while (i--) {
@@ -1503,7 +1503,7 @@ Series.prototype = {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking && !tooltip.shared) {
+		if (tooltip && !options.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
 			tooltip.hide();
 		}
 
@@ -1583,14 +1583,10 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			trackerGroup = this.trackerGroup;
+			group = this.group;
 			
 		if (group && this.options.clip !== false) {
 			group.clip(chart.clipRect);
-			if (trackerGroup) {
-				trackerGroup.clip(chart.clipRect); // #484
-			}
 			this.markerGroup.clip(); // no clip
 		}
 		
@@ -1918,7 +1914,7 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker', 'trackerGroup',
+		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
 				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
 			if (series[prop]) {
 
@@ -2066,8 +2062,8 @@ Series.prototype = {
 						
 					}
 					
-					// Now the data label is created and placed at 0,0, so we need to align it
 					if (dataLabel) {
+						// Now the data label is created and placed at 0,0, so we need to align it
 						series.alignDataLabel(point, dataLabel, options, null, isNew);
 					}
 				}
@@ -2331,7 +2327,7 @@ Series.prototype = {
 	},
 
 	/**
-	 * Initialize and perform group inversion on series.group and series.trackerGroup
+	 * Initialize and perform group inversion on series.group and series.markerGroup
 	 */
 	invertGroups: function () {
 		var series = this,
@@ -2344,7 +2340,7 @@ Series.prototype = {
 				height: series.xAxis.len
 			};
 			
-			each(['group', 'trackerGroup', 'markerGroup'], function (groupName) {
+			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
 					series[groupName].attr(size).invert();
 				}
@@ -2364,7 +2360,7 @@ Series.prototype = {
 	},
 	
 	/**
-	 * General abstraction for creating plot groups like series.group, series.trackerGroup, series.dataLabelsGroup and 
+	 * General abstraction for creating plot groups like series.group, series.dataLabelsGroup and 
 	 * series.markerGroup. On subsequent calls, the group will only be adjusted to the updated plot size.
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
@@ -2442,11 +2438,11 @@ Series.prototype = {
 			series.clipNeg();
 		}
 
+		// draw the data labels (inn pies they go before the points)
+		series.drawDataLabels();
+		
 		// draw the points
 		series.drawPoints();
-		
-		// draw the data labels
-		series.drawDataLabels();
 
 
 		// draw the mouse tracking area
@@ -2462,9 +2458,6 @@ Series.prototype = {
 		// Initial clipping, must be defined after inverting groups for VML
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
-			if (this.trackerGroup) {
-				this.trackerGroup.clip(chart.clipRect);
-			}
 		}
 
 		// Run the animation
@@ -2561,13 +2554,9 @@ Series.prototype = {
 			chart = series.chart,
 			legendItem = series.legendItem,
 			seriesGroup = series.group,
-			seriesTracker = series.tracker,
 			dataLabelsGroup = series.dataLabelsGroup,
 			markerGroup = series.markerGroup,
 			showOrHide,
-			i,
-			points = series.points,
-			point,
 			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
 			oldVisibility = series.visible;
 
@@ -2583,19 +2572,6 @@ Series.prototype = {
 			markerGroup[showOrHide]();
 		}
 
-		// show or hide trackers
-		if (seriesTracker) {
-			seriesTracker[showOrHide]();
-		} else if (points) {
-			i = points.length;
-			while (i--) {
-				point = points[i];
-				if (point.tracker) {
-					point.tracker[showOrHide]();
-				}
-			}
-		}
-		
 		// hide tooltip (#1361)
 		if (chart.hoverSeries === series) {
 			series.onMouseOut();
@@ -2689,7 +2665,6 @@ Series.prototype = {
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
-			trackerGroup = this.isCartesian && this.plotGroup('trackerGroup', null, VISIBLE, options.zIndex || 1, chart.trackerGroup),
 			singlePoint,
 			i,
 			onMouseOver = function () {
@@ -2735,16 +2710,18 @@ Series.prototype = {
 			series.tracker = tracker = renderer.path(trackerPath)
 				.attr({
 					isTracker: true,
+					'class': PREFIX + 'tracker',
 					'stroke-linejoin': 'round', // #1225
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					stroke: TRACKER_FILL,
 					fill: trackByArea ? TRACKER_FILL : NONE,
-					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap)
+					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
+					zIndex: 2
 				})
 				.on('mouseover', onMouseOver)
 				.on('mouseout', onMouseOut)
 				.css(css)
-				.add(trackerGroup);
+				.add(series.group);
 				
 			if (hasTouch) {
 				tracker.on('touchstart', onMouseOver);

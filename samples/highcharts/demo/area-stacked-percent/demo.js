@@ -22,11 +22,8 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                        return ''+
-                        this.x +': '+ Highcharts.numberFormat(this.percentage, 1) +'% ('+
-                        Highcharts.numberFormat(this.y, 0, ',') +' millions)';
-                }
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f} millions)<br/>',
+                shared: true
             },
             plotOptions: {
                 area: {

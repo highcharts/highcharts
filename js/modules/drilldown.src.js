@@ -417,8 +417,8 @@
     	H.wrap(proto, 'drawTracker', function (proceed) {
     		proceed.call(this);
     		H.each(this.points, function (point) {
-    			if (point.drilldown && point.tracker) {
-    				point.tracker
+    			if (point.drilldown && point.graphic) {
+    				point.graphic
     					.css({ cursor: 'pointer' });
     			}
     		});
