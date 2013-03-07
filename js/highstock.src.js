@@ -15814,7 +15814,7 @@ var PieSeries = {
 			y,
 			visibility,
 			rankArr,
-			i = 2,
+			i,
 			j,
 			overflow = [0, 0, 0, 0], // top, right, bottom, left
 			sort = function (a, b) {
@@ -15842,11 +15842,16 @@ var PieSeries = {
 		});
 
 		// assume equal label heights
-		labelHeight = data[0] && data[0].dataLabel && (data[0].dataLabel.getBBox().height || 21); // 21 is for #968
+		i = 0;
+		while (!labelHeight && data[i]) { // #1569
+			labelHeight = data[i] && data[i].dataLabel && (data[i].dataLabel.getBBox().height || 21); // 21 is for #968
+			i++;
+		}
 
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
+		i = 2;
 		while (i--) {
 
 			var slots = [],
