@@ -1,6 +1,7 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         chart: {
+            renderTo: 'container',
             marginBottom: 80
         },
         xAxis: {

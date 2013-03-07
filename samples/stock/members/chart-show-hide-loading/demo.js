@@ -1,20 +1,22 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
-
+	var chart = new Highcharts.StockChart({
+	    
+	    chart: {
+	        renderTo: 'container'
+	    },
+	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
-
+	    
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
-	
 	});
-
+	
 	// the button handler
-	var chart = $('#container').highcharts(),
-        isLoading = false,
+	var isLoading = false,
 	    $button = $('#button');
 	$button.click(function() {
 	    if (!isLoading) {

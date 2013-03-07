@@ -7,8 +7,9 @@ $(function() {
 		data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);
 				
 		// create the chart
-		$('#container').highcharts('StockChart', {
+		window.chart = new Highcharts.StockChart({
 			chart : {
+				renderTo : 'container',
 				type: 'candlestick',
 				zoomType: 'x'
 			},
@@ -18,10 +19,6 @@ $(function() {
 				series : {
 					data : data
 				}
-			},
-
-			scrollbar: {
-				liveRedraw: false
 			},
 			
 			title: {
@@ -83,7 +80,7 @@ function afterSetExtremes(e) {
 	var url,
 		currentExtremes = this.getExtremes(),
 		range = e.max - e.min;
-	var chart = $('#container').highcharts();
+	
 	chart.showLoading('Loading data from server...');
 	$.getJSON('http://www.highcharts.com/samples/data/from-sql.php?start='+ Math.round(e.min) +
 			'&end='+ Math.round(e.max) +'&callback=?', function(data) {

@@ -1,20 +1,20 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
-
-	    title: {
-	    	text: 'plotOptions: {ohlc: {lineWidth: 3}}'
+	var chart = new Highcharts.StockChart({
+	    
+	    chart: {
+	        renderTo: 'container'
 	    },
-
+	    
 	    plotOptions: {
 	    	ohlc: {
-	    		lineWidth: 3
+	    		lineWidth: 2
 	    	}
 	    },
-
+	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
-
+	    
 	    series: [{
 	    	type: 'ohlc',
 	        name: 'USD to EUR',

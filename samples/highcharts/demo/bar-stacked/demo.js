@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'bar'
             },
             title: {
@@ -18,6 +21,12 @@ $(function () {
             legend: {
                 backgroundColor: '#FFFFFF',
                 reversed: true
+            },
+            tooltip: {
+                formatter: function() {
+                    return ''+
+                        this.series.name +': '+ this.y +'';
+                }
             },
             plotOptions: {
                 series: {
@@ -37,3 +46,4 @@ $(function () {
         });
     });
     
+});

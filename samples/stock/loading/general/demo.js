@@ -1,6 +1,10 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
-
+	var chart = new Highcharts.StockChart({
+	    
+	    chart: {
+	        renderTo: 'container'
+	    },
+	    
 	    loading: {
 	    	style: {
 	    		backgroundColor: 'silver'
@@ -9,19 +13,18 @@ $(function() {
 	    		color: 'white'
 	    	}
 	    },
-
+	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
-
+	    
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
 	});
-
-	var chart = $('#container').highcharts();
-    $('#showloading').click(function() {
+	
+	$('#showloading').click(function() {
 		chart.showLoading();
 	});
 	$('#hideloading').click(function() {

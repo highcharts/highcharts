@@ -2,8 +2,9 @@ $(function() {
 	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-v.json&callback=?', function(data) {
 
 		// create the chart
-		$('#container').highcharts('StockChart', {
+		chart = new Highcharts.StockChart({
 		    chart: {
+		        renderTo: 'container',
 		        alignTicks: false
 		    },
 

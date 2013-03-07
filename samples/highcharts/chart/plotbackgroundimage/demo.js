@@ -1,6 +1,7 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         chart: {
+            renderTo: 'container',
             type: 'line',
             plotBackgroundImage: 'http://www.highcharts.com/demo/gfx/skies.jpg'
         },

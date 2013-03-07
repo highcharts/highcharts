@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false
@@ -46,3 +49,4 @@ $(function () {
         });
     });
     
+});

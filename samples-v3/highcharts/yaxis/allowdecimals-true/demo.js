@@ -1,0 +1,24 @@
+$(function () {
+    $('#container').highcharts({
+        chart: {
+        },
+        
+        title: {
+            text: 'Flats sold per month'
+        },
+        
+        xAxis: {        
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        
+        yAxis: {
+            title: {
+                text: 'Flats'
+            }
+        },
+        
+        series: [{
+            data: [1, 3, 5, 2, 3, 9, 6, 7, 3, 5, 4, 3]        
+        }]
+    });
+});

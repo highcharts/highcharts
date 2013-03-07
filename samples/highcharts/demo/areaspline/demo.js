@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'areaspline'
             },
             title: {
@@ -38,8 +41,10 @@ $(function () {
                 }
             },
             tooltip: {
-                shared: true,
-                valueSuffix: ' units'
+                formatter: function() {
+                    return ''+
+                    this.x +': '+ this.y +' units';
+                }
             },
             credits: {
                 enabled: false
@@ -59,3 +64,4 @@ $(function () {
         });
     });
     
+});

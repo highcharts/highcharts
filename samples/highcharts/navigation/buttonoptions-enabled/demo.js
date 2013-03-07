@@ -1,8 +1,8 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         
-        title: {
-            text: 'Exporting module is loaded but buttons are disabled'
+        chart: {
+            renderTo: 'container'
         },
         
         xAxis: {

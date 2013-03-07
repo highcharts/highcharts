@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'line',
                 marginRight: 130,
                 marginBottom: 25
@@ -28,7 +31,10 @@ $(function () {
                 }]
             },
             tooltip: {
-                valueSuffix: '°C'
+                formatter: function() {
+                        return '<b>'+ this.series.name +'</b><br/>'+
+                        this.x +': '+ this.y +'°C';
+                }
             },
             legend: {
                 layout: 'vertical',
@@ -54,3 +60,4 @@ $(function () {
         });
     });
     
+});

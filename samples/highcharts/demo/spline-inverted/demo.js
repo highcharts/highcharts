@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'spline',
                 inverted: true,
                 width: 500,
@@ -43,8 +46,10 @@ $(function () {
                 enabled: false
             },
             tooltip: {
-                headerFormat: '<b>{series.name}</b><br/>',
-                pointFormat: '{point.x} km: {point.y}°C'
+                formatter: function() {
+                    return ''+
+                        this.x +' km: '+ this.y +'°C';
+                }
             },
             plotOptions: {
                 spline: {
@@ -61,3 +66,4 @@ $(function () {
         });
     });
     
+});

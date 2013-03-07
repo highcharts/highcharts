@@ -4,8 +4,9 @@ $(function () {
     $(document).ready(function () {
     	
     	// Build the chart
-        $('#container').highcharts({
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false

@@ -22,13 +22,14 @@ $(function() {
         }
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        window.chart = new Highcharts.StockChart({
             chart: {
+                renderTo: 'container',
                 alignTicks: false,
                 zoomType: 'y',
                 events: {
-                    load: function (e) {
-                        e.target.yAxis[0].setExtremes(500, 550);
+                    load: function () {
+                        this.yAxis[0].setExtremes(500, 550);
                     }
                 }
             },

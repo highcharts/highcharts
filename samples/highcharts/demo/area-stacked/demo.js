@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'area'
             },
             title: {
@@ -27,8 +30,10 @@ $(function () {
                 }
             },
             tooltip: {
-                shared: true,
-                valueSuffix: ' millions'
+                formatter: function() {
+                    return ''+
+                        this.x +': '+ Highcharts.numberFormat(this.y, 0, ',') +' millions';
+                }
             },
             plotOptions: {
                 area: {
@@ -60,3 +65,4 @@ $(function () {
         });
     });
     
+});

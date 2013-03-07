@@ -2,12 +2,16 @@ $(function() {
 	Highcharts.setOptions({
     	colors: ['green', 'blue']
 	});
-	$('#container').highcharts('StockChart', {
-
+	var chart = new Highcharts.StockChart({
+	    
+	    chart: {
+	        renderTo: 'container'
+	    },
+	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
-
+	    
 	    series: [{
 	        name: 'ADBE',
 	        data: ADBE

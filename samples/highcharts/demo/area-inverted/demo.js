@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'area',
                 inverted: true
             },
@@ -46,6 +49,12 @@ $(function () {
                 },
                 min: 0
             },
+            tooltip: {
+                formatter: function() {
+                    return ''+
+                    this.x +': '+ this.y;
+                }
+            },
             plotOptions: {
                 area: {
                     fillOpacity: 0.5
@@ -61,3 +70,4 @@ $(function () {
         });
     });
     
+});

@@ -1,7 +1,8 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.StockChart({
 	    
 	    chart: {
+	        renderTo: 'container',
 	        events: {
 	        	load: function() {
 	        		alert ('Chart has loaded');

@@ -1,6 +1,7 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         chart: {
+            renderTo: 'container'
         },
         xAxis: {        
             tickInterval: 24 * 3600 * 1000, // one day

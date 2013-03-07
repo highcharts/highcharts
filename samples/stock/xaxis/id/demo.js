@@ -1,20 +1,26 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.StockChart({
+	    
+	    chart: {
+	        renderTo: 'container'
+	    },
+	    
 	    xAxis: {
 	    	id: 'x-axis'
 	    },
+	    
 	    rangeSelector: {
 	    	selected: 1
 	    },
+	    
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur
 	    }]
 	});
-
+	
 	// the button action
 	$('#button').click(function() {
-    	var chart = $('#container').highcharts();
-        alert('The axis object: '+ chart.get('x-axis'));
+    	alert('The axis object: '+ chart.get('x-axis'));
 	});
 });

@@ -1,8 +1,9 @@
 $(function () {
     	
-	$('#container').highcharts({
+	window.chart = new Highcharts.Chart({
 	
 	    chart: {
+	        renderTo: 'container',
 	        type: 'columnrange',
 	        inverted: true
 	    },

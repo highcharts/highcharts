@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 zoomType: 'x',
                 spacingRight: 20
             },
@@ -22,7 +25,8 @@ $(function () {
             yAxis: {
                 title: {
                     text: 'Exchange rate'
-                }
+                },
+                showFirstLabel: false
             },
             tooltip: {
                 shared: true
@@ -36,12 +40,18 @@ $(function () {
                         linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
                         stops: [
                             [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                            [1, 'rgba(2,0,0,0)']
                         ]
                     },
                     lineWidth: 1,
                     marker: {
-                        enabled: false
+                        enabled: false,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                radius: 5
+                            }
+                        }
                     },
                     shadow: false,
                     states: {
@@ -174,3 +184,4 @@ $(function () {
         });
     });
     
+});
