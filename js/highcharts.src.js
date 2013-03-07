@@ -5939,7 +5939,7 @@ Tick.prototype = {
 		this.isActive = true;
 		
 		// create the grid line
-		if (gridLineWidth && pos >= axis.min && pos <= axis.max) {
+		if (gridLineWidth/* && pos >= axis.min && pos <= axis.max*/) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
 			if (gridLine === UNDEFINED) {
@@ -14919,10 +14919,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		y: null
 	},
 	stickyTracking: false,
-	threshold: 0,
-	tooltip: {
-		followPointer: true
-	}
+	threshold: 0
 });
 
 /**

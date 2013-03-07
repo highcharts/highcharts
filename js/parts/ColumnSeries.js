@@ -31,10 +31,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		y: null
 	},
 	stickyTracking: false,
-	threshold: 0,
-	tooltip: {
-		followPointer: true
-	}
+	threshold: 0
 });
 
 /**
