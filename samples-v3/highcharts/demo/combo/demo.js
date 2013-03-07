@@ -58,15 +58,15 @@ $(function () {
                 data: [{
                     name: 'Jane',
                     y: 13,
-                    color: '#4572A7' // Jane's color
+                    color: Highcharts.getOptions().colors[0] // Jane's color
                 }, {
                     name: 'John',
                     y: 23,
-                    color: '#AA4643' // John's color
+                    color: Highcharts.getOptions().colors[1] // John's color
                 }, {
                     name: 'Joe',
                     y: 19,
-                    color: '#89A54E' // Joe's color
+                    color: Highcharts.getOptions().colors[2] // Joe's color
                 }],
                 center: [100, 80],
                 size: 100,

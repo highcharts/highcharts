@@ -14,6 +14,7 @@ defaultLabelOptions = {
 	},*/
 	style: {
 		color: '#666',
+		cursor: 'default',
 		fontSize: '11px',
 		lineHeight: '14px'
 	}

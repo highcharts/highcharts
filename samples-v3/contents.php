@@ -30,6 +30,11 @@ elseif ($product == 'highstock') $dir = 'stock';
 				font-family: Arial, Verdana;
 				font-size: 12px;
 			}
+
+			h4 {
+				font-size: 20px;
+			}
+
 			ul {
 				margin-left: 0;
 				padding-left: 0;

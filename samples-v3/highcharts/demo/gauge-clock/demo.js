@@ -97,7 +97,7 @@ $(function () {
 	    
 	    tooltip: {
 	    	formatter: function () {
-	    		return chart.tooltipText;
+	    		return this.series.chart.tooltipText;
 	    	}
 	    },
 	

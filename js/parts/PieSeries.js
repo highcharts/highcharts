@@ -93,16 +93,13 @@ var PiePoint = extendClass(Point, {
 		
 		method = vis ? 'show' : 'hide';
 
-		point.group[method]();
-		if (dataLabel) {
-			dataLabel[method]();
-		}
-		if (connector) {
-			connector[method]();
-		}
-		if (shadowGroup) {
-			shadowGroup[method]();
-		}
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+			if (point[key]) {
+				point[key][method]();
+			}
+		});
+
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
 		}
@@ -366,7 +363,7 @@ var PieSeries = {
 		this.setTooltipPoints();
 	},
 
-	drawGraph: noop,
+	drawGraph: null,
 
 	/**
 	 * Draw the data points

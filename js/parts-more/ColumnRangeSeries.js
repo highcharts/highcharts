@@ -34,9 +34,11 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 			
 		});
 	},
+	trackerGroups: ['group', 'dataLabels'],
 	drawGraph: noop,
 	pointAttrToOptions: colProto.pointAttrToOptions,
 	drawPoints: colProto.drawPoints,
 	drawTracker: colProto.drawTracker,
-	animate: colProto.animate
+	animate: colProto.animate,
+	getColumnMetrics: colProto.getColumnMetrics
 });

@@ -7,6 +7,8 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 $i = (int)$_GET['i'];
 $next = $i + 1;
 
+$path = dirname(__FILE__) . '/' . $path;
+
 // Get HTML and use dev server
 ob_start();
 include("$path/demo.html");
