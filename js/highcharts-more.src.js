@@ -1974,7 +1974,8 @@ Axis.prototype.beforePadding = function () {
 		smallestSize = math.min(chart.plotWidth, chart.plotHeight),
 		zMin = Number.MAX_VALUE,
 		zMax = -Number.MAX_VALUE,
-		transA = axisLength / (this.max - min),
+		range = this.max - min,
+		transA = axisLength / range,
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
@@ -2028,17 +2029,21 @@ Axis.prototype.beforePadding = function () {
 				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
 			}
 			
-			while (i--) {
-				radius = series.radii[i];
-				pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-				pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+			if (range > 0) {
+				while (i--) {
+					radius = series.radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
 			}
 		});
 		
-		pxMax -= axisLength;
-		transA *= (axisLength + pxMin - pxMax) / axisLength;
-		this.min += pxMin / transA;
-		this.max += pxMax / transA;
+		if (range > 0) {
+			pxMax -= axisLength;
+			transA *= (axisLength + pxMin - pxMax) / axisLength;
+			this.min += pxMin / transA;
+			this.max += pxMax / transA;
+		}
 	}
 };
 
