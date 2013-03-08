@@ -7,11 +7,11 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 $i = (int)$_GET['i'];
 $next = $i + 1;
 
-$path = dirname(__FILE__) . '/' . $path;
+$fullpath = dirname(__FILE__) . '/' . $path;
 
 // Get HTML and use dev server
 ob_start();
-include("$path/demo.html");
+include("$fullpath/demo.html");
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/high', '/codev.highcharts.com/high', $html);
 $html = str_replace('/code.highcharts.com/stock/', '/codev.highcharts.com/', $html);
@@ -20,11 +20,11 @@ $html = str_replace('/code.highcharts.com/modules/', '/codev.highcharts.com/modu
 
 
 function getResources() {
-	global $path;
+	global $fullpath;
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	include("$path/demo.details");
+	include("$fullpath/demo.details");
 	$s = ob_get_clean();
 
 	$html = '';
@@ -66,11 +66,11 @@ function getResources() {
 		<script src="/lib/jquery-1.7.2.js"></script>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
-		<?php @include("$path/demo.js"); ?>
+		<?php @include("$fullpath/demo.js"); ?>
 		</script>
 
 		<style type="text/css">
-			<?php @include("$path/demo.css"); ?>
+			<?php @include("$fullpath/demo.css"); ?>
 		</style>
 
 		<script type="text/javascript">
