@@ -23,14 +23,4 @@ $(function () {
 
         })
         .add();
-
-    $('<button>Add</button>').click(function () {
-        rect.addClass('red');
-    }).appendTo(document.body);
-    $('<button>Has</button>').click(function () {
-        console.log(rect.hasClass('red'));
-    }).appendTo(document.body);
-    $('<button>Remove</button>').click(function () {
-        rect.removeClass('red');
-    }).appendTo(document.body);
 });
