@@ -870,7 +870,7 @@ Axis.prototype = {
 				for (j = 0; j < len && !break2; j++) {
 					pos = log2lin(lin2log(i) * intermediate[j]);
 					
-					if (pos > min) {
+					if (pos > min && lastPos <= max) {
 						positions.push(lastPos);
 					}
 					
@@ -930,9 +930,8 @@ Axis.prototype = {
 		var axis = this,
 			options = axis.options,
 			tickPositions = axis.tickPositions,
-			minorTickInterval = axis.minorTickInterval;
-
-		var minorTickPositions = [],
+			minorTickInterval = axis.minorTickInterval,
+			minorTickPositions = [],
 			pos,
 			i,
 			len;

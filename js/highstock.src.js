@@ -1780,7 +1780,7 @@ defaultOptions = {
 		style: {
 			cursor: 'pointer',
 			color: '#909090',
-			fontSize: '10px'
+			fontSize: '9px'
 		}
 	}
 };
@@ -5940,7 +5940,7 @@ Tick.prototype = {
 		this.isActive = true;
 		
 		// create the grid line
-		if (gridLineWidth/* && pos >= axis.min && pos <= axis.max*/) {
+		if (gridLineWidth) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
 			if (gridLine === UNDEFINED) {
@@ -7200,7 +7200,7 @@ Axis.prototype = {
 				for (j = 0; j < len && !break2; j++) {
 					pos = log2lin(lin2log(i) * intermediate[j]);
 					
-					if (pos > min) {
+					if (pos > min && lastPos <= max) {
 						positions.push(lastPos);
 					}
 					
@@ -7260,9 +7260,8 @@ Axis.prototype = {
 		var axis = this,
 			options = axis.options,
 			tickPositions = axis.tickPositions,
-			minorTickInterval = axis.minorTickInterval;
-
-		var minorTickPositions = [],
+			minorTickInterval = axis.minorTickInterval,
+			minorTickPositions = [],
 			pos,
 			i,
 			len;
@@ -14301,7 +14300,9 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-			group = series.group;
+			group = series.group,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis;
 
 		// reposition on resize
 		if (group) {
@@ -14313,8 +14314,8 @@ Series.prototype = {
 			}
 
 			group.animate({
-				translateX: series.xAxis.left,
-				translateY: series.yAxis.top
+				translateX: pick(xAxis && xAxis.left, chart.plotLeft),
+				translateY: pick(yAxis && yAxis.top, chart.plotTop)
 			});
 		}
 
@@ -15428,9 +15429,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			dataLabel = point.dataLabel,
-			connector = point.connector,
-			shadowGroup = point.shadowGroup,
 			method;
 
 		// if called without an argument, toggle visibility

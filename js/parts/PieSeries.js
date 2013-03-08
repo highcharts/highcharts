@@ -82,9 +82,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			dataLabel = point.dataLabel,
-			connector = point.connector,
-			shadowGroup = point.shadowGroup,
 			method;
 
 		// if called without an argument, toggle visibility

@@ -340,6 +340,7 @@ extend(Chart.prototype, {
 		
 		var chart = this,
 			svg = chart.getSVG(merge(
+				{ chart: { borderRadius: 0 } }, // docs: defaults to 0 for exported charts
 				chart.options.exporting.chartOptions, // docs
 				chartOptions, 
 				{

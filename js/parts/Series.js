@@ -2479,7 +2479,9 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-			group = series.group;
+			group = series.group,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis;
 
 		// reposition on resize
 		if (group) {
@@ -2491,8 +2493,8 @@ Series.prototype = {
 			}
 
 			group.animate({
-				translateX: series.xAxis.left,
-				translateY: series.yAxis.top
+				translateX: pick(xAxis && xAxis.left, chart.plotLeft),
+				translateY: pick(yAxis && yAxis.top, chart.plotTop)
 			});
 		}
 
