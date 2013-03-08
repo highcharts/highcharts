@@ -39,6 +39,9 @@ function merge() {
 
 					// Primitives and arrays are copied over directly
 					} else {
+						if (typeof copy !== 'object') { // When an object is replacing a primitive
+							copy = {};
+						}
 						copy[key] = original[key];
 					}
 				}
