@@ -7620,7 +7620,7 @@ Axis.prototype = {
 			// and max are equal and tickPositions.length is 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = 1e-9; // The lowest possible number to avoid extra padding on columns
+				singlePad = 0.001; // The lowest possible number to avoid extra padding on columns
 				axis.min -= singlePad;
 				axis.max += singlePad;
 			}
@@ -15566,24 +15566,24 @@ var PieSeries = {
 		
 		var options = this.options,
 			chart = this.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
+			slicingRoom = 2 * (options.dataLabels && options.dataLabels.enabled ? 0 : (options.slicedOffset || 0)),
+			plotWidth = chart.plotWidth - 2 * slicingRoom,
+			plotHeight = chart.plotHeight - 2 * slicingRoom,
 			centerOption = options.center,
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
 			smallestSize = mathMin(plotWidth, plotHeight),
 			isPercent;
-					
 		
 		return map(positions, function (length, i) {
 			isPercent = /%$/.test(length);
-			return isPercent ?
+			return (isPercent ?
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to smallestSize
 				// i == 4: innerSize, relative to smallestSize
 				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
 					pInt(length) / 100 :
-				length;
+				length) + (i < 3 ? slicingRoom : 0);
 		});
 	},
 	
@@ -16065,11 +16065,9 @@ var PieSeries = {
 							point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 								'stroke-width': connectorWidth,
 								stroke: options.connectorColor || point.color || '#606060',
-								visibility: visibility,
-								zIndex: 3
+								visibility: visibility
 							})
-							.translate(chart.plotLeft, chart.plotTop)
-							.add();
+							.add(series.group);
 						}
 					} else if (connector) {
 						point.connector = connector.destroy();
