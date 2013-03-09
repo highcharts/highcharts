@@ -4,7 +4,6 @@ extend(Highcharts, {
 	
 	// Constructors
 	Axis: Axis,
-	CanVGRenderer: CanVGRenderer,
 	Chart: Chart,
 	Color: Color,
 	Legend: Legend,
@@ -16,8 +15,6 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
-	VMLElement: VMLElement,
-	VMLRenderer: VMLRenderer,
 	
 	// Various
 	arrayMin: arrayMin,

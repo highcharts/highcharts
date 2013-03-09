@@ -10,8 +10,8 @@ var files = [
 	"Options.js",
 	"Color.js",
 	"SvgRenderer.js",
-	"VmlRenderer.js",
-	"CanVGRenderer.js",
+	//"VmlRenderer.js",
+	//"CanVGRenderer.js",
 	"Tick.js",
 	"PlotLineOrBand.js",
 	"StackItem.js",
@@ -33,9 +33,10 @@ var files = [
 ];
 
 // Parse the path from the script tag
-var $tag = $('script[src$="highcharts.debug.js"]'),
-	path = $tag.attr('src').replace('highcharts.debug.js', '') + 'parts/';
+var $tag = $('script[src*="highcharts.debug.js"]'),
+	path = $tag.attr('src').replace(/highcharts\.debug\.js\?(.*?)$/, '') + 'parts/';
 
+console.log('--- Running individual parts ---')
 // Include the individual files
 $.each(files, function (i, file) {
 	document.write('<script src="' + path + file + '?' + (new Date()).getTime() +'"></script>')	

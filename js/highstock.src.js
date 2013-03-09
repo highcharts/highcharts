@@ -4477,7 +4477,7 @@ if (!hasSVG && !useCanVG) {
 /**
  * The VML element wrapper.
  */
-VMLElement = {
+Highcharts.VMLElement = VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -5566,7 +5566,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		}
 	}
 };
-VMLRenderer = function () {
+Highcharts.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
 VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
@@ -5595,7 +5595,7 @@ if (useCanVG) {
 	 * When requested, the CanVGController downloads the rest of the source packaged
 	 * together with the canvg library.
 	 */
-	CanVGRenderer = function () {
+	Highcharts.CanVGRenderer = CanVGRenderer = function () {
 		// Override the global SVG namespace to fake SVG/HTML that accepts CSS
 		SVG_NS = 'http://www.w3.org/1999/xhtml';
 	};
@@ -5639,6 +5639,8 @@ if (useCanVG) {
 			}
 		};
 	}());
+
+	Renderer = CanVGRenderer;
 } // end CanVGRenderer
 
 /* ****************************************************************************
@@ -5647,10 +5649,6 @@ if (useCanVG) {
  *                                                                            *
  *****************************************************************************/
 
-/**
- * General renderer
- */
-Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;
 /**
  * The Tick class
  */
@@ -19757,7 +19755,6 @@ extend(Highcharts, {
 	
 	// Constructors
 	Axis: Axis,
-	CanVGRenderer: CanVGRenderer,
 	Chart: Chart,
 	Color: Color,
 	Legend: Legend,
@@ -19769,8 +19766,6 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
-	VMLElement: VMLElement,
-	VMLRenderer: VMLRenderer,
 	
 	// Various
 	arrayMin: arrayMin,

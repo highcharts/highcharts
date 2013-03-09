@@ -13,7 +13,7 @@ if (useCanVG) {
 	 * When requested, the CanVGController downloads the rest of the source packaged
 	 * together with the canvg library.
 	 */
-	CanVGRenderer = function () {
+	Highcharts.CanVGRenderer = CanVGRenderer = function () {
 		// Override the global SVG namespace to fake SVG/HTML that accepts CSS
 		SVG_NS = 'http://www.w3.org/1999/xhtml';
 	};
@@ -57,6 +57,8 @@ if (useCanVG) {
 			}
 		};
 	}());
+
+	Renderer = CanVGRenderer;
 } // end CanVGRenderer
 
 /* ****************************************************************************
@@ -65,7 +67,3 @@ if (useCanVG) {
  *                                                                            *
  *****************************************************************************/
 
-/**
- * General renderer
- */
-Renderer = VMLRenderer || CanVGRenderer || SVGRenderer;

@@ -18,7 +18,7 @@ if (!hasSVG && !useCanVG) {
 /**
  * The VML element wrapper.
  */
-VMLElement = {
+Highcharts.VMLElement = VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -1107,7 +1107,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		}
 	}
 };
-VMLRenderer = function () {
+Highcharts.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
 VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
