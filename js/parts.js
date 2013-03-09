@@ -1,13 +1,12 @@
 /*jslint node: true */
 'use strict';
-var HighchartsConfig;
-
-HighchartsConfig = function () {
-	this.parts = [
+var HighchartsConfig = {
+	parts: [
 		/* CORE */
 		{name: 'Globals', component: 'Core', group: "Core"},
 		{name: 'Utilities', component: 'Core', group: "Core"},
 		{name: 'PathAnimation', component: 'Core', group: "Core"},
+		{name: 'JQueryAdapter', component: 'Core', group: "Core"},
 		{name: 'Adapters', component: 'Core', group: "Core"},
 		{name: 'Options', component: 'Core', group: "Core"},
 		{name: 'Color', component: 'Core', group: "Core"},
@@ -57,15 +56,16 @@ HighchartsConfig = function () {
 		{name: 'RadialAxis'},
 		{name: 'Pane'}
 
-	];
+	],
 
-	this.groups = {
+	groups: {
 		'Core': 'This is the description for Core',
 		'Stock': 'This is the description for Stock',
 		'SerieTypes': 'This is the description for SerieTypes',
 		'Extra\'s': 'This is the description for Extra\'s'
-	};
-	this.components = {
+	},
+
+	components: {
 		'Core': 'This is the description for Core',
 		'Stock': 'This is the description for Stock',
 		'Stock serieTypes': 'This is the description for Stock SerieTypes',
@@ -82,5 +82,5 @@ HighchartsConfig = function () {
 		'AreaRangeSeries': 'This is a components description',
 		'AreaSplineSeries': 'This is a components description',
 		'ColumnRangeSeries': 'This is a components description'
-	};
+	}
 };
