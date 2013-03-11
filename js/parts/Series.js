@@ -2716,7 +2716,7 @@ Series.prototype = {
 				.on('mouseover', onMouseOver)
 				.on('mouseout', onMouseOut)
 				.css(css)
-				.add(series.group);
+				.add(series.markerGroup);
 				
 			if (hasTouch) {
 				tracker.on('touchstart', onMouseOver);
