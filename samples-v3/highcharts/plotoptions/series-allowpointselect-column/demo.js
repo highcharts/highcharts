@@ -19,7 +19,7 @@ $(function () {
     
     // the button action
     $('#button').click(function() {
-       var selectedPoints = chart.getSelectedPoints();
+        var selectedPoints = $('#container').highcharts().getSelectedPoints();
         alert ('You selected '+ selectedPoints.length +' points');
     });
 });

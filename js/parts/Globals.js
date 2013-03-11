@@ -80,10 +80,8 @@ var UNDEFINED,
 	YEAR = 'year',
 
 	// constants for attributes
-	FILL = 'fill',
 	LINEAR_GRADIENT = 'linearGradient',
 	STOPS = 'stops',
-	STROKE = 'stroke',
 	STROKE_WIDTH = 'stroke-width',
 
 	// time methods, changed based on whether or not UTC is used

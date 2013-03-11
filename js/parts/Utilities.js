@@ -31,17 +31,19 @@ function merge() {
 			for (key in original) {
 				if (original.hasOwnProperty(key)) {
 					value = original[key];
-					
+
+					// An object is replacing a primitive
+					if (typeof copy !== 'object') {
+						copy = {};
+					}
+						
 					// Copy the contents of objects, but not arrays or DOM nodes
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
 							&& typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
-
+				
 					// Primitives and arrays are copied over directly
 					} else {
-						if (typeof copy !== 'object') { // When an object is replacing a primitive
-							copy = {};
-						}
 						copy[key] = original[key];
 					}
 				}

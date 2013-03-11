@@ -95,10 +95,8 @@ var UNDEFINED,
 	YEAR = 'year',
 
 	// constants for attributes
-	FILL = 'fill',
 	LINEAR_GRADIENT = 'linearGradient',
 	STOPS = 'stops',
-	STROKE = 'stroke',
 	STROKE_WIDTH = 'stroke-width',
 
 	// time methods, changed based on whether or not UTC is used
@@ -154,17 +152,19 @@ function merge() {
 			for (key in original) {
 				if (original.hasOwnProperty(key)) {
 					value = original[key];
-					
+
+					// An object is replacing a primitive
+					if (typeof copy !== 'object') {
+						copy = {};
+					}
+						
 					// Copy the contents of objects, but not arrays or DOM nodes
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
 							&& typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
-
+				
 					// Primitives and arrays are copied over directly
 					} else {
-						if (typeof copy !== 'object') { // When an object is replacing a primitive
-							copy = {};
-						}
 						copy[key] = original[key];
 					}
 				}
@@ -3369,55 +3369,51 @@ SVGRenderer.prototype = {
 			STYLE = 'style',
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
-		// prepare the attributes
-		/*jslint white: true*/
-		normalState = merge(hash(
-			STROKE_WIDTH, 1,
-			STROKE, '#CCCCCC',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
+		// Normal state - prepare the attributes
+		normalState = merge({
+			'stroke-width': 1,
+			stroke: '#CCCCCC',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
 					[0, '#FEFEFE'],
 					[1, '#F6F6F6']
 				]
-			),
-			'r', 2,
-			'padding', 5,
-			STYLE, hash(
-				'color', 'black'
-			)
-		), normalState);
-		/*jslint white: false*/
+			},
+			r: 2,
+			padding: 5,
+			style: {
+				color: 'black'
+			}
+		}, normalState);
 		normalStyle = normalState[STYLE];
 		delete normalState[STYLE];
 
-		/*jslint white: true*/
-		hoverState = merge(normalState, hash(
-			STROKE, '#68A',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
+		// Hover state
+		hoverState = merge(normalState, {
+			stroke: '#68A',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
 					[0, '#FFF'],
 					[1, '#ACF']
 				]
-			)
-		), hoverState);
-		/*jslint white: false*/
+			}
+		}, hoverState);
 		hoverStyle = hoverState[STYLE];
 		delete hoverState[STYLE];
 
-		/*jslint white: true*/
-		pressedState = merge(normalState, hash(
-			STROKE, '#68A',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
+		// Pressed state
+		pressedState = merge(normalState, {
+			stroke: '#68A',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
 					[0, '#9BD'],
 					[1, '#CDF']
 				]
-			)
-		), pressedState);
-		/*jslint white: false*/
+			}
+		}, pressedState);
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
