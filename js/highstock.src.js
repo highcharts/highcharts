@@ -1576,8 +1576,9 @@ var Color = function (input) {
 
 		if (stops) {
 			ret = merge(input);
+			ret.stops = [].concat(ret.stops);
 			each(stops, function (stop, i) {
-				ret.stops[i][1] = stop.get(format);
+				ret.stops[i] = [ret.stops[i][0], stop.get(format)];
 			});
 
 		// it's NaN if gradient colors on a column chart
@@ -1592,7 +1593,6 @@ var Color = function (input) {
 		} else {
 			ret = input;
 		}
-		
 		return ret;
 	}
 
@@ -15411,19 +15411,18 @@ var PieSeries = {
 
 			// draw the slice
 			if (graphic) {
-				graphic.animate(shapeArgs);
+				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
 				point.graphic = graphic = renderer.arc(shapeArgs)
 					.setRadialReference(series.center)
-					.attr(extend(
-						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE],
-						{ 'stroke-linejoin': 'round' }
-					))
-					//.add(point.group)
+					.attr(
+						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
+					)
+					.attr({ 'stroke-linejoin': 'round' })
+					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
 			}
-			graphic.attr(groupTranslation);
 
 			// detect point specific visibility
 			if (point.visible === false) {

@@ -407,19 +407,18 @@ var PieSeries = {
 
 			// draw the slice
 			if (graphic) {
-				graphic.animate(shapeArgs);
+				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
 				point.graphic = graphic = renderer.arc(shapeArgs)
 					.setRadialReference(series.center)
-					.attr(extend(
-						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE],
-						{ 'stroke-linejoin': 'round' }
-					))
-					//.add(point.group)
+					.attr(
+						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
+					)
+					.attr({ 'stroke-linejoin': 'round' })
+					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
 			}
-			graphic.attr(groupTranslation);
 
 			// detect point specific visibility
 			if (point.visible === false) {

@@ -203,33 +203,23 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
-			renderer = chart.renderer,
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop;
+			renderer = chart.renderer;
 
 		each(series.data, function (point) {
 			
-			var group = point.group,
-				graphic = point.graphic,
+			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs;
 
-			if (!group) { // Create the shapes
-				point.group = renderer.g('point').add(series.group).
-					translate(plotLeft, plotTop);
-					
+			if (!graphic) { // Create the shapes
 				point.graphic = renderer.path(shapeArgs).
 					attr({
 						fill: point.color,
 						stroke: options.borderColor,
 						'stroke-width': options.borderWidth
 					}).
-					add(point.group);
+					add(series.group);
 					
 			} else { // Update the shapes
-				group.animate({
-					translateX: plotLeft, 
-					translateY: plotTop
-				});
 				graphic.animate(shapeArgs);
 			}
 		});
