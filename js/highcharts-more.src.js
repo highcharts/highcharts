@@ -1974,7 +1974,7 @@ Axis.prototype.beforePadding = function () {
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
-	if (pick(this.options.min, this.userMin) === UNDEFINED && this.tickPositions) {
+	if (this.tickPositions) {
 		each(this.series, function (series) {
 
 			var seriesOptions = series.options,
@@ -2033,7 +2033,7 @@ Axis.prototype.beforePadding = function () {
 			}
 		});
 		
-		if (range > 0) {
+		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED) {
 			pxMax -= axisLength;
 			transA *= (axisLength + pxMin - pxMax) / axisLength;
 			this.min += pxMin / transA;
