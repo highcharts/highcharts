@@ -1,9 +1,3 @@
-<?php
-$product = $_GET['product'];
-
-if ($product == 'highcharts') $dir = 'highcharts';
-elseif ($product == 'highstock') $dir = 'stock';
-?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -54,6 +48,9 @@ elseif ($product == 'highstock') $dir = 'stock';
 		<style type="text/css">
 			* {
 				font-family: Arial, Verdana;
+			}
+
+			li, a, p, div, span {
 				font-size: 12px;
 			}
 			ul {
@@ -69,7 +66,10 @@ elseif ($product == 'highstock') $dir = 'stock';
 				text-decoration: none;
 			}
 			
-			
+			h2 {
+				border-bottom: 1px solid gray;
+				text-transform: uppercase;
+			}
 			li {
 				border: 1px solid white;
 				border-radius: 5px;
@@ -135,8 +135,6 @@ elseif ($product == 'highstock') $dir = 'stock';
 	<body>
 		
 	<div id="top-nav">
-		Product: <a href='?product=highcharts'>Highcharts</a> | <a href='?product=highstock'>Highstock</a>
-		<br/>
 		<button id="batch-compare">Batch compare</button>
 
 		<div>Show only differences above: <span id="slider-value">0</span></div>
@@ -146,14 +144,18 @@ elseif ($product == 'highstock') $dir = 'stock';
 
 	<div id="main-nav">
 	<?php
-	if (isset($dir)) {
+	$products = array('highcharts', 'stock');
+
+	$i = 1;
+	foreach ($products as $dir) {
 		if ($handle = opendir(dirname(__FILE__). '/' . $dir)) {
+
+			echo "<h2>$dir</h2>";
 			
-			$i = 1;
 			while (false !== ($file = readdir($handle))) {
 				if (preg_match('/^[a-z]+$/', $file)) {
 					echo "
-					<h4>$file</h4>
+					<h4>$dir/$file</h4>
 					<ul>
 					";
 				
