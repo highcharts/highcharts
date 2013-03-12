@@ -259,7 +259,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	/**
 	 * Disable animation
 	 */
-	animate: function () {}
+	animate: noop
 
 });
 

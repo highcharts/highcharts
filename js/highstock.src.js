@@ -9505,14 +9505,27 @@ Pointer.prototype = {
 			inverted = chart.inverted,
 			chartPosition,
 			plotX,
-			plotY;
+			plotY,
+			clickedTracker,
+			element;
 		
 		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
-			// Detect clicks on trackers or tracker groups, #783
-			if (hoverPoint && (attr(e.target, 'isTracker') || attr(e.target.parentNode, 'isTracker'))) {
+			// Detect clicks on trackers or tracker groups, #783, #1583
+			if (hoverPoint) {
+				element = e.target;
+				while (!clickedTracker && element && element !== chart.container) {
+					if (attr(element, 'isTracker')) {
+						clickedTracker = true;
+					}
+					element = element.parentNode;
+				}
+			}
+
+			// On tracker click, fire the series and point events
+			if (clickedTracker) {
 				chartPosition = this.chartPosition;
 				plotX = hoverPoint.plotX;
 				plotY = hoverPoint.plotY;
@@ -9533,6 +9546,7 @@ Pointer.prototype = {
 				// the point click event
 				hoverPoint.firePointEvent('click', e);
 
+			// When clicking outside a tracker, fire a chart event
 			} else {
 				extend(e, this.getCoordinates(e));
 
@@ -17218,7 +17232,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	/**
 	 * Disable animation
 	 */
-	animate: function () {}
+	animate: noop
 
 });
 
