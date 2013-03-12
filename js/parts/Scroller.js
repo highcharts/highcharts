@@ -528,7 +528,7 @@ Scroller.prototype = {
 			removeEvent.apply(null, args);
 		});
 		this._events = UNDEFINED;
-		if (this.navigatorEnabled) {
+		if (this.navigatorEnabled && this.baseSeries) {
 			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
 		}
 	},

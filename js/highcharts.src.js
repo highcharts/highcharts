@@ -6987,7 +6987,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
+			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -15156,6 +15156,9 @@ var ColumnSeries = extendClass(Series, {
 				}
 			},
 			onMouseOut = function () {
+				// This looks promising: 
+				// if (!series.options.stickyTracking && attr(e.relatedTarget.parentNode, 'class') !== PREFIX + 'tooltip') {
+				// Check with graph tracker as well as oldIE
 				if (!series.options.stickyTracking) {
 					series.onMouseOut();
 				}

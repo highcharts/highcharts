@@ -136,6 +136,7 @@
             <file name="Globals.js"/>
             <file name="Utilities.js"/>
             <file name="PathAnimation.js"/>
+            <file name="JQueryAdapter.js"/>
             <file name="Adapters.js"/>
             <file name="Options.js"/>
             <file name="Color.js"/>

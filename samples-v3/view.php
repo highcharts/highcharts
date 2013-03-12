@@ -91,7 +91,7 @@ function getResources() {
 						}
 
 						$(contentDoc.body).animate({
-							scrollTop: $(li).offset().top - 70
+							scrollTop: $(li).offset().top - 300
 						},'slow');
 
 						contentDoc.currentLi = li;
