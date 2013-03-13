@@ -184,10 +184,6 @@ SVGElement.prototype = {
 							value = value.join(',');
 						}
 
-					// special
-					} else if (key === 'isTracker') {
-						wrapper[key] = value;
-
 					// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
 					// is unable to cast them. Test again with final IE9.
 					} else if (key === 'width') {
@@ -291,13 +287,16 @@ SVGElement.prototype = {
 		return ret;
 	},
 
-	/* 
-	// Proposal for class name handling: 
+	 
+	/**
+	 * Add a class name to an element
+	 */
 	addClass: function (className) {
 		return this.attr({
 			'class': this.attr('class') + ' ' + className
 		});
 	},
+	/* hasClass and removeClass are not (yet) needed
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},

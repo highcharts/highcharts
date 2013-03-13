@@ -253,6 +253,7 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	drawTracker: function () {
 		var series = this,
+			pointer = series.chart.pointer,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
@@ -267,11 +268,6 @@ var ColumnSeries = extendClass(Series, {
 				}
 				if (point !== UNDEFINED) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
-				}
-			},
-			onMouseOut = function () {
-				if (!series.options.stickyTracking) {
-					series.onMouseOut();
 				}
 			};
 
@@ -290,11 +286,9 @@ var ColumnSeries = extendClass(Series, {
 			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
-						.attr({
-							isTracker: true
-						})
+						.addClass(PREFIX + 'tracker')
 						.on('mouseover', onMouseOver)
-						.on('mouseout', onMouseOut)
+						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);

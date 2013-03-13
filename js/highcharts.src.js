@@ -1760,6 +1760,7 @@ defaultOptions = {
 		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
+			cursor: 'default',
 			fontSize: '12px',
 			padding: '8px', // docs
 			whiteSpace: 'nowrap'
@@ -2165,10 +2166,6 @@ SVGElement.prototype = {
 							value = value.join(',');
 						}
 
-					// special
-					} else if (key === 'isTracker') {
-						wrapper[key] = value;
-
 					// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
 					// is unable to cast them. Test again with final IE9.
 					} else if (key === 'width') {
@@ -2272,13 +2269,16 @@ SVGElement.prototype = {
 		return ret;
 	},
 
-	/* 
-	// Proposal for class name handling: 
+	 
+	/**
+	 * Add a class name to an element
+	 */
 	addClass: function (className) {
 		return this.attr({
 			'class': this.attr('class') + ' ' + className
 		});
 	},
+	/* hasClass and removeClass are not (yet) needed
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
@@ -9198,7 +9198,7 @@ Pointer.prototype = {
 
 		// On touch devices, only proceed to trigger click if a handler is defined
 		if (e.type === 'touchstart') {
-			if (attr(e.target, 'isTracker')) {
+			if (self.inClass(e.target, PREFIX + 'tracker')) {
 				if (!chart.runTrackerClick) {
 					e.preventDefault();
 				}
@@ -9497,6 +9497,33 @@ Pointer.prototype = {
 		}
 	},
 
+	/**
+	 * Utility to detect whether an element has, or has a parent with, a specific
+	 * class name. Used on detection of tracker objects and on deciding whether
+	 * hovering the tooltip should cause the active series to mouse out.
+	 */
+	inClass: function (element, className) {
+		var elemClassName;
+		while (element) {
+			elemClassName = attr(element, 'class');
+			if (elemClassName) {
+				if (elemClassName.indexOf(className) !== -1) {
+					return true;
+				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+					return false;
+				}
+			}
+			element = element.parentNode;
+		}		
+	},
+
+	onTrackerMouseOut: function (e) {
+		var series = this.chart.hoverSeries;
+		if (series && !series.options.stickyTracking && !this.inClass(e.toElement || e.relatedTarget, PREFIX + 'tooltip')) {
+			series.onMouseOut();
+		}
+	},
+
 	onContainerClick: function (e) {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
@@ -9505,27 +9532,15 @@ Pointer.prototype = {
 			inverted = chart.inverted,
 			chartPosition,
 			plotX,
-			plotY,
-			clickedTracker,
-			element;
+			plotY;
 		
 		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
-			// Detect clicks on trackers or tracker groups, #783, #1583
-			if (hoverPoint) {
-				element = e.target;
-				while (!clickedTracker && element && element !== chart.container) {
-					if (attr(element, 'isTracker')) {
-						clickedTracker = true;
-					}
-					element = element.parentNode;
-				}
-			}
-
-			// On tracker click, fire the series and point events
-			if (clickedTracker) {
+			
+			// On tracker click, fire the series and point events. #783, #1583
+			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
 				chartPosition = this.chartPosition;
 				plotX = hoverPoint.plotX;
 				plotY = hoverPoint.plotY;
@@ -14485,6 +14500,7 @@ Series.prototype = {
 			trackerPath = [].concat(trackByArea ? series.areaPath : series.graphPath),
 			trackerPathLength = trackerPath.length,
 			chart = series.chart,
+			pointer = chart.pointer,
 			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
@@ -14496,11 +14512,6 @@ Series.prototype = {
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
 					series.onMouseOver();
-				}
-			},
-			onMouseOut = function () {
-				if (!options.stickyTracking) {
-					series.onMouseOut();
 				}
 			};
 
@@ -14535,7 +14546,6 @@ Series.prototype = {
 				
 			series.tracker = tracker = renderer.path(trackerPath)
 				.attr({
-					isTracker: true,
 					'class': PREFIX + 'tracker',
 					'stroke-linejoin': 'round', // #1225
 					visibility: series.visible ? VISIBLE : HIDDEN,
@@ -14544,8 +14554,9 @@ Series.prototype = {
 					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
 					zIndex: 2
 				})
+				.addClass(PREFIX + 'tracker')
 				.on('mouseover', onMouseOver)
-				.on('mouseout', onMouseOut)
+				.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 				.css(css)
 				.add(series.markerGroup);
 				
@@ -15153,6 +15164,7 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	drawTracker: function () {
 		var series = this,
+			pointer = series.chart.pointer,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
@@ -15167,14 +15179,6 @@ var ColumnSeries = extendClass(Series, {
 				}
 				if (point !== UNDEFINED) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
-				}
-			},
-			onMouseOut = function () {
-				// This looks promising: 
-				// if (!series.options.stickyTracking && attr(e.relatedTarget.parentNode, 'class') !== PREFIX + 'tooltip') {
-				// Check with graph tracker as well as oldIE
-				if (!series.options.stickyTracking) {
-					series.onMouseOut();
 				}
 			};
 
@@ -15193,11 +15197,9 @@ var ColumnSeries = extendClass(Series, {
 			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
-						.attr({
-							isTracker: true
-						})
+						.addClass(PREFIX + 'tracker')
 						.on('mouseover', onMouseOver)
-						.on('mouseout', onMouseOut)
+						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);

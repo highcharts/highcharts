@@ -351,7 +351,7 @@ Pointer.prototype = {
 
 		// On touch devices, only proceed to trigger click if a handler is defined
 		if (e.type === 'touchstart') {
-			if (attr(e.target, 'isTracker')) {
+			if (self.inClass(e.target, PREFIX + 'tracker')) {
 				if (!chart.runTrackerClick) {
 					e.preventDefault();
 				}
@@ -650,6 +650,33 @@ Pointer.prototype = {
 		}
 	},
 
+	/**
+	 * Utility to detect whether an element has, or has a parent with, a specific
+	 * class name. Used on detection of tracker objects and on deciding whether
+	 * hovering the tooltip should cause the active series to mouse out.
+	 */
+	inClass: function (element, className) {
+		var elemClassName;
+		while (element) {
+			elemClassName = attr(element, 'class');
+			if (elemClassName) {
+				if (elemClassName.indexOf(className) !== -1) {
+					return true;
+				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+					return false;
+				}
+			}
+			element = element.parentNode;
+		}		
+	},
+
+	onTrackerMouseOut: function (e) {
+		var series = this.chart.hoverSeries;
+		if (series && !series.options.stickyTracking && !this.inClass(e.toElement || e.relatedTarget, PREFIX + 'tooltip')) {
+			series.onMouseOut();
+		}
+	},
+
 	onContainerClick: function (e) {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
@@ -658,27 +685,15 @@ Pointer.prototype = {
 			inverted = chart.inverted,
 			chartPosition,
 			plotX,
-			plotY,
-			clickedTracker,
-			element;
+			plotY;
 		
 		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
-			// Detect clicks on trackers or tracker groups, #783, #1583
-			if (hoverPoint) {
-				element = e.target;
-				while (!clickedTracker && element && element !== chart.container) {
-					if (attr(element, 'isTracker')) {
-						clickedTracker = true;
-					}
-					element = element.parentNode;
-				}
-			}
-
-			// On tracker click, fire the series and point events
-			if (clickedTracker) {
+			
+			// On tracker click, fire the series and point events. #783, #1583
+			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
 				chartPosition = this.chartPosition;
 				plotX = hoverPoint.plotX;
 				plotY = hoverPoint.plotY;

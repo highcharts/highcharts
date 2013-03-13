@@ -300,6 +300,7 @@ defaultOptions = {
 		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
+			cursor: 'default',
 			fontSize: '12px',
 			padding: '8px', // docs
 			whiteSpace: 'nowrap'
