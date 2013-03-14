@@ -1738,6 +1738,7 @@ defaultOptions = {
 
 	tooltip: {
 		enabled: true,
+		animation: hasSVG, // docs
 		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
 		borderWidth: 1, // docs
@@ -2274,9 +2275,8 @@ SVGElement.prototype = {
 	 * Add a class name to an element
 	 */
 	addClass: function (className) {
-		return this.attr({
-			'class': this.attr('class') + ' ' + className
-		});
+		attr(this.element, 'class', attr(this.element, 'class') + ' ' + className);
+		return this;
 	},
 	/* hasClass and removeClass are not (yet) needed
 	hasClass: function (className) {
@@ -4484,21 +4484,20 @@ Highcharts.VMLElement = VMLElement = {
 	init: function (renderer, nodeName) {
 		var wrapper = this,
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
-			style = ['position: ', ABSOLUTE, ';'];
+			style = ['position: ', ABSOLUTE, ';'],
+			isDiv = nodeName === DIV;
 
 		// divs and shapes need size
-		if (nodeName === 'shape' || nodeName === DIV) {
+		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
-		if (docMode8) {
-			style.push('visibility: ', nodeName === DIV ? HIDDEN : VISIBLE);
-		}
-
+		style.push('visibility: ', isDiv ? HIDDEN : VISIBLE);
+		
 		markup.push(' style="', style.join(''), '"/>');
 
 		// create element with default attributes and style
 		if (nodeName) {
-			markup = nodeName === DIV || nodeName === 'span' || nodeName === 'img' ?
+			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
 			wrapper.element = createElement(markup);
@@ -4538,7 +4537,7 @@ Highcharts.VMLElement = VMLElement = {
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
 			wrapper.updateTransform();
 		}
-
+		
 		// fire an event for internal hooks
 		fireEvent(wrapper, 'add');
 
@@ -4712,9 +4711,9 @@ Highcharts.VMLElement = VMLElement = {
 						skipAttr = true;						
 
 					// class name
-					} else if (key === 'class') {
+					} else if (key === 'class' && nodeName === 'DIV') {
 						// IE8 Standards mode has problems retrieving the className
-						element.className = value;
+						element.className = value;						
 
 					// stroke
 					} else if (key === 'stroke') {
@@ -5084,7 +5083,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						height: bottom + PX
 					});
 				}
-				
 				return ret;
 			},
 
@@ -14244,7 +14242,9 @@ Series.prototype = {
 			group,
 			options = series.options,
 			animation = options.animation,
-			doAnimation = animation && !!series.animate,
+			doAnimation = animation && !!series.animate && 
+				chart.renderer.svg, // this animation doesn't work in IE8 quirks when the group div is hidden,
+				// and looks bad in other oldIE // docs
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,

@@ -278,6 +278,7 @@ defaultOptions = {
 
 	tooltip: {
 		enabled: true,
+		animation: hasSVG, // docs
 		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
 		borderWidth: 1, // docs

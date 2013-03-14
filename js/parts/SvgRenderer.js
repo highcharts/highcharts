@@ -292,9 +292,8 @@ SVGElement.prototype = {
 	 * Add a class name to an element
 	 */
 	addClass: function (className) {
-		return this.attr({
-			'class': this.attr('class') + ' ' + className
-		});
+		attr(this.element, 'class', attr(this.element, 'class') + ' ' + className);
+		return this;
 	},
 	/* hasClass and removeClass are not (yet) needed
 	hasClass: function (className) {

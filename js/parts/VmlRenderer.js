@@ -29,21 +29,20 @@ Highcharts.VMLElement = VMLElement = {
 	init: function (renderer, nodeName) {
 		var wrapper = this,
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
-			style = ['position: ', ABSOLUTE, ';'];
+			style = ['position: ', ABSOLUTE, ';'],
+			isDiv = nodeName === DIV;
 
 		// divs and shapes need size
-		if (nodeName === 'shape' || nodeName === DIV) {
+		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
-		if (docMode8) {
-			style.push('visibility: ', nodeName === DIV ? HIDDEN : VISIBLE);
-		}
-
+		style.push('visibility: ', isDiv ? HIDDEN : VISIBLE);
+		
 		markup.push(' style="', style.join(''), '"/>');
 
 		// create element with default attributes and style
 		if (nodeName) {
-			markup = nodeName === DIV || nodeName === 'span' || nodeName === 'img' ?
+			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
 			wrapper.element = createElement(markup);
@@ -83,7 +82,7 @@ Highcharts.VMLElement = VMLElement = {
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
 			wrapper.updateTransform();
 		}
-
+		
 		// fire an event for internal hooks
 		fireEvent(wrapper, 'add');
 
@@ -257,9 +256,9 @@ Highcharts.VMLElement = VMLElement = {
 						skipAttr = true;						
 
 					// class name
-					} else if (key === 'class') {
+					} else if (key === 'class' && nodeName === 'DIV') {
 						// IE8 Standards mode has problems retrieving the className
-						element.className = value;
+						element.className = value;						
 
 					// stroke
 					} else if (key === 'stroke') {
@@ -629,7 +628,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						height: bottom + PX
 					});
 				}
-				
 				return ret;
 			},
 

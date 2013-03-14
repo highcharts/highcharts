@@ -2398,7 +2398,9 @@ Series.prototype = {
 			group,
 			options = series.options,
 			animation = options.animation,
-			doAnimation = animation && !!series.animate,
+			doAnimation = animation && !!series.animate && 
+				chart.renderer.svg, // this animation doesn't work in IE8 quirks when the group div is hidden,
+				// and looks bad in other oldIE // docs
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
