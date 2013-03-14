@@ -5240,7 +5240,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		} else {
 			var propNodes = elem.getElementsByTagName(prop); // 'stroke' or 'fill' node
 			if (propNodes.length) {
-				elem.removeChild(propNodes[0]);
+				propNodes[0].opacity = 1;
+				propNodes[0].type = 'solid';
 			}
 			ret = color;
 		}
