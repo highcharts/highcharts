@@ -11,6 +11,7 @@ extend(defaultOptions, {
 			height: 16,
 			padding: 1,
 			r: 0,
+			stroke: '#68A',
 			zIndex: 7 // #484, #852
 		//	states: {
 		//		hover: {},

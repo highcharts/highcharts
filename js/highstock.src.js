@@ -6690,7 +6690,8 @@ Axis.prototype = {
      * Remove the axis from the chart
      */
 	remove: function (redraw) {
-		var chart = this.chart;
+		var chart = this.chart,
+			key = this.xOrY + 'Axis'; // xAxis or yAxis
 
 		// Remove associated series
 		each(this.series, function (series) {
@@ -6699,7 +6700,8 @@ Axis.prototype = {
 
 		// Remove the axis
 		erase(chart.axes, this);
-		erase(chart[this.xOrY + 'Axis'], this);
+		erase(chart[key], this);
+		chart.options[key].splice(this.options.index, 1);
 		this.destroy();
 		chart.isDirtyBox = true;
 
@@ -18267,6 +18269,7 @@ extend(defaultOptions, {
 			height: 16,
 			padding: 1,
 			r: 0,
+			stroke: '#68A',
 			zIndex: 7 // #484, #852
 		//	states: {
 		//		hover: {},
