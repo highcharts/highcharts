@@ -1015,19 +1015,6 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Empty a group element
-	 */
-	empty: function () {
-		var element = this.element,
-			childNodes = element.childNodes,
-			i = childNodes.length;
-
-		while (i--) {
-			element.removeChild(childNodes[i]);
-		}
-	},
-
-	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
 	 * @param {Boolean|Object} shadowOptions
 	 */

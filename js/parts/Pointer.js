@@ -818,7 +818,7 @@ Pointer.prototype = {
 		// Release all DOM events
 		each(pointer._events, function (eventConfig) {	
 			if (eventConfig[1].indexOf('on') === 0) {
-				delete eventConfig[0][eventConfig[1]];
+				eventConfig[0][eventConfig[1]] = null; // delete breaks oldIE
 			} else {		
 				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
 			}

@@ -470,7 +470,7 @@ var PieSeries = {
 			},
 			sortByAngle = function (points, sign) {
 				points.sort(function (a, b) {
-					return (b.angle - a.angle) * sign;
+					return a.angle !== undefined && (b.angle - a.angle) * sign;
 				});
 			};
 

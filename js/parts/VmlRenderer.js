@@ -220,6 +220,13 @@ Highcharts.VMLElement = VMLElement = {
 						// This works around #61 and #586							
 						if (nodeName === 'DIV') {
 							value = value === HIDDEN ? '-999em' : 0;
+							
+							// In order to redraw, IE7 needs the div to be visible when tucked away
+							// outside the viewport. So the visibility is actually opposite of 
+							// the expected value. This applies to the tooltip only. 
+							if (!docMode8) {
+								elemStyle[key] = value ? HIDDEN : VISIBLE;
+							}
 							key = 'top';
 						}
 						elemStyle[key] = value;	
@@ -398,21 +405,6 @@ Highcharts.VMLElement = VMLElement = {
 		}
 
 		return SVGElement.prototype.destroy.apply(this);
-	},
-
-	/**
-	 * Remove all child nodes of a group, except the v:group element
-	 */
-	empty: function () {
-		var element = this.element,
-			childNodes = element.childNodes,
-			i = childNodes.length,
-			node;
-
-		while (i--) {
-			node = childNodes[i];
-			node.parentNode.removeChild(node);
-		}
 	},
 
 	/**
@@ -804,9 +796,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 
 		} else {
-			var strokeNodes = elem.getElementsByTagName(prop);
-			if (strokeNodes.length) {
-				strokeNodes[0].opacity = 1;
+			var propNodes = elem.getElementsByTagName(prop); // 'stroke' or 'fill' node
+			if (propNodes.length) {
+				elem.removeChild(propNodes[0]);
 			}
 			ret = color;
 		}
