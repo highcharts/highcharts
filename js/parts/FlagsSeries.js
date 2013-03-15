@@ -247,13 +247,15 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 		// put each point in front on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis
-		each(this.points, function (point) {
-			if (point.graphic) {
-				addEvent(point.graphic.element, 'mouseover', function () {
-					point.graphic.toFront();
-				});
-			}
-		});
+		if (hasSVG) { // Known issue: VML browsers don't bubble up
+			each(this.points, function (point) {
+				if (point.graphic) {
+					addEvent(point.graphic.element, 'mouseover', function () {
+						point.graphic.toFront();
+					});
+				}
+			});
+		}
 	},
 
 	/**

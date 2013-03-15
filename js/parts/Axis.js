@@ -1915,7 +1915,9 @@ Axis.prototype = {
 			for (pos in coll) {
 
 				if (!coll[pos].isActive) {
+					// Render to zero opacity
 					coll[pos].render(pos, false, 0);
+					coll[pos].isActive = false;
 					forDestruction.push(pos);
 				}
 			}
