@@ -229,6 +229,10 @@
                     }
                 });
             }, Math.max(this.chart.options.drilldown.animation.duration - 50, 0));
+
+            // Reset
+            console.log(234)
+            this.animate = noop;
         }
 
     };

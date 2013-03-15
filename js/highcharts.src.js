@@ -2859,12 +2859,13 @@ SVGElement.prototype = {
 	},
 	
 	fadeOut: function (duration) {
-		this.animate({
+		var elemWrapper = this;
+		elemWrapper.animate({
 			opacity: 0
 		}, {
 			duration: duration || 150,
 			complete: function () {
-				this.hide();
+				elemWrapper.hide();
 			}
 		});
 	},
@@ -10846,8 +10847,9 @@ Chart.prototype = {
 	 * Zoom out to 1:1
 	 */
 	zoomOut: function () {
-		fireEvent(this, 'selection', { resetSelection: true }, function (e) { 
-			e.target.zoom();
+		var chart = this;
+		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
+			chart.zoom();
 		});
 	},
 

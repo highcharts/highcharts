@@ -876,12 +876,13 @@ SVGElement.prototype = {
 	},
 	
 	fadeOut: function (duration) {
-		this.animate({
+		var elemWrapper = this;
+		elemWrapper.animate({
 			opacity: 0
 		}, {
 			duration: duration || 150,
 			complete: function () {
-				this.hide();
+				elemWrapper.hide();
 			}
 		});
 	},
