@@ -2041,6 +2041,7 @@ SVGRenderer.prototype = {
 				delete this.bBox;
 			}
 			element.innerHTML = value;
+			wrapper[key] = value;
 			return false;
 		};
 
