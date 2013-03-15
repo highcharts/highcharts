@@ -1804,6 +1804,14 @@ Axis.prototype = {
 		// If the series has data draw the ticks. Else only the line and title
 		if (hasData || isLinked) {
 
+			// Mark all elements inActive before we go over and mark the active ones
+			each([ticks, minorTicks, alternateBands], function (coll) {
+				var pos;
+				for (pos in coll) {
+					coll[pos].isActive = false;
+				}
+			});
+
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
 				each(axis.getMinorTickPositions(), function (pos) {
@@ -1894,7 +1902,9 @@ Axis.prototype = {
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
-						if (coll[forDestruction[i]]) { // when resizing rapidly, the same items may be destroyed in different timeouts
+						// When resizing rapidly, the same items may be destroyed in different timeouts,
+						// or the may be reactivated
+						if (coll[forDestruction[i]] && !coll[forDestruction[i]].isActive) {
 							coll[forDestruction[i]].destroy();
 							delete coll[forDestruction[i]];
 						}
@@ -1904,14 +1914,7 @@ Axis.prototype = {
 
 			for (pos in coll) {
 
-				// These ticks are still active, now reset the isActive flag for the 
-				// next run.
-				if (coll[pos].isActive) {
-					coll[pos].isActive = false;
-					
-				// These ticks have not been marked active in the current run. Fade them
-				// out and mark them for destruction.
-				} else {
+				if (!coll[pos].isActive) {
 					coll[pos].render(pos, false, 0);
 					forDestruction.push(pos);
 				}
