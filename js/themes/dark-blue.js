@@ -132,26 +132,17 @@ Highcharts.theme = {
 
 	navigation: {
 		buttonOptions: {
-			backgroundColor: {
-				linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-				stops: [
-					[0.4, '#606060'],
-					[0.6, '#333333']
-				]
-			},
-			borderColor: '#000000',
-			symbolStroke: '#C0C0C0',
-			hoverSymbolStroke: '#FFFFFF'
-		}
-	},
-
-	exporting: {
-		buttons: {
-			exportButton: {
-				symbolFill: '#55BE3B'
-			},
-			printButton: {
-				symbolFill: '#7797BE'
+			symbolStroke: '#DDDDDD',
+			hoverSymbolStroke: '#FFFFFF',
+			theme: {
+				fill: {
+					linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+					stops: [
+						[0.4, '#606060'],
+						[0.6, '#333333']
+					]
+				},
+				stroke: '#000000'
 			}
 		}
 	},

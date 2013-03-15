@@ -88,6 +88,14 @@ Highcharts.theme = {
 		style: {
 			color: '#99b'
 		}
+	},
+
+	navigation: {
+		buttonOptions: {
+			theme: {
+				stroke: '#CCCCCC'
+			}
+		}
 	}
 };
 
