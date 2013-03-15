@@ -1280,9 +1280,6 @@ SVGRenderer.prototype = {
 					// add attributes
 					attr(tspan, attributes);
 
-					// append it
-					textNode.appendChild(tspan);
-
 					// first span on subsequent line, add the line height
 					if (!spanNo && lineNo) {
 
@@ -1306,6 +1303,9 @@ SVGRenderer.prototype = {
 							isWebKit && tspan.offsetHeight
 						);
 					}
+
+					// Append it
+					textNode.appendChild(tspan);
 
 					spanNo++;
 

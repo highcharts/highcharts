@@ -3263,9 +3263,6 @@ SVGRenderer.prototype = {
 					// add attributes
 					attr(tspan, attributes);
 
-					// append it
-					textNode.appendChild(tspan);
-
 					// first span on subsequent line, add the line height
 					if (!spanNo && lineNo) {
 
@@ -3289,6 +3286,9 @@ SVGRenderer.prototype = {
 							isWebKit && tspan.offsetHeight
 						);
 					}
+
+					// Append it
+					textNode.appendChild(tspan);
 
 					spanNo++;
 
@@ -14228,7 +14228,7 @@ Series.prototype = {
 			options = series.options,
 			animation = options.animation,
 			doAnimation = animation && !!series.animate && 
-				chart.renderer.svg, // this animation doesn't work in IE8 quirks when the group div is hidden,
+				chart.renderer.isSVG, // this animation doesn't work in IE8 quirks when the group div is hidden,
 				// and looks bad in other oldIE // docs
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
