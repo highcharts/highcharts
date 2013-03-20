@@ -1,8 +1,13 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.StockChart({
 	    
 	    chart: {
+	        renderTo: 'container',
 	        ignoreHiddenSeries: false 
+	    },
+	    
+	    navigator: {
+	    	top: 295
 	    },
 	    
 	    rangeSelector: {

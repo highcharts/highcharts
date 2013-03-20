@@ -374,7 +374,7 @@ Tick.prototype = {
 			}
 
 			// Set the new position, and show or hide
-			if (show) {
+			if (show && !isNaN(xy.y)) {
 				xy.opacity = opacity;
 				label[tick.isNew ? 'attr' : 'animate'](xy);
 				tick.isNew = false;

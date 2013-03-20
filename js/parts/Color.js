@@ -50,8 +50,9 @@ var Color = function (input) {
 
 		if (stops) {
 			ret = merge(input);
+			ret.stops = [].concat(ret.stops);
 			each(stops, function (stop, i) {
-				ret.stops[i][1] = stop.get(format);
+				ret.stops[i] = [ret.stops[i][0], stop.get(format)];
 			});
 
 		// it's NaN if gradient colors on a column chart
@@ -66,7 +67,6 @@ var Color = function (input) {
 		} else {
 			ret = input;
 		}
-		
 		return ret;
 	}
 

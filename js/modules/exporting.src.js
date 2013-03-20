@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
- * (c) 2010-2011 Torstein Hønsi
+ * (c) 2010-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -81,8 +81,8 @@ defaultOptions.navigation = {
 		buttonSpacing: 3, 
 		height: 22,
 		theme: {
-			fill: 'none',
-			stroke: 'white'
+			fill: 'white', // capture hover
+			stroke: 'none'
 		},
 		verticalAlign: 'top',
 		width: 24
@@ -237,6 +237,7 @@ extend(Chart.prototype, {
 
 		// override some options
 		extend(options.chart, {
+			animation: false,
 			renderTo: sandbox,
 			forExport: true,
 			width: sourceWidth, // docs,
@@ -290,7 +291,6 @@ extend(Chart.prototype, {
 			.replace(/isShadow="[^"]+"/g, '')
 			.replace(/symbolName="[^"]+"/g, '')
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
-			.replace(/isTracker="[^"]+"/g, '')
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
 			.replace(/ href=/g, ' xlink:href=')
@@ -339,6 +339,7 @@ extend(Chart.prototype, {
 		
 		var chart = this,
 			svg = chart.getSVG(merge(
+				{ chart: { borderRadius: 0 } }, // docs: defaults to 0 for exported charts
 				chart.options.exporting.chartOptions, // docs
 				chartOptions, 
 				{
@@ -356,7 +357,7 @@ extend(Chart.prototype, {
 		Highcharts.post(options.url, {
 			filename: options.filename || 'chart',
 			type: options.type,
-			width: options.width,
+			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
 			scale: options.scale || 2,
 			svg: svg
 		});
@@ -637,9 +638,9 @@ extend(Chart.prototype, {
 	/**
 	 * Destroy the buttons.
 	 */
-	destroyExport: function () {
-		var i,
-			chart = this,
+	destroyExport: function (e) {
+		var chart = e.target,
+			i,
 			elem;
 
 		// Destroy the extra buttons added

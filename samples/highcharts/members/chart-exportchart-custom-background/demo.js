@@ -1,7 +1,8 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         
         chart: {
+            renderTo: 'container',
             backgroundColor: {
                 linearGradient: [0, 0, 0, 300],
                 stops: [

@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'spline'
             },
             title: {
@@ -107,7 +110,15 @@ $(function () {
                         }
                     },
                     marker: {
-                        enabled: false
+                        enabled: false,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                symbol: 'circle',
+                                radius: 5,
+                                lineWidth: 1
+                            }
+                        }
                     },
                     pointInterval: 3600000, // one hour
                     pointStart: Date.UTC(2009, 9, 6, 0, 0, 0)
@@ -137,3 +148,4 @@ $(function () {
         });
     });
     
+});

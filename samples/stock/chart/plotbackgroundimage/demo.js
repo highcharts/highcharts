@@ -1,7 +1,8 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.StockChart({
 	    
 	    chart: {
+	        renderTo: 'container',
 	        plotBackgroundImage: 'http://www.highcharts.com/demo/gfx/skies.jpg'
 	    },
 	    

@@ -2,8 +2,9 @@ $(function () {
     var $report = $('#report');
     
     // create the chart
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         chart: {
+            renderTo: 'container',
             events: {
                 selection: function(event) {
                     if (event.xAxis) {

@@ -29,8 +29,9 @@ $(function() {
     // create the chart when all data is loaded
     function createChart() {
 
-        $('#container').highcharts('StockChart', {
+        chart = new Highcharts.StockChart({
             chart: {
+                renderTo: 'container'
             },
 
             rangeSelector: {

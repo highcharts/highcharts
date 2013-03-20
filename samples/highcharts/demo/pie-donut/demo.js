@@ -1,4 +1,6 @@
 $(function () {
+    var chart;
+    $(document).ready(function() {
     
         var colors = Highcharts.getOptions().colors,
             categories = ['MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera'],
@@ -77,8 +79,9 @@ $(function () {
         }
     
         // Create the chart
-        $('#container').highcharts({
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'pie'
             },
             title: {
@@ -122,3 +125,4 @@ $(function () {
         });
     });
     
+});

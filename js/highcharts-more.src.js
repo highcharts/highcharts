@@ -2,15 +2,15 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v2.3.5 (2012-12-19)
+ * @license Highcharts JS v3.0Beta (2013-02-21)
  *
- * (c) 2009-2011 Torstein Hønsi
+ * (c) 2009-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
 
 // JSLint options:
-/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
+/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts, UNDEFINED) {
 var arrayMin = Highcharts.arrayMin,
@@ -508,7 +508,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		if (!chart.panes) {
 			chart.panes = [];
 		}
-		this.pane = chart.panes[paneIndex] = pane = new Pane(
+		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
 			splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
@@ -645,8 +645,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		xHigh: 0,
 		yLow: 0,
 		yHigh: 0	
-	},
-	shadow: false
+	}
 });
 
 /**
@@ -845,14 +844,15 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 			shapeArgs.y = plotHigh;
 			shapeArgs.height = point.plotY - plotHigh;
 			
-			point.trackerArgs = shapeArgs;
 		});
 	},
+	trackerGroups: ['group', 'dataLabels'],
 	drawGraph: noop,
 	pointAttrToOptions: colProto.pointAttrToOptions,
 	drawPoints: colProto.drawPoints,
 	drawTracker: colProto.drawTracker,
-	animate: colProto.animate
+	animate: colProto.animate,
+	getColumnMetrics: colProto.getColumnMetrics
 });/* 
  * The GaugeSeries class
  */
@@ -920,17 +920,8 @@ var GaugeSeries = {
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true, 
-	
-	/* *
-	 * Extend the bindAxes method by adding radial features to the axes
-	 * /
-	_bindAxes: function () {
-		Series.prototype.bindAxes.call(this);
-		
-		extend(this.xAxis, gaugeXAxisMixin);
-		extend(this.yAxis, radialAxisMixin);
-		this.yAxis.onBind();
-	},*/
+	drawGraph: noop,
+	trackerGroups: ['group', 'dataLabels'],
 	
 	/**
 	 * Calculate paths etc
@@ -1039,27 +1030,29 @@ var GaugeSeries = {
 	/**
 	 * Animate the arrow up from startAngle
 	 */
-	animate: function () {
+	animate: function (init) {
 		var series = this;
 
-		each(series.points, function (point) {
-			var graphic = point.graphic;
+		if (!init) {
+			each(series.points, function (point) {
+				var graphic = point.graphic;
 
-			if (graphic) {
-				// start value
-				graphic.attr({
-					rotation: series.yAxis.startAngleRad * 180 / Math.PI
-				});
+				if (graphic) {
+					// start value
+					graphic.attr({
+						rotation: series.yAxis.startAngleRad * 180 / Math.PI
+					});
 
-				// animate
-				graphic.animate({
-					rotation: point.shapeArgs.rotation
-				}, series.options.animation);
-			}
-		});
+					// animate
+					graphic.animate({
+						rotation: point.shapeArgs.rotation
+					}, series.options.animation);
+				}
+			});
 
-		// delete this function to allow it only once
-		series.animate = null;
+			// delete this function to allow it only once
+			series.animate = null;
+		}
 	},
 	
 	render: function () {
@@ -1128,10 +1121,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	},
 	
 	/**
-	 * Disable data labels and animation for box plot
+	 * Disable data labels for box plot
 	 */
 	drawDataLabels: noop,
-	animate: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1183,6 +1175,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			right,
 			halfWidth,
 			shapeArgs,
+			color,
 			doQuartiles = series.doQuartiles !== false, // error bar inherits this series type but doesn't do quartiles
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
@@ -1194,6 +1187,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			stemAttr = {};
 			whiskersAttr = {};
 			medianAttr = {};
+			color = point.color || series.color;
 			
 			if (point.plotY !== UNDEFINED) {
 
@@ -1211,16 +1205,16 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				lowPlot = mathFloor(point.lowPlot);// + crispCorr;
 				
 				// Stem attributes
-				stemAttr.stroke = point.stemColor || options.stemColor || series.color;
+				stemAttr.stroke = point.stemColor || options.stemColor || color;
 				stemAttr['stroke-width'] = point.stemWidth || options.stemWidth || options.lineWidth;
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
 				
 				// Whiskers attributes
-				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || series.color;
+				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
 				whiskersAttr['stroke-width'] = point.whiskerWidth || options.whiskerWidth || options.lineWidth;
 				
 				// Median attributes
-				medianAttr.stroke = point.medianColor || options.medianColor || series.color;
+				medianAttr.stroke = point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = point.medianWidth || options.medianWidth || options.lineWidth;
 				
 				
@@ -1369,7 +1363,16 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 		return [point.low, point.high];
 	},
 	pointValKey: 'high', // defines the top of the tracker
-	doQuartiles: false
+	doQuartiles: false,
+
+	/**
+	 * Get the width and X offset, either on top of the linked series column
+	 * or standalone
+	 */
+	getColumnMetrics: function () {
+		return (this.linkedParent && this.linkedParent.columnMetrics) || 
+			seriesTypes.column.prototype.getColumnMetrics.call(this);
+	}
 });
 
 /* ****************************************************************************
@@ -1384,9 +1387,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
-	borderWidth: 1,
-	borderColor: '#333',
-	shadow: false
+	borderColor: '#333'
 });
 
 
@@ -1596,7 +1597,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			stacks = axis.stacks,
 			key = this.stackKey;
 
-		if (this.processedYData[i] < 0) {
+		if (this.processedYData[i] < this.options.threshold) {
 			key = '-' + key;
 		}
 
@@ -1609,10 +1610,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	getSumEdges: function (pointA, pointB) {
 		var valueA,
 			valueB,
-			tmp;
+			tmp,
+			threshold = this.options.threshold;
 
-		valueA = pointA.y >= 0 ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
-		valueB = pointB.y >= 0 ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
+		valueA = pointA.y >= threshold ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
+		valueB = pointB.y >= threshold ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
 
 		if (valueB > valueA) {
 			tmp = valueA;
@@ -1621,29 +1623,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 
 		return [valueA, valueB];
-	},
-
-	/**
-	 * Place sums' dataLabels on the top of column regardles of its value
-	 */
-	_alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
-		var dlBox;
-
-		if (point.isSum || point.isIntermediateSum) {
-			dlBox = point.dlBox || point.shapeArgs;
-
-			if (dlBox) {
-				alignTo = merge(dlBox);
-			}
-
-			alignTo.height = 0;
-			options.verticalAlign = 'bottom';
-			options.align = pick(options.align, 'center');
-
-			Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-		} else {
-			seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
-		}
 	},
 
 	drawGraph: Series.prototype.drawGraph
@@ -1675,10 +1654,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
-	shadow: false,
-	stickyTracking: false,
 	tooltip: {
-		followPointer: true,
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 	zThreshold: 0
@@ -1688,7 +1664,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
-	trackerGroupKey: 'group',
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -1862,11 +1838,12 @@ Axis.prototype.beforePadding = function () {
 		smallestSize = math.min(chart.plotWidth, chart.plotHeight),
 		zMin = Number.MAX_VALUE,
 		zMax = -Number.MAX_VALUE,
-		transA = axisLength / (this.max - min),
+		range = this.max - min,
+		transA = axisLength / range,
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
-	if (pick(this.options.min, this.userMin) === UNDEFINED && this.tickPositions) {
+	if (this.tickPositions) {
 		each(this.series, function (series) {
 
 			var seriesOptions = series.options,
@@ -1916,17 +1893,21 @@ Axis.prototype.beforePadding = function () {
 				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
 			}
 			
-			while (i--) {
-				radius = series.radii[i];
-				pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-				pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+			if (range > 0) {
+				while (i--) {
+					radius = series.radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
 			}
 		});
 		
-		pxMax -= axisLength;
-		transA *= (axisLength + pxMin - pxMax) / axisLength;
-		this.min += pxMin / transA;
-		this.max += pxMax / transA;
+		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED) {
+			pxMax -= axisLength;
+			transA *= (axisLength + pxMin - pxMax) / axisLength;
+			this.min += pxMin / transA;
+			this.max += pxMax / transA;
+		}
 	}
 };
 
@@ -2166,22 +2147,12 @@ function polarAnimate(proceed, init) {
 			// Initialize the animation
 			if (init) {
 				
-				// Create an SVG specific attribute setter for scaleX and scaleY
-				group.attrSetters.scaleX = group.attrSetters.scaleY = function (value, key) {
-					this[key] = value;
-					if (this.scaleX !== UNDEFINED && this.scaleY !== UNDEFINED) {
-						this.element.setAttribute('transform', 'translate(' + this.translateX + ',' + this.translateY + ') scale(' + 
-							this.scaleX + ',' + this.scaleY + ')');
-					}
-					return false;
-				};
-				
 				// Scale down the group and place it in the center
 				attribs = {
 					translateX: center[0] + plotLeft,
 					translateY: center[1] + plotTop,
-					scaleX: 0,
-					scaleY: 0
+					scaleX: 0.001, // #1499
+					scaleY: 0.001
 				};
 					
 				group.attr(attribs);

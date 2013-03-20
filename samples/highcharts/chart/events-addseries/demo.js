@@ -1,7 +1,8 @@
 $(function () {
     // create the chart
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         chart: {
+            renderTo: 'container',
             events: {
                 addSeries: function() {
                     alert ('A series was added');

@@ -63,7 +63,6 @@ Chart.prototype = {
 
 		//this.renderTo = UNDEFINED;
 		//this.renderToClone = UNDEFINED;
-		//this.tracker = UNDEFINED;
 
 		//this.spacingBox = UNDEFINED
 
@@ -235,8 +234,7 @@ Chart.prototype = {
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
-			afterRedraw = [],
-			l;
+			afterRedraw = [];
 			
 		setAnimation(animation, chart);
 		
@@ -472,21 +470,18 @@ Chart.prototype = {
 	 */
 	getAxes: function () {
 		var chart = this,
-			options = this.options;
-
-		var xAxisOptions = options.xAxis || {},
-			yAxisOptions = options.yAxis || {},
+			options = this.options,
+			xAxisOptions = options.xAxis = splat(options.xAxis || {}),
+			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
 			optionsArray,
 			axis;
 
 		// make sure the options are arrays and add some members
-		xAxisOptions = splat(xAxisOptions);
 		each(xAxisOptions, function (axis, i) {
 			axis.index = i;
 			axis.isX = true;
 		});
 
-		yAxisOptions = splat(yAxisOptions);
 		each(yAxisOptions, function (axis, i) {
 			axis.index = i;
 		});
@@ -1075,6 +1070,9 @@ Chart.prototype = {
 			spacingRight = optionsChart.spacingRight,
 			spacingBottom = optionsChart.spacingBottom,
 			spacingLeft = optionsChart.spacingLeft,
+			clipOffset = chart.clipOffset,
+			clipX,
+			clipY,
 			plotLeft,
 			plotTop,
 			plotWidth,
@@ -1104,11 +1102,13 @@ Chart.prototype = {
 			width: plotWidth,
 			height: plotHeight
 		};
+		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
-			x: plotBorderWidth / 2, 
-			y: plotBorderWidth / 2, 
-			width: chart.plotSizeX - plotBorderWidth, 
-			height: chart.plotSizeY - plotBorderWidth
+			x: clipX, 
+			y: clipY, 
+			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: mathFloor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY)
 		};
 
 		if (!skipAxes) {
@@ -1135,6 +1135,7 @@ Chart.prototype = {
 		chart.marginBottom = pick(chart.optionsMarginBottom, spacingBottom);
 		chart.plotLeft = pick(chart.optionsMarginLeft, spacingLeft);
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
+		chart.clipOffset = [0, 0, 0, 0];
 	},
 
 	/**
@@ -1434,7 +1435,7 @@ Chart.prototype = {
 
 		// ==== Destroy chart properties:
 		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'tracker', 'scroller', 
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 

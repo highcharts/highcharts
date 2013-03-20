@@ -1,5 +1,10 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
+    
+        chart: {
+            renderTo: 'container'
+        },
+    
         xAxis: {
             type: 'datetime'
         },
@@ -13,6 +18,6 @@ $(function () {
                 [Date.UTC(2010, 0, 8), 176.0]
              ]
         }]
-
+    
     });
 });

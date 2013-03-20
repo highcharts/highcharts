@@ -11,6 +11,7 @@ extend(defaultOptions, {
 			height: 16,
 			padding: 1,
 			r: 0,
+			stroke: '#68A',
 			zIndex: 7 // #484, #852
 		//	states: {
 		//		hover: {},
@@ -469,8 +470,8 @@ RangeSelector.prototype = {
 				y: yAlign,
 				width: inputGroup.offset,
 				// detect collision with the exporting buttons
-				x: navButtonOptions && (yAlign < navButtonOptions.y + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
-					-60 : 0
+				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
+					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
 	
 			// Set or reset the input values
@@ -520,12 +521,16 @@ RangeSelector.prototype = {
 };
 
 // Initialize scroller for stock charts
-addEvent(Chart.prototype, 'init', function (e) {
-	var chart = e.target,
-		options = chart.options;
-	if (options.rangeSelector.enabled) {
-		chart.rangeSelector = new RangeSelector(chart);
-	}
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+	
+	addEvent(this, 'init', function () {
+		if (this.options.rangeSelector.enabled) {
+			this.rangeSelector = new RangeSelector(this);
+		}
+	});
+
+	proceed.call(this, options, callback);
+	
 });
 
 

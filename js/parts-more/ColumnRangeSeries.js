@@ -32,12 +32,13 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 			shapeArgs.y = plotHigh;
 			shapeArgs.height = point.plotY - plotHigh;
 			
-			point.trackerArgs = shapeArgs;
 		});
 	},
+	trackerGroups: ['group', 'dataLabels'],
 	drawGraph: noop,
 	pointAttrToOptions: colProto.pointAttrToOptions,
 	drawPoints: colProto.drawPoints,
 	drawTracker: colProto.drawTracker,
-	animate: colProto.animate
+	animate: colProto.animate,
+	getColumnMetrics: colProto.getColumnMetrics
 });

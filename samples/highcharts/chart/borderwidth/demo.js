@@ -1,6 +1,7 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         chart: {
+            renderTo: 'container',
             borderColor: '#EBBA95',
             borderWidth: 3,
             type: 'line'

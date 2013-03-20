@@ -99,8 +99,9 @@ extend(defaultOptions, {
 			]
 		),
 		trackBorderColor: '#CCC',
-		trackBorderWidth: 1
+		trackBorderWidth: 1,
 		// trackBorderRadius: 0
+		liveRedraw: hasSVG // docs
 	}
 });
 /*jslint white:false */
@@ -190,7 +191,7 @@ Scroller.prototype = {
 		}
 
 		// Place it
-		handles[index][scroller.rendered ? 'animate' : 'attr']({
+		handles[index][chart.isResizing ? 'animate' : 'attr']({
 			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10), 
 			translateY: scroller.top + scroller.height / 2 - 8
 		});
@@ -397,7 +398,7 @@ Scroller.prototype = {
 		}
 
 		// place elements
-		verb = scroller.rendered ? 'animate' : 'attr';
+		verb = chart.isResizing ? 'animate' : 'attr';
 		if (navigatorEnabled) {
 			scroller.leftShade[verb]({
 				x: navigatorLeft,
@@ -460,22 +461,25 @@ Scroller.prototype = {
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
 
-			scroller.scrollbarRifles[verb]({ d: [
-					M,
-					centerBarX - 3, scrollbarHeight / 4,
-					L,
-					centerBarX - 3, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX, scrollbarHeight / 4,
-					L,
-					centerBarX, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX + 3, scrollbarHeight / 4,
-					L,
-					centerBarX + 3, 2 * scrollbarHeight / 3
-				],
-				visibility: range > 12 ? VISIBLE : HIDDEN
-			});
+			scroller.scrollbarRifles
+				.attr({
+					visibility: range > 12 ? VISIBLE : HIDDEN
+				})[verb]({ 
+					d: [
+						M,
+						centerBarX - 3, scrollbarHeight / 4,
+						L,
+						centerBarX - 3, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX, scrollbarHeight / 4,
+						L,
+						centerBarX, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX + 3, scrollbarHeight / 4,
+						L,
+						centerBarX + 3, 2 * scrollbarHeight / 3
+					]
+				});
 		}
 
 		scroller.scrollbarPad = scrollbarPad;
@@ -524,7 +528,7 @@ Scroller.prototype = {
 			removeEvent.apply(null, args);
 		});
 		this._events = UNDEFINED;
-		if (this.navigatorEnabled) {
+		if (this.navigatorEnabled && this.baseSeries) {
 			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
 		}
 	},
@@ -689,28 +693,33 @@ Scroller.prototype = {
 	
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 				}
+				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
+					setTimeout(function () {
+						scroller.mouseUpHandler(false);
+					}, 0);
+				}
 			}
 		};
 
 		/**
 		 * Event handler for the mouse up event.
 		 */
-		scroller.mouseUpHandler = function () {
-			var zoomedMin = scroller.zoomedMin,
-				zoomedMax = scroller.zoomedMax;
-
+		scroller.mouseUpHandler = function (reset) {
+			
 			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
-					xAxis.translate(zoomedMin, true),
-					xAxis.translate(zoomedMax, true),
+					xAxis.translate(scroller.zoomedMin, true),
+					xAxis.translate(scroller.zoomedMax, true),
 					true,
 					false,
 					{ trigger: 'navigator' }
 				);
 			}
-			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
-			
-			bodyStyle.cursor = defaultBodyCursor || '';
+
+			if (reset !== false) {
+				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
+				bodyStyle.cursor = defaultBodyCursor || '';
+			}
 			
 		};
 
@@ -788,7 +797,6 @@ Scroller.prototype = {
 
 			// remove it to prevent merging one by one
 			navigatorData = navigatorSeriesOptions.data;
-			baseOptions.data = navigatorSeriesOptions.data = null;
 
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
@@ -832,8 +840,6 @@ Scroller.prototype = {
 			});
 
 			// set the data back
-			baseOptions.data = baseData;
-			navigatorSeriesOptions.data = navigatorData;
 			mergedNavSeriesOptions.data = navigatorData || baseData;
 
 			// add the series
@@ -841,7 +847,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) {
+			if (baseSeries && navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 				// Survive Series.update()
 				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
@@ -931,7 +937,7 @@ Highcharts.Scroller = Scroller;
 wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
-		zoomType = chartOptions.chart.pinchType || chartOptions.chart.zoomType,
+		zoomType = chartOptions.chart.zoomType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,
@@ -967,12 +973,17 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize scroller for stock charts
-addEvent(Chart.prototype, 'beforeRender', function (e) {
-	var chart = e.target,
-		options = chart.options;
-	if (options.navigator.enabled || options.scrollbar.enabled) {
-		chart.scroller = new Scroller(chart);
-	}
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+	
+	addEvent(this, 'beforeRender', function () {
+		var options = this.options;
+		if (options.navigator.enabled || options.scrollbar.enabled) {
+			this.scroller = new Scroller(this);
+		}
+	});
+
+	proceed.call(this, options, callback);
+
 });
 
 /* ****************************************************************************

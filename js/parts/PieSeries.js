@@ -19,6 +19,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// softConnector: true,
 		//y: 0
 	},
+	ignoreHiddenPoint: true, // docs: new default
 	//innerSize: 0,
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
@@ -51,6 +52,11 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
+		// Disallow negative values (#1530)
+		if (point.y < 0) {
+			point.y = null;
+		}
+
 		//visible: options.visible !== false,
 		extend(point, {
 			visible: point.visible !== false,
@@ -76,10 +82,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			tracker = point.tracker,
-			dataLabel = point.dataLabel,
-			connector = point.connector,
-			shadowGroup = point.shadowGroup,
 			method;
 
 		// if called without an argument, toggle visibility
@@ -88,19 +90,13 @@ var PiePoint = extendClass(Point, {
 		
 		method = vis ? 'show' : 'hide';
 
-		point.group[method]();
-		if (tracker) {
-			tracker[method]();
-		}
-		if (dataLabel) {
-			dataLabel[method]();
-		}
-		if (connector) {
-			connector[method]();
-		}
-		if (shadowGroup) {
-			shadowGroup[method]();
-		}
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+			if (point[key]) {
+				point[key][method]();
+			}
+		});
+
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
 		}
@@ -121,7 +117,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			slicedTranslation = point.slicedTranslation,
 			translation;
 
 		setAnimation(animation, chart);
@@ -133,11 +128,13 @@ var PiePoint = extendClass(Point, {
 		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
 		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-		translation = {
-			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
-			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
+		translation = sliced ? point.slicedTranslation : {
+			translateX: 0,
+			translateY: 0
 		};
-		point.group.animate(translation);
+
+		point.graphic.animate(translation);
+		
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
@@ -153,6 +150,8 @@ var PieSeries = {
 	isCartesian: false,
 	pointClass: PiePoint,
 	requireSorting: false,
+	noSharedTooltip: true,
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -162,43 +161,41 @@ var PieSeries = {
 	/**
 	 * Pies have one color each point
 	 */
-	getColor: function () {
-		// record first color for use in setData
-		this.initialColor = this.chart.counters.color;
-	},
+	getColor: noop,
 
 	/**
 	 * Animate the pies in
 	 */
-	animate: function () {
+	animate: function (init) {
 		var series = this,
 			points = series.points,
 			startAngleRad = series.startAngleRad;
 
-		each(points, function (point) {
-			var graphic = point.graphic,
-				args = point.shapeArgs;
+		if (!init) {
+			each(points, function (point) {
+				var graphic = point.graphic,
+					args = point.shapeArgs;
 
-			if (graphic) {
-				// start values
-				graphic.attr({
-					r: series.center[3] / 2, // animate from inner radius (#779)
-					start: startAngleRad,
-					end: startAngleRad
-				});
+				if (graphic) {
+					// start values
+					graphic.attr({
+						r: series.center[3] / 2, // animate from inner radius (#779)
+						start: startAngleRad,
+						end: startAngleRad
+					});
 
-				// animate
-				graphic.animate({
-					r: args.r,
-					start: args.start,
-					end: args.end
-				}, series.options.animation);
-			}
-		});
+					// animate
+					graphic.animate({
+						r: args.r,
+						start: args.start,
+						end: args.end
+					}, series.options.animation);
+				}
+			});
 
-		// delete this function to allow it only once
-		series.animate = null;
-
+			// delete this function to allow it only once
+			series.animate = null;
+		}
 	},
 
 	/**
@@ -222,24 +219,24 @@ var PieSeries = {
 		
 		var options = this.options,
 			chart = this.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
+			slicingRoom = 2 * (options.dataLabels && options.dataLabels.enabled ? 0 : (options.slicedOffset || 0)),
+			plotWidth = chart.plotWidth - 2 * slicingRoom,
+			plotHeight = chart.plotHeight - 2 * slicingRoom,
 			centerOption = options.center,
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
 			smallestSize = mathMin(plotWidth, plotHeight),
 			isPercent;
-					
 		
 		return map(positions, function (length, i) {
 			isPercent = /%$/.test(length);
-			return isPercent ?
+			return (isPercent ?
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to smallestSize
 				// i == 4: innerSize, relative to smallestSize
 				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
 					pInt(length) / 100 :
-				length;
+				length) + (i < 3 ? slicingRoom : 0);
 		});
 	},
 	
@@ -256,7 +253,6 @@ var PieSeries = {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + options.borderWidth,
-			chart = series.chart,
 			start,
 			end,
 			angle,
@@ -324,10 +320,10 @@ var PieSeries = {
 			if (angle > 0.75 * circ) {
 				angle -= 2 * mathPI;
 			}
-			point.slicedTranslation = map([
-				mathCos(angle) * slicedOffset + chart.plotLeft,
-				mathSin(angle) * slicedOffset + chart.plotTop
-			], mathRound);
+			point.slicedTranslation = {
+				translateX: mathRound(mathCos(angle) * slicedOffset),
+				translateY: mathRound(mathSin(angle) * slicedOffset)
+			};
 
 			// set the anchor point for tooltips
 			radiusX = mathCos(angle) * positions[2] / 2;
@@ -364,30 +360,7 @@ var PieSeries = {
 		this.setTooltipPoints();
 	},
 
-	/**
-	 * Render the slices
-	 */
-	render: function () {
-		
-		this.drawDataLabels();
-
-		// cache attributes for shapes
-		this.getAttribs();
-
-		this.drawPoints();
-
-		// draw the mouse tracking area
-		if (this.options.enableMouseTracking !== false) {
-			this.drawTracker();
-		}
-
-		if (this.options.animation && this.animate) {
-			this.animate();
-		}
-
-		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
-		this.isDirty = false; // means data is in accordance with what you see
-	},
+	drawGraph: null,
 
 	/**
 	 * Draw the data points
@@ -399,52 +372,52 @@ var PieSeries = {
 			groupTranslation,
 			//center,
 			graphic,
-			group,
+			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
 			shapeArgs;
+
+		if (shadow && !series.shadowGroup) {
+			series.shadowGroup = renderer.g('shadow')
+				.add(series.group);
+		}
 
 		// draw the slices
 		each(series.points, function (point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
-			group = point.group;
 			shadowGroup = point.shadowGroup;
 
 			// put the shadow behind all points
 			if (shadow && !shadowGroup) {
 				shadowGroup = point.shadowGroup = renderer.g('shadow')
-					.attr({ zIndex: 4 })
-					.add();
-			}
-
-			// create the group the first time
-			if (!group) {
-				group = point.group = renderer.g('point')
-					.attr({ zIndex: 5 })
-					.add();
+					.add(series.shadowGroup);
 			}
 
 			// if the point is sliced, use special translation, else use plot area traslation
-			groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-			group.translate(groupTranslation[0], groupTranslation[1]);
+			groupTranslation = point.sliced ? point.slicedTranslation : {
+				translateX: 0,
+				translateY: 0
+			};
+
+			//group.translate(groupTranslation[0], groupTranslation[1]);
 			if (shadowGroup) {
-				shadowGroup.translate(groupTranslation[0], groupTranslation[1]);
+				shadowGroup.attr(groupTranslation);
 			}
 
 			// draw the slice
 			if (graphic) {
-				graphic.animate(shapeArgs);
+				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
 				point.graphic = graphic = renderer.arc(shapeArgs)
 					.setRadialReference(series.center)
-					.attr(extend(
-						point.pointAttr[NORMAL_STATE],
-						{ 'stroke-linejoin': 'round' }
-					))
-					.add(point.group)
-					.shadow(shadow, shadowGroup);
-				
+					.attr(
+						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
+					)
+					.attr({ 'stroke-linejoin': 'round' })
+					.attr(groupTranslation)
+					.add(series.group)
+					.shadow(shadow, shadowGroup);	
 			}
 
 			// detect point specific visibility
@@ -489,7 +462,7 @@ var PieSeries = {
 			y,
 			visibility,
 			rankArr,
-			i = 2,
+			i,
 			j,
 			overflow = [0, 0, 0, 0], // top, right, bottom, left
 			sort = function (a, b) {
@@ -497,7 +470,7 @@ var PieSeries = {
 			},
 			sortByAngle = function (points, sign) {
 				points.sort(function (a, b) {
-					return (b.angle - a.angle) * sign;
+					return a.angle !== undefined && (b.angle - a.angle) * sign;
 				});
 			};
 
@@ -517,11 +490,16 @@ var PieSeries = {
 		});
 
 		// assume equal label heights
-		labelHeight = data[0] && data[0].dataLabel && (data[0].dataLabel.getBBox().height || 21); // 21 is for #968
+		i = 0;
+		while (!labelHeight && data[i]) { // #1569
+			labelHeight = data[i] && data[i].dataLabel && (data[i].dataLabel.getBBox().height || 21); // 21 is for #968
+			i++;
+		}
 
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
+		i = 2;
 		while (i--) {
 
 			var slots = [],
@@ -558,7 +536,7 @@ var PieSeries = {
 								fill: 'silver'
 							}).add();
 					}
-					// */
+					*/
 				}
 				slotsLength = slots.length;
 	
@@ -739,11 +717,9 @@ var PieSeries = {
 							point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 								'stroke-width': connectorWidth,
 								stroke: options.connectorColor || point.color || '#606060',
-								visibility: visibility,
-								zIndex: 3
+								visibility: visibility
 							})
-							.translate(chart.plotLeft, chart.plotTop)
-							.add();
+							.add(series.group);
 						}
 					} else if (connector) {
 						point.connector = connector.destroy();

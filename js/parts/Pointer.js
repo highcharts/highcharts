@@ -32,12 +32,6 @@ Pointer.prototype = {
 		this.pinchDown = [];
 		this.lastValidTouch = {};
 
-		if (!chart.trackerGroup) {
-			chart.trackerGroup = chart.renderer.g('tracker')
-				.attr({ zIndex: 9 })
-				.add();
-		}
-
 		if (options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
 		}
@@ -146,9 +140,11 @@ Pointer.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					point._dist = mathAbs(index - point.clientX);
-					distance = mathMin(distance, point._dist);
-					points.push(point);
+					if (point.series) { // not a dummy point, #1544
+						point._dist = mathAbs(index - point.clientX);
+						distance = mathMin(distance, point._dist);
+						points.push(point);
+					}
 				}
 			}
 			// remove furthest points
@@ -355,7 +351,7 @@ Pointer.prototype = {
 
 		// On touch devices, only proceed to trigger click if a handler is defined
 		if (e.type === 'touchstart') {
-			if (attr(e.target, 'isTracker')) {
+			if (self.inClass(e.target, PREFIX + 'tracker')) {
 				if (!chart.runTrackerClick) {
 					e.preventDefault();
 				}
@@ -654,6 +650,33 @@ Pointer.prototype = {
 		}
 	},
 
+	/**
+	 * Utility to detect whether an element has, or has a parent with, a specific
+	 * class name. Used on detection of tracker objects and on deciding whether
+	 * hovering the tooltip should cause the active series to mouse out.
+	 */
+	inClass: function (element, className) {
+		var elemClassName;
+		while (element) {
+			elemClassName = attr(element, 'class');
+			if (elemClassName) {
+				if (elemClassName.indexOf(className) !== -1) {
+					return true;
+				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+					return false;
+				}
+			}
+			element = element.parentNode;
+		}		
+	},
+
+	onTrackerMouseOut: function (e) {
+		var series = this.chart.hoverSeries;
+		if (series && !series.options.stickyTracking && !this.inClass(e.toElement || e.relatedTarget, PREFIX + 'tooltip')) {
+			series.onMouseOut();
+		}
+	},
+
 	onContainerClick: function (e) {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
@@ -668,8 +691,9 @@ Pointer.prototype = {
 		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
-			// Detect clicks on trackers or tracker groups, #783
-			if (hoverPoint && (attr(e.target, 'isTracker') || attr(e.target.parentNode, 'isTracker'))) {
+			
+			// On tracker click, fire the series and point events. #783, #1583
+			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
 				chartPosition = this.chartPosition;
 				plotX = hoverPoint.plotX;
 				plotY = hoverPoint.plotY;
@@ -690,6 +714,7 @@ Pointer.prototype = {
 				// the point click event
 				hoverPoint.firePointEvent('click', e);
 
+			// When clicking outside a tracker, fire a chart event
 			} else {
 				extend(e, this.getCoordinates(e));
 
@@ -745,111 +770,62 @@ Pointer.prototype = {
 	 */
 	setDOMEvents: function () {
 
-		var tracker = this,
-			container = tracker.chart.container;
+		var pointer = this,
+			container = pointer.chart.container,
+			events;
 
-		container.onmousedown = function (e) {
-			tracker.onContainerMouseDown(e);
-		};
+		this._events = events = [
+			[container, 'onmousedown', 'onContainerMouseDown'],
+			[container, 'onmousemove', 'onContainerMouseMove'],
+			[container, 'onclick', 'onContainerClick'],
+			[container, 'mouseleave', 'onContainerMouseLeave'],
+			[doc, 'mousemove', 'onDocumentMouseMove'],
+			[doc, 'mouseup', 'onDocumentMouseUp']
+		];
 
-		container.onmousemove = function (e) {
-			tracker.onContainerMouseMove(e);
-		};
-
-		container.onclick = function (e) {
-			tracker.onContainerClick(e);
-		};
-		
-		addEvent(container, 'mouseleave', function (e) {
-			tracker.onContainerMouseLeave(e);
-		});
-
-		addEvent(doc, 'mousemove', function (e) {
-			tracker.onDocumentMouseMove(e);
-		});
-
-		addEvent(doc, 'mouseup', function (e) {
-			tracker.onDocumentMouseUp(e);
-		});
-
-		
 		if (hasTouch) {
-			
-			container.ontouchstart = function (e) {
-				tracker.onContainerTouchStart(e);
-			};
-			
-			container.ontouchmove = function (e) {
-				tracker.onContainerTouchMove(e);
-			};
-			
-			addEvent(doc, 'touchend', function (e) {
-				tracker.onDocumentTouchEnd(e);
-			});
+			events.push(
+				[container, 'ontouchstart', 'onContainerTouchStart'],
+				[container, 'ontouchmove', 'onContainerTouchMove'],
+				[doc, 'touchend', 'onDocumentTouchEnd']
+			);
 		}
 
-		/*
-		
-		// The automatic version of the above. It is harder to read, about the same amount of
-		// code and the only real advantage is that it automatically picks up user defined
-		// onSomething methods, but this can be added anyway through the DOM.
-		var tracker = this,
-			prop;
+		each(events, function (eventConfig) {
 
-		for (prop in tracker) {
-			if (prop.indexOf('on') === 0 && (hasTouch || prop.indexOf('Touch') === -1)) {
-				(function () {
-					var method = prop,
-						from,
-						type,
-						element,
-						handler = function (e) {
-							tracker[method](e);
-						};
+			// First, create the callback function that in turn calls the method on Pointer
+			pointer['_' + eventConfig[2]] = function (e) {
+				pointer[eventConfig[2]](e);
+			};
 
-					// Identify the element to add the event to
-					if (prop.indexOf('Container') === 2) {
-						element = tracker.chart.container;
-						from = 11;
-					} else if (prop.indexOf('Document') === 2) {
-						element = doc;
-						from = 10;
-					}
-
-					// The type of event
-					type = prop.substring(from).toLowerCase();
-
-					// Some events need to be added via addEvent, others need to be set 
-					// directly as an attribute in order to work.
-					if (element === doc || type === 'mouseleave') {
-						addEvent(element, type, handler);
-					} else {
-						element['on' + type] = handler;
-					}
-				}());
+			// Now attach the function, either as a direct property or through addEvent
+			if (eventConfig[1].indexOf('on') === 0) {
+				eventConfig[0][eventConfig[1]] = pointer['_' + eventConfig[2]];
+			} else {
+				addEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
 			}
-		}
-		*/
+		});
+
+		
 	},
 
 	/**
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var pointer = this,
-			chart = pointer.chart,
-			container = chart.container;
+		var pointer = this;
 
-		// Destroy the tracker group element
-		if (chart.trackerGroup) {
-			chart.trackerGroup = chart.trackerGroup.destroy();
-		}
-
-		removeEvent(container, 'mouseleave', pointer.hideTooltipOnMouseLeave);
-		removeEvent(doc, 'mousemove', pointer.hideTooltipOnMouseMove);
-		container.onclick = container.onmousedown = container.onmousemove = container.ontouchstart = container.ontouchend = container.ontouchmove = null;
+		// Release all DOM events
+		each(pointer._events, function (eventConfig) {	
+			if (eventConfig[1].indexOf('on') === 0) {
+				eventConfig[0][eventConfig[1]] = null; // delete breaks oldIE
+			} else {		
+				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
+			}
+		});
+		delete pointer._events;
 
 		// memory and CPU leak
-		clearInterval(this.tooltipTimeout);
+		clearInterval(pointer.tooltipTimeout);
 	}
 };

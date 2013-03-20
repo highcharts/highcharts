@@ -1,9 +1,10 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function(data) {
     
-    	$('#container').highcharts('StockChart', {
+    	window.chart = new Highcharts.StockChart({
     	
 		    chart: {
+		        renderTo: 'container',
 		        type: 'arearange'
 		    },
 		    

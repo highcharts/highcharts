@@ -82,7 +82,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#6D869F',
+				color: '#4d759e',
 				//font: defaultFont.replace('normal', 'bold')
 				fontWeight: 'bold'
 			}
@@ -373,7 +373,7 @@ Axis.prototype = {
 	update: function (newOptions, redraw) {
 		var chart = this.chart;
 
-		newOptions = merge(this.userOptions, newOptions);
+		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy();
 
@@ -389,7 +389,8 @@ Axis.prototype = {
      * Remove the axis from the chart
      */
 	remove: function (redraw) {
-		var chart = this.chart;
+		var chart = this.chart,
+			key = this.xOrY + 'Axis'; // xAxis or yAxis
 
 		// Remove associated series
 		each(this.series, function (series) {
@@ -398,7 +399,8 @@ Axis.prototype = {
 
 		// Remove the axis
 		erase(chart.axes, this);
-		erase(chart[this.xOrY + 'Axis'], this);
+		erase(chart[key], this);
+		chart.options[key].splice(this.options.index, 1);
 		this.destroy();
 		chart.isDirtyBox = true;
 
@@ -558,7 +560,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
+			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -727,11 +729,10 @@ Axis.prototype = {
 	getLogTickPositions: function (interval, min, max, minor) {
 		var axis = this,
 			options = axis.options,
-			axisLength = axis.len;
-
-		// Since we use this method for both major and minor ticks,
-		// use a local variable and return the result
-		var positions = []; 
+			axisLength = axis.len,
+			// Since we use this method for both major and minor ticks,
+			// use a local variable and return the result
+			positions = []; 
 		
 		// Reset
 		if (!minor) {
@@ -768,7 +769,7 @@ Axis.prototype = {
 				for (j = 0; j < len && !break2; j++) {
 					pos = log2lin(lin2log(i) * intermediate[j]);
 					
-					if (pos > min) {
+					if (pos > min && lastPos <= max) {
 						positions.push(lastPos);
 					}
 					
@@ -828,9 +829,8 @@ Axis.prototype = {
 		var axis = this,
 			options = axis.options,
 			tickPositions = axis.tickPositions,
-			minorTickInterval = axis.minorTickInterval;
-
-		var minorTickPositions = [],
+			minorTickInterval = axis.minorTickInterval,
+			minorTickPositions = [],
 			pos,
 			i,
 			len;
@@ -851,9 +851,12 @@ Axis.prototype = {
 					options.startOfWeek
 				)
 			);
+			if (minorTickPositions[0] < axis.min) {
+				minorTickPositions.shift();
+			}
 		} else {			
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
-				minorTickPositions.push(pos);	
+				minorTickPositions.push(pos);
 			}
 		}
 		return minorTickPositions;
@@ -1148,7 +1151,9 @@ Axis.prototype = {
 				axis.tickInterval / 5 : options.minorTickInterval;
 
 		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
+		axis.tickPositions = tickPositions = options.tickPositions ?
+			[].concat(options.tickPositions) : // Work on a copy (#1565)
+			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
 		if (!tickPositions) {
 			if (isDatetimeAxis) {
 				tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
@@ -1192,7 +1197,7 @@ Axis.prototype = {
 			// and max are equal and tickPositions.length is 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = 1e-9; // The lowest possible number to avoid extra padding on columns
+				singlePad = 0.001; // The lowest possible number to avoid extra padding on columns
 				axis.min -= singlePad;
 				axis.max += singlePad;
 			}
@@ -1205,19 +1210,12 @@ Axis.prototype = {
 	setMaxTicks: function () {
 		
 		var chart = this.chart,
-			maxTicks = chart.maxTicks,
+			maxTicks = chart.maxTicks || {},
 			tickPositions = this.tickPositions,
-			xOrY = this.xOrY;
+			key = this._maxTicksKey = [this.xOrY, this.pos, this.len].join('-');
 		
-		if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
-			maxTicks = {
-				x: 0,
-				y: 0
-			};
-		}
-
-		if (!this.isLinked && !this.isDatetimeAxis && tickPositions.length > maxTicks[xOrY] && this.options.alignTicks !== false) {
-			maxTicks[xOrY] = tickPositions.length;
+		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
+			maxTicks[key] = tickPositions.length;
 		}
 		chart.maxTicks = maxTicks;
 	},
@@ -1229,17 +1227,17 @@ Axis.prototype = {
 	adjustTickAmount: function () {
 		var axis = this,
 			chart = axis.chart,
-			xOrY = axis.xOrY,
+			key = axis._maxTicksKey,
 			tickPositions = axis.tickPositions,
 			maxTicks = chart.maxTicks;
 
-		if (maxTicks && maxTicks[xOrY] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
+		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
 				tickAmount;
 
 			// set the axis-level tickAmount to use below
-			axis.tickAmount = tickAmount = maxTicks[xOrY];
+			axis.tickAmount = tickAmount = maxTicks[key];
 
 			if (calculatedTickAmount < tickAmount) {
 				while (tickPositions.length < tickAmount) {
@@ -1492,6 +1490,7 @@ Axis.prototype = {
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
+			invertedSide = chart.inverted ? [1, 0, 3, 2][side] : side,
 			hasData,
 			showAxis,
 			titleOffset = 0,
@@ -1501,6 +1500,7 @@ Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			axisOffset = chart.axisOffset,
+			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
@@ -1598,6 +1598,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], options.lineWidth);
 
 	},
 	
@@ -1706,6 +1707,14 @@ Axis.prototype = {
 		// If the series has data draw the ticks. Else only the line and title
 		if (hasData || isLinked) {
 
+			// Mark all elements inActive before we go over and mark the active ones
+			each([ticks, minorTicks, alternateBands], function (coll) {
+				var pos;
+				for (pos in coll) {
+					coll[pos].isActive = false;
+				}
+			});
+
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
 				each(axis.getMinorTickPositions(), function (pos) {
@@ -1792,10 +1801,13 @@ Axis.prototype = {
 			var pos, 
 				i,
 				forDestruction = [],
+				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
-						if (coll[forDestruction[i]]) { // when resizing rapidly, the same items may be destroyed in different timeouts
+						// When resizing rapidly, the same items may be destroyed in different timeouts,
+						// or the may be reactivated
+						if (coll[forDestruction[i]] && !coll[forDestruction[i]].isActive) {
 							coll[forDestruction[i]].destroy();
 							delete coll[forDestruction[i]];
 						}
@@ -1805,24 +1817,19 @@ Axis.prototype = {
 
 			for (pos in coll) {
 
-				// These ticks are still active, now reset the isActive flag for the 
-				// next run.
-				if (coll[pos].isActive) {
-					coll[pos].isActive = false;
-					
-				// These ticks have not been marked active in the current run. Fade them
-				// out and mark them for destruction.
-				} else {
+				if (!coll[pos].isActive) {
+					// Render to zero opacity
 					coll[pos].render(pos, false, 0);
+					coll[pos].isActive = false;
 					forDestruction.push(pos);
 				}
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered) {
+			if (coll === alternateBands || !chart.hasRendered || !delay) {
 				destroyInactiveItems();
-			} else {
-				setTimeout(destroyInactiveItems, (globalAnimation && globalAnimation.duration) || 500);
+			} else if (delay) {
+				setTimeout(destroyInactiveItems, delay);
 			}
 		});
 

@@ -184,10 +184,6 @@ SVGElement.prototype = {
 							value = value.join(',');
 						}
 
-					// special
-					} else if (key === 'isTracker') {
-						wrapper[key] = value;
-
 					// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
 					// is unable to cast them. Test again with final IE9.
 					} else if (key === 'width') {
@@ -290,6 +286,24 @@ SVGElement.prototype = {
 		
 		return ret;
 	},
+
+	 
+	/**
+	 * Add a class name to an element
+	 */
+	addClass: function (className) {
+		attr(this.element, 'class', attr(this.element, 'class') + ' ' + className);
+		return this;
+	},
+	/* hasClass and removeClass are not (yet) needed
+	hasClass: function (className) {
+		return attr(this.element, 'class').indexOf(className) !== -1;
+	},
+	removeClass: function (className) {
+		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		return this;
+	},
+	*/
 
 	/**
 	 * If one of the symbol size affecting parameters are changed,
@@ -690,8 +704,8 @@ SVGElement.prototype = {
 		}
 
 		// apply scale
-		if (scaleX || scaleY) {
-			transform.push('scale(' + (scaleX || 1) + ' ' + (scaleY || 1) + ')');
+		if (defined(scaleX) || defined(scaleY)) {
+			transform.push('scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')');
 		}
 
 		if (transform.length) {
@@ -963,7 +977,7 @@ SVGElement.prototype = {
 			i;
 
 		// remove events
-		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
+		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
@@ -998,19 +1012,6 @@ SVGElement.prototype = {
 		}
 
 		return null;
-	},
-
-	/**
-	 * Empty a group element
-	 */
-	empty: function () {
-		var element = this.element,
-			childNodes = element.childNodes,
-			i = childNodes.length;
-
-		while (i--) {
-			element.removeChild(childNodes[i]);
-		}
 	},
 
 	/**
@@ -1212,6 +1213,7 @@ SVGRenderer.prototype = {
 	buildText: function (wrapper) {
 		var textNode = wrapper.element,
 			renderer = this,
+			forExport = renderer.forExport,
 			lines = pick(wrapper.textStr, '').toString()
 				.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
 				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
@@ -1257,7 +1259,7 @@ SVGRenderer.prototype = {
 						spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
 						attr(tspan, 'style', spanStyle);
 					}
-					if (hrefRegex.test(span)) {
+					if (hrefRegex.test(span) && !forExport) { // Not for export - #1529
 						attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
 						css(tspan, { cursor: 'pointer' });
 					}
@@ -1272,21 +1274,17 @@ SVGRenderer.prototype = {
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
 					} else {
-						// Firefox ignores spaces at the front or end of the tspan
-						attributes.dx = 3; // space
+						attributes.dx = 0; // #16
 					}
 
 					// add attributes
 					attr(tspan, attributes);
 
-					// append it
-					textNode.appendChild(tspan);
-
 					// first span on subsequent line, add the line height
 					if (!spanNo && lineNo) {
 
 						// allow getting the right offset height in exporting in IE
-						if (!hasSVG && renderer.forExport) {
+						if (!hasSVG && forExport) {
 							css(tspan, { display: 'block' });
 						}
 
@@ -1299,9 +1297,15 @@ SVGRenderer.prototype = {
 								/px$/.test(tspan.style.fontSize) ?
 									tspan.style.fontSize : 
 									textStyles.fontSize
-							).h
+							).h,
+							// Safari 6.0.2 - too optimized for its own good (#1539)
+							// TODO: revisit this with future versions of Safari
+							isWebKit && tspan.offsetHeight
 						);
 					}
+
+					// Append it
+					textNode.appendChild(tspan);
 
 					spanNo++;
 
@@ -1369,55 +1373,51 @@ SVGRenderer.prototype = {
 			STYLE = 'style',
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
-		// prepare the attributes
-		/*jslint white: true*/
-		normalState = merge(hash(
-			STROKE_WIDTH, 1,
-			STROKE, '#999',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
-					[0, '#FFF'],
-					[1, '#DDD']
+		// Normal state - prepare the attributes
+		normalState = merge({
+			'stroke-width': 1,
+			stroke: '#CCCCCC',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
+					[0, '#FEFEFE'],
+					[1, '#F6F6F6']
 				]
-			),
-			'r', 3,
-			'padding', 3,
-			STYLE, hash(
-				'color', 'black'
-			)
-		), normalState);
-		/*jslint white: false*/
+			},
+			r: 2,
+			padding: 5,
+			style: {
+				color: 'black'
+			}
+		}, normalState);
 		normalStyle = normalState[STYLE];
 		delete normalState[STYLE];
 
-		/*jslint white: true*/
-		hoverState = merge(normalState, hash(
-			STROKE, '#68A',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
+		// Hover state
+		hoverState = merge(normalState, {
+			stroke: '#68A',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
 					[0, '#FFF'],
 					[1, '#ACF']
 				]
-			)
-		), hoverState);
-		/*jslint white: false*/
+			}
+		}, hoverState);
 		hoverStyle = hoverState[STYLE];
 		delete hoverState[STYLE];
 
-		/*jslint white: true*/
-		pressedState = merge(normalState, hash(
-			STROKE, '#68A',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
+		// Pressed state
+		pressedState = merge(normalState, {
+			stroke: '#68A',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
 					[0, '#9BD'],
 					[1, '#CDF']
 				]
-			)
-		), pressedState);
-		/*jslint white: false*/
+			}
+		}, pressedState);
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
@@ -1784,7 +1784,7 @@ SVGRenderer.prototype = {
 		'arc': function (x, y, w, h, options) {
 			var start = options.start,
 				radius = options.r || w || h,
-				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
+				end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 				innerRadius = options.innerR,
 				open = options.open,
 				cosStart = mathCos(start),
@@ -1898,7 +1898,7 @@ SVGRenderer.prototype = {
 			
 			// Correct the radial gradient for the radial reference system
 			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				extend(gradAttr, {
+				gradAttr = merge(gradAttr, {
 					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
 					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
 					r: gradAttr.r * radialReference[2],
@@ -2397,7 +2397,7 @@ SVGRenderer.prototype = {
 			css: function (styles) {
 				if (styles) {
 					var textStyles = {};
-					styles = merge({}, styles); // create a copy to avoid altering the original object (#537)
+					styles = merge(styles); // create a copy to avoid altering the original object (#537)
 					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width'], function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];

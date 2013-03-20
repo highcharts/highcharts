@@ -1,6 +1,9 @@
 $(function () {
-        $('#container').highcharts({
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'container',
                 type: 'scatter',
                 zoomType: 'xy'
             },
@@ -173,3 +176,4 @@ $(function () {
         });
     });
     
+});

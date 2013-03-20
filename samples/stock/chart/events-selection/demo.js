@@ -1,9 +1,10 @@
 $(function() {
 	var $report = $('#report');
 	
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.StockChart({
 	    
 	    chart: {
+	        renderTo: 'container',
 	        zoomType: 'x',
 	        events: {
 	        	selection: function(event) {

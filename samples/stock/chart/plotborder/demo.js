@@ -1,7 +1,8 @@
 $(function() {
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.StockChart({
 	    
 	    chart: {
+	        renderTo: 'container',
 	        plotBorderColor: '#346691',
 	        plotBorderWidth: 2
 	    },

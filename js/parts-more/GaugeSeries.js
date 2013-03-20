@@ -65,17 +65,8 @@ var GaugeSeries = {
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true, 
-	
-	/* *
-	 * Extend the bindAxes method by adding radial features to the axes
-	 * /
-	_bindAxes: function () {
-		Series.prototype.bindAxes.call(this);
-		
-		extend(this.xAxis, gaugeXAxisMixin);
-		extend(this.yAxis, radialAxisMixin);
-		this.yAxis.onBind();
-	},*/
+	drawGraph: noop,
+	trackerGroups: ['group', 'dataLabels'],
 	
 	/**
 	 * Calculate paths etc
@@ -184,27 +175,29 @@ var GaugeSeries = {
 	/**
 	 * Animate the arrow up from startAngle
 	 */
-	animate: function () {
+	animate: function (init) {
 		var series = this;
 
-		each(series.points, function (point) {
-			var graphic = point.graphic;
+		if (!init) {
+			each(series.points, function (point) {
+				var graphic = point.graphic;
 
-			if (graphic) {
-				// start value
-				graphic.attr({
-					rotation: series.yAxis.startAngleRad * 180 / Math.PI
-				});
+				if (graphic) {
+					// start value
+					graphic.attr({
+						rotation: series.yAxis.startAngleRad * 180 / Math.PI
+					});
 
-				// animate
-				graphic.animate({
-					rotation: point.shapeArgs.rotation
-				}, series.options.animation);
-			}
-		});
+					// animate
+					graphic.animate({
+						rotation: point.shapeArgs.rotation
+					}, series.options.animation);
+				}
+			});
 
-		// delete this function to allow it only once
-		series.animate = null;
+			// delete this function to allow it only once
+			series.animate = null;
+		}
 	},
 	
 	render: function () {

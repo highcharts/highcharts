@@ -1,7 +1,8 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = new Highcharts.Chart({
         
         chart: {
+            renderTo: 'container'
         },
         
         xAxis: {
@@ -14,8 +15,7 @@ $(function () {
         
         exporting: {
             buttons: {
-                contextButton: {
-                    symbol: 'circle',
+                exportButton: {
                     symbolFill: 'blue'
                 }
             }

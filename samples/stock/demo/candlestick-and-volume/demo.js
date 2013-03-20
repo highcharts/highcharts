@@ -31,8 +31,9 @@ $(function() {
 		]];
 
 		// create the chart
-		$('#container').highcharts('StockChart', {
+		chart = new Highcharts.StockChart({
 		    chart: {
+		        renderTo: 'container',
 		        alignTicks: false
 		    },
 

@@ -7,8 +7,9 @@ $(function() {
 		data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);
 				
 		// create the chart
-		$('#container').highcharts('StockChart', {
+		window.chart = new Highcharts.StockChart({
 			chart : {
+				renderTo : 'container',
 				type: 'candlestick',
 				zoomType: 'x'
 			},

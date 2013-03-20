@@ -1,6 +1,7 @@
 $(function () {
-    $('#container').highcharts({
+    chart = new Highcharts.Chart({
         chart: {
+            renderTo: 'container'
         },
         title: {
             text: 'Browser market shares at a specific website, 2010'

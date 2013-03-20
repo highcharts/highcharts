@@ -1,43 +1,34 @@
 $(function() {
-	var w = 1;
-	$('#container').highcharts({
-
+	Highcharts.setOptions({
+	    yAxis: {
+	        lineWidth: 2,
+	        lineColor: 'red'
+	    },
+	    xAxis: {
+	        lineWidth: 2,
+	        lineColor: 'blue'
+	    }
+	});
+	
+	var chart = new Highcharts.Chart({
+	
 	    chart: {
-	        plotBorderWidth: w,
-	        plotBorderColor: 'red',
-	        width: 400
+	        renderTo: 'container',
+	        width: 400,
+	        height: 200
 	    },
 	    
 	    title: {
-	        text: 'Test that axis lines cover plotBorder'
+	    	text: 'Issue #1048: general options on multiple axes'
 	    },
-	    
-	    subtitle: {
-	        text: 'No red lines should be visible close to the plot border'
-	    },
+	
 	    xAxis: [{
-	        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-	        lineWidth: w,
-	        gridLineWidth: w,
-	        gridLineColor: 'red',
-	        tickColor: 'red',
-	        tickPosition: 'inside'
-	    }, {
-	        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-	        opposite: true,
-	        lineWidth: w     
+	        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 	    }],
-	    
-	    yAxis: [{
-	        lineWidth: w,
-	        gridLineColor: 'red'
-	    }, {
-	        lineWidth: w,
-	        opposite: 'true'
-	    }],
+	
 	    series: [{
 	        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
 	    }]
-
+	
 	});
 });

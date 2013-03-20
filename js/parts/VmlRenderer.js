@@ -18,7 +18,7 @@ if (!hasSVG && !useCanVG) {
 /**
  * The VML element wrapper.
  */
-VMLElement = {
+Highcharts.VMLElement = VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -29,21 +29,20 @@ VMLElement = {
 	init: function (renderer, nodeName) {
 		var wrapper = this,
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
-			style = ['position: ', ABSOLUTE, ';'];
+			style = ['position: ', ABSOLUTE, ';'],
+			isDiv = nodeName === DIV;
 
 		// divs and shapes need size
-		if (nodeName === 'shape' || nodeName === DIV) {
+		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
-		if (docMode8) {
-			style.push('visibility: ', nodeName === DIV ? HIDDEN : VISIBLE);
-		}
-
+		style.push('visibility: ', isDiv ? HIDDEN : VISIBLE);
+		
 		markup.push(' style="', style.join(''), '"/>');
 
 		// create element with default attributes and style
 		if (nodeName) {
-			markup = nodeName === DIV || nodeName === 'span' || nodeName === 'img' ?
+			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
 			wrapper.element = createElement(markup);
@@ -83,7 +82,7 @@ VMLElement = {
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
 			wrapper.updateTransform();
 		}
-
+		
 		// fire an event for internal hooks
 		fireEvent(wrapper, 'add');
 
@@ -221,9 +220,15 @@ VMLElement = {
 						// This works around #61 and #586							
 						if (nodeName === 'DIV') {
 							value = value === HIDDEN ? '-999em' : 0;
+							
+							// In order to redraw, IE7 needs the div to be visible when tucked away
+							// outside the viewport. So the visibility is actually opposite of 
+							// the expected value. This applies to the tooltip only. 
+							if (!docMode8) {
+								elemStyle[key] = value ? HIDDEN : VISIBLE;
+							}
 							key = 'top';
 						}
-						
 						elemStyle[key] = value;	
 						skipAttr = true;
 
@@ -258,9 +263,9 @@ VMLElement = {
 						skipAttr = true;						
 
 					// class name
-					} else if (key === 'class') {
+					} else if (key === 'class' && nodeName === 'DIV') {
 						// IE8 Standards mode has problems retrieving the className
-						element.className = value;
+						element.className = value;						
 
 					// stroke
 					} else if (key === 'stroke') {
@@ -351,8 +356,6 @@ VMLElement = {
 	clip: function (clipRect) {
 		var wrapper = this,
 			clipMembers,
-			element = wrapper.element,
-			parentNode = element.parentNode,
 			cssRet;
 
 		if (clipRect) {
@@ -362,10 +365,6 @@ VMLElement = {
 			wrapper.destroyClip = function () {
 				erase(clipMembers, wrapper);
 			};
-			// Issue #863 workaround - related to #140, #61, #74
-			if (parentNode && parentNode.className === 'highcharts-tracker' && !docMode8) {
-				css(element, { visibility: HIDDEN });
-			}
 			cssRet = clipRect.getCSS(wrapper);
 			
 		} else {
@@ -406,21 +405,6 @@ VMLElement = {
 		}
 
 		return SVGElement.prototype.destroy.apply(this);
-	},
-
-	/**
-	 * Remove all child nodes of a group, except the v:group element
-	 */
-	empty: function () {
-		var element = this.element,
-			childNodes = element.childNodes,
-			i = childNodes.length,
-			node;
-
-		while (i--) {
-			node = childNodes[i];
-			node.parentNode.removeChild(node);
-		}
 	},
 
 	/**
@@ -636,7 +620,6 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						height: bottom + PX
 					});
 				}
-				
 				return ret;
 			},
 
@@ -813,9 +796,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 
 		} else {
-			var strokeNodes = elem.getElementsByTagName(prop);
-			if (strokeNodes.length) {
-				strokeNodes[0].opacity = 1;
+			var propNodes = elem.getElementsByTagName(prop); // 'stroke' or 'fill' node
+			if (propNodes.length) {
+				propNodes[0].opacity = 1;
+				propNodes[0].type = 'solid';
 			}
 			ret = color;
 		}
@@ -1114,7 +1098,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		}
 	}
 };
-VMLRenderer = function () {
+Highcharts.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
 VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);

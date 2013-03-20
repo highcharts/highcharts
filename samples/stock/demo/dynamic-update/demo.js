@@ -7,8 +7,9 @@ $(function() {
 	});
 	
 	// Create the chart
-	$('#container').highcharts('StockChart', {
+	window.chart = new Highcharts.StockChart({
 		chart : {
+			renderTo : 'container',
 			events : {
 				load : function() {
 

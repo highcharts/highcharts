@@ -2,9 +2,10 @@ $(function() {
 	var data = usdeur.splice(0, 500);
 	
 	
-	$('#container').highcharts('StockChart', {
+	var chart = new Highcharts.StockChart({
 	    
 	    chart: {
+	        renderTo: 'container'
 	    },
 	    
 	    rangeSelector: {

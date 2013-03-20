@@ -265,38 +265,6 @@ return {
 	map: function (arr, fn) {
 		return arr.map(fn);
 	},
-	
-	merge: function () { // the built-in prototype merge function doesn't do deep copy
-		function doCopy(copy, original) {
-			var value, key;
-
-			for (key in original) {
-				value = original[key];
-				if (value && typeof value === 'object' && value.constructor !== Array &&
-						typeof value.nodeType !== 'number') {
-					copy[key] = doCopy(copy[key] || {}, value); // copy
-
-				} else {
-					copy[key] = original[key];
-				}
-			}
-			return copy;
-		}
-
-		function merge() {
-			var args = arguments,
-				i,
-				retVal = {};
-
-			for (i = 0; i < args.length; i++) {
-				retVal = doCopy(retVal, args[i]);
-
-			}
-			return retVal;
-		}
-
-		return merge.apply(this, arguments);
-	},
 
 	// extend an object to handle highchart events (highchart objects, not svg elements).
 	// this is a very simple way of handling events but whatever, it works (i think)

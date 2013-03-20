@@ -24,12 +24,13 @@ var AreaSeries = extendClass(Series, {
 		var segments = [],
 			stack = this.yAxis.stacks.area,
 			pointMap = {},
+			plotX,
 			plotY,
 			points = this.points,
 			i,
 			x;
 
-		if (this.options.stacking) {
+		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
 			// Create a map where we can quickly look up the points by their X value.
 			for (i = 0; i < points.length; i++) {
 				pointMap[points[i].x] = points[i];
@@ -44,10 +45,12 @@ var AreaSeries = extendClass(Series, {
 				// insert a dummy point in order for the areas to be drawn
 				// correctly.
 				} else {
-					plotY = this.yAxis.translate(stack[x].cum, 0, 1, 0, 1);
+					plotX = this.xAxis.translate(x);
+					plotY = this.yAxis.toPixels(stack[x].cum, true);
 					segments.push({ 
 						y: null, 
-						plotX: this.xAxis.translate(x), 
+						plotX: plotX,
+						clientX: plotX, 
 						plotY: plotY, 
 						yBottom: plotY,
 						onMouseOver: noop
