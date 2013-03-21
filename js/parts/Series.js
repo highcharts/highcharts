@@ -1334,6 +1334,10 @@ Series.prototype = {
 	 * Adds series' points value to corresponding stack
 	 */
 	setStackedPoints: function () {
+		if (!this.isDirty || !this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
+			return;
+		}
+
 		var series = this,
 			xData = series.processedXData,
 			yData = series.processedYData,

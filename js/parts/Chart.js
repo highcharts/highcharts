@@ -298,6 +298,11 @@ Chart.prototype = {
 				each(axes, function (axis) {
 					axis.setScale();
 				});
+			} else {
+				// build stacks
+				each(chart.series, function (serie) {
+					serie.setStackedPoints();
+				});
 			}
 			chart.adjustTickAmounts();
 			chart.getMargins();

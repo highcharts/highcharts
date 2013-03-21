@@ -7433,12 +7433,8 @@ Axis.prototype = {
 		// is in turn needed in order to find tick positions in ordinal axes. 
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
-				// For stacked series we call processData in Chart.getStacks, there's no need to calculate it again
 				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
-
-				if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-					series.setStackedPoints();
-				}
+				series.setStackedPoints();
 			});
 		}
 
@@ -10531,6 +10527,11 @@ Chart.prototype = {
 				each(axes, function (axis) {
 					axis.setScale();
 				});
+			} else {
+				// build stacks
+				each(chart.series, function (serie) {
+					serie.setStackedPoints();
+				});
 			}
 			chart.adjustTickAmounts();
 			chart.getMargins();
@@ -13123,6 +13124,10 @@ Series.prototype = {
 	 * Adds series' points value to corresponding stack
 	 */
 	setStackedPoints: function () {
+		if (!this.isDirty || !this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
+			return;
+		}
+
 		var series = this,
 			xData = series.processedXData,
 			yData = series.processedYData,

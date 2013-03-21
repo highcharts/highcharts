@@ -1111,12 +1111,8 @@ Axis.prototype = {
 		// is in turn needed in order to find tick positions in ordinal axes. 
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
-				// For stacked series we call processData in Chart.getStacks, there's no need to calculate it again
 				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
-
-				if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-					series.setStackedPoints();
-				}
+				series.setStackedPoints();
 			});
 		}
 
