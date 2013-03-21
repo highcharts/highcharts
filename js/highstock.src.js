@@ -14589,7 +14589,7 @@ var AreaSeries = extendClass(Series, {
 	 */ 
 	getSegments: function () {
 		var segments = [],
-			stack = this.yAxis.stacks.area,
+			stack = this.yAxis.stacks[this.stackKey],
 			pointMap = {},
 			plotX,
 			plotY,
@@ -14604,6 +14604,7 @@ var AreaSeries = extendClass(Series, {
 			}
 
 			for (x in stack) {
+
 				// The point exists, push it to the segment
 				if (pointMap[x]) {
 					segments.push(pointMap[x]);
@@ -14630,6 +14631,7 @@ var AreaSeries = extendClass(Series, {
 			Series.prototype.getSegments.call(this);
 			segments = this.segments;
 		}
+
 		this.segments = segments;
 	},
 	
