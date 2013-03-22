@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'column',
                 margin: [ 50, 50, 100, 80]
             },
@@ -79,4 +76,3 @@ $(function () {
         });
     });
     
-});

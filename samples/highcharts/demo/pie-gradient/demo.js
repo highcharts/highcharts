@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     	
     	// Radialize the colors
 		Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
@@ -14,9 +12,8 @@ $(function () {
 		});
 		
 		// Build the chart
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false
@@ -62,4 +59,3 @@ $(function () {
         });
     });
     
-});

@@ -1,10 +1,6 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
-	    chart: {
-	        renderTo: 'container'
-	    },
-	    
+	$('#container').highcharts('StockChart', {
+
 	    plotOptions: {
 	    	series: {
 	    		marker: {
@@ -12,15 +8,15 @@ $(function() {
 	    		}
 	    	}
 	    },
-	    
+
 	    tooltip: {
 	    	valueDecimals: 4
 	    },
-	    
+
 	    rangeSelector: {
-	    	selected: 4	
+	    	selected: 4
 	    },
-	    
+
 	    series: [{
 	        name: 'ADBE',
 	        data: ADBE,

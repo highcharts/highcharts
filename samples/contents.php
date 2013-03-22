@@ -1,17 +1,15 @@
-<?php
-$product = $_GET['product'];
-
-if ($product == 'highcharts') $dir = 'highcharts';
-elseif ($product == 'highstock') $dir = 'stock';
-?>
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Highstock Example</title>
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<title>Highcharts samples</title>
+
+		<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
+  		<script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
 		
 		<script>
+			var diffThreshold = 0;
 			$(function () {
 				$("#batch-compare").click(function() {
 					var currentLi = document.currentLi || $('#li1')[0];
@@ -22,12 +20,37 @@ elseif ($product == 'highstock') $dir = 'stock';
 						window.parent.frames[1].location.href = href;
 					}
 				});
+
+				$("#slider").slider({
+					min: 0,
+					max: 1,
+					step: 0.01,
+					slide: function (ui, e) {
+						diffThreshold = e.value;
+						$('#slider-value').html(e.value);
+						$('a.dissimilarity-index').each(function (i, a) {
+							var $a = $(a),
+								$li = $a.parent(),
+								diff = parseFloat($a.attr('data-diff'));
+
+							if (diff >= e.value && $li.hasClass('identical')) {
+								$li.removeClass('identical').addClass('different');
+							} else if (diff < e.value && $li.hasClass('different')) {
+								$li.removeClass('different').addClass('identical');
+							}
+
+						})
+					}
+				});
 			});
 			
 		</script>
 		<style type="text/css">
 			* {
 				font-family: Arial, Verdana;
+			}
+
+			li, a, p, div, span {
 				font-size: 12px;
 			}
 			ul {
@@ -43,7 +66,10 @@ elseif ($product == 'highstock') $dir = 'stock';
 				text-decoration: none;
 			}
 			
-			
+			h2 {
+				border-bottom: 1px solid gray;
+				text-transform: uppercase;
+			}
 			li {
 				border: 1px solid white;
 				border-radius: 5px;
@@ -82,7 +108,7 @@ elseif ($product == 'highstock') $dir = 'stock';
 				color: white; 
 				font-family: Arial, sans-serif; 
 				padding: 0.5em; 
-				height: 3.5em;
+				height: 6.5em;
 				background: #57544A;
 				background: -webkit-linear-gradient(top, #57544A, #37342A); 
 				background: -moz-linear-gradient(top, #57544A, #37342A);
@@ -97,7 +123,7 @@ elseif ($product == 'highstock') $dir = 'stock';
 				
 			}
 			#main-nav {
-				margin-top: 60px;
+				margin-top: 100px;
 				margin-left: 10px;
 			}
 			.batch {
@@ -109,21 +135,27 @@ elseif ($product == 'highstock') $dir = 'stock';
 	<body>
 		
 	<div id="top-nav">
-		Product: <a href='?product=highcharts'>Highcharts</a> | <a href='?product=highstock'>Highstock</a>
-		<br/>
 		<button id="batch-compare">Batch compare</button>
+
+		<div>Show only differences above: <span id="slider-value">0</span></div>
+		<div id="slider" style="margin: 1em 3em 1em 1em"></div>
 	</div>
+
 
 	<div id="main-nav">
 	<?php
-	if (isset($dir)) {
+	$products = array('highcharts', 'stock');
+
+	$i = 1;
+	foreach ($products as $dir) {
 		if ($handle = opendir(dirname(__FILE__). '/' . $dir)) {
+
+			echo "<h2>$dir</h2>";
 			
-			$i = 1;
 			while (false !== ($file = readdir($handle))) {
 				if (preg_match('/^[a-z]+$/', $file)) {
 					echo "
-					<h4>$file</h4>
+					<h4>$dir/$file</h4>
 					<ul>
 					";
 				

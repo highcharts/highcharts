@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'bar'
             },
             title: {
@@ -29,10 +26,7 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y +' millions';
-                }
+                valueSuffix: ' millions'
             },
             plotOptions: {
                 bar: {
@@ -68,4 +62,3 @@ $(function () {
         });
     });
     
-});

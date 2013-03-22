@@ -8,10 +8,9 @@ $(function() {
 	    }
 	});
 	
-	var chart = new Highcharts.StockChart({
+	$('#container').highcharts('StockChart', {
 	    
 	    chart: {
-	        renderTo: 'container'
 	    },
 	    
 	    rangeSelector: {

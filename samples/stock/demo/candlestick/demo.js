@@ -2,10 +2,8 @@ $(function() {
 	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?', function(data) {
 
 		// create the chart
-		chart = new Highcharts.StockChart({
-			chart : {
-				renderTo : 'container'
-			},
+		$('#container').highcharts('StockChart', {
+			
 
 			rangeSelector : {
 				selected : 1

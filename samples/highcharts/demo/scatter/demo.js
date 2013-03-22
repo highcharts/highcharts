@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'scatter',
                 zoomType: 'xy'
             },
@@ -25,12 +22,6 @@ $(function () {
             yAxis: {
                 title: {
                     text: 'Weight (kg)'
-                }
-            },
-            tooltip: {
-                formatter: function() {
-                        return ''+
-                        this.x +' cm, '+ this.y +' kg';
                 }
             },
             legend: {
@@ -60,6 +51,10 @@ $(function () {
                                 enabled: false
                             }
                         }
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{series.name}</b><br>',
+                        pointFormat: '{point.x} cm, {point.y} kg'
                     }
                 }
             },
@@ -176,4 +171,3 @@ $(function () {
         });
     });
     
-});

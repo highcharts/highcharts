@@ -1,10 +1,11 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             type: 'pie'
         },
-        
+        title: {
+            text: 'Connectorline is not visible, with setting connectorWidth to zero'
+        },
         plotOptions: {
             pie: {
                 dataLabels: {
@@ -12,7 +13,7 @@ $(function () {
                 }
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

@@ -1,8 +1,7 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
+	$('#container').highcharts('StockChart', {
 	    
 	    chart: {
-	        renderTo: 'container',
 	        borderWidth: 2,
 	        marginLeft: 150
 	    },

@@ -1,9 +1,5 @@
 $(function () {
-    var chart = new Highcharts.Chart({
-    
-        chart: {
-            renderTo: 'container'
-        },
+    $('#container').highcharts({
     
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

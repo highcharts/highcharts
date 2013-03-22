@@ -7,45 +7,47 @@ if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 $i = (int)$_GET['i'];
 $next = $i + 1;
 
+$fullpath = dirname(__FILE__) . '/' . $path;
+
 // Get HTML and use dev server
 ob_start();
-include("$path/demo.html");
+include("$fullpath/demo.html");
 $html = ob_get_clean();
-$html = str_replace('/code.highcharts.com/high', '/dev.highcharts.com/js/high', $html);
-$html = str_replace('/code.highcharts.com/stock/', '/dev.highcharts.com/js/', $html);
-$html = str_replace('/code.highcharts.com/modules/', '/dev.highcharts.com/js/modules/', $html);
-	
+$html = str_replace('/code.highcharts.com/high', '/codev.highcharts.com/high', $html);
+$html = str_replace('/code.highcharts.com/stock/', '/codev.highcharts.com/', $html);
+$html = str_replace('/code.highcharts.com/modules/', '/codev.highcharts.com/modules/', $html);
+
 
 
 function getResources() {
-	global $path;
-	
+	global $fullpath;
+
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	include("$path/demo.details");
+	include("$fullpath/demo.details");
 	$s = ob_get_clean();
-	
+
 	$html = '';
 	if ($s) {
 		$lines = explode("\n", $s);
-		
+
 		$run = false;
 		foreach ($lines as $line) {
 			if ($run && substr(trim($line), 0, 1) != '-') {
 				$run = false;
 			}
-			
+
 			if ($run) {
 				$url = trim($line, " -\r");
-				
+
 				if (preg_match('/\.js$/', $url)) {
 					$html .= "<script src='$url'></script>\n";
 				} elseif (preg_match('/\.css$/', $url)) {
 					$html .= "<link rel='stylesheet' href='$url'></script>\n";
 				}
 			}
-			
-			
+
+
 			if (trim($line) === 'resources:') {
 				$run = true;
 			}
@@ -60,25 +62,25 @@ function getResources() {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highstock Example</title>
-		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script -->
+		<script src="/lib/jquery-1.7.2.js"></script>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
-		<?php @include("$path/demo.js"); ?>
+		<?php @include("$fullpath/demo.js"); ?>
 		</script>
-		
+
 		<style type="text/css">
-			<?php @include("$path/demo.css"); ?>
+			<?php @include("$fullpath/demo.css"); ?>
 		</style>
-		
+
 		<script type="text/javascript">
 			$(function() {
-				
+
 				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
-				
+
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document;
-					
+
 					// Highlight the current sample in the left
 					var li = contentDoc.getElementById('li<?php echo $i ?>');
 					if (li) {
@@ -87,69 +89,69 @@ function getResources() {
 							$(contentDoc.currentLi).removeClass('hilighted');
 							$(contentDoc.currentLi).addClass('visited');
 						}
-						
+
 						$(contentDoc.body).animate({
-							scrollTop: $(li).offset().top - 70
+							scrollTop: $(li).offset().top - 300
 						},'slow');
 
 						contentDoc.currentLi = li;
 						$(li).addClass('hilighted');
 					}
-					
+
 					// add the next button
 					if (contentDoc.getElementById('i<?php echo $next ?>')) {
 						function goNext () {
-							window.location.href = 
+							window.location.href =
 								window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
 						}
-						
+
 						$('#next').click(function() {
 							goNext();
 						});
 						$('#next')[0].disabled = false;
 					}
-					
+
 				}
 			});
 		</script>
-		
+
 		<style type="text/css">
 			.top-bar {
-				color: white; 
-				font-family: Arial, sans-serif; 
-				font-size: 0.8em; 
-				padding: 0.5em; 
+				color: white;
+				font-family: Arial, sans-serif;
+				font-size: 0.8em;
+				padding: 0.5em;
 				height: 3.5em;
 				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A); 
+				background: -webkit-linear-gradient(top, #57544A, #37342A);
 				background: -moz-linear-gradient(top, #57544A, #37342A);
 				box-shadow: 0px 0px 8px #888;
 			}
 		</style>
-		
+
 	</head>
 	<body style="margin: 0">
-		
+
 		<div class="top-bar">
-			
+
 			<div id="version" style="float:right; color: white"></div>
-			
-			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2> 
-			
+
+			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2>
+
 			<div style="text-align: center">
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="../compare-svg/view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em" 
-					href="http://jsfiddle.net/gh/get/jquery/1.8.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+					href="http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>
 			</div>
 		</div>
 		<div style="margin: 1em">
-		
+
 		<?php echo $html ?>
 		</div>
-		
+
 	</body>
 </html>

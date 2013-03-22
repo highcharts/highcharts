@@ -1,9 +1,5 @@
 $(function () {
-    var chart = new Highcharts.Chart({
-
-        chart: {
-            renderTo: 'container'
-        },
+    $('#container').highcharts({
 
         title: {
             text: 'Custom tick positions'
