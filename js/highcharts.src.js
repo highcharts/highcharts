@@ -6678,6 +6678,7 @@ Axis.prototype = {
 		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy();
+		this._addedPlotLB = false; // #1611
 
 		this.init(chart, newOptions);
 
