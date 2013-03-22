@@ -137,10 +137,10 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			points,
 			point,
 			shapeArgs,
-			sum = 0,
-			sumStart = 0,
-			subSum = 0,
-			subSumStart = 0,
+			sum,
+			sumStart,
+			subSum,
+			subSumStart,
 			edges,
 			cumulative,
 			prevStack,
@@ -156,6 +156,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		points = this.points;
 		subSumStart = sumStart = points[0];
+		sum = subSum = points[0].y;
 
 		for (i = 1, len = points.length; i < len; i++) {
 			// cache current point object
