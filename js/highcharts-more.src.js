@@ -1511,7 +1511,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	translate: function () {
 		var series = this,
 			options = series.options,
-			stacking = options.stacking,
 			axis = series.yAxis,
 			len,
 			i,
@@ -1519,10 +1518,10 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			points,
 			point,
 			shapeArgs,
-			sum = 0,
-			sumStart = 0,
-			subSum = 0,
-			subSumStart = 0,
+			sum,
+			sumStart,
+			subSum,
+			subSumStart,
 			edges,
 			cumulative,
 			prevStack,
@@ -1538,18 +1537,17 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		points = this.points;
 		subSumStart = sumStart = points[0];
+		sum = subSum = points[0].y;
 
 		for (i = 1, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
 			shapeArgs = point.shapeArgs;
 
-			if (stacking) {
-				// get current and previous stack
-				stack = series.getStack(i);
-				prevStack = series.getStack(i - 1);
-				prevY = series.getStackY(prevStack);
-			}
+			// get current and previous stack
+			stack = series.getStack(i);
+			prevStack = series.getStack(i - 1);
+			prevY = series.getStackY(prevStack);
 
 			// set new intermediate sum values after reset
 			if (subSumStart === null) {
@@ -1580,23 +1578,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// calculate other (up or down) points based on y value
 			} else if (point.y < 0) {
-
-				if (stacking) {
-					// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
-					cumulative = stack._cum === null ? prevStack.total : stack._cum;
-					stack._cum = cumulative + point.y;
-					y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
-					h = axis.translate(stack._cum, 0, 1);
-				}
+				// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
+				cumulative = stack._cum === null ? prevStack.total : stack._cum;
+				stack._cum = cumulative + point.y;
+				y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
+				h = axis.translate(stack._cum, 0, 1);
 
 				shapeArgs.y = y;
 				shapeArgs.height = mathCeil(h - y);
 			} else {
-				if (!stacking) {
-					shapeArgs.y -= points[i - 1].shapeArgs.height;
-				} else if (shapeArgs.y + shapeArgs.height > prevY) {
-					shapeArgs.height = mathFloor(prevY - shapeArgs.y);
-				}
+				shapeArgs.height = mathFloor(prevY - shapeArgs.y);
 			}
 		}
 	},
