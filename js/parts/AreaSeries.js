@@ -143,7 +143,7 @@ var AreaSeries = extendClass(Series, {
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
 		if (negativeColor) {
-			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]); // docs: negativeFillColor
+			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]);
 		}
 		
 		each(props, function (prop) {

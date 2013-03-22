@@ -6418,7 +6418,7 @@ Axis.prototype = {
 		tickWidth: 0,
 		title: {
 			rotation: 270,
-			text: 'Values' // docs
+			text: 'Values'
 		},
 		stackLabels: {
 			enabled: false,
@@ -6540,7 +6540,7 @@ Axis.prototype = {
 		axis.zoomEnabled = options.zoomEnabled !== false;
 	
 		// Initial categories
-		axis.categories = options.categories || type === 'category'; // docs
+		axis.categories = options.categories || type === 'category';
 	
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -14711,7 +14711,7 @@ var AreaSeries = extendClass(Series, {
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
 		if (negativeColor) {
-			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]); // docs: negativeFillColor
+			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]);
 		}
 		
 		each(props, function (prop) {
