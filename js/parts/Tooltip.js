@@ -293,7 +293,7 @@ Tooltip.prototype = {
 			textConfig = {},
 			text,
 			pointConfig = [],
-			formatter = options.formatter || tooltip.defaultFormatter,
+			formatter = (point.series.tooltipOptions && point.series.tooltipOptions.formatter) || options.formatter || tooltip.defaultFormatter,
 			hoverPoints = chart.hoverPoints,
 			borderColor,
 			crosshairsOptions = options.crosshairs,
