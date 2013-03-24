@@ -22,17 +22,6 @@ $(function () {
                 symbolY: 21,
                 symbolStrokeWidth: 2
             }
-        },
-        
-        exporting: {
-            buttons: {
-                exportButton: {
-                    x: -20
-                },
-                printButton: {
-                    x: -75
-                }
-            }
         }
     });
 });

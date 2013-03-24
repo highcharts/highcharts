@@ -1,14 +1,9 @@
 $(function () {
     $('#container').highcharts({
         
-        chart: {
-        },
-        
         yAxis: {        
             labels: {
-                formatter: function() {
-                    return this.value +' km';
-                }
+                format: '{value} km'
             }
         },
         

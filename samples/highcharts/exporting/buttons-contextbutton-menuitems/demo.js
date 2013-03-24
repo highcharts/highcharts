@@ -32,11 +32,7 @@ $(function () {
                             this.exportChart();
                         },
                         separator: false
-                    }, 
-                    null,
-                    null,
-                    null,
-                    null]
+                    }]
                 }
             }
         }

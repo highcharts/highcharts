@@ -1072,7 +1072,7 @@
                 </ac:if>
             </sequential>
         </ac:for>
-        <delete dir="${basedir}/build/dist/highcharts/js-gzip"/>
+        <!-- delete dir="${basedir}/build/dist/highcharts/js-gzip"/ -->
     </target>
     
     <!-- Deploy Highstock to S3 -->
@@ -1159,7 +1159,7 @@
                 </ac:if>
             </sequential>
         </ac:for>
-        <delete dir="${basedir}/build/dist/highstock/js-gzip"/>
+        <!-- delete dir="${basedir}/build/dist/highstock/js-gzip"/ -->
     </target>
     
     <!-- push whole versions structure from local machine to Amazon S3 -->

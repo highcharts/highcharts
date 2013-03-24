@@ -49,8 +49,6 @@ var Chart = Highcharts.Chart,
 		contextButtonTitle: 'Chart context menu'
 	});
 
-// docs: update the new defaults and explain the compatibility pack
-
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
 defaultOptions.navigation = {
@@ -70,7 +68,7 @@ defaultOptions.navigation = {
 		color: '#FFFFFF'
 	},
 
-	buttonOptions: { // docs
+	buttonOptions: {
 		symbolFill: '#E0E0E0',
 		symbolSize: 14,
 		symbolStroke: '#666',
@@ -80,6 +78,7 @@ defaultOptions.navigation = {
 		align: 'right',
 		buttonSpacing: 3, 
 		height: 22,
+		// text: null,
 		theme: {
 			fill: 'white', // capture hover
 			stroke: 'none'
@@ -97,11 +96,11 @@ defaultOptions.exporting = {
 	//filename: 'chart',
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
-	//width: undefined, // docs
-	//scale: 2 // docs 
+	//width: undefined,
+	//scale: 2
 	buttons: {
-		contextButton: { // docs
-			//x: -10, // docs: x is different now
+		contextButton: {
+			//x: -10,
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
 			menuItems: [{
@@ -233,15 +232,14 @@ extend(Chart.prototype, {
 			options.chart.height ||
 			(/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
 			400;
-		
 
 		// override some options
 		extend(options.chart, {
 			animation: false,
 			renderTo: sandbox,
 			forExport: true,
-			width: sourceWidth, // docs,
-			height: sourceHeight // docs
+			width: sourceWidth,
+			height: sourceHeight
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
@@ -339,12 +337,12 @@ extend(Chart.prototype, {
 		
 		var chart = this,
 			svg = chart.getSVG(merge(
-				{ chart: { borderRadius: 0 } }, // docs: defaults to 0 for exported charts
-				chart.options.exporting.chartOptions, // docs
+				{ chart: { borderRadius: 0 } },
+				chart.options.exporting.chartOptions,
 				chartOptions, 
 				{
 					exporting: {
-						sourceWidth: options.sourceWidth, // docs
+						sourceWidth: options.sourceWidth, // docs: option and parameter in exportChart()
 						sourceHeight: options.sourceHeight // docs
 					}
 				}

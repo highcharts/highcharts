@@ -418,7 +418,7 @@ Axis.prototype = {
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
-			formatOption = axis.options.labels.format, // docs
+			formatOption = axis.options.labels.format,
 			
 			// make sure the same symbol is added for all labels on a linear axis
 			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
