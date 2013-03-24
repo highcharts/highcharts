@@ -18,7 +18,7 @@ Point.prototype = {
 		point.pointAttr = {};
 
 		if (series.options.colorByPoint) {
-			colors = series.options.colors || series.chart.options.colors; // docs: series.options.colors when colorByPoint is true
+			colors = series.options.colors || series.chart.options.colors;
 			point.color = point.color || colors[series.colorCounter++];
 			// loop back to zero
 			if (series.colorCounter === colors.length) {
@@ -618,7 +618,7 @@ Series.prototype = {
 		});
 
 		// Linked series
-		linkedTo = options.linkedTo; // docs: ':previous' or Series.id - set up demo with linked temperature range and mean temperature
+		linkedTo = options.linkedTo;
 		series.linkedSeries = [];
 		if (isString(linkedTo)) {
 			if (linkedTo === ':previous') {
@@ -654,7 +654,7 @@ Series.prototype = {
 					// apply if the series xAxis or yAxis option mathches the number of the 
 					// axis, or if undefined, use the first axis
 					if ((seriesOptions[AXIS] === axisOptions.index) ||
-							(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) || // docs: series.xAxis and series.yAxis can point to axis.id
+							(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) ||
 							(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
 						
 						// register this series in the axis.series lookup
@@ -1839,7 +1839,7 @@ Series.prototype = {
 
 	},
 	/**
-	 * Update the series with a new set of options // docs (demo: members/series-update)
+	 * Update the series with a new set of options
 	 */
 	update: function (newOptions, redraw) {
 		var chart = this.chart,
@@ -2002,7 +2002,7 @@ Series.prototype = {
 				
 					// Get the string
 					labelConfig = point.getLabelConfig();
-					str = options.format ? // docs
+					str = options.format ?
 						format(options.format, labelConfig) : 
 						options.formatter.call(labelConfig, options);
 					
@@ -2400,7 +2400,7 @@ Series.prototype = {
 			animation = options.animation,
 			doAnimation = animation && !!series.animate && 
 				chart.renderer.isSVG, // this animation doesn't work in IE8 quirks when the group div is hidden,
-				// and looks bad in other oldIE // docs
+				// and looks bad in other oldIE
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,

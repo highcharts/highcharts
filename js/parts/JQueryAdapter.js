@@ -115,7 +115,7 @@
 				};
 			
 			/**
-			 * Register Highcharts as a plugin in the respective framework // docs
+			 * Register Highcharts as a plugin in the respective framework
 			 */
 			$.fn.highcharts = function () {
 				var constr = 'Chart', // default constructor

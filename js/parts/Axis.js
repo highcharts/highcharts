@@ -711,7 +711,7 @@ Axis.prototype = {
 	 * @param {Boolean} paneCoordinates Whether to return the pixel coordinate relative to the chart
 	 *        or just the axis/pane itself.
 	 */
-	toPixels: function (value, paneCoordinates) { // docs
+	toPixels: function (value, paneCoordinates) {
 		return this.translate(value, false, !this.horiz, null, true) + (paneCoordinates ? 0 : this.pos);
 	},
 
@@ -721,7 +721,7 @@ Axis.prototype = {
 	 * @param {Boolean} paneCoordiantes Whether the input pixel is relative to the chart or just the
 	 *        axis/pane itself.
 	 */
-	toValue: function (pixel, paneCoordinates) { // docs
+	toValue: function (pixel, paneCoordinates) {
 		return this.translate(pixel - (paneCoordinates ? 0 : this.pos), true, !this.horiz, null, true);
 	},
 

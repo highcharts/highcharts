@@ -101,7 +101,7 @@ extend(defaultOptions, {
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: hasSVG // docs
+		liveRedraw: hasSVG
 	}
 });
 /*jslint white:false */

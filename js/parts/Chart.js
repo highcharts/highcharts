@@ -163,7 +163,7 @@ Chart.prototype = {
      * @param {Object} options The axis option
      * @param {Boolean} isX Whether it is an X axis or a value axis
      */
-	addAxis: function (options, isX, redraw, animation) { // docs
+	addAxis: function (options, isX, redraw, animation) {
 		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
 			axis;

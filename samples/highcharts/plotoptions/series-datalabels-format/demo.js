@@ -1,7 +1,6 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -10,9 +9,7 @@ $(function () {
             series: {
                 dataLabels: {
                     enabled: true,
-                    formatter: function() {
-                        return this.y +'mm';
-                    }
+                    format: '{y} mm'
                 }
             }
         },

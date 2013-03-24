@@ -343,7 +343,6 @@ dateFormat = function (format, timestamp, capitalize) {
 		langWeekdays = lang.weekdays,
 
 		// List all format keys. Custom formats can be added from the outside. 
-		// See http://jsfiddle.net/highcharts/7PB5N/ // docs
 		replacements = extend({
 
 			// Day

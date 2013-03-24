@@ -464,7 +464,6 @@ dateFormat = function (format, timestamp, capitalize) {
 		langWeekdays = lang.weekdays,
 
 		// List all format keys. Custom formats can be added from the outside. 
-		// See http://jsfiddle.net/highcharts/7PB5N/ // docs
 		replacements = extend({
 
 			// Day
@@ -1206,7 +1205,7 @@ pathAnim = {
 				};
 			
 			/**
-			 * Register Highcharts as a plugin in the respective framework // docs
+			 * Register Highcharts as a plugin in the respective framework
 			 */
 			$.fn.highcharts = function () {
 				var constr = 'Chart', // default constructor
@@ -1482,7 +1481,7 @@ defaultLabelOptions = {
 
 defaultOptions = {
 	colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
-		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'], // docs
+		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1587,7 +1586,7 @@ defaultOptions = {
 			events: {},
 			//legendIndex: 0,
 			lineWidth: 2,
-			//shadow: false, // docs
+			//shadow: false,
 			// stacking: null,
 			marker: {
 				enabled: true,
@@ -1676,7 +1675,7 @@ defaultOptions = {
 		borderRadius: 5,
 		navigation: {
 			// animation: true,
-			activeColor: '#274b6d', // docs
+			activeColor: '#274b6d',
 			// arrowSize: 12
 			inactiveColor: '#CCC'
 			// style: {} // text styles
@@ -1690,7 +1689,7 @@ defaultOptions = {
 		},*/
 		itemStyle: {
 			cursor: 'pointer',
-			color: '#274b6d', // docs
+			color: '#274b6d',
 			fontSize: '12px'
 		},
 		itemHoverStyle: {
@@ -1712,7 +1711,7 @@ defaultOptions = {
 		// width: undefined,
 		x: 0,
 		y: 0,
-		title: { // docs
+		title: {
 			//text: null,
 			style: {
 				fontWeight: 'bold'
@@ -1738,11 +1737,11 @@ defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: hasSVG, // docs
+		animation: hasSVG,
 		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
-		borderWidth: 1, // docs
-		borderRadius: 3, // docs
+		borderWidth: 1,
+		borderRadius: 3,
 		dateTimeLabelFormats: { 
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
 			second: '%A, %b %e, %H:%M:%S',
@@ -1763,7 +1762,7 @@ defaultOptions = {
 			color: '#333333',
 			cursor: 'default',
 			fontSize: '12px',
-			padding: '8px', // docs
+			padding: '8px',
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',
@@ -6257,7 +6256,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries // docs: useHTML for stackLabels
+				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
 					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
@@ -7017,7 +7016,7 @@ Axis.prototype = {
 	 * @param {Boolean} paneCoordinates Whether to return the pixel coordinate relative to the chart
 	 *        or just the axis/pane itself.
 	 */
-	toPixels: function (value, paneCoordinates) { // docs
+	toPixels: function (value, paneCoordinates) {
 		return this.translate(value, false, !this.horiz, null, true) + (paneCoordinates ? 0 : this.pos);
 	},
 
@@ -7027,7 +7026,7 @@ Axis.prototype = {
 	 * @param {Boolean} paneCoordiantes Whether the input pixel is relative to the chart or just the
 	 *        axis/pane itself.
 	 */
-	toValue: function (pixel, paneCoordinates) { // docs
+	toValue: function (pixel, paneCoordinates) {
 		return this.translate(pixel - (paneCoordinates ? 0 : this.pos), true, !this.horiz, null, true);
 	},
 
@@ -8519,7 +8518,7 @@ Tooltip.prototype = {
 			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(this.options.hideDelay, 500)); // docs
+			}, pick(this.options.hideDelay, 500));
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -9910,7 +9909,7 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item), // docs,
+					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
 					useHTML
@@ -10199,7 +10198,7 @@ Legend.prototype = {
 		}
 		
 		// Reset the legend height and adjust the clipping rectangle
-		if (legendHeight > spaceHeight && !options.useHTML) { // docs - disable navigation when useHTML
+		if (legendHeight > spaceHeight && !options.useHTML) {
 			
 			this.clipHeight = clipHeight = spaceHeight - 20 - this.titleHeight;
 			this.pageCount = pageCount = mathCeil(legendHeight / clipHeight);
@@ -10478,7 +10477,7 @@ Chart.prototype = {
      * @param {Object} options The axis option
      * @param {Boolean} isX Whether it is an X axis or a value axis
      */
-	addAxis: function (options, isX, redraw, animation) { // docs
+	addAxis: function (options, isX, redraw, animation) {
 		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
 			axis;
@@ -11852,7 +11851,7 @@ Point.prototype = {
 		point.pointAttr = {};
 
 		if (series.options.colorByPoint) {
-			colors = series.options.colors || series.chart.options.colors; // docs: series.options.colors when colorByPoint is true
+			colors = series.options.colors || series.chart.options.colors;
 			point.color = point.color || colors[series.colorCounter++];
 			// loop back to zero
 			if (series.colorCounter === colors.length) {
@@ -12452,7 +12451,7 @@ Series.prototype = {
 		});
 
 		// Linked series
-		linkedTo = options.linkedTo; // docs: ':previous' or Series.id - set up demo with linked temperature range and mean temperature
+		linkedTo = options.linkedTo;
 		series.linkedSeries = [];
 		if (isString(linkedTo)) {
 			if (linkedTo === ':previous') {
@@ -12488,7 +12487,7 @@ Series.prototype = {
 					// apply if the series xAxis or yAxis option mathches the number of the 
 					// axis, or if undefined, use the first axis
 					if ((seriesOptions[AXIS] === axisOptions.index) ||
-							(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) || // docs: series.xAxis and series.yAxis can point to axis.id
+							(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) ||
 							(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
 						
 						// register this series in the axis.series lookup
@@ -13673,7 +13672,7 @@ Series.prototype = {
 
 	},
 	/**
-	 * Update the series with a new set of options // docs (demo: members/series-update)
+	 * Update the series with a new set of options
 	 */
 	update: function (newOptions, redraw) {
 		var chart = this.chart,
@@ -13836,7 +13835,7 @@ Series.prototype = {
 				
 					// Get the string
 					labelConfig = point.getLabelConfig();
-					str = options.format ? // docs
+					str = options.format ?
 						format(options.format, labelConfig) : 
 						options.formatter.call(labelConfig, options);
 					
@@ -14234,7 +14233,7 @@ Series.prototype = {
 			animation = options.animation,
 			doAnimation = animation && !!series.animate && 
 				chart.renderer.isSVG, // this animation doesn't work in IE8 quirks when the group div is hidden,
-				// and looks bad in other oldIE // docs
+				// and looks bad in other oldIE
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -15212,7 +15211,7 @@ var ColumnSeries = extendClass(Series, {
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
-			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box? // docs: inside
+			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
@@ -15266,7 +15265,7 @@ var ColumnSeries = extendClass(Series, {
 			attr = {},
 			translatedThreshold;
 
-		if (hasSVG) { // VML is too slow anyway // docs
+		if (hasSVG) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
 				translatedThreshold = mathMin(yAxis.pos + yAxis.len, mathMax(yAxis.pos, yAxis.toPixels(options.threshold)));
@@ -15331,9 +15330,9 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	tooltip: {
 		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
-		followPointer: true // docs
+		followPointer: true
 	},
-	stickyTracking: false // docs: new default
+	stickyTracking: false
 });
 
 /**
@@ -15358,7 +15357,7 @@ seriesTypes.scatter = ScatterSeries;
 defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
-	center: [null, null],//['50%', '50%'], // docs: new default
+	center: [null, null],
 	colorByPoint: true, // always true for pies
 	dataLabels: {
 		// align: null,
@@ -15373,11 +15372,11 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// softConnector: true,
 		//y: 0
 	},
-	ignoreHiddenPoint: true, // docs: new default
+	ignoreHiddenPoint: true,
 	//innerSize: 0,
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
-	size: null,//'75%', // docs: new default
+	size: null,
 	showInLegend: false,
 	slicedOffset: 10,
 	states: {
@@ -15386,9 +15385,9 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 			shadow: false
 		}
 	},
-	stickyTracking: false, // docs
+	stickyTracking: false,
 	tooltip: {
-		followPointer: true // docs
+		followPointer: true
 	}
 });
 
@@ -16099,7 +16098,7 @@ var PieSeries = {
 			
 		// Handle horizontal size and center
 		if (centerOption[0] !== null) { // Fixed center
-			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize); // docs: minSize
+			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize);
 			
 		} else { // Auto center
 			newSize = mathMax(
@@ -16111,7 +16110,7 @@ var PieSeries = {
 		
 		// Handle vertical size and center
 		if (centerOption[1] !== null) { // Fixed center
-			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize); // docs: minSize
+			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize);
 			
 		} else { // Auto center
 			newSize = mathMax(
@@ -17140,7 +17139,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			point = points[i];
 			plotX = point.plotX + crisp;
 			stackIndex = point.stackIndex;
-			shape = point.options.shape || options.shape; // docs: individual point shape
+			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
 			if (plotY !== UNDEFINED) {
 				plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
@@ -17170,7 +17169,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						shape,
 						anchorX,
 						anchorY,
-						options.useHTML // docs: plotOptions.flags.useHTML
+						options.useHTML
 					)
 					.css(merge(options.style, point.style))
 					.attr(pointAttr)
@@ -17380,7 +17379,7 @@ extend(defaultOptions, {
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: hasSVG // docs
+		liveRedraw: hasSVG
 	}
 });
 /*jslint white:false */
@@ -19003,7 +19002,7 @@ Highcharts.StockChart = function (options, callback) {
 // Implement the pinchType option
 wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
-	var pinchType = options.chart.pinchType || ''; // docs: pinchType (for Highstock only)
+	var pinchType = options.chart.pinchType || '';
 		
 	proceed.call(this, chart, options);
 
@@ -19036,7 +19035,7 @@ seriesProto.init = function () {
 };
 
 /**
- * The setCompare method can be called also from the outside after render time // docs
+ * The setCompare method can be called also from the outside after render time
  */
 seriesProto.setCompare = function (compare) {
 
@@ -19094,7 +19093,7 @@ seriesProto.processData = function () {
 };
 
 /**
- * Add a utility method, setCompare, to the Y axis // docs
+ * Add a utility method, setCompare, to the Y axis
  */
 Axis.prototype.setCompare = function (compare, redraw) {
 	if (!this.isXAxis) {

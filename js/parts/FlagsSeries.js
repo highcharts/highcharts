@@ -173,7 +173,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			point = points[i];
 			plotX = point.plotX + crisp;
 			stackIndex = point.stackIndex;
-			shape = point.options.shape || options.shape; // docs: individual point shape
+			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
 			if (plotY !== UNDEFINED) {
 				plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
@@ -203,7 +203,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						shape,
 						anchorX,
 						anchorY,
-						options.useHTML // docs: plotOptions.flags.useHTML
+						options.useHTML
 					)
 					.css(merge(options.style, point.style))
 					.attr(pointAttr)

@@ -309,7 +309,7 @@ var ColumnSeries = extendClass(Series, {
 			inverted = chart.inverted,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
-			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box? // docs: inside
+			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 		
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
@@ -363,7 +363,7 @@ var ColumnSeries = extendClass(Series, {
 			attr = {},
 			translatedThreshold;
 
-		if (hasSVG) { // VML is too slow anyway // docs
+		if (hasSVG) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
 				translatedThreshold = mathMin(yAxis.pos + yAxis.len, mathMax(yAxis.pos, yAxis.toPixels(options.threshold)));

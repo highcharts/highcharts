@@ -126,7 +126,7 @@ Tooltip.prototype = {
 			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(this.options.hideDelay, 500)); // docs
+			}, pick(this.options.hideDelay, 500));
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {

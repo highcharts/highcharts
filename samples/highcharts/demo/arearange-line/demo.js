@@ -71,7 +71,7 @@ $(function () {
     	$('#container').highcharts({
     	
 		    title: {
-		        text: 'Temperature variation by day'
+		        text: 'July temperatures'
 		    },
 		
 		    xAxis: {

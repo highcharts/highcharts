@@ -4,7 +4,7 @@
 defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
-	center: [null, null],//['50%', '50%'], // docs: new default
+	center: [null, null],
 	colorByPoint: true, // always true for pies
 	dataLabels: {
 		// align: null,
@@ -19,11 +19,11 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// softConnector: true,
 		//y: 0
 	},
-	ignoreHiddenPoint: true, // docs: new default
+	ignoreHiddenPoint: true,
 	//innerSize: 0,
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
-	size: null,//'75%', // docs: new default
+	size: null,
 	showInLegend: false,
 	slicedOffset: 10,
 	states: {
@@ -32,9 +32,9 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 			shadow: false
 		}
 	},
-	stickyTracking: false, // docs
+	stickyTracking: false,
 	tooltip: {
-		followPointer: true // docs
+		followPointer: true
 	}
 });
 
@@ -745,7 +745,7 @@ var PieSeries = {
 			
 		// Handle horizontal size and center
 		if (centerOption[0] !== null) { // Fixed center
-			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize); // docs: minSize
+			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize);
 			
 		} else { // Auto center
 			newSize = mathMax(
@@ -757,7 +757,7 @@ var PieSeries = {
 		
 		// Handle vertical size and center
 		if (centerOption[1] !== null) { // Fixed center
-			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize); // docs: minSize
+			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize);
 			
 		} else { // Auto center
 			newSize = mathMax(
