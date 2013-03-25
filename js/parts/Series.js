@@ -2382,7 +2382,9 @@ Series.prototype = {
 		// Place it on first and subsequent (redraw) calls
 		group[isNew ? 'attr' : 'animate']({
 			translateX: xAxis ? xAxis.left : chart.plotLeft, 
-			translateY: yAxis ? yAxis.top : chart.plotTop
+			translateY: yAxis ? yAxis.top : chart.plotTop,
+			scaleX: 1, // #1623
+			scaleY: 1
 		});
 		
 		return group;
