@@ -1,16 +1,12 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
-	    chart: {
-	        renderTo: 'container'
-	    },
-	    
+	$('#container').highcharts('StockChart', {
+
 	    tooltip: {
 	    	backgroundColor: {
 	    		linearGradient: {
-	    			x1: 0, 
-	    			y1: 0, 
-	    			x2: 0, 
+	    			x1: 0,
+	    			y1: 0,
+	    			x2: 0,
 	    			y2: 1
 	    		},
 	    		stops: [
@@ -21,11 +17,11 @@ $(function() {
 	    	borderColor: 'gray',
 	    	borderWidth: 1
 	    },
-	    
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur

@@ -23,11 +23,12 @@ Tick.prototype = {
 			chart = axis.chart,
 			horiz = axis.horiz,
 			categories = axis.categories,
+			names = axis.series[0] && axis.series[0].names,
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
 			tickPositions = axis.tickPositions,
-			width = (categories && horiz && categories.length &&
+			width = (horiz && categories &&
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
@@ -36,7 +37,9 @@ Tick.prototype = {
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
 			attr,
-			value = categories && defined(categories[pos]) ? categories[pos] : pos,
+			value = categories ?
+				pick(categories[pos], names && names[pos], pos) : 
+				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
 			dateTimeLabelFormat;
@@ -281,13 +284,14 @@ Tick.prototype = {
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
+			reverseCrisp = ((horiz && x === axis.pos) || (!horiz && y === axis.pos + axis.len)) ? -1 : 1, // #1480
 			staggerLines = axis.staggerLines;
 
 		this.isActive = true;
 		
 		// create the grid line
 		if (gridLineWidth) {
-			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth, old, true);
+			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
 			if (gridLine === UNDEFINED) {
 				attribs = {
@@ -331,7 +335,7 @@ Tick.prototype = {
 				tickLength = -tickLength;
 			}
 
-			markPath = tick.getMarkPath(x, y, tickLength, tickWidth, horiz, renderer);
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
 
 			if (mark) { // updating
 				mark.animate({
@@ -370,7 +374,7 @@ Tick.prototype = {
 			}
 
 			// Set the new position, and show or hide
-			if (show) {
+			if (show && !isNaN(xy.y)) {
 				xy.opacity = opacity;
 				label[tick.isNew ? 'attr' : 'animate'](xy);
 				tick.isNew = false;

@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * MooTools adapter
  *
- * (c) 2010-2011 Torstein Hønsi
+ * (c) 2010-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -67,13 +67,6 @@ win.HighchartsAdapter = {
 			}
 		};
 		/*jslint unparam: false*/
-	},
-
-	/**
-	 * Register Highcharts as a plugin in MooTools. 
-	 * TODO: implement
-	 */
-	plugin: function () {
 	},
 	
 	/**
@@ -198,35 +191,10 @@ win.HighchartsAdapter = {
 	},
 
 	/**
-	 * Deep merge two objects and return a third
-	 */
-	merge: function () {
-		var args = arguments,
-			args13 = [{}], // MooTools 1.3+
-			i = args.length,
-			ret;
-
-		if (legacy) {
-			ret = $merge.apply(null, args);
-		} else {
-			while (i--) {
-				// Boolean argumens should not be merged.
-				// JQuery explicitly skips this, so we do it here as well.
-				if (typeof args[i] !== 'boolean') {
-					args13[i + 1] = args[i];
-				}
-			}
-			ret = Object.merge.apply(Object, args13);
-		}
-
-		return ret;
-	},
-
-	/**
 	 * Get the offset of an element relative to the top left corner of the web page
 	 */
 	offset: function (el) {
-		var offsets = $(el).getOffsets();
+		var offsets = el.getPosition(); // #1496
 		return {
 			left: offsets.x,
 			top: offsets.y
@@ -298,6 +266,12 @@ win.HighchartsAdapter = {
 		// create an event object that keeps all functions
 		event = legacyEvent ? new Event(eventArgs) : new DOMEvent(eventArgs);
 		event = $extend(event, eventArguments);
+
+		// When running an event on the Chart.prototype, MooTools nests the target in event.event
+		if (!event.target && event.event) {
+			event.target = event.event.target;
+		}
+
 		// override the preventDefault function to be able to use
 		// this for custom events
 		event.preventDefault = function () {
@@ -316,10 +290,14 @@ win.HighchartsAdapter = {
 	},
 	
 	/**
-	 * Set back e.pageX and e.pageY that MooTools has abstracted away
+	 * Set back e.pageX and e.pageY that MooTools has abstracted away. #1165, #1346.
 	 */
 	washMouseEvent: function (e) {
-		return e.event || e;
+		if (e.page) {
+			e.pageX = e.page.x;
+			e.pageY = e.page.y;
+		}
+		return e;
 	},
 
 	/**

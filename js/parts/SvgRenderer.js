@@ -130,10 +130,8 @@ SVGElement.prototype = {
 							}
 						}
 
-						if (wrapper.rotation) {
-							attr(element, 'transform', 'rotate(' + wrapper.rotation + ' ' + value + ' ' +
-								pInt(hash.y || attr(element, 'y')) + ')');
-						}
+					} else if (wrapper.rotation && (key === 'x' || key === 'y')) {
+						doTransform = true;
 
 					// apply gradients
 					} else if (key === 'fill') {
@@ -186,10 +184,6 @@ SVGElement.prototype = {
 							value = value.join(',');
 						}
 
-					// special
-					} else if (key === 'isTracker') {
-						wrapper[key] = value;
-
 					// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
 					// is unable to cast them. Test again with final IE9.
 					} else if (key === 'width') {
@@ -215,9 +209,20 @@ SVGElement.prototype = {
 						key = 'stroke-width';
 					}
 
-					// Chrome/Win < 6 bug (http://code.google.com/p/chromium/issues/detail?id=15461)
-					if (isWebKit && key === 'stroke-width' && value === 0) {
-						value = 0.000001;
+					// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
+					// width is 0. #1369
+					if (key === 'stroke-width' || key === 'stroke') {
+						wrapper[key] = value;
+						// Only apply the stroke attribute if the stroke width is defined and larger than 0
+						if (wrapper.stroke && wrapper['stroke-width']) {
+							attr(element, 'stroke', wrapper.stroke);
+							attr(element, 'stroke-width', wrapper['stroke-width']);
+							wrapper.hasStroke = true;
+						} else if (key === 'stroke-width' && value === 0 && wrapper.hasStroke) {
+							element.removeAttribute('stroke');
+							wrapper.hasStroke = false;
+						}
+						skipAttr = true;
 					}
 
 					// symbols
@@ -253,12 +258,7 @@ SVGElement.prototype = {
 					// Record for animation and quick access without polling the DOM
 					wrapper[key] = value;
 					
-					// Update transform
-					if (doTransform) {
-						wrapper.updateTransform();
-					}
-
-
+					
 					if (key === 'text') {
 						// Delete bBox memo when the text changes
 						if (value !== wrapper.textStr) {
@@ -276,10 +276,34 @@ SVGElement.prototype = {
 
 			}
 
+			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
+			// of attributes.
+			if (doTransform) {
+				wrapper.updateTransform();
+			}
+
 		}
 		
 		return ret;
 	},
+
+	 
+	/**
+	 * Add a class name to an element
+	 */
+	addClass: function (className) {
+		attr(this.element, 'class', attr(this.element, 'class') + ' ' + className);
+		return this;
+	},
+	/* hasClass and removeClass are not (yet) needed
+	hasClass: function (className) {
+		return attr(this.element, 'class').indexOf(className) !== -1;
+	},
+	removeClass: function (className) {
+		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		return this;
+	},
+	*/
 
 	/**
 	 * If one of the symbol size affecting parameters are changed,
@@ -680,8 +704,8 @@ SVGElement.prototype = {
 		}
 
 		// apply scale
-		if (scaleX || scaleY) {
-			transform.push('scale(' + (scaleX || 1) + ' ' + (scaleY || 1) + ')');
+		if (defined(scaleX) || defined(scaleY)) {
+			transform.push('scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')');
 		}
 
 		if (transform.length) {
@@ -704,33 +728,49 @@ SVGElement.prototype = {
 	 *
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
-	 * @param {Object} box The box to align to, needs a width and height
+	 * @param {String[Object} box The box to align to, needs a width and height. When the
+	 *        box is a string, it refers to an object in the Renderer. For example, when 
+	 *        box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
+	 *        x and y properties.
 	 *
 	 */
 	align: function (alignOptions, alignByTranslate, box) {
-		var elemWrapper = this;
+		var align,
+			vAlign,
+			x,
+			y,
+			attribs = {},
+			alignTo,
+			renderer = this.renderer,
+			alignedObjects = renderer.alignedObjects;
 
-		if (!alignOptions) { // called on resize
-			alignOptions = elemWrapper.alignOptions;
-			alignByTranslate = elemWrapper.alignByTranslate;
-		} else { // first call on instanciate
-			elemWrapper.alignOptions = alignOptions;
-			elemWrapper.alignByTranslate = alignByTranslate;
-			if (!box) { // boxes other than renderer handle this internally
-				elemWrapper.renderer.alignedObjects.push(elemWrapper);
+		// First call on instanciate
+		if (alignOptions) {
+			this.alignOptions = alignOptions;
+			this.alignByTranslate = alignByTranslate;
+			if (!box || isString(box)) { // boxes other than renderer handle this internally
+				this.alignTo = alignTo = box || 'renderer';
+				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
+				alignedObjects.push(this);
+				box = null; // reassign it below
 			}
+		
+		// When called on resize, no arguments are supplied
+		} else {
+			alignOptions = this.alignOptions;
+			alignByTranslate = this.alignByTranslate;
+			alignTo = this.alignTo;
 		}
 
-		box = pick(box, elemWrapper.renderer);
+		box = pick(box, renderer[alignTo], renderer);
 
-		var align = alignOptions.align,
-			vAlign = alignOptions.verticalAlign,
-			x = (box.x || 0) + (alignOptions.x || 0), // default: left align
-			y = (box.y || 0) + (alignOptions.y || 0), // default: top align
-			attribs = {};
+		// Assign variables
+		align = alignOptions.align;
+		vAlign = alignOptions.verticalAlign;
+		x = (box.x || 0) + (alignOptions.x || 0); // default: left align
+		y = (box.y || 0) + (alignOptions.y || 0); // default: top align
 
-
-		// align
+		// Align
 		if (align === 'right' || align === 'center') {
 			x += (box.width - (alignOptions.width || 0)) /
 					{ right: 1, center: 2 }[align];
@@ -738,7 +778,7 @@ SVGElement.prototype = {
 		attribs[alignByTranslate ? 'translateX' : 'x'] = mathRound(x);
 
 
-		// vertical align
+		// Vertical align
 		if (vAlign === 'bottom' || vAlign === 'middle') {
 			y += (box.height - (alignOptions.height || 0)) /
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
@@ -746,12 +786,12 @@ SVGElement.prototype = {
 		}
 		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
 
-		// animate only if already placed
-		elemWrapper[elemWrapper.placed ? 'animate' : 'attr'](attribs);
-		elemWrapper.placed = true;
-		elemWrapper.alignAttr = attribs;
+		// Animate only if already placed
+		this[this.placed ? 'animate' : 'attr'](attribs);
+		this.placed = true;
+		this.alignAttr = attribs;
 
-		return elemWrapper;
+		return this;
 	},
 
 	/**
@@ -804,8 +844,8 @@ SVGElement.prototype = {
 				width = bBox.width;
 				height = bBox.height;
 				
-				// Workaround for wrong bounding box in IE9 and IE10 (#1101)
-				if (isIE && styles && styles.fontSize === '11px' && height === 22.700000762939453) {
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505)
+				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === 22.7) {
 					bBox.height = height = 14;
 				}
 			
@@ -836,12 +876,13 @@ SVGElement.prototype = {
 	},
 	
 	fadeOut: function (duration) {
-		this.animate({
+		var elemWrapper = this;
+		elemWrapper.animate({
 			opacity: 0
 		}, {
 			duration: duration || 150,
 			complete: function () {
-				this.hide();
+				elemWrapper.hide();
 			}
 		});
 	},
@@ -937,7 +978,7 @@ SVGElement.prototype = {
 			i;
 
 		// remove events
-		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = null;
+		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
@@ -963,26 +1004,15 @@ SVGElement.prototype = {
 		}
 
 		// remove from alignObjects
-		erase(wrapper.renderer.alignedObjects, wrapper);
+		if (wrapper.alignTo) {
+			erase(wrapper.renderer.alignedObjects, wrapper);
+		}
 
 		for (key in wrapper) {
 			delete wrapper[key];
 		}
 
 		return null;
-	},
-
-	/**
-	 * Empty a group element
-	 */
-	empty: function () {
-		var element = this.element,
-			childNodes = element.childNodes,
-			i = childNodes.length;
-
-		while (i--) {
-			element.removeChild(childNodes[i]);
-		}
 	},
 
 	/**
@@ -1184,6 +1214,7 @@ SVGRenderer.prototype = {
 	buildText: function (wrapper) {
 		var textNode = wrapper.element,
 			renderer = this,
+			forExport = renderer.forExport,
 			lines = pick(wrapper.textStr, '').toString()
 				.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
 				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
@@ -1229,7 +1260,7 @@ SVGRenderer.prototype = {
 						spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
 						attr(tspan, 'style', spanStyle);
 					}
-					if (hrefRegex.test(span)) {
+					if (hrefRegex.test(span) && !forExport) { // Not for export - #1529
 						attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
 						css(tspan, { cursor: 'pointer' });
 					}
@@ -1244,21 +1275,17 @@ SVGRenderer.prototype = {
 					if (!spanNo) { // first span in a line, align it to the left
 						attributes.x = parentX;
 					} else {
-						// Firefox ignores spaces at the front or end of the tspan
-						attributes.dx = 3; // space
+						attributes.dx = 0; // #16
 					}
 
 					// add attributes
 					attr(tspan, attributes);
 
-					// append it
-					textNode.appendChild(tspan);
-
 					// first span on subsequent line, add the line height
 					if (!spanNo && lineNo) {
 
 						// allow getting the right offset height in exporting in IE
-						if (!hasSVG && renderer.forExport) {
+						if (!hasSVG && forExport) {
 							css(tspan, { display: 'block' });
 						}
 
@@ -1271,9 +1298,15 @@ SVGRenderer.prototype = {
 								/px$/.test(tspan.style.fontSize) ?
 									tspan.style.fontSize : 
 									textStyles.fontSize
-							).h
+							).h,
+							// Safari 6.0.2 - too optimized for its own good (#1539)
+							// TODO: revisit this with future versions of Safari
+							isWebKit && tspan.offsetHeight
 						);
 					}
+
+					// Append it
+					textNode.appendChild(tspan);
 
 					spanNo++;
 
@@ -1331,7 +1364,7 @@ SVGRenderer.prototype = {
 	 * @param {Object} pressedState
 	 */
 	button: function (text, x, y, callback, normalState, hoverState, pressedState) {
-		var label = this.label(text, x, y),
+		var label = this.label(text, x, y, null, null, null, null, null, 'button'),
 			curState = 0,
 			stateOptions,
 			stateStyle,
@@ -1341,55 +1374,51 @@ SVGRenderer.prototype = {
 			STYLE = 'style',
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
-		// prepare the attributes
-		/*jslint white: true*/
-		normalState = merge(hash(
-			STROKE_WIDTH, 1,
-			STROKE, '#999',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
-					[0, '#FFF'],
-					[1, '#DDD']
+		// Normal state - prepare the attributes
+		normalState = merge({
+			'stroke-width': 1,
+			stroke: '#CCCCCC',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
+					[0, '#FEFEFE'],
+					[1, '#F6F6F6']
 				]
-			),
-			'r', 3,
-			'padding', 3,
-			STYLE, hash(
-				'color', 'black'
-			)
-		), normalState);
-		/*jslint white: false*/
+			},
+			r: 2,
+			padding: 5,
+			style: {
+				color: 'black'
+			}
+		}, normalState);
 		normalStyle = normalState[STYLE];
 		delete normalState[STYLE];
 
-		/*jslint white: true*/
-		hoverState = merge(normalState, hash(
-			STROKE, '#68A',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
+		// Hover state
+		hoverState = merge(normalState, {
+			stroke: '#68A',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
 					[0, '#FFF'],
 					[1, '#ACF']
 				]
-			)
-		), hoverState);
-		/*jslint white: false*/
+			}
+		}, hoverState);
 		hoverStyle = hoverState[STYLE];
 		delete hoverState[STYLE];
 
-		/*jslint white: true*/
-		pressedState = merge(normalState, hash(
-			STROKE, '#68A',
-			FILL, hash(
-				LINEAR_GRADIENT, verticalGradient,
-				STOPS, [
+		// Pressed state
+		pressedState = merge(normalState, {
+			stroke: '#68A',
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
 					[0, '#9BD'],
 					[1, '#CDF']
 				]
-			)
-		), pressedState);
-		/*jslint white: false*/
+			}
+		}, pressedState);
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
@@ -1630,6 +1659,7 @@ SVGRenderer.prototype = {
 				options
 			),
 
+			imageElement,
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
@@ -1656,23 +1686,25 @@ SVGRenderer.prototype = {
 
 			// On image load, set the size and position
 			centerImage = function (img, size) {
-				img.attr({
-					width: size[0],
-					height: size[1]
-				});
+				if (img.element) { // it may be destroyed in the meantime (#1390)
+					img.attr({
+						width: size[0],
+						height: size[1]
+					});
 
-				if (!img.alignByTranslate) { // #185
-					img.translate(
-						-mathRound(size[0] / 2),
-						-mathRound(size[1] / 2)
-					);
+					if (!img.alignByTranslate) { // #185
+						img.translate(
+							mathRound((width - size[0]) / 2), // #1378
+							mathRound((height - size[1]) / 2)
+						);
+					}
 				}
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
 			imageSize = symbolSizes[imageSrc];
 
-			// create the image synchronously, add attribs async
+			// Ireate the image synchronously, add attribs async
 			obj = this.image(imageSrc)
 				.attr({
 					x: x,
@@ -1682,15 +1714,15 @@ SVGRenderer.prototype = {
 			if (imageSize) {
 				centerImage(obj, imageSize);
 			} else {
-				// initialize image to be 0 size so export will still function if there's no cached sizes
+				// Initialize image to be 0 size so export will still function if there's no cached sizes.
+				// 
 				obj.attr({ width: 0, height: 0 });
 
-				// create a dummy JavaScript image to get the width and height
-				createElement('img', {
+				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
+				// the created element must be assigned to a variable in order to load (#292).
+				imageElement = createElement('img', {
 					onload: function () {
-						var img = this;
-
-						centerImage(obj, symbolSizes[imageSrc] = [img.width, img.height]);
+						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
 					},
 					src: imageSrc
 				});
@@ -1753,7 +1785,7 @@ SVGRenderer.prototype = {
 		'arc': function (x, y, w, h, options) {
 			var start = options.start,
 				radius = options.r || w || h,
-				end = options.end - 0.000001, // to prevent cos and sin of start and end from becoming equal on 360 arcs
+				end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 				innerRadius = options.innerR,
 				open = options.open,
 				cosStart = mathCos(start),
@@ -1867,7 +1899,7 @@ SVGRenderer.prototype = {
 			
 			// Correct the radial gradient for the radial reference system
 			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				extend(gradAttr, {
+				gradAttr = merge(gradAttr, {
 					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
 					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
 					r: gradAttr.r * radialReference[2],
@@ -2158,6 +2190,7 @@ SVGRenderer.prototype = {
 			bBox,
 			alignFactor = 0,
 			padding = 3,
+			paddingLeft = 0,
 			width,
 			height,
 			wrapperX,
@@ -2174,12 +2207,13 @@ SVGRenderer.prototype = {
 		 * box and reflect it in the border box.
 		 */
 		function updateBoxSize() {
-			var boxY,
+			var boxX,
+				boxY,
 				style = text.element.style;
 				
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
 				text.getBBox();
-			wrapper.width = (width || bBox.width || 0) + 2 * padding;
+			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 			
 			// update the label-scoped y offset
@@ -2189,11 +2223,12 @@ SVGRenderer.prototype = {
 				
 				// create the border box if it is not already present
 				if (!box) {
+					boxX = mathRound(-alignFactor * padding);
 					boxY = baseline ? -baselineOffset : 0;
 				
 					wrapper.box = box = shape ?
-						renderer.symbol(shape, -alignFactor * padding, boxY, wrapper.width, wrapper.height) :
-						renderer.rect(-alignFactor * padding, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height) :
+						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 					box.add(wrapper);
 				}
 	
@@ -2212,7 +2247,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = padding * (1 - alignFactor),
+				x = paddingLeft + padding * (1 - alignFactor),
 				y;
 			
 			// determin y based on the baseline
@@ -2284,14 +2319,21 @@ SVGRenderer.prototype = {
 			height = value;
 			return false;
 		};
-		attrSetters.padding = function (value) {
+		attrSetters.padding =  function (value) {
 			if (defined(value) && value !== padding) {
 				padding = value;
 				updateTextPadding();
 			}
-
 			return false;
 		};
+		attrSetters.paddingLeft =  function (value) {
+			if (defined(value) && value !== paddingLeft) {
+				paddingLeft = value;
+				updateTextPadding();
+			}
+			return false;
+		};
+		
 
 		// change local variable and set attribue as well
 		attrSetters.align = function (value) {
@@ -2343,7 +2385,7 @@ SVGRenderer.prototype = {
 		};
 		attrSetters.y = function (value) {
 			wrapperY = wrapper.y = mathRound(value);
-			wrapper.attr('translateY', value);
+			wrapper.attr('translateY', wrapperY);
 			return false;
 		};
 
@@ -2356,7 +2398,7 @@ SVGRenderer.prototype = {
 			css: function (styles) {
 				if (styles) {
 					var textStyles = {};
-					styles = merge({}, styles); // create a copy to avoid altering the original object (#537)
+					styles = merge(styles); // create a copy to avoid altering the original object (#537)
 					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width'], function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];

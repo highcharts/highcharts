@@ -1,6 +1,3 @@
-// Register the constructor as a framework plugin
-globalAdapter.plugin('StockChart');
-
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
@@ -18,7 +15,6 @@ Highcharts.StockChart = function (options, callback) {
 				}
 			},
 			// gapSize: 0,
-			shadow: false,
 			states: {
 				hover: {
 					lineWidth: 2
@@ -126,7 +122,7 @@ Highcharts.StockChart = function (options, callback) {
 // Implement the pinchType option
 wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
-	var pinchType = options.chart.pinchType || ''; // docs: pinchType (for Highstock only)
+	var pinchType = options.chart.pinchType || '';
 		
 	proceed.call(this, chart, options);
 
@@ -151,30 +147,40 @@ var seriesInit = seriesProto.init,
  */
 seriesProto.init = function () {
 	
-	// call base method
+	// Call base method
 	seriesInit.apply(this, arguments);
 	
-	// local variables
-	var series = this,
-		compare = series.options.compare;
-	
-	if (compare) {
-		series.modifyValue = function (value, point) {
-			var compareValue = this.compareValue;
+	// Set comparison mode
+	this.setCompare(this.options.compare);
+};
+
+/**
+ * The setCompare method can be called also from the outside after render time
+ */
+seriesProto.setCompare = function (compare) {
+
+	// Set or unset the modifyValue method
+	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
+		var compareValue = this.compareValue;
+		
+		// get the modified value
+		value = compare === 'value' ? 
+			value - compareValue : // compare value
+			value = 100 * (value / compareValue) - 100; // compare percent
 			
-			// get the modified value
-			value = compare === 'value' ? 
-				value - compareValue : // compare value
-				value = 100 * (value / compareValue) - 100; // compare percent
-				
-			// record for tooltip etc.
-			if (point) {
-				point.change = value;
-			}
-			
-			return value;
-		};
-	}	
+		// record for tooltip etc.
+		if (point) {
+			point.change = value;
+		}
+		
+		return value;
+	} : null;
+
+	// Mark dirty
+	if (this.chart.hasRendered) {
+		this.isDirty = true;
+	}
+
 };
 
 /**
@@ -202,6 +208,20 @@ seriesProto.processData = function () {
 				series.compareValue = processedYData[i];
 				break;
 			}
+		}
+	}
+};
+
+/**
+ * Add a utility method, setCompare, to the Y axis
+ */
+Axis.prototype.setCompare = function (compare, redraw) {
+	if (!this.isXAxis) {
+		each(this.series, function (series) {
+			series.setCompare(compare);
+		});
+		if (pick(redraw, true)) {
+			this.chart.redraw();
 		}
 	}
 };

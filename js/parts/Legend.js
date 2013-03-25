@@ -69,7 +69,7 @@ Legend.prototype = {
 
 		
 		if (legendItem) {
-			legendItem.css({ fill: textColor });
+			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE
 		}
 		if (legendLine) {
 			legendLine.attr({ stroke: symbolColor });
@@ -192,7 +192,8 @@ Legend.prototype = {
 		
 		if (titleOptions.text) {
 			if (!this.title) {
-				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4)
+				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4, null, null, null, null, null, 'legend-title')
+					.attr({ zIndex: 1 })
 					.css(titleOptions.style)
 					.add(this.group);
 			}
@@ -244,7 +245,7 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item), // docs,
+					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline,
 					useHTML
@@ -382,9 +383,6 @@ Legend.prototype = {
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
-				// #414, #759. Trackers will be drawn above the legend, but we have 
-				// to sacrifice that because tooltips need to be above the legend
-				// and trackers above tooltips
 				.attr({ zIndex: 7 }) 
 				.add();
 			legend.contentGroup = renderer.g()
@@ -498,7 +496,7 @@ Legend.prototype = {
 			legendGroup.align(extend({
 				width: legendWidth,
 				height: legendHeight
-			}, options), true, chart.spacingBox);
+			}, options), true, 'spacingBox');
 		}
 
 		if (!chart.isResizing) {
@@ -536,7 +534,7 @@ Legend.prototype = {
 		}
 		
 		// Reset the legend height and adjust the clipping rectangle
-		if (legendHeight > spaceHeight) {
+		if (legendHeight > spaceHeight && !options.useHTML) {
 			
 			this.clipHeight = clipHeight = spaceHeight - 20 - this.titleHeight;
 			this.pageCount = pageCount = mathCeil(legendHeight / clipHeight);
@@ -578,6 +576,7 @@ Legend.prototype = {
 			this.scrollGroup.attr({
 				translateY: 1
 			});
+			this.clipHeight = 0; // #1379
 		}
 		
 		return legendHeight;

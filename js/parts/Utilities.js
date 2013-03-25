@@ -14,6 +14,50 @@ function extend(a, b) {
 	}
 	return a;
 }
+	
+/**
+ * Deep merge two or more objects and return a third object.
+ * Previously this function redirected to jQuery.extend(true), but this had two limitations.
+ * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
+ * it copied properties from extended prototypes. 
+ */
+function merge() {
+	var i,
+		len = arguments.length,
+		ret = {},
+		doCopy = function (copy, original) {
+			var value, key;
+
+			for (key in original) {
+				if (original.hasOwnProperty(key)) {
+					value = original[key];
+
+					// An object is replacing a primitive
+					if (typeof copy !== 'object') {
+						copy = {};
+					}
+						
+					// Copy the contents of objects, but not arrays or DOM nodes
+					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
+							&& typeof value.nodeType !== 'number') {
+						copy[key] = doCopy(copy[key] || {}, value);
+				
+					// Primitives and arrays are copied over directly
+					} else {
+						copy[key] = original[key];
+					}
+				}
+			}
+			return copy;
+		};
+
+	// For each argument, extend the return
+	for (i = 0; i < len; i++) {
+		ret = doCopy(ret, arguments[i]);
+	}
+
+	return ret;
+}
 
 /**
  * Take an array and turn into a hash with even number arguments as keys and odd numbers as
@@ -297,19 +341,9 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
-		/* // uncomment this and the 'W' format key below to enable week numbers
-		weekNumber = function () {
-			var clone = new Date(date.valueOf()),
-				day = clone[getDay]() == 0 ? 7 : clone[getDay](),
-				dayNumber;
-			clone.setDate(clone[getDate]() + 4 - day);
-			dayNumber = mathFloor((clone.getTime() - new Date(clone[getFullYear](), 0, 1, -6)) / 86400000);
-			return 1 + mathFloor(dayNumber / 7);
-		},
-		*/
 
-		// list all format keys
-		replacements = {
+		// List all format keys. Custom formats can be added from the outside. 
+		replacements = extend({
 
 			// Day
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
@@ -338,13 +372,13 @@ dateFormat = function (format, timestamp, capitalize) {
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
 			'L': pad(mathRound(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
-		};
+		}, Highcharts.dateFormats);
 
 
 	// do the replaces
 	for (key in replacements) {
 		while (format.indexOf('%' + key) !== -1) { // regex would do it in one line, but this is faster
-			format = format.replace('%' + key, replacements[key]);
+			format = format.replace('%' + key, typeof replacements[key] === 'function' ? replacements[key](timestamp) : replacements[key]);
 		}
 	}
 
@@ -833,7 +867,7 @@ timeUnits = hash(
 	HOUR, 3600000,
 	DAY, 24 * 3600000,
 	WEEK, 7 * 24 * 3600000,
-	MONTH, 30 * 24 * 3600000,
+	MONTH, 31 * 24 * 3600000,
 	YEAR, 31556952000
 );
 /*jslint white: false*/

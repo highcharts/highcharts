@@ -29,9 +29,12 @@ $(function() {
     // create the chart when all data is loaded
     function createChart() {
 
-        chart = new Highcharts.StockChart({
-            chart: {
-                renderTo: 'container'
+        $('#container').highcharts('StockChart', {
+            title: {
+                text: 'plotOptions: {series: {compare: \'percent\'}}'
+            },
+            subtitle: {
+                text: 'Compare the values of the series against the first value in the visible range'
             },
 
             rangeSelector: {
@@ -45,19 +48,19 @@ $(function() {
                     }
                 }
             },
-            
+
             plotOptions: {
                 series: {
                     compare: 'percent'
                 }
             },
-            
+
             tooltip: {
                 pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
                 changeDecimals: 2,
                 valueDecimals: 2
             },
-            
+
             series: seriesOptions
         });
     }

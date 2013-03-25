@@ -1,7 +1,6 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container'
         },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -19,7 +18,8 @@ $(function () {
     
     // the button action
     $('#button').click(function() {
-       var selectedPoints = chart.getSelectedPoints();
+        var chart = $('#container').highcharts(),
+            selectedPoints = chart.getSelectedPoints();
         alert ('You selected '+ selectedPoints.length +' points');
     });
 });

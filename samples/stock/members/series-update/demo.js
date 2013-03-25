@@ -18,10 +18,8 @@ $(function () {
         });
 
         // create the chart
-        var chart = new Highcharts.StockChart({
-            chart : {
-                renderTo : 'container'
-            },
+        $('#container').highcharts('StockChart', {
+
 
             rangeSelector : {
                 selected : 1
@@ -39,7 +37,8 @@ $(function () {
             }]
         });
 
-    
+        var chart = $('#container').highcharts();
+        
         // Toggle point markers
         var enableMarkers = true;
         $('#markers').click(function() {

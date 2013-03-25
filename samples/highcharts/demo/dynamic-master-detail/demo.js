@@ -120,9 +120,8 @@ $(function () {
     
         // create the master chart
         function createMaster() {
-            masterChart = new Highcharts.Chart({
+            masterChart = $('#master-container').highcharts({
                 chart: {
-                    renderTo: 'master-container',
                     reflow: false,
                     borderWidth: 0,
                     backgroundColor: null,
@@ -250,7 +249,8 @@ $(function () {
     
             }, function(masterChart) {
                 createDetail(masterChart)
-            });
+            })
+            .highcharts(); // return chart instance
         }
     
         // create the detail chart
@@ -267,10 +267,9 @@ $(function () {
             });
     
             // create a detail chart referenced by a global variable
-            detailChart = new Highcharts.Chart({
+            detailChart = $('#detail-container').highcharts({
                 chart: {
                     marginBottom: 120,
-                    renderTo: 'detail-container',
                     reflow: false,
                     marginLeft: 50,
                     marginRight: 20,
@@ -332,7 +331,7 @@ $(function () {
                     enabled: false
                 }
     
-            });
+            }).highcharts(); // return chart
         }
     
         // make the container smaller and add a second container for the master chart

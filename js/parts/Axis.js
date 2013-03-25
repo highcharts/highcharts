@@ -76,13 +76,13 @@ Axis.prototype = {
 		tickPosition: 'outside',
 		tickWidth: 1,
 		title: {
-			//text: null, // docs: pulled from name, then text
+			//text: null,
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#6D869F',
+				color: '#4d759e',
 				//font: defaultFont.replace('normal', 'bold')
 				fontWeight: 'bold'
 			}
@@ -108,11 +108,11 @@ Axis.prototype = {
 		lineWidth: 0,
 		maxPadding: 0.05,
 		minPadding: 0.05,
-		name: 'Values', // docs
 		startOnTick: true,
 		tickWidth: 0,
 		title: {
-			rotation: 270
+			rotation: 270,
+			text: 'Values'
 		},
 		stackLabels: {
 			enabled: false,
@@ -234,7 +234,7 @@ Axis.prototype = {
 		axis.zoomEnabled = options.zoomEnabled !== false;
 	
 		// Initial categories
-		axis.categories = options.categories;
+		axis.categories = options.categories || type === 'category';
 	
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -242,16 +242,15 @@ Axis.prototype = {
 		//axis.axisTitle = UNDEFINED;
 		//axis.axisLine = UNDEFINED;
 	
-		// Flag if type === logarithmic
+		// Shorthand types
 		axis.isLog = type === 'logarithmic';
+		axis.isDatetimeAxis = isDatetimeAxis;
 	
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
 		// Linked axis.
 		//axis.linkedParent = UNDEFINED;
 	
-		// Flag if type === datetime
-		axis.isDatetimeAxis = isDatetimeAxis;
 	
 		// Flag if percentage mode
 		//axis.usePercentage = UNDEFINED;
@@ -263,7 +262,7 @@ Axis.prototype = {
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
 		
-		axis.tickmarkOffset = (options.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
+		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
 	
 		// Major ticks
 		axis.ticks = {};
@@ -300,6 +299,7 @@ Axis.prototype = {
 	
 		// Dictionary for stacks
 		axis.stacks = {};
+		axis._stacksTouched = 0;
 	
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
@@ -369,9 +369,10 @@ Axis.prototype = {
 	update: function (newOptions, redraw) {
 		var chart = this.chart;
 
-		newOptions = merge(this.userOptions, newOptions);
+		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy();
+		this._addedPlotLB = false; // #1611
 
 		this.init(chart, newOptions);
 
@@ -380,6 +381,30 @@ Axis.prototype = {
 			chart.redraw();
 		}
 	},	
+	
+	/**
+     * Remove the axis from the chart
+     */
+	remove: function (redraw) {
+		var chart = this.chart,
+			key = this.xOrY + 'Axis'; // xAxis or yAxis
+
+		// Remove associated series
+		each(this.series, function (series) {
+			series.remove(false);
+		});
+
+		// Remove the axis
+		erase(chart.axes, this);
+		erase(chart[key], this);
+		chart.options[key].splice(this.options.index, 1);
+		this.destroy();
+		chart.isDirtyBox = true;
+
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+	},
 	
 	/** 
 	 * The default label formatter. The context is a special config object for the label.
@@ -393,7 +418,7 @@ Axis.prototype = {
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
-			formatOption = axis.options.labels.format, // docs
+			formatOption = axis.options.labels.format,
 			
 			// make sure the same symbol is added for all labels on a linear axis
 			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
@@ -440,6 +465,8 @@ Axis.prototype = {
 			stacks = axis.stacks,
 			posStack = [],
 			negStack = [],
+			stacksTouched = axis._stacksTouched = axis._stacksTouched + 1,
+			type,
 			i;
 		
 		axis.hasVisibleSeries = false;
@@ -538,11 +565,14 @@ Axis.prototype = {
 							pointStack = isNegative ? negPointStack : posPointStack;
 							key = isNegative ? negKey : stackKey;
 
-							y = pointStack[x] =
-								defined(pointStack[x]) ?
-									correctFloat(pointStack[x] + y) : 
-									y;
+							// Set the stack value and y for extremes
+							if (defined(pointStack[x])) { // we're adding to the stack
+								pointStack[x] = correctFloat(pointStack[x] + y);
+								y = [y, pointStack[x]]; // consider both the actual value and the stack (#1376)
 
+							} else { // it's the first point in the stack
+								pointStack[x] = y;
+							}
 
 							// add the series
 							if (!stacks[key]) {
@@ -554,7 +584,8 @@ Axis.prototype = {
 							if (!stacks[key][x]) {
 								stacks[key][x] = new StackItem(axis, axis.options.stackLabels, isNegative, x, stackOption, stacking);
 							}
-							stacks[key][x].setTotal(y);
+							stacks[key][x].setTotal(pointStack[x]);
+							stacks[key][x].touched = stacksTouched;
 						}
 						
 						// Handle non null values
@@ -584,12 +615,6 @@ Axis.prototype = {
 						}
 					}
 
-					// record the least unit distance
-					/*if (findPointRange) {
-						series.pointRange = pointRange || 1;
-					}
-					series.closestPointRange = pointRange;*/
-
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If the length of activeYData is 0, continue with null values.
 					if (!axis.usePercentage && activeYData.length) {
@@ -612,6 +637,16 @@ Axis.prototype = {
 				}
 			}
 		});
+
+		// Destroy unused stacks (#1044)
+		for (type in stacks) {
+			for (i in stacks[type]) {
+				if (stacks[type][i].touched < stacksTouched) {
+					stacks[type][i].destroy();
+					delete stacks[type][i];
+				}
+			}
+		}
 		
 	},
 
@@ -628,7 +663,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = axis.options.ordinal || (axis.isLog && handleLog);
+			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -676,7 +711,7 @@ Axis.prototype = {
 	 * @param {Boolean} paneCoordinates Whether to return the pixel coordinate relative to the chart
 	 *        or just the axis/pane itself.
 	 */
-	toPixels: function (value, paneCoordinates) { // docs
+	toPixels: function (value, paneCoordinates) {
 		return this.translate(value, false, !this.horiz, null, true) + (paneCoordinates ? 0 : this.pos);
 	},
 
@@ -686,7 +721,7 @@ Axis.prototype = {
 	 * @param {Boolean} paneCoordiantes Whether the input pixel is relative to the chart or just the
 	 *        axis/pane itself.
 	 */
-	toValue: function (pixel, paneCoordinates) { // docs
+	toValue: function (pixel, paneCoordinates) {
 		return this.translate(pixel - (paneCoordinates ? 0 : this.pos), true, !this.horiz, null, true);
 	},
 
@@ -797,11 +832,10 @@ Axis.prototype = {
 	getLogTickPositions: function (interval, min, max, minor) {
 		var axis = this,
 			options = axis.options,
-			axisLength = axis.len;
-
-		// Since we use this method for both major and minor ticks,
-		// use a local variable and return the result
-		var positions = []; 
+			axisLength = axis.len,
+			// Since we use this method for both major and minor ticks,
+			// use a local variable and return the result
+			positions = []; 
 		
 		// Reset
 		if (!minor) {
@@ -838,7 +872,7 @@ Axis.prototype = {
 				for (j = 0; j < len && !break2; j++) {
 					pos = log2lin(lin2log(i) * intermediate[j]);
 					
-					if (pos > min) {
+					if (pos > min && lastPos <= max) {
 						positions.push(lastPos);
 					}
 					
@@ -898,9 +932,8 @@ Axis.prototype = {
 		var axis = this,
 			options = axis.options,
 			tickPositions = axis.tickPositions,
-			minorTickInterval = axis.minorTickInterval;
-
-		var minorTickPositions = [],
+			minorTickInterval = axis.minorTickInterval,
+			minorTickPositions = [],
 			pos,
 			i,
 			len;
@@ -921,9 +954,12 @@ Axis.prototype = {
 					options.startOfWeek
 				)
 			);
+			if (minorTickPositions[0] < axis.min) {
+				minorTickPositions.shift();
+			}
 		} else {			
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
-				minorTickPositions.push(pos);	
+				minorTickPositions.push(pos);
 			}
 		}
 		return minorTickPositions;
@@ -1031,6 +1067,9 @@ Axis.prototype = {
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 						
+					if (seriesPointRange > range) { // #1446
+						seriesPointRange = 0;
+					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 					
 					// minPointOffset is the value padding to the left of the axis in order to make
@@ -1062,7 +1101,7 @@ Axis.prototype = {
 			axis.pointRangePadding = pointRangePadding;
 
 			// pointRange means the width reserved for each point, like in a column chart
-			axis.pointRange = pointRange;
+			axis.pointRange = mathMin(pointRange, range);
 
 			// closestPointRange means the closest distance between points. In columns
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
@@ -1141,6 +1180,20 @@ Axis.prototype = {
 
 		// adjust min and max for the minimum range
 		axis.adjustForMinRange();
+		
+		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
+		// into account, we do this after computing tick interval (#1337).
+		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+			length = axis.max - axis.min;
+			if (length) {
+				if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
+					axis.min -= length * minPadding;
+				}
+				if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
+					axis.max += length * maxPadding;
+				}
+			}
+		}
 
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
@@ -1155,18 +1208,6 @@ Axis.prototype = {
 					1 :
 					(axis.max - axis.min) * tickPixelIntervalOption / (axis.len || 1)
 			);
-		}
-
-		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
-		// into account, we do this after computing tick interval (#1337).
-		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
-			length = (axis.max - axis.min) || 1;
-			if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
-				axis.min -= length * minPadding;
-			}
-			if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
-				axis.max += length * maxPadding;
-			}
 		}
 
 		// Now we're finished detecting min and max, crop and group series data. This
@@ -1208,7 +1249,9 @@ Axis.prototype = {
 				axis.tickInterval / 5 : options.minorTickInterval;
 
 		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions || (tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
+		axis.tickPositions = tickPositions = options.tickPositions ?
+			[].concat(options.tickPositions) : // Work on a copy (#1565)
+			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
 		if (!tickPositions) {
 			if (isDatetimeAxis) {
 				tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
@@ -1233,7 +1276,8 @@ Axis.prototype = {
 			// reset min/max or remove extremes based on start/end on tick
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1],
-				minPointOffset = axis.minPointOffset || 0;
+				minPointOffset = axis.minPointOffset || 0,
+				singlePad;
 
 			if (options.startOnTick) {
 				axis.min = roundedMin;
@@ -1247,6 +1291,14 @@ Axis.prototype = {
 				tickPositions.pop();
 			}
 			
+			// When there is only one point, or all points have the same value on this axis, then min
+			// and max are equal and tickPositions.length is 1. In this case, add some padding
+			// in order to center the point, but leave it with one tick. #1337.
+			if (tickPositions.length === 1) {
+				singlePad = 0.001; // The lowest possible number to avoid extra padding on columns
+				axis.min -= singlePad;
+				axis.max += singlePad;
+			}
 		}
 	},
 	
@@ -1256,19 +1308,12 @@ Axis.prototype = {
 	setMaxTicks: function () {
 		
 		var chart = this.chart,
-			maxTicks = chart.maxTicks,
+			maxTicks = chart.maxTicks || {},
 			tickPositions = this.tickPositions,
-			xOrY = this.xOrY;
+			key = this._maxTicksKey = [this.xOrY, this.pos, this.len].join('-');
 		
-		if (!maxTicks) { // first call, or maxTicks have been reset after a zoom operation
-			maxTicks = {
-				x: 0,
-				y: 0
-			};
-		}
-
-		if (!this.isLinked && !this.isDatetimeAxis && tickPositions.length > maxTicks[xOrY] && this.options.alignTicks !== false) {
-			maxTicks[xOrY] = tickPositions.length;
+		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
+			maxTicks[key] = tickPositions.length;
 		}
 		chart.maxTicks = maxTicks;
 	},
@@ -1280,17 +1325,17 @@ Axis.prototype = {
 	adjustTickAmount: function () {
 		var axis = this,
 			chart = axis.chart,
-			xOrY = axis.xOrY,
+			key = axis._maxTicksKey,
 			tickPositions = axis.tickPositions,
 			maxTicks = chart.maxTicks;
 
-		if (maxTicks && maxTicks[xOrY] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
+		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
 				tickAmount;
 
 			// set the axis-level tickAmount to use below
-			axis.tickAmount = tickAmount = maxTicks[xOrY];
+			axis.tickAmount = tickAmount = maxTicks[key];
 
 			if (calculatedTickAmount < tickAmount) {
 				while (tickPositions.length < tickAmount) {
@@ -1543,6 +1588,7 @@ Axis.prototype = {
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
+			invertedSide = chart.inverted ? [1, 0, 3, 2][side] : side,
 			hasData,
 			showAxis,
 			titleOffset = 0,
@@ -1552,6 +1598,7 @@ Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			axisOffset = chart.axisOffset,
+			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n;
 			
@@ -1649,6 +1696,7 @@ Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], options.lineWidth);
 
 	},
 	
@@ -1664,6 +1712,9 @@ Axis.prototype = {
 			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
 			
 		this.lineTop = lineTop; // used by flag series
+		if (!opposite) {
+			lineWidth *= -1; // crispify the other way - #1480
+		}
 
 		return chart.renderer.crispLine([
 				M,
@@ -1754,6 +1805,14 @@ Axis.prototype = {
 		// If the series has data draw the ticks. Else only the line and title
 		if (hasData || isLinked) {
 
+			// Mark all elements inActive before we go over and mark the active ones
+			each([ticks, minorTicks, alternateBands], function (coll) {
+				var pos;
+				for (pos in coll) {
+					coll[pos].isActive = false;
+				}
+			});
+
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
 				each(axis.getMinorTickPositions(), function (pos) {
@@ -1839,33 +1898,37 @@ Axis.prototype = {
 		each([ticks, minorTicks, alternateBands], function (coll) {
 			var pos, 
 				i,
-				forDestruction = [];
+				forDestruction = [],
+				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+				destroyInactiveItems = function () {
+					i = forDestruction.length;
+					while (i--) {
+						// When resizing rapidly, the same items may be destroyed in different timeouts,
+						// or the may be reactivated
+						if (coll[forDestruction[i]] && !coll[forDestruction[i]].isActive) {
+							coll[forDestruction[i]].destroy();
+							delete coll[forDestruction[i]];
+						}
+					}
+					
+				};
 
 			for (pos in coll) {
 
-				// These ticks are still active, now reset the isActive flag for the 
-				// next run.
-				if (coll[pos].isActive) {
-					coll[pos].isActive = false;
-					
-				// These ticks have not been marked active in the current run. Fade them
-				// out and mark them for destruction.
-				} else {
+				if (!coll[pos].isActive) {
+					// Render to zero opacity
 					coll[pos].render(pos, false, 0);
+					coll[pos].isActive = false;
 					forDestruction.push(pos);
 				}
 			}
 
 			// When the objects are finished fading out, destroy them
-			setTimeout(function () {
-				i = forDestruction.length;
-				while (i--) {
-					coll[forDestruction[i]].destroy();
-					delete coll[forDestruction[i]];	
-				}
-				
-			}, coll === alternateBands ? 
-					0 : (globalAnimation && globalAnimation.duration) || 500);
+			if (coll === alternateBands || !chart.hasRendered || !delay) {
+				destroyInactiveItems();
+			} else if (delay) {
+				setTimeout(destroyInactiveItems, delay);
+			}
 		});
 
 		// Static items. As the axis group is cleared on subsequent calls

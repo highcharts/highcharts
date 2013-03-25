@@ -16,6 +16,59 @@ var AreaSeries = extendClass(Series, {
 	type: 'area',
 	
 	/**
+	 * For stacks, don't split segments on null values. Instead, draw null values with 
+	 * no marker. Also insert dummy points for any X position that exists in other series
+	 * in the stack.
+	 */ 
+	getSegments: function () {
+		var segments = [],
+			stack = this.yAxis.stacks[this.stackKey],
+			pointMap = {},
+			plotX,
+			plotY,
+			points = this.points,
+			i,
+			x;
+
+		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
+			// Create a map where we can quickly look up the points by their X value.
+			for (i = 0; i < points.length; i++) {
+				pointMap[points[i].x] = points[i];
+			}
+
+			for (x in stack) {
+
+				// The point exists, push it to the segment
+				if (pointMap[x]) {
+					segments.push(pointMap[x]);
+
+				// There is no point for this X value in this series, so we 
+				// insert a dummy point in order for the areas to be drawn
+				// correctly.
+				} else {
+					plotX = this.xAxis.translate(x);
+					plotY = this.yAxis.toPixels(stack[x].cum, true);
+					segments.push({ 
+						y: null, 
+						plotX: plotX,
+						clientX: plotX, 
+						plotY: plotY, 
+						yBottom: plotY,
+						onMouseOver: noop
+					});
+				}
+			}
+			segments = [segments];
+
+		} else {
+			Series.prototype.getSegments.call(this);
+			segments = this.segments;
+		}
+
+		this.segments = segments;
+	},
+	
+	/**
 	 * Extend the base Series getSegmentPath method by adding the path for the area.
 	 * This path is pushed to the series.areaPath property.
 	 */
@@ -90,7 +143,7 @@ var AreaSeries = extendClass(Series, {
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
 		if (negativeColor) {
-			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]); // docs: negativeFillColor
+			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]);
 		}
 		
 		each(props, function (prop) {

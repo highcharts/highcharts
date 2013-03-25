@@ -18,7 +18,7 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 	// recalculate extremes for each waterfall stack
 	each(axis.series, function (series) {
 		// process only visible, waterfall series, one from each stack
-		if (!series.visible || !series.stackKey || series.type !== 'waterfall' || visitedStacks.indexOf(series.stackKey) !== -1) {
+		if (!series.visible || !series.stackKey || series.type !== 'waterfall' || HighchartsAdapter.inArray(series.stackKey) !== -1) {
 			return;
 		}
 
@@ -45,10 +45,10 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 
 		// set new stack totals including preceding values, finds new min and max values
 		for (i = 0; i < yDataLength; i++) {
-			key = yData[i] < 0 ? negKey : stackKey;
+			key = yData[i] < threshold ? negKey : stackKey;
 			total = stacks[key][i].total;
 
-			if (i > 0) {
+			if (i > threshold) {
 				total += previous;
 				stacks[key][i].setTotal(total);
 
@@ -78,12 +78,29 @@ wrap(axisProto, 'getSeriesExtremes', function (proceed, renew) {
 
 		// remember series' stack key
 		visitedStacks.push(series.stackKey);
+
+
+
+		// Adjust to threshold. This code is duplicated from the parent getSeriesExtremes method.
+		if (typeof threshold === 'number') {
+			if (axis.dataMin >= threshold) {
+				axis.dataMin = threshold;
+				axis.ignoreMinPadding = true;
+			} else if (axis.dataMax < threshold) {
+				axis.dataMax = threshold;
+				axis.ignoreMaxPadding = true;
+			}
+		}
 	});
 });
 
 
 // 1 - set default options
 defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
+	lineWidth: 1,
+	lineColor: '#333',
+	dashStyle: 'dot',
+	borderColor: '#333'
 });
 
 
@@ -98,11 +115,20 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	pointValKey: 'y',
 
 	/**
+	 * Init waterfall series, force stacking
+	 */
+	init: function (chart, options) {
+		options.stacking = true;
+		seriesTypes.column.prototype.init.call(this, chart, options);
+	},
+
+
+	/**
 	 * Translate data points from raw values
 	 */
 	translate: function () {
 		var series = this,
-			stacking = series.options.stacking,
+			options = series.options,
 			axis = series.yAxis,
 			len,
 			i,
@@ -110,18 +136,18 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			points,
 			point,
 			shapeArgs,
-			sum = 0,
-			sumStart = 0,
-			subSum = 0,
-			subSumStart = 0,
+			sum,
+			sumStart,
+			subSum,
+			subSumStart,
 			edges,
 			cumulative,
-			previous,
 			prevStack,
 			prevY,
 			stack,
 			y,
-			h;
+			h,
+			crispCorr = (options.borderWidth % 2) / 2;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
@@ -129,18 +155,17 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		points = this.points;
 		subSumStart = sumStart = points[0];
+		sum = subSum = points[0].y;
 
 		for (i = 1, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
 			shapeArgs = point.shapeArgs;
 
-			if (stacking) {
-				// get current and previous stack
-				stack = series.getStack(i);
-				prevStack = series.getStack(i - 1);
-				prevY = series.getStackY(prevStack);
-			}
+			// get current and previous stack
+			stack = series.getStack(i);
+			prevStack = series.getStack(i - 1);
+			prevY = series.getStackY(prevStack);
 
 			// set new intermediate sum values after reset
 			if (subSumStart === null) {
@@ -171,26 +196,18 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// calculate other (up or down) points based on y value
 			} else if (point.y < 0) {
-
-				if (stacking) {
-					// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
-					cumulative = stack._cum === null ? prevStack.total : stack._cum;
-					stack._cum = cumulative + point.y;
-					y = mathCeil(axis.translate(cumulative, 0, 1));
-					h = mathCeil(axis.translate(stack._cum, 0, 1));
-				}
+				// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
+				cumulative = stack._cum === null ? prevStack.total : stack._cum;
+				stack._cum = cumulative + point.y;
+				y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
+				h = axis.translate(stack._cum, 0, 1);
 
 				shapeArgs.y = y;
-				shapeArgs.height = h - y;
+				shapeArgs.height = mathCeil(h - y);
 			} else {
-				if (!stacking) {
-					shapeArgs.y -= points[i - 1].shapeArgs.height;
-				} else if (shapeArgs.y + shapeArgs.height > prevY) {
-					shapeArgs.height = prevY - shapeArgs.y;
-				}
+				shapeArgs.height = mathFloor(prevY - shapeArgs.y);
 			}
 		}
-
 	},
 
 	/**
@@ -316,7 +333,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			stacks = axis.stacks,
 			key = this.stackKey;
 
-		if (this.processedYData[i] < 0) {
+		if (this.processedYData[i] < this.options.threshold) {
 			key = '-' + key;
 		}
 
@@ -333,10 +350,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	getSumEdges: function (pointA, pointB) {
 		var valueA,
 			valueB,
-			tmp;
+			tmp,
+			threshold = this.options.threshold;
 
-		valueA = pointA.y >= 0 ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
-		valueB = pointB.y >= 0 ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
+		valueA = pointA.y >= threshold ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
+		valueB = pointB.y >= threshold ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
 
 		if (valueB > valueA) {
 			tmp = valueA;
@@ -345,29 +363,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		}
 
 		return [valueA, valueB];
-	},
-
-	/**
-	 * Place sums' dataLabels on the top of column regardles of its value
-	 */
-	alignDataLabel: function (point, dataLabel, options,  alignTo, isNew) {
-		var dlBox;
-
-		if (point.isSum || point.isIntermediateSum) {
-			dlBox = point.dlBox || point.shapeArgs;
-
-			if (dlBox) {
-				alignTo = merge(dlBox);
-			}
-
-			alignTo.height = 0;
-			options.verticalAlign = 'bottom';
-			options.align = pick(options.align, 'center');
-
-			Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-		} else {
-			seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
-		}
 	},
 
 	drawGraph: Series.prototype.drawGraph

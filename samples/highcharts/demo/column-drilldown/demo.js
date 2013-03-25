@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     
         var colors = Highcharts.getOptions().colors,
             categories = ['MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera'],
@@ -65,9 +63,8 @@ $(function () {
 			chart.redraw();
         }
     
-        chart = new Highcharts.Chart({
+        var chart = $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'column'
             },
             title: {
@@ -131,7 +128,7 @@ $(function () {
             exporting: {
                 enabled: false
             }
-        });
+        })
+        .highcharts(); // return chart
     });
     
-});

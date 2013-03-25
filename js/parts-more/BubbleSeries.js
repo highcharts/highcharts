@@ -7,7 +7,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		inside: true,
 		style: {
-			color: 'white'
+			color: 'white',
+			textShadow: '0px 0px 3px black'
 		},
 		verticalAlign: 'middle'
 	},
@@ -20,10 +21,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
-	shadow: false,
-	stickyTracking: false,
 	tooltip: {
-		followPointer: true,
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 	zThreshold: 0
@@ -33,7 +31,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
-	trackerGroupKey: 'group',
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -93,7 +91,6 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radii.push(math.round(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
-	
 	},
 	
 	/**
@@ -208,11 +205,12 @@ Axis.prototype.beforePadding = function () {
 		smallestSize = math.min(chart.plotWidth, chart.plotHeight),
 		zMin = Number.MAX_VALUE,
 		zMax = -Number.MAX_VALUE,
-		transA = axisLength / (this.max - min),
+		range = this.max - min,
+		transA = axisLength / range,
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
-	if (pick(this.options.min, this.userMin) === UNDEFINED && this.tickPositions) {
+	if (this.tickPositions) {
 		each(this.series, function (series) {
 
 			var seriesOptions = series.options,
@@ -262,17 +260,21 @@ Axis.prototype.beforePadding = function () {
 				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
 			}
 			
-			while (i--) {
-				radius = series.radii[i];
-				pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-				pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+			if (range > 0) {
+				while (i--) {
+					radius = series.radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
 			}
 		});
 		
-		pxMax -= axisLength;
-		transA *= (axisLength + pxMin - pxMax) / axisLength;
-		this.min += pxMin / transA;
-		this.max += pxMax / transA;
+		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED) {
+			pxMax -= axisLength;
+			transA *= (axisLength + pxMin - pxMax) / axisLength;
+			this.min += pxMin / transA;
+			this.max += pxMax / transA;
+		}
 	}
 };
 

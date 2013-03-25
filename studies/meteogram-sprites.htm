@@ -6,7 +6,7 @@
         <!-- 1. Add these JavaScript inclusions in the head of your page -->
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
         </script>
-        <script type="text/javascript" src="http://code.highcharts.com/master/highcharts.js">
+        <script type="text/javascript" src="http://github.highcharts.com/v3.0Beta/highcharts.js">
         </script>
         <!-- 2. Add the JavaScript to initialize the chart on document ready -->
         <script type="text/javascript">
@@ -202,7 +202,23 @@
 						},
 						
 						tooltip: {
-							shared: true
+							shared: true,
+							useHTML: true,
+							formatter: function () {
+								var ret = '<small>' + Highcharts.dateFormat('%A, %b %e, %H:%M', this.x) + '-' +
+									Highcharts.dateFormat('%H:%M', this.x + 36e5) + '</small>';
+
+								ret += '<table>';
+								Highcharts.each(this.points, function (point) {
+									var series = point.series;
+									ret += '<tr><td style="color:'+ series.color + '">' + series.name +
+										':a</td><td>' + point.y + series.options.tooltip.valueSuffix + '</td></tr>';
+								});
+								ret += '</table>';
+
+
+								return ret;
+							}
 						},
 	                    
 	                    credits: {
@@ -212,12 +228,12 @@
 							}
 	                    },
 						
-	                    xAxis: [{
+	                    xAxis: [{ // Bottom X axis
 	                        type: 'datetime',
-	                        tickInterval: 2 * 3600 * 1000,
+	                        tickInterval: 2 * 36e5, // two hours
 							tickPosition: 'inside',
-							minorTickInterval: 1 * 3600 * 1000,
-							tickLength: 30,
+							minorTickInterval: 36e5, // one hour
+							tickLength: 0,
 							gridLineWidth: 1,
 							gridLineColor: '#F0F0F0',
 							startOnTick: false,
@@ -227,24 +243,14 @@
 							offset: 30,
 							showLastLabel: true,
 	                        labels: {
-	                            formatter: function(){
-	                                return Highcharts.dateFormat(
-										'%H', 
-										this.value
-									);
-	                            }
+	                            format: '{value:%H}'
 	                        }
-	                    }, {
+	                    }, { // Top X axis
 							linkedTo: 0,
 							type: 'datetime',
 							tickInterval: 24 * 3600 * 1000,
 	                        labels: {
-	                            formatter: function(){
-	                                return Highcharts.dateFormat(
-										'<span style="font-size: 12px; font-weight: bold">%a</span> %b %e', 
-										this.value
-									);
-	                            },
+	                            format: '{value:<span style="font-size: 12px; font-weight: bold">%a</span> %b %e}',
 								align: 'left',
 								x: 3
 	                        },
@@ -258,9 +264,7 @@
 								text: null
 							},
 							labels: {
-								formatter: function() {
-									return this.value +'°'
-								},
+								format: '{value}°',
 								style: {
 									fontSize: '10px'
 								},
@@ -268,12 +272,29 @@
 							},
 							plotLines: [{ // zero plane
 								value: 0,
-								color: '#C0C0C0',
-								width: 1
+								color: '#BBBBBB',
+								width: 1,
+								zIndex: 2
 							}],
+							// Custom positioner to provide even temperature ticks from top down
+							tickPositioner: function () {
+								var max = Math.ceil(this.max),
+									pos = max - 12, // start
+									ret;
+
+								if (pos < this.min) {
+									ret = [];
+									while (pos <= max) {
+										ret.push(pos++);
+									}
+								} // else return undefined and go auto
+
+								return ret;
+
+							},
+							maxPadding: 0.3,
 							tickInterval: 1,
-							gridLineColor: '#F0F0F0',
-							maxPadding: 0.3 // make room for symbols
+							gridLineColor: '#F0F0F0'
 							
 						}, { // precipitation axis
 							title: {
@@ -304,6 +325,12 @@
 	                    legend: {
 	                        enabled: false
 	                    },
+
+	                    plotOptions: {
+	                    	series: {
+	                    		pointPlacement: 'between'
+	                    	}
+	                    },
 						
 	                    
 	                    series: [{
@@ -321,7 +348,9 @@
 							tooltip: {
 								valueSuffix: '°C'
 							},
-							zIndex: 1
+							zIndex: 1,
+							color: '#FF3333',
+							negativeColor: '#48AFE8'
 	                    }, {
 							name: 'Precipitation',
 	                        data: precipitations,
@@ -362,7 +391,10 @@
 							yAxis: 2
 	                    }]
 	                
-	                }, function(chart) {
+	                }, 
+
+	                // Post-process the chart from the callback function
+	                function(chart) {
 						$.each(chart.series[0].data, function(i, point) {
 							
 							if (i % 2 === 0) {
@@ -390,13 +422,13 @@
 									.add();
 								}
 								
-								// wind direction code
+								// Get the wind direction code
 								var windDirection = (Math.round(windDirections[i] / 5) * 5 % 360).toString();
 								while (windDirection.length < 3) { // pad
 									windDirection = '0' + windDirection;
 								}
 								
-								// wind speed code
+								// Get the wind speed code
 								var windSpeed = (Math.floor(windSpeeds[i] / 25) * 25).toString();
 								while (windSpeed.length < 4) { // pad
 									windSpeed = '0' + windSpeed;
@@ -414,8 +446,42 @@
 									zIndex: 5
 								})
 								.add();
+
+
 							}
-						})
+						});
+
+						// Draw blocks around wind arrows
+						var xAxis = chart.xAxis[0],
+							x,
+							pos,
+							max,
+							i;
+
+						for (pos = chart.xAxis[0].min, max = chart.xAxis[0].max, i = 0; pos <= max + 36e5; pos += 36e5, i ++) {
+							x = Math.round(chart.xAxis[0].toPixels(pos)) + (i === 0 ? 0.5 : -0.5);
+							
+							// Vertical dividers
+							if (i % 2 === 0) {
+								chart.renderer.path(['M', x, chart.plotTop + chart.plotHeight,
+									'L', x, chart.plotTop + chart.plotHeight + 30, 'Z'])
+									.attr({
+										'stroke': '#DDDDDD',
+										'stroke-width': 1
+									})
+									.add();
+							}
+
+							// Ticks
+							chart.renderer.path(['M', x, chart.plotTop + chart.plotHeight + 28,
+								'L', x, chart.plotTop + chart.plotHeight + 32, 'Z'])
+								.attr({
+									'stroke': '#BBBBBB',
+									'stroke-width': 1
+								})
+								.add();
+						}
+
 						
 	                    
 	                });
@@ -447,19 +513,19 @@
 							// populate the parallel arrays
                         	symbols.push($('symbol', time).attr('var').match(/[0-9]{2}[dnm]?/)[0]);
 							precipitations.push({
-								x: middle,
+								x: from,
 								y: parseFloat($('precipitation', time).attr('value'))
 							});
 							windDirections.push(parseFloat($('windDirection', time).attr('deg')));
 							windSpeeds.push(parseFloat($('windSpeed', time).attr('mps')));
 							temperatures.push({
-								x: middle,
-								y: parseInt($('temperature', time).attr('value')),
-								from: from,
-								to: to
+								x: from,
+								y: parseInt($('temperature', time).attr('value'))//,
+								//from: from,
+								//to: to
 							});
 							pressures.push({
-								x: middle,
+								x: from,
 								y: parseFloat($('pressure', time).attr('value'))
 							});
 							

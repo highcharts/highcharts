@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'scatter',
                 margin: [70, 50, 60, 80],
                 events: {
@@ -67,4 +64,3 @@ $(function () {
         });
     });
     
-});

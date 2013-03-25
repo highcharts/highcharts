@@ -2,7 +2,7 @@
  * @license 
  * Highcharts funnel module, Beta
  *
- * (c) 2010 Torstein Hønsi
+ * (c) 2010-2012 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -17,6 +17,7 @@ var defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
 	merge = Highcharts.merge,
+	noop = function () {},
 	each = Highcharts.each;
 
 // set default options
@@ -32,14 +33,21 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 		connectorWidth: 1,
 		connectorColor: '#606060'
 	},
-	size: true // to avoid adapting to data label size in Pie.drawDataLabels
+	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
+	states: {
+		select: {
+			color: '#C0C0C0',
+			borderColor: '#000000',
+			shadow: false
+		}
+	}	
 });
 
 
 seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
 	type: 'funnel',
-	animate: function () {},
+	animate: noop,
 
 	/**
 	 * Overrides the pie translate method
@@ -183,6 +191,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 				centerX,
 				point.plotY
 			];
+
+			// Slice is a noop on funnel points
+			point.slice = noop;
 			
 			// Mimicking pie data label placement logic
 			point.half = half;
@@ -203,33 +214,23 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
-			renderer = chart.renderer,
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop;
+			renderer = chart.renderer;
 
 		each(series.data, function (point) {
 			
-			var group = point.group,
-				graphic = point.graphic,
+			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs;
 
-			if (!group) { // Create the shapes
-				point.group = renderer.g('point').add(series.group).
-					translate(plotLeft, plotTop);
-					
+			if (!graphic) { // Create the shapes
 				point.graphic = renderer.path(shapeArgs).
 					attr({
 						fill: point.color,
 						stroke: options.borderColor,
 						'stroke-width': options.borderWidth
 					}).
-					add(point.group);
+					add(series.group);
 					
 			} else { // Update the shapes
-				group.animate({
-					translateX: plotLeft, 
-					translateY: plotTop
-				});
 				graphic.animate(shapeArgs);
 			}
 		});

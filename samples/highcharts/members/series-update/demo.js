@@ -1,9 +1,5 @@
 $(function () {
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
-        },
-        
+    $('#container').highcharts({
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             showEmpty: false
@@ -12,33 +8,34 @@ $(function () {
         yAxis: {
             showEmpty: false
         },
-        
+
         series: [{
             allowPointSelect: true,
             data: [ // use names for display in pie data labels
-                ['January',    29.9], 
-                ['February',   71.5], 
-                ['March',     106.4], 
-                ['April',     129.2], 
-                ['May',       144.0], 
-                ['June',      176.0], 
-                ['July',      135.6], 
-                ['August',    148.5], 
+                ['January',    29.9],
+                ['February',   71.5],
+                ['March',     106.4],
+                ['April',     129.2],
+                ['May',       144.0],
+                ['June',      176.0],
+                ['July',      135.6],
+                ['August',    148.5],
                 {
-                    name: 'September', 
+                    name: 'September',
                     y: 216.4,
                     selected: true,
                     sliced: true
                 },
                 ['October',   194.1],
-                ['November',   95.6], 
+                ['November',   95.6],
                 ['December',   54.4]
             ],
             showInLegend: true
         }]
     });
-    
-    
+
+    var chart = $('#container').highcharts();
+        
     // Toggle names
     var name = false;
     $('#name').click(function() {

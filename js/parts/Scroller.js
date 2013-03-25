@@ -89,7 +89,7 @@ extend(defaultOptions, {
 		buttonBorderColor: '#666',
 		buttonBorderRadius: 2,
 		buttonBorderWidth: 1,
-		minWidth: 6, // docs
+		minWidth: 6,
 		rifleColor: '#666',
 		trackBackgroundColor: hash(
 			LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -99,8 +99,9 @@ extend(defaultOptions, {
 			]
 		),
 		trackBorderColor: '#CCC',
-		trackBorderWidth: 1
+		trackBorderWidth: 1,
 		// trackBorderRadius: 0
+		liveRedraw: hasSVG
 	}
 });
 /*jslint white:false */
@@ -190,7 +191,7 @@ Scroller.prototype = {
 		}
 
 		// Place it
-		handles[index][scroller.rendered ? 'animate' : 'attr']({
+		handles[index][chart.isResizing ? 'animate' : 'attr']({
 			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10), 
 			translateY: scroller.top + scroller.height / 2 - 8
 		});
@@ -271,7 +272,7 @@ Scroller.prototype = {
 			scrollbarEnabled = scroller.scrollbarEnabled,
 			navigatorOptions = scroller.navigatorOptions,
 			scrollbarOptions = scroller.scrollbarOptions,
-			scrollbarMinWidth = scrollbarOptions.minWidth, // docs
+			scrollbarMinWidth = scrollbarOptions.minWidth,
 			height = scroller.height,
 			top = scroller.top,
 			navigatorEnabled = scroller.navigatorEnabled,
@@ -324,10 +325,13 @@ Scroller.prototype = {
 		pxMax = pick(pxMax, xAxis.translate(max));
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMin = zoomedMin = mathMax(pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
+		scroller.zoomedMin = zoomedMin = scroller.fixedWidth ? 
+			zoomedMax - scroller.fixedWidth :
+			mathMax(pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.range = range = zoomedMax - zoomedMin;
-		
+		scroller.fixedWidth = null;
+
 		// on first render, create all elements
 		if (!scroller.rendered) {
 
@@ -394,7 +398,7 @@ Scroller.prototype = {
 		}
 
 		// place elements
-		verb = scroller.rendered ? 'animate' : 'attr';
+		verb = chart.isResizing ? 'animate' : 'attr';
 		if (navigatorEnabled) {
 			scroller.leftShade[verb]({
 				x: navigatorLeft,
@@ -457,24 +461,28 @@ Scroller.prototype = {
 
 			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
 
-			scroller.scrollbarRifles[verb]({ d: [
-					M,
-					centerBarX - 3, scrollbarHeight / 4,
-					L,
-					centerBarX - 3, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX, scrollbarHeight / 4,
-					L,
-					centerBarX, 2 * scrollbarHeight / 3,
-					M,
-					centerBarX + 3, scrollbarHeight / 4,
-					L,
-					centerBarX + 3, 2 * scrollbarHeight / 3
-				],
-				visibility: range > 12 ? VISIBLE : HIDDEN
-			});
+			scroller.scrollbarRifles
+				.attr({
+					visibility: range > 12 ? VISIBLE : HIDDEN
+				})[verb]({ 
+					d: [
+						M,
+						centerBarX - 3, scrollbarHeight / 4,
+						L,
+						centerBarX - 3, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX, scrollbarHeight / 4,
+						L,
+						centerBarX, 2 * scrollbarHeight / 3,
+						M,
+						centerBarX + 3, scrollbarHeight / 4,
+						L,
+						centerBarX + 3, 2 * scrollbarHeight / 3
+					]
+				});
 		}
 
+		scroller.scrollbarPad = scrollbarPad;
 		scroller.rendered = true;
 	},
 
@@ -520,7 +528,7 @@ Scroller.prototype = {
 			removeEvent.apply(null, args);
 		});
 		this._events = UNDEFINED;
-		if (this.navigatorEnabled) {
+		if (this.navigatorEnabled && this.baseSeries) {
 			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
 		}
 	},
@@ -563,6 +571,8 @@ Scroller.prototype = {
 				range = scroller.range,
 				chartX = e.chartX,
 				chartY = e.chartY,
+				baseXAxis = chart.xAxis[0],
+				leftValue,
 				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
 				isOnNavigator;
@@ -617,19 +627,21 @@ Scroller.prototype = {
 						left = navigatorWidth - range;
 					}
 					if (left !== zoomedMin) { // it has actually moved
-						chart.xAxis[0].setExtremes(
-							xAxis.translate(left, true),
-							xAxis.translate(left + range, true),
+						scroller.fixedWidth = range; // #1370
+						if (!baseXAxis.ordinalPositions) {
+							baseXAxis.fixedRange = baseXAxis.max - baseXAxis.min;
+						}
+						leftValue = xAxis.translate(left, true);
+						baseXAxis.setExtremes(
+							leftValue,
+							baseXAxis.fixedRange ? leftValue + baseXAxis.fixedRange : xAxis.translate(left + range, true),
 							true,
 							false,
 							{ trigger: 'navigator' }
 						);
 					}
 				}
-			}
-			// Prevent iPad from passing the handler on from touchstart to mousedown 
-			if (e.type === 'touchstart') {
-				e.preventDefault();
+
 			}
 		};
 
@@ -681,28 +693,33 @@ Scroller.prototype = {
 	
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 				}
+				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
+					setTimeout(function () {
+						scroller.mouseUpHandler(false);
+					}, 0);
+				}
 			}
 		};
 
 		/**
 		 * Event handler for the mouse up event.
 		 */
-		scroller.mouseUpHandler = function () {
-			var zoomedMin = scroller.zoomedMin,
-				zoomedMax = scroller.zoomedMax;
-
+		scroller.mouseUpHandler = function (reset) {
+			
 			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
-					xAxis.translate(zoomedMin, true),
-					xAxis.translate(zoomedMax, true),
+					xAxis.translate(scroller.zoomedMin, true),
+					xAxis.translate(scroller.zoomedMax, true),
 					true,
 					false,
 					{ trigger: 'navigator' }
 				);
 			}
-			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
-			
-			bodyStyle.cursor = defaultBodyCursor || '';
+
+			if (reset !== false) {
+				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
+				bodyStyle.cursor = defaultBodyCursor || '';
+			}
 			
 		};
 
@@ -780,7 +797,6 @@ Scroller.prototype = {
 
 			// remove it to prevent merging one by one
 			navigatorData = navigatorSeriesOptions.data;
-			baseOptions.data = navigatorSeriesOptions.data = null;
 
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
@@ -824,8 +840,6 @@ Scroller.prototype = {
 			});
 
 			// set the data back
-			baseOptions.data = baseData;
-			navigatorSeriesOptions.data = navigatorData;
 			mergedNavSeriesOptions.data = navigatorData || baseData;
 
 			// add the series
@@ -833,7 +847,7 @@ Scroller.prototype = {
 
 			// Respond to updated data in the base series.
 			// Abort if lazy-loading data from the server.
-			if (navigatorOptions.adaptToUpdatedData !== false) {
+			if (baseSeries && navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
 				// Survive Series.update()
 				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
@@ -923,7 +937,7 @@ Highcharts.Scroller = Scroller;
 wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
-		zoomType = chartOptions.chart.pinchType || chartOptions.chart.zoomType,
+		zoomType = chartOptions.chart.zoomType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,
@@ -958,6 +972,19 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
 });
 
+// Initialize scroller for stock charts
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+	
+	addEvent(this, 'beforeRender', function () {
+		var options = this.options;
+		if (options.navigator.enabled || options.scrollbar.enabled) {
+			this.scroller = new Scroller(this);
+		}
+	});
+
+	proceed.call(this, options, callback);
+
+});
 
 /* ****************************************************************************
  * End Scroller code														  *

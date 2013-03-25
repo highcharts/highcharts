@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
- * (c) 2010-2011 Torstein Hønsi
+ * (c) 2010-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -37,7 +37,8 @@ var Chart = Highcharts.Chart,
 	PX = 'px',
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
-	defaultOptions = Highcharts.getOptions();
+	defaultOptions = Highcharts.getOptions(),
+	buttonOffset;
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -47,8 +48,6 @@ var Chart = Highcharts.Chart,
 		downloadSVG: 'Download SVG vector image',
 		contextButtonTitle: 'Chart context menu'
 	});
-
-// docs: update the new defaults and explain the compatibility pack
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
@@ -70,25 +69,22 @@ defaultOptions.navigation = {
 	},
 
 	buttonOptions: {
-		align: 'right',
-		backgroundColor: null,
-		borderColor: 'transparent',
-		borderRadius: 3,
-		borderWidth: 1,
-		//enabled: true,
-		height: 22,
-		hoverBorderColor: '#909090',
-		hoverSymbolFill: '#81A7CF',
-		hoverSymbolStroke: '#333',
 		symbolFill: '#E0E0E0',
 		symbolSize: 14,
-		symbolStroke: '#333',
-		symbolStrokeWidth: 2,
-		symbolX: 11.5,
+		symbolStroke: '#666',
+		symbolStrokeWidth: 3,
+		symbolX: 12.5,
 		symbolY: 10.5,
+		align: 'right',
+		buttonSpacing: 3, 
+		height: 22,
+		// text: null,
+		theme: {
+			fill: 'white', // capture hover
+			stroke: 'none'
+		},
 		verticalAlign: 'top',
-		width: 24,
-		y: 8
+		width: 24
 	}
 };
 
@@ -100,11 +96,11 @@ defaultOptions.exporting = {
 	//filename: 'chart',
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
-	//width: undefined, // docs
-	//scale: 2 // docs 
+	//width: undefined,
+	//scale: 2
 	buttons: {
-		contextButton: { // docs
-			x: -10,
+		contextButton: {
+			//x: -10,
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
 			menuItems: [{
@@ -190,6 +186,7 @@ Highcharts.post = function (url, data) {
 };
 
 extend(Chart.prototype, {
+
 	/**
 	 * Return an SVG representation of the chart
 	 *
@@ -235,14 +232,14 @@ extend(Chart.prototype, {
 			options.chart.height ||
 			(/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
 			400;
-		
 
 		// override some options
 		extend(options.chart, {
+			animation: false,
 			renderTo: sandbox,
 			forExport: true,
-			width: sourceWidth, // docs,
-			height: sourceHeight // docs
+			width: sourceWidth,
+			height: sourceHeight
 		});
 		options.exporting.enabled = false; // hide buttons in print
 		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
@@ -257,12 +254,6 @@ extend(Chart.prototype, {
 			});
 
 			if (!seriesOptions.isInternal) { // used for the navigator series that has its own option set
-
-				// remove image markers
-				if (seriesOptions && seriesOptions.marker && /^url\(/.test(seriesOptions.marker.symbol)) {
-					seriesOptions.marker.symbol = 'circle';
-				}
-
 				options.series.push(seriesOptions);
 			}
 		});
@@ -298,7 +289,6 @@ extend(Chart.prototype, {
 			.replace(/isShadow="[^"]+"/g, '')
 			.replace(/symbolName="[^"]+"/g, '')
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
-			.replace(/isTracker="[^"]+"/g, '')
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
 			.replace(/ href=/g, ' xlink:href=')
@@ -347,11 +337,12 @@ extend(Chart.prototype, {
 		
 		var chart = this,
 			svg = chart.getSVG(merge(
-				chart.options.exporting.chartOptions, // docs
+				{ chart: { borderRadius: 0 } },
+				chart.options.exporting.chartOptions,
 				chartOptions, 
 				{
 					exporting: {
-						sourceWidth: options.sourceWidth, // docs
+						sourceWidth: options.sourceWidth, // docs: option and parameter in exportChart()
 						sourceHeight: options.sourceHeight // docs
 					}
 				}
@@ -364,7 +355,7 @@ extend(Chart.prototype, {
 		Highcharts.post(options.url, {
 			filename: options.filename || 'chart',
 			type: options.type,
-			width: options.width,
+			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
 			scale: options.scale || 2,
 			svg: svg
 		});
@@ -401,6 +392,7 @@ extend(Chart.prototype, {
 		body.appendChild(container);
 
 		// print
+		win.focus(); // #1510
 		win.print();
 
 		// allow the browser to prepare before reverting
@@ -432,7 +424,7 @@ extend(Chart.prototype, {
 	 * @param {Number} width The width of the opener button
 	 * @param {Number} height The height of the opener button
 	 */
-	contextMenu: function (name, items, x, y, width, height) {
+	contextMenu: function (name, items, x, y, width, height, button) {
 		var chart = this,
 			navOptions = chart.options.navigation,
 			menuItemStyle = navOptions.menuItemStyle,
@@ -469,6 +461,9 @@ extend(Chart.prototype, {
 			// hide on mouse out
 			hide = function () {
 				css(menu, { display: NONE });
+				if (button) {
+					button.setState(0);
+				}
 			};
 
 			// Hide the menu some time after mouse leave (#1357)
@@ -536,27 +531,24 @@ extend(Chart.prototype, {
 	 * Add the export button to the chart
 	 */
 	addButton: function (options) {
-
 		var chart = this,
 			renderer = chart.renderer,
 			btnOptions = merge(chart.options.navigation.buttonOptions, options),
 			onclick = btnOptions.onclick,
 			menuItems = btnOptions.menuItems,
-			buttonWidth = btnOptions.width,
-			buttonHeight = btnOptions.height,
-			box,
 			symbol,
 			button,
-			borderWidth = btnOptions.borderWidth,
-			boxAttr = {
-				stroke: btnOptions.borderColor
-
-			},
 			symbolAttr = {
 				stroke: btnOptions.symbolStroke,
 				fill: btnOptions.symbolFill
 			},
-			symbolSize = btnOptions.symbolSize || 12;
+			symbolSize = btnOptions.symbolSize || 12,
+			menuKey;
+
+		if (!chart.btnCount) {
+			chart.btnCount = 0;
+		}
+		menuKey = chart.btnCount++;
 
 		// Keeps references to the button elements
 		if (!chart.exportDivElements) {
@@ -568,99 +560,85 @@ extend(Chart.prototype, {
 			return;
 		}
 
-		// element to capture the click
-		function revert() {
-			symbol.attr(symbolAttr);
-			box.attr(boxAttr);
-		}
 
-		// the box border
-		box = renderer.rect(
-			0,
-			0,
-			buttonWidth,
-			buttonHeight,
-			btnOptions.borderRadius,
-			borderWidth
-		)
-		//.translate(buttonLeft, buttonTop) // to allow gradients
-		.align(btnOptions, true)
-		.attr(extend({
-			fill: btnOptions.backgroundColor,
-			'stroke-width': borderWidth,
-			zIndex: 19
-		}, boxAttr)).add();
+		var attr = btnOptions.theme,
+			states = attr.states,
+			hover = states && states.hover,
+			select = states && states.select,
+			callback;
 
-		// the invisible element to track the clicks
-		button = renderer.rect(
-				0,
-				0,
-				buttonWidth,
-				buttonHeight,
-				0
-			)
-			.align(btnOptions)
-			.attr({
-				id: btnOptions._id,
-				fill: 'rgba(255, 255, 255, 0.001)',
-				title: chart.options.lang[btnOptions._titleKey],
-				zIndex: 21
-			}).css({
-				cursor: 'pointer'
-			})
-			.on('mouseover', function () {
-				symbol.attr({
-					stroke: btnOptions.hoverSymbolStroke,
-					fill: btnOptions.hoverSymbolFill
-				});
-				box.attr({
-					stroke: btnOptions.hoverBorderColor
-				});
-			})
-			.on('mouseout', revert)
-			.on('click', revert)
-			.add();
+		delete attr.states;
 
+		if (onclick) {
+			callback = function () {
+				onclick.apply(chart, arguments);
+			};
 
-		// add the click event
-		if (menuItems) {
-			onclick = function () {
-				revert();
-				var bBox = button.getBBox();
-				chart.contextMenu('export-menu', menuItems, bBox.x, bBox.y, buttonWidth, buttonHeight);
+		} else if (menuItems) {
+			callback = function () {
+				chart.contextMenu(
+					'contextmenu', 
+					menuItems, 
+					button.translateX, 
+					button.translateY, 
+					button.width, 
+					button.height,
+					button
+				);
+				button.setState(2);
 			};
 		}
-		/*addEvent(button.element, 'click', function() {
-			onclick.apply(chart, arguments);
-		});*/
-		button.on('click', function () {
-			onclick.apply(chart, arguments);
-		});
 
-		// the icon
-		symbol = renderer.symbol(
-				btnOptions.symbol,
-				btnOptions.symbolX - (symbolSize / 2),
-				btnOptions.symbolY - (symbolSize / 2),
-				symbolSize,				
-				symbolSize
-			)
-			.align(btnOptions, true)
-			.attr(extend(symbolAttr, {
-				'stroke-width': btnOptions.symbolStrokeWidth || 1,
-				zIndex: 20
-			})).add();
 
-		// Keep references to the renderer element so to be able to destroy them later.
-		chart.exportSVGElements.push(box, button, symbol);
+		if (btnOptions.text && btnOptions.symbol) {
+			attr.paddingLeft = Highcharts.pick(attr.paddingLeft, 25);
+		
+		} else if (!btnOptions.text) {
+			extend(attr, {
+				width: btnOptions.width,
+				height: btnOptions.height,
+				padding: 0
+			});
+		}
+
+		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
+			.attr({
+				title: chart.options.lang[btnOptions._titleKey],
+				'stroke-linecap': 'round'
+			});
+
+		if (btnOptions.symbol) {
+			symbol = renderer.symbol(
+					btnOptions.symbol,
+					btnOptions.symbolX - (symbolSize / 2),
+					btnOptions.symbolY - (symbolSize / 2),
+					symbolSize,				
+					symbolSize
+				)
+				.attr(extend(symbolAttr, {
+					'stroke-width': btnOptions.symbolStrokeWidth || 1,
+					zIndex: 1
+				})).add(button);
+		}
+
+		button.add()
+			.align(extend(btnOptions, {
+				width: button.width,
+				x: buttonOffset
+			}), true, 'spacingBox');
+
+		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
+
+		chart.exportSVGElements.push(button, symbol);
+
 	},
 
 	/**
 	 * Destroy the buttons.
 	 */
-	destroyExport: function () {
-		var i,
-			chart = this,
+	destroyExport: function (e) {
+		var chart = e.target,
+			i,
 			elem;
 
 		// Destroy the extra buttons added
@@ -690,12 +668,12 @@ extend(Chart.prototype, {
 
 symbols.menu = function (x, y, width, height) {
 	var arr = [
-		M, x, y + 2,
-		L, x + width, y + 2,
-		M, x, y + height / 2,
-		L, x + width, y + height / 2,
-		M, x, y + height - 2,
-		L, x + width, y + height - 2
+		M, x, y + 2.5,
+		L, x + width, y + 2.5,
+		M, x, y + height / 2 + 0.5,
+		L, x + width, y + height / 2 + 0.5,
+		M, x, y + height - 1.5,
+		L, x + width, y + height - 1.5
 	];
 	return arr;
 };
@@ -705,6 +683,8 @@ Chart.prototype.callbacks.push(function (chart) {
 	var n,
 		exportingOptions = chart.options.exporting,
 		buttons = exportingOptions.buttons;
+
+	buttonOffset = 0;
 
 	if (exportingOptions.enabled !== false) {
 

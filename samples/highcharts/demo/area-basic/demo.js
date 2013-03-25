@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'area'
             },
             title: {
@@ -31,10 +28,7 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return this.series.name +' produced <b>'+
-                        Highcharts.numberFormat(this.y, 0) +'</b><br/>warheads in '+ this.x;
-                }
+                pointFormat: '{series.name} produced <b>{point.y:,.0f}</b><br/>warheads in {point.x}'
             },
             plotOptions: {
                 area: {
@@ -73,4 +67,3 @@ $(function () {
         });
     });
     
-});

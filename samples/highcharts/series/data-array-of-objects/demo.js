@@ -1,14 +1,13 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             type: 'column'
         },
-        
+
         xAxis: {
             categories: ['Green', 'Pink']
         },
-        
+
         series: [{
             data: [{
                 name: 'Point 1',

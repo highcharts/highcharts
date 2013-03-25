@@ -2,12 +2,15 @@
 RewriteEngine On
 
 # Files concatenated from parts
-RewriteRule highcharts.js debug.php?target=highcharts
-RewriteRule highstock.js debug.php?target=highstock
-RewriteRule highcharts-more.js debug.php?target=highchartsmore
+RewriteRule highcharts.js debug.php?target=highcharts [L]
+RewriteRule highstock.js debug.php?target=highstock [L]
+RewriteRule highcharts-more.js debug.php?target=highchartsmore [L]
 
 # Stock directory
 RewriteRule ^stock/(.*?) /$1
 
 # Source files
+RewriteRule (.*?)data.js $1data.src.js
+RewriteRule (.*?)drilldown.js $1drilldown.src.js
 RewriteRule (.*?)exporting.js $1exporting.src.js
+RewriteRule (.*?)funnel.js $1funnel.src.js

@@ -31,12 +31,8 @@ $(function() {
 		]];
 
 		// create the chart
-		chart = new Highcharts.StockChart({
-		    chart: {
-		        renderTo: 'container',
-		        alignTicks: false
-		    },
-
+		$('#container').highcharts('StockChart', {
+		    
 		    rangeSelector: {
 		        selected: 1
 		    },

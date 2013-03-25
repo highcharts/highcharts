@@ -1,7 +1,7 @@
 /**
  * @license Map plugin v0.1 for Highcharts
  *
- * (c) 2011 Torstein Hønsi
+ * (c) 2011-2013 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */
@@ -116,7 +116,6 @@
 			animation: false, // makes the complex shapes slow
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
-			shadow: false,
 			borderColor: 'silver',
 			borderWidth: 1,
 			marker: null,
@@ -139,7 +138,6 @@
 			'stroke-width': 'borderWidth',
 			fill: 'color'
 		},
-		trackerGroupKey: 'group',
 		getSymbol: noop,
 		getExtremesFromAll: true,
 		init: function(chart) {

@@ -1,33 +1,30 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
-	    chart: {
-	        renderTo: 'container'
-	    },
-	    
-        scrollbar: {
+	$('#container').highcharts('StockChart', {
+
+	    scrollbar: {
             enabled: true
         },
-        
+
         navigator: {
             enabled: true
         },
-        
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-        
+
         series: [{
 			name: 'MSFT',
 			data: MSFT
         }]
 	});
-	
+
 	$('#button').click(function() {
-		chart.addSeries({
+		var chart = $('#container').highcharts();
+        chart.addSeries({
 			name: 'ADBE',
 			data: ADBE
 		});
-        $('#button')[0].disabled = true;
+        $(this).attr('disabled', true);
 	});
 });

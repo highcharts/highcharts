@@ -1,7 +1,6 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             type: 'line',
             plotBackgroundColor: {
                 linearGradient: [0, 0, 500, 500],

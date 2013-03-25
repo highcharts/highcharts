@@ -1,9 +1,8 @@
 $(function () {
 
-	window.chart = new Highcharts.Chart({
+	$('#container').highcharts({
 	            
 	    chart: {
-	        renderTo: 'container',
 	        polar: true,
 	        type: 'line'
 	    },
@@ -32,7 +31,7 @@ $(function () {
 	    
 	    tooltip: {
 	    	shared: true,
-	        valuePrefix: '$'
+	        pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
 	    },
 	    
 	    legend: {

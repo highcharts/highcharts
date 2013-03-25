@@ -6,6 +6,7 @@ var files = [
 	"Globals.js",
 	"Utilities.js",
 	"PathAnimation.js",
+	"JQueryAdapter.js",
 	"Adapters.js",
 	"Options.js",
 	"Color.js",
@@ -33,10 +34,17 @@ var files = [
 ];
 
 // Parse the path from the script tag
-var $tag = $('script[src$="highcharts.debug.js"]'),
-	path = $tag.attr('src').replace('highcharts.debug.js', '') + 'parts/';
+var scripts = document.getElementsByTagName('script'),
+	path;
 
+for (var i = 0; i < scripts.length; i++) {
+	if (scripts[i].src.indexOf('highcharts.debug.js') !== -1) {
+		path = scripts[i].src.replace(/highcharts\.debug\.js\?(.*?)$/, '') + 'parts/'
+	}
+}
+
+console.log('--- Running individual parts ---')
 // Include the individual files
-$.each(files, function (i, file) {
-	document.write('<script src="' + path + file + '"></script>')	
-});
+for (var i = 0; i < files.length; i++) {
+	document.write('<script src="' + path + files[i] + '?' + (new Date()).getTime() +'"></script>')	
+}

@@ -1,8 +1,7 @@
 $(function () {
-	var chart = new Highcharts.Chart({
+	$('#container').highcharts({
 	
 	    chart: {
-	        renderTo: 'container',
 	        borderWidth: 1,
 	        plotBorderWidth: 1,
 	        spacingRight: 100

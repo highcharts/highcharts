@@ -1,8 +1,7 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
     
         chart: {
-            renderTo: 'container',
             type: 'pie',
             width: 500,
             borderWidth: 2
