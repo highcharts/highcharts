@@ -46,6 +46,7 @@ var Chart = Highcharts.Chart,
 		downloadJPEG: 'Download JPEG image',
 		downloadPDF: 'Download PDF document',
 		downloadSVG: 'Download SVG vector image',
+		printChart: 'Print chart',
 		contextButtonTitle: 'Chart context menu'
 	});
 
@@ -104,7 +105,7 @@ defaultOptions.exporting = {
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
 			menuItems: [{
-				text: 'Print chart',
+				textKey: 'printChart',
 				onclick: function () {
 					this.print();
 				}
