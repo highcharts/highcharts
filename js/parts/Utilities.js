@@ -1,4 +1,3 @@
-
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -599,7 +598,7 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min),
+		minDate = new Date(min-1), // deduct the min value by 1 to make sure if min value is exactly equal to 12:00 AM, it will be pushed in higherRanks Array.
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
