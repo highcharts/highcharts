@@ -4667,7 +4667,7 @@ Highcharts.VMLElement = VMLElement = {
 							// outside the viewport. So the visibility is actually opposite of 
 							// the expected value. This applies to the tooltip only. 
 							if (!docMode8) {
-								elemStyle[key] = value ? HIDDEN : VISIBLE;
+								elemStyle[key] = value ? VISIBLE : HIDDEN;
 							}
 							key = 'top';
 						}
