@@ -789,6 +789,9 @@ Chart.prototype = {
 			chart.renderToClone || renderTo
 		);
 
+		// cache the cursor (#1650)
+		chart._cursor = container.style.cursor;
+
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
