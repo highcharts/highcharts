@@ -369,7 +369,7 @@
 					posLength,
 					outsideMax,
 					groupPositions = [],
-					lastGroupPosition = Number.MIN_VALUE,
+					lastGroupPosition = -Number.MAX_VALUE,
 					tickPixelIntervalOption = xAxis.options.tickPixelInterval;
 					
 				// The positions are not always defined, for example for ordinal positions when data
