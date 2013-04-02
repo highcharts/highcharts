@@ -673,12 +673,14 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 	
 			// else, the interval is fixed and we use simple addition
 			} else {
-				time += interval * count;
 				
 				// mark new days if the time is dividable by day
 				if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === timezoneOffset) {
 					higherRanks[time] = DAY;
 				}
+
+				time += interval * count;
+				
 			}
 	
 			i++;
