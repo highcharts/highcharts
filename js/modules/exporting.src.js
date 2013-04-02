@@ -42,6 +42,7 @@ var Chart = Highcharts.Chart,
 
 	// Add language
 	extend(defaultOptions.lang, {
+		printChart: 'Print chart',
 		downloadPNG: 'Download PNG image',
 		downloadJPEG: 'Download JPEG image',
 		downloadPDF: 'Download PDF document',
@@ -104,7 +105,7 @@ defaultOptions.exporting = {
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
 			menuItems: [{
-				text: 'Print chart',
+				textKey: printChart, // docs
 				onclick: function () {
 					this.print();
 				}
