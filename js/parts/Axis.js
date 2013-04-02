@@ -1802,16 +1802,16 @@ Axis.prototype = {
 			from,
 			to;
 
+		// Mark all elements inActive before we go over and mark the active ones
+		each([ticks, minorTicks, alternateBands], function (coll) {
+			var pos;
+			for (pos in coll) {
+				coll[pos].isActive = false;
+			}
+		});
+
 		// If the series has data draw the ticks. Else only the line and title
 		if (hasData || isLinked) {
-
-			// Mark all elements inActive before we go over and mark the active ones
-			each([ticks, minorTicks, alternateBands], function (coll) {
-				var pos;
-				for (pos in coll) {
-					coll[pos].isActive = false;
-				}
-			});
 
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
