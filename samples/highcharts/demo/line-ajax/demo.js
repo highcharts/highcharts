@@ -111,7 +111,7 @@ $(function () {
         // to the options and initiate the chart.
         // This data is obtained by exporting a GA custom report to TSV.
         // http://api.jquery.com/jQuery.get/
-        jQuery.get('analytics.tsv', null, function(tsv, state, xhr) {
+        jQuery.get('/demo/analytics.tsv', null, function(tsv, state, xhr) {
             var lines = [],
                 listen = false,
                 date,
