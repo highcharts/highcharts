@@ -14591,6 +14591,7 @@ var AreaSeries = extendClass(Series, {
 	 */ 
 	getSegments: function () {
 		var segments = [],
+			segment = [],
 			stack = this.yAxis.stacks[this.stackKey],
 			pointMap = {},
 			plotX,
@@ -14609,7 +14610,7 @@ var AreaSeries = extendClass(Series, {
 
 				// The point exists, push it to the segment
 				if (pointMap[x]) {
-					segments.push(pointMap[x]);
+					segment.push(pointMap[x]);
 
 				// There is no point for this X value in this series, so we 
 				// insert a dummy point in order for the areas to be drawn
@@ -14617,7 +14618,7 @@ var AreaSeries = extendClass(Series, {
 				} else {
 					plotX = this.xAxis.translate(x);
 					plotY = this.yAxis.toPixels(stack[x].cum, true);
-					segments.push({ 
+					segment.push({ 
 						y: null, 
 						plotX: plotX,
 						clientX: plotX, 
@@ -14627,7 +14628,9 @@ var AreaSeries = extendClass(Series, {
 					});
 				}
 			}
-			segments = [segments];
+			if (segment.length) {
+				segments.push(segment);
+			}
 
 		} else {
 			Series.prototype.getSegments.call(this);
