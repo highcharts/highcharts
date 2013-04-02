@@ -105,7 +105,7 @@ defaultOptions.exporting = {
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
 			menuItems: [{
-				textKey: printChart, // docs
+				textKey: 'printChart', // docs
 				onclick: function () {
 					this.print();
 				}
@@ -625,7 +625,7 @@ extend(Chart.prototype, {
 		button.add()
 			.align(extend(btnOptions, {
 				width: button.width,
-				x: buttonOffset
+				x: Highcharts.pick(btnOptions.x, buttonOffset) // #1654
 			}), true, 'spacingBox');
 
 		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
