@@ -70,6 +70,9 @@ Tooltip.prototype = {
 		if (this.label) {
 			this.label = this.label.destroy();
 		}
+
+		clearTimeout(this.tooltipTimeout);
+		clearTimeout(this.hideTimer);
 	},
 
 	/**
