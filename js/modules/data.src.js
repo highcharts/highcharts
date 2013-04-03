@@ -49,10 +49,10 @@
  * The Google Spreadsheet worksheet. The available id's can be read from 
  * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
  *
- * - itemDilimiter : String
+ * - itemDelimiter : String
  * Item or cell delimiter for parsing CSV. Defaults to ",".
  *
- * - lineDilimiter : String
+ * - lineDelimiter : String
  * Line delimiter for parsing CSV. Defaults to "\n".
  *
  * - parsed : Function
