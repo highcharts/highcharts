@@ -1766,7 +1766,7 @@ Series.prototype = {
 				normalOptions.radius = 0;
 			}
 			
-			if (point.negative) {
+			if (point.negative && negativeColor) {
 				point.color = point.fillColor = negativeColor;
 			}
 			
