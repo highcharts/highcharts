@@ -9176,21 +9176,24 @@ Pointer.prototype = {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
+			followTouchMove = chart.tooltip.options.followTouchMove, // docs
 			touches = e.touches,
+			touchesLength = touches.length,
 			lastValidTouch = self.lastValidTouch,
 			zoomHor = self.zoomHor || self.pinchHor,
 			zoomVert = self.zoomVert || self.pinchVert,
+			hasZoom = zoomHor || zoomVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart') {
+		if (e.type === 'touchstart' && followTouchMove) {
 			if (self.inClass(e.target, PREFIX + 'tracker')) {
-				if (!chart.runTrackerClick) {
+				if (!chart.runTrackerClick || touchesLength > 1) {
 					e.preventDefault();
 				}
-			} else if (!chart.runChartClick) {
+			} else if (!chart.runChartClick || touchesLength > 1) {
 				e.preventDefault();
 			}
 		}
@@ -9244,12 +9247,15 @@ Pointer.prototype = {
 				self.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 			}
 
-			self.hasPinched = zoomHor || zoomVert;
+			self.hasPinched = hasZoom;
 
 			// Scale and translate the groups to provide visual feedback during pinching
 			self.scaleGroups(transform, clip);
 			
-			
+			// Optionally move the tooltip on touchmove
+			if (!hasZoom && followTouchMove && touchesLength === 1) {
+				this.runPointActions(self.normalize(e));
+			}
 		}
 	},
 
