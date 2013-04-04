@@ -18595,33 +18595,40 @@ RangeSelector.prototype = {
 		inputGroup.offset += dateBox.width + (isMin ? 10 : 0);
 		
 
-		// Create the HTML input element. This is placed off screen and moved on top of the label
-		// when activated.
+		// Create the HTML input element. This is rendered as 1x1 pixel then set to the right size 
+		// when focused.
 		this[name + 'Input'] = input = createElement('input', {
 			name: name,
 			className: PREFIX + 'range-selector',
 			type: 'text'
 		}, extend({
 			position: ABSOLUTE,
-			border: '2px solid silver',
-			top: '-9999em',
+			border: 0,
+			width: '1px', // Chrome needs a pixel to see it
+			height: '1px',
+			padding: 0,
 			textAlign: 'center',
 			fontSize: chartStyle.fontSize,
-			fontFamily: chartStyle.fontFamily
+			fontFamily: chartStyle.fontFamily,
+			top: chart.plotTop + PX // prevent jump on focus in Firefox
 		}, options.inputStyle), div);
 
-
+		// Blow up the input box
 		input.onfocus = function () {
 			css(this, {
 				left: (inputGroup.translateX + dateBox.x) + PX,
 				top: inputGroup.translateY + PX,
 				width: (dateBox.width - 2) + PX,
-				height: (dateBox.height - 2) + PX
+				height: (dateBox.height - 2) + PX,
+				border: '2px solid silver',
 			});
 		};
+		// Hide away the input box
 		input.onblur = function () {
 			css(this, {
-				top: '-9999em'
+				border: 0,
+				width: '1px',
+				height: '1px'
 			});
 			rangeSelector.setInputValue(name);
 		};
