@@ -339,7 +339,7 @@ RangeSelector.prototype = {
 				top: inputGroup.translateY + PX,
 				width: (dateBox.width - 2) + PX,
 				height: (dateBox.height - 2) + PX,
-				border: '2px solid silver',
+				border: '2px solid silver'
 			});
 		};
 		// Hide away the input box

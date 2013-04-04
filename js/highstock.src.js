@@ -7167,7 +7167,7 @@ Axis.prototype = {
 				for (j = 0; j < len && !break2; j++) {
 					pos = log2lin(lin2log(i) * intermediate[j]);
 					
-					if (pos > min && lastPos <= max) {
+					if (pos > min && (!minor || lastPos <= max)) { // #1670
 						positions.push(lastPos);
 					}
 					
@@ -18620,7 +18620,7 @@ RangeSelector.prototype = {
 				top: inputGroup.translateY + PX,
 				width: (dateBox.width - 2) + PX,
 				height: (dateBox.height - 2) + PX,
-				border: '2px solid silver',
+				border: '2px solid silver'
 			});
 		};
 		// Hide away the input box
