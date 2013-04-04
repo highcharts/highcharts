@@ -19469,6 +19469,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 				});
 				median = distances[mathFloor(len / 2)];
 				
+				// Compensate for series that don't extend through the entire axis extent. #1675.
+				xMin = mathMax(xMin, processedXData[0]);
+				xMax = mathMin(xMax, processedXData[len - 1]);
+
 				// Return the factor needed for data grouping
 				return (len * median) / (xMax - xMin);
 			};
