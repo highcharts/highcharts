@@ -14605,7 +14605,9 @@ var AreaSeries = extendClass(Series, {
 		var segments = [],
 			segment = [],
 			keys = [],
-			stack = this.yAxis.stacks[this.stackKey],
+			xAxis = this.xAxis,
+			yAxis = this.yAxis,
+			stack = yAxis.stacks[this.stackKey],
 			pointMap = {},
 			plotX,
 			plotY,
@@ -14634,8 +14636,8 @@ var AreaSeries = extendClass(Series, {
 				// insert a dummy point in order for the areas to be drawn
 				// correctly.
 				} else {
-					plotX = this.xAxis.translate(x);
-					plotY = this.yAxis.toPixels(stack[x].cum, true);
+					plotX = xAxis.translate(x);
+					plotY = yAxis.toPixels(stack[x].cum, true);
 					segment.push({ 
 						y: null, 
 						plotX: plotX,
