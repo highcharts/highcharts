@@ -7760,11 +7760,13 @@ Axis.prototype = {
 	zoom: function (newMin, newMax) {
 
 		// Prevent pinch zooming out of range
-		if (newMin <= this.dataMin) {
-			newMin = UNDEFINED;
-		}
-		if (newMax >= this.dataMax) {
-			newMax = UNDEFINED;
+		if (!this.allowZoomOutside) {
+			if (newMin <= this.dataMin) {
+				newMin = UNDEFINED;
+			}
+			if (newMax >= this.dataMax) {
+				newMax = UNDEFINED;
+			}
 		}
 
 		// In full view, displaying the reset zoom button is not required

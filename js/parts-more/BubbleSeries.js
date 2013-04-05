@@ -209,6 +209,9 @@ Axis.prototype.beforePadding = function () {
 		transA = axisLength / range,
 		activeSeries = [];
 
+	// Correction for #1673
+	this.allowZoomOutside = true;
+
 	// Handle padding on the second pass, or on redraw
 	if (this.tickPositions) {
 		each(this.series, function (series) {
@@ -269,7 +272,7 @@ Axis.prototype.beforePadding = function () {
 			}
 		});
 		
-		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED) {
+		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
 			pxMax -= axisLength;
 			transA *= (axisLength + pxMin - pxMax) / axisLength;
 			this.min += pxMin / transA;
