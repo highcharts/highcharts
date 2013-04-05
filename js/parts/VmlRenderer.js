@@ -165,7 +165,8 @@ Highcharts.VMLElement = VMLElement = {
 
 						// convert paths
 						i = value.length;
-						var convertedPath = [];
+						var convertedPath = [],
+							clockwise;
 						while (i--) {
 
 							// Multiply by 10 to allow subpixel precision.
@@ -181,13 +182,14 @@ Highcharts.VMLElement = VMLElement = {
 								// When the start X and end X coordinates of an arc are too close,
 								// they are rounded to the same value above. In this case, substract 1 from the end X
 								// position. #760, #1371. 
-								if (value[i] === 'wa' || value[i] === 'at') {
+								if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
+									clockwise = value[i] === 'wa' ? 1 : -1; // #1642
 									if (convertedPath[i + 5] === convertedPath[i + 7]) {
-										convertedPath[i + 7] -= 1;
+										convertedPath[i + 7] -= clockwise;
 									}
 									// Start and end Y (#1410)
 									if (convertedPath[i + 6] === convertedPath[i + 8]) {
-										convertedPath[i + 8] -= 1;
+										convertedPath[i + 8] -= clockwise;
 									}
 								}
 							}
@@ -1008,6 +1010,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				'e' // close
 			);
 			
+			ret.isArc = true;
 			return ret;
 
 		},
