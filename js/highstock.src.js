@@ -11166,8 +11166,8 @@ Chart.prototype = {
 		// adjust for title and subtitle
 		if ((chart.title || chart.subtitle) && !defined(chart.optionsMarginTop)) {
 			titleOffset = mathMax(
-				(chart.title && !chartTitleOptions.floating && !chartTitleOptions.verticalAlign && chartTitleOptions.y) || 0,
-				(chart.subtitle && !chartSubtitleOptions.floating && !chartSubtitleOptions.verticalAlign && chartSubtitleOptions.y) || 0
+				(chart.title && !chartTitleOptions.floating && !chartTitleOptions.verticalAlign && chartTitleOptions.y + chart.title.getBBox().height) || 0,
+				(chart.subtitle && !chartSubtitleOptions.floating && !chartSubtitleOptions.verticalAlign && chartSubtitleOptions.y+ chart.subtitle.getBBox().height) || 0
 			);
 			if (titleOffset) {
 				chart.plotTop = mathMax(chart.plotTop, titleOffset + pick(chartTitleOptions.margin, 15) + spacingTop);
