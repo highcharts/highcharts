@@ -333,18 +333,18 @@ extend(Chart.prototype, {
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function (options, chartOptions) {
-		
 		options = options || {};
 		
 		var chart = this,
+			chartExportingOptions = chart.options.exporting,
 			svg = chart.getSVG(merge(
 				{ chart: { borderRadius: 0 } },
-				chart.options.exporting.chartOptions,
+				chartExportingOptions,
 				chartOptions, 
 				{
 					exporting: {
-						sourceWidth: options.sourceWidth, // docs: option and parameter in exportChart()
-						sourceHeight: options.sourceHeight // docs
+						sourceWidth: options.sourceWidth || chartExportingOptions.sourceWidth, // docs: option and parameter in exportChart()
+						sourceHeight: options.sourceHeight || chartExportingOptions.sourceHeight // docs
 					}
 				}
 			));

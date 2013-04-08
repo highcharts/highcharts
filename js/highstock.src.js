@@ -14628,7 +14628,9 @@ var AreaSeries = extendClass(Series, {
 			for (x in stack) {
 				keys.push(+x);
 			}
-			keys.sort();
+			keys.sort(function (a, b) {
+				return a - b;
+			});
 
 			each(keys, function (x) {
 				// The point exists, push it to the segment
