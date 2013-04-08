@@ -5653,7 +5653,7 @@ Tick.prototype = {
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
-				(!horiz && chart.plotWidth / 2),
+				(!horiz && (chart.optionsMarginLeft || chart.plotWidth / 2)), // #1580
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
