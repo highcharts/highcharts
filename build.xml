@@ -899,7 +899,9 @@
         <!-- HINT: The sync command will compare checksums and sizes of the remote vs local files and only want to upload those that are new. When using skip-existing only file presence is checked, NOT the content -->
         <echo message="synch local folder: ${local} with remote S3 path: ${remote}"/>
         <!-- Upload the .js files to remote S3 version folder -->
-        <exec executable="s3cmd" failonerror="true">
+        <!--exec executable="s3cmd" failonerror="true"-->
+        <exec dir="${s3cmdDir}" executable="python" failonerror="true">
+            <arg line="s3cmd"/>
             <arg value="--guess-mime-type"/>
             <arg value="--add-header=Vary:Accept-Encoding"/>
             <!-- tell proxies to only serve this compressed content to a client who has the accept-encoding header: http://blog.port80software.com/2005/01/21/; NOT REALLY NECESSARY in our case were only serving gzipped js. But it will maybe help for proxy-servers in transition to only gzipped files -->
@@ -920,7 +922,8 @@
     <!-- synch all files to S3 recursively, but ommit .js files -->
     <target name="put-files-to-S3">
         <echo message="synch local folder: ${local} with remote S3 path: ${remote}"/>
-        <exec executable="s3cmd" failonerror="true">
+        <exec dir="${s3cmdDir}" executable="python" failonerror="true">
+            <arg line="s3cmd"/>
             <arg value="--add-header=Cache-Control:public, max-age=${max.age}"/>
             <arg value="--add-header=Expires:${http.expires}"/>
             <arg value="--guess-mime-type"/>
@@ -937,7 +940,8 @@
     </target>
     <target name="put-zipfile-to-S3">
         <echo message="copy a file to : ${local} with remote S3 path: ${remote}"/>
-        <exec executable="s3cmd" failonerror="true">
+        <exec dir="${s3cmdDir}" executable="python" failonerror="true">
+            <arg line="s3cmd"/>
             <arg value="--add-header=Cache-Control:public, max-age=${max.age}"/>
             <arg value="--add-header=Expires:${http.expires}"/>
             <arg value="--guess-mime-type"/>
@@ -954,7 +958,8 @@
     </target>
     <target name="copy-folder-on-S3">
         <echo message="copy a folders and files from : ${from.s3} to: ${to.s3}"/>
-        <exec executable="s3cmd" failonerror="true">
+        <exec dir="${s3cmdDir}" executable="python" failonerror="true">
+            <arg line="s3cmd"/>
             <arg value="--recursive"/>
             <arg value="--guess-mime-type"/>
             <arg value="--encoding=UTF-8"/>
@@ -968,7 +973,8 @@
         <!-- This is used to push all versions from local machine to S3 -->
         <echo message="synch local folder: ${local} with remote S3 path: ${remote}"/>
         <echo message="copying all files and folders other than .js"/>
-        <exec executable="s3cmd" failonerror="true">
+        <exec dir="${s3cmdDir}" executable="python" failonerror="true">
+            <arg line="s3cmd"/>
             <!--arg value="-!-skip-existing" /-->
             <arg value="--add-header=Cache-Control:public, max-age=${max.age}"/>
             <arg value="--add-header=Expires:${http.expires}"/>
@@ -993,6 +999,7 @@
         <antcall target="put-zipfile-to-S3">
             <param name="local" value="${basedir}/build/dist/Highcharts.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
             <param name="include.pattern" value="*.zip"/>
         </antcall>
         <antcall target="gzip-js">
@@ -1011,6 +1018,7 @@
                         <antcall target="put-gzipped-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/"/>
                             <param name="remote" value="${amazon.s3.bucketname}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1018,6 +1026,7 @@
                         <antcall target="put-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highcharts/gfx"/>
                             <param name="remote" value="${amazon.s3.bucketname}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1025,6 +1034,7 @@
                         <antcall target="put-gzipped-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/"/>
                             <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1032,6 +1042,7 @@
                         <antcall target="put-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highcharts/gfx"/>
                             <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1045,6 +1056,7 @@
                             <antcall target="put-gzipped-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
                                 <param name="http.expires" value="${http.expires.one.month}"/>
                                 <param name="max.age" value="${max.age.one.month}"/>
                             </antcall>
@@ -1052,6 +1064,7 @@
                             <antcall target="put-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highcharts/gfx"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
                                 <param name="http.expires" value="${http.expires.one.month}"/>
                                 <param name="max.age" value="${max.age.one.month}"/>
                             </antcall>
@@ -1064,6 +1077,7 @@
                         <antcall target="copy-folder-on-S3">
                             <param name="from.s3" value="${amazon.s3.bucketname}/${copy.version}/"/>
                             <param name="to.s3" value="${amazon.s3.bucketname}/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                         </antcall>
                     </else>
                 </ac:if>
@@ -1079,6 +1093,8 @@
         <antcall target="put-zipfile-to-S3">
             <param name="local" value="${basedir}/build/dist/Highstock.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
             <param name="include.pattern" value="*.zip"/>
         </antcall>
         <antcall target="gzip-js">
@@ -1097,6 +1113,7 @@
                         <antcall target="put-gzipped-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highstock/js-gzip/"/>
                             <param name="remote" value="${amazon.s3.bucketname}/stock"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1104,6 +1121,7 @@
                         <antcall target="put-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highstock/gfx"/>
                             <param name="remote" value="${amazon.s3.bucketname}/stock"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1111,6 +1129,7 @@
                         <antcall target="put-gzipped-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highstock/js-gzip/"/>
                             <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1118,6 +1137,7 @@
                         <antcall target="put-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/highstock/gfx"/>
                             <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
                         </antcall>
@@ -1130,6 +1150,7 @@
                             <antcall target="put-gzipped-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highstock/js-gzip/"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
                                 <param name="http.expires" value="${http.expires.one.month}"/>
                                 <param name="max.age" value="${max.age.one.month}"/>
                             </antcall>
@@ -1137,6 +1158,7 @@
                             <antcall target="put-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highstock/gfx"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
                                 <param name="http.expires" value="${http.expires.one.month}"/>
                                 <param name="max.age" value="${max.age.one.month}"/>
                             </antcall>
@@ -1148,6 +1170,7 @@
                         <antcall target="copy-folder-on-S3">
                             <param name="from.s3" value="${amazon.s3.bucketname}/stock/${copy.version}/"/>
                             <param name="to.s3" value="${amazon.s3.bucketname}/stock/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
                         </antcall>
                     </else>
                 </ac:if>
@@ -1170,11 +1193,13 @@
             <param name="remote" value="${amazon.s3.bucketname}"/>
             <param name="http.expires" value="${http.expires.one.month}"/>
             <param name="max.age" value="${max.age.one.month}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <!-- synch files and folders containing non-gzipped content -->
         <antcall target="put-all-versions-nonjs-files-to-S3">
             <param name="local" value="${src.versions.dir}/"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
             <param name="http.expires" value="${http.expires.one.month}"/>
             <param name="max.age" value="${max.age.one.month}"/>
         </antcall>
