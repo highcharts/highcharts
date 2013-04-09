@@ -139,14 +139,16 @@
 	 * Parse a CSV input string
 	 */
 	parseCSV: function () {
-		var options = this.options,
+		var self = this,
+			options = this.options,
 			csv = options.csv,
 			columns = this.columns,
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
 			endColumn = options.endColumn || Number.MAX_VALUE,
-			lines;
+			lines,
+			activeRowNo = 0;
 			
 		if (csv) {
 			
@@ -156,19 +158,26 @@
 				.split(options.lineDelimiter || "\n");
 			
 			each(lines, function (line, rowNo) {
-				if (rowNo >= startRow && rowNo <= endRow) {
-					var items = line.split(options.itemDelimiter || ',');
+				var trimmed = self.trim(line),
+					isComment = trimmed.indexOf('#') === 0,
+					isBlank = trimmed === '',
+					items;
+				
+				if (rowNo >= startRow && rowNo <= endRow && !isComment && !isBlank) {
+					items = line.split(options.itemDelimiter || ',');
 					each(items, function (item, colNo) {
 						if (colNo >= startColumn && colNo <= endColumn) {
 							if (!columns[colNo - startColumn]) {
 								columns[colNo - startColumn] = [];					
 							}
 							
-							columns[colNo - startColumn][rowNo - startRow] = item;
+							columns[colNo - startColumn][activeRowNo] = item;
 						}
 					});
+					activeRowNo += 1;
 				}
-			}); 
+			});
+
 			this.dataFound();
 		}
 	},
@@ -299,7 +308,6 @@
 	 * Trim a string from whitespace
 	 */
 	trim: function (str) {
-		//return typeof str === 'number' ? str : str.replace(/^\s+|\s+$/g, ''); // fails with spreadsheet
 		return typeof str === 'string' ? str.replace(/^\s+|\s+$/g, '') : str;
 	},
 	
@@ -322,6 +330,7 @@
 				val = columns[col][row];
 				floatVal = parseFloat(val);
 				trimVal = this.trim(val);
+
 				/*jslint eqeq: true*/
 				if (trimVal == floatVal) { // is numeric
 				/*jslint eqeq: false*/
@@ -370,13 +379,14 @@
 			match;
 
 		if (parseDate) {
-			ret = parseDate;
+			ret = parseDate(val);
 		}
 			
 		if (typeof val === 'string') {
 			for (key in this.dateFormats) {
 				format = this.dateFormats[key];
 				match = val.match(format.regex);
+				console.log(key, match)
 				if (match) {
 					ret = format.parser(match);
 				}
