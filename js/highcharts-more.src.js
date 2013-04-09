@@ -1917,7 +1917,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 					height: 2 * radius
 				};
 			} else { // below zThreshold
-				point.shapeArgs = point.plotY = point.dlBox = null;
+				point.shapeArgs = point.plotY = point.dlBox = UNDEFINED; // #1691
 			}
 		}
 	},
@@ -2004,6 +2004,7 @@ Axis.prototype.beforePadding = function () {
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					);
+
 					zMax = math.max(zMax, arrayMax(zData));
 				}
 			}
