@@ -6890,7 +6890,7 @@ Axis.prototype = {
 						}
 						
 						// Handle non null values
-						if (y !== null && y !== UNDEFINED && (!axis.isLog || y > 0)) {							
+						if (y !== null && y !== UNDEFINED && (!axis.isLog || (y.length || y > 0))) {							
 
 							// general hook, used for Highstock compare values feature
 							if (hasModifyValue) {
