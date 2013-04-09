@@ -386,7 +386,6 @@
 			for (key in this.dateFormats) {
 				format = this.dateFormats[key];
 				match = val.match(format.regex);
-				console.log(key, match)
 				if (match) {
 					ret = format.parser(match);
 				}

@@ -105,7 +105,7 @@ defaultOptions.exporting = {
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
 			menuItems: [{
-				textKey: 'printChart', // docs
+				textKey: 'printChart',
 				onclick: function () {
 					this.print();
 				}
