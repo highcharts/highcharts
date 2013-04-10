@@ -662,6 +662,18 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	pointValKey: 'low',
 	
 	/**
+	 * Extend getSegments to force null points if the higher value is null. #1703.
+	 */
+	getSegments: function () {
+		each(this.points, function (point) {
+			if (point.high === null) {
+				point.y = null;
+			}
+		});
+		Series.prototype.getSegments.call(this);
+	},
+	
+	/**
 	 * Translate data points from raw values x and y to plotX and plotY
 	 */
 	translate: function () {
