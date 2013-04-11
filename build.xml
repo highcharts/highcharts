@@ -500,6 +500,9 @@
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highstock.filter"/></copy>
 
+        <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
+
         <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
