@@ -47,7 +47,6 @@ var Chart = Highcharts.Chart,
 		downloadJPEG: 'Download JPEG image',
 		downloadPDF: 'Download PDF document',
 		downloadSVG: 'Download SVG vector image',
-		printChart: 'Print chart',
 		contextButtonTitle: 'Chart context menu'
 	});
 
