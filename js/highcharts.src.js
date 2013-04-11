@@ -13678,7 +13678,7 @@ Series.prototype = {
 				);
 
 				// Force the fill to negativeColor on markers
-				if (point.negative && seriesOptions.marker) {
+				if (point.negative && seriesOptions.marker && negativeColor) {
 					pointAttr[NORMAL_STATE].fill = pointAttr[HOVER_STATE].fill = pointAttr[SELECT_STATE].fill = 
 						series.convertAttribs({ fillColor: negativeColor }).fill;
 				}

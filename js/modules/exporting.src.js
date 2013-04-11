@@ -467,7 +467,7 @@ extend(Chart.prototype, {
 				if (button) {
 					button.setState(0);
 				}
-				chart.openMenus -=1;
+				chart.openMenus -= 1;
 			};
 
 			// Hide the menu some time after mouse leave (#1357)
