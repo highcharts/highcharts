@@ -9506,7 +9506,7 @@ Pointer.prototype = {
 		} 
 		
 		// Show the tooltip and run mouse over events (#977)
-		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenus) {
+		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 			this.runPointActions(e);
 		}
 	},

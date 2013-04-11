@@ -188,8 +188,6 @@ Highcharts.post = function (url, data) {
 
 extend(Chart.prototype, {
 
-	openMenus: 0,
-
 	/**
 	 * Return an SVG representation of the chart
 	 *
@@ -467,7 +465,7 @@ extend(Chart.prototype, {
 				if (button) {
 					button.setState(0);
 				}
-				chart.openMenus -= 1;
+				chart.openMenu = false;
 			};
 
 			// Hide the menu some time after mouse leave (#1357)
@@ -529,7 +527,7 @@ extend(Chart.prototype, {
 		}
 
 		css(menu, menuStyle);
-		chart.openMenus += 1;
+		chart.openMenu = true;
 	},
 
 	/**
