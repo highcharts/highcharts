@@ -1432,7 +1432,7 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
 			headerFormat = tooltipOptions.headerFormat,
-			closestPointRange = xAxis.closestPointRange,
+			closestPointRange = xAxis && xAxis.closestPointRange,
 			n;
 			
 		// Guess the best date format based on the closest point distance (#568)
