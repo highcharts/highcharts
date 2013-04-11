@@ -2260,6 +2260,8 @@ Series.prototype = {
 			translatedThreshold,
 			posAttr,
 			negAttr,
+			graph = this.graph,
+			area = this.area,
 			posClip = this.posClip,
 			negClip = this.negClip,
 			chartWidth = chart.chartWidth,
@@ -2268,7 +2270,7 @@ Series.prototype = {
 			above,
 			below;
 		
-		if (negativeColor && this.graph) {
+		if (negativeColor && (graph || area)) {
 			translatedThreshold = mathCeil(this.yAxis.len - this.yAxis.translate(options.threshold || 0));
 			above = {
 				x: 0,
@@ -2310,14 +2312,17 @@ Series.prototype = {
 				posClip.animate(posAttr);
 				negClip.animate(negAttr);
 			} else {
+				
 				this.posClip = posClip = renderer.clipRect(posAttr);
-				this.graph.clip(posClip);
-				
 				this.negClip = negClip = renderer.clipRect(negAttr);
-				this.graphNeg.clip(negClip);
 				
-				if (this.area) {
-					this.area.clip(posClip);
+				if (graph) {
+					graph.clip(posClip);
+					this.graphNeg.clip(negClip);	
+				}
+				
+				if (area) {
+					area.clip(posClip);
 					this.areaNeg.clip(negClip);
 				} 
 			} 
