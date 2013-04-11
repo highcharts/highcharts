@@ -17629,7 +17629,19 @@ Scroller.prototype = {
 				newMax = mathMax(baseExtremes.dataMax, navExtremes.dataMax);
 
 			if (!noBase && (newMin !== navExtremes.min || newMax !== navExtremes.max)) {
+				var wasRendered = scroller.rendered;
 				xAxis.setExtremes(newMin, newMax, true, false);
+
+				// setExtremes can call the render function that we're in, which may render the scrollbar
+				// for the first time.  If that happened, some of the variables that were initialized at
+				// the top need to be reset. (#1698)
+				if (!wasRendered && scroller.rendered)
+				{
+					navigatorGroup = scroller.navigatorGroup;
+					scrollbarGroup = scroller.scrollbarGroup;
+					scrollbarTrack = scroller.scrollbarTrack;
+					scrollbar = scroller.scrollbar;
+				}
 			}
 		}
 
