@@ -42,6 +42,7 @@ var Chart = Highcharts.Chart,
 
 	// Add language
 	extend(defaultOptions.lang, {
+		printChart: 'Print chart',
 		downloadPNG: 'Download PNG image',
 		downloadJPEG: 'Download JPEG image',
 		downloadPDF: 'Download PDF document',
@@ -187,6 +188,8 @@ Highcharts.post = function (url, data) {
 };
 
 extend(Chart.prototype, {
+
+	openMenus: 0,
 
 	/**
 	 * Return an SVG representation of the chart
@@ -346,18 +349,18 @@ extend(Chart.prototype, {
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function (options, chartOptions) {
-		
 		options = options || {};
 		
 		var chart = this,
+			chartExportingOptions = chart.options.exporting,
 			svg = chart.getSVG(merge(
 				{ chart: { borderRadius: 0 } },
-				chart.options.exporting.chartOptions,
+				chartExportingOptions,
 				chartOptions, 
 				{
 					exporting: {
-						sourceWidth: options.sourceWidth, // docs: option and parameter in exportChart()
-						sourceHeight: options.sourceHeight // docs
+						sourceWidth: options.sourceWidth || chartExportingOptions.sourceWidth, // docs: option and parameter in exportChart()
+						sourceHeight: options.sourceHeight || chartExportingOptions.sourceHeight // docs
 					}
 				}
 			));
@@ -478,6 +481,7 @@ extend(Chart.prototype, {
 				if (button) {
 					button.setState(0);
 				}
+				chart.openMenus -= 1;
 			};
 
 			// Hide the menu some time after mouse leave (#1357)
@@ -539,6 +543,7 @@ extend(Chart.prototype, {
 		}
 
 		css(menu, menuStyle);
+		chart.openMenus += 1;
 	},
 
 	/**
@@ -638,7 +643,7 @@ extend(Chart.prototype, {
 		button.add()
 			.align(extend(btnOptions, {
 				width: button.width,
-				x: buttonOffset
+				x: Highcharts.pick(btnOptions.x, buttonOffset) // #1654
 			}), true, 'spacingBox');
 
 		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);

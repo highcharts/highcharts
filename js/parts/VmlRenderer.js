@@ -165,7 +165,8 @@ Highcharts.VMLElement = VMLElement = {
 
 						// convert paths
 						i = value.length;
-						var convertedPath = [];
+						var convertedPath = [],
+							clockwise;
 						while (i--) {
 
 							// Multiply by 10 to allow subpixel precision.
@@ -181,13 +182,14 @@ Highcharts.VMLElement = VMLElement = {
 								// When the start X and end X coordinates of an arc are too close,
 								// they are rounded to the same value above. In this case, substract 1 from the end X
 								// position. #760, #1371. 
-								if (value[i] === 'wa' || value[i] === 'at') {
+								if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
+									clockwise = value[i] === 'wa' ? 1 : -1; // #1642
 									if (convertedPath[i + 5] === convertedPath[i + 7]) {
-										convertedPath[i + 7] -= 1;
+										convertedPath[i + 7] -= clockwise;
 									}
 									// Start and end Y (#1410)
 									if (convertedPath[i + 6] === convertedPath[i + 8]) {
-										convertedPath[i + 8] -= 1;
+										convertedPath[i + 8] -= clockwise;
 									}
 								}
 							}
@@ -225,7 +227,7 @@ Highcharts.VMLElement = VMLElement = {
 							// outside the viewport. So the visibility is actually opposite of 
 							// the expected value. This applies to the tooltip only. 
 							if (!docMode8) {
-								elemStyle[key] = value ? HIDDEN : VISIBLE;
+								elemStyle[key] = value ? VISIBLE : HIDDEN;
 							}
 							key = 'top';
 						}
@@ -866,12 +868,14 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} r
 	 */
 	circle: function (x, y, r) {
+		var circle = this.symbol('circle');
 		if (isObject(x)) {
 			r = x.r;
 			y = x.y;
 			x = x.x;
 		}
-		return this.symbol('circle').attr({ x: x - r, y: y - r, width: 2 * r, height: 2 * r });
+		circle.isCircle = true; // Causes x and y to mean center (#1682)
+		return circle.attr({ x: x, y: y, width: 2 * r, height: 2 * r });
 	},
 
 	/**
@@ -1008,12 +1012,19 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				'e' // close
 			);
 			
+			ret.isArc = true;
 			return ret;
 
 		},
 		// Add circle symbol path. This performs significantly faster than v:oval.
-		circle: function (x, y, w, h) {
+		circle: function (x, y, w, h, wrapper) {
+			// Center correction, #1682
+			if (wrapper && wrapper.isCircle) {
+				x -= w / 2;
+				y -= h / 2;
+			}
 
+			// Return the path
 			return [
 				'wa', // clockwisearcto
 				x, // left

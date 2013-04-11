@@ -8,15 +8,17 @@ $(function() {
 	    	buttonTheme: { // styles for the buttons
 	    		fill: 'none',
 	    		stroke: 'none',
+	    		'stroke-width': 0,
+	    		r: 8,
 	    		style: {
 	    			color: '#039',
 	    			fontWeight: 'bold'
 	    		},
 	    		states: {
 	    			hover: {
-	    				fill: 'white'
 	    			},
 	    			select: {
+	    				fill: '#039',
 	    				style: {
 	    					color: 'white'
 	    				}

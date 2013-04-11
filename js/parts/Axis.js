@@ -398,6 +398,9 @@ Axis.prototype = {
 		erase(chart.axes, this);
 		erase(chart[key], this);
 		chart.options[key].splice(this.options.index, 1);
+		each(chart[key], function (axis, i) { // Re-index, #1706
+			axis.options.index = i;
+		});
 		this.destroy();
 		chart.isDirtyBox = true;
 
@@ -589,7 +592,7 @@ Axis.prototype = {
 						}
 						
 						// Handle non null values
-						if (y !== null && y !== UNDEFINED && (!axis.isLog || y > 0)) {							
+						if (y !== null && y !== UNDEFINED && (!axis.isLog || (y.length || y > 0))) {							
 
 							// general hook, used for Highstock compare values feature
 							if (hasModifyValue) {
@@ -872,7 +875,7 @@ Axis.prototype = {
 				for (j = 0; j < len && !break2; j++) {
 					pos = log2lin(lin2log(i) * intermediate[j]);
 					
-					if (pos > min && lastPos <= max) {
+					if (pos > min && (!minor || lastPos <= max)) { // #1670
 						positions.push(lastPos);
 					}
 					
@@ -1053,6 +1056,7 @@ Axis.prototype = {
 			minPointOffset = 0,
 			pointRangePadding = 0,
 			linkedParent = axis.linkedParent,
+			ordinalCorrection,
 			transA = axis.transA;
 
 		// adjust translation for padding
@@ -1097,8 +1101,9 @@ Axis.prototype = {
 			}
 			
 			// Record minPointOffset and pointRangePadding
-			axis.minPointOffset = minPointOffset;
-			axis.pointRangePadding = pointRangePadding;
+			ordinalCorrection = axis.ordinalSlope ? axis.ordinalSlope / closestPointRange : 1; // #988
+			axis.minPointOffset = minPointOffset = minPointOffset * ordinalCorrection;
+			axis.pointRangePadding = pointRangePadding = pointRangePadding * ordinalCorrection;
 
 			// pointRange means the width reserved for each point, like in a column chart
 			axis.pointRange = mathMin(pointRange, range);
@@ -1463,11 +1468,13 @@ Axis.prototype = {
 	zoom: function (newMin, newMax) {
 
 		// Prevent pinch zooming out of range
-		if (newMin <= this.dataMin) {
-			newMin = UNDEFINED;
-		}
-		if (newMax >= this.dataMax) {
-			newMax = UNDEFINED;
+		if (!this.allowZoomOutside) {
+			if (newMin <= this.dataMin) {
+				newMin = UNDEFINED;
+			}
+			if (newMax >= this.dataMax) {
+				newMax = UNDEFINED;
+			}
 		}
 
 		// In full view, displaying the reset zoom button is not required
@@ -1802,16 +1809,16 @@ Axis.prototype = {
 			from,
 			to;
 
+		// Mark all elements inActive before we go over and mark the active ones
+		each([ticks, minorTicks, alternateBands], function (coll) {
+			var pos;
+			for (pos in coll) {
+				coll[pos].isActive = false;
+			}
+		});
+
 		// If the series has data draw the ticks. Else only the line and title
 		if (hasData || isLinked) {
-
-			// Mark all elements inActive before we go over and mark the active ones
-			each([ticks, minorTicks, alternateBands], function (coll) {
-				var pos;
-				for (pos in coll) {
-					coll[pos].isActive = false;
-				}
-			});
 
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
