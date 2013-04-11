@@ -24,8 +24,8 @@ import org.apache.log4j.Logger;
 
 public class SVGCreator {
 
-	private final String PHANTOM_EXEC = "/usr/local/bin/phantomjs";
-	private String PHANTOM_SCRIPT = "highcharts-convert.js";
+	private final String PHANTOM_EXEC = "phantomjs";
+	private final String PHANTOM_SCRIPT = "highcharts-convert.js";
 
 	protected static Logger logger = Logger.getLogger("svgCreator");
 	private static final SVGCreator INSTANCE = new SVGCreator();
