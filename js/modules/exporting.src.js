@@ -248,10 +248,23 @@ extend(Chart.prototype, {
 		// prepare for replicating the chart
 		options.series = [];
 		each(chart.series, function (serie) {
+            var dataLabelSerie = function () {
+                var enabled = false;
+                $.each(options.plotOptions, function (serieType, plotSerie) {
+                    if (serie.type == serieType) {
+                        enabled = plotSerie.dataLabels.enabled;
+                    }
+                });
+                return enabled;
+            };
+
 			seriesOptions = merge(serie.options, {
 				animation: false, // turn off animation
 				showCheckbox: false,
-				visible: serie.visible
+				visible: serie.visible,
+                dataLabels: {
+                    enabled: dataLabelSerie()
+                }
 			});
 
 			if (!seriesOptions.isInternal) { // used for the navigator series that has its own option set
