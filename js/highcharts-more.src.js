@@ -1907,7 +1907,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 		while (i--) {
 			point = data[i];
-			radius = radii[i];
+			radius = radii ? radii[i] : 0; // #1737
 
 			// Flag for negativeColor to be applied in Series.js
 			point.negative = point.z < (this.options.zThreshold || 0);
