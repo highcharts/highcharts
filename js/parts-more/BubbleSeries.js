@@ -241,15 +241,16 @@ Axis.prototype.beforePadding = function () {
 					
 					// Find the min and max Z
 					zData = series.zData;
-					zMin = math.min(
-						zMin,
-						math.max(
-							arrayMin(zData), 
-							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
-						)
-					);
-
-					zMax = math.max(zMax, arrayMax(zData));
+					if (zData.length) { // #1735
+						zMin = math.min(
+							zMin,
+							math.max(
+								arrayMin(zData), 
+								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
+							)
+						);
+						zMax = math.max(zMax, arrayMax(zData));
+					}
 				}
 			}
 		});
