@@ -9437,7 +9437,7 @@ Pointer.prototype = {
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
 			css(chart.container, { cursor: chart._cursor });
-			chart.cancelClick = this.hasDragged > 10; // #370
+			chart.cancelClick = this.hasDragged; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
 		}
@@ -11227,8 +11227,16 @@ Chart.prototype = {
 
 		// adjust for scroller
 		if (chart.extraBottomMargin) {
+            if(chart.options.scrollbar.opposite) {
+                chart.plotTop += chart.extraBottomMargin;
+                if(!chart.options.scrollbar.enabled){
+                    chart.plotTop -= chart.options.scrollbar.height;
+                }
+            } else {
 			chart.marginBottom += chart.extraBottomMargin;
 		}
+		}
+
 		if (chart.extraTopMargin) {
 			chart.plotTop += chart.extraTopMargin;
 		}
@@ -17439,6 +17447,8 @@ extend(defaultOptions, {
 				[1, '#FFF']
 			]
 		),
+        opposite: false,
+        oppositeMargin: 2,
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
@@ -17753,18 +17763,36 @@ Scroller.prototype = {
 				width: navigatorWidth - zoomedMax,
 				height: height
 			});
-			scroller.outline[verb]({ d: [
-				M,
-				scrollerLeft, outlineTop, // left
-				L,
-				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower left of z.r.
-				M,
-				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower right of z.r.
-				L,
-				navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
-				scrollerLeft + scrollerWidth, outlineTop // right
-			]});
+            if(chart.options.scrollbar.enabled) {
+                scroller.outline[verb]({ d: [
+                    M,
+                    scrollerLeft, outlineTop, // left
+                    L,
+                    navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
+                    navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower left of z.r.
+                    M,
+                    navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower right of z.r.
+                    L,
+                    navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
+                    scrollerLeft + scrollerWidth, outlineTop // right top
+                ]});
+            } else if(chart.options.scrollbar.opposite){
+                scroller.outline[verb]({ d: [
+                    M,
+                    scrollerLeft, outlineTop, // left
+                    L,
+                    navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
+                    navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower left of z.r.
+                    scrollerLeft, outlineHeight + outlineTop, //lower left
+                    M,
+                    scrollerLeft + scrollerWidth, outlineHeight + outlineTop, //right bottom
+                    L,
+                    navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower right of z.r.
+                    navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
+                    scrollerLeft + scrollerWidth, outlineTop // right top
+                ]});
+            }
+
 			// draw handles
 			scroller.drawHandle(zoomedMin + halfOutline, 0);
 			scroller.drawHandle(zoomedMax + halfOutline, 1);
@@ -18226,10 +18254,14 @@ Scroller.prototype = {
 				legendOptions = legend.options;
 
 			proceed.call(this);
-			
+
 			// Compute the top position
-			scroller.top = top = scroller.navigatorOptions.top || this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom - 
-						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled ? legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+            if(scroller.chart.options.scrollbar.opposite) {
+                scroller.top = top = this.options.title.y + this.title.element.offsetHeight - this.options.scrollbar.oppositeMargin;
+            } else {
+                scroller.top = top = scroller.navigatorOptions.top || this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom -
+                            (legendOptions.verticalAlign === 'bottom' && legendOptions.enabled ? legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+            }
 
 			if (xAxis && yAxis) { // false if navigator is disabled (#904)
 
