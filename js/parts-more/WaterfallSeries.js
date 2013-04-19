@@ -202,8 +202,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 					shapeArgs.y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
 					shapeArgs.height = mathCeil(axis.translate(stack._cum, 0, 1) - shapeArgs.y);
 				} else {
-
-					if (prevStack.isNegative) {
+					if (prevStack.total + point.y < 0) {
 						shapeArgs.y = axis.translate(stack._cum, 0, 1);
 					}
 
