@@ -1540,8 +1540,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			prevStack,
 			prevY,
 			stack,
-			y,
-			h,
 			crispCorr = (options.borderWidth % 2) / 2;
 
 		// run column series translate
@@ -1590,17 +1588,23 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height = edges[0] - edges[1];
 
 			// calculate other (up or down) points based on y value
-			} else if (point.y < 0) {
+			} else {
 				// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
 				cumulative = stack._cum === null ? prevStack.total : stack._cum;
 				stack._cum = cumulative + point.y;
-				y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
-				h = axis.translate(stack._cum, 0, 1);
 
-				shapeArgs.y = y;
-				shapeArgs.height = mathCeil(h - y);
-			} else {
-				shapeArgs.height = mathFloor(prevY - shapeArgs.y);
+				if (point.y < 0) {
+					shapeArgs.y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
+					shapeArgs.height = mathCeil(axis.translate(stack._cum, 0, 1) - shapeArgs.y);
+				} else {
+
+					if (prevStack.isNegative) {
+						shapeArgs.y = axis.translate(stack._cum, 0, 1);
+					}
+
+					shapeArgs.height = mathFloor(prevY - shapeArgs.y);
+				}
+
 			}
 		}
 	},
