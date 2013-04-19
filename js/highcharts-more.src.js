@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.0 (2013-03-22)
+ * @license Highcharts JS v3.0.1 (2013-04-09)
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -662,6 +662,18 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 	pointValKey: 'low',
 	
 	/**
+	 * Extend getSegments to force null points if the higher value is null. #1703.
+	 */
+	getSegments: function () {
+		each(this.points, function (point) {
+			if (point.high === null) {
+				point.y = null;
+			}
+		});
+		Series.prototype.getSegments.call(this);
+	},
+	
+	/**
 	 * Translate data points from raw values x and y to plotX and plotY
 	 */
 	translate: function () {
@@ -1292,6 +1304,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					left, 
 					medianPlot,
+					'L',
 					right, 
 					medianPlot,
 					'z'
@@ -1329,7 +1342,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					}	
 					point.medianShape = renderer.path(medianPath)
 						.attr(medianAttr)
-						.add(graphic);		
+						.add(graphic);
 				}
 			}
 		});
@@ -1527,8 +1540,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			prevStack,
 			prevY,
 			stack,
-			y,
-			h,
 			crispCorr = (options.borderWidth % 2) / 2;
 
 		// run column series translate
@@ -1577,17 +1588,22 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height = edges[0] - edges[1];
 
 			// calculate other (up or down) points based on y value
-			} else if (point.y < 0) {
+			} else {
 				// use "_cum" instead of already calculated "cum" to avoid reverse ordering negative columns
 				cumulative = stack._cum === null ? prevStack.total : stack._cum;
 				stack._cum = cumulative + point.y;
-				y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
-				h = axis.translate(stack._cum, 0, 1);
 
-				shapeArgs.y = y;
-				shapeArgs.height = mathCeil(h - y);
-			} else {
-				shapeArgs.height = mathFloor(prevY - shapeArgs.y);
+				if (point.y < 0) {
+					shapeArgs.y = mathCeil(axis.translate(cumulative, 0, 1)) - crispCorr;
+					shapeArgs.height = mathCeil(axis.translate(stack._cum, 0, 1) - shapeArgs.y);
+				} else {
+					if (prevStack.total + point.y < 0) {
+						shapeArgs.y = axis.translate(stack._cum, 0, 1);
+					}
+
+					shapeArgs.height = mathFloor(prevY - shapeArgs.y);
+				}
+
 			}
 		}
 	},
@@ -1843,7 +1859,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos = zRange > 0 ? // relative size, a number between 0 and 1
 				(zData[i] - zMin) / (zMax - zMin) : 
 				0.5;
-			radii.push(math.round(minSize + pos * (maxSize - minSize)) / 2);
+			radii.push(math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
 	},
@@ -1894,7 +1910,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 		while (i--) {
 			point = data[i];
-			radius = radii[i];
+			radius = radii ? radii[i] : 0; // #1737
 
 			// Flag for negativeColor to be applied in Series.js
 			point.negative = point.z < (this.options.zThreshold || 0);
@@ -1916,7 +1932,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 					height: 2 * radius
 				};
 			} else { // below zThreshold
-				point.shapeArgs = point.plotY = point.dlBox = null;
+				point.shapeArgs = point.plotY = point.dlBox = UNDEFINED; // #1691
 			}
 		}
 	},
@@ -1964,6 +1980,9 @@ Axis.prototype.beforePadding = function () {
 		transA = axisLength / range,
 		activeSeries = [];
 
+	// Correction for #1673
+	this.allowZoomOutside = true;
+
 	// Handle padding on the second pass, or on redraw
 	if (this.tickPositions) {
 		each(this.series, function (series) {
@@ -1993,14 +2012,16 @@ Axis.prototype.beforePadding = function () {
 					
 					// Find the min and max Z
 					zData = series.zData;
-					zMin = math.min(
-						zMin,
-						math.max(
-							arrayMin(zData), 
-							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
-						)
-					);
-					zMax = math.max(zMax, arrayMax(zData));
+					if (zData.length) { // #1735
+						zMin = math.min(
+							zMin,
+							math.max(
+								arrayMin(zData), 
+								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
+							)
+						);
+						zMax = math.max(zMax, arrayMax(zData));
+					}
 				}
 			}
 		});
@@ -2024,7 +2045,7 @@ Axis.prototype.beforePadding = function () {
 			}
 		});
 		
-		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED) {
+		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
 			pxMax -= axisLength;
 			transA *= (axisLength + pxMin - pxMax) / axisLength;
 			this.min += pxMin / transA;

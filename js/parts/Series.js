@@ -1428,19 +1428,25 @@ Series.prototype = {
 		var series = this,
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
+			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
 			headerFormat = tooltipOptions.headerFormat,
+			closestPointRange = xAxis && xAxis.closestPointRange,
 			n;
 			
 		// Guess the best date format based on the closest point distance (#568)
 		if (isDateTime && !xDateFormat) {
-			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange) {
-					xDateFormat = tooltipOptions.dateTimeLabelFormats[n];
-					break;
-				}	
-			}		
+			if (closestPointRange) {
+				for (n in timeUnits) {
+					if (timeUnits[n] >= closestPointRange) {
+						xDateFormat = dateTimeLabelFormats[n];
+						break;
+					}
+				}
+			} else {
+				xDateFormat = dateTimeLabelFormats.day;
+			}
 		}
 		
 		// Insert the header date format if any
@@ -1819,7 +1825,7 @@ Series.prototype = {
 				);
 
 				// Force the fill to negativeColor on markers
-				if (point.negative && seriesOptions.marker) {
+				if (point.negative && seriesOptions.marker && negativeColor) {
 					pointAttr[NORMAL_STATE].fill = pointAttr[HOVER_STATE].fill = pointAttr[SELECT_STATE].fill = 
 						series.convertAttribs({ fillColor: negativeColor }).fill;
 				}
@@ -2260,6 +2266,8 @@ Series.prototype = {
 			translatedThreshold,
 			posAttr,
 			negAttr,
+			graph = this.graph,
+			area = this.area,
 			posClip = this.posClip,
 			negClip = this.negClip,
 			chartWidth = chart.chartWidth,
@@ -2268,7 +2276,7 @@ Series.prototype = {
 			above,
 			below;
 		
-		if (negativeColor && this.graph) {
+		if (negativeColor && (graph || area)) {
 			translatedThreshold = mathCeil(this.yAxis.len - this.yAxis.translate(options.threshold || 0));
 			above = {
 				x: 0,
@@ -2310,14 +2318,17 @@ Series.prototype = {
 				posClip.animate(posAttr);
 				negClip.animate(negAttr);
 			} else {
+				
 				this.posClip = posClip = renderer.clipRect(posAttr);
-				this.graph.clip(posClip);
-				
 				this.negClip = negClip = renderer.clipRect(negAttr);
-				this.graphNeg.clip(negClip);
 				
-				if (this.area) {
-					this.area.clip(posClip);
+				if (graph) {
+					graph.clip(posClip);
+					this.graphNeg.clip(negClip);	
+				}
+				
+				if (area) {
+					area.clip(posClip);
 					this.areaNeg.clip(negClip);
 				} 
 			} 
@@ -2330,6 +2341,11 @@ Series.prototype = {
 	invertGroups: function () {
 		var series = this,
 			chart = series.chart;
+
+		// Pie, go away (#1736)
+		if (!series.xAxis) {
+			return;
+		}
 		
 		// A fixed size is needed for inversion to work
 		function setInvert() {			

@@ -398,6 +398,9 @@ Axis.prototype = {
 		erase(chart.axes, this);
 		erase(chart[key], this);
 		chart.options[key].splice(this.options.index, 1);
+		each(chart[key], function (axis, i) { // Re-index, #1706
+			axis.options.index = i;
+		});
 		this.destroy();
 		chart.isDirtyBox = true;
 
@@ -589,7 +592,7 @@ Axis.prototype = {
 						}
 						
 						// Handle non null values
-						if (y !== null && y !== UNDEFINED && (!axis.isLog || y > 0)) {							
+						if (y !== null && y !== UNDEFINED && (!axis.isLog || (y.length || y > 0))) {							
 
 							// general hook, used for Highstock compare values feature
 							if (hasModifyValue) {
@@ -872,7 +875,7 @@ Axis.prototype = {
 				for (j = 0; j < len && !break2; j++) {
 					pos = log2lin(lin2log(i) * intermediate[j]);
 					
-					if (pos > min && lastPos <= max) {
+					if (pos > min && (!minor || lastPos <= max)) { // #1670
 						positions.push(lastPos);
 					}
 					
@@ -1465,11 +1468,13 @@ Axis.prototype = {
 	zoom: function (newMin, newMax) {
 
 		// Prevent pinch zooming out of range
-		if (newMin <= this.dataMin) {
-			newMin = UNDEFINED;
-		}
-		if (newMax >= this.dataMax) {
-			newMax = UNDEFINED;
+		if (!this.allowZoomOutside) {
+			if (newMin <= this.dataMin) {
+				newMin = UNDEFINED;
+			}
+			if (newMax >= this.dataMax) {
+				newMax = UNDEFINED;
+			}
 		}
 
 		// In full view, displaying the reset zoom button is not required

@@ -341,7 +341,7 @@ Pointer.prototype = {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = chart.tooltip.options.followTouchMove, // docs
+			followTouchMove = chart.tooltip.options.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
 			lastValidTouch = self.lastValidTouch,
@@ -582,7 +582,7 @@ Pointer.prototype = {
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
 			css(chart.container, { cursor: chart._cursor });
-			chart.cancelClick = this.hasDragged; // #370
+			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
 		}
@@ -650,8 +650,8 @@ Pointer.prototype = {
 			this.drag(e);
 		} 
 		
-		// Show the tooltip and run mouse over events (#977)			
-		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+		// Show the tooltip and run mouse over events (#977)
+		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 			this.runPointActions(e);
 		}
 	},
