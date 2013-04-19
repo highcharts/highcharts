@@ -16665,7 +16665,7 @@ seriesProto.tooltipHeaderFormatter = function (point) {
 		// if not grouped, and we don't have set the xDateFormat option, get the best fit,
 		// so if the least distance between points is one minute, show it, but if the 
 		// least distance is one day, skip hours and minutes etc.
-		} else if (!xDateFormat) {
+		} else if (!xDateFormat && dateTimeLabelFormats) {
 			for (n in timeUnits) {
 				if (timeUnits[n] >= xAxis.closestPointRange) {
 					xDateFormat = dateTimeLabelFormats[n][0];
