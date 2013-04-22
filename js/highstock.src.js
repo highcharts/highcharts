@@ -16954,6 +16954,44 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 	},
 	upColorProp: 'fill',
 
+  /**
+   * Detect UP candles and apply attributes accordingly
+   *
+   * Just for reference:
+   * a candle is UP whenever it's CLOSE value is greater than OPEN value
+   *
+   * For better explanation, read "Candlestick chart topics" here:
+   * http://en.wikipedia.org/wiki/Candlestick_chart
+   */
+  getAttribs = function () {
+    seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+
+    var series = this,
+      options = series.options,
+      stateOptions = options.states,
+      upColor = options.upColor || series.color,
+      seriesDownPointAttr = HC.merge(series.pointAttr),
+      upColorProp = series.upColorProp,
+      points = series.points || [],
+      length = points.length,
+      isUpDay,
+      point,
+      i;
+
+    seriesDownPointAttr[''][upColorProp] = upColor;
+    seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
+    seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+
+    for (i = 0; i < length; i++) {
+      point = points[i];
+      isUpDay = point.close > point.open;
+
+      if (isUpDay) {
+        point.pointAttr = seriesDownPointAttr;
+      }
+    }
+  },
+
 	/**
 	 * Draw the data points
 	 */
