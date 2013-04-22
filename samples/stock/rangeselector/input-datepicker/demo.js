@@ -24,10 +24,10 @@ $(function() {
         }, function(chart){
 
             // apply the date pickers
-            setTimeout(function(){
-                $('input.highcharts-range-selector', $('#'+chart.options.chart.renderTo))
-                    .datepicker()
-            },0)
+            setTimeout(function () {
+                $('input.highcharts-range-selector', $(chart.container).parent())
+                    .datepicker();
+            }, 0);
         });
     });
     
