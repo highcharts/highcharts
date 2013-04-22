@@ -160,7 +160,7 @@ seriesProto.init = function () {
 seriesProto.setCompare = function (compare) {
 
 	// Set or unset the modifyValue method
-	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
+	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
 		// get the modified value

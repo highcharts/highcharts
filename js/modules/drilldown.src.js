@@ -116,7 +116,7 @@
 
 		this.redraw();
 
-		if (this.drilldownLevels.length === 0) {
+		if (this.drilldownLevels.length === 0) {
 			this.resetDrilldownButton = this.resetDrilldownButton.destroy();
 		} else {
             this.resetDrilldownButton.attr({

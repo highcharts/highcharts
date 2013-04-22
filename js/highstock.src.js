@@ -12135,7 +12135,7 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 			
@@ -19116,7 +19116,7 @@ seriesProto.init = function () {
 seriesProto.setCompare = function (compare) {
 
 	// Set or unset the modifyValue method
-	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
+	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
 		// get the modified value

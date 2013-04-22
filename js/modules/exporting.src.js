@@ -343,7 +343,7 @@ extend(Chart.prototype, {
 				chartOptions, 
 				{
 					exporting: {
-						sourceWidth: options.sourceWidth || chartExportingOptions.sourceWidth, // docs: option and parameter in exportChart()
+						sourceWidth: options.sourceWidth || chartExportingOptions.sourceWidth, // docs: option and parameter in exportChart()
 						sourceHeight: options.sourceHeight || chartExportingOptions.sourceHeight // docs
 					}
 				}
