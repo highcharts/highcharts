@@ -125,7 +125,9 @@ Tooltip.prototype = {
 			hoverPoints = this.chart.hoverPoints;
 
 			this.hideTimer = setTimeout(function () {
-				tooltip.label.fadeOut();
+				if(tooltip.label) {
+					tooltip.label.fadeOut();
+				}
 				tooltip.isHidden = true;
 			}, pick(this.options.hideDelay, 500));
 
