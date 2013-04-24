@@ -8480,6 +8480,7 @@ Tooltip.prototype = {
 			this.label = this.label.destroy();
 		}
 		clearTimeout(this.hideTimer);
+		clearTimeout(this.tooltipTimeout);
 	},
 
 	/**
@@ -8530,7 +8531,7 @@ Tooltip.prototype = {
 		var tooltip = this,
 			hoverPoints;
 			
-		if (!this.isHidden) {
+		if (!this.isHidden && !this.hideTimer) {
 			hoverPoints = this.chart.hoverPoints;
 
 			this.hideTimer = setTimeout(function () {
