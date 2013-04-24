@@ -661,14 +661,7 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 	
 			// else, the interval is fixed and we use simple addition
 			} else {
-				
-				// mark new days if the time is dividable by day
-				if (interval <= timeUnits[HOUR] && time % timeUnits[DAY] === timezoneOffset) {
-					higherRanks[time] = DAY;
-				}
-
 				time += interval * count;
-				
 			}
 	
 			i++;
@@ -676,7 +669,16 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 	
 		// push the last time
 		tickPositions.push(time);
+
+
+		// mark new days if the time is dividible by day (#1649, #1760)
+		each(grep(tickPositions, function (time) {
+			return interval <= timeUnits[HOUR] && time % timeUnits[DAY] === timezoneOffset;
+		}), function (time) {
+			higherRanks[time] = DAY;
+		});
 	}
+
 
 	// record information on the chosen unit - for dynamic label formatter
 	tickPositions.info = extend(normalizedInterval, {
