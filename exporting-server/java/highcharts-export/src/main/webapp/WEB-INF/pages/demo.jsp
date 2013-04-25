@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<spring:eval expression="@appProps['webapp.url']" var="url"/>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -88,7 +88,7 @@
 		<h1>Highcharts Export Server</h1>
 	</div>
 	<div id="wrap">
-		<form id="exportForm" action="${url}" method="POST">
+		<form id="exportForm" action="./" method="POST">
 			<p>Use this page to experiment with the different options.</p>
 
 			<input id="options" title="Highcharts config object" type="radio"
