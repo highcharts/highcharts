@@ -1,8 +1,7 @@
 $(function () {
     // create the chart
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             events: {
                 click: function(event) {
                     alert ('x: '+ event.xAxis[0].value +', y: '+

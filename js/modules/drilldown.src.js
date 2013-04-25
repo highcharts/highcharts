@@ -116,7 +116,7 @@
 
 		this.redraw();
 
-		if (this.drilldownLevels.length === 0) {
+		if (this.drilldownLevels.length === 0) {
 			this.resetDrilldownButton = this.resetDrilldownButton.destroy();
 		} else {
             this.resetDrilldownButton.attr({
@@ -229,6 +229,10 @@
                     }
                 });
             }, Math.max(this.chart.options.drilldown.animation.duration - 50, 0));
+
+            // Reset
+            console.log(234)
+            this.animate = noop;
         }
 
     };

@@ -40,7 +40,8 @@ import com.highcharts.export.util.SVGRasterizerException;
 @RequestMapping("/")
 public class ExportController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String FORBIDDEN_WORD = "<!ENTITY";
+	private static final String FORBIDDEN_ENTITY = "<!ENTITY";
+        private static final String FORBIDDEN_DOCTYPE = "<!DOCTYPE";
 	private static final Float MAX_WIDTH = 2000.0F;
 	private static final Float MAX_SCALE = 4.0F;
 	protected static Logger logger = Logger.getLogger("exporter");
@@ -71,10 +72,9 @@ public class ExportController extends HttpServlet {
 
 		// check if the svg contains a svg-batik exploit.
 		if (svg != null
-				&& (svg.indexOf(FORBIDDEN_WORD) > -1 || svg
-						.indexOf(FORBIDDEN_WORD.toLowerCase()) > -1)) {
-			throw new ServletException(
-					"The - svg - post parameter could contain a malicious attack");
+			&& ((svg.indexOf(FORBIDDEN_ENTITY) > -1 || svg.indexOf(FORBIDDEN_ENTITY.toLowerCase()) > -1 )
+                            || (svg.indexOf(FORBIDDEN_DOCTYPE) > -1 || svg.indexOf(FORBIDDEN_DOCTYPE.toLowerCase()) > -1))) {
+                    throw new ServletException("The - svg - post parameter could contain a malicious attack");
 		}
 
 		if (options != null && !options.isEmpty()) {

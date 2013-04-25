@@ -163,9 +163,8 @@ Chart.prototype = {
      * @param {Object} options The axis option
      * @param {Boolean} isX Whether it is an X axis or a value axis
      */
-	addAxis: function (options, isX, redraw, animation) { // docs
-		var chart = this,
-			key = isX ? 'xAxis' : 'yAxis',
+	addAxis: function (options, isX, redraw, animation) {
+		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
 			axis;
 
@@ -379,10 +378,6 @@ Chart.prototype = {
 			chart.loadingDiv = loadingDiv = createElement(DIV, {
 				className: PREFIX + 'loading'
 			}, extend(loadingOptions.style, {
-				left: chart.plotLeft + PX,
-				top: chart.plotTop + PX,
-				width: chart.plotWidth + PX,
-				height: chart.plotHeight + PX,
 				zIndex: 10,
 				display: NONE
 			}), chart.container);
@@ -401,7 +396,14 @@ Chart.prototype = {
 
 		// show it
 		if (!chart.loadingShown) {
-			css(loadingDiv, { opacity: 0, display: '' });
+			css(loadingDiv, { 
+				opacity: 0, 
+				display: '',
+				left: chart.plotLeft + PX,
+				top: chart.plotTop + PX,
+				width: chart.plotWidth + PX,
+				height: chart.plotHeight + PX
+			});
 			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
@@ -508,7 +510,7 @@ Chart.prototype = {
 	getSelectedPoints: function () {
 		var points = [];
 		each(this.series, function (serie) {
-			points = points.concat(grep(serie.points, function (point) {
+			points = points.concat(grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
 		});
@@ -573,8 +575,9 @@ Chart.prototype = {
 	 * Zoom out to 1:1
 	 */
 	zoomOut: function () {
-		fireEvent(this, 'selection', { resetSelection: true }, function (e) { 
-			e.target.zoom();
+		var chart = this;
+		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
+			chart.zoom();
 		});
 	},
 
@@ -827,6 +830,9 @@ Chart.prototype = {
 			}, optionsChart.style),
 			chart.renderToClone || renderTo
 		);
+
+		// cache the cursor (#1650)
+		chart._cursor = container.style.cursor;
 
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export

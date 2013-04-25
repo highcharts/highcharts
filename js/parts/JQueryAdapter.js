@@ -115,7 +115,7 @@
 				};
 			
 			/**
-			 * Register Highcharts as a plugin in the respective framework // docs
+			 * Register Highcharts as a plugin in the respective framework
 			 */
 			$.fn.highcharts = function () {
 				var constr = 'Chart', // default constructor
@@ -221,7 +221,7 @@
 			// workaround for jQuery issue with unbinding custom events:
 			// http://forum.jQuery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jQuery-1-4-2
 			var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
-			if (doc[func] && !el[func]) {
+			if (doc[func] && el && !el[func]) {
 				el[func] = function () {};
 			}
 	

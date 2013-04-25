@@ -7,10 +7,10 @@ $(function () {
         });
     
         var chart;
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'spline',
+                animation: Highcharts.svg, // don't animate in old IE
                 marginRight: 10,
                 events: {
                     load: function() {

@@ -122,7 +122,7 @@ Highcharts.StockChart = function (options, callback) {
 // Implement the pinchType option
 wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
-	var pinchType = options.chart.pinchType || ''; // docs: pinchType (for Highstock only)
+	var pinchType = options.chart.pinchType || '';
 		
 	proceed.call(this, chart, options);
 
@@ -155,12 +155,12 @@ seriesProto.init = function () {
 };
 
 /**
- * The setCompare method can be called also from the outside after render time // docs
+ * The setCompare method can be called also from the outside after render time
  */
 seriesProto.setCompare = function (compare) {
 
 	// Set or unset the modifyValue method
-	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
+	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
 		// get the modified value
@@ -213,7 +213,7 @@ seriesProto.processData = function () {
 };
 
 /**
- * Add a utility method, setCompare, to the Y axis // docs
+ * Add a utility method, setCompare, to the Y axis
  */
 Axis.prototype.setCompare = function (compare, redraw) {
 	if (!this.isXAxis) {

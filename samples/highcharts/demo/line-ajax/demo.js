@@ -1,22 +1,30 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-    
-        // define the options
-        var options = {
-    
-            chart: {
-                renderTo: 'container'
+
+    // Register a parser for the American date format used by Google
+    Highcharts.Data.prototype.dateFormats['m/d/Y'] = {
+        regex: '^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$',
+        parser: function (match) {
+            return Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]);
+        }
+    };
+
+    // Get the CSV and create the chart
+    $.get('/samples/highcharts/demo/line-ajax/analytics.csv', function (csv) {
+        
+        $('#container').highcharts({
+
+            data: {
+                csv: csv
             },
-    
+
             title: {
                 text: 'Daily visits at www.highcharts.com'
             },
-    
+
             subtitle: {
                 text: 'Source: Google Analytics'
             },
-    
+
             xAxis: {
                 type: 'datetime',
                 tickInterval: 7 * 24 * 3600 * 1000, // one week
@@ -28,7 +36,7 @@ $(function () {
                     y: -3
                 }
             },
-    
+
             yAxis: [{ // left y axis
                 title: {
                     text: null
@@ -59,7 +67,7 @@ $(function () {
                 },
                 showFirstLabel: false
             }],
-    
+
             legend: {
                 align: 'left',
                 verticalAlign: 'top',
@@ -67,12 +75,12 @@ $(function () {
                 floating: true,
                 borderWidth: 0
             },
-    
+
             tooltip: {
                 shared: true,
                 crosshairs: true
             },
-    
+
             plotOptions: {
                 series: {
                     cursor: 'pointer',
@@ -97,7 +105,7 @@ $(function () {
                     }
                 }
             },
-    
+
             series: [{
                 name: 'All visits',
                 lineWidth: 4,
@@ -107,59 +115,8 @@ $(function () {
             }, {
                 name: 'New visitors'
             }]
-        };
-    
-    
-        // Load data asynchronously using jQuery. On success, add the data
-        // to the options and initiate the chart.
-        // This data is obtained by exporting a GA custom report to TSV.
-        // http://api.jquery.com/jQuery.get/
-        jQuery.get('analytics.tsv', null, function(tsv, state, xhr) {
-            var lines = [],
-                listen = false,
-                date,
-    
-                // set up the two data series
-                allVisits = [],
-                newVisitors = [];
-    
-            // inconsistency
-            if (typeof tsv !== 'string') {
-                tsv = xhr.responseText;
-            }
-    
-            // split the data return into lines and parse them
-            tsv = tsv.split(/\n/g);
-            jQuery.each(tsv, function(i, line) {
-    
-                // listen for data lines between the Graph and Table headers
-                if (tsv[i - 3] == '# Graph') {
-                    listen = true;
-                } else if (line == '' || line.charAt(0) == '#') {
-                    listen = false;
-                }
-    
-                // all data lines start with a double quote
-                if (listen) {
-                    line = line.split(/\t/);
-                    date = Date.parse(line[0] +' UTC');
-    
-                    allVisits.push([
-                        date,
-                        parseInt(line[1].replace(',', ''), 10)
-                    ]);
-                    newVisitors.push([
-                        date,
-                        parseInt(line[2].replace(',', ''), 10)
-                    ]);
-                }
-            });
-    
-            options.series[0].data = allVisits;
-            options.series[1].data = newVisitors;
-    
-            chart = new Highcharts.Chart(options);
         });
     });
-    
+
 });
+

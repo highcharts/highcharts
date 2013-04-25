@@ -1,9 +1,8 @@
 $(function () {
     
-    window.chart = new Highcharts.Chart({
+    $('#container').highcharts({
         
 	    chart: {
-	        renderTo: 'container',
 	        polar: true
 	    },
 	    

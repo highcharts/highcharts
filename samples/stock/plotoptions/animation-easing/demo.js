@@ -1,10 +1,9 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
+	$('#container').highcharts('StockChart', {
+
 	    chart: {
-	        renderTo: 'container'
 	    },
-	    
+
 	    plotOptions: {
 	    	series: {
 	    		animation: {
@@ -13,11 +12,11 @@ $(function() {
 	    		}
 	    	}
 	    },
-	    
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 	        name: 'USD to EUR',
 	        data: usdeur

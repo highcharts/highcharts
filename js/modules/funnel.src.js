@@ -17,6 +17,7 @@ var defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
 	merge = Highcharts.merge,
+	noop = function () {},
 	each = Highcharts.each;
 
 // set default options
@@ -32,14 +33,21 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 		connectorWidth: 1,
 		connectorColor: '#606060'
 	},
-	size: true // to avoid adapting to data label size in Pie.drawDataLabels
+	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
+	states: {
+		select: {
+			color: '#C0C0C0',
+			borderColor: '#000000',
+			shadow: false
+		}
+	}	
 });
 
 
 seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
 	type: 'funnel',
-	animate: function () {},
+	animate: noop,
 
 	/**
 	 * Overrides the pie translate method
@@ -183,6 +191,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 				centerX,
 				point.plotY
 			];
+
+			// Slice is a noop on funnel points
+			point.slice = noop;
 			
 			// Mimicking pie data label placement logic
 			point.half = half;

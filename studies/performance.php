@@ -15,6 +15,7 @@ $seriesTypeOptions = array(
 	'area',
 	'areaspline',	
 	'column',
+	'bar',
 	'line',
 	'pie',
 	'scatter',

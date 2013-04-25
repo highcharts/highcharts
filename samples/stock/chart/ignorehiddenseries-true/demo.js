@@ -1,15 +1,10 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
+	$('#container').highcharts('StockChart', {
 	    
 	    chart: {
-	        renderTo: 'container'
 	        // ignoreHiddenSeries: true // by default 
 	    },
         
-        navigator: {
-            top: 295
-        },
-	    
 	    rangeSelector: {
 	    	selected: 1
 	    },

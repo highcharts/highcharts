@@ -1,33 +1,33 @@
 $(function() {
-	var chart = new Highcharts.StockChart({
-	    
+	$('#container').highcharts('StockChart', {
+
 	    chart: {
-	        renderTo: 'container',
         	events: {
             	addSeries: function() {
                 	alert ('A series was added');
             	}
-        	} 
+        	}
 	    },
-	    
+
 	    rangeSelector: {
 	    	selected: 1
 	    },
-	    
+
 	    series: [{
 	        name: 'MSFT',
 	        data: MSFT
 	    }]
 	});
-	
-		
+
+
 	// activate the button
 	$('#button').click(function() {
-	    chart.addSeries({
+	    var chart = $('#container').highcharts();
+        chart.addSeries({
 	    	name: 'ADBE',
-	        data: ADBE        
+	        data: ADBE
 	    });
-	
-	    $('#button').unbind('click');
+
+	    $(this).attr('disabled', true);
 	});
 });

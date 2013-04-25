@@ -1,6 +1,4 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
     
         var colors = Highcharts.getOptions().colors,
             categories = ['MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera'],
@@ -79,9 +77,8 @@ $(function () {
         }
     
         // Create the chart
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'pie'
             },
             title: {
@@ -94,7 +91,8 @@ $(function () {
             },
             plotOptions: {
                 pie: {
-                    shadow: false
+                    shadow: false,
+                    center: ['50%', '50%']
                 }
             },
             tooltip: {
@@ -114,6 +112,7 @@ $(function () {
             }, {
                 name: 'Versions',
                 data: versionsData,
+                size: '80%',
                 innerSize: '60%',
                 dataLabels: {
                     formatter: function() {
@@ -125,4 +124,3 @@ $(function () {
         });
     });
     
-});

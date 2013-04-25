@@ -1,9 +1,8 @@
 $(function () {
     var $reporting = $('#reporting');
     
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container'
         },
         
         xAxis: {

@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'column'
             },
             title: {
@@ -19,10 +16,8 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y +' ('+ Math.round(this.percentage) +'%)';
-                }
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                shared: true
             },
             plotOptions: {
                 column: {
@@ -42,4 +37,3 @@ $(function () {
         });
     });
     
-});

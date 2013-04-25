@@ -46,25 +46,17 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
 			seriesDownPointAttr = merge(series.pointAttr),
-			upColorProp = series.upColorProp,
-			points = series.points || [],
-			length = points.length,
-			isUpDay,
-			point,
-			i;
+			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		for (i = 0; i < length; i++) {
-			point = points[i];
-			isUpDay = i > 0 ? points[i - 1].close < point.close : point.open < point.close;
-
-			if (isUpDay) {
+		each(series.points, function (point) {
+			if (point.open < point.close) {
 				point.pointAttr = seriesDownPointAttr;
 			}
-		}
+		});
 	},
 
 	/**

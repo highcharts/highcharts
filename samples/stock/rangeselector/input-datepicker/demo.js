@@ -2,10 +2,8 @@ $(function() {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
         // Create the chart
-        window.chart = new Highcharts.StockChart({
-            chart : {
-                renderTo : 'container'
-            },
+        $('#container').highcharts('StockChart', {
+            
 
             rangeSelector : {
                 selected : 1
@@ -26,10 +24,10 @@ $(function() {
         }, function(chart){
 
             // apply the date pickers
-            setTimeout(function(){
-                $('input.highcharts-range-selector', $('#'+chart.options.chart.renderTo))
-                    .datepicker()
-            },0)
+            setTimeout(function () {
+                $('input.highcharts-range-selector', $(chart.container).parent())
+                    .datepicker();
+            }, 0);
         });
     });
     

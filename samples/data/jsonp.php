@@ -19,12 +19,16 @@ if (preg_match('/^[a-zA-Z\-]+\.json$/', $filename)) {
  */
 $url = $_GET['url'];
 if ($url) {
-	if (preg_match('/^http:\/\/[\/\w \.-]*\.xml$/', $url)) {
+	if (preg_match('/^(http|https):\/\/[\/\w \.-]*\.xml$/', $url)) {
 		$xml = simplexml_load_file($url);
 		$json = json_encode($xml);
-	} else if (preg_match('/^http:\/\/[\/\w \.-]*\.csv$/', $url)) {
+	} else if (preg_match('/^(http|https):\/\/[\/\w \.-]*\.csv$/', $url)) {
 		$csv = str_getcsv(file_get_contents($url));
 		$json = json_encode($xml);
+	
+	// Assume JSON
+	} else if (preg_match('/^(http|https):\/\/[\/\w \.-]*$/', $url)) {
+		$json = file_get_contents($url);
 	}
 }
 

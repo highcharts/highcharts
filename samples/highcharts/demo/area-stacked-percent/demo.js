@@ -1,9 +1,6 @@
 $(function () {
-    var chart;
-    $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        $('#container').highcharts({
             chart: {
-                renderTo: 'container',
                 type: 'area'
             },
             title: {
@@ -25,11 +22,8 @@ $(function () {
                 }
             },
             tooltip: {
-                formatter: function() {
-                        return ''+
-                        this.x +': '+ Highcharts.numberFormat(this.percentage, 1) +'% ('+
-                        Highcharts.numberFormat(this.y, 0, ',') +' millions)';
-                }
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f} millions)<br/>',
+                shared: true
             },
             plotOptions: {
                 area: {
@@ -61,4 +55,3 @@ $(function () {
         });
     });
     
-});

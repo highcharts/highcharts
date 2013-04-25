@@ -21,8 +21,8 @@ defaultLabelOptions = {
 };
 
 defaultOptions = {
-	colors: ['#2f7ed8', '#0d233a', /*'#7da32d'*/ '#8bbc21', '#c42525', '#6d4999', '#1b90ad',
-		'#f28f43', '#77a1e5', '#a35c5b', '#a6c96a'], // docs
+	colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
+		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -127,7 +127,7 @@ defaultOptions = {
 			events: {},
 			//legendIndex: 0,
 			lineWidth: 2,
-			//shadow: false, // docs
+			//shadow: false,
 			// stacking: null,
 			marker: {
 				enabled: true,
@@ -216,7 +216,7 @@ defaultOptions = {
 		borderRadius: 5,
 		navigation: {
 			// animation: true,
-			activeColor: '#274b6d', // docs
+			activeColor: '#274b6d',
 			// arrowSize: 12
 			inactiveColor: '#CCC'
 			// style: {} // text styles
@@ -230,7 +230,7 @@ defaultOptions = {
 		},*/
 		itemStyle: {
 			cursor: 'pointer',
-			color: '#274b6d', // docs
+			color: '#274b6d',
 			fontSize: '12px'
 		},
 		itemHoverStyle: {
@@ -252,7 +252,7 @@ defaultOptions = {
 		// width: undefined,
 		x: 0,
 		y: 0,
-		title: { // docs
+		title: {
 			//text: null,
 			style: {
 				fontWeight: 'bold'
@@ -278,11 +278,11 @@ defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: hasSVG, // docs
+		animation: hasSVG,
 		//crosshairs: null,
 		backgroundColor: 'rgba(255, 255, 255, .85)',
-		borderWidth: 1, // docs
-		borderRadius: 3, // docs
+		borderWidth: 1,
+		borderRadius: 3,
 		dateTimeLabelFormats: { 
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
 			second: '%A, %b %e, %H:%M:%S',
@@ -303,7 +303,7 @@ defaultOptions = {
 			color: '#333333',
 			cursor: 'default',
 			fontSize: '12px',
-			padding: '8px', // docs
+			padding: '8px',
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',

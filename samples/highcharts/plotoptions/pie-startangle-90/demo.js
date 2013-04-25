@@ -4,17 +4,17 @@ $(function () {
             renderTo: 'container',
             type: 'pie'
         },
-        
+
         title: {
         	text: 'Pie with startAngle = 90'
         },
-        
+
         plotOptions: {
             pie: {
                 startAngle: 90
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

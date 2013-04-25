@@ -1,7 +1,6 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             type: 'pie'
         },
         xAxis: {
@@ -20,7 +19,8 @@ $(function () {
     
     // the button action
     $('#button').click(function() {
-       var selectedPoints = chart.getSelectedPoints();
+        var chart = $('#container').highcharts(),
+            selectedPoints = chart.getSelectedPoints();
         alert ('You selected '+ selectedPoints.length +' points');
     });
 });

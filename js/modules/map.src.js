@@ -138,6 +138,7 @@
 			'stroke-width': 'borderWidth',
 			fill: 'color'
 		},
+		trackerGroups: ['group', 'markerGroup'],
 		getSymbol: noop,
 		getExtremesFromAll: true,
 		init: function(chart) {
@@ -347,6 +348,12 @@
 		
 		drawGraph: noop,
 		
+		/**
+		 * We need the points' bounding boxes in order to draw the data labels, so 
+		 * we skip it now and call if from drawPoints instead.
+		 */
+		drawDataLabels: noop,
+		
 		/** 
 		 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
 		 * Extend it by assigning the tooltip position.
@@ -386,6 +393,9 @@
 					point.y = null;
 				}
 			});
+
+			// Now draw the data labels
+			Highcharts.Series.prototype.drawDataLabels.call(series);
 			
 		}
 	});

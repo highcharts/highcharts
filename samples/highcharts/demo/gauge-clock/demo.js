@@ -24,10 +24,9 @@ $(function () {
 	var now = getNow();
 	
 	// Create the chart
-	var chart = new Highcharts.Chart({
+	$('#container').highcharts({
 	
 	    chart: {
-	        renderTo: 'container',
 	        type: 'gauge',
 	        plotBackgroundColor: null,
 	        plotBackgroundImage: null,
@@ -98,7 +97,7 @@ $(function () {
 	    
 	    tooltip: {
 	    	formatter: function () {
-	    		return chart.tooltipText;
+	    		return this.series.chart.tooltipText;
 	    	}
 	    },
 	

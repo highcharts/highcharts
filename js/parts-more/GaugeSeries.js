@@ -90,7 +90,7 @@ var GaugeSeries = {
 				topWidth = dialOptions.topWidth || 1,
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
-			// Handle the wrap option // docs
+			// Handle the wrap option
 			if (options.wrap === false) {
 				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
 			}

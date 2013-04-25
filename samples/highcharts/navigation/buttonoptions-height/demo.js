@@ -1,8 +1,7 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         
         chart: {
-            renderTo: 'container',
             marginTop: 70
         },
         
@@ -22,17 +21,6 @@ $(function () {
                 symbolX: 23,
                 symbolY: 21,
                 symbolStrokeWidth: 2
-            }
-        },
-        
-        exporting: {
-            buttons: {
-                exportButton: {
-                    x: -20
-                },
-                printButton: {
-                    x: -75
-                }
             }
         }
     });
