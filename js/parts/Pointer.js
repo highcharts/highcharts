@@ -341,21 +341,24 @@ Pointer.prototype = {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
+			followTouchMove = chart.tooltip.options.followTouchMove,
 			touches = e.touches,
+			touchesLength = touches.length,
 			lastValidTouch = self.lastValidTouch,
 			zoomHor = self.zoomHor || self.pinchHor,
 			zoomVert = self.zoomVert || self.pinchVert,
+			hasZoom = zoomHor || zoomVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart') {
+		if (e.type === 'touchstart' && followTouchMove) {
 			if (self.inClass(e.target, PREFIX + 'tracker')) {
-				if (!chart.runTrackerClick) {
+				if (!chart.runTrackerClick || touchesLength > 1) {
 					e.preventDefault();
 				}
-			} else if (!chart.runChartClick) {
+			} else if (!chart.runChartClick || touchesLength > 1) {
 				e.preventDefault();
 			}
 		}
@@ -409,12 +412,15 @@ Pointer.prototype = {
 				self.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 			}
 
-			self.hasPinched = zoomHor || zoomVert;
+			self.hasPinched = hasZoom;
 
 			// Scale and translate the groups to provide visual feedback during pinching
 			self.scaleGroups(transform, clip);
 			
-			
+			// Optionally move the tooltip on touchmove
+			if (!hasZoom && followTouchMove && touchesLength === 1) {
+				this.runPointActions(self.normalize(e));
+			}
 		}
 	},
 
@@ -575,8 +581,8 @@ Pointer.prototype = {
 
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
-			css(chart.container, { cursor: 'auto' });
-			chart.cancelClick = this.hasDragged; // #370
+			css(chart.container, { cursor: chart._cursor });
+			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
 		}
@@ -644,8 +650,8 @@ Pointer.prototype = {
 			this.drag(e);
 		} 
 		
-		// Show the tooltip and run mouse over events (#977)			
-		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+		// Show the tooltip and run mouse over events (#977)
+		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 			this.runPointActions(e);
 		}
 	},

@@ -218,6 +218,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					left, 
 					medianPlot,
+					'L',
 					right, 
 					medianPlot,
 					'z'
@@ -255,7 +256,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					}	
 					point.medianShape = renderer.path(medianPath)
 						.attr(medianAttr)
-						.add(graphic);		
+						.add(graphic);
 				}
 			}
 		});

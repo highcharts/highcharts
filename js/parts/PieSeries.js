@@ -5,6 +5,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: [null, null],
+	clip: false,
 	colorByPoint: true, // always true for pies
 	dataLabels: {
 		// align: null,
@@ -219,7 +220,8 @@ var PieSeries = {
 		
 		var options = this.options,
 			chart = this.chart,
-			slicingRoom = 2 * (options.dataLabels && options.dataLabels.enabled ? 0 : (options.slicedOffset || 0)),
+			slicingRoom = 2 * (options.slicedOffset || 0),
+			handleSlicingRoom,
 			plotWidth = chart.plotWidth - 2 * slicingRoom,
 			plotHeight = chart.plotHeight - 2 * slicingRoom,
 			centerOption = options.center,
@@ -229,6 +231,7 @@ var PieSeries = {
 		
 		return map(positions, function (length, i) {
 			isPercent = /%$/.test(length);
+			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
 			return (isPercent ?
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
@@ -236,7 +239,7 @@ var PieSeries = {
 				// i == 4: innerSize, relative to smallestSize
 				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
 					pInt(length) / 100 :
-				length) + (i < 3 ? slicingRoom : 0);
+				length) + (handleSlicingRoom ? slicingRoom : 0);
 		});
 	},
 	
@@ -337,6 +340,7 @@ var PieSeries = {
 			point.angle = angle;
 
 			// set the anchor point for data labels
+			connectorOffset = mathMin(connectorOffset, labelDistance / 2); // #1678
 			point.labelPos = [
 				positions[0] + radiusX + mathCos(angle) * labelDistance, // first break of connector
 				positions[1] + radiusY + mathSin(angle) * labelDistance, // a/a

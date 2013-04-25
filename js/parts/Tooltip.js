@@ -70,6 +70,8 @@ Tooltip.prototype = {
 		if (this.label) {
 			this.label = this.label.destroy();
 		}
+		clearTimeout(this.hideTimer);
+		clearTimeout(this.tooltipTimeout);
 	},
 
 	/**
@@ -120,7 +122,7 @@ Tooltip.prototype = {
 		var tooltip = this,
 			hoverPoints;
 			
-		if (!this.isHidden) {
+		if (!this.isHidden && !this.hideTimer) {
 			hoverPoints = this.chart.hoverPoints;
 
 			this.hideTimer = setTimeout(function () {
@@ -380,14 +382,19 @@ Tooltip.prototype = {
 			var path,
 				i = crosshairsOptions.length,
 				attribs,
-				axis;
+				axis,
+				val;
 
 			while (i--) {
 				axis = point.series[i ? 'yAxis' : 'xAxis'];
 				if (crosshairsOptions[i] && axis) {
+					val = i ? pick(point.stackY, point.y) : point.x; // #814
+					if (axis.isLog) { // #1671
+						val = log2lin(val);
+					}
 
 					path = axis.getPlotLinePath(
-						i ? pick(point.stackY, point.y) : point.x, // #814
+						val,
 						1
 					);
 
