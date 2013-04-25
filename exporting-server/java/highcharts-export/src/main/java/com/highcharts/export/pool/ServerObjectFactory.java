@@ -148,7 +148,7 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	public void afterBeanInit() {
 		if(script == null || script.trim().isEmpty()) {
 			ClassLoader classLoader = getClass().getClassLoader();
-			URL url = classLoader.getResource("/../phantomjs/highcharts-convert.2.0.js");
+			URL url = classLoader.getResource("/../phantomjs/highcharts-convert.js");
 			this.setScript(url.getPath());
 		}
 	}
