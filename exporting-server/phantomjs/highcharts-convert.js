@@ -29,9 +29,11 @@
 		input,
 		constr,
 		callback,
+		theme,
 		width,
 		callbackStr,
 		optionsStr,
+		themeStr,
 		output,
 		outputExtension,
 		pdfOutput,
@@ -135,7 +137,7 @@
 	args = mapArguments();
 
 	if (args.length < 1) {
-		console.log('Usage: highcharts-convert.js -infile URL -outfile filename -scale 2.5 -width 300 -constr Chart -callback callback.js');
+		console.log('Usage: highcharts-convert.js -infile URL -outfile filename -scale 2.5 -width 300 -constr Chart -callback callback.js -theme theme.js');
 		console.log('Commandline parameter width is used for scaling, not for creating the chart');
 		phantom.exit(1);
 	} else {
@@ -143,7 +145,8 @@
 		output = pick(args.outfile, "chart.png");
 		constr = pick(args.constr, 'Chart');
 		callback = args.callback;
-		width = args.width;
+		theme	=	args.theme;
+		width	=	args.width;
 
 		outputExtension = output.split('.').pop();
 		pdfOutput = outputExtension === 'pdf';
@@ -171,8 +174,13 @@
 				callbackStr = fs.read(callback);
 			}
 
+			// load callback from file
+			if (theme !== undefined) {
+				themeStr = fs.read(theme);
+			}
+
 			// load chart in page and return svg height and width
-			svg = page.evaluate(function (width, constr, optionsStr, callbackStr, pdfOutput) {
+			svg = page.evaluate(function (width, constr, optionsStr, callbackStr, themeStr, pdfOutput) {
 
 				var imagesLoadedMsg = 'Highcharts.images.loaded', $container, chart,
 					nodes, nodeIter, elem, opacity;
@@ -224,6 +232,10 @@
 					loadScript('callback', callbackStr);
 				}
 
+				if (themeStr !== 'undefined') {
+					loadScript('highcharts_theme', themeStr);
+				}
+
 				$(document.body).css('margin', '0px');
 				$container = $('<div>').appendTo(document.body);
 				$container.attr('id', 'container');
@@ -246,6 +258,10 @@
 				options.chart.height = (options.exporting && options.exporting.sourceHeight) || options.chart.height || 400;
 
 
+				if (highcharts_theme !== undefined) {
+					Highcharts.theme	=	highcharts_theme;
+					Highcharts.setOptions(	Highcharts.theme	);
+				}
 
 				chart = new Highcharts[constr](options, callback);
 
@@ -274,7 +290,7 @@
 					height: chart.chartHeight
 				};
 
-			}, width, constr, optionsStr, callbackStr, pdfOutput);
+			}, width, constr, optionsStr, callbackStr, themeStr, pdfOutput);
 
 			if (!window.optionsParsed) {
 				console.log('ERROR - the options variable was not available, contains the infile an syntax error? see' + input);
