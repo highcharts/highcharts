@@ -2,7 +2,7 @@
  * @license Highcharts JS v2.3.3 (2012-11-02)
  *
  * (c) 20012-2014
- * 
+ *
  * Author: Gert Vaartjes
  *
  * License: www.highcharts.com/license
@@ -10,14 +10,19 @@
 package com.highcharts.export.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.batik.transcoder.TranscoderException;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,32 +31,37 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.highcharts.export.converter.SVGConverter;
+import com.highcharts.export.converter.SVGConverterException;
+import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.util.MimeType;
-import com.highcharts.export.util.SVGCreator;
-import com.highcharts.export.util.SVGRasterizer;
-import com.highcharts.export.util.SVGRasterizerException;
 
 @Controller
 @RequestMapping("/")
 public class ExportController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String FORBIDDEN_ENTITY = "<!ENTITY";
-        private static final String FORBIDDEN_DOCTYPE = "<!DOCTYPE";
 	private static final Float MAX_WIDTH = 2000.0F;
 	private static final Float MAX_SCALE = 4.0F;
 	protected static Logger logger = Logger.getLogger("exporter");
 
+	/*for test*/
 	@Autowired
-	ServletContext servletContext;
+    private ServletContext servletContext;
+
+	/* end*/
+
+	@Resource(name = "svgConverter")
+	private SVGConverter converter;
 
 	/* Catch All */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<byte[]> exporter(
+	public void exporter(
 			@RequestParam(value = "svg", required = false) String svg,
 			@RequestParam(value = "type", required = false) String type,
 			@RequestParam(value = "filename", required = false) String filename,
@@ -59,52 +69,66 @@ public class ExportController extends HttpServlet {
 			@RequestParam(value = "scale", required = false) String scale,
 			@RequestParam(value = "options", required = false) String options,
 			@RequestParam(value = "constr", required = false) String constructor,
-			@RequestParam(value = "callback", required = false) String callback)
-			throws ServletException, IOException, InterruptedException,
-			TimeoutException {
+			@RequestParam(value = "callback", required = false) String callback,
+			HttpServletResponse response, HttpServletRequest request)
+			throws ServletException, IOException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException {
+
+		long start1 = System.currentTimeMillis();
 
 		MimeType mime = getMime(type);
 		filename = getFilename(filename);
 		Float parsedWidth = widthToFloat(width);
 		Float parsedScale = scaleToFloat(scale);
+		options = sanitize(options);
+		String input;
 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		boolean convertSvg = false;
 
-		// check if the svg contains a svg-batik exploit.
-		if (svg != null
-			&& ((svg.indexOf(FORBIDDEN_ENTITY) > -1 || svg.indexOf(FORBIDDEN_ENTITY.toLowerCase()) > -1 )
-                            || (svg.indexOf(FORBIDDEN_DOCTYPE) > -1 || svg.indexOf(FORBIDDEN_DOCTYPE.toLowerCase()) > -1))) {
-                    throw new ServletException("The - svg - post parameter could contain a malicious attack");
-		}
-
-		if (options != null && !options.isEmpty()) {
+		if (options != null) {
 			// create a svg file out of the options
-			String location = servletContext.getRealPath("/") + "/WEB-INF";
-
-			svg = SVGCreator.getInstance().createSVG(location, options,
-					constructor, callback);
-			if (svg.equals("no-svg")) {
+			input = options;
+			callback = sanitize(callback);
+		} else {
+			// assume SVG conversion
+			if (svg == null) {
 				throw new ServletException(
-						"Could not create an SVG out of the options");
+						"The manadatory svg POST parameter is undefined.");
+			} else {
+				svg = sanitize(svg);
+				if (svg == null) {
+					throw new ServletException(
+							"The manadatory svg POST parameter is undefined.");
+				}
+				convertSvg = true;
+				input = svg;
 			}
 		}
 
-		if (svg == null || svg.isEmpty() || svg.equalsIgnoreCase("undefined")) {
-			throw new ServletException(
-					"The manadatory svg POST parameter is undefined.");
+		ByteArrayOutputStream stream = null;
+		if (convertSvg && mime.equals(MimeType.SVG)) {
+			// send this to the client, without converting.
+			stream = new ByteArrayOutputStream();
+			stream.write(input.getBytes());
+		} else {
+			//stream = SVGCreator.getInstance().convert(input, mime, constructor, callback, parsedWidth, parsedScale);
+			stream = converter.convert(input, mime, constructor, callback, parsedWidth, parsedScale);
 		}
 
-		try {
-			ExportController.convert(stream, svg, filename, mime, parsedWidth,
-					parsedScale);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (stream == null) {
+			throw new ServletException("Error while converting");
 		}
 
-		HttpHeaders responseHeaders = httpHeaderAttachment(filename, mime,
-				stream.size());
-		return new ResponseEntity<byte[]>(stream.toByteArray(),
-				responseHeaders, HttpStatus.OK);
+		logger.debug(request.getHeader("referer") + " Total time: " + (System.currentTimeMillis() - start1));
+
+		response.reset();
+		response.setCharacterEncoding("utf-8");
+		response.setContentLength(stream.size());
+		response.setStatus(HttpStatus.OK.value());
+		response.setHeader("Content-disposition", "attachment; filename=\""
+				+ filename + "." + mime.name().toLowerCase() + "\"");
+
+		IOUtils.write(stream.toByteArray(), response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	@RequestMapping(value = "/demo", method = RequestMethod.GET)
@@ -133,7 +157,29 @@ public class ExportController extends HttpServlet {
 		modelAndView
 				.addObject(
 						"message",
-						"It took too long time to process the options, no SVG is created. Make sure your javascript is correct");
+						"Timeout converting SVG, is your file this big, or maybe you have a syntax error in the javascript callback?");
+		return modelAndView;
+	}
+
+	@ExceptionHandler(PoolException.class)
+	public ModelAndView handleServerPoolException(Exception ex) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView
+				.addObject(
+						"message",
+						"Sorry, the server is handling too many requests at the moment. Please try again.");
+		return modelAndView;
+	}
+
+	@ExceptionHandler(SVGConverterException.class)
+	public ModelAndView handleSVGRasterizeException(Exception ex) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView
+				.addObject(
+						"message",
+						"Something went wrong while converting.");
 		return modelAndView;
 	}
 
@@ -156,34 +202,40 @@ public class ExportController extends HttpServlet {
 		return modelAndView;
 	}
 
+
+	/* TEST */
+	@RequestMapping(value = "/test/{fileName}", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> staticImagesDownload(
+	                 @PathVariable("fileName") String fileName) throws IOException {
+
+	    String imageLoc = servletContext.getRealPath("WEB-INF/benchmark");
+	    FileInputStream fis = new FileInputStream(imageLoc + "/" + fileName + ".png");
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        try {
+            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum);
+            }
+        } catch (IOException ex) {
+            // nothing here
+        } finally {
+        	fis.close();
+        }
+
+	    HttpHeaders responseHeaders = httpHeaderAttachment("TEST-" + fileName,  MimeType.PNG,
+				bos.size());
+		return new ResponseEntity<byte[]>(bos.toByteArray(),
+				responseHeaders, HttpStatus.OK);
+	}
+
+
+	/* end TEST */
+
+
 	/*
 	 * Util methods
 	 */
-
-	public static void convert(ByteArrayOutputStream stream, String svg,
-			String filename, MimeType mime, Float width, Float scale)
-			throws IOException, ServletException {
-
-		if (!MimeType.SVG.equals(mime)) {
-			try {
-				stream = SVGRasterizer.getInstance().transcode(stream, svg,
-						mime, width, scale);
-			} catch (SVGRasterizerException sre) {
-				logger.error("Error while transcoding svg file to an image",
-						sre);
-				stream.close();
-				throw new ServletException(
-						"Error while transcoding svg file to an image");
-			} catch (TranscoderException te) {
-				logger.error("Error while transcoding svg file to an image", te);
-				stream.close();
-				throw new ServletException(
-						"Error while transcoding svg file to an image");
-			}
-		} else {
-			stream.write(svg.getBytes());
-		}
-	}
 
 	public static HttpHeaders httpHeaderAttachment(final String filename,
 			final MimeType mime, final int fileSize) {
@@ -195,10 +247,10 @@ public class ExportController extends HttpServlet {
 		responseHeaders.set("Content-disposition", "attachment; filename=\""
 				+ filename + "." + mime.name().toLowerCase() + "\"");
 		return responseHeaders;
-
 	}
 
 	private String getFilename(String name) {
+		name = sanitize(name);
 		return (name != null) ? name : "chart";
 	}
 
@@ -210,9 +262,16 @@ public class ExportController extends HttpServlet {
 		return MimeType.PNG;
 	}
 
+	private static String sanitize(String parameter) {
+		if (parameter != null && !parameter.trim().isEmpty() && !(parameter.compareToIgnoreCase("undefined") == 0)) {
+			return parameter.trim();
+		}
+		return null;
+	}
+
 	private static Float widthToFloat(String width) {
-		if (width != null && !width.isEmpty()
-				&& !(width.compareToIgnoreCase("undefined") == 0)) {
+		width = sanitize(width);
+		if (width != null) {
 			Float parsedWidth = Float.valueOf(width);
 			if (parsedWidth.compareTo(MAX_WIDTH) > 0) {
 				return MAX_WIDTH;
@@ -225,8 +284,8 @@ public class ExportController extends HttpServlet {
 	}
 
 	private static Float scaleToFloat(String scale) {
-		if (scale != null && !scale.isEmpty()
-				&& !(scale.compareToIgnoreCase("undefined") == 0)) {
+		scale = sanitize(scale);
+		if (scale != null) {
 			Float parsedScale = Float.valueOf(scale);
 			if (parsedScale.compareTo(MAX_SCALE) > 0) {
 				return MAX_SCALE;
