@@ -2,7 +2,12 @@
 The file highcharts-convert.js is a [PhantomJS](http://phantomjs.org/) script to convert SVG or Highcharts JSON options objects to chart images. It is ideal for batch processing Highcharts configurations for attaching to emails or reports. It is also used in the featured (Java based) export server. An online demo with a GUI can be viewed at [export.highcharts.com/demo](http://export.highcharts.com/demo).
 
 #Example usage#
+	for commandline use.
 	phantomjs highcharts-convert.js -infile options1.json -outfile chart1.png -scale 2.5 -width 300 -constr Chart -callback callback.js
+
+	Run Phantomjs as Http-server.
+	phantomjs highcharts-convert.js -host 127.0.0.1 -port 3003
+
 
 #Description of command line parameters#
 
@@ -26,5 +31,18 @@ The file highcharts-convert.js is a [PhantomJS](http://phantomjs.org/) script to
 	     }).add();
 	}
 
-#Installation#
+**-host** The hostname Phantomjs is listening to for POST-requests. If this parameter is specified, phantomjs startsup as Http-server.
+
+**-port** The portnumber Phantomjs is listening to for POST-requests.
+
+#Running the script as Httpserver
+Start the Phantomjs as a server. You can use the same script as for commandline usage. Start the server like this.
+	phantomjs highcharts-convert.js -host 127.0.0.1 -port 3003
+You can ofcourse change the host and port to your needs. The server listens only to a POST-request. You can use the the same parameters as for commandline usage, but wrap them in a JSON structure.
+
+Example of an POST request
+
+	"{"infile":"{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart","outfile":"C:\\programs\\apache-tomcat-7.0.37\temp/qHROUfDh.png"}"
+
+#Installation of Phantomjs#
 See http://phantomjs.org/download.html

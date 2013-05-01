@@ -121,8 +121,9 @@ Tooltip.prototype = {
 	hide: function () {
 		var tooltip = this,
 			hoverPoints;
-			
-		if (!this.isHidden && !this.hideTimer) {
+		
+		clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
+		if (!this.isHidden) {
 			hoverPoints = this.chart.hoverPoints;
 
 			this.hideTimer = setTimeout(function () {
