@@ -243,8 +243,7 @@ extend(Chart.prototype, {
 			height: sourceHeight
 		});
 		options.exporting.enabled = false; // hide buttons in print
-		options.chart.plotBackgroundImage = null; // the converter doesn't handle images
-
+		
 		// prepare for replicating the chart
 		options.series = [];
 		each(chart.series, function (serie) {

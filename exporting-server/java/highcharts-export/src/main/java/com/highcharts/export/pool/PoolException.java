@@ -2,24 +2,24 @@
  * @license Highcharts JS v2.3.3 (2012-11-02)
  *
  * (c) 20012-2014
- * 
+ *
  * Author: Gert Vaartjes
  *
  * License: www.highcharts.com/license
  */
-package com.highcharts.export.util;
+package com.highcharts.export.pool;
 
-public class SVGRasterizerException extends Exception {
+public class PoolException extends Exception {
 
-	private static final long serialVersionUID = -5110552374074051446L;
-	private String mistake;
+	private static final long serialVersionUID = 3925816328286206059L;
+	private final String mistake;
 
-	public SVGRasterizerException() {
+	public PoolException() {
 		super();
 		mistake = "unknown to men";
 	}
 
-	public SVGRasterizerException(String err) {
+	public PoolException(String err) {
 		super(err); // call super class constructor
 		mistake = err; // save message
 	}
