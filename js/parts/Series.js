@@ -1332,7 +1332,7 @@ Series.prototype = {
 	 * Adds series' points value to corresponding stack
 	 */
 	setStackedPoints: function () {
-		if (!this.isDirty || !this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
+		if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
 			return;
 		}
 
