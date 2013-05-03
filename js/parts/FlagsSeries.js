@@ -288,10 +288,14 @@ each(['circle', 'square'], function (shape) {
 
 		var anchorX = options && options.anchorX,
 			anchorY = options &&  options.anchorY,
-			path = symbols[shape](x, y, w, h);
+			path = symbols[shape](x, y, w, h),
+			labelTopOrBottomY;
 
 		if (anchorX && anchorY) {
-			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
+			// if the label is below the anchor, draw the connecting line from the top edge of the label
+			// otherwise start drawing from the bottom edge
+			labelTopOrBottomY = (y > anchorY) ? y : y + h;
+			path.push('M', anchorX, labelTopOrBottomY, 'L', anchorX, anchorY);
 		}
 
 		return path;
