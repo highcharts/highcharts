@@ -1807,7 +1807,9 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
-			to;
+			to,
+			aGCtickPositions,
+			modPos;
 
 		// Mark all elements inActive before we go over and mark the active ones
 		each([ticks, minorTicks, alternateBands], function (coll) {
@@ -1873,8 +1875,16 @@ Axis.prototype = {
 
 			// alternate grid color
 			if (alternateGridColor) {
-				each(tickPositions, function (pos, i) {
-					if (i % 2 === 0 && pos < axis.max) {
+				aGCtickPositions = axis.tickPositions.info ? [axis.min].concat(tickPositions) : tickPositions;
+				each(aGCtickPositions, function (pos, i) {
+					if (axis.tickPositions.info) {
+						modPos = i ? pos : tickPositions[i] - axis.tickPositions.info.totalRange;
+						modPos = Math.floor((axis.dataMax - modPos) / axis.tickPositions.info.totalRange);
+						i -= 1;
+					} else {
+						modPos = i
+					}
+					if (modPos % 2 === 0 && pos < axis.max) {
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new PlotLineOrBand(axis);
 						}
