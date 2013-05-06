@@ -55,7 +55,12 @@
 				key = system.args[i].substr(1, i.length);
 				if (key === 'infile' || key === 'callback') {
 					// get string from file
-					map[key] = fs.read(system.args[i + 1]);
+					try {
+						map[key] = fs.read(system.args[i + 1]);
+					} catch (e) {
+						console.log('Error: cannot find file, ' + system.args[i + 1]);
+						phantom.exit();
+					}
 				} else {
 					map[key] = system.args[i + 1];
 				}
