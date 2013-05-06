@@ -9405,9 +9405,8 @@ Pointer.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
-							minPixelPadding = axis.minPixelPadding,
-							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height) - minPixelPadding);
+							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.xOrY + 'Axis'].push({
@@ -10087,8 +10086,6 @@ Legend.prototype = {
 				.add(legendGroup);
 			legend.scrollGroup = renderer.g()
 				.add(legend.contentGroup);
-			legend.clipRect = renderer.clipRect(0, 0, 9999, chart.chartHeight);
-			legend.contentGroup.clip(legend.clipRect);
 		}
 		
 		legend.renderTitle();
@@ -10232,12 +10229,17 @@ Legend.prototype = {
 		
 		// Reset the legend height and adjust the clipping rectangle
 		if (legendHeight > spaceHeight && !options.useHTML) {
-			
+
 			this.clipHeight = clipHeight = spaceHeight - 20 - this.titleHeight;
 			this.pageCount = pageCount = mathCeil(legendHeight / clipHeight);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
 			
+			// Only apply clipping if needed. Clipping causes blurred legend in PDF export (#1787)
+			if (!clipRect) {
+				clipRect = legend.clipRect = renderer.clipRect(0, 0, 9999, 0);
+				legend.contentGroup.clip(clipRect);
+			}
 			clipRect.attr({
 				height: clipHeight
 			});
