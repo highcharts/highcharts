@@ -20,7 +20,7 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private int readTimeout;
 	private int connectTimeout;
 	private int maxTimeout;
-	private static HashMap<Integer,PortStatus> portUsage = new HashMap<Integer, PortStatus>();
+	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>(); 
 	protected static Logger logger = Logger.getLogger("pool");
 
 	private enum PortStatus {
@@ -28,11 +28,8 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
         FREE;
 	}
 
-
-	public ServerObjectFactory() {}
-
 	@Override
-	public synchronized Server makeObject() {
+	public Server create() {
 		logger.debug("in makeObject, " + exec + ", " +  script + ", " +  host);
 		Integer port = this.getAvailablePort();
 		portUsage.put(port, PortStatus.BUSY);
@@ -40,21 +37,13 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	}
 
 	@Override
-	public synchronized void removeObject(Server server) {
-		logger.debug("in destroyObject");
-		ServerObjectFactory.releasePort(server.getPort());
-		server.cleanup();
-	}
-
-	@Override
-	public boolean validateObject(Server server) {
+	public boolean validate(Server server) {
 		boolean isValid = false;
 		try {
 			if(server.getState() != ServerState.IDLE) {
 				logger.debug("server didn\'t pass validation");
 				return false;
 			}
-
 			String result = server.request("{\"status\":\"isok\"}");
 			if(result.indexOf("OK") > -1) {
 				isValid = true;
@@ -66,6 +55,22 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 			logger.error("Error while validating object in Pool: " + e.getMessage());
 		}
 		return isValid;
+	}
+
+	@Override
+	public void destroy(Server server) {
+		ServerObjectFactory.releasePort(server.getPort());
+		server.cleanup();
+	}
+
+	@Override
+	public void activate(Server server) {
+		server.setState(ServerState.ACTIVE);
+	}
+
+	@Override
+	public void passivate(Server server) {
+		server.setState(ServerState.IDLE);
 	}
 
 	public static void releasePort(Integer port) {

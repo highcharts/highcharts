@@ -7,7 +7,7 @@
  *
  * License: www.highcharts.com/license
  *
- * version: 2.0
+ * version: 2.0.1
  */
 
 /*global window, require, phantom, console, $, document, Image, Highcharts, clearTimeout, clearInterval, options, cb */
@@ -55,7 +55,12 @@
 				key = system.args[i].substr(1, i.length);
 				if (key === 'infile' || key === 'callback') {
 					// get string from file
-					map[key] = fs.read(system.args[i + 1]);
+					try {
+						map[key] = fs.read(system.args[i + 1]);
+					} catch (e) {
+						console.log('Error: cannot find file, ' + system.args[i + 1]);
+						phantom.exit();
+					}
 				} else {
 					map[key] = system.args[i + 1];
 				}
@@ -77,7 +82,6 @@
 			width,
 			output,
 			outputExtension,
-			pdfOutput,
 			svgInput,
 			svg,
 			svgFile,
@@ -120,9 +124,8 @@
 		};
 
 		/* scale and clip the page */
-		scaleAndClipPage = function (svg, pdf) {
+		scaleAndClipPage = function (svg) {
 			/*	param: svg: The scg configuration object
-				param: pdf: boolean, if true set papersize
 			*/
 
 			var zoom = 1,
@@ -152,7 +155,7 @@
 			};
 
 			/* for pdf we need a bit more paperspace in some cases for example (w:600,h:400), I don't know why.*/
-			if (pdf) {
+			if (outputExtension === 'pdf') {
 				page.paperSize = { width: clipwidth, height: clipheight + 2};
 			}
 		};
@@ -167,7 +170,7 @@
 
 		convert = function (svg) {
 			var base64;
-			scaleAndClipPage(svg, pdfOutput);
+			scaleAndClipPage(svg);
 			if (outputExtension === 'pdf' || !runsAsServer) {
 				page.render(output);
 				exit(output);
@@ -222,7 +225,7 @@
 			}
 		};
 
-		loadChart = function (input, pdfOutput, messages) {
+		loadChart = function (input, outputFormat, messages) {
 			var nodeIter, nodes, elem, opacity, counter, svgElem;
 
 			document.body.style.margin = '0px';
@@ -255,6 +258,11 @@
 				}
 			}
 
+			if (outputFormat === 'jpeg') {
+				document.body.style.backgroundColor = 'white';
+			}
+
+
 			nodes = document.querySelectorAll('*[stroke-opacity]');
 
 			for (nodeIter = 0; nodeIter < nodes.length; nodeIter += 1) {
@@ -276,7 +284,7 @@
 			};
 		};
 
-		createChart = function (width, constr, input, callback, pdfOutput, messages) {
+		createChart = function (width, constr, input, outputFormat, callback, messages) {
 
 			var $container, chart, nodes, nodeIter, elem, opacity, counter;
 
@@ -329,8 +337,15 @@
 			}
 
 			$(document.body).css('margin', '0px');
+
+			if (outputFormat === 'jpeg') {
+				$(document.body).css('backgroundColor', 'white');
+			}
+
 			$container = $('<div>').appendTo(document.body);
 			$container.attr('id', 'container');
+
+
 
 			// disable animations
 			Highcharts.SVGRenderer.prototype.Element.prototype.animate = Highcharts.SVGRenderer.prototype.Element.prototype.attr;
@@ -391,7 +406,7 @@
 			}
 
 			outputExtension = output.split('.').pop();
-			pdfOutput = outputExtension === 'pdf';
+
 			/* Decide if we have to generate a svg first before rendering */
 			svgInput = input.substring(0, 4).toLowerCase() === "<svg" ? true : false;
 
@@ -400,7 +415,7 @@
 
 				if (svgInput) {
 					//render page directly from svg file
-					svg = page.evaluate(loadChart, input, pdfOutput, messages);
+					svg = page.evaluate(loadChart, input, outputExtension, messages);
 					page.viewportSize = { width: svg.width, height: svg.height };
 					renderSVG(svg);
 				} else {
@@ -412,7 +427,7 @@
 					page.injectJs(config.HIGHCHARTS_MORE);
 
 					// load chart in page and return svg height and width
-					svg = page.evaluate(createChart, width, constr, input, callback, pdfOutput, messages);
+					svg = page.evaluate(createChart, width, constr, input, outputExtension, callback, messages);
 
 					if (!window.optionsParsed) {
 						exit('ERROR: the options variable was not available, contains the infile an syntax error? see' + input);
