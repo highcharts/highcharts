@@ -14274,7 +14274,6 @@ Series.prototype = {
 			scaleX: 1, // #1623
 			scaleY: 1
 		});
-		
 		return group;
 		
 	},
@@ -14321,8 +14320,8 @@ Series.prototype = {
 		// cache attributes for shapes
 		series.getAttribs();
 
-		// SVGRenderer needs to know this before drawing elements (#1089)
-		group.inverted = chart.inverted;
+		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
+		group.inverted = series.isCartesian ? chart.inverted : false;
 		
 		// draw the graph if any
 		if (series.drawGraph) {
