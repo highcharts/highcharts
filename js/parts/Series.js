@@ -1665,7 +1665,10 @@ Series.prototype = {
 							plotX - radius,
 							plotY - radius,
 							2 * radius,
-							2 * radius
+							2 * radius,
+							null,
+							pointMarkerOptions.width,
+							pointMarkerOptions.height
 						)
 						.attr(pointAttr)
 						.add(markerGroup);
