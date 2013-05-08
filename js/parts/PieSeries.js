@@ -691,6 +691,7 @@ var PieSeries = {
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
+					visibility = dataLabel._attr.visibility;
 					
 					if (dataLabel && dataLabel._pos) {
 						x = dataLabel.connX;
