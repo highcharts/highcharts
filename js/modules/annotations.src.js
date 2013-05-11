@@ -111,11 +111,13 @@ Annotation.prototype = {
 			y;
 
 
-		title.attr({
-			x: options.title.x,
-			y: options.title.y,
-			text: options.title.text
-		}).css();
+		if (title) {
+			title.attr({
+				x: options.title.x,
+				y: options.title.y,
+				text: options.title.text
+			}).css();
+		}
 
 
 		if (linkedTo) {
@@ -200,7 +202,7 @@ Annotation.prototype = {
 		extend(this.options, options);
 
 		// update link to point or series
-		annotation.linkObjects();
+		this.linkObjects();
 
 		if (redraw !== false) {
 			this.redraw();
