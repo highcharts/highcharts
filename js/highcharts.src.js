@@ -8469,6 +8469,8 @@ Tooltip.prototype = {
 	 * Destroy the tooltip and its elements.
 	 */
 	destroy: function () {
+		clearTimeout(this.tooltipTimeout);
+		
 		each(this.crosshairs, function (crosshair) {
 			if (crosshair) {
 				crosshair.destroy();
@@ -8533,7 +8535,11 @@ Tooltip.prototype = {
 			hoverPoints = this.chart.hoverPoints;
 
 			this.hideTimer = setTimeout(function () {
-				tooltip.label.fadeOut();
+                		// The interval function may still be running during destroy, so check that the chart is really there before calling.
+		                if (tooltip.label) {
+		                    tooltip.label.fadeOut();
+		                }
+
 				tooltip.isHidden = true;
 			}, pick(this.options.hideDelay, 500));
 
