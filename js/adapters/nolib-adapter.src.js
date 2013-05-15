@@ -9,31 +9,29 @@ To implement:
  */
 var HighchartsAdapter = (function () {
 
-var win = window,
+var UNDEFINED,
+	win = window,
 	doc = document,
 	adapterMethods = {},
-	emptyArray = [],
-	events,
-	fx;
+	emptyArray = [];
 
 /**
  * Extend an object with the members of another
  */
 function extend() {
-	var args = [].slice.call(arguments),
-		a = args[0] || {},
-		l = args.length,
+	var args = emptyArray.slice.call(arguments),
+		target = args[0] || {},
+		len = args.length,
 		i = 1,
 		n;
 
-
-	for (; i < l; i++) {
+	for (; i < len; i++) {
 		for (n in args[i]) {
-			a[n] = args[i][n];
+			target[n] = args[i][n];
 		}
 	}
 
-	return a;
+	return target;
 }
 
 /**
@@ -81,136 +79,167 @@ function getCSS(el, prop) {
 
 
 /**
- *
+ * Return the index of an item in an array, or -1 if not found
  */
-function Event(obj, type) {
-	var receiver = (typeof arguments[2] === 'string' && arguments[3]) ? arguments[2] : null,
-		data = receiver ? arguments[3] : arguments[2],
-		isDom = obj.addEventListener,
-		evt = doc.createEvent(isDom ? 'HTMLEvents' : 'Events');
+function inArray(item, arr) {
+	return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
 
-	evt.initEvent(type, true, true);
-	evt.data = data || {};
-
-	return evt;
 }
 
+
 /**
- * Method to extend 
+ * Extend given object with custom events
  */
-Event.methods = {
-	bind: function (eventName, callback, context) {
-		var el = this,
-			calls = el._highcharts_callbacks,
-			list = calls[eventName],
-			fn;
+function _extend(obj) {
+	function removeOneEvent(el, type, fn) {
+		el.removeEventListener(type, fn, false);
+	}
 
-		if (!list) {
-			list = calls[eventName] = [];
-		}
+	function IERemoveOneEvent(el, type, fn) {
+		fn = el._highcharts_proxied_methods[fn.toString()];
+		el.detachEvent(type, fn);
+	}
 
-		if (el.addEventListener) {
-			el.addEventListener(eventName, callback, false);
-		}
-		else if (el.attachEvent) {
-			fn = callback;
-			callback = function (eventName) {
-				el.call(fn, eventName);
-			};
-
-			el.attachEvent(eventName, callback);
-		}
-
-		list.push([callback, context]);
-
-		return el;
-	},
-
-	unbind: function (eventName, callback) {
-		var el = this,
-			calls = el._highcharts_callbacks,
-			list,
-			l,
-			i;
-
-		if (!eventName) {
-			el._highcharts_callbacks = {};
-
-		} else if (calls) {
-			if (!callback) {
-				calls[eventName] = [];
-
-			} else if (calls[eventName]) {
-				list = calls[eventName];
-
-				for (i = 0, l = list.length; i < l; i++) {
-					if (list[i] && callback === list[i][0]) {
-						list[i] = null;
-						break;
-					}
-				}
-
-				if (!list.length) {
-					delete calls[eventName];
-				}
-			}
-		}
-
+	function removeAllEvents(el, type) {
+		var events = el._highcharts_events,
+			remove,
+			types,
+			len,
+			n;
 
 		if (el.removeEventListener) {
-			el.removeEventListener(eventName, callback, false);
-		} else if (el.detachEvent) {
-			el.detachEvent(eventName, callback);
+			remove = removeOneEvent;
+		} else if (el.attachEvent) {
+			remove = IERemoveOneEvent;
+		} else {
+			return; // break on non-DOM events
 		}
 
-		return this;
-	},
 
-	trigger: function (eventName) {
-		var calls = this._highcharts_callbacks,
-			both = 2,
-			callback,
-			list,
-			args,
-			ev,
-			i;
-
-		if (!calls) {
-			return this;
+		if (type) {
+			types = {};
+			types[type] = true;
+		} else {
+			types = events;
 		}
 
-		while (both--) {
-			ev = both ? eventName : 'all';
-			list = calls[ev];
-
-			if (list) {
-				for (i = 0, l = list.length; i < l; i++) {
-					if (!(callback = list[i])) {
-						list.splice(i, 1); i--; l--;
-					} else {
-						args = both ? emptyArray.slice.call(arguments, 1) : arguments;
-						callback[0].apply(callback[1] || this, args);
-					}
+		for (n in types) {
+			if (events[n]) {
+				len = events[n].length;
+				while (len--) {
+					remove(el, n, events[n][len]);
 				}
 			}
 		}
-
-		return this;
 	}
-};
 
-/**
- * Extend an object (not html elements) to handle events.
- */
-Event.extend = function (object) {
-	if (!object._highcharts_callbacks) {
-		extend(object, Event.methods, {
-			_highcharts_callbacks: {}
+	if (!obj._highcharts_extended) {
+		extend(obj, {
+			_highcharts_extended: true,
+
+			_highcharts_events: {},
+
+			bind: function (name, fn) {
+				var el = this,
+					events = this._highcharts_events,
+					originalFn;
+
+
+				// handle DOM events in modern browsers
+				if (el.addEventListener) {
+					el.addEventListener(name, fn, false);
+
+				// handle old IE implementation
+				} else if (el.attachEvent) {
+					originalFn = fn;
+
+					fn = function (e) {
+						originalFn.call(el, e);
+					};
+
+					if (!el._highcharts_proxied_methods) {
+						el._highcharts_proxied_methods = {};
+					}
+
+					// link wrapped fn with original fn, so we can get this in removeEvent
+					el._highcharts_proxied_methods[originalFn.toString()] = fn;
+
+					el.attachEvent(name, wrappedFn);
+				}
+
+
+				if (events[name] === UNDEFINED) {
+					events[name] = [];
+				}
+
+				events[name].push(fn);
+			},
+
+			unbind: function (name, fn) {
+				var events,
+					index,
+					tail;
+
+				if (name) {
+					events = this._highcharts_events[name] || [];
+
+					if (fn) {
+						index = inArray(fn, events);
+
+						if (index > -1) {
+							tail = events.splice(index);
+							this._highcharts_events[name] = events.concat(tail.slice(1));
+						}
+
+						if (this.removeEventListener) {
+							removeOneEvent(this, name, fn);
+						} else if (this.attachEvent) {
+							IERemoveOneEvent(this, name, fn);
+						}
+					} else {
+						removeAllEvents(this, name);
+						this._highcharts_events[name] = [];
+					}
+				} else {
+					removeAllEvents(this);
+					this._highcharts_events = {};
+				}
+			},
+
+			trigger: function (name, args) {
+				var events = this._highcharts_events[name] || [],
+					target = this,
+					len = events.length,
+					preventDefault,
+					fn;
+
+				// Attach a simple preventDefault function to skip default handler if called
+				preventDefault = function () {
+					args.defaultPrevented = true;
+				};
+
+				while (len--) {
+					fn = events[len];
+
+					// args is never null here
+					if (args.stopped) {
+						return;
+					}
+
+					args.preventDefault = preventDefault;
+					args.target = target;
+
+					// If the event handler return false, prevent the default handler from executing
+					if (fn.call(this, args) === false) {
+						args.preventDefault();
+					}
+				}
+			}
 		});
 	}
 
-	return object;
-};
+	return obj;
+}
 
 
 ['width', 'height'].forEach(function (name) {
@@ -218,60 +247,6 @@ Event.extend = function (object) {
 		return parseInt(getCSS(el, name), 10);
 	};
 });
-
-fx = function (elem, options, prop) {
-	this.options = options;
-	this.elem = elem;
-	this.prop = prop;
-
-	if (!options.orig) {
-		options.orig = {};
-	}
-};
-fx.prototype = {
-	update: function () {
-		(fx.step[this.prop] || fx.step._default)(this);
-
-		if (this.options.step) {
-			this.options.step.call(this.elem, this.now, this);
-		}
-	},
-
-	step: function (gotoEnd) {
-		var t = (new Date()).getTime(),
-			done = true,
-			i;
-
-		if (gotoEnd || t >= this.options.duration + this.startTime) {
-			this.now = this.end;
-			this.pos = this.state = 1;
-			this.update();
-
-			this.options.curAnim[this.prop] = true;
-
-			for (i in this.options.curAnim) {
-				if (this.options.curAnim[i] !== true) {
-					done = false;
-				}
-			}
-
-			if (done && this.options.complete) {
-				this.options.complete.call(this.elem);
-			}
-
-			return false;
-
-		} else {
-			var n = t - this.startTime;
-			this.state = n / this.options.duration;
-			this.pos = this.options.easing(n, 0, 1, this.options.duration);
-			this.now = this.start + ((this.end - this.start) * this.pos);
-			this.update();
-		}
-
-		return true;
-	}
-};
 
 
 return {
@@ -287,19 +262,12 @@ return {
 	 */
 	getScript: function () {},
 
-	/**
-	 * Return the index of an item in an array, or -1 if not found
-	 */
-	inArray: function (el, arr) {
-		return arr.indexOf ? arr.indexOf(el) : emptyArray.indexOf.call(arr, el);
-	},
+	inArray: inArray,
 
 	/**
 	 * A direct link to adapter methods
 	 */
 	adapterRun: function (elem, method) {
-		console.log(arguments);
-
 		return adapterMethods[method](elem);
 	},
 
@@ -331,12 +299,13 @@ return {
 	},
 
 	offset: function (el) {
-		var left = el.offsetLeft || 0,
-			top = el.offsetTop || 0;
+		var left = 0,
+			top = 0;
 
-		while ((el = el.offsetParent)) {
+		while (el) {
 			left += el.offsetLeft;
 			top += el.offsetTop;
+			el = el.offsetParent;
 		}
 
 		return {
@@ -348,44 +317,47 @@ return {
 	/**
 	 * Add an event listener
 	 */
-	addEvent: function (el, event, handler) {
-		Event.extend(el).bind(event, handler);
+	addEvent: function (el, type, fn) {
+		_extend(el).bind(type, fn);
 	},
 
 	/**
 	 * Remove event added with addEvent
 	 */
-	removeEvent: function (el, eventType, handler) {
-		Event.extend(el).unbind(eventType, handler);
+	removeEvent: function (el, type, fn) {
+		_extend(el).unbind(type, fn);
 	},
 
 	/**
 	 * Fire an event on a custom object
 	 */
-	fireEvent: function (el, event, eventArguments, defaultFunction) {
-		var eventArgs = {
-			type: event,
-			target: el
-		};
+	fireEvent: function (el, type, eventArguments, defaultFunction) {
+		var e;
 
-		// create an event object that keeps all functions
-		event = extend(Event(event, eventArgs), eventArguments);
+		if (el.dispatchEvent || el.fireEvent) {
+			e = doc.createEvent('Events');
+			e.initEvent(type, true, true);
+			e.target = el;
 
-		// override the preventDefault function to be able to use this for custom events
-		event.preventDefault = function () {
-			defaultFunction = null;
-		};
+			extend(e, eventArguments);
 
-		if ((!el.trigger && el instanceof HTMLElement) || el === doc || el === win) {
-			el = Event.extend(el);
+			if (el.dispatchEvent) {
+				el.dispatchEvent(e);
+			} else {
+				el.fireEvent(type, e);
+			}
+
+		} else if (el._highcharts_extended === true) {
+			eventArguments = eventArguments || {};
+			el.trigger(type, eventArguments);
 		}
 
-		if (el.trigger) {
-			el.trigger(event.type, event);
+		if (eventArguments && eventArguments.defaultPrevented) {
+			defaultFunction = null;
 		}
 
 		if (defaultFunction) {
-			defaultFunction(event);
+			defaultFunction(eventArguments);
 		}
 	},
 
