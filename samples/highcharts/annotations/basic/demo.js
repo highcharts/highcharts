@@ -18,8 +18,8 @@ $(function () {
         annotations: [{
             xValue: 8,
             yValue: 216.4,
-            verticalAlign: "bottom",
-            align: "center",
+            anchorY: "bottom",
+            anchorX: "center",
             width: 30,
             height: 40,
             title: {
@@ -38,8 +38,8 @@ $(function () {
         }, {
             xValue: 0,
             yValue: 29.9,
-            verticalAlign: "center",
-            align: "left",
+            anchorY: "center",
+            anchorX: "left",
             width: 30,
             height: 25,
             title: {

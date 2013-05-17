@@ -18,8 +18,8 @@ $(function () {
         annotations: [{
             xValue: 4,
             yValue: 144.0,
-            verticalAlign: 'center',
-            align: 'center',
+            anchorY: 'center',
+            anchorX: 'center',
             height: 40,
             title: {
                 text: 'Now',

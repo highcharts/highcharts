@@ -38,8 +38,8 @@ $(function () {
         return {
             xValue: xData[n],
             yValue: series.yData[n],
-            verticalAlign: "bottom",
-            align: 'center',
+            anchorY: "bottom",
+            anchorX: 'center',
             width: 80,
             height: 40,
             title: {

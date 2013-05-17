@@ -35,8 +35,8 @@ $(function() {
         annotations: [{
             xValue: 0,
             yValue: 29.9,
-            verticalAlign: "bottom",
-            align: "center",
+            anchorY: "bottom",
+            anchorX: "center",
             width: 80,
             height: 40,
             title: {
@@ -53,8 +53,8 @@ $(function() {
         }, {
             xValue: 9,
             yValue: 194.1,
-            verticalAlign: "bottom",
-            align: "center",
+            anchorY: "bottom",
+            anchorX: "center",
             width: 80,
             height: 40,
             title: {
@@ -71,8 +71,8 @@ $(function() {
         }, {
             xValue: 4,
             yValue: 144,
-            verticalAlign: "bottom",
-            align: "center",
+            anchorY: "bottom",
+            anchorX: "center",
             width: 80,
             height: 40,
             title: {
@@ -89,8 +89,8 @@ $(function() {
         }, {
             xValue: 8,
             yValue: 216.4,
-            verticalAlign: "bottom",
-            align: "center",
+            anchorY: "bottom",
+            anchorX: "center",
             width: 80,
             height: 40,
             title: {
