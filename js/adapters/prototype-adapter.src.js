@@ -206,8 +206,8 @@ return {
 		$A(arr).each(fn);
 	},
 	
-	inArray: function (item, arr) {
-		return arr.indexOf(item);
+	inArray: function (item, arr, from) {
+		return arr ? arr.indexOf(item, from) : -1;
 	},
 
 	/**
