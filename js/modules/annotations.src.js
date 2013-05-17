@@ -1,12 +1,11 @@
-(function () {
+(function (Highcharts, HighchartsAdapter) {
 
 var UNDEFINED,
-	ALIGN_FACTORS,
+	ALIGN_FACTOR,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
 	each = Highcharts.each,
-	allowedShapes,
-	annotations;
+	allowedShapes;
 
 allowedShapes = ["path", "rect", "circle"];
 
@@ -100,10 +99,8 @@ Annotation.prototype = {
 			yAxis = chart.yAxis[options.yAxis || 0],
 			width = options.width,
 			height = options.height,
-			anchorY = ALIGN_FACTOR[options.verticalAlign],
-			anchorX = ALIGN_FACTOR[options.align],
-			linkedToPoint = false,
-			linkedToSeries = false,
+			anchorY = ALIGN_FACTOR[options.anchorY],
+			anchorX = ALIGN_FACTOR[options.anchorX],
 			linkType,
 			series,
 			bbox,
@@ -112,11 +109,7 @@ Annotation.prototype = {
 
 
 		if (title) {
-			title.attr({
-				x: options.title.x,
-				y: options.title.y,
-				text: options.title.text
-			}).css();
+			title.attr(options.title).css();
 		}
 
 
@@ -161,11 +154,11 @@ Annotation.prototype = {
 
 		// Calculate anchor point
 		if (!isNumber(anchorX)) {
-			anchorX = ALIGN_FACTOR["center"];
+			anchorX = ALIGN_FACTOR.center;
 		}
 
 		if (!isNumber(anchorY)) {
-			anchorY = ALIGN_FACTOR["center"];
+			anchorY = ALIGN_FACTOR.center;
 		}
 
 		// Translate group according to its dimension and anchor point
@@ -255,10 +248,7 @@ extend(Chart.prototype, {
 		 * Redraw all annotations, method used in chart events
 		 */
 		redraw: function () {
-			var items = this.allItems,
-				chart = this.chart;
-
-			each(items, function (annotation) {
+			each(this.allItems, function (annotation) {
 				annotation.redraw();
 			});
 		}
@@ -295,4 +285,4 @@ Chart.prototype.callbacks.push(function (chart) {
 		chart.annotations.redraw();
 	});
 });
-}());
+}(Highcharts, HighchartsAdapter));
