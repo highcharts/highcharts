@@ -10076,9 +10076,10 @@ Legend.prototype = {
 			options = legend.options,
 			padding = legend.padding,
 			legendBorderWidth = options.borderWidth,
-			legendBackgroundColor = options.backgroundColor;
-
-		legend.itemX = options.align == 'left' ?
+			legendBackgroundColor = options.backgroundColor,
+			showCheckbox = chart.options.plotOptions.series.showCheckbox;
+			
+		legend.itemX = options.align == 'left' && showCheckbox ?
 			legend.initialItemX + parseInt(options.itemCheckboxStyle.width) :
 			legend.initialItemX;
 		legend.itemY = legend.initialItemY;
