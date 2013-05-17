@@ -10078,7 +10078,9 @@ Legend.prototype = {
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor;
 
-		legend.itemX = legend.initialItemX;
+		legend.itemX = options.align == 'left' ?
+			legend.initialItemX + parseInt(options.itemCheckboxStyle.width) :
+			legend.initialItemX;
 		legend.itemY = legend.initialItemY;
 		legend.offsetWidth = 0;
 		legend.lastItemY = 0;
