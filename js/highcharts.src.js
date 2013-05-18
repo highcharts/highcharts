@@ -9932,6 +9932,7 @@ Legend.prototype = {
 			series = item.series || item,
 			itemOptions = series.options,
 			showCheckbox = itemOptions.showCheckbox,
+			checkboxPosition = itemOptions.checkboxPosition,
 			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
@@ -10016,7 +10017,7 @@ Legend.prototype = {
 
 		itemWidth = item.legendItemWidth =
 			options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding +
-			(showCheckbox ? 20 : 0);
+			(showCheckbox && checkboxPosition == 'right' ? 20 : 0);
 		legend.itemHeight = itemHeight = bBox.height;
 
 		// if the item exceeds the width, start a new line
@@ -10077,8 +10078,14 @@ Legend.prototype = {
 			padding = legend.padding,
 			legendBorderWidth = options.borderWidth,
 			legendBackgroundColor = options.backgroundColor,
-			showCheckbox = chart.options.plotOptions.series.showCheckbox;
-			
+			showCheckbox = chart.options.plotOptions.series.showCheckbox,
+			checkboxPosition = chart.options.plotOptions.series.checkboxPosition;
+
+		if (options.align == 'right' && checkboxPosition == 'left' &&
+				showCheckbox) {
+			legend.initialItemX += 20;
+		}
+
 		legend.itemX = options.align == 'left' && showCheckbox ?
 			legend.initialItemX + parseInt(options.itemCheckboxStyle.width) :
 			legend.initialItemX;
