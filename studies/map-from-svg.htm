@@ -8,10 +8,10 @@
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" />
 		
-		<script type="text/javascript" src="http://github.highcharts.com/c07441d/highcharts.src.js"></script>
-		<script type="text/javascript" src="http://github.highcharts.com/c07441d/modules/map.src.js"></script>
-		<script type="text/javascript" src="http://github.highcharts.com/c07441d/modules/data.src.js"></script>
-		
+		<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/75c66eb3/modules/map.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/75c66eb3/modules/data.src.js"></script>
+		<script type="text/javascript" src="http://github.highcharts.com/75c66eb3/modules/map-parser.src.js"></script>
 		
 		
 		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
@@ -74,7 +74,6 @@
 				Highcharts.data({
 					svg: '/maps/file.php?file=' + file,
 					complete: function (options) {
-						
 						var data = options.series[0].data,
 							lines = identifyLines(data, key);
 							
