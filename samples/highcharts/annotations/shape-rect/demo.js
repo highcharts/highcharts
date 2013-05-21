@@ -18,8 +18,8 @@ $(function () {
         annotations: [{
             xValue: 5,
             yValue: 225,
-            verticalAlign: 'top',
-            align: 'left',
+            anchorY: 'top',
+            anchorX: 'left',
             // title: {},
             shape: {
                 type: 'rect',

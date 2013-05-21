@@ -1,14 +1,12 @@
-(function () {
+(function (Highcharts, HighchartsAdapter) {
 
 var UNDEFINED,
-	ALIGN_FACTORS,
+	ALIGN_FACTOR,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
-	each = Highcharts.each,
-	allowedShapes,
-	annotations;
+	each = Highcharts.each;
 
-allowedShapes = ["path", "rect", "circle"];
+ALLOWED_SHAPES = ["path", "rect", "circle"];
 
 ALIGN_FACTOR = {
 	top: 0,
@@ -72,7 +70,7 @@ Annotation.prototype = {
 			title.add(group);
 		}
 
-		if (!shape && shapeOptions && inArray(shapeOptions.type, allowedShapes) !== -1) {
+		if (!shape && shapeOptions && inArray(shapeOptions.type, ALLOWED_SHAPES) !== -1) {
 			shape = annotation.shape = renderer[options.shape.type](shapeOptions.params);
 			shape.add(group);
 		}
@@ -95,29 +93,22 @@ Annotation.prototype = {
 			chart = this.chart,
 			group = this.group,
 			title = this.title,
+			shape = this.shape,
 			linkedTo = this.linkedObject,
 			xAxis = chart.xAxis[options.xAxis || 0],
 			yAxis = chart.yAxis[options.yAxis || 0],
 			width = options.width,
 			height = options.height,
-			anchorY = ALIGN_FACTOR[options.verticalAlign],
-			anchorX = ALIGN_FACTOR[options.align],
-			linkedToPoint = false,
-			linkedToSeries = false,
+			anchorY = ALIGN_FACTOR[options.anchorY],
+			anchorX = ALIGN_FACTOR[options.anchorX],
+			resetBBox = false,
+			shapeParams,
 			linkType,
 			series,
+			param,
 			bbox,
 			x,
 			y;
-
-
-		if (title) {
-			title.attr({
-				x: options.title.x,
-				y: options.title.y,
-				text: options.title.text
-			}).css();
-		}
 
 
 		if (linkedTo) {
@@ -144,6 +135,34 @@ Annotation.prototype = {
 		x = defined(options.xValue) ? xAxis.toPixels(options.xValue) : options.x;
 		y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
 
+		if (title) {
+			title.attr(options.title);
+			resetBBox = true;
+		}
+
+		if (shape) {
+			shapeParams = extend({}, options.shape.params);
+
+			if (options.units === 'values') {
+				for (param in shapeParams) {
+					if (inArray(param, ['width', 'x']) > -1) {
+						shapeParams[param] = xAxis.translate(shapeParams[param]);
+					} else if (inArray(param, ['height', 'y']) > -1) {
+						shapeParams[param] = yAxis.translate(shapeParams[param]);
+					}
+				}
+
+				if (shapeParams.width) {
+					shapeParams.width = shapeParams.width + xAxis.left - x;
+				}
+			}
+
+			resetBBox = true;
+			shape.attr(shapeParams);
+		}
+
+		group.bBox = null;
+
 		// If annotation width or height is not defined in options use bounding box size
 		if (!isNumber(width)) {
 			bbox = group.getBBox();
@@ -161,11 +180,11 @@ Annotation.prototype = {
 
 		// Calculate anchor point
 		if (!isNumber(anchorX)) {
-			anchorX = ALIGN_FACTOR["center"];
+			anchorX = ALIGN_FACTOR.center;
 		}
 
 		if (!isNumber(anchorY)) {
-			anchorY = ALIGN_FACTOR["center"];
+			anchorY = ALIGN_FACTOR.center;
 		}
 
 		// Translate group according to its dimension and anchor point
@@ -204,9 +223,7 @@ Annotation.prototype = {
 		// update link to point or series
 		this.linkObjects();
 
-		if (redraw !== false) {
-			this.redraw();
-		}
+		this.render(redraw);
 	},
 
 	linkObjects: function () {
@@ -255,10 +272,7 @@ extend(Chart.prototype, {
 		 * Redraw all annotations, method used in chart events
 		 */
 		redraw: function () {
-			var items = this.allItems,
-				chart = this.chart;
-
-			each(items, function (annotation) {
+			each(this.allItems, function (annotation) {
 				annotation.redraw();
 			});
 		}
@@ -295,4 +309,4 @@ Chart.prototype.callbacks.push(function (chart) {
 		chart.annotations.redraw();
 	});
 });
-}());
+}(Highcharts, HighchartsAdapter));
