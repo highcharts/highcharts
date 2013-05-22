@@ -1965,7 +1965,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
  * necessary to avoid the bubbles to overflow.
  */
 Axis.prototype.beforePadding = function () {
-	var axisLength = this.len,
+	var axis = this,
+		axisLength = this.len,
 		chart = this.chart,
 		pxMin = 0, 
 		pxMax = axisLength,
@@ -1980,9 +1981,6 @@ Axis.prototype.beforePadding = function () {
 		transA = axisLength / range,
 		activeSeries = [];
 
-	// Correction for #1673
-	this.allowZoomOutside = true;
-
 	// Handle padding on the second pass, or on redraw
 	if (this.tickPositions) {
 		each(this.series, function (series) {
@@ -1991,6 +1989,9 @@ Axis.prototype.beforePadding = function () {
 				zData;
 
 			if (series.type === 'bubble' && series.visible) {
+
+				// Correction for #1673
+				axis.allowZoomOutside = true;
 
 				// Cache it
 				activeSeries.push(series);
