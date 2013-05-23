@@ -9571,7 +9571,9 @@ Pointer.prototype = {
 				}));
 
 				// the point click event
-				hoverPoint.firePointEvent('click', e);
+				if (chart.hoverPoint) { // it may be destroyed (#1844)
+					hoverPoint.firePointEvent('click', e);
+				}
 
 			// When clicking outside a tracker, fire a chart event
 			} else {
