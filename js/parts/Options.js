@@ -154,7 +154,7 @@ defaultOptions = {
 			dataLabels: merge(defaultLabelOptions, {
 				enabled: false,
 				formatter: function () {
-					return this.y;
+					return numberFormat(this.y);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
