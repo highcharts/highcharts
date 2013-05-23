@@ -1605,7 +1605,7 @@ defaultOptions = {
 			dataLabels: merge(defaultLabelOptions, {
 				enabled: false,
 				formatter: function () {
-					return numberFormat(this.y);
+					return numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -6257,7 +6257,10 @@ StackItem.prototype = {
 	 */
 	render: function (group) {
 		var options = this.options,
-			str = options.formatter.call(this);  // format the text in the label
+			formatOption = options.format, // docs: added stackLabel.format option
+			str = formatOption ?
+				format(formatOption, this) : 
+				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
@@ -6437,7 +6440,7 @@ Axis.prototype = {
 			//textAlign: dynamic,
 			//rotation: 0,
 			formatter: function () {
-				return this.total;
+				return numberFormat(this.total, -1);
 			},
 			style: defaultLabelOptions.style
 		}
