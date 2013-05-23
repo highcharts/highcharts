@@ -3,7 +3,22 @@
  * This file requires data.js.
  */
 
-Highcharts.extend(Highcharts.Data.prototype, {
+/*global Highcharts */
+(function (H) {
+
+"use strict";
+
+var each = H.each;
+
+H.wrap(H.Data.prototype, 'init', function (proceed, options) {
+	proceed.call(this, options);
+
+	if (options.svg) {
+		this.loadSVG();
+	}
+});
+
+H.extend(H.Data.prototype, {
 	/**
 	 * Parse an SVG path into a simplified array that Highcharts can read
 	 */
@@ -218,4 +233,6 @@ Highcharts.extend(Highcharts.Data.prototype, {
 			}
 		});
 	}
-));
+});
+}(Highcharts));
+

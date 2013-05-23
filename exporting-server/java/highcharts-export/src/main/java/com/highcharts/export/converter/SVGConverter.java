@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.highcharts.export.pool.PoolException;
-import com.highcharts.export.pool.ServerPool;
+import com.highcharts.export.pool.BlockingQueuePool;
 import com.highcharts.export.server.Server;
 import com.highcharts.export.util.MimeType;
 
@@ -35,7 +35,7 @@ import com.highcharts.export.util.MimeType;
 public class SVGConverter {
 
 	@Autowired
-	private ServerPool serverPool;
+	private BlockingQueuePool serverPool;
 	protected static Logger logger = Logger.getLogger("converter");
 
 	public ByteArrayOutputStream convert(String input, MimeType mime,
@@ -43,7 +43,7 @@ public class SVGConverter {
 
 			ByteArrayOutputStream stream = null;
 
-			// create converted file
+			// get filename
 			String extension = mime.name().toLowerCase();
 			String outFilename = createUniqueFileName("." + extension);
 
@@ -97,7 +97,7 @@ public class SVGConverter {
 		Server server = null;
 
 		try {
-			server = serverPool.borrow();
+			server = (Server) serverPool.borrowObject();
 			String response = server.request(params);
 
 			return response;
@@ -113,7 +113,7 @@ public class SVGConverter {
 			throw new SVGConverterException("Error converting SVG" + e.getMessage());
 		} finally {
 			try {
-				serverPool.giveBack(server);
+				serverPool.returnObject(server, true);
 			} catch (Exception e) {
 				logger.error("Exception while returning server to pool: " + e.getMessage());
 			}

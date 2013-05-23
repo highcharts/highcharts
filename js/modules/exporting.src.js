@@ -646,9 +646,12 @@ extend(Chart.prototype, {
 		// Destroy the extra buttons added
 		for (i = 0; i < chart.exportSVGElements.length; i++) {
 			elem = chart.exportSVGElements[i];
+			
 			// Destroy and null the svg/vml elements
-			elem.onclick = elem.ontouchstart = null;
-			chart.exportSVGElements[i] = elem.destroy();
+			if (elem) { // #1822
+				elem.onclick = elem.ontouchstart = null;
+				chart.exportSVGElements[i] = elem.destroy();
+			}
 		}
 
 		// Destroy the divs for the menu

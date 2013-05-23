@@ -1605,7 +1605,7 @@ defaultOptions = {
 			dataLabels: merge(defaultLabelOptions, {
 				enabled: false,
 				formatter: function () {
-					return this.y;
+					return numberFormat(this.y);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -2533,19 +2533,17 @@ SVGElement.prototype = {
 			shadows = wrapper.shadows;
 
 		// apply translate
-		if (translateX || translateY) {
-			css(elem, {
-				marginLeft: translateX,
-				marginTop: translateY
-			});
-			if (shadows) { // used in labels/tooltip
-				each(shadows, function (shadow) {
-					css(shadow, {
-						marginLeft: translateX + 1,
-						marginTop: translateY + 1
-					});
+		css(elem, {
+			marginLeft: translateX,
+			marginTop: translateY
+		});
+		if (shadows) { // used in labels/tooltip
+			each(shadows, function (shadow) {
+				css(shadow, {
+					marginLeft: translateX + 1,
+					marginTop: translateY + 1
 				});
-			}
+			});
 		}
 
 		// apply inversion
@@ -2663,7 +2661,7 @@ SVGElement.prototype = {
 			scaleY = wrapper.scaleY,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
-			transform = [];
+			transform;
 
 		// flipping affects translate as adjustment for flipping around the group's axis
 		if (inverted) {
@@ -2671,10 +2669,9 @@ SVGElement.prototype = {
 			translateY += wrapper.attr('height');
 		}
 
-		// apply translate
-		if (translateX || translateY) {
-			transform.push('translate(' + translateX + ',' + translateY + ')');
-		}
+		// Apply translate. Nearly all transformed elements have translation, so instead
+		// of checking for translate = 0, do it always (#1767, #1846).
+		transform = ['translate(' + translateX + ',' + translateY + ')'];
 
 		// apply rotation
 		if (inverted) {
@@ -7332,7 +7329,7 @@ Axis.prototype = {
 			}
 			
 			// Record minPointOffset and pointRangePadding
-			ordinalCorrection = axis.ordinalSlope ? axis.ordinalSlope / closestPointRange : 1; // #988
+			ordinalCorrection = axis.ordinalSlope && closestPointRange ? axis.ordinalSlope / closestPointRange : 1; // #988, #1853
 			axis.minPointOffset = minPointOffset = minPointOffset * ordinalCorrection;
 			axis.pointRangePadding = pointRangePadding = pointRangePadding * ordinalCorrection;
 
@@ -9013,7 +9010,7 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			if (series.xAxis.zoomEnabled) {
+			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {
 					series.markerGroup.attr(attribs);
@@ -9116,9 +9113,10 @@ Pointer.prototype = {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = chart.tooltip.options.followTouchMove,
+			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
+			multiTouch = touchesLength > 1,
 			lastValidTouch = self.lastValidTouch,
 			zoomHor = self.zoomHor || self.pinchHor,
 			zoomVert = self.zoomVert || self.pinchVert,
@@ -9128,12 +9126,8 @@ Pointer.prototype = {
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart' && followTouchMove) {
-			if (self.inClass(e.target, PREFIX + 'tracker')) {
-				if (!chart.runTrackerClick || touchesLength > 1) {
-					e.preventDefault();
-				}
-			} else if (!chart.runChartClick || touchesLength > 1) {
+		if (e.type === 'touchstart') {
+			if (followTouchMove || hasZoom) {
 				e.preventDefault();
 			}
 		}
@@ -9320,9 +9314,8 @@ Pointer.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
-							minPixelPadding = axis.minPixelPadding,
-							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height) - minPixelPadding);
+							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.xOrY + 'Axis'].push({
@@ -11091,7 +11084,8 @@ Chart.prototype = {
 				height: chartHeight + PX,
 				textAlign: 'left',
 				lineHeight: 'normal', // #427
-				zIndex: 0 // #1072
+				zIndex: 0, // #1072
+				'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
 			}, optionsChart.style),
 			chart.renderToClone || renderTo
 		);
@@ -12500,7 +12494,7 @@ Series.prototype = {
 
 				// The series needs an X and an Y axis
 				if (!series[AXIS]) {
-					error(17, true);
+					error(18, true);
 				}
 
 			});
@@ -13631,7 +13625,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -14395,7 +14389,6 @@ Series.prototype = {
 			scaleX: 1, // #1623
 			scaleY: 1
 		});
-		
 		return group;
 		
 	},
@@ -14442,8 +14435,8 @@ Series.prototype = {
 		// cache attributes for shapes
 		series.getAttribs();
 
-		// SVGRenderer needs to know this before drawing elements (#1089)
-		group.inverted = chart.inverted;
+		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
+		group.inverted = series.isCartesian ? chart.inverted : false;
 		
 		// draw the graph if any
 		if (series.drawGraph) {
@@ -16236,6 +16229,7 @@ var PieSeries = {
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
+					visibility = dataLabel._attr.visibility;
 					
 					if (dataLabel && dataLabel._pos) {
 						x = dataLabel.connX;
@@ -17442,10 +17436,14 @@ each(['circle', 'square'], function (shape) {
 
 		var anchorX = options && options.anchorX,
 			anchorY = options &&  options.anchorY,
-			path = symbols[shape](x, y, w, h);
+			path = symbols[shape](x, y, w, h),
+			labelTopOrBottomY;
 
 		if (anchorX && anchorY) {
-			path.push('M', anchorX, y + h, 'L', anchorX, anchorY);
+			// if the label is below the anchor, draw the connecting line from the top edge of the label
+			// otherwise start drawing from the bottom edge
+			labelTopOrBottomY = (y > anchorY) ? y : y + h;
+			path.push('M', anchorX, labelTopOrBottomY, 'L', anchorX, anchorY);
 		}
 
 		return path;
@@ -19385,18 +19383,15 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 							ordinalPositions = ordinalPositions.concat(series.processedXData);
 							len = ordinalPositions.length;
 							
-							// if we're dealing with more than one series, remove duplicates
-							if (i && len) {
+							// remove duplicates (#1588)
+							ordinalPositions.sort(function (a, b) {
+								return a - b; // without a custom function it is sorted as strings
+							});
 							
-								ordinalPositions.sort(function (a, b) {
-									return a - b; // without a custom function it is sorted as strings
-								});
-							
-								i = len - 1;
-								while (i--) {
-									if (ordinalPositions[i] === ordinalPositions[i + 1]) {
-										ordinalPositions.splice(i, 1);
-									}
+							i = len - 1;
+							while (i--) {
+								if (ordinalPositions[i] === ordinalPositions[i + 1]) {
+									ordinalPositions.splice(i, 1);
 								}
 							}
 						}

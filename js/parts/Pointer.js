@@ -238,7 +238,7 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			if (series.xAxis.zoomEnabled) {
+			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {
 					series.markerGroup.attr(attribs);
@@ -341,9 +341,10 @@ Pointer.prototype = {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = chart.tooltip.options.followTouchMove,
+			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
+			multiTouch = touchesLength > 1,
 			lastValidTouch = self.lastValidTouch,
 			zoomHor = self.zoomHor || self.pinchHor,
 			zoomVert = self.zoomVert || self.pinchVert,
@@ -353,12 +354,8 @@ Pointer.prototype = {
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart' && followTouchMove) {
-			if (self.inClass(e.target, PREFIX + 'tracker')) {
-				if (!chart.runTrackerClick || touchesLength > 1) {
-					e.preventDefault();
-				}
-			} else if (!chart.runChartClick || touchesLength > 1) {
+		if (e.type === 'touchstart') {
+			if (followTouchMove || hasZoom) {
 				e.preventDefault();
 			}
 		}
@@ -545,9 +542,8 @@ Pointer.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
-							minPixelPadding = axis.minPixelPadding,
-							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height) - minPixelPadding);
+							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.xOrY + 'Axis'].push({

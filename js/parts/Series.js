@@ -668,7 +668,7 @@ Series.prototype = {
 
 				// The series needs an X and an Y axis
 				if (!series[AXIS]) {
-					error(17, true);
+					error(18, true);
 				}
 
 			});
@@ -1799,7 +1799,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -2563,7 +2563,6 @@ Series.prototype = {
 			scaleX: 1, // #1623
 			scaleY: 1
 		});
-		
 		return group;
 		
 	},
@@ -2610,8 +2609,8 @@ Series.prototype = {
 		// cache attributes for shapes
 		series.getAttribs();
 
-		// SVGRenderer needs to know this before drawing elements (#1089)
-		group.inverted = chart.inverted;
+		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
+		group.inverted = series.isCartesian ? chart.inverted : false;
 		
 		// draw the graph if any
 		if (series.drawGraph) {

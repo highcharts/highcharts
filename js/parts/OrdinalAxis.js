@@ -64,18 +64,15 @@
 							ordinalPositions = ordinalPositions.concat(series.processedXData);
 							len = ordinalPositions.length;
 							
-							// if we're dealing with more than one series, remove duplicates
-							if (i && len) {
+							// remove duplicates (#1588)
+							ordinalPositions.sort(function (a, b) {
+								return a - b; // without a custom function it is sorted as strings
+							});
 							
-								ordinalPositions.sort(function (a, b) {
-									return a - b; // without a custom function it is sorted as strings
-								});
-							
-								i = len - 1;
-								while (i--) {
-									if (ordinalPositions[i] === ordinalPositions[i + 1]) {
-										ordinalPositions.splice(i, 1);
-									}
+							i = len - 1;
+							while (i--) {
+								if (ordinalPositions[i] === ordinalPositions[i + 1]) {
+									ordinalPositions.splice(i, 1);
 								}
 							}
 						}

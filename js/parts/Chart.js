@@ -826,7 +826,8 @@ Chart.prototype = {
 				height: chartHeight + PX,
 				textAlign: 'left',
 				lineHeight: 'normal', // #427
-				zIndex: 0 // #1072
+				zIndex: 0, // #1072
+				'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
 			}, optionsChart.style),
 			chart.renderToClone || renderTo
 		);
