@@ -13148,13 +13148,18 @@ Series.prototype = {
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
 			isBottomSeries,
-			allStackSeries = yAxis.series,
-			i = allStackSeries.length,
+			allStackSeries,
+			i,
 			placeBetween = options.pointPlacement === 'between',
 			threshold = options.threshold;
 			//nextSeriesDown;
 			
-		// Is it the last visible series?
+		// Is it the last visible series? (#809, #1722).
+		// TODO: After merging in the 'stacking' branch, this logic should probably be moved to Chart.getStacks
+		allStackSeries = yAxis.series.sort(function (a, b) {
+			return a.index - b.index;
+		});
+		i = allStackSeries.length;
 		while (i--) {
 			if (allStackSeries[i].visible) {
 				if (allStackSeries[i] === series) { // #809
