@@ -1220,16 +1220,16 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
-				stemAttr['stroke-width'] = point.stemWidth || options.stemWidth || options.lineWidth;
+				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
 				
 				// Whiskers attributes
 				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
-				whiskersAttr['stroke-width'] = point.whiskerWidth || options.whiskerWidth || options.lineWidth;
+				whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
 				
 				// Median attributes
 				medianAttr.stroke = point.medianColor || options.medianColor || color;
-				medianAttr['stroke-width'] = point.medianWidth || options.medianWidth || options.lineWidth;
+				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
 				
 				
 				// The stem
