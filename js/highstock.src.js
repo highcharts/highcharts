@@ -18046,7 +18046,7 @@ Scroller.prototype = {
 				}
 				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
 					setTimeout(function () {
-						scroller.mouseUpHandler(false);
+						scroller.mouseUpHandler(e);
 					}, 0);
 				}
 			}
@@ -18055,7 +18055,7 @@ Scroller.prototype = {
 		/**
 		 * Event handler for the mouse up event.
 		 */
-		scroller.mouseUpHandler = function (reset) {
+		scroller.mouseUpHandler = function (e) {
 			
 			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
@@ -18063,11 +18063,14 @@ Scroller.prototype = {
 					xAxis.translate(scroller.zoomedMax, true),
 					true,
 					false,
-					{ trigger: 'navigator' }
+					{ 
+						trigger: 'navigator',
+						DOMEvent: e // #1838
+					}
 				);
 			}
 
-			if (reset !== false) {
+			if (e.type !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
 				bodyStyle.cursor = defaultBodyCursor || '';
 			}
