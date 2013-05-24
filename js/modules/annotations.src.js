@@ -66,7 +66,7 @@ Annotation.prototype = {
 		}
 
 		if (!title && titleOptions) {
-			title = annotation.title = renderer.label(null);
+			title = annotation.title = renderer.label(titleOptions);
 			title.add(group);
 		}
 
@@ -137,6 +137,7 @@ Annotation.prototype = {
 
 		if (title) {
 			title.attr(options.title);
+			title.css(options.title.style || {});
 			resetBBox = true;
 		}
 
