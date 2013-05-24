@@ -1220,16 +1220,16 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
-				stemAttr['stroke-width'] = point.stemWidth || options.stemWidth || options.lineWidth;
+				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
 				
 				// Whiskers attributes
 				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
-				whiskersAttr['stroke-width'] = point.whiskerWidth || options.whiskerWidth || options.lineWidth;
+				whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
 				
 				// Median attributes
 				medianAttr.stroke = point.medianColor || options.medianColor || color;
-				medianAttr['stroke-width'] = point.medianWidth || options.medianWidth || options.lineWidth;
+				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
 				
 				
 				// The stem
@@ -1965,7 +1965,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
  * necessary to avoid the bubbles to overflow.
  */
 Axis.prototype.beforePadding = function () {
-	var axisLength = this.len,
+	var axis = this,
+		axisLength = this.len,
 		chart = this.chart,
 		pxMin = 0, 
 		pxMax = axisLength,
@@ -1980,9 +1981,6 @@ Axis.prototype.beforePadding = function () {
 		transA = axisLength / range,
 		activeSeries = [];
 
-	// Correction for #1673
-	this.allowZoomOutside = true;
-
 	// Handle padding on the second pass, or on redraw
 	if (this.tickPositions) {
 		each(this.series, function (series) {
@@ -1991,6 +1989,9 @@ Axis.prototype.beforePadding = function () {
 				zData;
 
 			if (series.type === 'bubble' && series.visible) {
+
+				// Correction for #1673
+				axis.allowZoomOutside = true;
 
 				// Cache it
 				activeSeries.push(series);
