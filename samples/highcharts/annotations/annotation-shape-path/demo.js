@@ -25,8 +25,11 @@ $(function () {
                 y: 60
             },
             shape: {
-                type: 'rect',
+                type: 'path',
                 params: {
+                    d: ['M', -25, 10, 'L', 20, 60, 'M', 25, 60, 'L', 40, 0],
+                    stroke: '#000000',
+                    strokeWidth: 2
                 }
             }
         }]
