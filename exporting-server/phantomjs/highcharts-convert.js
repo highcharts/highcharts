@@ -191,6 +191,7 @@
 						// write the file
 						svgFile = fs.open(output, "w");
 						svgFile.write(svg);
+						svgFile.close();
 						exit(output);
 					} else {
 						// return the svg as a string

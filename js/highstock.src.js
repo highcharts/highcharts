@@ -1605,7 +1605,7 @@ defaultOptions = {
 			dataLabels: merge(defaultLabelOptions, {
 				enabled: false,
 				formatter: function () {
-					return this.y;
+					return numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -2533,19 +2533,17 @@ SVGElement.prototype = {
 			shadows = wrapper.shadows;
 
 		// apply translate
-		if (translateX || translateY) {
-			css(elem, {
-				marginLeft: translateX,
-				marginTop: translateY
-			});
-			if (shadows) { // used in labels/tooltip
-				each(shadows, function (shadow) {
-					css(shadow, {
-						marginLeft: translateX + 1,
-						marginTop: translateY + 1
-					});
+		css(elem, {
+			marginLeft: translateX,
+			marginTop: translateY
+		});
+		if (shadows) { // used in labels/tooltip
+			each(shadows, function (shadow) {
+				css(shadow, {
+					marginLeft: translateX + 1,
+					marginTop: translateY + 1
 				});
-			}
+			});
 		}
 
 		// apply inversion
@@ -2663,7 +2661,7 @@ SVGElement.prototype = {
 			scaleY = wrapper.scaleY,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
-			transform = [];
+			transform;
 
 		// flipping affects translate as adjustment for flipping around the group's axis
 		if (inverted) {
@@ -2671,10 +2669,9 @@ SVGElement.prototype = {
 			translateY += wrapper.attr('height');
 		}
 
-		// apply translate
-		if (translateX || translateY) {
-			transform.push('translate(' + translateX + ',' + translateY + ')');
-		}
+		// Apply translate. Nearly all transformed elements have translation, so instead
+		// of checking for translate = 0, do it always (#1767, #1846).
+		transform = ['translate(' + translateX + ',' + translateY + ')'];
 
 		// apply rotation
 		if (inverted) {
@@ -6260,7 +6257,10 @@ StackItem.prototype = {
 	 */
 	render: function (group) {
 		var options = this.options,
-			str = options.formatter.call(this);  // format the text in the label
+			formatOption = options.format, // docs: added stackLabel.format option
+			str = formatOption ?
+				format(formatOption, this) : 
+				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
@@ -6440,7 +6440,7 @@ Axis.prototype = {
 			//textAlign: dynamic,
 			//rotation: 0,
 			formatter: function () {
-				return this.total;
+				return numberFormat(this.total, -1);
 			},
 			style: defaultLabelOptions.style
 		}
@@ -7418,7 +7418,7 @@ Axis.prototype = {
 			}
 			
 			// Record minPointOffset and pointRangePadding
-			ordinalCorrection = axis.ordinalSlope ? axis.ordinalSlope / closestPointRange : 1; // #988
+			ordinalCorrection = axis.ordinalSlope && closestPointRange ? axis.ordinalSlope / closestPointRange : 1; // #988, #1853
 			axis.minPointOffset = minPointOffset = minPointOffset * ordinalCorrection;
 			axis.pointRangePadding = pointRangePadding = pointRangePadding * ordinalCorrection;
 
@@ -9098,7 +9098,7 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			if (series.xAxis.zoomEnabled) {
+			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {
 					series.markerGroup.attr(attribs);
@@ -9201,9 +9201,10 @@ Pointer.prototype = {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = chart.tooltip.options.followTouchMove,
+			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
+			multiTouch = touchesLength > 1,
 			lastValidTouch = self.lastValidTouch,
 			zoomHor = self.zoomHor || self.pinchHor,
 			zoomVert = self.zoomVert || self.pinchVert,
@@ -9213,12 +9214,8 @@ Pointer.prototype = {
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart' && followTouchMove) {
-			if (self.inClass(e.target, PREFIX + 'tracker')) {
-				if (!chart.runTrackerClick || touchesLength > 1) {
-					e.preventDefault();
-				}
-			} else if (!chart.runChartClick || touchesLength > 1) {
+		if (e.type === 'touchstart') {
+			if (followTouchMove || hasZoom) {
 				e.preventDefault();
 			}
 		}
@@ -9577,7 +9574,9 @@ Pointer.prototype = {
 				}));
 
 				// the point click event
-				hoverPoint.firePointEvent('click', e);
+				if (chart.hoverPoint) { // it may be destroyed (#1844)
+					hoverPoint.firePointEvent('click', e);
+				}
 
 			// When clicking outside a tracker, fire a chart event
 			} else {
@@ -11136,7 +11135,8 @@ Chart.prototype = {
 				height: chartHeight + PX,
 				textAlign: 'left',
 				lineHeight: 'normal', // #427
-				zIndex: 0 // #1072
+				zIndex: 0, // #1072
+				'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
 			}, optionsChart.style),
 			chart.renderToClone || renderTo
 		);
@@ -13153,13 +13153,18 @@ Series.prototype = {
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
 			isBottomSeries,
-			allStackSeries = yAxis.series,
-			i = allStackSeries.length,
+			allStackSeries,
+			i,
 			placeBetween = options.pointPlacement === 'between',
 			threshold = options.threshold;
 			//nextSeriesDown;
 			
-		// Is it the last visible series?
+		// Is it the last visible series? (#809, #1722).
+		// TODO: After merging in the 'stacking' branch, this logic should probably be moved to Chart.getStacks
+		allStackSeries = yAxis.series.sort(function (a, b) {
+			return a.index - b.index;
+		});
+		i = allStackSeries.length;
 		while (i--) {
 			if (allStackSeries[i].visible) {
 				if (allStackSeries[i] === series) { // #809
@@ -13510,7 +13515,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(plotX, plotY, chart.inverted);
+				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 				
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -18044,7 +18049,7 @@ Scroller.prototype = {
 				}
 				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
 					setTimeout(function () {
-						scroller.mouseUpHandler(false);
+						scroller.mouseUpHandler(e);
 					}, 0);
 				}
 			}
@@ -18053,7 +18058,7 @@ Scroller.prototype = {
 		/**
 		 * Event handler for the mouse up event.
 		 */
-		scroller.mouseUpHandler = function (reset) {
+		scroller.mouseUpHandler = function (e) {
 			
 			if (hasDragged) {
 				chart.xAxis[0].setExtremes(
@@ -18061,11 +18066,14 @@ Scroller.prototype = {
 					xAxis.translate(scroller.zoomedMax, true),
 					true,
 					false,
-					{ trigger: 'navigator' }
+					{ 
+						trigger: 'navigator',
+						DOMEvent: e // #1838
+					}
 				);
 			}
 
-			if (reset !== false) {
+			if (e.type !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = hasDragged = dragOffset = null;
 				bodyStyle.cursor = defaultBodyCursor || '';
 			}
@@ -19268,13 +19276,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 							ordinalPositions = ordinalPositions.concat(series.processedXData);
 							len = ordinalPositions.length;
 							
-							// if we're dealing with more than one series, remove duplicates
-							if (i && len) {
+							// remove duplicates (#1588)
+							ordinalPositions.sort(function (a, b) {
+								return a - b; // without a custom function it is sorted as strings
+							});
 							
-								ordinalPositions.sort(function (a, b) {
-									return a - b; // without a custom function it is sorted as strings
-								});
-							
+							if (len) {
 								i = len - 1;
 								while (i--) {
 									if (ordinalPositions[i] === ordinalPositions[i + 1]) {
