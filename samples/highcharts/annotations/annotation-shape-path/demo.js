@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'basic annotations - circle'
+            text: 'Basic annotations demo'
         },
         credits: {
             enabled: false
@@ -16,24 +16,19 @@ $(function () {
         }],
 
         annotations: [{
-            xValue: 4,
-            yValue: 144.0,
-            anchorY: 'center',
-            anchorX: 'center',
-            height: 40,
+            xValue: 7,
+            yValue: 140,
+            anchorY: 'top',
+            anchorX: 'middle',
             title: {
-                text: 'Now',
-                x: 5,
-                y: -20
+                text: 'Holidays',
+                y: 60
             },
             shape: {
-                type: 'circle',
+                type: 'path',
                 params: {
-                    x: 20,
-                    y: 20,
-                    r: 20,
-                    fill: 'rgba(0,0,0,0)',
-                    stroke: Highcharts.getOptions().colors[1],
+                    d: ['M', -25, 10, 'L', 20, 60, 'M', 25, 60, 'L', 40, 0],
+                    stroke: '#000000',
                     strokeWidth: 2
                 }
             }

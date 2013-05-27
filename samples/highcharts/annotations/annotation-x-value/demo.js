@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'basic annotations - rectangle'
+            text: 'Basic annotations demo'
         },
         credits: {
             enabled: false
@@ -17,20 +17,9 @@ $(function () {
 
         annotations: [{
             xValue: 5,
-            yValue: 225,
-            anchorY: 'top',
-            anchorX: 'left',
-            // title: {},
-            shape: {
-                type: 'rect',
-                params: {
-                    width: 440,
-                    height: 120,
-                    x: -20,
-                    y: 0,
-                    stroke: Highcharts.getOptions().colors[1],
-                    strokeWidth: 2
-                }
+            yValue: 190,
+            title: {
+                text: 'Annotate axis value'
             }
         }]
 
