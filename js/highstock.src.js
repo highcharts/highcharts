@@ -17393,7 +17393,8 @@ extend(defaultOptions, {
 				units: units
 			},
 			dataLabels: {
-				enabled: false
+				enabled: false,
+				zIndex: 2 // #1839
 			},
 			id: PREFIX + 'navigator-series',
 			lineColor: '#4572A7',
