@@ -338,7 +338,7 @@ extend(Chart.prototype, {
 			chartExportingOptions = chart.options.exporting,
 			svg = chart.getSVG(merge(
 				{ chart: { borderRadius: 0 } },
-				chartExportingOptions,
+				chartExportingOptions.chartOptions,
 				chartOptions, 
 				{
 					exporting: {
