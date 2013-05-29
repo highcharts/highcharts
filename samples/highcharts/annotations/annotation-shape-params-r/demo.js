@@ -16,12 +16,18 @@ $(function () {
         }],
 
         annotations: [{
-            xValue: 6,
-            yValue: 176,
-            anchorX: 'right',
-            anchorY: 'bottom',
-            title: {
-                text: 'anntoations'
+            xValue: 6.5,
+            yValue: 200,
+            anchorY: 'top',
+            anchorX: 'center',
+            units: 'values',
+            shape: {
+                type: 'circle',
+                params: {
+                    r: 50,
+                    stroke: '#000000',
+                    strokeWidth: 2
+                }
             }
         }]
 

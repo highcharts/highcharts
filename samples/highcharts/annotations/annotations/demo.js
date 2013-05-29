@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'Basic annotations demo'
+            text: 'Chart title'
         },
         credits: {
             enabled: false
@@ -14,7 +14,7 @@ $(function () {
         series: [{
             data: [29.9, {
                 y: 71.5,
-                id: 'a',
+                id: 'a'
             }, 106.4, {
                 y: 129.2,
                 id: 'b'

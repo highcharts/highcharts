@@ -16,12 +16,21 @@ $(function () {
         }],
 
         annotations: [{
-            xValue: 6,
-            yValue: 176,
-            anchorX: 'right',
-            anchorY: 'bottom',
+            xValue: 7,
+            yValue: 140,
+            anchorY: 'top',
+            anchorX: 'middle',
             title: {
-                text: 'anntoations'
+                text: 'Holidays',
+                y: 60
+            },
+            shape: {
+                type: 'path',
+                params: {
+                    d: ['M', -25, 10, 'L', 20, 60, 'M', 25, 60, 'L', 40, 0],
+                    stroke: '#000000',
+                    strokeWidth: 2
+                }
             }
         }]
 

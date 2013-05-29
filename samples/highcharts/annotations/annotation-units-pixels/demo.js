@@ -16,12 +16,15 @@ $(function () {
         }],
 
         annotations: [{
-            xValue: 6,
-            yValue: 176,
-            anchorX: 'right',
-            anchorY: 'bottom',
-            title: {
-                text: 'anntoations'
+            xValue: 0,
+            yValue: 225,
+            units: 'pixels',
+            shape: {
+                type: 'rect',
+                params: {
+                    width: 50,
+                    height: 50
+                }
             }
         }]
 

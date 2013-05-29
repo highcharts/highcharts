@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'Basic annotations demo'
+            text: 'Chart title'
         },
         credits: {
             enabled: false
@@ -16,18 +16,18 @@ $(function () {
         }],
 
         annotations: [{
-            xValue: 7,
-            yValue: 140,
+            xValue: 2,
+            yValue: 50,
+            anchorX: 'center',
             anchorY: 'top',
-            anchorX: 'middle',
-            title: {
-                text: 'Holidays',
-                y: 60
-            },
+            units: 'values',
             shape: {
-                type: 'path',
+                type: 'rect',
                 params: {
-                    d: ['M', -25, 10, 'L', 20, 60, 'M', 25, 60, 'L', 40, 0],
+                    x: -2,
+                    y: -50,
+                    width: 1,
+                    height: 50,
                     stroke: '#000000',
                     strokeWidth: 2
                 }

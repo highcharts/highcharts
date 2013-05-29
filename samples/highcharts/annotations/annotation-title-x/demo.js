@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'Basic annotations demo'
+            text: 'Chart title'
         },
         credits: {
             enabled: false
