@@ -1398,15 +1398,13 @@ pathAnim = {
 		 */
 		animate: function (el, params, options) {
 			var $el = $(el);
+			el.style = {}; // #1881
 			if (params.d) {
 				el.toD = params.d; // keep the array form for paths, used in $.fx.step.d
 				params.d = 1; // because in jQuery, animating to an array has a different meaning
 			}
 	
 			$el.stop();
-			if (params.opacity !== UNDEFINED && el.attr) {
-				params.opacity += 'px'; // force jQuery to use same logic as width and height
-			}
 			$el.animate(params, options);
 	
 		},
@@ -2391,9 +2389,7 @@ SVGElement.prototype = {
 			for (n in styles) {
 				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
 			}
-			elemWrapper.attr({
-				style: serializedCss
-			});
+			attr(elem, 'style', serializedCss); // #1881
 		}
 
 
@@ -17393,7 +17389,8 @@ extend(defaultOptions, {
 				units: units
 			},
 			dataLabels: {
-				enabled: false
+				enabled: false,
+				zIndex: 2 // #1839
 			},
 			id: PREFIX + 'navigator-series',
 			lineColor: '#4572A7',
