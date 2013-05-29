@@ -10,12 +10,18 @@ var UNDEFINED,
 defaultOptions = {
 	xAxis: 0,
 	yAxis: 0,
-	shape: null,
 	title: {
 		style: {},
 		text: "",
 		x: 0,
 		y: 0
+	},
+	shape: {
+		params: {
+			stroke: "#000000",
+			fill: "transparent",
+			strokeWidth: 2
+		}
 	}
 };
 
@@ -143,9 +149,11 @@ Annotation.prototype = {
 			}
 		}
 
+
 		// Based on given options find annotation pixel position
-		x = defined(options.xValue) ? xAxis.toPixels(options.xValue) : options.x;
+		x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) : options.x) - xAxis.minPixelPadding;
 		y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
+
 
 		if (title) {
 			title.attr(options.title);
@@ -166,8 +174,13 @@ Annotation.prototype = {
 				}
 
 				if (shapeParams.width) {
-					shapeParams.width = shapeParams.width + xAxis.left - x;
+					shapeParams.width -= xAxis.toPixels(0) - xAxis.left;
 				}
+
+				if (shapeParams.x) {
+					shapeParams.x += xAxis.minPixelPadding;
+				}
+
 			}
 
 			resetBBox = true;
