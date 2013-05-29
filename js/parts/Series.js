@@ -1281,7 +1281,7 @@ Series.prototype = {
 			isBottomSeries,
 			allStackSeries,
 			i,
-			placeBetween = options.pointPlacement === 'between',
+            dynamicallyPlaced = options.pointPlacement === 'between' || $.isNumeric(options.pointPlacement),
 			threshold = options.threshold;
 			//nextSeriesDown;
 			
@@ -1316,7 +1316,7 @@ Series.prototype = {
 			}
 			
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, options.pointPlacement); // Math.round fixes #591
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1359,7 +1359,7 @@ Series.prototype = {
 				UNDEFINED;
 			
 			// Set client related positions for mouse tracking
-			point.clientX = placeBetween ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
+			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
 				
 			point.negative = point.y < (threshold || 0);
 

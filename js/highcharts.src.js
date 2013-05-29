@@ -6970,7 +6970,7 @@ Axis.prototype = {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacementBetween) {
+	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -7015,7 +7015,7 @@ Axis.prototype = {
 			}
 
 			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(pointPlacementBetween ? localA * axis.pointRange / 2 : 0);
+                (pointPlacement === 'between' ? localA * axis.pointRange / 2 : $.isNumeric(pointPlacement) ? localA * pointPlacement : 0);
 		}
 
 		return returnValue;
@@ -13151,7 +13151,7 @@ Series.prototype = {
 			isBottomSeries,
 			allStackSeries,
 			i,
-			placeBetween = options.pointPlacement === 'between',
+            dynamicallyPlaced = options.pointPlacement === 'between' || $.isNumeric(options.pointPlacement),
 			threshold = options.threshold;
 			//nextSeriesDown;
 			
@@ -13186,7 +13186,7 @@ Series.prototype = {
 			}
 			
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, options.pointPlacement); // Math.round fixes #591
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -13229,7 +13229,7 @@ Series.prototype = {
 				UNDEFINED;
 			
 			// Set client related positions for mouse tracking
-			point.clientX = placeBetween ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
+			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
 				
 			point.negative = point.y < (threshold || 0);
 

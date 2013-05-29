@@ -657,7 +657,7 @@ Axis.prototype = {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacementBetween) {
+	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -702,7 +702,7 @@ Axis.prototype = {
 			}
 
 			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(pointPlacementBetween ? localA * axis.pointRange / 2 : 0);
+                (pointPlacement === 'between' ? localA * axis.pointRange / 2 : $.isNumeric(pointPlacement) ? localA * pointPlacement : 0);
 		}
 
 		return returnValue;
