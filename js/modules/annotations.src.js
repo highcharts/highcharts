@@ -4,7 +4,26 @@ var UNDEFINED,
 	ALIGN_FACTOR,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
-	each = Highcharts.each;
+	each = Highcharts.each,
+	defaultOptions;
+
+defaultOptions = {
+	xAxis: 0,
+	yAxis: 0,
+	title: {
+		style: {},
+		text: "",
+		x: 0,
+		y: 0
+	},
+	shape: {
+		params: {
+			stroke: "#000000",
+			fill: "transparent",
+			strokeWidth: 2
+		}
+	}
+};
 
 ALLOWED_SHAPES = ["path", "rect", "circle"];
 
@@ -19,7 +38,8 @@ ALIGN_FACTOR = {
 
 
 // Highcharts helper methods
-var inArray = HighchartsAdapter.inArray;
+var inArray = HighchartsAdapter.inArray,
+	merge = Highcharts.merge;
 
 function isArray(obj) {
 	return Object.prototype.toString.call(obj) === '[object Array]';
@@ -44,7 +64,7 @@ Annotation.prototype = {
 	 */
 	init: function (chart, options) {
 		this.chart = chart;
-		this.options = options;
+		this.options = merge({}, defaultOptions, options);
 	},
 
 	/*
@@ -66,7 +86,7 @@ Annotation.prototype = {
 		}
 
 		if (!title && titleOptions) {
-			title = annotation.title = renderer.label(null);
+			title = annotation.title = renderer.label(titleOptions);
 			title.add(group);
 		}
 
@@ -95,8 +115,8 @@ Annotation.prototype = {
 			title = this.title,
 			shape = this.shape,
 			linkedTo = this.linkedObject,
-			xAxis = chart.xAxis[options.xAxis || 0],
-			yAxis = chart.yAxis[options.yAxis || 0],
+			xAxis = chart.xAxis[options.xAxis],
+			yAxis = chart.yAxis[options.yAxis],
 			width = options.width,
 			height = options.height,
 			anchorY = ALIGN_FACTOR[options.anchorY],
@@ -110,7 +130,6 @@ Annotation.prototype = {
 			x,
 			y;
 
-
 		if (linkedTo) {
 			linkType = (linkedTo instanceof Highcharts.Point) ? 'point' :
 						(linkedTo instanceof Highcharts.Series) ? 'series' : null;
@@ -119,7 +138,6 @@ Annotation.prototype = {
 				options.xValue = linkedTo.x;
 				options.yValue = linkedTo.y;
 				series = linkedTo.series;
-
 			} else if (linkType === 'series') {
 				series = linkedTo;
 			}
@@ -131,12 +149,20 @@ Annotation.prototype = {
 			}
 		}
 
+
 		// Based on given options find annotation pixel position
-		x = defined(options.xValue) ? xAxis.toPixels(options.xValue) : options.x;
+		x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) : options.x) - xAxis.minPixelPadding;
 		y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
+
+
+		if (isNaN(x) || isNaN(y) || !isNumber(x) || !isNumber(y)) {
+			return;
+		}
+
 
 		if (title) {
 			title.attr(options.title);
+			title.css(options.title.style);
 			resetBBox = true;
 		}
 
@@ -153,8 +179,13 @@ Annotation.prototype = {
 				}
 
 				if (shapeParams.width) {
-					shapeParams.width = shapeParams.width + xAxis.left - x;
+					shapeParams.width -= xAxis.toPixels(0) - xAxis.left;
 				}
+
+				if (shapeParams.x) {
+					shapeParams.x += xAxis.minPixelPadding;
+				}
+
 			}
 
 			resetBBox = true;
@@ -188,7 +219,17 @@ Annotation.prototype = {
 		}
 
 		// Translate group according to its dimension and anchor point
-		group.translate(x - width * anchorX, y - height * anchorY);
+		x = x - width * anchorX;
+		y = y - height * anchorY;
+
+		if (chart.animation && defined(group.translateX) && defined(group.translateY)) {
+			group.animate({
+				translateX: x,
+				translateY: y
+			});
+		} else {
+			group.translate(x, y);
+		}
 	},
 
 	/*
