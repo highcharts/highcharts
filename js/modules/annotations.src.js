@@ -155,6 +155,11 @@ Annotation.prototype = {
 		y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
 
 
+		if (isNaN(x) || isNaN(y) || !isNumber(x) || !isNumber(y)) {
+			return;
+		}
+
+
 		if (title) {
 			title.attr(options.title);
 			title.css(options.title.style);
@@ -214,7 +219,17 @@ Annotation.prototype = {
 		}
 
 		// Translate group according to its dimension and anchor point
-		group.translate(x - width * anchorX, y - height * anchorY);
+		x = x - width * anchorX;
+		y = y - height * anchorY;
+
+		if (chart.animation && defined(group.translateX) && defined(group.translateY)) {
+			group.animate({
+				translateX: x,
+				translateY: y
+			});
+		} else {
+			group.translate(x, y);
+		}
 	},
 
 	/*
