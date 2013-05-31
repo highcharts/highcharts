@@ -10,12 +10,18 @@ var UNDEFINED,
 defaultOptions = {
 	xAxis: 0,
 	yAxis: 0,
-	shape: null,
 	title: {
 		style: {},
 		text: "",
 		x: 0,
 		y: 0
+	},
+	shape: {
+		params: {
+			stroke: "#000000",
+			fill: "transparent",
+			strokeWidth: 2
+		}
 	}
 };
 
@@ -143,9 +149,16 @@ Annotation.prototype = {
 			}
 		}
 
+
 		// Based on given options find annotation pixel position
-		x = defined(options.xValue) ? xAxis.toPixels(options.xValue) : options.x;
+		x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) : options.x) - xAxis.minPixelPadding;
 		y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
+
+
+		if (isNaN(x) || isNaN(y) || !isNumber(x) || !isNumber(y)) {
+			return;
+		}
+
 
 		if (title) {
 			title.attr(options.title);
@@ -166,8 +179,13 @@ Annotation.prototype = {
 				}
 
 				if (shapeParams.width) {
-					shapeParams.width = shapeParams.width + xAxis.left - x;
+					shapeParams.width -= xAxis.toPixels(0) - xAxis.left;
 				}
+
+				if (shapeParams.x) {
+					shapeParams.x += xAxis.minPixelPadding;
+				}
+
 			}
 
 			resetBBox = true;
@@ -201,7 +219,17 @@ Annotation.prototype = {
 		}
 
 		// Translate group according to its dimension and anchor point
-		group.translate(x - width * anchorX, y - height * anchorY);
+		x = x - width * anchorX;
+		y = y - height * anchorY;
+
+		if (chart.animation && defined(group.translateX) && defined(group.translateY)) {
+			group.animate({
+				translateX: x,
+				translateY: y
+			});
+		} else {
+			group.translate(x, y);
+		}
 	},
 
 	/*
