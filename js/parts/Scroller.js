@@ -891,8 +891,10 @@ Scroller.prototype = {
 			proceed.call(this);
 			
 			// Compute the top position
-			scroller.top = top = scroller.navigatorOptions.top || this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom - 
-						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled ? legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+			scroller.top = top = scroller.navigatorOptions.top || 
+				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom - 
+						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ? 
+							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 
 			if (xAxis && yAxis) { // false if navigator is disabled (#904)
 
