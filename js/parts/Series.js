@@ -1349,6 +1349,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			xAxis = series.xAxis,
 			stacks = yAxis.stacks,
+			oldStacks = yAxis.oldStacks,
 			cropped = series.cropped,
 			stacksMax = yAxis.stacksMax,
 			xExtremes = xAxis.getExtremes(),
@@ -1370,17 +1371,23 @@ Series.prototype = {
 			isNegative = y < threshold;
 			key = isNegative ? negKey : stackKey;
 
-			// add the series
 			if (!stacks[key]) {
 				stacks[key] = {};
+			}
+
+			if (!stacksMax[key]) {
 				stacksMax[key] = y;
 			}
 
-			// If the StackItem doesn't exist, create it first
-			if (!stacks[key][x]) {
+			if (oldStacks[key] && oldStacks[key][x]) {
+				stacks[key][x] = oldStacks[key][x];
+				stacks[key][x].total = null;
+				oldStacks[key][x] = null;
+			} else if (!stacks[key][x]) {
 				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
 			}
 
+			// If the StackItem doesn't exist, create it first
 			if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
 				stack = stacks[key][x];
 				total = stack.total;

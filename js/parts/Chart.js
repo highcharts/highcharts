@@ -534,6 +534,11 @@ Chart.prototype = {
 
 		// reset stacks for each yAxis
 		each(chart.yAxis, function (axis) {
+			if (axis.stacks) {
+				axis.oldStacks = axis.stacks;
+			}
+
+			axis.stacksMax = {};
 			axis.stacks = {};
 		});
 
@@ -542,11 +547,8 @@ Chart.prototype = {
 				return;
 			}
 
-			var seriesOptions = series.options,
-				stackOption = seriesOptions.stack,
-				stackKey = series.type + pick(stackOption, '');
-
-			series.stackKey = stackKey; // used in translate
+			// used in translate
+			series.stackKey = series.type + pick(series.options.stack, '');
 		});
 	},
 
