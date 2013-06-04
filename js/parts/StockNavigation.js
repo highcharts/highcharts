@@ -10,7 +10,7 @@ Chart.prototype.callbacks.push(function (chart) {
 		extremes = chart.xAxis[0].getExtremes();
 		scroller.render(
 			mathMax(extremes.min, extremes.dataMin),
-			mathMin(extremes.max, extremes.dataMax)
+			mathMin(extremes.max, pick(extremes.dataMax, Number.MAX_VALUE))
 		);
 	}
 
