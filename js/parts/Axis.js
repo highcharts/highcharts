@@ -475,8 +475,15 @@ Axis.prototype = {
 		// reset dataMin and dataMax in case we're redrawing
 		axis.dataMin = axis.dataMax = null;
 
+		// reset cached stacking extremes
+		axis.stacksMax = {};
+
 		// loop through this axis' series
 		each(axis.series, function (series) {
+
+			if (axis.xOrY === 'y') {
+				series.setStackedPoints();
+			}
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -1117,7 +1124,6 @@ Axis.prototype = {
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
 				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
-				series.setStackedPoints();
 			});
 		}
 
@@ -1284,6 +1290,15 @@ Axis.prototype = {
 				isDirtyData = true;
 			}
 		});
+
+		// reset stacks
+		if (!axis.isXAxis) {
+			for (type in stacks) {
+				for (i in stacks[type]) {
+					stacks[type][i].total = null;
+				}
+			}
+		}
 		
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||

@@ -6805,8 +6805,15 @@ Axis.prototype = {
 		// reset dataMin and dataMax in case we're redrawing
 		axis.dataMin = axis.dataMax = null;
 
+		// reset cached stacking extremes
+		axis.stacksMax = {};
+
 		// loop through this axis' series
 		each(axis.series, function (series) {
+
+			if (axis.xOrY === 'y') {
+				series.setStackedPoints();
+			}
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -7447,7 +7454,6 @@ Axis.prototype = {
 		if (isXAxis && !secondPass) {
 			each(axis.series, function (series) {
 				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
-				series.setStackedPoints();
 			});
 		}
 
@@ -7614,6 +7620,15 @@ Axis.prototype = {
 				isDirtyData = true;
 			}
 		});
+
+		// reset stacks
+		if (!axis.isXAxis) {
+			for (type in stacks) {
+				for (i in stacks[type]) {
+					stacks[type][i].total = null;
+				}
+			}
+		}
 		
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
@@ -13200,14 +13215,17 @@ Series.prototype = {
 			isNegative = y < threshold;
 			key = isNegative ? negKey : stackKey;
 
-			if (!stacks[key]) {
-				stacks[key] = {};
-			}
-
+			// Set default stacksMax value for this stack
 			if (!stacksMax[key]) {
 				stacksMax[key] = y;
 			}
 
+			// Create empty object for this stack if it doesn't exist yet
+			if (!stacks[key]) {
+				stacks[key] = {};
+			}
+
+			// Initialize StackItem for this x
 			if (oldStacks[key] && oldStacks[key][x]) {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;

@@ -1371,14 +1371,17 @@ Series.prototype = {
 			isNegative = y < threshold;
 			key = isNegative ? negKey : stackKey;
 
-			if (!stacks[key]) {
-				stacks[key] = {};
-			}
-
+			// Set default stacksMax value for this stack
 			if (!stacksMax[key]) {
 				stacksMax[key] = y;
 			}
 
+			// Create empty object for this stack if it doesn't exist yet
+			if (!stacks[key]) {
+				stacks[key] = {};
+			}
+
+			// Initialize StackItem for this x
 			if (oldStacks[key] && oldStacks[key][x]) {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
