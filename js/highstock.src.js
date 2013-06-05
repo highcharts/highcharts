@@ -681,7 +681,11 @@ function normalizeTimeTickInterval(tickInterval, unitsOption) {
 	}
 
 	// get the count
-	count = normalizeTickInterval(tickInterval / interval, multiples);
+	count = normalizeTickInterval(
+		tickInterval / interval, 
+		multiples,
+		unit[0] === YEAR ? math.pow(10, mathFloor(math.log(tickInterval / interval) / math.LN10)) : 1 // #1913
+	);
 	
 	return {
 		unitRange: interval,
