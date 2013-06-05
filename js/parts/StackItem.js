@@ -52,7 +52,7 @@ StackItem.prototype = {
 	 */
 	render: function (group) {
 		var options = this.options,
-			formatOption = options.format, // docs: added stackLabel.format option
+			formatOption = options.format,
 			str = formatOption ?
 				format(formatOption, this) : 
 				options.formatter.call(this);  // format the text in the label

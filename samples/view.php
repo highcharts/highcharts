@@ -14,9 +14,9 @@ $fullpath = dirname(__FILE__) . '/' . $path;
 ob_start();
 include("$fullpath/demo.html");
 $html = ob_get_clean();
-$html = str_replace('/code.highcharts.com/high', '/codev.highcharts.com/high', $html);
-$html = str_replace('/code.highcharts.com/stock/', '/codev.highcharts.com/', $html);
-$html = str_replace('/code.highcharts.com/modules/', '/codev.highcharts.com/modules/', $html);
+$html = str_replace('/code.highcharts.com/high', '/code.highcharts.local/high', $html);
+$html = str_replace('/code.highcharts.com/stock/', '/code.highcharts.local/', $html);
+$html = str_replace('/code.highcharts.com/modules/', '/code.highcharts.local/modules/', $html);
 
 
 
@@ -64,7 +64,7 @@ function getResources() {
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highstock Example</title>
 		<!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script -->
-		<script src="/lib/jquery-1.7.2.js"></script>
+		<script src="/lib/jquery-1.10.1.js"></script>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
 		<?php @include("$fullpath/demo.js"); ?>

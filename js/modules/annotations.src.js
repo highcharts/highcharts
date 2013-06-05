@@ -2,6 +2,7 @@
 
 var UNDEFINED,
 	ALIGN_FACTOR,
+	ALLOWED_SHAPES,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
 	each = Highcharts.each,

@@ -344,7 +344,6 @@ Pointer.prototype = {
 			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
-			multiTouch = touchesLength > 1,
 			lastValidTouch = self.lastValidTouch,
 			zoomHor = self.zoomHor || self.pinchHor,
 			zoomVert = self.zoomVert || self.pinchVert,

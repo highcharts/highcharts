@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.3.1 (2013-04-09)
+ * @license Highstock JS v1.3.2 (2013-06-05)
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -10,7 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
+/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
 
 (function () {
 // encapsulated variables
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highstock',
-	VERSION = '1.3.1',
+	VERSION = '1.3.2',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1096,7 +1096,8 @@ pathAnim = {
 				Step = Fx.step,
 				dSetter,
 				Tween = $.Tween,
-				propHooks = Tween && Tween.propHooks;
+				propHooks = Tween && Tween.propHooks,
+				opacityHook = $.cssHooks.opacity;
 			
 			/*jslint unparam: true*//* allow unused param x in this function */
 			$.extend($.easing, {
@@ -1105,7 +1106,6 @@ pathAnim = {
 				}
 			});
 			/*jslint unparam: false*/
-		
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
@@ -1142,6 +1142,11 @@ pathAnim = {
 							base.apply(this, arguments); // use jQuery's built-in method
 					};
 				}
+			});
+
+			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
+			wrap(opacityHook, 'get', function (proceed, elem, computed) {
+				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
 			
@@ -1398,7 +1403,9 @@ pathAnim = {
 		 */
 		animate: function (el, params, options) {
 			var $el = $(el);
-			el.style = {}; // #1881
+			if (!el.style) {
+				el.style = {}; // #1881
+			}
 			if (params.d) {
 				el.toD = params.d; // keep the array form for paths, used in $.fx.step.d
 				params.d = 1; // because in jQuery, animating to an array has a different meaning
@@ -1487,8 +1494,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.1/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.1/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.2/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.2/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -6253,7 +6260,7 @@ StackItem.prototype = {
 	 */
 	render: function (group) {
 		var options = this.options,
-			formatOption = options.format, // docs: added stackLabel.format option
+			formatOption = options.format,
 			str = formatOption ?
 				format(formatOption, this) : 
 				options.formatter.call(this);  // format the text in the label
@@ -9200,7 +9207,6 @@ Pointer.prototype = {
 			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
-			multiTouch = touchesLength > 1,
 			lastValidTouch = self.lastValidTouch,
 			zoomHor = self.zoomHor || self.pinchHor,
 			zoomVert = self.zoomVert || self.pinchVert,
