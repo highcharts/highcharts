@@ -906,7 +906,7 @@ Axis.prototype = {
 			interval = normalizeTickInterval(
 				interval, 
 				null, 
-				math.pow(10, mathFloor(math.log(interval) / math.LN10))
+				getMagnitude(interval)
 			);
 			
 			positions = map(axis.getLinearTickPositions(
@@ -1136,7 +1136,6 @@ Axis.prototype = {
 			isXAxis = axis.isXAxis,
 			isLinked = axis.isLinked,
 			tickPositioner = axis.options.tickPositioner,
-			magnitude,
 			maxPadding = options.maxPadding,
 			minPadding = options.minPadding,
 			length,
@@ -1243,9 +1242,8 @@ Axis.prototype = {
 
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog) { // linear
-			magnitude = math.pow(10, mathFloor(math.log(axis.tickInterval) / math.LN10));
 			if (!tickIntervalOption) {
-				axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, magnitude, options);
+				axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, getMagnitude(axis.tickInterval), options);
 			}
 		}
 

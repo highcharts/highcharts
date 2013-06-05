@@ -449,6 +449,13 @@ function format(str, ctx) {
 }
 
 /**
+ * Get the magnitude of a number
+ */
+function getMagnitude(num) {
+	return math.pow(10, mathFloor(math.log(num) / math.LN10));
+}
+
+/**
  * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
  * @param {Number} interval
  * @param {Array} multiples
@@ -563,7 +570,7 @@ function normalizeTimeTickInterval(tickInterval, unitsOption) {
 	count = normalizeTickInterval(
 		tickInterval / interval, 
 		multiples,
-		unit[0] === YEAR ? math.pow(10, mathFloor(math.log(tickInterval / interval) / math.LN10)) : 1 // #1913
+		unit[0] === YEAR ? getMagnitude(tickInterval / interval) : 1 // #1913
 	);
 	
 	return {
