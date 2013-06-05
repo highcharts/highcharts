@@ -6048,6 +6048,7 @@ PlotLineOrBand.prototype = {
 			halfPointRange = (axis.pointRange || 0) / 2,
 			options = plotLine.options,
 			optionsLabel = options.label,
+			useHTML = optionsLabel.useHTML || false,
 			label = plotLine.label,
 			width = options.width,
 			to = options.to,
@@ -6153,7 +6154,8 @@ PlotLineOrBand.prototype = {
 				plotLine.label = label = renderer.text(
 						optionsLabel.text,
 						0,
-						0
+						0,
+						useHTML
 					)
 					.attr({
 						align: optionsLabel.textAlign || optionsLabel.align,
