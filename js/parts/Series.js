@@ -1169,7 +1169,7 @@ Series.prototype = {
 		
 		
 		// Find the closest distance between processed points
-		for (i = processedXData.length - 1; i > 0; i--) {
+		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
@@ -1385,7 +1385,6 @@ Series.prototype = {
 			if (oldStacks[key] && oldStacks[key][x]) {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
-				oldStacks[key][x] = null;
 			} else if (!stacks[key][x]) {
 				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
 			}
@@ -1406,6 +1405,9 @@ Series.prototype = {
 				}
 			}
 		}
+
+		// reset old stacks
+		yAxis.oldStacks = {};
 	},
 
 	/**

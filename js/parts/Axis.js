@@ -299,6 +299,7 @@ Axis.prototype = {
 	
 		// Dictionary for stacks
 		axis.stacks = {};
+		axis.oldStacks = {};
 
 		// Dictionary for stacks max values
 		axis.stacksMax = {};
@@ -481,7 +482,7 @@ Axis.prototype = {
 		// loop through this axis' series
 		each(axis.series, function (series) {
 
-			if (axis.xOrY === 'y') {
+			if (!axis.isXAxis) {
 				series.setStackedPoints();
 			}
 
@@ -1291,18 +1292,19 @@ Axis.prototype = {
 			}
 		});
 
-		// reset stacks
-		if (!axis.isXAxis) {
-			for (type in stacks) {
-				for (i in stacks[type]) {
-					stacks[type][i].total = null;
-				}
-			}
-		}
-		
+
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
+			
+			// reset stacks
+			if (!axis.isXAxis) {
+				for (type in stacks) {
+					for (i in stacks[type]) {
+						stacks[type][i].total = null;
+					}
+				}
+			}
 
 			axis.forceRedraw = false;
 
@@ -1320,11 +1322,12 @@ Axis.prototype = {
 			if (!axis.isDirty) {
 				axis.isDirty = isDirtyAxisLength || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
 			}
-		}
-		
-		
-		// reset stacks
-		if (!axis.isXAxis) {
+		} else if (!axis.isXAxis) {
+			if (axis.oldStacks) {
+				stacks = axis.stacks = axis.oldStacks;
+			}
+
+			// reset stacks
 			for (type in stacks) {
 				for (i in stacks[type]) {
 					stacks[type][i].cum = stacks[type][i].total;

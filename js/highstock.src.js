@@ -6629,6 +6629,7 @@ Axis.prototype = {
 	
 		// Dictionary for stacks
 		axis.stacks = {};
+		axis.oldStacks = {};
 
 		// Dictionary for stacks max values
 		axis.stacksMax = {};
@@ -6811,7 +6812,7 @@ Axis.prototype = {
 		// loop through this axis' series
 		each(axis.series, function (series) {
 
-			if (axis.xOrY === 'y') {
+			if (!axis.isXAxis) {
 				series.setStackedPoints();
 			}
 
@@ -7621,18 +7622,19 @@ Axis.prototype = {
 			}
 		});
 
-		// reset stacks
-		if (!axis.isXAxis) {
-			for (type in stacks) {
-				for (i in stacks[type]) {
-					stacks[type][i].total = null;
-				}
-			}
-		}
-		
+
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
 			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
+			
+			// reset stacks
+			if (!axis.isXAxis) {
+				for (type in stacks) {
+					for (i in stacks[type]) {
+						stacks[type][i].total = null;
+					}
+				}
+			}
 
 			axis.forceRedraw = false;
 
@@ -7650,11 +7652,12 @@ Axis.prototype = {
 			if (!axis.isDirty) {
 				axis.isDirty = isDirtyAxisLength || axis.min !== axis.oldMin || axis.max !== axis.oldMax;
 			}
-		}
-		
-		
-		// reset stacks
-		if (!axis.isXAxis) {
+		} else if (!axis.isXAxis) {
+			if (axis.oldStacks) {
+				stacks = axis.stacks = axis.oldStacks;
+			}
+
+			// reset stacks
 			for (type in stacks) {
 				for (i in stacks[type]) {
 					stacks[type][i].cum = stacks[type][i].total;
@@ -10808,21 +10811,15 @@ Chart.prototype = {
 
 		// reset stacks for each yAxis
 		each(chart.yAxis, function (axis) {
-			if (axis.stacks) {
+			if (axis.stacks && axis.hasVisibleSeries) {
 				axis.oldStacks = axis.stacks;
 			}
-
-			axis.stacksMax = {};
-			axis.stacks = {};
 		});
 
 		each(chart.series, function (series) {
-			if ((series.visible === false && chart.options.chart.ignoreHiddenSeries) || !series.options.stacking) {
-				return;
+			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
+				series.stackKey = series.type + pick(series.options.stack, '');
 			}
-
-			// used in translate
-			series.stackKey = series.type + pick(series.options.stack, '');
 		});
 	},
 
@@ -13013,7 +13010,7 @@ Series.prototype = {
 		
 		
 		// Find the closest distance between processed points
-		for (i = processedXData.length - 1; i > 0; i--) {
+		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
@@ -13229,7 +13226,6 @@ Series.prototype = {
 			if (oldStacks[key] && oldStacks[key][x]) {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
-				oldStacks[key][x] = null;
 			} else if (!stacks[key][x]) {
 				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
 			}
@@ -13250,6 +13246,9 @@ Series.prototype = {
 				}
 			}
 		}
+
+		// reset old stacks
+		yAxis.oldStacks = {};
 	},
 
 	/**
