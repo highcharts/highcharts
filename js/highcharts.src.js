@@ -1473,7 +1473,7 @@ var
 defaultLabelOptions = {
 	enabled: true,
 	// rotation: 0,
-	align: 'center',
+	// align: 'center',
 	x: 0,
 	y: 15,
 	/*formatter: function () {
@@ -5719,7 +5719,7 @@ Tick.prototype = {
 		// first call
 		if (!defined(label)) {
 			attr = {
-				align: labelOptions.align
+				align: axis.labelAlign
 			};
 			if (isNumber(labelOptions.rotation)) {
 				attr.rotation = labelOptions.rotation;
@@ -6432,7 +6432,6 @@ Axis.prototype = {
 		tickPixelInterval: 72,
 		showLastLabel: true,
 		labels: {
-			align: 'right',
 			x: -8,
 			y: 3
 		},
@@ -6465,7 +6464,6 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			align: 'right',
 			x: -8,
 			y: null
 		},
@@ -6479,7 +6477,6 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			align: 'left',
 			x: 8,
 			y: null
 		},
@@ -6493,7 +6490,6 @@ Axis.prototype = {
 	 */
 	defaultBottomAxisOptions: {
 		labels: {
-			align: 'center',
 			x: 0,
 			y: 14
 			// overflow: undefined,
@@ -6508,7 +6504,6 @@ Axis.prototype = {
 	 */
 	defaultTopAxisOptions: {
 		labels: {
-			align: 'center',
 			x: 0,
 			y: -5
 			// overflow: undefined
@@ -7913,6 +7908,24 @@ Axis.prototype = {
 	},
 
 	/**
+	 * Compute auto alignment for the axis label based on which side the axis is on 
+	 * and the given rotation for the label
+	 */
+	autoLabelAlign: function (rotation) {
+		var ret, 
+			angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360;
+
+		if (angle > 15 && angle < 165) {
+			ret = 'right';
+		} else if (angle > 195 && angle < 345) {
+			ret = 'left';
+		} else {
+			ret = 'center';
+		}
+		return ret;
+	},
+
+	/**
 	 * Render the tick labels to a preliminary position to get their sizes
 	 */
 	getOffset: function () {
@@ -7956,6 +7969,10 @@ Axis.prototype = {
 		}
 
 		if (hasData || axis.isLinked) {
+			
+			// Set the explicit or automatic label alignment
+			axis.labelAlign = pick(labelOptions.align || axis.autoLabelAlign(labelOptions.rotation));
+
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
 					ticks[pos] = new Tick(axis, pos);
@@ -7965,9 +7982,10 @@ Axis.prototype = {
 
 			});
 
+
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
-				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === labelOptions.align) {
+				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
 
 					// get the highest offset
 					labelOffset = mathMax(
