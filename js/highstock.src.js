@@ -17813,7 +17813,7 @@ Scroller.prototype = {
 		}
 
 		// draw the scrollbar
-		if (scrollbarEnabled) {
+		if (scrollbarEnabled && scrollbarGroup) {
 
 			// draw the buttons
 			scroller.drawScrollbarButton(0);
