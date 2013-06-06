@@ -274,6 +274,19 @@
         <fixcrlf srcDir="${basedir}/test" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
     </target>
 
+
+    <!-- Set a property that tells if there are nbsp. -->
+    <!--
+    <target name="do-check-nbsp">
+        <condition property="has.nbsp">
+            <resourcecontains resource="${highstock.src.file}" substring=""/>
+        </condition>
+    </target>
+    <target name="check-nbsp" depends="do-check-nbsp" if="has.nbsp">
+        <echo message="ERROR: Non-breaking space characters exist in source code."/>
+    </target>
+    -->
+
     <!-- Runs jslint on generated source code. -->
     <target name="do-lint" depends="check-crlf">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue" encoding="UTF-8">

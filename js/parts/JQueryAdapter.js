@@ -64,7 +64,7 @@
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
 			wrap(opacityHook, 'get', function (proceed, elem, computed) {
-				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
+				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
 			
