@@ -14,25 +14,6 @@
 
 	<!-- Activate annotation configured components -->
 	<mvc:annotation-driven/>
-	<task:annotation-driven/>
 	<context:annotation-config/>
-	<context:property-placeholder location="classpath:app.properties" />
-
-	<bean id="serverObjectFactory" class="com.highcharts.export.pool.ServerObjectFactory">
-		<property name="host" value="${host}"/>
-		<property name="basePort" value="${port}"/>
-		<property name="exec" value="${exec}"/>
-		<property name="script" value="${script}"/>
-		<property name="readTimeout" value="${readTimeout}"/>
-		<property name="connectTimeout" value="${connectTimeout}"/>
-		<property name="maxTimeout" value="${maxTimeout}"/>
-	</bean>
-
-	<bean id="serverPool" class="com.highcharts.export.pool.BlockingQueuePool">
-		<constructor-arg name="factory" ref="serverObjectFactory"/>
-		<constructor-arg name="number"  value="${poolSize}"/>
-		<constructor-arg name="maxWait" value="${maxWait}"/>
-	</bean>
-
-
+	<import resource="classpath:spring-convert.xml"/>
 </beans>
