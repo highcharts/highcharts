@@ -5858,16 +5858,23 @@ Tick.prototype = {
 		var axis = this.axis,
 			transA = axis.transA,
 			reversed = axis.reversed,
-			staggerLines = axis.staggerLines;
+			staggerLines = axis.staggerLines,
+			baseline = axis.chart.renderer.fontMetrics(labelOptions.style.fontSize).b,
+			rotation = labelOptions.rotation;
 			
 		x = x + labelOptions.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + labelOptions.y - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+
+		// Correct for rotation (#1764)
+		if (rotation && axis.side === 2) {
+			y -= baseline - baseline * mathCos(rotation * deg2rad);
+		}
 		
 		// Vertically centered
 		if (!defined(labelOptions.y)) {
-			y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+			y += baseline - label.getBBox().height / 2;
 		}
 		
 		// Correct for staggered labels
@@ -17705,8 +17712,13 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		pxMin = pick(pxMin, xAxis.translate(min));
-		pxMax = pick(pxMax, xAxis.translate(max));
+		if (mathRound(min) === mathRound(max) && pxMin === UNDEFINED) { // #1851
+			pxMin = 0;
+			pxMax = scrollerWidth;
+		} else {
+			pxMin = pick(pxMin, xAxis.translate(min));
+			pxMax = pick(pxMax, xAxis.translate(max));
+		}
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
