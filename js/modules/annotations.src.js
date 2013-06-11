@@ -86,14 +86,15 @@ Annotation.prototype = {
 			group = annotation.group = renderer.g();
 		}
 
-		if (!title && titleOptions) {
-			title = annotation.title = renderer.label(titleOptions);
-			title.add(group);
-		}
 
 		if (!shape && shapeOptions && inArray(shapeOptions.type, ALLOWED_SHAPES) !== -1) {
 			shape = annotation.shape = renderer[options.shape.type](shapeOptions.params);
 			shape.add(group);
+		}
+
+		if (!title && titleOptions) {
+			title = annotation.title = renderer.label(titleOptions);
+			title.add(group);
 		}
 
 		group.add(chart.annotations.group);
