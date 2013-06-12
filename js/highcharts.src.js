@@ -10017,7 +10017,8 @@ Legend.prototype = {
 
 		itemWidth = item.legendItemWidth =
 			options.itemWidth || symbolWidth + symbolPadding + bBox.width + padding +
-			(showCheckbox && checkboxPosition == 'right' ? 20 : 0);
+			(showCheckbox && checkboxPosition == 'right' ? 20 : 0) +
+      (showCheckbox && checkboxPosition == 'left' && horizontal ? 20 : 0);
 		legend.itemHeight = itemHeight = bBox.height;
 
 		// if the item exceeds the width, start a new line
