@@ -2267,7 +2267,7 @@ Series.prototype = {
 		var options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor,
+			negativeColor = options.negativeColor || options.negativeFillColor,
 			translatedThreshold,
 			posAttr,
 			negAttr,
@@ -2327,7 +2327,7 @@ Series.prototype = {
 				this.posClip = posClip = renderer.clipRect(posAttr);
 				this.negClip = negClip = renderer.clipRect(negAttr);
 				
-				if (graph) {
+				if (graph && this.graphNeg) {
 					graph.clip(posClip);
 					this.graphNeg.clip(negClip);	
 				}

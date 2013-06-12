@@ -14185,7 +14185,7 @@ Series.prototype = {
 		var options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor,
+			negativeColor = options.negativeColor || options.negativeFillColor,
 			translatedThreshold,
 			posAttr,
 			negAttr,
@@ -14245,7 +14245,7 @@ Series.prototype = {
 				this.posClip = posClip = renderer.clipRect(posAttr);
 				this.negClip = negClip = renderer.clipRect(negAttr);
 				
-				if (graph) {
+				if (graph && this.graphNeg) {
 					graph.clip(posClip);
 					this.graphNeg.clip(negClip);	
 				}
@@ -14826,10 +14826,11 @@ var AreaSeries = extendClass(Series, {
 			areaPath = this.areaPath,
 			options = this.options,
 			negativeColor = options.negativeColor,
+			negativeFillColor = options.negativeFillColor,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		if (negativeColor) {
-			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]);
+		if (negativeColor || negativeFillColor) {
+			props.push(['areaNeg', negativeColor, negativeFillColor]);
 		}
 		
 		each(props, function (prop) {
