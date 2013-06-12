@@ -14196,11 +14196,12 @@ Series.prototype = {
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			chartSizeMax = mathMax(chartWidth, chartHeight),
+			yAxis = this.yAxis,
 			above,
 			below;
 		
 		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathCeil(this.yAxis.len - this.yAxis.translate(options.threshold || 0));
+			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
 			above = {
 				x: 0,
 				y: 0,
@@ -14229,7 +14230,7 @@ Series.prototype = {
 				};
 			}
 			
-			if (this.yAxis.reversed) {
+			if (yAxis.reversed) {
 				posAttr = below;
 				negAttr = above;
 			} else {
