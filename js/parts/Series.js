@@ -326,8 +326,7 @@ Point.prototype = {
 			series.options.data[i] = point.options;
 
 			// redraw
-			series.isDirty = true;
-			series.isDirtyData = true;
+			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
 			if (redraw) {
 				chart.redraw(animation);
 			}
