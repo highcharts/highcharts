@@ -3265,82 +3265,86 @@ SVGRenderer.prototype = {
 						.replace(/&lt;/g, '<')
 						.replace(/&gt;/g, '>');
 
-					// add the text node
-					tspan.appendChild(doc.createTextNode(span));
+					// Nested tags aren't supported, and cause crash in Safari (#1596)
+					if (span !== ' ') {
+					
+						// add the text node
+						tspan.appendChild(doc.createTextNode(span));
 
-					if (!spanNo) { // first span in a line, align it to the left
-						attributes.x = parentX;
-					} else {
-						attributes.dx = 0; // #16
-					}
-
-					// add attributes
-					attr(tspan, attributes);
-
-					// first span on subsequent line, add the line height
-					if (!spanNo && lineNo) {
-
-						// allow getting the right offset height in exporting in IE
-						if (!hasSVG && forExport) {
-							css(tspan, { display: 'block' });
+						if (!spanNo) { // first span in a line, align it to the left
+							attributes.x = parentX;
+						} else {
+							attributes.dx = 0; // #16
 						}
 
-						// Set the line height based on the font size of either 
-						// the text element or the tspan element
-						attr(
-							tspan, 
-							'dy',
-							textLineHeight || renderer.fontMetrics(
-								/px$/.test(tspan.style.fontSize) ?
-									tspan.style.fontSize : 
-									textStyles.fontSize
-							).h,
-							// Safari 6.0.2 - too optimized for its own good (#1539)
-							// TODO: revisit this with future versions of Safari
-							isWebKit && tspan.offsetHeight
-						);
-					}
+						// add attributes
+						attr(tspan, attributes);
 
-					// Append it
-					textNode.appendChild(tspan);
+						// first span on subsequent line, add the line height
+						if (!spanNo && lineNo) {
 
-					spanNo++;
-
-					// check width and apply soft breaks
-					if (width) {
-						var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-							tooLong,
-							actualWidth,
-							rest = [];
-
-						while (words.length || rest.length) {
-							delete wrapper.bBox; // delete cache
-							actualWidth = wrapper.getBBox().width;
-							tooLong = actualWidth > width;
-							if (!tooLong || words.length === 1) { // new line needed
-								words = rest;
-								rest = [];
-								if (words.length) {
-									tspan = doc.createElementNS(SVG_NS, 'tspan');
-									attr(tspan, {
-										dy: textLineHeight || 16,
-										x: parentX
-									});
-									if (spanStyle) { // #390
-										attr(tspan, 'style', spanStyle);
-									}
-									textNode.appendChild(tspan);
-
-									if (actualWidth > width) { // a single word is pressing it out
-										width = actualWidth;
-									}
-								}
-							} else { // append to existing line tspan
-								tspan.removeChild(tspan.firstChild);
-								rest.unshift(words.pop());
+							// allow getting the right offset height in exporting in IE
+							if (!hasSVG && forExport) {
+								css(tspan, { display: 'block' });
 							}
-							if (words.length) {
-								tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+
+							// Set the line height based on the font size of either 
+							// the text element or the tspan element
+							attr(
+								tspan, 
+								'dy',
+								textLineHeight || renderer.fontMetrics(
+									/px$/.test(tspan.style.fontSize) ?
+										tspan.style.fontSize : 
+										textStyles.fontSize
+								).h,
+								// Safari 6.0.2 - too optimized for its own good (#1539)
+								// TODO: revisit this with future versions of Safari
+								isWebKit && tspan.offsetHeight
+							);
+						}
+
+						// Append it
+						textNode.appendChild(tspan);
+
+						spanNo++;
+
+						// check width and apply soft breaks
+						if (width) {
+							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
+								tooLong,
+								actualWidth,
+								rest = [];
+
+							while (words.length || rest.length) {
+								delete wrapper.bBox; // delete cache
+								actualWidth = wrapper.getBBox().width;
+								tooLong = actualWidth > width;
+								if (!tooLong || words.length === 1) { // new line needed
+									words = rest;
+									rest = [];
+									if (words.length) {
+										tspan = doc.createElementNS(SVG_NS, 'tspan');
+										attr(tspan, {
+											dy: textLineHeight || 16,
+											x: parentX
+										});
+										if (spanStyle) { // #390
+											attr(tspan, 'style', spanStyle);
+										}
+										textNode.appendChild(tspan);
+
+										if (actualWidth > width) { // a single word is pressing it out
+											width = actualWidth;
+										}
+									}
+								} else { // append to existing line tspan
+									tspan.removeChild(tspan.firstChild);
+									rest.unshift(words.pop());
+								}
+								if (words.length) {
+									tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+								}
 							}
 						}
 					}
