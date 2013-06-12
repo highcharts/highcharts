@@ -2282,7 +2282,12 @@ SVGElement.prototype = {
 	 * Add a class name to an element
 	 */
 	addClass: function (className) {
-		attr(this.element, 'class', attr(this.element, 'class') + ' ' + className);
+		var element = this.element,
+			currentClassName = attr(element, 'class') || '';
+
+		if (currentClassName.indexOf(className) === -1) {
+			attr(element, 'class', currentClassName + ' ' + className);
+		}
 		return this;
 	},
 	/* hasClass and removeClass are not (yet) needed
@@ -3260,82 +3265,86 @@ SVGRenderer.prototype = {
 						.replace(/&lt;/g, '<')
 						.replace(/&gt;/g, '>');
 
-					// add the text node
-					tspan.appendChild(doc.createTextNode(span));
+					// Nested tags aren't supported, and cause crash in Safari (#1596)
+					if (span !== ' ') {
+					
+						// add the text node
+						tspan.appendChild(doc.createTextNode(span));
 
-					if (!spanNo) { // first span in a line, align it to the left
-						attributes.x = parentX;
-					} else {
-						attributes.dx = 0; // #16
-					}
-
-					// add attributes
-					attr(tspan, attributes);
-
-					// first span on subsequent line, add the line height
-					if (!spanNo && lineNo) {
-
-						// allow getting the right offset height in exporting in IE
-						if (!hasSVG && forExport) {
-							css(tspan, { display: 'block' });
+						if (!spanNo) { // first span in a line, align it to the left
+							attributes.x = parentX;
+						} else {
+							attributes.dx = 0; // #16
 						}
 
-						// Set the line height based on the font size of either 
-						// the text element or the tspan element
-						attr(
-							tspan, 
-							'dy',
-							textLineHeight || renderer.fontMetrics(
-								/px$/.test(tspan.style.fontSize) ?
-									tspan.style.fontSize : 
-									textStyles.fontSize
-							).h,
-							// Safari 6.0.2 - too optimized for its own good (#1539)
-							// TODO: revisit this with future versions of Safari
-							isWebKit && tspan.offsetHeight
-						);
-					}
+						// add attributes
+						attr(tspan, attributes);
 
-					// Append it
-					textNode.appendChild(tspan);
+						// first span on subsequent line, add the line height
+						if (!spanNo && lineNo) {
 
-					spanNo++;
-
-					// check width and apply soft breaks
-					if (width) {
-						var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-							tooLong,
-							actualWidth,
-							rest = [];
-
-						while (words.length || rest.length) {
-							delete wrapper.bBox; // delete cache
-							actualWidth = wrapper.getBBox().width;
-							tooLong = actualWidth > width;
-							if (!tooLong || words.length === 1) { // new line needed
-								words = rest;
-								rest = [];
-								if (words.length) {
-									tspan = doc.createElementNS(SVG_NS, 'tspan');
-									attr(tspan, {
-										dy: textLineHeight || 16,
-										x: parentX
-									});
-									if (spanStyle) { // #390
-										attr(tspan, 'style', spanStyle);
-									}
-									textNode.appendChild(tspan);
-
-									if (actualWidth > width) { // a single word is pressing it out
-										width = actualWidth;
-									}
-								}
-							} else { // append to existing line tspan
-								tspan.removeChild(tspan.firstChild);
-								rest.unshift(words.pop());
+							// allow getting the right offset height in exporting in IE
+							if (!hasSVG && forExport) {
+								css(tspan, { display: 'block' });
 							}
-							if (words.length) {
-								tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+
+							// Set the line height based on the font size of either 
+							// the text element or the tspan element
+							attr(
+								tspan, 
+								'dy',
+								textLineHeight || renderer.fontMetrics(
+									/px$/.test(tspan.style.fontSize) ?
+										tspan.style.fontSize : 
+										textStyles.fontSize
+								).h,
+								// Safari 6.0.2 - too optimized for its own good (#1539)
+								// TODO: revisit this with future versions of Safari
+								isWebKit && tspan.offsetHeight
+							);
+						}
+
+						// Append it
+						textNode.appendChild(tspan);
+
+						spanNo++;
+
+						// check width and apply soft breaks
+						if (width) {
+							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
+								tooLong,
+								actualWidth,
+								rest = [];
+
+							while (words.length || rest.length) {
+								delete wrapper.bBox; // delete cache
+								actualWidth = wrapper.getBBox().width;
+								tooLong = actualWidth > width;
+								if (!tooLong || words.length === 1) { // new line needed
+									words = rest;
+									rest = [];
+									if (words.length) {
+										tspan = doc.createElementNS(SVG_NS, 'tspan');
+										attr(tspan, {
+											dy: textLineHeight || 16,
+											x: parentX
+										});
+										if (spanStyle) { // #390
+											attr(tspan, 'style', spanStyle);
+										}
+										textNode.appendChild(tspan);
+
+										if (actualWidth > width) { // a single word is pressing it out
+											width = actualWidth;
+										}
+									}
+								} else { // append to existing line tspan
+									tspan.removeChild(tspan.firstChild);
+									rest.unshift(words.pop());
+								}
+								if (words.length) {
+									tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+								}
 							}
 						}
 					}
@@ -4770,7 +4779,9 @@ Highcharts.VMLElement = VMLElement = {
 						
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
-						wrapper[key] = value;
+						
+						wrapper[key] = element.style[key] = value; // style is for #1873
+
 						// Correction for the 1x1 size of the shape container. Used in gauge needles.
 						element.style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
 						element.style.top = mathRound(mathCos(value * deg2rad)) + PX;
@@ -5680,7 +5691,7 @@ Tick.prototype = {
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
-				(!horiz && (chart.optionsMarginLeft || chart.plotWidth / 2)), // #1580
+				(!horiz && (chart.optionsMarginLeft || chart.chartWidth * 0.33)), // #1580, #1931
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
@@ -6178,7 +6189,8 @@ PlotLineOrBand.prototype = {
 				plotLine.label = label = renderer.text(
 						optionsLabel.text,
 						0,
-						0
+						0,
+						optionsLabel.useHTML // docs: useHTML for plotLines and plotBands
 					)
 					.attr({
 						align: optionsLabel.textAlign || optionsLabel.align,
@@ -12236,8 +12248,7 @@ Point.prototype = {
 			series.options.data[i] = point.options;
 
 			// redraw
-			series.isDirty = true;
-			series.isDirtyData = true;
+			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
 			if (redraw) {
 				chart.redraw(animation);
 			}
@@ -13295,6 +13306,7 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
+			nextPoint,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
 
@@ -13318,15 +13330,22 @@ Series.prototype = {
 			points = points.reverse();
 		}
 
+		// Polar needs additional shaping
+		if (series.orderTooltipPoints) {
+			series.orderTooltipPoints(points);
+		}
+
 		// Assign each pixel position to the nearest point
 		pointsLength = points.length;
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
+			nextPoint = points[i + 1];
+			
 			// Set this range's low to the last range's high plus one
 			low = points[i - 1] ? high + 1 : 0;
 			// Now find the new high
 			high = points[i + 1] ?
-				mathMax(0, mathFloor((point.clientX + (points[i + 1] ? points[i + 1].clientX : axisLength)) / 2)) :
+				mathMax(0, mathFloor((point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2)) :
 				axisLength;
 
 			while (low >= 0 && low <= high) {
@@ -14177,7 +14196,7 @@ Series.prototype = {
 		var options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor,
+			negativeColor = options.negativeColor || options.negativeFillColor,
 			translatedThreshold,
 			posAttr,
 			negAttr,
@@ -14188,11 +14207,12 @@ Series.prototype = {
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			chartSizeMax = mathMax(chartWidth, chartHeight),
+			yAxis = this.yAxis,
 			above,
 			below;
 		
 		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathCeil(this.yAxis.len - this.yAxis.translate(options.threshold || 0));
+			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
 			above = {
 				x: 0,
 				y: 0,
@@ -14221,7 +14241,7 @@ Series.prototype = {
 				};
 			}
 			
-			if (this.yAxis.reversed) {
+			if (yAxis.reversed) {
 				posAttr = below;
 				negAttr = above;
 			} else {
@@ -14237,7 +14257,7 @@ Series.prototype = {
 				this.posClip = posClip = renderer.clipRect(posAttr);
 				this.negClip = negClip = renderer.clipRect(negAttr);
 				
-				if (graph) {
+				if (graph && this.graphNeg) {
 					graph.clip(posClip);
 					this.graphNeg.clip(negClip);	
 				}
@@ -14818,10 +14838,11 @@ var AreaSeries = extendClass(Series, {
 			areaPath = this.areaPath,
 			options = this.options,
 			negativeColor = options.negativeColor,
+			negativeFillColor = options.negativeFillColor,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		if (negativeColor) {
-			props.push(['areaNeg', options.negativeColor, options.negativeFillColor]);
+		if (negativeColor || negativeFillColor) {
+			props.push(['areaNeg', negativeColor, negativeFillColor]);
 		}
 		
 		each(props, function (prop) {

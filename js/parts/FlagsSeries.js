@@ -12,7 +12,7 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
-	stackDistance: 7,
+	stackDistance: 12, // docs: new default
 	states: {
 		hover: {
 			lineColor: 'black',
@@ -242,20 +242,39 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Extend the column trackers with listeners to expand and contract stacks
 	 */
 	drawTracker: function () {
+		var series = this,
+			points = series.points;
 		
 		seriesTypes.column.prototype.drawTracker.apply(this);
 
-		// put each point in front on mouse over, this allows readability of vertically
-		// stacked elements as well as tight points on the x axis
-		if (hasSVG) { // Known issue: VML browsers don't bubble up
-			each(this.points, function (point) {
-				if (point.graphic) {
-					addEvent(point.graphic.element, 'mouseover', function () {
-						point.graphic.toFront();
+		// Bring each stacked flag up on mouse over, this allows readability of vertically
+		// stacked elements as well as tight points on the x axis. #1924.
+		each(points, function (point) {
+			var graphic = point.graphic;
+			if (graphic) {
+				addEvent(graphic.element, 'mouseover', function () {
+
+					// Raise this point
+					if (point.stackIndex > 0 && !point.raised) {
+						point._y = graphic.y;
+						graphic.attr({
+							y: point._y - 8
+						});
+						point.raised = true;
+					}
+
+					// Revert other raised points
+					each(points, function (otherPoint) {
+						if (otherPoint !== point && otherPoint.raised && otherPoint.graphic) {
+							otherPoint.graphic.attr({
+								y: otherPoint._y
+							});
+							otherPoint.raised = false;
+						}
 					});
-				}
-			});
-		}
+				});
+			}
+		});
 	},
 
 	/**
