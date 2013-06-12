@@ -5,26 +5,7 @@ var UNDEFINED,
 	ALLOWED_SHAPES,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
-	each = Highcharts.each,
-	defaultOptions;
-
-defaultOptions = {
-	xAxis: 0,
-	yAxis: 0,
-	title: {
-		style: {},
-		text: "",
-		x: 0,
-		y: 0
-	},
-	shape: {
-		params: {
-			stroke: "#000000",
-			fill: "transparent",
-			strokeWidth: 2
-		}
-	}
-};
+	each = Highcharts.each;
 
 ALLOWED_SHAPES = ["path", "rect", "circle"];
 
@@ -41,6 +22,44 @@ ALIGN_FACTOR = {
 // Highcharts helper methods
 var inArray = HighchartsAdapter.inArray,
 	merge = Highcharts.merge;
+
+function defaultOptions (shapeType) {
+	var shapeOptions,
+		options;
+
+	options = {
+		xAxis: 0,
+		yAxis: 0,
+		title: {
+			style: {},
+			text: "",
+			x: 0,
+			y: 0
+		},
+		shape: {
+			params: {
+				stroke: "#000000",
+				fill: "transparent",
+				strokeWidth: 2
+			}
+		}
+	};
+
+	shapeOptions = {
+		circle: {
+			params: {
+				x: 0,
+				y: 0
+			}
+		}
+	};
+
+	if (shapeOptions[shapeType]) {
+		options.shape = merge(options.shape, shapeOptions[shapeType]);
+	}
+
+	return options;
+}
 
 function isArray(obj) {
 	return Object.prototype.toString.call(obj) === '[object Array]';
@@ -64,8 +83,10 @@ Annotation.prototype = {
 	 * Initialize the annotation
 	 */
 	init: function (chart, options) {
+		var shapeType = options.shape && options.shape.type;
+
 		this.chart = chart;
-		this.options = merge({}, defaultOptions, options);
+		this.options = merge({}, defaultOptions(shapeType), options);
 	},
 
 	/*
@@ -188,6 +209,12 @@ Annotation.prototype = {
 					shapeParams.x += xAxis.minPixelPadding;
 				}
 
+			}
+
+			// move the center of the circle to shape x/y
+			if (options.shape.type === 'circle') {
+				shapeParams.x += shapeParams.r;
+				shapeParams.y += shapeParams.r;
 			}
 
 			resetBBox = true;
