@@ -1280,7 +1280,8 @@ Series.prototype = {
 			isBottomSeries,
 			allStackSeries,
 			i,
-            dynamicallyPlaced = options.pointPlacement === 'between' || $.isNumeric(options.pointPlacement),
+			pointPlacement = options.pointPlacement, // docs: accept numbers
+			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
 			//nextSeriesDown;
 			
@@ -1315,7 +1316,7 @@ Series.prototype = {
 			}
 			
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, options.pointPlacement); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement); // Math.round fixes #591
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {

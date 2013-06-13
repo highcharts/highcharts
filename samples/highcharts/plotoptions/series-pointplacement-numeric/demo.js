@@ -41,12 +41,14 @@ $(function () {
             name: 'Employees',
             color: 'rgba(165,170,217,1)',
             data: [150, 73, 20],
-            pointPadding: .3
+            pointPadding: 0.3,
+            pointPlacement: -0.2
         }, {
             name: 'Employees Optimized',
             color: 'rgba(126,86,134,.9)',
             data: [140, 90, 40],
-            pointPadding: 0.4
+            pointPadding: 0.4,
+            pointPlacement: -0.2
         },{
             name: 'Profit',
             color: 'rgba(248,161,63,1)',
@@ -56,7 +58,7 @@ $(function () {
                 valueSuffix: ' M'
             },
             pointPadding: .3,
-            pointPlacement: .3,
+            pointPlacement: 0.2,
             yAxis: 1
         },{
             name: 'Profit Optimized',
@@ -67,7 +69,7 @@ $(function () {
                 valueSuffix: ' M'
             },
             pointPadding: .4,
-            pointPlacement: .3,
+            pointPlacement: 0.2,
             yAxis: 1
         }]
     });
