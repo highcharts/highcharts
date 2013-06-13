@@ -12823,13 +12823,14 @@ Series.prototype = {
 		setAnimation(animation, chart);
 
 		// Make graph animate sideways
-		if (graph && shift) { 
-			graph.shift = currentShift + 1;
+		if (shift) {
+			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
+				if (shape) {
+					shape.shift = currentShift + 1;
+				}
+			});
 		}
 		if (area) {
-			if (shift) { // #780
-				area.shift = currentShift + 1;
-			}
 			area.isArea = true; // needed in animation, both with and without shift
 		}
 		
