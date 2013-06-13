@@ -5,26 +5,7 @@ var UNDEFINED,
 	ALLOWED_SHAPES,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
-	each = Highcharts.each,
-	defaultOptions;
-
-defaultOptions = {
-	xAxis: 0,
-	yAxis: 0,
-	title: {
-		style: {},
-		text: "",
-		x: 0,
-		y: 0
-	},
-	shape: {
-		params: {
-			stroke: "#000000",
-			fill: "transparent",
-			strokeWidth: 2
-		}
-	}
-};
+	each = Highcharts.each;
 
 ALLOWED_SHAPES = ["path", "rect", "circle"];
 
@@ -42,6 +23,44 @@ ALIGN_FACTOR = {
 var inArray = HighchartsAdapter.inArray,
 	merge = Highcharts.merge;
 
+function defaultOptions(shapeType) {
+	var shapeOptions,
+		options;
+
+	options = {
+		xAxis: 0,
+		yAxis: 0,
+		title: {
+			style: {},
+			text: "",
+			x: 0,
+			y: 0
+		},
+		shape: {
+			params: {
+				stroke: "#000000",
+				fill: "transparent",
+				strokeWidth: 2
+			}
+		}
+	};
+
+	shapeOptions = {
+		circle: {
+			params: {
+				x: 0,
+				y: 0
+			}
+		}
+	};
+
+	if (shapeOptions[shapeType]) {
+		options.shape = merge(options.shape, shapeOptions[shapeType]);
+	}
+
+	return options;
+}
+
 function isArray(obj) {
 	return Object.prototype.toString.call(obj) === '[object Array]';
 }
@@ -54,6 +73,23 @@ function defined(obj) {
 	return obj !== UNDEFINED && obj !== null;
 }
 
+function translatePath(d, xAxis, yAxis, xOffset, yOffset) {
+	var len = d.length,
+		i = 0;
+
+	while (i < len) {
+		if (typeof d[i] === 'number' && typeof d[i + 1] === 'number') {
+			d[i] = xAxis.toPixels(d[i]) - xOffset;
+			d[i + 1] = yAxis.toPixels(d[i + 1]) - yOffset;
+			i += 2;
+		} else {
+			i += 1;
+		}
+	}
+
+	return d;
+}
+
 
 // Define annotation prototype
 var Annotation = function () {
@@ -64,8 +100,10 @@ Annotation.prototype = {
 	 * Initialize the annotation
 	 */
 	init: function (chart, options) {
+		var shapeType = options.shape && options.shape.type;
+
 		this.chart = chart;
-		this.options = merge({}, defaultOptions, options);
+		this.options = merge({}, defaultOptions(shapeType), options);
 	},
 
 	/*
@@ -86,14 +124,15 @@ Annotation.prototype = {
 			group = annotation.group = renderer.g();
 		}
 
-		if (!title && titleOptions) {
-			title = annotation.title = renderer.label(titleOptions);
-			title.add(group);
-		}
 
 		if (!shape && shapeOptions && inArray(shapeOptions.type, ALLOWED_SHAPES) !== -1) {
 			shape = annotation.shape = renderer[options.shape.type](shapeOptions.params);
 			shape.add(group);
+		}
+
+		if (!title && titleOptions) {
+			title = annotation.title = renderer.label(titleOptions);
+			title.add(group);
 		}
 
 		group.add(chart.annotations.group);
@@ -187,6 +226,15 @@ Annotation.prototype = {
 					shapeParams.x += xAxis.minPixelPadding;
 				}
 
+				if (options.shape.type === 'path') {
+					translatePath(shapeParams.d, xAxis, yAxis, x, y);
+				}
+			}
+
+			// move the center of the circle to shape x/y
+			if (options.shape.type === 'circle') {
+				shapeParams.x += shapeParams.r;
+				shapeParams.y += shapeParams.r;
 			}
 
 			resetBBox = true;

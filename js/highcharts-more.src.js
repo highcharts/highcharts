@@ -697,13 +697,13 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.y = null;
 			} else if (low === null) {
 				point.plotLow = point.plotY = null;
-				point.plotHigh = yAxis.toPixels(high, true);
+				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
 			} else if (high === null) {
 				point.plotLow = plotY;
 				point.plotHigh = null;
 			} else {
 				point.plotLow = plotY;
-				point.plotHigh = yAxis.toPixels(high, true);
+				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
 			}
 		});
 	},
@@ -2108,12 +2108,28 @@ seriesProto.toXY = function (point) {
 	point.rectPlotY = plotY;
 	
 	// Record the angle in degrees for use in tooltip
-	point.clientX = plotX / Math.PI * 180;
+	point.clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
 	
 	// Find the polar plotX and plotY
 	xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
 	point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
 	point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+};
+
+/** 
+ * Order the tooltip points to get the mouse capture ranges correct. #1915. 
+ */
+seriesProto.orderTooltipPoints = function (points) {
+	if (this.chart.polar) {
+		points.sort(function (a, b) {
+			return a.clientX - b.clientX;
+		});
+
+		// Wrap mouse tracking around to capture movement on the segment to the left
+		// of the north point (#1469).
+		points[0].wrappedClientX = points[0].clientX + 360;
+		points.push(points[0]);
+	}
 };
 
 

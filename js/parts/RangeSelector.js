@@ -259,7 +259,7 @@ RangeSelector.prototype = {
 	setInputValue: function (name, time) {
 		var options = this.chart.options.rangeSelector;
 
-		if (time) {
+		if (defined(time)) {
 			this[name + 'Input'].HCTime = time;
 		}
 		
@@ -355,7 +355,7 @@ RangeSelector.prototype = {
 		// handle changes in the input boxes
 		input.onchange = function () {
 			var inputValue = input.value,
-				value = Date.parse(inputValue),
+				value = (options.inputDateParser || Date.parse)(inputValue), // docs: dateParser for inputDateFormat (http://jsfiddle.net/highcharts/G7azG/)
 				extremes = chart.xAxis[0].getExtremes();
 
 			// If the value isn't parsed directly to a value by the browser's Date.parse method,

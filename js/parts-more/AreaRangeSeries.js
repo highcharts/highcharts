@@ -70,13 +70,13 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				point.y = null;
 			} else if (low === null) {
 				point.plotLow = point.plotY = null;
-				point.plotHigh = yAxis.toPixels(high, true);
+				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
 			} else if (high === null) {
 				point.plotLow = plotY;
 				point.plotHigh = null;
 			} else {
 				point.plotLow = plotY;
-				point.plotHigh = yAxis.toPixels(high, true);
+				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
 			}
 		});
 	},

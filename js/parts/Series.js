@@ -326,8 +326,7 @@ Point.prototype = {
 			series.options.data[i] = point.options;
 
 			// redraw
-			series.isDirty = true;
-			series.isDirtyData = true;
+			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
 			if (redraw) {
 				chart.redraw(animation);
 			}
@@ -902,13 +901,14 @@ Series.prototype = {
 		setAnimation(animation, chart);
 
 		// Make graph animate sideways
-		if (graph && shift) { 
-			graph.shift = currentShift + 1;
+		if (shift) {
+			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
+				if (shape) {
+					shape.shift = currentShift + 1;
+				}
+			});
 		}
 		if (area) {
-			if (shift) { // #780
-				area.shift = currentShift + 1;
-			}
 			area.isArea = true; // needed in animation, both with and without shift
 		}
 		
@@ -945,12 +945,12 @@ Series.prototype = {
 				dataOptions.shift();
 			}
 		}
-		series.getAttribs();
 
 		// redraw
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
+			series.getAttribs(); // #1937
 			chart.redraw();
 		}
 	},
@@ -1043,12 +1043,6 @@ Series.prototype = {
 			}
 		}
 		
-		// Unsorted data is not supported by the line tooltip as well as data grouping and 
-		// navigation in Stock charts (#725)
-		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
-			error(15);
-		}
-
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
 		if (isString(yData[0])) {
 			error(14, true);
@@ -1184,6 +1178,11 @@ Series.prototype = {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
+
+			// Unsorted data is not supported by the line tooltip, as well as data grouping and 
+			// navigation in Stock charts (#725) and width calculation of columns (#1900)
+			} else if (distance < 0 && series.requireSorting) {
+				error(15);
 			}
 		}
 		
@@ -1385,6 +1384,7 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
+			nextPoint,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
 
@@ -1408,15 +1408,22 @@ Series.prototype = {
 			points = points.reverse();
 		}
 
+		// Polar needs additional shaping
+		if (series.orderTooltipPoints) {
+			series.orderTooltipPoints(points);
+		}
+
 		// Assign each pixel position to the nearest point
 		pointsLength = points.length;
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
+			nextPoint = points[i + 1];
+			
 			// Set this range's low to the last range's high plus one
 			low = points[i - 1] ? high + 1 : 0;
 			// Now find the new high
 			high = points[i + 1] ?
-				mathMax(0, mathFloor((point.clientX + (points[i + 1] ? points[i + 1].clientX : axisLength)) / 2)) :
+				mathMax(0, mathFloor((point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2)) :
 				axisLength;
 
 			while (low >= 0 && low <= high) {
@@ -2267,7 +2274,7 @@ Series.prototype = {
 		var options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor,
+			negativeColor = options.negativeColor || options.negativeFillColor,
 			translatedThreshold,
 			posAttr,
 			negAttr,
@@ -2278,11 +2285,12 @@ Series.prototype = {
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			chartSizeMax = mathMax(chartWidth, chartHeight),
+			yAxis = this.yAxis,
 			above,
 			below;
 		
 		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathCeil(this.yAxis.len - this.yAxis.translate(options.threshold || 0));
+			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
 			above = {
 				x: 0,
 				y: 0,
@@ -2311,7 +2319,7 @@ Series.prototype = {
 				};
 			}
 			
-			if (this.yAxis.reversed) {
+			if (yAxis.reversed) {
 				posAttr = below;
 				negAttr = above;
 			} else {
@@ -2327,7 +2335,7 @@ Series.prototype = {
 				this.posClip = posClip = renderer.clipRect(posAttr);
 				this.negClip = negClip = renderer.clipRect(negAttr);
 				
-				if (graph) {
+				if (graph && this.graphNeg) {
 					graph.clip(posClip);
 					this.graphNeg.clip(negClip);	
 				}

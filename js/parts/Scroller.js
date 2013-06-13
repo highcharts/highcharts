@@ -102,7 +102,7 @@ extend(defaultOptions, {
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: hasSVG
+		liveRedraw: hasSVG && !isTouchDevice // docs: new default
 	}
 });
 /*jslint white:false */
@@ -322,8 +322,13 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		pxMin = pick(pxMin, xAxis.translate(min));
-		pxMax = pick(pxMax, xAxis.translate(max));
+		if (mathRound(min) === mathRound(max) && pxMin === UNDEFINED) { // #1851
+			pxMin = 0;
+			pxMax = scrollerWidth;
+		} else {
+			pxMin = pick(pxMin, xAxis.translate(min));
+			pxMax = pick(pxMax, xAxis.translate(max));
+		}
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);

@@ -40,7 +40,6 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	tooltipOutsidePlot: true,
-	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',

@@ -32,7 +32,7 @@ Tick.prototype = {
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
-				(!horiz && (chart.optionsMarginLeft || chart.plotWidth / 2)), // #1580
+				(!horiz && (chart.optionsMarginLeft || chart.chartWidth * 0.33)), // #1580, #1931
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
@@ -210,16 +210,23 @@ Tick.prototype = {
 		var axis = this.axis,
 			transA = axis.transA,
 			reversed = axis.reversed,
-			staggerLines = axis.staggerLines;
+			staggerLines = axis.staggerLines,
+			baseline = axis.chart.renderer.fontMetrics(labelOptions.style.fontSize).b,
+			rotation = labelOptions.rotation;
 			
 		x = x + labelOptions.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + labelOptions.y - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+
+		// Correct for rotation (#1764)
+		if (rotation && axis.side === 2) {
+			y -= baseline - baseline * mathCos(rotation * deg2rad);
+		}
 		
 		// Vertically centered
 		if (!defined(labelOptions.y)) {
-			y += pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
+			y += baseline - label.getBBox().height / 2;
 		}
 		
 		// Correct for staggered labels
