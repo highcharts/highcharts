@@ -944,12 +944,12 @@ Series.prototype = {
 				dataOptions.shift();
 			}
 		}
-		series.getAttribs();
 
 		// redraw
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
+			series.getAttribs(); // #1937
 			chart.redraw();
 		}
 	},
