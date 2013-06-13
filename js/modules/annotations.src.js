@@ -191,9 +191,8 @@ Annotation.prototype = {
 
 
 		// Based on given options find annotation pixel position
-		x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) : options.x) - xAxis.minPixelPadding;
+		x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) - xAxis.minPixelPadding : options.x);
 		y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
-
 
 		if (isNaN(x) || isNaN(y) || !isNumber(x) || !isNumber(y)) {
 			return;
