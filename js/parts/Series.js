@@ -981,7 +981,7 @@ Series.prototype = {
 			yData = [],
 			zData = [],
 			dataLength = data ? data.length : [],
-			turboThreshold = options.turboThreshold || 1000,
+			turboThreshold = pick(options.turboThreshold, 1000), // docs: 0 to disable
 			pt,
 			pointArrayMap = series.pointArrayMap,
 			valueCount = pointArrayMap && pointArrayMap.length,
@@ -991,7 +991,7 @@ Series.prototype = {
 		// first value is tested, and we assume that all the rest are defined the same
 		// way. Although the 'for' loops are similar, they are repeated inside each
 		// if-else conditional for max performance.
-		if (dataLength > turboThreshold) {
+		if (turboThreshold && dataLength > turboThreshold) { 
 			
 			// find the first non-null point
 			i = 0;
