@@ -19,6 +19,7 @@
 			/* define locations of mandatory javascript files */
 			HIGHCHARTS: 'highstock.1.3.1.min.js',
 			HIGHCHARTS_MORE: 'highcharts-more.3.0.1.min.js',
+			HIGHCHARTS_DATA: 'highcharts-data.2013-06-13.min.js',
 			JQUERY: 'jquery-1.8.2.min.js',
 			TIMEOUT: 2000 /* 2 seconds timout for loading images */
 		},
@@ -355,7 +356,6 @@
 			}
 
 			options.chart.renderTo = $container[0];
-
 			// check if witdh is set. Order of precedence:
 			// args.width, options.chart.width and 600px
 
@@ -364,7 +364,6 @@
 
 			options.chart.width = (options.exporting && options.exporting.sourceWidth) || options.chart.width || 600;
 			options.chart.height = (options.exporting && options.exporting.sourceHeight) || options.chart.height || 400;
-
 
 			chart = new Highcharts[constr](options, cb);
 
@@ -425,6 +424,7 @@
 					page.injectJs(config.JQUERY);
 					page.injectJs(config.HIGHCHARTS);
 					page.injectJs(config.HIGHCHARTS_MORE);
+					page.injectJs(config.HIGHCHARTS_DATA);
 
 					// load chart in page and return svg height and width
 					svg = page.evaluate(createChart, width, constr, input, outputExtension, callback, messages);

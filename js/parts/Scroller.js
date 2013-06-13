@@ -49,7 +49,8 @@ extend(defaultOptions, {
 				enabled: false
 			},
 			pointRange: 0,
-			shadow: false
+			shadow: false,
+			threshold: null
 		},
 		//top: undefined,
 		xAxis: {
@@ -102,7 +103,7 @@ extend(defaultOptions, {
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: hasSVG
+		liveRedraw: hasSVG && !isTouchDevice // docs: new default
 	}
 });
 /*jslint white:false */
@@ -835,7 +836,6 @@ Scroller.prototype = {
 
 			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-				threshold: null,
 				clip: false,
 				enableMouseTracking: false,
 				group: 'nav', // for columns

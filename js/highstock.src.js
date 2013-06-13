@@ -7002,7 +7002,7 @@ Axis.prototype = {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacementBetween) {
+	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -7045,9 +7045,11 @@ Axis.prototype = {
 			if (postTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
-
+			if (pointPlacement === 'between') {
+				pointPlacement = 0.5;
+			}
 			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(pointPlacementBetween ? localA * axis.pointRange / 2 : 0);
+				(isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
 		}
 
 		return returnValue;
@@ -7415,7 +7417,7 @@ Axis.prototype = {
 					var seriesPointRange = series.pointRange,
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
-						
+
 					if (seriesPointRange > range) { // #1446
 						seriesPointRange = 0;
 					}
@@ -7426,7 +7428,7 @@ Axis.prototype = {
 					// is 'between' or 'on', this padding does not apply.
 					minPointOffset = mathMax(
 						minPointOffset, 
-						pointPlacement ? 0 : seriesPointRange / 2
+						isString(pointPlacement) ? 0 : seriesPointRange / 2
 					);
 					
 					// Determine the total padding needed to the length of the axis to make room for the 
@@ -9143,10 +9145,12 @@ Pointer.prototype = {
 	 */
 	scaleGroups: function (attribs, clip) {
 
-		var chart = this.chart;
+		var chart = this.chart,
+			seriesAttribs;
 
 		// Scale each series
 		each(chart.series, function (series) {
+			seriesAttribs = attribs || series.getBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {
@@ -9474,12 +9478,7 @@ Pointer.prototype = {
 
 			// Reset scaling preview
 			if (hasPinched) {
-				this.scaleGroups({
-					translateX: chart.plotLeft,
-					translateY: chart.plotTop,
-					scaleX: 1,
-					scaleY: 1
-				});
+				this.scaleGroups();
 			}
 		}
 
@@ -12823,13 +12822,14 @@ Series.prototype = {
 		setAnimation(animation, chart);
 
 		// Make graph animate sideways
-		if (graph && shift) { 
-			graph.shift = currentShift + 1;
+		if (shift) {
+			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
+				if (shape) {
+					shape.shift = currentShift + 1;
+				}
+			});
 		}
 		if (area) {
-			if (shift) { // #780
-				area.shift = currentShift + 1;
-			}
 			area.isArea = true; // needed in animation, both with and without shift
 		}
 		
@@ -12866,12 +12866,12 @@ Series.prototype = {
 				dataOptions.shift();
 			}
 		}
-		series.getAttribs();
 
 		// redraw
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
+			series.getAttribs(); // #1937
 			chart.redraw();
 		}
 	},
@@ -12902,7 +12902,7 @@ Series.prototype = {
 			yData = [],
 			zData = [],
 			dataLength = data ? data.length : [],
-			turboThreshold = options.turboThreshold || 1000,
+			turboThreshold = pick(options.turboThreshold, 1000), // docs: 0 to disable
 			pt,
 			pointArrayMap = series.pointArrayMap,
 			valueCount = pointArrayMap && pointArrayMap.length,
@@ -12912,7 +12912,7 @@ Series.prototype = {
 		// first value is tested, and we assume that all the rest are defined the same
 		// way. Although the 'for' loops are similar, they are repeated inside each
 		// if-else conditional for max performance.
-		if (dataLength > turboThreshold) {
+		if (turboThreshold && dataLength > turboThreshold) { 
 			
 			// find the first non-null point
 			i = 0;
@@ -12964,12 +12964,6 @@ Series.prototype = {
 			}
 		}
 		
-		// Unsorted data is not supported by the line tooltip as well as data grouping and 
-		// navigation in Stock charts (#725)
-		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
-			error(15);
-		}
-
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
 		if (isString(yData[0])) {
 			error(14, true);
@@ -13105,6 +13099,11 @@ Series.prototype = {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
+
+			// Unsorted data is not supported by the line tooltip, as well as data grouping and 
+			// navigation in Stock charts (#725) and width calculation of columns (#1900)
+			} else if (distance < 0 && series.requireSorting) {
+				error(15);
 			}
 		}
 		
@@ -13202,7 +13201,8 @@ Series.prototype = {
 			isBottomSeries,
 			allStackSeries,
 			i,
-			placeBetween = options.pointPlacement === 'between',
+			pointPlacement = options.pointPlacement, // docs: accept numbers
+			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
 			//nextSeriesDown;
 			
@@ -13237,7 +13237,7 @@ Series.prototype = {
 			}
 			
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement); // Math.round fixes #591
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -13280,7 +13280,7 @@ Series.prototype = {
 				UNDEFINED;
 			
 			// Set client related positions for mouse tracking
-			point.clientX = placeBetween ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
+			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
 				
 			point.negative = point.y < (threshold || 0);
 
@@ -14314,14 +14314,11 @@ Series.prototype = {
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
-			isNew = !group,
-			chart = this.chart,
-			xAxis = this.xAxis,
-			yAxis = this.yAxis;
+			isNew = !group;
 		
 		// Generate it on first call
 		if (isNew) {	
-			this[prop] = group = chart.renderer.g(name)
+			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
 					zIndex: zIndex || 0.1 // IE8 needs this
@@ -14329,14 +14326,20 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group[isNew ? 'attr' : 'animate']({
-			translateX: xAxis ? xAxis.left : chart.plotLeft, 
-			translateY: yAxis ? yAxis.top : chart.plotTop,
+		group[isNew ? 'attr' : 'animate'](this.getBox());
+		return group;		
+	},
+
+	/**
+	 * Get the translation and scale for the plot area of this series
+	 */
+	getBox: function () {
+		return {
+			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft, 
+			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,
 			scaleX: 1, // #1623
 			scaleY: 1
-		});
-		return group;
-		
+		};
 	},
 	
 	/**
@@ -15074,7 +15077,6 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	tooltipOutsidePlot: true,
-	requireSorting: false,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
@@ -17499,7 +17501,8 @@ extend(defaultOptions, {
 				enabled: false
 			},
 			pointRange: 0,
-			shadow: false
+			shadow: false,
+			threshold: null
 		},
 		//top: undefined,
 		xAxis: {
@@ -17552,7 +17555,7 @@ extend(defaultOptions, {
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: hasSVG
+		liveRedraw: hasSVG && !isTouchDevice // docs: new default
 	}
 });
 /*jslint white:false */
@@ -18285,7 +18288,6 @@ Scroller.prototype = {
 
 			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-				threshold: null,
 				clip: false,
 				enableMouseTracking: false,
 				group: 'nav', // for columns
@@ -18711,7 +18713,7 @@ RangeSelector.prototype = {
 	setInputValue: function (name, time) {
 		var options = this.chart.options.rangeSelector;
 
-		if (time) {
+		if (defined(time)) {
 			this[name + 'Input'].HCTime = time;
 		}
 		
@@ -18807,7 +18809,7 @@ RangeSelector.prototype = {
 		// handle changes in the input boxes
 		input.onchange = function () {
 			var inputValue = input.value,
-				value = (options.inputDateParser || Date.parse)(inputValue), // docs: dateParser for inputDateFormat
+				value = (options.inputDateParser || Date.parse)(inputValue), // docs: dateParser for inputDateFormat (http://jsfiddle.net/highcharts/G7azG/)
 				extremes = chart.xAxis[0].getExtremes();
 
 			// If the value isn't parsed directly to a value by the browser's Date.parse method,
@@ -19258,23 +19260,25 @@ seriesProto.setCompare = function (compare) {
  * used for comparing the following values 
  */
 seriesProto.processData = function () {
-	var series = this;
+	var series = this,
+		i = 0,
+		processedXData,
+		processedYData,
+		length;
 	
 	// call base method
 	seriesProcessData.apply(this, arguments);
-	
-	if (series.options.compare) {
+
+	if (series.xAxis) { // not pies
 		
 		// local variables
-		var i = 0,
-			processedXData = series.processedXData,
-			processedYData = series.processedYData,
-			length = processedYData.length,
-			min = series.xAxis.getExtremes().min;
+		processedXData = series.processedXData;
+		processedYData = series.processedYData;
+		length = processedYData.length;
 		
 		// find the first value for comparison
 		for (; i < length; i++) {
-			if (typeof processedYData[i] === NUMBER && processedXData[i] >= min) {
+			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
 			}
@@ -19305,7 +19309,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + numberFormat(point.change, point.series.tooltipOptions.changeDecimals || 2)
+		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);

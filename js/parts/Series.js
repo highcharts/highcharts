@@ -901,13 +901,14 @@ Series.prototype = {
 		setAnimation(animation, chart);
 
 		// Make graph animate sideways
-		if (graph && shift) { 
-			graph.shift = currentShift + 1;
+		if (shift) {
+			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
+				if (shape) {
+					shape.shift = currentShift + 1;
+				}
+			});
 		}
 		if (area) {
-			if (shift) { // #780
-				area.shift = currentShift + 1;
-			}
 			area.isArea = true; // needed in animation, both with and without shift
 		}
 		
@@ -944,12 +945,12 @@ Series.prototype = {
 				dataOptions.shift();
 			}
 		}
-		series.getAttribs();
 
 		// redraw
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
+			series.getAttribs(); // #1937
 			chart.redraw();
 		}
 	},
@@ -980,7 +981,7 @@ Series.prototype = {
 			yData = [],
 			zData = [],
 			dataLength = data ? data.length : [],
-			turboThreshold = options.turboThreshold || 1000,
+			turboThreshold = pick(options.turboThreshold, 1000), // docs: 0 to disable
 			pt,
 			pointArrayMap = series.pointArrayMap,
 			valueCount = pointArrayMap && pointArrayMap.length,
@@ -990,7 +991,7 @@ Series.prototype = {
 		// first value is tested, and we assume that all the rest are defined the same
 		// way. Although the 'for' loops are similar, they are repeated inside each
 		// if-else conditional for max performance.
-		if (dataLength > turboThreshold) {
+		if (turboThreshold && dataLength > turboThreshold) { 
 			
 			// find the first non-null point
 			i = 0;
@@ -1042,12 +1043,6 @@ Series.prototype = {
 			}
 		}
 		
-		// Unsorted data is not supported by the line tooltip as well as data grouping and 
-		// navigation in Stock charts (#725)
-		if (series.requireSorting && xData.length > 1 && xData[1] < xData[0]) {
-			error(15);
-		}
-
 		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON		
 		if (isString(yData[0])) {
 			error(14, true);
@@ -1183,6 +1178,11 @@ Series.prototype = {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
+
+			// Unsorted data is not supported by the line tooltip, as well as data grouping and 
+			// navigation in Stock charts (#725) and width calculation of columns (#1900)
+			} else if (distance < 0 && series.requireSorting) {
+				error(15);
 			}
 		}
 		
@@ -1280,7 +1280,8 @@ Series.prototype = {
 			isBottomSeries,
 			allStackSeries,
 			i,
-			placeBetween = options.pointPlacement === 'between',
+			pointPlacement = options.pointPlacement, // docs: accept numbers
+			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
 			//nextSeriesDown;
 			
@@ -1315,7 +1316,7 @@ Series.prototype = {
 			}
 			
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, placeBetween); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement); // Math.round fixes #591
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1358,7 +1359,7 @@ Series.prototype = {
 				UNDEFINED;
 			
 			// Set client related positions for mouse tracking
-			point.clientX = placeBetween ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
+			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
 				
 			point.negative = point.y < (threshold || 0);
 
@@ -2392,14 +2393,11 @@ Series.prototype = {
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
-			isNew = !group,
-			chart = this.chart,
-			xAxis = this.xAxis,
-			yAxis = this.yAxis;
+			isNew = !group;
 		
 		// Generate it on first call
 		if (isNew) {	
-			this[prop] = group = chart.renderer.g(name)
+			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
 					zIndex: zIndex || 0.1 // IE8 needs this
@@ -2407,14 +2405,20 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group[isNew ? 'attr' : 'animate']({
-			translateX: xAxis ? xAxis.left : chart.plotLeft, 
-			translateY: yAxis ? yAxis.top : chart.plotTop,
+		group[isNew ? 'attr' : 'animate'](this.getBox());
+		return group;		
+	},
+
+	/**
+	 * Get the translation and scale for the plot area of this series
+	 */
+	getBox: function () {
+		return {
+			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft, 
+			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,
 			scaleX: 1, // #1623
 			scaleY: 1
-		});
-		return group;
-		
+		};
 	},
 	
 	/**

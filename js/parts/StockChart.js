@@ -188,23 +188,25 @@ seriesProto.setCompare = function (compare) {
  * used for comparing the following values 
  */
 seriesProto.processData = function () {
-	var series = this;
+	var series = this,
+		i = 0,
+		processedXData,
+		processedYData,
+		length;
 	
 	// call base method
 	seriesProcessData.apply(this, arguments);
-	
-	if (series.options.compare) {
+
+	if (series.xAxis) { // not pies
 		
 		// local variables
-		var i = 0,
-			processedXData = series.processedXData,
-			processedYData = series.processedYData,
-			length = processedYData.length,
-			min = series.xAxis.getExtremes().min;
+		processedXData = series.processedXData;
+		processedYData = series.processedYData;
+		length = processedYData.length;
 		
 		// find the first value for comparison
 		for (; i < length; i++) {
-			if (typeof processedYData[i] === NUMBER && processedXData[i] >= min) {
+			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
 			}
@@ -235,7 +237,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + numberFormat(point.change, point.series.tooltipOptions.changeDecimals || 2)
+		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);

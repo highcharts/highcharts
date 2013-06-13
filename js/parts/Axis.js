@@ -652,7 +652,7 @@ Axis.prototype = {
 	 * Translate from axis value to pixel position on the chart, or back
 	 *
 	 */
-	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacementBetween) {
+	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
 		var axis = this,
 			axisLength = axis.len,
 			sign = 1,
@@ -695,9 +695,11 @@ Axis.prototype = {
 			if (postTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
-
+			if (pointPlacement === 'between') {
+				pointPlacement = 0.5;
+			}
 			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(pointPlacementBetween ? localA * axis.pointRange / 2 : 0);
+				(isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
 		}
 
 		return returnValue;
@@ -1065,7 +1067,7 @@ Axis.prototype = {
 					var seriesPointRange = series.pointRange,
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
-						
+
 					if (seriesPointRange > range) { // #1446
 						seriesPointRange = 0;
 					}
@@ -1076,7 +1078,7 @@ Axis.prototype = {
 					// is 'between' or 'on', this padding does not apply.
 					minPointOffset = mathMax(
 						minPointOffset, 
-						pointPlacement ? 0 : seriesPointRange / 2
+						isString(pointPlacement) ? 0 : seriesPointRange / 2
 					);
 					
 					// Determine the total padding needed to the length of the axis to make room for the 
