@@ -234,10 +234,12 @@ Pointer.prototype = {
 	 */
 	scaleGroups: function (attribs, clip) {
 
-		var chart = this.chart;
+		var chart = this.chart,
+			seriesAttribs;
 
 		// Scale each series
 		each(chart.series, function (series) {
+			seriesAttribs = attribs || series.getBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {
@@ -565,12 +567,7 @@ Pointer.prototype = {
 
 			// Reset scaling preview
 			if (hasPinched) {
-				this.scaleGroups({
-					translateX: chart.plotLeft,
-					translateY: chart.plotTop,
-					scaleX: 1,
-					scaleY: 1
-				});
+				this.scaleGroups();
 			}
 		}
 
