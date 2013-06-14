@@ -6716,10 +6716,10 @@ Axis.prototype = {
 
 		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
-		this.destroy();
+		this.destroy(true);
 		this._addedPlotLB = false; // #1611
 
-		this.init(chart, newOptions);
+		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
@@ -8434,13 +8434,15 @@ Axis.prototype = {
 	/**
 	 * Destroys an Axis instance.
 	 */
-	destroy: function () {
+	destroy: function (keepEvents) {
 		var axis = this,
 			stacks = axis.stacks,
 			stackKey;
 
 		// Remove the events
-		removeEvent(axis);
+		if (!keepEvents) {
+			removeEvent(axis);
+		}
 
 		// Destroy each stack total
 		for (stackKey in stacks) {
