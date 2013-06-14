@@ -10571,6 +10571,7 @@ Chart.prototype = {
 			chartOptions = this.options,
 			axis;
 
+		options.isX = isX;
 		/*jslint unused: false*/
 		axis = new Axis(this, merge(options, {
 			index: this[key].length
