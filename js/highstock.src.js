@@ -13941,12 +13941,12 @@ Series.prototype = {
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
 					
-					rotation = options.rotation;
-					
 					// Create individual options structure that can be extended without 
 					// affecting others
 					options = merge(generalOptions, pointOptions);
-				
+
+					rotation = options.rotation;
+					
 					// Get the string
 					labelConfig = point.getLabelConfig();
 					str = options.format ?
