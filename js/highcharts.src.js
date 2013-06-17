@@ -7818,12 +7818,12 @@ Axis.prototype = {
 	 */
 	zoom: function (newMin, newMax) {
 
-		// Prevent pinch zooming out of range
+		// Prevent pinch zooming out of range. Check for defined is for #1946.
 		if (!this.allowZoomOutside) {
-			if (newMin <= this.dataMin) {
+			if (defined(this.dataMin) && newMin <= this.dataMin) {
 				newMin = UNDEFINED;
 			}
-			if (newMax >= this.dataMax) {
+			if (defined(this.dataMax) && newMax >= this.dataMax) {
 				newMax = UNDEFINED;
 			}
 		}
