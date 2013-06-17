@@ -13813,7 +13813,7 @@ Series.prototype = {
 			animation: false,
 			index: this.index,
 			pointStart: this.xData[0] // when updating after addPoint
-		}, newOptions);
+		}, { data: this.options.data }, newOptions);
 
 		// Destroy the series and reinsert methods from the type prototype
 		this.remove(false);
