@@ -10,6 +10,16 @@ import org.apache.log4j.Logger;
 
 import com.highcharts.export.server.Server;
 import com.highcharts.export.server.ServerState;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import org.apache.commons.io.IOUtils;
 
 public class ServerObjectFactory implements ObjectFactory<Server> {
 
@@ -20,7 +30,8 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private int readTimeout;
 	private int connectTimeout;
 	private int maxTimeout;
-	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>(); 
+	public static String tmpDir;
+	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>();
 	protected static Logger logger = Logger.getLogger("pool");
 
 	private enum PortStatus {
@@ -151,10 +162,34 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 
 	@PostConstruct
 	public void afterBeanInit() {
-		if(script == null || script.trim().isEmpty()) {
-			ClassLoader classLoader = getClass().getClassLoader();
-			URL url = classLoader.getResource("/../phantomjs/highcharts-convert.js");
-			this.setScript(url.getPath());
+		String jarLocation = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		try {
+			jarLocation = URLDecoder.decode(jarLocation, "utf-8");
+			// get filesystem depend path
+			jarLocation = new File(jarLocation).getCanonicalPath();
+		} catch (UnsupportedEncodingException ueex) {
+			logger.error(ueex);
+		} catch (IOException ioex) {
+			logger.error(ioex);
+		}
+
+		try {
+			JarFile jar = new JarFile(jarLocation);
+			for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
+				JarEntry entry = entries.nextElement();
+				String name = entry.getName();
+				if (name.startsWith("phantomjs/")) {
+					File file = new File(tmpDir + name);
+					if (name.endsWith("/")) {
+						file.mkdir();
+					} else {
+						InputStream in = jar.getInputStream(entry);
+						IOUtils.copy(in, new FileOutputStream(file));
+					}
+				}
+			}
+		} catch (IOException ioex) {
+			logger.error(ioex);
 		}
 	}
 

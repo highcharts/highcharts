@@ -16,3 +16,6 @@
 *sublime*
 /exporting-server/java/highcharts-export/src/main/resources/presets/
 /exporting-server/java/highcharts-export/src/main/webapp/META-INF/
+/highcharts.com-access.log
+/highcharts.com.site-access.log
+/highcharts.com.site-error.log

@@ -17,8 +17,9 @@
 
 	var config = {
 			/* define locations of mandatory javascript files */
-			HIGHCHARTS: 'highstock.1.3.1.min.js',
-			HIGHCHARTS_MORE: 'highcharts-more.3.0.1.min.js',
+			HIGHCHARTS: 'highstock.js',
+			HIGHCHARTS_MORE: 'highcharts-more.js',
+			HIGHCHARTS_DATA: 'data.js',
 			JQUERY: 'jquery-1.8.2.min.js',
 			TIMEOUT: 2000 /* 2 seconds timout for loading images */
 		},
