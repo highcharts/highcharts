@@ -83,24 +83,15 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<!-- for local development, you can use the Jetty server; use Maven goal: mvn clean jetty:run -->
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>8.1.2.v20120308</version>
 				<configuration>
 					<webApp>
 						<contextPath>/export</contextPath>
 					</webApp>
-					<scanTargets>
-						<scanTarget>src/main/webapp/WEB-INF/pages</scanTarget>
-						<scanTarget>src/main/webapp/resources</scanTarget>
-					</scanTargets>
+					<!-- use war with command mvn jetty:run-exploded -->
+					<war>${basedir}/target/highcharts-cloud-editor-web</war>
 					<reload>manual</reload>
-					<!-- ignored while having reload defined -->
-					<scanIntervalSeconds>2</scanIntervalSeconds>
-					<!-- while running as run-forked ins separet jvm -->
-					<stopKey>stop</stopKey>
-					<stopPort>9999</stopPort>
 					<systemProperties>
 						<systemProperty>
 							<name>log4j.configuration</name>

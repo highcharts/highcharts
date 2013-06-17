@@ -18,6 +18,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.highcharts.export.converter.SVGConverterException;
+import com.highcharts.export.pool.ServerObjectFactory;
+import static com.highcharts.export.server.Server.logger;
 
 public class Server {
 	private Process process;
@@ -42,11 +44,13 @@ public class Server {
 		try {
 			ArrayList<String> commands = new ArrayList<String>();
 			commands.add(exec);
-			commands.add(script);
+			commands.add(ServerObjectFactory.tmpDir + "phantomjs/" + script);
 			commands.add("-host");
 			commands.add(host);
 			commands.add("-port");
 			commands.add("" + port);
+
+			logger.debug(commands.toString());
 
 			process = new ProcessBuilder(commands).start();
 			final BufferedReader bufferedReader = new BufferedReader(
@@ -161,10 +165,4 @@ public class Server {
 	public String toString() {
 		return this.getClass().getName() + "listening to port: " + port;
 	}
-
-
-
-
-
-
 }
