@@ -152,6 +152,7 @@ defaultOptions = {
 				events: {}
 			},
 			dataLabels: merge(defaultLabelOptions, {
+				align: 'center',
 				enabled: false,
 				formatter: function () {
 					return numberFormat(this.y, -1);

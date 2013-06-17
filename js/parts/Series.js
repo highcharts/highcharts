@@ -2116,7 +2116,7 @@ Series.prototype = {
 			width: bBox.width,
 			height: bBox.height
 		});
-		
+
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
 			alignAttr = {
@@ -2132,7 +2132,8 @@ Series.prototype = {
 		
 		// Show or hide based on the final aligned position
 		dataLabel.attr({
-			visibility: options.crop === false || /*chart.isInsidePlot(alignAttr.x, alignAttr.y) || */chart.isInsidePlot(plotX, plotY, inverted) ?
+			visibility: options.crop === false ||
+					(chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height)) ?
 				(chart.renderer.isSVG ? 'inherit' : VISIBLE) : 
 				HIDDEN
 		});
