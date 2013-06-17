@@ -19952,12 +19952,13 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 		
 		var series = this,
 			segments,
-			gapSize = series.options.gapSize;
+			gapSize = series.options.gapSize,
+			xAxis = series.xAxis;
 	
 		// call base method
 		baseGetSegments.apply(series);
-		
-		if (gapSize) {
+			
+		if (xAxis.options.ordinal && gapSize) { // #1794
 		
 			// properties
 			segments = series.segments;
@@ -19966,7 +19967,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			each(segments, function (segment, no) {
 				var i = segment.length - 1;
 				while (i--) {
-					if (segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * gapSize) {
+					if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
 						segments.splice( // insert after this one
 							no + 1,
 							0,
