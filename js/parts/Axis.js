@@ -366,10 +366,10 @@ Axis.prototype = {
 
 		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
-		this.destroy();
+		this.destroy(true);
 		this._addedPlotLB = false; // #1611
 
-		this.init(chart, newOptions);
+		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
@@ -1231,6 +1231,11 @@ Axis.prototype = {
 		if (axis.postProcessTickInterval) {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
+
+		// In column-like charts, don't cramp in more ticks than there are points (#1943)
+		if (axis.pointRange) {
+			axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
+		}
 		
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
 		if (!tickIntervalOption && axis.tickInterval < minTickIntervalOption) {
@@ -2024,12 +2029,21 @@ Axis.prototype = {
 	 */
 	removePlotBandOrLine: function (id) {
 		var plotLinesAndBands = this.plotLinesAndBands,
+			options = this.options,
 			i = plotLinesAndBands.length;
 		while (i--) {
 			if (plotLinesAndBands[i].id === id) {
 				plotLinesAndBands[i].destroy();
 			}
 		}
+		each([options.plotLines || [], options.plotBands || []], function (arr) {
+			i = arr.length;
+			while (i--) {
+				if (arr[i].id === id) {
+					erase(arr, arr[i]);
+				}
+			}
+		});
 	},
 
 	/**
@@ -2079,13 +2093,15 @@ Axis.prototype = {
 	/**
 	 * Destroys an Axis instance.
 	 */
-	destroy: function () {
+	destroy: function (keepEvents) {
 		var axis = this,
 			stacks = axis.stacks,
 			stackKey;
 
 		// Remove the events
-		removeEvent(axis);
+		if (!keepEvents) {
+			removeEvent(axis);
+		}
 
 		// Destroy each stack total
 		for (stackKey in stacks) {

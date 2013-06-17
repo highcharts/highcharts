@@ -49,7 +49,8 @@ extend(defaultOptions, {
 				enabled: false
 			},
 			pointRange: 0,
-			shadow: false
+			shadow: false,
+			threshold: null
 		},
 		//top: undefined,
 		xAxis: {
@@ -835,7 +836,6 @@ Scroller.prototype = {
 
 			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-				threshold: null,
 				clip: false,
 				enableMouseTracking: false,
 				group: 'nav', // for columns
@@ -858,8 +858,6 @@ Scroller.prototype = {
 			// Abort if lazy-loading data from the server.
 			if (baseSeries && navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
-				// Survive Series.update()
-				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
 			}
 			
 

@@ -65,8 +65,8 @@ var PiePoint = extendClass(Point, {
 		});
 
 		// add event listener for select
-		toggleSlice = function () {
-			point.slice();
+		toggleSlice = function (e) {
+			point.slice(e.type === 'select');
 		};
 		addEvent(point, 'select', toggleSlice);
 		addEvent(point, 'unselect', toggleSlice);

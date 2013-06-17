@@ -2430,15 +2430,16 @@ SVGElement.prototype = {
 	 * @param {Function} handler
 	 */
 	on: function (eventType, handler) {
+		var element = this.element;
 		// touch
 		if (hasTouch && eventType === 'click') {
-			this.element.ontouchstart = function (e) {
+			element.ontouchstart = function (e) {
 				e.preventDefault();
-				handler();
+				handler.call(element, e);
 			};
 		}
 		// simplest possible event model for internal use
-		this.element['on' + eventType] = handler;
+		element['on' + eventType] = handler;
 		return this;
 	},
 	
@@ -6716,10 +6717,10 @@ Axis.prototype = {
 
 		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
-		this.destroy();
+		this.destroy(true);
 		this._addedPlotLB = false; // #1611
 
-		this.init(chart, newOptions);
+		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
@@ -7581,6 +7582,11 @@ Axis.prototype = {
 		if (axis.postProcessTickInterval) {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
+
+		// In column-like charts, don't cramp in more ticks than there are points (#1943)
+		if (axis.pointRange) {
+			axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
+		}
 		
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
 		if (!tickIntervalOption && axis.tickInterval < minTickIntervalOption) {
@@ -8374,12 +8380,21 @@ Axis.prototype = {
 	 */
 	removePlotBandOrLine: function (id) {
 		var plotLinesAndBands = this.plotLinesAndBands,
+			options = this.options,
 			i = plotLinesAndBands.length;
 		while (i--) {
 			if (plotLinesAndBands[i].id === id) {
 				plotLinesAndBands[i].destroy();
 			}
 		}
+		each([options.plotLines || [], options.plotBands || []], function (arr) {
+			i = arr.length;
+			while (i--) {
+				if (arr[i].id === id) {
+					erase(arr, arr[i]);
+				}
+			}
+		});
 	},
 
 	/**
@@ -8429,13 +8444,15 @@ Axis.prototype = {
 	/**
 	 * Destroys an Axis instance.
 	 */
-	destroy: function () {
+	destroy: function (keepEvents) {
 		var axis = this,
 			stacks = axis.stacks,
 			stackKey;
 
 		// Remove the events
-		removeEvent(axis);
+		if (!keepEvents) {
+			removeEvent(axis);
+		}
 
 		// Destroy each stack total
 		for (stackKey in stacks) {
@@ -9871,7 +9888,7 @@ Legend.prototype = {
 		// destroy SVG elements
 		each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
 			if (item[key]) {
-				item[key].destroy();
+				item[key] = item[key].destroy();
 			}
 		});
 
@@ -10565,7 +10582,8 @@ Chart.prototype = {
 
 		/*jslint unused: false*/
 		axis = new Axis(this, merge(options, {
-			index: this[key].length
+			index: this[key].length,
+			isX: isX
 		}));
 		/*jslint unused: true*/
 
@@ -12222,7 +12240,8 @@ Point.prototype = {
 			graphic = point.graphic,
 			i,
 			data = series.data,
-			chart = series.chart;
+			chart = series.chart,
+			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 
@@ -12244,10 +12263,13 @@ Point.prototype = {
 			series.xData[i] = point.x;
 			series.yData[i] = series.toYData ? series.toYData(point) : point.y;
 			series.zData[i] = point.z;
-			series.options.data[i] = point.options;
+			seriesOptions.data[i] = point.options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
+			if (seriesOptions.legendType === 'point') { // #1831, #1885
+				chart.legend.destroyItem(point);
+			}
 			if (redraw) {
 				chart.redraw(animation);
 			}
@@ -13932,12 +13954,12 @@ Series.prototype = {
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
 					
-					rotation = options.rotation;
-					
 					// Create individual options structure that can be extended without 
 					// affecting others
 					options = merge(generalOptions, pointOptions);
-				
+
+					rotation = options.rotation;
+					
 					// Get the string
 					labelConfig = point.getLabelConfig();
 					str = options.format ?
@@ -15552,8 +15574,8 @@ var PiePoint = extendClass(Point, {
 		});
 
 		// add event listener for select
-		toggleSlice = function () {
-			point.slice();
+		toggleSlice = function (e) {
+			point.slice(e.type === 'select');
 		};
 		addEvent(point, 'select', toggleSlice);
 		addEvent(point, 'unselect', toggleSlice);
@@ -17501,7 +17523,8 @@ extend(defaultOptions, {
 				enabled: false
 			},
 			pointRange: 0,
-			shadow: false
+			shadow: false,
+			threshold: null
 		},
 		//top: undefined,
 		xAxis: {
@@ -18287,7 +18310,6 @@ Scroller.prototype = {
 
 			// dmerge the series options
 			mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-				threshold: null,
 				clip: false,
 				enableMouseTracking: false,
 				group: 'nav', // for columns
@@ -18310,8 +18332,6 @@ Scroller.prototype = {
 			// Abort if lazy-loading data from the server.
 			if (baseSeries && navigatorOptions.adaptToUpdatedData !== false) {
 				addEvent(baseSeries, 'updatedData', scroller.updatedDataHandler);
-				// Survive Series.update()
-				baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: scroller.updatedDataHandler });
 			}
 			
 
@@ -19260,23 +19280,25 @@ seriesProto.setCompare = function (compare) {
  * used for comparing the following values 
  */
 seriesProto.processData = function () {
-	var series = this;
+	var series = this,
+		i = 0,
+		processedXData,
+		processedYData,
+		length;
 	
 	// call base method
 	seriesProcessData.apply(this, arguments);
-	
-	if (series.options.compare) {
+
+	if (series.xAxis) { // not pies
 		
 		// local variables
-		var i = 0,
-			processedXData = series.processedXData,
-			processedYData = series.processedYData,
-			length = processedYData.length,
-			min = series.xAxis.getExtremes().min;
+		processedXData = series.processedXData;
+		processedYData = series.processedYData;
+		length = processedYData.length;
 		
 		// find the first value for comparison
 		for (; i < length; i++) {
-			if (typeof processedYData[i] === NUMBER && processedXData[i] >= min) {
+			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
 			}

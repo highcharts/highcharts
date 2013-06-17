@@ -301,7 +301,8 @@ Point.prototype = {
 			graphic = point.graphic,
 			i,
 			data = series.data,
-			chart = series.chart;
+			chart = series.chart,
+			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 
@@ -323,10 +324,13 @@ Point.prototype = {
 			series.xData[i] = point.x;
 			series.yData[i] = series.toYData ? series.toYData(point) : point.y;
 			series.zData[i] = point.z;
-			series.options.data[i] = point.options;
+			seriesOptions.data[i] = point.options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
+			if (seriesOptions.legendType === 'point') { // #1831, #1885
+				chart.legend.destroyItem(point);
+			}
 			if (redraw) {
 				chart.redraw(animation);
 			}
@@ -2011,12 +2015,12 @@ Series.prototype = {
 				// in the point options, or if they fall outside the plot area.
 				} else if (enabled) {
 					
-					rotation = options.rotation;
-					
 					// Create individual options structure that can be extended without 
 					// affecting others
 					options = merge(generalOptions, pointOptions);
-				
+
+					rotation = options.rotation;
+					
 					// Get the string
 					labelConfig = point.getLabelConfig();
 					str = options.format ?

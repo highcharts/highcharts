@@ -170,7 +170,8 @@ Chart.prototype = {
 
 		/*jslint unused: false*/
 		axis = new Axis(this, merge(options, {
-			index: this[key].length
+			index: this[key].length,
+			isX: isX
 		}));
 		/*jslint unused: true*/
 
