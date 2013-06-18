@@ -5886,7 +5886,7 @@ Tick.prototype = {
 		}
 		
 		// Vertically centered
-		if (!defined(labelOptions.y)) {
+		if (!defined(labelOptions.y) && !rotation) { // #1951
 			y += baseline - label.getBBox().height / 2;
 		}
 		
