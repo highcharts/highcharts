@@ -2410,14 +2410,14 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group[isNew ? 'attr' : 'animate'](this.getBox());
+		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;		
 	},
 
 	/**
 	 * Get the translation and scale for the plot area of this series
 	 */
-	getBox: function () {
+	getPlotBox: function () {
 		return {
 			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft, 
 			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,

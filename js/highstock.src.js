@@ -9168,7 +9168,7 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			seriesAttribs = attribs || series.getBox(); // #1701
+			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {
@@ -14350,14 +14350,14 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group[isNew ? 'attr' : 'animate'](this.getBox());
+		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;		
 	},
 
 	/**
 	 * Get the translation and scale for the plot area of this series
 	 */
-	getBox: function () {
+	getPlotBox: function () {
 		return {
 			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft, 
 			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,
