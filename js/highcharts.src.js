@@ -13139,7 +13139,7 @@ Series.prototype = {
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
 		}
-		series.closestPointRange = closestPointRange;
+		series.closestPointRange = closestPointRange || xAxis.minRange || 0;
 		
 	},
 
