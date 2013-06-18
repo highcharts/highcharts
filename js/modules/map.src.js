@@ -147,10 +147,14 @@
 				legendItems = [],
 				name,
 				from,
-				to;
+				to,
+				fromLabel,
+				toLabel,
+				colorRange;
 				
 			Highcharts.Series.prototype.init.apply(this, arguments);
 			
+
 			if (series.options.valueRanges) {
 				each(series.options.valueRanges, function(range) {
 					from = range.from;
@@ -186,8 +190,84 @@
 				});
 				series.legendItems = legendItems;
 			}
+
+			colorRange = series.options.colorRange;
+			if (colorRange) {
+
+				from = colorRange.from;
+				to = colorRange.to;
+				fromLabel = colorRange.fromLabel;
+				toLabel = colorRange.toLabel;
+
+				var gradientColor = {
+                	linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+                	stops: [
+                    	[0, from],
+                    	[1, to]
+  	    	          ]
+    	        };
+
+
+				// Add a mock object to the legend items
+				legendItems = [{
+					chart: series.chart,
+					options: {},
+					fromLabel: fromLabel,
+					toLabel: toLabel,
+					color: gradientColor,
+					drawLegendSymbol: this.drawLegendSymbol,
+					visible: true,
+					setState: function() {},
+					setVisible: function() {}
+				}];
+
+				series.legendItems = legendItems;
+
+			}
 		},
+
+	/**
+	*
+	**/
+		drawLegendSymbol: function(legend, item) {
+			
+
+			item.fromPart = this.chart.renderer.text(
+					item.fromLabel,
+					legend.baseline,				//lower left horisontal (x)
+					0								//lower left vertical (y)
+				).attr({
+					zIndex: 0
+				}).add(item.legendGroup);
+
+
+			var box1 = item.fromPart.getBBox(); //x, y, w, h
+
+			//symbolPart?
+			item.legendSymbol = this.chart.renderer.rect(
+				box1.x + box1.width*1.2,								//upper left x
+				box1.y + box1.height*0.2,			//upper left y
+				legend.options.symbolWidth,		//width
+				12,								//heigt
+				2 								//corner radius
+			).attr({
+				zIndex: 3
+			}).add(item.legendGroup);
+
+			var box2 = item.legendSymbol.getBBox();
+
 		
+			item.toPart = this.chart.renderer.text(
+					item.toLabel,
+					box1.width+box2.width*1.1,
+					0
+				).attr({
+					zIndex: 0
+				}).add(item.legendGroup);
+
+		},
+
+
 		/**
 		 * Get the bounding box of all paths in the map combined.
 		 */
