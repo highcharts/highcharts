@@ -312,7 +312,7 @@ Point.prototype = {
 			point.applyOptions(options);
 
 			// update visuals
-			if (isObject(options)) {
+			if (redraw && isObject(options)) {
 				series.getAttribs();
 				if (graphic) {
 					graphic.attr(point.pointAttr[series.state]);
@@ -1666,6 +1666,7 @@ Series.prototype = {
 
 					if (graphic) { // update
 						graphic
+							.attr(pointAttr)
 							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
 								visibility: isInside ? (hasSVG ? 'inherit' : VISIBLE) : HIDDEN
 							})
