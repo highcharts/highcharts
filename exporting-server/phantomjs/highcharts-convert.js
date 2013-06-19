@@ -10,7 +10,9 @@
  * version: 2.0.1
  */
 
+/*jslint white: true */
 /*global window, require, phantom, console, $, document, Image, Highcharts, clearTimeout, clearInterval, options, cb */
+
 
 (function () {
 	"use strict";
@@ -20,7 +22,7 @@
 			HIGHCHARTS: 'highstock.js',
 			HIGHCHARTS_MORE: 'highcharts-more.js',
 			HIGHCHARTS_DATA: 'data.js',
-			JQUERY: 'jquery-1.8.2.min.js',
+			JQUERY: 'jquery.1.9.1.min.js',
 			TIMEOUT: 2000 /* 2 seconds timout for loading images */
 		},
 		mapCLArguments,
@@ -28,6 +30,7 @@
 		startServer = false,
 		args,
 		pick,
+		SVG_DOCTYPE = '<?xml version\"1.0" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">',
 		system = require('system'),
 		fs = require('fs');
 
@@ -187,6 +190,8 @@
 				if (outputExtension.toLowerCase() === 'svg') {
 					// output svg
 					svg = svg.html.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ').replace(/ href=/g, ' xlink:href=').replace(/<\/svg>.*?$/, '</svg>');
+					// add xml doc type
+					svg = SVG_DOCTYPE + svg;
 
 					if (!runsAsServer) {
 						// write the file
