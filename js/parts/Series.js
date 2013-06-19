@@ -875,6 +875,7 @@ Series.prototype = {
 				2 * radius
 			)
 			.add(legendItemGroup);
+			legendSymbol.isMarker = true;
 		}
 	},
 
