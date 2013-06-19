@@ -3424,12 +3424,12 @@ SVGRenderer.prototype = {
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
-		// add the events
-		addEvent(label.element, 'mouseenter', function () {
+		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
+		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
 			label.attr(hoverState)
 				.css(hoverStyle);
 		});
-		addEvent(label.element, 'mouseleave', function () {
+		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
 			stateOptions = [normalState, hoverState, pressedState][curState];
 			stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
 			label.attr(stateOptions)
