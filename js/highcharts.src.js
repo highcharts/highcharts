@@ -3424,12 +3424,12 @@ SVGRenderer.prototype = {
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
-		// add the events
-		addEvent(label.element, 'mouseenter', function () {
+		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
+		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
 			label.attr(hoverState)
 				.css(hoverStyle);
 		});
-		addEvent(label.element, 'mouseleave', function () {
+		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
 			stateOptions = [normalState, hoverState, pressedState][curState];
 			stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
 			label.attr(stateOptions)
@@ -5886,7 +5886,7 @@ Tick.prototype = {
 		}
 		
 		// Vertically centered
-		if (!defined(labelOptions.y)) {
+		if (!defined(labelOptions.y) && !rotation) { // #1951
 			y += baseline - label.getBBox().height / 2;
 		}
 		
@@ -6851,7 +6851,7 @@ Axis.prototype = {
 					
 				// Validate threshold in logarithmic axes
 				if (axis.isLog && threshold <= 0) {
-					threshold = seriesOptions.threshold = null;
+					threshold = null;
 				}
 
 				// Get dataMin and dataMax for X axes
@@ -8864,14 +8864,19 @@ Tooltip.prototype = {
 				i = crosshairsOptions.length,
 				attribs,
 				axis,
-				val;
+				val,
+				series;
 
 			while (i--) {
-				axis = point.series[i ? 'yAxis' : 'xAxis'];
+				series = point.series;
+				axis = series[i ? 'yAxis' : 'xAxis'];
 				if (crosshairsOptions[i] && axis) {
 					val = i ? pick(point.stackY, point.y) : point.x; // #814
 					if (axis.isLog) { // #1671
 						val = log2lin(val);
+					}
+					if (series.modifyValue) { // #1205
+						val = series.modifyValue(val);
 					}
 
 					path = axis.getPlotLinePath(
@@ -9168,7 +9173,7 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			seriesAttribs = attribs || series.getBox(); // #1701
+			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {
@@ -9826,7 +9831,6 @@ Legend.prototype = {
 			},
 			key,
 			val;
-
 		
 		if (legendItem) {
 			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE
@@ -9838,7 +9842,7 @@ Legend.prototype = {
 		if (legendSymbol) {
 			
 			// Apply marker options
-			if (markerOptions) {
+			if (markerOptions && legendSymbol.isMarker) { // #585
 				markerOptions = item.convertAttribs(markerOptions);
 				for (key in markerOptions) {
 					val = markerOptions[key];
@@ -9948,7 +9952,8 @@ Legend.prototype = {
 		var options = this.options,
 			padding = this.padding,
 			titleOptions = options.title,
-			titleHeight = 0;
+			titleHeight = 0,
+			bBox;
 		
 		if (titleOptions.text) {
 			if (!this.title) {
@@ -9957,7 +9962,9 @@ Legend.prototype = {
 					.css(titleOptions.style)
 					.add(this.group);
 			}
-			titleHeight = this.title.getBBox().height;
+			bBox = this.title.getBBox();
+			titleHeight = bBox.height;
+			this.offsetWidth = bBox.width; // #1717
 			this.contentGroup.attr({ translateY: titleHeight });
 		}
 		this.titleHeight = titleHeight;
@@ -12781,7 +12788,7 @@ Series.prototype = {
 			symbolWidth = legendOptions.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			baseline = legend.baseline,
+			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),
 			attr;
 			
 		// Draw the line
@@ -12795,10 +12802,10 @@ Series.prototype = {
 			this.legendLine = renderer.path([
 				M,
 				0,
-				baseline - 4,
+				verticalCenter,
 				L,
 				symbolWidth,
-				baseline - 4
+				verticalCenter
 			])
 			.attr(attr)
 			.add(legendItemGroup);
@@ -12810,11 +12817,12 @@ Series.prototype = {
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
 				(symbolWidth / 2) - radius,
-				baseline - 4 - radius,
+				verticalCenter - radius,
 				2 * radius,
 				2 * radius
 			)
 			.add(legendItemGroup);
+			legendSymbol.isMarker = true;
 		}
 	},
 
@@ -14350,14 +14358,14 @@ Series.prototype = {
 				.add(parent);
 		}
 		// Place it on first and subsequent (redraw) calls
-		group[isNew ? 'attr' : 'animate'](this.getBox());
+		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;		
 	},
 
 	/**
 	 * Get the translation and scale for the plot area of this series
 	 */
-	getBox: function () {
+	getPlotBox: function () {
 		return {
 			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft, 
 			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,
@@ -15055,7 +15063,8 @@ var areaProto = AreaSeries.prototype,
 		// Mix in methods from the area series
 		getSegmentPath: areaProto.getSegmentPath,
 		closeSegment: areaProto.closeSegment,
-		drawGraph: areaProto.drawGraph
+		drawGraph: areaProto.drawGraph,
+		drawLegendSymbol: areaProto.drawLegendSymbol
 	});
 seriesTypes.areaspline = AreaSplineSeries;
 
@@ -15136,7 +15145,6 @@ var ColumnSeries = extendClass(Series, {
 	getColumnMetrics: function () {
 
 		var series = this,
-			chart = series.chart,
 			options = series.options,
 			xAxis = this.xAxis,
 			reversedXAxis = xAxis.reversed,
@@ -15151,7 +15159,7 @@ var ColumnSeries = extendClass(Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			each(chart.series, function (otherSeries) {
+			each(series.yAxis.series, function (otherSeries) { // use Y axes separately, #642
 				var otherOptions = otherSeries.options;
 				if (otherSeries.type === series.type && otherSeries.visible &&
 						series.options.group === otherOptions.group) { // used in Stock charts navigator series

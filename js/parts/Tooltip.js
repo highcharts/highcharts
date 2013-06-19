@@ -384,14 +384,19 @@ Tooltip.prototype = {
 				i = crosshairsOptions.length,
 				attribs,
 				axis,
-				val;
+				val,
+				series;
 
 			while (i--) {
-				axis = point.series[i ? 'yAxis' : 'xAxis'];
+				series = point.series;
+				axis = series[i ? 'yAxis' : 'xAxis'];
 				if (crosshairsOptions[i] && axis) {
 					val = i ? pick(point.stackY, point.y) : point.x; // #814
 					if (axis.isLog) { // #1671
 						val = log2lin(val);
+					}
+					if (series.modifyValue) { // #1205
+						val = series.modifyValue(val);
 					}
 
 					path = axis.getPlotLinePath(

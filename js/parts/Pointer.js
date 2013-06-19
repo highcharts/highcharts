@@ -239,7 +239,7 @@ Pointer.prototype = {
 
 		// Scale each series
 		each(chart.series, function (series) {
-			seriesAttribs = attribs || series.getBox(); // #1701
+			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(attribs);
 				if (series.markerGroup) {

@@ -66,7 +66,6 @@ Legend.prototype = {
 			},
 			key,
 			val;
-
 		
 		if (legendItem) {
 			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE
@@ -78,7 +77,7 @@ Legend.prototype = {
 		if (legendSymbol) {
 			
 			// Apply marker options
-			if (markerOptions) {
+			if (markerOptions && legendSymbol.isMarker) { // #585
 				markerOptions = item.convertAttribs(markerOptions);
 				for (key in markerOptions) {
 					val = markerOptions[key];
@@ -188,7 +187,8 @@ Legend.prototype = {
 		var options = this.options,
 			padding = this.padding,
 			titleOptions = options.title,
-			titleHeight = 0;
+			titleHeight = 0,
+			bBox;
 		
 		if (titleOptions.text) {
 			if (!this.title) {
@@ -197,7 +197,9 @@ Legend.prototype = {
 					.css(titleOptions.style)
 					.add(this.group);
 			}
-			titleHeight = this.title.getBBox().height;
+			bBox = this.title.getBBox();
+			titleHeight = bBox.height;
+			this.offsetWidth = bBox.width; // #1717
 			this.contentGroup.attr({ translateY: titleHeight });
 		}
 		this.titleHeight = titleHeight;

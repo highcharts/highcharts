@@ -16,7 +16,9 @@ Chart.prototype.callbacks.push(function (chart) {
 
 	function renderRangeSelector() {
 		extremes = chart.xAxis[0].getExtremes();
-		rangeSelector.render(extremes.min, extremes.max);
+		if (!isNaN(extremes.min)) {
+			rangeSelector.render(extremes.min, extremes.max);
+		}
 	}
 
 	function afterSetExtremesHandlerScroller(e) {

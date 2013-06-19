@@ -23,15 +23,26 @@ seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 
 		// Set plotLow and plotHigh
 		each(series.points, function (point) {
-			var shapeArgs = point.shapeArgs;
-			
+			var shapeArgs = point.shapeArgs,
+				minPointLength = series.options.minPointLength,
+				heightDifference,
+				height,
+				y;
+
 			point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
 			point.plotLow = point.plotY;
-			
+
 			// adjust shape
-			shapeArgs.y = plotHigh;
-			shapeArgs.height = point.plotY - plotHigh;
-			
+			y = plotHigh;
+			height = point.plotY - plotHigh;
+
+			if (height < minPointLength) {
+				heightDifference = (minPointLength - height);
+				height += heightDifference;
+				y -= heightDifference / 2;
+			}
+			shapeArgs.height = height;
+			shapeArgs.y = y;
 		});
 	},
 	trackerGroups: ['group', 'dataLabels'],
