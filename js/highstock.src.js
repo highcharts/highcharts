@@ -18429,7 +18429,7 @@ Scroller.prototype = {
 			hasSetExtremes = !!baseXAxis.setExtremes;
 
 		// detect whether to move the range
-		stickToMax = baseMax >= navXData[navXData.length - 1];
+		stickToMax = baseMax >= navXData[navXData.length - 1] - (this.closestPointRange || 0); // #570
 		stickToMin = baseMin <= baseDataMin;
 
 		// set the navigator series data to the new data of the base series
@@ -19380,7 +19380,7 @@ seriesProto.processData = function () {
 	// call base method
 	seriesProcessData.apply(this, arguments);
 
-	if (series.xAxis) { // not pies
+	if (series.xAxis && series.processedYData) { // not pies
 		
 		// local variables
 		processedXData = series.processedXData;
