@@ -113,7 +113,8 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				} else {
 					point.graphic = chart.renderer.path(path)
 						.attr(pointAttr)
-						.add(series.group);
+						.add(series.group)
+						.shadow(series.options.shadow);
 				}
 
 			}

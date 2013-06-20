@@ -17159,7 +17159,8 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				} else {
 					point.graphic = chart.renderer.path(path)
 						.attr(pointAttr)
-						.add(series.group);
+						.add(series.group)
+						.shadow(series.options.shadow);
 				}
 
 			}
@@ -18144,12 +18145,12 @@ Scroller.prototype = {
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
 						if (!baseXAxis.ordinalPositions) {
-							baseXAxis.fixedRange = baseXAxis.max - baseXAxis.min;
+							chart.fixedRange = baseXAxis.max - baseXAxis.min;
 						}
 						leftValue = xAxis.translate(left, true);
 						baseXAxis.setExtremes(
 							leftValue,
-							baseXAxis.fixedRange ? leftValue + baseXAxis.fixedRange : xAxis.translate(left + range, true),
+							chart.fixedRange ? leftValue + chart.fixedRange : xAxis.translate(left + range, true),
 							true,
 							false,
 							{ trigger: 'navigator' }
@@ -18712,6 +18713,8 @@ RangeSelector.prototype = {
 			buttons[i].setState(2);
 		}
 
+		chart.fixedRange = range;
+
 		// update the chart
 		if (!baseAxis) { // axis not yet instanciated
 			baseXAxisOptions = chart.options.xAxis;
@@ -18802,13 +18805,12 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (this.fixedRange !== this.max - this.min) {
+				if (chart.fixedRange !== this.max - this.min) {
 					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 						buttons[rangeSelector.selected].setState(0);
 					}
-					rangeSelector.selected = null;
+					rangeSelector.selected = chart.fixedRange = null;
 				}
-				this.fixedRange = null;
 			});
 		});
 	},

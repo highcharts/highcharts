@@ -8,7 +8,8 @@
 
 	var defaultOptions = Highcharts.getOptions(),
 		symbols = Highcharts.Renderer.prototype.symbols,
-		extend = Highcharts.extend;
+		extend = Highcharts.extend,
+		merge = Highcharts.merge;
 
 	// Add language keys
 	extend(defaultOptions.lang, {
@@ -35,7 +36,7 @@
 		symbolStroke: '#A0A0A0',
 		symbolStrokeWidth: 1
 	});
-
+	
 	// Add the buttons to default options
 	extend(defaultOptions.exporting.buttons, {
 		exportButton: {
@@ -45,7 +46,7 @@
 			symbolFill: '#A8BF77',
 			_id: 'exportButton',
 			_titleKey: 'exportButtonTitle',
-			menuItems: defaultOptions.exporting.buttons.contextButton.menuItems.splice(2)
+			menuItems: defaultOptions.exporting.buttons.contextButton.menuItems.splice(2, 4)
 
 		},
 		printButton: {
