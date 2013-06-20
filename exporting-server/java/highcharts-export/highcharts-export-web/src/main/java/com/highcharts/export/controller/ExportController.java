@@ -48,6 +48,7 @@ public class ExportController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Float MAX_WIDTH = 2000.0F;
 	private static final Float MAX_SCALE = 4.0F;
+        private static final String SVG_DOCTYPE = "<?xml version\"1.0\" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">";
 	protected static Logger logger = Logger.getLogger("exporter");
 
 	/*for test*/
@@ -108,6 +109,8 @@ public class ExportController extends HttpServlet {
 		if (convertSvg && mime.equals(MimeType.SVG)) {
 			// send this to the client, without converting.
 			stream = new ByteArrayOutputStream();
+                        // add XML Doctype for svg
+                        input = SVG_DOCTYPE + input;
 			stream.write(input.getBytes());
 		} else {
 			//stream = SVGCreator.getInstance().convert(input, mime, constructor, callback, parsedWidth, parsedScale);
