@@ -146,7 +146,7 @@
 			scale has precedence : page.zoomFactor = params.scale  ? zoom * params.scale : zoom;*/
 
 			/* params.width has a higher precedence over scaling, to not break backover compatibility */
-			//page.zoomFactor = params.scale && params.width == undefined ? zoom * params.scale : zoom;
+			page.zoomFactor = params.scale && params.width == undefined ? zoom * params.scale : zoom;
 
 			clipwidth = svg.width * page.zoomFactor;
 			clipheight = svg.height * page.zoomFactor;
