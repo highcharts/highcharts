@@ -57,7 +57,7 @@ StackItem.prototype = {
 	 * Adds value to stack total, this method takes care of correcting floats
 	 */
 	addValue: function (y) {
-		return this.setTotal(correctFloat(this.total + y));
+		this.setTotal(correctFloat(this.total + y));
 	},
 
 	/**

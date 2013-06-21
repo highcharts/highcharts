@@ -1457,28 +1457,11 @@ Series.prototype = {
 			points = series.points,
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
-			isBottomSeries,
-			allStackSeries,
 			i,
 			pointPlacement = options.pointPlacement, // docs: accept numbers
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
-			//nextSeriesDown;
-			
-		// Is it the last visible series? (#809, #1722).
-		// TODO: After merging in the 'stacking' branch, this logic should probably be moved to Chart.getStacks
-		allStackSeries = yAxis.series.sort(function (a, b) {
-			return a.index - b.index;
-		});
-		i = allStackSeries.length;
-		while (i--) {
-			if (allStackSeries[i].visible) {
-				if (allStackSeries[i] === series) { // #809
-					isBottomSeries = true;
-				}
-				break;
-			}
-		}
+
 		
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
@@ -1500,12 +1483,14 @@ Series.prototype = {
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
+
+
 				pointStack = stack[xValue];
 				pointStackTotal = pointStack.total;
 				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
 				yValue = yBottom + yValue;
 				
-				if (isBottomSeries) {
+				if (pointStack.cum === 0) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				
