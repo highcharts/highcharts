@@ -31,6 +31,7 @@
 		args,
 		pick,
 		SVG_DOCTYPE = '<?xml version\"1.0" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">',
+		dpiCorrection = 1.4,
 		system = require('system'),
 		fs = require('fs');
 
@@ -151,6 +152,7 @@
 			clipheight = svg.height * page.zoomFactor;
 
 			/* define the clip-rectangle */
+			/* ignored for PDF, see https://github.com/ariya/phantomjs/issues/10465 */
 			page.clipRect = {
 				top: 0,
 				left: 0,
@@ -160,7 +162,13 @@
 
 			/* for pdf we need a bit more paperspace in some cases for example (w:600,h:400), I don't know why.*/
 			if (outputExtension === 'pdf') {
-				page.paperSize = { width: clipwidth, height: clipheight + 2};
+				// changed to a multiplication with 1.333 to correct systems dpi setting
+				clipwidth = clipwidth * dpiCorrection;
+				clipheight = clipheight * dpiCorrection;
+				// redefine the viewport
+				page.viewportSize = { width: clipwidth, height: clipheight};
+				// make the paper a bit larger than the viewport
+				page.paperSize = { width: clipwidth + 2 , height: clipheight + 2 };
 			}
 		};
 
