@@ -5781,7 +5781,7 @@ Tick.prototype = {
 			options = axis.options,
 			labelOptions = options.labels,
 			width = bBox.width,
-			leftSide = width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] - labelOptions.x;
+			leftSide = width * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x;
 
 		return [-leftSide, width - leftSide];
 	},
