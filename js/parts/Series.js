@@ -1649,7 +1649,7 @@ Series.prototype = {
 			i = points.length;
 			while (i--) {
 				point = points[i];
-				plotX = point.plotX;
+				plotX = mathFloor(point.plotX); // #1843
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
