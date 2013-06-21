@@ -499,7 +499,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 		dgOptions = series[i].options.dataGrouping;
 		if (dgOptions) {
 		
-			dataLength = (series[i].processedXData || series[i].data).length;
+			dataLength = (series[i].processedXData || series[i].data).length;
 
 			// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 			if (series[i].hasGroupedData || dataLength > (this.chart.plotSizeX / groupPixelWidth) || (dataLength && dgOptions.forced)) {

@@ -14228,7 +14228,7 @@ Series.prototype = {
 		var options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor || options.negativeFillColor,
+			negativeColor = options.negativeColor || options.negativeFillColor,
 			translatedThreshold,
 			posAttr,
 			negAttr,
@@ -16856,7 +16856,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 		dgOptions = series[i].options.dataGrouping;
 		if (dgOptions) {
 		
-			dataLength = (series[i].processedXData || series[i].data).length;
+			dataLength = (series[i].processedXData || series[i].data).length;
 
 			// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 			if (series[i].hasGroupedData || dataLength > (this.chart.plotSizeX / groupPixelWidth) || (dataLength && dgOptions.forced)) {
