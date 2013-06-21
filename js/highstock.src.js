@@ -9622,6 +9622,10 @@ Pointer.prototype = {
 				this.runPointActions(e);
 
 				this.pinch(e);
+
+			} else {
+				// Hide the tooltip on touching outside the plot area (#1203)
+				this.reset();
 			}
 
 		} else if (e.touches.length === 2) {
