@@ -739,6 +739,7 @@ Series.prototype = {
 		// register it
 		series.segments = segments;
 	},
+	
 	/**
 	 * Set the series options by merging from the options tree
 	 * @param {Object} itemOptions
@@ -1125,8 +1126,8 @@ Series.prototype = {
 			processedXData = series.xData, // copied during slice operation below
 			processedYData = series.yData,
 			dataLength = processedXData.length,
+			croppedData,
 			cropStart = 0,
-			cropEnd = dataLength,
 			cropped,
 			distance,
 			closestPointRange,
@@ -1134,13 +1135,15 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			isCartesian = series.isCartesian;
+			isCartesian = series.isCartesian,
+			dataExtremes = {};
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
 		if (isCartesian && !series.isDirty && !xAxis.isDirty && !series.yAxis.isDirty && !force) {
 			return false;
 		}
+		
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
@@ -1155,31 +1158,17 @@ Series.prototype = {
 			
 			// only crop if it's actually spilling out
 			} else if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
-
-				// iterate up to find slice start
-				for (i = 0; i < dataLength; i++) {
-					if (processedXData[i] >= min) {
-						cropStart = mathMax(0, i - 1);
-						break;
-					}
-				}
-				// proceed to find slice end
-				for (; i < dataLength; i++) {
-					if (processedXData[i] > max) {
-						cropEnd = i + 1;
-						break;
-					}
-					
-				}
-				processedXData = processedXData.slice(cropStart, cropEnd);
-				processedYData = processedYData.slice(cropStart, cropEnd);
+				croppedData = this.cropData(series.xData, series.yData, min, max);
+				processedXData = croppedData.xData;
+				processedYData = croppedData.yData;
+				cropStart = croppedData.start;
 				cropped = true;
 			}
 		}
 		
 		
 		// Find the closest distance between processed points
-		for (i = processedXData.length - 1; i > 0; i--) {
+		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
@@ -1189,6 +1178,11 @@ Series.prototype = {
 			} else if (distance < 0 && series.requireSorting) {
 				error(15);
 			}
+
+			// don't search dataMin/dataMax again for cropped data
+			if (!cropped && processedYData) {
+				series.getDataMinMax(processedYData[i], dataExtremes);
+			}
 		}
 		
 		// Record the properties
@@ -1196,12 +1190,86 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
-		
+		series.dataMax = cropped ? croppedData.dataMax : dataExtremes.max;
+		series.dataMin = cropped ? croppedData.dataMin : dataExtremes.min;
+
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
 		}
 		series.closestPointRange = closestPointRange;
 		
+	},
+
+	/**
+	 * Iterate over xData and crop values between min and max. Returns object containing crop start/end
+	 * cropped xData with corresponding part of yData, dataMin and dataMax within the cropped range
+	 */
+	cropData: function (xData, yData, min, max) {
+		var series = this,
+			dataLength = xData.length,
+			cropStart = 0,
+			cropEnd = dataLength,
+			dataExtremes = {},
+			i;
+
+		// iterate up to find slice start
+		for (i = 0; i < dataLength; i++) {
+			if (xData[i] >= min) {
+				cropStart = mathMax(0, i - 1);
+				break;
+			}
+		}
+
+		// proceed to find slice end
+		for (; i < dataLength; i++) {
+			series.getDataMinMax(yData[i], dataExtremes);
+
+			if (xData[i] > max) {
+				cropEnd = i + 1;
+				break;
+			}
+		}
+
+		return {
+			xData: xData.slice(cropStart, cropEnd),
+			yData: yData.slice(cropStart, cropEnd),
+			dataMin: dataExtremes.min,
+			dataMax: dataExtremes.max,
+			start: cropStart,
+			end: cropEnd
+		};
+	},
+	
+	/**
+	 * Process single yData point, find dataMin/dataMax and store them in the object referenced by 2nd argument
+	 */
+	getDataMinMax: function (y, e) {
+		var j;
+
+		// exit if y is null
+		if (y === null || y === UNDEFINED) { return; }
+
+		// handle arrays, like OHLC or range points
+		j = y.length;
+
+		if (j) {
+			while (j--) {
+				// handle null values in arrays
+				if (y[j] !== null) {
+					// find extreme values or set current if dataMin or dataMax is null
+					if (y[j] < e.min || e.min === UNDEFINED) { e.min = y[j]; }
+					if (y[j] > e.max || e.max === UNDEFINED) { e.max = y[j]; }
+				}
+			}
+		} else {
+			// set default values
+			if (e.min === UNDEFINED) { e.min = y; }
+			if (e.max === UNDEFINED) { e.max = y; }
+			
+			// set extremes
+			if (e.min > y) { e.min = y; }
+			if (e.max < y) { e.max = y; }
+		}
 	},
 
 	/**
@@ -1262,6 +1330,113 @@ Series.prototype = {
 
 		series.data = data;
 		series.points = points;
+	},
+
+	/**
+	 * Adds series' points value to corresponding stack
+	 */
+	setStackedPoints: function () {
+		if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
+			return;
+		}
+
+		var series = this,
+			xData = series.processedXData,
+			yData = series.processedYData,
+			yDataLength = yData.length,
+			seriesOptions = series.options,
+			threshold = seriesOptions.threshold,
+			stackOption = seriesOptions.stack,
+			stacking = seriesOptions.stacking,
+			stackKey = series.stackKey,
+			negKey = '-' + stackKey,
+			yAxis = series.yAxis,
+			xAxis = series.xAxis,
+			stacks = yAxis.stacks,
+			oldStacks = yAxis.oldStacks,
+			cropped = series.cropped,
+			stacksMax = yAxis.stacksMax,
+			xExtremes = xAxis.getExtremes(),
+			isNegative,
+			total,
+			stack,
+			key,
+			i,
+			x,
+			y;
+
+		// loop over the non-null y values and read them into a local array
+		for (i = 0; i < yDataLength; i++) {
+			x = xData[i];
+			y = yData[i];
+
+			// Read stacked values into a stack based on the x value,
+			// the sign of y and the stack key. Stacking is also handled for null values (#739)
+			isNegative = y < threshold;
+			key = isNegative ? negKey : stackKey;
+
+			// Set default stacksMax value for this stack
+			if (!stacksMax[key]) {
+				stacksMax[key] = y;
+			}
+
+			// Create empty object for this stack if it doesn't exist yet
+			if (!stacks[key]) {
+				stacks[key] = {};
+			}
+
+			// Initialize StackItem for this x
+			if (oldStacks[key] && oldStacks[key][x]) {
+				stacks[key][x] = oldStacks[key][x];
+				stacks[key][x].total = null;
+			} else if (!stacks[key][x]) {
+				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
+			}
+
+			// If the StackItem doesn't exist, create it first
+			if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
+				stack = stacks[key][x];
+				total = stack.total;
+
+				// add value to the stack total
+				stack.addValue(y);
+				stack.cacheExtremes(series, [total, total + y]);
+
+				if (stack.total > stacksMax[key] && !isNegative) {
+					stacksMax[key] = stack.total;
+				} else if (stack.total < stacksMax[key] && isNegative) {
+					stacksMax[key] = stack.total;
+				}
+			}
+		}
+
+		// reset old stacks
+		yAxis.oldStacks = {};
+	},
+
+	/**
+	 * Calculate x and y extremes for visible data
+	 */
+	getExtremes: function () {
+		var series = this,
+			dataMax = series.dataMax,
+			dataMin = series.dataMin,
+			xData = series.processedXData,
+			yData = series.processedYData,
+			xAxis = series.xAxis,
+			xExtremes = xAxis.getExtremes(),
+			croppedData;
+
+		if (!series.cropped) {
+			croppedData = series.cropData(xData, yData, xExtremes.min, xExtremes.max);
+			dataMax = croppedData.dataMax;
+			dataMin = croppedData.dataMin;
+		}
+
+		return {
+			dataMax: dataMax,
+			dataMin: dataMin
+		};
 	},
 
 	/**

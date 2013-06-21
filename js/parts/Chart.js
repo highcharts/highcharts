@@ -227,6 +227,7 @@ Chart.prototype = {
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
+			hasDirtyStacks,
 			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
@@ -244,12 +245,17 @@ Chart.prototype = {
 		// link stacked series
 		while (i--) {
 			serie = series[i];
-			if (serie.isDirty && serie.options.stacking) {
+
+			if (serie.options.stacking) {
 				hasStackedSeries = true;
-				break;
+				
+				if (serie.isDirty) {
+					hasDirtyStacks = true;
+					break;
+				}
 			}
 		}
-		if (hasStackedSeries) { // mark others as dirty
+		if (hasDirtyStacks) { // mark others as dirty
 			i = seriesLength;
 			while (i--) {
 				serie = series[i];
@@ -276,6 +282,11 @@ Chart.prototype = {
 			chart.isDirtyLegend = false;
 		}
 
+		// reset stacks
+		if (hasStackedSeries) {
+			chart.getStacks();
+		}
+
 
 		if (chart.hasCartesianSeries) {
 			if (!chart.isResizing) {
@@ -286,6 +297,11 @@ Chart.prototype = {
 				// set axes scales
 				each(axes, function (axis) {
 					axis.setScale();
+				});
+			} else {
+				// build stacks
+				each(chart.series, function (serie) {
+					serie.setStackedPoints();
 				});
 			}
 			chart.adjustTickAmounts();
@@ -314,7 +330,6 @@ Chart.prototype = {
 		if (isDirtyBox) {
 			chart.drawChartBox();
 		}
-
 
 
 		// redraw affected series
@@ -509,6 +524,26 @@ Chart.prototype = {
 	getSelectedSeries: function () {
 		return grep(this.series, function (serie) {
 			return serie.selected;
+		});
+	},
+
+	/**
+	 * Generate stacks for each series and calculate stacks total values
+	 */
+	getStacks: function () {
+		var chart = this;
+
+		// reset stacks for each yAxis
+		each(chart.yAxis, function (axis) {
+			if (axis.stacks && axis.hasVisibleSeries) {
+				axis.oldStacks = axis.stacks;
+			}
+		});
+
+		each(chart.series, function (series) {
+			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
+				series.stackKey = series.type + pick(series.options.stack, '');
+			}
 		});
 	},
 
@@ -1281,11 +1316,14 @@ Chart.prototype = {
 		// Legend
 		chart.legend = new Legend(chart, options.legend);
 
+		chart.getStacks(); // render stacks
+
 		// Get margins by pre-rendering axes
 		// set axes scales
 		each(axes, function (axis) {
 			axis.setScale();
 		});
+
 		chart.getMargins();
 
 		chart.maxTicks = null; // reset for second pass
