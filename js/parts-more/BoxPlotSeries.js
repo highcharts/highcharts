@@ -19,11 +19,12 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	threshold: null,
 	tooltip: {
 		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
-			'Minimum: {point.low}<br/>' +
-			'Lower quartile: {point.q1}<br/>' +
+			'Maximum: {point.high}<br/>' +
+			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +
-			'Higher quartile: {point.q3}<br/>' +
-			'Maximum: {point.high}<br/>'
+			'Lower quartile: {point.q1}<br/>' +
+			'Minimum: {point.low}<br/>'
+			
 	},
 	//whiskerColor: null,
 	whiskerLength: '50%',

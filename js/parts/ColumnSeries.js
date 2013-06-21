@@ -75,7 +75,6 @@ var ColumnSeries = extendClass(Series, {
 	getColumnMetrics: function () {
 
 		var series = this,
-			chart = series.chart,
 			options = series.options,
 			xAxis = this.xAxis,
 			reversedXAxis = xAxis.reversed,
@@ -90,7 +89,7 @@ var ColumnSeries = extendClass(Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			each(chart.series, function (otherSeries) {
+			each(series.yAxis.series, function (otherSeries) { // use Y axes separately, #642
 				var otherOptions = otherSeries.options;
 				if (otherSeries.type === series.type && otherSeries.visible &&
 						series.options.group === otherOptions.group) { // used in Stock charts navigator series

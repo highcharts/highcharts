@@ -150,6 +150,8 @@ RangeSelector.prototype = {
 			buttons[i].setState(2);
 		}
 
+		chart.fixedRange = range;
+
 		// update the chart
 		if (!baseAxis) { // axis not yet instanciated
 			baseXAxisOptions = chart.options.xAxis;
@@ -240,13 +242,12 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (this.fixedRange !== this.max - this.min) {
+				if (chart.fixedRange !== this.max - this.min) {
 					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 						buttons[rangeSelector.selected].setState(0);
 					}
-					rangeSelector.selected = null;
+					rangeSelector.selected = chart.fixedRange = null;
 				}
-				this.fixedRange = null;
 			});
 		});
 	},

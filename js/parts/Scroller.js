@@ -632,12 +632,12 @@ Scroller.prototype = {
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
 						if (!baseXAxis.ordinalPositions) {
-							baseXAxis.fixedRange = baseXAxis.max - baseXAxis.min;
+							chart.fixedRange = baseXAxis.max - baseXAxis.min;
 						}
 						leftValue = xAxis.translate(left, true);
 						baseXAxis.setExtremes(
 							leftValue,
-							baseXAxis.fixedRange ? leftValue + baseXAxis.fixedRange : xAxis.translate(left + range, true),
+							chart.fixedRange ? leftValue + chart.fixedRange : xAxis.translate(left + range, true),
 							true,
 							false,
 							{ trigger: 'navigator' }
@@ -917,7 +917,7 @@ Scroller.prototype = {
 			hasSetExtremes = !!baseXAxis.setExtremes;
 
 		// detect whether to move the range
-		stickToMax = baseMax >= navXData[navXData.length - 1];
+		stickToMax = baseMax >= navXData[navXData.length - 1] - (this.closestPointRange || 0); // #570
 		stickToMin = baseMin <= baseDataMin;
 
 		// set the navigator series data to the new data of the base series

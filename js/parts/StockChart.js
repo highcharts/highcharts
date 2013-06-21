@@ -197,7 +197,7 @@ seriesProto.processData = function () {
 	// call base method
 	seriesProcessData.apply(this, arguments);
 
-	if (series.xAxis) { // not pies
+	if (series.xAxis && series.processedYData) { // not pies
 		
 		// local variables
 		processedXData = series.processedXData;

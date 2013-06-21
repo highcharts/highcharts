@@ -129,7 +129,7 @@
 	getColumnDistribution: function () {
 		var chartOptions = this.chartOptions,
 			getValueCount = function (type) {
-				return (Highcharts.seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
+				return (Highcharts.seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
 			},
 			globalType = chartOptions && chartOptions.chart && chartOptions.chart.type,
 			individualCounts = [];

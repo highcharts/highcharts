@@ -1,6 +1,5 @@
 package com.highcharts.export.pool;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private int readTimeout;
 	private int connectTimeout;
 	private int maxTimeout;
-	public static String tmpDir;
+	public static String tmpDir = System.getProperty("java.io.tmpdir");
 	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>();
 	protected static Logger logger = Logger.getLogger("pool");
 

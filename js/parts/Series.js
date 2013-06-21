@@ -841,7 +841,7 @@ Series.prototype = {
 			symbolWidth = legendOptions.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			baseline = legend.baseline,
+			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),
 			attr;
 			
 		// Draw the line
@@ -855,10 +855,10 @@ Series.prototype = {
 			this.legendLine = renderer.path([
 				M,
 				0,
-				baseline - 4,
+				verticalCenter,
 				L,
 				symbolWidth,
-				baseline - 4
+				verticalCenter
 			])
 			.attr(attr)
 			.add(legendItemGroup);
@@ -870,11 +870,12 @@ Series.prototype = {
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
 				(symbolWidth / 2) - radius,
-				baseline - 4 - radius,
+				verticalCenter - radius,
 				2 * radius,
 				2 * radius
 			)
 			.add(legendItemGroup);
+			legendSymbol.isMarker = true;
 		}
 	},
 
@@ -1648,7 +1649,7 @@ Series.prototype = {
 			i = points.length;
 			while (i--) {
 				point = points[i];
-				plotX = point.plotX;
+				plotX = mathFloor(point.plotX); // #1843
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
@@ -2280,7 +2281,7 @@ Series.prototype = {
 		var options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor || options.negativeFillColor,
+			negativeColor = options.negativeColor || options.negativeFillColor,
 			translatedThreshold,
 			posAttr,
 			negAttr,

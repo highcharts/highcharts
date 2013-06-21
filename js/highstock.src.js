@@ -2972,6 +2972,8 @@ SVGElement.prototype = {
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
+			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && element.parentNode,
+			grandParent,
 			key,
 			i;
 
@@ -2999,6 +3001,13 @@ SVGElement.prototype = {
 			each(shadows, function (shadow) {
 				wrapper.safeRemoveChild(shadow);
 			});
+		}
+
+		// In case of useHTML, clean up empty containers emulating SVG groups (#1960).
+		while (parentToClean && parentToClean.childNodes.length === 0) {
+			grandParent = parentToClean.parentNode;
+			wrapper.safeRemoveChild(parentToClean);
+			parentToClean = grandParent;
 		}
 
 		// remove from alignObjects
@@ -3424,12 +3433,12 @@ SVGRenderer.prototype = {
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
-		// add the events
-		addEvent(label.element, 'mouseenter', function () {
+		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
+		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
 			label.attr(hoverState)
 				.css(hoverStyle);
 		});
-		addEvent(label.element, 'mouseleave', function () {
+		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
 			stateOptions = [normalState, hoverState, pressedState][curState];
 			stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
 			label.attr(stateOptions)
@@ -5781,7 +5790,7 @@ Tick.prototype = {
 			options = axis.options,
 			labelOptions = options.labels,
 			width = bBox.width,
-			leftSide = width * { left: 0, center: 0.5, right: 1 }[labelOptions.align] - labelOptions.x;
+			leftSide = width * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x;
 
 		return [-leftSide, width - leftSide];
 	},
@@ -6851,7 +6860,7 @@ Axis.prototype = {
 					
 				// Validate threshold in logarithmic axes
 				if (axis.isLog && threshold <= 0) {
-					threshold = seriesOptions.threshold = null;
+					threshold = null;
 				}
 
 				// Get dataMin and dataMax for X axes
@@ -8864,14 +8873,19 @@ Tooltip.prototype = {
 				i = crosshairsOptions.length,
 				attribs,
 				axis,
-				val;
+				val,
+				series;
 
 			while (i--) {
-				axis = point.series[i ? 'yAxis' : 'xAxis'];
+				series = point.series;
+				axis = series[i ? 'yAxis' : 'xAxis'];
 				if (crosshairsOptions[i] && axis) {
 					val = i ? pick(point.stackY, point.y) : point.x; // #814
 					if (axis.isLog) { // #1671
 						val = log2lin(val);
+					}
+					if (series.modifyValue) { // #1205
+						val = series.modifyValue(val);
 					}
 
 					path = axis.getPlotLinePath(
@@ -9826,7 +9840,6 @@ Legend.prototype = {
 			},
 			key,
 			val;
-
 		
 		if (legendItem) {
 			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE
@@ -9838,7 +9851,7 @@ Legend.prototype = {
 		if (legendSymbol) {
 			
 			// Apply marker options
-			if (markerOptions) {
+			if (markerOptions && legendSymbol.isMarker) { // #585
 				markerOptions = item.convertAttribs(markerOptions);
 				for (key in markerOptions) {
 					val = markerOptions[key];
@@ -9948,7 +9961,8 @@ Legend.prototype = {
 		var options = this.options,
 			padding = this.padding,
 			titleOptions = options.title,
-			titleHeight = 0;
+			titleHeight = 0,
+			bBox;
 		
 		if (titleOptions.text) {
 			if (!this.title) {
@@ -9957,7 +9971,9 @@ Legend.prototype = {
 					.css(titleOptions.style)
 					.add(this.group);
 			}
-			titleHeight = this.title.getBBox().height;
+			bBox = this.title.getBBox();
+			titleHeight = bBox.height;
+			this.offsetWidth = bBox.width; // #1717
 			this.contentGroup.attr({ translateY: titleHeight });
 		}
 		this.titleHeight = titleHeight;
@@ -12781,7 +12797,7 @@ Series.prototype = {
 			symbolWidth = legendOptions.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			baseline = legend.baseline,
+			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),
 			attr;
 			
 		// Draw the line
@@ -12795,10 +12811,10 @@ Series.prototype = {
 			this.legendLine = renderer.path([
 				M,
 				0,
-				baseline - 4,
+				verticalCenter,
 				L,
 				symbolWidth,
-				baseline - 4
+				verticalCenter
 			])
 			.attr(attr)
 			.add(legendItemGroup);
@@ -12810,11 +12826,12 @@ Series.prototype = {
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
 				(symbolWidth / 2) - radius,
-				baseline - 4 - radius,
+				verticalCenter - radius,
 				2 * radius,
 				2 * radius
 			)
 			.add(legendItemGroup);
+			legendSymbol.isMarker = true;
 		}
 	},
 
@@ -13588,7 +13605,7 @@ Series.prototype = {
 			i = points.length;
 			while (i--) {
 				point = points[i];
-				plotX = point.plotX;
+				plotX = mathFloor(point.plotX); // #1843
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
@@ -14220,7 +14237,7 @@ Series.prototype = {
 		var options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor || options.negativeFillColor,
+			negativeColor = options.negativeColor || options.negativeFillColor,
 			translatedThreshold,
 			posAttr,
 			negAttr,
@@ -15055,7 +15072,8 @@ var areaProto = AreaSeries.prototype,
 		// Mix in methods from the area series
 		getSegmentPath: areaProto.getSegmentPath,
 		closeSegment: areaProto.closeSegment,
-		drawGraph: areaProto.drawGraph
+		drawGraph: areaProto.drawGraph,
+		drawLegendSymbol: areaProto.drawLegendSymbol
 	});
 seriesTypes.areaspline = AreaSplineSeries;
 
@@ -15136,7 +15154,6 @@ var ColumnSeries = extendClass(Series, {
 	getColumnMetrics: function () {
 
 		var series = this,
-			chart = series.chart,
 			options = series.options,
 			xAxis = this.xAxis,
 			reversedXAxis = xAxis.reversed,
@@ -15151,7 +15168,7 @@ var ColumnSeries = extendClass(Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			each(chart.series, function (otherSeries) {
+			each(series.yAxis.series, function (otherSeries) { // use Y axes separately, #642
 				var otherOptions = otherSeries.options;
 				if (otherSeries.type === series.type && otherSeries.visible &&
 						series.options.group === otherOptions.group) { // used in Stock charts navigator series
@@ -16848,7 +16865,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 		dgOptions = series[i].options.dataGrouping;
 		if (dgOptions) {
 		
-			dataLength = (series[i].processedXData || series[i].data).length;
+			dataLength = (series[i].processedXData || series[i].data).length;
 
 			// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 			if (series[i].hasGroupedData || dataLength > (this.chart.plotSizeX / groupPixelWidth) || (dataLength && dgOptions.forced)) {
@@ -17151,7 +17168,8 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				} else {
 					point.graphic = chart.renderer.path(path)
 						.attr(pointAttr)
-						.add(series.group);
+						.add(series.group)
+						.shadow(series.options.shadow);
 				}
 
 			}
@@ -18136,12 +18154,12 @@ Scroller.prototype = {
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
 						if (!baseXAxis.ordinalPositions) {
-							baseXAxis.fixedRange = baseXAxis.max - baseXAxis.min;
+							chart.fixedRange = baseXAxis.max - baseXAxis.min;
 						}
 						leftValue = xAxis.translate(left, true);
 						baseXAxis.setExtremes(
 							leftValue,
-							baseXAxis.fixedRange ? leftValue + baseXAxis.fixedRange : xAxis.translate(left + range, true),
+							chart.fixedRange ? leftValue + chart.fixedRange : xAxis.translate(left + range, true),
 							true,
 							false,
 							{ trigger: 'navigator' }
@@ -18421,7 +18439,7 @@ Scroller.prototype = {
 			hasSetExtremes = !!baseXAxis.setExtremes;
 
 		// detect whether to move the range
-		stickToMax = baseMax >= navXData[navXData.length - 1];
+		stickToMax = baseMax >= navXData[navXData.length - 1] - (this.closestPointRange || 0); // #570
 		stickToMin = baseMin <= baseDataMin;
 
 		// set the navigator series data to the new data of the base series
@@ -18704,6 +18722,8 @@ RangeSelector.prototype = {
 			buttons[i].setState(2);
 		}
 
+		chart.fixedRange = range;
+
 		// update the chart
 		if (!baseAxis) { // axis not yet instanciated
 			baseXAxisOptions = chart.options.xAxis;
@@ -18794,13 +18814,12 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (this.fixedRange !== this.max - this.min) {
+				if (chart.fixedRange !== this.max - this.min) {
 					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 						buttons[rangeSelector.selected].setState(0);
 					}
-					rangeSelector.selected = null;
+					rangeSelector.selected = chart.fixedRange = null;
 				}
-				this.fixedRange = null;
 			});
 		});
 	},
@@ -19372,7 +19391,7 @@ seriesProto.processData = function () {
 	// call base method
 	seriesProcessData.apply(this, arguments);
 
-	if (series.xAxis) { // not pies
+	if (series.xAxis && series.processedYData) { // not pies
 		
 		// local variables
 		processedXData = series.processedXData;
