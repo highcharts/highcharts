@@ -2972,6 +2972,8 @@ SVGElement.prototype = {
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
+			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && element.parentNode,
+			grandParent,
 			key,
 			i;
 
@@ -2999,6 +3001,13 @@ SVGElement.prototype = {
 			each(shadows, function (shadow) {
 				wrapper.safeRemoveChild(shadow);
 			});
+		}
+
+		// In case of useHTML, clean up empty containers emulating SVG groups (#1960).
+		while (parentToClean && parentToClean.childNodes.length === 0) {
+			grandParent = parentToClean.parentNode;
+			wrapper.safeRemoveChild(parentToClean);
+			parentToClean = grandParent;
 		}
 
 		// remove from alignObjects
