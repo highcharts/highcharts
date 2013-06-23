@@ -1118,12 +1118,13 @@ var GaugeSeries = {
 	setData: seriesTypes.pie.prototype.setData,
 	drawTracker: seriesTypes.column.prototype.drawTracker
 };
-seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ****************************************************************************
+seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);
+/* ****************************************************************************
  * Start Box plot series code											      *
  *****************************************************************************/
 
 // Set default options
-defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
+defaultPlotOptions.boxplot = merge(defaultPlotOptions.columnrange, {
 	fillColor: '#FFFFFF',
 	lineWidth: 1,
 	//medianColor: null,
@@ -1152,7 +1153,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 });
 
 // Create the series object
-seriesTypes.boxplot = extendClass(seriesTypes.column, {
+seriesTypes.boxplot = extendClass(seriesTypes.columnrange, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1169,10 +1170,6 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		'stroke-width': 'lineWidth'
 	},
 	
-	/**
-	 * Disable data labels for box plot
-	 */
-	drawDataLabels: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1396,6 +1393,14 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
+    	dataLabels: {
+        	align: null,
+        	verticalAlign: null,
+        	xLow: 0,
+        	yLow: 0,
+        	xHigh: 0,
+        	yHigh: 0
+    	},
 	color: '#000000',
 	grouping: false,
 	linkedTo: ':previous',
@@ -1412,17 +1417,8 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.low, point.high];
 	},
-	pointValKey: 'high', // defines the top of the tracker
+	pointValKey: 'low', // defines the top of the tracker
 	doQuartiles: false,
-
-	/**
-	 * Get the width and X offset, either on top of the linked series column
-	 * or standalone
-	 */
-	getColumnMetrics: function () {
-		return (this.linkedParent && this.linkedParent.columnMetrics) || 
-			seriesTypes.column.prototype.getColumnMetrics.call(this);
-	}
 });
 
 /* ****************************************************************************
