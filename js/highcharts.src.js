@@ -13440,7 +13440,7 @@ Series.prototype = {
 				point.stackY = yValue;
 
 				// Place the stack label
-				pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+				pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
 				
 			}
 
