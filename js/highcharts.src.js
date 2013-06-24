@@ -3230,7 +3230,7 @@ SVGRenderer.prototype = {
 				.split(/<br.*?>/g),
 			childNodes = textNode.childNodes,
 			styleRegex = /style="([^"]+)"/,
-			hrefRegex = /href="([^"]+)"/,
+			hrefRegex = /href="(http[^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = textStyles && textStyles.width && pInt(textStyles.width),
