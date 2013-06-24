@@ -237,7 +237,7 @@ SVGElement.prototype = {
 					}
 
 					// let the shadow follow the main element
-					if (shadows && /^(width|height|visibility|x|y|d|transform)$/.test(key)) {
+					if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
 						i = shadows.length;
 						while (i--) {
 							attr(
