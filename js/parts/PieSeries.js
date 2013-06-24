@@ -479,7 +479,7 @@ var PieSeries = {
 			};
 
 		// get out if not enabled
-		if (!options.enabled && !series._hasPointLabels) {
+		if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
 			return;
 		}
 
