@@ -1506,6 +1506,10 @@ Series.prototype = {
 				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
 				point.total = point.stackTotal = pointStackTotal;
 				point.stackY = yValue;
+
+				// Place the stack label
+				pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+				
 			}
 
 			// Set translated yBottom or remove it

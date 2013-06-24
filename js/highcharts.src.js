@@ -13438,6 +13438,10 @@ Series.prototype = {
 				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
 				point.total = point.stackTotal = pointStackTotal;
 				point.stackY = yValue;
+
+				// Place the stack label
+				pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+				
 			}
 
 			// Set translated yBottom or remove it
@@ -15355,7 +15359,6 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			stacking = options.stacking,
 			borderWidth = options.borderWidth,
 			yAxis = series.yAxis,
 			threshold = options.threshold,
@@ -15363,8 +15366,8 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5),
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
-			barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
-			pointXOffset = metrics.offset;
+			barW = series.barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
+			pointXOffset = series.pointXOffset = metrics.offset;
 
 		Series.prototype.translate.apply(series);
 
@@ -15375,13 +15378,7 @@ var ColumnSeries = extendClass(Series, {
 				barX = point.plotX + pointXOffset,
 				barY = mathCeil(mathMin(plotY, yBottom)),
 				barH = mathCeil(mathMax(plotY, yBottom) - barY),
-				stack = yAxis.stacks[(point.y < 0 ? '-' : '') + series.stackKey],
 				shapeArgs;
-
-			// Record the offset'ed position and width of the bar to be able to align the stacking total correctly
-			if (stacking && series.visible && stack && stack[point.x]) {
-				stack[point.x].setOffset(pointXOffset, barW);
-			}
 
 			// handle options.minPointLength
 			if (mathAbs(barH) < minPointLength) {
