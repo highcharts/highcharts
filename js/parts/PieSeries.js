@@ -211,6 +211,39 @@ var PieSeries = {
 			this.chart.redraw();
 		} 
 	},
+
+	/**
+	 * Extend the generatePoints method by adding total and percentage properties to each point
+	 */
+	generatePoints: function () {
+		var i,
+			total = 0,
+			points,
+			len,
+			point,
+			ignoreHiddenPoint = this.options.ignoreHiddenPoint;
+
+		Series.prototype.generatePoints.call(this);
+
+		// Populate local vars
+		points = this.points;
+		len = points.length;
+		
+		// Get the total sum
+		for (i = 0; i < len; i++) {
+			point = points[i];
+			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
+		}
+		this.total = total;
+
+		// Set each point's properties
+		for (i = 0; i < len; i++) {
+			point = points[i];
+			point.percentage = (point.y / total) * 100;
+			point.total = total;
+		}
+		
+	},
 	
 	/**
 	 * Get the center of the pie based on the size and center options relative to the  
@@ -249,8 +282,7 @@ var PieSeries = {
 	translate: function (positions) {
 		this.generatePoints();
 		
-		var total = 0,
-			series = this,
+		var series = this,
 			cumulative = 0,
 			precision = 1000, // issue #172
 			options = series.options,
@@ -262,7 +294,6 @@ var PieSeries = {
 			startAngleRad = series.startAngleRad = mathPI / 180 * ((options.startAngle || 0) % 360 - 90),
 			points = series.points,
 			circ = 2 * mathPI,
-			fraction,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance,
@@ -288,22 +319,15 @@ var PieSeries = {
 				(mathCos(angle) * (positions[2] / 2 + labelDistance));
 		};
 
-		// get the total sum
-		for (i = 0; i < len; i++) {
-			point = points[i];
-			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
-		}
-
 		// Calculate the geometry for each point
 		for (i = 0; i < len; i++) {
 			
 			point = points[i];
 			
 			// set start and end angle
-			fraction = total ? point.y / total : 0;
 			start = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
 			if (!ignoreHiddenPoint || point.visible) {
-				cumulative += fraction;
+				cumulative += point.percentage / 100;
 			}
 			end = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
 
@@ -353,10 +377,6 @@ var PieSeries = {
 					point.half ? 'right' : 'left', // alignment
 				angle // center angle
 			];
-			
-			// API properties
-			point.percentage = fraction * 100;
-			point.total = total;
 
 		}
 
