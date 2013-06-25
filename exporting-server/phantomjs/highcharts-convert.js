@@ -440,6 +440,7 @@
 					page.injectJs(config.JQUERY);
 					page.injectJs(config.HIGHCHARTS);
 					page.injectJs(config.HIGHCHARTS_MORE);
+					page.injectJs(config.HIGHCHARTS_DATA);
 
 					// load chart in page and return svg height and width
 					svg = page.evaluate(createChart, width, constr, input, outputExtension, callback, messages);
