@@ -3,6 +3,8 @@
 		each = Highcharts.each;
 	
 	seriesTypes.heatmap = Highcharts.extendClass(seriesTypes.map, {
+		colorKey: 'z',
+		pointArrayMap: ['y', 'z'],
 		translate: function () {
 			var series = this,
 				options = series.options,
@@ -17,13 +19,17 @@
 			series.generatePoints();
 	
 			each(series.data, function (point) {
-				
+				var x = point.x,
+					y = point.y,
+					value = point.z,
+					xPad = (series.options.colsize || 1) / 2,
+					yPad = (series.options.rowsize || 1) / 2;
 
 				point.path = [
-					'M', point.col - 0.5, point.row - 0.5,
-					'L', point.col + 0.5, point.row - 0.5,
-					'L', point.col + 0.5, point.row + 0.5,
-					'L', point.col - 0.5, point.row + 0.5,
+					'M', x - xPad, y - yPad,
+					'L', x + xPad, y - yPad,
+					'L', x + xPad, y + yPad,
+					'L', x - xPad, y + yPad,
 					'Z'
 				];
 				
@@ -32,11 +38,11 @@
 					d: series.translatePath(point.path)
 				};
 				
-				if (typeof point.y === 'number') {
-					if (point.y > dataMax) {
-						dataMax = point.y;
-					} else if (point.y < dataMin) {
-						dataMin = point.y;
+				if (typeof value === 'number') {
+					if (value > dataMax) {
+						dataMax = value;
+					} else if (value < dataMin) {
+						dataMin = value;
 					}
 				}
 			});

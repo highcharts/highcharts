@@ -142,6 +142,7 @@
 			'stroke-width': 'borderWidth',
 			fill: 'color'
 		},
+		colorKey: 'y',
 		trackerGroups: ['group', 'markerGroup'],
 		getSymbol: noop,
 		getExtremesFromAll: true,
@@ -436,32 +437,34 @@
 			
 			var seriesOptions = this.options,
 				valueRanges = seriesOptions.valueRanges,
-				colorRange = seriesOptions.colorRange;
+				colorRange = seriesOptions.colorRange,
+				colorKey = this.colorKey;
 			
 			each(this.data, function (point) {
-				var y = point.y,
+				var value = point[colorKey],
 					rgba = [],
 					range,
 					from,
 					to,
 					i,
 					pos;
+
 				if (valueRanges) {
 					i = valueRanges.length;
 					while (i--) {
 						range = valueRanges[i];
 						from = range.from;
 						to = range.to;
-						if ((from === UNDEFINED || y >= from) && (to === UNDEFINED || y <= to)) {
+						if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
 							point.options.color = range.color;
 							break;
 						}
 							
 					}
-				} else if (colorRange && y !== undefined) {
+				} else if (colorRange && value !== undefined) {
 					from = Color(colorRange.from);
 					to = Color(colorRange.to);
-					pos = (dataMax - y) / (dataMax - dataMin);
+					pos = (dataMax - value) / (dataMax - dataMin);
 					i = 4;
 					while (i--) {
 						rgba[i] = Math.round(
@@ -489,13 +492,14 @@
 			var series = this,
 				chart = series.chart,
 				saturation,
-				bBox;
+				bBox,
+				colorKey = series.colorKey;
 			
 			// Make points pass test in drawing
 			each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
-				if (point.y === null) {
-					point.y = 0;
+				if (point[colorKey] === null) {
+					point[colorKey] = 0;
 					point.isNull = true;
 				}
 			});
@@ -517,7 +521,7 @@
 				
 				// Reset escaped null points
 				if (point.isNull) {
-					point.y = null;
+					point[colorKey] = null;
 				}
 			});
 
