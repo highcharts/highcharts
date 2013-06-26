@@ -166,9 +166,9 @@ var ColumnSeries = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					barY =
-						mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+						mathRound(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0); // use exact yAxis.translation (#1485)
+							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
 				}
 			}
 
