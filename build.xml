@@ -52,18 +52,24 @@
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
+        <property name="map.src.name" value="map.src.js"/>
+        <property name="heatmap.src.name" value="heatmap.src.js"/>
         <property name="annotations.src.name" value="annotations.src.js"/>
         <property name="mootools.minified.name" value="mootools-adapter.js"/>
         <property name="prototype.minified.name" value="prototype-adapter.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
+        <property name="map.minified.name" value="map.js"/>
+        <property name="heatmap.minified.name" value="heatmap.js"/>
         <property name="annotations.minified.name" value="annotations.js"/>
         <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
         <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
+        <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
+        <property name="heatmap.src.file" value="${basedir}/js/modules/${heatmap.src.name}"/>
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
 
         <!-- jsLint -->
@@ -299,6 +305,8 @@
             <fileset file="${exporting.src.file}"/>
             <fileset file="${data.src.file}"/>
             <fileset file="${funnel.src.file}"/>
+            <fileset file="${map.src.file}"/>
+            <fileset file="${heatmap.src.file}"/>
             <fileset file="${annotations.src.file}"/>
             <fileset dir="${themes.dir}"/>
             <fileset file="js/modules/canvgrenderer-extended.src.js"/>
@@ -429,6 +437,14 @@
             <param name="param.out" value="${dist.dir}/js/modules/${funnel.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${map.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${map.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${heatmap.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${heatmap.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${annotations.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${annotations.minified.name}"/>
         </antcall>
@@ -548,6 +564,16 @@
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${funnel.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${map.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${map.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${heatmap.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${heatmap.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${annotations.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${annotations.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>

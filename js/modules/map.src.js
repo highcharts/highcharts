@@ -13,16 +13,17 @@
  * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
  * - Zoom and pan GUI
  */
- (function(Highcharts) {
+(function (Highcharts) {
 	var UNDEFINED,
 		Axis = Highcharts.Axis,
 		each = Highcharts.each,
 		extend = Highcharts.extend,
 		merge = Highcharts.merge,
+		pick = Highcharts.pick,
 		numberFormat = Highcharts.numberFormat,
 		plotOptions = Highcharts.getOptions().plotOptions,
 		Color = Highcharts.Color,
-		noop = function() {};
+		noop = function () {};
 	
 	/**
 	 * Utility for reading SVG paths directly.
@@ -30,6 +31,8 @@
 	 * @todo This is moved to the Data plugin. Make sure it is deleted here.
 	 */
 	Highcharts.pathToArray = function (path) {
+		var i;
+
 		// Move letters apart
 		path = path.replace(/([A-Za-z])/g, ' $1 ');
 		// Trim
@@ -38,7 +41,7 @@
 		// Split on spaces and commas
 		path = path.split(/[ ,]+/);
 		
-		for (var i = 0; i < path.length; i++) {
+		for (i = 0; i < path.length; i++) {
 			if (!/[a-zA-Z]/.test(path[i])) {
 				path[i] = parseFloat(path[i]);
 			}
@@ -112,7 +115,8 @@
 	 * Extend the default options with map options
 	 */
 	plotOptions.map = merge(
-		plotOptions.scatter, {
+		plotOptions.scatter, 
+		{
 			animation: false, // makes the complex shapes slow
 			minOpacity: 0.2,
 			nullColor: '#F8F8F8',
@@ -138,28 +142,38 @@
 			'stroke-width': 'borderWidth',
 			fill: 'color'
 		},
+		colorKey: 'y',
 		trackerGroups: ['group', 'markerGroup'],
 		getSymbol: noop,
 		getExtremesFromAll: true,
-		init: function(chart) {
+		init: function (chart) {
 			var series = this,
 				valueDecimals = chart.options.legend.valueDecimals,
 				legendItems = [],
 				name,
 				from,
-				to;
-				
-			Highcharts.Series.prototype.init.apply(this, arguments);
+				to,
+				fromLabel,
+				toLabel,
+				colorRange,
+				gradientColor,
+				grad,
+				tmpLabel,
+				horizontal = chart.options.legend.layout === 'horizontal';
+
 			
+			Highcharts.Series.prototype.init.apply(this, arguments);
+			colorRange = series.options.colorRange;
+
 			if (series.options.valueRanges) {
-				each(series.options.valueRanges, function(range) {
+				each(series.options.valueRanges, function (range) {
 					from = range.from;
 					to = range.to;
 					
 					// Assemble the default name. This can be overridden by legend.options.labelFormatter
 					name = '';
 					if (from === UNDEFINED) {
-						name = '< '
+						name = '< ';
 					} else if (to === UNDEFINED) {
 						name = '> ';
 					}
@@ -180,18 +194,132 @@
 						options: {},
 						drawLegendSymbol: Highcharts.seriesTypes.area.prototype.drawLegendSymbol,
 						visible: true,
-						setState: function() {},
-						setVisible: function() {}
+						setState: function () {},
+						setVisible: function () {}
 					}, range));
 				});
 				series.legendItems = legendItems;
+
+			} else if (colorRange) {
+
+				from = colorRange.from;
+				to = colorRange.to;
+				fromLabel = colorRange.fromLabel;
+				toLabel = colorRange.toLabel;
+
+				// Flips linearGradient variables and label text.
+				grad = horizontal ? [0, 0, 1, 0] : [0, 1, 0, 0]; 
+				if (!horizontal) {
+					tmpLabel = fromLabel;
+					fromLabel = toLabel;
+					toLabel = tmpLabel;
+				} 
+
+				// Creates color gradient.
+				gradientColor = {
+					linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
+					stops: 
+					[
+						[0, from],
+						[1, to]
+					]
+				};
+
+				// Add a mock object to the legend items.
+				legendItems = [{
+					chart: series.chart,
+					options: {},
+					fromLabel: fromLabel,
+					toLabel: toLabel,
+					color: gradientColor,
+					drawLegendSymbol: this.drawLegendSymbol,
+					visible: true,
+					setState: function () {},
+					setVisible: function () {}
+				}];
+
+				series.legendItems = legendItems;
 			}
 		},
-		
+
+		/**
+		 * Gets the series' symbol in the legend and extended legend with more information.
+		 * 
+		 * @param {Object} legend The legend object
+		 * @param {Object} item The series (this) or point
+		 */
+		drawLegendSymbol: function (legend, item) {
+			
+			var spacing = legend.options.symbolPadding,
+				padding = pick(legend.options.padding, 8),
+				positionY,
+				gradientSize = this.chart.renderer.fontMetrics(legend.options.itemStyle.fontSize).h,
+				positionX,
+				horizontal = legend.options.layout === 'horizontal',
+				box1,
+				box2,
+				box3,
+				rectangleLength = pick(legend.options.rectangleLength, 200),
+				max;
+
+			// Set local variables based on option.
+			if (horizontal) {
+				positionY = (padding / 2) - (gradientSize / 2.5);
+				positionX = 0;
+			} else {
+				positionY = -rectangleLength + legend.baseline;
+				positionX = padding + gradientSize;
+			}
+
+			// Creates the from text.
+			item.fromText = this.chart.renderer.text(
+					item.fromLabel,	// Text.
+					positionX,		// Lower left x.
+					positionY		// Lower left y.
+				).attr({
+					zIndex: 2
+				}).add(item.legendGroup);
+			box1 = item.fromText.getBBox();
+
+			// Creates legend symbol.
+			// Ternary changes variables based on option.
+			item.legendSymbol = this.chart.renderer.rect(
+				horizontal ? box1.x + box1.width + spacing : box1.x - gradientSize - spacing,		// Upper left x.
+				box1.y,																				// Upper left y.
+				horizontal ? rectangleLength : box1.height,											// Width.
+				horizontal ? box1.height : rectangleLength,											// Height.
+				2																					// Corner radius.
+			).attr({
+				zIndex: 1
+			}).add(item.legendGroup);
+			box2 = item.legendSymbol.getBBox();
+
+			// Creates the to text.
+			// Vertical coordinate changed based on option.
+			item.toText = this.chart.renderer.text(
+					item.toLabel,
+					box2.x + box2.width + spacing,
+					horizontal ? positionY : box2.y + box2.height - spacing
+				).attr({
+					zIndex: 2
+				}).add(item.legendGroup);
+			box3 = item.toText.getBBox();
+
+			// Changes legend settings based on option.
+			if (horizontal) {
+				legend.offsetWidth = box1.width + box2.width + box3.width + (spacing * 2) + padding;
+				legend.itemY = box3.height;
+			} else {
+				legend.itemY = box2.height + padding;
+				legend.offsetWidth = Math.max(box1.width, box2.width) + padding + box2.width;
+				legend.itemX = spacing;
+			}
+		},
+
 		/**
 		 * Get the bounding box of all paths in the map combined.
 		 */
-		getBox: function() {
+		getBox: function () {
 			var chart = this.chart,
 				maxX = -Math.pow(2, 31), 
 				minX =  Math.pow(2, 31) - 1, 
@@ -205,12 +333,12 @@
 			
 			
 			// Find the bounding box
-			each(this.options.data, function(point) {
+			each(this.options.data, function (point) {
 				var path = point.path,
 					i = path.length,
 					even = false; // while loop reads from the end
 					
-				while(i--) {
+				while (i--) {
 					if (typeof path[i] === 'number') {
 						if (even) { // even = x
 							maxX = Math.max(maxX, path[i]);
@@ -249,7 +377,7 @@
 				
 			// Do the translation
 			i = path.length;
-			while(i--) {
+			while (i--) {
 				if (typeof path[i] === 'number') {
 					if (even) { // even = x
 						path[i] = Math.round(xAxis.translate(path[i]));
@@ -309,32 +437,34 @@
 			
 			var seriesOptions = this.options,
 				valueRanges = seriesOptions.valueRanges,
-				colorRange = seriesOptions.colorRange;
+				colorRange = seriesOptions.colorRange,
+				colorKey = this.colorKey;
 			
 			each(this.data, function (point) {
-				var y = point.y,
+				var value = point[colorKey],
 					rgba = [],
 					range,
 					from,
 					to,
 					i,
 					pos;
+
 				if (valueRanges) {
 					i = valueRanges.length;
 					while (i--) {
 						range = valueRanges[i];
 						from = range.from;
 						to = range.to;
-						if ((from === UNDEFINED || y >= from) && (to === UNDEFINED || y <= to)) {
+						if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
 							point.options.color = range.color;
 							break;
 						}
 							
 					}
-				} else if (colorRange && y !== undefined) {
+				} else if (colorRange && value !== undefined) {
 					from = Color(colorRange.from);
 					to = Color(colorRange.to);
-					pos = (dataMax - y) / (dataMax - dataMin);
+					pos = (dataMax - value) / (dataMax - dataMin);
 					i = 4;
 					while (i--) {
 						rgba[i] = Math.round(
@@ -358,17 +488,18 @@
 		 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
 		 * Extend it by assigning the tooltip position.
 		 */
-		drawPoints: function() {
+		drawPoints: function () {
 			var series = this,
 				chart = series.chart,
 				saturation,
-				bBox;
+				bBox,
+				colorKey = series.colorKey;
 			
 			// Make points pass test in drawing
 			each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
-				if (point.y === null) {
-					point.y = 0;
+				if (point[colorKey] === null) {
+					point[colorKey] = 0;
 					point.isNull = true;
 				}
 			});
@@ -390,7 +521,7 @@
 				
 				// Reset escaped null points
 				if (point.isNull) {
-					point.y = null;
+					point[colorKey] = null;
 				}
 			});
 
@@ -443,4 +574,4 @@
 	
 		return new Highcharts.Chart(options, callback);
 	};
-})(Highcharts);
+}(Highcharts));
