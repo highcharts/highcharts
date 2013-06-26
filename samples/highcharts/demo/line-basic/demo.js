@@ -1,10 +1,5 @@
 $(function () {
         $('#container').highcharts({
-            chart: {
-                type: 'line',
-                marginRight: 130,
-                marginBottom: 25
-            },
             title: {
                 text: 'Monthly Average Temperature',
                 x: -20 //center
@@ -33,9 +28,7 @@ $(function () {
             legend: {
                 layout: 'vertical',
                 align: 'right',
-                verticalAlign: 'top',
-                x: -10,
-                y: 100,
+                verticalAlign: 'middle',
                 borderWidth: 0
             },
             series: [{

@@ -179,7 +179,7 @@ SVGElement.prototype = {
 
 							i = value.length;
 							while (i--) {
-								value[i] = pInt(value[i]) * hash['stroke-width'];
+								value[i] = pInt(value[i]) * pick(hash['stroke-width'], wrapper['stroke-width']);
 							}
 							value = value.join(',');
 						}
@@ -237,7 +237,7 @@ SVGElement.prototype = {
 					}
 
 					// let the shadow follow the main element
-					if (shadows && /^(width|height|visibility|x|y|d|transform)$/.test(key)) {
+					if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
 						i = shadows.length;
 						while (i--) {
 							attr(
@@ -1107,18 +1107,24 @@ SVGRenderer.prototype = {
 		var renderer = this,
 			loc = location,
 			boxWrapper,
+			element,
 			desc;
 
 		boxWrapper = renderer.createElement('svg')
 			.attr({
-				xmlns: SVG_NS,
 				version: '1.1'
 			});
-		container.appendChild(boxWrapper.element);
+		element = boxWrapper.element;
+		container.appendChild(element);
+
+		// For browsers other than IE, add the namespace attribute (#1978)
+		if (container.innerHTML.indexOf('xmlns') === -1) {
+			attr(element, 'xmlns', SVG_NS);
+		}
 
 		// object properties
 		renderer.isSVG = true;
-		renderer.box = boxWrapper.element;
+		renderer.box = element;
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
 		
@@ -1239,7 +1245,7 @@ SVGRenderer.prototype = {
 				.split(/<br.*?>/g),
 			childNodes = textNode.childNodes,
 			styleRegex = /style="([^"]+)"/,
-			hrefRegex = /href="([^"]+)"/,
+			hrefRegex = /href="(http[^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = textStyles && textStyles.width && pInt(textStyles.width),
@@ -1536,8 +1542,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} end Ending angle
 	 */
 	arc: function (x, y, r, innerR, start, end) {
-		// arcs are defined as symbols for the ability to set
-		// attributes in attr and animate
+		var arc;
 
 		if (isObject(x)) {
 			y = x.y;
@@ -1547,11 +1552,16 @@ SVGRenderer.prototype = {
 			end = x.end;
 			x = x.x;
 		}
-		return this.symbol('arc', x || 0, y || 0, r || 0, r || 0, {
+		
+		// Arcs are defined as symbols for the ability to set
+		// attributes in attr and animate
+		arc = this.symbol('arc', x || 0, y || 0, r || 0, r || 0, {
 			innerR: innerR || 0,
 			start: start || 0,
 			end: end || 0
 		});
+		arc.r = r; // #959
+		return arc;
 	},
 	
 	/**

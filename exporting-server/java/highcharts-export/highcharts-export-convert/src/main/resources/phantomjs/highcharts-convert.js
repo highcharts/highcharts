@@ -30,7 +30,7 @@
 		startServer = false,
 		args,
 		pick,
-		SVG_DOCTYPE = '<?xml version\"1.0" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">',
+		SVG_DOCTYPE = '<?xml version=\"1.0" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">',
 		dpiCorrection = 1.4,
 		system = require('system'),
 		fs = require('fs');
@@ -440,6 +440,7 @@
 					page.injectJs(config.JQUERY);
 					page.injectJs(config.HIGHCHARTS);
 					page.injectJs(config.HIGHCHARTS_MORE);
+					page.injectJs(config.HIGHCHARTS_DATA);
 
 					// load chart in page and return svg height and width
 					svg = page.evaluate(createChart, width, constr, input, outputExtension, callback, messages);
