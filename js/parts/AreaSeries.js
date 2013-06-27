@@ -31,6 +31,7 @@ var AreaSeries = extendClass(Series, {
 			plotX,
 			plotY,
 			points = this.points,
+			val,
 			i,
 			x;
 
@@ -58,7 +59,8 @@ var AreaSeries = extendClass(Series, {
 				// correctly.
 				} else {
 					plotX = xAxis.translate(x);
-					plotY = yAxis.toPixels(stack[x].cum, true);
+					val = stack[x].percent ? (stack[x].total ? stack[x].cum * 100 / stack[x].total : 0) : stack[x].cum; // #1991
+					plotY = yAxis.toPixels(val, true);
 					segment.push({ 
 						y: null, 
 						plotX: plotX,
