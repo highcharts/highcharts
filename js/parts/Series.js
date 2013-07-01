@@ -1360,13 +1360,14 @@ Series.prototype = {
 			isNegative,
 			total,
 			stack,
+			prev,
 			key,
 			i,
 			x,
 			y;
 
 		if (isLast) {
-			var prev = {};
+			prev = {};
 			prev[stackKey] = 0;
 			prev[negKey] = 0;
 		}
@@ -1443,7 +1444,14 @@ Series.prototype = {
 			yData = series.processedYData,
 			xAxis = series.xAxis,
 			xExtremes = xAxis.getExtremes(),
-			croppedData;
+			croppedData,
+			onSeries;
+
+		// handle flag series
+		if (series.options.onSeries) {
+			onSeries = series.chart.get(series.options.onSeries);
+			return onSeries.getExtremes();
+		}
 
 		if (!series.cropped) {
 			croppedData = series.cropData(xData, yData, xExtremes.min, xExtremes.max);
