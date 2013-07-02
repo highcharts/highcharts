@@ -8346,13 +8346,14 @@ Axis.prototype = {
 	removePlotBandOrLine: function (id) {
 		var plotLinesAndBands = this.plotLinesAndBands,
 			options = this.options,
+			userOptions = this.userOptions,
 			i = plotLinesAndBands.length;
 		while (i--) {
 			if (plotLinesAndBands[i].id === id) {
 				plotLinesAndBands[i].destroy();
 			}
 		}
-		each([options.plotLines || [], options.plotBands || []], function (arr) {
+		each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
 			i = arr.length;
 			while (i--) {
 				if (arr[i].id === id) {
@@ -8360,6 +8361,7 @@ Axis.prototype = {
 				}
 			}
 		});
+
 	},
 
 	/**
