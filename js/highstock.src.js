@@ -11133,7 +11133,7 @@ Chart.prototype = {
 		
 		// Set up the clone
 		} else {
-			if (container) {
+			if (container && container.parentNode === this.renderTo) {
 				this.renderTo.removeChild(container); // do not clone this
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
@@ -18022,7 +18022,7 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		if (mathRound(min) === mathRound(max) && pxMin === UNDEFINED) { // #1851
+		if (navigatorWidth === 0 || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		} else {

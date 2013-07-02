@@ -321,7 +321,7 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		if (mathRound(min) === mathRound(max) && pxMin === UNDEFINED) { // #1851
+		if (navigatorWidth === 0 || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		} else {
