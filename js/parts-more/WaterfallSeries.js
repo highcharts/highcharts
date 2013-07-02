@@ -224,27 +224,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		return stacks[key][i];
 	},
 
-	/**
-	 * Return array of top and bottom position for sum column based on given edge points
-	 */
-	getSumEdges: function (pointA, pointB) {
-		var valueA,
-			valueB,
-			tmp,
-			threshold = this.options.threshold;
-
-		valueA = pointA.y >= threshold ? pointA.shapeArgs.y + pointA.shapeArgs.height : pointA.shapeArgs.y;
-		valueB = pointB.y >= threshold ? pointB.shapeArgs.y : pointB.shapeArgs.y + pointB.shapeArgs.height;
-
-		if (valueB > valueA) {
-			tmp = valueA;
-			valueA = valueB;
-			valueB = tmp;
-		}
-
-		return [valueA, valueB];
-	},
-
 	drawGraph: Series.prototype.drawGraph
 });
 

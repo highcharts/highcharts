@@ -300,8 +300,8 @@ Chart.prototype = {
 				});
 			} else {
 				// build stacks
-				each(chart.series, function (serie) {
-					serie.setStackedPoints();
+				each(axes, function (axis) {
+					axis.buildStacks();
 				});
 			}
 			chart.adjustTickAmounts();
