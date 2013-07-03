@@ -8961,8 +8961,6 @@ Pointer.prototype = {
 	 */
 	normalize: function (e) {
 		var chartPosition,
-			chartX,
-			chartY,
 			ePos;
 
 		// common IE normalizing
@@ -8970,7 +8968,7 @@ Pointer.prototype = {
 		if (!e.target) {
 			e.target = e.srcElement;
 		}
-
+		
 		// Framework specific normalizing (#1165)
 		e = washMouseEvent(e);
 		
@@ -8980,18 +8978,10 @@ Pointer.prototype = {
 		// get mouse position
 		this.chartPosition = chartPosition = offset(this.chart.container);
 
-		// chartX and chartY
-		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
-			chartX = e.x;
-			chartY = e.y;
-		} else {
-			chartX = ePos.pageX - chartPosition.left;
-			chartY = ePos.pageY - chartPosition.top;
-		}
-
+		// Old IE and compatibility mode use clientX. #886, #2005.
 		return extend(e, {
-			chartX: mathRound(chartX),
-			chartY: mathRound(chartY)
+			chartX: mathRound(pick(ePos.pageX, ePos.clientX) - chartPosition.left),
+			chartY: mathRound(pick(ePos.pageY, ePos.clientY) - chartPosition.top)
 		});
 	},
 
