@@ -244,20 +244,22 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	drawTracker: function () {
 		var series = this,
-			pointer = series.chart.pointer,
+			chart = series.chart,
+			pointer = chart.pointer,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
 				var target = e.target,
 					point;
 
-				series.onMouseOver();
-
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
 				while (target && !point) {
 					point = target.point;
 					target = target.parentNode;
 				}
-				if (point !== UNDEFINED) { // undefined on graph in scatterchart
+				if (point !== UNDEFINED && point !== chart.hoverPoint) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
 				}
 			};
