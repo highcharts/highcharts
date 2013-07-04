@@ -1622,7 +1622,7 @@ defaultOptions = {
 				align: 'center',
 				enabled: false,
 				formatter: function () {
-					return numberFormat(this.y, -1);
+					return this.y === null ? '' : numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
