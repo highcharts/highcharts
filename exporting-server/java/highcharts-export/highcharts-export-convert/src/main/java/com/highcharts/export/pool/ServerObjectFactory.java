@@ -29,7 +29,7 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private int readTimeout;
 	private int connectTimeout;
 	private int maxTimeout;
-	public static String tmpDir = System.getProperty("java.io.tmpdir");
+	public static String tmpDir = System.getProperty("java.io.tmpdir").endsWith(File.separator)?System.getProperty("java.io.tmpdir"):System.getProperty("java.io.tmpdir") + File.separator;
 	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>();
 	protected static Logger logger = Logger.getLogger("pool");
 
