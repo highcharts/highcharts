@@ -35,7 +35,7 @@ Chart.prototype = {
 
 		var chartEvents = optionsChart.events;
 
-		this.runChartClick = chartEvents && !!chartEvents.click;
+		//this.runChartClick = chartEvents && !!chartEvents.click;
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
 
 		this.callback = callback;

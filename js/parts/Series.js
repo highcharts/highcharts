@@ -2498,22 +2498,26 @@ Series.prototype = {
 				x: 0,
 				y: translatedThreshold,
 				width: chartSizeMax,
-				height: chartSizeMax - translatedThreshold
+				height: chartSizeMax
 			};
 			
-			if (chart.inverted && renderer.isVML) {
-				above = {
-					x: chart.plotWidth - translatedThreshold - chart.plotLeft,
-					y: 0,
-					width: chartWidth,
-					height: chartHeight
-				};
-				below = {
-					x: translatedThreshold + chart.plotLeft - chartWidth,
-					y: 0,
-					width: chart.plotLeft + translatedThreshold,
-					height: chartWidth
-				};
+			if (chart.inverted) {
+
+				above.height = below.y = chart.plotWidth - translatedThreshold;
+				if (renderer.isVML) {
+					above = {
+						x: chart.plotWidth - translatedThreshold - chart.plotLeft,
+						y: 0,
+						width: chartWidth,
+						height: chartHeight
+					};
+					below = {
+						x: translatedThreshold + chart.plotLeft - chartWidth,
+						y: 0,
+						width: chart.plotLeft + translatedThreshold,
+						height: chartWidth
+					};
+				}
 			}
 			
 			if (yAxis.reversed) {
