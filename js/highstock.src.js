@@ -149,15 +149,15 @@ function merge() {
 		doCopy = function (copy, original) {
 			var value, key;
 
+			// An object is replacing a primitive
+			if (typeof copy !== 'object') {
+				copy = {};
+			}
+
 			for (key in original) {
 				if (original.hasOwnProperty(key)) {
 					value = original[key];
 
-					// An object is replacing a primitive
-					if (typeof copy !== 'object') {
-						copy = {};
-					}
-						
 					// Copy the contents of objects, but not arrays or DOM nodes
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
 							&& typeof value.nodeType !== 'number') {
