@@ -416,7 +416,7 @@
 			callback = params.callback;
 			width = params.width;
 
-			if (input === undefined || input.lenght === 0) {
+			if (input === undefined || input.length === 0) {
 				exit('Error: Insuficient or wrong parameters for rendering');
 			}
 
