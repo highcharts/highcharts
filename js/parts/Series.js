@@ -1043,7 +1043,7 @@ Series.prototype = {
 					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
 					zData[i] = pt.z;
 					if (names && pt.name) {
-						names[i] = pt.name;
+						names[pt.x] = pt.name; // #2046
 					}
 				}
 			}
