@@ -58,7 +58,7 @@
 		for (i = 0; i < system.args.length; i += 1) {
 			if (system.args[i].charAt(0) === '-') {
 				key = system.args[i].substr(1, i.length);
-				if (key === 'infile' || key === 'callback') {
+				if (key === 'infile' || key === 'callback' || key === 'dataoptions' || key === 'globaloptions' || key === 'customcode') {
 					// get string from file
 					try {
 						map[key] = fs.read(system.args[i + 1]);
@@ -299,7 +299,7 @@
 			};
 		};
 
-		createChart = function (width, constr, input, outputFormat, callback, messages) {
+		createChart = function (width, constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputFormat, callback, messages) {
 
 			var $container, chart, nodes, nodeIter, elem, opacity, counter;
 
@@ -343,12 +343,33 @@
 				}
 			}
 
+			function parseData(completeHandler, chartOptions, dataConfig) {
+				try {
+					dataConfig.complete = completeHandler;
+					Highcharts.data(dataConfig, chartOptions);
+				} catch (error) {
+					completeHandler(undefined);
+				}
+			}
+
 			if (input !== 'undefined') {
 				loadScript('options', input);
 			}
 
 			if (callback !== 'undefined') {
 				loadScript('cb', callback);
+			}
+
+			if (globalOptionsArg !== 'undefined') {
+				loadScript('globalOptions', globalOptionsArg);
+			}
+
+			if (dataOptionsArg !== 'undefined') {
+				loadScript('dataOptions', dataOptionsArg);
+			}
+
+			if (customCodeArg !== 'undefined') {
+				loadScript('customCode', customCodeArg);
 			}
 
 			$(document.body).css('margin', '0px');
@@ -380,11 +401,39 @@
 			options.chart.width = (options.exporting && options.exporting.sourceWidth) || options.chart.width || 600;
 			options.chart.height = (options.exporting && options.exporting.sourceHeight) || options.chart.height || 400;
 
+			// Load globalOptions
+			if (globalOptions) {
+				Highcharts.setOptions(globalOptions);
+			}
 
-			chart = new Highcharts[constr](options, cb);
+			// Load data
+			if (dataOptions) {
+				parseData(function completeHandler(opts) {
+					// Merge series configs
+					if (options.series) {
+						Highcharts.each(options.series, function (series, i) {
+							options.series[i] = Highcharts.merge(series, opts.series[i]);
+						});
+					}
 
-			// ensure images are all loaded
-			loadImages();
+					var mergedOptions = Highcharts.merge(opts, options);
+
+					// Run customCode
+					if (customCode) {
+						customCode(mergedOptions);
+					}
+
+					chart = new Highcharts[constr](mergedOptions, cb);
+
+					// ensure images are all loaded
+					loadImages();
+				}, options, dataOptions);
+			} else {
+				chart = new Highcharts[constr](options, cb);
+
+				// ensure images are all loaded
+				loadImages();
+			}
 
 			/* remove stroke-opacity paths, used by mouse-trackers, they turn up as
 			*  as fully opaque in the PDF
@@ -426,7 +475,11 @@
 			svgInput = input.substring(0, 4).toLowerCase() === "<svg" ? true : false;
 
 			page.open('about:blank', function (status) {
-				var svg;
+				var svg,
+					globalOptions = params.globaloptions,
+					dataOptions = params.dataoptions,
+					customCode = 'function customCode(options) {\n' + params.customcode + '}\n';
+
 
 				if (svgInput) {
 					//render page directly from svg file
@@ -443,7 +496,7 @@
 					page.injectJs(config.HIGHCHARTS_DATA);
 
 					// load chart in page and return svg height and width
-					svg = page.evaluate(createChart, width, constr, input, outputExtension, callback, messages);
+					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outputExtension, callback, messages);
 
 					if (!window.optionsParsed) {
 						exit('ERROR: the options variable was not available, contains the infile an syntax error? see' + input);
