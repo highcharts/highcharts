@@ -149,15 +149,15 @@ function merge() {
 		doCopy = function (copy, original) {
 			var value, key;
 
+			// An object is replacing a primitive
+			if (typeof copy !== 'object') {
+				copy = {};
+			}
+
 			for (key in original) {
 				if (original.hasOwnProperty(key)) {
 					value = original[key];
 
-					// An object is replacing a primitive
-					if (typeof copy !== 'object') {
-						copy = {};
-					}
-						
 					// Copy the contents of objects, but not arrays or DOM nodes
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
 							&& typeof value.nodeType !== 'number') {
@@ -1622,7 +1622,7 @@ defaultOptions = {
 				align: 'center',
 				enabled: false,
 				formatter: function () {
-					return numberFormat(this.y, -1);
+					return this.y === null ? '' : numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -2594,25 +2594,12 @@ SVGElement.prototype = {
 
 				if (defined(rotation)) {
 					
-					if (renderer.isSVG) { // #916
-						cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
-						rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
-						
-					} else {
-						radians = rotation * deg2rad; // deg to rad
-						costheta = mathCos(radians);
-						sintheta = mathSin(radians);
+					radians = rotation * deg2rad; // deg to rad
+					costheta = mathCos(radians);
+					sintheta = mathSin(radians);
 	
-						// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
-						// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
-						// has support for CSS3 transform. The getBBox method also needs to be updated
-						// to compensate for the rotation, like it currently does for SVG.
-						// Test case: http://highcharts.com/tests/?file=text-rotation
-						rotationStyle.filter = rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
-								', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-								', sizingMethod=\'auto expand\')'].join('') : NONE;
-					}
-					css(elem, rotationStyle);
+					wrapper.setSpanRotation(rotation, sintheta, costheta);
+					
 				}
 
 				width = pick(wrapper.elemWidth, elem.offsetWidth);
@@ -2668,6 +2655,17 @@ SVGElement.prototype = {
 			// record current text transform
 			wrapper.cTT = currentTextTransform;
 		}
+	},
+
+	/**
+	 * Set the rotation of an individual HTML span
+	 */
+	setSpanRotation: function (rotation, sintheta, costheta) {
+		var rotationStyle = {},
+			cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
+		
+		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
+		css(this.element, rotationStyle);
 	},
 
 	/**
@@ -4577,6 +4575,22 @@ Highcharts.VMLElement = VMLElement = {
 	 * VML always uses htmlUpdateTransform
 	 */
 	updateTransform: SVGElement.prototype.htmlUpdateTransform,
+
+	/**
+	 * Set the rotation of a span with oldIE's filter
+	 */
+	setSpanRotation: function (rotation, sintheta, costheta) {
+		// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
+		// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
+		// has support for CSS3 transform. The getBBox method also needs to be updated
+		// to compensate for the rotation, like it currently does for SVG.
+		// Test case: http://highcharts.com/tests/?file=text-rotation
+		css(this.element, {
+			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
+				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
+				', sizingMethod=\'auto expand\')'].join('') : NONE
+		});
+	},
 
 	/**
 	 * Get or set attributes
@@ -6862,12 +6876,10 @@ Axis.prototype = {
 		// reset cached stacking extremes
 		axis.stacksMax = {};
 
+		axis.buildStacks();
+
 		// loop through this axis' series
 		each(axis.series, function (series) {
-
-			if (!axis.isXAxis) {
-				series.setStackedPoints();
-			}
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -8334,13 +8346,14 @@ Axis.prototype = {
 	removePlotBandOrLine: function (id) {
 		var plotLinesAndBands = this.plotLinesAndBands,
 			options = this.options,
+			userOptions = this.userOptions,
 			i = plotLinesAndBands.length;
 		while (i--) {
 			if (plotLinesAndBands[i].id === id) {
 				plotLinesAndBands[i].destroy();
 			}
 		}
-		each([options.plotLines || [], options.plotBands || []], function (arr) {
+		each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
 			i = arr.length;
 			while (i--) {
 				if (arr[i].id === id) {
@@ -8348,6 +8361,7 @@ Axis.prototype = {
 				}
 			}
 		});
+
 	},
 
 	/**
@@ -8383,6 +8397,22 @@ Axis.prototype = {
 			series.isDirty = true;
 		});
 
+	},
+
+	/**
+	 *
+	 */
+	buildStacks: function () {
+		if (this.isXAxis) {
+			return;
+		}
+
+		var series = this.series,
+				last = series.length - 1;
+
+		each(series, function (serie, i) {
+			serie.setStackedPoints(i === last);
+		});
 	},
 
 	/**
@@ -8931,8 +8961,6 @@ Pointer.prototype = {
 	 */
 	normalize: function (e) {
 		var chartPosition,
-			chartX,
-			chartY,
 			ePos;
 
 		// common IE normalizing
@@ -8950,18 +8978,10 @@ Pointer.prototype = {
 		// get mouse position
 		this.chartPosition = chartPosition = offset(this.chart.container);
 
-		// chartX and chartY
-		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
-			chartX = e.x;
-			chartY = e.y;
-		} else {
-			chartX = ePos.pageX - chartPosition.left;
-			chartY = ePos.pageY - chartPosition.top;
-		}
-
+		// Old IE and compatibility mode use clientX. #886, #2005.
 		return extend(e, {
-			chartX: mathRound(chartX),
-			chartY: mathRound(chartY)
+			chartX: mathRound(pick(ePos.pageX, ePos.clientX) - chartPosition.left),
+			chartY: mathRound(pick(ePos.pageY, ePos.clientY) - chartPosition.top)
 		});
 	},
 
@@ -10412,7 +10432,7 @@ Chart.prototype = {
 
 		var chartEvents = optionsChart.events;
 
-		this.runChartClick = chartEvents && !!chartEvents.click;
+		//this.runChartClick = chartEvents && !!chartEvents.click;
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
 
 		this.callback = callback;
@@ -10677,8 +10697,8 @@ Chart.prototype = {
 				});
 			} else {
 				// build stacks
-				each(chart.series, function (serie) {
-					serie.setStackedPoints();
+				each(axes, function (axis) {
+					axis.buildStacks();
 				});
 			}
 			chart.adjustTickAmounts();
@@ -11119,7 +11139,7 @@ Chart.prototype = {
 		
 		// Set up the clone
 		} else {
-			if (container) {
+			if (container && container.parentNode === this.renderTo) {
 				this.renderTo.removeChild(container); // do not clone this
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
@@ -12985,7 +13005,7 @@ Series.prototype = {
 					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
 					zData[i] = pt.z;
 					if (names && pt.name) {
-						names[i] = pt.name;
+						names[pt.x] = pt.name; // #2046
 					}
 				}
 			}
@@ -13277,7 +13297,7 @@ Series.prototype = {
 	/**
 	 * Adds series' points value to corresponding stack
 	 */
-	setStackedPoints: function () {
+	setStackedPoints: function (isLast) {
 		if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
 			return;
 		}
@@ -13302,10 +13322,17 @@ Series.prototype = {
 			isNegative,
 			total,
 			stack,
+			prev,
 			key,
 			i,
 			x,
 			y;
+
+		if (isLast) {
+			prev = {};
+			prev[stackKey] = 0;
+			prev[negKey] = 0;
+		}
 
 		// loop over the non-null y values and read them into a local array
 		for (i = 0; i < yDataLength; i++) {
@@ -13340,14 +13367,26 @@ Series.prototype = {
 				stack = stacks[key][x];
 				total = stack.total;
 
+
 				// add value to the stack total
 				stack.addValue(y);
+
 				stack.cacheExtremes(series, [total, total + y]);
+
+				if (isLast) {
+					stack.addValue(prev[key]);
+				}
+
+
 
 				if (stack.total > stacksMax[key] && !isNegative) {
 					stacksMax[key] = stack.total;
 				} else if (stack.total < stacksMax[key] && isNegative) {
 					stacksMax[key] = stack.total;
+				}
+
+				if (isLast) {
+					prev[key] = total;
 				}
 			}
 		}
@@ -13367,7 +13406,14 @@ Series.prototype = {
 			yData = series.processedYData,
 			xAxis = series.xAxis,
 			xExtremes = xAxis.getExtremes(),
-			croppedData;
+			croppedData,
+			onSeries;
+
+		// handle flag series
+		if (series.options.onSeries) {
+			onSeries = series.chart.get(series.options.onSeries);
+			return onSeries.getExtremes();
+		}
 
 		if (!series.cropped) {
 			croppedData = series.cropData(xData, yData, xExtremes.min, xExtremes.max);
@@ -14414,22 +14460,26 @@ Series.prototype = {
 				x: 0,
 				y: translatedThreshold,
 				width: chartSizeMax,
-				height: chartSizeMax - translatedThreshold
+				height: chartSizeMax
 			};
 			
-			if (chart.inverted && renderer.isVML) {
-				above = {
-					x: chart.plotWidth - translatedThreshold - chart.plotLeft,
-					y: 0,
-					width: chartWidth,
-					height: chartHeight
-				};
-				below = {
-					x: translatedThreshold + chart.plotLeft - chartWidth,
-					y: 0,
-					width: chart.plotLeft + translatedThreshold,
-					height: chartWidth
-				};
+			if (chart.inverted) {
+
+				above.height = below.y = chart.plotWidth - translatedThreshold;
+				if (renderer.isVML) {
+					above = {
+						x: chart.plotWidth - translatedThreshold - chart.plotLeft,
+						y: 0,
+						width: chartWidth,
+						height: chartHeight
+					};
+					below = {
+						x: translatedThreshold + chart.plotLeft - chartWidth,
+						y: 0,
+						width: chart.plotLeft + translatedThreshold,
+						height: chartWidth
+					};
+				}
 			}
 			
 			if (yAxis.reversed) {
@@ -14909,6 +14959,7 @@ var AreaSeries = extendClass(Series, {
 			plotX,
 			plotY,
 			points = this.points,
+			val,
 			i,
 			x;
 
@@ -14936,7 +14987,8 @@ var AreaSeries = extendClass(Series, {
 				// correctly.
 				} else {
 					plotX = xAxis.translate(x);
-					plotY = yAxis.toPixels(stack[x].cum, true);
+					val = stack[x].percent ? (stack[x].total ? stack[x].cum * 100 / stack[x].total : 0) : stack[x].cum; // #1991
+					plotY = yAxis.toPixels(val, true);
 					segment.push({ 
 						y: null, 
 						plotX: plotX,
@@ -15052,7 +15104,7 @@ var AreaSeries = extendClass(Series, {
 					.attr({
 						fill: pick(
 							prop[2],
-							Color(prop[1]).setOpacity(options.fillOpacity || 0.75).get()
+							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
 						zIndex: 0 // #1069
 					}).add(series.group);
@@ -15395,9 +15447,9 @@ var ColumnSeries = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					barY =
-						mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+						mathRound(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0); // use exact yAxis.translation (#1485)
+							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
 				}
 			}
 
@@ -15473,20 +15525,22 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	drawTracker: function () {
 		var series = this,
-			pointer = series.chart.pointer,
+			chart = series.chart,
+			pointer = chart.pointer,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
 				var target = e.target,
 					point;
 
-				series.onMouseOver();
-
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
 				while (target && !point) {
 					point = target.point;
 					target = target.parentNode;
 				}
-				if (point !== UNDEFINED) { // undefined on graph in scatterchart
+				if (point !== UNDEFINED && point !== chart.hoverPoint) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
 				}
 			};
@@ -18006,7 +18060,7 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		if (mathRound(min) === mathRound(max) && pxMin === UNDEFINED) { // #1851
+		if (navigatorWidth === 0 || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		} else {
@@ -18579,6 +18633,9 @@ Scroller.prototype = {
 		// Abort if lazy-loading data from the server.
 		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
 			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+			// Survive Series.update()
+			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+      
 		}
 	},
 

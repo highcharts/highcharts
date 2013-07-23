@@ -95,6 +95,22 @@ Highcharts.VMLElement = VMLElement = {
 	updateTransform: SVGElement.prototype.htmlUpdateTransform,
 
 	/**
+	 * Set the rotation of a span with oldIE's filter
+	 */
+	setSpanRotation: function (rotation, sintheta, costheta) {
+		// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
+		// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
+		// has support for CSS3 transform. The getBBox method also needs to be updated
+		// to compensate for the rotation, like it currently does for SVG.
+		// Test case: http://highcharts.com/tests/?file=text-rotation
+		css(this.element, {
+			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
+				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
+				', sizingMethod=\'auto expand\')'].join('') : NONE
+		});
+	},
+
+	/**
 	 * Get or set attributes
 	 */
 	attr: function (hash, val) {

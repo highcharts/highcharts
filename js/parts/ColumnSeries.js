@@ -166,9 +166,9 @@ var ColumnSeries = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					barY =
-						mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+						mathRound(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0); // use exact yAxis.translation (#1485)
+							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
 				}
 			}
 
@@ -244,20 +244,22 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	drawTracker: function () {
 		var series = this,
-			pointer = series.chart.pointer,
+			chart = series.chart,
+			pointer = chart.pointer,
 			cursor = series.options.cursor,
 			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
 				var target = e.target,
 					point;
 
-				series.onMouseOver();
-
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
 				while (target && !point) {
 					point = target.point;
 					target = target.parentNode;
 				}
-				if (point !== UNDEFINED) { // undefined on graph in scatterchart
+				if (point !== UNDEFINED && point !== chart.hoverPoint) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
 				}
 			};

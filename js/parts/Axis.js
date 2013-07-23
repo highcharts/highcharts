@@ -474,12 +474,10 @@ Axis.prototype = {
 		// reset cached stacking extremes
 		axis.stacksMax = {};
 
+		axis.buildStacks();
+
 		// loop through this axis' series
 		each(axis.series, function (series) {
-
-			if (!axis.isXAxis) {
-				series.setStackedPoints();
-			}
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -1946,13 +1944,14 @@ Axis.prototype = {
 	removePlotBandOrLine: function (id) {
 		var plotLinesAndBands = this.plotLinesAndBands,
 			options = this.options,
+			userOptions = this.userOptions,
 			i = plotLinesAndBands.length;
 		while (i--) {
 			if (plotLinesAndBands[i].id === id) {
 				plotLinesAndBands[i].destroy();
 			}
 		}
-		each([options.plotLines || [], options.plotBands || []], function (arr) {
+		each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
 			i = arr.length;
 			while (i--) {
 				if (arr[i].id === id) {
@@ -1960,6 +1959,7 @@ Axis.prototype = {
 				}
 			}
 		});
+
 	},
 
 	/**
@@ -1995,6 +1995,22 @@ Axis.prototype = {
 			series.isDirty = true;
 		});
 
+	},
+
+	/**
+	 *
+	 */
+	buildStacks: function () {
+		if (this.isXAxis) {
+			return;
+		}
+
+		var series = this.series,
+				last = series.length - 1;
+
+		each(series, function (serie, i) {
+			serie.setStackedPoints(i === last);
+		});
 	},
 
 	/**

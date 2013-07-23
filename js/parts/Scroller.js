@@ -321,7 +321,7 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		if (mathRound(min) === mathRound(max) && pxMin === UNDEFINED) { // #1851
+		if (navigatorWidth === 0 || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		} else {
@@ -894,6 +894,9 @@ Scroller.prototype = {
 		// Abort if lazy-loading data from the server.
 		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
 			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+			// Survive Series.update()
+			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+      
 		}
 	},
 

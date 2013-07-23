@@ -1043,7 +1043,7 @@ Series.prototype = {
 					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
 					zData[i] = pt.z;
 					if (names && pt.name) {
-						names[i] = pt.name;
+						names[pt.x] = pt.name; // #2046
 					}
 				}
 			}
@@ -1335,7 +1335,7 @@ Series.prototype = {
 	/**
 	 * Adds series' points value to corresponding stack
 	 */
-	setStackedPoints: function () {
+	setStackedPoints: function (isLast) {
 		if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
 			return;
 		}
@@ -1360,10 +1360,17 @@ Series.prototype = {
 			isNegative,
 			total,
 			stack,
+			prev,
 			key,
 			i,
 			x,
 			y;
+
+		if (isLast) {
+			prev = {};
+			prev[stackKey] = 0;
+			prev[negKey] = 0;
+		}
 
 		// loop over the non-null y values and read them into a local array
 		for (i = 0; i < yDataLength; i++) {
@@ -1398,14 +1405,26 @@ Series.prototype = {
 				stack = stacks[key][x];
 				total = stack.total;
 
+
 				// add value to the stack total
 				stack.addValue(y);
+
 				stack.cacheExtremes(series, [total, total + y]);
+
+				if (isLast) {
+					stack.addValue(prev[key]);
+				}
+
+
 
 				if (stack.total > stacksMax[key] && !isNegative) {
 					stacksMax[key] = stack.total;
 				} else if (stack.total < stacksMax[key] && isNegative) {
 					stacksMax[key] = stack.total;
+				}
+
+				if (isLast) {
+					prev[key] = total;
 				}
 			}
 		}
@@ -1425,7 +1444,14 @@ Series.prototype = {
 			yData = series.processedYData,
 			xAxis = series.xAxis,
 			xExtremes = xAxis.getExtremes(),
-			croppedData;
+			croppedData,
+			onSeries;
+
+		// handle flag series
+		if (series.options.onSeries) {
+			onSeries = series.chart.get(series.options.onSeries);
+			return onSeries.getExtremes();
+		}
 
 		if (!series.cropped) {
 			croppedData = series.cropData(xData, yData, xExtremes.min, xExtremes.max);
@@ -2472,22 +2498,26 @@ Series.prototype = {
 				x: 0,
 				y: translatedThreshold,
 				width: chartSizeMax,
-				height: chartSizeMax - translatedThreshold
+				height: chartSizeMax
 			};
 			
-			if (chart.inverted && renderer.isVML) {
-				above = {
-					x: chart.plotWidth - translatedThreshold - chart.plotLeft,
-					y: 0,
-					width: chartWidth,
-					height: chartHeight
-				};
-				below = {
-					x: translatedThreshold + chart.plotLeft - chartWidth,
-					y: 0,
-					width: chart.plotLeft + translatedThreshold,
-					height: chartWidth
-				};
+			if (chart.inverted) {
+
+				above.height = below.y = chart.plotWidth - translatedThreshold;
+				if (renderer.isVML) {
+					above = {
+						x: chart.plotWidth - translatedThreshold - chart.plotLeft,
+						y: 0,
+						width: chartWidth,
+						height: chartHeight
+					};
+					below = {
+						x: translatedThreshold + chart.plotLeft - chartWidth,
+						y: 0,
+						width: chart.plotLeft + translatedThreshold,
+						height: chartWidth
+					};
+				}
 			}
 			
 			if (yAxis.reversed) {

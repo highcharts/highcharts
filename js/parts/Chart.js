@@ -35,7 +35,7 @@ Chart.prototype = {
 
 		var chartEvents = optionsChart.events;
 
-		this.runChartClick = chartEvents && !!chartEvents.click;
+		//this.runChartClick = chartEvents && !!chartEvents.click;
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
 
 		this.callback = callback;
@@ -300,8 +300,8 @@ Chart.prototype = {
 				});
 			} else {
 				// build stacks
-				each(chart.series, function (serie) {
-					serie.setStackedPoints();
+				each(axes, function (axis) {
+					axis.buildStacks();
 				});
 			}
 			chart.adjustTickAmounts();
@@ -742,7 +742,7 @@ Chart.prototype = {
 		
 		// Set up the clone
 		} else {
-			if (container) {
+			if (container && container.parentNode === this.renderTo) {
 				this.renderTo.removeChild(container); // do not clone this
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
