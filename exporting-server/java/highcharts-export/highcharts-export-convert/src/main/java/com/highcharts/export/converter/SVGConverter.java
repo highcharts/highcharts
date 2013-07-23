@@ -40,6 +40,11 @@ public class SVGConverter {
 
 	public ByteArrayOutputStream convert(String input, MimeType mime,
 			String constructor, String callback, Float width, Float scale) throws SVGConverterException, IOException, PoolException, NoSuchElementException, TimeoutException {
+		return this.convert(input, null, null, null, mime, constructor, callback, width, scale);
+	}
+
+	public ByteArrayOutputStream convert(String input, String globalOptions, String dataOptions, String customCode, MimeType mime,
+			String constructor, String callback, Float width, Float scale) throws SVGConverterException, IOException, PoolException, NoSuchElementException, TimeoutException {
 
 			ByteArrayOutputStream stream = null;
 
@@ -59,6 +64,18 @@ public class SVGConverter {
 
 			if (callback != null && !callback.isEmpty()) {
 				params.put("callback", callback);
+			}
+
+			if (globalOptions != null && !globalOptions.isEmpty()) {
+				params.put("globaloptions", globalOptions);
+			}
+
+			if (dataOptions != null && !dataOptions.isEmpty()) {
+				params.put("dataoptions", dataOptions);
+			}
+
+			if (customCode != null && !customCode.isEmpty()) {
+				params.put("customcode", customCode);
 			}
 
 			if (width != null) {
