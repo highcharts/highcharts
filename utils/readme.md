@@ -19,18 +19,22 @@ order to run concatenated scripts from the local repo. Best practice is also to 
 ```
 
 2. Add them to the httpd.conf config file for Apache:
-```
-&lt;VirtualHost *>
+```xml
+<VirtualHost *>
 DocumentRoot "/Users/{...}/highcharts.com/js"
 ServerName code.highcharts.local
-&lt;/VirtualHost>
-&lt;Directory "/Users/{...}/highcharts.com/js">
+</VirtualHost>
+```
+```xml
+<Directory "/Users/{...}/highcharts.com/js">
 	AllowOverride All
-&lt;/Directory>
-&lt;VirtualHost *>
+</Directory>
+```
+```xml
+<VirtualHost *>
 DocumentRoot "/Users/{...}/highcharts.com/utils"
 ServerName utils.highcharts.local
-&lt;/VirtualHost>
+</VirtualHost>
 ```
 
 3. Restart your browser and point it to <a href="http://utils.highcharts.local">utils.highcharts.local</a>.
