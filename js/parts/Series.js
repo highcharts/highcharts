@@ -1360,17 +1360,10 @@ Series.prototype = {
 			isNegative,
 			total,
 			stack,
-			prev,
 			key,
 			i,
 			x,
 			y;
-
-		if (isLast) {
-			prev = {};
-			prev[stackKey] = 0;
-			prev[negKey] = 0;
-		}
 
 		// loop over the non-null y values and read them into a local array
 		for (i = 0; i < yDataLength; i++) {
@@ -1411,11 +1404,6 @@ Series.prototype = {
 
 				stack.cacheExtremes(series, [total, total + y]);
 
-				if (isLast) {
-					stack.addValue(prev[key]);
-				}
-
-
 
 				if (stack.total > stacksMax[key] && !isNegative) {
 					stacksMax[key] = stack.total;
@@ -1423,9 +1411,6 @@ Series.prototype = {
 					stacksMax[key] = stack.total;
 				}
 
-				if (isLast) {
-					prev[key] = total;
-				}
 			}
 		}
 
