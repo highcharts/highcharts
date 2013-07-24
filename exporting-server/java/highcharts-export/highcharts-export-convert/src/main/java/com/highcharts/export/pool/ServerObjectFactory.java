@@ -178,7 +178,7 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 				JarEntry entry = entries.nextElement();
 				String name = entry.getName();
 				if (name.startsWith("phantomjs/")) {
-					File file = new File(tmpDir + name);
+					File file = new File(tmpDir + "/" + name);
 					if (name.endsWith("/")) {
 						file.mkdir();
 					} else {
