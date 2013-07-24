@@ -44,7 +44,7 @@ public class Server {
 		try {
 			ArrayList<String> commands = new ArrayList<String>();
 			commands.add(exec);
-			commands.add(ServerObjectFactory.tmpDir + "phantomjs/" + script);
+			commands.add(ServerObjectFactory.tmpDir + "/phantomjs/" + script);
 			commands.add("-host");
 			commands.add(host);
 			commands.add("-port");
