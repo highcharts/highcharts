@@ -19,6 +19,9 @@
 /highcharts.com-access.log
 /highcharts.com.site-access.log
 /highcharts.com.site-error.log
+/utils/issue-by-commit/demo.js
+/utils/issue-by-commit/demo.html
+/utils/issue-by-commit/log.txt
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 
