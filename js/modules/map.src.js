@@ -253,21 +253,20 @@
 			var spacing = legend.options.symbolPadding,
 				padding = pick(legend.options.padding, 8),
 				positionY,
-				gradientSize = this.chart.renderer.fontMetrics(legend.options.itemStyle.fontSize).h,
 				positionX,
+				gradientSize = this.chart.renderer.fontMetrics(legend.options.itemStyle.fontSize).h,
 				horizontal = legend.options.layout === 'horizontal',
 				box1,
 				box2,
 				box3,
-				rectangleLength = pick(legend.options.rectangleLength, 200),
-				max;
+				rectangleLength = pick(legend.options.rectangleLength, 200);
 
 			// Set local variables based on option.
 			if (horizontal) {
-				positionY = (padding / 2) - (gradientSize / 2.5);
+				positionY = -(spacing / 2);
 				positionX = 0;
 			} else {
-				positionY = -rectangleLength + legend.baseline;
+				positionY = -rectangleLength + legend.baseline - (spacing / 2);
 				positionX = padding + gradientSize;
 			}
 
@@ -286,8 +285,8 @@
 			item.legendSymbol = this.chart.renderer.rect(
 				horizontal ? box1.x + box1.width + spacing : box1.x - gradientSize - spacing,		// Upper left x.
 				box1.y,																				// Upper left y.
-				horizontal ? rectangleLength : box1.height,											// Width.
-				horizontal ? box1.height : rectangleLength,											// Height.
+				horizontal ? rectangleLength : gradientSize,											// Width.
+				horizontal ? gradientSize : rectangleLength,										// Height.
 				2																					// Corner radius.
 			).attr({
 				zIndex: 1
@@ -305,13 +304,13 @@
 				}).add(item.legendGroup);
 			box3 = item.toText.getBBox();
 
-			// Changes legend settings based on option.
+			// Changes legend box settings based on option.
 			if (horizontal) {
 				legend.offsetWidth = box1.width + box2.width + box3.width + (spacing * 2) + padding;
-				legend.itemY = box3.height;
+				legend.itemY = gradientSize + padding;
 			} else {
+				legend.offsetWidth = Math.max(box1.width, box3.width) + (spacing) + box2.width + padding;
 				legend.itemY = box2.height + padding;
-				legend.offsetWidth = Math.max(box1.width, box2.width) + padding + box2.width;
 				legend.itemX = spacing;
 			}
 		},
