@@ -6933,7 +6933,7 @@ Axis.prototype = {
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series
 					// doesn't have active y data, we continue with nulls
-					if (!axis.usePercentage && seriesDataMin !== null && seriesDataMax !== null) {
+					if (!axis.usePercentage && defined(seriesDataMin) && defined(seriesDataMax)) {
 						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
 						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
@@ -13398,6 +13398,12 @@ Series.prototype = {
 		if (series.options.onSeries) {
 			onSeries = series.chart.get(series.options.onSeries);
 			return onSeries.getExtremes();
+		}
+
+		// handle comparison series
+		if (series.modifyValue) {
+			dataMax = series.modifyValue(dataMax);
+			dataMin = series.modifyValue(dataMin);
 		}
 
 		if (!series.cropped) {
