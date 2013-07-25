@@ -2,6 +2,7 @@
 
 $leftPath = 'http://code.highcharts.com';
 $rightPath = 'http://code.highcharts.local';
+//$rightPath = 'http://github.highcharts.com/ce80cd29';
 
 $leftHighcharts = "$leftPath/highcharts.js";
 $rightHighcharts = "$rightPath/highcharts.js";
@@ -177,9 +178,6 @@ function getHTML($which) {
 								},
 								borderWidth: 1
 							}
-						},
-						_exporting: {
-							url: 'http://www.exporting.com'
 						}
 							
 					});

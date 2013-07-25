@@ -115,7 +115,7 @@
 						}
 					}
 					
-					href = href.replace("/samples/", "/compare-svg/") + '&continue=true';
+					href = href.replace("view.php", "compare-view.php") + '&continue=true';
 					
 					window.location.href = href; 
 				}		
@@ -216,7 +216,7 @@
 					}
 				} else {
 					if (leftVersion === rightVersion) {
-						throw "Left and right version are equal.";
+						console.log("Warning: Left and right versions are equal.");
 					}
 					
 					report += 'Left version: '+ leftVersion +'; right version: '+ rightVersion +'<br/>';

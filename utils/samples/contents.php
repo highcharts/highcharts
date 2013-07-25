@@ -16,7 +16,7 @@
 					if (currentLi) {
 						var href = currentLi.getElementsByTagName("a")[0].href;
 					
-						href = href.replace("/samples/", "/compare-svg/") + '&continue=true';
+						href = href.replace("view.php", "compare-view.php") + '&continue=true';
 						window.parent.frames[1].location.href = href;
 					}
 				});

@@ -2,7 +2,7 @@
 ini_set('display_errors', 'on');
 
 define('EXPORT_SERVER', 'http://export.highcharts.com');
-//define('EXPORT_SERVER', 'http://exporting.elasticbeanstalk.com');
+//define('EXPORT_SERVER', 'http://localhost:8080/export/');
 
 /**
  * Send a post request
