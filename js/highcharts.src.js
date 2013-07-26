@@ -13091,8 +13091,7 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			isCartesian = series.isCartesian,
-			dataExtremes = {};
+			isCartesian = series.isCartesian;
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping. 
@@ -13103,9 +13102,8 @@ Series.prototype = {
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
-			var extremes = xAxis.getExtremes(),
-				min = extremes.min,
-				max = extremes.max;
+			var min = xAxis.min,
+				max = xAxis.max;
 
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -13134,20 +13132,13 @@ Series.prototype = {
 			} else if (distance < 0 && series.requireSorting) {
 				error(15);
 			}
-
-			// don't search dataMin/dataMax again for cropped data
-			if (!cropped && processedYData) {
-				series.getDataMinMax(processedYData[i], dataExtremes);
-			}
 		}
-		
+
 		// Record the properties
 		series.cropped = cropped; // undefined or true
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
-		series.dataMax = cropped ? croppedData.dataMax : dataExtremes.max;
-		series.dataMin = cropped ? croppedData.dataMin : dataExtremes.min;
 
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
@@ -13161,11 +13152,9 @@ Series.prototype = {
 	 * cropped xData with corresponding part of yData, dataMin and dataMax within the cropped range
 	 */
 	cropData: function (xData, yData, min, max) {
-		var series = this,
-			dataLength = xData.length,
+		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
-			dataExtremes = {},
 			i;
 
 		// iterate up to find slice start
@@ -13178,8 +13167,6 @@ Series.prototype = {
 
 		// proceed to find slice end
 		for (; i < dataLength; i++) {
-			series.getDataMinMax(yData[i], dataExtremes);
-
 			if (xData[i] > max) {
 				cropEnd = i + 1;
 				break;
@@ -13189,44 +13176,11 @@ Series.prototype = {
 		return {
 			xData: xData.slice(cropStart, cropEnd),
 			yData: yData.slice(cropStart, cropEnd),
-			dataMin: dataExtremes.min,
-			dataMax: dataExtremes.max,
 			start: cropStart,
 			end: cropEnd
 		};
 	},
-	
-	/**
-	 * Process single yData point, find dataMin/dataMax and store them in the object referenced by 2nd argument
-	 */
-	getDataMinMax: function (y, e) {
-		var j;
 
-		// exit if y is null
-		if (y === null || y === UNDEFINED) { return; }
-
-		// handle arrays, like OHLC or range points
-		j = y.length;
-
-		if (j) {
-			while (j--) {
-				// handle null values in arrays
-				if (y[j] !== null) {
-					// find extreme values or set current if dataMin or dataMax is null
-					if (y[j] < e.min || e.min === UNDEFINED) { e.min = y[j]; }
-					if (y[j] > e.max || e.max === UNDEFINED) { e.max = y[j]; }
-				}
-			}
-		} else {
-			// set default values
-			if (e.min === UNDEFINED) { e.min = y; }
-			if (e.max === UNDEFINED) { e.max = y; }
-			
-			// set extremes
-			if (e.min > y) { e.min = y; }
-			if (e.max < y) { e.max = y; }
-		}
-	},
 
 	/**
 	 * Generate the data point after the data has been processed by cropping away
@@ -13291,7 +13245,7 @@ Series.prototype = {
 	/**
 	 * Adds series' points value to corresponding stack
 	 */
-	setStackedPoints: function (isLast) {
+	setStackedPoints: function () {
 		if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
 			return;
 		}
@@ -13307,12 +13261,9 @@ Series.prototype = {
 			stackKey = series.stackKey,
 			negKey = '-' + stackKey,
 			yAxis = series.yAxis,
-			xAxis = series.xAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
-			cropped = series.cropped,
 			stacksMax = yAxis.stacksMax,
-			xExtremes = xAxis.getExtremes(),
 			isNegative,
 			total,
 			stack,
@@ -13350,23 +13301,20 @@ Series.prototype = {
 			}
 
 			// If the StackItem doesn't exist, create it first
-			if (series.getExtremesFromAll || cropped || ((xData[i + 1] || x) >= xExtremes.min && (xData[i - 1] || x) <= xExtremes.max)) {
-				stack = stacks[key][x];
-				total = stack.total;
+			stack = stacks[key][x];
+			total = stack.total;
 
 
-				// add value to the stack total
-				stack.addValue(y);
+			// add value to the stack total
+			stack.addValue(y);
 
-				stack.cacheExtremes(series, [total, total + y]);
+			stack.cacheExtremes(series, [total, total + y]);
 
 
-				if (stack.total > stacksMax[key] && !isNegative) {
-					stacksMax[key] = stack.total;
-				} else if (stack.total < stacksMax[key] && isNegative) {
-					stacksMax[key] = stack.total;
-				}
-
+			if (stack.total > stacksMax[key] && !isNegative) {
+				stacksMax[key] = stack.total;
+			} else if (stack.total < stacksMax[key] && isNegative) {
+				stacksMax[key] = stack.total;
 			}
 		}
 
@@ -13379,28 +13327,62 @@ Series.prototype = {
 	 */
 	getExtremes: function () {
 		var series = this,
-			dataMax = series.dataMax,
-			dataMin = series.dataMin,
-			xData = series.processedXData,
-			yData = series.processedYData,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			stackKey = series.stackKey,
-			croppedData,
-			onSeries;
+			options = series.options,
+			threshold = options.threshold,
+			xData = this.processedXData,
+			yData = this.processedYData,
+			yDataLength = yData.length,
+			activeYData = [],
+			activeCounter = -1,
+			xMin = xAxis.min,
+			xMax = xAxis.max,
+			validValue,
+			withinRange,
+			x,
+			y,
+			i,
+			j;
 
-		if (series.options.stacking) {
-			dataMax = yAxis.stacksMax[stackKey] || series.dataMax;
-			dataMin = yAxis.stacksMax['-' + stackKey] || series.dataMin;
+		// For stacked series, get the value from the stack
+		if (options.stacking) {
+			series.dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
+			series.dataMax = yAxis.stacksMax[stackKey] || threshold;
 
-		} else if (!series.cropped) {
-			croppedData = series.cropData(xData, yData, xAxis.min, xAxis.max);
-			dataMax = croppedData.dataMax;
-			dataMin = croppedData.dataMin;
+		// Else, iterate over values that are within the visible range
+		} else {
+
+			for (i = 0; i < yDataLength; i++) {
+				
+				x = xData[i];
+				y = yData[i];
+
+				// For points within the visible range, including the first point outside the
+				// visible range, consider y extremes
+				validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+				withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin && 
+					(xData[i - 1] || x) <= xMax);
+
+				if (validValue && withinRange) {
+
+					j = y.length;
+					if (j) { // array, like ohlc or range data
+						while (j--) {
+							if (y[j] !== null) {
+								activeYData[activeCounter++] = y[j];
+							}
+						}
+					} else {
+						activeYData[activeCounter++] = y;
+					}
+				}
+			}
+			this.dataMin = arrayMin(activeYData);
+			this.dataMax = arrayMax(activeYData);
 		}
 
-		series.dataMin = dataMin;
-		series.dataMax = dataMax;
 	},
 
 	/**
