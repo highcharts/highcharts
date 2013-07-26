@@ -215,6 +215,18 @@ seriesProto.processData = function () {
 };
 
 /**
+ * Modify series extremes
+ */
+wrap(seriesProto, 'getExtremes', function (proceed) {
+	proceed.call(this);
+
+	if (this.modifyValue) {
+		this.dataMax = this.modifyValue(this.dataMax);
+		this.dataMin = this.modifyValue(this.dataMin);
+	}		
+});
+
+/**
  * Add a utility method, setCompare, to the Y axis
  */
 Axis.prototype.setCompare = function (compare, redraw) {

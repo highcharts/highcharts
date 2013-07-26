@@ -1437,25 +1437,10 @@ Series.prototype = {
 			dataMax = yAxis.stacksMax[stackKey] || series.dataMax;
 			dataMin = yAxis.stacksMax['-' + stackKey] || series.dataMin;
 
-		} else {
-
-			// handle flag series
-			if (series.options.onSeries) {
-				onSeries = series.chart.get(series.options.onSeries);
-				return onSeries.getExtremes();
-			}
-
-			// handle comparison series
-			if (series.modifyValue) {
-				dataMax = series.modifyValue(dataMax);
-				dataMin = series.modifyValue(dataMin);
-			}
-
-			if (!series.cropped) {
-				croppedData = series.cropData(xData, yData, xAxis.min, xAxis.max);
-				dataMax = croppedData.dataMax;
-				dataMin = croppedData.dataMin;
-			}
+		} else if (!series.cropped) {
+			croppedData = series.cropData(xData, yData, xAxis.min, xAxis.max);
+			dataMax = croppedData.dataMax;
+			dataMin = croppedData.dataMin;
 		}
 
 		series.dataMin = dataMin;
