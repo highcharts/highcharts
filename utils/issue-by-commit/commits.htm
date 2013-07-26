@@ -17,7 +17,7 @@
 
 				}
 			
-				$.get('log.txt?d' + (new Date()).getTime(), function(log) {
+				$.get('../../temp-commit-log.txt?d' + (new Date()).getTime(), function(log) {
 					log = log.split('\n');
 					$.each(log, function(i, line) {
 						
