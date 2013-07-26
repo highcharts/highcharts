@@ -3,11 +3,17 @@ RewriteEngine On
 
 # Files concatenated from parts
 RewriteRule highcharts.js debug.php?target=highcharts [L]
+RewriteRule highcharts.src.js debug.php?target=highcharts [L]
 RewriteRule highstock.js debug.php?target=highstock [L]
+RewriteRule highstock.src.js debug.php?target=highstock [L]
 RewriteRule highcharts-more.js debug.php?target=highchartsmore [L]
+RewriteRule highcharts-more.src.js debug.php?target=highchartsmore [L]
 
 # Stock directory
 RewriteRule ^stock/(.*?) /$1
+
+# Github branches
+RewriteRule ^master/(.*?) /$1
 
 # Source files
 RewriteRule (.*?)annotations.js $1annotations.src.js
