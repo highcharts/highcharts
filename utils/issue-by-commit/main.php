@@ -14,6 +14,7 @@
 
 
 	$commit = @$_GET['commit'];
+	$tempDir = sys_get_temp_dir();
 
 	// Defaults
 	if (!@$_SESSION['branch']) {
@@ -29,9 +30,12 @@
 			$_SESSION['before'] = @$_POST['before'];
 			$activeBranch = $repo->active_branch();
 			$repo->checkout($_SESSION['branch']);
-			$repo->run('log > ' . dirname(__FILE__) . '/log.txt --format="%H %ci %s" ' .
+			$repo->run('log > ' . $tempDir . '/log.txt --format="%H %ci %s" ' .
 				'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
 			$repo->checkout($activeBranch);
+
+			// Move the log file back from temp dir
+			copy("$tempDir/log.txt", 'log.txt');
 
 
 			$commitsKey = join(array($_SESSION['branch'],$_SESSION['after'],$_SESSION['before']), ',');
@@ -42,11 +46,17 @@
 
 	// handle input data
 	if (@$_POST['html']) {
-		file_put_contents('demo.html', stripslashes($_POST['html']));
+		$_SESSION['html'] = stripslashes($_POST['html']);
 	}
 	if (@$_POST['js']) {
-		file_put_contents('demo.js', stripslashes($_POST['js']));
+		$_SESSION['js'] = stripslashes($_POST['js']);
 	}
+
+
+	// Get demo code
+	$html = isset($_SESSION['html']) ? $_SESSION['html'] : file_get_contents('demo.html');
+	$js = isset($_SESSION['js']) ? $_SESSION['js'] : file_get_contents('demo.js');
+
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -77,14 +87,10 @@
 		
 		
 <?php if ($commit) {
-	$html = file_get_contents('demo.html');
 	printf($html, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit);
 
 		
-	echo '<script type="text/javascript">';
-	require_once('demo.js');
-	echo '</script>';
-	
+	echo "<script>$js</script>";	
 	echo '<hr/>';
 	echo "<a target='_blank' href='https://github.com/highslide-software/highcharts.com/commit/$commit'>View commit</a>";
 
@@ -97,11 +103,11 @@
 
 <form method="post" action="main.php">
 <b>Paste HTML</b> here (including framework and Highcharts, use %s for commit):<br/>
-<textarea name="html" rows="6" style="width: 100%"><?php include('demo.html'); ?></textarea>
+<textarea name="html" rows="6" style="width: 100%"><?php echo $html; ?></textarea>
 	
 <br/>
 <b>Paste JS</b> here:<br/>
-<textarea name="js" rows="30" style="width: 100%"><?php include('demo.js'); ?></textarea><br/>
+<textarea name="js" rows="30" style="width: 100%"><?php echo $js; ?></textarea><br/>
 
 Load commits in <b>branch</b>
 <select name="branch">
