@@ -1,3 +1,7 @@
+<?php 
+	// Move the log file back from temp dir
+	copy(sys_get_temp_dir() . '/log.txt', 'log.txt');
+?>
 <html>
 	
 	<head>
@@ -17,7 +21,7 @@
 
 				}
 			
-				$.get('../../temp-commit-log.txt?d' + (new Date()).getTime(), function(log) {
+				$.get('log.txt?d' + (new Date()).getTime(), function(log) {
 					log = log.split('\n');
 					$.each(log, function(i, line) {
 						

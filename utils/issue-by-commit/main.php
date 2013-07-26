@@ -34,9 +34,6 @@
 				'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
 			$repo->checkout($activeBranch);
 
-			// Move the log file back from temp dir
-			copy("$tempDir/log.txt", '../../temp-commit-log.txt');
-
 
 			$commitsKey = join(array($_SESSION['branch'],$_SESSION['after'],$_SESSION['before']), ',');
 		} catch (Exception $e) {
