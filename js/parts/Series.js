@@ -1610,7 +1610,9 @@ Series.prototype = {
 			low = points[i - 1] ? high + 1 : 0;
 			// Now find the new high
 			high = points[i + 1] ?
-				mathMax(0, mathFloor((point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2)) :
+				mathMin(mathMax(0, mathFloor( // #2070
+					(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
+				)), axisLength) :
 				axisLength;
 
 			while (low >= 0 && low <= high) {
