@@ -1428,32 +1428,38 @@ Series.prototype = {
 			xData = series.processedXData,
 			yData = series.processedYData,
 			xAxis = series.xAxis,
-			xExtremes = xAxis.getExtremes(),
+			yAxis = series.yAxis,
+			stackKey = series.stackKey,
 			croppedData,
 			onSeries;
 
-		// handle flag series
-		if (series.options.onSeries) {
-			onSeries = series.chart.get(series.options.onSeries);
-			return onSeries.getExtremes();
+		if (series.options.stacking) {
+			dataMax = yAxis.stacksMax[stackKey] || series.dataMax;
+			dataMin = yAxis.stacksMax['-' + stackKey] || series.dataMin;
+
+		} else {
+
+			// handle flag series
+			if (series.options.onSeries) {
+				onSeries = series.chart.get(series.options.onSeries);
+				return onSeries.getExtremes();
+			}
+
+			// handle comparison series
+			if (series.modifyValue) {
+				dataMax = series.modifyValue(dataMax);
+				dataMin = series.modifyValue(dataMin);
+			}
+
+			if (!series.cropped) {
+				croppedData = series.cropData(xData, yData, xAxis.min, yAxis.max);
+				dataMax = croppedData.dataMax;
+				dataMin = croppedData.dataMin;
+			}
 		}
 
-		// handle comparison series
-		if (series.modifyValue) {
-			dataMax = series.modifyValue(dataMax);
-			dataMin = series.modifyValue(dataMin);
-		}
-
-		if (!series.cropped) {
-			croppedData = series.cropData(xData, yData, xExtremes.min, xExtremes.max);
-			dataMax = croppedData.dataMax;
-			dataMin = croppedData.dataMin;
-		}
-
-		return {
-			dataMax: dataMax,
-			dataMin: dataMin
-		};
+		series.dataMin = dataMin;
+		series.dataMax = dataMax;
 	},
 
 	/**

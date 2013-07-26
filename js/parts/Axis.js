@@ -485,8 +485,6 @@ Axis.prototype = {
 					stacking,
 					xData,
 					threshold = seriesOptions.threshold,
-					stackKey = series.stackKey,
-					seriesExtremes,
 					seriesDataMin,
 					seriesDataMax;
 
@@ -518,15 +516,11 @@ Axis.prototype = {
 						axis.dataMax = 99;
 					}
 
-					if (stacking) {
-						seriesDataMax = axis.stacksMax[stackKey] || series.dataMax;
-						seriesDataMin = axis.stacksMax['-' + stackKey] || series.dataMin;
-					} else {
-						// get this particular series extremes
-						seriesExtremes = series.getExtremes();
-						seriesDataMax = seriesExtremes.dataMax;
-						seriesDataMin = seriesExtremes.dataMin;
-					}
+					
+					// get this particular series extremes
+					series.getExtremes();
+					seriesDataMax = series.dataMax;
+					seriesDataMin = series.dataMin;
 
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series

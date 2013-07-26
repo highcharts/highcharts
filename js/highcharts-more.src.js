@@ -1536,13 +1536,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			options = series.options,
 			yData = series.yData,
 			dataLength = yData.length,
-			threshold = options.threshold,
+			threshold = options.threshold || 0,
 			subSum,
 			sum,
+			dataMin,
+			dataMax,
 			y,
 			i;
 
-		sum = subSum = threshold;
+		sum = subSum = dataMin = dataMax = threshold;
 
 		for (i = 0; i < dataLength; i++) {
 			y = yData[i];
@@ -1556,9 +1558,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				sum += y;
 				subSum += y;
 			}
+			dataMin = Math.min(sum, dataMin);
+			dataMax = Math.max(sum, dataMax);
 		}
 
 		Series.prototype.processData.call(this, force);
+
+		// Record extremes
+		series.dataMin = dataMin;
+		series.dataMax = dataMax;
 	},
 
 	/**
@@ -1638,6 +1646,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		return path;
 	},
+
+	/**
+	 * Extremes are recorded in processData
+	 */
+	getExtremes: noop,
 
 	/**
 	 * Return stack for given index
