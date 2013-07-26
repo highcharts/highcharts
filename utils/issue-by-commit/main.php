@@ -22,15 +22,6 @@
 		$_SESSION['branch'] = 'master';
 	}
 
-	
-	// handle input data
-	if (@$_POST['html']) {
-		file_put_contents('demo.html', stripslashes($_POST['html']));
-	}
-	if (@$_POST['js']) {
-		file_put_contents('demo.js', stripslashes($_POST['js']));
-	}
-
 	if (@$_POST['branch']) {
 		try {
 			$_SESSION['branch'] = @$_POST['branch'];
@@ -47,6 +38,14 @@
 		} catch (Exception $e) {
 			$error = $e->getMessage();
 		}
+	}
+
+	// handle input data
+	if (@$_POST['html']) {
+		file_put_contents('demo.html', stripslashes($_POST['html']));
+	}
+	if (@$_POST['js']) {
+		file_put_contents('demo.js', stripslashes($_POST['js']));
 	}
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
