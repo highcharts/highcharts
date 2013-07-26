@@ -1452,7 +1452,7 @@ Series.prototype = {
 			}
 
 			if (!series.cropped) {
-				croppedData = series.cropData(xData, yData, xAxis.min, yAxis.max);
+				croppedData = series.cropData(xData, yData, xAxis.min, xAxis.max);
 				dataMax = croppedData.dataMax;
 				dataMin = croppedData.dataMin;
 			}
