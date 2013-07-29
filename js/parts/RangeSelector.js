@@ -56,6 +56,7 @@ RangeSelector.prototype = {
 	 */
 	clickButton: function (i, rangeOptions, redraw) {
 		var rangeSelector = this,
+			selected = rangeSelector.selected,
 			chart = rangeSelector.chart,
 			buttons = rangeSelector.buttons,
 			baseAxis = chart.xAxis[0],
@@ -145,7 +146,11 @@ RangeSelector.prototype = {
 			newMax = dataMax;
 		}
 
-		// mark the button pressed
+		// Deselect previous button
+		if (buttons[selected]) {
+			buttons[selected].setState(0);
+		}
+		// Select this button
 		if (buttons[i]) {
 			buttons[i].setState(2);
 		}
