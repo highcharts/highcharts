@@ -182,7 +182,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radius
 		).attr({
 			zIndex: 3
-		}).add(item.legendGroup);		
+		}).add(item.legendGroup);
+		item.legendSymbol.isMarker = true;	
 		
 	},
 	
