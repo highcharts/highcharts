@@ -13326,17 +13326,16 @@ Series.prototype = {
 	 * Calculate x and y extremes for visible data
 	 */
 	getExtremes: function () {
-		var series = this,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			stackKey = series.stackKey,
-			options = series.options,
+		var xAxis = this.xAxis,
+			yAxis = this.yAxis,
+			stackKey = this.stackKey,
+			options = this.options,
 			threshold = options.threshold,
 			xData = this.processedXData,
 			yData = this.processedYData,
 			yDataLength = yData.length,
 			activeYData = [],
-			activeCounter = -1,
+			activeCounter = 0,
 			xMin = xAxis.min,
 			xMax = xAxis.max,
 			validValue,
@@ -13348,8 +13347,8 @@ Series.prototype = {
 
 		// For stacked series, get the value from the stack
 		if (options.stacking) {
-			series.dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
-			series.dataMax = yAxis.stacksMax[stackKey] || threshold;
+			this.dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
+			this.dataMax = yAxis.stacksMax[stackKey] || threshold;
 
 		// Else, iterate over values that are within the visible range
 		} else {
