@@ -1384,6 +1384,8 @@ Series.prototype = {
 			xMax = xAxis.max,
 			validValue,
 			withinRange,
+			dataMin,
+			dataMax,
 			x,
 			y,
 			i,
@@ -1391,11 +1393,12 @@ Series.prototype = {
 
 		// For stacked series, get the value from the stack
 		if (options.stacking) {
-			this.dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
-			this.dataMax = yAxis.stacksMax[stackKey] || threshold;
+			dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
+			dataMax = yAxis.stacksMax[stackKey] || threshold;
+		}
 
-		// Else, iterate over values that are within the visible range
-		} else {
+		// If not stacking or threshold is null, iterate over values that are within the visible range
+		if (dataMin === UNDEFINED || dataMax === UNDEFINED) {
 
 			for (i = 0; i < yDataLength; i++) {
 				
@@ -1422,10 +1425,13 @@ Series.prototype = {
 					}
 				}
 			}
-			this.dataMin = arrayMin(activeYData);
-			this.dataMax = arrayMax(activeYData);
+			dataMin = pick(dataMin, arrayMin(activeYData));
+			dataMax = pick(dataMax, arrayMax(activeYData));
 		}
 
+		// Set
+		this.dataMin = dataMin;
+		this.dataMax = dataMax;
 	},
 
 	/**
