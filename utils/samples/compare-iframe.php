@@ -146,6 +146,10 @@ function getCompareTooltips() {
 					interval = setInterval(function() {
 						chart = window.Highcharts && window.Highcharts.charts[0];
 						if (chart) {
+
+							// Automatically click buttons with classname "autocompare"
+							$('.autocompare').click();
+
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
 							clearInterval(interval);
 							
@@ -205,6 +209,7 @@ function getCompareTooltips() {
 					}
 				});
 				<?php endif ?>
+
 			});
 			
 			window.alert = function () {}
