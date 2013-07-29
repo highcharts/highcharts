@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -15,13 +13,23 @@ $(function () {
 
     // the button action
     $('#button').click(function() {
-        var chart = $('#container').highcharts();
-        var extremes = chart.yAxis[0].getExtremes()
-        $('#report').html(
+        var chart = $('#container').highcharts(),
+            extremes = chart.yAxis[0].getExtremes();
+
+        chart.renderer.label(
             'dataMax: '+ extremes.dataMax +'<br/>'+
             'dataMin: '+ extremes.dataMin +'<br/>'+
             'max: '+ extremes.max +'<br/>'+
-            'min: '+ extremes.min +'<br/>'
-        );
+            'min: '+ extremes.min +'<br/>',
+            100,
+            100
+        )
+        .attr({
+            fill: '#FCFFC5',
+            zIndex: 8
+        })
+        .add();
+
+        $(this).attr('disabled', true);
     });
 });
