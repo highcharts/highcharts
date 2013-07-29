@@ -13354,7 +13354,7 @@ Series.prototype = {
 		}
 
 		// If not stacking or threshold is null, iterate over values that are within the visible range
-		if (dataMin === UNDEFINED || dataMax === UNDEFINED) {
+		if (!defined(dataMin) || !defined(dataMax)) {
 
 			for (i = 0; i < yDataLength; i++) {
 				
