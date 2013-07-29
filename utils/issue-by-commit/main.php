@@ -89,7 +89,7 @@
 		
 	echo "<script>$js</script>";	
 	echo '<hr/>';
-	echo "<a target='_blank' href='https://github.com/highslide-software/highcharts.com/commit/$commit'>View commit</a>";
+	echo "<a target='_blank' href='https://github.com/highslide-software/highcharts.com/commit/$commit'>View commit ". substr($commit, 0, 8) ."</a>";
 
 } else { ?>
 

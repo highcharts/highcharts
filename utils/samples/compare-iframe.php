@@ -110,6 +110,16 @@ function getHTML($which) {
 	return $s;
 }
 
+function getCompareTooltips() {
+	global $path;
+	// No idea why file_get_contents doesn't work here...
+	ob_start();
+	include("$path/demo.details");
+	$yaml = ob_get_clean();
+
+	return strstr($yaml, 'compareTooltips: true');
+}
+
 
 ?><!DOCTYPE HTML>
 <html>
@@ -182,6 +192,19 @@ function getHTML($which) {
 							
 					});
 				}
+
+				<?php if (getCompareTooltips()) : ?>
+				// Start with tooltip open 
+				Highcharts.Chart.prototype.callbacks.push(function (chart) {
+					if (chart.series[0] && chart.series[0].points[2]) {
+						chart.tooltip.refresh(
+							chart.tooltip.options.shared ? 
+								[chart.series[0].points[2]] :
+								chart.series[0].points[2]
+						);
+					}
+				});
+				<?php endif ?>
 			});
 			
 			window.alert = function () {}
