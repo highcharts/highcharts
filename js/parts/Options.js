@@ -90,10 +90,10 @@ defaultOptions = {
 		text: 'Chart title',
 		align: 'center',
 		// floating: false,
-		// margin: 15,
+		margin: 15,
 		// x: 0,
 		// verticalAlign: 'top',
-		y: 15,
+		// y: null,
 		style: {
 			color: '#274b6d',//#3E576F',
 			fontSize: '16px'
@@ -106,7 +106,7 @@ defaultOptions = {
 		// floating: false
 		// x: 0,
 		// verticalAlign: 'top',
-		y: 30,
+		// y: null,
 		style: {
 			color: '#4d759e'
 		}

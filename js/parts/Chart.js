@@ -242,6 +242,9 @@ Chart.prototype = {
 			chart.cloneRenderTo();
 		}
 
+		// Adjust title layout (reflow multiline text)
+		chart.layOutTitles();
+
 		// link stacked series
 		while (i--) {
 			serie = series[i];
@@ -699,11 +702,49 @@ Chart.prototype = {
 					zIndex: chartTitleOptions.zIndex || 4
 				})
 				.css(chartTitleOptions.style)
-				.add()
-				.align(chartTitleOptions, false, 'spacingBox');
-			}
+				.add();
+			}	
 		});
+		chart.layOutTitles();
+	},
 
+	/**
+	 * Lay out the chart titles and cache the full offset height for use in getMargins
+	 */
+	layOutTitles: function () {
+		var titleOffset = 0,
+			title = this.title,
+			subtitle = this.subtitle,
+			options = this.options,
+			titleOptions = options.title,
+			subtitleOptions = options.subtitle,
+			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
+
+		if (title) {
+			title
+				.css({ width: (titleOptions.width || autoWidth) + PX })
+				.align(extend({ y: 15 }, titleOptions), false, 'spacingBox');
+			
+			if (!titleOptions.floating && !titleOptions.verticalAlign) {
+				titleOffset = title.getBBox().height;
+
+				// Adjust for browser consistency + backwards compat after #776 fix
+				if (titleOffset >= 18 && titleOffset <= 25) {
+					titleOffset = 15; 
+				}
+			}
+		}
+		if (subtitle) {
+			subtitle
+				.css({ width: (subtitleOptions.width || autoWidth) + PX })
+				.align(extend({ y: titleOffset + titleOptions.margin }, subtitleOptions), false, 'spacingBox');
+			
+			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
+				titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);
+			}
+		}
+
+		this.titleOffset = titleOffset; // used in getMargins
 	},
 
 	/**
@@ -862,30 +903,23 @@ Chart.prototype = {
 			optionsMarginLeft = chart.optionsMarginLeft,
 			optionsMarginRight = chart.optionsMarginRight,
 			optionsMarginBottom = chart.optionsMarginBottom,
-			chartTitleOptions = chart.options.title,
-			chartSubtitleOptions = chart.options.subtitle,
 			legendOptions = chart.options.legend,
 			legendMargin = pick(legendOptions.margin, 10),
 			legendX = legendOptions.x,
 			legendY = legendOptions.y,
 			align = legendOptions.align,
 			verticalAlign = legendOptions.verticalAlign,
-			titleOffset;
+			titleOffset = chart.titleOffset;
 
 		chart.resetMargins();
 		axisOffset = chart.axisOffset;
 
-		// adjust for title and subtitle
-		if ((chart.title || chart.subtitle) && !defined(chart.optionsMarginTop)) {
-			titleOffset = mathMax(
-				(chart.title && !chartTitleOptions.floating && !chartTitleOptions.verticalAlign && chartTitleOptions.y) || 0,
-				(chart.subtitle && !chartSubtitleOptions.floating && !chartSubtitleOptions.verticalAlign && chartSubtitleOptions.y) || 0
-			);
-			if (titleOffset) {
-				chart.plotTop = mathMax(chart.plotTop, titleOffset + pick(chartTitleOptions.margin, 15) + spacingTop);
-			}
+		// Adjust for title and subtitle
+		if (titleOffset) {
+			chart.plotTop = mathMax(chart.plotTop, titleOffset + chart.options.title.margin + spacingTop);
 		}
-		// adjust for legend
+		
+		// Adjust for legend
 		if (legend.display && !legendOptions.floating) {
 			if (align === 'right') { // horizontal alignment handled first
 				if (!defined(optionsMarginRight)) {
