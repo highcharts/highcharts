@@ -231,7 +231,7 @@ Tick.prototype = {
 		
 		// Correct for staggered labels
 		if (staggerLines) {
-			y += (index / (step || 1) % staggerLines) * 16;
+			y += (index / (step || 1) % staggerLines) * (axis.labelOffset / staggerLines);
 		}
 		
 		return {

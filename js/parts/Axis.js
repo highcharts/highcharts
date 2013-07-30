@@ -216,7 +216,6 @@ Axis.prototype = {
 	
 	
 		// Flag, stagger lines or not
-		axis.staggerLines = axis.horiz && options.labels.staggerLines;
 		axis.userOptions = userOptions;
 	
 		//axis.axisTitleMargin = UNDEFINED,// = options.title.margin,
@@ -1533,11 +1532,24 @@ Axis.prototype = {
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
-			n;
+			n,
+			i,
+			autoStaggerLines = 1,
+			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5), // docs
+			lastRight,
+			overlap,
+			pos,
+			bBox,
+			x,
+			w,
+			lineNo;
 			
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
+
+		// Set/reset staggerLines
+		axis.staggerLines = axis.horiz && labelOptions.staggerLines;
 		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
@@ -1563,8 +1575,39 @@ Axis.prototype = {
 				} else {
 					ticks[pos].addLabel(); // update labels depending on tick interval
 				}
-
 			});
+
+			// Handle automatic stagger lines (#776)
+			if (axis.horiz && !axis.staggerLines && maxStaggerLines) {
+				while (autoStaggerLines < maxStaggerLines) {
+					lastRight = [];
+					overlap = false;
+					
+					for (i = 0;  i < tickPositions.length; i++) {
+						pos = tickPositions[i];
+						bBox = ticks[pos].label.bBox;
+						x = axis.toPixels(pos);
+						w = bBox ? bBox.width : 0;
+						lineNo = i % autoStaggerLines;
+						
+						if (w) {
+							if (lastRight[lineNo] !== UNDEFINED && x < lastRight[lineNo]) {
+								overlap = true;
+							}
+							lastRight[lineNo] = x + w;
+						}
+					}
+					if (overlap) {
+						autoStaggerLines++;
+					} else {
+						break;
+					}
+				}
+
+				if (autoStaggerLines > 1) {
+					axis.staggerLines = autoStaggerLines;
+				}
+			}
 
 
 			each(tickPositions, function (pos) {
@@ -1579,10 +1622,11 @@ Axis.prototype = {
 				}
 
 			});
-
 			if (axis.staggerLines) {
-				labelOffset += (axis.staggerLines - 1) * 16;
+				labelOffset *= axis.staggerLines;
+				axis.labelOffset = labelOffset;
 			}
+			
 
 		} else { // doesn't have data
 			for (n in ticks) {
