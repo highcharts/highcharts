@@ -7980,7 +7980,7 @@ Axis.prototype = {
 			});
 
 			// Handle automatic stagger lines (#776)
-			if (axis.horiz && !axis.staggerLines && maxStaggerLines) {
+			if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
 				while (autoStaggerLines < maxStaggerLines) {
 					lastRight = [];
 					overlap = false;
