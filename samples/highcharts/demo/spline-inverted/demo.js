@@ -2,11 +2,7 @@ $(function () {
         $('#container').highcharts({
             chart: {
                 type: 'spline',
-                inverted: true,
-                width: 500,
-                style: {
-                    margin: '0 auto'
-                }
+                inverted: true
             },
             title: {
                 text: 'Atmosphere Temperature by Altitude'

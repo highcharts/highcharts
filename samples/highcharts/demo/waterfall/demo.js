@@ -60,7 +60,8 @@ $(function () {
                 },
                 style: {
                     color: '#FFFFFF',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    textShadow: '0px 0px 3px black'
                 }
             },
             pointPadding: 0

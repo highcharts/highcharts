@@ -24,7 +24,7 @@ $(function () {
             },
             legend: {
                 align: 'right',
-                x: -100,
+                x: -70,
                 verticalAlign: 'top',
                 y: 20,
                 floating: true,

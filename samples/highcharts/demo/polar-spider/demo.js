@@ -37,7 +37,7 @@ $(function () {
 	    legend: {
 	        align: 'right',
 	        verticalAlign: 'top',
-	        y: 100,
+	        y: 70,
 	        layout: 'vertical'
 	    },
 	    
