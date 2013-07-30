@@ -4,10 +4,10 @@ $(function () {
                 type: 'spline'
             },
             title: {
-                text: 'Snow depth in the Vikjafjellet mountain, Norway'
+                text: 'Snow depth at Vikjafjellet, Norway'
             },
             subtitle: {
-                text: 'An example of irregular time data in Highcharts JS'
+                text: 'Irregular time data in Highcharts JS'
             },
             xAxis: {
                 type: 'datetime',
