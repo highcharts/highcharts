@@ -140,6 +140,8 @@
 	<div id="top-nav">
 		<button id="batch-compare">Batch compare</button>
 
+		<a href="compare-report.php" target="main">View report</a>
+
 		<div>Show only differences above: <span id="slider-value">0</span></div>
 		<div id="slider" style="margin: 1em 3em 1em 1em"></div>
 	</div>
