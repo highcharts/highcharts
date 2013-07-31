@@ -3,8 +3,14 @@
 	$mode = $_GET['mode'];
 	$i = $_GET['i'];
 	$continue = $_GET['continue'];
-	
 
+	if (!get_browser(null, true)) {
+		$warning = 'Unable to get the browser info. Make sure a php_browscap.ini file extists, see ' .
+		'<a href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
+	}
+
+	print_r($browser);
+	
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -51,12 +57,14 @@
 							diff = difference.dissimilarityIndex.toFixed(2);
 							
 							// Compare to reference
+							/*
 							if (difference.reference) {
 								diff += ' ('+ difference.reference.toFixed(2) + ')';
 								if (difference.dissimilarityIndex.toFixed(2) === difference.reference.toFixed(2)) {
 									background = 'green';
 								}
 							}
+							*/
 							$span = $('<a>')
 								.attr({
 									'class': 'dissimilarity-index',
@@ -66,7 +74,6 @@
 									'data-diff': difference.dissimilarityIndex.toFixed(2)
 								})
 								.css({
-									'float': 'right',
 									background: background
 								})
 								.html(diff)
@@ -285,6 +292,7 @@
 	</head>
 	<body style="margin: 0">
 		
+		<div><?php echo $warning ?></div>
 		<div class="top-bar">
 			
 			<h2 style="margin: 0"><?php echo $path ?></h2> 
@@ -293,6 +301,7 @@
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
 		</div>
+
 		<div style="margin: 1em">
 		
 		<div id="report"></div>

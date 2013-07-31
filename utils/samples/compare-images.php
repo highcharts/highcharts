@@ -1,8 +1,8 @@
 <?php
 ini_set('display_errors', 'on');
 
-define('EXPORT_SERVER', 'http://export.highcharts.com');
-//define('EXPORT_SERVER', 'http://localhost:8080/export/');
+//define('EXPORT_SERVER', 'http://export.highcharts.com');
+define('EXPORT_SERVER', 'http://192.168.15.109:8080/export/');
 
 /**
  * Send a post request
@@ -127,14 +127,18 @@ $difference['sourceImage']['url'] = "temp/left.png";
 $difference['matchImage']['url'] = "temp/right.png";
 
 // compare to reference
-$path = 'temp/' . $_POST['path'];
-if (!file_exists($path)) {
-	if (isset($difference['dissimilarityIndex']) && $difference['dissimilarityIndex']) {
-		file_put_contents($path, $difference['dissimilarityIndex'] );
-	}
-} else {
-	$difference['reference'] = (float)file_get_contents($path);
+$path = str_replace('--', '/', $_POST['path']);
+$tempFile = 'temp/compare.json';
+$compare = file_exists($tempFile) ? json_decode(file_get_contents($tempFile)) : new stdClass;
+$browser = get_browser(null, true);
+$key = $browser['parent'];
+
+if (isset($compare->$path->$key)) {  
+	$difference['reference'] = $compare->$path->$key;
+} elseif (isset($difference['dissimilarityIndex'])) {
+	$compare->$path->$key = $difference['dissimilarityIndex'];
 }
+file_put_contents($tempFile, json_encode($compare));
 
 echo json_encode($difference);
 

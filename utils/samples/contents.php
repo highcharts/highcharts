@@ -128,6 +128,9 @@
 			}
 			.batch {
 			}
+			.dissimilarity-index {
+				float: right;
+			}
 		</style>
 		
 		
@@ -146,6 +149,9 @@
 	<?php
 	$products = array('highcharts', 'stock');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
+	$browser = get_browser(null, true);
+	$browserKey = $browser['parent'];
+	$compare = json_decode(file_get_contents('temp/compare.json'));
 
 	$i = 1;
 	foreach ($products as $dir) {
@@ -164,16 +170,36 @@
 					if ($innerHandle = opendir($samplesDir . $dir . '/'. $file)) {
 						while (false !== ($innerFile = readdir($innerHandle))) {
 							$next = $i + 1;
-							$batchClass = 'class="batch"';
+							$batchClass = 'batch';
+							$compareClass = '';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
 								$yaml = file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
+								$path = "$dir/$file/$innerFile";
 								$suffix = '';
+								$dissIndex = '';
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
+
+								// Display diff from previous comparison
+								if (isset($compare->$path->$browserKey)) {
+									$diff = $compare->$path->$browserKey;
+									if ($diff > 0) {
+										$diff = round($diff, 2);
+										$compareClass = 'different';
+										$dissIndex = "
+											<a class='dissimilarity-index' href='view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
+										";
+									} else {
+										$compareClass = 'identical';
+									}
+								}
 								echo "
-								<li id='li$i'>$i. $suffix <a target='main' id='i$i' $batchClass href='view.php?path=$dir/$file/$innerFile&amp;i=$i'>$innerFile</a> </li>
+								<li id='li$i' class='$compareClass'>$i. $suffix 
+									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a> 
+									$dissIndex
+								</li>
 								";
 								$i++;
 							}
