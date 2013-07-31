@@ -915,7 +915,7 @@ Chart.prototype = {
 		axisOffset = chart.axisOffset;
 
 		// Adjust for title and subtitle
-		if (titleOffset) {
+		if (titleOffset && !defined(optionsMarginTop)) {
 			chart.plotTop = mathMax(chart.plotTop, titleOffset + chart.options.title.margin + spacingTop);
 		}
 		

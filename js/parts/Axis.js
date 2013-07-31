@@ -1577,7 +1577,7 @@ Axis.prototype = {
 				}
 			});
 
-			// Handle automatic stagger lines (#776)
+			// Handle automatic stagger lines
 			if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
 				while (autoStaggerLines < maxStaggerLines) {
 					lastRight = [];
@@ -1585,12 +1585,12 @@ Axis.prototype = {
 					
 					for (i = 0;  i < tickPositions.length; i++) {
 						pos = tickPositions[i];
-						bBox = ticks[pos].label.bBox;
-						x = axis.toPixels(pos);
+						bBox = ticks[pos].label && ticks[pos].label.bBox;
 						w = bBox ? bBox.width : 0;
 						lineNo = i % autoStaggerLines;
 						
 						if (w) {
+							x = axis.translate(pos); // don't handle log
 							if (lastRight[lineNo] !== UNDEFINED && x < lastRight[lineNo]) {
 								overlap = true;
 							}
