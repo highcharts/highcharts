@@ -1,3 +1,4 @@
+product.js
 highcharts.js
 highcharts.src.js
 highcharts-more.js

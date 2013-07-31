@@ -1583,7 +1583,7 @@ Axis.prototype = {
 					lastRight = [];
 					overlap = false;
 					
-					for (i = 0;  i < tickPositions.length; i++) {
+					for (i = 0; i < tickPositions.length; i++) {
 						pos = tickPositions[i];
 						bBox = ticks[pos].label && ticks[pos].label.bBox;
 						w = bBox ? bBox.width : 0;

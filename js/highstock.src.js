@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.3.2 (2013-06-05)
+ * @license Highstock JS v1.3.3 (2013-07-31)
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highstock',
-	VERSION = '1.3.2',
+	VERSION = '1.3.3',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1505,8 +1505,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.2/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.2/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.3/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.3/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -7983,7 +7983,7 @@ Axis.prototype = {
 					lastRight = [];
 					overlap = false;
 					
-					for (i = 0;  i < tickPositions.length; i++) {
+					for (i = 0; i < tickPositions.length; i++) {
 						pos = tickPositions[i];
 						bBox = ticks[pos].label && ticks[pos].label.bBox;
 						w = bBox ? bBox.width : 0;
@@ -9183,13 +9183,13 @@ Pointer.prototype = {
 		each(chart.series, function (series) {
 			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
-				series.group.attr(attribs);
+				series.group.attr(seriesAttribs);
 				if (series.markerGroup) {
-					series.markerGroup.attr(attribs);
+					series.markerGroup.attr(seriesAttribs);
 					series.markerGroup.clip(clip ? chart.clipRect : null);
 				}
 				if (series.dataLabelsGroup) {
-					series.dataLabelsGroup.attr(attribs);
+					series.dataLabelsGroup.attr(seriesAttribs);
 				}
 			}
 		});
@@ -11156,7 +11156,7 @@ Chart.prototype = {
 		if (title) {
 			title
 				.css({ width: (titleOptions.width || autoWidth) + PX })
-				.align(extend({ y: 15 }, titleOptions), false, 'spacingBox');
+				.align(extend({ y: 15 }, titleOptions), false, 'spacingBox');
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
@@ -11170,7 +11170,7 @@ Chart.prototype = {
 		if (subtitle) {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + PX })
-				.align(extend({ y: titleOffset + titleOptions.margin }, subtitleOptions), false, 'spacingBox');
+				.align(extend({ y: titleOffset + titleOptions.margin }, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
 				titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);

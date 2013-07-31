@@ -231,13 +231,13 @@ Pointer.prototype = {
 		each(chart.series, function (series) {
 			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
-				series.group.attr(attribs);
+				series.group.attr(seriesAttribs);
 				if (series.markerGroup) {
-					series.markerGroup.attr(attribs);
+					series.markerGroup.attr(seriesAttribs);
 					series.markerGroup.clip(clip ? chart.clipRect : null);
 				}
 				if (series.dataLabelsGroup) {
-					series.dataLabelsGroup.attr(attribs);
+					series.dataLabelsGroup.attr(seriesAttribs);
 				}
 			}
 		});
