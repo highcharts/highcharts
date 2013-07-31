@@ -276,7 +276,7 @@ seriesProto.processData = function () {
 		processedYData = series.processedYData,
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
-		groupPixelWidth = xAxis.getGroupPixelWidth(),
+		groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
 		nonGroupedPointRange = series.pointRange;
 
 	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
