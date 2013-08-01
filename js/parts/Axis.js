@@ -1536,6 +1536,7 @@ Axis.prototype = {
 			i,
 			autoStaggerLines = 1,
 			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5), // docs
+			sortedPositions,
 			lastRight,
 			overlap,
 			pos,
@@ -1579,12 +1580,13 @@ Axis.prototype = {
 
 			// Handle automatic stagger lines
 			if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
+				sortedPositions = axis.reversed ? [].concat(tickPositions).reverse() : tickPositions;
 				while (autoStaggerLines < maxStaggerLines) {
 					lastRight = [];
 					overlap = false;
 					
-					for (i = 0; i < tickPositions.length; i++) {
-						pos = tickPositions[i];
+					for (i = 0; i < sortedPositions.length; i++) {
+						pos = sortedPositions[i];
 						bBox = ticks[pos].label && ticks[pos].label.bBox;
 						w = bBox ? bBox.width : 0;
 						lineNo = i % autoStaggerLines;
