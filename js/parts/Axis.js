@@ -1535,7 +1535,7 @@ Axis.prototype = {
 			n,
 			i,
 			autoStaggerLines = 1,
-			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5), // docs
+			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5),
 			sortedPositions,
 			lastRight,
 			overlap,

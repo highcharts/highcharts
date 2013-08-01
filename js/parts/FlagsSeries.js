@@ -12,7 +12,7 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
-	stackDistance: 12, // docs: new default
+	stackDistance: 12,
 	states: {
 		hover: {
 			lineColor: 'black',

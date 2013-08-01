@@ -130,7 +130,7 @@ PlotLineOrBand.prototype = {
 						optionsLabel.text,
 						0,
 						0,
-						optionsLabel.useHTML // docs: useHTML for plotLines and plotBands
+						optionsLabel.useHTML
 					)
 					.attr({
 						align: optionsLabel.textAlign || optionsLabel.align,
