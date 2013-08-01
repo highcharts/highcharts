@@ -1112,16 +1112,16 @@
                                 <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                             <!-- STEP 2: copy gfx folder to version folder on S3-->
                             <antcall target="put-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highcharts/gfx"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                         </then>
                     </elseif>
@@ -1206,16 +1206,16 @@
                                 <param name="local" value="${basedir}/build/dist/highstock/js-gzip/"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                             <!-- copy gfx folder to version folder on S3-->
                             <antcall target="put-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highstock/gfx"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                         </then>
                     </elseif>
