@@ -533,6 +533,7 @@
             </condition>
         </fail -->
 
+        <echo file="${dist.dir}/products.js" append="false">var products = {'Highcharts': {date: '${highcharts.product.date}', nr: '${highcharts.product.version}'},'Highstock': {date: '${highstock.product.date}', nr: '${highstock.product.version}'}};</echo>
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highstock.filter"/></copy>
@@ -993,7 +994,7 @@
             <arg value="${remote}/"/>
         </exec>
     </target>
-    <target name="put-zipfile-to-S3">
+    <target name="put-file-to-S3">
         <echo message="copy a file to : ${local} with remote S3 path: ${remote}"/>
         <exec dir="${s3cmdDir}" executable="python" failonerror="true">
             <arg line="s3cmd"/>
@@ -1003,8 +1004,8 @@
             <arg value="--encoding=UTF-8"/>
             <arg value="--acl-public"/>
             <arg value="--no-preserve"/>
-            <arg value="--exclude=*"/>
-            <arg value="--include=${include.pattern}"/>
+            <!--arg value="-!   -exclude=*"/>
+            <arg value="-!-include=${include.pattern}"/-->
             <!--arg value="-!-dry-run" /-->
             <arg value="put"/>
             <arg value="${local}"/>
@@ -1050,12 +1051,16 @@
     </target>
     <target name="deploy-highcharts-S3" depends="set.properties" description="deploy highcharts distribution to Amazon S3">
         <property file="git-ignore-me.properties"/>
-        <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip"/>
-        <antcall target="put-zipfile-to-S3">
-            <param name="local" value="${basedir}/build/dist/Highcharts.zip"/>
+        <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
+            <param name="remote" value="${amazon.s3.bucketname}/zips"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>           
+        </antcall>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/products.js"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="include.pattern" value="*.zip"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highcharts/js/"/>
@@ -1144,13 +1149,12 @@
     <!-- Deploy Highstock to S3 -->
     <target name="deploy-highstock-S3" depends="set.properties" description="deploy highstock distribution to Amazon S3">
         <property file="git-ignore-me.properties"/>
-        <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip"/>
-        <antcall target="put-zipfile-to-S3">
-            <param name="local" value="${basedir}/build/dist/Highstock.zip"/>
-            <param name="remote" value="${amazon.s3.bucketname}"/>
+        <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock-${highstock.product.version}.zip"/>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highstock-${highstock.product.version}.zip"/>
+            <param name="remote" value="${amazon.s3.bucketname}/zips"/>
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="include.pattern" value="*.zip"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highstock/js/"/>
