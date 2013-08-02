@@ -33,6 +33,7 @@
         <property name="testoutput.dir" value="${build.dir}/tests"/>
         <property name="coveragereport.dir" value="${build.dir}/coverage-report"/>
         <property name="themes.dir" value="${basedir}/js/themes"/>
+        <property name="highcharts.site.dir" value="C:/Users/HS Vikar/Documents/GitHub/highcharts.com.site"/>
 
         <!-- highcharts/highstock src -->
         <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
@@ -1265,4 +1266,21 @@
         <delete dir="${src.versions.dir}/../js-gzip"/>
         <echo message="finished!"/>
     </target>
+
+    <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
+    <target name="copy-to-site" depends="set.properties">
+        <copy todir="${highcharts.site.dir}/samples">
+            <fileset dir="samples"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/studies">
+            <fileset dir="studies"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/js/themes">
+            <fileset dir="js/themes"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/errors">
+            <fileset dir="errors"/>
+        </copy>
+    </target>
+
 </project>
