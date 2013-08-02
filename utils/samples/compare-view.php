@@ -80,10 +80,11 @@
 								.appendTo(li);
 						}
 						
-						$(contentDoc.body).animate({
-							scrollTop: $(li).offset().top - 300
-						}, 0);
-
+						if (_continue) {
+							$(contentDoc.body).animate({
+								scrollTop: $(li).offset().top - 300
+							}, 0);
+						}
 					}
 					
 				}				
@@ -108,14 +109,21 @@
 				if (window.parent.frames[0] && i !== "" && _continue === 'true' ) {
 					var contentDoc = window.parent.frames[0].document,
 						i = <?php echo $i ?>,
-						href;
+						href,
+						next;
 						
 					if (!contentDoc || !contentDoc.getElementById('i' + i)) {
 						return;
 					}
 					
 					while (i++) {
-						href = contentDoc.getElementById('i' + i).href;
+						next = contentDoc.getElementById('i' + i);
+						if (next) {
+							href = next.href;
+						} else {
+							window.location.href = 'view.php';
+							return;
+						}
 						
 						if (!contentDoc.getElementById('i' + i) || /batch/.test(contentDoc.getElementById('i' + i).className)) {
 							break;
