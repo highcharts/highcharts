@@ -8445,11 +8445,8 @@ Axis.prototype = {
 			return;
 		}
 
-		var series = this.series,
-				last = series.length - 1;
-
-		each(series, function (serie, i) {
-			serie.setStackedPoints(i === last);
+		each(this.series, function (series) {
+			series.setStackedPoints();
 		});
 	},
 
@@ -10736,12 +10733,8 @@ Chart.prototype = {
 				each(axes, function (axis) {
 					axis.setScale();
 				});
-			} else {
-				// build stacks
-				each(axes, function (axis) {
-					axis.buildStacks();
-				});
 			}
+
 			chart.adjustTickAmounts();
 			chart.getMargins();
 

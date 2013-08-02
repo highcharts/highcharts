@@ -2045,11 +2045,8 @@ Axis.prototype = {
 			return;
 		}
 
-		var series = this.series,
-				last = series.length - 1;
-
-		each(series, function (serie, i) {
-			serie.setStackedPoints(i === last);
+		each(this.series, function (series) {
+			series.setStackedPoints();
 		});
 	},
 

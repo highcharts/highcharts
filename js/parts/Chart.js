@@ -301,12 +301,8 @@ Chart.prototype = {
 				each(axes, function (axis) {
 					axis.setScale();
 				});
-			} else {
-				// build stacks
-				each(axes, function (axis) {
-					axis.buildStacks();
-				});
 			}
+
 			chart.adjustTickAmounts();
 			chart.getMargins();
 
