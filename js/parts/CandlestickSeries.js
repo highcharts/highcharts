@@ -82,31 +82,17 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 					'L',
 					crispX + halfWidth, bottomBox,
 					'L',
-					crispX - halfWidth, bottomBox
-				];
-				if (hasTopWhisker) {
-					path.push(
-						'M',
-						crispX, 
-						topBox,
-						'L',
-						crispX, 
-						mathRound(point.plotY)
-					);
-				}
-				if (hasBottomWhisker) {
-					path.push(
-						'M',
-						crispX, 
-						bottomBox,
-						'L',
-						crispX, 
-						mathRound(point.yBottom)
-					);
-				}
-				path.push(
+					crispX - halfWidth, bottomBox,
+					'M',
+					crispX, topBox,
+					'L',
+					crispX, hasTopWhisker ? mathRound(point.plotY) : topBox, // #460, #2094
+					'M',
+					crispX, bottomBox,
+					'L',
+					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox, // #460, #2094
 					'Z'
-				);
+				];
 
 				if (graphic) {
 					graphic.animate({ d: path });
