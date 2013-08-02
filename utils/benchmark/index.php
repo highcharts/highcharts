@@ -4,27 +4,41 @@
 		<link rel="stylesheet" type="text/css" href="test-style.css">
 
 		<?php
-			// This code recieves post variables from the dropdown menus for jquery and highcharts.
 			if (!isset($_SESSION)){
 				session_start();
 			}
-			$defaultJquery = 'http://code.jquery.com/jquery.min.js';
-			$defaultHighcharts = 'http://code.highcharts.com/highcharts.js';
+
+			// Array of different jquery versions.
+			// index 0 being default.
+			$jqueryVersions = array(
+				0 => 'http://code.jquery.com/jquery.min.js'
+				);
+
+			// Array of different Highcharts versions.
+			// index 0 being default.
+			$highchartsVersions = array(
+				0 => 'http://code.highcharts.com/highcharts.js',
+				1 => 'http://code.highcharts.com/3.0.2/highcharts.js'
+				);
+
+			// Repetitions each chart is to be run within runChart();
+			// This takes longer time but results in a more accurate average.
 			$defaultRepetitions = 5;
 
-			if (isset($_POST['jquery']) && $_POST['jquery'] != $defaultJquery) {
+			// These lines determine what jquery version to load based on POST/SESSION variables.
+			if (isset($_POST['jquery']) && $_POST['jquery'] != $jqueryVersions[0]) {
 				$_SESSION['jquery'] = $_POST['jquery'];
 
 			} else if (isset($_SESSION['jquery'])) {
 				echo "<script src='".$_SESSION['jquery']."'></script>";
 
 			} else {
-				echo "<script src='".$defaultJquery."'></script>";
-				$_SESSION['jquery'] = $defaultJquery;
+				echo "<script src='".$jqueryVersions[0]."'></script>";
+				$_SESSION['jquery'] = $jqueryVersions[0];
 			}
 
-			$highchartsVersion = null;
 
+			// These lines determine what Highchart version to load based on POST/SESSION variables.
 			if (isset($_POST['highcharts'])) {
 				echo '<script src="'.$_POST['highcharts'].'"></script>';
 				$_SESSION['highcharts'] = $_POST['highcharts'];
@@ -33,8 +47,8 @@
 				echo "<script src='".$_SESSION['highcharts']."'></script>";
 
 			} else {
-				echo "<script src='".$defaultHighcharts."'></script>";
-				$_SESSION['highcharts'] = $defaultHighcharts;
+				echo "<script src='".$highchartsVersios[0]."'></script>";
+				$_SESSION['highcharts'] = $highchartsVersions[0];
 			}
 
 			// The variable "rep" is set:
@@ -141,11 +155,20 @@
 
 			<form method="post" action="index.php">
 				<select name="jquery">
-	  				<option value="http://code.jquery.com/jquery.min.js">Newest jquery code</option>
+					<?php
+						foreach ($jqueryVersions as $jquery) {
+							$selected = $jquery == $_SESSION['jquery'] ? 'selected' : '';
+							echo "<option value='".$jquery."' ".$selected.">".$jquery."</option>";
+						}
+					?>
 				</select>
 				<select name="highcharts">
-	  				<option value="http://code.highcharts.com/highcharts.js">Newest higcharts code</option>
-	  				<option value="http://code.highcharts.com/3.0.2/highcharts.js">3.0.2</option>
+					<?php
+						foreach ($highchartsVersions as $highcharts) {
+							$selected = $highcharts == $_SESSION['highcharts'] ? 'selected' : '';
+							echo "<option value='".$highcharts."' ".$selected.">".$highcharts."</option>";
+						}
+					?>
 				</select>
 				<input type="submit" name="submit"> 
 			</form>
