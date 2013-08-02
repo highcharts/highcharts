@@ -6260,13 +6260,11 @@ PlotLineOrBand.prototype = {
 	 * Remove the plot line or band
 	 */
 	destroy: function () {
-		var plotLine = this,
-			axis = plotLine.axis;
-
 		// remove it from the lookup
-		erase(axis.plotLinesAndBands, plotLine);
-
-		destroyObjectProperties(plotLine, this.axis);
+		erase(this.axis.plotLinesAndBands, this);
+		
+		delete this.axis;
+		destroyObjectProperties(this);
 	}
 };
 /**
@@ -8465,7 +8463,9 @@ Axis.prototype = {
 	destroy: function (keepEvents) {
 		var axis = this,
 			stacks = axis.stacks,
-			stackKey;
+			stackKey,
+			plotLinesAndBands = axis.plotLinesAndBands,
+			i;
 
 		// Remove the events
 		if (!keepEvents) {
@@ -8480,9 +8480,13 @@ Axis.prototype = {
 		}
 
 		// Destroy collections
-		each([axis.ticks, axis.minorTicks, axis.alternateBands, axis.plotLinesAndBands], function (coll) {
+		each([axis.ticks, axis.minorTicks, axis.alternateBands], function (coll) {
 			destroyObjectProperties(coll);
 		});
+		i = plotLinesAndBands.length;
+		while (i--) { // #1975
+			plotLinesAndBands[i].destroy();
+		}
 
 		// Destroy local variables
 		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'labelGroup', 'axisTitle'], function (prop) {
