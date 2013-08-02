@@ -138,14 +138,16 @@ function getScripts(group, tests) {
 
 		for (var i = 1; i <= rep; i++) {
 
+			if ($('#container').highcharts()) {
+				$('#container').highcharts().destroy();
+			}
+			
 			start = new Date();
 			new Highcharts.Chart(options, function() { 
 
 				total = total ? total + Math.round((new Date() - start)) : Math.round((new Date() - start));
 
-				if ($('#container').highcharts()) {
-					$('#container').highcharts().destroy();
-				}
+
 
 				if (i == rep) {
 					displayResult(Math.round((total / rep)), test);
