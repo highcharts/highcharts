@@ -21,6 +21,12 @@
 					}
 				});
 
+				$('#reset').click(function () {
+					if (confirm("Do you want to reset the compare history? Results from all browsers will be lost.")) {
+						$.getScript('compare-reset.php');
+					}
+				});
+
 				$("#slider").slider({
 					min: 0,
 					max: 1,
@@ -117,11 +123,6 @@
 				top: 0;
 				width: 100%;
 			}
-			#top-nav a {
-				color: white;
-				font-weight: bold;
-				
-			}
 			#main-nav {
 				margin-top: 100px;
 				margin-left: 10px;
@@ -131,6 +132,22 @@
 			.dissimilarity-index {
 				float: right;
 			}
+			.buttons a, a.button {
+				border: 1px solid silver;
+				border-radius: 5px;
+				background: #628e01;
+				padding: 5px;
+				color: white;
+				text-shadow: 0 -1px 1px #000000;
+				text-decoration: none;
+				font-size: 11pt;
+				white-space: nowrap;
+				line-height: 30px;
+				cursor: pointer;
+			}
+			.buttons a:hover, a.button:hover {
+				background: #729e11;
+			}
 		</style>
 		
 		
@@ -138,12 +155,14 @@
 	<body>
 		
 	<div id="top-nav">
-		<button id="batch-compare">Batch compare</button>
+		<a class="button" id="batch-compare">Batch compare</a>
+		<a class="button" href="compare-report.php" target="main">View report</a>
+		<a class="button" id="reset" title="Reset compare history for all browsers">Reset</a>
 
-		<a href="compare-report.php" target="main">View report</a>
-
-		<div>Show only differences above: <span id="slider-value">0</span></div>
-		<div id="slider" style="margin: 1em 3em 1em 1em"></div>
+		<div style="margin-top: 1em">
+			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
+			<div id="slider" style="width: 45%; float:left"></div>
+		</div>
 	</div>
 
 
