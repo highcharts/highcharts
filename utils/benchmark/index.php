@@ -5,17 +5,19 @@
 
 		<?php
 			// This code recieves post variables from the dropdown menus for jquery and highcharts.
-			session_start();
+			if (!isset($_SESSION)){
+				session_start();
+			}
 			$defaultJquery = 'http://code.jquery.com/jquery.min.js';
 			$defaultHighcharts = 'http://code.highcharts.com/highcharts.js';
 			$defaultRepetitions = 5;
 
-			if (isset($_POST['jquery'])) {
+			if (isset($_POST['jquery']) && $_POST['jquery'] != $defaultJquery) {
 				$_SESSION['jquery'] = $_POST['jquery'];
 
 			} else if (isset($_SESSION['jquery'])) {
 				echo "<script src='".$_SESSION['jquery']."'></script>";
-				
+
 			} else {
 				echo "<script src='".$defaultJquery."'></script>";
 				$_SESSION['jquery'] = $defaultJquery;
