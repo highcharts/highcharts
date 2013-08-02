@@ -376,8 +376,8 @@
 					tickPixelIntervalOption = xAxis.options.tickPixelInterval;
 					
 				// The positions are not always defined, for example for ordinal positions when data
-				// has regular interval (#1557)
-				if (!positions || positions.length === 1 || min === UNDEFINED) {
+				// has regular interval (#1557, #2090)
+				if (!positions || positions.length < 3 || min === UNDEFINED) {
 					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
 				}
 				

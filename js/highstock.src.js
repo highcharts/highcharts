@@ -6223,7 +6223,7 @@ PlotLineOrBand.prototype = {
 						optionsLabel.text,
 						0,
 						0,
-						optionsLabel.useHTML // docs: useHTML for plotLines and plotBands
+						optionsLabel.useHTML
 					)
 					.attr({
 						align: optionsLabel.textAlign || optionsLabel.align,
@@ -7935,7 +7935,7 @@ Axis.prototype = {
 			n,
 			i,
 			autoStaggerLines = 1,
-			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5), // docs
+			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5),
 			sortedPositions,
 			lastRight,
 			overlap,
@@ -9999,7 +9999,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 8) : 0, // docs
+			itemDistance = horizontal ? pick(options.itemDistance, 8) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -13021,7 +13021,7 @@ Series.prototype = {
 			yData = [],
 			zData = [],
 			dataLength = data ? data.length : [],
-			turboThreshold = pick(options.turboThreshold, 1000), // docs: 0 to disable
+			turboThreshold = pick(options.turboThreshold, 1000),
 			pt,
 			pointArrayMap = series.pointArrayMap,
 			valueCount = pointArrayMap && pointArrayMap.length,
@@ -13487,7 +13487,7 @@ Series.prototype = {
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
 			i,
-			pointPlacement = options.pointPlacement, // docs: accept numbers
+			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
 
@@ -17459,7 +17459,7 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
-	stackDistance: 12, // docs: new default
+	stackDistance: 12,
 	states: {
 		hover: {
 			lineColor: 'black',
@@ -17885,7 +17885,7 @@ extend(defaultOptions, {
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: hasSVG && !isTouchDevice // docs: new default
+		liveRedraw: hasSVG && !isTouchDevice
 	}
 });
 /*jslint white:false */
@@ -19196,7 +19196,7 @@ RangeSelector.prototype = {
 		// handle changes in the input boxes
 		input.onchange = function () {
 			var inputValue = input.value,
-				value = (options.inputDateParser || Date.parse)(inputValue), // docs: dateParser for inputDateFormat (http://jsfiddle.net/highcharts/G7azG/)
+				value = (options.inputDateParser || Date.parse)(inputValue),
 				extremes = chart.xAxis[0].getExtremes();
 
 			// If the value isn't parsed directly to a value by the browser's Date.parse method,
@@ -20098,8 +20098,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 					tickPixelIntervalOption = xAxis.options.tickPixelInterval;
 					
 				// The positions are not always defined, for example for ordinal positions when data
-				// has regular interval (#1557)
-				if (!positions || positions.length === 1 || min === UNDEFINED) {
+				// has regular interval (#1557, #2090)
+				if (!positions || positions.length < 3 || min === UNDEFINED) {
 					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
 				}
 				

@@ -6223,7 +6223,7 @@ PlotLineOrBand.prototype = {
 						optionsLabel.text,
 						0,
 						0,
-						optionsLabel.useHTML // docs: useHTML for plotLines and plotBands
+						optionsLabel.useHTML
 					)
 					.attr({
 						align: optionsLabel.textAlign || optionsLabel.align,
@@ -7935,7 +7935,7 @@ Axis.prototype = {
 			n,
 			i,
 			autoStaggerLines = 1,
-			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5), // docs
+			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5),
 			sortedPositions,
 			lastRight,
 			overlap,
@@ -9999,7 +9999,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 8) : 0, // docs
+			itemDistance = horizontal ? pick(options.itemDistance, 8) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -13021,7 +13021,7 @@ Series.prototype = {
 			yData = [],
 			zData = [],
 			dataLength = data ? data.length : [],
-			turboThreshold = pick(options.turboThreshold, 1000), // docs: 0 to disable
+			turboThreshold = pick(options.turboThreshold, 1000),
 			pt,
 			pointArrayMap = series.pointArrayMap,
 			valueCount = pointArrayMap && pointArrayMap.length,
@@ -13487,7 +13487,7 @@ Series.prototype = {
 			dataLength = points.length,
 			hasModifyValue = !!series.modifyValue,
 			i,
-			pointPlacement = options.pointPlacement, // docs: accept numbers
+			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
 

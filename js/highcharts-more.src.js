@@ -1702,7 +1702,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	tooltip: {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
-	turboThreshold: 0, // docs: exclude from bubbles
+	turboThreshold: 0,
 	zThreshold: 0
 });
 
