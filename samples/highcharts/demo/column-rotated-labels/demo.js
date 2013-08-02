@@ -49,11 +49,7 @@ $(function () {
                 enabled: false
             },
             tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.x +'</b><br/>'+
-                        'Population in 2008: '+ Highcharts.numberFormat(this.y, 1) +
-                        ' millions';
-                }
+                pointFormat: 'Population in 2008: <b>{point.y:.1f} millions</b>',
             },
             series: [{
                 name: 'Population',
@@ -69,7 +65,8 @@ $(function () {
                     y: 10,
                     style: {
                         fontSize: '13px',
-                        fontFamily: 'Verdana, sans-serif'
+                        fontFamily: 'Verdana, sans-serif',
+                        textShadow: '0 0 3px black'
                     }
                 }
             }]
