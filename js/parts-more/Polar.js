@@ -42,9 +42,11 @@ seriesProto.orderTooltipPoints = function (points) {
 		});
 
 		// Wrap mouse tracking around to capture movement on the segment to the left
-		// of the north point (#1469).
-		points[0].wrappedClientX = points[0].clientX + 360;
-		points.push(points[0]);
+		// of the north point (#1469, #2093).
+		if (points[0]) {
+			points[0].wrappedClientX = points[0].clientX + 360;
+			points.push(points[0]);
+		}
 	}
 };
 
