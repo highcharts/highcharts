@@ -13,69 +13,48 @@ $(function () {
 
 
         title: {
-            text: 'Highcharts heat map study'
+            text: 'Highcharts heat map study',
+            align: 'left'
+        },
+
+        subtitle: {
+            text: 'Temperature variation by day and hour through April 2013',
+            align: 'left'
         },
 
         xAxis: {
-            title: {
-                text: null
-            },
             tickPixelInterval: 50
-            //categories: [],
-            //min: 0,
-            //max: 23
         },
 
         yAxis: {
             title: {
-                text: 'Hour of the day'
+                text: null
             },
-            //categories: [],
-            //min: -0.5,
-            //max: 30.5,
+            labels: {
+                format: '{value}:00'
+            },
             minPadding: 0,
             maxPadding: 0,
             startOnTick: false,
-            endOnTick: false
-        },
-
-        legend: {
-            valueDecimals: 0,
-            _rectangleLength: 120,
-            _padding: 50,
-            _layout: 'vertical',
-            _align: 'right',
-            _verticalAlign: 'middle'
+            endOnTick: false,
+            tickPositions: [0, 6, 12, 18, 24],
+            tickWidth: 1
         },
 
         series: [{
             borderWidth: 0,
-            data: [],
-            colsize: 24 * 36e5,
-
-            // Color ranges for the legend
-            _valueRanges: [{
-                to: 99,
-                color: 'green'
-            }, {
-                from: 100,
-                to: 199,
-                color: 'red'
-            }, {
-                from: 200,
-                color: 'yellow'
-            }],
+            colsize: 24 * 36e5, // one day
 
             colorRange: {
                 from: '#000088',
-                to: '#FFFFFF',
-                fromLabel: 'cold',
-                toLabel: 'warm'
+                to: '#FFDDAA',
+                fromLabel: 'Cold',
+                toLabel: 'Warm'
             },
 
             tooltip: {
-                headerFormat: '{series.name}',
-                pointFormat: '{series.name}'
+                headerFormat: 'Temperature<br/>',
+                pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.z} ℃</b>'
             }
         }]
 

@@ -9,12 +9,7 @@
 			var series = this,
 				options = series.options,
 				dataMin = Number.MAX_VALUE,
-				dataMax = Number.MIN_VALUE,
-				opacity,
-				minOpacity = options.minOpacity,
-				path,
-				color;
-			
+				dataMax = Number.MIN_VALUE;
 
 			series.generatePoints();
 	
@@ -22,8 +17,8 @@
 				var x = point.x,
 					y = point.y,
 					value = point.z,
-					xPad = (series.options.colsize || 1) / 2,
-					yPad = (series.options.rowsize || 1) / 2;
+					xPad = (options.colsize || 1) / 2,
+					yPad = (options.rowsize || 1) / 2;
 
 				point.path = [
 					'M', x - xPad, y - yPad,

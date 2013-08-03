@@ -319,16 +319,10 @@
 		 * Get the bounding box of all paths in the map combined.
 		 */
 		getBox: function () {
-			var chart = this.chart,
-				maxX = -Math.pow(2, 31), 
+			var maxX = -Math.pow(2, 31), 
 				minX =  Math.pow(2, 31) - 1, 
 				maxY = -Math.pow(2, 31), 
-				minY =  Math.pow(2, 31) - 1,
-				xyRatio,
-				ratioCorrection,
-				plotWidth = chart.plotWidth, 
-				plotHeight = chart.plotHeight,
-				pad;
+				minY =  Math.pow(2, 31) - 1;
 			
 			
 			// Find the bounding box
@@ -366,10 +360,10 @@
 		translatePath: function (path) {
 			
 			var series = this,
-				chart = series.chart,
 				even = false, // while loop reads from the end
 				xAxis = series.xAxis,
-				yAxis = series.yAxis;
+				yAxis = series.yAxis,
+				i;
 				
 			// Preserve the original
 			path = [].concat(path);
@@ -399,13 +393,8 @@
 		 */
 		translate: function () {
 			var series = this,
-				options = series.options,
 				dataMin = Number.MAX_VALUE,
-				dataMax = Number.MIN_VALUE,
-				opacity,
-				minOpacity = options.minOpacity,
-				path,
-				color;
+				dataMax = Number.MIN_VALUE;
 	
 			series.generatePoints();
 	
@@ -470,7 +459,7 @@
 							to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
 						);
 					}
-					point.options.color = 'rgba(' + rgba.join(',') + ')';
+					point.options.color = value === null ? seriesOptions.nullColor : 'rgba(' + rgba.join(',') + ')';
 				}
 			});
 		},
@@ -489,8 +478,6 @@
 		 */
 		drawPoints: function () {
 			var series = this,
-				chart = series.chart,
-				saturation,
 				bBox,
 				colorKey = series.colorKey;
 			
@@ -536,18 +523,19 @@
 	Highcharts.Map = function (options, callback) {
 		
 		var hiddenAxis = {
-			endOnTick: false,
-			gridLineWidth: 0,
-			labels: {
-				enabled: false
+				endOnTick: false,
+				gridLineWidth: 0,
+				labels: {
+					enabled: false
+				},
+				lineWidth: 0,
+				minPadding: 0,
+				maxPadding: 0,
+				startOnTick: false,
+				tickWidth: 0,
+				title: null
 			},
-			lineWidth: 0,
-			minPadding: 0,
-			maxPadding: 0,
-			startOnTick: false,
-			tickWidth: 0,
-			title: null
-		};
+			seriesOptions;
 		
 		// Don't merge the data
 		seriesOptions = options.series;
