@@ -4,24 +4,29 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Map</title>
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" />
+		<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
 		
-		<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
-		<script type="text/javascript" src="http://github.highcharts.com/75c66eb3/modules/map.src.js"></script>
-		<script type="text/javascript" src="http://github.highcharts.com/75c66eb3/modules/data.src.js"></script>
-		<script type="text/javascript" src="http://github.highcharts.com/75c66eb3/modules/map-parser.src.js"></script>
+		<script src="http://code.highcharts.com/3.0.4/highcharts.js"></script>
+		<script src="http://github.highcharts.com/fe297f0/modules/map.src.js"></script>
+		<script src="http://github.highcharts.com/fe297f0/modules/data.src.js"></script>
+		<script src="http://github.highcharts.com/fe297f0/modules/map-parser.src.js"></script>
 		
+		<!--
+		<script src="http://code.highcharts.local/highcharts.js"></script>
+		<script src="http://code.highcharts.local/modules/map.src.js"></script>
+		<script src="http://code.highcharts.local/modules/data.src.js"></script>
+		<script src="http://code.highcharts.local/modules/map-parser.src.js"></script>
+		-->
 		
 		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
 		<script type="text/javascript">
-			
 			var chart,
 				file,
 				$current;
 				
 			var maps = {
+				// Offline
+				'Poland': 'http://www.highcharts.com/maps/maps/Poland.svg', 
 				
 				// Finished
 				'World1': 'http://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg',
@@ -138,7 +143,7 @@
 						
 						
 						// View data
-						var strData = JSON.stringify(data);
+						var strData = JSON.stringify(Highcharts.Data.prototype.pathToString(data));
 						$('#view-data')
 							.html('View data (' + Highcharts.numberFormat(strData.length / 1024, 1, '.') + ' kB)')
 							.click(function () {
