@@ -30,7 +30,7 @@
 	 * 
 	 * @todo This is moved to the Data plugin. Make sure it is deleted here.
 	 */
-	Highcharts.pathToArray = function (path) {
+	Highcharts.splitPath = function (path) {
 		var i;
 
 		// Move letters apart
@@ -41,6 +41,7 @@
 		// Split on spaces and commas
 		path = path.split(/[ ,]+/);
 		
+		// Parse numbers
 		for (i = 0; i < path.length; i++) {
 			if (!/[a-zA-Z]/.test(path[i])) {
 				path[i] = parseFloat(path[i]);
@@ -48,6 +49,9 @@
 		}
 		return path;
 	};
+
+	// A placeholder for map definitions
+	Highcharts.maps = {};
 	
 	/**
 	 * Extend the Axis object with methods specific to maps
@@ -124,6 +128,9 @@
 			borderWidth: 1,
 			marker: null,
 			stickyTracking: false,
+			dataLabels: {
+				verticalAlign: 'middle'
+			},
 			tooltip: {
 				followPointer: true,
 				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
@@ -143,7 +150,7 @@
 			fill: 'color'
 		},
 		colorKey: 'y',
-		trackerGroups: ['group', 'markerGroup'],
+		trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 		getSymbol: noop,
 		getExtremesFromAll: true,
 		init: function (chart) {
@@ -318,7 +325,7 @@
 		/**
 		 * Get the bounding box of all paths in the map combined.
 		 */
-		getBox: function () {
+		getBox: function (paths) {
 			var maxX = -Math.pow(2, 31), 
 				minX =  Math.pow(2, 31) - 1, 
 				maxY = -Math.pow(2, 31), 
@@ -326,7 +333,7 @@
 			
 			
 			// Find the bounding box
-			each(this.options.data, function (point) {
+			each(paths || this.options.data, function (point) {
 				var path = point.path,
 					i = path.length,
 					even = false; // while loop reads from the end
@@ -426,14 +433,19 @@
 			var seriesOptions = this.options,
 				valueRanges = seriesOptions.valueRanges,
 				colorRange = seriesOptions.colorRange,
-				colorKey = this.colorKey;
+				colorKey = this.colorKey,
+				from,
+				to;
+
+			if (colorRange) {
+				from = Color(colorRange.from);
+				to = Color(colorRange.to);
+			}
 			
 			each(this.data, function (point) {
 				var value = point[colorKey],
 					rgba = [],
 					range,
-					from,
-					to,
 					i,
 					pos;
 
@@ -450,8 +462,7 @@
 							
 					}
 				} else if (colorRange && value !== undefined) {
-					from = Color(colorRange.from);
-					to = Color(colorRange.to);
+
 					pos = (dataMax - value) / (dataMax - dataMin);
 					i = 4;
 					while (i--) {
@@ -494,17 +505,16 @@
 			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			
 			each(series.data, function (point) {
+
+				var dataLabels = point.dataLabels;
 				
+				delete point.graphic.bBox; // delete cache
 				bBox = point.graphic.getBBox();
-				// for tooltip
-				point.tooltipPos = [
-					bBox.x + bBox.width / 2,
-					bBox.y + bBox.height / 2
-				];
-				// for data labels
-				point.plotX = point.tooltipPos[0];
-				point.plotY = point.tooltipPos[1]; 
 				
+				// for data labels
+				point.plotX = bBox.x + bBox.width * pick(dataLabels && dataLabels.anchorX, 0.5);
+				point.plotY = bBox.y + bBox.height * pick(dataLabels && dataLabels.anchorY, 0.5); 
+
 				// Reset escaped null points
 				if (point.isNull) {
 					point[colorKey] = null;
