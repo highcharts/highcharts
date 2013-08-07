@@ -52,9 +52,10 @@ foreach ($issues as $issue) {
 
 // Now create an array with the total number of open issues by date
 $startDate = strtotime('2010-06-01');
+$endDate = filemtime('pages/keyed-issues.json');
 $openIssues = 0;
 $openByDate = array();
-for ($time = $startDate; $time < mktime(); $time += 24 * 3600) {
+for ($time = $startDate; $time < $endDate; $time += 24 * 3600) {
 
 	$date = strftime('%Y-%m-%d', $time);
 	$opened = isset($openedByDate[$date]) ? $openedByDate[$date] : 0;
