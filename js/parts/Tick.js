@@ -364,9 +364,10 @@ Tick.prototype = {
 		if (label && !isNaN(x)) {
 			label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
-			// apply show first and show last
-			if ((tick.isFirst && !pick(options.showFirstLabel, 1)) ||
-					(tick.isLast && !pick(options.showLastLabel, 1))) {
+			// Apply show first and show last. If the tick is both first and last, it is 
+			// a single centered tick, in which case we show the label anyway (#2100).
+			if ((tick.isFirst && !tick.isLast && !pick(options.showFirstLabel, 1)) ||
+					(tick.isLast && !tick.isFirst && !pick(options.showLastLabel, 1))) {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
