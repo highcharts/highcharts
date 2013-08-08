@@ -18079,7 +18079,8 @@ Scroller.prototype = {
 			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
 			centerBarX,
 			outlineTop = top + halfOutline,
-			verb;
+			verb,
+			unionExtremes;
 
 		// don't render the navigator until we have data (#486)
 		if (isNaN(min)) {
@@ -18098,14 +18099,10 @@ Scroller.prototype = {
 		// should always be the extremes of the union of all series in the chart as
 		// well as the navigator series.
 		if (xAxis.getExtremes) {
-			var baseExtremes = chart.xAxis[0].getExtremes(), // the base
-				noBase = baseExtremes.dataMin === null,
-				navExtremes = xAxis.getExtremes(),
-				newMin = mathMin(baseExtremes.dataMin, navExtremes.dataMin),
-				newMax = mathMax(baseExtremes.dataMax, navExtremes.dataMax);
+			unionExtremes = scroller.getUnionExtremes(true);
 
-			if (!noBase && (newMin !== navExtremes.min || newMax !== navExtremes.max)) {
-				xAxis.setExtremes(newMin, newMax, true, false);
+			if (unionExtremes && (unionExtremes.dataMin !== xAxis.min || unionExtremes.dataMax !== xAxis.max)) {
+				xAxis.setExtremes(unionExtremes.dataMin, unionExtremes.dataMax, true, false);
 			}
 		}
 
@@ -18120,9 +18117,8 @@ Scroller.prototype = {
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
-		scroller.zoomedMin = zoomedMin = scroller.fixedWidth ? 
-			zoomedMax - scroller.fixedWidth :
-			mathMax(pInt(mathMin(pxMin, pxMax)), 0);
+		scroller.zoomedMin = zoomedMin = 
+			mathMax(scroller.fixedWidth ? zoomedMax - scroller.fixedWidth : pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.range = range = zoomedMax - zoomedMin;
 
 		// on first render, create all elements
@@ -18484,6 +18480,7 @@ Scroller.prototype = {
 					}
 	
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+
 				}
 				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
 					setTimeout(function () {
@@ -18622,6 +18619,23 @@ Scroller.prototype = {
 		
 
 		scroller.addEvents();
+	},
+
+	/**
+	 * Get the union data extremes of the chart - the outer data extremes of the base
+	 * X axis and the navigator axis.
+	 */
+	getUnionExtremes: function (returnFalseOnNoBaseSeries) {
+		var baseAxis = this.chart.xAxis[0],
+			navAxis = this.xAxis;
+
+		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
+			return {
+				dataMin: ((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin),
+				dataMax: ((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+			};
+		}
+		
 	},
 
 	/**
@@ -18904,18 +18918,11 @@ RangeSelector.prototype = {
 			chart = rangeSelector.chart,
 			buttons = rangeSelector.buttons,
 			baseAxis = chart.xAxis[0],
-			extremes = baseAxis && baseAxis.getExtremes(),
-			navAxis = chart.scroller && chart.scroller.xAxis,
-			navExtremes = navAxis && navAxis.getExtremes && navAxis.getExtremes(),
-			navDataMin = navExtremes && navExtremes.dataMin,
-			navDataMax = navExtremes && navExtremes.dataMax,
-			baseDataMin = extremes && extremes.dataMin,
-			baseDataMax = extremes && extremes.dataMax,
-			// if both are defined, get Math.min, else, pick the one that is defined
-			dataMin = ((defined(baseDataMin) && defined(navDataMin)) ? mathMin : pick)(baseDataMin, navDataMin),
-			dataMax = ((defined(baseDataMax) && defined(navDataMax)) ? mathMax : pick)(baseDataMax, navDataMax),
+			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis || {},
+			dataMin = unionExtremes.dataMin,
+			dataMax = unionExtremes.dataMax,
 			newMin,
-			newMax = baseAxis && mathRound(mathMin(extremes.max, pick(dataMax, extremes.max))), // #1568
+			newMax = baseAxis && mathRound(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
@@ -18924,7 +18931,6 @@ RangeSelector.prototype = {
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			
 			timeName;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
@@ -19111,7 +19117,11 @@ RangeSelector.prototype = {
 	 */
 	updateButtonStates: function () {
 		var rangeSelector = this,
-			baseAxis = this.chart.xAxis[0],
+			chart = this.chart,
+			baseAxis = chart.xAxis[0],
+			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
+			dataMin = unionExtremes.dataMin,
+			dataMax = unionExtremes.dataMax,
 			selected = rangeSelector.selected,
 			buttons = rangeSelector.buttons,
 			range;
@@ -19127,16 +19137,16 @@ RangeSelector.prototype = {
 				buttons[i].setState(2);
 			
 			// Disable buttons where the range exceeds what is allowed in the current view
-			} else if (range > baseAxis.dataMax - baseAxis.dataMin) {
+			} else if (range > dataMax - dataMin) {
 				buttons[i].setState(3);
 
 			// Disable the All button if we're already showing all 
-			} else if (rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= baseAxis.dataMax - baseAxis.dataMin && 
+			} else if (rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin && 
 					buttons[i].state !== 2) {
 				buttons[i].setState(3);
 
 			// Disable the YTD button if the complete range is within the same year
-			} else if (rangeOptions.type === 'ytd' && dateFormat('%Y', baseAxis.dataMin) === dateFormat('%Y', baseAxis.dataMax)) {
+			} else if (rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax)) {
 				buttons[i].setState(3);
 
 			} else if (buttons[i].state === 3) {

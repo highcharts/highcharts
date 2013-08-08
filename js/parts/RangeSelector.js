@@ -60,18 +60,11 @@ RangeSelector.prototype = {
 			chart = rangeSelector.chart,
 			buttons = rangeSelector.buttons,
 			baseAxis = chart.xAxis[0],
-			extremes = baseAxis && baseAxis.getExtremes(),
-			navAxis = chart.scroller && chart.scroller.xAxis,
-			navExtremes = navAxis && navAxis.getExtremes && navAxis.getExtremes(),
-			navDataMin = navExtremes && navExtremes.dataMin,
-			navDataMax = navExtremes && navExtremes.dataMax,
-			baseDataMin = extremes && extremes.dataMin,
-			baseDataMax = extremes && extremes.dataMax,
-			// if both are defined, get Math.min, else, pick the one that is defined
-			dataMin = ((defined(baseDataMin) && defined(navDataMin)) ? mathMin : pick)(baseDataMin, navDataMin),
-			dataMax = ((defined(baseDataMax) && defined(navDataMax)) ? mathMax : pick)(baseDataMax, navDataMax),
+			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis || {},
+			dataMin = unionExtremes.dataMin,
+			dataMax = unionExtremes.dataMax,
 			newMin,
-			newMax = baseAxis && mathRound(mathMin(extremes.max, pick(dataMax, extremes.max))), // #1568
+			newMax = baseAxis && mathRound(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
@@ -80,7 +73,6 @@ RangeSelector.prototype = {
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			
 			timeName;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
@@ -267,7 +259,11 @@ RangeSelector.prototype = {
 	 */
 	updateButtonStates: function () {
 		var rangeSelector = this,
-			baseAxis = this.chart.xAxis[0],
+			chart = this.chart,
+			baseAxis = chart.xAxis[0],
+			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
+			dataMin = unionExtremes.dataMin,
+			dataMax = unionExtremes.dataMax,
 			selected = rangeSelector.selected,
 			buttons = rangeSelector.buttons,
 			range;
@@ -283,16 +279,16 @@ RangeSelector.prototype = {
 				buttons[i].setState(2);
 			
 			// Disable buttons where the range exceeds what is allowed in the current view
-			} else if (range > baseAxis.dataMax - baseAxis.dataMin) {
+			} else if (range > dataMax - dataMin) {
 				buttons[i].setState(3);
 
 			// Disable the All button if we're already showing all 
-			} else if (rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= baseAxis.dataMax - baseAxis.dataMin && 
+			} else if (rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin && 
 					buttons[i].state !== 2) {
 				buttons[i].setState(3);
 
 			// Disable the YTD button if the complete range is within the same year
-			} else if (rangeOptions.type === 'ytd' && dateFormat('%Y', baseAxis.dataMin) === dateFormat('%Y', baseAxis.dataMax)) {
+			} else if (rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax)) {
 				buttons[i].setState(3);
 
 			} else if (buttons[i].state === 3) {
