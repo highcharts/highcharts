@@ -19160,7 +19160,7 @@ RangeSelector.prototype = {
 	 */
 	computeButtonRange: function (rangeOptions) {
 		var type = rangeOptions.type,
-			count = rangeOptions.count || 1,
+			count = rangeOptions.count || 1,
 
 			// these time intervals have a fixed number of milliseconds, as opposed
 			// to month, ytd and year
