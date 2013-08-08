@@ -7,16 +7,26 @@ To implement:
 - getScript
 
  */
+/*global Highcharts */
 var HighchartsAdapter = (function () {
 
 var UNDEFINED,
 	win = window,
 	doc = document,
 	adapterMethods = {},
-	emptyArray = [];
+	emptyArray = [],
+	timers = [],
+	timerId,
+	Fx;
 
+Math.easeInOutSine = function (t, b, c, d) {
+	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+};
+	
 /**
  * Extend an object with the members of another
+ * TODO: Maybe we can use Highcharts.extend instead of all of these calls, as they
+ * are not called until Highcharts is loaded and we start drawing elements.
  */
 function extend() {
 	var args = emptyArray.slice.call(arguments),
@@ -35,45 +45,10 @@ function extend() {
 }
 
 /**
- * Deep copy properties from 'original' object to 'copy'
- */
-function doCopy(copy, original) {
-	var value,
-		key;
-
-	for (key in original) {
-		value = original[key];
-
-		if (value && typeof value === 'object' && value.constructor !== Array &&
-			typeof value.nodeType !== 'number') {
-			copy[key] = doCopy(copy[key] || {}, value); // copy
-		} else {
-			copy[key] = original[key];
-		}
-	}
-
-	return copy;
-}
-
-/**
- * Merge objects passed in arguments into one object and return it
- */
-function merge() {
-	var args = arguments,
-		obj = {},
-		i;
-
-	for (i = 0; i < args.length; i++) {
-		obj = doCopy(obj, args[i]);
-	}
-
-	return obj;
-}
-
-/**
  * return CSS value for given element and property
  */
-function getCSS(el, prop) {
+function getStyle(el, prop) {
+	// TODO: legacy IE support
 	return win.getComputedStyle(el).getPropertyValue(prop);
 }
 
@@ -82,8 +57,8 @@ function getCSS(el, prop) {
  * Return the index of an item in an array, or -1 if not found
  */
 function inArray(item, arr) {
+	// TODO: legacy IE support
 	return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
-
 }
 
 
@@ -164,7 +139,7 @@ function _extend(obj) {
 					// link wrapped fn with original fn, so we can get this in removeEvent
 					el._highcharts_proxied_methods[originalFn.toString()] = fn;
 
-					el.attachEvent(name, wrappedFn);
+					el.attachEvent(name, fn);
 				}
 
 
@@ -244,7 +219,7 @@ function _extend(obj) {
 
 ['width', 'height'].forEach(function (name) {
 	adapterMethods[name] = function (el) {
-		return parseInt(getCSS(el, name), 10);
+		return parseInt(getStyle(el, name), 10);
 	};
 });
 
@@ -254,11 +229,179 @@ return {
 	 * Initialize the adapter. This is run once as Highcharts is first run.
 	 */
 	init: function (pathAnim) {
-		this.pathAnim = pathAnim;
+
+		Fx = function (elem, options, prop) {
+			this.options = options;
+			this.elem = elem;
+			this.prop = prop;
+		};
+		Fx.prototype = {
+			
+			update: function () {
+				var styles,
+					paths = this.paths,
+					elem = this.elem,
+					elemelem = elem.element; // if destroyed, it is null
+
+				// Animating a path definition on SVGElement
+				if (paths && elemelem) {
+					elem.attr('d', pathAnim.step(paths[0], paths[1], this.now, this.toD));
+				
+				// Other animations on SVGElement
+				} else if (elem.attr) {
+					if (elemelem) {
+						elem.attr(this.prop, this.now);
+					}
+
+				// HTML styles
+				} else {
+					styles = {};
+					styles[elem] = this.now + this.unit;
+					Highcharts.css(elem, styles);
+				}
+				
+				if (this.options.step) {
+					this.options.step.call(this.elem, this.now, this);
+				}
+
+			},
+			custom: function (from, to, unit) {
+				var self = this,
+					t = function (gotoEnd) {
+						return self.step(gotoEnd);
+					},
+					i;
+
+				this.startTime = +new Date();
+				this.start = from;
+				this.end = to;
+				this.unit = unit;
+				this.now = this.start;
+				this.pos = this.state = 0;
+
+				t.elem = this.elem;
+
+				if (t() && timers.push(t) === 1) {
+					timerId = setInterval(function () {
+						
+						for (i = 0; i < timers.length; i++) {
+							if (!timers[i]()) {
+								timers.splice(i--, 1);
+							}
+						}
+
+						if (!timers.length) {
+							clearInterval(timerId);
+						}
+					}, 13);
+				}
+			},
+			
+			step: function (gotoEnd) {
+				var t = +new Date(),
+					ret,
+					done,
+					options = this.options,
+					i;
+
+				if (this.elem.stopAnimation) {
+					ret = false;
+
+				} else if (gotoEnd || t >= options.duration + this.startTime) {
+					this.now = this.end;
+					this.pos = this.state = 1;
+					this.update();
+
+					this.options.curAnim[this.prop] = true;
+
+					done = true;
+					for (i in options.curAnim) {
+						if (options.curAnim[i] !== true) {
+							done = false;
+						}
+					}
+
+					if (done) {
+						if (options.complete) {
+							options.complete.call(this.elem);
+						}
+					}
+					ret = false;
+
+				} else {
+					var n = t - this.startTime;
+					this.state = n / options.duration;
+					this.pos = options.easing(n, 0, 1, options.duration);
+					this.now = this.start + ((this.end - this.start) * this.pos);
+					this.update();
+					ret = true;
+				}
+				return ret;
+			}
+		};
+
+		/**
+		 * The adapter animate method
+		 */
+		this.animate = function (el, prop, opt) {
+			var start,
+				unit = '',
+				end,
+				fx,
+				args,
+				name;
+
+			el.stopAnimation = false; // ready for new
+
+			if (typeof opt !== 'object' || opt === null) {
+				args = arguments;
+				opt = {
+					duration: args[2],
+					easing: args[3],
+					complete: args[4]
+				};
+			}
+			if (typeof opt.duration !== 'number') {
+				opt.duration = 400;
+			}
+			opt.easing = Math[opt.easing] || Math.easeInOutSine;
+			opt.curAnim = Highcharts.extend({}, prop);
+			
+			for (name in prop) {
+				fx = new Fx(el, opt, name);
+				end = null;
+				
+				if (name === 'd') {
+					fx.paths = pathAnim.init(
+						el,
+						el.d,
+						prop.d
+					);
+					fx.toD = prop.d;
+					start = 0;
+					end = 1;
+				} else if (el.attr) {
+					start = el.attr(name);
+				} else {
+					start = parseFloat(getStyle(el, name)) || 0;
+					if (name !== 'opacity') {
+						unit = 'px';
+					}
+				}
+	
+				if (!end) {
+					end = parseFloat(prop[name]);
+				}
+				fx.custom(start, end, unit);
+			}	
+		};
+
+
 	},
 
 	/**
 	 * Downloads a script and executes a callback when done.
+	 * TODO: implement
 	 */
 	getScript: function () {},
 
@@ -275,6 +418,7 @@ return {
 	 * Filter an array
 	 */
 	grep: function (elements, callback) {
+		// TODO: legacy implementation
 		return emptyArray.filter.call(elements, callback);
 	},
 
@@ -289,13 +433,6 @@ return {
 		}
 
 		return results;
-	},
-
-	/**
-	 * Deep merge two objects and return a third object
-	 */
-	merge: function () { // the built-in prototype merge function doesn't do deep copy
-		return merge.apply(this, arguments);
 	},
 
 	offset: function (el) {
@@ -365,16 +502,12 @@ return {
 		return e;
 	},
 
-	/**
-	 * Animate a HTML element or SVG element wrapper
-	 */
-	animate: function (el, params, options) {},
 
 	/**
 	 * Stop running animation
 	 */
 	stop: function (el) {
-		// $(el).stop();
+		el.stopAnimation = true;
 	},
 
 	/**
