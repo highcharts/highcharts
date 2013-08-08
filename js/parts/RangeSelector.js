@@ -606,7 +606,7 @@ RangeSelector.prototype = {
  * Add logic to normalize the zoomed range in order to preserve the pressed state of range selector buttons
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, newMin, newMax) {
-	var fixedRange = this.chart.fixedRange;
+	var fixedRange = this.chart && this.chart.fixedRange;
 
 	newMin = pick(newMin, this.translate(pxMin, true));
 	newMax = pick(newMax, this.translate(pxMax, true));

@@ -18401,9 +18401,9 @@ Scroller.prototype = {
 						left = chartX - navigatorLeft - range / 2;
 					} else { // click on scrollbar
 						if (chartX < navigatorLeft) { // click left scrollbar button
-							left = zoomedMin - mathMin(10, range);
+							left = zoomedMin - mathMax(mathMin(10, range), 1);
 						} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-							left = zoomedMin + mathMin(10, range);
+							left = zoomedMin + mathMax(mathMin(10, range), 1);
 						} else {
 							// click on scrollbar track, shift the scrollbar by one range
 							left = chartX < navigatorLeft + zoomedMin ? // on the left
@@ -18586,7 +18586,8 @@ Scroller.prototype = {
 						(value * valueRange / scrollTrackWidth) + dataMin :
 						// from value to pixel
 						scrollTrackWidth * (value - dataMin) / valueRange;
-				}
+				},
+				toFixedRange: Axis.prototype.toFixedRange
 			};
 		}
 
@@ -19464,7 +19465,7 @@ RangeSelector.prototype = {
  * Add logic to normalize the zoomed range in order to preserve the pressed state of range selector buttons
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, newMin, newMax) {
-	var fixedRange = this.chart.fixedRange;
+	var fixedRange = this.chart && this.chart.fixedRange;
 
 	newMin = pick(newMin, this.translate(pxMin, true));
 	newMax = pick(newMax, this.translate(pxMax, true));
