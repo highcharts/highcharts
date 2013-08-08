@@ -77,19 +77,10 @@ RangeSelector.prototype = {
 			type = rangeOptions.type,
 			count = rangeOptions.count,
 			baseXAxisOptions,
-			range,
+			range = rangeOptions._range,
 			rangeMin,
 			year,
-			// these time intervals have a fixed number of milliseconds, as opposed
-			// to month, ytd and year
-			fixedTimes = {
-				millisecond: 1,
-				second: 1000,
-				minute: 60 * 1000,
-				hour: 3600 * 1000,
-				day: 24 * 3600 * 1000,
-				week: 7 * 24 * 3600 * 1000
-			},
+			
 			timeName;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
@@ -97,22 +88,24 @@ RangeSelector.prototype = {
 			return;
 		}
 
-		if (fixedTimes[type]) {
-			range = fixedTimes[type] * count;
-			newMin = mathMax(newMax - range, dataMin);
-		
-		} else if (type === 'month' || type === 'year') {
+		if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
 			date['set' + timeName](date['get' + timeName]() - count);
 
 			newMin = date.getTime();
-			if (isNaN(newMin) || newMin < pick(dataMin, Number.MIN_VALUE)) {
-				newMin = pick(dataMin, Number.MIN_VALUE);
-				range = { month: 30, year: 365 }[type] * 24 * 3600 * 1000 * count;
+			dataMin = pick(dataMin, Number.MIN_VALUE);
+			if (isNaN(newMin) || newMin < dataMin) {
+				newMin = dataMin;
+				newMax = mathMin(newMin + range, dataMax);
 			} else {
 				range = newMax - newMin;
 			}
 
+		// Fixed times like minutes, hours, days
+		} else if (range) {
+			newMin = mathMax(newMax - range, dataMin);
+			newMax = mathMin(newMin + range, dataMax);
+		
 		} else if (type === 'ytd') {
 
 			// On user clicks on the buttons, or a delayed action running from the beforeRender 
@@ -245,6 +238,9 @@ RangeSelector.prototype = {
 		addEvent(chart.container, 'mousedown', blurInputs);
 		addEvent(chart, 'resize', blurInputs);
 
+		// Extend the buttonOptions with actual range
+		each(buttonOptions, rangeSelector.computeButtonRange);
+
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
 			this.clickButton(selectedOption, buttonOptions[selectedOption], false);
@@ -257,10 +253,78 @@ RangeSelector.prototype = {
 					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 						buttons[rangeSelector.selected].setState(0);
 					}
-					rangeSelector.selected = chart.fixedRange = null;
+					rangeSelector.selected = null;
 				}
+
+				rangeSelector.updateButtonStates();
+
 			});
 		});
+	},
+
+	/**
+	 * Dynamically update the range selector buttons after a new range has been set
+	 */
+	updateButtonStates: function () {
+		var rangeSelector = this,
+			baseAxis = this.chart.xAxis[0],
+			selected = rangeSelector.selected,
+			buttons = rangeSelector.buttons,
+			range;
+
+		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+			range = rangeOptions._range;
+
+			// The new zoom area happens to match the range for a button - mark it selected.
+			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
+			// demos when selecting 1h and scroll across the night gap.
+			if (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected) {
+				rangeSelector.selected = i;
+				buttons[i].setState(2);
+			
+			// Disable buttons where the range exceeds what is allowed in the current view
+			} else if (range > baseAxis.dataMax - baseAxis.dataMin) {
+				buttons[i].setState(3);
+
+			// Disable the All button if we're already showing all 
+			} else if (rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= baseAxis.dataMax - baseAxis.dataMin && 
+					buttons[i].state !== 2) {
+				buttons[i].setState(3);
+
+			// Disable the YTD button if the complete range is within the same year
+			} else if (rangeOptions.type === 'ytd' && dateFormat('%Y', baseAxis.dataMin) === dateFormat('%Y', baseAxis.dataMax)) {
+				buttons[i].setState(3);
+
+			} else if (buttons[i].state === 3) {
+				buttons[i].setState(0);
+			}
+		});
+	},
+
+	/** 
+	 * Compute and cache the range for an individual button
+	 */
+	computeButtonRange: function (rangeOptions) {
+		var type = rangeOptions.type,
+			count = rangeOptions.count || 1,
+
+			// these time intervals have a fixed number of milliseconds, as opposed
+			// to month, ytd and year
+			fixedTimes = {
+				millisecond: 1,
+				second: 1000,
+				minute: 60 * 1000,
+				hour: 3600 * 1000,
+				day: 24 * 3600 * 1000,
+				week: 7 * 24 * 3600 * 1000
+			};
+		
+		// Store the range on the button object
+		if (fixedTimes[type]) {
+			rangeOptions._range = fixedTimes[type] * count;				
+		} else if (type === 'month' || type === 'year') {
+			rangeOptions._range = { month: 30, year: 365 }[type] * 24 * 36e5 * count;
+		}
 	},
 	
 	/**
@@ -460,6 +524,8 @@ RangeSelector.prototype = {
 					buttons[i].setState(2);
 				}
 			});
+
+			rangeSelector.updateButtonStates();
 
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
