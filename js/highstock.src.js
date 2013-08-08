@@ -18344,7 +18344,7 @@ Scroller.prototype = {
 				chartX = e.chartX,
 				chartY = e.chartY,
 				baseXAxis = chart.xAxis[0],
-				leftValue,
+				ext,
 				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
 				isOnNavigator;
@@ -18356,11 +18356,13 @@ Scroller.prototype = {
 				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedLeft = true;
 					scroller.otherHandlePos = zoomedMax;
+					chart.fixedRange = null;
 
 				// grab the right handle
 				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedRight = true;
 					scroller.otherHandlePos = zoomedMin;
+					chart.fixedRange = null;
 
 				// grab the zoomed range
 				} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
@@ -18401,13 +18403,11 @@ Scroller.prototype = {
 					}
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
-						if (!baseXAxis.ordinalPositions) {
-							chart.fixedRange = baseXAxis.max - baseXAxis.min;
-						}
-						leftValue = xAxis.translate(left, true);
+
+						ext = xAxis.toFixedRange(left, left + range);
 						baseXAxis.setExtremes(
-							leftValue,
-							chart.fixedRange ? leftValue + chart.fixedRange : xAxis.translate(left + range, true),
+							ext.min,
+							ext.max,
 							true,
 							false,
 							{ trigger: 'navigator' }
@@ -18478,11 +18478,13 @@ Scroller.prototype = {
 		 * Event handler for the mouse up event.
 		 */
 		scroller.mouseUpHandler = function (e) {
+			var ext;
 			
 			if (hasDragged) {
+				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax);
 				chart.xAxis[0].setExtremes(
-					xAxis.translate(scroller.zoomedMin, true),
-					xAxis.translate(scroller.zoomedMax, true),
+					ext.min,
+					ext.max,
 					true,
 					false,
 					{ 
@@ -18894,7 +18896,7 @@ RangeSelector.prototype = {
 			dataMin = ((defined(baseDataMin) && defined(navDataMin)) ? mathMin : pick)(baseDataMin, navDataMin),
 			dataMax = ((defined(baseDataMax) && defined(navDataMax)) ? mathMax : pick)(baseDataMax, navDataMax),
 			newMin,
-			newMax = baseAxis && mathMin(extremes.max, pick(dataMax, extremes.max)), // #1568
+			newMax = baseAxis && mathRound(mathMin(extremes.max, pick(dataMax, extremes.max))), // #1568
 			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
@@ -18927,9 +18929,15 @@ RangeSelector.prototype = {
 		} else if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
 			date['set' + timeName](date['get' + timeName]() - count);
-			newMin = mathMax(date.getTime(), pick(dataMin, Number.MIN_VALUE)); // #1568
-			range = { month: 30, year: 365 }[type] * 24 * 3600 * 1000 * count;
-		
+
+			newMin = date.getTime();
+			if (isNaN(newMin) || newMin < pick(dataMin, Number.MIN_VALUE)) {
+				newMin = pick(dataMin, Number.MIN_VALUE);
+				range = { month: 30, year: 365 }[type] * 24 * 3600 * 1000 * count;
+			} else {
+				range = newMax - newMin;
+			}
+
 		} else if (type === 'ytd') {
 
 			// On user clicks on the buttons, or a delayed action running from the beforeRender 
@@ -19070,7 +19078,7 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (chart.fixedRange !== this.max - this.min) {
+				if (chart.fixedRange !== mathRound(this.max - this.min)) {
 					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 						buttons[rangeSelector.selected].setState(0);
 					}
@@ -19355,6 +19363,28 @@ RangeSelector.prototype = {
 			this[key] = null;
 		}
 	}
+};
+
+/**
+ * Add logic to normalize the zoomed range in order to preserve the pressed state of range selector buttons
+ */
+Axis.prototype.toFixedRange = function (pxMin, pxMax, newMin, newMax) {
+	var fixedRange = this.chart.fixedRange;
+
+	newMin = pick(newMin, this.translate(pxMin, true));
+	newMax = pick(newMax, this.translate(pxMax, true));
+
+	// If the difference between the fixed range and the actual requested range is
+	// too great, the user is dragging across an ordinal gap, and we need to release
+	// the range selector button.
+	if (fixedRange && (newMax - newMin) / fixedRange < 1.3) {
+		newMax = newMin + fixedRange;
+	}
+
+	return {
+		min: newMin,
+		max: newMax
+	};
 };
 
 // Initialize scroller for stock charts
@@ -20239,8 +20269,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						dataMax = extremes.dataMax,
 						min = extremes.min,
 						max = extremes.max,
-						newMin,
-						newMax,
+						trimmedRange,
 						hoverPoints = chart.hoverPoints,
 						closestPointRange = xAxis.closestPointRange,
 						pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || closestPointRange),
@@ -20284,18 +20313,20 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 						// then add the moved units and translate back to values. This happens on the 
 						// extended ordinal positions if the new position is out of range, else it happens
 						// on the current x axis which is smaller and faster.
-						newMin = lin2val.apply(searchAxisLeft, [
-							val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index 
-							true // translate from index
-						]);
-						newMax = lin2val.apply(searchAxisRight, [
-							val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index 
-							true // translate from index
-						]);
+						trimmedRange = xAxis.toFixedRange(null, null, 
+							lin2val.apply(searchAxisLeft, [
+								val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index 
+								true // translate from index
+							]),
+							lin2val.apply(searchAxisRight, [
+								val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index 
+								true // translate from index
+							])
+						);
 						
 						// Apply it if it is within the available data range
-						if (newMin > mathMin(extremes.dataMin, min) && newMax < mathMax(dataMax, max)) {
-							xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
+						if (trimmedRange.min > mathMin(extremes.dataMin, min) && trimmedRange.max < mathMax(dataMax, max)) {
+							xAxis.setExtremes(trimmedRange.min, trimmedRange.max, true, false, { trigger: 'pan' });
 						}
 				
 						chart.mouseDownX = chartX; // set new reference for next run

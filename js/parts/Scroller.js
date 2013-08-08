@@ -574,7 +574,7 @@ Scroller.prototype = {
 				chartX = e.chartX,
 				chartY = e.chartY,
 				baseXAxis = chart.xAxis[0],
-				leftValue,
+				ext,
 				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
 				isOnNavigator;
@@ -586,11 +586,13 @@ Scroller.prototype = {
 				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedLeft = true;
 					scroller.otherHandlePos = zoomedMax;
+					chart.fixedRange = null;
 
 				// grab the right handle
 				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedRight = true;
 					scroller.otherHandlePos = zoomedMin;
+					chart.fixedRange = null;
 
 				// grab the zoomed range
 				} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
@@ -631,13 +633,11 @@ Scroller.prototype = {
 					}
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
-						if (!baseXAxis.ordinalPositions) {
-							chart.fixedRange = baseXAxis.max - baseXAxis.min;
-						}
-						leftValue = xAxis.translate(left, true);
+
+						ext = xAxis.toFixedRange(left, left + range);
 						baseXAxis.setExtremes(
-							leftValue,
-							chart.fixedRange ? leftValue + chart.fixedRange : xAxis.translate(left + range, true),
+							ext.min,
+							ext.max,
 							true,
 							false,
 							{ trigger: 'navigator' }
@@ -708,11 +708,13 @@ Scroller.prototype = {
 		 * Event handler for the mouse up event.
 		 */
 		scroller.mouseUpHandler = function (e) {
+			var ext;
 			
 			if (hasDragged) {
+				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax);
 				chart.xAxis[0].setExtremes(
-					xAxis.translate(scroller.zoomedMin, true),
-					xAxis.translate(scroller.zoomedMax, true),
+					ext.min,
+					ext.max,
 					true,
 					false,
 					{ 

@@ -71,7 +71,7 @@ RangeSelector.prototype = {
 			dataMin = ((defined(baseDataMin) && defined(navDataMin)) ? mathMin : pick)(baseDataMin, navDataMin),
 			dataMax = ((defined(baseDataMax) && defined(navDataMax)) ? mathMax : pick)(baseDataMax, navDataMax),
 			newMin,
-			newMax = baseAxis && mathMin(extremes.max, pick(dataMax, extremes.max)), // #1568
+			newMax = baseAxis && mathRound(mathMin(extremes.max, pick(dataMax, extremes.max))), // #1568
 			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
@@ -104,9 +104,15 @@ RangeSelector.prototype = {
 		} else if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
 			date['set' + timeName](date['get' + timeName]() - count);
-			newMin = mathMax(date.getTime(), pick(dataMin, Number.MIN_VALUE)); // #1568
-			range = { month: 30, year: 365 }[type] * 24 * 3600 * 1000 * count;
-		
+
+			newMin = date.getTime();
+			if (isNaN(newMin) || newMin < pick(dataMin, Number.MIN_VALUE)) {
+				newMin = pick(dataMin, Number.MIN_VALUE);
+				range = { month: 30, year: 365 }[type] * 24 * 3600 * 1000 * count;
+			} else {
+				range = newMax - newMin;
+			}
+
 		} else if (type === 'ytd') {
 
 			// On user clicks on the buttons, or a delayed action running from the beforeRender 
@@ -247,7 +253,7 @@ RangeSelector.prototype = {
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (chart.fixedRange !== this.max - this.min) {
+				if (chart.fixedRange !== mathRound(this.max - this.min)) {
 					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 						buttons[rangeSelector.selected].setState(0);
 					}
@@ -532,6 +538,28 @@ RangeSelector.prototype = {
 			this[key] = null;
 		}
 	}
+};
+
+/**
+ * Add logic to normalize the zoomed range in order to preserve the pressed state of range selector buttons
+ */
+Axis.prototype.toFixedRange = function (pxMin, pxMax, newMin, newMax) {
+	var fixedRange = this.chart.fixedRange;
+
+	newMin = pick(newMin, this.translate(pxMin, true));
+	newMax = pick(newMax, this.translate(pxMax, true));
+
+	// If the difference between the fixed range and the actual requested range is
+	// too great, the user is dragging across an ordinal gap, and we need to release
+	// the range selector button.
+	if (fixedRange && (newMax - newMin) / fixedRange < 1.3) {
+		newMax = newMin + fixedRange;
+	}
+
+	return {
+		min: newMin,
+		max: newMax
+	};
 };
 
 // Initialize scroller for stock charts

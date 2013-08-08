@@ -529,8 +529,7 @@
 						dataMax = extremes.dataMax,
 						min = extremes.min,
 						max = extremes.max,
-						newMin,
-						newMax,
+						trimmedRange,
 						hoverPoints = chart.hoverPoints,
 						closestPointRange = xAxis.closestPointRange,
 						pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || closestPointRange),
@@ -574,18 +573,20 @@
 						// then add the moved units and translate back to values. This happens on the 
 						// extended ordinal positions if the new position is out of range, else it happens
 						// on the current x axis which is smaller and faster.
-						newMin = lin2val.apply(searchAxisLeft, [
-							val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index 
-							true // translate from index
-						]);
-						newMax = lin2val.apply(searchAxisRight, [
-							val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index 
-							true // translate from index
-						]);
+						trimmedRange = xAxis.toFixedRange(null, null, 
+							lin2val.apply(searchAxisLeft, [
+								val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index 
+								true // translate from index
+							]),
+							lin2val.apply(searchAxisRight, [
+								val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index 
+								true // translate from index
+							])
+						);
 						
 						// Apply it if it is within the available data range
-						if (newMin > mathMin(extremes.dataMin, min) && newMax < mathMax(dataMax, max)) {
-							xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
+						if (trimmedRange.min > mathMin(extremes.dataMin, min) && trimmedRange.max < mathMax(dataMax, max)) {
+							xAxis.setExtremes(trimmedRange.min, trimmedRange.max, true, false, { trigger: 'pan' });
 						}
 				
 						chart.mouseDownX = chartX; // set new reference for next run
