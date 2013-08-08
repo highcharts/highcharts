@@ -3,7 +3,22 @@
  * This file requires data.js.
  */
 
-Highcharts.extend(Highcharts.Data.prototype, {
+/*global Highcharts */
+(function (H) {
+
+"use strict";
+
+var each = H.each;
+
+H.wrap(H.Data.prototype, 'init', function (proceed, options) {
+	proceed.call(this, options);
+
+	if (options.svg) {
+		this.loadSVG();
+	}
+});
+
+H.extend(H.Data.prototype, {
 	/**
 	 * Parse an SVG path into a simplified array that Highcharts can read
 	 */
@@ -101,6 +116,70 @@ Highcharts.extend(Highcharts.Data.prototype, {
 			}
 		}
 		return path;
+	},
+
+	/**
+	 * Join the path back to a string for compression
+	 */
+	pathToString: function (arr) {
+		each(arr, function (point) {
+			var path = point.path;
+
+			// Join all by commas
+			path = path.join(',');
+
+			// Remove commas next to a letter
+			path = path.replace(/,?([a-zA-Z]),?/g, '$1');
+			
+			// Reinsert
+			point.path = path;
+		});
+
+		return arr;
+		//return path.join(',')
+	},
+
+	/**
+	 * Scale the path to fit within a given box and round all numbers
+	 */
+	roundPaths: function (arr, scale) {
+		var mapProto = Highcharts.seriesTypes.map.prototype,
+			fakeSeries,
+			origSize,
+			transA;
+
+		
+		// Borrow the map series type's getBox method
+		mapProto.getBox.call(arr, arr);
+
+		origSize = Math.max(arr.maxX - arr.minX, arr.maxY - arr.minY);
+		scale = scale || 999;
+		transA = scale / origSize;
+
+		fakeSeries = {
+			xAxis: {
+				min: arr.minX,
+				len: scale,//arr.maxX - arr.minX,
+				translate: Highcharts.Axis.prototype.translate,
+				options: {},
+				minPixelPadding: 0,
+				transA: transA
+			}, 
+			yAxis: {
+				min: (arr.minY + scale) / transA,
+				len: scale,//arr.maxY - arr.minY,
+				translate: Highcharts.Axis.prototype.translate,
+				options: {},
+				minPixelPadding: 0,
+				transA: -transA
+			}
+		};
+
+		each(arr, function (point) {
+			point.path = mapProto.translatePath.call(fakeSeries, point.path);
+		});
+
+		return arr;
 	},
 	
 	/**
@@ -208,6 +287,9 @@ Highcharts.extend(Highcharts.Data.prototype, {
 						});
 					}			
 				});
+
+				// Round off to compress
+				data.roundPaths(arr);
 				
 				// Do the callback
 				options.complete({
@@ -218,4 +300,6 @@ Highcharts.extend(Highcharts.Data.prototype, {
 			}
 		});
 	}
-));
+});
+}(Highcharts));
+

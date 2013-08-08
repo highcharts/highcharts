@@ -94,7 +94,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 
 		// Return the width at a specific y coordinate
 		series.getWidthAt = getWidthAt = function (y) {
-			return y > height - neckHeight ?
+			return y > height - neckHeight || height === neckHeight ?
 				neckWidth :
 				neckWidth + (width - neckWidth) * ((height - neckHeight - y) / (height - neckHeight));
 		};
@@ -137,7 +137,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			// set start and end positions
 			y5 = null;
 			fraction = sum ? point.y / sum : 0;
-			y1 = cumulative * height;
+			y1 = centerY - height / 2 + cumulative * height;
 			y3 = y1 + fraction * height;
 			//tempWidth = neckWidth + (width - neckWidth) * ((height - neckHeight - y1) / (height - neckHeight));
 			tempWidth = getWidthAt(y1);

@@ -3,6 +3,3 @@
 .classpath
 .project
 target/
-/java/highcharts-export/nbactions.xml
-/java/highcharts-export/nb-configuration.xml
-/java/highcharts-export/src/main/webapp/META-INF/

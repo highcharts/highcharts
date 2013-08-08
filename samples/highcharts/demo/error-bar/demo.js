@@ -62,7 +62,7 @@ $(function() {
 			yAxis: 1,
 			data: [[48, 51], [68, 73], [92, 110], [128, 136], [140, 150], [171, 179], [135, 143], [142, 149], [204, 220], [189, 199], [95, 110], [52, 56]],
 			tooltip: {
-				pointFormat: '(error range: {point.low}-{point.high} mm)<br/>'
+				pointFormat: '(error range: {point.low}-{point.high} mm)<br/>'
 			}
 		}, {
 			name: 'Temperature',

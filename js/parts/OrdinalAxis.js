@@ -64,13 +64,12 @@
 							ordinalPositions = ordinalPositions.concat(series.processedXData);
 							len = ordinalPositions.length;
 							
-							// if we're dealing with more than one series, remove duplicates
-							if (i && len) {
+							// remove duplicates (#1588)
+							ordinalPositions.sort(function (a, b) {
+								return a - b; // without a custom function it is sorted as strings
+							});
 							
-								ordinalPositions.sort(function (a, b) {
-									return a - b; // without a custom function it is sorted as strings
-								});
-							
+							if (len) {
 								i = len - 1;
 								while (i--) {
 									if (ordinalPositions[i] === ordinalPositions[i + 1]) {
@@ -377,8 +376,8 @@
 					tickPixelIntervalOption = xAxis.options.tickPixelInterval;
 					
 				// The positions are not always defined, for example for ordinal positions when data
-				// has regular interval (#1557)
-				if (!positions || positions.length === 1 || min === UNDEFINED) {
+				// has regular interval (#1557, #2090)
+				if (!positions || positions.length < 3 || min === UNDEFINED) {
 					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
 				}
 				
@@ -530,8 +529,7 @@
 						dataMax = extremes.dataMax,
 						min = extremes.min,
 						max = extremes.max,
-						newMin,
-						newMax,
+						trimmedRange,
 						hoverPoints = chart.hoverPoints,
 						closestPointRange = xAxis.closestPointRange,
 						pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || closestPointRange),
@@ -575,18 +573,20 @@
 						// then add the moved units and translate back to values. This happens on the 
 						// extended ordinal positions if the new position is out of range, else it happens
 						// on the current x axis which is smaller and faster.
-						newMin = lin2val.apply(searchAxisLeft, [
-							val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index 
-							true // translate from index
-						]);
-						newMax = lin2val.apply(searchAxisRight, [
-							val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index 
-							true // translate from index
-						]);
+						trimmedRange = xAxis.toFixedRange(null, null, 
+							lin2val.apply(searchAxisLeft, [
+								val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index 
+								true // translate from index
+							]),
+							lin2val.apply(searchAxisRight, [
+								val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index 
+								true // translate from index
+							])
+						);
 						
 						// Apply it if it is within the available data range
-						if (newMin > mathMin(extremes.dataMin, min) && newMax < mathMax(dataMax, max)) {
-							xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
+						if (trimmedRange.min > mathMin(extremes.dataMin, min) && trimmedRange.max < mathMax(dataMax, max)) {
+							xAxis.setExtremes(trimmedRange.min, trimmedRange.max, true, false, { trigger: 'pan' });
 						}
 				
 						chart.mouseDownX = chartX; // set new reference for next run
@@ -613,12 +613,13 @@
 		
 		var series = this,
 			segments,
-			gapSize = series.options.gapSize;
+			gapSize = series.options.gapSize,
+			xAxis = series.xAxis;
 	
 		// call base method
 		baseGetSegments.apply(series);
-		
-		if (gapSize) {
+			
+		if (xAxis.options.ordinal && gapSize) { // #1794
 		
 			// properties
 			segments = series.segments;
@@ -627,7 +628,7 @@
 			each(segments, function (segment, no) {
 				var i = segment.length - 1;
 				while (i--) {
-					if (segment[i + 1].x - segment[i].x > series.xAxis.closestPointRange * gapSize) {
+					if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
 						segments.splice( // insert after this one
 							no + 1,
 							0,

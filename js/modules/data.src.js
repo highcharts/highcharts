@@ -2,7 +2,7 @@
  * @license Data plugin for Highcharts
  *
  * (c) 2012-2013 Torstein Hønsi
- * Last revision 2012-11-27
+ * Last revision 2013-06-07
  *
  * License: www.highcharts.com/license
  */
@@ -87,8 +87,8 @@
 	
 	
 	// The Data constructor
-	var Data = function (options) {
-		this.init(options);
+	var Data = function (dataOptions, chartOptions) {
+		this.init(dataOptions, chartOptions);
 	};
 	
 	// Set the prototype properties
@@ -97,8 +97,9 @@
 	/**
 	 * Initialize the Data object with the given options
 	 */
-	init: function (options) {
+	init: function (options, chartOptions) {
 		this.options = options;
+		this.chartOptions = chartOptions;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
 
 		// No need to parse or interpret anything
@@ -119,6 +120,30 @@
 		}
 
 	},
+
+	/**
+	 * Get the column distribution. For example, a line series takes a single column for 
+	 * Y values. A range series takes two columns for low and high values respectively,
+	 * and an OHLC series takes four columns.
+	 */
+	getColumnDistribution: function () {
+		var chartOptions = this.chartOptions,
+			getValueCount = function (type) {
+				return (Highcharts.seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
+			},
+			globalType = chartOptions && chartOptions.chart && chartOptions.chart.type,
+			individualCounts = [];
+
+		each((chartOptions && chartOptions.series) || [], function (series) {
+			individualCounts.push(getValueCount(series.type || globalType));
+		});
+
+		this.valueCount = {
+			global: getValueCount(globalType),
+			individual: individualCounts
+		};
+	},
+
 
 	dataFound: function () {
 		// Interpret the values into right types
@@ -436,19 +461,20 @@
 	complete: function () {
 		
 		var columns = this.columns,
-			hasXData,
-			categories,
 			firstCol,
 			type,
 			options = this.options,
+			valueCount,
 			series,
 			data,
-			name,
 			i,
-			j;
+			j,
+			seriesIndex;
 			
 		
 		if (options.complete) {
+
+			this.getColumnDistribution();
 			
 			// Use first column for X data or categories?
 			if (columns.length > 1) {
@@ -457,42 +483,61 @@
 					firstCol.shift(); // remove the first cell
 				}
 				
-				// Use the first column for categories or X values
-				hasXData = firstCol.isNumeric || firstCol.isDatetime;
-				if (!hasXData) { // means type is neither datetime nor linear
-					categories = firstCol;
-				}
 				
 				if (firstCol.isDatetime) {
 					type = 'datetime';
+				} else if (!firstCol.isNumeric) {
+					type = 'category';
+				}
+			}
+
+			// Get the names and shift the top row
+			for (i = 0; i < columns.length; i++) {
+				if (this.headerRow === 0) {
+					columns[i].name = columns[i].shift();
 				}
 			}
 			
 			// Use the next columns for series
 			series = [];
-			for (i = 0; i < columns.length; i++) {
-				if (this.headerRow === 0) {
-					name = columns[i].shift();
-				}
+			for (i = 0, seriesIndex = 0; i < columns.length; seriesIndex++) {
+
+				// This series' value count
+				valueCount = Highcharts.pick(this.valueCount.individual[seriesIndex], this.valueCount.global);
+				
+				// Iterate down the cells of each column and add data to the series
 				data = [];
 				for (j = 0; j < columns[i].length; j++) {
-					data[j] = columns[i][j] !== undefined ?
-						(hasXData ?
-							[firstCol[j], columns[i][j]] :
-							columns[i][j]
-						) :
-						null;
+					data[j] = [
+						firstCol[j], 
+						columns[i][j] !== undefined ? columns[i][j] : null
+					];
+					if (valueCount > 1) {
+						data[j].push(columns[i + 1][j] !== undefined ? columns[i + 1][j] : null);
+					}
+					if (valueCount > 2) {
+						data[j].push(columns[i + 2][j] !== undefined ? columns[i + 2][j] : null);
+					}
+					if (valueCount > 3) {
+						data[j].push(columns[i + 3][j] !== undefined ? columns[i + 3][j] : null);
+					}
+					if (valueCount > 4) {
+						data[j].push(columns[i + 4][j] !== undefined ? columns[i + 4][j] : null);
+					}
 				}
-				series[i] = {
-					name: name,
+
+				// Add the series
+				series[seriesIndex] = {
+					name: columns[i].name,
 					data: data
 				};
+
+				i += valueCount;
 			}
 			
 			// Do the callback
 			options.complete({
 				xAxis: {
-					categories: categories,
 					type: type
 				},
 				series: series
@@ -503,8 +548,8 @@
 	
 	// Register the Data prototype and data function on Highcharts
 	Highcharts.Data = Data;
-	Highcharts.data = function (options) {
-		return new Data(options);
+	Highcharts.data = function (options, chartOptions) {
+		return new Data(options, chartOptions);
 	};
 
 	// Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -528,7 +573,7 @@
 
 					proceed.call(chart, userOptions, callback);
 				}
-			}));
+			}), userOptions);
 		} else {
 			proceed.call(chart, userOptions, callback);
 		}

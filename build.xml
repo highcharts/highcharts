@@ -53,18 +53,27 @@
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
+        <property name="map.src.name" value="map.src.js"/>
+        <property name="heatmap.src.name" value="heatmap.src.js"/>
+        <property name="annotations.src.name" value="annotations.src.js"/>
         <property name="mootools.minified.name" value="mootools-adapter.js"/>
         <property name="prototype.minified.name" value="prototype-adapter.js"/>
         <property name="nolib.minified.name" value="nolib-adapter.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
+        <property name="map.minified.name" value="map.js"/>
+        <property name="heatmap.minified.name" value="heatmap.js"/>
+        <property name="annotations.minified.name" value="annotations.js"/>
         <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
         <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/>
         <property name="nolib.src.file" value="${basedir}/js/adapters/${nolib.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
+        <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
+        <property name="heatmap.src.file" value="${basedir}/js/modules/${heatmap.src.name}"/>
+        <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
@@ -274,6 +283,19 @@
         <fixcrlf srcDir="${basedir}/test" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
     </target>
 
+
+    <!-- Set a property that tells if there are nbsp. -->
+    <!--
+    <target name="do-check-nbsp">
+        <condition property="has.nbsp">
+            <resourcecontains resource="${highstock.src.file}" substring=""/>
+        </condition>
+    </target>
+    <target name="check-nbsp" depends="do-check-nbsp" if="has.nbsp">
+        <echo message="ERROR: Non-breaking space characters exist in source code."/>
+    </target>
+    -->
+
     <!-- Runs jslint on generated source code. -->
     <target name="do-lint" depends="check-crlf">
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue" encoding="UTF-8">
@@ -287,6 +309,9 @@
             <fileset file="${exporting.src.file}"/>
             <fileset file="${data.src.file}"/>
             <fileset file="${funnel.src.file}"/>
+            <fileset file="${map.src.file}"/>
+            <fileset file="${heatmap.src.file}"/>
+            <fileset file="${annotations.src.file}"/>
             <fileset dir="${themes.dir}"/>
             <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
@@ -420,6 +445,18 @@
             <param name="param.out" value="${dist.dir}/js/modules/${funnel.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${map.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${map.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${heatmap.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${heatmap.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${annotations.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${annotations.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="build/canvas-tools.src.js"/>
             <param name="param.out" value="build/canvas-tools.js"/>
         </antcall>
@@ -504,6 +541,7 @@
             </condition>
         </fail -->
 
+        <echo file="${dist.dir}/products.js" append="false">var products = {'Highcharts': {date: '${highcharts.product.date}', nr: '${highcharts.product.version}'},'Highstock': {date: '${highstock.product.date}', nr: '${highstock.product.version}'}};</echo>
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highstock.filter"/></copy>
@@ -540,6 +578,21 @@
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${funnel.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${map.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${map.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${heatmap.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${heatmap.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${annotations.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${annotations.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${annotations.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${annotations.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
@@ -960,7 +1013,7 @@
             <arg value="${remote}/"/>
         </exec>
     </target>
-    <target name="put-zipfile-to-S3">
+    <target name="put-file-to-S3">
         <echo message="copy a file to : ${local} with remote S3 path: ${remote}"/>
         <exec dir="${s3cmdDir}" executable="python" failonerror="true">
             <arg line="s3cmd"/>
@@ -970,8 +1023,8 @@
             <arg value="--encoding=UTF-8"/>
             <arg value="--acl-public"/>
             <arg value="--no-preserve"/>
-            <arg value="--exclude=*"/>
-            <arg value="--include=${include.pattern}"/>
+            <!--arg value="-!   -exclude=*"/>
+            <arg value="-!-include=${include.pattern}"/-->
             <!--arg value="-!-dry-run" /-->
             <arg value="put"/>
             <arg value="${local}"/>
@@ -1017,12 +1070,16 @@
     </target>
     <target name="deploy-highcharts-S3" depends="set.properties" description="deploy highcharts distribution to Amazon S3">
         <property file="git-ignore-me.properties"/>
-        <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip"/>
-        <antcall target="put-zipfile-to-S3">
-            <param name="local" value="${basedir}/build/dist/Highcharts.zip"/>
+        <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
+            <param name="remote" value="${amazon.s3.bucketname}/zips"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>           
+        </antcall>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/products.js"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="include.pattern" value="*.zip"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highcharts/js/"/>
@@ -1079,16 +1136,16 @@
                                 <param name="local" value="${basedir}/build/dist/highcharts/js-gzip/"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                             <!-- STEP 2: copy gfx folder to version folder on S3-->
                             <antcall target="put-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highcharts/gfx"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                         </then>
                     </elseif>
@@ -1111,13 +1168,12 @@
     <!-- Deploy Highstock to S3 -->
     <target name="deploy-highstock-S3" depends="set.properties" description="deploy highstock distribution to Amazon S3">
         <property file="git-ignore-me.properties"/>
-        <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip"/>
-        <antcall target="put-zipfile-to-S3">
-            <param name="local" value="${basedir}/build/dist/Highstock.zip"/>
-            <param name="remote" value="${amazon.s3.bucketname}"/>
+        <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock-${highstock.product.version}.zip"/>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highstock-${highstock.product.version}.zip"/>
+            <param name="remote" value="${amazon.s3.bucketname}/zips"/>
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="include.pattern" value="*.zip"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highstock/js/"/>
@@ -1173,16 +1229,16 @@
                                 <param name="local" value="${basedir}/build/dist/highstock/js-gzip/"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                             <!-- copy gfx folder to version folder on S3-->
                             <antcall target="put-files-to-S3">
                                 <param name="local" value="${basedir}/build/dist/highstock/gfx"/>
                                 <param name="remote" value="${amazon.s3.bucketname}/stock/${path.var}"/>
                                 <param name="s3cmdDir" value="${s3cmd.dir}"/>
-                                <param name="http.expires" value="${http.expires.one.month}"/>
-                                <param name="max.age" value="${max.age.one.month}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
                             </antcall>
                         </then>
                     </elseif>
@@ -1228,4 +1284,25 @@
         <delete dir="${src.versions.dir}/../js-gzip"/>
         <echo message="finished!"/>
     </target>
+
+    <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
+    <target name="copy-to-site">
+        <property file="git-ignore-me.properties"/>
+        <copy todir="${highcharts.site.dir}/samples">
+            <fileset dir="samples"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/studies">
+            <fileset dir="studies"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/js/themes">
+            <fileset dir="js/themes"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/errors">
+            <fileset dir="errors"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/lib">
+            <fileset dir="lib"/>
+        </copy>
+    </target>
+
 </project>

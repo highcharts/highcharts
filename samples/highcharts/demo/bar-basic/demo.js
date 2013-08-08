@@ -39,7 +39,7 @@ $(function () {
                 layout: 'vertical',
                 align: 'right',
                 verticalAlign: 'top',
-                x: -100,
+                x: -40,
                 y: 100,
                 floating: true,
                 borderWidth: 1,

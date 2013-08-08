@@ -10,16 +10,19 @@
  * version: 2.0.1
  */
 
+/*jslint white: true */
 /*global window, require, phantom, console, $, document, Image, Highcharts, clearTimeout, clearInterval, options, cb */
+
 
 (function () {
 	"use strict";
 
 	var config = {
 			/* define locations of mandatory javascript files */
-			HIGHCHARTS: 'highstock.1.3.1.min.js',
-			HIGHCHARTS_MORE: 'highcharts-more.3.0.1.min.js',
-			JQUERY: 'jquery-1.8.2.min.js',
+			HIGHCHARTS: 'highstock.js',
+			HIGHCHARTS_MORE: 'highcharts-more.js',
+			HIGHCHARTS_DATA: 'data.js',
+			JQUERY: 'jquery.1.9.1.min.js',
 			TIMEOUT: 2000 /* 2 seconds timout for loading images */
 		},
 		mapCLArguments,
@@ -27,6 +30,8 @@
 		startServer = false,
 		args,
 		pick,
+		SVG_DOCTYPE = '<?xml version=\"1.0" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">',
+		dpiCorrection = 1.4,
 		system = require('system'),
 		fs = require('fs');
 
@@ -53,7 +58,7 @@
 		for (i = 0; i < system.args.length; i += 1) {
 			if (system.args[i].charAt(0) === '-') {
 				key = system.args[i].substr(1, i.length);
-				if (key === 'infile' || key === 'callback') {
+				if (key === 'infile' || key === 'callback' || key === 'dataoptions' || key === 'globaloptions' || key === 'customcode') {
 					// get string from file
 					try {
 						map[key] = fs.read(system.args[i + 1]);
@@ -147,6 +152,7 @@
 			clipheight = svg.height * page.zoomFactor;
 
 			/* define the clip-rectangle */
+			/* ignored for PDF, see https://github.com/ariya/phantomjs/issues/10465 */
 			page.clipRect = {
 				top: 0,
 				left: 0,
@@ -156,7 +162,13 @@
 
 			/* for pdf we need a bit more paperspace in some cases for example (w:600,h:400), I don't know why.*/
 			if (outputExtension === 'pdf') {
-				page.paperSize = { width: clipwidth, height: clipheight + 2};
+				// changed to a multiplication with 1.333 to correct systems dpi setting
+				clipwidth = clipwidth * dpiCorrection;
+				clipheight = clipheight * dpiCorrection;
+				// redefine the viewport
+				page.viewportSize = { width: clipwidth, height: clipheight};
+				// make the paper a bit larger than the viewport
+				page.paperSize = { width: clipwidth + 2 , height: clipheight + 2 };
 			}
 		};
 
@@ -186,11 +198,14 @@
 				if (outputExtension.toLowerCase() === 'svg') {
 					// output svg
 					svg = svg.html.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ').replace(/ href=/g, ' xlink:href=').replace(/<\/svg>.*?$/, '</svg>');
+					// add xml doc type
+					svg = SVG_DOCTYPE + svg;
 
 					if (!runsAsServer) {
 						// write the file
 						svgFile = fs.open(output, "w");
 						svgFile.write(svg);
+						svgFile.close();
 						exit(output);
 					} else {
 						// return the svg as a string
@@ -284,7 +299,7 @@
 			};
 		};
 
-		createChart = function (width, constr, input, outputFormat, callback, messages) {
+		createChart = function (width, constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputFormat, callback, messages) {
 
 			var $container, chart, nodes, nodeIter, elem, opacity, counter;
 
@@ -328,12 +343,33 @@
 				}
 			}
 
+			function parseData(completeHandler, chartOptions, dataConfig) {
+				try {
+					dataConfig.complete = completeHandler;
+					Highcharts.data(dataConfig, chartOptions);
+				} catch (error) {
+					completeHandler(undefined);
+				}
+			}
+
 			if (input !== 'undefined') {
 				loadScript('options', input);
 			}
 
 			if (callback !== 'undefined') {
 				loadScript('cb', callback);
+			}
+
+			if (globalOptionsArg !== 'undefined') {
+				loadScript('globalOptions', globalOptionsArg);
+			}
+
+			if (dataOptionsArg !== 'undefined') {
+				loadScript('dataOptions', dataOptionsArg);
+			}
+
+			if (customCodeArg !== 'undefined') {
+				loadScript('customCode', customCodeArg);
 			}
 
 			$(document.body).css('margin', '0px');
@@ -365,11 +401,39 @@
 			options.chart.width = (options.exporting && options.exporting.sourceWidth) || options.chart.width || 600;
 			options.chart.height = (options.exporting && options.exporting.sourceHeight) || options.chart.height || 400;
 
+			// Load globalOptions
+			if (globalOptions) {
+				Highcharts.setOptions(globalOptions);
+			}
 
-			chart = new Highcharts[constr](options, cb);
+			// Load data
+			if (dataOptions) {
+				parseData(function completeHandler(opts) {
+					// Merge series configs
+					if (options.series) {
+						Highcharts.each(options.series, function (series, i) {
+							options.series[i] = Highcharts.merge(series, opts.series[i]);
+						});
+					}
 
-			// ensure images are all loaded
-			loadImages();
+					var mergedOptions = Highcharts.merge(opts, options);
+
+					// Run customCode
+					if (customCode) {
+						customCode(mergedOptions);
+					}
+
+					chart = new Highcharts[constr](mergedOptions, cb);
+
+					// ensure images are all loaded
+					loadImages();
+				}, options, dataOptions);
+			} else {
+				chart = new Highcharts[constr](options, cb);
+
+				// ensure images are all loaded
+				loadImages();
+			}
 
 			/* remove stroke-opacity paths, used by mouse-trackers, they turn up as
 			*  as fully opaque in the PDF
@@ -401,7 +465,7 @@
 			callback = params.callback;
 			width = params.width;
 
-			if (input === undefined || input.lenght === 0) {
+			if (input === undefined || input.length === 0) {
 				exit('Error: Insuficient or wrong parameters for rendering');
 			}
 
@@ -411,7 +475,11 @@
 			svgInput = input.substring(0, 4).toLowerCase() === "<svg" ? true : false;
 
 			page.open('about:blank', function (status) {
-				var svg;
+				var svg,
+					globalOptions = params.globaloptions,
+					dataOptions = params.dataoptions,
+					customCode = 'function customCode(options) {\n' + params.customcode + '}\n';
+
 
 				if (svgInput) {
 					//render page directly from svg file
@@ -425,9 +493,10 @@
 					page.injectJs(config.JQUERY);
 					page.injectJs(config.HIGHCHARTS);
 					page.injectJs(config.HIGHCHARTS_MORE);
+					page.injectJs(config.HIGHCHARTS_DATA);
 
 					// load chart in page and return svg height and width
-					svg = page.evaluate(createChart, width, constr, input, outputExtension, callback, messages);
+					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outputExtension, callback, messages);
 
 					if (!window.optionsParsed) {
 						exit('ERROR: the options variable was not available, contains the infile an syntax error? see' + input);

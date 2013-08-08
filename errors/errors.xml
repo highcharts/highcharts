@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<errors>
+	<error id="10">
+		<title>Can't plot zero or subzero values on a logarithmic axis</title>
+		<description>
+			This error occurs in the following situations:
+			<ul>
+				<li>If a zero or subzero data value is added to a logarithmic axis</li>
+				<li>If the minimum of a logarithimic axis is set to 0 or less</li>
+				<li>If the threshold is set to 0 or less</li>
+			</ul>
+		</description>
+	</error>
+	<error id="13">
+		<title>Rendering div not found</title>
+		<description>
+			This error occurs if the <a href="http://www.highcharts.com/ref/#chart--renderTo">chart.renderTo</a> 
+			option is misconfugured so that Highcharts is unable to find the HTML element to render the chart in.
+		</description>
+	</error>
+	<error id="14">
+		<title>String value sent to series.data, expected Number</title>
+		<description>
+			<p>This happens if you pass in a string as a data point, for example in a setup like this:</p>
+			<pre>series: [{
+	data: ["3", "5", "1", "6"]
+}]</pre>
+			<p>Highcharts expects the data values to be numbers. The most common reason for this is that data is parsed
+				from CSV or from a XML source, and the implementer forgot to run <code>parseFloat</code> on the 
+				parsed value.</p>
+				
+				
+			<p>For performance reasons internal type casting is not performed,
+			and only the first value is checked (since 2.3).</p> 
+		</description>
+	</error>
+	<error id="15">
+		<title>Highcharts expects data to be sorted</title>
+		<description>
+			<p>This happens when you are trying to create a line series or a stock chart where the data is not
+				sorted in ascending X order. For performance reasons, Highcharts does not sort the data,
+				instead it is required that the implementer pre-sorts the data.</p> 
+		</description>
+	</error>
+	<error id="16">
+		<title>Highcharts already defined in the page</title>
+		<description>
+			<p>This error happens the second time Highcharts or Highstock is loaded in the same page, so the <code>Highcharts</code>
+			namespace is already defined. Keep in mind that the <code>Highcharts.Chart</code> constructor and all features
+			of Highcharts are included in Highstock, so if you are running <code>Chart</code> and <code>StockChart</code> in combination, you 
+			only need to load the highstock.js file. </p> 
+		</description>
+	</error>
+	<error id="17">
+		<title>The requested series type does not exist</title>
+		<description>
+			<p>This error happens when you are setting <code>chart.type</code> or <code>series.type</code> to a series type
+			this isn't defined in Highcharts. A typical reason may be that your are missing the extension file where the serires type
+			is defined, for example in order to run an <code>arearange</code> series you need to load the <code>highcharts-more.js</code>
+			file.</p> 
+		</description>
+	</error>
+	<error id="18">
+		<title>The requested axis does not exist</title>
+		<description>
+			<p>This error happens when you set a series' <code>xAxis</code> or <code>yAxis</code> property to point to an axis that does not exist.</p> 
+		</description>
+	</error>
+</errors>
