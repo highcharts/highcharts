@@ -1,8 +1,8 @@
 <?php
 function getFramework($framework) {
-	if ($framework === 'nolib') {
+	if ($framework === 'standalone') {
 		return '
-			<script src="http://code.highcharts.local/adapters/nolib-adapter.src.js"></script>
+			<script src="http://code.highcharts.local/adapters/standalone-framework.src.js"></script>
 			<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
 			<script>
 			/**

@@ -1,6 +1,6 @@
 <?php
 
-define(FRAMEWORK, 'nolib');
+define(FRAMEWORK, 'jQuery');
 
 require_once('functions.php');
 
