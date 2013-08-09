@@ -713,12 +713,15 @@
             <param name="testrun.name" value="jquery-1.4.4"/>
             <param name="required.lib" value="jquery-1.4.4.js"/>
         </antcall>
+
+
+        <!-- no library -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="jquery-1.3.2"/>
-            <param name="required.lib" value="jquery-1.3.2.js"/>
+            <param name="testrun.name" value="nolib"/>
+            <param name="required.adapter" value="js/adapters/nolib-adapter.src.js"/>
         </antcall>
-
+        
         <!-- mootools versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
@@ -745,12 +748,6 @@
             <param name="testrun.name" value="prototype-1.7.0.0"/>
             <param name="required.lib" value="prototype-1.7.0.0.js"/>
             <param name="required.adapter" value="js/adapters/prototype-adapter.src.js"/>
-        </antcall>
-
-        <antcall target="test-specific-lib">
-            <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="nolib"/>
-            <param name="required.adapter" value="js/adapters/nolib-adapter.src.js"/>
         </antcall>
     </target>
 

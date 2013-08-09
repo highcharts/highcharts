@@ -21,7 +21,6 @@ var HighchartsAdapter = (function () {
 
 var UNDEFINED,
 	doc = document,
-	adapterMethods = {},
 	emptyArray = [],
 	timers = [],
 	timerId,
@@ -198,6 +197,7 @@ return {
 		 */
 		if (!doc.defaultView) {
 			this._getStyle = function (el, prop) {
+				var val;
 				if (el.style[prop]) {
 					return el.style[prop];
 				} else {
@@ -215,7 +215,14 @@ return {
 					}
 					return val === '' ? 1 : val;
 				} 
-			}
+			};
+			this.adapterRun = function (elem, method) {
+				if (method === 'width') {
+					return elem.clientWidth - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
+				} else if (method === 'height') {
+					return elem.clientHeight - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
+				}
+			};
 		}
 
 		if (!Array.prototype.forEach) {
@@ -239,7 +246,7 @@ return {
 					len = arr.length;
 					
 					for (; i < len; i++) {
-						if (i in arr && arr[i] === item) {
+						if (arr[i] === item) {
 							return i;
 						}
 					}
@@ -436,16 +443,6 @@ return {
 				fx.custom(start, end, unit);
 			}	
 		};
-
-
-		// Add adapter basic methods
-		this.each(['width', 'height'], function (name) {
-			adapterMethods[name] = function (el) {
-				return parseInt(HighchartsAdapter._getStyle(el, name), 10);
-			};
-		});
-
-
 	},
 
 	/**
@@ -484,7 +481,7 @@ return {
 	 * A direct link to adapter methods
 	 */
 	adapterRun: function (elem, method) {
-		return adapterMethods[method](elem);
+		return parseInt(HighchartsAdapter._getStyle(elem, method), 10);
 	},
 
 	/**
