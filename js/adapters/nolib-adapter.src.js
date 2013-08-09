@@ -9,11 +9,6 @@
  * License: MIT License
  */
 
- /*
-TODO:
-- unit tests
- */
-
 
 /*global Highcharts */
 var HighchartsAdapter = (function () {
@@ -119,20 +114,16 @@ function augment(obj) {
 
 			unbind: function (name, fn) {
 				var events,
-					index,
-					tail;
+					index;
 
 				if (name) {
 					events = this.HCEvents[name] || [];
-
 					if (fn) {
 						index = HighchartsAdapter.inArray(fn, events);
-
 						if (index > -1) {
-							tail = events.splice(index);
-							this.HCEvents[name] = events.concat(tail.slice(1));
+							events.splice(index, 1);
+							this.HCEvents[name] = events;
 						}
-
 						if (this.removeEventListener) {
 							removeOneEvent(this, name, fn);
 						} else if (this.attachEvent) {
@@ -161,6 +152,7 @@ function augment(obj) {
 				};
 
 				while (len--) {
+
 					fn = events[len];
 
 					// args is never null here
@@ -216,10 +208,11 @@ return {
 				} 
 			};
 			this.adapterRun = function (elem, method) {
-				if (method === 'width') {
-					return elem.clientWidth - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
-				} else if (method === 'height') {
-					return elem.clientHeight - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
+				var alias = { width: 'clientWidth', height: 'clientHeight' }[method];
+
+				if (alias) {
+					elem.style.zoom = 1;
+					return elem[alias] - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
 				}
 			};
 		}
@@ -539,7 +532,7 @@ return {
 	fireEvent: function (el, type, eventArguments, defaultFunction) {
 		var e;
 
-		if (el.dispatchEvent || el.fireEvent) {
+		if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
 			e = doc.createEvent('Events');
 			e.initEvent(type, true, true);
 			e.target = el;
