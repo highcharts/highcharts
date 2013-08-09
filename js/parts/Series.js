@@ -1307,7 +1307,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
-			stacksMax = yAxis.stacksMax,
+			stackExtremes = yAxis.stackExtremes,
 			isNegative,
 			total,
 			stack,
@@ -1323,12 +1323,15 @@ Series.prototype = {
 
 			// Read stacked values into a stack based on the x value,
 			// the sign of y and the stack key. Stacking is also handled for null values (#739)
-			isNegative = y < threshold;
+			isNegative = series.negStacks && y < threshold;
 			key = isNegative ? negKey : stackKey;
 
-			// Set default stacksMax value for this stack
-			if (!stacksMax[key]) {
-				stacksMax[key] = y;
+			// Set default stackExtremes value for this stack
+			if (!stackExtremes[stackKey]) {
+				stackExtremes[stackKey] = {
+					dataMin: y,
+					dataMax: y
+				};
 			}
 
 			// Create empty object for this stack if it doesn't exist yet
@@ -1353,15 +1356,12 @@ Series.prototype = {
 
 			// add value to the stack total
 			stack.addValue(y);
-
 			stack.cacheExtremes(series, [total, total + y]);
 
 
-			if (stack.total > stacksMax[key] && !isNegative) {
-				stacksMax[key] = stack.total;
-			} else if (stack.total < stacksMax[key] && isNegative) {
-				stacksMax[key] = stack.total;
-			}
+			stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total);
+			stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total);
+
 		}
 
 		// reset old stacks
@@ -1375,6 +1375,9 @@ Series.prototype = {
 		var xAxis = this.xAxis,
 			yAxis = this.yAxis,
 			stackKey = this.stackKey,
+			stackExtremes,
+			stackMin,
+			stackMax,
 			options = this.options,
 			threshold = options.threshold,
 			xData = this.processedXData,
@@ -1395,8 +1398,12 @@ Series.prototype = {
 
 		// For stacked series, get the value from the stack
 		if (options.stacking) {
-			dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
-			dataMax = yAxis.stacksMax[stackKey] || threshold;
+			stackExtremes = yAxis.stackExtremes[stackKey];
+			stackMin = stackExtremes.dataMin;
+			stackMax = stackExtremes.dataMax;
+
+			dataMin = mathMin(stackMin, pick(threshold, stackMin));
+			dataMax = mathMax(stackMax, pick(threshold, stackMax));
 		}
 
 		// If not stacking or threshold is null, iterate over values that are within the visible range
@@ -1466,7 +1473,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(yValue < threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
 

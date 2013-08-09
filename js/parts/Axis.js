@@ -296,9 +296,7 @@ Axis.prototype = {
 		axis.oldStacks = {};
 
 		// Dictionary for stacks max values
-		axis.stacksMax = {};
-
-		axis._stacksTouched = 0;
+		axis.stackExtremes = {};
 
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
@@ -471,7 +469,7 @@ Axis.prototype = {
 		axis.dataMin = axis.dataMax = null;
 
 		// reset cached stacking extremes
-		axis.stacksMax = {};
+		axis.stackExtremes = {};
 
 		axis.buildStacks();
 
