@@ -11,10 +11,8 @@
 
  /*
 TODO:
-- tooltip not disappearing in IE8
 - test with sample suite
 - unit tests
-
  */
 
 

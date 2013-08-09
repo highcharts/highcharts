@@ -302,7 +302,7 @@ UtilTest.prototype.testFormat = function () {
     assertEquals('Shallow access format with decimals', '123.00', format("{value:.2f}", { value: 123 }));
     
     // Six decimals by default
-    assertEquals('Six decimals by default', '12345.000000', format("{value:f}", { value: 12345 }));
+    assertEquals('Keep decimals by default', '12345.567', format("{value:f}", { value: 12345.567 }));
     
     // Complicated string format
     assertEquals(
