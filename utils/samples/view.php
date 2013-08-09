@@ -1,4 +1,9 @@
 <?php
+
+define(FRAMEWORK, 'jQuery');
+
+require_once('functions.php');
+
 $path = $_GET['path'];
 if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input');
@@ -63,7 +68,7 @@ function getResources() {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highstock Example</title>
-		<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
+		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
 		<?php @include("$fullpath/demo.js"); ?>

@@ -49,6 +49,7 @@
         <property name="highchartsmore.minified.name" value="highcharts-more.js"/>
         <property name="mootools.src.name" value="mootools-adapter.src.js"/>
         <property name="prototype.src.name" value="prototype-adapter.src.js"/>
+        <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
@@ -57,6 +58,7 @@
         <property name="annotations.src.name" value="annotations.src.js"/>
         <property name="mootools.minified.name" value="mootools-adapter.js"/>
         <property name="prototype.minified.name" value="prototype-adapter.js"/>
+        <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
@@ -65,6 +67,7 @@
         <property name="annotations.minified.name" value="annotations.js"/>
         <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
         <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/>
+        <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
@@ -302,6 +305,7 @@
             <fileset file="${highchartsmore.src.file}"/>
             <fileset file="${mootools.src.file}"/>
             <fileset file="${prototype.src.file}"/>
+            <fileset file="${standalone.src.file}"/>
             <fileset file="${exporting.src.file}"/>
             <fileset file="${data.src.file}"/>
             <fileset file="${funnel.src.file}"/>
@@ -423,6 +427,10 @@
         <antcall target="compile">
             <param name="param.src" value="${prototype.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/adapters/${prototype.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${standalone.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/adapters/${standalone.minified.name}"/>
         </antcall>
         <antcall target="compile">
             <param name="param.src" value="${exporting.src.file}"/>
@@ -550,6 +558,11 @@
         <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${standalone.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${standalone.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
@@ -700,12 +713,15 @@
             <param name="testrun.name" value="jquery-1.4.4"/>
             <param name="required.lib" value="jquery-1.4.4.js"/>
         </antcall>
+
+
+        <!-- no library -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
-            <param name="testrun.name" value="jquery-1.3.2"/>
-            <param name="required.lib" value="jquery-1.3.2.js"/>
+            <param name="testrun.name" value="standalone"/>
+            <param name="required.adapter" value="js/adapters/standalone-framework.src.js"/>
         </antcall>
-
+        
         <!-- mootools versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>

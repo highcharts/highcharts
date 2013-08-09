@@ -16,6 +16,9 @@ $rightHighstock = "$rightPath/highstock.js";
 $leftExporting = "$leftPath/modules/exporting.src.js";
 $rightExporting = "$rightPath/modules/exporting.src.js";
 
+$leftFramework = 'jQuery';
+$rightFramework = 'jQuery';
+
 
 $path = $_GET['path'];
 if (!preg_match('/^[a-z\-0-9]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
@@ -24,6 +27,7 @@ if (!preg_match('/^[a-z\-0-9]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
 
 $path = "../../samples/$path";
 
+require_once('functions.php');
 
 function getResources() {
 	global $path;
@@ -127,7 +131,7 @@ function getCompareTooltips() {
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts demo</title>
 		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<?php echo getFramework($_GET['which'] === 'left' ? $leftFramework : $rightFramework); ?>
 		<?php echo getResources(); ?>
 		
 		<style type="text/css">
