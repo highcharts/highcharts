@@ -1,12 +1,15 @@
 /**
- * Highcharts no-library adapter
-
-
-To implement:
-- extend
-- getScript
-
+ * @license @product.name@ JS v@product.version@ (@product.date@)
+ *
+ * Standalone framework
+ *
+ * This is a standalone framework that eliminates the need from frameworks like jQuery
+ * or MooTools with an adapter for Highcharts.
+ *
+ * License: MIT License
  */
+
+
 /*global Highcharts */
 var HighchartsAdapter = (function () {
 
@@ -22,27 +25,6 @@ var UNDEFINED,
 Math.easeInOutSine = function (t, b, c, d) {
 	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
 };
-	
-/**
- * Extend an object with the members of another
- * TODO: Maybe we can use Highcharts.extend instead of all of these calls, as they
- * are not called until Highcharts is loaded and we start drawing elements.
- */
-function extend() {
-	var args = emptyArray.slice.call(arguments),
-		target = args[0] || {},
-		len = args.length,
-		i = 1,
-		n;
-
-	for (; i < len; i++) {
-		for (n in args[i]) {
-			target[n] = args[i][n];
-		}
-	}
-
-	return target;
-}
 
 /**
  * return CSS value for given element and property
@@ -65,18 +47,18 @@ function inArray(item, arr) {
 /**
  * Extend given object with custom events
  */
-function _extend(obj) {
+function augment(obj) {
 	function removeOneEvent(el, type, fn) {
 		el.removeEventListener(type, fn, false);
 	}
 
 	function IERemoveOneEvent(el, type, fn) {
-		fn = el._highcharts_proxied_methods[fn.toString()];
+		fn = el.HCProxiedMethods[fn.toString()];
 		el.detachEvent(type, fn);
 	}
 
 	function removeAllEvents(el, type) {
-		var events = el._highcharts_events,
+		var events = el.HCEvents,
 			remove,
 			types,
 			len,
@@ -108,15 +90,15 @@ function _extend(obj) {
 		}
 	}
 
-	if (!obj._highcharts_extended) {
-		extend(obj, {
-			_highcharts_extended: true,
+	if (!obj.HCExtended) {
+		Highcharts.extend(obj, {
+			HCExtended: true,
 
-			_highcharts_events: {},
+			HCEvents: {},
 
 			bind: function (name, fn) {
 				var el = this,
-					events = this._highcharts_events,
+					events = this.HCEvents,
 					originalFn;
 
 
@@ -132,12 +114,12 @@ function _extend(obj) {
 						originalFn.call(el, e);
 					};
 
-					if (!el._highcharts_proxied_methods) {
-						el._highcharts_proxied_methods = {};
+					if (!el.HCProxiedMethods) {
+						el.HCProxiedMethods = {};
 					}
 
 					// link wrapped fn with original fn, so we can get this in removeEvent
-					el._highcharts_proxied_methods[originalFn.toString()] = fn;
+					el.HCProxiedMethods[originalFn.toString()] = fn;
 
 					el.attachEvent(name, fn);
 				}
@@ -156,14 +138,14 @@ function _extend(obj) {
 					tail;
 
 				if (name) {
-					events = this._highcharts_events[name] || [];
+					events = this.HCEvents[name] || [];
 
 					if (fn) {
 						index = inArray(fn, events);
 
 						if (index > -1) {
 							tail = events.splice(index);
-							this._highcharts_events[name] = events.concat(tail.slice(1));
+							this.HCEvents[name] = events.concat(tail.slice(1));
 						}
 
 						if (this.removeEventListener) {
@@ -173,16 +155,16 @@ function _extend(obj) {
 						}
 					} else {
 						removeAllEvents(this, name);
-						this._highcharts_events[name] = [];
+						this.HCEvents[name] = [];
 					}
 				} else {
 					removeAllEvents(this);
-					this._highcharts_events = {};
+					this.HCEvents = {};
 				}
 			},
 
 			trigger: function (name, args) {
-				var events = this._highcharts_events[name] || [],
+				var events = this.HCEvents[name] || [],
 					target = this,
 					len = events.length,
 					preventDefault,
@@ -401,9 +383,20 @@ return {
 
 	/**
 	 * Downloads a script and executes a callback when done.
-	 * TODO: implement
+	 * @param {String} scriptLocation
+	 * @param {Function} callback
 	 */
-	getScript: function () {},
+	getScript: function (scriptLocation, callback) {
+		// We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
+		var head = doc.getElementsByTagName('head')[0],
+			script = doc.createElement('script');
+
+		script.type = 'text/javascript';
+		script.src = scriptLocation;
+		script.onload = callback;
+
+		head.appendChild(script);
+	},
 
 	inArray: inArray,
 
@@ -455,14 +448,14 @@ return {
 	 * Add an event listener
 	 */
 	addEvent: function (el, type, fn) {
-		_extend(el).bind(type, fn);
+		augment(el).bind(type, fn);
 	},
 
 	/**
 	 * Remove event added with addEvent
 	 */
 	removeEvent: function (el, type, fn) {
-		_extend(el).unbind(type, fn);
+		augment(el).unbind(type, fn);
 	},
 
 	/**
@@ -476,7 +469,7 @@ return {
 			e.initEvent(type, true, true);
 			e.target = el;
 
-			extend(e, eventArguments);
+			Highcharts.extend(e, eventArguments);
 
 			if (el.dispatchEvent) {
 				el.dispatchEvent(e);
@@ -484,7 +477,7 @@ return {
 				el.fireEvent(type, e);
 			}
 
-		} else if (el._highcharts_extended === true) {
+		} else if (el.HCExtended === true) {
 			eventArguments = eventArguments || {};
 			el.trigger(type, eventArguments);
 		}
