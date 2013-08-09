@@ -14,7 +14,6 @@
 var HighchartsAdapter = (function () {
 
 var UNDEFINED,
-	win = window,
 	doc = document,
 	adapterMethods = {},
 	emptyArray = [],
@@ -27,11 +26,30 @@ Math.easeInOutSine = function (t, b, c, d) {
 };
 
 /**
- * return CSS value for given element and property
+ * Feturn CSS value for given element and property
  */
 function getStyle(el, prop) {
-	// TODO: legacy IE support
-	return win.getComputedStyle(el).getPropertyValue(prop);
+	var val;
+	if (el.style[prop]) {
+		return el.style[prop];
+	} else if (document.defaultView) {
+		return document.defaultView.getComputedStyle(el, null).getPropertyValue(prop);
+
+	} else {
+		if (prop === 'opacity') {
+			prop = 'filter';
+		}
+		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) { return b.toUpperCase(); })];
+		if (prop === 'filter') {
+			val = val.replace(
+				/alpha\(opacity=([0-9]+)\)/, 
+				function (a, b) { 
+					return b / 100; 
+				}
+			);
+		}
+		return val === '' ? 1 : val;
+	} 
 }
 
 
@@ -197,13 +215,6 @@ function augment(obj) {
 
 	return obj;
 }
-
-
-['width', 'height'].forEach(function (name) {
-	adapterMethods[name] = function (el) {
-		return parseInt(getStyle(el, name), 10);
-	};
-});
 
 
 return {
@@ -379,6 +390,16 @@ return {
 		};
 
 
+		/** 
+		 * Add adapter basic methods
+		 */
+		this.each(['width', 'height'], function (name) {
+			adapterMethods[name] = function (el) {
+				return parseInt(getStyle(el, name), 10);
+			};
+		});
+
+
 	},
 
 	/**
@@ -503,17 +524,24 @@ return {
 		el.stopAnimation = true;
 	},
 
-	/**
+	/*
 	 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+	 * @param {Array} arr
+	 * @param {Function} fn
 	 */
-	each: function (arr, fn) {
-		var i = 0, len = arr.length;
-
-		for (; i < len; i++) {
-			if (fn.call(arr[i], arr[i], i, arr) === false) {
-				return i;
+	each: Array.prototype.forEach ?
+		function (arr, fn) { // modern browsers
+			return Array.prototype.forEach.call(arr, fn);
+			
+		} : 
+		function (arr, fn) { // legacy
+			var i = 0, 
+				len = arr.length;
+			for (; i < len; i++) {
+				if (fn.call(arr[i], arr[i], i, arr) === false) {
+					return i;
+				}
 			}
 		}
-	}
 };
 }());
