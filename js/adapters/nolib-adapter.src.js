@@ -9,6 +9,14 @@
  * License: MIT License
  */
 
+ /*
+TODO:
+- tooltip not disappearing in IE8
+- test with sample suite
+- unit tests
+
+ */
+
 
 /*global Highcharts */
 var HighchartsAdapter = (function () {
@@ -25,41 +33,6 @@ Math.easeInOutSine = function (t, b, c, d) {
 	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
 };
 
-/**
- * Feturn CSS value for given element and property
- */
-function getStyle(el, prop) {
-	var val;
-	if (el.style[prop]) {
-		return el.style[prop];
-	} else if (document.defaultView) {
-		return document.defaultView.getComputedStyle(el, null).getPropertyValue(prop);
-
-	} else {
-		if (prop === 'opacity') {
-			prop = 'filter';
-		}
-		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) { return b.toUpperCase(); })];
-		if (prop === 'filter') {
-			val = val.replace(
-				/alpha\(opacity=([0-9]+)\)/, 
-				function (a, b) { 
-					return b / 100; 
-				}
-			);
-		}
-		return val === '' ? 1 : val;
-	} 
-}
-
-
-/**
- * Return the index of an item in an array, or -1 if not found
- */
-function inArray(item, arr) {
-	// TODO: legacy IE support
-	return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
-}
 
 
 /**
@@ -72,7 +45,7 @@ function augment(obj) {
 
 	function IERemoveOneEvent(el, type, fn) {
 		fn = el.HCProxiedMethods[fn.toString()];
-		el.detachEvent(type, fn);
+		el.detachEvent('on' + type, fn);
 	}
 
 	function removeAllEvents(el, type) {
@@ -117,8 +90,7 @@ function augment(obj) {
 			bind: function (name, fn) {
 				var el = this,
 					events = this.HCEvents,
-					originalFn;
-
+					wrappedFn;
 
 				// handle DOM events in modern browsers
 				if (el.addEventListener) {
@@ -126,10 +98,9 @@ function augment(obj) {
 
 				// handle old IE implementation
 				} else if (el.attachEvent) {
-					originalFn = fn;
-
-					fn = function (e) {
-						originalFn.call(el, e);
+					
+					wrappedFn = function (e) {
+						fn.call(el, e);
 					};
 
 					if (!el.HCProxiedMethods) {
@@ -137,9 +108,9 @@ function augment(obj) {
 					}
 
 					// link wrapped fn with original fn, so we can get this in removeEvent
-					el.HCProxiedMethods[originalFn.toString()] = fn;
+					el.HCProxiedMethods[fn.toString()] = wrappedFn;
 
-					el.attachEvent(name, fn);
+					el.attachEvent('on' + name, wrappedFn);
 				}
 
 
@@ -159,7 +130,7 @@ function augment(obj) {
 					events = this.HCEvents[name] || [];
 
 					if (fn) {
-						index = inArray(fn, events);
+						index = HighchartsAdapter.inArray(fn, events);
 
 						if (index > -1) {
 							tail = events.splice(index);
@@ -223,6 +194,85 @@ return {
 	 */
 	init: function (pathAnim) {
 
+		/**
+		 * Compatibility section to add support for legacy IE. This can be removed if old IE 
+		 * support is not needed.
+		 */
+		if (!doc.defaultView) {
+			this._getStyle = function (el, prop) {
+				if (el.style[prop]) {
+					return el.style[prop];
+				} else {
+					if (prop === 'opacity') {
+						prop = 'filter';
+					}
+					val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) { return b.toUpperCase(); })];
+					if (prop === 'filter') {
+						val = val.replace(
+							/alpha\(opacity=([0-9]+)\)/, 
+							function (a, b) { 
+								return b / 100; 
+							}
+						);
+					}
+					return val === '' ? 1 : val;
+				} 
+			}
+		}
+
+		if (!Array.prototype.forEach) {
+			this.each = function (arr, fn) { // legacy
+				var i = 0, 
+					len = arr.length;
+				for (; i < len; i++) {
+					if (fn.call(arr[i], arr[i], i, arr) === false) {
+						return i;
+					}
+				}
+			};
+		}
+
+		if (!Array.prototype.indexOf) {
+			this.inArray = function (item, arr) {
+				var len, 
+					i = 0;
+
+				if (arr) {
+					len = arr.length;
+					
+					for (; i < len; i++) {
+						if (i in arr && arr[i] === item) {
+							return i;
+						}
+					}
+				}
+
+				return -1;
+			};
+		}
+
+		if (!Array.prototype.filter) {
+			this.grep = function (elements, callback) {
+				var ret = [],
+					i = 0,
+					length = elements.length;
+
+				for (; i < length; i++) {
+					if (!!callback(elements[i], i)) {
+						ret.push(elements[i]);
+					}
+				}
+
+				return ret;
+			};
+		}
+
+		//--- End compatibility section ---
+
+
+		/**
+		 * Start of animation specific code
+		 */
 		Fx = function (elem, options, prop) {
 			this.options = options;
 			this.elem = elem;
@@ -376,7 +426,7 @@ return {
 				} else if (el.attr) {
 					start = el.attr(name);
 				} else {
-					start = parseFloat(getStyle(el, name)) || 0;
+					start = parseFloat(this._getStyle(el, name)) || 0;
 					if (name !== 'opacity') {
 						unit = 'px';
 					}
@@ -390,16 +440,21 @@ return {
 		};
 
 
-		/** 
-		 * Add adapter basic methods
-		 */
+		// Add adapter basic methods
 		this.each(['width', 'height'], function (name) {
 			adapterMethods[name] = function (el) {
-				return parseInt(getStyle(el, name), 10);
+				return parseInt(HighchartsAdapter._getStyle(el, name), 10);
 			};
 		});
 
 
+	},
+
+	/**
+	 * Internal method to return CSS value for given element and property
+	 */
+	_getStyle: function (el, prop) {
+		return window.getComputedStyle(el).getPropertyValue(prop);
 	},
 
 	/**
@@ -419,7 +474,13 @@ return {
 		head.appendChild(script);
 	},
 
-	inArray: inArray,
+	/**
+	 * Return the index of an item in an array, or -1 if not found
+	 */
+	inArray: function (item, arr) {
+		return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
+	},
+
 
 	/**
 	 * A direct link to adapter methods
@@ -432,7 +493,6 @@ return {
 	 * Filter an array
 	 */
 	grep: function (elements, callback) {
-		// TODO: legacy implementation
 		return emptyArray.filter.call(elements, callback);
 	},
 
@@ -529,19 +589,8 @@ return {
 	 * @param {Array} arr
 	 * @param {Function} fn
 	 */
-	each: Array.prototype.forEach ?
-		function (arr, fn) { // modern browsers
-			return Array.prototype.forEach.call(arr, fn);
-			
-		} : 
-		function (arr, fn) { // legacy
-			var i = 0, 
-				len = arr.length;
-			for (; i < len; i++) {
-				if (fn.call(arr[i], arr[i], i, arr) === false) {
-					return i;
-				}
-			}
-		}
+	each: function (arr, fn) { // modern browsers
+		return Array.prototype.forEach.call(arr, fn);
+	}
 };
 }());
