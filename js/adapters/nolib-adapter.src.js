@@ -1,10 +1,7 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  *
- * Standalone framework
- *
- * This is a standalone framework that eliminates the need from frameworks like jQuery
- * or MooTools with an adapter for Highcharts.
+ * Standalone Highcharts Framework
  *
  * License: MIT License
  */
