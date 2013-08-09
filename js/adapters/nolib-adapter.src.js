@@ -11,7 +11,6 @@
 
  /*
 TODO:
-- test with sample suite
 - unit tests
  */
 
