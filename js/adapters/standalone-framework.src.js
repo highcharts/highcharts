@@ -568,7 +568,7 @@ return {
 		el.stopAnimation = true;
 	},
 
-	/*
+	/**
 	 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
 	 * @param {Array} arr
 	 * @param {Function} fn
