@@ -12371,12 +12371,9 @@ Point.prototype = {
 
 			point.applyOptions(options);
 
-			// update visuals
-			if (isObject(options)) {
-				series.getAttribs();
-				if (graphic) {
-					graphic.attr(point.pointAttr[series.state]);
-				}
+			// Force recreation of the graphic to update visuals (#)
+			if (graphic) {
+				point.graphic = graphic.destroy();
 			}
 
 			// record changes in the parallel arrays
