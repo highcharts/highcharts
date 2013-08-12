@@ -524,7 +524,7 @@ var PieSeries = {
 		 * of the pie to detect overlapping labels.
 		 */
 		i = 2;
-		while (i--) {
+		while (i-- > 0) {
 
 			var slots = [],
 				slotsLength,
@@ -539,9 +539,11 @@ var PieSeries = {
 
 			// Only do anti-collision when we are outside the pie and have connectors (#856)
 			if (distanceOption > 0) {
-				
-				// build the slots
-				for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
+
+                // Build up the possible vertical positions for the labels... or "slots"
+                var topSlotY = centerY - radius - distanceOption
+                var bottomSlotY = centerY + radius + distanceOption
+                for (pos = topSlotY; pos <= bottomSlotY; pos += labelHeight) {
 					slots.push(pos);
 					
 					// visualize the slot
@@ -563,8 +565,8 @@ var PieSeries = {
 					*/
 				}
 				slotsLength = slots.length;
-	
-				// if there are more values than available slots, remove lowest values
+
+                // if there are more values than available slots, remove data points with the smallest values
 				if (length > slotsLength) {
 					// create an array for sorting and ranking the points within each quarter
 					rankArr = [].concat(points);
@@ -587,21 +589,29 @@ var PieSeries = {
 				for (j = 0; j < length; j++) {
 	
 					point = points[j];
-					labelPos = point.labelPos;
-	
+                    //labelPos Index Magic Number: 0 is X, 1 is Y
+                    var labelYPos = point.labelPos[1];
+
+                    //labelYPos can be NaN when we've got all null/0 values.
+                    //We'll still render our labels, as if we had valid positions.
+                    //At least users will be able to hover over them and see the 0 values, instead of empty space
+                    if(isNaN(labelYPos)){
+                        labelYPos = 1;
+                    }
+
 					var closest = 9999,
 						distance,
 						slotI;
-	
+
 					// find the closest slot index
 					for (slotI = 0; slotI < slotsLength; slotI++) {
-						distance = mathAbs(slots[slotI] - labelPos[1]);
+						distance = mathAbs(slots[slotI] - labelYPos);
 						if (distance < closest) {
 							closest = distance;
 							slotIndex = slotI;
 						}
 					}
-	
+
 					// if that slot index is closer to the edges of the slots, move it
 					// to the closest appropriate slot
 					if (slotIndex < j && slots[j] !== null) { // cluster at the top
@@ -618,7 +628,7 @@ var PieSeries = {
 							slotIndex++;
 						}
 					}
-	
+
 					usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
 					slots[slotIndex] = null; // mark as taken
 				}
@@ -626,6 +636,10 @@ var PieSeries = {
 				usedSlots.sort(sort);
 			}
 
+            if(usedSlots.length === 0){
+                //If we don't have any valid data, we don't need to bother trying to display labels
+                continue;
+            }
 			// now the used slots are sorted, fill them up sequentially
 			for (j = 0; j < length; j++) {
 				
