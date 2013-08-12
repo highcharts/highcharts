@@ -3376,7 +3376,7 @@ SVGRenderer.prototype = {
 	 * @param {Object} hoverState
 	 * @param {Object} pressedState
 	 */
-	button: function (text, x, y, callback, normalState, hoverState, pressedState) {
+	button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState) {
 		var label = this.label(text, x, y, null, null, null, null, null, 'button'),
 			curState = 0,
 			stateOptions,
@@ -3384,6 +3384,7 @@ SVGRenderer.prototype = {
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
+			disabledStyle,
 			STYLE = 'style',
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
@@ -3435,32 +3436,50 @@ SVGRenderer.prototype = {
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
+		// Disabled state
+		disabledState = merge(normalState, {
+			style: {
+				color: '#CCC'
+			}
+		}, disabledState);
+		disabledStyle = disabledState[STYLE];
+		delete disabledState[STYLE];
+
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
 		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
-			label.attr(hoverState)
-				.css(hoverStyle);
+			if (curState !== 3) {
+				label.attr(hoverState)
+					.css(hoverStyle);
+			}
 		});
 		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
-			stateOptions = [normalState, hoverState, pressedState][curState];
-			stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
-			label.attr(stateOptions)
-				.css(stateStyle);
+			if (curState !== 3) {
+				stateOptions = [normalState, hoverState, pressedState][curState];
+				stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
+				label.attr(stateOptions)
+					.css(stateStyle);
+			}
 		});
 
 		label.setState = function (state) {
-			curState = state;
+			label.state = curState = state;
 			if (!state) {
 				label.attr(normalState)
 					.css(normalStyle);
 			} else if (state === 2) {
 				label.attr(pressedState)
 					.css(pressedStyle);
+			} else if (state === 3) {
+				label.attr(disabledState)
+					.css(disabledStyle);
 			}
 		};
 
 		return label
 			.on('click', function () {
-				callback.call(label);
+				if (curState !== 3) {
+					callback.call(label);
+				}
 			})
 			.attr(normalState)
 			.css(extend({ cursor: 'default' }, normalStyle));
@@ -6695,9 +6714,7 @@ Axis.prototype = {
 		axis.oldStacks = {};
 
 		// Dictionary for stacks max values
-		axis.stacksMax = {};
-
-		axis._stacksTouched = 0;
+		axis.stackExtremes = {};
 
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
@@ -6870,7 +6887,7 @@ Axis.prototype = {
 		axis.dataMin = axis.dataMax = null;
 
 		// reset cached stacking extremes
-		axis.stacksMax = {};
+		axis.stackExtremes = {};
 
 		axis.buildStacks();
 
@@ -9001,6 +9018,8 @@ Pointer.prototype = {
 	 */
 	normalize: function (e) {
 		var chartPosition,
+			chartX,
+			chartY,
 			ePos;
 
 		// common IE normalizing
@@ -9018,10 +9037,19 @@ Pointer.prototype = {
 		// get mouse position
 		this.chartPosition = chartPosition = offset(this.chart.container);
 
-		// Old IE and compatibility mode use clientX. #886, #2005.
+		// chartX and chartY
+		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
+			chartX = mathMax(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
+				// for IE10 quirks mode within framesets
+			chartY = e.y;
+		} else {
+			chartX = ePos.pageX - chartPosition.left;
+			chartY = ePos.pageY - chartPosition.top;
+		}
+
 		return extend(e, {
-			chartX: mathRound(pick(ePos.pageX, ePos.clientX) - chartPosition.left),
-			chartY: mathRound(pick(ePos.pageY, ePos.clientY) - chartPosition.top)
+			chartX: mathRound(chartX),
+			chartY: mathRound(chartY)
 		});
 	},
 
@@ -12343,12 +12371,9 @@ Point.prototype = {
 
 			point.applyOptions(options);
 
-			// update visuals
-			if (isObject(options)) {
-				series.getAttribs();
-				if (graphic) {
-					graphic.attr(point.pointAttr[series.state]);
-				}
+			// Force recreation of the graphic to update visuals (#)
+			if (graphic) {
+				point.graphic = graphic.destroy();
 			}
 
 			// record changes in the parallel arrays
@@ -13339,7 +13364,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
-			stacksMax = yAxis.stacksMax,
+			stackExtremes = yAxis.stackExtremes,
 			isNegative,
 			total,
 			stack,
@@ -13355,12 +13380,15 @@ Series.prototype = {
 
 			// Read stacked values into a stack based on the x value,
 			// the sign of y and the stack key. Stacking is also handled for null values (#739)
-			isNegative = y < threshold;
+			isNegative = series.negStacks && y < threshold;
 			key = isNegative ? negKey : stackKey;
 
-			// Set default stacksMax value for this stack
-			if (!stacksMax[key]) {
-				stacksMax[key] = y;
+			// Set default stackExtremes value for this stack
+			if (!stackExtremes[stackKey]) {
+				stackExtremes[stackKey] = {
+					dataMin: y,
+					dataMax: y
+				};
 			}
 
 			// Create empty object for this stack if it doesn't exist yet
@@ -13385,15 +13413,12 @@ Series.prototype = {
 
 			// add value to the stack total
 			stack.addValue(y);
-
 			stack.cacheExtremes(series, [total, total + y]);
 
 
-			if (stack.total > stacksMax[key] && !isNegative) {
-				stacksMax[key] = stack.total;
-			} else if (stack.total < stacksMax[key] && isNegative) {
-				stacksMax[key] = stack.total;
-			}
+			stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total);
+			stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total);
+
 		}
 
 		// reset old stacks
@@ -13401,12 +13426,15 @@ Series.prototype = {
 	},
 
 	/**
-	 * Calculate x and y extremes for visible data
+	 * Calculate Y extremes for visible data
 	 */
 	getExtremes: function () {
 		var xAxis = this.xAxis,
 			yAxis = this.yAxis,
 			stackKey = this.stackKey,
+			stackExtremes,
+			stackMin,
+			stackMax,
 			options = this.options,
 			threshold = options.threshold,
 			xData = this.processedXData,
@@ -13414,8 +13442,9 @@ Series.prototype = {
 			yDataLength = yData.length,
 			activeYData = [],
 			activeCounter = 0,
-			xMin = xAxis.min,
-			xMax = xAxis.max,
+			xExtremes = xAxis.getExtremes(), // #2117, need to compensate for log X axis
+			xMin = xExtremes.min,
+			xMax = xExtremes.max,
 			validValue,
 			withinRange,
 			dataMin,
@@ -13427,8 +13456,12 @@ Series.prototype = {
 
 		// For stacked series, get the value from the stack
 		if (options.stacking) {
-			dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
-			dataMax = yAxis.stacksMax[stackKey] || threshold;
+			stackExtremes = yAxis.stackExtremes[stackKey];
+			stackMin = stackExtremes.dataMin;
+			stackMax = stackExtremes.dataMax;
+
+			dataMin = mathMin(stackMin, pick(threshold, stackMin));
+			dataMax = mathMax(stackMax, pick(threshold, stackMax));
 		}
 
 		// If not stacking or threshold is null, iterate over values that are within the visible range
@@ -13498,7 +13531,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(yValue < threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
 
@@ -15371,6 +15404,8 @@ var ColumnSeries = extendClass(Series, {
 		r: 'borderRadius'
 	},
 	trackerGroups: ['group', 'dataLabelsGroup'],
+	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
+		// point is substracted from previous (#1910)
 	
 	/**
 	 * Initialize the series
@@ -18060,7 +18095,8 @@ Scroller.prototype = {
 			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
 			centerBarX,
 			outlineTop = top + halfOutline,
-			verb;
+			verb,
+			unionExtremes;
 
 		// don't render the navigator until we have data (#486)
 		if (isNaN(min)) {
@@ -18079,14 +18115,10 @@ Scroller.prototype = {
 		// should always be the extremes of the union of all series in the chart as
 		// well as the navigator series.
 		if (xAxis.getExtremes) {
-			var baseExtremes = chart.xAxis[0].getExtremes(), // the base
-				noBase = baseExtremes.dataMin === null,
-				navExtremes = xAxis.getExtremes(),
-				newMin = mathMin(baseExtremes.dataMin, navExtremes.dataMin),
-				newMax = mathMax(baseExtremes.dataMax, navExtremes.dataMax);
+			unionExtremes = scroller.getUnionExtremes(true);
 
-			if (!noBase && (newMin !== navExtremes.min || newMax !== navExtremes.max)) {
-				xAxis.setExtremes(newMin, newMax, true, false);
+			if (unionExtremes && (unionExtremes.dataMin !== xAxis.min || unionExtremes.dataMax !== xAxis.max)) {
+				xAxis.setExtremes(unionExtremes.dataMin, unionExtremes.dataMax, true, false);
 			}
 		}
 
@@ -18101,9 +18133,8 @@ Scroller.prototype = {
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
-		scroller.zoomedMin = zoomedMin = scroller.fixedWidth ? 
-			zoomedMax - scroller.fixedWidth :
-			mathMax(pInt(mathMin(pxMin, pxMax)), 0);
+		scroller.zoomedMin = zoomedMin = 
+			mathMax(scroller.fixedWidth ? zoomedMax - scroller.fixedWidth : pInt(mathMin(pxMin, pxMax)), 0);
 		scroller.range = range = zoomedMax - zoomedMin;
 
 		// on first render, create all elements
@@ -18386,9 +18417,9 @@ Scroller.prototype = {
 						left = chartX - navigatorLeft - range / 2;
 					} else { // click on scrollbar
 						if (chartX < navigatorLeft) { // click left scrollbar button
-							left = zoomedMin - mathMin(10, range);
+							left = zoomedMin - mathMax(mathMin(10, range), 1);
 						} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-							left = zoomedMin + mathMin(10, range);
+							left = zoomedMin + mathMax(mathMin(10, range), 1);
 						} else {
 							// click on scrollbar track, shift the scrollbar by one range
 							left = chartX < navigatorLeft + zoomedMin ? // on the left
@@ -18465,6 +18496,7 @@ Scroller.prototype = {
 					}
 	
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+
 				}
 				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
 					setTimeout(function () {
@@ -18570,7 +18602,8 @@ Scroller.prototype = {
 						(value * valueRange / scrollTrackWidth) + dataMin :
 						// from value to pixel
 						scrollTrackWidth * (value - dataMin) / valueRange;
-				}
+				},
+				toFixedRange: Axis.prototype.toFixedRange
 			};
 		}
 
@@ -18603,6 +18636,23 @@ Scroller.prototype = {
 		
 
 		scroller.addEvents();
+	},
+
+	/**
+	 * Get the union data extremes of the chart - the outer data extremes of the base
+	 * X axis and the navigator axis.
+	 */
+	getUnionExtremes: function (returnFalseOnNoBaseSeries) {
+		var baseAxis = this.chart.xAxis[0],
+			navAxis = this.xAxis;
+
+		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
+			return {
+				dataMin: ((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin),
+				dataMax: ((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+			};
+		}
+		
 	},
 
 	/**
@@ -18885,36 +18935,19 @@ RangeSelector.prototype = {
 			chart = rangeSelector.chart,
 			buttons = rangeSelector.buttons,
 			baseAxis = chart.xAxis[0],
-			extremes = baseAxis && baseAxis.getExtremes(),
-			navAxis = chart.scroller && chart.scroller.xAxis,
-			navExtremes = navAxis && navAxis.getExtremes && navAxis.getExtremes(),
-			navDataMin = navExtremes && navExtremes.dataMin,
-			navDataMax = navExtremes && navExtremes.dataMax,
-			baseDataMin = extremes && extremes.dataMin,
-			baseDataMax = extremes && extremes.dataMax,
-			// if both are defined, get Math.min, else, pick the one that is defined
-			dataMin = ((defined(baseDataMin) && defined(navDataMin)) ? mathMin : pick)(baseDataMin, navDataMin),
-			dataMax = ((defined(baseDataMax) && defined(navDataMax)) ? mathMax : pick)(baseDataMax, navDataMax),
+			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis || {},
+			dataMin = unionExtremes.dataMin,
+			dataMax = unionExtremes.dataMax,
 			newMin,
-			newMax = baseAxis && mathRound(mathMin(extremes.max, pick(dataMax, extremes.max))), // #1568
+			newMax = baseAxis && mathRound(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
 			count = rangeOptions.count,
 			baseXAxisOptions,
-			range,
+			range = rangeOptions._range,
 			rangeMin,
 			year,
-			// these time intervals have a fixed number of milliseconds, as opposed
-			// to month, ytd and year
-			fixedTimes = {
-				millisecond: 1,
-				second: 1000,
-				minute: 60 * 1000,
-				hour: 3600 * 1000,
-				day: 24 * 3600 * 1000,
-				week: 7 * 24 * 3600 * 1000
-			},
 			timeName;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
@@ -18922,22 +18955,24 @@ RangeSelector.prototype = {
 			return;
 		}
 
-		if (fixedTimes[type]) {
-			range = fixedTimes[type] * count;
-			newMin = mathMax(newMax - range, dataMin);
-		
-		} else if (type === 'month' || type === 'year') {
+		if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
 			date['set' + timeName](date['get' + timeName]() - count);
 
 			newMin = date.getTime();
-			if (isNaN(newMin) || newMin < pick(dataMin, Number.MIN_VALUE)) {
-				newMin = pick(dataMin, Number.MIN_VALUE);
-				range = { month: 30, year: 365 }[type] * 24 * 3600 * 1000 * count;
+			dataMin = pick(dataMin, Number.MIN_VALUE);
+			if (isNaN(newMin) || newMin < dataMin) {
+				newMin = dataMin;
+				newMax = mathMin(newMin + range, dataMax);
 			} else {
 				range = newMax - newMin;
 			}
 
+		// Fixed times like minutes, hours, days
+		} else if (range) {
+			newMin = mathMax(newMax - range, dataMin);
+			newMax = mathMin(newMin + range, dataMax);
+		
 		} else if (type === 'ytd') {
 
 			// On user clicks on the buttons, or a delayed action running from the beforeRender 
@@ -19070,6 +19105,9 @@ RangeSelector.prototype = {
 		addEvent(chart.container, 'mousedown', blurInputs);
 		addEvent(chart, 'resize', blurInputs);
 
+		// Extend the buttonOptions with actual range
+		each(buttonOptions, rangeSelector.computeButtonRange);
+
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
 			this.clickButton(selectedOption, buttonOptions[selectedOption], false);
@@ -19082,10 +19120,82 @@ RangeSelector.prototype = {
 					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
 						buttons[rangeSelector.selected].setState(0);
 					}
-					rangeSelector.selected = chart.fixedRange = null;
+					rangeSelector.selected = null;
 				}
+
+				rangeSelector.updateButtonStates();
+
 			});
 		});
+	},
+
+	/**
+	 * Dynamically update the range selector buttons after a new range has been set
+	 */
+	updateButtonStates: function () {
+		var rangeSelector = this,
+			chart = this.chart,
+			baseAxis = chart.xAxis[0],
+			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
+			dataMin = unionExtremes.dataMin,
+			dataMax = unionExtremes.dataMax,
+			selected = rangeSelector.selected,
+			buttons = rangeSelector.buttons,
+			range;
+
+		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+			range = rangeOptions._range;
+
+			// The new zoom area happens to match the range for a button - mark it selected.
+			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
+			// demos when selecting 1h and scroll across the night gap.
+			if (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected) {
+				rangeSelector.selected = i;
+				buttons[i].setState(2);
+			
+			// Disable buttons where the range exceeds what is allowed in the current view
+			} else if (range > dataMax - dataMin) {
+				buttons[i].setState(3);
+
+			// Disable the All button if we're already showing all 
+			} else if (rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin && 
+					buttons[i].state !== 2) {
+				buttons[i].setState(3);
+
+			// Disable the YTD button if the complete range is within the same year
+			} else if (rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax)) {
+				buttons[i].setState(3);
+
+			} else if (buttons[i].state === 3) {
+				buttons[i].setState(0);
+			}
+		});
+	},
+
+	/** 
+	 * Compute and cache the range for an individual button
+	 */
+	computeButtonRange: function (rangeOptions) {
+		var type = rangeOptions.type,
+			count = rangeOptions.count || 1,
+
+			// these time intervals have a fixed number of milliseconds, as opposed
+			// to month, ytd and year
+			fixedTimes = {
+				millisecond: 1,
+				second: 1000,
+				minute: 60 * 1000,
+				hour: 3600 * 1000,
+				day: 24 * 3600 * 1000,
+				week: 7 * 24 * 3600 * 1000
+			};
+		
+		// Store the range on the button object
+		if (fixedTimes[type]) {
+			rangeOptions._range = fixedTimes[type] * count;				
+		} else if (type === 'month' || type === 'year') {
+			rangeOptions._range = { month: 30, year: 365 }[type] * 24 * 36e5 * count;
+		}
 	},
 	
 	/**
@@ -19286,6 +19396,8 @@ RangeSelector.prototype = {
 				}
 			});
 
+			rangeSelector.updateButtonStates();
+
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
 			if (inputEnabled) {
@@ -19369,7 +19481,7 @@ RangeSelector.prototype = {
  * Add logic to normalize the zoomed range in order to preserve the pressed state of range selector buttons
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, newMin, newMax) {
-	var fixedRange = this.chart.fixedRange;
+	var fixedRange = this.chart && this.chart.fixedRange;
 
 	newMin = pick(newMin, this.translate(pxMin, true));
 	newMax = pick(newMax, this.translate(pxMax, true));

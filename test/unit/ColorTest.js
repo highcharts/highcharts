@@ -10,10 +10,11 @@ ColorTest.prototype.testConstruction = function () {
     }
 
     // These 3 methods should be public
-    assertEquals("3 methods.", 3, members.length);
+    assertEquals("4 methods.", 4, members.length);
     assertEquals("get should be public.", "get", members[0]);
     assertEquals("brighten should be public.", "brighten", members[1]);
-    assertEquals("setOpacity should be public.", "setOpacity", members[2]);
+    assertEquals("rgba should be public.", "rgba", members[2]);
+    assertEquals("setOpacity should be public.", "setOpacity", members[3]);
  }
 
 ColorTest.prototype.testGet = function () {

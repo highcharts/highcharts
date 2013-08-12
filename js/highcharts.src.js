@@ -3376,7 +3376,7 @@ SVGRenderer.prototype = {
 	 * @param {Object} hoverState
 	 * @param {Object} pressedState
 	 */
-	button: function (text, x, y, callback, normalState, hoverState, pressedState) {
+	button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState) {
 		var label = this.label(text, x, y, null, null, null, null, null, 'button'),
 			curState = 0,
 			stateOptions,
@@ -3384,6 +3384,7 @@ SVGRenderer.prototype = {
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
+			disabledStyle,
 			STYLE = 'style',
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
@@ -3435,32 +3436,50 @@ SVGRenderer.prototype = {
 		pressedStyle = pressedState[STYLE];
 		delete pressedState[STYLE];
 
+		// Disabled state
+		disabledState = merge(normalState, {
+			style: {
+				color: '#CCC'
+			}
+		}, disabledState);
+		disabledStyle = disabledState[STYLE];
+		delete disabledState[STYLE];
+
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
 		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
-			label.attr(hoverState)
-				.css(hoverStyle);
+			if (curState !== 3) {
+				label.attr(hoverState)
+					.css(hoverStyle);
+			}
 		});
 		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
-			stateOptions = [normalState, hoverState, pressedState][curState];
-			stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
-			label.attr(stateOptions)
-				.css(stateStyle);
+			if (curState !== 3) {
+				stateOptions = [normalState, hoverState, pressedState][curState];
+				stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
+				label.attr(stateOptions)
+					.css(stateStyle);
+			}
 		});
 
 		label.setState = function (state) {
-			curState = state;
+			label.state = curState = state;
 			if (!state) {
 				label.attr(normalState)
 					.css(normalStyle);
 			} else if (state === 2) {
 				label.attr(pressedState)
 					.css(pressedStyle);
+			} else if (state === 3) {
+				label.attr(disabledState)
+					.css(disabledStyle);
 			}
 		};
 
 		return label
 			.on('click', function () {
-				callback.call(label);
+				if (curState !== 3) {
+					callback.call(label);
+				}
 			})
 			.attr(normalState)
 			.css(extend({ cursor: 'default' }, normalStyle));
@@ -6695,9 +6714,7 @@ Axis.prototype = {
 		axis.oldStacks = {};
 
 		// Dictionary for stacks max values
-		axis.stacksMax = {};
-
-		axis._stacksTouched = 0;
+		axis.stackExtremes = {};
 
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
@@ -6870,7 +6887,7 @@ Axis.prototype = {
 		axis.dataMin = axis.dataMax = null;
 
 		// reset cached stacking extremes
-		axis.stacksMax = {};
+		axis.stackExtremes = {};
 
 		axis.buildStacks();
 
@@ -9001,6 +9018,8 @@ Pointer.prototype = {
 	 */
 	normalize: function (e) {
 		var chartPosition,
+			chartX,
+			chartY,
 			ePos;
 
 		// common IE normalizing
@@ -9018,10 +9037,19 @@ Pointer.prototype = {
 		// get mouse position
 		this.chartPosition = chartPosition = offset(this.chart.container);
 
-		// Old IE and compatibility mode use clientX. #886, #2005.
+		// chartX and chartY
+		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
+			chartX = mathMax(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
+				// for IE10 quirks mode within framesets
+			chartY = e.y;
+		} else {
+			chartX = ePos.pageX - chartPosition.left;
+			chartY = ePos.pageY - chartPosition.top;
+		}
+
 		return extend(e, {
-			chartX: mathRound(pick(ePos.pageX, ePos.clientX) - chartPosition.left),
-			chartY: mathRound(pick(ePos.pageY, ePos.clientY) - chartPosition.top)
+			chartX: mathRound(chartX),
+			chartY: mathRound(chartY)
 		});
 	},
 
@@ -12343,12 +12371,9 @@ Point.prototype = {
 
 			point.applyOptions(options);
 
-			// update visuals
-			if (isObject(options)) {
-				series.getAttribs();
-				if (graphic) {
-					graphic.attr(point.pointAttr[series.state]);
-				}
+			// Force recreation of the graphic to update visuals (#)
+			if (graphic) {
+				point.graphic = graphic.destroy();
 			}
 
 			// record changes in the parallel arrays
@@ -13339,7 +13364,7 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
-			stacksMax = yAxis.stacksMax,
+			stackExtremes = yAxis.stackExtremes,
 			isNegative,
 			total,
 			stack,
@@ -13355,12 +13380,15 @@ Series.prototype = {
 
 			// Read stacked values into a stack based on the x value,
 			// the sign of y and the stack key. Stacking is also handled for null values (#739)
-			isNegative = y < threshold;
+			isNegative = series.negStacks && y < threshold;
 			key = isNegative ? negKey : stackKey;
 
-			// Set default stacksMax value for this stack
-			if (!stacksMax[key]) {
-				stacksMax[key] = y;
+			// Set default stackExtremes value for this stack
+			if (!stackExtremes[stackKey]) {
+				stackExtremes[stackKey] = {
+					dataMin: y,
+					dataMax: y
+				};
 			}
 
 			// Create empty object for this stack if it doesn't exist yet
@@ -13385,15 +13413,12 @@ Series.prototype = {
 
 			// add value to the stack total
 			stack.addValue(y);
-
 			stack.cacheExtremes(series, [total, total + y]);
 
 
-			if (stack.total > stacksMax[key] && !isNegative) {
-				stacksMax[key] = stack.total;
-			} else if (stack.total < stacksMax[key] && isNegative) {
-				stacksMax[key] = stack.total;
-			}
+			stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total);
+			stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total);
+
 		}
 
 		// reset old stacks
@@ -13401,12 +13426,15 @@ Series.prototype = {
 	},
 
 	/**
-	 * Calculate x and y extremes for visible data
+	 * Calculate Y extremes for visible data
 	 */
 	getExtremes: function () {
 		var xAxis = this.xAxis,
 			yAxis = this.yAxis,
 			stackKey = this.stackKey,
+			stackExtremes,
+			stackMin,
+			stackMax,
 			options = this.options,
 			threshold = options.threshold,
 			xData = this.processedXData,
@@ -13414,8 +13442,9 @@ Series.prototype = {
 			yDataLength = yData.length,
 			activeYData = [],
 			activeCounter = 0,
-			xMin = xAxis.min,
-			xMax = xAxis.max,
+			xExtremes = xAxis.getExtremes(), // #2117, need to compensate for log X axis
+			xMin = xExtremes.min,
+			xMax = xExtremes.max,
 			validValue,
 			withinRange,
 			dataMin,
@@ -13427,8 +13456,12 @@ Series.prototype = {
 
 		// For stacked series, get the value from the stack
 		if (options.stacking) {
-			dataMin = yAxis.stacksMax['-' + stackKey] || threshold;
-			dataMax = yAxis.stacksMax[stackKey] || threshold;
+			stackExtremes = yAxis.stackExtremes[stackKey];
+			stackMin = stackExtremes.dataMin;
+			stackMax = stackExtremes.dataMax;
+
+			dataMin = mathMin(stackMin, pick(threshold, stackMin));
+			dataMax = mathMax(stackMax, pick(threshold, stackMax));
 		}
 
 		// If not stacking or threshold is null, iterate over values that are within the visible range
@@ -13498,7 +13531,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(yValue < threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				pointStackTotal;
 
@@ -15371,6 +15404,8 @@ var ColumnSeries = extendClass(Series, {
 		r: 'borderRadius'
 	},
 	trackerGroups: ['group', 'dataLabelsGroup'],
+	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
+		// point is substracted from previous (#1910)
 	
 	/**
 	 * Initialize the series
