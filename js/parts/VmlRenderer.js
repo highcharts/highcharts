@@ -111,6 +111,56 @@ Highcharts.VMLElement = VMLElement = {
 	},
 
 	/**
+	 * Converts a subset of an SVG path definition to its VML counterpart. Takes an array
+	 * as the parameter and returns a string.
+	 */
+	pathToVML: function (value) {
+		// convert paths
+		var i = value.length,
+			path = [],
+			clockwise;
+		
+		while (i--) {
+
+			// Multiply by 10 to allow subpixel precision.
+			// Substracting half a pixel seems to make the coordinates
+			// align with SVG, but this hasn't been tested thoroughly
+			if (isNumber(value[i])) {
+				path[i] = mathRound(value[i] * 10) - 5;
+			} else if (value[i] === 'Z') { // close the path
+				path[i] = 'x';
+			} else {
+				path[i] = value[i];
+
+				// When the start X and end X coordinates of an arc are too close,
+				// they are rounded to the same value above. In this case, substract 1 from the end X
+				// position. #760, #1371. 
+				if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
+					clockwise = value[i] === 'wa' ? 1 : -1; // #1642
+					if (path[i + 5] === path[i + 7]) {
+						path[i + 7] -= clockwise;
+					}
+					// Start and end Y (#1410)
+					if (path[i + 6] === path[i + 8]) {
+						path[i + 8] -= clockwise;
+					}
+				}
+			}
+		}
+		// Loop up again to handle path shortcuts (#2132)
+		/*while (i++ < path.length) {
+			if (path[i] === 'H') { // horizontal line to
+				path[i] = 'L';
+				path.splice(i + 2, 0, path[i - 1]);
+			} else if (path[i] === 'V') { // vertical line to
+				path[i] = 'L';
+				path.splice(i + 1, 0, path[i - 2]);
+			}
+		}*/
+		return path.join(' ') || 'x';
+	},
+
+	/**
 	 * Get or set attributes
 	 */
 	attr: function (hash, val) {
@@ -179,40 +229,7 @@ Highcharts.VMLElement = VMLElement = {
 						value = value || [];
 						wrapper.d = value.join(' '); // used in getter for animation
 
-						// convert paths
-						i = value.length;
-						var convertedPath = [],
-							clockwise;
-						while (i--) {
-
-							// Multiply by 10 to allow subpixel precision.
-							// Substracting half a pixel seems to make the coordinates
-							// align with SVG, but this hasn't been tested thoroughly
-							if (isNumber(value[i])) {
-								convertedPath[i] = mathRound(value[i] * 10) - 5;
-							} else if (value[i] === 'Z') { // close the path
-								convertedPath[i] = 'x';
-							} else {
-								convertedPath[i] = value[i];
-
-								// When the start X and end X coordinates of an arc are too close,
-								// they are rounded to the same value above. In this case, substract 1 from the end X
-								// position. #760, #1371. 
-								if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
-									clockwise = value[i] === 'wa' ? 1 : -1; // #1642
-									if (convertedPath[i + 5] === convertedPath[i + 7]) {
-										convertedPath[i + 7] -= clockwise;
-									}
-									// Start and end Y (#1410)
-									if (convertedPath[i + 6] === convertedPath[i + 8]) {
-										convertedPath[i + 8] -= clockwise;
-									}
-								}
-							}
-
-						}
-						value = convertedPath.join(' ') || 'x';
-						element.path = value;
+						element.path = value = wrapper.pathToVML(value);
 
 						// update shadows
 						if (shadows) {
@@ -1086,32 +1103,32 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					M,
 					left + r, top,
 	
-					L,
-					right - r, top,
+					'H',
+					right - r,
 					'wa',
 					right - 2 * r, top,
 					right, top + 2 * r,
 					right - r, top,
 					right, top + r,
 	
-					L,
-					right, bottom - r,
+					'V',
+					bottom - r,
 					'wa',
 					right - 2 * r, bottom - 2 * r,
 					right, bottom,
 					right, bottom - r,
 					right - r, bottom,
 	
-					L,
-					left + r, bottom,
+					'H',
+					left + r,
 					'wa',
 					left, bottom - 2 * r,
 					left + 2 * r, bottom,
 					left + r, bottom,
 					left, bottom - r,
 	
-					L,
-					left, top + r,
+					'V',
+					top + r,
 					'wa',
 					left, top,
 					left + 2 * r, top + 2 * r,
