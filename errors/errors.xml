@@ -11,10 +11,21 @@
 			</ul>
 		</description>
 	</error>
+
+	<error id="12">
+		<title>Highcharts expects point configuration to be numbers or arrays in turbo mode</title>
+		<description>
+			This error occurs if the <code>series.data</code> option contains object configurations and the number
+			of points exceeds the <code>turboThreshold</code>. It can be fixed by either setting the <code>turboThreshold</code>
+			option to a higher value, or changing your point configurations to numbers or arrays. See <a href="http://api.highcharts.com/highcharts#plotOptions.series.turboThreshold">turboThreshold</a>.
+		</description>
+	</error>
+	
+
 	<error id="13">
 		<title>Rendering div not found</title>
 		<description>
-			This error occurs if the <a href="http://www.highcharts.com/ref/#chart--renderTo">chart.renderTo</a> 
+			This error occurs if the <a href="http://api.highcharts.com/#renderTo">chart.renderTo</a> 
 			option is misconfugured so that Highcharts is unable to find the HTML element to render the chart in.
 		</description>
 	</error>

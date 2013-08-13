@@ -13105,9 +13105,9 @@ Series.prototype = {
 						yData[i] = pt[1];
 					}
 				}
-			} /* else {
+			} else {
 				error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
-			}*/
+			}
 		} else {
 			for (i = 0; i < dataLength; i++) {
 				if (data[i] !== UNDEFINED) { // stray commas in oldIE

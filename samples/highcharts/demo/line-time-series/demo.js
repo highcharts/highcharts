@@ -10,7 +10,7 @@ $(function () {
             subtitle: {
                 text: document.ontouchstart === undefined ?
                     'Click and drag in the plot area to zoom in' :
-                    'Drag your finger over the plot to zoom in'
+                    'Pinch the chart to zoom in'
             },
             xAxis: {
                 type: 'datetime',
