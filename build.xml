@@ -648,10 +648,28 @@
             <fileset dir="samples/graphics"/>
         </copy>
 
-        <!-- 4. Copy php export server -->
+        <!-- 4. Copy export server -->
+        <!-- update highcharts export-server with newest js -->
+        <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highcharts/js/modules/data.js" todir="exporting-server/phantomjs/"/>
+        
+        <!-- copy files from phantomjs to java export server -->
+        <copy todir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs">
+            <fileset dir="exporting-server/phantomjs/">
+                <exclude name="*.md"/>
+            </fileset>    
+        </copy>
+        <!-- copy highcharts export-server -->
         <copy todir="${dist.dir}/highcharts/exporting-server">
             <fileset dir="exporting-server"/>
         </copy>
+        <delete file="${dist.dir}/highcharts/exporting-server/phantomjs/highstock.js" />
+        <delete file="${dist.dir}/highcharts/exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs/highstock.js" />
+        <replace file="${dist.dir}/highcharts/exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs/highcharts-convert.js" token="HIGHCHARTS: &apos;highstock.js&apos;" value="HIGHCHARTS: &apos;highcharts.js&apos;"/>
+
+        <!-- copy highstock export-server -->
         <copy todir="${dist.dir}/highstock/exporting-server">
             <fileset dir="exporting-server"/>
         </copy>
@@ -663,6 +681,7 @@
         <!-- 5. Create zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
+
     </target>
 
     <!-- Starts the test driver server. -->
@@ -872,79 +891,7 @@
         <exec executable="${browser}" spawn="true">
             <arg value="${file}"/>
         </exec>
-    </target>
-
-    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
-    <target name="deploy-highcharts">
-        <property file="git-ignore-me.properties"/>
-        <property file="build.properties"/>
-        <!-- The zip file -->
-        <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts.zip"/>
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/downloads/zips">
-            <fileset dir="${basedir}/build/dist">
-                <include name="Highcharts-${highcharts.product.version}.zip"/>
-                <include name="Highcharts.zip"/>
-            </fileset>
-        </ftp>
-        <!-- Upload the .js files to code.highcharts.com/version -->
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" action="mkdir" remotedir="/www/code/${highcharts.product.version}"/>
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/${highcharts.product.version}">
-            <fileset dir="${basedir}/build/dist/highcharts/js">
-                <include name="*.js"/>
-                <include name="*/*.js"/>
-            </fileset>
-            <fileset dir="${basedir}/build/dist/highcharts">
-                <include name="gfx/*.png"/>
-            </fileset>
-        </ftp>
-        <!-- Upload the .js files to code.highcharts.com root -->
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code">
-            <fileset dir="${basedir}/build/dist/highcharts/js">
-                <include name="*.js"/>
-                <include name="*/*.js"/>
-            </fileset>
-            <fileset dir="${basedir}/build/dist/highcharts">
-                <include name="gfx/*.png"/>
-            </fileset>
-        </ftp>
-    </target>
-
-    <!-- Uploads the generated files to the downloadable zip and to code.highcharts.com -->
-    <target name="deploy-highstock">
-        <property file="git-ignore-me.properties"/>
-        <property file="build.properties"/>
-        <!-- The zip file -->
-        <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock.zip"/>
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/downloads/zips">
-            <fileset dir="${basedir}/build/dist">
-                <include name="Highstock-${highstock.product.version}.zip"/>
-                <include name="Highstock.zip"/>
-            </fileset>
-        </ftp>
-        <!-- Upload the .js files to code.highcharts.com/version -->
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" action="mkdir" remotedir="/www/code/stock/${highstock.product.version}"/>
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/stock/${highstock.product.version}">
-            <fileset dir="${basedir}/build/dist/highstock/js">
-                <include name="*.js"/>
-                <include name="*/*.js"/>
-            </fileset>
-            <fileset dir="${basedir}/build/dist/highstock">
-                <include name="gfx/*.png"/>
-            </fileset>
-        </ftp>
-        <!-- Upload the .js files to code.highcharts.com root -->
-        <ftp server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="/www/code/stock">
-            <fileset dir="${basedir}/build/dist/highstock/js">
-                <include name="*.js"/>
-                <include name="*/*.js"/>
-            </fileset>
-            <fileset dir="${basedir}/build/dist/highstock">
-                <include name="gfx/*.png"/>
-            </fileset>
-        </ftp>
-    </target>
-
-    <!-- DEPLOY TO AMAZON S3 -->
+    </target>     
     <!-- gzip javascript files in folder -->
     <target name="gzip-js" description="gzip all javascript versions for upload to Amazon S3" depends="set.properties">
         <property name="gzip.dir" value="${js.dir}/../js-gzip"/>
@@ -1065,14 +1012,17 @@
             <arg value="${remote}/"/>
         </exec>
     </target>
-    <target name="deploy-highcharts-S3" depends="set.properties" description="deploy highcharts distribution to Amazon S3">
+    <target name="deploy-highcharts" depends="set.properties" description="deploy highcharts distribution to Amazon S3">
         <property file="git-ignore-me.properties"/>
+        <!-- Get Zip file highcharts -->
         <copy file="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip" tofile="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
+        <!-- Upload zip file to S3 -->
         <antcall target="put-file-to-S3">
             <param name="local" value="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}/zips"/>
             <param name="s3cmdDir" value="${s3cmd.dir}"/>           
         </antcall>
+        <!-- upload product.js to S3 -->
         <antcall target="put-file-to-S3">
             <param name="local" value="${basedir}/build/dist/products.js"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
@@ -1163,7 +1113,7 @@
     </target>
 
     <!-- Deploy Highstock to S3 -->
-    <target name="deploy-highstock-S3" depends="set.properties" description="deploy highstock distribution to Amazon S3">
+    <target name="deploy-highstock" depends="set.properties" description="deploy highstock distribution to Amazon S3">
         <property file="git-ignore-me.properties"/>
         <copy file="${basedir}/build/dist/Highstock-${highstock.product.version}.zip" tofile="${basedir}/build/dist/Highstock-${highstock.product.version}.zip"/>
         <antcall target="put-file-to-S3">
@@ -1253,6 +1203,12 @@
         </ac:for>
         <!-- delete dir="${basedir}/build/dist/highstock/js-gzip"/ -->
     </target>
+
+    <target name="deploy-all">
+        <antcall target="deploy-highcharts"></antcall>
+        <antcall target="deploy-highstock"></antcall>
+    </target>
+
 
     <!-- push whole versions structure from local machine to Amazon S3 -->
     <target name="push-all-versions-to-S3" depends="set.properties">
