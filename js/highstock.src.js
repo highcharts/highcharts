@@ -6062,6 +6062,14 @@ Tick.prototype = {
 		// create the tick mark
 		if (tickWidth && tickLength) {
 
+			if (tickPosition === 'on') {
+				if (horiz) {
+					y -= Math.abs(tickLength / 2);
+				} else {
+					x += Math.abs(tickLength / 2);
+				}
+			}
+
 			// negate the length
 			if (tickPosition === 'inside') {
 				tickLength = -tickLength;
