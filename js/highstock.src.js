@@ -9345,11 +9345,9 @@ Pointer.prototype = {
 			transform = {},
 			clip = {};
 
-		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart') {
-			if (followTouchMove || hasZoom) {
-				e.preventDefault();
-			}
+		// If we're capturing touch, prevent pseudo click events from happening
+		if (followTouchMove || hasZoom) {
+			e.preventDefault();
 		}
 			
 		// Normalize each touch
@@ -9744,7 +9742,7 @@ Pointer.prototype = {
 			}
 
 		} else if (e.touches.length === 2) {
-			this.pinch(e);	
+			this.pinch(e);
 		}		
 	},
 
