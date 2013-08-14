@@ -311,9 +311,16 @@ Point.prototype = {
 
 			point.applyOptions(options);
 
-			// Force recreation of the graphic to update visuals (#)
-			if (graphic) {
-				point.graphic = graphic.destroy();
+			// update visuals
+			if (isObject(options)) {
+				series.getAttribs();
+				if (graphic) {
+					if (options.marker && options.marker.symbol) {
+						point.graphic = graphic.destroy();
+					} else {
+						graphic.attr(point.pointAttr[series.state]);
+					}
+				}
 			}
 
 			// record changes in the parallel arrays
