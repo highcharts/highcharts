@@ -6323,7 +6323,7 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	this.x = x;
 
 	// Initialize total value
-	this.total = 0;
+	this.total = null;
 
 	// This will keep each points' extremes stored by series.index
 	this.points = {};
@@ -13406,7 +13406,7 @@ Series.prototype = {
 			key = isNegative ? negKey : stackKey;
 
 			// Set default stackExtremes value for this stack
-			if (!stackExtremes[stackKey]) {
+			if (typeof y === 'number' && !stackExtremes[stackKey]) {
 				stackExtremes[stackKey] = {
 					dataMin: y,
 					dataMax: y
@@ -13434,12 +13434,13 @@ Series.prototype = {
 
 
 			// add value to the stack total
-			stack.addValue(y);
-			stack.cacheExtremes(series, [total, total + y]);
-
-
-			stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total);
-			stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total);
+			if (typeof y === 'number') {
+				stack.addValue(y);
+				stack.cacheExtremes(series, [total, total + y]);
+				
+				stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total, y);
+				stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total, y);
+			}
 
 		}
 
@@ -13458,7 +13459,7 @@ Series.prototype = {
 			stackMin,
 			stackMax,
 			options = this.options,
-			threshold = options.threshold,
+			threshold = yAxis.isLog ? null : options.threshold,
 			xData = this.processedXData,
 			yData = this.processedYData,
 			yDataLength = yData.length,

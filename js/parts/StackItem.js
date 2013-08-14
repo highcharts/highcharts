@@ -17,7 +17,7 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	this.x = x;
 
 	// Initialize total value
-	this.total = 0;
+	this.total = null;
 
 	// This will keep each points' extremes stored by series.index
 	this.points = {};
