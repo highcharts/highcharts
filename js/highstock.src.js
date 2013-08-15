@@ -13430,10 +13430,10 @@ Series.prototype = {
 
 
 			// add value to the stack total
+			stack.addValue(y || 0);
+			stack.cacheExtremes(series, [total, total + (y || 0)]);
+			
 			if (typeof y === 'number') {
-				stack.addValue(y);
-				stack.cacheExtremes(series, [total, total + y]);
-				
 				stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total, y);
 				stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total, y);
 			}
