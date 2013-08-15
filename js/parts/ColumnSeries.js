@@ -292,8 +292,6 @@ var ColumnSeries = extendClass(Series, {
 					}
 				}
 			});
-			
-		} else {
 			series._hasTracking = true;
 		}
 	},

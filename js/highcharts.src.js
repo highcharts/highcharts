@@ -14993,9 +14993,8 @@ Series.prototype = {
 
 		} else { // create
 				
-			series.tracker = tracker = renderer.path(trackerPath)
+			series.tracker = renderer.path(trackerPath)
 				.attr({
-					'class': PREFIX + 'tracker',
 					'stroke-linejoin': 'round', // #1225
 					visibility: series.visible ? VISIBLE : HIDDEN,
 					stroke: TRACKER_FILL,
@@ -15003,15 +15002,20 @@ Series.prototype = {
 					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
 					zIndex: 2
 				})
-				.addClass(PREFIX + 'tracker')
-				.on('mouseover', onMouseOver)
-				.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
-				.css(css)
-				.add(series.markerGroup);
+				.add(series.group);
 				
-			if (hasTouch) {
-				tracker.on('touchstart', onMouseOver);
-			} 
+			// The tracker is added to the series group, which is clipped, but is covered 
+			// by the marker group. So the marker group also needs to capture events.
+			each([series.tracker, series.markerGroup], function (tracker) {
+				tracker.addClass(PREFIX + 'tracker')
+					.on('mouseover', onMouseOver)
+					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+					.css(css);
+
+				if (hasTouch) {
+					tracker.on('touchstart', onMouseOver);
+				} 
+			});
 		}
 
 	}
@@ -15672,8 +15676,6 @@ var ColumnSeries = extendClass(Series, {
 					}
 				}
 			});
-			
-		} else {
 			series._hasTracking = true;
 		}
 	},
