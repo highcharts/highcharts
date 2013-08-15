@@ -19163,11 +19163,19 @@ RangeSelector.prototype = {
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
 			selected = rangeSelector.selected,
-			buttons = rangeSelector.buttons,
-			range;
+			buttons = rangeSelector.buttons;
 
 		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
-			range = rangeOptions._range;
+			var range = rangeOptions._range,
+				// Disable buttons where the range exceeds what is allowed in the current view
+				isTooGreatRange = range > dataMax - dataMin,
+				// Disable buttons where the range is smaller than the minimum range
+				isTooSmallRange = range < baseAxis.minRange,
+				// Disable the All button if we're already showing all 
+				isAllButAlreadyShowingAll = rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin && 
+					buttons[i].state !== 2,
+				// Disable the YTD button if the complete range is within the same year
+				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax);
 
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
@@ -19176,17 +19184,7 @@ RangeSelector.prototype = {
 				rangeSelector.selected = i;
 				buttons[i].setState(2);
 			
-			// Disable buttons where the range exceeds what is allowed in the current view
-			} else if (range > dataMax - dataMin) {
-				buttons[i].setState(3);
-
-			// Disable the All button if we're already showing all 
-			} else if (rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin && 
-					buttons[i].state !== 2) {
-				buttons[i].setState(3);
-
-			// Disable the YTD button if the complete range is within the same year
-			} else if (rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax)) {
+			} else if (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable) {
 				buttons[i].setState(3);
 
 			} else if (buttons[i].state === 3) {
