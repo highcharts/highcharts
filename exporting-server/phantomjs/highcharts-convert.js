@@ -505,7 +505,13 @@
 					if (callback !== undefined && !window.callbackParsed) {
 						exit('ERROR: the callback variable was not available, contains the callbackfile an syntax error? see' + callback);
 					}
-					renderSVG(svg);
+					
+					args = mapCLArguments();
+					if(args.type == "svg"){
+						exit(svg.html);
+					} else {
+						renderSVG(svg);
+					}
 				}
 			});
 		}
