@@ -148,10 +148,11 @@
 		return proceed.call(this, chart, userOptions);
 	});
 
+
+	//--- Start zooming and panning features
+
 	Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
-
 		proceed.call(this);
-
 		this.renderMapNavigation();
 	});
 

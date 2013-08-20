@@ -431,7 +431,7 @@ Pointer.prototype = {
 		chart.mouseIsDown = e.type;
 		chart.cancelClick = false;
 		chart.mouseDownX = this.mouseDownX = e.chartX;
-		this.mouseDownY = e.chartY;
+		chart.mouseDownY = this.mouseDownY = e.chartY;
 	},
 
 	/**
@@ -513,7 +513,7 @@ Pointer.prototype = {
 
 			// panning
 			if (clickedInside && !this.selectionMarker && chartOptions.panning) {
-				chart.pan(chartX);
+				chart.pan(e, chartOptions.panning);
 			}
 		}
 	},

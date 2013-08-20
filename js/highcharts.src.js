@@ -9418,7 +9418,7 @@ Pointer.prototype = {
 		chart.mouseIsDown = e.type;
 		chart.cancelClick = false;
 		chart.mouseDownX = this.mouseDownX = e.chartX;
-		this.mouseDownY = e.chartY;
+		chart.mouseDownY = this.mouseDownY = e.chartY;
 	},
 
 	/**
@@ -9500,7 +9500,7 @@ Pointer.prototype = {
 
 			// panning
 			if (clickedInside && !this.selectionMarker && chartOptions.panning) {
-				chart.pan(chartX);
+				chart.pan(e, chartOptions.panning);
 			}
 		}
 	},
@@ -11109,15 +11109,11 @@ Chart.prototype = {
 	 * on mouse move, and the distance to pan is computed from chartX compared to
 	 * the first chartX position in the dragging operation.
 	 */
-	pan: function (chartX) {
+	pan: function (e, panning) {
+
 		var chart = this,
-			xAxis = chart.xAxis[0],
-			mouseDownX = chart.mouseDownX,
-			halfPointRange = xAxis.pointRange / 2,
-			extremes = xAxis.getExtremes(),
-			newMin = xAxis.translate(mouseDownX - chartX, true) + halfPointRange,
-			newMax = xAxis.translate(mouseDownX + chart.plotWidth - chartX, true) - halfPointRange,
-			hoverPoints = chart.hoverPoints;
+			hoverPoints = chart.hoverPoints,
+			doRedraw;
 
 		// remove active points for shared tooltip
 		if (hoverPoints) {
@@ -11126,11 +11122,26 @@ Chart.prototype = {
 			});
 		}
 
-		if (xAxis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-			xAxis.setExtremes(newMin, newMax, true, false, { trigger: 'pan' });
-		}
+		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // docs: panning xy
+			var mousePos = e[isX ? 'chartX' : 'chartY'],
+				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
+				halfPointRange = (axis.pointRange || 0) / 2,
+				extremes = axis.getExtremes(),
+				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
+				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange;
 
-		chart.mouseDownX = chartX; // set new reference for next run
+			if (axis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+				doRedraw = true;
+			}
+
+			chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
+		});
+
+		if (doRedraw) {
+			chart.redraw(false);
+		}
 		css(chart.container, { cursor: 'move' });
 	},
 

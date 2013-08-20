@@ -190,7 +190,9 @@ $(function () {
         chart : {
             renderTo : 'container',
             type : 'map',
-            borderWidth : 1
+            borderWidth : 1,
+            //zoomType: 'xy',
+            panning: 'xy'
         },
         
         title : {

@@ -519,8 +519,9 @@
 			 */
 			
 			var baseChartPan = chart.pan;
-			chart.pan = function (chartX) {
+			chart.pan = function (e) {
 				var xAxis = chart.xAxis[0],
+					chartX = e.chartX,
 					runBase = false;
 				if (xAxis.options.ordinal && xAxis.series.length) {
 					
