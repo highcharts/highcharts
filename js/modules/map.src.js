@@ -34,10 +34,10 @@
 			align: 'right',
 			verticalAlign: 'bottom',
 			x: 0,
-			width: 20,
-			height: 20,
+			width: 18,
+			height: 18,
 			style: {
-				fontSize: '16px',
+				fontSize: '15px',
 				fontWeight: 'bold',
 				textAlign: 'center'
 			}
@@ -48,7 +48,7 @@
 					this.mapZoom(0.5);
 				},
 				text: '+',
-				y: -35
+				y: -32
 			},
 			zoomOut: {
 				onclick: function () {
@@ -161,27 +161,56 @@
 			var chart = this,
 				options = this.options.mapNavigation,
 				buttons = options.buttons,
-				n;
+				n,
+				button,
+				buttonOptions,
+				outerHandler = function () { 
+					this.handler.call(chart); 
+				};
 
 			if (pick(options.enabled, true)) {
 				for (n in buttons) {
 					if (buttons.hasOwnProperty(n)) {
-						(function () {
-							var key = 'mapNavigation_' + n,
-								button = merge(options.buttonOptions, buttons[n]);
-							chart[key] = chart.renderer.button(button.text, 0, 0, function () { button.onclick.call(chart); })
-								.attr({
-									width: button.width,
-									height: button.height
-								})
-								.css(button.style)
-								.add();
+						buttonOptions = merge(options.buttonOptions, buttons[n]);
 
-							chart[key].align(extend(button, { width: chart[key].width, height: chart[key].height }), null, 'spacingBox');
-						}());
+						button = chart.renderer.button(buttonOptions.text, 0, 0, outerHandler)
+							.attr({
+								width: buttonOptions.width,
+								height: buttonOptions.height
+							})
+							.css(buttonOptions.style)
+							.add();
+						button.handler = buttonOptions.onclick;
+						button.align(extend(buttonOptions, { width: button.width, height: button.height }), null, 'spacingBox');
 					}
 				}
 			}
+		},
+
+		/**
+		 * Fit an inner box to an outer. If the inner box overflows left or right, align it to the sides of the
+		 * outer. If it overflows both sides, fit it within the outer. This is a pattern that occurs more places
+		 * in Highcharts, perhaps it should be elevated to a common utility function.
+		 */
+		fitToBox: function (inner, outer) {
+			each([['x', 'width'], ['y', 'height']], function (dim) {
+				var pos = dim[0],
+					size = dim[1];
+				if (inner[pos] + inner[size] > outer[pos] + outer[size]) { // right overflow
+					if (inner[size] > outer[size]) { // the general size is greater, fit fully to outer
+						inner[size] = outer[size];
+						inner[pos] = outer[pos];
+					} else { // align right
+						inner[pos] = outer[pos] + outer[size] - inner[size];
+					}
+				}
+				if (inner[pos] < outer[pos]) {
+					inner[pos] = outer[pos];
+				}
+				
+			});
+
+			return inner;
 		},
 
 		/**
@@ -190,11 +219,28 @@
 		mapZoom: function (howMuch) {
 			var xAxis = this.xAxis[0],
 				xRange = xAxis.max - xAxis.min,
+				centerX = xAxis.min + xRange / 2,
+				newXRange = xRange * howMuch,
 				yAxis = this.yAxis[0],
-				yRange = yAxis.max - yAxis.min;
+				yRange = yAxis.max - yAxis.min,
+				centerY = yAxis.min + yRange / 2,
+				newYRange = yRange * howMuch,
+				newXMin = centerX - newXRange / 2,
+				newYMin = centerY - newYRange / 2,
+				newExt = this.fitToBox({
+					x: newXMin,
+					y: newYMin,
+					width: newXRange,
+					height: newYRange
+				}, {
+					x: xAxis.dataMin,
+					y: yAxis.dataMin,
+					width: xAxis.dataMax - xAxis.dataMin,
+					height: yAxis.dataMax - yAxis.dataMin
+				});
 
-			xAxis.setExtremes(xAxis.min + (xRange * (1 - howMuch) / 2), xAxis.max - (xRange * (1 - howMuch) / 2), false);
-			yAxis.setExtremes(yAxis.min + (yRange * (1 - howMuch) / 2), yAxis.max - (yRange * (1 - howMuch) / 2), false);
+			xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
+			yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 			this.redraw();
 		}
 	});
@@ -653,7 +699,8 @@
 		
 		options = merge({
 			chart: {
-				type: 'map'
+				type: 'map',
+				panning: 'xy'
 			},
 			xAxis: hiddenAxis,
 			yAxis: merge(hiddenAxis, { reversed: true })	

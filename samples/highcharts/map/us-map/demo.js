@@ -188,11 +188,7 @@ $(function () {
 
     var options = {
         chart : {
-            renderTo : 'container',
-            type : 'map',
-            borderWidth : 1,
-            //zoomType: 'xy',
-            panning: 'xy'
+            borderWidth : 1
         },
         
         title : {
@@ -244,5 +240,5 @@ $(function () {
     });
 
     // Instanciate the map
-    var chart = new Highcharts.Map(options);
+    $('#container').highcharts('Map', options);
 });
