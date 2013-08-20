@@ -1423,6 +1423,9 @@ pathAnim = {
 			}
 	
 			$el.stop();
+			if (params.opacity !== UNDEFINED && el.attr) {
+				params.opacity += 'px'; // force jQuery to use same logic as width and height (#2161)
+			}
 			$el.animate(params, options);
 	
 		},
