@@ -4,16 +4,20 @@ $(function() {
 
 	    chart: {
 	        plotBorderWidth: w,
-	        plotBorderColor: 'red',
+	        plotBorderColor: 'green',
 	        width: 400
 	    },
 	    
 	    title: {
-	        text: 'Test that axis lines cover plotBorder'
+	        text: 'Test that axis lines cover plotBorder',
+	        align: 'left'
 	    },
 	    
 	    subtitle: {
-	        text: 'No red lines should be visible close to the plot border'
+	        text: '- No colored lines should be visible next to the plot border.<br/>' +
+	        	'- In the line segments close to axis (Mar-Apr, Oct-Nov), <br/>' +
+	        	'half the line should be visible.',
+	        align: 'left'
 	    },
 	    xAxis: [{
 	        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -30,13 +34,16 @@ $(function() {
 	    
 	    yAxis: [{
 	        lineWidth: w,
-	        gridLineColor: 'red'
+	        gridLineColor: 'red',
+	        min: 0,
+	        max: 250,
+	        tickInterval: 50
 	    }, {
 	        lineWidth: w,
 	        opposite: 'true'
 	    }],
 	    series: [{
-	        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+	        data: [29.9, 71.5, 0, 0, 129.2, 144.0, 176.0, 135.6, 148.5, 250, 250, 194.1]
 	    }]
 
 	});
