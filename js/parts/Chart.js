@@ -149,6 +149,7 @@ Chart.prototype = {
 				series = chart.initSeries(options);
 				
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
+				chart.linkSeries();
 				if (redraw) {
 					chart.redraw(animation);
 				}
@@ -1327,6 +1328,36 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Link two or more series together. This is done initially from Chart.render,
+	 * and after Chart.addSeries and Series.remove.
+	 */
+	linkSeries: function () {
+		var chart = this,
+			chartSeries = chart.series;
+
+		// Reset links
+		each(chartSeries, function (series) {
+			series.linkedSeries.length = 0;
+		});
+
+		// Apply new links
+		each(chartSeries, function (series) {
+			var linkedTo = series.options.linkedTo;
+			if (isString(linkedTo)) {
+				if (linkedTo === ':previous') {
+					linkedTo = chart.series[series.index - 1];
+				} else {
+					linkedTo = chart.get(linkedTo);
+				}
+				if (linkedTo) {
+					linkedTo.linkedSeries.push(series);
+					series.linkedParent = linkedTo;
+				}
+			}
+		});
+	},
+
+	/**
 	 * Render all graphics for the chart
 	 */
 	render: function () {
@@ -1561,6 +1592,8 @@ Chart.prototype = {
 		each(options.series || [], function (serieOptions) {
 			chart.initSeries(serieOptions);
 		});
+
+		chart.linkSeries();
 
 		// Run an event after axes and series are initialized, but before render. At this stage,
 		// the series data is indexed and cached in the xData and yData arrays, so we can access

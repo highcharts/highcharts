@@ -4135,7 +4135,7 @@ SVGRenderer.prototype = {
 						// Ensure dynamically updating position when any parent is translated
 						each(parents.reverse(), function (parentGroup) {
 							var htmlGroupStyle;
-								
+
 							// Create a HTML div and append it to the parent div to emulate 
 							// the SVG group structure
 							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, {
@@ -4438,7 +4438,7 @@ SVGRenderer.prototype = {
 				if (styles) {
 					var textStyles = {};
 					styles = merge(styles); // create a copy to avoid altering the original object (#537)
-					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width', 'textDecoration'], function (prop) {
+					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width', 'textDecoration', 'textShadow'], function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];
 							delete styles[prop];
@@ -10625,6 +10625,7 @@ Chart.prototype = {
 				series = chart.initSeries(options);
 				
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
+				chart.linkSeries();
 				if (redraw) {
 					chart.redraw(animation);
 				}
@@ -11803,6 +11804,36 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Link two or more series together. This is done initially from Chart.render,
+	 * and after Chart.addSeries and Series.remove.
+	 */
+	linkSeries: function () {
+		var chart = this,
+			chartSeries = chart.series;
+
+		// Reset links
+		each(chartSeries, function (series) {
+			series.linkedSeries.length = 0;
+		});
+
+		// Apply new links
+		each(chartSeries, function (series) {
+			var linkedTo = series.options.linkedTo;
+			if (isString(linkedTo)) {
+				if (linkedTo === ':previous') {
+					linkedTo = chart.series[series.index - 1];
+				} else {
+					linkedTo = chart.get(linkedTo);
+				}
+				if (linkedTo) {
+					linkedTo.linkedSeries.push(series);
+					series.linkedParent = linkedTo;
+				}
+			}
+		});
+	},
+
+	/**
 	 * Render all graphics for the chart
 	 */
 	render: function () {
@@ -12037,6 +12068,8 @@ Chart.prototype = {
 		each(options.series || [], function (serieOptions) {
 			chart.initSeries(serieOptions);
 		});
+
+		chart.linkSeries();
 
 		// Run an event after axes and series are initialized, but before render. At this stage,
 		// the series data is indexed and cached in the xData and yData arrays, so we can access
@@ -12633,11 +12666,11 @@ Series.prototype = {
 		var series = this,
 			eventType,
 			events,
-			linkedTo,
 			chartSeries = chart.series;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
+		series.linkedSeries = [];
 
 		// bind the axes
 		series.bindAxes();
@@ -12693,20 +12726,6 @@ Series.prototype = {
 			series.name = series.name || 'Series ' + (i + 1);
 		});
 
-		// Linked series
-		linkedTo = options.linkedTo;
-		series.linkedSeries = [];
-		if (isString(linkedTo)) {
-			if (linkedTo === ':previous') {
-				linkedTo = chartSeries[series.index - 1];
-			} else {
-				linkedTo = chart.get(linkedTo);
-			}
-			if (linkedTo) {
-				linkedTo.linkedSeries.push(series);
-				series.linkedParent = linkedTo;
-			}
-		}
 	},
 	
 	/**
@@ -13183,6 +13202,8 @@ Series.prototype = {
 
 				// redraw
 				chart.isDirtyLegend = chart.isDirtyBox = true;
+				chart.linkSeries();
+				
 				if (redraw) {
 					chart.redraw(animation);
 				}

@@ -562,11 +562,11 @@ Series.prototype = {
 		var series = this,
 			eventType,
 			events,
-			linkedTo,
 			chartSeries = chart.series;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
+		series.linkedSeries = [];
 
 		// bind the axes
 		series.bindAxes();
@@ -622,20 +622,6 @@ Series.prototype = {
 			series.name = series.name || 'Series ' + (i + 1);
 		});
 
-		// Linked series
-		linkedTo = options.linkedTo;
-		series.linkedSeries = [];
-		if (isString(linkedTo)) {
-			if (linkedTo === ':previous') {
-				linkedTo = chartSeries[series.index - 1];
-			} else {
-				linkedTo = chart.get(linkedTo);
-			}
-			if (linkedTo) {
-				linkedTo.linkedSeries.push(series);
-				series.linkedParent = linkedTo;
-			}
-		}
 	},
 	
 	/**
@@ -1112,6 +1098,8 @@ Series.prototype = {
 
 				// redraw
 				chart.isDirtyLegend = chart.isDirtyBox = true;
+				chart.linkSeries();
+				
 				if (redraw) {
 					chart.redraw(animation);
 				}
