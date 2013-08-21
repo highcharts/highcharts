@@ -307,6 +307,13 @@ Chart.prototype = {
 			chart.adjustTickAmounts();
 			chart.getMargins();
 
+			// If one axis is dirty, all axes must be redrawn (#792, #2169)
+			each(axes, function (axis) {
+				if (axis.isDirty) {
+					isDirtyBox = true;
+				}
+			});
+
 			// redraw axes
 			each(axes, function (axis) {
 				
@@ -317,10 +324,9 @@ Chart.prototype = {
 						fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
 					});
 				}
-								
-				if (axis.isDirty || isDirtyBox || hasStackedSeries) {
+				
+				if (isDirtyBox || hasStackedSeries) {
 					axis.redraw();
-					isDirtyBox = true; // #792
 				}
 			});
 
