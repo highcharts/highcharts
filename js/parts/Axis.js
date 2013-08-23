@@ -1152,6 +1152,12 @@ Axis.prototype = {
 			[].concat(options.tickPositions) : // Work on a copy (#1565)
 			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
 		if (!tickPositions) {
+			
+			// Too many ticks
+			if ((axis.max - axis.min) / axis.tickInterval > 2 * axis.len) {
+				error(19, true);
+			}
+			
 			if (isDatetimeAxis) {
 				tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
 					normalizeTimeTickInterval(axis.tickInterval, options.units),
