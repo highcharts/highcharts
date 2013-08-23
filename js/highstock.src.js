@@ -15576,7 +15576,8 @@ var ColumnSeries = extendClass(Series, {
 			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
 			minPointLength = pick(options.minPointLength, 5),
 			metrics = series.getColumnMetrics(),
-			pointWidth = series.barW = mathMax(metrics.width, 1 + borderWidth), // rounded and postprocessed for border width
+			pointWidth = metrics.width,
+			seriesBarW = series.barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
 			pointXOffset = series.pointXOffset = metrics.offset,
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1;
@@ -15592,7 +15593,7 @@ var ColumnSeries = extendClass(Series, {
 			var plotY = mathMin(mathMax(-999, point.plotY), yAxis.len + 999), // Don't draw too far outside plot area (#1303)
 				yBottom = pick(point.yBottom, translatedThreshold),
 				barX = point.plotX + pointXOffset,
-				barW = pointWidth,
+				barW = seriesBarW,
 				barY = mathMin(plotY, yBottom),
 				right,
 				bottom,
@@ -15611,8 +15612,10 @@ var ColumnSeries = extendClass(Series, {
 				}
 			}
 
+			// Cache for access in polar
 			point.barX = barX;
 			point.pointWidth = pointWidth;
+
 
 			// Round off to obtain crisp edges
 			fromLeft = mathAbs(barX) < 0.5;
