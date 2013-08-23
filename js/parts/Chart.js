@@ -650,7 +650,7 @@ Chart.prototype = {
 			});
 		}
 
-		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // docs: panning xy
+		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
 			var mousePos = e[isX ? 'chartX' : 'chartY'],
 				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
 				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
