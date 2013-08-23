@@ -1522,7 +1522,8 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = (typeof yValue === 'number' && yValue !== Infinity) ? 
-				mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
+				//mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
+				yAxis.translate(yValue, 0, 1, 0, 1) : 
 				UNDEFINED;
 			
 			// Set client related positions for mouse tracking

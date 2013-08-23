@@ -628,10 +628,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
-			left: isObj ? x.x : x,
-			top: isObj ? x.y : y,
-			width: isObj ? x.width : width,
-			height: isObj ? x.height : height,
+			left: (isObj ? x.x : x) + 1,
+			top: (isObj ? x.y : y) + 1,
+			width: (isObj ? x.width : width) - 1,
+			height: (isObj ? x.height : height) - 1,
 			getCSS: function (wrapper) {
 				var element = wrapper.element,
 					nodeName = element.nodeName,
@@ -963,17 +963,16 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
 
-		if (isObject(x)) {
-			y = x.y;
-			width = x.width;
-			height = x.height;
-			strokeWidth = x.strokeWidth;
-			x = x.x;
-		}
 		var wrapper = this.symbol('rect');
-		wrapper.r = r;
+		wrapper.r = isObject(x) ? x.r : r;
 
-		return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
+		//return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
+		return wrapper.attr(
+				isObject(x) ? 
+					x : 
+					// do not crispify when an object is passed in (as in column charts)
+					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
+			);
 	},
 
 	/**
