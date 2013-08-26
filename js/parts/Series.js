@@ -1491,7 +1491,6 @@ Series.prototype = {
 				if (pointStack.cum === 0) {
 					yBottom = pick(threshold, yAxis.min);
 				}
-				
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
 					yBottom = null;
 				}
@@ -1514,7 +1513,7 @@ Series.prototype = {
 			point.yBottom = defined(yBottom) ? 
 				yAxis.translate(yBottom, 0, 1, 0, 1) :
 				null;
-			
+				
 			// general hook, used for Highstock compare mode
 			if (hasModifyValue) {
 				yValue = series.modifyValue(yValue, point);

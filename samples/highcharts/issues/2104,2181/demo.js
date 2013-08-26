@@ -6,23 +6,31 @@ $(function () {
         },
 
         title: {
-            text: 'Stacked columns on a log axis'
+            text: 'Stacking on a log axis'
         },
 		subtitle: {
-            text: 'Issue #2104 caused error #10 and no visible data'
+            text: '#2104 caused error #10 and no visible columns.<br/>' +
+                '#2181 caused the lower area stack not to display.'
         },
 
         xAxis: {
             tickInterval: 1
         },
 
-        yAxis: {
+        yAxis: [{
             type: 'logarithmic',
             minorTickInterval: 0.1
-        },
+        }, {
+            type: 'logarithmic',
+            opposite: true,
+            id: 'area-stack'
+        }],
         plotOptions: {
             series: {
                 stacking: 'normal'
+            },
+            area: {
+                fillOpacity: 0.2
             }
         },
 
@@ -37,8 +45,7 @@ $(function () {
                 y: 17
             }, {
                 y: null
-            }],
-            pointStart: 1
+            }]
         }, {
             data: [{
                 y: 34
@@ -48,8 +55,15 @@ $(function () {
                 y: null
             }, {
                 y: 1
-            }],
-            pointStart: 1
+            }]
+        }, {
+            data: [1, 20, 10, 30, 1],
+            type: 'area',
+            yAxis: 'area-stack'
+        }, {
+            data: [30, 10, 20, 1, 30],
+            type: 'area',
+            yAxis: 'area-stack'
         }]
     });
 });
