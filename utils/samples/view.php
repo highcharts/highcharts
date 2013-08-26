@@ -19,9 +19,7 @@ $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 ob_start();
 include("$fullpath/demo.html");
 $html = ob_get_clean();
-$html = str_replace('/code.highcharts.com/high', '/code.highcharts.local/high', $html);
-$html = str_replace('/code.highcharts.com/stock/', '/code.highcharts.local/', $html);
-$html = str_replace('/code.highcharts.com/modules/', '/code.highcharts.local/modules/', $html);
+$html = str_replace('/code.highcharts.com/', '/code.highcharts.th/', $html);
 
 
 
@@ -160,3 +158,35 @@ function getResources() {
 
 	</body>
 </html>
+<?php
+//------------ Output the sample into /draft/index.htm for debugging on mobile --------
+ob_start();
+?><!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Sample</title>
+		<?php echo getFramework(FRAMEWORK); ?>
+		<?php echo getResources(); ?>
+		<script type="text/javascript">
+		<?php @include("$fullpath/demo.js"); ?>
+		</script>
+
+		<style type="text/css">
+			<?php @include("$fullpath/demo.css"); ?>
+		</style>
+
+	</head>
+	<body style="margin: 0">
+
+		<div style="margin: 1em">
+
+		<?php echo $html ?>
+		</div>
+
+	</body>
+</html>
+<?php 
+file_put_contents('draft/index.html', ob_get_clean());
+
+?>
