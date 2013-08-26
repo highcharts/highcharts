@@ -1,7 +1,8 @@
 <?php
 ini_set('display_errors', 'on');
 
-$issues = json_decode(file_get_contents('pages/keyed-issues.json'));
+$keyedIssues = json_decode(file_get_contents('pages/keyed-issues.json'));
+$issues = $keyedIssues->issues;
 
 $keywords = array(
 	array('legend'),
@@ -52,7 +53,7 @@ foreach ($issues as $issue) {
 
 // Now create an array with the total number of open issues by date
 $startDate = strtotime('2010-06-01');
-$endDate = filemtime('pages/keyed-issues.json');
+$endDate = strtotime($keyedIssues->meta->since);
 $openIssues = 0;
 $openByDate = array();
 for ($time = $startDate; $time < $endDate; $time += 24 * 3600) {

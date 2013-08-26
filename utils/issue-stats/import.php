@@ -80,8 +80,9 @@ function rebuildHistory () {
 	}
 }
 
-function incrementKeyedIssues($keyedIssues, $since) {
+function incrementKeyedIssues($keyedIssues) {
 	$states = array('open', 'closed');
+	$since = $keyedIssues->meta->since;
 	foreach ($states as $state) {
 		$page = 1;
 		$lastPage = $page + 9;
@@ -104,7 +105,7 @@ function incrementKeyedIssues($keyedIssues, $since) {
 				foreach ($issues as $i => $issue) {
 					echo '#' . $issue->number . ', ';
 					$number = $issue->number;
-					$keyedIssues->$number = $issue;
+					$keyedIssues->issues->$number = $issue;
 				}
 
 				//file_put_contents("pages/$state-$page.json", $file);
@@ -119,6 +120,7 @@ function incrementKeyedIssues($keyedIssues, $since) {
 			}
 		}
 	}
+	$keyedIssues->meta->since = strftime('%Y-%m-%dT%H:%M:%SZ', mktime());
 
 	echo "<br/>Incremented to total " . sizeof($keyedIssues) . " issues.";
 	return $keyedIssues;
@@ -127,13 +129,12 @@ function incrementKeyedIssues($keyedIssues, $since) {
 function updateSinceLast () {
 
 
-	$since = strftime('%Y-%m-%dT%H:%M:%SZ', filemtime('pages/keyed-issues.json') - 7200); // two hours back to be on the safe side
 	echo "Loading issues since $since<br/>";
-	// $since = '2013-06-19T00:00:00Z';
 	
 	// Add since:
 	$keyedIssues = json_decode(file_get_contents('pages/keyed-issues.json'));
-	$keyedIssues = incrementKeyedIssues($keyedIssues, $since);
+	$keyedIssues = incrementKeyedIssues($keyedIssues);
+
 	file_put_contents(
 		'pages/keyed-issues.json',
 		json_encode($keyedIssues)
@@ -143,7 +144,7 @@ function updateSinceLast () {
 
 function getKeyedIssuesFromDownloadedFiles() {
 	$issues = array();
-	$keyedIssues = array();
+	$keyedIssues = array('issues' => array());
 	$states = array('open', 'closed');
 
 	foreach ($states as $state) {
@@ -155,7 +156,8 @@ function getKeyedIssuesFromDownloadedFiles() {
 		}
 	}
 	foreach ($issues as $issue) {
-		$keyedIssues[$issue->number] = $issue;
+		$number = $issue->number;
+		$keyedIssues->issues->$number = $issue;
 	}
 	echo "Got " . sizeof($keyedIssues) . " issues from files.";
 	return $keyedIssues;
