@@ -192,6 +192,7 @@ return {
 					if (prop === 'opacity') {
 						prop = 'filter';
 					}
+					/*jslint unparam: true*/
 					val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) { return b.toUpperCase(); })];
 					if (prop === 'filter') {
 						val = val.replace(
@@ -201,6 +202,7 @@ return {
 							}
 						);
 					}
+					/*jslint unparam: false*/
 					return val === '' ? 1 : val;
 				} 
 			};
