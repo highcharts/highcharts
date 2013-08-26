@@ -15104,6 +15104,7 @@ var AreaSeries = extendClass(Series, {
 			plotX,
 			plotY,
 			points = this.points,
+			connectNulls = this.options.connectNulls,
 			val,
 			i,
 			x;
@@ -15123,8 +15124,11 @@ var AreaSeries = extendClass(Series, {
 			});
 
 			each(keys, function (x) {
+				if (pointMap[x].y === null && connectNulls) { // #1836
+					return;
+
 				// The point exists, push it to the segment
-				if (pointMap[x]) {
+				} else if (pointMap[x]) {
 					segment.push(pointMap[x]);
 
 				// There is no point for this X value in this series, so we 
