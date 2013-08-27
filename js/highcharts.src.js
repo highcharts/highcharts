@@ -7919,13 +7919,14 @@ Axis.prototype = {
 		var obj = new PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
-		// Add it to the user options for exporting and Axis.update
-		if (coll) {
-			userOptions[coll] = userOptions[coll] || [];
-			userOptions[coll].push(options); 
+		if (obj) { // 2189
+			// Add it to the user options for exporting and Axis.update
+			if (coll) {
+				userOptions[coll] = userOptions[coll] || [];
+				userOptions[coll].push(options); 
+			}
+			this.plotLinesAndBands.push(obj); 
 		}
-		
-		this.plotLinesAndBands.push(obj); 
 		
 		return obj;
 	},
