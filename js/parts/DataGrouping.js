@@ -193,31 +193,31 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 				if (typeof open === NUMBER) {
 					values1.push(open);
 				} else if (open === null) {
-					values1.hasNulls = true;
+					values1.hasNulls = (values1.hasNulls || 0) + 1;
 				}
 				
 				if (typeof high === NUMBER) {
 					values2.push(high);
 				} else if (high === null) {
-					values2.hasNulls = true;
+					values2.hasNulls = (values2.hasNulls || 0) + 1;
 				}
 				
 				if (typeof low === NUMBER) {
 					values3.push(low);
 				} else if (low === null) {
-					values3.hasNulls = true;
+					values3.hasNulls = (values3.hasNulls || 0) + 1;
 				}
 				
 				if (typeof close === NUMBER) {
 					values4.push(close);
 				} else if (close === null) {
-					values4.hasNulls = true;
+					values4.hasNulls = (values4.hasNulls || 0) + 1;
 				}
 			} else {
 				if (typeof pointY === NUMBER) {
 					values1.push(pointY);
 				} else if (pointY === null) {
-					values1.hasNulls = true;
+					values1.hasNulls = (values1.hasNulls || 0) + 1;
 				}
 			}
 
