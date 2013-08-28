@@ -13477,7 +13477,7 @@ Series.prototype = {
 
 
 			// add value to the stack total
-			stack.addValue(y || 0);
+			stack.addValue((stacking === 'percent' ? mathAbs(y) : y) || 0);
 			stack.cacheExtremes(series, [total, total + (y || 0)]);
 			
 			if (typeof y === 'number') {
@@ -13579,6 +13579,7 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			stacking = options.stacking,
+			percentStacking = stacking === 'percent',
 			xAxis = series.xAxis,
 			categories = xAxis.categories,
 			yAxis = series.yAxis,
@@ -13615,7 +13616,7 @@ Series.prototype = {
 
 				pointStack = stack[xValue];
 				pointStackTotal = pointStack.total;
-				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
+				pointStack.cum = yBottom = pointStack.cum - (percentStacking ? mathAbs(yValue) : yValue); // start from top
 				yValue = yBottom + yValue;
 				
 				if (pointStack.cum === 0) {
@@ -13625,7 +13626,7 @@ Series.prototype = {
 					yBottom = null;
 				}
 				
-				if (stacking === 'percent') {
+				if (percentStacking) {
 					yBottom = pointStackTotal ? yBottom * 100 / pointStackTotal : 0;
 					yValue = pointStackTotal ? yValue * 100 / pointStackTotal : 0;
 				}
