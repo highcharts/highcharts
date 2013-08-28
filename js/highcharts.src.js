@@ -7919,7 +7919,7 @@ Axis.prototype = {
 		var obj = new PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
-		if (obj) { // 2189
+		if (obj) { // #2189
 			// Add it to the user options for exporting and Axis.update
 			if (coll) {
 				userOptions[coll] = userOptions[coll] || [];
@@ -8028,7 +8028,7 @@ Axis.prototype = {
 					
 					for (i = 0; i < sortedPositions.length; i++) {
 						pos = sortedPositions[i];
-						bBox = ticks[pos].label && ticks[pos].label.bBox;
+						bBox = ticks[pos].label && ticks[pos].label.getBBox();
 						w = bBox ? bBox.width : 0;
 						lineNo = i % autoStaggerLines;
 						
