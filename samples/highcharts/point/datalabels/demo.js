@@ -10,7 +10,6 @@ $(function () {
                 dataLabels: {
                     enabled: true,
                     align: 'left',
-                    crop: false,
                     style: {
                         fontWeight: 'bold'
                     },
