@@ -28,3 +28,9 @@ exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
 exporting-server/java/highcharts-export/highcharts-export-convert/src/main/java/com/highcharts/export/pool/ServerObjectFactory.java
 exporting-server/deploy export server to amazon.txt
 /jsTestDriver.conf
+
+utils/samples/temp/compare.json
+
+utils/samples/temp/left.png
+
+utils/samples/temp/right.png

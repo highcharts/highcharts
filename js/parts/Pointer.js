@@ -839,7 +839,7 @@ Pointer.prototype = {
  * PointTrackerMixin
  */
 
- var PointTrackerMixin = {
+var PointTrackerMixin = {
 	drawTracker: function () {
 		var series = this,
 			chart = series.chart,
@@ -889,4 +889,4 @@ Pointer.prototype = {
 			series._hasTracking = true;
 		}
 	}	
-}
+};

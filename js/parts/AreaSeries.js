@@ -188,7 +188,7 @@ var AreaSeries = extendClass(Series, {
 					}).add(series.group);
 			}
 		});
-	},
+	}
 });
 
 seriesTypes.area = AreaSeries;

@@ -7919,7 +7919,7 @@ Axis.prototype = {
 		var obj = new PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
-		if (obj) { // 2189
+		if (obj) { // #2189
 			// Add it to the user options for exporting and Axis.update
 			if (coll) {
 				userOptions[coll] = userOptions[coll] || [];
@@ -9825,7 +9825,63 @@ Pointer.prototype = {
 		clearInterval(pointer.tooltipTimeout);
 	}
 };
+
+
 /**
+ * PointTrackerMixin
+ */
+
+var PointTrackerMixin = {
+	drawTracker: function () {
+		var series = this,
+			chart = series.chart,
+			pointer = chart.pointer,
+			cursor = series.options.cursor,
+			css = cursor && { cursor: cursor },
+			onMouseOver = function (e) {
+				var target = e.target,
+					point;
+
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+				while (target && !point) {
+					point = target.point;
+					target = target.parentNode;
+				}
+				if (point !== UNDEFINED && point !== chart.hoverPoint) { // undefined on graph in scatterchart
+					point.onMouseOver(e);
+				}
+			};
+
+		// Add reference to the point
+		each(series.points, function (point) {
+			if (point.graphic) {
+				point.graphic.element.point = point;
+			}
+			if (point.dataLabel) {
+				point.dataLabel.element.point = point;
+			}
+		});
+
+		// Add the event listeners, we need to do this only once
+		if (!series._hasTracking) {
+			each(series.trackerGroups, function (key) {
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
+						.addClass(PREFIX + 'tracker')
+						.on('mouseover', onMouseOver)
+						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+						.css(css);
+					if (hasTouch) {
+						series[key].on('touchstart', onMouseOver);
+					}
+				}
+			});
+			series._hasTracking = true;
+		}
+	}	
+};/**
  * The overview of the chart's series
  */
 function Legend(chart, options) {
@@ -10479,6 +10535,33 @@ Legend.prototype = {
 			
 	}
 	
+};
+
+/*
+ * LegendSymbolMixin
+ */ 
+
+var LegendSymbolMixin = {
+
+	/**
+	 * Get the series' symbol in the legend
+	 * 
+	 * @param {Object} legend The legend object
+	 * @param {Object} item The series (this) or point
+	 */
+	drawLegendSymbol: function (legend, item) {
+		
+		item.legendSymbol = this.chart.renderer.rect(
+			0,
+			legend.baseline - 11,
+			legend.options.symbolWidth,
+			12,
+			2
+		).attr({
+			zIndex: 3
+		}).add(item.legendGroup);		
+		
+	}
 };
 
 /**
@@ -15267,26 +15350,6 @@ var AreaSeries = extendClass(Series, {
 					}).add(series.group);
 			}
 		});
-	},
-	
-	/**
-	 * Get the series' symbol in the legend
-	 * 
-	 * @param {Object} legend The legend object
-	 * @param {Object} item The series (this) or point
-	 */
-	drawLegendSymbol: function (legend, item) {
-		
-		item.legendSymbol = this.chart.renderer.rect(
-			0,
-			legend.baseline - 11,
-			legend.options.symbolWidth,
-			12,
-			2
-		).attr({
-			zIndex: 3
-		}).add(item.legendGroup);		
-		
 	}
 });
 
@@ -15666,7 +15729,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
-	drawLegendSymbol: AreaSeries.prototype.drawLegendSymbol,
+	drawLegendSymbol: LegendSymbolMixin.drawLegendSymbol,
 	
 	
 	/**
@@ -15715,55 +15778,7 @@ var ColumnSeries = extendClass(Series, {
 	 * Add tracking event listener to the series group, so the point graphics
 	 * themselves act as trackers
 	 */
-	drawTracker: function () {
-		var series = this,
-			chart = series.chart,
-			pointer = chart.pointer,
-			cursor = series.options.cursor,
-			css = cursor && { cursor: cursor },
-			onMouseOver = function (e) {
-				var target = e.target,
-					point;
-
-				if (chart.hoverSeries !== series) {
-					series.onMouseOver();
-				}
-				while (target && !point) {
-					point = target.point;
-					target = target.parentNode;
-				}
-				if (point !== UNDEFINED && point !== chart.hoverPoint) { // undefined on graph in scatterchart
-					point.onMouseOver(e);
-				}
-			};
-
-		// Add reference to the point
-		each(series.points, function (point) {
-			if (point.graphic) {
-				point.graphic.element.point = point;
-			}
-			if (point.dataLabel) {
-				point.dataLabel.element.point = point;
-			}
-		});
-
-		// Add the event listeners, we need to do this only once
-		if (!series._hasTracking) {
-			each(series.trackerGroups, function (key) {
-				if (series[key]) { // we don't always have dataLabelsGroup
-					series[key]
-						.addClass(PREFIX + 'tracker')
-						.on('mouseover', onMouseOver)
-						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
-						.css(css);
-					if (hasTouch) {
-						series[key].on('touchstart', onMouseOver);
-					}
-				}
-			});
-			series._hasTracking = true;
-		}
-	},
+	drawTracker: PointTrackerMixin.drawTracker,
 	
 	/** 
 	 * Override the basic data label alignment by adjusting for the position of the column
@@ -16755,12 +16770,12 @@ var PieSeries = {
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.
 	 */
-	drawTracker: ColumnSeries.prototype.drawTracker,
+	drawTracker: PointTrackerMixin.drawTracker,
 
 	/**
 	 * Use a simple symbol from column prototype
 	 */
-	drawLegendSymbol: AreaSeries.prototype.drawLegendSymbol,
+	drawLegendSymbol: LegendSymbolMixin.drawLegendSymbol,
 
 	/**
 	 * Pies don't have point marker symbols
