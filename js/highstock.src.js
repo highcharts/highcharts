@@ -7919,7 +7919,7 @@ Axis.prototype = {
 		var obj = new PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
-		if (obj) { // 2189
+		if (obj) { // #2189
 			// Add it to the user options for exporting and Axis.update
 			if (coll) {
 				userOptions[coll] = userOptions[coll] || [];
@@ -14396,7 +14396,7 @@ Series.prototype = {
 			plotX = pick(point.plotX, -999),
 			plotY = pick(point.plotY, -999),
 			bBox = dataLabel.getBBox(),
-			visible = this.visible,
+			visible = this.visible && chart.isInsidePlot(point.plotX, point.plotY, inverted),
 			alignAttr; // the final position;
 				
 		if (visible) {
@@ -14426,11 +14426,17 @@ Series.prototype = {
 			} else {
 				dataLabel.align(options, null, alignTo);
 				alignAttr = dataLabel.alignAttr;
-			}
 
-			// Now check that the data label is within the plot area
-			visible = options.crop === false ||
-					(chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height));
+				// Handle justify or crop
+				if (pick(options.overflow, 'justify') === 'justify') { // docs: overflow: justify, also crop only applies when not justify
+					this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+				
+				} else if (pick(options.crop, true)) {
+					// Now check that the data label is within the plot area
+					visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
+				
+				}
+			}		
 		}
 
 		// Show or hide based on the final aligned position
@@ -14438,6 +14444,67 @@ Series.prototype = {
 			dataLabel.attr({ y: -999 });
 		}
 				
+	},
+	
+	/**
+	 * If data labels fall partly outside the plot area, align them back in, in a way that
+	 * doesn't hide the point.
+	 */
+	justifyDataLabel: function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
+		var chart = this.chart,
+			align = options.align,
+			verticalAlign = options.verticalAlign,
+			off,
+			justified;
+
+		// Off left
+		off = alignAttr.x;
+		if (off < 0) {
+			if (align === 'right') {
+				options.align = 'left';
+			} else {
+				options.x = -off;
+			}
+			justified = true;
+		}
+
+		// Off right
+		off = alignAttr.x + bBox.width;
+		if (off > chart.plotWidth) {
+			if (align === 'left') {
+				options.align = 'right';
+			} else {
+				options.x = chart.plotWidth - off;
+			}
+			justified = true;
+		}
+
+		// Off top
+		off = alignAttr.y;
+		if (off < 0) {
+			if (verticalAlign === 'bottom') {
+				options.verticalAlign = 'top';
+			} else {
+				options.y = -off;
+			}
+			justified = true;
+		}
+
+		// Off bottom
+		off = alignAttr.y + bBox.height;
+		if (off > chart.plotHeight) {
+			if (verticalAlign === 'top') {
+				options.verticalAlign = 'bottom';
+			} else {
+				options.y = chart.plotHeight - off;
+			}
+			justified = true;
+		}
+		
+		if (justified) {
+			dataLabel.placed = !isNew;
+			dataLabel.align(options, null, alignTo);
+		}
 	},
 	
 	/**
