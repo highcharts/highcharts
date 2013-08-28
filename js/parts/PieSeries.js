@@ -840,12 +840,12 @@ var PieSeries = {
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.
 	 */
-	drawTracker: ColumnSeries.prototype.drawTracker,
+	drawTracker: PointTrackerMixin.drawTracker,
 
 	/**
 	 * Use a simple symbol from column prototype
 	 */
-	drawLegendSymbol: AreaSeries.prototype.drawLegendSymbol,
+	drawLegendSymbol: LegendSymbolMixin.drawLegendSymbol,
 
 	/**
 	 * Pies don't have point marker symbols
