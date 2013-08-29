@@ -183,8 +183,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			graphic = point.graphic;
 
-			// only draw the point if y is defined
-			if (plotY !== UNDEFINED) {
+			// only draw the point if y is defined and the flag is within the visible area
+			if (plotY !== UNDEFINED && plotX >= 0 && plotX < series.xAxis.len) {
 				// shortcuts
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''];
 				if (graphic) { // update
