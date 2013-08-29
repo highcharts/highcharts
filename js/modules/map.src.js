@@ -152,10 +152,66 @@
 	//--- Start zooming and panning features
 
 	Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
-		proceed.call(this);
-		this.renderMapNavigation();
+		var chart = this;
+
+		proceed.call(chart);
+
+		// Render the plus and minus buttons
+		chart.renderMapNavigation();
+
+		// Add the double click event
+		Highcharts.addEvent(chart.container, 'dblclick', function (e) {
+			chart.pointer.onContainerDblClick(e);
+		});
+
+		// Add the mousewheel event
+		Highcharts.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+			chart.pointer.onContainerMouseWheel(e);
+		});
 	});
 
+	// Extend the Pointer
+	extend(Highcharts.Pointer.prototype, {
+
+		/**
+		 * The event handler for the doubleclick event
+		 */
+		onContainerDblClick: function (e) {
+			var chart = this.chart;
+
+			e = this.normalize(e);
+
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+				chart.mapZoom(
+					0.5,
+					chart.xAxis[0].toValue(e.chartX),
+					chart.yAxis[0].toValue(e.chartY)
+				);
+			}
+		},
+
+		/**
+		 * The event handler for the mouse scroll event
+		 */
+		onContainerMouseWheel: function (e) {
+			var chart = this.chart,
+				delta;
+
+			e = this.normalize(e);
+
+			// Firefox uses e.detail, WebKit and IE uses wheelDelta
+			delta = e.detail || -(e.wheelDelta / 120);
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+				chart.mapZoom(
+					delta > 0 ? 2 : 0.5,
+					chart.xAxis[0].toValue(e.chartX),
+					chart.yAxis[0].toValue(e.chartY)
+				);
+			}
+		}
+	});
+
+	// Add events to the Chart object itself
 	extend(Chart.prototype, {
 		renderMapNavigation: function () {
 			var chart = this,
@@ -216,14 +272,14 @@
 		/**
 		 * Zoom the map in or out by a certain amount. Less than 1 zooms in, greater than 1 zooms out.
 		 */
-		mapZoom: function (howMuch) {
+		mapZoom: function (howMuch, centerXArg, centerYArg) {
 			var xAxis = this.xAxis[0],
 				xRange = xAxis.max - xAxis.min,
-				centerX = xAxis.min + xRange / 2,
+				centerX = pick(centerXArg, xAxis.min + xRange / 2),
 				newXRange = xRange * howMuch,
 				yAxis = this.yAxis[0],
 				yRange = yAxis.max - yAxis.min,
-				centerY = yAxis.min + yRange / 2,
+				centerY = pick(centerYArg, yAxis.min + yRange / 2),
 				newYRange = yRange * howMuch,
 				newXMin = centerX - newXRange / 2,
 				newYMin = centerY - newYRange / 2,
@@ -241,6 +297,7 @@
 
 			xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
 			yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
+
 			this.redraw();
 		}
 	});
