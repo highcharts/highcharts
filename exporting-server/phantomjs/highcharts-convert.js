@@ -77,7 +77,6 @@
 	render = function (params, runsAsServer, exitCallback) {
 
 		var page = require('webpage').create(),
-			messages = {},
 			scaleAndClipPage,
 			loadChart,
 			createChart,
@@ -96,34 +95,10 @@
 			exit,
 			interval;
 
-		messages.imagesLoaded = 'Highcharts.images.loaded';
-		messages.optionsParsed = 'Highcharts.options.parsed';
-		messages.callbackParsed = 'Highcharts.cb.parsed';
-		window.imagesLoaded = false;
-		window.optionsParsed = false;
-		window.callbackParsed = false;
-
 		page.onConsoleMessage = function (msg) {
-			//console.log(msg);
-
-			/*
-			 * Ugly hack, but only way to get messages out of the 'page.evaluate()'
-			 * sandbox. If any, please contribute with improvements on this!
-			 */
-
-			if (msg === messages.imagesLoaded) {
-				window.imagesLoaded = true;
-			}
-			/* more ugly hacks, to check options or callback are properly parsed */
-			if (msg === messages.optionsParsed) {
-				window.optionsParsed = true;
-			}
-
-			if (msg === messages.callbackParsed) {
-				window.callbackParsed = true;
-			}
-		};
-
+			console.log(msg);
+		};		
+		
 		page.onAlert = function (msg) {
 			console.log(msg);
 		};
@@ -214,11 +189,11 @@
 
 				} else {
 					// output binary images or pdf
-					if (!window.imagesLoaded) {
+					if (!page.evaluate(function(){return window['HC_imagesLoaded'];})) {
 						// render with interval, waiting for all images loaded
 						interval = window.setInterval(function () {
 							console.log('waiting');
-							if (window.imagesLoaded) {
+							if (page.evaluate(function(){return window['HC_imagesLoaded'];})) {
 								clearTimeout(timer);
 								clearInterval(interval);
 								convert(svg);
@@ -240,7 +215,7 @@
 			}
 		};
 
-		loadChart = function (input, outputFormat, messages) {
+		loadChart = function (input, outputFormat) {
 			var nodeIter, nodes, elem, opacity, counter, svgElem;
 
 			document.body.style.margin = '0px';
@@ -250,7 +225,7 @@
 				console.log('Loading image ' + counter);
 				counter -= 1;
 				if (counter < 1) {
-					console.log(messages.imagesLoaded);
+					window['HC_imagesLoaded']=true;
 				}
 			}
 
@@ -269,7 +244,7 @@
 					}
 				} else {
 					// no images set property to:imagesLoaded = true
-					console.log(messages.imagesLoaded);
+					window['HC_imagesLoaded']=true;
 				}
 			}
 
@@ -299,7 +274,7 @@
 			};
 		};
 
-		createChart = function (width, constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputFormat, callback, messages) {
+		createChart = function (width, constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputFormat, callback) {
 
 			var $container, chart, nodes, nodeIter, elem, opacity, counter;
 
@@ -308,9 +283,6 @@
 				var $script = $('<script>').attr('type', 'text/javascript');
 				$script.html('var ' + varStr + ' = ' + codeStr);
 				document.getElementsByTagName("head")[0].appendChild($script[0]);
-				if (window[varStr] !== undefined) {
-					console.log('Highcharts.' + varStr + '.parsed');
-				}
 			}
 
 			// are all images loaded in time?
@@ -318,7 +290,7 @@
 				console.log('loading image ' + counter);
 				counter -= 1;
 				if (counter < 1) {
-					console.log(messages.imagesLoaded);
+					window['HC_imagesLoaded']=true;
 				}
 			}
 
@@ -339,7 +311,7 @@
 				} else {
 					// no images set property to all images
 					// loaded
-					console.log(messages.imagesLoaded);
+					window['HC_imagesLoaded']=true;
 				}
 			}
 
@@ -483,7 +455,7 @@
 
 				if (svgInput) {
 					//render page directly from svg file
-					svg = page.evaluate(loadChart, input, outputExtension, messages);
+					svg = page.evaluate(loadChart, input, outputExtension);
 					page.viewportSize = { width: svg.width, height: svg.height };
 					renderSVG(svg);
 				} else {
@@ -496,13 +468,13 @@
 					page.injectJs(config.HIGHCHARTS_DATA);
 
 					// load chart in page and return svg height and width
-					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outputExtension, callback, messages);
+					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outputExtension, callback);
 
-					if (!window.optionsParsed) {
+					if (!page.evaluate(function(){return (window['options'] !== undefined);})) {
 						exit('ERROR: the options variable was not available, contains the infile an syntax error? see' + input);
 					}
 
-					if (callback !== undefined && !window.callbackParsed) {
+					if (callback !== undefined && !page.evaluate(function(){return (window['callback'] !== undefined);})) {
 						exit('ERROR: the callback variable was not available, contains the callbackfile an syntax error? see' + callback);
 					}
 					renderSVG(svg);
