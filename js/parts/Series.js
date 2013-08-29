@@ -549,6 +549,7 @@ Series.prototype = {
 	isCartesian: true,
 	type: 'line',
 	pointClass: Point,
+	cropShoulder: 1,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -1139,12 +1140,13 @@ Series.prototype = {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
+			cropShoulder = this.cropShoulder, // Line type series need one point outside the plot area, columns don't
 			i;
 
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
 			if (xData[i] >= min) {
-				cropStart = mathMax(0, i - 1);
+				cropStart = mathMax(0, i - cropShoulder);
 				break;
 			}
 		}
@@ -1152,7 +1154,7 @@ Series.prototype = {
 		// proceed to find slice end
 		for (; i < dataLength; i++) {
 			if (xData[i] > max) {
-				cropEnd = i + 1;
+				cropEnd = i + cropShoulder;
 				break;
 			}
 		}
@@ -1295,7 +1297,7 @@ Series.prototype = {
 
 
 			// add value to the stack total
-			stack.addValue(y || 0);
+			stack.addValue((stacking === 'percent' ? mathAbs(y) : y) || 0);
 			stack.cacheExtremes(series, [total, total + (y || 0)]);
 			
 			if (typeof y === 'number') {
@@ -1397,6 +1399,7 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			stacking = options.stacking,
+			percentStacking = stacking === 'percent',
 			xAxis = series.xAxis,
 			categories = xAxis.categories,
 			yAxis = series.yAxis,
@@ -1425,7 +1428,8 @@ Series.prototype = {
 			}
 			
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags'); // Math.round fixes #591
+			
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -1433,7 +1437,7 @@ Series.prototype = {
 
 				pointStack = stack[xValue];
 				pointStackTotal = pointStack.total;
-				pointStack.cum = yBottom = pointStack.cum - yValue; // start from top
+				pointStack.cum = yBottom = pointStack.cum - (percentStacking ? mathAbs(yValue) : yValue); // start from top
 				yValue = yBottom + yValue;
 				
 				if (pointStack.cum === 0) {
@@ -1443,7 +1447,7 @@ Series.prototype = {
 					yBottom = null;
 				}
 				
-				if (stacking === 'percent') {
+				if (percentStacking) {
 					yBottom = pointStackTotal ? yBottom * 100 / pointStackTotal : 0;
 					yValue = pointStackTotal ? yValue * 100 / pointStackTotal : 0;
 				}

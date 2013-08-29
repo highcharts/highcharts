@@ -45,6 +45,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
 		// point is substracted from previous (#1910)

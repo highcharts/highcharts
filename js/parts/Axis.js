@@ -1591,7 +1591,7 @@ Axis.prototype = {
 					
 					for (i = 0; i < sortedPositions.length; i++) {
 						pos = sortedPositions[i];
-						bBox = ticks[pos].label && ticks[pos].label.bBox;
+						bBox = ticks[pos].label && ticks[pos].label.getBBox();
 						w = bBox ? bBox.width : 0;
 						lineNo = i % autoStaggerLines;
 						
