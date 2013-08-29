@@ -12679,6 +12679,7 @@ Series.prototype = {
 	isCartesian: true,
 	type: 'line',
 	pointClass: Point,
+	cropShoulder: 1,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -13321,12 +13322,13 @@ Series.prototype = {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
+			cropShoulder = this.cropShoulder, // Line type series need one point outside the plot area, columns don't
 			i;
 
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
 			if (xData[i] >= min) {
-				cropStart = mathMax(0, i - 1);
+				cropStart = mathMax(0, i - cropShoulder);
 				break;
 			}
 		}
@@ -13334,7 +13336,7 @@ Series.prototype = {
 		// proceed to find slice end
 		for (; i < dataLength; i++) {
 			if (xData[i] > max) {
-				cropEnd = i + 1;
+				cropEnd = i + cropShoulder;
 				break;
 			}
 		}
@@ -13608,7 +13610,8 @@ Series.prototype = {
 			}
 			
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement); // Math.round fixes #591
+			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags'); // Math.round fixes #591
+			
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
@@ -15484,6 +15487,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
 		// point is substracted from previous (#1910)
