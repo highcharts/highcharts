@@ -329,7 +329,7 @@
 						chart: series.chart,
 						name: name,
 						options: {},
-						drawLegendSymbol: Highcharts.seriesTypes.area.prototype.drawLegendSymbol,
+						drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 						visible: true,
 						setState: function () {},
 						setVisible: function () {}

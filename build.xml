@@ -116,6 +116,7 @@
             <file name="Intro.js"/>
             <file name="Globals.js"/>
             <file name="Utilities.js"/>
+            <file name="CenteredSeriesMixin.js"/>
             <file name="PathAnimation.js"/>
             <file name="JQueryAdapter.js"/>
             <file name="Adapters.js"/>
@@ -150,6 +151,7 @@
             <file name="Intro.js"/>
             <file name="Globals.js"/>
             <file name="Utilities.js"/>
+            <file name="CenteredSeriesMixin.js"/>
             <file name="PathAnimation.js"/>
             <file name="JQueryAdapter.js"/>
             <file name="Adapters.js"/>

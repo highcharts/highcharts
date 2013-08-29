@@ -188,7 +188,9 @@ var AreaSeries = extendClass(Series, {
 					}).add(series.group);
 			}
 		});
-	}
+	},
+
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
 seriesTypes.area = AreaSeries;

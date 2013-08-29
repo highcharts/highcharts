@@ -11,3 +11,4 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 	type: 'areasplinerange',
 	getPointSpline: seriesTypes.spline.prototype.getPointSpline
 });
+

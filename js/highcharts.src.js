@@ -995,6 +995,39 @@ timeUnits = hash(
 	YEAR, 31556952000
 );
 /*jslint white: false*/
+
+var CenteredSeriesMixin = {
+	/**
+	 * Get the center of the pie based on the size and center options relative to the  
+	 * plot area. Borrowed by the polar and gauge series types.
+	 */
+	getCenter: function () {
+		
+		var options = this.options,
+			chart = this.chart,
+			slicingRoom = 2 * (options.slicedOffset || 0),
+			handleSlicingRoom,
+			plotWidth = chart.plotWidth - 2 * slicingRoom,
+			plotHeight = chart.plotHeight - 2 * slicingRoom,
+			centerOption = options.center,
+			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
+			smallestSize = mathMin(plotWidth, plotHeight),
+			isPercent;
+		
+		return map(positions, function (length, i) {
+			isPercent = /%$/.test(length);
+			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
+			return (isPercent ?
+				// i == 0: centerX, relative to width
+				// i == 1: centerY, relative to height
+				// i == 2: size, relative to smallestSize
+				// i == 4: innerSize, relative to smallestSize
+				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
+					pInt(length) / 100 :
+				length) + (handleSlicingRoom ? slicingRoom : 0);
+		});
+	}
+};
 /**
  * Path interpolation algorithm used across adapters
  */
@@ -10549,7 +10582,7 @@ var LegendSymbolMixin = {
 	 * @param {Object} legend The legend object
 	 * @param {Object} item The series (this) or point
 	 */
-	drawLegendSymbol: function (legend, item) {
+	drawRectangle: function (legend, item) {
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
@@ -10561,6 +10594,60 @@ var LegendSymbolMixin = {
 			zIndex: 3
 		}).add(item.legendGroup);		
 		
+	},
+
+	/**
+	 * Get the series' symbol in the legend. This method should be overridable to create custom 
+	 * symbols through Highcharts.seriesTypes[type].prototype.drawLegendSymbols.
+	 * 
+	 * @param {Object} legend The legend object
+	 */
+	drawLineMarker: function (legend, item) {
+
+		var options = this.options,
+			markerOptions = options.marker,
+			radius,
+			legendOptions = legend.options,
+			legendSymbol,
+			symbolWidth = legendOptions.symbolWidth,
+			renderer = this.chart.renderer,
+			legendItemGroup = this.legendGroup,
+			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),
+			attr;
+			
+		// Draw the line
+		if (options.lineWidth) {
+			attr = {
+				'stroke-width': options.lineWidth
+			};
+			if (options.dashStyle) {
+				attr.dashstyle = options.dashStyle;
+			}
+			this.legendLine = renderer.path([
+				M,
+				0,
+				verticalCenter,
+				L,
+				symbolWidth,
+				verticalCenter
+			])
+			.attr(attr)
+			.add(legendItemGroup);
+		}
+		
+		// Draw the marker
+		if (markerOptions && markerOptions.enabled) {
+			radius = markerOptions.radius;
+			this.legendSymbol = legendSymbol = renderer.symbol(
+				this.symbol,
+				(symbolWidth / 2) - radius,
+				verticalCenter - radius,
+				2 * radius,
+				2 * radius
+			)
+			.add(legendItemGroup);
+			legendSymbol.isMarker = true;
+		}
 	}
 };
 
@@ -13028,60 +13115,8 @@ Series.prototype = {
 		}
 		counters.wrapSymbol(defaultSymbols.length);
 	},
-
-	/**
-	 * Get the series' symbol in the legend. This method should be overridable to create custom 
-	 * symbols through Highcharts.seriesTypes[type].prototype.drawLegendSymbols.
-	 * 
-	 * @param {Object} legend The legend object
-	 */
-	drawLegendSymbol: function (legend) {
-		
-		var options = this.options,
-			markerOptions = options.marker,
-			radius,
-			legendOptions = legend.options,
-			legendSymbol,
-			symbolWidth = legendOptions.symbolWidth,
-			renderer = this.chart.renderer,
-			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),
-			attr;
-			
-		// Draw the line
-		if (options.lineWidth) {
-			attr = {
-				'stroke-width': options.lineWidth
-			};
-			if (options.dashStyle) {
-				attr.dashstyle = options.dashStyle;
-			}
-			this.legendLine = renderer.path([
-				M,
-				0,
-				verticalCenter,
-				L,
-				symbolWidth,
-				verticalCenter
-			])
-			.attr(attr)
-			.add(legendItemGroup);
-		}
-		
-		// Draw the marker
-		if (markerOptions && markerOptions.enabled) {
-			radius = markerOptions.radius;
-			this.legendSymbol = legendSymbol = renderer.symbol(
-				this.symbol,
-				(symbolWidth / 2) - radius,
-				verticalCenter - radius,
-				2 * radius,
-				2 * radius
-			)
-			.add(legendItemGroup);
-			legendSymbol.isMarker = true;
-		}
-	},
+	
+	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
 
 	/**
 	 * Add a point dynamically after chart load time
@@ -15350,10 +15385,13 @@ var AreaSeries = extendClass(Series, {
 					}).add(series.group);
 			}
 		});
-	}
+	},
+
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
-seriesTypes.area = AreaSeries;/**
+seriesTypes.area = AreaSeries;
+/**
  * Set the default options for spline
  */
 defaultPlotOptions.spline = merge(defaultSeriesOptions);
@@ -15495,8 +15533,9 @@ var areaProto = AreaSeries.prototype,
 		getSegmentPath: areaProto.getSegmentPath,
 		closeSegment: areaProto.closeSegment,
 		drawGraph: areaProto.drawGraph,
-		drawLegendSymbol: areaProto.drawLegendSymbol
+		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
+
 seriesTypes.areaspline = AreaSplineSeries;
 
 /**
@@ -15729,7 +15768,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
-	drawLegendSymbol: LegendSymbolMixin.drawLegendSymbol,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 	
 	
 	/**
@@ -16173,37 +16212,6 @@ var PieSeries = {
 			point.total = total;
 		}
 		
-	},
-	
-	/**
-	 * Get the center of the pie based on the size and center options relative to the  
-	 * plot area. Borrowed by the polar and gauge series types.
-	 */
-	getCenter: function () {
-		
-		var options = this.options,
-			chart = this.chart,
-			slicingRoom = 2 * (options.slicedOffset || 0),
-			handleSlicingRoom,
-			plotWidth = chart.plotWidth - 2 * slicingRoom,
-			plotHeight = chart.plotHeight - 2 * slicingRoom,
-			centerOption = options.center,
-			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
-			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent;
-		
-		return map(positions, function (length, i) {
-			isPercent = /%$/.test(length);
-			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
-			return (isPercent ?
-				// i == 0: centerX, relative to width
-				// i == 1: centerY, relative to height
-				// i == 2: size, relative to smallestSize
-				// i == 4: innerSize, relative to smallestSize
-				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
-					pInt(length) / 100 :
-				length) + (handleSlicingRoom ? slicingRoom : 0);
-		});
 	},
 	
 	/**
@@ -16773,9 +16781,14 @@ var PieSeries = {
 	drawTracker: PointTrackerMixin.drawTracker,
 
 	/**
-	 * Use a simple symbol from column prototype
+	 * Use a simple symbol from LegendSymbolMixin
 	 */
-	drawLegendSymbol: LegendSymbolMixin.drawLegendSymbol,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+
+	/**
+	 * Use the getCenter method from drawLegendSymbol
+	 */
+	getCenter: CenteredSeriesMixin.getCenter,
 
 	/**
 	 * Pies don't have point marker symbols
@@ -16803,6 +16816,7 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
+	CenteredSeriesMixin: CenteredSeriesMixin,
 	
 	// Various
 	arrayMin: arrayMin,
