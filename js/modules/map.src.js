@@ -29,7 +29,6 @@
 
 	// Set the default map navigation options
 	defaultOptions.mapNavigation = {
-		enabled: false,
 		buttonOptions: {
 			align: 'right',
 			verticalAlign: 'bottom',
@@ -58,6 +57,9 @@
 				y: 0
 			}
 		}
+		// enableButtons: false,
+		// zoomOnDoubleClick: true,
+		// zoomOnMouseWheel: true
 	};
 	
 	/**
@@ -152,7 +154,8 @@
 	//--- Start zooming and panning features
 
 	Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
-		var chart = this;
+		var chart = this,
+			mapNavigation = chart.options.mapNavigation;
 
 		proceed.call(chart);
 
@@ -160,14 +163,18 @@
 		chart.renderMapNavigation();
 
 		// Add the double click event
-		Highcharts.addEvent(chart.container, 'dblclick', function (e) {
-			chart.pointer.onContainerDblClick(e);
-		});
+		if (pick(mapNavigation.zoomOnDoubleClick, true)) {
+			Highcharts.addEvent(chart.container, 'dblclick', function (e) {
+				chart.pointer.onContainerDblClick(e);
+			});
+		}
 
 		// Add the mousewheel event
-		Highcharts.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
-			chart.pointer.onContainerMouseWheel(e);
-		});
+		if (pick(mapNavigation.zoomOnMouseWheel, true)) {
+			Highcharts.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+				chart.pointer.onContainerMouseWheel(e);
+			});
+		}
 	});
 
 	// Extend the Pointer
@@ -224,7 +231,7 @@
 					this.handler.call(chart); 
 				};
 
-			if (pick(options.enabled, true)) {
+			if (options.enableButtons) {
 				for (n in buttons) {
 					if (buttons.hasOwnProperty(n)) {
 						buttonOptions = merge(options.buttonOptions, buttons[n]);
