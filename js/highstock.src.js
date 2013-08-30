@@ -12480,6 +12480,7 @@ Point.prototype = {
 	remove: function (redraw, animation) {
 		var point = this,
 			series = point.series,
+			points = series.points,
 			chart = series.chart,
 			i,
 			data = series.data;
@@ -12492,6 +12493,9 @@ Point.prototype = {
 
 			// splice all the parallel arrays
 			i = inArray(point, data);
+			if (data.length === points.length) {
+				points.splice(i, 1);			
+			}
 			data.splice(i, 1);
 			series.options.data.splice(i, 1);
 			series.xData.splice(i, 1);
