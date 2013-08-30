@@ -796,8 +796,8 @@
 		 * When drilling up, pull out the individual point graphics from the lower series
 		 * and animate them into the origin point in the upper series.
 		 */
-		animateDrillupFrom: function (newSeries, level) {
-			Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, newSeries, level);
+		animateDrillupFrom: function (level) {
+			Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 		},
 
 
