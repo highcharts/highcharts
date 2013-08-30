@@ -248,7 +248,7 @@ H.extend(H.Data.prototype, {
 						} else {
 							for (j = 0; j < commonLineage.length; j++) {
 								if (commonLineage[j] !== itemLineage[j]) {
-									commonLineage.slice(0, j);
+									commonLineage = commonLineage.slice(0, j);
 								}
 							}
 						}
