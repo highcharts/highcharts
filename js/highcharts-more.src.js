@@ -1550,7 +1550,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		for (i = 0; i < dataLength; i++) {
 			y = yData[i];
-			point = points ? points[i] : {};
+			point = points && points[i] ? points[i] : {};
 
 			if (y === "sum" || point.isSum) {
 				yData[i] = sum;
