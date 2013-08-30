@@ -202,7 +202,7 @@ $(function () {
         },
 
         mapNavigation: {
-            enabled: true
+            enableButtons: true
         },
         
         series : [{

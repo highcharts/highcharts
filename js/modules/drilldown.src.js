@@ -4,6 +4,8 @@
  * Author: Torstein Honsi
  * Last revision: 2013-02-18
  * License: MIT License
+ *
+ * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  * 
  * TODO:
  * - Make unlinked axis labels revert to default CSS without having to explicitly define it
@@ -42,9 +44,9 @@
     H.SVGRenderer.prototype.Element.prototype.fadeIn = function () {
         this
         .attr({
-            opacity: 0
+            opacity: 0,
+            visibility: 'visible'
         })
-        .show()
         .animate({
             opacity: 1
         }, {
@@ -105,6 +107,7 @@
         if (newSeries.type === oldSeries.type) {
             newSeries.drilldownLevel = level;
 		    newSeries.animate = newSeries.animateDrillupTo || noop;
+            newSeries.options.animation = true;
 
             if (oldSeries.animateDrillupFrom) {
 			    oldSeries.animateDrillupFrom(newSeries, level);
@@ -169,11 +172,9 @@
 
         H.each(this.points, function (point) {
             var graphic = point.graphic,
-                group = point.group,
                 startColor = H.Color(point.color).rgba;
 
             delete point.graphic;
-            delete point.group;
             if (graphic.r === undefined) {
                 console.log("TODO: fix animation bug. May be related to #1517");
             }
@@ -187,7 +188,6 @@
                 },
                 complete: function () {
                     graphic.destroy();
-                    group.destroy();
                 }
             }));
         });
@@ -231,7 +231,6 @@
             }, Math.max(this.chart.options.drilldown.animation.duration - 50, 0));
 
             // Reset
-            console.log(234)
             this.animate = noop;
         }
 
@@ -338,6 +337,7 @@
             level = {
                 seriesOptions: series.userOptions,
                 shapeArgs: this.shapeArgs,
+                bBox: this.graphic.getBBox(),
                 color: color,
                 newSeries: ddOptions,
                 pointOptions: series.options.data[pointIndex],
@@ -358,6 +358,7 @@
             // Run fancy cross-animation on supported and equal types
             if (series.type === newSeries.type) {
                 newSeries.animate = newSeries.animateDrilldown || noop;
+                newSeries.options.animation = true;
             }
 			
 			series.remove(false);
