@@ -8,7 +8,6 @@
  * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  * 
  * TODO:
- * - Pies broken
  * - Lint
  */
 
@@ -181,39 +180,6 @@
     };
 
 
-
-    /**
-     * When drilling up, pull out the individual point graphics from the lower series
-     * and animate them into the origin point in the upper series.
-     */
-    H.seriesTypes.pie.prototype.animateDrillupFrom = function (newSeries, level) {
-        var animateTo = this.animateTo,
-            animationOptions = this.chart.options.drilldown.animation;
-
-        H.each(this.points, function (point) {
-            var graphic = point.graphic,
-                startColor = H.Color(point.color).rgba;
-
-            delete point.graphic;
-            if (graphic.r === undefined) {
-                console.log("TODO: fix animation bug. May be related to #1517");
-            }
-            graphic.animate(level.shapeArgs, H.merge(animationOptions, {
-                step: function (val, fx) {
-                    if (fx.prop === 'start') {
-                        this.attr({
-                            fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
-                        });
-                    }
-                },
-                complete: function () {
-                    graphic.destroy();
-                }
-            }));
-        });
-    };
-
-
     /**
      * When drilling up, keep the upper series invisible until the lower series has
      * moved into place
@@ -277,17 +243,27 @@
      * When drilling up, pull out the individual point graphics from the lower series
      * and animate them into the origin point in the upper series.
      */
-    H.seriesTypes.column.prototype.animateDrillupFrom = function (newSeries, level) {
-        var animateTo = this.animateTo,
-            animationOptions = this.chart.options.drilldown.animation,
+    H.seriesTypes.column.prototype.animateDrillupFrom = 
+        H.seriesTypes.pie.prototype.animateDrillupFrom =
+    function (newSeries, level) {
+        var animationOptions = this.chart.options.drilldown.animation,
             group = this.group;
 
         delete this.group;
         H.each(this.points, function (point) {
-            var graphic = point.graphic;
+            var graphic = point.graphic,
+                startColor = H.Color(point.color).rgba;
 
             delete point.graphic;
             graphic.animate(level.shapeArgs, H.merge(animationOptions, {
+
+                step: function (val, fx) {
+                    if (fx.prop === 'start') {
+                        this.attr({
+                            fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
+                        });
+                    }
+                },
                 complete: function () {
                     graphic.destroy();
                     if (group) {
