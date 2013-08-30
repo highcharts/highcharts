@@ -893,7 +893,10 @@ Series.prototype = {
 			names = series.names,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
-			point;
+			point,
+			isInTheMiddle,
+			x,
+			i;
 
 		setAnimation(animation, chart);
 
@@ -916,14 +919,30 @@ Series.prototype = {
 		// the Point instance will be created on demand and pushed to the series.data array.
 		point = { series: series };
 		series.pointClass.prototype.applyOptions.apply(point, [options]);
-		xData.push(point.x);
-		yData.push(series.toYData ? series.toYData(point) : point.y);
-		zData.push(point.z);
-		if (names) {
-			names[point.x] = point.name;
-		}
-		dataOptions.push(options);
+		x = point.x;
 
+		// Get the insertion point
+		i = xData.length;
+		if (series.requireSorting && x < xData[i - 1]) {
+			isInTheMiddle = true;
+			while (i && xData[i - 1] > x) {
+				i--;
+			}
+		}
+		
+		xData.splice(i, 0, x);
+		yData.splice(i, 0, series.toYData ? series.toYData(point) : point.y);
+		zData.splice(i, 0, point.z);
+		if (names) {
+			names[x] = point.name;
+		}
+		dataOptions.splice(i, 0, options);
+
+		if (isInTheMiddle) {
+			series.data.splice(i, 0, null);
+			series.processData();
+		}
+		
 		// Generate points to be added to the legend (#1329) 
 		if (seriesOptions.legendType === 'point') {
 			series.generatePoints();
