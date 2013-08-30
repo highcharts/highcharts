@@ -349,35 +349,6 @@ $(function () {
             borderWidth : 1
         },
 
-        drilldown: {
-            activeAxisLabelStyle: {
-                cursor: 'pointer',
-                color: '#039',
-                fontWeight: 'bold',
-                textDecoration: 'underline'            
-            },
-            activeDataLabelStyle: {
-                cursor: 'pointer',
-                color: '#039',
-                fontWeight: 'bold',
-                textDecoration: 'underline'            
-            },
-            animation: {
-                duration: 500
-            },
-            series: [{
-                id: 'sognOgFjordane',
-                name: 'Sogn og Fjordane',
-                data: [],
-                colorRange: {
-                    from: '#E6E7E8',
-                    to: '#005645',
-                    fromLabel: '0'  ,
-                    toLabel: '100'
-                }
-            }]
-        },
-        
         title : {
             text : 'Highcharts Map Drilldown'
         },
@@ -391,17 +362,30 @@ $(function () {
         mapNavigation: {
             enableButtons: true
         },
+
+        plotOptions: {
+            map: {
+                colorRange: {
+                    from: '#E6E7E8',
+                    to: '#005645',
+                    fromLabel: '0'  ,
+                    toLabel: '100'
+                }
+            }
+        },
         
         series : [{
             data : [],
-            name: 'Norway',
-            colorRange: {
-                from: '#E6E7E8',
-                to: '#005645',
-                fromLabel: '0'  ,
-                toLabel: '100'
-            }
-        }]
+            name: 'Norway'
+        }], 
+
+        drilldown: {
+            series: [{
+                id: 'sognOgFjordane',
+                name: 'Sogn og Fjordane',
+                data: []
+            }]
+        }
     };
 
     // Add values

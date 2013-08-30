@@ -363,6 +363,7 @@
 		colorKey: 'y',
 		trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 		getSymbol: noop,
+		supportsDrilldown: true,
 		getExtremesFromAll: true,
 		init: function (chart) {
 			var series = this,
