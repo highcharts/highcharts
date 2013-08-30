@@ -318,7 +318,7 @@ Point.prototype = {
 					if (options.marker && options.marker.symbol) {
 						point.graphic = graphic.destroy();
 					} else {
-						graphic.attr(point.pointAttr[series.state]);
+						graphic.attr(point.pointAttr[point.state || '']);
 					}
 				}
 			}
