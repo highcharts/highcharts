@@ -768,7 +768,7 @@
 			if (!init) {
 
 				scale = Math.min(fromBox.width / toBox.width, fromBox.height / toBox.height);
-				level.attribs = {
+				level.shapeArgs = {
 					scaleX: scale,
 					scaleY: scale,
 					translateX: fromBox.x,
@@ -778,7 +778,7 @@
 				each(this.points, function (point) {
 
 					point.graphic
-						.attr(level.attribs)
+						.attr(level.shapeArgs)
 						.animate({
 							scaleX: 1,
 							scaleY: 1,
@@ -797,23 +797,7 @@
 		 * and animate them into the origin point in the upper series.
 		 */
 		animateDrillupFrom: function (newSeries, level) {
-			var animationOptions = this.chart.options.drilldown.animation,
-				group = this.group;
-
-			delete this.group;
-			each(this.points, function (point) {
-				var graphic = point.graphic;
-
-				delete point.graphic;
-				graphic.animate(level.attribs, merge(animationOptions, {
-					complete: function () {
-						graphic.destroy();
-						if (group) {
-							group = group.destroy();
-						}
-					}
-				}));
-			});
+			Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, newSeries, level);
 		},
 
 
