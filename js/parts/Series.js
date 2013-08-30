@@ -1364,8 +1364,8 @@ Series.prototype = {
 			j;
 
 		// For stacked series, get the value from the stack
-		if (options.stacking) {
-			stackExtremes = yAxis.stackExtremes[stackKey];
+		stackExtremes = options.stacking && yAxis.stackExtremes[stackKey];
+		if (stackExtremes) {			
 			stackMin = stackExtremes.dataMin;
 			stackMax = stackExtremes.dataMax;
 
