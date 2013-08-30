@@ -273,17 +273,25 @@
 		 * Zoom the map in or out by a certain amount. Less than 1 zooms in, greater than 1 zooms out.
 		 */
 		mapZoom: function (howMuch, centerXArg, centerYArg) {
-			var xAxis = this.xAxis[0],
+
+			if (this.isMapZooming) {
+				return;
+			}
+
+			var chart = this,
+				xAxis = chart.xAxis[0],
 				xRange = xAxis.max - xAxis.min,
 				centerX = pick(centerXArg, xAxis.min + xRange / 2),
 				newXRange = xRange * howMuch,
-				yAxis = this.yAxis[0],
+				yAxis = chart.yAxis[0],
 				yRange = yAxis.max - yAxis.min,
 				centerY = pick(centerYArg, yAxis.min + yRange / 2),
 				newYRange = yRange * howMuch,
 				newXMin = centerX - newXRange / 2,
 				newYMin = centerY - newYRange / 2,
-				newExt = this.fitToBox({
+				animation = pick(chart.options.chart.animation, true),
+				delay,
+				newExt = chart.fitToBox({
 					x: newXMin,
 					y: newYMin,
 					width: newXRange,
@@ -298,7 +306,16 @@
 			xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
 			yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 
-			this.redraw();
+			// Prevent zooming until this one is finished animating
+			delay = animation ? animation.duration || 500 : 0;
+			if (delay) {
+				chart.isMapZooming = true;
+				setTimeout(function () {
+					chart.isMapZooming = false;
+				}, delay);
+			}
+
+			chart.redraw();
 		}
 	});
 	
