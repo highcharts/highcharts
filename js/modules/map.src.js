@@ -751,8 +751,80 @@
 			// Now draw the data labels
 			Highcharts.Series.prototype.drawDataLabels.call(series);
 			
+		},
+
+		/**
+		 * Animate in the new series from the clicked point in the old series.
+		 * Depends on the drilldown.js module
+		 */
+		animateDrilldown: function (init) {
+			var toBox = this.chart.plotBox,
+				level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
+				fromBox = level.bBox,
+				animationOptions = this.chart.options.drilldown.animation,
+				scale;
+				
+			if (!init) {
+
+				scale = Math.min(fromBox.width / toBox.width, fromBox.height / toBox.height);
+				level.attribs = {
+					scaleX: scale,
+					scaleY: scale,
+					translateX: fromBox.x,
+					translateY: fromBox.y
+				};
+				
+				each(this.points, function (point) {
+
+					point.graphic
+						.attr(level.attribs)
+						.animate({
+							scaleX: 1,
+							scaleY: 1,
+							translateX: 0,
+							translateY: 0
+						}, animationOptions);
+
+				});
+			}
+			
+		},
+
+
+		/**
+		 * When drilling up, pull out the individual point graphics from the lower series
+		 * and animate them into the origin point in the upper series.
+		 */
+		animateDrillupFrom: function (newSeries, level) {
+			var animationOptions = this.chart.options.drilldown.animation,
+				group = this.group;
+
+			delete this.group;
+			each(this.points, function (point) {
+				var graphic = point.graphic;
+
+				delete point.graphic;
+				graphic.animate(level.attribs, merge(animationOptions, {
+					complete: function () {
+						graphic.destroy();
+						if (group) {
+							group = group.destroy();
+						}
+					}
+				}));
+			});
+		},
+
+
+		/**
+		 * When drilling up, keep the upper series invisible until the lower series has
+		 * moved into place
+		 */
+		animateDrillupTo: function (init) {
+			Highcharts.seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 		}
 	});
+
 	
 	/**
 	 * A wrapper for Chart with all the default values for a Map
