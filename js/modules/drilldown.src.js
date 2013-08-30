@@ -8,11 +8,8 @@
  * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  * 
  * TODO:
- * - Make unlinked axis labels revert to default CSS without having to explicitly define it
- * - Automatically mark drillable points with cursor: pointer
- * - Animation for each series type to visualize how a point explodes into sub-points and collapses back
- * - Default options that are merged in. 
- * - Options for the button, similar to resetZoomButton options.
+ * - Pies broken
+ * - Lint
  */
 
 (function (H) {
@@ -37,6 +34,32 @@
     H.extend(defaultOptions.lang, {
         drillUpText: '◁ Back to {series.name}'
     });
+    defaultOptions.drilldown = {
+        activeAxisLabelStyle: {
+            cursor: 'pointer',
+            color: '#039',
+            fontWeight: 'bold',
+            textDecoration: 'underline'            
+        },
+        activeDataLabelStyle: {
+            cursor: 'pointer',
+            color: '#039',
+            fontWeight: 'bold',
+            textDecoration: 'underline'            
+        },
+        animation: {
+            duration: 500
+        },
+        drillUpButton: {
+            position: { 
+                align: 'right',
+                x: -10,
+                y: 10
+            }
+            // relativeTo: 'plotBox'
+            // theme
+        }
+    };    
 
     /**
      * A general fadeIn method
@@ -44,7 +67,7 @@
     H.SVGRenderer.prototype.Element.prototype.fadeIn = function () {
         this
         .attr({
-            opacity: 0,
+            opacity: 0.1,
             visibility: 'visible'
         })
         .animate({
@@ -64,13 +87,14 @@
 
     };
 
-	H.Chart.prototype.showResetDrilldown = function () {
+	H.Chart.prototype.showDrillUp = function () {
 		var chart = this,
-            backText = this.getDrilldownBackText();
+            backText = this.getDrilldownBackText(),
+            buttonOptions = chart.options.drilldown.drillUpButton;
             
 
-		if (!this.resetDrilldownButton) {
-			this.resetDrilldownButton = this.renderer.button(
+		if (!this.drillUpButton) {
+			this.drillUpButton = this.renderer.button(
 				backText,
 				null,
 				null,
@@ -78,18 +102,14 @@
 					chart.drillUp(); 
 				}
             )
-			.attr({
-				align: 'right',
-                zIndex: 20
-			})
+			.attr(Highcharts.extend({
+				align: buttonOptions.position.align,
+                zIndex: 9
+			}, buttonOptions.theme))
 			.add()
-			.align({ 
-				align: 'right',
-				x: -10,
-				y: 10
-			}, false, 'plotBox');
+			.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
 		} else {
-            this.resetDrilldownButton.attr({
+            this.drillUpButton.attr({
                 text: backText
             })
             .align();
@@ -120,9 +140,9 @@
 		this.redraw();
 
 		if (this.drilldownLevels.length === 0) {
-			this.resetDrilldownButton = this.resetDrilldownButton.destroy();
+			this.drillUpButton = this.drillUpButton.destroy();
 		} else {
-            this.resetDrilldownButton.attr({
+            this.drillUpButton.attr({
                 text: this.getDrilldownBackText()
             })
             .align();
@@ -364,14 +384,16 @@
 			series.remove(false);
 			
 			chart.redraw();
-			chart.showResetDrilldown();
+			chart.showDrillUp();
 		}
 	};
 	
 	H.wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
 		var point = proceed.call(this, series, options, x),
 			series = point.series,
-			chart = series.chart;
+			chart = series.chart,
+            tick = series.xAxis && series.xAxis.ticks[x],
+            tickLabel = tick && tick.label;
 		
 		if (point.drilldown) {
 			
@@ -381,19 +403,23 @@
 			});
 			
 			// Make axis labels clickable
-			if (series.xAxis && series.xAxis.ticks[x]) {
-				series.xAxis.ticks[x].label.attr({
-					'class': 'highcharts-drilldown-axis-label'
-				})
-				.css(chart.options.drilldown.activeAxisLabelStyle)
-				.on('click', function () {
-					if (point.doDrilldown) {
-						point.doDrilldown();
-					}
-				});
+			if (tickLabel) {
+                if (!tickLabel._basicStyle) {
+                    tickLabel._basicStyle = tickLabel.element.getAttribute('style');
+                }
+				tickLabel
+                    .addClass('highcharts-drilldown-axis-label')
+    				.css(chart.options.drilldown.activeAxisLabelStyle)
+    				.on('click', function () {
+    					if (point.doDrilldown) {
+    						point.doDrilldown();
+    					}
+    				});
 					
 			}
-		}
+		} else if (tickLabel && tickLabel._basicStyle) {
+            tickLabel.element.setAttribute('style', tickLabel._basicStyle);
+        }
 		
 		return point;
 	});
@@ -417,17 +443,25 @@
 		});
 	});
 
-    // Mark the trackers with a pointer cursor
-    H.each([H.seriesTypes.column.prototype, H.seriesTypes.pie.prototype], function (proto) {
-    	H.wrap(proto, 'drawTracker', function (proceed) {
-    		proceed.call(this);
-    		H.each(this.points, function (point) {
-    			if (point.drilldown && point.graphic) {
-    				point.graphic
-    					.css({ cursor: 'pointer' });
-    			}
-    		});
-    	});
-    });
+    // Mark the trackers with a pointer 
+    H.seriesTypes.column.prototype.supportsDrilldown = true;
+    H.seriesTypes.pie.prototype.supportsDrilldown = true;
+    var type;
+    for (type in H.seriesTypes) {
+        if (H.seriesTypes[type].prototype.supportsDrilldown) {
+        	H.wrap(H.seriesTypes[type].prototype, 'drawTracker', function (proceed) {
+        		proceed.call(this);
+        		H.each(this.points, function (point) {
+        			if (point.drilldown && point.graphic) {
+        				point.graphic
+                            .attr({
+                                'class': 'highcharts-drilldown-point'
+                            })
+        					.css({ cursor: 'pointer' });
+        			}
+        		});
+        	});
+        }
+    };
     	
 }(Highcharts));
