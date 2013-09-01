@@ -146,16 +146,27 @@
 						
 						
 						// View data
-						var strData = JSON.stringify(Highcharts.Data.prototype.pathToString(data));
+						var mapData = [];
+						$.each(data, function (i, point) {
+							point = Highcharts.merge(point);
+							delete point._minX;
+							delete point._maxX;
+							delete point._minY;
+							delete point._maxY;
+							delete point.y;
+							delete point.color;
+							mapData[i] = point;
+						});
+						mapData = JSON.stringify(Highcharts.Data.prototype.pathToString(mapData), null, "\t");
 						$('#view-data')
-							.html('View data (' + Highcharts.numberFormat(strData.length / 1024, 1, '.') + ' kB)')
+							.html('View data (' + Highcharts.numberFormat(mapData.length / 1024, 1, '.') + ' kB)')
 							.click(function () {
 								if (chart) {
 									chart = chart.destroy();
 								}
 								$('#container').html(
-									'<div style="font-family:courier new;font-size: 0.8em; color: green">' + 
-										strData + '</div>'
+									'<div style="font-family:courier new;font-size: 0.8em; color: green;"><pre>' + 
+										mapData + '</pre></div>'
 								);
 							});
 					}

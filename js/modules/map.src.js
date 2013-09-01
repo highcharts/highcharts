@@ -652,7 +652,7 @@
 		},
 		
 		/**
-		 * In choropleth maps, the color is a result of the value, so this needs translation tood
+		 * In choropleth maps, the color is a result of the value, so this needs translation too
 		 */
 		translateColors: function (dataMin, dataMax) {
 			
@@ -672,6 +672,7 @@
 				var value = point[colorKey],
 					rgba = [],
 					range,
+					color,
 					i,
 					pos;
 
@@ -682,7 +683,7 @@
 						from = range.from;
 						to = range.to;
 						if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
-							point.options.color = range.color;
+							color = range.color;
 							break;
 						}
 							
@@ -696,7 +697,12 @@
 							to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
 						);
 					}
-					point.options.color = value === null ? seriesOptions.nullColor : 'rgba(' + rgba.join(',') + ')';
+					color = value === null ? seriesOptions.nullColor : 'rgba(' + rgba.join(',') + ')';
+				}
+
+				if (color) {
+					point.color = null; // reset from previous drilldowns, use of the same data options
+					point.options.color = color;
 				}
 			});
 		},
@@ -775,6 +781,7 @@
 					translateY: fromBox.y
 				};
 				
+				// TODO: Animate this.group instead
 				each(this.points, function (point) {
 
 					point.graphic
