@@ -21,7 +21,8 @@
 		Chart = H.Chart,
 		seriesTypes = H.seriesTypes,
 		PieSeries = seriesTypes.pie,
-		ColumnSeries = seriesTypes.column;
+		ColumnSeries = seriesTypes.column,
+		fireEvent = HighchartsAdapter.fireEvent;
 
 	// Utilities
 	function tweenColors(startColor, endColor, pos) {
@@ -84,6 +85,47 @@
 	// Extend the Chart prototype
 	Chart.prototype.drilldownLevels = [];
 
+	Chart.prototype.addSeriesAsDrilldown = function (point, ddOptions) {
+		var oldSeries = point.series,
+			xAxis = oldSeries.xAxis,
+			newSeries,
+			color = point.color || oldSeries.color,
+			pointIndex,
+			level;
+			
+		ddOptions = extend({
+			color: color
+		}, ddOptions);
+		pointIndex = HighchartsAdapter.inArray(this, oldSeries.points);
+		level = {
+			seriesOptions: oldSeries.userOptions,
+			shapeArgs: point.shapeArgs,
+			bBox: point.graphic.getBBox(),
+			color: color,
+			newSeries: ddOptions,
+			pointOptions: oldSeries.options.data[pointIndex],
+			pointIndex: pointIndex
+		};
+
+		this.drilldownLevels.push(level);
+
+		newSeries = this.addSeries(ddOptions, false);
+		if (xAxis) {
+			xAxis.oldPos = xAxis.pos;
+		}
+
+		// Run fancy cross-animation on supported and equal types
+		if (oldSeries.type === newSeries.type) {
+			newSeries.animate = newSeries.animateDrilldown || noop;
+			newSeries.options.animation = true;
+		}
+		
+		oldSeries.remove(false);
+		
+		this.redraw();
+		this.showDrillUpButton();
+	};
+
 	Chart.prototype.getDrilldownBackText = function () {
 		var lastLevel = this.drilldownLevels[this.drilldownLevels.length - 1];
 
@@ -91,7 +133,7 @@
 
 	};
 
-	Chart.prototype.showDrillUp = function () {
+	Chart.prototype.showDrillUpButton = function () {
 		var chart = this,
 			backText = this.getDrilldownBackText(),
 			buttonOptions = chart.options.drilldown.drillUpButton;
@@ -125,8 +167,8 @@
 			level = chart.drilldownLevels.pop(),
 			oldSeries = chart.series[0],
 			newSeries = chart.addSeries(level.seriesOptions, false);
-
-		HighchartsAdapter.fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+		
+		fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
 
 		if (newSeries.type === oldSeries.type) {
 			newSeries.drilldownLevel = level;
@@ -289,60 +331,25 @@
 			chart = series.chart,
 			drilldown = chart.options.drilldown,
 			i = drilldown.series.length,
-			ddOptions,
-			xAxis = series.xAxis,
-			color = this.color || series.color,
-			newSeries,
-			pointIndex,
-			level;
+			seriesOptions;
 		
-		while (i-- && !ddOptions) {
+		while (i-- && !seriesOptions) {
 			if (drilldown.series[i].id === this.drilldown) {
-				ddOptions = drilldown.series[i];
+				seriesOptions = drilldown.series[i];
 			}
 		}
+
+		// Fire the event. If seriesOptions is undefined, the implementer can check for 
+		// seriesOptions, and call addSeriesAsDrilldown async if necessary.
+		fireEvent(chart, 'drilldown', { 
+			point: this,
+			seriesOptions: seriesOptions
+		});
 		
-		if (ddOptions) {
-
-			HighchartsAdapter.inArray(this, series.points);
-			
-			
-			ddOptions = extend({
-				color: color
-			}, ddOptions);
-			pointIndex = HighchartsAdapter.inArray(this, series.points);
-			level = {
-				seriesOptions: series.userOptions,
-				shapeArgs: this.shapeArgs,
-				bBox: this.graphic.getBBox(),
-				color: color,
-				newSeries: ddOptions,
-				pointOptions: series.options.data[pointIndex],
-				pointIndex: pointIndex
-			};
-
-			HighchartsAdapter.fireEvent(chart, 'drilldown', { 
-				drilldown: level 
-			});
-			
-			chart.drilldownLevels.push(level);
-
-			newSeries = chart.addSeries(ddOptions, false);
-			if (xAxis) {
-				xAxis.oldPos = xAxis.pos;
-			}
-
-			// Run fancy cross-animation on supported and equal types
-			if (series.type === newSeries.type) {
-				newSeries.animate = newSeries.animateDrilldown || noop;
-				newSeries.options.animation = true;
-			}
-			
-			series.remove(false);
-			
-			chart.redraw();
-			chart.showDrillUp();
+		if (seriesOptions) {
+			chart.addSeriesAsDrilldown(this, seriesOptions);
 		}
+
 	};
 	
 	wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
