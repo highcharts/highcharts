@@ -25,7 +25,40 @@
 		defaultOptions = Highcharts.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
 		Color = Highcharts.Color,
+		jQuery = window.jQuery,
 		noop = function () {};
+
+	
+
+	/*
+	 * Return an intermediate color between two colors, according to pos where 0
+	 * is the from color and 1 is the to color
+	 */
+	function tweenColors(from, to, pos) {
+		var i = 4,
+			rgba = [];
+
+		while (i--) {
+			rgba[i] = Math.round(
+				to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos)
+			);
+		}
+		return 'rgba(' + rgba.join(',') + ')';
+	}
+
+	// Extend jQuery with color tweening
+	if (jQuery && jQuery.Tween) {
+		jQuery.Tween.propHooks.fill = {
+			set: function (fx) {
+				if (typeof fx.start !== 'string') {
+					fx.start = fx.elem.fill;
+					fx.HCfrom = Color(fx.start);
+					fx.HCto = Color(fx.end);
+				}
+				fx.elem.attr('fill', tweenColors(fx.HCfrom, fx.HCto, fx.pos));
+			}
+		};
+	}
 
 	// Set the default map navigation options
 	defaultOptions.mapNavigation = {
@@ -346,6 +379,11 @@
 				followPointer: true,
 				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
 				pointFormat: '{series.name}: {point.y}<br/>'
+			},
+			states: {
+				normal: {
+					animation: true
+				}
 			}
 		}
 	);
@@ -670,7 +708,6 @@
 			
 			each(this.data, function (point) {
 				var value = point[colorKey],
-					rgba = [],
 					range,
 					color,
 					i,
@@ -690,14 +727,8 @@
 					}
 				} else if (colorRange && value !== undefined) {
 
-					pos = (dataMax - value) / (dataMax - dataMin);
-					i = 4;
-					while (i--) {
-						rgba[i] = Math.round(
-							to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
-						);
-					}
-					color = value === null ? seriesOptions.nullColor : 'rgba(' + rgba.join(',') + ')';
+					pos = 1 - ((dataMax - value) / (dataMax - dataMin));
+					color = value === null ? seriesOptions.nullColor : tweenColors(from, to, pos);
 				}
 
 				if (color) {
