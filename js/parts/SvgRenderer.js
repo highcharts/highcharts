@@ -89,7 +89,7 @@ SVGElement.prototype = {
 				key = 'stroke-width';
 			}
 			ret = attr(element, key) || wrapper[key] || 0;
-			if (key !== 'd' && key !== 'visibility') { // 'd' is string in animation step
+			if (key !== 'd' && key !== 'visibility' && key !== 'fill') { // 'd' is string in animation step
 				ret = parseFloat(ret);
 			}
 

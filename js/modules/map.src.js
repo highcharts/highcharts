@@ -52,8 +52,7 @@
 	if (jQuery && jQuery.Tween) {
 		jQuery.Tween.propHooks.fill = {
 			set: function (fx) {
-				if (typeof fx.start !== 'string') {
-					fx.start = fx.elem.fill;
+				if (!fx.HCfrom) {
 					fx.HCfrom = Color(fx.start);
 					fx.HCto = Color(fx.end);
 				}
