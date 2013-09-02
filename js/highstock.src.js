@@ -12618,6 +12618,7 @@ Point.prototype = {
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
 			animation = stateOptions[state || 'normal'].animation;
+			stop(point.graphic);
 			point.graphic[animation ? 'animate' : 'attr'](merge(
 				pointAttr[state],
 				radius ? { // new symbol attributes (#507, #612)
