@@ -25,11 +25,43 @@
 		defaultOptions = Highcharts.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
 		Color = Highcharts.Color,
+		jQuery = window.jQuery,
 		noop = function () {};
+
+	
+
+	/*
+	 * Return an intermediate color between two colors, according to pos where 0
+	 * is the from color and 1 is the to color
+	 */
+	function tweenColors(from, to, pos) {
+		var i = 4,
+			rgba = [];
+
+		while (i--) {
+			rgba[i] = Math.round(
+				to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos)
+			);
+		}
+		return 'rgba(' + rgba.join(',') + ')';
+	}
+
+	// Extend jQuery with color tweening
+	if (jQuery && jQuery.Tween) {
+		jQuery.Tween.propHooks.fill = {
+			set: function (fx) {
+				if (typeof fx.start !== 'string') {
+					fx.start = fx.elem.fill;
+					fx.HCfrom = Color(fx.start);
+					fx.HCto = Color(fx.end);
+				}
+				fx.elem.attr('fill', tweenColors(fx.HCfrom, fx.HCto, fx.pos));
+			}
+		};
+	}
 
 	// Set the default map navigation options
 	defaultOptions.mapNavigation = {
-		enabled: false,
 		buttonOptions: {
 			align: 'right',
 			verticalAlign: 'bottom',
@@ -58,6 +90,9 @@
 				y: 0
 			}
 		}
+		// enableButtons: false,
+		// zoomOnDoubleClick: true,
+		// zoomOnMouseWheel: true
 	};
 	
 	/**
@@ -152,7 +187,8 @@
 	//--- Start zooming and panning features
 
 	Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
-		var chart = this;
+		var chart = this,
+			mapNavigation = chart.options.mapNavigation;
 
 		proceed.call(chart);
 
@@ -160,14 +196,18 @@
 		chart.renderMapNavigation();
 
 		// Add the double click event
-		Highcharts.addEvent(chart.container, 'dblclick', function (e) {
-			chart.pointer.onContainerDblClick(e);
-		});
+		if (pick(mapNavigation.zoomOnDoubleClick, true)) {
+			Highcharts.addEvent(chart.container, 'dblclick', function (e) {
+				chart.pointer.onContainerDblClick(e);
+			});
+		}
 
 		// Add the mousewheel event
-		Highcharts.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
-			chart.pointer.onContainerMouseWheel(e);
-		});
+		if (pick(mapNavigation.zoomOnMouseWheel, true)) {
+			Highcharts.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+				chart.pointer.onContainerMouseWheel(e);
+			});
+		}
 	});
 
 	// Extend the Pointer
@@ -224,7 +264,7 @@
 					this.handler.call(chart); 
 				};
 
-			if (pick(options.enabled, true)) {
+			if (options.enableButtons) {
 				for (n in buttons) {
 					if (buttons.hasOwnProperty(n)) {
 						buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -339,6 +379,11 @@
 				followPointer: true,
 				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
 				pointFormat: '{series.name}: {point.y}<br/>'
+			},
+			states: {
+				normal: {
+					animation: true
+				}
 			}
 		}
 	);
@@ -356,6 +401,7 @@
 		colorKey: 'y',
 		trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 		getSymbol: noop,
+		supportsDrilldown: true,
 		getExtremesFromAll: true,
 		init: function (chart) {
 			var series = this,
@@ -644,7 +690,7 @@
 		},
 		
 		/**
-		 * In choropleth maps, the color is a result of the value, so this needs translation tood
+		 * In choropleth maps, the color is a result of the value, so this needs translation too
 		 */
 		translateColors: function (dataMin, dataMax) {
 			
@@ -662,8 +708,8 @@
 			
 			each(this.data, function (point) {
 				var value = point[colorKey],
-					rgba = [],
 					range,
+					color,
 					i,
 					pos;
 
@@ -674,21 +720,20 @@
 						from = range.from;
 						to = range.to;
 						if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
-							point.options.color = range.color;
+							color = range.color;
 							break;
 						}
 							
 					}
 				} else if (colorRange && value !== undefined) {
 
-					pos = (dataMax - value) / (dataMax - dataMin);
-					i = 4;
-					while (i--) {
-						rgba[i] = Math.round(
-							to.rgba[i] + (from.rgba[i] - to.rgba[i]) * pos
-						);
-					}
-					point.options.color = value === null ? seriesOptions.nullColor : 'rgba(' + rgba.join(',') + ')';
+					pos = 1 - ((dataMax - value) / (dataMax - dataMin));
+					color = value === null ? seriesOptions.nullColor : tweenColors(from, to, pos);
+				}
+
+				if (color) {
+					point.color = null; // reset from previous drilldowns, use of the same data options
+					point.options.color = color;
 				}
 			});
 		},
@@ -744,8 +789,65 @@
 			// Now draw the data labels
 			Highcharts.Series.prototype.drawDataLabels.call(series);
 			
+		},
+
+		/**
+		 * Animate in the new series from the clicked point in the old series.
+		 * Depends on the drilldown.js module
+		 */
+		animateDrilldown: function (init) {
+			var toBox = this.chart.plotBox,
+				level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
+				fromBox = level.bBox,
+				animationOptions = this.chart.options.drilldown.animation,
+				scale;
+				
+			if (!init) {
+
+				scale = Math.min(fromBox.width / toBox.width, fromBox.height / toBox.height);
+				level.shapeArgs = {
+					scaleX: scale,
+					scaleY: scale,
+					translateX: fromBox.x,
+					translateY: fromBox.y
+				};
+				
+				// TODO: Animate this.group instead
+				each(this.points, function (point) {
+
+					point.graphic
+						.attr(level.shapeArgs)
+						.animate({
+							scaleX: 1,
+							scaleY: 1,
+							translateX: 0,
+							translateY: 0
+						}, animationOptions);
+
+				});
+			}
+			
+		},
+
+
+		/**
+		 * When drilling up, pull out the individual point graphics from the lower series
+		 * and animate them into the origin point in the upper series.
+		 */
+		animateDrillupFrom: function (level) {
+			Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
+		},
+
+
+		/**
+		 * When drilling up, keep the upper series invisible until the lower series has
+		 * moved into place
+		 */
+		animateDrillupTo: function (init) {
+			Highcharts.seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 		}
 	});
+
 	
 	/**
 	 * A wrapper for Chart with all the default values for a Map

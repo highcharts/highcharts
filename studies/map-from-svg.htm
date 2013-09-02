@@ -6,10 +6,10 @@
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
 		
-		<script src="http://code.highcharts.com/3.0.4/highcharts.js"></script>
-		<script src="http://github.highcharts.com/fe297f0/modules/map.src.js"></script>
-		<script src="http://github.highcharts.com/fe297f0/modules/data.src.js"></script>
-		<script src="http://github.highcharts.com/fe297f0/modules/map-parser.src.js"></script>
+		<script src="http://code.highcharts.com/3.0.5/highcharts.js"></script>
+		<script src="http://github.highcharts.com/bdf6471/modules/map.src.js"></script>
+		<script src="http://github.highcharts.com/bdf6471/modules/data.src.js"></script>
+		<script src="http://github.highcharts.com/bdf6471/modules/map-parser.src.js"></script>
 		
 		<!--
 		<script src="http://code.highcharts.local/highcharts.js"></script>
@@ -146,16 +146,27 @@
 						
 						
 						// View data
-						var strData = JSON.stringify(Highcharts.Data.prototype.pathToString(data));
+						var mapData = [];
+						$.each(data, function (i, point) {
+							point = Highcharts.merge(point);
+							delete point._minX;
+							delete point._maxX;
+							delete point._minY;
+							delete point._maxY;
+							delete point.y;
+							delete point.color;
+							mapData[i] = point;
+						});
+						mapData = JSON.stringify(Highcharts.Data.prototype.pathToString(mapData), null, "\t");
 						$('#view-data')
-							.html('View data (' + Highcharts.numberFormat(strData.length / 1024, 1, '.') + ' kB)')
+							.html('View data (' + Highcharts.numberFormat(mapData.length / 1024, 1, '.') + ' kB)')
 							.click(function () {
 								if (chart) {
 									chart = chart.destroy();
 								}
 								$('#container').html(
-									'<div style="font-family:courier new;font-size: 0.8em; color: green">' + 
-										strData + '</div>'
+									'<div style="font-family:courier new;font-size: 0.8em; color: green;"><pre>' + 
+										mapData + '</pre></div>'
 								);
 							});
 					}
