@@ -475,7 +475,7 @@ Point.prototype = {
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
-			animation = stateOptions[state || 'normal'].animation;
+			animation = stateOptions[state || 'normal'] && stateOptions[state || 'normal'].animation;
 			stop(point.graphic);
 			point.graphic[animation ? 'animate' : 'attr'](merge(
 				pointAttr[state],
