@@ -88,6 +88,7 @@
 	Chart.prototype.addSeriesAsDrilldown = function (point, ddOptions) {
 		var oldSeries = point.series,
 			xAxis = oldSeries.xAxis,
+			yAxis = oldSeries.yAxis,
 			newSeries,
 			color = point.color || oldSeries.color,
 			pointIndex,
@@ -104,7 +105,13 @@
 			color: color,
 			newSeries: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
-			pointIndex: pointIndex
+			pointIndex: pointIndex,
+			oldExtremes: {
+				xMin: xAxis && xAxis.userMin,
+				xMax: xAxis && xAxis.userMax,
+				yMin: yAxis && yAxis.userMin,
+				yMax: yAxis && yAxis.userMax
+			}
 		};
 
 		this.drilldownLevels.push(level);
@@ -112,6 +119,8 @@
 		newSeries = this.addSeries(ddOptions, false);
 		if (xAxis) {
 			xAxis.oldPos = xAxis.pos;
+			xAxis.userMin = xAxis.userMax = null;
+			yAxis.userMin = yAxis.userMax = null;
 		}
 
 		// Run fancy cross-animation on supported and equal types
@@ -166,6 +175,7 @@
 		var chart = this,
 			level = chart.drilldownLevels.pop(),
 			oldSeries = chart.series[0],
+			oldExtremes = level.oldExtremes,
 			newSeries = chart.addSeries(level.seriesOptions, false);
 		
 		fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
@@ -181,6 +191,12 @@
 		}
 
 		oldSeries.remove(false);
+
+		// Reset the zoom level of the upper series
+		if (newSeries.xAxis) {
+			newSeries.xAxis.setExtremes(oldExtremes.xMin, oldExtremes.xMax, false);
+			newSeries.yAxis.setExtremes(oldExtremes.yMin, oldExtremes.yMax, false);
+		}
 
 
 		this.redraw();
@@ -237,7 +253,7 @@
 			ColumnSeries.prototype.animateDrillupTo = function (init) {
 		if (!init) {
 			var newSeries = this,
-				pointIndex = newSeries.drilldownLevel.pointIndex;
+				level = newSeries.drilldownLevel;
 
 			each(this.points, function (point) {
 				point.graphic.hide();
@@ -254,7 +270,7 @@
 			setTimeout(function () {
 				each(newSeries.points, function (point, i) {  
 					// Fade in other points			  
-					var verb = i === pointIndex ? 'show' : 'fadeIn';
+					var verb = i === level.pointIndex ? 'show' : 'fadeIn';
 					point.graphic[verb]();
 					if (point.dataLabel) {
 						point.dataLabel[verb]();

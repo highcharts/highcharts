@@ -17,6 +17,7 @@
 	var UNDEFINED,
 		Axis = Highcharts.Axis,
 		Chart = Highcharts.Chart,
+		Point = Highcharts.Point,
 		each = Highcharts.each,
 		extend = Highcharts.extend,
 		merge = Highcharts.merge,
@@ -24,6 +25,7 @@
 		numberFormat = Highcharts.numberFormat,
 		defaultOptions = Highcharts.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
+		wrap = Highcharts.wrap,
 		Color = Highcharts.Color,
 		jQuery = window.jQuery,
 		noop = function () {};
@@ -124,7 +126,7 @@
 	/**
 	 * Extend the Axis object with methods specific to maps
 	 */
-	Highcharts.wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		
 		if (chart.options.chart.type === 'map') {
 			extend(this, {
@@ -186,7 +188,7 @@
 
 	//--- Start zooming and panning features
 
-	Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
+	wrap(Chart.prototype, 'render', function (proceed) {
 		var chart = this,
 			mapNavigation = chart.options.mapNavigation;
 
@@ -377,8 +379,7 @@
 			},
 			tooltip: {
 				followPointer: true,
-				headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
-				pointFormat: '{series.name}: {point.y}<br/>'
+				pointFormat: '{point.name}: {point.y}<br/>'
 			},
 			states: {
 				normal: {
@@ -387,7 +388,20 @@
 			}
 		}
 	);
-	
+
+	/**
+	 * Extend the Point object to split paths
+	 */
+	wrap(Point.prototype, 'applyOptions', function (proceed, options, x) {
+		var point = proceed.call(this, options, x);
+
+		if (point.path && typeof point.path === 'string') {
+			point.path = point.options.path = Highcharts.splitPath(point.path);
+		}
+
+		return point;
+	});
+
 	/**
 	 * Add the series type
 	 */
@@ -825,6 +839,8 @@
 						}, animationOptions);
 
 				});
+
+				delete this.animate;
 			}
 			
 		},

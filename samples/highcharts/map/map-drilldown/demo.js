@@ -356,12 +356,22 @@ $(function () {
                             series = {
                                 name: 'Hordaland',
                                 data: hordaland
-                            };
+                            },
+                            bBox = e.point.graphic.getBBox();
+                        
                         $.each(series.data, function () {
                             this.y = Math.round(Math.random() * 100);
                         });
 
-                        chart.showLoading('Loading drilldown map...');
+                        // Put the spinner on top of the clicked area
+                        Highcharts.extend(chart.options.loading.labelStyle, {
+                            position: 'absolute',
+                            left: (bBox.x + bBox.width / 2 - 10) + 'px',
+                            top: (bBox.y + bBox.height / 2 - 10) + 'px'
+                        });
+                        // Show the spinner
+                        chart.showLoading('<i class="icon-spinner icon-spin icon-2x"></i>'); // Font Awesome spinner
+
                         setTimeout(function () {
                             chart.hideLoading();
                             chart.addSeriesAsDrilldown(e.point, series);
@@ -417,9 +427,7 @@ $(function () {
 
     // Add values
     Highcharts.each(Highcharts.maps.no, function (point) {
-        options.series[0].data.push(Highcharts.extend(point, {
-            path: Highcharts.splitPath(point.path)
-        }));
+        options.series[0].data.push(point);
         // If there's a map with the same id as the parent's point id, use it for drilldown
         if (Highcharts.maps[point.name]) {
             point.drilldown = point.name;
@@ -430,9 +438,7 @@ $(function () {
         }
     });
     Highcharts.each(Highcharts.maps.sogn_og_fjordane, function (point) {
-        options.drilldown.series[0].data.push(Highcharts.extend(point, {
-            path: Highcharts.splitPath(point.path)
-        }));
+        options.drilldown.series[0].data.push(point);
     });
 
     // Instanciate the map
