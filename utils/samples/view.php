@@ -1,5 +1,6 @@
 <?php
 
+
 define(FRAMEWORK, 'jQuery');
 
 require_once('functions.php');
@@ -18,8 +19,11 @@ $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 // Get HTML and use dev server
 ob_start();
 include("$fullpath/demo.html");
+$httpHost = $_SERVER['HTTP_HOST'];
+$httpHost = explode('.', $httpHost);
+$topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
-$html = str_replace('/code.highcharts.com/', '/code.highcharts.local/', $html);
+$html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
 
 
 
