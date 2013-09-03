@@ -18,6 +18,7 @@
 		Axis = Highcharts.Axis,
 		Chart = Highcharts.Chart,
 		Point = Highcharts.Point,
+		Pointer = Highcharts.Pointer,
 		each = Highcharts.each,
 		extend = Highcharts.extend,
 		merge = Highcharts.merge,
@@ -92,8 +93,10 @@
 			}
 		}
 		// enableButtons: false,
+		// enableTouchZoom: false,
 		// zoomOnDoubleClick: true,
 		// zoomOnMouseWheel: true
+
 	};
 	
 	/**
@@ -212,7 +215,7 @@
 	});
 
 	// Extend the Pointer
-	extend(Highcharts.Pointer.prototype, {
+	extend(Pointer.prototype, {
 
 		/**
 		 * The event handler for the doubleclick event
@@ -249,6 +252,17 @@
 					chart.yAxis[0].toValue(e.chartY)
 				);
 			}
+		}
+	});
+	// Implement the pinchType option
+	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+
+		proceed.call(this, chart, options);
+
+		// Pinch status
+		if (options.mapNavigation.enableTouchZoom) {
+			this.pinchX = this.pinchHor = 
+				this.pinchY = this.pinchVert = true;
 		}
 	});
 

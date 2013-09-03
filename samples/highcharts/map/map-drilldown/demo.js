@@ -392,7 +392,8 @@ $(function () {
         },
 
         mapNavigation: {
-            enableButtons: true
+            enableButtons: true,
+            enableTouchZoom: true
         },
 
         plotOptions: {
