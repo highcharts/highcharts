@@ -17895,14 +17895,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				box = graphic.box;
 				bBox = box.getBBox();
 
-				// set the shape arguments for the tracker element
-				point.shapeArgs = extend(
-					bBox,
-					{
-						x: plotX - (shape === 'flag' ? 0 : box.attr('width') / 2), // flags align left, else align center
-						y: plotY
-					}
-				);
+				// Set the tooltip anchor position
+				point.tooltipPos = [plotX, plotY];
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();
