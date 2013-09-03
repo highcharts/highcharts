@@ -8168,7 +8168,6 @@ Axis.prototype = {
 			lineLeft = this.left + (opposite ? this.width : 0) + offset,
 			lineTop = chart.chartHeight - this.bottom - (opposite ? this.height : 0) + offset;
 			
-		this.lineTop = lineTop; // used by flag series
 		if (opposite) {
 			lineWidth *= -1; // crispify the other way - #1480, #1687
 		}
