@@ -28,7 +28,6 @@
 		plotOptions = defaultOptions.plotOptions,
 		wrap = Highcharts.wrap,
 		Color = Highcharts.Color,
-		jQuery = window.jQuery,
 		noop = function () {};
 
 	
@@ -47,19 +46,6 @@
 			);
 		}
 		return 'rgba(' + rgba.join(',') + ')';
-	}
-
-	// Extend jQuery with color tweening
-	if (jQuery && jQuery.Tween) {
-		jQuery.Tween.propHooks.fill = {
-			set: function (fx) {
-				if (!fx.HCfrom) {
-					fx.HCfrom = Color(fx.start);
-					fx.HCto = Color(fx.end);
-				}
-				fx.elem.attr('fill', tweenColors(fx.HCfrom, fx.HCto, fx.pos));
-			}
-		};
 	}
 
 	// Set the default map navigation options
@@ -402,17 +388,61 @@
 		}
 	);
 
-	/**
-	 * Extend the Point object to split paths
-	 */
-	wrap(Point.prototype, 'applyOptions', function (proceed, options, x) {
-		var point = proceed.call(this, options, x);
+	var MapAreaPoint = Highcharts.extendClass(Point, {
+		/**
+		 * Extend the Point object to split paths
+		 */
+		applyOptions: function (options, x) {
 
-		if (point.path && typeof point.path === 'string') {
-			point.path = point.options.path = Highcharts.splitPath(point.path);
+			var point = Point.prototype.applyOptions.call(this, options, x);
+
+			if (point.path && typeof point.path === 'string') {
+				point.path = point.options.path = Highcharts.splitPath(point.path);
+			}
+
+			return point;
+		},
+		/**
+		 * Stop the fade-out 
+		 */
+		onMouseOver: function () {
+			clearTimeout(this.colorInterval);
+			Point.prototype.onMouseOver.call(this);
+		},
+		/**
+		 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
+		 * over islands and coast lines. We run a custom implementation of animation becuase we
+		 * need to be able to run this independently from other animations like zoom redraw. Also,
+		 * adding color animation to the adapters would introduce almost the same amount of code.
+		 */
+		onMouseOut: function () {
+			var point = this,
+				start = +new Date(),
+				normalColor = Color(point.options.color),
+				hoverColor = Color(point.pointAttr.hover.fill),
+				animation = point.series.options.states.normal.animation,
+				duration = animation && (animation.duration || 500);
+
+			if (duration) {
+				delete point.pointAttr[''].fill; // avoid resetting it in Point.setState
+
+				clearTimeout(point.colorInterval);
+				point.colorInterval = setInterval(function () {
+					var pos = (new Date() - start) / duration,
+						graphic = point.graphic;
+					if (pos > 1) {
+						pos = 1;
+					}
+					if (graphic) {
+						graphic.attr('fill', tweenColors(hoverColor, normalColor, pos));
+					}
+					if (pos >= 1) {
+						clearTimeout(point.colorInterval);
+					}
+				}, 13);
+			}
+			Point.prototype.onMouseOut.call(point);
 		}
-
-		return point;
 	});
 
 	/**
@@ -426,6 +456,7 @@
 			fill: 'color'
 		},
 		colorKey: 'y',
+		pointClass: MapAreaPoint,
 		trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 		getSymbol: noop,
 		supportsDrilldown: true,
