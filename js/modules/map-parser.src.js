@@ -120,6 +120,13 @@ H.extend(H.Data.prototype, {
 				}
 			}
 		}
+
+		// Handle polygon points
+		if (typeof path[0] === 'number' && path.length >= 4) {
+			path.unshift('M');
+			path.splice(3, 0, 'L');
+		}
+
 		return path;
 	},
 
@@ -195,6 +202,19 @@ H.extend(H.Data.prototype, {
 		
 		var data = this,
 			options = this.options;
+
+		function getPathLikeChildren(parent) {
+			return Array.prototype.slice.call(parent.getElementsByTagName('path'))
+						.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')));
+		}
+
+		function getPathDefinition(path) {
+			if (path.nodeName === 'path') {
+				return path.getAttribute('d');
+			} else if (path.nodeName === 'polygon') {
+				return path.getAttribute('points');
+			}
+		}
 		
 		function getTranslate(elem) {
 			var transform = elem.getAttribute('transform'),
@@ -217,7 +237,7 @@ H.extend(H.Data.prototype, {
 			success: function (xml) {
 				var arr = [],
 					currentParent,
-					allPaths = xml.getElementsByTagName('path'),
+					allPaths = getPathLikeChildren(xml),
 					commonLineage,
 					lastCommonAncestor,
 					handleGroups,
@@ -272,10 +292,10 @@ H.extend(H.Data.prototype, {
 							translate = getTranslate(g),
 							pathHasFill;
 						
-						each(g.getElementsByTagName('path'), function (path) {
+						each(getPathLikeChildren(g), function (path) {
 							if (!path.skip) {
 								groupPath = groupPath.concat(
-									data.pathToArray(path.getAttribute('d'), translate)
+									data.pathToArray(getPathDefinition(path), translate)
 								);
 
 								if (hasFill(path)) {
@@ -298,7 +318,7 @@ H.extend(H.Data.prototype, {
 					if (!path.skip) {
 						arr.push({
 							name: getName(path),
-							path: data.pathToArray(path.getAttribute('d'), getTranslate(path)),
+							path: data.pathToArray(getPathDefinition(path), getTranslate(path)),
 							hasFill: hasFill(path)
 						});
 					}			
