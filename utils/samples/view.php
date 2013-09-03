@@ -6,7 +6,7 @@ define(FRAMEWORK, 'jQuery');
 require_once('functions.php');
 
 $path = $_GET['path'];
-if (!preg_match('/^[a-z]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
+if (!preg_match('/^[a-z]+\/[a-z\-]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input');
 }
 

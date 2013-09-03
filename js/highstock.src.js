@@ -11526,6 +11526,7 @@ Chart.prototype = {
 				chart.containerHeight = height;
 			}
 		}
+		chart.reflow = reflow;
 		addEvent(win, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
 			removeEvent(win, 'resize', reflow);
