@@ -31,7 +31,12 @@ H.extend(H.Data.prototype, {
 			isRelative,
 			isString,
 			operator;
+
 		path = path
+			// Scientific notation
+			.replace(/[0-9]+e-?[0-9]+/g, function (a) {
+				return +a; // cast to number
+			})
 			// Move letters apart
 			.replace(/([A-Za-z])/g, ' $1 ')
 			// Add space before minus
@@ -46,7 +51,7 @@ H.extend(H.Data.prototype, {
 		if (path.length === 1) {
 			return [];	
 		}
-		
+
 		// Real path
 		for (i = 0; i < path.length; i++) {
 			isString = /[a-zA-Z]/.test(path[i]);
@@ -67,7 +72,7 @@ H.extend(H.Data.prototype, {
 					isRelative = true;
 				} else if (operator === 'M' || operator === 'L' || operator === 'C') {
 					isRelative = false;
-				
+
 				
 				// Horizontal and vertical line to
 				} else if (operator === 'h') {
@@ -201,6 +206,10 @@ H.extend(H.Data.prototype, {
 		function getName(elem) {
 			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
 		}
+
+		function hasFill(elem) {
+			return !/fill[\s]?\:[\s]?none/.test(elem.getAttribute('style'));
+		}
 		
 		jQuery.ajax({
 			url: options.svg,
@@ -260,20 +269,26 @@ H.extend(H.Data.prototype, {
 				if (handleGroups) {
 					each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
 						var groupPath = [],
-							translate = getTranslate(g);
+							translate = getTranslate(g),
+							pathHasFill;
 						
 						each(g.getElementsByTagName('path'), function (path) {
 							if (!path.skip) {
 								groupPath = groupPath.concat(
 									data.pathToArray(path.getAttribute('d'), translate)
 								);
+
+								if (hasFill(path)) {
+									pathHasFill = true;
+								}
 								
 								path.skip = true;
 							}
 						});
 						arr.push({
 							name: getName(g),
-							path: groupPath
+							path: groupPath,
+							hasFill: pathHasFill
 						});
 					});
 				}
@@ -283,7 +298,8 @@ H.extend(H.Data.prototype, {
 					if (!path.skip) {
 						arr.push({
 							name: getName(path),
-							path: data.pathToArray(path.getAttribute('d'), getTranslate(path))
+							path: data.pathToArray(path.getAttribute('d'), getTranslate(path)),
+							hasFill: hasFill(path)
 						});
 					}			
 				});

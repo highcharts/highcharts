@@ -651,7 +651,7 @@
 					pointMinY =  Number.MAX_VALUE;
 					
 				while (i--) {
-					if (typeof path[i] === 'number') {
+					if (typeof path[i] === 'number' && !isNaN(path[i])) {
 						if (even) { // even = x
 							pointMaxX = Math.max(pointMaxX, path[i]);
 							pointMinX = Math.min(pointMinX, path[i]);
