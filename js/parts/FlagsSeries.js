@@ -125,7 +125,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
 			if (point.plotY === UNDEFINED) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
-					point.plotY = xAxis.lineTop - chart.plotTop;
+					point.plotY = chart.chartHeight - xAxis.bottom - (xAxis.opposite ? xAxis.height : 0) + xAxis.offset - chart.plotTop;
 				} else {
 					point.shapeArgs = {}; // 847
 				}
