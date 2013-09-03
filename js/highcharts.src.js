@@ -12593,7 +12593,6 @@ Point.prototype = {
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
 			chart = series.chart,
-			animation,
 			radius,
 			newSymbol,
 			pointAttr = point.pointAttr;
@@ -12617,8 +12616,7 @@ Point.prototype = {
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
-			animation = stateOptions[state || 'normal'] && stateOptions[state || 'normal'].animation;
-			point.graphic[animation ? 'animate' : 'attr'](merge(
+			point.graphic.attr(merge(
 				pointAttr[state],
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
@@ -12626,7 +12624,7 @@ Point.prototype = {
 					width: 2 * radius,
 					height: 2 * radius
 				} : {}
-			), animation);
+			));
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
