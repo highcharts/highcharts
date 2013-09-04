@@ -218,7 +218,7 @@ var radialAxisMixin = {
 		
 		// Title or label offsets are not counted
 		this.chart.axisOffset[this.side] = 0;
-	
+		
 		// Set the center array
 		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
 	},
