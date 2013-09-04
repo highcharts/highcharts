@@ -1,5 +1,5 @@
 
-var CenteredSeriesMixin = {
+var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the  
 	 * plot area. Borrowed by the polar and gauge series types.
@@ -31,3 +31,4 @@ var CenteredSeriesMixin = {
 		});
 	}
 };
+

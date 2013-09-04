@@ -15,7 +15,6 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
-	CenteredSeriesMixin: CenteredSeriesMixin,
 	
 	// Various
 	arrayMin: arrayMin,
