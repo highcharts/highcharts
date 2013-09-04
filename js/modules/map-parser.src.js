@@ -217,10 +217,23 @@ H.extend(H.Data.prototype, {
 		}
 		
 		function getTranslate(elem) {
-			var transform = elem.getAttribute('transform'),
-				translate = transform && transform.match(/translate\(([0-9\-\. ]+),([0-9\-\. ]+)\)/);
+			var translateX = 0,
+				translateY = 0,
+				transform,
+				match;
+
+			while (elem && elem.nodeName !== 'svg') {
+				transform = elem.getAttribute('transform'),
+				match = transform && transform.match(/translate\(([0-9\-\. ]+),([0-9\-\. ]+)\)/);
+
+				if (match) {
+					translateX += parseFloat(match[1]);
+					translateY += parseFloat(match[2]);
+				}
+				elem = elem.parentNode;
+			}
 			
-			return translate && [parseFloat(translate[1]), parseFloat(translate[2])]; 
+			return (translateX || translateY) && [translateX, translateY]; 
 		}
 		
 		function getName(elem) {
@@ -289,13 +302,12 @@ H.extend(H.Data.prototype, {
 				if (handleGroups) {
 					each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
 						var groupPath = [],
-							translate = getTranslate(g),
 							pathHasFill;
 						
 						each(getPathLikeChildren(g), function (path) {
 							if (!path.skip) {
 								groupPath = groupPath.concat(
-									data.pathToArray(getPathDefinition(path), translate)
+									data.pathToArray(getPathDefinition(path), getTranslate(path))
 								);
 
 								if (hasFill(path)) {
