@@ -1,4 +1,4 @@
-	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -7,9 +7,9 @@
 		<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
 		
 		<script src="http://code.highcharts.com/3.0.5/highcharts.js"></script>
-		<script src="http://github.highcharts.com/bdf6471/modules/map.src.js"></script>
-		<script src="http://github.highcharts.com/bdf6471/modules/data.src.js"></script>
-		<script src="http://github.highcharts.com/bdf6471/modules/map-parser.src.js"></script>
+		<script src="http://github.highcharts.com/b4127e7/modules/map.src.js"></script>
+		<script src="http://github.highcharts.com/b4127e7/modules/data.src.js"></script>
+		<script src="http://github.highcharts.com/b4127e7/modules/map-parser.src.js"></script>
 		
 		<!--
 		<script src="http://code.highcharts.local/highcharts.js"></script>
@@ -44,7 +44,8 @@
 				'Sogn-og-Fjordane-Norway': 'http://upload.wikimedia.org/wikipedia/commons/4/4f/NO_1417_Vik.svg',
 
 				// Offline
-				'Poland': 'http://www.highcharts.com/maps/maps/Poland.svg'
+				'Poland': 'http://www.highcharts.com/maps/maps/Poland.svg',
+				'Sweden': 'http://www.highcharts.com/maps/maps/Sweden.svg'
 				
 				
 			};
@@ -53,24 +54,17 @@
 			// identify those and assign to a separate series
 			function identifyLines(data, key) {
 				var lines = [],
-					lineNames = {
-						'France': ['path2408', 'path3387', 'path5327'],
-						'Spain': ['path3682'], 
-						'USA': ['path57']
-					}[key],
 					i,
 					point;
 				
-				if (lineNames) {
-					for (i = 0; i < data.length; i++) {
-						point = data[i];
-						if ($.inArray(point.name, lineNames) !== -1) {
-							lines.push(data.splice(i, 1)[0]);
-							i -= 1;
-						}
+				for (i = 0; i < data.length; i++) {
+					point = data[i];
+					if (!point.hasFill) {
+						lines.push(data.splice(i, 1)[0]);
+						i -= 1;
 					}
-					return lines;
 				}
+				return lines;
 			}
 			
 			function drawMap(key, file) {
@@ -123,7 +117,7 @@
 									},
 									states: {
 										hover: {
-											color: '#FF7F00' // orange
+											color: '#bada55'
 										}
 									}
 								}
@@ -132,7 +126,7 @@
 						
 						// Add separator lines
 						if (lines) {
-							options.series.splice(0, 0, {
+							options.series.push({
 								color: 'none',
 								borderColor: 'gray',
 								enableMouseTracking: false,
@@ -194,7 +188,12 @@
 				
 				// Build the links
 				for (var n in maps) {;
-					var $a = $('<a id="' + n + '_" href="#' + n + '">' + n + '</a>')
+					var $a = $('<a>' + n + '</a>')
+						.attr({
+							id: n + '_',
+							href: '#' + n,
+							title: maps[n]
+						})
 						.click(function () {
 							drawMap(this.innerHTML);
 						})
