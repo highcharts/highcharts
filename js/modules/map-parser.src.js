@@ -241,7 +241,7 @@ H.extend(H.Data.prototype, {
 		}
 
 		function hasFill(elem) {
-			return !/fill[\s]?\:[\s]?none/.test(elem.getAttribute('style'));
+			return !/fill[\s]?\:[\s]?none/.test(elem.getAttribute('style')) && elem.getAttribute('fill') !== 'none';
 		}
 		
 		jQuery.ajax({
@@ -299,7 +299,7 @@ H.extend(H.Data.prototype, {
 				lastCommonAncestor = commonLineage[commonLineage.length - 1];
 				
 				// Iterate groups to find sub paths
-				if (handleGroups) {
+				if (false && handleGroups) {
 					each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
 						var groupPath = [],
 							pathHasFill;
