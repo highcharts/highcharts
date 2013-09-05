@@ -1120,12 +1120,12 @@ var GaugeSeries = {
 			this.options.zIndex, 
 			this.chart.seriesGroup
 		);
-		seriesTypes.pie.prototype.render.call(this);
+		Series.prototype.render.call(this);
 		this.group.clip(this.chart.clipRect);
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: seriesTypes.column.prototype.drawTracker
+	drawTracker: PointTrackerMixin.drawTracker
 };
 seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ****************************************************************************
  * Start Box plot series code											      *

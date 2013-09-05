@@ -996,7 +996,7 @@ timeUnits = hash(
 );
 /*jslint white: false*/
 
-var CenteredSeriesMixin = {
+var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the  
 	 * plot area. Borrowed by the polar and gauge series types.
@@ -1028,6 +1028,7 @@ var CenteredSeriesMixin = {
 		});
 	}
 };
+
 /**
  * Path interpolation algorithm used across adapters
  */
@@ -16000,10 +16001,11 @@ var ScatterSeries = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
 
-	drawTracker: ColumnSeries.prototype.drawTracker,
+	drawTracker: PointTrackerMixin.drawTracker, // was columnSeries.prototype.drawTracker before
 	
 	setTooltipPoints: noop
 });
+
 seriesTypes.scatter = ScatterSeries;
 
 /**
@@ -17990,7 +17992,7 @@ each(['circle', 'square'], function (shape) {
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Renderer === VMLRenderer) {
+if (Renderer === Highcharts.VMLRenderer) {
 	each(['flag', 'circlepin', 'squarepin'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = symbols[shape];
 	});
@@ -18010,11 +18012,13 @@ var buttonGradient = hash(
 			[1, '#CCC']
 		]
 	),
-	units = [].concat(defaultDataGroupingUnits); // copy
-
+	units = [].concat(defaultDataGroupingUnits), // copy
+	defaultSeriesType;
 // add more resolution to units
 units[4] = [DAY, [1, 2, 3, 4]]; // allow more days
 units[5] = [WEEK, [1, 2, 3]]; // allow more weeks
+
+defaultSeriesType = seriesTypes.areaspline === UNDEFINED ? 'line' : 'areaspline';
 
 extend(defaultOptions, {
 	navigator: {
@@ -18029,7 +18033,7 @@ extend(defaultOptions, {
 		outlineColor: '#444',
 		outlineWidth: 1,
 		series: {
-			type: 'areaspline',
+			type: defaultSeriesType,
 			color: '#4572A7',
 			compare: null,
 			fillOpacity: 0.4,
@@ -20707,7 +20711,6 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
-	CenteredSeriesMixin: CenteredSeriesMixin,
 	
 	// Various
 	arrayMin: arrayMin,

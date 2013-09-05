@@ -996,7 +996,7 @@ timeUnits = hash(
 );
 /*jslint white: false*/
 
-var CenteredSeriesMixin = {
+var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the  
 	 * plot area. Borrowed by the polar and gauge series types.
@@ -1028,6 +1028,7 @@ var CenteredSeriesMixin = {
 		});
 	}
 };
+
 /**
  * Path interpolation algorithm used across adapters
  */
@@ -16000,10 +16001,11 @@ var ScatterSeries = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
 
-	drawTracker: ColumnSeries.prototype.drawTracker,
+	drawTracker: PointTrackerMixin.drawTracker, // was columnSeries.prototype.drawTracker before
 	
 	setTooltipPoints: noop
 });
+
 seriesTypes.scatter = ScatterSeries;
 
 /**
@@ -16855,7 +16857,6 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
-	CenteredSeriesMixin: CenteredSeriesMixin,
 	
 	// Various
 	arrayMin: arrayMin,
