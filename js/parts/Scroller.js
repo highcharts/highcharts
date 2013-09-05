@@ -9,11 +9,13 @@ var buttonGradient = hash(
 			[1, '#CCC']
 		]
 	),
-	units = [].concat(defaultDataGroupingUnits); // copy
-
+	units = [].concat(defaultDataGroupingUnits), // copy
+	defaultSeriesType;
 // add more resolution to units
 units[4] = [DAY, [1, 2, 3, 4]]; // allow more days
 units[5] = [WEEK, [1, 2, 3]]; // allow more weeks
+
+defaultSeriesType = seriesTypes.areaspline === UNDEFINED ? 'line' : 'areaspline';
 
 extend(defaultOptions, {
 	navigator: {
@@ -28,7 +30,7 @@ extend(defaultOptions, {
 		outlineColor: '#444',
 		outlineWidth: 1,
 		series: {
-			type: 'areaspline',
+			type: defaultSeriesType,
 			color: '#4572A7',
 			compare: null,
 			fillOpacity: 0.4,
