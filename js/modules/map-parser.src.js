@@ -22,15 +22,21 @@ H.extend(H.Data.prototype, {
 	/**
 	 * Parse an SVG path into a simplified array that Highcharts can read
 	 */
-	pathToArray: function (path, translate) {
-		
+	pathToArray: function (path, matrix) {
 		var i = 0,
 			position = 0,
+			point,
 			positions,
 			fixedPoint = [0, 0],
 			isRelative,
 			isString,
-			operator;
+			operator,
+			matrixTransform = function (p, m) {
+			    return [
+			        m.a * p[0] + m.b * p[1] + m.e,
+			        m.c * p[0] + m.d * p[1] + m.f
+			    ];
+			};
 
 		path = path
 			// Scientific notation
@@ -101,23 +107,31 @@ H.extend(H.Data.prototype, {
 					path[i] += fixedPoint[position % 2];
 				
 				} 
-				if (translate && (!isRelative || (operator === 'm' && i < 3))) { // only translate absolute points or initial moveTo
-					path[i] += translate[position % 2];
-				}
+
+				if (position % 2 === 1) { // y
+					// only translate absolute points or initial moveTo
+					if (matrix && (!isRelative || (operator === 'm' && i < 3))) {
+						point = matrixTransform([path[i - 1], path[i]], matrix);
+						path[i - 1] = point[0];
+						path[i] = point[1];
+					}
+
+					// Add it
+					path[i - 1] = Math.round(path[i - 1] * 100) / 100; // x
+					path[i] = Math.round(path[i] * 100) / 100; // y
+				}	
 				
-				path[i] = Math.round(path[i] * 100) / 100;
-				
-				// Set the fixed point for the next pair
-				if (position === positions - 1) {
-					fixedPoint = [path[i - 1], path[i]];
-				}
 				
 				// Reset to zero position (x/y switching)
 				if (position === positions - 1) {
+					// Set the fixed point for the next pair
+					fixedPoint = [path[i - 1], path[i]];
+				
 					position = 0;
 				} else {
 					position += 1;
 				}
+
 			}
 		}
 
@@ -217,6 +231,10 @@ H.extend(H.Data.prototype, {
 		}
 		
 		function getTranslate(elem) {
+			console.log(elem.getCTM())
+			return elem.getCTM();
+			/*
+
 			var translateX = 0,
 				translateY = 0,
 				transform,
@@ -234,7 +252,9 @@ H.extend(H.Data.prototype, {
 			}
 			
 			return (translateX || translateY) && [translateX, translateY]; 
+			*/
 		}
+
 		
 		function getName(elem) {
 			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
@@ -246,16 +266,28 @@ H.extend(H.Data.prototype, {
 		
 		jQuery.ajax({
 			url: options.svg,
-			dataType: 'xml',
+			dataType: 'text',
 			success: function (xml) {
+
 				var arr = [],
 					currentParent,
-					allPaths = getPathLikeChildren(xml),
+					allPaths,
 					commonLineage,
 					lastCommonAncestor,
 					handleGroups,
-					defs = xml.getElementsByTagName('defs')[0],
+					defs,
 					clipPaths;
+
+				// Make a hidden frame where the SVG is rendered
+				data.$frame = data.$frame || $('<div>')
+					.hide()
+					.appendTo($(document.body));
+				data.$frame.html(xml);
+				xml = $('svg', data.$frame)[0];
+					
+
+				allPaths = getPathLikeChildren(xml);
+				defs = xml.getElementsByTagName('defs')[0];
 					
 				// Skip clip paths
 				clipPaths = defs && defs.getElementsByTagName('path');
