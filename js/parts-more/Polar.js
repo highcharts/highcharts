@@ -8,7 +8,8 @@
 	 */
 
 	var seriesProto = Series.prototype,
-		pointerProto = Pointer.prototype;
+		pointerProto = Pointer.prototype,
+		colProto;
 
 	/**
 	 * Translate a point's plotX and plotY from the internal angle and radius measures to 
@@ -316,6 +317,7 @@
 
 	if (seriesTypes.column) {
 
+		colProto = seriesTypes.column.prototype;
 		/**
 		* Define the animate method for columnseries
 		*/

@@ -34,7 +34,6 @@ var arrayMin = Highcharts.arrayMin,
 	mathRound = math.round,
 	mathFloor = math.floor,
 	mathMax = math.max,
-	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	noop = function () {};/**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
@@ -220,7 +219,7 @@ var radialAxisMixin = {
 		this.chart.axisOffset[this.side] = 0;
 		
 		// Set the center array
-		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
+		this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
 	},
 
 
@@ -1125,7 +1124,7 @@ var GaugeSeries = {
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: PointTrackerMixin.drawTracker
+	drawTracker: Highcharts.PointTrackerMixin.drawTracker
 };
 seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ****************************************************************************
  * Start Box plot series code											      *
@@ -1986,7 +1985,8 @@ Axis.prototype.beforePadding = function () {
 	 */
 
 	var seriesProto = Series.prototype,
-		pointerProto = Pointer.prototype;
+		pointerProto = Pointer.prototype,
+		colProto;
 
 	/**
 	 * Translate a point's plotX and plotY from the internal angle and radius measures to 
@@ -2294,6 +2294,7 @@ Axis.prototype.beforePadding = function () {
 
 	if (seriesTypes.column) {
 
+		colProto = seriesTypes.column.prototype;
 		/**
 		* Define the animate method for columnseries
 		*/

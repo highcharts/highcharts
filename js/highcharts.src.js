@@ -995,40 +995,6 @@ timeUnits = hash(
 	YEAR, 31556952000
 );
 /*jslint white: false*/
-
-var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
-	/**
-	 * Get the center of the pie based on the size and center options relative to the  
-	 * plot area. Borrowed by the polar and gauge series types.
-	 */
-	getCenter: function () {
-		
-		var options = this.options,
-			chart = this.chart,
-			slicingRoom = 2 * (options.slicedOffset || 0),
-			handleSlicingRoom,
-			plotWidth = chart.plotWidth - 2 * slicingRoom,
-			plotHeight = chart.plotHeight - 2 * slicingRoom,
-			centerOption = options.center,
-			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
-			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent;
-		
-		return map(positions, function (length, i) {
-			isPercent = /%$/.test(length);
-			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
-			return (isPercent ?
-				// i == 0: centerX, relative to width
-				// i == 1: centerY, relative to height
-				// i == 2: size, relative to smallestSize
-				// i == 4: innerSize, relative to smallestSize
-				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
-					pInt(length) / 100 :
-				length) + (handleSlicingRoom ? slicingRoom : 0);
-		});
-	}
-};
-
 /**
  * Path interpolation algorithm used across adapters
  */
@@ -9864,7 +9830,7 @@ Pointer.prototype = {
  * PointTrackerMixin
  */
 
-var PointTrackerMixin = {
+var PointTrackerMixin = Highcharts.PointTrackerMixin = {
 	drawTracker: function () {
 		var series = this,
 			chart = series.chart,
@@ -9914,7 +9880,8 @@ var PointTrackerMixin = {
 			series._hasTracking = true;
 		}
 	}	
-};/**
+};
+/**
  * The overview of the chart's series
  */
 function Legend(chart, options) {
@@ -10574,7 +10541,7 @@ Legend.prototype = {
  * LegendSymbolMixin
  */ 
 
-var LegendSymbolMixin = {
+var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 
 	/**
 	 * Get the series' symbol in the legend
@@ -10602,7 +10569,7 @@ var LegendSymbolMixin = {
 	 * 
 	 * @param {Object} legend The legend object
 	 */
-	drawLineMarker: function (legend, item) {
+	drawLineMarker: function (legend) {
 
 		var options = this.options,
 			markerOptions = options.marker,
@@ -12310,6 +12277,40 @@ Chart.prototype = {
 
 // Hook for exporting module
 Chart.prototype.callbacks = [];
+
+var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
+	/**
+	 * Get the center of the pie based on the size and center options relative to the  
+	 * plot area. Borrowed by the polar and gauge series types.
+	 */
+	getCenter: function () {
+		
+		var options = this.options,
+			chart = this.chart,
+			slicingRoom = 2 * (options.slicedOffset || 0),
+			handleSlicingRoom,
+			plotWidth = chart.plotWidth - 2 * slicingRoom,
+			plotHeight = chart.plotHeight - 2 * slicingRoom,
+			centerOption = options.center,
+			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
+			smallestSize = mathMin(plotWidth, plotHeight),
+			isPercent;
+		
+		return map(positions, function (length, i) {
+			isPercent = /%$/.test(length);
+			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
+			return (isPercent ?
+				// i == 0: centerX, relative to width
+				// i == 1: centerY, relative to height
+				// i == 2: size, relative to smallestSize
+				// i == 4: innerSize, relative to smallestSize
+				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
+					pInt(length) / 100 :
+				length) + (handleSlicingRoom ? slicingRoom : 0);
+		});
+	}
+};
+
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */

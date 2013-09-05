@@ -121,8 +121,7 @@
         <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
             <file name="Intro.js"/>
             <file name="Globals.js"/>
-            <file name="Utilities.js"/>
-            <file name="CenteredSeriesMixin.js"/>
+            <file name="Utilities.js"/>            
             <file name="PathAnimation.js"/>
             <file name="JQueryAdapter.js"/>
             <file name="Adapters.js"/>
@@ -139,6 +138,7 @@
             <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
+            <file name="CenteredSeriesMixin.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
@@ -156,8 +156,7 @@
         <filelist id="highstock.files" dir="${highcharts.parts.dir}">
             <file name="Intro.js"/>
             <file name="Globals.js"/>
-            <file name="Utilities.js"/>
-            <file name="CenteredSeriesMixin.js"/>
+            <file name="Utilities.js"/>            
             <file name="PathAnimation.js"/>
             <file name="JQueryAdapter.js"/>
             <file name="Adapters.js"/>
@@ -174,6 +173,7 @@
             <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
+            <file name="CenteredSeriesMixin.js"/>
             <file name="Series.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>

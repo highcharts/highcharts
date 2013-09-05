@@ -839,7 +839,7 @@ Pointer.prototype = {
  * PointTrackerMixin
  */
 
-var PointTrackerMixin = {
+var PointTrackerMixin = Highcharts.PointTrackerMixin = {
 	drawTracker: function () {
 		var series = this,
 			chart = series.chart,

@@ -19,5 +19,4 @@ var arrayMin = Highcharts.arrayMin,
 	mathRound = math.round,
 	mathFloor = math.floor,
 	mathMax = math.max,
-	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	noop = function () {};

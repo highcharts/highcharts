@@ -507,7 +507,7 @@
 						chart: series.chart,
 						name: name,
 						options: {},
-						drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+						drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 						visible: true,
 						setState: function () {},
 						setVisible: function () {}

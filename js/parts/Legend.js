@@ -658,7 +658,7 @@ Legend.prototype = {
  * LegendSymbolMixin
  */ 
 
-var LegendSymbolMixin = {
+var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 
 	/**
 	 * Get the series' symbol in the legend
@@ -686,7 +686,7 @@ var LegendSymbolMixin = {
 	 * 
 	 * @param {Object} legend The legend object
 	 */
-	drawLineMarker: function (legend, item) {
+	drawLineMarker: function (legend) {
 
 		var options = this.options,
 			markerOptions = options.marker,
