@@ -33,8 +33,8 @@ H.extend(H.Data.prototype, {
 			operator,
 			matrixTransform = function (p, m) {
 			    return [
-			        m.a * p[0] + m.b * p[1] + m.e,
-			        m.c * p[0] + m.d * p[1] + m.f
+			        m.a * p[0] + m.c * p[1] + m.e,
+			        m.b * p[0] + m.d * p[1] + m.f
 			    ];
 			};
 
@@ -231,7 +231,6 @@ H.extend(H.Data.prototype, {
 		}
 		
 		function getTranslate(elem) {
-			console.log(elem.getCTM())
 			return elem.getCTM();
 			/*
 
