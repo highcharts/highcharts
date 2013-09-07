@@ -375,7 +375,6 @@
 	 */
 	plotOptions.map = merge(plotOptions.scatter, {
 		animation: false, // makes the complex shapes slow
-		minOpacity: 0.2,
 		nullColor: '#F8F8F8',
 		borderColor: 'silver',
 		borderWidth: 1,
@@ -567,6 +566,11 @@
 				series.legendItems = legendItems;
 			}
 		},
+
+		/**
+		 * If neither valueRanges nor colorRanges are defined, use basic area symbol.
+		 */
+		drawLegendSymbol: seriesTypes.area.prototype.drawLegendSymbol,
 
 		/**
 		 * Gets the series' symbol in the legend and extended legend with more information.
