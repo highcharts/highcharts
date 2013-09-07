@@ -13719,8 +13719,12 @@ Series.prototype = {
 			low,
 			high,
 			xAxis = series.xAxis,
+			xExtremes = xAxis.getExtremes(),
+			xMin = xExtremes.min,
+			xMax = xExtremes.max,
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
+			pointX,
 			nextPoint,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
@@ -13754,19 +13758,22 @@ Series.prototype = {
 		pointsLength = points.length;
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
-			nextPoint = points[i + 1];
-			
-			// Set this range's low to the last range's high plus one
-			low = points[i - 1] ? high + 1 : 0;
-			// Now find the new high
-			high = points[i + 1] ?
-				mathMin(mathMax(0, mathFloor( // #2070
-					(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
-				)), axisLength) :
-				axisLength;
+			pointX = point.x;
+			if (pointX >= xMin && pointX <= xMax) { // #1149
+				nextPoint = points[i + 1];
+				
+				// Set this range's low to the last range's high plus one
+				low = high === UNDEFINED ? 0 : high + 1;
+				// Now find the new high
+				high = points[i + 1] ?
+					mathMin(mathMax(0, mathFloor( // #2070
+						(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
+					)), axisLength) :
+					axisLength;
 
-			while (low >= 0 && low <= high) {
-				tooltipPoints[low++] = point;
+				while (low >= 0 && low <= high) {
+					tooltipPoints[low++] = point;
+				}
 			}
 		}
 		series.tooltipPoints = tooltipPoints;
