@@ -53,6 +53,18 @@ var presets = [{
 	name: 'Sweden',
 	url: 'http://www.highcharts.com/maps/maps/Sweden.svg'
 }];
+
+var defaultSeriesSetup = [{
+	name: 'Areas',
+	type: 'map',
+	enableMouseTracking: true,
+	showInLegend: true,
+	rules: [{
+		key: 'fill',
+		operator: 'is-not',
+		value: 'none'
+	}]
+}]
 			
 
 
