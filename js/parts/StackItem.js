@@ -45,22 +45,6 @@ StackItem.prototype = {
 	},
 
 	/**
-	 * Sets the total of this stack. Should be called when a serie is hidden or shown
-	 * since that will affect the total of other stacks.
-	 */
-	setTotal: function (total) {
-		this.total = total;
-		this.cum = total;
-	},
-
-	/**
-	 * Adds value to stack total, this method takes care of correcting floats
-	 */
-	addValue: function (y) {
-		this.setTotal(correctFloat(this.total + y));
-	},
-
-	/**
 	 * Renders the stack total label and adds it to the stack label group.
 	 */
 	render: function (group) {
@@ -85,10 +69,6 @@ StackItem.prototype = {
 					})				
 					.add(group);							// add to the labels-group
 		}
-	},
-
-	cacheExtremes: function (series, extremes) {
-		this.points[series.index] = extremes;
 	},
 
 	/**

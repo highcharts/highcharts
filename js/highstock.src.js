@@ -6353,22 +6353,6 @@ StackItem.prototype = {
 	},
 
 	/**
-	 * Sets the total of this stack. Should be called when a serie is hidden or shown
-	 * since that will affect the total of other stacks.
-	 */
-	setTotal: function (total) {
-		this.total = total;
-		this.cum = total;
-	},
-
-	/**
-	 * Adds value to stack total, this method takes care of correcting floats
-	 */
-	addValue: function (y) {
-		this.setTotal(correctFloat(this.total + y));
-	},
-
-	/**
 	 * Renders the stack total label and adds it to the stack label group.
 	 */
 	render: function (group) {
@@ -6393,10 +6377,6 @@ StackItem.prototype = {
 					})				
 					.add(group);							// add to the labels-group
 		}
-	},
-
-	cacheExtremes: function (series, extremes) {
-		this.points[series.index] = extremes;
 	},
 
 	/**
@@ -6680,12 +6660,7 @@ Axis.prototype = {
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
 		// Linked axis.
-		//axis.linkedParent = UNDEFINED;
-	
-	
-		// Flag if percentage mode
-		//axis.usePercentage = UNDEFINED;
-	
+		//axis.linkedParent = UNDEFINED;	
 		
 		// Tick positions
 		//axis.tickPositions = UNDEFINED; // array containing predefined positions
@@ -6916,7 +6891,6 @@ Axis.prototype = {
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
 				var seriesOptions = series.options,
-					stacking,
 					xData,
 					threshold = seriesOptions.threshold,
 					seriesDataMin,
@@ -6940,18 +6914,7 @@ Axis.prototype = {
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 				} else {
 
-					// Handle stacking
-					stacking = seriesOptions.stacking;
-					axis.usePercentage = stacking === 'percent';
-
-					// create a stack for this particular series type
-					if (axis.usePercentage) {
-						axis.dataMin = 0;
-						axis.dataMax = 99;
-					}
-
-					
-					// get this particular series extremes
+					// Get this particular series extremes
 					series.getExtremes();
 					seriesDataMax = series.dataMax;
 					seriesDataMin = series.dataMin;
@@ -6959,7 +6922,7 @@ Axis.prototype = {
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series
 					// doesn't have active y data, we continue with nulls
-					if (!axis.usePercentage && defined(seriesDataMin) && defined(seriesDataMax)) {
+					if (defined(seriesDataMin) && defined(seriesDataMax)) {
 						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
 						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
@@ -7733,6 +7696,7 @@ Axis.prototype = {
 				for (type in stacks) {
 					for (i in stacks[type]) {
 						stacks[type][i].total = null;
+						stacks[type][i].cum = 0;
 					}
 				}
 			}
@@ -8477,16 +8441,22 @@ Axis.prototype = {
 	},
 
 	/**
-	 *
+	 * Build the stacks from top down
 	 */
 	buildStacks: function () {
-		if (this.isXAxis) {
-			return;
+		var series = this.series,
+			i = series.length;
+		if (!this.isXAxis) {
+			while (i--) {
+				series[i].setStackedPoints();
+			}
+			// Loop up again to compute percent stack
+			if (this.usePercentage) {
+				for (i = 0; i < series.length; i++) {
+					series[i].setPercentStacks();
+				}
+			}
 		}
-
-		each(this.series, function (series) {
-			series.setStackedPoints();
-		});
 	},
 
 	/**
@@ -13456,19 +13426,20 @@ Series.prototype = {
 		var series = this,
 			xData = series.processedXData,
 			yData = series.processedYData,
+			stackedYData = [],
 			yDataLength = yData.length,
 			seriesOptions = series.options,
 			threshold = seriesOptions.threshold,
 			stackOption = seriesOptions.stack,
 			stacking = seriesOptions.stacking,
+			percentStacking = stacking === 'percent',
 			stackKey = series.stackKey,
 			negKey = '-' + stackKey,
+			negStacks = series.negStacks && !percentStacking,
 			yAxis = series.yAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
-			stackExtremes = yAxis.stackExtremes,
 			isNegative,
-			total,
 			stack,
 			key,
 			i,
@@ -13482,16 +13453,8 @@ Series.prototype = {
 
 			// Read stacked values into a stack based on the x value,
 			// the sign of y and the stack key. Stacking is also handled for null values (#739)
-			isNegative = series.negStacks && y < threshold;
+			isNegative = negStacks && y < threshold;
 			key = isNegative ? negKey : stackKey;
-
-			// Set default stackExtremes value for this stack
-			if (typeof y === 'number' && !stackExtremes[stackKey]) {
-				stackExtremes[stackKey] = {
-					dataMin: y,
-					dataMax: y
-				};
-			}
 
 			// Create empty object for this stack if it doesn't exist yet
 			if (!stacks[key]) {
@@ -13510,22 +13473,45 @@ Series.prototype = {
 
 			// If the StackItem doesn't exist, create it first
 			stack = stacks[key][x];
-			total = stack.total;
+			stack.points[series.index] = [stack.cum || 0];
 
+			// Add value to the stack total
+			stack.total += (stacking === 'percent' ? mathAbs(y) : y) || 0;
+			stack.cum = (stack.cum || 0) + (y || 0);
 
-			// add value to the stack total
-			stack.addValue((stacking === 'percent' ? mathAbs(y) : y) || 0);
-			stack.cacheExtremes(series, [total, total + (y || 0)]);
-			
-			if (typeof y === 'number') {
-				stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total, y);
-				stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total, y);
-			}
+			stack.points[series.index].push(stack.cum);
+			stackedYData[i] = stack.cum;
 
 		}
 
-		// reset old stacks
+		if (stacking === 'percent') {
+			yAxis.usePercentage = true;
+		}
+
+		this.stackedYData = stackedYData; // To be used in getExtremes
+		
+		// Reset old stacks
 		yAxis.oldStacks = {};
+	},
+
+	/**
+	 * Iterate over all stacks and compute the absolute values to percent
+	 */
+	setPercentStacks: function () {
+		var i = this.xData.length,
+			x,
+			stack,
+			pointExtremes,
+			totalFactor;
+		while (i--) {
+			x = this.xData[i];
+			stack = this.yAxis.stacks[this.stackKey][x];
+			pointExtremes = stack.points[this.index];
+			totalFactor = stack.total ? 100 / stack.total : 0;
+			pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
+			pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
+			this.stackedYData[i] = pointExtremes[1];
+		}
 	},
 
 	/**
@@ -13534,14 +13520,8 @@ Series.prototype = {
 	getExtremes: function () {
 		var xAxis = this.xAxis,
 			yAxis = this.yAxis,
-			stackKey = this.stackKey,
-			stackExtremes,
-			stackMin,
-			stackMax,
-			options = this.options,
-			threshold = yAxis.isLog ? null : options.threshold,
 			xData = this.processedXData,
-			yData = this.processedYData,
+			yData = this.stackedYData || this.processedYData,
 			yDataLength = yData.length,
 			activeYData = [],
 			activeCounter = 0,
@@ -13557,51 +13537,33 @@ Series.prototype = {
 			i,
 			j;
 
-		// For stacked series, get the value from the stack
-		stackExtremes = options.stacking && yAxis.stackExtremes[stackKey];
-		if (stackExtremes) {			
-			stackMin = stackExtremes.dataMin;
-			stackMax = stackExtremes.dataMax;
+		for (i = 0; i < yDataLength; i++) {
+			
+			x = xData[i];
+			y = yData[i];
 
-			dataMin = mathMin(stackMin, pick(threshold, stackMin));
-			dataMax = mathMax(stackMax, pick(threshold, stackMax));
-		}
+			// For points within the visible range, including the first point outside the
+			// visible range, consider y extremes
+			validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+			withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin && 
+				(xData[i - 1] || x) <= xMax);
 
-		// If not stacking or threshold is null, iterate over values that are within the visible range
-		if (!defined(dataMin) || !defined(dataMax)) {
+			if (validValue && withinRange) {
 
-			for (i = 0; i < yDataLength; i++) {
-				
-				x = xData[i];
-				y = yData[i];
-
-				// For points within the visible range, including the first point outside the
-				// visible range, consider y extremes
-				validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
-				withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin && 
-					(xData[i - 1] || x) <= xMax);
-
-				if (validValue && withinRange) {
-
-					j = y.length;
-					if (j) { // array, like ohlc or range data
-						while (j--) {
-							if (y[j] !== null) {
-								activeYData[activeCounter++] = y[j];
-							}
+				j = y.length;
+				if (j) { // array, like ohlc or range data
+					while (j--) {
+						if (y[j] !== null) {
+							activeYData[activeCounter++] = y[j];
 						}
-					} else {
-						activeYData[activeCounter++] = y;
 					}
+				} else {
+					activeYData[activeCounter++] = y;
 				}
 			}
-			dataMin = pick(dataMin, arrayMin(activeYData));
-			dataMax = pick(dataMax, arrayMax(activeYData));
 		}
-
-		// Set
-		this.dataMin = dataMin;
-		this.dataMax = dataMax;
+		this.dataMin = pick(dataMin, arrayMin(activeYData));
+		this.dataMax = pick(dataMax, arrayMax(activeYData));
 	},
 
 	/**
@@ -13616,7 +13578,6 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			stacking = options.stacking,
-			percentStacking = stacking === 'percent',
 			xAxis = series.xAxis,
 			categories = xAxis.categories,
 			yAxis = series.yAxis,
@@ -13626,7 +13587,8 @@ Series.prototype = {
 			i,
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
-			threshold = options.threshold;
+			threshold = options.threshold,
+			negStacks = series.negStacks && stacking !== 'percent'; // #1910, #2197
 
 		
 		// Translate each point
@@ -13635,9 +13597,9 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
-				pointStackTotal;
+				stackValues;
 
 			// Discard disallowed y values for log axes
 			if (yAxis.isLog && yValue <= 0) {
@@ -13651,26 +13613,20 @@ Series.prototype = {
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
 
-
 				pointStack = stack[xValue];
-				pointStackTotal = pointStack.total;
-				pointStack.cum = yBottom = pointStack.cum - (percentStacking ? mathAbs(yValue) : yValue); // start from top
-				yValue = yBottom + yValue;
-				
-				if (pointStack.cum === 0) {
+				stackValues = pointStack.points[series.index];
+				yBottom = stackValues[0];
+				yValue = stackValues[1];
+
+				if (yBottom === 0) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
 					yBottom = null;
 				}
-				
-				if (percentStacking) {
-					yBottom = pointStackTotal ? yBottom * 100 / pointStackTotal : 0;
-					yValue = pointStackTotal ? yValue * 100 / pointStackTotal : 0;
-				}
 
-				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
-				point.total = point.stackTotal = pointStackTotal;
+				point.percentage = stacking === 'percent' && yValue;
+				point.total = point.stackTotal = pointStack.total;
 				point.stackY = yValue;
 
 				// Place the stack label
@@ -13719,9 +13675,7 @@ Series.prototype = {
 			low,
 			high,
 			xAxis = series.xAxis,
-			xExtremes = xAxis.getExtremes(),
-			xMin = xExtremes.min,
-			xMax = xExtremes.max,
+			xExtremes = xAxis && xAxis.getExtremes(),
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
 			pointX,
@@ -13759,7 +13713,7 @@ Series.prototype = {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			pointX = point.x;
-			if (pointX >= xMin && pointX <= xMax) { // #1149
+			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
 				nextPoint = points[i + 1];
 				
 				// Set this range's low to the last range's high plus one
@@ -16341,11 +16295,9 @@ var PieSeries = {
 			];
 
 		}
-
-
-		this.setTooltipPoints();
 	},
 
+	setTooltipPoints: noop,
 	drawGraph: null,
 
 	/**
