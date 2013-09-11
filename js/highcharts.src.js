@@ -7554,7 +7554,7 @@ Axis.prototype = {
 		if (!tickPositions) {
 			
 			// Too many ticks
-			if ((axis.max - axis.min) / axis.tickInterval > 2 * axis.len) {
+			if (!axis.ordinalPositions && (axis.max - axis.min) / axis.tickInterval > 2 * axis.len) {
 				error(19, true);
 			}
 			
