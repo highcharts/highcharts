@@ -2094,6 +2094,7 @@ Series.prototype = {
 			if (axis) {
 				erase(axis.series, series);
 				axis.isDirty = axis.forceRedraw = true;
+				axis.stacks = {}; // Rebuild stacks when updating (#2229)
 			}
 		});
 
