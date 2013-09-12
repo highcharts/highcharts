@@ -19720,6 +19720,14 @@ Chart.prototype.callbacks.push(function (chart) {
 Highcharts.StockChart = function (options, callback) {
 	var seriesOptions = options.series, // to increase performance, don't merge the data 
 		opposite,
+
+		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090) // docs
+		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
+		disableStartOnTick = navigatorEnabled ? {
+			startOnTick: false,
+			endOnTick: false
+		} : null,
+
 		lineOptions = {
 
 			marker: {
@@ -19759,7 +19767,9 @@ Highcharts.StockChart = function (options, callback) {
 			{ // forced options
 				type: 'datetime',
 				categories: null
-			});
+			},
+			disableStartOnTick
+		);
 	});
 
 	// apply Y axis options to both single and multi y axes
