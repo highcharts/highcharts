@@ -1,3 +1,7 @@
+
+
+
+
 var presets = [{
 	name: '',
 	url: ''
@@ -53,7 +57,7 @@ var presets = [{
 	name: 'Sweden',
 	url: 'http://www.highcharts.com/maps/maps/Sweden.svg'
 }];
-
+/*
 var defaultSeriesSetup = [{
 	name: 'Areas',
 	type: 'map',
@@ -64,9 +68,30 @@ var defaultSeriesSetup = [{
 		operator: 'is-not',
 		value: 'none'
 	}]
-}]
-			
+}, {
+	name: 'Lines',
+	type: 'mapline',
+	enableMouseTracking: false,
+	showInLegend: false,
+	rules: [{
+		key: 'fill',
+		operator: 'is',
+		value: 'none'
+	}]
+}];
 
+function showSeriesSetup(setup) {
+	$.each(setup, function (i, series) {
+		var $div = $('<div>').appendTo($('#series-setup'));
+		$('<input>')
+			.attr({
+				name: i + '-name',
+				value: series.name
+			})
+			.appendTo($div);
+	})
+}	
+*/
 
 $(function() {
 	var $preset = $('#preset')
@@ -80,6 +105,7 @@ $(function() {
 		$preset[0].selectedIndex = index;
 		$('#load')[0].value = preset.url;
 		location.hash = '#' + preset.name;
+		//showSeriesSetup(preset.seriesSetup || defaultSeriesSetup);
 		runChart();
 	}
 
