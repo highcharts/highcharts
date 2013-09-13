@@ -18248,7 +18248,8 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		if (navigatorWidth === 0 || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851
+
+		if (navigatorWidth === 0 || !defined(xAxis.min) || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851, #2238
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		} else {
@@ -18329,6 +18330,7 @@ Scroller.prototype = {
 
 		// place elements
 		verb = chart.isResizing ? 'animate' : 'attr';
+
 		if (navigatorEnabled) {
 			scroller.leftShade[verb]({
 				x: navigatorLeft,
