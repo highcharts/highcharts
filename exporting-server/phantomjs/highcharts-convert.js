@@ -85,9 +85,8 @@
 			constr,
 			callback,
 			width,
-			output,
+			output,			
 			outputExtension,
-			svgInput,
 			svg,
 			svgFile,
 			timer,
@@ -470,18 +469,15 @@
 			}
 
 			outputExtension = output.split('.').pop();
-
-			/* Decide if we have to generate a svg first before rendering */
-			svgInput = input.substring(0, 4).toLowerCase() === "<svg" ? true : false;
-
+			
 			page.open('about:blank', function (status) {
 				var svg,
 					globalOptions = params.globaloptions,
 					dataOptions = params.dataoptions,
 					customCode = 'function customCode(options) {\n' + params.customcode + '}\n';
 
-
-				if (svgInput) {
+				/* Decide if we have to generate a svg first before rendering */
+				if (input.substring(0, 4).toLowerCase() === "<svg") {
 					//render page directly from svg file
 					svg = page.evaluate(loadChart, input, outputExtension, messages);
 					page.viewportSize = { width: svg.width, height: svg.height };
