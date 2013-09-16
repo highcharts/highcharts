@@ -1214,12 +1214,13 @@ Series.prototype = {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
+			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
 			i;
 
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
 			if (xData[i] >= min) {
-				cropStart = mathMax(0, i - 1);
+				cropStart = mathMax(0, i - cropShoulder);
 				break;
 			}
 		}
@@ -1227,7 +1228,7 @@ Series.prototype = {
 		// proceed to find slice end
 		for (; i < dataLength; i++) {
 			if (xData[i] > max) {
-				cropEnd = i + 1;
+				cropEnd = i + cropShoulder;
 				break;
 			}
 		}

@@ -728,6 +728,7 @@ Scroller.prototype = {
 					false,
 					{ 
 						trigger: 'navigator',
+						triggerOp: 'navigator-drag',
 						DOMEvent: e // #1838
 					}
 				);

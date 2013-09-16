@@ -22,7 +22,7 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function afterSetExtremesHandlerScroller(e) {
-		if (e.trigger !== 'navigator') {
+		if (e.triggerOp !== 'navigator-drag') {
 			scroller.render(e.min, e.max);
 		}
 	}

@@ -9103,7 +9103,7 @@ Pointer.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					if (point.series) { // not a dummy point, #1544
+					if (point && point.series) { // not a dummy point, #1544
 						point._dist = mathAbs(index - point.clientX);
 						distance = mathMin(distance, point._dist);
 						points.push(point);
@@ -13328,12 +13328,13 @@ Series.prototype = {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
+			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
 			i;
 
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
 			if (xData[i] >= min) {
-				cropStart = mathMax(0, i - 1);
+				cropStart = mathMax(0, i - cropShoulder);
 				break;
 			}
 		}
@@ -13341,7 +13342,7 @@ Series.prototype = {
 		// proceed to find slice end
 		for (; i < dataLength; i++) {
 			if (xData[i] > max) {
-				cropEnd = i + 1;
+				cropEnd = i + cropShoulder;
 				break;
 			}
 		}
@@ -15484,6 +15485,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
 		// point is substracted from previous (#1910)
