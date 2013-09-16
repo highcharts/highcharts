@@ -7761,6 +7761,7 @@ Axis.prototype = {
 
 			axis.userMin = newMin;
 			axis.userMax = newMax;
+			axis.eventArgs = eventArguments;
 
 			// Mark for running afterSetExtremes
 			axis.isDirtyExtremes = true;
@@ -10785,7 +10786,8 @@ Chart.prototype = {
 				if (axis.isDirtyExtremes) { // #821
 					axis.isDirtyExtremes = false;
 					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
-						fireEvent(axis, 'afterSetExtremes', axis.getExtremes()); // #747, #751
+						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+						delete axis.eventArgs;
 					});
 				}
 				
@@ -18514,12 +18516,14 @@ Scroller.prototype = {
 				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedLeft = true;
 					scroller.otherHandlePos = zoomedMax;
+					scroller.fixedExtreme = baseXAxis.max;
 					chart.fixedRange = null;
 
 				// grab the right handle
 				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedRight = true;
 					scroller.otherHandlePos = zoomedMin;
+					scroller.fixedExtreme = baseXAxis.min;
 					chart.fixedRange = null;
 
 				// grab the zoomed range
@@ -18637,10 +18641,18 @@ Scroller.prototype = {
 		 * Event handler for the mouse up event.
 		 */
 		scroller.mouseUpHandler = function (e) {
-			var ext;
+			var ext,
+				fixedMin,
+				fixedMax;
 			
 			if (hasDragged) {
-				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax);
+				// When dragging one handle, make sure the other one doesn't change
+				if (scroller.zoomedMin === scroller.otherHandlePos) {
+					fixedMin = scroller.fixedExtreme;
+				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
+					fixedMax = scroller.fixedExtreme;
+				}
+				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				chart.xAxis[0].setExtremes(
 					ext.min,
 					ext.max,
@@ -18654,7 +18666,8 @@ Scroller.prototype = {
 			}
 
 			if (e.type !== 'mousemove') {
-				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth = hasDragged = dragOffset = null;
+				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth = 
+					scroller.fixedExtreme = scroller.otherHandlePos = hasDragged = dragOffset = null;
 				bodyStyle.cursor = defaultBodyCursor || '';
 			}
 			
@@ -19667,7 +19680,9 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function afterSetExtremesHandlerScroller(e) {
-		scroller.render(e.min, e.max);
+		if (e.trigger !== 'navigator') {
+			scroller.render(e.min, e.max);
+		}
 	}
 
 	function afterSetExtremesHandlerRangeSelector(e) {

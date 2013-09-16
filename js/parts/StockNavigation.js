@@ -22,7 +22,9 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function afterSetExtremesHandlerScroller(e) {
-		scroller.render(e.min, e.max);
+		if (e.trigger !== 'navigator') {
+			scroller.render(e.min, e.max);
+		}
 	}
 
 	function afterSetExtremesHandlerRangeSelector(e) {
