@@ -280,7 +280,7 @@ var radialAxisMixin = {
 	 */
 	beforeSetTickPositions: function () {
 		if (this.autoConnect) {
-			this.max += (this.categories && 1) || this.pointRange || this.closestPointRange; // #1197
+			this.max += (this.categories && 1) || this.pointRange || this.closestPointRange || 0; // #1197, #2260
 		}
 	},
 	
