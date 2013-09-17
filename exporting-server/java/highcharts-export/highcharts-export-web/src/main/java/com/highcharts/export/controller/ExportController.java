@@ -41,6 +41,7 @@ import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
 import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.util.MimeType;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/")
@@ -48,12 +49,11 @@ public class ExportController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Float MAX_WIDTH = 2000.0F;
 	private static final Float MAX_SCALE = 4.0F;
-        private static final String SVG_DOCTYPE = "<?xml version=\"1.0\" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">";
 	protected static Logger logger = Logger.getLogger("exporter");
 
 	/*for test*/
 	@Autowired
-    private ServletContext servletContext;
+	private ServletContext servletContext;
 
 	/* end*/
 
@@ -63,27 +63,61 @@ public class ExportController extends HttpServlet {
 	/* Catch All */
 	@RequestMapping(method = RequestMethod.POST)
 	public void exporter(
-			@RequestParam(value = "svg", required = false) String svg,
-			@RequestParam(value = "type", required = false) String type,
-			@RequestParam(value = "filename", required = false) String filename,
-			@RequestParam(value = "width", required = false) String width,
-			@RequestParam(value = "scale", required = false) String scale,
-			@RequestParam(value = "options", required = false) String options,
-			@RequestParam(value = "constr", required = false) String constructor,
-			@RequestParam(value = "callback", required = false) String callback,
-			HttpServletResponse response, HttpServletRequest request)
-			throws ServletException, IOException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException {
-
-		long start1 = System.currentTimeMillis();
+		@RequestParam(value = "svg", required = false) String svg,
+		@RequestParam(value = "type", required = false) String type,
+		@RequestParam(value = "filename", required = false) String filename,
+		@RequestParam(value = "width", required = false) String width,
+		@RequestParam(value = "scale", required = false) String scale,
+		@RequestParam(value = "options", required = false) String options,
+		@RequestParam(value = "constr", required = false) String constructor,
+		@RequestParam(value = "callback", required = false) String callback,
+		HttpServletResponse response, HttpServletRequest request) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException {
 
 		MimeType mime = getMime(type);
+		ByteArrayOutputStream stream = processRequest(svg, mime, width, scale, options, constructor, callback, false);
 		filename = getFilename(filename);
+		response.reset();
+		response.setCharacterEncoding("utf-8");
+		response.setContentLength(stream.size());
+		response.setStatus(HttpStatus.OK.value());
+		response.setHeader("Content-disposition", "attachment; filename=\""
+						+ filename + "." + mime.name().toLowerCase() + "\"");
+		IOUtils.write(stream.toByteArray(), response.getOutputStream());
+		response.flushBuffer();
+	}
+
+
+
+	@RequestMapping (value="/async", method=RequestMethod.GET, produces = {"application/x-javascript", "application/json", "application/xml"})
+	@ResponseBody
+	public String ExportAsync(
+		@RequestParam(value = "svg", required = false) String svg,
+		@RequestParam(value = "type", required = false) String type,
+		@RequestParam(value = "filename", required = false) String filename,
+		@RequestParam(value = "width", required = false) String width,
+		@RequestParam(value = "scale", required = false) String scale,
+		@RequestParam(value = "options", required = false) String options,
+		@RequestParam(value = "constr", required = false) String constructor,
+		@RequestParam(value = "callback", required = false) String callback,
+		@RequestParam("callback") String jsonpCallback,	HttpServletResponse response, HttpServletRequest request) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
+
+		MimeType mime = getMime(type);
+
+		ByteArrayOutputStream stream = processRequest(svg, mime, width, scale, options, constructor, callback, true);
+
+		return "JsonCallback(\"key\",\"value\")";
+	}
+
+
+	private ByteArrayOutputStream processRequest(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, boolean async) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
+
 		Float parsedWidth = widthToFloat(width);
 		Float parsedScale = scaleToFloat(scale);
 		options = sanitize(options);
 		String input;
 
 		boolean convertSvg = false;
+		ByteArrayOutputStream stream = null;
 
 		if (options != null) {
 			// create a svg file out of the options
@@ -105,13 +139,9 @@ public class ExportController extends HttpServlet {
 			}
 		}
 
-		ByteArrayOutputStream stream = null;
 		if (convertSvg && mime.equals(MimeType.SVG)) {
-			// send this to the client, without converting.
-			stream = new ByteArrayOutputStream();
-                        // add XML Doctype for svg
-                        input = SVG_DOCTYPE + input;
-			stream.write(input.getBytes());
+			String convertedSvg = converter.redirectSVG(input, async);
+
 		} else {
 			//stream = SVGCreator.getInstance().convert(input, mime, constructor, callback, parsedWidth, parsedScale);
 			stream = converter.convert(input, mime, constructor, callback, parsedWidth, parsedScale);
@@ -121,17 +151,7 @@ public class ExportController extends HttpServlet {
 			throw new ServletException("Error while converting");
 		}
 
-		logger.debug(request.getHeader("referer") + " Total time: " + (System.currentTimeMillis() - start1));
-
-		response.reset();
-		response.setCharacterEncoding("utf-8");
-		response.setContentLength(stream.size());
-		response.setStatus(HttpStatus.OK.value());
-		response.setHeader("Content-disposition", "attachment; filename=\""
-				+ filename + "." + mime.name().toLowerCase() + "\"");
-
-		IOUtils.write(stream.toByteArray(), response.getOutputStream());
-		response.flushBuffer();
+		return stream;
 	}
 
 	@RequestMapping(value = "/demo", method = RequestMethod.GET)
@@ -209,24 +229,24 @@ public class ExportController extends HttpServlet {
 	/* TEST */
 	@RequestMapping(value = "/test/{fileName}", method = RequestMethod.GET)
 	public ResponseEntity<byte[]> staticImagesDownload(
-	                 @PathVariable("fileName") String fileName) throws IOException {
+					 @PathVariable("fileName") String fileName) throws IOException {
 
-	    String imageLoc = servletContext.getRealPath("WEB-INF/benchmark");
-	    FileInputStream fis = new FileInputStream(imageLoc + "/" + fileName + ".png");
+		String imageLoc = servletContext.getRealPath("WEB-INF/benchmark");
+		FileInputStream fis = new FileInputStream(imageLoc + "/" + fileName + ".png");
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] buf = new byte[1024];
-        try {
-            for (int readNum; (readNum = fis.read(buf)) != -1;) {
-                bos.write(buf, 0, readNum);
-            }
-        } catch (IOException ex) {
-            // nothing here
-        } finally {
-        	fis.close();
-        }
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		try {
+			for (int readNum; (readNum = fis.read(buf)) != -1;) {
+				bos.write(buf, 0, readNum);
+			}
+		} catch (IOException ex) {
+			// nothing here
+		} finally {
+			fis.close();
+		}
 
-	    HttpHeaders responseHeaders = httpHeaderAttachment("TEST-" + fileName,  MimeType.PNG,
+		HttpHeaders responseHeaders = httpHeaderAttachment("TEST-" + fileName,  MimeType.PNG,
 				bos.size());
 		return new ResponseEntity<byte[]>(bos.toByteArray(),
 				responseHeaders, HttpStatus.OK);

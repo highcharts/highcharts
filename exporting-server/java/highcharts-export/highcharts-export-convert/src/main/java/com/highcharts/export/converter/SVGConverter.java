@@ -37,14 +37,15 @@ public class SVGConverter {
 	@Autowired
 	private BlockingQueuePool serverPool;
 	protected static Logger logger = Logger.getLogger("converter");
+	private static final String SVG_DOCTYPE = "<?xml version=\"1.0\" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">";
 
 	public ByteArrayOutputStream convert(String input, MimeType mime,
-			String constructor, String callback, Float width, Float scale) throws SVGConverterException, IOException, PoolException, NoSuchElementException, TimeoutException {
+			String constructor, String callback, Float width, Float scale) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException {
 		return this.convert(input, null, null, null, mime, constructor, callback, width, scale);
 	}
 
 	public ByteArrayOutputStream convert(String input, String globalOptions, String dataOptions, String customCode, MimeType mime,
-			String constructor, String callback, Float width, Float scale) throws SVGConverterException, IOException, PoolException, NoSuchElementException, TimeoutException {
+			String constructor, String callback, Float width, Float scale) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException {
 
 			ByteArrayOutputStream stream = null;
 
@@ -86,28 +87,58 @@ public class SVGConverter {
 				params.put("scale", String.valueOf(scale));
 			}
 
+			// parameters to JSON
 			String json = gson.toJson(params);
+
+			// send to PhantomServer, get 64bit string image in return
+			// or filelocation
+
+			// TODO: send with async parameter -> if async let phantomjs create the local file in /temp and get the fileloc in return.
 			String output = requestServer(json);
 
-			// check for errors
+			// check first for errors
 			if (output.substring(0,5).equalsIgnoreCase("error")) {
 				logger.debug("recveived error from phantomjs: " + output);
 				throw new SVGConverterException("recveived error from phantomjs:" + output);
 			}
 
 			stream = new ByteArrayOutputStream();
-			if (output.equalsIgnoreCase(outFilename)) {
-				// in case of pdf, phantom cannot base64 on pdf files
-				stream.write(FileUtils.readFileToByteArray(new File(outFilename)));
-			} else {
-				// assume phantom is returning SVG or a base64 string for images
-				if (extension.equals("svg")) {
-					stream.write(output.getBytes());
+			try {
+				if (output.equalsIgnoreCase(outFilename)) {
+					// in case of pdf, phantom cannot base64 on pdf files
+					stream.write(FileUtils.readFileToByteArray(new File(outFilename)));
 				} else {
-					stream.write(Base64.decodeBase64(output));
+					// assume phantom is returning SVG or a base64 string for images
+					if (extension.equals("svg")) {
+						stream.write(output.getBytes());
+					} else {
+						stream.write(Base64.decodeBase64(output));
+					}
 				}
+			} catch (IOException ioex) {
+				logger.error(ioex.getMessage());
+				throw new SVGConverterException("Error while converting, " + ioex.getMessage());
 			}
+
 			return stream;
+	}
+
+	public String redirectSVG(String svg, boolean async) throws SVGConverterException {
+		// add XML Doctype for svg
+		String input = SVG_DOCTYPE + svg;
+		if (async) {
+			// Create file and return filename instead.
+			String filename = createUniqueFileName(".svg");
+			File file = new File(filename);
+			try {
+				FileUtils.writeStringToFile(file, svg);
+			} catch (IOException ioex) {
+				logger.error(ioex.getMessage());
+				throw new SVGConverterException("Error while converting, " + ioex.getMessage());
+			}
+			return filename;
+		}
+		return input;
 	}
 
 	public String requestServer(String params) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException {
@@ -125,7 +156,7 @@ public class SVGConverter {
 		} catch (PoolException nse) {
 				logger.error("POOL EXHAUSTED!!");
 				throw new PoolException(nse.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			throw new SVGConverterException("Error converting SVG" + e.getMessage());
 		} finally {
@@ -137,7 +168,8 @@ public class SVGConverter {
 		}
 	}
 
-	public String createUniqueFileName(String extension) throws IOException {
+	public String createUniqueFileName(String extension) {
 		return System.getProperty("java.io.tmpdir") + "/" + RandomStringUtils.randomAlphanumeric(8) + extension;
 	}
+
 }
