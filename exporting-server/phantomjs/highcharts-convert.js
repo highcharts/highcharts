@@ -11,7 +11,7 @@
  */
 
 /*jslint white: true */
-/*global window, require, phantom, console, $, document, Image, Highcharts, clearTimeout, clearInterval, options, cb */
+/*global window, require, phantom, console, $, document, Image, Highcharts, clearTimeout, clearInterval, options, cb, globalOptions, dataOptions, customCode */
 
 
 (function () {
@@ -85,8 +85,8 @@
 			constr,
 			callback,
 			width,
-			output,			
-			outputExtension,
+			output,
+			outType,
 			svg,
 			svgFile,
 			timer,
@@ -160,7 +160,7 @@
 			};
 
 			/* for pdf we need a bit more paperspace in some cases for example (w:600,h:400), I don't know why.*/
-			if (outputExtension === 'pdf') {
+			if (outType === 'pdf') {
 				// changed to a multiplication with 1.333 to correct systems dpi setting
 				clipwidth = clipwidth * dpiCorrection;
 				clipheight = clipheight * dpiCorrection;
@@ -182,11 +182,14 @@
 		convert = function (svg) {
 			var base64;
 			scaleAndClipPage(svg);
-			if (outputExtension === 'pdf' || !runsAsServer) {
+			if (outType === 'pdf' || !runsAsServer || output !== undefined) {
+				if (output === undefined) {
+					output = 'chart.' + outType;
+				}
 				page.render(output);
 				exit(output);
 			} else {
-				base64 = page.renderBase64(outputExtension);
+				base64 = page.renderBase64(outType);
 				exit(base64);
 			}
 		};
@@ -194,7 +197,7 @@
 		renderSVG = function (svg) {
 			// From this point we have loaded/or created a SVG
 			try {
-				if (outputExtension.toLowerCase() === 'svg') {
+				if (outType.toLowerCase() === 'svg') {
 					// output svg
 					svg = svg.html.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ').replace(/ href=/g, ' xlink:href=').replace(/<\/svg>.*?$/, '</svg>');
 					// add xml doc type
@@ -239,7 +242,7 @@
 			}
 		};
 
-		loadChart = function (input, outputFormat, messages) {
+		loadChart = function (input, outputType, messages) {
 			var nodeIter, nodes, elem, opacity, counter, svgElem;
 
 			document.body.style.margin = '0px';
@@ -272,7 +275,7 @@
 				}
 			}
 
-			if (outputFormat === 'jpeg') {
+			if (outputType === 'jpeg') {
 				document.body.style.backgroundColor = 'white';
 			}
 
@@ -298,7 +301,7 @@
 			};
 		};
 
-		createChart = function (width, constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputFormat, callback, messages) {
+		createChart = function (width, constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputType, callback, messages) {
 
 			var $container, chart, nodes, nodeIter, elem, opacity, counter;
 
@@ -373,14 +376,12 @@
 
 			$(document.body).css('margin', '0px');
 
-			if (outputFormat === 'jpeg') {
+			if (outputType === 'jpeg') {
 				$(document.body).css('backgroundColor', 'white');
 			}
 
 			$container = $('<div>').appendTo(document.body);
 			$container.attr('id', 'container');
-
-
 
 			// disable animations
 			Highcharts.SVGRenderer.prototype.Element.prototype.animate = Highcharts.SVGRenderer.prototype.Element.prototype.attr;
@@ -459,7 +460,14 @@
 			exit("Error: Insuficient parameters");
 		} else {
 			input = params.infile;
-			output = pick(params.outfile, "chart.png");
+			output = params.outfile;
+
+			if (output !== undefined) {
+				outType = pick(output.split('.').pop(),outType,'png');
+			} else {
+				outType = pick(params.outtype,'png');
+			}
+
 			constr = pick(params.constr, 'Chart');
 			callback = params.callback;
 			width = params.width;
@@ -468,8 +476,6 @@
 				exit('Error: Insuficient or wrong parameters for rendering');
 			}
 
-			outputExtension = output.split('.').pop();
-			
 			page.open('about:blank', function (status) {
 				var svg,
 					globalOptions = params.globaloptions,
@@ -479,7 +485,7 @@
 				/* Decide if we have to generate a svg first before rendering */
 				if (input.substring(0, 4).toLowerCase() === "<svg") {
 					//render page directly from svg file
-					svg = page.evaluate(loadChart, input, outputExtension, messages);
+					svg = page.evaluate(loadChart, input, outType, messages);
 					page.viewportSize = { width: svg.width, height: svg.height };
 					renderSVG(svg);
 				} else {
@@ -492,7 +498,7 @@
 					page.injectJs(config.HIGHCHARTS_DATA);
 
 					// load chart in page and return svg height and width
-					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outputExtension, callback, messages);
+					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outType, callback, messages);
 
 					if (!window.optionsParsed) {
 						exit('ERROR: the options variable was not available, contains the infile an syntax error? see' + input);
@@ -507,9 +513,11 @@
 		}
 	};
 
-	startServer = function (host, port) {
+	startServer = function (host, port, tmpDir) {
 		var server = require('webserver').create(),
-			service = server.listen(host + ':' + port,
+		tmpDir;
+
+			server.listen(host + ':' + port,
 				function (request, response) {
 					var jsonStr = request.post,
 						params,
@@ -537,7 +545,12 @@
 						response.write(msg);
 						response.close();
 					}
-				});
+				}); // end server.listen
+
+		// Optional, change working directory for saving images
+		if (tmpDir !== undefined && fs.exists(tmpDir)) {
+			fs.changeWorkingDirectory(tmpDir);
+		}
 
 		console.log("OK, PhantomJS is ready.");
 	};
@@ -545,7 +558,7 @@
 	args = mapCLArguments();
 
 	if (args.port !== undefined) {
-		startServer(args.host, args.port);
+		startServer(args.host, args.port, args.tmpDir);
 	} else {
 		// presume commandline usage
 		render(args, false, function (msg) {
