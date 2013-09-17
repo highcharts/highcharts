@@ -47,16 +47,23 @@ public class SVGConverter {
 			String constructor, String callback, Float width, Float scale) throws SVGConverterException, IOException, PoolException, NoSuchElementException, TimeoutException {
 
 			ByteArrayOutputStream stream = null;
-
-			// get filename
-			String extension = mime.name().toLowerCase();
-			String outFilename = createUniqueFileName("." + extension);
+			String outFilename = null;
 
 			Map<String, String> params = new HashMap<String, String>();
 			Gson gson = new Gson();
 
+			// get filename
+			String extension = mime.name().toLowerCase();
+			if (MimeType.PDF.equals(mime)) {
+				// only PDF cannot returned as a string by PhantomJS
+				outFilename = createUniqueFileName("." + extension);
+				params.put("outfile", outFilename);
+			} else {
+				// set the mime we want to convert to
+				params.put("outtype", extension);
+			}
+
 			params.put("infile", input);
-			params.put("outfile", outFilename);
 
 			if (constructor != null && !constructor.isEmpty()) {
 				params.put("constr", constructor);
@@ -104,6 +111,7 @@ public class SVGConverter {
 				if (extension.equals("svg")) {
 					stream.write(output.getBytes());
 				} else {
+					//decode the base64 string
 					stream.write(Base64.decodeBase64(output));
 				}
 			}
