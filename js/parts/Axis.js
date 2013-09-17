@@ -243,12 +243,7 @@ Axis.prototype = {
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
 		// Linked axis.
-		//axis.linkedParent = UNDEFINED;
-	
-	
-		// Flag if percentage mode
-		//axis.usePercentage = UNDEFINED;
-	
+		//axis.linkedParent = UNDEFINED;	
 		
 		// Tick positions
 		//axis.tickPositions = UNDEFINED; // array containing predefined positions
@@ -479,7 +474,6 @@ Axis.prototype = {
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
 				var seriesOptions = series.options,
-					stacking,
 					xData,
 					threshold = seriesOptions.threshold,
 					seriesDataMin,
@@ -503,18 +497,7 @@ Axis.prototype = {
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
 				} else {
 
-					// Handle stacking
-					stacking = seriesOptions.stacking;
-					axis.usePercentage = stacking === 'percent';
-
-					// create a stack for this particular series type
-					if (axis.usePercentage) {
-						axis.dataMin = 0;
-						axis.dataMax = 99;
-					}
-
-					
-					// get this particular series extremes
+					// Get this particular series extremes
 					series.getExtremes();
 					seriesDataMax = series.dataMax;
 					seriesDataMin = series.dataMin;
@@ -522,7 +505,7 @@ Axis.prototype = {
 					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
 					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series
 					// doesn't have active y data, we continue with nulls
-					if (!axis.usePercentage && defined(seriesDataMin) && defined(seriesDataMax)) {
+					if (defined(seriesDataMin) && defined(seriesDataMax)) {
 						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
 						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
@@ -1154,7 +1137,7 @@ Axis.prototype = {
 		if (!tickPositions) {
 			
 			// Too many ticks
-			if ((axis.max - axis.min) / axis.tickInterval > 2 * axis.len) {
+			if (!axis.ordinalPositions && (axis.max - axis.min) / axis.tickInterval > 2 * axis.len) {
 				error(19, true);
 			}
 			
@@ -1296,6 +1279,7 @@ Axis.prototype = {
 				for (type in stacks) {
 					for (i in stacks[type]) {
 						stacks[type][i].total = null;
+						stacks[type][i].cum = 0;
 					}
 				}
 			}
@@ -2040,16 +2024,22 @@ Axis.prototype = {
 	},
 
 	/**
-	 *
+	 * Build the stacks from top down
 	 */
 	buildStacks: function () {
-		if (this.isXAxis) {
-			return;
+		var series = this.series,
+			i = series.length;
+		if (!this.isXAxis) {
+			while (i--) {
+				series[i].setStackedPoints();
+			}
+			// Loop up again to compute percent stack
+			if (this.usePercentage) {
+				for (i = 0; i < series.length; i++) {
+					series[i].setPercentStacks();
+				}
+			}
 		}
-
-		each(this.series, function (series) {
-			series.setStackedPoints();
-		});
 	},
 
 	/**

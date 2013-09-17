@@ -471,6 +471,12 @@ extend(Chart.prototype, {
 			addEvent(menu, 'mouseenter', function () {
 				clearTimeout(hideTimer);
 			});
+			// Hide it on clicking or touching outside the menu (#2258)
+			addEvent(document, 'mousedown', function (e) {
+				if (!chart.pointer.inClass(e.target, 'highcharts-contextmenu')) {
+					hide();
+				}
+			});
 
 
 			// create the items

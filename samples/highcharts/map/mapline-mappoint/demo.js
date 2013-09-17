@@ -193,8 +193,8 @@ $(function () {
             floating: true,
             layout: 'vertical',
             verticalAlign: 'bottom',
-            x: 10,
-            y: -10
+            x: 50,
+            y: -50
         },
 
         

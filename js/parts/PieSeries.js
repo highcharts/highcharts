@@ -379,11 +379,9 @@ var PieSeries = {
 			];
 
 		}
-
-
-		this.setTooltipPoints();
 	},
 
+	setTooltipPoints: noop,
 	drawGraph: null,
 
 	/**
