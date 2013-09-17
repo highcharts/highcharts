@@ -33,7 +33,8 @@
 		SVG_DOCTYPE = '<?xml version=\"1.0" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">',
 		dpiCorrection = 1.4,
 		system = require('system'),
-		fs = require('fs');
+		fs = require('fs'),
+		serverMode = false;
 
 	pick = function () {
 		var args = arguments, i, arg, length = args.length;
@@ -74,7 +75,7 @@
 		return map;
 	};
 
-	render = function (params, runsAsServer, exitCallback) {
+	render = function (params, exitCallback) {
 
 		var page = require('webpage').create(),
 			messages = {},
@@ -87,8 +88,6 @@
 			width,
 			output,
 			outType,
-			svg,
-			svgFile,
 			timer,
 			renderSVG,
 			convert,
@@ -172,7 +171,7 @@
 		};
 
 		exit = function (result) {
-			if (runsAsServer) {
+			if (serverMode) {
 				//Calling page.close(), may stop the increasing heap allocation
 				page.close();
 			}
@@ -182,9 +181,10 @@
 		convert = function (svg) {
 			var base64;
 			scaleAndClipPage(svg);
-			if (outType === 'pdf' || !runsAsServer || output !== undefined) {
+			if (outType === 'pdf' || output !== undefined) {
 				if (output === undefined) {
-					output = 'chart.' + outType;
+					// in case of pdf files
+					output = config.tmpDir + '/chart.' + outType;
 				}
 				page.render(output);
 				exit(output);
@@ -195,6 +195,7 @@
 		};
 
 		renderSVG = function (svg) {
+			var svgFile;
 			// From this point we have loaded/or created a SVG
 			try {
 				if (outType.toLowerCase() === 'svg') {
@@ -203,7 +204,7 @@
 					// add xml doc type
 					svg = SVG_DOCTYPE + svg;
 
-					if (!runsAsServer) {
+					if (output !== undefined) {
 						// write the file
 						svgFile = fs.open(output, "w");
 						svgFile.write(svg);
@@ -456,7 +457,6 @@
 		};
 
 		if (params.length < 1) {
-			// TODO: log when using as server
 			exit("Error: Insuficient parameters");
 		} else {
 			input = params.infile;
@@ -513,55 +513,69 @@
 		}
 	};
 
-	startServer = function (host, port, tmpDir) {
-		var server = require('webserver').create(),
-		tmpDir;
+	startServer = function (host, port) {
+		var server = require('webserver').create();
 
-			server.listen(host + ':' + port,
-				function (request, response) {
-					var jsonStr = request.post,
-						params,
-						msg;
-					try {
-						params = JSON.parse(jsonStr);
-						if (params.status) {
-							// for server health validation
-							response.statusCode = 200;
-							response.write('OK');
-							response.close();
-						} else {
-							render(params, true, function (result) {
-								// TODO: set response headers?
-								response.statusCode = 200;
-								response.write(result);
-								response.close();
-							});
-						}
-					} catch (e) {
-						msg = "Failed rendering: \n" + e;
-						response.statusCode = 500;
-						response.setHeader('Content-Type', 'text/plain');
-						response.setHeader('Content-Length', msg.length);
-						response.write(msg);
+		server.listen(host + ':' + port,
+			function (request, response) {
+				var jsonStr = request.post,
+					params,
+					msg;
+				try {
+					params = JSON.parse(jsonStr);
+					if (params.status) {
+						// for server health validation
+						response.statusCode = 200;
+						response.write('OK');
 						response.close();
+					} else {
+						render(params, function (result) {
+							// TODO: set response headers?
+							response.statusCode = 200;
+							response.write(result);
+							response.close();
+						});
 					}
-				}); // end server.listen
+				} catch (e) {
+					msg = "Failed rendering: \n" + e;
+					response.statusCode = 500;
+					response.setHeader('Content-Type', 'text/plain');
+					response.setHeader('Content-Length', msg.length);
+					response.write(msg);
+					response.close();
+				}
+			}); // end server.listen
 
-		// Optional, change working directory for saving images
-		if (tmpDir !== undefined && fs.exists(tmpDir)) {
-			fs.changeWorkingDirectory(tmpDir);
-		}
+		// switch to serverMode
+		serverMode = true;
 
 		console.log("OK, PhantomJS is ready.");
 	};
 
 	args = mapCLArguments();
 
+	// set tmpDir, for output temporary files.
+	if (args.tmpDir === undefined) {
+		config.tmpDir = fs.workingDirectory + '/tmp';
+	} else {
+		config.tmpDir = args.tmpDir;
+	}
+
+	// exists tmpDir and is it writable?
+	if (!fs.exists(config.tmpDir)) {
+		try{
+			fs.makeDirectory(config.tmpDir);
+		} catch (e) {
+			console.log('ERROR: Cannot make temp directory');
+		}
+	}
+
+
 	if (args.port !== undefined) {
-		startServer(args.host, args.port, args.tmpDir);
+		startServer(args.host, args.port);
 	} else {
 		// presume commandline usage
-		render(args, false, function (msg) {
+		render(args, function (msg) {
 			console.log(msg);
 			phantom.exit();
 		});
