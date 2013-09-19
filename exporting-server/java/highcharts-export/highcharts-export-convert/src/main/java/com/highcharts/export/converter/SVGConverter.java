@@ -30,6 +30,10 @@ import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.pool.BlockingQueuePool;
 import com.highcharts.export.server.Server;
 import com.highcharts.export.util.MimeType;
+import com.highcharts.export.util.TempDir;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.apache.commons.io.FilenameUtils;
 
 @Service("svgConverter")
 public class SVGConverter {
@@ -40,12 +44,12 @@ public class SVGConverter {
 	private static final String SVG_DOCTYPE = "<?xml version=\"1.0\" standalone=\"no\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">";
 
 	public ByteArrayOutputStream convert(String input, MimeType mime,
-			String constructor, String callback, Float width, Float scale) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException {
-		return this.convert(input, null, null, null, mime, constructor, callback, width, scale);
+			String constructor, String callback, Float width, Float scale, Boolean async) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException {
+		return this.convert(input, null, null, null, mime, constructor, callback, width, scale, async);
 	}
 
 	public ByteArrayOutputStream convert(String input, String globalOptions, String dataOptions, String customCode, MimeType mime,
-			String constructor, String callback, Float width, Float scale) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException {
+			String constructor, String callback, Float width, Float scale, Boolean async) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException {
 
 			ByteArrayOutputStream stream = null;
 			String outFilename = null;
@@ -55,8 +59,8 @@ public class SVGConverter {
 
 			// get filename
 			String extension = mime.name().toLowerCase();
-			if (MimeType.PDF.equals(mime)) {
-				// only PDF cannot returned as a string by PhantomJS
+			if (async || MimeType.PDF.equals(mime)) {
+				// only PDF cannot be returned as a string by PhantomJS
 				outFilename = createUniqueFileName("." + extension);
 				params.put("outfile", outFilename);
 			} else {
@@ -112,8 +116,15 @@ public class SVGConverter {
 			stream = new ByteArrayOutputStream();
 			try {
 				if (output.equalsIgnoreCase(outFilename)) {
-					// in case of pdf, phantom cannot base64 on pdf files
-					stream.write(FileUtils.readFileToByteArray(new File(outFilename)));
+					if (async) {
+						// asnc outputs a filename
+						String filename = FilenameUtils.getName(outFilename);
+						String link = "files/" + filename; // + "/safe";
+						stream.write(link.getBytes("utf-8"));
+					} else {
+						// in case of pdf, phantom cannot base64 on pdf files
+						stream.write(FileUtils.readFileToByteArray(new File(outFilename)));
+					}
 				} else {
 					// assume phantom is returning SVG or a base64 string for images
 					if (extension.equals("svg")) {
@@ -131,6 +142,9 @@ public class SVGConverter {
 			return stream;
 	}
 
+	/*
+	 * Redirect the SVG string directly
+	 */
 	public String redirectSVG(String svg, boolean async) throws SVGConverterException {
 		// add XML Doctype for svg
 		String input = SVG_DOCTYPE + svg;
@@ -144,7 +158,7 @@ public class SVGConverter {
 				logger.error(ioex.getMessage());
 				throw new SVGConverterException("Error while converting, " + ioex.getMessage());
 			}
-			return filename;
+			return "files/" + FilenameUtils.getName(filename);// + "/safe";
 		}
 		return input;
 	}
@@ -177,7 +191,8 @@ public class SVGConverter {
 	}
 
 	public String createUniqueFileName(String extension) {
-		return System.getProperty("java.io.tmpdir") + "/" + RandomStringUtils.randomAlphanumeric(8) + extension;
+		Path path = Paths.get(TempDir.outputDir.toString(), RandomStringUtils.randomAlphanumeric(8) + extension);
+		return path.toString();
 	}
 
 }

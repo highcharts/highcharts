@@ -13,14 +13,14 @@
 
 	<!-- Activate annotation configured components -->
 	<context:annotation-config />
-	<context:component-scan base-package="com.highcharts.export" />	
-	
+	<context:component-scan base-package="com.highcharts.export.controller" />
+
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving
-        up static resources in the ${webappRoot}/resources/ directory -->   
-	<mvc:resources mapping="/resources/**" location="/resources/" />	
+        up static resources in the ${webappRoot}/resources/ directory -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
 
 	<mvc:annotation-driven/>
-	
+
 	<!-- Declare a view resolver -->
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"

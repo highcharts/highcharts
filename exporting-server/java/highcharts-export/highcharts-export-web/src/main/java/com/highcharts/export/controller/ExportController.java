@@ -9,14 +9,14 @@
  */
 package com.highcharts.export.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +40,15 @@ import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
 import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.util.MimeType;
-import org.springframework.web.bind.annotation.ResponseBody;
+import com.highcharts.export.util.TempDir;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import org.apache.commons.io.FileUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/")
@@ -52,8 +59,11 @@ public class ExportController extends HttpServlet {
 	protected static Logger logger = Logger.getLogger("exporter");
 
 	/*for test*/
+	/*@Autowired
+	private ServletContext servletContext;*/
+
 	@Autowired
-	private ServletContext servletContext;
+	private TempDir tempDir;
 
 	/* end*/
 
@@ -86,29 +96,6 @@ public class ExportController extends HttpServlet {
 		response.flushBuffer();
 	}
 
-
-
-	@RequestMapping (value="/async", method=RequestMethod.GET, produces = {"application/x-javascript", "application/json", "application/xml"})
-	@ResponseBody
-	public String ExportAsync(
-		@RequestParam(value = "svg", required = false) String svg,
-		@RequestParam(value = "type", required = false) String type,
-		@RequestParam(value = "filename", required = false) String filename,
-		@RequestParam(value = "width", required = false) String width,
-		@RequestParam(value = "scale", required = false) String scale,
-		@RequestParam(value = "options", required = false) String options,
-		@RequestParam(value = "constr", required = false) String constructor,
-		@RequestParam(value = "callback", required = false) String callback,
-		@RequestParam("callback") String jsonpCallback,	HttpServletResponse response, HttpServletRequest request) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
-
-		MimeType mime = getMime(type);
-
-		ByteArrayOutputStream stream = processRequest(svg, mime, width, scale, options, constructor, callback, true);
-
-		return "JsonCallback(\"key\",\"value\")";
-	}
-
-
 	private ByteArrayOutputStream processRequest(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, boolean async) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
 
 		Float parsedWidth = widthToFloat(width);
@@ -140,11 +127,19 @@ public class ExportController extends HttpServlet {
 		}
 
 		if (convertSvg && mime.equals(MimeType.SVG)) {
-			String convertedSvg = converter.redirectSVG(input, async);
-
+			try {
+				String convertedSvg = converter.redirectSVG(input, async);
+				stream = new ByteArrayOutputStream();
+				stream.write(convertedSvg.getBytes("utf-8"));
+			} catch (UnsupportedEncodingException ueex) {
+				logger.error("Cannot encode this string, while writing SVG to stream. " + ueex.getMessage());
+				throw new SVGConverterException("Error while converting " + ueex.getMessage());
+			} catch (IOException ioex) {
+				logger.error("Cannot write SVG to stream. " + ioex.getMessage());
+				throw new SVGConverterException("Error while converting " + ioex.getMessage());
+			}
 		} else {
-			//stream = SVGCreator.getInstance().convert(input, mime, constructor, callback, parsedWidth, parsedScale);
-			stream = converter.convert(input, mime, constructor, callback, parsedWidth, parsedScale);
+			stream = converter.convert(input, mime, constructor, callback, parsedWidth, parsedScale, async);
 		}
 
 		if (stream == null) {
@@ -152,6 +147,45 @@ public class ExportController extends HttpServlet {
 		}
 
 		return stream;
+	}
+
+	@RequestMapping(value = "/async",  method = RequestMethod.POST, consumes = { "application/json" })
+	public void async(@RequestBody String json, HttpServletResponse response ) throws IOException, SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
+
+		Gson gson = new Gson();
+		Type type = new TypeToken<Map<String, String>>(){}.getType();
+		Map<String, String> map = gson.fromJson(json, type);
+
+		MimeType mime = MimeType.get(map.get("type"));
+		ByteArrayOutputStream stream = processRequest(map.get("svg"), mime, map.get("width"), map.get("scale"),
+				map.get("options"), map.get("constructor"), map.get("callback"), true);
+
+		response.reset();
+		response.setCharacterEncoding("utf-8");
+		response.setContentLength(stream.size());
+		response.setStatus(HttpStatus.OK.value());
+		// without this line, you get an error message in the client
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		IOUtils.write(stream.toByteArray(), response.getOutputStream());
+		response.flushBuffer();
+    }
+
+	@RequestMapping(value = "/files/{name}.{ext}", method = RequestMethod.GET)
+	public void getFile(@PathVariable("name") String name, @PathVariable("ext") String ext, HttpServletResponse response) throws IOException {
+		Path path = Paths.get(TempDir.getOutputDir().toString(), name + "." + ext);
+
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		stream.write(FileUtils.readFileToByteArray(new File(path.toString())));
+		MimeType mime = MimeType.valueOf(ext.toUpperCase());
+
+		response.reset();
+		response.setCharacterEncoding("utf-8");
+		response.setContentLength(stream.size());
+		response.setContentType(mime.getType());
+		response.setStatus(HttpStatus.OK.value());
+		IOUtils.write(stream.toByteArray(), response.getOutputStream());
+		response.flushBuffer();
+
 	}
 
 	@RequestMapping(value = "/demo", method = RequestMethod.GET)
@@ -227,7 +261,7 @@ public class ExportController extends HttpServlet {
 
 
 	/* TEST */
-	@RequestMapping(value = "/test/{fileName}", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/test/{fileName}", method = RequestMethod.GET)
 	public ResponseEntity<byte[]> staticImagesDownload(
 					 @PathVariable("fileName") String fileName) throws IOException {
 
@@ -250,9 +284,7 @@ public class ExportController extends HttpServlet {
 				bos.size());
 		return new ResponseEntity<byte[]>(bos.toByteArray(),
 				responseHeaders, HttpStatus.OK);
-	}
-
-
+	}*/
 	/* end TEST */
 
 
@@ -318,4 +350,17 @@ public class ExportController extends HttpServlet {
 		}
 		return null;
 	}
+
+	public String getExtension(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        int index = filename.indexOf(".");
+        if (index == -1) {
+            return "";
+        } else {
+            return filename.substring(index + 1);
+        }
+    }
+
 }
