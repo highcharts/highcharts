@@ -6333,6 +6333,8 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
 	this.percent = stacking === 'percent';
+	this.leftCliff = 0;
+	this.rightCliff = 0;
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -7696,7 +7698,7 @@ Axis.prototype = {
 				for (type in stacks) {
 					for (i in stacks[type]) {
 						stacks[type][i].total = null;
-						stacks[type][i].cum = 0;
+						stacks[type][i].cum = stacks[type][i].leftCliff = stacks[type][i].rightCliff = 0;
 					}
 				}
 			}
@@ -8448,7 +8450,8 @@ Axis.prototype = {
 		var series = this.series,
 			i = series.length;
 		if (!this.isXAxis) {
-			while (i--) {
+			//while (i--) {
+			for (i = 0; i < series.length; i++) {
 				series[i].setStackedPoints();
 			}
 			// Loop up again to compute percent stack
@@ -12163,6 +12166,7 @@ Point.prototype = {
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
+		point.isNull = point.y === null;
 		
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
@@ -12802,50 +12806,6 @@ Series.prototype = {
 		series.xIncrement = xIncrement + series.pointInterval;
 		return xIncrement;
 	},
-
-	/**
-	 * Divide the series data into segments divided by null values.
-	 */
-	getSegments: function () {
-		var series = this,
-			lastNull = -1,
-			segments = [],
-			i,
-			points = series.points,
-			pointsLength = points.length;
-
-		if (pointsLength) { // no action required for []
-			
-			// if connect nulls, just remove null points
-			if (series.options.connectNulls) {
-				i = pointsLength;
-				while (i--) {
-					if (points[i].y === null) {
-						points.splice(i, 1);
-					}
-				}
-				if (points.length) {
-					segments = [points];
-				}
-				
-			// else, split on null points
-			} else {
-				each(points, function (point, i) {
-					if (point.y === null) {
-						if (i > lastNull + 1) {
-							segments.push(points.slice(lastNull + 1, i));
-						}
-						lastNull = i;
-					} else if (i === pointsLength - 1) { // last value
-						segments.push(points.slice(lastNull + 1, i + 1));
-					}
-				});
-			}
-		}
-		
-		// register it
-		series.segments = segments;
-	},
 	
 	/**
 	 * Set the series options by merging from the options tree
@@ -13473,15 +13433,18 @@ Series.prototype = {
 
 			// If the StackItem doesn't exist, create it first
 			stack = stacks[key][x];
-			stack.points[series.index] = [stack.cum || 0];
+			if (y !== null) {
+				stack.points[series.index] = [stack.cum || 0];
+			}
 
 			// Add value to the stack total
 			stack.total += (stacking === 'percent' ? mathAbs(y) : y) || 0;
 			stack.cum = (stack.cum || 0) + (y || 0);
 
-			stack.points[series.index].push(stack.cum);
+			if (y !== null) {
+				stack.points[series.index].push(stack.cum);
+			}
 			stackedYData[i] = stack.cum;
-
 		}
 
 		if (stacking === 'percent') {
@@ -13611,7 +13574,7 @@ Series.prototype = {
 			
 
 			// Calculate the bottom y value for stacked series
-			if (stacking && series.visible && stack && stack[xValue]) {
+			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
 
 				pointStack = stack[xValue];
 				stackValues = pointStack.points[series.index];
@@ -13661,16 +13624,23 @@ Series.prototype = {
 
 
 		}
-
-		// now that we have the cropped data, build the segments
-		series.getSegments();
 	},
+
+	/**
+	 * Return the series points with null points filtered out
+	 */
+	getValidPoints: function () {
+		return grep(this.points, function (point) {
+			return !point.isNull;
+		});
+	},
+
 	/**
 	 * Memoize tooltip texts and positions
 	 */
 	setTooltipPoints: function (renew) {
 		var series = this,
-			points = [],
+			points,
 			pointsLength,
 			low,
 			high,
@@ -13693,10 +13663,8 @@ Series.prototype = {
 			series.tooltipPoints = null;
 		}
 
-		// concat segments to overcome null values
-		each(series.segments || series.points, function (segment) {
-			points = points.concat(segment);
-		});
+		// Filter out null values
+		points = this.getValidPoints();
 
 		// Reverse the points in case the X axis is reversed
 		if (xAxis && xAxis.reversed) {
@@ -14440,90 +14408,86 @@ Series.prototype = {
 		}
 				
 	},
-	
-	/**
-	 * Return the graph path of a segment
-	 */
-	getSegmentPath: function (segment) {		
-		var series = this,
-			segmentPath = [],
-			step = series.options.step;
-			
-		// build the segment line
-		each(segment, function (point, i) {
-			
-			var plotX = point.plotX,
-				plotY = point.plotY,
-				lastPoint;
-
-			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
-
-			} else {
-
-				// moveTo or lineTo
-				segmentPath.push(i ? L : M);
-
-				// step line?
-				if (step && i) {
-					lastPoint = segment[i - 1];
-					if (step === 'right') {
-						segmentPath.push(
-							lastPoint.plotX,
-							plotY
-						);
-						
-					} else if (step === 'center') {
-						segmentPath.push(
-							(lastPoint.plotX + plotX) / 2,
-							lastPoint.plotY,
-							(lastPoint.plotX + plotX) / 2,
-							plotY
-						);
-						
-					} else {
-						segmentPath.push(
-							plotX,
-							lastPoint.plotY
-						);
-					}
-				}
-
-				// normal line to next point
-				segmentPath.push(
-					point.plotX,
-					point.plotY
-				);
-			}
-		});
-		
-		return segmentPath;
-	},
 
 	/**
 	 * Get the graph path
 	 */
 	getGraphPath: function () {
 		var series = this,
+			points = series.points,
+			options = series.options,
+			step = options.step,
 			graphPath = [],
-			segmentPath,
-			singlePoints = []; // used in drawTracker
+			gap;
 
-		// Divide into segments and build graph and area paths
-		each(series.segments, function (segment) {
+		// If connect nulls, filter out null values
+		if (options.connectNulls) {
+			points = series.getValidPoints();
+		}
+
+		// Build the line
+		each(points, function (point, i) {
 			
-			segmentPath = series.getSegmentPath(segment);
-			
-			// add the segment to the graph, or a single point for tracking
-			if (segment.length > 1) {
-				graphPath = graphPath.concat(segmentPath);
+			var plotX = point.plotX,
+				plotY = point.plotY,
+				lastPoint,
+				pathToPoint; // the path to this point from the previous
+
+			if (point.isNull) {
+				gap = true;
+
 			} else {
-				singlePoints.push(segment[0]);
+
+				if (i === 0 || gap) {
+					pathToPoint = [M, point.plotX, point.plotY];
+				
+				} else if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+					
+					pathToPoint = series.getPointSpline(points, point, i);
+
+				} else if (step) {
+
+					lastPoint = points[i - 1];
+					if (step === 'right') {
+						pathToPoint = [
+							L,
+							lastPoint.plotX,
+							plotY
+						];
+						
+					} else if (step === 'center') {
+						pathToPoint = [
+							L,
+							(lastPoint.plotX + plotX) / 2,
+							lastPoint.plotY,
+							(lastPoint.plotX + plotX) / 2,
+							plotY
+						];
+						
+					} else {
+						pathToPoint = [
+							L,
+							plotX,
+							lastPoint.plotY
+						];
+					}
+					pathToPoint.push(L, plotX, plotY);
+
+				} else {
+					// normal line to next point
+					pathToPoint = [
+						L,
+						plotX,
+						plotY
+					];
+				}
+
+
+				graphPath.push.apply(graphPath, pathToPoint);
+				gap = false;
 			}
 		});
-
-		// Record it for use in drawGraph and drawTracker, and return graphPath
-		series.singlePoints = singlePoints;
+		
 		series.graphPath = graphPath;
 		
 		return graphPath;
@@ -15004,8 +14968,6 @@ Series.prototype = {
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
-			singlePoints = series.singlePoints,
-			singlePoint,
 			i,
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
@@ -15027,14 +14989,6 @@ Series.prototype = {
 			}
 		}
 
-		// handle single points
-		for (i = 0; i < singlePoints.length; i++) {
-			singlePoint = singlePoints[i];
-			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
-				L, singlePoint.plotX + snap, singlePoint.plotY);
-		}
-		
-		
 
 		// draw the tracker
 		if (tracker) {
@@ -15095,14 +15049,13 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 var AreaSeries = extendClass(Series, {
 	type: 'area',
 	
-	/**
+	/* *
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
 	 * no marker. Also insert dummy points for any X position that exists in other series
 	 * in the stack.
-	 */ 
-	getSegments: function () {
-		var segments = [],
-			segment = [],
+	 * / 
+	setAllStackPoints: function () {
+		var segment = [],
 			keys = [],
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
@@ -15113,6 +15066,7 @@ var AreaSeries = extendClass(Series, {
 			points = this.points,
 			connectNulls = this.options.connectNulls,
 			val,
+			seriesIndex = this.index,
 			i,
 			x;
 
@@ -15131,18 +15085,19 @@ var AreaSeries = extendClass(Series, {
 			});
 
 			each(keys, function (x) {
-				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
-					return;
+				//if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
+				//	return;
 
 				// The point exists, push it to the segment
-				} else if (pointMap[x]) {
+				//} else if (pointMap[x]) {
+				if (pointMap[x] && !pointMap[x].isNull) {
 					segment.push(pointMap[x]);
 
 				// There is no point for this X value in this series, so we 
 				// insert a dummy point in order for the areas to be drawn
 				// correctly.
 				} else {
-					plotX = xAxis.translate(x);
+					/ *plotX = xAxis.translate(x);
 					val = stack[x].percent ? (stack[x].total ? stack[x].cum * 100 / stack[x].total : 0) : stack[x].cum; // #1991
 					plotY = yAxis.toPixels(val, true);
 					segment.push({ 
@@ -15152,26 +15107,22 @@ var AreaSeries = extendClass(Series, {
 						plotY: plotY, 
 						yBottom: plotY,
 						onMouseOver: noop
+					});* /
+					segment.push({
+						isNull: true,
+						x: x
 					});
+					stack[x].nullFrom = seriesIndex;
 				}
 			});
-
-			if (segment.length) {
-				segments.push(segment);
-			}
-
-		} else {
-			Series.prototype.getSegments.call(this);
-			segments = this.segments;
+			this.stackPoints = segment;
 		}
-
-		this.segments = segments;
-	},
+	},* /
 	
-	/**
+	/ **
 	 * Extend the base Series getSegmentPath method by adding the path for the area.
 	 * This path is pushed to the series.areaPath property.
-	 */
+	 * /
 	getSegmentPath: function (segment) {
 		
 		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
@@ -15209,10 +15160,10 @@ var AreaSeries = extendClass(Series, {
 		return segmentPath;
 	},
 	
-	/**
+	/ **
 	 * Extendable method to close the segment path of an area. This is overridden in polar 
 	 * charts.
-	 */
+	 * /
 	closeSegment: function (path, segment, translatedThreshold) {
 		path.push(
 			L,
@@ -15222,6 +15173,164 @@ var AreaSeries = extendClass(Series, {
 			segment[0].plotX,
 			translatedThreshold
 		);
+	},
+	*/
+	getGraphPath: function () {
+		var getGraphPath = Series.prototype.getGraphPath,
+			graphPath,
+			options = this.options,
+			stacking = options.stacking,
+			yAxis = this.yAxis,
+			translatedThreshold = yAxis.getThreshold(options.threshold),
+			topPath,
+			topPoints = [],
+			bottomPath,
+			bottomPoints = [],
+			graphPoints = [],
+			points = this.stackPoints || this.points,
+			len = points.length,
+			seriesIndex = this.index,
+			i,
+			areaPath,
+			plotX,
+			plotY,
+			stacks = yAxis.stacks[this.stackKey],
+			isNull,
+			plotYBottom = [],
+			plotYNullTop = [],
+			yBottom,
+			addDummyPoints = function (i, otherI, plotX, plotY, cliffName) {
+				var stack = stacks[points[i].x],
+					otherStack = points[otherI] && stacks[points[otherI].x],
+					cliff;
+
+				if (otherStack && points[otherI].isNull) {
+					otherStack.hasNulls = true;
+				}
+				
+				if (otherStack && (otherStack.hasNulls || stack[cliffName])) {
+					
+					if (otherStack.points[seriesIndex]) {
+						cliff = stack[cliffName];
+					} else {
+						cliff = yBottom - plotY;
+						// Add it up
+						stack[cliffName] += cliff;
+					}
+
+					
+					if (otherI > i) {
+						graphPoints.push({
+							isNull: true
+						});
+					}
+					graphPoints.push({
+						plotX: plotX,
+						plotY: plotY + cliff
+					});
+					if (otherI < i) {
+						graphPoints.push({
+							isNull: true
+						});
+					}
+					
+					topPoints.push({
+						plotX: plotX,
+						plotY: points[otherI].isNull ? 
+							plotYNullTop[otherI] || translatedThreshold : 
+							plotY + cliff
+					});
+					bottomPoints.push({
+						plotX: plotX,
+						plotY: points[otherI].isNull ? 
+							plotYNullTop[otherI] || translatedThreshold : 
+							yBottom + cliff
+					});
+
+				} else if (!otherStack) {
+					cliff = yBottom - plotY;
+					// Add it up
+					stack[cliffName] += cliff;					
+				}
+			};
+			// Get the series index of the previous valid point in the stack
+			/*getPreviousSeries = function (x) {
+				var i = seriesIndex;
+				while (i--) {
+					if (stacks[x].points[i]) {
+						return i;
+					} else {
+						stacks[x].hasNulls = true;
+					}
+				}
+			};*/
+
+		if (stacking && seriesIndex > 0) {
+			for (i = 0; i < len; i++) {
+				//previousSeries = getPreviousSeries(points[i].x);
+				if (!points[i].isNull) {
+					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex][0], true);
+				}
+				
+				//if (previousSeries !== seriesIndex - 1) {
+					/*plotYNullBottom[i] = previousSeries !== undefined ?
+						yAxis.toPixels(stacks[points[i].x].points[previousSeries][0], true):
+						translatedThreshold;*/
+					/*plotYNullTop[i] = points[i].isNull ? 
+						translatedThreshold : 
+						points[i].plotY - plotYBottom[i] + plotYNullBottom[i];*/
+					
+				//}
+			}
+		}
+
+		for (i = 0; i < len; i++) {
+
+			isNull = points[i].isNull;
+			plotX = points[i].plotX;
+			plotY = points[i].plotY;
+			yBottom = plotYBottom[i] || translatedThreshold;
+
+			if (!isNull) {
+
+				addDummyPoints(i, i - 1, plotX, plotY, 'leftCliff');
+
+				graphPoints.push({
+					plotX: plotX,
+					plotY: plotY
+				});
+				topPoints.push({
+					plotX: plotX,
+					plotY: plotY
+				});
+				bottomPoints.push({
+					plotX: plotX,
+					plotY: yBottom
+				});
+
+				addDummyPoints(i, i + 1, plotX, plotY, 'rightCliff');
+			} else {
+				graphPoints.push({
+					isNull: true
+				});
+			}
+		}
+		this.points = topPoints;
+		topPath = getGraphPath.call(this);
+		this.points = bottomPoints.reverse();
+		bottomPath = getGraphPath.call(this);
+		if (bottomPath.length) {
+			bottomPath[0] = L;
+		}
+
+		areaPath = topPath.concat(bottomPath);
+		this.points = graphPoints;
+
+		graphPath = getGraphPath.call(this);
+		this.points = points;
+
+		this.areaPath = areaPath;
+		return graphPath;
 	},
 	
 	/**
@@ -15319,8 +15428,7 @@ var SplineSeries = extendClass(Series, {
 			ret;
 
 		// find control points
-		if (lastPoint && nextPoint) {
-		
+		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -15394,23 +15502,18 @@ var SplineSeries = extendClass(Series, {
 				})
 				.add();
 		}
-		*/
+		// */
 
-		// moveTo or lineTo
-		if (!i) {
-			ret = [M, plotX, plotY];
-		} else { // curve from last point to this
-			ret = [
-				'C',
-				lastPoint.rightContX || lastPoint.plotX,
-				lastPoint.rightContY || lastPoint.plotY,
-				leftContX || plotX,
-				leftContY || plotY,
-				plotX,
-				plotY
-			];
-			lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
-		}
+		ret = [
+			'C',
+			lastPoint.rightContX || lastPoint.plotX,
+			lastPoint.rightContY || lastPoint.plotY,
+			leftContX || plotX,
+			leftContY || plotY,
+			plotX,
+			plotY
+		];
+		lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
 		return ret;
 	}
 });

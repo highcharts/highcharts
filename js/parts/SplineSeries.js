@@ -26,8 +26,7 @@ var SplineSeries = extendClass(Series, {
 			ret;
 
 		// find control points
-		if (lastPoint && nextPoint) {
-		
+		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -101,23 +100,18 @@ var SplineSeries = extendClass(Series, {
 				})
 				.add();
 		}
-		*/
+		// */
 
-		// moveTo or lineTo
-		if (!i) {
-			ret = [M, plotX, plotY];
-		} else { // curve from last point to this
-			ret = [
-				'C',
-				lastPoint.rightContX || lastPoint.plotX,
-				lastPoint.rightContY || lastPoint.plotY,
-				leftContX || plotX,
-				leftContY || plotY,
-				plotX,
-				plotY
-			];
-			lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
-		}
+		ret = [
+			'C',
+			lastPoint.rightContX || lastPoint.plotX,
+			lastPoint.rightContY || lastPoint.plotY,
+			leftContX || plotX,
+			leftContY || plotY,
+			plotX,
+			plotY
+		];
+		lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
 		return ret;
 	}
 });

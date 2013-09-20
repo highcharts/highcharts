@@ -1279,7 +1279,7 @@ Axis.prototype = {
 				for (type in stacks) {
 					for (i in stacks[type]) {
 						stacks[type][i].total = null;
-						stacks[type][i].cum = 0;
+						stacks[type][i].cum = stacks[type][i].leftCliff = stacks[type][i].rightCliff = 0;
 					}
 				}
 			}
@@ -2031,7 +2031,8 @@ Axis.prototype = {
 		var series = this.series,
 			i = series.length;
 		if (!this.isXAxis) {
-			while (i--) {
+			//while (i--) {
+			for (i = 0; i < series.length; i++) {
 				series[i].setStackedPoints();
 			}
 			// Loop up again to compute percent stack

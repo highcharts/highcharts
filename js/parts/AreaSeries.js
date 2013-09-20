@@ -15,14 +15,13 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 var AreaSeries = extendClass(Series, {
 	type: 'area',
 	
-	/**
+	/* *
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
 	 * no marker. Also insert dummy points for any X position that exists in other series
 	 * in the stack.
-	 */ 
-	getSegments: function () {
-		var segments = [],
-			segment = [],
+	 * / 
+	setAllStackPoints: function () {
+		var segment = [],
 			keys = [],
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
@@ -33,6 +32,7 @@ var AreaSeries = extendClass(Series, {
 			points = this.points,
 			connectNulls = this.options.connectNulls,
 			val,
+			seriesIndex = this.index,
 			i,
 			x;
 
@@ -51,18 +51,19 @@ var AreaSeries = extendClass(Series, {
 			});
 
 			each(keys, function (x) {
-				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
-					return;
+				//if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
+				//	return;
 
 				// The point exists, push it to the segment
-				} else if (pointMap[x]) {
+				//} else if (pointMap[x]) {
+				if (pointMap[x] && !pointMap[x].isNull) {
 					segment.push(pointMap[x]);
 
 				// There is no point for this X value in this series, so we 
 				// insert a dummy point in order for the areas to be drawn
 				// correctly.
 				} else {
-					plotX = xAxis.translate(x);
+					/ *plotX = xAxis.translate(x);
 					val = stack[x].percent ? (stack[x].total ? stack[x].cum * 100 / stack[x].total : 0) : stack[x].cum; // #1991
 					plotY = yAxis.toPixels(val, true);
 					segment.push({ 
@@ -72,26 +73,22 @@ var AreaSeries = extendClass(Series, {
 						plotY: plotY, 
 						yBottom: plotY,
 						onMouseOver: noop
+					});* /
+					segment.push({
+						isNull: true,
+						x: x
 					});
+					stack[x].nullFrom = seriesIndex;
 				}
 			});
-
-			if (segment.length) {
-				segments.push(segment);
-			}
-
-		} else {
-			Series.prototype.getSegments.call(this);
-			segments = this.segments;
+			this.stackPoints = segment;
 		}
-
-		this.segments = segments;
-	},
+	},* /
 	
-	/**
+	/ **
 	 * Extend the base Series getSegmentPath method by adding the path for the area.
 	 * This path is pushed to the series.areaPath property.
-	 */
+	 * /
 	getSegmentPath: function (segment) {
 		
 		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
@@ -129,10 +126,10 @@ var AreaSeries = extendClass(Series, {
 		return segmentPath;
 	},
 	
-	/**
+	/ **
 	 * Extendable method to close the segment path of an area. This is overridden in polar 
 	 * charts.
-	 */
+	 * /
 	closeSegment: function (path, segment, translatedThreshold) {
 		path.push(
 			L,
@@ -142,6 +139,164 @@ var AreaSeries = extendClass(Series, {
 			segment[0].plotX,
 			translatedThreshold
 		);
+	},
+	*/
+	getGraphPath: function () {
+		var getGraphPath = Series.prototype.getGraphPath,
+			graphPath,
+			options = this.options,
+			stacking = options.stacking,
+			yAxis = this.yAxis,
+			translatedThreshold = yAxis.getThreshold(options.threshold),
+			topPath,
+			topPoints = [],
+			bottomPath,
+			bottomPoints = [],
+			graphPoints = [],
+			points = this.stackPoints || this.points,
+			len = points.length,
+			seriesIndex = this.index,
+			i,
+			areaPath,
+			plotX,
+			plotY,
+			stacks = yAxis.stacks[this.stackKey],
+			isNull,
+			plotYBottom = [],
+			plotYNullTop = [],
+			yBottom,
+			addDummyPoints = function (i, otherI, plotX, plotY, cliffName) {
+				var stack = stacks[points[i].x],
+					otherStack = points[otherI] && stacks[points[otherI].x],
+					cliff;
+
+				if (otherStack && points[otherI].isNull) {
+					otherStack.hasNulls = true;
+				}
+				
+				if (otherStack && (otherStack.hasNulls || stack[cliffName])) {
+					
+					if (otherStack.points[seriesIndex]) {
+						cliff = stack[cliffName];
+					} else {
+						cliff = yBottom - plotY;
+						// Add it up
+						stack[cliffName] += cliff;
+					}
+
+					
+					if (otherI > i) {
+						graphPoints.push({
+							isNull: true
+						});
+					}
+					graphPoints.push({
+						plotX: plotX,
+						plotY: plotY + cliff
+					});
+					if (otherI < i) {
+						graphPoints.push({
+							isNull: true
+						});
+					}
+					
+					topPoints.push({
+						plotX: plotX,
+						plotY: points[otherI].isNull ? 
+							plotYNullTop[otherI] || translatedThreshold : 
+							plotY + cliff
+					});
+					bottomPoints.push({
+						plotX: plotX,
+						plotY: points[otherI].isNull ? 
+							plotYNullTop[otherI] || translatedThreshold : 
+							yBottom + cliff
+					});
+
+				} else if (!otherStack) {
+					cliff = yBottom - plotY;
+					// Add it up
+					stack[cliffName] += cliff;					
+				}
+			};
+			// Get the series index of the previous valid point in the stack
+			/*getPreviousSeries = function (x) {
+				var i = seriesIndex;
+				while (i--) {
+					if (stacks[x].points[i]) {
+						return i;
+					} else {
+						stacks[x].hasNulls = true;
+					}
+				}
+			};*/
+
+		if (stacking && seriesIndex > 0) {
+			for (i = 0; i < len; i++) {
+				//previousSeries = getPreviousSeries(points[i].x);
+				if (!points[i].isNull) {
+					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex][0], true);
+				}
+				
+				//if (previousSeries !== seriesIndex - 1) {
+					/*plotYNullBottom[i] = previousSeries !== undefined ?
+						yAxis.toPixels(stacks[points[i].x].points[previousSeries][0], true):
+						translatedThreshold;*/
+					/*plotYNullTop[i] = points[i].isNull ? 
+						translatedThreshold : 
+						points[i].plotY - plotYBottom[i] + plotYNullBottom[i];*/
+					
+				//}
+			}
+		}
+
+		for (i = 0; i < len; i++) {
+
+			isNull = points[i].isNull;
+			plotX = points[i].plotX;
+			plotY = points[i].plotY;
+			yBottom = plotYBottom[i] || translatedThreshold;
+
+			if (!isNull) {
+
+				addDummyPoints(i, i - 1, plotX, plotY, 'leftCliff');
+
+				graphPoints.push({
+					plotX: plotX,
+					plotY: plotY
+				});
+				topPoints.push({
+					plotX: plotX,
+					plotY: plotY
+				});
+				bottomPoints.push({
+					plotX: plotX,
+					plotY: yBottom
+				});
+
+				addDummyPoints(i, i + 1, plotX, plotY, 'rightCliff');
+			} else {
+				graphPoints.push({
+					isNull: true
+				});
+			}
+		}
+		this.points = topPoints;
+		topPath = getGraphPath.call(this);
+		this.points = bottomPoints.reverse();
+		bottomPath = getGraphPath.call(this);
+		if (bottomPath.length) {
+			bottomPath[0] = L;
+		}
+
+		areaPath = topPath.concat(bottomPath);
+		this.points = graphPoints;
+
+		graphPath = getGraphPath.call(this);
+		this.points = points;
+
+		this.areaPath = areaPath;
+		return graphPath;
 	},
 	
 	/**

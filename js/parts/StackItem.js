@@ -25,6 +25,8 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
 	this.percent = stacking === 'percent';
+	this.leftCliff = 0;
+	this.rightCliff = 0;
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
