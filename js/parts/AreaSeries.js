@@ -165,25 +165,26 @@ var AreaSeries = extendClass(Series, {
 			plotYBottom = [],
 			plotYNullTop = [],
 			yBottom,
-			addDummyPoints = function (i, otherI, plotX, plotY, cliffName) {
-				var stack = stacks[points[i].x],
-					otherStack = points[otherI] && stacks[points[otherI].x],
+			addDummyPoints = options.connectNulls ? noop : function (i, otherI, plotX, plotY, cliffName) {
+				var stack = stacks && stacks[points[i].x],
+					otherPoint = points[otherI],
+					otherStack = stacks && otherPoint && stacks[otherPoint.x],
 					cliff;
 
 				if (otherStack && points[otherI].isNull) {
 					otherStack.hasNulls = true;
 				}
 				
-				if (otherStack && (otherStack.hasNulls || stack[cliffName])) {
+				if ((otherPoint && otherPoint.isNull) || (otherStack && (otherStack.hasNulls || stack[cliffName]))) {
 					
-					if (otherStack.points[seriesIndex]) {
+					if (stacks && otherStack.points[seriesIndex]) {
 						cliff = stack[cliffName];
 					} else {
 						cliff = yBottom - plotY;
-						// Add it up
-						stack[cliffName] += cliff;
+						if (stack) {
+							stack[cliffName] += cliff;
+						}
 					}
-
 					
 					if (otherI > i) {
 						graphPoints.push({
@@ -213,9 +214,8 @@ var AreaSeries = extendClass(Series, {
 							yBottom + cliff
 					});
 
-				} else if (!otherStack) {
+				} else if (stacks && !otherStack) {
 					cliff = yBottom - plotY;
-					// Add it up
 					stack[cliffName] += cliff;					
 				}
 			};
