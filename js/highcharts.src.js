@@ -14162,7 +14162,9 @@ Series.prototype = {
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
-			oldType = this.type;
+			oldType = this.type,
+			proto = seriesTypes[oldType].prototype,
+			n;
 
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
@@ -14173,6 +14175,11 @@ Series.prototype = {
 
 		// Destroy the series and reinsert methods from the type prototype
 		this.remove(false);
+		for (n in proto) { // Overwrite series-type specific methods (#2270)
+			if (proto.hasOwnProperty(n)) {
+				this[n] = UNDEFINED;
+			}
+		}
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 		
 
