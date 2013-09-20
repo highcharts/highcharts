@@ -422,7 +422,7 @@ return {
 				} else if (el.attr) {
 					start = el.attr(name);
 				} else {
-					start = parseFloat(this._getStyle(el, name)) || 0;
+					start = parseFloat(HighchartsAdapter._getStyle(el, name)) || 0;
 					if (name !== 'opacity') {
 						unit = 'px';
 					}
