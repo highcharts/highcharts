@@ -4,6 +4,7 @@
  */
 package com.highcharts.export.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +21,10 @@ public class TempDir {
 
 	public TempDir() throws IOException {
 		tmpDir = Files.createTempDirectory("export");
+
+		// Delete this directory on deletion of the JVM
+		tmpDir.toFile().deleteOnExit();
+
 		outputDir = Files.createDirectory(Paths.get(tmpDir.toString(), "output"));
 		System.out.println("Running with " +TempDir.getTmpDir() + " = TEMP");
 	}

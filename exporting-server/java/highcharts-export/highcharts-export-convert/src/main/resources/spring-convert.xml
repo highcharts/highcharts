@@ -35,6 +35,7 @@
 		<constructor-arg name="factory" ref="serverObjectFactory"/>
 		<constructor-arg name="number"  value="${poolSize}"/>
 		<constructor-arg name="maxWait" value="${maxWait}"/>
+		<constructor-arg name="retentionTime" value="${retentionTime}"/>
 	</bean>
-	
+
 </beans>
