@@ -1930,6 +1930,7 @@ Series.prototype = {
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions,
 			negativeColor = seriesOptions.negativeColor,
+			defaultLineColor = normalOptions.lineColor,
 			key;
 
 		// series type specific modifications
@@ -1976,7 +1977,7 @@ Series.prototype = {
 			}
 			
 			hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
-			
+
 			// check if the point has specific visual options
 			if (point.options) {
 				for (key in pointAttrToOptions) {
@@ -2006,7 +2007,9 @@ Series.prototype = {
 
 				// normal point state inherits series wide normal state
 				pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
-					color: point.color // #868
+					color: point.color, // #868
+					fillColor: point.color, // Individual point color or negative color markers (#2219)
+					lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
 				}, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 				// inherit from point normal and series hover
@@ -2022,12 +2025,6 @@ Series.prototype = {
 					seriesPointAttr[SELECT_STATE],
 					pointAttr[NORMAL_STATE]
 				);
-
-				// Force the fill to negativeColor on markers
-				if (point.negative && seriesOptions.marker && negativeColor) {
-					pointAttr[NORMAL_STATE].fill = pointAttr[HOVER_STATE].fill = pointAttr[SELECT_STATE].fill = 
-						series.convertAttribs({ fillColor: negativeColor }).fill;
-				}
 
 
 			// no marker config object is created: copy a reference to the series-wide
