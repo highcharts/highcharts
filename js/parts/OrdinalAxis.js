@@ -104,9 +104,10 @@
 						// Register
 						axis.ordinalPositions = ordinalPositions;
 						
-						// This relies on the ordinalPositions being set
-						minIndex = xAxis.val2lin(min, true);
-						maxIndex = xAxis.val2lin(max, true);
+						// This relies on the ordinalPositions being set. Use mathMax and mathMin to prevent
+						// padding on either sides of the data.
+						minIndex = xAxis.val2lin(mathMax(min, ordinalPositions[0]), true);
+						maxIndex = xAxis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true);
 				
 						// Set the slope and offset of the values compared to the indices in the ordinal positions
 						axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
