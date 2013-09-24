@@ -33,7 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
-import com.highcharts.export.domain.JsonRequest;
 import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.util.MimeType;
 import com.highcharts.export.util.TempDir;
@@ -48,7 +47,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/")
@@ -92,7 +90,8 @@ public class ExportController extends HttpServlet {
 		@RequestParam(value = "options", required = false) String options,
 		@RequestParam(value = "constr", required = false) String constructor,
 		@RequestParam(value = "callback", required = false) String callback,
-		HttpServletResponse response, HttpServletRequest request,
+		@RequestParam(value = "async", required = false, defaultValue = "false")  Boolean async,
+		HttpServletRequest request,
 		HttpSession session) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException {
 
 		MimeType mime = getMime(type);
@@ -100,13 +99,21 @@ public class ExportController extends HttpServlet {
 
 		boolean isAndroid = request.getHeader("user-agent").contains("Android");
 
-		if (isAndroid || MimeType.PDF.equals(mime)) {
+		if (isAndroid || MimeType.PDF.equals(mime) || async) {
 			tempFilename = createUniqueFileName(mime.name().toLowerCase());
 		}
 
 		String output = processRequest(svg, mime, width, scale, options, constructor, callback, tempFilename);
+		ByteArrayOutputStream stream;
 
-		ByteArrayOutputStream stream = ouputToStream(output, mime, tempFilename);
+		if (async) {
+			String link = TempDir.getDownloadLink(tempFilename);
+			// write to stream
+			stream = new ByteArrayOutputStream();
+			stream.write(link.getBytes("utf-8"));
+		} else {
+			stream = ouputToStream(output, mime, tempFilename);
+		}
 
 		/* If tempFilename is not null, then we want to save the filename in session, in case of GET is used later on*/
 		if (isAndroid) {
@@ -123,35 +130,6 @@ public class ExportController extends HttpServlet {
 
 		return new HttpEntity<byte[]>(stream.toByteArray(), headers);
 	}
-
-	@RequestMapping(value = "/async",  method = RequestMethod.POST, consumes = { "application/json" })
-
-	public void async(@RequestBody JsonRequest json, HttpServletResponse response ) throws IOException, SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
-
-		MimeType mime = MimeType.get( json.getType());
-		String tempFilename = createUniqueFileName(mime.name().toLowerCase());
-
-		String output = processRequest(json.getSvg(), mime, json.getWidth(), json.getScale(),
-				json.getOptions(), json.getConstr(), json.getCallback(), tempFilename);
-
-		String link = TempDir.getDownloadLink(tempFilename);
-
-		// write to stream
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		stream.write(link.getBytes("utf-8"));
-
-		// output
-		response.reset();
-		response.setCharacterEncoding("utf-8");
-		response.setContentLength(stream.size());
-		response.setStatus(HttpStatus.OK.value());
-
-		// without this line, you get an error message in the client
-		response.setHeader("Access-Control-Allow-Origin", "*");
-
-		IOUtils.write(stream.toByteArray(), response.getOutputStream());
-		response.flushBuffer();
-    }
 
 	@RequestMapping(value = "/files/{name}.{ext}", method = RequestMethod.GET)
 	public void getFile(@PathVariable("name") String name, @PathVariable("ext") String ext, HttpServletResponse response) throws SVGConverterException, IOException {
