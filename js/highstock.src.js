@@ -18794,8 +18794,14 @@ Scroller.prototype = {
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
-				dataMin: ((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin),
-				dataMax: ((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+				dataMin: pick(
+					navAxis.options.min, 
+					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
+				),
+				dataMax: pick(
+					navAxis.options.max, 
+					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+				)
 			};
 		}
 		
@@ -19672,10 +19678,7 @@ Chart.prototype.callbacks.push(function (chart) {
 
 	function renderScroller() {
 		extremes = chart.xAxis[0].getExtremes();
-		scroller.render(
-			mathMax(extremes.min, extremes.dataMin),
-			mathMin(extremes.max, pick(extremes.dataMax, Number.MAX_VALUE))
-		);
+		scroller.render(extremes.min, extremes.max);
 	}
 
 	function renderRangeSelector() {

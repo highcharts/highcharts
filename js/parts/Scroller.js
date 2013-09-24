@@ -857,8 +857,14 @@ Scroller.prototype = {
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
-				dataMin: ((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin),
-				dataMax: ((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+				dataMin: pick(
+					navAxis.options.min, 
+					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
+				),
+				dataMax: pick(
+					navAxis.options.max, 
+					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+				)
 			};
 		}
 		
