@@ -92,6 +92,8 @@ var UNDEFINED,
 	DAY = 'day',
 	WEEK = 'week',
 	MONTH = 'month',
+	QUARTER = 'quarter',
+	SEMESTER = 'semester',
 	YEAR = 'year',
 
 	// constants for attributes
@@ -439,7 +441,14 @@ dateFormat = function (format, timestamp, capitalize) {
 		return 'Invalid date';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
-
+	/*
+	 *	Workaround for quarter and semester
+	 *	Sometimes the timestamps are not aligned with quarters,
+	 *	for instance, 2014 first semester comes with Dec 31.
+	 */
+	if (format.indexOf('%q') != -1 || format.indexOf('%s') != -1) {
+		timestamp += 3 * 24 * 60 * 60 * 1000;
+	}
 	var date = new Date(timestamp),
 		key, // used in for constuct below
 		// get the basic time values
@@ -468,6 +477,11 @@ dateFormat = function (format, timestamp, capitalize) {
 			'B': lang.months[month], // Long month, like 'January'
 			'm': pad(month + 1), // Two digit month number, 01 through 12
 
+			// Quarter
+			'q': Math.floor(month/3)+1, // Quarter number, 1 trough 4
+			
+			// Semester
+			's': Math.floor(month/6)+1, // Semester number, 1 trough 2
 			// Year
 			'y': fullYear.toString().substr(2, 2), // Two digits year, like 09 for 2009
 			'Y': fullYear, // Four digits year, like 2009
@@ -483,14 +497,12 @@ dateFormat = function (format, timestamp, capitalize) {
 			'L': pad(mathRound(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
 		}, Highcharts.dateFormats);
 
-
 	// do the replaces
 	for (key in replacements) {
 		while (format.indexOf('%' + key) !== -1) { // regex would do it in one line, but this is faster
 			format = format.replace('%' + key, typeof replacements[key] === 'function' ? replacements[key](timestamp) : replacements[key]);
 		}
 	}
-
 	// Optionally capitalize the string and return
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
@@ -647,7 +659,13 @@ function normalizeTimeTickInterval(tickInterval, unitsOption) {
 				[1, 2]
 			], [
 				MONTH,
-				[1, 2, 3, 4, 6]
+				[1, 2] // changed from[1, 2, 3, 4, 6]
+			], [
+				QUARTER,
+				[1]
+			], [
+				SEMESTER,
+				[1]
 			], [
 				YEAR,
 				null
@@ -745,6 +763,18 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 		}
 	
 		if (interval >= timeUnits[MONTH]) { // month
+			minDate[setMonth](interval >= timeUnits[QUARTER] ? 0 :
+				count * mathFloor(minDate[getMonth]() / count));
+			minYear = minDate[getFullYear]();
+		}
+		
+		if (interval >= timeUnits[QUARTER]) { // quarter
+			minDate[setMonth](interval >= timeUnits[SEMESTER] ? 0 :
+				count * mathFloor(minDate[getMonth]() / count));
+			minYear = minDate[getFullYear]();
+		}
+		
+		if (interval >= timeUnits[SEMESTER]) { // semester
 			minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
 				count * mathFloor(minDate[getMonth]() / count));
 			minYear = minDate[getFullYear]();
@@ -992,6 +1022,8 @@ timeUnits = hash(
 	DAY, 24 * 3600000,
 	WEEK, 7 * 24 * 3600000,
 	MONTH, 31 * 24 * 3600000,
+	QUARTER, 31556952000/4,
+	SEMESTER, 31556952000/2,
 	YEAR, 31556952000
 );
 /*jslint white: false*/
@@ -1762,6 +1794,8 @@ defaultOptions = {
 			day: '%A, %b %e, %Y',
 			week: 'Week from %A, %b %e, %Y',
 			month: '%B %Y',
+			quarter: 'Q%q %Y',
+			semester: 'S%s %Y',
 			year: '%Y'
 		},
 		//formatter: defaultFormatter,
@@ -6441,6 +6475,8 @@ Axis.prototype = {
 			day: '%e. %b',
 			week: '%e. %b',
 			month: '%b \'%y',
+			quarter: 'Q%q \'%y',
+			semester: 'S%s \'%y',
 			year: '%Y'
 		},
 		endOnTick: false,
