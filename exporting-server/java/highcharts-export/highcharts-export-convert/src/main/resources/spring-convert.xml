@@ -13,14 +13,15 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!-- Activate annotation configured components -->
-	<mvc:annotation-driven/>
 	<task:annotation-driven/>
 	<context:annotation-config/>
-	<context:component-scan base-package="com.highcharts.export" />
+	<context:component-scan base-package="com.highcharts.export.converter" />
 
 	<context:property-placeholder location="classpath*:app-convert.properties" />
 
-	<bean id="serverObjectFactory" class="com.highcharts.export.pool.ServerObjectFactory">
+	<bean id="tempDir" class="com.highcharts.export.util.TempDir"/>
+
+	<bean id="serverObjectFactory" class="com.highcharts.export.pool.ServerObjectFactory" depends-on="tempDir">
 		<property name="host" value="${host}"/>
 		<property name="basePort" value="${port}"/>
 		<property name="exec" value="${exec}"/>
@@ -34,7 +35,7 @@
 		<constructor-arg name="factory" ref="serverObjectFactory"/>
 		<constructor-arg name="number"  value="${poolSize}"/>
 		<constructor-arg name="maxWait" value="${maxWait}"/>
+		<constructor-arg name="retentionTime" value="${retentionTime}"/>
 	</bean>
-
 
 </beans>

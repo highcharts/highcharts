@@ -9,12 +9,16 @@ import org.apache.log4j.Logger;
 
 import com.highcharts.export.server.Server;
 import com.highcharts.export.server.ServerState;
+import com.highcharts.export.util.TempDir;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -29,7 +33,6 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private int readTimeout;
 	private int connectTimeout;
 	private int maxTimeout;
-	public static String tmpDir = System.getProperty("java.io.tmpdir");
 	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>();
 	protected static Logger logger = Logger.getLogger("pool");
 
@@ -178,10 +181,11 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 				JarEntry entry = entries.nextElement();
 				String name = entry.getName();
 				if (name.startsWith("phantomjs/")) {
-					File file = new File(tmpDir + "/" + name);
+					Path path = Paths.get(TempDir.getTmpDir().toString(), name);
 					if (name.endsWith("/")) {
-						file.mkdir();
+						Files.createDirectories(path);
 					} else {
+						File file = Files.createFile(path).toFile();
 						InputStream in = jar.getInputStream(entry);
 						IOUtils.copy(in, new FileOutputStream(file));
 					}
