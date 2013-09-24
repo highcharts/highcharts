@@ -217,9 +217,6 @@ var radialAxisMixin = {
 		
 		// Title or label offsets are not counted
 		this.chart.axisOffset[this.side] = 0;
-		
-		// Set the center array
-		this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
 	},
 
 
@@ -291,8 +288,12 @@ var radialAxisMixin = {
 	setAxisSize: function () {
 		
 		axisProto.setAxisSize.call(this);
-		
-		if (this.center) { // it's not defined the first time
+
+		if (this.isRadial) {
+
+			// Set the center array
+			this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
+			
 			this.len = this.width = this.height = this.isCircular ?
 				this.center[2] * (this.endAngleRad - this.startAngleRad) / 2 :
 				this.center[2] / 2;
@@ -1955,7 +1956,7 @@ Axis.prototype.beforePadding = function () {
 			}
 		});
 		
-		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+		if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
 			pxMax -= axisLength;
 			transA *= (axisLength + pxMin - pxMax) / axisLength;
 			this.min += pxMin / transA;
