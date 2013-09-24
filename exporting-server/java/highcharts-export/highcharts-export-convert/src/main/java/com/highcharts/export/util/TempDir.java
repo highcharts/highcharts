@@ -4,11 +4,11 @@
  */
 package com.highcharts.export.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -29,17 +29,18 @@ public class TempDir {
 		System.out.println("Running with " +TempDir.getTmpDir() + " = TEMP");
 	}
 
-	/*public static void main(String[] args) throws IOException {
-		TempDir t = new TempDir();
-
-	}*/
-
 	public static Path getTmpDir() {
 		return tmpDir;
 	}
 
 	public static Path getOutputDir() {
 		return outputDir;
+	}
+
+	public static String getDownloadLink(String filename) {
+		filename = FilenameUtils.getName(filename);
+		String link = "files/" + filename;
+		return link;
 	}
 
 

@@ -24,7 +24,7 @@
 	<!-- Declare a view resolver -->
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		p:prefix="/WEB-INF/pages/" p:suffix=".jsp" p:order="2" />
+		p:prefix="/WEB-INF/pages/" p:suffix=".jsp" p:order="1" />
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

@@ -9,8 +9,6 @@
  */
 package com.highcharts.export.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -24,10 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,16 +33,21 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
+import com.highcharts.export.domain.JsonRequest;
 import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.util.MimeType;
 import com.highcharts.export.util.TempDir;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.logging.Level;
+import javax.servlet.http.HttpSession;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
@@ -58,21 +58,32 @@ public class ExportController extends HttpServlet {
 	private static final Float MAX_SCALE = 4.0F;
 	protected static Logger logger = Logger.getLogger("exporter");
 
-	/*for test*/
-	/*@Autowired
-	private ServletContext servletContext;*/
-
-	@Autowired
-	private TempDir tempDir;
-
-	/* end*/
-
 	@Resource(name = "svgConverter")
 	private SVGConverter converter;
 
-	/* Catch All */
+	/* catch all GET requests and redirect those */
+	@RequestMapping(method = RequestMethod.GET)
+	public String getAll(HttpSession session) {
+
+		String tempFile = (String) session.getAttribute("tempFile");
+		session.removeAttribute("tempFile");
+
+		if (tempFile != null && !tempFile.isEmpty()) {
+			// redirect to file download
+			return "redirect:" + TempDir.getDownloadLink(tempFile);
+		}
+		// redirect to demo page
+		return "redirect:demo";
+	}
+
+
+	@RequestMapping(value = "/demo", method = RequestMethod.GET)
+	public String demo() {
+		return "demo";
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
-	public void exporter(
+	public HttpEntity<byte[]> exporter(
 		@RequestParam(value = "svg", required = false) String svg,
 		@RequestParam(value = "type", required = false) String type,
 		@RequestParam(value = "filename", required = false) String filename,
@@ -81,101 +92,79 @@ public class ExportController extends HttpServlet {
 		@RequestParam(value = "options", required = false) String options,
 		@RequestParam(value = "constr", required = false) String constructor,
 		@RequestParam(value = "callback", required = false) String callback,
-		HttpServletResponse response, HttpServletRequest request) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException {
+		HttpServletResponse response, HttpServletRequest request,
+		HttpSession session) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException {
 
 		MimeType mime = getMime(type);
-		ByteArrayOutputStream stream = processRequest(svg, mime, width, scale, options, constructor, callback, false);
+		String tempFilename = null;
+
+		boolean isAndroid = request.getHeader("user-agent").contains("Android");
+
+		if (isAndroid || MimeType.PDF.equals(mime)) {
+			tempFilename = createUniqueFileName(mime.name().toLowerCase());
+		}
+
+		String output = processRequest(svg, mime, width, scale, options, constructor, callback, tempFilename);
+
+		ByteArrayOutputStream stream = ouputToStream(output, mime, tempFilename);
+
+		/* If tempFilename is not null, then we want to save the filename in session, in case of GET is used later on*/
+		if (isAndroid) {
+			session.setAttribute("tempFile", FilenameUtils.getName(tempFilename));
+		}
+
 		filename = getFilename(filename);
-		response.reset();
-		response.setCharacterEncoding("utf-8");
-		response.setContentLength(stream.size());
-		response.setStatus(HttpStatus.OK.value());
-		response.setHeader("Content-disposition", "attachment; filename=\""
-						+ filename + "." + mime.name().toLowerCase() + "\"");
-		IOUtils.write(stream.toByteArray(), response.getOutputStream());
-		response.flushBuffer();
-	}
 
-	private ByteArrayOutputStream processRequest(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, boolean async) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
+	    HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", mime.getType() + "; charset=utf-8");
+		headers.add("Content-Disposition",
+                   "attachment; filename=" + filename.replace(" ", "_"));
+		headers.setContentLength(stream.size());
 
-		Float parsedWidth = widthToFloat(width);
-		Float parsedScale = scaleToFloat(scale);
-		options = sanitize(options);
-		String input;
-
-		boolean convertSvg = false;
-		ByteArrayOutputStream stream = null;
-
-		if (options != null) {
-			// create a svg file out of the options
-			input = options;
-			callback = sanitize(callback);
-		} else {
-			// assume SVG conversion
-			if (svg == null) {
-				throw new ServletException(
-						"The manadatory svg POST parameter is undefined.");
-			} else {
-				svg = sanitize(svg);
-				if (svg == null) {
-					throw new ServletException(
-							"The manadatory svg POST parameter is undefined.");
-				}
-				convertSvg = true;
-				input = svg;
-			}
-		}
-
-		if (convertSvg && mime.equals(MimeType.SVG)) {
-			try {
-				String convertedSvg = converter.redirectSVG(input, async);
-				stream = new ByteArrayOutputStream();
-				stream.write(convertedSvg.getBytes("utf-8"));
-			} catch (UnsupportedEncodingException ueex) {
-				logger.error("Cannot encode this string, while writing SVG to stream. " + ueex.getMessage());
-				throw new SVGConverterException("Error while converting " + ueex.getMessage());
-			} catch (IOException ioex) {
-				logger.error("Cannot write SVG to stream. " + ioex.getMessage());
-				throw new SVGConverterException("Error while converting " + ioex.getMessage());
-			}
-		} else {
-			stream = converter.convert(input, mime, constructor, callback, parsedWidth, parsedScale, async);
-		}
-
-		if (stream == null) {
-			throw new ServletException("Error while converting");
-		}
-
-		return stream;
+		return new HttpEntity<byte[]>(stream.toByteArray(), headers);
 	}
 
 	@RequestMapping(value = "/async",  method = RequestMethod.POST, consumes = { "application/json" })
-	public void async(@RequestBody String json, HttpServletResponse response ) throws IOException, SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
 
-		Gson gson = new Gson();
-		Type type = new TypeToken<Map<String, String>>(){}.getType();
-		Map<String, String> map = gson.fromJson(json, type);
+	public void async(@RequestBody JsonRequest json, HttpServletResponse response ) throws IOException, SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
 
-		MimeType mime = MimeType.get(map.get("type"));
-		ByteArrayOutputStream stream = processRequest(map.get("svg"), mime, map.get("width"), map.get("scale"),
-				map.get("options"), map.get("constructor"), map.get("callback"), true);
+		MimeType mime = MimeType.get( json.getType());
+		String tempFilename = createUniqueFileName(mime.name().toLowerCase());
 
+		String output = processRequest(json.getSvg(), mime, json.getWidth(), json.getScale(),
+				json.getOptions(), json.getConstr(), json.getCallback(), tempFilename);
+
+		String link = TempDir.getDownloadLink(tempFilename);
+
+		// write to stream
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		stream.write(link.getBytes("utf-8"));
+
+		// output
 		response.reset();
 		response.setCharacterEncoding("utf-8");
 		response.setContentLength(stream.size());
 		response.setStatus(HttpStatus.OK.value());
+
 		// without this line, you get an error message in the client
 		response.setHeader("Access-Control-Allow-Origin", "*");
+
 		IOUtils.write(stream.toByteArray(), response.getOutputStream());
 		response.flushBuffer();
     }
 
 	@RequestMapping(value = "/files/{name}.{ext}", method = RequestMethod.GET)
-	public void getFile(@PathVariable("name") String name, @PathVariable("ext") String ext, HttpServletResponse response) throws IOException {
+	public void getFile(@PathVariable("name") String name, @PathVariable("ext") String ext, HttpServletResponse response) throws SVGConverterException, IOException {
 		Path path = Paths.get(TempDir.getOutputDir().toString(), name + "." + ext);
 
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		stream.write(FileUtils.readFileToByteArray(new File(path.toString())));
+		try {
+			stream.write(FileUtils.readFileToByteArray(new File(path.toString())));
+		} catch (IOException ioex) {
+			logger.error("Tried to read file from filesystem: " + ioex.getMessage());
+			throw new SVGConverterException("IOException: cannot find your file to download...");
+		}
+
 		MimeType mime = MimeType.valueOf(ext.toUpperCase());
 
 		response.reset();
@@ -186,17 +175,6 @@ public class ExportController extends HttpServlet {
 		IOUtils.write(stream.toByteArray(), response.getOutputStream());
 		response.flushBuffer();
 
-	}
-
-	@RequestMapping(value = "/demo", method = RequestMethod.GET)
-	public String demo() {
-		return "demo";
-	}
-
-	/* catch all GET requests and redirect those */
-	@RequestMapping(method = RequestMethod.GET)
-	public String getAll() {
-		return "redirect:demo";
 	}
 
 	@ExceptionHandler(IOException.class)
@@ -236,7 +214,7 @@ public class ExportController extends HttpServlet {
 		modelAndView
 				.addObject(
 						"message",
-						"Something went wrong while converting.");
+						"Something went wrong while converting. " + ex.getMessage());
 		return modelAndView;
 	}
 
@@ -259,49 +237,47 @@ public class ExportController extends HttpServlet {
 		return modelAndView;
 	}
 
-
-	/* TEST */
-	/*@RequestMapping(value = "/test/{fileName}", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> staticImagesDownload(
-					 @PathVariable("fileName") String fileName) throws IOException {
-
-		String imageLoc = servletContext.getRealPath("WEB-INF/benchmark");
-		FileInputStream fis = new FileInputStream(imageLoc + "/" + fileName + ".png");
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		byte[] buf = new byte[1024];
-		try {
-			for (int readNum; (readNum = fis.read(buf)) != -1;) {
-				bos.write(buf, 0, readNum);
-			}
-		} catch (IOException ex) {
-			// nothing here
-		} finally {
-			fis.close();
-		}
-
-		HttpHeaders responseHeaders = httpHeaderAttachment("TEST-" + fileName,  MimeType.PNG,
-				bos.size());
-		return new ResponseEntity<byte[]>(bos.toByteArray(),
-				responseHeaders, HttpStatus.OK);
-	}*/
-	/* end TEST */
-
-
 	/*
-	 * Util methods
+	 * UTILS METHODS
 	 */
 
-	public static HttpHeaders httpHeaderAttachment(final String filename,
-			final MimeType mime, final int fileSize) {
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("charset", "utf-8");
-		responseHeaders
-				.setContentType(MediaType.parseMediaType(mime.getType()));
-		responseHeaders.setContentLength(fileSize);
-		responseHeaders.set("Content-disposition", "attachment; filename=\""
-				+ filename + "." + mime.name().toLowerCase() + "\"");
-		return responseHeaders;
+	private String processRequest(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, String filename) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
+
+		Float parsedWidth = widthToFloat(width);
+		Float parsedScale = scaleToFloat(scale);
+		options = sanitize(options);
+		String input;
+		String output;
+
+		boolean convertSvg = false;
+
+		if (options != null) {
+			// create a svg file out of the options
+			input = options;
+			callback = sanitize(callback);
+		} else {
+			// assume SVG conversion
+			if (svg == null) {
+				throw new ServletException(
+						"The manadatory svg POST parameter is undefined.");
+			} else {
+				svg = sanitize(svg);
+				if (svg == null) {
+					throw new ServletException(
+							"The manadatory svg POST parameter is undefined.");
+				}
+				convertSvg = true;
+				input = svg;
+			}
+		}
+
+		if (convertSvg && mime.equals(MimeType.SVG)) {
+				output = converter.redirectSVG(input, filename);
+		} else {
+			output = converter.convert(input, mime, constructor, callback, parsedWidth, parsedScale, filename);
+		}
+
+		return output;
 	}
 
 	private String getFilename(String name) {
@@ -351,16 +327,32 @@ public class ExportController extends HttpServlet {
 		return null;
 	}
 
-	public String getExtension(String filename) {
-        if (filename == null) {
-            return null;
-        }
-        int index = filename.indexOf(".");
-        if (index == -1) {
-            return "";
-        } else {
-            return filename.substring(index + 1);
-        }
-    }
+	public String createUniqueFileName(String extension) {
+		Path path = Paths.get(TempDir.outputDir.toString(), RandomStringUtils.randomAlphanumeric(8) + "." + extension);
+		return path.toString();
+	}
+
+	private ByteArrayOutputStream ouputToStream(String output, MimeType mime, String filename) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try {
+			// for example with PDF files or async download
+			if (output.equalsIgnoreCase(filename)) {
+				stream.write(FileUtils.readFileToByteArray(new File(filename)));
+			}
+
+			if (filename == null) {
+				if (mime.getExtension().equals("svg")) {
+					stream.write(output.getBytes());
+				} else {
+					//decode the base64 string
+					stream.write(Base64.decodeBase64(output));
+				}
+			}
+		} catch (IOException ex) {
+			java.util.logging.Logger.getLogger(ExportController.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		return stream;
+	}
 
 }
