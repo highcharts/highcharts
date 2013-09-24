@@ -7435,6 +7435,7 @@ Axis.prototype = {
 			minTickIntervalOption = options.minTickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
+			keepTwoTicksOnly,
 			categories = axis.categories;
 
 		// linked axis gets the extremes from the parent axis
@@ -7501,8 +7502,14 @@ Axis.prototype = {
 				tickIntervalOption,
 				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
-					(axis.max - axis.min) * tickPixelIntervalOption / (axis.len || 1)
+					// don't let it be more than the data range
+					(axis.max - axis.min) * tickPixelIntervalOption / mathMax(axis.len, tickPixelIntervalOption)
 			);
+			// For squished axes, set only two ticks
+			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial) {
+				keepTwoTicksOnly = true;
+				axis.tickInterval /= 4; // tick extremes closer to the real values
+			}
 		}
 
 		// Now we're finished detecting min and max, crop and group series data. This
@@ -7573,6 +7580,10 @@ Axis.prototype = {
 			} else {
 				tickPositions = axis.getLinearTickPositions(axis.tickInterval, axis.min, axis.max);
 			}
+			if (keepTwoTicksOnly) {
+				tickPositions.splice(1, tickPositions.length - 2);
+			}
+
 			axis.tickPositions = tickPositions;
 		}
 
