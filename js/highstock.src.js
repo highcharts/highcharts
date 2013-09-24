@@ -20116,6 +20116,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 								useOrdinal = true;
 							}
 						}
+
+						// When zooming in on a week, prevent axis padding for weekends even though the data within
+						// the week is evenly spaced.
+						if (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist) {
+							useOrdinal = true;
+						}
 					}
 					
 					// Record the slope and offset to compute the linear values from the array index.
