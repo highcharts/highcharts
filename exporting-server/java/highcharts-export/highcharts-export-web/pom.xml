@@ -20,6 +20,7 @@
 		<cglib.version>2.2.2</cglib.version>
 		<java.version>1.6</java.version>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+		<beanstalk.versionLabel>export-${maven.build.timestamp}</beanstalk.versionLabel>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -98,6 +99,58 @@
 							<value>file:./src/main/resources/log4j.properties</value>
 						</systemProperty>
 					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>br.com.ingenieux</groupId>
+				<artifactId>beanstalk-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<!-- ################ required for upload-source-bundle ################ -->
+					<s3Bucket>war-bucket</s3Bucket>
+					<s3Key>${project.artifactId}/${project.build.finalName}-${beanstalk.versionLabel}.war</s3Key>
+
+
+					<!-- ################ required for create-application-version ################ -->
+					<!-- The application name is fixed -->
+					<applicationName>cloudchart</applicationName>
+
+					<!-- Just to be explicit (plugin will pick this name anyway) -->
+					<versionLabel>${beanstalk.versionLabel}</versionLabel>
+
+					<!-- Use the project artifact id as name -->
+					<versionDescription>${project.artifactId}</versionDescription>
+
+					<!-- Disable auto creation. The application is running already -->
+					<autoCreateApplication>false</autoCreateApplication>
+
+
+					<!-- ################ required for create-environment ################ -->
+					<!-- This will create a new environment with a timestamp -->
+					<environmentName>${beanstalk.versionLabel}</environmentName>
+
+					<!-- Not needed, the CNAME will be created from the environmentName -->
+					<!-- <cnamePrefix>editor</cnamePrefix> -->
+
+					<!-- Oregon -->
+					<region>us-west-2</region>
+
+					<!-- TemplateName is Called Saved Configurations in aws console -->
+					<templateName>export-server-24092013</templateName>
+
+					<!-- Override these settings in chartcloud-config -->
+					<optionSettings>
+						<optionSetting>
+							<namespace>aws:elasticbeanstalk:application</namespace>
+							<optionName>Application Healthcheck URL</optionName>
+							<value>/demo</value>
+						</optionSetting>
+						<optionSetting>
+							<namespace>aws:elasticbeanstalk:sns:topics</namespace>
+							<optionName>Notification Endpoint</optionName>
+							<value>gert@highsoft.com</value>
+						</optionSetting>
+					</optionSettings>
 				</configuration>
 			</plugin>
 		</plugins>
