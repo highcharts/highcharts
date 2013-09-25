@@ -1142,6 +1142,11 @@ pathAnim = {
 		
 						// Fx.prototype.cur does not use fx argument
 						fx = i ? fx : this;
+
+						// Don't run animations on textual properties like align (#1821)
+						if (fx.prop === 'align') {
+							return;
+						}
 		
 						// shortcut
 						elem = fx.elem;
