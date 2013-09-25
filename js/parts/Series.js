@@ -2191,7 +2191,7 @@ Series.prototype = {
 				
 				// Determine if each data label is enabled
 				pointOptions = point.options && point.options.dataLabels;
-				enabled = generalOptions.enabled || (pointOptions && pointOptions.enabled);
+				enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
 				
 				
 				// If the point is outside the plot area, destroy it. #678, #820
