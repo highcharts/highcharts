@@ -97,7 +97,7 @@ public class ExportController extends HttpServlet {
 		MimeType mime = getMime(type);
 		String tempFilename = null;
 
-		boolean isAndroid = request.getHeader("user-agent").contains("Android");
+		boolean isAndroid = request.getHeader("user-agent") != null && request.getHeader("user-agent").contains("Android");
 
 		if (isAndroid || MimeType.PDF.equals(mime) || async) {
 			tempFilename = createUniqueFileName(mime.name().toLowerCase());
@@ -125,7 +125,7 @@ public class ExportController extends HttpServlet {
 	    HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", mime.getType() + "; charset=utf-8");
 		headers.add("Content-Disposition",
-                   "attachment; filename=" + filename.replace(" ", "_"));
+                   "attachment; filename=" + filename.replace(" ", "_") + "." + mime.name().toLowerCase());
 		headers.setContentLength(stream.size());
 
 		return new HttpEntity<byte[]>(stream.toByteArray(), headers);

@@ -181,7 +181,7 @@
 		convert = function (svg) {
 			var base64;
 			scaleAndClipPage(svg);
-			if (outType === 'pdf' || output !== undefined) {
+			if (outType === 'pdf' || output !== undefined || !serverMode) {
 				if (output === undefined) {
 					// in case of pdf files
 					output = config.tmpDir + '/chart.' + outType;
@@ -463,9 +463,9 @@
 			output = params.outfile;
 
 			if (output !== undefined) {
-				outType = pick(output.split('.').pop(),outType,'png');
+				outType = pick(output.split('.').pop(),'png');
 			} else {
-				outType = pick(params.outtype,'png');
+				outType = pick(params.type,'png');
 			}
 
 			constr = pick(params.constr, 'Chart');
@@ -530,7 +530,6 @@
 						response.close();
 					} else {
 						render(params, function (result) {
-							// TODO: set response headers?
 							response.statusCode = 200;
 							response.write(result);
 							response.close();
@@ -555,10 +554,10 @@
 	args = mapCLArguments();
 
 	// set tmpDir, for output temporary files.
-	if (args.tmpDir === undefined) {
+	if (args.tmpdir === undefined) {
 		config.tmpDir = fs.workingDirectory + '/tmp';
 	} else {
-		config.tmpDir = args.tmpDir;
+		config.tmpDir = args.tmpdir;
 	}
 
 	// exists tmpDir and is it writable?
@@ -571,7 +570,7 @@
 	}
 
 
-	if (args.port !== undefined) {
+	if (args.host !== undefined && args.port !== undefined) {
 		startServer(args.host, args.port);
 	} else {
 		// presume commandline usage
