@@ -16386,6 +16386,15 @@ var PieSeries = {
 	},
 
 	/**
+	 * Utility for sorting data labels
+	 */
+	sortByAngle: function (points, sign) {
+		points.sort(function (a, b) {
+			return a.angle !== undefined && (b.angle - a.angle) * sign;
+		});
+	},
+
+	/**
 	 * Override the base drawDataLabels method by pie specific functionality
 	 */
 	drawDataLabels: function () {
@@ -16423,11 +16432,6 @@ var PieSeries = {
 			overflow = [0, 0, 0, 0], // top, right, bottom, left
 			sort = function (a, b) {
 				return b.y - a.y;
-			},
-			sortByAngle = function (points, sign) {
-				points.sort(function (a, b) {
-					return a.angle !== undefined && (b.angle - a.angle) * sign;
-				});
 			};
 
 		// get out if not enabled
@@ -16467,7 +16471,7 @@ var PieSeries = {
 				slotIndex;
 				
 			// Sort by angle
-			sortByAngle(points, i - 0.5);
+			series.sortByAngle(points, i - 0.5);
 
 			// Only do anti-collision when we are outside the pie and have connectors (#856)
 			if (distanceOption > 0) {
