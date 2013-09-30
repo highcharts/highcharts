@@ -101,6 +101,7 @@ defaultOptions.exporting = {
 	//scale: 2
 	buttons: {
 		contextButton: {
+			menuClassName: PREFIX + 'contextmenu',
 			//x: -10,
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
@@ -414,20 +415,20 @@ extend(Chart.prototype, {
 	/**
 	 * Display a popup menu for choosing the export type
 	 *
-	 * @param {String} name An identifier for the menu
+	 * @param {String} className An identifier for the menu
 	 * @param {Array} items A collection with text and onclicks for the items
 	 * @param {Number} x The x position of the opener button
 	 * @param {Number} y The y position of the opener button
 	 * @param {Number} width The width of the opener button
 	 * @param {Number} height The height of the opener button
 	 */
-	contextMenu: function (name, items, x, y, width, height, button) {
+	contextMenu: function (className, items, x, y, width, height, button) {
 		var chart = this,
 			navOptions = chart.options.navigation,
 			menuItemStyle = navOptions.menuItemStyle,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
-			cacheName = 'cache-' + name,
+			cacheName = 'cache-' + className,
 			menu = chart[cacheName],
 			menuPadding = mathMax(width, height), // for mouse leave detection
 			boxShadow = '3px 3px 10px #888',
@@ -441,7 +442,7 @@ extend(Chart.prototype, {
 
 			// create a HTML element above the SVG
 			chart[cacheName] = menu = createElement(DIV, {
-				className: PREFIX + name
+				className: className
 			}, {
 				position: ABSOLUTE,
 				zIndex: 1000,
@@ -470,6 +471,12 @@ extend(Chart.prototype, {
 			});
 			addEvent(menu, 'mouseenter', function () {
 				clearTimeout(hideTimer);
+			});
+			// Hide it on clicking or touching outside the menu (#2258)
+			addEvent(document, 'mousedown', function (e) {
+				if (!chart.pointer.inClass(e.target, className)) {
+					hide();
+				}
 			});
 
 
@@ -541,13 +548,10 @@ extend(Chart.prototype, {
 				stroke: btnOptions.symbolStroke,
 				fill: btnOptions.symbolFill
 			},
-			symbolSize = btnOptions.symbolSize || 12,
-			menuKey;
-
+			symbolSize = btnOptions.symbolSize || 12;
 		if (!chart.btnCount) {
 			chart.btnCount = 0;
 		}
-		menuKey = chart.btnCount++;
 
 		// Keeps references to the button elements
 		if (!chart.exportDivElements) {
@@ -576,7 +580,7 @@ extend(Chart.prototype, {
 		} else if (menuItems) {
 			callback = function () {
 				chart.contextMenu(
-					'contextmenu', 
+					button.menuClassName, 
 					menuItems, 
 					button.translateX, 
 					button.translateY, 
@@ -605,6 +609,7 @@ extend(Chart.prototype, {
 				title: chart.options.lang[btnOptions._titleKey],
 				'stroke-linecap': 'round'
 			});
+		button.menuClassName = options.menuClassName || PREFIX + 'menu-' + chart.btnCount++;
 
 		if (btnOptions.symbol) {
 			symbol = renderer.symbol(

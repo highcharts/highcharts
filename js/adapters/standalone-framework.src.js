@@ -140,6 +140,7 @@ function augment(obj) {
 				var events = this.HCEvents[name] || [],
 					target = this,
 					len = events.length,
+					i,
 					preventDefault,
 					fn;
 
@@ -147,10 +148,9 @@ function augment(obj) {
 				preventDefault = function () {
 					args.defaultPrevented = true;
 				};
-
-				while (len--) {
-
-					fn = events[len];
+				
+				for (i = 0; i < len; i++) {
+					fn = events[i];
 
 					// args is never null here
 					if (args.stopped) {
@@ -422,7 +422,7 @@ return {
 				} else if (el.attr) {
 					start = el.attr(name);
 				} else {
-					start = parseFloat(this._getStyle(el, name)) || 0;
+					start = parseFloat(HighchartsAdapter._getStyle(el, name)) || 0;
 					if (name !== 'opacity') {
 						unit = 'px';
 					}

@@ -593,8 +593,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
 
-			// setup default css
-			doc.createStyleSheet().cssText =
+			// Setup default CSS (#2153)
+			(doc.styleSheets.length ? doc.styleSheets[0] : doc.createStyleSheet()).cssText +=
 				'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 

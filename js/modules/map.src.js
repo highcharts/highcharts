@@ -25,6 +25,7 @@
 		pick = Highcharts.pick,
 		numberFormat = Highcharts.numberFormat,
 		defaultOptions = Highcharts.getOptions(),
+		seriesTypes = Highcharts.seriesTypes,
 		plotOptions = defaultOptions.plotOptions,
 		wrap = Highcharts.wrap,
 		Color = Highcharts.Color,
@@ -80,8 +81,8 @@
 		}
 		// enableButtons: false,
 		// enableTouchZoom: false,
-		// zoomOnDoubleClick: true,
-		// zoomOnMouseWheel: true
+		// zoomOnDoubleClick: false,
+		// zoomOnMouseWheel: false
 
 	};
 	
@@ -112,65 +113,71 @@
 	Highcharts.maps = {};
 	
 	/**
-	 * Extend the Axis object with methods specific to maps
+	 * Override to use the extreme coordinates from the SVG shape, not the
+	 * data values
 	 */
-	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+	wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
+		var isXAxis = this.isXAxis,
+			dataMin,
+			dataMax,
+			xData = [];
+
+		// Remove the xData array and cache it locally so that the proceed method doesn't use it
+		each(this.series, function (series, i) {
+			if (series.useMapGeometry) {
+				xData[i] = series.xData;
+				series.xData = [];
+			}
+		});
+
+		// Call base to reach normal cartesian series (like mappoint)
+		proceed.call(this);
+
+		// Run extremes logic for map and mapline
+		dataMin = pick(this.dataMin, Number.MAX_VALUE);
+		dataMax = pick(this.dataMax, Number.MIN_VALUE);
+		each(this.series, function (series, i) {
+			if (series.useMapGeometry) {
+				dataMin = Math.min(dataMin, series[isXAxis ? 'minX' : 'minY']);
+				dataMax = Math.max(dataMax, series[isXAxis ? 'maxX' : 'maxY']);
+				series.xData = xData[i]; // Reset xData array
+			}
+		});
 		
-		if (chart.options.chart.type === 'map') {
-			extend(this, {
-				
-				/**
-				 * Override to use the extreme coordinates from the SVG shape, not the
-				 * data values
-				 */
-				getSeriesExtremes: function () {
-					var isXAxis = this.isXAxis,
-						dataMin = Number.MAX_VALUE,
-						dataMax = Number.MIN_VALUE;
-					each(this.series, function (series) {
-						dataMin = Math.min(dataMin, series[isXAxis ? 'minX' : 'minY']);
-						dataMax = Math.max(dataMax, series[isXAxis ? 'maxX' : 'maxY']);
-					});
-					this.dataMin = dataMin;
-					this.dataMax = dataMax;
-				},
-				
-				/**
-				 * Override axis translation to make sure the aspect ratio is always kept
-				 */
-				setAxisTranslation: function () {
-					var chart = this.chart,
-						mapRatio,
-						plotRatio = chart.plotWidth / chart.plotHeight,
-						isXAxis = this.isXAxis,
-						adjustedAxisLength,
-						xAxis = chart.xAxis[0],
-						padAxis;
-					
-					// Run the parent method
-					Axis.prototype.setAxisTranslation.call(this);
-					
-					// On Y axis, handle both
-					if (!isXAxis && xAxis.transA !== UNDEFINED) {
-						
-						// Use the same translation for both axes
-						this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
-						
-						mapRatio = (xAxis.max - xAxis.min) / (this.max - this.min);
-						
-						// What axis to pad to put the map in the middle
-						padAxis = mapRatio > plotRatio ? this : xAxis;
-						
-						// Pad it
-						adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
-						padAxis.minPixelPadding = (padAxis.len - adjustedAxisLength) / 2;
-					}
-					
-				}
-			});
-		}	
+		this.dataMin = dataMin;
+		this.dataMax = dataMax;
+	});
+	
+	/**
+	 * Override axis translation to make sure the aspect ratio is always kept
+	 */
+	wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
+		var chart = this.chart,
+			mapRatio,
+			plotRatio = chart.plotWidth / chart.plotHeight,
+			isXAxis = this.isXAxis,
+			adjustedAxisLength,
+			xAxis = chart.xAxis[0],
+			padAxis;
 		
-		return proceed.call(this, chart, userOptions);
+		// Run the parent method
+		proceed.call(this);
+		
+		// On Y axis, handle both
+		if (chart.options.chart.type === 'map' && !isXAxis && xAxis.transA !== UNDEFINED) {
+			
+			// Use the same translation for both axes
+			this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
+			
+			mapRatio = (xAxis.max - xAxis.min) / (this.max - this.min);
+			
+			// What axis to pad to put the map in the middle
+			padAxis = mapRatio > plotRatio ? this : xAxis;
+			
+			// Pad it
+			adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
+			padAxis.minPixelPadding = (padAxis.len - adjustedAxisLength) / 2;
+		}
 	});
 
 
@@ -186,14 +193,14 @@
 		chart.renderMapNavigation();
 
 		// Add the double click event
-		if (pick(mapNavigation.zoomOnDoubleClick, true)) {
+		if (mapNavigation.zoomOnDoubleClick) {
 			Highcharts.addEvent(chart.container, 'dblclick', function (e) {
 				chart.pointer.onContainerDblClick(e);
 			});
 		}
 
 		// Add the mousewheel event
-		if (pick(mapNavigation.zoomOnMouseWheel, true)) {
+		if (mapNavigation.zoomOnMouseWheel) {
 			Highcharts.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
 				chart.pointer.onContainerMouseWheel(e);
 			});
@@ -301,6 +308,9 @@
 						inner[pos] = outer[pos] + outer[size] - inner[size];
 					}
 				}
+				if (inner[size] > outer[size]) {
+					inner[size] = outer[size];
+				}
 				if (inner[pos] < outer[pos]) {
 					inner[pos] = outer[pos];
 				}
@@ -363,30 +373,27 @@
 	/**
 	 * Extend the default options with map options
 	 */
-	plotOptions.map = merge(
-		plotOptions.scatter, 
-		{
-			animation: false, // makes the complex shapes slow
-			minOpacity: 0.2,
-			nullColor: '#F8F8F8',
-			borderColor: 'silver',
-			borderWidth: 1,
-			marker: null,
-			stickyTracking: false,
-			dataLabels: {
-				verticalAlign: 'middle'
-			},
-			tooltip: {
-				followPointer: true,
-				pointFormat: '{point.name}: {point.y}<br/>'
-			},
-			states: {
-				normal: {
-					animation: true
-				}
+	plotOptions.map = merge(plotOptions.scatter, {
+		animation: false, // makes the complex shapes slow
+		nullColor: '#F8F8F8',
+		borderColor: 'silver',
+		borderWidth: 1,
+		marker: null,
+		stickyTracking: false,
+		dataLabels: {
+			verticalAlign: 'middle'
+		},
+		turboThreshold: 0,
+		tooltip: {
+			followPointer: true,
+			pointFormat: '{point.name}: {point.y}<br/>'
+		},
+		states: {
+			normal: {
+				animation: true
 			}
 		}
-	);
+	});
 
 	var MapAreaPoint = Highcharts.extendClass(Point, {
 		/**
@@ -423,7 +430,7 @@
 				animation = point.series.options.states.normal.animation,
 				duration = animation && (animation.duration || 500);
 
-			if (duration) {
+			if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4) {
 				delete point.pointAttr[''].fill; // avoid resetting it in Point.setState
 
 				clearTimeout(point.colorInterval);
@@ -448,7 +455,7 @@
 	/**
 	 * Add the series type
 	 */
-	Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
+	seriesTypes.map = Highcharts.extendClass(seriesTypes.scatter, {
 		type: 'map',
 		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 			stroke: 'borderColor',
@@ -461,6 +468,7 @@
 		getSymbol: noop,
 		supportsDrilldown: true,
 		getExtremesFromAll: true,
+		useMapGeometry: true, // get axis extremes from paths, not values
 		init: function (chart) {
 			var series = this,
 				valueDecimals = chart.options.legend.valueDecimals,
@@ -471,6 +479,7 @@
 				fromLabel,
 				toLabel,
 				colorRange,
+				valueRanges,
 				gradientColor,
 				grad,
 				tmpLabel,
@@ -479,9 +488,10 @@
 			
 			Highcharts.Series.prototype.init.apply(this, arguments);
 			colorRange = series.options.colorRange;
+			valueRanges = series.options.valueRanges;
 
-			if (series.options.valueRanges) {
-				each(series.options.valueRanges, function (range) {
+			if (valueRanges) {
+				each(valueRanges, function (range) {
 					from = range.from;
 					to = range.to;
 					
@@ -547,7 +557,7 @@
 					fromLabel: fromLabel,
 					toLabel: toLabel,
 					color: gradientColor,
-					drawLegendSymbol: this.drawLegendSymbol,
+					drawLegendSymbol: this.drawLegendSymbolGradient,
 					visible: true,
 					setState: function () {},
 					setVisible: function () {}
@@ -558,13 +568,17 @@
 		},
 
 		/**
+		 * If neither valueRanges nor colorRanges are defined, use basic area symbol.
+		 */
+		drawLegendSymbol: seriesTypes.area.prototype.drawLegendSymbol,
+
+		/**
 		 * Gets the series' symbol in the legend and extended legend with more information.
 		 * 
 		 * @param {Object} legend The legend object
 		 * @param {Object} item The series (this) or point
 		 */
-		drawLegendSymbol: function (legend, item) {
-			
+		drawLegendSymbolGradient: function (legend, item) {
 			var spacing = legend.options.symbolPadding,
 				padding = pick(legend.options.padding, 8),
 				positionY,
@@ -651,7 +665,7 @@
 					pointMinY =  Number.MAX_VALUE;
 					
 				while (i--) {
-					if (typeof path[i] === 'number') {
+					if (typeof path[i] === 'number' && !isNaN(path[i])) {
 						if (even) { // even = x
 							pointMaxX = Math.max(pointMaxX, path[i]);
 							pointMinX = Math.min(pointMinX, path[i]);
@@ -824,7 +838,7 @@
 			});
 			
 			// Draw them
-			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
+			seriesTypes.column.prototype.drawPoints.apply(series);
 			
 			each(series.data, function (point) {
 
@@ -889,13 +903,12 @@
 			
 		},
 
-
 		/**
 		 * When drilling up, pull out the individual point graphics from the lower series
 		 * and animate them into the origin point in the upper series.
 		 */
 		animateDrillupFrom: function (level) {
-			Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
+			seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 		},
 
 
@@ -904,9 +917,41 @@
 		 * moved into place
 		 */
 		animateDrillupTo: function (init) {
-			Highcharts.seriesTypes.column.prototype.animateDrillupTo.call(this, init);
+			seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 		}
 	});
+
+
+	// The mapline series type
+	plotOptions.mapline = merge(plotOptions.map, {
+		lineWidth: 1,
+		backgroundColor: 'none'
+	});
+	seriesTypes.mapline = Highcharts.extendClass(seriesTypes.map, {
+		type: 'mapline',
+		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+			stroke: 'color',
+			'stroke-width': 'lineWidth',
+			fill: 'backgroundColor'
+		},
+		drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+	});
+
+	// The mappoint series type
+	plotOptions.mappoint = merge(plotOptions.scatter, {
+		dataLabels: {
+			enabled: true,
+			format: '{point.name}',
+			color: 'black',
+			style: {
+				textShadow: '0 0 5px white'
+			}
+		}
+	});
+	seriesTypes.mappoint = Highcharts.extendClass(seriesTypes.scatter, {
+		type: 'mappoint'
+	});
+	
 
 	
 	/**

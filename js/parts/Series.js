@@ -553,7 +553,6 @@ Series.prototype = {
 	isCartesian: true,
 	type: 'line',
 	pointClass: Point,
-	cropShoulder: 1,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -1163,7 +1162,7 @@ Series.prototype = {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
-			cropShoulder = this.cropShoulder, // Line type series need one point outside the plot area, columns don't
+			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
 			i;
 
 		// iterate up to find slice start
@@ -1262,19 +1261,20 @@ Series.prototype = {
 		var series = this,
 			xData = series.processedXData,
 			yData = series.processedYData,
+			stackedYData = [],
 			yDataLength = yData.length,
 			seriesOptions = series.options,
 			threshold = seriesOptions.threshold,
 			stackOption = seriesOptions.stack,
 			stacking = seriesOptions.stacking,
+			percentStacking = stacking === 'percent',
 			stackKey = series.stackKey,
 			negKey = '-' + stackKey,
+			negStacks = series.negStacks && !percentStacking,
 			yAxis = series.yAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
-			stackExtremes = yAxis.stackExtremes,
 			isNegative,
-			total,
 			stack,
 			key,
 			i,
@@ -1288,16 +1288,8 @@ Series.prototype = {
 
 			// Read stacked values into a stack based on the x value,
 			// the sign of y and the stack key. Stacking is also handled for null values (#739)
-			isNegative = series.negStacks && y < threshold;
+			isNegative = negStacks && y < threshold;
 			key = isNegative ? negKey : stackKey;
-
-			// Set default stackExtremes value for this stack
-			if (typeof y === 'number' && !stackExtremes[stackKey]) {
-				stackExtremes[stackKey] = {
-					dataMin: y,
-					dataMax: y
-				};
-			}
 
 			// Create empty object for this stack if it doesn't exist yet
 			if (!stacks[key]) {
@@ -1316,22 +1308,45 @@ Series.prototype = {
 
 			// If the StackItem doesn't exist, create it first
 			stack = stacks[key][x];
-			total = stack.total;
+			stack.points[series.index] = [stack.cum || 0];
 
+			// Add value to the stack total
+			stack.total += (stacking === 'percent' ? mathAbs(y) : y) || 0;
+			stack.cum = (stack.cum || 0) + (y || 0);
 
-			// add value to the stack total
-			stack.addValue((stacking === 'percent' ? mathAbs(y) : y) || 0);
-			stack.cacheExtremes(series, [total, total + (y || 0)]);
-			
-			if (typeof y === 'number') {
-				stackExtremes[stackKey].dataMin = mathMin(stackExtremes[stackKey].dataMin, stack.total, y);
-				stackExtremes[stackKey].dataMax = mathMax(stackExtremes[stackKey].dataMax, stack.total, y);
-			}
+			stack.points[series.index].push(stack.cum);
+			stackedYData[i] = stack.cum;
 
 		}
 
-		// reset old stacks
+		if (stacking === 'percent') {
+			yAxis.usePercentage = true;
+		}
+
+		this.stackedYData = stackedYData; // To be used in getExtremes
+		
+		// Reset old stacks
 		yAxis.oldStacks = {};
+	},
+
+	/**
+	 * Iterate over all stacks and compute the absolute values to percent
+	 */
+	setPercentStacks: function () {
+		var i = this.xData.length,
+			x,
+			stack,
+			pointExtremes,
+			totalFactor;
+		while (i--) {
+			x = this.xData[i];
+			stack = this.yAxis.stacks[this.stackKey][x];
+			pointExtremes = stack.points[this.index];
+			totalFactor = stack.total ? 100 / stack.total : 0;
+			pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
+			pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
+			this.stackedYData[i] = pointExtremes[1];
+		}
 	},
 
 	/**
@@ -1340,14 +1355,8 @@ Series.prototype = {
 	getExtremes: function () {
 		var xAxis = this.xAxis,
 			yAxis = this.yAxis,
-			stackKey = this.stackKey,
-			stackExtremes,
-			stackMin,
-			stackMax,
-			options = this.options,
-			threshold = yAxis.isLog ? null : options.threshold,
 			xData = this.processedXData,
-			yData = this.processedYData,
+			yData = this.stackedYData || this.processedYData,
 			yDataLength = yData.length,
 			activeYData = [],
 			activeCounter = 0,
@@ -1363,51 +1372,33 @@ Series.prototype = {
 			i,
 			j;
 
-		// For stacked series, get the value from the stack
-		stackExtremes = options.stacking && yAxis.stackExtremes[stackKey];
-		if (stackExtremes) {			
-			stackMin = stackExtremes.dataMin;
-			stackMax = stackExtremes.dataMax;
+		for (i = 0; i < yDataLength; i++) {
+			
+			x = xData[i];
+			y = yData[i];
 
-			dataMin = mathMin(stackMin, pick(threshold, stackMin));
-			dataMax = mathMax(stackMax, pick(threshold, stackMax));
-		}
+			// For points within the visible range, including the first point outside the
+			// visible range, consider y extremes
+			validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+			withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin && 
+				(xData[i - 1] || x) <= xMax);
 
-		// If not stacking or threshold is null, iterate over values that are within the visible range
-		if (!defined(dataMin) || !defined(dataMax)) {
+			if (validValue && withinRange) {
 
-			for (i = 0; i < yDataLength; i++) {
-				
-				x = xData[i];
-				y = yData[i];
-
-				// For points within the visible range, including the first point outside the
-				// visible range, consider y extremes
-				validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
-				withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin && 
-					(xData[i - 1] || x) <= xMax);
-
-				if (validValue && withinRange) {
-
-					j = y.length;
-					if (j) { // array, like ohlc or range data
-						while (j--) {
-							if (y[j] !== null) {
-								activeYData[activeCounter++] = y[j];
-							}
+				j = y.length;
+				if (j) { // array, like ohlc or range data
+					while (j--) {
+						if (y[j] !== null) {
+							activeYData[activeCounter++] = y[j];
 						}
-					} else {
-						activeYData[activeCounter++] = y;
 					}
+				} else {
+					activeYData[activeCounter++] = y;
 				}
 			}
-			dataMin = pick(dataMin, arrayMin(activeYData));
-			dataMax = pick(dataMax, arrayMax(activeYData));
 		}
-
-		// Set
-		this.dataMin = dataMin;
-		this.dataMax = dataMax;
+		this.dataMin = pick(dataMin, arrayMin(activeYData));
+		this.dataMax = pick(dataMax, arrayMax(activeYData));
 	},
 
 	/**
@@ -1422,7 +1413,6 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			stacking = options.stacking,
-			percentStacking = stacking === 'percent',
 			xAxis = series.xAxis,
 			categories = xAxis.categories,
 			yAxis = series.yAxis,
@@ -1432,7 +1422,8 @@ Series.prototype = {
 			i,
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
-			threshold = options.threshold;
+			threshold = options.threshold,
+			negStacks = series.negStacks && stacking !== 'percent'; // #1910, #2197
 
 		
 		// Translate each point
@@ -1441,9 +1432,9 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
-				pointStackTotal;
+				stackValues;
 
 			// Discard disallowed y values for log axes
 			if (yAxis.isLog && yValue <= 0) {
@@ -1457,26 +1448,20 @@ Series.prototype = {
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
 
-
 				pointStack = stack[xValue];
-				pointStackTotal = pointStack.total;
-				pointStack.cum = yBottom = pointStack.cum - (percentStacking ? mathAbs(yValue) : yValue); // start from top
-				yValue = yBottom + yValue;
-				
-				if (pointStack.cum === 0) {
+				stackValues = pointStack.points[series.index];
+				yBottom = stackValues[0];
+				yValue = stackValues[1];
+
+				if (yBottom === 0) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
 					yBottom = null;
 				}
-				
-				if (percentStacking) {
-					yBottom = pointStackTotal ? yBottom * 100 / pointStackTotal : 0;
-					yValue = pointStackTotal ? yValue * 100 / pointStackTotal : 0;
-				}
 
-				point.percentage = pointStackTotal ? point.y * 100 / pointStackTotal : 0;
-				point.total = point.stackTotal = pointStackTotal;
+				point.percentage = stacking === 'percent' && yValue;
+				point.total = point.stackTotal = pointStack.total;
 				point.stackY = yValue;
 
 				// Place the stack label
@@ -1525,8 +1510,10 @@ Series.prototype = {
 			low,
 			high,
 			xAxis = series.xAxis,
+			xExtremes = xAxis && xAxis.getExtremes(),
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
+			pointX,
 			nextPoint,
 			i,
 			tooltipPoints = []; // a lookup array for each pixel in the x dimension
@@ -1560,19 +1547,22 @@ Series.prototype = {
 		pointsLength = points.length;
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
-			nextPoint = points[i + 1];
-			
-			// Set this range's low to the last range's high plus one
-			low = points[i - 1] ? high + 1 : 0;
-			// Now find the new high
-			high = points[i + 1] ?
-				mathMin(mathMax(0, mathFloor( // #2070
-					(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
-				)), axisLength) :
-				axisLength;
+			pointX = point.x;
+			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
+				nextPoint = points[i + 1];
+				
+				// Set this range's low to the last range's high plus one
+				low = high === UNDEFINED ? 0 : high + 1;
+				// Now find the new high
+				high = points[i + 1] ?
+					mathMin(mathMax(0, mathFloor( // #2070
+						(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
+					)), axisLength) :
+					axisLength;
 
-			while (low >= 0 && low <= high) {
-				tooltipPoints[low++] = point;
+				while (low >= 0 && low <= high) {
+					tooltipPoints[low++] = point;
+				}
 			}
 		}
 		series.tooltipPoints = tooltipPoints;
@@ -1888,6 +1878,7 @@ Series.prototype = {
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions,
 			negativeColor = seriesOptions.negativeColor,
+			defaultLineColor = normalOptions.lineColor,
 			key;
 
 		// series type specific modifications
@@ -1934,7 +1925,7 @@ Series.prototype = {
 			}
 			
 			hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
-			
+
 			// check if the point has specific visual options
 			if (point.options) {
 				for (key in pointAttrToOptions) {
@@ -1964,7 +1955,9 @@ Series.prototype = {
 
 				// normal point state inherits series wide normal state
 				pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
-					color: point.color // #868
+					color: point.color, // #868
+					fillColor: point.color, // Individual point color or negative color markers (#2219)
+					lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
 				}, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 				// inherit from point normal and series hover
@@ -1980,12 +1973,6 @@ Series.prototype = {
 					seriesPointAttr[SELECT_STATE],
 					pointAttr[NORMAL_STATE]
 				);
-
-				// Force the fill to negativeColor on markers
-				if (point.negative && seriesOptions.marker && negativeColor) {
-					pointAttr[NORMAL_STATE].fill = pointAttr[HOVER_STATE].fill = pointAttr[SELECT_STATE].fill = 
-						series.convertAttribs({ fillColor: negativeColor }).fill;
-				}
 
 
 			// no marker config object is created: copy a reference to the series-wide
@@ -2007,7 +1994,9 @@ Series.prototype = {
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
-			oldType = this.type;
+			oldType = this.type,
+			proto = seriesTypes[oldType].prototype,
+			n;
 
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
@@ -2018,6 +2007,11 @@ Series.prototype = {
 
 		// Destroy the series and reinsert methods from the type prototype
 		this.remove(false);
+		for (n in proto) { // Overwrite series-type specific methods (#2270)
+			if (proto.hasOwnProperty(n)) {
+				this[n] = UNDEFINED;
+			}
+		}
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 		
 
@@ -2053,6 +2047,7 @@ Series.prototype = {
 			if (axis) {
 				erase(axis.series, series);
 				axis.isDirty = axis.forceRedraw = true;
+				axis.stacks = {}; // Rebuild stacks when updating (#2229)
 			}
 		});
 
@@ -2144,7 +2139,7 @@ Series.prototype = {
 				
 				// Determine if each data label is enabled
 				pointOptions = point.options && point.options.dataLabels;
-				enabled = generalOptions.enabled || (pointOptions && pointOptions.enabled);
+				enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
 				
 				
 				// If the point is outside the plot area, destroy it. #678, #820

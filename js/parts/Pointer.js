@@ -43,9 +43,8 @@ Pointer.prototype = {
 	 * Add crossbrowser support for chartX and chartY
 	 * @param {Object} e The event object in standard browsers
 	 */
-	normalize: function (e) {
-		var chartPosition,
-			chartX,
+	normalize: function (e, chartPosition) {
+		var chartX,
 			chartY,
 			ePos;
 
@@ -61,8 +60,10 @@ Pointer.prototype = {
 		// iOS
 		ePos = e.touches ? e.touches.item(0) : e;
 
-		// get mouse position
-		this.chartPosition = chartPosition = offset(this.chart.container);
+		// Get mouse position
+		if (!chartPosition) {
+			this.chartPosition = chartPosition = offset(this.chart.container);
+		}
 
 		// chartX and chartY
 		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
@@ -141,7 +142,7 @@ Pointer.prototype = {
 						series[j].options.enableMouseTracking !== false &&
 						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
-					if (point.series) { // not a dummy point, #1544
+					if (point && point.series) { // not a dummy point, #1544
 						point._dist = mathAbs(index - point.clientX);
 						distance = mathMin(distance, point._dist);
 						points.push(point);
@@ -606,14 +607,12 @@ Pointer.prototype = {
 			chartPosition = this.chartPosition,
 			hoverSeries = chart.hoverSeries;
 
-		// Get e.pageX and e.pageY back in MooTools
-		e = washMouseEvent(e);
+		e = this.normalize(e, chartPosition);
 
 		// If we're outside, hide the tooltip
 		if (chartPosition && hoverSeries && !this.inClass(e.target, 'highcharts-tracker') &&
-			!chart.isInsidePlot(e.pageX - chartPosition.left - chart.plotLeft,
-			e.pageY - chartPosition.top - chart.plotTop)) {
-				this.reset();
+				!chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+			this.reset();
 		}
 	},
 

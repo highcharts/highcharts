@@ -54,7 +54,11 @@
 						$('.dissimilarity-index', li).remove();
 						
 						if (difference !== undefined) {
-							diff = difference.dissimilarityIndex.toFixed(2);
+							if (typeof difference === 'object') {
+								diff = difference.dissimilarityIndex.toFixed(2);
+							} else {
+								diff = difference;
+							}
 							
 							// Compare to reference
 							/*
@@ -71,7 +75,7 @@
 									href: location.href.replace(/continue=true/, ''),
 									target: 'main',
 									title: 'Difference between exported images. The number in parantheses is the reference diff, generated on the first run after clearing temp dir cache.' ,
-									'data-diff': difference.dissimilarityIndex.toFixed(2)
+									'data-diff': diff
 								})
 								.css({
 									background: background
@@ -183,7 +187,13 @@
 				}
 
 				if (mode === 'images') {
-					if (identical) {
+					if (rightSVG.indexOf('NaN') !== -1) {
+						report += "<br/>The generated SVG contains NaN"
+						$('#report').html(report)
+							.css('background', 'red');
+						onDifferent('Error');
+
+					} else if (identical) {
 						report += "<br/>The generated SVG is identical"
 						$('#report').html(report)
 							.css('background', 'green');

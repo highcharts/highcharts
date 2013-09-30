@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 
+	<!-- Beans in these files will makeup the configuration of the root web application context -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -10,19 +11,38 @@
  		</param-value>
 	</context-param>
 
+	<!-- Bootstraps the root web application context before servlet initialization -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Deploys the 'export' dispatcher servlet whose configuration resides in /WEB-INF/export-servlet.xml -->
 	<servlet>
 		<servlet-name>export</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/export-servlet.xml</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+	<!-- Maps all requests to the export servlet-->
 	<servlet-mapping>
 		<servlet-name>export</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+
+	<!-- Filter allowing CORS -->
+	<filter>
+		<filter-name>cors</filter-name>
+		<filter-class>com.highcharts.export.filter.CorsFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>cors</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

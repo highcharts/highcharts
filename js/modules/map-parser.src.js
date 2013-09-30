@@ -22,22 +22,35 @@ H.extend(H.Data.prototype, {
 	/**
 	 * Parse an SVG path into a simplified array that Highcharts can read
 	 */
-	pathToArray: function (path, translate) {
-		
+	pathToArray: function (path, matrix) {
 		var i = 0,
 			position = 0,
+			point,
 			positions,
 			fixedPoint = [0, 0],
 			isRelative,
 			isString,
-			operator;
+			operator,
+			matrixTransform = function (p, m) {
+			    return [
+			        m.a * p[0] + m.c * p[1] + m.e,
+			        m.b * p[0] + m.d * p[1] + m.f
+			    ];
+			};
+
 		path = path
+			// Scientific notation
+			.replace(/[0-9]+e-?[0-9]+/g, function (a) {
+				return +a; // cast to number
+			})
 			// Move letters apart
 			.replace(/([A-Za-z])/g, ' $1 ')
 			// Add space before minus
 			.replace(/-/g, ' -')
 			// Trim
 			.replace(/^\s*/, "").replace(/\s*$/, "")
+			// Remove newlines, tabs etc
+			.replace(/\s+/g, " ")
 		
 			// Split on spaces, minus and commas
 			.split(/[ ,]+/);
@@ -46,7 +59,7 @@ H.extend(H.Data.prototype, {
 		if (path.length === 1) {
 			return [];	
 		}
-		
+
 		// Real path
 		for (i = 0; i < path.length; i++) {
 			isString = /[a-zA-Z]/.test(path[i]);
@@ -67,7 +80,7 @@ H.extend(H.Data.prototype, {
 					isRelative = true;
 				} else if (operator === 'M' || operator === 'L' || operator === 'C') {
 					isRelative = false;
-				
+
 				
 				// Horizontal and vertical line to
 				} else if (operator === 'h') {
@@ -90,30 +103,43 @@ H.extend(H.Data.prototype, {
 			
 			// Handle numbers
 			} else {
-				
 				path[i] = parseFloat(path[i]);
 				if (isRelative) {
 					path[i] += fixedPoint[position % 2];
 				
 				} 
-				if (translate && (!isRelative || (operator === 'm' && i < 3))) { // only translate absolute points or initial moveTo
-					path[i] += translate[position % 2];
-				}
+
+				if (position % 2 === 1) { // y
+					// only translate absolute points or initial moveTo
+					if (matrix && (!isRelative || (operator === 'm' && i < 3))) {
+						point = matrixTransform([path[i - 1], path[i]], matrix);
+						path[i - 1] = point[0];
+						path[i] = point[1];
+					}
+
+					// Add it
+					path[i - 1] = Math.round(path[i - 1] * 100) / 100; // x
+					path[i] = Math.round(path[i] * 100) / 100; // y
+				}	
 				
-				path[i] = Math.round(path[i] * 100) / 100;
-				
-				// Set the fixed point for the next pair
-				if (position === positions - 1) {
-					fixedPoint = [path[i - 1], path[i]];
-				}
 				
 				// Reset to zero position (x/y switching)
 				if (position === positions - 1) {
+					// Set the fixed point for the next pair
+					fixedPoint = [path[i - 1], path[i]];
+				
 					position = 0;
 				} else {
 					position += 1;
 				}
+
 			}
+		}
+
+		// Handle polygon points
+		if (typeof path[0] === 'number' && path.length >= 4) {
+			path.unshift('M');
+			path.splice(3, 0, 'L');
 		}
 		return path;
 	},
@@ -190,30 +216,57 @@ H.extend(H.Data.prototype, {
 		
 		var data = this,
 			options = this.options;
-		
-		function getTranslate(elem) {
-			var transform = elem.getAttribute('transform'),
-				translate = transform && transform.match(/translate\(([0-9\-\. ]+),([0-9\-\. ]+)\)/);
-			
-			return translate && [parseFloat(translate[1]), parseFloat(translate[2])]; 
+
+		function getPathLikeChildren(parent) {
+			return Array.prototype.slice.call(parent.getElementsByTagName('path'))
+						.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')));
 		}
+
+		function getPathDefinition(path) {
+			if (path.nodeName === 'path') {
+				return path.getAttribute('d');
+			} else if (path.nodeName === 'polygon') {
+				return path.getAttribute('points');
+			}
+		}
+
+		function getTranslate(elem) {
+			return elem.getCTM();
+		}
+
 		
 		function getName(elem) {
 			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
 		}
+
+		function hasFill(elem) {
+			return !/fill[\s]?\:[\s]?none/.test(elem.getAttribute('style')) && elem.getAttribute('fill') !== 'none';
+		}
 		
 		jQuery.ajax({
 			url: options.svg,
-			dataType: 'xml',
+			dataType: 'text',
 			success: function (xml) {
+
 				var arr = [],
 					currentParent,
-					allPaths = xml.getElementsByTagName('path'),
+					allPaths,
 					commonLineage,
 					lastCommonAncestor,
 					handleGroups,
-					defs = xml.getElementsByTagName('defs')[0],
+					defs,
 					clipPaths;
+
+				// Make a hidden frame where the SVG is rendered
+				data.$frame = data.$frame || $('<div>')
+					.hide()
+					.appendTo($(document.body));
+				data.$frame.html(xml);
+				xml = $('svg', data.$frame)[0];
+					
+
+				allPaths = getPathLikeChildren(xml);
+				defs = xml.getElementsByTagName('defs')[0];
 					
 				// Skip clip paths
 				clipPaths = defs && defs.getElementsByTagName('path');
@@ -260,20 +313,25 @@ H.extend(H.Data.prototype, {
 				if (handleGroups) {
 					each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
 						var groupPath = [],
-							translate = getTranslate(g);
+							pathHasFill;
 						
-						each(g.getElementsByTagName('path'), function (path) {
+						each(getPathLikeChildren(g), function (path) {
 							if (!path.skip) {
 								groupPath = groupPath.concat(
-									data.pathToArray(path.getAttribute('d'), translate)
+									data.pathToArray(getPathDefinition(path), getTranslate(path))
 								);
+
+								if (hasFill(path)) {
+									pathHasFill = true;
+								}
 								
 								path.skip = true;
 							}
 						});
 						arr.push({
 							name: getName(g),
-							path: groupPath
+							path: groupPath,
+							hasFill: pathHasFill
 						});
 					});
 				}
@@ -283,7 +341,8 @@ H.extend(H.Data.prototype, {
 					if (!path.skip) {
 						arr.push({
 							name: getName(path),
-							path: data.pathToArray(path.getAttribute('d'), getTranslate(path))
+							path: data.pathToArray(getPathDefinition(path), getTranslate(path)),
+							hasFill: hasFill(path)
 						});
 					}			
 				});
@@ -302,4 +361,3 @@ H.extend(H.Data.prototype, {
 	}
 });
 }(Highcharts));
-

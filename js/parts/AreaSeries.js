@@ -51,7 +51,7 @@ var AreaSeries = extendClass(Series, {
 			});
 
 			each(keys, function (x) {
-				if (pointMap[x].y === null && connectNulls) { // #1836
+				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
 					return;
 
 				// The point exists, push it to the segment
