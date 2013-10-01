@@ -13466,12 +13466,13 @@ Series.prototype = {
 			percentStacking = stacking === 'percent',
 			stackKey = series.stackKey,
 			negKey = '-' + stackKey,
-			negStacks = series.negStacks && !percentStacking,
+			negStacks = series.negStacks,
 			yAxis = series.yAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
 			isNegative,
 			stack,
+			other,
 			key,
 			i,
 			x,
@@ -13507,7 +13508,22 @@ Series.prototype = {
 			stack.points[series.index] = [stack.cum || 0];
 
 			// Add value to the stack total
-			stack.total += (stacking === 'percent' ? mathAbs(y) : y) || 0;
+			if (stacking === 'percent') {
+				
+				// Percent stacked column, totals are the same for the positive and negative stacks
+				other = isNegative ? stackKey : negKey;
+				if (negStacks && stacks[other] && stacks[other][x]) {
+					other = stacks[other][x];
+					stack.total = other.total = mathMax(other.total, stack.total) + mathAbs(y) || 0;
+
+				// Percent stacked areas					
+				} else {
+					stack.total += mathAbs(y) || 0;
+				}
+			} else {
+				stack.total += y || 0;
+			}
+
 			stack.cum = (stack.cum || 0) + (y || 0);
 
 			stack.points[series.index].push(stack.cum);
@@ -13529,20 +13545,29 @@ Series.prototype = {
 	 * Iterate over all stacks and compute the absolute values to percent
 	 */
 	setPercentStacks: function () {
-		var i = this.xData.length,
-			x,
-			stack,
-			pointExtremes,
-			totalFactor;
-		while (i--) {
-			x = this.xData[i];
-			stack = this.yAxis.stacks[this.stackKey][x];
-			pointExtremes = stack.points[this.index];
-			totalFactor = stack.total ? 100 / stack.total : 0;
-			pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
-			pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
-			this.stackedYData[i] = pointExtremes[1];
-		}
+		var series = this,
+			stackKey = series.stackKey,
+			stacks = series.yAxis.stacks;
+		
+		each([stackKey, '-' + stackKey], function (key) {
+			var	i = series.xData.length,
+				x,
+				stack,
+				pointExtremes,
+				totalFactor;
+
+			while (i--) {
+				x = series.xData[i];
+				stack = stacks[key] && stacks[key][x];
+				pointExtremes = stack && stack.points[series.index];
+				if (pointExtremes) {
+					totalFactor = stack.total ? 100 / stack.total : 0;
+					pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
+					pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
+					series.stackedYData[i] = pointExtremes[1];
+				}
+			}
+		});
 	},
 
 	/**
@@ -13618,8 +13643,7 @@ Series.prototype = {
 			i,
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
-			threshold = options.threshold,
-			negStacks = series.negStacks && stacking !== 'percent'; // #1910, #2197
+			threshold = options.threshold;
 
 		
 		// Translate each point
@@ -13628,7 +13652,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				stackValues;
 
