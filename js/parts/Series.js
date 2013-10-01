@@ -2546,6 +2546,8 @@ Series.prototype = {
 				};
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
+				} else {
+					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 
 				series[graphKey] = series.chart.renderer.path(graphPath)
