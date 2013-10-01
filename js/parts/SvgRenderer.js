@@ -89,7 +89,7 @@ SVGElement.prototype = {
 				key = 'stroke-width';
 			}
 			ret = attr(element, key) || wrapper[key] || 0;
-			if (key !== 'd' && key !== 'visibility') { // 'd' is string in animation step
+			if (key !== 'd' && key !== 'visibility' && key !== 'fill') { // 'd' is string in animation step
 				ret = parseFloat(ret);
 			}
 
@@ -1336,28 +1336,41 @@ SVGRenderer.prototype = {
 							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
 								tooLong,
 								actualWidth,
-								rest = [];
+								clipHeight = wrapper._clipHeight,
+								rest = [],
+								dy = pInt(textLineHeight || 16),
+								softLineNo = 1,
+								bBox;
 
 							while (words.length || rest.length) {
 								delete wrapper.bBox; // delete cache
-								actualWidth = wrapper.getBBox().width;
+								bBox = wrapper.getBBox();
+								actualWidth = bBox.width;
 								tooLong = actualWidth > width;
 								if (!tooLong || words.length === 1) { // new line needed
 									words = rest;
 									rest = [];
 									if (words.length) {
-										tspan = doc.createElementNS(SVG_NS, 'tspan');
-										attr(tspan, {
-											dy: textLineHeight || 16,
-											x: parentX
-										});
-										if (spanStyle) { // #390
-											attr(tspan, 'style', spanStyle);
-										}
-										textNode.appendChild(tspan);
+										softLineNo++;
+											
+										if (clipHeight && softLineNo * dy > clipHeight) {
+											words = ['...'];
+											wrapper.attr('title', wrapper.textStr);
+										} else {
 
-										if (actualWidth > width) { // a single word is pressing it out
-											width = actualWidth;
+											tspan = doc.createElementNS(SVG_NS, 'tspan');
+											attr(tspan, {
+												dy: dy,
+												x: parentX
+											});
+											if (spanStyle) { // #390
+												attr(tspan, 'style', spanStyle);
+											}
+											textNode.appendChild(tspan);
+
+											if (actualWidth > width) { // a single word is pressing it out
+												width = actualWidth;
+											}
 										}
 									}
 								} else { // append to existing line tspan

@@ -7,6 +7,8 @@
 		<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
   		<script type="text/javascript" src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
   		<link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		
 		<script>
 			var diffThreshold = 0;
@@ -19,12 +21,30 @@
 						href = href.replace("view.php", "compare-view.php") + '&continue=true';
 						window.parent.frames[1].location.href = href;
 					}
+					$(this).toggle();
+					$('#batch-stop').toggle();
+				});
+
+				$("#batch-stop").click(function() {
+					var currentLi = document.currentLi || $('#li1')[0];
+					if (currentLi) {
+						var href = currentLi.getElementsByTagName("a")[0].href;
+					
+						href = href.replace("view.php", "compare-view.php");
+						window.parent.frames[1].location.href = href;
+					}
+					$(this).toggle();
+					$('#batch-compare').toggle();
 				});
 
 				$('#reset').click(function () {
 					if (confirm("Do you want to reset the compare history? Results from all browsers will be lost.")) {
 						$.getScript('compare-reset.php');
 					}
+				});
+
+				$('#reload').click(function () {
+					window.location.reload();
 				});
 
 				$("#slider").slider({
@@ -127,7 +147,8 @@
 				margin-top: 100px;
 				margin-left: 10px;
 			}
-			.batch {
+			#batch-stop {
+				display: none;
 			}
 			.dissimilarity-index {
 				float: right;
@@ -144,6 +165,7 @@
 				white-space: nowrap;
 				line-height: 30px;
 				cursor: pointer;
+				margin: 0 3px;
 			}
 			.buttons a:hover, a.button:hover {
 				background: #729e11;
@@ -155,9 +177,20 @@
 	<body>
 		
 	<div id="top-nav">
-		<a class="button" id="batch-compare">Batch compare</a>
-		<a class="button" href="compare-report.php" target="main">View report</a>
+		<a class="button" id="batch-compare" title="Batch compare all samples">
+			<i class="icon-play"></i>
+			Compare
+		</a>
+		<a class="button" id="batch-stop" title="Stop comparing">
+			<i class="icon-stop"></i>
+			Stop
+		</a>
+		<a class="button" href="compare-report.php" title="View compare history for all browsers" target="main">Report</a>
 		<a class="button" id="reset" title="Reset compare history for all browsers">Reset</a>
+		<a class="button" id="reload" title="Reload frame">
+			<i class="icon-refresh"></i>
+			Reload
+		</a>
 
 		<div style="margin-top: 1em">
 			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
@@ -181,7 +214,7 @@
 			echo "<h2>$dir</h2>";
 			
 			while (false !== ($file = readdir($handle))) {
-				if (preg_match('/^[a-z]+$/', $file)) {
+				if (preg_match('/^[a-z\-]+$/', $file)) {
 					echo "
 					<h4>$dir/$file</h4>
 					<ul>

@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import com.highcharts.export.converter.SVGConverterException;
 import com.highcharts.export.pool.ServerObjectFactory;
 import static com.highcharts.export.server.Server.logger;
+import com.highcharts.export.util.TempDir;
 
 public class Server {
 	private Process process;
@@ -44,7 +45,7 @@ public class Server {
 		try {
 			ArrayList<String> commands = new ArrayList<String>();
 			commands.add(exec);
-			commands.add(ServerObjectFactory.tmpDir + "/phantomjs/" + script);
+			commands.add(TempDir.getTmpDir().toAbsolutePath().toString() + "/phantomjs/" + script);
 			commands.add("-host");
 			commands.add(host);
 			commands.add("-port");

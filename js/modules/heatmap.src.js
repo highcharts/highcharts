@@ -4,6 +4,7 @@
 	
 	seriesTypes.heatmap = Highcharts.extendClass(seriesTypes.map, {
 		colorKey: 'z',
+		useMapGeometry: false,
 		pointArrayMap: ['y', 'z'],
 		translate: function () {
 			var series = this,

@@ -6,7 +6,9 @@ $(function() {
 	    
 	    plotOptions: {
 	    	candlestick: {
-	    		lineColor: 'red'
+	    		lineColor: '#2f7ed8',	    		
+	    		upLineColor: 'silver', // docs
+	    		upColor: 'silver'
 	    	}
 	    },
 	    

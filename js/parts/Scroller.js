@@ -318,7 +318,8 @@ Scroller.prototype = {
 		}
 
 		// get the pixel position of the handles
-		if (navigatorWidth === 0 || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851
+
+		if (navigatorWidth === 0 || !defined(xAxis.min) || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851, #2238
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		} else {
@@ -399,6 +400,7 @@ Scroller.prototype = {
 
 		// place elements
 		verb = chart.isResizing ? 'animate' : 'attr';
+
 		if (navigatorEnabled) {
 			scroller.leftShade[verb]({
 				x: navigatorLeft,
@@ -582,12 +584,14 @@ Scroller.prototype = {
 				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedLeft = true;
 					scroller.otherHandlePos = zoomedMax;
+					scroller.fixedExtreme = baseXAxis.max;
 					chart.fixedRange = null;
 
 				// grab the right handle
 				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedRight = true;
 					scroller.otherHandlePos = zoomedMin;
+					scroller.fixedExtreme = baseXAxis.min;
 					chart.fixedRange = null;
 
 				// grab the zoomed range
@@ -705,10 +709,18 @@ Scroller.prototype = {
 		 * Event handler for the mouse up event.
 		 */
 		scroller.mouseUpHandler = function (e) {
-			var ext;
+			var ext,
+				fixedMin,
+				fixedMax;
 			
 			if (hasDragged) {
-				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax);
+				// When dragging one handle, make sure the other one doesn't change
+				if (scroller.zoomedMin === scroller.otherHandlePos) {
+					fixedMin = scroller.fixedExtreme;
+				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
+					fixedMax = scroller.fixedExtreme;
+				}
+				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				chart.xAxis[0].setExtremes(
 					ext.min,
 					ext.max,
@@ -716,13 +728,15 @@ Scroller.prototype = {
 					false,
 					{ 
 						trigger: 'navigator',
+						triggerOp: 'navigator-drag',
 						DOMEvent: e // #1838
 					}
 				);
 			}
 
 			if (e.type !== 'mousemove') {
-				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth = hasDragged = dragOffset = null;
+				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth = 
+					scroller.fixedExtreme = scroller.otherHandlePos = hasDragged = dragOffset = null;
 				bodyStyle.cursor = defaultBodyCursor || '';
 			}
 			
@@ -843,8 +857,14 @@ Scroller.prototype = {
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
-				dataMin: ((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin),
-				dataMax: ((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+				dataMin: pick(
+					navAxis.options.min, 
+					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
+				),
+				dataMax: pick(
+					navAxis.options.max, 
+					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+				)
 			};
 		}
 		

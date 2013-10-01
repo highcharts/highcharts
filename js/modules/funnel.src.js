@@ -235,6 +235,11 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			}
 		});
 	},
+
+	/**
+	 * Funnel items don't have angles (#2289)
+	 */
+	sortByAngle: noop,
 	
 	/**
 	 * Extend the pie data label method

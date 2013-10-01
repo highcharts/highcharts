@@ -8,10 +8,7 @@ Chart.prototype.callbacks.push(function (chart) {
 
 	function renderScroller() {
 		extremes = chart.xAxis[0].getExtremes();
-		scroller.render(
-			mathMax(extremes.min, extremes.dataMin),
-			mathMin(extremes.max, pick(extremes.dataMax, Number.MAX_VALUE))
-		);
+		scroller.render(extremes.min, extremes.max);
 	}
 
 	function renderRangeSelector() {
@@ -22,7 +19,9 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function afterSetExtremesHandlerScroller(e) {
-		scroller.render(e.min, e.max);
+		if (e.triggerOp !== 'navigator-drag') {
+			scroller.render(e.min, e.max);
+		}
 	}
 
 	function afterSetExtremesHandlerRangeSelector(e) {

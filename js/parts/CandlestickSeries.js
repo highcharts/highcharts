@@ -14,6 +14,7 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
+	// upLineColor: 'black' // docs
 });
 
 // 2 - Create the CandlestickSeries object
@@ -29,6 +30,30 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 		'stroke-width': 'lineWidth'
 	},
 	upColorProp: 'fill',
+
+	/**
+	 * Postprocess mapping between options and SVG attributes
+	 */
+	getAttribs: function () {
+		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
+		var series = this,
+			options = series.options,
+			stateOptions = options.states,			
+			upLineColor = options.upLineColor || options.lineColor,
+			hoverStroke = stateOptions.hover.upLineColor || upLineColor, 
+			selectStroke = stateOptions.select.upLineColor || upLineColor;
+
+		// docs
+		// Add custom line color for points going up (close > open).
+		// Fill is handled by OHLCSeries' getAttribs.
+		each(series.points, function (point) {
+			if (point.open < point.close) {
+				point.pointAttr[''].stroke = upLineColor;
+				point.pointAttr.hover.stroke = hoverStroke;
+				point.pointAttr.select.stroke = selectStroke;
+			}
+		});
+	},
 
 	/**
 	 * Draw the data points

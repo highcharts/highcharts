@@ -13,7 +13,5 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!-- Activate annotation configured components -->
-	<mvc:annotation-driven/>
-	<context:annotation-config/>
 	<import resource="classpath:spring-convert.xml"/>
 </beans>

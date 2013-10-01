@@ -52,7 +52,9 @@
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
+        <property name="drilldown.src.name" value="drilldown.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
+        <property name="nodata.src.name" value="no-data-to-display.src.js"/>
         <property name="map.src.name" value="map.src.js"/>
         <property name="heatmap.src.name" value="heatmap.src.js"/>
         <property name="annotations.src.name" value="annotations.src.js"/>
@@ -61,7 +63,9 @@
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
         <property name="data.minified.name" value="data.js"/>
+        <property name="drilldown.minified.name" value="drilldown.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
+        <property name="nodata.minified.name" value="no-data-to-display.js"/>
         <property name="map.minified.name" value="map.js"/>
         <property name="heatmap.minified.name" value="heatmap.js"/>
         <property name="annotations.minified.name" value="annotations.js"/>
@@ -70,7 +74,9 @@
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
+        <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
+        <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
         <property name="heatmap.src.file" value="${basedir}/js/modules/${heatmap.src.name}"/>
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
@@ -308,7 +314,9 @@
             <fileset file="${standalone.src.file}"/>
             <fileset file="${exporting.src.file}"/>
             <fileset file="${data.src.file}"/>
+            <fileset file="${drilldown.src.file}"/>
             <fileset file="${funnel.src.file}"/>
+            <fileset file="${nodata.src.file}"/>
             <fileset file="${map.src.file}"/>
             <fileset file="${heatmap.src.file}"/>
             <fileset file="${annotations.src.file}"/>
@@ -441,9 +449,17 @@
             <param name="param.out" value="${dist.dir}/js/modules/${data.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${drilldown.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${drilldown.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${funnel.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${funnel.minified.name}"/>
         </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${nodata.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${nodata.minified.name}"/>
+        </antcall>        
         <antcall target="compile">
             <param name="param.src" value="${map.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${map.minified.name}"/>
@@ -574,10 +590,20 @@
         <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
+        <copy file="${drilldown.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${drilldown.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
         <copy file="${funnel.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${funnel.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${nodata.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${nodata.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${nodata.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${nodata.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${map.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
