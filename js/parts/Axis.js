@@ -364,7 +364,7 @@ Axis.prototype = {
 		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = false; // #1611
+		this._addedPlotLB = this.userMin = this.userMax = UNDEFINED; // #1611, #2306
 
 		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
