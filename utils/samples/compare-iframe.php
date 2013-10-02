@@ -21,7 +21,7 @@ $rightFramework = 'jQuery';
 
 
 $path = $_GET['path'];
-if (!preg_match('/^[a-z\-0-9]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
+if (!preg_match('/^[a-z\-0-9]+\/[a-z\-]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input: ' . $path);
 }
 

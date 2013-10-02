@@ -1319,7 +1319,6 @@ Series.prototype = {
 			threshold = seriesOptions.threshold,
 			stackOption = seriesOptions.stack,
 			stacking = seriesOptions.stacking,
-			percentStacking = stacking === 'percent',
 			stackKey = series.stackKey,
 			negKey = '-' + stackKey,
 			negStacks = series.negStacks,
@@ -1406,7 +1405,7 @@ Series.prototype = {
 			stacks = series.yAxis.stacks;
 		
 		each([stackKey, '-' + stackKey], function (key) {
-			var	i = series.xData.length,
+			var i = series.xData.length,
 				x,
 				stack,
 				pointExtremes,
