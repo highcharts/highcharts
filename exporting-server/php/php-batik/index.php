@@ -63,6 +63,7 @@ $outfile = "temp/$tempName.$ext";
 if (isset($typeString)) {
 	
 	// size
+	$width = '';
 	if ($_POST['width']) {
 		$width = (int)$_POST['width'];
 		if ($width) $width = "-w $width";
