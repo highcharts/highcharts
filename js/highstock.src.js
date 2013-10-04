@@ -8934,7 +8934,7 @@ Tooltip.prototype = {
 					if (axis.isLog) { // #1671
 						val = log2lin(val);
 					}
-					if (series.modifyValue) { // #1205
+					if (i === 1 && series.modifyValue) { // #1205, #2316
 						val = series.modifyValue(val);
 					}
 
