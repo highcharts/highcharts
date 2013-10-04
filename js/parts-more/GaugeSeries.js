@@ -66,6 +66,7 @@ var GaugeSeries = {
 	// be used on the axes
 	angular: true, 
 	drawGraph: noop,
+	fixedBox: true,
 	trackerGroups: ['group', 'dataLabels'],
 	
 	/**
