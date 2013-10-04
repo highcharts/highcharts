@@ -14,7 +14,7 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
-	// upLineColor: 'black' // docs
+	// upLineColor: null
 });
 
 // 2 - Create the CandlestickSeries object
@@ -43,7 +43,6 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 			hoverStroke = stateOptions.hover.upLineColor || upLineColor, 
 			selectStroke = stateOptions.select.upLineColor || upLineColor;
 
-		// docs
 		// Add custom line color for points going up (close > open).
 		// Fill is handled by OHLCSeries' getAttribs.
 		each(series.points, function (point) {
