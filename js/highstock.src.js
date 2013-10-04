@@ -9016,7 +9016,9 @@ Pointer.prototype = {
 	 */
 	init: function (chart, options) {
 		
-		var zoomType = useCanVG ? '' : options.chart.zoomType,
+		var chartOptions = options.chart,
+			chartEvents = chartOptions.events,
+			zoomType = useCanVG ? '' : chartOptions.zoomType,
 			inverted = chart.inverted,
 			zoomX,
 			zoomY;
@@ -9030,6 +9032,9 @@ Pointer.prototype = {
 		this.zoomY = zoomY = /y/.test(zoomType);
 		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
+
+		// Do we need to handle click on a touch device?
+		this.runChartClick = chartEvents && !!chartEvents.click;
 
 		this.pinchDown = [];
 		this.lastValidTouch = {};
@@ -9358,11 +9363,17 @@ Pointer.prototype = {
 			transform = {},
 			clip = {};
 
-		// If we're capturing touch, prevent pseudo click events from happening
-		if (followTouchMove || hasZoom) {
-			e.preventDefault();
+		// On touch devices, only proceed to trigger click if a handler is defined
+		if (e.type === 'touchstart') {
+			if (self.inClass(e.target, PREFIX + 'tracker')) {
+				if (!chart.runTrackerClick || touchesLength > 1) {
+					e.preventDefault();
+				}
+			} else if (!chart.runChartClick || touchesLength > 1) {
+				e.preventDefault();
+			}
 		}
-			
+
 		// Normalize each touch
 		map(touches, function (e) {
 			return self.normalize(e);
