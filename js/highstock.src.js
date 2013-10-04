@@ -1529,10 +1529,11 @@ defaultOptions = {
 		ignoreHiddenSeries: true,
 		//inverted: false,
 		//shadow: false,
-		spacingTop: 10,
-		spacingRight: 10,
-		spacingBottom: 15,
-		spacingLeft: 10,
+		spacing: [10, 10, 15, 10],
+		//spacingTop: 10,
+		//spacingRight: 10,
+		//spacingBottom: 15,
+		//spacingLeft: 10,
 		style: {
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
@@ -5790,7 +5791,7 @@ Tick.prototype = {
 				!labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
-				(!horiz && (chart.optionsMarginLeft || chart.chartWidth * 0.33)), // #1580, #1931
+				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
@@ -9361,19 +9362,15 @@ Pointer.prototype = {
 			hasZoom = zoomHor || zoomVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
+				chart.runTrackerClick) || chart.runChartClick),
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart') {
-			if (self.inClass(e.target, PREFIX + 'tracker')) {
-				if (!chart.runTrackerClick || touchesLength > 1) {
-					e.preventDefault();
-				}
-			} else if (!chart.runChartClick || touchesLength > 1) {
-				e.preventDefault();
-			}
+		if ((hasZoom || followTouchMove) && !fireClickEvent) {
+			e.preventDefault();
 		}
-
+		
 		// Normalize each touch
 		map(touches, function (e) {
 			return self.normalize(e);
@@ -10537,16 +10534,11 @@ Chart.prototype = {
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 
-		var optionsChart = options.chart,
-			optionsMargin = optionsChart.margin,
-			margin = isObject(optionsMargin) ?
-				optionsMargin :
-				[optionsMargin, optionsMargin, optionsMargin, optionsMargin];
-
-		this.optionsMarginTop = pick(optionsChart.marginTop, margin[0]);
-		this.optionsMarginRight = pick(optionsChart.marginRight, margin[1]);
-		this.optionsMarginBottom = pick(optionsChart.marginBottom, margin[2]);
-		this.optionsMarginLeft = pick(optionsChart.marginLeft, margin[3]);
+		var optionsChart = options.chart;
+		
+		// Create margin & spacing array
+		this.margin = this.splashArray('margin', optionsChart);
+		this.spacing = this.splashArray('spacing', optionsChart);
 
 		var chartEvents = optionsChart.events;
 
@@ -11422,17 +11414,10 @@ Chart.prototype = {
 	 */
 	getMargins: function () {
 		var chart = this,
-			optionsChart = chart.options.chart,
-			spacingTop = optionsChart.spacingTop,
-			spacingRight = optionsChart.spacingRight,
-			spacingBottom = optionsChart.spacingBottom,
-			spacingLeft = optionsChart.spacingLeft,
+			spacing = chart.spacing,
 			axisOffset,
 			legend = chart.legend,
-			optionsMarginTop = chart.optionsMarginTop,
-			optionsMarginLeft = chart.optionsMarginLeft,
-			optionsMarginRight = chart.optionsMarginRight,
-			optionsMarginBottom = chart.optionsMarginBottom,
+			margin = chart.margin,
 			legendOptions = chart.options.legend,
 			legendMargin = pick(legendOptions.margin, 10),
 			legendX = legendOptions.x,
@@ -11445,40 +11430,40 @@ Chart.prototype = {
 		axisOffset = chart.axisOffset;
 
 		// Adjust for title and subtitle
-		if (titleOffset && !defined(optionsMarginTop)) {
-			chart.plotTop = mathMax(chart.plotTop, titleOffset + chart.options.title.margin + spacingTop);
+		if (titleOffset && !defined(margin[0])) {
+			chart.plotTop = mathMax(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
 		}
 		
 		// Adjust for legend
 		if (legend.display && !legendOptions.floating) {
 			if (align === 'right') { // horizontal alignment handled first
-				if (!defined(optionsMarginRight)) {
+				if (!defined(margin[1])) {
 					chart.marginRight = mathMax(
 						chart.marginRight,
-						legend.legendWidth - legendX + legendMargin + spacingRight
+						legend.legendWidth - legendX + legendMargin + spacing[1]
 					);
 				}
 			} else if (align === 'left') {
-				if (!defined(optionsMarginLeft)) {
+				if (!defined(margin[3])) {
 					chart.plotLeft = mathMax(
 						chart.plotLeft,
-						legend.legendWidth + legendX + legendMargin + spacingLeft
+						legend.legendWidth + legendX + legendMargin + spacing[3]
 					);
 				}
 
 			} else if (verticalAlign === 'top') {
-				if (!defined(optionsMarginTop)) {
+				if (!defined(margin[0])) {
 					chart.plotTop = mathMax(
 						chart.plotTop,
-						legend.legendHeight + legendY + legendMargin + spacingTop
+						legend.legendHeight + legendY + legendMargin + spacing[0]
 					);
 				}
 
 			} else if (verticalAlign === 'bottom') {
-				if (!defined(optionsMarginBottom)) {
+				if (!defined(margin[2])) {
 					chart.marginBottom = mathMax(
 						chart.marginBottom,
-						legend.legendHeight - legendY + legendMargin + spacingBottom
+						legend.legendHeight - legendY + legendMargin + spacing[2]
 					);
 				}
 			}
@@ -11499,16 +11484,16 @@ Chart.prototype = {
 			});
 		}
 		
-		if (!defined(optionsMarginLeft)) {
+		if (!defined(margin[3])) {
 			chart.plotLeft += axisOffset[3];
 		}
-		if (!defined(optionsMarginTop)) {
+		if (!defined(margin[0])) {
 			chart.plotTop += axisOffset[0];
 		}
-		if (!defined(optionsMarginBottom)) {
+		if (!defined(margin[2])) {
 			chart.marginBottom += axisOffset[2];
 		}
-		if (!defined(optionsMarginRight)) {
+		if (!defined(margin[1])) {
 			chart.marginRight += axisOffset[1];
 		}
 
@@ -11640,10 +11625,7 @@ Chart.prototype = {
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			optionsChart = chart.options.chart,
-			spacingTop = optionsChart.spacingTop,
-			spacingRight = optionsChart.spacingRight,
-			spacingBottom = optionsChart.spacingBottom,
-			spacingLeft = optionsChart.spacingLeft,
+			spacing = chart.spacing,
 			clipOffset = chart.clipOffset,
 			clipX,
 			clipY,
@@ -11665,10 +11647,10 @@ Chart.prototype = {
 
 		// Set boxes used for alignment
 		chart.spacingBox = renderer.spacingBox = {
-			x: spacingLeft,
-			y: spacingTop,
-			width: chartWidth - spacingLeft - spacingRight,
-			height: chartHeight - spacingTop - spacingBottom
+			x: spacing[3],
+			y: spacing[0],
+			width: chartWidth - spacing[3] - spacing[1],
+			height: chartHeight - spacing[0] - spacing[2]
 		};
 		chart.plotBox = renderer.plotBox = {
 			x: plotLeft,
@@ -11700,16 +11682,13 @@ Chart.prototype = {
 	 */
 	resetMargins: function () {
 		var chart = this,
-			optionsChart = chart.options.chart,
-			spacingTop = optionsChart.spacingTop,
-			spacingRight = optionsChart.spacingRight,
-			spacingBottom = optionsChart.spacingBottom,
-			spacingLeft = optionsChart.spacingLeft;
+			spacing = chart.spacing,
+			margin = chart.margin;
 
-		chart.plotTop = pick(chart.optionsMarginTop, spacingTop);
-		chart.marginRight = pick(chart.optionsMarginRight, spacingRight);
-		chart.marginBottom = pick(chart.optionsMarginBottom, spacingBottom);
-		chart.plotLeft = pick(chart.optionsMarginLeft, spacingLeft);
+		chart.plotTop = pick(margin[0], spacing[0]);
+		chart.marginRight = pick(margin[1], spacing[1]);
+		chart.marginBottom = pick(margin[2], spacing[2]);
+		chart.plotLeft = pick(margin[3], spacing[3]);
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
 	},
@@ -12157,6 +12136,19 @@ Chart.prototype = {
 
 		fireEvent(chart, 'load');
 
+	},
+
+	/**
+	* Creates arrays for spacing and margin from given options.
+	*/
+	splashArray: function (target, options) {
+		var oVar = options[target],
+			tArray = isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
+
+		return [pick(options[target + 'Top'], tArray[0]),
+				pick(options[target + 'Right'], tArray[1]),
+				pick(options[target + 'Bottom'], tArray[2]),
+				pick(options[target + 'Left'], tArray[3])];
 	}
 }; // end Chart
 
@@ -18918,7 +18910,7 @@ Scroller.prototype = {
 			
 			// Compute the top position
 			scroller.top = top = scroller.navigatorOptions.top || 
-				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom - 
+				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] - 
 						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ? 
 							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 
@@ -19729,7 +19721,7 @@ RangeSelector.prototype = {
 				y: yAlign,
 				width: inputGroup.offset,
 				// detect collision with the exporting buttons
-				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chartOptions.chart.spacingTop) ? 
+				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
 	

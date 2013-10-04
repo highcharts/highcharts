@@ -359,19 +359,15 @@ Pointer.prototype = {
 			hasZoom = zoomHor || zoomVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
+				chart.runTrackerClick) || chart.runChartClick),
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (e.type === 'touchstart') {
-			if (self.inClass(e.target, PREFIX + 'tracker')) {
-				if (!chart.runTrackerClick || touchesLength > 1) {
-					e.preventDefault();
-				}
-			} else if (!chart.runChartClick || touchesLength > 1) {
-				e.preventDefault();
-			}
+		if ((hasZoom || followTouchMove) && !fireClickEvent) {
+			e.preventDefault();
 		}
-
+		
 		// Normalize each touch
 		map(touches, function (e) {
 			return self.normalize(e);
