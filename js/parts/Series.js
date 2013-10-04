@@ -331,7 +331,11 @@ Point.prototype = {
 			seriesOptions.data[i] = point.options;
 
 			// redraw
-			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
+			series.isDirty = series.isDirtyData = true;
+			if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
+				chart.isDirtyBox = true;
+			}
+			
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
 				chart.legend.destroyItem(point);
 			}
