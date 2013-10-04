@@ -191,6 +191,6 @@ ob_start();
 	</body>
 </html>
 <?php 
-file_put_contents('draft/index.html', ob_get_clean());
+file_put_contents('../draft/index.html', ob_get_clean());
 
 ?>

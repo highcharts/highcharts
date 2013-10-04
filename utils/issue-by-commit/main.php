@@ -59,7 +59,13 @@
 <html>
 	<head>
 		<style type="text/css">
-		textarea {
+		body {
+			font-family: Arial;
+		}
+		a, p, div, li {
+			font-size: 10pt;
+		}
+		textarea, code {
 			font-family: monospace;
 			color: green;
 		}
@@ -88,8 +94,9 @@
 
 		
 	echo "<script>$js</script>";	
-	echo '<hr/>';
-	echo "<a target='_blank' href='https://github.com/highslide-software/highcharts.com/commit/$commit'>View commit ". substr($commit, 0, 8) ."</a>";
+	echo '<hr/><ul>';
+	echo "<li>View commit: <a target='_blank' href='https://github.com/highslide-software/highcharts.com/commit/$commit'>". substr($commit, 0, 8) ."</a></li>";
+	echo "<li>Mobile testing: <a href='http://" . $_SERVER['SERVER_NAME'] . "/draft'>http://" . $_SERVER['SERVER_NAME'] . "/draft</a>.";
 
 } else { ?>
 
@@ -133,3 +140,33 @@ to
 		
 	</body>
 </html>
+<?php
+//------------ Output the sample into /draft/index.htm for debugging on mobile --------
+if ($commit) {
+ob_start();
+?><!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Sample</title>
+
+
+	</head>
+	<body style="margin: 0">
+
+		<div style="margin: 1em">
+
+		<?php printf($html, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit); ?>
+		</div>
+
+		
+		<script>
+		<?php echo $js ?>
+		</script>
+
+	</body>
+</html>
+<?php 
+file_put_contents('../draft/index.html', ob_get_clean());
+}
+?>
