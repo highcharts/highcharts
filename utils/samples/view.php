@@ -134,6 +134,10 @@ function getResources() {
 				background: -moz-linear-gradient(top, #57544A, #37342A);
 				box-shadow: 0px 0px 8px #888;
 			}
+			li, a, p, div {
+				font-family: Arial, sans-serif;
+				font-size: 10pt;
+			}
 		</style>
 
 	</head>
@@ -155,10 +159,15 @@ function getResources() {
 					target="_blank">» jsFiddle</a>
 			</div>
 		</div>
+
 		<div style="margin: 1em">
 
 		<?php echo $html ?>
 		</div>
+		<hr/>
+		<ul>
+			<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
+		</ul>
 
 	</body>
 </html>
