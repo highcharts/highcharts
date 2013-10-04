@@ -828,7 +828,7 @@ Scroller.prototype = {
 			
 			// Compute the top position
 			scroller.top = top = scroller.navigatorOptions.top || 
-				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom - 
+				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] - 
 						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ? 
 							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 
