@@ -254,7 +254,6 @@ H.extend(H.Data.prototype, {
 					commonLineage,
 					lastCommonAncestor,
 					handleGroups,
-					defs,
 					clipPaths;
 
 				// Make a hidden frame where the SVG is rendered
@@ -266,15 +265,15 @@ H.extend(H.Data.prototype, {
 					
 
 				allPaths = getPathLikeChildren(xml);
-				defs = xml.getElementsByTagName('defs')[0];
 					
 				// Skip clip paths
-				clipPaths = defs && defs.getElementsByTagName('path');
-				if (clipPaths) {
-					each(clipPaths, function (path) {
-						path.skip = true;
+				each(['defs', 'clipPath'], function (nodeName) {
+					each(xml.getElementsByTagName(nodeName), function (parent) {
+						each (parent.getElementsByTagName('path'), function (path) {
+							path.skip = true
+						});
 					});
-				}
+				});
 				
 				// If not all paths belong to the same group, handle groups
 				each(allPaths, function (path, i) {
