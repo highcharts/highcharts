@@ -842,14 +842,15 @@
 			
 			each(series.data, function (point) {
 
-				var dataLabels = point.dataLabels,
-					minX = xAxis.toPixels(point._minX, true),
+				var minX = xAxis.toPixels(point._minX, true),
 					maxX = xAxis.toPixels(point._maxX, true),
 					minY = yAxis.toPixels(point._minY, true),
 					maxY = yAxis.toPixels(point._maxY, true);
 
-				point.plotX = Math.round(minX + (maxX - minX) * pick(dataLabels && dataLabels.anchorX, 0.5));
-				point.plotY = Math.round(minY + (maxY - minY) * pick(dataLabels && dataLabels.anchorY, 0.5)); 
+				// Record the middle point (loosely based on centroid), determined
+				// by the middleX and middleY options.
+				point.plotX = Math.round(minX + (maxX - minX) * pick(point.middleX, 0.5));
+				point.plotY = Math.round(minY + (maxY - minY) * pick(point.middleY, 0.5)); 
 				
 				
 				// Reset escaped null points
