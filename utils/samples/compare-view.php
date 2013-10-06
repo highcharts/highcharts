@@ -174,11 +174,16 @@
 
 				var out,
 					identical;
-					
+				
 				// remove identifier for each iframe
-				if (mode !== 'images') {
-					leftSVG = leftSVG.replace(/which=left/g, "");
-					rightSVG = rightSVG.replace(/which=right/g, "");
+				if (leftSVG && rightSVG) {
+					leftSVG = leftSVG
+						.replace(/which=left/g, "")
+						.replace(/Created with [a-zA-Z0-9\.@ ]+/, "Created with ___");
+						
+					rightSVG = rightSVG
+						.replace(/which=right/g, "")
+						.replace(/Created with [a-zA-Z0-9\.@ ]+/, "Created with ___");
 				}
 
 				if (leftSVG === rightSVG) {
@@ -251,15 +256,12 @@
 						'The innerHTML is different, testing generated SVG...';
 						
 					$('#report').html(report)
-						.css('background', 'gray');
+						.css('background', identical ? 'green' : 'red');
 						
 					if (!identical) {
 						// switch to image mode
 						leftSVG = rightSVG = undefined;
 						mode = 'images';
-						//location.href = 'view.php?<?php echo $_SERVER['QUERY_STRING'] ?>&mode=images';
-						//document.getElementByI\nd('iframe-left').src = "iframe.php?which=left&mode=images&path=<?php echo $path ?>";
-						//document.getElementById('iframe-right').src = "iframe.php?which=right&mode=images&path=<?php echo $path ?>";	
 						$("#iframe-left")[0].contentWindow.compareSVG();				
 						$("#iframe-right")[0].contentWindow.compareSVG();
 					}
@@ -268,7 +270,7 @@
 				// Show the diff
 				if (!identical) {
 					out = diffString(wash(leftSVG), wash(rightSVG)).replace(/&gt;/g, '&gt;\n');
-					$("#preview").html(out);
+					$("#svg").html('<h4>Generated SVG:</h4>' + out);
 				}
 
 				/*report +=  '<br/>Left length: '+ leftSVG.length + '; right length: '+ rightSVG.length +
@@ -333,7 +335,8 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<pre style="overflow: auto; width: 1000px" id="preview"></pre>
+					<pre style="overflow: auto; width: 1000px; height: 300px" id="svg"></pre>
+					<div style="overflow: auto; width: 1000px" id="preview"></pre>
 				</td>
 			</tr>
 		</table>

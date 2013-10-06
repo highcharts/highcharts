@@ -194,7 +194,9 @@ $(function () {
         },
         
         series : [{
-            data : [],
+            data : [85,31,86,3,92,82,26,88,98,95,97,5,59,61,51,21,96,41,8,7,51,
+                79,21,36,17,83,43,67,96,24,57,14,28,15,3,27,11,47,54,33,73,71,
+                31,12,93,63,27,17,39,80,93],
             dataLabels: {
                 enabled: true,
                 color: 'white',
@@ -218,13 +220,14 @@ $(function () {
         }]
     };
 
+    var data = [];
+
     // Add values
-    Highcharts.each(Highcharts.maps.us, function (point) {
-        options.series[0].data.push(Highcharts.extend(point, {
+    Highcharts.each(Highcharts.maps.us, function (point, i) {
+        options.series[0].data[i] = Highcharts.extend(point, {
             name: point.code,
-            path: Highcharts.splitPath(point.path),
-            y: Math.round(Math.random() * 100)
-        }));
+            y: options.series[0].data[i]
+        });
     });
 
     // Instanciate the map
