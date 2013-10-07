@@ -19,6 +19,9 @@
 		Chart = Highcharts.Chart,
 		Point = Highcharts.Point,
 		Pointer = Highcharts.Pointer,
+		SVGRenderer = Highcharts.SVGRenderer,
+		VMLRenderer = Highcharts.VMLRenderer,
+		symbols = SVGRenderer.prototype.symbols,
 		each = Highcharts.each,
 		extend = Highcharts.extend,
 		merge = Highcharts.merge,
@@ -52,8 +55,9 @@
 	// Set the default map navigation options
 	defaultOptions.mapNavigation = {
 		buttonOptions: {
-			align: 'right',
-			verticalAlign: 'bottom',
+			alignTo: 'plotBox',
+			align: 'left',
+			verticalAlign: 'top',
 			x: 0,
 			width: 18,
 			height: 18,
@@ -61,6 +65,9 @@
 				fontSize: '15px',
 				fontWeight: 'bold',
 				textAlign: 'center'
+			},
+			theme: {
+				'stroke-width': 1
 			}
 		},
 		buttons: {
@@ -69,14 +76,14 @@
 					this.mapZoom(0.5);
 				},
 				text: '+',
-				y: -32
+				y: 0
 			},
 			zoomOut: {
 				onclick: function () {
 					this.mapZoom(2);
 				},
 				text: '-',
-				y: 0
+				y: 28
 			}
 		}
 		// enableButtons: false,
@@ -298,16 +305,15 @@
 				for (n in buttons) {
 					if (buttons.hasOwnProperty(n)) {
 						buttonOptions = merge(options.buttonOptions, buttons[n]);
-
-						button = chart.renderer.button(buttonOptions.text, 0, 0, outerHandler)
-							.attr({
+						button = chart.renderer.button(buttonOptions.text, 0, 0, outerHandler, 0, 0, 0, 0, n === 'zoomIn' ? 'topbutton' : 'bottombutton')
+							.attr(extend(buttonOptions.theme, {
 								width: buttonOptions.width,
 								height: buttonOptions.height
-							})
+							}))
 							.css(buttonOptions.style)
 							.add();
 						button.handler = buttonOptions.onclick;
-						button.align(extend(buttonOptions, { width: button.width, height: button.height }), null, 'spacingBox');
+						button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
 					}
 				}
 			}
@@ -974,7 +980,49 @@
 	seriesTypes.mappoint = Highcharts.extendClass(seriesTypes.scatter, {
 		type: 'mappoint'
 	});
-	
+
+
+	// Create symbols for the zoom buttons
+	function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
+		var normalize = (attr['stroke-width'] % 2 / 2);
+			
+		x -= normalize;
+		y -= normalize;
+
+		return ['M', x + rTopLeft, y,
+            // top side
+            'L', x + w - rTopRight, y,
+            // top right corner
+            'C', x + w - rTopRight / 2, y, x + w, y + rTopRight / 2, x + w, y + rTopRight,
+            // right side
+            'L', x + w, y + h - rBottomRight,
+            // bottom right corner
+            'C', x + w, y + h - rBottomRight / 2, x + w - rBottomRight / 2, y + h, x + w - rBottomRight, y + h,
+            // bottom side
+            'L', x + rBottomLeft, y + h,
+            // bottom left corner
+            'C', x + rBottomLeft / 2, y + h, x, y + h - rBottomLeft / 2, x, y + h - rBottomLeft,
+            // left side
+            'L', x, y + rTopLeft,
+            // top left corner
+            'C', x, y + rTopLeft / 2, x + rTopLeft / 2, y, x + rTopLeft, y,
+            'Z'
+        ];
+	}
+	symbols.topbutton = function (x, y, w, h, attr) {
+		return selectiveRoundedRect(attr, x, y, w, h, attr.r, attr.r, 0, 0);
+	};
+	symbols.bottombutton = function (x, y, w, h, attr) {
+		return selectiveRoundedRect(attr, x, y, w, h, 0, 0, attr.r, attr.r);
+	};
+	// The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
+	// VML browsers need this in order to generate shapes in export. Now share
+	// them with the VMLRenderer.
+	if (Highcharts.Renderer === VMLRenderer) {
+		each(['topbutton', 'bottombutton'], function (shape) {
+			VMLRenderer.prototype.symbols[shape] = symbols[shape];
+		});
+	}
 
 	
 	/**

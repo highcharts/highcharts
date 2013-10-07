@@ -3402,8 +3402,8 @@ SVGRenderer.prototype = {
 	 * @param {Object} hoverState
 	 * @param {Object} pressedState
 	 */
-	button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState) {
-		var label = this.label(text, x, y, null, null, null, null, null, 'button'),
+	button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape) {
+		var label = this.label(text, x, y, shape, null, null, null, null, 'button'),
 			curState = 0,
 			stateOptions,
 			stateStyle,
@@ -4290,7 +4290,7 @@ SVGRenderer.prototype = {
 					boxY = baseline ? -baselineOffset : 0;
 
 					wrapper.box = box = shape ?
-						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height) :
+						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 					box.add(wrapper);
 				}
