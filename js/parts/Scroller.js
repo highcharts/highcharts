@@ -34,6 +34,7 @@ extend(defaultOptions, {
 			fillOpacity: 0.4,
 			dataGrouping: {
 				approximation: 'average',
+				enabled: true,
 				groupPixelWidth: 2,
 				smoothed: true,
 				units: units
