@@ -182,7 +182,6 @@
 
 
 	//--- Start zooming and panning features
-
 	wrap(Chart.prototype, 'render', function (proceed) {
 		var chart = this,
 			mapNavigation = chart.options.mapNavigation;
@@ -247,6 +246,7 @@
 			}
 		}
 	});
+	
 	// Implement the pinchType option
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
@@ -256,6 +256,28 @@
 		if (options.mapNavigation.enableTouchZoom) {
 			this.pinchX = this.pinchHor = 
 				this.pinchY = this.pinchVert = true;
+		}
+	});
+
+	// Extend the pinchTranslate method to preserve fixed ratio when zooming
+	wrap(Pointer.prototype, 'pinchTranslate', function (proceed, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+		var xBigger;
+
+		proceed.call(this, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+
+		// Keep ratio
+		if (this.chart.options.chart.type === 'map') {
+			xBigger = transform.scaleX > transform.scaleY;
+			this.pinchTranslateDirection(
+				!xBigger, 
+				pinchDown, 
+				touches, 
+				transform, 
+				selectionMarker, 
+				clip, 
+				lastValidTouch, 
+				xBigger ? transform.scaleX : transform.scaleY
+			);
 		}
 	});
 
@@ -814,7 +836,7 @@
 		
 		/**
 		 * We need the points' bounding boxes in order to draw the data labels, so 
-		 * we skip it now and call if from drawPoints instead.
+		 * we skip it now and call it from drawPoints instead.
 		 */
 		drawDataLabels: noop,
 		
@@ -981,7 +1003,6 @@
 		
 		options = merge({
 			chart: {
-				type: 'map',
 				panning: 'xy'
 			},
 			xAxis: hiddenAxis,
@@ -991,6 +1012,7 @@
 	
 		{ // forced options
 			chart: {
+				type: 'map',
 				inverted: false
 			}
 		});
@@ -998,6 +1020,6 @@
 		options.series = seriesOptions;
 	
 	
-		return new Highcharts.Chart(options, callback);
+		return new Chart(options, callback);
 	};
 }(Highcharts));
