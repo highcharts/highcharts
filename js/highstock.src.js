@@ -10503,10 +10503,16 @@ Legend.prototype = {
 // or make a better one.
 if (/Trident.*?11\.0/.test(userAgent)) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
-		var legend = this;
-		setTimeout(function () {
-			proceed.call(legend, item);
-		});
+		var legend = this,
+			runPositionItem = function () {
+				proceed.call(legend, item);
+			};
+
+		if (legend.chart.renderer.forExport) {
+			runPositionItem();
+		} else {
+			setTimeout(runPositionItem);
+		}
 	});
 }
 
