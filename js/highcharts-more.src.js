@@ -1713,6 +1713,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
+	bubblePadding: true,
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -1899,7 +1900,7 @@ Axis.prototype.beforePadding = function () {
 			var seriesOptions = series.options,
 				zData;
 
-			if (series.type === 'bubble' && series.visible) {
+			if (series.bubblePadding && series.visible) {
 
 				// Correction for #1673
 				axis.allowZoomOutside = true;

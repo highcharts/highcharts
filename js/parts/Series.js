@@ -64,7 +64,7 @@ Point.prototype = {
 	 * Transform number or array configs into objects
 	 */
 	optionsToObject: function (options) {
-		var ret,
+		var ret = {},
 			series = this.series,
 			pointArrayMap = series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
@@ -73,10 +73,9 @@ Point.prototype = {
 			j = 0;
 
 		if (typeof options === 'number' || options === null) {
-			ret = { y: options };
+			ret[pointArrayMap[0]] = options;
 
 		} else if (isArray(options)) {
-			ret = {};
 			// with leading x value
 			if (options.length > valueCount) {
 				firstItemType = typeof options[0];

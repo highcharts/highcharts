@@ -704,11 +704,9 @@
 						even = !even;
 					}
 				}
-				// Cache point bounding box for use to position data labels
-				point._maxX = pointMaxX;
-				point._minX = pointMinX;
-				point._maxY = pointMaxY;
-				point._minY = pointMinY;
+				// Cache point bounding box for use to position data labels, bubbles etc
+				point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, 0.5);
+				point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, 0.5);
 
 				maxX = Math.max(maxX, pointMaxX);
 				minX = Math.min(minX, pointMinX);
@@ -719,7 +717,6 @@
 			this.maxY = maxY;
 			this.minX = minX;
 			this.maxX = maxX;
-			
 		},
 		
 		
@@ -754,8 +751,8 @@
 			return path;
 		},
 		
-		setData: function () {
-			Highcharts.Series.prototype.setData.apply(this, arguments);
+		setData: function (data, redraw) {
+			Highcharts.Series.prototype.setData.call(this, data, redraw);
 			this.getBox();
 		},
 		
@@ -870,16 +867,10 @@
 			
 			each(series.data, function (point) {
 
-				var minX = xAxis.toPixels(point._minX, true),
-					maxX = xAxis.toPixels(point._maxX, true),
-					minY = yAxis.toPixels(point._minY, true),
-					maxY = yAxis.toPixels(point._maxY, true);
-
 				// Record the middle point (loosely based on centroid), determined
 				// by the middleX and middleY options.
-				point.plotX = Math.round(minX + (maxX - minX) * pick(point.middleX, 0.5));
-				point.plotY = Math.round(minY + (maxY - minY) * pick(point.middleY, 0.5)); 
-				
+				point.plotX = xAxis.toPixels(point._midX, true);
+				point.plotY = yAxis.toPixels(point._midY, true);
 				
 				// Reset escaped null points
 				if (point.isNull) {
@@ -981,6 +972,54 @@
 		type: 'mappoint'
 	});
 
+	// The mapbubble series type
+	if (seriesTypes.bubble) {
+		plotOptions.mapbubble = merge(plotOptions.bubble, {
+			tooltip: {
+				pointFormat: '{point.name}: {point.z}'
+			}
+		});
+		seriesTypes.mapbubble = Highcharts.extendClass(seriesTypes.bubble, {
+			type: 'mapbubble',
+			pointArrayMap: ['z'], // If one single value is passed, it is interpreted as z
+			/**
+			 * Return dummy value in order to pass as non-null point, real Y value is inserted in generatePoints.
+			 */
+			toYData: function () {
+				return 1;
+			},
+			/**
+			 * Return the map area identified by the dataJoinBy option
+			 */
+			getMapData: function (key, value) {
+				var options = this.options,
+					mapData = options.mapData,
+					i = mapData.length;
+
+				while (i--) {
+					if (mapData[i][key] === value) {
+						return mapData[i];
+					}
+				}
+			},
+			generatePoints: function () {
+				var series = this,
+					options = series.options,
+					joinBy = options.dataJoinBy;
+
+				Highcharts.Series.prototype.generatePoints.apply(series, arguments);
+				
+				each(this.points, function (point) {
+					var mapPoint = series.getMapData(joinBy, point[joinBy]);
+					if (mapPoint) {
+						point.x = mapPoint._midX;
+						point.y = mapPoint._midY;
+						extend(point, mapPoint); // copy over properties
+					}
+				});
+			}
+		});
+	}
 
 	// Create symbols for the zoom buttons
 	function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {

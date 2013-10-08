@@ -24,6 +24,7 @@ $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
+$html = str_replace('.js"', '.js?' . mktime() . '"', $html); // Force no-cache for debugging
 
 
 
