@@ -7738,7 +7738,10 @@ Axis.prototype = {
 			// reset stacks
 			if (!axis.isXAxis) {
 				for (type in stacks) {
-					delete stacks[type];
+					for (i in stacks[type]) {
+						stacks[type][i].total = null;
+						stacks[type][i].cum = 0;
+					}
 				}
 			}
 
@@ -15276,7 +15279,9 @@ var AreaSeries = extendClass(Series, {
 
 			// Sort the keys (#1651)
 			for (x in stack) {
-				keys.push(+x);
+				if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
+					keys.push(+x);
+				}
 			}
 			keys.sort(function (a, b) {
 				return a - b;
