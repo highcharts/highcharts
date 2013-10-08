@@ -21,6 +21,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
+	// sizeBy: 'area' // docs: 'area' or 'width'
 	tooltip: {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
@@ -82,6 +83,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos,
 			zData = this.zData,
 			radii = [],
+			sizeByArea = this.options.sizeBy !== 'width',
 			zRange;
 		
 		// Set the shape type and arguments to be picked up in drawPoints
@@ -90,6 +92,9 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos = zRange > 0 ? // relative size, a number between 0 and 1
 				(zData[i] - zMin) / (zMax - zMin) : 
 				0.5;
+			if (sizeByArea) {
+				pos = Math.sqrt(pos);
+			}
 			radii.push(math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
