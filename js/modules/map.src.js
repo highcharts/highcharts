@@ -308,7 +308,8 @@
 						button = chart.renderer.button(buttonOptions.text, 0, 0, outerHandler, 0, 0, 0, 0, n === 'zoomIn' ? 'topbutton' : 'bottombutton')
 							.attr(extend(buttonOptions.theme, {
 								width: buttonOptions.width,
-								height: buttonOptions.height
+								height: buttonOptions.height,
+								zIndex: 5
 							}))
 							.css(buttonOptions.style)
 							.add();
@@ -974,49 +975,56 @@
 
 	// The mapbubble series type
 	if (seriesTypes.bubble) {
+
 		plotOptions.mapbubble = merge(plotOptions.bubble, {
 			tooltip: {
 				pointFormat: '{point.name}: {point.z}'
 			}
 		});
 		seriesTypes.mapbubble = Highcharts.extendClass(seriesTypes.bubble, {
+			pointClass: Highcharts.extendClass(Point, {
+				applyOptions: function (options, x) {
+					var point = Point.prototype.applyOptions.call(this, options, x),
+						series = this.series,
+						joinBy = series.options.dataJoinBy,
+						mapPoint = series.getMapData(joinBy, point[joinBy]);
+
+					if (mapPoint) {
+						point.x = mapPoint._midX;
+						point.y = mapPoint._midY;
+						extend(point, mapPoint); // copy over properties
+					} else {
+						point.y = null;
+					}
+					return point;
+				}
+			}),
 			type: 'mapbubble',
 			pointArrayMap: ['z'], // If one single value is passed, it is interpreted as z
-			/**
-			 * Return dummy value in order to pass as non-null point, real Y value is inserted in generatePoints.
-			 */
-			toYData: function () {
-				return 1;
-			},
 			/**
 			 * Return the map area identified by the dataJoinBy option
 			 */
 			getMapData: function (key, value) {
 				var options = this.options,
 					mapData = options.mapData,
+					mapMap = this.mapMap,
 					i = mapData.length;
 
-				while (i--) {
-					if (mapData[i][key] === value) {
-						return mapData[i];
+				// Create a cache for quicker lookup second time
+				if (!mapMap) {
+					mapMap = this.mapMap = [];
+				}
+				if (mapMap[value] !== undefined) {
+					return mapData[mapMap[value]];
+
+				} else {
+					while (i--) {
+						if (mapData[i][key] === value) {
+							mapMap[value] = i; // cache it
+							return mapData[i];
+						}
 					}
 				}
-			},
-			generatePoints: function () {
-				var series = this,
-					options = series.options,
-					joinBy = options.dataJoinBy;
-
-				Highcharts.Series.prototype.generatePoints.apply(series, arguments);
-				
-				each(this.points, function (point) {
-					var mapPoint = series.getMapData(joinBy, point[joinBy]);
-					if (mapPoint) {
-						point.x = mapPoint._midX;
-						point.y = mapPoint._midY;
-						extend(point, mapPoint); // copy over properties
-					}
-				});
 			}
 		});
 	}
