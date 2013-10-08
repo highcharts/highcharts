@@ -685,7 +685,7 @@
 			
 			// Find the bounding box
 			each(paths || this.options.data, function (point) {
-				var path = point.path,
+				var path = point.path || [],
 					i = path.length,
 					even = false, // while loop reads from the end
 					pointMaxX = Number.MIN_VALUE, 
@@ -803,7 +803,6 @@
 				from = Color(colorRange.from);
 				to = Color(colorRange.to);
 			}
-			
 			each(this.data, function (point) {
 				var value = point[colorKey],
 					range,
@@ -813,15 +812,18 @@
 
 				if (valueRanges) {
 					i = valueRanges.length;
-					while (i--) {
-						range = valueRanges[i];
-						from = range.from;
-						to = range.to;
-						if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
-							color = range.color;
-							break;
+					if (value === null || value === undefined) {
+						color = seriesOptions.nullColor;
+					} else {
+						while (i--) {
+							range = valueRanges[i];
+							from = range.from;
+							to = range.to;
+							if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
+								color = range.color;
+								break;
+							}	
 						}
-							
 					}
 				} else if (colorRange && value !== undefined) {
 
