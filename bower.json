@@ -4,7 +4,7 @@
   "main": [
     "js/highcharts.src.js",
     "js/highcharts-more.src.js",
-    "js/highstocks.src.js"
+    "js/highstock.src.js"
   ],  
   "ignore": [
     "errors",
