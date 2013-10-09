@@ -14349,6 +14349,7 @@ Series.prototype = {
 		
 		var series = this,
 			seriesOptions = series.options,
+			cursor = seriesOptions.cursor,
 			options = seriesOptions.dataLabels,
 			points = series.points,
 			pointOptions,
@@ -14459,7 +14460,7 @@ Series.prototype = {
 							options.useHTML
 						)
 						.attr(attr)
-						.css(options.style)
+						.css(extend(options.style, cursor && { cursor: cursor }))
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);
 						
