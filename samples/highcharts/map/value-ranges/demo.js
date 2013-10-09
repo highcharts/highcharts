@@ -254,7 +254,13 @@ $(function () {
                     y: 70,
                     floating: true,
                     layout: 'vertical',
-                    valueDecimals: 0
+                    valueDecimals: 0,
+                    backgroundColor: 'rgba(255,255,255,0.85)'
+                },
+
+                mapNavigation: {
+                    enabled: true,
+                    enableButtons: false
                 },
 
                 series : [{

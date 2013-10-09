@@ -483,6 +483,22 @@
 			
 			return point;
 		},
+
+		/**
+		 * Set the visibility of a single map area
+		 */
+		setVisible: function (vis) {
+			var point = this,
+				method = vis ? 'show' : 'hide';
+
+			// Show and hide associated elements
+			each(['graphic', 'dataLabel'], function (key) {
+				if (point[key]) {
+					point[key][method]();
+				}
+			});
+		},
+
 		/**
 		 * Stop the fade-out 
 		 */
@@ -565,7 +581,8 @@
 			valueRanges = series.options.valueRanges;
 
 			if (valueRanges) {
-				each(valueRanges, function (range) {
+				each(valueRanges, function (range, i) {
+					var vis = true;
 					from = range.from;
 					to = range.to;
 					
@@ -593,8 +610,17 @@
 						options: {},
 						drawLegendSymbol: seriesTypes.area.prototype.drawLegendSymbol,
 						visible: true,
-						setState: function () {},
-						setVisible: function () {}
+						setState: noop,
+						setVisible: function () {
+							vis = !vis;
+							each(series.points, function (point) {
+								if (point.valueRange === i) {
+									point.setVisible(vis);
+								}
+							});
+							
+							chart.legend.colorizeItem(this, vis);
+						}
 					}, range));
 				});
 				series.legendItems = legendItems;
@@ -633,8 +659,8 @@
 					color: gradientColor,
 					drawLegendSymbol: this.drawLegendSymbolGradient,
 					visible: true,
-					setState: function () {},
-					setVisible: function () {}
+					setState: noop,
+					setVisible: noop
 				}];
 
 				series.legendItems = legendItems;
@@ -937,6 +963,7 @@
 								break;
 							}	
 						}
+						point.valueRange = i;
 					}
 				} else if (colorRange && !isNull) {
 
