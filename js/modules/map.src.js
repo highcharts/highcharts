@@ -7,33 +7,34 @@
  */
 
 /* 
- * See www.highcharts.com/studies/world-map.htm for use case.
+ * See www.H.com/studies/world-map.htm for use case.
  *
  * To do:
  * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
  * - Zoom and pan GUI
  */
 /*global HighchartsAdapter*/
-(function (Highcharts) {
+(function (H) {
 	var UNDEFINED,
-		Axis = Highcharts.Axis,
-		Chart = Highcharts.Chart,
-		Point = Highcharts.Point,
-		Pointer = Highcharts.Pointer,
-		SVGRenderer = Highcharts.SVGRenderer,
-		VMLRenderer = Highcharts.VMLRenderer,
+		Axis = H.Axis,
+		Chart = H.Chart,
+		Point = H.Point,
+		Pointer = H.Pointer,
+		SVGRenderer = H.SVGRenderer,
+		VMLRenderer = H.VMLRenderer,
 		symbols = SVGRenderer.prototype.symbols,
-		each = Highcharts.each,
-		extend = Highcharts.extend,
-		merge = Highcharts.merge,
-		pick = Highcharts.pick,
-		numberFormat = Highcharts.numberFormat,
-		defaultOptions = Highcharts.getOptions(),
-		seriesTypes = Highcharts.seriesTypes,
+		each = H.each,
+		extend = H.extend,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		pick = H.pick,
+		numberFormat = H.numberFormat,
+		defaultOptions = H.getOptions(),
+		seriesTypes = H.seriesTypes,
 		inArray = HighchartsAdapter.inArray,
 		plotOptions = defaultOptions.plotOptions,
-		wrap = Highcharts.wrap,
-		Color = Highcharts.Color,
+		wrap = H.wrap,
+		Color = H.Color,
 		noop = function () {};
 
 	
@@ -88,17 +89,18 @@
 				y: 28
 			}
 		}
-		// enableButtons: false,
-		// enableTouchZoom: false,
-		// zoomOnDoubleClick: false,
-		// zoomOnMouseWheel: false
-
+		// enabled: false,
+		// enableButtons: null, // inherit from enabled
+		// enableTouchZoom: null, // inherit from enabled
+		// enableDoubleClickZoom: null, // inherit from enabled
+		// enableDoubleClickZoomTo: false
+		// enableMouseWheelZoom: null, // inherit from enabled
 	};
 	
 	/**
 	 * Utility for reading SVG paths directly.
 	 */
-	Highcharts.splitPath = function (path) {
+	H.splitPath = function (path) {
 		var i;
 
 		// Move letters apart
@@ -119,7 +121,7 @@
 	};
 
 	// A placeholder for map definitions
-	Highcharts.maps = {};
+	H.maps = {};
 	
 	/**
 	 * Override to use the extreme coordinates from the SVG shape, not the
@@ -201,15 +203,15 @@
 		chart.renderMapNavigation();
 
 		// Add the double click event
-		if (mapNavigation.zoomOnDoubleClick) {
-			Highcharts.addEvent(chart.container, 'dblclick', function (e) {
+		if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
+			H.addEvent(chart.container, 'dblclick', function (e) {
 				chart.pointer.onContainerDblClick(e);
 			});
 		}
 
 		// Add the mousewheel event
-		if (mapNavigation.zoomOnMouseWheel) {
-			Highcharts.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+		if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
+			H.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
 				chart.pointer.onContainerMouseWheel(e);
 			});
 		}
@@ -226,7 +228,11 @@
 
 			e = this.normalize(e);
 
-			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+			if (chart.options.mapNavigation.enableDoubleClickZoomTo) {
+				if (chart.pointer.inClass(e.target, 'highcharts-tracker')) {
+					chart.zoomToShape(chart.hoverPoint);
+				}
+			} else if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 				chart.mapZoom(
 					0.5,
 					chart.xAxis[0].toValue(e.chartX),
@@ -262,7 +268,7 @@
 		proceed.call(this, chart, options);
 
 		// Pinch status
-		if (options.mapNavigation.enableTouchZoom) {
+		if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
 			this.pinchX = this.pinchHor = 
 				this.pinchY = this.pinchVert = true;
 		}
@@ -303,7 +309,7 @@
 					this.handler.call(chart); 
 				};
 
-			if (options.enableButtons) {
+			if (pick(options.enableButtons, options.enabled)) {
 				for (n in buttons) {
 					if (buttons.hasOwnProperty(n)) {
 						buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -331,6 +337,7 @@
 			each([['x', 'width'], ['y', 'height']], function (dim) {
 				var pos = dim[0],
 					size = dim[1];
+
 				if (inner[pos] + inner[size] > outer[pos] + outer[size]) { // right overflow
 					if (inner[size] > outer[size]) { // the general size is greater, fit fully to outer
 						inner[size] = outer[size];
@@ -345,8 +352,8 @@
 				if (inner[pos] < outer[pos]) {
 					inner[pos] = outer[pos];
 				}
-				
 			});
+			
 
 			return inner;
 		},
@@ -396,7 +403,28 @@
 					chart.isMapZooming = false;
 				}, delay);
 			}
+			
 
+			chart.redraw();
+		},
+
+		/**
+		 * Zoom the chart to view a specific area point
+		 */
+		zoomToShape: function (point) {
+			var series = point.series,
+				chart = series.chart;
+
+			series.xAxis.setExtremes(
+				point._minX,
+				point._maxX,
+				false
+			);
+			series.yAxis.setExtremes(
+				point._minY,
+				point._maxY,
+				false
+			);
 			chart.redraw();
 		}
 	});
@@ -426,7 +454,7 @@
 		}
 	});
 
-	var MapAreaPoint = Highcharts.extendClass(Point, {
+	var MapAreaPoint = extendClass(Point, {
 		/**
 		 * Extend the Point object to split paths
 		 */
@@ -442,9 +470,11 @@
 				mapPoint = series.getMapData(joinBy, point[joinBy]);
 					
 				if (mapPoint) {
-					// This applies only to bubbles: TODO: cache _midX and _midY on the mapPoint itself
-					// point.x = mapPoint._midX;
-					// point.y = mapPoint._midY;
+					// This applies only to bubbles
+					if (series.xyFromShape) {
+						point.x = mapPoint._midX;
+						point.y = mapPoint._midY;
+					}
 					extend(point, mapPoint); // copy over properties
 				} else {
 					point.y = point.y || null;
@@ -499,7 +529,7 @@
 	/**
 	 * Add the series type
 	 */
-	seriesTypes.map = Highcharts.extendClass(seriesTypes.scatter, {
+	seriesTypes.map = extendClass(seriesTypes.scatter, {
 		type: 'map',
 		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 			stroke: 'borderColor',
@@ -530,7 +560,7 @@
 				horizontal = chart.options.legend.layout === 'horizontal';
 
 			
-			Highcharts.Series.prototype.init.apply(this, arguments);
+			H.Series.prototype.init.apply(this, arguments);
 			colorRange = series.options.colorRange;
 			valueRanges = series.options.valueRanges;
 
@@ -557,7 +587,7 @@
 					}
 					
 					// Add a mock object to the legend items
-					legendItems.push(Highcharts.extend({
+					legendItems.push(H.extend({
 						chart: series.chart,
 						name: name,
 						options: {},
@@ -702,7 +732,7 @@
 			each(paths || [], function (point) {
 
 				if (point.path && typeof point.path === 'string') {
-					point.path = Highcharts.splitPath(point.path);
+					point.path = H.splitPath(point.path);
 				}
 
 				var path = point.path || [],
@@ -809,7 +839,7 @@
 					}
 				});
 			}
-			Highcharts.Series.prototype.setData.call(this, data, redraw);
+			H.Series.prototype.setData.call(this, data, redraw);
 		},
 
 		/**
@@ -967,7 +997,7 @@
 			});
 
 			// Now draw the data labels
-			Highcharts.Series.prototype.drawDataLabels.call(series);
+			H.Series.prototype.drawDataLabels.call(series);
 			
 		},
 
@@ -1035,7 +1065,7 @@
 		lineWidth: 1,
 		backgroundColor: 'none'
 	});
-	seriesTypes.mapline = Highcharts.extendClass(seriesTypes.map, {
+	seriesTypes.mapline = extendClass(seriesTypes.map, {
 		type: 'mapline',
 		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 			stroke: 'color',
@@ -1056,7 +1086,7 @@
 			}
 		}
 	});
-	seriesTypes.mappoint = Highcharts.extendClass(seriesTypes.scatter, {
+	seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 		type: 'mappoint'
 	});
 
@@ -1068,25 +1098,11 @@
 				pointFormat: '{point.name}: {point.z}'
 			}
 		});
-		seriesTypes.mapbubble = Highcharts.extendClass(seriesTypes.bubble, {
-			pointClass: Highcharts.extendClass(Point, {
-				applyOptions: function (options, x) {
-					var point = Point.prototype.applyOptions.call(this, options, x),
-						series = this.series,
-						joinBy = series.options.dataJoinBy,
-						mapPoint = joinBy && series.getMapData(joinBy, point[joinBy]);
-
-					if (mapPoint) {
-						point.x = mapPoint._midX;
-						point.y = mapPoint._midY;
-						extend(point, mapPoint); // copy over properties
-					} else {
-						point.y = null;
-					}
-					
-					return point;
-				}
+		seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
+			pointClass: extendClass(Point, {
+				applyOptions: MapAreaPoint.prototype.applyOptions
 			}),
+			xyFromShape: true,
 			type: 'mapbubble',
 			pointArrayMap: ['z'], // If one single value is passed, it is interpreted as z
 			/**
@@ -1134,7 +1150,7 @@
 	// The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 	// VML browsers need this in order to generate shapes in export. Now share
 	// them with the VMLRenderer.
-	if (Highcharts.Renderer === VMLRenderer) {
+	if (H.Renderer === VMLRenderer) {
 		each(['topbutton', 'bottombutton'], function (shape) {
 			VMLRenderer.prototype.symbols[shape] = symbols[shape];
 		});
@@ -1144,7 +1160,7 @@
 	/**
 	 * A wrapper for Chart with all the default values for a Map
 	 */
-	Highcharts.Map = function (options, callback) {
+	H.Map = function (options, callback) {
 		
 		var hiddenAxis = {
 				endOnTick: false,

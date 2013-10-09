@@ -176,8 +176,7 @@ $(function () {
 
     var options = {
         chart : {
-            borderWidth : 1,
-            zoomType: 'xy'
+            borderWidth : 1
         },
         
         title : {
@@ -191,10 +190,7 @@ $(function () {
         },
 
         mapNavigation: {
-            enableButtons: true,
-            enableTouchZoom: true,
-            zoomOnMouseWheel: true,
-            zoomOnDoubleClick: true
+            enabled: true
         },
         
         series : [{
