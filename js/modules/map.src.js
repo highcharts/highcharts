@@ -502,9 +502,9 @@
 		/**
 		 * Stop the fade-out 
 		 */
-		onMouseOver: function () {
+		onMouseOver: function (e) {
 			clearTimeout(this.colorInterval);
-			Point.prototype.onMouseOver.call(this);
+			Point.prototype.onMouseOver.call(this, e);
 		},
 		/**
 		 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
