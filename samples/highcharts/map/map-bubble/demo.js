@@ -1333,22 +1333,21 @@ $(function () {
                 verticalAlign: 'bottom'
             }
         },
-        
+
         series : [{
             name: 'Countries',
-            data: Highcharts.maps.world,
+            mapData: Highcharts.maps.world,
+            allAreas: true,
             color: '#E0E0E0',
-            tooltip: {
-                headerFormat: '',
-                pointFormat: 'Country: {point.code}'
-            }
+            enableMouseTracking: false
         }, {
             type: 'mapbubble',
             mapData: Highcharts.maps.world,
             name: 'Population 2010',
-            data: data,
             dataJoinBy: 'code',
+            data: data,
             minSize: 4,
+            maxSize: '12%',
             tooltip: {
                 pointFormat: '{point.code}: {point.z} thousands'
             }

@@ -13,6 +13,7 @@
  * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
  * - Zoom and pan GUI
  */
+/*global HighchartsAdapter*/
 (function (Highcharts) {
 	var UNDEFINED,
 		Axis = Highcharts.Axis,
@@ -29,6 +30,7 @@
 		numberFormat = Highcharts.numberFormat,
 		defaultOptions = Highcharts.getOptions(),
 		seriesTypes = Highcharts.seriesTypes,
+		inArray = HighchartsAdapter.inArray,
 		plotOptions = defaultOptions.plotOptions,
 		wrap = Highcharts.wrap,
 		Color = Highcharts.Color,
@@ -430,12 +432,25 @@
 		 */
 		applyOptions: function (options, x) {
 
-			var point = Point.prototype.applyOptions.call(this, options, x);
+			var point = Point.prototype.applyOptions.call(this, options, x),
+				series = this.series,
+				seriesOptions = series.options,
+				joinBy = seriesOptions.dataJoinBy,
+				mapPoint;
 
-			if (point.path && typeof point.path === 'string') {
-				point.path = point.options.path = Highcharts.splitPath(point.path);
+			if (joinBy && seriesOptions.mapData) {
+				mapPoint = series.getMapData(joinBy, point[joinBy]);
+					
+				if (mapPoint) {
+					// This applies only to bubbles: TODO: cache _midX and _midY on the mapPoint itself
+					// point.x = mapPoint._midX;
+					// point.y = mapPoint._midY;
+					extend(point, mapPoint); // copy over properties
+				} else {
+					point.y = point.y || null;
+				}
 			}
-
+			
 			return point;
 		},
 		/**
@@ -682,9 +697,14 @@
 				maxY = Number.MIN_VALUE, 
 				minY =  Number.MAX_VALUE;
 			
-			
+			// TODO: Possible speed improvement by caching the box of each element and each mapData set.
 			// Find the bounding box
-			each(paths || this.options.data, function (point) {
+			each(paths || [], function (point) {
+
+				if (point.path && typeof point.path === 'string') {
+					point.path = Highcharts.splitPath(point.path);
+				}
+
 				var path = point.path || [],
 					i = path.length,
 					even = false, // while loop reads from the end
@@ -692,32 +712,42 @@
 					pointMinX =  Number.MAX_VALUE, 
 					pointMaxY = Number.MIN_VALUE, 
 					pointMinY =  Number.MAX_VALUE;
-					
-				while (i--) {
-					if (typeof path[i] === 'number' && !isNaN(path[i])) {
-						if (even) { // even = x
-							pointMaxX = Math.max(pointMaxX, path[i]);
-							pointMinX = Math.min(pointMinX, path[i]);
-						} else { // odd = Y
-							pointMaxY = Math.max(pointMaxY, path[i]);
-							pointMinY = Math.min(pointMinY, path[i]);
-						}
-						even = !even;
-					}
-				}
-				// Cache point bounding box for use to position data labels, bubbles etc
-				point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, 0.5);
-				point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, 0.5);
 
-				maxX = Math.max(maxX, pointMaxX);
-				minX = Math.min(minX, pointMinX);
-				maxY = Math.max(maxY, pointMaxY);
-				minY = Math.min(minY, pointMinY);
+				// The first time a map point is used, analyze its box
+				if (!point._foundBox) {
+					while (i--) {
+						if (typeof path[i] === 'number' && !isNaN(path[i])) {
+							if (even) { // even = x
+								pointMaxX = Math.max(pointMaxX, path[i]);
+								pointMinX = Math.min(pointMinX, path[i]);
+							} else { // odd = Y
+								pointMaxY = Math.max(pointMaxY, path[i]);
+								pointMinY = Math.min(pointMinY, path[i]);
+							}
+							even = !even;
+						}
+					}
+					// Cache point bounding box for use to position data labels, bubbles etc
+					point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, 0.5);
+					point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, 0.5);
+					point._maxX = pointMaxX;
+					point._minX = pointMinX;
+					point._maxY = pointMaxY;
+					point._minY = pointMinY;
+					point._foundBox = true;
+				}
+
+				maxX = Math.max(maxX, point._maxX);
+				minX = Math.min(minX, point._minX);
+				maxY = Math.max(maxY, point._maxY);
+				minY = Math.min(minY, point._minY);
 			});
-			this.minY = minY;
-			this.maxY = maxY;
-			this.minX = minX;
-			this.maxX = maxX;
+
+			// Set the box for the whole series
+			this.minY = Math.min(minY, pick(this.minY, Number.MAX_VALUE));
+			this.maxY = Math.max(maxY, pick(this.maxY, Number.MIN_VALUE));
+			this.minX = Math.min(minX, pick(this.minX, Number.MAX_VALUE));
+			this.maxX = Math.max(maxX, pick(this.maxX, Number.MIN_VALUE));
 		},
 		
 		
@@ -753,8 +783,59 @@
 		},
 		
 		setData: function (data, redraw) {
+			var options = this.options,
+				mapData = options.mapData,
+				joinBy = options.dataJoinBy,
+				dataUsed = [];
+			
+
+			this.getBox(data);
+			this.getBox(mapData);
+			if (options.allAreas && mapData) {
+
+				data = data || [];
+
+				// Registered the point codes that actually hold data
+				if (joinBy) {
+					each(data, function (point) {
+						dataUsed.push(point[joinBy]);
+					});
+				}
+
+				// Add those map points that don't correspond to data, which will be drawn as null points
+				each(mapData, function (mapPoint) {
+					if (!joinBy || inArray(mapPoint[joinBy], dataUsed) === -1) {
+						data.push(merge(mapPoint, { y: null }));
+					}
+				});
+			}
 			Highcharts.Series.prototype.setData.call(this, data, redraw);
-			this.getBox();
+		},
+
+		/**
+		 * For each point, get the corresponding map data
+		 */
+		getMapData: function (key, value) {
+			var options = this.options,
+				mapData = options.mapData,
+				mapMap = this.mapMap,
+				i = mapData.length;
+
+			// Create a cache for quicker lookup second time
+			if (!mapMap) {
+				mapMap = this.mapMap = [];
+			}
+			if (mapMap[value] !== undefined) {
+				return mapData[mapMap[value]];
+
+			} else if (value !== undefined) {
+				while (i--) {
+					if (mapData[i][key] === value) {
+						mapMap[value] = i; // cache it
+						return mapData[i];
+					}
+				}
+			}
 		},
 		
 		/**
@@ -796,6 +877,7 @@
 				valueRanges = seriesOptions.valueRanges,
 				colorRange = seriesOptions.colorRange,
 				colorKey = this.colorKey,
+				nullColor = seriesOptions.nullColor,
 				from,
 				to;
 
@@ -805,6 +887,7 @@
 			}
 			each(this.data, function (point) {
 				var value = point[colorKey],
+					isNull = value === null,
 					range,
 					color,
 					i,
@@ -812,8 +895,8 @@
 
 				if (valueRanges) {
 					i = valueRanges.length;
-					if (value === null || value === undefined) {
-						color = seriesOptions.nullColor;
+					if (isNull) {
+						color = nullColor;
 					} else {
 						while (i--) {
 							range = valueRanges[i];
@@ -825,10 +908,12 @@
 							}	
 						}
 					}
-				} else if (colorRange && value !== undefined) {
+				} else if (colorRange && !isNull) {
 
 					pos = 1 - ((dataMax - value) / (dataMax - dataMin));
-					color = value === null ? seriesOptions.nullColor : tweenColors(from, to, pos);
+					color = tweenColors(from, to, pos);
+				} else if (isNull) {
+					color = nullColor;
 				}
 
 				if (color) {
@@ -989,7 +1074,7 @@
 					var point = Point.prototype.applyOptions.call(this, options, x),
 						series = this.series,
 						joinBy = series.options.dataJoinBy,
-						mapPoint = series.getMapData(joinBy, point[joinBy]);
+						mapPoint = joinBy && series.getMapData(joinBy, point[joinBy]);
 
 					if (mapPoint) {
 						point.x = mapPoint._midX;
@@ -998,6 +1083,7 @@
 					} else {
 						point.y = null;
 					}
+					
 					return point;
 				}
 			}),
@@ -1006,28 +1092,9 @@
 			/**
 			 * Return the map area identified by the dataJoinBy option
 			 */
-			getMapData: function (key, value) {
-				var options = this.options,
-					mapData = options.mapData,
-					mapMap = this.mapMap,
-					i = mapData.length;
-
-				// Create a cache for quicker lookup second time
-				if (!mapMap) {
-					mapMap = this.mapMap = [];
-				}
-				if (mapMap[value] !== undefined) {
-					return mapData[mapMap[value]];
-
-				} else {
-					while (i--) {
-						if (mapData[i][key] === value) {
-							mapMap[value] = i; // cache it
-							return mapData[i];
-						}
-					}
-				}
-			}
+			getMapData: seriesTypes.map.prototype.getMapData,
+			getBox: seriesTypes.map.prototype.getBox,
+			setData: seriesTypes.map.prototype.setData
 		});
 	}
 
