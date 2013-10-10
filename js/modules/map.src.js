@@ -134,29 +134,33 @@
 			xData = [];
 
 		// Remove the xData array and cache it locally so that the proceed method doesn't use it
-		each(this.series, function (series, i) {
-			if (series.useMapGeometry) {
-				xData[i] = series.xData;
-				series.xData = [];
-			}
-		});
+		if (isXAxis) {
+			each(this.series, function (series, i) {
+				if (series.useMapGeometry) {
+					xData[i] = series.xData;
+					series.xData = [];
+				}
+			});
+		}
 
 		// Call base to reach normal cartesian series (like mappoint)
 		proceed.call(this);
 
 		// Run extremes logic for map and mapline
-		dataMin = pick(this.dataMin, Number.MAX_VALUE);
-		dataMax = pick(this.dataMax, Number.MIN_VALUE);
-		each(this.series, function (series, i) {
-			if (series.useMapGeometry) {
-				dataMin = Math.min(dataMin, series[isXAxis ? 'minX' : 'minY']);
-				dataMax = Math.max(dataMax, series[isXAxis ? 'maxX' : 'maxY']);
-				series.xData = xData[i]; // Reset xData array
-			}
-		});
-		
-		this.dataMin = dataMin;
-		this.dataMax = dataMax;
+		if (isXAxis) {
+			dataMin = pick(this.dataMin, Number.MAX_VALUE);
+			dataMax = pick(this.dataMax, Number.MIN_VALUE);
+			each(this.series, function (series, i) {
+				if (series.useMapGeometry) {
+					dataMin = Math.min(dataMin, series.minX);
+					dataMax = Math.max(dataMax, series.maxX);
+					series.xData = xData[i]; // Reset xData array
+				}
+			});
+			
+			this.dataMin = dataMin;
+			this.dataMax = dataMax;
+		}
 	});
 	
 	/**
@@ -751,62 +755,71 @@
 			var maxX = Number.MIN_VALUE, 
 				minX =  Number.MAX_VALUE, 
 				maxY = Number.MIN_VALUE, 
-				minY =  Number.MAX_VALUE;
+				minY =  Number.MAX_VALUE,
+				hasBox;
 			
-			// TODO: Possible speed improvement by caching the box of each element and each mapData set.
 			// Find the bounding box
 			each(paths || [], function (point) {
 
-				if (point.path && typeof point.path === 'string') {
-					point.path = H.splitPath(point.path);
-				}
-
-				var path = point.path || [],
-					i = path.length,
-					even = false, // while loop reads from the end
-					pointMaxX = Number.MIN_VALUE, 
-					pointMinX =  Number.MAX_VALUE, 
-					pointMaxY = Number.MIN_VALUE, 
-					pointMinY =  Number.MAX_VALUE;
-
-				// The first time a map point is used, analyze its box
-				if (!point._foundBox) {
-					while (i--) {
-						if (typeof path[i] === 'number' && !isNaN(path[i])) {
-							if (even) { // even = x
-								pointMaxX = Math.max(pointMaxX, path[i]);
-								pointMinX = Math.min(pointMinX, path[i]);
-							} else { // odd = Y
-								pointMaxY = Math.max(pointMaxY, path[i]);
-								pointMinY = Math.min(pointMinY, path[i]);
-							}
-							even = !even;
-						}
+				if (point.path) {
+					if (typeof point.path === 'string') {
+						point.path = H.splitPath(point.path);
 					}
-					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, 0.5);
-					point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, 0.5);
-					point._maxX = pointMaxX;
-					point._minX = pointMinX;
-					point._maxY = pointMaxY;
-					point._minY = pointMinY;
-					point._foundBox = true;
-				}
 
-				maxX = Math.max(maxX, point._maxX);
-				minX = Math.min(minX, point._minX);
-				maxY = Math.max(maxY, point._maxY);
-				minY = Math.min(minY, point._minY);
+					var path = point.path || [],
+						i = path.length,
+						even = false, // while loop reads from the end
+						pointMaxX = Number.MIN_VALUE, 
+						pointMinX =  Number.MAX_VALUE, 
+						pointMaxY = Number.MIN_VALUE, 
+						pointMinY =  Number.MAX_VALUE;
+
+					// The first time a map point is used, analyze its box
+					if (!point._foundBox) {
+						while (i--) {
+							if (typeof path[i] === 'number' && !isNaN(path[i])) {
+								if (even) { // even = x
+									pointMaxX = Math.max(pointMaxX, path[i]);
+									pointMinX = Math.min(pointMinX, path[i]);
+								} else { // odd = Y
+									pointMaxY = Math.max(pointMaxY, path[i]);
+									pointMinY = Math.min(pointMinY, path[i]);
+								}
+								even = !even;
+							}
+						}
+						// Cache point bounding box for use to position data labels, bubbles etc
+						point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, 0.5);
+						point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, 0.5);
+						point._maxX = pointMaxX;
+						point._minX = pointMinX;
+						point._maxY = pointMaxY;
+						point._minY = pointMinY;
+						point._foundBox = true;
+					}
+
+					maxX = Math.max(maxX, point._maxX);
+					minX = Math.min(minX, point._minX);
+					maxY = Math.max(maxY, point._maxY);
+					minY = Math.min(minY, point._minY);
+
+					hasBox = true;
+				}
 			});
 
 			// Set the box for the whole series
-			this.minY = Math.min(minY, pick(this.minY, Number.MAX_VALUE));
-			this.maxY = Math.max(maxY, pick(this.maxY, Number.MIN_VALUE));
-			this.minX = Math.min(minX, pick(this.minX, Number.MAX_VALUE));
-			this.maxX = Math.max(maxX, pick(this.maxX, Number.MIN_VALUE));
+			if (hasBox) {
+				this.minY = Math.min(minY, pick(this.minY, Number.MAX_VALUE));
+				this.maxY = Math.max(maxY, pick(this.maxY, Number.MIN_VALUE));
+				this.minX = Math.min(minX, pick(this.minX, Number.MAX_VALUE));
+				this.maxX = Math.max(maxX, pick(this.maxX, Number.MIN_VALUE));
+			}
 		},
 		
-		
+		getExtremes: function () {
+			this.dataMin = this.minY;
+			this.dataMax = this.maxY;
+		},
 		
 		/**
 		 * Translate the path so that it automatically fits into the plot area box
@@ -819,7 +832,6 @@
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
 				i;
-				
 			// Preserve the original
 			path = [].concat(path);
 				
@@ -835,9 +847,15 @@
 					even = !even;
 				}
 			}
+
 			return path;
 		},
 		
+		/**
+		 * Extend setData to join in mapData. If the allAreas option is true, all areas 
+		 * from the mapData are used, and those that don't correspond to a data value
+		 * are given null values.
+		 */
 		setData: function (data, redraw) {
 			var options = this.options,
 				mapData = options.mapData,
@@ -971,7 +989,7 @@
 					color = tweenColors(from, to, pos);
 				} else if (isNull) {
 					color = nullColor;
-				}
+				} 
 
 				if (color) {
 					point.color = null; // reset from previous drilldowns, use of the same data options
