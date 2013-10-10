@@ -719,6 +719,10 @@ Scroller.prototype = {
 				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
 					fixedMax = scroller.fixedExtreme;
 				}
+				if (scroller.zoomedMax === scroller.navigatorWidth) { // #2341
+					fixedMax = xAxis.dataMax;
+				}
+
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				chart.xAxis[0].setExtremes(
 					ext.min,

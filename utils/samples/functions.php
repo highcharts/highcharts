@@ -3,7 +3,7 @@ function getFramework($framework) {
 	if ($framework === 'standalone') {
 		return '
 			<script src="http://code.highcharts.local/adapters/standalone-framework.src.js"></script>
-			<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
+			<script src="http://code.jquery.com/jquery-1.7.2.js"></script>
 			<script>
 			/**
 			 * Register Highcharts as a plugin in the respective framework
@@ -43,7 +43,7 @@ function getFramework($framework) {
 
 	} else {
 		return '
-			<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
+			<script src="http://code.jquery.com/jquery-1.7.2.js"></script>
 		';
 	}
 }

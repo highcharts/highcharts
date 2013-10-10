@@ -174,66 +174,139 @@ $(function () {
     }];
 
 
-    var options = {
-        chart : {
-            borderWidth : 1,
-            zoomType: 'xy'
-        },
+    // Load the data from a Google Spreadsheet 
+    // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
+    Highcharts.data({
         
-        title : {
-            text : 'Highcharts US map demo'
-        },
-
-        legend: {
-            title: {
-                text: 'Some random value'
-            } 
-        },
-
-        mapNavigation: {
-            enableButtons: true,
-            enableTouchZoom: true,
-            zoomOnMouseWheel: true,
-            zoomOnDoubleClick: true
-        },
+        googleSpreadsheetKey: '0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc',
         
-        series : [{
-            data : [85,31,86,3,92,82,26,88,98,95,97,5,59,61,51,21,96,41,8,7,51,
-                79,21,36,17,83,43,67,96,24,57,14,28,15,3,27,11,47,54,33,73,71,
-                31,12,93,63,27,17,39,80,93],
-            dataLabels: {
-                enabled: true,
-                color: 'white',
-                format: '{point.name}',
-                style: {
-                    fontWeight: 'bold',
-                    textShadow: '0 0 3px black',
-                    textTransform: 'uppercase'
-                }
-            },
-            name: 'Random values',
-            tooltip: {
-                ySuffix: ' %'
-            },
-            colorRange: {
-                from: '#CCCCFF',
-                to: '#000044',
-                fromLabel: '0'  ,
-                toLabel: '100'
+        // custom handler for columns
+        parsed: function(columns) {
+            
+            /**
+             * Event handler for clicking points. Use jQuery UI to pop up 
+             * a pie chart showing the details for each state.
+             */
+            function pointClick() {
+                var row = this.options.row,
+                    $div = $('<div></div>')
+                        .dialog({
+                            title: this.name,
+                            width: 400,
+                            height: 300
+                        });
+                var chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: $div[0],
+                        type: 'pie',
+                        width: 370,
+                        height: 240
+                    },
+                    title: {
+                        text: null
+                    },
+                    series: [{
+                        name: 'Votes',
+                        data: [{
+                            name: 'Obama',
+                            color: '#0200D0',
+                            y: parseInt(columns[3][row])
+                        }, {
+                            name: 'McCain',
+                            color: '#C40401',
+                            y: parseInt(columns[4][row])
+                        }],
+                        dataLabels: {
+                            format: '<b>{point.name}</b> {point.percentage:.1f}%'
+                        }
+                    }]
+                });
             }
-        }]
-    };
 
-    var data = [];
 
-    // Add values
-    Highcharts.each(Highcharts.maps.us, function (point, i) {
-        options.series[0].data[i] = Highcharts.extend(point, {
-            name: point.code,
-            y: options.series[0].data[i]
-        });
+            
+            
+            // Make the columns easier to read
+            var keys = columns[0],
+                names = columns[1],
+                percent = columns[10];
+    
+            // Build the chart options
+            var options = {
+                chart : {
+                    renderTo : 'container',
+                    type : 'map',
+                    borderWidth : 1
+                },
+                
+                title : {
+                    text : 'US presidential election 2008 results'
+                },
+                subtitle : {
+                    text : 'Source: <a href="http://en.wikipedia.org/wiki/United_States_presidential_election,'+
+                        '_2008#Election_results">Wikipedia</a>'
+                },
+                
+                legend: {
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: -100,
+                    y: 70,
+                    floating: true,
+                    layout: 'vertical',
+                    valueDecimals: 0
+                },
+
+                series : [{
+                    data : [],
+                    dataLabels: {
+                        enabled: true,
+                        color: 'white',
+                        formatter: function(dataLabelOptions) {
+                            return this.point.options.key.toUpperCase();
+                        },
+                        style: {
+                            fontWeight: 'bold',
+                            textShadow: '0 1px 2px black'
+                        }
+                    },
+                    name: 'Democrats margin',
+                    point: {
+                        events: {
+                            click: pointClick
+                        }
+                    },
+                    tooltip: {
+                        ySuffix: ' %'
+                    },
+                    cursor: 'pointer',
+                    valueRanges: [{
+                        from: -100,
+                        to: 0,
+                        color: '#C40401',
+                        name: 'McCain'
+                    }, {
+                        from: 0,
+                        to: 100,
+                        color: '#0200D0',
+                        name: 'Obama'
+                    }]
+                }]
+            };
+            
+            Highcharts.each(Highcharts.maps.us, function (mapPoint) {
+                var key = mapPoint.code,
+                    i = $.inArray(key, keys);
+                options.series[0].data.push(Highcharts.extend({
+                    y : parseFloat(percent[i]),
+                    name : names[i],
+                    key: key,
+                    row: i
+                }, mapPoint));
+            });
+            
+            // Initiate the chart
+            chart = new Highcharts.Map(options);
+        }
     });
-
-    // Instanciate the map
-    $('#container').highcharts('Map', options);
 });
