@@ -653,6 +653,9 @@ $(function () {
                 },
                 
                 legend: {
+                    title: {
+                        text: 'Individuals per km²'
+                    },
                     align: 'left',
                     verticalAlign: 'bottom',
                     floating: true,

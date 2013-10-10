@@ -45,12 +45,12 @@
 	 */
 	function tweenColors(from, to, pos) {
 		var i = 4,
+			val,
 			rgba = [];
 
 		while (i--) {
-			rgba[i] = Math.round(
-				to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos)
-			);
+			val = to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos);
+			rgba[i] = i === 3 ? val : Math.round(val); // Do not round opacity
 		}
 		return 'rgba(' + rgba.join(',') + ')';
 	}
@@ -616,7 +616,7 @@
 						visible: true,
 						setState: noop,
 						setVisible: function () {
-							vis = !vis;
+							vis = this.visible = !vis;
 							each(series.points, function (point) {
 								if (point.valueRange === i) {
 									point.setVisible(vis);
