@@ -73,6 +73,7 @@ extend(defaultOptions, {
 			labels: {
 				enabled: false
 			},
+			crosshair: false,
 			title: {
 				text: null
 			},

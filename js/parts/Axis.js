@@ -305,6 +305,8 @@ Axis.prototype = {
 		//axis.userMin = UNDEFINED,
 		//axis.userMax = UNDEFINED,
 
+		// Crosshair options
+		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);		
 		// Run Axis
 		
 		var eventType,
@@ -609,7 +611,7 @@ Axis.prototype = {
 	 * @param {Number} lineWidth Used for calculation crisp line
 	 * @param {Number] old Use old coordinates (for resizing and rescaling)
 	 */
-	getPlotLinePath: function (value, lineWidth, old, force) {
+	getPlotLinePath: function (value, lineWidth, old, force, translatedValue) {
 		var axis = this,
 			chart = axis.chart,
 			axisLeft = axis.left,
@@ -618,12 +620,12 @@ Axis.prototype = {
 			y1,
 			x2,
 			y2,
-			translatedValue = axis.translate(value, null, null, old),
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
 			transB = axis.transB;
 
+		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = mathRound(translatedValue + transB);
 		y1 = y2 = mathRound(cHeight - translatedValue - transB);
 
@@ -2097,8 +2099,54 @@ Axis.prototype = {
 				axis[prop] = axis[prop].destroy();
 			}
 		});
+
+		// Destroy crosshair
+		if (this.cross) {
+			this.cross.destroy();
+		}
+	},
+
+	/**
+	 * Draw the crosshair
+	 */
+	drawCrosshair: function (e, point) {
+		if (!this.crosshair) { return; }// Do not draw crosshairs if you don't have too.
+		var path,
+			options = this.crosshair,
+			pos;
+
+		// Get the path
+		if (!pick(options.snap, true)) {
+			pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
+		} else if (defined(point)) {
+			/*jslint eqeq: true*/
+			pos = ((this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY);
+			/*jslint eqeq: false*/
+		}
+		path = this.getPlotLinePath(null, null, null, null, pos);
+
+		// Draw the cross
+		if (this.cross) {
+			this.cross.attr({ d: path, visibility: VISIBLE });
+		} else {
+			var attribs = {
+				'stroke-width': options.width || 1,
+				stroke: options.color || '#C0C0C0',
+				zIndex: options.zIndex || 2
+			};
+			if (options.dashStyle) {
+				attribs.dashstyle = options.dashStyle;
+			}
+			this.cross = this.chart.renderer.path(path).attr(attribs).add();
+		}
+	},
+
+	/**
+	 *	Hide the crosshair.
+	 */
+	hideCrosshair: function () {
+		if (this.cross) {
+			this.cross.hide();			
+		}
 	}
-
-	
 }; // end Axis
-
