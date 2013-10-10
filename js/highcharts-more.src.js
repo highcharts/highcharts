@@ -1267,6 +1267,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				// Median attributes
 				medianAttr.stroke = point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+				medianAttr['stroke-linecap'] = 'round'; // #1638
 				
 				
 				// The stem
