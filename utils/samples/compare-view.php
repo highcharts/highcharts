@@ -26,6 +26,13 @@
 				$('#reload').click(function() {
 					location.reload();
 				});
+
+				$('#svg').click(function () {
+					$(this).css({
+						height: 'auto',
+						cursor: 'default'
+					});
+				});
 				
 				hilightCurrent();
 			});
@@ -163,7 +170,13 @@
 
 			function wash(svg) {
 				if (typeof svg === "string") {
-					return svg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+					return svg
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;')
+						.replace(/&lt;del&gt;/g, '<del>')
+						.replace(/&lt;\/del&gt;/g, '</del>')
+						.replace(/&lt;ins&gt;/g, '<ins>')
+						.replace(/&lt;\/ins&gt;/g, '</ins>');
 				} else {
 					return "";
 				}
@@ -269,8 +282,12 @@
 						
 				// Show the diff
 				if (!identical) {
-					out = diffString(wash(leftSVG), wash(rightSVG)).replace(/&gt;/g, '&gt;\n');
-					$("#svg").html('<h4>Generated SVG:</h4>' + out);
+					//out = diffString(wash(leftSVG), wash(rightSVG)).replace(/&gt;/g, '&gt;\n');
+					out = diffString(
+						leftSVG.replace(/>/g, '>\n'),
+						rightSVG.replace(/>/g, '>\n')
+					)
+					$("#svg").html('<h4>Generated SVG:</h4>' + wash(out));
 				}
 
 				/*report +=  '<br/>Left length: '+ leftSVG.length + '; right length: '+ rightSVG.length +
@@ -307,6 +324,24 @@
 				padding: 0.5em; 
 				
 			}
+
+			pre#svg {
+				padding: 1em;
+				border: 1px solid silver;
+				background-color: #F8F8F8;
+			}
+			del {
+				color: white;
+				background-color: red;
+				border-radius: 3px;
+				padding: 0 3px;
+			}
+			ins {
+				color: white;
+				background-color: green;
+				border-radius: 3px;
+				padding: 0 3px;
+			}
 		</style>
 		
 	</head>
@@ -335,7 +370,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<pre style="overflow: auto; width: 1000px; height: 300px" id="svg"></pre>
+					<pre style="overflow: auto; width: 1000px; height: 300px; cursor: pointer" id="svg"></pre>
 					<div style="overflow: auto; width: 1000px" id="preview"></pre>
 				</td>
 			</tr>
