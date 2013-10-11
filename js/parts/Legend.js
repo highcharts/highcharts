@@ -402,7 +402,8 @@ Legend.prototype = {
 		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
-			if (!seriesOptions.showInLegend || defined(seriesOptions.linkedTo)) {
+			// Handle showInLegend. If the series is linked to another series, defaults to false.
+			if (!pick(seriesOptions.showInLegend, seriesOptions.linkedTo === UNDEFINED ? UNDEFINED : false, true)) {
 				return;
 			}
 

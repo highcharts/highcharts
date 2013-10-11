@@ -171,7 +171,7 @@ defaultOptions = {
 			pointRange: 0,
 			//pointStart: 0,
 			//pointInterval: 1,
-			showInLegend: true,
+			//showInLegend: null, // auto: true for standalone series, false for linked series // docs
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,

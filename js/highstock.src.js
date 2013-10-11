@@ -1641,7 +1641,7 @@ defaultOptions = {
 			pointRange: 0,
 			//pointStart: 0,
 			//pointInterval: 1,
-			showInLegend: true,
+			//showInLegend: null, // auto: true for standalone series, false for linked series // docs
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
@@ -10253,7 +10253,8 @@ Legend.prototype = {
 		each(chart.series, function (serie) {
 			var seriesOptions = serie.options;
 
-			if (!seriesOptions.showInLegend || defined(seriesOptions.linkedTo)) {
+			// Handle showInLegend. If the series is linked to another series, defaults to false.
+			if (!pick(seriesOptions.showInLegend, seriesOptions.linkedTo === UNDEFINED ? UNDEFINED : false, true)) {
 				return;
 			}
 
