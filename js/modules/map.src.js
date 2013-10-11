@@ -37,7 +37,11 @@
 		Color = H.Color,
 		noop = function () {};
 
-	
+	// Add language
+	extend(defaultOptions.lang, {
+		zoomIn: 'Zoom in',
+		zoomOut: 'Zoom out'
+	});
 
 	/*
 	 * Return an intermediate color between two colors, according to pos where 0
@@ -309,6 +313,8 @@
 				n,
 				button,
 				buttonOptions,
+				attr,
+				states,
 				outerHandler = function () { 
 					this.handler.call(chart); 
 				};
@@ -317,12 +323,25 @@
 				for (n in buttons) {
 					if (buttons.hasOwnProperty(n)) {
 						buttonOptions = merge(options.buttonOptions, buttons[n]);
-						button = chart.renderer.button(buttonOptions.text, 0, 0, outerHandler, 0, 0, 0, 0, n === 'zoomIn' ? 'topbutton' : 'bottombutton')
-							.attr(extend(buttonOptions.theme, {
+						attr = buttonOptions.theme;
+						states = attr.states;
+						button = chart.renderer.button(
+								buttonOptions.text, 
+								0, 
+								0, 
+								outerHandler, 
+								attr, 
+								states && states.hover,
+								states && states.select, 
+								0, 
+								n === 'zoomIn' ? 'topbutton' : 'bottombutton'
+							)
+							.attr({
 								width: buttonOptions.width,
 								height: buttonOptions.height,
+								title: chart.options.lang[n],
 								zIndex: 5
-							}))
+							})
 							.css(buttonOptions.style)
 							.add();
 						button.handler = buttonOptions.onclick;

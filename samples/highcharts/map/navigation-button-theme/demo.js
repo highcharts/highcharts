@@ -1310,10 +1310,6 @@ $(function () {
 
     // Instanciate the map
     $('#container').highcharts('Map', {
-        chart : {
-            borderWidth : 1
-        },
-
         title: {
             text: 'World population 2010 by country'
         },
@@ -1323,14 +1319,27 @@ $(function () {
         },
 
         legend: {
-            colorRange: {
-
-            }
+            enabled: false
         },
 
         mapNavigation: {
             enabled: true,
             buttonOptions: {
+                theme: {
+                    fill: 'white',
+                    'stroke-width': 1,
+                    stroke: 'silver',
+                    r: 0,
+                    states: {
+                        hover: {
+                            fill: '#bada55'
+                        },
+                        select: {
+                            stroke: '#039',
+                            fill: '#bada55'
+                        }
+                    }
+                },
                 verticalAlign: 'bottom'
             }
         },
@@ -1340,7 +1349,16 @@ $(function () {
             mapData: Highcharts.maps.world,
             data: data,
             dataJoinBy: 'code',
-            allAreas: true
+            allAreas: true,
+            tooltip: {
+                pointFormat: '{point.code}: {point.y},000'
+            },
+            colorRange: {
+                from: '#efecf3',
+                to: '#990041',
+                fromLabel: 'Low',
+                toLabel: 'High'
+            }
         }]
     });
 });
