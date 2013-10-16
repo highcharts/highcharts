@@ -12484,7 +12484,7 @@ Point.prototype = {
 			if (isObject(options)) {
 				series.getAttribs();
 				if (graphic) {
-					if (options.marker && options.marker.symbol) {
+					if (options && options.marker && options.marker.symbol) {
 						point.graphic = graphic.destroy();
 					} else {
 						graphic.attr(point.pointAttr[point.state || '']);
