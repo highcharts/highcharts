@@ -20,7 +20,7 @@ var ScatterSeries = extendClass(Series, {
 	requireSorting: false,
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
-
+	takeOrdinalPosition: false, // #2342
 	drawTracker: ColumnSeries.prototype.drawTracker,
 	
 	setTooltipPoints: noop
