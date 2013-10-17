@@ -19566,9 +19566,9 @@ RangeSelector.prototype = {
 		this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
 			.attr({
 				padding: 1,
-				width: 90,
-				height: 16,
-				stroke: 'silver',
+				width: options.inputBoxWidth || 90, // docs
+				height: options.inputBoxHeight || 16, // docs
+				stroke: options.inputBoxBorderColor || 'silver', // docs
 				'stroke-width': 1
 			})
 			.css(merge({
