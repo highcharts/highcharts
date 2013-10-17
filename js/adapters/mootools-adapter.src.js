@@ -120,6 +120,9 @@ win.HighchartsAdapter = {
 			};
 			// dirty hack to trick Moo into handling el as an element wrapper
 			el.$family = function () { return true; };
+			el.getComputedStyle = function(){
+				return el.element.getComputedStyle.apply(el.element, arguments);
+			};
 		}
 
 		// stop running animations
