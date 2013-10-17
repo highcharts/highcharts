@@ -467,12 +467,15 @@ Point.prototype = {
 				(point.selected && state !== SELECT_STATE) ||
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
-				// point marker's state options is disabled
-				(state && (stateDisabled || (normalDisabled && !markerStateOptions.enabled)))
+				// general point marker's state options is disabled
+				(state && (stateDisabled || (normalDisabled && !markerStateOptions.enabled))) ||
+				// individual point marker's state options is disabled
+				(state && pointMarker.states && pointMarker.states[state] && pointMarker.states[state].enabled === false) // #1610
 
 			) {
 			return;
 		}
+
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
@@ -844,7 +847,7 @@ Series.prototype = {
 			xData = series.xData,
 			yData = series.yData,
 			zData = series.zData,
-			names = series.names,
+			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
 			point,
@@ -937,7 +940,7 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			names = xAxis && xAxis.categories && !xAxis.categories.length ? [] : null,
+			names = xAxis && xAxis.names,
 			i;
 
 		// reset properties
@@ -1023,7 +1026,6 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 		series.zData = zData;
-		series.names = names;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
@@ -2472,6 +2474,7 @@ Series.prototype = {
 			props = [['graph', options.lineColor || this.color]],
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
+			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
 			negativeColor = options.negativeColor;
 			
@@ -2497,7 +2500,7 @@ Series.prototype = {
 				};
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
-				} else {
+				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 

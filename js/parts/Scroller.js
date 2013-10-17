@@ -573,6 +573,7 @@ Scroller.prototype = {
 				chartX = e.chartX,
 				chartY = e.chartY,
 				baseXAxis = chart.xAxis[0],
+				fixedMax,
 				ext,
 				handleSensitivity = isTouchDevice ? 10 : 7,
 				left,
@@ -629,13 +630,14 @@ Scroller.prototype = {
 					}
 					if (left < 0) {
 						left = 0;
-					} else if (left + range > navigatorWidth) {
+					} else if (left + range >= navigatorWidth) {
 						left = navigatorWidth - range;
+						fixedMax = xAxis.dataMax; // #2293
 					}
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
 
-						ext = xAxis.toFixedRange(left, left + range);
+						ext = xAxis.toFixedRange(left, left + range, null, fixedMax);
 						baseXAxis.setExtremes(
 							ext.min,
 							ext.max,

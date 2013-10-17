@@ -1597,6 +1597,7 @@ defaultOptions = {
 			//enableMouseTracking: true,
 			events: {},
 			//legendIndex: 0,
+			//linecap: 'round', // docs
 			lineWidth: 2,
 			//shadow: false,
 			// stacking: null,
@@ -2381,7 +2382,7 @@ SVGElement.prototype = {
 		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
 			elem = elemWrapper.element,
-			textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text',
+			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width),
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
@@ -2401,17 +2402,12 @@ SVGElement.prototype = {
 		// store object
 		elemWrapper.styles = styles;
 
-
-		// Don't handle line wrap on canvas
-		if (useCanVG && textWidth) {
+		if (textWidth) {
 			delete styles.width;
 		}
 
 		// serialize and set style attribute
-		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
-			if (textWidth) {
-				delete styles.width;
-			}
+		if (isIE && !hasSVG) {
 			css(elemWrapper.element, styles);
 		} else {
 			for (n in styles) {
@@ -3248,7 +3244,7 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="(http[^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			width = textStyles && textStyles.width && pInt(textStyles.width),
+			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
 			i = childNodes.length;
 
@@ -3350,6 +3346,12 @@ SVGRenderer.prototype = {
 								delete wrapper.bBox; // delete cache
 								bBox = wrapper.getBBox();
 								actualWidth = bBox.width;
+
+								// Old IE cannot measure the actualWidth for SVG elements (#2314)
+								if (!hasSVG && renderer.forExport) {
+									actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
+								}
+
 								tooLong = actualWidth > width;
 								if (!tooLong || words.length === 1) { // new line needed
 									words = rest;
@@ -5683,6 +5685,18 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 	Renderer = VMLRenderer;
 }
 
+// This method is used with exporting in old IE, when emulating SVG (see #2314)
+SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
+	var measuringSpan = doc.createElement('span'),
+	textNode = doc.createTextNode(text);
+
+	measuringSpan.appendChild(textNode);
+	css(measuringSpan, styles);
+	this.box.appendChild(measuringSpan);
+	return measuringSpan.offsetWidth;
+};
+
+
 /* ****************************************************************************
  *                                                                            *
  * END OF INTERNET EXPLORER <= 8 SPECIFIC CODE                                *
@@ -5782,7 +5796,7 @@ Tick.prototype = {
 			chart = axis.chart,
 			horiz = axis.horiz,
 			categories = axis.categories,
-			names = axis.series[0] && axis.series[0].names,
+			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
@@ -5797,7 +5811,7 @@ Tick.prototype = {
 			css,
 			attr,
 			value = categories ?
-				pick(categories[pos], names && names[pos], pos) : 
+				pick(categories[pos], names[pos], pos) : 
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -6679,6 +6693,7 @@ Axis.prototype = {
 	
 		// Initial categories
 		axis.categories = options.categories || type === 'category';
+		axis.names = [];
 	
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -8020,6 +8035,7 @@ Axis.prototype = {
 			// Set the explicit or automatic label alignment
 			axis.labelAlign = pick(labelOptions.align || axis.autoLabelAlign(labelOptions.rotation));
 
+			// Generate ticks
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
 					ticks[pos] = new Tick(axis, pos);
@@ -12808,12 +12824,15 @@ Point.prototype = {
 				(point.selected && state !== SELECT_STATE) ||
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
-				// point marker's state options is disabled
-				(state && (stateDisabled || (normalDisabled && !markerStateOptions.enabled)))
+				// general point marker's state options is disabled
+				(state && (stateDisabled || (normalDisabled && !markerStateOptions.enabled))) ||
+				// individual point marker's state options is disabled
+				(state && pointMarker.states && pointMarker.states[state] && pointMarker.states[state].enabled === false) // #1610
 
 			) {
 			return;
 		}
+
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
@@ -13185,7 +13204,7 @@ Series.prototype = {
 			xData = series.xData,
 			yData = series.yData,
 			zData = series.zData,
-			names = series.names,
+			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
 			point,
@@ -13278,7 +13297,7 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			names = xAxis && xAxis.categories && !xAxis.categories.length ? [] : null,
+			names = xAxis && xAxis.names,
 			i;
 
 		// reset properties
@@ -13364,7 +13383,6 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 		series.zData = zData;
-		series.names = names;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
@@ -14813,6 +14831,7 @@ Series.prototype = {
 			props = [['graph', options.lineColor || this.color]],
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
+			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
 			negativeColor = options.negativeColor;
 			
@@ -14838,7 +14857,7 @@ Series.prototype = {
 				};
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
-				} else {
+				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 
@@ -16122,8 +16141,8 @@ var ScatterSeries = extendClass(Series, {
 	requireSorting: false,
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
-
-	drawTracker: PointTrackerMixin.drawTracker, // was columnSeries.prototype.drawTracker before
+	takeOrdinalPosition: false, // #2342
+	drawTracker: PointTrackerMixin.drawTracker, 
 	
 	setTooltipPoints: noop
 });

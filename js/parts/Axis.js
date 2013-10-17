@@ -229,6 +229,7 @@ Axis.prototype = {
 	
 		// Initial categories
 		axis.categories = options.categories || type === 'category';
+		axis.names = [];
 	
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -1570,6 +1571,7 @@ Axis.prototype = {
 			// Set the explicit or automatic label alignment
 			axis.labelAlign = pick(labelOptions.align || axis.autoLabelAlign(labelOptions.rotation));
 
+			// Generate ticks
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
 					ticks[pos] = new Tick(axis, pos);

@@ -20,8 +20,8 @@ var ScatterSeries = extendClass(Series, {
 	requireSorting: false,
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
-
-	drawTracker: PointTrackerMixin.drawTracker, // was columnSeries.prototype.drawTracker before
+	takeOrdinalPosition: false, // #2342
+	drawTracker: PointTrackerMixin.drawTracker, 
 	
 	setTooltipPoints: noop
 });
