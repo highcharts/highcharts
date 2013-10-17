@@ -127,6 +127,7 @@ defaultOptions = {
 			//enableMouseTracking: true,
 			events: {},
 			//legendIndex: 0,
+			//linecap: 'round', // docs
 			lineWidth: 2,
 			//shadow: false,
 			// stacking: null,
