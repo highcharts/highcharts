@@ -2382,7 +2382,7 @@ SVGElement.prototype = {
 		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
 			elem = elemWrapper.element,
-			textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text',
+			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width),
 			n,
 			serializedCss = '',
 			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
@@ -2402,17 +2402,12 @@ SVGElement.prototype = {
 		// store object
 		elemWrapper.styles = styles;
 
-
-		// Don't handle line wrap on canvas
-		if (useCanVG && textWidth) {
+		if (textWidth) {
 			delete styles.width;
 		}
 
 		// serialize and set style attribute
-		if (isIE && !hasSVG) { // legacy IE doesn't support setting style attribute
-			if (textWidth) {
-				delete styles.width;
-			}
+		if (isIE && !hasSVG) {
 			css(elemWrapper.element, styles);
 		} else {
 			for (n in styles) {
@@ -3249,7 +3244,7 @@ SVGRenderer.prototype = {
 			hrefRegex = /href="(http[^"]+)"/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
-			width = textStyles && textStyles.width && pInt(textStyles.width),
+			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
 			i = childNodes.length;
 
@@ -3351,6 +3346,12 @@ SVGRenderer.prototype = {
 								delete wrapper.bBox; // delete cache
 								bBox = wrapper.getBBox();
 								actualWidth = bBox.width;
+
+								// Old IE cannot measure the actualWidth for SVG elements (#2314)
+								if (!hasSVG && renderer.forExport) {
+									actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
+								}
+
 								tooLong = actualWidth > width;
 								if (!tooLong || words.length === 1) { // new line needed
 									words = rest;
@@ -5683,6 +5684,18 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 	// general renderer
 	Renderer = VMLRenderer;
 }
+
+// This method is used with exporting in old IE, when emulating SVG (see #2314)
+SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
+	var measuringSpan = doc.createElement('span'),
+	textNode = doc.createTextNode(text);
+
+	measuringSpan.appendChild(textNode);
+	css(measuringSpan, styles);
+	this.box.appendChild(measuringSpan);
+	return measuringSpan.offsetWidth;
+};
+
 
 /* ****************************************************************************
  *                                                                            *
