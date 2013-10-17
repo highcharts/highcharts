@@ -5783,7 +5783,7 @@ Tick.prototype = {
 			chart = axis.chart,
 			horiz = axis.horiz,
 			categories = axis.categories,
-			names = axis.series[0] && axis.series[0].names,
+			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
@@ -5798,7 +5798,7 @@ Tick.prototype = {
 			css,
 			attr,
 			value = categories ?
-				pick(categories[pos], names && names[pos], pos) : 
+				pick(categories[pos], names[pos], pos) : 
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -6680,6 +6680,7 @@ Axis.prototype = {
 	
 		// Initial categories
 		axis.categories = options.categories || type === 'category';
+		axis.names = [];
 	
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -8021,6 +8022,7 @@ Axis.prototype = {
 			// Set the explicit or automatic label alignment
 			axis.labelAlign = pick(labelOptions.align || axis.autoLabelAlign(labelOptions.rotation));
 
+			// Generate ticks
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
 					ticks[pos] = new Tick(axis, pos);
@@ -13070,7 +13072,7 @@ Series.prototype = {
 			xData = series.xData,
 			yData = series.yData,
 			zData = series.zData,
-			names = series.names,
+			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
 			point,
@@ -13163,7 +13165,7 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			names = xAxis && xAxis.categories && !xAxis.categories.length ? [] : null,
+			names = xAxis && xAxis.names,
 			i;
 
 		// reset properties
@@ -13249,7 +13251,6 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 		series.zData = zData;
-		series.names = names;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;

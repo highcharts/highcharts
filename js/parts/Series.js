@@ -899,7 +899,7 @@ Series.prototype = {
 			xData = series.xData,
 			yData = series.yData,
 			zData = series.zData,
-			names = series.names,
+			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
 			point,
@@ -992,7 +992,7 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			names = xAxis && xAxis.categories && !xAxis.categories.length ? [] : null,
+			names = xAxis && xAxis.names,
 			i;
 
 		// reset properties
@@ -1078,7 +1078,6 @@ Series.prototype = {
 		series.xData = xData;
 		series.yData = yData;
 		series.zData = zData;
-		series.names = names;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
