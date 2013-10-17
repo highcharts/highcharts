@@ -257,11 +257,11 @@ seriesProto.processData = function () {
 		chart = series.chart,
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
-		groupingEnabled = dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock);
+		groupingEnabled = dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
+		hasGroupedData;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
-	series.hasGroupedData = false;
 	
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
@@ -276,12 +276,12 @@ seriesProto.processData = function () {
 		processedYData = series.processedYData,
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
-		groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
+		groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
 		nonGroupedPointRange = series.pointRange;
 
 	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 	if (groupPixelWidth) {
-		series.hasGroupedData = true;
+		hasGroupedData = true;
 
 		series.points = null; // force recreation of point instances in series.translate
 
@@ -327,7 +327,7 @@ seriesProto.processData = function () {
 		series.currentDataGrouping = null;
 		series.pointRange = nonGroupedPointRange;
 	}
-
+	series.hasGroupedData = hasGroupedData;
 };
 
 /**
@@ -501,7 +501,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 			dataLength = (series[i].processedXData || series[i].data).length;
 
 			// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
-			if (series[i].hasGroupedData || dataLength > (this.chart.plotSizeX / groupPixelWidth) || (dataLength && dgOptions.forced)) {
+			if (series[i].groupPixelWidth || dataLength > (this.chart.plotSizeX / groupPixelWidth) || (dataLength && dgOptions.forced)) {
 				doGrouping = true;
 			}
 		}
