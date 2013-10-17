@@ -36,6 +36,7 @@ extend(defaultOptions, {
 			fillOpacity: 0.4,
 			dataGrouping: {
 				approximation: 'average',
+				enabled: true,
 				groupPixelWidth: 2,
 				smoothed: true,
 				units: units
@@ -319,14 +320,12 @@ Scroller.prototype = {
 			}
 		}
 
-		// get the pixel position of the handles
-
-		if (navigatorWidth === 0 || !defined(xAxis.min) || (mathRound(min) === mathRound(max) && pxMin === UNDEFINED)) { // #1851, #2238
+		// Get the pixel position of the handles
+		pxMin = pick(pxMin, xAxis.translate(min));
+		pxMax = pick(pxMax, xAxis.translate(max));
+		if (isNaN(pxMin) || mathAbs(pxMin) === Infinity) { // Verify (#1851, #2238)
 			pxMin = 0;
 			pxMax = scrollerWidth;
-		} else {
-			pxMin = pick(pxMin, xAxis.translate(min));
-			pxMax = pick(pxMax, xAxis.translate(max));
 		}
 
 		// handles are allowed to cross, but never exceed the plot area
@@ -722,6 +721,10 @@ Scroller.prototype = {
 				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
 					fixedMax = scroller.fixedExtreme;
 				}
+				if (scroller.zoomedMax === scroller.navigatorWidth) { // #2341
+					fixedMax = xAxis.dataMax;
+				}
+
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				chart.xAxis[0].setExtremes(
 					ext.min,
@@ -832,7 +835,7 @@ Scroller.prototype = {
 			
 			// Compute the top position
 			scroller.top = top = scroller.navigatorOptions.top || 
-				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.options.chart.spacingBottom - 
+				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] - 
 						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ? 
 							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 
@@ -855,16 +858,17 @@ Scroller.prototype = {
 	 */
 	getUnionExtremes: function (returnFalseOnNoBaseSeries) {
 		var baseAxis = this.chart.xAxis[0],
-			navAxis = this.xAxis;
+			navAxis = this.xAxis,
+			navAxisOptions = navAxis.options;
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
 				dataMin: pick(
-					navAxis.options.min, 
+					navAxisOptions && navAxisOptions.min, 
 					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
 				),
 				dataMax: pick(
-					navAxis.options.max, 
+					navAxisOptions && navAxisOptions.max, 
 					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
 				)
 			};

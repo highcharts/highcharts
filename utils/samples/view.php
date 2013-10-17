@@ -24,6 +24,7 @@ $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
+$html = str_replace('.js"', '.js?' . mktime() . '"', $html); // Force no-cache for debugging
 
 
 
@@ -134,6 +135,10 @@ function getResources() {
 				background: -moz-linear-gradient(top, #57544A, #37342A);
 				box-shadow: 0px 0px 8px #888;
 			}
+			li, a, p, div {
+				font-family: Arial, sans-serif;
+				font-size: 10pt;
+			}
 		</style>
 
 	</head>
@@ -151,14 +156,19 @@ function getResources() {
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
-					href="http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>
 			</div>
 		</div>
+
 		<div style="margin: 1em">
 
 		<?php echo $html ?>
 		</div>
+		<hr/>
+		<ul>
+			<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
+		</ul>
 
 	</body>
 </html>
@@ -191,6 +201,6 @@ ob_start();
 	</body>
 </html>
 <?php 
-file_put_contents('draft/index.html', ob_get_clean());
+file_put_contents('../draft/index.html', ob_get_clean());
 
 ?>

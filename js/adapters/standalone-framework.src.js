@@ -159,7 +159,8 @@ function augment(obj) {
 
 					args.preventDefault = preventDefault;
 					args.target = target;
-
+					args.type = name; // #2297	
+					
 					// If the event handler return false, prevent the default handler from executing
 					if (fn.call(this, args) === false) {
 						args.preventDefault();

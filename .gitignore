@@ -22,10 +22,7 @@
 /utils/issue-by-commit/demo.js
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt
-utils/samples/temp/compare.json
-utils/samples/temp/left.png
-utils/samples/temp/right.png
-
+/utils/samples/temp/
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
@@ -36,3 +33,7 @@ exporting-server/java/highcharts-export/highcharts-export-web/src/main/webapp/.e
 
 export-error.log
 export-access.log
+
+*/.ebextensions/
+
+exporting-server/java/highcharts-export/highcharts-export-web/src/main/webapp/.ebextensions/java7.config

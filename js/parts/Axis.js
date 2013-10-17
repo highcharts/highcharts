@@ -364,7 +364,7 @@ Axis.prototype = {
 		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = false; // #1611
+		this._addedPlotLB = this.userMin = this.userMax = UNDEFINED; // #1611, #2306
 
 		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
@@ -1288,7 +1288,10 @@ Axis.prototype = {
 			// reset stacks
 			if (!axis.isXAxis) {
 				for (type in stacks) {
-					delete stacks[type];
+					for (i in stacks[type]) {
+						stacks[type][i].total = null;
+						stacks[type][i].cum = 0;
+					}
 				}
 			}
 

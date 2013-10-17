@@ -80,6 +80,7 @@
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
         <property name="heatmap.src.file" value="${basedir}/js/modules/${heatmap.src.name}"/>
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
+        <property name="highcharts-all.minified.name" value="highcharts-all.js"/>
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
@@ -212,6 +213,14 @@
             <file name="BubbleSeries.js"/>
             <file name="Polar.js"/>
             <file name="Outro.js"/>
+        </filelist>
+
+        <filelist id="highcharts-all.files" dir="${dist.dir}">
+            <file name="js/adapters/${standalone.minified.name}"/>
+            <file name="highcharts/js/${highcharts.minified.name}"/>
+            <file name="highcharts/js/${highchartsmore.minified.name}"/>
+            <file name="js/modules/${exporting.minified.name}"/>
+            <file name="js/modules/${data.minified.name}"/>
         </filelist>
     </target>
 
@@ -478,6 +487,19 @@
             <param name="param.src" value="build/canvas-tools.src.js"/>
             <param name="param.out" value="build/canvas-tools.js"/>
         </antcall>
+        <!-- Concatenate a single file with minified standalone adapter and highcharts sources -->
+        <!-- for faster download from cloud.highcharts.com -->
+        <concat destfile="${dist.dir}/highcharts/js/${highcharts-all.minified.name}">
+            <filelist refid="highcharts-all.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
     </target>
 
     <!-- Builds the source and runts lint and minify. -->

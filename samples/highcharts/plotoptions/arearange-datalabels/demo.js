@@ -42,7 +42,8 @@ $(function () {
 		        	yHigh: 20,
 		        	yLow: -20,
 		        	style: {
-		        		color: 'white'
+		        		color: 'white',
+		        		textShadow: '0px 1px 2px black '
 		        	}
 		        }
 		    }]

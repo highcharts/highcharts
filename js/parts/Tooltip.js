@@ -43,8 +43,8 @@ Tooltip.prototype = {
 			})
 			.css(style)
 			.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
-			.hide()
-			.add();
+			.add()
+			.attr({ y: -999 }); // #2301
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
@@ -390,7 +390,7 @@ Tooltip.prototype = {
 					if (axis.isLog) { // #1671
 						val = log2lin(val);
 					}
-					if (series.modifyValue) { // #1205
+					if (i === 1 && series.modifyValue) { // #1205, #2316
 						val = series.modifyValue(val);
 					}
 

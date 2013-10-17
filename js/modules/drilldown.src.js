@@ -22,7 +22,8 @@
 		seriesTypes = H.seriesTypes,
 		PieSeries = seriesTypes.pie,
 		ColumnSeries = seriesTypes.column,
-		fireEvent = HighchartsAdapter.fireEvent;
+		fireEvent = HighchartsAdapter.fireEvent,
+		inArray = HighchartsAdapter.inArray;
 
 	// Utilities
 	function tweenColors(startColor, endColor, pos) {
@@ -97,7 +98,8 @@
 		ddOptions = extend({
 			color: color
 		}, ddOptions);
-		pointIndex = HighchartsAdapter.inArray(this, oldSeries.points);
+		pointIndex = inArray(point, oldSeries.points);
+		
 		level = {
 			seriesOptions: oldSeries.userOptions,
 			shapeArgs: point.shapeArgs,

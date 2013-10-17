@@ -5,7 +5,7 @@ Highcharts.StockChart = function (options, callback) {
 	var seriesOptions = options.series, // to increase performance, don't merge the data 
 		opposite,
 
-		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090) // docs
+		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
 		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
 		disableStartOnTick = navigatorEnabled ? {
 			startOnTick: false,

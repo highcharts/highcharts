@@ -260,9 +260,11 @@ var PieSeries = {
 			start,
 			end,
 			angle,
-			startAngleRad = series.startAngleRad = mathPI / 180 * ((options.startAngle || 0) % 360 - 90),
+			startAngle = options.startAngle || 0,
+			startAngleRad = series.startAngleRad = mathPI / 180 * (startAngle - 90),
+			endAngleRad = series.endAngleRad = mathPI / 180 * ((options.endAngle || (startAngle + 360)) - 90),
+			circ = endAngleRad - startAngleRad, //2 * mathPI,
 			points = series.points,
-			circ = 2 * mathPI,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
 			labelDistance = options.dataLabels.distance,
@@ -294,11 +296,11 @@ var PieSeries = {
 			point = points[i];
 			
 			// set start and end angle
-			start = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
+			start = startAngleRad + (cumulative * circ);
 			if (!ignoreHiddenPoint || point.visible) {
 				cumulative += point.percentage / 100;
 			}
-			end = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
+			end = startAngleRad + (cumulative * circ);
 
 			// set the shape
 			point.shapeType = 'arc';
@@ -307,8 +309,8 @@ var PieSeries = {
 				y: positions[1],
 				r: positions[2] / 2,
 				innerR: positions[3] / 2,
-				start: start,
-				end: end
+				start: mathRound(start * precision) / precision,
+				end: mathRound(end * precision) / precision
 			};
 
 			// center for the sliced out slice
@@ -329,7 +331,7 @@ var PieSeries = {
 				positions[1] + radiusY * 0.7
 			];
 			
-			point.half = angle < circ / 4 ? 0 : 1;
+			point.half = angle < -mathPI / 2 || angle > mathPI / 2 ? 1 : 0;
 			point.angle = angle;
 
 			// set the anchor point for data labels

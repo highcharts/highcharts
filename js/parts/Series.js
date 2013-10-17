@@ -64,7 +64,7 @@ Point.prototype = {
 	 * Transform number or array configs into objects
 	 */
 	optionsToObject: function (options) {
-		var ret,
+		var ret = {},
 			series = this.series,
 			pointArrayMap = series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
@@ -73,10 +73,9 @@ Point.prototype = {
 			j = 0;
 
 		if (typeof options === 'number' || options === null) {
-			ret = { y: options };
+			ret[pointArrayMap[0]] = options;
 
 		} else if (isArray(options)) {
-			ret = {};
 			// with leading x value
 			if (options.length > valueCount) {
 				firstItemType = typeof options[0];
@@ -315,7 +314,7 @@ Point.prototype = {
 			if (isObject(options)) {
 				series.getAttribs();
 				if (graphic) {
-					if (options.marker && options.marker.symbol) {
+					if (options && options.marker && options.marker.symbol) {
 						point.graphic = graphic.destroy();
 					} else {
 						graphic.attr(point.pointAttr[point.state || '']);
@@ -331,7 +330,11 @@ Point.prototype = {
 			seriesOptions.data[i] = point.options;
 
 			// redraw
-			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
+			series.isDirty = series.isDirtyData = true;
+			if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
+				chart.isDirtyBox = true;
+			}
+			
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
 				chart.legend.destroyItem(point);
 			}
@@ -1267,15 +1270,15 @@ Series.prototype = {
 			threshold = seriesOptions.threshold,
 			stackOption = seriesOptions.stack,
 			stacking = seriesOptions.stacking,
-			percentStacking = stacking === 'percent',
 			stackKey = series.stackKey,
 			negKey = '-' + stackKey,
-			negStacks = series.negStacks && !percentStacking,
+			negStacks = series.negStacks,
 			yAxis = series.yAxis,
 			stacks = yAxis.stacks,
 			oldStacks = yAxis.oldStacks,
 			isNegative,
 			stack,
+			other,
 			key,
 			i,
 			x,
@@ -1311,7 +1314,22 @@ Series.prototype = {
 			stack.points[series.index] = [stack.cum || 0];
 
 			// Add value to the stack total
-			stack.total += (stacking === 'percent' ? mathAbs(y) : y) || 0;
+			if (stacking === 'percent') {
+				
+				// Percent stacked column, totals are the same for the positive and negative stacks
+				other = isNegative ? stackKey : negKey;
+				if (negStacks && stacks[other] && stacks[other][x]) {
+					other = stacks[other][x];
+					stack.total = other.total = mathMax(other.total, stack.total) + mathAbs(y) || 0;
+
+				// Percent stacked areas					
+				} else {
+					stack.total += mathAbs(y) || 0;
+				}
+			} else {
+				stack.total += y || 0;
+			}
+
 			stack.cum = (stack.cum || 0) + (y || 0);
 
 			stack.points[series.index].push(stack.cum);
@@ -1333,20 +1351,29 @@ Series.prototype = {
 	 * Iterate over all stacks and compute the absolute values to percent
 	 */
 	setPercentStacks: function () {
-		var i = this.xData.length,
-			x,
-			stack,
-			pointExtremes,
-			totalFactor;
-		while (i--) {
-			x = this.xData[i];
-			stack = this.yAxis.stacks[this.stackKey][x];
-			pointExtremes = stack.points[this.index];
-			totalFactor = stack.total ? 100 / stack.total : 0;
-			pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
-			pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
-			this.stackedYData[i] = pointExtremes[1];
-		}
+		var series = this,
+			stackKey = series.stackKey,
+			stacks = series.yAxis.stacks;
+		
+		each([stackKey, '-' + stackKey], function (key) {
+			var i = series.xData.length,
+				x,
+				stack,
+				pointExtremes,
+				totalFactor;
+
+			while (i--) {
+				x = series.xData[i];
+				stack = stacks[key] && stacks[key][x];
+				pointExtremes = stack && stack.points[series.index];
+				if (pointExtremes) {
+					totalFactor = stack.total ? 100 / stack.total : 0;
+					pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
+					pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
+					series.stackedYData[i] = pointExtremes[1];
+				}
+			}
+		});
 	},
 
 	/**
@@ -1422,8 +1449,7 @@ Series.prototype = {
 			i,
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
-			threshold = options.threshold,
-			negStacks = series.negStacks && stacking !== 'percent'; // #1910, #2197
+			threshold = options.threshold;
 
 		
 		// Translate each point
@@ -1432,7 +1458,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				stackValues;
 
@@ -2102,6 +2128,7 @@ Series.prototype = {
 		
 		var series = this,
 			seriesOptions = series.options,
+			cursor = seriesOptions.cursor,
 			options = seriesOptions.dataLabels,
 			points = series.points,
 			pointOptions,
@@ -2212,7 +2239,7 @@ Series.prototype = {
 							options.useHTML
 						)
 						.attr(attr)
-						.css(options.style)
+						.css(extend(options.style, cursor && { cursor: cursor }))
 						.add(dataLabelsGroup)
 						.shadow(options.shadow);
 						
@@ -2236,7 +2263,7 @@ Series.prototype = {
 			plotX = pick(point.plotX, -999),
 			plotY = pick(point.plotY, -999),
 			bBox = dataLabel.getBBox(),
-			visible = this.visible,
+			visible = this.visible && chart.isInsidePlot(point.plotX, point.plotY, inverted),
 			alignAttr; // the final position;
 				
 		if (visible) {
@@ -2266,11 +2293,17 @@ Series.prototype = {
 			} else {
 				dataLabel.align(options, null, alignTo);
 				alignAttr = dataLabel.alignAttr;
-			}
 
-			// Now check that the data label is within the plot area
-			visible = options.crop === false ||
-					(chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height));
+				// Handle justify or crop
+				if (pick(options.overflow, 'justify') === 'justify') {
+					this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+				
+				} else if (pick(options.crop, true)) {
+					// Now check that the data label is within the plot area
+					visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
+				
+				}
+			}		
 		}
 
 		// Show or hide based on the final aligned position
@@ -2278,6 +2311,67 @@ Series.prototype = {
 			dataLabel.attr({ y: -999 });
 		}
 				
+	},
+	
+	/**
+	 * If data labels fall partly outside the plot area, align them back in, in a way that
+	 * doesn't hide the point.
+	 */
+	justifyDataLabel: function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
+		var chart = this.chart,
+			align = options.align,
+			verticalAlign = options.verticalAlign,
+			off,
+			justified;
+
+		// Off left
+		off = alignAttr.x;
+		if (off < 0) {
+			if (align === 'right') {
+				options.align = 'left';
+			} else {
+				options.x = -off;
+			}
+			justified = true;
+		}
+
+		// Off right
+		off = alignAttr.x + bBox.width;
+		if (off > chart.plotWidth) {
+			if (align === 'left') {
+				options.align = 'right';
+			} else {
+				options.x = chart.plotWidth - off;
+			}
+			justified = true;
+		}
+
+		// Off top
+		off = alignAttr.y;
+		if (off < 0) {
+			if (verticalAlign === 'bottom') {
+				options.verticalAlign = 'top';
+			} else {
+				options.y = -off;
+			}
+			justified = true;
+		}
+
+		// Off bottom
+		off = alignAttr.y + bBox.height;
+		if (off > chart.plotHeight) {
+			if (verticalAlign === 'top') {
+				options.verticalAlign = 'bottom';
+			} else {
+				options.y = chart.plotHeight - off;
+			}
+			justified = true;
+		}
+		
+		if (justified) {
+			dataLabel.placed = !isNew;
+			dataLabel.align(options, null, alignTo);
+		}
 	},
 	
 	/**
@@ -2403,6 +2497,8 @@ Series.prototype = {
 				};
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
+				} else {
+					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 
 				series[graphKey] = series.chart.renderer.path(graphPath)

@@ -22,7 +22,7 @@ public class BlockingQueuePool<T> extends AbstractPool<T>{
 
 	@Override
 	public T borrowObject() throws InterruptedException, PoolException {
-		T object = linkQueue.poll(2000, TimeUnit.MILLISECONDS);
+		T object = linkQueue.poll(maxWait, TimeUnit.MILLISECONDS);
 		if (object == null) {
 			throw new PoolException();
 		}

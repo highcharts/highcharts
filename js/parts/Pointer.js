@@ -14,7 +14,9 @@ Pointer.prototype = {
 	 */
 	init: function (chart, options) {
 		
-		var zoomType = useCanVG ? '' : options.chart.zoomType,
+		var chartOptions = options.chart,
+			chartEvents = chartOptions.events,
+			zoomType = useCanVG ? '' : chartOptions.zoomType,
 			inverted = chart.inverted,
 			zoomX,
 			zoomY;
@@ -28,6 +30,9 @@ Pointer.prototype = {
 		this.zoomY = zoomY = /y/.test(zoomType);
 		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
+
+		// Do we need to handle click on a touch device?
+		this.runChartClick = chartEvents && !!chartEvents.click;
 
 		this.pinchDown = [];
 		this.lastValidTouch = {};
@@ -259,9 +264,21 @@ Pointer.prototype = {
 	},
 
 	/**
+	 * Run translation operations
+	 */
+	pinchTranslate: function (zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+		if (zoomHor) {
+			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+		}
+		if (zoomVert) {
+			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+		}
+	},
+
+	/**
 	 * Run translation operations for each direction (horizontal and vertical) independently
 	 */
-	pinchTranslateDirection: function (horiz, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+	pinchTranslateDirection: function (horiz, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch, forcedScale) {
 		var chart = this.chart,
 			xy = horiz ? 'x' : 'y',
 			XY = horiz ? 'X' : 'Y',
@@ -271,7 +288,7 @@ Pointer.prototype = {
 			selectionWH,
 			selectionXY,
 			clipXY,
-			scale = 1,
+			scale = forcedScale || 1,
 			inverted = chart.inverted,
 			bounds = chart.bounds[horiz ? 'h' : 'v'],
 			singleTouch = pinchDown.length === 1,
@@ -284,7 +301,7 @@ Pointer.prototype = {
 			scaleKey,
 			setScale = function () {
 				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
-					scale = mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);	
+					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);	
 				}
 				
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
@@ -322,7 +339,6 @@ Pointer.prototype = {
 			lastValidTouch[xy] = [touch0Now, touch1Now];
 		}
 
-		
 		// Set geometry for clipping, selection and transformation
 		if (!inverted) { // TODO: implement clipping for inverted charts
 			clip[xy] = clipXY - plotLeftTop;
@@ -354,18 +370,20 @@ Pointer.prototype = {
 			hasZoom = zoomHor || zoomVert,
 			selectionMarker = self.selectionMarker,
 			transform = {},
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
+				chart.runTrackerClick) || chart.runChartClick),
 			clip = {};
 
-		// If we're capturing touch, prevent pseudo click events from happening
-		if (followTouchMove || hasZoom) {
+		// On touch devices, only proceed to trigger click if a handler is defined
+		if ((hasZoom || followTouchMove) && !fireClickEvent) {
 			e.preventDefault();
 		}
-			
+		
 		// Normalize each touch
 		map(touches, function (e) {
 			return self.normalize(e);
 		});
-			
+		
 		// Register the touch start position
 		if (e.type === 'touchstart') {
 			each(touches, function (e, i) {
@@ -400,15 +418,8 @@ Pointer.prototype = {
 					destroy: noop
 				}, chart.plotBox);
 			}
-
 			
-
-			if (zoomHor) {
-				self.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
-			}
-			if (zoomVert) {
-				self.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
-			}
+			self.pinchTranslate(zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 			self.hasPinched = hasZoom;
 

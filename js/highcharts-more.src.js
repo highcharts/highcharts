@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.5 (2013-08-23)
+ * @license Highcharts JS v3.0.6 (2013-10-04)
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -981,6 +981,7 @@ var GaugeSeries = {
 	// be used on the axes
 	angular: true, 
 	drawGraph: noop,
+	fixedBox: true,
 	trackerGroups: ['group', 'dataLabels'],
 	
 	/**
@@ -1277,6 +1278,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				// Median attributes
 				medianAttr.stroke = point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+				medianAttr['stroke-linecap'] = 'round'; // #1638
 				
 				
 				// The stem
@@ -1711,6 +1713,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
+	// sizeBy: 'area' // docs: 'area' or 'width'
 	tooltip: {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
@@ -1723,6 +1726,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
+	bubblePadding: true,
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -1771,6 +1775,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos,
 			zData = this.zData,
 			radii = [],
+			sizeByArea = this.options.sizeBy !== 'width',
 			zRange;
 		
 		// Set the shape type and arguments to be picked up in drawPoints
@@ -1779,6 +1784,9 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos = zRange > 0 ? // relative size, a number between 0 and 1
 				(zData[i] - zMin) / (zMax - zMin) : 
 				0.5;
+			if (sizeByArea) {
+				pos = Math.sqrt(pos);
+			}
 			radii.push(math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
@@ -1909,7 +1917,7 @@ Axis.prototype.beforePadding = function () {
 			var seriesOptions = series.options,
 				zData;
 
-			if (series.type === 'bubble' && series.visible) {
+			if (series.bubblePadding && series.visible) {
 
 				// Correction for #1673
 				axis.allowZoomOutside = true;
@@ -1960,9 +1968,11 @@ Axis.prototype.beforePadding = function () {
 			
 			if (range > 0) {
 				while (i--) {
-					radius = series.radii[i];
-					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+					if (data[i] !== null) {
+						radius = series.radii[i];
+						pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+						pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+					}
 				}
 			}
 		});

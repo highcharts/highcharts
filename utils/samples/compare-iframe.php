@@ -4,15 +4,6 @@ $leftPath = 'http://code.highcharts.com';
 $rightPath = 'http://code.highcharts.local';
 //$rightPath = 'http://github.highcharts.com/ce80cd29';
 
-$leftHighcharts = "$leftPath/highcharts.js";
-$rightHighcharts = "$rightPath/highcharts.js";
-
-$leftHighchartsMore = "$leftPath/highcharts-more.js";
-$rightHighchartsMore = "$rightPath/highcharts-more.js";
-
-$leftHighstock = "$leftPath/stock/highstock.js";
-$rightHighstock = "$rightPath/highstock.js";
-
 $leftExporting = "$leftPath/modules/exporting.src.js";
 $rightExporting = "$rightPath/modules/exporting.src.js";
 
@@ -21,7 +12,7 @@ $rightFramework = 'jQuery';
 
 
 $path = $_GET['path'];
-if (!preg_match('/^[a-z\-0-9]+\/[a-z]+\/[a-z0-9\-,]+$/', $path)) {
+if (!preg_match('/^[a-z\-0-9]+\/[a-z\-]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input: ' . $path);
 }
 
@@ -78,8 +69,7 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $path, $leftHighcharts, $rightHighcharts, $leftHighstock, $rightHighstock, $leftHighchartsMore, 
-		$rightHighchartsMore, $rightExporting, $leftExporting;
+	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting;
 	
 	
 	// No idea why file_get_contents doesn't work here...
@@ -87,23 +77,13 @@ function getHTML($which) {
 	include("$path/demo.html");
 	$s = ob_get_clean();
 	
-	if ($which == 'right') {
-		$s = str_replace('http://code.highcharts.com/highcharts.js', $rightHighcharts, $s);
-		$s = str_replace('http://code.highcharts.com/highcharts-more.js', $rightHighchartsMore, $s);
-		$s = str_replace('http://code.highcharts.com/stock/highcharts-more.js', $rightHighchartsMore, $s);
-		$s = str_replace('http://code.highcharts.com/stock/highstock.js', $rightHighstock, $s);
-		$s = str_replace('http://code.highcharts.com/modules/exporting.js', $rightExporting, $s);
-		$s = str_replace('http://code.highcharts.com/stock/modules/exporting.js', $rightExporting, $s);
-
+	if ($which == 'left') {
+		$s = str_replace('http://code.highcharts.com', $leftPath, $s);
 		$exporting = $rightExporting;
-	} else {
-		$s = str_replace('http://code.highcharts.com/highcharts.js', $leftHighcharts, $s);
-		$s = str_replace('http://code.highcharts.com/highcharts-more.js', $leftHighchartsMore, $s);
-		$s = str_replace('http://code.highcharts.com/stock/highcharts-more.js', $leftHighchartsMore, $s);
-		$s = str_replace('http://code.highcharts.com/stock/highstock.js', $leftHighstock, $s);
-		$s = str_replace('http://code.highcharts.com/modules/exporting.js', $leftExporting, $s);
-		$s = str_replace('http://code.highcharts.com/stock/modules/exporting.js', $leftExporting, $s);
 		
+	} else {
+		
+		$s = str_replace('http://code.highcharts.com', $rightPath, $s);
 		$exporting = $leftExporting;
 	}
 	
@@ -225,5 +205,10 @@ function getCompareTooltips() {
 		</script>
 		
 	</head>
-	<body style="margin: 0"><?php echo getHTML($_GET['which']); ?></body>
+	<body style="margin: 0">
+
+<?php echo getHTML($_GET['which']); ?>
+
+
+	</body>
 </html>

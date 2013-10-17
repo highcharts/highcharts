@@ -37,7 +37,7 @@ Highcharts.VMLElement = VMLElement = {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
 		style.push('visibility: ', isDiv ? HIDDEN : VISIBLE);
-		
+
 		markup.push(' style="', style.join(''), '"/>');
 
 		// create element with default attributes and style
@@ -82,7 +82,7 @@ Highcharts.VMLElement = VMLElement = {
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
 			wrapper.updateTransform();
 		}
-		
+
 		// fire an event for internal hooks
 		fireEvent(wrapper, 'add');
 
@@ -119,7 +119,7 @@ Highcharts.VMLElement = VMLElement = {
 		var i = value.length,
 			path = [],
 			clockwise;
-		
+
 		while (i--) {
 
 			// Multiply by 10 to allow subpixel precision.
@@ -134,7 +134,7 @@ Highcharts.VMLElement = VMLElement = {
 
 				// When the start X and end X coordinates of an arc are too close,
 				// they are rounded to the same value above. In this case, substract 1 from the end X
-				// position. #760, #1371. 
+				// position. #760, #1371.
 				if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
 					clockwise = value[i] === 'wa' ? 1 : -1; // #1642
 					if (path[i + 5] === path[i + 7]) {
@@ -250,21 +250,21 @@ Highcharts.VMLElement = VMLElement = {
 								shadows[i].style[key] = value;
 							}
 						}
-						
-						// Instead of toggling the visibility CSS property, move the div out of the viewport. 
-						// This works around #61 and #586							
+
+						// Instead of toggling the visibility CSS property, move the div out of the viewport.
+						// This works around #61 and #586
 						if (nodeName === 'DIV') {
 							value = value === HIDDEN ? '-999em' : 0;
-							
+
 							// In order to redraw, IE7 needs the div to be visible when tucked away
-							// outside the viewport. So the visibility is actually opposite of 
-							// the expected value. This applies to the tooltip only. 
+							// outside the viewport. So the visibility is actually opposite of
+							// the expected value. This applies to the tooltip only.
 							if (!docMode8) {
 								elemStyle[key] = value ? VISIBLE : HIDDEN;
 							}
 							key = 'top';
 						}
-						elemStyle[key] = value;	
+						elemStyle[key] = value;
 						skipAttr = true;
 
 					// directly mapped to css
@@ -277,15 +277,15 @@ Highcharts.VMLElement = VMLElement = {
 
 					// x, y, width, height
 					} else if (inArray(key, ['x', 'y', 'width', 'height']) !== -1) {
-						
+
 						wrapper[key] = value; // used in getter
-						
+
 						if (key === 'x' || key === 'y') {
 							key = { x: 'left', y: 'top' }[key];
 						} else {
 							value = mathMax(0, value); // don't set width or height below zero (#311)
 						}
-						
+
 						// clipping rectangle special
 						if (wrapper.updateClipping) {
 							wrapper[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
@@ -295,12 +295,12 @@ Highcharts.VMLElement = VMLElement = {
 							elemStyle[key] = value;
 						}
 
-						skipAttr = true;						
+						skipAttr = true;
 
 					// class name
 					} else if (key === 'class' && nodeName === 'DIV') {
 						// IE8 Standards mode has problems retrieving the className
-						element.className = value;						
+						element.className = value;
 
 					// stroke
 					} else if (key === 'stroke') {
@@ -346,10 +346,10 @@ Highcharts.VMLElement = VMLElement = {
 							opacity: value
 						});*/
 						skipAttr = true;
-						
+
 					// rotation on VML elements
 					} else if (nodeName === 'shape' && key === 'rotation') {
-						
+
 						wrapper[key] = element.style[key] = value; // style is for #1873
 
 						// Correction for the 1x1 size of the shape container. Used in gauge needles.
@@ -368,7 +368,7 @@ Highcharts.VMLElement = VMLElement = {
 						this.bBox = null;
 						element.innerHTML = value;
 						skipAttr = true;
-					} 
+					}
 
 
 					if (!skipAttr) {
@@ -403,16 +403,16 @@ Highcharts.VMLElement = VMLElement = {
 				erase(clipMembers, wrapper);
 			};
 			cssRet = clipRect.getCSS(wrapper);
-			
+
 		} else {
 			if (wrapper.destroyClip) {
 				wrapper.destroyClip();
 			}
 			cssRet = { clip: docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
 		}
-		
+
 		return wrapper.css(cssRet);
-			
+
 	},
 
 	/**
@@ -458,21 +458,21 @@ Highcharts.VMLElement = VMLElement = {
 		};
 		return this;
 	},
-	
+
 	/**
 	 * In stacked columns, cut off the shadows so that they don't overlap
 	 */
 	cutOffPath: function (path, length) {
-		
+
 		var len;
-		
+
 		path = path.split(/[ ,]/);
 		len = path.length;
-		
+
 		if (len === 9 || len === 11) {
 			path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
 		}
-		return path.join(' ');		
+		return path.join(' ');
 	},
 
 	/**
@@ -503,18 +503,18 @@ Highcharts.VMLElement = VMLElement = {
 			shadowWidth = pick(shadowOptions.width, 3);
 			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			for (i = 1; i <= 3; i++) {
-				
+
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
-				
+
 				// Cut off shadows for stacked column items
 				if (cutOff) {
 					modifiedPath = this.cutOffPath(path.value, strokeWidth + 0.5);
 				}
-				
+
 				markup = ['<shape isShadow="true" strokeweight="', strokeWidth,
 					'" filled="false" path="', modifiedPath,
 					'" coordsize="10 10" style="', element.style.cssText, '" />'];
-				
+
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
 						left: pInt(elemStyle.left) + pick(shadowOptions.offsetX, 1),
@@ -524,7 +524,7 @@ Highcharts.VMLElement = VMLElement = {
 				if (cutOff) {
 					shadow.cutOff = strokeWidth + 1;
 				}
-				
+
 				// apply the opacity
 				markup = ['<stroke color="', shadowOptions.color || 'black', '" opacity="', shadowElementOpacity * i, '"/>'];
 				createElement(renderer.prepVML(markup), null, null, shadow);
@@ -600,14 +600,14 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		}
 	},
-	
-	
+
+
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
 	 * has display: none
 	 */
 	isHidden: function () {
-		return !this.box.offsetWidth;			
+		return !this.box.offsetWidth;
 	},
 
 	/**
@@ -624,7 +624,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// create a dummy element
 		var clipRect = this.createElement(),
 			isObj = isObject(x);
-		
+
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
@@ -691,15 +691,15 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		} else if (color && color.radialGradient) {
 			fillType = 'pattern';
 		}
-		
-		
+
+
 		if (fillType) {
 
 			var stopColor,
 				stopOpacity,
 				gradient = color.linearGradient || color.radialGradient,
 				x1,
-				y1, 
+				y1,
 				x2,
 				y2,
 				opacity1,
@@ -718,7 +718,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
 					createElement(renderer.prepVML(markup), null, null, elem);
 				};
-			
+
 			// Extend from 0 to 1
 			firstStop = stops[0];
 			lastStop = stops[stops.length - 1];
@@ -745,9 +745,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					stopColor = stop[1];
 					stopOpacity = 1;
 				}
-				
+
 				// Build the color attribute
-				colors.push((stop[0] * 100) + '% ' + stopColor); 
+				colors.push((stop[0] * 100) + '% ' + stopColor);
 
 				// Only start and end opacities are allowed, so we use the first and the last
 				if (!i) {
@@ -758,10 +758,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					color1 = stopColor;
 				}
 			});
-			
+
 			// Apply the gradient to fills only.
 			if (prop === 'fill') {
-				
+
 				// Handle linear gradient angle
 				if (fillType === 'gradient') {
 					x1 = gradient.x1 || gradient[0] || 0;
@@ -772,12 +772,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						(y2 - y1) / // y vector
 						(x2 - x1) // x vector
 						) * 180 / mathPI) + '"';
-						
+
 					addFillNode();
-					
+
 				// Radial (circular) gradient
-				} else { 
-					
+				} else {
+
 					var r = gradient.r,
 						sizex = r * 2,
 						sizey = r * 2,
@@ -791,17 +791,17 @@ var VMLRendererExtension = { // inherit SVGRenderer
 								cx += (radialReference[0] - bBox.x) / bBox.width - 0.5;
 								cy += (radialReference[1] - bBox.y) / bBox.height - 0.5;
 								sizex *= radialReference[2] / bBox.width;
-								sizey *= radialReference[2] / bBox.height;							
+								sizey *= radialReference[2] / bBox.height;
 							}
 							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
 								'size="' + sizex + ',' + sizey + '" ' +
 								'origin="0.5,0.5" ' +
 								'position="' + cx + ',' + cy + '" ' +
 								'color2="' + color2 + '" ';
-							
+
 							addFillNode();
 						};
-					
+
 					// Apply radial gradient
 					if (wrapper.added) {
 						applyRadialGradient();
@@ -809,12 +809,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						// We need to know the bounding box to get the size and position right
 						addEvent(wrapper, 'add', applyRadialGradient);
 					}
-					
+
 					// The fill element's color attribute is broken in IE8 standards mode, so we
 					// need to set the parent shape's fillcolor attribute instead.
 					ret = color1;
 				}
-			
+
 			// Gradients are not supported for VML stroke, return the first color. #722.
 			} else {
 				ret = stopColor;
@@ -910,7 +910,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			x = x.x;
 		}
 		circle.isCircle = true; // Causes x and y to mean center (#1682)
-		return circle.attr({ x: x, y: y, width: 2 * r, height: 2 * r });
+		circle.r = r;
+		return circle.attr({ x: x, y: y });
 	},
 
 	/**
@@ -968,8 +969,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		//return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
 		return wrapper.attr(
-				isObject(x) ? 
-					x : 
+				isObject(x) ?
+					x :
 					// do not crispify when an object is passed in (as in column charts)
 					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
 			);
@@ -1026,8 +1027,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			if (options.open && !innerRadius) {
 				ret.push(
 					'e',
-					M, 
-					x,// - innerRadius, 
+					M,
+					x,// - innerRadius,
 					y// - innerRadius
 				);
 			}
@@ -1045,13 +1046,18 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				'x', // finish path
 				'e' // close
 			);
-			
+
 			ret.isArc = true;
 			return ret;
 
 		},
 		// Add circle symbol path. This performs significantly faster than v:oval.
 		circle: function (x, y, w, h, wrapper) {
+
+			if (wrapper) {
+				w = h = 2 * wrapper.r;
+			}
+
 			// Center correction, #1682
 			if (wrapper && wrapper.isCircle) {
 				x -= w / 2;
@@ -1084,7 +1090,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		 */
 
 		rect: function (left, top, width, height, options) {
-			
+
 			var right = left + width,
 				bottom = top + height,
 				ret,
@@ -1093,15 +1099,15 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// No radius, return the more lightweight square
 			if (!defined(options) || !options.r) {
 				ret = SVGRenderer.prototype.symbols.square.apply(0, arguments);
-				
+
 			// Has radius add arcs for the corners
 			} else {
-			
+
 				r = mathMin(options.r, width, height);
 				ret = [
 					M,
 					left + r, top,
-	
+
 					L,
 					right - r, top,
 					'wa',
@@ -1109,7 +1115,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					right, top + 2 * r,
 					right - r, top,
 					right, top + r,
-	
+
 					L,
 					right, bottom - r,
 					'wa',
@@ -1117,7 +1123,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					right, bottom,
 					right, bottom - r,
 					right - r, bottom,
-	
+
 					L,
 					left + r, bottom,
 					'wa',
@@ -1125,7 +1131,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					left + 2 * r, bottom,
 					left + r, bottom,
 					left, bottom - r,
-	
+
 					L,
 					left, top + r,
 					'wa',
@@ -1133,8 +1139,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					left + 2 * r, top + 2 * r,
 					left, top + r,
 					left + r, top,
-	
-	
+
+
 					'x',
 					'e'
 				];

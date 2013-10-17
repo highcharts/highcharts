@@ -1,8 +1,8 @@
 <?php
 ini_set('display_errors', 'on');
 
-//define('EXPORT_SERVER', 'http://export.highcharts.com');
-define('EXPORT_SERVER', 'http://localhost:8080/export/');
+define('EXPORT_SERVER', 'http://export.highcharts.com');
+//define('EXPORT_SERVER', 'http://localhost:8080/export/');
 
 /**
  * Send a post request
@@ -123,6 +123,7 @@ $difference = dissimilarityIndexCalculator($leftImage, $rightImage);
 if (!file_exists("temp")) {
 	mkdir("temp");
 }
+
 
 // Save on disk for viewing
 $filename = strftime('%Y-%m-%d-') . md5(rand());
