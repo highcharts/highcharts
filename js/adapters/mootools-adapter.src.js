@@ -79,7 +79,7 @@ win.HighchartsAdapter = {
 		// This currently works for getting inner width and height. If adding
 		// more methods later, we need a conditional implementation for each.
 		if (method === 'width' || method === 'height') {
-			return parseInt($(el).getStyle(method), 10);
+			return parseInt(document.id(el).getStyle(method), 10);
 		}
 	},
 
@@ -130,7 +130,7 @@ win.HighchartsAdapter = {
 
 		// define and run the effect
 		effect = new Fx.Morph(
-			isSVGElement ? el : $(el),
+			isSVGElement ? el : document.id(el),
 			$extend({
 				transition: Fx.Transitions.Quad.easeInOut
 			}, options)
@@ -212,7 +212,7 @@ win.HighchartsAdapter = {
 		// like series or point
 		if (!el.addEvent) {
 			if (el.nodeName) {
-				el = $(el); // a dynamically generated node
+				el = document.id(el); // a dynamically generated node
 			} else {
 				$extend(el, new Events()); // a custom object
 			}
