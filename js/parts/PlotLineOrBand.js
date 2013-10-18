@@ -95,6 +95,9 @@ PlotLineOrBand.prototype = {
 				svgElem.onGetPath = function () {
 					svgElem.show();
 				};
+				if (label) {
+					plotLine.label = label = label.destroy();
+				}
 			}
 		} else if (path && path.length) {
 			plotLine.svgElem = svgElem = renderer.path(path)
