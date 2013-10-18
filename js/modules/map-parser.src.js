@@ -236,7 +236,11 @@ H.extend(H.Data.prototype, {
 
 		
 		function getName(elem) {
-			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
+			var desc = elem.getElementsByTagName('desc'),
+				nameTag = desc[0] && desc[0].getElementsByTagName('name'),
+				name = nameTag && nameTag[0] && nameTag[0].innerText;
+
+			return name || elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
 		}
 
 		function hasFill(elem) {
