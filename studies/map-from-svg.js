@@ -99,42 +99,59 @@ function showSeriesSetup(setup) {
 }	
 */
 
+
 $(function() {
-	var $preset = $('#preset')
-		.change(function () {
-			runPreset($preset[0].selectedIndex);
-		});
+	$.getJSON('/maps/list.json.php', function (localFiles) {
 
-	function runPreset(index) {
-		var preset = presets[index];
+		var $preset = $('#preset')
+			.change(function () {
+				runPreset($preset[0].selectedIndex);
+			});
 
-		$preset[0].selectedIndex = index;
+		function runPreset(index) {
+			var preset = presets[index];
 
-		if (preset.url) {
-			$('#load')[0].value = preset.url;
-			location.hash = '#' + preset.name;
-			runChart();
-		}
-	}
+			$preset[0].selectedIndex = index;
 
-	function runChart() {
-		drawMap('Online SVG', $('#load')[0].value);
-	}
-	
-	// Build the links
-	for (var i = 0; i < presets.length; i++) {
-		$('<option>' + presets[i].name + '</option>')
-			.appendTo($preset);
-	}
-	
-	if (location.hash) {
-		for (var i = 0; i < presets.length; i++) {
-			if (location.hash === '#' + presets[i].name) {
-				runPreset(i);
+			if (preset && preset.url) {
+				$('#load')[0].value = preset.url;
+				location.hash = '#' + preset.name;
+				runChart();
+			} else if (!preset) { // local files
+				
+				$('#load')[0].value = 'http://' + location.host + '/maps/' + $preset.children()[index].value;
+				runChart('Local file');
 			}
 		}
-	}
-	$(location.hash ? location.hash + '_' : '#_World2_').click();
-	
-	$('#load-submit').click(runChart);
+
+		function runChart() {
+			drawMap('Highcharts map from SVG', $('#load')[0].value);
+		}
+		
+		// Build the links
+		for (var i = 0; i < presets.length; i++) {
+			$('<option>' + presets[i].name + '</option>')
+				.appendTo($preset);
+		}
+		// Build the links
+		for (var i = 0; i < localFiles.length; i++) {
+			if (i === 0) {
+				$('<option>----- Local files ----</option>')
+					.appendTo($preset);
+			}
+			$('<option>' + localFiles[i] + '</option>')
+				.appendTo($preset);
+		}
+		
+		if (location.hash) {
+			for (var i = 0; i < presets.length; i++) {
+				if (location.hash === '#' + presets[i].name) {
+					runPreset(i);
+				}
+			}
+		}
+		$(location.hash ? location.hash + '_' : '#_World2_').click();
+		
+		$('#load-submit').click(runChart);
+	});
 });
