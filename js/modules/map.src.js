@@ -156,8 +156,8 @@
 			dataMax = pick(this.dataMax, Number.MIN_VALUE);
 			each(this.series, function (series, i) {
 				if (series.useMapGeometry) {
-					dataMin = Math.min(dataMin, series.minX);
-					dataMax = Math.max(dataMax, series.maxX);
+					dataMin = Math.min(dataMin, pick(series.minX, dataMin));
+					dataMax = Math.max(dataMax, pick(series.maxX, dataMin));
 					series.xData = xData[i]; // Reset xData array
 				}
 			});
@@ -851,6 +851,7 @@
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
 				i;
+
 			// Preserve the original
 			path = [].concat(path);
 				
@@ -866,6 +867,7 @@
 					even = !even;
 				}
 			}
+
 
 			return path;
 		},
