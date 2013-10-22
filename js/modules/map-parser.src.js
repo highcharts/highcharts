@@ -118,8 +118,8 @@ H.extend(H.Data.prototype, {
 					}
 
 					// Add it
-					path[i - 1] = Math.round(path[i - 1] * 100) / 100; // x
-					path[i] = Math.round(path[i] * 100) / 100; // y
+					//path[i - 1] = Math.round(path[i - 1] * 100) / 100; // x
+					//path[i] = Math.round(path[i] * 100) / 100; // y
 				}	
 				
 				
@@ -179,7 +179,7 @@ H.extend(H.Data.prototype, {
 		mapProto.getBox.call(arr, arr);
 
 		origSize = Math.max(arr.maxX - arr.minX, arr.maxY - arr.minY);
-		scale = scale || 999;
+		scale = scale || 1000;
 		transA = scale / origSize;
 
 		fakeSeries = {
@@ -202,7 +202,16 @@ H.extend(H.Data.prototype, {
 		};
 
 		each(arr, function (point) {
-			point.path = mapProto.translatePath.call(fakeSeries, point.path);
+			var i,
+				path;
+			point.path = path = mapProto.translatePath.call(fakeSeries, point.path, true);
+			i = path.length;
+			while (i--) {
+				if (typeof path[i] === 'number') {
+					path[i] = Math.round(path[i]);
+				}
+			}
+
 		});
 
 		return arr;

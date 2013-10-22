@@ -584,7 +584,9 @@
 		useMapGeometry: true, // get axis extremes from paths, not values
 		init: function (chart) {
 			var series = this,
-				valueDecimals = chart.options.legend.valueDecimals,
+				legendOptions = chart.options.legend,
+				valueDecimals = legendOptions.valueDecimals,
+				valueSuffix = legendOptions.valueSuffix || '',
 				legendItems = [],
 				name,
 				from,
@@ -617,13 +619,13 @@
 						name = '> ';
 					}
 					if (from !== UNDEFINED) {
-						name += numberFormat(from, valueDecimals);
+						name += numberFormat(from, valueDecimals) + valueSuffix;
 					}
 					if (from !== UNDEFINED && to !== UNDEFINED) {
 						name += ' - ';
 					}
 					if (to !== UNDEFINED) {
-						name += numberFormat(to, valueDecimals);
+						name += numberFormat(to, valueDecimals) + valueSuffix;
 					}
 					
 					// Add a mock object to the legend items
@@ -860,9 +862,9 @@
 			while (i--) {
 				if (typeof path[i] === 'number') {
 					if (even) { // even = x
-						path[i] = Math.round(xAxis.translate(path[i]));
+						path[i] = xAxis.translate(path[i]);
 					} else { // odd = Y
-						path[i] = Math.round(yAxis.len - yAxis.translate(path[i]));
+						path[i] = yAxis.len - yAxis.translate(path[i]);
 					}
 					even = !even;
 				}

@@ -55,8 +55,11 @@ var presets = [{
 	name: 'Sweden',
 	url: 'http://www.highcharts.com/maps/maps/Sweden.svg'
 }, {
-	name: 'USA',
+	name: 'USA-states',
 	url: 'http://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg'
+}, {
+	name: 'USA-counties',
+	url: 'http://upload.wikimedia.org/wikipedia/commons/5/5f/USA_Counties_with_FIPS_and_names.svg'
 }, {
 	name: '----- Regions ------'
 }, {

@@ -43,6 +43,7 @@
 			}
 			
 			function drawMap(key, file) {
+				var start = +new Date();
 				if (chart) {
 					chart = chart.destroy();
 				}
@@ -51,6 +52,10 @@
 				Highcharts.data({
 					svg: '/maps/file.php?file=' + file,
 					complete: function (options) {
+
+						console.log('Loading and parsing map:', new Date() - start, 'ms');
+						start = +new Date();
+
 						var data = options.series[0].data,
 							lines = identifyLines(data, key);
 							
@@ -69,7 +74,11 @@
 							chart : {
 								renderTo : 'container',
 								borderWidth : 1,
-								zoomType: 'xy'
+								events: {
+									load: function () {
+										console.log('Generating chart:', new Date() - start, 'ms');
+									}
+								}
 							},
 							
 							title: {
@@ -78,6 +87,10 @@
 							
 							legend: {
 								enabled: false
+							},
+
+							mapNavigation: {
+								enabled: true
 							},
 						
 							plotOptions: {
