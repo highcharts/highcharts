@@ -62,6 +62,11 @@ extend(defaultOptions, {
 				align: 'left',
 				x: 3,
 				y: -4
+			},
+			crosshair: {
+				label: {
+					enabled: false
+				}
 			}
 		},
 		yAxis: {
@@ -73,7 +78,12 @@ extend(defaultOptions, {
 			labels: {
 				enabled: false
 			},
-			crosshair: false,
+			crosshair: {
+				enabled: false,
+				label: {
+					enabled: false
+				}
+			},
 			title: {
 				text: null
 			},

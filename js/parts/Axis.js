@@ -2111,6 +2111,12 @@ Axis.prototype = {
 	 */
 	drawCrosshair: function (e, point) {
 		if (!this.crosshair) { return; }// Do not draw crosshairs if you don't have too.
+
+		if ((defined(point) || !pick(this.crosshair.snap, true)) === false) { 
+			this.hideCrosshair();
+			return; 
+		}
+
 		var path,
 			options = this.crosshair,
 			pos;
@@ -2123,7 +2129,17 @@ Axis.prototype = {
 			pos = ((this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY);
 			/*jslint eqeq: false*/
 		}
-		path = this.getPlotLinePath(null, null, null, null, pos);
+
+		if (this.isRadial) {
+			path = this.getPlotLinePath(this.xOrY === 'x' ? point.x : pick(point.stackY, point.y));
+		} else {
+			path = this.getPlotLinePath(null, null, null, null, pos);
+		}
+
+		if (path === null) {
+			this.hideCrosshair();
+			return;
+		}
 
 		// Draw the cross
 		if (this.cross) {
