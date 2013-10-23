@@ -981,7 +981,7 @@ SVGElement.prototype = {
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
-			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && element.parentNode,
+			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && wrapper.parentGroup,
 			grandParent,
 			key,
 			i;
@@ -1012,10 +1012,11 @@ SVGElement.prototype = {
 			});
 		}
 
-		// In case of useHTML, clean up empty containers emulating SVG groups (#1960).
-		while (parentToClean && parentToClean.childNodes.length === 0) {
-			grandParent = parentToClean.parentNode;
-			wrapper.safeRemoveChild(parentToClean);
+		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393).
+		while (parentToClean && parentToClean.div.childNodes.length === 0) {
+			grandParent = parentToClean.parentGroup;
+			wrapper.safeRemoveChild(parentToClean.div);
+			delete parentToClean.div;
 			parentToClean = grandParent;
 		}
 
@@ -2148,6 +2149,8 @@ SVGRenderer.prototype = {
 					container = renderer.box.parentNode,
 					parentGroup,
 					parents = [];
+
+				this.parentGroup = svgGroupWrapper;
 
 				// Create a mock group to hold the HTML elements
 				if (svgGroupWrapper) {
