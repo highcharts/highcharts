@@ -1,6 +1,6 @@
 <?php 
 	$path = $_GET['path'];
-	$mode = $_GET['mode'];
+	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
 	$continue = $_GET['continue'];
 
@@ -9,8 +9,6 @@
 		'<a href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
 	}
 
-	print_r($browser);
-	
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -347,7 +345,7 @@
 	</head>
 	<body style="margin: 0">
 		
-		<div><?php echo $warning ?></div>
+		<div><?php echo @$warning ?></div>
 		<div class="top-bar">
 			
 			<h2 style="margin: 0"><?php echo $path ?></h2> 

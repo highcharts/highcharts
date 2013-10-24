@@ -22408,10 +22408,5 @@ $(function () {
     };
 
     // Instanciate the map
-    var start = +new Date();
-    $('#container').highcharts('Map', options, function () {
-        if (window.console) {
-            console.log('Generated map in ' + (new Date() - start) + ' ms');
-        }
-    });
+    $('#container').highcharts('Map', options);
 });

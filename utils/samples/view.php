@@ -74,6 +74,23 @@ function getResources() {
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
+
+
+		<?php if ($_GET['profile']) : ?>
+		$(function () {
+			// End profile on chart load
+			Highcharts.Chart.prototype.callbacks.push(function (chart) {
+				console.timeEnd('<?php echo $path ?>');
+				console.profileEnd('<?php echo $path ?>');
+			});
+			// Start profile on DOM ready	
+			console.profile('<?php echo $path ?>');
+			console.time('<?php echo $path ?>');
+
+		});
+		<?php endif ?>
+
+
 		<?php @include("$fullpath/demo.js"); ?>
 		</script>
 
@@ -120,6 +137,7 @@ function getResources() {
 					}
 
 				}
+
 			});
 		</script>
 
@@ -155,6 +173,8 @@ function getResources() {
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;profile=1">Profile</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>

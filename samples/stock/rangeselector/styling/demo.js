@@ -25,6 +25,9 @@ $(function() {
 	    			}
 	    		}
 	    	},
+	    	inputBoxBorderColor: 'gray',
+	    	inputBoxWidth: 120,
+	    	inputBoxHeight: 18,
 	    	inputStyle: {
 	    		color: '#039',
 	    		fontWeight: 'bold'
