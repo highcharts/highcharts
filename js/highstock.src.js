@@ -17250,6 +17250,7 @@ seriesProto.processData = function () {
 		processedYData = series.processedYData,
 		plotSizeX = chart.plotSizeX,
 		xAxis = series.xAxis,
+		ordinal = xAxis.options.ordinal,
 		groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
 		nonGroupedPointRange = series.pointRange;
 
@@ -17262,9 +17263,9 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			groupIntervalFactor = (xAxis.getGroupIntervalFactor && xAxis.getGroupIntervalFactor(xMin, xMax, processedXData)) || 1,
+			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, processedXData)) || 1,
 			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,			
-			groupPositions = (xAxis.getNonLinearTimeTicks || getTimeTicks)(
+			groupPositions = (ordinal ? xAxis.getNonLinearTimeTicks : getTimeTicks)(
 				normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
 				xMin, 
 				xMax, 
@@ -20843,7 +20844,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 		// call base method
 		baseGetSegments.apply(series);
 			
-		if (xAxis.options.ordinal && gapSize) { // #1794
+		if (gapSize) {
 		
 			// properties
 			segments = series.segments;
