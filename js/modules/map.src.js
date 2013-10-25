@@ -31,7 +31,6 @@
 		numberFormat = H.numberFormat,
 		defaultOptions = H.getOptions(),
 		seriesTypes = H.seriesTypes,
-		inArray = HighchartsAdapter.inArray,
 		plotOptions = defaultOptions.plotOptions,
 		wrap = H.wrap,
 		Color = H.Color,
@@ -810,8 +809,8 @@
 							}
 						}
 						// Cache point bounding box for use to position data labels, bubbles etc
-						point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, 0.5);
-						point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, 0.5);
+						point._midX = pointMinX + (pointMaxX - pointMinX) * point.middleX || 0.5;
+						point._midY = pointMinY + (pointMaxY - pointMinY) * point.middleY || 0.5;
 						point._maxX = pointMaxX;
 						point._minX = pointMinX;
 						point._maxY = pointMaxY;
@@ -852,26 +851,31 @@
 				even = false, // while loop reads from the end
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
-				i;
+				xMin = xAxis.min,
+				xTransA = xAxis.transA,
+				xMinPixelPadding = xAxis.minPixelPadding,
+				yMin = yAxis.min,
+				yTransA = yAxis.transA,
+				yMinPixelPadding = yAxis.minPixelPadding,
+				i,
+				ret = []; // Preserve the original
 
-			// Preserve the original
-			path = [].concat(path);
-				
 			// Do the translation
-			i = path.length;
-			while (i--) {
-				if (typeof path[i] === 'number') {
-					if (even) { // even = x
-						path[i] = xAxis.translate(path[i]);
-					} else { // odd = Y
-						path[i] = yAxis.len - yAxis.translate(path[i]);
+			if (path) {
+				i = path.length;
+				while (i--) {
+					if (typeof path[i] === 'number') {
+						ret[i] = even ? 
+							(path[i] - xMin) * xTransA + xMinPixelPadding :
+							(path[i] - yMin) * yTransA + yMinPixelPadding;
+						even = !even;
+					} else {
+						ret[i] = path[i];
 					}
-					even = !even;
 				}
 			}
 
-
-			return path;
+			return ret;
 		},
 		
 		/**
@@ -900,8 +904,9 @@
 				}
 
 				// Add those map points that don't correspond to data, which will be drawn as null points
+				dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
 				each(mapData, function (mapPoint) {
-					if (!joinBy || inArray(mapPoint[joinBy], dataUsed) === -1) {
+					if (!joinBy || dataUsed.indexOf('|' + mapPoint[joinBy] + '|') === -1) {
 						data.push(merge(mapPoint, { y: null }));
 					}
 				});
@@ -920,7 +925,7 @@
 
 			// Create a cache for quicker lookup second time
 			if (!mapMap) {
-				mapMap = this.mapMap = [];
+				mapMap = this.mapMap = {};
 			}
 			if (mapMap[value] !== undefined) {
 				return mapData[mapMap[value]];
