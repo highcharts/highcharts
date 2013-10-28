@@ -186,6 +186,11 @@ Pointer.prototype = {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
+
+		// Draw independent crosshairs
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, pick(hoverPoint, point));
+		});
 	},
 
 
@@ -228,9 +233,13 @@ Pointer.prototype = {
 
 			if (tooltip) {
 				tooltip.hide();
-				tooltip.hideCrosshairs();
 			}
 
+			// Remove crosshairs
+			each(chart.axes, function (axis) {
+				axis.hideCrosshair();
+			});
+			
 			pointer.hoverX = null;
 
 		}
