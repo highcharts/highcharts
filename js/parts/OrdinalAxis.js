@@ -385,7 +385,7 @@
 				// The positions are not always defined, for example for ordinal positions when data
 				// has regular interval (#1557, #2090)
 				if (!positions || positions.length < 3 || min === UNDEFINED) {
-					return getTimeTicks(normalizedInterval, min, max, startOfWeek);
+					return xAxis.getTimeTicks(normalizedInterval, min, max, startOfWeek);
 				}
 				
 				// Analyze the positions array to split it into segments on gaps larger than 5 times
@@ -405,7 +405,7 @@
 						// For each segment, calculate the tick positions from the getTimeTicks utility
 						// function. The interval will be the same regardless of how long the segment is.
 						if (positions[end] > lastGroupPosition) { // #1475
-							segmentPositions = getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);
+							segmentPositions = xAxis.getTimeTicks(normalizedInterval, positions[start], positions[end], startOfWeek);
 							
 							// Prevent duplicate groups, for example for multiple segments within one larger time frame (#1475)
 							while (segmentPositions.length && segmentPositions[0] <= lastGroupPosition) {

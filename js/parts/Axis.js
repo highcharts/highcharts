@@ -705,8 +705,8 @@ Axis.prototype = {
 			}
 		} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
 			minorTickPositions = minorTickPositions.concat(
-				getTimeTicks(
-					normalizeTimeTickInterval(minorTickInterval),
+				axis.getTimeTicks(
+					axis.normalizeTimeTickInterval(minorTickInterval),
 					axis.min,
 					axis.max,
 					options.startOfWeek
@@ -1031,8 +1031,8 @@ Axis.prototype = {
 			}
 			
 			if (isDatetimeAxis) {
-				tickPositions = (axis.getNonLinearTimeTicks || getTimeTicks)(
-					normalizeTimeTickInterval(axis.tickInterval, options.units),
+				tickPositions = (axis.getNonLinearTimeTicks || axis.getTimeTicks)(
+					axis.normalizeTimeTickInterval(axis.tickInterval, options.units),
 					axis.min,
 					axis.max,
 					options.startOfWeek,
@@ -1936,3 +1936,4 @@ Axis.prototype = {
 	
 }; // end Axis
 
+extend(Axis.prototype, AxisPlotLineOrBandExtension);
