@@ -15879,8 +15879,9 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	drawPoints: function () {
 		var series = this,
+			chart = this.chart,
 			options = series.options,
-			renderer = series.chart.renderer,
+			renderer = chart.renderer,
 			shapeArgs;
 
 
@@ -15894,7 +15895,7 @@ var ColumnSeries = extendClass(Series, {
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.animate(merge(shapeArgs));
+					graphic[chart.pointCount < 100 ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)

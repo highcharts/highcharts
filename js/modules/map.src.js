@@ -946,15 +946,24 @@
 		translate: function () {
 			var series = this,
 				dataMin = Number.MAX_VALUE,
-				dataMax = Number.MIN_VALUE;
+				dataMax = Number.MIN_VALUE,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				doAnimation = series.chart.pointCount < 100;
 	
 			series.generatePoints();
 	
 			each(series.data, function (point) {
 				
+				var display = doAnimation || 
+					(point._maxX > xAxis.min &&
+					point._minX < xAxis.max &&
+					point._maxY > yAxis.min &&
+					point._minY < yAxis.max);
+
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					d: series.translatePath(point.path)
+					d: display ? series.translatePath(point.path) : ''
 				};
 				
 				// TODO: do point colors in drawPoints instead of point.init
