@@ -1231,7 +1231,8 @@ Axis.prototype = {
 			tickPositions = axis.tickPositions,
 			maxTicks = chart.maxTicks;
 
-		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
+		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && 
+				axis.options.alignTicks !== false && this.min !== UNDEFINED) {
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
 				tickAmount;
