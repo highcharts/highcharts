@@ -132,9 +132,10 @@
             <file name="VmlRenderer.js"/>
             <file name="CanVGRenderer.js"/>
             <file name="Tick.js"/>
+            <file name="Axis.js"/>
+            <file name="LogarithmicAxis.js"/>
             <file name="PlotLineOrBand.js"/>
             <file name="StackItem.js"/>
-            <file name="Axis.js"/>
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
             <file name="Legend.js"/>
@@ -193,6 +194,7 @@
             <file name="StockNavigation.js"/>
             <file name="StockChart.js"/>
             <file name="OrdinalAxis.js"/>
+            <file name="LogarithmicAxis.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>

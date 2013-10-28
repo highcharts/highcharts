@@ -6190,294 +6190,6 @@ Tick.prototype = {
 };
 
 /**
- * The object wrapper for plot lines and plot bands
- * @param {Object} options
- */
-function PlotLineOrBand(axis, options) {
-	this.axis = axis;
-
-	if (options) {
-		this.options = options;
-		this.id = options.id;
-	}
-}
-
-PlotLineOrBand.prototype = {
-	
-	/**
-	 * Render the plot line or plot band. If it is already existing,
-	 * move it.
-	 */
-	render: function () {
-		var plotLine = this,
-			axis = plotLine.axis,
-			horiz = axis.horiz,
-			halfPointRange = (axis.pointRange || 0) / 2,
-			options = plotLine.options,
-			optionsLabel = options.label,
-			label = plotLine.label,
-			width = options.width,
-			to = options.to,
-			from = options.from,
-			isBand = defined(from) && defined(to),
-			value = options.value,
-			dashStyle = options.dashStyle,
-			svgElem = plotLine.svgElem,
-			path = [],
-			addEvent,
-			eventType,
-			xs,
-			ys,
-			x,
-			y,
-			color = options.color,
-			zIndex = options.zIndex,
-			events = options.events,
-			attribs,
-			renderer = axis.chart.renderer;
-
-		// logarithmic conversion
-		if (axis.isLog) {
-			from = log2lin(from);
-			to = log2lin(to);
-			value = log2lin(value);
-		}
-
-		// plot line
-		if (width) {
-			path = axis.getPlotLinePath(value, width);
-			attribs = {
-				stroke: color,
-				'stroke-width': width
-			};
-			if (dashStyle) {
-				attribs.dashstyle = dashStyle;
-			}
-		} else if (isBand) { // plot band
-			
-			// keep within plot area
-			from = mathMax(from, axis.min - halfPointRange);
-			to = mathMin(to, axis.max + halfPointRange);
-			
-			path = axis.getPlotBandPath(from, to, options);
-			attribs = {
-				fill: color
-			};
-			if (options.borderWidth) {
-				attribs.stroke = options.borderColor;
-				attribs['stroke-width'] = options.borderWidth;
-			}
-		} else {
-			return;
-		}
-		// zIndex
-		if (defined(zIndex)) {
-			attribs.zIndex = zIndex;
-		}
-
-		// common for lines and bands
-		if (svgElem) {
-			if (path) {
-				svgElem.animate({
-					d: path
-				}, null, svgElem.onGetPath);
-			} else {
-				svgElem.hide();
-				svgElem.onGetPath = function () {
-					svgElem.show();
-				};
-				if (label) {
-					plotLine.label = label = label.destroy();
-				}
-			}
-		} else if (path && path.length) {
-			plotLine.svgElem = svgElem = renderer.path(path)
-				.attr(attribs).add();
-
-			// events
-			if (events) {
-				addEvent = function (eventType) {
-					svgElem.on(eventType, function (e) {
-						events[eventType].apply(plotLine, [e]);
-					});
-				};
-				for (eventType in events) {
-					addEvent(eventType);
-				}
-			}
-		}
-
-		// the plot band/line label
-		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
-			// apply defaults
-			optionsLabel = merge({
-				align: horiz && isBand && 'center',
-				x: horiz ? !isBand && 4 : 10,
-				verticalAlign : !horiz && isBand && 'middle',
-				y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
-				rotation: horiz && !isBand && 90
-			}, optionsLabel);
-
-			// add the SVG element
-			if (!label) {
-				plotLine.label = label = renderer.text(
-						optionsLabel.text,
-						0,
-						0,
-						optionsLabel.useHTML
-					)
-					.attr({
-						align: optionsLabel.textAlign || optionsLabel.align,
-						rotation: optionsLabel.rotation,
-						zIndex: zIndex
-					})
-					.css(optionsLabel.style)
-					.add();
-			}
-
-			// get the bounding box and align the label
-			xs = [path[1], path[4], pick(path[6], path[1])];
-			ys = [path[2], path[5], pick(path[7], path[2])];
-			x = arrayMin(xs);
-			y = arrayMin(ys);
-
-			label.align(optionsLabel, false, {
-				x: x,
-				y: y,
-				width: arrayMax(xs) - x,
-				height: arrayMax(ys) - y
-			});
-			label.show();
-
-		} else if (label) { // move out of sight
-			label.hide();
-		}
-
-		// chainable
-		return plotLine;
-	},
-
-	/**
-	 * Remove the plot line or band
-	 */
-	destroy: function () {
-		// remove it from the lookup
-		erase(this.axis.plotLinesAndBands, this);
-		
-		delete this.axis;
-		destroyObjectProperties(this);
-	}
-};
-/**
- * The class for stack items
- */
-function StackItem(axis, options, isNegative, x, stackOption, stacking) {
-	
-	var inverted = axis.chart.inverted;
-
-	this.axis = axis;
-
-	// Tells if the stack is negative
-	this.isNegative = isNegative;
-
-	// Save the options to be able to style the label
-	this.options = options;
-
-	// Save the x value to be able to position the label later
-	this.x = x;
-
-	// Initialize total value
-	this.total = null;
-
-	// This will keep each points' extremes stored by series.index
-	this.points = {};
-
-	// Save the stack option on the series configuration object, and whether to treat it as percent
-	this.stack = stackOption;
-	this.percent = stacking === 'percent';
-
-	// The align options and text align varies on whether the stack is negative and
-	// if the chart is inverted or not.
-	// First test the user supplied value, then use the dynamic.
-	this.alignOptions = {
-		align: options.align || (inverted ? (isNegative ? 'left' : 'right') : 'center'),
-		verticalAlign: options.verticalAlign || (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
-		y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
-		x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
-	};
-
-	this.textAlign = options.textAlign || (inverted ? (isNegative ? 'right' : 'left') : 'center');
-}
-
-StackItem.prototype = {
-	destroy: function () {
-		destroyObjectProperties(this, this.axis);
-	},
-
-	/**
-	 * Renders the stack total label and adds it to the stack label group.
-	 */
-	render: function (group) {
-		var options = this.options,
-			formatOption = options.format,
-			str = formatOption ?
-				format(formatOption, this) : 
-				options.formatter.call(this);  // format the text in the label
-
-		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
-		if (this.label) {
-			this.label.attr({text: str, visibility: HIDDEN});
-		// Create new label
-		} else {
-			this.label =
-				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
-					.css(options.style)				// apply style
-					.attr({
-						align: this.textAlign,				// fix the text-anchor
-						rotation: options.rotation,	// rotation
-						visibility: HIDDEN					// hidden until setOffset is called
-					})				
-					.add(group);							// add to the labels-group
-		}
-	},
-
-	/**
-	 * Sets the offset that the stack has from the x value and repositions the label.
-	 */
-	setOffset: function (xOffset, xWidth) {
-		var stackItem = this,
-			axis = stackItem.axis,
-			chart = axis.chart,
-			inverted = chart.inverted,
-			neg = this.isNegative,							// special treatment is needed for negative stacks
-			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
-			yZero = axis.translate(0),						// stack origin
-			h = mathAbs(y - yZero),							// stack height
-			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
-			plotHeight = chart.plotHeight,
-			stackBox = {	// this is the box for the complete stack
-				x: inverted ? (neg ? y : y - h) : x,
-				y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
-				width: inverted ? h : xWidth,
-				height: inverted ? xWidth : h
-			},
-			label = this.label,
-			alignAttr;
-		
-		if (label) {
-			label.align(this.alignOptions, null, stackBox);	// align the label to the box
-				
-			// Set visibility (#678)
-			alignAttr = label.alignAttr;
-			label.attr({ 
-				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
-					(hasSVG ? 'inherit' : VISIBLE) : 
-					HIDDEN
-			});
-		}
-	}
-};
-/**
  * Create a new axis object
  * @param {Object} chart
  * @param {Object} options
@@ -7130,28 +6842,6 @@ Axis.prototype = {
 	},
 	
 	/**
-	 * Create the path for a plot band
-	 */
-	getPlotBandPath: function (from, to) {
-
-		var toPath = this.getPlotLinePath(to),
-			path = this.getPlotLinePath(from);
-			
-		if (path && toPath) {
-			path.push(
-				toPath[4],
-				toPath[5],
-				toPath[1],
-				toPath[2]
-			);
-		} else { // outside the axis area
-			path = null;
-		}
-		
-		return path;
-	},
-	
-	/**
 	 * Set the tick positions of a linear axis to round values like whole tens or every five.
 	 */
 	getLinearTickPositions: function (tickInterval, min, max) {
@@ -7183,104 +6873,6 @@ Axis.prototype = {
 		return tickPositions;
 	},
 	
-	/**
-	 * Set the tick positions of a logarithmic axis
-	 */
-	getLogTickPositions: function (interval, min, max, minor) {
-		var axis = this,
-			options = axis.options,
-			axisLength = axis.len,
-			// Since we use this method for both major and minor ticks,
-			// use a local variable and return the result
-			positions = []; 
-		
-		// Reset
-		if (!minor) {
-			axis._minorAutoInterval = null;
-		}
-		
-		// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
-		if (interval >= 0.5) {
-			interval = mathRound(interval);
-			positions = axis.getLinearTickPositions(interval, min, max);
-			
-		// Second case: We need intermediary ticks. For example 
-		// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
-		} else if (interval >= 0.08) {
-			var roundedMin = mathFloor(min),
-				intermediate,
-				i,
-				j,
-				len,
-				pos,
-				lastPos,
-				break2;
-				
-			if (interval > 0.3) {
-				intermediate = [1, 2, 4];
-			} else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
-				intermediate = [1, 2, 4, 6, 8];
-			} else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
-				intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-			}
-			
-			for (i = roundedMin; i < max + 1 && !break2; i++) {
-				len = intermediate.length;
-				for (j = 0; j < len && !break2; j++) {
-					pos = log2lin(lin2log(i) * intermediate[j]);
-					
-					if (pos > min && (!minor || lastPos <= max)) { // #1670
-						positions.push(lastPos);
-					}
-					
-					if (lastPos > max) {
-						break2 = true;
-					}
-					lastPos = pos;
-				}
-			}
-			
-		// Third case: We are so deep in between whole logarithmic values that
-		// we might as well handle the tick positions like a linear axis. For
-		// example 1.01, 1.02, 1.03, 1.04.
-		} else {
-			var realMin = lin2log(min),
-				realMax = lin2log(max),
-				tickIntervalOption = options[minor ? 'minorTickInterval' : 'tickInterval'],
-				filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
-				tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
-				totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
-			
-			interval = pick(
-				filteredTickIntervalOption,
-				axis._minorAutoInterval,
-				(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
-			);
-			
-			interval = normalizeTickInterval(
-				interval, 
-				null, 
-				getMagnitude(interval)
-			);
-			
-			positions = map(axis.getLinearTickPositions(
-				interval, 
-				realMin,
-				realMax	
-			), log2lin);
-			
-			if (!minor) {
-				axis._minorAutoInterval = interval / 5;
-			}
-		}
-		
-		// Set the axis-level tickInterval variable 
-		if (!minor) {
-			axis.tickInterval = interval;
-		}
-		return positions;
-	},
-
 	/**
 	 * Return the minor tick positions. For logarithmic axes, reuse the same logic
 	 * as for major ticks.
@@ -7944,35 +7536,6 @@ Axis.prototype = {
 		return axis.translate(threshold, 0, 1, 0, 1);
 	},
 
-	addPlotBand: function (options) {
-		this.addPlotBandOrLine(options, 'plotBands');
-	},
-	
-	addPlotLine: function (options) {
-		this.addPlotBandOrLine(options, 'plotLines');
-	},
-
-	/**
-	 * Add a plot band or plot line after render time
-	 *
-	 * @param options {Object} The plotBand or plotLine configuration object
-	 */
-	addPlotBandOrLine: function (options, coll) {
-		var obj = new PlotLineOrBand(this, options).render(),
-			userOptions = this.userOptions;
-
-		if (obj) { // #2189
-			// Add it to the user options for exporting and Axis.update
-			if (coll) {
-				userOptions[coll] = userOptions[coll] || [];
-				userOptions[coll].push(options); 
-			}
-			this.plotLinesAndBands.push(obj); 
-		}
-		
-		return obj;
-	},
-
 	/**
 	 * Compute auto alignment for the axis label based on which side the axis is on 
 	 * and the given rotation for the label
@@ -8460,31 +8023,6 @@ Axis.prototype = {
 	},
 
 	/**
-	 * Remove a plot band or plot line from the chart by id
-	 * @param {Object} id
-	 */
-	removePlotBandOrLine: function (id) {
-		var plotLinesAndBands = this.plotLinesAndBands,
-			options = this.options,
-			userOptions = this.userOptions,
-			i = plotLinesAndBands.length;
-		while (i--) {
-			if (plotLinesAndBands[i].id === id) {
-				plotLinesAndBands[i].destroy();
-			}
-		}
-		each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
-			i = arr.length;
-			while (i--) {
-				if (arr[i].id === id) {
-					erase(arr, arr[i]);
-				}
-			}
-		});
-
-	},
-
-	/**
 	 * Update the axis title by options
 	 */
 	setTitle: function (newTitleOptions, redraw) {
@@ -8589,6 +8127,473 @@ Axis.prototype = {
 	
 }; // end Axis
 
+/**
+ * Methods defined on the Axis prototype
+ */
+
+/**
+ * Set the tick positions of a logarithmic axis
+ */
+Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
+	var axis = this,
+		options = axis.options,
+		axisLength = axis.len,
+		// Since we use this method for both major and minor ticks,
+		// use a local variable and return the result
+		positions = []; 
+	
+	// Reset
+	if (!minor) {
+		axis._minorAutoInterval = null;
+	}
+	
+	// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
+	if (interval >= 0.5) {
+		interval = mathRound(interval);
+		positions = axis.getLinearTickPositions(interval, min, max);
+		
+	// Second case: We need intermediary ticks. For example 
+	// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
+	} else if (interval >= 0.08) {
+		var roundedMin = mathFloor(min),
+			intermediate,
+			i,
+			j,
+			len,
+			pos,
+			lastPos,
+			break2;
+			
+		if (interval > 0.3) {
+			intermediate = [1, 2, 4];
+		} else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
+			intermediate = [1, 2, 4, 6, 8];
+		} else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
+			intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+		}
+		
+		for (i = roundedMin; i < max + 1 && !break2; i++) {
+			len = intermediate.length;
+			for (j = 0; j < len && !break2; j++) {
+				pos = log2lin(lin2log(i) * intermediate[j]);
+				
+				if (pos > min && (!minor || lastPos <= max)) { // #1670
+					positions.push(lastPos);
+				}
+				
+				if (lastPos > max) {
+					break2 = true;
+				}
+				lastPos = pos;
+			}
+		}
+		
+	// Third case: We are so deep in between whole logarithmic values that
+	// we might as well handle the tick positions like a linear axis. For
+	// example 1.01, 1.02, 1.03, 1.04.
+	} else {
+		var realMin = lin2log(min),
+			realMax = lin2log(max),
+			tickIntervalOption = options[minor ? 'minorTickInterval' : 'tickInterval'],
+			filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
+			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
+			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
+		
+		interval = pick(
+			filteredTickIntervalOption,
+			axis._minorAutoInterval,
+			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
+		);
+		
+		interval = normalizeTickInterval(
+			interval, 
+			null, 
+			getMagnitude(interval)
+		);
+		
+		positions = map(axis.getLinearTickPositions(
+			interval, 
+			realMin,
+			realMax	
+		), log2lin);
+		
+		if (!minor) {
+			axis._minorAutoInterval = interval / 5;
+		}
+	}
+	
+	// Set the axis-level tickInterval variable 
+	if (!minor) {
+		axis.tickInterval = interval;
+	}
+	return positions;
+};/**
+ * The object wrapper for plot lines and plot bands
+ * @param {Object} options
+ */
+function PlotLineOrBand(axis, options) {
+	this.axis = axis;
+
+	if (options) {
+		this.options = options;
+		this.id = options.id;
+	}
+}
+
+PlotLineOrBand.prototype = {
+	
+	/**
+	 * Render the plot line or plot band. If it is already existing,
+	 * move it.
+	 */
+	render: function () {
+		var plotLine = this,
+			axis = plotLine.axis,
+			horiz = axis.horiz,
+			halfPointRange = (axis.pointRange || 0) / 2,
+			options = plotLine.options,
+			optionsLabel = options.label,
+			label = plotLine.label,
+			width = options.width,
+			to = options.to,
+			from = options.from,
+			isBand = defined(from) && defined(to),
+			value = options.value,
+			dashStyle = options.dashStyle,
+			svgElem = plotLine.svgElem,
+			path = [],
+			addEvent,
+			eventType,
+			xs,
+			ys,
+			x,
+			y,
+			color = options.color,
+			zIndex = options.zIndex,
+			events = options.events,
+			attribs,
+			renderer = axis.chart.renderer;
+
+		// logarithmic conversion
+		if (axis.isLog) {
+			from = log2lin(from);
+			to = log2lin(to);
+			value = log2lin(value);
+		}
+
+		// plot line
+		if (width) {
+			path = axis.getPlotLinePath(value, width);
+			attribs = {
+				stroke: color,
+				'stroke-width': width
+			};
+			if (dashStyle) {
+				attribs.dashstyle = dashStyle;
+			}
+		} else if (isBand) { // plot band
+			
+			// keep within plot area
+			from = mathMax(from, axis.min - halfPointRange);
+			to = mathMin(to, axis.max + halfPointRange);
+			
+			path = axis.getPlotBandPath(from, to, options);
+			attribs = {
+				fill: color
+			};
+			if (options.borderWidth) {
+				attribs.stroke = options.borderColor;
+				attribs['stroke-width'] = options.borderWidth;
+			}
+		} else {
+			return;
+		}
+		// zIndex
+		if (defined(zIndex)) {
+			attribs.zIndex = zIndex;
+		}
+
+		// common for lines and bands
+		if (svgElem) {
+			if (path) {
+				svgElem.animate({
+					d: path
+				}, null, svgElem.onGetPath);
+			} else {
+				svgElem.hide();
+				svgElem.onGetPath = function () {
+					svgElem.show();
+				};
+				if (label) {
+					plotLine.label = label = label.destroy();
+				}
+			}
+		} else if (path && path.length) {
+			plotLine.svgElem = svgElem = renderer.path(path)
+				.attr(attribs).add();
+
+			// events
+			if (events) {
+				addEvent = function (eventType) {
+					svgElem.on(eventType, function (e) {
+						events[eventType].apply(plotLine, [e]);
+					});
+				};
+				for (eventType in events) {
+					addEvent(eventType);
+				}
+			}
+		}
+
+		// the plot band/line label
+		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
+			// apply defaults
+			optionsLabel = merge({
+				align: horiz && isBand && 'center',
+				x: horiz ? !isBand && 4 : 10,
+				verticalAlign : !horiz && isBand && 'middle',
+				y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
+				rotation: horiz && !isBand && 90
+			}, optionsLabel);
+
+			// add the SVG element
+			if (!label) {
+				plotLine.label = label = renderer.text(
+						optionsLabel.text,
+						0,
+						0,
+						optionsLabel.useHTML
+					)
+					.attr({
+						align: optionsLabel.textAlign || optionsLabel.align,
+						rotation: optionsLabel.rotation,
+						zIndex: zIndex
+					})
+					.css(optionsLabel.style)
+					.add();
+			}
+
+			// get the bounding box and align the label
+			xs = [path[1], path[4], pick(path[6], path[1])];
+			ys = [path[2], path[5], pick(path[7], path[2])];
+			x = arrayMin(xs);
+			y = arrayMin(ys);
+
+			label.align(optionsLabel, false, {
+				x: x,
+				y: y,
+				width: arrayMax(xs) - x,
+				height: arrayMax(ys) - y
+			});
+			label.show();
+
+		} else if (label) { // move out of sight
+			label.hide();
+		}
+
+		// chainable
+		return plotLine;
+	},
+
+	/**
+	 * Remove the plot line or band
+	 */
+	destroy: function () {
+		// remove it from the lookup
+		erase(this.axis.plotLinesAndBands, this);
+		
+		delete this.axis;
+		destroyObjectProperties(this);
+	}
+};
+
+/**
+ * Methods defined on the Axis prototype
+ */
+
+/**
+ * Create the path for a plot band
+ */
+Axis.prototype.getPlotBandPath = function (from, to) {
+
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
+		
+	if (path && toPath) {
+		path.push(
+			toPath[4],
+			toPath[5],
+			toPath[1],
+			toPath[2]
+		);
+	} else { // outside the axis area
+		path = null;
+	}
+	
+	return path;
+};
+
+Axis.prototype.addPlotBand = function (options) {
+		this.addPlotBandOrLine(options, 'plotBands');
+};
+	
+Axis.prototype.addPlotLine = function (options) {
+		this.addPlotBandOrLine(options, 'plotLines');
+};
+
+/**
+ * Add a plot band or plot line after render time
+ *
+ * @param options {Object} The plotBand or plotLine configuration object
+ */
+Axis.prototype.addPlotBandOrLine = function (options, coll) {
+	var obj = new PlotLineOrBand(this, options).render(),
+		userOptions = this.userOptions;
+
+	if (obj) { // #2189
+		// Add it to the user options for exporting and Axis.update
+		if (coll) {
+			userOptions[coll] = userOptions[coll] || [];
+			userOptions[coll].push(options); 
+		}
+		this.plotLinesAndBands.push(obj); 
+	}
+	
+	return obj;
+};
+
+/**
+ * Remove a plot band or plot line from the chart by id
+ * @param {Object} id
+ */
+Axis.prototype.removePlotBandOrLine = function (id) {
+	var plotLinesAndBands = this.plotLinesAndBands,
+		options = this.options,
+		userOptions = this.userOptions,
+		i = plotLinesAndBands.length;
+	while (i--) {
+		if (plotLinesAndBands[i].id === id) {
+			plotLinesAndBands[i].destroy();
+		}
+	}
+	each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
+		i = arr.length;
+		while (i--) {
+			if (arr[i].id === id) {
+				erase(arr, arr[i]);
+			}
+		}
+	});
+
+};/**
+ * The class for stack items
+ */
+function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+	
+	var inverted = axis.chart.inverted;
+
+	this.axis = axis;
+
+	// Tells if the stack is negative
+	this.isNegative = isNegative;
+
+	// Save the options to be able to style the label
+	this.options = options;
+
+	// Save the x value to be able to position the label later
+	this.x = x;
+
+	// Initialize total value
+	this.total = null;
+
+	// This will keep each points' extremes stored by series.index
+	this.points = {};
+
+	// Save the stack option on the series configuration object, and whether to treat it as percent
+	this.stack = stackOption;
+	this.percent = stacking === 'percent';
+
+	// The align options and text align varies on whether the stack is negative and
+	// if the chart is inverted or not.
+	// First test the user supplied value, then use the dynamic.
+	this.alignOptions = {
+		align: options.align || (inverted ? (isNegative ? 'left' : 'right') : 'center'),
+		verticalAlign: options.verticalAlign || (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
+		y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
+		x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
+	};
+
+	this.textAlign = options.textAlign || (inverted ? (isNegative ? 'right' : 'left') : 'center');
+}
+
+StackItem.prototype = {
+	destroy: function () {
+		destroyObjectProperties(this, this.axis);
+	},
+
+	/**
+	 * Renders the stack total label and adds it to the stack label group.
+	 */
+	render: function (group) {
+		var options = this.options,
+			formatOption = options.format,
+			str = formatOption ?
+				format(formatOption, this) : 
+				options.formatter.call(this);  // format the text in the label
+
+		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
+		if (this.label) {
+			this.label.attr({text: str, visibility: HIDDEN});
+		// Create new label
+		} else {
+			this.label =
+				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+					.css(options.style)				// apply style
+					.attr({
+						align: this.textAlign,				// fix the text-anchor
+						rotation: options.rotation,	// rotation
+						visibility: HIDDEN					// hidden until setOffset is called
+					})				
+					.add(group);							// add to the labels-group
+		}
+	},
+
+	/**
+	 * Sets the offset that the stack has from the x value and repositions the label.
+	 */
+	setOffset: function (xOffset, xWidth) {
+		var stackItem = this,
+			axis = stackItem.axis,
+			chart = axis.chart,
+			inverted = chart.inverted,
+			neg = this.isNegative,							// special treatment is needed for negative stacks
+			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			yZero = axis.translate(0),						// stack origin
+			h = mathAbs(y - yZero),							// stack height
+			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
+			plotHeight = chart.plotHeight,
+			stackBox = {	// this is the box for the complete stack
+				x: inverted ? (neg ? y : y - h) : x,
+				y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
+				width: inverted ? h : xWidth,
+				height: inverted ? xWidth : h
+			},
+			label = this.label,
+			alignAttr;
+		
+		if (label) {
+			label.align(this.alignOptions, null, stackBox);	// align the label to the box
+				
+			// Set visibility (#678)
+			alignAttr = label.alignAttr;
+			label.attr({ 
+				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+					(hasSVG ? 'inherit' : VISIBLE) : 
+					HIDDEN
+			});
+		}
+	}
+};
 /**
  * The tooltip object
  * @param {Object} chart The chart instance

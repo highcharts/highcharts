@@ -177,3 +177,83 @@ PlotLineOrBand.prototype = {
 		destroyObjectProperties(this);
 	}
 };
+
+/**
+ * Methods defined on the Axis prototype
+ */
+
+/**
+ * Create the path for a plot band
+ */
+Axis.prototype.getPlotBandPath = function (from, to) {
+
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
+		
+	if (path && toPath) {
+		path.push(
+			toPath[4],
+			toPath[5],
+			toPath[1],
+			toPath[2]
+		);
+	} else { // outside the axis area
+		path = null;
+	}
+	
+	return path;
+};
+
+Axis.prototype.addPlotBand = function (options) {
+		this.addPlotBandOrLine(options, 'plotBands');
+};
+	
+Axis.prototype.addPlotLine = function (options) {
+		this.addPlotBandOrLine(options, 'plotLines');
+};
+
+/**
+ * Add a plot band or plot line after render time
+ *
+ * @param options {Object} The plotBand or plotLine configuration object
+ */
+Axis.prototype.addPlotBandOrLine = function (options, coll) {
+	var obj = new PlotLineOrBand(this, options).render(),
+		userOptions = this.userOptions;
+
+	if (obj) { // #2189
+		// Add it to the user options for exporting and Axis.update
+		if (coll) {
+			userOptions[coll] = userOptions[coll] || [];
+			userOptions[coll].push(options); 
+		}
+		this.plotLinesAndBands.push(obj); 
+	}
+	
+	return obj;
+};
+
+/**
+ * Remove a plot band or plot line from the chart by id
+ * @param {Object} id
+ */
+Axis.prototype.removePlotBandOrLine = function (id) {
+	var plotLinesAndBands = this.plotLinesAndBands,
+		options = this.options,
+		userOptions = this.userOptions,
+		i = plotLinesAndBands.length;
+	while (i--) {
+		if (plotLinesAndBands[i].id === id) {
+			plotLinesAndBands[i].destroy();
+		}
+	}
+	each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
+		i = arr.length;
+		while (i--) {
+			if (arr[i].id === id) {
+				erase(arr, arr[i]);
+			}
+		}
+	});
+
+};
