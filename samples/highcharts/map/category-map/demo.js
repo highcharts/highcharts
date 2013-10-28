@@ -205,7 +205,7 @@ $(function () {
 
         plotOptions: {
             map: {
-                dataJoinBy: 'code',
+                joinBy: 'code',
                 dataLabels: {
                     enabled: true,
                     color: 'white',
@@ -227,7 +227,6 @@ $(function () {
         
         series : [{
             name: 'Other',
-            allAreas: true,
             nullColor: '#F8F8F8'
         }, {
             name: 'UTC',

@@ -455,6 +455,7 @@
 	 * Extend the default options with map options
 	 */
 	plotOptions.map = merge(plotOptions.scatter, {
+		allAreas: true,
 		animation: false, // makes the complex shapes slow
 		nullColor: '#F8F8F8',
 		borderColor: 'silver',
@@ -485,7 +486,7 @@
 			var point = Point.prototype.applyOptions.call(this, options, x),
 				series = this.series,
 				seriesOptions = series.options,
-				joinBy = seriesOptions.dataJoinBy,
+				joinBy = seriesOptions.joinBy,
 				mapPoint;
 
 			if (joinBy && seriesOptions.mapData) {
@@ -809,8 +810,8 @@
 							}
 						}
 						// Cache point bounding box for use to position data labels, bubbles etc
-						point._midX = pointMinX + (pointMaxX - pointMinX) * point.middleX || 0.5;
-						point._midY = pointMinY + (pointMaxY - pointMinY) * point.middleY || 0.5;
+						point._midX = pointMinX + (pointMaxX - pointMinX) * (point.middleX || 0.5); // pick is slower and very marginally needed
+						point._midY = pointMinY + (pointMaxY - pointMinY) * (point.middleY || 0.5);
 						point._maxX = pointMaxX;
 						point._minX = pointMinX;
 						point._maxY = pointMaxY;
@@ -886,7 +887,7 @@
 		setData: function (data, redraw) {
 			var options = this.options,
 				mapData = options.mapData,
-				joinBy = options.dataJoinBy,
+				joinBy = options.joinBy,
 				dataUsed = [];
 			
 

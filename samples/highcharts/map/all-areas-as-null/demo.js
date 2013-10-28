@@ -226,7 +226,7 @@ $(function () {
                 code: 'dk',
                 y: 1
             }],
-            dataJoinBy: 'code',
+            joinBy: 'code',
             dataLabels: {
                 enabled: true,
                 color: 'white',
