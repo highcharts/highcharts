@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.6 (2013-10-04)
+ * @license Highcharts JS v3.0.7 (2013-10-24)
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -1713,7 +1713,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
-	// sizeBy: 'area' // docs: 'area' or 'width'
+	// sizeBy: 'area'
 	tooltip: {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},

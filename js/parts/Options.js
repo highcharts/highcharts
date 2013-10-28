@@ -127,7 +127,7 @@ defaultOptions = {
 			//enableMouseTracking: true,
 			events: {},
 			//legendIndex: 0,
-			//linecap: 'round', // docs
+			//linecap: 'round',
 			lineWidth: 2,
 			//shadow: false,
 			// stacking: null,
@@ -172,7 +172,7 @@ defaultOptions = {
 			pointRange: 0,
 			//pointStart: 0,
 			//pointInterval: 1,
-			//showInLegend: null, // auto: true for standalone series, false for linked series // docs
+			//showInLegend: null, // auto: true for standalone series, false for linked series
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,

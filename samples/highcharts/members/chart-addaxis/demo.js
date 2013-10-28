@@ -10,7 +10,8 @@ $(function () {
                 text: 'Temperature'
             },
             lineWidth: 2,
-            lineColor: '#F33'
+            lineColor: '#F33',
+            id: 'temperature-axis'
         },
         
         series: [{
@@ -43,7 +44,7 @@ $(function () {
         $('#remove').attr('disabled', false);
     });
     $('#remove').click(function() {
-        chart.get('rainfall-axis').remove();
+        chart.get('temperature-axis').remove();
 
         $(this).attr('disabled', true);
         $('#add').attr('disabled', false);

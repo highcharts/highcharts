@@ -4,7 +4,10 @@ $(function () {
             type: 'pie'
         },
         series: [{
-            data: [29.9, 71.5, 106.4]
+            data: [29.9, 71.5, 106.4],
+            dataLabels: {
+                format: '{point.y}'
+            }
         }]
     });
 

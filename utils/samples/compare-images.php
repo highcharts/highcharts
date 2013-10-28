@@ -1,8 +1,8 @@
 <?php
 ini_set('display_errors', 'on');
 
-define('EXPORT_SERVER', 'http://export.highcharts.com');
-//define('EXPORT_SERVER', 'http://localhost:8080/export/');
+//define('EXPORT_SERVER', 'http://export.highcharts.com');
+define('EXPORT_SERVER', 'http://localhost:8080/export/');
 
 /**
  * Send a post request
@@ -142,7 +142,7 @@ $key = $browser['parent'];
 if (isset($compare->$path->$key)) {  
 	$difference['reference'] = $compare->$path->$key;
 } elseif (isset($difference['dissimilarityIndex'])) {
-	$compare->$path->$key = $difference['dissimilarityIndex'];
+	@$compare->$path->$key = $difference['dissimilarityIndex'];
 }
 file_put_contents($tempFile, json_encode($compare));
 

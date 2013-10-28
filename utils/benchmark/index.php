@@ -17,9 +17,10 @@
 			// Array of different Highcharts versions.
 			// index 0 being default.
 			$highchartsVersions = array(
-				0 => 'http://code.highcharts.com/highcharts.js',
-				1 => 'http://code.highcharts.com/3.0.2/highcharts.js'
-				);
+				'http://code.highcharts.local/highcharts.js',
+				'http://code.highcharts.com/highcharts.js',
+				'http://code.highcharts.com/3.0.2/highcharts.js'
+			);
 
 			// Repetitions each chart is to be run within runChart();
 			// This takes longer time but results in a more accurate average.

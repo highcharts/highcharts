@@ -74,6 +74,59 @@ function getResources() {
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
+
+
+		<?php if ($_GET['profile']) : ?>
+		$(function () {
+			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
+				var chart,
+					start;
+
+				// Start profile
+				if (window.console && console.profileEnd) {
+					console.profile('<?php echo $path ?>');
+				}
+				
+				chart = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+				if (window.console && console.profileEnd) {
+			 		console.profileEnd();
+			 	}
+
+			 	return chart;
+
+			});
+		});
+		<?php endif ?>
+		<?php if ($_GET['time']) : ?>
+		$(function () {
+			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
+				var chart,
+					start;
+
+				// Start profile
+				if (window.console && console.time) {
+					console.time('<?php echo $path ?>');
+				} else {
+					start = +new Date();
+				}
+
+
+				chart = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+				if (window.console && console.time) {
+					console.timeEnd('<?php echo $path ?>');
+				} else if (window.console) {
+					console.log('<?php echo $path ?>: ' + (new Date() - start) + 'ms');
+				}
+				
+			 	return chart;
+
+			});
+		});
+		<?php endif ?>
+
+
 		<?php @include("$fullpath/demo.js"); ?>
 		</script>
 
@@ -120,6 +173,7 @@ function getResources() {
 					}
 
 				}
+
 			});
 		</script>
 
@@ -155,6 +209,10 @@ function getResources() {
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;profile=1">Profile</a>
+				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;time=1">Time</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>

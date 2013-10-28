@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.6 (2013-10-04)
+ * @license Highcharts JS v3.0.7 (2013-10-24)
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highcharts',
-	VERSION = '3.0.6',
+	VERSION = '3.0.7',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -686,7 +686,7 @@ function normalizeTimeTickInterval(tickInterval, unitsOption) {
 	count = normalizeTickInterval(
 		tickInterval / interval, 
 		multiples,
-		unit[0] === YEAR ? getMagnitude(tickInterval / interval) : 1 // #1913
+		unit[0] === YEAR ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
 	
 	return {
@@ -1508,8 +1508,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/3.0.6/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.6/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/3.0.7/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.7/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1597,7 +1597,7 @@ defaultOptions = {
 			//enableMouseTracking: true,
 			events: {},
 			//legendIndex: 0,
-			//linecap: 'round', // docs
+			//linecap: 'round',
 			lineWidth: 2,
 			//shadow: false,
 			// stacking: null,
@@ -1642,7 +1642,7 @@ defaultOptions = {
 			pointRange: 0,
 			//pointStart: 0,
 			//pointInterval: 1,
-			//showInLegend: null, // auto: true for standalone series, false for linked series // docs
+			//showInLegend: null, // auto: true for standalone series, false for linked series
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
@@ -1881,6 +1881,10 @@ function getOptions() {
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
  */
+var rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+	hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
+	rgbRegEx = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/;
+
 var Color = function (input) {
 	// declare variables
 	var rgba = [], result, stops;
@@ -1900,17 +1904,17 @@ var Color = function (input) {
 		// Solid colors
 		} else {
 			// rgba
-			result = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/.exec(input);
+			result = rgbaRegEx.exec(input);
 			if (result) {
 				rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
 			} else { 
 				// hex
-				result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(input);
+				result = hexRegEx.exec(input);
 				if (result) {
 					rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
 				} else {
 					// rgb
-					result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(input);
+					result = rgbRegEx.exec(input);
 					if (result) {
 						rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
 					}
@@ -2977,7 +2981,7 @@ SVGElement.prototype = {
 		var wrapper = this,
 			element = wrapper.element || {},
 			shadows = wrapper.shadows,
-			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && element.parentNode,
+			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && wrapper.parentGroup,
 			grandParent,
 			key,
 			i;
@@ -3008,10 +3012,11 @@ SVGElement.prototype = {
 			});
 		}
 
-		// In case of useHTML, clean up empty containers emulating SVG groups (#1960).
-		while (parentToClean && parentToClean.childNodes.length === 0) {
-			grandParent = parentToClean.parentNode;
-			wrapper.safeRemoveChild(parentToClean);
+		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393).
+		while (parentToClean && parentToClean.div.childNodes.length === 0) {
+			grandParent = parentToClean.parentGroup;
+			wrapper.safeRemoveChild(parentToClean.div);
+			delete parentToClean.div;
 			parentToClean = grandParent;
 		}
 
@@ -4145,6 +4150,8 @@ SVGRenderer.prototype = {
 					parentGroup,
 					parents = [];
 
+				this.parentGroup = svgGroupWrapper;
+
 				// Create a mock group to hold the HTML elements
 				if (svgGroupWrapper) {
 					htmlGroup = svgGroupWrapper.div;
@@ -5095,7 +5102,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	init: function (container, width, height) {
 		var renderer = this,
 			boxWrapper,
-			box;
+			box,
+			css;
 
 		renderer.alignedObjects = [];
 
@@ -5120,10 +5128,14 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
 
-			// Setup default CSS (#2153)
-			(doc.styleSheets.length ? doc.styleSheets[0] : doc.createStyleSheet()).cssText +=
-				'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
+			// Setup default CSS (#2153, #2368, #2384)
+			css = 'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
 				'{ behavior:url(#default#VML); display: inline-block; } ';
+			try {
+				doc.createStyleSheet().cssText = css;
+			} catch (e) {
+				doc.styleSheets[0].cssText += css;
+			}
 
 		}
 	},
@@ -6274,6 +6286,9 @@ PlotLineOrBand.prototype = {
 				svgElem.onGetPath = function () {
 					svgElem.show();
 				};
+				if (label) {
+					plotLine.label = label = label.destroy();
+				}
 			}
 		} else if (path && path.length) {
 			plotLine.svgElem = svgElem = renderer.path(path)
@@ -7554,7 +7569,8 @@ Axis.prototype = {
 					(axis.max - axis.min) * tickPixelIntervalOption / mathMax(axis.len, tickPixelIntervalOption)
 			);
 			// For squished axes, set only two ticks
-			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial) {
+			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial && 
+					!categories && options.startOnTick && options.endOnTick) {
 				keepTwoTicksOnly = true;
 				axis.tickInterval /= 4; // tick extremes closer to the real values
 			}
@@ -7628,6 +7644,7 @@ Axis.prototype = {
 			} else {
 				tickPositions = axis.getLinearTickPositions(axis.tickInterval, axis.min, axis.max);
 			}
+
 			if (keepTwoTicksOnly) {
 				tickPositions.splice(1, tickPositions.length - 2);
 			}
@@ -7693,7 +7710,8 @@ Axis.prototype = {
 			tickPositions = axis.tickPositions,
 			maxTicks = chart.maxTicks;
 
-		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && axis.options.alignTicks !== false) { // only apply to linear scale
+		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked && 
+				axis.options.alignTicks !== false && this.min !== UNDEFINED) {
 			var oldTickAmount = axis.tickAmount,
 				calculatedTickAmount = tickPositions.length,
 				tickAmount;
@@ -8561,7 +8579,7 @@ Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisGroup', 'gridGroup', 'labelGroup', 'axisTitle'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
@@ -13845,8 +13863,8 @@ Series.prototype = {
 					yBottom = null;
 				}
 
-				point.percentage = stacking === 'percent' && yValue;
 				point.total = point.stackTotal = pointStack.total;
+				point.percentage = stacking === 'percent' && (point.y / pointStack.total * 100);
 				point.stackY = yValue;
 
 				// Place the stack label

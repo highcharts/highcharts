@@ -1325,10 +1325,7 @@ $(function () {
         },
 
         mapNavigation: {
-            enableButtons: true,
-            enableTouchZoom: true,
-            zoomOnMouseWheel: true,
-            zoomOnDoubleClick: true,
+            enabled: true,
             buttonOptions: {
                 verticalAlign: 'bottom'
             }

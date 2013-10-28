@@ -627,7 +627,7 @@
 		// call base method
 		baseGetSegments.apply(series);
 			
-		if (xAxis.options.ordinal && gapSize) { // #1794
+		if (gapSize) {
 		
 			// properties
 			segments = series.segments;
