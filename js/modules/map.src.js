@@ -477,6 +477,45 @@
 		}
 	});
 
+
+	/**
+	 * The ColorAxis object for inclusion in gradient legends
+	 */
+	var ColorAxis = H.ColorAxis = function () {
+		this.init.apply(this, arguments);
+	};
+	extend(ColorAxis.prototype, Axis.prototype);
+	extend(ColorAxis.prototype, {
+
+		init: function (series, userOptions) {
+			var chart = series.chart;
+			Axis.prototype.init.call(this, series.chart, userOptions);
+
+			// Override original axis properties
+			this.isXAxis = true;
+			this.horiz = chart.options.legend.layout === 'horizontal';
+			this.side =  this.horiz ? 2 : 1;
+
+			// Extended properties
+			this.series = [series];
+		},
+		getOffset: function () {
+			var group = this.series[0].legendItems[0].legendGroup;
+			Axis.prototype.getOffset.call(this);
+			this.axisGroup.add(group);
+			this.gridGroup.add(group);
+			this.labelGroup.add(group);
+		},
+		getSeriesExtremes: function () {
+			var series = this.series[0];
+			this.dataMin = series.valueMin;
+			this.dataMax = series.valueMax;
+		}
+	});
+
+	/**
+	 * The MapAreaPoint object
+	 */
 	var MapAreaPoint = extendClass(Point, {
 		/**
 		 * Extend the Point object to split paths
@@ -591,18 +630,15 @@
 				name,
 				from,
 				to,
-				fromLabel,
-				toLabel,
-				colorRange,
+				colorAxis,
 				valueRanges,
 				gradientColor,
 				grad,
-				tmpLabel,
 				horizontal = chart.options.legend.layout === 'horizontal';
 
 			
 			H.Series.prototype.init.apply(this, arguments);
-			colorRange = series.options.colorRange;
+			colorAxis = series.options.colorAxis;
 			valueRanges = series.options.valueRanges;
 
 			if (valueRanges) {
@@ -650,7 +686,32 @@
 				});
 				series.legendItems = legendItems;
 
-			} else if (colorRange) {
+			} else if (colorAxis) {
+
+				// Create the color gradient
+				grad = horizontal ? [0, 0, 1, 0] : [0, 1, 0, 0]; 
+				gradientColor = {
+					linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
+					stops: 
+					[
+						[0, colorAxis.minColor],
+						[1, colorAxis.maxColor]
+					]
+				};
+
+				// Add a mock object to the legend items.
+				series.legendItems = [{
+					chart: chart,
+					color: gradientColor,
+					options: {},
+					drawLegendSymbol: this.drawLegendSymbolGradient,
+					visible: true,
+					setState: noop,
+					setVisible: noop,
+					owner: series
+				}];
+
+			} /*else if (colorRange) {
 
 				from = colorRange.from;
 				to = colorRange.to;
@@ -689,7 +750,7 @@
 				}];
 
 				series.legendItems = legendItems;
-			}
+			}*/
 		},
 
 		/**
@@ -708,65 +769,60 @@
 				padding = pick(legend.options.padding, 8),
 				positionY,
 				positionX,
-				gradientSize = this.chart.renderer.fontMetrics(legend.options.itemStyle.fontSize).h,
+				gradientSize = 14,
 				horizontal = legend.options.layout === 'horizontal',
-				box1,
-				box2,
-				box3,
+				box,
 				rectangleLength = pick(legend.options.rectangleLength, 200);
 
 			// Set local variables based on option.
 			if (horizontal) {
-				positionY = -(spacing / 2);
+				positionY = -gradientSize - (spacing / 2) - 10;
 				positionX = 0;
 			} else {
 				positionY = -rectangleLength + legend.baseline - (spacing / 2);
 				positionX = padding + gradientSize;
 			}
 
-			// Creates the from text.
-			item.fromText = this.chart.renderer.text(
-					item.fromLabel,	// Text.
-					positionX,		// Lower left x.
-					positionY		// Lower left y.
-				).attr({
-					zIndex: 2
-				}).add(item.legendGroup);
-			box1 = item.fromText.getBBox();
-
-			// Creates legend symbol.
-			// Ternary changes variables based on option.
+			// Create the gradient
 			item.legendSymbol = this.chart.renderer.rect(
-				horizontal ? box1.x + box1.width + spacing : box1.x - gradientSize - spacing,		// Upper left x.
-				box1.y,																				// Upper left y.
-				horizontal ? rectangleLength : gradientSize,											// Width.
-				horizontal ? gradientSize : rectangleLength,										// Height.
-				2																					// Corner radius.
+				horizontal ? spacing : -gradientSize - spacing,
+				positionY,
+				horizontal ? rectangleLength : gradientSize,
+				horizontal ? gradientSize : rectangleLength
 			).attr({
 				zIndex: 1
 			}).add(item.legendGroup);
-			box2 = item.legendSymbol.getBBox();
-
-			// Creates the to text.
-			// Vertical coordinate changed based on option.
-			item.toText = this.chart.renderer.text(
-					item.toLabel,
-					box2.x + box2.width + spacing,
-					horizontal ? positionY : box2.y + box2.height - spacing
-				).attr({
-					zIndex: 2
-				}).add(item.legendGroup);
-			box3 = item.toText.getBBox();
+			box = item.legendSymbol.getBBox();
 
 			// Changes legend box settings based on option.
 			if (horizontal) {
-				legend.offsetWidth = box1.width + box2.width + box3.width + (spacing * 2) + padding;
-				legend.itemY = gradientSize + padding;
+				legend.offsetWidth = box.width + (spacing * 2) + padding;
+				legend.itemY = gradientSize + padding + 10;
 			} else {
-				legend.offsetWidth = Math.max(box1.width, box3.width) + (spacing) + box2.width + padding;
-				legend.itemY = box2.height + padding;
+				legend.offsetWidth = (spacing) + box.width + padding;
+				legend.itemY = box.height + padding;
 				legend.itemX = spacing;
 			}
+			this.owner.drawLegendAxis(horizontal, box);
+		},
+
+		drawLegendAxis: function (horizontal, box) {
+			this.colorAxis = new ColorAxis(this, merge({
+				lineWidth: 0,
+				gridLineWidth: 1,
+				tickPixelInterval: 70,
+				startOnTick: true,
+				endOnTick: true
+			}, this.options.colorAxis, {
+				isX: horizontal,
+				title: null,
+				type: 'linear',
+				left: box.x,
+				top: box.y,
+				width: box.width,
+				height: box.height
+			}), horizontal);
+
 		},
 
 		/**
@@ -838,6 +894,12 @@
 		},
 		
 		getExtremes: function () {
+			// Get the actual value extremes for colors
+			H.Series.prototype.getExtremes.call(this);
+			this.valueMin = this.dataMin;
+			this.valueMax = this.dataMax;
+
+			// Extremes for the mock Y axis
 			this.dataMin = this.minY;
 			this.dataMax = this.maxY;
 		},
@@ -946,8 +1008,6 @@
 		 */
 		translate: function () {
 			var series = this,
-				dataMin = Number.MAX_VALUE,
-				dataMax = Number.MIN_VALUE,
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
 				doAnimation = series.chart.pointCount < 100;
@@ -966,36 +1026,33 @@
 				point.shapeArgs = {
 					d: display ? series.translatePath(point.path) : ''
 				};
-				
-				// TODO: do point colors in drawPoints instead of point.init
-				if (typeof point.y === 'number') {
-					if (point.y > dataMax) {
-						dataMax = point.y;
-					} else if (point.y < dataMin) {
-						dataMin = point.y;
-					}
-				}
 			});
 			
-			series.translateColors(dataMin, dataMax);
+			series.translateColors();
 		},
 		
 		/**
 		 * In choropleth maps, the color is a result of the value, so this needs translation too
 		 */
-		translateColors: function (dataMin, dataMax) {
+		translateColors: function () {
 			
 			var seriesOptions = this.options,
 				valueRanges = seriesOptions.valueRanges,
-				colorRange = seriesOptions.colorRange,
+				colorAxis = this.colorAxis,
 				colorKey = this.colorKey,
 				nullColor = seriesOptions.nullColor,
+				minColor,
 				from,
-				to;
+				to,
+				valueMin,
+				valueMax,
+				maxColor;
 
-			if (colorRange) {
-				from = Color(colorRange.from);
-				to = Color(colorRange.to);
+			if (colorAxis) {
+				minColor = Color(colorAxis.options.minColor);
+				maxColor = Color(colorAxis.options.maxColor);
+				valueMin = colorAxis.min;
+				valueMax = colorAxis.max;
 			}
 			each(this.data, function (point) {
 				var value = point[colorKey],
@@ -1021,10 +1078,10 @@
 						}
 						point.valueRange = i;
 					}
-				} else if (colorRange && !isNull) {
+				} else if (colorAxis && !isNull) {
 
-					pos = 1 - ((dataMax - value) / (dataMax - dataMin));
-					color = tweenColors(from, to, pos);
+					pos = 1 - ((valueMax - value) / (valueMax - valueMin));
+					color = tweenColors(minColor, maxColor, pos);
 				} else if (isNull) {
 					color = nullColor;
 				} 
@@ -1276,7 +1333,8 @@
 		{ // forced options
 			chart: {
 				type: 'map',
-				inverted: false
+				inverted: false,
+				alignTicks: false
 			}
 		});
 	

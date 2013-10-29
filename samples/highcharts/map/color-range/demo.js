@@ -186,7 +186,9 @@ $(function () {
         legend: {
             title: {
                 text: 'Some random value'
-            } 
+            },
+            layout: 'horizontal'
+            //layout: 'vertical'
         },
 
         mapNavigation: {
@@ -211,11 +213,9 @@ $(function () {
             tooltip: {
                 ySuffix: ' %'
             },
-            colorRange: {
-                from: '#CCCCFF',
-                to: '#000044',
-                fromLabel: '0'  ,
-                toLabel: '100'
+            colorAxis: {
+                minColor: '#CCCCFF',
+                maxColor: '#000044'
             }
         }]
     };
