@@ -173,8 +173,211 @@ $(function () {
         middleX: 0.35
     }];
 
+    var data = [
+    {
+        "y": 438,
+        "code": "nj"
+    },
+    {
+        "y": 387.35,
+        "code": "ri"
+    },
+    {
+        "y": 312.68,
+        "code": "ma"
+    },
+    {
+        "y": 271.4,
+        "code": "ct"
+    },
+    {
+        "y": 209.23,
+        "code": "md"
+    },
+    {
+        "y": 195.18,
+        "code": "ny"
+    },
+    {
+        "y": 154.87,
+        "code": "de"
+    },
+    {
+        "y": 114.43,
+        "code": "fl"
+    },
+    {
+        "y": 107.05,
+        "code": "oh"
+    },
+    {
+        "y": 105.8,
+        "code": "pa"
+    },
+    {
+        "y": 86.27,
+        "code": "il"
+    },
+    {
+        "y": 83.85,
+        "code": "ca"
+    },
+    {
+        "y": 72.83,
+        "code": "hi"
+    },
+    {
+        "y": 69.03,
+        "code": "va"
+    },
+    {
+        "y": 67.55,
+        "code": "mi"
+    },
+    {
+        "y": 65.46,
+        "code": "in"
+    },
+    {
+        "y": 63.8,
+        "code": "nc"
+    },
+    {
+        "y": 54.59,
+        "code": "ga"
+    },
+    {
+        "y": 53.29,
+        "code": "tn"
+    },
+    {
+        "y": 53.2,
+        "code": "nh"
+    },
+    {
+        "y": 51.45,
+        "code": "sc"
+    },
+    {
+        "y": 39.61,
+        "code": "la"
+    },
+    {
+        "y": 39.28,
+        "code": "ky"
+    },
+    {
+        "y": 38.13,
+        "code": "wi"
+    },
+    {
+        "y": 34.2,
+        "code": "wa"
+    },
+    {
+        "y": 33.84,
+        "code": "al"
+    },
+    {
+        "y": 31.36,
+        "code": "mo"
+    },
+    {
+        "y": 30.75,
+        "code": "tx"
+    },
+    {
+        "y": 29,
+        "code": "wv"
+    },
+    {
+        "y": 25.41,
+        "code": "vt"
+    },
+    {
+        "y": 23.86,
+        "code": "mn"
+    },
+    {
+        "y": 23.42,
+        "code": "ms"
+    },
+    {
+        "y": 20.22,
+        "code": "ia"
+    },
+    {
+        "y": 19.82,
+        "code": "ar"
+    },
+    {
+        "y": 19.4,
+        "code": "ok"
+    },
+    {
+        "y": 17.43,
+        "code": "az"
+    },
+    {
+        "y": 16.01,
+        "code": "co"
+    },
+    {
+        "y": 15.95,
+        "code": "me"
+    },
+    {
+        "y": 13.76,
+        "code": "or"
+    },
+    {
+        "y": 12.69,
+        "code": "ks"
+    },
+    {
+        "y": 10.5,
+        "code": "ut"
+    },
+    {
+        "y": 8.6,
+        "code": "ne"
+    },
+    {
+        "y": 7.03,
+        "code": "nv"
+    },
+    {
+        "y": 6.04,
+        "code": "id"
+    },
+    {
+        "y": 5.79,
+        "code": "nm"
+    },
+    {
+        "y": 3.84,
+        "code": "sd"
+    },
+    {
+        "y": 3.59,
+        "code": "nd"
+    },
+    {
+        "y": 2.39,
+        "code": "mt"
+    },
+    {
+        "y": 1.96,
+        "code": "wy"
+    },
+    {
+        "y": 0.42,
+        "code": "ak"
+    }
+];
 
-    var options = {
+    // Instanciate the map
+    $('#container').highcharts('Map', {
         chart : {
             borderWidth : 1
         },
@@ -185,7 +388,7 @@ $(function () {
 
         legend: {
             title: {
-                text: 'Some random value'
+                text: 'Population density per square km'
             },
             layout: 'horizontal'
             //layout: 'vertical'
@@ -196,40 +399,29 @@ $(function () {
         },
         
         series : [{
-            data : [85,31,86,3,92,82,26,88,98,95,97,5,59,61,51,21,96,41,8,7,51,
-                79,21,36,17,83,43,67,96,24,57,14,28,15,3,27,11,47,54,33,73,71,
-                31,12,93,63,27,17,39,80,93],
+            data : data,
+            mapData: Highcharts.maps.us,
+            joinBy: 'code',
             dataLabels: {
                 enabled: true,
                 color: 'white',
-                format: '{point.name}',
+                format: '{point.code}',
                 style: {
                     fontWeight: 'bold',
                     textShadow: '0 0 3px black',
                     textTransform: 'uppercase'
                 }
             },
-            name: 'Random values',
+            name: 'Population density',
             tooltip: {
-                ySuffix: ' %'
+                pointFormat: '{point.code}: {point.y} / km2'
             },
             colorAxis: {
-                minColor: '#CCCCFF',
-                maxColor: '#000044'
+                min: 1,
+                type: 'logarithmic',
+                minColor: '#DDDDFF',
+                maxColor: '#000033'
             }
         }]
-    };
-
-    var data = [];
-
-    // Add values
-    Highcharts.each(Highcharts.maps.us, function (point, i) {
-        options.series[0].data[i] = Highcharts.extend(point, {
-            name: point.code,
-            y: options.series[0].data[i]
-        });
     });
-
-    // Instanciate the map
-    $('#container').highcharts('Map', options);
 });

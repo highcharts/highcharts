@@ -510,6 +510,44 @@
 			var series = this.series[0];
 			this.dataMin = series.valueMin;
 			this.dataMax = series.valueMax;
+		},
+		drawCrosshair: function (e, point) {
+			var newCross = !this.cross,
+				plotX = point && point.plotX,
+				crossPos,
+				axisPos = this.pos,
+				axisLen = this.len;
+			
+			if (point) {
+				crossPos = this.translate(point.y, null, null, null, true);
+				if (crossPos < axisPos) {
+					crossPos = axisPos - 3;
+				} else if (crossPos > axisPos + axisLen) {
+					crossPos = axisPos + axisLen + 3;
+				}
+				
+				point.plotX = crossPos;
+				Axis.prototype.drawCrosshair.call(this, e, point);
+				point.plotX = plotX;
+				
+				if (!newCross && this.cross) {
+					this.cross
+						.attr({
+							fill: this.crosshair.color
+						})
+						.add(this.labelGroup);
+
+				}
+			}
+		},
+		getPlotLinePath: function (a, b, c, d, pos) {
+			if (pos) { // crosshairs only
+				return this.horiz ? 
+					['M', pos - 6, this.top - 6, 'L', pos + 6, this.top - 6, pos, this.top, 'Z'] : 
+					[];
+			} else {
+				return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
+			}
 		}
 	});
 
@@ -797,7 +835,7 @@
 			// Changes legend box settings based on option.
 			if (horizontal) {
 				legend.offsetWidth = box.width + (spacing * 2) + padding;
-				legend.itemY = gradientSize + padding + 10;
+				legend.itemY = gradientSize + padding + 20;
 			} else {
 				legend.offsetWidth = (spacing) + box.width + padding;
 				legend.itemY = box.height + padding;
@@ -812,11 +850,17 @@
 				gridLineWidth: 1,
 				tickPixelInterval: 70,
 				startOnTick: true,
-				endOnTick: true
+				endOnTick: true,
+				crosshair: { // docs: use another name?
+					animation: {
+						duration: 50
+					},
+					color: 'black',
+					width: 0.01
+				}
 			}, this.options.colorAxis, {
 				isX: horizontal,
 				title: null,
-				type: 'linear',
 				left: box.x,
 				top: box.y,
 				width: box.width,
@@ -1079,7 +1123,9 @@
 						point.valueRange = i;
 					}
 				} else if (colorAxis && !isNull) {
-
+					if (colorAxis.isLog) {
+						value = colorAxis.val2lin(value);
+					}
 					pos = 1 - ((valueMax - value) / (valueMax - valueMin));
 					color = tweenColors(minColor, maxColor, pos);
 				} else if (isNull) {
