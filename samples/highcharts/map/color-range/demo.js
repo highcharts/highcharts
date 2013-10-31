@@ -383,15 +383,16 @@ $(function () {
         },
         
         title : {
-            text : 'Highcharts US map demo'
+            text : 'Population density'
         },
 
         legend: {
-            title: {
-                text: 'Population density per square km'
-            },
-            layout: 'horizontal'
-            //layout: 'vertical'
+            layout: 'horizontal',
+
+            /*
+            layout: 'vertical',
+            align: 'right'
+            // */
         },
 
         mapNavigation: {
@@ -414,13 +415,13 @@ $(function () {
             },
             name: 'Population density',
             tooltip: {
-                pointFormat: '{point.code}: {point.y} / km2'
+                pointFormat: '{point.code}: {point.y}/km²'
             },
             colorAxis: {
                 min: 1,
                 type: 'logarithmic',
-                minColor: '#DDDDFF',
-                maxColor: '#000033'
+                minColor: '#CCCCFF',
+                maxColor: '#000044'
             }
         }]
     });

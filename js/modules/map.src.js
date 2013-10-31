@@ -487,24 +487,36 @@
 	extend(ColorAxis.prototype, Axis.prototype);
 	extend(ColorAxis.prototype, {
 
-		init: function (series, userOptions) {
-			var chart = series.chart;
-			Axis.prototype.init.call(this, series.chart, userOptions);
+		init: function (series, userOptions, legend) {
+			var chart = series.chart,
+				horiz = chart.options.legend.layout !== 'vertical';
+
+			userOptions.opposite = !horiz;
+
+			Axis.prototype.init.call(this, chart, userOptions);
 
 			// Override original axis properties
 			this.isXAxis = true;
-			this.horiz = chart.options.legend.layout === 'horizontal';
-			this.side =  this.horiz ? 2 : 1;
+			this.side =  horiz ? 2 : 1;
 
 			// Extended properties
 			this.series = [series];
+			this.getOffset(legend);
 		},
-		getOffset: function () {
+		getOffset: function (legend) {
 			var group = this.series[0].legendItems[0].legendGroup;
 			Axis.prototype.getOffset.call(this);
-			this.axisGroup.add(group);
-			this.gridGroup.add(group);
-			this.labelGroup.add(group);
+			if (!this.added) {
+				this.axisGroup.add(group);
+				this.gridGroup.add(group);
+				this.labelGroup.add(group);
+
+			
+				legend.offsetWidth = 200;
+
+				this.added = true;
+			}
+			// TODO: Start from here, get the label offset
 		},
 		getSeriesExtremes: function () {
 			var series = this.series[0];
@@ -536,7 +548,6 @@
 							fill: this.crosshair.color
 						})
 						.add(this.labelGroup);
-
 				}
 			}
 		},
@@ -544,7 +555,7 @@
 			if (pos) { // crosshairs only
 				return this.horiz ? 
 					['M', pos - 6, this.top - 6, 'L', pos + 6, this.top - 6, pos, this.top, 'Z'] : 
-					[];
+					['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
 			} else {
 				return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 			}
@@ -817,13 +828,13 @@
 				positionY = -gradientSize - (spacing / 2) - 10;
 				positionX = 0;
 			} else {
-				positionY = -rectangleLength + legend.baseline - (spacing / 2);
+				positionY = -rectangleLength - (spacing / 2);
 				positionX = padding + gradientSize;
 			}
 
 			// Create the gradient
 			item.legendSymbol = this.chart.renderer.rect(
-				horizontal ? spacing : -gradientSize - spacing,
+				spacing,
 				positionY,
 				horizontal ? rectangleLength : gradientSize,
 				horizontal ? gradientSize : rectangleLength
@@ -841,10 +852,10 @@
 				legend.itemY = box.height + padding;
 				legend.itemX = spacing;
 			}
-			this.owner.drawLegendAxis(horizontal, box);
+			this.owner.drawLegendAxis(horizontal, box, legend);
 		},
 
-		drawLegendAxis: function (horizontal, box) {
+		drawLegendAxis: function (horizontal, box, legend) {
 			this.colorAxis = new ColorAxis(this, merge({
 				lineWidth: 0,
 				gridLineWidth: 1,
@@ -865,7 +876,7 @@
 				top: box.y,
 				width: box.width,
 				height: box.height
-			}), horizontal);
+			}), legend);
 
 		},
 
