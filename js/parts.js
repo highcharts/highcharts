@@ -22,7 +22,7 @@ var HighchartsConfig = {
 			{name: 'Legend', component: 'Core', group: "Core"},
 			{name: 'Chart', component: 'Core', group: "Core"},
 			{name: 'Series', component: 'Core', group: "Core"},
-			{name: 'LineSeries', component: 'Core', group: "Core"},
+			
 
 			/* RENDERERS */
 			{name: 'VMLRenderer', component: 'VMLRenderer', group: "Renderers", depends: {component: ['Core']}},
@@ -36,7 +36,8 @@ var HighchartsConfig = {
 			/* MIXINS WITH SEPARATE PARTFILES */
 			{name: 'CenteredSeriesMixin'},
 
-			/* SERIETYPES */			
+			/* SERIETYPES */
+			{name: 'LineSeries', component: 'LineSeries', group: "SerieTypes", depends: {component: ['Core']}},			
 			{name: 'AreaSeries', component: 'AreaSeries', group: "SerieTypes", depends: {component: ['Core']}},
 			{name: 'SplineSeries', component: 'SplineSeries', group: "SerieTypes", depends: {component: ['Core']}},
 			{name: 'AreaSplineSeries', component: 'AreaSplineSeries', group: "SerieTypes", depends: {component: ['Core', 'AreaSeries','SplineSeries']}},
@@ -74,28 +75,30 @@ var HighchartsConfig = {
 		],
 
 		groups: {
-			'Core': 'This is the description for Core',
-			'Stock': 'This is the description for Stock',
-			'SerieTypes': 'This is the description for SerieTypes',
-			'Extra\'s': 'This is the description for Extra\'s'
+			'Core': { description: 'This is the description for Core group', depends: {component: ['LineSeries']}},
+			'Stock': { description: 'This is the description for Stock'},
+			'SerieTypes': { description: 'This is the description for SerieTypes group'},
+			'Extra\'s': { description: 'This is the description for Extra\'s group'},
+			'Features': { description: 'This is the description for the Features group'},
+			'Renderers': { description: 'This is the description for the Renderers group'}
 		},
 
 		components: {
-			'Core': { desc: 'This is the description for Core', depends: {name: ['LineSeries']}},
-			'Stock': { desc: 'This is the description for Stock'},
-			'Stock serieTypes': { desc:  'This is the description for Stock SerieTypes'},
-			'SerieTypes': { desc:  'This is the description for SerieTypes'},
-			'Gauge': { desc:  'This is a components description'},
-			'Polar': { desc:  'This is a components description'},
-			'LineSeries': { desc:  'This is a components description'},
-			'AreaSeries': { desc:  'This is a components description'},
-			'SplineSeries': { desc:  'This is a components description'},
-			'ColumnSeries': { desc:  'This is a components description'},
-			'BarSeries': { desc:  'This is a components description'},
-			'ScatterSeries': { desc:  'This is a components description'},
-			'PieSeries': { desc:  'This is a components description'},
-			'AreaRangeSeries': { desc:  'This is a components description'},
-			'AreaSplineSeries': { desc:  'This is a components description'},
-			'ColumnRangeSeries': { desc:  'This is a components description'}
+			'Core': { description: 'This is the description for Core'},
+			'Stock': { description: 'This is the description for Stock'},
+			'Stock serieTypes': { description:  'This is the description for Stock SerieTypes'},
+			'SerieTypes': { description:  'This is the description for SerieTypes'},
+			'Gauge': { description:  'This is a components description'},
+			'Polar': { description:  'This is a components description'},
+			'LineSeries': { description:  'CORE .. This is a components description'},
+			'AreaSeries': { description:  'This is a components description'},
+			'SplineSeries': { description:  'This is a components description'},
+			'ColumnSeries': { description:  'This is a components description'},
+			'BarSeries': { description:  'This is a components description'},
+			'ScatterSeries': { description:  'This is a components description'},
+			'PieSeries': { description:  'This is a components description'},
+			'AreaRangeSeries': { description:  'This is a components description'},
+			'AreaSplineSeries': { description:  'This is a components description'},
+			'ColumnRangeSeries': { description:  'This is a components description'}
 		}
 	};
