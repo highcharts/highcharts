@@ -46,7 +46,15 @@ Highcharts.StockChart = function (options, callback) {
 				labels: {
 					overflow: 'justify'
 				},
-				showLastLabel: true
+				showLastLabel: true,
+				crosshair: {
+					label: {
+						enabled: false,
+						formatter: function (value) { 
+							return dateFormat('%b %d, %Y', value);
+						}
+					}
+				}
 			}, xAxisOptions, // user options 
 			{ // forced options
 				type: 'datetime',
@@ -66,6 +74,14 @@ Highcharts.StockChart = function (options, callback) {
 				y: -2
 			},
 			showLastLabel: false,
+			crosshair: {
+				label: {
+					enabled: false,
+					formatter: function (value) { 
+						return value;
+					}
+				}
+			},
 			title: {
 				text: null
 			}
@@ -141,6 +157,110 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
 });
 
+// Wrapper to hide the label
+wrap(Axis.prototype, 'hideCrosshair', function (proceed, e, point) {
+	proceed.call(this, e, point);
+	if (this.crossLabel) {
+		this.crossLabel.hide();
+	}
+});
+
+// Wrapper to draw the label
+wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+	// Draw the crosshair
+	proceed.call(this, e, point);
+
+	// Check if the label has to be drawn
+	if (!defined(this.crosshair.label)) { return; }
+	if (!this.crosshair.label.enabled) { return; }
+	if (!defined(point)) { return; }
+
+	var options = this.options.crosshair.label,		// the label's options
+		axis = this.xOrY,							// axis name
+		horiz = this.horiz,							// axis orientation
+		opposite = this.opposite,					// axis position
+		left = this.left,							// left position
+		top = this.top,								// top position
+		crossLabel = this.crossLabel;				// reference to the svgElement
+
+	// If the label does not exist yet, create it.
+	if (!crossLabel) {
+		crossLabel = this.crossLabel = this.chart.renderer.label()			
+		.attr({
+			align: options.align || horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'center') : (this.labelAlign === 'left' ? 'left' : 'center'),
+			zIndex: 12,
+			fill: options.backgroundColor || 'lightgrey',
+			padding: 5,
+			stroke: options.stroke || null,
+			'stroke-width': options.strokeWidth || 0
+		})
+		.css({				
+			color: options.color || 'black',
+			fontWeight: options.fontWeight || 'bold',
+			textAlign: 'center'
+		})
+		.add();
+	}
+
+	var txt = options.format ? format(options.format, {value: point[axis]}) : options.formatter.call(this, point[axis]),
+		posx,
+		posy;
+
+	if (horiz) {
+		posx = point.plotX + left;
+		posy = top + (opposite ? 0 : this.height);
+	} else {
+		posx = opposite ? this.width + left : 0;
+		posy = point.plotY + top;
+	}
+
+	// if the crosshair goes out of view (too high or too low, hide it and hide the label)
+	if (posy < top || posy > top + this.height) {
+		this.hideCrosshair();
+		return;
+	}
+
+	// show the label
+	crossLabel.attr({x: posx, y: posy, text: txt, visibility: VISIBLE});
+	var crossBox = crossLabel.box;
+
+	// now it is placed we can correct its position
+	if (horiz) {
+		if (((this.options.tickPosition === 'inside') && !opposite) ||
+			((this.options.tickPosition !== 'inside') && opposite)) {
+			posy = crossLabel.y - crossBox.height;
+		}	
+	} else {
+		posy = crossLabel.y - (crossBox.height / 2);
+	}
+
+	// check the edges
+	var renderBox = this.chart.renderer.box;
+	var limit;
+	if (horiz) {
+		limit = {
+			left: left - crossBox.x,
+			right: left + this.width - crossBox.x
+		};
+	} else {
+		limit = {
+			left: this.labelAlign === 'left' ? left : renderBox.clientLeft,
+			right: this.labelAlign === 'right' ? left + this.width : renderBox.clientLeft + renderBox.clientWidth
+		};
+	}
+
+	// left edge
+	if (crossLabel.translateX < limit.left) {
+		posx = posx + (limit.left - crossLabel.translateX);
+	}
+	// right edge
+	if (crossLabel.translateX + crossBox.width >= limit.right) {
+		posx = posx - (crossLabel.translateX + crossBox.width - limit.right);
+	}
+
+	// show the crosslabel
+	crossLabel.attr({x: posx, y: posy, visibility: VISIBLE});
+});
 
 /* ****************************************************************************
  * Start value compare logic                                                  *
