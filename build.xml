@@ -132,8 +132,6 @@
             <file name="VmlRenderer.js"/>
             <file name="CanVGRenderer.js"/>
             <file name="Tick.js"/>
-            <file name="Axis.js"/>
-            <file name="LogarithmicAxis.js"/>
             <file name="PlotLineOrBand.js"/>
             <file name="Axis.js"/>
             <file name="LogarithmicAxis.js"/>
