@@ -19859,12 +19859,13 @@ RangeSelector.prototype = {
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	var fixedRange = this.chart && this.chart.fixedRange,
 		newMin = pick(fixedMin, this.translate(pxMin, true)),
-		newMax = pick(fixedMax, this.translate(pxMax, true));
+		newMax = pick(fixedMax, this.translate(pxMax, true)),
+		changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
 	// If the difference between the fixed range and the actual requested range is
 	// too great, the user is dragging across an ordinal gap, and we need to release
 	// the range selector button.
-	if (fixedRange && (newMax - newMin) / fixedRange < 1.3) {
+	if (changeRatio > 0.7 && changeRatio < 1.3) {
 		if (fixedMax) {
 			newMin = newMax - fixedRange;
 		} else {
