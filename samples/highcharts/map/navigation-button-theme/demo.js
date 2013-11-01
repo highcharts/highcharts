@@ -1348,8 +1348,7 @@ $(function () {
             name: 'Population',
             mapData: Highcharts.maps.world,
             data: data,
-            dataJoinBy: 'code',
-            allAreas: true,
+            joinBy: 'code',
             tooltip: {
                 pointFormat: '{point.code}: {point.y},000'
             },

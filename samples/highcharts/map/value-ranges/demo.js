@@ -666,7 +666,7 @@ $(function () {
                 series : [{
                     data : data,
                     mapData: Highcharts.maps.world,
-                    dataJoinBy: 'code',
+                    joinBy: 'code',
                     name: 'Population density',
                     valueRanges: [{
                         to: 3,

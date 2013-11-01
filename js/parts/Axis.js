@@ -1953,6 +1953,7 @@ Axis.prototype = {
 
 		var path,
 			options = this.crosshair,
+			animation = options.animation,
 			pos;
 
 		// Get the path
@@ -1963,9 +1964,9 @@ Axis.prototype = {
 			pos = ((this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY);
 			/*jslint eqeq: false*/
 		}
-
+		
 		if (this.isRadial) {
-			path = this.getPlotLinePath(this.xOrY === 'x' ? point.x : pick(point.stackY, point.y));
+			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y));
 		} else {
 			path = this.getPlotLinePath(null, null, null, null, pos);
 		}
@@ -1977,7 +1978,8 @@ Axis.prototype = {
 
 		// Draw the cross
 		if (this.cross) {
-			this.cross.attr({ d: path, visibility: VISIBLE });
+			this.cross
+				.attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
 		} else {
 			var attribs = {
 				'stroke-width': options.width || 1,

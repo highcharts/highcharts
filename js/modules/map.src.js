@@ -455,6 +455,7 @@
 	 * Extend the default options with map options
 	 */
 	plotOptions.map = merge(plotOptions.scatter, {
+		allAreas: true,
 		animation: false, // makes the complex shapes slow
 		nullColor: '#F8F8F8',
 		borderColor: 'silver',
@@ -476,6 +477,94 @@
 		}
 	});
 
+
+	/**
+	 * The ColorAxis object for inclusion in gradient legends
+	 */
+	var ColorAxis = H.ColorAxis = function () {
+		this.init.apply(this, arguments);
+	};
+	extend(ColorAxis.prototype, Axis.prototype);
+	extend(ColorAxis.prototype, {
+
+		init: function (series, userOptions, legend) {
+			var chart = series.chart,
+				horiz = chart.options.legend.layout !== 'vertical';
+
+			userOptions.opposite = !horiz;
+
+			Axis.prototype.init.call(this, chart, userOptions);
+
+			// Override original axis properties
+			this.isXAxis = true;
+			this.side =  horiz ? 2 : 1;
+
+			// Extended properties
+			this.series = [series];
+			this.getOffset(legend);
+		},
+		getOffset: function (legend) {
+			var group = this.series[0].legendItems[0].legendGroup;
+			Axis.prototype.getOffset.call(this);
+			if (!this.added) {
+				this.axisGroup.add(group);
+				this.gridGroup.add(group);
+				this.labelGroup.add(group);
+
+			
+				legend.offsetWidth = 200;
+
+				this.added = true;
+			}
+			// TODO: Start from here, get the label offset
+		},
+		getSeriesExtremes: function () {
+			var series = this.series[0];
+			this.dataMin = series.valueMin;
+			this.dataMax = series.valueMax;
+		},
+		drawCrosshair: function (e, point) {
+			var newCross = !this.cross,
+				plotX = point && point.plotX,
+				crossPos,
+				axisPos = this.pos,
+				axisLen = this.len;
+			
+			if (point) {
+				crossPos = this.translate(point.y, null, null, null, true);
+				if (crossPos < axisPos) {
+					crossPos = axisPos - 3;
+				} else if (crossPos > axisPos + axisLen) {
+					crossPos = axisPos + axisLen + 3;
+				}
+				
+				point.plotX = crossPos;
+				Axis.prototype.drawCrosshair.call(this, e, point);
+				point.plotX = plotX;
+				
+				if (!newCross && this.cross) {
+					this.cross
+						.attr({
+							fill: this.crosshair.color
+						})
+						.add(this.labelGroup);
+				}
+			}
+		},
+		getPlotLinePath: function (a, b, c, d, pos) {
+			if (pos) { // crosshairs only
+				return this.horiz ? 
+					['M', pos - 6, this.top - 6, 'L', pos + 6, this.top - 6, pos, this.top, 'Z'] : 
+					['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
+			} else {
+				return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
+			}
+		}
+	});
+
+	/**
+	 * The MapAreaPoint object
+	 */
 	var MapAreaPoint = extendClass(Point, {
 		/**
 		 * Extend the Point object to split paths
@@ -485,7 +574,7 @@
 			var point = Point.prototype.applyOptions.call(this, options, x),
 				series = this.series,
 				seriesOptions = series.options,
-				joinBy = seriesOptions.dataJoinBy,
+				joinBy = seriesOptions.joinBy,
 				mapPoint;
 
 			if (joinBy && seriesOptions.mapData) {
@@ -590,18 +679,15 @@
 				name,
 				from,
 				to,
-				fromLabel,
-				toLabel,
-				colorRange,
+				colorAxis,
 				valueRanges,
 				gradientColor,
 				grad,
-				tmpLabel,
 				horizontal = chart.options.legend.layout === 'horizontal';
 
 			
 			H.Series.prototype.init.apply(this, arguments);
-			colorRange = series.options.colorRange;
+			colorAxis = series.options.colorAxis;
 			valueRanges = series.options.valueRanges;
 
 			if (valueRanges) {
@@ -649,7 +735,32 @@
 				});
 				series.legendItems = legendItems;
 
-			} else if (colorRange) {
+			} else if (colorAxis) {
+
+				// Create the color gradient
+				grad = horizontal ? [0, 0, 1, 0] : [0, 1, 0, 0]; 
+				gradientColor = {
+					linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
+					stops: 
+					[
+						[0, colorAxis.minColor],
+						[1, colorAxis.maxColor]
+					]
+				};
+
+				// Add a mock object to the legend items.
+				series.legendItems = [{
+					chart: chart,
+					color: gradientColor,
+					options: {},
+					drawLegendSymbol: this.drawLegendSymbolGradient,
+					visible: true,
+					setState: noop,
+					setVisible: noop,
+					owner: series
+				}];
+
+			} /*else if (colorRange) {
 
 				from = colorRange.from;
 				to = colorRange.to;
@@ -688,7 +799,7 @@
 				}];
 
 				series.legendItems = legendItems;
-			}
+			}*/
 		},
 
 		/**
@@ -707,65 +818,66 @@
 				padding = pick(legend.options.padding, 8),
 				positionY,
 				positionX,
-				gradientSize = this.chart.renderer.fontMetrics(legend.options.itemStyle.fontSize).h,
+				gradientSize = 14,
 				horizontal = legend.options.layout === 'horizontal',
-				box1,
-				box2,
-				box3,
+				box,
 				rectangleLength = pick(legend.options.rectangleLength, 200);
 
 			// Set local variables based on option.
 			if (horizontal) {
-				positionY = -(spacing / 2);
+				positionY = -gradientSize - (spacing / 2) - 10;
 				positionX = 0;
 			} else {
-				positionY = -rectangleLength + legend.baseline - (spacing / 2);
+				positionY = -rectangleLength - (spacing / 2);
 				positionX = padding + gradientSize;
 			}
 
-			// Creates the from text.
-			item.fromText = this.chart.renderer.text(
-					item.fromLabel,	// Text.
-					positionX,		// Lower left x.
-					positionY		// Lower left y.
-				).attr({
-					zIndex: 2
-				}).add(item.legendGroup);
-			box1 = item.fromText.getBBox();
-
-			// Creates legend symbol.
-			// Ternary changes variables based on option.
+			// Create the gradient
 			item.legendSymbol = this.chart.renderer.rect(
-				horizontal ? box1.x + box1.width + spacing : box1.x - gradientSize - spacing,		// Upper left x.
-				box1.y,																				// Upper left y.
-				horizontal ? rectangleLength : gradientSize,											// Width.
-				horizontal ? gradientSize : rectangleLength,										// Height.
-				2																					// Corner radius.
+				spacing,
+				positionY,
+				horizontal ? rectangleLength : gradientSize,
+				horizontal ? gradientSize : rectangleLength
 			).attr({
 				zIndex: 1
 			}).add(item.legendGroup);
-			box2 = item.legendSymbol.getBBox();
-
-			// Creates the to text.
-			// Vertical coordinate changed based on option.
-			item.toText = this.chart.renderer.text(
-					item.toLabel,
-					box2.x + box2.width + spacing,
-					horizontal ? positionY : box2.y + box2.height - spacing
-				).attr({
-					zIndex: 2
-				}).add(item.legendGroup);
-			box3 = item.toText.getBBox();
+			box = item.legendSymbol.getBBox();
 
 			// Changes legend box settings based on option.
 			if (horizontal) {
-				legend.offsetWidth = box1.width + box2.width + box3.width + (spacing * 2) + padding;
-				legend.itemY = gradientSize + padding;
+				legend.offsetWidth = box.width + (spacing * 2) + padding;
+				legend.itemY = gradientSize + padding + 20;
 			} else {
-				legend.offsetWidth = Math.max(box1.width, box3.width) + (spacing) + box2.width + padding;
-				legend.itemY = box2.height + padding;
+				legend.offsetWidth = (spacing) + box.width + padding;
+				legend.itemY = box.height + padding;
 				legend.itemX = spacing;
 			}
+			this.owner.drawLegendAxis(horizontal, box, legend);
+		},
+
+		drawLegendAxis: function (horizontal, box, legend) {
+			this.colorAxis = new ColorAxis(this, merge({
+				lineWidth: 0,
+				gridLineWidth: 1,
+				tickPixelInterval: 70,
+				startOnTick: true,
+				endOnTick: true,
+				crosshair: { // docs: use another name?
+					animation: {
+						duration: 50
+					},
+					color: 'black',
+					width: 0.01
+				}
+			}, this.options.colorAxis, {
+				isX: horizontal,
+				title: null,
+				left: box.x,
+				top: box.y,
+				width: box.width,
+				height: box.height
+			}), legend);
+
 		},
 
 		/**
@@ -809,8 +921,8 @@
 							}
 						}
 						// Cache point bounding box for use to position data labels, bubbles etc
-						point._midX = pointMinX + (pointMaxX - pointMinX) * point.middleX || 0.5;
-						point._midY = pointMinY + (pointMaxY - pointMinY) * point.middleY || 0.5;
+						point._midX = pointMinX + (pointMaxX - pointMinX) * (point.middleX || 0.5); // pick is slower and very marginally needed
+						point._midY = pointMinY + (pointMaxY - pointMinY) * (point.middleY || 0.5);
 						point._maxX = pointMaxX;
 						point._minX = pointMinX;
 						point._maxY = pointMaxY;
@@ -837,6 +949,12 @@
 		},
 		
 		getExtremes: function () {
+			// Get the actual value extremes for colors
+			H.Series.prototype.getExtremes.call(this);
+			this.valueMin = this.dataMin;
+			this.valueMax = this.dataMax;
+
+			// Extremes for the mock Y axis
 			this.dataMin = this.minY;
 			this.dataMax = this.maxY;
 		},
@@ -886,7 +1004,7 @@
 		setData: function (data, redraw) {
 			var options = this.options,
 				mapData = options.mapData,
-				joinBy = options.dataJoinBy,
+				joinBy = options.joinBy,
 				dataUsed = [];
 			
 
@@ -945,47 +1063,51 @@
 		 */
 		translate: function () {
 			var series = this,
-				dataMin = Number.MAX_VALUE,
-				dataMax = Number.MIN_VALUE;
+				xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				doAnimation = series.chart.pointCount < 100;
 	
 			series.generatePoints();
 	
 			each(series.data, function (point) {
 				
+				var display = doAnimation || 
+					(point._maxX > xAxis.min &&
+					point._minX < xAxis.max &&
+					point._maxY > yAxis.min &&
+					point._minY < yAxis.max);
+
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					d: series.translatePath(point.path)
+					d: display ? series.translatePath(point.path) : ''
 				};
-				
-				// TODO: do point colors in drawPoints instead of point.init
-				if (typeof point.y === 'number') {
-					if (point.y > dataMax) {
-						dataMax = point.y;
-					} else if (point.y < dataMin) {
-						dataMin = point.y;
-					}
-				}
 			});
 			
-			series.translateColors(dataMin, dataMax);
+			series.translateColors();
 		},
 		
 		/**
 		 * In choropleth maps, the color is a result of the value, so this needs translation too
 		 */
-		translateColors: function (dataMin, dataMax) {
+		translateColors: function () {
 			
 			var seriesOptions = this.options,
 				valueRanges = seriesOptions.valueRanges,
-				colorRange = seriesOptions.colorRange,
+				colorAxis = this.colorAxis,
 				colorKey = this.colorKey,
 				nullColor = seriesOptions.nullColor,
+				minColor,
 				from,
-				to;
+				to,
+				valueMin,
+				valueMax,
+				maxColor;
 
-			if (colorRange) {
-				from = Color(colorRange.from);
-				to = Color(colorRange.to);
+			if (colorAxis) {
+				minColor = Color(colorAxis.options.minColor);
+				maxColor = Color(colorAxis.options.maxColor);
+				valueMin = colorAxis.min;
+				valueMax = colorAxis.max;
 			}
 			each(this.data, function (point) {
 				var value = point[colorKey],
@@ -1011,10 +1133,12 @@
 						}
 						point.valueRange = i;
 					}
-				} else if (colorRange && !isNull) {
-
-					pos = 1 - ((dataMax - value) / (dataMax - dataMin));
-					color = tweenColors(from, to, pos);
+				} else if (colorAxis && !isNull) {
+					if (colorAxis.isLog) {
+						value = colorAxis.val2lin(value);
+					}
+					pos = 1 - ((valueMax - value) / (valueMax - valueMin));
+					color = tweenColors(minColor, maxColor, pos);
 				} else if (isNull) {
 					color = nullColor;
 				} 
@@ -1266,7 +1390,8 @@
 		{ // forced options
 			chart: {
 				type: 'map',
-				inverted: false
+				inverted: false,
+				alignTicks: false
 			}
 		});
 	

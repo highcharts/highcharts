@@ -6673,6 +6673,8 @@ Axis.prototype = {
 		//axis.userMin = UNDEFINED,
 		//axis.userMax = UNDEFINED,
 
+		// Crosshair options
+		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);		
 		// Run Axis
 		
 		var eventType,
@@ -6977,7 +6979,7 @@ Axis.prototype = {
 	 * @param {Number} lineWidth Used for calculation crisp line
 	 * @param {Number] old Use old coordinates (for resizing and rescaling)
 	 */
-	getPlotLinePath: function (value, lineWidth, old, force) {
+	getPlotLinePath: function (value, lineWidth, old, force, translatedValue) {
 		var axis = this,
 			chart = axis.chart,
 			axisLeft = axis.left,
@@ -6986,12 +6988,12 @@ Axis.prototype = {
 			y1,
 			x2,
 			y2,
-			translatedValue = axis.translate(value, null, null, old),
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
 			transB = axis.transB;
 
+		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = mathRound(translatedValue + transB);
 		y1 = y2 = mathRound(cHeight - translatedValue - transB);
 
@@ -8298,9 +8300,74 @@ Axis.prototype = {
 				axis[prop] = axis[prop].destroy();
 			}
 		});
-	}
 
-	
+		// Destroy crosshair
+		if (this.cross) {
+			this.cross.destroy();
+		}
+	},
+
+	/**
+	 * Draw the crosshair
+	 */
+	drawCrosshair: function (e, point) {
+		if (!this.crosshair) { return; }// Do not draw crosshairs if you don't have too.
+
+		if ((defined(point) || !pick(this.crosshair.snap, true)) === false) { 
+			this.hideCrosshair();
+			return; 
+		}
+
+		var path,
+			options = this.crosshair,
+			animation = options.animation,
+			pos;
+
+		// Get the path
+		if (!pick(options.snap, true)) {
+			pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
+		} else if (defined(point)) {
+			/*jslint eqeq: true*/
+			pos = ((this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY);
+			/*jslint eqeq: false*/
+		}
+		
+		if (this.isRadial) {
+			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y));
+		} else {
+			path = this.getPlotLinePath(null, null, null, null, pos);
+		}
+
+		if (path === null) {
+			this.hideCrosshair();
+			return;
+		}
+
+		// Draw the cross
+		if (this.cross) {
+			this.cross
+				.attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
+		} else {
+			var attribs = {
+				'stroke-width': options.width || 1,
+				stroke: options.color || '#C0C0C0',
+				zIndex: options.zIndex || 2
+			};
+			if (options.dashStyle) {
+				attribs.dashstyle = options.dashStyle;
+			}
+			this.cross = this.chart.renderer.path(path).attr(attribs).add();
+		}
+	},
+
+	/**
+	 *	Hide the crosshair.
+	 */
+	hideCrosshair: function () {
+		if (this.cross) {
+			this.cross.hide();			
+		}
+	}
 }; // end Axis
 
 extend(Axis.prototype, AxisPlotLineOrBandExtension);
@@ -8366,12 +8433,6 @@ Tooltip.prototype = {
 	 * Destroy the tooltip and its elements.
 	 */
 	destroy: function () {
-		each(this.crosshairs, function (crosshair) {
-			if (crosshair) {
-				crosshair.destroy();
-			}
-		});
-
 		// Destroy and clear local variables
 		if (this.label) {
 			this.label = this.label.destroy();
@@ -8446,17 +8507,6 @@ Tooltip.prototype = {
 
 			this.chart.hoverPoints = null;
 		}
-	},
-
-	/**
-	 * Hide the crosshairs
-	 */
-	hideCrosshairs: function () {
-		each(this.crosshairs, function (crosshair) {
-			if (crosshair) {
-				crosshair.hide();
-			}
-		});
 	},
 	
 	/** 
@@ -8604,7 +8654,6 @@ Tooltip.prototype = {
 			formatter = options.formatter || tooltip.defaultFormatter,
 			hoverPoints = chart.hoverPoints,
 			borderColor,
-			crosshairsOptions = options.crosshairs,
 			shared = tooltip.shared,
 			currentSeries;
 			
@@ -8675,53 +8724,6 @@ Tooltip.prototype = {
 			tooltip.updatePosition({ plotX: x, plotY: y });
 		
 			this.isHidden = false;
-		}
-
-		// crosshairs
-		if (crosshairsOptions) {
-			crosshairsOptions = splat(crosshairsOptions); // [x, y]
-
-			var path,
-				i = crosshairsOptions.length,
-				attribs,
-				axis,
-				val,
-				series;
-
-			while (i--) {
-				series = point.series;
-				axis = series[i ? 'yAxis' : 'xAxis'];
-				if (crosshairsOptions[i] && axis) {
-					val = i ? pick(point.stackY, point.y) : point.x; // #814
-					if (axis.isLog) { // #1671
-						val = log2lin(val);
-					}
-					if (i === 1 && series.modifyValue) { // #1205, #2316
-						val = series.modifyValue(val);
-					}
-
-					path = axis.getPlotLinePath(
-						val,
-						1
-					);
-
-					if (tooltip.crosshairs[i]) {
-						tooltip.crosshairs[i].attr({ d: path, visibility: VISIBLE });
-					} else {
-						attribs = {
-							'stroke-width': crosshairsOptions[i].width || 1,
-							stroke: crosshairsOptions[i].color || '#C0C0C0',
-							zIndex: crosshairsOptions[i].zIndex || 2
-						};
-						if (crosshairsOptions[i].dashStyle) {
-							attribs.dashstyle = crosshairsOptions[i].dashStyle;
-						}
-						tooltip.crosshairs[i] = chart.renderer.path(path)
-							.attr(attribs)
-							.add();
-					}
-				}
-			}
 		}
 		fireEvent(chart, 'tooltipRefresh', {
 				text: text,
@@ -8941,6 +8943,11 @@ Pointer.prototype = {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
+
+		// Draw independent crosshairs
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, pick(hoverPoint, point));
+		});
 	},
 
 
@@ -8983,9 +8990,13 @@ Pointer.prototype = {
 
 			if (tooltip) {
 				tooltip.hide();
-				tooltip.hideCrosshairs();
 			}
 
+			// Remove crosshairs
+			each(chart.axes, function (axis) {
+				axis.hideCrosshair();
+			});
+			
 			pointer.hoverX = null;
 
 		}
@@ -10060,7 +10071,7 @@ Legend.prototype = {
 			var seriesOptions = serie.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, seriesOptions.linkedTo === UNDEFINED ? UNDEFINED : false, true)) {
+			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? UNDEFINED : false, true)) {
 				return;
 			}
 
@@ -15697,8 +15708,9 @@ var ColumnSeries = extendClass(Series, {
 	 */
 	drawPoints: function () {
 		var series = this,
+			chart = this.chart,
 			options = series.options,
-			renderer = series.chart.renderer,
+			renderer = chart.renderer,
 			shapeArgs;
 
 
@@ -15712,7 +15724,7 @@ var ColumnSeries = extendClass(Series, {
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.animate(merge(shapeArgs));
+					graphic[chart.pointCount < 100 ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
@@ -17945,6 +17957,11 @@ extend(defaultOptions, {
 				align: 'left',
 				x: 3,
 				y: -4
+			},
+			crosshair: {
+				label: {
+					enabled: false
+				}
 			}
 		},
 		yAxis: {
@@ -17955,6 +17972,12 @@ extend(defaultOptions, {
 			maxPadding: 0.1,
 			labels: {
 				enabled: false
+			},
+			crosshair: {
+				enabled: false,
+				label: {
+					enabled: false
+				}
 			},
 			title: {
 				text: null
@@ -19584,12 +19607,13 @@ RangeSelector.prototype = {
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	var fixedRange = this.chart && this.chart.fixedRange,
 		newMin = pick(fixedMin, this.translate(pxMin, true)),
-		newMax = pick(fixedMax, this.translate(pxMax, true));
+		newMax = pick(fixedMax, this.translate(pxMax, true)),
+		changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
 	// If the difference between the fixed range and the actual requested range is
 	// too great, the user is dragging across an ordinal gap, and we need to release
 	// the range selector button.
-	if (fixedRange && (newMax - newMin) / fixedRange < 1.3) {
+	if (changeRatio > 0.7 && changeRatio < 1.3) {
 		if (fixedMax) {
 			newMin = newMax - fixedRange;
 		} else {
@@ -19741,7 +19765,15 @@ Highcharts.StockChart = function (options, callback) {
 				labels: {
 					overflow: 'justify'
 				},
-				showLastLabel: true
+				showLastLabel: true,
+				crosshair: {
+					label: {
+						enabled: false,
+						formatter: function (value) { 
+							return dateFormat('%b %d, %Y', value);
+						}
+					}
+				}
 			}, xAxisOptions, // user options 
 			{ // forced options
 				type: 'datetime',
@@ -19761,6 +19793,14 @@ Highcharts.StockChart = function (options, callback) {
 				y: -2
 			},
 			showLastLabel: false,
+			crosshair: {
+				label: {
+					enabled: false,
+					formatter: function (value) { 
+						return value;
+					}
+				}
+			},
 			title: {
 				text: null
 			}
@@ -19836,6 +19876,110 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
 });
 
+// Wrapper to hide the label
+wrap(Axis.prototype, 'hideCrosshair', function (proceed, e, point) {
+	proceed.call(this, e, point);
+	if (this.crossLabel) {
+		this.crossLabel.hide();
+	}
+});
+
+// Wrapper to draw the label
+wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+	// Draw the crosshair
+	proceed.call(this, e, point);
+
+	// Check if the label has to be drawn
+	if (!defined(this.crosshair.label)) { return; }
+	if (!this.crosshair.label.enabled) { return; }
+	if (!defined(point)) { return; }
+
+	var options = this.options.crosshair.label,		// the label's options
+		axis = this.xOrY,							// axis name
+		horiz = this.horiz,							// axis orientation
+		opposite = this.opposite,					// axis position
+		left = this.left,							// left position
+		top = this.top,								// top position
+		crossLabel = this.crossLabel;				// reference to the svgElement
+
+	// If the label does not exist yet, create it.
+	if (!crossLabel) {
+		crossLabel = this.crossLabel = this.chart.renderer.label()			
+		.attr({
+			align: options.align || horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'center') : (this.labelAlign === 'left' ? 'left' : 'center'),
+			zIndex: 12,
+			fill: options.backgroundColor || 'lightgrey',
+			padding: 5,
+			stroke: options.stroke || null,
+			'stroke-width': options.strokeWidth || 0
+		})
+		.css({				
+			color: options.color || 'black',
+			fontWeight: options.fontWeight || 'bold',
+			textAlign: 'center'
+		})
+		.add();
+	}
+
+	var txt = options.format ? format(options.format, {value: point[axis]}) : options.formatter.call(this, point[axis]),
+		posx,
+		posy;
+
+	if (horiz) {
+		posx = point.plotX + left;
+		posy = top + (opposite ? 0 : this.height);
+	} else {
+		posx = opposite ? this.width + left : 0;
+		posy = point.plotY + top;
+	}
+
+	// if the crosshair goes out of view (too high or too low, hide it and hide the label)
+	if (posy < top || posy > top + this.height) {
+		this.hideCrosshair();
+		return;
+	}
+
+	// show the label
+	crossLabel.attr({x: posx, y: posy, text: txt, visibility: VISIBLE});
+	var crossBox = crossLabel.box;
+
+	// now it is placed we can correct its position
+	if (horiz) {
+		if (((this.options.tickPosition === 'inside') && !opposite) ||
+			((this.options.tickPosition !== 'inside') && opposite)) {
+			posy = crossLabel.y - crossBox.height;
+		}	
+	} else {
+		posy = crossLabel.y - (crossBox.height / 2);
+	}
+
+	// check the edges
+	var renderBox = this.chart.renderer.box;
+	var limit;
+	if (horiz) {
+		limit = {
+			left: left - crossBox.x,
+			right: left + this.width - crossBox.x
+		};
+	} else {
+		limit = {
+			left: this.labelAlign === 'left' ? left : renderBox.clientLeft,
+			right: this.labelAlign === 'right' ? left + this.width : renderBox.clientLeft + renderBox.clientWidth
+		};
+	}
+
+	// left edge
+	if (crossLabel.translateX < limit.left) {
+		posx = posx + (limit.left - crossLabel.translateX);
+	}
+	// right edge
+	if (crossLabel.translateX + crossBox.width >= limit.right) {
+		posx = posx - (crossLabel.translateX + crossBox.width - limit.right);
+	}
+
+	// show the crosslabel
+	crossLabel.attr({x: posx, y: posy, visibility: VISIBLE});
+});
 
 /* ****************************************************************************
  * Start value compare logic                                                  *

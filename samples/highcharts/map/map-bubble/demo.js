@@ -1334,14 +1334,13 @@ $(function () {
         series : [{
             name: 'Countries',
             mapData: Highcharts.maps.world,
-            allAreas: true,
             color: '#E0E0E0',
             enableMouseTracking: false
         }, {
             type: 'mapbubble',
             mapData: Highcharts.maps.world,
             name: 'Population 2010',
-            dataJoinBy: 'code',
+            joinBy: 'code',
             data: data,
             minSize: 4,
             maxSize: '12%',
