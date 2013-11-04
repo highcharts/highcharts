@@ -1525,7 +1525,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
-		symbolWidth: 16,
+		// symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
 		// width: undefined,
@@ -5727,7 +5727,6 @@ Tick.prototype = {
 	handleOverflow: function (index, xy) {
 		var show = true,
 			axis = this.axis,
-			chart = axis.chart,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
 			x = xy.x,
@@ -5739,17 +5738,17 @@ Tick.prototype = {
 			var sides = this.getLabelSides(),
 				leftSide = sides[0],
 				rightSide = sides[1],
-				plotLeft = chart.plotLeft,
-				plotRight = plotLeft + axis.len,
+				axisLeft = axis.pos,
+				axisRight = axisLeft + axis.len,
 				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
 				neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
-				if (x + leftSide < plotLeft) {
+				if (x + leftSide < axisLeft) {
 
 					// Align it to plot left
-					x = plotLeft - leftSide;
+					x = axisLeft - leftSide;
 
 					// Hide it if it now overlaps the neighbour label
 					if (neighbour && x + rightSide > neighbourEdge) {
@@ -5759,10 +5758,10 @@ Tick.prototype = {
 
 			} else {
 				// Is the label spilling out to the right of the plot area?
-				if (x + rightSide > plotRight) {
+				if (x + rightSide > axisRight) {
 
 					// Align it to plot right
-					x = plotRight - rightSide;
+					x = axisRight - rightSide;
 
 					// Hide it if it now overlaps the neighbour label
 					if (neighbour && x + leftSide < neighbourEdge) {
@@ -9702,6 +9701,7 @@ Legend.prototype = {
 		legend.chart = chart;
 		legend.itemHeight = 0;
 		legend.lastLineHeight = 0;
+		legend.symbolWidth = pick(options.symbolWidth, 16);
 
 		// Render it
 		legend.render();
@@ -9726,7 +9726,7 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? item.color : hiddenColor,
+			symbolColor = visible ? (item.legendColor || item.color) : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = {
 				stroke: symbolColor,
@@ -9883,7 +9883,7 @@ Legend.prototype = {
 			renderer = chart.renderer,
 			options = legend.options,
 			horizontal = options.layout === 'horizontal',
-			symbolWidth = options.symbolWidth,
+			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
@@ -9983,10 +9983,10 @@ Legend.prototype = {
 		// calculate the positions for the next line
 		bBox = li.getBBox();
 
-		itemWidth = item.legendItemWidth =
-			options.itemWidth || symbolWidth + symbolPadding + bBox.width + itemDistance +
+		itemWidth = item.legendItemWidth = 
+			options.itemWidth || item.legendItemWidth || symbolWidth + symbolPadding + bBox.width + itemDistance +
 			(showCheckbox ? 20 : 0);
-		legend.itemHeight = itemHeight = bBox.height;
+		legend.itemHeight = itemHeight = item.legendItemHeight || bBox.height;
 
 		// if the item exceeds the width, start a new line
 		if (horizontal && legend.itemX - initialItemX + itemWidth >
@@ -10340,7 +10340,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
 			legend.baseline - 11,
-			legend.options.symbolWidth,
+			legend.symbolWidth,
 			12,
 			2
 		).attr({
@@ -10362,7 +10362,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			radius,
 			legendOptions = legend.options,
 			legendSymbol,
-			symbolWidth = legendOptions.symbolWidth,
+			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
 			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),

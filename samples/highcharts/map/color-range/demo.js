@@ -388,11 +388,11 @@ $(function () {
 
         legend: {
             layout: 'horizontal',
-
-            /*
-            layout: 'vertical',
-            align: 'right'
-            // */
+            borderWidth: 0,
+            backgroundColor: 'rgba(255,255,255,0.85)',
+            floating: true,
+            verticalAlign: 'top',
+            y: 25
         },
 
         mapNavigation: {
@@ -420,8 +420,13 @@ $(function () {
             colorAxis: {
                 min: 1,
                 type: 'logarithmic',
-                minColor: '#CCCCFF',
-                maxColor: '#000044'
+                minColor: '#EEEEFF',
+                maxColor: '#000022',
+                stops: [
+                    [0, '#EFEFFF'],
+                    [0.67, '#4444FF'],
+                    [1, '#000022']
+                ]
             }
         }]
     });

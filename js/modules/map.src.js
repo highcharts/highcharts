@@ -487,7 +487,7 @@
 	extend(ColorAxis.prototype, Axis.prototype);
 	extend(ColorAxis.prototype, {
 
-		init: function (series, userOptions, legend) {
+		init: function (series, userOptions) {
 			var chart = series.chart,
 				horiz = chart.options.legend.layout !== 'vertical';
 
@@ -501,22 +501,19 @@
 
 			// Extended properties
 			this.series = [series];
-			this.getOffset(legend);
 		},
-		getOffset: function (legend) {
-			var group = this.series[0].legendItems[0].legendGroup;
+		getOffset: function () {
+			var group = this.series[0].legendGroup;
 			Axis.prototype.getOffset.call(this);
 			if (!this.added) {
+
+				// Move the axis elements inside the legend group
 				this.axisGroup.add(group);
 				this.gridGroup.add(group);
 				this.labelGroup.add(group);
 
-			
-				legend.offsetWidth = 200;
-
 				this.added = true;
 			}
-			// TODO: Start from here, get the label offset
 		},
 		getSeriesExtremes: function () {
 			var series = this.series[0];
@@ -531,7 +528,7 @@
 				axisLen = this.len;
 			
 			if (point) {
-				crossPos = this.translate(point.y, null, null, null, true);
+				crossPos = this.toPixels(point.y);
 				if (crossPos < axisPos) {
 					crossPos = axisPos - 3;
 				} else if (crossPos > axisPos + axisLen) {
@@ -680,10 +677,7 @@
 				from,
 				to,
 				colorAxis,
-				valueRanges,
-				gradientColor,
-				grad,
-				horizontal = chart.options.legend.layout === 'horizontal';
+				valueRanges;
 
 			
 			H.Series.prototype.init.apply(this, arguments);
@@ -737,19 +731,9 @@
 
 			} else if (colorAxis) {
 
-				// Create the color gradient
-				grad = horizontal ? [0, 0, 1, 0] : [0, 1, 0, 0]; 
-				gradientColor = {
-					linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
-					stops: 
-					[
-						[0, colorAxis.minColor],
-						[1, colorAxis.maxColor]
-					]
-				};
 
 				// Add a mock object to the legend items.
-				series.legendItems = [{
+				/*series.legendItems = [{
 					chart: chart,
 					color: gradientColor,
 					options: {},
@@ -758,7 +742,8 @@
 					setState: noop,
 					setVisible: noop,
 					owner: series
-				}];
+				}];*/
+				series.drawLegendSymbol = series.drawLegendSymbolGradient;
 
 			} /*else if (colorRange) {
 
@@ -814,63 +799,70 @@
 		 * @param {Object} item The series (this) or point
 		 */
 		drawLegendSymbolGradient: function (legend, item) {
-			var spacing = legend.options.symbolPadding,
-				padding = pick(legend.options.padding, 8),
-				positionY,
-				positionX,
-				gradientSize = 14,
-				horizontal = legend.options.layout === 'horizontal',
+			var padding = legend.padding,
+				legendOptions = legend.options,
+				horiz = legendOptions.layout === 'horizontal',
 				box,
-				rectangleLength = pick(legend.options.rectangleLength, 200);
+				width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
+				height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
+				labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30),
+				colorAxis = this.options.colorAxis,
+				grad;
 
-			// Set local variables based on option.
-			if (horizontal) {
-				positionY = -gradientSize - (spacing / 2) - 10;
-				positionX = 0;
-			} else {
-				positionY = -rectangleLength - (spacing / 2);
-				positionX = padding + gradientSize;
-			}
+
+			// Create the color gradient
+			grad = horiz ? [0, 0, 1, 0] : [0, 0, 0, 1]; 
+			this.legendColor = {
+				linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
+				stops: colorAxis.stops || [
+					[0, colorAxis.minColor],
+					[1, colorAxis.maxColor]
+				]
+			};
+
+			// Don't show the series name
+			legendOptions.labelFormatter = noop;
 
 			// Create the gradient
 			item.legendSymbol = this.chart.renderer.rect(
-				spacing,
-				positionY,
-				horizontal ? rectangleLength : gradientSize,
-				horizontal ? gradientSize : rectangleLength
+				0,
+				legend.baseline - 11,
+				width,
+				height
 			).attr({
 				zIndex: 1
 			}).add(item.legendGroup);
 			box = item.legendSymbol.getBBox();
 
-			// Changes legend box settings based on option.
-			if (horizontal) {
-				legend.offsetWidth = box.width + (spacing * 2) + padding;
-				legend.itemY = gradientSize + padding + 20;
-			} else {
-				legend.offsetWidth = (spacing) + box.width + padding;
-				legend.itemY = box.height + padding;
-				legend.itemX = spacing;
+			// Set how much space this legend item takes up
+			this.legendItemWidth = width + padding + (horiz ? 0 : labelPadding);
+			this.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
+			
+			if (!this.colorAxis) {
+				this.drawLegendAxis(horiz, box, legend);
 			}
-			this.owner.drawLegendAxis(horizontal, box, legend);
 		},
 
-		drawLegendAxis: function (horizontal, box, legend) {
+		drawLegendAxis: function (horiz, box, legend) {
 			this.colorAxis = new ColorAxis(this, merge({
 				lineWidth: 0,
 				gridLineWidth: 1,
 				tickPixelInterval: 70,
 				startOnTick: true,
 				endOnTick: true,
+				reversed: !horiz,
 				crosshair: { // docs: use another name?
 					animation: {
 						duration: 50
 					},
-					color: 'black',
+					color: legend.options.borderColor,
 					width: 0.01
+				},
+				labels: {
+					overflow: 'justify'
 				}
 			}, this.options.colorAxis, {
-				isX: horizontal,
+				isX: horiz,
 				title: null,
 				left: box.x,
 				top: box.y,
@@ -1096,16 +1088,20 @@
 				colorAxis = this.colorAxis,
 				colorKey = this.colorKey,
 				nullColor = seriesOptions.nullColor,
-				minColor,
 				from,
 				to,
 				valueMin,
 				valueMax,
-				maxColor;
+				stops;
 
 			if (colorAxis) {
-				minColor = Color(colorAxis.options.minColor);
-				maxColor = Color(colorAxis.options.maxColor);
+				stops = colorAxis.options.stops || [
+					[0, colorAxis.options.minColor],
+					[1, colorAxis.options.maxColor]
+				];
+				each(stops, function (stop) {
+					stop.color = Color(stop[1]);
+				});
 				valueMin = colorAxis.min;
 				valueMax = colorAxis.max;
 			}
@@ -1138,7 +1134,23 @@
 						value = colorAxis.val2lin(value);
 					}
 					pos = 1 - ((valueMax - value) / (valueMax - valueMin));
-					color = tweenColors(minColor, maxColor, pos);
+					i = stops.length;
+					while (i--) {
+						if (pos > stops[i][0]) {
+							break;
+						}
+					}
+					from = (stops[i] || stops[i + 1]);
+					to = stops[i + 1];
+
+					// The position within the gradient
+					pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
+					
+					color = tweenColors(
+						from.color, 
+						to.color,
+						pos
+					);
 				} else if (isNull) {
 					color = nullColor;
 				} 
