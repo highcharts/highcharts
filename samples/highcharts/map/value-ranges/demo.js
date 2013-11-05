@@ -632,7 +632,7 @@ $(function () {
             $.each(columns[0], function (i, code) {
                 data.push({
                     code: code.toUpperCase(),
-                    y: parseFloat(columns[2][i]),
+                    value: parseFloat(columns[2][i]),
                     name: columns[1][i]
                 })
             });

@@ -450,32 +450,6 @@
 			chart.redraw();
 		}
 	});
-	
-	/**
-	 * Extend the default options with map options
-	 */
-	plotOptions.map = merge(plotOptions.scatter, {
-		allAreas: true,
-		animation: false, // makes the complex shapes slow
-		nullColor: '#F8F8F8',
-		borderColor: 'silver',
-		borderWidth: 1,
-		marker: null,
-		stickyTracking: false,
-		dataLabels: {
-			verticalAlign: 'middle'
-		},
-		turboThreshold: 0,
-		tooltip: {
-			followPointer: true,
-			pointFormat: '{point.name}: {point.y}<br/>'
-		},
-		states: {
-			normal: {
-				animation: true
-			}
-		}
-	});
 
 
 	/**
@@ -498,6 +472,7 @@
 			// Override original axis properties
 			this.isXAxis = true;
 			this.side =  horiz ? 2 : 1;
+			this.horiz = horiz;
 
 			// Extended properties
 			this.series = [series];
@@ -528,7 +503,7 @@
 				axisLen = this.len;
 			
 			if (point) {
-				crossPos = this.toPixels(point.y);
+				crossPos = this.toPixels(point.value);
 				if (crossPos < axisPos) {
 					crossPos = axisPos - 3;
 				} else if (crossPos > axisPos + axisLen) {
@@ -559,6 +534,34 @@
 		}
 	});
 
+
+	
+	/**
+	 * Extend the default options with map options
+	 */
+	plotOptions.map = merge(plotOptions.scatter, {
+		allAreas: true,
+		animation: false, // makes the complex shapes slow
+		nullColor: '#F8F8F8',
+		borderColor: 'silver',
+		borderWidth: 1,
+		marker: null,
+		stickyTracking: false,
+		dataLabels: {
+			verticalAlign: 'middle'
+		},
+		turboThreshold: 0,
+		tooltip: {
+			followPointer: true,
+			pointFormat: '{point.name}: {point.value}<br/>'
+		},
+		states: {
+			normal: {
+				animation: true
+			}
+		}
+	});
+
 	/**
 	 * The MapAreaPoint object
 	 */
@@ -585,7 +588,7 @@
 					}
 					extend(point, mapPoint); // copy over properties
 				} else {
-					point.y = point.y || null;
+					point.value = point.value || null;
 				}
 			}
 			
@@ -660,13 +663,13 @@
 			'stroke-width': 'borderWidth',
 			fill: 'color'
 		},
-		colorKey: 'y',
 		pointClass: MapAreaPoint,
 		trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 		getSymbol: noop,
 		supportsDrilldown: true,
 		getExtremesFromAll: true,
 		useMapGeometry: true, // get axis extremes from paths, not values
+		parallelArrays: ['x', 'y', 'value'],
 		init: function (chart) {
 			var series = this,
 				legendOptions = chart.options.legend,
@@ -942,7 +945,7 @@
 		
 		getExtremes: function () {
 			// Get the actual value extremes for colors
-			H.Series.prototype.getExtremes.call(this);
+			H.Series.prototype.getExtremes.call(this, this.valueData);
 			this.valueMin = this.dataMin;
 			this.valueMax = this.dataMax;
 
@@ -1017,7 +1020,7 @@
 				dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
 				each(mapData, function (mapPoint) {
 					if (!joinBy || dataUsed.indexOf('|' + mapPoint[joinBy] + '|') === -1) {
-						data.push(merge(mapPoint, { y: null }));
+						data.push(merge(mapPoint, { value: null }));
 					}
 				});
 			}
@@ -1086,7 +1089,6 @@
 			var seriesOptions = this.options,
 				valueRanges = seriesOptions.valueRanges,
 				colorAxis = this.colorAxis,
-				colorKey = this.colorKey,
 				nullColor = seriesOptions.nullColor,
 				from,
 				to,
@@ -1106,7 +1108,7 @@
 				valueMax = colorAxis.max;
 			}
 			each(this.data, function (point) {
-				var value = point[colorKey],
+				var value = point.value,
 					isNull = value === null,
 					range,
 					color,
@@ -1177,16 +1179,11 @@
 		drawPoints: function () {
 			var series = this,
 				xAxis = series.xAxis,
-				yAxis = series.yAxis,
-				colorKey = series.colorKey;
+				yAxis = series.yAxis;
 			
-			// Make points pass test in drawing
+			// Make points pass test in drawing // TODO: check with point.value
 			each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
-				if (point[colorKey] === null) {
-					point[colorKey] = 0;
-					point.isNull = true;
-				}
 			});
 			
 			// Draw them
@@ -1198,11 +1195,6 @@
 				// by the middleX and middleY options.
 				point.plotX = xAxis.toPixels(point._midX, true);
 				point.plotY = yAxis.toPixels(point._midY, true);
-				
-				// Reset escaped null points
-				if (point.isNull) {
-					point[colorKey] = null;
-				}
 			});
 
 			// Now draw the data labels

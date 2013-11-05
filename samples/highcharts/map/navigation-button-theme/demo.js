@@ -619,691 +619,691 @@ $(function () {
 
     var data = [{
         code: "AF",
-        y: 31412
+        value: 31412
     }, {
         code: "AL",
-        y: 3204
+        value: 3204
     }, {
         code: "DZ",
-        y: 35468
+        value: 35468
     }, {
         code: "AS",
-        y: 68
+        value: 68
     }, {
         code: "AD",
-        y: 85
+        value: 85
     }, {
         code: "AO",
-        y: 19082
+        value: 19082
     }, {
         code: "AI",
-        y: 15
+        value: 15
     }, {
         code: "AG",
-        y: 89
+        value: 89
     }, {
         code: "AR",
-        y: 40412
+        value: 40412
     }, {
         code: "AM",
-        y: 3092
+        value: 3092
     }, {
         code: "AW",
-        y: 107
+        value: 107
     }, {
         code: "AU",
-        y: 22268
+        value: 22268
     }, {
         code: "AT",
-        y: 8394
+        value: 8394
     }, {
         code: "AZ",
-        y: 9188
+        value: 9188
     }, {
         code: "BS",
-        y: 343
+        value: 343
     }, {
         code: "BH",
-        y: 1262
+        value: 1262
     }, {
         code: "BD",
-        y: 148692
+        value: 148692
     }, {
         code: "BB",
-        y: 273
+        value: 273
     }, {
         code: "BY",
-        y: 9595
+        value: 9595
     }, {
         code: "BE",
-        y: 10712
+        value: 10712
     }, {
         code: "BZ",
-        y: 312
+        value: 312
     }, {
         code: "BJ",
-        y: 8850
+        value: 8850
     }, {
         code: "BM",
-        y: 65
+        value: 65
     }, {
         code: "BT",
-        y: 726
+        value: 726
     }, {
         code: "BO",
-        y: 9930
+        value: 9930
     }, {
         code: "BA",
-        y: 3760
+        value: 3760
     }, {
         code: "BW",
-        y: 2007
+        value: 2007
     }, {
         code: "BR",
-        y: 194946
+        value: 194946
     }, {
         code: "VG",
-        y: 23
+        value: 23
     }, {
         code: "BN",
-        y: 399
+        value: 399
     }, {
         code: "BG",
-        y: 7494
+        value: 7494
     }, {
         code: "BF",
-        y: 16469
+        value: 16469
     }, {
         code: "BI",
-        y: 8383
+        value: 8383
     }, {
         code: "KH",
-        y: 14138
+        value: 14138
     }, {
         code: "CM",
-        y: 19599
+        value: 19599
     }, {
         code: "CA",
-        y: 34017
+        value: 34017
     }, {
         code: "CV",
-        y: 496
+        value: 496
     }, {
         code: "KY",
-        y: 56
+        value: 56
     }, {
         code: "CF",
-        y: 4401
+        value: 4401
     }, {
         code: "TD",
-        y: 11227
+        value: 11227
     }, {
         code: "GB",
-        y: 153
+        value: 153
     }, {
         code: "CL",
-        y: 17114
+        value: 17114
     }, {
         code: "CN",
-        y: 1341335
+        value: 1341335
     }, {
         code: "CO",
-        y: 46295
+        value: 46295
     }, {
         code: "KM",
-        y: 735
+        value: 735
     }, {
         code: "CG",
-        y: 4043
+        value: 4043
     }, {
         code: "CD",
-        y: 65966
+        value: 65966
     }, {
         code: "CK",
-        y: 20
+        value: 20
     }, {
         code: "CR",
-        y: 4659
+        value: 4659
     }, {
         code: "CI",
-        y: 19738
+        value: 19738
     }, {
         code: "HR",
-        y: 4403
+        value: 4403
     }, {
         code: "CU",
-        y: 11258
+        value: 11258
     }, {
         code: "CY",
-        y: 1104
+        value: 1104
     }, {
         code: "CZ",
-        y: 10493
+        value: 10493
     }, {
         code: "DK",
-        y: 5550
+        value: 5550
     }, {
         code: "DJ",
-        y: 889
+        value: 889
     }, {
         code: "DM",
-        y: 68
+        value: 68
     }, {
         code: "DO",
-        y: 9927
+        value: 9927
     }, {
         code: "EC",
-        y: 14465
+        value: 14465
     }, {
         code: "EG",
-        y: 81121
+        value: 81121
     }, {
         code: "SV",
-        y: 6193
+        value: 6193
     }, {
         code: "GQ",
-        y: 700
+        value: 700
     }, {
         code: "ER",
-        y: 5254
+        value: 5254
     }, {
         code: "EE",
-        y: 1341
+        value: 1341
     }, {
         code: "ET",
-        y: 82950
+        value: 82950
     }, {
         code: "FO",
-        y: 49
+        value: 49
     }, {
         code: "FK",
-        y: 3
+        value: 3
     }, {
         code: "FJ",
-        y: 861
+        value: 861
     }, {
         code: "FI",
-        y: 5365
+        value: 5365
     }, {
         code: "FR",
-        y: 62787
+        value: 62787
     }, {
         code: "GF",
-        y: 231
+        value: 231
     }, {
         code: "PF",
-        y: 271
+        value: 271
     }, {
         code: "GA",
-        y: 1505
+        value: 1505
     }, {
         code: "GM",
-        y: 1728
+        value: 1728
     }, {
         code: "GE",
-        y: 4352
+        value: 4352
     }, {
         code: "DE",
-        y: 82302
+        value: 82302
     }, {
         code: "GH",
-        y: 24392
+        value: 24392
     }, {
         code: "GI",
-        y: 29
+        value: 29
     }, {
         code: "GR",
-        y: 11359
+        value: 11359
     }, {
         code: "GL",
-        y: 57
+        value: 57
     }, {
         code: "GD",
-        y: 104
+        value: 104
     }, {
         code: "GP",
-        y: 461
+        value: 461
     }, {
         code: "GU",
-        y: 180
+        value: 180
     }, {
         code: "GT",
-        y: 14389
+        value: 14389
     }, {
         code: "GN",
-        y: 9982
+        value: 9982
     }, {
         code: "GW",
-        y: 1515
+        value: 1515
     }, {
         code: "GY",
-        y: 754
+        value: 754
     }, {
         code: "HT",
-        y: 9993
+        value: 9993
     }, {
         code: "HN",
-        y: 7601
+        value: 7601
     }, {
         code: "HK",
-        y: 7053
+        value: 7053
     }, {
         code: "HU",
-        y: 9984
+        value: 9984
     }, {
         code: "IS",
-        y: 320
+        value: 320
     }, {
         code: "IN",
-        y: 1224614
+        value: 1224614
     }, {
         code: "ID",
-        y: 239871
+        value: 239871
     }, {
         code: "IR",
-        y: 73974
+        value: 73974
     }, {
         code: "IQ",
-        y: 31672
+        value: 31672
     }, {
         code: "IE",
-        y: 4470
+        value: 4470
     }, {
         code: "IM",
-        y: 83
+        value: 83
     }, {
         code: "IL",
-        y: 7418
+        value: 7418
     }, {
         code: "IT",
-        y: 60551
+        value: 60551
     }, {
         code: "JM",
-        y: 2741
+        value: 2741
     }, {
         code: "JP",
-        y: 126536
+        value: 126536
     }, {
         code: "JO",
-        y: 6187
+        value: 6187
     }, {
         code: "KZ",
-        y: 16026
+        value: 16026
     }, {
         code: "KE",
-        y: 40513
+        value: 40513
     }, {
         code: "KI",
-        y: 100
+        value: 100
     }, {
         code: "KP",
-        y: 24346
+        value: 24346
     }, {
         code: "KR",
-        y: 48184
+        value: 48184
     }, {
         code: "KW",
-        y: 2737
+        value: 2737
     }, {
         code: "KG",
-        y: 5334
+        value: 5334
     }, {
         code: "LA",
-        y: 6201
+        value: 6201
     }, {
         code: "LV",
-        y: 2252
+        value: 2252
     }, {
         code: "LB",
-        y: 4228
+        value: 4228
     }, {
         code: "LS",
-        y: 2171
+        value: 2171
     }, {
         code: "LR",
-        y: 3994
+        value: 3994
     }, {
         code: "LY",
-        y: 6355
+        value: 6355
     }, {
         code: "LI",
-        y: 36
+        value: 36
     }, {
         code: "LT",
-        y: 3324
+        value: 3324
     }, {
         code: "LU",
-        y: 507
+        value: 507
     }, {
         code: "MO",
-        y: 544
+        value: 544
     }, {
         code: "MK",
-        y: 2061
+        value: 2061
     }, {
         code: "MG",
-        y: 20714
+        value: 20714
     }, {
         code: "MW",
-        y: 14901
+        value: 14901
     }, {
         code: "MY",
-        y: 28401
+        value: 28401
     }, {
         code: "MV",
-        y: 316
+        value: 316
     }, {
         code: "ML",
-        y: 15370
+        value: 15370
     }, {
         code: "MT",
-        y: 417
+        value: 417
     }, {
         code: "MH",
-        y: 54
+        value: 54
     }, {
         code: "MQ",
-        y: 406
+        value: 406
     }, {
         code: "MR",
-        y: 3460
+        value: 3460
     }, {
         code: "MU",
-        y: 1299
+        value: 1299
     }, {
         code: "YT",
-        y: 204
+        value: 204
     }, {
         code: "MX",
-        y: 113423
+        value: 113423
     }, {
         code: "FM",
-        y: 111
+        value: 111
     }, {
         code: "MD",
-        y: 3573
+        value: 3573
     }, {
         code: "MC",
-        y: 35
+        value: 35
     }, {
         code: "MN",
-        y: 2756
+        value: 2756
     }, {
         code: "ME",
-        y: 631
+        value: 631
     }, {
         code: "MS",
-        y: 6
+        value: 6
     }, {
         code: "MA",
-        y: 31951
+        value: 31951
     }, {
         code: "MZ",
-        y: 23391
+        value: 23391
     }, {
         code: "MM",
-        y: 47963
+        value: 47963
     }, {
         code: "NA",
-        y: 2283
+        value: 2283
     }, {
         code: "NR",
-        y: 10
+        value: 10
     }, {
         code: "NP",
-        y: 29959
+        value: 29959
     }, {
         code: "NL",
-        y: 16613
+        value: 16613
     }, {
         code: "AN",
-        y: 201
+        value: 201
     }, {
         code: "NC",
-        y: 251
+        value: 251
     }, {
         code: "NZ",
-        y: 4368
+        value: 4368
     }, {
         code: "NI",
-        y: 5788
+        value: 5788
     }, {
         code: "NE",
-        y: 15512
+        value: 15512
     }, {
         code: "NG",
-        y: 158423
+        value: 158423
     }, {
         code: "NU",
-        y: 1
+        value: 1
     }, {
         code: "MP",
-        y: 61
+        value: 61
     }, {
         code: "NO",
-        y: 4883
+        value: 4883
     }, {
         code: "OM",
-        y: 2782
+        value: 2782
     }, {
         code: "PK",
-        y: 173593
+        value: 173593
     }, {
         code: "PW",
-        y: 20
+        value: 20
     }, {
         code: "PS",
-        y: 4039
+        value: 4039
     }, {
         code: "PA",
-        y: 3517
+        value: 3517
     }, {
         code: "PG",
-        y: 6858
+        value: 6858
     }, {
         code: "PY",
-        y: 6455
+        value: 6455
     }, {
         code: "PE",
-        y: 29077
+        value: 29077
     }, {
         code: "PH",
-        y: 93261
+        value: 93261
     }, {
         code: "PL",
-        y: 38277
+        value: 38277
     }, {
         code: "PT",
-        y: 10676
+        value: 10676
     }, {
         code: "PR",
-        y: 3749
+        value: 3749
     }, {
         code: "QA",
-        y: 1759
+        value: 1759
     }, {
         code: "RE",
-        y: 846
+        value: 846
     }, {
         code: "RO",
-        y: 21486
+        value: 21486
     }, {
         code: "RU",
-        y: 142958
+        value: 142958
     }, {
         code: "RW",
-        y: 10624
+        value: 10624
     }, {
         code: "SH",
-        y: 4
+        value: 4
     }, {
         code: "KN",
-        y: 52
+        value: 52
     }, {
         code: "LC",
-        y: 174
+        value: 174
     }, {
         code: "PM",
-        y: 6
+        value: 6
     }, {
         code: "VC",
-        y: 109
+        value: 109
     }, {
         code: "WS",
-        y: 183
+        value: 183
     }, {
         code: "SM",
-        y: 32
+        value: 32
     }, {
         code: "ST",
-        y: 165
+        value: 165
     }, {
         code: "SA",
-        y: 27448
+        value: 27448
     }, {
         code: "SN",
-        y: 12434
+        value: 12434
     }, {
         code: "RS",
-        y: 9856
+        value: 9856
     }, {
         code: "SC",
-        y: 87
+        value: 87
     }, {
         code: "SL",
-        y: 5868
+        value: 5868
     }, {
         code: "SG",
-        y: 5086
+        value: 5086
     }, {
         code: "SK",
-        y: 5462
+        value: 5462
     }, {
         code: "SI",
-        y: 2030
+        value: 2030
     }, {
         code: "SB",
-        y: 538
+        value: 538
     }, {
         code: "SO",
-        y: 9331
+        value: 9331
     }, {
         code: "ZA",
-        y: 50133
+        value: 50133
     }, {
         code: "ES",
-        y: 46077
+        value: 46077
     }, {
         code: "LK",
-        y: 20860
+        value: 20860
     }, {
         code: "SD",
-        y: 43552
+        value: 43552
     }, {
         code: "SR",
-        y: 525
+        value: 525
     }, {
         code: "SZ",
-        y: 1186
+        value: 1186
     }, {
         code: "SE",
-        y: 9380
+        value: 9380
     }, {
         code: "CH",
-        y: 7664
+        value: 7664
     }, {
         code: "SY",
-        y: 20411
+        value: 20411
     }, {
         code: "TJ",
-        y: 6879
+        value: 6879
     }, {
         code: "TZ",
-        y: 44841
+        value: 44841
     }, {
         code: "TH",
-        y: 69122
+        value: 69122
     }, {
         code: "TL",
-        y: 1124
+        value: 1124
     }, {
         code: "TG",
-        y: 6028
+        value: 6028
     }, {
         code: "TK",
-        y: 1
+        value: 1
     }, {
         code: "TO",
-        y: 104
+        value: 104
     }, {
         code: "TT",
-        y: 1341
+        value: 1341
     }, {
         code: "TN",
-        y: 10481
+        value: 10481
     }, {
         code: "TR",
-        y: 72752
+        value: 72752
     }, {
         code: "TM",
-        y: 5042
+        value: 5042
     }, {
         code: "TC",
-        y: 38
+        value: 38
     }, {
         code: "TV",
-        y: 10
+        value: 10
     }, {
         code: "UG",
-        y: 33425
+        value: 33425
     }, {
         code: "UA",
-        y: 45448
+        value: 45448
     }, {
         code: "AE",
-        y: 7512
+        value: 7512
     }, {
         code: "UK",
-        y: 62036
+        value: 62036
     }, {
         code: "US",
-        y: 310384
+        value: 310384
     }, {
         code: "VI",
-        y: 109
+        value: 109
     }, {
         code: "UY",
-        y: 3369
+        value: 3369
     }, {
         code: "UZ",
-        y: 27445
+        value: 27445
     }, {
         code: "VU",
-        y: 240
+        value: 240
     }, {
         code: "VA",
-        y: 0
+        value: 0
     }, {
         code: "VE",
-        y: 28980
+        value: 28980
     }, {
         code: "VN",
-        y: 87848
+        value: 87848
     }, {
         code: "WF",
-        y: 14
+        value: 14
     }, {
         code: "EH",
-        y: 531
+        value: 531
     }, {
         code: "YE",
-        y: 24053
+        value: 24053
     }, {
         code: "ZM",
-        y: 13089
+        value: 13089
     }, {
         code: "ZW",
-        y: 12571
+        value: 12571
     }];
 
 
@@ -1319,7 +1319,8 @@ $(function () {
         },
 
         legend: {
-            enabled: false
+            //enabled: false
+            backgroundColor: 'yellow'
         },
 
         mapNavigation: {
@@ -1350,13 +1351,13 @@ $(function () {
             data: data,
             joinBy: 'code',
             tooltip: {
-                pointFormat: '{point.code}: {point.y},000'
+                pointFormat: '{point.code}: {point.value:,f},000'
             },
-            colorRange: {
-                from: '#efecf3',
-                to: '#990041',
-                fromLabel: 'Low',
-                toLabel: 'High'
+            colorAxis: {
+                minColor: '#efecf3',
+                maxColor: '#990041',
+                min: 10,
+                type: 'logarithmic'
             }
         }]
     });

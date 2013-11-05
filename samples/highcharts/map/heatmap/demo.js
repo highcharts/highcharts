@@ -45,16 +45,18 @@ $(function () {
             borderWidth: 0,
             colsize: 24 * 36e5, // one day
 
-            colorRange: {
-                from: '#000088',
-                to: '#FFDDAA',
-                fromLabel: 'Cold',
-                toLabel: 'Warm'
+            colorAxis: {
+                stops: [
+                    [0, '#3060cf'],
+                    [0.5, '#fffbbc'],
+                    [1, '#c4463a']
+                ],
+                min: -5
             },
 
             tooltip: {
                 headerFormat: 'Temperature<br/>',
-                pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.z} ℃</b>'
+                pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
             }
         }]
 

@@ -304,7 +304,7 @@ $(function () {
                 var key = mapPoint.code,
                     i = $.inArray(key, keys);
                 options.series[0].data.push(Highcharts.extend({
-                    y : parseFloat(percent[i]),
+                    value : parseFloat(percent[i]),
                     name : names[i],
                     key: key,
                     row: i
