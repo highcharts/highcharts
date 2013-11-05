@@ -15,7 +15,9 @@ var UNDEFINED,
 	emptyArray = [],
 	timers = [],
 	timerId,
-	Fx;
+	Fx,
+	proxiedHandlers = {},
+	handlerId = 0;
 
 Math.easeInOutSine = function (t, b, c, d) {
 	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
@@ -32,8 +34,9 @@ function augment(obj) {
 	}
 
 	function IERemoveOneEvent(el, type, fn) {
-		fn = el.HCProxiedMethods[fn.toString()];
+		fn = proxiedHandlers[fn.HCHandlerId];
 		el.detachEvent('on' + type, fn);
+		delete proxiedHandlers[fn.HCHandlerId];
 	}
 
 	function removeAllEvents(el, type) {
@@ -91,12 +94,9 @@ function augment(obj) {
 						fn.call(el, e);
 					};
 
-					if (!el.HCProxiedMethods) {
-						el.HCProxiedMethods = {};
-					}
-
 					// link wrapped fn with original fn, so we can get this in removeEvent
-					el.HCProxiedMethods[fn.toString()] = wrappedFn;
+					fn.HCHandlerId = handlerId++;
+					proxiedHandlers[fn.HCHandlerId] = wrappedFn;
 
 					el.attachEvent('on' + name, wrappedFn);
 				}
