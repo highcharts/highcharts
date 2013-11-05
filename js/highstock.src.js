@@ -12425,9 +12425,8 @@ Point.prototype = {
 
 			// record changes in the parallel arrays
 			i = inArray(point, data);
-			series.xData[i] = point.x;
-			series.yData[i] = series.toYData ? series.toYData(point) : point.y;
-			series.zData[i] = point.z;
+			series.updateParallelArrays(point, i);
+					
 			seriesOptions.data[i] = point.options;
 
 			// redraw
@@ -12472,9 +12471,7 @@ Point.prototype = {
 			}
 			data.splice(i, 1);
 			series.options.data.splice(i, 1);
-			series.xData.splice(i, 1);
-			series.yData.splice(i, 1);
-			series.zData.splice(i, 1);
+			series.updateParallelArrays(point, 'splice', i, 1);
 
 			point.destroy();
 
@@ -12669,6 +12666,7 @@ Series.prototype = {
 		r: 'radius'
 	},
 	colorCounter: 0,
+	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
 	init: function (chart, options) {
 		var series = this,
 			eventType,
@@ -12712,7 +12710,10 @@ Series.prototype = {
 		series.getColor();
 		series.getSymbol();
 
-		// set the data
+		// Set the data
+		each(series.parallelArrays, function (key) {
+			series[key + 'Data'] = [];
+		});
 		series.setData(options.data, false);
 		
 		// Mark cartesian
@@ -12779,6 +12780,28 @@ Series.prototype = {
 		}
 	},
 
+	/**
+	 * For simple series types like line and column, the data values are held in arrays like
+	 * xData and yData for quick lookup to find extremes and more. For multidimensional series
+	 * like bubble and map, this can be extended with arrays like zData and valueData by 
+	 * adding to the series.parallelArrays array.
+	 */
+	updateParallelArrays: function (point, i) {
+		var series = point.series,
+			args = arguments,
+			fn = typeof i === 'number' ? 
+				 // Insert the value in the given position
+				function (key) {
+					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
+					series[key + 'Data'][i] = val;
+				} :
+				// Apply the method specified in i with the following arguments as arguments
+				function (key) {
+					Array.prototype[i].apply(series[key + 'Data'], Array.prototype.slice.call(args, 2));
+				};
+		
+		each(series.parallelArrays, fn);
+	},
 
 	/**
 	 * Return an auto incremented x value based on the pointStart and pointInterval options.
@@ -12945,14 +12968,12 @@ Series.prototype = {
 			graph = series.graph,
 			area = series.area,
 			chart = series.chart,
-			xData = series.xData,
-			yData = series.yData,
-			zData = series.zData,
 			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
+			xData = series.xData,
 			x,
 			i;
 
@@ -12988,9 +13009,9 @@ Series.prototype = {
 			}
 		}
 		
-		xData.splice(i, 0, x);
-		yData.splice(i, 0, series.toYData ? series.toYData(point) : point.y);
-		zData.splice(i, 0, point.z);
+		series.updateParallelArrays(point, 'splice', i); // insert undefined item
+		series.updateParallelArrays(point, i); // update it
+
 		if (names) {
 			names[x] = point.name;
 		}
@@ -13013,9 +13034,8 @@ Series.prototype = {
 				data[0].remove(false);
 			} else {
 				data.shift();
-				xData.shift();
-				yData.shift();
-				zData.shift();
+				series.updateParallelArrays(point, 'shift');
+				
 				dataOptions.shift();
 			}
 		}
@@ -13051,15 +13071,17 @@ Series.prototype = {
 		series.colorCounter = 0; // for series with colorByPoint (#1547)
 		
 		// parallel arrays
-		var xData = [],
-			yData = [],
-			zData = [],
-			dataLength = data ? data.length : [],
+		var dataLength = data ? data.length : [],
 			turboThreshold = pick(options.turboThreshold, 1000),
 			pt,
+			xData = this.xData,
+			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
-			valueCount = pointArrayMap && pointArrayMap.length,
-			hasToYData = !!series.toYData;
+			valueCount = pointArrayMap && pointArrayMap.length;
+
+		each(this.parallelArrays, function (key) {
+			series[key + 'Data'].length = 0;
+		});
 
 		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
 		// first value is tested, and we assume that all the rest are defined the same
@@ -13107,9 +13129,7 @@ Series.prototype = {
 				if (data[i] !== UNDEFINED) { // stray commas in oldIE
 					pt = { series: series };
 					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-					xData[i] = pt.x;
-					yData[i] = hasToYData ? series.toYData(pt) : pt.y;
-					zData[i] = pt.z;
+					series.updateParallelArrays(pt, i);	
 					if (names && pt.name) {
 						names[pt.x] = pt.name; // #2046
 					}
@@ -13124,9 +13144,7 @@ Series.prototype = {
 
 		series.data = [];
 		series.options.data = data;
-		series.xData = xData;
-		series.yData = yData;
-		series.zData = zData;
+		//series.zData = zData;
 
 		// destroy old points
 		i = (oldData && oldData.length) || 0;
@@ -13482,12 +13500,11 @@ Series.prototype = {
 	/**
 	 * Calculate Y extremes for visible data
 	 */
-	getExtremes: function () {
+	getExtremes: function (yData) {
 		var xAxis = this.xAxis,
 			yAxis = this.yAxis,
 			xData = this.processedXData,
-			yData = this.stackedYData || this.processedYData,
-			yDataLength = yData.length,
+			yDataLength,
 			activeYData = [],
 			activeCounter = 0,
 			xExtremes = xAxis.getExtremes(), // #2117, need to compensate for log X axis
@@ -13501,6 +13518,9 @@ Series.prototype = {
 			y,
 			i,
 			j;
+
+		yData = yData || this.stackedYData || this.processedYData;
+		yDataLength = yData.length;
 
 		for (i = 0; i < yDataLength; i++) {
 			
