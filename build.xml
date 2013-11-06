@@ -151,6 +151,7 @@
             <file name="BarSeries.js"/>
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
+            <file name="Datalabels.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
@@ -190,6 +191,7 @@
             <file name="OHLCSeries.js"/>
             <file name="CandlestickSeries.js"/>
             <file name="FlagsSeries.js"/>
+            <file name="DataLabels.js"/>
             <file name="Scroller.js"/>
             <file name="RangeSelector.js"/>
             <file name="StockNavigation.js"/>

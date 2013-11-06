@@ -175,7 +175,10 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
-			seriesProto.drawDataLabels.apply(this, arguments); // #1209
+			
+			if (seriesProto.drawDataLabels) {
+				seriesProto.drawDataLabels.apply(this, arguments); // #1209
+			}
 			
 			// Step 2: reorganize and handle data labels for the lower values
 			i = length;
@@ -199,12 +202,16 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
-			seriesProto.drawDataLabels.apply(this, arguments);
+			if (seriesProto.drawDataLabels) {
+				seriesProto.drawDataLabels.apply(this, arguments);
+			}
 		}
 	
 	},
 	
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	alignDataLabel: function () {
+		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+	},
 	
 	getSymbol: seriesTypes.column.prototype.getSymbol,
 	
