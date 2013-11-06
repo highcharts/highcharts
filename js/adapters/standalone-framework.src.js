@@ -105,7 +105,7 @@ function augment(obj) {
 						el.HCGuid = guid++;
 					}
 
-					var key = HighchartsAdapter.getProxiedHandlerKey(el, type, fn);
+					var key = HighchartsAdapter.getProxiedHandlerKey(el, name, fn);
 					// ignore already registered handler (equivalent to addEventListener)
 					if (proxiedHandlers[key]) {
 						return;
