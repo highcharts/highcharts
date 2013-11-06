@@ -16,10 +16,10 @@
 			each(series.data, function (point) {
 				var xPad = (options.colsize || 1) / 2,
 					yPad = (options.rowsize || 1) / 2,
-					x1 = Math.round(xAxis.toPixels(point.x - xPad, true)),
-					x2 = Math.round(xAxis.toPixels(point.x + xPad, true)),
-					y1 = Math.round(yAxis.toPixels(point.y - yPad, true)),
-					y2 = Math.round(yAxis.toPixels(point.y + yPad, true));
+					x1 = Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)),
+					x2 = Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)),
+					y1 = Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
+					y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
 
 				point.shapeType = 'rect';
 				point.shapeArgs = {

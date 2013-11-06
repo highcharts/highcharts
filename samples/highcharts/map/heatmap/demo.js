@@ -23,7 +23,9 @@ $(function () {
         },
 
         xAxis: {
-            tickPixelInterval: 50
+            tickPixelInterval: 50,
+            min: Date.UTC(2013, 3, 1),
+            max: Date.UTC(2013, 3, 30)
         },
 
         yAxis: {
@@ -38,7 +40,9 @@ $(function () {
             startOnTick: false,
             endOnTick: false,
             tickPositions: [0, 6, 12, 18, 24],
-            tickWidth: 1
+            tickWidth: 1,
+            min: 0,
+            max: 23
         },
 
         series: [{

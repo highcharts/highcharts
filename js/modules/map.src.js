@@ -471,7 +471,6 @@
 
 			// Override original axis properties
 			this.isXAxis = true;
-			this.side =  horiz ? 2 : 1;
 			this.horiz = horiz;
 
 			// Extended properties
@@ -498,6 +497,7 @@
 		drawCrosshair: function (e, point) {
 			var newCross = !this.cross,
 				plotX = point && point.plotX,
+				plotY = point && point.plotY,
 				crossPos,
 				axisPos = this.pos,
 				axisLen = this.len;
@@ -505,14 +505,16 @@
 			if (point) {
 				crossPos = this.toPixels(point.value);
 				if (crossPos < axisPos) {
-					crossPos = axisPos - 3;
+					crossPos = axisPos - 2;
 				} else if (crossPos > axisPos + axisLen) {
-					crossPos = axisPos + axisLen + 3;
+					crossPos = axisPos + axisLen + 2;
 				}
 				
 				point.plotX = crossPos;
+				point.plotY = this.len - crossPos;
 				Axis.prototype.drawCrosshair.call(this, e, point);
 				point.plotX = plotX;
+				point.plotY = plotY;
 				
 				if (!newCross && this.cross) {
 					this.cross
@@ -526,7 +528,7 @@
 		getPlotLinePath: function (a, b, c, d, pos) {
 			if (pos) { // crosshairs only
 				return this.horiz ? 
-					['M', pos - 6, this.top - 6, 'L', pos + 6, this.top - 6, pos, this.top, 'Z'] : 
+					['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
 					['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
 			} else {
 				return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
@@ -853,7 +855,9 @@
 				tickPixelInterval: 70,
 				startOnTick: true,
 				endOnTick: true,
+				offset: 0,
 				reversed: !horiz,
+				side:  horiz ? 2 : 1,
 				crosshair: { // docs: use another name?
 					animation: {
 						duration: 50
