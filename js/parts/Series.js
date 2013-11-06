@@ -971,7 +971,7 @@ Series.prototype = {
 		
 		// parallel arrays
 		var dataLength = data ? data.length : [],
-			turboThreshold = pick(options.turboThreshold, 1000),
+			turboThreshold = options.turboThreshold,
 			pt,
 			xData = this.xData,
 			yData = this.yData,

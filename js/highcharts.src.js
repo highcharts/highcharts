@@ -1462,7 +1462,7 @@ defaultOptions = {
 					marker: {}
 				}
 			},
-			stickyTracking: true
+			stickyTracking: true,
 			//tooltip: {
 				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
 				//valueDecimals: null,
@@ -1470,7 +1470,7 @@ defaultOptions = {
 				//valuePrefix: '',
 				//ySuffix: ''				
 			//}
-			// turboThreshold: 1000
+			turboThreshold: 1000
 			// zIndex: null
 		}
 	},
@@ -13369,7 +13369,7 @@ Series.prototype = {
 		
 		// parallel arrays
 		var dataLength = data ? data.length : [],
-			turboThreshold = pick(options.turboThreshold, 1000),
+			turboThreshold = options.turboThreshold,
 			pt,
 			xData = this.xData,
 			yData = this.yData,

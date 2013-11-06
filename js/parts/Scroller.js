@@ -1104,6 +1104,15 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 });
 
+// Pick up badly formatted point options to addPoint
+wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
+	var turboThreshold = this.options.turboThreshold;
+	if (turboThreshold && this.xData.length > turboThreshold && isObject(options) && !isArray(options) && this.chart.scroller) {
+		error(20, true);
+	}
+	proceed.call(this, options, redraw, shift, animation);
+});
+
 /* ****************************************************************************
  * End Scroller code														  *
  *****************************************************************************/

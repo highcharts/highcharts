@@ -1462,7 +1462,7 @@ defaultOptions = {
 					marker: {}
 				}
 			},
-			stickyTracking: true
+			stickyTracking: true,
 			//tooltip: {
 				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
 				//valueDecimals: null,
@@ -1470,7 +1470,7 @@ defaultOptions = {
 				//valuePrefix: '',
 				//ySuffix: ''				
 			//}
-			// turboThreshold: 1000
+			turboThreshold: 1000
 			// zIndex: null
 		}
 	},
@@ -13072,7 +13072,7 @@ Series.prototype = {
 		
 		// parallel arrays
 		var dataLength = data ? data.length : [],
-			turboThreshold = pick(options.turboThreshold, 1000),
+			turboThreshold = options.turboThreshold,
 			pt,
 			xData = this.xData,
 			yData = this.yData,
@@ -19016,6 +19016,15 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 	proceed.call(this, options, callback);
 
+});
+
+// Pick up badly formatted point options to addPoint
+wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
+	var turboThreshold = this.options.turboThreshold;
+	if (turboThreshold && this.xData.length > turboThreshold && isObject(options) && !isArray(options) && this.chart.scroller) {
+		error(20, true);
+	}
+	proceed.call(this, options, redraw, shift, animation);
 });
 
 /* ****************************************************************************
