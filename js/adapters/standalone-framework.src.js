@@ -17,7 +17,7 @@ var UNDEFINED,
 	timerId,
 	Fx,
 	proxiedHandlers = {},
-	handlerId = 0;
+	guid = 1;
 
 Math.easeInOutSine = function (t, b, c, d) {
 	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
@@ -34,9 +34,12 @@ function augment(obj) {
 	}
 
 	function IERemoveOneEvent(el, type, fn) {
-		fn = proxiedHandlers[fn.HCHandlerId];
-		el.detachEvent('on' + type, fn);
-		delete proxiedHandlers[fn.HCHandlerId];
+		var key = HighchartsAdapter.getProxiedHandlerKey(el, type, fn);
+		var proxiedHandler = proxiedHandlers[key];
+		if (proxiedHandler) {
+			el.detachEvent('on' + type, proxiedHandler);
+			delete proxiedHandlers[key];
+		}
 	}
 
 	function removeAllEvents(el, type) {
@@ -94,9 +97,22 @@ function augment(obj) {
 						fn.call(el, e);
 					};
 
+					if (!fn.HCGuid) {
+						fn.HCGuid = guid++;
+					}
+
+					if (!el.HCGuid) {
+						el.HCGuid = guid++;
+					}
+
+					var key = HighchartsAdapter.getProxiedHandlerKey(el, type, fn);
+					// ignore already registered handler (equivalent to addEventListener)
+					if (proxiedHandlers[key]) {
+						return;
+					}
+
 					// link wrapped fn with original fn, so we can get this in removeEvent
-					fn.HCHandlerId = handlerId++;
-					proxiedHandlers[fn.HCHandlerId] = wrappedFn;
+					proxiedHandlers[key] = wrappedFn;
 
 					el.attachEvent('on' + name, wrappedFn);
 				}
@@ -578,6 +594,16 @@ return {
 	 */
 	each: function (arr, fn) { // modern browsers
 		return Array.prototype.forEach.call(arr, fn);
+	},
+
+	/**
+	 * Get key for proxied IE event handler.
+	 * @param {Element} el
+	 * @param {String} type
+	 * @param {Function} fn
+	 */
+	getProxiedHandlerKey: function (el, type, fn) {
+		return [el.HCGuid, name, fn.HCGuid].join(':');
 	}
 };
 }());
