@@ -76,11 +76,13 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			xAxisExt = xAxis.getExtremes(),
 			leftPoint,
 			lastX,
-			rightPoint;
+			rightPoint,
+			currentDataGrouping;
 
 		// relate to a master series
 		if (onSeries && onSeries.visible && i) {
-			lastX = onData[i - 1].x;
+			currentDataGrouping = onSeries.currentDataGrouping;
+			lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
 
 			// sort the data points
 			points.sort(function (a, b) {
@@ -93,7 +95,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				
 				
 				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
-					
 					if (point.x <= lastX) { // #803
 					
 						point.plotY = leftPoint.plotY;
