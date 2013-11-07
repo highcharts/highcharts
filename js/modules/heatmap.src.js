@@ -5,6 +5,11 @@
 	seriesTypes.heatmap = H.extendClass(seriesTypes.map, {
 		useMapGeometry: false,
 		pointArrayMap: ['y', 'value'],
+		init: function () {
+			seriesTypes.map.prototype.init.apply(this, arguments);
+			this.pointRange = this.options.colsize || 1;
+			// TODO: similar logic for the Y axis
+		},
 		translate: function () {
 			var series = this,
 				options = series.options,
@@ -30,6 +35,7 @@
 				};
 			});
 			
+			series.pointRange = options.colsize || 1;
 			series.translateColors();
 		},
 		

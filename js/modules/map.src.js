@@ -1146,8 +1146,8 @@
 							break;
 						}
 					}
-					from = (stops[i] || stops[i + 1]);
-					to = stops[i + 1];
+					from = stops[i] || stops[i + 1];
+					to = stops[i + 1] || from;
 
 					// The position within the gradient
 					pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
