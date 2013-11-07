@@ -290,7 +290,7 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, processedXData)) || 1,
+			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
 			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,			
 			groupPositions = (ordinal ? xAxis.getNonLinearTimeTicks : xAxis.getTimeTicks)(
 				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),

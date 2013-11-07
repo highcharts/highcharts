@@ -123,6 +123,7 @@
 						axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 					}
 				}
+				axis.groupIntervalFactor = null; // reset for next run
 			};
 			
 			/**
@@ -320,29 +321,38 @@
 			 * with a greater interval if the number of data groups is more than a certain fraction
 			 * of the desired group count.
 			 */
-			xAxis.getGroupIntervalFactor = function (xMin, xMax, processedXData) {
+			xAxis.getGroupIntervalFactor = function (xMin, xMax, series) {
 				var i = 0,
+					processedXData = series.processedXData,
 					len = processedXData.length, 
 					distances = [],
-					median;
+					median,
+					groupIntervalFactor = this.groupIntervalFactor;
+
+				// Only do this computation for the first series, let the other inherit it (#2416)
+				if (!groupIntervalFactor) {
+						
+					// Register all the distances in an array
+					for (; i < len - 1; i++) {
+						distances[i] = processedXData[i + 1] - processedXData[i];
+					}
 					
-				// Register all the distances in an array
-				for (; i < len - 1; i++) {
-					distances[i] = processedXData[i + 1] - processedXData[i];
+					// Sort them and find the median
+					distances.sort(function (a, b) {
+						return a - b;
+					});
+					median = distances[mathFloor(len / 2)];
+					
+					// Compensate for series that don't extend through the entire axis extent. #1675.
+					xMin = mathMax(xMin, processedXData[0]);
+					xMax = mathMin(xMax, processedXData[len - 1]);
+
+					this.groupIntervalFactor = groupIntervalFactor = (len * median) / (xMax - xMin);
 				}
-				
-				// Sort them and find the median
-				distances.sort(function (a, b) {
-					return a - b;
-				});
-				median = distances[mathFloor(len / 2)];
-				
-				// Compensate for series that don't extend through the entire axis extent. #1675.
-				xMin = mathMax(xMin, processedXData[0]);
-				xMax = mathMin(xMax, processedXData[len - 1]);
+
 
 				// Return the factor needed for data grouping
-				return (len * median) / (xMax - xMin);
+				return groupIntervalFactor;
 			};
 			
 			/**
