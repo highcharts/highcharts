@@ -30,8 +30,9 @@
 			$_SESSION['before'] = @$_POST['before'];
 			$activeBranch = $repo->active_branch();
 			$repo->checkout($_SESSION['branch']);
-			$repo->run('log > ' . $tempDir . '/log.txt --format="%H %ci %s" ' .
-				'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
+			$repo->run('log > ' . $tempDir . '/log.txt --format="%h|%ci|%s|%p" ' .
+				//'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
+				'--after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
 			$repo->checkout($activeBranch);
 
 
