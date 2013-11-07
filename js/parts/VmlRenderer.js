@@ -97,17 +97,53 @@ Highcharts.VMLElement = VMLElement = {
 	/**
 	 * Set the rotation of a span with oldIE's filter
 	 */
-	setSpanRotation: function (rotation, sintheta, costheta) {
+	setSpanRotation: function () {
 		// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
 		// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
 		// has support for CSS3 transform. The getBBox method also needs to be updated
 		// to compensate for the rotation, like it currently does for SVG.
-		// Test case: http://highcharts.com/tests/?file=text-rotation
+		// Test case: http://jsfiddle.net/highcharts/Ybt44/
+
+		var rotation = this.rotation,
+			costheta = mathCos(rotation * deg2rad),
+			sintheta = mathSin(rotation * deg2rad);
+					
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 				', sizingMethod=\'auto expand\')'].join('') : NONE
 		});
+	},
+
+	/**
+	 * Get the positioning correction for the span after rotating. 
+	 */
+	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
+
+		var costheta = rotation ? mathCos(rotation * deg2rad) : 1,
+			sintheta = rotation ? mathSin(rotation * deg2rad) : 0,
+			height = pick(this.elemHeight, this.element.offsetHeight),
+			quad,
+			nonLeft = align && align !== 'left';
+
+		// correct x and y
+		this.xCorr = costheta < 0 && -width;
+		this.yCorr = sintheta < 0 && -height;
+
+		// correct for baseline and corners spilling out after rotation
+		quad = costheta * sintheta < 0;
+		this.xCorr += sintheta * baseline * (quad ? 1 - alignCorrection : alignCorrection);
+		this.yCorr -= costheta * baseline * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
+		// correct for the length/height of the text
+		if (nonLeft) {
+			this.xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
+			if (rotation) {
+				this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
+			}
+			css(this.element, {
+				textAlign: align
+			});
+		}
 	},
 
 	/**

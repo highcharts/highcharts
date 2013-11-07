@@ -2369,7 +2369,6 @@ SVGElement.prototype = {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			nonLeft = align && align !== 'left',
 			shadows = wrapper.shadows;
 
 		// apply translate
@@ -2395,34 +2394,25 @@ SVGElement.prototype = {
 
 		if (elem.tagName === 'SPAN') {
 
-			var width, height,
+			var width,
 				rotation = wrapper.rotation,
 				baseline,
-				radians = 0,
-				costheta = 1,
-				sintheta = 0,
-				quad,
 				textWidth = pInt(wrapper.textWidth),
-				xCorr = wrapper.xCorr || 0,
-				yCorr = wrapper.yCorr || 0,
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
 
+
+				baseline = renderer.fontMetrics(elem.style.fontSize).b;
+
+				// Renderer specific handling of span rotation
 				if (defined(rotation)) {
-
-					radians = rotation * deg2rad; // deg to rad
-					costheta = mathCos(radians);
-					sintheta = mathSin(radians);
-
-					wrapper.setSpanRotation(rotation, sintheta, costheta);
-
+					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 
 				width = pick(wrapper.elemWidth, elem.offsetWidth);
-				height = pick(wrapper.elemHeight, elem.offsetHeight);
 
-				// update textWidth
+				// Update textWidth
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + PX,
@@ -2432,41 +2422,18 @@ SVGElement.prototype = {
 					width = textWidth;
 				}
 
-				// correct x and y
-				baseline = renderer.fontMetrics(elem.style.fontSize).b;
-				xCorr = costheta < 0 && -width;
-				yCorr = sintheta < 0 && -height;
-
-				// correct for baseline and corners spilling out after rotation
-				quad = costheta * sintheta < 0;
-				xCorr += sintheta * baseline * (quad ? 1 - alignCorrection : alignCorrection);
-				yCorr -= costheta * baseline * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
-
-				// correct for the length/height of the text
-				if (nonLeft) {
-					xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
-					if (rotation) {
-						yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
-					}
-					css(elem, {
-						textAlign: align
-					});
-				}
-
-				// record correction
-				wrapper.xCorr = xCorr;
-				wrapper.yCorr = yCorr;
+				wrapper.getSpanCorrection(width, baseline, alignCorrection, rotation, align);
 			}
 
 			// apply position with correction
 			css(elem, {
-				left: (x + xCorr) + PX,
-				top: (y + yCorr) + PX
+				left: (x + (wrapper.xCorr || 0)) + PX,
+				top: (y + (wrapper.yCorr || 0)) + PX
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
 			if (isWebKit) {
-				height = elem.offsetHeight; // assigned to height for JSLint purpose
+				baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
 			}
 
 			// record current text transform
@@ -2477,12 +2444,21 @@ SVGElement.prototype = {
 	/**
 	 * Set the rotation of an individual HTML span
 	 */
-	setSpanRotation: function (rotation) {
+	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
 			cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
+		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = (alignCorrection * 100) + '% ' + baseline + 'px';
 		css(this.element, rotationStyle);
+	},
+
+	/**
+	 * Get the correction in X and Y positioning as the element is rotated.
+	 */
+	getSpanCorrection: function (width, baseline, alignCorrection) {
+		this.xCorr = -width * alignCorrection;
+		this.yCorr = -baseline;
 	},
 
 	/**
@@ -3922,7 +3898,7 @@ SVGRenderer.prototype = {
 		};
 
 		// Various setters which rely on update transform
-		attrSetters.x = attrSetters.y = attrSetters.align = function (value, key) {
+		attrSetters.x = attrSetters.y = attrSetters.align = attrSetters.rotation = function (value, key) {
 			if (key === 'align') {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
@@ -4437,17 +4413,53 @@ Highcharts.VMLElement = VMLElement = {
 	/**
 	 * Set the rotation of a span with oldIE's filter
 	 */
-	setSpanRotation: function (rotation, sintheta, costheta) {
+	setSpanRotation: function () {
 		// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
 		// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
 		// has support for CSS3 transform. The getBBox method also needs to be updated
 		// to compensate for the rotation, like it currently does for SVG.
-		// Test case: http://highcharts.com/tests/?file=text-rotation
+		// Test case: http://jsfiddle.net/highcharts/Ybt44/
+
+		var rotation = this.rotation,
+			costheta = mathCos(rotation * deg2rad),
+			sintheta = mathSin(rotation * deg2rad);
+					
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 				', sizingMethod=\'auto expand\')'].join('') : NONE
 		});
+	},
+
+	/**
+	 * Get the positioning correction for the span after rotating. 
+	 */
+	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
+
+		var costheta = rotation ? mathCos(rotation * deg2rad) : 1,
+			sintheta = rotation ? mathSin(rotation * deg2rad) : 0,
+			height = pick(this.elemHeight, this.element.offsetHeight),
+			quad,
+			nonLeft = align && align !== 'left';
+
+		// correct x and y
+		this.xCorr = costheta < 0 && -width;
+		this.yCorr = sintheta < 0 && -height;
+
+		// correct for baseline and corners spilling out after rotation
+		quad = costheta * sintheta < 0;
+		this.xCorr += sintheta * baseline * (quad ? 1 - alignCorrection : alignCorrection);
+		this.yCorr -= costheta * baseline * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
+		// correct for the length/height of the text
+		if (nonLeft) {
+			this.xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
+			if (rotation) {
+				this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
+			}
+			css(this.element, {
+				textAlign: align
+			});
+		}
 	},
 
 	/**
