@@ -447,7 +447,7 @@
 					
 					// Compare points two by two
 					for (start = 1; start < end; start++) {
-						if (new Date(groupPositions[start])[getDate]() !== new Date(groupPositions[start - 1])[getDate]()) {
+						if (new Date(groupPositions[start] - timezoneOffset)[getDate]() !== new Date(groupPositions[start - 1] - timezoneOffset)[getDate]()) {
 							higherRanks[groupPositions[start]] = DAY;
 							hasCrossedHigherRank = true;
 						}
