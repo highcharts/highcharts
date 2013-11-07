@@ -781,6 +781,7 @@ Scroller.prototype = {
 				offset: 0,
 				offsetLeft: scrollbarHeight,
 				offsetRight: -scrollbarHeight,
+				keepOrdinalPadding: true, // #2436
 				startOnTick: false,
 				endOnTick: false,
 				minPadding: 0,

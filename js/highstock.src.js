@@ -18711,6 +18711,7 @@ Scroller.prototype = {
 				offset: 0,
 				offsetLeft: scrollbarHeight,
 				offsetRight: -scrollbarHeight,
+				keepOrdinalPadding: true, // #2436
 				startOnTick: false,
 				endOnTick: false,
 				minPadding: 0,
@@ -20253,7 +20254,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 						// When zooming in on a week, prevent axis padding for weekends even though the data within
 						// the week is evenly spaced.
-						if (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist) {
+						if (!axis.options.keepOrdinalPadding && (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist)) {
 							useOrdinal = true;
 						}
 					}

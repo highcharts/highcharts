@@ -97,7 +97,7 @@
 
 						// When zooming in on a week, prevent axis padding for weekends even though the data within
 						// the week is evenly spaced.
-						if (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist) {
+						if (!axis.options.keepOrdinalPadding && (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist)) {
 							useOrdinal = true;
 						}
 					}
