@@ -16645,9 +16645,9 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 
-			// detect point specific visibility
-			if (point.visible === false) {
-				point.setVisible(false);
+			// detect point specific visibility (#2430)
+			if (point.visible !== undefined) {
+				point.setVisible(point.visible);
 			}
 
 		});
