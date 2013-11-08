@@ -1,74 +1,69 @@
 /*jslint node: true, white: true */
 'use strict';
 var HighchartsConfig = {
-		parts: [
-		/* CORE */
-			{name: 'Globals', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Utilities', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'PathAnimation', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'JQueryAdapter', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Adapters', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Options', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Color', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'SvgRenderer', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Tick', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'StackItem', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Axis', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Tooltip', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Pointer', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Chart', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
-			
-
-			/* RENDERERS */
-			{name: 'VMLRenderer', component: 'VMLRenderer', group: "Renderers", depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'CanVGRenderer', component: 'CanVGRenderer', group: "Renderers", depends: {component: ['Core']}, baseUrl: 'parts'},
-		
-			/* FEATURES */			
-			{name: 'PlotLineOrBand', component: 'PlotLineOrBand', group: "Features", depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'LogarithmicAxis', component: 'LogarithmicAxis', group: "Features", depends: {component: ['Axis']}, baseUrl: 'parts'},
-			{name: 'DateTimeAxis', component: 'DateTimeAxis', group: "Features", depends: { component: ['Core']}, baseUrl: 'parts'},
-
-			/* SERIETYPES */
-			{name: 'LineSeries', component: 'LineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},			
-			{name: 'AreaSeries', component: 'AreaSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'SplineSeries', component: 'SplineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'AreaSplineSeries', component: 'AreaSplineSeries', group: "SerieTypes", depends: {component: ['Core', 'AreaSeries','SplineSeries']}, baseUrl: 'parts'},
-			{name: 'ColumnSeries', component: 'ColumnSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'BarSeries', component: 'BarSeries', group: "SerieTypes", depends: {component: ['Core','ColumnSeries']}, baseUrl: 'parts'},
-			{name: 'ScatterSeries', component: 'ScatterSeries', group: "SerieTypes", depends: {component: ['Core','ColumnSeries']}, baseUrl: 'parts'},
-			{name: 'PieSeries', component: 'PieSeries', group: "SerieTypes", depends: {component: ['Core'], name: ['CenteredSeriesMixin']}, baseUrl: 'parts'},
-			{name: 'ColumnRangeSeries', component: 'ColumnRangeSeries', group: 'SerieTypes', depends: {component: ['Core']}, baseUrl: 'parts'},
-
+		parts: {
+			/* CORE */
+			Intro: {name: 'Intro', component: 'Core', group: 'Core', baseUrl:  'parts'},
+			Globals:	{name: 'Globals', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Utilities:	{name: 'Utilities', component: 'Core', group: "Core", baseUrl: 'parts'},
+			PathAnimation: {name: 'PathAnimation', component: 'Core', group: "Core", baseUrl: 'parts'},
+			JQueryAdapter:	{name: 'JQueryAdapter', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Adapters:	{name: 'Adapters', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Options:	{name: 'Options', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Color:	{name: 'Color', component: 'Core', group: "Core", baseUrl: 'parts'},
+			SvgRenderer:	{name: 'SvgRenderer', component: 'Core', group: "Core", baseUrl: 'parts'},
+			VMLRenderer:	{name: 'VMLRenderer', component: 'VMLRenderer', group: "Renderers", depends: {component: ['Core']}, baseUrl: 'parts'},
+			CanVGRenderer:	{name: 'CanVGRenderer', component: 'CanVGRenderer', group: "Renderers", depends: {component: ['Core']}, baseUrl: 'parts'},
+			Tick:	{name: 'Tick', component: 'Core', group: "Core", baseUrl: 'parts'},
+			StackItem:	{name: 'StackItem', component: 'Core', group: "Core", baseUrl: 'parts'},		
+			PlotLineOrBand:	{name: 'PlotLineOrBand', component: 'PlotLineOrBand', group: "Features", depends: {component: ['Core']}, baseUrl: 'parts'},
+			Axis:	{name: 'Axis', component: 'Core', group: "Core", baseUrl: 'parts', depends: {name: ['StackItem']}},
+			DateTimeAxis:	{name: 'DateTimeAxis', component: 'DateTimeAxis', group: "Features", depends: { component: ['Core']}, baseUrl: 'parts'},
+			LogarithmicAxis:	{name: 'LogarithmicAxis', component: 'LogarithmicAxis', group: "Features", depends: {component: ['Axis']}, baseUrl: 'parts'},
+			Tooltip:	{name: 'Tooltip', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Pointer:	{name: 'Pointer', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Legend:	{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Chart:	{name: 'Chart', component: 'Core', group: "Core", baseUrl: 'parts'},
+			CenteredSeriesMixin: {name: 'CenteredSeriesMixin', component: 'CenteredSeriesMixin', baseUrl: 'parts'},
+			Series:	{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
+			OrdinalAxis:	{name: 'OrdinalAxis', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
+			LineSeries:	{name: 'LineSeries', component: 'LineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
+			AreaSeries:	{name: 'AreaSeries', component: 'AreaSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
+			SplineSeries:	{name: 'SplineSeries', component: 'SplineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
+			AreaSplineSeries:	{name: 'AreaSplineSeries', component: 'AreaSplineSeries', group: "SerieTypes", depends: {component: ['Core', 'AreaSeries','SplineSeries']}, baseUrl: 'parts'},
+			ColumnSeries:	{name: 'ColumnSeries', component: 'ColumnSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
+			BarSeries:	{name: 'BarSeries', component: 'BarSeries', group: "SerieTypes", depends: {component: ['Core','ColumnSeries']}, baseUrl: 'parts'},
+			ScatterSeries:	{name: 'ScatterSeries', component: 'ScatterSeries', group: "SerieTypes", depends: {component: ['Core','ColumnSeries']}, baseUrl: 'parts'},
+			PieSeries:	{name: 'PieSeries', component: 'PieSeries', group: "SerieTypes", depends: {component: ['Core'], name: ['CenteredSeriesMixin']}, baseUrl: 'parts'},
 
 			/* STOCK */
-			{name: 'DataGrouping', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'OHLCSeries', component: 'OHLC', group: 'Stock', depends: {component: ['Stock', 'ColumnSeries']}, baseUrl: 'parts'},
-			{name: 'CandlestickSeries', component: 'Candlestick', group: 'Stock', depends: {component: ['Stock','OHLC', 'ColumnSeries']}, baseUrl: 'parts'},
-			{name: 'FlagsSeries', component: 'Flags', group: 'Stock', depends: {component: ['Stock','ColumnSeries']}, baseUrl: 'parts'},
-			{name: 'Scroller', component: 'Stock', group: 'Stock', depends: {component: ['Core','LineSeries']}, baseUrl: 'parts'},
-			{name: 'RangeSelector', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'StockNavigation', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'StockChart', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'OrdinalAxis', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
-
-			{name: 'Facade', component: 'Core', group: "Core", baseUrl: 'parts'},
-
-			/* EXTRAS */
-			{name: 'AreaRangeSeries', component: 'AreaRangeSeries', group: "Extra\'s", depends: {component: ['ColumnSeries', 'AreaSeries']}, baseUrl: 'parts-more'},
-			{name: 'AreaSplineRangeSeries', component: 'AreaSplineRangeSeries', group: "Extra\'s", depends: {component: ['AreaRangeSeries', 'SplineSeries']}, baseUrl: 'parts-more'},
-			{name: 'GaugeSeries', component: 'Gauge', group: 'Extra\'s', depends: {component: ['Core','PieSeries','LineSeries'], name: ['RadialAxis', 'Pane']}, baseUrl: 'parts-more'},
-			{name: 'Polar', component: 'Polar', group: 'Extra\'s', depends: {component: ['Core'], name: ['RadialAxis', 'Pane']}, baseUrl: 'parts-more'},
-			{name: 'BubbleSeries', component: 'BubbleSeries', group: "Extra\'s", depends: {component: ['Core', 'ScatterSeries']}, baseUrl: 'parts-more'},
-			{name: 'BoxPlotSeries', component: 'BoxPlotSeries', group: "Extra\'s", depends: {component: ['ColumnSeries']}, baseUrl: 'parts-more'},
-			{name: 'ErrorBarSeries', component: 'ErrorBarSeries', group: "Extra\'s", depends: {component: ['BoxPlotSeries']}, baseUrl: 'parts-more'},
-			{name: 'WaterfallSeries', component: 'WaterfallSeries', group: "Extra\'s", depends: {component: ['ColumnSeries']}, baseUrl: 'parts-more'},
-			{name: 'RadialAxis', depends: {name: ['CenteredSeriesMixin']}, baseUrl: 'parts-more'},
-			{name: 'Pane', baseUrl: 'parts-more'},
-			{name: 'DataLabels', component: 'DataLabels', group: "Features", depends: {component: ['Core']}, baseUrl: 'parts'},
-			{name: 'funnel.src', component: 'Funnel', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
-		],
+			DataGrouping:	{name: 'DataGrouping', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
+			OHLCSeries:	{name: 'OHLCSeries', component: 'OHLC', group: 'Stock', depends: {component: ['Stock', 'ColumnSeries']}, baseUrl: 'parts'},
+			CandlestickSeries:	{name: 'CandlestickSeries', component: 'Candlestick', group: 'Stock', depends: {component: ['Stock','OHLC', 'ColumnSeries']}, baseUrl: 'parts'},
+			FlagsSeries:	{name: 'FlagsSeries', component: 'Flags', group: 'Stock', depends: {component: ['Stock','ColumnSeries']}, baseUrl: 'parts'},
+			DataLabels:	{name: 'DataLabels', component: 'DataLabels', group: "Features", depends: {component: ['Core']}, baseUrl: 'parts'},
+			Scroller:	{name: 'Scroller', component: 'Stock', group: 'Stock', depends: {component: ['Core','LineSeries']}, baseUrl: 'parts'},
+			RangeSelector:	{name: 'RangeSelector', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
+			StockNavigation:	{name: 'StockNavigation', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
+			StockChart:	{name: 'StockChart', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
+			
+			/* PARTS-MORE */
+			Pane:	{name: 'Pane', baseUrl: 'parts-more'},			
+			RadialAxis:	{name: 'RadialAxis', depends: {name: ['CenteredSeriesMixin']}, baseUrl: 'parts-more'},
+			AreaRangeSeries:	{name: 'AreaRangeSeries', component: 'AreaRangeSeries', group: "Extra\'s", depends: {component: ['ColumnSeries', 'AreaSeries']}, baseUrl: 'parts-more'},
+			AreaSplineRangeSeries:	{name: 'AreaSplineRangeSeries', component: 'AreaSplineRangeSeries', group: "Extra\'s", depends: {component: ['AreaRangeSeries', 'SplineSeries']}, baseUrl: 'parts-more'},
+			ColumnRangeSeries:	{name: 'ColumnRangeSeries', component: 'ColumnRangeSeries', group: 'SerieTypes', depends: {component: ['Core', 'ColumnSeries', 'AreaRangeSeries']}, baseUrl: 'parts-more'},
+			GaugeSeries:	{name: 'GaugeSeries', component: 'Gauge', group: 'Extra\'s', depends: {component: ['Core','LineSeries'], name: ['RadialAxis', 'Pane', 'PlotLineOrBand']}, baseUrl: 'parts-more'},
+			BoxPlotSeries:	{name: 'BoxPlotSeries', component: 'BoxPlotSeries', group: "Extra\'s", depends: {component: ['ColumnSeries']}, baseUrl: 'parts-more'},
+			ErrorBarSeries:	{name: 'ErrorBarSeries', component: 'ErrorBarSeries', group: "Extra\'s", depends: {component: ['BoxPlotSeries']}, baseUrl: 'parts-more'},
+			WaterfallSeries:	{name: 'WaterfallSeries', component: 'WaterfallSeries', group: "Extra\'s", depends: {component: ['ColumnSeries']}, baseUrl: 'parts-more'},
+			BubbleSeries:	{name: 'BubbleSeries', component: 'BubbleSeries', group: "Extra\'s", depends: {component: ['Core', 'ScatterSeries' ]}, baseUrl: 'parts-more'},
+			Polar:	{name: 'Polar', component: 'Polar', group: 'Extra\'s', depends: {component: ['Core'], name: ['RadialAxis', 'Pane', 'ColumnSeries', 'AreaSeries']}, baseUrl: 'parts-more'},
+			Facade:	{name: 'Facade', component: 'Core', group: "Core", baseUrl: 'parts'},	
+			Outro: {name: 'Outro', component: 'Core', group: 'Core', baseUrl:  'parts'},
+			/* MODULES */
+			'funnel.src':	{name: 'funnel.src', component: 'Funnel', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'}
+		},
 
 		groups: {
 			'Core': { description: 'This is the description for Core group', depends: {component: ['LineSeries']}},
@@ -97,6 +92,6 @@ var HighchartsConfig = {
 			'AreaRangeSeries': { description:  'This is a components description'},
 			'AreaSplineSeries': { description:  'This is a components description'},
 			'ColumnRangeSeries': { description:  'This is a components description'},
-			'Funnel': {description: 'THis is a description for Funnel'}
+			'Funnel': {description: 'DEPS NOT TESTED ...This is a description for Funnel'}
 		}
 	};

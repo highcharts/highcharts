@@ -17048,8 +17048,6 @@ extend(Highcharts, {
 	Legend: Legend,
 	Pointer: Pointer,
 	Point: Point,
-	PointTrackerMixin: PointTrackerMixin,
-	CenteredSeriesMixin: CenteredSeriesMixin,
 	Tick: Tick,
 	Tooltip: Tooltip,
 	Renderer: Renderer,

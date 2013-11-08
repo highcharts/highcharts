@@ -173,12 +173,15 @@
             <file name="StackItem.js"/>
             <file name="PlotLineOrBand.js"/>
             <file name="Axis.js"/>
+            <file name="DateTimeAxis.js"/>
+            <file name="LogarithmicAxis.js"/>
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
             <file name="Series.js"/>
+            <file name="OrdinalAxis.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
             <file name="SplineSeries.js"/>
@@ -196,9 +199,6 @@
             <file name="RangeSelector.js"/>
             <file name="StockNavigation.js"/>
             <file name="StockChart.js"/>
-            <file name="OrdinalAxis.js"/>
-            <file name="DateTimeAxis.js"/>
-            <file name="LogarithmicAxis.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
