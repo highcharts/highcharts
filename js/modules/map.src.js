@@ -408,6 +408,7 @@
 		 */
 		setState: noop,
 		visible: true,
+		setVisible: noop,
 		getSeriesExtremes: function () {
 			var series = this.series[0];
 			this.dataMin = series.valueMin;
