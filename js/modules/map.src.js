@@ -21,6 +21,7 @@
 		Color = H.Color,
 		Point = H.Point,
 		Pointer = H.Pointer,
+		Legend = H.Legend,
 		Series = H.Series,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer,
@@ -331,7 +332,7 @@
 			this.horiz = horiz;
 		},
 		setAxisSize: function () {
-			var symbol = this.series.length && this.series[0].legendSymbol,
+			var symbol = this.legendSymbol,
 				chart = this.chart;
 
 			if (symbol) {
@@ -347,9 +348,11 @@
 			}
 		},
 		getOffset: function () {
-			if (this.series.length) {
-				var group = this.series[0].legendGroup;
+			var group = this.legendGroup;
+			if (group) {
+
 				Axis.prototype.getOffset.call(this);
+				
 				if (!this.added) {
 
 					// Move the axis elements inside the legend group
@@ -361,6 +364,50 @@
 				}
 			}
 		},
+		/**
+		 * The color axis appears inside the legend and has its own legend symbol
+		 */
+		drawLegendSymbol: function (legend, item) {
+			var padding = legend.padding,
+				legendOptions = legend.options,
+				horiz = legendOptions.layout === 'horizontal',
+				box,
+				width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
+				height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
+				labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30),
+				options = this.options,
+				grad;
+
+			// Create the color gradient
+			grad = horiz ? [0, 0, 1, 0] : [0, 0, 0, 1]; 
+			this.legendColor = {
+				linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
+				stops: options.stops || [
+					[0, options.minColor],
+					[1, options.maxColor]
+				]
+			};
+
+			// Create the gradient
+			item.legendSymbol = this.chart.renderer.rect(
+				0,
+				legend.baseline - 11,
+				width,
+				height
+			).attr({
+				zIndex: 1
+			}).add(item.legendGroup);
+			box = item.legendSymbol.getBBox();
+
+			// Set how much space this legend item takes up
+			this.legendItemWidth = width + padding + (horiz ? 0 : labelPadding);
+			this.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
+		},
+		/**
+		 * Fool the legend
+		 */
+		setState: noop,
+		visible: true,
 		getSeriesExtremes: function () {
 			var series = this.series[0];
 			this.dataMin = series.valueMin;
@@ -406,6 +453,28 @@
 				return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 			}
 		}
+	});
+
+	/**
+	 * Wrap the legend getAllItems method to add the color axis. This also removes the 
+	 * axis' own series to prevent them from showing up individually.
+	 */
+	wrap(Legend.prototype, 'getAllItems', function (proceed) {
+		var allItems = [],
+			colorAxis = this.chart.colorAxis[0];
+
+		if (colorAxis) {
+			
+			// Add this axis on top
+			allItems.push(colorAxis);
+
+			// Don't add the color axis' series
+			each(colorAxis.series, function (series) {
+				series.options.showInLegend = false;
+			});
+		}
+
+		return allItems.concat(proceed.call(this));
 	});
 
 
@@ -802,78 +871,6 @@
 		},
 
 		/**
-		 * Extend bindAxes to also bind the color axis if defined. This implementation
-		 * doesn't handle linking series to axis by id or index like for xAxis and yAxis,
-		 * because running the parent bindAxes method throws an error 18 when a colorAxis
-		 * is not defined. In order to use that, we need to prevent calling error 18.
-		 */
-		/*bindAxes: function () {
-			var colorAxis = this.chart.colorAxis[0];
-
-			Series.prototype.bindAxes.call(this);
-
-			if (colorAxis) {
-				this.colorAxis = colorAxis;
-				colorAxis.series.push(this);
-			}
-		},*/
-
-		/**
-		 * Gets the series' symbol in the legend and extended legend with more information.
-		 * 
-		 * @param {Object} legend The legend object
-		 * @param {Object} item The series (this) or point
-		 */
-		drawLegendSymbol: function (legend, item) {
-
-			if (!this.colorAxis) {
-				H.LegendSymbolMixin.drawRectangle.call(this, legend, item);
-			
-			} else {
-
-				var padding = legend.padding,
-					legendOptions = legend.options,
-					horiz = legendOptions.layout === 'horizontal',
-					box,
-					width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
-					height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
-					labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30),
-					colorAxis = this.colorAxis.options,
-					grad;
-
-
-				// Create the color gradient
-				grad = horiz ? [0, 0, 1, 0] : [0, 0, 0, 1]; 
-				this.legendColor = {
-					linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
-					stops: colorAxis.stops || [
-						[0, colorAxis.minColor],
-						[1, colorAxis.maxColor]
-					]
-				};
-
-				// Don't show the series name
-				legendOptions.labelFormatter = noop;
-
-				// Create the gradient
-				item.legendSymbol = this.chart.renderer.rect(
-					0,
-					legend.baseline - 11,
-					width,
-					height
-				).attr({
-					zIndex: 1
-				}).add(item.legendGroup);
-				box = item.legendSymbol.getBBox();
-
-				// Set how much space this legend item takes up
-				this.legendItemWidth = width + padding + (horiz ? 0 : labelPadding);
-				this.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
-			}
-		},
-
-
-		/**
 		 * Get the bounding box of all paths in the map combined.
 		 */
 		getBox: function (paths) {
@@ -1239,6 +1236,8 @@
 			}
 			
 		},
+
+		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
 
 		/**
 		 * When drilling up, pull out the individual point graphics from the lower series

@@ -2087,7 +2087,7 @@ Series.prototype = {
 		removeEvent(series);
 		
 		// erase from axes
-		each(['xAxis', 'yAxis'], function (AXIS) {
+		each(series.axisTypes || [], function (AXIS) {
 			axis = series[AXIS];
 			if (axis) {
 				erase(axis.series, series);
