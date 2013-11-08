@@ -1319,8 +1319,7 @@ $(function () {
         },
 
         legend: {
-            //enabled: false
-            backgroundColor: 'yellow'
+            enabled: false
         },
 
         mapNavigation: {
@@ -1345,6 +1344,14 @@ $(function () {
             }
         },
 
+        colorAxis: {
+            minColor: '#efecf3',
+            maxColor: '#990041',
+            startOnTick: false,
+            endOnTick: false,
+            type: 'logarithmic'
+        },
+
         series : [{
             name: 'Population',
             mapData: Highcharts.maps.world,
@@ -1352,12 +1359,6 @@ $(function () {
             joinBy: 'code',
             tooltip: {
                 pointFormat: '{point.code}: {point.value:,f},000'
-            },
-            colorAxis: {
-                minColor: '#efecf3',
-                maxColor: '#990041',
-                min: 10,
-                type: 'logarithmic'
             }
         }]
     });

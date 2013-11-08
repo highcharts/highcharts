@@ -199,11 +199,10 @@ Axis.prototype = {
 		axis.isXAxis = isXAxis;
 		axis.xOrY = isXAxis ? 'x' : 'y';
 	
-	
 		axis.opposite = userOptions.opposite; // needed in setOptions
-		axis.side = userOptions.side || axis.horiz ?
+		axis.side = userOptions.side || (axis.horiz ?
 				(axis.opposite ? 0 : 2) : // top : bottom
-				(axis.opposite ? 1 : 3);  // right : left
+				(axis.opposite ? 1 : 3));  // right : left
 	
 		axis.setOptions(userOptions);
 		

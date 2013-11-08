@@ -6581,11 +6581,10 @@ Axis.prototype = {
 		axis.isXAxis = isXAxis;
 		axis.xOrY = isXAxis ? 'x' : 'y';
 	
-	
 		axis.opposite = userOptions.opposite; // needed in setOptions
-		axis.side = userOptions.side || axis.horiz ?
+		axis.side = userOptions.side || (axis.horiz ?
 				(axis.opposite ? 0 : 2) : // top : bottom
-				(axis.opposite ? 1 : 3);  // right : left
+				(axis.opposite ? 1 : 3));  // right : left
 	
 		axis.setOptions(userOptions);
 		
@@ -12681,6 +12680,7 @@ Series.prototype = {
 		fill: 'fillColor',
 		r: 'radius'
 	},
+	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
 	init: function (chart, options) {
@@ -12762,38 +12762,34 @@ Series.prototype = {
 			chart = series.chart,
 			axisOptions;
 			
-		if (series.isCartesian) {
+		each(series.axisTypes || [], function (AXIS) { // repeat for xAxis and yAxis
 			
-			each(['xAxis', 'yAxis'], function (AXIS) { // repeat for xAxis and yAxis
+			each(chart[AXIS], function (axis) { // loop through the chart's axis objects
+				axisOptions = axis.options;
 				
-				each(chart[AXIS], function (axis) { // loop through the chart's axis objects
+				// apply if the series xAxis or yAxis option mathches the number of the 
+				// axis, or if undefined, use the first axis
+				if ((seriesOptions[AXIS] === axisOptions.index) ||
+						(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) ||
+						(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
 					
-					axisOptions = axis.options;
+					// register this series in the axis.series lookup
+					axis.series.push(series);
 					
-					// apply if the series xAxis or yAxis option mathches the number of the 
-					// axis, or if undefined, use the first axis
-					if ((seriesOptions[AXIS] === axisOptions.index) ||
-							(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) ||
-							(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
-						
-						// register this series in the axis.series lookup
-						axis.series.push(series);
-						
-						// set this series.xAxis or series.yAxis reference
-						series[AXIS] = axis;
-						
-						// mark dirty for redraw
-						axis.isDirty = true;
-					}
-				});
-
-				// The series needs an X and an Y axis
-				if (!series[AXIS]) {
-					error(18, true);
+					// set this series.xAxis or series.yAxis reference
+					series[AXIS] = axis;
+					
+					// mark dirty for redraw
+					axis.isDirty = true;
 				}
-
 			});
-		}
+
+			// The series needs an X and an Y axis
+			if (!series[AXIS] && series.optionalAxis !== AXIS) {
+				error(18, true);
+			}
+
+		});
 	},
 
 	/**

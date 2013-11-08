@@ -391,16 +391,17 @@ $(function () {
             } 
         },
 
+        colorAxis: {
+            minColor: '#E6E7E8',
+            maxColor: '#005645'
+        },
+        
         mapNavigation: {
             enabled: true
         },
 
         plotOptions: {
             map: {
-                colorAxis: {
-                    minColor: '#E6E7E8',
-                    maxColor: '#005645'
-                },
                 states: {
                     hover: {
                         color: '#EEDD66' // orange
