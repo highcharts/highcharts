@@ -214,6 +214,6 @@ var GaugeSeries = {
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: Highcharts.PointTrackerMixin.drawTracker
+	drawTracker: PointTrackerMixin.drawTracker
 };
-seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);
+seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
