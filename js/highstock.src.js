@@ -19475,7 +19475,9 @@ RangeSelector.prototype = {
 		input.onchange = function () {
 			var inputValue = input.value,
 				value = (options.inputDateParser || Date.parse)(inputValue),
-				extremes = chart.xAxis[0].getExtremes();
+				xAxis = chart.xAxis[0],
+				dataMin = xAxis.dataMin,
+				dataMax = xAxis.dataMax;
 
 			// If the value isn't parsed directly to a value by the browser's Date.parse method,
 			// like YYYY-MM-DD in IE, try parsing it a different way
@@ -19491,12 +19493,27 @@ RangeSelector.prototype = {
 					value = value + new Date().getTimezoneOffset() * 60 * 1000;
 				}
 
-			    // Set the extremes
-				if ((isMin && (value >= extremes.dataMin && value <= rangeSelector.maxInput.HCTime)) ||
-					(!isMin && (value <= extremes.dataMax && value >= rangeSelector.minInput.HCTime))) {
+				// Validate the extremes. If it goes beyound the data min or max, use the
+				// actual data extreme (#2438).
+				if (isMin) {
+					if (value > rangeSelector.maxInput.HCTime) {
+						value = UNDEFINED;
+					} else if (value < dataMin) {
+						value = dataMin;
+					}
+				} else {
+					if (value < rangeSelector.minInput.HCTime) {
+						value = UNDEFINED;
+					} else if (value > dataMax) {
+						value = dataMax;
+					}
+				}
+
+				// Set the extremes
+				if (value !== UNDEFINED) {
 					chart.xAxis[0].setExtremes(
-						isMin ? value : extremes.min,
-						isMin ? extremes.max : value,
+						isMin ? value : xAxis.min,
+						isMin ? xAxis.max : value,
 						UNDEFINED,
 						UNDEFINED,
 						{ trigger: 'rangeSelectorInput' }
