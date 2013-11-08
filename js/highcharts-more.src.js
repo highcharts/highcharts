@@ -28,12 +28,16 @@ var arrayMin = Highcharts.arrayMin,
 	wrap = Highcharts.wrap,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
+	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
+	PointTrackerMixin = Highcharts.PointTrackerMixin,
+	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	Series = Highcharts.Series,
 	math = Math,
 	mathRound = math.round,
 	mathFloor = math.floor,
 	mathMax = math.max,
+	Color = Highcharts.Color,
 	noop = function () {};/**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
@@ -219,7 +223,7 @@ var radialAxisMixin = {
 		this.chart.axisOffset[this.side] = 0;
 		
 		// Set the center array
-		this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
 	},
 
 
@@ -295,7 +299,7 @@ var radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
+			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
 			
 			this.len = this.width = this.height = this.isCircular ?
 				this.center[2] * (this.endAngleRad - this.startAngleRad) / 2 :
@@ -655,7 +659,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
+seriesTypes.arearange = extendClass(seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {
@@ -967,7 +971,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
+var GaugePoint = extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -1136,9 +1140,9 @@ var GaugeSeries = {
 	},
 	
 	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: Highcharts.PointTrackerMixin.drawTracker
+	drawTracker: PointTrackerMixin.drawTracker
 };
-seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ****************************************************************************
+seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);/* ****************************************************************************
  * Start Box plot series code											      *
  *****************************************************************************/
 
@@ -1755,7 +1759,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		fill = fill || markerOptions.fillColor || this.color; 
 		
 		if (fillOpacity !== 1) {
-			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
+			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
 		}
 		return fill;
 	},

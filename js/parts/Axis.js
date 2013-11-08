@@ -1033,7 +1033,7 @@ Axis.prototype = {
 			}
 			
 			if (isDatetimeAxis) {
-				tickPositions = (axis.getNonLinearTimeTicks || axis.getTimeTicks)(
+				tickPositions = axis.getTimeTicks(
 					axis.normalizeTimeTickInterval(axis.tickInterval, options.units),
 					axis.min,
 					axis.max,

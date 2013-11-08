@@ -7291,7 +7291,7 @@ Axis.prototype = {
 			}
 			
 			if (isDatetimeAxis) {
-				tickPositions = (axis.getNonLinearTimeTicks || axis.getTimeTicks)(
+				tickPositions = axis.getTimeTicks(
 					axis.normalizeTimeTickInterval(axis.tickInterval, options.units),
 					axis.min,
 					axis.max,
@@ -17048,6 +17048,8 @@ extend(Highcharts, {
 	Legend: Legend,
 	Pointer: Pointer,
 	Point: Point,
+	PointTrackerMixin: PointTrackerMixin,
+	CenteredSeriesMixin: CenteredSeriesMixin,
 	Tick: Tick,
 	Tooltip: Tooltip,
 	Renderer: Renderer,
@@ -17088,4 +17090,5 @@ extend(Highcharts, {
 	product: PRODUCT,
 	version: VERSION
 });
+
 }());
