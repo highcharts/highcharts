@@ -19839,10 +19839,8 @@ Highcharts.StockChart = function (options, callback) {
 				showLastLabel: true,
 				crosshair: {
 					label: {
-						enabled: false,
-						formatter: function (value) { 
-							return dateFormat('%b %d, %Y', value);
-						}
+						enabled: true,
+						format: '{value:%b %d, %Y}' // TODO: pick best time format like tooltips
 					}
 				}
 			}, xAxisOptions, // user options 
@@ -19867,9 +19865,7 @@ Highcharts.StockChart = function (options, callback) {
 			crosshair: {
 				label: {
 					enabled: false,
-					formatter: function (value) { 
-						return value;
-					}
+					format: '{value}' // TODO: formatting/decimals like tooltip
 				}
 			},
 			title: {
