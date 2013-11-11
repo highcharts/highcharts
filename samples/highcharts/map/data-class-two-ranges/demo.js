@@ -263,6 +263,21 @@ $(function () {
                     enableButtons: false
                 },
 
+                colorAxis: {
+
+                    dataClasses: [{
+                        from: -100,
+                        to: 0,
+                        color: '#C40401',
+                        name: 'McCain'
+                    }, {
+                        from: 0,
+                        to: 100,
+                        color: '#0200D0',
+                        name: 'Obama'
+                    }]
+                },
+
                 series : [{
                     data : [],
                     dataLabels: {
@@ -285,18 +300,7 @@ $(function () {
                     tooltip: {
                         ySuffix: ' %'
                     },
-                    cursor: 'pointer',
-                    valueRanges: [{
-                        from: -100,
-                        to: 0,
-                        color: '#C40401',
-                        name: 'McCain'
-                    }, {
-                        from: 0,
-                        to: 100,
-                        color: '#0200D0',
-                        name: 'Obama'
-                    }]
+                    cursor: 'pointer'
                 }]
             };
             

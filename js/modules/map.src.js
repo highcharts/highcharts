@@ -305,7 +305,9 @@
 			},
 			labels: {
 				overflow: 'justify'
-			}
+			},
+			minColor: '#EFEFFF',
+			maxColor: '#102d4c'
 		},
 		init: function (chart, userOptions) {
 			var horiz = chart.options.legend.layout !== 'vertical',
@@ -327,10 +329,55 @@
 			// Base init() pushes it to the xAxis array, now pop it again
 			chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
 
+			// Prepare data classes
+			if (userOptions.dataClasses) {
+				this.initDataClasses(userOptions);
+			}
+
 			// Override original axis properties
 			this.isXAxis = true;
 			this.horiz = horiz;
 		},
+
+		initDataClasses: function (userOptions) {
+			var chart = this.chart,
+				dataClasses,
+				colorCounter = 0;
+			this.dataClasses = dataClasses = [];
+
+			each(userOptions.dataClasses, function (dataClass) {
+				var colors;
+
+				dataClass = merge(dataClass);
+				dataClasses.push(dataClass);
+				if (!dataClass.color) {
+					colors = chart.options.colors;
+					dataClass.color = colors[colorCounter++];
+					// loop back to zero
+					if (colorCounter === colors.length) {
+						colorCounter = 0;
+					}
+
+				}
+			});
+		},
+
+		/**
+		 * Extend the setOptions method to process extreme colors and color
+		 * stops.
+		 */
+		setOptions: function (userOptions) {
+			Axis.prototype.setOptions.call(this, userOptions);
+
+			this.stops = userOptions.stops || [
+				[0, this.options.minColor],
+				[1, this.options.maxColor]
+			];
+			each(this.stops, function (stop) {
+				stop.color = Color(stop[1]);
+			});
+		},
+
 		setAxisSize: function () {
 			var symbol = this.legendSymbol,
 				chart = this.chart;
@@ -347,6 +394,62 @@
 				this.pos = this.horiz ? this.left : this.top;
 			}
 		},
+
+		/** 
+		 * Translate from a value to a color
+		 */
+		toColor: function (value, point) {
+			var pos,
+				stops = this.stops,
+				from,
+				to,
+				color,
+				dataClasses = this.dataClasses,
+				dataClass,
+				i;
+
+			if (dataClasses) {
+				i = dataClasses.length;
+				while (i--) {
+					dataClass = dataClasses[i];
+					from = dataClass.from;
+					to = dataClass.to;
+					if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
+						color = dataClass.color;
+						if (point) {
+							point.dataClass = i;
+						}
+						break;
+					}	
+				}
+
+			} else {
+
+				if (this.isLog) {
+					value = this.val2lin(value);
+				}
+				pos = 1 - ((this.max - value) / (this.max - this.min));
+				i = stops.length;
+				while (i--) {
+					if (pos > stops[i][0]) {
+						break;
+					}
+				}
+				from = stops[i] || stops[i + 1];
+				to = stops[i + 1] || from;
+
+				// The position within the gradient
+				pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
+				
+				color = tweenColors(
+					from.color, 
+					to.color,
+					pos
+				);
+			}
+			return color;
+		},
+
 		getOffset: function () {
 			var group = this.legendGroup;
 			if (group) {
@@ -453,6 +556,65 @@
 			} else {
 				return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 			}
+		},
+
+		/**
+		 * Get the legend item symbols for data classes
+		 */
+		getDataClassLegendSymbols: function () {
+			var axis = this,
+				chart = this.chart,
+				legendItems = [],
+				legendOptions = chart.options.legend,
+				valueDecimals = legendOptions.valueDecimals,
+				valueSuffix = legendOptions.valueSuffix || '',
+				name;
+
+			each(this.dataClasses, function (dataClass, i) {
+				var vis = true,
+					from = dataClass.from,
+					to = dataClass.to;
+				
+				// Assemble the default name. This can be overridden by legend.options.labelFormatter
+				name = '';
+				if (from === UNDEFINED) {
+					name = '< ';
+				} else if (to === UNDEFINED) {
+					name = '> ';
+				}
+				if (from !== UNDEFINED) {
+					name += numberFormat(from, valueDecimals) + valueSuffix;
+				}
+				if (from !== UNDEFINED && to !== UNDEFINED) {
+					name += ' - ';
+				}
+				if (to !== UNDEFINED) {
+					name += numberFormat(to, valueDecimals) + valueSuffix;
+				}
+				
+				// Add a mock object to the legend items
+				legendItems.push(H.extend({
+					chart: chart,
+					name: name,
+					options: {},
+					drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+					visible: true,
+					setState: noop,
+					setVisible: function () {
+						vis = this.visible = !vis;
+						each(axis.series, function (series) {
+							each(series.points, function (point) {
+								if (point.dataClass === i) {
+									point.setVisible(vis);
+								}
+							});
+						});
+						
+						chart.legend.colorizeItem(this, vis);
+					}
+				}, dataClass));
+			});
+			return legendItems;
 		}
 	});
 
@@ -465,9 +627,15 @@
 			colorAxis = this.chart.colorAxis[0];
 
 		if (colorAxis) {
-			
-			// Add this axis on top
-			allItems.push(colorAxis);
+
+			// Data classes
+			if (colorAxis.options.dataClasses) {
+				allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+			// Gradient legend
+			} else {
+				// Add this axis on top
+				allItems.push(colorAxis);
+			}
 
 			// Don't add the color axis' series
 			each(colorAxis.series, function (series) {
@@ -808,68 +976,6 @@
 		getExtremesFromAll: true,
 		useMapGeometry: true, // get axis extremes from paths, not values
 		parallelArrays: ['x', 'y', 'value'],
-		init: function (chart) {
-			var series = this,
-				legendOptions = chart.options.legend,
-				valueDecimals = legendOptions.valueDecimals,
-				valueSuffix = legendOptions.valueSuffix || '',
-				legendItems = [],
-				name,
-				from,
-				to,
-				valueRanges;
-
-			
-			Series.prototype.init.apply(this, arguments);
-			valueRanges = series.options.valueRanges;
-
-			if (valueRanges) {
-				each(valueRanges, function (range, i) {
-					var vis = true;
-					from = range.from;
-					to = range.to;
-					
-					// Assemble the default name. This can be overridden by legend.options.labelFormatter
-					name = '';
-					if (from === UNDEFINED) {
-						name = '< ';
-					} else if (to === UNDEFINED) {
-						name = '> ';
-					}
-					if (from !== UNDEFINED) {
-						name += numberFormat(from, valueDecimals) + valueSuffix;
-					}
-					if (from !== UNDEFINED && to !== UNDEFINED) {
-						name += ' - ';
-					}
-					if (to !== UNDEFINED) {
-						name += numberFormat(to, valueDecimals) + valueSuffix;
-					}
-					
-					// Add a mock object to the legend items
-					legendItems.push(H.extend({
-						chart: series.chart,
-						name: name,
-						options: {},
-						drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
-						visible: true,
-						setState: noop,
-						setVisible: function () {
-							vis = this.visible = !vis;
-							each(series.points, function (point) {
-								if (point.valueRange === i) {
-									point.setVisible(vis);
-								}
-							});
-							
-							chart.legend.colorizeItem(this, vis);
-						}
-					}, range));
-				});
-				series.legendItems = legendItems;
-
-			} 
-		},
 
 		/**
 		 * Get the bounding box of all paths in the map combined.
@@ -1081,77 +1187,15 @@
 		 * In choropleth maps, the color is a result of the value, so this needs translation too
 		 */
 		translateColors: function () {
-			
-			var seriesOptions = this.options,
-				valueRanges = seriesOptions.valueRanges,
-				colorAxis = this.colorAxis,
-				nullColor = seriesOptions.nullColor,
-				from,
-				to,
-				valueMin,
-				valueMax,
-				stops;
+			var series = this,
+				nullColor = this.options.nullColor,
+				colorAxis = this.colorAxis;
 
-			if (colorAxis) {
-				stops = colorAxis.options.stops || [
-					[0, colorAxis.options.minColor],
-					[1, colorAxis.options.maxColor]
-				];
-				each(stops, function (stop) {
-					stop.color = Color(stop[1]);
-				});
-				valueMin = colorAxis.min;
-				valueMax = colorAxis.max;
-			}
 			each(this.data, function (point) {
 				var value = point.value,
-					isNull = value === null,
-					range,
-					color,
-					i,
-					pos;
+					color;
 
-				if (valueRanges) {
-					i = valueRanges.length;
-					if (isNull) {
-						color = nullColor;
-					} else {
-						while (i--) {
-							range = valueRanges[i];
-							from = range.from;
-							to = range.to;
-							if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
-								color = range.color;
-								break;
-							}	
-						}
-						point.valueRange = i;
-					}
-				} else if (colorAxis && !isNull) {
-					if (colorAxis.isLog) {
-						value = colorAxis.val2lin(value);
-					}
-					pos = 1 - ((valueMax - value) / (valueMax - valueMin));
-					i = stops.length;
-					while (i--) {
-						if (pos > stops[i][0]) {
-							break;
-						}
-					}
-					from = stops[i] || stops[i + 1];
-					to = stops[i + 1] || from;
-
-					// The position within the gradient
-					pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
-					
-					color = tweenColors(
-						from.color, 
-						to.color,
-						pos
-					);
-				} else if (isNull) {
-					color = nullColor;
-				} 
+				color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
 
 				if (color) {
 					point.color = null; // reset from previous drilldowns, use of the same data options
@@ -1160,6 +1204,9 @@
 			});
 		},
 		
+		/**
+		 * No graph for the map series
+		 */
 		drawGraph: noop,
 		
 		/**

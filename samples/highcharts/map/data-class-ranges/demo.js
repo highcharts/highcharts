@@ -663,12 +663,8 @@ $(function () {
                     valueDecimals: 0
                 },
 
-                series : [{
-                    data : data,
-                    mapData: Highcharts.maps.world,
-                    joinBy: 'code',
-                    name: 'Population density',
-                    valueRanges: [{
+                colorAxis: {
+                    dataClasses: [{
                         to: 3,
                         color: 'rgba(19,64,117,0.05)'
                     }, {
@@ -694,7 +690,14 @@ $(function () {
                     }, {
                         from: 1000,
                         color: 'rgba(19,64,117,1)'
-                    }],
+                    }]
+                },
+
+                series : [{
+                    data : data,
+                    mapData: Highcharts.maps.world,
+                    joinBy: 'code',
+                    name: 'Population density',
                     states: {
                         hover: {
                             color: '#BADA55'
