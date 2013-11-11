@@ -1,8 +1,12 @@
 <?php
+ini_set('display_errors', 'on');
+session_start();
+$defaults = json_decode(file_get_contents('default-settings.json'));
 
-$leftPath = 'http://code.highcharts.com';
-$rightPath = 'http://code.highcharts.local';
-//$rightPath = 'http://github.highcharts.com/ce80cd29';
+$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : $defaults->leftPath;
+$rightPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : $defaults->leftPath;
+
+
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
 $rightExporting = "$rightPath/modules/exporting.src.js";

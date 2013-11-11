@@ -1,0 +1,5 @@
+{
+	"leftPath": "http://code.highcharts.com",
+	"rightPath": "http://code.highcharts.local",
+	"exportServer": "http://export.highcharts.com/"
+}

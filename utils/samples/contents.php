@@ -161,7 +161,7 @@
 				color: white;
 				text-shadow: 0 -1px 1px #000000;
 				text-decoration: none;
-				font-size: 11pt;
+				font-size: 12px;
 				white-space: nowrap;
 				line-height: 30px;
 				cursor: pointer;
@@ -190,6 +190,10 @@
 		<a class="button" id="reload" title="Reload frame">
 			<i class="icon-refresh"></i>
 			Reload
+		</a>
+		<a class="button" id="settings" title="Settings" href="settings.php" target="main">
+			<i class="icon-cog"></i>
+			Settings
 		</a>
 
 		<div style="margin-top: 1em">
