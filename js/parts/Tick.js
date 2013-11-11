@@ -136,7 +136,6 @@ Tick.prototype = {
 	handleOverflow: function (index, xy) {
 		var show = true,
 			axis = this.axis,
-			chart = axis.chart,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
 			x = xy.x,
@@ -148,17 +147,17 @@ Tick.prototype = {
 			var sides = this.getLabelSides(),
 				leftSide = sides[0],
 				rightSide = sides[1],
-				plotLeft = chart.plotLeft,
-				plotRight = plotLeft + axis.len,
+				axisLeft = axis.pos,
+				axisRight = axisLeft + axis.len,
 				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
 				neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
-				if (x + leftSide < plotLeft) {
+				if (x + leftSide < axisLeft) {
 
 					// Align it to plot left
-					x = plotLeft - leftSide;
+					x = axisLeft - leftSide;
 
 					// Hide it if it now overlaps the neighbour label
 					if (neighbour && x + rightSide > neighbourEdge) {
@@ -168,10 +167,10 @@ Tick.prototype = {
 
 			} else {
 				// Is the label spilling out to the right of the plot area?
-				if (x + rightSide > plotRight) {
+				if (x + rightSide > axisRight) {
 
 					// Align it to plot right
-					x = plotRight - rightSide;
+					x = axisRight - rightSide;
 
 					// Hide it if it now overlaps the neighbour label
 					if (neighbour && x + leftSide < neighbourEdge) {

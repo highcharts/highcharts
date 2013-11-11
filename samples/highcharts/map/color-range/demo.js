@@ -175,203 +175,253 @@ $(function () {
 
     var data = [
     {
-        "y": 438,
+        "_y": 438,
+        "value": 438,
         "code": "nj"
     },
     {
-        "y": 387.35,
+        "_y": 387.35,
+        "value": 387.35,
         "code": "ri"
     },
     {
-        "y": 312.68,
+        "_y": 312.68,
+        "value": 312.68,
         "code": "ma"
     },
     {
-        "y": 271.4,
+        "_y": 271.4,
+        "value": 271.4,
         "code": "ct"
     },
     {
-        "y": 209.23,
+        "_y": 209.23,
+        "value": 209.23,
         "code": "md"
     },
     {
-        "y": 195.18,
+        "_y": 195.18,
+        "value": 195.18,
         "code": "ny"
     },
     {
-        "y": 154.87,
+        "_y": 154.87,
+        "value": 154.87,
         "code": "de"
     },
     {
-        "y": 114.43,
+        "_y": 114.43,
+        "value": 114.43,
         "code": "fl"
     },
     {
-        "y": 107.05,
+        "_y": 107.05,
+        "value": 107.05,
         "code": "oh"
     },
     {
-        "y": 105.8,
+        "_y": 105.8,
+        "value": 105.8,
         "code": "pa"
     },
     {
-        "y": 86.27,
+        "_y": 86.27,
+        "value": 86.27,
         "code": "il"
     },
     {
-        "y": 83.85,
+        "_y": 83.85,
+        "value": 83.85,
         "code": "ca"
     },
     {
-        "y": 72.83,
+        "_y": 72.83,
+        "value": 72.83,
         "code": "hi"
     },
     {
-        "y": 69.03,
+        "_y": 69.03,
+        "value": 69.03,
         "code": "va"
     },
     {
-        "y": 67.55,
+        "_y": 67.55,
+        "value": 67.55,
         "code": "mi"
     },
     {
-        "y": 65.46,
+        "_y": 65.46,
+        "value": 65.46,
         "code": "in"
     },
     {
-        "y": 63.8,
+        "_y": 63.8,
+        "value": 63.8,
         "code": "nc"
     },
     {
-        "y": 54.59,
+        "_y": 54.59,
+        "value": 54.59,
         "code": "ga"
     },
     {
-        "y": 53.29,
+        "_y": 53.29,
+        "value": 53.29,
         "code": "tn"
     },
     {
-        "y": 53.2,
+        "_y": 53.2,
+        "value": 53.2,
         "code": "nh"
     },
     {
-        "y": 51.45,
+        "_y": 51.45,
+        "value": 51.45,
         "code": "sc"
     },
     {
-        "y": 39.61,
+        "_y": 39.61,
+        "value": 39.61,
         "code": "la"
     },
     {
-        "y": 39.28,
+        "_y": 39.28,
+        "value": 39.28,
         "code": "ky"
     },
     {
-        "y": 38.13,
+        "_y": 38.13,
+        "value": 38.13,
         "code": "wi"
     },
     {
-        "y": 34.2,
+        "_y": 34.2,
+        "value": 34.2,
         "code": "wa"
     },
     {
-        "y": 33.84,
+        "_y": 33.84,
+        "value": 33.84,
         "code": "al"
     },
     {
-        "y": 31.36,
+        "_y": 31.36,
+        "value": 31.36,
         "code": "mo"
     },
     {
-        "y": 30.75,
+        "_y": 30.75,
+        "value": 30.75,
         "code": "tx"
     },
     {
-        "y": 29,
+        "_y": 29,
+        "value": 29,
         "code": "wv"
     },
     {
-        "y": 25.41,
+        "_y": 25.41,
+        "value": 25.41,
         "code": "vt"
     },
     {
-        "y": 23.86,
+        "_y": 23.86,
+        "value": 23.86,
         "code": "mn"
     },
     {
-        "y": 23.42,
+        "_y": 23.42,
+        "value": 23.42,
         "code": "ms"
     },
     {
-        "y": 20.22,
+        "_y": 20.22,
+        "value": 20.22,
         "code": "ia"
     },
     {
-        "y": 19.82,
+        "_y": 19.82,
+        "value": 19.82,
         "code": "ar"
     },
     {
-        "y": 19.4,
+        "_y": 19.4,
+        "value": 19.4,
         "code": "ok"
     },
     {
-        "y": 17.43,
+        "_y": 17.43,
+        "value": 17.43,
         "code": "az"
     },
     {
-        "y": 16.01,
+        "_y": 16.01,
+        "value": 16.01,
         "code": "co"
     },
     {
-        "y": 15.95,
+        "_y": 15.95,
+        "value": 15.95,
         "code": "me"
     },
     {
-        "y": 13.76,
+        "_y": 13.76,
+        "value": 13.76,
         "code": "or"
     },
     {
-        "y": 12.69,
+        "_y": 12.69,
+        "value": 12.69,
         "code": "ks"
     },
     {
-        "y": 10.5,
+        "_y": 10.5,
+        "value": 10.5,
         "code": "ut"
     },
     {
-        "y": 8.6,
+        "_y": 8.6,
+        "value": 8.6,
         "code": "ne"
     },
     {
-        "y": 7.03,
+        "_y": 7.03,
+        "value": 7.03,
         "code": "nv"
     },
     {
-        "y": 6.04,
+        "_y": 6.04,
+        "value": 6.04,
         "code": "id"
     },
     {
-        "y": 5.79,
+        "_y": 5.79,
+        "value": 5.79,
         "code": "nm"
     },
     {
-        "y": 3.84,
+        "_y": 3.84,
+        "value": 3.84,
         "code": "sd"
     },
     {
-        "y": 3.59,
+        "_y": 3.59,
+        "value": 3.59,
         "code": "nd"
     },
     {
-        "y": 2.39,
+        "_y": 2.39,
+        "value": 2.39,
         "code": "mt"
     },
     {
-        "y": 1.96,
+        "_y": 1.96,
+        "value": 1.96,
         "code": "wy"
     },
     {
-        "y": 0.42,
+        "_y": 0.42,
+        "value": 0.42,
         "code": "ak"
     }
 ];
@@ -388,11 +438,11 @@ $(function () {
 
         legend: {
             layout: 'horizontal',
-
-            /*
-            layout: 'vertical',
-            align: 'right'
-            // */
+            borderWidth: 0,
+            backgroundColor: 'rgba(255,255,255,0.85)',
+            floating: true,
+            verticalAlign: 'top',
+            y: 25
         },
 
         mapNavigation: {
@@ -415,13 +465,18 @@ $(function () {
             },
             name: 'Population density',
             tooltip: {
-                pointFormat: '{point.code}: {point.y}/km²'
+                pointFormat: '{point.code}: {point.value}/km²'
             },
             colorAxis: {
                 min: 1,
                 type: 'logarithmic',
-                minColor: '#CCCCFF',
-                maxColor: '#000044'
+                minColor: '#EEEEFF',
+                maxColor: '#000022',
+                stops: [
+                    [0, '#EFEFFF'],
+                    [0.67, '#4444FF'],
+                    [1, '#000022']
+                ]
             }
         }]
     });

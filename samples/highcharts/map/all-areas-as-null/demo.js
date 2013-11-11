@@ -212,19 +212,19 @@ $(function () {
             allAreas: true,
             data: [{
                 code: 'is',
-                y: 1
+                value: 1
             }, {
                 code: 'no',
-                y: 1
+                value: 1
             }, {
                 code: 'se',
-                y: 1
+                value: 1
             }, {
                 code: 'sf',
-                y: 1
+                value: 1
             }, {
                 code: 'dk',
-                y: 1
+                value: 1
             }],
             joinBy: 'code',
             dataLabels: {
@@ -241,7 +241,7 @@ $(function () {
             nullColor: '#F8F8F8',
             tooltip: {
                 headerFormat: '',
-                pointFormat: '{point.name}: <b>{point.y}</b>'
+                pointFormat: '{point.name}'
             }
         }]
     });

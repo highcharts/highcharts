@@ -1749,6 +1749,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointArrayMap: ['y', 'z'],
+	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
 	
@@ -1992,7 +1993,7 @@ Axis.prototype.beforePadding = function () {
 			
 			if (range > 0) {
 				while (i--) {
-					if (data[i] !== null) {
+					if (typeof data[i] === 'number') {
 						radius = series.radii[i];
 						pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
 						pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);

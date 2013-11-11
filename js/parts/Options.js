@@ -38,6 +38,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
+		//timezoneOffset: 0, // docs: highcharts/global/timezoneoffset
 		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
 		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png'
 	},
@@ -186,7 +187,7 @@ defaultOptions = {
 					marker: {}
 				}
 			},
-			stickyTracking: true
+			stickyTracking: true,
 			//tooltip: {
 				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
 				//valueDecimals: null,
@@ -194,7 +195,7 @@ defaultOptions = {
 				//valuePrefix: '',
 				//ySuffix: ''				
 			//}
-			// turboThreshold: 1000
+			turboThreshold: 1000
 			// zIndex: null
 		}
 	},
@@ -249,7 +250,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
-		symbolWidth: 16,
+		// symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
 		// width: undefined,
@@ -354,6 +355,8 @@ function setTimeMethods() {
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
+
+	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
 	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
 		return new Date(
 			year,

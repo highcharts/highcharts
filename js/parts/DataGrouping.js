@@ -262,6 +262,7 @@ seriesProto.processData = function () {
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
+	series.groupPixelWidth = null;
 	
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
@@ -289,7 +290,7 @@ seriesProto.processData = function () {
 		var extremes = xAxis.getExtremes(),
 			xMin = extremes.min,
 			xMax = extremes.max,
-			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, processedXData)) || 1,
+			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
 			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,			
 			groupPositions = xAxis.getTimeTicks(
 				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),

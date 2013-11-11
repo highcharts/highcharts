@@ -319,7 +319,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp),
+	var date = new Date(timestamp - timezoneOffset),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),

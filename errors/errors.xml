@@ -88,4 +88,13 @@
 				in Highcharts trying to add one tick on every millisecond since 1970.</p> 
 		</description>
 	</error>
+	
+	<error id="20">
+		<title>Can't add object point configuration to a long data series</title>
+		<description>
+			<p>In Highstock, if you try to add a point using the object literal configuration syntax, it works only when the number of data points is 
+				below the series' <a href="http://api.highcharts.com/highstock#plotOptions.series.turboThreshold">turboThreshold</a>. Instead of the object
+				syntax, use the Array syntax.</p> 
+		</description>
+	</error>
 </errors>

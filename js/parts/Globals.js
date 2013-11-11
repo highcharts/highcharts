@@ -89,6 +89,7 @@ var UNDEFINED,
 
 	// time methods, changed based on whether or not UTC is used
 	makeTime,
+	timezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,

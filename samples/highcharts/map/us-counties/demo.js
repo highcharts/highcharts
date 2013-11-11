@@ -9431,12883 +9431,12883 @@ $(function () {
     var data = [
     {
         "name": "Autauga, AL",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Baldwin, AL",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Barbour, AL",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Bibb, AL",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Blount, AL",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Bullock, AL",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "Butler, AL",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Calhoun, AL",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Chambers, AL",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Cherokee, AL",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Chilton, AL",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Choctaw, AL",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Clarke, AL",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Clay, AL",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Cleburne, AL",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Coffee, AL",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Colbert, AL",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Conecuh, AL",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Coosa, AL",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Covington, AL",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Crenshaw, AL",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Cullman, AL",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Dale, AL",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Dallas, AL",
-        "y": 14.4
+        "value": 14.4
     },
     {
         "name": "DeKalb, AL",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Elmore, AL",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Escambia, AL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Etowah, AL",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Fayette, AL",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Franklin, AL",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Geneva, AL",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Greene, AL",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Hale, AL",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Henry, AL",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Houston, AL",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Jackson, AL",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Jefferson, AL",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Lamar, AL",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Lauderdale, AL",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Lawrence, AL",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Lee, AL",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Limestone, AL",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Lowndes, AL",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Macon, AL",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Madison, AL",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Marengo, AL",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Marion, AL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Marshall, AL",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Mobile, AL",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Monroe, AL",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Montgomery, AL",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Morgan, AL",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Perry, AL",
-        "y": 14.7
+        "value": 14.7
     },
     {
         "name": "Pickens, AL",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Pike, AL",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Randolph, AL",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Russell, AL",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "St. Clair, AL",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Shelby, AL",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Sumter, AL",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Talladega, AL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Tallapoosa, AL",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Tuscaloosa, AL",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Walker, AL",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Washington, AL",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Wilcox, AL",
-        "y": 16.2
+        "value": 16.2
     },
     {
         "name": "Winston, AL",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Aleutians East Borough, AK",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Aleutians West Census Area, AK",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Anchorage Borough/municipality, AK",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Bethel Census Area, AK",
-        "y": 16.1
+        "value": 16.1
     },
     {
         "name": "Bristol Bay Borough, AK",
-        "y": 1.1
+        "value": 1.1
     },
     {
         "name": "Denali Borough, AK",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Dillingham Census Area, AK",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Fairbanks North Star Borough, AK",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Haines Borough, AK",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Hoonah-Angoon Census Area, AK",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Juneau Borough/city, AK",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Kenai Peninsula Borough, AK",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Ketchikan Gateway Borough, AK",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Kodiak Island Borough, AK",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Lake and Peninsula Borough, AK",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Matanuska-Susitna Borough, AK",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Nome Census Area, AK",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "North Slope Borough, AK",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Northwest Arctic Borough, AK",
-        "y": 13.8
+        "value": 13.8
     },
     {
         "name": "Petersburg Census Area, AK",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Prince of Wales-Hyder Census Area, AK",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Sitka Borough/city, AK",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Skagway Municipality, AK",
-        "y": 2.2
+        "value": 2.2
     },
     {
         "name": "Southeast Fairbanks Census Area, AK",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Valdez-Cordova Census Area, AK",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Wade Hampton Census Area, AK",
-        "y": 23.7
+        "value": 23.7
     },
     {
         "name": "Wrangell Borough/city, AK",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Yakutat Borough/city, AK",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Yukon-Koyukuk Census Area, AK",
-        "y": 14.3
+        "value": 14.3
     },
     {
         "name": "Apache, AZ",
-        "y": 20.4
+        "value": 20.4
     },
     {
         "name": "Cochise, AZ",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Coconino, AZ",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Gila, AZ",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Graham, AZ",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Greenlee, AZ",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "La Paz, AZ",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Maricopa, AZ",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Mohave, AZ",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Navajo, AZ",
-        "y": 15.3
+        "value": 15.3
     },
     {
         "name": "Pima, AZ",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Pinal, AZ",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Santa Cruz, AZ",
-        "y": 19.5
+        "value": 19.5
     },
     {
         "name": "Yavapai, AZ",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Yuma, AZ",
-        "y": 33.2
+        "value": 33.2
     },
     {
         "name": "Arkansas, AR",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Ashley, AR",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Baxter, AR",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Benton, AR",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Boone, AR",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Bradley, AR",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Calhoun, AR",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Carroll, AR",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Chicot, AR",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Clark, AR",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Clay, AR",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Cleburne, AR",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Cleveland, AR",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Columbia, AR",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Conway, AR",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Craighead, AR",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Crawford, AR",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Crittenden, AR",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Cross, AR",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Dallas, AR",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Desha, AR",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Drew, AR",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Faulkner, AR",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Franklin, AR",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Fulton, AR",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Garland, AR",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Grant, AR",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Greene, AR",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Hempstead, AR",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Hot Spring, AR",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Howard, AR",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Independence, AR",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Izard, AR",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Jackson, AR",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Jefferson, AR",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Johnson, AR",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Lafayette, AR",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Lawrence, AR",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Lee, AR",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Lincoln, AR",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Little River, AR",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Logan, AR",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Lonoke, AR",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Madison, AR",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Marion, AR",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Miller, AR",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Mississippi, AR",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Monroe, AR",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Montgomery, AR",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Nevada, AR",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Newton, AR",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Ouachita, AR",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Perry, AR",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Phillips, AR",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Pike, AR",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Poinsett, AR",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Polk, AR",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Pope, AR",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Prairie, AR",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Pulaski, AR",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Randolph, AR",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "St. Francis, AR",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Saline, AR",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Scott, AR",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Searcy, AR",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Sebastian, AR",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Sevier, AR",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Sharp, AR",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Stone, AR",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Union, AR",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Van Buren, AR",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Washington, AR",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "White, AR",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Woodruff, AR",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Yell, AR",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Alameda, CA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Alpine, CA",
-        "y": 13.4
+        "value": 13.4
     },
     {
         "name": "Amador, CA",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Butte, CA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Calaveras, CA",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Colusa, CA",
-        "y": 14.4
+        "value": 14.4
     },
     {
         "name": "Contra Costa, CA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Del Norte, CA",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "El Dorado, CA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Fresno, CA",
-        "y": 12.5
+        "value": 12.5
     },
     {
         "name": "Glenn, CA",
-        "y": 13.0
+        "value": 13.0
     },
     {
         "name": "Humboldt, CA",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Imperial, CA",
-        "y": 27.4
+        "value": 27.4
     },
     {
         "name": "Inyo, CA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Kern, CA",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Kings, CA",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Lake, CA",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Lassen, CA",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Los Angeles, CA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Madera, CA",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Marin, CA",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Mariposa, CA",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Mendocino, CA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Merced, CA",
-        "y": 14.5
+        "value": 14.5
     },
     {
         "name": "Modoc, CA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Mono, CA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Monterey, CA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Napa, CA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Nevada, CA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Orange, CA",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Placer, CA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Plumas, CA",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Riverside, CA",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Sacramento, CA",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "San Benito, CA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "San Bernardino, CA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "San Diego, CA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "San Francisco County/city, CA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "San Joaquin, CA",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "San Luis Obispo, CA",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "San Mateo, CA",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Santa Barbara, CA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Santa Clara, CA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Santa Cruz, CA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Shasta, CA",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Sierra, CA",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Siskiyou, CA",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Solano, CA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Sonoma, CA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Stanislaus, CA",
-        "y": 12.9
+        "value": 12.9
     },
     {
         "name": "Sutter, CA",
-        "y": 13.5
+        "value": 13.5
     },
     {
         "name": "Tehama, CA",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Trinity, CA",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Tulare, CA",
-        "y": 13.7
+        "value": 13.7
     },
     {
         "name": "Tuolumne, CA",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Ventura, CA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Yolo, CA",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Yuba, CA",
-        "y": 14.4
+        "value": 14.4
     },
     {
         "name": "Adams, CO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Alamosa, CO",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Arapahoe, CO",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Archuleta, CO",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Baca, CO",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Bent, CO",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Boulder, CO",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Broomfield County/city, CO",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Chaffee, CO",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Cheyenne, CO",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Clear Creek, CO",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Conejos, CO",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Costilla, CO",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Crowley, CO",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Custer, CO",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Delta, CO",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Denver County/city, CO",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Dolores, CO",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Douglas, CO",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Eagle, CO",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Elbert, CO",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "El Paso, CO",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Fremont, CO",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Garfield, CO",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Gilpin, CO",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Grand, CO",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Gunnison, CO",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Hinsdale, CO",
-        "y": 2.7
+        "value": 2.7
     },
     {
         "name": "Huerfano, CO",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Jackson, CO",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Jefferson, CO",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Kiowa, CO",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Kit Carson, CO",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Lake, CO",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "La Plata, CO",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Larimer, CO",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Las Animas, CO",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Lincoln, CO",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Logan, CO",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Mesa, CO",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Mineral, CO",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Moffat, CO",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Montezuma, CO",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Montrose, CO",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Morgan, CO",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Otero, CO",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Ouray, CO",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Park, CO",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Phillips, CO",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Pitkin, CO",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Prowers, CO",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Pueblo, CO",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Rio Blanco, CO",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Rio Grande, CO",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Routt, CO",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Saguache, CO",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "San Juan, CO",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "San Miguel, CO",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Sedgwick, CO",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Summit, CO",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Teller, CO",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Washington, CO",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Weld, CO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Yuma, CO",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Fairfield, CT",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Hartford, CT",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Litchfield, CT",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Middlesex, CT",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "New Haven, CT",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "New London, CT",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Tolland, CT",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Windham, CT",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Kent, DE",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "New Castle, DE",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Sussex, DE",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "District of Columbia                            ",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Alachua, FL",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Baker, FL",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Bay, FL",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Bradford, FL",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Brevard, FL",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Broward, FL",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Calhoun, FL",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Charlotte, FL",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Citrus, FL",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Clay, FL",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Collier, FL",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Columbia, FL",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "DeSoto, FL",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Dixie, FL",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Duval, FL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Escambia, FL",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Flagler, FL",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Franklin, FL",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Gadsden, FL",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Gilchrist, FL",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Glades, FL",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Gulf, FL",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Hamilton, FL",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Hardee, FL",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Hendry, FL",
-        "y": 15.6
+        "value": 15.6
     },
     {
         "name": "Hernando, FL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Highlands, FL",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Hillsborough, FL",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Holmes, FL",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Indian River, FL",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Jackson, FL",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Jefferson, FL",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Lafayette, FL",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Lake, FL",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Lee, FL",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Leon, FL",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Levy, FL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Liberty, FL",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Madison, FL",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Manatee, FL",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Marion, FL",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Martin, FL",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Miami-Dade, FL",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Monroe, FL",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Nassau, FL",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Okaloosa, FL",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Okeechobee, FL",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Orange, FL",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Osceola, FL",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Palm Beach, FL",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Pasco, FL",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Pinellas, FL",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Polk, FL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Putnam, FL",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "St. Johns, FL",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "St. Lucie, FL",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Santa Rosa, FL",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Sarasota, FL",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Seminole, FL",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Sumter, FL",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Suwannee, FL",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Taylor, FL",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Union, FL",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Volusia, FL",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Wakulla, FL",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Walton, FL",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Washington, FL",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Appling, GA",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Atkinson, GA",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Bacon, GA",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Baker, GA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Baldwin, GA",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "Banks, GA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Barrow, GA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Bartow, GA",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Ben Hill, GA",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Berrien, GA",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Bibb, GA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Bleckley, GA",
-        "y": 16.6
+        "value": 16.6
     },
     {
         "name": "Brantley, GA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Brooks, GA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Bryan, GA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Bulloch, GA",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Burke, GA",
-        "y": 12.7
+        "value": 12.7
     },
     {
         "name": "Butts, GA",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Calhoun, GA",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "Camden, GA",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Candler, GA",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Carroll, GA",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Catoosa, GA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Charlton, GA",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Chatham, GA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Chattahoochee, GA",
-        "y": 18.4
+        "value": 18.4
     },
     {
         "name": "Chattooga, GA",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Cherokee, GA",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Clarke, GA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Clay, GA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Clayton, GA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Clinch, GA",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Cobb, GA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Coffee, GA",
-        "y": 13.4
+        "value": 13.4
     },
     {
         "name": "Colquitt, GA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Columbia, GA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Cook, GA",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Coweta, GA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Crawford, GA",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Crisp, GA",
-        "y": 13.4
+        "value": 13.4
     },
     {
         "name": "Dade, GA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Dawson, GA",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Decatur, GA",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "DeKalb, GA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Dodge, GA",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Dooly, GA",
-        "y": 14.1
+        "value": 14.1
     },
     {
         "name": "Dougherty, GA",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Douglas, GA",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Early, GA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Echols, GA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Effingham, GA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Elbert, GA",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Emanuel, GA",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Evans, GA",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Fannin, GA",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Fayette, GA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Floyd, GA",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Forsyth, GA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Franklin, GA",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Fulton, GA",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Gilmer, GA",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Glascock, GA",
-        "y": 12.9
+        "value": 12.9
     },
     {
         "name": "Glynn, GA",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Gordon, GA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Grady, GA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Greene, GA",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Gwinnett, GA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Habersham, GA",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Hall, GA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Hancock, GA",
-        "y": 19.8
+        "value": 19.8
     },
     {
         "name": "Haralson, GA",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Harris, GA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Hart, GA",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Heard, GA",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Henry, GA",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Houston, GA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Irwin, GA",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Jackson, GA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Jasper, GA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Jeff Davis, GA",
-        "y": 13.9
+        "value": 13.9
     },
     {
         "name": "Jefferson, GA",
-        "y": 16.6
+        "value": 16.6
     },
     {
         "name": "Jenkins, GA",
-        "y": 17.9
+        "value": 17.9
     },
     {
         "name": "Johnson, GA",
-        "y": 14.0
+        "value": 14.0
     },
     {
         "name": "Jones, GA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Lamar, GA",
-        "y": 13.2
+        "value": 13.2
     },
     {
         "name": "Lanier, GA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Laurens, GA",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Lee, GA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Liberty, GA",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Lincoln, GA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Long, GA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Lowndes, GA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Lumpkin, GA",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "McDuffie, GA",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "McIntosh, GA",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Macon, GA",
-        "y": 15.3
+        "value": 15.3
     },
     {
         "name": "Madison, GA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Marion, GA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Meriwether, GA",
-        "y": 15.1
+        "value": 15.1
     },
     {
         "name": "Miller, GA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Mitchell, GA",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Monroe, GA",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Montgomery, GA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Morgan, GA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Murray, GA",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Muscogee, GA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Newton, GA",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Oconee, GA",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Oglethorpe, GA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Paulding, GA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Peach, GA",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Pickens, GA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Pierce, GA",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Pike, GA",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Polk, GA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Pulaski, GA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Putnam, GA",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Quitman, GA",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Rabun, GA",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Randolph, GA",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Richmond, GA",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Rockdale, GA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Schley, GA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Screven, GA",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Seminole, GA",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Spalding, GA",
-        "y": 12.7
+        "value": 12.7
     },
     {
         "name": "Stephens, GA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Stewart, GA",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Sumter, GA",
-        "y": 13.4
+        "value": 13.4
     },
     {
         "name": "Talbot, GA",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Taliaferro, GA",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Tattnall, GA",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Taylor, GA",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Telfair, GA",
-        "y": 16.2
+        "value": 16.2
     },
     {
         "name": "Terrell, GA",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Thomas, GA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Tift, GA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Toombs, GA",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Towns, GA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Treutlen, GA",
-        "y": 14.9
+        "value": 14.9
     },
     {
         "name": "Troup, GA",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Turner, GA",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Twiggs, GA",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Union, GA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Upson, GA",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Walker, GA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Walton, GA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Ware, GA",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Warren, GA",
-        "y": 15.4
+        "value": 15.4
     },
     {
         "name": "Washington, GA",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Wayne, GA",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Webster, GA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Wheeler, GA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "White, GA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Whitfield, GA",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Wilcox, GA",
-        "y": 13.2
+        "value": 13.2
     },
     {
         "name": "Wilkes, GA",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Wilkinson, GA",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Worth, GA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Hawaii, HI",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Honolulu County/city, HI",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Kauai, HI",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Maui, HI",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Ada, ID",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Adams, ID",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Bannock, ID",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Bear Lake, ID",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Benewah, ID",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Bingham, ID",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Blaine, ID",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Boise, ID",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Bonner, ID",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Bonneville, ID",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Boundary, ID",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Butte, ID",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Camas, ID",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Canyon, ID",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Caribou, ID",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Cassia, ID",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Clark, ID",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Clearwater, ID",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Custer, ID",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Elmore, ID",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Franklin, ID",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Fremont, ID",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Gem, ID",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Gooding, ID",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Idaho, ID",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Jefferson, ID",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Jerome, ID",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Kootenai, ID",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Latah, ID",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Lemhi, ID",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Lewis, ID",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Lincoln, ID",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Madison, ID",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Minidoka, ID",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Nez Perce, ID",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Oneida, ID",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Owyhee, ID",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Payette, ID",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Power, ID",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Shoshone, ID",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Teton, ID",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Twin Falls, ID",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Valley, ID",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Washington, ID",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Adams, IL",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Alexander, IL",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Bond, IL",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Boone, IL",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Brown, IL",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Bureau, IL",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Calhoun, IL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Carroll, IL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Cass, IL",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Champaign, IL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Christian, IL",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Clark, IL",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Clay, IL",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Clinton, IL",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Coles, IL",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Cook, IL",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Crawford, IL",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Cumberland, IL",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "DeKalb, IL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "De Witt, IL",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Douglas, IL",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "DuPage, IL",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Edgar, IL",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Edwards, IL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Effingham, IL",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Fayette, IL",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Ford, IL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Franklin, IL",
-        "y": 12.9
+        "value": 12.9
     },
     {
         "name": "Fulton, IL",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Gallatin, IL",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Greene, IL",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Grundy, IL",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Hamilton, IL",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Hancock, IL",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Hardin, IL",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Henderson, IL",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Henry, IL",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Iroquois, IL",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Jackson, IL",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Jasper, IL",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Jefferson, IL",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Jersey, IL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Jo Daviess, IL",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Johnson, IL",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Kane, IL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Kankakee, IL",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Kendall, IL",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Knox, IL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Lake, IL",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "LaSalle, IL",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Lawrence, IL",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Lee, IL",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Livingston, IL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Logan, IL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "McDonough, IL",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "McHenry, IL",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "McLean, IL",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Macon, IL",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Macoupin, IL",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Madison, IL",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Marion, IL",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Marshall, IL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Mason, IL",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Massac, IL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Menard, IL",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Mercer, IL",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Monroe, IL",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Montgomery, IL",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Morgan, IL",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Moultrie, IL",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Ogle, IL",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Peoria, IL",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Perry, IL",
-        "y": 12.7
+        "value": 12.7
     },
     {
         "name": "Piatt, IL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Pike, IL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Pope, IL",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Pulaski, IL",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Putnam, IL",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Randolph, IL",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Richland, IL",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Rock Island, IL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "St. Clair, IL",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Saline, IL",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Sangamon, IL",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Schuyler, IL",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Scott, IL",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Shelby, IL",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Stark, IL",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Stephenson, IL",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Tazewell, IL",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Union, IL",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Vermilion, IL",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Wabash, IL",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Warren, IL",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Washington, IL",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Wayne, IL",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "White, IL",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Whiteside, IL",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Will, IL",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Williamson, IL",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Winnebago, IL",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Woodford, IL",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Adams, IN",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Allen, IN",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Bartholomew, IN",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Benton, IN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Blackford, IN",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Boone, IN",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Brown, IN",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Carroll, IN",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Cass, IN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Clark, IN",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Clay, IN",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Clinton, IN",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Crawford, IN",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Daviess, IN",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Dearborn, IN",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Decatur, IN",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "DeKalb, IN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Delaware, IN",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Dubois, IN",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Elkhart, IN",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Fayette, IN",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Floyd, IN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Fountain, IN",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Franklin, IN",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Fulton, IN",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Gibson, IN",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Grant, IN",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Greene, IN",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Hamilton, IN",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Hancock, IN",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Harrison, IN",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Hendricks, IN",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Henry, IN",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Howard, IN",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Huntington, IN",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Jackson, IN",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Jasper, IN",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Jay, IN",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Jefferson, IN",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Jennings, IN",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Johnson, IN",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Knox, IN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Kosciusko, IN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "LaGrange, IN",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Lake, IN",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "LaPorte, IN",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Lawrence, IN",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Madison, IN",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Marion, IN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Marshall, IN",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Martin, IN",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Miami, IN",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Monroe, IN",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Montgomery, IN",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Morgan, IN",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Newton, IN",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Noble, IN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Ohio, IN",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Orange, IN",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Owen, IN",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Parke, IN",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Perry, IN",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Pike, IN",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Porter, IN",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Posey, IN",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Pulaski, IN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Putnam, IN",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Randolph, IN",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Ripley, IN",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Rush, IN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "St. Joseph, IN",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Scott, IN",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Shelby, IN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Spencer, IN",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Starke, IN",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Steuben, IN",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Sullivan, IN",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Switzerland, IN",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Tippecanoe, IN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Tipton, IN",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Union, IN",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Vanderburgh, IN",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Vermillion, IN",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Vigo, IN",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Wabash, IN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Warren, IN",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Warrick, IN",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Washington, IN",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Wayne, IN",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Wells, IN",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "White, IN",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Whitley, IN",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Adair, IA",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Adams, IA",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Allamakee, IA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Appanoose, IA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Audubon, IA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Benton, IA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Black Hawk, IA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Boone, IA",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Bremer, IA",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Buchanan, IA",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Buena Vista, IA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Butler, IA",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Calhoun, IA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Carroll, IA",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Cass, IA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Cedar, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Cerro Gordo, IA",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Cherokee, IA",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Chickasaw, IA",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Clarke, IA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Clay, IA",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Clayton, IA",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Clinton, IA",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Crawford, IA",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Dallas, IA",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Davis, IA",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Decatur, IA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Delaware, IA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Des Moines, IA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Dickinson, IA",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Dubuque, IA",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Emmet, IA",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Fayette, IA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Floyd, IA",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Franklin, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Fremont, IA",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Greene, IA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Grundy, IA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Guthrie, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Hamilton, IA",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Hancock, IA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Hardin, IA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Harrison, IA",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Henry, IA",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Howard, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Humboldt, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Ida, IA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Iowa, IA",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Jackson, IA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Jasper, IA",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Jefferson, IA",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Johnson, IA",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Jones, IA",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Keokuk, IA",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Kossuth, IA",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Lee, IA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Linn, IA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Louisa, IA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Lucas, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Lyon, IA",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Madison, IA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Mahaska, IA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Marion, IA",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Marshall, IA",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Mills, IA",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Mitchell, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Monona, IA",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Monroe, IA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Montgomery, IA",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Muscatine, IA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "O'Brien, IA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Osceola, IA",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Page, IA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Palo Alto, IA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Plymouth, IA",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Pocahontas, IA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Polk, IA",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Pottawattamie, IA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Poweshiek, IA",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Ringgold, IA",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Sac, IA",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Scott, IA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Shelby, IA",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Sioux, IA",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Story, IA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Tama, IA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Taylor, IA",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Union, IA",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Van Buren, IA",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Wapello, IA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Warren, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Washington, IA",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Wayne, IA",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Webster, IA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Winnebago, IA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Winneshiek, IA",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Woodbury, IA",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Worth, IA",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Wright, IA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Allen, KS",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Anderson, KS",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Atchison, KS",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Barber, KS",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Barton, KS",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Bourbon, KS",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Brown, KS",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Butler, KS",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Chase, KS",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Chautauqua, KS",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Cherokee, KS",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Cheyenne, KS",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Clark, KS",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Clay, KS",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Cloud, KS",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Coffey, KS",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Comanche, KS",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Cowley, KS",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Crawford, KS",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Decatur, KS",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Dickinson, KS",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Doniphan, KS",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Douglas, KS",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Edwards, KS",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Elk, KS",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Ellis, KS",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Ellsworth, KS",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Finney, KS",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Ford, KS",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Franklin, KS",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Geary, KS",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Gove, KS",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Graham, KS",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Grant, KS",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Gray, KS",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Greeley, KS",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Greenwood, KS",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Hamilton, KS",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Harper, KS",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Harvey, KS",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Haskell, KS",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Hodgeman, KS",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Jackson, KS",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Jefferson, KS",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Jewell, KS",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Johnson, KS",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Kearny, KS",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Kingman, KS",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Kiowa, KS",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Labette, KS",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Lane, KS",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Leavenworth, KS",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Lincoln, KS",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Linn, KS",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Logan, KS",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Lyon, KS",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "McPherson, KS",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Marion, KS",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Marshall, KS",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Meade, KS",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Miami, KS",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Mitchell, KS",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Montgomery, KS",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Morris, KS",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Morton, KS",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Nemaha, KS",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Neosho, KS",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Ness, KS",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Norton, KS",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Osage, KS",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Osborne, KS",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Ottawa, KS",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Pawnee, KS",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Phillips, KS",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Pottawatomie, KS",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Pratt, KS",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Rawlins, KS",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Reno, KS",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Republic, KS",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Rice, KS",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Riley, KS",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Rooks, KS",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Rush, KS",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Russell, KS",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Saline, KS",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Scott, KS",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Sedgwick, KS",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Seward, KS",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Shawnee, KS",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Sheridan, KS",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Sherman, KS",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Smith, KS",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Stafford, KS",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Stanton, KS",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Stevens, KS",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Sumner, KS",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Thomas, KS",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Trego, KS",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Wabaunsee, KS",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Wallace, KS",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Washington, KS",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Wichita, KS",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Wilson, KS",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Woodson, KS",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Wyandotte, KS",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Adair, KY",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Allen, KY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Anderson, KY",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Ballard, KY",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Barren, KY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Bath, KY",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Bell, KY",
-        "y": 14.4
+        "value": 14.4
     },
     {
         "name": "Boone, KY",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Bourbon, KY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Boyd, KY",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Boyle, KY",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Bracken, KY",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Breathitt, KY",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Breckinridge, KY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Bullitt, KY",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Butler, KY",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Caldwell, KY",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Calloway, KY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Campbell, KY",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Carlisle, KY",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Carroll, KY",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Carter, KY",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Casey, KY",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Christian, KY",
-        "y": 13.2
+        "value": 13.2
     },
     {
         "name": "Clark, KY",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Clay, KY",
-        "y": 12.9
+        "value": 12.9
     },
     {
         "name": "Clinton, KY",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Crittenden, KY",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Cumberland, KY",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Daviess, KY",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Edmonson, KY",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Elliott, KY",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Estill, KY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Fayette, KY",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Fleming, KY",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Floyd, KY",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Franklin, KY",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Fulton, KY",
-        "y": 15.6
+        "value": 15.6
     },
     {
         "name": "Gallatin, KY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Garrard, KY",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Grant, KY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Graves, KY",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Grayson, KY",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Green, KY",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Greenup, KY",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Hancock, KY",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Hardin, KY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Harlan, KY",
-        "y": 17.2
+        "value": 17.2
     },
     {
         "name": "Harrison, KY",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Hart, KY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Henderson, KY",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Henry, KY",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Hickman, KY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Hopkins, KY",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Jackson, KY",
-        "y": 13.9
+        "value": 13.9
     },
     {
         "name": "Jefferson, KY",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Jessamine, KY",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Johnson, KY",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Kenton, KY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Knott, KY",
-        "y": 14.9
+        "value": 14.9
     },
     {
         "name": "Knox, KY",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Larue, KY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Laurel, KY",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Lawrence, KY",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Lee, KY",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Leslie, KY",
-        "y": 17.0
+        "value": 17.0
     },
     {
         "name": "Letcher, KY",
-        "y": 16.2
+        "value": 16.2
     },
     {
         "name": "Lewis, KY",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "Lincoln, KY",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Livingston, KY",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Logan, KY",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Lyon, KY",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "McCracken, KY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "McCreary, KY",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "McLean, KY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Madison, KY",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Magoffin, KY",
-        "y": 16.8
+        "value": 16.8
     },
     {
         "name": "Marion, KY",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Marshall, KY",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Martin, KY",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Mason, KY",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Meade, KY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Menifee, KY",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Mercer, KY",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Metcalfe, KY",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Monroe, KY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Montgomery, KY",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Morgan, KY",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Muhlenberg, KY",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Nelson, KY",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Nicholas, KY",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Ohio, KY",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Oldham, KY",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Owen, KY",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Owsley, KY",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Pendleton, KY",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Perry, KY",
-        "y": 13.0
+        "value": 13.0
     },
     {
         "name": "Pike, KY",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Powell, KY",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Pulaski, KY",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Robertson, KY",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Rockcastle, KY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Rowan, KY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Russell, KY",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Scott, KY",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Shelby, KY",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Simpson, KY",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Spencer, KY",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Taylor, KY",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Todd, KY",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Trigg, KY",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Trimble, KY",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Union, KY",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Warren, KY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Washington, KY",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Wayne, KY",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Webster, KY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Whitley, KY",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Wolfe, KY",
-        "y": 13.4
+        "value": 13.4
     },
     {
         "name": "Woodford, KY",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Acadia, LA",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Allen, LA",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Ascension, LA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Assumption, LA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Avoyelles, LA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Beauregard, LA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Bienville, LA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Bossier, LA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Caddo, LA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Calcasieu, LA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Caldwell, LA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Cameron, LA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Catahoula, LA",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Claiborne, LA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Concordia, LA",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "De Soto, LA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "East Baton Rouge, LA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "East Carroll, LA",
-        "y": 16.3
+        "value": 16.3
     },
     {
         "name": "East Feliciana, LA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Evangeline, LA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Franklin, LA",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Grant, LA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Iberia, LA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Iberville, LA",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Jackson, LA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Jefferson, LA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Jefferson Davis, LA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Lafayette, LA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Lafourche, LA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "La Salle, LA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Lincoln, LA",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Livingston, LA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Madison, LA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Morehouse, LA",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Natchitoches, LA",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Orleans, LA",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Ouachita, LA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Plaquemines, LA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Pointe Coupee, LA",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Rapides, LA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Red River, LA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Richland, LA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Sabine, LA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "St. Bernard, LA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "St. Charles, LA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "St. Helena, LA",
-        "y": 13.0
+        "value": 13.0
     },
     {
         "name": "St. James, LA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "St. John the Baptist, LA",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "St. Landry, LA",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "St. Martin, LA",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "St. Mary, LA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "St. Tammany, LA",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Tangipahoa, LA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Tensas, LA",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Terrebonne, LA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Union, LA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Vermilion, LA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Vernon, LA",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Washington, LA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Webster, LA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "West Baton Rouge, LA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "West Carroll, LA",
-        "y": 13.0
+        "value": 13.0
     },
     {
         "name": "West Feliciana, LA",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Winn, LA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Androscoggin, ME",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Aroostook, ME",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Cumberland, ME",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Franklin, ME",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Hancock, ME",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Kennebec, ME",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Knox, ME",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Lincoln, ME",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Oxford, ME",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Penobscot, ME",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Piscataquis, ME",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Sagadahoc, ME",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Somerset, ME",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Waldo, ME",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Washington, ME",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "York, ME",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Allegany, MD",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Anne Arundel, MD",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Baltimore, MD",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Calvert, MD",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Caroline, MD",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Carroll, MD",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Cecil, MD",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Charles, MD",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Dorchester, MD",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Frederick, MD",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Garrett, MD",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Harford, MD",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Howard, MD",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Kent, MD",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Montgomery, MD",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Prince George's, MD",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Queen Anne's, MD",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "St. Mary's, MD",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Somerset, MD",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Talbot, MD",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Washington, MD",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Wicomico, MD",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Worcester, MD",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Baltimore city, MD",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Barnstable, MA",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Berkshire, MA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Bristol, MA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Dukes, MA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Essex, MA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Franklin, MA",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Hampden, MA",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Hampshire, MA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Middlesex, MA",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Nantucket County/town, MA",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Norfolk, MA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Plymouth, MA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Suffolk, MA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Worcester, MA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Alcona, MI",
-        "y": 14.8
+        "value": 14.8
     },
     {
         "name": "Alger, MI",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Allegan, MI",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Alpena, MI",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Antrim, MI",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Arenac, MI",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Baraga, MI",
-        "y": 17.5
+        "value": 17.5
     },
     {
         "name": "Barry, MI",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Bay, MI",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Benzie, MI",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Berrien, MI",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Branch, MI",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Calhoun, MI",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Cass, MI",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Charlevoix, MI",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Cheboygan, MI",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Chippewa, MI",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Clare, MI",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Clinton, MI",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Crawford, MI",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Delta, MI",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Dickinson, MI",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Eaton, MI",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Emmet, MI",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Genesee, MI",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Gladwin, MI",
-        "y": 13.5
+        "value": 13.5
     },
     {
         "name": "Gogebic, MI",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Grand Traverse, MI",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Gratiot, MI",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Hillsdale, MI",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Houghton, MI",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Huron, MI",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Ingham, MI",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Ionia, MI",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Iosco, MI",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Iron, MI",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Isabella, MI",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Jackson, MI",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Kalamazoo, MI",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Kalkaska, MI",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Kent, MI",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Keweenaw, MI",
-        "y": 12.7
+        "value": 12.7
     },
     {
         "name": "Lake, MI",
-        "y": 13.5
+        "value": 13.5
     },
     {
         "name": "Lapeer, MI",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Leelanau, MI",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Lenawee, MI",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Livingston, MI",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Luce, MI",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Mackinac, MI",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Macomb, MI",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Manistee, MI",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Marquette, MI",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Mason, MI",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Mecosta, MI",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Menominee, MI",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Midland, MI",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Missaukee, MI",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Monroe, MI",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Montcalm, MI",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Montmorency, MI",
-        "y": 14.8
+        "value": 14.8
     },
     {
         "name": "Muskegon, MI",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Newaygo, MI",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Oakland, MI",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Oceana, MI",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Ogemaw, MI",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Ontonagon, MI",
-        "y": 13.5
+        "value": 13.5
     },
     {
         "name": "Osceola, MI",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Oscoda, MI",
-        "y": 16.8
+        "value": 16.8
     },
     {
         "name": "Otsego, MI",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Ottawa, MI",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Presque Isle, MI",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Roscommon, MI",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Saginaw, MI",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "St. Clair, MI",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "St. Joseph, MI",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Sanilac, MI",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Schoolcraft, MI",
-        "y": 13.4
+        "value": 13.4
     },
     {
         "name": "Shiawassee, MI",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Tuscola, MI",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Van Buren, MI",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Washtenaw, MI",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Wayne, MI",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Wexford, MI",
-        "y": 13.9
+        "value": 13.9
     },
     {
         "name": "Aitkin, MN",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Anoka, MN",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Becker, MN",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Beltrami, MN",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Benton, MN",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Big Stone, MN",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Blue Earth, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Brown, MN",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Carlton, MN",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Carver, MN",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Cass, MN",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Chippewa, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Chisago, MN",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Clay, MN",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Clearwater, MN",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Cook, MN",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Cottonwood, MN",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Crow Wing, MN",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Dakota, MN",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Dodge, MN",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Douglas, MN",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Faribault, MN",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Fillmore, MN",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Freeborn, MN",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Goodhue, MN",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Grant, MN",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Hennepin, MN",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Houston, MN",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Hubbard, MN",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Isanti, MN",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Itasca, MN",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Jackson, MN",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Kanabec, MN",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Kandiyohi, MN",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Kittson, MN",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Koochiching, MN",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Lac qui Parle, MN",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Lake, MN",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Lake of the Woods, MN",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Le Sueur, MN",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Lincoln, MN",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Lyon, MN",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "McLeod, MN",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Mahnomen, MN",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Marshall, MN",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Martin, MN",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Meeker, MN",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Mille Lacs, MN",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Morrison, MN",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Mower, MN",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Murray, MN",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Nicollet, MN",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Nobles, MN",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Norman, MN",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Olmsted, MN",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Otter Tail, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Pennington, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Pine, MN",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Pipestone, MN",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Polk, MN",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Pope, MN",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Ramsey, MN",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Red Lake, MN",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Redwood, MN",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Renville, MN",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Rice, MN",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Rock, MN",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Roseau, MN",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "St. Louis, MN",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Scott, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Sherburne, MN",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Sibley, MN",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Stearns, MN",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Steele, MN",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Stevens, MN",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Swift, MN",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Todd, MN",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Traverse, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Wabasha, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Wadena, MN",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Waseca, MN",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Washington, MN",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Watonwan, MN",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Wilkin, MN",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Winona, MN",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Wright, MN",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Yellow Medicine, MN",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Adams, MS",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Alcorn, MS",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Amite, MS",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Attala, MS",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Benton, MS",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Bolivar, MS",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Calhoun, MS",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Carroll, MS",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Chickasaw, MS",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Choctaw, MS",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Claiborne, MS",
-        "y": 15.8
+        "value": 15.8
     },
     {
         "name": "Clarke, MS",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Clay, MS",
-        "y": 19.0
+        "value": 19.0
     },
     {
         "name": "Coahoma, MS",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Copiah, MS",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Covington, MS",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "DeSoto, MS",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Forrest, MS",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Franklin, MS",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "George, MS",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Greene, MS",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Grenada, MS",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Hancock, MS",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Harrison, MS",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Hinds, MS",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Holmes, MS",
-        "y": 18.2
+        "value": 18.2
     },
     {
         "name": "Humphreys, MS",
-        "y": 14.6
+        "value": 14.6
     },
     {
         "name": "Issaquena, MS",
-        "y": 15.1
+        "value": 15.1
     },
     {
         "name": "Itawamba, MS",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Jackson, MS",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Jasper, MS",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Jefferson, MS",
-        "y": 18.3
+        "value": 18.3
     },
     {
         "name": "Jefferson Davis, MS",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Jones, MS",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Kemper, MS",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Lafayette, MS",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Lamar, MS",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Lauderdale, MS",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Lawrence, MS",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Leake, MS",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Lee, MS",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Leflore, MS",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Lincoln, MS",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Lowndes, MS",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Madison, MS",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Marion, MS",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Marshall, MS",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Monroe, MS",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Montgomery, MS",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Neshoba, MS",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Newton, MS",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Noxubee, MS",
-        "y": 15.1
+        "value": 15.1
     },
     {
         "name": "Oktibbeha, MS",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Panola, MS",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Pearl River, MS",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Perry, MS",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Pike, MS",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Pontotoc, MS",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Prentiss, MS",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Quitman, MS",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Rankin, MS",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Scott, MS",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Sharkey, MS",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Simpson, MS",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Smith, MS",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Stone, MS",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Sunflower, MS",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Tallahatchie, MS",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Tate, MS",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Tippah, MS",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Tishomingo, MS",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Tunica, MS",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Union, MS",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Walthall, MS",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Warren, MS",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Washington, MS",
-        "y": 14.1
+        "value": 14.1
     },
     {
         "name": "Wayne, MS",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Webster, MS",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Wilkinson, MS",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Winston, MS",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Yalobusha, MS",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Yazoo, MS",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Adair, MO",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Andrew, MO",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Atchison, MO",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Audrain, MO",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Barry, MO",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Barton, MO",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Bates, MO",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Benton, MO",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Bollinger, MO",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Boone, MO",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Buchanan, MO",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Butler, MO",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Caldwell, MO",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Callaway, MO",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Camden, MO",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Cape Girardeau, MO",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Carroll, MO",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Carter, MO",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Cass, MO",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Cedar, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Chariton, MO",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Christian, MO",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Clark, MO",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Clay, MO",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Clinton, MO",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Cole, MO",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Cooper, MO",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Crawford, MO",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Dade, MO",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Dallas, MO",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Daviess, MO",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "DeKalb, MO",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Dent, MO",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Douglas, MO",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Dunklin, MO",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Franklin, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Gasconade, MO",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Gentry, MO",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Greene, MO",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Grundy, MO",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Harrison, MO",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Henry, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Hickory, MO",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Holt, MO",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Howard, MO",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Howell, MO",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Iron, MO",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Jackson, MO",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Jasper, MO",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Jefferson, MO",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Johnson, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Knox, MO",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Laclede, MO",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Lafayette, MO",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Lawrence, MO",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Lewis, MO",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Lincoln, MO",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Linn, MO",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Livingston, MO",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "McDonald, MO",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Macon, MO",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Madison, MO",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Maries, MO",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Marion, MO",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Mercer, MO",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Miller, MO",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Mississippi, MO",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Moniteau, MO",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Monroe, MO",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Montgomery, MO",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Morgan, MO",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "New Madrid, MO",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Newton, MO",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Nodaway, MO",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Oregon, MO",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Osage, MO",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Ozark, MO",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Pemiscot, MO",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Perry, MO",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Pettis, MO",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Phelps, MO",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Pike, MO",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Platte, MO",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Polk, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Pulaski, MO",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Putnam, MO",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Ralls, MO",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Randolph, MO",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Ray, MO",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Reynolds, MO",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Ripley, MO",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "St. Charles, MO",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "St. Clair, MO",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Ste. Genevieve, MO",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "St. Francois, MO",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "St. Louis, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Saline, MO",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Schuyler, MO",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Scotland, MO",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Scott, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Shannon, MO",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Shelby, MO",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Stoddard, MO",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Stone, MO",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Sullivan, MO",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Taney, MO",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Texas, MO",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Vernon, MO",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Warren, MO",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Washington, MO",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Wayne, MO",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Webster, MO",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Worth, MO",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Wright, MO",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "St. Louis city, MO",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Beaverhead, MT",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Big Horn, MT",
-        "y": 14.5
+        "value": 14.5
     },
     {
         "name": "Blaine, MT",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Broadwater, MT",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Carbon, MT",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Carter, MT",
-        "y": 2.5
+        "value": 2.5
     },
     {
         "name": "Cascade, MT",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Chouteau, MT",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Custer, MT",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Daniels, MT",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Dawson, MT",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Deer Lodge, MT",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Fallon, MT",
-        "y": 1.5
+        "value": 1.5
     },
     {
         "name": "Fergus, MT",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Flathead, MT",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Gallatin, MT",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Garfield, MT",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Glacier, MT",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Golden Valley, MT",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Granite, MT",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Hill, MT",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Jefferson, MT",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Judith Basin, MT",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Lake, MT",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Lewis and Clark, MT",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Liberty, MT",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Lincoln, MT",
-        "y": 12.5
+        "value": 12.5
     },
     {
         "name": "McCone, MT",
-        "y": 2.2
+        "value": 2.2
     },
     {
         "name": "Madison, MT",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Meagher, MT",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Mineral, MT",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Missoula, MT",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Musselshell, MT",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Park, MT",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Petroleum, MT",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Phillips, MT",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Pondera, MT",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Powder River, MT",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Powell, MT",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Prairie, MT",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Ravalli, MT",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Richland, MT",
-        "y": 2.3
+        "value": 2.3
     },
     {
         "name": "Roosevelt, MT",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Rosebud, MT",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Sanders, MT",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Sheridan, MT",
-        "y": 2.1
+        "value": 2.1
     },
     {
         "name": "Silver Bow, MT",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Stillwater, MT",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Sweet Grass, MT",
-        "y": 2.2
+        "value": 2.2
     },
     {
         "name": "Teton, MT",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Toole, MT",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Treasure, MT",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Valley, MT",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Wheatland, MT",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Wibaux, MT",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Yellowstone, MT",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Adams, NE",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Antelope, NE",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Arthur, NE",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Banner, NE",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Blaine, NE",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Boone, NE",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Box Butte, NE",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Boyd, NE",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Brown, NE",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Buffalo, NE",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Burt, NE",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Butler, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Cass, NE",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Cedar, NE",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Chase, NE",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Cherry, NE",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Cheyenne, NE",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Clay, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Colfax, NE",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Cuming, NE",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Custer, NE",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Dakota, NE",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Dawes, NE",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Dawson, NE",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Deuel, NE",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Dixon, NE",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Dodge, NE",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Douglas, NE",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Dundy, NE",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Fillmore, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Franklin, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Frontier, NE",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Furnas, NE",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Gage, NE",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Garden, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Garfield, NE",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Gosper, NE",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Grant, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Greeley, NE",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Hall, NE",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Hamilton, NE",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Harlan, NE",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Hayes, NE",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Hitchcock, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Holt, NE",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Hooker, NE",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Howard, NE",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Jefferson, NE",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Johnson, NE",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Kearney, NE",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Keith, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Keya Paha, NE",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Kimball, NE",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Knox, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Lancaster, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Lincoln, NE",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Logan, NE",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Loup, NE",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "McPherson, NE",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Madison, NE",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Merrick, NE",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Morrill, NE",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Nance, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Nemaha, NE",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Nuckolls, NE",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Otoe, NE",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Pawnee, NE",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Perkins, NE",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Phelps, NE",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Pierce, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Platte, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Polk, NE",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Red Willow, NE",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Richardson, NE",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Rock, NE",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Saline, NE",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Sarpy, NE",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Saunders, NE",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Scotts Bluff, NE",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Seward, NE",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Sheridan, NE",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Sherman, NE",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Sioux, NE",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Stanton, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Thayer, NE",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Thomas, NE",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Thurston, NE",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Valley, NE",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Washington, NE",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Wayne, NE",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Webster, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Wheeler, NE",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "York, NE",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Churchill, NV",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Clark, NV",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Douglas, NV",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Elko, NV",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Esmeralda, NV",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Eureka, NV",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Humboldt, NV",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Lander, NV",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Lincoln, NV",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Lyon, NV",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Mineral, NV",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Nye, NV",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Pershing, NV",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Storey, NV",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Washoe, NV",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "White Pine, NV",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Carson City, NV",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Belknap, NH",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Carroll, NH",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Cheshire, NH",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Coos, NH",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Grafton, NH",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Hillsborough, NH",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Merrimack, NH",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Rockingham, NH",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Strafford, NH",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Sullivan, NH",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Atlantic, NJ",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Bergen, NJ",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Burlington, NJ",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Camden, NJ",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Cape May, NJ",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Cumberland, NJ",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Essex, NJ",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Gloucester, NJ",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Hudson, NJ",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Hunterdon, NJ",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Mercer, NJ",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Middlesex, NJ",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Monmouth, NJ",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Morris, NJ",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Ocean, NJ",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Passaic, NJ",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Salem, NJ",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Somerset, NJ",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Sussex, NJ",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Union, NJ",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Warren, NJ",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Bernalillo, NM",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Catron, NM",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Chaves, NM",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Cibola, NM",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Colfax, NM",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Curry, NM",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "De Baca, NM",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Dona Ana, NM",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Eddy, NM",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Grant, NM",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Guadalupe, NM",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Harding, NM",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Hidalgo, NM",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Lea, NM",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Lincoln, NM",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Los Alamos, NM",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Luna, NM",
-        "y": 16.3
+        "value": 16.3
     },
     {
         "name": "McKinley, NM",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Mora, NM",
-        "y": 13.7
+        "value": 13.7
     },
     {
         "name": "Otero, NM",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Quay, NM",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Rio Arriba, NM",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Roosevelt, NM",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Sandoval, NM",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "San Juan, NM",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "San Miguel, NM",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Santa Fe, NM",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Sierra, NM",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Socorro, NM",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Taos, NM",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Torrance, NM",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Union, NM",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Valencia, NM",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Albany, NY",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Allegany, NY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Bronx, NY",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Broome, NY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Cattaraugus, NY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Cayuga, NY",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Chautauqua, NY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Chemung, NY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Chenango, NY",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Clinton, NY",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Columbia, NY",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Cortland, NY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Delaware, NY",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Dutchess, NY",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Erie, NY",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Essex, NY",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Franklin, NY",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Fulton, NY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Genesee, NY",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Greene, NY",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Hamilton, NY",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Herkimer, NY",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Jefferson, NY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Kings, NY",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Lewis, NY",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Livingston, NY",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Madison, NY",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Monroe, NY",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Montgomery, NY",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Nassau, NY",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "New York, NY",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Niagara, NY",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Oneida, NY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Onondaga, NY",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Ontario, NY",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Orange, NY",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Orleans, NY",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Oswego, NY",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Otsego, NY",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Putnam, NY",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Queens, NY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Rensselaer, NY",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Richmond, NY",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Rockland, NY",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "St. Lawrence, NY",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Saratoga, NY",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Schenectady, NY",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Schoharie, NY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Schuyler, NY",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Seneca, NY",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Steuben, NY",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Suffolk, NY",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Sullivan, NY",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Tioga, NY",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Tompkins, NY",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Ulster, NY",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Warren, NY",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Washington, NY",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Wayne, NY",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Westchester, NY",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Wyoming, NY",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Yates, NY",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Alamance, NC",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Alexander, NC",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Alleghany, NC",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Anson, NC",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Ashe, NC",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Avery, NC",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Beaufort, NC",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Bertie, NC",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Bladen, NC",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "Brunswick, NC",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Buncombe, NC",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Burke, NC",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Cabarrus, NC",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Caldwell, NC",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Camden, NC",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Carteret, NC",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Caswell, NC",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Catawba, NC",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Chatham, NC",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Cherokee, NC",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Chowan, NC",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Clay, NC",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Cleveland, NC",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Columbus, NC",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Craven, NC",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Cumberland, NC",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Currituck, NC",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Dare, NC",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Davidson, NC",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Davie, NC",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Duplin, NC",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Durham, NC",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Edgecombe, NC",
-        "y": 15.0
+        "value": 15.0
     },
     {
         "name": "Forsyth, NC",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Franklin, NC",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Gaston, NC",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Gates, NC",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Graham, NC",
-        "y": 13.6
+        "value": 13.6
     },
     {
         "name": "Granville, NC",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Greene, NC",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Guilford, NC",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Halifax, NC",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Harnett, NC",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Haywood, NC",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Henderson, NC",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Hertford, NC",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Hoke, NC",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Hyde, NC",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Iredell, NC",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Jackson, NC",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Johnston, NC",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Jones, NC",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Lee, NC",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Lenoir, NC",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Lincoln, NC",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "McDowell, NC",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Macon, NC",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Madison, NC",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Martin, NC",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Mecklenburg, NC",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Mitchell, NC",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Montgomery, NC",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Moore, NC",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Nash, NC",
-        "y": 12.7
+        "value": 12.7
     },
     {
         "name": "New Hanover, NC",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Northampton, NC",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Onslow, NC",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Orange, NC",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Pamlico, NC",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Pasquotank, NC",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Pender, NC",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Perquimans, NC",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Person, NC",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Pitt, NC",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Polk, NC",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Randolph, NC",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Richmond, NC",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Robeson, NC",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Rockingham, NC",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Rowan, NC",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Rutherford, NC",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Sampson, NC",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Scotland, NC",
-        "y": 16.1
+        "value": 16.1
     },
     {
         "name": "Stanly, NC",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Stokes, NC",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Surry, NC",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Swain, NC",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Transylvania, NC",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Tyrrell, NC",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Union, NC",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Vance, NC",
-        "y": 12.9
+        "value": 12.9
     },
     {
         "name": "Wake, NC",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Warren, NC",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Washington, NC",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Watauga, NC",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Wayne, NC",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Wilkes, NC",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Wilson, NC",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Yadkin, NC",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Yancey, NC",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Adams, ND",
-        "y": 2.5
+        "value": 2.5
     },
     {
         "name": "Barnes, ND",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Benson, ND",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Billings, ND",
-        "y": 1.2
+        "value": 1.2
     },
     {
         "name": "Bottineau, ND",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Bowman, ND",
-        "y": 2.1
+        "value": 2.1
     },
     {
         "name": "Burke, ND",
-        "y": 1.7
+        "value": 1.7
     },
     {
         "name": "Burleigh, ND",
-        "y": 2.3
+        "value": 2.3
     },
     {
         "name": "Cass, ND",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Cavalier, ND",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Dickey, ND",
-        "y": 2.5
+        "value": 2.5
     },
     {
         "name": "Divide, ND",
-        "y": 1.6
+        "value": 1.6
     },
     {
         "name": "Dunn, ND",
-        "y": 1.2
+        "value": 1.2
     },
     {
         "name": "Eddy, ND",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Emmons, ND",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Foster, ND",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Golden Valley, ND",
-        "y": 2.4
+        "value": 2.4
     },
     {
         "name": "Grand Forks, ND",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Grant, ND",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Griggs, ND",
-        "y": 2.2
+        "value": 2.2
     },
     {
         "name": "Hettinger, ND",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Kidder, ND",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "LaMoure, ND",
-        "y": 2.3
+        "value": 2.3
     },
     {
         "name": "Logan, ND",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "McHenry, ND",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "McIntosh, ND",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "McKenzie, ND",
-        "y": 1.3
+        "value": 1.3
     },
     {
         "name": "McLean, ND",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Mercer, ND",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Morton, ND",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Mountrail, ND",
-        "y": 1.6
+        "value": 1.6
     },
     {
         "name": "Nelson, ND",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Oliver, ND",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Pembina, ND",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Pierce, ND",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Ramsey, ND",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Ransom, ND",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Renville, ND",
-        "y": 2.4
+        "value": 2.4
     },
     {
         "name": "Richland, ND",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Rolette, ND",
-        "y": 17.2
+        "value": 17.2
     },
     {
         "name": "Sargent, ND",
-        "y": 2.4
+        "value": 2.4
     },
     {
         "name": "Sheridan, ND",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Sioux, ND",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Slope, ND",
-        "y": 1.0
+        "value": 1.0
     },
     {
         "name": "Stark, ND",
-        "y": 1.4
+        "value": 1.4
     },
     {
         "name": "Steele, ND",
-        "y": 2.1
+        "value": 2.1
     },
     {
         "name": "Stutsman, ND",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Towner, ND",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Traill, ND",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Walsh, ND",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Ward, ND",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Wells, ND",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Williams, ND",
-        "y": 0.7
+        "value": 0.7
     },
     {
         "name": "Adams, OH",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Allen, OH",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Ashland, OH",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Ashtabula, OH",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Athens, OH",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Auglaize, OH",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Belmont, OH",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Brown, OH",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Butler, OH",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Carroll, OH",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Champaign, OH",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Clark, OH",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Clermont, OH",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Clinton, OH",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Columbiana, OH",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Coshocton, OH",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Crawford, OH",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Cuyahoga, OH",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Darke, OH",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Defiance, OH",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Delaware, OH",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Erie, OH",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Fairfield, OH",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Fayette, OH",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Franklin, OH",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Fulton, OH",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Gallia, OH",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Geauga, OH",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Greene, OH",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Guernsey, OH",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Hamilton, OH",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Hancock, OH",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Hardin, OH",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Harrison, OH",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Henry, OH",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Highland, OH",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Hocking, OH",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Holmes, OH",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Huron, OH",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Jackson, OH",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Jefferson, OH",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Knox, OH",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Lake, OH",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Lawrence, OH",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Licking, OH",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Logan, OH",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Lorain, OH",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Lucas, OH",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Madison, OH",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Mahoning, OH",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Marion, OH",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Medina, OH",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Meigs, OH",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Mercer, OH",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Miami, OH",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Monroe, OH",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Montgomery, OH",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Morgan, OH",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Morrow, OH",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Muskingum, OH",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Noble, OH",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Ottawa, OH",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Paulding, OH",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Perry, OH",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Pickaway, OH",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Pike, OH",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Portage, OH",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Preble, OH",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Putnam, OH",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Richland, OH",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Ross, OH",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Sandusky, OH",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Scioto, OH",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Seneca, OH",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Shelby, OH",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Stark, OH",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Summit, OH",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Trumbull, OH",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Tuscarawas, OH",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Union, OH",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Van Wert, OH",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Vinton, OH",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Warren, OH",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Washington, OH",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Wayne, OH",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Williams, OH",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Wood, OH",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Wyandot, OH",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Adair, OK",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Alfalfa, OK",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Atoka, OK",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Beaver, OK",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Beckham, OK",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Blaine, OK",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Bryan, OK",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Caddo, OK",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Canadian, OK",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Carter, OK",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Cherokee, OK",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Choctaw, OK",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Cimarron, OK",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Cleveland, OK",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Coal, OK",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Comanche, OK",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Cotton, OK",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Craig, OK",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Creek, OK",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Custer, OK",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Delaware, OK",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Dewey, OK",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Ellis, OK",
-        "y": 2.3
+        "value": 2.3
     },
     {
         "name": "Garfield, OK",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Garvin, OK",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Grady, OK",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Grant, OK",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Greer, OK",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Harmon, OK",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Harper, OK",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Haskell, OK",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Hughes, OK",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Jackson, OK",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Jefferson, OK",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Johnston, OK",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Kay, OK",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Kingfisher, OK",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Kiowa, OK",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Latimer, OK",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Le Flore, OK",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Lincoln, OK",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Logan, OK",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Love, OK",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "McClain, OK",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "McCurtain, OK",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "McIntosh, OK",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Major, OK",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Marshall, OK",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Mayes, OK",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Murray, OK",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Muskogee, OK",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Noble, OK",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Nowata, OK",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Okfuskee, OK",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Oklahoma, OK",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Okmulgee, OK",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Osage, OK",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Ottawa, OK",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Pawnee, OK",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Payne, OK",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Pittsburg, OK",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Pontotoc, OK",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Pottawatomie, OK",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Pushmataha, OK",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Roger Mills, OK",
-        "y": 2.3
+        "value": 2.3
     },
     {
         "name": "Rogers, OK",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Seminole, OK",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Sequoyah, OK",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Stephens, OK",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Texas, OK",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Tillman, OK",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Tulsa, OK",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Wagoner, OK",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Washington, OK",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Washita, OK",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Woods, OK",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Woodward, OK",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Baker, OR",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Benton, OR",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Clackamas, OR",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Clatsop, OR",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Columbia, OR",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Coos, OR",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Crook, OR",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Curry, OR",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Deschutes, OR",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Douglas, OR",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Gilliam, OR",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Grant, OR",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Harney, OR",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Hood River, OR",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Jackson, OR",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Jefferson, OR",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Josephine, OR",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Klamath, OR",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Lake, OR",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Lane, OR",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Lincoln, OR",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Linn, OR",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Malheur, OR",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Marion, OR",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Morrow, OR",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Multnomah, OR",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Polk, OR",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Sherman, OR",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Tillamook, OR",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Umatilla, OR",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Union, OR",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Wallowa, OR",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Wasco, OR",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Washington, OR",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Wheeler, OR",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Yamhill, OR",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Adams, PA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Allegheny, PA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Armstrong, PA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Beaver, PA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Bedford, PA",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Berks, PA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Blair, PA",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Bradford, PA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Bucks, PA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Butler, PA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Cambria, PA",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Cameron, PA",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Carbon, PA",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Centre, PA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Chester, PA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Clarion, PA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Clearfield, PA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Clinton, PA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Columbia, PA",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Crawford, PA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Cumberland, PA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Dauphin, PA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Delaware, PA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Elk, PA",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Erie, PA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Fayette, PA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Forest, PA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Franklin, PA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Fulton, PA",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Greene, PA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Huntingdon, PA",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Indiana, PA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Jefferson, PA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Juniata, PA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Lackawanna, PA",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Lancaster, PA",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Lawrence, PA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Lebanon, PA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Lehigh, PA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Luzerne, PA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Lycoming, PA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "McKean, PA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Mercer, PA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Mifflin, PA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Monroe, PA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Montgomery, PA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Montour, PA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Northampton, PA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Northumberland, PA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Perry, PA",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Philadelphia County/city, PA",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Pike, PA",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Potter, PA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Schuylkill, PA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Snyder, PA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Somerset, PA",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Sullivan, PA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Susquehanna, PA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Tioga, PA",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Union, PA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Venango, PA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Warren, PA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Washington, PA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Wayne, PA",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Westmoreland, PA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Wyoming, PA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "York, PA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Bristol, RI",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Kent, RI",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Newport, RI",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Providence, RI",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Washington, RI",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Abbeville, SC",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Aiken, SC",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Allendale, SC",
-        "y": 14.4
+        "value": 14.4
     },
     {
         "name": "Anderson, SC",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Bamberg, SC",
-        "y": 14.3
+        "value": 14.3
     },
     {
         "name": "Barnwell, SC",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Beaufort, SC",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Berkeley, SC",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Calhoun, SC",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Charleston, SC",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Cherokee, SC",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Chester, SC",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Chesterfield, SC",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Clarendon, SC",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Colleton, SC",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Darlington, SC",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Dillon, SC",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "Dorchester, SC",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Edgefield, SC",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Fairfield, SC",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Florence, SC",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Georgetown, SC",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Greenville, SC",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Greenwood, SC",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Hampton, SC",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Horry, SC",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Jasper, SC",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Kershaw, SC",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Lancaster, SC",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Laurens, SC",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Lee, SC",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Lexington, SC",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "McCormick, SC",
-        "y": 11.1
+        "value": 11.1
     },
     {
         "name": "Marion, SC",
-        "y": 15.1
+        "value": 15.1
     },
     {
         "name": "Marlboro, SC",
-        "y": 13.6
+        "value": 13.6
     },
     {
         "name": "Newberry, SC",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Oconee, SC",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Orangeburg, SC",
-        "y": 13.3
+        "value": 13.3
     },
     {
         "name": "Pickens, SC",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Richland, SC",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Saluda, SC",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Spartanburg, SC",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Sumter, SC",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Union, SC",
-        "y": 12.5
+        "value": 12.5
     },
     {
         "name": "Williamsburg, SC",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "York, SC",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Aurora, SD",
-        "y": 2.4
+        "value": 2.4
     },
     {
         "name": "Beadle, SD",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Bennett, SD",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Bon Homme, SD",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Brookings, SD",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Brown, SD",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Brule, SD",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Buffalo, SD",
-        "y": 13.1
+        "value": 13.1
     },
     {
         "name": "Butte, SD",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Campbell, SD",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Charles Mix, SD",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Clark, SD",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Clay, SD",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Codington, SD",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Corson, SD",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Custer, SD",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Davison, SD",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Day, SD",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Deuel, SD",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Dewey, SD",
-        "y": 18.0
+        "value": 18.0
     },
     {
         "name": "Douglas, SD",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Edmunds, SD",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Fall River, SD",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Faulk, SD",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Grant, SD",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Gregory, SD",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Haakon, SD",
-        "y": 2.5
+        "value": 2.5
     },
     {
         "name": "Hamlin, SD",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Hand, SD",
-        "y": 2.7
+        "value": 2.7
     },
     {
         "name": "Hanson, SD",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Harding, SD",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Hughes, SD",
-        "y": 2.7
+        "value": 2.7
     },
     {
         "name": "Hutchinson, SD",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Hyde, SD",
-        "y": 2.9
+        "value": 2.9
     },
     {
         "name": "Jackson, SD",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Jerauld, SD",
-        "y": 2.0
+        "value": 2.0
     },
     {
         "name": "Jones, SD",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Kingsbury, SD",
-        "y": 2.7
+        "value": 2.7
     },
     {
         "name": "Lake, SD",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Lawrence, SD",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Lincoln, SD",
-        "y": 2.7
+        "value": 2.7
     },
     {
         "name": "Lyman, SD",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "McCook, SD",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "McPherson, SD",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Marshall, SD",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Meade, SD",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Mellette, SD",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Miner, SD",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Minnehaha, SD",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Moody, SD",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Pennington, SD",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Perkins, SD",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Potter, SD",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Roberts, SD",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Sanborn, SD",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Shannon, SD",
-        "y": 16.1
+        "value": 16.1
     },
     {
         "name": "Spink, SD",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Stanley, SD",
-        "y": 2.4
+        "value": 2.4
     },
     {
         "name": "Sully, SD",
-        "y": 2.3
+        "value": 2.3
     },
     {
         "name": "Todd, SD",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Tripp, SD",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Turner, SD",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Union, SD",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Walworth, SD",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Yankton, SD",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Ziebach, SD",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Anderson, TN",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Bedford, TN",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Benton, TN",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Bledsoe, TN",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Blount, TN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Bradley, TN",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Campbell, TN",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Cannon, TN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Carroll, TN",
-        "y": 12.5
+        "value": 12.5
     },
     {
         "name": "Carter, TN",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Cheatham, TN",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Chester, TN",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Claiborne, TN",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Clay, TN",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Cocke, TN",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Coffee, TN",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Crockett, TN",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Cumberland, TN",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Davidson, TN",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Decatur, TN",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "DeKalb, TN",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Dickson, TN",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Dyer, TN",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Fayette, TN",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Fentress, TN",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Franklin, TN",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Gibson, TN",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Giles, TN",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Grainger, TN",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Greene, TN",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Grundy, TN",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Hamblen, TN",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Hamilton, TN",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Hancock, TN",
-        "y": 13.5
+        "value": 13.5
     },
     {
         "name": "Hardeman, TN",
-        "y": 11.7
+        "value": 11.7
     },
     {
         "name": "Hardin, TN",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Hawkins, TN",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Haywood, TN",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Henderson, TN",
-        "y": 13.2
+        "value": 13.2
     },
     {
         "name": "Henry, TN",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Hickman, TN",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Houston, TN",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Humphreys, TN",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Jackson, TN",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Jefferson, TN",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Johnson, TN",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Knox, TN",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Lake, TN",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Lauderdale, TN",
-        "y": 13.6
+        "value": 13.6
     },
     {
         "name": "Lawrence, TN",
-        "y": 12.2
+        "value": 12.2
     },
     {
         "name": "Lewis, TN",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Lincoln, TN",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Loudon, TN",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "McMinn, TN",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "McNairy, TN",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Macon, TN",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Madison, TN",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Marion, TN",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Marshall, TN",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Maury, TN",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Meigs, TN",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Monroe, TN",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Montgomery, TN",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Moore, TN",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Morgan, TN",
-        "y": 11.0
+        "value": 11.0
     },
     {
         "name": "Obion, TN",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Overton, TN",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Perry, TN",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Pickett, TN",
-        "y": 12.0
+        "value": 12.0
     },
     {
         "name": "Polk, TN",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Putnam, TN",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Rhea, TN",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Roane, TN",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Robertson, TN",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Rutherford, TN",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Scott, TN",
-        "y": 17.2
+        "value": 17.2
     },
     {
         "name": "Sequatchie, TN",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Sevier, TN",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Shelby, TN",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Smith, TN",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Stewart, TN",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Sullivan, TN",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Sumner, TN",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Tipton, TN",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Trousdale, TN",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Unicoi, TN",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Union, TN",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Van Buren, TN",
-        "y": 12.1
+        "value": 12.1
     },
     {
         "name": "Warren, TN",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Washington, TN",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Wayne, TN",
-        "y": 11.6
+        "value": 11.6
     },
     {
         "name": "Weakley, TN",
-        "y": 14.4
+        "value": 14.4
     },
     {
         "name": "White, TN",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Williamson, TN",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Wilson, TN",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Anderson, TX",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Andrews, TX",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Angelina, TX",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Aransas, TX",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Archer, TX",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Armstrong, TX",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Atascosa, TX",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Austin, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Bailey, TX",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Bandera, TX",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Bastrop, TX",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Baylor, TX",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Bee, TX",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Bell, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Bexar, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Blanco, TX",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Borden, TX",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Bosque, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Bowie, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Brazoria, TX",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Brazos, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Brewster, TX",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Briscoe, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Brooks, TX",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Brown, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Burleson, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Burnet, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Caldwell, TX",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Calhoun, TX",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Callahan, TX",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Cameron, TX",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Camp, TX",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Carson, TX",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Cass, TX",
-        "y": 9.5
+        "value": 9.5
     },
     {
         "name": "Castro, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Chambers, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Cherokee, TX",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Childress, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Clay, TX",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Cochran, TX",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Coke, TX",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Coleman, TX",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Collin, TX",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Collingsworth, TX",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Colorado, TX",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Comal, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Comanche, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Concho, TX",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Cooke, TX",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Coryell, TX",
-        "y": 9.0
+        "value": 9.0
     },
     {
         "name": "Cottle, TX",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Crane, TX",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Crockett, TX",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Crosby, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Culberson, TX",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Dallam, TX",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Dallas, TX",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Dawson, TX",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Deaf Smith, TX",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Delta, TX",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Denton, TX",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "DeWitt, TX",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Dickens, TX",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Dimmit, TX",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Donley, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Duval, TX",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Eastland, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Ector, TX",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Edwards, TX",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Ellis, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "El Paso, TX",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Erath, TX",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Falls, TX",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Fannin, TX",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Fayette, TX",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Fisher, TX",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Floyd, TX",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Foard, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Fort Bend, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Franklin, TX",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Freestone, TX",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Frio, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Gaines, TX",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Galveston, TX",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Garza, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Gillespie, TX",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Glasscock, TX",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Goliad, TX",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Gonzales, TX",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Gray, TX",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Grayson, TX",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Gregg, TX",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Grimes, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Guadalupe, TX",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Hale, TX",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Hall, TX",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Hamilton, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Hansford, TX",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Hardeman, TX",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Hardin, TX",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Harris, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Harrison, TX",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Hartley, TX",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Haskell, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Hays, TX",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Hemphill, TX",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Henderson, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Hidalgo, TX",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Hill, TX",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Hockley, TX",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Hood, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Hopkins, TX",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Houston, TX",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Howard, TX",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Hudspeth, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Hunt, TX",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Hutchinson, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Irion, TX",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Jack, TX",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Jackson, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Jasper, TX",
-        "y": 10.1
+        "value": 10.1
     },
     {
         "name": "Jeff Davis, TX",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Jefferson, TX",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Jim Hogg, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Jim Wells, TX",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Johnson, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Jones, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Karnes, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Kaufman, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Kendall, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Kenedy, TX",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Kent, TX",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Kerr, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Kimble, TX",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "King, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Kinney, TX",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Kleberg, TX",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Knox, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Lamar, TX",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Lamb, TX",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Lampasas, TX",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "La Salle, TX",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Lavaca, TX",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Lee, TX",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Leon, TX",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Liberty, TX",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Limestone, TX",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Lipscomb, TX",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Live Oak, TX",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Llano, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Loving, TX",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Lubbock, TX",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Lynn, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "McCulloch, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "McLennan, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "McMullen, TX",
-        "y": 3.1
+        "value": 3.1
     },
     {
         "name": "Madison, TX",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Marion, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Martin, TX",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Mason, TX",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Matagorda, TX",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Maverick, TX",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Medina, TX",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Menard, TX",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Midland, TX",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Milam, TX",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Mills, TX",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Mitchell, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Montague, TX",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Montgomery, TX",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Moore, TX",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Morris, TX",
-        "y": 9.2
+        "value": 9.2
     },
     {
         "name": "Motley, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Nacogdoches, TX",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Navarro, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Newton, TX",
-        "y": 11.5
+        "value": 11.5
     },
     {
         "name": "Nolan, TX",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Nueces, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Ochiltree, TX",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Oldham, TX",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Orange, TX",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Palo Pinto, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Panola, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Parker, TX",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Parmer, TX",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Pecos, TX",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Polk, TX",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Potter, TX",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Presidio, TX",
-        "y": 12.3
+        "value": 12.3
     },
     {
         "name": "Rains, TX",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Randall, TX",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Reagan, TX",
-        "y": 2.8
+        "value": 2.8
     },
     {
         "name": "Real, TX",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Red River, TX",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Reeves, TX",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Refugio, TX",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Roberts, TX",
-        "y": 2.6
+        "value": 2.6
     },
     {
         "name": "Robertson, TX",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Rockwall, TX",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Runnels, TX",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Rusk, TX",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Sabine, TX",
-        "y": 14.3
+        "value": 14.3
     },
     {
         "name": "San Augustine, TX",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "San Jacinto, TX",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "San Patricio, TX",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "San Saba, TX",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Schleicher, TX",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Scurry, TX",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Shackelford, TX",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Shelby, TX",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Sherman, TX",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Smith, TX",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Somervell, TX",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Starr, TX",
-        "y": 15.6
+        "value": 15.6
     },
     {
         "name": "Stephens, TX",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Sterling, TX",
-        "y": 3.0
+        "value": 3.0
     },
     {
         "name": "Stonewall, TX",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Sutton, TX",
-        "y": 3.4
+        "value": 3.4
     },
     {
         "name": "Swisher, TX",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Tarrant, TX",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Taylor, TX",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Terrell, TX",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Terry, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Throckmorton, TX",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Titus, TX",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Tom Green, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Travis, TX",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Trinity, TX",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Tyler, TX",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Upshur, TX",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Upton, TX",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Uvalde, TX",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Val Verde, TX",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Van Zandt, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Victoria, TX",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Walker, TX",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Waller, TX",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Ward, TX",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Washington, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Webb, TX",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Wharton, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Wheeler, TX",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Wichita, TX",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Wilbarger, TX",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Willacy, TX",
-        "y": 14.1
+        "value": 14.1
     },
     {
         "name": "Williamson, TX",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Wilson, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Winkler, TX",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Wise, TX",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Wood, TX",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Yoakum, TX",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Young, TX",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Zapata, TX",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Zavala, TX",
-        "y": 15.2
+        "value": 15.2
     },
     {
         "name": "Beaver, UT",
-        "y": 4.2
+        "value": 4.2
     },
     {
         "name": "Box Elder, UT",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Cache, UT",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Carbon, UT",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Daggett, UT",
-        "y": 3.6
+        "value": 3.6
     },
     {
         "name": "Davis, UT",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Duchesne, UT",
-        "y": 3.5
+        "value": 3.5
     },
     {
         "name": "Emery, UT",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Garfield, UT",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Grand, UT",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Iron, UT",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Juab, UT",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Kane, UT",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Millard, UT",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Morgan, UT",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Piute, UT",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Rich, UT",
-        "y": 2.5
+        "value": 2.5
     },
     {
         "name": "Salt Lake, UT",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "San Juan, UT",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Sanpete, UT",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Sevier, UT",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Summit, UT",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Tooele, UT",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Uintah, UT",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Utah, UT",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Wasatch, UT",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Washington, UT",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Wayne, UT",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Weber, UT",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Addison, VT",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Bennington, VT",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Caledonia, VT",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Chittenden, VT",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Essex, VT",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Franklin, VT",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Grand Isle, VT",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Lamoille, VT",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Orange, VT",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Orleans, VT",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Rutland, VT",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Washington, VT",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Windham, VT",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Windsor, VT",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Accomack, VA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Albemarle, VA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Alleghany, VA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Amelia, VA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Amherst, VA",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Appomattox, VA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Arlington, VA",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Augusta, VA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Bath, VA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Bedford, VA",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Bland, VA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Botetourt, VA",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Brunswick, VA",
-        "y": 10.5
+        "value": 10.5
     },
     {
         "name": "Buchanan, VA",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Buckingham, VA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Campbell, VA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Caroline, VA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Carroll, VA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Charles City, VA",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Charlotte, VA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Chesterfield, VA",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Clarke, VA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Craig, VA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Culpeper, VA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Cumberland, VA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Dickenson, VA",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Dinwiddie, VA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Essex, VA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Fairfax, VA",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Fauquier, VA",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Floyd, VA",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Fluvanna, VA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Franklin, VA",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Frederick, VA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Giles, VA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Gloucester, VA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Goochland, VA",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Grayson, VA",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Greene, VA",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Greensville, VA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Halifax, VA",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Hanover, VA",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Henrico, VA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Henry, VA",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Highland, VA",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Isle of Wight, VA",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "James City, VA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "King and Queen, VA",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "King George, VA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "King William, VA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Lancaster, VA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Lee, VA",
-        "y": 9.4
+        "value": 9.4
     },
     {
         "name": "Loudoun, VA",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Louisa, VA",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Lunenburg, VA",
-        "y": 8.6
+        "value": 8.6
     },
     {
         "name": "Madison, VA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Mathews, VA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Mecklenburg, VA",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Middlesex, VA",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Montgomery, VA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Nelson, VA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "New Kent, VA",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Northampton, VA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Northumberland, VA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Nottoway, VA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Orange, VA",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Page, VA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Patrick, VA",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Pittsylvania, VA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Powhatan, VA",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Prince Edward, VA",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Prince George, VA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Prince William, VA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Pulaski, VA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Rappahannock, VA",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Richmond, VA",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Roanoke, VA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Rockbridge, VA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Rockingham, VA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Russell, VA",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Scott, VA",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Shenandoah, VA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Smyth, VA",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Southampton, VA",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Spotsylvania, VA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Stafford, VA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Surry, VA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Sussex, VA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Tazewell, VA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Warren, VA",
-        "y": 5.7
+        "value": 5.7
     },
     {
         "name": "Washington, VA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Westmoreland, VA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Wise, VA",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Wythe, VA",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "York, VA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Alexandria city, VA",
-        "y": 4.6
+        "value": 4.6
     },
     {
         "name": "Bedford city, VA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Bristol city, VA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Buena Vista city, VA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Charlottesville city, VA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Chesapeake city, VA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Colonial Heights city, VA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Covington city, VA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Danville city, VA",
-        "y": 10.9
+        "value": 10.9
     },
     {
         "name": "Emporia city, VA",
-        "y": 12.4
+        "value": 12.4
     },
     {
         "name": "Fairfax city, VA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Falls Church city, VA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Franklin city, VA",
-        "y": 9.6
+        "value": 9.6
     },
     {
         "name": "Fredericksburg city, VA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Galax city, VA",
-        "y": 16.2
+        "value": 16.2
     },
     {
         "name": "Hampton city, VA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Harrisonburg city, VA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Hopewell city, VA",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Lexington city, VA",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Lynchburg city, VA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Manassas city, VA",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Manassas Park city, VA",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Martinsville city, VA",
-        "y": 13.0
+        "value": 13.0
     },
     {
         "name": "Newport News city, VA",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Norfolk city, VA",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Norton city, VA",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Petersburg city, VA",
-        "y": 10.6
+        "value": 10.6
     },
     {
         "name": "Poquoson city, VA",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Portsmouth city, VA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Radford city, VA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Richmond city, VA",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Roanoke city, VA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Salem city, VA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Staunton city, VA",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Suffolk city, VA",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Virginia Beach city, VA",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Waynesboro city, VA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Williamsburg city, VA",
-        "y": 12.6
+        "value": 12.6
     },
     {
         "name": "Winchester city, VA",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Adams, WA",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Asotin, WA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Benton, WA",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Chelan, WA",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Clallam, WA",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Clark, WA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Columbia, WA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Cowlitz, WA",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Douglas, WA",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Ferry, WA",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Franklin, WA",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Garfield, WA",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Grant, WA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Grays Harbor, WA",
-        "y": 11.4
+        "value": 11.4
     },
     {
         "name": "Island, WA",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Jefferson, WA",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "King, WA",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Kitsap, WA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Kittitas, WA",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Klickitat, WA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Lewis, WA",
-        "y": 11.3
+        "value": 11.3
     },
     {
         "name": "Lincoln, WA",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Mason, WA",
-        "y": 9.7
+        "value": 9.7
     },
     {
         "name": "Okanogan, WA",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Pacific, WA",
-        "y": 10.3
+        "value": 10.3
     },
     {
         "name": "Pend Oreille, WA",
-        "y": 10.2
+        "value": 10.2
     },
     {
         "name": "Pierce, WA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "San Juan, WA",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Skagit, WA",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Skamania, WA",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Snohomish, WA",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Spokane, WA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Stevens, WA",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "Thurston, WA",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Wahkiakum, WA",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Walla Walla, WA",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Whatcom, WA",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Whitman, WA",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Yakima, WA",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Barbour, WV",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Berkeley, WV",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Boone, WV",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Braxton, WV",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Brooke, WV",
-        "y": 8.4
+        "value": 8.4
     },
     {
         "name": "Cabell, WV",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Calhoun, WV",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Clay, WV",
-        "y": 9.9
+        "value": 9.9
     },
     {
         "name": "Doddridge, WV",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Fayette, WV",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Gilmer, WV",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Grant, WV",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Greenbrier, WV",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Hampshire, WV",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Hancock, WV",
-        "y": 8.1
+        "value": 8.1
     },
     {
         "name": "Hardy, WV",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Harrison, WV",
-        "y": 5.1
+        "value": 5.1
     },
     {
         "name": "Jackson, WV",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Jefferson, WV",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Kanawha, WV",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Lewis, WV",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Lincoln, WV",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Logan, WV",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "McDowell, WV",
-        "y": 10.4
+        "value": 10.4
     },
     {
         "name": "Marion, WV",
-        "y": 5.5
+        "value": 5.5
     },
     {
         "name": "Marshall, WV",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Mason, WV",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Mercer, WV",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Mineral, WV",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Mingo, WV",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Monongalia, WV",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Monroe, WV",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Morgan, WV",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Nicholas, WV",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Ohio, WV",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Pendleton, WV",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Pleasants, WV",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Pocahontas, WV",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "Preston, WV",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Putnam, WV",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Raleigh, WV",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Randolph, WV",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Ritchie, WV",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Roane, WV",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Summers, WV",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Taylor, WV",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Tucker, WV",
-        "y": 7.4
+        "value": 7.4
     },
     {
         "name": "Tyler, WV",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Upshur, WV",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Wayne, WV",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Webster, WV",
-        "y": 10.8
+        "value": 10.8
     },
     {
         "name": "Wetzel, WV",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Wirt, WV",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Wood, WV",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Wyoming, WV",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Adams, WI",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Ashland, WI",
-        "y": 9.3
+        "value": 9.3
     },
     {
         "name": "Barron, WI",
-        "y": 7.3
+        "value": 7.3
     },
     {
         "name": "Bayfield, WI",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Brown, WI",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Buffalo, WI",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Burnett, WI",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Calumet, WI",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Chippewa, WI",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Clark, WI",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Columbia, WI",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Crawford, WI",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Dane, WI",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Dodge, WI",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Door, WI",
-        "y": 6.7
+        "value": 6.7
     },
     {
         "name": "Douglas, WI",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Dunn, WI",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Eau Claire, WI",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Florence, WI",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Fond du Lac, WI",
-        "y": 6.6
+        "value": 6.6
     },
     {
         "name": "Forest, WI",
-        "y": 9.1
+        "value": 9.1
     },
     {
         "name": "Grant, WI",
-        "y": 6.1
+        "value": 6.1
     },
     {
         "name": "Green, WI",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Green Lake, WI",
-        "y": 7.7
+        "value": 7.7
     },
     {
         "name": "Iowa, WI",
-        "y": 5.3
+        "value": 5.3
     },
     {
         "name": "Iron, WI",
-        "y": 11.2
+        "value": 11.2
     },
     {
         "name": "Jackson, WI",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Jefferson, WI",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Juneau, WI",
-        "y": 8.2
+        "value": 8.2
     },
     {
         "name": "Kenosha, WI",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Kewaunee, WI",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "La Crosse, WI",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Lafayette, WI",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Langlade, WI",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Lincoln, WI",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Manitowoc, WI",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Marathon, WI",
-        "y": 6.8
+        "value": 6.8
     },
     {
         "name": "Marinette, WI",
-        "y": 7.8
+        "value": 7.8
     },
     {
         "name": "Marquette, WI",
-        "y": 7.5
+        "value": 7.5
     },
     {
         "name": "Menominee, WI",
-        "y": 16.7
+        "value": 16.7
     },
     {
         "name": "Milwaukee, WI",
-        "y": 8.7
+        "value": 8.7
     },
     {
         "name": "Monroe, WI",
-        "y": 6.2
+        "value": 6.2
     },
     {
         "name": "Oconto, WI",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Oneida, WI",
-        "y": 7.1
+        "value": 7.1
     },
     {
         "name": "Outagamie, WI",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Ozaukee, WI",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Pepin, WI",
-        "y": 5.4
+        "value": 5.4
     },
     {
         "name": "Pierce, WI",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Polk, WI",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Portage, WI",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Price, WI",
-        "y": 6.3
+        "value": 6.3
     },
     {
         "name": "Racine, WI",
-        "y": 8.8
+        "value": 8.8
     },
     {
         "name": "Richland, WI",
-        "y": 5.6
+        "value": 5.6
     },
     {
         "name": "Rock, WI",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Rusk, WI",
-        "y": 8.0
+        "value": 8.0
     },
     {
         "name": "St. Croix, WI",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Sauk, WI",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Sawyer, WI",
-        "y": 8.5
+        "value": 8.5
     },
     {
         "name": "Shawano, WI",
-        "y": 7.2
+        "value": 7.2
     },
     {
         "name": "Sheboygan, WI",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Taylor, WI",
-        "y": 6.5
+        "value": 6.5
     },
     {
         "name": "Trempealeau, WI",
-        "y": 5.2
+        "value": 5.2
     },
     {
         "name": "Vernon, WI",
-        "y": 5.9
+        "value": 5.9
     },
     {
         "name": "Vilas, WI",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Walworth, WI",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Washburn, WI",
-        "y": 7.0
+        "value": 7.0
     },
     {
         "name": "Washington, WI",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Waukesha, WI",
-        "y": 6.0
+        "value": 6.0
     },
     {
         "name": "Waupaca, WI",
-        "y": 7.6
+        "value": 7.6
     },
     {
         "name": "Waushara, WI",
-        "y": 7.9
+        "value": 7.9
     },
     {
         "name": "Winnebago, WI",
-        "y": 6.4
+        "value": 6.4
     },
     {
         "name": "Wood, WI",
-        "y": 6.9
+        "value": 6.9
     },
     {
         "name": "Albany, WY",
-        "y": 3.8
+        "value": 3.8
     },
     {
         "name": "Big Horn, WY",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Campbell, WY",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Carbon, WY",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Converse, WY",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Crook, WY",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Fremont, WY",
-        "y": 5.8
+        "value": 5.8
     },
     {
         "name": "Goshen, WY",
-        "y": 5.0
+        "value": 5.0
     },
     {
         "name": "Hot Springs, WY",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Johnson, WY",
-        "y": 4.8
+        "value": 4.8
     },
     {
         "name": "Laramie, WY",
-        "y": 4.4
+        "value": 4.4
     },
     {
         "name": "Lincoln, WY",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Natrona, WY",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Niobrara, WY",
-        "y": 3.7
+        "value": 3.7
     },
     {
         "name": "Park, WY",
-        "y": 4.1
+        "value": 4.1
     },
     {
         "name": "Platte, WY",
-        "y": 4.9
+        "value": 4.9
     },
     {
         "name": "Sheridan, WY",
-        "y": 4.7
+        "value": 4.7
     },
     {
         "name": "Sublette, WY",
-        "y": 3.2
+        "value": 3.2
     },
     {
         "name": "Sweetwater, WY",
-        "y": 3.9
+        "value": 3.9
     },
     {
         "name": "Teton, WY",
-        "y": 3.3
+        "value": 3.3
     },
     {
         "name": "Uinta, WY",
-        "y": 4.3
+        "value": 4.3
     },
     {
         "name": "Washakie, WY",
-        "y": 4.5
+        "value": 4.5
     },
     {
         "name": "Weston, WY",
-        "y": 4.0
+        "value": 4.0
     },
     {
         "name": "Adjuntas Municipio, PR",
-        "y": 23.3
+        "value": 23.3
     },
     {
         "name": "Aguada Municipio, PR",
-        "y": 15.9
+        "value": 15.9
     },
     {
         "name": "Aguadilla Municipio, PR",
-        "y": 14.7
+        "value": 14.7
     },
     {
         "name": "Aguas Buenas Municipio, PR",
-        "y": 15.2
+        "value": 15.2
     },
     {
         "name": "Aibonito Municipio, PR",
-        "y": 16.6
+        "value": 16.6
     },
     {
         "name": "Anasco Municipio, PR",
-        "y": 16.3
+        "value": 16.3
     },
     {
         "name": "Arecibo Municipio, PR",
-        "y": 15.0
+        "value": 15.0
     },
     {
         "name": "Arroyo Municipio, PR",
-        "y": 24.8
+        "value": 24.8
     },
     {
         "name": "Barceloneta Municipio, PR",
-        "y": 20.5
+        "value": 20.5
     },
     {
         "name": "Barranquitas Municipio, PR",
-        "y": 18.0
+        "value": 18.0
     },
     {
         "name": "Bayamon Municipio, PR",
-        "y": 11.9
+        "value": 11.9
     },
     {
         "name": "Cabo Rojo Municipio, PR",
-        "y": 15.8
+        "value": 15.8
     },
     {
         "name": "Caguas Municipio, PR",
-        "y": 12.5
+        "value": 12.5
     },
     {
         "name": "Camuy Municipio, PR",
-        "y": 15.4
+        "value": 15.4
     },
     {
         "name": "Canovanas Municipio, PR",
-        "y": 17.4
+        "value": 17.4
     },
     {
         "name": "Carolina Municipio, PR",
-        "y": 10.7
+        "value": 10.7
     },
     {
         "name": "Catano Municipio, PR",
-        "y": 16.0
+        "value": 16.0
     },
     {
         "name": "Cayey Municipio, PR",
-        "y": 15.9
+        "value": 15.9
     },
     {
         "name": "Ceiba Municipio, PR",
-        "y": 16.6
+        "value": 16.6
     },
     {
         "name": "Ciales Municipio, PR",
-        "y": 27.0
+        "value": 27.0
     },
     {
         "name": "Cidra Municipio, PR",
-        "y": 15.2
+        "value": 15.2
     },
     {
         "name": "Coamo Municipio, PR",
-        "y": 20.9
+        "value": 20.9
     },
     {
         "name": "Comerio Municipio, PR",
-        "y": 22.6
+        "value": 22.6
     },
     {
         "name": "Corozal Municipio, PR",
-        "y": 18.1
+        "value": 18.1
     },
     {
         "name": "Culebra Municipio, PR",
-        "y": 8.3
+        "value": 8.3
     },
     {
         "name": "Dorado Municipio, PR",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Fajardo Municipio, PR",
-        "y": 15.8
+        "value": 15.8
     },
     {
         "name": "Florida Municipio, PR",
-        "y": 19.6
+        "value": 19.6
     },
     {
         "name": "Guanica Municipio, PR",
-        "y": 20.8
+        "value": 20.8
     },
     {
         "name": "Guayama Municipio, PR",
-        "y": 20.1
+        "value": 20.1
     },
     {
         "name": "Guayanilla Municipio, PR",
-        "y": 19.3
+        "value": 19.3
     },
     {
         "name": "Guaynabo Municipio, PR",
-        "y": 8.9
+        "value": 8.9
     },
     {
         "name": "Gurabo Municipio, PR",
-        "y": 12.8
+        "value": 12.8
     },
     {
         "name": "Hatillo Municipio, PR",
-        "y": 14.3
+        "value": 14.3
     },
     {
         "name": "Hormigueros Municipio, PR",
-        "y": 16.0
+        "value": 16.0
     },
     {
         "name": "Humacao Municipio, PR",
-        "y": 16.9
+        "value": 16.9
     },
     {
         "name": "Isabela Municipio, PR",
-        "y": 14.2
+        "value": 14.2
     },
     {
         "name": "Jayuya Municipio, PR",
-        "y": 20.0
+        "value": 20.0
     },
     {
         "name": "Juana Diaz Municipio, PR",
-        "y": 15.8
+        "value": 15.8
     },
     {
         "name": "Juncos Municipio, PR",
-        "y": 15.8
+        "value": 15.8
     },
     {
         "name": "Lajas Municipio, PR",
-        "y": 20.0
+        "value": 20.0
     },
     {
         "name": "Lares Municipio, PR",
-        "y": 19.8
+        "value": 19.8
     },
     {
         "name": "Las Marias Municipio, PR",
-        "y": 16.7
+        "value": 16.7
     },
     {
         "name": "Las Piedras Municipio, PR",
-        "y": 16.4
+        "value": 16.4
     },
     {
         "name": "Loiza Municipio, PR",
-        "y": 18.5
+        "value": 18.5
     },
     {
         "name": "Luquillo Municipio, PR",
-        "y": 17.3
+        "value": 17.3
     },
     {
         "name": "Manati Municipio, PR",
-        "y": 14.8
+        "value": 14.8
     },
     {
         "name": "Maricao Municipio, PR",
-        "y": 23.6
+        "value": 23.6
     },
     {
         "name": "Maunabo Municipio, PR",
-        "y": 19.1
+        "value": 19.1
     },
     {
         "name": "Mayaguez Municipio, PR",
-        "y": 18.8
+        "value": 18.8
     },
     {
         "name": "Moca Municipio, PR",
-        "y": 16.6
+        "value": 16.6
     },
     {
         "name": "Morovis Municipio, PR",
-        "y": 19.9
+        "value": 19.9
     },
     {
         "name": "Naguabo Municipio, PR",
-        "y": 17.7
+        "value": 17.7
     },
     {
         "name": "Naranjito Municipio, PR",
-        "y": 18.0
+        "value": 18.0
     },
     {
         "name": "Orocovis Municipio, PR",
-        "y": 20.9
+        "value": 20.9
     },
     {
         "name": "Patillas Municipio, PR",
-        "y": 19.4
+        "value": 19.4
     },
     {
         "name": "Penuelas Municipio, PR",
-        "y": 17.4
+        "value": 17.4
     },
     {
         "name": "Ponce Municipio, PR",
-        "y": 14.5
+        "value": 14.5
     },
     {
         "name": "Quebradillas Municipio, PR",
-        "y": 16.5
+        "value": 16.5
     },
     {
         "name": "Rincon Municipio, PR",
-        "y": 15.5
+        "value": 15.5
     },
     {
         "name": "Rio Grande Municipio, PR",
-        "y": 15.1
+        "value": 15.1
     },
     {
         "name": "Sabana Grande Municipio, PR",
-        "y": 18.0
+        "value": 18.0
     },
     {
         "name": "Salinas Municipio, PR",
-        "y": 25.7
+        "value": 25.7
     },
     {
         "name": "San German Municipio, PR",
-        "y": 18.7
+        "value": 18.7
     },
     {
         "name": "San Juan Municipio, PR",
-        "y": 10.0
+        "value": 10.0
     },
     {
         "name": "San Lorenzo Municipio, PR",
-        "y": 17.5
+        "value": 17.5
     },
     {
         "name": "San Sebastian Municipio, PR",
-        "y": 17.6
+        "value": 17.6
     },
     {
         "name": "Santa Isabel Municipio, PR",
-        "y": 20.1
+        "value": 20.1
     },
     {
         "name": "Toa Alta Municipio, PR",
-        "y": 11.8
+        "value": 11.8
     },
     {
         "name": "Toa Baja Municipio, PR",
-        "y": 12.7
+        "value": 12.7
     },
     {
         "name": "Trujillo Alto Municipio, PR",
-        "y": 9.8
+        "value": 9.8
     },
     {
         "name": "Utuado Municipio, PR",
-        "y": 18.8
+        "value": 18.8
     },
     {
         "name": "Vega Alta Municipio, PR",
-        "y": 14.9
+        "value": 14.9
     },
     {
         "name": "Vega Baja Municipio, PR",
-        "y": 15.7
+        "value": 15.7
     },
     {
         "name": "Vieques Municipio, PR",
-        "y": 16.0
+        "value": 16.0
     },
     {
         "name": "Villalba Municipio, PR",
-        "y": 19.5
+        "value": 19.5
     },
     {
         "name": "Yabucoa Municipio, PR",
-        "y": 22.9
+        "value": 22.9
     },
     {
         "name": "Yauco Municipio, PR",
-        "y": 16.2
+        "value": 16.2
     }
 ];
 /*

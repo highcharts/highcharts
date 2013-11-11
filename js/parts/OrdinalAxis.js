@@ -97,7 +97,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
-			if (new Date(groupPositions[start])[getDate]() !== new Date(groupPositions[start - 1])[getDate]()) {
+			if (new Date(groupPositions[start] - timezoneOffset)[getDate]() !== new Date(groupPositions[start - 1] - timezoneOffset)[getDate]()) {
 				higherRanks[groupPositions[start]] = DAY;
 				hasCrossedHigherRank = true;
 			}
@@ -243,8 +243,8 @@ extend(Axis.prototype, {
 				}
 
 				// When zooming in on a week, prevent axis padding for weekends even though the data within
-				// the week is evenly spaced.
-				if (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist) {
+				// the week is evenly spaced.				
+				if (!axis.options.keepOrdinalPadding && (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist)) {
 					useOrdinal = true;
 				}
 			}
@@ -270,6 +270,7 @@ extend(Axis.prototype, {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
 		}
+		axis.getGroupIntervalFactor = null; // reset for next run
 	},
 	/**
 	 * Translate from a linear axis value to the corresponding ordinal axis position. If there
@@ -465,29 +466,37 @@ extend(Axis.prototype, {
 	 * with a greater interval if the number of data groups is more than a certain fraction
 	 * of the desired group count.
 	 */
-	getGroupIntervalFactor: function (xMin, xMax, processedXData) {
+	getGroupIntervalFactor: function (xMin, xMax, series) {
 		var i = 0,
+			processedXData = series.processedXData,
 			len = processedXData.length,
 			distances = [],
-			median;
+			median,
+			groupIntervalFactor = this.getGroupIntervalFactor;
 
-		// Register all the distances in an array
-		for (; i < len - 1; i++) {
-			distances[i] = processedXData[i + 1] - processedXData[i];
+		// Only do this computation for the first series, let the other inherit it (#2416)
+		if (!groupIntervalFactor) {
+
+			// Register all the distances in an array
+			for (; i < len - 1; i++) {
+				distances[i] = processedXData[i + 1] - processedXData[i];
+			}
+
+			// Sort them and find the median
+			distances.sort(function (a, b) {
+					return a - b;
+			});
+			median = distances[mathFloor(len / 2)];
+
+			// Compensate for series that don't extend through the entire axis extent. #1675.
+			xMin = mathMax(xMin, processedXData[0]);
+			xMax = mathMin(xMax, processedXData[len - 1]);
+
+			this.groupIntervalFactor = groupIntervalFactor = (len * median) / (xMax - xMin);
 		}
 
-		// Sort them and find the median
-		distances.sort(function (a, b) {
-			return a - b;
-		});
-		median = distances[mathFloor(len / 2)];
-
-		// Compensate for series that don't extend through the entire axis extent. #1675.
-		xMin = mathMax(xMin, processedXData[0]);
-		xMax = mathMin(xMax, processedXData[len - 1]);
-
 		// Return the factor needed for data grouping
-		return (len * median) / (xMax - xMin);
+		return groupIntervalFactor;
 	},
 
 	/**

@@ -199,11 +199,10 @@ Axis.prototype = {
 		axis.isXAxis = isXAxis;
 		axis.xOrY = isXAxis ? 'x' : 'y';
 	
-	
 		axis.opposite = userOptions.opposite; // needed in setOptions
-		axis.side = axis.horiz ?
+		axis.side = userOptions.side || (axis.horiz ?
 				(axis.opposite ? 0 : 2) : // top : bottom
-				(axis.opposite ? 1 : 3);  // right : left
+				(axis.opposite ? 1 : 3));  // right : left
 	
 		axis.setOptions(userOptions);
 		
@@ -1961,7 +1960,7 @@ Axis.prototype = {
 			pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 		} else if (defined(point)) {
 			/*jslint eqeq: true*/
-			pos = ((this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY);
+			pos = (this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY;
 			/*jslint eqeq: false*/
 		}
 		

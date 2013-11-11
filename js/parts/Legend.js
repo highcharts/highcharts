@@ -34,6 +34,8 @@ Legend.prototype = {
 		legend.chart = chart;
 		legend.itemHeight = 0;
 		legend.lastLineHeight = 0;
+		legend.symbolWidth = pick(options.symbolWidth, 16);
+
 
 		// Render it
 		legend.render();
@@ -58,7 +60,7 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? item.color : hiddenColor,
+			symbolColor = visible ? (item.legendColor || item.color) : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = {
 				stroke: symbolColor,
@@ -215,7 +217,7 @@ Legend.prototype = {
 			renderer = chart.renderer,
 			options = legend.options,
 			horizontal = options.layout === 'horizontal',
-			symbolWidth = options.symbolWidth,
+			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
@@ -230,9 +232,9 @@ Legend.prototype = {
 			bBox,
 			itemWidth,
 			li = item.legendItem,
-			series = item.series || item,
-			itemOptions = series.options,
-			showCheckbox = itemOptions.showCheckbox,
+			series = item.series && item.series.drawLegendSymbol ? item.series : item,
+			seriesOptions = series.options,
+			showCheckbox = seriesOptions && seriesOptions.showCheckbox,
 			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
@@ -292,7 +294,7 @@ Legend.prototype = {
 			legend.colorizeItem(item, item.visible);
 
 			// add the HTML checkbox on top
-			if (itemOptions && showCheckbox) {
+			if (showCheckbox) {
 				item.checkbox = createElement('input', {
 					type: 'checkbox',
 					checked: item.selected,
@@ -315,10 +317,10 @@ Legend.prototype = {
 		// calculate the positions for the next line
 		bBox = li.getBBox();
 
-		itemWidth = item.legendItemWidth =
-			options.itemWidth || symbolWidth + symbolPadding + bBox.width + itemDistance +
+		itemWidth = item.legendItemWidth = 
+			options.itemWidth || item.legendItemWidth || symbolWidth + symbolPadding + bBox.width + itemDistance +
 			(showCheckbox ? 20 : 0);
-		legend.itemHeight = itemHeight = bBox.height;
+		legend.itemHeight = itemHeight = item.legendItemHeight || bBox.height;
 
 		// if the item exceeds the width, start a new line
 		if (horizontal && legend.itemX - initialItemX + itemWidth >
@@ -360,6 +362,31 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Get all items, which is one item per series for normal series and one item per point
+	 * for pie series.
+	 */
+	getAllItems: function () {
+		var allItems = [];
+		each(this.chart.series, function (series) {
+			var seriesOptions = series.options;
+
+			// Handle showInLegend. If the series is linked to another series, defaults to false.
+			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? UNDEFINED : false, true)) {
+				return;
+			}
+
+			// use points or series for the legend item depending on legendType
+			allItems = allItems.concat(
+					series.legendItems ||
+					(seriesOptions.legendType === 'point' ?
+							series.data :
+							series)
+			);
+		});
+		return allItems;
+	},
+
+	/**
 	 * Render the legend. This method can be called both before and after
 	 * chart.render. If called after, it will only rearrange items instead
 	 * of creating new ones.
@@ -398,23 +425,7 @@ Legend.prototype = {
 		legend.renderTitle();
 
 		// add each series or point
-		allItems = [];
-		each(chart.series, function (serie) {
-			var seriesOptions = serie.options;
-
-			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? UNDEFINED : false, true)) {
-				return;
-			}
-
-			// use points or series for the legend item depending on legendType
-			allItems = allItems.concat(
-					serie.legendItems ||
-					(seriesOptions.legendType === 'point' ?
-							serie.data :
-							serie)
-			);
-		});
+		allItems = legend.getAllItems();
 
 		// sort by legendIndex
 		stableSort(allItems, function (a, b) {
@@ -672,7 +683,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
 			legend.baseline - 11,
-			legend.options.symbolWidth,
+			legend.symbolWidth,
 			12,
 			2
 		).attr({
@@ -694,7 +705,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			radius,
 			legendOptions = legend.options,
 			legendSymbol,
-			symbolWidth = legendOptions.symbolWidth,
+			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
 			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),
