@@ -4,7 +4,7 @@ session_start();
 $defaults = json_decode(file_get_contents('default-settings.json'));
 
 $leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : $defaults->leftPath;
-$rightPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : $defaults->leftPath;
+$rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : $defaults->rightPath;
 
 
 
