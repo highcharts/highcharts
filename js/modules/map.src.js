@@ -730,7 +730,7 @@
 		mapZoom: function (howMuch, centerXArg, centerYArg) {
 
 			if (this.isMapZooming) {
-				return;
+				this.mapZoomQueue = arguments;
 			}
 
 			var chart = this,
@@ -767,6 +767,10 @@
 				chart.isMapZooming = true;
 				setTimeout(function () {
 					chart.isMapZooming = false;
+					if (chart.mapZoomQueue) {
+						chart.mapZoom.apply(chart, chart.mapZoomQueue);
+					}
+					chart.mapZoomQueue = null;
 				}, delay);
 			}
 			
@@ -834,6 +838,7 @@
 		if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
 			H.addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
 				chart.pointer.onContainerMouseWheel(e);
+				return false;
 			});
 		}
 	});
@@ -1160,9 +1165,10 @@
 		 */
 		translate: function () {
 			var series = this,
+				chart = series.chart,
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
-				doAnimation = series.chart.pointCount < 100;
+				doAnimation = chart.pointCount < (chart.options.animationLimit || 250);
 	
 			series.generatePoints();
 	

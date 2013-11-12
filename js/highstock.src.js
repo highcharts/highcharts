@@ -15753,8 +15753,8 @@ var ColumnSeries = extendClass(Series, {
 			chart = this.chart,
 			options = series.options,
 			renderer = chart.renderer,
+			animationLimit = chart.options.animationLimit || 250,
 			shapeArgs;
-
 
 		// draw the columns
 		each(series.points, function (point) {
@@ -15766,7 +15766,7 @@ var ColumnSeries = extendClass(Series, {
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic[chart.pointCount < 100 ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
