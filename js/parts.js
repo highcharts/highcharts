@@ -1,6 +1,7 @@
 /*jslint node: true, white: true */
 'use strict';
 var HighchartsConfig = {
+		version: [{highcharts: '3.0.7'},{Highstock: '1.3.7.'}],
 		parts: {
 			/* CORE */
 			Intro: {name: 'Intro', component: 'Core', group: 'Core', baseUrl:  'parts'},
@@ -12,14 +13,15 @@ var HighchartsConfig = {
 			Options:	{name: 'Options', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Color:	{name: 'Color', component: 'Core', group: "Core", baseUrl: 'parts'},
 			SvgRenderer:	{name: 'SvgRenderer', component: 'Core', group: "Core", baseUrl: 'parts'},
-			VMLRenderer:	{name: 'VMLRenderer', component: 'VMLRenderer', group: "Renderers", depends: {component: ['Core']}, baseUrl: 'parts'},
+			Html: { name: 'Html', component: 'Html', group: 'Features', baseUrl: 'parts', depends: {component: ['Core']}},
+			VmlRenderer:	{name: 'VmlRenderer', component: 'VMLRenderer', group: "Renderers", depends: {component: ['Html']}, baseUrl: 'parts'},
 			CanVGRenderer:	{name: 'CanVGRenderer', component: 'CanVGRenderer', group: "Renderers", depends: {component: ['Core']}, baseUrl: 'parts'},
 			Tick:	{name: 'Tick', component: 'Core', group: "Core", baseUrl: 'parts'},
 			StackItem:	{name: 'StackItem', component: 'Core', group: "Core", baseUrl: 'parts'},		
-			PlotLineOrBand:	{name: 'PlotLineOrBand', component: 'PlotLineOrBand', group: "Features", depends: {component: ['Core']}, baseUrl: 'parts'},
+			PlotLineOrBand:	{name: 'PlotLineOrBand', component: 'PlotLineOrBand', group: 'Features', depends: {component: ['Core']}, baseUrl: 'parts'},
 			Axis:	{name: 'Axis', component: 'Core', group: "Core", baseUrl: 'parts', depends: {name: ['StackItem']}},
-			DateTimeAxis:	{name: 'DateTimeAxis', component: 'DateTimeAxis', group: "Features", depends: { component: ['Core']}, baseUrl: 'parts'},
-			LogarithmicAxis:	{name: 'LogarithmicAxis', component: 'LogarithmicAxis', group: "Features", depends: {component: ['Axis']}, baseUrl: 'parts'},
+			DateTimeAxis:	{name: 'DateTimeAxis', component: 'DateTimeAxis', group: 'Features', depends: { component: ['Core']}, baseUrl: 'parts'},
+			LogarithmicAxis:	{name: 'LogarithmicAxis', component: 'LogarithmicAxis', group: 'Features', depends: {component: ['Core']}, baseUrl: 'parts'},
 			Tooltip:	{name: 'Tooltip', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Pointer:	{name: 'Pointer', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Legend:	{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
@@ -41,7 +43,7 @@ var HighchartsConfig = {
 			OHLCSeries:	{name: 'OHLCSeries', component: 'OHLC', group: 'Stock', depends: {component: ['Stock', 'ColumnSeries']}, baseUrl: 'parts'},
 			CandlestickSeries:	{name: 'CandlestickSeries', component: 'Candlestick', group: 'Stock', depends: {component: ['Stock','OHLC', 'ColumnSeries']}, baseUrl: 'parts'},
 			FlagsSeries:	{name: 'FlagsSeries', component: 'Flags', group: 'Stock', depends: {component: ['Stock','ColumnSeries']}, baseUrl: 'parts'},
-			DataLabels:	{name: 'DataLabels', component: 'DataLabels', group: "Features", depends: {component: ['Core']}, baseUrl: 'parts'},
+			DataLabels:	{name: 'DataLabels', component: 'DataLabels', group: 'Features', depends: {component: ['Core']}, baseUrl: 'parts'},
 			Scroller:	{name: 'Scroller', component: 'Stock', group: 'Stock', depends: {component: ['Core','LineSeries']}, baseUrl: 'parts'},
 			RangeSelector:	{name: 'RangeSelector', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},
 			StockNavigation:	{name: 'StockNavigation', component: 'Stock', group: 'Stock', depends: {component: ['Core']}, baseUrl: 'parts'},

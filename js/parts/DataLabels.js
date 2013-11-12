@@ -124,7 +124,6 @@ Series.prototype.drawDataLabels = function () {
 
 				if (dataLabel) {
 					// Now the data label is created and placed at 0,0, so we need to align it
-					console.log(series);
 					series.alignDataLabel(point, dataLabel, options, null, isNew);
 				}
 			}
