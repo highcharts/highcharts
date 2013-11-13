@@ -4,23 +4,9 @@ $(function () {
         
         // Initiate the chart
         $('#container').highcharts('Map', {
-
-            chart: {
-                events: {
-                    click: function (e) {
-                        var x = Math.round(e.xAxis[0].value),
-                            y = Math.round(e.yAxis[0].value)
-                        this.get('clicks').addPoint({
-                            x: x,
-                            y: y,
-                            name: '[' + x + ', ' + y + ']'
-                        });
-                    }
-                }
-            },
             
             title : {
-                text : 'Add points on chart click'
+                text : 'Population density by country (/km²)'
             },
 
             mapNavigation: {
@@ -36,6 +22,12 @@ $(function () {
                 type: 'logarithmic'
             },
 
+            plotOptions: {
+                series: {
+                    enableMouseTracking: false
+                }
+            },
+
             series : [{
                 data : data,
                 mapData: Highcharts.maps.world,
@@ -49,10 +41,6 @@ $(function () {
                 tooltip: {
                     valueSuffix: '/km²'
                 }
-            }, {
-                type: 'mappoint',
-                id: 'clicks',
-                name: 'Clicks'
             }]
         });
     });

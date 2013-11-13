@@ -198,6 +198,11 @@ function getCompareTooltips() {
 				});
 				<?php endif ?>
 
+				<?php if (file_exists("$path/test.js")) : ?>
+				<?php include("$path/test.js"); ?>
+				Highcharts.Chart.prototype.callbacks.push(test);
+				<?php endif ?>
+
 			});
 			
 			window.alert = function () {}
