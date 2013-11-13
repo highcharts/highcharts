@@ -9258,6 +9258,14 @@ Pointer.prototype = {
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
 
+		// Start the event listener to pick up the tooltip 
+		if (tooltip && !pointer._onDocumentMouseMove) {
+			pointer._onDocumentMouseMove = function (e) {
+				pointer.onDocumentMouseMove(e);
+			};
+			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+		}
+
 		// Draw independent crosshairs
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(hoverPoint, point));
@@ -9304,6 +9312,11 @@ Pointer.prototype = {
 
 			if (tooltip) {
 				tooltip.hide();
+			}
+
+			if (pointer._onDocumentMouseMove) {
+				removeEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+				pointer._onDocumentMouseMove = null;
 			}
 
 			// Remove crosshairs
@@ -9873,7 +9886,6 @@ Pointer.prototype = {
 			[container, 'onmousemove', 'onContainerMouseMove'],
 			[container, 'onclick', 'onContainerClick'],
 			[container, 'mouseleave', 'onContainerMouseLeave'],
-			[doc, 'mousemove', 'onDocumentMouseMove'],
 			[doc, 'mouseup', 'onDocumentMouseUp']
 		];
 
