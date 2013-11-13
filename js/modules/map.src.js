@@ -857,6 +857,7 @@
 		marker: null,
 		stickyTracking: false,
 		dataLabels: {
+			format: '{point.value}',
 			verticalAlign: 'middle'
 		},
 		turboThreshold: 0,
@@ -940,7 +941,7 @@
 				animation = point.series.options.states.normal.animation,
 				duration = animation && (animation.duration || 500);
 
-			if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4) {
+			if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
 				delete point.pointAttr[''].fill; // avoid resetting it in Point.setState
 
 				clearTimeout(point.colorInterval);
@@ -970,7 +971,8 @@
 		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 			stroke: 'borderColor',
 			'stroke-width': 'borderWidth',
-			fill: 'color'
+			fill: 'color',
+			dashstyle: 'dashStyle'
 		},
 		pointClass: MapAreaPoint,
 		axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
@@ -1230,7 +1232,7 @@
 				xAxis = series.xAxis,
 				yAxis = series.yAxis;
 			
-			// Make points pass test in drawing // TODO: check with point.value
+			// Make points pass test in drawing
 			each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
 			});
@@ -1249,6 +1251,53 @@
 			// Now draw the data labels
 			Series.prototype.drawDataLabels.call(series);
 			
+		},
+
+		/**
+		 * The initial animation for the map series. By default, animation is disabled. 
+		 * Animation of map shapes is not at all supported in VML browsers.
+		 */
+		animate: function (init) {
+			var chart = this.chart,
+				animation = this.options.animation,
+				group = this.group,
+				xAxis = this.xAxis,
+				yAxis = this.yAxis,
+				left = xAxis.pos,
+				top = yAxis.pos;
+
+			if (chart.renderer.isSVG) {
+
+				if (animation === true) {
+					animation = {
+						duration: 1000
+					};
+				}
+	
+				// Initialize the animation
+				if (init) {
+				
+					// Scale down the group and place it in the center
+					group.attr({
+						translateX: left + xAxis.len / 2,
+						translateY: top + yAxis.len / 2,
+						scaleX: 0.001, // #1499
+						scaleY: 0.001
+					});
+				
+				// Run the animation
+				} else {
+					group.animate({
+						translateX: left,
+						translateY: top,
+						scaleX: 1,
+						scaleY: 1
+					}, animation);
+				
+					// Delete this function to allow it only once
+					this.animate = null;
+				}
+			}
 		},
 
 		/**
@@ -1435,7 +1484,8 @@
 		
 		options = merge({
 			chart: {
-				panning: 'xy'
+				panning: 'xy',
+				type: 'map'
 			},
 			xAxis: hiddenAxis,
 			yAxis: merge(hiddenAxis, { reversed: true })	
@@ -1444,7 +1494,6 @@
 	
 		{ // forced options
 			chart: {
-				type: 'map',
 				inverted: false,
 				alignTicks: false
 			}
