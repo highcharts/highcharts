@@ -243,7 +243,7 @@ extend(Axis.prototype, {
 				}
 
 				// When zooming in on a week, prevent axis padding for weekends even though the data within
-				// the week is evenly spaced.				
+				// the week is evenly spaced.
 				if (!axis.options.keepOrdinalPadding && (ordinalPositions[0] - min > dist || max - ordinalPositions[ordinalPositions.length - 1] > dist)) {
 					useOrdinal = true;
 				}
@@ -270,7 +270,7 @@ extend(Axis.prototype, {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
 		}
-		axis.getGroupIntervalFactor = null; // reset for next run
+		axis.groupIntervalFactor = null; // reset for next run
 	},
 	/**
 	 * Translate from a linear axis value to the corresponding ordinal axis position. If there
@@ -472,7 +472,7 @@ extend(Axis.prototype, {
 			len = processedXData.length,
 			distances = [],
 			median,
-			groupIntervalFactor = this.getGroupIntervalFactor;
+			groupIntervalFactor = this.groupIntervalFactor;
 
 		// Only do this computation for the first series, let the other inherit it (#2416)
 		if (!groupIntervalFactor) {
