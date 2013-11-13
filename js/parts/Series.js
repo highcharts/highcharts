@@ -965,9 +965,10 @@ Series.prototype = {
 		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
 
 		series.colorCounter = 0; // for series with colorByPoint (#1547)
+		data = data || [];
 		
 		// parallel arrays
-		var dataLength = data ? data.length : [],
+		var dataLength = data.length,
 			turboThreshold = options.turboThreshold,
 			pt,
 			xData = this.xData,

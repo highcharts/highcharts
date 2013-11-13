@@ -320,7 +320,7 @@ Legend.prototype = {
 		itemWidth = item.legendItemWidth = 
 			options.itemWidth || item.legendItemWidth || symbolWidth + symbolPadding + bBox.width + itemDistance +
 			(showCheckbox ? 20 : 0);
-		legend.itemHeight = itemHeight = item.legendItemHeight || bBox.height;
+		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
 		if (horizontal && legend.itemX - initialItemX + itemWidth >
@@ -679,13 +679,14 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
+		var symbolHeight = legend.options.symbolHeight || 12; // docs
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
-			legend.baseline - 11,
+			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
-			12,
-			2
+			symbolHeight,
+			pick(legend.options.symbolRadius, 2) // docs
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
