@@ -3,8 +3,6 @@ ini_set('display_errors', 'on');
 session_start();
 $defaults = json_decode(file_get_contents('default-settings.json'));
 
-
-
 define('EXPORT_SERVER', isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $defaults->exportServer);
 
 /**

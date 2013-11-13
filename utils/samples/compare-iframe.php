@@ -102,7 +102,7 @@ function getCompareTooltips() {
 	global $path;
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	include("$path/demo.details");
+	@include("$path/demo.details");
 	$yaml = ob_get_clean();
 
 	return strstr($yaml, 'compareTooltips: true');

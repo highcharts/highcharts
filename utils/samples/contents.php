@@ -205,7 +205,7 @@
 
 	<div id="main-nav">
 	<?php
-	$products = array('highcharts', 'map', 'stock');
+	$products = array('highcharts', 'maps', 'stock');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
 	$browserKey = $browser['parent'];
