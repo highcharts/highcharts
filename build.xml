@@ -122,7 +122,7 @@
         <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
             <file name="Intro.js"/>
             <file name="Globals.js"/>
-            <file name="Utilities.js"/>            
+            <file name="Utilities.js"/>
             <file name="PathAnimation.js"/>
             <file name="JQueryAdapter.js"/>
             <file name="Adapters.js"/>
@@ -144,6 +144,7 @@
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
             <file name="Series.js"/>
+            <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
             <file name="SplineSeries.js"/>
@@ -161,7 +162,7 @@
         <filelist id="highstock.files" dir="${highcharts.parts.dir}">
             <file name="Intro.js"/>
             <file name="Globals.js"/>
-            <file name="Utilities.js"/>            
+            <file name="Utilities.js"/>
             <file name="PathAnimation.js"/>
             <file name="JQueryAdapter.js"/>
             <file name="Adapters.js"/>
@@ -183,7 +184,7 @@
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
             <file name="Series.js"/>
-            <file name="OrdinalAxis.js"/>
+            <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
             <file name="SplineSeries.js"/>
@@ -192,11 +193,13 @@
             <file name="BarSeries.js"/>
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
+            <file name="DataLabels.js"/>
+            <!-- Stock -->
+            <file name="OrdinalAxis.js"/>
             <file name="DataGrouping.js"/>
             <file name="OHLCSeries.js"/>
             <file name="CandlestickSeries.js"/>
             <file name="FlagsSeries.js"/>
-            <file name="DataLabels.js"/>
             <file name="Scroller.js"/>
             <file name="RangeSelector.js"/>
             <file name="StockNavigation.js"/>
@@ -478,7 +481,7 @@
         <antcall target="compile">
             <param name="param.src" value="${nodata.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${nodata.minified.name}"/>
-        </antcall>        
+        </antcall>
         <antcall target="compile">
             <param name="param.src" value="${map.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${map.minified.name}"/>
@@ -712,12 +715,12 @@
         <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/modules/data.js" todir="exporting-server/phantomjs/"/>
-        
+
         <!-- copy files from phantomjs to java export server -->
         <copy todir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs">
             <fileset dir="exporting-server/phantomjs/">
                 <exclude name="*.md"/>
-            </fileset>    
+            </fileset>
         </copy>
         <!-- copy highcharts export-server -->
         <copy todir="${dist.dir}/highcharts/exporting-server">
@@ -798,7 +801,7 @@
             <param name="testrun.name" value="standalone"/>
             <param name="required.adapter" value="js/adapters/standalone-framework.src.js"/>
         </antcall>
-        
+
         <!-- mootools versions -->
         <antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
@@ -949,7 +952,7 @@
         <exec executable="${browser}" spawn="true">
             <arg value="${file}"/>
         </exec>
-    </target>     
+    </target>
     <!-- gzip javascript files in folder -->
     <target name="gzip-js" description="gzip all javascript versions for upload to Amazon S3" depends="set.properties">
         <property name="gzip.dir" value="${js.dir}/../js-gzip"/>
@@ -1078,13 +1081,13 @@
         <antcall target="put-file-to-S3">
             <param name="local" value="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}/zips"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>           
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <!-- upload product.js to S3 -->
         <antcall target="put-file-to-S3">
             <param name="local" value="${basedir}/build/dist/products.js"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highcharts/js/"/>
@@ -1178,7 +1181,7 @@
             <param name="local" value="${basedir}/build/dist/Highstock-${highstock.product.version}.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}/zips"/>
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highstock/js/"/>
