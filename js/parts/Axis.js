@@ -1389,24 +1389,15 @@ Axis.prototype = {
 			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
-			i,
-			autoStaggerLines = 1,
-			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5),
-			sortedPositions,
-			lastRight,
-			overlap,
-			pos,
-			bBox,
-			x,
-			w,
-			lineNo;
+			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5);
 			
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
-		// Set/reset staggerLines
+		// Set/reset staggerLines and step
 		axis.staggerLines = axis.horiz && labelOptions.staggerLines;
+		axis.step = labelOptions.step;
 		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
@@ -1435,37 +1426,11 @@ Axis.prototype = {
 				}
 			});
 
-			// Handle automatic stagger lines
+			// Handle automatic stagger lines and step
 			if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
-				sortedPositions = axis.reversed ? [].concat(tickPositions).reverse() : tickPositions;
-				while (autoStaggerLines < maxStaggerLines) {
-					lastRight = [];
-					overlap = false;
-					
-					for (i = 0; i < sortedPositions.length; i++) {
-						pos = sortedPositions[i];
-						bBox = ticks[pos].label && ticks[pos].label.getBBox();
-						w = bBox ? bBox.width : 0;
-						lineNo = i % autoStaggerLines;
-						
-						if (w) {
-							x = axis.translate(pos); // don't handle log
-							if (lastRight[lineNo] !== UNDEFINED && x < lastRight[lineNo]) {
-								overlap = true;
-							}
-							lastRight[lineNo] = x + w;
-						}
-					}
-					if (overlap) {
-						autoStaggerLines++;
-					} else {
-						break;
-					}
-				}
-
-				if (autoStaggerLines > 1) {
-					axis.staggerLines = autoStaggerLines;
-				}
+				axis.staggerLines = axis.getOverlap(maxStaggerLines);
+			} else if (!axis.horiz && !labelOptions.rotation && axis.step === UNDEFINED && !axis.isRadial) {
+				axis.step = axis.getOverlap();
 			}
 
 
@@ -1539,7 +1504,53 @@ Axis.prototype = {
 		);
 		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
 	},
-	
+
+	/**
+	 * Detect overlapping axis labels. On a horizontal axis, this will cause stagger lines up to 
+	 * the maxStaggerLines option. On a vertical axis, overlapping labels are removed. The method
+	 * returns the value representing staggerLines or step.
+	 */
+	getOverlap: function (max) {
+		var steps = 1,
+			sortedPositions = this.reversed ? [].concat(this.tickPositions).reverse() : this.tickPositions,
+			ticks = this.ticks,
+			val,
+			lastEdge,
+			overlap,
+			i,
+			bBox,
+			size,
+			lineNo,
+			pos,
+			horiz = this.horiz;
+
+		while (!max || steps < max) {
+			lastEdge = [];
+			overlap = false;
+			
+			for (i = 0; i < sortedPositions.length; i++) {
+				val = sortedPositions[i];
+				bBox = ticks[val].label && ticks[val].label.getBBox();
+				size = bBox ? bBox[horiz ? 'width' : 'height'] : 0;
+				lineNo = i % steps;
+				
+				if (size) {
+					pos = this.translate(val); // don't handle log
+					if (lastEdge[lineNo] !== UNDEFINED && pos < lastEdge[lineNo]) {
+						overlap = true;
+					}
+					lastEdge[lineNo] = pos + size;
+				}
+			}
+			if (overlap) {
+				steps++;
+			} else {
+				break;
+			}
+		}
+		return steps > 1 ? steps : null;
+	},
+
 	/**
 	 * Get the path for the axis line
 	 */
