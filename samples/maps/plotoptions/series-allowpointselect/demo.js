@@ -15,10 +15,36 @@ $(function () {
                 }
             },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
+            plotOptions: {
+                series: {
+                    point: {
+                        events: {
+                            select: function () {
+                                var text = 'Selected ' + this.name + ' (' + this.value + '/km²)',
+                                    chart = this.series.chart;
+                                if (!chart.selectedLabel) {
+                                    chart.selectedLabel = chart.renderer.label(text, 0, 320)
+                                        .add();
+                                } else {
+                                    chart.selectedLabel.attr({
+                                        text: text
+                                    });
+                                }
+                            },
+                            unselect: function () {
+                                var text = 'Unselected ' + this.name + ' (' + this.value + '/km²)',
+                                    chart = this.series.chart;
+                                if (!chart.unselectedLabel) {
+                                    chart.unselectedLabel = chart.renderer.label(text, 0, 300)
+                                        .add();
+                                } else {
+                                    chart.unselectedLabel.attr({
+                                        text: text
+                                    });
+                                }
+                            }
+                        }
+                    }
                 }
             },
 

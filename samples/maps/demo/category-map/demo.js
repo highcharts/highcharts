@@ -245,7 +245,7 @@ $(function () {
                 code: 'uk'
             }, {
                 code: 'pt'
-            }],
+            }]
         }, {
             name: 'UTC + 1',
             data: [{
