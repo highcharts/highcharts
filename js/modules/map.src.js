@@ -662,7 +662,7 @@
 					this.handler.call(chart); 
 				};
 
-			if (pick(options.enableButtons, options.enabled)) {
+			if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 				for (n in buttons) {
 					if (buttons.hasOwnProperty(n)) {
 						buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -857,7 +857,9 @@
 		marker: null,
 		stickyTracking: false,
 		dataLabels: {
-			format: '{point.value}',
+			formatter: function () { // Must use formatter here, if not the format will always take presedence
+				return this.point.value;
+			},
 			verticalAlign: 'middle'
 		},
 		turboThreshold: 0,
