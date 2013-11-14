@@ -1532,7 +1532,7 @@ Series.prototype = {
 				UNDEFINED;
 			
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
+			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement) : point.plotX; // #1514
 				
 			point.negative = point.y < (threshold || 0);
 
