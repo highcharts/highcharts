@@ -21,6 +21,7 @@ Chart.prototype = {
 		userOptions.series = null;
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
+		this.userOptions = userOptions;
 
 		var optionsChart = options.chart;
 		

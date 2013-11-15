@@ -10498,6 +10498,7 @@ Chart.prototype = {
 		userOptions.series = null;
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
+		this.userOptions = userOptions;
 
 		var optionsChart = options.chart;
 		
@@ -12923,6 +12924,8 @@ Series.prototype = {
 		var chart = this.chart,
 			chartOptions = chart.options,
 			plotOptions = chartOptions.plotOptions,
+			userOptions = chart.userOptions || {},
+			userPlotOptions = userOptions.plotOptions || {},
 			typeOptions = plotOptions[this.type],
 			options;
 
@@ -12934,10 +12937,17 @@ Series.prototype = {
 			itemOptions
 		);
 		
-		// the tooltip options are merged between global and series specific options
-		this.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
+		// The tooltip options are merged between global and series specific options
+		this.tooltipOptions = merge(
+			defaultOptions.tooltip,
+			defaultOptions.plotOptions[this.type].tooltip,
+			userOptions.tooltip,
+			userPlotOptions.series && userPlotOptions.series.tooltip,
+			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
+			itemOptions.tooltip
+		);
 		
-		// Delte marker object if not allowed (#1125)
+		// Delete marker object if not allowed (#1125)
 		if (typeOptions.marker === null) {
 			delete options.marker;
 		}
