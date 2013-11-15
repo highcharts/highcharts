@@ -1,6 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Slawek Kolodziej
- requiresManualTesting: true
-...

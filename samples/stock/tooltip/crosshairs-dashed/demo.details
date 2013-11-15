@@ -1,6 +1,0 @@
----
- name: Highcharts Stock Demo
- authors:
-   - Torstein Hønsi
- compareTooltips: true
- ...
