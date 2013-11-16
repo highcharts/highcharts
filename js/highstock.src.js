@@ -122,7 +122,7 @@ var UNDEFINED,
 	seriesTypes = {};
 
 // The Highcharts namespace
-win.Highcharts = win.Highcharts ? error(16, true) : {};
+var Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
 
 /**
  * Extend an object with the members of another
