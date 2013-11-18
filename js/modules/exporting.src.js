@@ -435,7 +435,12 @@ extend(Chart.prototype, {
 			innerMenu,
 			hide,
 			hideTimer,
-			menuStyle;
+			menuStyle,
+			docMouseUpHandler = function (e) {
+				if (!chart.pointer.inClass(e.target, className)) {
+					hide();
+				}
+			};
 
 		// create the menu only the first time
 		if (!menu) {
@@ -472,11 +477,12 @@ extend(Chart.prototype, {
 			addEvent(menu, 'mouseenter', function () {
 				clearTimeout(hideTimer);
 			});
-			// Hide it on clicking or touching outside the menu (#2258, #2335)
-			addEvent(document, 'mouseup', function (e) {
-				if (!chart.pointer.inClass(e.target, className)) {
-					hide();
-				}
+
+
+			// Hide it on clicking or touching outside the menu (#2258, #2335, #2407)
+			addEvent(document, 'mouseup', docMouseUpHandler);
+			addEvent(chart, 'destroy', function () {
+				removeEvent(document, 'mouseup', docMouseUpHandler);
 			});
 
 
