@@ -158,7 +158,7 @@ RangeSelector.prototype = {
 					min: rangeMin
 				}
 			);
-			rangeSelector.selected = i;
+			rangeSelector.setSelected(i);
 		} else { // existing axis object; after render time
 			baseAxis.setExtremes(
 				newMin,
@@ -170,8 +170,16 @@ RangeSelector.prototype = {
 					rangeSelectorButton: rangeOptions
 				}
 			);
-			rangeSelector.selected = i;
+			rangeSelector.setSelected(i);
 		}
+	},
+
+	/**
+	 * Set the selected option. This method only sets the internal flag, it doesn't
+	 * update the buttons or the actual zoomed range.
+	 */
+	setSelected: function (selected) {
+		this.selected = this.options.selected = selected;
 	},
 	
 	/**
@@ -223,6 +231,7 @@ RangeSelector.prototype = {
 			};
 
 		rangeSelector.chart = chart;
+		rangeSelector.options = options;
 		
 		chart.extraTopMargin = 25;
 		rangeSelector.buttonOptions = buttonOptions;
@@ -242,10 +251,10 @@ RangeSelector.prototype = {
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
 				if (chart.fixedRange !== mathRound(this.max - this.min)) {
-					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
+					if (buttons[rangeSelector.selected]) {
 						buttons[rangeSelector.selected].setState(0);
 					}
-					rangeSelector.selected = null;
+					rangeSelector.setSelected(null);
 				}
 
 				rangeSelector.updateButtonStates();
@@ -283,7 +292,7 @@ RangeSelector.prototype = {
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
 			if (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected) {
-				rangeSelector.selected = i;
+				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			
 			} else if (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable) {
