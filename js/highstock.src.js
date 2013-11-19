@@ -6829,11 +6829,11 @@ Axis.prototype = {
 		}
 		
 		if (ret === UNDEFINED) {
-			if (value >= 1000) { // add thousands separators
+			if (value >= 10000) { // add thousands separators
 				ret = numberFormat(value, 0);
 
 			} else { // small numbers
-				ret = numberFormat(value, -1);
+				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
 			}
 		}
 		
