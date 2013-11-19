@@ -238,7 +238,7 @@
 			delta = e.detail || -(e.wheelDelta / 120);
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 				chart.mapZoom(
-					delta > 0 ? 2 : 0.5,
+					delta > 0 ? 1.5 : 0.75,
 					chart.xAxis[0].toValue(e.chartX),
 					chart.yAxis[0].toValue(e.chartY)
 				);
@@ -977,6 +977,7 @@
 			dashstyle: 'dashStyle'
 		},
 		pointClass: MapAreaPoint,
+		pointArrayMap: ['value'],
 		axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 		optionalAxis: 'colorAxis',
 		trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
