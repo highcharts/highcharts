@@ -12807,6 +12807,9 @@ Point.prototype = {
 						graphic.attr(point.pointAttr[point.state || '']);
 					}
 				}
+				if (options.dataLabels && point.dataLabel) { // #2468
+					point.dataLabel = point.dataLabel.destroy();
+				}
 			}
 
 			// record changes in the parallel arrays
@@ -14682,7 +14685,6 @@ Series.prototype = {
 				// Determine if each data label is enabled
 				pointOptions = point.options && point.options.dataLabels;
 				enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
-				
 				
 				// If the point is outside the plot area, destroy it. #678, #820
 				if (dataLabel && !enabled) {
