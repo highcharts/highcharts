@@ -7320,7 +7320,7 @@ Axis.prototype = {
 		}
 
 		// handle zoomed range
-		if (axis.range) {
+		if (axis.range && defined(axis.max)) {
 			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
 			if (secondPass) {
@@ -19181,11 +19181,12 @@ RangeSelector.prototype = {
 	 * @param {Object} rangeOptions
 	 * @param {Boolean} redraw
 	 */
-	clickButton: function (i, rangeOptions, redraw) {
+	clickButton: function (i, redraw) {
 		var rangeSelector = this,
 			selected = rangeSelector.selected,
 			chart = rangeSelector.chart,
 			buttons = rangeSelector.buttons,
+			rangeOptions = rangeSelector.buttonOptions[i],
 			baseAxis = chart.xAxis[0],
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis || {},
 			dataMin = unionExtremes.dataMin,
@@ -19255,7 +19256,7 @@ RangeSelector.prototype = {
 			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
 			} else {
 				addEvent(chart, 'beforeRender', function () {
-					rangeSelector.clickButton(i, rangeOptions);
+					rangeSelector.clickButton(i);
 				});
 				return;
 			}
@@ -19344,7 +19345,6 @@ RangeSelector.prototype = {
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
-			buttons = rangeSelector.buttons = [],
 			selectedOption = options.selected,
 			blurInputs = rangeSelector.blurInputs = function () {
 				var minInput = rangeSelector.minInput,
@@ -19371,21 +19371,13 @@ RangeSelector.prototype = {
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
-			this.clickButton(selectedOption, buttonOptions[selectedOption], false);
+			this.clickButton(selectedOption, false);
 		}
 
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (chart.fixedRange !== mathRound(this.max - this.min)) {
-					if (buttons[rangeSelector.selected]) {
-						buttons[rangeSelector.selected].setState(0);
-					}
-					rangeSelector.setSelected(null);
-				}
-
-				rangeSelector.updateButtonStates();
-
+				rangeSelector.updateButtonStates(true);
 			});
 		});
 	},
@@ -19393,7 +19385,7 @@ RangeSelector.prototype = {
 	/**
 	 * Dynamically update the range selector buttons after a new range has been set
 	 */
-	updateButtonStates: function () {
+	updateButtonStates: function (updating) {
 		var rangeSelector = this,
 			chart = this.chart,
 			baseAxis = chart.xAxis[0],
@@ -19402,6 +19394,13 @@ RangeSelector.prototype = {
 			dataMax = unionExtremes.dataMax,
 			selected = rangeSelector.selected,
 			buttons = rangeSelector.buttons;
+
+		if (updating && chart.fixedRange !== mathRound(baseAxis.max - baseAxis.min)) {
+			if (buttons[selected]) {
+				buttons[selected].setState(0);
+			}
+			rangeSelector.setSelected(null);
+		}
 
 		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 			var range = rangeOptions._range,
@@ -19652,7 +19651,7 @@ RangeSelector.prototype = {
 						buttonLeft,
 						chart.plotTop - 25,
 						function () {
-							rangeSelector.clickButton(i, rangeOptions);
+							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
 						},
 						buttonTheme,

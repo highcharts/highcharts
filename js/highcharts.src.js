@@ -7211,7 +7211,7 @@ Axis.prototype = {
 		}
 
 		// handle zoomed range
-		if (axis.range) {
+		if (axis.range && defined(axis.max)) {
 			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
 			if (secondPass) {
