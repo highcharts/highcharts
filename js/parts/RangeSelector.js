@@ -232,6 +232,7 @@ RangeSelector.prototype = {
 
 		rangeSelector.chart = chart;
 		rangeSelector.options = options;
+		rangeSelector.buttons = [];
 		
 		chart.extraTopMargin = 25;
 		rangeSelector.buttonOptions = buttonOptions;

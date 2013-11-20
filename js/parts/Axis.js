@@ -929,9 +929,8 @@ Axis.prototype = {
 		if (axis.range && defined(axis.max)) {
 			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
-			if (secondPass) {
-				axis.range = null;  // don't use it when running setExtremes
-			}
+			
+			axis.range = null;  // don't use it when running setExtremes
 		}
 		
 		// Hook for adjusting this.min and this.max. Used by bubble series.
