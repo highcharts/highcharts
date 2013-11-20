@@ -12760,7 +12760,10 @@ Series.prototype = {
 		var series = this,
 			eventType,
 			events,
-			chartSeries = chart.series;
+			chartSeries = chart.series,
+			sortByIndex = function (a, b) {
+				return pick(a.options.index, a._i) - pick(b.options.index, a._i);
+			};
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -12814,10 +12817,12 @@ Series.prototype = {
 		chartSeries.push(series);
 		series._i = chartSeries.length - 1;
 		
-		// Sort series according to index option (#248, #1123)
-		stableSort(chartSeries, function (a, b) {
-			return pick(a.options.index, a._i) - pick(b.options.index, a._i);
-		});
+		// Sort series according to index option (#248, #1123, #2456)
+		stableSort(chartSeries, sortByIndex);
+		if (this.yAxis) {
+			stableSort(this.yAxis.series, sortByIndex);
+		}
+
 		each(chartSeries, function (series, i) {
 			series.index = i;
 			series.name = series.name || 'Series ' + (i + 1);
@@ -13668,7 +13673,6 @@ Series.prototype = {
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
-
 		
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
@@ -16162,6 +16166,7 @@ var PieSeries = {
 	requireSorting: false,
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
+	axisTypes: [],
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
