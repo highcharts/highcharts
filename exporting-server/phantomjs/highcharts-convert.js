@@ -62,7 +62,7 @@
 				if (key === 'infile' || key === 'callback' || key === 'dataoptions' || key === 'globaloptions' || key === 'customcode') {
 					// get string from file
 					try {
-						map[key] = fs.read(system.args[i + 1]);
+						map[key] = fs.read(system.args[i + 1]).replace(/^\s+/, '');
 					} catch (e) {
 						console.log('Error: cannot find file, ' + system.args[i + 1]);
 						phantom.exit();
@@ -483,7 +483,8 @@
 					customCode = 'function customCode(options) {\n' + params.customcode + '}\n';
 
 				/* Decide if we have to generate a svg first before rendering */
-				if (input.substring(0, 4).toLowerCase() === "<svg") {
+				if (input.substring(0, 4).toLowerCase() === "<svg" || input.substring(0, 5).toLowerCase() === "<?xml"
+					|| input.substring(0, 9).toLowerCase() === "<!doctype") {
 					//render page directly from svg file
 					svg = page.evaluate(loadChart, input, outType, messages);
 					page.viewportSize = { width: svg.width, height: svg.height };
