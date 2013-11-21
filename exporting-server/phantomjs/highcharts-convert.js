@@ -267,7 +267,6 @@
 						img = new Image();
 						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
 						img.onload = img.onerror = decrementImgCounter;
-						img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
 						img.src = images[i].href.baseVal;
 					}
@@ -325,19 +324,18 @@
 			}
 
 			function loadImages() {
-				var images = document.getElementsByTagName('image'), i, img;
+				var $images = $('svg image'), i, img;
 
-				if (images.length > 0) {
+				if ($images.length > 0) {
 
-					counter = images.length;
+					counter = $images.length;
 
-					for (i = 0; i < images.length; i += 1) {
+					for (i = 0; i < $images.length; i += 1) {
 						img = new Image();
 						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
 						img.onload = img.onerror = decrementImgCounter;
-						img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
-						img.src = images[i].href.baseVal;
+						img.src = $images[i].getAttribute('href');
 					}
 				} else {
 					// no images set property to:imagesLoaded = true
