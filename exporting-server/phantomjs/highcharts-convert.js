@@ -256,10 +256,6 @@
 				}
 			}
 
-			function loadingImage() {
-				decrementImgCounter();
-			}
-
 			function loadImages() {
 				var images = document.getElementsByTagName('image'), i, img;
 
@@ -269,8 +265,8 @@
 
 					for (i = 0; i < images.length; i += 1) {
 						img = new Image();
-						img.onload = loadingImage;
-						/* if error (perhaps 404), then we wont wait for this image to be loaded */
+						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
+						img.onload = img.onerror = decrementImgCounter;
 						img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
 						img.src = images[i].href.baseVal;
@@ -328,29 +324,23 @@
 				}
 			}
 
-			function loadingImage() {
-				decrementImgCounter();
-			}
-
 			function loadImages() {
-				// are images loaded?
-				var $images = $('svg image'), i, img;
+				var images = document.getElementsByTagName('image'), i, img;
 
-				if ($images.length > 0) {
+				if (images.length > 0) {
 
-					counter = $images.length;
+					counter = images.length;
 
-					for (i = 0; i < $images.length; i += 1) {
+					for (i = 0; i < images.length; i += 1) {
 						img = new Image();
-						img.onload = loadingImage;
-						/* if error (perhaps 404), then we wont wait for this image to be loaded */
+						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
+						img.onload = img.onerror = decrementImgCounter;
 						img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
-						img.src = $images[i].getAttribute('href');
+						img.src = images[i].href.baseVal;
 					}
 				} else {
-					// no images set property to all images
-					// loaded
+					// no images set property to:imagesLoaded = true
 					console.log(messages.imagesLoaded);
 				}
 			}
