@@ -2,6 +2,7 @@ products.js
 highcharts.js
 highcharts.src.js
 highcharts-more.js
+highcharts-3d.js
 modules/data.js
 modules/canvas-tools.js
 modules/exporting.js

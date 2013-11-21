@@ -10,6 +10,9 @@ if ($target == 'highchartsmore') {
 	$partsDir = 'parts-more/';
 }
 
+if ($target == 'highcharts3d') {
+	$partsDir = 'parts-3d/';
+}
 
 $xml = simplexml_load_file('../build.xml');
 

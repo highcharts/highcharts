@@ -37,6 +37,7 @@
         <!-- highcharts/highstock src -->
         <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
         <property name="highchartsmore.parts.dir" location="${basedir}/js/parts-more"/>
+        <property name="highcharts3d.parts.dir" location="${basedir}/js/parts-3d"/>
 
         <property name="highcharts.src.name" value="highcharts.src.js"/>
         <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}"/>
@@ -47,6 +48,9 @@
         <property name="highchartsmore.src.name" value="highcharts-more.src.js"/>
         <property name="highchartsmore.src.file" value="${basedir}/js/${highchartsmore.src.name}"/>
         <property name="highchartsmore.minified.name" value="highcharts-more.js"/>
+        <property name="highcharts3d.src.name" value="highcharts-3d.src.js"/>
+        <property name="highcharts3d.src.file" value="${basedir}/js/${highcharts3d.src.name}"/>
+        <property name="highcharts3d.minified.name" value="highcharts-3d.js"/>
         <property name="mootools.src.name" value="mootools-adapter.src.js"/>
         <property name="prototype.src.name" value="prototype-adapter.src.js"/>
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
@@ -219,10 +223,17 @@
             <file name="Outro.js"/>
         </filelist>
 
+        <!-- This is the list of files for highcharts-3d -->
+        <filelist id="highcharts3d.files" dir="${highcharts3d.parts.dir}">
+            <file name="Intro.js"/>
+            <file name="Outro.js"/>
+        </filelist>
+        
         <filelist id="highcharts-all.files" dir="${dist.dir}">
             <file name="js/adapters/${standalone.minified.name}"/>
             <file name="highcharts/js/${highcharts.minified.name}"/>
             <file name="highcharts/js/${highchartsmore.minified.name}"/>
+            <file name="highcharts/js/${highcharts3d.minified.name}"/>
             <file name="js/modules/${exporting.minified.name}"/>
             <file name="js/modules/${data.minified.name}"/>
         </filelist>
@@ -291,6 +302,19 @@
             </filterchain>
         </concat>
 
+        <!-- Concat highcharts-3d src and replace the product name and version -->
+        <concat destfile="${highcharts3d.src.file}" encoding="UTF-8">
+            <filelist refid="highcharts3d.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+        
         <!-- Concat canvg library together with rgbcolor script -->
         <concat destfile="build/canvas-tools.src.js">
             <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
@@ -324,6 +348,7 @@
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
             <fileset file="${highstock.src.file}"/>
             <fileset file="${highchartsmore.src.file}"/>
+            <fileset file="${highcharts3d.src.file}"/>
             <fileset file="${mootools.src.file}"/>
             <fileset file="${prototype.src.file}"/>
             <fileset file="${standalone.src.file}"/>
@@ -365,6 +390,11 @@
                 <exclude name="Outro.js"/>
             </fileset>
             <fileset dir="${highchartsmore.parts.dir}">
+                <include name="*.js"/>
+                <exclude name="Intro.js"/>
+                <exclude name="Outro.js"/>
+            </fileset>
+            <fileset dir="${highcharts3d.parts.dir}">
                 <include name="*.js"/>
                 <exclude name="Intro.js"/>
                 <exclude name="Outro.js"/>
@@ -442,6 +472,14 @@
         <antcall target="compile">
             <param name="param.src" value="${highchartsmore.src.file}"/>
             <param name="param.out" value="${dist.dir}/highstock/js/${highchartsmore.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${highcharts3d.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts3d.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${highcharts3d.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highstock/js/${highcharts3d.minified.name}"/>
         </antcall>
         <antcall target="compile">
             <param name="param.src" value="${mootools.src.file}"/>
@@ -593,6 +631,9 @@
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
 
+        <copy file="${highcharts3d.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${highcharts3d.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
+        
         <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
@@ -707,6 +748,7 @@
         <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highcharts/js/highcharts-3d.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/modules/data.js" todir="exporting-server/phantomjs/"/>
         
         <!-- copy files from phantomjs to java export server -->
