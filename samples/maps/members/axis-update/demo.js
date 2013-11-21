@@ -6,7 +6,7 @@ $(function () {
         $('#container').highcharts('Map', {
 
             title : {
-                text : 'Set axis extremes'
+                text : 'Update the color axis'
             },
 
             colorAxis: {
