@@ -249,12 +249,15 @@
 			document.body.style.margin = '0px';
 			document.body.innerHTML = input;
 
-			function loadingImage() {
-				console.log('Loading image ' + counter);
+			function decrementImgCounter() {
 				counter -= 1;
 				if (counter < 1) {
 					console.log(messages.imagesLoaded);
 				}
+			}
+
+			function loadingImage() {
+				decrementImgCounter();
 			}
 
 			function loadImages() {
@@ -267,6 +270,8 @@
 					for (i = 0; i < images.length; i += 1) {
 						img = new Image();
 						img.onload = loadingImage;
+						/* if error (perhaps 404), then we wont wait for this image to be loaded */
+						img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
 						img.src = images[i].href.baseVal;
 					}
@@ -316,13 +321,15 @@
 				}
 			}
 
-			// are all images loaded in time?
-			function loadingImage() {
-				console.log('loading image ' + counter);
+			function decrementImgCounter() {
 				counter -= 1;
 				if (counter < 1) {
 					console.log(messages.imagesLoaded);
 				}
+			}
+
+			function loadingImage() {
+				decrementImgCounter();
 			}
 
 			function loadImages() {
@@ -336,6 +343,8 @@
 					for (i = 0; i < $images.length; i += 1) {
 						img = new Image();
 						img.onload = loadingImage;
+						/* if error (perhaps 404), then we wont wait for this image to be loaded */
+						img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
 						img.src = $images[i].getAttribute('href');
 					}
