@@ -226,6 +226,12 @@
         <!-- This is the list of files for highcharts-3d -->
         <filelist id="highcharts3d.files" dir="${highcharts3d.parts.dir}">
             <file name="Intro.js"/>
+            <file name="Globals.js"/>
+            <file name="Math.js"/>
+            <file name="SVGRenderer.js"/>
+            <file name="Chart.js"/>
+            <file name="Axis.js"/>
+            <file name="Column.js"/>
             <file name="Outro.js"/>
         </filelist>
         
