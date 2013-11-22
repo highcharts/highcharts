@@ -63,3 +63,36 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		}
 	}
 });
+
+H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
+	if (path === null) { return path; }
+
+	var chart = this.chart;
+		options3d = chart.options.D3,
+		d = options3d.depth * 1.5 * chart.getNumberOfStacks();
+
+	options3d.origin = {
+		//x: chart.plotLeft + (chart.yAxis[0].opposite ? 0 : chart.plotWidth),
+		//y: chart.plotTop,
+		x: chart.plotLeft,
+		y: chart.plotTop + chart.plotHeight,
+		z: chart.getTotalDepth()
+	}
+	var pArr = [
+		{ x: path[1], y: path[2], z : (this.horiz || this.opposite ? d : 0)},
+		{ x: path[1], y: path[2], z : d },
+		{ x: path[4], y: path[5], z : d },
+		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)},
+	];
+
+	pArr = perspective(pArr, options3d);
+
+	path = [
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[1].x, pArr[1].y,
+		'L', pArr[2].x, pArr[2].y,
+		'L', pArr[3].x, pArr[3].y
+	]
+	return path;
+});
