@@ -29,11 +29,13 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			w = this.horiz ? this.len : options.lineWidth * 5,
 			d = chart.getTotalDepth();
 
+		var nstacks = chart.getNumberOfStacks();
+
 		if (this.horiz) {
 			axis.axisLine  = renderer.cube(x1, y1, z1, w, h, d, options3d)
 				.attr({
 					fill: options.lineColor,
-					zIndex: 7
+					zIndex: nstacks + 2
 				})
 				.add(axis.axisGroup);
 		} else {
@@ -43,7 +45,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			var back = renderer.cube(x1 - w, y1, z1 + d, this.width + w, h + w, w, options3d)
 				.attr({
 					fill: options.lineColor,
-					zIndex: 7
+					zIndex: nstacks + 2
 				})
 				.add(axis.axisLineGroup);
 			axisLineGroup.children.push(back);
@@ -52,7 +54,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			var side = renderer.cube(x1 - w, y1, z1, w, h + w, d, options3d)
 				.attr({
 					fill: options.lineColor,
-					zIndex: 7
+					zIndex: nstacks + 2
 				})
 				.add(axis.axisLineGroup);
 			axisLineGroup.children.push(side);

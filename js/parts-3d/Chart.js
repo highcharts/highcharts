@@ -10,10 +10,9 @@
  H.wrap(HC.prototype, 'redraw', function (proceed) {	
 	proceed.apply(this, [].slice.call(arguments, 1));
 
-	
-		var mainSVG = this.container.childNodes[0];
-		this.clipRect.destroy();
-		this.clipRect = this.renderer.rect({x: 0, y: 0, height: this.chartHeight, width: this.chartWidth}).add(mainSVG);
+	var mainSVG = this.container.childNodes[0];
+	this.clipRect.destroy();
+	this.clipRect = this.renderer.rect({x: 0, y: 0, height: this.chartHeight, width: this.chartWidth}).add(mainSVG);
 });
 
 HC.prototype.getZPosition = function(serie) {

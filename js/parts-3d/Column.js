@@ -1,7 +1,6 @@
 /**
  *	Column Extension
  */
-
  H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
     	
@@ -17,7 +16,7 @@
     }
 	
 	H.each(series.data, function (point) {
-		point.shapeType = 'cube2';
+		point.shapeType = 'cube';
 		point.shapeArgs = {
 			x: point.shapeArgs.x,
 			y: point.shapeArgs.y,
@@ -30,4 +29,10 @@
 			animate: true
 		};
 	});	    
+});
+
+  H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+	var nz = this.chart.getZPosition(this) + 1;
+	this.group.attr({zIndex: nz}); 
+	proceed.apply(this, [].slice.call(arguments, 1));
 });
