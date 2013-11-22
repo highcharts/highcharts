@@ -513,9 +513,12 @@
 		visible: true,
 		setVisible: noop,
 		getSeriesExtremes: function () {
-			var series = this.series[0];
-			this.dataMin = series.valueMin;
-			this.dataMax = series.valueMax;
+			var series;
+			if (this.series.length) {
+				series = this.series[0];
+				this.dataMin = series.valueMin;
+				this.dataMax = series.valueMax;
+			}
 		},
 		drawCrosshair: function (e, point) {
 			var newCross = !this.cross,
