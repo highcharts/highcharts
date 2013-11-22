@@ -5977,7 +5977,7 @@ Tick.prototype = {
 				}
 
 			// Don't draw ticks so close they appear as a gray mass
-			} else if (mark) {
+			} else if (mark) {
 				tick.mark = mark.destroy();
 			}
 		}
