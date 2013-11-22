@@ -42,11 +42,12 @@ HC.prototype.getNumberOfStacks = function () {
 
 	// Without grouping all stacks are on the front line.
 	if (options.grouping !== false) {
+		console.log('oink');
 		return 1;
 	}
 
 	// If there is no stacking all series are their own stack.
-	if (options.stacking === null) {
+	if (options.stacking === null || options.stacking === undefined) {
 		return this.series.length;
 	}
 
@@ -55,7 +56,6 @@ HC.prototype.getNumberOfStacks = function () {
 	H.each(this.series, function (serie) {
 		stacks[serie.options.stack || 0] = true;
 	});
-	
 	return stacks.length;
 };
 
