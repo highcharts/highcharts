@@ -9,8 +9,9 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 				angle2: 0,
 				depth: 0,
 				frame: {
-					x: 0,
-					y: [0, 0]
+					bottom: 0,
+					side: 0,
+					back: 0
 				}
 			}
 		}

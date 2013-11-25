@@ -20,18 +20,20 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 	var x1 = this.left,
 		y1 = (this.horiz ? this.top + this.height : this.top),
 		z1 = 0,
-		h = (this.horiz ? frame.x : this.height),
-		w = (this.horiz ? [this.len] : frame.y),
+		h = this.height,
+		w = this.len,
 		d = chart.getTotalDepth();
 
 	var nstacks = chart.getNumberOfStacks();
+	var fbottom = frame.bottom,
+		fside = frame.side,
+		fback = frame.back;
 
-
-	if (this.horiz && h !== 0) {
+	if (this.horiz && fbottom !== 0) {
 		if (axis.axisLine) { 
 				axis.axisLine.destroy();
 			}
-		axis.axisLine  = renderer.cube(x1, y1, z1, w[0], h, d, options3d)
+		axis.axisLine  = renderer.cube(x1, y1, z1, w, fbottom, d, options3d)
 			.attr({
 				fill: options.lineColor,
 				zIndex: nstacks + 2
@@ -40,8 +42,8 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 	} else if (!this.horiz) {
 		var axisLineGroup = renderer.createElement3D().add(axis.axisGroup);
 		// back
-		if (w[1] !== 0) {
-			var back = renderer.cube(x1 - w[0], y1, z1 + d, this.width + w[0], h + frame.x, w[1], options3d)
+		if (fback) {
+			var back = renderer.cube(x1 - fside, y1, z1 + d, this.width + fside, h + fbottom, fback, options3d)
 				.attr({
 					fill: options.lineColor,
 					zIndex: nstacks + 2
@@ -50,11 +52,11 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			axisLineGroup.children.push(back);
 		}
 		// side
-		if (w[0] !== 0) {
+		if (fside) {
 			if (axis.axisLine) { 
 				axis.axisLine.destroy();
 			}
-			var side = renderer.cube(x1 - w[0], y1, z1, w[0], h + frame.x, d, options3d)
+			var side = renderer.cube(x1 - fside, y1, z1, fside, h + fbottom, d, options3d)
 				.attr({
 					fill: options.lineColor,
 					zIndex: nstacks + 2
