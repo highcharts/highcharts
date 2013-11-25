@@ -1,10 +1,25 @@
 /**
  *	3D Chart
  */
+H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
+	userOptions = H.merge({
+		chart: {
+			options3d: {
+				angle1: 0,
+				angle2: 0,
+				depth: 0,
+				frame: {
+					x: 0,
+					y: [0, 0]
+				}
+			}
+		}
+	},
+	userOptions // user's options
+	);
 
-H.wrap(HC.prototype, 'init', function (proceed) {
 	// Proceed as normal
-	proceed.apply(this, [].slice.call(arguments, 1));
+	proceed.apply(this, [userOptions, callback]);
 
 	// Make the clipbox larger
 	var mainSVG = this.container.childNodes[0];
@@ -42,7 +57,6 @@ HC.prototype.getNumberOfStacks = function () {
 
 	// Without grouping all stacks are on the front line.
 	if (options.grouping !== false) {
-		console.log('oink');
 		return 1;
 	}
 
@@ -60,5 +74,5 @@ HC.prototype.getNumberOfStacks = function () {
 };
 
 HC.prototype.getTotalDepth = function () {
-	return this.getNumberOfStacks() * this.options.chart.options3d.depth * 1.5;
+	return this.getNumberOfStacks() * (this.options.chart.options3d.depth || 0) * 1.5;
 };

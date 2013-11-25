@@ -2,19 +2,25 @@
  *	Mathematical Functionility
  */
 
+H.toRadians = function (val) { 
+	return val * Math.PI / 180; 
+};
+
 var sin = Math.sin;
 var cos = Math.cos;
 var round = Math.round;
 
-function perspective(points, options) {
+//function perspective(points, options) {
+function perspective(points, angle1, angle2, origin) {
 	var result = [];
+	var xe, ye, ze;
 
-	var angle1 = -options.angle1,
-		angle2 = options.angle2,
-		xe = options.origin.x,
-		ye = options.origin.y,
-		ze = options.origin.z * 100;
+	angle1 = -angle1;
 	
+	xe = origin.x;
+	ye = origin.y;
+	ze = (origin.z === 0 ? 0.0001 : origin.z * 1000);
+
 	var s1 = sin(angle1),
 		c1 = cos(angle1),
 		s2 = sin(angle2),

@@ -6,6 +6,7 @@ var SVG_NS = 'http://www.w3.org/2000/svg';
 
 var H = Highcharts,
 	HC = H.Chart,
+	HC3 = H.Chart3D,
 	HR = H.SVGRenderer,
 	HA = H.Axis;
 

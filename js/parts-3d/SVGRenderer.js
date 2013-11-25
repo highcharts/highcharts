@@ -1,7 +1,6 @@
 /**
  *	Extension of the Renderer
  */
-
 HR.prototype.createElement3D = function () {
 	var wrapper = new this.Element();
 	wrapper.init(this, 'g');
@@ -82,7 +81,7 @@ HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
 		{ x: x, y: y + h, z: z + d }
 	];
 
-	pArr = perspective(pArr, options);
+	pArr = perspective(pArr, options.angle1, options.angle2, options.origin);
 
 	var front = this.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
 	var top = this.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);

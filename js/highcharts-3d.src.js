@@ -21,6 +21,7 @@ var SVG_NS = 'http://www.w3.org/2000/svg';
 
 var H = Highcharts,
 	HC = H.Chart,
+	HC3 = H.Chart3D,
 	HR = H.SVGRenderer,
 	HA = H.Axis;
 
@@ -40,19 +41,25 @@ function arraySize(array) {
  *	Mathematical Functionility
  */
 
+H.toRadians = function (val) { 
+	return val * Math.PI / 180; 
+};
+
 var sin = Math.sin;
 var cos = Math.cos;
 var round = Math.round;
 
-function perspective(points, options) {
+//function perspective(points, options) {
+function perspective(points, angle1, angle2, origin) {
 	var result = [];
+	var xe, ye, ze;
 
-	var angle1 = -options.angle1,
-		angle2 = options.angle2,
-		xe = options.origin.x,
-		ye = options.origin.y,
-		ze = options.origin.z * 100;
+	angle1 = -angle1;
 	
+	xe = origin.x;
+	ye = origin.y;
+	ze = (origin.z === 0 ? 0.0001 : origin.z * 1000);
+
 	var s1 = sin(angle1),
 		c1 = cos(angle1),
 		s2 = sin(angle2),
@@ -81,7 +88,6 @@ function perspective(points, options) {
 /**
  *	Extension of the Renderer
  */
-
 HR.prototype.createElement3D = function () {
 	var wrapper = new this.Element();
 	wrapper.init(this, 'g');
@@ -162,7 +168,7 @@ HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
 		{ x: x, y: y + h, z: z + d }
 	];
 
-	pArr = perspective(pArr, options);
+	pArr = perspective(pArr, options.angle1, options.angle2, options.origin);
 
 	var front = this.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
 	var top = this.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);
@@ -197,10 +203,25 @@ HR.prototype.toLinePath = function (points, closed) {
 /**
  *	3D Chart
  */
+H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
+	userOptions = H.merge({
+		chart: {
+			options3d: {
+				angle1: 0,
+				angle2: 0,
+				depth: 0,
+				frame: {
+					x: 0,
+					y: [0, 0]
+				}
+			}
+		}
+	},
+	userOptions // user's options
+	);
 
-H.wrap(HC.prototype, 'init', function (proceed) {
 	// Proceed as normal
-	proceed.apply(this, [].slice.call(arguments, 1));
+	proceed.apply(this, [userOptions, callback]);
 
 	// Make the clipbox larger
 	var mainSVG = this.container.childNodes[0];
@@ -242,7 +263,7 @@ HC.prototype.getNumberOfStacks = function () {
 	}
 
 	// If there is no stacking all series are their own stack.
-	if (options.stacking === null) {
+	if (options.stacking === null || options.stacking === undefined) {
 		return this.series.length;
 	}
 
@@ -251,12 +272,11 @@ HC.prototype.getNumberOfStacks = function () {
 	H.each(this.series, function (serie) {
 		stacks[serie.options.stack || 0] = true;
 	});
-	
 	return stacks.length;
 };
 
 HC.prototype.getTotalDepth = function () {
-	return this.getNumberOfStacks() * this.options.chart.options3d.depth * 1.5;
+	return this.getNumberOfStacks() * (this.options.chart.options3d.depth || 0) * 1.5;
 };
 /**
  *	Extension for the Axis
@@ -268,58 +288,90 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		chart = axis.chart,
 		renderer = chart.renderer,
 		options = axis.options,
-		options3d = chart.options.chart.options3d;
+		options3d = chart.options.chart.options3d,
+		frame = options3d.frame;
 
 	options3d.origin = {
-		x: chart.plotLeft,
-		y: chart.plotTop + chart.plotHeight,
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
 		z: chart.getTotalDepth()
 	};
 
 	// AxisLines --> replace with flat cubes
-	if (options.lineWidth > 0) {
+	if (axis.axisLine) {
 		axis.axisLine.destroy();
+	}
 
-		var x1 = this.left,
-			y1 = (this.horiz ? this.top + this.height : this.top),
-			z1 = 0,
-			h = (this.horiz ? options.lineWidth * 5 : this.height),
-			w = (this.horiz ? this.len : options.lineWidth * 5),
-			d = chart.getTotalDepth();
+	var x1 = this.left,
+		y1 = (this.horiz ? this.top + this.height : this.top),
+		z1 = 0,
+		h = (this.horiz ? frame.x : this.height),
+		w = (this.horiz ? [this.len] : frame.y),
+		d = chart.getTotalDepth();
 
-		var nstacks = chart.getNumberOfStacks();
+	var nstacks = chart.getNumberOfStacks();
 
-		if (this.horiz) {
-			axis.axisLine  = renderer.cube(x1, y1, z1, w, h, d, options3d)
-				.attr({
-					fill: options.lineColor,
-					zIndex: nstacks + 2
-				})
-				.add(axis.axisGroup);
-		} else {
-			var axisLineGroup = renderer.createElement3D().add(axis.axisGroup);
 
-			// back			
-			var back = renderer.cube(x1 - w, y1, z1 + d, this.width + w, h + w, w, options3d)
+	if (this.horiz && h !== 0) {
+		axis.axisLine  = renderer.cube(x1, y1, z1, w[0], h, d, options3d)
+			.attr({
+				fill: options.lineColor,
+				zIndex: nstacks + 2
+			})
+			.add(axis.axisGroup);
+	} else if (!this.horiz) {
+		var axisLineGroup = renderer.createElement3D().add(axis.axisGroup);
+		
+		// back
+		if (w[1] !== 0) {
+			var back = renderer.cube(x1 - w[0], y1, z1 + d, this.width + w[0], h + frame.x, w[1], options3d)
 				.attr({
 					fill: options.lineColor,
 					zIndex: nstacks + 2
 				})
 				.add(axis.axisLineGroup);
 			axisLineGroup.children.push(back);
-			
-			// side
-			var side = renderer.cube(x1 - w, y1, z1, w, h + w, d, options3d)
+		}
+		// side
+		if (w[0] !== 0) {
+			var side = renderer.cube(x1 - w[0], y1, z1, w[0], h + frame.x, d, options3d)
 				.attr({
 					fill: options.lineColor,
 					zIndex: nstacks + 2
 				})
 				.add(axis.axisLineGroup);
 			axisLineGroup.children.push(side);
-
-			axis.axisLine = axisLineGroup;
 		}
+		axis.axisLine = axisLineGroup;
 	}
+
+	H.each(axis.tickPositions, function (tickPos) {
+		var tick = axis.ticks[tickPos],
+		label = tick.label,
+		mark = tick.mark;
+
+		if (label) {
+			var xy = label.xy,
+			labelPos = perspective([{x: xy.x, y: xy.y, z: z1 }], options3d.angle1, options3d.angle2, options3d.origin)[0];
+
+			label.animate({
+				x: labelPos.x,
+				y: labelPos.y,
+				opacity: xy.opacity					
+			});
+		}
+
+		if (mark) {
+			var path = mark.toD || mark.d.split(' '),
+			pArr = [ 
+			{x: path[1], y: path[2], z: z1 },
+			{x: path[4], y: path[5], z: z1 }
+			];
+			path = chart.renderer.toLinePath(perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin), false);
+			mark.animate({d: path, opacity: 1});
+		}
+	});
+
 });
 
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
@@ -327,12 +379,13 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	if (path === null) { return path; }
 
 	var chart = this.chart,
-		options3d = chart.options.chart.options3d,
-		d = options3d.depth * 1.5 * chart.getNumberOfStacks();
+		options3d = chart.options.chart.options3d;
+
+	var d = options3d.depth * 1.5 * chart.getNumberOfStacks();
 
 	options3d.origin = {
-		x: chart.plotLeft,
-		y: chart.plotTop + chart.plotHeight,
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
 		z: chart.getTotalDepth()
 	};
 
@@ -343,7 +396,7 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
 	];
 
-	pArr = perspective(pArr, options3d);
+	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
 	return path;
@@ -359,9 +412,11 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 	zPos = chart.getZPosition(series),
 	options3d = chart.options.chart.options3d;
 
+	options3d.depth = options3d.depth || 0;
+
 	options3d.origin = { 
-		x: series.yAxis.opposite ? chart.plotWidth : 0,
-		y: chart.plotHeight,
+		x: chart.plotWidth / 2,
+		y: chart.plotHeight / 2,
 		z: chart.getTotalDepth()
 	};
 
@@ -382,7 +437,17 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 });
 
 H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
-	var nz = this.chart.getZPosition(this) + 1;
+	var options = this.chart.options.plotOptions.column,
+		nz;
+
+	// Without grouping all stacks are on the front line.
+	if (options.grouping !== false) {
+		nz = this._i;
+	} else {
+		nz = this.chart.getZPosition(this) + 1;
+	}
+
+
 	this.group.attr({zIndex: nz}); 
 	proceed.apply(this, [].slice.call(arguments, 1));
 });

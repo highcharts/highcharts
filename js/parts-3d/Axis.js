@@ -8,18 +8,14 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		chart = axis.chart,
 		renderer = chart.renderer,
 		options = axis.options,
-		options3d = chart.options.chart.options3d;
+		options3d = chart.options.chart.options3d,
+		frame = options3d.frame;
 
 	options3d.origin = {
-		x: chart.plotLeft,
-		y: chart.plotTop + chart.plotHeight,
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
 		z: chart.getTotalDepth()
 	};
-
-	var frame = options3d.frame || { x: this.lineWidth, y : [this.lineWidth, this.lineWidth] };
-
-	// AxisLines --> replace with flat cubes
-	if (axis.axisLine) axis.axisLine.destroy();
 
 	var x1 = this.left,
 		y1 = (this.horiz ? this.top + this.height : this.top),
@@ -30,37 +26,46 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 
 	var nstacks = chart.getNumberOfStacks();
 
-	if (this.horiz) {
+
+	if (this.horiz && h !== 0) {
+		if (axis.axisLine) { 
+				axis.axisLine.destroy();
+			}
 		axis.axisLine  = renderer.cube(x1, y1, z1, w[0], h, d, options3d)
 			.attr({
 				fill: options.lineColor,
 				zIndex: nstacks + 2
 			})
 			.add(axis.axisGroup);
-	} else {
+	} else if (!this.horiz) {
 		var axisLineGroup = renderer.createElement3D().add(axis.axisGroup);
-		
-		// back			
-		var back = renderer.cube(x1 - w[0], y1, z1 + d, this.width + w[0], h + options3d.frame.x, w[1], options3d)
-			.attr({
-				fill: options.lineColor,
-				zIndex: nstacks + 2
-			})
-			.add(axis.axisLineGroup);
-		axisLineGroup.children.push(back);
-		
+		// back
+		if (w[1] !== 0) {
+			var back = renderer.cube(x1 - w[0], y1, z1 + d, this.width + w[0], h + frame.x, w[1], options3d)
+				.attr({
+					fill: options.lineColor,
+					zIndex: nstacks + 2
+				})
+				.add(axis.axisLineGroup);
+			axisLineGroup.children.push(back);
+		}
 		// side
-		var side = renderer.cube(x1 - w[0], y1, z1, w[0], h + frame.x, d, options3d)
-			.attr({
-				fill: options.lineColor,
-				zIndex: nstacks + 2
-			})
-			.add(axis.axisLineGroup);
-		axisLineGroup.children.push(side);
-
+		if (w[0] !== 0) {
+			if (axis.axisLine) { 
+				axis.axisLine.destroy();
+			}
+			var side = renderer.cube(x1 - w[0], y1, z1, w[0], h + frame.x, d, options3d)
+				.attr({
+					fill: options.lineColor,
+					zIndex: nstacks + 2
+				})
+				.add(axis.axisLineGroup);
+			axisLineGroup.children.push(side);
+		} else {
+			axisLineGroup.children.push(axis.axisLine);
+		}
 		axis.axisLine = axisLineGroup;
 	}
-	
 
 	H.each(axis.tickPositions, function (tickPos) {
 		var tick = axis.ticks[tickPos],
@@ -69,9 +74,9 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 
 		if (label) {
 			var xy = label.xy,
-			labelPos = perspective([{x: xy.x, y: xy.y, z: z1 }], options3d)[0];
+			labelPos = perspective([{x: xy.x, y: xy.y, z: z1 }], options3d.angle1, options3d.angle2, options3d.origin)[0];
 
-			label['animate']({
+			label.animate({
 				x: labelPos.x,
 				y: labelPos.y,
 				opacity: xy.opacity					
@@ -79,12 +84,12 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		}
 
 		if (mark) {
-			var path = (mark.toD ? mark.toD : mark.d.split(' ')),
+			var path = mark.toD || mark.d.split(' '),
 			pArr = [ 
 			{x: path[1], y: path[2], z: z1 },
 			{x: path[4], y: path[5], z: z1 }
 			];
-			path = chart.renderer.toLinePath(perspective(pArr, options3d), false);
+			path = chart.renderer.toLinePath(perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin), false);
 			mark.animate({d: path, opacity: 1});
 		}
 	});
@@ -96,12 +101,13 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	if (path === null) { return path; }
 
 	var chart = this.chart,
-		options3d = chart.options.chart.options3d,
-		d = options3d.depth * 1.5 * chart.getNumberOfStacks();
+		options3d = chart.options.chart.options3d;
+
+	var d = options3d.depth * 1.5 * chart.getNumberOfStacks();
 
 	options3d.origin = {
-		x: chart.plotLeft,
-		y: chart.plotTop + chart.plotHeight,
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
 		z: chart.getTotalDepth()
 	};
 
@@ -112,7 +118,7 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
 	];
 
-	pArr = perspective(pArr, options3d);
+	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
 	return path;
