@@ -326,7 +326,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		if (fback) {
 			var back = renderer.cube(x1 - fside, y1, z1 + d, this.width + fside, h + fbottom, fback, options3d)
 				.attr({
-					fill: options.lineColor,
+					fill: chart.options.chart.plotBackground || options.lineColor,
 					zIndex: nstacks + 2
 				})
 				.add(axis.axisLineGroup);
@@ -337,7 +337,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			if (axis.axisLine) { 
 				axis.axisLine.destroy();
 			}
-			var side = renderer.cube(x1 - fside, y1, z1, fside, h + fbottom, d, options3d)
+			var side = renderer.cube((this.opposite ? x1 + this.width : x1) - fside, y1, z1, fside, h + fbottom, d, options3d)
 				.attr({
 					fill: options.lineColor,
 					zIndex: nstacks + 2
