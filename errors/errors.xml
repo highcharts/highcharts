@@ -26,7 +26,7 @@
 		<title>Rendering div not found</title>
 		<description>
 			This error occurs if the <a href="http://api.highcharts.com/#renderTo">chart.renderTo</a> 
-			option is misconfugured so that Highcharts is unable to find the HTML element to render the chart in.
+			option is misconfigured so that Highcharts is unable to find the HTML element to render the chart in.
 		</description>
 	</error>
 	<error id="14">
