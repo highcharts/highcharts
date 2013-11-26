@@ -327,7 +327,7 @@
 			Axis.prototype.init.call(this, chart, options);
 
 			// Base init() pushes it to the xAxis array, now pop it again
-			chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
+			//chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
 
 			// Prepare data classes
 			if (userOptions.dataClasses) {
@@ -376,6 +376,7 @@
 			each(this.stops, function (stop) {
 				stop.color = Color(stop[1]);
 			});
+			this.coll = 'colorAxis';
 		},
 
 		setAxisSize: function () {
@@ -456,7 +457,7 @@
 
 				Axis.prototype.getOffset.call(this);
 				
-				if (!this.added) {
+				if (!this.axisGroup.parentGroup) {
 
 					// Move the axis elements inside the legend group
 					this.axisGroup.add(group);
@@ -467,21 +468,15 @@
 				}
 			}
 		},
-		/**
-		 * The color axis appears inside the legend and has its own legend symbol
-		 */
-		drawLegendSymbol: function (legend, item) {
-			var padding = legend.padding,
-				legendOptions = legend.options,
-				horiz = legendOptions.layout === 'horizontal',
-				box,
-				width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
-				height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
-				labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30),
-				options = this.options,
-				grad;
 
-			// Create the color gradient
+		/**
+		 * Create the color gradient
+		 */
+		setLegendColor: function () {
+			var grad,
+				horiz = this.horiz,
+				options = this.options;
+
 			grad = horiz ? [0, 0, 1, 0] : [0, 0, 0, 1]; 
 			this.legendColor = {
 				linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
@@ -490,6 +485,23 @@
 					[1, options.maxColor]
 				]
 			};
+		},
+
+		/**
+		 * The color axis appears inside the legend and has its own legend symbol
+		 */
+		drawLegendSymbol: function (legend, item) {
+			var padding = legend.padding,
+				legendOptions = legend.options,
+				horiz = this.horiz,
+				box,
+				width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
+				height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
+				labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30),
+				options = this.options,
+				grad;
+
+			this.setLegendColor();
 
 			// Create the gradient
 			item.legendSymbol = this.chart.renderer.rect(
@@ -558,6 +570,14 @@
 					['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
 			} else {
 				return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
+			}
+		},
+
+		update: function (newOptions, redraw) {
+			Axis.prototype.update.call(this, newOptions, redraw);
+			if (this.legendItem) {
+				this.setLegendColor();
+				this.chart.legend.colorizeItem(this, true);
 			}
 		},
 
@@ -814,7 +834,7 @@
 
 		this.colorAxis = [];
 		if (colorAxisOptions) {
-			this.colorAxis.push(new ColorAxis(this, colorAxisOptions));
+			new ColorAxis(this, colorAxisOptions);
 		}
 	});
 
@@ -1214,6 +1234,7 @@
 				if (color) {
 					point.color = null; // reset from previous drilldowns, use of the same data options
 					point.options.color = color;
+					//point.color = color;
 				}
 			});
 		},
@@ -1242,18 +1263,27 @@
 			each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
 			});
-			
+
+
 			// Draw them
 			seriesTypes.column.prototype.drawPoints.apply(series);
-			
+
+
+			// Individual point actions	
 			each(series.data, function (point) {
+
+				// Reset color on update/redraw
+				if (series.chart.hasRendered) {
+					point.graphic.attr('fill', point.options.color);
+				}
 
 				// Record the middle point (loosely based on centroid), determined
 				// by the middleX and middleY options.
 				point.plotX = xAxis.toPixels(point._midX, true);
 				point.plotY = yAxis.toPixels(point._midY, true);
 			});
-
+			
+			
 			// Now draw the data labels
 			Series.prototype.drawDataLabels.call(series);
 			

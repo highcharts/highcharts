@@ -39,7 +39,7 @@ $(function () {
         var colorAxis = $('#container').highcharts().colorAxis[0];
 
         colorAxis.update({
-            maxColor: blackAndWhite ? '#102d4c' : '#000000'
+            maxColor: blackAndWhite ? '#980043' : '#000000'
         });
         blackAndWhite = !blackAndWhite;
     });

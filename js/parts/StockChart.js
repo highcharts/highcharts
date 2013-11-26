@@ -172,7 +172,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	if (!defined(point)) { return; }
 
 	var options = this.options.crosshair.label,		// the label's options
-		axis = this.xOrY,							// axis name
+		axis = this.isXAxis ? 'x' : 'y',			// axis name
 		horiz = this.horiz,							// axis orientation
 		opposite = this.opposite,					// axis position
 		left = this.left,							// left position
