@@ -24,51 +24,6 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		w = this.len,
 		d = chart.getTotalDepth();
 
-	var nstacks = chart.getNumberOfStacks();
-	var fbottom = frame.bottom,
-		fside = frame.side,
-		fback = frame.back;
-
-	if (this.horiz && fbottom !== 0) {
-		if (axis.axisLine) { 
-				axis.axisLine.destroy();
-			}
-		axis.axisLine  = renderer.cube(x1, y1, z1, w, fbottom, d, options3d)
-			.attr({
-				fill: options.lineColor,
-				zIndex: nstacks + 2
-			})
-			.add(axis.axisGroup);
-	} else if (!this.horiz) {
-		var axisLineGroup = renderer.createElement3D().add(axis.axisGroup);
-		// back
-		if (fback) {
-			var back = renderer.cube(x1 - fside, y1, z1 + d, this.width + fside, h + fbottom, fback, options3d)
-				.attr({
-					fill: chart.options.chart.plotBackground || options.lineColor,
-					zIndex: nstacks + 2
-				})
-				.add(axis.axisLineGroup);
-			axisLineGroup.children.push(back);
-		}
-		// side
-		if (fside) {
-			if (axis.axisLine) { 
-				axis.axisLine.destroy();
-			}
-			var side = renderer.cube((this.opposite ? x1 + this.width : x1) - fside, y1, z1, fside, h + fbottom, d, options3d)
-				.attr({
-					fill: options.lineColor,
-					zIndex: nstacks + 2
-				})
-				.add(axis.axisLineGroup);
-			axisLineGroup.children.push(side);
-		} else {
-			axisLineGroup.children.push(axis.axisLine);
-		}
-		axis.axisLine = axisLineGroup;
-	}
-
 	H.each(axis.tickPositions, function (tickPos) {
 		var tick = axis.ticks[tickPos],
 		label = tick.label,
