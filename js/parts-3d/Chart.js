@@ -4,6 +4,7 @@
 H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	userOptions = H.merge({
 		chart: {
+			animation: false,
 			options3d: {
 				angle1: 0,
 				angle2: 0,
@@ -15,11 +16,16 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 				}
 			}
 		},
-		xAxis: {
-			lineWidth: 0
+		yAxis: {
+			opposite: false
 		}
 	},
-	userOptions // user's options
+	//user's options
+	userOptions, {
+		chart: {
+			plotBackgroundImage: null,
+		}
+	} // 
 	);
 
 	if (userOptions.yAxis.opposite) {
@@ -30,6 +36,12 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	proceed.apply(this, [userOptions, callback]);
 
 	console.log(this);
+
+	// Destroy the plotBackground
+	if (this.plotBackground) { 
+		this.plotBackground.destroy();
+	}
+
 	// Make the clipbox larger
 	var mainSVG = this.container.childNodes[0];
 	this.clipRect.destroy();
@@ -159,10 +171,10 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		}
 	}
 
-	if (fback) {
+	if (fback || chart.options.chart.plotBackgroundColor) {
 		if (!frameGroup.back) {
 			frameGroup.back = renderer.cube(left, top, depth, width, height, backSize, options3d, opposite, true)
-				.attr({ fill: fback.fillColor || '#C0C0C0' }).add(frameGroup);
+				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.back.animate({
 				x: left,

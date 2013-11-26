@@ -24,6 +24,26 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		w = this.len,
 		d = chart.getTotalDepth();
 
+	if (this.axisLine) {
+		var axisLine = this.axisLine;
+		var hide = (this.horiz ? options3d.frame.bottom : options3d.frame.side);
+		if (hide) {
+			axisLine.hide();
+		} else {
+			var path = axisLine.d.split(' ');
+			var pArr = [
+			{x: path[1], y: path[2], z: 0},
+			{x: path[4], y: path[5], z: 0}
+			];
+			pArr = perspective(pArr,options3d.angle1, options3d.angle2, options3d.origin);
+			path = [
+				'M', pArr[0].x, pArr[0].y,
+				'L', pArr[1].x, pArr[1].y
+				];
+			axisLine.attr({d: path});
+		}		 
+	}
+
 	H.each(axis.tickPositions, function (tickPos) {
 		var tick = axis.ticks[tickPos],
 		label = tick.label,
@@ -51,6 +71,10 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		}
 	});
 
+	// If there is one, update the first one, the rest will follow automatically.
+	if (this.alternateBands[0]) {
+		this.alternateBands[0].svgElem.attr({zIndex: 1});
+	}
 });
 
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
@@ -77,6 +101,20 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 
 	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
-
 	return path;
 });
+
+HA.prototype.getPlotBandPath = function (from, to) {
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
+	if (path && toPath) {
+		return [
+			'M', path[4], path[5],
+			'L', path[7], path[8],
+			'L', toPath[7], toPath[8],
+			'L', toPath[4], toPath[5],
+			'Z'];
+	} else { // outside the axis area
+		return null;
+	}
+};
