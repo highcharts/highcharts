@@ -1081,6 +1081,12 @@
 		getExtremes: function () {
 			// Get the actual value extremes for colors
 			Series.prototype.getExtremes.call(this, this.valueData);
+
+			// Recalculate box on updated data
+			if (this.chart.hasRendered && this.isDirtyData) {
+				this.getBox(this.options.data);
+			}
+
 			this.valueMin = this.dataMin;
 			this.valueMax = this.dataMax;
 
@@ -1199,7 +1205,7 @@
 				doAnimation = chart.pointCount < (chart.options.animationLimit || 250);
 	
 			series.generatePoints();
-	
+			
 			each(series.data, function (point) {
 				
 				var display = doAnimation || 
@@ -1267,7 +1273,6 @@
 
 			// Draw them
 			seriesTypes.column.prototype.drawPoints.apply(series);
-
 
 			// Individual point actions	
 			each(series.data, function (point) {

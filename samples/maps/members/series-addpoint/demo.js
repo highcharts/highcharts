@@ -45,6 +45,7 @@ $(function () {
         // Activate the button
         $('#addpoint').click(function () {
             $('#container').highcharts().series[0].addPoint(greenland);
+            $(this).attr('disabled', true);
         });
     });
 });
