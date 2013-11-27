@@ -12507,7 +12507,7 @@ Point.prototype = {
 						graphic.attr(point.pointAttr[point.state || '']);
 					}
 				}
-				if (options.dataLabels && point.dataLabel) { // #2468
+				if (options && options.dataLabels && point.dataLabel) { // #2468
 					point.dataLabel = point.dataLabel.destroy();
 				}
 			}
