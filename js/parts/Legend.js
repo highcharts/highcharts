@@ -569,7 +569,7 @@ Legend.prototype = {
 				}
 				
 				if (i === allItems.length - 1 && y + h - pages[len - 1] > clipHeight) {
-					pages.push(lastY);
+					pages.push(y);
 				}
 				if (y !== lastY) {
 					lastY = y;
@@ -662,7 +662,7 @@ Legend.prototype = {
 					cursor: currentPage === 1 ? 'default' : 'pointer'
 				});
 			pager.attr({
-				text: currentPage + '/' + this.pageCount
+				text: currentPage + '/' + pageCount
 			});
 			this.down.attr({
 					x: 18 + this.pager.getBBox().width, // adjust to text width
@@ -676,11 +676,7 @@ Legend.prototype = {
 
 			this.scrollGroup.animate({
 				translateY: scrollOffset
-			});
-			pager.attr({
-				text: currentPage + '/' + pageCount
-			});
-			
+			});			
 			
 			this.currentPage = currentPage;
 			this.positionCheckboxes(scrollOffset);
