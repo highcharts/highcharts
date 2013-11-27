@@ -5,6 +5,7 @@ HR.prototype.createElement3D = function (z) {
 	var wrapper = new this.Element();
 	wrapper.init(this, 'g');
 
+	wrapper.attr({zIndex : (z || 0)});
 	wrapper.children = [];
 	wrapper.attrSetters = {};
 
@@ -131,14 +132,25 @@ HR.prototype.arc3dAnimate = function (x, y, a1, d, options) {
 
 	this.top.attr({d: paths.top});
 	this.front.attr({d: paths.front});
+	this.back.attr({d: paths.back});
+	this.side1.attr({d: paths.side1});
+	this.side2.attr({d: paths.side2});
 }
 
 HR.prototype.arc3d = function (x, y, a1, d, options) {
-	var result = this.createElement3D();
+	var z = (typeof x === 'object' ? x.options.start : options.start);
+	z = (sin(z) + 1) * 100;
 
+	var result = this.createElement3D(z);
 
-	result.top = result.addChild(this.path());
+	result.back = result.addChild(this.path());
 	result.front = result.addChild(this.path());
+	result.side1 = result.addChild(this.path());
+	result.side2 = result.addChild(this.path());
+	
+	result.top = result.addChild(this.path());
+	
+	result.attr({zIndex: z});
 
 	this.arc3dAnimate.apply(result, [x, y, a1, d, options]);
 
@@ -147,26 +159,34 @@ HR.prototype.arc3d = function (x, y, a1, d, options) {
 		element.attr({stroke: v, 'stroke-width': 1}); 
 		return v;
 	};
-
-	result.front.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };	
+	
 	result.top.attrSetters.fill = function (value, key) { return filler(this, value, 0); };
-	//result.side.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
+	result.front.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
+	result.back.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
+	result.side1.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
+	result.side2.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
 	return result;
 }
 
 HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	var start = options.start,
-		rx = options.r || w || h,
-		ry = rx * cos(a1);
 		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
-		
-		sx = x + rx * cos(start);
-		sy = y + ry * sin(start);
-		ex = x + rx * cos(end);
-		ey = y + ry * sin(end);
-
-		longArc = end - start < PI ? 0 : 1;
+		longArc = end - start < PI ? 0 : 1,
+		// outside ring
+		rx1 = options.r,
+		ry1 = rx1 * cos(a1),		
+		sx1 = x + rx1 * cos(start),
+		sy1 = y + ry1 * sin(start),
+		ex1 = x + rx1 * cos(end),
+		ey1 = y + ry1 * sin(end),
+		// inside ring
+		rx2 = options.ir,
+		ry2 = rx2 * cos(a1),		
+		sx2 = x + rx2 * cos(end),
+		sy2 = y + ry2 * sin(end),
+		ex2 = x + rx2 * cos(start),
+		ey2 = y + ry2 * sin(start);
 
 	// Normalize angles
 	start = (start + 4 * Math.PI) % (2 * Math.PI);
@@ -178,10 +198,11 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 
 	// TOP SIDE
 	var top =  [
-		'M', sx, sy,
-		'A', rx, ry, 0, longArc, 1, ex, ey,
-		'L', x, y,
-		'L', sx, sy,
+		'M', sx1, sy1,
+		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
+		'L', sx2, sy2,
+		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
+		'L', sx1, sy1,
 		'Z'
 	]
 
@@ -189,37 +210,89 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	var front = [];
 	if ((sQ == 1 || sQ == 2) && (eQ == 1 || eQ == 2)) {
 		front = [		
-		'M', sx, sy,
-		'A', rx, ry, 0, longArc, 1, ex, ey,
-		'L', ex, ey + d,
-		'A', rx, ry, 0, longArc, 0, sx, sy + d,
-		'L', sx, sy,
+		'M', sx1, sy1,
+		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
+		'L', ex1, ey1 + d,
+		'A', rx1, ry1, 0, longArc, 0, sx1, sy1 + d,
+		'L', sx1, sy1,
 		'Z'
 		];
 	}
 	if ((sQ == 1 || sQ == 2) && eQ > 2) {
 		front = [		
-		'M', sx, sy,
-		'A', rx, ry, 0, longArc, 1, x - rx, y,
-		'L', x - rx, y + d,
-		'A', rx, ry, 0, longArc, 0, sx, sy + d,
-		'L', sx, sy,
+		'M', sx1, sy1,
+		'A', rx1, ry1, 0, longArc, 1, x - rx1, y,
+		'L', x - rx1, y + d,
+		'A', rx1, ry1, 0, longArc, 0, sx1, sy1 + d,
+		'L', sx1, sy1,
 		'Z'
 		];
 	}
 
 	if ((sQ == 0 || sQ == 3) && (eQ == 2 || eQ == 1)) {
 		front = [		
-		'M', x + rx, y,
-		'A', rx, ry, 0, longArc, 1, ex, ey,
-		'L', ex, ey + d,
-		'A', rx, ry, 0, longArc, 0, x + rx, y + d,
-		'L', x + rx, y,
+		'M', x + rx1, y,
+		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
+		'L', ex1, ey1 + d,
+		'A', rx1, ry1, 0, longArc, 0, x + rx1, y + d,
+		'L', x + rx1, y,
 		'Z'
 		];		
 	}
+
+	// BACK SIDE
+	var back = [];
+	if ((sQ == 3 || sQ == 0) && (eQ == 3 || eQ == 0)) {
+		back = [
+		'M', sx2, sy2,
+		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
+		'L', ex2, ey2 + d,
+		'A', rx2, ry2, 0, longArc, 1, sx2, sy2 + d,
+		'L', sx2, sy2,
+		'Z'
+		];
+	}
+	if ((sQ < 3 && sQ != 0) && (eQ == 3 || eQ == 0)) {
+		back = [
+		'M', x - rx2, y,
+		'A', rx2, ry2, 0, longArc, 1, sx2, sy2,
+		'L', sx2, sy2 + d,
+		'A', rx2, ry2, 0, longArc, 0, x - rx2, y + d,
+		'L', x - rx2, y,
+		'Z'
+		];		
+	}
+
+	// INNER SIDE 1
+	var side1 = [];
+	if (sQ > 1) {
+		side1 = [
+		'M', sx1, sy1,
+		'L', ex2, ey2,
+		'L', ex2, ey2 + d,
+		'L', sx1, sy1 + d,
+		'Z' 
+		];
+	}
+
+	// INNER SIDE 2
+	var side2 = [];
+	
+	if (eQ <= 1) {
+		side2 = [
+		'M', ex1, ey1,
+		'L', sx2, sy2,
+		'L', sx2, sy2 + d,
+		'L', ex1, ey1 + d,
+		'Z' 
+		];
+	}
+	
 	return {
 		top: top,
 		front: front,
+		back: back,
+		side1: side1,
+		side2: side2
 	};
 }

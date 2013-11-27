@@ -18,7 +18,8 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 			options: {
 				start: point.shapeArgs.start,
 				end: point.shapeArgs.end,
-				r: point.shapeArgs.r
+				r: point.shapeArgs.r,
+				ir: point.shapeArgs.innerR
 			}
 		};
 	});    
