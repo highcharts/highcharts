@@ -16,6 +16,11 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 				}
 			}
 		},
+		plotOptions: {
+			column: {
+				
+			}
+		},
 		yAxis: {
 			opposite: false
 		}
@@ -34,8 +39,6 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 
 	// Proceed as normal
 	proceed.apply(this, [userOptions, callback]);
-
-	console.log(this);
 
 	// Destroy the plotBackground
 	if (this.plotBackground) { 
@@ -66,9 +69,9 @@ HC.prototype.getZPosition = function (serie) {
 	// Count the number of stacks in front of this one.
 	for (cnt = 0; cnt < i; cnt++) {
 		S = this.series[cnt];
-		if (S.visible && !stacks[S.options.stack || 0]) {
+		if (S.visible && !stacks[(stacking ? S.options.stack : S._i) || 0]) {
 			result++;
-			stacks[S.options.stack || 0] = true;
+			stacks[(stacking ? S.options.stack : S._i) || 0] = true;
 		}
 	}
 
@@ -101,6 +104,9 @@ HC.prototype.getTotalDepth = function () {
 };
 
 H.wrap(HC.prototype, 'redraw', function (proceed) {
+	// Set to force a redraw of all elements
+	this.isDirtyBox = true;
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	var chart = this,

@@ -1,7 +1,7 @@
 /**
  *	Extension for the Axis
  */
-H.wrap(HA.prototype, 'render', function (proceed) {	
+H.wrap(HA.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	var axis = this,
@@ -84,7 +84,7 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = options3d.depth * 1.5 * chart.getNumberOfStacks();
+	var d = chart.getTotalDepth();
 
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
