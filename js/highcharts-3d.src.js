@@ -206,6 +206,7 @@ HR.prototype.toLinePath = function (points, closed) {
 H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	userOptions = H.merge({
 		chart: {
+			animation: false,
 			options3d: {
 				angle1: 0,
 				angle2: 0,
@@ -217,11 +218,21 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 				}
 			}
 		},
-		xAxis: {
-			lineWidth: 0
+		plotOptions: {
+			column: {
+				
+			}
+		},
+		yAxis: {
+			opposite: false
 		}
 	},
-	userOptions // user's options
+	//user's options
+	userOptions, {
+		chart: {
+			plotBackgroundImage: null
+		}
+	} // 
 	);
 
 	if (userOptions.yAxis.opposite) {
@@ -231,7 +242,11 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	// Proceed as normal
 	proceed.apply(this, [userOptions, callback]);
 
-	console.log(this);
+	// Destroy the plotBackground
+	if (this.plotBackground) { 
+		this.plotBackground.destroy();
+	}
+
 	// Make the clipbox larger
 	var mainSVG = this.container.childNodes[0];
 	this.clipRect.destroy();
@@ -256,9 +271,9 @@ HC.prototype.getZPosition = function (serie) {
 	// Count the number of stacks in front of this one.
 	for (cnt = 0; cnt < i; cnt++) {
 		S = this.series[cnt];
-		if (S.visible && !stacks[S.options.stack || 0]) {
+		if (S.visible && !stacks[(stacking ? S.options.stack : S._i) || 0]) {
 			result++;
-			stacks[S.options.stack || 0] = true;
+			stacks[(stacking ? S.options.stack : S._i) || 0] = true;
 		}
 	}
 
@@ -291,6 +306,9 @@ HC.prototype.getTotalDepth = function () {
 };
 
 H.wrap(HC.prototype, 'redraw', function (proceed) {
+	// Set to force a redraw of all elements
+	this.isDirtyBox = true;
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	var chart = this,
@@ -314,24 +332,29 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		this.frameGroup = frameGroup = renderer.g().add();
 	}
 
-	var left = chart.plotLeft,
+	var opposite = chart.yAxis[0].opposite,
+		left = chart.plotLeft,
 		top = chart.plotTop,
 		width = chart.plotWidth,
 		height = chart.plotHeight,
 		depth = chart.getTotalDepth(),
-		opposite = chart.yAxis.opposite;
 
 		sideSize = (fside ? fside.size || 0 : 0);
 		bottomSize = (fbottom ? fbottom.size || 0 : 0);
 		backSize = (fback ? fback.size || 0 : 0);
 
+
+	var xval;
+
 	if (fbottom) {
+		xval = (opposite ? left : left - sideSize);
+
 		if (!frameGroup.bottom) {
-			frameGroup.bottom = renderer.cube(left - sideSize, top + height, 0, width + sideSize, bottomSize, depth + backSize, options3d, opposite, true)
+			frameGroup.bottom = renderer.cube(xval, top + height, 0, width + sideSize, bottomSize, depth + backSize, options3d, opposite, true)
 				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.bottom.animate({
-				x: left - sideSize,
+				x: xval,
 				y: top + height,
 				z: 0,
 				w: width + sideSize,
@@ -344,12 +367,14 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 	}
 
 	if (fside) {
+		xval = (opposite ? left + width : left - sideSize);
+
 		if (!frameGroup.side) {
-			frameGroup.side = renderer.cube(left - sideSize, top, 0, sideSize, height, depth + backSize, options3d, opposite, true)
+			frameGroup.side = renderer.cube(xval, top, 0, sideSize, height, depth + backSize, options3d, opposite, true)
 				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.side.animate({
-				x: left - sideSize,
+				x: xval,
 				y: top,
 				z: 0,
 				w: sideSize,
@@ -361,10 +386,10 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		}
 	}
 
-	if (fback) {
+	if (fback || chart.options.chart.plotBackgroundColor) {
 		if (!frameGroup.back) {
 			frameGroup.back = renderer.cube(left, top, depth, width, height, backSize, options3d, opposite, true)
-				.attr({ fill: fback.fillColor || '#C0C0C0' }).add(frameGroup);
+				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.back.animate({
 				x: left,
@@ -381,7 +406,7 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 });/**
  *	Extension for the Axis
  */
-H.wrap(HA.prototype, 'render', function (proceed) {	
+H.wrap(HA.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	var axis = this,
@@ -404,52 +429,26 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		w = this.len,
 		d = chart.getTotalDepth();
 
-	/*
-	var nstacks = chart.getNumberOfStacks();
-	var fbottom = frame.bottom,
-		fside = frame.side,
-		fback = frame.back;
-
-	if (this.horiz && fbottom !== 0) {
-		if (axis.axisLine) { 
-				axis.axisLine.destroy();
-			}
-		axis.axisLine  = renderer.cube(x1, y1, z1, w, fbottom, d, options3d)
-			.attr({
-				fill: options.lineColor,
-				zIndex: nstacks + 2
-			})
-			.add(axis.axisGroup);
-	} else if (!this.horiz) {
-		var axisLineGroup = renderer.createElement3D().add(axis.axisGroup);
-		// back
-		if (fback) {
-			var back = renderer.cube(x1 - fside, y1, z1 + d, this.width + fside, h + fbottom, fback, options3d)
-				.attr({
-					fill: chart.options.chart.plotBackground || options.lineColor,
-					zIndex: nstacks + 2
-				})
-				.add(axis.axisLineGroup);
-			axisLineGroup.children.push(back);
-		}
-		// side
-		if (fside) {
-			if (axis.axisLine) { 
-				axis.axisLine.destroy();
-			}
-			var side = renderer.cube((this.opposite ? x1 + this.width : x1) - fside, y1, z1, fside, h + fbottom, d, options3d)
-				.attr({
-					fill: options.lineColor,
-					zIndex: nstacks + 2
-				})
-				.add(axis.axisLineGroup);
-			axisLineGroup.children.push(side);
+	if (this.axisLine) {
+		var axisLine = this.axisLine;
+		var hide = (this.horiz ? options3d.frame.bottom : options3d.frame.side);
+		if (hide) {
+			axisLine.hide();
 		} else {
-			axisLineGroup.children.push(axis.axisLine);
-		}
-		axis.axisLine = axisLineGroup;
+			var path = axisLine.d.split(' ');
+			var pArr = [
+			{x: path[1], y: path[2], z: 0},
+			{x: path[4], y: path[5], z: 0}
+			];
+			pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
+			path = [
+				'M', pArr[0].x, pArr[0].y,
+				'L', pArr[1].x, pArr[1].y
+				];
+			axisLine.attr({d: path});
+		}		 
 	}
-	*/
+
 	H.each(axis.tickPositions, function (tickPos) {
 		var tick = axis.ticks[tickPos],
 		label = tick.label,
@@ -477,6 +476,10 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		}
 	});
 
+	// If there is one, update the first one, the rest will follow automatically.
+	if (this.alternateBands[0]) {
+		this.alternateBands[0].svgElem.attr({zIndex: 1});
+	}
 });
 
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
@@ -486,7 +489,7 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = options3d.depth * 1.5 * chart.getNumberOfStacks();
+	var d = chart.getTotalDepth();
 
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
@@ -503,10 +506,23 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 
 	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
-
 	return path;
 });
-/**
+
+HA.prototype.getPlotBandPath = function (from, to) {
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
+	if (path && toPath) {
+		return [
+			'M', path[4], path[5],
+			'L', path[7], path[8],
+			'L', toPath[7], toPath[8],
+			'L', toPath[4], toPath[5],
+			'Z'];
+	} else { // outside the axis area
+		return null;
+	}
+};/**
  *	Column Extension
  */
 H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {

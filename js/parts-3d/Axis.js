@@ -35,7 +35,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			{x: path[1], y: path[2], z: 0},
 			{x: path[4], y: path[5], z: 0}
 			];
-			pArr = perspective(pArr,options3d.angle1, options3d.angle2, options3d.origin);
+			pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
 			path = [
 				'M', pArr[0].x, pArr[0].y,
 				'L', pArr[1].x, pArr[1].y

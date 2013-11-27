@@ -3,9 +3,10 @@
  */
 
 H.toRadians = function (val) { 
-	return val * Math.PI / 180; 
+	return val * PI / 180; 
 };
 
+var PI = Math.PI;
 var sin = Math.sin;
 var cos = Math.cos;
 var round = Math.round;

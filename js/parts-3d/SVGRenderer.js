@@ -26,6 +26,8 @@ HR.prototype.createElement3D = function () {
 	return wrapper;
 };
 
+/**** CUBES ****/
+
 HR.prototype.cubeAnimate = function (x, y, z, w, h, d, options, opposite) {
 	if (typeof x === 'object') {
 		animate = x.animate;
@@ -95,6 +97,7 @@ HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
 	};
 };
 
+/**** Lines ****/
 HR.prototype.toLinePath = function (points, closed) {
 	var result = [];
 		
@@ -113,3 +116,109 @@ HR.prototype.toLinePath = function (points, closed) {
 	
 	return result;
 };
+
+/**** Pie Slices ***/
+HR.prototype.pie3dAnimate = function (x, y, a1, d, options) {
+	if (typeof x === 'object') {
+		options = x.options,
+		d = x.d;
+		a1 = x.a1;
+		y = x.y;
+		x = x.x;
+	}
+
+	var paths = this.renderer.get3DPiePath(x, y, a1, d, options);
+
+	this.top.attr({d: paths.top});
+	this.front.attr({d: paths.front});
+}
+
+HR.prototype.pie3d = function (x, y, a1, d, options) {
+	var result = this.createElement3D();
+
+	result.top = result.addChild(this.path());
+	result.front = result.addChild(this.path());
+
+	this.pie3dAnimate.apply(result, [x, y, a1, d, options]);
+
+	var filler = function (element, value, factor) {
+		var v = H.Color(value).brighten(factor).get(); 
+		element.attr({stroke: v, 'stroke-width': 1}); 
+		return v;
+	};
+
+	result.front.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };	
+	result.top.attrSetters.fill = function (value, key) { return filler(this, value, 0); };
+	//result.side.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
+
+	return result;
+}
+
+HR.prototype.get3DPiePath = function (x, y, a1, d, options) {
+	var start = options.start,
+		rx = options.r || w || h,
+		ry = rx * cos(a1);
+		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
+		
+		sx = x + rx * cos(start);
+		sy = y + ry * sin(start);
+		ex = x + rx * cos(end);
+		ey = y + ry * sin(end);
+
+		longArc = end - start < PI ? 0 : 1;
+
+	// Normalize angles
+	start = (start + 4 * Math.PI) % (2 * Math.PI);
+	end = (end + 4 * Math.PI) % (2 * Math.PI);
+
+	// Find Quadrant start & end ?	
+	var sQ = (Math.floor(start / (Math.PI / 2)) + 1) % 4;
+	var eQ = (Math.floor(end / (Math.PI / 2)) + 1) % 4;
+
+	// TOP SIDE
+	var top =  [
+		'M', sx, sy,
+		'A', rx, ry, 0, longArc, 1, ex, ey,
+		'L', x, y,
+		'L', sx, sy,
+		'Z'
+	]
+
+	// FRONT SIDE
+	var front = [];
+	if ((sQ == 1 || sQ == 2) && (eQ == 1 || eQ == 2)) {
+		front = [		
+		'M', sx, sy,
+		'A', rx, ry, 0, longArc, 1, ex, ey,
+		'L', ex, ey + d,
+		'A', rx, ry, 0, longArc, 0, sx, sy + d,
+		'L', sx, sy,
+		'Z'
+		];
+	}
+	if ((sQ == 1 || sQ == 2) && eQ > 2) {
+		front = [		
+		'M', sx, sy,
+		'A', rx, ry, 0, longArc, 1, x - rx, y,
+		'L', x - rx, y + d,
+		'A', rx, ry, 0, longArc, 0, sx, sy + d,
+		'L', sx, sy,
+		'Z'
+		];
+	}
+
+	if ((sQ == 0 || sQ == 3) && (eQ == 2 || eQ == 1)) {
+		front = [		
+		'M', x + rx, y,
+		'A', rx, ry, 0, longArc, 1, ex, ey,
+		'L', ex, ey + d,
+		'A', rx, ry, 0, longArc, 0, x + rx, y + d,
+		'L', x + rx, y,
+		'Z'
+		];		
+	}
+	return {
+		top: top,
+		front: front,
+	};
+}

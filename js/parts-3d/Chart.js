@@ -28,15 +28,16 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	//user's options
 	userOptions, {
 		chart: {
-			plotBackgroundImage: null,
+			plotBackgroundImage: null
 		}
 	} // 
 	);
 
+	/*
 	if (userOptions.yAxis.opposite) {
 		userOptions.chart.options3d.angle1 =  -userOptions.chart.options3d.angle1;
 	}
-
+	*/
 	// Proceed as normal
 	proceed.apply(this, [userOptions, callback]);
 
