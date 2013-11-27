@@ -1,7 +1,7 @@
 /**
  *	Extension of the Renderer
  */
-HR.prototype.createElement3D = function () {
+HR.prototype.createElement3D = function (z) {
 	var wrapper = new this.Element();
 	wrapper.init(this, 'g');
 
@@ -118,7 +118,7 @@ HR.prototype.toLinePath = function (points, closed) {
 };
 
 /**** Pie Slices ***/
-HR.prototype.pie3dAnimate = function (x, y, a1, d, options) {
+HR.prototype.arc3dAnimate = function (x, y, a1, d, options) {
 	if (typeof x === 'object') {
 		options = x.options,
 		d = x.d;
@@ -127,19 +127,20 @@ HR.prototype.pie3dAnimate = function (x, y, a1, d, options) {
 		x = x.x;
 	}
 
-	var paths = this.renderer.get3DPiePath(x, y, a1, d, options);
+	var paths = this.renderer.get3DArcPath(x, y, a1, d, options);
 
 	this.top.attr({d: paths.top});
 	this.front.attr({d: paths.front});
 }
 
-HR.prototype.pie3d = function (x, y, a1, d, options) {
+HR.prototype.arc3d = function (x, y, a1, d, options) {
 	var result = this.createElement3D();
+
 
 	result.top = result.addChild(this.path());
 	result.front = result.addChild(this.path());
 
-	this.pie3dAnimate.apply(result, [x, y, a1, d, options]);
+	this.arc3dAnimate.apply(result, [x, y, a1, d, options]);
 
 	var filler = function (element, value, factor) {
 		var v = H.Color(value).brighten(factor).get(); 
@@ -154,7 +155,7 @@ HR.prototype.pie3d = function (x, y, a1, d, options) {
 	return result;
 }
 
-HR.prototype.get3DPiePath = function (x, y, a1, d, options) {
+HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	var start = options.start,
 		rx = options.r || w || h,
 		ry = rx * cos(a1);

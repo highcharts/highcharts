@@ -9,7 +9,7 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 		options3d = series.chart.options.chart.options3d;
 
 	H.each(series.data, function (point) {
-		point.shapeType = 'pie3d';
+		point.shapeType = 'arc3d';
 		point.shapeArgs = {
 			x: point.shapeArgs.x,
 			y: point.shapeArgs.y,
