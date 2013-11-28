@@ -121,7 +121,7 @@ HR.prototype.toLinePath = function (points, closed) {
 /**** Pie Slices ***/
 HR.prototype.arc3dAnimate = function (x, y, a1, d, options) {
 	if (typeof x === 'object') {
-		options = x.options,
+		options = x.options;
 		d = x.d;
 		a1 = x.a1;
 		y = x.y;
@@ -135,10 +135,10 @@ HR.prototype.arc3dAnimate = function (x, y, a1, d, options) {
 	this.back.attr({d: paths.back});
 	this.side1.attr({d: paths.side1});
 	this.side2.attr({d: paths.side2});
-}
+};
 
 HR.prototype.arc3d = function (x, y, a1, d, options) {
-	var z = (typeof x === 'object' ? x.options.start + x.options.end : options.start + options.end ) / 2;
+	var z = (typeof x === 'object' ? x.options.start + x.options.end : options.start + options.end) / 2;
 	z = (sin(z) + 1) * 100;
 
 	var result = this.createElement3D(z);
@@ -167,7 +167,7 @@ HR.prototype.arc3d = function (x, y, a1, d, options) {
 	result.side2.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
 	return result;
-}
+};
 
 HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	var start = options.start,
@@ -204,11 +204,11 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
 		'L', sx1, sy1,
 		'Z'
-	]
+	];
 
 	// OUTER SIDE
 	var outer = [];
-	if ((sQ == 1 || sQ == 2) && (eQ == 1 || eQ == 2)) {
+	if ((sQ === 1 || sQ === 2) && (eQ === 1 || eQ === 2)) {
 		outer = [		
 		'M', sx1, sy1,
 		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
@@ -218,7 +218,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];
 	}
-	if ((sQ == 1 || sQ == 2) && (eQ == 3 || eQ == 0)) {
+	if ((sQ === 1 || sQ === 2) && (eQ === 3 || eQ === 0)) {
 		outer = [		
 		'M', sx1, sy1,
 		'A', rx1, ry1, 0, longArc, 1, x - rx1, y,
@@ -229,7 +229,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		];
 	}
 
-	if ((sQ == 3 || sQ == 0) && (eQ == 1 || eQ == 2)) {
+	if ((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) {
 		outer = [		
 		'M', x + rx1, y,
 		'A', rx1, ry1, 0, (longArc ? 0 : 1), 1, ex1, ey1,
@@ -239,7 +239,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];		
 	}
-	if ((sQ == 3 || sQ == 0) && (eQ == 3 || eQ == 0) && (start > end)) {
+	if ((sQ === 3 || sQ === 0) && (eQ === 3 || eQ === 0) && (start > end)) {
 		outer = [		
 		'M', x + rx1, y,
 		'A', rx1, ry1, 0, longArc, 1, x - rx1, y,
@@ -252,7 +252,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 
 	// BACK SIDE
 	var back = [];
-	if ((sQ == 3 || sQ == 0) && (eQ == 3 || eQ == 0)) {
+	if ((sQ === 3 || sQ === 0) && (eQ === 3 || eQ === 0)) {
 		back = [
 		'M', sx2, sy2,
 		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
@@ -262,7 +262,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];
 	}
-	if ((sQ < 3 && sQ != 0) && (eQ == 3 || eQ == 0)) {
+	if ((sQ < 3 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
 		back = [
 		'M', x - rx2, y,
 		'A', rx2, ry2, 0, longArc, 1, sx2, sy2,
@@ -273,7 +273,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		];		
 	}
 	
-	if ((sQ == 3 || sQ == 0) && (eQ == 1 || eQ == 2)) {
+	if ((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) {
 		back = [
 		'M', ex2, ey2,
 		'A', rx2, ry2, 0, (longArc ? 0 : 1), 1, x + rx2, y,
@@ -316,4 +316,4 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		side1: side1,
 		side2: side2
 	};
-}
+};
