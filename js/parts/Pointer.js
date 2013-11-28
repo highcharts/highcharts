@@ -663,11 +663,7 @@ Pointer.prototype = {
 		var chart = this.chart;
 
 		// normalize
-		e = this.normalize(e);
-
-		// #295
-		e.returnValue = false;
-		
+		e = this.normalize(e);		
 		
 		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);
