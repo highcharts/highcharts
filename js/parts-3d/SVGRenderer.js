@@ -232,13 +232,23 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	if ((sQ == 3 || sQ == 0) && (eQ == 1 || eQ == 2)) {
 		outer = [		
 		'M', x + rx1, y,
-		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
+		'A', rx1, ry1, 0, (longArc ? 0 : 1), 1, ex1, ey1,
 		'L', ex1, ey1 + d,
-		'A', rx1, ry1, 0, longArc, 0, x + rx1, y + d,
+		'A', rx1, ry1, 0, (longArc ? 0 : 1), 0, x + rx1, y + d,
 		'L', x + rx1, y,
 		'Z'
 		];		
 	}
+	if ((sQ == 3 || sQ == 0) && (eQ == 3 || eQ == 0) && (start > end)) {
+		outer = [		
+		'M', x + rx1, y,
+		'A', rx1, ry1, 0, longArc, 1, x - rx1, y,
+		'L', x - rx1, y + d,
+		'A', rx1, ry1, 0, longArc, 0, x + rx1, y + d,
+		'L', x + rx1, y,
+		'Z'
+		];	
+	} 
 
 	// BACK SIDE
 	var back = [];
@@ -262,17 +272,18 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];		
 	}
+	
 	if ((sQ == 3 || sQ == 0) && (eQ == 1 || eQ == 2)) {
 		back = [
 		'M', ex2, ey2,
-		'A', rx2, ry2, 0, longArc, 1, x + rx2, y,
+		'A', rx2, ry2, 0, (longArc ? 0 : 1), 1, x + rx2, y,
 		'L', x + rx2, y + d,
-		'A', rx2, ry2, 0, longArc, 0, ex2, ey2 + d,
+		'A', rx2, ry2, 0, (longArc ? 0 : 1), 0, ex2, ey2 + d,
 		'L', ex2, ey2,
 		'Z'
 		];	
 	}
-
+	
 	// INNER SIDE 1
 	var side1 = [];
 	if (sQ > 1) {

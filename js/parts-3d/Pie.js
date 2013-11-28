@@ -24,3 +24,20 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 		};
 	});    
 });
+
+H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	var series = this;
+
+	H.each(series.data, function (point) {
+		var options = point.shapeArgs.options;
+		var r = options.r,
+			d = point.shapeArgs.d,
+			a1 = point.shapeArgs.a1,
+			a2 = (options.start + options.end) / 2; 
+
+		point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
+		point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
+
+	});
+});
