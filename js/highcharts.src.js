@@ -15235,7 +15235,9 @@ Series.prototype = {
 		series.drawDataLabels();
 		
 		// draw the points
-		series.drawPoints();
+		if (series.visible) {
+			series.drawPoints();
+		}
 
 
 		// draw the mouse tracking area
