@@ -276,6 +276,9 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		ex2 = x + rx2 * cos(start),
 		ey2 = y + ry2 * sin(start);
 
+	// Sanity
+	if (a1 === 0) { d = 0; }
+
 	// Normalize angles
 	start = (start + 4 * Math.PI) % (2 * Math.PI);
 	end = (end + 4 * Math.PI) % (2 * Math.PI);
@@ -400,7 +403,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	return {
 		top: top,
 		outer: outer,
-		back: back,
+		back: (rx2 === 0 ? [] : back),
 		side1: side1,
 		side2: side2
 	};
