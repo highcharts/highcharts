@@ -9791,8 +9791,12 @@ Pointer.prototype = {
 	},
 
 	onTrackerMouseOut: function (e) {
-		var series = this.chart.hoverSeries;
-		if (series && !series.options.stickyTracking && !this.inClass(e.toElement || e.relatedTarget, PREFIX + 'tooltip')) {
+		var series = this.chart.hoverSeries,
+			relatedTarget = e.relatedTarget || e.toElement,
+			relatedSeries = relatedTarget.point && relatedTarget.point.series; // #2499
+		
+		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
+				relatedSeries !== series) {
 			series.onMouseOut();
 		}
 	},
