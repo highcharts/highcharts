@@ -227,6 +227,9 @@ Pointer.prototype = {
 		// Just move the tooltip, #349
 		if (allowMove) {
 			tooltip.refresh(tooltipPoints);
+			if (hoverPoint) { // #2500
+				hoverPoint.setState(hoverPoint.state, true);
+			}
 
 		// Full reset
 		} else {

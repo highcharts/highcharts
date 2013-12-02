@@ -7043,7 +7043,7 @@ Axis.prototype = {
 		}
 		return skip && !force ?
 			null :
-			chart.renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 0);
+			chart.renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 1);
 	},
 	
 	/**
@@ -9021,6 +9021,9 @@ Pointer.prototype = {
 		// Just move the tooltip, #349
 		if (allowMove) {
 			tooltip.refresh(tooltipPoints);
+			if (hoverPoint) { // #2500
+				hoverPoint.setState(hoverPoint.state, true);
+			}
 
 		// Full reset
 		} else {
@@ -12624,7 +12627,7 @@ Point.prototype = {
 	 * Set the point's state
 	 * @param {String} state
 	 */
-	setState: function (state) {
+	setState: function (state, move) {
 		var point = this,
 			plotX = point.plotX,
 			plotY = point.plotY,
@@ -12642,10 +12645,11 @@ Point.prototype = {
 			pointAttr = point.pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
+		move = move && stateMarkerGraphic;
 
 		if (
 				// already has this state
-				state === point.state ||
+				(state === point.state && !move) ||
 				// selected points don't respond to hover
 				(point.selected && state !== SELECT_STATE) ||
 				// series' state options is disabled
