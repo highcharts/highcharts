@@ -12704,7 +12704,7 @@ Point.prototype = {
 				
 				// Move the existing graphic
 				} else {
-					stateMarkerGraphic.attr({ // #1054
+					stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
 						x: plotX - radius,
 						y: plotY - radius
 					});
