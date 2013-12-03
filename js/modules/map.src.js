@@ -912,8 +912,10 @@
 				joinBy = seriesOptions.joinBy,
 				mapPoint;
 
-			if (joinBy && seriesOptions.mapData) {
-				mapPoint = series.getMapData(joinBy, point[joinBy]);
+			if (seriesOptions.mapData) {
+				mapPoint = joinBy ? 
+					series.getMapData(joinBy, point[joinBy]) : // Join by a string
+					seriesOptions.mapData[point.x]; // Use array position (faster)
 					
 				if (mapPoint) {
 					// This applies only to bubbles
@@ -1292,6 +1294,23 @@
 			// Now draw the data labels
 			Series.prototype.drawDataLabels.call(series);
 			
+		},
+
+		/**
+		 * Override render to throw in an async call in IE8. Otherwise it chokes on the US counties demo.
+		 */
+		render: function () {
+			var series = this,
+				render = Series.prototype.render;
+
+			// Give IE8 some time to breathe.
+			if (series.chart.renderer.isVML && series.data.length > 3000) {
+				setTimeout(function () {
+					render.call(series);
+				});
+			} else {
+				render.call(series);
+			}
 		},
 
 		/**

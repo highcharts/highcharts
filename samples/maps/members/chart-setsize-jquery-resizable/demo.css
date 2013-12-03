@@ -1,8 +1,11 @@
+#resizer {
+    border: 1px solid silver;   
+}
+#inner-resizer { /* make room for the resize handle */
+    padding: 10px;
+}
 #container {
-	height: 500px; 
-	min-width: 310px; 
-	max-width: 800px; 
-	margin: 0 auto; 
+	height: 500px;
 }
 .loading {
 	margin-top: 10em;
