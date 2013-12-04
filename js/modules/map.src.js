@@ -240,7 +240,9 @@
 				chart.mapZoom(
 					delta > 0 ? 1.5 : 0.75,
 					chart.xAxis[0].toValue(e.chartX),
-					chart.yAxis[0].toValue(e.chartY)
+					chart.yAxis[0].toValue(e.chartY),
+					e.chartX,
+					e.chartY
 				);
 			}
 		}
@@ -497,9 +499,7 @@
 				box,
 				width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 				height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
-				labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30),
-				options = this.options,
-				grad;
+				labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30);
 
 			this.setLegendColor();
 
@@ -750,10 +750,10 @@
 		/**
 		 * Zoom the map in or out by a certain amount. Less than 1 zooms in, greater than 1 zooms out.
 		 */
-		mapZoom: function (howMuch, centerXArg, centerYArg) {
-
+		mapZoom: function (howMuch, centerXArg, centerYArg, mouseX, mouseY) {
 			if (this.isMapZooming) {
 				this.mapZoomQueue = arguments;
+				return;
 			}
 
 			var chart = this,
@@ -765,8 +765,10 @@
 				yRange = yAxis.max - yAxis.min,
 				centerY = pick(centerYArg, yAxis.min + yRange / 2),
 				newYRange = yRange * howMuch,
-				newXMin = centerX - newXRange / 2,
-				newYMin = centerY - newYRange / 2,
+				alignToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5,
+				alignToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
+				newXMin = centerX - newXRange * alignToX,
+				newYMin = centerY - newYRange * alignToY,
 				animation = pick(chart.options.chart.animation, true),
 				delay,
 				newExt = chart.fitToBox({
@@ -780,10 +782,26 @@
 					width: xAxis.dataMax - xAxis.dataMin,
 					height: yAxis.dataMax - yAxis.dataMin
 				});
-
+			
 			xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
 			yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-
+			// A faster, experimental implementation. SVG only. 
+			/*each(chart.series, function (series) {
+				var newScale = (series.group.scaleX || 1) / howMuch;
+				series.group.animate({
+					scaleX: newScale,
+					scaleY: newScale
+				});
+				each(series.points, function (point) {
+					if (point.strokeWidth === undefined) {
+						point.strokeWidth = point.graphic['stroke-width'];
+					}
+					point.graphic.attr({
+						'stroke-width': point.strokeWidth / newScale
+					});
+				})
+			});*/
+			
 			// Prevent zooming until this one is finished animating
 			delay = animation ? animation.duration || 500 : 0;
 			if (delay) {
@@ -796,7 +814,6 @@
 					chart.mapZoomQueue = null;
 				}, delay);
 			}
-			
 
 			chart.redraw();
 		},
@@ -834,7 +851,7 @@
 
 		this.colorAxis = [];
 		if (colorAxisOptions) {
-			new ColorAxis(this, colorAxisOptions);
+			proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
 		}
 	});
 

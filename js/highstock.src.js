@@ -14532,6 +14532,7 @@ Series.prototype = {
 		// Show or hide based on the final aligned position
 		if (!visible) {
 			dataLabel.attr({ y: -999 });
+			dataLabel.placed = false; // don't animate back in
 		}
 				
 	},
