@@ -104,7 +104,11 @@ HR.prototype.createElement3D = function (z) {
 	};
 
 	wrapper.attr = function (hash, val) {
-		H.each(this.children, function (child) { child.attr(hash, val); });
+		if (hash.d) { 
+			this.animate(hash);
+		} else {
+			H.each(this.children, function (child) { child.attr(hash, val); });
+		}
 		return wrapper;
 	};
 
@@ -133,7 +137,7 @@ HR.prototype.cubeAnimate = function (x, y, z, w, h, d, options, opposite) {
 	var paths = this.renderer.getCubePath(x, y, z, w, h, d, options, opposite);
 	this.front.attr({d: paths.front});
 	this.top.attr({d: paths.top});
-	this.side.attr({d: paths.side});	
+	this.side.attr({d: paths.side});
 };
 
 HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
@@ -175,14 +179,15 @@ HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
 	pArr = perspective(pArr, options.angle1, options.angle2, options.origin);
 
 	var front = this.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
+	var side  = (opposite ?
+			this.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true) :			// left
+			this.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true));			// right
 	var top = this.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);
-	var left = this.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true);
-	var right = this.toLinePath([pArr[5], pArr[1], pArr[2], pArr[6]], true);
 
 	return {
 		front: front,
 		top: top,
-		side: (opposite ? left : right)
+		side: side
 	};
 };
 
@@ -258,6 +263,16 @@ HR.prototype.arc3d = function (x, y, a1, d, options) {
 };
 
 HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
+	if (options.start === options.end) {
+		return {			
+			top: [],
+			outer: [],
+			back: [],
+			side1: [],
+			side2: []
+		};
+	}
+
 	var start = options.start,
 		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 		longArc = end - start < PI ? 0 : 1,
@@ -299,6 +314,42 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 
 	// OUTER SIDE
 	var outer = [];
+	var osx, osy, oex, oey,
+		la = longArc;
+
+	if ((sQ === 1) || (sQ === 2)) {
+		osx = sx1;
+		osy = sy1;
+	} else {
+		osx = x + rx1;		
+		osy = y;
+	}
+	if ((eQ === 1) || (eQ === 2)) {
+		oex = ex1;
+		oey = ey1;
+	} else {
+		oex = x - rx1;
+		oey = y;
+	}
+
+	if (((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) || 
+		((sQ === 2 || sQ === 1) && (eQ === 0 || eQ === 3))) {
+		la = 0;
+	}
+
+	outer = [ 
+		'M', osx, osy,
+		'A', rx1, ry1, 0, la, 1, oex, oey,
+		'L', oex, oey + d,
+		'A', rx1, ry1, 0, la, 0, osx, osy + d,
+		'L', osx, osy,
+		'Z'
+	];
+	if (((sQ === 3) || (sQ === 0)) && ((eQ === 3) || (eQ === 0)) && (start < end)) {
+		outer = [];
+	}
+
+	/*
 	if ((sQ === 1 || sQ === 2) && (eQ === 1 || eQ === 2)) {
 		outer = [		
 		'M', sx1, sy1,
@@ -323,9 +374,9 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	if ((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) {
 		outer = [		
 		'M', x + rx1, y,
-		'A', rx1, ry1, 0, (longArc ? 0 : 1), 1, ex1, ey1,
+		'A', rx1, ry1, 0, 0, 1, ex1, ey1,
 		'L', ex1, ey1 + d,
-		'A', rx1, ry1, 0, (longArc ? 0 : 1), 0, x + rx1, y + d,
+		'A', rx1, ry1, 0, 0, 0, x + rx1, y + d,
 		'L', x + rx1, y,
 		'Z'
 		];		
@@ -340,10 +391,11 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];	
 	} 
-
+	*/
 	// BACK SIDE
 	var back = [];
 	if ((sQ === 3 || sQ === 0) && (eQ === 3 || eQ === 0)) {
+		
 		back = [
 		'M', sx2, sy2,
 		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
@@ -352,8 +404,21 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'L', sx2, sy2,
 		'Z'
 		];
+		
 	}
-	if ((sQ < 3 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
+
+	if ((sQ === 1 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
+		back = [
+		'M', x - rx2, y,
+		'A', rx2, ry2, 0, (longArc ? 0 : 1), 1, sx2, sy2,
+		'L', sx2, sy2 + d,
+		'A', rx2, ry2, 0, (longArc ? 0 : 1), 0, x - rx2, y + d,
+		'L', x - rx2, y,
+		'Z'
+		];		
+	}
+	
+	if ((sQ === 2 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
 		back = [
 		'M', x - rx2, y,
 		'A', rx2, ry2, 0, longArc, 1, sx2, sy2,
@@ -363,13 +428,13 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];		
 	}
-	
+
 	if ((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) {
 		back = [
 		'M', ex2, ey2,
-		'A', rx2, ry2, 0, (longArc ? 0 : 1), 1, x + rx2, y,
+		'A', rx2, ry2, 0, 0, 1, x + rx2, y,
 		'L', x + rx2, y + d,
-		'A', rx2, ry2, 0, (longArc ? 0 : 1), 0, ex2, ey2 + d,
+		'A', rx2, ry2, 0, 0, 0, ex2, ey2 + d,
 		'L', ex2, ey2,
 		'Z'
 		];	
@@ -819,9 +884,12 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 			a1 = point.shapeArgs.a1,
 			a2 = (options.start + options.end) / 2; 
 
-		point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
-		point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
-
+		if (point.connector) {
+			point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
+		}
+		if (point.dataLabel) {
+			point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
+		}
 	});
 });
 

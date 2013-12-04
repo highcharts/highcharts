@@ -36,8 +36,11 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 			a1 = point.shapeArgs.a1,
 			a2 = (options.start + options.end) / 2; 
 
-		point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
-		point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
-
+		if (point.connector) {
+			point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
+		}
+		if (point.dataLabel) {
+			point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
+		}
 	});
 });

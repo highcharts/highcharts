@@ -92,8 +92,8 @@ HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
 
 	var front = this.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
 	var side  = (opposite ?
-			this.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true) : 			// left
-			this.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true) );			// right
+			this.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true) :			// left
+			this.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true));			// right
 	var top = this.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);
 
 	return {
@@ -182,8 +182,9 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 			back: [],
 			side1: [],
 			side2: []
-		}
+		};
 	}
+
 	var start = options.start,
 		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 		longArc = end - start < PI ? 0 : 1,
@@ -225,6 +226,42 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 
 	// OUTER SIDE
 	var outer = [];
+	var osx, osy, oex, oey,
+		la = longArc;
+
+	if ((sQ === 1) || (sQ === 2)) {
+		osx = sx1;
+		osy = sy1;
+	} else {
+		osx = x + rx1;		
+		osy = y;
+	}
+	if ((eQ === 1) || (eQ === 2)) {
+		oex = ex1;
+		oey = ey1;
+	} else {
+		oex = x - rx1;
+		oey = y;
+	}
+
+	if (((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) || 
+		((sQ === 2 || sQ === 1) && (eQ === 0 || eQ === 3))) {
+		la = 0;
+	}
+
+	outer = [ 
+		'M', osx, osy,
+		'A', rx1, ry1, 0, la, 1, oex, oey,
+		'L', oex, oey + d,
+		'A', rx1, ry1, 0, la, 0, osx, osy + d,
+		'L', osx, osy,
+		'Z'
+	];
+	if (((sQ === 3) || (sQ === 0)) && ((eQ === 3) || (eQ === 0)) && (start < end)) {
+		outer = [];
+	}
+
+	/*
 	if ((sQ === 1 || sQ === 2) && (eQ === 1 || eQ === 2)) {
 		outer = [		
 		'M', sx1, sy1,
@@ -266,7 +303,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];	
 	} 
-	
+	*/
 	// BACK SIDE
 	var back = [];
 	if ((sQ === 3 || sQ === 0) && (eQ === 3 || eQ === 0)) {
