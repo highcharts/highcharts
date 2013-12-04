@@ -12763,7 +12763,7 @@ Series.prototype = {
 			events,
 			chartSeries = chart.series,
 			sortByIndex = function (a, b) {
-				return pick(a.options.index, a._i) - pick(b.options.index, a._i);
+				return pick(a.options.index, a._i) - pick(b.options.index, b._i);
 			};
 
 		series.chart = chart;
