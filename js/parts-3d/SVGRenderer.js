@@ -281,7 +281,19 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		];
 		
 	}
-	if ((sQ < 3 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
+
+	if ((sQ === 1 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
+		back = [
+		'M', x - rx2, y,
+		'A', rx2, ry2, 0, (longArc ? 0 : 1), 1, sx2, sy2,
+		'L', sx2, sy2 + d,
+		'A', rx2, ry2, 0, (longArc ? 0 : 1), 0, x - rx2, y + d,
+		'L', x - rx2, y,
+		'Z'
+		];		
+	}
+	
+	if ((sQ === 2 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
 		back = [
 		'M', x - rx2, y,
 		'A', rx2, ry2, 0, longArc, 1, sx2, sy2,
@@ -291,7 +303,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z'
 		];		
 	}
-	
+
 	if ((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) {
 		back = [
 		'M', ex2, ey2,
