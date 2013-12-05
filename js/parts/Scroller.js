@@ -340,10 +340,12 @@ Scroller.prototype = {
 		}
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMax = zoomedMax = mathMin(pInt(mathMax(pxMin, pxMax)), navigatorWidth);
-		scroller.zoomedMin = zoomedMin =
-			mathMax(scroller.fixedWidth ? zoomedMax - scroller.fixedWidth : pInt(mathMin(pxMin, pxMax)), 0);
-		scroller.range = range = zoomedMax - zoomedMin;
+		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax), navigatorWidth);
+		scroller.zoomedMin = 
+			mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
+		scroller.range = range = scroller.zoomedMax - scroller.zoomedMin;
+		zoomedMax = mathRound(scroller.zoomedMax);
+		zoomedMin = mathRound(scroller.zoomedMin);
 
 		// on first render, create all elements
 		if (!scroller.rendered) {
@@ -625,15 +627,23 @@ Scroller.prototype = {
 				// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
 				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
 
-					if (isOnNavigator) { // center around the clicked point
+					// Center around the clicked point
+					if (isOnNavigator) {
 						left = chartX - navigatorLeft - range / 2;
-					} else { // click on scrollbar
-						if (chartX < navigatorLeft) { // click left scrollbar button
-							left = zoomedMin - mathMax(mathMin(10, range), 1);
+					
+					// Click on scrollbar
+					} else {
+
+						// Click left scrollbar button
+						if (chartX < navigatorLeft) { 
+							left = zoomedMin - range * 0.2;
+
+						// Click right scrollbar button
 						} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-							left = zoomedMin + mathMax(mathMin(10, range), 1);
+							left = zoomedMin + range * 0.2;
+						
+						// Click on scrollbar track, shift the scrollbar by one range
 						} else {
-							// click on scrollbar track, shift the scrollbar by one range
 							left = chartX < navigatorLeft + zoomedMin ? // on the left
 								zoomedMin - range :
 								zoomedMax;

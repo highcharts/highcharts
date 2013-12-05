@@ -1202,12 +1202,15 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = doc.createElement('span'),
+		offsetWidth,
 	textNode = doc.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
 	css(measuringSpan, styles);
 	this.box.appendChild(measuringSpan);
-	return measuringSpan.offsetWidth;
+	offsetWidth = measuringSpan.offsetWidth;
+	discardElement(measuringSpan); // #2463
+	return offsetWidth;
 };
 
 

@@ -62,7 +62,7 @@
 				if (key === 'infile' || key === 'callback' || key === 'dataoptions' || key === 'globaloptions' || key === 'customcode') {
 					// get string from file
 					try {
-						map[key] = fs.read(system.args[i + 1]);
+						map[key] = fs.read(system.args[i + 1]).replace(/^\s+/, '');
 					} catch (e) {
 						console.log('Error: cannot find file, ' + system.args[i + 1]);
 						phantom.exit();
@@ -249,8 +249,7 @@
 			document.body.style.margin = '0px';
 			document.body.innerHTML = input;
 
-			function loadingImage() {
-				console.log('Loading image ' + counter);
+			function decrementImgCounter() {
 				counter -= 1;
 				if (counter < 1) {
 					console.log(messages.imagesLoaded);
@@ -266,7 +265,8 @@
 
 					for (i = 0; i < images.length; i += 1) {
 						img = new Image();
-						img.onload = loadingImage;
+						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
+						img.onload = img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
 						img.src = images[i].href.baseVal;
 					}
@@ -316,9 +316,7 @@
 				}
 			}
 
-			// are all images loaded in time?
-			function loadingImage() {
-				console.log('loading image ' + counter);
+			function decrementImgCounter() {
 				counter -= 1;
 				if (counter < 1) {
 					console.log(messages.imagesLoaded);
@@ -326,7 +324,6 @@
 			}
 
 			function loadImages() {
-				// are images loaded?
 				var $images = $('svg image'), i, img;
 
 				if ($images.length > 0) {
@@ -335,13 +332,13 @@
 
 					for (i = 0; i < $images.length; i += 1) {
 						img = new Image();
-						img.onload = loadingImage;
+						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
+						img.onload = img.onerror = decrementImgCounter;
 						/* force loading of images by setting the src attr.*/
 						img.src = $images[i].getAttribute('href');
 					}
 				} else {
-					// no images set property to all images
-					// loaded
+					// no images set property to:imagesLoaded = true
 					console.log(messages.imagesLoaded);
 				}
 			}
@@ -483,7 +480,8 @@
 					customCode = 'function customCode(options) {\n' + params.customcode + '}\n';
 
 				/* Decide if we have to generate a svg first before rendering */
-				if (input.substring(0, 4).toLowerCase() === "<svg") {
+				if (input.substring(0, 4).toLowerCase() === "<svg" || input.substring(0, 5).toLowerCase() === "<?xml"
+					|| input.substring(0, 9).toLowerCase() === "<!doctype") {
 					//render page directly from svg file
 					svg = page.evaluate(loadChart, input, outType, messages);
 					page.viewportSize = { width: svg.width, height: svg.height };

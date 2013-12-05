@@ -286,6 +286,110 @@ Point.prototype = {
 	},
 
 	/**
+	 * Update the point with new options (typically x/y data) and optionally redraw the series.
+	 *
+	 * @param {Object} options Point options as defined in the series.data array
+	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
+	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
+	 *    configuration
+	 *
+	 */
+	update: function (options, redraw, animation) {
+		var point = this,
+			series = point.series,
+			graphic = point.graphic,
+			i,
+			data = series.data,
+			chart = series.chart,
+			seriesOptions = series.options;
+
+		redraw = pick(redraw, true);
+
+		// fire the event with a default handler of doing the update
+		point.firePointEvent('update', { options: options }, function () {
+
+			point.applyOptions(options);
+
+			// update visuals
+			if (isObject(options)) {
+				series.getAttribs();
+				if (graphic) {
+					if (options && options.marker && options.marker.symbol) {
+						point.graphic = graphic.destroy();
+					} else {
+						graphic.attr(point.pointAttr[point.state || '']);
+					}
+				}
+				if (options && options.dataLabels && point.dataLabel) { // #2468
+					point.dataLabel = point.dataLabel.destroy();
+				}
+			}
+
+			// record changes in the parallel arrays
+			i = inArray(point, data);
+			series.updateParallelArrays(point, i);
+					
+			seriesOptions.data[i] = point.options;
+
+			// redraw
+			series.isDirty = series.isDirtyData = true;
+			if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
+				chart.isDirtyBox = true;
+			}
+			
+			if (seriesOptions.legendType === 'point') { // #1831, #1885
+				chart.legend.destroyItem(point);
+			}
+			if (redraw) {
+				chart.redraw(animation);
+			}
+		});
+	},
+
+	/**
+	 * Remove a point and optionally redraw the series and if necessary the axes
+	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
+	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
+	 *    configuration
+	 */
+	remove: function (redraw, animation) {
+		var point = this,
+			series = point.series,
+			points = series.points,
+			chart = series.chart,
+			i,
+			data = series.data;
+
+		setAnimation(animation, chart);
+		redraw = pick(redraw, true);
+
+		// fire the event with a default handler of removing the point
+		point.firePointEvent('remove', null, function () {
+
+			// splice all the parallel arrays
+			i = inArray(point, data);
+			if (data.length === points.length) {
+				points.splice(i, 1);			
+			}
+			data.splice(i, 1);
+			series.options.data.splice(i, 1);
+			series.updateParallelArrays(point, 'splice', i, 1);
+
+			point.destroy();
+
+
+			// redraw
+			series.isDirty = true;
+			series.isDirtyData = true;
+			if (redraw) {
+				chart.redraw();
+			}
+		});
+
+
+	},
+
+	/**
 	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
 	 * causes a name clash in MooTools
 	 * @param {String} eventType
@@ -337,7 +441,7 @@ Point.prototype = {
 	 * Set the point's state
 	 * @param {String} state
 	 */
-	setState: function (state) {
+	setState: function (state, move) {
 		var point = this,
 			plotX = point.plotX,
 			plotY = point.plotY,
@@ -355,10 +459,11 @@ Point.prototype = {
 			pointAttr = point.pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
+		move = move && stateMarkerGraphic;
 
 		if (
 				// already has this state
-				state === point.state ||
+				(state === point.state && !move) ||
 				// selected points don't respond to hover
 				(point.selected && state !== SELECT_STATE) ||
 				// series' state options is disabled
@@ -413,7 +518,7 @@ Point.prototype = {
 
 				// Move the existing graphic
 				} else {
-					stateMarkerGraphic.attr({ // #1054
+					stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
 						x: plotX - radius,
 						y: plotY - radius
 					});
@@ -421,7 +526,7 @@ Point.prototype = {
 			}
 
 			if (stateMarkerGraphic) {
-				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY) ? 'show' : 'hide']();
+				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide'](); // #2450
 			}
 		}
 
@@ -470,7 +575,10 @@ Series.prototype = {
 		var series = this,
 			eventType,
 			events,
-			chartSeries = chart.series;
+			chartSeries = chart.series,
+			sortByIndex = function (a, b) {
+				return pick(a.options.index, a._i) - pick(b.options.index, b._i);
+			};
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -523,11 +631,13 @@ Series.prototype = {
 		// Register it in the chart
 		chartSeries.push(series);
 		series._i = chartSeries.length - 1;
+		
+		// Sort series according to index option (#248, #1123, #2456)
+		stableSort(chartSeries, sortByIndex);
+		if (this.yAxis) {
+			stableSort(this.yAxis.series, sortByIndex);
+		}
 
-		// Sort series according to index option (#248, #1123)
-		stableSort(chartSeries, function (a, b) {
-			return pick(a.options.index, a._i) - pick(b.options.index, a._i);
-		});
 		each(chartSeries, function (series, i) {
 			series.index = i;
 			series.name = series.name || 'Series ' + (i + 1);
@@ -667,6 +777,8 @@ Series.prototype = {
 		var chart = this.chart,
 			chartOptions = chart.options,
 			plotOptions = chartOptions.plotOptions,
+			userOptions = chart.userOptions || {},
+			userPlotOptions = userOptions.plotOptions || {},
 			typeOptions = plotOptions[this.type],
 			options;
 
@@ -677,11 +789,18 @@ Series.prototype = {
 			plotOptions.series,
 			itemOptions
 		);
-
-		// the tooltip options are merged between global and series specific options
-		this.tooltipOptions = merge(chartOptions.tooltip, options.tooltip);
-
-		// Delte marker object if not allowed (#1125)
+		
+		// The tooltip options are merged between global and series specific options
+		this.tooltipOptions = merge(
+			defaultOptions.tooltip,
+			defaultOptions.plotOptions[this.type].tooltip,
+			userOptions.tooltip,
+			userPlotOptions.series && userPlotOptions.series.tooltip,
+			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
+			itemOptions.tooltip
+		);
+		
+		// Delete marker object if not allowed (#1125)
 		if (typeOptions.marker === null) {
 			delete options.marker;
 		}
@@ -767,9 +886,10 @@ Series.prototype = {
 		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
 
 		series.colorCounter = 0; // for series with colorByPoint (#1547)
-
+		data = data || [];
+		
 		// parallel arrays
-		var dataLength = data ? data.length : [],
+		var dataLength = data.length,
 			turboThreshold = options.turboThreshold,
 			pt,
 			xData = this.xData,
@@ -1233,8 +1353,7 @@ Series.prototype = {
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
-
-
+		
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
@@ -1821,7 +1940,6 @@ Series.prototype = {
 			if (axis) {
 				erase(axis.series, series);
 				axis.isDirty = axis.forceRedraw = true;
-				axis.stacks = {}; // Rebuild stacks when updating (#2229)
 			}
 		});
 
@@ -2219,7 +2337,9 @@ Series.prototype = {
 		}
 
 		// draw the points
-		series.drawPoints();
+		if (series.visible) {
+			series.drawPoints();
+		}
 
 
 		// draw the mouse tracking area

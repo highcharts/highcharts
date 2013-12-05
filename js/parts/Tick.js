@@ -287,7 +287,7 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = labelOptions.step,
+			step = axis.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
@@ -336,30 +336,35 @@ Tick.prototype = {
 
 		// create the tick mark
 		if (tickWidth && tickLength) {
+			if (axis.len / axis.tickPositions.length > tickWidth + 1) {
+				// negate the length
+				if (tickPosition === 'inside') {
+					tickLength = -tickLength;
+				}
+				if (axis.opposite) {
+					tickLength = -tickLength;
+				}
 
-			// negate the length
-			if (tickPosition === 'inside') {
-				tickLength = -tickLength;
-			}
-			if (axis.opposite) {
-				tickLength = -tickLength;
-			}
+				markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
 
-			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
+				if (mark) { // updating
+					mark.animate({
+						d: markPath,
+						opacity: opacity
+					});
+				} else { // first time
+					tick.mark = renderer.path(
+						markPath
+					).attr({
+						stroke: tickColor,
+						'stroke-width': tickWidth,
+						opacity: opacity
+					}).add(axis.axisGroup);
+				}
 
-			if (mark) { // updating
-				mark.animate({
-					d: markPath,
-					opacity: opacity
-				});
-			} else { // first time
-				tick.mark = renderer.path(
-					markPath
-				).attr({
-					stroke: tickColor,
-					'stroke-width': tickWidth,
-					opacity: opacity
-				}).add(axis.axisGroup);
+			// Don't draw ticks so close they appear as a gray mass
+			} else if (mark) {
+				tick.mark = mark.destroy();
 			}
 		}
 

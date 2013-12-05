@@ -1,8 +1,9 @@
 <?php
 ini_set('display_errors', 'on');
+session_start();
+$defaults = json_decode(file_get_contents('default-settings.json'));
 
-define('EXPORT_SERVER', 'http://export.highcharts.com');
-//define('EXPORT_SERVER', 'http://localhost:8080/export/');
+define('EXPORT_SERVER', isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $defaults->exportServer);
 
 /**
  * Send a post request

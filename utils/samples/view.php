@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+$defaults = json_decode(file_get_contents('default-settings.json'));
 
 define(FRAMEWORK, 'jQuery');
 

@@ -161,7 +161,7 @@
 				color: white;
 				text-shadow: 0 -1px 1px #000000;
 				text-decoration: none;
-				font-size: 11pt;
+				font-size: 12px;
 				white-space: nowrap;
 				line-height: 30px;
 				cursor: pointer;
@@ -191,6 +191,10 @@
 			<i class="icon-refresh"></i>
 			Reload
 		</a>
+		<a class="button" id="settings" title="Settings" href="settings.php" target="main">
+			<i class="icon-cog"></i>
+			Settings
+		</a>
 
 		<div style="margin-top: 1em">
 			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
@@ -201,7 +205,7 @@
 
 	<div id="main-nav">
 	<?php
-	$products = array('highcharts', 'stock');
+	$products = array('highcharts', 'maps', 'stock');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
 	$browserKey = $browser['parent'];

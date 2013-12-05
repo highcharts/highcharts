@@ -54,11 +54,12 @@ RangeSelector.prototype = {
 	 * @param {Object} rangeOptions
 	 * @param {Boolean} redraw
 	 */
-	clickButton: function (i, rangeOptions, redraw) {
+	clickButton: function (i, redraw) {
 		var rangeSelector = this,
 			selected = rangeSelector.selected,
 			chart = rangeSelector.chart,
 			buttons = rangeSelector.buttons,
+			rangeOptions = rangeSelector.buttonOptions[i],
 			baseAxis = chart.xAxis[0],
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis || {},
 			dataMin = unionExtremes.dataMin,
@@ -128,7 +129,7 @@ RangeSelector.prototype = {
 			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
 			} else {
 				addEvent(chart, 'beforeRender', function () {
-					rangeSelector.clickButton(i, rangeOptions);
+					rangeSelector.clickButton(i);
 				});
 				return;
 			}
@@ -158,7 +159,7 @@ RangeSelector.prototype = {
 					min: rangeMin
 				}
 			);
-			rangeSelector.selected = i;
+			rangeSelector.setSelected(i);
 		} else { // existing axis object; after render time
 			baseAxis.setExtremes(
 				newMin,
@@ -170,8 +171,16 @@ RangeSelector.prototype = {
 					rangeSelectorButton: rangeOptions
 				}
 			);
-			rangeSelector.selected = i;
+			rangeSelector.setSelected(i);
 		}
+	},
+
+	/**
+	 * Set the selected option. This method only sets the internal flag, it doesn't
+	 * update the buttons or the actual zoomed range.
+	 */
+	setSelected: function (selected) {
+		this.selected = this.options.selected = selected;
 	},
 	
 	/**
@@ -209,7 +218,6 @@ RangeSelector.prototype = {
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
-			buttons = rangeSelector.buttons = [],
 			selectedOption = options.selected,
 			blurInputs = rangeSelector.blurInputs = function () {
 				var minInput = rangeSelector.minInput,
@@ -223,6 +231,8 @@ RangeSelector.prototype = {
 			};
 
 		rangeSelector.chart = chart;
+		rangeSelector.options = options;
+		rangeSelector.buttons = [];
 		
 		chart.extraTopMargin = 25;
 		rangeSelector.buttonOptions = buttonOptions;
@@ -235,21 +245,13 @@ RangeSelector.prototype = {
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
-			this.clickButton(selectedOption, buttonOptions[selectedOption], false);
+			this.clickButton(selectedOption, false);
 		}
 
 		// normalize the pressed button whenever a new range is selected
 		addEvent(chart, 'load', function () {
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				if (chart.fixedRange !== mathRound(this.max - this.min)) {
-					if (buttons[rangeSelector.selected] && !chart.renderer.forExport) {
-						buttons[rangeSelector.selected].setState(0);
-					}
-					rangeSelector.selected = null;
-				}
-
-				rangeSelector.updateButtonStates();
-
+				rangeSelector.updateButtonStates(true);
 			});
 		});
 	},
@@ -257,7 +259,7 @@ RangeSelector.prototype = {
 	/**
 	 * Dynamically update the range selector buttons after a new range has been set
 	 */
-	updateButtonStates: function () {
+	updateButtonStates: function (updating) {
 		var rangeSelector = this,
 			chart = this.chart,
 			baseAxis = chart.xAxis[0],
@@ -266,6 +268,13 @@ RangeSelector.prototype = {
 			dataMax = unionExtremes.dataMax,
 			selected = rangeSelector.selected,
 			buttons = rangeSelector.buttons;
+
+		if (updating && chart.fixedRange !== mathRound(baseAxis.max - baseAxis.min)) {
+			if (buttons[selected]) {
+				buttons[selected].setState(0);
+			}
+			rangeSelector.setSelected(null);
+		}
 
 		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 			var range = rangeOptions._range,
@@ -283,7 +292,7 @@ RangeSelector.prototype = {
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
 			if (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected) {
-				rangeSelector.selected = i;
+				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			
 			} else if (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable) {
@@ -516,7 +525,7 @@ RangeSelector.prototype = {
 						buttonLeft,
 						chart.plotTop - 25,
 						function () {
-							rangeSelector.clickButton(i, rangeOptions);
+							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
 						},
 						buttonTheme,

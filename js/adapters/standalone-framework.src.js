@@ -159,7 +159,15 @@ function augment(obj) {
 
 					args.preventDefault = preventDefault;
 					args.target = target;
-					args.type = name; // #2297	
+
+					// If the type is not set, we're running a custom event (#2297). If it is set,
+					// we're running a browser event, and setting it will cause en error in
+					// IE8 (#2465).
+					if (!args.type) {
+						args.type = name;
+					}
+					
+
 					
 					// If the event handler return false, prevent the default handler from executing
 					if (fn.call(this, args) === false) {

@@ -49,10 +49,8 @@ Highcharts.StockChart = function (options, callback) {
 				showLastLabel: true,
 				crosshair: {
 					label: {
-						enabled: false,
-						formatter: function (value) { 
-							return dateFormat('%b %d, %Y', value);
-						}
+						enabled: true,
+						format: '{value:%b %d, %Y}' // TODO: pick best time format like tooltips
 					}
 				}
 			}, xAxisOptions, // user options 
@@ -77,9 +75,7 @@ Highcharts.StockChart = function (options, callback) {
 			crosshair: {
 				label: {
 					enabled: false,
-					formatter: function (value) { 
-						return value;
-					}
+					format: '{value}' // TODO: formatting/decimals like tooltip
 				}
 			},
 			title: {
@@ -176,7 +172,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	if (!defined(point)) { return; }
 
 	var options = this.options.crosshair.label,		// the label's options
-		axis = this.xOrY,							// axis name
+		axis = this.isXAxis ? 'x' : 'y',			// axis name
 		horiz = this.horiz,							// axis orientation
 		opposite = this.opposite,					// axis position
 		left = this.left,							// left position

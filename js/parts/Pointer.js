@@ -187,6 +187,14 @@ Pointer.prototype = {
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
 
+		// Start the event listener to pick up the tooltip 
+		if (tooltip && !pointer._onDocumentMouseMove) {
+			pointer._onDocumentMouseMove = function (e) {
+				pointer.onDocumentMouseMove(e);
+			};
+			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+		}
+
 		// Draw independent crosshairs
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(hoverPoint, point));
@@ -219,6 +227,9 @@ Pointer.prototype = {
 		// Just move the tooltip, #349
 		if (allowMove) {
 			tooltip.refresh(tooltipPoints);
+			if (hoverPoint) { // #2500
+				hoverPoint.setState(hoverPoint.state, true);
+			}
 
 		// Full reset
 		} else {
@@ -233,6 +244,11 @@ Pointer.prototype = {
 
 			if (tooltip) {
 				tooltip.hide();
+			}
+
+			if (pointer._onDocumentMouseMove) {
+				removeEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+				pointer._onDocumentMouseMove = null;
 			}
 
 			// Remove crosshairs
@@ -567,7 +583,7 @@ Pointer.prototype = {
 							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-							selectionData[axis.xOrY + 'Axis'].push({
+							selectionData[axis.coll].push({
 								axis: axis,
 								min: mathMin(selectionMin, selectionMax), // for reversed axes,
 								max: mathMax(selectionMin, selectionMax)
@@ -650,11 +666,7 @@ Pointer.prototype = {
 		var chart = this.chart;
 
 		// normalize
-		e = this.normalize(e);
-
-		// #295
-		e.returnValue = false;
-		
+		e = this.normalize(e);		
 		
 		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);
@@ -688,8 +700,12 @@ Pointer.prototype = {
 	},
 
 	onTrackerMouseOut: function (e) {
-		var series = this.chart.hoverSeries;
-		if (series && !series.options.stickyTracking && !this.inClass(e.toElement || e.relatedTarget, PREFIX + 'tooltip')) {
+		var series = this.chart.hoverSeries,
+			relatedTarget = e.relatedTarget || e.toElement,
+			relatedSeries = relatedTarget.point && relatedTarget.point.series; // #2499
+		
+		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
+				relatedSeries !== series) {
 			series.onMouseOut();
 		}
 	},
@@ -802,7 +818,6 @@ Pointer.prototype = {
 			[container, 'onmousemove', 'onContainerMouseMove'],
 			[container, 'onclick', 'onContainerClick'],
 			[container, 'mouseleave', 'onContainerMouseLeave'],
-			[doc, 'mousemove', 'onDocumentMouseMove'],
 			[doc, 'mouseup', 'onDocumentMouseUp']
 		];
 

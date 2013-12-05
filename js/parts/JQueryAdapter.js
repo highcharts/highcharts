@@ -28,8 +28,7 @@
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
 				var obj = Step,
-					base,
-					elem;
+					base;
 					
 				// Handle different parent objects
 				if (fn === 'cur') {
@@ -46,7 +45,9 @@
 		
 					// create the extended function replacement
 					obj[fn] = function (fx) {
-		
+
+						var elem;
+						
 						// Fx.prototype.cur does not use fx argument
 						fx = i ? fx : this;
 
