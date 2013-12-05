@@ -283,12 +283,11 @@ $(function () {
                     dataLabels: {
                         enabled: true,
                         color: 'white',
-                        formatter: function(dataLabelOptions) {
-                            return this.point.options.key.toUpperCase();
-                        },
+                        format: '{point.code}',
                         style: {
                             fontWeight: 'bold',
-                            textShadow: '0 1px 2px black'
+                            textShadow: '0 1px 2px black',
+                            textTransform: 'uppercase'
                         }
                     },
                     name: 'Democrats margin',
