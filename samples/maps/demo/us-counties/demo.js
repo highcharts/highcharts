@@ -21999,6 +21999,30 @@ $(function () {
     }
 ];
 /*
+Highcharts.maps.uscounties = [{
+    path: 'M0 0,L2 0,2 2,0 2z'
+}, {
+    path: 'M300 0,L302 0,302 2,300 2z'
+}, {
+    path: 'M500 0,L502 0,502 2,500 2z'
+}, {
+    path: 'M500 50,L502 50,502 52,500 52z'
+}, {
+    path: 'M500 -50,L502 -50,502 -52,500 -52z'
+}];
+data = [{
+    value: 1
+}, {
+    value: 1
+}, {
+    value: 1
+}, {
+    value: 1
+}, {
+    value: 1
+}];
+*/
+/*
 Highcharts.maps.uscounties.length = [];
 data.length = [];
 var num = 2500,
@@ -22086,6 +22110,13 @@ for (var i = 0; i < num; i++) {
             },
             tooltip: {
                 valueSuffix: '%'
+            },
+            point: {
+                events: {
+                    click: function () {
+                        console.log(this.name, [this._midX, this._midY])
+                    }
+                }
             }
         }, {
             type: "mapline",

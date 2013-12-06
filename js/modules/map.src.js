@@ -6,13 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/* 
- * See www.H.com/studies/world-map.htm for use case.
- *
- * To do:
- * - Optimize long variable names and alias adapter methods and Highcharts namespace variables
- * - Zoom and pan GUI
- */
 /*global HighchartsAdapter*/
 (function (H) {
 	var UNDEFINED,
@@ -179,7 +172,9 @@
 			isXAxis = this.isXAxis,
 			adjustedAxisLength,
 			xAxis = chart.xAxis[0],
-			padAxis;
+			padAxis,
+			fixTo,
+			fixDiff;
 		
 		// Run the parent method
 		proceed.call(this);
@@ -194,11 +189,25 @@
 			
 			// What axis to pad to put the map in the middle
 			padAxis = mapRatio > plotRatio ? this : xAxis;
-			
+
 			// Pad it
 			adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
-			padAxis.minPixelPadding = (padAxis.len - adjustedAxisLength) / 2;
+			padAxis.minPixelPadding = (padAxis.len - adjustedAxisLength) * 0.5;
+
+			fixTo = padAxis.fixTo;
+			if (fixTo) {
+				fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
+				padAxis.minPixelPadding -= fixDiff * padAxis.transA;
+			}
 		}
+	});
+
+	/**
+	 * Override Axis.render in order to delete the fixTo prop
+	 */
+	wrap(Axis.prototype, 'render', function (proceed) {
+		proceed.call(this);
+		this.fixTo = null;
 	});
 
 	// Extend the Pointer
@@ -281,6 +290,8 @@
 			);
 		}
 	});
+
+
 
 
 	/**
@@ -751,10 +762,10 @@
 		 * Zoom the map in or out by a certain amount. Less than 1 zooms in, greater than 1 zooms out.
 		 */
 		mapZoom: function (howMuch, centerXArg, centerYArg, mouseX, mouseY) {
-			if (this.isMapZooming) {
+			/*if (this.isMapZooming) {
 				this.mapZoomQueue = arguments;
 				return;
-			}
+			}*/
 
 			var chart = this,
 				xAxis = chart.xAxis[0],
@@ -765,10 +776,10 @@
 				yRange = yAxis.max - yAxis.min,
 				centerY = pick(centerYArg, yAxis.min + yRange / 2),
 				newYRange = yRange * howMuch,
-				alignToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5,
-				alignToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
-				newXMin = centerX - newXRange * alignToX,
-				newYMin = centerY - newYRange * alignToY,
+				fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5,
+				fixToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
+				newXMin = centerX - newXRange * fixToX,
+				newYMin = centerY - newYRange * fixToY,
 				animation = pick(chart.options.chart.animation, true),
 				delay,
 				newExt = chart.fitToBox({
@@ -782,28 +793,21 @@
 					width: xAxis.dataMax - xAxis.dataMin,
 					height: yAxis.dataMax - yAxis.dataMin
 				});
-			
+
+			// When mousewheel zooming, fix the point under the mouse
+			if (mouseX) {
+				xAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
+			}
+			if (mouseY) {
+				yAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
+			}
+
 			xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
 			yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-			// A faster, experimental implementation. SVG only. 
-			/*each(chart.series, function (series) {
-				var newScale = (series.group.scaleX || 1) / howMuch;
-				series.group.animate({
-					scaleX: newScale,
-					scaleY: newScale
-				});
-				each(series.points, function (point) {
-					if (point.strokeWidth === undefined) {
-						point.strokeWidth = point.graphic['stroke-width'];
-					}
-					point.graphic.attr({
-						'stroke-width': point.strokeWidth / newScale
-					});
-				})
-			});*/
+			
 			
 			// Prevent zooming until this one is finished animating
-			delay = animation ? animation.duration || 500 : 0;
+			/*delay = animation ? animation.duration || 500 : 0;
 			if (delay) {
 				chart.isMapZooming = true;
 				setTimeout(function () {
@@ -813,7 +817,7 @@
 					}
 					chart.mapZoomQueue = null;
 				}, delay);
-			}
+			}*/
 
 			chart.redraw();
 		},
@@ -897,9 +901,7 @@
 		marker: null,
 		stickyTracking: false,
 		dataLabels: {
-			formatter: function () { // Must use formatter here, if not the format will always take presedence
-				return this.point.value;
-			},
+			format: '{point.value}',
 			verticalAlign: 'middle'
 		},
 		turboThreshold: 0,
@@ -1214,35 +1216,6 @@
 		},
 		
 		/**
-		 * Add the path option for data points. Find the max value for color calculation.
-		 */
-		translate: function () {
-			var series = this,
-				chart = series.chart,
-				xAxis = series.xAxis,
-				yAxis = series.yAxis,
-				doAnimation = chart.pointCount < (chart.options.animationLimit || 250);
-	
-			series.generatePoints();
-			
-			each(series.data, function (point) {
-				
-				var display = doAnimation || 
-					(point._maxX > xAxis.min &&
-					point._minX < xAxis.max &&
-					point._maxY > yAxis.min &&
-					point._minY < yAxis.max);
-
-				point.shapeType = 'path';
-				point.shapeArgs = {
-					d: display ? series.translatePath(point.path) : ''
-				};
-			});
-			
-			series.translateColors();
-		},
-		
-		/**
 		 * In choropleth maps, the color is a result of the value, so this needs translation too
 		 */
 		translateColors: function () {
@@ -1275,6 +1248,35 @@
 		 */
 		drawDataLabels: noop,
 		
+		/**
+		 * Add the path option for data points. Find the max value for color calculation.
+		 */
+		translate: function () {
+			var series = this;
+	
+			series.generatePoints();
+			
+			if (series.isDirtyData) {
+				each(series.data, function (point) {
+					
+					/*var display = doAnimation || 
+						(point._maxX > xAxis.min &&
+						point._minX < xAxis.max &&
+						point._maxY > yAxis.min &&
+						point._minY < yAxis.max);*/
+
+					point.shapeType = 'path';
+					point.shapeArgs = {
+						//d: display ? series.translatePath(point.path) : ''
+						d: series.translatePath(point.path),
+						'vector-effect': 'non-scaling-stroke'
+					};
+				});
+			}
+			
+			series.translateColors();
+		},
+		
 		/** 
 		 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
 		 * Extend it by assigning the tooltip position.
@@ -1282,31 +1284,77 @@
 		drawPoints: function () {
 			var series = this,
 				xAxis = series.xAxis,
-				yAxis = series.yAxis;
+				yAxis = series.yAxis,
+				scale,
+				centerX,
+				centerY,
+				translateX,
+				translateY;
 			
 			// Make points pass test in drawing
 			each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
 			});
 
+			// Draw the shapes again
+			if (series.isDirtyData) {
 
-			// Draw them
-			seriesTypes.column.prototype.drawPoints.apply(series);
+				// Draw them
+				seriesTypes.column.prototype.drawPoints.apply(series);
 
-			// Individual point actions	
-			each(series.data, function (point) {
+				// Individual point actions	
+				each(series.data, function (point) {
 
-				// Reset color on update/redraw
-				if (series.chart.hasRendered) {
-					point.graphic.attr('fill', point.options.color);
-				}
+					// Reset color on update/redraw
+					if (series.chart.hasRendered) {
+						point.graphic.attr('fill', point.options.color);
+					}
 
-				// Record the middle point (loosely based on centroid), determined
-				// by the middleX and middleY options.
-				point.plotX = xAxis.toPixels(point._midX, true);
-				point.plotY = yAxis.toPixels(point._midY, true);
-			});
-			
+					// Record the middle point (loosely based on centroid), determined
+					// by the middleX and middleY options.
+					point.plotX = xAxis.toPixels(point._midX, true);
+					point.plotY = yAxis.toPixels(point._midY, true);
+				});
+
+				// Set the base for later scale-zooming
+				this.transA = xAxis.transA;
+
+			// Just update the scale and transform for better performance
+			} else {
+				scale = xAxis.transA / this.transA;
+				if (scale === 1) {
+
+					translateX = xAxis.pos;
+					translateY = yAxis.pos;
+
+				} else {
+					centerX = ((xAxis.max + xAxis.min) / (xAxis.dataMax + xAxis.dataMin)) * 0.5;
+					centerY = ((yAxis.max + yAxis.min) / (yAxis.dataMax + yAxis.dataMin)) * 0.5;
+
+					var a = xAxis.min - xAxis.dataMin,
+						d = xAxis.dataMax - xAxis.dataMin,
+						b = xAxis.max - xAxis.min,
+						c = d - b,
+						centerX = a / c;
+
+					var a = yAxis.min - yAxis.dataMin,
+						d = yAxis.dataMax - yAxis.dataMin,
+						b = yAxis.max - yAxis.min,
+						c = d - b,
+						centerY = a / c;
+					//console.log(xAxis.minPixelPadding, yAxis.minPixelPadding)
+					translateX = xAxis.pos + (xAxis.len * (1 - scale)) * centerX;
+					translateY = yAxis.pos + (yAxis.len * (1 - scale)) * centerY;
+				} 
+
+				this.group.animate({
+					translateX: translateX,
+					translateY: translateY,
+					scaleX: scale,
+					scaleY: scale
+				});
+			}
+
 			
 			// Now draw the data labels
 			Series.prototype.drawDataLabels.call(series);
@@ -1542,16 +1590,12 @@
 		
 		var hiddenAxis = {
 				endOnTick: false,
-				gridLineWidth: 0,
-				labels: {
-					enabled: false
-				},
 				lineWidth: 0,
 				minPadding: 0,
 				maxPadding: 0,
 				startOnTick: false,
-				tickWidth: 0,
-				title: null
+				title: null,
+				tickPositions: []
 			},
 			seriesOptions;
 		
