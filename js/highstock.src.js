@@ -14197,10 +14197,10 @@ Series.prototype = {
 				// Handle colors for column and pies
 				if (!seriesOptions.marker) { // column, bar, point
 					// if no hover color is given, brighten the normal color
-					pointStateOptionsHover.color =
-						Color(pointStateOptionsHover.color || point.color)
-							.brighten(pointStateOptionsHover.brightness ||
-								stateOptionsHover.brightness).get();
+					pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
+						Color(point.color)
+							.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
+							.get();
 
 				}
 

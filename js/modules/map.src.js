@@ -180,15 +180,17 @@
 		proceed.call(this);
 		
 		// On Y axis, handle both
-		if (chart.options.chart.type === 'map' && !isXAxis && xAxis.transA !== UNDEFINED) {
+		if (chart.options.chart.preserveAspectRatio && !isXAxis && xAxis.transA !== UNDEFINED) {
 			
 			// Use the same translation for both axes
 			this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
 			
-			mapRatio = (xAxis.max - xAxis.min) / (this.max - this.min);
+			mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
 			
 			// What axis to pad to put the map in the middle
-			padAxis = mapRatio > plotRatio ? this : xAxis;
+			padAxis = mapRatio < 1 ? this : xAxis;
+
+			//padAxis.paddedLength = padAxis.len * (1 + Math.abs(mapRatio - 1));
 
 			// Pad it
 			adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
@@ -199,6 +201,8 @@
 				fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
 				padAxis.minPixelPadding -= fixDiff * padAxis.transA;
 			}
+
+
 		}
 	});
 
@@ -912,6 +916,9 @@
 		states: {
 			normal: {
 				animation: true
+			},
+			hover: {
+				brightness: 0.2
 			}
 		}
 	});
@@ -1230,9 +1237,7 @@
 				color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
 
 				if (color) {
-					point.color = null; // reset from previous drilldowns, use of the same data options
-					point.options.color = color;
-					//point.color = color;
+					point.color = point.options.color = color;
 				}
 			});
 		},
@@ -1252,27 +1257,29 @@
 		 * Add the path option for data points. Find the max value for color calculation.
 		 */
 		translate: function () {
-			var series = this;
+			var series = this,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis;
 	
 			series.generatePoints();
 			
-			if (series.isDirtyData) {
-				each(series.data, function (point) {
-					
-					/*var display = doAnimation || 
-						(point._maxX > xAxis.min &&
-						point._minX < xAxis.max &&
-						point._maxY > yAxis.min &&
-						point._minY < yAxis.max);*/
+			each(series.data, function (point) {
+			
+				// Record the middle point (loosely based on centroid), determined
+				// by the middleX and middleY options.
+				point.plotX = xAxis.toPixels(point._midX, true);
+				point.plotY = yAxis.toPixels(point._midY, true);
 
+				if (series.isDirtyData) {
+			
 					point.shapeType = 'path';
 					point.shapeArgs = {
 						//d: display ? series.translatePath(point.path) : ''
 						d: series.translatePath(point.path),
 						'vector-effect': 'non-scaling-stroke'
 					};
-				});
-			}
+				}
+			});
 			
 			series.translateColors();
 		},
@@ -1292,9 +1299,9 @@
 				translateY;
 			
 			// Make points pass test in drawing
-			each(series.data, function (point) {
+			/*each(series.data, function (point) {
 				point.plotY = 1; // pass null test in column.drawPoints
-			});
+			});*/
 
 			// Draw the shapes again
 			if (series.isDirtyData) {
@@ -1310,10 +1317,6 @@
 						point.graphic.attr('fill', point.options.color);
 					}
 
-					// Record the middle point (loosely based on centroid), determined
-					// by the middleX and middleY options.
-					point.plotX = xAxis.toPixels(point._midX, true);
-					point.plotY = yAxis.toPixels(point._midY, true);
 				});
 
 				// Set the base for later scale-zooming
@@ -1328,9 +1331,7 @@
 					translateY = yAxis.pos;
 
 				} else {
-					centerX = ((xAxis.max + xAxis.min) / (xAxis.dataMax + xAxis.dataMin)) * 0.5;
-					centerY = ((yAxis.max + yAxis.min) / (yAxis.dataMax + yAxis.dataMin)) * 0.5;
-
+					
 					var a = xAxis.min - xAxis.dataMin,
 						d = xAxis.dataMax - xAxis.dataMin,
 						b = xAxis.max - xAxis.min,
@@ -1342,7 +1343,9 @@
 						b = yAxis.max - yAxis.min,
 						c = d - b,
 						centerY = a / c;
-					//console.log(xAxis.minPixelPadding, yAxis.minPixelPadding)
+					
+					var xPad = (xAxis.minPixelPadding - 104);
+					
 					translateX = xAxis.pos + (xAxis.len * (1 - scale)) * centerX;
 					translateY = yAxis.pos + (yAxis.len * (1 - scale)) * centerY;
 				} 
@@ -1590,6 +1593,7 @@
 		
 		var hiddenAxis = {
 				endOnTick: false,
+				//gridLineWidth: 1,
 				lineWidth: 0,
 				minPadding: 0,
 				maxPadding: 0,
@@ -1616,7 +1620,8 @@
 		{ // forced options
 			chart: {
 				inverted: false,
-				alignTicks: false
+				alignTicks: false,
+				preserveAspectRatio: true
 			}
 		});
 	
@@ -1626,3 +1631,4 @@
 		return new Chart(options, callback);
 	};
 }(Highcharts));
+	
