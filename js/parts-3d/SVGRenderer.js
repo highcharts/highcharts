@@ -17,9 +17,11 @@ SVGElementCollection.prototype = {
 	},
 
 	animate: function (params, options, complete) {
-		//if (params.translateX !== undefined || params.translateY !== undefined) {
-			H.each(this.children, function (child) { child.animate(params, options, complete); });
-		//}
+		if (params.x !== undefined) {
+			this.pathFunction(params);
+		} else {
+			H.each(this.children, function (child) { child.animate(params, options, complete); });			
+		}
 		return this;
 	},
 
@@ -179,25 +181,8 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
 
-	result.pathFunction = pathFunction;
-
-	var paths = result.pathFunction();
-	result.front.attr({d: paths.front.d, zIndex: paths.front.z });
-	result.back.attr({d: paths.back.d, zIndex: paths.back.z });
-	result.top.attr({d: paths.top.d, zIndex: paths.top.z });
-	result.bottom.attr({d: paths.bottom.d, zIndex: paths.bottom.z });
-	result.left.attr({d: paths.left.d, zIndex: paths.left.z });
-	result.right.attr({d: paths.right.d, zIndex: paths.right.z });
-
-	return result;
-};
-
-/**** CUBES ****/
-HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
-	result = this.createElement3D(function () { return this.renderer.getCubePath(x, y, z, w, h, d, options, opposite, this.renderer); });
-
-	result.animate = function (params) {
-		var paths = this.renderer.getCubePath(params);
+	result.pathFunction = function (params) {
+		var paths = pathFunction(params);
 		this.front.attr({d: paths.front.d, zIndex: paths.front.z });
 		this.back.attr({d: paths.back.d, zIndex: paths.back.z });
 		this.top.attr({d: paths.top.d, zIndex: paths.top.z });
@@ -206,6 +191,14 @@ HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
 		this.right.attr({d: paths.right.d, zIndex: paths.right.z });
 		return this;
 	};
+	result.pathFunction(params);
+	
+	return result;
+};
+
+/**** CUBES ****/
+HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
+	result = this.createElement3D(this.getCubePath, arguments);
 	return result;
 };
 
@@ -271,7 +264,7 @@ HR.prototype.toLinePath = function (points, closed) {
 
 /**** Pie Slices ***/
 HR.prototype.arc3d = function (x, y, a1, d, options) {
-	var result = this.createElement3D(function () { return this.renderer.get3DArcPath(x, y, a1, d, options); });
+	var result = this.createElement3D(this.get3DArcPath, arguments);
 	return result;
 };
 
