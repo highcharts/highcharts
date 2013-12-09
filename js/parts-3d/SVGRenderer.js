@@ -26,7 +26,11 @@ SVGElementCollection.prototype = {
 	},
 
 	attr: function (hash, val) {
-		H.each(this.children, function (child) { child.attr(hash, val); });
+		if (hash.x !== undefined) {
+			this.pathFunction(hash);
+		} else {
+			H.each(this.children, function (child) { child.attr(hash, val); });
+		}
 		return this;
 	},
 
