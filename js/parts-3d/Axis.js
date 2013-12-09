@@ -61,7 +61,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		}
 
 		if (mark) {
-			var path = mark.toD || mark.d.split(' '),
+			var path = mark.d.split(' '),
 			pArr = [ 
 			{x: path[1], y: path[2], z: z1 },
 			{x: path[4], y: path[5], z: z1 }

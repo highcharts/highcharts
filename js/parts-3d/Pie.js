@@ -44,3 +44,14 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 		}
 	});
 });
+
+H.wrap(H.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	H.each(this.data, function (point) {
+		H.each(point.graphic.children, function (child) {
+			child.element.point = point;
+		});
+	});	
+
+});

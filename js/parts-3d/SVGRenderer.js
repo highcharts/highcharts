@@ -1,65 +1,169 @@
 /**
  *	Extension of the Renderer
  */
-HR.prototype.createElement3D = function (z) {
-	var wrapper = new this.Element();
-	wrapper.init(this, 'g');
+function SVGElementCollection() {}
+SVGElementCollection.prototype = {
+	init: function (renderer, nodeName) {
+		this.element = {};
+		this.renderer = renderer;
+		this.attrSetters = {};
+		
+		this.children = [];
+	},
 
-	wrapper.attr({zIndex : (z || 0)});
-	wrapper.children = [];
-	wrapper.attrSetters = {};
-
-	wrapper.addChild = function (element) {
-		element.add(this);
+	addChild: function (element) {
 		this.children.push(element);
 		return element;
-	};
+	},
 
-	wrapper.attr = function (hash, val) {
-		if (hash.d) { 
-			this.animate(hash);
-		} else {
-			H.each(this.children, function (child) { child.attr(hash, val); });
-		}
-		return wrapper;
-	};
+	animate: function (params, options, complete) {
+		//if (params.translateX !== undefined || params.translateY !== undefined) {
+			H.each(this.children, function (child) { child.animate(params, options, complete); });
+		//}
+		return this;
+	},
 
-	wrapper.destroy = function () {
+	attr: function (hash, val) {
+		H.each(this.children, function (child) { child.attr(hash, val); });
+		return this;
+	},
+
+	addClass: function (className) {
+		H.each(this.children, function (child) { child.addClass(className); });
+		return this;
+	},
+
+	symbolAttr: function (hash) {
+		H.each(this.children, function (child) { child.symbolAttr(hash); });
+		return this;
+	},
+
+	clip: function (clipRect) {
+		H.each(this.children, function (child) { child.clipRect(clipRect); });
+		return this;
+	},
+
+	crisp: function (strokeWidth, x, y, width, height) {
+		H.each(this.children, function (child) { child.crisp(strokeWidth, x, y, width, height); });
+		return this;
+	},
+
+	css: function (styles) {
+		H.each(this.children, function (child) { child.css(styles); });
+		return this;
+	},
+
+	on: function (eventType, handler) {
+		H.each(this.children, function (child) { child.on(eventType, handler); });
+		return this;
+	},
+	setRadialReference: function (coordinates) {
+		H.each(this.children, function (child) { child.setRadialReference(coordinates); });
+		return this;
+	},
+
+	translate: function (x, y) {
+		H.each(this.children, function (child) { child.translate(x, y); });
+		return this;
+	},
+
+	invert: function () {
+		H.each(this.children, function (child) { child.invert(); });
+		return this;
+	},
+
+	htmlCss: function (styles) {
+		H.each(this.children, function (child) { child.htmlCss(styles); });
+		return this;
+	},
+
+	// TODO 
+	htmlGetBBox: function () {
+		return null;
+	},
+
+	htmlUpdateTransform: function () {
+		H.each(this.children, function (child) { child.htmlUpdateTransform(); });
+		return this;
+	},
+
+	setSpanRotation: function (rotation, alignCorrection, baseline) {
+		H.each(this.children, function (child) { child.setSpanRotation(rotation, alignCorrection, baseline); });
+		return this;
+	},
+
+	getSpanCorrection: function (width, baseline, alignCorrection) {
+		H.each(this.children, function (child) { child.getSpanCorrection(width, baseLine, alignCorrection); });
+		return this;
+	},
+
+	updateTransform: function () {
+		H.each(this.children, function (child) { child.updateTransform(); });
+		return this;
+	},
+
+	toFront: function () {
+		H.each(this.children, function (child) { child.toFront(); });
+		return this;
+	},
+
+	align: function (alignOptions, alignByTranslate, box) {
+		H.each(this.children, function (child) { child.align(alignOptions, alignByTranslate, box); });
+		return this;
+	},
+
+	// TODO
+	getBBox: function () {
+		return null;
+	},
+
+	show: function () {
+		H.each(this.children, function (child) { child.show(); });
+		return this;
+	},
+
+	hide: function () {
+		H.each(this.children, function (child) { child.hide(); });
+		return this;
+	},
+
+	fadeOut: function (duration) {
+		H.each(this.children, function (child) { child.fadeOut(); });
+		return this;
+	},
+
+	add: function (parent) {
+		H.each(this.children, function (child) { child.add(parent); });
+		return this;
+	},
+
+	safeRemoveChild: function (element) {
+		H.each(this.children, function (child) { child.safeRemoveChild(); });
+		return this;
+	},
+
+	destroy: function () {
 		H.each(this.children, function (child) { child.destroy(); });
-		return H.SVGElement.prototype.destroy.apply(this);
-	};
-	return wrapper;
-};
+		return null;
+	},
 
-/**** CUBES ****/
-
-HR.prototype.cubeAnimate = function (x, y, z, w, h, d, options, opposite) {
-	if (typeof x === 'object') {
-		animate = x.animate;
-		opposite = x.opposite;
-		options = x.options;
-		d = x.d;
-		h = x.h;
-		w = x.w;
-		z = x.z;
-		y = x.y;
-		x = x.x;
+	shadow: function (shadowOptions, group, cutOff) {
+		H.each(this.children, function (child) { child.shadow(shadowOptions, group, cutOff); });
+		return this;
 	}
-
-	var paths = this.renderer.getCubePath(x, y, z, w, h, d, options, opposite);
-	this.front.attr({d: paths.front});
-	this.top.attr({d: paths.top});
-	this.side.attr({d: paths.side});
 };
 
-HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
-	var result = this.createElement3D();
+/**** GENERIC 3D OBJECT ****/
+HR.prototype.createElement3D = function (pathFunction, params) {
+	var result = new SVGElementCollection();
+	result.init(this);
 
-	result.side = result.addChild(this.path());
-	result.top = result.addChild(this.path());
 	result.front = result.addChild(this.path());
-
-	this.cubeAnimate.apply(result, [x, y, z, w, h, d, options, opposite]);
+	result.back = result.addChild(this.path());
+	result.top = result.addChild(this.path());
+	result.bottom = result.addChild(this.path());
+	result.left = result.addChild(this.path());
+	result.right = result.addChild(this.path());
 
 	var filler = function (element, value, factor) {
 		var v = H.Color(value).brighten(factor).get(); 
@@ -67,16 +171,56 @@ HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
 		return v;
 	};
 
-	result.front.attrSetters.fill = function (value, key) { return filler(this, value, 0); };	
+	result.front.attrSetters.fill = function (value, key) { return filler(this, value, 0); };
+	result.back.attrSetters.fill = function (value, key) { return filler(this, value, 0); };		
 	result.top.attrSetters.fill = function (value, key) { return filler(this, value, 0.1); };
-	result.side.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
+	result.bottom.attrSetters.fill = function (value, key) { return filler(this, value, 0.1); };
+	result.left.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
+	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
-	if (x.animate || animate) { result.animate = this.cubeAnimate; }
+
+	result.pathFunction = pathFunction;
+
+	var paths = result.pathFunction();
+	result.front.attr({d: paths.front.d, zIndex: paths.front.z });
+	result.back.attr({d: paths.back.d, zIndex: paths.back.z });
+	result.top.attr({d: paths.top.d, zIndex: paths.top.z });
+	result.bottom.attr({d: paths.bottom.d, zIndex: paths.bottom.z });
+	result.left.attr({d: paths.left.d, zIndex: paths.left.z });
+	result.right.attr({d: paths.right.d, zIndex: paths.right.z });
 
 	return result;
 };
 
+/**** CUBES ****/
+HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
+	result = this.createElement3D(function () { return this.renderer.getCubePath(x, y, z, w, h, d, options, opposite, this.renderer); });
+
+	result.animate = function (params) {
+		var paths = this.renderer.getCubePath(params);
+		this.front.attr({d: paths.front.d, zIndex: paths.front.z });
+		this.back.attr({d: paths.back.d, zIndex: paths.back.z });
+		this.top.attr({d: paths.top.d, zIndex: paths.top.z });
+		this.bottom.attr({d: paths.bottom.d, zIndex: paths.bottom.z });
+		this.left.attr({d: paths.left.d, zIndex: paths.left.z });
+		this.right.attr({d: paths.right.d, zIndex: paths.right.z });
+		return this;
+	};
+	return result;
+};
+
 HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
+	if (typeof x === 'object') {
+		opposite = x.opposite;
+		options = x.options;
+		d = x.d;
+		h = x.h;
+		w = x.w;
+		z = x.z;
+		y = x.y;
+		x = x.x;		
+	}
+
 	var pArr = [
 		{ x: x, y: y, z: z },
 		{ x: x + w, y: y, z: z },
@@ -91,15 +235,17 @@ HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
 	pArr = perspective(pArr, options.angle1, options.angle2, options.origin);
 
 	var front = this.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
-	var side  = (opposite ?
-			this.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true) :			// left
-			this.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true));			// right
+	var left  = this.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true);
+	var right = this.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true);
 	var top = this.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);
 
 	return {
-		front: front,
-		top: top,
-		side: side
+		front: {d: front, z: 2},
+		back: {d: [], z: 0 },
+		top: {d: top, z: 0},
+		bottom: {d: [], z: 0},
+		left: {d: opposite ? left : [], z: 0 },
+		right: {d: opposite ? [] : right, z: 0 }
 	};
 };
 
@@ -124,65 +270,20 @@ HR.prototype.toLinePath = function (points, closed) {
 };
 
 /**** Pie Slices ***/
-HR.prototype.arc3dAnimate = function (x, y, a1, d, options) {
+HR.prototype.arc3d = function (x, y, a1, d, options) {
+	var result = this.createElement3D(function () { return this.renderer.get3DArcPath(x, y, a1, d, options); });
+	return result;
+};
+
+HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
+	//console.log(x, y, a1, d, options);
 	if (typeof x === 'object') {
+		x = x[0] || x;
 		options = x.options;
 		d = x.d;
 		a1 = x.a1;
 		y = x.y;
 		x = x.x;
-	}
-
-	var paths = this.renderer.get3DArcPath(x, y, a1, d, options);
-
-	this.top.attr({d: paths.top});
-	this.outer.attr({d: paths.outer});
-	this.back.attr({d: paths.back});
-	this.side1.attr({d: paths.side1});
-	this.side2.attr({d: paths.side2});
-};
-
-HR.prototype.arc3d = function (x, y, a1, d, options) {
-	var z = (typeof x === 'object' ? x.options.start + x.options.end : options.start + options.end) / 2;
-	z = (sin(z) + 1) * 100;
-
-	var result = this.createElement3D(z);
-
-	result.back = result.addChild(this.path());
-	result.outer = result.addChild(this.path());
-	result.side1 = result.addChild(this.path());
-	result.side2 = result.addChild(this.path());
-	
-	result.top = result.addChild(this.path());
-	
-	result.attr({zIndex: z});
-
-	this.arc3dAnimate.apply(result, [x, y, a1, d, options]);
-
-	var filler = function (element, value, factor) {
-		var v = H.Color(value).brighten(factor).get(); 
-		element.attr({stroke: v, 'stroke-width': 1}); 
-		return v;
-	};
-	
-	result.top.attrSetters.fill = function (value, key) { return filler(this, value, 0); };
-	result.outer.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
-	result.back.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
-	result.side1.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
-	result.side2.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
-
-	return result;
-};
-
-HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
-	if (options.start === options.end) {
-		return {			
-			top: [],
-			outer: [],
-			back: [],
-			side1: [],
-			side2: []
-		};
 	}
 
 	var start = options.start,
@@ -225,45 +326,7 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	];
 
 	// OUTER SIDE
-	var outer = [];
-	var osx, osy, oex, oey,
-		la = longArc;
-
-	if ((sQ === 1) || (sQ === 2)) {
-		osx = sx1;
-		osy = sy1;
-	} else {
-		osx = x + rx1;		
-		osy = y;
-	}
-	if ((eQ === 1) || (eQ === 2)) {
-		oex = ex1;
-		oey = ey1;
-	} else {
-		oex = x - rx1;
-		oey = y;
-	}
-
-	if (((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) || 
-		((sQ === 2 || sQ === 1) && (eQ === 0 || eQ === 3))) {
-		la = 0;
-	}
-
-	outer = [ 
-		'M', osx, osy,
-		'A', rx1, ry1, 0, la, 1, oex, oey,
-		'L', oex, oey + d,
-		'A', rx1, ry1, 0, la, 0, osx, osy + d,
-		'L', osx, osy,
-		'Z'
-	];
-	if (((sQ === 3) || (sQ === 0)) && ((eQ === 3) || (eQ === 0)) && (start < end)) {
-		outer = [];
-	}
-
-	/*
-	if ((sQ === 1 || sQ === 2) && (eQ === 1 || eQ === 2)) {
-		outer = [		
+	var front = [		
 		'M', sx1, sy1,
 		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
 		'L', ex1, ey1 + d,
@@ -271,44 +334,9 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'L', sx1, sy1,
 		'Z'
 		];
-	}
-	if ((sQ === 1 || sQ === 2) && (eQ === 3 || eQ === 0)) {
-		outer = [		
-		'M', sx1, sy1,
-		'A', rx1, ry1, 0, longArc, 1, x - rx1, y,
-		'L', x - rx1, y + d,
-		'A', rx1, ry1, 0, longArc, 0, sx1, sy1 + d,
-		'L', sx1, sy1,
-		'Z'
-		];
-	}
-
-	if ((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) {
-		outer = [		
-		'M', x + rx1, y,
-		'A', rx1, ry1, 0, 0, 1, ex1, ey1,
-		'L', ex1, ey1 + d,
-		'A', rx1, ry1, 0, 0, 0, x + rx1, y + d,
-		'L', x + rx1, y,
-		'Z'
-		];		
-	}
-	if ((sQ === 3 || sQ === 0) && (eQ === 3 || eQ === 0) && (start > end)) {
-		outer = [		
-		'M', x + rx1, y,
-		'A', rx1, ry1, 0, longArc, 1, x - rx1, y,
-		'L', x - rx1, y + d,
-		'A', rx1, ry1, 0, longArc, 0, x + rx1, y + d,
-		'L', x + rx1, y,
-		'Z'
-		];	
-	} 
-	*/
+	
 	// BACK SIDE
-	var back = [];
-	if ((sQ === 3 || sQ === 0) && (eQ === 3 || eQ === 0)) {
-		
-		back = [
+	var back = [
 		'M', sx2, sy2,
 		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
 		'L', ex2, ey2 + d,
@@ -316,46 +344,11 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'L', sx2, sy2,
 		'Z'
 		];
-		
-	}
-
-	if ((sQ === 1 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
-		back = [
-		'M', x - rx2, y,
-		'A', rx2, ry2, 0, (longArc ? 0 : 1), 1, sx2, sy2,
-		'L', sx2, sy2 + d,
-		'A', rx2, ry2, 0, (longArc ? 0 : 1), 0, x - rx2, y + d,
-		'L', x - rx2, y,
-		'Z'
-		];		
-	}
-	
-	if ((sQ === 2 && sQ !== 0) && (eQ === 3 || eQ === 0)) {
-		back = [
-		'M', x - rx2, y,
-		'A', rx2, ry2, 0, longArc, 1, sx2, sy2,
-		'L', sx2, sy2 + d,
-		'A', rx2, ry2, 0, longArc, 0, x - rx2, y + d,
-		'L', x - rx2, y,
-		'Z'
-		];		
-	}
-
-	if ((sQ === 3 || sQ === 0) && (eQ === 1 || eQ === 2)) {
-		back = [
-		'M', ex2, ey2,
-		'A', rx2, ry2, 0, 0, 1, x + rx2, y,
-		'L', x + rx2, y + d,
-		'A', rx2, ry2, 0, 0, 0, ex2, ey2 + d,
-		'L', ex2, ey2,
-		'Z'
-		];	
-	}
 	
 	// INNER SIDE 1
-	var side1 = [];
+	var right = [];
 	if (sQ > 1) {
-		side1 = [
+		right = [
 		'M', sx1, sy1,
 		'L', ex2, ey2,
 		'L', ex2, ey2 + d,
@@ -365,10 +358,10 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 	}
 
 	// INNER SIDE 2
-	var side2 = [];
+	var left = [];
 	
 	if (eQ <= 1) {
-		side2 = [
+		left = [
 		'M', ex1, ey1,
 		'L', sx2, sy2,
 		'L', sx2, sy2 + d,
@@ -376,12 +369,13 @@ HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
 		'Z' 
 		];
 	}
-	
+
 	return {
-		top: top,
-		outer: outer,
-		back: (rx2 === 0 ? [] : back),
-		side1: side1,
-		side2: side2
+		front: {d: front, z: 1},
+		back: {d: back, z: 0 },
+		top: {d: top, z: 2},
+		bottom: {d: [], z: 0},
+		left: {d: left, z: 0 },
+		right: {d: right, z: 0 }
 	};
 };

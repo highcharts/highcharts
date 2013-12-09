@@ -43,8 +43,14 @@ H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	} else {
 		nz = this.chart.getZPosition(this) + 1;
 	}
-
-
-	this.group.attr({zIndex: nz}); 
+	this.group.attr({zIndex: nz});
+	
 	proceed.apply(this, [].slice.call(arguments, 1));
+
+	H.each(this.data, function (point) {
+		H.each(point.graphic.children, function (child) {
+			child.element.point = point;
+		});
+	});	
+
 });
