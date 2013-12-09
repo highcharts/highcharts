@@ -167,6 +167,9 @@ extend(Point.prototype, {
 						graphic.attr(point.pointAttr[point.state || '']);
 					}
 				}
+				if (options && options.dataLabels && point.dataLabel) { // #2468
+					point.dataLabel = point.dataLabel.destroy();
+				}
 			}
 
 			// record changes in the parallel arrays
@@ -413,7 +416,7 @@ extend(Axis.prototype, {
 	update: function (newOptions, redraw) {
 		var chart = this.chart;
 
-		newOptions = chart.options[this.xOrY + 'Axis'][this.options.index] = merge(this.userOptions, newOptions);
+		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
 		this._addedPlotLB = this.userMin = this.userMax = UNDEFINED; // #1611, #2306
@@ -431,7 +434,7 @@ extend(Axis.prototype, {
      */
 	remove: function (redraw) {
 		var chart = this.chart,
-			key = this.xOrY + 'Axis'; // xAxis or yAxis
+			key = this.coll; // xAxis or yAxis
 
 		// Remove associated series
 		each(this.series, function (series) {
