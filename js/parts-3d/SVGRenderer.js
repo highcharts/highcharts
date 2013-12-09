@@ -208,7 +208,7 @@ HR.prototype.getCubePath = function (params) {
 	var opposite = params.opposite,
 		options = params.options,
 		d = params.d,
-		h = params.h
+		h = params.h,
 		w = params.w,
 		z = params.z,
 		y = params.y,
@@ -271,10 +271,10 @@ HR.prototype.arc3d = function (x, y, a1, d, options) {
 
 HR.prototype.get3DArcPath = function (params) {
 	params = params[0] || params;
-	var	options = params.options,
-		d = params.d,
-		a1 = params.a1,
-		y = params.y,
+	var	options = params.options;
+		d = params.d;
+		a1 = params.a1;
+		y = params.y;
 		x = params.x;
 
 	var start = options.start,
