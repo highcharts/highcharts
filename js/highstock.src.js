@@ -14486,7 +14486,7 @@ Series.prototype = {
 			plotX = pick(point.plotX, -999),
 			plotY = pick(point.plotY, -999),
 			bBox = dataLabel.getBBox(),
-			visible = this.visible && chart.isInsidePlot(point.plotX, point.plotY, inverted),
+			visible = this.visible && (point.series.forceDL || chart.isInsidePlot(point.plotX, point.plotY, inverted)),
 			alignAttr; // the final position;
 				
 		if (visible) {
