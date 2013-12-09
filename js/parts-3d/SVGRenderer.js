@@ -160,6 +160,7 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 	var result = new SVGElementCollection();
 	result.init(this);
 
+
 	result.front = result.addChild(this.path());
 	result.back = result.addChild(this.path());
 	result.top = result.addChild(this.path());
@@ -181,8 +182,8 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
 
-	result.pathFunction = function (params) {
-		var paths = pathFunction(params);
+	result.pathFunction = function (parameters) {
+		var paths = pathFunction(parameters);
 		this.front.attr({d: paths.front.d, zIndex: paths.front.z });
 		this.back.attr({d: paths.back.d, zIndex: paths.back.z });
 		this.top.attr({d: paths.top.d, zIndex: paths.top.z });
@@ -197,22 +198,22 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 };
 
 /**** CUBES ****/
-HR.prototype.cube = function (x, y, z, w, h, d, options, opposite, animate) {
+HR.prototype.cube = function () {
 	result = this.createElement3D(this.getCubePath, arguments);
 	return result;
 };
 
-HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
-	if (typeof x === 'object') {
-		opposite = x.opposite;
-		options = x.options;
-		d = x.d;
-		h = x.h;
-		w = x.w;
-		z = x.z;
-		y = x.y;
-		x = x.x;		
-	}
+HR.prototype.getCubePath = function (params) {
+	params = params[0] || params;
+	var opposite = params.opposite,
+		options = params.options,
+		d = params.d,
+		h = params.h
+		w = params.w,
+		z = params.z,
+		y = params.y,
+		x = params.x;		
+
 
 	var pArr = [
 		{ x: x, y: y, z: z },
@@ -227,10 +228,10 @@ HR.prototype.getCubePath = function (x, y, z, w, h, d, options, opposite) {
 
 	pArr = perspective(pArr, options.angle1, options.angle2, options.origin);
 
-	var front = this.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
-	var left  = this.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true);
-	var right = this.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true);
-	var top = this.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);
+	var front = HR.prototype.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
+	var left  = HR.prototype.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true);
+	var right = HR.prototype.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true);
+	var top = HR.prototype.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);
 
 	return {
 		front: {d: front, z: 2},
@@ -268,16 +269,13 @@ HR.prototype.arc3d = function (x, y, a1, d, options) {
 	return result;
 };
 
-HR.prototype.get3DArcPath = function (x, y, a1, d, options) {
-	//console.log(x, y, a1, d, options);
-	if (typeof x === 'object') {
-		x = x[0] || x;
-		options = x.options;
-		d = x.d;
-		a1 = x.a1;
-		y = x.y;
-		x = x.x;
-	}
+HR.prototype.get3DArcPath = function (params) {
+	params = params[0] || params;
+	var	options = params.options,
+		d = params.d,
+		a1 = params.a1,
+		y = params.y,
+		x = params.x;
 
 	var start = options.start,
 		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)

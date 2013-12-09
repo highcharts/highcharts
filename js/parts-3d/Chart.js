@@ -144,7 +144,7 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left : left - sideSize);
 
 		if (!frameGroup.bottom) {
-			frameGroup.bottom = renderer.cube(xval, top + height, 0, width + sideSize, bottomSize, depth + backSize, options3d, opposite, true)
+			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, w: width + sideSize, h: bottomSize, d: depth + backSize, options: options3d, opposite: opposite })
 				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.bottom.animate({
@@ -164,7 +164,7 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left + width : left - sideSize);
 
 		if (!frameGroup.side) {
-			frameGroup.side = renderer.cube(xval, top, 0, sideSize, height, depth + backSize, options3d, opposite, true)
+			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, w: sideSize, h: height, d: depth + backSize, options: options3d, opposite: opposite })
 				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.side.animate({
@@ -182,7 +182,7 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 
 	if (fback || chart.options.chart.plotBackgroundColor) {
 		if (!frameGroup.back) {
-			frameGroup.back = renderer.cube(left, top, depth, width, height, backSize, options3d, opposite, true)
+			frameGroup.back = renderer.cube({x: left, y: top, z: depth, w: width, h: height, d: backSize, options: options3d, opposite: opposite })
 				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.back.animate({
