@@ -390,6 +390,16 @@ HR.prototype.get3DArcPath = function (params) {
 	// Sanity
 	if (a1 === 0) { d = 0; }
 
+	if (options.start === options.end) {
+		return {
+			front: {d: [], z: 0},
+			back: {d: [], z: 0 },
+			top: {d: [], z: 0 },
+			bottom: {d: [], z: 0 },
+			left: {d: [], z: 0 },
+			right: {d: [], z: 0 }
+		};
+	}
 	// Normalize angles
 	start = (start + 4 * Math.PI) % (2 * Math.PI);
 	end = (end + 4 * Math.PI) % (2 * Math.PI);
