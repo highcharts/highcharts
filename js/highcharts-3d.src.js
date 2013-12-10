@@ -114,7 +114,11 @@ SVGElementCollection.prototype = {
 	},
 
 	attr: function (hash, val) {
-		H.each(this.children, function (child) { child.attr(hash, val); });
+		if (hash.x !== undefined) {
+			this.pathFunction(hash);
+		} else {
+			H.each(this.children, function (child) { child.attr(hash, val); });
+		}
 		return this;
 	},
 
@@ -272,12 +276,12 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 
 	result.pathFunction = function (parameters) {
 		var paths = pathFunction(parameters);
-		this.front.attr({d: paths.front.d, zIndex: paths.front.z });
-		this.back.attr({d: paths.back.d, zIndex: paths.back.z });
-		this.top.attr({d: paths.top.d, zIndex: paths.top.z });
-		this.bottom.attr({d: paths.bottom.d, zIndex: paths.bottom.z });
-		this.left.attr({d: paths.left.d, zIndex: paths.left.z });
-		this.right.attr({d: paths.right.d, zIndex: paths.right.z });
+		this.front.animate({d: paths.front.d, zIndex: paths.front.z }, false, false);
+		this.back.animate({d: paths.back.d, zIndex: paths.back.z }, false, false);
+		this.top.animate({d: paths.top.d, zIndex: paths.top.z }, false, false);
+		this.bottom.animate({d: paths.bottom.d, zIndex: paths.bottom.z }, false, false);
+		this.left.animate({d: paths.left.d, zIndex: paths.left.z }, false, false);
+		this.right.animate({d: paths.right.d, zIndex: paths.right.z }, false, false);
 		return this;
 	};
 	result.pathFunction(params);
@@ -405,25 +409,78 @@ HR.prototype.get3DArcPath = function (params) {
 	];
 
 	// OUTER SIDE
+	var fsx1 = sx1,
+		fsy1 = sy1,
+		fex1 = ex1,
+		fey1 = ey1;
+
+	if (eQ === 3 || eQ === 0) {
+		fex1 = x - rx1;
+		fey1 = y;
+		longArc = 0;
+	}
+	if (sQ === 3 || sQ === 0) {
+		fsx1 = x + rx1;
+		fsy1 = y;
+		longArc = 0;
+	}
+
 	var front = [		
-		'M', sx1, sy1,
-		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
-		'L', ex1, ey1 + d,
-		'A', rx1, ry1, 0, longArc, 0, sx1, sy1 + d,
-		'L', sx1, sy1,
+		'M', fsx1, fsy1,
+		'A', rx1, ry1, 0, longArc, 1, fex1, fey1,
+		'L', fex1, fey1 + d,
+		'A', rx1, ry1, 0, longArc, 0, fsx1, fsy1 + d,
+		'L', fsx1, fsy1,
 		'Z'
 		];
+
+	if ((eQ === 3 || eQ === 0) && (sQ === 3 || sQ === 0)) {
+		front = [];
+	}
+	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start > end)) {
+	front = [	
+		'M', sx1, sy1,
+		'A', rx1, ry1, 0, 0, 1, x - rx1, y,
+		'L', x - rx1, y + d,
+		'A', rx1, ry1, 0, 0, 0, sx1, sy1 + d,
+		'L', sx1, sy1,
+		'M', ex1, ey1,
+		'A', rx1, ry1, 0, 0, 0, x + rx1, y,
+		'L', x + rx1, y + d,
+		'A', rx1, ry1, 0, 0, 1, ex1, ey1 + d,
+		'L', ex1, ey1		
+		];
+	}
 	
 	// BACK SIDE
+	var bsx2 = sx2,
+		bsy2 = sy2,
+		bex2 = ex2,
+		bey2 = ey2;
+
+	if (eQ === 2 || eQ === 1) {
+		bsx2 = x + rx2;
+		bsy2 = y;
+		longArc = 0;
+	}
+	if (sQ === 2 || sQ === 1) {
+		bex2 = x - rx2;
+		bey2 = y;
+		longArc = 0;
+	}
+
 	var back = [
-		'M', sx2, sy2,
-		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
-		'L', ex2, ey2 + d,
-		'A', rx2, ry2, 0, longArc, 1, sx2, sy2 + d,
-		'L', sx2, sy2,
+		'M', bsx2, bsy2,
+		'A', rx2, ry2, 0, longArc, 0, bex2, bey2,
+		'L', bex2, bey2 + d,
+		'A', rx2, ry2, 0, longArc, 1, bsx2, bsy2 + d,
+		'L', bsx2, bsy2,
 		'Z'
 		];
-	
+
+	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start < end)) {
+		back = [];
+	}
 	// INNER SIDE 1
 	var right = [];
 	if (sQ > 1) {
@@ -449,13 +506,18 @@ HR.prototype.get3DArcPath = function (params) {
 		];
 	}
 
+	var zCorr = Math.sin((start + end) / 2) * 100;
+	if (start > end) {
+		zCorr = 0;
+	}
+
 	return {
-		front: {d: front, z: 1},
-		back: {d: back, z: 0 },
-		top: {d: top, z: 2},
-		bottom: {d: [], z: 0},
-		left: {d: left, z: 0 },
-		right: {d: right, z: 0 }
+		front: {d: front, z: 100 + zCorr},
+		back: {d: back, z: 100 + zCorr },
+		top: {d: top, z: 200 + zCorr },
+		bottom: {d: [], z: zCorr },
+		left: {d: left, z: zCorr },
+		right: {d: right, z: zCorr }
 	};
 };
 /**
