@@ -22142,4 +22142,10 @@ for (var i = 0; i < num; i++) {
 
     // Instanciate the map
     $('#container').highcharts('Map', options);
+
+    /*$('#container').bind('mousemove', function (e) {
+        var chart = $('#container').highcharts();
+        e = chart.pointer.normalize(e);
+        console.log('plotX', e.chartX - chart.plotLeft)
+    })*/
 });

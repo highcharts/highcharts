@@ -161,7 +161,7 @@
 			this.dataMax = dataMax;
 		}
 	});
-	
+
 	/**
 	 * Override axis translation to make sure the aspect ratio is always kept
 	 */
@@ -169,23 +169,23 @@
 		var chart = this.chart,
 			mapRatio,
 			plotRatio = chart.plotWidth / chart.plotHeight,
-			isXAxis = this.isXAxis,
 			adjustedAxisLength,
 			xAxis = chart.xAxis[0],
 			padAxis,
 			fixTo,
 			fixDiff;
+
 		
 		// Run the parent method
 		proceed.call(this);
 		
 		// On Y axis, handle both
-		if (chart.options.chart.preserveAspectRatio && !isXAxis && xAxis.transA !== UNDEFINED) {
+		if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
 			
 			// Use the same translation for both axes
 			this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
 			
-			mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
+			mapRatio = chart.mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
 			
 			// What axis to pad to put the map in the middle
 			padAxis = mapRatio < 1 ? this : xAxis;
@@ -194,15 +194,14 @@
 
 			// Pad it
 			adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
-			padAxis.minPixelPadding = (padAxis.len - adjustedAxisLength) * 0.5;
+			padAxis.pixelPadding = padAxis.len - adjustedAxisLength;
+			padAxis.minPixelPadding = padAxis.pixelPadding / 2;
 
 			fixTo = padAxis.fixTo;
 			if (fixTo) {
 				fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
 				padAxis.minPixelPadding -= fixDiff * padAxis.transA;
 			}
-
-
 		}
 	});
 
@@ -233,7 +232,9 @@
 				chart.mapZoom(
 					0.5,
 					chart.xAxis[0].toValue(e.chartX),
-					chart.yAxis[0].toValue(e.chartY)
+					chart.yAxis[0].toValue(e.chartY),
+					e.chartX, 
+					e.chartY
 				);
 			}
 		},
@@ -251,7 +252,8 @@
 			delta = e.detail || -(e.wheelDelta / 120);
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 				chart.mapZoom(
-					delta > 0 ? 1.5 : 0.75,
+					//delta > 0 ? 1.5 : 0.75,
+					delta > 0 ? 2 : 1 / 2,
 					chart.xAxis[0].toValue(e.chartX),
 					chart.yAxis[0].toValue(e.chartY),
 					e.chartX,
@@ -1298,11 +1300,6 @@
 				translateX,
 				translateY;
 			
-			// Make points pass test in drawing
-			/*each(series.data, function (point) {
-				point.plotY = 1; // pass null test in column.drawPoints
-			});*/
-
 			// Draw the shapes again
 			if (series.isDirtyData) {
 
@@ -1325,29 +1322,37 @@
 			// Just update the scale and transform for better performance
 			} else {
 				scale = xAxis.transA / this.transA;
-				if (scale === 1) {
+				if (scale > 0.99 && scale < 1.01) { // rounding errors
 
 					translateX = xAxis.pos;
 					translateY = yAxis.pos;
+					scale = 1;
 
 				} else {
-					
-					var a = xAxis.min - xAxis.dataMin,
-						d = xAxis.dataMax - xAxis.dataMin,
-						b = xAxis.max - xAxis.min,
+
+					var mapRatio = Math.max(1, series.chart.mapRatio),
+						fullDataMin = xAxis.dataMin - ((xAxis.dataMax - xAxis.dataMin) * (mapRatio - 1) / 2),
+						fullMin = xAxis.min - xAxis.minPixelPadding / xAxis.transA,
+						a = fullMin - fullDataMin,
+						d = (xAxis.dataMax - xAxis.dataMin) * mapRatio,
+						b = (xAxis.max - xAxis.min) * mapRatio,
 						c = d - b,
 						centerX = a / c;
 
-					var a = yAxis.min - yAxis.dataMin,
-						d = yAxis.dataMax - yAxis.dataMin,
-						b = yAxis.max - yAxis.min,
+
+
+					var mapRatio = 1 / Math.min(1, series.chart.mapRatio),
+						fullDataMin = yAxis.dataMin - ((yAxis.dataMax - yAxis.dataMin) * (mapRatio - 1) / 2),
+						fullMin = yAxis.min - yAxis.minPixelPadding / yAxis.transA,
+						a = fullMin - fullDataMin,
+						d = (yAxis.dataMax - yAxis.dataMin) * mapRatio,
+						b = (yAxis.max - yAxis.min) * mapRatio,
 						c = d - b,
 						centerY = a / c;
 					
-					var xPad = (xAxis.minPixelPadding - 104);
-					
 					translateX = xAxis.pos + (xAxis.len * (1 - scale)) * centerX;
 					translateY = yAxis.pos + (yAxis.len * (1 - scale)) * centerY;
+
 				} 
 
 				this.group.animate({
@@ -1593,13 +1598,15 @@
 		
 		var hiddenAxis = {
 				endOnTick: false,
-				//gridLineWidth: 1,
+				gridLineWidth: 0,
 				lineWidth: 0,
 				minPadding: 0,
 				maxPadding: 0,
 				startOnTick: false,
 				title: null,
 				tickPositions: []
+				//tickInterval: 200,
+				//gridZIndex: 10
 			},
 			seriesOptions;
 		
