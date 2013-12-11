@@ -13081,7 +13081,8 @@ Series.prototype = {
 			graph = series.graph,
 			area = series.area,
 			chart = series.chart,
-			names = series.xAxis && series.xAxis.names,
+			xAxis = series.xAxis,
+			hasCategories = xAxis && !!xAxis.categories,
 			currentShift = (graph && graph.shift) || 0,
 			dataOptions = seriesOptions.data,
 			point,
@@ -13125,8 +13126,8 @@ Series.prototype = {
 		series.updateParallelArrays(point, 'splice', i); // insert undefined item
 		series.updateParallelArrays(point, i); // update it
 
-		if (names) {
-			names[x] = point.name;
+		if (hasCategories && point.name) {
+			xAxis.names[x] = point.name;
 		}
 		dataOptions.splice(i, 0, options);
 
@@ -13174,12 +13175,12 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			names = xAxis && xAxis.names,
+			hasCategories = xAxis && !!xAxis.categories,
 			i;
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
+		series.pointRange = hasCategories ? 1 : options.pointRange;
 
 		series.colorCounter = 0; // for series with colorByPoint (#1547)
 		data = data || [];
@@ -13244,8 +13245,8 @@ Series.prototype = {
 					pt = { series: series };
 					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 					series.updateParallelArrays(pt, i);	
-					if (names && pt.name) {
-						names[pt.x] = pt.name; // #2046
+					if (hasCategories && pt.name) {
+						xAxis.names[pt.x] = pt.name; // #2046
 					}
 				}
 			}
@@ -14208,10 +14209,10 @@ Series.prototype = {
 				// Handle colors for column and pies
 				if (!seriesOptions.marker) { // column, bar, point
 					// if no hover color is given, brighten the normal color
-					pointStateOptionsHover.color =
-						Color(pointStateOptionsHover.color || point.color)
-							.brighten(pointStateOptionsHover.brightness ||
-								stateOptionsHover.brightness).get();
+					pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
+						Color(point.color)
+							.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
+							.get();
 
 				}
 
