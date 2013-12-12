@@ -27,6 +27,7 @@ var HighchartsConfig = {
 			Legend:	{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Chart:	{name: 'Chart', component: 'Core', group: "Core", baseUrl: 'parts'},
 			CenteredSeriesMixin: {name: 'CenteredSeriesMixin', component: 'CenteredSeriesMixin', baseUrl: 'parts'},
+			Point:	{name: 'Point', component: 'Core', group: 'Core', baseUrl: 'parts'},
 			Series:	{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Dynamics: {name: 'Dynamics', component: 'Dynamics', group: 'Features', depends: {component: ['Core']}},
 			LineSeries:	{name: 'LineSeries', component: 'LineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},

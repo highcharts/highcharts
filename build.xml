@@ -143,6 +143,7 @@
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
+			<file name="Point.js"/>
             <file name="Series.js"/>
             <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
@@ -183,6 +184,7 @@
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
+            <file name="Point.js"/>
             <file name="Series.js"/>
             <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
