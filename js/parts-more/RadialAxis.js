@@ -107,7 +107,7 @@ var radialAxisMixin = {
 		this.chart.axisOffset[this.side] = 0;
 		
 		// Set the center array
-		this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
 	},
 
 
@@ -183,7 +183,7 @@ var radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
+			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
 			
 			this.len = this.width = this.height = this.isCircular ?
 				this.center[2] * (this.endAngleRad - this.startAngleRad) / 2 :

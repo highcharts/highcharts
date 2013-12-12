@@ -46,7 +46,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
+var GaugePoint = extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -215,7 +215,19 @@ var GaugeSeries = {
 		this.group.clip(this.chart.clipRect);
 	},
 	
-	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: Highcharts.PointTrackerMixin.drawTracker
+	/**
+	 * Extend the basic setData method by running processData and generatePoints immediately,
+	 * in order to access the points from the legend.
+	 */
+	setData: function (data, redraw) {
+		Series.prototype.setData.call(this, data, false);
+		this.processData();
+		this.generatePoints();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		}
+	},
+	drawTracker: PointTrackerMixin.drawTracker
 };
-seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);
+seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
+

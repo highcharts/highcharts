@@ -57,7 +57,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		fill = fill || markerOptions.fillColor || this.color; 
 		
 		if (fillOpacity !== 1) {
-			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
+			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
 		}
 		return fill;
 	},
