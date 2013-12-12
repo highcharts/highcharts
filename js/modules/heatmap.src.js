@@ -18,13 +18,16 @@
 
 			series.generatePoints();
 	
-			each(series.data, function (point) {
+			each(series.points, function (point) {
 				var xPad = (options.colsize || 1) / 2,
 					yPad = (options.rowsize || 1) / 2,
 					x1 = Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)),
 					x2 = Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)),
 					y1 = Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
 					y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
+
+
+				point.plotY = 1; // Pass test in Column.drawPoints
 
 				point.shapeType = 'rect';
 				point.shapeArgs = {
@@ -39,6 +42,7 @@
 			series.translateColors();
 		},
 		
+		animate: function () {},
 		getBox: function () {},
 
 		getExtremes: function () {

@@ -190,8 +190,6 @@
 			// What axis to pad to put the map in the middle
 			padAxis = mapRatio < 1 ? this : xAxis;
 
-			//padAxis.paddedLength = padAxis.len * (1 + Math.abs(mapRatio - 1));
-
 			// Pad it
 			adjustedAxisLength = (padAxis.max - padAxis.min) * padAxis.transA;
 			padAxis.pixelPadding = padAxis.len - adjustedAxisLength;
@@ -200,7 +198,12 @@
 			fixTo = padAxis.fixTo;
 			if (fixTo) {
 				fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
-				padAxis.minPixelPadding -= fixDiff * padAxis.transA;
+				fixDiff *= padAxis.transA;
+				if (Math.abs(fixDiff) > padAxis.minPixelPadding) { // zooming out again, keep within restricted area
+					fixDiff = 0;
+				}
+				padAxis.minPixelPadding -= fixDiff;
+				
 			}
 		}
 	});
@@ -252,12 +255,11 @@
 			delta = e.detail || -(e.wheelDelta / 120);
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 				chart.mapZoom(
-					//delta > 0 ? 1.5 : 0.75,
 					delta > 0 ? 2 : 1 / 2,
 					chart.xAxis[0].toValue(e.chartX),
 					chart.yAxis[0].toValue(e.chartY),
-					e.chartX,
-					e.chartY
+					delta > 0 ? undefined : e.chartX,
+					delta > 0 ? undefined : e.chartY
 				);
 			}
 		}
@@ -1272,7 +1274,7 @@
 				point.plotX = xAxis.toPixels(point._midX, true);
 				point.plotY = yAxis.toPixels(point._midY, true);
 
-				if (series.isDirtyData) {
+				if (series.isDirtyData || series.chart.renderer.isVML) {
 			
 					point.shapeType = 'path';
 					point.shapeArgs = {
@@ -1298,19 +1300,35 @@
 				centerX,
 				centerY,
 				translateX,
+				group = series.group,
+				chart = series.chart,
+				renderer = chart.renderer,
 				translateY;
+
+			// Set a group that handles transform during zooming and panning in order to preserve clipping
+			// on series.group
+			if (!series.transformGroup) {
+				series.transformGroup = renderer.g()
+					.attr({
+						scaleX: 1,
+						scaleY: 1
+					})
+					.add(group);
+			}
 			
 			// Draw the shapes again
-			if (series.isDirtyData) {
+			if (series.isDirtyData || renderer.isVML) {
 
-				// Draw them
+				// Draw them in transformGroup
+				series.group = series.transformGroup;
 				seriesTypes.column.prototype.drawPoints.apply(series);
+				series.group = group; // Reset
 
 				// Individual point actions	
-				each(series.data, function (point) {
+				each(series.points, function (point) {
 
 					// Reset color on update/redraw
-					if (series.chart.hasRendered) {
+					if (chart.hasRendered && point.graphic) {
 						point.graphic.attr('fill', point.options.color);
 					}
 
@@ -1324,8 +1342,8 @@
 				scale = xAxis.transA / this.transA;
 				if (scale > 0.99 && scale < 1.01) { // rounding errors
 
-					translateX = xAxis.pos;
-					translateY = yAxis.pos;
+					translateX = 0;
+					translateY = 0;
 					scale = 1;
 
 				} else {
@@ -1350,17 +1368,17 @@
 						c = d - b,
 						centerY = a / c;
 					
-					translateX = xAxis.pos + (xAxis.len * (1 - scale)) * centerX;
-					translateY = yAxis.pos + (yAxis.len * (1 - scale)) * centerY;
+					translateX = (xAxis.len * (1 - scale)) * centerX;
+					translateY = (yAxis.len * (1 - scale)) * centerY;
 
 				} 
-
-				this.group.animate({
+				this.transformGroup.animate({
 					translateX: translateX,
 					translateY: translateY,
 					scaleX: scale,
 					scaleY: scale
 				});
+
 			}
 
 			
@@ -1468,7 +1486,7 @@
 
 				});
 
-				delete this.animate;
+				this.animate = null;
 			}
 			
 		},
@@ -1605,7 +1623,7 @@
 				startOnTick: false,
 				title: null,
 				tickPositions: []
-				//tickInterval: 200,
+				//tickInterval: 500,
 				//gridZIndex: 10
 			},
 			seriesOptions;
