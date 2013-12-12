@@ -10794,8 +10794,10 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 if (/Trident\/7\.0/.test(userAgent)) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
-			runPositionItem = function () {
-				proceed.call(legend, item);
+			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
+				if (item._legendItemPos) {
+					proceed.call(legend, item);
+				}
 			};
 
 		if (legend.chart.renderer.forExport) {
