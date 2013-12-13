@@ -92,13 +92,13 @@
 				}
 
 				// Sets the js variable as well.
-				echo "folders =".json_encode($folders).',';
+				echo "folders = ".json_encode($folders). ';';
 
 				// Updates js array result to current $_SESSION content. 
-				echo "results =".json_encode($_SESSION).';';
+				echo "results = ".json_encode($_SESSION).';';
 
 				// Sets the "rep" variable.
-				echo "rep =".json_encode($_SESSION['repetitions']).';';
+				echo "rep = ".json_encode($_SESSION['repetitions']).';';
 			?>
 		</script>
 
