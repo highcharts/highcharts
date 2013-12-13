@@ -43,8 +43,12 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 
 	// Make the clipbox larger
 	var mainSVG = this.container.childNodes[0];
+	
 	this.clipRect.destroy();
-	this.clipRect = this.renderer.rect({x: 0, y: 0, height: this.chartHeight, width: this.chartWidth}).add(mainSVG);
+	this.clipBox.width = this.chartWidth;
+	this.clipBox.height = this.chartHeight;
+
+	this.clipRect = this.renderer.clipRect(this.clipBox);
 
 	this.redraw();
 });
