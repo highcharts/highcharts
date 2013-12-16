@@ -142,42 +142,43 @@
 		?>
 
 		<div id="topMenu">
-			<h3> testsuite </h3>
-			<?php
-				echo 	'<h4>The Highcharts version currently loaded is: 
-							<span class="loaded">'.$_SESSION['highcharts'].'</span>
-						</h4>';
-				echo 	'<h4>The javascript version currently loaded is: 
-							<span class="loaded">'.$_SESSION['jquery'].'</span>
-						</h4>';
-				echo 	'<h4>The number of repetitions per indivudual test is set to: <span class="loaded">'.$_SESSION['repetitions'].'</span>
-						</h4>';
-			?>
+			<h1>Highcharts Benchmarks</h1>
+
 
 			<form method="post" action="index.php">
-				<select name="jquery">
-					<?php
-						foreach ($jqueryVersions as $jquery) {
-							$selected = $jquery == $_SESSION['jquery'] ? 'selected' : '';
-							echo "<option value='".$jquery."' ".$selected.">".$jquery."</option>";
-						}
-					?>
-				</select>
-				<select name="highcharts">
-					<?php
-						foreach ($highchartsVersions as $highcharts) {
-							$selected = $highcharts == $_SESSION['highcharts'] ? 'selected' : '';
-							echo "<option value='".$highcharts."' ".$selected.">".$highcharts."</option>";
-						}
-					?>
-				</select>
-				<input type="submit" name="submit"> 
+				<table>
+					<tr>
+						<td><label for="jquery">jQuery version</label></td>
+						<td><select name="jquery" id="jquery">
+							<?php
+								foreach ($jqueryVersions as $jquery) {
+									$selected = $jquery == $_SESSION['jquery'] ? 'selected' : '';
+									echo "<option value='".$jquery."' ".$selected.">".$jquery."</option>";
+								}
+							?>
+						</select></td>
+					</tr>
+					<tr>
+						<td><label for="highcharts">Highcharts version</label></td>
+						<td>
+							<select name="highcharts">
+								<?php
+									foreach ($highchartsVersions as $highcharts) {
+										$selected = $highcharts == $_SESSION['highcharts'] ? 'selected' : '';
+										echo "<option value='".$highcharts."' ".$selected.">".$highcharts."</option>";
+									}
+								?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Repeat each test</td>
+						<td><input type="text" name="repetitions" value="<?php echo $_SESSION['repetitions']; ?>"> times</td>
+					</tr>
+				</table>
+				<input type="submit" name="submit" value="OK">
 			</form>
-			<br>
-			<form method="post" action="index.php">
-				Repeat each test: <input type="text" name="repetitions">
-				<input type="submit" name="submit">
-			</form>
+			<hr>
 
 			<?php 
 				// IE8 makes the runChart() function work in mysterious ways the second time the 
