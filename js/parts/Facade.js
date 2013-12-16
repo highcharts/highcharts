@@ -6,8 +6,6 @@ extend(Highcharts, {
 	Axis: Axis,
 	Chart: Chart,
 	Color: Color,
-	Legend: Legend,
-	Pointer: Pointer,
 	Point: Point,
 	Tick: Tick,
 	Tooltip: Tooltip,
