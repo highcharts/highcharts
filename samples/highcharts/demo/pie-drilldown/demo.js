@@ -70,31 +70,19 @@ $(function () {
             // Create the chart
             $('#container').highcharts({
                 chart: {
-                    type: 'column'
+                    type: 'pie'
                 },
                 title: {
-                    text: 'Browser market shares. November, 2013'
+                    text: 'Browser market shares. November, 2013.'
                 },
                 subtitle: {
-                    text: 'Click the columns to view versions. Source: netmarketshare.com.'
-                },
-                xAxis: {
-                    type: 'category'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Total percent market share'
-                    }
-                },
-                legend: {
-                    enabled: false
+                    text: 'Click the slices to view versions. Source: netmarketshare.com.'
                 },
                 plotOptions: {
                     series: {
-                        borderWidth: 0,
                         dataLabels: {
                             enabled: true,
-                            format: '{point.y:.1f}%'
+                            format: '{point.name}: {point.y:.1f}%'
                         }
                     }
                 },
