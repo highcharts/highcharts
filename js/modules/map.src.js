@@ -794,8 +794,6 @@
 				fixToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
 				newXMin = centerX - newXRange * fixToX,
 				newYMin = centerY - newYRange * fixToY,
-				animation = pick(chart.options.chart.animation, true),
-				delay,
 				newExt = chart.fitToBox({
 					x: newXMin,
 					y: newYMin,
@@ -1310,13 +1308,21 @@
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
 				scale,
-				centerX,
-				centerY,
 				translateX,
 				group = series.group,
 				chart = series.chart,
 				renderer = chart.renderer,
-				translateY;
+				translateY,
+				getTranslate = function (axis, mapRatio) {
+					var dataMin = axis.dataMin,
+						dataMax = axis.dataMax,
+						fullDataMin = dataMin - ((dataMax - dataMin) * (mapRatio - 1) / 2),
+						fullMin = axis.min - axis.minPixelPadding / axis.transA,
+						minOffset = fullMin - fullDataMin,
+						centerOffset = (dataMax - dataMin - axis.max + axis.min) * mapRatio,
+						center = minOffset / centerOffset;
+					return (axis.len * (1 - scale)) * center;
+				};
 
 			// Set a group that handles transform during zooming and panning in order to preserve clipping
 			// on series.group
@@ -1354,37 +1360,15 @@
 			} else {
 				scale = xAxis.transA / this.transA;
 				if (scale > 0.99 && scale < 1.01) { // rounding errors
-
 					translateX = 0;
 					translateY = 0;
 					scale = 1;
 
-				} else {
-
-					var mapRatio = Math.max(1, series.chart.mapRatio),
-						fullDataMin = xAxis.dataMin - ((xAxis.dataMax - xAxis.dataMin) * (mapRatio - 1) / 2),
-						fullMin = xAxis.min - xAxis.minPixelPadding / xAxis.transA,
-						a = fullMin - fullDataMin,
-						d = (xAxis.dataMax - xAxis.dataMin) * mapRatio,
-						b = (xAxis.max - xAxis.min) * mapRatio,
-						c = d - b,
-						centerX = a / c;
-
-
-
-					var mapRatio = 1 / Math.min(1, series.chart.mapRatio),
-						fullDataMin = yAxis.dataMin - ((yAxis.dataMax - yAxis.dataMin) * (mapRatio - 1) / 2),
-						fullMin = yAxis.min - yAxis.minPixelPadding / yAxis.transA,
-						a = fullMin - fullDataMin,
-						d = (yAxis.dataMax - yAxis.dataMin) * mapRatio,
-						b = (yAxis.max - yAxis.min) * mapRatio,
-						c = d - b,
-						centerY = a / c;
-					
-					translateX = (xAxis.len * (1 - scale)) * centerX;
-					translateY = (yAxis.len * (1 - scale)) * centerY;
-
+				} else {	
+					translateX = getTranslate(xAxis, Math.max(1, series.chart.mapRatio)); 
+					translateY = getTranslate(yAxis, 1 / Math.min(1, series.chart.mapRatio));
 				} 
+
 				this.transformGroup.animate({
 					translateX: translateX,
 					translateY: translateY,
