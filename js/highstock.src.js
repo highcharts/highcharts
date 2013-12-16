@@ -14367,6 +14367,9 @@ Series.prototype = {
 
 		if (negativeColor && (graph || area)) {
 			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
+			if (translatedThreshold < 0) {
+				chartSizeMax -= translatedThreshold; // #2534
+			}
 			above = {
 				x: 0,
 				y: 0,
@@ -14379,6 +14382,7 @@ Series.prototype = {
 				width: chartSizeMax,
 				height: chartSizeMax
 			};
+			console.log(below)
 
 			if (chart.inverted) {
 
