@@ -95,7 +95,7 @@ Series.prototype = {
 		// Register it in the chart
 		chartSeries.push(series);
 		series._i = chartSeries.length - 1;
-		
+
 		// Sort series according to index option (#248, #1123, #2456)
 		stableSort(chartSeries, sortByIndex);
 		if (this.yAxis) {
@@ -253,7 +253,7 @@ Series.prototype = {
 			plotOptions.series,
 			itemOptions
 		);
-		
+
 		// The tooltip options are merged between global and series specific options
 		this.tooltipOptions = merge(
 			defaultOptions.tooltip,
@@ -263,7 +263,7 @@ Series.prototype = {
 			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
 			itemOptions.tooltip
 		);
-		
+
 		// Delete marker object if not allowed (#1125)
 		if (typeOptions.marker === null) {
 			delete options.marker;
@@ -342,16 +342,16 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			names = xAxis && xAxis.names,
+			hasCategories = xAxis && !!xAxis.categories,
 			i;
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
+		series.pointRange = hasCategories ? 1 : options.pointRange;
 
 		series.colorCounter = 0; // for series with colorByPoint (#1547)
 		data = data || [];
-		
+
 		// parallel arrays
 		var dataLength = data.length,
 			turboThreshold = options.turboThreshold,
@@ -412,8 +412,8 @@ Series.prototype = {
 					pt = { series: series };
 					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 					series.updateParallelArrays(pt, i);
-					if (names && pt.name) {
-						names[pt.x] = pt.name; // #2046
+					if (hasCategories && pt.name) {
+						xAxis.names[pt.x] = pt.name; // #2046
 					}
 				}
 			}
@@ -817,7 +817,7 @@ Series.prototype = {
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
-		
+
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
@@ -1338,10 +1338,10 @@ Series.prototype = {
 				// Handle colors for column and pies
 				if (!seriesOptions.marker) { // column, bar, point
 					// if no hover color is given, brighten the normal color
-					pointStateOptionsHover.color =
-						Color(pointStateOptionsHover.color || point.color)
-							.brighten(pointStateOptionsHover.brightness ||
-								stateOptionsHover.brightness).get();
+					pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
+						Color(point.color)
+							.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
+							.get();
 
 				}
 

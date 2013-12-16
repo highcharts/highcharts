@@ -29,6 +29,9 @@ $(function () {
                 chart : {
                     borderWidth : 1
                 },
+
+                colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
+                    'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
                 
                 title : {
                     text : 'Population density by country (/km²)'
@@ -47,36 +50,31 @@ $(function () {
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: 'rgba(255,255,255,0.9)'
+                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    symbolRadius: 0,
+                    symbolHeight: 14
                 },
 
                 colorAxis: {
                     dataClasses: [{
-                        to: 3,
-                        color: 'rgba(19,64,117,0.05)'
+                        to: 3
                     }, {
                         from: 3,
-                        to: 10,
-                        color: 'rgba(19,64,117,0.2)'
+                        to: 10 
                     }, {
                         from: 10,
-                        to: 30,
-                        color: 'rgba(19,64,117,0.4)'
+                        to: 30 
                     }, {
                         from: 30,
-                        to: 100,
-                        color: 'rgba(19,64,117,0.5)'
+                        to: 100
                     }, {
                         from: 100,
                         to: 300,
-                        color: 'rgba(19,64,117,0.6)'
                     }, {
                         from: 300,
-                        to: 1000,
-                        color: 'rgba(19,64,117,0.8)'
+                        to: 1000
                     }, {
-                        from: 1000,
-                        color: 'rgba(19,64,117,1)'
+                        from: 1000
                     }]
                 },
 

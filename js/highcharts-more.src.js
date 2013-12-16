@@ -940,6 +940,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,
+		crop: false,
 		style: {
 			fontWeight: 'bold'
 		},
@@ -993,6 +994,7 @@ var GaugeSeries = {
 	angular: true, 
 	drawGraph: noop,
 	fixedBox: true,
+	forceDL: true,
 	trackerGroups: ['group', 'dataLabels'],
 	
 	/**

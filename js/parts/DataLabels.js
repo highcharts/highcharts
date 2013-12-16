@@ -140,7 +140,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
-		visible = this.visible && chart.isInsidePlot(point.plotX, point.plotY, inverted),
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(point.plotX, point.plotY, inverted)),
 		alignAttr; // the final position;
 
 	if (visible) {
@@ -303,7 +303,7 @@ if (seriesTypes.pie) {
 
 		// arrange points for detection collision
 		each(data, function (point) {
-			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
+			if (point.dataLabel && point.visible) { // #407, #2510
 				halves[point.half].push(point);
 			}
 		});
@@ -636,7 +636,7 @@ if (seriesTypes.pie) {
 
 if (seriesTypes.column) {
 
-	/** 
+	/**
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
 	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
@@ -645,7 +645,7 @@ if (seriesTypes.column) {
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
-		
+
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
 			alignTo = merge(dlBox);
@@ -657,7 +657,7 @@ if (seriesTypes.column) {
 					height: alignTo.width
 				};
 			}
-				
+
 			// Compute the alignment box
 			if (!inside) {
 				if (inverted) {
@@ -669,18 +669,18 @@ if (seriesTypes.column) {
 				}
 			}
 		}
-		
-		// When alignment is undefined (typically columns and bars), display the individual 
+
+		// When alignment is undefined (typically columns and bars), display the individual
 		// point below or above the point depending on the threshold
 		options.align = pick(
-			options.align, 
+			options.align,
 			!inverted || inside ? 'center' : below ? 'right' : 'left'
 		);
 		options.verticalAlign = pick(
-			options.verticalAlign, 
+			options.verticalAlign,
 			inverted || inside ? 'middle' : below ? 'top' : 'bottom'
 		);
-		
+
 		// Call the parent method
 		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
 	};

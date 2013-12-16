@@ -10815,8 +10815,10 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 if (/Trident\/7\.0/.test(userAgent)) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
-			runPositionItem = function () {
-				proceed.call(legend, item);
+			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
+				if (item._legendItemPos) {
+					proceed.call(legend, item);
+				}
 			};
 
 		if (legend.chart.renderer.forExport) {
@@ -11689,38 +11691,49 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Add the event handlers necessary for auto resizing
-	 *
+	 * Resize the chart to its container if size is not explicitly set
 	 */
-	initReflow: function () {
+	reflow: function (e) {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
-			reflowTimeout;
-			
-		function reflow(e) {
-			var width = optionsChart.width || adapterRun(renderTo, 'width'),
-				height = optionsChart.height || adapterRun(renderTo, 'height'),
-				target = e ? e.target : win; // #805 - MooTools doesn't supply e
-				
-			// Width and height checks for display:none. Target is doc in IE8 and Opera,
-			// win in Firefox, Chrome and IE9.
-			if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
-				
-				if (width !== chart.containerWidth || height !== chart.containerHeight) {
-					clearTimeout(reflowTimeout);
-					chart.reflowTimeout = reflowTimeout = setTimeout(function () {
-						if (chart.container) { // It may have been destroyed in the meantime (#1257)
-							chart.setSize(width, height, false);
-							chart.hasUserSize = null;
-						}
-					}, 100);
+			width = optionsChart.width || adapterRun(renderTo, 'width'),
+			height = optionsChart.height || adapterRun(renderTo, 'height'),
+			target = e ? e.target : win, // #805 - MooTools doesn't supply e
+			doReflow = function () {
+				if (chart.container) { // It may have been destroyed in the meantime (#1257)
+					chart.setSize(width, height, false);
+					chart.hasUserSize = null;
 				}
-				chart.containerWidth = width;
-				chart.containerHeight = height;
+			};
+			
+		// Width and height checks for display:none. Target is doc in IE8 and Opera,
+		// win in Firefox, Chrome and IE9.
+		if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
+			
+			if (width !== chart.containerWidth || height !== chart.containerHeight) {
+				clearTimeout(chart.reflowTimeout);
+				if (e) { // Called from window.resize
+					chart.reflowTimeout = setTimeout(doReflow, 100);
+				} else { // Called directly (#2224)
+					doReflow();
+				}
 			}
+			chart.containerWidth = width;
+			chart.containerHeight = height;
 		}
-		chart.reflow = reflow;
+	},
+
+	/**
+	 * Add the event handlers necessary for auto resizing
+	 */
+	initReflow: function () {
+		var chart = this,
+			reflow = function (e) {
+				chart.reflow(e);
+			};
+			
+		
 		addEvent(win, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
 			removeEvent(win, 'resize', reflow);
@@ -12904,7 +12917,7 @@ Series.prototype = {
 		// Register it in the chart
 		chartSeries.push(series);
 		series._i = chartSeries.length - 1;
-		
+
 		// Sort series according to index option (#248, #1123, #2456)
 		stableSort(chartSeries, sortByIndex);
 		if (this.yAxis) {
@@ -13062,7 +13075,7 @@ Series.prototype = {
 			plotOptions.series,
 			itemOptions
 		);
-		
+
 		// The tooltip options are merged between global and series specific options
 		this.tooltipOptions = merge(
 			defaultOptions.tooltip,
@@ -13072,7 +13085,7 @@ Series.prototype = {
 			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
 			itemOptions.tooltip
 		);
-		
+
 		// Delete marker object if not allowed (#1125)
 		if (typeOptions.marker === null) {
 			delete options.marker;
@@ -13151,16 +13164,16 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			names = xAxis && xAxis.names,
+			hasCategories = xAxis && !!xAxis.categories,
 			i;
 
 		// reset properties
 		series.xIncrement = null;
-		series.pointRange = xAxis && xAxis.categories ? 1 : options.pointRange;
+		series.pointRange = hasCategories ? 1 : options.pointRange;
 
 		series.colorCounter = 0; // for series with colorByPoint (#1547)
 		data = data || [];
-		
+
 		// parallel arrays
 		var dataLength = data.length,
 			turboThreshold = options.turboThreshold,
@@ -13221,8 +13234,8 @@ Series.prototype = {
 					pt = { series: series };
 					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 					series.updateParallelArrays(pt, i);
-					if (names && pt.name) {
-						names[pt.x] = pt.name; // #2046
+					if (hasCategories && pt.name) {
+						xAxis.names[pt.x] = pt.name; // #2046
 					}
 				}
 			}
@@ -13626,7 +13639,7 @@ Series.prototype = {
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold;
-		
+
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
@@ -14147,10 +14160,10 @@ Series.prototype = {
 				// Handle colors for column and pies
 				if (!seriesOptions.marker) { // column, bar, point
 					// if no hover color is given, brighten the normal color
-					pointStateOptionsHover.color =
-						Color(pointStateOptionsHover.color || point.color)
-							.brighten(pointStateOptionsHover.brightness ||
-								stateOptionsHover.brightness).get();
+					pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
+						Color(point.color)
+							.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
+							.get();
 
 				}
 
@@ -16625,7 +16638,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
-		visible = this.visible && chart.isInsidePlot(point.plotX, point.plotY, inverted),
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(point.plotX, point.plotY, inverted)),
 		alignAttr; // the final position;
 
 	if (visible) {
@@ -16788,7 +16801,7 @@ if (seriesTypes.pie) {
 
 		// arrange points for detection collision
 		each(data, function (point) {
-			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
+			if (point.dataLabel && point.visible) { // #407, #2510
 				halves[point.half].push(point);
 			}
 		});
@@ -17121,7 +17134,7 @@ if (seriesTypes.pie) {
 
 if (seriesTypes.column) {
 
-	/** 
+	/**
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
 	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
@@ -17130,7 +17143,7 @@ if (seriesTypes.column) {
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
-		
+
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
 			alignTo = merge(dlBox);
@@ -17142,7 +17155,7 @@ if (seriesTypes.column) {
 					height: alignTo.width
 				};
 			}
-				
+
 			// Compute the alignment box
 			if (!inside) {
 				if (inverted) {
@@ -17154,18 +17167,18 @@ if (seriesTypes.column) {
 				}
 			}
 		}
-		
-		// When alignment is undefined (typically columns and bars), display the individual 
+
+		// When alignment is undefined (typically columns and bars), display the individual
 		// point below or above the point depending on the threshold
 		options.align = pick(
-			options.align, 
+			options.align,
 			!inverted || inside ? 'center' : below ? 'right' : 'left'
 		);
 		options.verticalAlign = pick(
-			options.verticalAlign, 
+			options.verticalAlign,
 			inverted || inside ? 'middle' : below ? 'top' : 'bottom'
 		);
-		
+
 		// Call the parent method
 		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
 	};
