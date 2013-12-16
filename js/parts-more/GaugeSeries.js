@@ -225,7 +225,7 @@ var GaugeSeries = {
 			this.chart.redraw();
 		}
 	},
-	drawTracker: PointTrackerMixin.drawTracker
+	drawTracker: TrackerMixin.drawTrackerPoint
 };
 seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
 
