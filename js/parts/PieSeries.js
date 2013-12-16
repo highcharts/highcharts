@@ -435,7 +435,7 @@ var PieSeries = {
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.
 	 */
-	drawTracker: PointTrackerMixin.drawTracker,
+	drawTracker: TrackerMixin.drawTrackerPoint,
 
 	/**
 	 * Use a simple symbol from LegendSymbolMixin

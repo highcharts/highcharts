@@ -240,7 +240,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		var series = this,
 			points = series.points;
 		
-		seriesTypes.column.prototype.drawTracker.apply(this);
+		TrackerMixin.drawTrackerPoint.apply(this);
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis. #1924.
