@@ -14382,7 +14382,6 @@ Series.prototype = {
 				width: chartSizeMax,
 				height: chartSizeMax
 			};
-			console.log(below)
 
 			if (chart.inverted) {
 
