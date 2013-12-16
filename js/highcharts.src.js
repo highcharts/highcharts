@@ -9058,7 +9058,7 @@ function Pointer(chart, options) {
 	this.init(chart, options);
 }
 
-Pointer.prototype = {
+Pointer.prototype = Highcharts.Pointer = {
 	/**
 	 * Initialize Pointer
 	 */
@@ -9923,8 +9923,8 @@ Pointer.prototype = {
  * PointTrackerMixin
  */
 
-var PointTrackerMixin = Highcharts.PointTrackerMixin = {
-	drawTracker: function () {
+var TrackerMixin = Highcharts.TrackerMixin = {
+	drawTrackerPoint: function () {
 		var series = this,
 			chart = series.chart,
 			pointer = chart.pointer,
@@ -9972,6 +9972,88 @@ var PointTrackerMixin = Highcharts.PointTrackerMixin = {
 			});
 			series._hasTracking = true;
 		}
+	},
+
+	/**
+	 * Draw the tracker object that sits above all data labels and markers to
+	 * track mouse events on the graph or points. For the line type charts
+	 * the tracker uses the same graphPath, but with a greater stroke width
+	 * for better control.
+	 */
+	drawTrackerGraph: function () {
+		var series = this,
+			options = series.options,
+			trackByArea = options.trackByArea,
+			trackerPath = [].concat(trackByArea ? series.areaPath : series.graphPath),
+			trackerPathLength = trackerPath.length,
+			chart = series.chart,
+			pointer = chart.pointer,
+			renderer = chart.renderer,
+			snap = chart.options.tooltip.snap,
+			tracker = series.tracker,
+			cursor = options.cursor,
+			css = cursor && { cursor: cursor },
+			singlePoints = series.singlePoints,
+			singlePoint,
+			i,
+			onMouseOver = function () {
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+			};
+
+		// Extend end points. A better way would be to use round linecaps,
+		// but those are not clickable in VML.
+		if (trackerPathLength && !trackByArea) {
+			i = trackerPathLength + 1;
+			while (i--) {
+				if (trackerPath[i] === M) { // extend left side
+					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
+				}
+				if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
+					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+				}
+			}
+		}
+
+		// handle single points
+		for (i = 0; i < singlePoints.length; i++) {
+			singlePoint = singlePoints[i];
+			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
+				L, singlePoint.plotX + snap, singlePoint.plotY);
+		}
+
+		// draw the tracker
+		if (tracker) {
+			tracker.attr({ d: trackerPath });
+
+		} else { // create
+
+			series.tracker = renderer.path(trackerPath)
+				.attr({
+					'stroke-linejoin': 'round', // #1225
+					visibility: series.visible ? VISIBLE : HIDDEN,
+					stroke: TRACKER_FILL,
+					fill: trackByArea ? TRACKER_FILL : NONE,
+					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
+					zIndex: 2
+				})
+				.add(series.group);
+
+			// The tracker is added to the series group, which is clipped, but is covered
+			// by the marker group. So the marker group also needs to capture events.
+			each([series.tracker, series.markerGroup], function (tracker) {
+				tracker.addClass(PREFIX + 'tracker')
+					.on('mouseover', onMouseOver)
+					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+					.css(css);
+
+				if (hasTouch) {
+					tracker.on('touchstart', onMouseOver);
+				}
+			});
+		}
+
 	}	
 };
 /**
@@ -9981,7 +10063,7 @@ function Legend(chart, options) {
 	this.init(chart, options);
 }
 
-Legend.prototype = {
+Legend.prototype = Highcharts.Legend = {
 	
 	/**
 	 * Initialize the legend
@@ -14762,89 +14844,7 @@ Series.prototype = {
 		fireEvent(series, selected ? 'select' : 'unselect');
 	},
 
-	/**
-	 * Draw the tracker object that sits above all data labels and markers to
-	 * track mouse events on the graph or points. For the line type charts
-	 * the tracker uses the same graphPath, but with a greater stroke width
-	 * for better control.
-	 */
-	drawTracker: function () {
-		var series = this,
-			options = series.options,
-			trackByArea = options.trackByArea,
-			trackerPath = [].concat(trackByArea ? series.areaPath : series.graphPath),
-			trackerPathLength = trackerPath.length,
-			chart = series.chart,
-			pointer = chart.pointer,
-			renderer = chart.renderer,
-			snap = chart.options.tooltip.snap,
-			tracker = series.tracker,
-			cursor = options.cursor,
-			css = cursor && { cursor: cursor },
-			singlePoints = series.singlePoints,
-			singlePoint,
-			i,
-			onMouseOver = function () {
-				if (chart.hoverSeries !== series) {
-					series.onMouseOver();
-				}
-			};
-
-		// Extend end points. A better way would be to use round linecaps,
-		// but those are not clickable in VML.
-		if (trackerPathLength && !trackByArea) {
-			i = trackerPathLength + 1;
-			while (i--) {
-				if (trackerPath[i] === M) { // extend left side
-					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
-				}
-				if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
-					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
-				}
-			}
-		}
-
-		// handle single points
-		for (i = 0; i < singlePoints.length; i++) {
-			singlePoint = singlePoints[i];
-			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
-				L, singlePoint.plotX + snap, singlePoint.plotY);
-		}
-
-
-
-		// draw the tracker
-		if (tracker) {
-			tracker.attr({ d: trackerPath });
-
-		} else { // create
-
-			series.tracker = renderer.path(trackerPath)
-				.attr({
-					'stroke-linejoin': 'round', // #1225
-					visibility: series.visible ? VISIBLE : HIDDEN,
-					stroke: TRACKER_FILL,
-					fill: trackByArea ? TRACKER_FILL : NONE,
-					'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
-					zIndex: 2
-				})
-				.add(series.group);
-
-			// The tracker is added to the series group, which is clipped, but is covered
-			// by the marker group. So the marker group also needs to capture events.
-			each([series.tracker, series.markerGroup], function (tracker) {
-				tracker.addClass(PREFIX + 'tracker')
-					.on('mouseover', onMouseOver)
-					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
-					.css(css);
-
-				if (hasTouch) {
-					tracker.on('touchstart', onMouseOver);
-				}
-			});
-		}
-
-	}
+	drawTracker: TrackerMixin.drawTrackerGraph
 
 }; // end Series prototype
 
@@ -15957,7 +15957,7 @@ var ColumnSeries = extendClass(Series, {
 	 * Add tracking event listener to the series group, so the point graphics
 	 * themselves act as trackers
 	 */
-	drawTracker: PointTrackerMixin.drawTracker,
+	drawTracker: TrackerMixin.drawTrackerPoint,
 
 	/**
 	 * Animate the column heights one by one from zero
@@ -16051,7 +16051,7 @@ var ScatterSeries = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
 	takeOrdinalPosition: false, // #2342
-	drawTracker: PointTrackerMixin.drawTracker, 
+	drawTracker: TrackerMixin.drawTrackerPoint,
 	
 	setTooltipPoints: noop
 });
@@ -16495,7 +16495,7 @@ var PieSeries = {
 	/**
 	 * Draw point specific tracker objects. Inherit directly from column series.
 	 */
-	drawTracker: PointTrackerMixin.drawTracker,
+	drawTracker: TrackerMixin.drawTrackerPoint,
 
 	/**
 	 * Use a simple symbol from LegendSymbolMixin
@@ -17214,8 +17214,6 @@ extend(Highcharts, {
 	Axis: Axis,
 	Chart: Chart,
 	Color: Color,
-	Legend: Legend,
-	Pointer: Pointer,
 	Point: Point,
 	Tick: Tick,
 	Tooltip: Tooltip,
