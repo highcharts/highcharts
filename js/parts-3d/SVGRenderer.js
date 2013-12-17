@@ -271,12 +271,12 @@ HR.prototype.toLinePath = function (points, closed) {
 /**** Pie Slices ***/
 HR.prototype.arc3d = function (x, y, a1, d, options) {
 	var result = this.createElement3D(this.get3DArcPath, arguments);
-	 
+	/* 
 	result.add = function (parent) {
 		H.each(this.children, function (child) { child.add(parent.parentGroup); });		
 		return this;
 	};
-	
+	*/
 	return result;
 };
 
