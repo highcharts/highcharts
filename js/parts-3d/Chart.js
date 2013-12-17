@@ -1,6 +1,15 @@
 /**
  *	3D Chart
  */
+H.wrap(HC.prototype, 'setChartSize', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	// Change the clipBox size to encompass the full chart
+	this.clipBox.x = -(this.margin[3] || 0);
+	this.clipBox.y = -(this.margin[0] || 0);
+	this.clipBox.width = this.chartWidth + (this.margin[3] || 0) + (this.margin[1] || 0);
+	this.clipBox.height = this.chartHeight + (this.margin[0] || 0) + (this.margin[2] || 0);
+});
+
 H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	userOptions = H.merge({
 		chart: {
@@ -43,17 +52,15 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 
 	// Make the clipbox larger
 	var mainSVG = this.container.childNodes[0];
-	
-	this.clipRect.destroy();
-	this.clipBox.width = this.chartWidth;
-	this.clipBox.height = this.chartHeight;
-
-	this.clipRect = this.renderer.clipRect(this.clipBox);
 
 	this.redraw();
 });
 
 HC.prototype.getZPosition = function (serie) {
+	if (serie.type !== 'column') {
+		return 0;
+	}
+	
 	// Without grouping all stacks are on the front line.
 	if (this.options.plotOptions.column.grouping !== false) { 
 		return 0;
@@ -77,6 +84,7 @@ HC.prototype.getZPosition = function (serie) {
 
 	return result;
 };
+HC.prototype.getZPosition2 = HC.prototype.getZPosition;
 
 HC.prototype.getNumberOfStacks = function () {
 	var options = this.options.plotOptions.column;
@@ -127,6 +135,7 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		fback = frame.back;
 
 	if (!frameGroup) {
+		//this.frameGroup = frameGroup = renderer.g().add(this.seriesGroup);
 		this.frameGroup = frameGroup = renderer.g().add();
 	}
 
@@ -148,7 +157,7 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left : left - sideSize);
 
 		if (!frameGroup.bottom) {
-			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, w: width + sideSize, h: bottomSize, d: depth + backSize, options: options3d, opposite: opposite })
+			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, w: width + sideSize, h: bottomSize, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.bottom.animate({
@@ -159,7 +168,8 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 				h: bottomSize,
 				d: depth + backSize,
 				options: options3d,
-				opposite: opposite
+				opposite: opposite, 
+				i: 50
 			});
 		}
 	}
@@ -168,7 +178,7 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left + width : left - sideSize);
 
 		if (!frameGroup.side) {
-			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, w: sideSize, h: height, d: depth + backSize, options: options3d, opposite: opposite })
+			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, w: sideSize, h: height, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.side.animate({
@@ -179,14 +189,15 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 				h: height,
 				d: depth + backSize,
 				options: options3d,
-				opposite: opposite
+				opposite: opposite, 
+				i: 0
 			});
 		}
 	}
 
 	if (fback || chart.options.chart.plotBackgroundColor) {
 		if (!frameGroup.back) {
-			frameGroup.back = renderer.cube({x: left, y: top, z: depth, w: width, h: height, d: backSize, options: options3d, opposite: opposite })
+			frameGroup.back = renderer.cube({x: left, y: top, z: depth, w: width, h: height, d: backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.back.animate({
@@ -197,7 +208,8 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 				h: height,
 				d: backSize,
 				options: options3d,
-				opposite: opposite
+				opposite: opposite, 
+				i: 0
 			});
 		}
 	}

@@ -26,6 +26,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 			w: point.shapeArgs.width,
 			h: point.shapeArgs.height,
 			d: options3d.depth,
+			i: chart.getNumberOfStacks() - zPos,
 			options: options3d,
 			opposite: series.yAxis.opposite,
 			animate: true
@@ -41,12 +42,13 @@ H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	if (options.grouping !== false) {
 		nz = this._i;
 	} else {
-		nz = this.chart.getZPosition(this) + 1;
+		nz = this.chart.getZPosition2(this) + 1;		
 	}
-	this.group.attr({zIndex: nz});
-	
-	proceed.apply(this, [].slice.call(arguments, 1));
 
+	this.group.attr({zIndex: nz});
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+	
 	H.each(this.data, function (point) {
 		H.each(point.graphic.children, function (child) {
 			child.element.point = point;

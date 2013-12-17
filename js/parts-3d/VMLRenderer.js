@@ -2,10 +2,13 @@
  *	Extension to the VML Renderer
  */
 
-var HV = H.VMLRenderer,
-	HVE = H.VMLElement;
+var HV = H.VMLRenderer;
 
 if (HV) {
+H.wrap(HC.prototype, 'getZPosition2', function (proceed) {
+	var k  = proceed.apply(this, [].slice.call(arguments, 1));
+	return (this.getNumberOfStacks() - k - 1);
+});
 
 HV.prototype.cube = HR.prototype.cube;
 HV.prototype.getCubePath = HR.prototype.getCubePath;

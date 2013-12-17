@@ -6,6 +6,8 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	var series = this,
+		chart = series.chart,
+		zPos = chart.getZPosition(series),
 		options3d = series.chart.options.chart.options3d;
 
 	H.each(series.data, function (point) {
@@ -15,6 +17,7 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 			y: point.shapeArgs.y,
 			a1: options3d.angle1,
 			d: options3d.depth,
+			i: chart.getNumberOfStacks() - zPos,
 			options: {
 				start: point.shapeArgs.start,
 				end: point.shapeArgs.end,
@@ -26,8 +29,8 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 });
 
 H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
 	var series = this;
+	proceed.apply(this, [].slice.call(arguments, 1));
 
 	H.each(series.data, function (point) {
 		var options = point.shapeArgs.options;
@@ -47,11 +50,11 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 
 H.wrap(H.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
-
-	H.each(this.data, function (point) {
+	
+	var group = this.group;
+	H.each(this.data, function (point) {		
 		H.each(point.graphic.children, function (child) {
 			child.element.point = point;
 		});
 	});	
-
 });

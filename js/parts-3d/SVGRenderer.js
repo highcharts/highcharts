@@ -3,11 +3,11 @@
  */
 function SVGElementCollection() {}
 SVGElementCollection.prototype = {
-	init: function (renderer, nodeName) {
+	init: function (renderer) {
 		this.element = {};
 		this.renderer = renderer;
 		this.attrSetters = {};
-		
+
 		this.children = [];
 	},
 
@@ -20,7 +20,7 @@ SVGElementCollection.prototype = {
 		if (params.x !== undefined) {
 			this.pathFunction(params);
 		} else {
-			H.each(this.children, function (child) { child.animate(params, options, complete); });			
+			H.each(this.children, function (child) { child.animate(params, options, complete); });	
 		}
 		return this;
 	},
@@ -139,7 +139,7 @@ SVGElementCollection.prototype = {
 	},
 
 	add: function (parent) {
-		H.each(this.children, function (child) { child.add(parent); });
+		H.each(this.children, function (child) { child.add(parent); });		
 		return this;
 	},
 
@@ -185,19 +185,20 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 	result.left.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
+	var i = params[0].i * 10;
 
 	result.pathFunction = function (parameters) {
 		var paths = pathFunction(parameters);
-		this.front.animate({d: paths.front.d, zIndex: paths.front.z }, false, false);
-		this.back.animate({d: paths.back.d, zIndex: paths.back.z }, false, false);
-		this.top.animate({d: paths.top.d, zIndex: paths.top.z }, false, false);
-		this.bottom.animate({d: paths.bottom.d, zIndex: paths.bottom.z }, false, false);
-		this.left.animate({d: paths.left.d, zIndex: paths.left.z }, false, false);
-		this.right.animate({d: paths.right.d, zIndex: paths.right.z }, false, false);
+		this.front.animate({d: paths.front.d, zIndex: i + paths.front.z }, false, false);
+		this.back.animate({d: paths.back.d, zIndex: i + paths.back.z }, false, false);
+		this.top.animate({d: paths.top.d, zIndex: i + paths.top.z }, false, false);
+		this.bottom.animate({d: paths.bottom.d, zIndex: i + paths.bottom.z }, false, false);
+		this.left.animate({d: paths.left.d, zIndex: i + paths.left.z }, false, false);
+		this.right.animate({d: paths.right.d, zIndex: i + paths.right.z }, false, false);
 		return this;
 	};
 	result.pathFunction(params);
-	
+
 	return result;
 };
 
@@ -270,6 +271,12 @@ HR.prototype.toLinePath = function (points, closed) {
 /**** Pie Slices ***/
 HR.prototype.arc3d = function (x, y, a1, d, options) {
 	var result = this.createElement3D(this.get3DArcPath, arguments);
+	 
+	result.add = function (parent) {
+		H.each(this.children, function (child) { child.add(parent.parentGroup); });		
+		return this;
+	};
+	
 	return result;
 };
 
@@ -434,11 +441,11 @@ HR.prototype.get3DArcPath = function (params) {
 	}
 
 	return {
-		front: {d: front, z: 100 + zCorr},
-		back: {d: back, z: 100 + zCorr },
-		top: {d: top, z: 200 + zCorr },
-		bottom: {d: [], z: zCorr },
-		left: {d: left, z: zCorr },
-		right: {d: right, z: zCorr }
+		front: {d: front, z: 2}, //z: 100 + zCorr},
+		back: {d: back, z: 2 }, //z: 100 + zCorr },
+		top: {d: top, z: 3 }, //z: 200 + zCorr },
+		bottom: {d: [], z: 0 }, //z: zCorr },
+		left: {d: left, z: 1 }, //z: zCorr },
+		right: {d: right, z: 1 } //z: zCorr }
 	};
 };

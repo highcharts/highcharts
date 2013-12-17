@@ -25,7 +25,6 @@ var H = Highcharts,
 	HR = H.SVGRenderer,
 	HA = H.Axis;
 
-
 // To get the length of an associative array.
 function arraySize(array) {
 	var size = 0, 
@@ -92,11 +91,11 @@ function perspective(points, angle1, angle2, origin) {
  */
 function SVGElementCollection() {}
 SVGElementCollection.prototype = {
-	init: function (renderer, nodeName) {
+	init: function (renderer) {
 		this.element = {};
 		this.renderer = renderer;
 		this.attrSetters = {};
-		
+
 		this.children = [];
 	},
 
@@ -109,7 +108,7 @@ SVGElementCollection.prototype = {
 		if (params.x !== undefined) {
 			this.pathFunction(params);
 		} else {
-			H.each(this.children, function (child) { child.animate(params, options, complete); });			
+			H.each(this.children, function (child) { child.animate(params, options, complete); });	
 		}
 		return this;
 	},
@@ -134,7 +133,7 @@ SVGElementCollection.prototype = {
 	},
 
 	clip: function (clipRect) {
-		//H.each(this.children, function (child) { child.clipRect(clipRect); });
+		H.each(this.children, function (child) { child.clipRect(clipRect); });
 		return this;
 	},
 
@@ -228,7 +227,7 @@ SVGElementCollection.prototype = {
 	},
 
 	add: function (parent) {
-		H.each(this.children, function (child) { child.add(parent); });
+		H.each(this.children, function (child) { child.add(parent); });		
 		return this;
 	},
 
@@ -274,19 +273,20 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 	result.left.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
+	var i = params[0].i * 10;
 
 	result.pathFunction = function (parameters) {
 		var paths = pathFunction(parameters);
-		this.front.animate({d: paths.front.d, zIndex: paths.front.z }, false, false);
-		this.back.animate({d: paths.back.d, zIndex: paths.back.z }, false, false);
-		this.top.animate({d: paths.top.d, zIndex: paths.top.z }, false, false);
-		this.bottom.animate({d: paths.bottom.d, zIndex: paths.bottom.z }, false, false);
-		this.left.animate({d: paths.left.d, zIndex: paths.left.z }, false, false);
-		this.right.animate({d: paths.right.d, zIndex: paths.right.z }, false, false);
+		this.front.animate({d: paths.front.d, zIndex: i + paths.front.z }, false, false);
+		this.back.animate({d: paths.back.d, zIndex: i + paths.back.z }, false, false);
+		this.top.animate({d: paths.top.d, zIndex: i + paths.top.z }, false, false);
+		this.bottom.animate({d: paths.bottom.d, zIndex: i + paths.bottom.z }, false, false);
+		this.left.animate({d: paths.left.d, zIndex: i + paths.left.z }, false, false);
+		this.right.animate({d: paths.right.d, zIndex: i + paths.right.z }, false, false);
 		return this;
 	};
 	result.pathFunction(params);
-	
+
 	return result;
 };
 
@@ -359,6 +359,12 @@ HR.prototype.toLinePath = function (points, closed) {
 /**** Pie Slices ***/
 HR.prototype.arc3d = function (x, y, a1, d, options) {
 	var result = this.createElement3D(this.get3DArcPath, arguments);
+	 
+	result.add = function (parent) {
+		H.each(this.children, function (child) { child.add(parent.parentGroup); });		
+		return this;
+	};
+	
 	return result;
 };
 
@@ -523,22 +529,476 @@ HR.prototype.get3DArcPath = function (params) {
 	}
 
 	return {
-		front: {d: front, z: 100 + zCorr},
-		back: {d: back, z: 100 + zCorr },
-		top: {d: top, z: 200 + zCorr },
-		bottom: {d: [], z: zCorr },
-		left: {d: left, z: zCorr },
-		right: {d: right, z: zCorr }
+		front: {d: front, z: 2}, //z: 100 + zCorr},
+		back: {d: back, z: 2 }, //z: 100 + zCorr },
+		top: {d: top, z: 3 }, //z: 200 + zCorr },
+		bottom: {d: [], z: 0 }, //z: zCorr },
+		left: {d: left, z: 1 }, //z: zCorr },
+		right: {d: right, z: 1 } //z: zCorr }
 	};
 };
 /**
+ *	3D Chart
+ */
+H.wrap(HC.prototype, 'setChartSize', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	// Change the clipBox size to encompass the full chart
+	this.clipBox.x = -(this.margin[3] || 0);
+	this.clipBox.y = -(this.margin[0] || 0);
+	this.clipBox.width = this.chartWidth + (this.margin[3] || 0) + (this.margin[1] || 0);
+	this.clipBox.height = this.chartHeight + (this.margin[0] || 0) + (this.margin[2] || 0);
+});
+
+H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
+	userOptions = H.merge({
+		chart: {
+			animation: false,
+			options3d: {
+				angle1: 0,
+				angle2: 0,
+				depth: 0,
+				frame: {
+					bottom: false,
+					side: false,
+					back: false
+				}
+			}
+		},
+		plotOptions: {
+			column: {
+				
+			}
+		},
+		yAxis: {
+			opposite: false
+		}
+	},
+	//user's options
+	userOptions, {
+		chart: {
+			plotBackgroundImage: null
+		}
+	} 
+	);
+
+	// Proceed as normal
+	proceed.apply(this, [userOptions, callback]);
+
+	// Destroy the plotBackground
+	if (this.plotBackground) { 
+		this.plotBackground.destroy();
+	}
+
+	// Make the clipbox larger
+	var mainSVG = this.container.childNodes[0];
+
+	this.redraw();
+});
+
+HC.prototype.getZPosition = function (serie) {
+	if (serie.type !== 'column') {
+		return 0;
+	}
+	
+	// Without grouping all stacks are on the front line.
+	if (this.options.plotOptions.column.grouping !== false) { 
+		return 0;
+	}
+
+	var stacking = this.options.plotOptions.column.stacking,
+		i = (stacking ? (serie.options.stack || 0) : serie._i),	// The number of the stack
+		result = 0,		
+		stacks = [],
+		cnt,
+		S;
+
+	// Count the number of stacks in front of this one.
+	for (cnt = 0; cnt < i; cnt++) {
+		S = this.series[cnt];
+		if (S.visible && !stacks[(stacking ? S.options.stack : S._i) || 0]) {
+			result++;
+			stacks[(stacking ? S.options.stack : S._i) || 0] = true;
+		}
+	}
+
+	return result;
+};
+HC.prototype.getZPosition2 = HC.prototype.getZPosition;
+
+HC.prototype.getNumberOfStacks = function () {
+	var options = this.options.plotOptions.column;
+
+	// Without grouping all stacks are on the front line.
+	if (options.grouping !== false) {
+		return 1;
+	}
+
+	// If there is no stacking all series are their own stack.
+	if (options.stacking === null || options.stacking === undefined) {
+		return this.series.length;
+	}
+
+	// If there is stacking, count the stacks.
+	var stacks = [];
+	H.each(this.series, function (serie) {
+		stacks[serie.options.stack || 0] = true;
+	});
+	return stacks.length;
+};
+
+HC.prototype.getTotalDepth = function () {
+	return this.getNumberOfStacks() * (this.options.chart.options3d.depth || 0) * 1.5;
+};
+
+H.wrap(HC.prototype, 'redraw', function (proceed) {
+	// Set to force a redraw of all elements
+	this.isDirtyBox = true;
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	var chart = this,
+		renderer = chart.renderer,
+		frameGroup = chart.frameGroup,
+		options3d = chart.options.chart.options3d,
+		frame = options3d.frame;
+
+	options3d.origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: chart.getTotalDepth()
+	};
+
+	var nstacks = chart.getNumberOfStacks();
+	var fbottom = frame.bottom,
+		fside = frame.side,
+		fback = frame.back;
+
+	if (!frameGroup) {
+		//this.frameGroup = frameGroup = renderer.g().add(this.seriesGroup);
+		this.frameGroup = frameGroup = renderer.g().add();
+	}
+
+	var opposite = chart.yAxis[0].opposite,
+		left = chart.plotLeft,
+		top = chart.plotTop,
+		width = chart.plotWidth,
+		height = chart.plotHeight,
+		depth = chart.getTotalDepth(),
+
+		sideSize = (fside ? fside.size || 0 : 0);
+		bottomSize = (fbottom ? fbottom.size || 0 : 0);
+		backSize = (fback ? fback.size || 0 : 0);
+
+
+	var xval;
+
+	if (fbottom) {
+		xval = (opposite ? left : left - sideSize);
+
+		if (!frameGroup.bottom) {
+			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, w: width + sideSize, h: bottomSize, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
+				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
+		} else {
+			frameGroup.bottom.animate({
+				x: xval,
+				y: top + height,
+				z: 0,
+				w: width + sideSize,
+				h: bottomSize,
+				d: depth + backSize,
+				options: options3d,
+				opposite: opposite, 
+				i: 50
+			});
+		}
+	}
+
+	if (fside) {
+		xval = (opposite ? left + width : left - sideSize);
+
+		if (!frameGroup.side) {
+			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, w: sideSize, h: height, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
+				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
+		} else {
+			frameGroup.side.animate({
+				x: xval,
+				y: top,
+				z: 0,
+				w: sideSize,
+				h: height,
+				d: depth + backSize,
+				options: options3d,
+				opposite: opposite, 
+				i: 0
+			});
+		}
+	}
+
+	if (fback || chart.options.chart.plotBackgroundColor) {
+		if (!frameGroup.back) {
+			frameGroup.back = renderer.cube({x: left, y: top, z: depth, w: width, h: height, d: backSize, options: options3d, opposite: opposite, i: 0 })
+				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
+		} else {
+			frameGroup.back.animate({
+				x: left,
+				y: top,
+				z: depth,
+				w: width,
+				h: height,
+				d: backSize,
+				options: options3d,
+				opposite: opposite, 
+				i: 0
+			});
+		}
+	}
+});/**
+ *	Extension for the Axis
+ */
+H.wrap(HA.prototype, 'render', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	var axis = this,
+		chart = axis.chart,
+		renderer = chart.renderer,
+		options = axis.options,
+		options3d = chart.options.chart.options3d,
+		frame = options3d.frame;
+
+	options3d.origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: chart.getTotalDepth()
+	};
+
+	var x1 = this.left,
+		y1 = (this.horiz ? this.top + this.height : this.top),
+		z1 = 0,
+		h = this.height,
+		w = this.len,
+		d = chart.getTotalDepth();
+
+	if (this.axisLine) {
+		var axisLine = this.axisLine;
+		var hide = (this.horiz ? options3d.frame.bottom : options3d.frame.side);
+		if (hide) {
+			axisLine.hide();
+		} else {
+			var path = axisLine.d.split(' ');
+			var pArr = [
+			{x: path[1], y: path[2], z: 0},
+			{x: path[4], y: path[5], z: 0}
+			];
+			pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
+			path = [
+				'M', pArr[0].x, pArr[0].y,
+				'L', pArr[1].x, pArr[1].y
+				];
+			axisLine.attr({d: path});
+		}		 
+	}
+
+	H.each(axis.tickPositions, function (tickPos) {
+		var tick = axis.ticks[tickPos],
+		label = tick.label,
+		mark = tick.mark;
+
+		if (label) {
+			var xy = label.xy,
+			labelPos = perspective([{x: xy.x, y: xy.y, z: z1 }], options3d.angle1, options3d.angle2, options3d.origin)[0];
+
+			label.animate({
+				x: labelPos.x,
+				y: labelPos.y,
+				opacity: xy.opacity					
+			});
+		}
+
+		if (mark) {
+			var path = mark.d.split(' '),
+			pArr = [ 
+			{x: path[1], y: path[2], z: z1 },
+			{x: path[4], y: path[5], z: z1 }
+			];
+			path = chart.renderer.toLinePath(perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin), false);
+			mark.animate({d: path, opacity: 1});
+		}
+	});
+
+	// If there is one, update the first one, the rest will follow automatically.
+	if (this.alternateBands[0]) {
+		this.alternateBands[0].svgElem.attr({zIndex: 1});
+	}
+});
+
+H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
+	if (path === null) { return path; }
+
+	var chart = this.chart,
+		options3d = chart.options.chart.options3d;
+
+	var d = chart.getTotalDepth();
+
+	options3d.origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: chart.getTotalDepth()
+	};
+
+	var pArr = [
+		{ x: path[1], y: path[2], z : (this.horiz || this.opposite ? d : 0)},
+		{ x: path[1], y: path[2], z : d },
+		{ x: path[4], y: path[5], z : d },
+		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
+	];
+
+	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
+	path = this.chart.renderer.toLinePath(pArr, false);
+	return path;
+});
+
+HA.prototype.getPlotBandPath = function (from, to) {
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
+	if (path && toPath) {
+		return [
+			'M', path[4], path[5],
+			'L', path[7], path[8],
+			'L', toPath[7], toPath[8],
+			'L', toPath[4], toPath[5],
+			'Z'];
+	} else { // outside the axis area
+		return null;
+	}
+};/**
+ *	Column Extension
+ */
+H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	var series = this,
+	chart = series.chart,
+	zPos = chart.getZPosition(series),
+	options3d = chart.options.chart.options3d;
+
+	options3d.depth = options3d.depth || 0;
+
+	options3d.origin = { 
+		x: chart.plotWidth / 2,
+		y: chart.plotHeight / 2,
+		z: chart.getTotalDepth()
+	};
+
+	H.each(series.data, function (point) {
+		point.shapeType = 'cube';
+		point.shapeArgs = {
+			x: point.shapeArgs.x,
+			y: point.shapeArgs.y,
+			z: zPos * options3d.depth * 1.3 + (options3d.depth * 0.3),
+			w: point.shapeArgs.width,
+			h: point.shapeArgs.height,
+			d: options3d.depth,
+			i: chart.getNumberOfStacks() - zPos,
+			options: options3d,
+			opposite: series.yAxis.opposite,
+			animate: true
+		};
+	});	    
+});
+
+H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+	var options = this.chart.options.plotOptions.column,
+		nz;
+
+	// Without grouping all stacks are on the front line.
+	if (options.grouping !== false) {
+		nz = this._i;
+	} else {
+		nz = this.chart.getZPosition2(this) + 1;		
+	}
+
+	this.group.attr({zIndex: nz});
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+	
+	H.each(this.data, function (point) {
+		H.each(point.graphic.children, function (child) {
+			child.element.point = point;
+		});
+	});	
+
+});
+/**
+ *	Pies
+ */
+
+H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	var series = this,
+		chart = series.chart,
+		zPos = chart.getZPosition(series),
+		options3d = series.chart.options.chart.options3d;
+
+	H.each(series.data, function (point) {
+		point.shapeType = 'arc3d';
+		point.shapeArgs = {
+			x: point.shapeArgs.x,
+			y: point.shapeArgs.y,
+			a1: options3d.angle1,
+			d: options3d.depth,
+			i: chart.getNumberOfStacks() - zPos,
+			options: {
+				start: point.shapeArgs.start,
+				end: point.shapeArgs.end,
+				r: point.shapeArgs.r,
+				ir: point.shapeArgs.innerR
+			}
+		};
+	});    
+});
+
+H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
+	var series = this;
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	H.each(series.data, function (point) {
+		var options = point.shapeArgs.options;
+		var r = options.r,
+			d = point.shapeArgs.d,
+			a1 = point.shapeArgs.a1,
+			a2 = (options.start + options.end) / 2; 
+
+		if (point.connector) {
+			point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
+		}
+		if (point.dataLabel) {
+			point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
+		}
+	});
+});
+
+H.wrap(H.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	
+	var group = this.group;
+	H.each(this.data, function (point) {		
+		H.each(point.graphic.children, function (child) {
+			child.element.point = point;
+		});
+	});	
+});/**
  *	Extension to the VML Renderer
  */
 
-var HV = H.VMLRenderer,
-	HVE = H.VMLElement;
+var HV = H.VMLRenderer;
 
 if (HV) {
+H.wrap(HC.prototype, 'getZPosition2', function (proceed) {
+	var k  = proceed.apply(this, [].slice.call(arguments, 1));
+	return (this.getNumberOfStacks() - k - 1);
+});
 
 HV.prototype.cube = HR.prototype.cube;
 HV.prototype.getCubePath = HR.prototype.getCubePath;
@@ -722,443 +1182,5 @@ HV.prototype.get3DArcPath = function (params) {
 };
 
 
-}/**
- *	3D Chart
- */
-H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
-	userOptions = H.merge({
-		chart: {
-			animation: false,
-			options3d: {
-				angle1: 0,
-				angle2: 0,
-				depth: 0,
-				frame: {
-					bottom: false,
-					side: false,
-					back: false
-				}
-			}
-		},
-		plotOptions: {
-			column: {
-				
-			}
-		},
-		yAxis: {
-			opposite: false
-		}
-	},
-	//user's options
-	userOptions, {
-		chart: {
-			plotBackgroundImage: null
-		}
-	} 
-	);
-
-	// Proceed as normal
-	proceed.apply(this, [userOptions, callback]);
-
-	// Destroy the plotBackground
-	if (this.plotBackground) { 
-		this.plotBackground.destroy();
-	}
-
-	// Make the clipbox larger
-	var mainSVG = this.container.childNodes[0];
-	
-	this.clipRect.destroy();
-	this.clipBox.width = this.chartWidth;
-	this.clipBox.height = this.chartHeight;
-
-	this.clipRect = this.renderer.clipRect(this.clipBox);
-
-	this.redraw();
-});
-
-HC.prototype.getZPosition = function (serie) {
-	// Without grouping all stacks are on the front line.
-	if (this.options.plotOptions.column.grouping !== false) { 
-		return 0;
-	}
-
-	var stacking = this.options.plotOptions.column.stacking,
-		i = (stacking ? (serie.options.stack || 0) : serie._i),	// The number of the stack
-		result = 0,		
-		stacks = [],
-		cnt,
-		S;
-
-	// Count the number of stacks in front of this one.
-	for (cnt = 0; cnt < i; cnt++) {
-		S = this.series[cnt];
-		if (S.visible && !stacks[(stacking ? S.options.stack : S._i) || 0]) {
-			result++;
-			stacks[(stacking ? S.options.stack : S._i) || 0] = true;
-		}
-	}
-
-	return result;
-};
-
-HC.prototype.getNumberOfStacks = function () {
-	var options = this.options.plotOptions.column;
-
-	// Without grouping all stacks are on the front line.
-	if (options.grouping !== false) {
-		return 1;
-	}
-
-	// If there is no stacking all series are their own stack.
-	if (options.stacking === null || options.stacking === undefined) {
-		return this.series.length;
-	}
-
-	// If there is stacking, count the stacks.
-	var stacks = [];
-	H.each(this.series, function (serie) {
-		stacks[serie.options.stack || 0] = true;
-	});
-	return stacks.length;
-};
-
-HC.prototype.getTotalDepth = function () {
-	return this.getNumberOfStacks() * (this.options.chart.options3d.depth || 0) * 1.5;
-};
-
-H.wrap(HC.prototype, 'redraw', function (proceed) {
-	// Set to force a redraw of all elements
-	this.isDirtyBox = true;
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var chart = this,
-		renderer = chart.renderer,
-		frameGroup = chart.frameGroup,
-		options3d = chart.options.chart.options3d,
-		frame = options3d.frame;
-
-	options3d.origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
-	};
-
-	var nstacks = chart.getNumberOfStacks();
-	var fbottom = frame.bottom,
-		fside = frame.side,
-		fback = frame.back;
-
-	if (!frameGroup) {
-		this.frameGroup = frameGroup = renderer.g().add();
-	}
-
-	var opposite = chart.yAxis[0].opposite,
-		left = chart.plotLeft,
-		top = chart.plotTop,
-		width = chart.plotWidth,
-		height = chart.plotHeight,
-		depth = chart.getTotalDepth(),
-
-		sideSize = (fside ? fside.size || 0 : 0);
-		bottomSize = (fbottom ? fbottom.size || 0 : 0);
-		backSize = (fback ? fback.size || 0 : 0);
-
-
-	var xval;
-
-	if (fbottom) {
-		xval = (opposite ? left : left - sideSize);
-
-		if (!frameGroup.bottom) {
-			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, w: width + sideSize, h: bottomSize, d: depth + backSize, options: options3d, opposite: opposite })
-				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
-		} else {
-			frameGroup.bottom.animate({
-				x: xval,
-				y: top + height,
-				z: 0,
-				w: width + sideSize,
-				h: bottomSize,
-				d: depth + backSize,
-				options: options3d,
-				opposite: opposite
-			});
-		}
-	}
-
-	if (fside) {
-		xval = (opposite ? left + width : left - sideSize);
-
-		if (!frameGroup.side) {
-			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, w: sideSize, h: height, d: depth + backSize, options: options3d, opposite: opposite })
-				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
-		} else {
-			frameGroup.side.animate({
-				x: xval,
-				y: top,
-				z: 0,
-				w: sideSize,
-				h: height,
-				d: depth + backSize,
-				options: options3d,
-				opposite: opposite
-			});
-		}
-	}
-
-	if (fback || chart.options.chart.plotBackgroundColor) {
-		if (!frameGroup.back) {
-			frameGroup.back = renderer.cube({x: left, y: top, z: depth, w: width, h: height, d: backSize, options: options3d, opposite: opposite })
-				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
-		} else {
-			frameGroup.back.animate({
-				x: left,
-				y: top,
-				z: depth,
-				w: width,
-				h: height,
-				d: backSize,
-				options: options3d,
-				opposite: opposite
-			});
-		}
-	}
-});/**
- *	Extension for the Axis
- */
-H.wrap(HA.prototype, 'render', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var axis = this,
-		chart = axis.chart,
-		renderer = chart.renderer,
-		options = axis.options,
-		options3d = chart.options.chart.options3d,
-		frame = options3d.frame;
-
-	options3d.origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
-	};
-
-	var x1 = this.left,
-		y1 = (this.horiz ? this.top + this.height : this.top),
-		z1 = 0,
-		h = this.height,
-		w = this.len,
-		d = chart.getTotalDepth();
-
-	if (this.axisLine) {
-		var axisLine = this.axisLine;
-		var hide = (this.horiz ? options3d.frame.bottom : options3d.frame.side);
-		if (hide) {
-			axisLine.hide();
-		} else {
-			var path = axisLine.d.split(' ');
-			var pArr = [
-			{x: path[1], y: path[2], z: 0},
-			{x: path[4], y: path[5], z: 0}
-			];
-			pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
-			path = [
-				'M', pArr[0].x, pArr[0].y,
-				'L', pArr[1].x, pArr[1].y
-				];
-			axisLine.attr({d: path});
-		}		 
-	}
-
-	H.each(axis.tickPositions, function (tickPos) {
-		var tick = axis.ticks[tickPos],
-		label = tick.label,
-		mark = tick.mark;
-
-		if (label) {
-			var xy = label.xy,
-			labelPos = perspective([{x: xy.x, y: xy.y, z: z1 }], options3d.angle1, options3d.angle2, options3d.origin)[0];
-
-			label.animate({
-				x: labelPos.x,
-				y: labelPos.y,
-				opacity: xy.opacity					
-			});
-		}
-
-		if (mark) {
-			var path = mark.d.split(' '),
-			pArr = [ 
-			{x: path[1], y: path[2], z: z1 },
-			{x: path[4], y: path[5], z: z1 }
-			];
-			path = chart.renderer.toLinePath(perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin), false);
-			mark.animate({d: path, opacity: 1});
-		}
-	});
-
-	// If there is one, update the first one, the rest will follow automatically.
-	if (this.alternateBands[0]) {
-		this.alternateBands[0].svgElem.attr({zIndex: 1});
-	}
-});
-
-H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));
-	if (path === null) { return path; }
-
-	var chart = this.chart,
-		options3d = chart.options.chart.options3d;
-
-	var d = chart.getTotalDepth();
-
-	options3d.origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
-	};
-
-	var pArr = [
-		{ x: path[1], y: path[2], z : (this.horiz || this.opposite ? d : 0)},
-		{ x: path[1], y: path[2], z : d },
-		{ x: path[4], y: path[5], z : d },
-		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
-	];
-
-	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
-	path = this.chart.renderer.toLinePath(pArr, false);
-	return path;
-});
-
-HA.prototype.getPlotBandPath = function (from, to) {
-	var toPath = this.getPlotLinePath(to),
-		path = this.getPlotLinePath(from);
-	if (path && toPath) {
-		return [
-			'M', path[4], path[5],
-			'L', path[7], path[8],
-			'L', toPath[7], toPath[8],
-			'L', toPath[4], toPath[5],
-			'Z'];
-	} else { // outside the axis area
-		return null;
-	}
-};/**
- *	Column Extension
- */
-H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var series = this,
-	chart = series.chart,
-	zPos = chart.getZPosition(series),
-	options3d = chart.options.chart.options3d;
-
-	options3d.depth = options3d.depth || 0;
-
-	options3d.origin = { 
-		x: chart.plotWidth / 2,
-		y: chart.plotHeight / 2,
-		z: chart.getTotalDepth()
-	};
-
-	H.each(series.data, function (point) {
-		point.shapeType = 'cube';
-		point.shapeArgs = {
-			x: point.shapeArgs.x,
-			y: point.shapeArgs.y,
-			z: zPos * options3d.depth * 1.3 + (options3d.depth * 0.3),
-			w: point.shapeArgs.width,
-			h: point.shapeArgs.height,
-			d: options3d.depth,
-			options: options3d,
-			opposite: series.yAxis.opposite,
-			animate: true
-		};
-	});	    
-});
-
-H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
-	var options = this.chart.options.plotOptions.column,
-		nz;
-
-	// Without grouping all stacks are on the front line.
-	if (options.grouping !== false) {
-		nz = this._i;
-	} else {
-		nz = this.chart.getZPosition(this) + 1;
-		// VML CODE
-		if (HV) {
-			nz = this.chart.getNumberOfStacks() - nz;
-		}
-	}
-	this.group.attr({zIndex: nz});
-	
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	H.each(this.data, function (point) {
-		H.each(point.graphic.children, function (child) {
-			child.element.point = point;
-		});
-	});	
-
-});
-/**
- *	Pies
- */
-
-H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var series = this,
-		options3d = series.chart.options.chart.options3d;
-
-	H.each(series.data, function (point) {
-		point.shapeType = 'arc3d';
-		point.shapeArgs = {
-			x: point.shapeArgs.x,
-			y: point.shapeArgs.y,
-			a1: options3d.angle1,
-			d: options3d.depth,
-			options: {
-				start: point.shapeArgs.start,
-				end: point.shapeArgs.end,
-				r: point.shapeArgs.r,
-				ir: point.shapeArgs.innerR
-			}
-		};
-	});    
-});
-
-H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-	var series = this;
-
-	H.each(series.data, function (point) {
-		var options = point.shapeArgs.options;
-		var r = options.r,
-			d = point.shapeArgs.d,
-			a1 = point.shapeArgs.a1,
-			a2 = (options.start + options.end) / 2; 
-
-		if (point.connector) {
-			point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
-		}
-		if (point.dataLabel) {
-			point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
-		}
-	});
-});
-
-H.wrap(H.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	H.each(this.data, function (point) {
-		H.each(point.graphic.children, function (child) {
-			child.element.point = point;
-		});
-	});	
-
-});
+}
 }(Highcharts));

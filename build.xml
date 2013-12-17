@@ -229,11 +229,11 @@
             <file name="Globals.js"/>
             <file name="Math.js"/>
             <file name="SVGRenderer.js"/>
-            <file name="VMLRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Axis.js"/>
             <file name="Column.js"/>
             <file name="Pie.js"/>
+            <file name="VMLRenderer.js"/>
             <file name="Outro.js"/>
         </filelist>
         
