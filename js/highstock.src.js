@@ -14108,6 +14108,7 @@ Series.prototype = {
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions,
+			turboThreshold = seriesOptions.turboThreshold,
 			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
 			key;
@@ -14144,76 +14145,78 @@ Series.prototype = {
 		// options are given. If not, create a referance to the series wide point
 		// attributes
 		i = points.length;
-		while (i--) {
-			point = points[i];
-			normalOptions = (point.options && point.options.marker) || point.options;
-			if (normalOptions && normalOptions.enabled === false) {
-				normalOptions.radius = 0;
-			}
+		if (!turboThreshold || i < turboThreshold) {
+			while (i--) {
+				point = points[i];
+				normalOptions = (point.options && point.options.marker) || point.options;
+				if (normalOptions && normalOptions.enabled === false) {
+					normalOptions.radius = 0;
+				}
 
-			if (point.negative && negativeColor) {
-				point.color = point.fillColor = negativeColor;
-			}
+				if (point.negative && negativeColor) {
+					point.color = point.fillColor = negativeColor;
+				}
 
-			hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
+				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
 
-			// check if the point has specific visual options
-			if (point.options) {
-				for (key in pointAttrToOptions) {
-					if (defined(normalOptions[pointAttrToOptions[key]])) {
-						hasPointSpecificOptions = true;
+				// check if the point has specific visual options
+				if (point.options) {
+					for (key in pointAttrToOptions) {
+						if (defined(normalOptions[pointAttrToOptions[key]])) {
+							hasPointSpecificOptions = true;
+						}
 					}
 				}
-			}
 
-			// a specific marker config object is defined for the individual point:
-			// create it's own attribute collection
-			if (hasPointSpecificOptions) {
-				normalOptions = normalOptions || {};
-				pointAttr = [];
-				stateOptions = normalOptions.states || {}; // reassign for individual point
-				pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
+				// a specific marker config object is defined for the individual point:
+				// create it's own attribute collection
+				if (hasPointSpecificOptions) {
+					normalOptions = normalOptions || {};
+					pointAttr = [];
+					stateOptions = normalOptions.states || {}; // reassign for individual point
+					pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
 
-				// Handle colors for column and pies
-				if (!seriesOptions.marker) { // column, bar, point
-					// if no hover color is given, brighten the normal color
-					pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
-						Color(point.color)
-							.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
-							.get();
+					// Handle colors for column and pies
+					if (!seriesOptions.marker) { // column, bar, point
+						// if no hover color is given, brighten the normal color
+						pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
+							Color(point.color)
+								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
+								.get();
 
+					}
+
+					// normal point state inherits series wide normal state
+					pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
+						color: point.color, // #868
+						fillColor: point.color, // Individual point color or negative color markers (#2219)
+						lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
+					}, normalOptions), seriesPointAttr[NORMAL_STATE]);
+
+					// inherit from point normal and series hover
+					pointAttr[HOVER_STATE] = series.convertAttribs(
+						stateOptions[HOVER_STATE],
+						seriesPointAttr[HOVER_STATE],
+						pointAttr[NORMAL_STATE]
+					);
+
+					// inherit from point normal and series hover
+					pointAttr[SELECT_STATE] = series.convertAttribs(
+						stateOptions[SELECT_STATE],
+						seriesPointAttr[SELECT_STATE],
+						pointAttr[NORMAL_STATE]
+					);
+
+
+				// no marker config object is created: copy a reference to the series-wide
+				// attribute collection
+				} else {
+					pointAttr = seriesPointAttr;
 				}
 
-				// normal point state inherits series wide normal state
-				pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
-					color: point.color, // #868
-					fillColor: point.color, // Individual point color or negative color markers (#2219)
-					lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
-				}, normalOptions), seriesPointAttr[NORMAL_STATE]);
+				point.pointAttr = pointAttr;
 
-				// inherit from point normal and series hover
-				pointAttr[HOVER_STATE] = series.convertAttribs(
-					stateOptions[HOVER_STATE],
-					seriesPointAttr[HOVER_STATE],
-					pointAttr[NORMAL_STATE]
-				);
-
-				// inherit from point normal and series hover
-				pointAttr[SELECT_STATE] = series.convertAttribs(
-					stateOptions[SELECT_STATE],
-					seriesPointAttr[SELECT_STATE],
-					pointAttr[NORMAL_STATE]
-				);
-
-
-			// no marker config object is created: copy a reference to the series-wide
-			// attribute collection
-			} else {
-				pointAttr = seriesPointAttr;
 			}
-
-			point.pointAttr = pointAttr;
-
 		}
 	},
 
