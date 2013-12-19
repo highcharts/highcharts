@@ -4,11 +4,11 @@
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
-function Pointer(chart, options) {
+var Pointer = Highcharts.Pointer = function (chart, options) {
 	this.init(chart, options);
-}
+};
 
-Pointer.prototype = Highcharts.Pointer = {
+Pointer.prototype = {
 	/**
 	 * Initialize Pointer
 	 */

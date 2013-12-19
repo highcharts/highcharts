@@ -9054,11 +9054,11 @@ Tooltip.prototype = {
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
-function Pointer(chart, options) {
+var Pointer = Highcharts.Pointer = function (chart, options) {
 	this.init(chart, options);
-}
+};
 
-Pointer.prototype = Highcharts.Pointer = {
+Pointer.prototype = {
 	/**
 	 * Initialize Pointer
 	 */
@@ -10059,11 +10059,11 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 /**
  * The overview of the chart's series
  */
-function Legend(chart, options) {
+var Legend = Highcharts.Legend = function (chart, options) {
 	this.init(chart, options);
-}
+};
 
-Legend.prototype = Highcharts.Legend = {
+Legend.prototype = {
 	
 	/**
 	 * Initialize the legend
