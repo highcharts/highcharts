@@ -17,7 +17,7 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 			options3d: {
 				angle1: 0,
 				angle2: 0,
-				depth: 0,
+				deptheight: 0,
 				frame: {
 					bottom: false,
 					side: false,
@@ -49,11 +49,7 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	if (this.plotBackground) { 
 		this.plotBackground.destroy();
 	}
-
-	// Make the clipbox larger
-	var mainSVG = this.container.childNodes[0];
-
-	this.redraw();
+	//this.redraw();
 });
 
 HC.prototype.getZPosition = function (serie) {
@@ -110,14 +106,8 @@ HC.prototype.getNumberOfStacks = function () {
 HC.prototype.getTotalDepth = function () {
 	return this.getNumberOfStacks() * (this.options.chart.options3d.depth || 0) * 1.5;
 };
-
-H.wrap(HC.prototype, 'redraw', function (proceed) {
-	// Set to force a redraw of all elements
-	this.isDirtyBox = true;
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var chart = this,
+HC.prototype.drawFrame = function () {
+var chart = this,
 		renderer = chart.renderer,
 		frameGroup = chart.frameGroup,
 		options3d = chart.options.chart.options3d,
@@ -157,15 +147,15 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left : left - sideSize);
 
 		if (!frameGroup.bottom) {
-			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, w: width + sideSize, h: bottomSize, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
+			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, width: width + sideSize, height: bottomSize, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.bottom.animate({
 				x: xval,
 				y: top + height,
 				z: 0,
-				w: width + sideSize,
-				h: bottomSize,
+				width: width + sideSize,
+				height: bottomSize,
 				d: depth + backSize,
 				options: options3d,
 				opposite: opposite, 
@@ -178,15 +168,15 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left + width : left - sideSize);
 
 		if (!frameGroup.side) {
-			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, w: sideSize, h: height, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
+			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, width: sideSize, height: height, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.side.animate({
 				x: xval,
 				y: top,
 				z: 0,
-				w: sideSize,
-				h: height,
+				width: sideSize,
+				height: height,
 				d: depth + backSize,
 				options: options3d,
 				opposite: opposite, 
@@ -197,15 +187,15 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 
 	if (fback || chart.options.chart.plotBackgroundColor) {
 		if (!frameGroup.back) {
-			frameGroup.back = renderer.cube({x: left, y: top, z: depth, w: width, h: height, d: backSize, options: options3d, opposite: opposite, i: 0 })
+			frameGroup.back = renderer.cube({x: left, y: top, z: depth, width: width, height: height, d: backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.back.animate({
 				x: left,
 				y: top,
 				z: depth,
-				w: width,
-				h: height,
+				width: width,
+				height: height,
 				d: backSize,
 				options: options3d,
 				opposite: opposite, 
@@ -213,4 +203,17 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 			});
 		}
 	}
+};
+H.wrap(HC.prototype, 'firstRender', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	this.drawFrame();
+	
+});
+
+H.wrap(HC.prototype, 'redraw', function (proceed) {
+	// Set to force a redraw of all elements
+	this.isDirtyBox = true;
+	proceed.apply(this, [].slice.call(arguments, 1));
+	this.drawFrame();
+	
 });

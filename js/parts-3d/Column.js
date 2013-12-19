@@ -19,6 +19,10 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 
 	H.each(series.data, function (point) {
 		point.shapeType = 'cube';
+		point.shapeArgs.z = zPos * options3d.depth * 1.3 + (options3d.depth * 0.3),
+		point.shapeArgs.d = options3d.depth;
+		point.shapeArgs.options = options3d;
+		/*
 		point.shapeArgs = {
 			x: point.shapeArgs.x,
 			y: point.shapeArgs.y,
@@ -31,6 +35,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 			opposite: series.yAxis.opposite,
 			animate: true
 		};
+		*/
 	});	    
 });
 

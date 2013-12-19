@@ -213,8 +213,8 @@ HR.prototype.getCubePath = function (params) {
 	var opposite = params.opposite,
 		options = params.options,
 		d = params.d,
-		h = params.h,
-		w = params.w,
+		h = params.height,
+		w = params.width,
 		z = params.z,
 		y = params.y,
 		x = params.x;		
@@ -270,14 +270,7 @@ HR.prototype.toLinePath = function (points, closed) {
 
 /**** Pie Slices ***/
 HR.prototype.arc3d = function (x, y, a1, d, options) {
-	var result = this.createElement3D(this.get3DArcPath, arguments);
-	/* 
-	result.add = function (parent) {
-		H.each(this.children, function (child) { child.add(parent.parentGroup); });		
-		return this;
-	};
-	*/
-	return result;
+	return this.createElement3D(this.get3DArcPath, arguments);
 };
 
 HR.prototype.get3DArcPath = function (params) {
@@ -435,17 +428,17 @@ HR.prototype.get3DArcPath = function (params) {
 		];
 	}
 
-	var zCorr = Math.sin((start + end) / 2) * 100;
+	var zCorr = Math.sin((start + end) / 2);
 	if (start > end) {
 		zCorr = 0;
 	}
 
 	return {
-		front: {d: front, z: 2}, //z: 100 + zCorr},
-		back: {d: back, z: 2 }, //z: 100 + zCorr },
-		top: {d: top, z: 3 }, //z: 200 + zCorr },
-		bottom: {d: [], z: 0 }, //z: zCorr },
-		left: {d: left, z: 1 }, //z: zCorr },
-		right: {d: right, z: 1 } //z: zCorr }
+		front: {d: front, z: 2},
+		back: {d: back, z: 2 },
+		top: {d: top, z: 3 },
+		bottom: {d: [], z: 0 },
+		left: {d: left, z: 1 },
+		right: {d: right, z: 1 }
 	};
 };
