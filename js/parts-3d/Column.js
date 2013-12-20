@@ -22,20 +22,6 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		point.shapeArgs.z = zPos * options3d.depth * 1.3 + (options3d.depth * 0.3),
 		point.shapeArgs.d = options3d.depth;
 		point.shapeArgs.options = options3d;
-		/*
-		point.shapeArgs = {
-			x: point.shapeArgs.x,
-			y: point.shapeArgs.y,
-			z: zPos * options3d.depth * 1.3 + (options3d.depth * 0.3),
-			w: point.shapeArgs.width,
-			h: point.shapeArgs.height,
-			d: options3d.depth,
-			i: chart.getNumberOfStacks() - zPos,
-			options: options3d,
-			opposite: series.yAxis.opposite,
-			animate: true
-		};
-		*/
 	});	    
 });
 
