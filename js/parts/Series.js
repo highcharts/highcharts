@@ -966,8 +966,8 @@ Series.prototype = {
 	tooltipHeaderFormatter: function (point) {
 		var series = this,
 			tooltipOptions = series.tooltipOptions,
-			xDateFormat = tooltipOptions.xDateFormat,
 			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
+			xDateFormat = tooltipOptions.xDateFormat || dateTimeLabelFormats.year, // #2546
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
 			headerFormat = tooltipOptions.headerFormat,
