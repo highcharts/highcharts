@@ -334,31 +334,33 @@ HR.prototype.get3DArcPath = function (params) {
 	var fsx1 = sx1,
 		fsy1 = sy1,
 		fex1 = ex1,
-		fey1 = ey1;
+		fey1 = ey1,
+		tLong = longArc;
 
 	if (eQ === 3 || eQ === 0) {
 		fex1 = x - rx1;
 		fey1 = y;
-		longArc = 0;
+		tLong = 0;
 	}
 	if (sQ === 3 || sQ === 0) {
 		fsx1 = x + rx1;
 		fsy1 = y;
-		longArc = 0;
+		tLong = 0;
 	}
 
 	var front = [		
 		'M', fsx1, fsy1,
-		'A', rx1, ry1, 0, longArc, 1, fex1, fey1,
+		'A', rx1, ry1, 0, tLong, 1, fex1, fey1,
 		'L', fex1, fey1 + d,
-		'A', rx1, ry1, 0, longArc, 0, fsx1, fsy1 + d,
+		'A', rx1, ry1, 0, tLong, 0, fsx1, fsy1 + d,
 		'L', fsx1, fsy1,
 		'Z'
 		];
 
-	if ((eQ === 3 || eQ === 0) && (sQ === 3 || sQ === 0)) {
+	if ((eQ === 3 || eQ === 0) && (sQ === 3 || sQ === 0) && (start < end)) {
 		front = [];
 	}
+
 	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start > end)) {
 	front = [	
 		'M', sx1, sy1,
@@ -434,8 +436,8 @@ HR.prototype.get3DArcPath = function (params) {
 	}
 
 	return {
-		front: {d: front, z: 2},
-		back: {d: back, z: 2 },
+		front: {d: [], z: 2},
+		back: {d: [], z: 2 },
 		top: {d: top, z: 3 },
 		bottom: {d: [], z: 0 },
 		left: {d: left, z: 1 },
