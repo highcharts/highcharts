@@ -13663,7 +13663,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				stackValues;
 
@@ -14392,7 +14392,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
-			graphPath = this.getGraphPath(),
+			graphPath = lineWidth && this.getGraphPath(),
 			negativeColor = options.negativeColor;
 
 		if (negativeColor) {
