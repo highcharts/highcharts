@@ -68,6 +68,7 @@ var UNDEFINED,
 	NONE = 'none',
 	M = 'M',
 	L = 'L',
+	numRegex = /^[0-9]+$/,
 	/*
 	 * Empirical lowest possible opacities for TRACKER_FILL
 	 * IE6: 0.002
@@ -2438,9 +2439,21 @@ SVGElement.prototype = {
 			rotation = wrapper.rotation,
 			element = wrapper.element,
 			styles = wrapper.styles,
-			rad = rotation * deg2rad;
+			rad = rotation * deg2rad,
+			textStr = wrapper.textStr,
+			numKey;
 
+		// Since numbers are monospaced, and numerical labels appear a lot in a chart,
+		// we assume that a label of n characters has the same bounding box as others 
+		// of the same length.
+		if (textStr === '' || numRegex.test(textStr)) {
+			numKey = textStr.length + '|' + styles.fontSize + '|' + styles.fontFamily;
+			bBox = renderer.cache[numKey];
+		}
+
+		// No cache found
 		if (!bBox) {
+
 			// SVG elements
 			if (element.namespaceURI === SVG_NS || renderer.forExport) {
 				try { // Fails in Firefox if the container has display: none.
@@ -2488,7 +2501,11 @@ SVGElement.prototype = {
 				}
 			}
 
+			// Cache it
 			wrapper.bBox = bBox;
+			if (numKey) {
+				renderer.cache[numKey] = bBox;
+			}
 		}
 		return bBox;
 	},
@@ -2770,6 +2787,7 @@ SVGRenderer.prototype = {
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
+		renderer.cache = {}; // Cache for numerical bounding boxes
 
 		renderer.setSize(width, height, false);
 
@@ -2973,7 +2991,9 @@ SVGRenderer.prototype = {
 								bBox;
 
 							while (words.length || rest.length) {
-								delete wrapper.bBox; // delete cache
+								if (words.length > 1) {
+									delete wrapper.bBox; // delete cache
+								}
 								bBox = wrapper.getBBox();
 								actualWidth = bBox.width;
 
@@ -4725,11 +4745,6 @@ Highcharts.VMLElement = VMLElement = {
 
 						skipAttr = true;
 
-					// text for rotated and non-rotated elements
-					} else if (key === 'text') {
-						this.bBox = null;
-						element.innerHTML = value;
-						skipAttr = true;
 					}
 
 
@@ -4945,6 +4960,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
+		renderer.cache = {};
 
 
 		renderer.setSize(width, height, false);
@@ -5979,7 +5995,7 @@ Tick.prototype = {
 				}
 
 			// Don't draw ticks so close they appear as a gray mass
-			} else if (mark) {
+			} else if (mark) {
 				tick.mark = mark.destroy();
 			}
 		}
@@ -7054,17 +7070,18 @@ Axis.prototype = {
 			pointRangePadding = 0,
 			linkedParent = axis.linkedParent,
 			ordinalCorrection,
+			hasCategories = !!axis.categories,
 			transA = axis.transA;
 
-		// adjust translation for padding
-		if (axis.isXAxis) {
+		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
+		if (axis.isXAxis || hasCategories) {
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = series.pointRange,
+					var seriesPointRange = mathMax(series.pointRange, +hasCategories),
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
@@ -9037,9 +9054,9 @@ Tooltip.prototype = {
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
-function Pointer(chart, options) {
+var Pointer = Highcharts.Pointer = function (chart, options) {
 	this.init(chart, options);
-}
+};
 
 Pointer.prototype = Highcharts.Pointer = {
 	/**
@@ -10042,9 +10059,9 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 /**
  * The overview of the chart's series
  */
-function Legend(chart, options) {
+var Legend = Highcharts.Legend = function (chart, options) {
 	this.init(chart, options);
-}
+};
 
 Legend.prototype = Highcharts.Legend = {
 	
@@ -13646,7 +13663,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
 				pointStack,
 				stackValues;
 
@@ -14091,6 +14108,7 @@ Series.prototype = {
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions,
+			turboThreshold = seriesOptions.turboThreshold,
 			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
 			key;
@@ -14127,76 +14145,78 @@ Series.prototype = {
 		// options are given. If not, create a referance to the series wide point
 		// attributes
 		i = points.length;
-		while (i--) {
-			point = points[i];
-			normalOptions = (point.options && point.options.marker) || point.options;
-			if (normalOptions && normalOptions.enabled === false) {
-				normalOptions.radius = 0;
-			}
+		if (!turboThreshold || i < turboThreshold) {
+			while (i--) {
+				point = points[i];
+				normalOptions = (point.options && point.options.marker) || point.options;
+				if (normalOptions && normalOptions.enabled === false) {
+					normalOptions.radius = 0;
+				}
 
-			if (point.negative && negativeColor) {
-				point.color = point.fillColor = negativeColor;
-			}
+				if (point.negative && negativeColor) {
+					point.color = point.fillColor = negativeColor;
+				}
 
-			hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
+				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
 
-			// check if the point has specific visual options
-			if (point.options) {
-				for (key in pointAttrToOptions) {
-					if (defined(normalOptions[pointAttrToOptions[key]])) {
-						hasPointSpecificOptions = true;
+				// check if the point has specific visual options
+				if (point.options) {
+					for (key in pointAttrToOptions) {
+						if (defined(normalOptions[pointAttrToOptions[key]])) {
+							hasPointSpecificOptions = true;
+						}
 					}
 				}
-			}
 
-			// a specific marker config object is defined for the individual point:
-			// create it's own attribute collection
-			if (hasPointSpecificOptions) {
-				normalOptions = normalOptions || {};
-				pointAttr = [];
-				stateOptions = normalOptions.states || {}; // reassign for individual point
-				pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
+				// a specific marker config object is defined for the individual point:
+				// create it's own attribute collection
+				if (hasPointSpecificOptions) {
+					normalOptions = normalOptions || {};
+					pointAttr = [];
+					stateOptions = normalOptions.states || {}; // reassign for individual point
+					pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
 
-				// Handle colors for column and pies
-				if (!seriesOptions.marker) { // column, bar, point
-					// if no hover color is given, brighten the normal color
-					pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
-						Color(point.color)
-							.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
-							.get();
+					// Handle colors for column and pies
+					if (!seriesOptions.marker) { // column, bar, point
+						// if no hover color is given, brighten the normal color
+						pointStateOptionsHover.color = pointStateOptionsHover.color || stateOptionsHover.color ||
+							Color(point.color)
+								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
+								.get();
 
+					}
+
+					// normal point state inherits series wide normal state
+					pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
+						color: point.color, // #868
+						fillColor: point.color, // Individual point color or negative color markers (#2219)
+						lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
+					}, normalOptions), seriesPointAttr[NORMAL_STATE]);
+
+					// inherit from point normal and series hover
+					pointAttr[HOVER_STATE] = series.convertAttribs(
+						stateOptions[HOVER_STATE],
+						seriesPointAttr[HOVER_STATE],
+						pointAttr[NORMAL_STATE]
+					);
+
+					// inherit from point normal and series hover
+					pointAttr[SELECT_STATE] = series.convertAttribs(
+						stateOptions[SELECT_STATE],
+						seriesPointAttr[SELECT_STATE],
+						pointAttr[NORMAL_STATE]
+					);
+
+
+				// no marker config object is created: copy a reference to the series-wide
+				// attribute collection
+				} else {
+					pointAttr = seriesPointAttr;
 				}
 
-				// normal point state inherits series wide normal state
-				pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
-					color: point.color, // #868
-					fillColor: point.color, // Individual point color or negative color markers (#2219)
-					lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
-				}, normalOptions), seriesPointAttr[NORMAL_STATE]);
+				point.pointAttr = pointAttr;
 
-				// inherit from point normal and series hover
-				pointAttr[HOVER_STATE] = series.convertAttribs(
-					stateOptions[HOVER_STATE],
-					seriesPointAttr[HOVER_STATE],
-					pointAttr[NORMAL_STATE]
-				);
-
-				// inherit from point normal and series hover
-				pointAttr[SELECT_STATE] = series.convertAttribs(
-					stateOptions[SELECT_STATE],
-					seriesPointAttr[SELECT_STATE],
-					pointAttr[NORMAL_STATE]
-				);
-
-
-			// no marker config object is created: copy a reference to the series-wide
-			// attribute collection
-			} else {
-				pointAttr = seriesPointAttr;
 			}
-
-			point.pointAttr = pointAttr;
-
 		}
 	},
 
@@ -14372,7 +14392,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
-			graphPath = this.getGraphPath(),
+			graphPath = lineWidth && this.getGraphPath(),
 			negativeColor = options.negativeColor;
 
 		if (negativeColor) {
@@ -14433,6 +14453,9 @@ Series.prototype = {
 
 		if (negativeColor && (graph || area)) {
 			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
+			if (translatedThreshold < 0) {
+				chartSizeMax -= translatedThreshold; // #2534
+			}
 			above = {
 				x: 0,
 				y: 0,

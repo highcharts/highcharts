@@ -623,9 +623,21 @@ SVGElement.prototype = {
 			rotation = wrapper.rotation,
 			element = wrapper.element,
 			styles = wrapper.styles,
-			rad = rotation * deg2rad;
+			rad = rotation * deg2rad,
+			textStr = wrapper.textStr,
+			numKey;
 
+		// Since numbers are monospaced, and numerical labels appear a lot in a chart,
+		// we assume that a label of n characters has the same bounding box as others 
+		// of the same length.
+		if (textStr === '' || numRegex.test(textStr)) {
+			numKey = textStr.length + '|' + styles.fontSize + '|' + styles.fontFamily;
+			bBox = renderer.cache[numKey];
+		}
+
+		// No cache found
 		if (!bBox) {
+
 			// SVG elements
 			if (element.namespaceURI === SVG_NS || renderer.forExport) {
 				try { // Fails in Firefox if the container has display: none.
@@ -673,7 +685,11 @@ SVGElement.prototype = {
 				}
 			}
 
+			// Cache it
 			wrapper.bBox = bBox;
+			if (numKey) {
+				renderer.cache[numKey] = bBox;
+			}
 		}
 		return bBox;
 	},
@@ -955,6 +971,7 @@ SVGRenderer.prototype = {
 		renderer.defs = this.createElement('defs').add();
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
+		renderer.cache = {}; // Cache for numerical bounding boxes
 
 		renderer.setSize(width, height, false);
 
@@ -1158,7 +1175,9 @@ SVGRenderer.prototype = {
 								bBox;
 
 							while (words.length || rest.length) {
-								delete wrapper.bBox; // delete cache
+								if (words.length > 1) {
+									delete wrapper.bBox; // delete cache
+								}
 								bBox = wrapper.getBBox();
 								actualWidth = bBox.width;
 

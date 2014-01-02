@@ -229,7 +229,7 @@
 
 			if (chart.options.mapNavigation.enableDoubleClickZoomTo) {
 				if (chart.pointer.inClass(e.target, 'highcharts-tracker')) {
-					chart.zoomToShape(chart.hoverPoint);
+					chart.hoverPoint.zoomTo();
 				}
 			} else if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 				chart.mapZoom(
@@ -313,11 +313,11 @@
 		defaultColorAxisOptions: {
 			lineWidth: 0,
 			gridLineWidth: 1,
-			tickPixelInterval: 70,
+			tickPixelInterval: 72,
 			startOnTick: true,
 			endOnTick: true,
 			offset: 0,
-			crosshair: { // docs: use another name?
+			marker: { // docs: use another name?
 				animation: {
 					duration: 50
 				},
@@ -363,22 +363,26 @@
 		initDataClasses: function (userOptions) {
 			var chart = this.chart,
 				dataClasses,
-				colorCounter = 0;
+				colorCounter = 0,
+				options = this.options;
 			this.dataClasses = dataClasses = [];
 
-			each(userOptions.dataClasses, function (dataClass) {
+			each(userOptions.dataClasses, function (dataClass, i) {
 				var colors;
 
 				dataClass = merge(dataClass);
 				dataClasses.push(dataClass);
 				if (!dataClass.color) {
-					colors = chart.options.colors;
-					dataClass.color = colors[colorCounter++];
-					// loop back to zero
-					if (colorCounter === colors.length) {
-						colorCounter = 0;
+					if (options.dataClassColor === 'category') {
+						colors = chart.options.colors;
+						dataClass.color = colors[colorCounter++];
+						// loop back to zero
+						if (colorCounter === colors.length) {
+							colorCounter = 0;
+						}
+					} else {
+						dataClass.color = tweenColors(Color(options.minColor), Color(options.maxColor), i / (userOptions.dataClasses.length - 1));
 					}
-
 				}
 			});
 		},
@@ -389,6 +393,8 @@
 		 */
 		setOptions: function (userOptions) {
 			Axis.prototype.setOptions.call(this, userOptions);
+
+			this.options.crosshair = this.options.marker;
 
 			this.stops = userOptions.stops || [
 				[0, this.options.minColor],
@@ -788,8 +794,6 @@
 				fixToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
 				newXMin = centerX - newXRange * fixToX,
 				newYMin = centerY - newYRange * fixToY,
-				animation = pick(chart.options.chart.animation, true),
-				delay,
 				newExt = chart.fitToBox({
 					x: newXMin,
 					y: newYMin,
@@ -810,9 +814,16 @@
 				yAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
 			}
 
-			xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
-			yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-			
+			// Zoom
+			if (howMuch !== undefined) {
+				xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
+				yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
+
+			// Reset zoom
+			} else {
+				xAxis.setExtremes(undefined, undefined, false);
+				yAxis.setExtremes(undefined, undefined, false);
+			}
 			
 			// Prevent zooming until this one is finished animating
 			/*delay = animation ? animation.duration || 500 : 0;
@@ -827,26 +838,6 @@
 				}, delay);
 			}*/
 
-			chart.redraw();
-		},
-
-		/**
-		 * Zoom the chart to view a specific area point
-		 */
-		zoomToShape: function (point) {
-			var series = point.series,
-				chart = series.chart;
-
-			series.xAxis.setExtremes(
-				point._minX,
-				point._maxX,
-				false
-			);
-			series.yAxis.setExtremes(
-				point._minY,
-				point._maxY,
-				false
-			);
 			chart.redraw();
 		}
 	});
@@ -1017,6 +1008,26 @@
 				}, 13);
 			}
 			Point.prototype.onMouseOut.call(point);
+		},
+
+		/**
+		 * Zoom the chart to view a specific area point
+		 */
+		zoomTo: function () {
+			var point = this,
+				series = point.series;
+
+			series.xAxis.setExtremes(
+				point._minX,
+				point._maxX,
+				false
+			);
+			series.yAxis.setExtremes(
+				point._minY,
+				point._maxY,
+				false
+			);
+			series.chart.redraw();
 		}
 	});
 
@@ -1297,13 +1308,21 @@
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
 				scale,
-				centerX,
-				centerY,
 				translateX,
 				group = series.group,
 				chart = series.chart,
 				renderer = chart.renderer,
-				translateY;
+				translateY,
+				getTranslate = function (axis, mapRatio) {
+					var dataMin = axis.dataMin,
+						dataMax = axis.dataMax,
+						fullDataMin = dataMin - ((dataMax - dataMin) * (mapRatio - 1) / 2),
+						fullMin = axis.min - axis.minPixelPadding / axis.transA,
+						minOffset = fullMin - fullDataMin,
+						centerOffset = (dataMax - dataMin - axis.max + axis.min) * mapRatio,
+						center = minOffset / centerOffset;
+					return (axis.len * (1 - scale)) * center;
+				};
 
 			// Set a group that handles transform during zooming and panning in order to preserve clipping
 			// on series.group
@@ -1341,37 +1360,15 @@
 			} else {
 				scale = xAxis.transA / this.transA;
 				if (scale > 0.99 && scale < 1.01) { // rounding errors
-
 					translateX = 0;
 					translateY = 0;
 					scale = 1;
 
-				} else {
-
-					var mapRatio = Math.max(1, series.chart.mapRatio),
-						fullDataMin = xAxis.dataMin - ((xAxis.dataMax - xAxis.dataMin) * (mapRatio - 1) / 2),
-						fullMin = xAxis.min - xAxis.minPixelPadding / xAxis.transA,
-						a = fullMin - fullDataMin,
-						d = (xAxis.dataMax - xAxis.dataMin) * mapRatio,
-						b = (xAxis.max - xAxis.min) * mapRatio,
-						c = d - b,
-						centerX = a / c;
-
-
-
-					var mapRatio = 1 / Math.min(1, series.chart.mapRatio),
-						fullDataMin = yAxis.dataMin - ((yAxis.dataMax - yAxis.dataMin) * (mapRatio - 1) / 2),
-						fullMin = yAxis.min - yAxis.minPixelPadding / yAxis.transA,
-						a = fullMin - fullDataMin,
-						d = (yAxis.dataMax - yAxis.dataMin) * mapRatio,
-						b = (yAxis.max - yAxis.min) * mapRatio,
-						c = d - b,
-						centerY = a / c;
-					
-					translateX = (xAxis.len * (1 - scale)) * centerX;
-					translateY = (yAxis.len * (1 - scale)) * centerY;
-
+				} else {	
+					translateX = getTranslate(xAxis, Math.max(1, series.chart.mapRatio)); 
+					translateY = getTranslate(yAxis, 1 / Math.min(1, series.chart.mapRatio));
 				} 
+
 				this.transformGroup.animate({
 					translateX: translateX,
 					translateY: translateY,
@@ -1515,14 +1512,14 @@
 	// The mapline series type
 	plotOptions.mapline = merge(plotOptions.map, {
 		lineWidth: 1,
-		backgroundColor: 'none'
+		fillColor: 'none'
 	});
 	seriesTypes.mapline = extendClass(seriesTypes.map, {
 		type: 'mapline',
 		pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 			stroke: 'color',
 			'stroke-width': 'lineWidth',
-			fill: 'backgroundColor'
+			fill: 'fillColor'
 		},
 		drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 	});

@@ -767,17 +767,18 @@ Axis.prototype = {
 			pointRangePadding = 0,
 			linkedParent = axis.linkedParent,
 			ordinalCorrection,
+			hasCategories = !!axis.categories,
 			transA = axis.transA;
 
-		// adjust translation for padding
-		if (axis.isXAxis) {
+		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
+		if (axis.isXAxis || hasCategories) {
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = series.pointRange,
+					var seriesPointRange = mathMax(series.pointRange, +hasCategories),
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 

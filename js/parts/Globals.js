@@ -53,6 +53,7 @@ var UNDEFINED,
 	NONE = 'none',
 	M = 'M',
 	L = 'L',
+	numRegex = /^[0-9]+$/,
 	/*
 	 * Empirical lowest possible opacities for TRACKER_FILL
 	 * IE6: 0.002
