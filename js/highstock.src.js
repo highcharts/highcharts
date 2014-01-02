@@ -13805,8 +13805,8 @@ Series.prototype = {
 	tooltipHeaderFormatter: function (point) {
 		var series = this,
 			tooltipOptions = series.tooltipOptions,
-			xDateFormat = tooltipOptions.xDateFormat,
 			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
+			xDateFormat = tooltipOptions.xDateFormat || dateTimeLabelFormats.year, // #2546
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
 			headerFormat = tooltipOptions.headerFormat,
@@ -20940,13 +20940,7 @@ Highcharts.StockChart = function (options, callback) {
 				labels: {
 					overflow: 'justify'
 				},
-				showLastLabel: true,
-				crosshair: {
-					label: {
-						enabled: true,
-						format: '{value:%b %d, %Y}' // TODO: pick best time format like tooltips
-					}
-				}
+				showLastLabel: true
 			}, xAxisOptions, // user options 
 			{ // forced options
 				type: 'datetime',
@@ -20966,12 +20960,6 @@ Highcharts.StockChart = function (options, callback) {
 				y: -2
 			},
 			showLastLabel: false,
-			crosshair: {
-				label: {
-					enabled: false,
-					format: '{value}' // TODO: formatting/decimals like tooltip
-				}
-			},
 			title: {
 				text: null
 			}
@@ -21061,40 +21049,45 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label)) { return; }
-	if (!this.crosshair.label.enabled) { return; }
-	if (!defined(point)) { return; }
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !defined(point)) { 
+		return; 
+	}
 
-	var options = this.options.crosshair.label,		// the label's options
+	var chart = this.chart,
+		options = this.options.crosshair.label,		// the label's options
 		axis = this.isXAxis ? 'x' : 'y',			// axis name
 		horiz = this.horiz,							// axis orientation
 		opposite = this.opposite,					// axis position
 		left = this.left,							// left position
 		top = this.top,								// top position
-		crossLabel = this.crossLabel;				// reference to the svgElement
+		crossLabel = this.crossLabel,				// reference to the svgElement
+		posx,
+		posy,
+		crossBox,
+		formatOption = options.format,
+		formatFormat = '',
+		limit;
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
-		crossLabel = this.crossLabel = this.chart.renderer.label()			
+		crossLabel = this.crossLabel = chart.renderer.label()			
 		.attr({
 			align: options.align || horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'center') : (this.labelAlign === 'left' ? 'left' : 'center'),
 			zIndex: 12,
-			fill: options.backgroundColor || 'lightgrey',
-			padding: 5,
-			stroke: options.stroke || null,
-			'stroke-width': options.strokeWidth || 0
+			height: horiz ? 16 : UNDEFINED,
+			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
+			padding: pick(options.padding, 2),
+			stroke: options.borderColor || null,
+			'stroke-width': options.borderWidth || 0
 		})
-		.css({				
-			color: options.color || 'black',
-			fontWeight: options.fontWeight || 'bold',
+		.css(extend({				
+			color: 'white',
+			fontWeight: 'normal',
+			fontSize: '11px',
 			textAlign: 'center'
-		})
+		}, options.style))
 		.add();
 	}
-
-	var txt = options.format ? format(options.format, {value: point[axis]}) : options.formatter.call(this, point[axis]),
-		posx,
-		posy;
 
 	if (horiz) {
 		posx = point.plotX + left;
@@ -21110,9 +21103,22 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		return;
 	}
 
+	// TODO: Dynamic date formats like in Series.tooltipHeaderFormat. 
+	if (!formatOption && !options.formatter) {
+		if (this.isDatetimeAxis) {
+			formatFormat = '%b %d, %Y';
+		}
+		formatOption = '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
+	}
+
 	// show the label
-	crossLabel.attr({x: posx, y: posy, text: txt, visibility: VISIBLE});
-	var crossBox = crossLabel.box;
+	crossLabel.attr({
+		x: posx, 
+		y: posy, 
+		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
+		visibility: VISIBLE
+	});
+	crossBox = crossLabel.box;
 
 	// now it is placed we can correct its position
 	if (horiz) {
@@ -21125,8 +21131,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	}
 
 	// check the edges
-	var renderBox = this.chart.renderer.box;
-	var limit;
 	if (horiz) {
 		limit = {
 			left: left - crossBox.x,
@@ -21134,18 +21138,18 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		};
 	} else {
 		limit = {
-			left: this.labelAlign === 'left' ? left : renderBox.clientLeft,
-			right: this.labelAlign === 'right' ? left + this.width : renderBox.clientLeft + renderBox.clientWidth
+			left: this.labelAlign === 'left' ? left : 0,
+			right: this.labelAlign === 'right' ? left + this.width : chart.chartWidth
 		};
 	}
 
 	// left edge
 	if (crossLabel.translateX < limit.left) {
-		posx = posx + (limit.left - crossLabel.translateX);
+		posx += limit.left - crossLabel.translateX;
 	}
 	// right edge
 	if (crossLabel.translateX + crossBox.width >= limit.right) {
-		posx = posx - (crossLabel.translateX + crossBox.width - limit.right);
+		posx -= crossLabel.translateX + crossBox.width - limit.right;
 	}
 
 	// show the crosslabel
