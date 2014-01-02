@@ -80,10 +80,10 @@ $(function() {
  */
 function afterSetExtremes(e) {
 
-	var url,
-		currentExtremes = this.getExtremes(),
-		range = e.max - e.min;
-	var chart = $('#container').highcharts();
+	var currentExtremes = this.getExtremes(),
+		range = e.max - e.min,
+		chart = $('#container').highcharts();
+		
 	chart.showLoading('Loading data from server...');
 	$.getJSON('http://www.highcharts.com/samples/data/from-sql.php?start='+ Math.round(e.min) +
 			'&end='+ Math.round(e.max) +'&callback=?', function(data) {
