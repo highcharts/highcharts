@@ -22,14 +22,15 @@ var HighchartsConfig = {
 			Axis:	{name: 'Axis', component: 'Core', group: "Core", baseUrl: 'parts', depends: {name: ['StackItem']}},
 			DateTimeAxis:	{name: 'DateTimeAxis', component: 'DateTimeAxis', group: 'Features', depends: { component: ['Core']}, baseUrl: 'parts'},
 			LogarithmicAxis:	{name: 'LogarithmicAxis', component: 'LogarithmicAxis', group: 'Features', depends: {component: ['Core']}, baseUrl: 'parts'},
-			Tooltip:	{name: 'Tooltip', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Tooltip:	{name: 'Tooltip', component: 'Tooltip', group: "Core", baseUrl: 'parts'},
 			Pointer:	{name: 'Pointer', component: 'Core', group: "Core", baseUrl: 'parts'},
+			TouchPointer:	{name: 'TouchPointer', component: 'Touch Pointer', group: "Dynamics\ and\ Interaction", depends: { component: ['Core']}, baseUrl: 'parts'},
 			Legend:	{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Chart:	{name: 'Chart', component: 'Core', group: "Core", baseUrl: 'parts'},
 			CenteredSeriesMixin: {name: 'CenteredSeriesMixin', component: 'CenteredSeriesMixin', baseUrl: 'parts'},
 			Point:	{name: 'Point', component: 'Core', group: 'Core', baseUrl: 'parts'},
 			Series:	{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
-			Dynamics: {name: 'Dynamics', component: 'Dynamics', group: 'Features', depends: {component: ['Core']}},
+			Dynamics: {name: 'Dynamics', component: 'Dynamics', group: 'Dynamics\ and\ Interaction', depends: {component: ['Core']}},
 			LineSeries:	{name: 'LineSeries', component: 'LineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
 			AreaSeries:	{name: 'AreaSeries', component: 'AreaSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
 			SplineSeries:	{name: 'SplineSeries', component: 'SplineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
@@ -76,7 +77,8 @@ var HighchartsConfig = {
 			'Extra\'s': { description: 'This is the description for Extra\'s group'},
 			'Features': { description: 'This is the description for the Features group'},
 			'Renderers': { description: 'This is the description for the Renderers group'},
-			'Modules':  { description: 'This is the description for the Modules group'}
+			'Modules':  { description: 'This is the description for the Modules group'},
+			'Dynamics\ and\ Interaction': { description: 'The description for dynamics support'}
 		},
 
 		components: {
