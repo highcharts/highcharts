@@ -43,7 +43,7 @@ var UNDEFINED,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
 	Renderer,
-	hasTouch,	
+	hasTouch,
 	symbolSizes = {},
 	idCounter = 0,
 	garbageBin,
@@ -8669,9 +8669,9 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
  * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
  */
-function Tooltip() {
+var Tooltip = Highcharts.Tooltip = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Tooltip.prototype = {
 
@@ -9087,7 +9087,7 @@ Pointer.prototype = Highcharts.Pointer = {
 		this.pinchDown = [];
 		this.lastValidTouch = {};
 
-		if (options.tooltip.enabled) {
+		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
 		}
 
@@ -9641,7 +9641,7 @@ Pointer.prototype = Highcharts.Pointer = {
 
 
 		}
-	},	
+	},
 
 	/**
 	 * Set the JS DOM events on the container and document. This method should contain
@@ -9845,7 +9845,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			});
 		}
 
-	}	
+	}
 };
 /**
  * The overview of the chart's series
@@ -21078,8 +21078,7 @@ extend(Highcharts, {
 	Chart: Chart,
 	Color: Color,
 	Point: Point,
-	Tick: Tick,
-	Tooltip: Tooltip,
+	Tick: Tick,	
 	Renderer: Renderer,
 	Series: Series,
 	SVGElement: SVGElement,

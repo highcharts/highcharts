@@ -37,7 +37,7 @@ Pointer.prototype = Highcharts.Pointer = {
 		this.pinchDown = [];
 		this.lastValidTouch = {};
 
-		if (options.tooltip.enabled) {
+		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
 		}
 
