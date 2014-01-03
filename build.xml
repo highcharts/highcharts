@@ -155,6 +155,7 @@
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
             <file name="Datalabels.js"/>
+            <file name="Interaction.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
@@ -196,6 +197,7 @@
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
             <file name="DataLabels.js"/>
+            <file name="Interaction.js"/>
             <!-- Stock -->
             <file name="OrdinalAxis.js"/>
             <file name="DataGrouping.js"/>

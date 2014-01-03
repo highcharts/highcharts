@@ -287,7 +287,7 @@ Chart.prototype = {
 		});
 
 		// move tooltip or reset
-		if (pointer && pointer.reset) {
+		if (pointer) {
 			pointer.reset(true);
 		}
 
@@ -418,127 +418,7 @@ Chart.prototype = {
 				series.stackKey = series.type + pick(series.options.stack, '');
 			}
 		});
-	},
-
-	/**
-	 * Display the zoom button
-	 */
-	showResetZoom: function () {
-		var chart = this,
-			lang = defaultOptions.lang,
-			btnOptions = chart.options.chart.resetZoomButton,
-			theme = btnOptions.theme,
-			states = theme.states,
-			alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
-			
-		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
-			.attr({
-				align: btnOptions.position.align,
-				title: lang.resetZoomTitle
-			})
-			.add()
-			.align(btnOptions.position, false, alignTo);
-			
-	},
-
-	/**
-	 * Zoom out to 1:1
-	 */
-	zoomOut: function () {
-		var chart = this;
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
-			chart.zoom();
-		});
-	},
-
-	/**
-	 * Zoom into a given portion of the chart given by axis coordinates
-	 * @param {Object} event
-	 */
-	zoom: function (event) {
-		var chart = this,
-			hasZoomed,
-			pointer = chart.pointer,
-			displayButton = false,
-			resetZoomButton;
-
-		// If zoom is called with no arguments, reset the axes
-		if (!event || event.resetSelection) {
-			each(chart.axes, function (axis) {
-				hasZoomed = axis.zoom();
-			});
-		} else { // else, zoom in on all axes
-			each(event.xAxis.concat(event.yAxis), function (axisData) {
-				var axis = axisData.axis,
-					isXAxis = axis.isXAxis;
-
-				// don't zoom more than minRange
-				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
-					hasZoomed = axis.zoom(axisData.min, axisData.max);
-					if (axis.displayBtn) {
-						displayButton = true;
-					}
-				}
-			});
-		}
-		
-		// Show or hide the Reset zoom button
-		resetZoomButton = chart.resetZoomButton;
-		if (displayButton && !resetZoomButton) {
-			chart.showResetZoom();
-		} else if (!displayButton && isObject(resetZoomButton)) {
-			chart.resetZoomButton = resetZoomButton.destroy();
-		}
-		
-
-		// Redraw
-		if (hasZoomed) {
-			chart.redraw(
-				pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
-			);
-		}
-	},
-
-	/**
-	 * Pan the chart by dragging the mouse across the pane. This function is called
-	 * on mouse move, and the distance to pan is computed from chartX compared to
-	 * the first chartX position in the dragging operation.
-	 */
-	pan: function (e, panning) {
-
-		var chart = this,
-			hoverPoints = chart.hoverPoints,
-			doRedraw;
-
-		// remove active points for shared tooltip
-		if (hoverPoints) {
-			each(hoverPoints, function (point) {
-				point.setState();
-			});
-		}
-
-		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
-			var mousePos = e[isX ? 'chartX' : 'chartY'],
-				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
-				halfPointRange = (axis.pointRange || 0) / 2,
-				extremes = axis.getExtremes(),
-				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange;
-
-			if (axis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
-				doRedraw = true;
-			}
-
-			chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
-		});
-
-		if (doRedraw) {
-			chart.redraw(false);
-		}
-		css(chart.container, { cursor: 'move' });
-	},
+	},	
 
 	/**
 	 * Show the title and subtitle of the chart
@@ -1488,7 +1368,9 @@ Chart.prototype = {
 		fireEvent(chart, 'beforeRender'); 
 
 		// depends on inverted and on margins being set
-		chart.pointer = new Pointer(chart, options);
+		if (Highcharts.Pointer) {
+			chart.pointer = new Pointer(chart, options);
+		}
 
 		chart.render();
 

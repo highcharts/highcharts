@@ -235,7 +235,7 @@ Legend.prototype = Highcharts.Legend = {
 			li = item.legendItem,
 			series = item.series && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
-			showCheckbox = seriesOptions && seriesOptions.showCheckbox,
+			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
 			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
@@ -263,55 +263,16 @@ Legend.prototype = Highcharts.Legend = {
 				})
 				.add(item.legendGroup);
 
-			// Set the events on the item group, or in case of useHTML, the item itself (#1249)
-			(useHTML ? li : item.legendGroup).on('mouseover', function () {
-					item.setState(HOVER_STATE);
-					li.css(legend.options.itemHoverStyle);
-				})
-				.on('mouseout', function () {
-					li.css(item.visible ? itemStyle : itemHiddenStyle);
-					item.setState();
-				})
-				.on('click', function (event) {
-					var strLegendItemClick = 'legendItemClick',
-						fnLegendItemClick = function () {
-							item.setVisible();
-						};
-						
-					// Pass over the click/touch event. #4.
-					event = {
-						browserEvent: event
-					};
-
-					// click the name or symbol
-					if (item.firePointEvent) { // point
-						item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
-					} else {
-						fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
-					}
-				});
+			if (legend.setItemEvents) {
+				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
+			}			
 
 			// Colorize the items
 			legend.colorizeItem(item, item.visible);
 
 			// add the HTML checkbox on top
 			if (showCheckbox) {
-				item.checkbox = createElement('input', {
-					type: 'checkbox',
-					checked: item.selected,
-					defaultChecked: item.selected // required by IE7
-				}, options.itemCheckboxStyle, chart.container);
-
-				addEvent(item.checkbox, 'click', function (event) {
-					var target = event.target;
-					fireEvent(item, 'checkboxClick', {
-							checked: target.checked
-						},
-						function () {
-							item.select();
-						}
-					);
-				});
+				legend.createCheckboxForItem(item);				
 			}
 		}
 
@@ -771,7 +732,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview.
 // TODO: When IE11 is released, check again for this bug, and remove the fix
 // or make a better one.
-if (/Trident\/7\.0/.test(userAgent)) {
+if (/Trident\/7\.0/.test(userAgent)) {	
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)

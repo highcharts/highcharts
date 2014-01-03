@@ -997,63 +997,7 @@ Series.prototype = {
 			point: point,
 			series: series
 		});
-	},
-
-	/**
-	 * Series mouse over handler
-	 */
-	onMouseOver: function () {
-		var series = this,
-			chart = series.chart,
-			hoverSeries = chart.hoverSeries;
-
-		// set normal state to previous series
-		if (hoverSeries && hoverSeries !== series) {
-			hoverSeries.onMouseOut();
-		}
-
-		// trigger the event, but to save processing time,
-		// only if defined
-		if (series.options.events.mouseOver) {
-			fireEvent(series, 'mouseOver');
-		}
-
-		// hover this
-		series.setState(HOVER_STATE);
-		chart.hoverSeries = series;
-	},
-
-	/**
-	 * Series mouse out handler
-	 */
-	onMouseOut: function () {
-		// trigger the event only if listeners exist
-		var series = this,
-			options = series.options,
-			chart = series.chart,
-			tooltip = chart.tooltip,
-			hoverPoint = chart.hoverPoint;
-
-		// trigger mouse out on the point, which must be in this series
-		if (hoverPoint) {
-			hoverPoint.onMouseOut();
-		}
-
-		// fire the mouse out event
-		if (series && options.events.mouseOut) {
-			fireEvent(series, 'mouseOut');
-		}
-
-
-		// hide the tooltip
-		if (tooltip && !options.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
-			tooltip.hide();
-		}
-
-		// set normal state
-		series.setState();
-		chart.hoverSeries = null;
-	},
+	},	
 
 	/**
 	 * Animate in the series
@@ -1813,7 +1757,7 @@ Series.prototype = {
 
 
 		// draw the mouse tracking area
-		if (series.options.enableMouseTracking !== false) {
+		if (series.drawTracker && series.options.enableMouseTracking !== false) {
 			series.drawTracker();
 		}
 
@@ -1872,143 +1816,6 @@ Series.prototype = {
 		if (wasDirtyData) {
 			fireEvent(series, 'updatedData');
 		}
-	},
-
-	/**
-	 * Set the state of the graph
-	 */
-	setState: function (state) {
-		var series = this,
-			options = series.options,
-			graph = series.graph,
-			graphNeg = series.graphNeg,
-			stateOptions = options.states,
-			lineWidth = options.lineWidth,
-			attribs;
-
-		state = state || NORMAL_STATE;
-
-		if (series.state !== state) {
-			series.state = state;
-
-			if (stateOptions[state] && stateOptions[state].enabled === false) {
-				return;
-			}
-
-			if (state) {
-				lineWidth = stateOptions[state].lineWidth || lineWidth + 1;
-			}
-
-			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML
-				attribs = {
-					'stroke-width': lineWidth
-				};
-				// use attr because animate will cause any other animation on the graph to stop
-				graph.attr(attribs);
-				if (graphNeg) {
-					graphNeg.attr(attribs);
-				}
-			}
-		}
-	},
-
-	/**
-	 * Set the visibility of the graph
-	 *
-	 * @param vis {Boolean} True to show the series, false to hide. If UNDEFINED,
-	 *        the visibility is toggled.
-	 */
-	setVisible: function (vis, redraw) {
-		var series = this,
-			chart = series.chart,
-			legendItem = series.legendItem,
-			showOrHide,
-			ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
-			oldVisibility = series.visible;
-
-		// if called without an argument, toggle visibility
-		series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
-		showOrHide = vis ? 'show' : 'hide';
-
-		// show or hide elements
-		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
-			if (series[key]) {
-				series[key][showOrHide]();
-			}
-		});
-
-
-		// hide tooltip (#1361)
-		if (chart.hoverSeries === series) {
-			series.onMouseOut();
-		}
-
-
-		if (legendItem) {
-			chart.legend.colorizeItem(series, vis);
-		}
-
-
-		// rescale or adapt to resized chart
-		series.isDirty = true;
-		// in a stack, all other series are affected
-		if (series.options.stacking) {
-			each(chart.series, function (otherSeries) {
-				if (otherSeries.options.stacking && otherSeries.visible) {
-					otherSeries.isDirty = true;
-				}
-			});
-		}
-
-		// show or hide linked series
-		each(series.linkedSeries, function (otherSeries) {
-			otherSeries.setVisible(vis, false);
-		});
-
-		if (ignoreHiddenSeries) {
-			chart.isDirtyBox = true;
-		}
-		if (redraw !== false) {
-			chart.redraw();
-		}
-
-		fireEvent(series, showOrHide);
-	},
-
-	/**
-	 * Show the graph
-	 */
-	show: function () {
-		this.setVisible(true);
-	},
-
-	/**
-	 * Hide the graph
-	 */
-	hide: function () {
-		this.setVisible(false);
-	},
-
-
-	/**
-	 * Set the selected state of the graph
-	 *
-	 * @param selected {Boolean} True to select the series, false to unselect. If
-	 *        UNDEFINED, the selection state is toggled.
-	 */
-	select: function (selected) {
-		var series = this;
-		// if called without an argument, toggle
-		series.selected = selected = (selected === UNDEFINED) ? !series.selected : selected;
-
-		if (series.checkbox) {
-			series.checkbox.checked = selected;
-		}
-
-		fireEvent(series, selected ? 'select' : 'unselect');
-	},
-
-	drawTracker: TrackerMixin.drawTrackerGraph
-
+	}
 }; // end Series prototype
 

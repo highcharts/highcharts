@@ -1805,8 +1805,8 @@ Axis.prototype = {
 			chart = axis.chart,
 			pointer = chart.pointer;
 
-		// hide tooltip and hover states
-		if (pointer.reset) {
+		// hide tooltip and hover states		
+		if (pointer) {
 			pointer.reset(true);
 		}
 
