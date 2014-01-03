@@ -4499,8 +4499,7 @@ Highcharts.VMLElement = VMLElement = {
 	pathToVML: function (value) {
 		// convert paths
 		var i = value.length,
-			path = [],
-			clockwise;
+			path = [];
 
 		while (i--) {
 
@@ -4515,20 +4514,22 @@ Highcharts.VMLElement = VMLElement = {
 				path[i] = value[i];
 
 				// When the start X and end X coordinates of an arc are too close,
-				// they are rounded to the same value above. In this case, substract 1 from the end X
-				// position. #760, #1371.
+				// they are rounded to the same value above. In this case, substract or 
+				// add 1 from the end X and Y positions. #186, #760, #1371, #1410.
 				if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
-					clockwise = value[i] === 'wa' ? 1 : -1; // #1642
+					// Start and end X
 					if (path[i + 5] === path[i + 7]) {
-						path[i + 7] -= clockwise;
+						path[i + 7] += value[i + 7] > value[i + 5] ? 1 : -1;
 					}
-					// Start and end Y (#1410)
+					// Start and end Y
 					if (path[i + 6] === path[i + 8]) {
-						path[i + 8] -= clockwise;
+						path[i + 8] += value[i + 8] > value[i + 6] ? 1 : -1;
 					}
 				}
 			}
 		}
+
+		
 		// Loop up again to handle path shortcuts (#2132)
 		/*while (i++ < path.length) {
 			if (path[i] === 'H') { // horizontal line to
