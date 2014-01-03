@@ -133,6 +133,9 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
+			style: {
+				lineHeight: '11px'
+			},
 			x: -8,
 			y: null
 		},
@@ -146,6 +149,9 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
+			style: {
+				lineHeight: '11px'
+			},
 			x: 8,
 			y: null
 		},
@@ -255,6 +261,7 @@ Axis.prototype = {
 
 		// Major ticks
 		axis.ticks = {};
+		axis.labelEdge = [];
 		// Minor ticks
 		axis.minorTicks = {};
 		//axis.tickAmount = UNDEFINED;
@@ -1343,15 +1350,24 @@ Axis.prototype = {
 			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
-			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5);
+			i,
+			autoStaggerLines = 1,
+			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5),
+			sortedPositions,
+			lastRight,
+			overlap,
+			pos,
+			bBox,
+			x,
+			w,
+			lineNo;
 			
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
-		// Set/reset staggerLines and step
+		// Set/reset staggerLines
 		axis.staggerLines = axis.horiz && labelOptions.staggerLines;
-		axis.step = labelOptions.step;
 		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
@@ -1380,11 +1396,37 @@ Axis.prototype = {
 				}
 			});
 
-			// Handle automatic stagger lines and step
+			// Handle automatic stagger lines
 			if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
-				axis.staggerLines = axis.getOverlap(maxStaggerLines);
-			} else if (!axis.horiz && !labelOptions.rotation && axis.step === UNDEFINED && !axis.isRadial) {
-				axis.step = axis.getOverlap();
+				sortedPositions = axis.reversed ? [].concat(tickPositions).reverse() : tickPositions;
+				while (autoStaggerLines < maxStaggerLines) {
+					lastRight = [];
+					overlap = false;
+
+					for (i = 0; i < sortedPositions.length; i++) {
+						pos = sortedPositions[i];
+						bBox = ticks[pos].label && ticks[pos].label.getBBox();
+						w = bBox ? bBox.width : 0;
+						lineNo = i % autoStaggerLines;
+
+						if (w) {
+							x = axis.translate(pos); // don't handle log
+							if (lastRight[lineNo] !== UNDEFINED && x < lastRight[lineNo]) {
+								overlap = true;
+							}
+							lastRight[lineNo] = x + w;
+						}
+					}
+					if (overlap) {
+						autoStaggerLines++;
+					} else {
+						break;
+					}
+				}
+
+				if (autoStaggerLines > 1) {
+					axis.staggerLines = autoStaggerLines;
+				}
 			}
 
 
@@ -1457,52 +1499,6 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
 		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
-	},
-
-	/**
-	 * Detect overlapping axis labels. On a horizontal axis, this will cause stagger lines up to 
-	 * the maxStaggerLines option. On a vertical axis, overlapping labels are removed. The method
-	 * returns the value representing staggerLines or step.
-	 */
-	getOverlap: function (max) {
-		var steps = 1,
-			sortedPositions = this.reversed ? [].concat(this.tickPositions).reverse() : this.tickPositions,
-			ticks = this.ticks,
-			val,
-			lastEdge,
-			overlap,
-			i,
-			bBox,
-			size,
-			lineNo,
-			pos,
-			horiz = this.horiz;
-
-		while (!max || steps < max) {
-			lastEdge = [];
-			overlap = false;
-			
-			for (i = 0; i < sortedPositions.length; i++) {
-				val = sortedPositions[i];
-				bBox = ticks[val].label && ticks[val].label.getBBox();
-				size = bBox ? bBox[horiz ? 'width' : 'height'] : 0;
-				lineNo = i % steps;
-				
-				if (size) {
-					pos = this.translate(val); // don't handle log
-					if (lastEdge[lineNo] !== UNDEFINED && pos < lastEdge[lineNo]) {
-						overlap = true;
-					}
-					lastEdge[lineNo] = pos + size;
-				}
-			}
-			if (overlap) {
-				steps++;
-			} else {
-				break;
-			}
-		}
-		return steps > 1 ? steps : null;
 	},
 
 	/**
@@ -1583,6 +1579,8 @@ Axis.prototype = {
 	 */
 	render: function () {
 		var axis = this,
+			horiz = axis.horiz,
+			reversed = axis.reversed,
 			chart = axis.chart,
 			renderer = chart.renderer,
 			options = axis.options,
@@ -1604,7 +1602,11 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
+			justifyLabels = axis.justifyLabels = !axis.staggerLines && horiz && options.labels.overflow === 'justify',
 			to;
+
+		// Reset
+		axis.labelEdge.length = 0;
 
 		// Mark all elements inActive before we go over and mark the active ones
 		each([ticks, minorTicks, alternateBands], function (coll) {
@@ -1636,10 +1638,18 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
-				each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
+				if ((horiz && reversed) || (!horiz && !reversed)) {
+					tickPositions.reverse();
+				}
+				if (justifyLabels) {
+					tickPositions = tickPositions.slice(1).concat([tickPositions[0]]);
+				}
+				each(tickPositions, function (pos, i) {
 
 					// Reorganize the indices
-					i = (i === tickPositions.length - 1) ? 0 : i + 1;
+					if (justifyLabels) {
+						i = (i === tickPositions.length - 1) ? 0 : i + 1;
+					}
 
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {

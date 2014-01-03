@@ -121,12 +121,15 @@ Tick.prototype = {
 	getLabelSides: function () {
 		var bBox = this.labelBBox, // assume getLabelSize has run at this point
 			axis = this.axis,
+			horiz = axis.horiz,
 			options = axis.options,
 			labelOptions = options.labels,
-			width = bBox.width,
-			leftSide = width * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x;
+			size = horiz ? bBox.width : bBox.height,
+			leftSide = horiz ?
+				size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x : 
+				size;
 
-		return [-leftSide, width - leftSide];
+		return [-leftSide, size - leftSide];
 	},
 
 	/**
@@ -138,42 +141,58 @@ Tick.prototype = {
 			axis = this.axis,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
-			x = xy.x,
+			horiz = axis.horiz,
+			pxPos = horiz ? xy.x : xy.y,
 			reversed = axis.reversed,
-			tickPositions = axis.tickPositions;
+			tickPositions = axis.tickPositions,
+			sides = this.getLabelSides(),
+			leftSide = sides[0],
+			rightSide = sides[1],
+			axisLeft = axis.pos,
+			axisRight = axisLeft + axis.len,
+			labelOptions = axis.options.labels,
+			neighbour,
+			neighbourEdge,
+			line = this.label.line || 0,
+			labelEdge = axis.labelEdge,
+			justifyLabel = axis.justifyLabels && (isFirst || isLast);
 
-		if (isFirst || isLast) {
+		if (!labelOptions.step && !labelOptions.rotation) { // docs: auto step pulls out overlapping labels
+			// Hide it if it now overlaps the neighbour label
+			if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
+				labelEdge[line] = pxPos + rightSide;
+				
+			} else if (!justifyLabel) {
+				show = false;
+			}
+		}
 
-			var sides = this.getLabelSides(),
-				leftSide = sides[0],
-				rightSide = sides[1],
-				axisLeft = axis.pos,
-				axisRight = axisLeft + axis.len,
-				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
-				neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+		if (justifyLabel) {
+			neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]];
+			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
-				if (x + leftSide < axisLeft) {
+				if (pxPos + leftSide < axisLeft) {
 
 					// Align it to plot left
-					x = axisLeft - leftSide;
+					pxPos = axisLeft - leftSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (neighbour && x + rightSide > neighbourEdge) {
+					if (neighbour && pxPos + rightSide > neighbourEdge) {
 						show = false;
 					}
 				}
 
 			} else {
 				// Is the label spilling out to the right of the plot area?
-				if (x + rightSide > axisRight) {
+				if (pxPos + rightSide > axisRight) {
 
 					// Align it to plot right
-					x = axisRight - rightSide;
+					pxPos = axisRight - rightSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (neighbour && x + leftSide < neighbourEdge) {
+					if (neighbour && pxPos + leftSide < neighbourEdge) {
 						show = false;
 					}
 
@@ -181,7 +200,7 @@ Tick.prototype = {
 			}
 
 			// Set the modified x position of the label
-			xy.x = x;
+			xy.x = pxPos;
 		}
 		return show;
 	},
@@ -234,7 +253,8 @@ Tick.prototype = {
 		
 		// Correct for staggered labels
 		if (staggerLines) {
-			y += (index / (step || 1) % staggerLines) * (axis.labelOffset / staggerLines);
+			label.line = (index / (step || 1) % staggerLines);
+			y += label.line * (axis.labelOffset / staggerLines);
 		}
 		
 		return {
@@ -287,15 +307,14 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = axis.step,
+			step = labelOptions.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
-			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1, // #1480, #1687
-			staggerLines = axis.staggerLines;
+			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
 		this.isActive = true;
 		
@@ -336,35 +355,30 @@ Tick.prototype = {
 
 		// create the tick mark
 		if (tickWidth && tickLength) {
-			if (axis.len / axis.tickPositions.length > tickWidth + 1) {
-				// negate the length
-				if (tickPosition === 'inside') {
-					tickLength = -tickLength;
-				}
-				if (axis.opposite) {
-					tickLength = -tickLength;
-				}
 
-				markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
+			// negate the length
+			if (tickPosition === 'inside') {
+				tickLength = -tickLength;
+			}
+			if (axis.opposite) {
+				tickLength = -tickLength;
+			}
 
-				if (mark) { // updating
-					mark.animate({
-						d: markPath,
-						opacity: opacity
-					});
-				} else { // first time
-					tick.mark = renderer.path(
-						markPath
-					).attr({
-						stroke: tickColor,
-						'stroke-width': tickWidth,
-						opacity: opacity
-					}).add(axis.axisGroup);
-				}
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
 
-			// Don't draw ticks so close they appear as a gray mass
-			} else if (mark) {
-				tick.mark = mark.destroy();
+			if (mark) { // updating
+				mark.animate({
+					d: markPath,
+					opacity: opacity
+				});
+			} else { // first time
+				tick.mark = renderer.path(
+					markPath
+				).attr({
+					stroke: tickColor,
+					'stroke-width': tickWidth,
+					opacity: opacity
+				}).add(axis.axisGroup);
 			}
 		}
 
@@ -379,7 +393,7 @@ Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!staggerLines && horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index, xy)) {
+			} else if (!tick.handleOverflow(index, xy)) {
 				show = false;
 			}
 
