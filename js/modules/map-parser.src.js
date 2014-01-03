@@ -240,7 +240,10 @@ H.extend(H.Data.prototype, {
 		}
 
 		function getTranslate(elem) {
-			return elem.getCTM();
+			var ctm = elem.getCTM();
+			if (!isNaN(ctm.f)) {
+				return ctm;
+			}
 		}
 
 		
