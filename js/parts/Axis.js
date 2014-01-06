@@ -1587,6 +1587,7 @@ Axis.prototype = {
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
+			sortedPositions,
 			axisTitle = axis.axisTitle,
 			stacks = axis.stacks,
 			ticks = axis.ticks,
@@ -1638,17 +1639,18 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
+				sortedPositions = tickPositions.slice();
 				if ((horiz && reversed) || (!horiz && !reversed)) {
-					tickPositions.reverse();
+					sortedPositions.reverse();
 				}
 				if (justifyLabels) {
-					tickPositions = tickPositions.slice(1).concat([tickPositions[0]]);
+					sortedPositions = sortedPositions.slice(1).concat([sortedPositions[0]]);
 				}
-				each(tickPositions, function (pos, i) {
+				each(sortedPositions, function (pos, i) {
 
 					// Reorganize the indices
 					if (justifyLabels) {
-						i = (i === tickPositions.length - 1) ? 0 : i + 1;
+						i = (i === sortedPositions.length - 1) ? 0 : i + 1;
 					}
 
 					// linked axes need an extra check to find out if
@@ -1660,7 +1662,7 @@ Axis.prototype = {
 
 						// render new ticks in old position
 						if (slideInTicks && ticks[pos].isNew) {
-							ticks[pos].render(i, true);
+							ticks[pos].render(i, true, 0.1);
 						}
 
 						ticks[pos].render(i, false, 1);

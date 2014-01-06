@@ -110,7 +110,7 @@ Tick.prototype = {
 		var label = this.label,
 			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
+			label.getBBox()[axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -119,7 +119,7 @@ Tick.prototype = {
 	 * detection with overflow logic.
 	 */
 	getLabelSides: function () {
-		var bBox = this.labelBBox, // assume getLabelSize has run at this point
+		var bBox = this.label.getBBox(),
 			axis = this.axis,
 			horiz = axis.horiz,
 			options = axis.options,
@@ -150,23 +150,21 @@ Tick.prototype = {
 			rightSide = sides[1],
 			axisLeft = axis.pos,
 			axisRight = axisLeft + axis.len,
-			labelOptions = axis.options.labels,
 			neighbour,
 			neighbourEdge,
 			line = this.label.line || 0,
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast);
 
-		if (!labelOptions.step && !labelOptions.rotation) { // docs: auto step pulls out overlapping labels
-			// Hide it if it now overlaps the neighbour label
-			if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
-				labelEdge[line] = pxPos + rightSide;
-				
-			} else if (!justifyLabel) {
-				show = false;
-			}
+		// docs: auto step pulls out overlapping labels
+		// Hide it if it now overlaps the neighbour label
+		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
+			labelEdge[line] = pxPos + rightSide;
+			
+		} else if (!justifyLabel) {
+			show = false;
 		}
-
+		
 		if (justifyLabel) {
 			neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]];
 			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
@@ -393,8 +391,8 @@ Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!tick.handleOverflow(index, xy)) {
-				show = false;
+			} else if (!axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
+				show = tick.handleOverflow(index, xy);
 			}
 
 			// apply step
@@ -402,7 +400,7 @@ Tick.prototype = {
 				// show those indices dividable by step
 				show = false;
 			}
-
+		
 			// Set the new position, and show or hide
 			if (show && !isNaN(xy.y)) {
 				xy.opacity = opacity;

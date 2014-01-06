@@ -2982,6 +2982,7 @@ SVGRenderer.prototype = {
 						// check width and apply soft breaks
 						if (width) {
 							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
+								hasWhiteSpace = words.length > 1,
 								tooLong,
 								actualWidth,
 								clipHeight = wrapper._clipHeight,
@@ -2990,10 +2991,8 @@ SVGRenderer.prototype = {
 								softLineNo = 1,
 								bBox;
 
-							while (words.length || rest.length) {
-								if (words.length > 1 || lineNo) {
-									delete wrapper.bBox; // delete cache
-								}
+							while (hasWhiteSpace && (words.length || rest.length)) {
+								delete wrapper.bBox; // delete cache
 								bBox = wrapper.getBBox();
 								actualWidth = bBox.width;
 
@@ -5743,7 +5742,7 @@ Tick.prototype = {
 		var label = this.label,
 			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
+			label.getBBox()[axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -5752,7 +5751,7 @@ Tick.prototype = {
 	 * detection with overflow logic.
 	 */
 	getLabelSides: function () {
-		var bBox = this.labelBBox, // assume getLabelSize has run at this point
+		var bBox = this.label.getBBox(),
 			axis = this.axis,
 			horiz = axis.horiz,
 			options = axis.options,
@@ -5783,23 +5782,21 @@ Tick.prototype = {
 			rightSide = sides[1],
 			axisLeft = axis.pos,
 			axisRight = axisLeft + axis.len,
-			labelOptions = axis.options.labels,
 			neighbour,
 			neighbourEdge,
 			line = this.label.line || 0,
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast);
 
-		if (!labelOptions.step && !labelOptions.rotation) { // docs: auto step pulls out overlapping labels
-			// Hide it if it now overlaps the neighbour label
-			if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
-				labelEdge[line] = pxPos + rightSide;
-				
-			} else if (!justifyLabel) {
-				show = false;
-			}
+		// docs: auto step pulls out overlapping labels
+		// Hide it if it now overlaps the neighbour label
+		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
+			labelEdge[line] = pxPos + rightSide;
+			
+		} else if (!justifyLabel) {
+			show = false;
 		}
-
+		
 		if (justifyLabel) {
 			neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]];
 			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
@@ -6026,8 +6023,8 @@ Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!tick.handleOverflow(index, xy)) {
-				show = false;
+			} else if (!axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
+				show = tick.handleOverflow(index, xy);
 			}
 
 			// apply step
@@ -6035,7 +6032,7 @@ Tick.prototype = {
 				// show those indices dividable by step
 				show = false;
 			}
-
+		
 			// Set the new position, and show or hide
 			if (show && !isNaN(xy.y)) {
 				xy.opacity = opacity;
@@ -7905,6 +7902,7 @@ Axis.prototype = {
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
+			sortedPositions,
 			axisTitle = axis.axisTitle,
 			stacks = axis.stacks,
 			ticks = axis.ticks,
@@ -7956,17 +7954,18 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
+				sortedPositions = tickPositions.slice();
 				if ((horiz && reversed) || (!horiz && !reversed)) {
-					tickPositions.reverse();
+					sortedPositions.reverse();
 				}
 				if (justifyLabels) {
-					tickPositions = tickPositions.slice(1).concat([tickPositions[0]]);
+					sortedPositions = sortedPositions.slice(1).concat([sortedPositions[0]]);
 				}
-				each(tickPositions, function (pos, i) {
+				each(sortedPositions, function (pos, i) {
 
 					// Reorganize the indices
 					if (justifyLabels) {
-						i = (i === tickPositions.length - 1) ? 0 : i + 1;
+						i = (i === sortedPositions.length - 1) ? 0 : i + 1;
 					}
 
 					// linked axes need an extra check to find out if
@@ -7978,7 +7977,7 @@ Axis.prototype = {
 
 						// render new ticks in old position
 						if (slideInTicks && ticks[pos].isNew) {
-							ticks[pos].render(i, true);
+							ticks[pos].render(i, true, 0.1);
 						}
 
 						ticks[pos].render(i, false, 1);
@@ -14482,7 +14481,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
-			graphPath = lineWidth && this.getGraphPath(),
+			graphPath = (lineWidth || series.filled) && this.getGraphPath(),
 			negativeColor = options.negativeColor;
 
 		if (negativeColor) {
@@ -15440,7 +15439,7 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
  */
 var AreaSeries = extendClass(Series, {
 	type: 'area',
-	
+	filled: true,
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
 	 * no marker. Also insert dummy points for any X position that exists in other series

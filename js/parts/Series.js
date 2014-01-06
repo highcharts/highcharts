@@ -1553,7 +1553,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
-			graphPath = lineWidth && this.getGraphPath(),
+			graphPath = (lineWidth || series.filled) && this.getGraphPath(),
 			negativeColor = options.negativeColor;
 
 		if (negativeColor) {
