@@ -10,7 +10,10 @@ $(function () {
                 text: 'October 6th and 7th 2009 at two locations in Vik i Sogn, Norway'
             },
             xAxis: {
-                type: 'datetime'
+                type: 'datetime',
+                labels: {
+                    overflow: 'justify'
+                }
             },
             yAxis: {
                 title: {

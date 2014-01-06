@@ -107,14 +107,14 @@ if (get_magic_quotes_gpc()) {
 }
 
 $leftImage = post(EXPORT_SERVER, array(
-	'width' => '300',
+	'width' => 500,
 	'type' => 'image/png',
 	'svg' => $leftSVG
 ));
 
 $rightImage = post(EXPORT_SERVER, array(
-	'width' => '300',
-	'type' => 'image/png',
+	'width' => 500,
+ 	'type' => 'image/png',
 	'svg' => $rightSVG
 ));
 
