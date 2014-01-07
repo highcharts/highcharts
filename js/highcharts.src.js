@@ -13113,7 +13113,7 @@ Series.prototype = {
 
 		// now that we have the cropped data, build the segments
 		series.getSegments();
-	},	
+	},
 
 	/**
 	 * Animate in the series
@@ -14816,7 +14816,7 @@ var ColumnSeries = extendClass(Series, {
 	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
-		// point is substracted from previous (#1910)	
+		// point is substracted from previous (#1910)
 	
 	/**
 	 * Initialize the series
@@ -15134,7 +15134,7 @@ var ScatterSeries = extendClass(Series, {
 	requireSorting: false,
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
-	takeOrdinalPosition: false, // #2342	
+	takeOrdinalPosition: false, // #2342
 	
 	singularTooltips: true
 });
@@ -17068,7 +17068,6 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
-	Tooltip: Tooltip,
 	
 	// Various
 	arrayMin: arrayMin,
