@@ -140,6 +140,7 @@
             <file name="StackItem.js"/>
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
+            <file name="MSPointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
@@ -182,6 +183,7 @@
             <file name="LogarithmicAxis.js"/>
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
+            <file name="MSPointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>

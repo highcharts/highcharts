@@ -1175,7 +1175,7 @@ SVGRenderer.prototype = {
 								bBox;
 
 							while (words.length || rest.length) {
-								if (words.length > 1) {
+								if (words.length > 1 || lineNo) {
 									delete wrapper.bBox; // delete cache
 								}
 								bBox = wrapper.getBBox();

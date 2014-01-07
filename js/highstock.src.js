@@ -2990,7 +2990,7 @@ SVGRenderer.prototype = {
 								bBox;
 
 							while (words.length || rest.length) {
-								if (words.length > 1) {
+								if (words.length > 1 || lineNo) {
 									delete wrapper.bBox; // delete cache
 								}
 								bBox = wrapper.getBBox();
@@ -4498,8 +4498,7 @@ Highcharts.VMLElement = VMLElement = {
 	pathToVML: function (value) {
 		// convert paths
 		var i = value.length,
-			path = [],
-			clockwise;
+			path = [];
 
 		while (i--) {
 
@@ -4514,20 +4513,22 @@ Highcharts.VMLElement = VMLElement = {
 				path[i] = value[i];
 
 				// When the start X and end X coordinates of an arc are too close,
-				// they are rounded to the same value above. In this case, substract 1 from the end X
-				// position. #760, #1371.
+				// they are rounded to the same value above. In this case, substract or 
+				// add 1 from the end X and Y positions. #186, #760, #1371, #1410.
 				if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
-					clockwise = value[i] === 'wa' ? 1 : -1; // #1642
+					// Start and end X
 					if (path[i + 5] === path[i + 7]) {
-						path[i + 7] -= clockwise;
+						path[i + 7] += value[i + 7] > value[i + 5] ? 1 : -1;
 					}
-					// Start and end Y (#1410)
+					// Start and end Y
 					if (path[i + 6] === path[i + 8]) {
-						path[i + 8] -= clockwise;
+						path[i + 8] += value[i + 8] > value[i + 6] ? 1 : -1;
 					}
 				}
 			}
 		}
+
+		
 		// Loop up again to handle path shortcuts (#2132)
 		/*while (i++ < path.length) {
 			if (path[i] === 'H') { // horizontal line to
@@ -5752,12 +5753,15 @@ Tick.prototype = {
 	getLabelSides: function () {
 		var bBox = this.labelBBox, // assume getLabelSize has run at this point
 			axis = this.axis,
+			horiz = axis.horiz,
 			options = axis.options,
 			labelOptions = options.labels,
-			width = bBox.width,
-			leftSide = width * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x;
+			size = horiz ? bBox.width : bBox.height,
+			leftSide = horiz ?
+				size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x : 
+				size;
 
-		return [-leftSide, width - leftSide];
+		return [-leftSide, size - leftSide];
 	},
 
 	/**
@@ -5769,42 +5773,58 @@ Tick.prototype = {
 			axis = this.axis,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
-			x = xy.x,
+			horiz = axis.horiz,
+			pxPos = horiz ? xy.x : xy.y,
 			reversed = axis.reversed,
-			tickPositions = axis.tickPositions;
+			tickPositions = axis.tickPositions,
+			sides = this.getLabelSides(),
+			leftSide = sides[0],
+			rightSide = sides[1],
+			axisLeft = axis.pos,
+			axisRight = axisLeft + axis.len,
+			labelOptions = axis.options.labels,
+			neighbour,
+			neighbourEdge,
+			line = this.label.line || 0,
+			labelEdge = axis.labelEdge,
+			justifyLabel = axis.justifyLabels && (isFirst || isLast);
 
-		if (isFirst || isLast) {
+		if (!labelOptions.step && !labelOptions.rotation) { // docs: auto step pulls out overlapping labels
+			// Hide it if it now overlaps the neighbour label
+			if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
+				labelEdge[line] = pxPos + rightSide;
+				
+			} else if (!justifyLabel) {
+				show = false;
+			}
+		}
 
-			var sides = this.getLabelSides(),
-				leftSide = sides[0],
-				rightSide = sides[1],
-				axisLeft = axis.pos,
-				axisRight = axisLeft + axis.len,
-				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
-				neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+		if (justifyLabel) {
+			neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]];
+			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
-				if (x + leftSide < axisLeft) {
+				if (pxPos + leftSide < axisLeft) {
 
 					// Align it to plot left
-					x = axisLeft - leftSide;
+					pxPos = axisLeft - leftSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (neighbour && x + rightSide > neighbourEdge) {
+					if (neighbour && pxPos + rightSide > neighbourEdge) {
 						show = false;
 					}
 				}
 
 			} else {
 				// Is the label spilling out to the right of the plot area?
-				if (x + rightSide > axisRight) {
+				if (pxPos + rightSide > axisRight) {
 
 					// Align it to plot right
-					x = axisRight - rightSide;
+					pxPos = axisRight - rightSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (neighbour && x + leftSide < neighbourEdge) {
+					if (neighbour && pxPos + leftSide < neighbourEdge) {
 						show = false;
 					}
 
@@ -5812,7 +5832,7 @@ Tick.prototype = {
 			}
 
 			// Set the modified x position of the label
-			xy.x = x;
+			xy.x = pxPos;
 		}
 		return show;
 	},
@@ -5865,7 +5885,8 @@ Tick.prototype = {
 		
 		// Correct for staggered labels
 		if (staggerLines) {
-			y += (index / (step || 1) % staggerLines) * (axis.labelOffset / staggerLines);
+			label.line = (index / (step || 1) % staggerLines);
+			y += label.line * (axis.labelOffset / staggerLines);
 		}
 		
 		return {
@@ -5918,15 +5939,14 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = axis.step,
+			step = labelOptions.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
-			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1, // #1480, #1687
-			staggerLines = axis.staggerLines;
+			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
 		this.isActive = true;
 		
@@ -5967,35 +5987,30 @@ Tick.prototype = {
 
 		// create the tick mark
 		if (tickWidth && tickLength) {
-			if (axis.len / axis.tickPositions.length > tickWidth + 1) {
-				// negate the length
-				if (tickPosition === 'inside') {
-					tickLength = -tickLength;
-				}
-				if (axis.opposite) {
-					tickLength = -tickLength;
-				}
 
-				markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
+			// negate the length
+			if (tickPosition === 'inside') {
+				tickLength = -tickLength;
+			}
+			if (axis.opposite) {
+				tickLength = -tickLength;
+			}
 
-				if (mark) { // updating
-					mark.animate({
-						d: markPath,
-						opacity: opacity
-					});
-				} else { // first time
-					tick.mark = renderer.path(
-						markPath
-					).attr({
-						stroke: tickColor,
-						'stroke-width': tickWidth,
-						opacity: opacity
-					}).add(axis.axisGroup);
-				}
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
 
-			// Don't draw ticks so close they appear as a gray mass
-			} else if (mark) {
-				tick.mark = mark.destroy();
+			if (mark) { // updating
+				mark.animate({
+					d: markPath,
+					opacity: opacity
+				});
+			} else { // first time
+				tick.mark = renderer.path(
+					markPath
+				).attr({
+					stroke: tickColor,
+					'stroke-width': tickWidth,
+					opacity: opacity
+				}).add(axis.axisGroup);
 			}
 		}
 
@@ -6010,7 +6025,7 @@ Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!staggerLines && horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index, xy)) {
+			} else if (!tick.handleOverflow(index, xy)) {
 				show = false;
 			}
 
@@ -6544,6 +6559,9 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
+			style: {
+				lineHeight: '11px'
+			},
 			x: -8,
 			y: null
 		},
@@ -6557,6 +6575,9 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
+			style: {
+				lineHeight: '11px'
+			},
 			x: 8,
 			y: null
 		},
@@ -6666,6 +6687,7 @@ Axis.prototype = {
 
 		// Major ticks
 		axis.ticks = {};
+		axis.labelEdge = [];
 		// Minor ticks
 		axis.minorTicks = {};
 		//axis.tickAmount = UNDEFINED;
@@ -7754,15 +7776,24 @@ Axis.prototype = {
 			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
-			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5);
+			i,
+			autoStaggerLines = 1,
+			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5),
+			sortedPositions,
+			lastRight,
+			overlap,
+			pos,
+			bBox,
+			x,
+			w,
+			lineNo;
 			
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
-		// Set/reset staggerLines and step
+		// Set/reset staggerLines
 		axis.staggerLines = axis.horiz && labelOptions.staggerLines;
-		axis.step = labelOptions.step;
 		
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
@@ -7791,11 +7822,37 @@ Axis.prototype = {
 				}
 			});
 
-			// Handle automatic stagger lines and step
+			// Handle automatic stagger lines
 			if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
-				axis.staggerLines = axis.getOverlap(maxStaggerLines);
-			} else if (!axis.horiz && !labelOptions.rotation && axis.step === UNDEFINED && !axis.isRadial) {
-				axis.step = axis.getOverlap();
+				sortedPositions = axis.reversed ? [].concat(tickPositions).reverse() : tickPositions;
+				while (autoStaggerLines < maxStaggerLines) {
+					lastRight = [];
+					overlap = false;
+
+					for (i = 0; i < sortedPositions.length; i++) {
+						pos = sortedPositions[i];
+						bBox = ticks[pos].label && ticks[pos].label.getBBox();
+						w = bBox ? bBox.width : 0;
+						lineNo = i % autoStaggerLines;
+
+						if (w) {
+							x = axis.translate(pos); // don't handle log
+							if (lastRight[lineNo] !== UNDEFINED && x < lastRight[lineNo]) {
+								overlap = true;
+							}
+							lastRight[lineNo] = x + w;
+						}
+					}
+					if (overlap) {
+						autoStaggerLines++;
+					} else {
+						break;
+					}
+				}
+
+				if (autoStaggerLines > 1) {
+					axis.staggerLines = autoStaggerLines;
+				}
 			}
 
 
@@ -7868,52 +7925,6 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
 		);
 		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
-	},
-
-	/**
-	 * Detect overlapping axis labels. On a horizontal axis, this will cause stagger lines up to 
-	 * the maxStaggerLines option. On a vertical axis, overlapping labels are removed. The method
-	 * returns the value representing staggerLines or step.
-	 */
-	getOverlap: function (max) {
-		var steps = 1,
-			sortedPositions = this.reversed ? [].concat(this.tickPositions).reverse() : this.tickPositions,
-			ticks = this.ticks,
-			val,
-			lastEdge,
-			overlap,
-			i,
-			bBox,
-			size,
-			lineNo,
-			pos,
-			horiz = this.horiz;
-
-		while (!max || steps < max) {
-			lastEdge = [];
-			overlap = false;
-			
-			for (i = 0; i < sortedPositions.length; i++) {
-				val = sortedPositions[i];
-				bBox = ticks[val].label && ticks[val].label.getBBox();
-				size = bBox ? bBox[horiz ? 'width' : 'height'] : 0;
-				lineNo = i % steps;
-				
-				if (size) {
-					pos = this.translate(val); // don't handle log
-					if (lastEdge[lineNo] !== UNDEFINED && pos < lastEdge[lineNo]) {
-						overlap = true;
-					}
-					lastEdge[lineNo] = pos + size;
-				}
-			}
-			if (overlap) {
-				steps++;
-			} else {
-				break;
-			}
-		}
-		return steps > 1 ? steps : null;
 	},
 
 	/**
@@ -7994,6 +8005,8 @@ Axis.prototype = {
 	 */
 	render: function () {
 		var axis = this,
+			horiz = axis.horiz,
+			reversed = axis.reversed,
 			chart = axis.chart,
 			renderer = chart.renderer,
 			options = axis.options,
@@ -8015,7 +8028,11 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
+			justifyLabels = axis.justifyLabels = !axis.staggerLines && horiz && options.labels.overflow === 'justify',
 			to;
+
+		// Reset
+		axis.labelEdge.length = 0;
 
 		// Mark all elements inActive before we go over and mark the active ones
 		each([ticks, minorTicks, alternateBands], function (coll) {
@@ -8047,10 +8064,18 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
-				each(tickPositions.slice(1).concat([tickPositions[0]]), function (pos, i) {
+				if ((horiz && reversed) || (!horiz && !reversed)) {
+					tickPositions.reverse();
+				}
+				if (justifyLabels) {
+					tickPositions = tickPositions.slice(1).concat([tickPositions[0]]);
+				}
+				each(tickPositions, function (pos, i) {
 
 					// Reorganize the indices
-					i = (i === tickPositions.length - 1) ? 0 : i + 1;
+					if (justifyLabels) {
+						i = (i === tickPositions.length - 1) ? 0 : i + 1;
+					}
 
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
@@ -9815,6 +9840,71 @@ Pointer.prototype = {
 };
 
 
+if (win.PointerEvent || win.MSPointerEvent) {
+	
+	// The touches object keeps track of the points being touched at all times
+	var touches = {};
+
+	// Emulate a Webkit TouchList 
+	Pointer.prototype.getWebkitTouches = function () {
+		var key, fake = [];
+		fake.item = function (i) { return this[i]; };
+		for (key in touches) {
+			if (touches.hasOwnProperty(key)) {
+				fake.push({
+					pageX: touches[key].pageX,
+					pageY: touches[key].pageY,
+					target: touches[key].target
+				});
+			}
+		}
+		return fake;
+	};
+
+	// Disable default IE actions for pinch and such on chart element
+	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+		chart.container.style["-ms-touch-action"] = chart.container.style["touch-action"] = "none";
+		proceed.call(this, chart, options);
+	});
+
+	// Add IE specific touch events to chart
+	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
+		var pointer = this, eventmap;
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		eventmap = [
+			[this.chart.container, "PointerDown", "touchstart", "onContainerTouchStart", function (e) {
+				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
+			}],
+			[this.chart.container, "PointerMove", "touchmove", "onContainerTouchMove", function (e) {
+				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
+				if (!touches[e.pointerId].target) {
+					touches[e.pointerId].target = e.currentTarget;
+				}	
+			}],
+			[document, "PointerUp", "touchend", "onDocumentTouchEnd", function (e) {
+				delete touches[e.pointerId];
+			}]
+		];
+		
+		each(eventmap, function (eventConfig) {
+			addEvent(eventConfig[0], window.PointerEvent ? eventConfig[1].toLowerCase() : "MS" + eventConfig[1], function (e) {
+				e = e.originalEvent;
+				if (e.pointerType === "touch" || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
+					eventConfig[4](e);
+					
+					// This event corresponds to ontouchstart - call onContainerTouchStart
+					pointer[eventConfig[3]]({
+						type: eventConfig[2],
+						target: e.currentTarget,
+						preventDefault: noop,
+						touches: pointer.getWebkitTouches()
+					});
+				}
+			});
+		});
+	   
+	});
+}	 
 /**
  * The overview of the chart's series
  */
@@ -9822,7 +9912,7 @@ var Legend = Highcharts.Legend = function (chart, options) {
 	this.init(chart, options);
 };
 
-Legend.prototype = Highcharts.Legend = {
+Legend.prototype = {
 	
 	/**
 	 * Initialize the legend
@@ -20787,13 +20877,7 @@ Highcharts.StockChart = function (options, callback) {
 				labels: {
 					overflow: 'justify'
 				},
-				showLastLabel: true,
-				crosshair: {
-					label: {
-						enabled: true,
-						format: '{value:%b %d, %Y}' // TODO: pick best time format like tooltips
-					}
-				}
+				showLastLabel: true
 			}, xAxisOptions, // user options 
 			{ // forced options
 				type: 'datetime',
@@ -20813,12 +20897,6 @@ Highcharts.StockChart = function (options, callback) {
 				y: -2
 			},
 			showLastLabel: false,
-			crosshair: {
-				label: {
-					enabled: false,
-					format: '{value}' // TODO: formatting/decimals like tooltip
-				}
-			},
 			title: {
 				text: null
 			}
@@ -20908,40 +20986,45 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label)) { return; }
-	if (!this.crosshair.label.enabled) { return; }
-	if (!defined(point)) { return; }
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !defined(point)) { 
+		return; 
+	}
 
-	var options = this.options.crosshair.label,		// the label's options
+	var chart = this.chart,
+		options = this.options.crosshair.label,		// the label's options
 		axis = this.isXAxis ? 'x' : 'y',			// axis name
 		horiz = this.horiz,							// axis orientation
 		opposite = this.opposite,					// axis position
 		left = this.left,							// left position
 		top = this.top,								// top position
-		crossLabel = this.crossLabel;				// reference to the svgElement
+		crossLabel = this.crossLabel,				// reference to the svgElement
+		posx,
+		posy,
+		crossBox,
+		formatOption = options.format,
+		formatFormat = '',
+		limit;
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
-		crossLabel = this.crossLabel = this.chart.renderer.label()			
+		crossLabel = this.crossLabel = chart.renderer.label()			
 		.attr({
 			align: options.align || horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'center') : (this.labelAlign === 'left' ? 'left' : 'center'),
 			zIndex: 12,
-			fill: options.backgroundColor || 'lightgrey',
-			padding: 5,
-			stroke: options.stroke || null,
-			'stroke-width': options.strokeWidth || 0
+			height: horiz ? 16 : UNDEFINED,
+			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
+			padding: pick(options.padding, 2),
+			stroke: options.borderColor || null,
+			'stroke-width': options.borderWidth || 0
 		})
-		.css({				
-			color: options.color || 'black',
-			fontWeight: options.fontWeight || 'bold',
+		.css(extend({				
+			color: 'white',
+			fontWeight: 'normal',
+			fontSize: '11px',
 			textAlign: 'center'
-		})
+		}, options.style))
 		.add();
 	}
-
-	var txt = options.format ? format(options.format, {value: point[axis]}) : options.formatter.call(this, point[axis]),
-		posx,
-		posy;
 
 	if (horiz) {
 		posx = point.plotX + left;
@@ -20957,9 +21040,22 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		return;
 	}
 
+	// TODO: Dynamic date formats like in Series.tooltipHeaderFormat. 
+	if (!formatOption && !options.formatter) {
+		if (this.isDatetimeAxis) {
+			formatFormat = '%b %d, %Y';
+		}
+		formatOption = '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
+	}
+
 	// show the label
-	crossLabel.attr({x: posx, y: posy, text: txt, visibility: VISIBLE});
-	var crossBox = crossLabel.box;
+	crossLabel.attr({
+		x: posx, 
+		y: posy, 
+		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
+		visibility: VISIBLE
+	});
+	crossBox = crossLabel.box;
 
 	// now it is placed we can correct its position
 	if (horiz) {
@@ -20972,8 +21068,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	}
 
 	// check the edges
-	var renderBox = this.chart.renderer.box;
-	var limit;
 	if (horiz) {
 		limit = {
 			left: left - crossBox.x,
@@ -20981,18 +21075,18 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		};
 	} else {
 		limit = {
-			left: this.labelAlign === 'left' ? left : renderBox.clientLeft,
-			right: this.labelAlign === 'right' ? left + this.width : renderBox.clientLeft + renderBox.clientWidth
+			left: this.labelAlign === 'left' ? left : 0,
+			right: this.labelAlign === 'right' ? left + this.width : chart.chartWidth
 		};
 	}
 
 	// left edge
 	if (crossLabel.translateX < limit.left) {
-		posx = posx + (limit.left - crossLabel.translateX);
+		posx += limit.left - crossLabel.translateX;
 	}
 	// right edge
 	if (crossLabel.translateX + crossBox.width >= limit.right) {
-		posx = posx - (crossLabel.translateX + crossBox.width - limit.right);
+		posx -= crossLabel.translateX + crossBox.width - limit.right;
 	}
 
 	// show the crosslabel

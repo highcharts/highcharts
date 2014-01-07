@@ -5,7 +5,7 @@ var Legend = Highcharts.Legend = function (chart, options) {
 	this.init(chart, options);
 };
 
-Legend.prototype = Highcharts.Legend = {
+Legend.prototype = {
 	
 	/**
 	 * Initialize the legend
