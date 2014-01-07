@@ -48,6 +48,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
 	type: 'funnel',
 	animate: noop,
+	singularTooltips: true,
 
 	/**
 	 * Overrides the pie translate method
@@ -199,10 +200,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			point.half = half;
 
 			cumulative += fraction;
-		});
-
-
-		series.setTooltipPoints();
+		});		
 	},
 	/**
 	 * Draw a single point (wedge)

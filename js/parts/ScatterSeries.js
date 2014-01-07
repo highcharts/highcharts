@@ -21,9 +21,8 @@ var ScatterSeries = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
 	takeOrdinalPosition: false, // #2342
-	drawTracker: TrackerMixin.drawTrackerPoint,
 	
-	setTooltipPoints: noop
+	singularTooltips: true
 });
 
 seriesTypes.scatter = ScatterSeries;

@@ -89,12 +89,12 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		if (trackerPathLength && !trackByArea) {
 			i = trackerPathLength + 1;
 			while (i--) {
-			if (trackerPath[i] === M) { // extend left side
-				trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
-			}
-			if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
-				trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
-			}
+				if (trackerPath[i] === M) { // extend left side
+					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
+				}
+				if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
+					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+				}
 			}
 		}
 
@@ -108,7 +108,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		// draw the tracker
 		if (tracker) {
 			tracker.attr({ d: trackerPath });
-
 		} else { // create
 
 			series.tracker = renderer.path(trackerPath)
@@ -146,11 +145,15 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  */ 
 
 if (seriesTypes.column) {
-	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
 if (seriesTypes.pie) {
 	PieSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+}
+
+if (seriesTypes.scatter) {
+	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 /* 

@@ -1182,7 +1182,9 @@ Chart.prototype = {
 		}
 		each(chart.series, function (serie) {
 			serie.translate();
-			serie.setTooltipPoints();
+			if (chart.tooltip && !serie.singularTooltips) {
+				chart.tooltip.setTooltipPoints(serie);
+			}
 			serie.render();
 		});
 

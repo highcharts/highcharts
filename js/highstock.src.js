@@ -8913,7 +8913,7 @@ Tooltip.prototype = {
 			s;
 
 		// build the header
-		s = [series.tooltipHeaderFormatter(items[0])];
+		s = [tooltip.tooltipHeaderFormatter(items[0])];
 
 		// build the values
 		each(items, function (item) {
@@ -9045,9 +9045,114 @@ Tooltip.prototype = {
 			point.plotX + chart.plotLeft, 
 			point.plotY + chart.plotTop
 		);
+	},
+
+	/**
+	 * Memorize tooltip texts and positions
+	 */
+	setTooltipPoints: function (series, renew) {
+		var points = [],
+			pointsLength,
+			low,
+			high,
+			xAxis = series.xAxis,
+			xExtremes = xAxis && xAxis.getExtremes(),
+			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
+			point,
+			pointX,
+			nextPoint,
+			i,
+			tooltipPoints = []; // a lookup array for each pixel in the x dimension
+
+		// don't waste resources if tracker is disabled
+		if (series.options.enableMouseTracking === false) {
+			return;
+		}
+
+		// renew
+		if (renew) {
+			series.tooltipPoints = null;
+		}
+
+		// concat segments to overcome null values
+		each(series.segments || series.points, function (segment) {
+			points = points.concat(segment);
+		});
+
+		// Reverse the points in case the X axis is reversed
+		if (xAxis && xAxis.reversed) {
+			points = points.reverse();
+		}
+
+		// Polar needs additional shaping
+		if (series.orderTooltipPoints) {			
+			series.orderTooltipPoints(points);
+		}
+
+		// Assign each pixel position to the nearest point
+		pointsLength = points.length;
+		for (i = 0; i < pointsLength; i++) {
+			point = points[i];
+			pointX = point.x;
+			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
+				nextPoint = points[i + 1];
+
+				// Set this range's low to the last range's high plus one
+				low = high === UNDEFINED ? 0 : high + 1;
+				// Now find the new high
+				high = points[i + 1] ?
+					mathMin(mathMax(0, mathFloor( // #2070
+						(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
+					)), axisLength) :
+					axisLength;
+
+				while (low >= 0 && low <= high) {
+					tooltipPoints[low++] = point;
+				}
+			}
+		}
+		series.tooltipPoints = tooltipPoints;		
+	},
+
+	/**
+	 * Format the header of the tooltip
+	 */
+	tooltipHeaderFormatter: function (point) {
+		var series = point.series,
+			tooltipOptions = series.tooltipOptions,
+			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
+			xDateFormat = tooltipOptions.xDateFormat || dateTimeLabelFormats.year, // #2546
+			xAxis = series.xAxis,
+			isDateTime = xAxis && xAxis.options.type === 'datetime',
+			headerFormat = tooltipOptions.headerFormat,
+			closestPointRange = xAxis && xAxis.closestPointRange,
+			n;
+
+		// Guess the best date format based on the closest point distance (#568)
+		if (isDateTime && !xDateFormat) {
+			if (closestPointRange) {
+				for (n in timeUnits) {
+					if (timeUnits[n] >= closestPointRange) {
+						xDateFormat = dateTimeLabelFormats[n];
+						break;
+					}
+				}
+			} else {
+				xDateFormat = dateTimeLabelFormats.day;
+			}
+		}
+
+		// Insert the header date format if any
+		if (isDateTime && xDateFormat && isNumber(point.key)) {
+			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
+		}
+
+		return format(headerFormat, {
+			point: point,
+			series: series
+		});
 	}
-};
-/**
+};/**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
  * Subsequent methods should be named differently from what they are doing.
  * @param {Object} chart The Chart instance
@@ -9057,7 +9162,7 @@ var Pointer = Highcharts.Pointer = function (chart, options) {
 	this.init(chart, options);
 };
 
-Pointer.prototype = Highcharts.Pointer = {
+Pointer.prototype = {
 	/**
 	 * Initialize Pointer
 	 */
@@ -9194,7 +9299,7 @@ Pointer.prototype = Highcharts.Pointer = {
 			for (j = 0; j < i; j++) {
 				if (series[j].visible &&
 						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
+						!series[j].noSharedTooltip && series[j].singularTooltips !== true && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
 					if (point && point.series) { // not a dummy point, #1544
 						point._dist = mathAbs(index - point.clientX);
@@ -11644,7 +11749,9 @@ Chart.prototype = {
 		}
 		each(chart.series, function (serie) {
 			serie.translate();
-			serie.setTooltipPoints();
+			if (chart.tooltip && !serie.singularTooltips) {
+				chart.tooltip.setTooltipPoints(serie);
+			}
 			serie.render();
 		});
 
@@ -13006,112 +13113,6 @@ Series.prototype = {
 
 		// now that we have the cropped data, build the segments
 		series.getSegments();
-	},
-	/**
-	 * Memoize tooltip texts and positions
-	 */
-	setTooltipPoints: function (renew) {
-		var series = this,
-			points = [],
-			pointsLength,
-			low,
-			high,
-			xAxis = series.xAxis,
-			xExtremes = xAxis && xAxis.getExtremes(),
-			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
-			point,
-			pointX,
-			nextPoint,
-			i,
-			tooltipPoints = []; // a lookup array for each pixel in the x dimension
-
-		// don't waste resources if tracker is disabled
-		if (series.options.enableMouseTracking === false) {
-			return;
-		}
-
-		// renew
-		if (renew) {
-			series.tooltipPoints = null;
-		}
-
-		// concat segments to overcome null values
-		each(series.segments || series.points, function (segment) {
-			points = points.concat(segment);
-		});
-
-		// Reverse the points in case the X axis is reversed
-		if (xAxis && xAxis.reversed) {
-			points = points.reverse();
-		}
-
-		// Polar needs additional shaping
-		if (series.orderTooltipPoints) {
-			series.orderTooltipPoints(points);
-		}
-
-		// Assign each pixel position to the nearest point
-		pointsLength = points.length;
-		for (i = 0; i < pointsLength; i++) {
-			point = points[i];
-			pointX = point.x;
-			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
-				nextPoint = points[i + 1];
-
-				// Set this range's low to the last range's high plus one
-				low = high === UNDEFINED ? 0 : high + 1;
-				// Now find the new high
-				high = points[i + 1] ?
-					mathMin(mathMax(0, mathFloor( // #2070
-						(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
-					)), axisLength) :
-					axisLength;
-
-				while (low >= 0 && low <= high) {
-					tooltipPoints[low++] = point;
-				}
-			}
-		}
-		series.tooltipPoints = tooltipPoints;
-	},
-
-	/**
-	 * Format the header of the tooltip
-	 */
-	tooltipHeaderFormatter: function (point) {
-		var series = this,
-			tooltipOptions = series.tooltipOptions,
-			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
-			xDateFormat = tooltipOptions.xDateFormat || dateTimeLabelFormats.year, // #2546
-			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime',
-			headerFormat = tooltipOptions.headerFormat,
-			closestPointRange = xAxis && xAxis.closestPointRange,
-			n;
-
-		// Guess the best date format based on the closest point distance (#568)
-		if (isDateTime && !xDateFormat) {
-			if (closestPointRange) {
-				for (n in timeUnits) {
-					if (timeUnits[n] >= closestPointRange) {
-						xDateFormat = dateTimeLabelFormats[n];
-						break;
-					}
-				}
-			} else {
-				xDateFormat = dateTimeLabelFormats.day;
-			}
-		}
-
-		// Insert the header date format if any
-		if (isDateTime && xDateFormat && isNumber(point.key)) {
-			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
-		}
-
-		return format(headerFormat, {
-			point: point,
-			series: series
-		});
 	},	
 
 	/**
@@ -13925,9 +13926,12 @@ Series.prototype = {
 		}
 
 		series.translate();
-		series.setTooltipPoints(true);
 
+		if (chart.tooltip && !series.singularTooltips) {
+			chart.tooltip.setTooltipPoints(this, true);
+		}
 		series.render();
+
 		if (wasDirtyData) {
 			fireEvent(series, 'updatedData');
 		}
@@ -14812,7 +14816,7 @@ var ColumnSeries = extendClass(Series, {
 	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
-		// point is substracted from previous (#1910)
+		// point is substracted from previous (#1910)	
 	
 	/**
 	 * Initialize the series
@@ -15130,10 +15134,9 @@ var ScatterSeries = extendClass(Series, {
 	requireSorting: false,
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
-	takeOrdinalPosition: false, // #2342
-	drawTracker: TrackerMixin.drawTrackerPoint,
+	takeOrdinalPosition: false, // #2342	
 	
-	setTooltipPoints: noop
+	singularTooltips: true
 });
 
 seriesTypes.scatter = ScatterSeries;
@@ -15299,6 +15302,7 @@ var PieSeries = {
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
+	singularTooltips: true,
 
 	/**
 	 * Pies have one color each point
@@ -15492,8 +15496,7 @@ var PieSeries = {
 
 		}
 	},
-
-	setTooltipPoints: noop,
+	
 	drawGraph: null,
 
 	/**
@@ -16372,12 +16375,12 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		if (trackerPathLength && !trackByArea) {
 			i = trackerPathLength + 1;
 			while (i--) {
-			if (trackerPath[i] === M) { // extend left side
-				trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
-			}
-			if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
-				trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
-			}
+				if (trackerPath[i] === M) { // extend left side
+					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
+				}
+				if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
+					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+				}
 			}
 		}
 
@@ -16391,7 +16394,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		// draw the tracker
 		if (tracker) {
 			tracker.attr({ d: trackerPath });
-
 		} else { // create
 
 			series.tracker = renderer.path(trackerPath)
@@ -16429,11 +16431,15 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  */ 
 
 if (seriesTypes.column) {
-	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
 if (seriesTypes.pie) {
 	PieSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+}
+
+if (seriesTypes.scatter) {
+	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 /* 
@@ -17701,10 +17707,11 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 /*jslint white:true */
 var DATA_GROUPING = 'dataGrouping',
 	seriesProto = Series.prototype,
+	tooltipProto = Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
-	baseTooltipHeaderFormatter = seriesProto.tooltipHeaderFormatter,
+	baseTooltipHeaderFormatter = tooltipProto.tooltipHeaderFormatter,
 	NUMBER = 'number',
 
 	commonOptions = {
@@ -18058,10 +18065,11 @@ seriesProto.generatePoints = function () {
 };
 
 /**
- * Make the tooltip's header reflect the grouped range
+ * Extend the original method, make the tooltip's header reflect the grouped range
  */
-seriesProto.tooltipHeaderFormatter = function (point) {
-	var series = this,
+tooltipProto.tooltipHeaderFormatter = function (point) {
+	var tooltip = this,
+		series = point.series,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
 		dataGroupingOptions = options.dataGrouping,
@@ -18114,7 +18122,7 @@ seriesProto.tooltipHeaderFormatter = function (point) {
 
 	// else, fall back to the regular formatter
 	} else {
-		ret = baseTooltipHeaderFormatter.call(series, point);
+		ret = baseTooltipHeaderFormatter.call(tooltip, point);
 	}
 
 	return ret;
@@ -21131,6 +21139,7 @@ extend(Highcharts, {
 	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
+	Tooltip: Tooltip,
 	
 	// Various
 	arrayMin: arrayMin,

@@ -8,7 +8,7 @@ var Pointer = Highcharts.Pointer = function (chart, options) {
 	this.init(chart, options);
 };
 
-Pointer.prototype = Highcharts.Pointer = {
+Pointer.prototype = {
 	/**
 	 * Initialize Pointer
 	 */
@@ -145,7 +145,7 @@ Pointer.prototype = Highcharts.Pointer = {
 			for (j = 0; j < i; j++) {
 				if (series[j].visible &&
 						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].tooltipPoints.length) {
+						!series[j].noSharedTooltip && series[j].singularTooltips !== true && series[j].tooltipPoints.length) {
 					point = series[j].tooltipPoints[index];
 					if (point && point.series) { // not a dummy point, #1544
 						point._dist = mathAbs(index - point.clientX);

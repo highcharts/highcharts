@@ -22,7 +22,7 @@ var HighchartsConfig = {
 			Axis:	{name: 'Axis', component: 'Core', group: "Core", baseUrl: 'parts', depends: {name: ['StackItem']}},
 			DateTimeAxis:	{name: 'DateTimeAxis', component: 'DateTimeAxis', group: 'Features', depends: { component: ['Core']}, baseUrl: 'parts'},
 			LogarithmicAxis:	{name: 'LogarithmicAxis', component: 'LogarithmicAxis', group: 'Features', depends: {component: ['Core']}, baseUrl: 'parts'},
-			Tooltip:	{name: 'Tooltip', component: 'Tooltip', group: "Dynamics\ and\ Interaction", depends: { component: ['Core']}, baseUrl: 'parts'},
+			Tooltip:	{name: 'Tooltip', component: 'Tooltip', group: "Dynamics\ and\ Interaction", depends: { component: ["Interaction"]}, baseUrl: 'parts'},
 			Pointer:	{name: 'Pointer', component: 'Interaction', group: "Dynamics\ and\ Interaction", depends: { component: ['Core']}, baseUrl: 'parts'},
 			TouchPointer:	{name: 'TouchPointer', component: 'Touch Pointer', group: "Dynamics\ and\ Interaction", depends: { component: ['Core']}, baseUrl: 'parts'},		
 			Legend:	{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
