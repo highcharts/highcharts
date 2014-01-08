@@ -14088,6 +14088,7 @@ Series.prototype = {
 			graphic,
 			options = series.options,
 			seriesMarkerOptions = options.marker,
+			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
 			enabled,
 			isInside,
@@ -14109,7 +14110,7 @@ Series.prototype = {
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
+					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || seriesPointAttr;
 					radius = pointAttr.r;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
@@ -14481,7 +14482,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
-			graphPath = (lineWidth || series.filled) && this.getGraphPath(),
+			graphPath = this.getGraphPath(),
 			negativeColor = options.negativeColor;
 
 		if (negativeColor) {
@@ -15439,7 +15440,6 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
  */
 var AreaSeries = extendClass(Series, {
 	type: 'area',
-	filled: true,
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
 	 * no marker. Also insert dummy points for any X position that exists in other series
@@ -16144,7 +16144,11 @@ var ScatterSeries = extendClass(Series, {
 	trackerGroups: ['markerGroup'],
 	takeOrdinalPosition: false, // #2342
 	drawTracker: TrackerMixin.drawTrackerPoint,
-	
+	drawGraph: function () {
+		if (this.options.lineWidth) {
+			Series.prototype.drawGraph(this);
+		}
+	},
 	setTooltipPoints: noop
 });
 
