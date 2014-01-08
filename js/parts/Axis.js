@@ -133,9 +133,6 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: -8,
 			y: null
 		},
@@ -149,9 +146,6 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: 8,
 			y: null
 		},

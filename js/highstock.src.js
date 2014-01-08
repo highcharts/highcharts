@@ -6557,9 +6557,6 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: -8,
 			y: null
 		},
@@ -6573,9 +6570,6 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: 8,
 			y: null
 		},
@@ -16146,7 +16140,7 @@ var ScatterSeries = extendClass(Series, {
 	drawTracker: TrackerMixin.drawTrackerPoint,
 	drawGraph: function () {
 		if (this.options.lineWidth) {
-			Series.prototype.drawGraph(this);
+			Series.prototype.drawGraph.call(this);
 		}
 	},
 	setTooltipPoints: noop

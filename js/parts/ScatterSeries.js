@@ -24,7 +24,7 @@ var ScatterSeries = extendClass(Series, {
 	drawTracker: TrackerMixin.drawTrackerPoint,
 	drawGraph: function () {
 		if (this.options.lineWidth) {
-			Series.prototype.drawGraph(this);
+			Series.prototype.drawGraph.call(this);
 		}
 	},
 	setTooltipPoints: noop
