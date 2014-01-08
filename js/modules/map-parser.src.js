@@ -185,7 +185,7 @@ H.extend(H.Data.prototype, {
 		fakeSeries = {
 			xAxis: {
 				min: arr.minX,
-				len: scale,//arr.maxX - arr.minX,
+				len: scale,
 				translate: Highcharts.Axis.prototype.translate,
 				options: {},
 				minPixelPadding: 0,
@@ -193,11 +193,11 @@ H.extend(H.Data.prototype, {
 			}, 
 			yAxis: {
 				min: (arr.minY + scale) / transA,
-				len: scale,//arr.maxY - arr.minY,
+				len: scale,
 				translate: Highcharts.Axis.prototype.translate,
 				options: {},
 				minPixelPadding: 0,
-				transA: -transA
+				transA: transA
 			}
 		};
 
