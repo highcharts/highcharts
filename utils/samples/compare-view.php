@@ -2,7 +2,7 @@
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
-	$continue = $_GET['continue'];
+	$continue = @$_GET['continue'];
 
 	if (!get_browser(null, true)) {
 		$warning = 'Unable to get the browser info. Make sure a php_browscap.ini file extists, see ' .
