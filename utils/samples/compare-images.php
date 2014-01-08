@@ -138,7 +138,7 @@ $path = str_replace('--', '/', $_POST['path']);
 $tempFile = 'temp/compare.json';
 $compare = file_exists($tempFile) ? json_decode(file_get_contents($tempFile)) : new stdClass;
 $browser = get_browser(null, true);
-$key = $browser['parent'];
+$key = @$browser['parent'] || 'Unknown';
 
 if (isset($compare->$path->$key)) {  
 	$difference['reference'] = $compare->$path->$key;

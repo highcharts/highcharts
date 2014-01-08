@@ -247,7 +247,7 @@
 										$diff = round($diff, 2);
 										$compareClass = 'different';
 										$dissIndex = "
-											<a class='dissimilarity-index' href='view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
 										$compareClass = 'identical';
