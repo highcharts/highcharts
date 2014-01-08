@@ -1166,7 +1166,7 @@ SVGRenderer.prototype = {
 						// check width and apply soft breaks
 						if (width) {
 							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-								hasWhiteSpace = words.length > 1,
+								hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap', // docs: nowrap
 								tooLong,
 								actualWidth,
 								clipHeight = wrapper._clipHeight,
