@@ -18,12 +18,18 @@ $(function () {
             },
             xAxis: [{
                 categories: categories,
-                reversed: false
+                reversed: false,
+                labels: {
+                    step: 1
+                }
             }, { // mirror axis on right side
                 opposite: true,
                 reversed: false,
                 categories: categories,
-                linkedTo: 0
+                linkedTo: 0,
+                labels: {
+                    step: 1
+                }
             }],
             yAxis: {
                 title: {
