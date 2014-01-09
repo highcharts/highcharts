@@ -5,7 +5,7 @@
  * production! This file may be removed at any time.
  */
 
-$csv = $_POST['csv'];
+$csv = utf8_decode($_POST['csv']);
 $filename = $_POST['filename'] ? $_POST['filename'] : 'chart';
 
 if ($csv) {
