@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * MooTools adapter
  *
- * (c) 2010-2013 Torstein Hønsi
+ * (c) 2010-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

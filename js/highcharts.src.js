@@ -2,9 +2,9 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.7-modified ()
+ * @license Highcharts JS v3.0.8 (2014-01-09)
  *
- * (c) 2009-2013 Torstein Hønsi
+ * (c) 2009-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highcharts',
-	VERSION = '3.0.7-modified',
+	VERSION = '3.0.8',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1327,8 +1327,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0, // docs: highcharts/global/timezoneoffset
-		canvasToolsURL: 'http://code.highcharts.com/3.0.7-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.7-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/3.0.8/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.8/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,

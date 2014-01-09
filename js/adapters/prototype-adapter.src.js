@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Prototype adapter
  *
- * @author Michael Nelson, Torstein Hønsi.
+ * @author Michael Nelson, Torstein Honsi.
  *
  * Feel free to use and modify this script.
  * Highcharts license: www.highcharts.com/license.
