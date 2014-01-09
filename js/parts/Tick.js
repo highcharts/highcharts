@@ -156,7 +156,6 @@ Tick.prototype = {
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast);
 
-		// docs: auto step pulls out overlapping labels
 		// Hide it if it now overlaps the neighbour label
 		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
 			labelEdge[line] = pxPos + rightSide;

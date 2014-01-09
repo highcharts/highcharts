@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.3.8 (2014-01-09)
+ * @license Highstock JS v1.3.8-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highstock',
-	VERSION = '1.3.8',
+	VERSION = '1.3.8-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1326,9 +1326,9 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		//timezoneOffset: 0, // docs: highcharts/global/timezoneoffset
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.8/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.8/gfx/vml-radial-gradient.png'
+		//timezoneOffset: 0,
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.8-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.8-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -2982,7 +2982,7 @@ SVGRenderer.prototype = {
 						// check width and apply soft breaks
 						if (width) {
 							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-								hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap', // docs: nowrap
+								hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
 								tooLong,
 								actualWidth,
 								clipHeight = wrapper._clipHeight,
@@ -5788,7 +5788,6 @@ Tick.prototype = {
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast);
 
-		// docs: auto step pulls out overlapping labels
 		// Hide it if it now overlaps the neighbour label
 		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
 			labelEdge[line] = pxPos + rightSide;
@@ -10840,14 +10839,14 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || 12; // docs
+		var symbolHeight = legend.options.symbolHeight || 12;
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
 			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, 2) // docs
+			pick(legend.options.symbolRadius, 2)
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		

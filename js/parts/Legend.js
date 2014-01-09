@@ -699,14 +699,14 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || 12; // docs
+		var symbolHeight = legend.options.symbolHeight || 12;
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
 			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, 2) // docs
+			pick(legend.options.symbolRadius, 2)
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		

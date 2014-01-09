@@ -146,22 +146,30 @@
 	Chart.prototype.showDrillUpButton = function () {
 		var chart = this,
 			backText = this.getDrilldownBackText(),
-			buttonOptions = chart.options.drilldown.drillUpButton;
+			buttonOptions = chart.options.drilldown.drillUpButton,
+			attr,
+			states;
 			
 
 		if (!this.drillUpButton) {
+			attr = buttonOptions.theme;
+			states = attr && attr.states;
+						
 			this.drillUpButton = this.renderer.button(
 				backText,
 				null,
 				null,
 				function () {
 					chart.drillUp(); 
-				}
+				},
+				attr, 
+				states && states.hover,
+				states && states.select
 			)
-			.attr(extend({
+			.attr({
 				align: buttonOptions.position.align,
 				zIndex: 9
-			}, buttonOptions.theme))
+			})
 			.add()
 			.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
 		} else {
@@ -350,7 +358,7 @@
 		var series = this.series,
 			chart = series.chart,
 			drilldown = chart.options.drilldown,
-			i = drilldown.series.length,
+			i = (drilldown.series || []).length,
 			seriesOptions;
 		
 		while (i-- && !seriesOptions) {
