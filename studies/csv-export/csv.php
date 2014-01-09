@@ -6,10 +6,11 @@
  */
 
 $csv = $_POST['csv'];
+$filename = $_POST['filename'] ? $_POST['filename'] : 'chart';
 
 if ($csv) {
 	header('Content-type: text/csv');
-	header('Content-disposition: attachment;filename=chart.csv');
+	header('Content-disposition: attachment;filename='.$filename.'.csv');
 	echo $csv;
 }
 
