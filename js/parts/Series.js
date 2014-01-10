@@ -1273,6 +1273,8 @@ Series.prototype = {
 			turboThreshold = seriesOptions.turboThreshold,
 			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
+			defaultFillColor = normalOptions.fillColor,
+			attr,
 			key;
 
 		// series type specific modifications
@@ -1349,11 +1351,14 @@ Series.prototype = {
 					}
 
 					// normal point state inherits series wide normal state
-					pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
-						color: point.color, // #868
-						fillColor: point.color, // Individual point color or negative color markers (#2219)
-						lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
-					}, normalOptions), seriesPointAttr[NORMAL_STATE]);
+					attr = { color: point.color }; // #868
+					if (!defaultFillColor) { // Individual point color or negative color markers (#2219)
+						attr.fillColor = point.color;
+					}
+					if (!defaultLineColor) {
+						attr.lineColor = point.color; // Bubbles take point color, line markers use white
+					}
+					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 					// inherit from point normal and series hover
 					pointAttr[HOVER_STATE] = series.convertAttribs(
