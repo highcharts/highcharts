@@ -1,7 +1,6 @@
 package com.highcharts.export.server;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,7 +8,6 @@ import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.concurrent.TimeoutException;
@@ -107,14 +105,12 @@ public class Server {
 			connection.setReadTimeout(readTimeout);
 
 			OutputStream out = connection.getOutputStream();
-			out.write(params.getBytes());
+			out.write(params.getBytes("utf-8"));
 			out.close();
 			InputStream in = connection.getInputStream();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			IOUtils.copy(in, baos);
-			in.close();
-			response = new String(baos.toByteArray(), Charset.forName("utf-8"));
+			response = IOUtils.toString(in, "utf-8");
 
+			in.close();
 			_timer.cancel();
 			state = ServerState.IDLE;
 		} catch (SocketTimeoutException ste) {
