@@ -1166,6 +1166,7 @@ SVGRenderer.prototype = {
 						// check width and apply soft breaks
 						if (width) {
 							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
+								hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
 								tooLong,
 								actualWidth,
 								clipHeight = wrapper._clipHeight,
@@ -1174,10 +1175,8 @@ SVGRenderer.prototype = {
 								softLineNo = 1,
 								bBox;
 
-							while (words.length || rest.length) {
-								if (words.length > 1 || lineNo) {
-									delete wrapper.bBox; // delete cache
-								}
+							while (hasWhiteSpace && (words.length || rest.length)) {
+								delete wrapper.bBox; // delete cache
 								bBox = wrapper.getBBox();
 								actualWidth = bBox.width;
 

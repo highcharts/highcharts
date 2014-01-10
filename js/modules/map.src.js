@@ -1,7 +1,7 @@
 /**
- * @license Map plugin v0.1 for Highcharts
+ * @license Map plugin v0.2 for Highcharts
  *
- * (c) 2011-2013 Torstein Hønsi
+ * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

@@ -2,9 +2,9 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.7-modified ()
+ * @license Highcharts JS v3.0.8-modified ()
  *
- * (c) 2009-2013 Torstein Hønsi
+ * (c) 2009-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highcharts',
-	VERSION = '3.0.7-modified',
+	VERSION = '3.0.8-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1326,9 +1326,9 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		//timezoneOffset: 0, // docs: highcharts/global/timezoneoffset
-		canvasToolsURL: 'http://code.highcharts.com/3.0.7-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.7-modified/gfx/vml-radial-gradient.png'
+		//timezoneOffset: 0,
+		canvasToolsURL: 'http://code.highcharts.com/3.0.8-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.8-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -2981,6 +2981,7 @@ SVGRenderer.prototype = {
 						// check width and apply soft breaks
 						if (width) {
 							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
+								hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
 								tooLong,
 								actualWidth,
 								clipHeight = wrapper._clipHeight,
@@ -2989,10 +2990,8 @@ SVGRenderer.prototype = {
 								softLineNo = 1,
 								bBox;
 
-							while (words.length || rest.length) {
-								if (words.length > 1 || lineNo) {
-									delete wrapper.bBox; // delete cache
-								}
+							while (hasWhiteSpace && (words.length || rest.length)) {
+								delete wrapper.bBox; // delete cache
 								bBox = wrapper.getBBox();
 								actualWidth = bBox.width;
 
@@ -5670,7 +5669,7 @@ Tick.prototype = {
 			css,
 			attr,
 			value = categories ?
-				pick(categories[pos], names[pos], pos) : 
+				pick(categories[pos], names[pos], pos) :
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -5742,7 +5741,7 @@ Tick.prototype = {
 		var label = this.label,
 			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
+			label.getBBox()[axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -5751,14 +5750,14 @@ Tick.prototype = {
 	 * detection with overflow logic.
 	 */
 	getLabelSides: function () {
-		var bBox = this.labelBBox, // assume getLabelSize has run at this point
+		var bBox = this.label.getBBox(),
 			axis = this.axis,
 			horiz = axis.horiz,
 			options = axis.options,
 			labelOptions = options.labels,
 			size = horiz ? bBox.width : bBox.height,
 			leftSide = horiz ?
-				size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x : 
+				size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x :
 				size;
 
 		return [-leftSide, size - leftSide];
@@ -5782,21 +5781,18 @@ Tick.prototype = {
 			rightSide = sides[1],
 			axisLeft = axis.pos,
 			axisRight = axisLeft + axis.len,
-			labelOptions = axis.options.labels,
 			neighbour,
 			neighbourEdge,
 			line = this.label.line || 0,
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast);
 
-		if (!labelOptions.step && !labelOptions.rotation) { // docs: auto step pulls out overlapping labels
-			// Hide it if it now overlaps the neighbour label
-			if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
-				labelEdge[line] = pxPos + rightSide;
-				
-			} else if (!justifyLabel) {
-				show = false;
-			}
+		// Hide it if it now overlaps the neighbour label
+		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
+			labelEdge[line] = pxPos + rightSide;
+
+		} else if (!justifyLabel) {
+			show = false;
 		}
 
 		if (justifyLabel) {
@@ -5844,7 +5840,7 @@ Tick.prototype = {
 		var axis = this.axis,
 			chart = axis.chart,
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight;
-		
+
 		return {
 			x: horiz ?
 				axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
@@ -5854,9 +5850,9 @@ Tick.prototype = {
 				cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
 				cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB
 		};
-		
+
 	},
-	
+
 	/**
 	 * Get the x, y position of the tick label
 	 */
@@ -5867,7 +5863,7 @@ Tick.prototype = {
 			staggerLines = axis.staggerLines,
 			baseline = axis.chart.renderer.fontMetrics(labelOptions.style.fontSize).b,
 			rotation = labelOptions.rotation;
-			
+
 		x = x + labelOptions.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + labelOptions.y - (tickmarkOffset && !horiz ?
@@ -5877,24 +5873,24 @@ Tick.prototype = {
 		if (rotation && axis.side === 2) {
 			y -= baseline - baseline * mathCos(rotation * deg2rad);
 		}
-		
+
 		// Vertically centered
 		if (!defined(labelOptions.y) && !rotation) { // #1951
 			y += baseline - label.getBBox().height / 2;
 		}
-		
+
 		// Correct for staggered labels
 		if (staggerLines) {
 			label.line = (index / (step || 1) % staggerLines);
 			y += label.line * (axis.labelOffset / staggerLines);
 		}
-		
+
 		return {
 			x: x,
 			y: y
 		};
 	},
-	
+
 	/**
 	 * Extendible method to return the path of the marker
 	 */
@@ -5949,7 +5945,7 @@ Tick.prototype = {
 			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
 		this.isActive = true;
-		
+
 		// create the grid line
 		if (gridLineWidth) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
@@ -6018,15 +6014,15 @@ Tick.prototype = {
 		if (label && !isNaN(x)) {
 			label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
-			// Apply show first and show last. If the tick is both first and last, it is 
+			// Apply show first and show last. If the tick is both first and last, it is
 			// a single centered tick, in which case we show the label anyway (#2100).
 			if ((tick.isFirst && !tick.isLast && !pick(options.showFirstLabel, 1)) ||
 					(tick.isLast && !tick.isFirst && !pick(options.showLastLabel, 1))) {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!tick.handleOverflow(index, xy)) {
-				show = false;
+			} else if (!axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
+				show = tick.handleOverflow(index, xy);
 			}
 
 			// apply step
@@ -6521,7 +6517,7 @@ Axis.prototype = {
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
 		axis.coll = isXAxis ? 'xAxis' : 'yAxis';
-	
+
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = userOptions.side || (axis.horiz ?
 				(axis.opposite ? 0 : 2) : // top : bottom
@@ -7208,7 +7204,7 @@ Axis.prototype = {
 		if (axis.range && defined(axis.max)) {
 			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
-			
+
 			axis.range = null;  // don't use it when running setExtremes
 		}
 
@@ -7372,7 +7368,7 @@ Axis.prototype = {
 			maxTicks = chart.maxTicks || {},
 			tickPositions = this.tickPositions,
 			key = this._maxTicksKey = [this.coll, this.pos, this.len].join('-');
-		
+
 		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
 			maxTicks[key] = tickPositions.length;
 		}
@@ -7678,14 +7674,14 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo;
-			
+
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 		// Set/reset staggerLines
 		axis.staggerLines = axis.horiz && labelOptions.staggerLines;
-		
+
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
@@ -7904,6 +7900,7 @@ Axis.prototype = {
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
+			sortedPositions,
 			axisTitle = axis.axisTitle,
 			stacks = axis.stacks,
 			ticks = axis.ticks,
@@ -7955,17 +7952,18 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
+				sortedPositions = tickPositions.slice();
 				if ((horiz && reversed) || (!horiz && !reversed)) {
-					tickPositions.reverse();
+					sortedPositions.reverse();
 				}
 				if (justifyLabels) {
-					tickPositions = tickPositions.slice(1).concat([tickPositions[0]]);
+					sortedPositions = sortedPositions.slice(1).concat([sortedPositions[0]]);
 				}
-				each(tickPositions, function (pos, i) {
+				each(sortedPositions, function (pos, i) {
 
 					// Reorganize the indices
 					if (justifyLabels) {
-						i = (i === tickPositions.length - 1) ? 0 : i + 1;
+						i = (i === sortedPositions.length - 1) ? 0 : i + 1;
 					}
 
 					// linked axes need an extra check to find out if
@@ -7977,7 +7975,7 @@ Axis.prototype = {
 
 						// render new ticks in old position
 						if (slideInTicks && ticks[pos].isNew) {
-							ticks[pos].render(i, true);
+							ticks[pos].render(i, true, 0.1);
 						}
 
 						ticks[pos].render(i, false, 1);
@@ -8132,7 +8130,7 @@ Axis.prototype = {
 			chart = axis.chart,
 			pointer = chart.pointer;
 
-		// hide tooltip and hover states		
+		// hide tooltip and hover states
 		if (pointer) {
 			pointer.reset(true);
 		}
@@ -10567,14 +10565,14 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || 12; // docs
+		var symbolHeight = legend.options.symbolHeight || 12;
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
 			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, 2) // docs
+			pick(legend.options.symbolRadius, 2)
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
@@ -13310,6 +13308,7 @@ Series.prototype = {
 			graphic,
 			options = series.options,
 			seriesMarkerOptions = options.marker,
+			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
 			enabled,
 			isInside,
@@ -13331,7 +13330,7 @@ Series.prototype = {
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
+					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || seriesPointAttr;
 					radius = pointAttr.r;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
@@ -13422,6 +13421,8 @@ Series.prototype = {
 			turboThreshold = seriesOptions.turboThreshold,
 			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
+			defaultFillColor = normalOptions.fillColor,
+			attr,
 			key;
 
 		// series type specific modifications
@@ -13498,11 +13499,14 @@ Series.prototype = {
 					}
 
 					// normal point state inherits series wide normal state
-					pointAttr[NORMAL_STATE] = series.convertAttribs(extend({
-						color: point.color, // #868
-						fillColor: point.color, // Individual point color or negative color markers (#2219)
-						lineColor: defaultLineColor === null ? point.color : UNDEFINED // Bubbles take point color, line markers use white
-					}, normalOptions), seriesPointAttr[NORMAL_STATE]);
+					attr = { color: point.color }; // #868
+					if (!defaultFillColor) { // Individual point color or negative color markers (#2219)
+						attr.fillColor = point.color;
+					}
+					if (!defaultLineColor) {
+						attr.lineColor = point.color; // Bubbles take point color, line markers use white
+					}
+					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 					// inherit from point normal and series hover
 					pointAttr[HOVER_STATE] = series.convertAttribs(
@@ -13703,7 +13707,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
-			graphPath = lineWidth && this.getGraphPath(),
+			graphPath = this.getGraphPath(),
 			negativeColor = options.negativeColor;
 
 		if (negativeColor) {
@@ -14527,7 +14531,6 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
  */
 var AreaSeries = extendClass(Series, {
 	type: 'area',
-	
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
 	 * no marker. Also insert dummy points for any X position that exists in other series
@@ -15225,8 +15228,12 @@ var ScatterSeries = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
 	takeOrdinalPosition: false, // #2342
-	
-	singularTooltips: true
+	singularTooltips: true,
+	drawGraph: function () {
+		if (this.options.lineWidth) {
+			Series.prototype.drawGraph.call(this);
+		}
+	}
 });
 
 seriesTypes.scatter = ScatterSeries;

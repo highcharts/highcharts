@@ -2,7 +2,7 @@
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
-	$continue = $_GET['continue'];
+	$continue = @$_GET['continue'];
 
 	if (!get_browser(null, true)) {
 		$warning = 'Unable to get the browser info. Make sure a php_browscap.ini file extists, see ' .
@@ -179,6 +179,48 @@
 					return "";
 				}
 			}
+
+			function activateOverlayCompare() {
+
+				var $button = $('button#overlay-compare'),
+					showingRight;
+
+				$button
+					.css('display', '')
+					.click(function () {
+						var $leftImage = $('#left-image'),
+							$rightImage = $('#right-image');
+
+						// Initiate
+						if (showingRight === undefined) {
+
+							$('#preview').css({ height: $('#preview').height() })
+
+							$leftImage.css('position', 'absolute');
+							$rightImage
+								.css({
+									left: 300,
+									position: 'absolute'
+								})
+								.animate({
+									left: 0
+								});
+							;
+							$button.html('Showing right. Click to show left');
+							showingRight = true;
+
+						// Show left
+						} else if (showingRight) {
+							$rightImage.hide();
+							$button.html('Showing left. Click to show right');
+							showingRight = false;
+						} else {
+							$rightImage.show();
+							$button.html('Showing right. Click to show left.');
+							showingRight = true;
+						}
+					});
+			}
 			
 			var report = "";
 			function onBothLoad() {
@@ -246,8 +288,10 @@
 									onDifferent(data);
 								}
 								
-								$('#preview').html('<h4>Generated images:</h4><img src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
-									'<img src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+								$('#preview').html('<h4>Generated images:</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
+									'<img id="right-image" src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+
+								activateOverlayCompare();
 								
 								$('#report').html(report)
 									.css('background', identical ? 'green' : 'red');
@@ -368,8 +412,9 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<pre style="overflow: auto; width: 1000px; height: 300px; cursor: pointer" id="svg"></pre>
-					<div style="overflow: auto; width: 1000px" id="preview"></pre>
+					<pre id="svg" style="overflow: auto; width: 1000px; height: 300px; cursor: pointer"></pre>
+					<div id="preview" style="overflow: auto; width: 1000px; position: relative"></div>
+					<button id="overlay-compare" style="display:none">Compare overlaid</button>
 				</td>
 			</tr>
 		</table>

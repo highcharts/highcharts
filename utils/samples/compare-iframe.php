@@ -29,7 +29,7 @@ function getResources() {
 	
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	include("$path/demo.details");
+	@include("$path/demo.details");
 	$s = ob_get_clean();
 	
 	$html = '';

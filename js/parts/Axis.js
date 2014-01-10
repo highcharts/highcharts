@@ -204,7 +204,7 @@ Axis.prototype = {
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
 		axis.coll = isXAxis ? 'xAxis' : 'yAxis';
-	
+
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = userOptions.side || (axis.horiz ?
 				(axis.opposite ? 0 : 2) : // top : bottom
@@ -891,7 +891,7 @@ Axis.prototype = {
 		if (axis.range && defined(axis.max)) {
 			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
-			
+
 			axis.range = null;  // don't use it when running setExtremes
 		}
 
@@ -1055,7 +1055,7 @@ Axis.prototype = {
 			maxTicks = chart.maxTicks || {},
 			tickPositions = this.tickPositions,
 			key = this._maxTicksKey = [this.coll, this.pos, this.len].join('-');
-		
+
 		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
 			maxTicks[key] = tickPositions.length;
 		}
@@ -1361,14 +1361,14 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo;
-			
+
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 		// Set/reset staggerLines
 		axis.staggerLines = axis.horiz && labelOptions.staggerLines;
-		
+
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
@@ -1587,6 +1587,7 @@ Axis.prototype = {
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
+			sortedPositions,
 			axisTitle = axis.axisTitle,
 			stacks = axis.stacks,
 			ticks = axis.ticks,
@@ -1638,17 +1639,18 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
+				sortedPositions = tickPositions.slice();
 				if ((horiz && reversed) || (!horiz && !reversed)) {
-					tickPositions.reverse();
+					sortedPositions.reverse();
 				}
 				if (justifyLabels) {
-					tickPositions = tickPositions.slice(1).concat([tickPositions[0]]);
+					sortedPositions = sortedPositions.slice(1).concat([sortedPositions[0]]);
 				}
-				each(tickPositions, function (pos, i) {
+				each(sortedPositions, function (pos, i) {
 
 					// Reorganize the indices
 					if (justifyLabels) {
-						i = (i === tickPositions.length - 1) ? 0 : i + 1;
+						i = (i === sortedPositions.length - 1) ? 0 : i + 1;
 					}
 
 					// linked axes need an extra check to find out if
@@ -1660,7 +1662,7 @@ Axis.prototype = {
 
 						// render new ticks in old position
 						if (slideInTicks && ticks[pos].isNew) {
-							ticks[pos].render(i, true);
+							ticks[pos].render(i, true, 0.1);
 						}
 
 						ticks[pos].render(i, false, 1);
@@ -1815,7 +1817,7 @@ Axis.prototype = {
 			chart = axis.chart,
 			pointer = chart.pointer;
 
-		// hide tooltip and hover states		
+		// hide tooltip and hover states
 		if (pointer) {
 			pointer.reset(true);
 		}
