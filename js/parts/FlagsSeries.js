@@ -37,6 +37,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	sorted: false,
 	noSharedTooltip: true,
 	takeOrdinalPosition: false, // #1074
+	trackerGroups: ['markerGroup'],
 	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series

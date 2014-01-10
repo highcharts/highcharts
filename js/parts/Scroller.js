@@ -343,9 +343,10 @@ Scroller.prototype = {
 		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax), navigatorWidth);
 		scroller.zoomedMin = 
 			mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
-		scroller.range = range = scroller.zoomedMax - scroller.zoomedMin;
+		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = mathRound(scroller.zoomedMax);
 		zoomedMin = mathRound(scroller.zoomedMin);
+		range = zoomedMax - zoomedMin;
 
 		// on first render, create all elements
 		if (!scroller.rendered) {
