@@ -72,6 +72,10 @@
  * - startRow : Integer
  * In tabular input data, the first row (indexed by 0) to use.
  *
+ * - switchRowsAndColumns : Boolean
+ * Switch rows and columns of the input data, so that this.columns effectively becomes the
+ * rows of the data set, and the rows are interpreted as series.
+ *
  * - table : String|HTMLElement
  * A HTML table or the id of such to be parsed as input data. Related options ara startRow,
  * endRow, startColumn and endColumn to delimit what part of the table is used.
@@ -144,8 +148,16 @@
 		};
 	},
 
-
+	/**
+	 * When the data is parsed into columns, either by CSV, table, GS or direct input,
+	 * continue with other operations.
+	 */
 	dataFound: function () {
+		
+		if (this.options.switchRowsAndColumns) {
+			this.columns = this.rowsToColumns(this.columns);
+		}
+
 		// Interpret the values into right types
 		this.parseTypes();
 		
@@ -250,8 +262,6 @@
 	},
 
 	/**
-	 * TODO: 
-	 * - switchRowsAndColumns
 	 */
 	parseGoogleSpreadsheet: function () {
 		var self = this,
@@ -341,7 +351,6 @@
 	
 	/**
 	 * Parse numeric cells in to number types and date types in to true dates.
-	 * @param {Object} columns
 	 */
 	parseTypes: function () {
 		var columns = this.columns,
@@ -386,7 +395,11 @@
 			}
 		}
 	},
-	//*
+	
+	/**
+	 * A collection of available date formats, extendable from the outside to support
+	 * custom date formats.
+	 */
 	dateFormats: {
 		'YYYY-mm-dd': {
 			regex: '^([0-9]{4})-([0-9]{2})-([0-9]{2})$',
@@ -395,7 +408,7 @@
 			}
 		}
 	},
-	// */
+	
 	/**
 	 * Parse a date and return it as a number. Overridable through options.parseDate.
 	 */
