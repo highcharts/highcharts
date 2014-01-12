@@ -232,9 +232,8 @@
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
-			endColumn = options.endColumn || Number.MAX_VALUE,
-			colNo;
-			
+			endColumn = options.endColumn || Number.MAX_VALUE;
+
 		if (table) {
 			
 			if (typeof table === 'string') {
@@ -242,16 +241,14 @@
 			}
 			
 			each(table.getElementsByTagName('tr'), function (tr, rowNo) {
-				colNo = 0; 
 				if (rowNo >= startRow && rowNo <= endRow) {
-					each(tr.childNodes, function (item) {
+					each(tr.children, function (item, colNo) {
 						if ((item.tagName === 'TD' || item.tagName === 'TH') && colNo >= startColumn && colNo <= endColumn) {
-							if (!columns[colNo]) {
-								columns[colNo] = [];					
+							if (!columns[colNo - startColumn]) {
+								columns[colNo - startColumn] = [];					
 							}
-							columns[colNo][rowNo - startRow] = item.innerHTML;
 							
-							colNo += 1;
+							columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
 						}
 					});
 				}
