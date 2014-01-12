@@ -462,7 +462,7 @@
 			if (output !== undefined) {
 				outType = pick(output.split('.').pop(),'png');
 			} else {
-				outType = pick(params.type,'png');
+				outType = pick(params.outtype,'png');
 			}
 
 			constr = pick(params.constr, 'Chart');
