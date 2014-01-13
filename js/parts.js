@@ -3,12 +3,19 @@
 var HighchartsConfig = {
 		version: [{highcharts: '3.0.7'},{Highstock: '1.3.7.'}],
 		parts: {
+			/* ADAPTERS */
+			'standalone-framework': {name: 'standalone-framework.src', component: 'Standalone Framework', group:"Adapters", baseUrl: 'adapters'},		
+			'mootools-adapter.src': {name: 'mootools-adapter.src', component: 'Mootools Adapter', group:"Adapters", baseUrl: 'adapters'},
+			'prototype-adapter.src': {name: 'prototype-adapter.src', component: 'Prototype Adapter', group:"Adapters", baseUrl: 'adapters'},
+
 			/* CORE */
 			Intro: {name: 'Intro', component: 'Core', group: 'Core', baseUrl:  'parts'},
 			Globals:	{name: 'Globals', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Utilities:	{name: 'Utilities', component: 'Core', group: "Core", baseUrl: 'parts'},
-			PathAnimation: {name: 'PathAnimation', component: 'Core', group: "Core", baseUrl: 'parts'},
-			JQueryAdapter:	{name: 'JQueryAdapter', component: 'Core', group: "Core", baseUrl: 'parts'},
+			PathAnimation: {name: 'PathAnimation', component: 'Core', group: "Core", baseUrl: 'parts'},			
+			/* JQueryAdpater */
+			JQueryAdapter:	{name: 'JQueryAdapter', component: 'JQuery Adapter', group: "Adapters", baseUrl: 'parts'},
+			/* CORE CONTINUES*/
 			Adapters:	{name: 'Adapters', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Options:	{name: 'Options', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Color:	{name: 'Color', component: 'Core', group: "Core", baseUrl: 'parts'},
@@ -80,7 +87,8 @@ var HighchartsConfig = {
 			'Features': { description: 'This is the description for the Features group'},
 			'Renderers': { description: 'This is the description for the Renderers group'},
 			'Modules':  { description: 'This is the description for the Modules group'},
-			'Dynamics\ and\ Interaction': { description: 'The description for dynamics support'}
+			'Dynamics\ and\ Interaction': { description: 'The description for dynamics support'},
+			'Adapters': { description: 'The description for Adapters'}
 		},
 
 		components: {
