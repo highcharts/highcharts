@@ -1374,6 +1374,13 @@ Chart.prototype = {
 		charts[chart.index] = UNDEFINED;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
+		if(adapterHandlesAllEvents) {
+			// remove the this._events using removeEvent...
+			each(this._events, function (eventConfig) {
+				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
+			});
+		}
+
 		// remove events
 		removeEvent(chart);
 
