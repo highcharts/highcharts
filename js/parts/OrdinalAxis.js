@@ -410,7 +410,8 @@ extend(Axis.prototype, {
 				},
 				options: {
 					ordinal: true
-				}
+				},
+				val2lin: Axis.prototype.val2lin // #2590
 			};
 
 			// Add the fake series to hold the full data, then apply processData to it

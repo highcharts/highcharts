@@ -212,7 +212,15 @@ function getCompareTooltips() {
 
 				<?php if (file_exists("$path/test.js")) : ?>
 				<?php include("$path/test.js"); ?>
-				Highcharts.Chart.prototype.callbacks.push(test);
+				Highcharts.Chart.prototype.callbacks.push(function (chart) {
+					try {
+						test(chart);
+					} catch (e) {
+						console.error(e.message);
+						parent.window.onDifferent('Error');
+					}
+
+				});
 				<?php endif ?>
 
 			});
