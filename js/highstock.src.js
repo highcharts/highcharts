@@ -15237,7 +15237,7 @@ extend(Series.prototype, {
 			}
 		}
 
-		series.updateParallelArrays(point, 'splice', i); // insert undefined item
+		series.updateParallelArrays(point, 'splice', i, 0, 0); // insert undefined item
 		series.updateParallelArrays(point, i); // update it
 
 		if (names) {
