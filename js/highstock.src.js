@@ -13907,9 +13907,9 @@ Series.prototype = {
 			} else {
 				xDateFormat = dateTimeLabelFormats.day;
 			}
-			if (!xDateFormat) { // #2546, 2581
-				xDateFormat = dateTimeLabelFormats.year;
-			}
+
+			xDateFormat = xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
+
 		}
 
 		// Insert the header date format if any
