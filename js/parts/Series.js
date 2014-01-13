@@ -967,7 +967,7 @@ Series.prototype = {
 		var series = this,
 			tooltipOptions = series.tooltipOptions,
 			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
-			xDateFormat = tooltipOptions.xDateFormat || dateTimeLabelFormats.year, // #2546
+			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime',
 			headerFormat = tooltipOptions.headerFormat,
@@ -985,6 +985,9 @@ Series.prototype = {
 				}
 			} else {
 				xDateFormat = dateTimeLabelFormats.day;
+			}
+			if (!xDateFormat) { // #2546, 2581
+				xDateFormat = dateTimeLabelFormats.year;
 			}
 		}
 
