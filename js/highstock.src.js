@@ -13610,10 +13610,10 @@ Series.prototype = {
 
 				// Percent stacked areas
 				} else {
-					stack.total += mathAbs(y) || 0;
+					stack.total = correctFloat(stack.total + (mathAbs(y) || 0));
 				}
 			} else {
-				stack.total += y || 0;
+				stack.total = correctFloat(stack.total + (y || 0));
 			}
 
 			stack.cum = (stack.cum || 0) + (y || 0);
