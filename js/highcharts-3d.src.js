@@ -273,16 +273,14 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 	result.left.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
-	var i = params[0].i * 10;
-
 	result.pathFunction = function (parameters) {
 		var paths = pathFunction(parameters);
-		this.front.animate({d: paths.front.d, zIndex: i + paths.front.z }, false, false);
-		this.back.animate({d: paths.back.d, zIndex: i + paths.back.z }, false, false);
-		this.top.animate({d: paths.top.d, zIndex: i + paths.top.z }, false, false);
-		this.bottom.animate({d: paths.bottom.d, zIndex: i + paths.bottom.z }, false, false);
-		this.left.animate({d: paths.left.d, zIndex: i + paths.left.z }, false, false);
-		this.right.animate({d: paths.right.d, zIndex: i + paths.right.z }, false, false);
+		this.front.animate({d: paths.front.d, zIndex: paths.front.z }, false, false);
+		this.back.animate({d: paths.back.d, zIndex: paths.back.z }, false, false);
+		this.top.animate({d: paths.top.d, zIndex: paths.top.z }, false, false);
+		this.bottom.animate({d: paths.bottom.d, zIndex: paths.bottom.z }, false, false);
+		this.left.animate({d: paths.left.d, zIndex: paths.left.z }, false, false);
+		this.right.animate({d: paths.right.d, zIndex: paths.right.z }, false, false);
 		return this;
 	};
 	result.pathFunction(params);
@@ -301,8 +299,8 @@ HR.prototype.getCubePath = function (params) {
 	var opposite = params.opposite,
 		options = params.options,
 		d = params.d,
-		h = params.h,
-		w = params.w,
+		h = params.height,
+		w = params.width,
 		z = params.z,
 		y = params.y,
 		x = params.x;		
@@ -358,14 +356,7 @@ HR.prototype.toLinePath = function (points, closed) {
 
 /**** Pie Slices ***/
 HR.prototype.arc3d = function (x, y, a1, d, options) {
-	var result = this.createElement3D(this.get3DArcPath, arguments);
-	/* 
-	result.add = function (parent) {
-		H.each(this.children, function (child) { child.add(parent.parentGroup); });		
-		return this;
-	};
-	*/
-	return result;
+	return this.createElement3D(this.get3DArcPath, arguments);
 };
 
 HR.prototype.get3DArcPath = function (params) {
@@ -429,31 +420,33 @@ HR.prototype.get3DArcPath = function (params) {
 	var fsx1 = sx1,
 		fsy1 = sy1,
 		fex1 = ex1,
-		fey1 = ey1;
+		fey1 = ey1,
+		tLong = longArc;
 
 	if (eQ === 3 || eQ === 0) {
 		fex1 = x - rx1;
 		fey1 = y;
-		longArc = 0;
+		tLong = 0;
 	}
 	if (sQ === 3 || sQ === 0) {
 		fsx1 = x + rx1;
 		fsy1 = y;
-		longArc = 0;
+		tLong = 0;
 	}
 
 	var front = [		
 		'M', fsx1, fsy1,
-		'A', rx1, ry1, 0, longArc, 1, fex1, fey1,
+		'A', rx1, ry1, 0, tLong, 1, fex1, fey1,
 		'L', fex1, fey1 + d,
-		'A', rx1, ry1, 0, longArc, 0, fsx1, fsy1 + d,
+		'A', rx1, ry1, 0, tLong, 0, fsx1, fsy1 + d,
 		'L', fsx1, fsy1,
 		'Z'
 		];
 
-	if ((eQ === 3 || eQ === 0) && (sQ === 3 || sQ === 0)) {
+	if ((eQ === 3 || eQ === 0) && (sQ === 3 || sQ === 0) && (start < end)) {
 		front = [];
 	}
+
 	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start > end)) {
 	front = [	
 		'M', sx1, sy1,
@@ -523,18 +516,22 @@ HR.prototype.get3DArcPath = function (params) {
 		];
 	}
 
-	var zCorr = Math.sin((start + end) / 2) * 100;
-	if (start > end) {
-		zCorr = 0;
-	}
+	// Z-INDEX
+	var fz = (front.length !== 0 ? 
+		(Math.sin(Math.sin((start + end) / 2) + (start > end ? Math.PI : 0))) * 1000 : 0);
+	var bz = (back.length !== 0 ? 
+		(Math.sin(Math.sin((start + end) / 2) + (start > end ? Math.PI : 0))) * 1000 : 0);
+
+	var lz = (left.length !== 0 ?  sin(Math.min(sin(start), sin(end))) * 1000 : 0);
+	var rz = (right.length !== 0 ?  sin(Math.max(sin(start), sin(end))) * 1000 : 0);
 
 	return {
-		front: {d: front, z: 2}, //z: 100 + zCorr},
-		back: {d: back, z: 2 }, //z: 100 + zCorr },
-		top: {d: top, z: 3 }, //z: 200 + zCorr },
-		bottom: {d: [], z: 0 }, //z: zCorr },
-		left: {d: left, z: 1 }, //z: zCorr },
-		right: {d: right, z: 1 } //z: zCorr }
+		front: {d: front, z: 1000 + fz },
+		back: {d: back, z: 1000 - bz},
+		top: {d: top, z: 2000 },
+		bottom: {d: [], z: 0 },
+		left: {d: left, z: 1000 + lz },
+		right: {d: right, z: 1000 + rz }
 	};
 };
 /**
@@ -556,7 +553,7 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 			options3d: {
 				angle1: 0,
 				angle2: 0,
-				depth: 0,
+				deptheight: 0,
 				frame: {
 					bottom: false,
 					side: false,
@@ -588,11 +585,7 @@ H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	if (this.plotBackground) { 
 		this.plotBackground.destroy();
 	}
-
-	// Make the clipbox larger
-	var mainSVG = this.container.childNodes[0];
-
-	this.redraw();
+	//this.redraw();
 });
 
 HC.prototype.getZPosition = function (serie) {
@@ -649,14 +642,8 @@ HC.prototype.getNumberOfStacks = function () {
 HC.prototype.getTotalDepth = function () {
 	return this.getNumberOfStacks() * (this.options.chart.options3d.depth || 0) * 1.5;
 };
-
-H.wrap(HC.prototype, 'redraw', function (proceed) {
-	// Set to force a redraw of all elements
-	this.isDirtyBox = true;
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var chart = this,
+HC.prototype.drawFrame = function () {
+var chart = this,
 		renderer = chart.renderer,
 		frameGroup = chart.frameGroup,
 		options3d = chart.options.chart.options3d,
@@ -696,15 +683,15 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left : left - sideSize);
 
 		if (!frameGroup.bottom) {
-			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, w: width + sideSize, h: bottomSize, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
+			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, width: width + sideSize, height: bottomSize, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.bottom.animate({
 				x: xval,
 				y: top + height,
 				z: 0,
-				w: width + sideSize,
-				h: bottomSize,
+				width: width + sideSize,
+				height: bottomSize,
 				d: depth + backSize,
 				options: options3d,
 				opposite: opposite, 
@@ -717,15 +704,15 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 		xval = (opposite ? left + width : left - sideSize);
 
 		if (!frameGroup.side) {
-			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, w: sideSize, h: height, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
+			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, width: sideSize, height: height, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.side.animate({
 				x: xval,
 				y: top,
 				z: 0,
-				w: sideSize,
-				h: height,
+				width: sideSize,
+				height: height,
 				d: depth + backSize,
 				options: options3d,
 				opposite: opposite, 
@@ -736,15 +723,15 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 
 	if (fback || chart.options.chart.plotBackgroundColor) {
 		if (!frameGroup.back) {
-			frameGroup.back = renderer.cube({x: left, y: top, z: depth, w: width, h: height, d: backSize, options: options3d, opposite: opposite, i: 0 })
+			frameGroup.back = renderer.cube({x: left, y: top, z: depth, width: width, height: height, d: backSize, options: options3d, opposite: opposite, i: 0 })
 				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
 		} else {
 			frameGroup.back.animate({
 				x: left,
 				y: top,
 				z: depth,
-				w: width,
-				h: height,
+				width: width,
+				height: height,
 				d: backSize,
 				options: options3d,
 				opposite: opposite, 
@@ -752,6 +739,19 @@ H.wrap(HC.prototype, 'redraw', function (proceed) {
 			});
 		}
 	}
+};
+H.wrap(HC.prototype, 'firstRender', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	this.drawFrame();
+	
+});
+
+H.wrap(HC.prototype, 'redraw', function (proceed) {
+	// Set to force a redraw of all elements
+	this.isDirtyBox = true;
+	proceed.apply(this, [].slice.call(arguments, 1));
+	this.drawFrame();
+	
 });/**
  *	Extension for the Axis
  */
@@ -892,18 +892,9 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 
 	H.each(series.data, function (point) {
 		point.shapeType = 'cube';
-		point.shapeArgs = {
-			x: point.shapeArgs.x,
-			y: point.shapeArgs.y,
-			z: zPos * options3d.depth * 1.3 + (options3d.depth * 0.3),
-			w: point.shapeArgs.width,
-			h: point.shapeArgs.height,
-			d: options3d.depth,
-			i: chart.getNumberOfStacks() - zPos,
-			options: options3d,
-			opposite: series.yAxis.opposite,
-			animate: true
-		};
+		point.shapeArgs.z = zPos * options3d.depth * 1.3 + (options3d.depth * 0.3);
+		point.shapeArgs.d = options3d.depth;
+		point.shapeArgs.options = options3d;
 	});	    
 });
 
@@ -948,7 +939,6 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 			y: point.shapeArgs.y,
 			a1: options3d.angle1,
 			d: options3d.depth,
-			i: chart.getNumberOfStacks() - zPos,
 			options: {
 				start: point.shapeArgs.start,
 				end: point.shapeArgs.end,

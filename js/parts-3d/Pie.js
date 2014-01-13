@@ -17,7 +17,6 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 			y: point.shapeArgs.y,
 			a1: options3d.angle1,
 			d: options3d.depth,
-			i: chart.getNumberOfStacks() - zPos,
 			options: {
 				start: point.shapeArgs.start,
 				end: point.shapeArgs.end,

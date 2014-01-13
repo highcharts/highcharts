@@ -185,16 +185,14 @@ HR.prototype.createElement3D = function (pathFunction, params) {
 	result.left.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
 
-	var i = params[0].i * 10;
-
 	result.pathFunction = function (parameters) {
 		var paths = pathFunction(parameters);
-		this.front.animate({d: paths.front.d, zIndex: i + paths.front.z }, false, false);
-		this.back.animate({d: paths.back.d, zIndex: i + paths.back.z }, false, false);
-		this.top.animate({d: paths.top.d, zIndex: i + paths.top.z }, false, false);
-		this.bottom.animate({d: paths.bottom.d, zIndex: i + paths.bottom.z }, false, false);
-		this.left.animate({d: paths.left.d, zIndex: i + paths.left.z }, false, false);
-		this.right.animate({d: paths.right.d, zIndex: i + paths.right.z }, false, false);
+		this.front.animate({d: paths.front.d, zIndex: paths.front.z }, false, false);
+		this.back.animate({d: paths.back.d, zIndex: paths.back.z }, false, false);
+		this.top.animate({d: paths.top.d, zIndex: paths.top.z }, false, false);
+		this.bottom.animate({d: paths.bottom.d, zIndex: paths.bottom.z }, false, false);
+		this.left.animate({d: paths.left.d, zIndex: paths.left.z }, false, false);
+		this.right.animate({d: paths.right.d, zIndex: paths.right.z }, false, false);
 		return this;
 	};
 	result.pathFunction(params);
@@ -430,17 +428,21 @@ HR.prototype.get3DArcPath = function (params) {
 		];
 	}
 
-	var zCorr = Math.sin((start + end) / 2);
-	if (start > end) {
-		zCorr = 0;
-	}
+	// Z-INDEX
+	var fz = (front.length !== 0 ? 
+		(Math.sin(Math.sin((start + end) / 2) + (start > end ? Math.PI : 0))) * 1000 : 0);
+	var bz = (back.length !== 0 ? 
+		(Math.sin(Math.sin((start + end) / 2) + (start > end ? Math.PI : 0))) * 1000 : 0);
+
+	var lz = (left.length !== 0 ?  sin(Math.min(sin(start), sin(end))) * 1000 : 0);
+	var rz = (right.length !== 0 ?  sin(Math.max(sin(start), sin(end))) * 1000 : 0);
 
 	return {
-		front: {d: [], z: 2},
-		back: {d: [], z: 2 },
-		top: {d: top, z: 3 },
+		front: {d: front, z: 1000 + fz },
+		back: {d: back, z: 1000 - bz},
+		top: {d: top, z: 2000 },
 		bottom: {d: [], z: 0 },
-		left: {d: left, z: 1 },
-		right: {d: right, z: 1 }
+		left: {d: left, z: 1000 + lz },
+		right: {d: right, z: 1000 + rz }
 	};
 };
