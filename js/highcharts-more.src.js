@@ -274,6 +274,10 @@ var radialAxisMixin = {
 			if (this.isXAxis) {
 				this.minPixelPadding = this.transA * this.minPointOffset +
 					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 4 : 0); // ???
+			} else {
+				// This is a workaround for regression #2593, but categories still don't position correctly.
+				// TODO: Implement true handling of Y axis categories on gauges.
+				this.minPixelPadding = 0; 
 			}
 		}
 	},
