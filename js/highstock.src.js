@@ -9773,7 +9773,7 @@ Pointer.prototype = {
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement,
-			relatedSeries = relatedTarget.point && relatedTarget.point.series; // #2499
+			relatedSeries = relatedTarget && relatedTarget.point && relatedTarget.point.series; // #2499
 		
 		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
 				relatedSeries !== series) {
