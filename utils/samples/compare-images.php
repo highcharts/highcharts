@@ -143,7 +143,7 @@ $key = isset($browser['parent']) ? $browser['parent'] : 'Unknown';
 if (isset($compare->$path->$key)) {  
 	$difference['reference'] = $compare->$path->$key;
 } elseif (isset($difference['dissimilarityIndex'])) {
-	$compare->$path->$key = $difference['dissimilarityIndex'];
+	@$compare->$path->$key = $difference['dissimilarityIndex'];
 }
 file_put_contents($tempFile, json_encode($compare));
 

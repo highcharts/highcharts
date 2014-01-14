@@ -3,7 +3,7 @@
 session_start();
 $defaults = json_decode(file_get_contents('default-settings.json'));
 
-define(FRAMEWORK, 'jQuery');
+define('FRAMEWORK', 'jQuery');
 
 require_once('functions.php');
 
@@ -26,7 +26,7 @@ $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
-$html = str_replace('.js"', '.js?' . mktime() . '"', $html); // Force no-cache for debugging
+$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 
 
 
@@ -78,7 +78,7 @@ function getResources() {
 		<script type="text/javascript">
 
 
-		<?php if ($_GET['profile']) : ?>
+		<?php if (@$_GET['profile']) : ?>
 		$(function () {
 			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				var chart,
@@ -100,7 +100,7 @@ function getResources() {
 			});
 		});
 		<?php endif ?>
-		<?php if ($_GET['time']) : ?>
+		<?php if (@$_GET['time']) : ?>
 		$(function () {
 			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				var chart,
