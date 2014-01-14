@@ -673,8 +673,8 @@ SVGElement.prototype = {
 				width = bBox.width;
 				height = bBox.height;
 
-				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669)
-				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '22.7') {
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
+				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
 					bBox.height = height = 14;
 				}
 
@@ -1078,7 +1078,16 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
-			i = childNodes.length;
+			i = childNodes.length,
+			getLineHeight = function (tspan) {
+				return textLineHeight ? 
+					pInt(textLineHeight) :
+					renderer.fontMetrics(
+						/px$/.test(tspan && tspan.style.fontSize) ?
+							tspan.style.fontSize :
+							(textStyles.fontSize || 11)
+					).h;
+			};
 
 		/// remove old text
 		while (i--) {
@@ -1147,11 +1156,7 @@ SVGRenderer.prototype = {
 							attr(
 								tspan,
 								'dy',
-								textLineHeight || renderer.fontMetrics(
-									/px$/.test(tspan.style.fontSize) ?
-										tspan.style.fontSize :
-										textStyles.fontSize
-								).h,
+								getLineHeight(tspan),
 								// Safari 6.0.2 - too optimized for its own good (#1539)
 								// TODO: revisit this with future versions of Safari
 								isWebKit && tspan.offsetHeight
@@ -1171,7 +1176,7 @@ SVGRenderer.prototype = {
 								actualWidth,
 								clipHeight = wrapper._clipHeight,
 								rest = [],
-								dy = pInt(textLineHeight || 16),
+								dy = getLineHeight(),
 								softLineNo = 1,
 								bBox;
 
