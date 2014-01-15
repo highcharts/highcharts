@@ -13268,6 +13268,7 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
+			tooltipPoints = series.tooltipPoints,
 			i;
 
 		// reset properties
@@ -13359,6 +13360,9 @@ Series.prototype = {
 			if (oldData[i] && oldData[i].destroy) {
 				oldData[i].destroy();
 			}
+		}
+		if (tooltipPoints) { // #2594
+			tooltipPoints.length = 0;
 		}
 
 		// reset minRange (#878)
