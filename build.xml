@@ -155,7 +155,7 @@
             <file name="BarSeries.js"/>
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
-            <file name="Datalabels.js"/>
+            <file name="DataLabels.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
