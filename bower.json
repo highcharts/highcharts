@@ -19,7 +19,6 @@
     "ant",
     "build.md",
     "build.properties",
-    "build.xml",
-    "invalidations.txt"
+    "build.xml"
   ]
 }
