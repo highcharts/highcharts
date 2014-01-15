@@ -5369,12 +5369,18 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Object} parentNode
 	 */
 	invertChild: function (element, parentNode) {
-		var parentStyle = parentNode.style;
+		var ren = this,
+			parentStyle = parentNode.style;
 		css(element, {
 			flip: 'x',
 			left: pInt(parentStyle.width) - 1,
 			top: pInt(parentStyle.height) - 1,
 			rotation: -90
+		});
+
+		// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
+		each(element.childNodes, function (child) {
+			ren.invertChild(child, element);
 		});
 	},
 
