@@ -504,19 +504,16 @@ return {
 		return results;
 	},
 
+	/**
+	 * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
+	 */
 	offset: function (el) {
-		var left = 0,
-			top = 0;
-
-		while (el) {
-			left += el.offsetLeft;
-			top += el.offsetTop;
-			el = el.offsetParent;
-		}
+		var docElem = document.documentElement,
+			box = el.getBoundingClientRect();
 
 		return {
-			left: left,
-			top: top
+			top: box.top  + (window.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
+			left: box.left + (window.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
 		};
 	},
 
