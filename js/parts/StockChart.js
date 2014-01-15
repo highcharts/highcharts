@@ -293,14 +293,18 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		// get the modified value
-		value = compare === 'value' ? 
-			value - compareValue : // compare value
-			value = 100 * (value / compareValue) - 100; // compare percent
+		if (value !== UNDEFINED) { // #2601
+
+			// get the modified value
+			value = compare === 'value' ? 
+				value - compareValue : // compare value
+				value = 100 * (value / compareValue) - 100; // compare percent
+				
+			// record for tooltip etc.
+			if (point) {
+				point.change = value;
+			}
 			
-		// record for tooltip etc.
-		if (point) {
-			point.change = value;
 		}
 		
 		return value;

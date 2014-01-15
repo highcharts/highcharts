@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v1.3.9 (2014-01-15)
+ * @license Highstock JS v1.3.9-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highstock',
-	VERSION = '1.3.9',
+	VERSION = '1.3.9-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1326,8 +1326,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.9/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.9/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/1.3.9-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/1.3.9-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -21278,14 +21278,18 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		// get the modified value
-		value = compare === 'value' ? 
-			value - compareValue : // compare value
-			value = 100 * (value / compareValue) - 100; // compare percent
+		if (value !== UNDEFINED) { // #2601
+
+			// get the modified value
+			value = compare === 'value' ? 
+				value - compareValue : // compare value
+				value = 100 * (value / compareValue) - 100; // compare percent
+				
+			// record for tooltip etc.
+			if (point) {
+				point.change = value;
+			}
 			
-		// record for tooltip etc.
-		if (point) {
-			point.change = value;
 		}
 		
 		return value;
