@@ -13782,7 +13782,7 @@ Series.prototype = {
 				}
 
 				point.total = point.stackTotal = pointStack.total;
-				point.percentage = stacking === 'percent' && (point.y / pointStack.total * 100);
+				point.percentage = pointStack.total && (point.y / pointStack.total * 100);
 				point.stackY = yValue;
 
 				// Place the stack label
