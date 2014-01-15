@@ -18576,7 +18576,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
 				// crisp vector coordinates
-				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispCorr = -(pointAttr['stroke-width'] % 2) / 2; // #2596
 				crispX = mathRound(point.plotX) + crispCorr;
 				halfWidth = mathRound(point.shapeArgs.width / 2);
 
@@ -18726,7 +18726,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
 				// crisp vector coordinates
-				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispCorr = -(pointAttr['stroke-width'] % 2) / 2; // #2596
 				crispX = mathRound(point.plotX) + crispCorr;
 				plotOpen = point.plotOpen;
 				plotClose = point.plotClose;
