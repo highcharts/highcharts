@@ -561,7 +561,7 @@ Legend.prototype = {
 			// the scroll top for each page (#2098)
 			each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
-					h = mathRound(item.legendItem.bBox.height),
+					h = mathRound(item.legendItem.getBBox().height),
 					len = pages.length;
 				
 				if (!len || (y - pages[len - 1] > clipHeight)) {

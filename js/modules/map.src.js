@@ -1455,7 +1455,7 @@
 		animateDrilldown: function (init) {
 			var toBox = this.chart.plotBox,
 				level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
-				fromBox = level.bBox,
+				fromBox = level.getBBox(),
 				animationOptions = this.chart.options.drilldown.animation,
 				scale;
 				
