@@ -19188,11 +19188,7 @@ extend(defaultOptions, {
 				x: 3,
 				y: -4
 			},
-			crosshair: {
-				label: {
-					enabled: false
-				}
-			}
+			crosshair: false
 		},
 		yAxis: {
 			gridLineWidth: 0,
@@ -19203,12 +19199,7 @@ extend(defaultOptions, {
 			labels: {
 				enabled: false
 			},
-			crosshair: {
-				enabled: false,
-				label: {
-					enabled: false
-				}
-			},
+			crosshair: false,
 			title: {
 				text: null
 			},
@@ -21137,11 +21128,91 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
 });
 
+// Override getPlotLinePath to allow for multipane charts
+Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
+	var axis = this,
+		renderer = axis.chart.renderer,
+		axisLeft = axis.left,
+		axisTop = axis.top,
+		x1,
+		y1,
+		x2,
+		y2,
+		result = [];
+
+	// Get the related axes.
+	var axes = (this.isXAxis ? 
+					(defined(this.options.yAxis) ?
+						[this.chart.yAxis[this.options.yAxis]] : 
+						map(axis.series, function (S) { return S.yAxis; })
+					) :
+					(defined(this.options.xAxis) ?
+						[this.chart.xAxis[this.options.xAxis]] : 
+						map(axis.series, function (S) { return S.xAxis; })
+					)
+				);
+	
+	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+	
+	if (!isNaN(translatedValue)) {
+		if (axis.horiz) {
+			each(axes, function (axis2) {
+				y1 = axis2.top;
+				y2 = y1 + axis2.len;
+				x1 = x2 = mathRound(translatedValue + axis.transB);
+
+				if ((x1 >= axisLeft && x1 <= axisLeft + axis.width) || force) {
+					result.push('M', x1, y1, 'L', x2, y2);
+				}
+			});
+		} else {
+			each(axes, function (axis2) {
+				x1 = axis2.left;
+				x2 = x1 + axis2.width;
+				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
+
+				if ((y1 >= axisTop && y1 <= axisTop + axis.height) || force) {
+					result.push('M', x1, y1, 'L', x2, y2);
+				}
+			});
+		}
+	}
+	if (result.length > 0) {
+		return renderer.crispPolyLine(result, lineWidth || 0); 
+	} else {
+		return null;
+	}
+};
+
+// Function to crisp a line with multiple segments
+SVGRenderer.prototype.crispPolyLine = function (points, width) {
+		// points format: [M, 0, 0, L, 100, 0]		
+		// normalize to a crisp line
+		var i;
+		for (i = 0; i < points.length; i = i + 6) {
+			if (points[i + 1] === points[i + 4]) {
+				// Substract due to #1129. Now bottom and left axis gridlines behave the same.
+				points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
+			}
+			if (points[i + 2] === points[i + 5]) {
+				points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+			}
+		}
+		return points;
+	};
+
 // Wrapper to hide the label
-wrap(Axis.prototype, 'hideCrosshair', function (proceed, e, point) {
-	proceed.call(this, e, point);
-	if (this.crossLabel) {
-		this.crossLabel.hide();
+wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	proceed.call(this, i);
+
+	if (!defined(this.crossLabelArray)) { return; }
+
+	if (defined(i)) {
+		if (this.crossLabelArray[i]) { this.crossLabelArray[i].hide(); }
+	} else {
+		each(this.crossLabelArray, function (crosslabel) {
+			crosslabel.hide();
+		});
 	}
 });
 

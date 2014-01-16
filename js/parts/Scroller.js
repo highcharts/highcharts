@@ -66,11 +66,7 @@ extend(defaultOptions, {
 				x: 3,
 				y: -4
 			},
-			crosshair: {
-				label: {
-					enabled: false
-				}
-			}
+			crosshair: false
 		},
 		yAxis: {
 			gridLineWidth: 0,
@@ -81,12 +77,7 @@ extend(defaultOptions, {
 			labels: {
 				enabled: false
 			},
-			crosshair: {
-				enabled: false,
-				label: {
-					enabled: false
-				}
-			},
+			crosshair: false,
 			title: {
 				text: null
 			},
