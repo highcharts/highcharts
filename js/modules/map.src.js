@@ -865,10 +865,10 @@
 		var chart = this,
 			mapNavigation = chart.options.mapNavigation;
 
-		proceed.call(chart);
-
-		// Render the plus and minus buttons
+		// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
 		chart.renderMapNavigation();
+
+		proceed.call(chart);
 
 		// Add the double click event
 		if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {

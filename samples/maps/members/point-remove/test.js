@@ -23,7 +23,7 @@ function test(chart) {
 	});
 
 	// Remove them
-	chart.getSelectedPoints(), function () {
+	$.each(chart.getSelectedPoints(), function () {
         this.remove();
     });
 };
