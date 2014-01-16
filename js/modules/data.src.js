@@ -520,22 +520,27 @@
 				
 				// Iterate down the cells of each column and add data to the series
 				data = [];
-				for (j = 0; j < columns[i].length; j++) {
-					data[j] = [
-						firstCol[j], 
-						columns[i][j] !== undefined ? columns[i][j] : null
-					];
-					if (valueCount > 1) {
-						data[j].push(columns[i + 1][j] !== undefined ? columns[i + 1][j] : null);
-					}
-					if (valueCount > 2) {
-						data[j].push(columns[i + 2][j] !== undefined ? columns[i + 2][j] : null);
-					}
-					if (valueCount > 3) {
-						data[j].push(columns[i + 3][j] !== undefined ? columns[i + 3][j] : null);
-					}
-					if (valueCount > 4) {
-						data[j].push(columns[i + 4][j] !== undefined ? columns[i + 4][j] : null);
+
+				// Only loop and fill the data series if there are columns available.
+				// We need this check to avoid reading outside the array bounds.
+				if (i + valueCount <= columns.length) {
+					for (j = 0; j < columns[i].length; j++) {
+						data[j] = [
+							firstCol[j],
+							columns[i][j] !== undefined ? columns[i][j] : null
+						];
+						if (valueCount > 1) {
+							data[j].push(columns[i + 1][j] !== undefined ? columns[i + 1][j] : null);
+						}
+						if (valueCount > 2) {
+							data[j].push(columns[i + 2][j] !== undefined ? columns[i + 2][j] : null);
+						}
+						if (valueCount > 3) {
+							data[j].push(columns[i + 3][j] !== undefined ? columns[i + 3][j] : null);
+						}
+						if (valueCount > 4) {
+							data[j].push(columns[i + 4][j] !== undefined ? columns[i + 4][j] : null);
+						}
 					}
 				}
 
