@@ -2446,7 +2446,7 @@ SVGElement.prototype = {
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			numKey = textStr.length + '|' + styles.fontSize + '|' + styles.fontFamily;
+			numKey = textStr.toString().length + '|' + styles.fontSize + '|' + styles.fontFamily;
 			bBox = renderer.cache[numKey];
 		}
 
