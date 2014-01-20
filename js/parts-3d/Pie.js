@@ -24,6 +24,12 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 				ir: point.shapeArgs.innerR
 			}
 		};
+
+
+		var angle = (point.shapeArgs.options.end + point.shapeArgs.options.start) / 2;
+		point.slicedTranslation.translateX = Math.round(cos(angle) * sin(options3d.angle1) * series.options.slicedOffset);
+		point.slicedTranslation.translateY = Math.round(sin(angle) * cos(options3d.angle1) * series.options.slicedOffset);
+
 	});    
 });
 
@@ -51,6 +57,7 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	
 	var group = this.group;
+
 	H.each(this.data, function (point) {		
 		H.each(point.graphic.children, function (child) {
 			child.element.point = point;
