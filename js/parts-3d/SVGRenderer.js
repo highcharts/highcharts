@@ -279,7 +279,7 @@ HR.prototype.get3DArcPath = function (params) {
 		y = params.y;
 		x = params.x;
 
-	var start = options.start,
+	var start = options.start + 0.001,
 		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 		longArc = end - start < PI ? 0 : 1,
 		// outside ring
@@ -290,7 +290,7 @@ HR.prototype.get3DArcPath = function (params) {
 		ex1 = x + rx1 * cos(end),
 		ey1 = y + ry1 * sin(end),
 		// inside ring
-		rx2 = options.ir,
+		rx2 = Math.max(0.5, options.ir),
 		ry2 = rx2 * cos(a1),		
 		sx2 = x + rx2 * cos(end),
 		sy2 = y + ry2 * sin(end),
@@ -439,8 +439,8 @@ HR.prototype.get3DArcPath = function (params) {
 
 	return {
 		front: {d: front, z: 1000 + fz },
-		back: {d: back, z: 1000 - bz},
-		top: {d: top, z: 2000 },
+		back: {d: back, z: 2000 + bz},
+		top: {d: top, z: 3000 },
 		bottom: {d: [], z: 0 },
 		left: {d: left, z: 1000 + lz },
 		right: {d: right, z: 1000 + rz }
