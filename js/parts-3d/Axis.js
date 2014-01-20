@@ -30,17 +30,17 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		if (hide) {
 			axisLine.hide();
 		} else {
-			var path = axisLine.d.split(' ');
+			var path = this.getLinePath(this.options.lineWidth);
 			var pArr = [
-			{x: path[1], y: path[2], z: 0},
-			{x: path[4], y: path[5], z: 0}
+				{x: path[1], y: path[2], z: 0},
+				{x: path[4], y: path[5], z: 0}
 			];
 			pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
 			path = [
 				'M', pArr[0].x, pArr[0].y,
 				'L', pArr[1].x, pArr[1].y
 				];
-			axisLine.attr({d: path});
+			axisLine.animate({d: path});
 		}		 
 	}
 
@@ -61,7 +61,8 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 		}
 
 		if (mark) {
-			var path = mark.d.split(' '),
+			var txy = tick.getPosition(axis.horiz, tick.pos, axis.tickmarkOffset, false);
+			var path = tick.getMarkPath(txy.x, txy.y, axis.options.tickLength, axis.options.tickWidth, axis.horiz, renderer);
 			pArr = [ 
 			{x: path[1], y: path[2], z: z1 },
 			{x: path[4], y: path[5], z: z1 }

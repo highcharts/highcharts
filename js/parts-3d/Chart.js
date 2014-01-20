@@ -13,7 +13,7 @@ H.wrap(HC.prototype, 'setChartSize', function (proceed) {
 H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
 	userOptions = H.merge({
 		chart: {
-			animation: false,
+			//animation: false,
 			options3d: {
 				angle1: 0,
 				angle2: 0,
