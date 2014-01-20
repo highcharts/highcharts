@@ -19293,7 +19293,7 @@ Scroller.prototype = {
 		// create the elements
 		if (!scroller.rendered) {
 			// the group
-			handles[index] = renderer.g()
+			handles[index] = renderer.g('navigator-handle-' + ['left', 'right'][index])
 				.css({ cursor: 'e-resize' })
 				.attr({ zIndex: 4 - index }) // zIndex = 3 for right handle, 4 for left
 				.add();
@@ -19860,10 +19860,7 @@ Scroller.prototype = {
 				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
 					fixedMax = scroller.fixedExtreme;
 				}
-				if (scroller.zoomedMax === scroller.navigatorWidth) { // #2341
-					fixedMax = xAxis.dataMax;
-				}
-
+				
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				chart.xAxis[0].setExtremes(
 					ext.min,
