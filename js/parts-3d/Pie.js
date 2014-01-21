@@ -25,10 +25,13 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 			}
 		};
 
-
 		var angle = (point.shapeArgs.options.end + point.shapeArgs.options.start) / 2;
-		point.slicedTranslation.translateX = Math.round(cos(angle) * cos(options3d.angle1) * series.options.slicedOffset);
-		point.slicedTranslation.translateY = Math.round(sin(angle) * cos(-options3d.angle1) * series.options.slicedOffset);
+		var a1 = options3d.angle1;
+
+		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(a1));
+		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(a1));
+
+		console.log(angle * 180 / Math.PI, tx, ty)
 
 	});    
 });

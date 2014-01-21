@@ -279,7 +279,7 @@ HR.prototype.get3DArcPath = function (params) {
 		y = params.y;
 		x = params.x;
 
-	var deg1 = Math.PI / 360; // small correction to prevent slices to overlap each other
+	var deg1 = 0.002; //Math.PI / 360; // small correction to prevent slices to overlap each other
 
 	var start = options.start, //+ 0.005,
 		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
@@ -287,10 +287,10 @@ HR.prototype.get3DArcPath = function (params) {
 		// outside ring
 		rx1 = options.r,
 		ry1 = rx1 * cos(a1),		
-		sx1 = x + rx1 * cos(start + (deg1 / 10)),
-		sy1 = y + ry1 * sin(start + (deg1 / 10)),
-		ex1 = x + rx1 * cos(end - (deg1 / 10)),
-		ey1 = y + ry1 * sin(end - (deg1 / 10)),
+		sx1 = x + rx1 * cos(start + deg1),
+		sy1 = y + ry1 * sin(start + deg1),
+		ex1 = x + rx1 * cos(end - deg1),
+		ey1 = y + ry1 * sin(end - deg1),
 		// inside ring
 		rx2 = Math.max(0.5, options.ir),
 		ry2 = rx2 * cos(a1),		
@@ -440,7 +440,7 @@ HR.prototype.get3DArcPath = function (params) {
 	var rz = (right.length !== 0 ?  sin(Math.max(sin(start), sin(end))) * 1000 : 0);
 
 	return {
-		front: {d: front, z: 1000 + fz },
+		front: {d: front, z: 2000 + fz },
 		back: {d: back, z: 2000 + bz},
 		top: {d: top, z: 3000 },
 		bottom: {d: [], z: 0 },
