@@ -8091,31 +8091,7 @@ Axis.prototype = {
 
 		// Stacked totals:
 		if (stackLabelOptions && stackLabelOptions.enabled) {
-			var stackKey, oneStack, stackCategory,
-				stackTotalGroup = axis.stackTotalGroup;
-
-			// Create a separate group for the stack total labels
-			if (!stackTotalGroup) {
-				axis.stackTotalGroup = stackTotalGroup =
-					renderer.g('stack-labels')
-						.attr({
-							visibility: VISIBLE,
-							zIndex: 6
-						})
-						.add();
-			}
-
-			// plotLeft/Top will change when y axis gets wider so we need to translate the
-			// stackTotalGroup at every render call. See bug #506 and #516
-			stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
-
-			// Render each stack total
-			for (stackKey in stacks) {
-				oneStack = stacks[stackKey];
-				for (stackCategory in oneStack) {
-					oneStack[stackCategory].render(stackTotalGroup);
-				}
-			}
+			axis.renderStackTotals();
 		}
 		// End stacked totals
 
@@ -8148,25 +8124,6 @@ Axis.prototype = {
 			series.isDirty = true;
 		});
 
-	},
-
-	/**
-	 * Build the stacks from top down
-	 */
-	buildStacks: function () {
-		var series = this.series,
-			i = series.length;
-		if (!this.isXAxis) {
-			while (i--) {
-				series[i].setStackedPoints();
-			}
-			// Loop up again to compute percent stack
-			if (this.usePercentage) {
-				for (i = 0; i < series.length; i++) {
-					series[i].setPercentStacks();
-				}
-			}
-		}
 	},
 
 	/**
@@ -8277,107 +8234,7 @@ Axis.prototype = {
 }; // end Axis
 
 extend(Axis.prototype, AxisPlotLineOrBandExtension);
-/**
- * Methods defined on the Axis prototype
- */
 
-/**
- * Set the tick positions of a logarithmic axis
- */
-Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
-	var axis = this,
-		options = axis.options,
-		axisLength = axis.len,
-		// Since we use this method for both major and minor ticks,
-		// use a local variable and return the result
-		positions = []; 
-	
-	// Reset
-	if (!minor) {
-		axis._minorAutoInterval = null;
-	}
-	
-	// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
-	if (interval >= 0.5) {
-		interval = mathRound(interval);
-		positions = axis.getLinearTickPositions(interval, min, max);
-		
-	// Second case: We need intermediary ticks. For example 
-	// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
-	} else if (interval >= 0.08) {
-		var roundedMin = mathFloor(min),
-			intermediate,
-			i,
-			j,
-			len,
-			pos,
-			lastPos,
-			break2;
-			
-		if (interval > 0.3) {
-			intermediate = [1, 2, 4];
-		} else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
-			intermediate = [1, 2, 4, 6, 8];
-		} else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
-			intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-		}
-		
-		for (i = roundedMin; i < max + 1 && !break2; i++) {
-			len = intermediate.length;
-			for (j = 0; j < len && !break2; j++) {
-				pos = log2lin(lin2log(i) * intermediate[j]);
-				
-				if (pos > min && (!minor || lastPos <= max)) { // #1670
-					positions.push(lastPos);
-				}
-				
-				if (lastPos > max) {
-					break2 = true;
-				}
-				lastPos = pos;
-			}
-		}
-		
-	// Third case: We are so deep in between whole logarithmic values that
-	// we might as well handle the tick positions like a linear axis. For
-	// example 1.01, 1.02, 1.03, 1.04.
-	} else {
-		var realMin = lin2log(min),
-			realMax = lin2log(max),
-			tickIntervalOption = options[minor ? 'minorTickInterval' : 'tickInterval'],
-			filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
-			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
-			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
-		
-		interval = pick(
-			filteredTickIntervalOption,
-			axis._minorAutoInterval,
-			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
-		);
-		
-		interval = normalizeTickInterval(
-			interval, 
-			null, 
-			getMagnitude(interval)
-		);
-		
-		positions = map(axis.getLinearTickPositions(
-			interval, 
-			realMin,
-			realMax	
-		), log2lin);
-		
-		if (!minor) {
-			axis._minorAutoInterval = interval / 5;
-		}
-	}
-	
-	// Set the axis-level tickInterval variable 
-	if (!minor) {
-		axis.tickInterval = interval;
-	}
-	return positions;
-};
 /**
  * Set the tick positions to a time unit that makes sense, for example
  * on the first of each month or on every Monday. Return an array
@@ -8578,115 +8435,106 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 		unitName: unit[0]
 	};
 };/**
- * The class for stack items
+ * Methods defined on the Axis prototype
  */
-function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+
+/**
+ * Set the tick positions of a logarithmic axis
+ */
+Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
+	var axis = this,
+		options = axis.options,
+		axisLength = axis.len,
+		// Since we use this method for both major and minor ticks,
+		// use a local variable and return the result
+		positions = []; 
 	
-	var inverted = axis.chart.inverted;
-
-	this.axis = axis;
-
-	// Tells if the stack is negative
-	this.isNegative = isNegative;
-
-	// Save the options to be able to style the label
-	this.options = options;
-
-	// Save the x value to be able to position the label later
-	this.x = x;
-
-	// Initialize total value
-	this.total = null;
-
-	// This will keep each points' extremes stored by series.index
-	this.points = {};
-
-	// Save the stack option on the series configuration object, and whether to treat it as percent
-	this.stack = stackOption;
-	this.percent = stacking === 'percent';
-
-	// The align options and text align varies on whether the stack is negative and
-	// if the chart is inverted or not.
-	// First test the user supplied value, then use the dynamic.
-	this.alignOptions = {
-		align: options.align || (inverted ? (isNegative ? 'left' : 'right') : 'center'),
-		verticalAlign: options.verticalAlign || (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
-		y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
-		x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
-	};
-
-	this.textAlign = options.textAlign || (inverted ? (isNegative ? 'right' : 'left') : 'center');
-}
-
-StackItem.prototype = {
-	destroy: function () {
-		destroyObjectProperties(this, this.axis);
-	},
-
-	/**
-	 * Renders the stack total label and adds it to the stack label group.
-	 */
-	render: function (group) {
-		var options = this.options,
-			formatOption = options.format,
-			str = formatOption ?
-				format(formatOption, this) : 
-				options.formatter.call(this);  // format the text in the label
-
-		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
-		if (this.label) {
-			this.label.attr({text: str, visibility: HIDDEN});
-		// Create new label
-		} else {
-			this.label =
-				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
-					.css(options.style)				// apply style
-					.attr({
-						align: this.textAlign,				// fix the text-anchor
-						rotation: options.rotation,	// rotation
-						visibility: HIDDEN					// hidden until setOffset is called
-					})				
-					.add(group);							// add to the labels-group
-		}
-	},
-
-	/**
-	 * Sets the offset that the stack has from the x value and repositions the label.
-	 */
-	setOffset: function (xOffset, xWidth) {
-		var stackItem = this,
-			axis = stackItem.axis,
-			chart = axis.chart,
-			inverted = chart.inverted,
-			neg = this.isNegative,							// special treatment is needed for negative stacks
-			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
-			yZero = axis.translate(0),						// stack origin
-			h = mathAbs(y - yZero),							// stack height
-			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
-			plotHeight = chart.plotHeight,
-			stackBox = {	// this is the box for the complete stack
-				x: inverted ? (neg ? y : y - h) : x,
-				y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
-				width: inverted ? h : xWidth,
-				height: inverted ? xWidth : h
-			},
-			label = this.label,
-			alignAttr;
+	// Reset
+	if (!minor) {
+		axis._minorAutoInterval = null;
+	}
+	
+	// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
+	if (interval >= 0.5) {
+		interval = mathRound(interval);
+		positions = axis.getLinearTickPositions(interval, min, max);
 		
-		if (label) {
-			label.align(this.alignOptions, null, stackBox);	// align the label to the box
+	// Second case: We need intermediary ticks. For example 
+	// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
+	} else if (interval >= 0.08) {
+		var roundedMin = mathFloor(min),
+			intermediate,
+			i,
+			j,
+			len,
+			pos,
+			lastPos,
+			break2;
+			
+		if (interval > 0.3) {
+			intermediate = [1, 2, 4];
+		} else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
+			intermediate = [1, 2, 4, 6, 8];
+		} else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
+			intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+		}
+		
+		for (i = roundedMin; i < max + 1 && !break2; i++) {
+			len = intermediate.length;
+			for (j = 0; j < len && !break2; j++) {
+				pos = log2lin(lin2log(i) * intermediate[j]);
 				
-			// Set visibility (#678)
-			alignAttr = label.alignAttr;
-			label.attr({ 
-				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
-					(hasSVG ? 'inherit' : VISIBLE) : 
-					HIDDEN
-			});
+				if (pos > min && (!minor || lastPos <= max)) { // #1670
+					positions.push(lastPos);
+				}
+				
+				if (lastPos > max) {
+					break2 = true;
+				}
+				lastPos = pos;
+			}
+		}
+		
+	// Third case: We are so deep in between whole logarithmic values that
+	// we might as well handle the tick positions like a linear axis. For
+	// example 1.01, 1.02, 1.03, 1.04.
+	} else {
+		var realMin = lin2log(min),
+			realMax = lin2log(max),
+			tickIntervalOption = options[minor ? 'minorTickInterval' : 'tickInterval'],
+			filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
+			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
+			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
+		
+		interval = pick(
+			filteredTickIntervalOption,
+			axis._minorAutoInterval,
+			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
+		);
+		
+		interval = normalizeTickInterval(
+			interval, 
+			null, 
+			getMagnitude(interval)
+		);
+		
+		positions = map(axis.getLinearTickPositions(
+			interval, 
+			realMin,
+			realMax	
+		), log2lin);
+		
+		if (!minor) {
+			axis._minorAutoInterval = interval / 5;
 		}
 	}
-};
-/**
+	
+	// Set the axis-level tickInterval variable 
+	if (!minor) {
+		axis.tickInterval = interval;
+	}
+	return positions;
+};/**
  * The tooltip object
  * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
@@ -9838,6 +9686,223 @@ Pointer.prototype = {
 };
 
 
+/* Support for touch devices */
+
+/* set the global to determine if we're dealing with a touch based device */
+hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+
+extend(Highcharts.Pointer, {
+
+	/**
+	 * Run translation operations
+	 */
+	pinchTranslate: function (zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+		if (zoomHor) {
+			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+		}
+		if (zoomVert) {
+			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+		}
+	},
+
+	/**
+	 * Run translation operations for each direction (horizontal and vertical) independently
+	 */
+	pinchTranslateDirection: function (horiz, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch, forcedScale) {
+		var chart = this.chart,
+			xy = horiz ? 'x' : 'y',
+			XY = horiz ? 'X' : 'Y',
+			sChartXY = 'chart' + XY,
+			wh = horiz ? 'width' : 'height',
+			plotLeftTop = chart['plot' + (horiz ? 'Left' : 'Top')],
+			selectionWH,
+			selectionXY,
+			clipXY,
+			scale = forcedScale || 1,
+			inverted = chart.inverted,
+			bounds = chart.bounds[horiz ? 'h' : 'v'],
+			singleTouch = pinchDown.length === 1,
+			touch0Start = pinchDown[0][sChartXY],
+			touch0Now = touches[0][sChartXY],
+			touch1Start = !singleTouch && pinchDown[1][sChartXY],
+			touch1Now = !singleTouch && touches[1][sChartXY],
+			outOfBounds,
+			transformScale,
+			scaleKey,
+			setScale = function () {
+				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
+					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start); 
+				}
+				
+				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
+				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
+			};
+
+		// Set the scale, first pass
+		setScale();
+
+		selectionXY = clipXY; // the clip position (x or y) is altered if out of bounds, the selection position is not
+
+		// Out of bounds
+		if (selectionXY < bounds.min) {
+			selectionXY = bounds.min;
+			outOfBounds = true;
+		} else if (selectionXY + selectionWH > bounds.max) {
+			selectionXY = bounds.max - selectionWH;
+			outOfBounds = true;
+		}
+		
+		// Is the chart dragged off its bounds, determined by dataMin and dataMax?
+		if (outOfBounds) {
+
+			// Modify the touchNow position in order to create an elastic drag movement. This indicates
+			// to the user that the chart is responsive but can't be dragged further.
+			touch0Now -= 0.8 * (touch0Now - lastValidTouch[xy][0]);
+			if (!singleTouch) {
+				touch1Now -= 0.8 * (touch1Now - lastValidTouch[xy][1]);
+			}
+
+			// Set the scale, second pass to adapt to the modified touchNow positions
+			setScale();
+
+		} else {
+			lastValidTouch[xy] = [touch0Now, touch1Now];
+		}
+
+		// Set geometry for clipping, selection and transformation
+		if (!inverted) { // TODO: implement clipping for inverted charts
+			clip[xy] = clipXY - plotLeftTop;
+			clip[wh] = selectionWH;
+		}
+		scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+		transformScale = inverted ? 1 / scale : scale;
+
+		selectionMarker[wh] = selectionWH;
+		selectionMarker[xy] = selectionXY;
+		transform[scaleKey] = scale;
+		transform['translate' + XY] = (transformScale * plotLeftTop) + (touch0Now - (transformScale * touch0Start));
+	},
+	
+	/**
+	 * Handle touch events with two touches
+	 */
+	pinch: function (e) {
+
+		var self = this,
+			chart = self.chart,
+			pinchDown = self.pinchDown,
+			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
+			touches = e.touches,
+			touchesLength = touches.length,
+			lastValidTouch = self.lastValidTouch,
+			zoomHor = self.zoomHor || self.pinchHor,
+			zoomVert = self.zoomVert || self.pinchVert,
+			hasZoom = zoomHor || zoomVert,
+			selectionMarker = self.selectionMarker,
+			transform = {},
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
+				chart.runTrackerClick) || chart.runChartClick),
+			clip = {};
+
+		// On touch devices, only proceed to trigger click if a handler is defined
+		if ((hasZoom || followTouchMove) && !fireClickEvent) {
+			e.preventDefault();
+		}
+		
+		// Normalize each touch
+		map(touches, function (e) {
+			return self.normalize(e);
+		});
+		
+		// Register the touch start position
+		if (e.type === 'touchstart') {
+			each(touches, function (e, i) {
+				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
+			});
+			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] && pinchDown[1].chartX];
+			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] && pinchDown[1].chartY];
+
+			// Identify the data bounds in pixels
+			each(chart.axes, function (axis) {
+				if (axis.zoomEnabled) {
+					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+						minPixelPadding = axis.minPixelPadding,
+						min = axis.toPixels(axis.dataMin),
+						max = axis.toPixels(axis.dataMax),
+						absMin = mathMin(min, max),
+						absMax = mathMax(min, max);
+
+					// Store the bounds for use in the touchmove handler
+					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
+					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+				}
+			});
+		
+		// Event type is touchmove, handle panning and pinching
+		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
+			
+
+			// Set the marker
+			if (!selectionMarker) {
+				self.selectionMarker = selectionMarker = extend({
+					destroy: noop
+				}, chart.plotBox);
+			}
+			
+			self.pinchTranslate(zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+
+			self.hasPinched = hasZoom;
+
+			// Scale and translate the groups to provide visual feedback during pinching
+			self.scaleGroups(transform, clip);
+			
+			// Optionally move the tooltip on touchmove
+			if (!hasZoom && followTouchMove && touchesLength === 1) {
+				this.runPointActions(self.normalize(e));
+			}
+		}
+	},
+
+	onContainerTouchStart: function (e) {
+		var chart = this.chart;
+
+		if (e.touches.length === 1) {
+
+			e = this.normalize(e);
+
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+
+				// Prevent the click pseudo event from firing unless it is set in the options
+				/*if (!chart.runChartClick) {
+					e.preventDefault();
+				}*/
+			
+				// Run mouse events and display tooltip etc
+				this.runPointActions(e);
+
+				this.pinch(e);
+
+			} else {
+				// Hide the tooltip on touching outside the plot area (#1203)
+				this.reset();
+			}
+
+		} else if (e.touches.length === 2) {
+			this.pinch(e);
+		}   
+	},
+
+	onContainerTouchMove: function (e) {
+		if (e.touches.length === 1 || e.touches.length === 2) {
+			this.pinch(e);
+		}
+	},
+
+	onDocumentTouchEnd: function (e) {
+		this.drop(e);
+	}
+
+});
 if (win.PointerEvent || win.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
@@ -12929,129 +12994,6 @@ Series.prototype = {
 	},
 
 	/**
-	 * Adds series' points value to corresponding stack
-	 */
-	setStackedPoints: function () {
-		if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
-			return;
-		}
-
-		var series = this,
-			xData = series.processedXData,
-			yData = series.processedYData,
-			stackedYData = [],
-			yDataLength = yData.length,
-			seriesOptions = series.options,
-			threshold = seriesOptions.threshold,
-			stackOption = seriesOptions.stack,
-			stacking = seriesOptions.stacking,
-			stackKey = series.stackKey,
-			negKey = '-' + stackKey,
-			negStacks = series.negStacks,
-			yAxis = series.yAxis,
-			stacks = yAxis.stacks,
-			oldStacks = yAxis.oldStacks,
-			isNegative,
-			stack,
-			other,
-			key,
-			i,
-			x,
-			y;
-
-		// loop over the non-null y values and read them into a local array
-		for (i = 0; i < yDataLength; i++) {
-			x = xData[i];
-			y = yData[i];
-
-			// Read stacked values into a stack based on the x value,
-			// the sign of y and the stack key. Stacking is also handled for null values (#739)
-			isNegative = negStacks && y < threshold;
-			key = isNegative ? negKey : stackKey;
-
-			// Create empty object for this stack if it doesn't exist yet
-			if (!stacks[key]) {
-				stacks[key] = {};
-			}
-
-			// Initialize StackItem for this x
-			if (!stacks[key][x]) {
-				if (oldStacks[key] && oldStacks[key][x]) {
-					stacks[key][x] = oldStacks[key][x];
-					stacks[key][x].total = null;
-				} else {
-					stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
-				}
-			}
-
-			// If the StackItem doesn't exist, create it first
-			stack = stacks[key][x];
-			stack.points[series.index] = [stack.cum || 0];
-
-			// Add value to the stack total
-			if (stacking === 'percent') {
-
-				// Percent stacked column, totals are the same for the positive and negative stacks
-				other = isNegative ? stackKey : negKey;
-				if (negStacks && stacks[other] && stacks[other][x]) {
-					other = stacks[other][x];
-					stack.total = other.total = mathMax(other.total, stack.total) + mathAbs(y) || 0;
-
-				// Percent stacked areas
-				} else {
-					stack.total += mathAbs(y) || 0;
-				}
-			} else {
-				stack.total += y || 0;
-			}
-
-			stack.cum = (stack.cum || 0) + (y || 0);
-
-			stack.points[series.index].push(stack.cum);
-			stackedYData[i] = stack.cum;
-
-		}
-
-		if (stacking === 'percent') {
-			yAxis.usePercentage = true;
-		}
-
-		this.stackedYData = stackedYData; // To be used in getExtremes
-
-		// Reset old stacks
-		yAxis.oldStacks = {};
-	},
-
-	/**
-	 * Iterate over all stacks and compute the absolute values to percent
-	 */
-	setPercentStacks: function () {
-		var series = this,
-			stackKey = series.stackKey,
-			stacks = series.yAxis.stacks;
-
-		each([stackKey, '-' + stackKey], function (key) {
-			var i = series.xData.length,
-				x,
-				stack,
-				pointExtremes,
-				totalFactor;
-
-			while (i--) {
-				x = series.xData[i];
-				stack = stacks[key] && stacks[key][x];
-				pointExtremes = stack && stack.points[series.index];
-				if (pointExtremes) {
-					totalFactor = stack.total ? 100 / stack.total : 0;
-					pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
-					pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
-					series.stackedYData[i] = pointExtremes[1];
-				}
-			}
-		});
-	},
-
-	/**
 	 * Calculate Y extremes for visible data
 	 */
 	getExtremes: function (yData) {
@@ -14031,6 +13973,298 @@ Series.prototype = {
 		}
 	}
 }; // end Series prototype
+
+/**
+ * The class for stack items
+ */
+function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+	
+	var inverted = axis.chart.inverted;
+
+	this.axis = axis;
+
+	// Tells if the stack is negative
+	this.isNegative = isNegative;
+
+	// Save the options to be able to style the label
+	this.options = options;
+
+	// Save the x value to be able to position the label later
+	this.x = x;
+
+	// Initialize total value
+	this.total = null;
+
+	// This will keep each points' extremes stored by series.index
+	this.points = {};
+
+	// Save the stack option on the series configuration object, and whether to treat it as percent
+	this.stack = stackOption;
+	this.percent = stacking === 'percent';
+
+	// The align options and text align varies on whether the stack is negative and
+	// if the chart is inverted or not.
+	// First test the user supplied value, then use the dynamic.
+	this.alignOptions = {
+		align: options.align || (inverted ? (isNegative ? 'left' : 'right') : 'center'),
+		verticalAlign: options.verticalAlign || (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
+		y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
+		x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
+	};
+
+	this.textAlign = options.textAlign || (inverted ? (isNegative ? 'right' : 'left') : 'center');
+}
+
+StackItem.prototype = {
+	destroy: function () {
+		destroyObjectProperties(this, this.axis);
+	},
+
+	/**
+	 * Renders the stack total label and adds it to the stack label group.
+	 */
+	render: function (group) {
+		var options = this.options,
+			formatOption = options.format,
+			str = formatOption ?
+				format(formatOption, this) : 
+				options.formatter.call(this);  // format the text in the label
+
+		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
+		if (this.label) {
+			this.label.attr({text: str, visibility: HIDDEN});
+		// Create new label
+		} else {
+			this.label =
+				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+					.css(options.style)				// apply style
+					.attr({
+						align: this.textAlign,				// fix the text-anchor
+						rotation: options.rotation,	// rotation
+						visibility: HIDDEN					// hidden until setOffset is called
+					})				
+					.add(group);							// add to the labels-group
+		}
+	},
+
+	/**
+	 * Sets the offset that the stack has from the x value and repositions the label.
+	 */
+	setOffset: function (xOffset, xWidth) {
+		var stackItem = this,
+			axis = stackItem.axis,
+			chart = axis.chart,
+			inverted = chart.inverted,
+			neg = this.isNegative,							// special treatment is needed for negative stacks
+			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			yZero = axis.translate(0),						// stack origin
+			h = mathAbs(y - yZero),							// stack height
+			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
+			plotHeight = chart.plotHeight,
+			stackBox = {	// this is the box for the complete stack
+				x: inverted ? (neg ? y : y - h) : x,
+				y: inverted ? plotHeight - x - xWidth : (neg ? (plotHeight - y - h) : plotHeight - y),
+				width: inverted ? h : xWidth,
+				height: inverted ? xWidth : h
+			},
+			label = this.label,
+			alignAttr;
+		
+		if (label) {
+			label.align(this.alignOptions, null, stackBox);	// align the label to the box
+				
+			// Set visibility (#678)
+			alignAttr = label.alignAttr;
+			label.attr({ 
+				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
+					(hasSVG ? 'inherit' : VISIBLE) : 
+					HIDDEN
+			});
+		}
+	}
+};
+
+
+// Stacking methods defined on the Axis prototype
+
+/**
+ * Build the stacks from top down
+ */
+Axis.prototype.buildStacks = function () {
+	var series = this.series,
+		i = series.length;
+	if (!this.isXAxis) {
+		while (i--) {
+			series[i].setStackedPoints();
+		}
+		// Loop up again to compute percent stack
+		if (this.usePercentage) {
+			for (i = 0; i < series.length; i++) {
+				series[i].setPercentStacks();
+			}
+		}
+	}
+};
+
+Axis.prototype.renderStackTotals = function () {
+	var axis = this,
+		chart = axis.chart,
+		renderer = chart.renderer,
+		stacks = axis.stacks,
+		stackKey, 
+		oneStack, 
+		stackCategory,
+		stackTotalGroup = axis.stackTotalGroup;
+
+	// Create a separate group for the stack total labels
+	if (!stackTotalGroup) {
+		axis.stackTotalGroup = stackTotalGroup =
+			renderer.g('stack-labels')
+				.attr({
+					visibility: VISIBLE,
+					zIndex: 6
+				})
+				.add();
+	}
+
+	// plotLeft/Top will change when y axis gets wider so we need to translate the
+	// stackTotalGroup at every render call. See bug #506 and #516
+	stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
+
+	// Render each stack total
+	for (stackKey in stacks) {
+		oneStack = stacks[stackKey];
+		for (stackCategory in oneStack) {
+			oneStack[stackCategory].render(stackTotalGroup);
+		}
+	}
+};
+
+
+// Stacking methods defnied for Series prototype
+
+/**
+ * Adds series' points value to corresponding stack
+ */
+Series.prototype.setStackedPoints = function () {
+	if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
+		return;
+	}
+
+	var series = this,
+		xData = series.processedXData,
+		yData = series.processedYData,
+		stackedYData = [],
+		yDataLength = yData.length,
+		seriesOptions = series.options,
+		threshold = seriesOptions.threshold,
+		stackOption = seriesOptions.stack,
+		stacking = seriesOptions.stacking,
+		stackKey = series.stackKey,
+		negKey = '-' + stackKey,
+		negStacks = series.negStacks,
+		yAxis = series.yAxis,
+		stacks = yAxis.stacks,
+		oldStacks = yAxis.oldStacks,
+		isNegative,
+		stack,
+		other,
+		key,
+		i,
+		x,
+		y;
+
+	// loop over the non-null y values and read them into a local array
+	for (i = 0; i < yDataLength; i++) {
+		x = xData[i];
+		y = yData[i];
+
+		// Read stacked values into a stack based on the x value,
+		// the sign of y and the stack key. Stacking is also handled for null values (#739)
+		isNegative = negStacks && y < threshold;
+		key = isNegative ? negKey : stackKey;
+
+		// Create empty object for this stack if it doesn't exist yet
+		if (!stacks[key]) {
+			stacks[key] = {};
+		}
+
+		// Initialize StackItem for this x
+		if (!stacks[key][x]) {
+			if (oldStacks[key] && oldStacks[key][x]) {
+				stacks[key][x] = oldStacks[key][x];
+				stacks[key][x].total = null;
+			} else {
+				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
+			}
+		}
+
+		// If the StackItem doesn't exist, create it first
+		stack = stacks[key][x];
+		stack.points[series.index] = [stack.cum || 0];
+
+		// Add value to the stack total
+		if (stacking === 'percent') {
+
+			// Percent stacked column, totals are the same for the positive and negative stacks
+			other = isNegative ? stackKey : negKey;
+			if (negStacks && stacks[other] && stacks[other][x]) {
+				other = stacks[other][x];
+				stack.total = other.total = mathMax(other.total, stack.total) + mathAbs(y) || 0;
+
+			// Percent stacked areas
+			} else {
+				stack.total += mathAbs(y) || 0;
+			}
+		} else {
+			stack.total += y || 0;
+		}
+
+		stack.cum = (stack.cum || 0) + (y || 0);
+
+		stack.points[series.index].push(stack.cum);
+		stackedYData[i] = stack.cum;
+
+	}
+
+	if (stacking === 'percent') {
+		yAxis.usePercentage = true;
+	}
+
+	this.stackedYData = stackedYData; // To be used in getExtremes
+
+	// Reset old stacks
+	yAxis.oldStacks = {};
+};
+
+/**
+ * Iterate over all stacks and compute the absolute values to percent
+ */
+Series.prototype.setPercentStacks = function () {
+	var series = this,
+		stackKey = series.stackKey,
+		stacks = series.yAxis.stacks;
+
+	each([stackKey, '-' + stackKey], function (key) {
+		var i = series.xData.length,
+			x,
+			stack,
+			pointExtremes,
+			totalFactor;
+
+		while (i--) {
+			x = series.xData[i];
+			stack = stacks[key] && stacks[key][x];
+			pointExtremes = stack && stack.points[series.index];
+			if (pointExtremes) {
+				totalFactor = stack.total ? 100 / stack.total : 0;
+				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
+				pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor); // Y value
+				series.stackedYData[i] = pointExtremes[1];
+			}
+		}
+	});
+};
 
 // Extend the Chart prototype for dynamic methods
 extend(Chart.prototype, {

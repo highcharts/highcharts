@@ -10,8 +10,8 @@ var HighchartsConfig = {
 
 			/* CORE */
 			Intro: {name: 'Intro', component: 'Core', group: 'Core', baseUrl:  'parts'},
-			Globals:	{name: 'Globals', component: 'Core', group: "Core", baseUrl: 'parts'},
-			Utilities:	{name: 'Utilities', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Globals: {name: 'Globals', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Utilities: {name: 'Utilities', component: 'Core', group: "Core", baseUrl: 'parts'},
 			PathAnimation: {name: 'PathAnimation', component: 'Core', group: "Core", baseUrl: 'parts'},			
 			/* JQueryAdpater */
 			JQueryAdapter:	{name: 'JQueryAdapter', component: 'JQuery Adapter', group: "Adapters", baseUrl: 'parts'},
@@ -23,10 +23,9 @@ var HighchartsConfig = {
 			Html: { name: 'Html', component: 'Html', group: 'Features', baseUrl: 'parts', depends: {component: ['Core']}},
 			VmlRenderer:	{name: 'VmlRenderer', component: 'VMLRenderer', group: "Renderers", depends: {component: ['Html']}, baseUrl: 'parts'},
 			CanVGRenderer:	{name: 'CanVGRenderer', component: 'CanVGRenderer', group: "Renderers", depends: {component: ['Core']}, baseUrl: 'parts'},
-			Tick:	{name: 'Tick', component: 'Core', group: "Core", baseUrl: 'parts'},
-			StackItem:	{name: 'StackItem', component: 'Core', group: "Core", baseUrl: 'parts'},
+			Tick:	{name: 'Tick', component: 'Core', group: "Core", baseUrl: 'parts'},			
 			PlotLineOrBand:	{name: 'PlotLineOrBand', component: 'PlotLineOrBand', group: 'Features', depends: {component: ['Core']}, baseUrl: 'parts'},
-			Axis:	{name: 'Axis', component: 'Core', group: "Core", baseUrl: 'parts', depends: {name: ['StackItem']}},
+			Axis:	{name: 'Axis', component: 'Core', group: "Core", baseUrl: 'parts' },
 			DateTimeAxis:	{name: 'DateTimeAxis', component: 'DateTimeAxis', group: 'Features', depends: { component: ['Core']}, baseUrl: 'parts'},
 			LogarithmicAxis:	{name: 'LogarithmicAxis', component: 'LogarithmicAxis', group: 'Features', depends: {component: ['Core']}, baseUrl: 'parts'},
 			Tooltip:	{name: 'Tooltip', component: 'Tooltip', group: "Dynamics\ and\ Interaction", depends: { component: ["Interaction"]}, baseUrl: 'parts'},
@@ -38,6 +37,7 @@ var HighchartsConfig = {
 			CenteredSeriesMixin: {name: 'CenteredSeriesMixin', component: 'CenteredSeriesMixin', baseUrl: 'parts'},
 			Point:	{name: 'Point', component: 'Core', group: 'Core', baseUrl: 'parts'},
 			Series:	{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
+			StackItem:	{name: 'StackItem', component: 'Stacking', group: "Features", baseUrl: 'parts'},
 			Dynamics: {name: 'Dynamics', component: 'Dynamics', group: 'Dynamics\ and\ Interaction', depends: {component: ['Core']}},			
 			LineSeries:	{name: 'LineSeries', component: 'LineSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
 			AreaSeries:	{name: 'AreaSeries', component: 'AreaSeries', group: "SerieTypes", depends: {component: ['Core']}, baseUrl: 'parts'},
@@ -72,11 +72,13 @@ var HighchartsConfig = {
 			ErrorBarSeries:	{name: 'ErrorBarSeries', component: 'ErrorBarSeries', group: "SerieTypes", depends: {component: ['BoxPlotSeries']}, baseUrl: 'parts-more'},
 			WaterfallSeries:	{name: 'WaterfallSeries', component: 'WaterfallSeries', group: "SerieTypes", depends: {component: ['ColumnSeries']}, baseUrl: 'parts-more'},
 			BubbleSeries:	{name: 'BubbleSeries', component: 'BubbleSeries', group: "SerieTypes", depends: {component: ['Core', 'ScatterSeries' ]}, baseUrl: 'parts-more'},
-			Polar:	{name: 'Polar', component: 'Polar', group: 'SerieTypes', depends: {component: ['Core'], name: ['RadialAxis', 'Pane', 'ColumnSeries', 'AreaSeries']}, baseUrl: 'parts-more'},
+			Polar:	{name: 'Polar', component: 'Polar', group: 'Features', depends: {component: ['Core'], name: ['RadialAxis', 'Pane', 'ColumnSeries', 'AreaSeries']}, baseUrl: 'parts-more'},
 			Facade:	{name: 'Facade', component: 'Core', group: "Core", baseUrl: 'parts'},
 			Outro: {name: 'Outro', component: 'Core', group: 'Core', baseUrl:  'parts'},
 			/* MODULES */
-			'funnel.src':	{name: 'funnel.src', component: 'Funnel', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'}
+			'funnel.src':	{name: 'funnel.src', component: 'Funnel', group: "SerieTypes", depends: {component: ['Core', 'DataLabels', 'PieSeries']}, baseUrl: 'modules'},
+			'exporting.src':	{name: 'exporting.src', component: 'Exporting', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
+			'data.src':	{name: 'data.src', component: 'Data', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'}
 		},
 
 		groups: {
