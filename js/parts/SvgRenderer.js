@@ -260,13 +260,15 @@ SVGElement.prototype = {
 
 
 					if (key === 'text') {
-						// Delete bBox memo when the text changes
 						if (value !== wrapper.textStr) {
+							
+							// Delete bBox memo when the text changes
 							delete wrapper.bBox;
-						}
-						wrapper.textStr = value;
-						if (wrapper.added) {
-							renderer.buildText(wrapper);
+						
+							wrapper.textStr = value;
+							if (wrapper.added) {
+								renderer.buildText(wrapper);
+							}
 						}
 					} else if (!skipAttr) {
 						attr(element, key, value);
@@ -383,47 +385,66 @@ SVGElement.prototype = {
 	 * @param {Object} styles
 	 */
 	css: function (styles) {
-		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
+			oldStyles = elemWrapper.styles,
+			newStyles = {},
 			elem = elemWrapper.element,
-			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width),
+			textWidth,
 			n,
 			serializedCss = '',
-			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
-		/*jslint unparam: false*/
+			hyphenate,
+			hasNew = !oldStyles;
 
 		// convert legacy
 		if (styles && styles.color) {
 			styles.fill = styles.color;
 		}
 
-		// Merge the new styles with the old ones
-		styles = extend(
-			elemWrapper.styles,
-			styles
-		);
-
-		// store object
-		elemWrapper.styles = styles;
-
-		if (textWidth) {
-			delete styles.width;
-		}
-
-		// serialize and set style attribute
-		if (isIE && !hasSVG) {
-			css(elemWrapper.element, styles);
-		} else {
+		// Filter out existing styles to increase performance (#2640)
+		if (oldStyles) {
 			for (n in styles) {
-				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
+				if (styles[n] !== oldStyles[n]) {
+					newStyles[n] = styles[n];
+					hasNew = true;
+				}
 			}
-			attr(elem, 'style', serializedCss); // #1881
 		}
+		if (hasNew) {
+			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width);
+
+			// Merge the new styles with the old ones
+			if (oldStyles) {
+				styles = extend(
+					oldStyles,
+					newStyles
+				);
+			}		
+
+			// store object
+			elemWrapper.styles = styles;
+
+			if (textWidth && (useCanVG || (!hasSVG && elemWrapper.renderer.forExport))) {
+				delete styles.width;
+			}
+
+			// serialize and set style attribute
+			if (isIE && !hasSVG) {
+				css(elemWrapper.element, styles);
+			} else {
+				/*jslint unparam: true*/
+				hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
+				/*jslint unparam: false*/
+				for (n in styles) {
+					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
+				}
+				attr(elem, 'style', serializedCss); // #1881
+			}
 
 
-		// re-build text
-		if (textWidth && elemWrapper.added) {
-			elemWrapper.renderer.buildText(elemWrapper);
+			// re-build text
+			if (textWidth && elemWrapper.added) {
+				elemWrapper.renderer.buildText(elemWrapper);
+			}
 		}
 
 		return elemWrapper;
