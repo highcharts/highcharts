@@ -399,7 +399,7 @@ seriesProto.tooltipHeaderFormatter = function (point) {
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
 			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange) {
+				if (timeUnits[n] >= xAxis.closestPointRange || point.key % timeUnits[n] > 0) { // #2637
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;
 				}

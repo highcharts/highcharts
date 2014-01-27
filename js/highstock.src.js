@@ -13909,7 +13909,7 @@ Series.prototype = {
 			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime',
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
 			headerFormat = tooltipOptions.headerFormat,
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n;
@@ -13918,7 +13918,7 @@ Series.prototype = {
 		if (isDateTime && !xDateFormat) {
 			if (closestPointRange) {
 				for (n in timeUnits) {
-					if (timeUnits[n] >= closestPointRange) {
+					if (timeUnits[n] >= closestPointRange || point.key % timeUnits[n] > 0) { // #2637
 						xDateFormat = dateTimeLabelFormats[n];
 						break;
 					}
@@ -13932,7 +13932,7 @@ Series.prototype = {
 		}
 
 		// Insert the header date format if any
-		if (isDateTime && xDateFormat && isNumber(point.key)) {
+		if (isDateTime && xDateFormat) {
 			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
@@ -18366,7 +18366,7 @@ seriesProto.tooltipHeaderFormatter = function (point) {
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
 			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange) {
+				if (timeUnits[n] >= xAxis.closestPointRange || point.key % timeUnits[n] > 0) { // #2637
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;
 				}
