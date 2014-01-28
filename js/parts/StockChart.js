@@ -164,12 +164,20 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 						map(axis.series, function (S) { return S.xAxis; })
 					)
 				);
+
+	// remove duplicates in the axes array
+	var uAxes = [];
+	each(axes, function (axis2) {
+		if (inArray(axis2, uAxes) === -1) {
+			uAxes.push(axis2);
+		}
+	});
 	
 	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 	
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
-			each(axes, function (axis2) {
+			each(uAxes, function (axis2) {
 				y1 = axis2.top;
 				y2 = y1 + axis2.len;
 				x1 = x2 = mathRound(translatedValue + axis.transB);
@@ -179,7 +187,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 				}
 			});
 		} else {
-			each(axes, function (axis2) {
+			each(uAxes, function (axis2) {
 				x1 = axis2.left;
 				x2 = x1 + axis2.width;
 				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
@@ -191,7 +199,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		}
 	}
 	if (result.length > 0) {
-		return renderer.crispPolyLine(result, lineWidth || 0); 
+		return renderer.crispPolyLine(result, lineWidth || 1); 
 	} else {
 		return null;
 	}
