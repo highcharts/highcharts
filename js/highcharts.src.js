@@ -12501,7 +12501,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 		
 		var options = this.options,
 			chart = this.chart,
-			slicingRoom = options.allowPointSelect ? 2 * (options.slicedOffset || 0) : 0, // #1993 #2624 Do not consider slicedOffset if the points will not be sliced.
+			slicingRoom = 2 * (options.slicedOffset || 0),
 			handleSlicingRoom,
 			plotWidth = chart.plotWidth - 2 * slicingRoom,
 			plotHeight = chart.plotHeight - 2 * slicingRoom,
