@@ -673,6 +673,9 @@ Chart.prototype = {
 				top: '-9999px',
 				display: 'block' // #833
 			});
+			if (clone.style.setProperty) { // #2631
+				clone.style.setProperty('display', 'block', 'important');
+			}
 			doc.body.appendChild(clone);
 			if (container) {
 				clone.appendChild(container);
