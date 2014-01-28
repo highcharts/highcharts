@@ -350,9 +350,10 @@ return {
 					ret,
 					done,
 					options = this.options,
+					elem = this.elem,
 					i;
-
-				if (this.elem.stopAnimation) {
+				
+				if (elem.stopAnimation || (elem.attr && !elem.element)) { // #2616, element including flag is destroyed
 					ret = false;
 
 				} else if (gotoEnd || t >= options.duration + this.startTime) {
@@ -371,7 +372,7 @@ return {
 
 					if (done) {
 						if (options.complete) {
-							options.complete.call(this.elem);
+							options.complete.call(elem);
 						}
 					}
 					ret = false;
