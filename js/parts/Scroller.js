@@ -330,6 +330,12 @@ Scroller.prototype = {
 			pxMax = scrollerWidth;
 		}
 
+		// Are we below the minRange? (#2618)
+		if (xAxis.translate(pxMax, true) - xAxis.translate(pxMin, true) < chart.xAxis[0].minRange) {
+			return;
+		}
+
+
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax), navigatorWidth);
 		scroller.zoomedMin = 
@@ -338,6 +344,8 @@ Scroller.prototype = {
 		zoomedMax = mathRound(scroller.zoomedMax);
 		zoomedMin = mathRound(scroller.zoomedMin);
 		range = zoomedMax - zoomedMin;
+
+
 
 		// on first render, create all elements
 		if (!scroller.rendered) {
