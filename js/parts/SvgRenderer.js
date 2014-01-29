@@ -1104,7 +1104,7 @@ SVGRenderer.prototype = {
 				return textLineHeight ? 
 					pInt(textLineHeight) :
 					renderer.fontMetrics(
-						/px$/.test(tspan && tspan.style.fontSize) ?
+						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
 							(textStyles.fontSize || 11)
 					).h;
@@ -1948,7 +1948,7 @@ SVGRenderer.prototype = {
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
 	fontMetrics: function (fontSize) {
-		fontSize = pInt(fontSize || 11);
+		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 11;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
