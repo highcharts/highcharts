@@ -10740,7 +10740,7 @@ Legend.prototype = {
 					h = mathRound(item.legendItem.getBBox().height),
 					len = pages.length;
 				
-				if (!len || (y - pages[len - 1] > clipHeight)) {
+				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
 					pages.push(lastY || y);
 				}
 				
