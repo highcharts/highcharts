@@ -16479,7 +16479,7 @@ var PieSeries = {
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
 		series.getX = function (y, left) {
 
-			angle = math.asin((y - positions[1]) / (positions[2] / 2 + labelDistance));
+			angle = math.asin(mathMin((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
 
 			return positions[0] +
 				(left ? -1 : 1) *
