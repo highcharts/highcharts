@@ -10941,10 +10941,11 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	}
 };
 
-// Workaround for #2030, horizontal legend items not displaying in IE11 Preview.
-// TODO: When IE11 is released, check again for this bug, and remove the fix
-// or make a better one.
-if (/Trident\/7\.0/.test(userAgent)) {
+// Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
+// and for #2580, a similar drawing flaw in Firefox 26.
+// TODO: Explore if there's a general cause for this. The problem may be related 
+// to nested group elements, as the legend item texts are within 4 group elements.
+if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
