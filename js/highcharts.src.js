@@ -8717,11 +8717,7 @@ StackItem.prototype = {
 				
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
-			label.attr({ 
-				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
-					(hasSVG ? 'inherit' : VISIBLE) : 
-					HIDDEN
-			});
+			label[this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 'show' : 'hide'](true);
 		}
 	}
 };
@@ -14168,7 +14164,7 @@ Series.prototype = {
 					if (graphic) { // update
 						graphic
 							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
-								visibility: isInside ? (hasSVG ? 'inherit' : VISIBLE) : HIDDEN
+								visibility: isInside ? 'inherit' : HIDDEN
 							})
 							.animate(extend({
 								x: plotX - radius,

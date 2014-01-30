@@ -99,11 +99,7 @@ StackItem.prototype = {
 				
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
-			label.attr({ 
-				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
-					(hasSVG ? 'inherit' : VISIBLE) : 
-					HIDDEN
-			});
+			label[this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 'show' : 'hide'](true);
 		}
 	}
 };
