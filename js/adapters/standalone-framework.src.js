@@ -304,7 +304,7 @@ return {
 				// HTML styles
 				} else {
 					styles = {};
-					styles[elem] = this.now + this.unit;
+					styles[this.prop] = this.now + this.unit;
 					Highcharts.css(elem, styles);
 				}
 				
