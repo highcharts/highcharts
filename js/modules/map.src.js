@@ -331,7 +331,7 @@
 				overflow: 'justify'
 			},
 			minColor: '#EFEFFF',
-			maxColor: '#102d4c'
+			maxColor: '#003875' //#102d4c'
 		},
 		init: function (chart, userOptions) {
 			var horiz = chart.options.legend.layout !== 'vertical',
@@ -990,9 +990,11 @@
 				normalColor = Color(point.options.color),
 				hoverColor = Color(point.pointAttr.hover.fill),
 				animation = point.series.options.states.normal.animation,
-				duration = animation && (animation.duration || 500);
+				duration = animation && (animation.duration || 500),
+				fill;
 
 			if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
+				fill = point.pointAttr[''].fill;
 				delete point.pointAttr[''].fill; // avoid resetting it in Point.setState
 
 				clearTimeout(point.colorInterval);
@@ -1011,6 +1013,10 @@
 				}, 13);
 			}
 			Point.prototype.onMouseOut.call(point);
+
+			if (fill) {
+				point.pointAttr[''].fill = fill;
+			}
 		},
 
 		/**
