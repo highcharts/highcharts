@@ -1,0 +1,27 @@
+#wrapper {
+	height: 500px;
+	width: 1000px;
+	margin: 0 auto;
+}
+#container {
+	float: left;
+	height: 500px; 
+	width: 700px; 
+}
+#info {
+	float: left;
+	width: 270px;
+	padding-left: 20px;
+	margin-top: 100px;
+	border-left: 1px solid silver;
+}
+#info h2 {
+	display: inline;
+}
+#info .f32 .flag {
+	vertical-align: bottom !important;
+}
+
+#info h4 {
+	margin: 1em 0 0 0;
+}

@@ -130,7 +130,8 @@
 		var isXAxis = this.isXAxis,
 			dataMin,
 			dataMax,
-			xData = [];
+			xData = [],
+			useMapGeometry;
 
 		// Remove the xData array and cache it locally so that the proceed method doesn't use it
 		if (isXAxis) {
@@ -154,11 +155,13 @@
 					dataMin = Math.min(dataMin, pick(series.minX, dataMin));
 					dataMax = Math.max(dataMax, pick(series.maxX, dataMin));
 					series.xData = xData[i]; // Reset xData array
+					useMapGeometry = true;
 				}
 			});
-			
-			this.dataMin = dataMin;
-			this.dataMax = dataMax;
+			if (useMapGeometry) {
+				this.dataMin = dataMin;
+				this.dataMax = dataMax;
+			}
 		}
 	});
 

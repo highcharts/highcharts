@@ -18,3 +18,7 @@
 	text-align: center;
 	color: gray;
 }
+
+.f32 .flag {
+	vertical-align: middle !important;
+}
