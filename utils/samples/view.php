@@ -75,7 +75,42 @@ function getResources() {
 		<title>Highstock Example</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
-		<script type="text/javascript">
+		<script>
+
+		/* Wrappers for recording mouse events in order to write automatic tests */
+		$(function () {
+			var checkbox = $('#record')[0],
+				pre = $('pre#recording')[0];
+			Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
+				if (checkbox.checked) {
+					pre.innerHTML += "chart.pointer.onContainerMouseDown({\n"+
+						"    type: 'mousedown',\n" +
+						"    pageX: " + e.pageX + ",\n" + 
+						"    pageY: " + e.pageY + "\n" + 
+						"});\n\n";
+				}
+				return proceed.call(this, e);
+			});
+			Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseMove', function (proceed, e) {
+				if (checkbox.checked) {
+					pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
+						"    type: 'mousemove',\n" +
+						"    pageX: " + e.pageX + ",\n" + 
+						"    pageY: " + e.pageY + ",\n" +  
+						"    target: chart.container\n" + 
+						"});\n\n";
+				}
+				return proceed.call(this, e);
+			});
+			Highcharts.wrap(Highcharts.Pointer.prototype, 'onDocumentMouseUp', function (proceed, e) {
+				if (checkbox.checked) {
+					pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
+						"    type: 'mouseup'\n" + 
+						"});\n\n";
+				}
+				return proceed.call(this, e);
+			});
+		});
 
 
 		<?php if (@$_GET['profile']) : ?>
@@ -218,6 +253,9 @@ function getResources() {
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>
+
+				<input id="record" type="checkbox" />
+				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
 			</div>
 		</div>
 
@@ -229,6 +267,7 @@ function getResources() {
 		<ul>
 			<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
 		</ul>
+		<pre id="recording" style="padding: 1em"></pre>
 
 	</body>
 </html>
