@@ -252,6 +252,10 @@
 									} else {
 										$compareClass = 'identical';
 									}
+								} else {
+									$dissIndex = "
+										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
+									";
 								}
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
