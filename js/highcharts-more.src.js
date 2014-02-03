@@ -2048,14 +2048,20 @@ Axis.prototype.beforePadding = function () {
 		var xy,
 			chart = this.chart,
 			plotX = point.plotX,
-			plotY = point.plotY;
+			plotY = point.plotY,
+			clientX;
 	
 		// Save rectangular plotX, plotY for later computation
 		point.rectPlotX = plotX;
 		point.rectPlotY = plotY;
 	
 		// Record the angle in degrees for use in tooltip
-		point.clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+		clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+		if (clientX < 0) { // #2665
+			clientX += 360;
+		}
+		point.clientX = clientX;
+
 	
 		// Find the polar plotX and plotY
 		xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);

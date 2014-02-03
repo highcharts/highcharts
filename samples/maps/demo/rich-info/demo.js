@@ -189,7 +189,7 @@ $(function () {
 
         });
         
-        // Initiate the chart
+        // Initiate the map chart
         mapChart = $('#container').highcharts('Map', {
             
             title : {
@@ -210,6 +210,10 @@ $(function () {
             colorAxis: {
                 type: 'logarithmic',
                 endOnTick: false
+            },
+
+            tooltip: {
+                footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
             },
 
             series : [{
