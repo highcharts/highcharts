@@ -274,8 +274,7 @@ var radialAxisMixin = {
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPointOffset +
-					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 4 : 0); // ???
+				this.minPixelPadding = this.transA * this.minPointOffset;
 			} else {
 				// This is a workaround for regression #2593, but categories still don't position correctly.
 				// TODO: Implement true handling of Y axis categories on gauges.
@@ -308,7 +307,7 @@ var radialAxisMixin = {
 			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
 			
 			this.len = this.width = this.height = this.isCircular ?
-				this.center[2] * (this.endAngleRad - this.startAngleRad) / 2 :
+				this.endAngleRad - this.startAngleRad : // #2570
 				this.center[2] / 2;
 		}
 	},
