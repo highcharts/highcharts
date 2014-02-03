@@ -6,13 +6,17 @@ H.toRadians = function (val) {
 	return val * PI / 180; 
 };
 
-var PI = Math.PI;
-var sin = Math.sin;
-var cos = Math.cos;
-var round = Math.round;
+var PI = Math.PI,
 
-//function perspective(points, options) {
-function perspective(points, angle1, angle2, origin) {
+	sin = Math.sin,
+	cos = Math.cos,
+
+	min = Math.min,
+	max = Math.max, 
+
+	round = Math.round;
+
+function perspective(points, angle2, angle1, origin) {
 	var result = [];
 	var xe, ye, ze;
 

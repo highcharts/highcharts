@@ -1,69 +1,43 @@
-/**
- *	Pies
- */
+/*** 
+	EXTENSION FOR 3D PIES
+***/
 
 H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
+	var type = this.chart.options.chart.type;
+
 	var series = this,
 		chart = series.chart,
-		zPos = chart.getZPosition(series),
-		options3d = series.chart.options.chart.options3d;
+		options = chart.options,
+		depth = options.chart.options3d.depth,
+		origin = {
+			x: chart.plotWidth / 2,
+			y: chart.plotHeight / 2,
+			z: depth * chart.series.length,
+		},
+		alpha = options.chart.options3d.alpha,
+		beta = options.chart.options3d.beta;
+
+	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
+
+	if (options.plotOptions[type].grouping !== false) { z = 0; }
 
 	H.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
-		point.shapeArgs = {
-			x: point.shapeArgs.x,
-			y: point.shapeArgs.y,
-			a1: options3d.angle1,
-			d: options3d.depth,
-			options: {
-				start: point.shapeArgs.start,
-				end: point.shapeArgs.end,
-				r: point.shapeArgs.r,
-				ir: point.shapeArgs.innerR
-			}
-		};
-
-		var angle = (point.shapeArgs.options.end + point.shapeArgs.options.start) / 2;
-		var a1 = options3d.angle1;
-
-		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(a1));
-		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(a1));
-
-		console.log(angle * 180 / Math.PI, tx, ty)
-
-	});    
-});
-
-H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
-	var series = this;
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	H.each(series.data, function (point) {
-		var options = point.shapeArgs.options;
-		var r = options.r,
-			d = point.shapeArgs.d,
-			a1 = point.shapeArgs.a1,
-			a2 = (options.start + options.end) / 2; 
-
-		if (point.connector) {
-			point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
-		}
-		if (point.dataLabel) {
-			point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
-		}
-	});
-});
-
-H.wrap(H.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
+		
+		point.shapeArgs.z = z;
+		point.shapeArgs.depth = depth * 0.75;
+		point.shapeArgs.origin = origin;
+		point.shapeArgs.alpha = alpha;
+		point.shapeArgs.beta = beta;
 	
-	var group = this.group;
+		var angle = (point.shapeArgs.end + point.shapeArgs.start) / 2;
 
-	H.each(this.data, function (point) {		
-		H.each(point.graphic.children, function (child) {
-			child.element.point = point;
-		});
-	});	
+		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(alpha));
+		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(alpha));
+	});
+
+
+
 });

@@ -1,82 +1,109 @@
-/**
- *	Extension for the Axis
- */
+/*** 
+	EXTENSION TO THE AXIS
+***/
 H.wrap(HA.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
-	var axis = this,
-		chart = axis.chart,
-		renderer = chart.renderer,
-		options = axis.options,
-		options3d = chart.options.chart.options3d,
-		frame = options3d.frame;
-
-	options3d.origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
-	};
-
-	var x1 = this.left,
-		y1 = (this.horiz ? this.top + this.height : this.top),
-		z1 = 0,
-		h = this.height,
-		w = this.len,
-		d = chart.getTotalDepth();
-
 	if (this.axisLine) {
-		var axisLine = this.axisLine;
-		var hide = (this.horiz ? options3d.frame.bottom : options3d.frame.side);
-		if (hide) {
-			axisLine.hide();
-		} else {
-			var path = this.getLinePath(this.options.lineWidth);
-			var pArr = [
-				{x: path[1], y: path[2], z: 0},
-				{x: path[4], y: path[5], z: 0}
-			];
-			pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
-			path = [
-				'M', pArr[0].x, pArr[0].y,
-				'L', pArr[1].x, pArr[1].y
-				];
-			axisLine.animate({d: path});
-		}		 
+		this.axisLine.hide();
 	}
 
-	H.each(axis.tickPositions, function (tickPos) {
-		var tick = axis.ticks[tickPos],
-		label = tick.label,
-		mark = tick.mark;
+	if (this.horiz) {
 
-		if (label) {
-			var xy = label.xy,
-			labelPos = perspective([{x: xy.x, y: xy.y, z: z1 }], options3d.angle1, options3d.angle2, options3d.origin)[0];
-
-			label.animate({
-				x: labelPos.x,
-				y: labelPos.y,
-				opacity: xy.opacity					
-			});
+		if (this.bottomFrame) {
+			this.bottomFrame.destroy();
+			this.sideFrame.destroy();
+			this.backFrame.destroy();
 		}
 
-		if (mark) {
-			var txy = tick.getPosition(axis.horiz, tick.pos, axis.tickmarkOffset, false);
-			var path = tick.getMarkPath(txy.x, txy.y, axis.options.tickLength, axis.options.tickWidth, axis.horiz, renderer);
-			pArr = [ 
-			{x: path[1], y: path[2], z: z1 },
-			{x: path[4], y: path[5], z: z1 }
-			];
-			path = chart.renderer.toLinePath(perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin), false);
-			mark.animate({d: path, opacity: 1});
-		}
-	});
+		var chart = this.chart,
+			options3d = chart.options.chart.options3d,
+			frame = options3d.frame,
+			fbottom = frame.bottom,
+			fside= frame.back,
+			fback = frame.side;
 
-	// If there is one, update the first one, the rest will follow automatically.
-	if (this.alternateBands[0]) {
-		this.alternateBands[0].svgElem.attr({zIndex: 1});
+		var d = options3d.depth * chart.series.length;
+
+		var origin = {
+			x: chart.plotLeft + (chart.plotWidth / 2),
+			y: chart.plotTop + (chart.plotHeight / 2),
+			z: d
+		};
+
+		
+		var backShape = {
+			x: this.left,
+			y: this.top,
+			z: d + 1,
+			width: this.width,
+			height: this.height + fbottom.size,
+			depth: fback.size,
+			alpha: options3d.alpha,
+			beta: options3d.beta,
+			origin: origin
+		}
+		this.backFrame = this.chart.renderer.cuboid(backShape).attr({fill: fback.color}).add();
+
+		var bottomShape = {
+			x: this.left,
+			y: this.top + this.height,
+			z: 0,
+			width: this.width,
+			height: fbottom.size,
+			depth: d ,
+			alpha: options3d.alpha,
+			beta: options3d.beta,
+			origin: origin
+		}
+		this.bottomFrame = this.chart.renderer.cuboid(bottomShape).attr({fill: fbottom.color}).add();
+
+		var sideShape = {
+			x: this.left,
+			y: this.top,
+			z: 0,
+			width: fside.size,
+			height: this.height,
+			depth: d,
+			alpha: options3d.alpha,
+			beta: options3d.beta,
+			origin: origin
+		}
+		this.sideFrame = this.chart.renderer.cuboid(sideShape).attr({fill: fside.color}).add();
 	}
 });
+/*
+H.wrap(HA.prototype, 'getLinePath', function (proceed) {
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
+	if (path === null) { return path; }	
+
+	var chart = this.chart,
+		options3d = chart.options.chart.options3d;
+
+	origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: options3d.depth * chart.series.length
+	};
+	
+	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
+		beta = chart.inverted ? options3d.alpha : options3d.beta;
+
+	var pArr = [
+		{x: path[1], y: path[2], z: 0},
+		{x: path[4], y: path[5], z: 0}
+	];
+
+	pArr = perspective(pArr, alpha, beta, origin);
+	
+	path = [
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[1].x, pArr[1].y
+		];
+
+	return path;
+});
+*/
 
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
@@ -85,12 +112,12 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = chart.getTotalDepth();
+	var d = options3d.depth * chart.series.length;
 
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
+		z: d
 	};
 
 	var pArr = [
@@ -100,22 +127,62 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
 	];
 
-	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
+	var alpha = chart.options.inverted ? options3d.beta : options3d.alpha,
+		beta = chart.options.inverted ? options3d.alpha : options3d.beta;
+
+	pArr = perspective(pArr, alpha, beta, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
+
 	return path;
 });
 
-HA.prototype.getPlotBandPath = function (from, to) {
-	var toPath = this.getPlotLinePath(to),
-		path = this.getPlotLinePath(from);
-	if (path && toPath) {
-		return [
-			'M', path[4], path[5],
-			'L', path[7], path[8],
-			'L', toPath[7], toPath[8],
-			'L', toPath[4], toPath[5],
-			'Z'];
-	} else { // outside the axis area
-		return null;
-	}
-};
+/*** 
+	EXTENSION TO THE TICKS
+***/
+
+H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
+
+	var chart = this.axis.chart,
+		options3d = chart.options.chart.options3d;
+
+	origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: options3d.depth * chart.series.length
+	};
+
+	var pArr = [
+		{x: path[1], y: path[2], z: 0},
+		{x: path[4], y: path[5], z: 0}
+	];
+	
+	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
+		beta = chart.inverted ? options3d.alpha : options3d.beta;
+
+	pArr = perspective(pArr, alpha, beta, origin);
+	path = [
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[1].x, pArr[1].y
+		];
+	return path;
+});
+
+H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
+	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+
+	var chart = this.axis.chart,
+		options3d = chart.options.chart.options3d;
+
+	origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: options3d.depth * chart.series.length
+	};
+	
+	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
+		beta = chart.inverted ? options3d.alpha : options3d.beta;
+
+	pos = perspective([{x: pos.x, y: pos.y, z: 0}], alpha, beta, origin)[0];
+	return pos;
+});
