@@ -10161,7 +10161,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 		
 		each(eventmap, function (eventConfig) {
 			addEvent(eventConfig[0], window.PointerEvent ? eventConfig[1].toLowerCase() : "MS" + eventConfig[1], function (e) {
-				e = e.originalEvent;
+				e = e.originalEvent || e;
 				if (e.pointerType === "touch" || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
 					eventConfig[4](e);
 					
