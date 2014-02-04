@@ -188,7 +188,7 @@
 			// Use the same translation for both axes
 			this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
 			
-			mapRatio = chart.mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
+			mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
 			
 			// What axis to pad to put the map in the middle
 			padAxis = mapRatio < 1 ? this : xAxis;
@@ -1317,21 +1317,12 @@
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
 				scale,
-				translateX,
 				group = series.group,
 				chart = series.chart,
 				renderer = chart.renderer,
+				translateX,
 				translateY,
-				getTranslate = function (axis, mapRatio) {
-					var dataMin = axis.dataMin,
-						dataMax = axis.dataMax,
-						fullDataMin = dataMin - ((dataMax - dataMin) * (mapRatio - 1) / 2),
-						fullMin = axis.min - axis.minPixelPadding / axis.transA,
-						minOffset = fullMin - fullDataMin,
-						centerOffset = (dataMax - dataMin - axis.max + axis.min) * mapRatio,
-						center = minOffset / centerOffset;
-					return (axis.len * (1 - scale)) * center;
-				};
+				baseTrans = this.baseTrans;
 
 			// Set a group that handles transform during zooming and panning in order to preserve clipping
 			// on series.group
@@ -1363,19 +1354,23 @@
 				});
 
 				// Set the base for later scale-zooming
-				this.transA = xAxis.transA;
+				this.baseTrans = {
+					originX: xAxis.min - xAxis.minPixelPadding / xAxis.transA,
+					originY: yAxis.min - yAxis.minPixelPadding / yAxis.transA,
+					transA: xAxis.transA
+				};
 
 			// Just update the scale and transform for better performance
 			} else {
-				scale = xAxis.transA / this.transA;
+				scale = xAxis.transA / baseTrans.transA;
 				if (scale > 0.99 && scale < 1.01) { // rounding errors
 					translateX = 0;
 					translateY = 0;
 					scale = 1;
 
 				} else {	
-					translateX = getTranslate(xAxis, Math.max(1, series.chart.mapRatio)); 
-					translateY = getTranslate(yAxis, 1 / Math.min(1, series.chart.mapRatio));
+					translateX = xAxis.toPixels(baseTrans.originX, true);
+					translateY = yAxis.toPixels(baseTrans.originY, true);
 				} 
 
 				this.transformGroup.animate({
@@ -1464,7 +1459,7 @@
 		animateDrilldown: function (init) {
 			var toBox = this.chart.plotBox,
 				level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
-				fromBox = level.getBBox(),
+				fromBox = level.bBox,
 				animationOptions = this.chart.options.drilldown.animation,
 				scale;
 				
@@ -1629,10 +1624,14 @@
 				startOnTick: false,
 				title: null,
 				tickPositions: []
-				//tickInterval: 500,
-				//gridZIndex: 10
 			},
 			seriesOptions;
+
+		/* For visual testing
+		hiddenAxis.gridLineWidth = 1;
+		hiddenAxis.gridZIndex = 10;
+		hiddenAxis.tickPositions = undefined;
+		// */
 		
 		// Don't merge the data
 		seriesOptions = options.series;
