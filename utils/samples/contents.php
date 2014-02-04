@@ -13,6 +13,9 @@
 		<script>
 			var diffThreshold = 0;
 			$(function () {
+
+				$(window).bind('keydown', parent.keyDown);
+
 				$("#batch-compare").click(function() {
 					var currentLi = document.currentLi || $('#li1')[0];
 					if (currentLi) {

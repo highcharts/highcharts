@@ -79,6 +79,9 @@ function getResources() {
 
 		/* Wrappers for recording mouse events in order to write automatic tests */
 		$(function () {
+
+			$(window).bind('keydown', parent.keyDown);
+			
 			var checkbox = $('#record')[0],
 				pre = $('pre#recording')[0];
 			Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {

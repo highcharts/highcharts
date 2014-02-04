@@ -25,6 +25,8 @@
 					location.reload();
 				});
 
+				$(window).bind('keydown', parent.keyDown);
+
 				$('#svg').click(function () {
 					$(this).css({
 						height: 'auto',
