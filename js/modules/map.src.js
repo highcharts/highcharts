@@ -1318,10 +1318,11 @@
 			var series = this,
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,
-				scale,
 				group = series.group,
 				chart = series.chart,
 				renderer = chart.renderer,
+				scaleX,
+				scaleY,
 				translateX,
 				translateY,
 				baseTrans = this.baseTrans;
@@ -1355,20 +1356,24 @@
 
 				});
 
-				// Set the base for later scale-zooming
+				// Set the base for later scale-zooming. The originX and originY properties are the 
+				// axis values in the plot area's upper left corner.
 				this.baseTrans = {
 					originX: xAxis.min - xAxis.minPixelPadding / xAxis.transA,
-					originY: yAxis.min - yAxis.minPixelPadding / yAxis.transA,
-					transA: xAxis.transA
+					originY: yAxis.min - yAxis.minPixelPadding / yAxis.transA + (yAxis.reversed ? 0 : yAxis.len / yAxis.transA), 
+					transAX: xAxis.transA,
+					transAY: yAxis.transA
 				};
 
 			// Just update the scale and transform for better performance
 			} else {
-				scale = xAxis.transA / baseTrans.transA;
-				if (scale > 0.99 && scale < 1.01) { // rounding errors
+				scaleX = xAxis.transA / baseTrans.transAX;
+				scaleY = yAxis.transA / baseTrans.transAY;
+				if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) { // rounding errors
 					translateX = 0;
 					translateY = 0;
-					scale = 1;
+					scaleX = 1;
+					scaleY = 1;
 
 				} else {	
 					translateX = xAxis.toPixels(baseTrans.originX, true);
@@ -1378,8 +1383,8 @@
 				this.transformGroup.animate({
 					translateX: translateX,
 					translateY: translateY,
-					scaleX: scale,
-					scaleY: scale
+					scaleX: scaleX,
+					scaleY: scaleY
 				});
 
 			}
