@@ -247,7 +247,7 @@ var ColumnSeries = extendClass(Series, {
 			chart = this.chart,
 			options = series.options,
 			renderer = chart.renderer,
-			animationLimit = options.animationLimit,
+			animationLimit = options.animationLimit || 250,
 			shapeArgs;
 
 		// draw the columns

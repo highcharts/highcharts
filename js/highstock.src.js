@@ -10241,7 +10241,7 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? (item.legendColor || item.color) : hiddenColor,
+			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = {
 				stroke: symbolColor,
@@ -16064,7 +16064,7 @@ var ColumnSeries = extendClass(Series, {
 			chart = this.chart,
 			options = series.options,
 			renderer = chart.renderer,
-			animationLimit = options.animationLimit,
+			animationLimit = options.animationLimit || 250,
 			shapeArgs;
 
 		// draw the columns
