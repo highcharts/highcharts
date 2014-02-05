@@ -2,7 +2,7 @@ $(function () {
     $('#container').highcharts({
 
         title: {
-            text: 'Hover color was brightened after repeated redraws'
+            text: 'Highcharts 3.1.9: Hover color was brightened after repeated redraws'
         },
 
 

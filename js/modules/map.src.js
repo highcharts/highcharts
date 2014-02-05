@@ -989,7 +989,7 @@
 		onMouseOut: function () {
 			var point = this,
 				start = +new Date(),
-				normalColor = Color(point.options.color),
+				normalColor = Color(point.color),
 				hoverColor = Color(point.pointAttr.hover.fill),
 				animation = point.series.options.states.normal.animation,
 				duration = animation && (animation.duration || 500),
@@ -1263,7 +1263,7 @@
 				color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
 
 				if (color) {
-					point.color = point.options.color = color;
+					point.color = color;
 				}
 			});
 		},
