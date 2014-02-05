@@ -261,8 +261,8 @@
 					delta > 0 ? 2 : 1 / 2,
 					chart.xAxis[0].toValue(e.chartX),
 					chart.yAxis[0].toValue(e.chartY),
-					delta > 0 ? undefined : e.chartX,
-					delta > 0 ? undefined : e.chartY
+					e.chartX,
+					e.chartY
 				);
 			}
 		}
