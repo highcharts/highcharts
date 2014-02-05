@@ -1547,6 +1547,7 @@
 	if (seriesTypes.bubble) {
 
 		plotOptions.mapbubble = merge(plotOptions.bubble, {
+			animationLimit: 500,
 			tooltip: {
 				pointFormat: '{point.name}: {point.z}'
 			}
