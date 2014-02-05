@@ -904,7 +904,9 @@
 		stickyTracking: false,
 		dataLabels: {
 			format: '{point.value}',
-			verticalAlign: 'middle'
+			verticalAlign: 'middle',
+			crop: false,
+			overflow: false
 		},
 		turboThreshold: 0,
 		tooltip: {
@@ -1061,7 +1063,7 @@
 		getExtremesFromAll: true,
 		useMapGeometry: true, // get axis extremes from paths, not values
 		parallelArrays: ['x', 'y', 'value'],
-
+		forceDL: true,
 		/**
 		 * Get the bounding box of all paths in the map combined.
 		 */
@@ -1383,8 +1385,12 @@
 			}
 
 			
-			// Now draw the data labels
+			// Now draw the data labels. Special for maps is the time that the data labels are drawn (after points),
+			// and the clipping of the dataLabelsGroup.
 			Series.prototype.drawDataLabels.call(series);
+			if (series.dataLabelsGroup) {
+				series.dataLabelsGroup.clip(chart.clipRect);
+			}
 			
 		},
 
