@@ -15,7 +15,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: depth * chart.series.length,
+			z: depth * chart.series.length
 		},
 		alpha = options3d.alpha,
 		beta = options3d.beta;
@@ -28,7 +28,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		var shapeArgs = point.shapeArgs;
 		if (cylindrical) {
 			point.shapeType = 'arc3d';
- 			shapeArgs.x += depth / 2;
+			shapeArgs.x += depth / 2;
 			shapeArgs.z = z;
 			shapeArgs.start = 0;
 			shapeArgs.end = PI * 2;
@@ -37,12 +37,12 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 			shapeArgs.depth = shapeArgs.height * (1 / sin((Math.PI / 2) - alpha)) - z;
 			shapeArgs.alpha = (Math.PI / 2) - alpha;
 			shapeArgs.beta = 0;
-			shapeArgs. origin = origin;
+			shapeArgs.origin = origin;
 
 		} else {
 			point.shapeType = 'cuboid';
 			shapeArgs.alpha = cylindrical ? (Math.PI / 2) - alpha : alpha;
-			shapeArgs.beta = chart.inverted ? beta : beta; 
+			shapeArgs.beta = beta; 
 			shapeArgs.z = chart.inverted ? -z : z;
 			shapeArgs.origin = origin;
 			shapeArgs.depth = depth * 0.75;
@@ -57,9 +57,9 @@ H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	var stack = (this.options.stack || 0),
 		order = this.chart.series.length - this._i;
 
-	var z = options.stacking ? this.group.zIndex * 10: this.group.zIndex * 10;
+	var z = this.group.zIndex * 10;
 
-	this.group.attr({zIndex: z});;
+	this.group.attr({zIndex: z});
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
@@ -70,6 +70,6 @@ H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 var defaultOptions = H.getOptions();
 defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
 var CylinderSeries = H.extendClass(H.seriesTypes.column, {
-	type: 'cylinder',
+	type: 'cylinder'
 });
 H.seriesTypes.cylinder = CylinderSeries;

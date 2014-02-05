@@ -20,8 +20,8 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			options3d = chart.options.chart.options3d,
 			frame = options3d.frame,
 			fbottom = frame.bottom,
-			fside= frame.back,
-			fback = frame.side;
+			fback = frame.back,
+			fside = frame.side;
 
 		var d = options3d.depth * chart.series.length;
 
@@ -42,7 +42,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			alpha: options3d.alpha,
 			beta: options3d.beta,
 			origin: origin
-		}
+		};
 		this.backFrame = this.chart.renderer.cuboid(backShape).attr({fill: fback.color}).add();
 
 		var bottomShape = {
@@ -51,11 +51,11 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			z: 0,
 			width: this.width,
 			height: fbottom.size,
-			depth: d ,
+			depth: d,
 			alpha: options3d.alpha,
 			beta: options3d.beta,
 			origin: origin
-		}
+		};
 		this.bottomFrame = this.chart.renderer.cuboid(bottomShape).attr({fill: fbottom.color}).add();
 
 		var sideShape = {
@@ -68,42 +68,11 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			alpha: options3d.alpha,
 			beta: options3d.beta,
 			origin: origin
-		}
+		};
 		this.sideFrame = this.chart.renderer.cuboid(sideShape).attr({fill: fside.color}).add();
 	}
 });
-/*
-H.wrap(HA.prototype, 'getLinePath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));
-	if (path === null) { return path; }	
 
-	var chart = this.chart,
-		options3d = chart.options.chart.options3d;
-
-	origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth * chart.series.length
-	};
-	
-	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
-		beta = chart.inverted ? options3d.alpha : options3d.beta;
-
-	var pArr = [
-		{x: path[1], y: path[2], z: 0},
-		{x: path[4], y: path[5], z: 0}
-	];
-
-	pArr = perspective(pArr, alpha, beta, origin);
-	
-	path = [
-		'M', pArr[0].x, pArr[0].y,
-		'L', pArr[1].x, pArr[1].y
-		];
-
-	return path;
-});
-*/
 
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));

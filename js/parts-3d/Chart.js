@@ -2,23 +2,24 @@
 	EXTENSION FOR 3D CHARTS
 ***/
 H.wrap(HC.prototype, 'init', function (proceed) {	
-	arguments[1] = H.merge({ 
+	var args = arguments;
+	args[1] = H.merge({ 
 		chart: {
 			options3d: {
-	    	    alpha: 0,
-	            beta: 0,
-	            depth: 0,
+				alpha: 0,
+				beta: 0,
+				depth: 0,
 
-	            frame: {
-	                bottom: { size: 1, color: 'transparent' },
-	                side: { size: 1, color: 'transparent' },
-	                back: { size: 1, color: 'transparent' }
-	            }
+				frame: {
+					bottom: { size: 1, color: 'transparent' },
+					side: { size: 1, color: 'transparent' },
+					back: { size: 1, color: 'transparent' }
+				}
 			}
 		}
-	}, arguments[1]);
+	}, args[1]);
 
-	proceed.apply(this, [].slice.call(arguments, 1));
+	proceed.apply(this, [].slice.call(args, 1));
 });
 
 H.wrap(HC.prototype, 'setChartSize', function (proceed) {
@@ -49,9 +50,10 @@ H.wrap(HC.prototype, 'firstRender', function (proceed) {
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 
-	var invSeries = []
-	for (var i = 0; i < this.series.length; i++) {
-		invSeries.push(this.series[this.series.length-(i+1)]);
+	var invSeries = [];
+
+	for (i = 0; i < this.series.length; i++) {
+		invSeries.push(this.series[this.series.length - (i + 1)]);
 	}
 	this.series = invSeries;
 	

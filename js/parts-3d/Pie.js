@@ -14,7 +14,7 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2,
-			z: depth * chart.series.length,
+			z: depth * chart.series.length
 		},
 		alpha = options.chart.options3d.alpha,
 		beta = options.chart.options3d.beta;
@@ -37,7 +37,31 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(alpha));
 		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(alpha));
 	});
+});
 
+H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
+	var series = this;
+	proceed.apply(this, [].slice.call(arguments, 1));
 
+	H.each(series.data, function (point) {
+		var shapeArgs = point.shapeArgs;
+		var r = shapeArgs.r,
+			d = shapeArgs.depth,
+			a1 = shapeArgs.alpha,
+			b1 = shapeArgs.beta,
+			a2 = (shapeArgs.start + shapeArgs.end) / 2; 
 
+		if (point.connector) {
+			point.connector.translate(
+				(-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? sin(b1) * d : 0),
+				(-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0)
+			);
+		}
+		if (point.dataLabel) {
+			point.dataLabel.attr({
+				x: point.dataLabel.connX + (-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? cos(b1) * d : 0) - (point.dataLabel.width / 2),
+				y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)
+			});
+		}
+	});
 });

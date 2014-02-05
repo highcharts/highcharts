@@ -45,13 +45,17 @@ H.toRadians = function (val) {
 	return val * PI / 180; 
 };
 
-var PI = Math.PI;
-var sin = Math.sin;
-var cos = Math.cos;
-var round = Math.round;
+var PI = Math.PI,
 
-//function perspective(points, options) {
-function perspective(points, angle1, angle2, origin) {
+	sin = Math.sin,
+	cos = Math.cos,
+
+	min = Math.min,
+	max = Math.max, 
+
+	round = Math.round;
+
+function perspective(points, angle2, angle1, origin) {
 	var result = [];
 	var xe, ye, ze;
 
@@ -86,258 +90,354 @@ function perspective(points, angle1, angle2, origin) {
 	});
 	return result;
 }
-/**
- *	Extension of the Renderer
- */
-function SVGElementCollection() {}
-SVGElementCollection.prototype = {
-	init: function (renderer) {
-		this.element = {};
-		this.renderer = renderer;
-		this.attrSetters = {};
+/*** 
+	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
+	***/
 
-		this.children = [];
-	},
+////// CUBOIDS //////
+HR.prototype.cuboid = function (shapeArgs) {
 
-	addChild: function (element) {
-		this.children.push(element);
-		return element;
-	},
+	var result = this.g(),
+	paths = this.cuboidPath(shapeArgs);
 
-	animate: function (params, options, complete) {
-		if (params.x !== undefined) {
-			this.pathFunction(params);
-		} else {
-			H.each(this.children, function (child) { child.animate(params, options, complete); });	
-		}
-		return this;
-	},
+	result.front = this.path(paths[0]).attr({zIndex: paths[3]}).add(result);
+	result.top = this.path(paths[1]).attr({zIndex: paths[4]}).add(result);
+	result.side = this.path(paths[2]).attr({zIndex: paths[5]}).add(result);
 
-	attr: function (hash, val) {
-		if (hash.x !== undefined) {
-			this.pathFunction(hash);
-		} else {
-			H.each(this.children, function (child) { child.attr(hash, val); });
-		}
-		return this;
-	},
+	result.attrSetters.fill = function (color) {
+		var c0 = color,
+		c1 = H.Color(color).brighten(0.1).get(),
+		c2 = H.Color(color).brighten(-0.1).get();
 
-	addClass: function (className) {
-		H.each(this.children, function (child) { child.addClass(className); });
-		return this;
-	},
+		this.front.attr({fill: c0});
+		this.top.attr({fill: c1});
+		this.side.attr({fill: c2});
 
-	symbolAttr: function (hash) {
-		H.each(this.children, function (child) { child.symbolAttr(hash); });
-		return this;
-	},
-
-	clip: function (clipRect) {
-		H.each(this.children, function (child) { child.clipRect(clipRect); });
-		return this;
-	},
-
-	crisp: function (strokeWidth, x, y, width, height) {
-		H.each(this.children, function (child) { child.crisp(strokeWidth, x, y, width, height); });
-		return this;
-	},
-
-	css: function (styles) {
-		H.each(this.children, function (child) { child.css(styles); });
-		return this;
-	},
-
-	on: function (eventType, handler) {
-		H.each(this.children, function (child) { child.on(eventType, handler); });
-		return this;
-	},
-	setRadialReference: function (coordinates) {
-		H.each(this.children, function (child) { child.setRadialReference(coordinates); });
-		return this;
-	},
-
-	translate: function (x, y) {
-		H.each(this.children, function (child) { child.translate(x, y); });
-		return this;
-	},
-
-	invert: function () {
-		H.each(this.children, function (child) { child.invert(); });
-		return this;
-	},
-
-	htmlCss: function (styles) {
-		H.each(this.children, function (child) { child.htmlCss(styles); });
-		return this;
-	},
-
-	// TODO 
-	htmlGetBBox: function () {
-		return null;
-	},
-
-	htmlUpdateTransform: function () {
-		H.each(this.children, function (child) { child.htmlUpdateTransform(); });
-		return this;
-	},
-
-	setSpanRotation: function (rotation, alignCorrection, baseline) {
-		H.each(this.children, function (child) { child.setSpanRotation(rotation, alignCorrection, baseline); });
-		return this;
-	},
-
-	getSpanCorrection: function (width, baseline, alignCorrection) {
-		H.each(this.children, function (child) { child.getSpanCorrection(width, baseLine, alignCorrection); });
-		return this;
-	},
-
-	updateTransform: function () {
-		H.each(this.children, function (child) { child.updateTransform(); });
-		return this;
-	},
-
-	toFront: function () {
-		H.each(this.children, function (child) { child.toFront(); });
-		return this;
-	},
-
-	align: function (alignOptions, alignByTranslate, box) {
-		H.each(this.children, function (child) { child.align(alignOptions, alignByTranslate, box); });
-		return this;
-	},
-
-	// TODO
-	getBBox: function () {
-		return null;
-	},
-
-	show: function () {
-		H.each(this.children, function (child) { child.show(); });
-		return this;
-	},
-
-	hide: function () {
-		H.each(this.children, function (child) { child.hide(); });
-		return this;
-	},
-
-	fadeOut: function (duration) {
-		H.each(this.children, function (child) { child.fadeOut(); });
-		return this;
-	},
-
-	add: function (parent) {
-		H.each(this.children, function (child) { child.add(parent); });		
-		return this;
-	},
-
-	safeRemoveChild: function (element) {
-		H.each(this.children, function (child) { child.safeRemoveChild(); });
-		return this;
-	},
-
-	destroy: function () {
-		H.each(this.children, function (child) { child.destroy(); });
-		return null;
-	},
-
-	shadow: function (shadowOptions, group, cutOff) {
-		H.each(this.children, function (child) { child.shadow(shadowOptions, group, cutOff); });
-		return this;
-	}
-};
-
-/**** GENERIC 3D OBJECT ****/
-HR.prototype.createElement3D = function (pathFunction, params) {
-	var result = new SVGElementCollection();
-	result.init(this);
-
-
-	result.front = result.addChild(this.path());
-	result.back = result.addChild(this.path());
-	result.top = result.addChild(this.path());
-	result.bottom = result.addChild(this.path());
-	result.left = result.addChild(this.path());
-	result.right = result.addChild(this.path());
-
-	var filler = function (element, value, factor) {
-		var v = H.Color(value).brighten(factor).get(); 
-		element.attr({stroke: v, 'stroke-width': 1}); 
-		return v;
-	};
-
-	result.front.attrSetters.fill = function (value, key) { return filler(this, value, 0); };
-	result.back.attrSetters.fill = function (value, key) { return filler(this, value, 0); };		
-	result.top.attrSetters.fill = function (value, key) { return filler(this, value, 0.1); };
-	result.bottom.attrSetters.fill = function (value, key) { return filler(this, value, 0.1); };
-	result.left.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
-	result.right.attrSetters.fill = function (value, key) { return filler(this, value, -0.1); };
-
-	result.pathFunction = function (parameters) {
-		var paths = pathFunction(parameters);
-		this.front.animate({d: paths.front.d, zIndex: paths.front.z }, false, false);
-		this.back.animate({d: paths.back.d, zIndex: paths.back.z }, false, false);
-		this.top.animate({d: paths.top.d, zIndex: paths.top.z }, false, false);
-		this.bottom.animate({d: paths.bottom.d, zIndex: paths.bottom.z }, false, false);
-		this.left.animate({d: paths.left.d, zIndex: paths.left.z }, false, false);
-		this.right.animate({d: paths.right.d, zIndex: paths.right.z }, false, false);
 		return this;
 	};
-	result.pathFunction(params);
 
+	result.animate = function (shapeArgs) {
+		var renderer = this.renderer,
+		paths = renderer.cuboidPath(shapeArgs);
+
+		this.front.attr({d: paths[0]});
+		this.top.attr({d: paths[1]});
+		this.side.attr({d: paths[2]});
+
+		return this;
+	};
 	return result;
 };
 
-/**** CUBES ****/
-HR.prototype.cube = function () {
-	result = this.createElement3D(this.getCubePath, arguments);
-	return result;
-};
 
-HR.prototype.getCubePath = function (params) {
-	params = params[0] || params;
-	var opposite = params.opposite,
-		options = params.options,
-		d = params.d,
-		h = params.height,
-		w = params.width,
-		z = params.z,
-		y = params.y,
-		x = params.x;		
-
+HR.prototype.cuboidPath = function (shapeArgs) {
+	var x = shapeArgs.x,
+	y = shapeArgs.y,
+	z = shapeArgs.z,
+	h = shapeArgs.height,
+	w = shapeArgs.width,
+	d = shapeArgs.depth,
+	alpha = shapeArgs.alpha,
+	beta = shapeArgs.beta,
+	origin = shapeArgs.origin;
 
 	var pArr = [
-		{ x: x, y: y, z: z },
-		{ x: x + w, y: y, z: z },
-		{ x: x + w, y: y + h, z: z },
-		{ x: x, y: y + h, z: z },
-		{ x: x, y: y, z: z + d },
-		{ x: x + w, y: y, z: z + d },
-		{ x: x + w, y: y + h, z: z + d },
-		{ x: x, y: y + h, z: z + d }
+	{x: x, y: y, z: z},
+	{x: x + w, y: y, z: z},
+	{x: x + w, y: y + h, z: z},
+	{x: x, y: y + h, z: z},
+	{x: x, y: y + h, z: z + d},
+	{x: x + w, y: y + h, z: z + d},
+	{x: x + w, y: y, z: z + d},
+	{x: x, y: y, z: z + d}
 	];
 
-	pArr = perspective(pArr, options.angle1, options.angle2, options.origin);
+	pArr = perspective(pArr, alpha, beta, origin);
 
-	var front = HR.prototype.toLinePath([pArr[0], pArr[1], pArr[2], pArr[3]], true);
-	var left  = HR.prototype.toLinePath([pArr[0], pArr[4], pArr[7], pArr[3]], true);
-	var right = HR.prototype.toLinePath([pArr[1], pArr[5], pArr[6], pArr[2]], true);
-	var top = HR.prototype.toLinePath([pArr[0], pArr[1], pArr[5], pArr[4]], true);
+	// front
+	var path1 = [
+	'M', pArr[0].x, pArr[0].y,
+	'L', pArr[1].x, pArr[1].y,
+	'L', pArr[2].x, pArr[2].y,
+	'L', pArr[3].x, pArr[3].y,
+	'Z'
+	];
+	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
 
-	return {
-		front: {d: front, z: 2},
-		back: {d: [], z: 0 },
-		top: {d: top, z: 0},
-		bottom: {d: [], z: 0},
-		left: {d: opposite ? left : [], z: 0 },
-		right: {d: opposite ? [] : right, z: 0 }
-	};
+	// top or bottom
+	var path2 = (beta > 0 ? 
+		[
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[7].x, pArr[7].y,
+		'L', pArr[6].x, pArr[6].y,
+		'L', pArr[1].x, pArr[1].y,
+		'Z'
+		] :
+	// bottom
+	[
+	'M', pArr[3].x, pArr[3].y,
+	'L', pArr[2].x, pArr[2].y,
+	'L', pArr[5].x, pArr[5].y,
+	'L', pArr[4].x, pArr[4].y,
+	'Z'
+	]);
+	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
+
+	// side
+	var path3 = (alpha > 0 ? 
+		[
+		'M', pArr[1].x, pArr[1].y,
+		'L', pArr[2].x, pArr[2].y,
+		'L', pArr[5].x, pArr[5].y,
+		'L', pArr[6].x, pArr[6].y,
+		'Z'
+		] : 
+		[
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[7].x, pArr[7].y,
+		'L', pArr[4].x, pArr[4].y,
+		'L', pArr[3].x, pArr[3].y,
+		'Z'
+		]);
+	var z3 = (alpha > 0 ? (pArr[1].z + pArr[2].z + pArr[5].z + pArr[6].z) / 4 : (pArr[0].z + pArr[7].z + pArr[4].z + pArr[3].z) / 4);
+
+	return [path1, path2, path3, z1, z2, z3];
 };
 
-/**** Lines ****/
+////// SECTORS //////
+HR.prototype.arc3d = function (shapeArgs) {
+
+	var result = this.g(),
+	paths = this.arc3dPath(shapeArgs),
+	renderer = result.renderer;
+
+	var zIndex = paths[4] * 100;
+
+	result.ins = [];
+	H.each(paths[3], function (path) {
+		result.ins.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
+	});
+	result.outs = [];
+	H.each(paths[1], function (path) {
+		result.outs.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
+	});
+	result.sides = [];
+	H.each(paths[2], function (path) {
+		result.sides.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
+	});
+	result.tops = [];
+	H.each(paths[0], function (path) {
+		result.tops.push(renderer.path(path).attr({zIndex: zIndex + 1}).add(result));
+	});
+
+	result.attrSetters.fill = function (color) {
+		var c0 = color,
+		c2 = H.Color(color).brighten(-0.1).get();
+
+		H.each(this.outs, function (out) {
+			out.attr({fill: c2}).css({stroke: c2});
+		});				
+		H.each(this.ins, function (inn) {
+			inn.attr({fill: c2}).css({stroke: c2});
+		});	
+		H.each(this.sides, function (side) {
+			side.attr({fill: c2}).css({stroke: c2});
+		});
+		H.each(this.tops, function (top) {
+			top.attr({fill: c0}).css({stroke: c0});
+		});
+		return this;
+	};
+	
+	result.attrSetters['stroke-width'] = function () {
+		// Force all to 0		
+		return 0;
+	};
+	
+	result.animate = function (args) {
+		if (args.translateX !== undefined && args.translateY !== undefined) {
+			this.translate(args.translateX, args.translateY);
+
+		}
+		return this;
+	};
+	result.slice = function (shapeArgs) {
+		console.log('slice ?');
+		return this;
+	};
+
+	result.attr({zIndex: zIndex});
+	return result;
+};
+
+
+HR.prototype.arc3dPath = function (shapeArgs) {
+	var topPaths = [],
+	outPaths = [],
+	sidePaths = [],
+	inPaths = [];
+
+	var x = shapeArgs.x,
+	y = shapeArgs.y,
+	z = shapeArgs.z,
+	start = shapeArgs.start,
+	end = shapeArgs.end - 0.00001,
+	r = shapeArgs.r,
+	ir = shapeArgs.innerR,
+	d = shapeArgs.depth,
+	alpha = shapeArgs.alpha,
+	beta = shapeArgs.beta,
+	origin = shapeArgs.origin;
+
+	// 2PI Correction
+	start = start % (2 * PI);
+	end = end % (2 * PI);
+
+	var arcAngle = end - start,
+	p1, 
+	p2;
+
+	if (arcAngle > PI / 2) {		
+		p1 = this.arc3dPath({x: x, y: y, depth: d, start: start, end: start + (PI / 2), r: r, innerR: ir, alpha: alpha, beta: beta});
+		p2 = this.arc3dPath({x: x, y: y, depth: d, start: start + (PI / 2) + 0.00001, end: end, r: r, innerR: ir, alpha: alpha, beta: beta});
+
+		topPaths = topPaths.concat(p1[0]);
+		topPaths = topPaths.concat(p2[0]);
+
+		outPaths = outPaths.concat(p1[1]);
+		outPaths = outPaths.concat(p2[1]);	 
+
+		sidePaths = sidePaths.concat(p1[2]);
+		sidePaths = sidePaths.concat(p2[2]);   
+
+		inPaths = inPaths.concat(p1[3]);
+		inPaths = inPaths.concat(p2[3]);
+	} else {
+		// -PI -> PI
+		start = (start > PI ? start - (2 * PI) : start);
+		end = (end > PI ? end - (2 * PI) : end);
+
+		if (start < 0 && end > 0) {	   
+			p1 = this.arc3dPath({x: x, y: y, depth: d, start: start, end: 0, r: r, innerR: ir, alpha: alpha, beta: beta});
+			p2 = this.arc3dPath({x: x, y: y, depth: d, start: 0, end: end, r: r, innerR: ir, alpha: alpha, beta: beta});
+
+			topPaths = topPaths.concat(p1[0]);
+			topPaths = topPaths.concat(p2[0]);   
+
+			outPaths = outPaths.concat(p1[1]);
+			outPaths = outPaths.concat(p2[1]);	 
+
+			sidePaths = sidePaths.concat(p1[2]);
+			sidePaths = sidePaths.concat(p2[2]);   
+
+			inPaths = inPaths.concat(p1[3]);
+			inPaths = inPaths.concat(p2[3]);
+		} else if (start > 0 && end < 0) {			
+			p1 = this.arc3dPath({x: x, y: y, depth: d, start: start, end: PI, r: r, innerR: ir, alpha: alpha, beta: beta});
+			p2 = this.arc3dPath({x: x, y: y, depth: d, start: -PI, end: end, r: r, innerR: ir, alpha: alpha, beta: beta});
+
+			topPaths = topPaths.concat(p1[0]);
+			topPaths = topPaths.concat(p2[0]);
+
+			outPaths = outPaths.concat(p1[1]);
+			outPaths = outPaths.concat(p2[1]);  
+
+			sidePaths = sidePaths.concat(p1[2]);
+			sidePaths = sidePaths.concat(p2[2]);   
+
+			inPaths = inPaths.concat(p1[3]);
+			inPaths = inPaths.concat(p2[3]);
+		} else {		
+			end += 0.001;
+
+			var rx = cos(beta) * r,
+			ry = cos(alpha) * r,
+			irx = cos(beta) * ir,
+			iry = cos(alpha) * ir,
+			dx = d * sin(beta),
+			dy = d * sin(alpha);
+
+			var sxO = x + (rx * cos(start)),
+			syO = y + (ry * sin(start)),
+			exO = x + (rx * cos(end)),
+			eyO = y + (ry * sin(end)),
+			exI = x + (irx * cos(start)),
+			eyI = y + (iry * sin(start)),
+			sxI = x + (irx * cos(end)),
+			syI = y + (iry * sin(end));
+
+			var rx2 = rx * 4 * (Math.sqrt(2) - 1) / 3,	
+			rx3 = rx2 / ((PI / 2) / arcAngle),
+			irx2 = irx * 4 * (Math.sqrt(2) - 1) / 3,	
+			irx3 = irx2 / ((PI / 2) / arcAngle);
+
+			var ry2 = ry * 4 * (Math.sqrt(2) - 1) / 3,	
+			ry3 = ry2 / ((PI / 2) / arcAngle),
+			iry2 = iry * 4 * (Math.sqrt(2) - 1) / 3,	
+			iry3 = iry2 / ((PI / 2) / arcAngle);	
+
+			topPaths.push([
+				'M', sxO, syO,
+				'C', sxO - (rx3 * sin(start)), syO + (ry3 * cos(start)), 
+				exO + (rx3 * sin(end)), eyO - (ry3 * cos(end)), 
+				exO, eyO,
+				'L', sxI, syI,
+				'C', sxI + (irx3 * sin(end)), syI - (iry3 * cos(end)), 
+				exI - (irx3 * sin(start)), eyI + (iry3 * cos(start)), 
+				exI, eyI,		
+				'Z'
+				]);
+
+			outPaths.push([
+				'M', sxO, syO,
+				'C', sxO - (rx3 * sin(start)), syO + (ry3 * cos(start)), 
+				exO + (rx3 * sin(end)), eyO - (ry3 * cos(end)), 
+				exO, eyO,
+				'L', exO + dx, eyO + dy,
+				'C', exO + (rx3 * sin(end)) + dx, eyO - (ry3 * cos(end)) + dy,
+				sxO - (rx3 * sin(start)) + dx, syO + (ry3 * cos(start)) + dy, 
+				sxO + dx, syO + dy,
+				'Z'
+				]);
+
+			sidePaths.push([
+				'M', sxO, syO,
+				'L', sxO + dx, syO + dy,
+				'L', exI + dx, eyI + dy,
+				'L', exI, eyI,
+				'Z',
+
+				'M', exO, eyO,
+				'L', exO + dx, eyO + dy,
+				'L', sxI + dx, syI + dy,
+				'L', sxI, syI,
+				'Z'		
+				]);
+
+			inPaths.push([
+				'M', sxI, syI,
+				'C', sxI + (irx3 * sin(end)), syI - (iry3 * cos(end)), 
+				exI - (irx3 * sin(start)), eyI + (iry3 * cos(start)), 
+				exI, eyI,
+				'L', exI + dx, eyI + dy,
+				'C', exI - (irx3 * sin(start)) + dx, eyI + (iry3 * cos(start)) + dy, 
+				sxI + (irx3 * sin(end)) + dx, syI - (iry3 * cos(end)) + dy, 
+				sxI + dx, syI + dy,
+				'Z'
+				]);
+		}
+	}
+
+	var midAngle = (start * 2 + arcAngle) / 2;
+	var zIndex = (sin(beta) * cos(midAngle)) + (sin(alpha) * sin(midAngle));
+
+	return [topPaths, outPaths, sidePaths, inPaths, zIndex];
+};
+
+////// HELPER METHODS //////
 HR.prototype.toLinePath = function (points, closed) {
 	var result = [];
-		
+
 	// Put "L x y" for each point
 	H.each(points, function (point) {
 		result.push('L', point.x, point.y);
@@ -353,276 +453,73 @@ HR.prototype.toLinePath = function (points, closed) {
 	
 	return result;
 };
+/*** 
+	EXTENSION FOR 3D CHARTS
+***/
+H.wrap(HC.prototype, 'init', function (proceed) {	
+	var args = arguments;
+	args[1] = H.merge({ 
+		chart: {
+			options3d: {
+				alpha: 0,
+				beta: 0,
+				depth: 0,
 
-/**** Pie Slices ***/
-HR.prototype.arc3d = function (x, y, a1, d, options) {
-	return this.createElement3D(this.get3DArcPath, arguments);
-};
+				frame: {
+					bottom: { size: 1, color: 'transparent' },
+					side: { size: 1, color: 'transparent' },
+					back: { size: 1, color: 'transparent' }
+				}
+			}
+		}
+	}, args[1]);
 
-HR.prototype.get3DArcPath = function (params) {
-	params = params[0] || params;
-	var	options = params.options;
-		d = params.d;
-		a1 = params.a1;
-		y = params.y;
-		x = params.x;
+	proceed.apply(this, [].slice.call(args, 1));
+});
 
-	var deg1 = Math.PI / 360; // small correction to prevent slices to overlap each other
-
-	var start = options.start, //+ 0.005,
-		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
-		longArc = end - start < PI ? 0 : 1,
-		// outside ring
-		rx1 = options.r,
-		ry1 = rx1 * cos(a1),		
-		sx1 = x + rx1 * cos(start + (deg1 / 10)),
-		sy1 = y + ry1 * sin(start + (deg1 / 10)),
-		ex1 = x + rx1 * cos(end - (deg1 / 10)),
-		ey1 = y + ry1 * sin(end - (deg1 / 10)),
-		// inside ring
-		rx2 = Math.max(0.5, options.ir),
-		ry2 = rx2 * cos(a1),		
-		sx2 = x + rx2 * cos(end - deg1),
-		sy2 = y + ry2 * sin(end - deg1),
-		ex2 = x + rx2 * cos(start + deg1),
-		ey2 = y + ry2 * sin(start + deg1);
-
-	// Sanity
-	if (a1 === 0) { d = 0; }
-
-	if (options.start === options.end) {
-		return {
-			front: {d: [], z: 0},
-			back: {d: [], z: 0 },
-			top: {d: [], z: 0 },
-			bottom: {d: [], z: 0 },
-			left: {d: [], z: 0 },
-			right: {d: [], z: 0 }
-		};
-	}
-	// Normalize angles
-	start = (start + 4 * Math.PI) % (2 * Math.PI);
-	end = (end + 4 * Math.PI) % (2 * Math.PI);
-
-	// Find Quadrant start & end ?	
-	var sQ = (Math.floor(start / (Math.PI / 2)) + 1) % 4;
-	var eQ = (Math.floor(end / (Math.PI / 2)) + 1) % 4;
-
-	// TOP SIDE
-	var top =  [
-		'M', sx1, sy1,
-		'A', rx1, ry1, 0, longArc, 1, ex1, ey1,
-		'L', sx2, sy2,
-		'A', rx2, ry2, 0, longArc, 0, ex2, ey2,
-		'L', sx1, sy1,
-		'Z'
-	];
-
-	// OUTER SIDE
-	var fsx1 = sx1,
-		fsy1 = sy1,
-		fex1 = ex1,
-		fey1 = ey1,
-		tLong = longArc;
-
-	if (eQ === 3 || eQ === 0) {
-		fex1 = x - rx1;
-		fey1 = y;
-		tLong = 0;
-	}
-	if (sQ === 3 || sQ === 0) {
-		fsx1 = x + rx1;
-		fsy1 = y;
-		tLong = 0;
-	}
-
-	var front = [		
-		'M', fsx1, fsy1,
-		'A', rx1, ry1, 0, tLong, 1, fex1, fey1,
-		'L', fex1, fey1 + d,
-		'A', rx1, ry1, 0, tLong, 0, fsx1, fsy1 + d,
-		'L', fsx1, fsy1,
-		'Z'
-		];
-
-	if ((eQ === 3 || eQ === 0) && (sQ === 3 || sQ === 0) && (start < end)) {
-		front = [];
-	}
-
-	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start > end)) {
-	front = [	
-		'M', sx1, sy1,
-		'A', rx1, ry1, 0, 0, 1, x - rx1, y,
-		'L', x - rx1, y + d,
-		'A', rx1, ry1, 0, 0, 0, sx1, sy1 + d,
-		'L', sx1, sy1,
-		'M', ex1, ey1,
-		'A', rx1, ry1, 0, 0, 0, x + rx1, y,
-		'L', x + rx1, y + d,
-		'A', rx1, ry1, 0, 0, 1, ex1, ey1 + d,
-		'L', ex1, ey1		
-		];
-	}
-	
-	// BACK SIDE
-	var bsx2 = sx2,
-		bsy2 = sy2,
-		bex2 = ex2,
-		bey2 = ey2;
-
-	if (eQ === 2 || eQ === 1) {
-		bsx2 = x + rx2;
-		bsy2 = y;
-		longArc = 0;
-	}
-	if (sQ === 2 || sQ === 1) {
-		bex2 = x - rx2;
-		bey2 = y;
-		longArc = 0;
-	}
-
-	var back = [
-		'M', bsx2, bsy2,
-		'A', rx2, ry2, 0, longArc, 0, bex2, bey2,
-		'L', bex2, bey2 + d,
-		'A', rx2, ry2, 0, longArc, 1, bsx2, bsy2 + d,
-		'L', bsx2, bsy2,
-		'Z'
-		];
-
-	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start < end)) {
-		back = [];
-	}
-	// INNER SIDE 1
-	var right = [];
-	if (sQ > 1) {
-		right = [
-		'M', sx1, sy1,
-		'L', ex2, ey2,
-		'L', ex2, ey2 + d,
-		'L', sx1, sy1 + d,
-		'Z' 
-		];
-	}
-
-	// INNER SIDE 2
-	var left = [];
-	
-	if (eQ <= 1) {
-		left = [
-		'M', ex1, ey1,
-		'L', sx2, sy2,
-		'L', sx2, sy2 + d,
-		'L', ex1, ey1 + d,
-		'Z' 
-		];
-	}
-
-	// Z-INDEX
-	var fz = (front.length !== 0 ? 
-		(Math.sin(Math.sin((start + end) / 2) + (start > end ? Math.PI : 0))) * 1000 : 0);
-	var bz = (back.length !== 0 ? 
-		(Math.sin(Math.sin((start + end) / 2) + (start > end ? Math.PI : 0))) * 1000 : 0);
-
-	var lz = (left.length !== 0 ?  sin(Math.min(sin(start), sin(end))) * 1000 : 0);
-	var rz = (right.length !== 0 ?  sin(Math.max(sin(start), sin(end))) * 1000 : 0);
-
-	return {
-		front: {d: front, z: 1000 + fz },
-		back: {d: back, z: 2000 + bz},
-		top: {d: top, z: 3000 },
-		bottom: {d: [], z: 0 },
-		left: {d: left, z: 1000 + lz },
-		right: {d: right, z: 1000 + rz }
-	};
-};
-/**
- *	3D Chart
- */
 H.wrap(HC.prototype, 'setChartSize', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	// Change the clipBox size to encompass the full chart
-	this.clipBox.x = -(this.margin[3] || 0);
-	this.clipBox.y = -(this.margin[0] || 0);
-	this.clipBox.width = this.chartWidth + (this.margin[3] || 0) + (this.margin[1] || 0);
-	this.clipBox.height = this.chartHeight + (this.margin[0] || 0) + (this.margin[2] || 0);
+	var inverted = this.inverted,
+		clipBox = this.clipBox,
+		x = inverted ? 'y' : 'x',
+		y = inverted ? 'x' : 'y',
+		w = inverted ? 'height' : 'width',
+		h = inverted ? 'width' : 'height';
+
+	clipBox[x] = -(this.margin[3] || 0);
+	clipBox[y] = -(this.margin[0] || 0);
+	clipBox[w] = this.chartWidth + (this.margin[3] || 0) + (this.margin[1] || 0);
+	clipBox[h] = this.chartHeight + (this.margin[0] || 0) + (this.margin[2] || 0);
 });
 
-H.wrap(HC.prototype, 'init', function (proceed, userOptions, callback) {
-	userOptions = H.merge({
-		chart: {
-			//animation: false,
-			options3d: {
-				angle1: 0,
-				angle2: 0,
-				deptheight: 0,
-				frame: {
-					bottom: false,
-					side: false,
-					back: false
-				}
-			}
-		},
-		plotOptions: {
-			column: {
-				
-			}
-		},
-		yAxis: {
-			opposite: false
-		}
-	},
-	//user's options
-	userOptions, {
-		chart: {
-			plotBackgroundImage: null
-		}
-	} 
-	);
-
-	// Proceed as normal
-	proceed.apply(this, [userOptions, callback]);
-
-	// Destroy the plotBackground
-	if (this.plotBackground) { 
-		this.plotBackground.destroy();
-	}
-	//this.redraw();
+H.wrap(HC.prototype, 'redraw', function (proceed) {
+	// Set to force a redraw of all elements
+	this.isDirtyBox = true;
+	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
-HC.prototype.getZPosition = function (serie) {
-	if (serie.type !== 'column') {
-		return 0;
+
+H.wrap(HC.prototype, 'firstRender', function (proceed) {
+	// Set to force a redraw of all elements
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	var invSeries = [];
+
+	for (i = 0; i < this.series.length; i++) {
+		invSeries.push(this.series[this.series.length - (i + 1)]);
 	}
+	this.series = invSeries;
 	
-	// Without grouping all stacks are on the front line.
-	if (this.options.plotOptions.column.grouping !== false) { 
-		return 0;
-	}
-
-	var stacking = this.options.plotOptions.column.stacking,
-		i = (stacking ? (serie.options.stack || 0) : serie._i),	// The number of the stack
-		result = 0,		
-		stacks = [],
-		cnt,
-		S;
-
-	// Count the number of stacks in front of this one.
-	for (cnt = 0; cnt < i; cnt++) {
-		S = this.series[cnt];
-		if (S.visible && !stacks[(stacking ? S.options.stack : S._i) || 0]) {
-			result++;
-			stacks[(stacking ? S.options.stack : S._i) || 0] = true;
-		}
-	}
-
-	return result;
-};
-HC.prototype.getZPosition2 = HC.prototype.getZPosition;
+	this.redraw();
+});
 
 HC.prototype.getNumberOfStacks = function () {
-	var options = this.options.plotOptions.column;
 
+	var type = this.chart.options.chart.type;
+		options = this.options.plotOptions[type];
+		
 	// Without grouping all stacks are on the front line.
 	if (options.grouping !== false) {
 		return 1;
@@ -639,200 +536,81 @@ HC.prototype.getNumberOfStacks = function () {
 		stacks[serie.options.stack || 0] = true;
 	});
 	return stacks.length;
-};
-
-HC.prototype.getTotalDepth = function () {
-	return this.getNumberOfStacks() * (this.options.chart.options3d.depth || 0) * 1.5;
-};
-HC.prototype.drawFrame = function () {
-var chart = this,
-		renderer = chart.renderer,
-		frameGroup = chart.frameGroup,
-		options3d = chart.options.chart.options3d,
-		frame = options3d.frame;
-
-	options3d.origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
-	};
-
-	var nstacks = chart.getNumberOfStacks();
-	var fbottom = frame.bottom,
-		fside = frame.side,
-		fback = frame.back;
-
-	if (!frameGroup) {
-		//this.frameGroup = frameGroup = renderer.g().add(this.seriesGroup);
-		this.frameGroup = frameGroup = renderer.g().add();
-	}
-
-	var opposite = chart.yAxis[0].opposite,
-		left = chart.plotLeft,
-		top = chart.plotTop,
-		width = chart.plotWidth,
-		height = chart.plotHeight,
-		depth = chart.getTotalDepth(),
-
-		sideSize = (fside ? fside.size || 0 : 0);
-		bottomSize = (fbottom ? fbottom.size || 0 : 0);
-		backSize = (fback ? fback.size || 0 : 0);
-
-
-	var xval;
-
-	if (fbottom) {
-		xval = (opposite ? left : left - sideSize);
-
-		if (!frameGroup.bottom) {
-			frameGroup.bottom = renderer.cube({x: xval, y: top + height, z: 0, width: width + sideSize, height: bottomSize, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
-				.attr({ fill: fbottom.fillColor || '#C0C0C0' }).add(frameGroup);
-		} else {
-			frameGroup.bottom.animate({
-				x: xval,
-				y: top + height,
-				z: 0,
-				width: width + sideSize,
-				height: bottomSize,
-				d: depth + backSize,
-				options: options3d,
-				opposite: opposite, 
-				i: 50
-			});
-		}
-	}
-
-	if (fside) {
-		xval = (opposite ? left + width : left - sideSize);
-
-		if (!frameGroup.side) {
-			frameGroup.side = renderer.cube({x: xval, y: top, z: 0, width: sideSize, height: height, d: depth + backSize, options: options3d, opposite: opposite, i: 0 })
-				.attr({ fill: fside.fillColor || '#C0C0C0' }).add(frameGroup);
-		} else {
-			frameGroup.side.animate({
-				x: xval,
-				y: top,
-				z: 0,
-				width: sideSize,
-				height: height,
-				d: depth + backSize,
-				options: options3d,
-				opposite: opposite, 
-				i: 0
-			});
-		}
-	}
-
-	if (fback || chart.options.chart.plotBackgroundColor) {
-		if (!frameGroup.back) {
-			frameGroup.back = renderer.cube({x: left, y: top, z: depth, width: width, height: height, d: backSize, options: options3d, opposite: opposite, i: 0 })
-				.attr({ fill: fback.fillColor || chart.options.chart.plotBackgroundColor || '#C0C0C0' }).add(frameGroup);
-		} else {
-			frameGroup.back.animate({
-				x: left,
-				y: top,
-				z: depth,
-				width: width,
-				height: height,
-				d: backSize,
-				options: options3d,
-				opposite: opposite, 
-				i: 0
-			});
-		}
-	}
-};
-H.wrap(HC.prototype, 'firstRender', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-	this.drawFrame();
-	
-});
-
-H.wrap(HC.prototype, 'redraw', function (proceed) {
-	// Set to force a redraw of all elements
-	this.isDirtyBox = true;
-	proceed.apply(this, [].slice.call(arguments, 1));
-	this.drawFrame();
-	
-});/**
- *	Extension for the Axis
- */
+};/*** 
+	EXTENSION TO THE AXIS
+***/
 H.wrap(HA.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
-	var axis = this,
-		chart = axis.chart,
-		renderer = chart.renderer,
-		options = axis.options,
-		options3d = chart.options.chart.options3d,
-		frame = options3d.frame;
-
-	options3d.origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
-	};
-
-	var x1 = this.left,
-		y1 = (this.horiz ? this.top + this.height : this.top),
-		z1 = 0,
-		h = this.height,
-		w = this.len,
-		d = chart.getTotalDepth();
-
 	if (this.axisLine) {
-		var axisLine = this.axisLine;
-		var hide = (this.horiz ? options3d.frame.bottom : options3d.frame.side);
-		if (hide) {
-			axisLine.hide();
-		} else {
-			var path = this.getLinePath(this.options.lineWidth);
-			var pArr = [
-				{x: path[1], y: path[2], z: 0},
-				{x: path[4], y: path[5], z: 0}
-			];
-			pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
-			path = [
-				'M', pArr[0].x, pArr[0].y,
-				'L', pArr[1].x, pArr[1].y
-				];
-			axisLine.animate({d: path});
-		}		 
+		this.axisLine.hide();
 	}
 
-	H.each(axis.tickPositions, function (tickPos) {
-		var tick = axis.ticks[tickPos],
-		label = tick.label,
-		mark = tick.mark;
+	if (this.horiz) {
 
-		if (label) {
-			var xy = label.xy,
-			labelPos = perspective([{x: xy.x, y: xy.y, z: z1 }], options3d.angle1, options3d.angle2, options3d.origin)[0];
-
-			label.animate({
-				x: labelPos.x,
-				y: labelPos.y,
-				opacity: xy.opacity					
-			});
+		if (this.bottomFrame) {
+			this.bottomFrame.destroy();
+			this.sideFrame.destroy();
+			this.backFrame.destroy();
 		}
 
-		if (mark) {
-			var txy = tick.getPosition(axis.horiz, tick.pos, axis.tickmarkOffset, false);
-			var path = tick.getMarkPath(txy.x, txy.y, axis.options.tickLength, axis.options.tickWidth, axis.horiz, renderer);
-			pArr = [ 
-			{x: path[1], y: path[2], z: z1 },
-			{x: path[4], y: path[5], z: z1 }
-			];
-			path = chart.renderer.toLinePath(perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin), false);
-			mark.animate({d: path, opacity: 1});
-		}
-	});
+		var chart = this.chart,
+			options3d = chart.options.chart.options3d,
+			frame = options3d.frame,
+			fbottom = frame.bottom,
+			fback = frame.back,
+			fside = frame.side;
 
-	// If there is one, update the first one, the rest will follow automatically.
-	if (this.alternateBands[0]) {
-		this.alternateBands[0].svgElem.attr({zIndex: 1});
+		var d = options3d.depth * chart.series.length;
+
+		var origin = {
+			x: chart.plotLeft + (chart.plotWidth / 2),
+			y: chart.plotTop + (chart.plotHeight / 2),
+			z: d
+		};
+
+		
+		var backShape = {
+			x: this.left,
+			y: this.top,
+			z: d + 1,
+			width: this.width,
+			height: this.height + fbottom.size,
+			depth: fback.size,
+			alpha: options3d.alpha,
+			beta: options3d.beta,
+			origin: origin
+		};
+		this.backFrame = this.chart.renderer.cuboid(backShape).attr({fill: fback.color}).add();
+
+		var bottomShape = {
+			x: this.left,
+			y: this.top + this.height,
+			z: 0,
+			width: this.width,
+			height: fbottom.size,
+			depth: d,
+			alpha: options3d.alpha,
+			beta: options3d.beta,
+			origin: origin
+		};
+		this.bottomFrame = this.chart.renderer.cuboid(bottomShape).attr({fill: fbottom.color}).add();
+
+		var sideShape = {
+			x: this.left,
+			y: this.top,
+			z: 0,
+			width: fside.size,
+			height: this.height,
+			depth: d,
+			alpha: options3d.alpha,
+			beta: options3d.beta,
+			origin: origin
+		};
+		this.sideFrame = this.chart.renderer.cuboid(sideShape).attr({fill: fside.color}).add();
 	}
 });
+
 
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
@@ -841,12 +619,12 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = chart.getTotalDepth();
+	var d = options3d.depth * chart.series.length;
 
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: chart.getTotalDepth()
+		z: d
 	};
 
 	var pArr = [
@@ -856,106 +634,179 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
 	];
 
-	pArr = perspective(pArr, options3d.angle1, options3d.angle2, options3d.origin);
+	var alpha = chart.options.inverted ? options3d.beta : options3d.alpha,
+		beta = chart.options.inverted ? options3d.alpha : options3d.beta;
+
+	pArr = perspective(pArr, alpha, beta, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
+
 	return path;
 });
 
-HA.prototype.getPlotBandPath = function (from, to) {
-	var toPath = this.getPlotLinePath(to),
-		path = this.getPlotLinePath(from);
-	if (path && toPath) {
-		return [
-			'M', path[4], path[5],
-			'L', path[7], path[8],
-			'L', toPath[7], toPath[8],
-			'L', toPath[4], toPath[5],
-			'Z'];
-	} else { // outside the axis area
-		return null;
-	}
-};/**
- *	Column Extension
- */
+/*** 
+	EXTENSION TO THE TICKS
+***/
+
+H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
+
+	var chart = this.axis.chart,
+		options3d = chart.options.chart.options3d;
+
+	origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: options3d.depth * chart.series.length
+	};
+
+	var pArr = [
+		{x: path[1], y: path[2], z: 0},
+		{x: path[4], y: path[5], z: 0}
+	];
+	
+	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
+		beta = chart.inverted ? options3d.alpha : options3d.beta;
+
+	pArr = perspective(pArr, alpha, beta, origin);
+	path = [
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[1].x, pArr[1].y
+		];
+	return path;
+});
+
+H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
+	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+
+	var chart = this.axis.chart,
+		options3d = chart.options.chart.options3d;
+
+	origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: options3d.depth * chart.series.length
+	};
+	
+	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
+		beta = chart.inverted ? options3d.alpha : options3d.beta;
+
+	pos = perspective([{x: pos.x, y: pos.y, z: 0}], alpha, beta, origin)[0];
+	return pos;
+});
+/*** 
+	EXTENSION FOR 3D COLUMNS
+***/
 H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
+	var type = this.chart.options.chart.type;
+
 	var series = this,
-	chart = series.chart,
-	zPos = chart.getZPosition(series),
-	options3d = chart.options.chart.options3d;
+		chart = series.chart,
+		options = chart.options,
+		options3d = options.chart.options3d,
+		cylindrical = (type === 'cylinder'),
+		depth = options3d.depth,
+		origin = {
+			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
+			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
+			z: depth * chart.series.length
+		},
+		alpha = options3d.alpha,
+		beta = options3d.beta;
 
-	options3d.depth = options3d.depth || 0;
+	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
 
-	options3d.origin = { 
-		x: chart.plotWidth / 2,
-		y: chart.plotHeight / 2,
-		z: chart.getTotalDepth()
-	};
+	if (options.plotOptions[type].grouping !== false) { z = 0; }
 
 	H.each(series.data, function (point) {
-		point.shapeType = 'cube';
-		point.shapeArgs.z = zPos * options3d.depth * 1.3 + (options3d.depth * 0.3);
-		point.shapeArgs.d = options3d.depth;
-		point.shapeArgs.options = options3d;
+		var shapeArgs = point.shapeArgs;
+		if (cylindrical) {
+			point.shapeType = 'arc3d';
+			shapeArgs.x += depth / 2;
+			shapeArgs.z = z;
+			shapeArgs.start = 0;
+			shapeArgs.end = PI * 2;
+			shapeArgs.r = depth * 0.95;
+			shapeArgs.innerR = 0;
+			shapeArgs.depth = shapeArgs.height * (1 / sin((Math.PI / 2) - alpha)) - z;
+			shapeArgs.alpha = (Math.PI / 2) - alpha;
+			shapeArgs.beta = 0;
+			shapeArgs.origin = origin;
+
+		} else {
+			point.shapeType = 'cuboid';
+			shapeArgs.alpha = cylindrical ? (Math.PI / 2) - alpha : alpha;
+			shapeArgs.beta = beta; 
+			shapeArgs.z = chart.inverted ? -z : z;
+			shapeArgs.origin = origin;
+			shapeArgs.depth = depth * 0.75;
+		}	
 	});	    
 });
 
 H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
-	var options = this.chart.options.plotOptions.column,
-		nz;
+	var type = this.chart.options.chart.type,
+		options = this.chart.options.plotOptions[type];
+	
+	var stack = (this.options.stack || 0),
+		order = this.chart.series.length - this._i;
 
-	// Without grouping all stacks are on the front line.
-	if (options.grouping !== false) {
-		nz = this._i;
-	} else {
-		nz = this.chart.getZPosition2(this) + 1;		
-	}
+	var z = this.group.zIndex * 10;
 
-	this.group.attr({zIndex: nz});
+	this.group.attr({zIndex: z});
 
 	proceed.apply(this, [].slice.call(arguments, 1));
-	
-	H.each(this.data, function (point) {
-		H.each(point.graphic.children, function (child) {
-			child.element.point = point;
-		});
-	});	
-
 });
-/**
- *	Pies
- */
+
+/*** 
+	EXTENSION FOR 3D CYLINDRICAL COLUMNS
+***/
+var defaultOptions = H.getOptions();
+defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
+var CylinderSeries = H.extendClass(H.seriesTypes.column, {
+	type: 'cylinder'
+});
+H.seriesTypes.cylinder = CylinderSeries;
+/*** 
+	EXTENSION FOR 3D PIES
+***/
 
 H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
+	var type = this.chart.options.chart.type;
+
 	var series = this,
 		chart = series.chart,
-		zPos = chart.getZPosition(series),
-		options3d = series.chart.options.chart.options3d;
+		options = chart.options,
+		depth = options.chart.options3d.depth,
+		origin = {
+			x: chart.plotWidth / 2,
+			y: chart.plotHeight / 2,
+			z: depth * chart.series.length
+		},
+		alpha = options.chart.options3d.alpha,
+		beta = options.chart.options3d.beta;
+
+	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
+
+	if (options.plotOptions[type].grouping !== false) { z = 0; }
 
 	H.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
-		point.shapeArgs = {
-			x: point.shapeArgs.x,
-			y: point.shapeArgs.y,
-			a1: options3d.angle1,
-			d: options3d.depth,
-			options: {
-				start: point.shapeArgs.start,
-				end: point.shapeArgs.end,
-				r: point.shapeArgs.r,
-				ir: point.shapeArgs.innerR
-			}
-		};
+		
+		point.shapeArgs.z = z;
+		point.shapeArgs.depth = depth * 0.75;
+		point.shapeArgs.origin = origin;
+		point.shapeArgs.alpha = alpha;
+		point.shapeArgs.beta = beta;
+	
+		var angle = (point.shapeArgs.end + point.shapeArgs.start) / 2;
 
-
-		var angle = (point.shapeArgs.options.end + point.shapeArgs.options.start) / 2;
-		point.slicedTranslation.translateX = Math.round(cos(angle) * cos(options3d.angle1) * series.options.slicedOffset);
-		point.slicedTranslation.translateY = Math.round(sin(angle) * cos(-options3d.angle1) * series.options.slicedOffset);
-
-	});    
+		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(alpha));
+		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(alpha));
+	});
 });
 
 H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
@@ -963,224 +814,25 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	H.each(series.data, function (point) {
-		var options = point.shapeArgs.options;
-		var r = options.r,
-			d = point.shapeArgs.d,
-			a1 = point.shapeArgs.a1,
-			a2 = (options.start + options.end) / 2; 
+		var shapeArgs = point.shapeArgs;
+		var r = shapeArgs.r,
+			d = shapeArgs.depth,
+			a1 = shapeArgs.alpha,
+			b1 = shapeArgs.beta,
+			a2 = (shapeArgs.start + shapeArgs.end) / 2; 
 
 		if (point.connector) {
-			point.connector.translate(0, (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0));
+			point.connector.translate(
+				(-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? sin(b1) * d : 0),
+				(-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0)
+			);
 		}
 		if (point.dataLabel) {
-			point.dataLabel.attr({y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)});
+			point.dataLabel.attr({
+				x: point.dataLabel.connX + (-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? cos(b1) * d : 0) - (point.dataLabel.width / 2),
+				y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)
+			});
 		}
 	});
 });
-
-H.wrap(H.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-	
-	var group = this.group;
-
-	H.each(this.data, function (point) {		
-		H.each(point.graphic.children, function (child) {
-			child.element.point = point;
-		});
-	});	
-});/**
- *	Extension to the VML Renderer
- */
-
-var HV = H.VMLRenderer;
-
-if (HV) {
-H.wrap(HC.prototype, 'getZPosition2', function (proceed) {
-	var k  = proceed.apply(this, [].slice.call(arguments, 1));
-	return (this.getNumberOfStacks() - k - 1);
-});
-
-HV.prototype.cube = HR.prototype.cube;
-HV.prototype.getCubePath = HR.prototype.getCubePath;
-
-HV.prototype.toLinePath = HR.prototype.toLinePath;
-
-HV.prototype.createElement3D = HR.prototype.createElement3D;
-
-HV.prototype.arc3d = HR.prototype.arc3d;
-HV.prototype.get3DArcPath = function (params) {
-	params = params[0] || params;
-	var	options = params.options;
-		d = params.d;
-		a1 = params.a1;
-		y = params.y;
-		x = params.x;
-
-	var start = options.start,
-		end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
-		longArc = end - start < PI ? 0 : 1,
-		// outside ring
-		rx1 = options.r,
-		ry1 = rx1 * cos(a1),		
-		sx1 = x + rx1 * cos(start),
-		sy1 = y + ry1 * sin(start),
-		ex1 = x + rx1 * cos(end),
-		ey1 = y + ry1 * sin(end),
-		// inside ring
-		rx2 = options.ir,
-		ry2 = rx2 * cos(a1),		
-		sx2 = x + rx2 * cos(end),
-		sy2 = y + ry2 * sin(end),
-		ex2 = x + rx2 * cos(start),
-		ey2 = y + ry2 * sin(start);
-
-	// Sanity
-	if (a1 === 0) { d = 0; }
-
-	if (options.start === options.end) {
-		return {
-			front: {d: [], z: 0},
-			back: {d: [], z: 0 },
-			top: {d: [], z: 0 },
-			bottom: {d: [], z: 0 },
-			left: {d: [], z: 0 },
-			right: {d: [], z: 0 }
-		};
-	}
-	// Normalize angles
-	start = (start + 4 * Math.PI) % (2 * Math.PI);
-	end = (end + 4 * Math.PI) % (2 * Math.PI);
-
-	// Find Quadrant start & end ?	
-	var sQ = (Math.floor(start / (Math.PI / 2)) + 1) % 4;
-	var eQ = (Math.floor(end / (Math.PI / 2)) + 1) % 4;
-
-	// TOP SIDE
-	var top =  [
-		'wa', 
-		x - rx1, y - ry1, x + rx1, y + ry1, 
-		sx1, sy1, ex1, ey1,
-		'at',
-		x - rx2, y - ry2, x + rx2, y + ry2,
-		sx2, sy2, ex2, ey2
-	];
-
-	// OUTER SIDE
-	var fsx1 = sx1,
-		fsy1 = sy1,
-		fex1 = ex1,
-		fey1 = ey1;
-
-	if (eQ === 3 || eQ === 0) {
-		fex1 = x - rx1;
-		fey1 = y;
-		longArc = 0;
-	}
-	if (sQ === 3 || sQ === 0) {
-		fsx1 = x + rx1;
-		fsy1 = y;
-		longArc = 0;
-	}
-
-	var front = [		
-		'wa', 
-		x - rx1, y - ry1, x + rx1, y + ry1,
-		fsx1, fsy1, fex1, fey1,
-		'at', 
-		x - rx1, y - ry1 + d, x + rx1, y + ry1 + d,
-		fex1, fey1 + d, fsx1, fsy1 + d
-		];
-
-	if ((eQ === 3 || eQ === 0) && (sQ === 3 || sQ === 0)) {
-		front = [];
-	}
-	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start > end)) {
-	front = [
-		'wa',
-		x - rx1, y - ry1, x + rx1, y + ry1,
-		sx1, sy1, x - rx1, y,
-		'at',
-		x - rx1, y - ry1 + d, x + rx1, y + ry1 + d,
-		x - rx1, y + d, sx1, sy1 + d,
-		'e',
-		'at',
-		x - rx1, y - ry1, x + rx1, y + ry1,
-		ex1, ey1, x + rx1, y,
-		'wa',
-		x - rx1, y - ry1 + d, x + rx1, y + ry1 + d,
-		x + rx1, y + d, ex1, ey1 + d,
-		'e'
-		];
-	}
-	// BACK SIDE
-	var bsx2 = sx2,
-		bsy2 = sy2,
-		bex2 = ex2,
-		bey2 = ey2;
-
-	if (eQ === 2 || eQ === 1) {
-		bsx2 = x + rx2;
-		bsy2 = y;
-		longArc = 0;
-	}
-	if (sQ === 2 || sQ === 1) {
-		bex2 = x - rx2;
-		bey2 = y;
-		longArc = 0;
-	}
-
-	var back = [
-		'at', 
-		x - rx2, y - ry2, x + rx2, y + ry2,
-		bsx2, bsy2, bex2, bey2,
-		'wa', 
-		x - rx2, y - ry2 + d, x + rx2, y + ry2 + d,
-		bex2, bey2 + d, bsx2, bsy2 + d
-		];
-
-	if ((eQ === 2 || eQ === 1) && (sQ === 2 || sQ === 1) && (start < end)) {
-		back = [];
-	}
-	// INNER SIDE 1
-	var right = [];
-	if (sQ > 1) {
-		right = [
-		'M', sx1, sy1,
-		'L', ex2, ey2,
-		'L', ex2, ey2 + d,
-		'L', sx1, sy1 + d,
-		'Z' 
-		];
-	}
-
-	// INNER SIDE 2
-	var left = [];
-	
-	if (eQ <= 1) {
-		left = [
-		'M', ex1, ey1,
-		'L', sx2, sy2,
-		'L', sx2, sy2 + d,
-		'L', ex1, ey1 + d,
-		'Z' 
-		];
-	}
-
-	var zCorr = Math.sin((start + end) / 2) * 100;
-	if (start > end) {
-		zCorr = 0;
-	}
-
-	return {
-		front: {d: front, z: 100 + zCorr},
-		back: {d: back, z: 100 + zCorr },
-		top: {d: top, z: 200 + zCorr },
-		bottom: {d: [], z: zCorr },
-		left: {d: left, z: zCorr },
-		right: {d: right, z: zCorr }
-	};
-};
-
-
-}
 }(Highcharts));
