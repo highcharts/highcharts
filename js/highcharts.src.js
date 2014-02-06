@@ -8196,6 +8196,7 @@ Axis.prototype = {
 		var series = this.series,
 			i = series.length;
 		if (!this.isXAxis) {
+			this.usePercentage = false;
 			while (i--) {
 				series[i].setStackedPoints();
 			}
