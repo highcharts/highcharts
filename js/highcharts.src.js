@@ -10082,17 +10082,17 @@ Legend.prototype = {
 			showCheckbox = chart.options.plotOptions.series.showCheckbox,
 			checkboxPosition = chart.options.plotOptions.series.checkboxPosition;
 
-		if (options.align == 'right' && checkboxPosition == 'left' &&
-				showCheckbox) {
-			legend.initialItemX += 20;
-		}
-
 		legend.itemX = options.align == 'left' && showCheckbox ?
 			legend.initialItemX + parseInt(options.itemCheckboxStyle.width) :
 			legend.initialItemX;
 		legend.itemY = legend.initialItemY;
 		legend.offsetWidth = 0;
 		legend.lastItemY = 0;
+
+		if (options.align == 'right' && checkboxPosition == 'left' &&
+				showCheckbox) {
+			legend.itemX += 20;
+		}
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
