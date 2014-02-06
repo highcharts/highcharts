@@ -837,7 +837,7 @@ Pointer.prototype = {
 			};
 
 			// Now attach the function, either as a direct property or through addEvent
-			if (eventConfig[1].indexOf('on') === 0) {
+			if (eventConfig[1].indexOf('on') === 0 && !adapterHandlesAllEvents) {
 				eventConfig[0][eventConfig[1]] = pointer['_' + eventConfig[2]];
 			} else {
 				addEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
@@ -855,7 +855,7 @@ Pointer.prototype = {
 
 		// Release all DOM events
 		each(pointer._events, function (eventConfig) {	
-			if (eventConfig[1].indexOf('on') === 0) {
+			if (eventConfig[1].indexOf('on') === 0 && !adapterHandlesAllEvents) {
 				eventConfig[0][eventConfig[1]] = null; // delete breaks oldIE
 			} else {		
 				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
