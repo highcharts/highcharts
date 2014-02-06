@@ -13690,17 +13690,18 @@ Series.prototype = {
 	setPercentStacks: function () {
 		var series = this,
 			stackKey = series.stackKey,
-			stacks = series.yAxis.stacks;
+			stacks = series.yAxis.stacks,
+			processedXData = series.processedXData;
 
 		each([stackKey, '-' + stackKey], function (key) {
-			var i = series.xData.length,
+			var i = processedXData.length,
 				x,
 				stack,
 				pointExtremes,
 				totalFactor;
 
 			while (i--) {
-				x = series.xData[i];
+				x = processedXData[i];
 				stack = stacks[key] && stacks[key][x];
 				pointExtremes = stack && stack.points[series.index];
 				if (pointExtremes) {
