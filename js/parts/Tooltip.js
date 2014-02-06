@@ -234,6 +234,65 @@ Tooltip.prototype = {
 		if (y + boxHeight > plotTop + plotHeight) {
 			y = mathMax(plotTop, plotTop + plotHeight - boxHeight - distance); // below
 		}
+
+		if (this.options.avoidLegend && this.chart.legend.options.enabled) {
+		    var legend = this.chart.legend,
+                        // Should it abide by the legend margin?
+                        legendMargin = 0, //legend.options.margin == null ? 15 : legend.options.margin,
+                        legendWidth = legend.legendWidth + legendMargin * 2,
+                        legendHeight = legend.legendHeight + legendMargin * 2,
+                        // Only reliable legend position cross browser
+                        legendX = legend.group.attr('translateX') - legendMargin,
+                        legendY = legend.group.attr('translateY') - legendMargin,
+                        legendRight = legendX + legendWidth,
+                        legendBottom = legendY + legendHeight,
+                        intersect = !(legendX > (x + boxWidth) || legendRight < x ||
+                            legendY > (y + boxHeight) || legendBottom < y);
+
+                    if (intersect) {
+                        var x_left = Math.abs((x + boxWidth) - legendX),
+                            x_right = Math.abs(x - legendRight),
+                            y_top = Math.abs((y + boxHeight) - legendY),
+                            y_bottom = Math.abs(y - legendBottom),
+                            x_overlap = 0,
+                            y_overlap = 0;
+
+                        // Check to make sure that the position will be visible
+                        if (x_left > x_right) {
+                            if ((x + boxWidth) + x_right > (plotLeft + plotWidth)) {
+                                x_overlap = -x_left;
+                            } else {
+                                x_overlap = x_right;
+                            }
+                        } else {
+                            if (x - x_left < 7) {
+                                x_overlap = x_right;
+                            } else {
+                                x_overlap = -x_left;
+                            }
+                        }
+
+                        if (y_top > y_bottom) {
+                            if ((y + boxHeight) + y_bottom > (plotTop + plotHeight)) {
+                                y_overlap = -y_top;
+                            } else {
+                                y_overlap = y_bottom;
+                            }
+                        } else {
+                            if (y - y_top < plotTop + 5) {
+                                y_overlap = y_bottom;
+                            } else {
+                                y_overlap = -y_top;
+                            }
+                        }
+
+                        if (Math.abs(x_overlap) < Math.abs(y_overlap)) {
+                            x += x_overlap;
+                        } else {
+                            y += y_overlap;
+                        }
+                    }
+		}
 	
 		return {x: x, y: y};
 	},
