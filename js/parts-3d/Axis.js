@@ -23,7 +23,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			fback = frame.back,
 			fside = frame.side;
 
-		var d = options3d.totalDepth;
+		var d = options3d.depth * chart.series.length;
 
 		var origin = {
 			x: chart.plotLeft + (chart.plotWidth / 2),
@@ -81,7 +81,7 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-		var d = options3d.totalDepth;
+	var d = options3d.depth * chart.series.length;
 
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
@@ -118,7 +118,7 @@ H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
 	origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.totalDepth
+		z: options3d.depth * chart.series.length
 	};
 
 	var pArr = [
@@ -146,7 +146,7 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
 	origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.totalDepth
+		z: options3d.depth * chart.series.length
 	};
 	
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,

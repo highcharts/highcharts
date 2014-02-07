@@ -10,23 +10,24 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		depth = options.plotOptions[type].depth,
+		depth = options.chart.options3d.depth,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2,
-			z: options.chart.options3d.totalDepth
+			z: depth * chart.series.length
 		},
 		alpha = options.chart.options3d.alpha,
 		beta = options.chart.options3d.beta;
 
-	var z = series._i * depth;
+	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
 
 	if (options.plotOptions[type].grouping !== false) { z = 0; }
+
 	H.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
 		
 		point.shapeArgs.z = z;
-		point.shapeArgs.depth = point.depth || depth * 0.75;
+		point.shapeArgs.depth = depth * 0.75;
 		point.shapeArgs.origin = origin;
 		point.shapeArgs.alpha = alpha;
 		point.shapeArgs.beta = beta;
