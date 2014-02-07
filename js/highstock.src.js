@@ -16801,7 +16801,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(point.plotX, point.plotY, inverted)),
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, plotY + 1, inverted)), // +1 for rounding errors (#2683)
 		alignAttr; // the final position;
 
 	if (visible) {
