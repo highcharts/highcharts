@@ -18321,6 +18321,11 @@ seriesProto.processData = function () {
 		}
 		series.closestPointRange = groupPositions.info.totalRange;
 
+		// Make sure the X axis extends to show the first group (#2533)
+		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+			xAxis.dataMin = groupedXData[0];
+		}
+
 		// set series props
 		series.processedXData = groupedXData;
 		series.processedYData = groupedYData;
