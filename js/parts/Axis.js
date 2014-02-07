@@ -1682,7 +1682,7 @@ Axis.prototype = {
 				each(tickPositions, function (pos, i) {
 					if (i % 2 === 0 && pos < axis.max) {
 						if (!alternateBands[pos]) {
-							alternateBands[pos] = new PlotLineOrBand(axis);
+							alternateBands[pos] = new Highcharts.PlotLineOrBand(axis);
 						}
 						from = pos + tickmarkOffset; // #949
 						to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max;

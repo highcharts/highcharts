@@ -99,8 +99,6 @@ var UNDEFINED,
 	AxisPlotLineOrBandExtension,
 
 	// constants for attributes
-	LINEAR_GRADIENT = 'linearGradient',
-	STOPS = 'stops',
 	STROKE_WIDTH = 'stroke-width',
 
 	// time methods, changed based on whether or not UTC is used
@@ -6201,7 +6199,7 @@ StackItem.prototype = {
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
-var PlotLineOrBand = function (axis, options) {
+Highcharts.PlotLineOrBand = function (axis, options) {
 	this.axis = axis;
 
 	if (options) {
@@ -6210,7 +6208,7 @@ var PlotLineOrBand = function (axis, options) {
 	}
 };
 
-PlotLineOrBand.prototype = {
+Highcharts.PlotLineOrBand.prototype = {
 	
 	/**
 	 * Render the plot line or plot band. If it is already existing,
@@ -6418,7 +6416,7 @@ AxisPlotLineOrBandExtension = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options, coll) {
-		var obj = new PlotLineOrBand(this, options).render(),
+		var obj = new Highcharts.PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
 		if (obj) { // #2189
@@ -8142,7 +8140,7 @@ Axis.prototype = {
 				each(tickPositions, function (pos, i) {
 					if (i % 2 === 0 && pos < axis.max) {
 						if (!alternateBands[pos]) {
-							alternateBands[pos] = new PlotLineOrBand(axis);
+							alternateBands[pos] = new Highcharts.PlotLineOrBand(axis);
 						}
 						from = pos + tickmarkOffset; // #949
 						to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max;
@@ -19162,14 +19160,13 @@ if (Renderer === Highcharts.VMLRenderer) {
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
-/*jslint white:true */
-var buttonGradient = hash(
-		LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
-		STOPS, [
+var buttonGradient = {
+		linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+		stops: [
 			[0, '#FFF'],
 			[1, '#CCC']
 		]
-	),
+	},
 	units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType;
 // add more resolution to units
@@ -19259,20 +19256,19 @@ extend(defaultOptions, {
 		buttonBorderWidth: 1,
 		minWidth: 6,
 		rifleColor: '#666',
-		trackBackgroundColor: hash(
-			LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
-			STOPS, [
+		trackBackgroundColor: {
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			stops: [
 				[0, '#EEE'],
 				[1, '#FFF']
 			]
-		),
+		},
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
 	}
 });
-/*jslint white:false */
 
 /**
  * The Scroller class

@@ -25,6 +25,12 @@
             <filter token="product.version" value="${highstock.product.version}"/>
             <filter token="product.date" value="${highstock.product.date}"/>
         </filterset>
+        <filterset id="highmaps.filter">
+            <filter token="product.name" value="${highmaps.product.name}"/>
+            <filter token="product.cdnpath" value="${highmaps.product.cdnpath}"/>
+            <filter token="product.version" value="${highmaps.product.version}"/>
+            <filter token="product.date" value="${highmaps.product.date}"/>
+        </filterset>
 
         <!-- folder names -->
         <property name="tools.dir" value="${basedir}/tools"/>
@@ -44,6 +50,9 @@
         <property name="highstock.src.name" value="highstock.src.js"/>
         <property name="highstock.src.file" value="${basedir}/js/${highstock.src.name}"/>
         <property name="highstock.minified.name" value="highstock.js"/>
+        <property name="highmaps.src.name" value="highmaps.src.js"/>
+        <property name="highmaps.src.file" value="${basedir}/js/${highmaps.src.name}"/>
+        <property name="highmaps.minified.name" value="highmaps.js"/>
         <property name="highchartsmore.src.name" value="highcharts-more.src.js"/>
         <property name="highchartsmore.src.file" value="${basedir}/js/${highchartsmore.src.name}"/>
         <property name="highchartsmore.minified.name" value="highcharts-more.js"/>
@@ -230,6 +239,79 @@
             <file name="Outro.js"/>
         </filelist>
 
+
+        <!-- This is the list of files for the maps module -->
+        <filelist id="maps.files" dir="${basedir}/js">
+            <file name="parts-map/Intro.txt"/>
+            <file name="parts-map/Globals.js"/>
+            <file name="parts-map/MapAxis.js"/>
+            <file name="parts-map/ColorAxis.js"/>
+            <file name="parts-map/MapChart.js"/>
+            <file name="parts-map/MapPointer.js"/>
+            <file name="parts-map/MapSeries.js"/>
+            <file name="parts-map/MapLineSeries.js"/>
+            <file name="parts-map/MapPointSeries.js"/>
+            <file name="parts-map/MapBubbleSeries.js"/>
+            <file name="parts-map/Map.js"/>
+            <file name="parts-map/Outro.txt"/>
+        </filelist>
+
+
+        <!-- This is the list of files for Highmaps -->
+        <filelist id="highmaps.files" dir="${basedir}/js">
+            <file name="parts/Intro.js"/>
+            <file name="parts/Globals.js"/>
+            <file name="parts/Utilities.js"/>
+            <file name="parts/PathAnimation.js"/>
+            <file name="parts/JQueryAdapter.js"/>
+            <file name="parts/Adapters.js"/>
+            <file name="parts/Options.js"/>
+            <file name="parts/Color.js"/>
+            <file name="parts/SvgRenderer.js"/>
+            <file name="parts/Html.js"/>
+            <file name="parts/VmlRenderer.js"/>
+            <file name="parts/CanVGRenderer.js"/>
+            <file name="parts/Tick.js"/>
+            <!-- file name="parts/StackItem.js"/ -->
+            <!-- file name="parts/PlotLineOrBand.js"/ -->
+            <file name="parts/Axis.js"/>
+            <!-- file name="parts/DateTimeAxis.js"/ -->
+            <file name="parts/LogarithmicAxis.js"/>
+            <file name="parts/Tooltip.js"/>
+            <file name="parts/Pointer.js"/>
+            <file name="parts/MSPointer.js"/>
+            <file name="parts/Legend.js"/>
+            <file name="parts/Chart.js"/>
+            <!-- file name="parts/CenteredSeriesMixin.js"/ -->
+            <file name="parts/Point.js"/>
+            <file name="parts/Series.js"/>
+            <file name="parts/Dynamics.js"/>
+            <file name="parts/LineSeries.js"/>
+            <!-- file name="parts/AreaSeries.js"/ -->
+            <!-- file name="parts/SplineSeries.js"/ -->
+            <!-- file name="parts/AreaSplineSeries.js"/ -->
+            <file name="parts/ColumnSeries.js"/>
+            <!-- file name="parts/BarSeries.js"/ -->
+            <file name="parts/ScatterSeries.js"/>
+            <!-- file name="parts/PieSeries.js"/ -->
+            <file name="parts/DataLabels.js"/>
+            <!-- Maps -->
+            <file name="parts-map/MapAxis.js"/>
+            <file name="parts-map/ColorAxis.js"/>
+            <file name="parts-map/MapSeries.js"/>
+            <file name="parts-map/MapChart.js"/>
+            <file name="parts-map/MapPointer.js"/>
+            <file name="parts-map/MapLineSeries.js"/>
+            <file name="parts-map/MapPointSeries.js"/>
+            <file name="parts-more/BubbleSeries.js"/>
+            <file name="parts-map/MapBubbleSeries.js"/>
+            <file name="parts-map/Map.js"/>
+            <!-- Outro -->
+            <file name="parts/Facade.js"/>
+            <file name="parts/Outro.js"/>
+
+        </filelist>
+
         <filelist id="highcharts-all.files" dir="${dist.dir}">
             <file name="js/adapters/${standalone.minified.name}"/>
             <file name="highcharts/js/${highcharts.minified.name}"/>
@@ -289,6 +371,32 @@
             </filterchain>
         </concat>
 
+        <!-- Concat highmaps src and replace the product name and version -->
+        <concat destfile="${basedir}/js/highmaps.src.js" encoding="UTF-8">
+            <filelist refid="highmaps.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highmaps.product.name}"/>
+                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
+                    <token key="product.version" value="${highmaps.product.version}"/>
+                    <token key="product.date" value="${highmaps.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+
+        <!-- Concat maps.src.js and replace the product name and version -->
+        <concat destfile="${basedir}/js/modules/map.src.js" encoding="UTF-8">
+            <filelist refid="maps.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highmaps.product.name}"/>
+                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
+                    <token key="product.version" value="${highmaps.product.version}"/>
+                    <token key="product.date" value="${highmaps.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+
         <!-- Concat highcharts-more src and replace the product name and version -->
         <concat destfile="${highchartsmore.src.file}" encoding="UTF-8">
             <filelist refid="highchartsmore.files"/>
@@ -334,6 +442,7 @@
             <formatter type="plain"/>
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
             <fileset file="${highstock.src.file}"/>
+            <fileset file="${highmaps.src.file}"/>
             <fileset file="${highchartsmore.src.file}"/>
             <fileset file="${mootools.src.file}"/>
             <fileset file="${prototype.src.file}"/>
@@ -445,6 +554,10 @@
         <antcall target="compile">
             <param name="param.src" value="${highstock.src.file}"/>
             <param name="param.out" value="${dist.dir}/highstock/js/${highstock.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${highmaps.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highmaps/js/${highmaps.minified.name}"/>
         </antcall>
         <antcall target="compile">
             <param name="param.src" value="${highchartsmore.src.file}"/>

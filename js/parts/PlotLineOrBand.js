@@ -2,7 +2,7 @@
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
-var PlotLineOrBand = function (axis, options) {
+Highcharts.PlotLineOrBand = function (axis, options) {
 	this.axis = axis;
 
 	if (options) {
@@ -11,7 +11,7 @@ var PlotLineOrBand = function (axis, options) {
 	}
 };
 
-PlotLineOrBand.prototype = {
+Highcharts.PlotLineOrBand.prototype = {
 	
 	/**
 	 * Render the plot line or plot band. If it is already existing,
@@ -219,7 +219,7 @@ AxisPlotLineOrBandExtension = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options, coll) {
-		var obj = new PlotLineOrBand(this, options).render(),
+		var obj = new Highcharts.PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
 		if (obj) { // #2189
