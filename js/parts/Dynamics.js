@@ -434,12 +434,16 @@ extend(Axis.prototype, {
      */
 	remove: function (redraw) {
 		var chart = this.chart,
-			key = this.coll; // xAxis or yAxis
+			key = this.coll, // xAxis or yAxis
+			axisSeries = this.series,
+			i = axisSeries.length;
 
-		// Remove associated series
-		each(this.series, function (series) {
-			series.remove(false);
-		});
+		// Remove associated series (#2687)
+		while (i--) {
+			if (axisSeries[i]) {
+				axisSeries[i].remove(false);
+			}
+		}
 
 		// Remove the axis
 		erase(chart.axes, this);
