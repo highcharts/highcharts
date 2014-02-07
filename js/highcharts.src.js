@@ -346,7 +346,7 @@ function pick() {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (isIE) {
+	if (isIE && !hasSVG) { // #2686
 		if (styles && styles.opacity !== UNDEFINED) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
