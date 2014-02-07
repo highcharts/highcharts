@@ -11,11 +11,11 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		options = chart.options,
 		options3d = options.chart.options3d,
 		cylindrical = (type === 'cylinder'),
-		depth = options3d.depth,
+		depth = options.plotOptions[type].depth,
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: depth * chart.series.length
+			z: options3d.totalDepth
 		},
 		alpha = options3d.alpha,
 		beta = options3d.beta;
@@ -45,7 +45,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 			shapeArgs.beta = beta; 
 			shapeArgs.z = chart.inverted ? -z : z;
 			shapeArgs.origin = origin;
-			shapeArgs.depth = depth * 0.75;
+			shapeArgs.depth = point.depth || depth * 0.75;
 		}	
 	});	    
 });
