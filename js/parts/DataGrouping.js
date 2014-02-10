@@ -262,7 +262,8 @@ seriesProto.processData = function () {
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
-	series.groupPixelWidth = null;
+	series.groupPixelWidth = null; // #2110
+	series.hasProcessed = true; // #2692
 
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
@@ -474,6 +475,18 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	return options;
 });
 
+
+/**
+ * When resetting the scale reset the hasProccessed flag to avoid taking previous data grouping
+ * of neighbour series into accound when determining group pixel width (#2692).
+ */
+wrap(Axis.prototype, 'setScale', function (proceed) {
+	proceed.call(this);
+	each(this.series, function (series) {
+		series.hasProcessed = false;
+	});
+});
+
 /**
  * Get the data grouping pixel width based on the greatest defined individual width
  * of the axis' series, and if whether one of the axes need grouping.
@@ -503,7 +516,8 @@ Axis.prototype.getGroupPixelWidth = function () {
 	i = len;
 	while (i--) {
 		dgOptions = series[i].options.dataGrouping;
-		if (dgOptions) {
+			
+		if (dgOptions && series[i].hasProcessed) { // #2692
 
 			dataLength = (series[i].processedXData || series[i].data).length;
 
