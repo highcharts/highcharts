@@ -11,7 +11,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		options = chart.options,
 		options3d = options.chart.options3d,
 		cylindrical = (type === 'cylinder'),
-		depth = options3d.depth,
+		depth = options.plotOptions[type].depth || 0,
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
@@ -21,6 +21,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		beta = options3d.beta;
 
 	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	z += depth / 2;
 
 	if (options.plotOptions[type].grouping !== false) { z = 0; }
 

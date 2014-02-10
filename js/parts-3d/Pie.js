@@ -10,16 +10,18 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		depth = options.chart.options3d.depth,
+		depth = options.plotOptions[type].depth || 0,
+		options3d = options.chart.options3d,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2,
-			z: depth * chart.series.length
+			z: options3d.depth
 		},
-		alpha = options.chart.options3d.alpha,
-		beta = options.chart.options3d.beta;
+		alpha = options3d.alpha,
+		beta = options3d.beta;
 
 	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	z += depth / 2;
 
 	if (options.plotOptions[type].grouping !== false) { z = 0; }
 

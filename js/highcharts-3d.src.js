@@ -561,7 +561,7 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 			fback = frame.back,
 			fside = frame.side;
 
-		var d = options3d.depth * chart.series.length;
+		var d = options3d.depth;
 
 		var origin = {
 			x: chart.plotLeft + (chart.plotWidth / 2),
@@ -619,7 +619,7 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = options3d.depth * chart.series.length;
+	var d = options3d.depth;
 
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
@@ -656,7 +656,7 @@ H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
 	origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth * chart.series.length
+		z: options3d.depth
 	};
 
 	var pArr = [
@@ -684,7 +684,7 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
 	origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth * chart.series.length
+		z: options3d.depth
 	};
 	
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
@@ -706,7 +706,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		options = chart.options,
 		options3d = options.chart.options3d,
 		cylindrical = (type === 'cylinder'),
-		depth = options3d.depth,
+		depth = options.plotOptions[type].depth || 0,
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
@@ -716,6 +716,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		beta = options3d.beta;
 
 	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	z += depth / 2;
 
 	if (options.plotOptions[type].grouping !== false) { z = 0; }
 
@@ -780,16 +781,18 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		depth = options.chart.options3d.depth,
+		depth = options.plotOptions[type].depth || 0,
+		options3d = options.chart.options3d,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2,
-			z: depth * chart.series.length
+			z: options3d.depth
 		},
-		alpha = options.chart.options3d.alpha,
-		beta = options.chart.options3d.beta;
+		alpha = options3d.alpha,
+		beta = options3d.beta;
 
 	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	z += depth / 2;
 
 	if (options.plotOptions[type].grouping !== false) { z = 0; }
 
