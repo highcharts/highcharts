@@ -21,7 +21,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-		chart.container.style["-ms-touch-action"] = chart.container.style["touch-action"] = "none";
+		chart.container.style['-ms-touch-action'] = chart.container.style['touch-action'] = NONE;
 		proceed.call(this, chart, options);
 	});
 
@@ -31,27 +31,27 @@ if (win.PointerEvent || win.MSPointerEvent) {
 			eventmap;
 		proceed.apply(this);
 		eventmap = [
-			[this.chart.container, "PointerDown", "touchstart", "onContainerTouchStart", function (e) {
+			[this.chart.container, 'PointerDown', 'touchstart', 'onContainerTouchStart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
 			}],
-			[this.chart.container, "PointerMove", "touchmove", "onContainerTouchMove", function (e) {
+			[this.chart.container, 'PointerMove', 'touchmove', 'onContainerTouchMove', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
 				if (!touches[e.pointerId].target) {
 					touches[e.pointerId].target = e.currentTarget;
 				}	
 			}],
-			[document, "PointerUp", "touchend", "onDocumentTouchEnd", function (e) {
+			[document, 'PointerUp', 'touchend', 'onDocumentTouchEnd', function (e) {
 				delete touches[e.pointerId];
 			}]
 		];
 		
 		// Add the events based on the eventmap configuration
 		each(eventmap, function (eventConfig) {
-			var eventName = window.PointerEvent ? eventConfig[1].toLowerCase() : "MS" + eventConfig[1];
+			var eventName = window.PointerEvent ? eventConfig[1].toLowerCase() : 'MS' + eventConfig[1];
 
 			pointer['_' + eventName] = function (e) {
 				e = e.originalEvent || e;
-				if (e.pointerType === "touch" || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
+				if (e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
 					eventConfig[4](e);
 					
 					// This event corresponds to ontouchstart - call onContainerTouchStart
