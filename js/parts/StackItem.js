@@ -99,11 +99,7 @@ StackItem.prototype = {
 				
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
-			label.attr({ 
-				visibility: this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 
-					(hasSVG ? 'inherit' : VISIBLE) : 
-					HIDDEN
-			});
+			label[this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 'show' : 'hide'](true);
 		}
 	}
 };
@@ -118,6 +114,7 @@ Axis.prototype.buildStacks = function () {
 	var series = this.series,
 		i = series.length;
 	if (!this.isXAxis) {
+		this.usePercentage = false;
 		while (i--) {
 			series[i].setStackedPoints();
 		}
@@ -238,10 +235,10 @@ Series.prototype.setStackedPoints = function () {
 
 			// Percent stacked areas
 			} else {
-				stack.total += mathAbs(y) || 0;
+				stack.total = correctFloat(stack.total + (mathAbs(y) || 0));
 			}
 		} else {
-			stack.total += y || 0;
+			stack.total = correctFloat(stack.total + (y || 0));
 		}
 
 		stack.cum = (stack.cum || 0) + (y || 0);
@@ -267,17 +264,18 @@ Series.prototype.setStackedPoints = function () {
 Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
-		stacks = series.yAxis.stacks;
+		stacks = series.yAxis.stacks,
+		processedXData = series.processedXData;
 
 	each([stackKey, '-' + stackKey], function (key) {
-		var i = series.xData.length,
+		var i = processedXData.length,
 			x,
 			stack,
 			pointExtremes,
 			totalFactor;
 
 		while (i--) {
-			x = series.xData[i];
+			x = processedXData[i];
 			stack = stacks[key] && stacks[key][x];
 			pointExtremes = stack && stack.points[series.index];
 			if (pointExtremes) {

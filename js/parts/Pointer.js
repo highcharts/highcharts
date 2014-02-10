@@ -169,7 +169,7 @@ Pointer.prototype = {
 		}
 
 		// separate tooltip and general mouse events
-		if (hoverSeries && hoverSeries.tracker) { // only use for line-type series with common tracker
+		if (hoverSeries && hoverSeries.tracker && !tooltip.followPointer) { // only use for line-type series with common tracker and while not following the pointer #2584
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
@@ -197,7 +197,7 @@ Pointer.prototype = {
 
 		// Draw independent crosshairs
 		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(hoverPoint, point));
+			axis.drawCrosshair(e, pick(point, hoverPoint));
 		});
 	},
 
@@ -533,7 +533,7 @@ Pointer.prototype = {
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement,
-			relatedSeries = relatedTarget.point && relatedTarget.point.series; // #2499
+			relatedSeries = relatedTarget && relatedTarget.point && relatedTarget.point.series; // #2499
 		
 		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
 				relatedSeries !== series) {

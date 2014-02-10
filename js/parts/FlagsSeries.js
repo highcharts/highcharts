@@ -159,8 +159,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			options = series.options,
 			optionsY = options.y,
 			shape,
-			box,
-			bBox,
 			i,
 			point,
 			graphic,
@@ -219,10 +217,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					.shadow(options.shadow);
 
 				}
-
-				// get the bounding box
-				box = graphic.box;
-				bBox = box.getBBox();
 
 				// Set the tooltip anchor position
 				point.tooltipPos = [plotX, plotY];

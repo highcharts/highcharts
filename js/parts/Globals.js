@@ -84,8 +84,6 @@ var UNDEFINED,
 	AxisPlotLineOrBandExtension,
 
 	// constants for attributes
-	LINEAR_GRADIENT = 'linearGradient',
-	STOPS = 'stops',
 	STROKE_WIDTH = 'stroke-width',
 
 	// time methods, changed based on whether or not UTC is used
@@ -108,4 +106,4 @@ var UNDEFINED,
 	seriesTypes = {};
 
 // The Highcharts namespace
-win.Highcharts = win.Highcharts ? error(16, true) : {};
+var Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};

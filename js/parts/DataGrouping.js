@@ -323,6 +323,11 @@ seriesProto.processData = function () {
 		}
 		series.closestPointRange = groupPositions.info.totalRange;
 
+		// Make sure the X axis extends to show the first group (#2533)
+		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+			xAxis.dataMin = groupedXData[0];
+		}
+
 		// set series props
 		series.processedXData = groupedXData;
 		series.processedYData = groupedYData;
@@ -401,7 +406,7 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
 			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange) {
+				if (timeUnits[n] >= xAxis.closestPointRange || point.key % timeUnits[n] > 0) { // #2637
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;
 				}

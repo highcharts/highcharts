@@ -38,7 +38,7 @@ SVGElement.prototype = {
 		var animOptions = pick(options, globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
-			animOptions = merge(animOptions);
+			animOptions = merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
@@ -260,13 +260,15 @@ SVGElement.prototype = {
 
 
 					if (key === 'text') {
-						// Delete bBox memo when the text changes
 						if (value !== wrapper.textStr) {
+							
+							// Delete bBox memo when the text changes
 							delete wrapper.bBox;
-						}
-						wrapper.textStr = value;
-						if (wrapper.added) {
-							renderer.buildText(wrapper);
+						
+							wrapper.textStr = value;
+							if (wrapper.added) {
+								renderer.buildText(wrapper);
+							}
 						}
 					} else if (!skipAttr) {
 						attr(element, key, value);
@@ -383,47 +385,66 @@ SVGElement.prototype = {
 	 * @param {Object} styles
 	 */
 	css: function (styles) {
-		/*jslint unparam: true*//* allow unused param a in the regexp function below */
 		var elemWrapper = this,
+			oldStyles = elemWrapper.styles,
+			newStyles = {},
 			elem = elemWrapper.element,
-			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width),
+			textWidth,
 			n,
 			serializedCss = '',
-			hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
-		/*jslint unparam: false*/
+			hyphenate,
+			hasNew = !oldStyles;
 
 		// convert legacy
 		if (styles && styles.color) {
 			styles.fill = styles.color;
 		}
 
-		// Merge the new styles with the old ones
-		styles = extend(
-			elemWrapper.styles,
-			styles
-		);
-
-		// store object
-		elemWrapper.styles = styles;
-
-		if (textWidth) {
-			delete styles.width;
-		}
-
-		// serialize and set style attribute
-		if (isIE && !hasSVG) {
-			css(elemWrapper.element, styles);
-		} else {
+		// Filter out existing styles to increase performance (#2640)
+		if (oldStyles) {
 			for (n in styles) {
-				serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
+				if (styles[n] !== oldStyles[n]) {
+					newStyles[n] = styles[n];
+					hasNew = true;
+				}
 			}
-			attr(elem, 'style', serializedCss); // #1881
 		}
+		if (hasNew) {
+			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width);
+
+			// Merge the new styles with the old ones
+			if (oldStyles) {
+				styles = extend(
+					oldStyles,
+					newStyles
+				);
+			}		
+
+			// store object
+			elemWrapper.styles = styles;
+
+			if (textWidth && (useCanVG || (!hasSVG && elemWrapper.renderer.forExport))) {
+				delete styles.width;
+			}
+
+			// serialize and set style attribute
+			if (isIE && !hasSVG) {
+				css(elemWrapper.element, styles);
+			} else {
+				/*jslint unparam: true*/
+				hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
+				/*jslint unparam: false*/
+				for (n in styles) {
+					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
+				}
+				attr(elem, 'style', serializedCss); // #1881
+			}
 
 
-		// re-build text
-		if (textWidth && elemWrapper.added) {
-			elemWrapper.renderer.buildText(elemWrapper);
+			// re-build text
+			if (textWidth && elemWrapper.added) {
+				elemWrapper.renderer.buildText(elemWrapper);
+			}
 		}
 
 		return elemWrapper;
@@ -631,7 +652,7 @@ SVGElement.prototype = {
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			numKey = textStr.length + '|' + styles.fontSize + '|' + styles.fontFamily;
+			numKey = textStr.toString().length + '|' + styles.fontSize + '|' + styles.fontFamily;
 			bBox = renderer.cache[numKey];
 		}
 
@@ -673,8 +694,8 @@ SVGElement.prototype = {
 				width = bBox.width;
 				height = bBox.height;
 
-				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669)
-				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '22.7') {
+				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
+				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
 					bBox.height = height = 14;
 				}
 
@@ -697,8 +718,8 @@ SVGElement.prototype = {
 	/**
 	 * Show the element
 	 */
-	show: function () {
-		return this.attr({ visibility: VISIBLE });
+	show: function (inherit) {
+		return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
 	},
 
 	/**
@@ -1078,7 +1099,16 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
-			i = childNodes.length;
+			i = childNodes.length,
+			getLineHeight = function (tspan) {
+				return textLineHeight ? 
+					pInt(textLineHeight) :
+					renderer.fontMetrics(
+						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
+							tspan.style.fontSize :
+							(textStyles.fontSize || 11)
+					).h;
+			};
 
 		/// remove old text
 		while (i--) {
@@ -1147,11 +1177,7 @@ SVGRenderer.prototype = {
 							attr(
 								tspan,
 								'dy',
-								textLineHeight || renderer.fontMetrics(
-									/px$/.test(tspan.style.fontSize) ?
-										tspan.style.fontSize :
-										textStyles.fontSize
-								).h,
+								getLineHeight(tspan),
 								// Safari 6.0.2 - too optimized for its own good (#1539)
 								// TODO: revisit this with future versions of Safari
 								isWebKit && tspan.offsetHeight
@@ -1171,7 +1197,7 @@ SVGRenderer.prototype = {
 								actualWidth,
 								clipHeight = wrapper._clipHeight,
 								rest = [],
-								dy = pInt(textLineHeight || 16),
+								dy = getLineHeight(),
 								softLineNo = 1,
 								bBox;
 
@@ -1922,7 +1948,7 @@ SVGRenderer.prototype = {
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
 	fontMetrics: function (fontSize) {
-		fontSize = pInt(fontSize || 11);
+		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 11;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/

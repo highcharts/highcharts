@@ -1,14 +1,13 @@
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
-/*jslint white:true */
-var buttonGradient = hash(
-		LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
-		STOPS, [
+var buttonGradient = {
+		linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+		stops: [
 			[0, '#FFF'],
 			[1, '#CCC']
 		]
-	),
+	},
 	units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType;
 // add more resolution to units
@@ -66,11 +65,7 @@ extend(defaultOptions, {
 				x: 3,
 				y: -4
 			},
-			crosshair: {
-				label: {
-					enabled: false
-				}
-			}
+			crosshair: false
 		},
 		yAxis: {
 			gridLineWidth: 0,
@@ -81,12 +76,7 @@ extend(defaultOptions, {
 			labels: {
 				enabled: false
 			},
-			crosshair: {
-				enabled: false,
-				label: {
-					enabled: false
-				}
-			},
+			crosshair: false,
 			title: {
 				text: null
 			},
@@ -107,20 +97,19 @@ extend(defaultOptions, {
 		buttonBorderWidth: 1,
 		minWidth: 6,
 		rifleColor: '#666',
-		trackBackgroundColor: hash(
-			LINEAR_GRADIENT, { x1: 0, y1: 0, x2: 0, y2: 1 },
-			STOPS, [
+		trackBackgroundColor: {
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			stops: [
 				[0, '#EEE'],
 				[1, '#FFF']
 			]
-		),
+		},
 		trackBorderColor: '#CCC',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
 	}
 });
-/*jslint white:false */
 
 /**
  * The Scroller class
@@ -178,7 +167,7 @@ Scroller.prototype = {
 		// create the elements
 		if (!scroller.rendered) {
 			// the group
-			handles[index] = renderer.g()
+			handles[index] = renderer.g('navigator-handle-' + ['left', 'right'][index])
 				.css({ cursor: 'e-resize' })
 				.attr({ zIndex: 4 - index }) // zIndex = 3 for right handle, 4 for left
 				.add();
@@ -339,6 +328,12 @@ Scroller.prototype = {
 			pxMax = scrollerWidth;
 		}
 
+		// Are we below the minRange? (#2618)
+		if (xAxis.translate(pxMax, true) - xAxis.translate(pxMin, true) < chart.xAxis[0].minRange) {
+			return;
+		}
+
+
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax), navigatorWidth);
 		scroller.zoomedMin = 
@@ -347,6 +342,8 @@ Scroller.prototype = {
 		zoomedMax = mathRound(scroller.zoomedMax);
 		zoomedMin = mathRound(scroller.zoomedMin);
 		range = zoomedMax - zoomedMin;
+
+
 
 		// on first render, create all elements
 		if (!scroller.rendered) {
@@ -745,10 +742,7 @@ Scroller.prototype = {
 				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
 					fixedMax = scroller.fixedExtreme;
 				}
-				if (scroller.zoomedMax === scroller.navigatorWidth) { // #2341
-					fixedMax = xAxis.dataMax;
-				}
-
+				
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				chart.xAxis[0].setExtremes(
 					ext.min,

@@ -25,6 +25,8 @@
 					location.reload();
 				});
 
+				$(window).bind('keydown', parent.keyDown);
+
 				$('#svg').click(function () {
 					$(this).css({
 						height: 'auto',
@@ -183,13 +185,10 @@
 			function activateOverlayCompare() {
 
 				var $button = $('button#overlay-compare'),
-					showingRight;
-
-				$button
-					.css('display', '')
-					.click(function () {
-						var $leftImage = $('#left-image'),
-							$rightImage = $('#right-image');
+					$leftImage = $('#left-image'),
+					$rightImage = $('#right-image'),
+					showingRight,
+					toggle = function () {
 
 						// Initiate
 						if (showingRight === undefined) {
@@ -219,7 +218,13 @@
 							$button.html('Showing right. Click to show left.');
 							showingRight = true;
 						}
-					});
+					};
+
+				$button
+					.css('display', '')
+					.click(toggle);
+				$leftImage.click(toggle);
+				$rightImage.click(toggle);
 			}
 			
 			var report = "";
@@ -288,7 +293,7 @@
 									onDifferent(data);
 								}
 								
-								$('#preview').html('<h4>Generated images:</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
+								$('#preview').html('<h4>Generated images (click to compare)</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
 									'<img id="right-image" src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
 
 								activateOverlayCompare();
@@ -329,7 +334,7 @@
 						leftSVG.replace(/>/g, '>\n'),
 						rightSVG.replace(/>/g, '>\n')
 					)
-					$("#svg").html('<h4>Generated SVG:</h4>' + wash(out));
+					$("#svg").html('<h4 style="margin:0 auto 1em 0">Generated SVG (click to view)</h4>' + wash(out));
 				}
 
 				/*report +=  '<br/>Left length: '+ leftSVG.length + '; right length: '+ rightSVG.length +
@@ -412,7 +417,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<pre id="svg" style="overflow: auto; width: 1000px; height: 300px; cursor: pointer"></pre>
+					<pre id="svg" style="overflow: hidden; width: 1000px; height: 10px; cursor: pointer;"></pre>
 					<div id="preview" style="overflow: auto; width: 1000px; position: relative"></div>
 					<button id="overlay-compare" style="display:none">Compare overlaid</button>
 				</td>

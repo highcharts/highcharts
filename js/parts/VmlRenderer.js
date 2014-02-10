@@ -280,7 +280,12 @@ Highcharts.VMLElement = VMLElement = {
 					// handle visibility
 					} else if (key === 'visibility') {
 
-						// let the shadow follow the main element
+						// Handle inherited visibility
+						if (value === 'inherit') {
+							value = VISIBLE;
+						}
+						
+						// Let the shadow follow the main element
 						if (shadows) {
 							i = shadows.length;
 							while (i--) {
@@ -1020,12 +1025,20 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Object} parentNode
 	 */
 	invertChild: function (element, parentNode) {
-		var parentStyle = parentNode.style;
+		var ren = this,
+			parentStyle = parentNode.style,
+			imgStyle = element.tagName === 'IMG' && element.style; // #1111
+
 		css(element, {
 			flip: 'x',
-			left: pInt(parentStyle.width) - 1,
-			top: pInt(parentStyle.height) - 1,
+			left: pInt(parentStyle.width) - (imgStyle ? pInt(imgStyle.top) : 1),
+			top: pInt(parentStyle.height) - (imgStyle ? pInt(imgStyle.left) : 1),
 			rotation: -90
+		});
+
+		// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
+		each(element.childNodes, function (child) {
+			ren.invertChild(child, element);
 		});
 	},
 

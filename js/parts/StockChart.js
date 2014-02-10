@@ -141,11 +141,99 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
 });
 
+// Override getPlotLinePath to allow for multipane charts
+Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
+	var axis = this,
+		renderer = axis.chart.renderer,
+		axisLeft = axis.left,
+		axisTop = axis.top,
+		x1,
+		y1,
+		x2,
+		y2,
+		result = [];
+
+	// Get the related axes.
+	var axes = (this.isXAxis ? 
+					(defined(this.options.yAxis) ?
+						[this.chart.yAxis[this.options.yAxis]] : 
+						map(axis.series, function (S) { return S.yAxis; })
+					) :
+					(defined(this.options.xAxis) ?
+						[this.chart.xAxis[this.options.xAxis]] : 
+						map(axis.series, function (S) { return S.xAxis; })
+					)
+				);
+
+	// remove duplicates in the axes array
+	var uAxes = [];
+	each(axes, function (axis2) {
+		if (inArray(axis2, uAxes) === -1) {
+			uAxes.push(axis2);
+		}
+	});
+	
+	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+	
+	if (!isNaN(translatedValue)) {
+		if (axis.horiz) {
+			each(uAxes, function (axis2) {
+				y1 = axis2.top;
+				y2 = y1 + axis2.len;
+				x1 = x2 = mathRound(translatedValue + axis.transB);
+
+				if ((x1 >= axisLeft && x1 <= axisLeft + axis.width) || force) {
+					result.push('M', x1, y1, 'L', x2, y2);
+				}
+			});
+		} else {
+			each(uAxes, function (axis2) {
+				x1 = axis2.left;
+				x2 = x1 + axis2.width;
+				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
+
+				if ((y1 >= axisTop && y1 <= axisTop + axis.height) || force) {
+					result.push('M', x1, y1, 'L', x2, y2);
+				}
+			});
+		}
+	}
+	if (result.length > 0) {
+		return renderer.crispPolyLine(result, lineWidth || 1); 
+	} else {
+		return null;
+	}
+};
+
+// Function to crisp a line with multiple segments
+SVGRenderer.prototype.crispPolyLine = function (points, width) {
+		// points format: [M, 0, 0, L, 100, 0]		
+		// normalize to a crisp line
+		var i;
+		for (i = 0; i < points.length; i = i + 6) {
+			if (points[i + 1] === points[i + 4]) {
+				// Substract due to #1129. Now bottom and left axis gridlines behave the same.
+				points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
+			}
+			if (points[i + 2] === points[i + 5]) {
+				points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+			}
+		}
+		return points;
+	};
+
 // Wrapper to hide the label
-wrap(Axis.prototype, 'hideCrosshair', function (proceed, e, point) {
-	proceed.call(this, e, point);
-	if (this.crossLabel) {
-		this.crossLabel.hide();
+wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	proceed.call(this, i);
+
+	if (!defined(this.crossLabelArray)) { return; }
+
+	if (defined(i)) {
+		if (this.crossLabelArray[i]) { this.crossLabelArray[i].hide(); }
+	} else {
+		each(this.crossLabelArray, function (crosslabel) {
+			crosslabel.hide();
+		});
 	}
 });
 
@@ -293,14 +381,18 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		// get the modified value
-		value = compare === 'value' ? 
-			value - compareValue : // compare value
-			value = 100 * (value / compareValue) - 100; // compare percent
+		if (value !== UNDEFINED) { // #2601
+
+			// get the modified value
+			value = compare === 'value' ? 
+				value - compareValue : // compare value
+				value = 100 * (value / compareValue) - 100; // compare percent
+				
+			// record for tooltip etc.
+			if (point) {
+				point.change = value;
+			}
 			
-		// record for tooltip etc.
-		if (point) {
-			point.change = value;
 		}
 		
 		return value;

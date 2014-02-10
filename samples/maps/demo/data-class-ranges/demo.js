@@ -82,6 +82,7 @@ $(function () {
                     data : data,
                     mapData: Highcharts.maps.world,
                     joinBy: 'code',
+                    animation: true,
                     name: 'Population density',
                     states: {
                         hover: {

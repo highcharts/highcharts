@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.8-modified ()
+ * @license Highcharts JS v3.0.9-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -156,7 +156,6 @@ var radialAxisMixin = {
 		minorTickLength: 10,
 		minorTickPosition: 'inside',
 		minorTickWidth: 1,
-		plotBands: [],
 		tickLength: 10,
 		tickPosition: 'inside',
 		tickWidth: 2,
@@ -177,7 +176,6 @@ var radialAxisMixin = {
 		},
 		maxPadding: 0,
 		minPadding: 0,
-		plotBands: [],
 		showLastLabel: false, 
 		tickLength: 0
 	},
@@ -190,7 +188,6 @@ var radialAxisMixin = {
 			x: -3,
 			y: -2
 		},
-		plotBands: [],
 		showLastLabel: false,
 		title: {
 			x: 4,
@@ -204,11 +201,16 @@ var radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		this.options = merge(
+		var options = this.options = merge(
 			this.defaultOptions,
 			this.defaultRadialOptions,
 			userOptions
 		);
+
+		// Make sure the plotBands array is instanciated for each Axis (#2649)
+		if (!options.plotBands) {
+			options.plotBands = [];
+		}
 		
 	},
 	
@@ -273,8 +275,11 @@ var radialAxisMixin = {
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPointOffset +
-					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 4 : 0); // ???
+				this.minPixelPadding = this.transA * this.minPointOffset;
+			} else {
+				// This is a workaround for regression #2593, but categories still don't position correctly.
+				// TODO: Implement true handling of Y axis categories on gauges.
+				this.minPixelPadding = 0; 
 			}
 		}
 	},
@@ -303,7 +308,7 @@ var radialAxisMixin = {
 			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
 			
 			this.len = this.width = this.height = this.isCircular ?
-				this.center[2] * (this.endAngleRad - this.startAngleRad) / 2 :
+				this.endAngleRad - this.startAngleRad : // #2570
 				this.center[2] / 2;
 		}
 	},
@@ -579,8 +584,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		
 		// Vertically centered
 		} else if (optionsY === null) {
-			optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
-		
+			optionsY = axis.chart.renderer.fontMetrics(label.styles.fontSize).b - label.getBBox().height / 2;
 		}
 		
 		// Automatic alignment
@@ -1018,12 +1022,18 @@ var GaugeSeries = {
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1,
+				overshoot = options.overshoot, // docs: http://jsfiddle.net/highcharts/gEGaf/1/
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
-			// Handle the wrap option
-			if (options.wrap === false) {
+			// Handle the wrap and overshoot options
+			if (overshoot && typeof overshoot === 'number') {
+				overshoot = overshoot / 180 * Math.PI;
+				rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));			
+			
+			} else if (options.wrap === false) {
 				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
 			}
+
 			rotation = rotation * 180 / Math.PI;
 				
 			point.shapeType = 'path';
@@ -2039,14 +2049,20 @@ Axis.prototype.beforePadding = function () {
 		var xy,
 			chart = this.chart,
 			plotX = point.plotX,
-			plotY = point.plotY;
+			plotY = point.plotY,
+			clientX;
 	
 		// Save rectangular plotX, plotY for later computation
 		point.rectPlotX = plotX;
 		point.rectPlotY = plotY;
 	
 		// Record the angle in degrees for use in tooltip
-		point.clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+		clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+		if (clientX < 0) { // #2665
+			clientX += 360;
+		}
+		point.clientX = clientX;
+
 	
 		// Find the polar plotX and plotY
 		xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);

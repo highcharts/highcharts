@@ -167,6 +167,22 @@ function getCompareTooltips() {
 				window.parent.onLoadTest('<?php echo $_GET['which']; ?>', chart.getSVG());
 			}
 
+			function tryToRun(proceed) {
+				try {
+					if (proceed) {
+						return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+					}
+				} catch (e) {
+					console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
+					if (parent.window.report) {
+						parent.window.report += '<br/>Broke on JS error (<?php echo $_GET['which']; ?>) ';
+					}
+					parent.window.$('#report').html(parent.window.report);
+					parent.window.onDifferent('Error');
+
+				}
+			}
+
 			$(function() {
 				if (!window.Highcharts) {
 					console.warn('Highcharts is undefined');
@@ -195,25 +211,42 @@ function getCompareTooltips() {
 						}
 							
 					});
+
+					// Wrap constructors in order to catch JS errors
+					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);
+					//Highcharts.wrap(Highcharts, 'StockChart', tryToRun);
+					//Highcharts.wrap(Highcharts, 'Map', tryToRun);
+					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);
+
+
+					<?php if (getCompareTooltips()) : ?>
+					// Start with tooltip open 
+					Highcharts.Chart.prototype.callbacks.push(function (chart) {
+						if (chart.series[0] && chart.series[0].points[2]) {
+							chart.tooltip.refresh(
+								chart.tooltip.options.shared ? 
+									[chart.series[0].points[2]] :
+									chart.series[0].points[2]
+							);
+						}
+					});
+					<?php endif ?>
+
+					<?php if (file_exists("$path/test.js")) : ?>
+					<?php include("$path/test.js"); ?>
+					Highcharts.Chart.prototype.callbacks.push(function (chart) {
+						try {
+							test(chart);
+						} catch (e) {
+							console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
+							parent.window.onDifferent('Error');
+						}
+
+					});
+					<?php endif ?>
+
+
 				}
-
-				<?php if (getCompareTooltips()) : ?>
-				// Start with tooltip open 
-				Highcharts.Chart.prototype.callbacks.push(function (chart) {
-					if (chart.series[0] && chart.series[0].points[2]) {
-						chart.tooltip.refresh(
-							chart.tooltip.options.shared ? 
-								[chart.series[0].points[2]] :
-								chart.series[0].points[2]
-						);
-					}
-				});
-				<?php endif ?>
-
-				<?php if (file_exists("$path/test.js")) : ?>
-				<?php include("$path/test.js"); ?>
-				Highcharts.Chart.prototype.callbacks.push(test);
-				<?php endif ?>
 
 			});
 			
@@ -222,7 +255,14 @@ function getCompareTooltips() {
 		
 		
 		<script type="text/javascript">
+		try {
+
 		<?php echo getJS(); ?>
+		
+		} catch (e) {
+			console.error(e.message);
+			parent.window.onDifferent('Error');
+		}
 		</script>
 		
 	</head>
