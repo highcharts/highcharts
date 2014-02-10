@@ -10,6 +10,9 @@ var H = Highcharts,
 	HR = H.SVGRenderer,
 	HA = H.Axis;
 
+
+var defaultOptions = H.getOptions();
+
 // To get the length of an associative array.
 function arraySize(array) {
 	var size = 0, 

@@ -15,7 +15,7 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: depth * chart.series.length
+			z: options3d.depth
 		},
 		alpha = options3d.alpha,
 		beta = options3d.beta;
@@ -68,7 +68,6 @@ H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 /*** 
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 ***/
-var defaultOptions = H.getOptions();
 defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
 var CylinderSeries = H.extendClass(H.seriesTypes.column, {
 	type: 'cylinder'

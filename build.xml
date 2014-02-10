@@ -233,6 +233,7 @@
             <file name="Axis.js"/>
             <file name="Column.js"/>
             <file name="Pie.js"/>
+            <file name="Scatter.js"/>
             <file name="VMLRenderer.js"/>
             <file name="Outro.js"/>
         </filelist>
