@@ -27,8 +27,9 @@ if (win.PointerEvent || win.MSPointerEvent) {
 
 	// Add IE specific touch events to chart
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
-		var pointer = this, eventmap;
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		var pointer = this, 
+			eventmap;
+		proceed.apply(this);
 		eventmap = [
 			[this.chart.container, "PointerDown", "touchstart", "onContainerTouchStart", function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -44,8 +45,11 @@ if (win.PointerEvent || win.MSPointerEvent) {
 			}]
 		];
 		
+		// Add the events based on the eventmap configuration
 		each(eventmap, function (eventConfig) {
-			addEvent(eventConfig[0], window.PointerEvent ? eventConfig[1].toLowerCase() : "MS" + eventConfig[1], function (e) {
+			var eventName = window.PointerEvent ? eventConfig[1].toLowerCase() : "MS" + eventConfig[1];
+
+			pointer['_' + eventName] = function (e) {
 				e = e.originalEvent || e;
 				if (e.pointerType === "touch" || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
 					eventConfig[4](e);
@@ -58,7 +62,11 @@ if (win.PointerEvent || win.MSPointerEvent) {
 						touches: pointer.getWebkitTouches()
 					});
 				}
-			});
+			};
+			addEvent(eventConfig[0], eventName, pointer['_' + eventName]);
+
+			// Register for removing in destroy (#2691)
+			pointer._events.push([eventConfig[0], eventName, eventName]);
 		});
 	   
 	});
