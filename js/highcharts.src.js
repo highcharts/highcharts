@@ -16526,8 +16526,15 @@ var PieSeries = {
 				end: mathRound(end * precision) / precision
 			};
 
-			// center for the sliced out slice
+			// The angle must stay within -90 and 270 (#2645)
 			angle = (end + start) / 2;
+			if (angle > 1.5 * mathPI) {
+				angle -= 2 * mathPI;
+			} else if (angle < -mathPI / 2) {
+				angle += 2 * mathPI;
+			}
+
+			// Center for the sliced out slice
 			point.slicedTranslation = {
 				translateX: mathRound(mathCos(angle) * slicedOffset),
 				translateY: mathRound(mathSin(angle) * slicedOffset)
