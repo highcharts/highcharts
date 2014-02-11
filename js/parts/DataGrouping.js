@@ -184,7 +184,14 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
 		i;
 
+	// Start with the first point within the X axis range (#2696)
 	for (i = 0; i <= dataLength; i++) {
+		if (xData[i] >= groupPositions[0]) {
+			break;
+		}
+	}
+
+	for (; i <= dataLength; i++) {
 
 		// when a new group is entered, summarize and initiate the previous group
 		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
