@@ -15341,10 +15341,93 @@ extend(ColorAxis.prototype, {
 
 
 /**
+ * Extend the chart getAxes method to also get the color axis
+ */
+wrap(Chart.prototype, 'getAxes', function (proceed) {
+
+	var options = this.options,
+		colorAxisOptions = options.colorAxis;
+
+	proceed.call(this);
+
+	this.colorAxis = [];
+	if (colorAxisOptions) {
+		proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+	}
+});
+
+
+/**
+ * Wrap the legend getAllItems method to add the color axis. This also removes the 
+ * axis' own series to prevent them from showing up individually.
+ */
+wrap(Legend.prototype, 'getAllItems', function (proceed) {
+	var allItems = [],
+		colorAxis = this.chart.colorAxis[0];
+
+	if (colorAxis) {
+
+		// Data classes
+		if (colorAxis.options.dataClasses) {
+			allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+		// Gradient legend
+		} else {
+			// Add this axis on top
+			allItems.push(colorAxis);
+		}
+
+		// Don't add the color axis' series
+		each(colorAxis.series, function (series) {
+			series.options.showInLegend = false;
+		});
+	}
+
+	return allItems.concat(proceed.call(this));
+});/**
+ * Mixin for maps and heatmaps
+ */
+var colorSeriesMixin = {
+
+	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		stroke: 'borderColor',
+		'stroke-width': 'borderWidth',
+		fill: 'color',
+		dashstyle: 'dashStyle'
+	},
+	pointArrayMap: ['value'],
+	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
+	optionalAxis: 'colorAxis',
+	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+	getSymbol: noop,
+	parallelArrays: ['x', 'y', 'value'],
+	
+	/**
+	 * In choropleth maps, the color is a result of the value, so this needs translation too
+	 */
+	translateColors: function () {
+		var series = this,
+			nullColor = this.options.nullColor,
+			colorAxis = this.colorAxis;
+
+		each(this.data, function (point) {
+			var value = point.value,
+				color;
+
+			color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
+
+			if (color) {
+				point.color = color;
+			}
+		});
+	}
+};
+
+/**
  * Extend the default options with map options
  */
 defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	allAreas: true,
+
 	animation: false, // makes the complex shapes slow
 	nullColor: '#F8F8F8',
 	borderColor: 'silver',
@@ -15494,29 +15577,17 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-seriesTypes.map = extendClass(seriesTypes.scatter, {
+seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'map',
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
-		fill: 'color',
-		dashstyle: 'dashStyle'
-	},
-	pointClass: MapAreaPoint,
-	pointArrayMap: ['value'],
-	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
-	optionalAxis: 'colorAxis',
-	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: noop,
+	_pointClass: MapAreaPoint,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
-	useMapGeometry: true, // get axis extremes from paths, not values
-	parallelArrays: ['x', 'y', 'value'],
-	forceDL: true,
+	_useMapGeometry: true, // get axis extremes from paths, not values
+	_forceDL: true,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
-	getBox: function (paths) {
+	_getBox: function (paths) {
 		var maxX = Number.MIN_VALUE, 
 			minX =  Number.MAX_VALUE, 
 			maxY = Number.MIN_VALUE, 
@@ -15581,7 +15652,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 		}
 	},
 	
-	getExtremes: function () {
+	_getExtremes: function () {
 		// Get the actual value extremes for colors
 		Series.prototype.getExtremes.call(this, this.valueData);
 
@@ -15602,7 +15673,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	 * Translate the path so that it automatically fits into the plot area box
 	 * @param {Object} path
 	 */
-	translatePath: function (path) {
+	_translatePath: function (path) {
 		
 		var series = this,
 			even = false, // while loop reads from the end
@@ -15640,7 +15711,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	 * from the mapData are used, and those that don't correspond to a data value
 	 * are given null values.
 	 */
-	setData: function (data, redraw) {
+	_setData: function (data, redraw) {
 		var options = this.options,
 			mapData = options.mapData,
 			joinBy = options.joinBy,
@@ -15674,7 +15745,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	/**
 	 * For each point, get the corresponding map data
 	 */
-	getMapData: function (key, value) {
+	_getMapData: function (key, value) {
 		var options = this.options,
 			mapData = options.mapData,
 			mapMap = this.mapMap,
@@ -15698,40 +15769,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	},
 	
 	/**
-	 * In choropleth maps, the color is a result of the value, so this needs translation too
-	 */
-	translateColors: function () {
-		var series = this,
-			nullColor = this.options.nullColor,
-			colorAxis = this.colorAxis;
-
-		each(this.data, function (point) {
-			var value = point.value,
-				color;
-
-			color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
-
-			if (color) {
-				point.color = color;
-			}
-		});
-	},
-	
-	/**
 	 * No graph for the map series
 	 */
-	drawGraph: noop,
+	_drawGraph: noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	drawDataLabels: noop,
+	_drawDataLabels: noop,
 	
 	/**
 	 * Add the path option for data points. Find the max value for color calculation.
 	 */
-	translate: function () {
+	_translate: function () {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -15763,7 +15814,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
 	 * Extend it by assigning the tooltip position.
 	 */
-	drawPoints: function () {
+	_drawPoints: function () {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
@@ -15851,7 +15902,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	/**
 	 * Override render to throw in an async call in IE8. Otherwise it chokes on the US counties demo.
 	 */
-	render: function () {
+	_render: function () {
 		var series = this,
 			render = Series.prototype.render;
 
@@ -15869,7 +15920,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	 * The initial animation for the map series. By default, animation is disabled. 
 	 * Animation of map shapes is not at all supported in VML browsers.
 	 */
-	animate: function (init) {
+	_animate: function (init) {
 		var chart = this.chart,
 			animation = this.options.animation,
 			group = this.group,
@@ -15916,7 +15967,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	 * Animate in the new series from the clicked point in the old series.
 	 * Depends on the drilldown.js module
 	 */
-	animateDrilldown: function (init) {
+	_animateDrilldown: function (init) {
 		var toBox = this.chart.plotBox,
 			level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
 			fromBox = level.bBox,
@@ -15958,7 +16009,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	 * When drilling up, pull out the individual point graphics from the lower series
 	 * and animate them into the origin point in the upper series.
 	 */
-	animateDrillupFrom: function (level) {
+	_animateDrillupFrom: function (level) {
 		seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 	},
 
@@ -15967,10 +16018,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, {
 	 * When drilling up, keep the upper series invisible until the lower series has
 	 * moved into place
 	 */
-	animateDrillupTo: function (init) {
+	_animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
-});
+}));
 // Add events to the Chart object itself
 extend(Chart.prototype, {
 	renderMapNavigation: function () {
@@ -16115,22 +16166,6 @@ extend(Chart.prototype, {
 		}*/
 
 		chart.redraw();
-	}
-});
-
-/**
- * Extend the chart getAxes method to also get the color axis
- */
-wrap(Chart.prototype, 'getAxes', function (proceed) {
-
-	var options = this.options,
-		colorAxisOptions = options.colorAxis;
-
-	proceed.call(this);
-
-	this.colorAxis = [];
-	if (colorAxisOptions) {
-		proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
 	}
 });
 
@@ -16603,6 +16638,7 @@ if (seriesTypes.bubble) {
 	});
 }
 
+
 // Add language
 extend(defaultOptions.lang, {
 	zoomIn: 'Zoom in',
@@ -16678,35 +16714,6 @@ Highcharts.splitPath = function (path) {
 // A placeholder for map definitions
 Highcharts.maps = {};
 
-
-
-/**
- * Wrap the legend getAllItems method to add the color axis. This also removes the 
- * axis' own series to prevent them from showing up individually.
- */
-wrap(Legend.prototype, 'getAllItems', function (proceed) {
-	var allItems = [],
-		colorAxis = this.chart.colorAxis[0];
-
-	if (colorAxis) {
-
-		// Data classes
-		if (colorAxis.options.dataClasses) {
-			allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
-		// Gradient legend
-		} else {
-			// Add this axis on top
-			allItems.push(colorAxis);
-		}
-
-		// Don't add the color axis' series
-		each(colorAxis.series, function (series) {
-			series.options.showInLegend = false;
-		});
-	}
-
-	return allItems.concat(proceed.call(this));
-});
 
 
 
@@ -16804,6 +16811,66 @@ Highcharts.Map = function (options, callback) {
 
 	return new Chart(options, callback);
 };
+
+
+// The Heatmap series type
+seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+	pointArrayMap: ['y', 'value'],
+	supportsDrilldown: true,
+	getExtremesFromAll: true,
+	init: function () {
+		seriesTypes.scatter.prototype.init.apply(this, arguments);
+		this.pointRange = this.options.colsize || 1;
+		// TODO: similar logic for the Y axis
+	},
+	translate: function () {
+		var series = this,
+			options = series.options,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis;
+
+		series.generatePoints();
+
+		each(series.points, function (point) {
+			var xPad = (options.colsize || 1) / 2,
+				yPad = (options.rowsize || 1) / 2,
+				x1 = Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)),
+				x2 = Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)),
+				y1 = Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
+				y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
+
+
+			point.plotY = 1; // Pass test in Column.drawPoints
+
+			point.shapeType = 'rect';
+			point.shapeArgs = {
+				x: Math.min(x1, x2),
+				y: Math.min(y1, y2),
+				width: Math.abs(x2 - x1),
+				height: Math.abs(y2 - y1)
+			};
+		});
+		
+		series.pointRange = options.colsize || 1;
+		series.translateColors();
+	},
+	drawPoints: seriesTypes.column.prototype.drawPoints,
+	animate: noop,
+	getBox: noop,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+
+	getExtremes: function () {
+		// Get the extremes from the value data
+		Series.prototype.getExtremes.call(this, this.valueData);
+		this.valueMin = this.dataMin;
+		this.valueMax = this.dataMax;
+
+		// Get the extremes from the y data
+		Series.prototype.getExtremes.call(this);
+	}
+		
+}));
+
 
 // global variables
 extend(Highcharts, {

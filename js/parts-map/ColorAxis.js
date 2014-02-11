@@ -381,3 +381,50 @@ extend(ColorAxis.prototype, {
 		return legendItems;
 	}
 });
+
+
+
+/**
+ * Extend the chart getAxes method to also get the color axis
+ */
+wrap(Chart.prototype, 'getAxes', function (proceed) {
+
+	var options = this.options,
+		colorAxisOptions = options.colorAxis;
+
+	proceed.call(this);
+
+	this.colorAxis = [];
+	if (colorAxisOptions) {
+		proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+	}
+});
+
+
+/**
+ * Wrap the legend getAllItems method to add the color axis. This also removes the 
+ * axis' own series to prevent them from showing up individually.
+ */
+wrap(Legend.prototype, 'getAllItems', function (proceed) {
+	var allItems = [],
+		colorAxis = this.chart.colorAxis[0];
+
+	if (colorAxis) {
+
+		// Data classes
+		if (colorAxis.options.dataClasses) {
+			allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+		// Gradient legend
+		} else {
+			// Add this axis on top
+			allItems.push(colorAxis);
+		}
+
+		// Don't add the color axis' series
+		each(colorAxis.series, function (series) {
+			series.options.showInLegend = false;
+		});
+	}
+
+	return allItems.concat(proceed.call(this));
+});

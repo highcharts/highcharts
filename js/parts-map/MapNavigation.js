@@ -147,22 +147,6 @@ extend(Chart.prototype, {
 });
 
 /**
- * Extend the chart getAxes method to also get the color axis
- */
-wrap(Chart.prototype, 'getAxes', function (proceed) {
-
-	var options = this.options,
-		colorAxisOptions = options.colorAxis;
-
-	proceed.call(this);
-
-	this.colorAxis = [];
-	if (colorAxisOptions) {
-		proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
-	}
-});
-
-/**
  * Extend the Chart.render method to add zooming and panning
  */
 wrap(Chart.prototype, 'render', function (proceed) {

@@ -250,13 +250,34 @@
             <file name="parts-map/Globals.js"/>
             <file name="parts-map/MapAxis.js"/>
             <file name="parts-map/ColorAxis.js"/>
-            <file name="parts-map/MapChart.js"/>
+            <file name="parts-map/ColorSeriesMixin.js"/>
+            <file name="parts-map/MapNavigation.js"/>
             <file name="parts-map/MapPointer.js"/>
             <file name="parts-map/MapSeries.js"/>
             <file name="parts-map/MapLineSeries.js"/>
             <file name="parts-map/MapPointSeries.js"/>
             <file name="parts-map/MapBubbleSeries.js"/>
+            <file name="parts-map/HeatmapSeries.js"/>
             <file name="parts-map/Map.js"/>
+            <file name="parts-map/Outro.txt"/>
+        </filelist>
+
+
+        <!-- This is the list of files for the heatmap module -->
+        <filelist id="heatmap.files" dir="${basedir}/js">
+            <file name="parts-map/Intro.txt"/>
+            <file name="parts-map/HeatmapGlobals.js"/>
+            <!-- file name="parts-map/MapAxis.js"/ -->
+            <file name="parts-map/ColorAxis.js"/>
+            <!-- file name="parts-map/MapNavigation.js"/ -->
+            <!-- file name="parts-map/MapPointer.js"/ -->
+            <file name="parts-map/ColorSeriesMixin.js"/>
+            <!-- file name="parts-map/MapSeries.js"/ -->
+            <!-- file name="parts-map/MapLineSeries.js"/ -->
+            <!-- file name="parts-map/MapPointSeries.js"/ -->
+            <!-- file name="parts-map/MapBubbleSeries.js"/ -->
+            <file name="parts-map/HeatmapSeries.js"/>
+            <!-- file name="parts-map/Map.js"/ -->
             <file name="parts-map/Outro.txt"/>
         </filelist>
 
@@ -302,19 +323,22 @@
             <!-- Maps -->
             <file name="parts-map/MapAxis.js"/>
             <file name="parts-map/ColorAxis.js"/>
+            <file name="parts-map/ColorSeriesMixin.js"/>
             <file name="parts-map/MapSeries.js"/>
-            <file name="parts-map/MapChart.js"/>
+            <file name="parts-map/MapNavigation.js"/>
             <file name="parts-map/MapPointer.js"/>
             <file name="parts-map/MapLineSeries.js"/>
             <file name="parts-map/MapPointSeries.js"/>
             <file name="parts-more/BubbleSeries.js"/>
             <file name="parts-map/MapBubbleSeries.js"/>
             <file name="parts-map/Map.js"/>
+            <file name="parts-map/HeatmapSeries.js"/>
             <!-- Outro -->
             <file name="parts/Facade.js"/>
             <file name="parts/Outro.js"/>
-
         </filelist>
+
+
 
         <filelist id="highcharts-all.files" dir="${dist.dir}">
             <file name="js/adapters/${standalone.minified.name}"/>
@@ -389,16 +413,16 @@
         </concat>
 
         <!-- Concat maps.src.js and replace the product name and version -->
-        <concat destfile="${basedir}/js/modules/map.src.js" encoding="UTF-8">
-            <filelist refid="maps.files"/>
-            <filterchain>
+        <concat destfile="${basedir}/js/modules/heatmap.src.js" encoding="UTF-8">
+            <filelist refid="heatmap.files"/>
+            <!-- filterchain>
                 <replacetokens>
-                    <token key="product.name" value="${highmaps.product.name}"/>
-                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
-                    <token key="product.version" value="${highmaps.product.version}"/>
-                    <token key="product.date" value="${highmaps.product.date}"/>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
                 </replacetokens>
-            </filterchain>
+            </filterchain -->
         </concat>
 
         <!-- Concat highcharts-more src and replace the product name and version -->
