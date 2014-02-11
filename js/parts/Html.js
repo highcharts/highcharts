@@ -187,7 +187,7 @@ extend(SVGRenderer.prototype, {
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
-			element.innerHTML = value;
+			element.innerHTML = this.textStr = value;
 			return false;
 		};
 
@@ -197,7 +197,9 @@ extend(SVGRenderer.prototype, {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
 			wrapper[key] = value;
-			wrapper.htmlUpdateTransform();
+			if (this.textStr) {
+				wrapper.htmlUpdateTransform();
+			}
 			return false;
 		};
 

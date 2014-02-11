@@ -8,7 +8,6 @@
 	 */
 
 	var seriesProto = Series.prototype,
-		tooltipProto = Tooltip.prototype,
 		pointerProto = Pointer.prototype,
 		colProto;
 
@@ -309,7 +308,7 @@
 	 * Throw in a couple of properties to let setTooltipPoints know we're indexing the points
 	 * in degrees (0-360), not plot pixel width.
 	 */
-	wrap(tooltipProto, 'setTooltipPoints', function (proceed, renew) {
+	wrap(seriesProto, 'setTooltipPoints', function (proceed, renew) {
 		
 		if (this.chart.polar) {
 			extend(this.xAxis, {

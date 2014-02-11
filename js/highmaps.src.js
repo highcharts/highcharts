@@ -151,7 +151,7 @@ function merge() {
 
 					// Copy the contents of objects, but not arrays or DOM nodes
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
-							&& typeof value.nodeType !== 'number') {
+							&& key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
 				
 					// Primitives and arrays are copied over directly
@@ -3807,7 +3807,7 @@ SVGRenderer.prototype = {
 				boxY,
 				style = text.element.style;
 
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) &&
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && text.textStr && 
 				text.getBBox();
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
@@ -4245,7 +4245,7 @@ extend(SVGRenderer.prototype, {
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
-			element.innerHTML = value;
+			element.innerHTML = this.textStr = value;
 			return false;
 		};
 
@@ -4255,7 +4255,9 @@ extend(SVGRenderer.prototype, {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
 			wrapper[key] = value;
-			wrapper.htmlUpdateTransform();
+			if (this.textStr) {
+				wrapper.htmlUpdateTransform();
+			}
 			return false;
 		};
 
@@ -8479,72 +8481,6 @@ Tooltip.prototype = {
 		);
 	},
 
-	/**
-	 * Memorize tooltip texts and positions
-	 */
-	setTooltipPoints: function (series, renew) {
-		var points = [],
-			pointsLength,
-			low,
-			high,
-			xAxis = series.xAxis,
-			xExtremes = xAxis && xAxis.getExtremes(),
-			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
-			point,
-			pointX,
-			nextPoint,
-			i,
-			tooltipPoints = []; // a lookup array for each pixel in the x dimension
-
-		// don't waste resources if tracker is disabled
-		if (series.options.enableMouseTracking === false) {
-			return;
-		}
-
-		// renew
-		if (renew) {
-			series.tooltipPoints = null;
-		}
-
-		// concat segments to overcome null values
-		each(series.segments || series.points, function (segment) {
-			points = points.concat(segment);
-		});
-
-		// Reverse the points in case the X axis is reversed
-		if (xAxis && xAxis.reversed) {
-			points = points.reverse();
-		}
-
-		// Polar needs additional shaping
-		if (series.orderTooltipPoints) {
-			series.orderTooltipPoints(points);
-		}
-
-		// Assign each pixel position to the nearest point
-		pointsLength = points.length;
-		for (i = 0; i < pointsLength; i++) {
-			point = points[i];
-			pointX = point.x;
-			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
-				nextPoint = points[i + 1];
-
-				// Set this range's low to the last range's high plus one
-				low = high === UNDEFINED ? 0 : high + 1;
-				// Now find the new high
-				high = points[i + 1] ?
-					mathMin(mathMax(0, mathFloor( // #2070
-						(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
-					)), axisLength) :
-					axisLength;
-
-				while (low >= 0 && low <= high) {
-					tooltipPoints[low++] = point;
-				}
-			}
-		}
-		series.tooltipPoints = tooltipPoints;
-	},
 
 	/**
 	 * Format the header of the tooltip
@@ -10591,14 +10527,20 @@ Chart.prototype = {
 	getChartSize: function () {
 		var chart = this,
 			optionsChart = chart.options.chart,
+			widthOption = optionsChart.width,
+			heightOption = optionsChart.height,
 			renderTo = chart.renderToClone || chart.renderTo;
 
 		// get inner width and height from jQuery (#824)
-		chart.containerWidth = adapterRun(renderTo, 'width');
-		chart.containerHeight = adapterRun(renderTo, 'height');
+		if (!defined(widthOption)) {
+			chart.containerWidth = adapterRun(renderTo, 'width');
+		}
+		if (!defined(heightOption)) {
+			chart.containerHeight = adapterRun(renderTo, 'height');
+		}
 		
-		chart.chartWidth = mathMax(0, optionsChart.width || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = mathMax(0, pick(optionsChart.height,
+		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
+		chart.chartHeight = mathMax(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -10686,7 +10628,7 @@ Chart.prototype = {
 		// that has display:none. We need to temporarily move it out to a visible
 		// state to determine the size, else the legend and tooltips won't render
 		// properly
-		if (!renderTo.offsetWidth) {
+		if (chart.cloneRenderTo && !renderTo.offsetWidth) {
 			chart.cloneRenderTo();
 		}
 
@@ -10843,7 +10785,6 @@ Chart.prototype = {
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
 		if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
-			
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
 				if (e) { // Called from window.resize
@@ -11265,9 +11206,7 @@ Chart.prototype = {
 		}
 		each(chart.series, function (serie) {
 			serie.translate();
-			if (chart.tooltip && !serie.singularTooltips) {
-				chart.tooltip.setTooltipPoints(serie);
-			}
+			serie.setTooltipPoints();
 			serie.render();
 		});
 
@@ -11471,7 +11410,9 @@ Chart.prototype = {
 		
 		
 		// If the chart was rendered outside the top container, put it back in
-		chart.cloneRenderTo(true);
+		if (chart.cloneRenderTo) {
+			chart.cloneRenderTo(true);
+		}
 
 		fireEvent(chart, 'load');
 
@@ -13290,10 +13231,7 @@ Series.prototype = {
 		}
 
 		series.translate();
-
-		if (chart.tooltip && !series.singularTooltips) {
-			chart.tooltip.setTooltipPoints(this, true);
-		}
+		series.setTooltipPoints(true);
 		series.render();
 
 		if (wasDirtyData) {

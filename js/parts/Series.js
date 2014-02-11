@@ -1586,10 +1586,7 @@ Series.prototype = {
 		}
 
 		series.translate();
-
-		if (chart.tooltip && !series.singularTooltips) {
-			chart.tooltip.setTooltipPoints(this, true);
-		}
+		series.setTooltipPoints(true);
 		series.render();
 
 		if (wasDirtyData) {

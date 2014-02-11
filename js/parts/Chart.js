@@ -514,14 +514,20 @@ Chart.prototype = {
 	getChartSize: function () {
 		var chart = this,
 			optionsChart = chart.options.chart,
+			widthOption = optionsChart.width,
+			heightOption = optionsChart.height,
 			renderTo = chart.renderToClone || chart.renderTo;
 
 		// get inner width and height from jQuery (#824)
-		chart.containerWidth = adapterRun(renderTo, 'width');
-		chart.containerHeight = adapterRun(renderTo, 'height');
+		if (!defined(widthOption)) {
+			chart.containerWidth = adapterRun(renderTo, 'width');
+		}
+		if (!defined(heightOption)) {
+			chart.containerHeight = adapterRun(renderTo, 'height');
+		}
 		
-		chart.chartWidth = mathMax(0, optionsChart.width || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = mathMax(0, pick(optionsChart.height,
+		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
+		chart.chartHeight = mathMax(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -609,7 +615,7 @@ Chart.prototype = {
 		// that has display:none. We need to temporarily move it out to a visible
 		// state to determine the size, else the legend and tooltips won't render
 		// properly
-		if (!renderTo.offsetWidth) {
+		if (chart.cloneRenderTo && !renderTo.offsetWidth) {
 			chart.cloneRenderTo();
 		}
 
@@ -766,7 +772,6 @@ Chart.prototype = {
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
 		if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
-			
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
 				if (e) { // Called from window.resize
@@ -1188,9 +1193,7 @@ Chart.prototype = {
 		}
 		each(chart.series, function (serie) {
 			serie.translate();
-			if (chart.tooltip && !serie.singularTooltips) {
-				chart.tooltip.setTooltipPoints(serie);
-			}
+			serie.setTooltipPoints();
 			serie.render();
 		});
 
@@ -1394,7 +1397,9 @@ Chart.prototype = {
 		
 		
 		// If the chart was rendered outside the top container, put it back in
-		chart.cloneRenderTo(true);
+		if (chart.cloneRenderTo) {
+			chart.cloneRenderTo(true);
+		}
 
 		fireEvent(chart, 'load');
 
