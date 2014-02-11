@@ -184,67 +184,67 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
 		i;
 
-		for (i = 0; i <= dataLength; i++) {
+	for (i = 0; i <= dataLength; i++) {
 
-			// when a new group is entered, summarize and initiate the previous group
-			while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
-					i === dataLength) { // get the last group
+		// when a new group is entered, summarize and initiate the previous group
+		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
+				i === dataLength) { // get the last group
 
-				// get group x and y
-				pointX = groupPositions.shift();
-				groupedY = approximationFn.apply(0, values);
+			// get group x and y
+			pointX = groupPositions.shift();
+			groupedY = approximationFn.apply(0, values);
 
-				// push the grouped data
-				if (groupedY !== UNDEFINED) {
-					groupedXData.push(pointX);
-					groupedYData.push(groupedY);
-				}
-
-				// reset the aggregate arrays
-				values[0] = [];
-				values[1] = [];
-				values[2] = [];
-				values[3] = [];
-
-				// don't loop beyond the last group
-				if (i === dataLength) {
-					break;
-				}
+			// push the grouped data
+			if (groupedY !== UNDEFINED) {
+				groupedXData.push(pointX);
+				groupedYData.push(groupedY);
 			}
 
-			// break out
+			// reset the aggregate arrays
+			values[0] = [];
+			values[1] = [];
+			values[2] = [];
+			values[3] = [];
+
+			// don't loop beyond the last group
 			if (i === dataLength) {
 				break;
 			}
+		}
 
-			// for each raw data point, push it to an array that contains all values for this specific group
-			if (pointArrayMap) {
+		// break out
+		if (i === dataLength) {
+			break;
+		}
 
-				var index = series.cropStart + i,
-					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
-					j,
-					val;
+		// for each raw data point, push it to an array that contains all values for this specific group
+		if (pointArrayMap) {
 
-				for (j = 0; j < pointArrayMapLength; j++) {
-					val = point[pointArrayMap[j]];
-					if (typeof val === NUMBER) {
-						values[j].push(val);
-					} else if (val === null) {
-						values[j].hasNulls = true;
-					}
-				}
+			var index = series.cropStart + i,
+				point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
+				j,
+				val;
 
-			} else {
-				pointY = handleYData ? yData[i] : null;
-
-				if (typeof pointY === NUMBER) {
-					values[0].push(pointY);
-				} else if (pointY === null) {
-					values[0].hasNulls = true;
+			for (j = 0; j < pointArrayMapLength; j++) {
+				val = point[pointArrayMap[j]];
+				if (typeof val === NUMBER) {
+					values[j].push(val);
+				} else if (val === null) {
+					values[j].hasNulls = true;
 				}
 			}
 
+		} else {
+			pointY = handleYData ? yData[i] : null;
+
+			if (typeof pointY === NUMBER) {
+				values[0].push(pointY);
+			} else if (pointY === null) {
+				values[0].hasNulls = true;
+			}
 		}
+	}
+		
 	return [groupedXData, groupedYData];
 };
 
