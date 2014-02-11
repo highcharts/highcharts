@@ -24,30 +24,42 @@ HR.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.animate = function (shapeArgs) {
-		var renderer = this.renderer,
-		paths = renderer.cuboidPath(shapeArgs);
-
-		this.front.attr({d: paths[0]});
-		this.top.attr({d: paths[1]});
-		this.side.attr({d: paths[2]});
-
+	result.animate = function (args, duration, complete) {
+		if (args.x && args.y) {
+			var renderer = this.renderer,
+			paths = renderer.cuboidPath(args);
+			this.front.animate({d: paths[0]}, duration, complete);
+			this.top.animate({d: paths[1]}, duration, complete);
+			this.side.animate({d: paths[2]}, duration, complete);
+		} else {
+			H.SVGElement.prototype.animate.call(this, args, duration, complete);
+		}
 		return this;
 	};
+
+	result.destroy = function () {
+		this.front.destroy();
+		this.top.destroy();
+		this.side.destroy();
+
+		return null;
+	};
+
 	return result;
 };
 
 
 HR.prototype.cuboidPath = function (shapeArgs) {
-	var x = shapeArgs.x,
-	y = shapeArgs.y,
-	z = shapeArgs.z,
-	h = shapeArgs.height,
-	w = shapeArgs.width,
-	d = shapeArgs.depth,
-	alpha = shapeArgs.alpha,
-	beta = shapeArgs.beta,
-	origin = shapeArgs.origin;
+	var inverted = shapeArgs.inverted || false,
+		x = shapeArgs.x,
+		y = shapeArgs.y,
+		z = shapeArgs.z,
+		h = shapeArgs.height,
+		w = shapeArgs.width,
+		d = shapeArgs.depth,
+		alpha = shapeArgs.alpha,
+		beta = shapeArgs.beta,
+		origin = shapeArgs.origin;
 
 	var pArr = [
 	{x: x, y: y, z: z},
@@ -115,11 +127,15 @@ HR.prototype.cuboidPath = function (shapeArgs) {
 ////// SECTORS //////
 HR.prototype.arc3d = function (shapeArgs) {
 
+	shapeArgs.alpha *= (Math.PI / 180);
+	shapeArgs.beta *= (Math.PI / 180);
 	var result = this.g(),
-	paths = this.arc3dPath(shapeArgs),
-	renderer = result.renderer;
+		paths = this.arc3dPath(shapeArgs),
+		renderer = result.renderer;
 
 	var zIndex = paths[4] * 100;
+
+	result.shapeArgs = shapeArgs;	// Store for later use
 
 	result.ins = [];
 	H.each(paths[3], function (path) {
@@ -139,6 +155,8 @@ HR.prototype.arc3d = function (shapeArgs) {
 	});
 
 	result.attrSetters.fill = function (color) {
+		this.color = color;
+
 		var c0 = color,
 		c2 = H.Color(color).brighten(-0.1).get();
 
@@ -162,11 +180,8 @@ HR.prototype.arc3d = function (shapeArgs) {
 		return 0;
 	};
 	
-	result.animate = function (args) {
-		if (args.translateX !== undefined && args.translateY !== undefined) {
-			this.translate(args.translateX, args.translateY);
-
-		}
+	result.animate = function (args, duration, complete) {	
+		H.SVGElement.prototype.animate.call(this, args, duration, complete);
 		return this;
 	};
 	result.slice = function (shapeArgs) {
@@ -186,16 +201,16 @@ HR.prototype.arc3dPath = function (shapeArgs) {
 	inPaths = [];
 
 	var x = shapeArgs.x,
-	y = shapeArgs.y,
-	z = shapeArgs.z,
-	start = shapeArgs.start,
-	end = shapeArgs.end - 0.00001,
-	r = shapeArgs.r,
-	ir = shapeArgs.innerR,
-	d = shapeArgs.depth,
-	alpha = shapeArgs.alpha,
-	beta = shapeArgs.beta,
-	origin = shapeArgs.origin;
+		y = shapeArgs.y,
+		z = shapeArgs.z,
+		start = shapeArgs.start,
+		end = shapeArgs.end - 0.00001,
+		r = shapeArgs.r,
+		ir = shapeArgs.innerR,
+		d = shapeArgs.depth,
+		alpha = shapeArgs.alpha,
+		beta = shapeArgs.beta,
+		origin = shapeArgs.origin;
 
 	// 2PI Correction
 	start = start % (2 * PI);

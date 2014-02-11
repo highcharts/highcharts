@@ -4,6 +4,12 @@
 H.wrap(HA.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}
+
+	// Isolate
 	if (this.axisLine) {
 		this.axisLine.hide();
 	}
@@ -73,9 +79,14 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 	}
 });
 
-
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
+	
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return path;
+	}
+
 	if (path === null) { return path; }
 
 	var chart = this.chart,
@@ -110,7 +121,12 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 ***/
 
 H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));
+	var path = proceed.apply(this, [].slice.call(arguments, 1));	
+
+	// Do not do this if the chart is not 3D
+	if (!this.axis.chart.options.chart.is3d) {
+		return path;
+	}
 
 	var chart = this.axis.chart,
 		options3d = chart.options.chart.options3d;
@@ -139,6 +155,11 @@ H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
 
 H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+	
+	// Do not do this if the chart is not 3D
+	if (!this.axis.chart.options.chart.is3d) {
+		return pos;
+	}	
 
 	var chart = this.axis.chart,
 		options3d = chart.options.chart.options3d;

@@ -59,8 +59,13 @@ var PI = Math.PI,
 	round = Math.round;
 
 function perspective(points, angle2, angle1, origin) {
-	var result = [];
-	var xe, ye, ze;
+	angle1 *= (Math.PI / 180);
+	angle2 *= (Math.PI / 180);
+
+	var result = [],
+		xe, 
+		ye, 
+		ze;
 
 	angle1 = -angle1;
 	
@@ -119,30 +124,42 @@ HR.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.animate = function (shapeArgs) {
-		var renderer = this.renderer,
-		paths = renderer.cuboidPath(shapeArgs);
-
-		this.front.attr({d: paths[0]});
-		this.top.attr({d: paths[1]});
-		this.side.attr({d: paths[2]});
-
+	result.animate = function (args, duration, complete) {
+		if (args.x && args.y) {
+			var renderer = this.renderer,
+			paths = renderer.cuboidPath(args);
+			this.front.animate({d: paths[0]}, duration, complete);
+			this.top.animate({d: paths[1]}, duration, complete);
+			this.side.animate({d: paths[2]}, duration, complete);
+		} else {
+			H.SVGElement.prototype.animate.call(this, args, duration, complete);
+		}
 		return this;
 	};
+
+	result.destroy = function () {
+		this.front.destroy();
+		this.top.destroy();
+		this.side.destroy();
+
+		return null;
+	};
+
 	return result;
 };
 
 
 HR.prototype.cuboidPath = function (shapeArgs) {
-	var x = shapeArgs.x,
-	y = shapeArgs.y,
-	z = shapeArgs.z,
-	h = shapeArgs.height,
-	w = shapeArgs.width,
-	d = shapeArgs.depth,
-	alpha = shapeArgs.alpha,
-	beta = shapeArgs.beta,
-	origin = shapeArgs.origin;
+	var inverted = shapeArgs.inverted || false,
+		x = shapeArgs.x,
+		y = shapeArgs.y,
+		z = shapeArgs.z,
+		h = shapeArgs.height,
+		w = shapeArgs.width,
+		d = shapeArgs.depth,
+		alpha = shapeArgs.alpha,
+		beta = shapeArgs.beta,
+		origin = shapeArgs.origin;
 
 	var pArr = [
 	{x: x, y: y, z: z},
@@ -210,11 +227,15 @@ HR.prototype.cuboidPath = function (shapeArgs) {
 ////// SECTORS //////
 HR.prototype.arc3d = function (shapeArgs) {
 
+	shapeArgs.alpha *= (Math.PI / 180);
+	shapeArgs.beta *= (Math.PI / 180);
 	var result = this.g(),
-	paths = this.arc3dPath(shapeArgs),
-	renderer = result.renderer;
+		paths = this.arc3dPath(shapeArgs),
+		renderer = result.renderer;
 
 	var zIndex = paths[4] * 100;
+
+	result.shapeArgs = shapeArgs;	// Store for later use
 
 	result.ins = [];
 	H.each(paths[3], function (path) {
@@ -234,6 +255,8 @@ HR.prototype.arc3d = function (shapeArgs) {
 	});
 
 	result.attrSetters.fill = function (color) {
+		this.color = color;
+
 		var c0 = color,
 		c2 = H.Color(color).brighten(-0.1).get();
 
@@ -257,11 +280,8 @@ HR.prototype.arc3d = function (shapeArgs) {
 		return 0;
 	};
 	
-	result.animate = function (args) {
-		if (args.translateX !== undefined && args.translateY !== undefined) {
-			this.translate(args.translateX, args.translateY);
-
-		}
+	result.animate = function (args, duration, complete) {	
+		H.SVGElement.prototype.animate.call(this, args, duration, complete);
 		return this;
 	};
 	result.slice = function (shapeArgs) {
@@ -281,16 +301,16 @@ HR.prototype.arc3dPath = function (shapeArgs) {
 	inPaths = [];
 
 	var x = shapeArgs.x,
-	y = shapeArgs.y,
-	z = shapeArgs.z,
-	start = shapeArgs.start,
-	end = shapeArgs.end - 0.00001,
-	r = shapeArgs.r,
-	ir = shapeArgs.innerR,
-	d = shapeArgs.depth,
-	alpha = shapeArgs.alpha,
-	beta = shapeArgs.beta,
-	origin = shapeArgs.origin;
+		y = shapeArgs.y,
+		z = shapeArgs.z,
+		start = shapeArgs.start,
+		end = shapeArgs.end - 0.00001,
+		r = shapeArgs.r,
+		ir = shapeArgs.innerR,
+		d = shapeArgs.depth,
+		alpha = shapeArgs.alpha,
+		beta = shapeArgs.beta,
+		origin = shapeArgs.origin;
 
 	// 2PI Correction
 	start = start % (2 * PI);
@@ -463,6 +483,7 @@ H.wrap(HC.prototype, 'init', function (proceed) {
 	var args = arguments;
 	args[1] = H.merge({ 
 		chart: {
+			is3d: false,
 			options3d: {
 				alpha: 0,
 				beta: 0,
@@ -497,29 +518,28 @@ H.wrap(HC.prototype, 'setChartSize', function (proceed) {
 });
 
 H.wrap(HC.prototype, 'redraw', function (proceed) {
-	// Set to force a redraw of all elements
-	this.isDirtyBox = true;
+	if (this.options.chart.is3d) {
+		// Set to force a redraw of all elements
+		this.isDirtyBox = true;
+	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
 
-H.wrap(HC.prototype, 'firstRender', function (proceed) {
-	// Set to force a redraw of all elements
-
+H.wrap(HC.prototype, 'firstRender', function (proceed) {		
 	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var invSeries = [];
-
-	for (i = 0; i < this.series.length; i++) {
-		invSeries.push(this.series[this.series.length - (i + 1)]);
+	if (this.options.chart.is3d) {
+		// Change the order for drawing the series
+		var invSeries = [];
+		for (i = 0; i < this.series.length; i++) {
+			invSeries.push(this.series[this.series.length - (i + 1)]);
+		}
+		this.series = invSeries;	
+		this.redraw();
 	}
-	this.series = invSeries;
-	
-	this.redraw();
 });
 
 HC.prototype.getNumberOfStacks = function () {
-
 	var type = this.chart.options.chart.type;
 		options = this.options.plotOptions[type];
 		
@@ -545,6 +565,12 @@ HC.prototype.getNumberOfStacks = function () {
 H.wrap(HA.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}
+
+	// Isolate
 	if (this.axisLine) {
 		this.axisLine.hide();
 	}
@@ -614,9 +640,14 @@ H.wrap(HA.prototype, 'render', function (proceed) {
 	}
 });
 
-
 H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
+	
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return path;
+	}
+
 	if (path === null) { return path; }
 
 	var chart = this.chart,
@@ -651,7 +682,12 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 ***/
 
 H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));
+	var path = proceed.apply(this, [].slice.call(arguments, 1));	
+
+	// Do not do this if the chart is not 3D
+	if (!this.axis.chart.options.chart.is3d) {
+		return path;
+	}
 
 	var chart = this.axis.chart,
 		options3d = chart.options.chart.options3d;
@@ -680,6 +716,11 @@ H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
 
 H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+	
+	// Do not do this if the chart is not 3D
+	if (!this.axis.chart.options.chart.is3d) {
+		return pos;
+	}	
 
 	var chart = this.axis.chart,
 		options3d = chart.options.chart.options3d;
@@ -702,14 +743,84 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
 H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {  
+		return;
+	}	
+
 	var type = this.chart.options.chart.type;
 
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
 		options3d = options.chart.options3d,
-		cylindrical = (type === 'cylinder'),
+
 		depth = options.plotOptions[type].depth || 0,
+		origin = {
+			x: chart.plotWidth / 2,
+			y: chart.plotHeight / 2, 
+			z: options3d.depth
+		},
+		alpha = options3d.alpha,
+		beta = options3d.beta;
+
+	var stack = options.plotOptions[type].stacking ? (this.options.stack || 0) : series._i; 
+	var z = stack * (depth + (options.plotOptions[type].groupZPadding || 1));
+
+	if (options.plotOptions[type].grouping !== false) { z = 0; }
+
+	z += (options.plotOptions[type].groupZPadding || 1);
+
+	H.each(series.data, function (point) {
+		var shapeArgs = point.shapeArgs;
+		point.shapeType = 'cuboid';
+		shapeArgs.alpha = alpha;
+		shapeArgs.beta = beta; 
+		shapeArgs.z = z;
+		shapeArgs.origin = origin;
+		shapeArgs.depth = depth;
+	});	    
+});
+
+H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+	// Do not do this if the chart is not 3D
+	if (this.chart.options.chart.is3d) {
+		var type = this.chart.options.chart.type,
+			options = this.chart.options.plotOptions[type];
+		
+		var stack = (this.options.stack || 0),
+			order = this.chart.series.length - this._i;
+
+		var z = this.group.zIndex * 10;
+
+		this.group.attr({zIndex: z});
+	}
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
+/*** 
+	EXTENSION FOR 3D CYLINDRICAL COLUMNS
+	Not supported
+***/
+defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
+var CylinderSeries = H.extendClass(H.seriesTypes.column, {
+	type: 'cylinder'
+});
+H.seriesTypes.cylinder = CylinderSeries;
+
+H.wrap(H.seriesTypes.cylinder.prototype, 'translate', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}	
+
+	var series = this,
+		chart = series.chart,
+		options = chart.options,
+		options3d = options.chart.options3d,
+		depth = options.plotOptions.cylinder.depth || 0,
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
@@ -718,65 +829,38 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		alpha = options3d.alpha,
 		beta = options3d.beta;
 
-	var z = options.plotOptions[type].stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	var z = options.plotOptions.cylinder.stacking ? (this.options.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
-	if (options.plotOptions[type].grouping !== false) { z = 0; }
+	if (options.plotOptions.cylinder.grouping !== false) { z = 0; }
 
 	H.each(series.data, function (point) {
 		var shapeArgs = point.shapeArgs;
-		if (cylindrical) {
-			point.shapeType = 'arc3d';
-			shapeArgs.x += depth / 2;
-			shapeArgs.z = z;
-			shapeArgs.start = 0;
-			shapeArgs.end = PI * 2;
-			shapeArgs.r = depth * 0.95;
-			shapeArgs.innerR = 0;
-			shapeArgs.depth = shapeArgs.height * (1 / sin((Math.PI / 2) - alpha)) - z;
-			shapeArgs.alpha = (Math.PI / 2) - alpha;
-			shapeArgs.beta = 0;
-			shapeArgs.origin = origin;
-
-		} else {
-			point.shapeType = 'cuboid';
-			shapeArgs.alpha = cylindrical ? (Math.PI / 2) - alpha : alpha;
-			shapeArgs.beta = beta; 
-			shapeArgs.z = chart.inverted ? -z : z;
-			shapeArgs.origin = origin;
-			shapeArgs.depth = depth * 0.75;
-		}	
-	});	    
+		point.shapeType = 'arc3d';
+		shapeArgs.x += depth / 2;
+		shapeArgs.z = z;
+		shapeArgs.start = 0;
+		shapeArgs.end = PI * 2;
+		shapeArgs.r = depth * 0.95;
+		shapeArgs.innerR = 0;
+		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * (Math.PI / 180))) - z;
+		shapeArgs.alpha = 90 - alpha;
+		shapeArgs.beta = 0;
+		shapeArgs.origin = origin;	
+	});
 });
-
-H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
-	var type = this.chart.options.chart.type,
-		options = this.chart.options.plotOptions[type];
-	
-	var stack = (this.options.stack || 0),
-		order = this.chart.series.length - this._i;
-
-	var z = this.group.zIndex * 10;
-
-	this.group.attr({zIndex: z});
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-});
-
-/*** 
-	EXTENSION FOR 3D CYLINDRICAL COLUMNS
-***/
-defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
-var CylinderSeries = H.extendClass(H.seriesTypes.column, {
-	type: 'cylinder'
-});
-H.seriesTypes.cylinder = CylinderSeries;
 /*** 
 	EXTENSION FOR 3D PIES
 ***/
 
 H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
+
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}	
+
 
 	var type = this.chart.options.chart.type;
 
@@ -815,15 +899,19 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 });
 
 H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
-	var series = this;
 	proceed.apply(this, [].slice.call(arguments, 1));
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}	
 
+	var series = this;
 	H.each(series.data, function (point) {
 		var shapeArgs = point.shapeArgs;
 		var r = shapeArgs.r,
 			d = shapeArgs.depth,
-			a1 = shapeArgs.alpha,
-			b1 = shapeArgs.beta,
+			a1 = shapeArgs.alpha * (Math.PI / 180),
+			b1 = shapeArgs.beta * (Math.PI / 180),
 			a2 = (shapeArgs.start + shapeArgs.end) / 2; 
 
 		if (point.connector) {
@@ -839,24 +927,26 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 			});
 		}
 	});
+});
+
+H.wrap(H.seriesTypes.pie.prototype, 'addPoint', function (proceed) {
+
+	proceed.apply(this, [].slice.call(arguments, 1));	
+	if (this.chart.options.chart.is3d) {
+		// destroy (and rebuild) everything!!!
+		this.update();
+	}
 });/*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
-// Add a third coordinate to the scatter type
-H.seriesTypes.scatter = Highcharts.extendClass(H.seriesTypes.scatter, {
-	pointArrayMap: ['x', 'y', 'z']
-});
-
-// Change tooltip formatter to display z-coordinate
-defaultOptions.plotOptions.scatter = H.merge(defaultOptions.plotOptions.scatter, {
-	tooltip: {
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
-	}
-});
-
 H.wrap(H.seriesTypes.scatter.prototype, 'translate', function (proceed) {
+//function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}	
+
 	var series = this,
 		chart = series.chart,
 		options3d = series.chart.options.chart.options3d,
@@ -883,7 +973,27 @@ H.wrap(H.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 
 		point.plotX = pCo.x;
 		point.plotY = pCo.y;
+		point.plotZ = pCo.z;
 	});	  
 });
 
+H.wrap(H.seriesTypes.scatter.prototype, 'init', function (proceed) {
+	var result = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.options.chart.is3d) {
+		// Add a third coordinate
+		this.pointArrayMap = ['x', 'y', 'z'];
+
+		/// TODO: CAN THIS BE MADE SIMPLER ????
+		// Set a new default tooltip formatter
+		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
+		if (this.userOptions.tooltip) {
+			this.tooltipOptions.pointFormat = this.userOptions.tooltip.pointFormat || default3dScatterTooltip;
+		} else {
+			this.tooltipOptions.pointFormat = default3dScatterTooltip;
+		}
+	}
+});/***
+	TO BE MADE
+***/
 }(Highcharts));

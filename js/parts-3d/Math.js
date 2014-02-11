@@ -17,8 +17,13 @@ var PI = Math.PI,
 	round = Math.round;
 
 function perspective(points, angle2, angle1, origin) {
-	var result = [];
-	var xe, ye, ze;
+	angle1 *= (Math.PI / 180);
+	angle2 *= (Math.PI / 180);
+
+	var result = [],
+		xe, 
+		ye, 
+		ze;
 
 	angle1 = -angle1;
 	

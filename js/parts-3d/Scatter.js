@@ -1,21 +1,14 @@
 /*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
-// Add a third coordinate to the scatter type
-H.seriesTypes.scatter = Highcharts.extendClass(H.seriesTypes.scatter, {
-	pointArrayMap: ['x', 'y', 'z']
-});
-
-// Change tooltip formatter to display z-coordinate
-defaultOptions.plotOptions.scatter = H.merge(defaultOptions.plotOptions.scatter, {
-	tooltip: {
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
-	}
-});
-
 H.wrap(H.seriesTypes.scatter.prototype, 'translate', function (proceed) {
+//function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}	
+
 	var series = this,
 		chart = series.chart,
 		options3d = series.chart.options.chart.options3d,
@@ -42,5 +35,24 @@ H.wrap(H.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 
 		point.plotX = pCo.x;
 		point.plotY = pCo.y;
+		point.plotZ = pCo.z;
 	});	  
+});
+
+H.wrap(H.seriesTypes.scatter.prototype, 'init', function (proceed) {
+	var result = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.options.chart.is3d) {
+		// Add a third coordinate
+		this.pointArrayMap = ['x', 'y', 'z'];
+
+		/// TODO: CAN THIS BE MADE SIMPLER ????
+		// Set a new default tooltip formatter
+		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
+		if (this.userOptions.tooltip) {
+			this.tooltipOptions.pointFormat = this.userOptions.tooltip.pointFormat || default3dScatterTooltip;
+		} else {
+			this.tooltipOptions.pointFormat = default3dScatterTooltip;
+		}
+	}
 });

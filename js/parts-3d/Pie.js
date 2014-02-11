@@ -5,6 +5,12 @@
 H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}	
+
+
 	var type = this.chart.options.chart.type;
 
 	var series = this,
@@ -42,15 +48,19 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 });
 
 H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
-	var series = this;
 	proceed.apply(this, [].slice.call(arguments, 1));
+	// Do not do this if the chart is not 3D
+	if (!this.chart.options.chart.is3d) {
+		return;
+	}	
 
+	var series = this;
 	H.each(series.data, function (point) {
 		var shapeArgs = point.shapeArgs;
 		var r = shapeArgs.r,
 			d = shapeArgs.depth,
-			a1 = shapeArgs.alpha,
-			b1 = shapeArgs.beta,
+			a1 = shapeArgs.alpha * (Math.PI / 180),
+			b1 = shapeArgs.beta * (Math.PI / 180),
 			a2 = (shapeArgs.start + shapeArgs.end) / 2; 
 
 		if (point.connector) {
@@ -66,4 +76,13 @@ H.wrap(H.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 			});
 		}
 	});
+});
+
+H.wrap(H.seriesTypes.pie.prototype, 'addPoint', function (proceed) {
+
+	proceed.apply(this, [].slice.call(arguments, 1));	
+	if (this.chart.options.chart.is3d) {
+		// destroy (and rebuild) everything!!!
+		this.update();
+	}
 });

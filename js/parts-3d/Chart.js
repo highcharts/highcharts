@@ -5,6 +5,7 @@ H.wrap(HC.prototype, 'init', function (proceed) {
 	var args = arguments;
 	args[1] = H.merge({ 
 		chart: {
+			is3d: false,
 			options3d: {
 				alpha: 0,
 				beta: 0,
@@ -39,29 +40,28 @@ H.wrap(HC.prototype, 'setChartSize', function (proceed) {
 });
 
 H.wrap(HC.prototype, 'redraw', function (proceed) {
-	// Set to force a redraw of all elements
-	this.isDirtyBox = true;
+	if (this.options.chart.is3d) {
+		// Set to force a redraw of all elements
+		this.isDirtyBox = true;
+	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
 
-H.wrap(HC.prototype, 'firstRender', function (proceed) {
-	// Set to force a redraw of all elements
-
+H.wrap(HC.prototype, 'firstRender', function (proceed) {		
 	proceed.apply(this, [].slice.call(arguments, 1));
-
-	var invSeries = [];
-
-	for (i = 0; i < this.series.length; i++) {
-		invSeries.push(this.series[this.series.length - (i + 1)]);
+	if (this.options.chart.is3d) {
+		// Change the order for drawing the series
+		var invSeries = [];
+		for (i = 0; i < this.series.length; i++) {
+			invSeries.push(this.series[this.series.length - (i + 1)]);
+		}
+		this.series = invSeries;	
+		this.redraw();
 	}
-	this.series = invSeries;
-	
-	this.redraw();
 });
 
 HC.prototype.getNumberOfStacks = function () {
-
 	var type = this.chart.options.chart.type;
 		options = this.options.plotOptions[type];
 		
