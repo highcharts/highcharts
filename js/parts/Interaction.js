@@ -82,7 +82,20 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				if (chart.hoverSeries !== series) {
 					series.onMouseOver();
 				}
-			};
+			},
+			/*
+			 * Empirical lowest possible opacities for TRACKER_FILL for an element to stay invisible but clickable
+			 * IE6: 0.002
+			 * IE7: 0.002
+			 * IE8: 0.002
+			 * IE9: 0.00000000001 (unlimited)
+			 * IE10: 0.0001 (exporting only)
+			 * FF: 0.00000000001 (unlimited)
+			 * Chrome: 0.000001
+			 * Safari: 0.000001
+			 * Opera: 0.00000000001 (unlimited)
+			 */
+			TRACKER_FILL = 'rgba(192,192,192,' + (hasSVG ? 0.0001 : 0.002) + ')';
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
