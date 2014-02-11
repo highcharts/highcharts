@@ -1,0 +1,16 @@
+table {
+    border-collapse:collapse;
+}
+th {
+    font-weight:bold;
+    text-align:center;
+    padding:5px;
+}
+thead th {
+    border-bottom: 3px solid black;
+}
+td {
+    padding:5px;
+    vertical-align:middle;
+    height: 20px;
+}
