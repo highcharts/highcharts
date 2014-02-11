@@ -144,17 +144,18 @@
             <file name="Tick.js"/>
             <file name="PlotLineOrBand.js"/>
             <file name="Axis.js"/>
-            <file name="LogarithmicAxis.js"/>
             <file name="DateTimeAxis.js"/>
-            <file name="StackItem.js"/>
+            <file name="LogarithmicAxis.js"/> 
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
+            <file name="TouchPointer.js"/>
             <file name="MSPointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
 			<file name="Point.js"/>
             <file name="Series.js"/>
+            <file name="StackItem.js"/>
             <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
@@ -165,6 +166,7 @@
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
             <file name="DataLabels.js"/>
+            <file name="Interaction.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
@@ -184,19 +186,20 @@
             <file name="VmlRenderer.js"/>
             <file name="CanVGRenderer.js"/>
             <file name="Tick.js"/>
-            <file name="StackItem.js"/>
             <file name="PlotLineOrBand.js"/>
             <file name="Axis.js"/>
             <file name="DateTimeAxis.js"/>
             <file name="LogarithmicAxis.js"/>
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
+            <file name="TouchPointer.js"/>
             <file name="MSPointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
             <file name="CenteredSeriesMixin.js"/>
             <file name="Point.js"/>
             <file name="Series.js"/>
+            <file name="StackItem.js"/>
             <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
@@ -207,6 +210,7 @@
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
             <file name="DataLabels.js"/>
+            <file name="Interaction.js"/>
             <!-- Stock -->
             <file name="OrdinalAxis.js"/>
             <file name="DataGrouping.js"/>

@@ -133,6 +133,9 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
+			style: {
+				lineHeight: '11px'
+			},
 			x: -8,
 			y: null
 		},
@@ -146,6 +149,9 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
+			style: {
+				lineHeight: '11px'
+			},
 			x: 8,
 			y: null
 		},
@@ -198,7 +204,7 @@ Axis.prototype = {
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
 		axis.coll = isXAxis ? 'xAxis' : 'yAxis';
-	
+
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = userOptions.side || (axis.horiz ?
 				(axis.opposite ? 0 : 2) : // top : bottom
@@ -290,10 +296,7 @@ Axis.prototype = {
 		// Dictionary for stacks
 		axis.stacks = {};
 		axis.oldStacks = {};
-
-		// Dictionary for stacks max values
-		axis.stackExtremes = {};
-
+		
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
 		//axis.dataMax = UNDEFINED,
@@ -419,11 +422,10 @@ Axis.prototype = {
 
 		// reset dataMin and dataMax in case we're redrawing
 		axis.dataMin = axis.dataMax = null;
-
-		// reset cached stacking extremes
-		axis.stackExtremes = {};
-
-		axis.buildStacks();
+		
+		if (axis.buildStacks) {
+			axis.buildStacks();
+		}
 
 		// loop through this axis' series
 		each(axis.series, function (series) {
@@ -884,7 +886,7 @@ Axis.prototype = {
 		if (axis.range && defined(axis.max)) {
 			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
-			
+
 			axis.range = null;  // don't use it when running setExtremes
 		}
 
@@ -1048,7 +1050,7 @@ Axis.prototype = {
 			maxTicks = chart.maxTicks || {},
 			tickPositions = this.tickPositions,
 			key = this._maxTicksKey = [this.coll, this.pos, this.len].join('-');
-		
+
 		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
 			maxTicks[key] = tickPositions.length;
 		}
@@ -1357,14 +1359,14 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo;
-			
+
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 		// Set/reset staggerLines
 		axis.staggerLines = axis.horiz && labelOptions.staggerLines;
-		
+
 		// Create the axisGroup and gridGroup elements on first iteration
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
@@ -1584,8 +1586,7 @@ Axis.prototype = {
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
 			sortedPositions,
-			axisTitle = axis.axisTitle,
-			stacks = axis.stacks,
+			axisTitle = axis.axisTitle,			
 			ticks = axis.ticks,
 			minorTicks = axis.minorTicks,
 			alternateBands = axis.alternateBands,
@@ -1774,31 +1775,7 @@ Axis.prototype = {
 
 		// Stacked totals:
 		if (stackLabelOptions && stackLabelOptions.enabled) {
-			var stackKey, oneStack, stackCategory,
-				stackTotalGroup = axis.stackTotalGroup;
-
-			// Create a separate group for the stack total labels
-			if (!stackTotalGroup) {
-				axis.stackTotalGroup = stackTotalGroup =
-					renderer.g('stack-labels')
-						.attr({
-							visibility: VISIBLE,
-							zIndex: 6
-						})
-						.add();
-			}
-
-			// plotLeft/Top will change when y axis gets wider so we need to translate the
-			// stackTotalGroup at every render call. See bug #506 and #516
-			stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
-
-			// Render each stack total
-			for (stackKey in stacks) {
-				oneStack = stacks[stackKey];
-				for (stackCategory in oneStack) {
-					oneStack[stackCategory].render(stackTotalGroup);
-				}
-			}
+			axis.renderStackTotals();
 		}
 		// End stacked totals
 
@@ -1814,7 +1791,7 @@ Axis.prototype = {
 			pointer = chart.pointer;
 
 		// hide tooltip and hover states
-		if (pointer.reset) {
+		if (pointer) {
 			pointer.reset(true);
 		}
 
@@ -1831,26 +1808,6 @@ Axis.prototype = {
 			series.isDirty = true;
 		});
 
-	},
-
-	/**
-	 * Build the stacks from top down
-	 */
-	buildStacks: function () {
-		var series = this.series,
-			i = series.length;
-		if (!this.isXAxis) {
-			this.usePercentage = false;
-			while (i--) {
-				series[i].setStackedPoints();
-			}
-			// Loop up again to compute percent stack
-			if (this.usePercentage) {
-				for (i = 0; i < series.length; i++) {
-					series[i].setPercentStacks();
-				}
-			}
-		}
 	},
 
 	/**

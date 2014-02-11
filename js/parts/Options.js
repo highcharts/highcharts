@@ -231,8 +231,7 @@ defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
-		itemStyle: {
-			cursor: 'pointer',
+		itemStyle: {			
 			color: '#274b6d',
 			fontSize: '12px'
 		},

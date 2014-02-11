@@ -4,10 +4,11 @@
 /*jslint white:true */
 var DATA_GROUPING = 'dataGrouping',
 	seriesProto = Series.prototype,
+	tooltipProto = Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
-	baseTooltipHeaderFormatter = seriesProto.tooltipHeaderFormatter,
+	baseTooltipHeaderFormatter = tooltipProto.tooltipHeaderFormatter,
 	NUMBER = 'number',
 
 	commonOptions = {
@@ -374,10 +375,11 @@ seriesProto.generatePoints = function () {
 };
 
 /**
- * Make the tooltip's header reflect the grouped range
+ * Extend the original method, make the tooltip's header reflect the grouped range
  */
-seriesProto.tooltipHeaderFormatter = function (point) {
-	var series = this,
+tooltipProto.tooltipHeaderFormatter = function (point) {
+	var tooltip = this,
+		series = point.series,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
 		dataGroupingOptions = options.dataGrouping,
@@ -430,7 +432,7 @@ seriesProto.tooltipHeaderFormatter = function (point) {
 
 	// else, fall back to the regular formatter
 	} else {
-		ret = baseTooltipHeaderFormatter.call(series, point);
+		ret = baseTooltipHeaderFormatter.call(tooltip, point);
 	}
 
 	return ret;

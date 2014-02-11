@@ -156,6 +156,7 @@ var PieSeries = {
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
+	singularTooltips: true,
 
 	/**
 	 * Pies have one color each point
@@ -353,8 +354,7 @@ var PieSeries = {
 
 		}
 	},
-
-	setTooltipPoints: noop,
+	
 	drawGraph: null,
 
 	/**
@@ -432,11 +432,6 @@ var PieSeries = {
 			return a.angle !== undefined && (b.angle - a.angle) * sign;
 		});
 	},		
-
-	/**
-	 * Draw point specific tracker objects. Inherit directly from column series.
-	 */
-	drawTracker: TrackerMixin.drawTrackerPoint,
 
 	/**
 	 * Use a simple symbol from LegendSymbolMixin

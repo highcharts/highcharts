@@ -21,13 +21,12 @@ var ScatterSeries = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
 	takeOrdinalPosition: false, // #2342
-	drawTracker: TrackerMixin.drawTrackerPoint,
+	singularTooltips: true,
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);
 		}
-	},
-	setTooltipPoints: noop
+	}
 });
 
 seriesTypes.scatter = ScatterSeries;
