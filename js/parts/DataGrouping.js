@@ -185,67 +185,74 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
 		i;
 
-		for (i = 0; i <= dataLength; i++) {
+	// Start with the first point within the X axis range (#2696)
+	for (i = 0; i <= dataLength; i++) {
+		if (xData[i] >= groupPositions[0]) {
+			break;
+		}
+	}
 
-			// when a new group is entered, summarize and initiate the previous group
-			while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
-					i === dataLength) { // get the last group
+	for (; i <= dataLength; i++) {
 
-				// get group x and y
-				pointX = groupPositions.shift();
-				groupedY = approximationFn.apply(0, values);
+		// when a new group is entered, summarize and initiate the previous group
+		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
+				i === dataLength) { // get the last group
 
-				// push the grouped data
-				if (groupedY !== UNDEFINED) {
-					groupedXData.push(pointX);
-					groupedYData.push(groupedY);
-				}
+			// get group x and y
+			pointX = groupPositions.shift();
+			groupedY = approximationFn.apply(0, values);
 
-				// reset the aggregate arrays
-				values[0] = [];
-				values[1] = [];
-				values[2] = [];
-				values[3] = [];
-
-				// don't loop beyond the last group
-				if (i === dataLength) {
-					break;
-				}
+			// push the grouped data
+			if (groupedY !== UNDEFINED) {
+				groupedXData.push(pointX);
+				groupedYData.push(groupedY);
 			}
 
-			// break out
+			// reset the aggregate arrays
+			values[0] = [];
+			values[1] = [];
+			values[2] = [];
+			values[3] = [];
+
+			// don't loop beyond the last group
 			if (i === dataLength) {
 				break;
 			}
+		}
 
-			// for each raw data point, push it to an array that contains all values for this specific group
-			if (pointArrayMap) {
+		// break out
+		if (i === dataLength) {
+			break;
+		}
 
-				var index = series.cropStart + i,
-					point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
-					j,
-					val;
+		// for each raw data point, push it to an array that contains all values for this specific group
+		if (pointArrayMap) {
 
-				for (j = 0; j < pointArrayMapLength; j++) {
-					val = point[pointArrayMap[j]];
-					if (typeof val === NUMBER) {
-						values[j].push(val);
-					} else if (val === null) {
-						values[j].hasNulls = true;
-					}
-				}
+			var index = series.cropStart + i,
+				point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
+				j,
+				val;
 
-			} else {
-				pointY = handleYData ? yData[i] : null;
-
-				if (typeof pointY === NUMBER) {
-					values[0].push(pointY);
-				} else if (pointY === null) {
-					values[0].hasNulls = true;
+			for (j = 0; j < pointArrayMapLength; j++) {
+				val = point[pointArrayMap[j]];
+				if (typeof val === NUMBER) {
+					values[j].push(val);
+				} else if (val === null) {
+					values[j].hasNulls = true;
 				}
 			}
 
+		} else {
+			pointY = handleYData ? yData[i] : null;
+
+			if (typeof pointY === NUMBER) {
+				values[0].push(pointY);
+			} else if (pointY === null) {
+				values[0].hasNulls = true;
+			}
 		}
+	}
+		
 	return [groupedXData, groupedYData];
 };
 
@@ -263,7 +270,8 @@ seriesProto.processData = function () {
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
-	series.groupPixelWidth = null;
+	series.groupPixelWidth = null; // #2110
+	series.hasProcessed = true; // #2692
 
 	// skip if processData returns false or if grouping is disabled (in that order)
 	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
@@ -476,6 +484,18 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	return options;
 });
 
+
+/**
+ * When resetting the scale reset the hasProccessed flag to avoid taking previous data grouping
+ * of neighbour series into accound when determining group pixel width (#2692).
+ */
+wrap(Axis.prototype, 'setScale', function (proceed) {
+	proceed.call(this);
+	each(this.series, function (series) {
+		series.hasProcessed = false;
+	});
+});
+
 /**
  * Get the data grouping pixel width based on the greatest defined individual width
  * of the axis' series, and if whether one of the axes need grouping.
@@ -505,7 +525,8 @@ Axis.prototype.getGroupPixelWidth = function () {
 	i = len;
 	while (i--) {
 		dgOptions = series[i].options.dataGrouping;
-		if (dgOptions) {
+			
+		if (dgOptions && series[i].hasProcessed) { // #2692
 
 			dataLength = (series[i].processedXData || series[i].data).length;
 

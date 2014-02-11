@@ -306,10 +306,16 @@ var radialAxisMixin = {
 
 			// Set the center array
 			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+
+			// The sector is used in Axis.translate to compute the translation of reversed axis points (#2570)
+			if (this.isCircular) {
+				this.sector = this.endAngleRad - this.startAngleRad;	
+			}
 			
-			this.len = this.width = this.height = this.isCircular ?
-				this.endAngleRad - this.startAngleRad : // #2570
-				this.center[2] / 2;
+			// Axis len is used to lay out the ticks
+			this.len = this.width = this.height = this.center[2] * pick(this.sector, 0.5);
+
+
 		}
 	},
 	

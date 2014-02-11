@@ -6581,7 +6581,6 @@ Axis.prototype = {
 	 */
 	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
 		var axis = this,
-			axisLength = axis.len,
 			sign = 1,
 			cvsOffset = 0,
 			localA = old ? axis.oldTransA : axis.transA,
@@ -6598,13 +6597,13 @@ Axis.prototype = {
 		// SVG.
 		if (cvsCoord) {
 			sign *= -1; // canvas coordinates inverts the value
-			cvsOffset = axisLength;
+			cvsOffset = axis.len;
 		}
 
 		// Handle reversed axis
 		if (axis.reversed) {
 			sign *= -1;
-			cvsOffset -= sign * axisLength;
+			cvsOffset -= sign * (axis.sector || axis.len);
 		}
 
 		// From pixels to value
@@ -8774,7 +8773,7 @@ Pointer.prototype = {
 		}
 
 		// separate tooltip and general mouse events
-		if (hoverSeries && hoverSeries.tracker && !tooltip.followPointer) { // only use for line-type series with common tracker and while not following the pointer #2584
+		if (hoverSeries && hoverSeries.tracker && (!tooltip || !tooltip.followPointer)) { // only use for line-type series with common tracker and while not following the pointer #2584
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
@@ -9289,33 +9288,37 @@ if (win.PointerEvent || win.MSPointerEvent) {
 
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-		chart.container.style["-ms-touch-action"] = chart.container.style["touch-action"] = "none";
+		chart.container.style['-ms-touch-action'] = chart.container.style['touch-action'] = NONE;
 		proceed.call(this, chart, options);
 	});
 
 	// Add IE specific touch events to chart
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
-		var pointer = this, eventmap;
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		var pointer = this, 
+			eventmap;
+		proceed.apply(this);
 		eventmap = [
-			[this.chart.container, "PointerDown", "touchstart", "onContainerTouchStart", function (e) {
+			[this.chart.container, 'PointerDown', 'touchstart', 'onContainerTouchStart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
 			}],
-			[this.chart.container, "PointerMove", "touchmove", "onContainerTouchMove", function (e) {
+			[this.chart.container, 'PointerMove', 'touchmove', 'onContainerTouchMove', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
 				if (!touches[e.pointerId].target) {
 					touches[e.pointerId].target = e.currentTarget;
 				}	
 			}],
-			[document, "PointerUp", "touchend", "onDocumentTouchEnd", function (e) {
+			[document, 'PointerUp', 'touchend', 'onDocumentTouchEnd', function (e) {
 				delete touches[e.pointerId];
 			}]
 		];
 		
+		// Add the events based on the eventmap configuration
 		each(eventmap, function (eventConfig) {
-			addEvent(eventConfig[0], window.PointerEvent ? eventConfig[1].toLowerCase() : "MS" + eventConfig[1], function (e) {
+			var eventName = window.PointerEvent ? eventConfig[1].toLowerCase() : 'MS' + eventConfig[1];
+
+			pointer['_' + eventName] = function (e) {
 				e = e.originalEvent || e;
-				if (e.pointerType === "touch" || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
+				if (e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
 					eventConfig[4](e);
 					
 					// This event corresponds to ontouchstart - call onContainerTouchStart
@@ -9326,7 +9329,11 @@ if (win.PointerEvent || win.MSPointerEvent) {
 						touches: pointer.getWebkitTouches()
 					});
 				}
-			});
+			};
+			addEvent(eventConfig[0], eventName, pointer['_' + eventName]);
+
+			// Register for removing in destroy (#2691)
+			pointer._events.push([eventConfig[0], eventName, eventName]);
 		});
 	   
 	});
@@ -14304,7 +14311,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, plotY + 1, inverted)), // +1 for rounding errors (#2683)
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted)), // Math.round for rounding errors (#2683)
 		alignAttr; // the final position;
 
 	if (visible) {

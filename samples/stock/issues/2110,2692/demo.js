@@ -432,28 +432,34 @@ var usdeur = [
 [Date.UTC(2011,4,8),0.696]
 
 ];
+
+var usdrand = [];
+$.each(usdeur, function (i, point) {
+    usdrand[i] = [point[0], point[1] + 0.01];
+});
+
 $(function() {
     $('#container').highcharts('StockChart', {
                     
-        chart: {
-            events: {
-                load: function () {
-                    this.rangeSelector.clickButton(0, {
-                        type: 'm',
-                        count: 1,
-                        _range: 30 * 24 * 36e5
-                    });
-                }
-            }
-        },
         title: {
-            text: 'Issue in Highstock 1.3.7 caused the data grouping to stick'
+            text: 'Issue in Highstock 1.3.7 caused the data grouping to stick.<br/>Highstock <= 1.3.9 saw the same issue with multiple series.'
         },
         rangeSelector: {
             selected: 5
         },
         series: [{
             data: usdeur,
+            dataGrouping: {
+                units: [[
+                    'week',                         
+                    [1]                             
+                ], [
+                    'month',
+                    [1, 2, 3, 4, 6]
+                ]]
+            }
+        }, {
+            data: usdrand,
             dataGrouping: {
                 units: [[
                     'week',                         
