@@ -155,7 +155,7 @@
             <file name="CenteredSeriesMixin.js"/>
 			<file name="Point.js"/>
             <file name="Series.js"/>
-            <file name="StackItem.js"/>
+            <file name="Stacking.js"/>
             <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
@@ -199,7 +199,7 @@
             <file name="CenteredSeriesMixin.js"/>
             <file name="Point.js"/>
             <file name="Series.js"/>
-            <file name="StackItem.js"/>
+            <file name="Stacking.js"/>
             <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
@@ -276,7 +276,7 @@
             <file name="parts/VmlRenderer.js"/>
             <file name="parts/CanVGRenderer.js"/>
             <file name="parts/Tick.js"/>
-            <!-- file name="parts/StackItem.js"/ -->
+            <!-- file name="parts/Stacking.js"/ -->
             <!-- file name="parts/PlotLineOrBand.js"/ -->
             <file name="parts/Axis.js"/>
             <!-- file name="parts/DateTimeAxis.js"/ -->

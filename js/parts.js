@@ -37,7 +37,7 @@ var HighchartsConfig = {
 			{name: 'CenteredSeriesMixin', component: 'CenteredSeriesMixin', baseUrl: 'parts'},
 			{name: 'Point', component: 'Core', group: 'Core', baseUrl: 'parts'},
 			{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
-			{name: 'StackItem', component: 'Stacking', group: "Features", baseUrl: 'parts'},
+			{name: 'Stacking', component: 'Stacking', group: "Features", baseUrl: 'parts'},
 			{name: 'Dynamics', component: 'Dynamics', group: 'Dynamics and Interaction', depends: {component: ['Core']}},			
 			{name: 'LineSeries', component: 'LineSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'AreaSeries', component: 'AreaSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
