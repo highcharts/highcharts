@@ -169,7 +169,7 @@ Pointer.prototype = {
 		}
 
 		// separate tooltip and general mouse events
-		if (hoverSeries && hoverSeries.tracker && !tooltip.followPointer) { // only use for line-type series with common tracker and while not following the pointer #2584
+		if (hoverSeries && hoverSeries.tracker && (!tooltip || !tooltip.followPointer)) { // only use for line-type series with common tracker and while not following the pointer #2584
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
