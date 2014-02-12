@@ -95,51 +95,54 @@ $(function () {
 
     var start = +new Date(),
         $tds = $("td[data-sparkline]"),
-        len = $tds.length,
-        chunks,
-        i;
+        fullLen = $tds.length,
+        n = 0;
 
     // Creating 153 sparkline charts is quite fast in modern browsers, but IE8 and mobile
     // can take some seconds, so we split the input into chunks and apply them in timeouts
     // in order avoid locking up the browser process and allow interaction.
-    chunks = [];
-    for (i = 0; i < len; i += 20) {
-        chunks.push($tds.slice(i, i + 20));
-    }
+    function doChunk() {
+        var time = +new Date(),
+            i,
+            len = $tds.length;
 
-    i = 0;
-
-    //console.profile('sparkline');
-    $.each(chunks, function () {
-        var chunk = this;
-        setTimeout(function () {
-            $.each(chunk, function () {
-                stringdata = $(this).data('sparkline');
-                arr = stringdata.split('; ');
-                data = $.map(arr[0].split(', '), parseFloat);
+        for (i = 0; i < len; i++) {
+            var $td = $($tds[i]),
+                stringdata = $td.data('sparkline'),
+                arr = stringdata.split('; '),
+                data = $.map(arr[0].split(', '), parseFloat),
                 chart = {};
-                if (arr[1]) {
-                    chart.type = arr[1];
-                }
-                $(this).highcharts('SparkLine', {
-                    series: [{
-                        data: data,
-                        pointStart: 1
-                    }],
-                    tooltip: {
-                        headerFormat: 'Q{point.x}<br/>',
-                        pointFormat: '<b>{point.y}.000</b> USD'
-                    },
-                    chart: chart
-                });
 
-                i++;
-                if (i === len) {
-                    //console.profileEnd('sparkline');
-                    $('#result').html('Generated ' + $tds.length + ' sparklines in ' + (new Date() - start) + ' ms');
-                }
+            if (arr[1]) {
+                chart.type = arr[1];
+            }
+            $td.highcharts('SparkLine', {
+                series: [{
+                    data: data,
+                    pointStart: 1
+                }],
+                tooltip: {
+                    headerFormat: '<span style="font-size: 10px">' + $td.parent().find('th').html() + ', Q{point.x}:</span><br/>',
+                    pointFormat: '<b>{point.y}.000</b> USD'
+                },
+                chart: chart
             });
-        }, 0);
-    });
+
+            n++;
+            
+            // If the process takes too much time, run a timeout to allow interaction with the browser
+            if (new Date() - time > 500) {
+                $tds.splice(0, i + 1);
+                setTimeout(doChunk, 0);
+                break;
+            }
+
+            // Print a feedback on the performance
+            if (n === fullLen) {
+                $('#result').html('Generated ' + fullLen + ' sparklines in ' + (new Date() - start) + ' ms');
+            }
+        }
+    }
+    doChunk();
     
 });

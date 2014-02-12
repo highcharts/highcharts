@@ -22,7 +22,7 @@ thead th {
     border-bottom: 2px solid gray;
 }
 .highcharts-tooltip>span {
-	background: rgba(255,255,255,0.85);
+	background: white;
 	border: 1px solid silver;
 	border-radius: 3px;
 	box-shadow: 1px 1px 2px #888;
