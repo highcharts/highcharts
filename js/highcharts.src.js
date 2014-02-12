@@ -2551,7 +2551,7 @@ SVGElement.prototype = {
 			parentNode = parentWrapper.element || renderer.box,
 			childNodes = parentNode.childNodes,
 			element = this.element,
-			zIndex = attr(element, 'zIndex'),
+			zIndex = this.zIndex,
 			otherElement,
 			otherZIndex,
 			i,
@@ -11305,8 +11305,9 @@ Chart.prototype = {
 		// If the container doesn't have an offsetWidth, it has or is a child of a node
 		// that has display:none. We need to temporarily move it out to a visible
 		// state to determine the size, else the legend and tooltips won't render
-		// properly
-		if (chart.cloneRenderTo && !renderTo.offsetWidth) {
+		// properly. The allowClone option is used in sparklines as a micro optimization,
+		// saving about 1-2 ms each chart.
+		if (!optionsChart.skipClone && !renderTo.offsetWidth) {
 			chart.cloneRenderTo();
 		}
 
@@ -12088,10 +12089,8 @@ Chart.prototype = {
 		
 		
 		// If the chart was rendered outside the top container, put it back in
-		if (chart.cloneRenderTo) {
-			chart.cloneRenderTo(true);
-		}
-
+		chart.cloneRenderTo(true);
+		
 		fireEvent(chart, 'load');
 
 	},

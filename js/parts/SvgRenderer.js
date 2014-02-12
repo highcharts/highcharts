@@ -753,7 +753,7 @@ SVGElement.prototype = {
 			parentNode = parentWrapper.element || renderer.box,
 			childNodes = parentNode.childNodes,
 			element = this.element,
-			zIndex = attr(element, 'zIndex'),
+			zIndex = this.zIndex,
 			otherElement,
 			otherZIndex,
 			i,

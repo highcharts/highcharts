@@ -8,13 +8,16 @@ $(function () {
         var defaultOptions = {
             chart: {
                 renderTo: (options.chart && options.chart.renderTo) || this,
+                backgroundColor: null,
+                borderWidth: 0,
                 type: 'area',
                 margin: [2, 0, 2, 0],
                 width: 120,
                 height: 20,
                 style: {
                     overflow: 'visible'
-                }
+                },
+                skipClone: true
             },
             title: {
                 text: ''
@@ -87,9 +90,6 @@ $(function () {
         };
         options = Highcharts.merge(defaultOptions, options);
 
-        // Speed optimization by not having to poll for offsetWidth
-        Highcharts.Chart.prototype.cloneRenderTo = false; 
-
         return new Highcharts.Chart(options, callback);
     };
 
@@ -108,6 +108,8 @@ $(function () {
     }
 
     i = 0;
+
+    //console.profile('sparkline');
     $.each(chunks, function () {
         var chunk = this;
         setTimeout(function () {
@@ -133,6 +135,7 @@ $(function () {
 
                 i++;
                 if (i === len) {
+                    //console.profileEnd('sparkline');
                     $('#result').html('Generated ' + $tds.length + ' sparklines in ' + (new Date() - start) + ' ms');
                 }
             });
