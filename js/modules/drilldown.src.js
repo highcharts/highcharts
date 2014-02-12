@@ -82,9 +82,6 @@
 		});
 	};
 
-	// Extend the Chart prototype
-	Chart.prototype.drilldownLevels = [];
-
 	Chart.prototype.addSeriesAsDrilldown = function (point, ddOptions) {
 		this.addSingleSeriesAsDrilldown(point, ddOptions);
 		this.applyDrilldown();
@@ -136,6 +133,10 @@
 			}
 		};
 
+		// Generate and push it to a lookup array
+		if (!this.drilldownLevels) {
+			this.drilldownLevels = [];
+		}
 		this.drilldownLevels.push(level);
 
 		newSeries = this.addSeries(ddOptions, false);
@@ -240,14 +241,13 @@
 					newSeries = addedSeries;
 				}
 			};
-
+				
 		while (i--) {
 
 			level = drilldownLevels[i];
 			if (level.levelNumber === levelNumber) {
 				drilldownLevels.pop();
 				
-
 				oldSeries = chart.series[i];
 				each(level.levelSeriesOptions, addSeries);
 				
