@@ -114,6 +114,7 @@
 			}
 		});
 		
+		// Add a record of properties for each drilldown level
 		level = {
 			levelNumber: levelNumber,
 			seriesOptions: oldSeries.userOptions,
@@ -122,7 +123,7 @@
 			shapeArgs: point.shapeArgs,
 			bBox: point.graphic.getBBox(),
 			color: color,
-			newSeries: ddOptions,
+			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
 			pointIndex: pointIndex,
 			oldExtremes: {
@@ -139,7 +140,7 @@
 		}
 		this.drilldownLevels.push(level);
 
-		newSeries = this.addSeries(ddOptions, false);
+		newSeries = level.lowerSeries = this.addSeries(ddOptions, false);
 		newSeries.levelNumber = levelNumber + 1;
 		if (xAxis) {
 			xAxis.oldPos = xAxis.pos;
@@ -241,14 +242,15 @@
 					newSeries = addedSeries;
 				}
 			};
-				
+		
 		while (i--) {
 
 			level = drilldownLevels[i];
 			if (level.levelNumber === levelNumber) {
 				drilldownLevels.pop();
 				
-				oldSeries = chart.series[i];
+				oldSeries = level.lowerSeries;
+
 				each(level.levelSeriesOptions, addSeries);
 				
 				fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
@@ -371,7 +373,7 @@
 			
 		if (!init) {
 			each(drilldownLevels, function (level) {
-				if (series.userOptions === level.newSeries) {
+				if (series.userOptions === level.lowerSeriesOptions) {
 					animateFrom = level.shapeArgs;
 				}
 			});
