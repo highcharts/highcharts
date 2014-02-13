@@ -1600,11 +1600,13 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
-			justifyLabels = axis.justifyLabels = !axis.staggerLines && horiz && options.labels.overflow === 'justify',
+			overflow = options.labels.overflow,
+			justifyLabels = axis.justifyLabels = horiz && overflow !== false, // docs: false is new
 			to;
 
 		// Reset
 		axis.labelEdge.length = 0;
+		axis.justifyToPlot = overflow === 'justify';
 
 		// Mark all elements inActive before we go over and mark the active ones
 		each([ticks, minorTicks, alternateBands], function (coll) {

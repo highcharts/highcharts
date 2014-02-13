@@ -27,7 +27,10 @@ $(function () {
             plotOptions: {
                 line: {
                     dataLabels: {
-                        enabled: true
+                        enabled: true,
+                        style: {
+                            textShadow: '0 0 3px white, 0 0 3px white'
+                        }
                     },
                     enableMouseTracking: false
                 }

@@ -49,7 +49,6 @@ Tick.prototype = {
 		if (axis.isDatetimeAxis && tickPositionInfo) {
 			dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 		}
-
 		// set properties for access in render method
 		tick.isFirst = isFirst;
 		tick.isLast = isLast;
@@ -151,13 +150,14 @@ Tick.prototype = {
 			sides = this.getLabelSides(),
 			leftSide = sides[0],
 			rightSide = sides[1],
-			axisLeft = axis.pos,
-			axisRight = axisLeft + axis.len,
+			axisLeft,
+			axisRight,
 			neighbour,
 			neighbourEdge,
 			line = this.label.line || 0,
 			labelEdge = axis.labelEdge,
-			justifyLabel = axis.justifyLabels && (isFirst || isLast);
+			justifyLabel = axis.justifyLabels && (isFirst || isLast),
+			justifyToPlot;
 
 		// Hide it if it now overlaps the neighbour label
 		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
@@ -168,7 +168,16 @@ Tick.prototype = {
 		}
 
 		if (justifyLabel) {
-			neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]];
+			justifyToPlot = axis.justifyToPlot;
+			axisLeft = justifyToPlot ? axis.pos : 0;
+			axisRight = justifyToPlot ? axisLeft + axis.len : axis.chart.chartWidth;
+
+			// Find the firsth neighbour on the same line
+			do {
+				index += (isFirst ? 1 : -1);
+				neighbour = axis.ticks[tickPositions[index]];
+			} while (tickPositions[index] && (!neighbour || neighbour.label.line !== line));
+
 			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
