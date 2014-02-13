@@ -132,6 +132,8 @@
 	 */
 	getColumnDistribution: function () {
 		var chartOptions = this.chartOptions,
+			options = this.options,
+			xColumns = [],
 			getValueCount = function (type) {
 				return (Highcharts.seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
 			},
@@ -142,8 +144,19 @@
 			individualCounts.push(getValueCount(series.type || globalType));
 		});
 
+		// Collect the x-column indexes from seriesMapping
+		each((options && options.seriesMapping) || [], function (mapping) {
+			xColumns.push(mapping.x || 0);
+		});
+
+		// If there are no defined series with x-columns, use the first column as x column
+		if (xColumns.length === 0) {
+			xColumns.push(0);
+		}
+
 		this.valueCount = {
 			global: getValueCount(globalType),
+			xColumns: xColumns,
 			individual: individualCounts
 		};
 	},
@@ -157,6 +170,9 @@
 		if (this.options.switchRowsAndColumns) {
 			this.columns = this.rowsToColumns(this.columns);
 		}
+
+		// Interpret the info about series and columns
+		this.getColumnDistribution();
 
 		// Interpret the values into right types
 		this.parseTypes();
@@ -356,6 +372,7 @@
 			val,
 			floatVal,
 			trimVal,
+			isXColumn,
 			dateVal;
 			
 		while (col--) {
@@ -379,8 +396,9 @@
 				
 				} else { // string, continue to determine if it is a date string or really a string
 					dateVal = this.parseDate(val);
-					
-					if (col === 0 && typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
+					// Only allow parsing of dates if this column is an x-column
+					isXColumn = this.valueCount.xColumns.indexOf(col) !== -1;
+					if (isXColumn && typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
 						columns[col][row] = dateVal;
 						columns[col].isDatetime = true;
 					
@@ -475,6 +493,8 @@
 		
 		var columns = this.columns,
 			firstCol,
+			xColumns = [],
+			knownXColumnIndexes = [],
 			type,
 			options = this.options,
 			valueCount,
@@ -484,23 +504,47 @@
 			j,
 			seriesIndex;
 			
-		
+		xColumns.length = columns.length;
 		if (options.complete) {
 
-			this.getColumnDistribution();
-			
 			// Use first column for X data or categories?
 			if (columns.length > 1) {
-				firstCol = columns.shift();
-				if (this.headerRow === 0) {
-					firstCol.shift(); // remove the first cell
+
+				// Move column references from columns to xColumns based on the
+				// value returned by getColumnDistribution
+				for (i = 0; i < this.valueCount.xColumns.length; i++) {
+					// Get the xColumn index
+					var xColumnIndex = this.valueCount.xColumns[i];
+					if (knownXColumnIndexes.indexOf(xColumnIndex) === -1) {
+						// If it not known then move the column to xColumns and
+						// shift out the first cell (column name)
+						knownXColumnIndexes.push(xColumnIndex);
+						xColumns[xColumnIndex] = columns[xColumnIndex];
+
+						if (firstCol === undefined) {
+							firstCol = xColumns[xColumnIndex];
+
+							if (firstCol !== undefined) {
+								if (firstCol.isDatetime) {
+									type = 'datetime';
+								} else if (!firstCol.isNumeric) {
+									type = 'category';
+								}
+							}
+						}
+
+						if (this.headerRow === 0) {
+							xColumns[xColumnIndex].shift(); // remove the first cell
+						}
+					}
 				}
-				
-				
-				if (firstCol.isDatetime) {
-					type = 'datetime';
-				} else if (!firstCol.isNumeric) {
-					type = 'category';
+
+				// Splice out the x-columns from the data-set from end to beginning to not bother about
+				// indexes and length changing
+				knownXColumnIndexes.sort().reverse();
+				for (i = 0; i < knownXColumnIndexes.length; i++) {
+					xColumnIndex = knownXColumnIndexes[i];
+					columns.splice(xColumnIndex, 1);
 				}
 			}
 
@@ -517,7 +561,8 @@
 
 				// This series' value count
 				valueCount = Highcharts.pick(this.valueCount.individual[seriesIndex], this.valueCount.global);
-				
+				var seriesXColumnIndex = this.valueCount.xColumns[seriesIndex] || 0;
+
 				// Iterate down the cells of each column and add data to the series
 				data = [];
 
@@ -526,7 +571,7 @@
 				if (i + valueCount <= columns.length) {
 					for (j = 0; j < columns[i].length; j++) {
 						data[j] = [
-							firstCol[j],
+							xColumns[seriesXColumnIndex][j],
 							columns[i][j] !== undefined ? columns[i][j] : null
 						];
 						if (valueCount > 1) {
