@@ -202,12 +202,12 @@ var PieSeries = {
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.
 	 */
-	setData: function (data, redraw) {
-		Series.prototype.setData.call(this, data, false);
+	setData: function (data, redraw, animation, updatePoints) {
+		Series.prototype.setData.call(this, data, false, animation, updatePoints);
 		this.processData();
 		this.generatePoints();
 		if (pick(redraw, true)) {
-			this.chart.redraw();
+			this.chart.redraw(animation);
 		} 
 	},
 

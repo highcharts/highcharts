@@ -12702,26 +12702,18 @@ Series.prototype = {
 	 * @param {Object} data
 	 * @param {Object} redraw
 	 */
-	setData: function (data, redraw) {
+	setData: function (data, redraw, animation, updatePoints) { // docs: animation and updatePoints
 		var series = this,
 			oldData = series.points,
+			oldDataLength = (oldData && oldData.length) || 0,
+			dataLength,
 			options = series.options,
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
 			tooltipPoints = series.tooltipPoints,
-			i;
-
-		// reset properties
-		series.xIncrement = null;
-		series.pointRange = hasCategories ? 1 : options.pointRange;
-
-		series.colorCounter = 0; // for series with colorByPoint (#1547)
-		data = data || [];
-
-		// parallel arrays
-		var dataLength = data.length,
+			i,
 			turboThreshold = options.turboThreshold,
 			pt,
 			xData = this.xData,
@@ -12729,93 +12721,116 @@ Series.prototype = {
 			pointArrayMap = series.pointArrayMap,
 			valueCount = pointArrayMap && pointArrayMap.length;
 
-		each(this.parallelArrays, function (key) {
-			series[key + 'Data'].length = 0;
-		});
+		data = data || [];
+		dataLength = data.length;
+		redraw = pick(redraw, true);
 
-		// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
-		// first value is tested, and we assume that all the rest are defined the same
-		// way. Although the 'for' loops are similar, they are repeated inside each
-		// if-else conditional for max performance.
-		if (turboThreshold && dataLength > turboThreshold) {
+		// If the point count is the same as is was, just run Point.update which is
+		// cheaper, allows animation, and keeps references to points.
+		if (updatePoints !== false && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
+			each(data, function (point, i) {
+				oldData[i].update(point, false);
+			});
 
-			// find the first non-null point
-			i = 0;
-			while (firstPoint === null && i < dataLength) {
-				firstPoint = data[i];
-				i++;
-			}
+		} else {
 
+			// Reset properties
+			series.xIncrement = null;
+			series.pointRange = hasCategories ? 1 : options.pointRange;
 
-			if (isNumber(firstPoint)) { // assume all points are numbers
-				var x = pick(options.pointStart, 0),
-					pointInterval = pick(options.pointInterval, 1);
+			series.colorCounter = 0; // for series with colorByPoint (#1547)
+			
+			// Update parallel arrays
+			each(this.parallelArrays, function (key) {
+				series[key + 'Data'].length = 0;
+			});
 
-				for (i = 0; i < dataLength; i++) {
-					xData[i] = x;
-					yData[i] = data[i];
-					x += pointInterval;
+			// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
+			// first value is tested, and we assume that all the rest are defined the same
+			// way. Although the 'for' loops are similar, they are repeated inside each
+			// if-else conditional for max performance.
+			if (turboThreshold && dataLength > turboThreshold) {
+
+				// find the first non-null point
+				i = 0;
+				while (firstPoint === null && i < dataLength) {
+					firstPoint = data[i];
+					i++;
 				}
-				series.xIncrement = x;
-			} else if (isArray(firstPoint)) { // assume all points are arrays
-				if (valueCount) { // [x, low, high] or [x, o, h, l, c]
+
+
+				if (isNumber(firstPoint)) { // assume all points are numbers
+					var x = pick(options.pointStart, 0),
+						pointInterval = pick(options.pointInterval, 1);
+
 					for (i = 0; i < dataLength; i++) {
-						pt = data[i];
-						xData[i] = pt[0];
-						yData[i] = pt.slice(1, valueCount + 1);
+						xData[i] = x;
+						yData[i] = data[i];
+						x += pointInterval;
 					}
-				} else { // [x, y]
-					for (i = 0; i < dataLength; i++) {
-						pt = data[i];
-						xData[i] = pt[0];
-						yData[i] = pt[1];
+					series.xIncrement = x;
+				} else if (isArray(firstPoint)) { // assume all points are arrays
+					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
+						for (i = 0; i < dataLength; i++) {
+							pt = data[i];
+							xData[i] = pt[0];
+							yData[i] = pt.slice(1, valueCount + 1);
+						}
+					} else { // [x, y]
+						for (i = 0; i < dataLength; i++) {
+							pt = data[i];
+							xData[i] = pt[0];
+							yData[i] = pt[1];
+						}
 					}
+				} else {
+					error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
 				}
 			} else {
-				error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
-			}
-		} else {
-			for (i = 0; i < dataLength; i++) {
-				if (data[i] !== UNDEFINED) { // stray commas in oldIE
-					pt = { series: series };
-					series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-					series.updateParallelArrays(pt, i);
-					if (hasCategories && pt.name) {
-						xAxis.names[pt.x] = pt.name; // #2046
+				for (i = 0; i < dataLength; i++) {
+					if (data[i] !== UNDEFINED) { // stray commas in oldIE
+						pt = { series: series };
+						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
+						series.updateParallelArrays(pt, i);
+						if (hasCategories && pt.name) {
+							xAxis.names[pt.x] = pt.name; // #2046
+						}
 					}
 				}
 			}
-		}
 
-		// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
-		if (isString(yData[0])) {
-			error(14, true);
-		}
-
-		series.data = [];
-		series.options.data = data;
-		//series.zData = zData;
-
-		// destroy old points
-		i = (oldData && oldData.length) || 0;
-		while (i--) {
-			if (oldData[i] && oldData[i].destroy) {
-				oldData[i].destroy();
+			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
+			if (isString(yData[0])) {
+				error(14, true);
 			}
-		}
-		if (tooltipPoints) { // #2594
-			tooltipPoints.length = 0;
+
+			series.data = [];
+			series.options.data = data;
+			//series.zData = zData;
+
+			// destroy old points
+			i = oldDataLength;
+			while (i--) {
+				if (oldData[i] && oldData[i].destroy) {
+					oldData[i].destroy();
+				}
+			}
+			if (tooltipPoints) { // #2594
+				tooltipPoints.length = 0;
+			}
+
+			// reset minRange (#878)
+			if (xAxis) {
+				xAxis.minRange = xAxis.userMinRange;
+			}
+
+			// redraw
+			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
+			animation = false;
 		}
 
-		// reset minRange (#878)
-		if (xAxis) {
-			xAxis.minRange = xAxis.userMinRange;
-		}
-
-		// redraw
-		series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
-		if (pick(redraw, true)) {
-			chart.redraw(false);
+		if (redraw) {
+			chart.redraw(animation);
 		}
 	},
 
@@ -15667,12 +15682,12 @@ var PieSeries = {
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.
 	 */
-	setData: function (data, redraw) {
-		Series.prototype.setData.call(this, data, false);
+	setData: function (data, redraw, animation, updatePoints) {
+		Series.prototype.setData.call(this, data, false, animation, updatePoints);
 		this.processData();
 		this.generatePoints();
 		if (pick(redraw, true)) {
-			this.chart.redraw();
+			this.chart.redraw(animation);
 		} 
 	},
 
