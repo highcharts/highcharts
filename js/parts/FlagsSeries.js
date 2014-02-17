@@ -151,6 +151,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	drawPoints: function () {
 		var series = this,
 			pointAttr,
+			seriesPointAttr = series.pointAttr[''],
 			points = series.points,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -187,7 +188,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// only draw the point if y is defined and the flag is within the visible area
 			if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
 				// shortcuts
-				pointAttr = point.pointAttr[point.selected ? 'select' : ''];
+				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
 				if (graphic) { // update
 					graphic.attr({
 						x: plotX,

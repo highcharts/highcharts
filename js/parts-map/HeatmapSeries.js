@@ -3,6 +3,7 @@
 // The Heatmap series type
 seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],
+	hasPointSpecificOptions: true,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	init: function () {

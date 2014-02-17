@@ -271,7 +271,10 @@ SVGElement.prototype = {
 							}
 						}
 					} else if (!skipAttr) {
-						attr(element, key, value);
+						//attr(element, key, value);
+						if (value !== undefined) {
+							element.setAttribute(key, value);
+						}
 					}
 
 				}
