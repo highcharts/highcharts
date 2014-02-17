@@ -319,6 +319,9 @@ Axis.prototype = {
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
 			chart.axes.push(axis);
+			chart.axes.sort(function (a) { // X axes first when adding X axes dynamically (#2713)
+				return !a.isXAxis;
+			});
 			chart[axis.coll].push(axis);
 		}
 

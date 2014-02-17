@@ -2069,10 +2069,10 @@ SVGElement.prototype = {
 							}
 						}
 					} else if (!skipAttr) {
-						attr(element, key, value);
-						/*if (value !== undefined) {
+						//attr(element, key, value);
+						if (value !== undefined) {
 							element.setAttribute(key, value);
-						}*/
+						}
 					}
 
 				}
@@ -2926,13 +2926,13 @@ SVGRenderer.prototype = {
 		}
 
 		// build the lines
-		each(lines, function doTextLine(line, lineNo) {
+		each(lines, function (line, lineNo) {
 			var spans, spanNo = 0;
 
 			line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 			spans = line.split('|||');
 
-			each(spans, function doSpan(span) {
+			each(spans, function (span) {
 				if (span !== '' || spans.length === 1) {
 					var attributes = {},
 						tspan = doc.createElementNS(SVG_NS, 'tspan'),
@@ -6671,6 +6671,9 @@ Axis.prototype = {
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
 			chart.axes.push(axis);
+			chart.axes.sort(function (a) { // X axes first when adding X axes dynamically (#2713)
+				return !a.isXAxis;
+			});
 			chart[axis.coll].push(axis);
 		}
 
