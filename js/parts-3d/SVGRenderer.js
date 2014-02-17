@@ -182,6 +182,56 @@ HR.prototype.arc3d = function (shapeArgs) {
 	
 	result.animate = function (args, duration, complete) {	
 		H.SVGElement.prototype.animate.call(this, args, duration, complete);
+		
+		if (args.x && args.y) {
+			// Destroy All
+			H.each(this.outs, function (out) {
+				out.destroy();
+			});				
+			H.each(this.ins, function (inn) {
+				inn.destroy();
+			});	
+			H.each(this.sides, function (side) {
+				side.destroy();
+			});
+			H.each(this.tops, function (top) {
+				top.destroy();
+			});
+
+			// Recreate
+			var result = this,
+				renderer = this.renderer,
+				shapeArgs = H.splat(args)[0];
+
+			shapeArgs.alpha *= (Math.PI / 180);
+			shapeArgs.beta *= (Math.PI / 180);
+
+			var paths = renderer.arc3dPath(shapeArgs),
+				zIndex = paths[4] * 100;
+
+			result.shapeArgs = shapeArgs;	// Store for later use
+
+			this.ins = [];
+			H.each(paths[3], function (path) {
+				result.ins.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
+			});
+			result.outs = [];
+			H.each(paths[1], function (path) {
+				result.outs.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
+			});
+			result.sides = [];
+			H.each(paths[2], function (path) {
+				result.sides.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
+			});
+			result.tops = [];
+			H.each(paths[0], function (path) {
+				result.tops.push(renderer.path(path).attr({zIndex: zIndex + 1}).add(result));
+			});
+
+			result.attr({fill: result.color});
+			result.attr({zIndex: zIndex});
+		}
+		
 		return this;
 	};
 	result.slice = function (shapeArgs) {
@@ -351,10 +401,11 @@ HR.prototype.arc3dPath = function (shapeArgs) {
 		}
 	}
 
-	var midAngle = (start * 2 + arcAngle) / 2;
-	var zIndex = (sin(beta) * cos(midAngle)) + (sin(alpha) * sin(midAngle));
+	var midAngle = ((shapeArgs.start + shapeArgs.end) / 2);
+	var zIndex = ((sin(beta) * cos(midAngle)) + (sin(-alpha) * sin(-midAngle)));
 
-	return [topPaths, outPaths, sidePaths, inPaths, zIndex];
+
+	return [topPaths, outPaths, sidePaths, inPaths, zIndex, midAngle];
 };
 
 ////// HELPER METHODS //////
