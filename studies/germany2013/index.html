@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>German Federal Elections 2013</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script src="http://github.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.sv/highcharts-3d.js"></script>
+<script src="http://github.highcharts.com/modules/map.src.js"></script>
+<script src="http://github.highcharts.com/modules/no-data-to-display.js"></script>
+<script src="http://github.highcharts.com/modules/drilldown.js"></script>
+
+<script src="http://github.highcharts.com/9f3c996/modules/data.src.js"></script>
+<script src="http://github.highcharts.com/modules/map-parser.src.js"></script>
+
+<script src='seats.js'></script>
+<script src='results.js'></script>
+<script src='map.js'></script>
+<script>
+$(function () {
+    /***
+        GLOBAL OPTIONS
+    ***/
+    Highcharts.setOptions({
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        }
+    });
+
+
+    /***
+        INIITALIZE CHARTS
+    ***/
+    var mapChart, resultChart, seatChart;
+    seatChart = getSeatsCharts('seats1', 'seats2'); 
+    resultChart = getResultChart('results'); 
+    mapChart = getMapChart('map', resultChart);
+
+    /***
+        LOAD DATA
+    ***/
+    loadMapData(mapChart);
+    loadResults('kerg.csv');
+});
+</script>
+</head>
+
+<body>
+<div id="map" style="height:600px; width:400px; float: left"></div>
+<div style="height:600px; width: 600px; float: left">
+    <div id="results" style="height:400px; width:600px; float: left;"></div>
+    <div id="seats1" style="height:200px; width:300px; float: left"></div>
+    <div id="seats2" style="height:200px; width:300px; float: left"></div>
+</div>
+<div style="clear: both; height: 0px;"/>
+<div style="background-color: #C0C0C0; padding-left: 10px; width: 1000px">
+    <i>[11:24]</i> <b>Hannover</b>: CDU 14% (+1) CSU 21% (-3)
+</div>
+</body>
+
+</html>

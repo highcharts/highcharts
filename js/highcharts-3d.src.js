@@ -235,70 +235,41 @@ HR.prototype.arc3d = function (shapeArgs) {
 		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;
 
-	var zIndex = paths[4] * 100;
+	var zIndex = paths.zAll * 100;
 
 	result.shapeArgs = shapeArgs;	// Store for later use
 
-	result.ins = [];
-	H.each(paths[3], function (path) {
-		result.ins.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
-	});
-	result.outs = [];
-	H.each(paths[1], function (path) {
-		result.outs.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
-	});
-	result.sides = [];
-	H.each(paths[2], function (path) {
-		result.sides.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
-	});
-	result.tops = [];
-	H.each(paths[0], function (path) {
-		result.tops.push(renderer.path(path).attr({zIndex: zIndex + 1}).add(result));
-	});
+	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide2}).add(result);
+	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide1}).add(result);
+	result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn}).add(result);
+	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut}).add(result);
+	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
 
 	result.attrSetters.fill = function (color) {
 		this.color = color;
 
 		var c0 = color,
 		c2 = H.Color(color).brighten(-0.1).get();
-
-		H.each(this.outs, function (out) {
-			out.attr({fill: c2}).css({stroke: c2});
-		});				
-		H.each(this.ins, function (inn) {
-			inn.attr({fill: c2}).css({stroke: c2});
-		});	
-		H.each(this.sides, function (side) {
-			side.attr({fill: c2}).css({stroke: c2});
-		});
-		H.each(this.tops, function (top) {
-			top.attr({fill: c0}).css({stroke: c0});
-		});
+		
+		this.side1.attr({fill: c2});
+		this.side2.attr({fill: c2});
+		this.inn.attr({fill: c2});
+		this.out.attr({fill: c2});
+		this.top.attr({fill: c0});
 		return this;
 	};
 	
+	/*
 	result.attrSetters['stroke-width'] = function () {
 		// Force all to 0		
 		return 0;
 	};
+	*/
 	
 	result.animate = function (args, duration, complete) {	
 		H.SVGElement.prototype.animate.call(this, args, duration, complete);
 		
 		if (args.x && args.y) {
-			// Destroy All
-			H.each(this.outs, function (out) {
-				out.destroy();
-			});				
-			H.each(this.ins, function (inn) {
-				inn.destroy();
-			});	
-			H.each(this.sides, function (side) {
-				side.destroy();
-			});
-			H.each(this.tops, function (top) {
-				top.destroy();
-			});
 
 			// Recreate
 			var result = this,
@@ -308,36 +279,20 @@ HR.prototype.arc3d = function (shapeArgs) {
 			shapeArgs.alpha *= (Math.PI / 180);
 			shapeArgs.beta *= (Math.PI / 180);
 
-			var paths = renderer.arc3dPath(shapeArgs),
-				zIndex = paths[4] * 100;
+			var paths = renderer.arc3dPath(shapeArgs);
 
 			result.shapeArgs = shapeArgs;	// Store for later use
 
-			this.ins = [];
-			H.each(paths[3], function (path) {
-				result.ins.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
-			});
-			result.outs = [];
-			H.each(paths[1], function (path) {
-				result.outs.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
-			});
-			result.sides = [];
-			H.each(paths[2], function (path) {
-				result.sides.push(renderer.path(path).attr({zIndex: zIndex}).add(result));
-			});
-			result.tops = [];
-			H.each(paths[0], function (path) {
-				result.tops.push(renderer.path(path).attr({zIndex: zIndex + 1}).add(result));
-			});
+			result.inn.attr({d: paths.inn, zIndex: paths.zInn});
+			result.out.attr({d: paths.out, zIndex: paths.zOut});
+			result.side1.attr({d: paths.side1, zIndex: paths.zSide2});
+			result.side2.attr({d: paths.side2, zIndex: paths.zSide1});
+			result.top.attr({d: paths.top, zIndex: paths.zTop});
 
 			result.attr({fill: result.color});
-			result.attr({zIndex: zIndex});
+			result.attr({zIndex: paths.zAll * 100});
 		}
 		
-		return this;
-	};
-	result.slice = function (shapeArgs) {
-		console.log('slice ?');
 		return this;
 	};
 
@@ -347,13 +302,8 @@ HR.prototype.arc3d = function (shapeArgs) {
 
 
 HR.prototype.arc3dPath = function (shapeArgs) {
-	var topPaths = [],
-	outPaths = [],
-	sidePaths = [],
-	inPaths = [];
-
-	var x = shapeArgs.x,
-		y = shapeArgs.y,
+	var cx = shapeArgs.x,
+		cy = shapeArgs.y,
 		z = shapeArgs.z,
 		start = shapeArgs.start,
 		end = shapeArgs.end - 0.00001,
@@ -364,153 +314,116 @@ HR.prototype.arc3dPath = function (shapeArgs) {
 		beta = shapeArgs.beta,
 		origin = shapeArgs.origin;
 
-	// 2PI Correction
-	start = start % (2 * PI);
-	end = end % (2 * PI);
+	// Some Variables
+	var cs = cos(start),
+		ss = sin(start),
+		ce = cos(end),
+		se = sin(end),
+		rx = r * cos(beta),
+		ry = r * cos(alpha),
+		irx = ir * cos(beta),
+		iry = ir * cos(alpha),
+		dx = d * sin(beta),
+		dy = d * sin(alpha);
 
-	var arcAngle = end - start,
-	p1, 
-	p2;
-
-	if (arcAngle > PI / 2) {		
-		p1 = this.arc3dPath({x: x, y: y, depth: d, start: start, end: start + (PI / 2), r: r, innerR: ir, alpha: alpha, beta: beta});
-		p2 = this.arc3dPath({x: x, y: y, depth: d, start: start + (PI / 2) + 0.00001, end: end, r: r, innerR: ir, alpha: alpha, beta: beta});
-
-		topPaths = topPaths.concat(p1[0]);
-		topPaths = topPaths.concat(p2[0]);
-
-		outPaths = outPaths.concat(p1[1]);
-		outPaths = outPaths.concat(p2[1]);	 
-
-		sidePaths = sidePaths.concat(p1[2]);
-		sidePaths = sidePaths.concat(p2[2]);   
-
-		inPaths = inPaths.concat(p1[3]);
-		inPaths = inPaths.concat(p2[3]);
-	} else {
-		// -PI -> PI
-		start = (start > PI ? start - (2 * PI) : start);
-		end = (end > PI ? end - (2 * PI) : end);
-
-		if (start < 0 && end > 0) {	   
-			p1 = this.arc3dPath({x: x, y: y, depth: d, start: start, end: 0, r: r, innerR: ir, alpha: alpha, beta: beta});
-			p2 = this.arc3dPath({x: x, y: y, depth: d, start: 0, end: end, r: r, innerR: ir, alpha: alpha, beta: beta});
-
-			topPaths = topPaths.concat(p1[0]);
-			topPaths = topPaths.concat(p2[0]);   
-
-			outPaths = outPaths.concat(p1[1]);
-			outPaths = outPaths.concat(p2[1]);	 
-
-			sidePaths = sidePaths.concat(p1[2]);
-			sidePaths = sidePaths.concat(p2[2]);   
-
-			inPaths = inPaths.concat(p1[3]);
-			inPaths = inPaths.concat(p2[3]);
-		} else if (start > 0 && end < 0) {			
-			p1 = this.arc3dPath({x: x, y: y, depth: d, start: start, end: PI, r: r, innerR: ir, alpha: alpha, beta: beta});
-			p2 = this.arc3dPath({x: x, y: y, depth: d, start: -PI, end: end, r: r, innerR: ir, alpha: alpha, beta: beta});
-
-			topPaths = topPaths.concat(p1[0]);
-			topPaths = topPaths.concat(p2[0]);
-
-			outPaths = outPaths.concat(p1[1]);
-			outPaths = outPaths.concat(p2[1]);  
-
-			sidePaths = sidePaths.concat(p1[2]);
-			sidePaths = sidePaths.concat(p2[2]);   
-
-			inPaths = inPaths.concat(p1[3]);
-			inPaths = inPaths.concat(p2[3]);
-		} else {		
-			end += 0.001;
-
-			var rx = cos(beta) * r,
-			ry = cos(alpha) * r,
-			irx = cos(beta) * ir,
-			iry = cos(alpha) * ir,
-			dx = d * sin(beta),
-			dy = d * sin(alpha);
-
-			var sxO = x + (rx * cos(start)),
-			syO = y + (ry * sin(start)),
-			exO = x + (rx * cos(end)),
-			eyO = y + (ry * sin(end)),
-			exI = x + (irx * cos(start)),
-			eyI = y + (iry * sin(start)),
-			sxI = x + (irx * cos(end)),
-			syI = y + (iry * sin(end));
-
-			var rx2 = rx * 4 * (Math.sqrt(2) - 1) / 3,	
-			rx3 = rx2 / ((PI / 2) / arcAngle),
-			irx2 = irx * 4 * (Math.sqrt(2) - 1) / 3,	
-			irx3 = irx2 / ((PI / 2) / arcAngle);
-
-			var ry2 = ry * 4 * (Math.sqrt(2) - 1) / 3,	
-			ry3 = ry2 / ((PI / 2) / arcAngle),
-			iry2 = iry * 4 * (Math.sqrt(2) - 1) / 3,	
-			iry3 = iry2 / ((PI / 2) / arcAngle);	
-
-			topPaths.push([
-				'M', sxO, syO,
-				'C', sxO - (rx3 * sin(start)), syO + (ry3 * cos(start)), 
-				exO + (rx3 * sin(end)), eyO - (ry3 * cos(end)), 
-				exO, eyO,
-				'L', sxI, syI,
-				'C', sxI + (irx3 * sin(end)), syI - (iry3 * cos(end)), 
-				exI - (irx3 * sin(start)), eyI + (iry3 * cos(start)), 
-				exI, eyI,		
-				'Z'
-				]);
-
-			outPaths.push([
-				'M', sxO, syO,
-				'C', sxO - (rx3 * sin(start)), syO + (ry3 * cos(start)), 
-				exO + (rx3 * sin(end)), eyO - (ry3 * cos(end)), 
-				exO, eyO,
-				'L', exO + dx, eyO + dy,
-				'C', exO + (rx3 * sin(end)) + dx, eyO - (ry3 * cos(end)) + dy,
-				sxO - (rx3 * sin(start)) + dx, syO + (ry3 * cos(start)) + dy, 
-				sxO + dx, syO + dy,
-				'Z'
-				]);
-
-			sidePaths.push([
-				'M', sxO, syO,
-				'L', sxO + dx, syO + dy,
-				'L', exI + dx, eyI + dy,
-				'L', exI, eyI,
-				'Z',
-
-				'M', exO, eyO,
-				'L', exO + dx, eyO + dy,
-				'L', sxI + dx, syI + dy,
-				'L', sxI, syI,
-				'Z'		
-				]);
-
-			inPaths.push([
-				'M', sxI, syI,
-				'C', sxI + (irx3 * sin(end)), syI - (iry3 * cos(end)), 
-				exI - (irx3 * sin(start)), eyI + (iry3 * cos(start)), 
-				exI, eyI,
-				'L', exI + dx, eyI + dy,
-				'C', exI - (irx3 * sin(start)) + dx, eyI + (iry3 * cos(start)) + dy, 
-				sxI + (irx3 * sin(end)) + dx, syI - (iry3 * cos(end)) + dy, 
-				sxI + dx, syI + dy,
-				'Z'
-				]);
-		}
-	}
+	// TOP	
+	var top = ['M', cx + (rx * cs), cy + (ry * ss)];
+	top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
+	top = top.concat([
+		'L', cx + (irx * ce), cy + (iry * se)
+	]);
+	top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
+	top = top.concat(['Z']);
 
 	var midAngle = ((shapeArgs.start + shapeArgs.end) / 2);
 	var zIndex = ((sin(beta) * cos(midAngle)) + (sin(-alpha) * sin(-midAngle)));
 
+	// OUTSIDE
+	var out = ['M', cx + (rx * cs), cy + (ry * ss)];
+	out = out.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
+	out = out.concat([
+		'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
+	]);
+	out = out.concat(curveTo(cx, cy, rx, ry, end, start, dx, dy));
+	out = out.concat(['Z']);
 
-	return [topPaths, outPaths, sidePaths, inPaths, zIndex, midAngle];
+	// INSIDE
+	var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
+	inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
+	inn = inn.concat([
+		'L', cx + (irx * cos(end)) + dx, cy + (iry * sin(end)) + dy
+	]);
+	inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
+	inn = inn.concat(['Z']);
+
+	// SIDES
+	var side1 = [
+		'M', cx + (rx * cs), cy + (ry * ss),
+		'L', cx + (rx * cs) + dx, cy + (ry * ss) + dy,
+		'L', cx + (irx * cs) + dx, cy + (iry * ss) + dy,
+		'L', cx + (irx * cs), cy + (iry * ss),
+		'Z'
+	];
+	var side2 = [
+		'M', cx + (rx * ce), cy + (ry * se),
+		'L', cx + (rx * ce) + dx, cy + (ry * se) + dy,
+		'L', cx + (irx * ce) + dx, cy + (iry * se) + dy,
+		'L', cx + (irx * ce), cy + (iry * se),
+		'Z'
+	];
+
+	var mr = ir + ((r - ir) / 2);
+
+	var zTop = Math.abs(zIndex * 2 * mr),
+		zOut = zIndex * r,
+		zInn = zIndex * ir,
+		zSide1 = ((sin(beta) * cos(start)) + (sin(-alpha) * sin(-start))) * mr,
+		zSide2 = ((sin(beta) * cos(end)) + (sin(-alpha) * sin(-end))) * mr;
+
+	return {
+		top: top,
+		zTop: zTop * 100,
+		out: out,
+		zOut: zOut * 100,
+		inn: inn,
+		zInn: zInn * 100,
+		side1: side1,
+		zSide1: zSide1 * 100,
+		side2: side2,
+		zSide2: zSide2 * 100,
+		zAll: zIndex
+	};
 };
 
 ////// HELPER METHODS //////
+// Don't ask don't tell, it's MAGIC!!
+var magic = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
+
+function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
+	var result = [];
+	if ((end > start) && (end - start > PI / 2)) {
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
+		return result;
+	} else if ((end < start) && (start - end > PI / 2)) {			
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
+		return result;
+	} else {
+		var arcAngle = end - start;
+		return [
+			'C', 
+			cx + (rx * cos(start)) - ((rx * magic * arcAngle) * sin(start)) + dx,
+			cy + (ry * sin(start)) + ((ry * magic * arcAngle) * cos(start)) + dy,
+			cx + (rx * cos(end)) + ((rx * magic * arcAngle) * sin(end)) + dx,
+			cy + (ry * sin(end)) - ((ry * magic * arcAngle) * cos(end)) + dy,
+
+			cx + (rx * cos(end)) + dx,
+			cy + (ry * sin(end)) + dy
+		];
+	}
+}
+
 HR.prototype.toLinePath = function (points, closed) {
 	var result = [];
 
@@ -946,8 +859,8 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	
 		var angle = (point.shapeArgs.end + point.shapeArgs.start) / 2;
 
-		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(alpha));
-		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(alpha));
+		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(alpha * PI / 180));
+		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(alpha * PI / 180));
 	});
 });
 

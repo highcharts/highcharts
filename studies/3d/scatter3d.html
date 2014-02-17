@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>Simple 3D Scatter Chart</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script src="http://code.highcharts.sv/highcharts.js"></script>
+<script src="http://code.highcharts.sv/highcharts-3d.src.js"></script>
+
+<script>
+$(function () {
+    var chart = new Highcharts.Chart({
+        chart: {
+            animation: false,
+            renderTo: 'container',
+            margin: [150, 100, 75, 50],
+            type: 'scatter',
+            is3d: true,
+
+            options3d: {
+                alpha: 30,
+                beta: 30,
+                depth: 200,
+
+                frame: {
+                    bottom: { size: 1, color: '#909090' },
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 10,
+            minorTickInterval: 1
+        },
+        xAxis: {
+            min: 0,
+            max: 10,
+            gridLineWidth: 1,
+            minorTickInterval: 1
+        },
+        zAxis: {
+            min: 0,
+            max: 10
+        },
+        series: [{
+            data: [
+                [1,1,1], [1,1,2], [1,1,5],      // X = 1
+                [2,3,2], [2,6,4],               // X = 2
+                [4,5,7], [4,2,8],               // X = 4
+                [7,1,3], [7,1,5],               // X = 7
+                [9,5,8], [9,6,6]                // X = 9
+            ]
+
+        }]
+    });
+
+    $('#R0').on('change', function(){
+        chart.options.chart.options3d.alpha = this.value;
+        chart.redraw();
+    });
+    $('#R1').on('change', function(){
+        chart.options.chart.options3d.beta = this.value;
+        chart.redraw();
+    });
+    $('#B1').on('click', function(){
+        console.log('pom');
+        chart.options.chart.is3d = !chart.options.chart.is3d;
+        chart.redraw();
+    });
+
+});
+</script>
+</head>
+
+<body>
+    <div id="container" style="height:400px; width: 600px"></div>
+    <hr/>
+    <table>
+        <tr><td>Alpha Angle</td><td><input id="R0" type="range" min="0" max="90" value="30"/></td></tr>
+        <tr><td>Beta Angle</td><td><input id="R1" type="range" min="0" max="90" value="10"/></td></tr>
+        <tr><td><input id="B1" type="button" value="Toggle 3D"></td></tr>
+    <table>
+
+</body>
+
+</html>

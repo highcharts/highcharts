@@ -42,8 +42,8 @@ H.wrap(H.seriesTypes.pie.prototype, 'translate', function (proceed) {
 	
 		var angle = (point.shapeArgs.end + point.shapeArgs.start) / 2;
 
-		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(alpha));
-		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(alpha));
+		var tx = point.slicedTranslation.translateX = Math.round(cos(angle) * series.options.slicedOffset * cos(alpha * PI / 180));
+		var ty = point.slicedTranslation.translateY = Math.round(sin(angle) * series.options.slicedOffset * cos(alpha * PI / 180));
 	});
 });
 
