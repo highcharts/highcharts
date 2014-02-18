@@ -1,13 +1,8 @@
 /**
  *	Mathematical Functionility
  */
-
-H.toRadians = function (val) { 
-	return val * PI / 180; 
-};
-
 var PI = Math.PI,
-
+	deg2rad = (PI / 180), // degrees to radians 
 	sin = Math.sin,
 	cos = Math.cos,
 
@@ -16,20 +11,21 @@ var PI = Math.PI,
 
 	round = Math.round;
 
+
 function perspective(points, angle2, angle1, origin) {
-	angle1 *= (Math.PI / 180);
-	angle2 *= (Math.PI / 180);
+	angle1 *= deg2rad;
+	angle2 *= deg2rad;
 
 	var result = [],
 		xe, 
 		ye, 
 		ze;
 
-	angle1 = -angle1;
+	angle1 *= -1;
 	
 	xe = origin.x;
 	ye = origin.y;
-	ze = (origin.z === 0 ? 0.0001 : origin.z * 10);
+	ze = (origin.z === 0 ? 0.0001 : origin.z * 100);
 
 	// some kind of minimum?
 
@@ -40,7 +36,7 @@ function perspective(points, angle2, angle1, origin) {
 
 	var x, y, z, p;
 
-	H.each(points, function (point) {
+	Highcharts.each(points, function (point) {
 		x = point.x - xe;
 		y = point.y - ye;
 		z = point.z;

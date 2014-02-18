@@ -3,7 +3,7 @@
 	***/
 
 ////// CUBOIDS //////
-HR.prototype.cuboid = function (shapeArgs) {
+Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	var result = this.g(),
 	paths = this.cuboidPath(shapeArgs);
@@ -14,8 +14,8 @@ HR.prototype.cuboid = function (shapeArgs) {
 
 	result.attrSetters.fill = function (color) {
 		var c0 = color,
-		c1 = H.Color(color).brighten(0.1).get(),
-		c2 = H.Color(color).brighten(-0.1).get();
+		c1 = Highcharts.Color(color).brighten(0.1).get(),
+		c2 = Highcharts.Color(color).brighten(-0.1).get();
 
 		this.front.attr({fill: c0});
 		this.top.attr({fill: c1});
@@ -32,7 +32,7 @@ HR.prototype.cuboid = function (shapeArgs) {
 			this.top.animate({d: paths[1]}, duration, complete);
 			this.side.animate({d: paths[2]}, duration, complete);
 		} else {
-			H.SVGElement.prototype.animate.call(this, args, duration, complete);
+			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
 		return this;
 	};
@@ -49,7 +49,7 @@ HR.prototype.cuboid = function (shapeArgs) {
 };
 
 
-HR.prototype.cuboidPath = function (shapeArgs) {
+Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var inverted = shapeArgs.inverted || false,
 		x = shapeArgs.x,
 		y = shapeArgs.y,
@@ -62,14 +62,14 @@ HR.prototype.cuboidPath = function (shapeArgs) {
 		origin = shapeArgs.origin;
 
 	var pArr = [
-	{x: x, y: y, z: z},
-	{x: x + w, y: y, z: z},
-	{x: x + w, y: y + h, z: z},
-	{x: x, y: y + h, z: z},
-	{x: x, y: y + h, z: z + d},
-	{x: x + w, y: y + h, z: z + d},
-	{x: x + w, y: y, z: z + d},
-	{x: x, y: y, z: z + d}
+		{x: x, y: y, z: z},
+		{x: x + w, y: y, z: z},
+		{x: x + w, y: y + h, z: z},
+		{x: x, y: y + h, z: z},
+		{x: x, y: y + h, z: z + d},
+		{x: x + w, y: y + h, z: z + d},
+		{x: x + w, y: y, z: z + d},
+		{x: x, y: y, z: z + d}
 	];
 
 	pArr = perspective(pArr, alpha, beta, origin);
@@ -125,10 +125,10 @@ HR.prototype.cuboidPath = function (shapeArgs) {
 };
 
 ////// SECTORS //////
-HR.prototype.arc3d = function (shapeArgs) {
+Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
-	shapeArgs.alpha *= (Math.PI / 180);
-	shapeArgs.beta *= (Math.PI / 180);
+	shapeArgs.alpha *= deg2rad;
+	shapeArgs.beta *= deg2rad;
 	var result = this.g(),
 		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;
@@ -147,7 +147,7 @@ HR.prototype.arc3d = function (shapeArgs) {
 		this.color = color;
 
 		var c0 = color,
-		c2 = H.Color(color).brighten(-0.1).get();
+		c2 = Highcharts.Color(color).brighten(-0.1).get();
 		
 		this.side1.attr({fill: c2});
 		this.side2.attr({fill: c2});
@@ -156,26 +156,19 @@ HR.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({fill: c0});
 		return this;
 	};
-	
-	/*
-	result.attrSetters['stroke-width'] = function () {
-		// Force all to 0		
-		return 0;
-	};
-	*/
-	
+		
 	result.animate = function (args, duration, complete) {	
-		H.SVGElement.prototype.animate.call(this, args, duration, complete);
+		Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		
 		if (args.x && args.y) {
 
 			// Recreate
 			var result = this,
 				renderer = this.renderer,
-				shapeArgs = H.splat(args)[0];
+				shapeArgs = Highcharts.splat(args)[0];
 
-			shapeArgs.alpha *= (Math.PI / 180);
-			shapeArgs.beta *= (Math.PI / 180);
+			shapeArgs.alpha *= deg2rad;
+			shapeArgs.beta *= deg2rad;
 
 			var paths = renderer.arc3dPath(shapeArgs);
 
@@ -199,7 +192,7 @@ HR.prototype.arc3d = function (shapeArgs) {
 };
 
 
-HR.prototype.arc3dPath = function (shapeArgs) {
+Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	var cx = shapeArgs.x,
 		cy = shapeArgs.y,
 		z = shapeArgs.z,
@@ -300,7 +293,7 @@ HR.prototype.arc3dPath = function (shapeArgs) {
 };
 
 ////// HELPER METHODS //////
-var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
+var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
@@ -327,11 +320,11 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	}
 }
 
-HR.prototype.toLinePath = function (points, closed) {
+Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 	var result = [];
 
 	// Put "L x y" for each point
-	H.each(points, function (point) {
+	Highcharts.each(points, function (point) {
 		result.push('L', point.x, point.y);
 	});
 

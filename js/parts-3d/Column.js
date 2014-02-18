@@ -1,22 +1,22 @@
 /*** 
 	EXTENSION FOR 3D COLUMNS
 ***/
-H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.options.chart.is3d) {  
+	if (!this.chart.is3d()) {  
 		return;
 	}	
 
-	var type = this.chart.options.chart.type;
-
-	var series = this,
+	var type = this.chart.options.chart.type,
+		series = this,
 		chart = series.chart,
 		options = chart.options,
+		typeOptions = options.plotOptions[type],		
 		options3d = options.chart.options3d,
 
-		depth = options.plotOptions[type].depth || 0,
+		depth = typeOptions.depth || 0,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
@@ -25,14 +25,14 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 		alpha = options3d.alpha,
 		beta = options3d.beta;
 
-	var stack = options.plotOptions[type].stacking ? (this.options.stack || 0) : series._i; 
-	var z = stack * (depth + (options.plotOptions[type].groupZPadding || 1));
+	var stack = typeOptions.stacking ? (this.options.stack || 0) : series._i; 
+	var z = stack * (depth + (typeOptions.groupZPadding || 1));
 
-	if (options.plotOptions[type].grouping !== false) { z = 0; }
+	if (typeOptions.grouping !== false) { z = 0; }
 
-	z += (options.plotOptions[type].groupZPadding || 1);
+	z += (typeOptions.groupZPadding || 1);
 
-	H.each(series.data, function (point) {
+	Highcharts.each(series.data, function (point) {
 		var shapeArgs = point.shapeArgs;
 		point.shapeType = 'cuboid';
 		shapeArgs.alpha = alpha;
@@ -43,9 +43,9 @@ H.wrap(H.seriesTypes.column.prototype, 'translate', function (proceed) {
 	});	    
 });
 
-H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
-	if (this.chart.options.chart.is3d) {
+	if (this.chart.is3d()) {
 		var type = this.chart.options.chart.type,
 			options = this.chart.options.plotOptions[type];
 		
@@ -63,25 +63,27 @@ H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
 ***/
-defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
-var CylinderSeries = H.extendClass(H.seriesTypes.column, {
+var defaultOptions = Highcharts.getOptions();
+defaultOptions.plotOptions.cylinder = Highcharts.merge(defaultOptions.plotOptions.column);
+var CylinderSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'cylinder'
 });
-H.seriesTypes.cylinder = CylinderSeries;
+Highcharts.seriesTypes.cylinder = CylinderSeries;
 
-H.wrap(H.seriesTypes.cylinder.prototype, 'translate', function (proceed) {
+Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.options.chart.is3d) {
+	if (!this.chart.is3d()) {
 		return;
 	}	
 
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
+		cylOptions = options.plotOptions.cylinder,
 		options3d = options.chart.options3d,
-		depth = options.plotOptions.cylinder.depth || 0,
+		depth = cylOptions.depth || 0,
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
@@ -90,12 +92,12 @@ H.wrap(H.seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		alpha = options3d.alpha,
 		beta = options3d.beta;
 
-	var z = options.plotOptions.cylinder.stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
-	if (options.plotOptions.cylinder.grouping !== false) { z = 0; }
+	if (cylOptions.grouping !== false) { z = 0; }
 
-	H.each(series.data, function (point) {
+	Highcharts.each(series.data, function (point) {
 		var shapeArgs = point.shapeArgs;
 		point.shapeType = 'arc3d';
 		shapeArgs.x += depth / 2;
@@ -104,7 +106,7 @@ H.wrap(H.seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		shapeArgs.end = 2 * PI;
 		shapeArgs.r = depth * 0.95;
 		shapeArgs.innerR = 0;
-		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * (Math.PI / 180))) - z;
+		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
 		shapeArgs.alpha = 90 - alpha;
 		shapeArgs.beta = 0;
 		shapeArgs.origin = origin;	

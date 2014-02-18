@@ -1,89 +1,101 @@
 /*** 
 	EXTENSION TO THE AXIS
 ***/
-H.wrap(HA.prototype, 'render', function (proceed) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.options.chart.is3d) {
+	if (!this.chart.is3d()) {
 		return;
 	}
 
-	// Isolate
-	if (this.axisLine) {
-		this.axisLine.hide();
-	}
+	var chart = this.chart,
+		renderer = chart.renderer,
+		options3d = chart.options.chart.options3d,
+		alpha = options3d.alpha,
+		beta = options3d.beta,
+		frame = options3d.frame,
+		fbottom = frame.bottom,
+		fback = frame.back,
+		fside = frame.side,
+		depth = options3d.depth,
+		height = this.height,
+		width = this.width,
+		left = this.left,
+		top = this.top;
 
+	var origin = {
+		x: chart.plotLeft + (chart.plotWidth / 2),
+		y: chart.plotTop + (chart.plotHeight / 2),
+		z: depth
+	};
 	if (this.horiz) {
-
-		if (this.bottomFrame) {
-			this.bottomFrame.destroy();
-			this.sideFrame.destroy();
-			this.backFrame.destroy();
+		/// BOTTOM
+		if (this.axisLine) {
+			this.axisLine.hide();
 		}
-
-		var chart = this.chart,
-			options3d = chart.options.chart.options3d,
-			frame = options3d.frame,
-			fbottom = frame.bottom,
-			fback = frame.back,
-			fside = frame.side;
-
-		var d = options3d.depth;
-
-		var origin = {
-			x: chart.plotLeft + (chart.plotWidth / 2),
-			y: chart.plotTop + (chart.plotHeight / 2),
-			z: d
-		};
-
-		
-		var backShape = {
-			x: this.left,
-			y: this.top,
-			z: d + 1,
-			width: this.width,
-			height: this.height + fbottom.size,
-			depth: fback.size,
-			alpha: options3d.alpha,
-			beta: options3d.beta,
-			origin: origin
-		};
-		this.backFrame = this.chart.renderer.cuboid(backShape).attr({fill: fback.color}).add();
-
 		var bottomShape = {
-			x: this.left,
-			y: this.top + this.height,
+			x: left,
+			y: top + height,
 			z: 0,
-			width: this.width,
+			width: width,
 			height: fbottom.size,
-			depth: d,
-			alpha: options3d.alpha,
-			beta: options3d.beta,
+			depth: depth,
+			alpha: alpha,
+			beta: beta,
 			origin: origin
 		};
-		this.bottomFrame = this.chart.renderer.cuboid(bottomShape).attr({fill: fbottom.color}).add();
-
+		if (!this.bottomFrame) {
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color}).add();
+		} else {
+			this.bottomFrame.animate(bottomShape);
+		}
+	} else {
+		// BACK
+		var backShape = {
+			x: left,
+			y: top,
+			z: depth + 1,
+			width: width,
+			height: height + fbottom.size,
+			depth: fback.size,
+			alpha: alpha,
+			beta: beta,
+			origin: origin
+		};
+		if (!this.backFrame) {
+			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color}).add();
+		} else {
+			this.backFrame.animate(backShape);
+		}
+		// SIDE
+		if (this.axisLine) {
+			this.axisLine.hide();
+		}
 		var sideShape = {
-			x: this.left,
-			y: this.top,
+			x: left,
+			y: top,
 			z: 0,
 			width: fside.size,
-			height: this.height,
-			depth: d,
-			alpha: options3d.alpha,
-			beta: options3d.beta,
+			height: height,
+			depth: depth,
+			alpha: alpha,
+			beta: beta,
 			origin: origin
 		};
-		this.sideFrame = this.chart.renderer.cuboid(sideShape).attr({fill: fside.color}).add();
+		if (!this.sideFrame) {
+			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color}).add();
+		} else {
+			this.sideFrame.animate(sideShape);
+		}
 	}
 });
 
-H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
 	
 	// Do not do this if the chart is not 3D
-	if (!this.chart.options.chart.is3d) {
+	if (!this.chart.is3d()) {
 		return path;
 	}
 
@@ -120,11 +132,11 @@ H.wrap(HA.prototype, 'getPlotLinePath', function (proceed) {
 	EXTENSION TO THE TICKS
 ***/
 
-H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
+Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));	
 
 	// Do not do this if the chart is not 3D
-	if (!this.axis.chart.options.chart.is3d) {
+	if (!this.axis.chart.is3d()) {
 		return path;
 	}
 
@@ -153,11 +165,11 @@ H.wrap(H.Tick.prototype, 'getMarkPath', function (proceed) {
 	return path;
 });
 
-H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed) {
+Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
 	
 	// Do not do this if the chart is not 3D
-	if (!this.axis.chart.options.chart.is3d) {
+	if (!this.axis.chart.is3d()) {
 		return pos;
 	}	
 

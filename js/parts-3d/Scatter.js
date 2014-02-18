@@ -1,11 +1,11 @@
 /*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
-H.wrap(H.seriesTypes.scatter.prototype, 'translate', function (proceed) {
+Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	
-	if (!this.chart.options.chart.is3d) {
+	if (!this.chart.is3d()) {
 		return;
 	}	
 
@@ -39,14 +39,13 @@ H.wrap(H.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 	});	  
 });
 
-H.wrap(H.seriesTypes.scatter.prototype, 'init', function (proceed) {
+Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed) {
 	var result = proceed.apply(this, [].slice.call(arguments, 1));
 
-	if (this.chart.options.chart.is3d) {
+	if (this.chart.is3d()) {
 		// Add a third coordinate
 		this.pointArrayMap = ['x', 'y', 'z'];
 
-		/// TODO: CAN THIS BE MADE SIMPLER ????
 		// Set a new default tooltip formatter
 		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
 		if (this.userOptions.tooltip) {
