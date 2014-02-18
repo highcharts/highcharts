@@ -237,12 +237,18 @@ HR.prototype.arc3dPath = function (shapeArgs) {
 	var zIndex = ((sin(beta) * cos(midAngle)) + (sin(-alpha) * sin(-midAngle)));
 
 	// OUTSIDE
-	var out = ['M', cx + (rx * cs), cy + (ry * ss)];
-	out = out.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
+	var b = (beta > 0 ? PI / 2 : 0),
+		a = (alpha > 0 ? 0 : PI / 2);
+
+	var start2 = start > -b ? start : (end > -b ? -b : start),
+		end2 = end < PI - a ? end : (start < PI - a ? PI - a : end);
+	
+	var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 	out = out.concat([
-		'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
+		'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
 	]);
-	out = out.concat(curveTo(cx, cy, rx, ry, end, start, dx, dy));
+	out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
 	out = out.concat(['Z']);
 
 	// INSIDE
@@ -294,16 +300,15 @@ HR.prototype.arc3dPath = function (shapeArgs) {
 };
 
 ////// HELPER METHODS //////
-// Don't ask don't tell, it's MAGIC!!
-var magic = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
+var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
 
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
-	if ((end > start) && (end - start > PI / 2)) {
+	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
 		return result;
-	} else if ((end < start) && (start - end > PI / 2)) {			
+	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
 		return result;
@@ -311,10 +316,10 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 		var arcAngle = end - start;
 		return [
 			'C', 
-			cx + (rx * cos(start)) - ((rx * magic * arcAngle) * sin(start)) + dx,
-			cy + (ry * sin(start)) + ((ry * magic * arcAngle) * cos(start)) + dy,
-			cx + (rx * cos(end)) + ((rx * magic * arcAngle) * sin(end)) + dx,
-			cy + (ry * sin(end)) - ((ry * magic * arcAngle) * cos(end)) + dy,
+			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
+			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
+			cx + (rx * cos(end)) + ((rx * dFactor * arcAngle) * sin(end)) + dx,
+			cy + (ry * sin(end)) - ((ry * dFactor * arcAngle) * cos(end)) + dy,
 
 			cx + (rx * cos(end)) + dx,
 			cy + (ry * sin(end)) + dy

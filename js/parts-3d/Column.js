@@ -101,7 +101,7 @@ H.wrap(H.seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		shapeArgs.x += depth / 2;
 		shapeArgs.z = z;
 		shapeArgs.start = 0;
-		shapeArgs.end = PI * 2;
+		shapeArgs.end = 2 * PI;
 		shapeArgs.r = depth * 0.95;
 		shapeArgs.innerR = 0;
 		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * (Math.PI / 180))) - z;
