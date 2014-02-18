@@ -16,7 +16,12 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		format: '{point.value}',
 		verticalAlign: 'middle',
 		crop: false,
-		overflow: false
+		overflow: false,
+		style: {
+			color: 'white',
+			fontWeight: 'bold',
+			textShadow: '0 0 5px black'
+		}
 	},
 	turboThreshold: 0,
 	tooltip: {
@@ -45,14 +50,13 @@ var MapAreaPoint = extendClass(Point, {
 		var point = Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
 			seriesOptions = series.options,
-			joinBy = seriesOptions.joinBy,
+			joinBy = series.joinBy,
 			mapPoint;
 
 		if (seriesOptions.mapData) {
-			mapPoint = joinBy ? 
-				series.getMapData(joinBy, point[joinBy]) : // Join by a string
+			mapPoint = joinBy[0] ? 
+				series.getMapData(joinBy[0], point[joinBy[1]]) : // Join by a string
 				seriesOptions.mapData[point.x]; // Use array position (faster)
-				
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -157,15 +161,15 @@ var MapAreaPoint = extendClass(Point, {
  */
 seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'map',
-	_pointClass: MapAreaPoint,
+	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
-	_useMapGeometry: true, // get axis extremes from paths, not values
-	_forceDL: true,
+	useMapGeometry: true, // get axis extremes from paths, not values
+	forceDL: true,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
-	_getBox: function (paths) {
+	getBox: function (paths) {
 		var maxX = Number.MIN_VALUE, 
 			minX =  Number.MAX_VALUE, 
 			maxY = Number.MIN_VALUE, 
@@ -230,7 +234,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 	},
 	
-	_getExtremes: function () {
+	getExtremes: function () {
 		// Get the actual value extremes for colors
 		Series.prototype.getExtremes.call(this, this.valueData);
 
@@ -251,7 +255,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * Translate the path so that it automatically fits into the plot area box
 	 * @param {Object} path
 	 */
-	_translatePath: function (path) {
+	translatePath: function (path) {
 		
 		var series = this,
 			even = false, // while loop reads from the end
@@ -289,12 +293,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * from the mapData are used, and those that don't correspond to a data value
 	 * are given null values.
 	 */
-	_setData: function (data, redraw) {
+	setData: function (data, redraw) {
 		var options = this.options,
 			mapData = options.mapData,
-			joinBy = options.joinBy,
+			joinBy,
 			dataUsed = [];
-		
+
+		joinBy = this.joinBy = Highcharts.splat(options.joinBy);
+		if (!joinBy[1]) {
+			joinBy[1] = joinBy[0];
+		}
 
 		this.getBox(data);
 		this.getBox(mapData);
@@ -303,16 +311,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			data = data || [];
 
 			// Registered the point codes that actually hold data
-			if (joinBy) {
+			if (joinBy[1]) {
 				each(data, function (point) {
-					dataUsed.push(point[joinBy]);
+					dataUsed.push(point[joinBy[1]]);
 				});
 			}
 
 			// Add those map points that don't correspond to data, which will be drawn as null points
 			dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
 			each(mapData, function (mapPoint) {
-				if (!joinBy || dataUsed.indexOf('|' + mapPoint[joinBy] + '|') === -1) {
+				if (!joinBy[0] || dataUsed.indexOf('|' + (mapPoint[joinBy[0]] || (mapPoint.properties && mapPoint.properties[joinBy[0]])) + '|') === -1) {
 					data.push(merge(mapPoint, { value: null }));
 				}
 			});
@@ -323,10 +331,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	/**
 	 * For each point, get the corresponding map data
 	 */
-	_getMapData: function (key, value) {
+	getMapData: function (key, value) {
 		var options = this.options,
 			mapData = options.mapData,
 			mapMap = this.mapMap,
+			mapPoint,
 			i = mapData.length;
 
 		// Create a cache for quicker lookup second time
@@ -338,9 +347,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		} else if (value !== undefined) {
 			while (i--) {
-				if (mapData[i][key] === value) {
+				mapPoint = mapData[i];
+				if (mapPoint[key] === value || (mapPoint.properties && mapPoint.properties[key] === value)) {
 					mapMap[value] = i; // cache it
-					return mapData[i];
+					return mapPoint;
 				}
 			}
 		}
@@ -349,18 +359,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	/**
 	 * No graph for the map series
 	 */
-	_drawGraph: noop,
+	drawGraph: noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	_drawDataLabels: noop,
+	drawDataLabels: noop,
 	
 	/**
 	 * Add the path option for data points. Find the max value for color calculation.
 	 */
-	_translate: function () {
+	translate: function () {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -392,7 +402,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
 	 * Extend it by assigning the tooltip position.
 	 */
-	_drawPoints: function () {
+	drawPoints: function () {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
@@ -480,7 +490,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	/**
 	 * Override render to throw in an async call in IE8. Otherwise it chokes on the US counties demo.
 	 */
-	_render: function () {
+	render: function () {
 		var series = this,
 			render = Series.prototype.render;
 
@@ -498,7 +508,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * The initial animation for the map series. By default, animation is disabled. 
 	 * Animation of map shapes is not at all supported in VML browsers.
 	 */
-	_animate: function (init) {
+	animate: function (init) {
 		var chart = this.chart,
 			animation = this.options.animation,
 			group = this.group,
@@ -545,7 +555,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * Animate in the new series from the clicked point in the old series.
 	 * Depends on the drilldown.js module
 	 */
-	_animateDrilldown: function (init) {
+	animateDrilldown: function (init) {
 		var toBox = this.chart.plotBox,
 			level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
 			fromBox = level.bBox,
@@ -587,7 +597,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * When drilling up, pull out the individual point graphics from the lower series
 	 * and animate them into the origin point in the upper series.
 	 */
-	_animateDrillupFrom: function (level) {
+	animateDrillupFrom: function (level) {
 		seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 	},
 

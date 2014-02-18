@@ -413,6 +413,19 @@
         </concat>
 
         <!-- Concat maps.src.js and replace the product name and version -->
+        <concat destfile="${basedir}/js/modules/map.src.js" encoding="UTF-8">
+            <filelist refid="maps.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highmaps.product.name}"/>
+                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
+                    <token key="product.version" value="${highmaps.product.version}"/>
+                    <token key="product.date" value="${highmaps.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+
+        <!-- Concat heatmap.src.js and replace the product name and version -->
         <concat destfile="${basedir}/js/modules/heatmap.src.js" encoding="UTF-8">
             <filelist refid="heatmap.files"/>
             <!-- filterchain>
