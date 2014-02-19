@@ -731,6 +731,10 @@ extend(Chart.prototype, {
 		}
 		
 		// Prevent zooming until this one is finished animating
+		/*chart.holdMapZoom = true;
+		setTimeout(function () {
+			chart.holdMapZoom = false;
+		}, 200);*/
 		/*delay = animation ? animation.duration || 500 : 0;
 		if (delay) {
 			chart.isMapZooming = true;
@@ -812,9 +816,11 @@ extend(Pointer.prototype, {
 
 		// Firefox uses e.detail, WebKit and IE uses wheelDelta
 		delta = e.detail || -(e.wheelDelta / 120);
+		//console.log(delta)
 		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			chart.mapZoom(
-				delta > 0 ? 2 : 1 / 2,
+				//delta > 0 ? 2 : 0.5,
+				Math.pow(2, delta),
 				chart.xAxis[0].toValue(e.chartX),
 				chart.yAxis[0].toValue(e.chartY),
 				e.chartX,
