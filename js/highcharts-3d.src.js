@@ -136,14 +136,14 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		origin = shapeArgs.origin;
 
 	var pArr = [
-	{x: x, y: y, z: z},
-	{x: x + w, y: y, z: z},
-	{x: x + w, y: y + h, z: z},
-	{x: x, y: y + h, z: z},
-	{x: x, y: y + h, z: z + d},
-	{x: x + w, y: y + h, z: z + d},
-	{x: x + w, y: y, z: z + d},
-	{x: x, y: y, z: z + d}
+		{x: x, y: y, z: z},
+		{x: x + w, y: y, z: z},
+		{x: x + w, y: y + h, z: z},
+		{x: x, y: y + h, z: z},
+		{x: x, y: y + h, z: z + d},
+		{x: x + w, y: y + h, z: z + d},
+		{x: x + w, y: y, z: z + d},
+		{x: x, y: y, z: z + d}
 	];
 
 	pArr = perspective(pArr, alpha, beta, origin);
@@ -159,7 +159,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
 
 	// top or bottom
-	var path2 = (beta > 0 ? 
+	var path2 = (beta > 0 !== alpha > 0 ? 
 		[
 		'M', pArr[0].x, pArr[0].y,
 		'L', pArr[7].x, pArr[7].y,
@@ -178,7 +178,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
 
 	// side
-	var path3 = (alpha > 0 ? 
+	var path3 = (alpha > 0 !== beta < 0 ? 
 		[
 		'M', pArr[1].x, pArr[1].y,
 		'L', pArr[2].x, pArr[2].y,
@@ -230,14 +230,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({fill: c0});
 		return this;
 	};
-	
-	/*
-	result.attrSetters['stroke-width'] = function () {
-		// Force all to 0		
-		return 0;
-	};
-	*/
-	
+		
 	result.animate = function (args, duration, complete) {	
 		Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		
@@ -505,7 +498,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		renderer = chart.renderer,
 		options3d = chart.options.chart.options3d,
 		alpha = options3d.alpha,
-		beta = options3d.beta,
+		beta = chart.yAxis[0].opposite ? -options3d.beta : options3d.beta,
 		frame = options3d.frame,
 		fbottom = frame.bottom,
 		fback = frame.back,
@@ -538,7 +531,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: -1}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -556,7 +549,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.backFrame) {
-			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color}).add();
+			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -2}).add();
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -565,18 +558,18 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			this.axisLine.hide();
 		}
 		var sideShape = {
-			x: left,
+			x: chart.yAxis[0].opposite ? left + width : left - fside.size,
 			y: top,
 			z: 0,
 			width: fside.size,
-			height: height,
-			depth: depth,
+			height: height + fbottom.size,
+			depth: depth + fback.size,
 			alpha: alpha,
 			beta: beta,
 			origin: origin
 		};
 		if (!this.sideFrame) {
-			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color}).add();
+			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -1}).add();
 		} else {
 			this.sideFrame.animate(sideShape);
 		}
@@ -614,6 +607,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	var alpha = chart.options.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.options.inverted ? options3d.alpha : options3d.beta;
 
+	beta *= chart.yAxis[0].opposite ? -1 : 1;
+
 	pArr = perspective(pArr, alpha, beta, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
@@ -649,6 +644,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.inverted ? options3d.alpha : options3d.beta;
 
+	beta *= chart.yAxis[0].opposite ? -1 : 1;
+
 	pArr = perspective(pArr, alpha, beta, origin);
 	path = [
 		'M', pArr[0].x, pArr[0].y,
@@ -676,6 +673,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.inverted ? options3d.alpha : options3d.beta;
+
+	beta *= chart.yAxis[0].opposite ? -1 : 1;
 
 	pos = perspective([{x: pos.x, y: pos.y, z: 0}], alpha, beta, origin)[0];
 	return pos;
@@ -705,7 +704,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			z: options3d.depth
 		},
 		alpha = options3d.alpha,
-		beta = options3d.beta;
+		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
 
 	var stack = typeOptions.stacking ? (this.options.stack || 0) : series._i; 
 	var z = stack * (depth + (typeOptions.groupZPadding || 1));
@@ -932,7 +931,6 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 		// Add a third coordinate
 		this.pointArrayMap = ['x', 'y', 'z'];
 
-		/// TODO: CAN THIS BE MADE SIMPLER ????
 		// Set a new default tooltip formatter
 		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
 		if (this.userOptions.tooltip) {
