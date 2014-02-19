@@ -15562,6 +15562,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			minX =  MAX_VALUE, 
 			maxY = -MAX_VALUE, 
 			minY =  MAX_VALUE,
+			minRange = MAX_VALUE,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis,
 			hasBox;
 		
 		// Find the bounding box
@@ -15608,6 +15611,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				minX = Math.min(minX, point._minX);
 				maxY = Math.max(maxY, point._maxY);
 				minY = Math.min(minY, point._minY);
+				minRange = Math.min(point._maxX - point._minX, point._maxY - point._minY, minRange);
 				hasBox = true;
 			}
 		});
@@ -15618,6 +15622,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
 			this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
 			this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
+
+			// If no minRange option is set, set the default minimum zooming range to 5 times the 
+			// size of the smallest element
+			if (xAxis.options.minRange === undefined) {
+				xAxis.minRange = Math.min(5 * minRange, xAxis.minRange || MAX_VALUE);
+			}
+			if (yAxis.options.minRange === undefined) {
+				yAxis.minRange = Math.min(5 * minRange, yAxis.minRange || MAX_VALUE);
+			}
+
 		}
 	},
 	
@@ -16213,7 +16227,6 @@ extend(Pointer.prototype, {
 
 		// Firefox uses e.detail, WebKit and IE uses wheelDelta
 		delta = e.detail || -(e.wheelDelta / 120);
-		//console.log(delta)
 		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			chart.mapZoom(
 				//delta > 0 ? 2 : 0.5,
