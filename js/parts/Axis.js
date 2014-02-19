@@ -318,10 +318,12 @@ Axis.prototype = {
 
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
-			chart.axes.push(axis);
-			chart.axes.sort(function (a) { // X axes first when adding X axes dynamically (#2713)
-				return !a.isXAxis;
-			});
+			if (isXAxis && !this.isColorAxis) { // #2713
+				chart.axes.splice(chart.xAxis.length, 0, axis);
+			} else {
+				chart.axes.push(axis);
+			}
+
 			chart[axis.coll].push(axis);
 		}
 

@@ -138,6 +138,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
  * The ColorAxis object for inclusion in gradient legends
  */
 var ColorAxis = Highcharts.ColorAxis = function () {
+	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
 extend(ColorAxis.prototype, Axis.prototype);
@@ -174,7 +175,8 @@ extend(ColorAxis.prototype, {
 			isX: horiz,
 			opposite: !horiz,
 			showEmpty: false,
-			title: null
+			title: null,
+			isColor: true
 		});
 
 		Axis.prototype.init.call(this, chart, options);
