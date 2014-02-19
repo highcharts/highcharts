@@ -10,7 +10,7 @@ $(function () {
                     if (i === 1) {
                         path.push('L');
                     }
-                    path.push(point[0], point[1]);
+                    path.push(point[0], -point[1]);
                 });
             };
         each(geojson.features, function (feature) {

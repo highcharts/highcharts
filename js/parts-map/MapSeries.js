@@ -170,10 +170,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * Get the bounding box of all paths in the map combined.
 	 */
 	getBox: function (paths) {
-		var maxX = Number.MIN_VALUE, 
-			minX =  Number.MAX_VALUE, 
-			maxY = Number.MIN_VALUE, 
-			minY =  Number.MAX_VALUE,
+		var MAX_VALUE = Number.MAX_VALUE,
+			maxX = -MAX_VALUE, 
+			minX =  MAX_VALUE, 
+			maxY = -MAX_VALUE, 
+			minY =  MAX_VALUE,
 			hasBox;
 		
 		// Find the bounding box
@@ -187,10 +188,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				var path = point.path || [],
 					i = path.length,
 					even = false, // while loop reads from the end
-					pointMaxX = Number.MIN_VALUE, 
-					pointMinX =  Number.MAX_VALUE, 
-					pointMaxY = Number.MIN_VALUE, 
-					pointMinY =  Number.MAX_VALUE;
+					pointMaxX = -MAX_VALUE, 
+					pointMinX =  MAX_VALUE, 
+					pointMaxY = -MAX_VALUE, 
+					pointMinY =  MAX_VALUE;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
@@ -220,17 +221,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				minX = Math.min(minX, point._minX);
 				maxY = Math.max(maxY, point._maxY);
 				minY = Math.min(minY, point._minY);
-
 				hasBox = true;
 			}
 		});
 
 		// Set the box for the whole series
 		if (hasBox) {
-			this.minY = Math.min(minY, pick(this.minY, Number.MAX_VALUE));
-			this.maxY = Math.max(maxY, pick(this.maxY, Number.MIN_VALUE));
-			this.minX = Math.min(minX, pick(this.minX, Number.MAX_VALUE));
-			this.maxX = Math.max(maxX, pick(this.maxX, Number.MIN_VALUE));
+			this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
+			this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
+			this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
+			this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
 		}
 	},
 	
