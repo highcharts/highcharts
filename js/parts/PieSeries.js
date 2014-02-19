@@ -409,7 +409,10 @@ var PieSeries = {
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
-					.attr({ 'stroke-linejoin': 'round' })
+					.attr({ 
+						'stroke-linejoin': 'round',
+						zIndex: 1 // #2722
+					})
 					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	

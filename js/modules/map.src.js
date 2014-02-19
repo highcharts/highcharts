@@ -1161,7 +1161,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (!joinBy[1]) {
 			joinBy[1] = joinBy[0];
 		}
-console.log(joinBy);
+
 		this.getBox(data);
 		this.getBox(mapData);
 		if (options.allAreas && mapData) {

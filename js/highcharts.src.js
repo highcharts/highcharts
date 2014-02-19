@@ -15896,7 +15896,10 @@ var PieSeries = {
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
-					.attr({ 'stroke-linejoin': 'round' })
+					.attr({ 
+						'stroke-linejoin': 'round',
+						zIndex: 1 // #2722
+					})
 					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
@@ -16480,7 +16483,8 @@ if (seriesTypes.pie) {
 							point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 								'stroke-width': connectorWidth,
 								stroke: options.connectorColor || point.color || '#606060',
-								visibility: visibility
+								visibility: visibility,
+								zIndex: 0 // #2722
 							})
 							.add(series.group);
 						}
