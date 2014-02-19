@@ -13,7 +13,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		chart = series.chart,
 		options3d = series.chart.options.chart.options3d,
 		alpha = options3d.alpha,
-		beta = options3d.beta,
+		beta = (chart.yAxis[0].opposite ? -options3d.beta : options3d.beta),
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
