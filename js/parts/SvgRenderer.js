@@ -1913,7 +1913,6 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			defaultChartStyle = defaultOptions.chart.style,
 			fakeSVG = useCanVG || (!hasSVG && renderer.forExport),
 			wrapper;
 
@@ -1929,10 +1928,6 @@ SVGRenderer.prototype = {
 				x: x,
 				y: y,
 				text: str
-			})
-			.css({
-				fontFamily: defaultChartStyle.fontFamily,
-				fontSize: defaultChartStyle.fontSize
 			});
 
 		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)

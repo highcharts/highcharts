@@ -3711,7 +3711,6 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			defaultChartStyle = defaultOptions.chart.style,
 			fakeSVG = useCanVG || (!hasSVG && renderer.forExport),
 			wrapper;
 
@@ -3727,10 +3726,6 @@ SVGRenderer.prototype = {
 				x: x,
 				y: y,
 				text: str
-			})
-			.css({
-				fontFamily: defaultChartStyle.fontFamily,
-				fontSize: defaultChartStyle.fontSize
 			});
 
 		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
@@ -11359,6 +11354,9 @@ Chart.prototype = {
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
+
+		// Set the default font style directly on the top SVG node
+		chart.renderer.boxWrapper.css(optionsChart.style); // #2723 // docs: remove disclaimer in API about this working only globally
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer

@@ -652,6 +652,9 @@ Chart.prototype = {
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
 
+		// Set the default font style directly on the top SVG node
+		chart.renderer.boxWrapper.css(optionsChart.style); // #2723 // docs: remove disclaimer in API about this working only globally
+
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
 			// to get the tracker for translating mouse events
