@@ -1466,7 +1466,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * When drilling up, keep the upper series invisible until the lower series has
 	 * moved into place
 	 */
-	_animateDrillupTo: function (init) {
+	animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));
