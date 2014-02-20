@@ -159,7 +159,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
 
 	// top or bottom
-	var path2 = (beta > 0 !== alpha > 0 ? 
+	var path2 = (beta > 0 ? 
 		[
 		'M', pArr[0].x, pArr[0].y,
 		'L', pArr[7].x, pArr[7].y,
@@ -178,7 +178,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
 
 	// side
-	var path3 = (alpha > 0 !== beta < 0 ? 
+	var path3 = (alpha > 0 ? 
 		[
 		'M', pArr[1].x, pArr[1].y,
 		'L', pArr[2].x, pArr[2].y,
@@ -420,6 +420,14 @@ Highcharts.Chart.prototype.is3d = function () {
 	return this.options.chart.is3d || false;
 };
 
+Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
+	if (this.is3d()) {
+		return true;
+	} else {
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	}
+});
+
 Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {	
 	var args = arguments;
 	args[1] = Highcharts.merge({ 
@@ -498,7 +506,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		renderer = chart.renderer,
 		options3d = chart.options.chart.options3d,
 		alpha = options3d.alpha,
-		beta = chart.yAxis[0].opposite ? -options3d.beta : options3d.beta,
+		beta = options3d.beta,
 		frame = options3d.frame,
 		fbottom = frame.bottom,
 		fback = frame.back,
@@ -549,7 +557,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.backFrame) {
-			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -2}).add();
+			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).add();
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -558,7 +566,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			this.axisLine.hide();
 		}
 		var sideShape = {
-			x: chart.yAxis[0].opposite ? left + width : left - fside.size,
+			x: left - fside.size,
 			y: top,
 			z: 0,
 			width: fside.size,
@@ -569,7 +577,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.sideFrame) {
-			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -1}).add();
+			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -2}).add();
 		} else {
 			this.sideFrame.animate(sideShape);
 		}
@@ -607,8 +615,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	var alpha = chart.options.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.options.inverted ? options3d.alpha : options3d.beta;
 
-	beta *= chart.yAxis[0].opposite ? -1 : 1;
-
 	pArr = perspective(pArr, alpha, beta, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
@@ -644,8 +650,6 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.inverted ? options3d.alpha : options3d.beta;
 
-	beta *= chart.yAxis[0].opposite ? -1 : 1;
-
 	pArr = perspective(pArr, alpha, beta, origin);
 	path = [
 		'M', pArr[0].x, pArr[0].y,
@@ -673,8 +677,6 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.inverted ? options3d.alpha : options3d.beta;
-
-	beta *= chart.yAxis[0].opposite ? -1 : 1;
 
 	pos = perspective([{x: pos.x, y: pos.y, z: 0}], alpha, beta, origin)[0];
 	return pos;
@@ -704,7 +706,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			z: options3d.depth
 		},
 		alpha = options3d.alpha,
-		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
+		beta = options3d.beta;
 
 	var stack = typeOptions.stacking ? (this.options.stack || 0) : series._i; 
 	var z = stack * (depth + (typeOptions.groupZPadding || 1));
