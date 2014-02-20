@@ -6,6 +6,14 @@ Highcharts.Chart.prototype.is3d = function () {
 	return this.options.chart.is3d || false;
 };
 
+Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
+	if (this.is3d()) {
+		return true;
+	} else {
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	}
+});
+
 Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {	
 	var args = arguments;
 	args[1] = Highcharts.merge({ 
