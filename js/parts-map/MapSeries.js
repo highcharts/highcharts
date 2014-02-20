@@ -441,7 +441,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 		
 		// Draw the shapes again
-		if (series.isDirtyData || renderer.isVML) {
+		if (series.isDirtyData || renderer.isVML || !baseTrans) {
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;

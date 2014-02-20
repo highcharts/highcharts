@@ -6,35 +6,68 @@ Highcharts.geojson = function (geojson, hType) { // docs: API methods
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
+			var i = 0,
+				len = polygon.length;
 			path.push('M');
-			each(polygon, function (point, i) {
+			for (; i < len; i++) {
 				if (i === 1) {
 					path.push('L');
 				}
-				path.push(point[0], -point[1]);
-			});
+				path.push(polygon[i][0], -polygon[i][1]);
+			}
 		};
 	
 	each(geojson.features, function (feature) {
+
+		var geometry = feature.geometry,
+			type = geometry.type,
+			coordinates = geometry.coordinates,
+			properties = feature.properties,
+			point;
+		
 		path = [];
 
 		if (hType === 'map') {
-			if (feature.geometry.type === 'Polygon') {
-				each(feature.geometry.coordinates, polygonToPath);
+			if (type === 'Polygon') {
+				each(coordinates, polygonToPath);
 				path.push('Z');
 
-			} else if (feature.geometry.type === 'MultiPolygon') {
-				each(feature.geometry.coordinates, function (items) {
+			} else if (type === 'MultiPolygon') {
+				each(coordinates, function (items) {
 					each(items, polygonToPath);
 				});
 				path.push('Z');
 			}
+
+			if (path.length) {
+				point = { path: path };
+			}
+		
+		} else if (hType === 'mapline') {
+			if (type === 'LineString') {
+				polygonToPath(coordinates);
+			} else if (type === 'MultiLineString') {
+				each(coordinates, polygonToPath);
+			}
+
+			if (path.length) {
+				point = { path: path };
+			}
+		
+		} else if (hType === 'mappoint') {
+			if (type === 'Point') {
+				point = {
+					x: coordinates[0],
+					y: -coordinates[1]
+				};
+			}
 		}
-		mapData.push({
-			path: path,
-			name: feature.properties.name,
-			properties: feature.properties
-		});
+		if (point) {
+			mapData.push(extend(point, {
+				name: properties.name, 
+				properties: properties
+			}));
+		}
 		
 	});
 	return mapData;
