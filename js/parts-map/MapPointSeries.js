@@ -6,11 +6,14 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		enabled: true,
 		format: '{point.name}',
 		color: 'black',
+		crop: false,
+		overflow: false,
 		style: {
 			textShadow: '0 0 5px white'
 		}
 	}
 });
 seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
-	type: 'mappoint'
+	type: 'mappoint',
+	forceDL: true
 });
