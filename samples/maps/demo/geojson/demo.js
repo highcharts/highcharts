@@ -1,47 +1,5 @@
 $(function () {
 
-    Highcharts.geojson = function (geojson, hType) {
-        var each = Highcharts.each,
-            mapData = [],
-            path;
-            polygonToPath = function (polygon) {
-                path.push('M');
-                each (polygon, function (point, i) {
-                    if (i === 1) {
-                        path.push('L');
-                    }
-                    path.push(point[0], -point[1]);
-                });
-            };
-        each(geojson.features, function (feature) {
-            var type;
-
-            path = [];
-
-            if (hType === 'map') {
-                if (feature.geometry.type === 'Polygon') {
-                    each(feature.geometry.coordinates, polygonToPath);
-                    path.push('Z');
-
-                } else if (feature.geometry.type === 'MultiPolygon') {
-                    each(feature.geometry.coordinates, function (items) {
-                        each(items, polygonToPath);
-                    });
-                    path.push('Z');                    
-                }
-            }
-            mapData.push({
-                path: path,
-                name: feature.properties.name,
-                //code_hasc: feature.properties.code_hasc,
-                properties: feature.properties
-            });
-            
-        });
-        return mapData;
-    };
-
-
     // Prepare random data
     var data = [
         {
@@ -127,8 +85,6 @@ $(function () {
             },
 
             colorAxis: {
-                min: 1,
-                max: 1000
             },
 
             series : [{

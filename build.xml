@@ -258,6 +258,7 @@
             <file name="parts-map/MapPointSeries.js"/>
             <file name="parts-map/MapBubbleSeries.js"/>
             <file name="parts-map/HeatmapSeries.js"/>
+            <file name="parts-map/GeoJSON.js"/>
             <file name="parts-map/Map.js"/>
             <file name="parts-map/Outro.txt"/>
         </filelist>
@@ -331,6 +332,7 @@
             <file name="parts-map/MapPointSeries.js"/>
             <file name="parts-more/BubbleSeries.js"/>
             <file name="parts-map/MapBubbleSeries.js"/>
+            <file name="parts-map/GeoJSON.js"/>
             <file name="parts-map/Map.js"/>
             <file name="parts-map/HeatmapSeries.js"/>
             <!-- Outro -->
