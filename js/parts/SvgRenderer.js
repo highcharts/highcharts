@@ -271,7 +271,10 @@ SVGElement.prototype = {
 							}
 						}
 					} else if (!skipAttr) {
-						attr(element, key, value);
+						//attr(element, key, value);
+						if (value !== undefined) {
+							element.setAttribute(key, value);
+						}
 					}
 
 				}
@@ -1910,7 +1913,6 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			defaultChartStyle = defaultOptions.chart.style,
 			fakeSVG = useCanVG || (!hasSVG && renderer.forExport),
 			wrapper;
 
@@ -1926,10 +1928,6 @@ SVGRenderer.prototype = {
 				x: x,
 				y: y,
 				text: str
-			})
-			.css({
-				fontFamily: defaultChartStyle.fontFamily,
-				fontSize: defaultChartStyle.fontSize
 			});
 
 		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
