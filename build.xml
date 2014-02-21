@@ -732,6 +732,7 @@
         <echo message=""/>
         <echo message=" ${highcharts.product.name} - ${highcharts.product.version} (${highcharts.product.date})"/>
         <echo message=" ${highstock.product.name} - ${highstock.product.version} (${highstock.product.date})"/>
+        <echo message=" ${highmaps.product.name} - ${highmaps.product.version} (${highmaps.product.date})"/>
         <echo message=""/>
 
         <!-- 1. Check for any console statements -->
@@ -756,6 +757,7 @@
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highstock.filter"/></copy>
+        <copy file="${highmaps.src.file}" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
@@ -764,31 +766,43 @@
         <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${prototype.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${standalone.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${standalone.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${standalone.src.file}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${data.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${drilldown.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${drilldown.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${drilldown.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${funnel.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
@@ -800,33 +814,32 @@
         <copy file="${nodata.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${nodata.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
-        <copy file="${map.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${map.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${map.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
-        <copy file="${annotations.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${annotations.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${annotations.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${annotations.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
-
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
 		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx"></copy>
 		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx"></copy>
+        <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highmaps/gfx"></copy>
 
         <copy todir="${dist.dir}/highcharts/js/themes">
             <fileset dir="${themes.dir}"/>
         </copy>
         <copy todir="${dist.dir}/highstock/js/themes">
+            <fileset dir="${themes.dir}"/>
+        </copy>
+        <copy todir="${dist.dir}/highmaps/js/themes">
             <fileset dir="${themes.dir}"/>
         </copy>
 
@@ -842,12 +855,21 @@
             <param name="samples.dir" value="samples/stock/demo"/>
             <param name="samples.dist.dir" value="${dist.dir}/highstock/"/>
         </antcall>
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highmaps"/>
+            <param name="samples.dir" value="samples/maps/demo"/>
+            <param name="samples.dist.dir" value="${dist.dir}/highmaps/"/>
+        </antcall>
         <sleep seconds="1"/>
         <!-- The demos are checked in with references to highcharts.com to be able to run them from jsfiddle -->
         <!-- replace these references with local paths here -->
         <replace dir="${dist.dir}">
             <replacefilter>
                 <replacetoken><![CDATA[<script src="http://code.highcharts.com/stock/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
+            </replacefilter>
+            <replacefilter>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/maps/]]></replacetoken>
                 <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <replacefilter>
@@ -861,11 +883,15 @@
         <!-- Copy index files -->
         <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/"/>
         <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/"/>
+        <copy file="samples/maps/demo/index.htm" todir="${dist.dir}/highstock/"/>
         <!-- Copy graphic files -->
         <copy todir="${dist.dir}/highcharts/graphics">
             <fileset dir="samples/graphics"/>
         </copy>
         <copy todir="${dist.dir}/highstock/graphics">
+            <fileset dir="samples/graphics"/>
+        </copy>
+        <copy todir="${dist.dir}/highmaps/graphics">
             <fileset dir="samples/graphics"/>
         </copy>
 
@@ -875,6 +901,7 @@
         <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/modules/data.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highmaps/js/modules/map.js" todir="exporting-server/phantomjs/"/>
 
         <!-- copy files from phantomjs to java export server -->
         <copy todir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs">
@@ -902,6 +929,7 @@
         <!-- 5. Create zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
+        <zip destfile="${dist.dir}/${highmaps.product.name}-${highmaps.product.version}.zip" basedir="${dist.dir}/highmaps"/>
 
     </target>
 
@@ -1423,6 +1451,99 @@
             </sequential>
         </ac:for>
         <!-- delete dir="${basedir}/build/dist/highstock/js-gzip"/ -->
+    </target>
+
+
+
+    <!-- Deploy Highmaps to S3 -->
+    <target name="deploy-highmaps" depends="set.properties" description="Deploy Highmaps distribution to Amazon S3">
+        <property file="git-ignore-me.properties"/>
+        <copy file="${basedir}/build/dist/Highmaps-${highmaps.product.version}.zip" tofile="${basedir}/build/dist/Highmaps-${highmaps.product.version}.zip"/>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highmaps-${highmaps.product.version}.zip"/>
+            <param name="remote" value="${amazon.s3.bucketname}/zips"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+        </antcall>
+        <antcall target="gzip-js">
+            <param name="js.dir" value="${basedir}/build/dist/highmaps/js/"/>
+        </antcall>
+        <ac:var name="path.var" value=""/>
+        <ac:for list="${highmaps.product.version}" delimiter="." param="val">
+            <sequential>
+                <ac:if>
+                    <length string="${path.var}" length="0"/>
+                    <then>
+                        <ac:var name="path.var" value="@{val}"/>
+                        <!-- this will be used later to do a remote copy on S3 -->
+                        <property name="copy.version" value="@{val}"/>
+                        <!-- Copy zipped js/* to Root on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highmaps/js-gzip/"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- copy gfx folder to Root -->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/hithmaps/gfx"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highmaps/js-gzip/"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- copy gfx folder to version folder on S3-->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highmaps/gfx"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                    </then>
+                    <elseif>
+                        <length string="${path.var}" length="3"/>
+                        <then>
+                            <ac:var name="path.var" value="${path.var}.@{val}"/>
+                            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                            <antcall target="put-gzipped-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highmaps/js-gzip/"/>
+                                <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
+                            </antcall>
+                            <!-- copy gfx folder to version folder on S3-->
+                            <antcall target="put-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highmaps/gfx"/>
+                                <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
+                            </antcall>
+                        </then>
+                    </elseif>
+                    <else>
+                        <!-- concatenate version name and assign to path.var-->
+                        <ac:var name="path.var" value="${path.var}.@{val}"/>
+                        <antcall target="copy-folder-on-S3">
+                            <param name="from.s3" value="${amazon.s3.bucketname}/maps/${copy.version}/"/>
+                            <param name="to.s3" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                        </antcall>
+                    </else>
+                </ac:if>
+            </sequential>
+        </ac:for>
     </target>
 
     <target name="deploy-all">
