@@ -513,7 +513,8 @@ extend(ColorAxis.prototype, {
 			}, dataClass));
 		});
 		return legendItems;
-	}
+	},
+	name: '' // Prevents 'undefined' in legend in IE8
 });
 
 

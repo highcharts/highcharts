@@ -16255,7 +16255,6 @@ $.each(drilldownSeries, function () {
 });
 
 
-
     var options = {
         chart : {
             events: {
@@ -16309,9 +16308,9 @@ $.each(drilldownSeries, function () {
         },
 
         legend: {
-            title: {
-                text: 'Some random value'
-            } 
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
         },
 
         colorAxis: {
