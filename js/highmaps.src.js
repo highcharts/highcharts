@@ -15238,6 +15238,9 @@ extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
+		each(this.series, function (series) {
+			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
+		});
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
@@ -15833,20 +15836,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Draw the shapes again
 		if (series.isDirtyData || renderer.isVML || !baseTrans) {
 
-			// Draw them in transformGroup
-			series.group = series.transformGroup;
-			seriesTypes.column.prototype.drawPoints.apply(series);
-			series.group = group; // Reset
-
 			// Individual point actions	
 			each(series.points, function (point) {
 
 				// Reset color on update/redraw
 				if (chart.hasRendered && point.graphic) {
-					point.graphic.attr('fill', point.options.color);
+					point.graphic.attr('fill', point.color);
 				}
 
 			});
+
+			// Draw them in transformGroup
+			series.group = series.transformGroup;
+			seriesTypes.column.prototype.drawPoints.apply(series);
+			series.group = group; // Reset
 
 			// Set the base for later scale-zooming. The originX and originY properties are the 
 			// axis values in the plot area's upper left corner.

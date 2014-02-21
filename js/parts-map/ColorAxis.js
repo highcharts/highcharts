@@ -317,6 +317,9 @@ extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
+		each(this.series, function (series) {
+			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
+		});
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
