@@ -59,6 +59,7 @@ extend(ColorAxis.prototype, {
 		// Override original axis properties
 		this.isXAxis = true;
 		this.horiz = horiz;
+		this.zoomEnabled = false;
 	},
 
 	/*
