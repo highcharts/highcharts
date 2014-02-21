@@ -1294,6 +1294,7 @@ defaultLabelOptions = {
 defaultOptions = {
 	colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
 		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
+	//colors: ['#8085e8', '#252530', '#90ee7e', '#8d4654', '#2b908f', '#76758e', '#f6a45c', '#7eb5ee', '#f45b5b', '#9ff0cf'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -12733,7 +12734,7 @@ Series.prototype = {
 
 		// If the point count is the same as is was, just run Point.update which is
 		// cheaper, allows animation, and keeps references to points.
-		if (updatePoints !== false && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
+		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
 			each(data, function (point, i) {
 				oldData[i].update(point, false);
 			});
@@ -16803,7 +16804,7 @@ if (seriesTypes.column) {
 }
 
 if (seriesTypes.pie) {
-	PieSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 if (seriesTypes.scatter) {

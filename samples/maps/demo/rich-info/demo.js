@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.th/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function (csv) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function (csv) {
 
         // Parse the CSV Data
         /*Highcharts.data({

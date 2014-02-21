@@ -360,7 +360,7 @@ Series.prototype = {
 
 		// If the point count is the same as is was, just run Point.update which is
 		// cheaper, allows animation, and keeps references to points.
-		if (updatePoints !== false && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
+		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
 			each(data, function (point, i) {
 				oldData[i].update(point, false);
 			});

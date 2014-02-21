@@ -8,6 +8,9 @@ $partsDir = 'parts/';
 
 if ($target == 'highchartsmore') {
 	$partsDir = 'parts-more/';
+
+} else if ($target == 'highmaps') {
+	$partsDir = '';
 }
 
 

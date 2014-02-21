@@ -335,6 +335,7 @@
             <file name="parts-map/GeoJSON.js"/>
             <file name="parts-map/Map.js"/>
             <file name="parts-map/HeatmapSeries.js"/>
+            <file name="parts/Interaction.js"/>
             <!-- Outro -->
             <file name="parts/Facade.js"/>
             <file name="parts/Outro.js"/>

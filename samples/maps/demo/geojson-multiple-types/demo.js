@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.th/samples/data/jsonp.php?filename=australia.geo.json&callback=?', function (geojson) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=australia.geo.json&callback=?', function (geojson) {
 
         // Prepare the geojson
         var states = Highcharts.geojson(geojson, 'map'),

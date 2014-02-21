@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
     
         // Instanciate the map
         $('#container').highcharts('Map', {

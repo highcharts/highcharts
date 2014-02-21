@@ -162,7 +162,7 @@ if (seriesTypes.column) {
 }
 
 if (seriesTypes.pie) {
-	PieSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 if (seriesTypes.scatter) {
