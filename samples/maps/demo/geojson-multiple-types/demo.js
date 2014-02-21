@@ -15,6 +15,14 @@ $(function () {
                     enabled: false
                 };
             }
+            if (this.properties.code_hasc === 'AU.TS') {
+                this.dataLabels = {
+                    style: {
+                        color: '#333333',
+                        textShadow: '0 0 2px white'
+                    }
+                }
+            }
             // Move center for data label
             if (this.properties.code_hasc === 'AU.SA') {
                 this.middleY = 0.3;
