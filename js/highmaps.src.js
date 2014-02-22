@@ -4256,9 +4256,8 @@ extend(SVGRenderer.prototype, {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
 			wrapper[key] = value;
-			if (this.textStr) {
-				wrapper.htmlUpdateTransform();
-			}
+			wrapper.htmlUpdateTransform();
+			
 			return false;
 		};
 
