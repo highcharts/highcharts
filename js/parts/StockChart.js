@@ -207,20 +207,24 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-		// points format: [M, 0, 0, L, 100, 0]		
-		// normalize to a crisp line
-		var i;
-		for (i = 0; i < points.length; i = i + 6) {
-			if (points[i + 1] === points[i + 4]) {
-				// Substract due to #1129. Now bottom and left axis gridlines behave the same.
-				points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
-			}
-			if (points[i + 2] === points[i + 5]) {
-				points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
-			}
+	// points format: [M, 0, 0, L, 100, 0]		
+	// normalize to a crisp line
+	var i;
+	for (i = 0; i < points.length; i = i + 6) {
+		if (points[i + 1] === points[i + 4]) {
+			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
+			points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
 		}
-		return points;
-	};
+		if (points[i + 2] === points[i + 5]) {
+			points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+		}
+	}
+	return points;
+};
+if (Renderer === Highcharts.VMLRenderer) {
+	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
+}
+
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
